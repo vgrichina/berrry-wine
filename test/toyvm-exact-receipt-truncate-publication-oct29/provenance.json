@@ -1,0 +1,106 @@
+{
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "fixtureSHA256": "b53b3c6dd4256c0e9f319626e187ead8c71db6028ec7c3f8382c249004364b75",
+  "historicalWrongPathBlocker": "A prior publication worker incorrectly omitted /private/ and reported missing evidence. That historical report is retained; this publication uses the exact existing dispatch path and does not rewrite prior records.",
+  "retainedFiles": {
+    "test/toyvm-exact-receipt-truncate-publication-oct29/evidence/coordinator-stopped-info.json": {
+      "bytes": 1319,
+      "sha256": "b817464fc44dbcb64a28057b97891755c4a477fec1cd691f68627870b50bd411",
+      "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-truncate-allocation-reuse-oct29/retained-evidence/coordinator-stopped-info.json"
+    },
+    "test/toyvm-exact-receipt-truncate-publication-oct29/evidence/pins.json": {
+      "bytes": 3088,
+      "sha256": "662a31d48020d9883f00dff2e385bc4499f902ad43ac5c6df0a00099cc515541",
+      "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-truncate-allocation-reuse-oct29/retained-evidence/private/pins.json"
+    },
+    "test/toyvm-exact-receipt-truncate-publication-oct29/evidence/publication-dispatch-preflight.json": {
+      "bytes": 351,
+      "sha256": "1605c568fa19d08da4bf2a9c864302701a00246de4928fd3576cc767ec2f4389",
+      "source": "/tmp/toyvm-exact-receipt-truncate-publication-oct29/dispatch-preflight.json"
+    },
+    "test/toyvm-exact-receipt-truncate-publication-oct29/evidence/publication-startup-controls.json": {
+      "bytes": 549,
+      "sha256": "e74f4f68ec00807b208d8799085d9025ffc9e66ac30d5ac40f8e2de044b74601",
+      "source": "/tmp/toyvm-exact-receipt-truncate-publication-oct29/prelaunch-controls.json"
+    },
+    "test/toyvm-exact-receipt-truncate-publication-oct29/evidence/reused-controls.json": {
+      "bytes": 548,
+      "sha256": "ae56f0e478498f5f9366a6ded751d3cb7c03264ceb24c21cc57d564e335132fc",
+      "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-truncate-allocation-reuse-oct29/retained-evidence/private/reused-controls.json"
+    },
+    "test/toyvm-exact-receipt-truncate-publication-oct29/evidence/runtime-result.json": {
+      "bytes": 18701,
+      "sha256": "725f1ea75365ea9fd8029d8b3059f83c456e614c1d9ded844a552637a8641fdd",
+      "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-truncate-allocation-reuse-oct29/retained-evidence/private/runtime-result.json"
+    },
+    "test/toyvm-exact-receipt-truncate-publication-oct29/evidence/runtime.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-truncate-allocation-reuse-oct29/retained-evidence/private/runtime.stderr"
+    },
+    "test/toyvm-exact-receipt-truncate-publication-oct29/evidence/runtime.stdout": {
+      "bytes": 17225,
+      "sha256": "95b90e35dd677ed65f0adeec4bf75e18135e367485e9dc72eafe520c23ad8bb0",
+      "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-truncate-allocation-reuse-oct29/retained-evidence/private/runtime.stdout"
+    },
+    "test/toyvm-exact-receipt-truncate-publication-oct29/evidence/wal-baseline.json": {
+      "bytes": 502,
+      "sha256": "3256d2b11321653f200bb969ed7f0328edf10e92b45eac9f2e8e0df7aa007f4a",
+      "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-truncate-allocation-reuse-oct29/retained-evidence/private/wal-baseline.json"
+    },
+    "test/toyvm-real-cli-truncate-allocation-reuse-oct29/README.md": {
+      "bytes": 1630,
+      "sha256": "4288205449c8253ff7b1f9631b496db03bda9186feddb7d87362356ef1c4cdbb",
+      "source": "/tmp/toyvm-real-cli-truncate-allocation-reuse-oct29/repo/test/toyvm-real-cli-truncate-allocation-reuse-oct29/README.md"
+    },
+    "test/toyvm-real-cli-truncate-allocation-reuse-oct29/canonical-receipt.json": {
+      "bytes": 6726,
+      "sha256": "c3c963b3c5447de64bb8795840a7dfa73e1217ccc2469668b4078135ec1e58c1",
+      "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-truncate-allocation-reuse-oct29/retained-evidence/private/canonical-receipt.json"
+    },
+    "test/toyvm-real-cli-truncate-allocation-reuse-oct29/fixture.py": {
+      "bytes": 610,
+      "sha256": "b53b3c6dd4256c0e9f319626e187ead8c71db6028ec7c3f8382c249004364b75",
+      "source": "/tmp/toyvm-real-cli-truncate-allocation-reuse-oct29/repo/test/toyvm-real-cli-truncate-allocation-reuse-oct29/fixture.py"
+    },
+    "test/toyvm-real-cli-truncate-allocation-reuse-oct29/limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387",
+      "source": "/tmp/toyvm-real-cli-truncate-allocation-reuse-oct29/repo/test/toyvm-real-cli-truncate-allocation-reuse-oct29/limit_contract.py"
+    },
+    "test/toyvm-real-cli-truncate-allocation-reuse-oct29/remote_test.py": {
+      "bytes": 6409,
+      "sha256": "6a6573e5ce093471465b1331751407a18f6864e1f3f00a2663826c44032208a2",
+      "source": "/tmp/toyvm-real-cli-truncate-allocation-reuse-oct29/repo/test/toyvm-real-cli-truncate-allocation-reuse-oct29/remote_test.py"
+    },
+    "test/toyvm-real-cli-truncate-allocation-reuse-oct29/source-pins.json": {
+      "bytes": 904,
+      "sha256": "9ca9e462267ee24e03c6023ac76867fcf21dd5212be9065f1342659dd0ed0037",
+      "source": "/tmp/toyvm-real-cli-truncate-allocation-reuse-oct29/repo/test/toyvm-real-cli-truncate-allocation-reuse-oct29/source-pins.json"
+    }
+  },
+  "runtimeRerun": false,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "task": "toyvm-exact-receipt-truncate-publication-oct29"
+}

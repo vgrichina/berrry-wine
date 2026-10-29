@@ -1,0 +1,16 @@
+{
+  "PASS": true,
+  "task": "toyvm-exact-receipt-truncate-publication-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sourcePins": 5,
+  "quotas": [
+    32768,
+    65536,
+    16384
+  ],
+  "policyReadBytes": 1600,
+  "policyOutputTokens": 600,
+  "freeBytes": 4657381376,
+  "MemAvailable": 3338113024,
+  "noWorkloadLaunched": true
+}

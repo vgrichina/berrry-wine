@@ -1,0 +1,19 @@
+{
+  "browserAllowance": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "historicalActualStoppedVerified": false,
+  "historicalCanonicalSHA256": "c3c963b3c5447de64bb8795840a7dfa73e1217ccc2469668b4078135ec1e58c1",
+  "productionInvocations": 1,
+  "separatelyVerified": {
+    "box": "bx_kzbn33q5",
+    "receiptSHA256": "b817464fc44dbcb64a28057b97891755c4a477fec1cd691f68627870b50bd411",
+    "snapshotCompletedAt": "2026-10-29T04:28:07.107Z",
+    "snapshotStatus": "completed",
+    "state": "stopped",
+    "stoppedAt": "2026-10-29T04:28:07.145Z"
+  },
+  "verificationSource": "coordinator retained stopped-info; no Boat operation in publication task"
+}

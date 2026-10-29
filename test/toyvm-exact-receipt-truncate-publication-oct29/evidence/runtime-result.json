@@ -1,0 +1,411 @@
+{
+  "admission": {
+    "MemAvailable": 7338991616,
+    "blockSize": 4096,
+    "f_bavail": 14274669
+  },
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvtrunc/cancellation.json",
+    "--work",
+    "/tmp/tvtrunc/w",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "16384",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "2",
+    "--wall-limit",
+    "5",
+    "--output-limit",
+    "4096",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+'A',os.O_CREAT|os.O_RDWR,0o600)\nwa=os.write(a,b'A'*16384);assert wa==16384\nassert os.fstat(a).st_size==16384\nos.ftruncate(a,0)\nsa=os.fstat(a);assert sa.st_size==0 and sa.st_nlink==1\nos.close(a)\nb=os.open(root+'B',os.O_CREAT|os.O_RDWR,0o600)\nwb=os.write(b,b'B'*16384);assert wb==16384\nsb=os.fstat(b);assert sb.st_size==16384 and sb.st_nlink==1\nos.close(b)\nsa=os.stat(root+'A');assert sa.st_size==0 and sa.st_nlink==1\nprint(json.dumps(dict(writeA=wa,truncateA=sa.st_size,AStillLinked=sa.st_nlink,writeB=wb,BSize=sb.st_size,closedA=True,closedB=True)))\n"
+  ],
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cliExit": 0,
+  "cliStderr": "",
+  "cliStdout": "{\"accepted\": true, \"accountingAccepted\": true, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 0.05562400000000001, \"exit\": 0, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": null, \"fileLimit\": 16384, \"inodes\": 3, \"live\": 28672, \"liveLimit\": 32768, \"openHandles\": 0, \"operations\": 18, \"peak\": 28672, \"writeLimit\": 65536, \"written\": 32768}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"eyJ3cml0ZUEiOiAxNjM4NCwgInRydW5jYXRlQSI6IDAsICJBU3RpbGxMaW5rZWQiOiAxLCAid3JpdGVCIjogMTYzODQsICJCU2l6ZSI6IDE2Mzg0LCAiY2xvc2VkQSI6IHRydWUsICJjbG9zZWRCIjogdHJ1ZX0K\", \"encoding\": \"base64\"}, \"owned\": [[5704, \"3708\"]], \"peakRSS\": 30408704, \"reapedPeakRSS\": 14082048, \"sampledPeakRSS\": 30408704, \"stopReason\": null, \"wallSeconds\": 0.04682712199999628}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": true, \"cleanupComplete\": true, \"failures\": []}\n",
+  "elapsed": 0.10941328400000572,
+  "executable": {
+    "path": "/usr/bin/python3",
+    "realpath": "/usr/bin/python3.12",
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  },
+  "fixtureAssertions": {
+    "AStillLinked": 1,
+    "BSize": 16384,
+    "closedA": true,
+    "closedB": true,
+    "truncateA": 0,
+    "writeA": 16384,
+    "writeB": 16384
+  },
+  "fixtureOutput": "{\"writeA\": 16384, \"truncateA\": 0, \"AStillLinked\": 1, \"writeB\": 16384, \"BSize\": 16384, \"closedA\": true, \"closedB\": true}\n",
+  "fixtureSHA256": "b53b3c6dd4256c0e9f319626e187ead8c71db6028ec7c3f8382c249004364b75",
+  "gatePASS": true,
+  "guestMountParserInvoked": false,
+  "mountArgv": [],
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvtrunc/cancellation.json --work /tmp/tvtrunc/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+",
+      "cmdSHA256": "cba2d8ee38eeb449bcce7a812b1db2b3faf3160eac32e91eb7141a3308664f12",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 5700,
+      "ppid": 5617,
+      "rss": 21364736,
+      "start": "3703",
+      "state": "S",
+      "stdoutLink": "/tmp/tvtrunc/cli.stdout",
+      "wchan": "hrtimer_nanosleep"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvtrunc/w/domain /tmp/tvtrunc/w/status.sock 32768 65536 16384 ",
+      "cmdSHA256": "3e8baad1c23a3950353cdc573a61451a895b7f78d7cfb2a719435172a3b3209f",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 5701,
+      "ppid": 5700,
+      "rss": 14155776,
+      "start": "3705",
+      "state": "S",
+      "stdoutLink": "pipe:[27101]",
+      "wchan": "ep_poll"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+'A',os.O_CREAT|os.O_RDWR,0o600)\nwa=os.write(a,b'A'*16384);assert wa==16384\nassert os.fstat(a).st_size==16384\nos.ftruncate(a,0)\nsa=os.fstat(a);assert sa.st_size==0 and sa.st_nlink==1\nos.close(a)\nb=os.open(root+'B',os.O_CREAT|os.O_RDWR,0o600)\nwb=os.write(b,b'B'*16384);assert wb==16384\nsb=os.fstat(b);assert sb.st_size=",
+      "cmdSHA256": "03869206f13b393e566a7ab1fbfb1bb016fd2780cd89c847ff57b1e4632c70e1",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 5704,
+      "ppid": 5700,
+      "rss": 7602176,
+      "start": "3708",
+      "state": "R",
+      "stdoutLink": "pipe:[27104]",
+      "wchan": "0"
+    }
+  ],
+  "pins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "remainingMounts": [],
+  "report": {
+    "accepted": true,
+    "accountingAccepted": true,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.05562400000000001,
+      "exit": 0,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": null,
+        "fileLimit": 16384,
+        "inodes": 3,
+        "live": 28672,
+        "liveLimit": 32768,
+        "openHandles": 0,
+        "operations": 18,
+        "peak": 28672,
+        "writeLimit": 65536,
+        "written": 32768
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "eyJ3cml0ZUEiOiAxNjM4NCwgInRydW5jYXRlQSI6IDAsICJBU3RpbGxMaW5rZWQiOiAxLCAid3JpdGVCIjogMTYzODQsICJCU2l6ZSI6IDE2Mzg0LCAiY2xvc2VkQSI6IHRydWUsICJjbG9zZWRCIjogdHJ1ZX0K",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          5704,
+          "3708"
+        ]
+      ],
+      "peakRSS": 30408704,
+      "reapedPeakRSS": 14082048,
+      "sampledPeakRSS": 30408704,
+      "stopReason": null,
+      "wallSeconds": 0.04682712199999628
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": true,
+    "cleanupComplete": true,
+    "failures": []
+  },
+  "safetyCleanup": null,
+  "samples": [
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvtrunc/cancellation.json --work /tmp/tvtrunc/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+",
+          "cmdSHA256": "cba2d8ee38eeb449bcce7a812b1db2b3faf3160eac32e91eb7141a3308664f12",
+          "cpu": 0.0,
+          "pid": 5700,
+          "ppid": 5617,
+          "rss": 11665408,
+          "start": "3703",
+          "state": "R",
+          "stdoutLink": "/tmp/tvtrunc/cli.stdout",
+          "wchan": "0"
+        }
+      ],
+      "t": 0.010141005000001257
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvtrunc/cancellation.json --work /tmp/tvtrunc/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+",
+          "cmdSHA256": "cba2d8ee38eeb449bcce7a812b1db2b3faf3160eac32e91eb7141a3308664f12",
+          "cpu": 0.01,
+          "pid": 5700,
+          "ppid": 5617,
+          "rss": 19660800,
+          "start": "3703",
+          "state": "R",
+          "stdoutLink": "/tmp/tvtrunc/cli.stdout",
+          "wchan": "0"
+        }
+      ],
+      "t": 0.02169618799999995
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvtrunc/cancellation.json --work /tmp/tvtrunc/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+",
+          "cmdSHA256": "cba2d8ee38eeb449bcce7a812b1db2b3faf3160eac32e91eb7141a3308664f12",
+          "cpu": 0.01,
+          "pid": 5700,
+          "ppid": 5617,
+          "rss": 21233664,
+          "start": "3703",
+          "state": "S",
+          "stdoutLink": "/tmp/tvtrunc/cli.stdout",
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvtrunc/w/domain /tmp/tvtrunc/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "3e8baad1c23a3950353cdc573a61451a895b7f78d7cfb2a719435172a3b3209f",
+          "cpu": 0.0,
+          "pid": 5701,
+          "ppid": 5700,
+          "rss": 11272192,
+          "start": "3705",
+          "state": "R",
+          "stdoutLink": "pipe:[27101]",
+          "wchan": "0"
+        }
+      ],
+      "t": 0.032411713000001896
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvtrunc/cancellation.json --work /tmp/tvtrunc/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+",
+          "cmdSHA256": "cba2d8ee38eeb449bcce7a812b1db2b3faf3160eac32e91eb7141a3308664f12",
+          "cpu": 0.01,
+          "pid": 5700,
+          "ppid": 5617,
+          "rss": 21233664,
+          "start": "3703",
+          "state": "S",
+          "stdoutLink": "/tmp/tvtrunc/cli.stdout",
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvtrunc/w/domain /tmp/tvtrunc/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "3e8baad1c23a3950353cdc573a61451a895b7f78d7cfb2a719435172a3b3209f",
+          "cpu": 0.01,
+          "pid": 5701,
+          "ppid": 5700,
+          "rss": 14155776,
+          "start": "3705",
+          "state": "R",
+          "stdoutLink": "pipe:[27101]",
+          "wchan": "0"
+        }
+      ],
+      "t": 0.04307671300000493
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvtrunc/cancellation.json --work /tmp/tvtrunc/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+",
+          "cmdSHA256": "cba2d8ee38eeb449bcce7a812b1db2b3faf3160eac32e91eb7141a3308664f12",
+          "cpu": 0.02,
+          "pid": 5700,
+          "ppid": 5617,
+          "rss": 21364736,
+          "start": "3703",
+          "state": "R",
+          "stdoutLink": "/tmp/tvtrunc/cli.stdout",
+          "wchan": "0"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvtrunc/w/domain /tmp/tvtrunc/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "3e8baad1c23a3950353cdc573a61451a895b7f78d7cfb2a719435172a3b3209f",
+          "cpu": 0.01,
+          "pid": 5701,
+          "ppid": 5700,
+          "rss": 14155776,
+          "start": "3705",
+          "state": "S",
+          "stdoutLink": "pipe:[27101]",
+          "wchan": "ep_poll"
+        }
+      ],
+      "t": 0.05442112100000429
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvtrunc/cancellation.json --work /tmp/tvtrunc/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+",
+          "cmdSHA256": "cba2d8ee38eeb449bcce7a812b1db2b3faf3160eac32e91eb7141a3308664f12",
+          "cpu": 0.02,
+          "pid": 5700,
+          "ppid": 5617,
+          "rss": 21364736,
+          "start": "3703",
+          "state": "R",
+          "stdoutLink": "/tmp/tvtrunc/cli.stdout",
+          "wchan": "0"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvtrunc/w/domain /tmp/tvtrunc/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "3e8baad1c23a3950353cdc573a61451a895b7f78d7cfb2a719435172a3b3209f",
+          "cpu": 0.01,
+          "pid": 5701,
+          "ppid": 5700,
+          "rss": 14155776,
+          "start": "3705",
+          "state": "S",
+          "stdoutLink": "pipe:[27101]",
+          "wchan": "ep_poll"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+'A',os.O_CREAT|os.O_RDWR,0o600)\nwa=os.write(a,b'A'*16384);assert wa==16384\nassert os.fstat(a).st_size==16384\nos.ftruncate(a,0)\nsa=os.fstat(a);assert sa.st_size==0 and sa.st_nlink==1\nos.close(a)\nb=os.open(root+'B',os.O_CREAT|os.O_RDWR,0o600)\nwb=os.write(b,b'B'*16384);assert wb==16384\nsb=os.fstat(b);assert sb.st_size=",
+          "cmdSHA256": "03869206f13b393e566a7ab1fbfb1bb016fd2780cd89c847ff57b1e4632c70e1",
+          "cpu": 0.01,
+          "pid": 5704,
+          "ppid": 5700,
+          "rss": 7602176,
+          "start": "3708",
+          "state": "R",
+          "stdoutLink": "pipe:[27104]",
+          "wchan": "0"
+        }
+      ],
+      "t": 0.06751447400000643
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvtrunc/cancellation.json --work /tmp/tvtrunc/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+",
+          "cmdSHA256": "cba2d8ee38eeb449bcce7a812b1db2b3faf3160eac32e91eb7141a3308664f12",
+          "cpu": 0.02,
+          "pid": 5700,
+          "ppid": 5617,
+          "rss": 21364736,
+          "start": "3703",
+          "state": "R",
+          "stdoutLink": "/tmp/tvtrunc/cli.stdout",
+          "wchan": "0"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvtrunc/w/domain /tmp/tvtrunc/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "3e8baad1c23a3950353cdc573a61451a895b7f78d7cfb2a719435172a3b3209f",
+          "cpu": 0.01,
+          "pid": 5701,
+          "ppid": 5700,
+          "rss": 14155776,
+          "start": "3705",
+          "state": "S",
+          "stdoutLink": "pipe:[27101]",
+          "wchan": "ep_poll"
+        }
+      ],
+      "t": 0.07967070700000534
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvtrunc/cancellation.json --work /tmp/tvtrunc/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+",
+          "cmdSHA256": "cba2d8ee38eeb449bcce7a812b1db2b3faf3160eac32e91eb7141a3308664f12",
+          "cpu": 0.02,
+          "pid": 5700,
+          "ppid": 5617,
+          "rss": 21364736,
+          "start": "3703",
+          "state": "S",
+          "stdoutLink": "/tmp/tvtrunc/cli.stdout",
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvtrunc/w/domain /tmp/tvtrunc/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "3e8baad1c23a3950353cdc573a61451a895b7f78d7cfb2a719435172a3b3209f",
+          "cpu": 0.01,
+          "pid": 5701,
+          "ppid": 5700,
+          "rss": 14155776,
+          "start": "3705",
+          "state": "S",
+          "stdoutLink": "pipe:[27101]",
+          "wchan": "ep_poll"
+        }
+      ],
+      "t": 0.0918130330000011
+    },
+    {
+      "rows": [],
+      "t": 0.10324122700000515
+    }
+  ],
+  "task": "toyvm-real-cli-truncate-allocation-reuse-oct29"
+}

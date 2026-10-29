@@ -1,0 +1,23 @@
+{
+  "PASS": true,
+  "controls": {
+    "donor": "REJECTED BEFORE SPAWN",
+    "omitted": "REJECTED BEFORE SPAWN",
+    "root": "REJECTED BEFORE SPAWN"
+  },
+  "gitVersion": "git version 2.43.0",
+  "inheritedDATA": [
+    -1,
+    -1
+  ],
+  "parentDATA": [
+    134217728,
+    -1
+  ],
+  "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor",
+  "pythonChild": [
+    134217728,
+    134217728
+  ],
+  "sentinel": "/tmp/toyvm-real-cli-truncate-allocation-reuse-oct29/repo"
+}
