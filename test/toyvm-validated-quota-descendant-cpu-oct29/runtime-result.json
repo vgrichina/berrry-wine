@@ -1,0 +1,3367 @@
+{
+  "admission": {
+    "MemAvailable": 7055851520,
+    "blockSize": 4096,
+    "f_bavail": 14266265
+  },
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvdt/cancellation.json",
+    "--work",
+    "/tmp/tvdt/w",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "16384",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "1.0",
+    "--wall-limit",
+    "8.0",
+    "--output-limit",
+    "4096",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n"
+  ],
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cliExit": 1,
+  "cliStderr": "",
+  "cliStdout": "{\"accepted\": false, \"accountingAccepted\": true, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 1.840854, \"exit\": -15, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": null, \"fileLimit\": 16384, \"inodes\": 1, \"live\": 4096, \"liveLimit\": 32768, \"openHandles\": 0, \"operations\": 1, \"peak\": 4096, \"writeLimit\": 65536, \"written\": 0}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"\", \"encoding\": \"base64\"}, \"owned\": [[6368, \"5890\"], [6369, \"5893\"]], \"peakRSS\": 39428096, \"reapedPeakRSS\": 13811712, \"sampledPeakRSS\": 39428096, \"stopReason\": \"aggregate CPU limit\", \"wallSeconds\": 0.8294834569999949}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": false, \"cleanupComplete\": true, \"failures\": [\"supervisor stopped or stop receipt missing\", \"resource receipt rejected: cpuSeconds\", \"child did not succeed\"]}\n",
+  "elapsed": 0.9199812089999995,
+  "executable": {
+    "path": "/usr/bin/python3",
+    "realpath": "/usr/bin/python3.12",
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  },
+  "fixtureIdentities": [
+    {
+      "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py /tmp/tvdt/w/domain /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+      "cpu": 0.01,
+      "pid": 6368,
+      "ppid": 6364,
+      "rss": 12320768,
+      "start": "5890",
+      "state": "R"
+    },
+    {
+      "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+      "cpu": 0.0,
+      "pid": 6369,
+      "ppid": 6368,
+      "rss": 7446528,
+      "start": "5893",
+      "state": "R"
+    }
+  ],
+  "fixtureSHA256": "576cdea8af71429a2288ee78e84999735158d4729447057634dc07f939eb4b08",
+  "gatePASS": true,
+  "guestMountParserInvoked": false,
+  "mountArgv": [],
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.28,
+      "finalState": null,
+      "pid": 6364,
+      "ppid": 5857,
+      "rss": 0,
+      "start": "5883",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 6365,
+      "ppid": 6364,
+      "rss": 14155776,
+      "start": "5886",
+      "state": "S"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 6368,
+      "ppid": 6364,
+      "rss": 0,
+      "start": "5890",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.77,
+      "finalState": null,
+      "pid": 6369,
+      "ppid": 6364,
+      "rss": 0,
+      "start": "5893",
+      "state": "Z"
+    }
+  ],
+  "pins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "remainingMounts": [],
+  "report": {
+    "accepted": false,
+    "accountingAccepted": true,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 1.840854,
+      "exit": -15,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": null,
+        "fileLimit": 16384,
+        "inodes": 1,
+        "live": 4096,
+        "liveLimit": 32768,
+        "openHandles": 0,
+        "operations": 1,
+        "peak": 4096,
+        "writeLimit": 65536,
+        "written": 0
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          6368,
+          "5890"
+        ],
+        [
+          6369,
+          "5893"
+        ]
+      ],
+      "peakRSS": 39428096,
+      "reapedPeakRSS": 13811712,
+      "sampledPeakRSS": 39428096,
+      "stopReason": "aggregate CPU limit",
+      "wallSeconds": 0.8294834569999949
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": true,
+    "failures": [
+      "supervisor stopped or stop receipt missing",
+      "resource receipt rejected: cpuSeconds",
+      "child did not succeed"
+    ]
+  },
+  "safetyCleanup": null,
+  "samples": [
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.0,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 9568256,
+          "start": "5883",
+          "state": "R"
+        }
+      ],
+      "t": 0.005838941999996905
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.01,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 15859712,
+          "start": "5883",
+          "state": "R"
+        }
+      ],
+      "t": 0.017651708999999016
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.02,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 18874368,
+          "start": "5883",
+          "state": "R"
+        }
+      ],
+      "t": 0.02813068999999757
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.02,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21233664,
+          "start": "5883",
+          "state": "S"
+        }
+      ],
+      "t": 0.03903459899999717
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.02,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21233664,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 12189696,
+          "start": "5886",
+          "state": "R"
+        }
+      ],
+      "t": 0.05048896299999939
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.02,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21233664,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        }
+      ],
+      "t": 0.06277523899999693
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.04,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        }
+      ],
+      "t": 0.07398106599999466
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.04,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py /tmp/tvdt/w/domain /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.01,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 12320768,
+          "start": "5890",
+          "state": "R"
+        }
+      ],
+      "t": 0.08566802699999698
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.04,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 9961472,
+          "start": "5890",
+          "state": "R"
+        }
+      ],
+      "t": 0.09746030499999847
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.04,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.0,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.10934359499999857
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.04,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.12067579800000061
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.05,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.03,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.13302471400000115
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.05,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.04,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.14374871399999734
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.06,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.05,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.15508310199999897
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.07,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.06,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.165517770000001
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.07,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.07,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.17629183500000067
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.07,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.08,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.18695812800000056
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.07,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.09,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.19736975200000018
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.07,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.1,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.20714790599999588
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.07,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.11,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.21715584199999682
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.07,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.12,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.2276134019999958
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.08,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.13,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.23890982900000068
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.08,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.14,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.24986772899999465
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.08,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.16,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.26243019599999684
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.09,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.17,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.2747348859999974
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.1,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.18,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.28632691899999685
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.1,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.19,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.29667006399999707
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.1,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.2,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.3090518409999987
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.1,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.22,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.3216096780000015
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.11,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.23,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.3326474479999959
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.11,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.24,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.3427297839999994
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.12,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.25,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.3533551089999989
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.12,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.26,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.366287100000001
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.12,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.27,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.3789239749999993
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.12,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.29,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.39059678899999994
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.12,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.3,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.403872204999999
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.14,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.31,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.41416221000000064
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.14,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.32,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.424342689999996
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.14,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.33,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.4351716289999956
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.14,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.34,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.44622594999999876
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.15,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.35,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.4578271199999975
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.15,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.36,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.47009400999999684
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.15,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.38,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.48208994099999813
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.15,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.39,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.49294592999999765
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.15,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.4,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.5041409769999987
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.16,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.41,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.5162113169999998
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.17,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.42,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.5268562299999999
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.17,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.43,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.5375700919999957
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.17,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.44,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.5488140199999947
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.17,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.46,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.5608380939999975
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.18,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.47,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.5724599019999985
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.18,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.48,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.5837360109999992
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.19,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.49,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.5949080739999957
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.19,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.5,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.6062868949999967
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.2,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.51,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.6178098879999965
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.2,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.52,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.6297367589999965
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.2,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.54,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.6414433369999983
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.2,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.55,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.6508044479999953
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.2,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.55,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.6599553819999997
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.21,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.56,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.6698855019999996
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.21,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.58,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.6820012079999955
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.21,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.59,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.6921403309999974
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.22,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.6,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.7016371449999994
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.22,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.61,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.7113007039999957
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.22,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.62,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.721265779999996
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.22,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.63,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.7305582999999984
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.22,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.64,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.7410093489999952
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.22,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.65,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.752739591000001
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.23,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.66,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.7639687909999964
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.24,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.67,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.7736577569999952
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.24,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.68,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.7838231289999982
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.24,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.69,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.7941789479999954
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.24,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.7,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.8050514379999996
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.24,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.71,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.8152325189999985
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.25,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.72,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.8246225339999995
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.25,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.73,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.8363652090000002
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.25,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.74,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.8481143670000009
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.25,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 10616832,
+          "start": "5890",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.75,
+          "pid": 6369,
+          "ppid": 6368,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.8590923949999976
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.27,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 0,
+          "start": "5890",
+          "state": "Z"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    while True:\n        value = (value * 1664525 + 1013904223) & 0xffffffff\nelse:\n    os.waitpid(child, 0)\n ",
+          "cpu": 0.77,
+          "pid": 6369,
+          "ppid": 6364,
+          "rss": 7446528,
+          "start": "5893",
+          "state": "R"
+        }
+      ],
+      "t": 0.8706335809999999
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.27,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        },
+        {
+          "cmd": "",
+          "cpu": 0.02,
+          "pid": 6368,
+          "ppid": 6364,
+          "rss": 0,
+          "start": "5890",
+          "state": "Z"
+        },
+        {
+          "cmd": "",
+          "cpu": 0.77,
+          "pid": 6369,
+          "ppid": 6364,
+          "rss": 0,
+          "start": "5893",
+          "state": "Z"
+        }
+      ],
+      "t": 0.881064711999997
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.27,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        }
+      ],
+      "t": 0.8908408630000011
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdt/cancellation.json --work /tmp/tvdt/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 1.0 --wall-limit 8.0 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nchild = os.fork()\nif child == 0:\n    value = 1\n    whil",
+          "cpu": 0.28,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 21364736,
+          "start": "5883",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdt/w/domain /tmp/tvdt/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.02,
+          "pid": 6365,
+          "ppid": 6364,
+          "rss": 14155776,
+          "start": "5886",
+          "state": "S"
+        }
+      ],
+      "t": 0.9030348159999946
+    },
+    {
+      "rows": [
+        {
+          "cmd": "",
+          "cpu": 0.28,
+          "pid": 6364,
+          "ppid": 5857,
+          "rss": 0,
+          "start": "5883",
+          "state": "Z"
+        }
+      ],
+      "t": 0.9135371909999961
+    }
+  ],
+  "task": "toyvm-validated-quota-descendant-cpu-oct29"
+}

@@ -1,0 +1,6 @@
+{
+  "guestMountParserInvoked": false,
+  "intendedFiles": [],
+  "mountArgv": [],
+  "reason": "no guest; actual qualify_accounted.py argparse only"
+}

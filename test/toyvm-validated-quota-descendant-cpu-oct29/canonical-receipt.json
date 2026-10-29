@@ -1,0 +1,62 @@
+{
+  "aggregateAccounting": "Dispatch admission aggregate and reservations unchanged; WAL prospective8MiB included once in task24MiB forecast; no second WAL reservation added.",
+  "apiEnvelopeSHA256": "39a4a623fabbc2d5338fbb6e15f0d0c419bd5bde0df3c82f9c18267a284f47ab",
+  "box": "bx_zw9w37jb",
+  "browserAllowance": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "childIdentity": [
+    6369,
+    "5893"
+  ],
+  "childMaxObservedCPU": 0.77,
+  "fullResourceAcceptance": "unknown",
+  "gameplayAcceptance": "unknown",
+  "gatePASS": true,
+  "lifecycle": {
+    "box": "bx_zw9w37jb",
+    "initialExpiry": "2026-10-29T04:32:27.853Z",
+    "snapshotAvailable": true,
+    "snapshotCompletedAt": "2026-10-29T04:03:11.014Z",
+    "state": "stopped",
+    "stoppedAt": "2026-10-29T04:03:11.053Z"
+  },
+  "parentIdentity": [
+    6368,
+    "5890"
+  ],
+  "parentWaitingObserved": true,
+  "precontrolLimitations": [
+    "Initial bounded policy/tool-discovery terminal commands preceded task ops physical monitoring.",
+    "Pre-materialized source directory had no Git metadata; initial git status returned 128; owned Git initialized using explicit read-only alternates."
+  ],
+  "runtimeResult": "runtime-result.json",
+  "runtimeSHA256": "fd84009757bf0ebda2fe5676fff12ecd0fdb2546ff85f695ef0fbbd33fff66f0",
+  "scope": "ordinary fork child aggregate CPU guard only; fullresource/gameplay acceptance unknown",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "task": "toyvm-validated-quota-descendant-cpu-oct29"
+}
