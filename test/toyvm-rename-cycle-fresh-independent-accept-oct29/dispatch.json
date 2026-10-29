@@ -1,0 +1,59 @@
+{
+  "task": "toyvm-rename-cycle-fresh-independent-accept-oct29",
+  "candidate": "034904ee78f5b5e486388cfe3a0219d8572eefed",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11381,
+      "sha256": "3b7e370fd30319fb84991c77c9456491b73a2d1b98d723ebc8cc8e2c731d8860"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "objectStores": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-cycle-fresh-independent-accept-oct29-object-stores.json",
+  "admission": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-cycle-fresh-independent-accept-oct29-admission.json",
+  "originalCancellationReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+  "originalCancellationReceiptPin": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "previousVerifiedReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-cycle-direct-parent-repair-oct29/retained-evidence/completion-receipt.json",
+  "previousRuntimeCases": "Distinct rename namespace-preservation case, not prior overwrite/rename-file/open-handle cases.",
+  "runtimeScope": "toyvm-rename-cycle-fresh-independent-accept-oct29",
+  "box": null,
+  "noMain": true,
+  "limitModule": "/tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/limit_contract.py",
+  "limitModulePin": {
+    "bytes": 2510,
+    "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "ownedRepo": "/tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/repo",
+  "quotaPreflight": "/tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/quota-preflight.json",
+  "gitReadiness": "/tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/git-readiness.json",
+  "previousVerifiedReceiptPin": {
+    "bytes": 630,
+    "sha256": "9f4b2f02e005bf882b8a51327ebc0a59f12430d913feb227065c391b0a8a1897"
+  },
+  "remoteWork": "/tmp/tvrn/w",
+  "remoteSocket": "/tmp/tvrn/w/status.sock",
+  "socketPathBytes": 23,
+  "taskSupervisor": "/tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/ops.py",
+  "taskSupervisorPin": {
+    "bytes": 3116,
+    "sha256": "13f58c5e7d0d4c074019f5360182d3e228c600df7912f5a0e2d54559ddc63d13"
+  },
+  "sourceChangeAuthorized": []
+}

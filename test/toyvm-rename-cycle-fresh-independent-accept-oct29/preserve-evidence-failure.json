@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path\nimport hashlib,json,shutil\nroot=Path(\"/tmp/toyvm-rename-cycle-fresh-independent-accept-oct29\")\ndst=root/\"repo/test/toyvm-rename-cycle-fresh-independent-accept-oct29\"\ndispatch=Path(\"/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-cycle-fresh-independent-accept-oct29-dispatch.json\")\nd=json.loads(dispatch.read_text())\nassert hashlib.sha256((root/\"checkpoint.py\").read_bytes()).hexdigest()==\"aea8507c2d0ec847b4e8d4eeae14a047099b97c349e2a5d4000d66933a25c7d3\"\nfor key,p in [(\"taskSupervisor\",root/\"ops.py\"),(\"limitModule\",root/\"limit_contract.py\")]:\n b=p.read_bytes();assert {\"bytes\":len(b),\"sha256\":hashlib.sha256(b).hexdigest()}==d[key+\"Pin\"]\nfor name in (\"prelaunch-controls.json\",\"git-readiness.json\",\"checkpoint.py\",\"ops.py\",\"limit_contract.py\"):\n shutil.copyfile(root/name,dst/name)\nfor name in (\"checkpoint.json\",\"checkpoint.stdout\",\"unchanged-contract.json\",\"unchanged-contract.stdout\",\"independent.json\",\"independent.stdout\"):\n shutil.copyfile(root/\"e\"/name,dst/name)\nshutil.copyfile(dispatch,dst/\"dispatch.json\")\nshutil.copyfile(d[\"admission\"],dst/\"allocation-admission.json\")\nshutil.copyfile(Path(\"/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-cycle-fresh-independent-accept-oct29/root-ref-digest.json\"),dst/\"initial-root-ref-digest.json\")\n(dst/\"acceptance.txt\").write_text(\"\"\"Independent rename-cycle acceptance, 2026-10-29\nCandidate: 034904ee78f5b5e486388cfe3a0219d8572eefed\nBackend: 11381 bytes; SHA256 3b7e370fd30319fb84991c77c9456491b73a2d1b98d723ebc8cc8e2c731d8860\nOnly the five dispatch sourcePins establish current source identity. Historical hashes/candidate labels in unchanged contract.py and its report are provenance only.\ncontract.py was copied byte-identically from the assigned predecessor: 8397 bytes, SHA256 8c2bcd1627db5b22024cb4ce96f893e3542a0ba14889d9d37c7c00d75f359e16.\nFirst behavioral gate: unchanged contract with explicit --expect-sha256 and absolute own --report; 14/14 cases and 16/16 observation-oracle mutations PASS.\nSupplement: independent.py imports only the exact pinned production backend, independently snapshots every instance attribute except operations, checks operations increments exactly once, and constructs expected namespace changes from requests. It does not import the predecessor oracle.\n24/24 supplementary op12/op45 cases PASS: self, depths 1/4/8, malformed reachable/unrelated/back-edge cycles, upward, ancestor, unrelated, same-path and file moves.\nAll four owned source-copy mutants caught: removed guard 12 failures, wrong errno 12, late guard 12, overbroad guard 10. Exact first counterexamples retained in independent-report.json. Production unchanged.\nReplay via original-shell direct ops.py only:\npython3 /tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/ops.py replay-contract python3 test/toyvm-rename-cycle-fresh-independent-accept-oct29/contract.py --expect-sha256 3b7e370fd30319fb84991c77c9456491b73a2d1b98d723ebc8cc8e2c731d8860 --report /tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/repo/test/toyvm-rename-cycle-fresh-independent-accept-oct29/contract-report.json\npython3 /tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/ops.py replay-independent python3 test/toyvm-rename-cycle-fresh-independent-accept-oct29/independent.py\nops.py retains the original absolute supervisor location; copied controls are recovery/provenance, not relocatable executable wrappers.\nNo Node, mount argv, mounted filesystem, kernel, browser, game, Boat or full CLI was executed. Mount/parser and Node startup checkpoints have no conditional operation in this source-only task. Box: none.\nCaller still pins OLD backend. Combined repairs, caller pin and full CLI qualification remain gates.\nPublication: task branch only; coordinator must append coordinator-note.txt and publication receipt to shared messageboard. Worker does not write shared board.\n\"\"\")\n(dst/\"coordinator-note.txt\").write_text(\"toyvm-rename-cycle-fresh-independent-accept-oct29: PASS direct pinned Backend.handle acceptance; unchanged14 + oracle16 + independent24; source mutants4/4 caught. Scope excludes mount/kernel/CLI/gameplay. Caller remains OLD-pinned; combined repairs/caller pin/full CLI still required. Evidence: test/toyvm-rename-cycle-fresh-independent-accept-oct29/{contract-report.json,independent-report.json,acceptance.txt}. Branch task/toyvm-rename-cycle-fresh-independent-accept-oct29. Append publication verified commit/remote SHA from publication-note.txt; no shared board written by worker. No box assigned.\\n\")\nprint(\"Preserved controls and acceptance evidence\",sum(p.stat().st_size for p in dst.iterdir() if p.is_file()))\n"
+  ],
+  "cwd": "/tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/repo",
+  "exit": 1,
+  "elapsed": 0.18176811188459396,
+  "admission": {
+    "free": 4491120640,
+    "MemAvailable": 3076661248,
+    "allocated": 2469888,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 0,
+  "stderrBytes": 89
+}

@@ -1,0 +1,15 @@
+Independent cycle repair acceptance 2026-10-29
+Candidate034904ee78f5b5e486388cfe3a0219d8572eefed.
+Current backend11381bytes SHA2563b7e370fd30319fb84991c77c9456491b73a2d1b98d723ebc8cc8e2c731d8860. Five dispatch sourcePins exclusively establish current source identity.
+contract.py copied byte-identically:8397bytes SHA2568c2bcd1627db5b22024cb4ce96f893e3542a0ba14889d9d37c7c00d75f359e16. Historical candidate/default PIN in this unchanged file/report are provenance only.
+First behavioral gate used exact production Backend.handle with supported --expect-sha256 and absolute owned --report:14cases +16oracle mutations PASS.
+Supplement independently constructs expected namespace changes and compares ALL instance fields except operations, which must increment exactly once. No predecessor oracle imports.24cases PASS across op12/45: self, descendants at depth1/4/8, reachable/unrelated/back-to-source malformed cycles, upward, ancestor, unrelated, samepath and file-to-deep moves.
+Four source-copy mutants caught: removed12failures, wrongerrno12, late12, overbroad10. Exact first counterexamples retained. Only owned sourcecopies mutated; production remained byte-identical.
+Replay independent.py with original-shell direct /tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/ops.py NAME python3 test/toyvm-rename-cycle-fresh-independent-accept-oct29/independent.py.
+Replay contract.py via same supervisor with --expect-sha256 current backend hash and --report absolute own report path.
+Copied ops.py/limit_contract.py/checkpoint.py are provenance/recovery sources; absolute configured ROOT remains original location, never nest supervisor under capped Python.
+Startup receipt verified552bytes SHA256aea8507c2d0ec847b4e8d4eeae14a047099b97c349e2a5d4000d66933a25c7d3. One internal evidence-packaging assertion used wrong file; corrected without rerunning suites (incident retained).
+Controls: unchanged resource floors and fresh admission per operation; original-shell ops; Python128/Git256DATA only on child; parent128soft/hard unchanged; monitored RSS parent128/group512; CPU90 wall120 file12MiB capture2MiB evidence1MiB; trusted Git SSH config.
+No Node or mount argv or runtime execution, so conditional Node-startup/mount-parser checks had no applicable invocation. No mount/kernel/browser/gameplay/full CLI claims. No boxes assigned.
+Caller still pins OLD backend; combined repairs/caller pin/full CLI qualification remain gates.
+Coordinator owns append-only shared messageboard; worker supplies coordinator-note.txt/publication-note.txt, does not write shared board.
