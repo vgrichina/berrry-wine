@@ -13,7 +13,9 @@ def emit(name, data):
     (EVID/name).write_text(json.dumps(data, indent=2)+'\n')
 if not BASE.exists():
     emit('baseline.json', {'at':datetime.datetime.now(datetime.timezone.utc).isoformat(), 'session': [str(p) for p in pathlib.Path('/home/user/.codex/sessions/2026/10/29').glob('*'+os.environ.get('CODEX_SESSION_ID','NONE')+'*')], 'wal':{str(p):p.stat().st_size for p in pathlib.Path('/home/user/.codex').glob('*-wal')}, 'inheritedLimits':{str(k):resource.getrlimit(k) for k in (resource.RLIMIT_DATA,resource.RLIMIT_AS,resource.RLIMIT_CPU,resource.RLIMIT_FSIZE)}, 'mountArgv':[], 'runtimeAllowed':False})
-resource.setrlimit(resource.RLIMIT_DATA,(128*1024**2,256*1024**2))
+_data_hard = resource.getrlimit(resource.RLIMIT_DATA)[1]
+_data_hard = 256*1024**2 if _data_hard == resource.RLIM_INFINITY else min(_data_hard,256*1024**2)
+resource.setrlimit(resource.RLIMIT_DATA,(min(128*1024**2,_data_hard),_data_hard))
 resource.setrlimit(resource.RLIMIT_FSIZE,(12*1024**2,12*1024**2))
 def admission(label):
     s=os.statvfs(OWN); mem=int(next(l.split()[1] for l in pathlib.Path('/proc/meminfo').read_text().splitlines() if l.startswith('MemAvailable:')))*1024
@@ -37,6 +39,8 @@ def limits(git):
 def run(argv, *, cwd, label='operation', git=False, check=True):
     cwd=valid(cwd); admission(label)
     if git and (argv[:3] != ['git','-C',str(OWN)]):raise ValueError('explicit owned git -C required')
+    if git and resource.getrlimit(resource.RLIMIT_DATA)[1] < 256*1024**2:
+        raise RuntimeError('inherited DATA hard limit cannot support prescribed Git cap; no spawn')
     out=EVID/(label+'.stdout'); err=EVID/(label+'.stderr')
     started=time.monotonic(); incident=None; peak_process=0; peak_group=0
     with out.open('wb') as a,err.open('wb') as b:

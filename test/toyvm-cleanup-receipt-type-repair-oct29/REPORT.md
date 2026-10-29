@@ -53,7 +53,12 @@ One initial focused-test harness assertion compared an API tuple directly to its
 JSON list encoding. That harness failure is retained (`focused-tests.*`); only
 report comparison was corrected to compare JSON encodings. Expected cleanup
 verdicts and original adversarial assertions were unchanged. The final group also
-adds NaN/infinity cases. No resource or platform access denial occurred. Initial Git staging refused new
+adds NaN/infinity cases. No admission or platform access denial occurred. A nested supervisor verification
+initially failed because its Python child inherited DATA hard128MiB and attempted
+to set hard256MiB. The helper now preserves the smaller inherited hard ceiling
+and rejects Git before spawn if its prescribed256MiB cannot fit. No limit was
+raised; corrected nested containment verification passes. Original stderr is
+retained (`committed-supervisor-controls.*`). Initial Git staging refused new
 paths outside the sparse patterns; staging was corrected with explicit --sparse,
 without broadening checkout or touching donor configuration. Git also emitted
 inherited nested-alternate warnings; required objects resolved successfully.
