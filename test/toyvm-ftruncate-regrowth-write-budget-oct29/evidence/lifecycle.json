@@ -1,0 +1,40 @@
+{
+  "box": "bx_t32cdxka",
+  "state": "ready",
+  "expiry": "2026-10-29T05:33:02.209Z",
+  "cutoff": "2026-10-29T05:35:00Z",
+  "shutdownOwner": "coordinator delegates preservation snapshot-stop actualstopped before every handback",
+  "events": [
+    {
+      "event": "created",
+      "hostedPorts": null,
+      "id": "bx_t32cdxka",
+      "org": null,
+      "team": null,
+      "ttlSeconds": 1800
+    },
+    {
+      "event": "state",
+      "id": "bx_t32cdxka",
+      "state": "cloning"
+    },
+    {
+      "event": "state",
+      "id": "bx_t32cdxka",
+      "state": "ready"
+    },
+    {
+      "archiveAfter": "2026-10-29T05:33:02.209Z",
+      "commands": {
+        "forward": "boat forward bx_t32cdxka --remote 3000 --local 3000",
+        "ssh": "boat ssh bx_t32cdxka"
+      },
+      "desktopUrl": null,
+      "event": "ready",
+      "id": "bx_t32cdxka",
+      "ip": "2001:41d0:303:27ef:100::25",
+      "state": "ready",
+      "url": "https://box-node-aa076ba55c036215.on.boat.dev"
+    }
+  ]
+}

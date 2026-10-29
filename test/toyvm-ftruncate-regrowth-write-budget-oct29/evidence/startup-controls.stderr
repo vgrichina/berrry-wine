@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-ftruncate-regrowth-write-budget-oct29/limit_contract.py", line 43, in <module>
+    if __name__=='__main__':selftest(sys.argv[1])
+                            ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/toyvm-ftruncate-regrowth-write-budget-oct29/limit_contract.py", line 31, in selftest
+    rec=configure_parent(); controls={}
+        ^^^^^^^^^^^^^^^^^^
+  File "/tmp/toyvm-ftruncate-regrowth-write-budget-oct29/limit_contract.py", line 8, in configure_parent
+    raise RuntimeError('inherited DATA hard limit incompatible; stop, never raise it')
+RuntimeError: inherited DATA hard limit incompatible; stop, never raise it

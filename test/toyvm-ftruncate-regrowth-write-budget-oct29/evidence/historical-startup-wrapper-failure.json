@@ -1,0 +1,6 @@
+{
+  "failure": "selftest incorrectly launched beneath Python hard128, incompatible with its Git256 child",
+  "resolution": "run topology selftest in soft128 parent with inherited hard unchanged; child Python128 and Git256 unchanged",
+  "original": "startup-controls.stderr",
+  "runtimeInvocations": 0
+}

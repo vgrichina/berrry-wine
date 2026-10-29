@@ -1,0 +1,36 @@
+{
+  "task": "toyvm-ftruncate-regrowth-write-budget-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "PASS": true,
+  "productionInvocations": 1,
+  "cliExit": 1,
+  "accepted": false,
+  "reason": "filesystem cumulative write limit",
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": "filesystem cumulative write limit",
+    "fileLimit": 16384,
+    "inodes": 2,
+    "live": 16384,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 18,
+    "peak": 16384,
+    "writeLimit": 16384,
+    "written": 16384
+  },
+  "sourceReview": "evidence/source-review.json",
+  "runtimeEvidence": "evidence/runtime-result.json",
+  "fixture": "fixture.py",
+  "observer": "runtime-observer.py",
+  "postReapObserved": true,
+  "oracleIsSourceInference": true,
+  "box": "bx_t32cdxka",
+  "actualBoatState": "stopped",
+  "stopReceipt": "evidence/stopped-verified.json",
+  "limitations": [
+    "one tiny-fixture production CLI/FUSE boundary; no browser, gameplay or general resource qualification",
+    "historical failures and restricted acceptance remain unchanged",
+    "startup wrapper selftest first failed under Python hard128; corrected in parent without raising inherited hard limit"
+  ]
+}

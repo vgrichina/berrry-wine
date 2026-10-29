@@ -1,0 +1,23 @@
+{
+  "sessionEvents": {
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-ftruncate-regrowth-write-budget-oct29/stderr.log": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-ftruncate-regrowth-write-budget-oct29/root-ref-digest.json": 196,
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-ftruncate-regrowth-write-budget-oct29/events.jsonl": 199959
+  },
+  "WAL": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4330152,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4255992
+  },
+  "forecastMiB": {
+    "sourceGit": 3,
+    "evidence": 1,
+    "WAL": 8,
+    "publication": 3,
+    "uncertainty": 9
+  },
+  "positiveWALCountedOnce": true
+}
