@@ -1,0 +1,8 @@
+{
+  "PASS": true,
+  "first": true,
+  "sourceSHA256": "5d8384416042115189995a0aa80ad9de4d2695112b87da8d3d1124e5736d6bfc",
+  "sequentialServes": 12,
+  "remaining": [],
+  "scope": "11824-byte backend only; no kernel/caller/six-candidate acceptance"
+}

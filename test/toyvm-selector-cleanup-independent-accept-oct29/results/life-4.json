@@ -1,0 +1,86 @@
+{
+  "kind": "eof",
+  "serial": 4,
+  "beforeFDs": {
+    "live": {
+      "0": {
+        "target": "/dev/null",
+        "fdinfo": "pos:\t0\nflags:\t0100000\nmnt_id:\t26\nino:\t5\n"
+      },
+      "1": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stdout",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755284\n"
+      },
+      "2": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stderr",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755294\n"
+      }
+    },
+    "vanishedReadlinkENOENT": [
+      "3"
+    ]
+  },
+  "ownedFDs": {
+    "transport": 3,
+    "control": 5,
+    "selector": 6
+  },
+  "activeFDs": {
+    "live": {
+      "0": {
+        "target": "/dev/null",
+        "fdinfo": "pos:\t0\nflags:\t0100000\nmnt_id:\t26\nino:\t5\n"
+      },
+      "1": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stdout",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755284\n"
+      },
+      "2": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stderr",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755294\n"
+      },
+      "3": {
+        "target": "socket:[177130999]",
+        "fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t9\nino:\t177130999\nscm_fds: 0\n"
+      },
+      "4": {
+        "target": "socket:[177131000]",
+        "fdinfo": "pos:\t0\nflags:\t02004002\nmnt_id:\t9\nino:\t177131000\nscm_fds: 0\n"
+      },
+      "5": {
+        "target": "socket:[177126332]",
+        "fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t9\nino:\t177126332\nscm_fds: 0\n"
+      },
+      "6": {
+        "target": "anon_inode:[eventpoll]",
+        "fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t16\nino:\t1059\ntfd:        5 events:       19 data:     717a00000005  pos:0 ino:a8ebbbc sdev:8\ntfd:        3 events:       19 data:     717a00000003  pos:0 ino:a8ecdf7 sdev:8\n"
+      }
+    },
+    "vanishedReadlinkENOENT": [
+      "7"
+    ]
+  },
+  "joined": true,
+  "exceptions": [],
+  "statusExisted": true,
+  "statusRemoved": true,
+  "afterFDs": {
+    "live": {
+      "0": {
+        "target": "/dev/null",
+        "fdinfo": "pos:\t0\nflags:\t0100000\nmnt_id:\t26\nino:\t5\n"
+      },
+      "1": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stdout",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755284\n"
+      },
+      "2": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stderr",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755294\n"
+      }
+    },
+    "vanishedReadlinkENOENT": [
+      "3"
+    ]
+  }
+}

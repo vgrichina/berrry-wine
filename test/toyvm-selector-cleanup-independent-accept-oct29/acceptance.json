@@ -1,0 +1,138 @@
+{
+  "PASS": true,
+  "candidate": "ab3b04e107f5be6611ea2fd616ffef8ed32b56cd",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11824,
+      "sha256": "5d8384416042115189995a0aa80ad9de4d2695112b87da8d3d1124e5736d6bfc"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "files": {
+    "wire.py": {
+      "bytes": 16164,
+      "sha256": "ba9a400ff97727ecd26673f792b3e9a3ee576a71cb065fc1759bf8d67323f26a"
+    },
+    "provenance.json": {
+      "bytes": 1427,
+      "sha256": "2012f83a09f1bf4f4dfea6c91429397b74b3f8fb0cdff7d3f5efd8fe203b3d3b"
+    },
+    "results/life-9.json": {
+      "bytes": 2845,
+      "sha256": "f2b431e07c26c1221be9abd32657c557816e9e632bb12af898f4bdb33af7d1fd"
+    },
+    "results/reject-selector-leak.json": {
+      "bytes": 5695,
+      "sha256": "9e3eb0277506b5b0a95df6556188feabf8390b7bfbf55404661cd4914f284cb3"
+    },
+    "results/checkpoint.json": {
+      "bytes": 248,
+      "sha256": "63b286b3eae75c1f7d2bcd139768aee49b4610fc47fa7fb91d15d5eb29922e61"
+    },
+    "results/late-guard.py.txt": {
+      "bytes": 11824,
+      "sha256": "4b2b6ce15168933766e5ce18c69bcaba10327752f21ddd6921b9a478fd0908b9"
+    },
+    "results/life-0.json": {
+      "bytes": 2729,
+      "sha256": "66cf67f86b0b3a70472cf19dda023dc7e5c5b666087d6e10c2959a017c55b401"
+    },
+    "results/life-5.json": {
+      "bytes": 2845,
+      "sha256": "71d2a2d7ed6218c3ff01fb6fea17da2a1caf6109854dcaec8d07070c1a5db4fa"
+    },
+    "results/life-6.json": {
+      "bytes": 2729,
+      "sha256": "b6da99e18e1317aded616399b077ca2a81cb478401a05900a3c83dbc4708e226"
+    },
+    "results/independent-unsupported.json": {
+      "bytes": 5551,
+      "sha256": "690efc9c77658c1b11ed829a34b22cad7e4aaacfeacf5015230827786a0b4ad5"
+    },
+    "results/no-selector-close.py.txt": {
+      "bytes": 11855,
+      "sha256": "808aba163bc7f54ec58e13ed603a9346287e9822d305cedad8dfd20b81b5474d"
+    },
+    "results/reject-late-guard.json": {
+      "bytes": 13721,
+      "sha256": "a8f4639af91559a36c97728c3ca3a36efc1e9bf838c4c89d846ce1dae7d3b145"
+    },
+    "results/life-2.json": {
+      "bytes": 2729,
+      "sha256": "8b7cff93da053d1bd9dc384f203382ff4b4e711f33ac465759a4e6fe58a65333"
+    },
+    "results/independent-supported.json": {
+      "bytes": 14142,
+      "sha256": "56746162e9bd5a11e6b0ae74e4793d992ab5b1fc0fdc1fa2e2ca0a118ed73fa1"
+    },
+    "results/life-11.json": {
+      "bytes": 2846,
+      "sha256": "8b4ee43a9882c56f7b86421c095613b33f597d97ac40509c2925013fafa732cd"
+    },
+    "results/life-1.json": {
+      "bytes": 2845,
+      "sha256": "c20ad07415a0cb3b8f0715623f13af9656e14fdcddb5c6a55fedcdb0b6240fc9"
+    },
+    "results/acquisition-register.json": {
+      "bytes": 1365,
+      "sha256": "2f52688758cffe5dd94ce0122c885c5c60c0106c138854bbf09dab0d92f8d4bd"
+    },
+    "results/life-10.json": {
+      "bytes": 2730,
+      "sha256": "b37dbd6fccca85cfca67d497cff28885bdbc43f7a63d78671ccc1f2453e8e848"
+    },
+    "results/life-3.json": {
+      "bytes": 2845,
+      "sha256": "cb3aa1282145af3d8b5c214dde90c72e51443c744a88208cfa3d36a25639e482"
+    },
+    "results/life-7.json": {
+      "bytes": 2845,
+      "sha256": "a1bded479d790b1ebc0615ea1c642043e1999bb8870ce344d09b6c90be56dc42"
+    },
+    "results/life-4.json": {
+      "bytes": 2729,
+      "sha256": "54f8ab76277a169873374191dbba09badb7319554dd93eecebc26c73c40b2fd7"
+    },
+    "results/independent-malformed.json": {
+      "bytes": 5487,
+      "sha256": "b732751c95be120f876a5173ddc1df5ec74a84d0cc21335dd99827b836e1b5e2"
+    },
+    "results/acquisition-bind.json": {
+      "bytes": 1367,
+      "sha256": "28e2df54da6d50e6eadbb9b96ba8c178b21d460324af8493b6d6b99b203858a0"
+    },
+    "results/life-8.json": {
+      "bytes": 2729,
+      "sha256": "47b49af3353584c3c4c133cde61920939f3fc193f86855e2f6f92f3c38fda44b"
+    }
+  },
+  "firstBoundary": "unchanged 2056 valid flags / 4097 size poisoned 88-byte body; 16-byte response error -95 request ID 0x1020304050607080 empty body atomic state",
+  "newChallenge": "12 alternating normal EOF and real peerclosed EPIPE serves in one process; exact FD identities before/after; retained exceptions; GC disabled",
+  "controls": [
+    "private copy late guard: -95 response but live/nodes/written changed",
+    "private copy omitted selector close: only owned eventpoll survives"
+  ],
+  "scope": "only pinned 11824-byte backend; no kernel or mount; six-candidate application and caller integration remain separate gates",
+  "supervisor": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/ops.py",
+  "resourceReceipts": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e",
+  "launchReceipt": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/prelaunch-controls.json",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-selector-cleanup-independent-accept-oct29/root-ref-digest.json",
+  "mountArgv": [],
+  "mountValidation": "not applicable: no mount/guest command",
+  "box": null
+}

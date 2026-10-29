@@ -1,0 +1,209 @@
+{
+  "name": "reject-selector-leak",
+  "beforeFDs": {
+    "live": {
+      "0": {
+        "target": "/dev/null",
+        "fdinfo": "pos:\t0\nflags:\t0100000\nmnt_id:\t26\nino:\t5\n"
+      },
+      "1": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stdout",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755284\n"
+      },
+      "2": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stderr",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755294\n"
+      }
+    },
+    "vanishedReadlinkENOENT": [
+      "3"
+    ]
+  },
+  "beforeState": {
+    "root": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/repo/test/toyvm-selector-cleanup-independent-accept-oct29/never-mounted",
+    "live_limit": 65536,
+    "write_limit": 65536,
+    "file_limit": 32768,
+    "nodes": {
+      "1": {
+        "mode": 16832,
+        "data": {
+          "bytesHex": ""
+        },
+        "names": {
+          "b'target'": 2,
+          "b'witness'": 3
+        },
+        "links": 1,
+        "opens": 0
+      },
+      "2": {
+        "mode": 33184,
+        "data": {
+          "bytesHex": "09529be42d76bf08519ae32c75be075099"
+        },
+        "names": {},
+        "links": 1,
+        "opens": 2
+      },
+      "3": {
+        "mode": 33152,
+        "data": {
+          "bytesHex": "7769746e6573732d64617461"
+        },
+        "names": {},
+        "links": 1,
+        "opens": 1
+      }
+    },
+    "next": 4,
+    "written": 29,
+    "peak": 24576,
+    "live": 20480,
+    "failure": null,
+    "handles": 3,
+    "fd": 3
+  },
+  "statusPath": "test/toyvm-selector-cleanup-independent-accept-oct29/w-149irem2/s",
+  "statusPathBytes": 65,
+  "initialStatus": {
+    "live": 20480,
+    "peak": 24576,
+    "written": 29,
+    "failure": null,
+    "inodes": 3,
+    "openHandles": 3,
+    "operations": 0,
+    "liveLimit": 65536,
+    "writeLimit": 65536,
+    "fileLimit": 32768,
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+  },
+  "ownedFDs": {
+    "transport": 3,
+    "control": 5,
+    "selector": 6
+  },
+  "clientFD": 4,
+  "liveFDs": {
+    "live": {
+      "0": {
+        "target": "/dev/null",
+        "fdinfo": "pos:\t0\nflags:\t0100000\nmnt_id:\t26\nino:\t5\n"
+      },
+      "1": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stdout",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755284\n"
+      },
+      "2": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stderr",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755294\n"
+      },
+      "3": {
+        "target": "socket:[177126334]",
+        "fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t9\nino:\t177126334\nscm_fds: 0\n"
+      },
+      "4": {
+        "target": "socket:[177126335]",
+        "fdinfo": "pos:\t0\nflags:\t02004002\nmnt_id:\t9\nino:\t177126335\nscm_fds: 0\n"
+      },
+      "5": {
+        "target": "socket:[177128166]",
+        "fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t9\nino:\t177128166\nscm_fds: 0\n"
+      },
+      "6": {
+        "target": "anon_inode:[eventpoll]",
+        "fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t16\nino:\t1059\ntfd:        3 events:       19 data:     717a00000003  pos:0 ino:a8ebbbe sdev:8\ntfd:        5 events:       19 data:     717a00000005  pos:0 ino:a8ec2e6 sdev:8\n"
+      }
+    },
+    "vanishedReadlinkENOENT": [
+      "7"
+    ]
+  },
+  "responseHex": "10000000a1ffffff8070605040302010",
+  "afterState": {
+    "root": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/repo/test/toyvm-selector-cleanup-independent-accept-oct29/never-mounted",
+    "live_limit": 65536,
+    "write_limit": 65536,
+    "file_limit": 32768,
+    "nodes": {
+      "1": {
+        "mode": 16832,
+        "data": {
+          "bytesHex": ""
+        },
+        "names": {
+          "b'target'": 2,
+          "b'witness'": 3
+        },
+        "links": 1,
+        "opens": 0
+      },
+      "2": {
+        "mode": 33184,
+        "data": {
+          "bytesHex": "09529be42d76bf08519ae32c75be075099"
+        },
+        "names": {},
+        "links": 1,
+        "opens": 2
+      },
+      "3": {
+        "mode": 33152,
+        "data": {
+          "bytesHex": "7769746e6573732d64617461"
+        },
+        "names": {},
+        "links": 1,
+        "opens": 1
+      }
+    },
+    "next": 4,
+    "written": 29,
+    "peak": 24576,
+    "live": 20480,
+    "failure": null,
+    "handles": 3,
+    "fd": 3
+  },
+  "operations": 1,
+  "length": 16,
+  "error": -95,
+  "unique": 1161981756646125696,
+  "bodyHex": "",
+  "bodyBytes": 0,
+  "changedStateFields": [],
+  "statePreserved": true,
+  "unsupportedContractAccepted": true,
+  "threadJoined": true,
+  "exceptions": [],
+  "statusExistedBeforeUnlink": true,
+  "statusRemoved": true,
+  "afterFDs": {
+    "live": {
+      "0": {
+        "target": "/dev/null",
+        "fdinfo": "pos:\t0\nflags:\t0100000\nmnt_id:\t26\nino:\t5\n"
+      },
+      "1": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stdout",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755284\n"
+      },
+      "2": {
+        "target": "/tmp/toyvm-selector-cleanup-independent-accept-oct29/e/remaining.stderr",
+        "fdinfo": "pos:\t0\nflags:\t0100001\nmnt_id:\t29\nino:\t2755294\n"
+      },
+      "6": {
+        "target": "anon_inode:[eventpoll]",
+        "fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t16\nino:\t1059\n"
+      }
+    },
+    "vanishedReadlinkENOENT": [
+      "3"
+    ]
+  },
+  "descriptorOraclePassed": false,
+  "survivingFDs": {
+    "6": "anon_inode:[eventpoll]"
+  }
+}
