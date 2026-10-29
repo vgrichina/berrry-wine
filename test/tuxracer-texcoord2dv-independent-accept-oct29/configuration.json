@@ -1,0 +1,20 @@
+{
+  "env": {
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "HOME": "/home/user",
+    "LANG": "C.UTF-8",
+    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "flags": [
+    "--max-old-space-size=96"
+  ],
+  "mount": "N/A: no guest, mounts, checkout or runtime execution",
+  "node": "/usr/bin/node",
+  "nodeDATA": [
+    -1,
+    -1
+  ],
+  "nodeHeapIsNotRSSCap": true,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

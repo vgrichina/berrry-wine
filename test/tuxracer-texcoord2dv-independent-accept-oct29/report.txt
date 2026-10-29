@@ -1,0 +1,57 @@
+ACCEPTED: f356bcac0727ed3aa5e0fde2f9cc829061fe6a59, source/production-fragment scope only.
+
+Pinned candidate published at task/tuxracer-valid-base-texcoord2dv-publication-oct29.
+All 36 supplied source/evidence pins verified once at admission, then unchanged
+at completion. Historical vertex evidence belongs to 9a8c7564ae2ab2c03983c62a9fb4ce541dd8dbc6,
+not the production candidate; no historical supervisor/helper was executed.
+
+The first behavioral boundary used the unchanged prefix/boot of the pinned
+published test, compiling its actual generated outer/page dispatch, native WAT
+handler, gl64/gl32 and production packed vertex encoder. One unchanged original
+pointer/value reproducer established that boundary. The prior eight implementation
+cases were reused from the published canonical receipt, not rerun as a group.
+The fragment placement substitution and exact original/transformed forms are
+hashed in behavior-checkpoint.json. Only the DIRECT_WINDOW region query is
+replaced by the existing fixture's small memory placement; no production edits.
+
+NEW checks: 16 IEEE/boundary pairs, one late-second-page translation trap with
+existing packed record/register/current-coordinate preservation, two unsigned
+address overflow guards, and one outside-Begin state persistence check = 20.
+The 16 pairs cover every vector-start offset 4080..4095 with non-affine pages,
+both append3 and append4 encoders, and exact packed f32 bits except NaN class.
+Values target signed zero/underflow, halfway ties, subnormal/normal boundaries,
+integer precision, finite overflow, infinities and NaNs. 136 comparisons ensure
+later coordinate updates preserve earlier records. Availability and stdcall/EAX
+checks run through real generated dispatch; color/normal/second texture state and
+homogeneous coordinate remain correct in the production packed vertex records.
+
+A test-local s<-t mutation of the real WAT handler still dispatches and cleans
+ESP but fails the exact-coordinate oracle. A second test-local wrong-route
+mutation traps. Both rejected; source files were never mutated. The original
+fragment module hash is 3b8f35f3128447a024eba8945d64db7eee3cb53effcae725396609b00c1c912a.
+Fresh generator --check passes for all 4594 APIs. Acceptance stdout/stderr and
+supervisor receipts retain exit, bounded output, time, measured peak group RSS,
+configuration and group cleanup. Node startup used /usr/bin/node with
+--max-old-space-size=96, same environment and supervisor limits as tests and
+generator; DATA was unlimited for Node, Python soft128MiB with inherited hard
+unchanged, Git subprocess DATA256MiB only. Heap flag is not a total RSS cap.
+
+Limitations: no full-module build, original game, browser, guest, GL rendering,
+protected operations, Boat or gameplay qualification. Translation/allocation are
+explicit fixture seams; this accepts the actual handler/dispatch/packed encoder,
+not all guest memory/heap/runtime behavior. Failure atomicity assertions cover
+caller registers/current coordinates/previous records, not lazy initializer
+allocation rollback. The original repair output-cap/resource incident and the
+publication's hard128/topology incident remain scope limitations; these tests do
+not retroactively qualify those historical execution envelopes. Prior canonical:
+/home/user/wine-assembly/scratch/usage-watch/tuxracer-valid-base-texcoord2dv-publication-oct29/retained-evidence/evidence/canonical-receipt.json
+Prior incident:
+/home/user/wine-assembly/scratch/usage-watch/tuxracer-gltexcoord2dv-dispatch-repair-oct29/retained-evidence/evidence/resource-incident.json
+
+No runtime box allocated; coordinator owns lifecycle. Reservation is the existing
+transferred 48MiB, retained through Git/publication and coordinator board delivery.
+Shared messageboard is already 13797605 bytes, beyond RLIMIT_FSIZE 12MiB: no append
+attempt or limit relaxation. publication-note.txt will carry verified publication
+for coordinator delivery. Final canonical-receipt.json and publication receipts
+are written after push to avoid a self-referential commit hash. Production paths,
+donor objects/refs/index and root checkout were not written. No cleanup deletes.

@@ -1,0 +1,152 @@
+{
+  "PASS": true,
+  "pins": {
+    "src/01-header.wat": {
+      "bytes": 297934,
+      "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4"
+    },
+    "tools/gen_dispatch.js": {
+      "bytes": 33858,
+      "sha256": "f79f394529702d5e74389c77e5f6b9946114cf2e6f539b732a9f8f058be91d65"
+    },
+    "src/03-registers.wat": {
+      "bytes": 61869,
+      "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+    },
+    "tools/watx.js": {
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    },
+    "test/test-gl-vertex2dv-dispatch.js": {
+      "bytes": 8838,
+      "sha256": "46cc6da88817f23effa278edd4726bfc274bbbc28c4c842962a9e1e855e58918"
+    },
+    "src/09b2-dispatch-table.generated.wat": {
+      "bytes": 1375934,
+      "sha256": "e643fa201d8eae4b8be81448ceff3d66452937d922d0247606183af6d8394bba"
+    },
+    "src/09a8b-handlers-opengl.wat": {
+      "bytes": 18835,
+      "sha256": "9a0527ea33482ef112add7b503e41dd73a69441297d62633052f8d13c5756c8e"
+    },
+    "docs/re-notes/tuxracer-glvertex2dv-oct29.txt": {
+      "bytes": 3597,
+      "sha256": "5fee206f21646ed2abb65d09069d560ee3ae6d40451ddc535730dcfc2dce197d"
+    },
+    "test/test-opengl-fixed-function.js": {
+      "bytes": 17580,
+      "sha256": "87e13f0333cab7daba55436865d7757314c66c0dc96c3f23cbb87afdd51fffb2"
+    },
+    "lib/region-map.generated.js": {
+      "bytes": 36089,
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+    },
+    "tools/watx-src/compiler.js": {
+      "bytes": 18610,
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+    },
+    "lib/gl-command-stream.js": {
+      "bytes": 7766,
+      "sha256": "dd3c35ddcc4e2f5b7d5e752ee9dd9c149892ef74193e70da9df05c4b573abdfb"
+    },
+    "lib/guest-rpc.js": {
+      "bytes": 59680,
+      "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1"
+    },
+    "test/test-opengl-wat-encoder.js": {
+      "bytes": 38750,
+      "sha256": "f8cd2c35f848caaf13a94d9e957df88172be8b3fa04718a0fcf97e62634c62a5"
+    },
+    "tools/d3d9-methods.js": {
+      "bytes": 15525,
+      "sha256": "64b71953872091fc50e731b9af3238a2bc1166cd395f2ab1a330d499d9dbbf0e"
+    },
+    "tools/watx-src/compiler-codegen.js": {
+      "bytes": 302257,
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    "src/09a8c-gl-encoder.wat": {
+      "bytes": 44718,
+      "sha256": "debf14711e19d2c5d193eff3cee5d728f8942a4d2b53587e91153907d905fb69"
+    },
+    "test/test-opengl-wat-worker.js": {
+      "bytes": 10489,
+      "sha256": "a8747025d2b4ffba88b605d00dfbdfc61c91618aa91fb25a29887b02378cd926"
+    },
+    "tools/watx-src/compiler-parser.js": {
+      "bytes": 38100,
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236"
+    },
+    "tools/d3d8-methods.js": {
+      "bytes": 12314,
+      "sha256": "76f3ce673ef26ce6477a89584a4f629e6570d953e0613f74d9175f64f993815e"
+    },
+    "tools/d3dim-methods.js": {
+      "bytes": 17453,
+      "sha256": "d26c5ad14f6907bd5c77dc88e5918953fa28e8793b06dbe209a3bbe06fe24d9d"
+    },
+    "tools/watx-src/compiler-stages.js": {
+      "bytes": 31195,
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+    },
+    "src/api_table.json": {
+      "bytes": 723342,
+      "sha256": "c7766adc60a2ec2a3d98686311b63a7ba50c8348acd1ab6828b2d5029f65b86c"
+    },
+    "lib/gl-compat.js": {
+      "bytes": 106632,
+      "sha256": "6abc9e29f5f8c0fac069ad869a1b32264f6942650298786e36d558fd0a38d04d"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/accept.js": {
+      "bytes": 5595,
+      "sha256": "bb5c2faf861683fe03a9fe29722f981716e2fb5ef169cb1c35159ab37f133c06"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/baseline.json": {
+      "bytes": 547,
+      "sha256": "961747040a6f4e63b1ff5ad363eff39733e66d3e33a96227b7f6681e1fcbbc51"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/behavior-checkpoint.json": {
+      "bytes": 2262,
+      "sha256": "fdf820371d7a369bf7e291a5a03a0f4fd0216b3f51d27854743393f0f0dec95b"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/containment.json": {
+      "bytes": 606,
+      "sha256": "62a9b63f6876ce96e8fe7d88dcbcb530eb498695328bd6d0b40b8862038b8907"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/limit_contract.py": {
+      "bytes": 2342,
+      "sha256": "9bf281144379a1881157865312cb0ce1a081096d6983ada3a090f0ea0d3c2134"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/mount-configuration.json": {
+      "bytes": 273,
+      "sha256": "903ba3bb692fd28b9d4167d3b5a1b0659d306733ca6d941eee6ae1968a9ee305"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/node-gen_dispatch.json": {
+      "bytes": 349,
+      "sha256": "e6330357de443de4cbe323e1f32070b2ea1fa4b9d180ea3af0de51921914cd1b"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/node-startup.json": {
+      "bytes": 2083,
+      "sha256": "d106cfd363b602fb15b5ef14ab650788a1fd3ec4e1507acf22275f925e30d7d0"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/report.txt": {
+      "bytes": 5178,
+      "sha256": "4f547159a5df951d2b27f775bf68ccbfa42b51b95886d8e0bdb70669615d58a5"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/source-pins.json": {
+      "bytes": 2908,
+      "sha256": "04b041f6c6182631902a9fb3de755c1ab4a0113a43d058b294776e460ca2cd3a"
+    },
+    "test/tuxracer-glvertex2dv-independent-accept-oct29/supervisor.py": {
+      "bytes": 7635,
+      "sha256": "5f452d428ebe099f60b4276501a1960148e6c956b4169aa5d6f3fb9ea70c8e02"
+    },
+    "test/test-gl-texcoord2dv-dispatch.js": {
+      "bytes": 10893,
+      "sha256": "43a95e5f9ba938f7cb4888370207bd1b7d27857cb82a1ebe4036bcf71494d3df"
+    }
+  },
+  "candidate": "f356bcac0727ed3aa5e0fde2f9cc829061fe6a59",
+  "acceptedVertexEvidenceCommit": "9a8c7564ae2ab2c03983c62a9fb4ce541dd8dbc6",
+  "changed": []
+}
