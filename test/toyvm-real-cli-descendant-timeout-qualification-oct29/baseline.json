@@ -1,0 +1,29 @@
+{
+  "allocationRetained": true,
+  "at": 1793243526.8360121,
+  "inheritedLimits": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "initialPositiveSharedWAL": 24831368,
+  "positiveGrowthCount": "once above initial baseline",
+  "sessionID": "01a185a3-23d6-7722-935d-05867fda0b05",
+  "sessionPath": [
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T03-10-24-01a185a3-23d6-7722-935d-05867fda0b05.jsonl"
+  ],
+  "sharedWALBaseline": 24831368
+}

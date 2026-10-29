@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_axf3v3mg",
+    "--cwd",
+    "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo",
+    "--timeout",
+    "30",
+    "--json",
+    "--",
+    "/usr/bin/python3 -B /tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo/test/toyvm-real-cli-descendant-timeout-qualification-oct29/remote_test.py"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo",
+  "exit": 1,
+  "peakPhysicalGroupRSS": 5722112,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 1039,
+  "wall": 0.5443856378551573
+}

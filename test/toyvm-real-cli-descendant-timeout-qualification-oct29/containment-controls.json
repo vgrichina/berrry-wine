@@ -1,0 +1,9 @@
+{
+  "negativeControls": [
+    "{} rejected",
+    "{'cwd': PosixPath('/home/user/wine-assembly')} rejected",
+    "{'cwd': PosixPath('/tmp/toyvm-real-backend-caller-qualification-oct29')} rejected",
+    "{'cwd': '/'} rejected"
+  ],
+  "sentinel": true
+}

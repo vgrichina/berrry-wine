@@ -1,0 +1,46 @@
+BLOCKED: descendant-timeout qualification was not reached.
+
+Exact candidate: 5a88ca099b962e946160afd2d4d71a950bf46db3.
+The actual unchanged qualify_accounted.py CLI was invoked once using the real
+synchronous-FUSE backend on the dedicated Boat. CLI exit 1 reported
+RuntimeError: filesystem mount/backend failed. The authoritative server stderr
+was OSError: AF_UNIX path too long at status socket bind. The task harness
+placed the fresh work directory under its long evidence path; this avoidable
+harness path selection exceeded Linux's 108-byte sockaddr_un.sun_path capacity.
+This is a setup-contract blocker, not a demonstrated production timeout bug.
+
+No confined child or descendant was launched. No live handle observation was
+obtained. Timeout rejection and descendant cleanup are UNQUALIFIED. No positive
+or quota case, fake backend, browser, guest, build or local FUSE work was run.
+No retry, repair, source change, allowance reset or limit increase was performed.
+The unchanged reproducer and actual argv are retained in remote_test.py,
+invocation.json and fixture.py. Original CLI stdout/stderr and backend cleanup
+are in cli.stdout; process-cleanup.json independently records no remaining
+observed identities and no mount. CLI unmountExit=0, serverExit=1; it correctly
+withheld cleanupComplete rather than claiming a clean successful server exit.
+
+The outer harness subsequently raised KeyError('output') because no backend
+receipt existed. This secondary diagnostic is preserved in boat-real-cli.stdout;
+it does not replace the authoritative CLI failure. Evidence was recovered using
+only supported API execution before explicitly delegated snapshot-stop.
+
+The owned supervisor's cwd rejection controls and sentinel passed. Source hashes
+were verified locally and on the Boat. Git uses explicit -C, owned cwd and
+repository identity checks; trusted Git SSH and process-local readonly alternate
+objects are used. Empty guest mount argv reuses the unchanged predecessor config;
+no filename-bearing guest mount is involved. The production's pinned internal
+supervisors remain byte-identical, including their existing subprocess behavior.
+Resource admissions and measured /proc RSS evidence are retained. No historical
+ru_maxrss was used as an outer physical-RSS measurement. Original browser budget
+remains 35.353183 CPU seconds, 101.495550694 wall seconds, one capture.
+
+Diagnostic inspection incident: an initial shell head against the installed Boat
+ELF and a later full retained stage recipe read produced excessive/truncated
+terminal output before the bounded supervisor was installed. No secret contents
+were requested; subsequent evidence commands were bounded. This is a procedural
+limitation of this run, not a passing output-control qualification.
+
+Coordinator next action: decide whether to authorize a fresh bounded qualification
+with a shorter owned work path. Do not treat this run as passing timeout cleanup.
+The allocation remains retained through coordinator board delivery/closeout.
+Board append is delegated; publication-note.txt is the bounded delivery artifact.

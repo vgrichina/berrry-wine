@@ -1,0 +1,14 @@
+{
+  "PASS": true,
+  "backendError": "AF_UNIX path too long",
+  "cliExit": 1,
+  "fixtureNeverLaunched": true,
+  "linuxSockaddrUnSunPathBytes": 108,
+  "meaning": "original failed attempt retained truthfully; timeout qualification NOT achieved",
+  "productionSourceUnchanged": true,
+  "remainingMounts": [],
+  "remainingObservedProcesses": [],
+  "retries": 0,
+  "socketPath": "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo/test/toyvm-real-cli-descendant-timeout-qualification-oct29/work/status.sock",
+  "socketPathBytes": 139
+}

@@ -1,0 +1,23 @@
+{
+  "exit": 1,
+  "observed": {
+    "6612": {
+      "cpu": 0.13,
+      "pid": 6612,
+      "ppid": 6604,
+      "rss": 21364736,
+      "start": "11170"
+    },
+    "6613": {
+      "cpu": 0.09,
+      "pid": 6613,
+      "ppid": 6612,
+      "rss": 31326208,
+      "start": "11173"
+    }
+  },
+  "outerReason": null,
+  "peakPhysicalGroupRSS": 52559872,
+  "remaining": [],
+  "remainingMounts": []
+}
