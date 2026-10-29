@@ -1,0 +1,88 @@
+{
+  "conclusion": "Observed startup below limit; allocation process contributes RSS rise. Allocation interrupted before all96MiB completed.",
+  "fixturePeak": 61865984,
+  "limit": 67108864,
+  "preFixturePeak": 35389440,
+  "samples": [
+    {
+      "fixtureRSS": null,
+      "groupRSS": 9175040,
+      "t": 0.004288983999913398
+    },
+    {
+      "fixtureRSS": null,
+      "groupRSS": 14548992,
+      "t": 0.012478959999953076
+    },
+    {
+      "fixtureRSS": null,
+      "groupRSS": 19136512,
+      "t": 0.02054977200009489
+    },
+    {
+      "fixtureRSS": null,
+      "groupRSS": 30277632,
+      "t": 0.028625533999957042
+    },
+    {
+      "fixtureRSS": null,
+      "groupRSS": 34471936,
+      "t": 0.03700572000002467
+    },
+    {
+      "fixtureRSS": null,
+      "groupRSS": 35389440,
+      "t": 0.0448727670000153
+    },
+    {
+      "fixtureRSS": 9830400,
+      "groupRSS": 45350912,
+      "t": 0.05284648600013497
+    },
+    {
+      "fixtureRSS": 13107200,
+      "groupRSS": 48627712,
+      "t": 0.061146641000050295
+    },
+    {
+      "fixtureRSS": 12713984,
+      "groupRSS": 48234496,
+      "t": 0.06914166000001387
+    },
+    {
+      "fixtureRSS": 41680896,
+      "groupRSS": 77201408,
+      "t": 0.07798358500008362
+    },
+    {
+      "fixtureRSS": 61865984,
+      "groupRSS": 97386496,
+      "t": 0.08654166600013014
+    },
+    {
+      "fixtureRSS": 0,
+      "groupRSS": 35520512,
+      "t": 0.09446597200008
+    },
+    {
+      "fixtureRSS": null,
+      "groupRSS": 35520512,
+      "t": 0.10281087099997421
+    },
+    {
+      "fixtureRSS": null,
+      "groupRSS": 35520512,
+      "t": 0.11069014200006677
+    },
+    {
+      "fixtureRSS": null,
+      "groupRSS": 0,
+      "t": 0.1194322189999184
+    },
+    {
+      "fixtureRSS": null,
+      "groupRSS": 0,
+      "t": 0.12770711699999993
+    }
+  ]
+}

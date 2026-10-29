@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "exec",
+    "bx_zdmxp979",
+    "--timeout",
+    "30",
+    "--",
+    "python3",
+    "-B",
+    "/tmp/tvrss/remote_test.py"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-rss-limit-oct29",
+  "exit": 0,
+  "incident": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 19686,
+  "wall": 0.2930046641267836
+}

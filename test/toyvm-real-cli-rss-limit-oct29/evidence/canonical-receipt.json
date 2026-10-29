@@ -1,0 +1,83 @@
+{
+  "apiEnvelopeSHA256": "346e7e12cdc17e47ef48ed081315588db8d4f9dca19f8abc296c9dfcaa8f32e9",
+  "box": "bx_zdmxp979",
+  "browserAllowance": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanupComplete": true,
+  "cliExit": 1,
+  "cpuSeconds": 0.08244199999999999,
+  "expiryAtCreation": "2026-10-29T04:41:37.206Z",
+  "gatePASS": true,
+  "lifecycleReceipt": "actual-stopped.json",
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.03,
+      "finalState": null,
+      "pid": 10268,
+      "ppid": 10196,
+      "rss": 0,
+      "start": "106819",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvrss/w/domain /tmp/tvrss/w/status.sock 32768 65536 16384 ",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 10269,
+      "ppid": 10268,
+      "rss": 14155776,
+      "start": "106822",
+      "state": "S"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.03,
+      "finalState": null,
+      "pid": 10271,
+      "ppid": 10268,
+      "rss": 0,
+      "start": "106824",
+      "state": "Z"
+    }
+  ],
+  "peakRSS": 85590016,
+  "remainingMounts": [],
+  "runtimeResult": "runtime-result.json",
+  "runtimeSHA256": "e120f1fdf0c7a8d255275718278674bc8f363baa6504bed6be675136d0565813",
+  "safetyCleanup": null,
+  "scope": "one ordinary Python process aggregate RSS rejection only; arbitrary descendant RSS, fullresource/browser/gameplay UNKNOWN",
+  "shutdownVerified": true,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "stopReason": "aggregate RSS limit",
+  "task": "toyvm-real-cli-rss-limit-oct29",
+  "wallSeconds": 0.06599359699998786
+}

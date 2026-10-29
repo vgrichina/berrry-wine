@@ -1,0 +1,77 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "new",
+    "--ttl",
+    "1800",
+    "--name",
+    "toyvm-rss-oct29",
+    "--file",
+    "/tmp/tvrss/dispatch.json=/tmp/toyvm-real-cli-rss-limit-oct29/private/pins.json",
+    "--file",
+    "/tmp/tvrss/remote_test.py=/tmp/toyvm-real-cli-rss-limit-oct29/remote_test.py",
+    "--file",
+    "/tmp/tvrss/fixture.py=/tmp/toyvm-real-cli-rss-limit-oct29/fixture.py",
+    "--file",
+    "/tmp/tvrss/cancellation.json=/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+    "--file",
+    "/tmp/tvrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py=/tmp/toyvm-real-cli-rss-limit-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--file",
+    "/tmp/tvrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py=/tmp/toyvm-real-cli-rss-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "--file",
+    "/tmp/tvrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py=/tmp/toyvm-real-cli-rss-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "--file",
+    "/tmp/tvrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py=/tmp/toyvm-real-cli-rss-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "--file",
+    "/tmp/tvrss/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py=/tmp/toyvm-real-cli-rss-limit-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py"
+  ],
+  "commaBearingFiles": [],
+  "intendedFiles": [
+    {
+      "local": "/tmp/toyvm-real-cli-rss-limit-oct29/private/pins.json",
+      "remote": "/tmp/tvrss/dispatch.json",
+      "sha256": "e532c32abf2a2dd93756087c032de689e2ddf9a736f72d38ffa94d3326e94808"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-rss-limit-oct29/remote_test.py",
+      "remote": "/tmp/tvrss/remote_test.py",
+      "sha256": "85ed1c278b33eebd5e5b755415dd9910063964d98ed0ab6feff85f6725cddd90"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-rss-limit-oct29/fixture.py",
+      "remote": "/tmp/tvrss/fixture.py",
+      "sha256": "6455b67741d5254db4317e85582f9cc2ab17967af5b945b36733ecafbb396833"
+    },
+    {
+      "local": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+      "remote": "/tmp/tvrss/cancellation.json",
+      "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-rss-limit-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "remote": "/tmp/tvrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-rss-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+      "remote": "/tmp/tvrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-rss-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "remote": "/tmp/tvrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-rss-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "remote": "/tmp/tvrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-rss-limit-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+      "remote": "/tmp/tvrss/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  ]
+}

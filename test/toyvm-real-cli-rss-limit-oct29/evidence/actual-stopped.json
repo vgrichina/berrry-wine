@@ -1,0 +1,18 @@
+{
+  "box": "bx_zdmxp979",
+  "expiry": null,
+  "operation": {
+    "endedAt": "2026-10-29T04:12:08.214Z",
+    "error": null,
+    "id": "stop_73e4ec673127fa57",
+    "lastAttemptAt": "2026-10-29T04:12:08.214Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "snapshotAvailable": true,
+  "snapshotCompletedAt": "2026-10-29T04:12:08.149Z",
+  "snapshotVerifiedAt": "2026-10-29T04:12:08.149Z",
+  "state": "stopped",
+  "stoppedAt": "2026-10-29T04:12:08.194Z",
+  "verified": true
+}

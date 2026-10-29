@@ -1,0 +1,6 @@
+{
+  "guestMountParserInvoked": false,
+  "intendedGuestFiles": [],
+  "mountArgv": [],
+  "reason": "No guest mount arguments; production CLI argparse and synchronous FUSE only. Boat file staging separately enumerated."
+}
