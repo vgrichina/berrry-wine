@@ -19,7 +19,8 @@ creation. Expected adapter/backend argv and quotas matched. No server, mount,
 child workload, browser, guest, Boat or build ran. Deterministic backend injection
 then verified API and CLI select `synchronous-fuse` and forward the exact command,
 work directory and all seven explicit limits. The rejecting oracle exits 1.
-`first-counterexample.txt` preserves that first output, including its assertion.
+`first-counterexample.txt` preserves that first stdout unchanged; the assertion is retained separately in
+`first-counterexample-stderr.txt`.
 No candidate repair, mutation or subsequent acceptance group ran.
 
 All seven dispatch pins, the flattened immutable supervisor pin and exact retained
