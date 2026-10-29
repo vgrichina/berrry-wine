@@ -1,0 +1,147 @@
+{
+  "status": "PASS",
+  "candidate": "545a51f4a11ac2e88293ac2c8dcc6be3b9ceb124",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12321,
+      "sha256": "d129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "firstBehavioralCall": "first-boundary",
+  "boundaryFirstSatisfied": true,
+  "productionUnchanged": true,
+  "scope": "direct Backend.handle only",
+  "requiredGroups": {
+    "renameType": "156 / 9 mutants",
+    "cycle": "14+24 / 16 oracle / 4 mutants",
+    "removal": "14+168 / 12 oracle / 9 mutants",
+    "readdir": "870+7329 wire / 10 corrupt EIO / 7 mutants",
+    "fourInteractions": 24,
+    "newInterleaved": "16 sequences / 688 state checks / 4 mutants"
+  },
+  "controls": {
+    "ops.py": {
+      "bytes": 3116,
+      "sha256": "13f58c5e7d0d4c074019f5360182d3e228c600df7912f5a0e2d54559ddc63d13"
+    },
+    "limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "prelaunch-controls.json": {
+      "bytes": 557,
+      "sha256": "d9d19e75eb80fa23463a7121b5db424e4257d19cc1ee52297341ea63f4a73ff3"
+    },
+    "dispatch-preflight.json": {
+      "bytes": 527,
+      "sha256": "d12019c3c0977376a8128f47c3620b6bbcd6def56ca715d0bdce6ae866c7c41a"
+    },
+    "checkpoint.py": {
+      "bytes": 586,
+      "sha256": "b6a265b50257500fb6b369fd03873b88347a8a49fb652e78096d776216e17170"
+    }
+  },
+  "rawEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e",
+  "box": null,
+  "lifecycle": "No assigned or created box; no mount or guest",
+  "remainingGates": [
+    "Caller still OLD: coordinator-owned pin integration",
+    "Full CLI and confinement qualification",
+    "Independent review before main integration"
+  ],
+  "proceduralNotes": [
+    "Predecessor reproducer ordering caveat corrected in this independent run",
+    "All production pins exclusively current-dispatch.json; historical candidate strings in retained oracle fixtures are provenance only",
+    "git status returned zero with nested alternate-store warnings; raw stderr retained; no store edited"
+  ],
+  "resultFiles": {
+    "source-pins.json": {
+      "bytes": 904,
+      "sha256": "6dee45fe5a76d87065b4dd78f714c1ce0d9648aa8bf77e2e47a10d89a8e2face"
+    },
+    "independent-results.json": {
+      "bytes": 5513,
+      "sha256": "8041672d296f3645620b35077843faed3eef8ab07f29f1ae0f206b45a6f9ef0a"
+    },
+    "independent-report.json": {
+      "bytes": 46685,
+      "sha256": "4d7ea9a19d45ff2d30de5740f1f075b6d9814af1665f2e7d5ce5dbe0990b9ef6"
+    },
+    "interleaved-results.json": {
+      "bytes": 2361,
+      "sha256": "1cc1dd568ba9d96f1ab03c15feb3fcead7b5851b0c49007cccd1a96150304f00"
+    },
+    "suite-provenance.json": {
+      "bytes": 3044,
+      "sha256": "8a0444657ca38b7ba7d9d2dd9dfc612bdd3f2d7657da31a8b2c3d84aedd7810f"
+    },
+    "removal-results.json": {
+      "bytes": 32032,
+      "sha256": "8d914999a4d5ed3c5eaa0421b1dcc7293408c2d82d59ca2fa40251599d92ff71"
+    },
+    "pin-update.json": {
+      "bytes": 348,
+      "sha256": "c676ebefa4823b74b0c79a7a0fb4e9a6bf50b08a7f97fea332494e3c5a32fa76"
+    },
+    "boundary-results.json": {
+      "bytes": 1967,
+      "sha256": "3ab4f2703d8abbbde67c1fc27a45bcf1b34b181acb78bf86003ea39c564abfc6"
+    },
+    "current-dispatch.json": {
+      "bytes": 3061,
+      "sha256": "e019af92559a3e436d1a9a035fb5c7b0e86278f5b04142b14509265d2b80023f"
+    },
+    "rename-type-results.json": {
+      "bytes": 1592,
+      "sha256": "826121c8489989b382da0ed1fff18b6db7112b7d283001315f01a164640f28a4"
+    },
+    "gate-results.json": {
+      "bytes": 1703,
+      "sha256": "0f74ecb54f60079be6699bca454317df5bb48dad34fd2815bdc4d98a5c7096ee"
+    },
+    "canonical.json": {
+      "bytes": 206611,
+      "sha256": "d248e91bc3d1e29ac1c37389a51ed7816c2ce1fd8631e452c93f77a458f7c9f1"
+    },
+    "execution-receipts.json": {
+      "bytes": 13854,
+      "sha256": "e5d27a0507ff0c62fe6704ba3ea17e3fc7b1395aa392fd681971ca85290317cc"
+    },
+    "fixture.json": {
+      "bytes": 474,
+      "sha256": "1836abfcc48c568c2c78c0821464446c228e189aa63cf0cfc0a5b4c945f39bfe"
+    },
+    "cycle-results.json": {
+      "bytes": 86030,
+      "sha256": "26c300da5fbb7d03bb47370926cc02583c82f563c67ad919327552b38b28e875"
+    },
+    "copy-receipt.json": {
+      "bytes": 379,
+      "sha256": "e772f876791d80e34a4b152ec22d1a877d0ec79f859f7b023b35009c4964e675"
+    },
+    "results.json": {
+      "bytes": 1703,
+      "sha256": "0f74ecb54f60079be6699bca454317df5bb48dad34fd2815bdc4d98a5c7096ee"
+    },
+    "four-interactions.json": {
+      "bytes": 2324,
+      "sha256": "e79e958397128a289d2013ec11d023e3053dbca7e313937bb6e8fa4c36885931"
+    }
+  }
+}

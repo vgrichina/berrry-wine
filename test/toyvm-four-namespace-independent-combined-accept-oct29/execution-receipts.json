@@ -1,0 +1,467 @@
+{
+  "first-boundary": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/rename-type-reproduce.py",
+      "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py"
+    ],
+    "cwd": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.04820963810198009,
+    "admission": {
+      "free": 4424978432,
+      "MemAvailable": 2391302144,
+      "allocated": 2191360,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 1967,
+    "stderrBytes": 0,
+    "stdout": {
+      "bytes": 1967,
+      "sha256": "3ab4f2703d8abbbde67c1fc27a45bcf1b34b181acb78bf86003ea39c564abfc6"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privateEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e/first-boundary.json"
+  },
+  "rename-type": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/rename-type-accept.py"
+    ],
+    "cwd": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.16297359019517899,
+    "admission": {
+      "free": 4423909376,
+      "MemAvailable": 3260600320,
+      "allocated": 2322432,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 1592,
+    "stderrBytes": 0,
+    "stdout": {
+      "bytes": 1592,
+      "sha256": "826121c8489989b382da0ed1fff18b6db7112b7d283001315f01a164640f28a4"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privateEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e/rename-type.json"
+  },
+  "cycle-original": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/cycle-contract.py",
+      "--report",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/cycle-results.json"
+    ],
+    "cwd": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.10939710517413914,
+    "admission": {
+      "free": 4423892992,
+      "MemAvailable": 3253952512,
+      "allocated": 2330624,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 427,
+    "stderrBytes": 0,
+    "stdout": {
+      "bytes": 427,
+      "sha256": "e0e94e0a41fcc01e7f3a26455ec81d2380a5ba064608819e6d7005f0d1f03dd6"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privateEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e/cycle-original.json"
+  },
+  "cycle-independent": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/cycle-independent.py"
+    ],
+    "cwd": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.15958488499745727,
+    "admission": {
+      "free": 4423786496,
+      "MemAvailable": 3258507264,
+      "allocated": 2428928,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 68,
+    "stderrBytes": 0,
+    "stdout": {
+      "bytes": 68,
+      "sha256": "d7a9265d6c40d0b32918fde5afc4a0f99070579dfc79b8b5b38110a3947a79e4"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privateEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e/cycle-independent.json"
+  },
+  "removal-original": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/unlink-regression.py",
+      "--output",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/removal-results.json"
+    ],
+    "cwd": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.0998942251317203,
+    "admission": {
+      "free": 4423671808,
+      "MemAvailable": 3261562880,
+      "allocated": 2543616,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 900,
+    "stderrBytes": 0,
+    "stdout": {
+      "bytes": 900,
+      "sha256": "abe1005ac13ef2c1c6d60682a519e9d8f643f12373afa32825733ecd9b9b9a0e"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privateEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e/removal-original.json"
+  },
+  "removal-independent": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/unlink-independent.py"
+    ],
+    "cwd": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.15552883804775774,
+    "admission": {
+      "free": 4423622656,
+      "MemAvailable": 3263975424,
+      "allocated": 2584576,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 95,
+    "stderrBytes": 0,
+    "stdout": {
+      "bytes": 95,
+      "sha256": "c3bf74550bc2ea9bb0f15612d876ff0f135541bd3c257f2eb550855926acc13a"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privateEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e/removal-independent.json"
+  },
+  "readdir-original": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/accept.py"
+    ],
+    "cwd": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.10262993606738746,
+    "admission": {
+      "free": 4423405568,
+      "MemAvailable": 3252269056,
+      "allocated": 2801664,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 1491,
+    "stderrBytes": 0,
+    "stdout": {
+      "bytes": 1491,
+      "sha256": "4994cd3ac7955b87a27066b81b981a2e537eba92b46e80f3722efc7fcf72064e"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privateEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e/readdir-original.json"
+  },
+  "readdir-independent": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/independent.py"
+    ],
+    "cwd": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.11110667209140956,
+    "admission": {
+      "free": 3811753984,
+      "MemAvailable": 3155767296,
+      "allocated": 2822144,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 299,
+    "stderrBytes": 0,
+    "stdout": {
+      "bytes": 299,
+      "sha256": "51c29b7ff3eb8193df4fe4163909fbb72d6cbd44f4257d08e2dd205ef181e948"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privateEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e/readdir-independent.json"
+  },
+  "four-interactions": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/four-interactions.py"
+    ],
+    "cwd": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.11144471587613225,
+    "admission": {
+      "free": 3807412224,
+      "MemAvailable": 3129700352,
+      "allocated": 2953216,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 39,
+    "stderrBytes": 0,
+    "stdout": {
+      "bytes": 39,
+      "sha256": "09b0f35a0ae62fd613513b6133dd1d1294caa8f223bf748866141eae3adab128"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privateEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e/four-interactions.json"
+  },
+  "new-interleaved": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-four-namespace-independent-combined-accept-oct29/interleaved.py"
+    ],
+    "cwd": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.1723187449388206,
+    "admission": {
+      "free": 4422963200,
+      "MemAvailable": 3542880256,
+      "allocated": 2981888,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 2113,
+    "stderrBytes": 0,
+    "stdout": {
+      "bytes": 2113,
+      "sha256": "5b780588eec5e461d4377fa1721a534d570476b4135bf2e0da2cc95a38d6c6a0"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privateEvidence": "/tmp/toyvm-four-namespace-independent-combined-accept-oct29/e/new-interleaved.json"
+  }
+}
