@@ -7,8 +7,11 @@ def supervise_accounted(argv,work,*,live_limit=32768,write_limit=65536,file_limi
     if backend!='synchronous-fuse':raise ValueError('unsafe filesystem accounting backend')
     work=pathlib.Path(work);root=work/'domain';status=work/'status.sock'
     source=HERE.parent/'toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py'
-    if hashlib.sha256(source.read_bytes()).hexdigest()!=PIN:raise RuntimeError('supervisor identity mismatch')
-    spec=importlib.util.spec_from_file_location('immutable_supervisor',source);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+    supervisor_source=source.read_bytes()
+    if hashlib.sha256(supervisor_source).hexdigest()!=PIN:raise RuntimeError('supervisor identity mismatch')
+    spec=importlib.util.spec_from_file_location('immutable_supervisor',source);m=importlib.util.module_from_spec(spec)
+    # Execute exactly the checked source, ignoring cached bytecode and later writes.
+    exec(compile(supervisor_source,str(source),'exec',dont_inherit=True),m.__dict__)
     server=subprocess.Popen([sys.executable,'-B',str(HERE/'fuse_backend.py'),str(root),str(status),str(live_limit),str(write_limit),str(file_limit)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     final=None;result=None;cleanup=None;primary=None
     def snapshot():
