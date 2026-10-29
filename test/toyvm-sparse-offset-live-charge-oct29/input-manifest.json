@@ -1,0 +1,77 @@
+{
+  "dispatch": {
+    "task": "toyvm-sparse-offset-live-charge-oct29",
+    "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+    "sourcePins": {
+      "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+        "bytes": 8105,
+        "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+        "bytes": 3457,
+        "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+        "bytes": 10877,
+        "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+        "bytes": 4058,
+        "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+      },
+      "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+        "bytes": 23268,
+        "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+      }
+    },
+    "objectStores": "/home/user/wine-assembly/scratch/usage-watch/toyvm-sparse-offset-live-charge-oct29-object-stores.json",
+    "admission": "/home/user/wine-assembly/scratch/usage-watch/toyvm-sparse-offset-live-charge-oct29-admission.json",
+    "originalCancellationReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+    "originalCancellationReceiptPin": {
+      "bytes": 12946,
+      "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+    },
+    "previousVerifiedReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-overwrite-runtime-independent-accept-oct29/retained-evidence/completion-receipt.json",
+    "previousRuntimeCases": "positive write/unlink and direct quota failure verified; DO NOT repeat",
+    "runtimeScope": "toyvm-sparse-offset-live-charge-oct29",
+    "box": {
+      "newOnly": true,
+      "ttlSeconds": 1800,
+      "cutoffUTC": "2026-10-29T05:40:00Z",
+      "shutdownOwner": "coordinator delegates preservation snapshot-stop actualstopped before EVERY handback"
+    },
+    "noMain": true,
+    "limitModule": "/tmp/toyvm-sparse-offset-live-charge-oct29/limit_contract.py",
+    "limitModulePin": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "ownedRepo": "/tmp/toyvm-sparse-offset-live-charge-oct29/repo",
+    "quotaPreflight": "/tmp/toyvm-sparse-offset-live-charge-oct29/quota-preflight.json",
+    "gitReadiness": "/tmp/toyvm-sparse-offset-live-charge-oct29/git-readiness.json",
+    "previousVerifiedReceiptPin": {
+      "bytes": 2719,
+      "sha256": "07c087b847ebbf50786e2d2dd3c6b640e6f3212077af5a0290be84448f8517a2"
+    },
+    "runtimeFixture": "/tmp/toyvm-sparse-offset-live-charge-oct29/fixture.py",
+    "runtimeFixturePin": {
+      "bytes": 294,
+      "sha256": "eeab8ed22f87dfbbb9e8a6d2837640625286747940aea71b42f0d790a88bef8a"
+    },
+    "runtimeObserver": "/tmp/toyvm-sparse-offset-live-charge-oct29/runtime-observer.py",
+    "runtimeObserverPin": {
+      "bytes": 6836,
+      "sha256": "994d7110efd93d5bc623869ac51a5bdd7b3cc966a884568d356f759b1edaee27"
+    },
+    "remoteWork": "/tmp/tvsp/w",
+    "remoteSocket": "/tmp/tvsp/w/status.sock",
+    "socketPathBytes": 23,
+    "sourcePhaseOracle": "/tmp/toyvm-sparse-offset-live-charge-oct29/source-phase-oracle.json",
+    "sourcePhaseOraclePin": {
+      "bytes": 678,
+      "sha256": "1d2683311e9e3aa294d10a52dab7a51c9b66e2836ceb1b7da8b055063354af29"
+    }
+  },
+  "previousReceiptRetainedWithoutNewInvocation": true,
+  "previousReceiptSHA256": "07c087b847ebbf50786e2d2dd3c6b640e6f3212077af5a0290be84448f8517a2"
+}

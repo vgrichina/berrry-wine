@@ -1,0 +1,49 @@
+{
+  "task": "toyvm-sparse-offset-live-charge-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "outcome": "BLOCKED_BEFORE_RUNTIME",
+  "productionInvocations": 0,
+  "box": null,
+  "boxState": "NOT_CREATED",
+  "expiry": null,
+  "lifecycle": "No task Boat allocated; snapshot/stop not applicable.",
+  "blocker": "Validation child imported ops.py, which unconditionally ran configure_parent under the ordinary Python child hard DATA limit 134217728; helper correctly rejected original hard<256MiB. No retry.",
+  "runtimeAcceptance": false,
+  "gatePASS": false,
+  "sourcePinsVerifiedUnchanged": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourcePhase": "Immutable oracle retained before runtime. Source inspected; arithmetic 4096+4096+8192=16384>12288. Automated controls did not execute: import failed before checks. No source-phase PASS claim.",
+  "sourcePhaseControls": "NOT_RUN",
+  "fixtureMarker": "NOT_OBSERVED",
+  "ownedRuntimeIdentities": "NOT_CREATED",
+  "postReapCounters": null,
+  "fuseDisconnected": null,
+  "cleanup": "No production or remote processes launched. Failed local validation child exited1 and was reaped.",
+  "proceduralLimitations": [
+    "An exploratory rg search produced output beyond the capture bound before the owned supervisor was introduced; output was truncated by tool.",
+    "ops.py import-time parent configuration violated the explicit supervisor-only topology checkpoint; helper stopped the operation.",
+    "No runtime allocation, mount/executable checkpoint or runtime evidence was reached."
+  ],
+  "noRetry": true,
+  "reportAt": "2026-10-29T05:13:57.475403+00:00"
+}

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-sparse-offset-live-charge-oct29/validate.py", line 1, in <module>
+    from ops import *
+  File "/tmp/toyvm-sparse-offset-live-charge-oct29/ops.py", line 5, in <module>
+    BASE=configure_parent()
+         ^^^^^^^^^^^^^^^^^^
+  File "/tmp/toyvm-sparse-offset-live-charge-oct29/limit_contract.py", line 8, in configure_parent
+    raise RuntimeError('inherited DATA hard limit incompatible; stop, never raise it')
+RuntimeError: inherited DATA hard limit incompatible; stop, never raise it
