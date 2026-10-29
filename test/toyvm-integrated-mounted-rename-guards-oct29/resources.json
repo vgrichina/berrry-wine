@@ -1,0 +1,15 @@
+{
+  "measuredAllocated": 2326528,
+  "projectedIncremental": 4194304,
+  "evidenceCeiling": 1048576,
+  "reserve": 8388608,
+  "totalProjected": 15958016,
+  "ceiling": 50331648,
+  "installedToolsStanding": [
+    "/home/user/.ascii/boat",
+    "/usr/bin/python3",
+    "/usr/bin/git"
+  ],
+  "remoteProjection": 9437184,
+  "remoteCeiling": 50331648
+}

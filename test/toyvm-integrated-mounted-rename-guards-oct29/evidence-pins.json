@@ -1,0 +1,42 @@
+{
+  "fixture.py": {
+    "bytes": 1794,
+    "sha256": "d42c85673f1432f31bf51b25edf075a08550dcc1e1d090093b8764e9dd58efe3"
+  },
+  "observer.py": {
+    "bytes": 4867,
+    "sha256": "23e6620194b2a18204fcde7ace99c5ac6062951e9596f25aac7c5dae58acdefb"
+  },
+  "verify.py": {
+    "bytes": 2727,
+    "sha256": "3db511e3ca39d1a2bb11da9d2deea487cd5b35ee7d0c8fe22e5213be38748676"
+  },
+  "manifest.json": {
+    "bytes": 1337,
+    "sha256": "a4788aaa987a501cb4d8aea8b8cd2e13e3f1498f64739f0f34c64518ea52a4c1"
+  },
+  "contract.json": {
+    "bytes": 1107,
+    "sha256": "9b60545dd67f4fe0c634016d6e82325c310f4fbf55636035be42b51f4a368e64"
+  },
+  "resources.json": {
+    "bytes": 342,
+    "sha256": "963ecc41b9ef39fc7ff8b4dff2e3bc17ec5c501e9a0449c7a8e5fe4dd7fcc1e7"
+  },
+  "preflight.json": {
+    "bytes": 2552,
+    "sha256": "d4f0960cf5b177b0f5bc12fec6f6dc392e5211cd8e00676276f189b29df8f80b"
+  },
+  "guards.json": {
+    "bytes": 6628,
+    "sha256": "98e6a95cf7525ce39349be8b39a6b8555cdfef0968b0843ce3d50da4dcd7e9c5"
+  },
+  "checkpoint.json": {
+    "bytes": 2201,
+    "sha256": "362253e5c413dc8c0cbee976424cfbc4569f39c7010518f81b528e87143e810a"
+  },
+  "lifecycle.json": {
+    "bytes": 1668,
+    "sha256": "66b26419fccb83146a0ab84f05ae6effe74f7b1493757b6c22ef74863fd8d97e"
+  }
+}

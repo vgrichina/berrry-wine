@@ -1,0 +1,90 @@
+{
+  "PASS": true,
+  "caseOutcomes": [
+    {
+      "event": "case",
+      "name": "file-to-dir",
+      "source": "file",
+      "destination": "dir",
+      "expected": 21,
+      "actual": 21,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    },
+    {
+      "event": "case",
+      "name": "dir-to-file",
+      "source": "dir",
+      "destination": "file",
+      "expected": 20,
+      "actual": 20,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    },
+    {
+      "event": "case",
+      "name": "absent-parent",
+      "source": "file",
+      "destination": "missing/new",
+      "expected": 2,
+      "actual": 2,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    },
+    {
+      "event": "case",
+      "name": "nondirectory-parent",
+      "source": "file",
+      "destination": "file/new",
+      "expected": 20,
+      "actual": 20,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    },
+    {
+      "event": "case",
+      "name": "descendant-cycle",
+      "source": "tree",
+      "destination": "tree/child/new",
+      "expected": 22,
+      "actual": 22,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    },
+    {
+      "event": "case",
+      "name": "same-path",
+      "source": "file",
+      "destination": "file",
+      "expected": 0,
+      "actual": 0,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    }
+  ],
+  "rejectingControls": [
+    {
+      "case": 0,
+      "key": "actual",
+      "rejected": true
+    },
+    {
+      "case": 0,
+      "key": "unchanged",
+      "rejected": true
+    },
+    {
+      "case": 0,
+      "key": "treeSHA256",
+      "rejected": true
+    },
+    {
+      "case": 5,
+      "key": "actual",
+      "rejected": true
+    }
+  ],
+  "productionMutated": false,
+  "noRuntimeReplay": true,
+  "scope": "actual mounted production CLI syscall contract; backend branch coverage not established"
+}

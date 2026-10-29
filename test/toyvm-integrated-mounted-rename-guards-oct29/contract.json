@@ -1,0 +1,41 @@
+{
+  "PASS": true,
+  "limits": [
+    262144,
+    32768,
+    32768
+  ],
+  "expectedErrnos": [
+    21,
+    20,
+    2,
+    20,
+    22,
+    0
+  ],
+  "derivedFinal": {
+    "inodes": 6,
+    "live": 32768,
+    "peak": 32768,
+    "written": 26,
+    "openHandles": 0
+  },
+  "derivation": "root + three directories + two files = six metadata blocks; two nonempty payload blocks; payload 13+13 bytes",
+  "limitations": "Mounted syscall contract only: kernel may reject parent/type/cycle or short-circuit same-path before FUSE RENAME. No claim that each backend guard branch executed.",
+  "mountArgv": [
+    "/usr/bin/fusermount3",
+    "-o",
+    "rw,nosuid,nodev,fsname=toyvm-accounting,subtype=toyvm-accounting",
+    "--",
+    "/tmp/tvmr/work/domain"
+  ],
+  "filenameBearingMounts": [],
+  "enumeratedFixtureFiles": [
+    "file",
+    "tree/child/leaf"
+  ],
+  "commaBearingFilename": false,
+  "parser": "Production caller argparse via --help; backend fusermount3 fixed argv. Emulator VFS mount parser not applicable: no --mount/--vfs-tree arguments.",
+  "noNodeExecution": true,
+  "noBehavioralBackendMethodCalls": true
+}
