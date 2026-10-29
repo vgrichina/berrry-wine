@@ -1,0 +1,5 @@
+{
+  "origin": "Own verifier guessed incorrect URL; actual born config vgrichina/wine-assembly.git used unchanged with trusted SSH before network.",
+  "state": "Own verifier guessed running; actual healthy idle/setup done accepted before single execution.",
+  "stop": "Initial info stopping/in_progress; asynchronous stop confirmed later; no second stop request."
+}

@@ -1,0 +1,7 @@
+{
+  "ftruncateCalls": 1,
+  "noWrite": true,
+  "sha256": "1e3aed5a933e65f29d2b64f0943181d58e6206d6b336791e2b216d27b45fb894",
+  "size": 16385,
+  "socketBytes": 23
+}

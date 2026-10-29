@@ -1,0 +1,10 @@
+{
+  "guestMountParserInvoked": false,
+  "intendedGuestFiles": [],
+  "mountArgv": [],
+  "reason": "No guest mount argv: production argparse plus synchronous FUSE; Boat file staging separately enumerated.",
+  "remoteWork": "/tmp/tvft/w",
+  "socketBytes": 23,
+  "socketNoNUL": true,
+  "userOverride": "dispatch legacy tvdt replaced by explicit user tvft"
+}

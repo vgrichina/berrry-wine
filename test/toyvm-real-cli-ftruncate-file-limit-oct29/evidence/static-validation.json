@@ -1,0 +1,13 @@
+{
+  "FUSEDisconnected": true,
+  "PASS": true,
+  "actualSnapshotStopped": true,
+  "apiNotTruncated": true,
+  "astSyntax": true,
+  "fixtureUnchanged": true,
+  "meaning": "Exact failed attempt/evidence consistency; does not accept runtime behavior",
+  "missingMarker": true,
+  "ownedIdentitiesReaped": true,
+  "pinsUnchanged": true,
+  "productionInvocations": 1
+}

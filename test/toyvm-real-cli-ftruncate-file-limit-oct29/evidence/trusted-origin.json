@@ -1,0 +1,5 @@
+{
+  "correction": "Previous assertion used an invented URL; local verifier corrected before network. No origin/config/trust mutation.",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "url": "git@github.com:vgrichina/wine-assembly.git"
+}
