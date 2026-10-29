@@ -1,0 +1,37 @@
+{
+  "test/toyvm-bounded24-caller-wiring-oct28/RECOVERY.md": {
+    "rev": "635633c8bc665451fd5a981108147b1c783e2f8a",
+    "bytes": 2079,
+    "sha256": "5055d3f59bf66c52022712ebf54f0e6b0dab78a4dc830474e7c6a2697086025d"
+  },
+  "test/toyvm-bounded24-caller-wiring-oct28/REPORT.md": {
+    "rev": "635633c8bc665451fd5a981108147b1c783e2f8a",
+    "bytes": 4860,
+    "sha256": "79c596927c19b0e046136c2e4665c9bd4e8cafea67cae09a8ddff3b45f9d0fe8"
+  },
+  "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+    "rev": "635633c8bc665451fd5a981108147b1c783e2f8a",
+    "bytes": 7949,
+    "sha256": "c6ea49a11917ac62777b4682013ce5bf3d086ab7a0b145c0513ed3478d0f06cb"
+  },
+  "test/toyvm-bounded24-caller-wiring-oct28/test_caller.py": {
+    "rev": "635633c8bc665451fd5a981108147b1c783e2f8a",
+    "bytes": 8919,
+    "sha256": "ccd070df8ea58162a69f46c13a51a68b781e05ece591e29111b244e1351f3adf"
+  },
+  "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+    "rev": "3898e008861bad6c274506664b2804dbdc7d236a",
+    "bytes": 4058,
+    "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+  },
+  "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+    "rev": "3898e008861bad6c274506664b2804dbdc7d236a",
+    "bytes": 3457,
+    "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+  },
+  "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+    "rev": "3898e008861bad6c274506664b2804dbdc7d236a",
+    "bytes": 10877,
+    "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+  }
+}
