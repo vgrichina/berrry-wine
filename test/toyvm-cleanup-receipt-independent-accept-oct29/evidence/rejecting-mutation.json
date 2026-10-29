@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "accept_independent.py",
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+    "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/mutation_qualify.py"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+  "descendantCleanup": "killpg after completion",
+  "exit": 1,
+  "limitFailure": null,
+  "peakGroupRSS": 36163584,
+  "stderr": "rejecting-mutation.stderr",
+  "stdout": "rejecting-mutation.stdout"
+}

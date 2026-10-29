@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+    "checkout",
+    "-b",
+    "task/toyvm-cleanup-receipt-independent-accept-oct29",
+    "5a88ca099b962e946160afd2d4d71a950bf46db3"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+  "descendantCleanup": "killpg after completion",
+  "exit": 0,
+  "limitFailure": null,
+  "peakGroupRSS": 21495808,
+  "stderr": "checkout.stderr",
+  "stdout": "checkout.stdout"
+}

@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "test/toyvm-complete-objects-caller-acceptance-oct29/accept_caller_rebound.py",
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+  "descendantCleanup": "killpg after completion",
+  "exit": 0,
+  "limitFailure": null,
+  "peakGroupRSS": 26546176,
+  "stderr": "unchanged-reproducer.stderr",
+  "stdout": "unchanged-reproducer.stdout"
+}

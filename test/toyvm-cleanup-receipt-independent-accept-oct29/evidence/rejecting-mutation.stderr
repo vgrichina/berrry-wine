@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo/accept_independent.py", line 127, in <module>
+    one('mutation-oracle-bool-unmount',dict(BASE,unmountExit=False))
+  File "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo/accept_independent.py", line 101, in one
+    assert api['accepted'] is expected and cli['accepted'] is expected and code==(0 if expected else 1),name
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: mutation-oracle-bool-unmount

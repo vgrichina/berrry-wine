@@ -1,0 +1,43 @@
+{
+  "allocationRetainedThroughCoordinatorCloseout": true,
+  "inheritedLimits": {
+    "0": [
+      90,
+      -1
+    ],
+    "1": [
+      12582912,
+      -1
+    ],
+    "2": [
+      134217728,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "mountArgv": [],
+  "mountFiles": [],
+  "negativeControls": [
+    "/home/user/wine-assembly",
+    "/",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+    "omitted"
+  ],
+  "runtimeAllowed": false,
+  "session": [
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-12-23-01a1856e-09cd-7ff0-a79e-98cfa860f52d.jsonl"
+  ],
+  "sharedWALBaselineCountedOnce": {
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/state_5.sqlite-wal": 4185952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  },
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "thread": "01a1856e-09cd-7ff0-a79e-98cfa860f52d"
+}

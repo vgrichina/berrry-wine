@@ -1,0 +1,46 @@
+{
+  "backendBase": "3898e008861bad6c274506664b2804dbdc7d236a",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sources": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-cleanup-receipt-type-repair-oct29/REPORT.md": {
+      "bytes": 6282,
+      "sha256": "dc76381a1f861487518116d9404372d91a5c5b1b8f49ea28fc2b2bb05393565e"
+    },
+    "test/toyvm-cleanup-receipt-type-repair-oct29/supervise_repair.py": {
+      "bytes": 7067,
+      "sha256": "24fe319257cfb42e851f309715cc0055152f7aae0e178e34d2c501dd9f0d6bdb"
+    },
+    "test/toyvm-cleanup-receipt-type-repair-oct29/test_cleanup.py": {
+      "bytes": 6112,
+      "sha256": "6e8863f332052023468779a6d2ca9aed5d623c0fd1ed7c09d0afd06fe87665e0"
+    },
+    "test/toyvm-complete-objects-caller-acceptance-oct29/REPORT.md": {
+      "bytes": 3346,
+      "sha256": "cf4ee2563a454873366fe399bc102adde8b23a40a791cf7bca2b4f1f14eb5762"
+    },
+    "test/toyvm-complete-objects-caller-acceptance-oct29/accept_caller.py": {
+      "bytes": 3367,
+      "sha256": "743c777db902db133522e74568a14e0aafc6bb8153b1e2f0006daa3d750c88c8"
+    },
+    "test/toyvm-complete-objects-caller-acceptance-oct29/accept_caller_rebound.py": {
+      "bytes": 3367,
+      "sha256": "23e3bbcf2e5a6b251e0857fc42545380cc4616960d13e7e4c1aefbcd653fb83f"
+    },
+    "test/toyvm-complete-objects-caller-acceptance-oct29/first-counterexample-stderr.txt": {
+      "bytes": 489,
+      "sha256": "cc74a7f8ee04bf48ae1486da37603a3ac4572ffd569af220002213ef8012771a"
+    },
+    "test/toyvm-complete-objects-caller-acceptance-oct29/first-counterexample.txt": {
+      "bytes": 3319,
+      "sha256": "05812b0507f369988bbf987965a3a8dfcb8a35ca01f7a974a5ba02a7250b1ee4"
+    },
+    "test/toyvm-complete-objects-caller-acceptance-oct29/input-pins.json": {
+      "bytes": 1598,
+      "sha256": "aea5f89b2f69d6ce039d0684b4b11d3f8bb85504a61cc13c08e80a05d70e47d7"
+    }
+  }
+}
