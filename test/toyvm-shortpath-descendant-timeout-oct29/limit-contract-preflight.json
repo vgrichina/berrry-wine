@@ -1,0 +1,24 @@
+{
+  "inheritedDATA": [
+    -1,
+    -1
+  ],
+  "parentDATA": [
+    134217728,
+    -1
+  ],
+  "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor",
+  "controls": {
+    "omitted": "REJECTED BEFORE SPAWN",
+    "root": "REJECTED BEFORE SPAWN",
+    "donor": "REJECTED BEFORE SPAWN"
+  },
+  "sentinel": "/tmp/toyvm-shortpath-descendant-timeout-oct29",
+  "pythonChild": [
+    134217728,
+    134217728
+  ],
+  "gitVersion": "git version 2.43.0",
+  "PASS": true,
+  "moduleSHA256": "9bf281144379a1881157865312cb0ce1a081096d6983ada3a090f0ea0d3c2134"
+}

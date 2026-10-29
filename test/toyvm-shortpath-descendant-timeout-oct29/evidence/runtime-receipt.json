@@ -1,0 +1,196 @@
+{
+  "task": "toyvm-shortpath-descendant-timeout-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "dispatchSHA256": "f140e87b94410686d1ddc74a6c8b102743f5f6100bf75e24ff41ca0f930272f6",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "inputReceiptPin": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "limitModulePin": {
+    "bytes": 2342,
+    "sha256": "9bf281144379a1881157865312cb0ce1a081096d6983ada3a090f0ea0d3c2134"
+  },
+  "preflightPin": {
+    "bytes": 624,
+    "sha256": "1d55245bf6c3afeb3e2fbb9fa2d059086884ed8ae21fe31e0b23e2929c310b0e"
+  },
+  "sessionID": "01a185ac-10dc-7322-b717-e3d4a1d662d4",
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T03-20-08-01a185ac-10dc-7322-b717-e3d4a1d662d4.jsonl"
+  ],
+  "outcome": "PASS: actual production CLI descendant wall-timeout rejection and process/FUSE cleanup qualified",
+  "tests": {
+    "cliRejected": true,
+    "stopReason": "wall deadline",
+    "identities": [
+      {
+        "role": "parent",
+        "pid": 7060,
+        "ppid": 7056,
+        "start": "17493",
+        "fd": 3
+      },
+      {
+        "role": "descendant",
+        "pid": 7061,
+        "ppid": 7060,
+        "start": "17499",
+        "fd": 3
+      }
+    ],
+    "authoritativeFilesystem": {
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+      "failure": null,
+      "fileLimit": 4096,
+      "inodes": 2,
+      "live": 12288,
+      "liveLimit": 32768,
+      "openHandles": 0,
+      "operations": 47,
+      "peak": 12288,
+      "writeLimit": 65536,
+      "written": 55
+    },
+    "authoritativeCleanup": {
+      "remainingMounts": [],
+      "serverExit": -15,
+      "serverStderr": "",
+      "serverStdout": "",
+      "unmountExit": 0,
+      "unmountStderr": "",
+      "unmountStdout": ""
+    },
+    "allOwnedProcessesGone": true,
+    "mountDisconnected": true,
+    "liveBackendObserved": true,
+    "report": {
+      "accepted": false,
+      "accountingAccepted": true,
+      "backendReceipt": {
+        "cleanupComplete": true,
+        "cpuSeconds": 0.916922,
+        "exit": -15,
+        "filesystem": {
+          "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+          "failure": null,
+          "fileLimit": 4096,
+          "inodes": 2,
+          "live": 12288,
+          "liveLimit": 32768,
+          "openHandles": 0,
+          "operations": 47,
+          "peak": 12288,
+          "writeLimit": 65536,
+          "written": 55
+        },
+        "filesystemCleanup": {
+          "remainingMounts": [],
+          "serverExit": -15,
+          "serverStderr": "",
+          "serverStdout": "",
+          "unmountExit": 0,
+          "unmountStderr": "",
+          "unmountStdout": ""
+        },
+        "output": {
+          "data": "eyJyb2xlIjogInBhcmVudCIsICJwaWQiOiA3MDYwLCAicHBpZCI6IDcwNTYsICJzdGFydCI6ICIxNzQ5MyIsICJmZCI6IDN9Cnsicm9sZSI6ICJkZXNjZW5kYW50IiwgInBpZCI6IDcwNjEsICJwcGlkIjogNzA2MCwgInN0YXJ0IjogIjE3NDk5IiwgImZkIjogM30K",
+          "encoding": "base64"
+        },
+        "owned": [
+          [
+            7060,
+            "17493"
+          ],
+          [
+            7061,
+            "17499"
+          ]
+        ],
+        "peakRSS": 41975808,
+        "reapedPeakRSS": 13856768,
+        "sampledPeakRSS": 41975808,
+        "stopReason": "wall deadline",
+        "wallSeconds": 2.0496389509999915
+      },
+      "browserAllowanceRemaining": {
+        "captures": 1,
+        "cpuSeconds": 35.353183,
+        "wallSeconds": 101.495550694
+      },
+      "browserAllowed": false,
+      "childSucceeded": false,
+      "cleanupComplete": true,
+      "failures": [
+        "supervisor stopped or stop receipt missing",
+        "resource receipt rejected: wallSeconds",
+        "child did not succeed"
+      ]
+    },
+    "PASS": true
+  },
+  "resources": {
+    "admissionSHA256": "0a038e260411325047842969cb366d4a12ccceb9dac4436a17d7ededd4834825",
+    "allocation": 25165824,
+    "allocationRetainedThroughCoordinatorCloseout": true,
+    "groupPeakPhysicalRSS": 75018240,
+    "supervisorPeakPhysicalRSS": 18755584,
+    "cliWall": 2.1705737359999944,
+    "productionInvocations": 1,
+    "retries": 0,
+    "fullEndToEndResourceControlAcceptance": false
+  },
+  "proceduralLimitations": [
+    "Initial diagnostic terminal target exceeded, including an accidental ELF read truncated by the tool; these are procedural incidents, not a full resource-control acceptance.",
+    "The local startup WAL sample was rewritten during preparation before startup was changed to retain it once; the final pre-production positive WAL baseline is retained without adding a second reservation.",
+    "Initial session receipt recorded the session ID and session directory; the exact session file is recorded at closeout.",
+    "Boat staging used a small API Python payload under the local supervisor, before the remote supervisor was present; remote DATA/RSS enforcement applies to the production test and its descendants, not that staging interpreter."
+  ],
+  "priorProceduralLimitations": [
+    "Initial diagnostic reads exceeded bounded terminal target; recorded in committed REPORT.txt.",
+    "Local guard Python parent inherited unlimited DATA; its spawned Python children received 128MiB DATA, Git children 256MiB only. Remote test supervisor lowered its own DATA to128MiB. Local parent DATA and own physicalRSS cap were not fully enforced. This run must not be represented as full resource-control acceptance."
+  ],
+  "browserAllowanceUnchanged": {
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694,
+    "captures": 1
+  },
+  "cleanup": {
+    "box": "bx_8nvge9ca",
+    "state": "stopped",
+    "expiryAtCreation": "2026-10-29T03:52:52.717Z",
+    "cutoff": "2026-10-29T03:45:00Z",
+    "snapshotAvailable": true,
+    "snapshotCompletedAt": "2026-10-29T03:25:10.225Z",
+    "shutdownOwner": "coordinator; explicit worker preserve/snapshot-stop delegation used",
+    "stopVerified": true,
+    "remainingLifecycleAction": null
+  },
+  "publication": {
+    "branch": "task/toyvm-shortpath-descendant-timeout-oct29",
+    "remote": "git@github.com:vgrichina/wine-assembly.git",
+    "finalReceipt": "/tmp/toyvm-shortpath-descendant-timeout-oct29/canonical-receipt.json"
+  },
+  "boardAppendDelegatedToCoordinator": true
+}

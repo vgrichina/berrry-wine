@@ -1,0 +1,11 @@
+{
+  "box": "bx_8nvge9ca",
+  "state": "stopped",
+  "expiryAtCreation": "2026-10-29T03:52:52.717Z",
+  "cutoff": "2026-10-29T03:45:00Z",
+  "snapshotAvailable": true,
+  "snapshotCompletedAt": "2026-10-29T03:25:10.225Z",
+  "shutdownOwner": "coordinator; explicit worker preserve/snapshot-stop delegation used",
+  "stopVerified": true,
+  "remainingLifecycleAction": null
+}

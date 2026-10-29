@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "new",
+    "--ttl",
+    "1800",
+    "--name",
+    "toyvm-shortpath-descendant-timeout-oct29",
+    "--json",
+    "--no-update"
+  ],
+  "cwd": "/tmp/toyvm-shortpath-descendant-timeout-oct29",
+  "exit": 0,
+  "stdout": "{\"event\":\"created\",\"hostedPorts\":null,\"id\":\"bx_8nvge9ca\",\"org\":null,\"team\":null,\"ttlSeconds\":1800}\n{\"event\":\"state\",\"id\":\"bx_8nvge9ca\",\"state\":\"starting\"}\n{\"event\":\"state\",\"id\":\"bx_8nvge9ca\",\"state\":\"cloning\"}\n{\"event\":\"state\",\"id\":\"bx_8nvge9ca\",\"state\":\"ready\"}\n{\"archiveAfter\":\"2026-10-29T03:52:52.717Z\",\"commands\":{\"forward\":\"boat forward bx_8nvge9ca --remote 3000 --local 3000\",\"ssh\":\"boat ssh bx_8nvge9ca\"},\"desktopUrl\":null,\"event\":\"ready\",\"id\":\"bx_8nvge9ca\",\"ip\":\"2001:41d0:8:ce39:100::37\",\"state\":\"ready\",\"url\":\"https://box-node-8c7c7e9cf2bb4c3a.on.boat.dev\"}\n",
+  "stderr": "",
+  "wall": 1.145394824910909,
+  "processes": {
+    "2372065": [
+      2372061,
+      129138181,
+      0
+    ],
+    "2372061": [
+      2372060,
+      129138175,
+      17301504
+    ]
+  },
+  "processLimits": {
+    "2372065": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            134217728            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "2372061": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n"
+  },
+  "observedCPU": {
+    "2372065": 0.0,
+    "2372061": 0.33
+  },
+  "peakGroupPhysicalRSS": 23003136,
+  "peakSupervisorPhysicalRSS": 17301504,
+  "rejection": null
+}

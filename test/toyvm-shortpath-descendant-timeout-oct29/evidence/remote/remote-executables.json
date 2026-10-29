@@ -1,0 +1,7 @@
+{
+  "python": "/usr/bin/python3.12",
+  "pythonSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "fusermount": "/usr/bin/fusermount3",
+  "fusermountSHA256": "d278775c1528dd32efc85c2cb322423ee93aa8dcf76aaa595f7022d427910704",
+  "fuseDevice": 2789
+}

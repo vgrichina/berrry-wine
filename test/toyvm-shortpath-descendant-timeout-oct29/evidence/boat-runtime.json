@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_8nvge9ca",
+    "--cwd",
+    "/tmp/tvdt",
+    "--timeout",
+    "30",
+    "--json",
+    "--no-update",
+    "--",
+    "/usr/bin/python3 -B /tmp/tvdt/remote_test.py"
+  ],
+  "cwd": "/tmp/toyvm-shortpath-descendant-timeout-oct29",
+  "exit": 0,
+  "stdout": "{\"commandId\":\"cmd_badsvft2et3q\",\"cwd\":\"../../tmp/tvdt\",\"exitCode\":0,\"finishedAt\":\"2026-10-29T03:24:12.245Z\",\"launcherFailed\":false,\"noticedMs\":8,\"oomKilled\":false,\"signal\":null,\"startMs\":3,\"startedAt\":\"2026-10-29T03:24:09.952Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"{\\\"PASS\\\": true, \\\"identities\\\": [{\\\"role\\\": \\\"parent\\\", \\\"pid\\\": 7060, \\\"ppid\\\": 7056, \\\"start\\\": \\\"17493\\\", \\\"fd\\\": 3}, {\\\"role\\\": \\\"descendant\\\", \\\"pid\\\": 7061, \\\"ppid\\\": 7060, \\\"start\\\": \\\"17499\\\", \\\"fd\\\": 3}], \\\"cleanup\\\": {\\\"remainingMounts\\\": [], \\\"serverExit\\\": -15, \\\"serverStderr\\\": \\\"\\\", \\\"serverStdout\\\": \\\"\\\", \\\"unmountExit\\\": 0, \\\"unmountStderr\\\": \\\"\\\", \\\"unmountStdout\\\": \\\"\\\"}}\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": "",
+  "wall": 2.4288653591647744,
+  "processes": {
+    "2373688": [
+      2373686,
+      129145910,
+      0
+    ],
+    "2373686": [
+      2373685,
+      129145904,
+      17301504
+    ]
+  },
+  "processLimits": {
+    "2373688": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            134217728            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "2373686": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n"
+  },
+  "observedCPU": {
+    "2373688": 0.0,
+    "2373686": 0.78
+  },
+  "peakGroupPhysicalRSS": 23154688,
+  "peakSupervisorPhysicalRSS": 17301504,
+  "rejection": null
+}

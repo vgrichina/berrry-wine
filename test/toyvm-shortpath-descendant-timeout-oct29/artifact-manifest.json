@@ -1,0 +1,142 @@
+{
+  "limit_contract.py": {
+    "bytes": 2342,
+    "sha256": "9bf281144379a1881157865312cb0ce1a081096d6983ada3a090f0ea0d3c2134"
+  },
+  "guard.py": {
+    "bytes": 6720,
+    "sha256": "e160e1c97a3a5aed33ebfcb80b0388e4afd7f4b0f17b518e6b6b753434ca5459"
+  },
+  "limit-contract-preflight.json": {
+    "bytes": 624,
+    "sha256": "1d55245bf6c3afeb3e2fbb9fa2d059086884ed8ae21fe31e0b23e2929c310b0e"
+  },
+  "remote_test.py": {
+    "bytes": 4762,
+    "sha256": "dc9898b0a98a0eca9b4b755322f65d4d74c77df2296cc8052b322ef74facc9c1"
+  },
+  "fixture.py": {
+    "bytes": 481,
+    "sha256": "807f426e7a34261200cab45c98a4225810706e807979561ffeeab436207505e6"
+  },
+  "cancellation-receipt.json": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "remote_guard.py": {
+    "bytes": 6500,
+    "sha256": "225e44d78a742f2a153c47b2e515419ce5f9fa7109aeb044bbeaa4830f0837f8"
+  },
+  "REPORT.txt": {
+    "bytes": 3167,
+    "sha256": "ca298882019a8c43f7f9409766a627a4c66816a9fbeb5ac9cb4eaed51626dc1f"
+  },
+  "runtime-receipt.json": {
+    "bytes": 7330,
+    "sha256": "861b1ec422a03329cec7b7b8deab7e285902be3484bb9e0385fc592fe972dfee"
+  },
+  "evidence/boat-runtime.json": {
+    "bytes": 4311,
+    "sha256": "76c0422212ffa2dd3c8c58be5147eefe9cc8e2c885264dd894b0e9fa141d9aae"
+  },
+  "evidence/operations.jsonl": {
+    "bytes": 233956,
+    "sha256": "f7880895f13e754e93633aecfde44e58a094d566330a35a1f40d36a84ef8c5d3"
+  },
+  "evidence/lifecycle.json": {
+    "bytes": 366,
+    "sha256": "9276683dfe98732de17e472dbbbbf6357c0014bda2a55be3da5b49bcc4837c36"
+  },
+  "evidence/containment.json": {
+    "bytes": 212,
+    "sha256": "d5cff4fa118041c6c38a04d4af21c1a7a32012e613417744a9928a404ddf105c"
+  },
+  "evidence/boat-evidence-retention.json": {
+    "bytes": 10436,
+    "sha256": "36f5f93553264c2d27ab059351573006245d8de2049bb62d011bf68767c97966"
+  },
+  "evidence/boat-final-info.json": {
+    "bytes": 4771,
+    "sha256": "14c225f3f9c62e32ca00fd1345806d2b51e2a1637983ba0d2717211cd7866b49"
+  },
+  "evidence/boat-snapshot-stop.json": {
+    "bytes": 5091,
+    "sha256": "0236d27ca095313237f6a33e7041bbb6b7df654b9da74c448c0e2a8c5bd34d4c"
+  },
+  "evidence/boat-stage.json": {
+    "bytes": 111455,
+    "sha256": "efd0d69bc14402f14363cb5c7fb932e3ecc2216adaddaf2a42dc5e6893337080"
+  },
+  "evidence/startup.json": {
+    "bytes": 1035,
+    "sha256": "e50a1da398433f8613d11dd94315a0d93e860579264f9d7afecfaffc0a4b8d39"
+  },
+  "evidence/boat-create.json": {
+    "bytes": 4033,
+    "sha256": "90201ac2031c3636e2f6f53897ae6a29a5a3d9ab2f1c0baf2995dda87a992360"
+  },
+  "evidence/supervisor-starts.jsonl": {
+    "bytes": 1832,
+    "sha256": "bdf749529ee4e2e52ceb2fc74e0d9eba3b8b697c4f025b644fce54fa75f83758"
+  },
+  "evidence/admissions.jsonl": {
+    "bytes": 12046,
+    "sha256": "4958bc7c131dadb80af30c7433e25ef2f228fd47aae583a020fca6205c0bfdd8"
+  },
+  "evidence/launch-configuration.json": {
+    "bytes": 1439,
+    "sha256": "6ee6daf01822a1749c5f2caf3b52c004f5b6289b3abe3a21adab037f58c96a52"
+  },
+  "evidence/runtime-receipt.json": {
+    "bytes": 7330,
+    "sha256": "861b1ec422a03329cec7b7b8deab7e285902be3484bb9e0385fc592fe972dfee"
+  },
+  "evidence/remote/operations.jsonl": {
+    "bytes": 12654,
+    "sha256": "143232ae042446f91cba7accbff85e7cb8059661edcea4cf7d6041685daa801a"
+  },
+  "evidence/remote/remote-source-pins.json": {
+    "bytes": 903,
+    "sha256": "9da934a6aca2ed98d7c4d93b8135ac1baa21cfec0b0a5199cfa6264c4b6c73fe"
+  },
+  "evidence/remote/remote-containment.json": {
+    "bytes": 140,
+    "sha256": "b60d1a51091579c35099b91ac8ba8ef32fe637357fef6e92b3d54631e372a0ec"
+  },
+  "evidence/remote/socket-path.json": {
+    "bytes": 88,
+    "sha256": "cfd24edb981c4b7dfcb5b1eef9ad617deea553bab9b06e255c3165265b7c9375"
+  },
+  "evidence/remote/cli-result.json": {
+    "bytes": 9931,
+    "sha256": "b23496a68fbd996ffc30e7c4d71d386ff81ba4e69c6207f3a1cb22012e4c5378"
+  },
+  "evidence/remote/process-mount-cleanup.json": {
+    "bytes": 102,
+    "sha256": "6ec010b8009b78468d4d392181866ec6cdcbf35e257dd3a0ca4d30cdd981f095"
+  },
+  "evidence/remote/invocation.json": {
+    "bytes": 2119,
+    "sha256": "7dbbc7c7ba745061bc443bec1c396b412262c09aef7717756da69324511a506b"
+  },
+  "evidence/remote/remote-executables.json": {
+    "bytes": 275,
+    "sha256": "44de92249270078efcfd69840b483ad98975d3f489ae7715678b7871cbe7f223"
+  },
+  "evidence/remote/remote-startup.json": {
+    "bytes": 306,
+    "sha256": "56cc113dab62a695d29002f299917bf415f839ade7fcbaa5891c90cab690cca2"
+  },
+  "evidence/remote/acceptance.json": {
+    "bytes": 2782,
+    "sha256": "afab57f64fed154bec223aa443037f76595cc6f9461dd8e4592d08d98249b9da"
+  },
+  "evidence/remote/live-observations.json": {
+    "bytes": 2902,
+    "sha256": "238eafb8c9ed7ec072b7760c9f6f26e740fe939b735eea738c2ccc80cd3edffc"
+  },
+  "evidence/remote/admissions.jsonl": {
+    "bytes": 825,
+    "sha256": "d630c6662c16ae7f00b66d713ef394b431049133a3d807d4bcb14fad02262f8e"
+  }
+}

@@ -1,0 +1,140 @@
+[
+  {
+    "at": 1793244250.226165,
+    "state": {
+      "live": 12288,
+      "peak": 12288,
+      "written": 17,
+      "failure": null,
+      "inodes": 2,
+      "openHandles": 1,
+      "operations": 6,
+      "liveLimit": 32768,
+      "writeLimit": 65536,
+      "fileLimit": 4096,
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+    },
+    "processes": {
+      "7022": [
+        4606,
+        16822,
+        18755584
+      ],
+      "7056": [
+        7022,
+        17483,
+        21364736
+      ],
+      "7057": [
+        7056,
+        17488,
+        14286848
+      ],
+      "7060": [
+        7056,
+        17493,
+        11534336
+      ],
+      "7061": [
+        7060,
+        17499,
+        9076736
+      ]
+    },
+    "mounts": [
+      "52 29 0:51 / /tmp/tvdt/w/domain rw,nosuid,nodev,relatime shared:98 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+    ]
+  },
+  {
+    "at": 1793244250.2593052,
+    "state": {
+      "live": 12288,
+      "peak": 12288,
+      "written": 17,
+      "failure": null,
+      "inodes": 2,
+      "openHandles": 1,
+      "operations": 6,
+      "liveLimit": 32768,
+      "writeLimit": 65536,
+      "fileLimit": 4096,
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+    },
+    "processes": {
+      "7022": [
+        4606,
+        16822,
+        18755584
+      ],
+      "7056": [
+        7022,
+        17483,
+        21364736
+      ],
+      "7057": [
+        7056,
+        17488,
+        14286848
+      ],
+      "7060": [
+        7056,
+        17493,
+        11534336
+      ],
+      "7061": [
+        7060,
+        17499,
+        9076736
+      ]
+    },
+    "mounts": [
+      "52 29 0:51 / /tmp/tvdt/w/domain rw,nosuid,nodev,relatime shared:98 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+    ]
+  },
+  {
+    "at": 1793244250.2919219,
+    "state": {
+      "live": 12288,
+      "peak": 12288,
+      "written": 18,
+      "failure": null,
+      "inodes": 2,
+      "openHandles": 1,
+      "operations": 7,
+      "liveLimit": 32768,
+      "writeLimit": 65536,
+      "fileLimit": 4096,
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+    },
+    "processes": {
+      "7022": [
+        4606,
+        16822,
+        18755584
+      ],
+      "7056": [
+        7022,
+        17483,
+        21364736
+      ],
+      "7057": [
+        7056,
+        17488,
+        14286848
+      ],
+      "7060": [
+        7056,
+        17493,
+        11534336
+      ],
+      "7061": [
+        7060,
+        17499,
+        9076736
+      ]
+    },
+    "mounts": [
+      "52 29 0:51 / /tmp/tvdt/w/domain rw,nosuid,nodev,relatime shared:98 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+    ]
+  }
+]

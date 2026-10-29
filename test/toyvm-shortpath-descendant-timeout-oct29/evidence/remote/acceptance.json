@@ -1,0 +1,109 @@
+{
+  "cliRejected": true,
+  "stopReason": "wall deadline",
+  "identities": [
+    {
+      "role": "parent",
+      "pid": 7060,
+      "ppid": 7056,
+      "start": "17493",
+      "fd": 3
+    },
+    {
+      "role": "descendant",
+      "pid": 7061,
+      "ppid": 7060,
+      "start": "17499",
+      "fd": 3
+    }
+  ],
+  "authoritativeFilesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 4096,
+    "inodes": 2,
+    "live": 12288,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 47,
+    "peak": 12288,
+    "writeLimit": 65536,
+    "written": 55
+  },
+  "authoritativeCleanup": {
+    "remainingMounts": [],
+    "serverExit": -15,
+    "serverStderr": "",
+    "serverStdout": "",
+    "unmountExit": 0,
+    "unmountStderr": "",
+    "unmountStdout": ""
+  },
+  "allOwnedProcessesGone": true,
+  "mountDisconnected": true,
+  "liveBackendObserved": true,
+  "report": {
+    "accepted": false,
+    "accountingAccepted": true,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.916922,
+      "exit": -15,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": null,
+        "fileLimit": 4096,
+        "inodes": 2,
+        "live": 12288,
+        "liveLimit": 32768,
+        "openHandles": 0,
+        "operations": 47,
+        "peak": 12288,
+        "writeLimit": 65536,
+        "written": 55
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "eyJyb2xlIjogInBhcmVudCIsICJwaWQiOiA3MDYwLCAicHBpZCI6IDcwNTYsICJzdGFydCI6ICIxNzQ5MyIsICJmZCI6IDN9Cnsicm9sZSI6ICJkZXNjZW5kYW50IiwgInBpZCI6IDcwNjEsICJwcGlkIjogNzA2MCwgInN0YXJ0IjogIjE3NDk5IiwgImZkIjogM30K",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          7060,
+          "17493"
+        ],
+        [
+          7061,
+          "17499"
+        ]
+      ],
+      "peakRSS": 41975808,
+      "reapedPeakRSS": 13856768,
+      "sampledPeakRSS": 41975808,
+      "stopReason": "wall deadline",
+      "wallSeconds": 2.0496389509999915
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": true,
+    "failures": [
+      "supervisor stopped or stop receipt missing",
+      "resource receipt rejected: wallSeconds",
+      "child did not succeed"
+    ]
+  },
+  "PASS": true
+}

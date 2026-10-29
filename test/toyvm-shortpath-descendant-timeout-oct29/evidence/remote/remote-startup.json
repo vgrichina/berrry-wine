@@ -1,0 +1,15 @@
+{
+  "limits": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+  },
+  "pid": 7022,
+  "root": "/tmp/tvdt"
+}

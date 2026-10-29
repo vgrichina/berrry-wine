@@ -1,0 +1,56 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvdt/cancellation.json",
+    "--work",
+    "/tmp/tvdt/w",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "4096",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "5",
+    "--wall-limit",
+    "2",
+    "--output-limit",
+    "8192",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os,time,json\nfd=os.open('/tmp/tvdt/w/domain/held-accounted-file',os.O_CREAT|os.O_RDWR,0o600)\nos.write(fd,b'parent')\ndef identity(role):\n s=open('/proc/self/stat').read().rsplit(')',1)[1].split()\n print(json.dumps(dict(role=role,pid=os.getpid(),ppid=os.getppid(),start=s[19],fd=fd)),flush=True)\nchild=os.fork()\nif child==0:\n os.pwrite(fd,b'descendant',0)\n identity('descendant')\n while True:\n  os.pwrite(fd,b'x',0)\n  time.sleep(.05)\nelse:\n identity('parent')\n time.sleep(30)\n"
+  ],
+  "cwd": "/tmp/tvdt/repo",
+  "fixtureSHA256": "807f426e7a34261200cab45c98a4225810706e807979561ffeeab436207505e6",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  }
+}

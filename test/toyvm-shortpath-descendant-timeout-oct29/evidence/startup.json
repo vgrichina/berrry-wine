@@ -1,0 +1,33 @@
+{
+  "limits": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+  },
+  "session": "01a185ac-10dc-7322-b717-e3d4a1d662d4",
+  "pid": 2371026,
+  "sessionPath": "/home/user/.codex/sessions",
+  "baselineWAL": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4330152,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  },
+  "baselineCount": "positive baseline counted once",
+  "browserRemaining": {
+    "CPU": 35.353183,
+    "wall": 101.49555,
+    "captures": 1
+  },
+  "proceduralLimitations": [
+    "Initial diagnostic terminal target exceeded; accidental ELF read was truncated by tool. No runtime occurred at that point."
+  ]
+}

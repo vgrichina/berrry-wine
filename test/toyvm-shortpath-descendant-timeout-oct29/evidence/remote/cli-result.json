@@ -1,0 +1,81 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvdt/cancellation.json",
+    "--work",
+    "/tmp/tvdt/w",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "4096",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "5",
+    "--wall-limit",
+    "2",
+    "--output-limit",
+    "8192",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os,time,json\nfd=os.open('/tmp/tvdt/w/domain/held-accounted-file',os.O_CREAT|os.O_RDWR,0o600)\nos.write(fd,b'parent')\ndef identity(role):\n s=open('/proc/self/stat').read().rsplit(')',1)[1].split()\n print(json.dumps(dict(role=role,pid=os.getpid(),ppid=os.getppid(),start=s[19],fd=fd)),flush=True)\nchild=os.fork()\nif child==0:\n os.pwrite(fd,b'descendant',0)\n identity('descendant')\n while True:\n  os.pwrite(fd,b'x',0)\n  time.sleep(.05)\nelse:\n identity('parent')\n time.sleep(30)\n"
+  ],
+  "cwd": "/tmp/tvdt/repo",
+  "exit": 1,
+  "stdout": "{\"accepted\": false, \"accountingAccepted\": true, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 0.916922, \"exit\": -15, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": null, \"fileLimit\": 4096, \"inodes\": 2, \"live\": 12288, \"liveLimit\": 32768, \"openHandles\": 0, \"operations\": 47, \"peak\": 12288, \"writeLimit\": 65536, \"written\": 55}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"eyJyb2xlIjogInBhcmVudCIsICJwaWQiOiA3MDYwLCAicHBpZCI6IDcwNTYsICJzdGFydCI6ICIxNzQ5MyIsICJmZCI6IDN9Cnsicm9sZSI6ICJkZXNjZW5kYW50IiwgInBpZCI6IDcwNjEsICJwcGlkIjogNzA2MCwgInN0YXJ0IjogIjE3NDk5IiwgImZkIjogM30K\", \"encoding\": \"base64\"}, \"owned\": [[7060, \"17493\"], [7061, \"17499\"]], \"peakRSS\": 41975808, \"reapedPeakRSS\": 13856768, \"sampledPeakRSS\": 41975808, \"stopReason\": \"wall deadline\", \"wallSeconds\": 2.0496389509999915}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": false, \"cleanupComplete\": true, \"failures\": [\"supervisor stopped or stop receipt missing\", \"resource receipt rejected: wallSeconds\", \"child did not succeed\"]}\n",
+  "stderr": "",
+  "wall": 2.1705737359999944,
+  "processes": {
+    "7056": [
+      7022,
+      17483,
+      21364736
+    ],
+    "7022": [
+      4606,
+      16822,
+      18755584
+    ],
+    "7057": [
+      7056,
+      17488,
+      14286848
+    ],
+    "7060": [
+      7056,
+      17493,
+      0
+    ],
+    "7061": [
+      7060,
+      17499,
+      9076736
+    ]
+  },
+  "processLimits": {
+    "7056": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            134217728            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "7022": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "7057": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            134217728            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "7060": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            134217728            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "7061": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            134217728            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    0                    bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n"
+  },
+  "observedCPU": {
+    "7056": 0.85,
+    "7022": 0.5,
+    "7057": 0.08,
+    "7060": 0.05,
+    "7061": 0.0
+  },
+  "peakGroupPhysicalRSS": 75018240,
+  "peakSupervisorPhysicalRSS": 18755584,
+  "rejection": null
+}
