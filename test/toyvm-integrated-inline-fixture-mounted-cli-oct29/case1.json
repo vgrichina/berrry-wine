@@ -1,0 +1,100 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvic/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvic/cancellation-receipt.json",
+    "--work",
+    "/tmp/tvic/work",
+    "--live-limit",
+    "8192",
+    "--write-limit",
+    "8192",
+    "--file-limit",
+    "8192",
+    "--rss-limit",
+    "67108864",
+    "--cpu-limit",
+    "10",
+    "--wall-limit",
+    "20",
+    "--output-limit",
+    "8192",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import pathlib,sys\np=pathlib.Path(sys.argv[1])\nassert p.is_absolute()\nwith p.open(\"wb\") as f: f.write(b\"x\" * int(sys.argv[2]))\np.unlink()\nprint(\"TINY_FIXTURE_COMPLETED\")\n",
+    "/tmp/tvic/work/domain/f1024",
+    "1024"
+  ],
+  "exit": 1,
+  "stdout": "{\"accepted\": false, \"accountingAccepted\": false, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 0.07237099999999999, \"exit\": -15, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": \"filesystem allocation limit\", \"fileLimit\": 8192, \"inodes\": 2, \"live\": 8192, \"liveLimit\": 8192, \"openHandles\": 0, \"operations\": 7, \"peak\": 8192, \"writeLimit\": 8192, \"written\": 0}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"\", \"encoding\": \"base64\"}, \"owned\": [[5929, \"4808\"]], \"peakRSS\": 34603008, \"reapedPeakRSS\": 14024704, \"sampledPeakRSS\": 34603008, \"stopReason\": \"filesystem allocation limit\", \"wallSeconds\": 0.05856261999999646}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": false, \"cleanupComplete\": true, \"failures\": [\"authoritative filesystem receipt rejected\", \"supervisor stopped or stop receipt missing\", \"child did not succeed\"]}\n",
+  "stderr": "",
+  "report": {
+    "accepted": false,
+    "accountingAccepted": false,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.07237099999999999,
+      "exit": -15,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": "filesystem allocation limit",
+        "fileLimit": 8192,
+        "inodes": 2,
+        "live": 8192,
+        "liveLimit": 8192,
+        "openHandles": 0,
+        "operations": 7,
+        "peak": 8192,
+        "writeLimit": 8192,
+        "written": 0
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          5929,
+          "4808"
+        ]
+      ],
+      "peakRSS": 34603008,
+      "reapedPeakRSS": 14024704,
+      "sampledPeakRSS": 34603008,
+      "stopReason": "filesystem allocation limit",
+      "wallSeconds": 0.05856261999999646
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": true,
+    "failures": [
+      "authoritative filesystem receipt rejected",
+      "supervisor stopped or stop receipt missing",
+      "child did not succeed"
+    ]
+  },
+  "remainingMounts": [],
+  "remainingOwnedProcesses": [],
+  "marker": false,
+  "pass": false
+}

@@ -1,0 +1,16 @@
+{
+  "boxID": "bx_45szpq2q",
+  "created": "2026-10-29T18:27:10.474Z",
+  "expiry": "2026-10-29T18:57:10.510Z",
+  "guestCutoff": "2026-10-29T18:49:44Z",
+  "handback": "2026-10-29T18:51:44Z",
+  "shutdown": "2026-10-29T18:52:44Z",
+  "scheduleExpiry": "2026-10-29T18:54:44Z",
+  "owner": "toyvm-integrated-inline-fixture-mounted-cli-oct29 worker, explicitly delegated snapshot-stop",
+  "state": "stopped",
+  "snapshotAvailable": true,
+  "snapshotCompletedAt": "2026-10-29T18:28:06.589Z",
+  "snapshotVerifiedAt": "2026-10-29T18:28:06.589Z",
+  "stopStatus": "completed",
+  "stoppedAt": "2026-10-29T18:28:06.626Z"
+}
