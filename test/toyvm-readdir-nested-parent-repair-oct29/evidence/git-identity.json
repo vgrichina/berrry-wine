@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-readdir-nested-parent-repair-oct29/repo",
+    "rev-parse",
+    "--show-toplevel",
+    "--absolute-git-dir",
+    "HEAD",
+    "--abbrev-ref",
+    "HEAD"
+  ],
+  "cwd": "/tmp/toyvm-readdir-nested-parent-repair-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.051440607057884336,
+  "admission": {
+    "free": 4491235328,
+    "MemAvailable": 3361558528,
+    "allocated": 2318336,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 194,
+  "stderrBytes": 0
+}

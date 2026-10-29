@@ -1,0 +1,20 @@
+diff --git a/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py b/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py
+index b4278f131f..ff9f83165b 100644
+--- a/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py
++++ b/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py
+@@ -160,7 +160,14 @@ class Backend:
+             return b''
+         if op==28:
+             fh,offset,size=unpack('2QI',data)
+-            names=[(b'.',ino),(b'..',1)]+list(self.nodes[ino]['names'].items());out=b''
++            parent=1
++            if ino!=1:
++                parents=[p for p,n in self.nodes.items()
++                         if stat.S_ISDIR(n['mode']) and ino in n['names'].values()]
++                if len(parents)!=1:
++                    raise OSError(errno.EIO,'directory parent is not unique')
++                parent=parents[0]
++            names=[(b'.',ino),(b'..',parent)]+list(self.nodes[ino]['names'].items());out=b''
+             for i,(name,child) in enumerate(names):
+                 if i<offset:continue
+                 kind=4 if stat.S_ISDIR(self.nodes[child]['mode']) else 8
