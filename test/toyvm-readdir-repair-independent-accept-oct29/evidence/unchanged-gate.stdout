@@ -1,0 +1,1 @@
+{"status": "PASS", "candidate": "7193af5f8f591ed05ab058f8a4ef268de38ca7ec", "originalContract": {"cases": 870, "passed": 870, "failed": 0}, "originalOracleControls": {"wrongExpectedParent": "REJECTED", "skippedRecord": "REJECTED", "incorrectAcceptance": "REJECTED"}}

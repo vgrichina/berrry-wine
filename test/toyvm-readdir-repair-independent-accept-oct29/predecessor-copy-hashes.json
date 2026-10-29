@@ -1,0 +1,30 @@
+{
+  "accept.py": {
+    "bytes": 7619,
+    "sha256": "466fe4a489c6b7a42696d39a41b9ceb5839ce8373d9134cf9eb446e08befe151"
+  },
+  "contract.py": {
+    "bytes": 7008,
+    "sha256": "bbbc80d984fa962adb8c4bdff0af39cf74623e4ac4c9caeaae677f85f818f79a"
+  },
+  "fixture.json": {
+    "bytes": 474,
+    "sha256": "1836abfcc48c568c2c78c0821464446c228e189aa63cf0cfc0a5b4c945f39bfe"
+  },
+  "copy-receipt.json": {
+    "bytes": 379,
+    "sha256": "e772f876791d80e34a4b152ec22d1a877d0ec79f859f7b023b35009c4964e675"
+  },
+  "source-pins.json": {
+    "bytes": 904,
+    "sha256": "59a4270a4b64a63d3c7f6b4062b6cc02bc19586063ade104c702fe72cb504998"
+  },
+  "pin-update.json": {
+    "bytes": 348,
+    "sha256": "302243790f0c43a04b933a54a2e793d308ff258f8eae839a9e3da719608917bb"
+  },
+  "original-source-pins.json": {
+    "bytes": 904,
+    "sha256": "6385e327317bff47a3b053ab79582410fda7a5390ca6efd03aa99718cfb6b6b1"
+  }
+}
