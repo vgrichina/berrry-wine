@@ -1,0 +1,167 @@
+{
+  "apiEnvelopeSHA256": "027b631a2c94d8ba45a66b997e8f369da5d97ee9c57413641fab8d24719123d6",
+  "box": "bx_pa82m6h6",
+  "boxLifecycle": {
+    "createdAt": "2026-10-29T04:28:56.525Z",
+    "cutoff": "2026-10-29T05:10:00Z",
+    "id": "bx_pa82m6h6",
+    "originalExpiry": "2026-10-29T04:58:56.525000+00:00",
+    "snapshotStatus": "completed",
+    "snapshotVerifiedAt": "2026-10-29T04:29:24.177Z",
+    "state": "stopped",
+    "stop": {
+      "endedAt": "2026-10-29T04:29:24.236Z",
+      "error": null,
+      "id": "stop_2743d22a63c4936b",
+      "lastAttemptAt": "2026-10-29T04:29:24.236Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "stoppedAt": "2026-10-29T04:29:24.217Z",
+    "ttlSeconds": 1800
+  },
+  "browserAllowance": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "canary": {
+    "after": {
+      "bytesHex": "6f776e65642d686f73742d63616e6172793a6f637432390a",
+      "device": 64769,
+      "inode": 141162,
+      "sha256": "fdd41b4d95330415e0c94195cbf2fe0ed5818699328de57a5bcb1bf1088ddbb9",
+      "size": 24
+    },
+    "before": {
+      "bytesHex": "6f776e65642d686f73742d63616e6172793a6f637432390a",
+      "device": 64769,
+      "inode": 141162,
+      "sha256": "fdd41b4d95330415e0c94195cbf2fe0ed5818699328de57a5bcb1bf1088ddbb9",
+      "size": 24
+    },
+    "unchanged": true
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanupComplete": true,
+  "cliExit": 0,
+  "executablePins": {
+    "/usr/bin/fusermount3": {
+      "bytes": 39296,
+      "realpath": "/usr/bin/fusermount3",
+      "sha256": "d278775c1528dd32efc85c2cb322423ee93aa8dcf76aaa595f7022d427910704"
+    },
+    "/usr/bin/python3": {
+      "bytes": 8020928,
+      "realpath": "/usr/bin/python3.12",
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    }
+  },
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 16384,
+    "inodes": 1,
+    "live": 4096,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 1,
+    "peak": 4096,
+    "writeLimit": 65536,
+    "written": 0
+  },
+  "fixtureOutput": "OUTSIDE_WRITE_DENIED:13\n",
+  "gatePASS": true,
+  "historicalEvidence": {
+    "originalCancellationReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+    "prelaunchControls": "/tmp/toyvm-real-cli-outside-write-confinement-oct29/prelaunch-controls.json",
+    "previousVerifiedReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-descendant-output-limit-oct29/retained-evidence/completion-receipt.json"
+  },
+  "limitations": [
+    "Historical startup/post-WAL limitations retained; this task pre-operation WAL baseline is not launcher-startup proof.",
+    "No guest mount argv or Node process; no guest mount parser or Node startup invoked. Boat --file staging enumerated separately, without comma-bearing filenames.",
+    "This tests only os.open absolute outside-canary O_WRONLY|O_TRUNC once; no broader filesystem/syscall/browser confinement claim."
+  ],
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvdeny/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdeny/cancellation.json --work /tmp/tvdeny/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import errno, os, sys\ntry:\n    fd = os.open('/tmp/tvdeny/outsid",
+      "cmdSHA256": "15812e530d1b31a19cf3b06d345001397c5a8403bebd3266b59a3afbdf0b1b8b",
+      "cpu": 0.03,
+      "finalState": null,
+      "pid": 6133,
+      "ppid": 6091,
+      "rss": 21364736,
+      "start": "8211",
+      "state": "S",
+      "stdoutLink": "/tmp/tvdeny/cli.stdout",
+      "wchan": "do_poll.constprop.0"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvdeny/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdeny/w/domain /tmp/tvdeny/w/status.sock 32768 65536 16384 ",
+      "cmdSHA256": "518701449b339f2c4e4602eb442bb2afa538e74f3fa97e9729f9df723ad7b09f",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 6134,
+      "ppid": 6133,
+      "rss": 14286848,
+      "start": "8214",
+      "state": "S",
+      "stdoutLink": "pipe:[27502]",
+      "wchan": "ep_poll"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B -c import errno, os, sys\ntry:\n    fd = os.open('/tmp/tvdeny/outside-canary', os.O_WRONLY | os.O_TRUNC)\nexcept PermissionError as error:\n    assert error.errno in (errno.EACCES, errno.EPERM)\n    print('OUTSIDE_WRITE_DENIED:' + str(error.errno), flush=True)\nelse:\n    os.close(fd)\n    sys.exit(3)\n ",
+      "cmdSHA256": "e83a379cb76dbd79563737b4bca84042372f4d4d453dd59d79a9438454f7f07d",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 6137,
+      "ppid": 6133,
+      "rss": 10354688,
+      "start": "8218",
+      "state": "R",
+      "stdoutLink": "pipe:[29092]",
+      "wchan": "0"
+    }
+  ],
+  "pathOverride": "Explicit task short path /tmp/tvdeny replaces historical dispatch /tmp/tvdt; actual AF_UNIX status socket 25 bytes verified before CLI.",
+  "pinLocations": {
+    "local": "/tmp/toyvm-real-cli-outside-write-confinement-oct29/repo",
+    "localBeforeAndAfterVerified": true,
+    "remote": "/tmp/tvdeny/repo",
+    "remoteBeforeAndAfterVerified": true
+  },
+  "productionInvocations": 1,
+  "productionOwnedIdentityCheck": true,
+  "remainingMounts": [],
+  "runtimeResult": "runtime-result.json",
+  "runtimeSHA256": "a0e298d3aaf5385141539487c4a8952196adc9118a010c7de36ff82b64f07fb3",
+  "safetyCleanup": null,
+  "scope": "One absolute-path write-open denial only; complete filesystem/syscall/browser confinement UNKNOWN",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourcePinsPath": "../source-pins.json",
+  "task": "toyvm-real-cli-outside-write-confinement-oct29"
+}

@@ -1,0 +1,9 @@
+from ops import *
+box=json.loads((E/'box.json').read_text())['id']
+envelope=json.loads((E/'runtime.stdout').read_text());r=json.loads((E/'runtime-result.json').read_text())
+assert not envelope['stdoutTruncated'] and not envelope['stderrTruncated'] and envelope['exitCode']==0 and r['gatePASS']
+br=r['report']['backendReceipt']
+record('canonical-receipt',dict(task=r['task'],candidate=r['candidate'],gatePASS=True,productionInvocations=1,sourcePins=r['pins'],runtimeSHA256=hashlib.sha256((E/'runtime-result.json').read_bytes()).hexdigest(),apiEnvelopeSHA256=hashlib.sha256((E/'runtime.stdout').read_bytes()).hexdigest(),box=box,cliExit=r['cliExit'],filesystem=br['filesystem'],cleanupComplete=r['report']['cleanupComplete'],observedIdentities=r['observedIdentities'],productionOwnedIdentityCheck=r['productionOwnedIdentityCheck'],remainingMounts=r['remainingMounts'],safetyCleanup=r['safetyCleanup'],canary=r['canary'],fixtureOutput=r['fixtureOutput'],executablePins=r['executablePins'],browserAllowance=r['report']['browserAllowanceRemaining'],scope='One absolute-path write-open denial only; complete filesystem/syscall/browser confinement UNKNOWN',limitations=['Historical startup/post-WAL limitations retained; this task pre-operation WAL baseline is not launcher-startup proof.','No guest mount argv or Node process; no guest mount parser or Node startup invoked. Boat --file staging enumerated separately, without comma-bearing filenames.','This tests only os.open absolute outside-canary O_WRONLY|O_TRUNC once; no broader filesystem/syscall/browser confinement claim.']))
+rc,out,err=run(['/home/user/.ascii/boat','--json','stop',box],cwd=OWN,name='snapshot-stop',timeout=120);assert rc==0,(rc,err)
+rc,out,err=run(['/home/user/.ascii/boat','--json','info',box],cwd=OWN,name='stopped-info',timeout=30);assert rc==0
+s=json.loads(out)['sandbox'];print(json.dumps(dict(id=box,state=s['state'],snapshot=s.get('lastSnapshotStatus'))))

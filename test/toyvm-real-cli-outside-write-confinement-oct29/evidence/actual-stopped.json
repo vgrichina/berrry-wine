@@ -1,0 +1,17 @@
+{
+  "createdAt": "2026-10-29T04:28:56.525Z",
+  "expiresAt": null,
+  "id": "bx_pa82m6h6",
+  "snapshotStatus": "completed",
+  "snapshotVerifiedAt": "2026-10-29T04:29:24.177Z",
+  "state": "stopped",
+  "stop": {
+    "endedAt": "2026-10-29T04:29:24.236Z",
+    "error": null,
+    "id": "stop_2743d22a63c4936b",
+    "lastAttemptAt": "2026-10-29T04:29:24.236Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "stoppedAt": "2026-10-29T04:29:24.217Z"
+}
