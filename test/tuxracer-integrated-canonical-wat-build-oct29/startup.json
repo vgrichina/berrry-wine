@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=6144",
+    "-e",
+    "const fs=require(\"fs\"); console.log(JSON.stringify({execPath:process.execPath,version:process.version,argv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+  ],
+  "cwd": "/tmp/tuxwat/repo",
+  "environment": {
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "elapsedSeconds": 0.5761663279999993,
+  "peakProcessTreeRSS": 0,
+  "denial": null,
+  "logs": {
+    ".stdout": {
+      "bytes": 1664,
+      "sha256": "ea7a2bb3cd45046553cda6f2b1f231098ce314729c2c0d60098365813b876a3a"
+    },
+    ".stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

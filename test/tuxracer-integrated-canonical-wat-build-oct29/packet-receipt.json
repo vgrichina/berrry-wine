@@ -1,0 +1,9 @@
+{
+  "files": 140,
+  "sourceBytes": 21302316,
+  "packetBytes": 3575482,
+  "packetSha256": "63954ffcc022954e5df0d199abe625613ff4c8858c6b7969c175e8a412a629fe",
+  "includeClosure": "PASS",
+  "compilerProvenance": "compiler hashes and manifest/CHANGELOG seals PASS",
+  "mount": "API text packet, no guest filesystem mounts or filename-bearing mount argv"
+}

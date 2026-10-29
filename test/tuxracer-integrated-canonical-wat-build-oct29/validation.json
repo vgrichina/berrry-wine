@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=6144",
+    "-e",
+    "const fs=require(\"fs\"),h=require(\"./tools/region-layout-hash.js\");const mirror=fs.readFileSync(\"lib/region-map.generated.js\",\"utf8\").match(/LAYOUT_HASH\\s*=\\s*['\"]([0-9a-f]+)['\"]/)[1];for(const p of [\"build/wine-assembly.wasm\",\"build/wine-assembly.compat.wasm\"]){const b=fs.readFileSync(p);if(!WebAssembly.validate(b))throw Error(\"invalid \"+p);new WebAssembly.Module(b);const hash=h.readSection(b);if(hash!==mirror)throw Error(JSON.stringify({hash,mirror})); console.log(JSON.stringify({p,valid:true,hash,mirror}));}"
+  ],
+  "cwd": "/tmp/tuxwat/repo",
+  "environment": {
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "elapsedSeconds": 0.12888652599997386,
+  "peakProcessTreeRSS": 37027840,
+  "denial": null,
+  "logs": {
+    ".stdout": {
+      "bytes": 207,
+      "sha256": "514a8c330778fba41697dea868b16f01dad1b07efc1ff8f8f4ac66e0e734158b"
+    },
+    ".stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

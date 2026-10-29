@@ -1,0 +1,67 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=6144",
+    "tools/build-compile-wat.js"
+  ],
+  "cwd": "/tmp/tuxwat/repo",
+  "environment": {
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "elapsedSeconds": 12.105512489000034,
+  "peakProcessTreeRSS": 408145920,
+  "denial": null,
+  "logs": {
+    ".stdout": {
+      "bytes": 316,
+      "sha256": "32dbaea6a540c2604eeee4db21c096110d3050204ba4785e05be89e80a2eff75"
+    },
+    ".stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "candidate": "898d2ec8d9db7d4f9236d9eb705adfd431ea19c9",
+  "packetSha256": "63954ffcc022954e5df0d199abe625613ff4c8858c6b7969c175e8a412a629fe",
+  "artifacts": {
+    "wine-assembly.wasm": {
+      "bytes": 1880509,
+      "sha256": "3b07f522ea5f0bae43f285d0f8ae9ee2ed297eab6997cbefe2bb660abd8aa581"
+    },
+    "wine-assembly.compat.wasm": {
+      "bytes": 1883082,
+      "sha256": "dad73cffd56fdd01118b1abe083acf3c5c3c57c799a9f300dcf498de0ef23d00"
+    }
+  },
+  "validation": {
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=6144",
+      "-e",
+      "const fs=require(\"fs\"),h=require(\"./tools/region-layout-hash.js\");const mirror=fs.readFileSync(\"lib/region-map.generated.js\",\"utf8\").match(/LAYOUT_HASH\\s*=\\s*['\"]([0-9a-f]+)['\"]/)[1];for(const p of [\"build/wine-assembly.wasm\",\"build/wine-assembly.compat.wasm\"]){const b=fs.readFileSync(p);if(!WebAssembly.validate(b))throw Error(\"invalid \"+p);new WebAssembly.Module(b);const hash=h.readSection(b);if(hash!==mirror)throw Error(JSON.stringify({hash,mirror})); console.log(JSON.stringify({p,valid:true,hash,mirror}));}"
+    ],
+    "cwd": "/tmp/tuxwat/repo",
+    "environment": {
+      "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/bin:/bin",
+      "LANG": "C.UTF-8",
+      "TZ": "UTC"
+    },
+    "exit": 0,
+    "elapsedSeconds": 0.12888652599997386,
+    "peakProcessTreeRSS": 37027840,
+    "denial": null,
+    "logs": {
+      ".stdout": {
+        "bytes": 207,
+        "sha256": "514a8c330778fba41697dea868b16f01dad1b07efc1ff8f8f4ac66e0e734158b"
+      },
+      ".stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  }
+}

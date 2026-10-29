@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=6144",
+    "tools/build-compile-wat.js"
+  ],
+  "cwd": "/tmp/tuxwat/repo",
+  "environment": {
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "elapsedSeconds": 12.105512489000034,
+  "peakProcessTreeRSS": 408145920,
+  "denial": null,
+  "logs": {
+    ".stdout": {
+      "bytes": 316,
+      "sha256": "32dbaea6a540c2604eeee4db21c096110d3050204ba4785e05be89e80a2eff75"
+    },
+    ".stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

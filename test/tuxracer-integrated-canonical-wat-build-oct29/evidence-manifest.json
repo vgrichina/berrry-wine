@@ -1,0 +1,78 @@
+{
+  "README.md": {
+    "bytes": 3710,
+    "sha256": "b634fef6aac0ee0930f68e0f8cfa41db560797d786857803dd93a4cf2ee0f99b"
+  },
+  "artifact-recovery.json": {
+    "bytes": 102,
+    "sha256": "73a80d1a867a8ac5aac8317d03b60e13fd0cd001ee787ab7b2aff82a637e44b8"
+  },
+  "boat-state.json": {
+    "bytes": 1324,
+    "sha256": "9185d29b586849f3a6e314643eee2f197eab95776ab225de45ba53e71f9d7085"
+  },
+  "compile.json": {
+    "bytes": 678,
+    "sha256": "d68a66271aa39e64742ab69866221dbb387fbc92af05acfbc84a01ec0a725a7f"
+  },
+  "compile.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "compile.stdout": {
+    "bytes": 316,
+    "sha256": "32dbaea6a540c2604eeee4db21c096110d3050204ba4785e05be89e80a2eff75"
+  },
+  "initial-git-status.stderr": {
+    "bytes": 73,
+    "sha256": "589861a8b1f1eae59294389bb2fe42f025abd8f69f65b9008bad37544600ba0d"
+  },
+  "packet-manifest.json": {
+    "bytes": 20655,
+    "sha256": "aada52d2589f9b2164f8512f57a1d634b0b4d2f84d4359bcc4bc87f30859a78f"
+  },
+  "packet-receipt.json": {
+    "bytes": 351,
+    "sha256": "71e759c7158b8eb7a562a2d7fcb585baeccfc7039435acdf2b2f412f74ebcd6f"
+  },
+  "remote.py": {
+    "bytes": 3635,
+    "sha256": "d0ad349219be5c355e09b577060fdfe652e0f1b38c51dab29438cad896db2454"
+  },
+  "result.json": {
+    "bytes": 2402,
+    "sha256": "f7b55e2a5a365ca199fe398e78fe6250332e3ac141c6f2d77a4cc30bbd6fe132"
+  },
+  "snapshot-stop.json": {
+    "bytes": 229,
+    "sha256": "e741563f82bfba92f7d33f331251e1265f5288599da4fdabdbc1efdbcfefd4ca"
+  },
+  "startup.json": {
+    "bytes": 838,
+    "sha256": "244e4fb47e41cd4308a41258c49b78f3ac7b23c3a0c469eb482f0af9176ae392"
+  },
+  "startup.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "startup.stdout": {
+    "bytes": 1664,
+    "sha256": "ea7a2bb3cd45046553cda6f2b1f231098ce314729c2c0d60098365813b876a3a"
+  },
+  "validate-evidence.py": {
+    "bytes": 1871,
+    "sha256": "5f5dba33ed0efb952f33883aa5bffabfb89c6de6b788589943f64f550a5c02ea"
+  },
+  "validation.json": {
+    "bytes": 1195,
+    "sha256": "ba0877f20990d160a49b550a5386cb273c2fc290cfbdd9712c4a73f39843d805"
+  },
+  "validation.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "validation.stdout": {
+    "bytes": 207,
+    "sha256": "514a8c330778fba41697dea868b16f01dad1b07efc1ff8f8f4ac66e0e734158b"
+  }
+}
