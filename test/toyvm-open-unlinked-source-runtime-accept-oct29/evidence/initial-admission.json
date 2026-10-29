@@ -1,0 +1,15 @@
+{
+  "MemAvailable": 2418860032,
+  "PASS": true,
+  "aggregateReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-open-unlinked-source-runtime-accept-oct29-admission.json",
+  "at": "2026-10-29T04:46:15.789712+00:00",
+  "blockSize": 4096,
+  "device": 64769,
+  "f_bavail": 1131528,
+  "freeBytes": 4634738688,
+  "futureGrowth": 150994944,
+  "ownedAllocatedBytes": 2191360,
+  "positiveWALGrowthCountedOnce": 0,
+  "requiredBytes": 3200253952,
+  "taskAllocation": 25165824
+}

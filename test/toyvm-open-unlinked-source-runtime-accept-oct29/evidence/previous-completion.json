@@ -1,0 +1,43 @@
+{
+  "actualFilesystem": {
+    "live": 8192,
+    "openHandles": 0,
+    "peak": 28672,
+    "written": 16384
+  },
+  "box": "bx_gfk8k88g",
+  "branch": "task/toyvm-domain-pinned-open-unlinked-allocation-oct29",
+  "canonical": "/tmp/toyvm-domain-pinned-open-unlinked-allocation-oct29/repo/test/toyvm-domain-pinned-open-unlinked-allocation-oct29/canonical.json",
+  "cliExit": 1,
+  "commit": "ad3b6663e10b429492c3996adcedbe18189eb29e",
+  "gatePASS": false,
+  "limitations": "Exact requested live28672 and filesystemFinal oracle unmet; no rerun or production repair. Pre-B checkpoint proves open-unlinked descriptor. Historical procedural/publication limitations retained.",
+  "productionInvocationCount": 1,
+  "remoteVerified": true,
+  "snapshotVerified": true,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "state": "stopped",
+  "stopReason": "filesystem allocation limit",
+  "task": "toyvm-domain-pinned-open-unlinked-allocation-oct29"
+}

@@ -1,0 +1,74 @@
+{
+  "backendInvocations": 0,
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "checkSHA256": "449bb3b8ca62d540d5309e25c967b3bc8128f7315ce769b4fd1d0a5cfe37d7ee",
+  "checks": {
+    "PASS": true,
+    "backendInvocations": 0,
+    "historicalGatePASS": false,
+    "inferredPreBCharge": 28672,
+    "negativeControls": [
+      "A closed before B write",
+      "A closed before checkpoint",
+      "accepted B growth with forged failure",
+      "accepted B growth without failure",
+      "unlink prematurely collects open inode",
+      "guard moved after live mutation",
+      "inferred rejection live relabeled measured final"
+    ],
+    "observedRejectionLive": null,
+    "runtimeInvocations": 0,
+    "scope": "offline source/receipt acceptance"
+  },
+  "decision": "SCOPED ACCEPTANCE: source plus preserved actual-runtime charge-lifetime evidence",
+  "historicalGatePASS": false,
+  "inferredPreBCharge": 28672,
+  "inputManifestSHA256": "bcd5d99c832f48d530ce0e764df9e9c0e6da28898e76ff2965672458fb506cd7",
+  "lifecycle": {
+    "box": "bx_gfk8k88g",
+    "coordinatorVerified": true,
+    "expiry": "2026-10-29T05:06:59.426Z",
+    "newBox": null,
+    "owner": "coordinator",
+    "state": "stopped"
+  },
+  "limitations": [
+    "No instantaneous rejection live sample; pre-B28672 is source-inferred",
+    "No observed syscall errno return; child terminated -15",
+    "Historical FAIL and all historical limitations remain",
+    "No gameplay or general-resource qualification"
+  ],
+  "observedPostReap": {
+    "live": 8192,
+    "openHandles": 0,
+    "peak": 28672,
+    "written": 16384
+  },
+  "observedRejectionLive": null,
+  "publication": "task branch only; verified commit/remote receipt follows outside this commit to avoid self-reference",
+  "reportSHA256": "9d67fd14c3112f81abe8bc6a3f66850a290e2f68b25f931835240b229d3af934",
+  "runtimeInvocations": 0,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "task": "toyvm-open-unlinked-source-runtime-accept-oct29"
+}
