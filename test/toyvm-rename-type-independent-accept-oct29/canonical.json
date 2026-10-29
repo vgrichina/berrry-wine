@@ -1,0 +1,363 @@
+{
+  "PASS": true,
+  "candidate": "ee783655f7d8dc7829093943fe73e0091fb440fe",
+  "branch": "task/toyvm-rename-type-independent-accept-oct29",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11245,
+      "sha256": "b27ebfe98312038bf7d8ec13a48c69a3a66a5e8b90af3d62798b296b852e6465"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "preservedRuntimeReceiptPins": {
+    "originalCancellationReceipt": {
+      "bytes": 12946,
+      "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+    },
+    "previousVerifiedReceipt": {
+      "bytes": 1847,
+      "sha256": "4c9462a39ab0dc5a522b16f8b3c46f6a83c603e6098bfa5a67205d770b8ae7ce"
+    }
+  },
+  "originalReproducerPin": {
+    "bytes": 976,
+    "sha256": "14f2c2088171ce8837493d78ab056f260507410ba2d647a60571e43b685c58b3"
+  },
+  "originalReproducerGate": "PASS",
+  "acceptance": {
+    "PASS": true,
+    "sourceSha256": "b27ebfe98312038bf7d8ec13a48c69a3a66a5e8b90af3d62798b296b852e6465",
+    "groups": {
+      "mismatch": 64,
+      "replacement": 32,
+      "samepath": 8,
+      "absent_destination": 8,
+      "error_precedence": 44
+    },
+    "cases": 156,
+    "sensitivity": {
+      "missing_guard": {
+        "rejected": true,
+        "exception": "AssertionError",
+        "reason": "('unexpected success', 21)"
+      },
+      "wrong_errno": {
+        "rejected": true,
+        "exception": "AssertionError",
+        "reason": "('errno', 22, 21)"
+      },
+      "after_emptiness": {
+        "rejected": true,
+        "exception": "AssertionError",
+        "reason": "('errno', 39, 21)"
+      },
+      "after_link_decrement": {
+        "rejected": true,
+        "exception": "AssertionError",
+        "reason": "state or object identity changed"
+      },
+      "after_collection": {
+        "rejected": true,
+        "exception": "KeyError",
+        "reason": "4"
+      },
+      "overbroad_file_guard": {
+        "rejected": true,
+        "exception": "IsADirectoryError",
+        "reason": "[Errno 21] replacement is directory"
+      },
+      "overbroad_directory_guard": {
+        "rejected": true,
+        "exception": "NotADirectoryError",
+        "reason": "[Errno 20] replacement is not directory"
+      },
+      "op12_only": {
+        "rejected": true,
+        "exception": "AssertionError",
+        "reason": "('unexpected success', 21)"
+      },
+      "op45_only": {
+        "rejected": true,
+        "exception": "AssertionError",
+        "reason": "('unexpected success', 20)"
+      }
+    },
+    "scope": "actual Backend.handle only; no mounted/CLI/browser/gameplay claim"
+  },
+  "supervisorReceipts": {
+    "identity": {
+      "argv": [
+        "git",
+        "-C",
+        "/tmp/toyvm-rename-type-independent-accept-oct29/repo",
+        "rev-parse",
+        "--show-toplevel",
+        "--absolute-git-dir",
+        "HEAD",
+        "--abbrev-ref",
+        "HEAD"
+      ],
+      "cwd": "/tmp/toyvm-rename-type-independent-accept-oct29/repo",
+      "exit": 0,
+      "elapsed": 0.043330349028110504,
+      "admission": {
+        "free": 4496691200,
+        "MemAvailable": 3427913728,
+        "allocated": 2150400,
+        "budget": 25165824,
+        "componentsMiB": {
+          "sourceGit": 3,
+          "evidence": 1,
+          "WAL": 8,
+          "publication": 3,
+          "uncertainty": 9
+        },
+        "positiveWALGrowthCountedOnce": true,
+        "parentLimits": {
+          "inheritedDATA": [
+            -1,
+            -1
+          ],
+          "parentDATA": [
+            134217728,
+            -1
+          ],
+          "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+        }
+      },
+      "stdoutBytes": 200,
+      "stderrBytes": 0
+    },
+    "original-reproducer": {
+      "argv": [
+        "python3",
+        "-B",
+        "-c",
+        "import hashlib,json,pathlib,runpy,sys; d=json.loads(pathlib.Path(\"/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-type-independent-accept-oct29-dispatch.json\").read_text()); r=pathlib.Path.cwd(); assert all((len((r/p).read_bytes()),hashlib.sha256((r/p).read_bytes()).hexdigest())==(v[\"bytes\"],v[\"sha256\"]) for p,v in d[\"sourcePins\"].items()); p=\"/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-type-safety-repair-oct29/retained-evidence/test/reproduce.py\"; sys.argv=[p,str(r/\"test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py\")]; runpy.run_path(p,run_name=\"__main__\")"
+      ],
+      "cwd": "/tmp/toyvm-rename-type-independent-accept-oct29/repo",
+      "exit": 0,
+      "elapsed": 0.04441780806519091,
+      "admission": {
+        "free": 4496613376,
+        "MemAvailable": 3481907200,
+        "allocated": 2158592,
+        "budget": 25165824,
+        "componentsMiB": {
+          "sourceGit": 3,
+          "evidence": 1,
+          "WAL": 8,
+          "publication": 3,
+          "uncertainty": 9
+        },
+        "positiveWALGrowthCountedOnce": true,
+        "parentLimits": {
+          "inheritedDATA": [
+            -1,
+            -1
+          ],
+          "parentDATA": [
+            134217728,
+            -1
+          ],
+          "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+        }
+      },
+      "stdoutBytes": 1967,
+      "stderrBytes": 0
+    },
+    "independent-acceptance": {
+      "argv": [
+        "python3",
+        "-B",
+        "test/toyvm-rename-type-independent-accept-oct29/accept.py"
+      ],
+      "cwd": "/tmp/toyvm-rename-type-independent-accept-oct29/repo",
+      "exit": 0,
+      "elapsed": 0.08446047292090952,
+      "admission": {
+        "free": 4496052224,
+        "MemAvailable": 3402661888,
+        "allocated": 2179072,
+        "budget": 25165824,
+        "componentsMiB": {
+          "sourceGit": 3,
+          "evidence": 1,
+          "WAL": 8,
+          "publication": 3,
+          "uncertainty": 9
+        },
+        "positiveWALGrowthCountedOnce": true,
+        "parentLimits": {
+          "inheritedDATA": [
+            -1,
+            -1
+          ],
+          "parentDATA": [
+            134217728,
+            -1
+          ],
+          "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+        }
+      },
+      "stdoutBytes": 1592,
+      "stderrBytes": 0
+    },
+    "tracked-production-integrity": {
+      "argv": [
+        "git",
+        "-C",
+        "/tmp/toyvm-rename-type-independent-accept-oct29/repo",
+        "diff",
+        "HEAD",
+        "--",
+        "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+        "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+        "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+        "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+        "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py"
+      ],
+      "cwd": "/tmp/toyvm-rename-type-independent-accept-oct29/repo",
+      "exit": 0,
+      "elapsed": 0.043475602054968476,
+      "admission": {
+        "free": 4495851520,
+        "MemAvailable": 3409895424,
+        "allocated": 2187264,
+        "budget": 25165824,
+        "componentsMiB": {
+          "sourceGit": 3,
+          "evidence": 1,
+          "WAL": 8,
+          "publication": 3,
+          "uncertainty": 9
+        },
+        "positiveWALGrowthCountedOnce": true,
+        "parentLimits": {
+          "inheritedDATA": [
+            -1,
+            -1
+          ],
+          "parentDATA": [
+            134217728,
+            -1
+          ],
+          "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+        }
+      },
+      "stdoutBytes": 0,
+      "stderrBytes": 4182
+    },
+    "preserve-evidence": {
+      "argv": [
+        "python3",
+        "-B",
+        "-c",
+        "import pathlib,json,hashlib,shutil; r=pathlib.Path.cwd(); t=r/\"test/toyvm-rename-type-independent-accept-oct29\"; src=pathlib.Path(\"/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-type-safety-repair-oct29/retained-evidence/test/reproduce.py\"); (t/\"reproduce.py\").write_bytes(src.read_bytes()); e=r.parent/\"e\"; a=json.loads((e/\"independent-acceptance.stdout\").read_text()); assert a[\"PASS\"] and a[\"cases\"]==156 and len(a[\"sensitivity\"])==9; results=json.loads((e/\"original-reproducer.stdout\").read_text()); assert [x[\"errno\"] for x in results]==[21,20]; assert all(x[\"before\"][\"live\"]==x[\"after\"][\"live\"]==12288 and x[\"names\"]=={\"S\":2,\"T\":3} and x[\"destinationExists\"] and {k:v for k,v in x[\"before\"].items() if k!=\"operations\"}=={k:v for k,v in x[\"after\"].items() if k!=\"operations\"} for x in results); (t/\"acceptance.json\").write_text(json.dumps(a,indent=2)+\"\\n\"); (t/\"original-reproducer.json\").write_text(json.dumps(results,indent=2)+\"\\n\"); p=r/\"test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py\"; print(\"qualifier backend pin lines:\"); print(\"\\n\".join(x for x in p.read_text().splitlines() if \"fuse_backend\" in x or \"e281eb\" in x)); print(\"original reproducer exact SHA256\",hashlib.sha256(src.read_bytes()).hexdigest()); print(\"original gate PASS; evidence preserved\")"
+      ],
+      "cwd": "/tmp/toyvm-rename-type-independent-accept-oct29/repo",
+      "exit": 0,
+      "elapsed": 0.04327424499206245,
+      "admission": {
+        "free": 4495511552,
+        "MemAvailable": 3444834304,
+        "allocated": 2199552,
+        "budget": 25165824,
+        "componentsMiB": {
+          "sourceGit": 3,
+          "evidence": 1,
+          "WAL": 8,
+          "publication": 3,
+          "uncertainty": 9
+        },
+        "positiveWALGrowthCountedOnce": true,
+        "parentLimits": {
+          "inheritedDATA": [
+            -1,
+            -1
+          ],
+          "parentDATA": [
+            134217728,
+            -1
+          ],
+          "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+        }
+      },
+      "stdoutBytes": 303,
+      "stderrBytes": 0
+    }
+  },
+  "controls": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor",
+    "controls": {
+      "omitted": "REJECTED BEFORE SPAWN",
+      "root": "REJECTED BEFORE SPAWN",
+      "donor": "REJECTED BEFORE SPAWN"
+    },
+    "sentinel": "/tmp/toyvm-rename-type-independent-accept-oct29/repo",
+    "pythonChild": [
+      134217728,
+      134217728
+    ],
+    "gitVersion": "git version 2.43.0",
+    "PASS": true
+  },
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-type-independent-accept-oct29/root-ref-digest.json",
+  "mountConfiguration": "not applicable: no mount execution",
+  "nodeStartup": "not applicable: no Node execution",
+  "box": null,
+  "remainingGate": "qualify_accounted.py still pins old e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41 backend; separately reviewed pin update and integration required before full CLI qualification",
+  "filePins": {
+    "accept.py": {
+      "bytes": 9945,
+      "sha256": "f3400bc5031dc9fa39ae1e58489d7f975aa2c6c4aa21e0018524f3265785d974"
+    },
+    "seal.py": {
+      "bytes": 3532,
+      "sha256": "0a6d7bd0eb42a55874b0b1a1ec02292df989ef79ecb648b24bbd02f59fd349b2"
+    },
+    "reproduce.py": {
+      "bytes": 976,
+      "sha256": "14f2c2088171ce8837493d78ab056f260507410ba2d647a60571e43b685c58b3"
+    },
+    "original-reproducer.json": {
+      "bytes": 1967,
+      "sha256": "3ab4f2703d8abbbde67c1fc27a45bcf1b34b181acb78bf86003ea39c564abfc6"
+    },
+    "report.md": {
+      "bytes": 3714,
+      "sha256": "14c21bcb2b19b8714326fa62aa0a38fc511d2ada53522d18c4e79a5c4c2a08e2"
+    },
+    "publish.py": {
+      "bytes": 3443,
+      "sha256": "068e9b337b57ed3fd76f2a7258e7929baae39b12c720b4c12c6190025dcd8fd8"
+    },
+    "acceptance.json": {
+      "bytes": 1592,
+      "sha256": "70ed829647c2abac3cae48d5e9bf1b45ca614df03be9d9919ebc0e0d68d3a7c4"
+    }
+  }
+}

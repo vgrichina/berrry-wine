@@ -1,0 +1,78 @@
+{
+  "publicationOnly": true,
+  "recordedAt": "2026-10-29T05:56:42.759810+00:00",
+  "candidate": "ee783655f7d8dc7829093943fe73e0091fb440fe",
+  "branch": "task/toyvm-rename-type-acceptance-retained-publication-oct29",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11245,
+      "sha256": "b27ebfe98312038bf7d8ec13a48c69a3a66a5e8b90af3d62798b296b852e6465"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "retainedSource": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-type-independent-accept-oct29/retained-evidence/test",
+  "canonical": "test/toyvm-rename-type-independent-accept-oct29/canonical.json",
+  "files": {
+    "accept.py": {
+      "bytes": 9945,
+      "sha256": "f3400bc5031dc9fa39ae1e58489d7f975aa2c6c4aa21e0018524f3265785d974"
+    },
+    "acceptance.json": {
+      "bytes": 1592,
+      "sha256": "70ed829647c2abac3cae48d5e9bf1b45ca614df03be9d9919ebc0e0d68d3a7c4"
+    },
+    "canonical.json": {
+      "bytes": 13023,
+      "sha256": "0fc82c35e044e08239cc19fe4e39d47372449829987fd4ada186c9d1bfc8fae4"
+    },
+    "original-reproducer.json": {
+      "bytes": 1967,
+      "sha256": "3ab4f2703d8abbbde67c1fc27a45bcf1b34b181acb78bf86003ea39c564abfc6"
+    },
+    "publish.py": {
+      "bytes": 3443,
+      "sha256": "068e9b337b57ed3fd76f2a7258e7929baae39b12c720b4c12c6190025dcd8fd8"
+    },
+    "report.md": {
+      "bytes": 3714,
+      "sha256": "14c21bcb2b19b8714326fa62aa0a38fc511d2ada53522d18c4e79a5c4c2a08e2"
+    },
+    "reproduce.py": {
+      "bytes": 976,
+      "sha256": "14f2c2088171ce8837493d78ab056f260507410ba2d647a60571e43b685c58b3"
+    },
+    "seal.py": {
+      "bytes": 3532,
+      "sha256": "0a6d7bd0eb42a55874b0b1a1ec02292df989ef79ecb648b24bbd02f59fd349b2"
+    }
+  },
+  "originalCanonicalFilePinsVerified": true,
+  "historicalEvidence": "All eight files copied byte-exact with original mtime. Embedded timestamps, paths, branch and receipts remain historical; they do not describe this publication session.",
+  "acceptance": "Reused recorded direct Backend.handle acceptance: 156 cases and nine sensitivity controls. No test or mutation replay.",
+  "remainingGates": [
+    "Accepted backend has old caller pin; separately reviewed caller update required",
+    "Combined backend integration",
+    "Mounted callback, browser and gameplay qualification"
+  ],
+  "runtime": "No runtime, mount, Node, Boat, browser or gameplay execution; kernel may reject before callback.",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-type-acceptance-retained-publication-oct29/root-ref-digest.json",
+  "mountConfiguration": "Not applicable: no mount argv executed",
+  "nodeStartup": "Not applicable: no Node executed",
+  "trustedGitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "box": null
+}
