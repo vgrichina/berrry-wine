@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/home/user/.ascii/bin/boat",
+    "--no-update",
+    "--json",
+    "info",
+    "bx_38g4dtgr"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-file-limit-oct29/repo",
+  "exit": 0,
+  "incident": null,
+  "wall": 0.05399666610173881,
+  "peakGroupRSS": 23281664,
+  "stdoutBytes": 1295,
+  "stderrBytes": 0
+}

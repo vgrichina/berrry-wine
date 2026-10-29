@@ -1,0 +1,95 @@
+{
+  "task": "toyvm-real-cli-file-limit-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "result": "PASS: observed isolated production per-file rejection",
+  "productionInvocations": 1,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "CLIExit": 1,
+  "accepted": false,
+  "failure": "filesystem per-file limit",
+  "stopReason": "filesystem per-file limit",
+  "attemptedWrite": 16385,
+  "acceptedWriteBytes": 0,
+  "maxPossibleLive": 28672,
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": "filesystem per-file limit",
+    "fileLimit": 16384,
+    "inodes": 2,
+    "live": 8192,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 6,
+    "peak": 8192,
+    "writeLimit": 65536,
+    "written": 0
+  },
+  "cleanupComplete": true,
+  "filesystemCleanup": {
+    "remainingMounts": [],
+    "serverExit": -15,
+    "serverStderr": "",
+    "serverStdout": "",
+    "unmountExit": 0,
+    "unmountStderr": "",
+    "unmountStdout": ""
+  },
+  "remainingIdentities": [],
+  "remainingMounts": [],
+  "externalSafety": null,
+  "browserAllowanceRemaining": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "runtimeReceipt": "runtime.json",
+  "runtimeSHA256": "49667c0ebaee38d9bbef432563351a32826772234a6faa0a206c0646b3fe68b7",
+  "lifecycle": {
+    "box": "bx_38g4dtgr",
+    "state": "stopped",
+    "originalExpiry": "2026-10-29T04:45:12.444Z",
+    "cutoff": "2026-10-29T04:40:00Z",
+    "stoppedAt": "2026-10-29T04:15:46.168Z",
+    "snapshotCompletedAt": "2026-10-29T04:15:46.132Z",
+    "snapshotAvailable": true,
+    "stop": {
+      "endedAt": "2026-10-29T04:15:46.187Z",
+      "error": null,
+      "id": "stop_ad65c115011985af",
+      "lastAttemptAt": "2026-10-29T04:15:46.187Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "actualStoppedReceipt": "stopped-final.stdout"
+  },
+  "proceduralLimitations": [
+    "Per-file gate qualification only; full resource enforcement, browser and gameplay remain unknown.",
+    "Historical missing python alias, UTF-8 slice diagnostic and absent Git metadata from the prior output task remain historical procedural limitations; not rerun here.",
+    "Initial policy/source inspections used direct shell outside the task-owned resource supervisor; one combined source inspection exceeded the requested terminal8192-byte presentation ceiling. No behavioral acceptance is inferred from those inspections.",
+    "No guest mount argv or intended mounted guest files. No guest mount parser invoked, as prohibited by this task. Production argparse parsed actual CLI flags; Boat --file uploaded the enumerated text files. No comma-bearing upload paths.",
+    "The first lifecycle info response was stopping/pending; an assertion stopped preservation script after the successful stop request. A later read-only info established completed snapshot-stop. No runtime or stop invocation was repeated.",
+    "Per-operation admission samples and physical monitors do not prove all unobserved resource controls. Positive state WAL growth is counted once against initial baseline; shared coordinator allocations remain reserved.",
+    "Process cleanup covers production-owned and externally observed PID/start identities; no external safety cleanup occurred."
+  ]
+}

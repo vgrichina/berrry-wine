@@ -1,0 +1,5 @@
+{"event":"created","hostedPorts":null,"id":"bx_38g4dtgr","org":null,"team":null,"ttlSeconds":1800}
+{"event":"state","id":"bx_38g4dtgr","state":"starting"}
+{"event":"state","id":"bx_38g4dtgr","state":"cloning"}
+{"event":"state","id":"bx_38g4dtgr","state":"ready"}
+{"archiveAfter":"2026-10-29T04:45:12.444Z","commands":{"forward":"boat forward bx_38g4dtgr --remote 3000 --local 3000","ssh":"boat ssh bx_38g4dtgr"},"desktopUrl":null,"event":"ready","id":"bx_38g4dtgr","ip":"2001:41d0:8:8d4c:100::26","state":"ready","url":"https://box-node-bafeef086141e296.on.boat.dev"}

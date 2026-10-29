@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/home/user/.ascii/bin/boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "10",
+    "bx_38g4dtgr",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import pathlib,json,base64; p=pathlib.Path(\"/tmp/tvfile\"); print(json.dumps({n:base64.b64encode((p/n).read_bytes()).decode() for n in [\"runtime.json\",\"cli.stdout\",\"cli.stderr\",\"remote-preflight.json\"]}))"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-file-limit-oct29/repo",
+  "exit": 0,
+  "incident": null,
+  "wall": 0.10680671711452305,
+  "peakGroupRSS": 23814144,
+  "stdoutBytes": 9247,
+  "stderrBytes": 0
+}

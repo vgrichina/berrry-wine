@@ -1,0 +1,46 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "guestMountArgv": [],
+  "intendedMountedFilenames": [],
+  "productionCLIParser": "unchanged argparse receives actual argv; no guest mount parser invocation",
+  "boatFiles": [
+    [
+      "/tmp/tvfile/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "/tmp/toyvm-real-cli-file-limit-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py"
+    ],
+    [
+      "/tmp/tvfile/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+      "/tmp/toyvm-real-cli-file-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py"
+    ],
+    [
+      "/tmp/tvfile/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "/tmp/toyvm-real-cli-file-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py"
+    ],
+    [
+      "/tmp/tvfile/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "/tmp/toyvm-real-cli-file-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py"
+    ],
+    [
+      "/tmp/tvfile/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+      "/tmp/toyvm-real-cli-file-limit-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py"
+    ],
+    [
+      "/tmp/tvfile/pins.json",
+      "/tmp/toyvm-real-cli-file-limit-oct29/pins.json"
+    ],
+    [
+      "/tmp/tvfile/remote_test.py",
+      "/tmp/toyvm-real-cli-file-limit-oct29/remote_test.py"
+    ],
+    [
+      "/tmp/tvfile/cancellation.json",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json"
+    ]
+  ],
+  "socketPath": "/tmp/tvfile/w/status.sock",
+  "socketBytes": 25,
+  "preflightPASS": true,
+  "limitations": [
+    "Instruction/source inspections used direct shell before owned guarded supervisor; no behavioral result inferred from them."
+  ]
+}
