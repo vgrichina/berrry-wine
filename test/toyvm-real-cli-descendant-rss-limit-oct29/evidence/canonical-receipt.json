@@ -1,0 +1,138 @@
+{
+  "PASS": true,
+  "browserAllowanceRemaining": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "causalSamples": [
+    {
+      "child": {
+        "cmd": "/usr/bin/python3 -B -c import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6) ",
+        "cpu": 0.01,
+        "pid": 6572,
+        "ppid": 6570,
+        "rss": 91357184,
+        "start": "10769",
+        "state": "R"
+      },
+      "pairRSS": 103415808,
+      "parent": {
+        "cmd": "/usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n ",
+        "cpu": 0.02,
+        "pid": 6570,
+        "ppid": 6567,
+        "rss": 12058624,
+        "start": "10766",
+        "state": "S"
+      },
+      "time": 0.11272496200000148
+    }
+  ],
+  "checks": {
+    "allowance": true,
+    "cliExit": true,
+    "cpu": true,
+    "disconnected": true,
+    "noExternalCleanup": true,
+    "observedChildContribution": true,
+    "observedIdentitiesReaped": true,
+    "peak": true,
+    "reason": true,
+    "rejected": true,
+    "treeCleanup": true,
+    "wall": true
+  },
+  "cliExit": 1,
+  "cpuSeconds": 0.13121,
+  "cutoffUTC": "2026-10-29T04:50:00Z",
+  "expiry": "2026-10-29T04:50:42.899Z",
+  "lifecycle": {
+    "actualStopped": true,
+    "box": "bx_9e3d6zn5",
+    "cutoffUTC": "2026-10-29T04:50:00Z",
+    "infoExit": 0,
+    "shutdownOwner": "worker explicitly delegated",
+    "states": [
+      "stopped"
+    ],
+    "ttl": 1800
+  },
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.06,
+      "finalState": null,
+      "pid": 6567,
+      "ppid": 6513,
+      "rss": 0,
+      "start": "10760",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 6568,
+      "ppid": 6567,
+      "rss": 14155776,
+      "start": "10763",
+      "state": "S"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 6570,
+      "ppid": 6567,
+      "rss": 0,
+      "start": "10766",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 6572,
+      "ppid": 6567,
+      "rss": 0,
+      "start": "10769",
+      "state": "Z"
+    }
+  ],
+  "observerLimitation": "Substring classifier included CLI/confine embedded argv; offline assessment joins authoritative owned PID/start identities and exact executable command prefixes. Original evidence retained; one invocation only.",
+  "originalObserverVerdict": false,
+  "peakRSS": 127926272,
+  "runtimeSHA256": "3d1c80b7d334feb0046d1318ac9519bab2a2ec6e2c7f500dc4e39d28b1c09a99",
+  "scope": "Bounded ordinary waiting-parent/single-child RSS aggregation only; arbitrary escaped-descendant completeness, full-resource/browser/gameplay remain UNKNOWN.",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "stopReason": "aggregate RSS limit",
+  "task": "toyvm-real-cli-descendant-rss-limit-oct29",
+  "wallSeconds": 0.0858193380000074
+}

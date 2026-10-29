@@ -1,0 +1,11 @@
+{
+  "actualStopped": true,
+  "box": "bx_9e3d6zn5",
+  "cutoffUTC": "2026-10-29T04:50:00Z",
+  "infoExit": 0,
+  "shutdownOwner": "worker explicitly delegated",
+  "states": [
+    "stopped"
+  ],
+  "ttl": 1800
+}

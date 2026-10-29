@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "stop",
+    "bx_9e3d6zn5"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-descendant-rss-limit-oct29",
+  "exit": 0,
+  "incident": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 1559,
+  "wall": 0.21271612402051687
+}

@@ -1,0 +1,728 @@
+{
+  "admission": {
+    "MemAvailable": 7402463232,
+    "blockSize": 4096,
+    "f_bavail": 14272308
+  },
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvdrss/cancellation.json",
+    "--work",
+    "/tmp/tvdrss/w",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "16384",
+    "--rss-limit",
+    "67108864",
+    "--cpu-limit",
+    "4",
+    "--wall-limit",
+    "8",
+    "--output-limit",
+    "4096",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n"
+  ],
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "causalSamples": [
+    {
+      "aggregate": 138805248,
+      "child": {
+        "cmd": "/usr/bin/python3 -B -c import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6) ",
+        "cpu": 0.01,
+        "pid": 6572,
+        "ppid": 6570,
+        "rss": 91357184,
+        "start": "10769",
+        "state": "R"
+      },
+      "parent": {
+        "cmd": "/usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n ",
+        "cpu": 0.02,
+        "pid": 6570,
+        "ppid": 6567,
+        "rss": 12058624,
+        "start": "10766",
+        "state": "S"
+      },
+      "t": 0.11272496200000148
+    }
+  ],
+  "childIdentities": [
+    {
+      "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py /tmp/tvdrss/w/domain /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n ",
+      "cpu": 0.0,
+      "pid": 6570,
+      "ppid": 6567,
+      "rss": 11403264,
+      "start": "10766",
+      "state": "R"
+    },
+    {
+      "cmd": "/usr/bin/python3 -B -c import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6) ",
+      "cpu": 0.0,
+      "pid": 6572,
+      "ppid": 6570,
+      "rss": 10354688,
+      "start": "10769",
+      "state": "R"
+    }
+  ],
+  "cliExit": 1,
+  "cliStderr": "",
+  "cliStdout": "{\"accepted\": false, \"accountingAccepted\": true, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 0.13121, \"exit\": -15, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": null, \"fileLimit\": 16384, \"inodes\": 1, \"live\": 4096, \"liveLimit\": 32768, \"openHandles\": 0, \"operations\": 1, \"peak\": 4096, \"writeLimit\": 65536, \"written\": 0}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"\", \"encoding\": \"base64\"}, \"owned\": [[6570, \"10766\"], [6572, \"10769\"]], \"peakRSS\": 127926272, \"reapedPeakRSS\": 111280128, \"sampledPeakRSS\": 127926272, \"stopReason\": \"aggregate RSS limit\", \"wallSeconds\": 0.0858193380000074}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": false, \"cleanupComplete\": true, \"failures\": [\"supervisor stopped or stop receipt missing\", \"resource receipt rejected: peakRSS\", \"child did not succeed\"]}\n",
+  "elapsed": 0.16071055099999398,
+  "executable": {
+    "path": "/usr/bin/python3",
+    "realpath": "/usr/bin/python3.12",
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  },
+  "fixtureIdentities": [
+    {
+      "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+      "cpu": 0.0,
+      "pid": 6567,
+      "ppid": 6513,
+      "rss": 9175040,
+      "start": "10760",
+      "state": "R"
+    },
+    {
+      "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py /tmp/tvdrss/w/domain /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n ",
+      "cpu": 0.0,
+      "pid": 6570,
+      "ppid": 6567,
+      "rss": 11403264,
+      "start": "10766",
+      "state": "R"
+    }
+  ],
+  "fixtureSHA256": "1a6dac671cc01aaa9abe4e0dd4ef05c6615be75c068764511d6c38459824212a",
+  "gatePASS": false,
+  "guestMountParserInvoked": false,
+  "mountArgv": [],
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.06,
+      "finalState": null,
+      "pid": 6567,
+      "ppid": 6513,
+      "rss": 0,
+      "start": "10760",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 6568,
+      "ppid": 6567,
+      "rss": 14155776,
+      "start": "10763",
+      "state": "S"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 6570,
+      "ppid": 6567,
+      "rss": 0,
+      "start": "10766",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 6572,
+      "ppid": 6567,
+      "rss": 0,
+      "start": "10769",
+      "state": "Z"
+    }
+  ],
+  "pins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "remainingMounts": [],
+  "report": {
+    "accepted": false,
+    "accountingAccepted": true,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.13121,
+      "exit": -15,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": null,
+        "fileLimit": 16384,
+        "inodes": 1,
+        "live": 4096,
+        "liveLimit": 32768,
+        "openHandles": 0,
+        "operations": 1,
+        "peak": 4096,
+        "writeLimit": 65536,
+        "written": 0
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          6570,
+          "10766"
+        ],
+        [
+          6572,
+          "10769"
+        ]
+      ],
+      "peakRSS": 127926272,
+      "reapedPeakRSS": 111280128,
+      "sampledPeakRSS": 127926272,
+      "stopReason": "aggregate RSS limit",
+      "wallSeconds": 0.0858193380000074
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": true,
+    "failures": [
+      "supervisor stopped or stop receipt missing",
+      "resource receipt rejected: peakRSS",
+      "child did not succeed"
+    ]
+  },
+  "safetyCleanup": null,
+  "samples": [
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.0,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 9175040,
+          "start": "10760",
+          "state": "R"
+        }
+      ],
+      "t": 0.005689476000000582
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.01,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 15204352,
+          "start": "10760",
+          "state": "R"
+        }
+      ],
+      "t": 0.014838261999997826
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.02,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 18612224,
+          "start": "10760",
+          "state": "R"
+        }
+      ],
+      "t": 0.023606955000005314
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.02,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "R"
+        }
+      ],
+      "t": 0.03239302999999438
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.03,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.0,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 10354688,
+          "start": "10763",
+          "state": "R"
+        }
+      ],
+      "t": 0.04119608899999605
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.03,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 13369344,
+          "start": "10763",
+          "state": "R"
+        }
+      ],
+      "t": 0.04999235300000748
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.03,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 14155776,
+          "start": "10763",
+          "state": "S"
+        }
+      ],
+      "t": 0.058746509000002334
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.03,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 14155776,
+          "start": "10763",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py /tmp/tvdrss/w/domain /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n ",
+          "cpu": 0.0,
+          "pid": 6570,
+          "ppid": 6567,
+          "rss": 11403264,
+          "start": "10766",
+          "state": "R"
+        }
+      ],
+      "t": 0.06746714199999815
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.03,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 14155776,
+          "start": "10763",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n ",
+          "cpu": 0.01,
+          "pid": 6570,
+          "ppid": 6567,
+          "rss": 7602176,
+          "start": "10766",
+          "state": "R"
+        }
+      ],
+      "t": 0.07713392099999794
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.03,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 14155776,
+          "start": "10763",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n ",
+          "cpu": 0.02,
+          "pid": 6570,
+          "ppid": 6567,
+          "rss": 11534336,
+          "start": "10766",
+          "state": "R"
+        }
+      ],
+      "t": 0.08623070999999527
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.04,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 14155776,
+          "start": "10763",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n ",
+          "cpu": 0.02,
+          "pid": 6570,
+          "ppid": 6567,
+          "rss": 12058624,
+          "start": "10766",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6) ",
+          "cpu": 0.0,
+          "pid": 6572,
+          "ppid": 6570,
+          "rss": 10354688,
+          "start": "10769",
+          "state": "R"
+        }
+      ],
+      "t": 0.09508004399999948
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.04,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 14155776,
+          "start": "10763",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n ",
+          "cpu": 0.02,
+          "pid": 6570,
+          "ppid": 6567,
+          "rss": 12058624,
+          "start": "10766",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6) ",
+          "cpu": 0.0,
+          "pid": 6572,
+          "ppid": 6570,
+          "rss": 48627712,
+          "start": "10769",
+          "state": "R"
+        }
+      ],
+      "t": 0.10390419099999804
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.04,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 14155776,
+          "start": "10763",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable, \"-B\", \"-c\", \"import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6)\"])\nchild.wait()\n ",
+          "cpu": 0.02,
+          "pid": 6570,
+          "ppid": 6567,
+          "rss": 12058624,
+          "start": "10766",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import time; allocation = bytearray(96 * 1024 * 1024); time.sleep(6) ",
+          "cpu": 0.01,
+          "pid": 6572,
+          "ppid": 6570,
+          "rss": 91357184,
+          "start": "10769",
+          "state": "R"
+        }
+      ],
+      "t": 0.11272496200000148
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.04,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 14155776,
+          "start": "10763",
+          "state": "S"
+        },
+        {
+          "cmd": "",
+          "cpu": 0.02,
+          "pid": 6570,
+          "ppid": 6567,
+          "rss": 0,
+          "start": "10766",
+          "state": "Z"
+        },
+        {
+          "cmd": "",
+          "cpu": 0.02,
+          "pid": 6572,
+          "ppid": 6567,
+          "rss": 0,
+          "start": "10769",
+          "state": "Z"
+        }
+      ],
+      "t": 0.12173994799999832
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.04,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 14155776,
+          "start": "10763",
+          "state": "S"
+        },
+        {
+          "cmd": "",
+          "cpu": 0.02,
+          "pid": 6570,
+          "ppid": 6567,
+          "rss": 0,
+          "start": "10766",
+          "state": "Z"
+        },
+        {
+          "cmd": "",
+          "cpu": 0.02,
+          "pid": 6572,
+          "ppid": 6567,
+          "rss": 0,
+          "start": "10769",
+          "state": "Z"
+        }
+      ],
+      "t": 0.1304932019999967
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.04,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdrss/w/domain /tmp/tvdrss/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6568,
+          "ppid": 6567,
+          "rss": 14155776,
+          "start": "10763",
+          "state": "S"
+        }
+      ],
+      "t": 0.13912040900000022
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvdrss/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdrss/cancellation.json --work /tmp/tvdrss/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 67108864 --cpu-limit 4 --wall-limit 8 --output-limit 4096 -- /usr/bin/python3 -B -c import subprocess, sys\nchild = subprocess.Popen([sys.executable,",
+          "cpu": 0.06,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 21233664,
+          "start": "10760",
+          "state": "R"
+        }
+      ],
+      "t": 0.1480795500000056
+    },
+    {
+      "rows": [
+        {
+          "cmd": "",
+          "cpu": 0.06,
+          "pid": 6567,
+          "ppid": 6513,
+          "rss": 0,
+          "start": "10760",
+          "state": "Z"
+        }
+      ],
+      "t": 0.15674777499999948
+    }
+  ],
+  "task": "toyvm-real-cli-descendant-rss-limit-oct29"
+}

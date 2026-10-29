@@ -1,0 +1,15 @@
+# Ordinary-child aggregate RSS acceptance
+
+PASS from one unmodified pinned production qualify_accounted.py CLI invocation with synchronous FUSE. Candidate 5a88ca099b962e946160afd2d4d71a950bf46db3; five exact byte/hash source pins are in evidence/canonical-receipt.json. No production source was changed.
+
+The confined Python parent starts exactly one ordinary Python child with subprocess.Popen, then waits. The child constructs one 96 MiB bytearray and sleeps for six seconds; there is no workload filesystem/network access or session manipulation. Production terminates allocation before completion. At 0.112725 seconds external observation saw parent 6570/start10766 sleeping at 12,058,624 bytes RSS and child 6572/start10769 at 91,357,184 bytes. Their simultaneous sum alone was 103,415,808 bytes, above 67,108,864. The child causally contributes the threshold crossing while its parent stays small.
+
+CLI exit 1, accepted false; authoritative stopReason aggregate RSS limit, sampled peak 127,926,272 bytes, CPU 0.13121 seconds, wall 0.085819338 seconds. Exact separate argv and executable hash are retained in runtime-result.json. All four externally observed PID/start identities disappeared, both authoritative confined identities were reaped, FUSE unmounted with no remaining mounts and zero open handles. No external safety cleanup occurred. Browser allowance remains CPU35.353183/wall101.495550694/capture1.
+
+The original observer gatePASS=false is preserved: its broad substring classifier matched embedded CLI/confine argv as extra fixture identities. assess.py evaluates the already captured samples against authoritative owned PID/start identities and exact command prefixes. This is offline analysis, with no second invocation or workload repair. The first post-stop info response was stopping; a later info confirms stopped and snapshot completed.
+
+Boat bx_9e3d6zn5 was newly created with TTL1800 at 04:20:42.899 UTC (nominal expiry04:50:42.899; task cutoff04:50). Delegated snapshot-stop completed04:21:15.022 UTC; actual stopped04:21:14.999. Shutdown evidence is retained.
+
+Limits: task-owned parent DATAsoft128MiB with original hard unchanged; Git children256MiB, Python128MiB, physical parent128MiB/group512MiB, CPU90/wall120, file12MiB/capture2MiB; 24MiB allocation with sourceGit3/evidence1/WAL8/publication3/uncertainty9. Fresh admission checks are retained. Existing quota and source checks reused, own startup negative controls rerun. No guest mount argv exists, so no filename-bearing guest mount/parser configuration is applicable; Boat staging --file argv enumerates all intended files (none comma-bearing) and was accepted by the supported API. Only supported API execution was used.
+
+Scope is this bounded ordinary child, not arbitrary escaped descendants, full resource qualification, browser or gameplay. Prior single-process/per-file cases were not rerun. The original procedural limitations remain; this receipt supplies no missing arbitrary-descendant proof. Oversized shared messageboard (13,802,996 bytes) is handled with a concise publication note for coordinator append.

@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-real-cli-descendant-rss-limit-oct29/repo",
+    "rev-parse",
+    "--absolute-git-dir"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-descendant-rss-limit-oct29/repo",
+  "exit": 0,
+  "incident": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 57,
+  "wall": 0.025140766985714436
+}
