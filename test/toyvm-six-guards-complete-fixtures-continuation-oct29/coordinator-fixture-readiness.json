@@ -1,0 +1,93 @@
+{
+  "originalReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-guards-compatible-fixture-continuation-oct29/retained-evidence/worker-receipt.json",
+  "originalReceiptPin": {
+    "bytes": 10732,
+    "sha256": "583bcf236921637e3d33bc305a118c9c250d044fb087277a93125506610f4b56"
+  },
+  "gateDerivedFrom": "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-guards-compatible-fixture-continuation-oct29/retained-evidence/e/readdir-retained.stdout",
+  "rawPin": {
+    "bytes": 1571,
+    "sha256": "ae12c8b504716b9c3e3a094f06be28ac0ac5afc0b8abfeae494343354dfac332"
+  },
+  "jsonLine": 2,
+  "gate": {
+    "bytes": 1703,
+    "sha256": "4c4196f66577629292f2e9134aac748811660a37f0d350e555fbe56ea9c74dbe"
+  },
+  "assertionsUnchanged": true,
+  "relocations": [
+    {
+      "path": "independent.py",
+      "before": {
+        "bytes": 7943,
+        "sha256": "4e2c0500ebd272699cada044557fba7bcbc798f783a17e845a74716a05c7f76d"
+      },
+      "after": {
+        "bytes": 7941,
+        "sha256": "8c5fc1155699be0b2fbc43d09fd81601c18559f28fc83b4269b67870a6e6d9db"
+      },
+      "change": "owned absolute paths only"
+    },
+    {
+      "path": "parent/accept.py",
+      "before": {
+        "bytes": 6652,
+        "sha256": "cfebbe17e386e6e07f31ae0579986f882aee20a5d96b020fe6e7976b28a4791b"
+      },
+      "after": {
+        "bytes": 6651,
+        "sha256": "49707fc403e998912f1792123ae99041f3c96f8803f4b6116917791b8d4ba8b2"
+      },
+      "change": "owned absolute paths only"
+    },
+    {
+      "path": "parent/independent.py",
+      "before": {
+        "bytes": 7747,
+        "sha256": "008b56d48d3177cb1a821204659d5973dc0617f4940ec812dcbb89a200766e82"
+      },
+      "after": {
+        "bytes": 7746,
+        "sha256": "881137fcbf0b347fe8af9ac6ad349e24899bc78c6063ff45f091e3ad91b05ff5"
+      },
+      "change": "owned absolute paths only"
+    },
+    {
+      "path": "parent/original-contract.py",
+      "before": {
+        "bytes": 8297,
+        "sha256": "cbc1e53629f4105fc5846438227ba15a750830c72bfd7c2c0afc2fa6a10c3bb1"
+      },
+      "after": {
+        "bytes": 8296,
+        "sha256": "01d770ba11f24a7bd746d8f5df62123c13c4326f1d380858bc5b9662ad359332"
+      },
+      "change": "owned absolute paths only"
+    },
+    {
+      "path": "setattr/verify.py",
+      "before": {
+        "bytes": 8830,
+        "sha256": "9f313a0efb55c0d05a644f3450d69a805a0db7afcc477dc21744ed068acb6be8"
+      },
+      "after": {
+        "bytes": 8829,
+        "sha256": "6b1edf768aaf2876c5007ff3bbcc151c31f996130c2118472278c94ccee9432f"
+      },
+      "change": "owned absolute paths only"
+    },
+    {
+      "path": "setattr/independent.py",
+      "before": {
+        "bytes": 9322,
+        "sha256": "44d0282069767a5a2d717f35b7ffeddeace2c721c5172228ecefad6b38705d22"
+      },
+      "after": {
+        "bytes": 9321,
+        "sha256": "7925fd0ebd61c944e5b4d255dff4bd31ddb892f2ae8874233c23e75eb47ee7cb"
+      },
+      "change": "owned absolute paths only"
+    }
+  ],
+  "scope": "Packaging of actual previously passed output, not a fresh execution"
+}

@@ -1,0 +1,247 @@
+{
+  "scope": "direct Backend.handle only; no mounted/kernel/browser/gameplay claims",
+  "candidate": "545a51f4a11ac2e88293ac2c8dcc6be3b9ceb124",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12482,
+      "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "results": [
+    {
+      "case": "collision-and-controls",
+      "passed": true,
+      "details": {
+        "rejected": 8,
+        "successful": 8,
+        "rootCharge": 4096,
+        "inodeCharge": 4096
+      }
+    },
+    {
+      "case": "35-missing-parent",
+      "passed": true,
+      "details": null
+    },
+    {
+      "case": "35-nondirectory-parent",
+      "passed": true,
+      "details": null
+    },
+    {
+      "case": "9-missing-parent",
+      "passed": true,
+      "details": null
+    },
+    {
+      "case": "9-nondirectory-parent",
+      "passed": true,
+      "details": null
+    }
+  ],
+  "mutations": [
+    {
+      "name": "omit-collision-check",
+      "rejected": true,
+      "sha256": "27dd31ed4457c8c6afe1cb82472f09fd0d4566a6d54ca2343946868c6329d367"
+    },
+    {
+      "name": "wrong-collision-errno",
+      "rejected": true,
+      "sha256": "8c4b4832c5d929b2715720eb7bda46e280d1d1b1505d25dce7919ff3b4467719"
+    },
+    {
+      "name": "charge-before-collision",
+      "rejected": true,
+      "sha256": "fc3a3e5f04b2db5474ebf7fb9b3441f209b3b2931117be81a97abf624424462c"
+    },
+    {
+      "name": "consume-inode-before-collision",
+      "rejected": true,
+      "sha256": "301fd0f603f6c39f5072700564585521c53561dc8bf41d0af3244cd2d2e410bf"
+    }
+  ],
+  "productionUnchanged": false,
+  "remainingGate": "combined repairs, caller backend pin, full CLI qualification",
+  "identityUpdate": "identity-update.json",
+  "supplementary": [
+    {
+      "case": "valid-name-preserved",
+      "op": 35,
+      "nameHex": "",
+      "passed": true
+    },
+    {
+      "case": "valid-name-preserved",
+      "op": 35,
+      "nameHex": "2e",
+      "passed": true
+    },
+    {
+      "case": "valid-name-preserved",
+      "op": 35,
+      "nameHex": "2e2e",
+      "passed": true
+    },
+    {
+      "case": "valid-name-preserved",
+      "op": 35,
+      "nameHex": "612f62",
+      "passed": true
+    },
+    {
+      "case": "valid-name-preserved",
+      "op": 35,
+      "nameHex": "78787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878",
+      "passed": true
+    },
+    {
+      "case": "parent-before-full-budget",
+      "op": 35,
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "case": "parent-before-full-budget",
+      "op": 35,
+      "kind": "nondirectory",
+      "passed": true
+    },
+    {
+      "case": "valid-name-preserved",
+      "op": 9,
+      "nameHex": "",
+      "passed": true
+    },
+    {
+      "case": "valid-name-preserved",
+      "op": 9,
+      "nameHex": "2e",
+      "passed": true
+    },
+    {
+      "case": "valid-name-preserved",
+      "op": 9,
+      "nameHex": "2e2e",
+      "passed": true
+    },
+    {
+      "case": "valid-name-preserved",
+      "op": 9,
+      "nameHex": "612f62",
+      "passed": true
+    },
+    {
+      "case": "valid-name-preserved",
+      "op": 9,
+      "nameHex": "78787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878",
+      "passed": true
+    },
+    {
+      "case": "parent-before-full-budget",
+      "op": 9,
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "case": "parent-before-full-budget",
+      "op": 9,
+      "kind": "nondirectory",
+      "passed": true
+    },
+    {
+      "case": "35-populated-file-parent",
+      "passed": true
+    },
+    {
+      "case": "35-populated-missing-parent",
+      "passed": true
+    },
+    {
+      "case": "9-populated-file-parent",
+      "passed": true
+    },
+    {
+      "case": "9-populated-missing-parent",
+      "passed": true
+    },
+    {
+      "case": "unlink-directory-guard",
+      "passed": true
+    },
+    {
+      "case": "rmdir-file-guard",
+      "passed": true
+    },
+    {
+      "case": "rmdir-nonempty-guard",
+      "passed": true
+    },
+    {
+      "case": "unlink-missing-guard",
+      "passed": true
+    },
+    {
+      "case": "unlinked-open-payload-collection",
+      "passed": true
+    }
+  ],
+  "parentMutations": [
+    {
+      "name": "missingparent-guard",
+      "rejected": true,
+      "failingCases": [
+        "35-missing",
+        "9-missing"
+      ],
+      "sha256": "e7d2d0f06baf61c6024498d524881b7963b922ecf2681e6d4255215b5321354b"
+    },
+    {
+      "name": "nondirectory-guard",
+      "rejected": true,
+      "failingCases": [
+        "35-nondirectory",
+        "9-nondirectory"
+      ],
+      "sha256": "9e2115118b87c45bb09f42a2fc0b607a4eafb8c51e8c896b24768f4d3e3ff2cd"
+    },
+    {
+      "name": "late-directory-check",
+      "rejected": true,
+      "failingCases": [
+        "35-nondirectory",
+        "9-nondirectory"
+      ],
+      "sha256": "7331af96f1a4646a83c2f34286e19d53116bbc7aefcec737c265624470cc765e"
+    },
+    {
+      "name": "late-parent-check",
+      "rejected": true,
+      "failingCases": [
+        "35-missing",
+        "35-nondirectory",
+        "9-missing",
+        "9-nondirectory"
+      ],
+      "sha256": "f6b262a134755a478df4134fa65a52906f5028ed8bdacd0ef35e29b861ca5f52"
+    }
+  ],
+  "strict": true,
+  "missingParentErrno": "proposed internal direct-handler contract; not proven public kernel requirement"
+}

@@ -1,0 +1,536 @@
+{
+  "task": "toyvm-six-guards-complete-fixtures-continuation-oct29",
+  "base": "545a51f4a11ac2e88293ac2c8dcc6be3b9ceb124",
+  "productionPins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12482,
+      "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "publicationOnly": true,
+  "testsReplayed": false,
+  "productionEdited": false,
+  "reusedPassingGroups": {
+    "readdir-independent": "7329 wire cases, 10 corrupt-state EIO controls, 7 source mutants rejected",
+    "setattr-repaired": "151 invalid cases, 24 valid controls, 5 focused regressions, unchanged binary reproducer, 2 source mutants rejected",
+    "setattr-independent": "2400 independent cases, 2 source mutants rejected",
+    "parent-strict": "4 parent cases, 8 collisions, 8 valid creations, 23 supplementary cases, 4 collision and 4 parent mutants rejected",
+    "parent-independent": "26 independent cases, 4 source mutants rejected",
+    "four-interactions": "24 checks",
+    "six-interactions": "328 checks through exact pinned production handle, rename opcodes 12 and 45"
+  },
+  "previouslyPassed": {
+    "source-boundary": "Unchanged rename-type reproducer, explicit absolute candidate source argument; errno21/20 and namespace/accounting preserved; first behavioral operation.",
+    "rename-type-accept": "156 cases; nine source mutants rejected",
+    "cycle-contract": "14 cases; 16 observation-oracle controls rejected",
+    "cycle-independent": "24 cases; four source mutants rejected",
+    "unlink-regression": "14 cases; 12 oracle mutations rejected"
+  },
+  "scope": "Offline direct Backend.handle verification; no mount, kernel, browser or gameplay qualification",
+  "remainingGate": "Fresh independent SIX-candidate acceptance before callers/main; full CLI qualification remains separate",
+  "retainedArtifacts": {
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/accept.py": {
+      "bytes": 7619,
+      "sha256": "995a378acfe6febb8abb6a6bc01b9910ccaf37151d4837834d48442e44ac1008"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/canonical.json": {
+      "bytes": 206611,
+      "sha256": "fafa6e38c5218e136e8d771217d4d1f306ea27d03874d425af6b8193bac062a7"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/contract.py": {
+      "bytes": 7008,
+      "sha256": "bbbc80d984fa962adb8c4bdff0af39cf74623e4ac4c9caeaae677f85f818f79a"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/coordinator-fixture-readiness.json": {
+      "bytes": 3035,
+      "sha256": "b9eb9bd7e0512f9a8e8773b895ceff0aa4824c368b5de9a74d57a1bdec67c9c6"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/copy-receipt.json": {
+      "bytes": 379,
+      "sha256": "e772f876791d80e34a4b152ec22d1a877d0ec79f859f7b023b35009c4964e675"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/current-dispatch.json": {
+      "bytes": 3351,
+      "sha256": "e7db172c1c63f5576344ebeaf2da9b5089ea49f2a277eae6ca7e008ba685590a"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/cycle-contract.py": {
+      "bytes": 8447,
+      "sha256": "e6511ec2b76d521d695a2d625a704a7c3abc324277a394803b58cdd9788cbbcd"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/cycle-independent.py": {
+      "bytes": 6573,
+      "sha256": "3eff69f3f049c1ea444666098927823dde0e036bc37ed203dd356c17af9089ec"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/fixture-equivalence.json": {
+      "bytes": 6507,
+      "sha256": "1a2db5071936ffc56360b2f27b2707b366a05ad595d1fa978bbd7154d9c3b6df"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/fixture-equivalence.py": {
+      "bytes": 2628,
+      "sha256": "3d5b936328fcfc8c4eb7db50123082747533e42fa8da791ab6f23ea05383d47e"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/fixture.json": {
+      "bytes": 474,
+      "sha256": "1836abfcc48c568c2c78c0821464446c228e189aa63cf0cfc0a5b4c945f39bfe"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/four-interactions.json": {
+      "bytes": 2324,
+      "sha256": "6ba90d38960eb836b66325ab9ff1e5d5f07e1c03a17b42720613af72096d3f7b"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/four-interactions.py": {
+      "bytes": 3842,
+      "sha256": "019ec867f32f192ab60fe5545ad6f4a8b8f6eb49712cbcae610b144759d0be10"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/gate-results.json": {
+      "bytes": 1703,
+      "sha256": "4c4196f66577629292f2e9134aac748811660a37f0d350e555fbe56ea9c74dbe"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/independent-results.json": {
+      "bytes": 5513,
+      "sha256": "81f2912feddd8b13ed55285f802e46a0c9fbd91af11221f47a97b27a6239ddf7"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/independent.py": {
+      "bytes": 7941,
+      "sha256": "8c5fc1155699be0b2fbc43d09fd81601c18559f28fc83b4269b67870a6e6d9db"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/mutants/offset-cookie.py": {
+      "bytes": 12480,
+      "sha256": "f4e1e81cf6e52fceb2ffbd2077c1ff7e34c0591ea4e8a8177ce4be1cc8b26c28"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/mutants/offset-skip.py": {
+      "bytes": 12483,
+      "sha256": "c41c557270d3669811714660c45fb5f2732adfcf43eb530d8b14472f824e03d6"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/mutants/rootconstant.py": {
+      "bytes": 12477,
+      "sha256": "c91e851312dfb84adb6c46564cfd558f5e2e05ac23340d723da31f1b004943ff"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/mutants/wrong-dot-type.py": {
+      "bytes": 12482,
+      "sha256": "6bedd25982ef28ea34acadedc3c05abdca885fc0793ec7ba526fd9ddab0e7cc0"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/mutants/wrong-name-length.py": {
+      "bytes": 12484,
+      "sha256": "efdb992ba06db85087893fd36a9519fa78fde3557b718198f0696540274e205d"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/mutants/wrongdot.py": {
+      "bytes": 12480,
+      "sha256": "b283c963f52331a0a990e7b735596bc87173abed993e46cc2abdaa1273724175"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/mutants/wrongparent.py": {
+      "bytes": 12475,
+      "sha256": "fad3d8cbe0cc904d4f822fbc63aaf3d94850b4444545207877471cc6cbeaea24"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/accept.py": {
+      "bytes": 6651,
+      "sha256": "49707fc403e998912f1792123ae99041f3c96f8803f4b6116917791b8d4ba8b2"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/baseline-results.json": {
+      "bytes": 4619,
+      "sha256": "4b08d5fe2be0e725f395a62aa8006980d5528e3ea573719001321a6fe54d4161"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/identity-update.json": {
+      "bytes": 1572,
+      "sha256": "c9139c4e68ade7615d63cf04663e779b42b7b887677b51c20b72958b9375ba0a"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/independent-mutants/charge-before-missing-guard.py": {
+      "bytes": 12490,
+      "sha256": "f6b262a134755a478df4134fa65a52906f5028ed8bdacd0ef35e29b861ca5f52"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/independent-mutants/directory-guard-after-allocation.py": {
+      "bytes": 12482,
+      "sha256": "0a67dd08b59ee349ec175ff1e52bb6e4509349cfb6d0e2564353c1cfba12d05a"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/independent-mutants/removed-directory-guard.py": {
+      "bytes": 12391,
+      "sha256": "9e2115118b87c45bb09f42a2fc0b607a4eafb8c51e8c896b24768f4d3e3ff2cd"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/independent-mutants/removed-missing-guard.py": {
+      "bytes": 12416,
+      "sha256": "ff203924ea73f1358898c457416bed7b2a134e2b4de6b24e0a25a161f7c9bafd"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/independent-results.json": {
+      "bytes": 6616,
+      "sha256": "e2de89a12635a75ddae55458e25ea7190175f27598a504bba300c49466a89122"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/independent.py": {
+      "bytes": 7746,
+      "sha256": "881137fcbf0b347fe8af9ac6ad349e24899bc78c6063ff45f091e3ad91b05ff5"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/original-contract.py": {
+      "bytes": 8296,
+      "sha256": "01d770ba11f24a7bd746d8f5df62123c13c4326f1d380858bc5b9662ad359332"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/results.json": {
+      "bytes": 7003,
+      "sha256": "7b559d28a725076184c792142d432281a0d77a34d1c09876e191070e3cf42944"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/parent/source-pins.json": {
+      "bytes": 904,
+      "sha256": "114c7b18d43246c72cffd419501a521e9140123ecd90c57200bf08ad8e921856"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/pin-update.json": {
+      "bytes": 348,
+      "sha256": "e0f61c3ae8ab7970b6b1ff2aca2e13b55e6f85c8cd4d69542cec7b1b7bc78dbe"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/provenance.json": {
+      "bytes": 37538,
+      "sha256": "a51c1c3c3c3c382a2dd20397487d1951fa11be0c0643230aaaeb21991e64cdd9"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/rename-type-accept.py": {
+      "bytes": 9970,
+      "sha256": "12a9ada82401c1585d007d7498cd4cbb7d4d6ae7e5eb45db049bc9054fc2a40e"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/rename-type-reproduce.py": {
+      "bytes": 976,
+      "sha256": "14f2c2088171ce8837493d78ab056f260507410ba2d647a60571e43b685c58b3"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/results.json": {
+      "bytes": 1703,
+      "sha256": "4c4196f66577629292f2e9134aac748811660a37f0d350e555fbe56ea9c74dbe"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/setattr/baseline.json": {
+      "bytes": 21857,
+      "sha256": "e085e2c575fd87a11b990c5b17b07adaf1a3981aeffe21e3206e1467bfe42a39"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/setattr/independent-results.json": {
+      "bytes": 1618,
+      "sha256": "4f00b97331e17fa89f872a420149b510f2a1444ab831acac7e287647daa6bd05"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/setattr/independent.py": {
+      "bytes": 9321,
+      "sha256": "7925fd0ebd61c944e5b4d255dff4bd31ddb892f2ae8874233c23e75eb47ee7cb"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/setattr/late-guard.py.txt": {
+      "bytes": 12482,
+      "sha256": "7fda13f1af1cfd2b438f7e95a00c8c89bcaafc920046125cb75c844969ab98f8"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/setattr/removed-guard.py.txt": {
+      "bytes": 12376,
+      "sha256": "2562d77c1ae3b38cc6da78e30d1bff1c2d74c30c5fcf1aaefb9651c3b06f02cf"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/setattr/repaired.json": {
+      "bytes": 512,
+      "sha256": "982241e48a2147d3e76247ab12f2f1b7757b6f2d2e28b624ba2051bf7efcc5e2"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/setattr/verify.py": {
+      "bytes": 8829,
+      "sha256": "6b1edf768aaf2876c5007ff3bbcc151c31f996130c2118472278c94ccee9432f"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/six-interactions.json": {
+      "bytes": 38144,
+      "sha256": "867230e4a2f01d0ff344f659c0f6cfdc24dd22f7a0b76c6b8f1e1c78d404994f"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/six-interactions.py": {
+      "bytes": 7157,
+      "sha256": "1bcca701547be01dd0d2899f96eaecb15658091d4ffcf94dea66f52a50357279"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/source-pins.json": {
+      "bytes": 904,
+      "sha256": "114c7b18d43246c72cffd419501a521e9140123ecd90c57200bf08ad8e921856"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/unlink-independent.py": {
+      "bytes": 9802,
+      "sha256": "0ceb857654489504bc685b0115423f747df957a2d1cfdab2a54d66b0afc5f09d"
+    },
+    "repo/test/toyvm-six-guards-complete-fixtures-continuation-oct29/unlink-regression.py": {
+      "bytes": 9351,
+      "sha256": "f4de0e993e54c96ec407dfb104e964c29debe4cae7b552c20602ebb72f553eea"
+    },
+    "e/after-interactions.json": {
+      "bytes": 1233,
+      "sha256": "596c31567f3f3eb85cea8352bfd7384282f3983cd2b6fad8c58ec6a49cc3d651"
+    },
+    "e/after-interactions.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/after-interactions.stdout": {
+      "bytes": 36,
+      "sha256": "b36e37671d7482a598ce898b5a2a9ed5fb1951c78c1f9623f83ae698fab8070c"
+    },
+    "e/after-parent-before-interactions.json": {
+      "bytes": 1232,
+      "sha256": "71fc1fd0fabaaf0e9e82558b0f98a88682a81c979765c229707337320ecd4296"
+    },
+    "e/after-parent-before-interactions.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/after-parent-before-interactions.stdout": {
+      "bytes": 36,
+      "sha256": "b36e37671d7482a598ce898b5a2a9ed5fb1951c78c1f9623f83ae698fab8070c"
+    },
+    "e/after-setattr-before-parent.json": {
+      "bytes": 1231,
+      "sha256": "e57dec256253a8628238781b6822191c1f378ad4b7a5ca1736d38f2bb963eb53"
+    },
+    "e/after-setattr-before-parent.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/after-setattr-before-parent.stdout": {
+      "bytes": 36,
+      "sha256": "b36e37671d7482a598ce898b5a2a9ed5fb1951c78c1f9623f83ae698fab8070c"
+    },
+    "e/authorized-diff.json": {
+      "bytes": 1020,
+      "sha256": "9b6ec3fa51f3a3ed32e371e7696991d51e5ed4b938dc2f9e91b6cbe19b079758"
+    },
+    "e/authorized-diff.stderr": {
+      "bytes": 5223,
+      "sha256": "0a54340ace2d5fc048613208f7496ec5362a66dcc101fb308c03ebe6e272829a"
+    },
+    "e/authorized-diff.stdout": {
+      "bytes": 1697,
+      "sha256": "965b03c4320c5fe9457328c1a90a9eecb0bd8b01d9b4cbe8feaa1a97b9cd6183"
+    },
+    "e/clear-authorized-skip.json": {
+      "bytes": 1002,
+      "sha256": "19632e85cbfe2c9ccd55948f64f339b7edb8d2b432328990ba257e12ed4c9fe6"
+    },
+    "e/clear-authorized-skip.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/clear-authorized-skip.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/footprint.json": {
+      "bytes": 1055,
+      "sha256": "d0cf3805bec7378bf55b33b177989ff1a3ef7a4403886c2056449a0c65d7cfaf"
+    },
+    "e/footprint.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/footprint.stdout": {
+      "bytes": 53,
+      "sha256": "328c3807b5ebf4b2820b25404065fa798fed5f55e4874444fd0752ee4076e196"
+    },
+    "e/four-interactions.json": {
+      "bytes": 893,
+      "sha256": "e30e4e48f5d44b15d1443d860713c34138f3d7f97f1483dca85bdf7a096623cd"
+    },
+    "e/four-interactions.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/four-interactions.stdout": {
+      "bytes": 39,
+      "sha256": "09b0f35a0ae62fd613513b6133dd1d1294caa8f223bf748866141eae3adab128"
+    },
+    "e/initial-git.json": {
+      "bytes": 985,
+      "sha256": "7330d294030f3ec21a6f4746a3eee94c158988dfcc5f2e45d3b3712fc807733c"
+    },
+    "e/initial-git.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/initial-git.stdout": {
+      "bytes": 233,
+      "sha256": "2c6bb709727459faf3293f211ba8cdd5b3b90ea505c6d39143764689a7776bd5"
+    },
+    "e/initial-pins.json": {
+      "bytes": 2252,
+      "sha256": "2c026b442218aa7ce10da6631d9b56442e416f3892512a42883951cb8dcc6e77"
+    },
+    "e/initial-pins.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/initial-pins.stdout": {
+      "bytes": 990,
+      "sha256": "978cac31c44244fb6920e1f973da34fa42f268de223e42e5734949ff93a21f00"
+    },
+    "e/parent-independent.json": {
+      "bytes": 893,
+      "sha256": "88ce5be60af854958b75f829f9de590230ef0e07e3b9a7c1dffafafffe61b9a3"
+    },
+    "e/parent-independent.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/parent-independent.stdout": {
+      "bytes": 80,
+      "sha256": "1fb7790325112ce8144529834c2c719b7b9ad5d258a07c1af195c34363e10787"
+    },
+    "e/parent-strict.json": {
+      "bytes": 906,
+      "sha256": "c43eb4aa5f1402aafc36a35f967e784a60095c39762431d1b20e399f0303a317"
+    },
+    "e/parent-strict.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/parent-strict.stdout": {
+      "bytes": 817,
+      "sha256": "3aa06a245843c5128dc4d0a43623d8a0142098b692ead689eab30f1631651c5d"
+    },
+    "e/pre-mutation-git.json": {
+      "bytes": 984,
+      "sha256": "4365374b6e824e2f9e956c20dc9273c98247599b3e44906ed3082687ef877df8"
+    },
+    "e/pre-mutation-git.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/pre-mutation-git.stdout": {
+      "bytes": 233,
+      "sha256": "2c6bb709727459faf3293f211ba8cdd5b3b90ea505c6d39143764689a7776bd5"
+    },
+    "e/production-diff.json": {
+      "bytes": 1019,
+      "sha256": "d825b51da610b8c65cdc85b600f26d3eaae8793344f1ffab18d1a97ae7c2bf75"
+    },
+    "e/production-diff.stderr": {
+      "bytes": 5223,
+      "sha256": "0a54340ace2d5fc048613208f7496ec5362a66dcc101fb308c03ebe6e272829a"
+    },
+    "e/production-diff.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/provenance-inspect.json": {
+      "bytes": 1326,
+      "sha256": "9b71d5da4b857d8ae45b0b77470360da13b0a1bd5edbe1030c7ec672f6666e7b"
+    },
+    "e/provenance-inspect.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/provenance-inspect.stdout": {
+      "bytes": 1014,
+      "sha256": "486e2a46906732c2639fd7c029e86149d30fe3727cc297cc69dcdfb7b4dec2b5"
+    },
+    "e/publication-inspect.json": {
+      "bytes": 1357,
+      "sha256": "9fa88c5182cddf0559a3ecdc1c95a979502a597214d8798a922119cb94404f53"
+    },
+    "e/publication-inspect.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/publication-inspect.stdout": {
+      "bytes": 4285,
+      "sha256": "8559955e5380a9cd457d18101698b4573c66a9211afb74c302fa9936282a23a2"
+    },
+    "e/readdir-independent.json": {
+      "bytes": 888,
+      "sha256": "9981ac0748bd81864c96a19c8f126e0d73bf45edc53ca3b47ea9b3f88f986518"
+    },
+    "e/readdir-independent.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/readdir-independent.stdout": {
+      "bytes": 299,
+      "sha256": "51c29b7ff3eb8193df4fe4163909fbb72d6cbd44f4257d08e2dd205ef181e948"
+    },
+    "e/setattr-independent.json": {
+      "bytes": 897,
+      "sha256": "c0e56a1e8e7bbd0a7302712f1151852493ea95cd5cc6695e3de9b301b5270202"
+    },
+    "e/setattr-independent.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/setattr-independent.stdout": {
+      "bytes": 1390,
+      "sha256": "16b1f6fc173c651968daa0cfaf13d48b6a9bdada7dcd9d4ae318d9a6c03986af"
+    },
+    "e/setattr-repaired.json": {
+      "bytes": 907,
+      "sha256": "3e8fc0ccb4cc71d4cc1b885675840bc325fd27f114f540bd5f4d02a52efd2577"
+    },
+    "e/setattr-repaired.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/setattr-repaired.stdout": {
+      "bytes": 434,
+      "sha256": "552c64499c8d2f82dc507903065746327437c73064a7e657ccd7de3f14a56d1a"
+    },
+    "e/six-interactions.json": {
+      "bytes": 891,
+      "sha256": "88a582e5afd2e42a882f57e6daa69a5097093c7e653c2c64b262cd60b9497d32"
+    },
+    "e/six-interactions.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/six-interactions.stdout": {
+      "bytes": 61,
+      "sha256": "9f1f10ac7649bf84c03dbd3e8728b8a090a2e51c5e63bb8cf05bcef48bed0f99"
+    },
+    "e/status.json": {
+      "bytes": 936,
+      "sha256": "3f3904eb4601643292b41ce00a931636063eeb5fdc923af6dfe19c6a54542c0e"
+    },
+    "e/status.stderr": {
+      "bytes": 5223,
+      "sha256": "0a54340ace2d5fc048613208f7496ec5362a66dcc101fb308c03ebe6e272829a"
+    },
+    "e/status.stdout": {
+      "bytes": 63,
+      "sha256": "e2ee385fdc729de64e26252bb52edb1d8711fb53dd4b51cb94ddb4573f294fd0"
+    },
+    "e/worker-missing-checkpoint-blocker.json": {
+      "bytes": 996,
+      "sha256": "eebff7eef54061daf4b4427163831f079de6d29d8b3da1942b4a4f5a633ac6d5"
+    },
+    "e/write-six-fixture.json": {
+      "bytes": 9037,
+      "sha256": "3ccbacc33a56e14bf27c715b89f0feade817c7b56cc7d57e2c5fedc162a3bdc4"
+    },
+    "e/write-six-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e/write-six-fixture.stdout": {
+      "bytes": 46,
+      "sha256": "f7f618f1a36c20bb391be63a8bfc031e857e79df8454fad67e5a8ebea07e74f6"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-guards-complete-fixtures-continuation-oct29-serial-publication-dispatch.json": {
+      "bytes": 3370,
+      "sha256": "45853ce558da9ed5d182561a654648d3fcfdf90872159a017683cb30eb1874cc"
+    },
+    "/tmp/toyvm-six-guards-complete-fixtures-continuation-oct29/worker-receipt.json": {
+      "bytes": 4493,
+      "sha256": "279b6d1613c8bc42cde0290bac9ba818f69b2feeff15800447390c26060073a8"
+    },
+    "/tmp/toyvm-six-guards-complete-fixtures-continuation-oct29/limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "/tmp/toyvm-six-guards-complete-fixtures-continuation-oct29/ops.py": {
+      "bytes": 3750,
+      "sha256": "f7e0446a4e7bb42304f50bd0ad0b06ed071cf70861162d26890fce06d5cab72a"
+    },
+    "/tmp/toyvm-six-guards-complete-fixtures-continuation-oct29/prelaunch-controls.json": {
+      "bytes": 556,
+      "sha256": "8fbe793e7f84a3a8df4062f9173a32b846052c928092a9b011be2b2144f29f0e"
+    }
+  },
+  "historicalReceipt": "worker-receipt.json describes prior publication blocker, not this recovery result",
+  "privateRawEvidenceRoot": "/tmp/toyvm-six-guards-complete-fixtures-continuation-oct29",
+  "rawEvidenceCommitted": false
+}

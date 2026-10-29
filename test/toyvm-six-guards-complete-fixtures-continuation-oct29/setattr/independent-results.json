@@ -1,0 +1,47 @@
+{
+  "PASS": true,
+  "sourcePin": {
+    "bytes": 12482,
+    "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+  },
+  "groups": {
+    "invalid": 252,
+    "invalid-length-node": 36,
+    "short-valid": 4,
+    "short-size": 4,
+    "missing-supported": 3,
+    "invalid-quota-precedence": 6,
+    "supported-masks": 2048,
+    "supported-quota-sticky": 12,
+    "rounding-length-boundaries": 35
+  },
+  "total": 2400,
+  "mutants": {
+    "removed-guard": {
+      "sha256": "2562d77c1ae3b38cc6da78e30d1bff1c2d74c30c5fcf1aaefb9651c3b06f02cf",
+      "rejectedForCorruption": true,
+      "changedStateFields": [
+        "live",
+        "nodes",
+        "written"
+      ],
+      "outcome": "ok",
+      "errno": null,
+      "requestHex": "08080000a5a5a5a5a5a5a5a5a5a5a5a50110000000000000a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+    },
+    "late-guard": {
+      "sha256": "7fda13f1af1cfd2b438f7e95a00c8c89bcaafc920046125cb75c844969ab98f8",
+      "rejectedForCorruption": true,
+      "changedStateFields": [
+        "live",
+        "nodes",
+        "written"
+      ],
+      "outcome": "errno",
+      "errno": 95,
+      "requestHex": "08080000a5a5a5a5a5a5a5a5a5a5a5a50110000000000000a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+    }
+  },
+  "scope": "direct exact-pinned Backend.handle op4; no mounted/kernel/CLI/runtime claims",
+  "oracle": "deepcopy all instance state except operations; each call increments operations exactly once"
+}

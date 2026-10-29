@@ -1,0 +1,229 @@
+{
+  "PASS": true,
+  "equivalentConstructions": 36,
+  "rows": [
+    {
+      "context": "root",
+      "size": 0,
+      "opens": 0,
+      "stateSHA256": "174a9be50d04bd79729463a33edf056273ba451ee57177ec10e52ef50ec7a97f"
+    },
+    {
+      "context": "root",
+      "size": 0,
+      "opens": 1,
+      "stateSHA256": "dc44b06c35bbe338d33c08f21dddd0e284d389f083958046c149f52c7a1860c4"
+    },
+    {
+      "context": "root",
+      "size": 0,
+      "opens": 2,
+      "stateSHA256": "2baba23d7cf3ce74b02b7feb160e47c1e9a369c7bc71fea6bc3a347f273a58cb"
+    },
+    {
+      "context": "root",
+      "size": 1,
+      "opens": 0,
+      "stateSHA256": "630cf09684f5dbaaa180a35da5266598bb03bc655f7d52009ed51fc749ff3e1b"
+    },
+    {
+      "context": "root",
+      "size": 1,
+      "opens": 1,
+      "stateSHA256": "351f82bcb5bdecc2e483e528384debb7a34623dd6b82dfabe7e55471e18f6b7c"
+    },
+    {
+      "context": "root",
+      "size": 1,
+      "opens": 2,
+      "stateSHA256": "24310835d6eaf8165290878e77a7e0d93f1cc6496ef77f6fac77e281b89fa15c"
+    },
+    {
+      "context": "root",
+      "size": 4096,
+      "opens": 0,
+      "stateSHA256": "3fae1f50ee35d82c8059ef2e07332cbef7921243da3efc593a6e8b0a9dda99d1"
+    },
+    {
+      "context": "root",
+      "size": 4096,
+      "opens": 1,
+      "stateSHA256": "68b3bbdb98b223a77853bfd5778796cbb6c6ddc891ec8ac15481b06cc2af92a8"
+    },
+    {
+      "context": "root",
+      "size": 4096,
+      "opens": 2,
+      "stateSHA256": "7f0ebe8e2ad43ca2c39c85a1e386ebaa1677075c11081a846c34e396c57e74a6"
+    },
+    {
+      "context": "root",
+      "size": 4097,
+      "opens": 0,
+      "stateSHA256": "6c2093f0c16bf59e8f2902027fbebcd47b6d3b6ee5ee373228d91dbb6e29f8a3"
+    },
+    {
+      "context": "root",
+      "size": 4097,
+      "opens": 1,
+      "stateSHA256": "9150139362ae99918f5135db20b209b868e4a0253b60a42534222904eef19efe"
+    },
+    {
+      "context": "root",
+      "size": 4097,
+      "opens": 2,
+      "stateSHA256": "b9274efe5d3bf7ebdcb545b7727532fd3215d34fbe26da67afebdc14f3fb9688"
+    },
+    {
+      "context": "cross-parent",
+      "size": 0,
+      "opens": 0,
+      "stateSHA256": "f833e5b3801f8f646b90af1f419b1f649f65aceb4c06a4a876dabd18e9f62cd2"
+    },
+    {
+      "context": "cross-parent",
+      "size": 0,
+      "opens": 1,
+      "stateSHA256": "c1fd9ecbb331d67c82e404fbf138cf8fd28cb982bb32aef96f73a34497d90eac"
+    },
+    {
+      "context": "cross-parent",
+      "size": 0,
+      "opens": 2,
+      "stateSHA256": "bf05e7e1398d21920a26814d6292f3a0b862cd2f7e5d98e8b4582767cb28cf41"
+    },
+    {
+      "context": "cross-parent",
+      "size": 1,
+      "opens": 0,
+      "stateSHA256": "dc20b8fa219fcf562f26bf5610ba92fcfa3795779030c3d05e4ff1f70b69c1ff"
+    },
+    {
+      "context": "cross-parent",
+      "size": 1,
+      "opens": 1,
+      "stateSHA256": "9cd5ef81906b026f9bde145c68ed2d9034a0d07838500e78c35d9510c6761245"
+    },
+    {
+      "context": "cross-parent",
+      "size": 1,
+      "opens": 2,
+      "stateSHA256": "a705494864337dac036e3145e8900298b63d8e467188e5ee0d7c4d5e8fa156dd"
+    },
+    {
+      "context": "cross-parent",
+      "size": 4096,
+      "opens": 0,
+      "stateSHA256": "d4053c16bdd611adadd2d900fa9d86f615090c139f07793c9072cf4fa1b188a8"
+    },
+    {
+      "context": "cross-parent",
+      "size": 4096,
+      "opens": 1,
+      "stateSHA256": "925f9585942cb0eb0dd77195ace82cc3197806252a1648315126eab3b5259da9"
+    },
+    {
+      "context": "cross-parent",
+      "size": 4096,
+      "opens": 2,
+      "stateSHA256": "65bc507daf4e8119644f1768c98bfa549ceadb050f0a669c98c01e684c0702cb"
+    },
+    {
+      "context": "cross-parent",
+      "size": 4097,
+      "opens": 0,
+      "stateSHA256": "8bc04580b1fb26148102339784e2732e95a9e551a9fdef468064e320e93fb265"
+    },
+    {
+      "context": "cross-parent",
+      "size": 4097,
+      "opens": 1,
+      "stateSHA256": "315d75dce835be80a1dd0c094814a01a8efeb2d305c77ebccf8e8511a948841e"
+    },
+    {
+      "context": "cross-parent",
+      "size": 4097,
+      "opens": 2,
+      "stateSHA256": "4509fa503e63459fbff4fd5affae72b45f3ef8dab8a7ed3da388fffd9a904352"
+    },
+    {
+      "context": "nested",
+      "size": 0,
+      "opens": 0,
+      "stateSHA256": "90ae154b3da24fa2f803b9a34409e51526c43a584c4dfb4ad37c46cb1eb63059"
+    },
+    {
+      "context": "nested",
+      "size": 0,
+      "opens": 1,
+      "stateSHA256": "fc7b913d9e43472b90be7aa2ba7470c29e1041610916296c8074d55db3d558d4"
+    },
+    {
+      "context": "nested",
+      "size": 0,
+      "opens": 2,
+      "stateSHA256": "451dfa1b04533b515e74f0b756e889b7e4a70ad57e345ce13674faa43661606d"
+    },
+    {
+      "context": "nested",
+      "size": 1,
+      "opens": 0,
+      "stateSHA256": "c68782819805efa762432875163c3db3bede644dc0a2e8770535d3207d772fbf"
+    },
+    {
+      "context": "nested",
+      "size": 1,
+      "opens": 1,
+      "stateSHA256": "1e0c73f5c26dae5c5ef2d66af19a2c8338a5282e3c52f7554a8044448ae5f317"
+    },
+    {
+      "context": "nested",
+      "size": 1,
+      "opens": 2,
+      "stateSHA256": "450d01e7ca8ffb08c23b71752ac99b2523fbe0bfda39c801cdb7ee05e0176507"
+    },
+    {
+      "context": "nested",
+      "size": 4096,
+      "opens": 0,
+      "stateSHA256": "4ef46110bc67bd31bec4352556321685103691a9a46fb41710fbed034a14a20e"
+    },
+    {
+      "context": "nested",
+      "size": 4096,
+      "opens": 1,
+      "stateSHA256": "89335caaee94f4ae87d1089d881992ff4bf6e13ca8cbd8b079c1e060808138ba"
+    },
+    {
+      "context": "nested",
+      "size": 4096,
+      "opens": 2,
+      "stateSHA256": "f6963d5b4190f9ea6cc8e6dda99b89d69f244aaaff7f3348db563aa9c469e0e9"
+    },
+    {
+      "context": "nested",
+      "size": 4097,
+      "opens": 0,
+      "stateSHA256": "c955945ae00f66bd39ed328e0ba461d55dabd1f0652bc612dacb3edbceaf95fa"
+    },
+    {
+      "context": "nested",
+      "size": 4097,
+      "opens": 1,
+      "stateSHA256": "44c4e41ebf8d5d01aa94b2981cf28c92e953a81d57f1d40ce42f1ffc1ee0efbd"
+    },
+    {
+      "context": "nested",
+      "size": 4097,
+      "opens": 2,
+      "stateSHA256": "47f7ceb34aab300313af44ed3fe3024f71eaa24ad04fff651e821d3a4e03877c"
+    }
+  ],
+  "compared": "all vars including nodes/modes/names/links/opens/data/next/live/peak/written/handles/operations",
+  "originalFixtureENOTDIR": 36,
+  "removedNondirectoryParentGuardControl": "original construction succeeds with identical complete state",
+  "legitimateDirectoryCreation": true,
+  "deniedCreateStateUnchanged": true,
+  "sourceSha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105",
+  "scope": "in-memory direct backend only; no mount"
+}

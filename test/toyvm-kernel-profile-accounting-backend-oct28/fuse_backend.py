@@ -63,7 +63,9 @@ class Backend:
 
     def create(self,parent,name,mode):
         self.valid_name(name)
-        n=self.nodes[parent]
+        n=self.nodes.get(parent)
+        if n is None:raise OSError(errno.ENOENT,'parent missing')
+        if not stat.S_ISDIR(n['mode']):raise OSError(errno.ENOTDIR,'parent non-directory')
         if name in n['names']:raise OSError(errno.EEXIST,'exists')
         self.charge(4096);ino=self.next;self.next+=1
         self.nodes[ino]=dict(mode=mode,data=bytearray(),names={},links=1,opens=0)
@@ -97,12 +99,12 @@ class Backend:
         if op==3:return pack('2Q',0,0)+self.attr(ino)
         if op==4:
             valid=unpack('I',data)[0]
+            if valid&~(1|2|4|8|16|32|64|128|256|512|1024):raise OSError(errno.EOPNOTSUPP,'setattr flags')
             if valid&8:
                 size=unpack('Q',data,16)[0];growth=max(0,size-len(self.nodes[ino]['data']))
                 if self.written+growth>self.write_limit:self.reject('filesystem cumulative write limit')
                 self.resize(ino,size);self.written+=growth
             # chmod/chown and timestamps do not change the allocation domain.
-            if valid&~(1|2|4|8|16|32|64|128|256|512|1024):raise OSError(errno.EOPNOTSUPP,'setattr flags')
             return pack('2Q',0,0)+self.attr(ino)
         if op==9:
             mode=unpack('I',data)[0]
