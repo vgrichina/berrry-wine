@@ -1,0 +1,122 @@
+{
+  "outcome": "SCOPED_ACCEPT",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "oracle": {
+    "phases": [
+      {
+        "phase": "create-A",
+        "rootMetadata": 4096,
+        "AMetadata": 4096,
+        "APayload": 0,
+        "live": 8192,
+        "written": 0,
+        "size": 0,
+        "rejected": false
+      },
+      {
+        "phase": "grow8192",
+        "rootMetadata": 4096,
+        "AMetadata": 4096,
+        "APayload": 8192,
+        "live": 16384,
+        "written": 8192,
+        "size": 8192,
+        "rejected": false
+      },
+      {
+        "phase": "shrink0",
+        "rootMetadata": 4096,
+        "AMetadata": 4096,
+        "APayload": 0,
+        "live": 8192,
+        "written": 8192,
+        "size": 0,
+        "rejected": false
+      },
+      {
+        "phase": "regrow8192",
+        "rootMetadata": 4096,
+        "AMetadata": 4096,
+        "APayload": 8192,
+        "live": 16384,
+        "written": 16384,
+        "size": 8192,
+        "rejected": false
+      },
+      {
+        "phase": "reject8193-before-resize",
+        "rootMetadata": 4096,
+        "AMetadata": 4096,
+        "APayload": 8192,
+        "live": 16384,
+        "written": 16384,
+        "size": 8192,
+        "rejected": true
+      }
+    ],
+    "postReap": {
+      "live": 16384,
+      "peak": 16384,
+      "written": 16384,
+      "inodes": 2,
+      "openHandles": 0
+    },
+    "observation": "post-reap linked A; phase values are source inference, not instantaneous samples",
+    "directSyscallTrace": false,
+    "errnoObserved": false
+  },
+  "adversarialChecks": [
+    {
+      "case": "shrink-refund",
+      "rejected": true
+    },
+    {
+      "case": "guard-after-resize",
+      "rejected": true
+    },
+    {
+      "case": "guard-removed",
+      "rejected": true
+    },
+    {
+      "case": "accepted-growth-forged-reason",
+      "rejected": true
+    },
+    {
+      "case": "missing-regrowth-checkpoint",
+      "rejected": true
+    },
+    {
+      "case": "missing-zero-fill-proof",
+      "rejected": true
+    },
+    {
+      "case": "pin-mismatch",
+      "rejected": true
+    },
+    {
+      "case": "wrong-reason",
+      "rejected": true
+    },
+    {
+      "case": "omitted-cleanup",
+      "rejected": true
+    },
+    {
+      "case": "postreap-mislabeled-instantaneous",
+      "rejected": true
+    }
+  ],
+  "sourceFragmentScope": "exact SETATTR growth statements, instrumented resize stub; no backend replay",
+  "actualRuntime": "retained canonical one-invocation CLI/FUSE evidence; no new execution",
+  "sourceUnchanged": true,
+  "postReapObservation": true,
+  "directSyscallTrace": false,
+  "errnoObserved": false,
+  "box": {
+    "id": "bx_t32cdxka",
+    "state": "stopped",
+    "shutdownOwner": "coordinator"
+  },
+  "remainingGate": "No browser/gameplay/general resource qualification; direct syscall trace and errno unobserved; historical startup wrapper failure retained."
+}

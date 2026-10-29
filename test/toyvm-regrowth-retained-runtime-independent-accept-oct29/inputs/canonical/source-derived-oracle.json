@@ -1,0 +1,59 @@
+{
+  "sourcePin": {
+    "bytes": 10877,
+    "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+  },
+  "method": "SETATTR growth=max(0,size-old), guard before resize; shrink does not refund written; source lines97-104 and resize78-83",
+  "phases": [
+    {
+      "phase": "root",
+      "metadata": 4096,
+      "payload": 0,
+      "live": 4096,
+      "written": 0
+    },
+    {
+      "phase": "create-A",
+      "metadata": 8192,
+      "payload": 0,
+      "live": 8192,
+      "written": 0
+    },
+    {
+      "phase": "grow8192",
+      "metadata": 8192,
+      "payload": 8192,
+      "live": 16384,
+      "written": 8192
+    },
+    {
+      "phase": "shrink0",
+      "metadata": 8192,
+      "payload": 0,
+      "live": 8192,
+      "written": 8192
+    },
+    {
+      "phase": "regrow8192",
+      "metadata": 8192,
+      "payload": 8192,
+      "live": 16384,
+      "written": 16384
+    },
+    {
+      "phase": "reject8193-before-resize",
+      "metadata": 8192,
+      "payload": 8192,
+      "live": 16384,
+      "written": 16384
+    }
+  ],
+  "postReap": {
+    "live": 16384,
+    "peak": 16384,
+    "written": 16384,
+    "inodes": 2,
+    "openHandles": 0
+  },
+  "observed": false
+}

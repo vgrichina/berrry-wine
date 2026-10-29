@@ -1,0 +1,82 @@
+{
+  "REPORT.md": {
+    "bytes": 2920,
+    "sha256": "309f7f54125425c6e5c71585a4928c3a90329a6bbf62b06f969b8f4fcc6dccf3"
+  },
+  "completion-receipt.json": {
+    "bytes": 1309,
+    "sha256": "56766d7a14a254f5481b1149d64d7ed0cfb3f82595604d66f2f4d37ff8db3717"
+  },
+  "dispatch.json": {
+    "bytes": 3536,
+    "sha256": "fa775c3c90e3e5dc9f940924bff30b4723ba341a43dc0b6d30a114bcce2d91b8"
+  },
+  "evidence/historical-startup-wrapper-failure.json": {
+    "bytes": 303,
+    "sha256": "f6de790fb04a83c9f965958c188aa90cec9dd15fc9f9cecd0a9cbaf602f66582"
+  },
+  "evidence/launch-configuration.json": {
+    "bytes": 1433,
+    "sha256": "46a74287c45600a1713ae52eb06e8195ead4e8f95db2a67af9bebef6d26f5046"
+  },
+  "evidence/lifecycle.json": {
+    "bytes": 989,
+    "sha256": "47045943f8b56f0ef79edf6e51fbce76c870c8e0ac36682effda4bcd6191f74b"
+  },
+  "evidence/prepare-publication-admission.json": {
+    "bytes": 562,
+    "sha256": "09a558b3f635c65a837011fc8bae3b3f3559950819f7e5fbb3f5affff7d9f043"
+  },
+  "evidence/production-api-summary.json": {
+    "bytes": 366,
+    "sha256": "0856a678ac89f41a74de5bae5f060008c6244506b7afec70398788213c72a688"
+  },
+  "evidence/remote-prelaunch.json": {
+    "bytes": 2228,
+    "sha256": "14c8bd5bc78517aca72e26850ca08d75daa75801ccc71170e0ea4eaabb37ef57"
+  },
+  "evidence/resource-baseline.json": {
+    "bytes": 864,
+    "sha256": "26d61692fab3bd2e404562af73f127efa36b0461e3034a8fa66fbfb157bffdb3"
+  },
+  "evidence/runtime-result.json": {
+    "bytes": 25580,
+    "sha256": "7bfa49cf114faeb41e7912439d8230d5310df8b7fc383008d2cb185508f745d7"
+  },
+  "evidence/source-review.json": {
+    "bytes": 2227,
+    "sha256": "be43d20ce2d725901e222eb144cec81a412a71afa4b15f9ae149b42fe907f60c"
+  },
+  "evidence/startup-controls-corrected.json": {
+    "bytes": 548,
+    "sha256": "efce421811182d565f545efddb5d1758f84edff86d268dff300603269f4ff6db"
+  },
+  "evidence/startup-controls.stderr": {
+    "bytes": 665,
+    "sha256": "dfab096c82a8b3748d6f743fd8a2f17a9d3773e58f558e11aa1c4036b33ea632"
+  },
+  "evidence/stopped-verified.json": {
+    "bytes": 1835,
+    "sha256": "a1c00860686e7da57fa3f8698c58689ff619fb8f877947597bedb6b1c872e60a"
+  },
+  "fixture.py": {
+    "bytes": 495,
+    "sha256": "4ffb914a3d68a8512ec351851f07f94fb5dfc17b3e54a347dda308c771408e59"
+  },
+  "guard.py": {
+    "bytes": 3768,
+    "sha256": "71477a84d9cf953cc1d749465f97e4d6491629bb343da4b41ccc43b45e522769"
+  },
+  "limit_contract.py": {
+    "bytes": 2510,
+    "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "runtime-observer.py": {
+    "bytes": 6856,
+    "sha256": "8355ea31a3418cd6e6264212ad9ed8750621a40f892d7b7ad34913424800ab37"
+  },
+  "source-derived-oracle.json": {
+    "bytes": 1196,
+    "sha256": "7628cdaf359f388dd4b0eecc114efe7636fbcbb370e82d58c16b4a77cf6306e6"
+  }
+}

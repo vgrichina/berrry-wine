@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/toyvm-regrowth-retained-runtime-independent-accept-oct29/repo/test/toyvm-regrowth-retained-runtime-independent-accept-oct29/accept.py"
+  ],
+  "cwd": "/tmp/toyvm-regrowth-retained-runtime-independent-accept-oct29/repo",
+  "exit": 0,
+  "safety": null,
+  "elapsed": 0.0503364079631865,
+  "stdoutBytes": 54,
+  "stderrBytes": 0,
+  "stdoutSHA256": "5f396c8f164734d546407f47e0d82c54b954ba3f7b1b294e21f08e418583c841",
+  "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

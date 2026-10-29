@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-29T05:04:32.478276+00:00",
+  "label": "prepare-publication",
+  "device": 64769,
+  "f_bavail": 1123581,
+  "blockSize": 4096,
+  "free": 4602187776,
+  "MemAvailable": 3480477696,
+  "ownedLogicalBytes": 2214005,
+  "reservation": 25165824,
+  "remainingGrowth": 25165824,
+  "requiredFloor": 3200253952,
+  "aggregateReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-ftruncate-regrowth-write-budget-oct29-admission.json",
+  "positiveWALGrowthCountedOnce": 0,
+  "sessionEventsGrowth": 20645,
+  "accountedCurrent": 2234650,
+  "PASS": true
+}

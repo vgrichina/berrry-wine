@@ -1,0 +1,25 @@
+{
+  "label": "accept-final",
+  "at": "2026-10-29T05:09:58.498962+00:00",
+  "free": 4595273728,
+  "MemAvailable": 3393384448,
+  "ownedBytes": 2161632,
+  "positiveWALGrowthCountedOnce": 0,
+  "allocation": 25165824,
+  "bucketsMiB": {
+    "sourceGit": 3,
+    "evidence": 1,
+    "WAL": 8,
+    "publication": 3,
+    "uncertainty": 9
+  },
+  "aggregateOwners": {
+    "coordinator": 25165824,
+    "gltron-eager-integrity-independent-accept-oct29": 50331648,
+    "toyvm-overwrite-runtime-independent-accept-oct29": 25165824,
+    "toyvm-rename-topology-corrected-independent-accept-oct29": 25165824,
+    "toyvm-regrowth-retained-runtime-independent-accept-oct29": 25165824
+  },
+  "aggregateRemainingGrowth": 150994944,
+  "PASS": true
+}
