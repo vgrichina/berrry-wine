@@ -1,0 +1,60 @@
+{
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "inputs": {
+    "canonical.json": {
+      "bytes": 5617,
+      "sha256": "a722eda7b9ce975c0fd4b6bf2ed3f631696fb9c92018c866db0d3c4a3680882e"
+    },
+    "fixture.py": {
+      "bytes": 374,
+      "sha256": "79a79a6e410d741a323983c2aaf315efe3e7f84e531d4121229fedf20f88f66a"
+    },
+    "runtime-observer.py": {
+      "bytes": 6847,
+      "sha256": "9d301cb95ae17b699c7c5378373306d8e9ffaecea7f2e04e7409ac550d3e3bb3"
+    },
+    "evidence/runtime-result.json": {
+      "bytes": 26495,
+      "sha256": "971be2913fafcba09f015417e02d07f952c3bf5dbdfe7594a6f6bc0a20dbb35a"
+    },
+    "evidence/runtime-api.stdout": {
+      "bytes": 24035,
+      "sha256": "851a4393b13ab89cfbc42b94855456250b840a05e029ccfdf3ad66557096809c"
+    },
+    "evidence/worker-prelaunch.json": {
+      "bytes": 3600,
+      "sha256": "33b8450f849714ebf6cbbd7b9717f99a17b9ab6e4d11be283348c511db19a1aa"
+    },
+    "evidence/remote-startup.stdout": {
+      "bytes": 549,
+      "sha256": "220773bae83cf8a657ea247c270bfcd49180e895b4a7c626a8d33b5a4070a92c"
+    },
+    "stopped.json": {
+      "bytes": 1537,
+      "sha256": "6d7332d45481f901a8da3440b262bcc172177fd646f20a2bc8e445109dcd65f5"
+    }
+  },
+  "runtimeRemoteSHA": "aa55ac47912e806791dccdd9a3b85b015c30a0ee"
+}

@@ -1,0 +1,73 @@
+{
+  "sourceOracle": "WRITE checks written+size before resize/data assignment; written increments full payload size even at same offset",
+  "expectedLivePeak": 16384,
+  "expectedWritten": 16384,
+  "socketBytes": 23,
+  "mountArguments": [],
+  "mountContract": "No guest mount argv: tiny-fixture CLI owns fixed synchronous FUSE domain. Files staged individually by supported Boat --file; no comma splitting.",
+  "files": [
+    {
+      "destination": "/tmp/tvow/dispatch.json",
+      "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-overwrite-cumulative-write-limit-oct29-dispatch.json",
+      "bytes": 3611,
+      "sha256": "7757962f2afc2913b61b808b14de6d8d0427169a2ab04ec2091e325e1a078bc1"
+    },
+    {
+      "destination": "/tmp/tvow/fixture.py",
+      "source": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29/fixture.py",
+      "bytes": 374,
+      "sha256": "79a79a6e410d741a323983c2aaf315efe3e7f84e531d4121229fedf20f88f66a"
+    },
+    {
+      "destination": "/tmp/tvow/runtime-observer.py",
+      "source": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29/runtime-observer.py",
+      "bytes": 6847,
+      "sha256": "9d301cb95ae17b699c7c5378373306d8e9ffaecea7f2e04e7409ac550d3e3bb3"
+    },
+    {
+      "destination": "/tmp/tvow/cancellation.json",
+      "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+      "bytes": 12946,
+      "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+    },
+    {
+      "destination": "/tmp/tvow/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "source": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    {
+      "destination": "/tmp/tvow/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+      "source": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    {
+      "destination": "/tmp/tvow/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "source": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    {
+      "destination": "/tmp/tvow/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "source": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    {
+      "destination": "/tmp/tvow/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+      "source": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  ],
+  "allocationMiB": {
+    "sourceGit": 3,
+    "evidence": 1,
+    "WAL": 8,
+    "publication": 3,
+    "uncertainty": 9
+  },
+  "shutdownOwner": "worker explicitly delegated preserve snapshot-stop and actual stopped verification",
+  "cutoff": "2026-10-29T05:25:00Z"
+}

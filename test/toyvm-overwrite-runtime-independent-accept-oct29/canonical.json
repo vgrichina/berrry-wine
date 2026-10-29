@@ -1,0 +1,82 @@
+{
+  "outcome": "SCOPED_ACCEPT",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "preservedRuntimeValidated": true,
+  "newRuntimeInvocations": 0,
+  "adversariesRejected": [
+    "wrong reason",
+    "accepted third write forged reason",
+    "third byte counted with forged reason",
+    "missing marker",
+    "missing second overwrite proof",
+    "pin mismatch",
+    "executable mismatch",
+    "omitted cleanup",
+    "post-reap mislabeled instantaneous",
+    "PID start mismatch",
+    "external cleanup",
+    "count only file growth",
+    "guard after write"
+  ],
+  "fragmentSHA256": "4384fdf5ea3819e5e99318620f6aa43b075e43e2e5a70d35b7d60b16f350523c",
+  "counterPhase": "post-reap",
+  "observed": {
+    "live": 16384,
+    "peak": 16384,
+    "written": 16384,
+    "inodes": 2,
+    "openHandles": 0
+  },
+  "limitations": [
+    "Exact WRITE fragment with stubbed resize/reject only; not backend execution",
+    "No observed syscall errno; ENOSPC is source inference",
+    "No general resource, browser or gameplay qualification"
+  ],
+  "remainingGate": "coordinator review; no main/public deployment",
+  "manifest": {
+    "REPORT.md": {
+      "bytes": 4241,
+      "sha256": "43f3075ebff68d3e2bb9792cf278a77dcff0e47c9f03bf6333b335d0e143cdae"
+    },
+    "check.py": {
+      "bytes": 11040,
+      "sha256": "e65f0dcfc12b34a143c9bb56b63e74ffe68bfa48e18cb83ddda740aa3d3e3654"
+    },
+    "input-pins.json": {
+      "bytes": 2247,
+      "sha256": "a62aac475d71064f4e80c3f8dbdb9b7ecc5790b66f6643ac8e05a7ecae69f748"
+    },
+    "inputs/canonical.json": {
+      "bytes": 5617,
+      "sha256": "a722eda7b9ce975c0fd4b6bf2ed3f631696fb9c92018c866db0d3c4a3680882e"
+    },
+    "inputs/evidence/remote-startup.stdout": {
+      "bytes": 549,
+      "sha256": "220773bae83cf8a657ea247c270bfcd49180e895b4a7c626a8d33b5a4070a92c"
+    },
+    "inputs/evidence/runtime-api.stdout": {
+      "bytes": 24035,
+      "sha256": "851a4393b13ab89cfbc42b94855456250b840a05e029ccfdf3ad66557096809c"
+    },
+    "inputs/evidence/runtime-result.json": {
+      "bytes": 26495,
+      "sha256": "971be2913fafcba09f015417e02d07f952c3bf5dbdfe7594a6f6bc0a20dbb35a"
+    },
+    "inputs/evidence/worker-prelaunch.json": {
+      "bytes": 3600,
+      "sha256": "33b8450f849714ebf6cbbd7b9717f99a17b9ab6e4d11be283348c511db19a1aa"
+    },
+    "inputs/fixture.py": {
+      "bytes": 374,
+      "sha256": "79a79a6e410d741a323983c2aaf315efe3e7f84e531d4121229fedf20f88f66a"
+    },
+    "inputs/runtime-observer.py": {
+      "bytes": 6847,
+      "sha256": "9d301cb95ae17b699c7c5378373306d8e9ffaecea7f2e04e7409ac550d3e3bb3"
+    },
+    "inputs/stopped.json": {
+      "bytes": 1537,
+      "sha256": "6d7332d45481f901a8da3440b262bcc172177fd646f20a2bc8e445109dcd65f5"
+    }
+  }
+}
