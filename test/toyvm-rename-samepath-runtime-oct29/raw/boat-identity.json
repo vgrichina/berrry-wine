@@ -1,0 +1,9 @@
+{
+  "id": "bx_h4faubeu",
+  "actualExpiry": "2026-10-29T06:03:31.190Z",
+  "effectiveOuterDeadline": "2026-10-29T05:59:42Z",
+  "guestCutoff": "2026-10-29T05:52:42Z",
+  "handback": "2026-10-29T05:54:42Z",
+  "shutdown": "2026-10-29T05:56:42Z",
+  "shutdownDelegated": true
+}
