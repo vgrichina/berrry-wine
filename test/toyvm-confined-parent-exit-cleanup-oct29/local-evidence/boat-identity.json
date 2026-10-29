@@ -1,0 +1,42 @@
+{
+  "id": "bx_67byn6ct",
+  "events": [
+    {
+      "event": "created",
+      "hostedPorts": null,
+      "id": "bx_67byn6ct",
+      "org": null,
+      "team": null,
+      "ttlSeconds": 1800
+    },
+    {
+      "event": "state",
+      "id": "bx_67byn6ct",
+      "state": "starting"
+    },
+    {
+      "event": "state",
+      "id": "bx_67byn6ct",
+      "state": "cloning"
+    },
+    {
+      "event": "state",
+      "id": "bx_67byn6ct",
+      "state": "idle"
+    },
+    {
+      "archiveAfter": "2026-10-29T04:16:05.297Z",
+      "commands": {
+        "forward": "boat forward bx_67byn6ct --remote 3000 --local 3000",
+        "ssh": "boat ssh bx_67byn6ct"
+      },
+      "desktopUrl": null,
+      "event": "ready",
+      "id": "bx_67byn6ct",
+      "ip": "2001:41d0:8:c980:100::28",
+      "state": "idle",
+      "url": "https://box-node-5d0ba47f3edc6a72.on.boat.dev"
+    }
+  ],
+  "parserIncident": "creation succeeded; JSONL parsed offline without repeated API request"
+}

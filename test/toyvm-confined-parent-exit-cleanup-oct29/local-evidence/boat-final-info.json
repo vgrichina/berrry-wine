@@ -1,0 +1,44 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "info",
+    "bx_67byn6ct",
+    "--json"
+  ],
+  "cwd": "/tmp/toyvm-confined-parent-exit-cleanup-oct29",
+  "exit": 0,
+  "stdout": "{\"sandbox\":{\"access\":\"owner\",\"archiveAfter\":null,\"billingMultiplier\":1,\"createdAt\":\"2026-10-29T03:46:05.281Z\",\"createdBy\":\"vgrichina\",\"createdById\":\"sandbox_23337a3f0dc2ab057f51992768a51ce6\",\"dataExpiredAt\":null,\"degradedSince\":null,\"desktopAvailable\":true,\"desktopUrl\":null,\"environment\":\"base\",\"environmentVersion\":1,\"error\":null,\"health\":\"ok\",\"healthReason\":null,\"holdsCreatorLogins\":true,\"hydrated\":true,\"hydratedAt\":null,\"hydration\":null,\"id\":\"bx_67byn6ct\",\"ip\":null,\"labels\":{},\"lastReboot\":null,\"lastSnapshotAttemptAt\":\"2026-10-29T03:46:41.141Z\",\"lastSnapshotStatus\":\"completed\",\"machineProvider\":null,\"memoryGB\":8,\"monitoring\":true,\"name\":\"toyvm-confined-parent-exit-cleanup-oct29\",\"setupError\":null,\"setupStatus\":\"done\",\"snapshotAvailable\":true,\"snapshotCompletedAt\":\"2026-10-29T03:46:42.657Z\",\"snapshotVerifiedAt\":\"2026-10-29T03:46:42.657Z\",\"snapshots\":true,\"sshEndpoint\":null,\"state\":\"stopped\",\"stop\":{\"endedAt\":\"2026-10-29T03:46:42.715Z\",\"error\":null,\"id\":\"stop_948b1e392c06d526\",\"lastAttemptAt\":\"2026-10-29T03:46:42.715Z\",\"requestedAt\":null,\"status\":\"completed\"},\"stoppedAt\":\"2026-10-29T03:46:42.694Z\",\"subdomain\":\"box-node-5d0ba47f3edc6a72\",\"team\":null,\"ttlSeconds\":1800,\"type\":\"default\",\"updatedAt\":\"2026-10-29T03:46:42.695Z\",\"url\":null,\"vcpu\":4,\"visibility\":null,\"wipePendingUntilRestart\":false}}\n",
+  "stderr": "",
+  "wall": 0.05884187878109515,
+  "processes": {
+    "2399252": {
+      "pid": 2399252,
+      "ppid": 2396334,
+      "start": "129281245",
+      "state": "R",
+      "pgrp": 2399252,
+      "session": 2399252,
+      "rss": 17563648,
+      "cpu": 0.05
+    },
+    "2399254": {
+      "pid": 2399254,
+      "ppid": 2399252,
+      "start": "129281251",
+      "state": "Z",
+      "pgrp": 2399252,
+      "session": 2399252,
+      "rss": 0,
+      "cpu": 0.0
+    }
+  },
+  "processLimits": {
+    "2399252": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "2399254": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            134217728            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n"
+  },
+  "peakGroupPhysicalRSS": 23154688,
+  "peakSupervisorPhysicalRSS": 17563648,
+  "rejection": null,
+  "safetyKilled": [],
+  "truncated": false
+}

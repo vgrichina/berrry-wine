@@ -1,0 +1,286 @@
+[
+  {
+    "at": 1793245588.2532413,
+    "state": {
+      "live": 12288,
+      "peak": 12288,
+      "written": 17,
+      "failure": null,
+      "inodes": 2,
+      "openHandles": 1,
+      "operations": 4,
+      "liveLimit": 32768,
+      "writeLimit": 65536,
+      "fileLimit": 4096,
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+    },
+    "processes": {
+      "5988": {
+        "pid": 5988,
+        "ppid": 4641,
+        "start": "6789",
+        "state": "R",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 19005440,
+        "cpu": 0.15
+      },
+      "6070": {
+        "pid": 6070,
+        "ppid": 5988,
+        "start": "8039",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 21364736,
+        "cpu": 0.05
+      },
+      "6071": {
+        "pid": 6071,
+        "ppid": 6070,
+        "start": "8044",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 14286848,
+        "cpu": 0.02
+      },
+      "6074": {
+        "pid": 6074,
+        "ppid": 6070,
+        "start": "8049",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 10747904,
+        "cpu": 0.02
+      },
+      "6075": {
+        "pid": 6075,
+        "ppid": 6074,
+        "start": "8052",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 7913472,
+        "cpu": 0.0
+      }
+    },
+    "mounts": [
+      "51 29 0:51 / /tmp/tvdt/w/domain rw,nosuid,nodev,relatime shared:98 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+    ]
+  },
+  {
+    "at": 1793245588.2634535,
+    "state": {
+      "live": 12288,
+      "peak": 12288,
+      "written": 17,
+      "failure": null,
+      "inodes": 2,
+      "openHandles": 1,
+      "operations": 4,
+      "liveLimit": 32768,
+      "writeLimit": 65536,
+      "fileLimit": 4096,
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+    },
+    "processes": {
+      "5988": {
+        "pid": 5988,
+        "ppid": 4641,
+        "start": "6789",
+        "state": "R",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 19005440,
+        "cpu": 0.16
+      },
+      "6070": {
+        "pid": 6070,
+        "ppid": 5988,
+        "start": "8039",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 21364736,
+        "cpu": 0.06
+      },
+      "6071": {
+        "pid": 6071,
+        "ppid": 6070,
+        "start": "8044",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 14286848,
+        "cpu": 0.02
+      },
+      "6074": {
+        "pid": 6074,
+        "ppid": 6070,
+        "start": "8049",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 10747904,
+        "cpu": 0.02
+      },
+      "6075": {
+        "pid": 6075,
+        "ppid": 6074,
+        "start": "8052",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 7913472,
+        "cpu": 0.0
+      }
+    },
+    "mounts": [
+      "51 29 0:51 / /tmp/tvdt/w/domain rw,nosuid,nodev,relatime shared:98 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+    ]
+  },
+  {
+    "at": 1793245588.2778366,
+    "state": {
+      "live": 12288,
+      "peak": 12288,
+      "written": 17,
+      "failure": null,
+      "inodes": 2,
+      "openHandles": 1,
+      "operations": 4,
+      "liveLimit": 32768,
+      "writeLimit": 65536,
+      "fileLimit": 4096,
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+    },
+    "processes": {
+      "5988": {
+        "pid": 5988,
+        "ppid": 4641,
+        "start": "6789",
+        "state": "R",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 19005440,
+        "cpu": 0.16
+      },
+      "6070": {
+        "pid": 6070,
+        "ppid": 5988,
+        "start": "8039",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 21364736,
+        "cpu": 0.07
+      },
+      "6071": {
+        "pid": 6071,
+        "ppid": 6070,
+        "start": "8044",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 14286848,
+        "cpu": 0.02
+      },
+      "6074": {
+        "pid": 6074,
+        "ppid": 6070,
+        "start": "8049",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 10747904,
+        "cpu": 0.02
+      },
+      "6075": {
+        "pid": 6075,
+        "ppid": 6074,
+        "start": "8052",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 7913472,
+        "cpu": 0.0
+      }
+    },
+    "mounts": [
+      "51 29 0:51 / /tmp/tvdt/w/domain rw,nosuid,nodev,relatime shared:98 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+    ]
+  },
+  {
+    "at": 1793245588.2889738,
+    "state": {
+      "live": 12288,
+      "peak": 12288,
+      "written": 17,
+      "failure": null,
+      "inodes": 2,
+      "openHandles": 1,
+      "operations": 4,
+      "liveLimit": 32768,
+      "writeLimit": 65536,
+      "fileLimit": 4096,
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+    },
+    "processes": {
+      "5988": {
+        "pid": 5988,
+        "ppid": 4641,
+        "start": "6789",
+        "state": "R",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 19005440,
+        "cpu": 0.16
+      },
+      "6070": {
+        "pid": 6070,
+        "ppid": 5988,
+        "start": "8039",
+        "state": "R",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 21364736,
+        "cpu": 0.07
+      },
+      "6071": {
+        "pid": 6071,
+        "ppid": 6070,
+        "start": "8044",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 14286848,
+        "cpu": 0.02
+      },
+      "6074": {
+        "pid": 6074,
+        "ppid": 6070,
+        "start": "8049",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 10747904,
+        "cpu": 0.02
+      },
+      "6075": {
+        "pid": 6075,
+        "ppid": 6074,
+        "start": "8052",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 7913472,
+        "cpu": 0.0
+      }
+    },
+    "mounts": [
+      "51 29 0:51 / /tmp/tvdt/w/domain rw,nosuid,nodev,relatime shared:98 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+    ]
+  }
+]

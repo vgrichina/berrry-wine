@@ -1,0 +1,154 @@
+{
+  "task": "toyvm-confined-parent-exit-cleanup-oct29",
+  "outcome": "PASS: one real unmodified CLI/FUSE parent-normal-exit cleanup invocation",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "inputReceiptPin": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "limitModulePin": {
+    "bytes": 2342,
+    "sha256": "9bf281144379a1881157865312cb0ce1a081096d6983ada3a090f0ea0d3c2134"
+  },
+  "dispatchSHA256": "990fb47b9e3cb099341baa03e56c9aa62f181abcee7b743faeff7de305da2b41",
+  "admissionSHA256": "4bd7e7c63e9bfb3f74edae12af683057ec5189332ea2429094b790efdfe7c992",
+  "sessionID": "01a185c2-167e-7313-80b0-a1f1cf095826",
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T03-44-12-01a185c2-167e-7313-80b0-a1f1cf095826.jsonl"
+  ],
+  "tests": {
+    "cliExit": 0,
+    "report": {
+      "accepted": true,
+      "accountingAccepted": true,
+      "backendReceipt": {
+        "cleanupComplete": true,
+        "cpuSeconds": 0.14984999999999998,
+        "exit": 0,
+        "filesystem": {
+          "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+          "failure": null,
+          "fileLimit": 4096,
+          "inodes": 2,
+          "live": 12288,
+          "liveLimit": 32768,
+          "openHandles": 0,
+          "operations": 6,
+          "peak": 12288,
+          "writeLimit": 65536,
+          "written": 17
+        },
+        "filesystemCleanup": {
+          "remainingMounts": [],
+          "serverExit": -15,
+          "serverStderr": "",
+          "serverStdout": "",
+          "unmountExit": 0,
+          "unmountStderr": "",
+          "unmountStdout": ""
+        },
+        "output": {
+          "data": "Y2hpbGQtcmVhZHkgcGlkPTYwNzUgcGFyZW50PTYwNzQgZmQ9MwpwYXJlbnQtbm9ybWFsLWV4aXQgcGlkPTYwNzQgY2hpbGQ9NjA3NQo=",
+          "encoding": "base64"
+        },
+        "owned": [
+          [
+            6074,
+            "8049"
+          ],
+          [
+            6075,
+            "8052"
+          ]
+        ],
+        "peakRSS": 40026112,
+        "reapedPeakRSS": 13967360,
+        "sampledPeakRSS": 40026112,
+        "stopReason": null,
+        "wallSeconds": 0.23029437300000666
+      },
+      "browserAllowanceRemaining": {
+        "captures": 1,
+        "cpuSeconds": 35.353183,
+        "wallSeconds": 101.495550694
+      },
+      "browserAllowed": false,
+      "childSucceeded": true,
+      "cleanupComplete": true,
+      "failures": []
+    },
+    "fixtureOutput": "child-ready pid=6075 parent=6074 fd=3\nparent-normal-exit pid=6074 child=6075\n",
+    "liveBackendObserved": true,
+    "noProductionSurvivors": true,
+    "noFinalSurvivors": true,
+    "mountDisconnected": true,
+    "safetyIntervened": false,
+    "wall": 0.3467035259999989,
+    "physicalRSS": 73318400,
+    "PASS": true
+  },
+  "productionInvocations": 1,
+  "productionRetries": 0,
+  "proceduralLimitations": [
+    "Initial bounded policy/source diagnostics exceeded terminal8192B and were truncated by the tool. This task does not establish full end-to-end resource-control acceptance.",
+    "Boat creation succeeded once and returned JSONL; the single-object parser failed locally. Existing response was parsed offline; creation was not repeated.",
+    "First remote harness startup stopped before any production CLI/backend/fixture invocation: nonexistent shared-root negative-control path raised FileNotFoundError before spawn. The owned wrapper was corrected to resolve non-strictly and reject outside paths before strict existence checking. Initial remote wrapper preserved on snapshot, failure response retained. No production source or confinement changed.",
+    "Mount argv and intended mounted filename list are empty. The exact production CLI argparse parsed the real argv; no guest mount parser or guest execution was invoked.",
+    "Remote API staging interpreter precedes task-owned physical-RSS sampling; actual test descendants were under the task supervisor. Sampling cannot prove unsampled physical RSS peaks."
+  ],
+  "fullResourceControlAcceptance": false,
+  "gameplayAcceptance": "unknown",
+  "browserAllowanceUnchanged": {
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694,
+    "captures": 1
+  },
+  "allocation": {
+    "bytes": 25165824,
+    "retainedThroughCoordinatorCloseout": true
+  },
+  "cleanup": {
+    "boxID": "bx_67byn6ct",
+    "state": "stopped",
+    "snapshotAvailable": true,
+    "stop": {
+      "endedAt": "2026-10-29T03:46:42.715Z",
+      "error": null,
+      "id": "stop_948b1e392c06d526",
+      "lastAttemptAt": "2026-10-29T03:46:42.715Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "snapshotVerifiedAt": "2026-10-29T03:46:42.657Z",
+    "originalExpiryUTC": "2026-10-29T04:16:05.297Z",
+    "delegatedSnapshotStop": true
+  },
+  "publication": {
+    "branch": "task/toyvm-confined-parent-exit-cleanup-oct29",
+    "remote": "git@github.com:vgrichina/wine-assembly.git",
+    "mainPush": false,
+    "boardAppendDelegated": true
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "PASS": true,
+  "authoritativeBackend": {
+    "cleanupComplete": true,
+    "cpuSeconds": 0.14984999999999998,
+    "exit": 0,
+    "filesystem": {
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+      "failure": null,
+      "fileLimit": 4096,
+      "inodes": 2,
+      "live": 12288,
+      "liveLimit": 32768,
+      "openHandles": 0,
+      "operations": 6,
+      "peak": 12288,
+      "writeLimit": 65536,
+      "written": 17
+    },
+    "filesystemCleanup": {
+      "remainingMounts": [],
+      "serverExit": -15,
+      "serverStderr": "",
+      "serverStdout": "",
+      "unmountExit": 0,
+      "unmountStderr": "",
+      "unmountStdout": ""
+    },
+    "output": {
+      "data": "Y2hpbGQtcmVhZHkgcGlkPTYwNzUgcGFyZW50PTYwNzQgZmQ9MwpwYXJlbnQtbm9ybWFsLWV4aXQgcGlkPTYwNzQgY2hpbGQ9NjA3NQo=",
+      "encoding": "base64"
+    },
+    "owned": [
+      [
+        6074,
+        "8049"
+      ],
+      [
+        6075,
+        "8052"
+      ]
+    ],
+    "peakRSS": 40026112,
+    "reapedPeakRSS": 13967360,
+    "sampledPeakRSS": 40026112,
+    "stopReason": null,
+    "wallSeconds": 0.23029437300000666
+  },
+  "observer": {
+    "remaining": {},
+    "mounts": [],
+    "identities": {
+      "5988": {
+        "pid": 5988,
+        "ppid": 4641,
+        "start": "6789",
+        "state": "R",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 19005440,
+        "cpu": 0.26
+      },
+      "6070": {
+        "pid": 6070,
+        "ppid": 5988,
+        "start": "8039",
+        "state": "Z",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 0,
+        "cpu": 0.14
+      },
+      "6071": {
+        "pid": 6071,
+        "ppid": 6070,
+        "start": "8044",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 14286848,
+        "cpu": 0.03
+      },
+      "6074": {
+        "pid": 6074,
+        "ppid": 6070,
+        "start": "8049",
+        "state": "S",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 10747904,
+        "cpu": 0.02
+      },
+      "6075": {
+        "pid": 6075,
+        "ppid": 6070,
+        "start": "8052",
+        "state": "Z",
+        "pgrp": 5988,
+        "session": 5988,
+        "rss": 0,
+        "cpu": 0.0
+      }
+    }
+  },
+  "safety": {
+    "killed": [],
+    "reaped": [],
+    "remaining": {},
+    "mounts": []
+  },
+  "actualCLIInvocationCount": 1
+}

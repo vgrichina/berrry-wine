@@ -1,0 +1,33 @@
+{
+  "limits": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+  },
+  "controls": {
+    "omitted": "rejected before spawn",
+    "root": "rejected before spawn",
+    "donor": "rejected before spawn",
+    "outside": "rejected before spawn",
+    "sentinel": "/tmp/toyvm-confined-parent-exit-cleanup-oct29"
+  },
+  "sessionID": "01a185c2-167e-7313-80b0-a1f1cf095826",
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T03-44-12-01a185c2-167e-7313-80b0-a1f1cf095826.jsonl"
+  ],
+  "baselineWAL": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4330152,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4255992
+  },
+  "baselineCountedOnce": true
+}

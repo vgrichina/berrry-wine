@@ -1,0 +1,39 @@
+One real unmodified qualify_accounted.py CLI/FUSE invocation qualified immediate
+normal-parent-exit cleanup of an ordinary confined fork child. Parent6074/start8049
+exited0 after readiness from child6075/start8052, holding fd3 on the accounted tiny
+file. Child wrote17bytes then slept20seconds. No setsid/setpgid/getsid/getpgid call
+appears in the workload. Outside /proc observer retained PID/start, ppid, state,
+pgrp and session; the child was observed reparented to CLI6070 in zombie state.
+Production owned receipt binds both identities; no identity remained at closeout.
+
+CLI exit0, accepted=true, root exit0, stopReason=null, cleanupComplete=true.
+Production wall0.230294373s; outside wall0.346703526s. Authoritative filesystem
+written17, live/peak12288, openHandles0, failure=null. FUSE unmountExit0,
+serverExit-15, remainingMounts[]. Independent observer found no owned survivor
+or mount. Outer safety guard killed nothing and reaped nothing. Report retains
+actual output, successful root-zero decision, stderr and nontruncation flags.
+Physical groupRSS sample73318400bytes; supervisor, child limits, disk/RAM
+admissions and inherited DATA topology are in retained evidence.
+
+Exactly one production invocation; no preceding positive/quota/timeout cases
+rerun. No fake backend/source substitutions, confinement changes, implementation
+repair, game/browser/guest/build/download/installer/local-FUSE execution or public
+deployment. Five production source pins and original cancellation receipt were
+verified locally and remotely. Mount argv is empty. Dedicated Boat bx_67byn6ct
+was preserved, snapshot-stopped and actual stopped/snapshot status verified under
+the explicit delegation before handback. Initial expiry04:16:05.297UTC, cutoff
+04:15UTC. No lifecycle action remains. Browser allowance remains unchanged.
+
+Procedural limitations are listed verbatim in acceptance-receipt.json, including
+diagnostic terminal truncation, local JSONL parse correction, and remote startup
+negative-control path correction before any CLI/backend/fixture execution. Whole
+resource-control and gameplay acceptance remain unknown. Actual behavior passed;
+these incidents are not erased by that result. No limits or allocation were raised.
+24MiB allocation stays held through coordinator publication/closeout.
+
+Recipe: stage only five source files at dispatch pins plus recipe files beneath
+/tmp/tvdt and cancellation.json/source-pins.json, then execute remote_test.py once
+through authorized Boat API from /tmp/tvdt. Reproduction consumes a new allocation
+and invocation authorization; this report does not authorize another run.
+Task-only branch publication is verified by canonical-receipt.json and bounded
+publication-note.txt outside Git. Coordinator owns oversized board append.

@@ -1,0 +1,45 @@
+{
+  "dispatchSHA256": "990fb47b9e3cb099341baa03e56c9aa62f181abcee7b743faeff7de305da2b41",
+  "admissionSHA256": "4bd7e7c63e9bfb3f74edae12af683057ec5189332ea2429094b790efdfe7c992",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "inputReceiptPin": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "fixtureSHA256": "2b1b19a68f72777982121462b2350d8e14467de59af81834b165c9baf8ddcf3c",
+  "mountArgv": [],
+  "intendedMountedFiles": [],
+  "mountValidation": "No guest mount options: exact production CLI argparse accepts no mount argument; no guest execution",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "syntaxPASS": true,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-confined-parent-exit-cleanup-oct29/root-ref-digest.json",
+  "allocation": 25165824,
+  "forecast": {
+    "sourceGit": 3145728,
+    "evidence": 1048576,
+    "WAL": 8388608,
+    "publish": 3145728,
+    "uncertainty": 9437184
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_67byn6ct",
+    "--cwd",
+    "/tmp/tvdt",
+    "--timeout",
+    "110",
+    "--json",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvdt/remote_test.py"
+  ],
+  "cwd": "/tmp/toyvm-confined-parent-exit-cleanup-oct29",
+  "exit": 1,
+  "stdout": "{\"commandId\":\"cmd_wef85yuyy3fj\",\"cwd\":\"../../tmp/tvdt\",\"exitCode\":1,\"finishedAt\":\"2026-10-29T03:46:15.697Z\",\"launcherFailed\":false,\"noticedMs\":1,\"oomKilled\":false,\"signal\":null,\"startMs\":1,\"startedAt\":\"2026-10-29T03:46:15.613Z\",\"stderr\":\"Traceback (most recent call last):\\n  File \\\"/tmp/tvdt/remote_test.py\\\", line 58, in <module>\\n    if __name__=='__main__':main()\\n                            ^^^^^^\\n  File \\\"/tmp/tvdt/remote_test.py\\\", line 4, in main\\n    startup()\\n  File \\\"/tmp/tvdt/guard.py\\\", line 88, in startup\\n    try:run(['/bin/false'],**kw)\\n        ^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/tmp/tvdt/guard.py\\\", line 29, in run\\n    cwd=pathlib.Path(cwd).resolve(strict=True)\\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/usr/lib/python3.12/pathlib.py\\\", line 1242, in resolve\\n    s = self._flavour.realpath(self, strict=strict)\\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"<frozen posixpath>\\\", line 432, in realpath\\n  File \\\"<frozen posixpath>\\\", line 476, in _joinrealpath\\nFileNotFoundError: [Errno 2] No such file or directory: '/home/user/wine-assembly'\\n\",\"stderrTruncated\":false,\"stdout\":\"\",\"stdoutTruncated\":false,\"success\":false,\"timedOut\":false}\n",
+  "stderr": "",
+  "wall": 0.15383091499097645,
+  "processes": {
+    "2398928": {
+      "pid": 2398928,
+      "ppid": 2396334,
+      "start": "129278475",
+      "state": "R",
+      "pgrp": 2398928,
+      "session": 2398928,
+      "rss": 17694720,
+      "cpu": 0.09
+    },
+    "2398930": {
+      "pid": 2398930,
+      "ppid": 2398928,
+      "start": "129278480",
+      "state": "Z",
+      "pgrp": 2398928,
+      "session": 2398928,
+      "rss": 0,
+      "cpu": 0.0
+    }
+  },
+  "processLimits": {
+    "2398928": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "2398930": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            134217728            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n"
+  },
+  "peakGroupPhysicalRSS": 23560192,
+  "peakSupervisorPhysicalRSS": 17694720,
+  "rejection": null,
+  "safetyKilled": [],
+  "truncated": false
+}

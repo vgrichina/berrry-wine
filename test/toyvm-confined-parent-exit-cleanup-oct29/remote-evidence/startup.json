@@ -1,0 +1,24 @@
+{
+  "limits": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+  },
+  "controls": {
+    "omitted": "rejected before spawn",
+    "root": "rejected before spawn",
+    "donor": "rejected before spawn",
+    "outside": "rejected before spawn",
+    "sentinel": "/tmp/tvdt"
+  },
+  "sessionID": null,
+  "sessionPaths": [],
+  "baselineWAL": {},
+  "baselineCountedOnce": true
+}

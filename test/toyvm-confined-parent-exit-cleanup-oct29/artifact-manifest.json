@@ -1,0 +1,146 @@
+{
+  "source-pins.json": {
+    "bytes": 831,
+    "sha256": "bd4cd499035c97a2028c04a142a609fd7dffc730f8e3e60cf445952fa433fb59"
+  },
+  "prepare.py": {
+    "bytes": 2495,
+    "sha256": "0a2c49686f91478c94d7df1775ac5be8aaf4834cf23edb7007b7a271dff8b4b5"
+  },
+  "limit_contract.py": {
+    "bytes": 2342,
+    "sha256": "9bf281144379a1881157865312cb0ce1a081096d6983ada3a090f0ea0d3c2134"
+  },
+  "guard.py": {
+    "bytes": 6784,
+    "sha256": "c78e528baa2688e2e874e2764e3ac71f65f93b66224aaa25b94a04d0d30e41eb"
+  },
+  "remote_test.py": {
+    "bytes": 4409,
+    "sha256": "cf3df61f0f1818e0f25e8228d46a82fde699d57045078ce146191bcfbf08961e"
+  },
+  "update_remote.py": {
+    "bytes": 870,
+    "sha256": "5129336736211b3088e37aaf5735bbe1d98136987febd4af4cbad6440e00cb0d"
+  },
+  "fixture.py": {
+    "bytes": 523,
+    "sha256": "2b1b19a68f72777982121462b2350d8e14467de59af81834b165c9baf8ddcf3c"
+  },
+  "acceptance-receipt.json": {
+    "bytes": 6014,
+    "sha256": "3fd72f4bc3f7cc27adceae6ccf8ca7da591011da45fded4c82f06aa024a72736"
+  },
+  "cancellation.json": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "boat_control.py": {
+    "bytes": 1626,
+    "sha256": "bb9552aa8718c12a310262f3c0d034d7ee825694115478aca363be145c039782"
+  },
+  "REPORT.txt": {
+    "bytes": 2774,
+    "sha256": "35ad99a776d9a0f9ccf77a2a7f6b60efbcdb73a6b73a6b0f275da7bbeccc0182"
+  },
+  "retain.py": {
+    "bytes": 1124,
+    "sha256": "6067a779991e8398562df835a08508da1e81ac143a77c6ff537d0121049a51dc"
+  },
+  "remote-evidence/executables.json": {
+    "bytes": 297,
+    "sha256": "429af7c438f9f7f8a20b93b456079021ed2ea6289bfad68c5194c7678381c016"
+  },
+  "remote-evidence/operations.jsonl": {
+    "bytes": 13095,
+    "sha256": "7c710c76a77d0c430b73f88d5baa39f74149fdc7c9c211fc8e5fb17e7d06c52a"
+  },
+  "remote-evidence/cli-result.json": {
+    "bytes": 10313,
+    "sha256": "fdfd26f07b88a2b39175b4fed086e504bc9e94e95f940b19467d1e83e68a6983"
+  },
+  "remote-evidence/invocation.json": {
+    "bytes": 1252,
+    "sha256": "b8950bb6658468dc665fd52623b5d77fbe5a284f6ba5abe29cde0bd0b243d9e2"
+  },
+  "remote-evidence/outer-safety-cleanup.json": {
+    "bytes": 69,
+    "sha256": "d485ab6c9dc017c3c230c972243a50ccbaaf8aabd002e06505076889f880ea7c"
+  },
+  "remote-evidence/production-cleanup-observation.json": {
+    "bytes": 979,
+    "sha256": "fb599924396dfa1b6ad2b081fd77e5561b80b8d44a1401406c0a02933d86b5c6"
+  },
+  "remote-evidence/startup.json": {
+    "bytes": 567,
+    "sha256": "a68e37ceda74306ef950d95bb7a244423aca476d8df2d955251af099c10f3c3b"
+  },
+  "remote-evidence/verified-pins.json": {
+    "bytes": 903,
+    "sha256": "27bca5e9dbf72f8745f4ff4d77717114c19028545c20473e3cff2b7a99bf8800"
+  },
+  "remote-evidence/acceptance.json": {
+    "bytes": 1891,
+    "sha256": "e5790317c1d76c6c271d5d6cc0340b0602be143933ffe49bf6ae0910a31f3fe1"
+  },
+  "remote-evidence/live-observations.json": {
+    "bytes": 6586,
+    "sha256": "12c5f84745206fcd72907f18fd9475acdcbfb2b18189eb0445d54b172a01c42d"
+  },
+  "remote-evidence/admissions.jsonl": {
+    "bytes": 590,
+    "sha256": "5cf1ca9b48502dd2b4dd664e75b3a6b09df13cd3d5ba7f42401a558da77f89c9"
+  },
+  "local-evidence/boat-production-runtime.json": {
+    "bytes": 13494,
+    "sha256": "23d11871316a004ce43f31c7c8ebfb4decabedb61fbe0f533741828546cbcb83"
+  },
+  "local-evidence/boat-runtime.json": {
+    "bytes": 4967,
+    "sha256": "cc191d14d6b7b776ccd084a2cb4edce61749eda791ab8b898164b884f73028f7"
+  },
+  "local-evidence/boat-evidence.json": {
+    "bytes": 59416,
+    "sha256": "641d33d66ba5ebf04e822cb1ef93f07ec2648b3721b5ab65c2771b97ae5555b2"
+  },
+  "local-evidence/operations.jsonl": {
+    "bytes": 149050,
+    "sha256": "2efc89b184aeff33d97f743ad214eaac2cef156f12cf648ff3a335f80dfd0560"
+  },
+  "local-evidence/retained-verification.json": {
+    "bytes": 2404,
+    "sha256": "80155bdbb20822afbe4942116877290c290d0667c6deb9dbc850739b635a2e3e"
+  },
+  "local-evidence/boat-identity.json": {
+    "bytes": 963,
+    "sha256": "4bc1682d9cdceec051662ab5eff974688f1860b60f084f1c082330f116e9cdb3"
+  },
+  "local-evidence/boat-final-info.json": {
+    "bytes": 5007,
+    "sha256": "d823c3c0efc3d497e84885a5feded1dbd88e7048e0410394c77f66f2642f2893"
+  },
+  "local-evidence/boat-stop.json": {
+    "bytes": 5270,
+    "sha256": "e19cf76ed225215fcdfca5f740c6a56aff81613e83f15e1f9856cf996b7c9b13"
+  },
+  "local-evidence/prepare-PASS.json": {
+    "bytes": 77,
+    "sha256": "c23e86519d32b0d9ef4909b0b7ecb057eb5d7a8e0375f2a7d162c4284dc523d5"
+  },
+  "local-evidence/startup.json": {
+    "bytes": 1075,
+    "sha256": "c0fce76e4893aedbe058228b9450ce7a707c45e7e963906e22dded76e1ec664c"
+  },
+  "local-evidence/boat-create.json": {
+    "bytes": 6020,
+    "sha256": "290b6fb254635c0c563ef6cea3fbb4db02994bc31bee930a36da24f5a19e03ac"
+  },
+  "local-evidence/prelaunch.json": {
+    "bytes": 2037,
+    "sha256": "684f92ed71c3cd16f4bd64e3ba54fca8350bfe13c4f18871b505ff29988e1ee4"
+  },
+  "local-evidence/admissions.jsonl": {
+    "bytes": 7346,
+    "sha256": "647db056bb87fe13076839e79e23768aeaf46689529f791491d441a4d1f46002"
+  }
+}

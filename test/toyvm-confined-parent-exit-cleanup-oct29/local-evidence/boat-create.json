@@ -1,0 +1,69 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "new",
+    "--ttl",
+    "1800",
+    "--json",
+    "--name",
+    "toyvm-confined-parent-exit-cleanup-oct29",
+    "--file",
+    "/tmp/tvdt/guard.py=/tmp/toyvm-confined-parent-exit-cleanup-oct29/guard.py",
+    "--file",
+    "/tmp/tvdt/remote_test.py=/tmp/toyvm-confined-parent-exit-cleanup-oct29/remote_test.py",
+    "--file",
+    "/tmp/tvdt/fixture.py=/tmp/toyvm-confined-parent-exit-cleanup-oct29/fixture.py",
+    "--file",
+    "/tmp/tvdt/limit_contract.py=/tmp/toyvm-confined-parent-exit-cleanup-oct29/limit_contract.py",
+    "--file",
+    "/tmp/tvdt/cancellation.json=/tmp/toyvm-confined-parent-exit-cleanup-oct29/cancellation.json",
+    "--file",
+    "/tmp/tvdt/source-pins.json=/tmp/toyvm-confined-parent-exit-cleanup-oct29/source-pins.json",
+    "--file",
+    "/tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py=/tmp/toyvm-confined-parent-exit-cleanup-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--file",
+    "/tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py=/tmp/toyvm-confined-parent-exit-cleanup-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "--file",
+    "/tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py=/tmp/toyvm-confined-parent-exit-cleanup-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "--file",
+    "/tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py=/tmp/toyvm-confined-parent-exit-cleanup-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "--file",
+    "/tmp/tvdt/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py=/tmp/toyvm-confined-parent-exit-cleanup-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py"
+  ],
+  "cwd": "/tmp/toyvm-confined-parent-exit-cleanup-oct29",
+  "exit": 0,
+  "stdout": "{\"event\":\"created\",\"hostedPorts\":null,\"id\":\"bx_67byn6ct\",\"org\":null,\"team\":null,\"ttlSeconds\":1800}\n{\"event\":\"state\",\"id\":\"bx_67byn6ct\",\"state\":\"starting\"}\n{\"event\":\"state\",\"id\":\"bx_67byn6ct\",\"state\":\"cloning\"}\n{\"event\":\"state\",\"id\":\"bx_67byn6ct\",\"state\":\"idle\"}\n{\"archiveAfter\":\"2026-10-29T04:16:05.297Z\",\"commands\":{\"forward\":\"boat forward bx_67byn6ct --remote 3000 --local 3000\",\"ssh\":\"boat ssh bx_67byn6ct\"},\"desktopUrl\":null,\"event\":\"ready\",\"id\":\"bx_67byn6ct\",\"ip\":\"2001:41d0:8:c980:100::28\",\"state\":\"idle\",\"url\":\"https://box-node-5d0ba47f3edc6a72.on.boat.dev\"}\n",
+  "stderr": "",
+  "wall": 4.238945175195113,
+  "processes": {
+    "2398664": {
+      "pid": 2398664,
+      "ppid": 2398662,
+      "start": "129277436",
+      "state": "S",
+      "pgrp": 2398662,
+      "session": 2398662,
+      "rss": 5939200,
+      "cpu": 0.0
+    },
+    "2398662": {
+      "pid": 2398662,
+      "ppid": 2396334,
+      "start": "129277433",
+      "state": "R",
+      "pgrp": 2398662,
+      "session": 2398662,
+      "rss": 17694720,
+      "cpu": 2.09
+    }
+  },
+  "processLimits": {
+    "2398664": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            134217728            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "2398662": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             134217728            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n"
+  },
+  "peakGroupPhysicalRSS": 23666688,
+  "peakSupervisorPhysicalRSS": 17694720,
+  "rejection": null,
+  "safetyKilled": [],
+  "truncated": false
+}

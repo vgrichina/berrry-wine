@@ -1,0 +1,71 @@
+{
+  "cliExit": 0,
+  "report": {
+    "accepted": true,
+    "accountingAccepted": true,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.14984999999999998,
+      "exit": 0,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": null,
+        "fileLimit": 4096,
+        "inodes": 2,
+        "live": 12288,
+        "liveLimit": 32768,
+        "openHandles": 0,
+        "operations": 6,
+        "peak": 12288,
+        "writeLimit": 65536,
+        "written": 17
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "Y2hpbGQtcmVhZHkgcGlkPTYwNzUgcGFyZW50PTYwNzQgZmQ9MwpwYXJlbnQtbm9ybWFsLWV4aXQgcGlkPTYwNzQgY2hpbGQ9NjA3NQo=",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          6074,
+          "8049"
+        ],
+        [
+          6075,
+          "8052"
+        ]
+      ],
+      "peakRSS": 40026112,
+      "reapedPeakRSS": 13967360,
+      "sampledPeakRSS": 40026112,
+      "stopReason": null,
+      "wallSeconds": 0.23029437300000666
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": true,
+    "cleanupComplete": true,
+    "failures": []
+  },
+  "fixtureOutput": "child-ready pid=6075 parent=6074 fd=3\nparent-normal-exit pid=6074 child=6075\n",
+  "liveBackendObserved": true,
+  "noProductionSurvivors": true,
+  "noFinalSurvivors": true,
+  "mountDisconnected": true,
+  "safetyIntervened": false,
+  "wall": 0.3467035259999989,
+  "physicalRSS": 73318400,
+  "PASS": true
+}
