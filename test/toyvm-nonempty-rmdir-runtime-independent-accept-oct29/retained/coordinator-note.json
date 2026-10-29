@@ -1,0 +1,38 @@
+{
+  "task": "toyvm-nonempty-rmdir-runtime-oct29",
+  "outcome": "SCOPED_ACTUAL_RUNTIME_ACCEPTED_AND_REMOTE_VERIFIED_CLOSEOUT_ADMISSION_BLOCKED",
+  "commit": "0d21814df575b5b7f2c299e5e27f012c044adbe6",
+  "remoteRef": "refs/heads/task/toyvm-nonempty-rmdir-runtime-oct29",
+  "remoteVerified": true,
+  "remoteVerification": "/tmp/toyvm-nonempty-rmdir-runtime-oct29/e/remote-verification.stdout",
+  "canonical": "/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-nonempty-rmdir-runtime-oct29/canonical.json",
+  "evidence": "/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-nonempty-rmdir-runtime-oct29/raw-manifest.json",
+  "productionInvocations": 1,
+  "boat": {
+    "id": "bx_27q3w7ee",
+    "state": "stopped",
+    "originalExpiry": "2026-10-29T06:00:38.936Z",
+    "snapshotCompletedAt": "2026-10-29T05:31:34.510Z",
+    "snapshotVerifiedAt": "2026-10-29T05:31:34.510Z",
+    "stoppedAt": "2026-10-29T05:31:34.547Z",
+    "stopOperation": "stop_f42d6e8ba3ab88fe",
+    "actualStoppedEvidence": "/tmp/toyvm-nonempty-rmdir-runtime-oct29/e/api-info.stdout"
+  },
+  "incident": {
+    "operation": "supervised closeout receipt creation after successful commit, push and exact remote verification",
+    "diagnostic": "ops.py admission line 11: assert mem>=2147483648; AssertionError before child creation",
+    "requiredMemAvailableBytes": 2147483648,
+    "actualMemAvailableBytes": null,
+    "measurementLimitation": "Pinned supervisor asserts before persisting failed admission values. Exact failure-time timestamp, MemAvailable, device, f_bavail and block size were not emitted. No later sample substitutes for that missing evidence.",
+    "previousPassingSample": "/tmp/toyvm-nonempty-rmdir-runtime-oct29/e/final-status.json",
+    "retry": false,
+    "controlsChanged": false,
+    "preservation": "This minimal incident and coordinator note was preserved directly after rejection, without retrying the denied child or changing controls. External publication-receipt.json was not created."
+  },
+  "remainingGates": [
+    "Coordinator appends this exact commit/ref/canonical receipt pointer to oversized root messageboard and verifies delivery",
+    "Coordinator retains allocation until board delivery and closeout",
+    "Independent review before integration; no main or public deployment authorized here"
+  ],
+  "worker": "STOPPED after first admission rejection; no additional runtime invocation or provider retry"
+}

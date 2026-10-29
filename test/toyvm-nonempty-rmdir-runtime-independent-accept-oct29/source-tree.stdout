@@ -1,0 +1,5 @@
+100644 blob 78a3f6e9da01b36a02f8a799f2ce2a8d4a5845dc	test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py
+100644 blob 8764b548402401ef60904f01d36c1792ee675c57	test/toyvm-kernel-profile-accounting-backend-oct28/confine.py
+100644 blob 959dac11d2e3bdba969308123524cb0490ee3424	test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py
+100644 blob ab245c2c86107819cae46f7a728557f0aca82064	test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py
+100644 blob 6c4f83b48bb4c3f9245af76469af835180c0ebfb	test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py

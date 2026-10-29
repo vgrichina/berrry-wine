@@ -1,0 +1,7 @@
+{
+  "id": "bx_27q3w7ee",
+  "expiry": "2026-10-29T06:00:38.936Z",
+  "state": "ready",
+  "response": "api-new.stdout",
+  "incident": "CLI returns JSONL, initial whole-document parser rejected after successful allocation; recovered original response without provider retry"
+}

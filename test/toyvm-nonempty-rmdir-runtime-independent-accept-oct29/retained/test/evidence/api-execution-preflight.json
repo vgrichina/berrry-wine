@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "exec",
+    "bx_27q3w7ee",
+    "--cwd",
+    "/tmp/tvne/repo",
+    "--timeout",
+    "20",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import pathlib,hashlib,json,os; files=[{'remote': '/tmp/tvne/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py', 'local': '/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py', 'bytes': 8105, 'sha256': '73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60'}, {'remote': '/tmp/tvne/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py', 'local': '/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py', 'bytes': 3457, 'sha256': '0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8'}, {'remote': '/tmp/tvne/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py', 'local': '/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py', 'bytes': 10877, 'sha256': 'e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41'}, {'remote': '/tmp/tvne/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py', 'local': '/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py', 'bytes': 4058, 'sha256': '5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf'}, {'remote': '/tmp/tvne/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py', 'local': '/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py', 'bytes': 23268, 'sha256': '9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85'}, {'remote': '/tmp/tvne/fixture.py', 'local': '/tmp/toyvm-nonempty-rmdir-runtime-oct29/fixture.py', 'bytes': 575, 'sha256': 'c11babf4b092a883dea4729e843211cf936f6c03dbfc71a90780b85857f14ac1'}, {'remote': '/tmp/tvne/runtime-observer.py', 'local': '/tmp/toyvm-nonempty-rmdir-runtime-oct29/runtime-observer.py', 'bytes': 6956, 'sha256': '8f37e030f68587d5a2189688418c2afbc0392e672be531b888260ef0621cfa08'}, {'remote': '/tmp/tvne/cancellation.json', 'local': '/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json', 'bytes': 12946, 'sha256': '543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870'}, {'remote': '/tmp/tvne/dispatch.json', 'local': '/home/user/wine-assembly/scratch/usage-watch/toyvm-nonempty-rmdir-runtime-oct29-dispatch.json', 'bytes': 4088, 'sha256': '6c3c0c12303fd5b49a513735db265df88878c073cce87fc615083cd502ac60ce'}]; result=[]\nfor f in files:\n b=pathlib.Path(f[\"remote\"]).read_bytes(); assert len(b)==f[\"bytes\"] and hashlib.sha256(b).hexdigest()==f[\"sha256\"]; result.append(dict(path=f[\"remote\"],bytes=len(b),sha256=f[\"sha256\"]))\nassert pathlib.Path(\"/dev/fuse\").exists() and os.access(\"/usr/bin/python3\",os.X_OK) and os.access(\"/usr/bin/fusermount3\",os.X_OK)\nprint(json.dumps(dict(PASS=True,verified=result,cwd=os.getcwd(),fuse=True)))"
+  ],
+  "exit": 0,
+  "at": "2026-10-29T05:31:19.091484+00:00",
+  "stdoutBytes": 1980,
+  "stderrBytes": 0
+}

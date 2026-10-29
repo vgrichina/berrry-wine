@@ -1,0 +1,109 @@
+{
+  "outcome": "SCOPED_INDEPENDENT_RETAINED_RUNTIME_ACCEPTED",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourceOrder": {
+    "guardIndex": 4,
+    "deleteIndex": 5,
+    "decrementIndex": 6,
+    "collectIndex": 7
+  },
+  "sourceInference": {
+    "metadataPerInode": 4096,
+    "rootPlusDPlusE": 12288,
+    "callbackExecutionObserved": false
+  },
+  "actual": {
+    "marker": {
+      "checkpoint": "nonempty-rmdir-preserved",
+      "childPreserved": true,
+      "directoryInodes": {
+        "/tmp/tvne/w/domain/D": 2,
+        "/tmp/tvne/w/domain/D/E": 3
+      },
+      "errno": 39
+    },
+    "postReapFilesystem": {
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+      "failure": null,
+      "fileLimit": 8192,
+      "inodes": 3,
+      "live": 12288,
+      "liveLimit": 12288,
+      "openHandles": 0,
+      "operations": 18,
+      "peak": 12288,
+      "writeLimit": 65536,
+      "written": 0
+    },
+    "sampledIdentities": 3
+  },
+  "controls": {
+    "missing-nonempty-guard": "REJECTED",
+    "reordered-nonempty-guard": "REJECTED",
+    "source-wrong-errno": "REJECTED",
+    "wrong-errno": "REJECTED",
+    "missing-marker": "REJECTED",
+    "stale-identity": "REJECTED",
+    "wrong-counter": "REJECTED",
+    "source-pin": "REJECTED",
+    "wrong-cli-argv": "REJECTED",
+    "external-cleanup": "REJECTED",
+    "mounted-fuse": "REJECTED",
+    "wrong-start-identity": "REJECTED"
+  },
+  "newRuntimeInvocations": 0,
+  "productionInvocationsRetained": 1,
+  "box": {
+    "id": "bx_27q3w7ee",
+    "state": "stopped",
+    "stoppedAt": "2026-10-29T05:31:34.547Z",
+    "originalExpiry": "2026-10-29T06:00:38.936Z"
+  },
+  "predecessorCommit": "0d21814df575b5b7f2c299e5e27f012c044adbe6",
+  "predecessorRemoteRef": "refs/heads/task/toyvm-nonempty-rmdir-runtime-oct29",
+  "predecessorCloseoutIncident": {
+    "operation": "supervised closeout receipt creation after successful commit, push and exact remote verification",
+    "diagnostic": "ops.py admission line 11: assert mem>=2147483648; AssertionError before child creation",
+    "requiredMemAvailableBytes": 2147483648,
+    "actualMemAvailableBytes": null,
+    "measurementLimitation": "Pinned supervisor asserts before persisting failed admission values. Exact failure-time timestamp, MemAvailable, device, f_bavail and block size were not emitted. No later sample substitutes for that missing evidence.",
+    "previousPassingSample": "/tmp/toyvm-nonempty-rmdir-runtime-oct29/e/final-status.json",
+    "retry": false,
+    "controlsChanged": false,
+    "preservation": "This minimal incident and coordinator note was preserved directly after rejection, without retrying the denied child or changing controls. External publication-receipt.json was not created."
+  },
+  "publicationReceiptExists": false,
+  "limitations": [
+    "Counters observed post-reap, not instantaneously during failed rmdir",
+    "PID/start cleanup is limited to sampled identities",
+    "Retained actual runtime only; no replay",
+    "Coordinator remote verification and durable completion receipt supplement missing worker closeout",
+    "No broad resource, browser or gameplay acceptance"
+  ],
+  "remainingGates": [
+    "Coordinator messageboard publication",
+    "Review before integration; no main or public deployment"
+  ]
+}

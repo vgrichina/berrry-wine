@@ -1,0 +1,30 @@
+{
+  "eventId": "worker-completion:01a18621-fc1c-74b0-8763-ff9f44ccddb8",
+  "reviewedAt": "2026-10-29T05:35:58.348894+00:00",
+  "outcome": "SCOPED_ACTUAL_RUNTIME_ACCEPTED",
+  "commit": "0d21814df575b5b7f2c299e5e27f012c044adbe6",
+  "remoteRef": "refs/heads/task/toyvm-nonempty-rmdir-runtime-oct29",
+  "remoteVerified": true,
+  "canonical": "/home/user/wine-assembly/scratch/usage-watch/toyvm-nonempty-rmdir-runtime-oct29/retained-evidence/test/canonical.json",
+  "canonicalPin": {
+    "bytes": 3564,
+    "sha256": "cc440cb7fed11af68d9b51ff517c8fac41679e4a65cde034caa261633ae39150"
+  },
+  "boat": "bx_27q3w7ee",
+  "actualStoppedVerified": true,
+  "stoppedAt": "2026-10-29T05:31:34.547Z",
+  "snapshotVerifiedAt": "2026-10-29T05:31:34.510Z",
+  "incident": {
+    "operation": "supervised closeout receipt creation after successful commit, push and exact remote verification",
+    "diagnostic": "ops.py admission line 11: assert mem>=2147483648; AssertionError before child creation",
+    "requiredMemAvailableBytes": 2147483648,
+    "actualMemAvailableBytes": null,
+    "measurementLimitation": "Pinned supervisor asserts before persisting failed admission values. Exact failure-time timestamp, MemAvailable, device, f_bavail and block size were not emitted. No later sample substitutes for that missing evidence.",
+    "previousPassingSample": "/tmp/toyvm-nonempty-rmdir-runtime-oct29/e/final-status.json",
+    "retry": false,
+    "controlsChanged": false,
+    "preservation": "This minimal incident and coordinator note was preserved directly after rejection, without retrying the denied child or changing controls. External publication-receipt.json was not created."
+  },
+  "nextTask": "toyvm-nonempty-rmdir-runtime-independent-accept-oct29",
+  "sourceUnchanged": true
+}
