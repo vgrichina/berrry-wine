@@ -197,9 +197,10 @@ class Backend:
         self.fd=fds[0]
 
     def serve(self,status_path):
-        control=socket.socket(socket.AF_UNIX);control.bind(str(status_path));control.listen(1)
-        sel=selectors.DefaultSelector();sel.register(control,selectors.EVENT_READ);sel.register(self.fd,selectors.EVENT_READ)
+        control=None;sel=None
         try:
+            control=socket.socket(socket.AF_UNIX);control.bind(str(status_path));control.listen(1)
+            sel=selectors.DefaultSelector();sel.register(control,selectors.EVENT_READ);sel.register(self.fd,selectors.EVENT_READ)
             while True:
                 for key,mask in sel.select(1):
                     if key.fileobj is control:
@@ -216,7 +217,14 @@ class Backend:
                             self.failure='filesystem protocol failure: '+repr(e);answer=b'';error=-errno.EIO
                         if answer is not None:os.write(self.fd,pack('IiQ',16+len(answer),error,unique)+answer)
         finally:
-            control.close();os.close(self.fd)
+            try:
+                if sel is not None:
+                    sel.close()
+            finally:
+                try:
+                    if control is not None:control.close()
+                finally:
+                    os.close(self.fd)
 
 
 if __name__=='__main__':

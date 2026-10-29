@@ -1,0 +1,294 @@
+{
+  "PASS": true,
+  "base": "856025789ae791f19ccdc3dc7324b3d654786d83",
+  "dispatch": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-serve-selector-cleanup-repair-oct29-dispatch.json",
+    "bytes": 3055,
+    "sha256": "bb62cd27180c53206f7ca3b118fa65ae258d4e2ddef35d3c176ee21c2d460847"
+  },
+  "productionBefore": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11583,
+      "sha256": "f25724c57b163417b07b6775a9bb05985a5ae8968498887d5e64e56fbf70ae4e"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "productionAfter": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11824,
+      "sha256": "5d8384416042115189995a0aa80ad9de4d2695112b87da8d3d1124e5736d6bfc"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "predecessorHarness": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-setattr-production-serve-wire-contract-oct29/retained-evidence/test/wire.py",
+    "bytes": 7793,
+    "sha256": "fbbd5952cb2ad7ea6c552ab78181d22c836ee2070ac8fc04a771bebc2dacfab5"
+  },
+  "harness": {
+    "bytes": 14120,
+    "sha256": "c82b6e68a3cd5d8b7055f230652ed2583e89d8bbaf5b1c9e9a24f9b973fa33a8"
+  },
+  "cases": {
+    "baseline": {
+      "length": 16,
+      "error": -95,
+      "bodyBytes": 0,
+      "statePreserved": true,
+      "changedStateFields": [],
+      "descriptorOraclePassed": false,
+      "survivingFDs": {
+        "6": "anon_inode:[eventpoll]"
+      },
+      "ownedFDs": {
+        "transport": 3,
+        "control": 5,
+        "selector": 6
+      },
+      "threadJoined": true,
+      "statusRemoved": true
+    },
+    "fixed-unsupported": {
+      "length": 16,
+      "error": -95,
+      "bodyBytes": 0,
+      "statePreserved": true,
+      "changedStateFields": [],
+      "descriptorOraclePassed": true,
+      "survivingFDs": {},
+      "ownedFDs": {
+        "transport": 3,
+        "control": 5,
+        "selector": 6
+      },
+      "threadJoined": true,
+      "statusRemoved": true
+    },
+    "fixed-supported": {
+      "length": 120,
+      "error": 0,
+      "bodyBytes": 104,
+      "statePreserved": false,
+      "changedStateFields": [
+        "live",
+        "nodes",
+        "written"
+      ],
+      "descriptorOraclePassed": true,
+      "survivingFDs": {},
+      "ownedFDs": {
+        "transport": 3,
+        "control": 5,
+        "selector": 6
+      },
+      "threadJoined": true,
+      "statusRemoved": true
+    },
+    "fixed-malformed": {
+      "descriptorOraclePassed": true,
+      "survivingFDs": {},
+      "ownedFDs": {
+        "transport": 3,
+        "control": 5,
+        "selector": 6
+      },
+      "threadJoined": true,
+      "statusRemoved": true,
+      "exception": [
+        {
+          "type": "RuntimeError",
+          "message": "FUSE request truncated"
+        }
+      ]
+    },
+    "removed-guard": {
+      "length": 120,
+      "error": 0,
+      "bodyBytes": 104,
+      "statePreserved": false,
+      "changedStateFields": [
+        "live",
+        "nodes",
+        "written"
+      ],
+      "descriptorOraclePassed": true,
+      "survivingFDs": {},
+      "ownedFDs": {
+        "transport": 3,
+        "control": 5,
+        "selector": 6
+      },
+      "threadJoined": true,
+      "statusRemoved": true
+    },
+    "late-guard": {
+      "length": 16,
+      "error": -95,
+      "bodyBytes": 0,
+      "statePreserved": false,
+      "changedStateFields": [
+        "live",
+        "nodes",
+        "written"
+      ],
+      "descriptorOraclePassed": true,
+      "survivingFDs": {},
+      "ownedFDs": {
+        "transport": 3,
+        "control": 5,
+        "selector": 6
+      },
+      "threadJoined": true,
+      "statusRemoved": true
+    },
+    "removed-selector-close": {
+      "length": 16,
+      "error": -95,
+      "bodyBytes": 0,
+      "statePreserved": true,
+      "changedStateFields": [],
+      "descriptorOraclePassed": false,
+      "survivingFDs": {
+        "6": "anon_inode:[eventpoll]"
+      },
+      "ownedFDs": {
+        "transport": 3,
+        "control": 5,
+        "selector": 6
+      },
+      "threadJoined": true,
+      "statusRemoved": true
+    },
+    "acquisition-bind": {
+      "statusRemoved": true,
+      "expectedErrno": 98,
+      "actualErrno": 98,
+      "controlClosed": true,
+      "selectorUninitializedOrClosed": true,
+      "transportClosed": true
+    },
+    "acquisition-register": {
+      "statusRemoved": true,
+      "expectedErrno": 1,
+      "actualErrno": 1,
+      "controlClosed": true,
+      "selectorUninitializedOrClosed": true,
+      "transportClosed": true
+    }
+  },
+  "evidenceRoot": "/tmp/toyvm-serve-selector-cleanup-repair-oct29/e",
+  "evidence": {
+    "baseline-harness.py.txt": {
+      "bytes": 11311,
+      "sha256": "839ce649afcc0f9998672c3bcfa67c7fecf12f1470a955fd5c1aa3a697ddbe84"
+    },
+    "baseline.json": {
+      "bytes": 5637,
+      "sha256": "f86ba2c01b2fab8c94c51189ce30fd06eac6089dc0a4dc4138c6efb2e03f096d"
+    },
+    "fixed-unsupported.json": {
+      "bytes": 5451,
+      "sha256": "63383932641c3e010368f9ccae7e5fcd096d85ab2097ed0e17c574aef27b2b56"
+    },
+    "fixed-supported.json": {
+      "bytes": 14072,
+      "sha256": "edfe51c0dc56dba6ad45466cfe8aa83147b6ebd1310497679911010a67f90dbe"
+    },
+    "fixed-malformed.json": {
+      "bytes": 5417,
+      "sha256": "adbc348924e775fbae40419c0c9f0de7af6d92975ce9063ded09a91d326b5794"
+    },
+    "removed-guard.json": {
+      "bytes": 14070,
+      "sha256": "e56ca5532948738a04cf9b2570699fae08595ffe712a8db66ea2de35e6fe165a"
+    },
+    "late-guard.json": {
+      "bytes": 13650,
+      "sha256": "3ece1aba7a0523732533c3ccea984d7a6de9b2eb7146dbc5afa9b30320bd6007"
+    },
+    "removed-selector-close.json": {
+      "bytes": 5633,
+      "sha256": "c33032b7c01fed3649b1ba304f1da00fc09b4ad74041c967e57c0d9adecb9ab0"
+    },
+    "acquisition-bind.json": {
+      "bytes": 1371,
+      "sha256": "109cc82504d6eada4161bff86e3f73e834f7a873437278b96bce8db30f3d9db0"
+    },
+    "acquisition-register.json": {
+      "bytes": 1369,
+      "sha256": "715208948c789abc93ba7f110bd233a362ff8c2fa2218691f46d47bd88a20171"
+    },
+    "removed-guard.py.txt": {
+      "bytes": 11718,
+      "sha256": "cd2b41478a35905b58a255cff278a2e6d96b1ab255216e21334eb6c91c798c6e"
+    },
+    "late-guard.py.txt": {
+      "bytes": 11824,
+      "sha256": "4b2b6ce15168933766e5ce18c69bcaba10327752f21ddd6921b9a478fd0908b9"
+    },
+    "removed-selector-close.py.txt": {
+      "bytes": 11837,
+      "sha256": "4798543bd6275ed2ef52e9ce43dd6ec34f168e2dd8060e8d3bff8ff8bd0165f3"
+    },
+    "results.json": {
+      "bytes": 563,
+      "sha256": "6a39267c369064fa0df86af3b2f9a84a34c2a96c48abea863419cc569e795017"
+    },
+    "baseline-diagnostic.json": {
+      "bytes": 927,
+      "sha256": "21aab385fb944ec0fb47cc868d02d0560c97b229107b3ac25a552b781f8c3273"
+    },
+    "fixed-acceptance.json": {
+      "bytes": 924,
+      "sha256": "91c273b9e805cfb673d091711eedd19edd1ec68c4f5fe587c663bfb32ed767dc"
+    }
+  },
+  "acceptance": {
+    "PASS": true,
+    "sourceSHA256": "5d8384416042115189995a0aa80ad9de4d2695112b87da8d3d1124e5736d6bfc",
+    "productionCases": 3,
+    "stateMutantsRejected": {
+      "removed-guard": "cd2b41478a35905b58a255cff278a2e6d96b1ab255216e21334eb6c91c798c6e",
+      "late-guard": "4b2b6ce15168933766e5ce18c69bcaba10327752f21ddd6921b9a478fd0908b9"
+    },
+    "cleanupMutationRejected": true,
+    "acquisitionFailuresClean": [
+      "bind EADDRINUSE",
+      "register EPERM"
+    ],
+    "automaticGC": false,
+    "scope": "actual production serve framing over local SOCK_SEQPACKET; no FUSE mount"
+  },
+  "remainingGate": "Fresh independent cleanup acceptance, then application and affected acceptance on accepted combined candidate.",
+  "boundaries": "Source/wire acceptance only. No mount, kernel, Boat, browser, gameplay, main or public deployment. Other six-guard candidate untouched."
+}
