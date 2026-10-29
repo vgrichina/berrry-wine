@@ -1,0 +1,6 @@
+{
+  "originalSHA256": "6a3dc423bf53410ba12cefa0bea3841eb87d0cbd6c2ff793a3ae5732f68c5850",
+  "historicalSourceHash": "5a47f748777d5b3a322e1c28b6acb78e13e6772f3cdb7d3b3d811c7e145b328e",
+  "newSourceHash": "69257615178adda7568036fc49e2f20b4ca602c6d3b734f1238caf6143021b17",
+  "change": "single source-hash string replacement in memory; fixtures/assertions unchanged"
+}
