@@ -1,0 +1,94 @@
+{
+  "outcome": "SCOPED_ACCEPT",
+  "tests": {
+    "raw anchored contract": true,
+    "exact SETATTR source fragment": true,
+    "forged missing marker": true,
+    "wrong limiting reason": true,
+    "accepted growth": true,
+    "source pin mismatch": true,
+    "omitted cleanup": true,
+    "mutation late": true,
+    "mutation removed": true
+  },
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": "filesystem per-file limit",
+    "fileLimit": 16384,
+    "inodes": 2,
+    "live": 8192,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 7,
+    "peak": 8192,
+    "writeLimit": 65536,
+    "written": 0
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "rawPin": {
+    "bytes": 24360,
+    "sha256": "4a8330b1f23ef4f32f2d6df29dcf92ebf23cdd6bde88b96129b67ea548f0e1b7"
+  },
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "box": {
+    "id": "bx_76gy8xxq",
+    "state": "stopped",
+    "expiry": "2026-10-29T05:14:53.237Z"
+  },
+  "observed": "Raw marker, stop reason, filesystem counters, PID/start records, executable pins and FUSE cleanup.",
+  "inferred": "Unchanged fixture plus unique per-file failure in SETATTR resize supports ftruncate reach; no syscall trace or returned errno was captured.",
+  "firstMissingDirectObservation": "syscall entry/return trace and fixture errno; not required for this combined source/runtime scoped inference",
+  "fragmentScope": "Selected SETATTR/resize source only; no backend, CLI, Boat or syscall replay.",
+  "task": "toyvm-ftruncate-runtime-independent-accept-oct29",
+  "canonicalPath": "/tmp/toyvm-ftruncate-runtime-independent-accept-oct29/repo/test/toyvm-ftruncate-runtime-independent-accept-oct29/canonical.json",
+  "testPath": "/tmp/toyvm-ftruncate-runtime-independent-accept-oct29/repo/test/toyvm-ftruncate-runtime-independent-accept-oct29/accept.py",
+  "ownedRepo": "/tmp/toyvm-ftruncate-runtime-independent-accept-oct29/repo",
+  "branch": "task/toyvm-ftruncate-runtime-independent-accept-oct29",
+  "artifacts": {
+    "accept.py": {
+      "bytes": 9617,
+      "sha256": "ca64c0ca3546b39d6fafad0f521920b9a00867c5319c5d75392e0baa299412fe"
+    },
+    "reviewed-limit_contract.py": {
+      "bytes": 2722,
+      "sha256": "b93201e6ceae6bcb2a9ea876e82cd7b00a229f618e6c1e3fbddf0f3364924e49"
+    },
+    "reviewed-supervisor.py": {
+      "bytes": 3743,
+      "sha256": "cfebd3af7eae035df2b033a5bed6c475a2dbc27d12c0c53bae36adb29adfd483"
+    },
+    "startup-controls-corrected.json": {
+      "bytes": 511,
+      "sha256": "cafa4632e2a82f9ea4d9f69c3dd82d3e3386c6161f49197e2688eefd32583440"
+    },
+    "initial-fragment-test-failure.stderr": {
+      "bytes": 1385,
+      "sha256": "abcb5987e9d7e962cdf07b720e6a4b3bd10d897575ff56707bfa64e2c4825656"
+    }
+  },
+  "originalEvidenceDirectory": "/home/user/wine-assembly/scratch/usage-watch/toyvm-domain-pinned-ftruncate-file-limit-oct29/retained-evidence",
+  "launchGate": "No checkout, runtime, Node or mount argv executed. Exact trusted SSH configuration supplied to all owned Git operations; unchanged launch preflight reused.",
+  "publicationGate": "bounded ftruncate-specific source/runtime acceptance only; no main or public deployment",
+  "resourceScope": "24MiB retained allocation sourceGit3/evidence1/WAL8/publication3/uncertainty9; inherited aggregate forecast150MiB kept; per-operation admission in private admissions.jsonl. No launch-start WAL coverage claim."
+}

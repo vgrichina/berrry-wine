@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-ftruncate-runtime-independent-accept-oct29/repo/test/toyvm-ftruncate-runtime-independent-accept-oct29/accept.py", line 114, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/tmp/toyvm-ftruncate-runtime-independent-accept-oct29/repo/test/toyvm-ftruncate-runtime-independent-accept-oct29/accept.py", line 92, in main
+    tests={'raw anchored contract':True,'exact SETATTR source fragment':exercise(source)}
+                                                                        ^^^^^^^^^^^^^^^^
+  File "/tmp/toyvm-ftruncate-runtime-independent-accept-oct29/repo/test/toyvm-ftruncate-runtime-independent-accept-oct29/accept.py", line 69, in exercise
+    B=fragment(source,mutation);b=B('/unused-not-created',32768,65536,16384)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/toyvm-ftruncate-runtime-independent-accept-oct29/repo/test/toyvm-ftruncate-runtime-independent-accept-oct29/accept.py", line 57, in fragment
+    require(isinstance(guard,ast.If) and ast.unparse(guard.test)=='size > self.file_limit','production resize guard')
+  File "/tmp/toyvm-ftruncate-runtime-independent-accept-oct29/repo/test/toyvm-ftruncate-runtime-independent-accept-oct29/accept.py", line 19, in require
+    if not ok:raise ValueError(why)
+              ^^^^^^^^^^^^^^^^^^^^^
+ValueError: production resize guard
