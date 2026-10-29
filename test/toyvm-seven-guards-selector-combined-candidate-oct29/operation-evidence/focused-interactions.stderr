@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-seven-guards-selector-combined-candidate-oct29/repo/test/toyvm-seven-guards-selector-combined-candidate-oct29/focused.py", line 132, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/tmp/toyvm-seven-guards-selector-combined-candidate-oct29/repo/test/toyvm-seven-guards-selector-combined-candidate-oct29/focused.py", line 126, in main
+    try:interaction(module(mutant))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/toyvm-seven-guards-selector-combined-candidate-oct29/repo/test/toyvm-seven-guards-selector-combined-candidate-oct29/focused.py", line 74, in interaction
+    reject('parent missing '+str(op),op,999999,data,errno.ENOENT)
+  File "/tmp/toyvm-seven-guards-selector-combined-candidate-oct29/repo/test/toyvm-seven-guards-selector-combined-candidate-oct29/focused.py", line 57, in reject
+    try:b.handle(op,ino,data)
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/toyvm-seven-guards-selector-combined-candidate-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py", line 113, in handle
+    if op==35:
+              ^
+  File "/tmp/toyvm-seven-guards-selector-combined-candidate-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py", line 67, in create
+    if n is None:raise OSError(errno.ENOENT,'parent missing')
+               ^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable

@@ -1,0 +1,347 @@
+{
+  "task": "toyvm-six-plus-rename-parent-candidate-oct29",
+  "outcome": "CANDIDATE_CONSTRUCTION_AND_INTERACTIONS_PASS_PUBLISHED",
+  "completedAt": "2026-10-29T07:52:49.895644+00:00",
+  "base": "a6b1fb7a761bde9bba6385dbd30b2357b6f3c1dc",
+  "beforeSourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "afterBackendSHA256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40",
+  "donorBackendSHA256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb",
+  "exactProductionChange": {
+    "addedLines": [
+      "            for parent in (ino,newdir):",
+      "                if parent not in self.nodes:raise OSError(errno.ENOENT,'rename parent missing')",
+      "                if not stat.S_ISDIR(self.nodes[parent]['mode']):raise OSError(errno.ENOTDIR,'rename parent not directory')"
+    ],
+    "removedLines": 0,
+    "serveByteIdentical": true,
+    "allUnrelatedSourceUnchanged": true,
+    "sixGuardsPreserved": [
+      "CREATE parent",
+      "early SETATTR flags",
+      "UNLINK/RMDIR types",
+      "RENAME replacement types",
+      "RENAME directory cycle",
+      "READDIR parent"
+    ]
+  },
+  "behavior": {
+    "requests": 84,
+    "rejections": 46,
+    "mutantsDetected": 7,
+    "mutants": {
+      "source-missing": {
+        "detected": "('source missing', 2, {'type': 'KeyError', 'isOSError': False, 'errno': None, 'text': '999999'})",
+        "requests": 20,
+        "lastLabel": "source missing",
+        "sourceSHA256": "adb5135b081d2c96a1c4f0c400121d8e127dc113f606fb4e8215296cb09fbd33"
+      },
+      "source-type": {
+        "detected": "('source file', 20, {'type': 'FileNotFoundError', 'isOSError': True, 'errno': 2, 'text': '[Errno 2] rename source'})",
+        "requests": 24,
+        "lastLabel": "source file",
+        "sourceSHA256": "e88bf85ef6a4c9d7e5d51d739b670a63fd6b4a1ebba1ffb1e568a25607c8fe24"
+      },
+      "destination-missing": {
+        "detected": "('destination missing', 2, {'type': 'KeyError', 'isOSError': False, 'errno': None, 'text': '999999'})",
+        "requests": 28,
+        "lastLabel": "destination missing",
+        "sourceSHA256": "4226546668fd5d639899641f7450f53fa33fb314cc6b2da54ac48d537e7a636c"
+      },
+      "destination-type": {
+        "detected": "('destination file', 20, None)",
+        "requests": 32,
+        "lastLabel": "destination file",
+        "sourceSHA256": "860ecded0b686ed28ae69c04caa7a60cf1125bc602e3005bd2cffd2f099b22e4"
+      },
+      "old-create-missing": {
+        "detected": "('invalid create/mkdir parent', 2, {'type': 'TypeError', 'isOSError': False, 'errno': None, 'text': \"'NoneType' object is not subscriptable\"})",
+        "requests": 9,
+        "lastLabel": "invalid create/mkdir parent",
+        "sourceSHA256": "576d4568c67d417f3b5a27cf65c9e8ebe253ce19ad28cfe3ffe654414111c8b8"
+      },
+      "old-create-type": {
+        "detected": "('invalid create/mkdir parent', 20, None)",
+        "requests": 11,
+        "lastLabel": "invalid create/mkdir parent",
+        "sourceSHA256": "5e5e2e61ae4b22d757b794cc0d8561b42651dea96ac466a8d897715f86dae4c2"
+      },
+      "old-setattr-early-flags": {
+        "detected": "('SETATTR size and unsupported bit rejects before growth', 95, None)",
+        "requests": 17,
+        "lastLabel": "SETATTR size and unsupported bit rejects before growth",
+        "sourceSHA256": "31cfcd794c9699678521bc5717eb1a723d6448e5f30cda26f4d666070b4144c4"
+      }
+    },
+    "interface": "fresh production Backend constructor, INIT then unchanged handle wire dispatch",
+    "completeRejectionSnapshot": "every instance field; only operations += 1 allowed",
+    "validRenameAfterRejection": true,
+    "retainedOpenOverwriteAccounting": true,
+    "oldSuitesReplayed": false
+  },
+  "priorReceipts": {
+    "six": {
+      "path": "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-receipt.json",
+      "sha256": "ad9f6f19886b7f27f549304489d61434c49a8db91437f6fc299cd00e0ef94b13"
+    },
+    "rename": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-parent-independent-accept-oct29-pinned-relaunch/coordinator-retained/completion-receipt-pinned-relaunch.json",
+      "sha256": "773ea706f2a7c59a7abd5ec66f530ecf768b21783d121052921ddb30bdb85539"
+    }
+  },
+  "artifacts": {
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/review.json": {
+      "bytes": 501,
+      "sha256": "81ee6ccb053e2f021cfdbc06818cbcb47bccc9b712ac99b791b707f555769596"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/source-gate.json": {
+      "bytes": 1370,
+      "sha256": "8765ae997a840459986bf57b3565acdb6683b5ab032185ecaaa33cae6e819351"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/mutant-destination-missing.json.gz": {
+      "bytes": 2075,
+      "sha256": "b23be124fd34d1b1c2afa37ab1957dc70061634a7bf41b8c2f0ac34aac555da9"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/mutant-source-missing.json.gz": {
+      "bytes": 1725,
+      "sha256": "742589040579aa6b51576b543790542418eb53911784d251251712ab55ed7645"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/interactions.py": {
+      "bytes": 9566,
+      "sha256": "9cd6157d1b1b0aff22ac3c75449f1281c18045fb979193dcc4088d81d167c34f"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/interactions.json.gz": {
+      "bytes": 3914,
+      "sha256": "f1fc1a27be3f6c00d74bba00c28bc25d8c66600a00d399d2965f3c5a717a2239"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/mutant-old-create-missing.json.gz": {
+      "bytes": 1221,
+      "sha256": "998a99e70a229505ac8e7af6408f397a89e724ee0d4e0bd14c32174c7eb91360"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/mutant-source-type.json.gz": {
+      "bytes": 1929,
+      "sha256": "d394e5924803837a14d4f765f79792f9e8224938acf81c780a31aae45cce06e3"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/mutant-old-setattr-early-flags.json.gz": {
+      "bytes": 1624,
+      "sha256": "21239974f387055bb16ac1a0dad5d609e3dc53211b8c256d08db228eab073b66"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/input-verification.json": {
+      "bytes": 16960,
+      "sha256": "27ac2af6f7db3a084bc500db7eca5ff7a4d378e931a0f33cc26da8224ce3c9c1"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/candidate.diff": {
+      "bytes": 810,
+      "sha256": "087a445c13cbea6542ccdb4bec20d2c0ee6fbcec338b25aefc9c0e8e34798f82"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/run-controls.json": {
+      "bytes": 4740,
+      "sha256": "1fcf5355451f1cd9c1e250a938accf7f0beea6b45eed5eac6283465550b9e751"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/REPORT.md": {
+      "bytes": 3896,
+      "sha256": "f41733424c0cc662cd6f7fc8248365ec804ae6de45f4d0cc6274589e05ae7dac"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/mutant-old-create-type.json.gz": {
+      "bytes": 1318,
+      "sha256": "aee01eda1d8f0becd06c00c87e9113b80a1fc8cb1711cb6e80cace6f375f38ce"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/interaction-summary.json": {
+      "bytes": 4344,
+      "sha256": "0a8c8ed28299ee4721179fe03ddd4db25941a40f93e4ede410964d655c9d23f8"
+    },
+    "test/toyvm-six-plus-rename-parent-candidate-oct29/mutant-destination-type.json.gz": {
+      "bytes": 2107,
+      "sha256": "f9993a315d7660711fb6aac6d950ec964eea8ea48c7aa7366d698651e639115c"
+    }
+  },
+  "publicationGate": {
+    "path": "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/publication-gate.json",
+    "sha256": "81cc0fd3ea0e23004287952c18ea795fc3dfe8de60f694fde029668427df7413"
+  },
+  "commit": "9faac38993abe6433115dcfbdafb5ed23c7c7ffb",
+  "branch": "task/toyvm-six-plus-rename-parent-candidate-oct29",
+  "remote": {
+    "url": "git@github.com:vgrichina/wine-assembly.git",
+    "ref": "refs/heads/task/toyvm-six-plus-rename-parent-candidate-oct29",
+    "sha": "9faac38993abe6433115dcfbdafb5ed23c7c7ffb",
+    "exactRemoteConfirmed": true,
+    "pushExit": 0,
+    "lsRemoteExit": 0,
+    "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "movedRepositoryNotice": "GitHub redirected successfully to vgrichina/berrry-wine; origin unchanged"
+  },
+  "controls": {
+    "prelaunch": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor",
+      "controls": {
+        "omitted": "REJECTED BEFORE SPAWN",
+        "root": "REJECTED BEFORE SPAWN",
+        "donor": "REJECTED BEFORE SPAWN"
+      },
+      "sentinel": "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/repo",
+      "pythonChild": [
+        134217728,
+        134217728
+      ],
+      "gitVersion": "git version 2.43.0",
+      "PASS": true
+    },
+    "supervisorSHA256": "9b68f604ef34556e09d3b5718d974d48aded9568ff00146e1e2d36ae41e173f5",
+    "limitContractSHA256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387",
+    "testRun": {
+      "argv": [
+        "/usr/bin/python3",
+        "test/toyvm-six-plus-rename-parent-candidate-oct29/interactions.py"
+      ],
+      "cwd": "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/repo",
+      "exit": 0,
+      "elapsed": 0.21785123203881085,
+      "admission": {
+        "at": 1793260195.4898825,
+        "device": 1680253000807562931,
+        "f_bavail": 1048573,
+        "blockSize": 4096,
+        "free": 4294955008,
+        "MemAvailable": 2526031872,
+        "allocated": 2625536,
+        "budget": 25165824,
+        "aggregate": {
+          "at": "2026-10-29T07:45:59.146786+00:00",
+          "owners": {
+            "coordinator": 25165824,
+            "gltron-eager-integrity-independent-accept-oct29": 50331648,
+            "toyvm-accepted-six-caller-pin-migration-oct29": 25165824,
+            "toyvm-six-plus-rename-parent-candidate-oct29": 25165824,
+            "toyvm-selector-rename-ready-lifetime-continuation-oct29": 25165824
+          },
+          "aggregate": 176160768,
+          "requiredBytes": 3200253952,
+          "futureGrowthIncludingUncertaintyBuffer": 150994944,
+          "freeBytes": 4307185664,
+          "remainingAfterForecast": 4156190720,
+          "MemAvailable": 3715170304,
+          "memRequired": 2147483648,
+          "device": 1680253000807562931,
+          "f_bavail": 1063445,
+          "blockSize": 4096,
+          "PASS": true,
+          "forecast": "Transferred24MiB predecessor allocation: sourceGit3 evidence1 WAL8 publication3 uncertainty9; other active owners retained through closeout. Current aggregate and unchanged per-operation floors.",
+          "previousAllocationCloseout": {
+            "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+            "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+          },
+          "transfers": {
+            "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+            "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+          },
+          "transfer": {
+            "tuxracer-glvertex2dv-independent-accept-oct29": "tuxracer-gltexcoord2dv-dispatch-repair-oct29"
+          },
+          "changedPrerequisite": "two predecessor clients exited; accepted RENAME parent and source-demonstrated bind-before-listen fixture race",
+          "shortfalls": {
+            "diskBytes": 0,
+            "memoryBytes": 0
+          },
+          "clientForecast": {
+            "at": "2026-10-29T07:45:59.146786+00:00",
+            "MemAvailable": 3715170304,
+            "additionalClients": 2,
+            "additionalClientBytes": 805306368,
+            "remaining": 2909863936,
+            "floor": 2147483648,
+            "changedPrerequisite": "two predecessor clients exited; accepted RENAME parent and source-demonstrated bind-before-listen fixture race",
+            "PASS": true
+          }
+        },
+        "parentLimits": {
+          "inheritedDATA": [
+            -1,
+            -1
+          ],
+          "parentDATA": [
+            134217728,
+            -1
+          ],
+          "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+        },
+        "checks": {
+          "allocation": true,
+          "disk": true,
+          "forecast": true,
+          "memory": true
+        }
+      },
+      "stdoutBytes": 98,
+      "stderrBytes": 0
+    },
+    "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "mountValidation": "not applicable: no mount argv or mount execution in this task",
+    "nodeStartup": "not applicable: no Node execution",
+    "rootRefInitial": "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-plus-rename-parent-candidate-oct29/root-ref-digest.json"
+  },
+  "resources": {
+    "allocationBytes": 25165824,
+    "maxOwnedAllocatedSample": 3006464,
+    "minFreeBytes": 3519475712,
+    "minMemAvailable": 2286477312,
+    "admissionDenials": 0,
+    "limitDenials": 0,
+    "physicalRSS": "supervisor monitored thresholds; peak not retained",
+    "evidenceBytes": 180970,
+    "limits": "unchanged assigned controls; no retries/waivers/resizes",
+    "historicalUnavailableSamples": "preserved as supplied; not replaced"
+  },
+  "rootRefInitial": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-plus-rename-parent-candidate-oct29/root-ref-digest.json",
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3",
+    "receipt": {
+      "command": "git show-ref",
+      "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+      "streamedBytes": 148965,
+      "capturedListingBytes": 0,
+      "maxChunkBytes": 8192,
+      "exitCode": 0
+    }
+  },
+  "remainingGates": [
+    "independent combined acceptance of exact candidate",
+    "separate caller migration and pin review",
+    "real CLI confinement and descendant lifecycle",
+    "mounted FUSE accounting qualification",
+    "browser/runtime execution where required"
+  ],
+  "excluded": [
+    "independent combined acceptance",
+    "caller migration",
+    "kernel mount",
+    "CLI/browser/Boat execution",
+    "shared integration",
+    "main",
+    "public deployment"
+  ],
+  "closeout": {
+    "worktreeClean": true,
+    "box": null,
+    "boxState": "not assigned",
+    "expiry": null,
+    "shutdownOwner": "coordinator",
+    "workersSpawned": 0,
+    "ownership": "candidate task complete; caller worker untouched",
+    "stopping": true
+  },
+  "messageboard": "coordinator-note.txt for coordinator append; oversized shared board untouched"
+}

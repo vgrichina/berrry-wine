@@ -1,0 +1,1 @@
+{"productionChanged":false,"reason":"Private create-parent guard-removal control raises TypeError for None parent. Treat this invalid mutant behavior as rejection; production oracle still requires exact OSError errno and unchanged full state.","originalFailure":"operation-evidence/focused-interactions.stderr","passedProductionReachedMutantLoop":true}

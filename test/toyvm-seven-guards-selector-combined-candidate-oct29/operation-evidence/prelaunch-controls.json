@@ -1,0 +1,23 @@
+{
+  "inheritedDATA": [
+    -1,
+    -1
+  ],
+  "parentDATA": [
+    134217728,
+    -1
+  ],
+  "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor",
+  "controls": {
+    "omitted": "REJECTED BEFORE SPAWN",
+    "root": "REJECTED BEFORE SPAWN",
+    "donor": "REJECTED BEFORE SPAWN"
+  },
+  "sentinel": "/tmp/toyvm-seven-guards-selector-combined-candidate-oct29/repo",
+  "pythonChild": [
+    134217728,
+    134217728
+  ],
+  "gitVersion": "git version 2.43.0",
+  "PASS": true
+}

@@ -1,0 +1,341 @@
+{
+  "provenance": {
+    "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822",
+    "namespace": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40",
+    "selector": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8",
+    "functions": {
+      ".pack": "69a5cb4884fb51b87788746c6346a95eceb2e8ba88038207c0bc12ac2b9a3c17",
+      ".unpack": "df3dbabb0b9ce46cd09f8e51d6e2cf703d2f6262f93e9bb18f17452866006e7b",
+      ".Backend.__init__": "160697a22a749d0229e15325536c3f6697fc1604d4b85317f3ea6008d85b4d36",
+      ".Backend.state": "77c9649e38abfade3d2624b0467fa3d7490a60833ef08505d19d5e163a1e10d0",
+      ".Backend.reject": "3607430a824b2f8d09cc814faa4ba90f2d0337f5d449a2a1096167c0a1e9a45b",
+      ".Backend.charge": "db7829e2f3f6db01d3093a42ba6a123572a4a12ba0f53523a98b980ad2996ec4",
+      ".Backend.collect": "c5d8453602f629639bc15a28b9705ceb6cd86df5a1483722a321697a6496b6fa",
+      ".Backend.attr": "05b4696eee2c51f2684b40c0f9b8690f2405b49ce5d5388b1fe8aaee854252fd",
+      ".Backend.entry": "19ba202af84d5daa38131d762f6f66d1ded82b4a98a84f10724b9f3ea0053676",
+      ".Backend.create": "a0df335e4d07eae90e803e3720a4ff6f63ada56c89c49bff4dd1f290367643c6",
+      ".Backend.valid_name": "1be8ade52686bbacf0b60d9abbcf1b1d3bdeae1aaeef7151c4eb041402872d36",
+      ".Backend.resize": "8c334b49553f4b94a0a30e3151c4088fdcdbfc5811c6540688020e26a855d140",
+      ".Backend.handle": "025e9ff658b6f9d4552a9221cabb98326bffe15b1a25ac081ef950e8bad7dc05",
+      ".Backend.mount": "9af4e6ad70a9ca520dd6d932f891ed110ab38ede79366bf26b497fc6f13c414d",
+      ".Backend.serve": "d2f3fd58824aa06878dabb70a41f815631c998658c84d61874cbb439530076e7"
+    },
+    "outsideServeByteIdentical": true,
+    "allNonServeASTEqual": true,
+    "protectedPinsUnchanged": true
+  },
+  "interactions": {
+    "requests": 42,
+    "rejections": 27,
+    "rows": [
+      {
+        "label": "INIT first",
+        "op": 26,
+        "result": "success"
+      },
+      {
+        "label": "mkdir",
+        "op": 9,
+        "result": "success"
+      },
+      {
+        "label": "mkdir",
+        "op": 9,
+        "result": "success"
+      },
+      {
+        "label": "mkdir",
+        "op": 9,
+        "result": "success"
+      },
+      {
+        "label": "create",
+        "op": 35,
+        "result": "success"
+      },
+      {
+        "label": "create",
+        "op": 35,
+        "result": "success"
+      },
+      {
+        "label": "mkdir",
+        "op": 9,
+        "result": "success"
+      },
+      {
+        "label": "write before rejected mutations",
+        "op": 16,
+        "result": "success"
+      },
+      {
+        "label": "parent missing 35",
+        "op": 35,
+        "result": "rejected",
+        "errno": 2,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "parent file 35",
+        "op": 35,
+        "result": "rejected",
+        "errno": 20,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "parent missing 9",
+        "op": 9,
+        "result": "rejected",
+        "errno": 2,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "parent file 9",
+        "op": 9,
+        "result": "rejected",
+        "errno": 20,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "setattr unsupported with shrink",
+        "op": 4,
+        "result": "rejected",
+        "errno": 95,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "setattr unsupported with growth",
+        "op": 4,
+        "result": "rejected",
+        "errno": 95,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "unlink directory",
+        "op": 10,
+        "result": "rejected",
+        "errno": 21,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "rmdir file",
+        "op": 11,
+        "result": "rejected",
+        "errno": 20,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "rmdir nonempty",
+        "op": 11,
+        "result": "rejected",
+        "errno": 39,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "file replaces directory 12",
+        "op": 12,
+        "result": "rejected",
+        "errno": 21,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "directory replaces file 12",
+        "op": 12,
+        "result": "rejected",
+        "errno": 20,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "directory into self 12",
+        "op": 12,
+        "result": "rejected",
+        "errno": 22,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "directory into descendant 12",
+        "op": 12,
+        "result": "rejected",
+        "errno": 22,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "rename source parent 12 999999",
+        "op": 12,
+        "result": "rejected",
+        "errno": 2,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "rename destination parent 12 999999",
+        "op": 12,
+        "result": "rejected",
+        "errno": 2,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "rename source parent 12 5",
+        "op": 12,
+        "result": "rejected",
+        "errno": 20,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "rename destination parent 12 5",
+        "op": 12,
+        "result": "rejected",
+        "errno": 20,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "file replaces directory 45",
+        "op": 45,
+        "result": "rejected",
+        "errno": 21,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "directory replaces file 45",
+        "op": 45,
+        "result": "rejected",
+        "errno": 20,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "directory into self 45",
+        "op": 45,
+        "result": "rejected",
+        "errno": 22,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "directory into descendant 45",
+        "op": 45,
+        "result": "rejected",
+        "errno": 22,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "rename source parent 45 999999",
+        "op": 45,
+        "result": "rejected",
+        "errno": 2,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "rename destination parent 45 999999",
+        "op": 45,
+        "result": "rejected",
+        "errno": 2,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "rename source parent 45 5",
+        "op": 45,
+        "result": "rejected",
+        "errno": 20,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "rename destination parent 45 5",
+        "op": 45,
+        "result": "rejected",
+        "errno": 20,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "valid rename directory",
+        "op": 12,
+        "result": "success"
+      },
+      {
+        "label": "READDIR moved parent",
+        "op": 28,
+        "result": "success"
+      },
+      {
+        "label": "open directory before unlink",
+        "op": 27,
+        "result": "success"
+      },
+      {
+        "label": "rmdir open empty directory",
+        "op": 11,
+        "result": "success"
+      },
+      {
+        "label": "READDIR orphan parent",
+        "op": 28,
+        "result": "rejected",
+        "errno": 5,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "READDIR ambiguous parent",
+        "op": 28,
+        "result": "rejected",
+        "errno": 5,
+        "fullInstanceUnchangedExceptOperations": true
+      },
+      {
+        "label": "release orphan directory",
+        "op": 29,
+        "result": "success"
+      },
+      {
+        "label": "valid file replacement with open old inode",
+        "op": 45,
+        "result": "success"
+      },
+      {
+        "label": "release replaced file",
+        "op": 18,
+        "result": "success"
+      }
+    ]
+  },
+  "privateGuardRemovalControls": {
+    "create-parent": {
+      "rejected": true,
+      "errorType": "TypeError",
+      "error": "'NoneType' object is not subscriptable",
+      "sha256": "52e239d50f08184026fb149bc1b3f7b0c752591a295c21eb5d2dcb14e5af70ed"
+    },
+    "setattr-atomicity": {
+      "rejected": true,
+      "errorType": "AssertionError",
+      "error": "('setattr unsupported with shrink', 'accepted rejection')",
+      "sha256": "a34e155844d79d203822bbf88b9d8fdf43afde7621e31f32ed595d9bbe39d2cc"
+    },
+    "unlink-rmdir-types": {
+      "rejected": true,
+      "errorType": "AssertionError",
+      "error": "('unlink directory', 'accepted rejection')",
+      "sha256": "d091bae72a3b207bd1bdbe5f1956dedad0136ace3c0dd1c4bbda105703538a26"
+    },
+    "rename-types": {
+      "rejected": true,
+      "errorType": "AssertionError",
+      "error": "('file replaces directory 12', 'accepted rejection')",
+      "sha256": "2caf893e63491744234cca932f570351d27b96bf0d0929213eec33fc52c82d42"
+    },
+    "rename-cycle": {
+      "rejected": true,
+      "errorType": "AssertionError",
+      "error": "('directory into self 12', 'accepted rejection')",
+      "sha256": "18f9a3885d7915bb96e2079b7180f213585809998f124c4de62c646cc3c8e7ed"
+    },
+    "rename-parents": {
+      "rejected": true,
+      "errorType": "KeyError",
+      "error": "999999",
+      "sha256": "2f77c22222b973c257cf3b53d0e54e5e2f27d6dc02b2daf309b41ac872b39633"
+    },
+    "readdir-parent": {
+      "rejected": true,
+      "errorType": "IndexError",
+      "error": "list index out of range",
+      "sha256": "0d65becb9d7603d651527f0769c27526a3758ac5a031efe224e4c909725036e0"
+    }
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "task": "toyvm-selector-rename-ready-lifetime-continuation-oct29",
+  "status": "local-qualification-passed; exact candidate committed and remote verified",
+  "objectiveCompleted": true,
+  "candidateAccepted": false,
+  "branch": "task/toyvm-selector-rename-ready-lifetime-continuation-oct29",
+  "base": "e196b1d5be38c1b2db616ffaa27a31bdabc1efc7",
+  "sourcePins": {
+    "before": {
+      "bytes": 12580,
+      "sha256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb"
+    },
+    "after": {
+      "bytes": 12821,
+      "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8"
+    },
+    "handleUnchanged": true,
+    "method": "replace ONLY serve AST line span",
+    "mountArgv": null,
+    "mountValidation": "not applicable: no mount/provider/checkout; owned prelaunch and trusted SSH reused"
+  },
+  "unchangedProductionPins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12821,
+      "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "fixturePins": {
+    "lifetime.py": {
+      "bytes": 15735,
+      "sha256": "c5553eac2df6649a4dc16c8ba1c5724b771a120ab728f85ec687702431201571"
+    },
+    "readiness.py": {
+      "bytes": 1991,
+      "sha256": "fd15de7d6a833d206de789a05122bd0cef78f5a593cf5d7fee697d89e05308e0"
+    },
+    "sentinel.py": {
+      "bytes": 2412,
+      "sha256": "d540dff2c3068d765d83ee6f59e7cd5224a5ca96c0d217f3c20d11cae0fb7ff5"
+    },
+    "production-pins.json": {
+      "bytes": 903,
+      "sha256": "43affbfd1d658313520f5307f448b69c1e382613a01ef38f395cae3d61c45666"
+    }
+  },
+  "carriedForward": {
+    "renameWireCases": 44,
+    "parentGuardMutantsRejected": 2,
+    "supportedSETATTR": true,
+    "malformedRequest": true,
+    "acquisitionBind": true,
+    "acquisitionRegister": true,
+    "eofSerial0": true
+  },
+  "passing": {
+    "delayedListenSentinel": true,
+    "alternatingSerials": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "realEPIPE": 6,
+    "EOF": 5,
+    "noSelectorCloseMutantRejected": true,
+    "gcDisabled": true,
+    "exceptionsRetained": 6,
+    "ownedDescriptorsClosed": true,
+    "borrowedBaselineDescriptorsSurvive": [
+      0,
+      1,
+      2
+    ],
+    "threadsJoined": true,
+    "noFDDrift": true,
+    "statusPathsRemovedByFixture": true
+  },
+  "firstNewDecisiveFailure": null,
+  "firstAdmissionDenial": null,
+  "remainingAcceptanceGates": [
+    "fresh independent combined acceptance",
+    "mounted/kernel/CLI/browser not qualified"
+  ],
+  "resourceControls": "assigned ops.py: unchanged DATAhard; parent soft128MiB; Python child128MiB Git child256MiB; parentRSS128/group512; CPU90 wall120 file12MiB capture2MiB terminal8192 evidence1MiB; transferred24MiB allocation",
+  "historicalMissingSamples": "unavailable; not replaced",
+  "scope": "source/local-wire only; no SIX guard/caller edits/shared integration/main/public deploy",
+  "box": {
+    "id": null,
+    "state": null,
+    "expiry": null,
+    "shutdownOwner": "coordinator"
+  },
+  "closeout": "no boxes or mounts created; no status paths or threads remain; qualified candidate pushed and verified; fresh independent combined acceptance required",
+  "commit": "2b77dfd86200ceab0e253c956a03539b1053526e",
+  "qualifiedCandidateCommit": "2b77dfd86200ceab0e253c956a03539b1053526e",
+  "remote": "origin",
+  "remoteVerified": true,
+  "exactRemoteSHA": "2b77dfd86200ceab0e253c956a03539b1053526e",
+  "publicationEvidence": "operation-evidence/verify-qualified-remote.stdout",
+  "publicationNote": "This receipt records the verified production/test commit. A subsequent evidence-only commit adds this receipt and publication records.",
+  "resourceCloseout": {
+    "at": 1793260370.8757093,
+    "device": 1680253000807562931,
+    "f_bavail": 1047545,
+    "blockSize": 4096,
+    "free": 4290744320,
+    "MemAvailable": 3353829376,
+    "allocated": 3710976,
+    "budget": 25165824,
+    "aggregate": {
+      "at": "2026-10-29T07:45:59.146786+00:00",
+      "owners": {
+        "coordinator": 25165824,
+        "gltron-eager-integrity-independent-accept-oct29": 50331648,
+        "toyvm-accepted-six-caller-pin-migration-oct29": 25165824,
+        "toyvm-six-plus-rename-parent-candidate-oct29": 25165824,
+        "toyvm-selector-rename-ready-lifetime-continuation-oct29": 25165824
+      },
+      "aggregate": 176160768,
+      "requiredBytes": 3200253952,
+      "futureGrowthIncludingUncertaintyBuffer": 150994944,
+      "freeBytes": 4307185664,
+      "remainingAfterForecast": 4156190720,
+      "MemAvailable": 3715170304,
+      "memRequired": 2147483648,
+      "device": 1680253000807562931,
+      "f_bavail": 1063445,
+      "blockSize": 4096,
+      "PASS": true,
+      "forecast": "Transferred24MiB predecessor allocation: sourceGit3 evidence1 WAL8 publication3 uncertainty9; other active owners retained through closeout. Current aggregate and unchanged per-operation floors.",
+      "previousAllocationCloseout": {
+        "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+        "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+      },
+      "transfers": {
+        "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+        "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+      },
+      "transfer": {
+        "tuxracer-glvertex2dv-independent-accept-oct29": "tuxracer-gltexcoord2dv-dispatch-repair-oct29"
+      },
+      "changedPrerequisite": "two predecessor clients exited; accepted RENAME parent and source-demonstrated bind-before-listen fixture race",
+      "shortfalls": {
+        "diskBytes": 0,
+        "memoryBytes": 0
+      },
+      "clientForecast": {
+        "at": "2026-10-29T07:45:59.146786+00:00",
+        "MemAvailable": 3715170304,
+        "additionalClients": 2,
+        "additionalClientBytes": 805306368,
+        "remaining": 2909863936,
+        "floor": 2147483648,
+        "changedPrerequisite": "two predecessor clients exited; accepted RENAME parent and source-demonstrated bind-before-listen fixture race",
+        "PASS": true
+      }
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true,
+      "forecast": true,
+      "memory": true
+    }
+  },
+  "artifactManifest": "artifact-hashes.json"
+}

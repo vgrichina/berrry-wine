@@ -1,0 +1,420 @@
+{
+  "checks": {
+    "cwd": true,
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": true,
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": true,
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": true,
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": true,
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": true,
+    "limitModule": true,
+    "taskSupervisor": true,
+    "canonicalReceipt": true,
+    "pythonExecutable": true,
+    "canonicalCopy": true,
+    "artifact:reconstruction.json": true,
+    "artifact:readiness.py": true,
+    "artifact:candidate.py.txt": true,
+    "artifact:sentinel.py": true,
+    "artifact:lifetime-results.json": true,
+    "artifact:lifetime.py": true,
+    "artifact:fixture-pins.json": true,
+    "artifact:prior-completion-receipt.json": true,
+    "artifact:production-pins.json": true,
+    "artifact:input-pins.json": true,
+    "artifact:mutant-rejection.json": true,
+    "artifact:remaining-summary.json": true,
+    "artifact:sentinel-results.json": true,
+    "artifact:README.md": true,
+    "artifact:operation-evidence/verify-qualified-remote.json": true,
+    "artifact:operation-evidence/push-qualified-candidate.stderr.json": true,
+    "artifact:operation-evidence/remaining-lifetime.stdout": true,
+    "artifact:operation-evidence/cached-whitespace.stdout": true,
+    "artifact:operation-evidence/remaining-lifetime.json": true,
+    "artifact:operation-evidence/pin-corrected-fixture.stdout": true,
+    "artifact:operation-evidence/verify-qualified-remote.stderr": true,
+    "artifact:operation-evidence/verify-lifetime-oracles.json": true,
+    "artifact:operation-evidence/prelaunch-controls.json": true,
+    "artifact:operation-evidence/latest-successful-admission-pinned-relaunch.json": true,
+    "artifact:operation-evidence/pin-corrected-fixture.json": true,
+    "artifact:operation-evidence/cached-whitespace.stderr": true,
+    "artifact:operation-evidence/no-selector-close-mutant.json": true,
+    "artifact:operation-evidence/delayed-listen-sentinel.stdout": true,
+    "artifact:operation-evidence/verify-lifetime-oracles.stderr": true,
+    "artifact:operation-evidence/delayed-listen-sentinel.stderr": true,
+    "artifact:operation-evidence/no-selector-close-mutant.stderr": true,
+    "artifact:operation-evidence/push-qualified-candidate.stdout": true,
+    "artifact:operation-evidence/pin-corrected-fixture.stderr": true,
+    "artifact:operation-evidence/verify-qualified-remote.stdout": true,
+    "artifact:operation-evidence/no-selector-close-mutant.stdout": true,
+    "artifact:operation-evidence/remaining-lifetime.stderr": true,
+    "artifact:operation-evidence/push-qualified-candidate.json": true,
+    "artifact:operation-evidence/verify-lifetime-oracles.stdout": true,
+    "artifact:operation-evidence/cached-whitespace.json": true,
+    "artifact:operation-evidence/delayed-listen-sentinel.json": true,
+    "artifact:operation-evidence/git-readiness.json": true,
+    "artifact:carried-forward/private-remove-destination-guard.py.txt": true,
+    "artifact:carried-forward/wire.py": true,
+    "artifact:carried-forward/diagnostic.json": true,
+    "artifact:carried-forward/lifetime.py": true,
+    "artifact:carried-forward/production-pins.json": true,
+    "artifact:carried-forward/private-remove-source-guard.py.txt": true,
+    "artifact:carried-forward/provenance.json": true,
+    "artifact:carried-forward/README.md": true,
+    "artifact:carried-forward/results.json": true,
+    "artifact:lifetime-results/life-9.json": true,
+    "artifact:lifetime-results/life-99.json": true,
+    "artifact:lifetime-results/life-5.json": true,
+    "artifact:lifetime-results/life-6.json": true,
+    "artifact:lifetime-results/life-2.json": true,
+    "artifact:lifetime-results/life-11.json": true,
+    "artifact:lifetime-results/private-no-selector-close.py.txt": true,
+    "artifact:lifetime-results/life-1.json": true,
+    "artifact:lifetime-results/life-10.json": true,
+    "artifact:lifetime-results/life-3.json": true,
+    "artifact:lifetime-results/life-7.json": true,
+    "artifact:lifetime-results/life-4.json": true,
+    "artifact:lifetime-results/life-8.json": true,
+    "artifact:carried-forward/provenance/source.diff": true,
+    "artifact:carried-forward/provenance/attempted-combined-backend.py.txt": true,
+    "artifact:carried-forward/provenance/original-rename-wire.py.txt": true,
+    "artifact:carried-forward/provenance/accepted-selector-backend.py.txt": true,
+    "artifact:carried-forward/provenance/original-selector-wire.py.txt": true,
+    "artifact:carried-forward/provenance/original-backend.py.txt": true,
+    "artifact:carried-forward/lifetime-results/supported.json": true,
+    "artifact:carried-forward/lifetime-results/life-0.json": true,
+    "artifact:carried-forward/lifetime-results/malformed.json": true,
+    "artifact:carried-forward/lifetime-results/life-1.json": true,
+    "artifact:carried-forward/lifetime-results/acquisition-register.json": true,
+    "artifact:carried-forward/lifetime-results/acquisition-bind.json": true,
+    "startup": true,
+    "remote": true
+  },
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12821,
+      "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "artifactHashes": {
+    "reconstruction.json": {
+      "bytes": 444,
+      "sha256": "0e99f80f8966c787bdafa7ef0989e6f3ccc5d7cda77ce9b0b2b4b2c473aa82ff"
+    },
+    "readiness.py": {
+      "bytes": 1991,
+      "sha256": "fd15de7d6a833d206de789a05122bd0cef78f5a593cf5d7fee697d89e05308e0"
+    },
+    "candidate.py.txt": {
+      "bytes": 12821,
+      "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8"
+    },
+    "sentinel.py": {
+      "bytes": 2412,
+      "sha256": "d540dff2c3068d765d83ee6f59e7cd5224a5ca96c0d217f3c20d11cae0fb7ff5"
+    },
+    "lifetime-results.json": {
+      "bytes": 2240,
+      "sha256": "d88b08afba99036af7eeea6572420bc095c7039dc132b9d43a989e05fedad452"
+    },
+    "lifetime.py": {
+      "bytes": 15735,
+      "sha256": "c5553eac2df6649a4dc16c8ba1c5724b771a120ab728f85ec687702431201571"
+    },
+    "fixture-pins.json": {
+      "bytes": 508,
+      "sha256": "4ff4ff737ca3409460a09ec0f6ee4e40de3b9a8f42e57162201c98acab90c9aa"
+    },
+    "prior-completion-receipt.json": {
+      "bytes": 3036,
+      "sha256": "4dadde90ba5a979dfd0a11bb62b8bcdc2d4d3a3df07db980bd84c4c3ebc81b3a"
+    },
+    "production-pins.json": {
+      "bytes": 903,
+      "sha256": "43affbfd1d658313520f5307f448b69c1e382613a01ef38f395cae3d61c45666"
+    },
+    "input-pins.json": {
+      "bytes": 3350,
+      "sha256": "4a42a8b1761a7d0e065745dd49979c040bccdeaf1e14f4a9ba1d9912989c0591"
+    },
+    "mutant-rejection.json": {
+      "bytes": 1074,
+      "sha256": "6c29194055c092b8b5f782967c74309efd0167aede846ea2c8bf9a278557f585"
+    },
+    "remaining-summary.json": {
+      "bytes": 5573,
+      "sha256": "b623b95bcc159bb8fb547f936584cb347111035e5c0458161c76e63805227a12"
+    },
+    "sentinel-results.json": {
+      "bytes": 361,
+      "sha256": "8c2f25103db5815ec896528df2830609c04ee6de16eb10e912b57521912d7f5f"
+    },
+    "README.md": {
+      "bytes": 2392,
+      "sha256": "1c3ffc0c31354130dc70dc81ccb935d1256c5383c22e44436ca00f2985ccee65"
+    },
+    "operation-evidence/verify-qualified-remote.json": {
+      "bytes": 3516,
+      "sha256": "a4b7518038d77057af1b099b2cbf636d30b0b7cfc7b5d48e03abbfab46830aa7"
+    },
+    "operation-evidence/push-qualified-candidate.stderr.json": {
+      "bytes": 656,
+      "sha256": "fac577d6f0b7ace9a12687c87b3c3f7db17b0ebfc2f3ce06bfbd50637f923329"
+    },
+    "operation-evidence/remaining-lifetime.stdout": {
+      "bytes": 1946,
+      "sha256": "3521d404bfd514c9b71673f6735ade07a74ac284c8d32236b0b7d84f3e6ce123"
+    },
+    "operation-evidence/cached-whitespace.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "operation-evidence/remaining-lifetime.json": {
+      "bytes": 3316,
+      "sha256": "09d7c916a007cb3c49a7fa774d7da9c683b3baf27b3636d25e5b69cd8a38c303"
+    },
+    "operation-evidence/pin-corrected-fixture.stdout": {
+      "bytes": 451,
+      "sha256": "620d8a30e06364a616117508d16d824e8807cfd85daa7bc31db7948c358a2f2c"
+    },
+    "operation-evidence/verify-qualified-remote.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "operation-evidence/verify-lifetime-oracles.json": {
+      "bytes": 6233,
+      "sha256": "e74e9d4d221c53092c2cbf1595f53a1732d3fdd9194865d4b8e95c9f56158013"
+    },
+    "operation-evidence/prelaunch-controls.json": {
+      "bytes": 558,
+      "sha256": "81c59c8e5419fb1f800715e0a3bc2e94f8694b90f415b8a23363fcadcb0ee162"
+    },
+    "operation-evidence/latest-successful-admission-pinned-relaunch.json": {
+      "bytes": 2525,
+      "sha256": "62e7ab363eef8ead49cab006827506f28b2b4dcccd5e8e80a624fe1311fa6143"
+    },
+    "operation-evidence/pin-corrected-fixture.json": {
+      "bytes": 4054,
+      "sha256": "0ad3853e28da974a03515ffafe4745064ac4921bdc06748edf494a28ff82c782"
+    },
+    "operation-evidence/cached-whitespace.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "operation-evidence/no-selector-close-mutant.json": {
+      "bytes": 3334,
+      "sha256": "af767d61472322fa3f6a0f17a6ac216a588d37be583c4184b262fd1acd62b10f"
+    },
+    "operation-evidence/delayed-listen-sentinel.stdout": {
+      "bytes": 315,
+      "sha256": "d9492b3d36bbf081dc2e763c8a89d30292b8999d1790e8b05dfd964ac294fd41"
+    },
+    "operation-evidence/verify-lifetime-oracles.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "operation-evidence/delayed-listen-sentinel.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "operation-evidence/no-selector-close-mutant.stderr": {
+      "bytes": 759,
+      "sha256": "e096dcbff8d7068d041f53c9de251c03c04b4817603d43fa248e68885bd7e1a7"
+    },
+    "operation-evidence/push-qualified-candidate.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "operation-evidence/pin-corrected-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "operation-evidence/verify-qualified-remote.stdout": {
+      "bytes": 113,
+      "sha256": "6ef79fbae153589bd64ad37f8aef6e37ee1753f0d19ec7694cdbcb7b36d41679"
+    },
+    "operation-evidence/no-selector-close-mutant.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "operation-evidence/remaining-lifetime.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "operation-evidence/push-qualified-candidate.json": {
+      "bytes": 3496,
+      "sha256": "112a995c32449defe0a012b93f77b1dfb7d5fb8977b56b062c83d61f19198f82"
+    },
+    "operation-evidence/verify-lifetime-oracles.stdout": {
+      "bytes": 147,
+      "sha256": "08ce0d2c6b254362f6a2a4a75f723dff689abf5e8ad44f12f5bec8253d2d2ee1"
+    },
+    "operation-evidence/cached-whitespace.json": {
+      "bytes": 3429,
+      "sha256": "efb6d66404393fe16d3ef877574bd73d8355b11e1bed5e9f37e0ff59e03460f0"
+    },
+    "operation-evidence/delayed-listen-sentinel.json": {
+      "bytes": 3316,
+      "sha256": "45bd862c89bb5c932f0cff255d9d252d005b7f73346f0fdfa3f59dbf3e690440"
+    },
+    "operation-evidence/git-readiness.json": {
+      "bytes": 326,
+      "sha256": "bfc24336bf7a083483c33f602e592e3dc54c172b88c97a9bc208f80c52eaae6f"
+    },
+    "carried-forward/private-remove-destination-guard.py.txt": {
+      "bytes": 12815,
+      "sha256": "f6614d24f75f82760cd00e3826eda99d0a06c297fa7d1acba9f70832b13a72b9"
+    },
+    "carried-forward/wire.py": {
+      "bytes": 10626,
+      "sha256": "339132d7f1a56ba3988a4b91453533b55cbe0abb28c279709d0b54937f7d610f"
+    },
+    "carried-forward/diagnostic.json": {
+      "bytes": 4028,
+      "sha256": "d40e766e07ac9006f4d222d439b54639bedd8726f0d1c91f498474abbe8c895e"
+    },
+    "carried-forward/lifetime.py": {
+      "bytes": 16786,
+      "sha256": "0cc4599968c3aec0c182f766278e49f1937099e205e4d55f75e1c118963eeae2"
+    },
+    "carried-forward/production-pins.json": {
+      "bytes": 904,
+      "sha256": "da5308528591fde91baada7b674aad23bb97c559709acc3a3ee1cd8be32696e4"
+    },
+    "carried-forward/private-remove-source-guard.py.txt": {
+      "bytes": 12818,
+      "sha256": "ee51e021ffa637341fd875e6c205176f2f8cdfc41c8e8f5e14dabf7b640c1ba7"
+    },
+    "carried-forward/provenance.json": {
+      "bytes": 1113,
+      "sha256": "691f47144453b4caad465003bf311cf7213eec4585dc4d70e26cf4c5fb166713"
+    },
+    "carried-forward/README.md": {
+      "bytes": 1978,
+      "sha256": "60ed47432bf916e71b4072e8ed78ca09ed5879523033f473bc433c3e21ad7b3d"
+    },
+    "carried-forward/results.json": {
+      "bytes": 151274,
+      "sha256": "20edf9647c46fbbf4b69b00d080b14b39cee397e7ddb59d1f0cd066f4c7c80d6"
+    },
+    "lifetime-results/life-9.json": {
+      "bytes": 2480,
+      "sha256": "d6136b614498dd976d593682f43d1ef0b627eac7b56a670a8874d0bc6304ed76"
+    },
+    "lifetime-results/life-99.json": {
+      "bytes": 2621,
+      "sha256": "b1dc20c75b29094496afd5502bb4cc427ea937ecc9893e6eb99e555dbfe0e5d4"
+    },
+    "lifetime-results/life-5.json": {
+      "bytes": 2480,
+      "sha256": "359fe2103b1c18edf0a0292f62a313cf312f39cfc4bf057c1cf6ccc3c74d5725"
+    },
+    "lifetime-results/life-6.json": {
+      "bytes": 2401,
+      "sha256": "a1b8f0d4df34be4e574c76ca3d2a961fc0ef1a4222ca513d3e7dfb68ac270e58"
+    },
+    "lifetime-results/life-2.json": {
+      "bytes": 2401,
+      "sha256": "68667482e01cda71fad549b09e34769e20e0bea105ffe8225cf6c1d77aa79b67"
+    },
+    "lifetime-results/life-11.json": {
+      "bytes": 2481,
+      "sha256": "0a0ad27e89000aae8aa7905275c26aa575219410e105e94364911354a36741fb"
+    },
+    "lifetime-results/private-no-selector-close.py.txt": {
+      "bytes": 12849,
+      "sha256": "3082b305669b99138aea644a7796fd0974cc891e1b82e3c65ce8fc9a6dfffc2c"
+    },
+    "lifetime-results/life-1.json": {
+      "bytes": 2480,
+      "sha256": "f1d2434c0d583fd7a0b2c760ac2e3c79b633afe3634284df8f876a66908cd55d"
+    },
+    "lifetime-results/life-10.json": {
+      "bytes": 2402,
+      "sha256": "b312f6c7f002faf81ad9aa43167e5fea4c965dcbd56560094167eae174eb3c70"
+    },
+    "lifetime-results/life-3.json": {
+      "bytes": 2480,
+      "sha256": "3583a427bd1ad3d0ec100ac8f52bfa0825fb1c81c9266c0422588953d09f42ad"
+    },
+    "lifetime-results/life-7.json": {
+      "bytes": 2480,
+      "sha256": "c284fea63c7d305e0f5cc411322699df4e9d12d365ee07c9f2e3bb71d29ce2ec"
+    },
+    "lifetime-results/life-4.json": {
+      "bytes": 2401,
+      "sha256": "7f34078242d66e05c7c6664b703ae32ce4b3629441e66c9be8cc4405a9e2bf4e"
+    },
+    "lifetime-results/life-8.json": {
+      "bytes": 2401,
+      "sha256": "34c946a00a1fd7947a7ac534ddd465d4550e86f0e9ff26e44f054e2353a481ad"
+    },
+    "carried-forward/provenance/source.diff": {
+      "bytes": 876,
+      "sha256": "0219937cc9a56b7c5626c0f3281dd47d0ef95a04b22503f751bf20dca0bc4688"
+    },
+    "carried-forward/provenance/attempted-combined-backend.py.txt": {
+      "bytes": 12821,
+      "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8"
+    },
+    "carried-forward/provenance/original-rename-wire.py.txt": {
+      "bytes": 10759,
+      "sha256": "9e2641965da39f5ba9b71912a6b251d23e24b571453e4df16aa928ff04ffe1b0"
+    },
+    "carried-forward/provenance/accepted-selector-backend.py.txt": {
+      "bytes": 11824,
+      "sha256": "5d8384416042115189995a0aa80ad9de4d2695112b87da8d3d1124e5736d6bfc"
+    },
+    "carried-forward/provenance/original-selector-wire.py.txt": {
+      "bytes": 16164,
+      "sha256": "ba9a400ff97727ecd26673f792b3e9a3ee576a71cb065fc1759bf8d67323f26a"
+    },
+    "carried-forward/provenance/original-backend.py.txt": {
+      "bytes": 12580,
+      "sha256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb"
+    },
+    "carried-forward/lifetime-results/supported.json": {
+      "bytes": 12603,
+      "sha256": "94fd464d246d992bf678355c1e4dc45ac59e13a95268a683320fe0ce0f15393d"
+    },
+    "carried-forward/lifetime-results/life-0.json": {
+      "bytes": 2104,
+      "sha256": "6d7ea9253ca59fba40b06bf220f447b712d050a6d6e02b901bd45d09e90ccf8e"
+    },
+    "carried-forward/lifetime-results/malformed.json": {
+      "bytes": 3936,
+      "sha256": "19d98bf55df860b1655ccf12030e4bba80689974603aac36fbf62d0cadc06724"
+    },
+    "carried-forward/lifetime-results/life-1.json": {
+      "bytes": 998,
+      "sha256": "494dc7a7d4a7fa7c65881aa8c67392bbee84a669daf4b5657f4860e62c56d220"
+    },
+    "carried-forward/lifetime-results/acquisition-register.json": {
+      "bytes": 1046,
+      "sha256": "a8c593db0ceef2e30594ba6400f9a962f5c329556593d7ad28c0e65a080a6e99"
+    },
+    "carried-forward/lifetime-results/acquisition-bind.json": {
+      "bytes": 1048,
+      "sha256": "2f3cd093bdf4a8ef81f37ca18bd9021592f25ba74c5c8f466e9cb8afa46a382d"
+    }
+  },
+  "mountArgv": null,
+  "mountValidation": "No mount/provider operation; no filename-bearing mount argv. Source-only pre-existing owned Git view.",
+  "trustedSSH": "ops.py exact coordinator configuration",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-selector-rename-fresh-independent-accept-oct29/root-ref-digest.json"
+}

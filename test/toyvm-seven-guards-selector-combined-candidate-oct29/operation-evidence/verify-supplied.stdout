@@ -1,0 +1,5 @@
+canonical 7c1ce7506362752184ed88e5bae354d8112268c2 7c1ce7506362752184ed88e5bae354d8112268c2 True
+carried {'renameCases': 44, 'replayed': False, 'artifactManifest': 'preflight.json', 'receipt': 'carried/qualified-completion-receipt.json'}
+namespace keys ['task', 'outcome', 'completedAt', 'base', 'beforeSourcePins', 'afterBackendSHA256', 'donorBackendSHA256', 'exactProductionChange', 'behavior', 'priorReceipts', 'artifacts', 'publicationGate', 'commit', 'branch', 'remote', 'controls', 'resources', 'rootRefInitial', 'remainingGates', 'excluded', 'closeout', 'messageboard']
+artifacts verified 25
+namespace source verified against supplied candidate receipt; optional historical Git source unavailable; no dependency on it

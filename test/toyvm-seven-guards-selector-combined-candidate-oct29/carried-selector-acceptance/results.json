@@ -1,0 +1,230 @@
+{
+  "source": "/tmp/toyvm-selector-rename-fresh-independent-accept-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+  "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8",
+  "cases": [
+    {
+      "boundPathDidNotSignalReady": true,
+      "registered": 2,
+      "listening": true,
+      "witness": "real register returned and SO_ACCEPTCONN=1",
+      "statusRoundTrip": true,
+      "kind": "EOF",
+      "owned": {
+        "transport": [
+          3,
+          [
+            8,
+            178086073,
+            49663,
+            "socket:[178086073]"
+          ]
+        ],
+        "control": [
+          5,
+          [
+            8,
+            178085200,
+            49663,
+            "socket:[178085200]"
+          ]
+        ],
+        "selector": [
+          6,
+          [
+            15,
+            1059,
+            384,
+            "anon_inode:[eventpoll]"
+          ]
+        ]
+      },
+      "closedBeforeFixtureCleanup": {
+        "transport": true,
+        "control": true,
+        "selector": true
+      },
+      "threadJoined": true,
+      "retainedExceptions": 0,
+      "gcDisabled": true
+    },
+    {
+      "registered": 2,
+      "listening": true,
+      "witness": "real register returned and SO_ACCEPTCONN=1",
+      "statusRoundTrip": true,
+      "kind": "EPIPE",
+      "owned": {
+        "transport": [
+          3,
+          [
+            8,
+            178086077,
+            49663,
+            "socket:[178086077]"
+          ]
+        ],
+        "control": [
+          5,
+          [
+            8,
+            178085204,
+            49663,
+            "socket:[178085204]"
+          ]
+        ],
+        "selector": [
+          6,
+          [
+            15,
+            1059,
+            384,
+            "anon_inode:[eventpoll]"
+          ]
+        ]
+      },
+      "closedBeforeFixtureCleanup": {
+        "transport": true,
+        "control": true,
+        "selector": true
+      },
+      "threadJoined": true,
+      "retainedExceptions": 1,
+      "gcDisabled": true
+    },
+    {
+      "registered": 2,
+      "listening": true,
+      "witness": "real register returned and SO_ACCEPTCONN=1",
+      "statusRoundTrip": true,
+      "kind": "EOF",
+      "owned": {
+        "transport": [
+          3,
+          [
+            8,
+            178086080,
+            49663,
+            "socket:[178086080]"
+          ]
+        ],
+        "control": [
+          5,
+          [
+            8,
+            178085206,
+            49663,
+            "socket:[178085206]"
+          ]
+        ],
+        "selector": [
+          6,
+          [
+            15,
+            1059,
+            384,
+            "anon_inode:[eventpoll]"
+          ]
+        ]
+      },
+      "closedBeforeFixtureCleanup": {
+        "transport": true,
+        "control": true,
+        "selector": true
+      },
+      "threadJoined": true,
+      "retainedExceptions": 0,
+      "gcDisabled": true
+    },
+    {
+      "registered": 2,
+      "listening": true,
+      "witness": "real register returned and SO_ACCEPTCONN=1",
+      "statusRoundTrip": true,
+      "kind": "EPIPE",
+      "owned": {
+        "transport": [
+          3,
+          [
+            8,
+            178086084,
+            49663,
+            "socket:[178086084]"
+          ]
+        ],
+        "control": [
+          5,
+          [
+            8,
+            178085207,
+            49663,
+            "socket:[178085207]"
+          ]
+        ],
+        "selector": [
+          6,
+          [
+            15,
+            1059,
+            384,
+            "anon_inode:[eventpoll]"
+          ]
+        ]
+      },
+      "closedBeforeFixtureCleanup": {
+        "transport": true,
+        "control": true,
+        "selector": true
+      },
+      "threadJoined": true,
+      "retainedExceptions": 1,
+      "gcDisabled": true
+    }
+  ],
+  "negativeControl": {
+    "registered": 2,
+    "listening": true,
+    "witness": "real register returned and SO_ACCEPTCONN=1",
+    "statusRoundTrip": true,
+    "negativeControlRejected": true,
+    "kind": "EPIPE",
+    "owned": {
+      "transport": [
+        3,
+        [
+          8,
+          178086088,
+          49663,
+          "socket:[178086088]"
+        ]
+      ],
+      "control": [
+        5,
+        [
+          8,
+          178085208,
+          49663,
+          "socket:[178085208]"
+        ]
+      ],
+      "selector": [
+        6,
+        [
+          15,
+          1059,
+          384,
+          "anon_inode:[eventpoll]"
+        ]
+      ]
+    },
+    "closedBeforeFixtureCleanup": {
+      "transport": true,
+      "control": true,
+      "selector": false
+    },
+    "threadJoined": true,
+    "retainedExceptions": 1,
+    "gcDisabled": true
+  },
+  "retainedExceptionCount": 3,
+  "PASS": true
+}

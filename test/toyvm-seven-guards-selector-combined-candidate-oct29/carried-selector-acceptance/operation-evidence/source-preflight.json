@@ -1,0 +1,87 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "from pathlib import Path; import json,hashlib,os; b=Path(\"/tmp/toyvm-selector-rename-fresh-independent-accept-oct29\"); d=json.loads(Path(\"/home/user/wine-assembly/scratch/usage-watch/toyvm-selector-rename-fresh-independent-accept-oct29-dispatch.json\").read_text()); pin=lambda p:{\"bytes\":len(p.read_bytes()),\"sha256\":hashlib.sha256(p.read_bytes()).hexdigest()}; checks={}; checks[\"cwd\"]=Path.cwd()==b/\"repo\"; checks.update({p:pin(Path(p))==v for p,v in d[\"sourcePins\"].items()}); checks.update({k:pin(Path(d[k]))==d[k+\"Pin\"] for k in (\"limitModule\",\"taskSupervisor\",\"canonicalReceipt\",\"pythonExecutable\")}); a=b/\"inputs/qualified-lifetime\"; checks[\"canonicalCopy\"]=pin(a/\"completion-receipt.json\")==d[\"canonicalReceiptPin\"]; manifest=json.loads((a/\"artifact-hashes.json\").read_text()); checks.update({\"artifact:\"+p:pin(a/p)==v for p,v in manifest.items()}); checks[\"startup\"]=json.loads((b/\"prelaunch-controls.json\").read_text())[\"PASS\"]; checks[\"remote\"]= (b/\"e/verify-input-remote.stdout\").read_text().split()[0]==d[\"candidate\"]; assert all(checks.values()),checks; out=Path(\"test/toyvm-selector-rename-fresh-independent-accept-oct29\"); out.mkdir(); (out/\"preflight.json\").write_text(json.dumps({\"checks\":checks,\"sourcePins\":d[\"sourcePins\"],\"artifactHashes\":manifest,\"mountArgv\":None,\"mountValidation\":\"No mount/provider operation; no filename-bearing mount argv. Source-only pre-existing owned Git view.\",\"trustedSSH\":\"ops.py exact coordinator configuration\",\"rootRefReceipt\":\"/home/user/wine-assembly/scratch/usage-watch/toyvm-selector-rename-fresh-independent-accept-oct29/root-ref-digest.json\"},indent=2)); print(\"PASS\",len(checks),\"source/artifact/startup/remote checks\"); s=Path(\"test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py\").read_text(); print(s[s.index(\"    def serve\"):])"
+  ],
+  "cwd": "/tmp/toyvm-selector-rename-fresh-independent-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.14537396491505206,
+  "admission": {
+    "at": 1793261228.1884675,
+    "device": 1680253000807562931,
+    "f_bavail": 1025801,
+    "blockSize": 4096,
+    "free": 4201680896,
+    "MemAvailable": 2985975808,
+    "allocated": 2908160,
+    "budget": 25165824,
+    "aggregate": {
+      "at": "2026-10-29T08:05:17.610294+00:00",
+      "owners": {
+        "coordinator": 25165824,
+        "gltron-eager-integrity-independent-accept-oct29": 50331648,
+        "toyvm-repaired-source-loader-independent-accept-oct29": 25165824,
+        "toyvm-selector-rename-fresh-independent-accept-oct29": 25165824,
+        "toyvm-six-rename-capacity-recovered-accept-oct29": 25165824
+      },
+      "aggregate": 176160768,
+      "requiredBytes": 3200253952,
+      "futureGrowthIncludingUncertaintyBuffer": 150994944,
+      "freeBytes": 4733878272,
+      "remainingAfterForecast": 4582883328,
+      "MemAvailable": 3658584064,
+      "memRequired": 2147483648,
+      "device": 1680253000807562931,
+      "f_bavail": 1063445,
+      "blockSize": 4096,
+      "PASS": true,
+      "forecast": "Transferred24MiB predecessor allocation: sourceGit3 evidence1 WAL8 publication3 uncertainty9; other active owners retained through closeout. Current aggregate and unchanged per-operation floors.",
+      "previousAllocationCloseout": {
+        "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+        "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+      },
+      "transfers": {
+        "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+        "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+      },
+      "transfer": {
+        "tuxracer-glvertex2dv-independent-accept-oct29": "tuxracer-gltexcoord2dv-dispatch-repair-oct29"
+      },
+      "changedPrerequisite": "Repair worker completed; current completion-triggered capacity sample",
+      "shortfalls": {
+        "diskBytes": 0,
+        "memoryBytes": 0
+      },
+      "clientForecast": {
+        "at": "2026-10-29T08:05:17.610294+00:00",
+        "MemAvailable": 3658584064,
+        "additionalClients": 3,
+        "additionalClientBytes": 1207959552,
+        "remaining": 2450624512,
+        "floor": 2147483648,
+        "changedPrerequisite": "Repair worker completed; current completion-triggered capacity sample",
+        "PASS": true
+      }
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true,
+      "forecast": true,
+      "memory": true
+    }
+  },
+  "stdoutBytes": 1704,
+  "stderrBytes": 0
+}
