@@ -1,0 +1,92 @@
+{
+  "allObservedIdentitiesReaped": true,
+  "box": "bx_76gy8xxq",
+  "boxExpiry": null,
+  "boxState": "stopped",
+  "browserAllowance": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanupComplete": true,
+  "cliExit": 1,
+  "executablePins": {
+    "/usr/bin/fusermount3": {
+      "bytes": 39296,
+      "realpath": "/usr/bin/fusermount3",
+      "sha256": "d278775c1528dd32efc85c2cb322423ee93aa8dcf76aaa595f7022d427910704"
+    },
+    "/usr/bin/python3": {
+      "bytes": 8020928,
+      "realpath": "/usr/bin/python3.12",
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    }
+  },
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": "filesystem per-file limit",
+    "fileLimit": 16384,
+    "inodes": 2,
+    "live": 8192,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 7,
+    "peak": 8192,
+    "writeLimit": 65536,
+    "written": 0
+  },
+  "fixtureOutput": "FTRUNCATE_ATTEMPTED_SIZE:16385\n",
+  "fixturePin": {
+    "bytes": 177,
+    "sha256": "e3bf1db6292c12c626aa36238ad8c6c0bf28a07e56d45ae916306599a0a95313"
+  },
+  "gatePASS": true,
+  "limitations": [
+    "Only this absolute-path ftruncate growth boundary is qualified; no gameplay, browser, general resource or broader syscall claim.",
+    "Pre-operation positive WAL baseline is not launcher-startup accounting proof; historical limitations remain.",
+    "No Node or guest runner mount arguments are used; Node startup and guest mount parser gates do not apply. Boat --file staging enumerated exact paths with no comma-bearing inputs.",
+    "Born partial repository has no sparse-checkout file; no sparse expansion, clone, fetch or donor write occurred. An optional metadata read reported FileNotFoundError and did not execute runtime."
+  ],
+  "observerPin": {
+    "bytes": 6847,
+    "sha256": "33c3f1c0951a8054633215cc9bc1c91ab328265c489ef5835ab27441caa5ecee"
+  },
+  "previousFailure": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-ftruncate-file-limit-oct29/retained-evidence/completion-receipt.json",
+    "pin": {
+      "bytes": 2010,
+      "sha256": "b4bea366a51aa7c7248dba13a17f99eca7895c3d84bca1cb577c9b6ab470014f"
+    },
+    "reason": "relative A EACCES before marker/syscall; preserved unchanged; not a production defect"
+  },
+  "productionInvocations": 1,
+  "productionOwnedIdentityCheck": true,
+  "remainingMounts": [],
+  "runtimeSHA256": "4a8330b1f23ef4f32f2d6df29dcf92ebf23cdd6bde88b96129b67ea548f0e1b7",
+  "safetyCleanup": null,
+  "snapshotVerifiedAt": "2026-10-29T04:45:39.596Z",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "task": "toyvm-domain-pinned-ftruncate-file-limit-oct29"
+}

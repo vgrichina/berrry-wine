@@ -1,0 +1,542 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvft2/cancellation.json",
+    "--work",
+    "/tmp/tvft2/w",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "16384",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "2",
+    "--wall-limit",
+    "5",
+    "--output-limit",
+    "4096",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,0o600)\ntry:\n print('FTRUNCATE_ATTEMPTED_SIZE:16385',flush=True)\n os.ftruncate(fd,16385)\nfinally:\n os.close(fd)\n"
+  ],
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cliExit": 1,
+  "cliStderr": "",
+  "cliStdout": "{\"accepted\": false, \"accountingAccepted\": false, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 0.132491, \"exit\": -15, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": \"filesystem per-file limit\", \"fileLimit\": 16384, \"inodes\": 2, \"live\": 8192, \"liveLimit\": 32768, \"openHandles\": 0, \"operations\": 7, \"peak\": 8192, \"writeLimit\": 65536, \"written\": 0}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"RlRSVU5DQVRFX0FUVEVNUFRFRF9TSVpFOjE2Mzg1Cg==\", \"encoding\": \"base64\"}, \"owned\": [[6241, \"13383\"]], \"peakRSS\": 34603008, \"reapedPeakRSS\": 17694720, \"sampledPeakRSS\": 34603008, \"stopReason\": \"filesystem per-file limit\", \"wallSeconds\": 0.08137714099999016}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": false, \"cleanupComplete\": true, \"failures\": [\"authoritative filesystem receipt rejected\", \"supervisor stopped or stop receipt missing\", \"child did not succeed\"]}\n",
+  "elapsed": 0.18410617899999693,
+  "executablePins": {
+    "/usr/bin/fusermount3": {
+      "bytes": 39296,
+      "realpath": "/usr/bin/fusermount3",
+      "sha256": "d278775c1528dd32efc85c2cb322423ee93aa8dcf76aaa595f7022d427910704"
+    },
+    "/usr/bin/python3": {
+      "bytes": 8020928,
+      "realpath": "/usr/bin/python3.12",
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    }
+  },
+  "fixtureOutput": "FTRUNCATE_ATTEMPTED_SIZE:16385\n",
+  "fixtureSHA256": "e3bf1db6292c12c626aa36238ad8c6c0bf28a07e56d45ae916306599a0a95313",
+  "gatePASS": true,
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cmdSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finalState": null,
+      "pid": 6238,
+      "ppid": 6132,
+      "rss": 0,
+      "start": "13375",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+      "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+      "finalState": null,
+      "pid": 6239,
+      "ppid": 6238,
+      "rss": 14286848,
+      "start": "13379",
+      "state": "R"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cmdSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finalState": null,
+      "pid": 6241,
+      "ppid": 6238,
+      "rss": 0,
+      "start": "13383",
+      "state": "Z"
+    }
+  ],
+  "pins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "productionInvocations": 1,
+  "productionOwnedIdentityCheck": true,
+  "remainingMounts": [],
+  "report": {
+    "accepted": false,
+    "accountingAccepted": false,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.132491,
+      "exit": -15,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": "filesystem per-file limit",
+        "fileLimit": 16384,
+        "inodes": 2,
+        "live": 8192,
+        "liveLimit": 32768,
+        "openHandles": 0,
+        "operations": 7,
+        "peak": 8192,
+        "writeLimit": 65536,
+        "written": 0
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "RlRSVU5DQVRFX0FUVEVNUFRFRF9TSVpFOjE2Mzg1Cg==",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          6241,
+          "13383"
+        ]
+      ],
+      "peakRSS": 34603008,
+      "reapedPeakRSS": 17694720,
+      "sampledPeakRSS": 34603008,
+      "stopReason": "filesystem per-file limit",
+      "wallSeconds": 0.08137714099999016
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": true,
+    "failures": [
+      "authoritative filesystem receipt rejected",
+      "supervisor stopped or stop receipt missing",
+      "child did not succeed"
+    ]
+  },
+  "safetyCleanup": null,
+  "samples": [
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 9699328,
+          "start": "13375",
+          "state": "R"
+        }
+      ],
+      "t": 0.009083076999985451
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 15990784,
+          "start": "13375",
+          "state": "R"
+        }
+      ],
+      "t": 0.0201102019999837
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 18874368,
+          "start": "13375",
+          "state": "R"
+        }
+      ],
+      "t": 0.03242163299998424
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21364736,
+          "start": "13375",
+          "state": "S"
+        }
+      ],
+      "t": 0.04404074199999286
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21364736,
+          "start": "13375",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+          "pid": 6239,
+          "ppid": 6238,
+          "rss": 11927552,
+          "start": "13379",
+          "state": "R"
+        }
+      ],
+      "t": 0.055689736999994466
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21364736,
+          "start": "13375",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+          "pid": 6239,
+          "ppid": 6238,
+          "rss": 14024704,
+          "start": "13379",
+          "state": "R"
+        }
+      ],
+      "t": 0.06710971100000052
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21495808,
+          "start": "13375",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+          "pid": 6239,
+          "ppid": 6238,
+          "rss": 14286848,
+          "start": "13379",
+          "state": "S"
+        }
+      ],
+      "t": 0.07747752500000615
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21495808,
+          "start": "13375",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+          "pid": 6239,
+          "ppid": 6238,
+          "rss": 14286848,
+          "start": "13379",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py /tmp/tvft2/w/domain /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,0o600)\ntry:\n print('FTRUNCATE_ATTEMPTED_SIZE:16385',flush=True)\n os.ftruncate(fd,16385)\nfinally:\n os.close(fd)\n ",
+          "cmdSHA256": "5358612ff86c813150d5b96659d16f4c5a676cc057a4b55bf0cfb7676c288af3",
+          "pid": 6241,
+          "ppid": 6238,
+          "rss": 10616832,
+          "start": "13383",
+          "state": "R"
+        }
+      ],
+      "t": 0.0888307219999831
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21495808,
+          "start": "13375",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+          "pid": 6239,
+          "ppid": 6238,
+          "rss": 14286848,
+          "start": "13379",
+          "state": "S"
+        },
+        {
+          "cmd": "",
+          "cmdSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "pid": 6241,
+          "ppid": 6238,
+          "rss": 0,
+          "start": "13383",
+          "state": "R"
+        }
+      ],
+      "t": 0.09900023099999089
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21495808,
+          "start": "13375",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+          "pid": 6239,
+          "ppid": 6238,
+          "rss": 14286848,
+          "start": "13379",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,0o600)\ntry:\n print('FTRUNCATE_ATTEMPTED_SIZE:16385',flush=True)\n os.ftruncate(fd,16385)\nfinally:\n os.close(fd)\n ",
+          "cmdSHA256": "d9f2103c1fc5342a0017532417fb962c2577855a43ed0ac31d6e8644fc9cfab6",
+          "pid": 6241,
+          "ppid": 6238,
+          "rss": 10616832,
+          "start": "13383",
+          "state": "R"
+        }
+      ],
+      "t": 0.1106751739999936
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21495808,
+          "start": "13375",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+          "pid": 6239,
+          "ppid": 6238,
+          "rss": 14286848,
+          "start": "13379",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,0o600)\ntry:\n print('FTRUNCATE_ATTEMPTED_SIZE:16385',flush=True)\n os.ftruncate(fd,16385)\nfinally:\n os.close(fd)\n ",
+          "cmdSHA256": "d9f2103c1fc5342a0017532417fb962c2577855a43ed0ac31d6e8644fc9cfab6",
+          "pid": 6241,
+          "ppid": 6238,
+          "rss": 12713984,
+          "start": "13383",
+          "state": "R"
+        }
+      ],
+      "t": 0.12287359100000117
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21495808,
+          "start": "13375",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+          "pid": 6239,
+          "ppid": 6238,
+          "rss": 14286848,
+          "start": "13379",
+          "state": "S"
+        },
+        {
+          "cmd": "",
+          "cmdSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "pid": 6241,
+          "ppid": 6238,
+          "rss": 0,
+          "start": "13383",
+          "state": "Z"
+        }
+      ],
+      "t": 0.135012617000001
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21495808,
+          "start": "13375",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+          "pid": 6239,
+          "ppid": 6238,
+          "rss": 14286848,
+          "start": "13379",
+          "state": "S"
+        }
+      ],
+      "t": 0.1463152080000043
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvft2/cancellation.json --work /tmp/tvft2/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\nfd=os.open('/tmp/tvft2/w/domain/A',os.O_CREAT|os.O_RDWR,",
+          "cmdSHA256": "cf538b61a8bcd567f1472e504ca284a59d6b86db1e72a10760eb346af94ce93e",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 21495808,
+          "start": "13375",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvft2/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvft2/w/domain /tmp/tvft2/w/status.sock 32768 65536 16384 ",
+          "cmdSHA256": "cfb03ac7a4664c715770f83ca4dc158b1a44c77352149390c52d23ac24f0fd5d",
+          "pid": 6239,
+          "ppid": 6238,
+          "rss": 14286848,
+          "start": "13379",
+          "state": "R"
+        }
+      ],
+      "t": 0.1577555989999837
+    },
+    {
+      "rows": [
+        {
+          "cmd": "",
+          "cmdSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 0,
+          "start": "13375",
+          "state": "R"
+        }
+      ],
+      "t": 0.1679145599999856
+    },
+    {
+      "rows": [
+        {
+          "cmd": "",
+          "cmdSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "pid": 6238,
+          "ppid": 6132,
+          "rss": 0,
+          "start": "13375",
+          "state": "Z"
+        }
+      ],
+      "t": 0.17871864399998572
+    }
+  ],
+  "socketBytes": 24,
+  "sourceAfter": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "task": "toyvm-domain-pinned-ftruncate-file-limit-oct29"
+}
