@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/home/user/.ascii/bin/boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "20",
+    "bx_s27fnfzu",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvdt/remote_test.py"
+  ],
+  "cwd": "/tmp/toyvm-validated-quota-output-limit-oct29/repo",
+  "exit": 0,
+  "incident": null,
+  "wall": 0.26893532392568886,
+  "stdoutBytes": 4029,
+  "stderrBytes": 0
+}

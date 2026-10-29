@@ -1,0 +1,78 @@
+{
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "observedGate": "PASS output rejection only",
+  "files": {
+    "source-pins.json": {
+      "bytes": 831,
+      "sha256": "bd4cd499035c97a2028c04a142a609fd7dffc730f8e3e60cf445952fa433fb59"
+    },
+    "run_owned.py": {
+      "bytes": 2793,
+      "sha256": "5065982296efa784a078bd3da9ac1ec488279cba213aeec715be383d525bbc41"
+    },
+    "limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "remote_test.py": {
+      "bytes": 3665,
+      "sha256": "29905c834e86473714a7eca210b45f8a77b6981aca2a6a4a63d34968b9368f62"
+    },
+    "create_once.py": {
+      "bytes": 2252,
+      "sha256": "f169c192cb24443752735fd9890dd95cfb53c07d48311acd43df3f69ff058f2b"
+    },
+    "REPORT.md": {
+      "bytes": 3318,
+      "sha256": "3cc031a1c32f2caca99a2994f2609c438a64e45d3b174d2a52527bd5092508f3"
+    },
+    "evidence/canonical-receipt.json": {
+      "bytes": 4142,
+      "sha256": "90e9f0a75ffe9f20bbf040b006d853dec257651736711b4ea819094b56da0b86"
+    },
+    "evidence/cli.stdout": {
+      "bytes": 2419,
+      "sha256": "94f8621a6d7ef4c9495bd6316f1a345febbe2dd88fefb5e73ffd0696df934384"
+    },
+    "evidence/stop.stdout": {
+      "bytes": 1531,
+      "sha256": "af9c4d450d5779394d56148ffeaa1ea1269d5c63c865b53ed8ea7d1ca8cb2f2c"
+    },
+    "evidence/lifecycle.json": {
+      "bytes": 1297,
+      "sha256": "037a17615c417e325ef33f6bb5806bf513ebd2bf1d57968361f5e061b8491f56"
+    },
+    "evidence/runtime-wrapper.json": {
+      "bytes": 390,
+      "sha256": "994bffa268d009d252f90ce43001503792e492f4e7d78ad6ed4cebac323a0faf"
+    },
+    "evidence/prelaunch-controls.json": {
+      "bytes": 543,
+      "sha256": "fdd3e28fa00a95df73a74814c64da6329546a570f61c181a2018af363fc7f092"
+    },
+    "evidence/cli.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/quota-preflight.json": {
+      "bytes": 339,
+      "sha256": "2687e156862f62080b77f2c37f5e24ab72461710f9907f7ed9755ee396a78eca"
+    },
+    "evidence/runtime-api.json": {
+      "bytes": 4029,
+      "sha256": "87e639541bebf5f266adb044acff37744c2dfbd99898ffd4df11e46c7b8b7c23"
+    },
+    "evidence/admissions.jsonl": {
+      "bytes": 6079,
+      "sha256": "2c3dbccc542160a6e718e89248dc5c9e89fa0691f0fe50f3e9d42e25665f7ca6"
+    },
+    "evidence/create.stdout": {
+      "bytes": 570,
+      "sha256": "6a6a52bfb21e694877550ac14d9be50efa6fedd1bc151a12a9119a44438fd1c4"
+    },
+    "evidence/box.json": {
+      "bytes": 129,
+      "sha256": "56368c52de744ceff959484caccbc9d2c704a67a19b196e0d3e1aba29148ab14"
+    }
+  }
+}

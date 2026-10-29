@@ -1,0 +1,5 @@
+{"event":"created","hostedPorts":null,"id":"bx_s27fnfzu","org":null,"team":null,"ttlSeconds":1800}
+{"event":"state","id":"bx_s27fnfzu","state":"starting"}
+{"event":"state","id":"bx_s27fnfzu","state":"cloning"}
+{"event":"state","id":"bx_s27fnfzu","state":"ready"}
+{"archiveAfter":"2026-10-29T04:37:47.428Z","commands":{"forward":"boat forward bx_s27fnfzu --remote 3000 --local 3000","ssh":"boat ssh bx_s27fnfzu"},"desktopUrl":null,"event":"ready","id":"bx_s27fnfzu","ip":"2001:41d0:303:291b:100::26","state":"ready","url":"https://box-node-fa3df6b72753acb8.on.boat.dev"}

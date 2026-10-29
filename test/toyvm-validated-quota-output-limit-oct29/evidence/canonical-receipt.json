@@ -1,0 +1,127 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvdt/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvdt/cancellation.json",
+    "--work",
+    "/tmp/tvdt/w",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "16384",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "2",
+    "--wall-limit",
+    "5",
+    "--output-limit",
+    "1024",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os\nfor i in range(4):\n assert os.write(1,b\"X\"*512)==512"
+  ],
+  "exit": 1,
+  "externalSafety": null,
+  "wall": 0.13021056600000236,
+  "observedIdentities": {
+    "6511:8254": {
+      "ppid": 6464,
+      "pgrp": 6511,
+      "start": "8254",
+      "rss": 0
+    },
+    "6512:8257": {
+      "ppid": 6511,
+      "pgrp": 6511,
+      "start": "8257",
+      "rss": 14155776
+    },
+    "6515:8260": {
+      "ppid": 6511,
+      "pgrp": 6511,
+      "start": "8260",
+      "rss": 0
+    }
+  },
+  "remainingIdentities": [],
+  "remainingMounts": [],
+  "backendCapturedBytes": 1024,
+  "stopReason": "output limit",
+  "cli": {
+    "accepted": false,
+    "accountingAccepted": true,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.058519,
+      "exit": 0,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": null,
+        "fileLimit": 16384,
+        "inodes": 1,
+        "live": 4096,
+        "liveLimit": 32768,
+        "openHandles": 0,
+        "operations": 1,
+        "peak": 4096,
+        "writeLimit": 65536,
+        "written": 0
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "WFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWA==",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          6515,
+          "8260"
+        ]
+      ],
+      "peakRSS": 34340864,
+      "reapedPeakRSS": 13856768,
+      "sampledPeakRSS": 34340864,
+      "stopReason": "output limit",
+      "wallSeconds": 0.04292214000000172
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": true,
+    "cleanupComplete": true,
+    "failures": [
+      "supervisor stopped or stop receipt missing"
+    ]
+  },
+  "preflight": {
+    "pinsVerified": true,
+    "mountArgv": [],
+    "guestMountParserInvoked": false,
+    "quotas": [
+      32768,
+      65536,
+      16384
+    ]
+  },
+  "PASS": true
+}
