@@ -1,0 +1,21 @@
+  6bcb87:	4c 89 ea             	mov    %r13,%rdx
+  6bcb8a:	be ac 68 70 00       	mov    $0x7068ac,%esi
+  6bcb8f:	bf ed c2 70 00       	mov    $0x70c2ed,%edi
+  6bcb94:	89 85 f8 fe ff ff    	mov    %eax,-0x108(%rbp)
+  6bcb9a:	31 c0                	xor    %eax,%eax
+  6bcb9c:	e8 ff 2d f5 ff       	call   60f9a0 <PySys_Audit@@Base>
+  6bcba1:	85 c0                	test   %eax,%eax
+  6bcba3:	0f 88 0c 42 e0 ff    	js     4c0db5 <Py_Main@@Base+0x58c>
+  6bcba9:	be 74 54 70 00       	mov    $0x705474,%esi
+  6bcbae:	4c 89 ef             	mov    %r13,%rdi
+  6bcbb1:	e8 8a f2 ff ff       	call   6bbe40 <_Py_fopen_obj@@Base>
+  6bcbb6:	49 89 c7             	mov    %rax,%r15
+  6bcbb9:	48 85 c0             	test   %rax,%rax
+  6bcbbc:	0f 84 59 42 e0 ff    	je     4c0e1b <Py_Main@@Base+0x5f2>
+  6bcbc2:	83 bd f8 fe ff ff 00 	cmpl   $0x0,-0x108(%rbp)
+  6bcbc9:	0f 85 d8 01 00 00    	jne    6bcda7 <Py_RunMain@@Base+0x527>
+  6bcbcf:	4c 89 ff             	mov    %r15,%rdi
+  6bcbd2:	e8 e9 34 d6 ff       	call   4200c0 <fileno@plt>
+  6bcbd7:	48 8d b5 40 ff ff ff 	lea    -0xc0(%rbp),%rsi
+  6bcbde:	89 c7                	mov    %eax,%edi
+  6bcbe0:	e8 8b e4 f5 ff       	call   61b070 <_Py_fstat_noraise@@Base>

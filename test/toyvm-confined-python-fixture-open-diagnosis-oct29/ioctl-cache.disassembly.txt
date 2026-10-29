@@ -1,0 +1,5 @@
+
+/usr/bin/python3:     file format elf64-x86-64
+
+Contents of section .data:
+ a4dad4 ffffffff                             ....

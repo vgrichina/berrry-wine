@@ -1,0 +1,77 @@
+
+/usr/bin/python3:     file format elf64-x86-64
+
+
+Disassembly of section .init:
+
+Disassembly of section .plt:
+
+Disassembly of section .text:
+
+00000000006bbb70 <_Py_wfopen@@Base>:
+  6bbb70:	f3 0f 1e fa          	endbr64
+  6bbb74:	55                   	push   %rbp
+  6bbb75:	45 31 c0             	xor    %r8d,%r8d
+  6bbb78:	48 89 f1             	mov    %rsi,%rcx
+  6bbb7b:	48 89 fa             	mov    %rdi,%rdx
+  6bbb7e:	48 89 e5             	mov    %rsp,%rbp
+  6bbb81:	41 55                	push   %r13
+  6bbb83:	41 54                	push   %r12
+  6bbb85:	49 89 f4             	mov    %rsi,%r12
+  6bbb88:	be 2e c2 70 00       	mov    $0x70c22e,%esi
+  6bbb8d:	53                   	push   %rbx
+  6bbb8e:	48 89 fb             	mov    %rdi,%rbx
+  6bbb91:	bf 99 a9 70 00       	mov    $0x70a999,%edi
+  6bbb96:	48 83 ec 28          	sub    $0x28,%rsp
+  6bbb9a:	64 48 8b 04 25 28 00 	mov    %fs:0x28,%rax
+  6bbba1:	00 00
+  6bbba3:	48 89 45 d8          	mov    %rax,-0x28(%rbp)
+  6bbba7:	31 c0                	xor    %eax,%eax
+  6bbba9:	e8 f2 3d f5 ff       	call   60f9a0 <PySys_Audit@@Base>
+  6bbbae:	85 c0                	test   %eax,%eax
+  6bbbb0:	0f 88 a4 39 e0 ff    	js     4bf55a <_Py_strhex_bytes@@Base+0x1a88>
+  6bbbb6:	ba 0a 00 00 00       	mov    $0xa,%edx
+  6bbbbb:	4c 89 e6             	mov    %r12,%rsi
+  6bbbbe:	48 8d 7d ce          	lea    -0x32(%rbp),%rdi
+  6bbbc2:	e8 79 63 d6 ff       	call   421f40 <wcstombs@plt>
+  6bbbc7:	48 83 f8 09          	cmp    $0x9,%rax
+  6bbbcb:	0f 87 91 39 e0 ff    	ja     4bf562 <_Py_strhex_bytes@@Base+0x1a90>
+  6bbbd1:	48 89 df             	mov    %rbx,%rdi
+  6bbbd4:	ba 01 00 00 00       	mov    $0x1,%edx
+  6bbbd9:	31 f6                	xor    %esi,%esi
+  6bbbdb:	e8 70 00 00 00       	call   6bbc50 <_Py_wfopen@@Base+0xe0>
+  6bbbe0:	48 89 c3             	mov    %rax,%rbx
+  6bbbe3:	48 85 c0             	test   %rax,%rax
+  6bbbe6:	0f 84 6e 39 e0 ff    	je     4bf55a <_Py_strhex_bytes@@Base+0x1a88>
+  6bbbec:	48 89 c7             	mov    %rax,%rdi
+  6bbbef:	48 8d 75 ce          	lea    -0x32(%rbp),%rsi
+  6bbbf3:	e8 68 5f d6 ff       	call   421b60 <fopen64@plt>
+  6bbbf8:	48 89 df             	mov    %rbx,%rdi
+  6bbbfb:	49 89 c4             	mov    %rax,%r12
+  6bbbfe:	49 89 c5             	mov    %rax,%r13
+  6bbc01:	e8 9a a0 ec ff       	call   585ca0 <PyMem_RawFree@@Base>
+  6bbc06:	4d 85 e4             	test   %r12,%r12
+  6bbc09:	0f 84 4b 39 e0 ff    	je     4bf55a <_Py_strhex_bytes@@Base+0x1a88>
+  6bbc0f:	4c 89 e7             	mov    %r12,%rdi
+  6bbc12:	e8 a9 44 d6 ff       	call   4200c0 <fileno@plt>
+  6bbc17:	31 c9                	xor    %ecx,%ecx
+  6bbc19:	31 d2                	xor    %edx,%edx
+  6bbc1b:	31 f6                	xor    %esi,%esi
+  6bbc1d:	89 c7                	mov    %eax,%edi
+  6bbc1f:	e8 ac fa f5 ff       	call   61b6d0 <_Py_write@@Base+0x650>
+  6bbc24:	85 c0                	test   %eax,%eax
+  6bbc26:	0f 88 26 39 e0 ff    	js     4bf552 <_Py_strhex_bytes@@Base+0x1a80>
+  6bbc2c:	48 8b 45 d8          	mov    -0x28(%rbp),%rax
+  6bbc30:	64 48 2b 04 25 28 00 	sub    %fs:0x28,%rax
+  6bbc37:	00 00
+  6bbc39:	75 0e                	jne    6bbc49 <_Py_wfopen@@Base+0xd9>
+  6bbc3b:	48 83 c4 28          	add    $0x28,%rsp
+  6bbc3f:	4c 89 e8             	mov    %r13,%rax
+  6bbc42:	5b                   	pop    %rbx
+  6bbc43:	41 5c                	pop    %r12
+  6bbc45:	41 5d                	pop    %r13
+  6bbc47:	5d                   	pop    %rbp
+  6bbc48:	c3                   	ret
+  6bbc49:	e8 22 59 d6 ff       	call   421570 <__stack_chk_fail@plt>
+
+Disassembly of section .fini:

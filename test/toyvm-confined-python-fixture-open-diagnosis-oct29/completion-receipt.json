@@ -1,0 +1,68 @@
+{
+  "task": "toyvm-confined-python-fixture-open-diagnosis-oct29",
+  "status": "BLOCKED_EXACT_HISTORICAL_SYSCALL_AND_POLICY_LAYER_UNOBSERVED",
+  "closedAt": "2026-10-29T18:19:22.015085+00:00",
+  "sourceCandidate": "dcbe956bb403509f531b059c6822a1dcacd9fa59",
+  "predecessorEvidenceCommit": "ef828662aaf016f6e4facc6be727e15f4aa416ba",
+  "sourcePinsUnchanged": true,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "fd87f1a4c211d70daf60b2b201cf2f7b3665b1dc7b631de66baa263c491cac77"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "staticMechanism": "Py_RunMain filename -> _Py_fopen_obj -> set_inheritable raising=1 -> ioctl FIOCLEX; own filter returns EPERM",
+  "observedFailingSyscall": null,
+  "productionRepair": false,
+  "proposal": "byte-identical fixture text via real CLI child python -B -c with same argv[1:]",
+  "proposalTestScope": "syntax, immutable input hashes, argument equivalence, exact BPF interpretation, binary branch review; no behavioral runtime",
+  "tests": {
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "test/toyvm-confined-python-fixture-open-diagnosis-oct29/test_diagnosis.py"
+    ],
+    "passed": 5,
+    "negativeControls": [
+      "ioctl allow mutation defeats errno prediction",
+      "wrong fixture rejected",
+      "foreign architecture and x32 killed"
+    ]
+  },
+  "runtime": {
+    "authorized": false,
+    "executed": false,
+    "box": null,
+    "lifecycle": "No assigned box; coordinator retains lifecycle ownership. Predecessor receipt records bx_pfvpxxu2 stopped."
+  },
+  "controls": "unchanged task-local ops.py and limit_contract.py; no admission denial",
+  "unknowns": [
+    "actual failing script syscall and fd",
+    "whether script open succeeded first",
+    "winning own vs outer seccomp layer",
+    "runtime validation of -c proposal",
+    "positive mounted production acceptance"
+  ],
+  "nextTask": "one separately authorized bounded supported trace of original filename command; stop on access denial; see REPORT.md",
+  "preservedEvidence": "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/preserved",
+  "publication": {
+    "branch": "task/toyvm-confined-python-fixture-open-diagnosis-oct29",
+    "state": "pending; final publication receipt at owned task root"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "task": "toyvm-real-cli-file-limit-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "result": "PASS: observed isolated production per-file rejection",
+  "commit": "f70389b42845ee1c3c548677dd3340b8e4955d82",
+  "branch": "refs/heads/task/toyvm-real-cli-file-limit-oct29",
+  "pushVerified": true,
+  "sourcePins": "/tmp/toyvm-real-cli-file-limit-oct29/repo/test/toyvm-real-cli-file-limit-oct29/source-pins.json",
+  "canonical": "/tmp/toyvm-real-cli-file-limit-oct29/repo/test/toyvm-real-cli-file-limit-oct29/evidence/canonical-receipt.json",
+  "manifestSHA256": "594f847e5b3d191d6a672ced5fe77b45c86affe0426462975a8a97b3268658e7",
+  "box": {
+    "box": "bx_38g4dtgr",
+    "state": "stopped",
+    "originalExpiry": "2026-10-29T04:45:12.444Z",
+    "cutoff": "2026-10-29T04:40:00Z",
+    "stoppedAt": "2026-10-29T04:15:46.168Z",
+    "snapshotCompletedAt": "2026-10-29T04:15:46.132Z",
+    "snapshotAvailable": true,
+    "stop": {
+      "endedAt": "2026-10-29T04:15:46.187Z",
+      "error": null,
+      "id": "stop_ad65c115011985af",
+      "lastAttemptAt": "2026-10-29T04:15:46.187Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "actualStoppedReceipt": "stopped-final.stdout"
+  },
+  "scope": "per-file gate only; full resources/browser/gameplay unknown",
+  "boardPublication": "coordinator append note; oversized shared board not modified",
+  "productionInvocations": 1
+}

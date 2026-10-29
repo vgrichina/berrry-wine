@@ -1,0 +1,132 @@
+{
+  "case": "work",
+  "count": 1024,
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvcm/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvcm/cancellation-receipt.json",
+    "--work",
+    "/tmp/tvcm/work",
+    "--live-limit",
+    "8192",
+    "--write-limit",
+    "8192",
+    "--file-limit",
+    "8192",
+    "--rss-limit",
+    "67108864",
+    "--cpu-limit",
+    "10",
+    "--wall-limit",
+    "20",
+    "--output-limit",
+    "8192",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvcm/fixture.py",
+    "/tmp/tvcm/work/domain/f",
+    "1024"
+  ],
+  "cwd": "/tmp/tvcm/repo",
+  "cliExit": 1,
+  "stdout": "{\"accepted\": false, \"accountingAccepted\": true, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 0.06925500000000001, \"exit\": 2, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": null, \"fileLimit\": 8192, \"inodes\": 1, \"live\": 4096, \"liveLimit\": 8192, \"openHandles\": 0, \"operations\": 1, \"peak\": 4096, \"writeLimit\": 8192, \"written\": 0}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"L3Vzci9iaW4vcHl0aG9uMzogY2FuJ3Qgb3BlbiBmaWxlICcvdG1wL3R2Y20vZml4dHVyZS5weSc6IFtFcnJubyAxXSBPcGVyYXRpb24gbm90IHBlcm1pdHRlZAo=\", \"encoding\": \"base64\"}, \"owned\": [[7068, \"20616\"]], \"peakRSS\": 34734080, \"reapedPeakRSS\": 13959168, \"sampledPeakRSS\": 34734080, \"stopReason\": null, \"wallSeconds\": 0.04726300699999797}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": false, \"cleanupComplete\": true, \"failures\": [\"child did not succeed\"]}\n",
+  "stderr": "",
+  "report": {
+    "accepted": false,
+    "accountingAccepted": true,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.06925500000000001,
+      "exit": 2,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": null,
+        "fileLimit": 8192,
+        "inodes": 1,
+        "live": 4096,
+        "liveLimit": 8192,
+        "openHandles": 0,
+        "operations": 1,
+        "peak": 4096,
+        "writeLimit": 8192,
+        "written": 0
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "L3Vzci9iaW4vcHl0aG9uMzogY2FuJ3Qgb3BlbiBmaWxlICcvdG1wL3R2Y20vZml4dHVyZS5weSc6IFtFcnJubyAxXSBPcGVyYXRpb24gbm90IHBlcm1pdHRlZAo=",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          7068,
+          "20616"
+        ]
+      ],
+      "peakRSS": 34734080,
+      "reapedPeakRSS": 13959168,
+      "sampledPeakRSS": 34734080,
+      "stopReason": null,
+      "wallSeconds": 0.04726300699999797
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": true,
+    "failures": [
+      "child did not succeed"
+    ]
+  },
+  "elapsed": 0.14236597499998993,
+  "watchdog": null,
+  "mountsObserved": [
+    "52 29 0:51 / /tmp/tvcm/work/domain rw,nosuid,nodev,relatime shared:98 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+  ],
+  "remainingMounts": [],
+  "observedProcessIdentities": [
+    {
+      "pid": 7064,
+      "startTicks": 20609
+    },
+    {
+      "pid": 7065,
+      "startTicks": 20613
+    },
+    {
+      "pid": 7068,
+      "startTicks": 20616
+    }
+  ],
+  "remainingObservedProcessIdentities": [],
+  "receiptSHA256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870",
+  "remoteLimits": {
+    "DATA": [
+      134217728,
+      134217728
+    ],
+    "CPU": [
+      90,
+      90
+    ],
+    "FSIZE": [
+      2097152,
+      2097152
+    ]
+  }
+}

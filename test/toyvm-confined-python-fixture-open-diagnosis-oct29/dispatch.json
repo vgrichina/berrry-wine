@@ -1,0 +1,50 @@
+{
+  "task": "toyvm-confined-python-fixture-open-diagnosis-oct29",
+  "candidate": "dcbe956bb403509f531b059c6822a1dcacd9fa59",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "fd87f1a4c211d70daf60b2b201cf2f7b3665b1dc7b631de66baa263c491cac77"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "ownedRepo": "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/repo",
+  "admission": "/home/user/wine-assembly/scratch/usage-watch/toyvm-confined-python-fixture-open-diagnosis-oct29-aggregate.json",
+  "objectStores": "/home/user/wine-assembly/scratch/usage-watch/toyvm-confined-python-fixture-open-diagnosis-oct29-object-stores.json",
+  "limitModule": "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/limit_contract.py",
+  "limitModulePin": {
+    "bytes": 2510,
+    "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "taskSupervisor": "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/ops.py",
+  "taskSupervisorPin": {
+    "bytes": 4294,
+    "sha256": "2ce4d8788fc08dd3c3e9fdcdd893431741dff2d1b16d0a5465b710d66c5bc460"
+  },
+  "canonicalReceipt": "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/inputs/completion-receipt.json",
+  "canonicalReceiptPin": {
+    "bytes": 32005,
+    "sha256": "77b57b35292aaf22c0da5aeb2f44abaad45cba63b0e159efcc683f31e214eada"
+  },
+  "pythonExecutable": "/usr/bin/python3",
+  "pythonExecutablePin": {
+    "bytes": 8020928,
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  },
+  "runtimeAllowed": false
+}

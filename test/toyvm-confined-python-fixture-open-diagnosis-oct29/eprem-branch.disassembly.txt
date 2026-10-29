@@ -1,0 +1,19 @@
+
+/usr/bin/python3:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+00000000004bf5ff <_Py_strhex_bytes@@Base+0x1b2d>:
+  4bf5ff:	83 f8 19             	cmp    $0x19,%eax
+  4bf602:	74 05                	je     4bf609 <_Py_strhex_bytes@@Base+0x1b37>
+  4bf604:	83 f8 0d             	cmp    $0xd,%eax
+  4bf607:	75 5f                	jne    4bf668 <_Py_strhex_bytes@@Base+0x1b96>
+  4bf609:	31 f6                	xor    %esi,%esi
+  4bf60b:	89 35 c3 e4 58 00    	mov    %esi,0x58e4c3(%rip)        # a4dad4 <PyTraceBack_Type@@Base+0x2f4>
+  4bf611:	e9 bf c1 15 00       	jmp    61b7d5 <_Py_write@@Base+0x755>
+  4bf616:	45 84 e4             	test   %r12b,%r12b
+  4bf619:	0f 84 f2 c1 15 00    	je     61b811 <_Py_write@@Base+0x791>
+  4bf61f:	48 8b 3d 3a 68 57 00 	mov    0x57683a(%rip),%rdi        # a35e60 <PyExc_OSError@@Base>
+  4bf626:	e8 f5 5a 1e 00       	call   6a5120 <PyErr_SetFromErrno@@Base>
+  4bf62b:	e9 e1 c1 15 00       	jmp    61b811 <_Py_write@@Base+0x791>

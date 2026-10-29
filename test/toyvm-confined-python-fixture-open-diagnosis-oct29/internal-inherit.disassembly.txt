@@ -1,0 +1,128 @@
+
+/usr/bin/python3:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+000000000061b6d0 <_Py_write@@Base+0x650>:
+  61b6d0:	55                   	push   %rbp
+  61b6d1:	48 89 e5             	mov    %rsp,%rbp
+  61b6d4:	41 54                	push   %r12
+  61b6d6:	53                   	push   %rbx
+  61b6d7:	89 f3                	mov    %esi,%ebx
+  61b6d9:	48 83 ec 10          	sub    $0x10,%rsp
+  61b6dd:	48 85 c9             	test   %rcx,%rcx
+  61b6e0:	74 1f                	je     61b701 <_Py_write@@Base+0x681>
+  61b6e2:	85 f6                	test   %esi,%esi
+  61b6e4:	75 1b                	jne    61b701 <_Py_write@@Base+0x681>
+  61b6e6:	83 39 ff             	cmpl   $0xffffffff,(%rcx)
+  61b6e9:	0f 84 9a 00 00 00    	je     61b789 <_Py_write@@Base+0x709>
+  61b6ef:	83 39 00             	cmpl   $0x0,(%rcx)
+  61b6f2:	0f 84 21 01 00 00    	je     61b819 <_Py_write@@Base+0x799>
+  61b6f8:	31 c0                	xor    %eax,%eax
+  61b6fa:	5a                   	pop    %rdx
+  61b6fb:	59                   	pop    %rcx
+  61b6fc:	5b                   	pop    %rbx
+  61b6fd:	41 5c                	pop    %r12
+  61b6ff:	5d                   	pop    %rbp
+  61b700:	c3                   	ret
+  61b701:	41 89 d4             	mov    %edx,%r12d
+  61b704:	41 83 e4 01          	and    $0x1,%r12d
+  61b708:	83 3d c5 23 43 00 00 	cmpl   $0x0,0x4323c5(%rip)        # a4dad4 <PyTraceBack_Type@@Base+0x2f4>
+  61b70f:	74 38                	je     61b749 <_Py_write@@Base+0x6c9>
+  61b711:	45 84 e4             	test   %r12b,%r12b
+  61b714:	74 33                	je     61b749 <_Py_write@@Base+0x6c9>
+  61b716:	85 db                	test   %ebx,%ebx
+  61b718:	0f 85 d8 00 00 00    	jne    61b7f6 <_Py_write@@Base+0x776>
+  61b71e:	b8 51 54 00 00       	mov    $0x5451,%eax
+  61b723:	48 63 f0             	movslq %eax,%rsi
+  61b726:	31 d2                	xor    %edx,%edx
+  61b728:	31 c0                	xor    %eax,%eax
+  61b72a:	89 7d ec             	mov    %edi,-0x14(%rbp)
+  61b72d:	e8 de 4b e0 ff       	call   420310 <ioctl@plt>
+  61b732:	8b 7d ec             	mov    -0x14(%rbp),%edi
+  61b735:	85 c0                	test   %eax,%eax
+  61b737:	0f 85 82 00 00 00    	jne    61b7bf <_Py_write@@Base+0x73f>
+  61b73d:	c7 05 8d 23 43 00 01 	movl   $0x1,0x43238d(%rip)        # a4dad4 <PyTraceBack_Type@@Base+0x2f4>
+  61b744:	00 00 00
+  61b747:	eb af                	jmp    61b6f8 <_Py_write@@Base+0x678>
+  61b749:	31 c0                	xor    %eax,%eax
+  61b74b:	be 01 00 00 00       	mov    $0x1,%esi
+  61b750:	89 7d ec             	mov    %edi,-0x14(%rbp)
+  61b753:	e8 28 5b e0 ff       	call   421280 <fcntl64@plt>
+  61b758:	8b 7d ec             	mov    -0x14(%rbp),%edi
+  61b75b:	85 c0                	test   %eax,%eax
+  61b75d:	0f 88 9d 00 00 00    	js     61b800 <_Py_write@@Base+0x780>
+  61b763:	85 db                	test   %ebx,%ebx
+  61b765:	75 51                	jne    61b7b8 <_Py_write@@Base+0x738>
+  61b767:	89 c2                	mov    %eax,%edx
+  61b769:	83 ca 01             	or     $0x1,%edx
+  61b76c:	39 c2                	cmp    %eax,%edx
+  61b76e:	74 88                	je     61b6f8 <_Py_write@@Base+0x678>
+  61b770:	31 c0                	xor    %eax,%eax
+  61b772:	be 02 00 00 00       	mov    $0x2,%esi
+  61b777:	e8 04 5b e0 ff       	call   421280 <fcntl64@plt>
+  61b77c:	85 c0                	test   %eax,%eax
+  61b77e:	0f 89 74 ff ff ff    	jns    61b6f8 <_Py_write@@Base+0x678>
+  61b784:	e9 8d 3e ea ff       	jmp    4bf616 <_Py_strhex_bytes@@Base+0x1b44>
+  61b789:	89 d6                	mov    %edx,%esi
+  61b78b:	48 89 4d e0          	mov    %rcx,-0x20(%rbp)
+  61b78f:	89 55 e8             	mov    %edx,-0x18(%rbp)
+  61b792:	89 7d ec             	mov    %edi,-0x14(%rbp)
+  61b795:	e8 86 05 0a 00       	call   6bbd20 <_Py_wfopen@@Base+0x1b0>
+  61b79a:	83 f8 ff             	cmp    $0xffffffff,%eax
+  61b79d:	74 72                	je     61b811 <_Py_write@@Base+0x791>
+  61b79f:	85 c0                	test   %eax,%eax
+  61b7a1:	48 8b 4d e0          	mov    -0x20(%rbp),%rcx
+  61b7a5:	8b 55 e8             	mov    -0x18(%rbp),%edx
+  61b7a8:	0f 94 c0             	sete   %al
+  61b7ab:	8b 7d ec             	mov    -0x14(%rbp),%edi
+  61b7ae:	0f b6 c0             	movzbl %al,%eax
+  61b7b1:	89 01                	mov    %eax,(%rcx)
+  61b7b3:	e9 37 ff ff ff       	jmp    61b6ef <_Py_write@@Base+0x66f>
+  61b7b8:	89 c2                	mov    %eax,%edx
+  61b7ba:	83 e2 fe             	and    $0xfffffffe,%edx
+  61b7bd:	eb ad                	jmp    61b76c <_Py_write@@Base+0x6ec>
+  61b7bf:	89 7d ec             	mov    %edi,-0x14(%rbp)
+  61b7c2:	e8 e9 5c e0 ff       	call   4214b0 <__errno_location@plt>
+  61b7c7:	8b 7d ec             	mov    -0x14(%rbp),%edi
+  61b7ca:	8b 00                	mov    (%rax),%eax
+  61b7cc:	83 f8 09             	cmp    $0x9,%eax
+  61b7cf:	0f 85 2a 3e ea ff    	jne    4bf5ff <_Py_strhex_bytes@@Base+0x1b2d>
+  61b7d5:	31 c0                	xor    %eax,%eax
+  61b7d7:	be 01 00 00 00       	mov    $0x1,%esi
+  61b7dc:	89 7d ec             	mov    %edi,-0x14(%rbp)
+  61b7df:	e8 9c 5a e0 ff       	call   421280 <fcntl64@plt>
+  61b7e4:	85 c0                	test   %eax,%eax
+  61b7e6:	78 1d                	js     61b805 <_Py_write@@Base+0x785>
+  61b7e8:	8b 7d ec             	mov    -0x14(%rbp),%edi
+  61b7eb:	41 bc 01 00 00 00    	mov    $0x1,%r12d
+  61b7f1:	e9 6d ff ff ff       	jmp    61b763 <_Py_write@@Base+0x6e3>
+  61b7f6:	b8 50 54 00 00       	mov    $0x5450,%eax
+  61b7fb:	e9 23 ff ff ff       	jmp    61b723 <_Py_write@@Base+0x6a3>
+  61b800:	45 84 e4             	test   %r12b,%r12b
+  61b803:	74 0c                	je     61b811 <_Py_write@@Base+0x791>
+  61b805:	48 8b 3d 54 a6 41 00 	mov    0x41a654(%rip),%rdi        # a35e60 <PyExc_OSError@@Base>
+  61b80c:	e8 0f 99 08 00       	call   6a5120 <PyErr_SetFromErrno@@Base>
+  61b811:	83 c8 ff             	or     $0xffffffff,%eax
+  61b814:	e9 e1 fe ff ff       	jmp    61b6fa <_Py_write@@Base+0x67a>
+  61b819:	e9 12 3e ea ff       	jmp    4bf630 <_Py_strhex_bytes@@Base+0x1b5e>
+  61b81e:	66 90                	xchg   %ax,%ax
+
+000000000061b820 <_Py_EncodeLocaleEx@@Base>:
+  61b820:	f3 0f 1e fa          	endbr64
+  61b824:	55                   	push   %rbp
+  61b825:	48 89 e5             	mov    %rsp,%rbp
+  61b828:	41 57                	push   %r15
+  61b82a:	41 56                	push   %r14
+  61b82c:	41 55                	push   %r13
+  61b82e:	49 89 fd             	mov    %rdi,%r13
+  61b831:	41 54                	push   %r12
+  61b833:	53                   	push   %rbx
+  61b834:	44 89 cb             	mov    %r9d,%ebx
+  61b837:	48 83 ec 48          	sub    $0x48,%rsp
+  61b83b:	48 89 75 a8          	mov    %rsi,-0x58(%rbp)
+  61b83f:	48 89 55 a0          	mov    %rdx,-0x60(%rbp)
+  61b843:	48 89 4d 98          	mov    %rcx,-0x68(%rbp)
+  61b847:	45 85 c0             	test   %r8d,%r8d
+  61b84a:	0f 85 6b 01 00 00    	jne    61b9bb <_Py_EncodeLocaleEx@@Base+0x19b>

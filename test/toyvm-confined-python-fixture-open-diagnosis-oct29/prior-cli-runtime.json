@@ -1,0 +1,152 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvfile/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvfile/cancellation.json",
+    "--work",
+    "/tmp/tvfile/w",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "16384",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "2",
+    "--wall-limit",
+    "5",
+    "--output-limit",
+    "4096",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os\nf=os.open(\"/tmp/tvfile/w/domain/profile\",os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)\ntry:\n os.write(f,b\"X\"*16385)\nfinally:\n os.close(f)"
+  ],
+  "exit": 1,
+  "externalSafety": null,
+  "wall": 0.1071874390000005,
+  "observedIdentities": {
+    "6541:9024": {
+      "ppid": 6036,
+      "start": "9024",
+      "rss": 21495808
+    },
+    "6542:9026": {
+      "ppid": 6541,
+      "start": "9026",
+      "rss": 14155776
+    },
+    "6545:9028": {
+      "ppid": 6541,
+      "start": "9028",
+      "rss": 0
+    }
+  },
+  "remainingIdentities": [],
+  "remainingMounts": [],
+  "cli": {
+    "accepted": false,
+    "accountingAccepted": false,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.05888,
+      "exit": -15,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": "filesystem per-file limit",
+        "fileLimit": 16384,
+        "inodes": 2,
+        "live": 8192,
+        "liveLimit": 32768,
+        "openHandles": 0,
+        "operations": 6,
+        "peak": 8192,
+        "writeLimit": 65536,
+        "written": 0
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          6545,
+          "9028"
+        ]
+      ],
+      "peakRSS": 35127296,
+      "reapedPeakRSS": 17694720,
+      "sampledPeakRSS": 35127296,
+      "stopReason": "filesystem per-file limit",
+      "wallSeconds": 0.0534156700000068
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": true,
+    "failures": [
+      "authoritative filesystem receipt rejected",
+      "supervisor stopped or stop receipt missing",
+      "child did not succeed"
+    ]
+  },
+  "preflight": {
+    "pinsVerified": {
+      "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+        "bytes": 8105,
+        "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+        "bytes": 3457,
+        "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+        "bytes": 10877,
+        "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+        "bytes": 4058,
+        "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+      },
+      "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+        "bytes": 23268,
+        "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+      }
+    },
+    "pythonExecutable": "/usr/bin/python3",
+    "fusermountExecutable": "/usr/bin/fusermount3",
+    "socketBytes": 25,
+    "mountArgv": [],
+    "intendedMountedFilenames": [],
+    "actualWorkloadPath": "/tmp/tvfile/w/domain/profile",
+    "workloadCwd": "/tmp/tvfile/repo",
+    "attemptedWrite": 16385,
+    "maxPossibleLive": 28672,
+    "quotas": [
+      32768,
+      65536,
+      16384
+    ]
+  },
+  "PASS": true
+}

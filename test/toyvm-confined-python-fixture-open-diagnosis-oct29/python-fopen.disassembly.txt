@@ -1,0 +1,94 @@
+
+/usr/bin/python3:     file format elf64-x86-64
+
+
+Disassembly of section .init:
+
+Disassembly of section .plt:
+
+Disassembly of section .text:
+
+00000000006bbe40 <_Py_fopen_obj@@Base>:
+  6bbe40:	f3 0f 1e fa          	endbr64
+  6bbe44:	55                   	push   %rbp
+  6bbe45:	48 89 e5             	mov    %rsp,%rbp
+  6bbe48:	41 57                	push   %r15
+  6bbe4a:	41 56                	push   %r14
+  6bbe4c:	49 89 f6             	mov    %rsi,%r14
+  6bbe4f:	48 8d 75 c8          	lea    -0x38(%rbp),%rsi
+  6bbe53:	41 55                	push   %r13
+  6bbe55:	41 54                	push   %r12
+  6bbe57:	49 89 fc             	mov    %rdi,%r12
+  6bbe5a:	53                   	push   %rbx
+  6bbe5b:	48 83 ec 18          	sub    $0x18,%rsp
+  6bbe5f:	e8 dc d8 ef ff       	call   5b9740 <PyUnicode_FSConverter@@Base>
+  6bbe64:	85 c0                	test   %eax,%eax
+  6bbe66:	0f 84 9e 00 00 00    	je     6bbf0a <_Py_fopen_obj@@Base+0xca>
+  6bbe6c:	48 8b 45 c8          	mov    -0x38(%rbp),%rax
+  6bbe70:	45 31 c0             	xor    %r8d,%r8d
+  6bbe73:	4c 89 f1             	mov    %r14,%rcx
+  6bbe76:	4c 89 e2             	mov    %r12,%rdx
+  6bbe79:	be 32 c2 70 00       	mov    $0x70c232,%esi
+  6bbe7e:	bf 99 a9 70 00       	mov    $0x70a999,%edi
+  6bbe83:	4c 8d 78 20          	lea    0x20(%rax),%r15
+  6bbe87:	31 c0                	xor    %eax,%eax
+  6bbe89:	e8 12 3b f5 ff       	call   60f9a0 <PySys_Audit@@Base>
+  6bbe8e:	85 c0                	test   %eax,%eax
+  6bbe90:	0f 88 47 39 e0 ff    	js     4bf7dd <_Py_strhex_bytes@@Base+0x1d0b>
+  6bbe96:	e8 e5 fe f3 ff       	call   5fbd80 <PyEval_SaveThread@@Base>
+  6bbe9b:	4c 89 ff             	mov    %r15,%rdi
+  6bbe9e:	4c 89 f6             	mov    %r14,%rsi
+  6bbea1:	49 89 c5             	mov    %rax,%r13
+  6bbea4:	e8 b7 5c d6 ff       	call   421b60 <fopen64@plt>
+  6bbea9:	4c 89 ef             	mov    %r13,%rdi
+  6bbeac:	48 89 c3             	mov    %rax,%rbx
+  6bbeaf:	e8 2c 03 f4 ff       	call   5fc1e0 <PyEval_RestoreThread@@Base>
+  6bbeb4:	48 85 db             	test   %rbx,%rbx
+  6bbeb7:	75 65                	jne    6bbf1e <_Py_fopen_obj@@Base+0xde>
+  6bbeb9:	e8 f2 55 d6 ff       	call   4214b0 <__errno_location@plt>
+  6bbebe:	83 38 04             	cmpl   $0x4,(%rax)
+  6bbec1:	0f 84 3c 39 e0 ff    	je     4bf803 <_Py_strhex_bytes@@Base+0x1d31>
+  6bbec7:	45 31 ed             	xor    %r13d,%r13d
+  6bbeca:	e8 e1 55 d6 ff       	call   4214b0 <__errno_location@plt>
+  6bbecf:	48 8b 7d c8          	mov    -0x38(%rbp),%rdi
+  6bbed3:	44 8b 30             	mov    (%rax),%r14d
+  6bbed6:	49 89 c7             	mov    %rax,%r15
+  6bbed9:	48 8b 17             	mov    (%rdi),%rdx
+  6bbedc:	85 d2                	test   %edx,%edx
+  6bbede:	78 0e                	js     6bbeee <_Py_fopen_obj@@Base+0xae>
+  6bbee0:	48 83 ea 01          	sub    $0x1,%rdx
+  6bbee4:	48 89 17             	mov    %rdx,(%rdi)
+  6bbee7:	75 05                	jne    6bbeee <_Py_fopen_obj@@Base+0xae>
+  6bbee9:	e8 c2 79 ec ff       	call   5838b0 <_Py_Dealloc@@Base>
+  6bbeee:	45 85 ed             	test   %r13d,%r13d
+  6bbef1:	75 17                	jne    6bbf0a <_Py_fopen_obj@@Base+0xca>
+  6bbef3:	48 85 db             	test   %rbx,%rbx
+  6bbef6:	75 2b                	jne    6bbf23 <_Py_fopen_obj@@Base+0xe3>
+  6bbef8:	45 89 37             	mov    %r14d,(%r15)
+  6bbefb:	48 8b 3d 5e 9f 37 00 	mov    0x379f5e(%rip),%rdi        # a35e60 <PyExc_OSError@@Base>
+  6bbf02:	4c 89 e6             	mov    %r12,%rsi
+  6bbf05:	e8 16 63 f3 ff       	call   5f2220 <PyErr_SetFromErrnoWithFilenameObject@@Base>
+  6bbf0a:	31 db                	xor    %ebx,%ebx
+  6bbf0c:	48 83 c4 18          	add    $0x18,%rsp
+  6bbf10:	48 89 d8             	mov    %rbx,%rax
+  6bbf13:	5b                   	pop    %rbx
+  6bbf14:	41 5c                	pop    %r12
+  6bbf16:	41 5d                	pop    %r13
+  6bbf18:	41 5e                	pop    %r14
+  6bbf1a:	41 5f                	pop    %r15
+  6bbf1c:	5d                   	pop    %rbp
+  6bbf1d:	c3                   	ret
+  6bbf1e:	45 31 ed             	xor    %r13d,%r13d
+  6bbf21:	eb a7                	jmp    6bbeca <_Py_fopen_obj@@Base+0x8a>
+  6bbf23:	48 89 df             	mov    %rbx,%rdi
+  6bbf26:	e8 95 41 d6 ff       	call   4200c0 <fileno@plt>
+  6bbf2b:	31 c9                	xor    %ecx,%ecx
+  6bbf2d:	31 f6                	xor    %esi,%esi
+  6bbf2f:	ba 01 00 00 00       	mov    $0x1,%edx
+  6bbf34:	89 c7                	mov    %eax,%edi
+  6bbf36:	e8 95 f7 f5 ff       	call   61b6d0 <_Py_write@@Base+0x650>
+  6bbf3b:	85 c0                	test   %eax,%eax
+  6bbf3d:	0f 88 8d 38 e0 ff    	js     4bf7d0 <_Py_strhex_bytes@@Base+0x1cfe>
+  6bbf43:	eb c7                	jmp    6bbf0c <_Py_fopen_obj@@Base+0xcc>
+
+Disassembly of section .fini:

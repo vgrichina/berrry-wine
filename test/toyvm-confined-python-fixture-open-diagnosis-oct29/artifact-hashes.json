@@ -1,0 +1,102 @@
+{
+  "REPORT.md": {
+    "bytes": 8261,
+    "sha256": "1cbcbbb89f912260eabcbcf036c182fa2f3bee987bfda5e44d77cb8e9496dc36"
+  },
+  "analysis.json": {
+    "bytes": 2711,
+    "sha256": "f4af735647b8a65e47df574f36dd7ec6a22689fd2ccda88a757f846ec082ff37"
+  },
+  "diagnose.py": {
+    "bytes": 5104,
+    "sha256": "7d5bc594321a1bb5855621380431db5111ab14616c59fc546dee07253de5a9c3"
+  },
+  "dispatch.json": {
+    "bytes": 2319,
+    "sha256": "d4f9d73b75e675578145e7e638b15f2791000451501ab73d657781a9d2048fa3"
+  },
+  "eprem-branch.disassembly.txt": {
+    "bytes": 972,
+    "sha256": "6408603d0e0587f2e9a1d8bad546762b4f7af0ab4c2db7c2d09932e98c0b98ea"
+  },
+  "fixture.py.txt": {
+    "bytes": 170,
+    "sha256": "3c0ac10c80895e992ffe25afed67da2c60f16db97ea946633bef8c7386fb601a"
+  },
+  "initial-analysis-test-failure.txt": {
+    "bytes": 2695,
+    "sha256": "7609d0f8861918a7822509e100edbbe81776082f76c0d4da9b14db32678b4c02"
+  },
+  "internal-inherit.disassembly.txt": {
+    "bytes": 6867,
+    "sha256": "11c5d3cc343a0ed33c3d1fd61190059f4239d6528bc7098cd98dbc05af91961e"
+  },
+  "ioctl-cache.disassembly.txt": {
+    "bytes": 126,
+    "sha256": "ff6e0822d38d4e5f76309d921c24ad1144c4808b3e1cb25a74fe81867b212068"
+  },
+  "main-fopen.disassembly.txt": {
+    "bytes": 1196,
+    "sha256": "f26c7cf24ad88f3a7ca913ca84e563ed519782a90a3ffe59f7ec4da7be00f1e8"
+  },
+  "predecessor-REPORT.md": {
+    "bytes": 3576,
+    "sha256": "aa898cfdcfbc3f6ca91cddaf967aaa03bbc7c080936884229bfef523a4188b24"
+  },
+  "predecessor-cancellation-receipt.json": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "predecessor-case1-result.json": {
+    "bytes": 4287,
+    "sha256": "cd4aa2da8c4dc9903cd4ea204fc18a0f44d05ae5c9e86c8134eba2859e4ec38f"
+  },
+  "predecessor-completion-receipt.json": {
+    "bytes": 32005,
+    "sha256": "77b57b35292aaf22c0da5aeb2f44abaad45cba63b0e159efcc683f31e214eada"
+  },
+  "predecessor-recipe.json": {
+    "bytes": 11810,
+    "sha256": "407e805921fe8d659d3cd075d1ef2e7dcf952c094929fd076cd6178ee3bfa535"
+  },
+  "prior-backend-REPORT.md": {
+    "bytes": 6887,
+    "sha256": "56a67418cccb11c15dce91728fbe903c170897a20f417fbcd94d2bd731fe6bb4"
+  },
+  "prior-cli-completion-receipt.json": {
+    "bytes": 1407,
+    "sha256": "ceed2beff269f24c465f5bffb5068542289eb87a6fd8e6af7abf7bfd1f2b92ce"
+  },
+  "prior-cli-pins.json": {
+    "bytes": 904,
+    "sha256": "9ca9e462267ee24e03c6023ac76867fcf21dd5212be9065f1342659dd0ed0037"
+  },
+  "prior-cli-remote_test.py.txt": {
+    "bytes": 4673,
+    "sha256": "a5b24f4aa4c0bb10f0f6db76ae4fe724075e9a431b83cb69fdb6c98c87d384f7"
+  },
+  "prior-cli-runtime.json": {
+    "bytes": 4122,
+    "sha256": "49667c0ebaee38d9bbef432563351a32826772234a6faa0a206c0646b3fe68b7"
+  },
+  "prior-test_backend.py.txt": {
+    "bytes": 5346,
+    "sha256": "18fe47278218c63d3f9ad60f490976172eecdf05ba36c568cac6cbf8441e546c"
+  },
+  "python-fopen.disassembly.txt": {
+    "bytes": 4718,
+    "sha256": "e341c6ac2307454d53561c73b377a6d01bb88725afa5d88d872d3c9553cb3b4d"
+  },
+  "python-wfopen.disassembly.txt": {
+    "bytes": 3563,
+    "sha256": "0336495b47f7d4b9043058e01376753c65f178ef33aa6edcbe0bfd6c20409f34"
+  },
+  "test_diagnosis.py": {
+    "bytes": 3882,
+    "sha256": "cb15f99886e51ba3b9e36b2e605591fb8eacffc9839e13ed4261ebeca203f7aa"
+  },
+  "tests.txt": {
+    "bytes": 707,
+    "sha256": "bed0ca02eaddba50aa834b125318dc9b1cfa07ad05f364747db048dadb56a866"
+  }
+}

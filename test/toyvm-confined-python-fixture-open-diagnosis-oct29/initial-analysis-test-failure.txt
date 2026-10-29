@@ -1,0 +1,37 @@
+test_binary_call_chain_and_branch_controls (__main__.DiagnosisTests.test_binary_call_chain_and_branch_controls) ... ok
+test_pinned_evidence_and_fixture_transport (__main__.DiagnosisTests.test_pinned_evidence_and_fixture_transport) ... FAIL
+test_policy_negative_and_positive_controls (__main__.DiagnosisTests.test_policy_negative_and_positive_controls) ... FAIL
+test_wrong_fixture_arguments_rejected (__main__.DiagnosisTests.test_wrong_fixture_arguments_rejected) ... ok
+
+======================================================================
+FAIL: test_pinned_evidence_and_fixture_transport (__main__.DiagnosisTests.test_pinned_evidence_and_fixture_transport)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/repo/test/toyvm-confined-python-fixture-open-diagnosis-oct29/test_diagnosis.py", line 10, in test_pinned_evidence_and_fixture_transport
+    result = d.analyze()
+             ^^^^^^^^^^^
+  File "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/repo/test/toyvm-confined-python-fixture-open-diagnosis-oct29/diagnose.py", line 82, in analyze
+    check_template(source)
+  File "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/repo/test/toyvm-confined-python-fixture-open-diagnosis-oct29/diagnose.py", line 58, in check_template
+    assert 'ins.append((0x06, 0, 0, 327680 | 1))' in ast.unparse(tree)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+======================================================================
+FAIL: test_policy_negative_and_positive_controls (__main__.DiagnosisTests.test_policy_negative_and_positive_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/repo/test/toyvm-confined-python-fixture-open-diagnosis-oct29/test_diagnosis.py", line 20, in test_policy_negative_and_positive_controls
+    result = d.analyze()
+             ^^^^^^^^^^^
+  File "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/repo/test/toyvm-confined-python-fixture-open-diagnosis-oct29/diagnose.py", line 82, in analyze
+    check_template(source)
+  File "/tmp/toyvm-confined-python-fixture-open-diagnosis-oct29/repo/test/toyvm-confined-python-fixture-open-diagnosis-oct29/diagnose.py", line 58, in check_template
+    assert 'ins.append((0x06, 0, 0, 327680 | 1))' in ast.unparse(tree)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.007s
+
+FAILED (failures=2)

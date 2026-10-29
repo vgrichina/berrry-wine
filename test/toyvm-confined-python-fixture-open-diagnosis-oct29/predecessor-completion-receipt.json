@@ -1,0 +1,779 @@
+{
+  "task": "toyvm-integrated-combined-mounted-cli-oct29",
+  "status": "BLOCKER: positive mounted production CLI rejected before fixture execution",
+  "qualificationPASS": false,
+  "closedAt": "2026-10-29T17:23:05.644294+00:00",
+  "sourceCandidate": "dcbe956bb403509f531b059c6822a1dcacd9fa59",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "fd87f1a4c211d70daf60b2b201cf2f7b3665b1dc7b631de66baa263c491cac77"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourcePinsUnchanged": true,
+  "originalReceipt": {
+    "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/inputs/cancellation-receipt.json",
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "fixture": {
+    "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/inputs/fixture.py",
+    "bytes": 170,
+    "sha256": "3c0ac10c80895e992ffe25afed67da2c60f16db97ea946633bef8c7386fb601a"
+  },
+  "case1": {
+    "cliExit": 1,
+    "accepted": false,
+    "childExit": 2,
+    "childOutput": "/usr/bin/python3: can't open file '/tmp/tvcm/fixture.py': [Errno 1] Operation not permitted\n",
+    "mountsObserved": [
+      "52 29 0:51 / /tmp/tvcm/work/domain rw,nosuid,nodev,relatime shared:98 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+    ],
+    "cleanupComplete": true,
+    "filesystem": {
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+      "failure": null,
+      "fileLimit": 8192,
+      "inodes": 1,
+      "live": 4096,
+      "liveLimit": 8192,
+      "openHandles": 0,
+      "operations": 1,
+      "peak": 4096,
+      "writeLimit": 8192,
+      "written": 0
+    }
+  },
+  "case2": {
+    "status": "NOT RUN",
+    "reason": "stop on first failed case"
+  },
+  "scope": {
+    "observed": [
+      "actual pinned production CLI invocation",
+      "real mounted FUSE backend",
+      "fixture-open denial before marker/write",
+      "authoritative and independently observed cleanup",
+      "verified snapshot-stop"
+    ],
+    "unknown": [
+      "successful positive mounted CLI decision",
+      "intended quota rejection",
+      "payload accounting acceptance",
+      "cause of fixture-open denial"
+    ],
+    "noRepairs": true,
+    "noRetainedGroupsRepeated": true,
+    "noBrowserGameGuestExecution": true,
+    "noAgentsOrWorkersLaunched": true,
+    "proceduralLimitation": "direct shell read-only policy/parser bootstrap; some omitted explicit cwd; all Git/Boat/behavior under owned supervisor"
+  },
+  "publication": {
+    "commit": "ef828662aaf016f6e4facc6be727e15f4aa416ba",
+    "branch": "task/toyvm-integrated-combined-mounted-cli-oct29",
+    "remote": "origin",
+    "remoteRef": "refs/heads/task/toyvm-integrated-combined-mounted-cli-oct29",
+    "remoteSHA": "ef828662aaf016f6e4facc6be727e15f4aa416ba",
+    "lsRemoteVerified": true,
+    "workingTreeClean": true,
+    "mainPushed": false,
+    "verification": {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-remote-verify.stdout",
+      "bytes": 101,
+      "sha256": "2c6b1e70cc28abc4d2f5abfa9225cbdc2da872be6b6d0fd68fc7abe63318b97d"
+    }
+  },
+  "evidence": [
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/REPORT.md",
+      "bytes": 3576,
+      "sha256": "aa898cfdcfbc3f6ca91cddaf967aaa03bbc7c080936884229bfef523a4188b24"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/artifact-hashes.json",
+      "bytes": 1575,
+      "sha256": "4251df7fde40e5f3ad84a3e33b5c92caadcf49adb5c1c99337797e6972343f85"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/boat-stop-status.json",
+      "bytes": 1950,
+      "sha256": "928fc468af7d1ceab9e8692644b141663a753c3b15d9f17fe0e73c2a83935797"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/case1-api.json",
+      "bytes": 4425,
+      "sha256": "c1f1bde5a2d3b981633a00ff6fce2d5ee6fe973a9743ff518e7d6faf6ba4c0bc"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/case1-result.json",
+      "bytes": 4287,
+      "sha256": "cd4aa2da8c4dc9903cd4ea204fc18a0f44d05ae5c9e86c8134eba2859e4ec38f"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/initial-preflight-error.json",
+      "bytes": 1222,
+      "sha256": "d65e927ac18f8d8bb64de828d4c7709c247766885c8610f6a3d4c1634c87afcb"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/lifecycle.json",
+      "bytes": 573,
+      "sha256": "e9f04bdbd0fdd811de31d378d682f87d2102c058d98b64f4b6305874cc08cf96"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/mount-configuration.json",
+      "bytes": 972,
+      "sha256": "bc38914a67d30d72573d7c38a46fedcf704ad0554f3fcd5a2fcc49e2f06f62fe"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/recipe.json",
+      "bytes": 11810,
+      "sha256": "407e805921fe8d659d3cd075d1ef2e7dcf952c094929fd076cd6178ee3bfa535"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/remote-preflight.json",
+      "bytes": 1361,
+      "sha256": "d0c0af62a4db581c73b7c878fe269958498440555c3c4407b59c08ed02aff2c4"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/runtime-prerequisites.json",
+      "bytes": 228,
+      "sha256": "df1f85230f6e6b998d05b02344f8cb884070bd9ae412decadd93f938782d1e80"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/source-pins.json",
+      "bytes": 904,
+      "sha256": "dc3ef461c61e29c01148fece74fdebb94c475a9cf5bd9f61d831c6bb36a08bed"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/repo/test/toyvm-integrated-combined-mounted-cli-oct29/verify_evidence.py",
+      "bytes": 2135,
+      "sha256": "a70d0ff1eff44faed512d0c9d0364eb5b07adc259458c7fb3183d7cd89820f2e"
+    }
+  ],
+  "rawEvidence": [
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/adapter-tail.json",
+      "bytes": 3345,
+      "sha256": "33ebb6273d6138cc580e52baf8af5d13fcf3b5d1f984e5c4521843df2e19e058"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/adapter-tail.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/adapter-tail.stdout",
+      "bytes": 3242,
+      "sha256": "91565e639a1adcfac43eb8de4998682dcd918b4c4335ba8541113f20ae1c14dc"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-create.json",
+      "bytes": 4673,
+      "sha256": "d5e6bd1bfa21ef2b36f63aff073011a4785c14734c8da3733a1124e92b122b71"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-create.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-create.stdout",
+      "bytes": 568,
+      "sha256": "ab73db6fdd339de86afbb8fe7f33d1d95fab294e90c00b02cc15228ac6b96241"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-final-info.json",
+      "bytes": 3228,
+      "sha256": "952d0bba7fd337a5f712e4f1db87bf8c31286512eac69851bba465cfaeda4509"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-final-info.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-final-info.stdout",
+      "bytes": 1331,
+      "sha256": "561d9d8c4bbcc435f2e7ba5a856347bdf64c85ee551ee82324337dec2b1e6959"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-help.json",
+      "bytes": 3198,
+      "sha256": "e0661d7e9487f0a1f6d9121b13e04cb44cccc34f1f15dcc7efd5bef81c2878ec"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-help.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-help.stdout",
+      "bytes": 5402,
+      "sha256": "886113fab2891defad3066ce76462f46b3c6ec8e48d72615b271b1c4fa8bc657"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-limits.json",
+      "bytes": 3212,
+      "sha256": "8f8d67edf6c26991209d686bb4a3bb0ab915c3769c4906c9efe3ba4b422f0ab5"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-limits.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-limits.stdout",
+      "bytes": 3714,
+      "sha256": "d16f0cc8f00e956df5078e28775c5efd1f5223c2ff62adeb3284d5dca0f4d09e"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-stop-status.json",
+      "bytes": 3273,
+      "sha256": "e0bb4ce5ff8c363d78a748c5f54800bc10a4372e6148b45c82340e67a6f39a76"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-stop-status.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-stop-status.stdout",
+      "bytes": 229,
+      "sha256": "344702697d63e9f59284d18bf87c90d0412b6b3e6ba70f071e8f36da28f1d502"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-stop.json",
+      "bytes": 3229,
+      "sha256": "05b77e537b26da4aeda0b9d11d14cbdf0613ea94b324cfac100c7d43a84679bd"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-stop.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/boat-stop.stdout",
+      "bytes": 1615,
+      "sha256": "034bf91f020bdfde8d8cd57b53e4c8c92b9448708750c7574f126e7b8cc49060"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/case1.json",
+      "bytes": 6573,
+      "sha256": "a90d16122f18fe80f66c1d0066fc71f9adcdfd43f4ed424521efd77dbefffa1a"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/case1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/case1.stdout",
+      "bytes": 4360,
+      "sha256": "1e94aa392e461342856fd358d06555c8ac14d7fd576e819a366422676db4be15"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/controls-inspect.json",
+      "bytes": 3458,
+      "sha256": "658f767e54a406ed449a1e2cc4a419323402f45f09fb2f2b582b60a155ea01cd"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/controls-inspect.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/controls-inspect.stdout",
+      "bytes": 3866,
+      "sha256": "b2a7d89537fb3f81394b41ece1466b79de443159f21bc59ed511c001e2d3bb0e"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/evaluate-inspect.json",
+      "bytes": 3335,
+      "sha256": "c46134da408cbb7a8efe0c0fbafd1b75bd3b152a5a4dd89e801c84fcedbe7b2a"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/evaluate-inspect.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/evaluate-inspect.stdout",
+      "bytes": 2001,
+      "sha256": "283e683b969e159b2fa1a5e686963e37bdf3cfedfa0f8227e542d9d56c164794"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/exec-help.json",
+      "bytes": 3210,
+      "sha256": "c3707814ba51f159ec98cd2d85074b8150ccf273cbed889ae3be1e911dbd67e6"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/exec-help.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/exec-help.stdout",
+      "bytes": 1544,
+      "sha256": "a5aafeb6d113d7c90fc5c9e7b794a5cff001f04285629180c1b2e2b14efaf127"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-add-final.json",
+      "bytes": 3416,
+      "sha256": "2766e7f8819f6e860c50e366032848e12483d93a755226151c8eb8f94ace55b6"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-add-final.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-add-final.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-add.json",
+      "bytes": 4253,
+      "sha256": "8ce5978cdf9ff09f9cb5d02eb4cca8649620420b0484dda5a37cf6fc85641d86"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-add.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-add.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-check.json",
+      "bytes": 3279,
+      "sha256": "bbd0a2466a65008f7e28b6b003958341e319e5671e5361b690ead9af564caca4"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-check.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-check.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-commit.json",
+      "bytes": 3337,
+      "sha256": "ac3cf3b88f3103d4bcb126515580dcc9274aa97fb5f70190dd617e0813f653f7"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-commit.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-commit.stdout",
+      "bytes": 1317,
+      "sha256": "d3efbc1a6f6367675c67294191a249d62043046b1f5b688b86c24564d6deb02e"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-final-head.json",
+      "bytes": 3264,
+      "sha256": "63b6de53896a662ccb93e0f8a052a75efe176dd822c0044b1a2f645c9532ca21"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-final-head.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-final-head.stdout",
+      "bytes": 41,
+      "sha256": "70c7b95b2300a8d534738b0eac1f145e5d62ae78553281776dda6427922a0215"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-final-status.json",
+      "bytes": 3271,
+      "sha256": "c441a977ef1034d026846833883d4d925922401c236aad950d07c915fd1f5dca"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-final-status.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-final-status.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-head.json",
+      "bytes": 3266,
+      "sha256": "4be99ef8da0b5ae48fe1dd264873413cc5c16218578adb04bf4c4235a63e597c"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-head.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-head.stdout",
+      "bytes": 41,
+      "sha256": "ee37830b612ece0c08508a59ebc1b2ba5d3378ebd7b23c138949f70d9ce89990"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-initial.json",
+      "bytes": 3282,
+      "sha256": "da7e7eb170bdf7c93ed811180265c7c0bda94e867f10ece5bf28b07f3b127c2c"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-initial.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-initial.stdout",
+      "bytes": 52,
+      "sha256": "66d870373b0501f30ce9d131ca2d042312785b9d1719eeffce208cc772f92ba0"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-push.json",
+      "bytes": 3335,
+      "sha256": "6d442a363213ae2aec22b730514e9a5898a988687bf214663517a56526b7f797"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-push.stderr",
+      "bytes": 509,
+      "sha256": "0a1a81ee241c69fb5cc40b51ec733481c6acb7676899ae15c1fc24fe5a220d7d"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-push.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-remote-verify.json",
+      "bytes": 3354,
+      "sha256": "923b5a56db4ec246a7a5ceb7828cfd2983ea8d60bf18a4f06bdb4bab6247f079"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-remote-verify.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-remote-verify.stdout",
+      "bytes": 101,
+      "sha256": "2c6b1e70cc28abc4d2f5abfa9225cbdc2da872be6b6d0fd68fc7abe63318b97d"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-review.json",
+      "bytes": 3279,
+      "sha256": "fdee3f08c68e8dc2f1d25b83d9f13a1aaef4830e3d5f9257a30780ddb44d37ad"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-review.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/git-review.stdout",
+      "bytes": 899,
+      "sha256": "60cfb7fa4025c569da7aff426941c240626829809d101d97bed558540f7426ec"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/initial.json",
+      "bytes": 3485,
+      "sha256": "bce8b8d40b8fe0c632625036b73764a1f45710db67c645494c60b80676e8573b"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/initial.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/initial.stdout",
+      "bytes": 1553,
+      "sha256": "ae05799ea3b4ccf45de247486c1cba8668f96956175cde5661bb4a5acabf14fd"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/lifecycle-created.json",
+      "bytes": 3845,
+      "sha256": "97abfd540f0a7da2980a79bf6a78d82c5229791a72174d128930802aeb1e1a8c"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/lifecycle-created.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/lifecycle-created.stdout",
+      "bytes": 274,
+      "sha256": "441bf984f95e501ff85996a12df2022df0393b1f3b2181d3a655032f50595135"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/mount-config.json",
+      "bytes": 4101,
+      "sha256": "2a738a954cec9fe3325c26f6e499aba5fc93471150aca15b220a5e42a5b1df4c"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/mount-config.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/mount-config.stdout",
+      "bytes": 44,
+      "sha256": "62188fef81480d2cbded9cbb77c0ad132478e0da26b8cbf8a5aadc42638b16a0"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/new-help.json",
+      "bytes": 3209,
+      "sha256": "d4ec43e2cd7ca709310b565aa2ad9c525178d24c4d4daae7f1b10dc92a3a8815"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/new-help.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/new-help.stdout",
+      "bytes": 3481,
+      "sha256": "53c608defa3a29807e940639accf6bd13e88a594b389944ea5bb9b8b51367870"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/pins.json",
+      "bytes": 3871,
+      "sha256": "cfd44519acc499935cd7316434b2808a03c6b2342d1786a511f746d05371bf9f"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/pins.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/pins.stdout",
+      "bytes": 1157,
+      "sha256": "7c222e2481c3db29d93e1d910d9c76ee14db0158e2f135c2a1aeeedc56cad46c"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/preserve-case1.json",
+      "bytes": 4604,
+      "sha256": "a271cfbf1713485515c1613d119702bc44aa0e3aac3bc4ac06506ab0ad381538"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/preserve-case1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/preserve-case1.stdout",
+      "bytes": 1127,
+      "sha256": "cc4d94f7ff600e3fe017a40dbaa44468fb2bedab286a29fb5f764c23fbd0b175"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/preserve-report.json",
+      "bytes": 3260,
+      "sha256": "b754e2aa2fc9c48191e5f6e710e2861134455314bf71121bfac302c474aa3a00"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/preserve-report.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/preserve-report.stdout",
+      "bytes": 1009,
+      "sha256": "157251fff32e24bc2ec83f64f701416362f2dd55ac021cb985cc82c7fdf65d75"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/remote-pins-ast-display.json",
+      "bytes": 5648,
+      "sha256": "9b6ba50eb696cd911ce7c7d38fd1803f908eb52ae8cc01396d4256e8027fa629"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/remote-pins-ast-display.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/remote-pins-ast-display.stdout",
+      "bytes": 1676,
+      "sha256": "6159dd7e5f0508dd8c3147afeb0758120d133716e3b89dfece8c50773aec2a51"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/remote-pins.json",
+      "bytes": 5652,
+      "sha256": "d3a878a4b7daff093d25487c172a930c6cc6150fb77edf63cb16ababea4677e7"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/remote-pins.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/remote-pins.stdout",
+      "bytes": 1157,
+      "sha256": "f2121ff2e78a2dbd4c02aec5331ecfc276cee2c39ecaa5f9034e2beea2831f6e"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/report-hash.json",
+      "bytes": 3539,
+      "sha256": "b75153afec9c23f70cf9de41090858de142302140cfbff3546c695c325f73900"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/report-hash.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/report-hash.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/runtime-prerequisites.json",
+      "bytes": 4062,
+      "sha256": "afd953687857e8af7d0085b3d979988610fe68a8d23d35d7e0dfcdbd4fba38e4"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/runtime-prerequisites.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/runtime-prerequisites.stdout",
+      "bytes": 543,
+      "sha256": "f47e6e062ee1ab296f4c9621b7c05c9ccc66550341647f9baba9d6054b89f578"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/source-inspect.json",
+      "bytes": 3327,
+      "sha256": "cdbde52229abe58ac2b2f45b7f71d4886142cbaa2bf325eba40a284970ea2748"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/source-inspect.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/source-inspect.stdout",
+      "bytes": 8393,
+      "sha256": "92d5f6f82539df9267c3a3f8af190b21ca2c8b1004e431a56386d48ec5140c54"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/source-tail.json",
+      "bytes": 3436,
+      "sha256": "b9796629e9ebc47aef2a30c172e6e50bfaa766982dd8682afc5fc8215b6fe100"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/source-tail.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/source-tail.stdout",
+      "bytes": 6935,
+      "sha256": "e41d8ed13424bae1e686b1424a8c44439e218747d74a5b0b1eb9daad2f3c2f3a"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/stop-help.json",
+      "bytes": 3210,
+      "sha256": "6d8dc8bd5499732ebfcfbcf2a0539a740373d31205d1d8d3bd1be51af8524cdd"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/stop-help.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/stop-help.stdout",
+      "bytes": 1113,
+      "sha256": "b1512ee6d9e5bd9b82d3c0dd4903531fd499c598ff516956b4d93391dadd8f99"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/verify-evidence.json",
+      "bytes": 3263,
+      "sha256": "b36742a1588fe47609dd78458cb740c0d672dc699420335502dc39dd8cb6cc53"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/verify-evidence.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/verify-evidence.stdout",
+      "bytes": 99,
+      "sha256": "e133d1dfc515078591bcec82ac7f7c1d415ad9a9427b795dcd24f87a0d62442b"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/verify-final.json",
+      "bytes": 3264,
+      "sha256": "b4a9390191df22c9c567306b8593ef3ae3aeb2f6929c2197986d83bea43acb7e"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/verify-final.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/e/verify-final.stdout",
+      "bytes": 99,
+      "sha256": "e133d1dfc515078591bcec82ac7f7c1d415ad9a9427b795dcd24f87a0d62442b"
+    }
+  ],
+  "lifecycle": {
+    "boxID": "bx_pfvpxxu2",
+    "creation": "2026-10-29T17:18:13.422Z",
+    "expiry": "2026-10-29T17:48:13.439Z",
+    "cutoff": "2026-10-29T17:40:54.963034+00:00",
+    "owner": "toyvm-integrated-combined-mounted-cli-oct29 worker: explicitly delegated snapshot-stop",
+    "state": "stopped",
+    "snapshotStoppedVerified": true,
+    "snapshotCompletedAt": "2026-10-29T17:20:12.800Z",
+    "snapshotVerifiedAt": "2026-10-29T17:20:12.800Z",
+    "stopOperationID": "stop_3fce35e32442de92",
+    "stopCompletedAt": "2026-10-29T17:20:12.882Z",
+    "verificationAt": "2026-10-29T17:21:11.094053+00:00"
+  },
+  "allocationCloseout": {
+    "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/allocation-closeout.json",
+    "bytes": 382,
+    "sha256": "c515f95c33a2344a1a27d874f34368beeeb082c10621f5f8ca87578d181111d6"
+  },
+  "coordinatorNote": {
+    "path": "/tmp/toyvm-integrated-combined-mounted-cli-oct29/coordinator-note.txt",
+    "bytes": 1292,
+    "sha256": "73c1661a21a6896bdd29355ffab76574db9acac73614492527f58e52e6985b0e"
+  },
+  "initialRootRefReceipt": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-integrated-combined-mounted-cli-oct29/root-ref-digest.json",
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "verification": {
+    "counterexampleEvidenceCheck": "PASS",
+    "qualification": "FAIL",
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "test/toyvm-integrated-combined-mounted-cli-oct29/verify_evidence.py"
+    ]
+  }
+}

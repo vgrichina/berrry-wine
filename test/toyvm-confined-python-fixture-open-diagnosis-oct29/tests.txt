@@ -1,0 +1,10 @@
+test_binary_call_chain_and_branch_controls (__main__.DiagnosisTests.test_binary_call_chain_and_branch_controls) ... ok
+test_pinned_evidence_and_fixture_transport (__main__.DiagnosisTests.test_pinned_evidence_and_fixture_transport) ... ok
+test_policy_negative_and_positive_controls (__main__.DiagnosisTests.test_policy_negative_and_positive_controls) ... ok
+test_prior_real_cli_same_confinement_different_startup (__main__.DiagnosisTests.test_prior_real_cli_same_confinement_different_startup) ... ok
+test_wrong_fixture_arguments_rejected (__main__.DiagnosisTests.test_wrong_fixture_arguments_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.066s
+
+OK
