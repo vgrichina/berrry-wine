@@ -1,0 +1,26 @@
+{
+  "boxID": "bx_zvw983pv",
+  "created": "2026-10-29T18:34:06.706Z",
+  "expiry": "2026-10-29T19:04:06.733Z",
+  "guestCutoff": "2026-10-29T18:56:59Z",
+  "handback": "2026-10-29T18:58:59Z",
+  "shutdownDeadline": "2026-10-29T18:59:59Z",
+  "scheduledExpiry": "2026-10-29T19:01:59Z",
+  "owner": "toyvm-metadata-budget-mounted-cli-oct29 worker; coordinator delegated snapshot-stop",
+  "state": "stopped",
+  "ttl": 1800,
+  "stoppedAt": "2026-10-29T18:34:58.180Z",
+  "snapshotAvailable": true,
+  "snapshotVerifiedAt": "2026-10-29T18:34:58.137Z",
+  "snapshotCompletedAt": "2026-10-29T18:34:58.137Z",
+  "stop": {
+    "endedAt": "2026-10-29T18:34:58.201Z",
+    "error": null,
+    "forced": false,
+    "id": "stop_8e4c39a0500c526e",
+    "lastAttemptAt": "2026-10-29T18:34:58.201Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "verifiedFrom": "e/boat-state-final.stdout"
+}

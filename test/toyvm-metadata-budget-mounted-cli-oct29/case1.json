@@ -1,0 +1,103 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvmb/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvmb/cancellation-receipt.json",
+    "--work",
+    "/tmp/tvmb/work",
+    "--live-limit",
+    "16384",
+    "--write-limit",
+    "8192",
+    "--file-limit",
+    "8192",
+    "--rss-limit",
+    "67108864",
+    "--cpu-limit",
+    "10",
+    "--wall-limit",
+    "20",
+    "--output-limit",
+    "8192",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import pathlib,sys\np=pathlib.Path(sys.argv[1])\nassert p.is_absolute()\nwith p.open(\"wb\") as f: f.write(b\"x\" * int(sys.argv[2]))\np.unlink()\nprint(\"TINY_FIXTURE_COMPLETED\")\n",
+    "/tmp/tvmb/work/domain/f1024",
+    "1024"
+  ],
+  "exit": 0,
+  "stdout": "{\"accepted\": true, \"accountingAccepted\": true, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 0.109927, \"exit\": 0, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": null, \"fileLimit\": 8192, \"inodes\": 1, \"live\": 4096, \"liveLimit\": 16384, \"openHandles\": 0, \"operations\": 32, \"peak\": 12288, \"writeLimit\": 8192, \"written\": 1024}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"VElOWV9GSVhUVVJFX0NPTVBMRVRFRAo=\", \"encoding\": \"base64\"}, \"owned\": [[9729, \"89943\"]], \"peakRSS\": 32768000, \"reapedPeakRSS\": 13864960, \"sampledPeakRSS\": 32768000, \"stopReason\": null, \"wallSeconds\": 0.07086274299990691}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": true, \"cleanupComplete\": true, \"failures\": []}\n",
+  "stderr": "",
+  "elapsed": 0.22353376799992475,
+  "report": {
+    "accepted": true,
+    "accountingAccepted": true,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.109927,
+      "exit": 0,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": null,
+        "fileLimit": 8192,
+        "inodes": 1,
+        "live": 4096,
+        "liveLimit": 16384,
+        "openHandles": 0,
+        "operations": 32,
+        "peak": 12288,
+        "writeLimit": 8192,
+        "written": 1024
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "VElOWV9GSVhUVVJFX0NPTVBMRVRFRAo=",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          9729,
+          "89943"
+        ]
+      ],
+      "peakRSS": 32768000,
+      "reapedPeakRSS": 13864960,
+      "sampledPeakRSS": 32768000,
+      "stopReason": null,
+      "wallSeconds": 0.07086274299990691
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": true,
+    "cleanupComplete": true,
+    "failures": []
+  },
+  "observerCleanup": {
+    "remainingMounts": [],
+    "workPathProcesses": []
+  },
+  "fixturePin": {
+    "bytes": 170,
+    "sha256": "3c0ac10c80895e992ffe25afed67da2c60f16db97ea946633bef8c7386fb601a"
+  },
+  "marker": true,
+  "identitiesAfter": true
+}

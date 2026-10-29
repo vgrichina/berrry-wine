@@ -1,0 +1,22 @@
+{
+  "PASS": true,
+  "identities": true,
+  "realFuseOpened": true,
+  "libfuse": true,
+  "landlockABI": 4,
+  "seccompActions": "kill_process kill_thread trap errno user_notif trace log allow\n",
+  "proc": true,
+  "syntax": true,
+  "help": {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/tvmb/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "--help"
+    ],
+    "exit": 0,
+    "stdout": "usage: qualify_accounted.py [-h] --domain DOMAIN --receipt RECEIPT --work WORK\n                            --live-limit LIVE_LIMIT --write-limit WRITE_LIMIT\n                            --file-limit FILE_LIMIT --rss-limit RSS_LIMIT\n                            --cpu-limit CPU_LIMIT --wall-limit WALL_LIMIT\n                            --output-limit OUTPUT_LIMIT\n                            ...\n\nSource-owned tiny-fixture caller. Browser qualification remains fail-closed.\n\npositional arguments:\n  command\n\noptions:\n  -h, --help            show this help message and exit\n  --domain DOMAIN\n  --receipt RECEIPT\n  --work WORK\n  --live-limit LIVE_LIMIT\n  --write-limit WRITE_LIMIT\n  --file-limit FILE_LIMIT\n  --rss-limit RSS_LIMIT\n  --cpu-limit CPU_LIMIT\n  --wall-limit WALL_LIMIT\n  --output-limit OUTPUT_LIMIT\n",
+    "stderr": "",
+    "elapsed": 0.07673410200004582
+  }
+}

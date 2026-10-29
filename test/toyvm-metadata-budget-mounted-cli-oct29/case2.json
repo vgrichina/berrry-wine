@@ -1,0 +1,107 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvmb/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvmb/cancellation-receipt.json",
+    "--work",
+    "/tmp/tvmb/reject",
+    "--live-limit",
+    "16384",
+    "--write-limit",
+    "8192",
+    "--file-limit",
+    "8192",
+    "--rss-limit",
+    "67108864",
+    "--cpu-limit",
+    "10",
+    "--wall-limit",
+    "20",
+    "--output-limit",
+    "8192",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import pathlib,sys\np=pathlib.Path(sys.argv[1])\nassert p.is_absolute()\nwith p.open(\"wb\") as f: f.write(b\"x\" * int(sys.argv[2]))\np.unlink()\nprint(\"TINY_FIXTURE_COMPLETED\")\n",
+    "/tmp/tvmb/reject/domain/f9000",
+    "9000"
+  ],
+  "exit": 1,
+  "stdout": "{\"accepted\": false, \"accountingAccepted\": false, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 0.148342, \"exit\": -15, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": \"filesystem cumulative write limit\", \"fileLimit\": 8192, \"inodes\": 2, \"live\": 8192, \"liveLimit\": 16384, \"openHandles\": 0, \"operations\": 33, \"peak\": 8192, \"writeLimit\": 8192, \"written\": 0}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"\", \"encoding\": \"base64\"}, \"owned\": [[9763, \"90812\"]], \"peakRSS\": 33685504, \"reapedPeakRSS\": 13959168, \"sampledPeakRSS\": 33685504, \"stopReason\": \"filesystem cumulative write limit\", \"wallSeconds\": 0.09079621900002621}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": false, \"cleanupComplete\": true, \"failures\": [\"authoritative filesystem receipt rejected\", \"supervisor stopped or stop receipt missing\", \"child did not succeed\"]}\n",
+  "stderr": "",
+  "elapsed": 0.24057223600004818,
+  "report": {
+    "accepted": false,
+    "accountingAccepted": false,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.148342,
+      "exit": -15,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": "filesystem cumulative write limit",
+        "fileLimit": 8192,
+        "inodes": 2,
+        "live": 8192,
+        "liveLimit": 16384,
+        "openHandles": 0,
+        "operations": 33,
+        "peak": 8192,
+        "writeLimit": 8192,
+        "written": 0
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          9763,
+          "90812"
+        ]
+      ],
+      "peakRSS": 33685504,
+      "reapedPeakRSS": 13959168,
+      "sampledPeakRSS": 33685504,
+      "stopReason": "filesystem cumulative write limit",
+      "wallSeconds": 0.09079621900002621
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": true,
+    "failures": [
+      "authoritative filesystem receipt rejected",
+      "supervisor stopped or stop receipt missing",
+      "child did not succeed"
+    ]
+  },
+  "observerCleanup": {
+    "remainingMounts": [],
+    "workPathProcesses": []
+  },
+  "fixturePin": {
+    "bytes": 170,
+    "sha256": "3c0ac10c80895e992ffe25afed67da2c60f16db97ea946633bef8c7386fb601a"
+  },
+  "marker": false,
+  "identitiesAfter": true
+}

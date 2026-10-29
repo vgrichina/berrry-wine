@@ -1,0 +1,54 @@
+{
+  "PASS": true,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "fd87f1a4c211d70daf60b2b201cf2f7b3665b1dc7b631de66baa263c491cac77"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "fixturePin": {
+    "bytes": 170,
+    "sha256": "3c0ac10c80895e992ffe25afed67da2c60f16db97ea946633bef8c7386fb601a"
+  },
+  "pythonPin": {
+    "bytes": 8020928,
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  },
+  "ssh": "exact task supervisor SSH string",
+  "transfer": "boat new --file argv with separate path=value elements; no mount argv or comma splitting used",
+  "productionChanges": [],
+  "supervisorPins": {
+    "ops.py": "e4633b16512e6cf492cc2d574a49c9ad4a2bc411a6b664aa2f81cb8827cb6d86",
+    "limit_contract.py": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "runtimeSchedule": {
+    "guestCutoff": "2026-10-29T18:56:59Z",
+    "handback": "2026-10-29T18:58:59Z",
+    "shutdown": "2026-10-29T18:59:59Z",
+    "expiry": "2026-10-29T19:01:59Z",
+    "createdAt": "2026-10-29T18:31:59Z"
+  },
+  "cases": 2,
+  "case1Oracle": true,
+  "case2Oracle": true,
+  "actualArgvFixtureByteIdentical": true,
+  "sourcePinsAfterUnchanged": true,
+  "boatSnapshotStoppedVerified": true,
+  "NoAdditionalCases": true
+}
