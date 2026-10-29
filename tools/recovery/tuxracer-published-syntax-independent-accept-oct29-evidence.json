@@ -1,0 +1,425 @@
+{
+  "status": "ACCEPT_BOUNDED_LEXICAL_CHANGE",
+  "candidate": "e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803",
+  "sourcePath": "tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+  "sourceSHA256": "17536ba93021a4d7061b542876eaecef6f1f716fa3e420ef283b2804c50b6c04",
+  "testSHA256": "43792772a2c60d9427a61da334047c92e695deff569ab116d899777c5a494c1c",
+  "dispatchSHA256": "ae8ee94b1c0806ce20b71c53c514825ffe3d181ef76ae39f5dbbf60993038d6d",
+  "admissionSHA256": "59a5324295005089665b742aabd422bc994e8a6ccf0a1426c40f8979af4e9200",
+  "originalMedia": {
+    "PASS": true,
+    "sourceSHA256": "17536ba93021a4d7061b542876eaecef6f1f716fa3e420ef283b2804c50b6c04",
+    "apiEqualsActualCLI": true,
+    "priorChecked": 1,
+    "checked": 4,
+    "unknown": 635,
+    "originalSix": [
+      {
+        "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+        "sha256": "c3405294b169d289230c848044f38ca9fb3b6aaba625308955ec8eed7c73833f",
+        "firstMissingLine": 6,
+        "firstMissingText": "set tux_data_dir [pwd]",
+        "literalSourceLines": [
+          {
+            "line": 18,
+            "text": "    source \"$tux_data_dir/courses/common/courseinit.tcl\""
+          },
+          {
+            "line": 24,
+            "text": "source courses/course_idx.tcl"
+          }
+        ],
+        "remainingSyntaxUnknown": false
+      },
+      {
+        "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+        "sha256": "10b39df43e216b2aad64d7b10415fa50eb67bec31f1cd19a70bd297af4ee373c",
+        "firstMissingLine": 45,
+        "firstMissingText": "set cwd [pwd]",
+        "literalSourceLines": [],
+        "remainingSyntaxUnknown": true
+      },
+      {
+        "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+        "sha256": "902f3ce8cb96f9291028e2b21f1048dbd003af0b443f8973f52b3524add40c58",
+        "firstMissingLine": 7,
+        "firstMissingText": "set far_clip [tux_get_param forward_clip_distance]",
+        "literalSourceLines": [],
+        "remainingSyntaxUnknown": false
+      },
+      {
+        "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+        "sha256": "aed962b348b5e789b82dfa612c38a71fd795bf887c31ce06006ac5bcc0cd6d11",
+        "firstMissingLine": 6,
+        "firstMissingText": "tux_fog -on -mode linear -density 0.005 -colour { 0.0 0.09 0.34 1 } -start 0 \\",
+        "literalSourceLines": [],
+        "remainingSyntaxUnknown": false
+      },
+      {
+        "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+        "sha256": "c4805b9546651991811e9a91b9039d2295c444721826d50ff53412d436849c33",
+        "firstMissingLine": 6,
+        "firstMissingText": "tux_fog -on -mode linear -density 0.005 -colour { 1.0 1.0 1.0 1 } -start 0 \\",
+        "literalSourceLines": [],
+        "remainingSyntaxUnknown": false
+      },
+      {
+        "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+        "sha256": "cf669ca48fbfe690c5db52fc70db0cb2b1db4df3f623784a831de24c6c7c81a6",
+        "firstMissingLine": 4,
+        "firstMissingText": "set cwd [pwd]",
+        "literalSourceLines": [
+          {
+            "line": 8,
+            "text": "source tree_polyhedron.tcl"
+          },
+          {
+            "line": 81,
+            "text": "source tux_walk.tcl"
+          },
+          {
+            "line": 88,
+            "text": "    source sunny_light.tcl"
+          },
+          {
+            "line": 90,
+            "text": "    source foggy_light.tcl"
+          },
+          {
+            "line": 92,
+            "text": "    source night_light.tcl"
+          }
+        ],
+        "remainingSyntaxUnknown": false
+      }
+    ],
+    "remainingSyntaxUnknown": [
+      {
+        "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+        "expression": "tux_open_courses [concat \\\n    { \\\n\t{ \\\n\t    -course frozen_river -name \"Frozen River\" \\\n\t\t    -description \"Keep your speed down to collect herring!\" \\\n                    -par_time 80.0 \\\n\t} \\\n\t{ \\\n\t    -course path_of_daggers -name \"Path of Daggers\" \\\n\t\t    -description \"Big spikes may prove to be the least of your worries on this course.  Muliple paths allow you to take low or high roads, each with their own challenges.\" \\\n                    -par_time 70.0 \\\n\t} \\\n\t{ \\\n\t    -course bunny_hill -name \"Bunny Hill\" \\\n\t\t    -description \"Use clever turning to conquer the Bunny Hill.\" \\\n                    -par_time 40.0 \\\n\t} \\\n\t{ \\\n\t    -course twisty_slope -name \"Twisty Slope\" \\\n\t\t    -description \"Tight twists make grabbing herring difficult.  Hard turns will lead you to victory.\" \\\n                    -par_time 40.0 \\\n\t} \\\n\t{ \\\n\t    -course bumpy_ride -name \"Bumpy Ride\" \\\n\t\t    -description \"This hill has a series of ramps tackle.  Make sure to line yourself up before getting airborne.\" \\\n                  ",
+        "reason": "unsupported or incomplete Tcl syntax; remaining commands unknown"
+      }
+    ],
+    "focusedControls": "simple brackets; computed source UNKNOWN; complex/incomplete stop; bodies; unsafe/missing paths",
+    "rejectingMutationKilled": true,
+    "runtimeExecuted": false
+  },
+  "newAdversarialResults": [
+    {
+      "case": "namespace",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "8e9c1891a6905eecfb6f86de32b028391166df26d8ffd165cb474c1477cfa514"
+    },
+    {
+      "case": "arguments",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "0765c492cf1c1243c591206d72af182c6b9bf2f52551ee28020026e69373803e"
+    },
+    {
+      "case": "tabs",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "820a7f0b3f278932e447461d674d50e514467bc1f8f128a1755f78a22e4fd204"
+    },
+    {
+      "case": "adjacent",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "d5aadf6d2180a7b3de2c670389db07b9170cb856a2d843d974985b27dec24571"
+    },
+    {
+      "case": "multiple",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "0a180a6ba55283d786e09aca6815b984b1d328def90c7fa35bc80621fa37154e"
+    },
+    {
+      "case": "quoted",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "47accf433e2e342cfd566d6b6ee63d18ffa95f009ec5b39936d2dfb18486210c"
+    },
+    {
+      "case": "nested",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "8d33e87e94eae2bbebac5916ee2dfa595ffaad9673f89bf1a135f97228d78982"
+    },
+    {
+      "case": "variable",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "23d96cf0a4a1593e276f504efff8c29c1b6a0c5ba151d22eccb39afdbfb19e47"
+    },
+    {
+      "case": "array",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "52440829bf8f28d49a550c98509d35e127891ec713a82d9e46e73a4bea9b0597"
+    },
+    {
+      "case": "quoted-inner",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "6401a3d21a4da4fe631746cfa93147c1bc2bfd1db3a907d78a78a001112bb6f1"
+    },
+    {
+      "case": "brace-inner",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "3f00ff6443d84f26d68f07775b51af3b5e51bb02819b850c436e080da863886e"
+    },
+    {
+      "case": "escaped-inner",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "b7ccc8ef353bd035d02078ff027e3b5ef0a7d775de596c6092948d7b6da2d663"
+    },
+    {
+      "case": "escaped-close",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "0330dbf9615e61fa0f6f972c7bdeebd4b511b649178f42a4334acab73dee5c4d"
+    },
+    {
+      "case": "semicolon",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "820f319f9068a9fbdf57d89d1cf6121f7abf196b40a686ac7da9e264dd104f76"
+    },
+    {
+      "case": "newline",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "bb4bc59d8698015c447f75a5fd2d5d1dd0bfc24e26317cb67a29b311398ef6dd"
+    },
+    {
+      "case": "comment",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "a8faaa6b3c8521b6dd1102349f08c02f68152863bedbdfbe964b71dd1ce1f735"
+    },
+    {
+      "case": "incomplete",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "4be27ac18b56100f4415ea080f850a56650c976951ffd432a9988e0abe11fca7"
+    },
+    {
+      "case": "extra-open",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "79f4c45553b7a1e01936a33a7f97a1dd8cc1194251c93e051ae35c3235b42b16"
+    },
+    {
+      "case": "empty",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "765f3ae6a9b0628898c6ab0bf4476da6e3fbea18c1889835467399a2f99700b4"
+    },
+    {
+      "case": "continuation",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "ada680f887855faca97b26f29c372fc1d365fced894cfa0761e75b25abeab75a"
+    },
+    {
+      "case": "computed",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "b4f56b7f884e6cf06c5639ce12fcbe143959149b93a864fc1472704727508be0"
+    },
+    {
+      "case": "computed-suffix",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "faceb4c146d2705df0a12a3c6254a9f1f087461bbf8a701e67c9ae3e7dd342f8"
+    },
+    {
+      "case": "computed-quoted",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "643e37ed86ff894f58d5c5b3660c2d39f6866fd55626105c7069b534b0ffa3b3"
+    },
+    {
+      "case": "computed-concat",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "1ba9ec8734a2b3e84dedeee580b956163493a41cab3e3a071eec47f0596cc2c4"
+    },
+    {
+      "case": "escaped-bracket",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "e4cb981f207752ec101be19b913f2476b75d54e1e5ae90f1ecef64540d106d3b"
+    },
+    {
+      "case": "variable-quoted",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "fb8949cea8310d4051c941f73ccd94e8d2f0b3a79f537ab94edd5780af341501"
+    },
+    {
+      "case": "quoted-body",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "887b8fa22bea0fa095771c2efcc8b64b3df5e3fbbfbab0feb84f034a5409e051"
+    },
+    {
+      "case": "braced-body",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "9425e4627b05871985e0786f2144cb2fcee7f1fa62e762ba891e68c5b0e071b0"
+    },
+    {
+      "case": "escaped-boundary",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "7004a90874f73d6389457cd4143d315922ac319dafe95991157f1c13ccdd60b6"
+    },
+    {
+      "case": "continued-comment",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "ebbfd85d0a2f36f69296d77caa7dc0fa0fbd3dd670cf225c65a77a84a6eb0abe"
+    },
+    {
+      "case": "trailing-comment",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "4ee242f0de8f472081a0aea7c9252becd09536eec91403bc03cf3e0731093fe8"
+    },
+    {
+      "case": "quoted-malformed",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "ff24c9699f15fe53a48e1c98fd85f2e180aedde2c99f5a4307272ce61539c9d9"
+    },
+    {
+      "case": "group-following-text",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "b8de69f030b45466b0e85d566828f9b75e8ab30d48ad76c4b2522776faf85c26"
+    },
+    {
+      "case": "literal-controls",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "a3c7ddb8e50708eb47a55e5fac91af5e2da73fb1d7e83dd321573478a7b8118d"
+    },
+    {
+      "case": "normalized-path",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "4a73780ad91af7cda4c537817ff7fce040ded7775fc8c48abad0b95753875c0c"
+    },
+    {
+      "case": "escaping",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "8e593b2b7ba77aa17150de5d90ba2612d3c9c6f1dee1a18eb8f46d96f32ced01"
+    },
+    {
+      "case": "absolute",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "2026be5b565ffcbca43e292bf6b0c977de587edbe120734d45a52dc73633ea17"
+    },
+    {
+      "case": "drive",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "5a9194ffaf37bc8a39048ecdf75d69ac4284b080ca08acbc29f6d7d89099bd1a"
+    },
+    {
+      "case": "missing-path",
+      "apiEqualsActualCLI": true,
+      "rejected": true,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "90bf66b360c05573154560720854f644ea7e7dceef0001076bbd1e9e68311d4d"
+    },
+    {
+      "case": "data-command",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "8ba3a99453656809ee095d47b536d86eb8567644b939692e50d79994f71859a9"
+    },
+    {
+      "case": "control-body",
+      "apiEqualsActualCLI": true,
+      "rejected": false,
+      "sentinelAbsent": true,
+      "fixtureSHA256": "65485b8743fea63985dfcdb5968d9fac9810818ce97c158e783b5866eb4c6f31"
+    }
+  ],
+  "rejectingMutationKilled": true,
+  "dataCommandSentinelsAbsent": true,
+  "sourceUnmodified": true,
+  "incidents": [
+    {
+      "case": "continued-comment",
+      "cause": "An overbroad test assertion required UNKNOWN for every fixture. The continued comment was correctly ignored and following child.tcl checked, matching the case oracle.",
+      "correction": "Exempt this comment-only fixture from the unrelated UNKNOWN assertion. Reused the 29 completed unchanged fixture/API/CLI receipts. No production modification.",
+      "originalFailure": "api-continued-comment exited1 at assert actual[unknown]; retained verbatim in initial worker session tool output. Same-name rerun replaced the local subprocess capture; this incident record preserves that limitation.",
+      "session": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-20-31-01a18575-79cf-72f2-8c57-441cd1877f9a.jsonl"
+    },
+    "Initial policy output exceeded requested8192B terminal limit; no production capture limit was raised."
+  ],
+  "resource": {
+    "allocation": 25165824,
+    "aggregate": 125829120,
+    "requiredBytes": 3175088128,
+    "memRequired": 2147483648,
+    "allOperationAdmissionsPassed": true,
+    "minFreeBytes": 5013823488,
+    "minMemAvailable": 2385461248,
+    "supervisorSHA256": "7a53f2124299047402ca4b3cab565f0b1c5f61286dc01ccaec885158203c79c1",
+    "initialReceipt": "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/evidence/initial.json",
+    "evidenceLogicalBytes": 282825,
+    "accounting": "Physical file allocation and current session plus positive shared WAL growth counted once at every subprocess admission; unchanged aggregate reservation retained through coordinator closeout."
+  },
+  "cleanup": "Every supervised process group killed; direct child reaped. No runtime or box assigned.",
+  "limits": "Acceptance establishes only the documented lexical subset. General Tcl/media closure, computed resolution, actual CWD/symlink semantics and runtime/gameplay remain unqualified.",
+  "publication": "Task branch only; final exact commit/remote verification recorded in retained canonical receipt and publication-note.txt."
+}
