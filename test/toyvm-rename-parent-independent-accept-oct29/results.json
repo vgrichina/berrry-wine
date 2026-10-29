@@ -1,0 +1,313 @@
+{
+  "candidate": "33528beec24aee12093633c30c260c30ff383969",
+  "productionPinsBefore": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12580,
+      "sha256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "scope": "internal direct Backend.handle validation consistency only",
+  "kernelReachability": "not established; callbacks can exceed kernel-reachable requests",
+  "snapshotNormalization": "deepcopy all instance variables except operations",
+  "requestLayouts": {
+    "12": "<Q newdir; old\\0new\\0",
+    "45": "<QII newdir, flags=0, padding=0; old\\0new\\0"
+  },
+  "executed": [
+    {
+      "case": "valid-crossdirectory-file-control",
+      "op": 12,
+      "requestHex": "030000000000000066696c65006d6f76656400",
+      "passed": true,
+      "before": {
+        "root": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/never-mounted-control",
+        "live_limit": 65536,
+        "write_limit": 65536,
+        "file_limit": 16384,
+        "nodes": {
+          "1": {
+            "mode": 16832,
+            "data": {
+              "hex": ""
+            },
+            "names": {
+              "hex:736f75726365": 2,
+              "hex:64657374696e6174696f6e": 3
+            },
+            "links": 1,
+            "opens": 0
+          },
+          "2": {
+            "mode": 16873,
+            "data": {
+              "hex": ""
+            },
+            "names": {
+              "hex:66696c65": 4
+            },
+            "links": 1,
+            "opens": 0
+          },
+          "3": {
+            "mode": 16873,
+            "data": {
+              "hex": ""
+            },
+            "names": {},
+            "links": 1,
+            "opens": 0
+          },
+          "4": {
+            "mode": 33184,
+            "data": {
+              "hex": "707265736572766564207061796c6f6164"
+            },
+            "names": {},
+            "links": 1,
+            "opens": 1
+          }
+        },
+        "next": 5,
+        "written": 17,
+        "peak": 20480,
+        "live": 20480,
+        "failure": null,
+        "handles": 1
+      },
+      "after": {
+        "root": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/never-mounted-control",
+        "live_limit": 65536,
+        "write_limit": 65536,
+        "file_limit": 16384,
+        "nodes": {
+          "1": {
+            "mode": 16832,
+            "data": {
+              "hex": ""
+            },
+            "names": {
+              "hex:736f75726365": 2,
+              "hex:64657374696e6174696f6e": 3
+            },
+            "links": 1,
+            "opens": 0
+          },
+          "2": {
+            "mode": 16873,
+            "data": {
+              "hex": ""
+            },
+            "names": {},
+            "links": 1,
+            "opens": 0
+          },
+          "3": {
+            "mode": 16873,
+            "data": {
+              "hex": ""
+            },
+            "names": {
+              "hex:6d6f766564": 4
+            },
+            "links": 1,
+            "opens": 0
+          },
+          "4": {
+            "mode": 33184,
+            "data": {
+              "hex": "707265736572766564207061796c6f6164"
+            },
+            "names": {},
+            "links": 1,
+            "opens": 1
+          }
+        },
+        "next": 5,
+        "written": 17,
+        "peak": 20480,
+        "live": 20480,
+        "failure": null,
+        "handles": 1
+      }
+    },
+    {
+      "case": "destination-regular-parent-valid-crossdirectory-source-file",
+      "op": 12,
+      "sourceParent": 2,
+      "destinationParent": 4,
+      "sourceInode": 3,
+      "requestHex": "040000000000000066696c65006d6f76656400",
+      "unexecutedRename2RequestHex": "0400000000000000000000000000000066696c65006d6f76656400",
+      "expectedErrno": 20,
+      "expectedErrnoName": "ENOTDIR",
+      "actual": {
+        "type": "NotADirectoryError",
+        "errno": 20,
+        "raw": "[Errno 20] rename parent not directory"
+      },
+      "snapshotPreserved": true,
+      "operationsDelta": 1,
+      "passed": false,
+      "before": {
+        "root": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/never-mounted-counterexample",
+        "live_limit": 65536,
+        "write_limit": 65536,
+        "file_limit": 16384,
+        "nodes": {
+          "1": {
+            "mode": 16832,
+            "data": {
+              "hex": ""
+            },
+            "names": {
+              "hex:736f75726365": 2,
+              "hex:6e6f6e2d6469726563746f7279": 4
+            },
+            "links": 1,
+            "opens": 0
+          },
+          "2": {
+            "mode": 16873,
+            "data": {
+              "hex": ""
+            },
+            "names": {
+              "hex:66696c65": 3
+            },
+            "links": 1,
+            "opens": 0
+          },
+          "3": {
+            "mode": 33184,
+            "data": {
+              "hex": "707265736572766564207061796c6f6164"
+            },
+            "names": {},
+            "links": 1,
+            "opens": 1
+          },
+          "4": {
+            "mode": 33184,
+            "data": {
+              "hex": ""
+            },
+            "names": {},
+            "links": 1,
+            "opens": 1
+          }
+        },
+        "next": 5,
+        "written": 17,
+        "peak": 20480,
+        "live": 20480,
+        "failure": null,
+        "handles": 2
+      },
+      "after": {
+        "root": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/never-mounted-counterexample",
+        "live_limit": 65536,
+        "write_limit": 65536,
+        "file_limit": 16384,
+        "nodes": {
+          "1": {
+            "mode": 16832,
+            "data": {
+              "hex": ""
+            },
+            "names": {
+              "hex:736f75726365": 2,
+              "hex:6e6f6e2d6469726563746f7279": 4
+            },
+            "links": 1,
+            "opens": 0
+          },
+          "2": {
+            "mode": 16873,
+            "data": {
+              "hex": ""
+            },
+            "names": {
+              "hex:66696c65": 3
+            },
+            "links": 1,
+            "opens": 0
+          },
+          "3": {
+            "mode": 33184,
+            "data": {
+              "hex": "707265736572766564207061796c6f6164"
+            },
+            "names": {},
+            "links": 1,
+            "opens": 1
+          },
+          "4": {
+            "mode": 33184,
+            "data": {
+              "hex": ""
+            },
+            "names": {},
+            "links": 1,
+            "opens": 1
+          }
+        },
+        "next": 5,
+        "written": 17,
+        "peak": 20480,
+        "live": 20480,
+        "failure": null,
+        "handles": 2
+      }
+    }
+  ],
+  "unexecuted": [
+    "RENAME2/op45 flags=0 behavioral calls",
+    "root-source-file destination-regular-parent",
+    "source-directory destination-regular-parent (root and crossdirectory)",
+    "destination-missing-parent with valid source-file or source-directory",
+    "source-regular-parent with valid destination-parent",
+    "source-missing-parent with valid destination-parent",
+    "remove-parent-guard source-copy controls (conditional on complete passing contract)"
+  ],
+  "productionPinsAfter": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12580,
+      "sha256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "productionUnchanged": true,
+  "status": "COUNTEREXAMPLE",
+  "acceptanceClaim": false
+}

@@ -1,0 +1,16 @@
+{
+  "eventId": "worker-completion:01a1866f-6ff0-7a81-94f8-53a3eafcf334",
+  "reviewedAt": "2026-10-29T06:59:12.595552+00:00",
+  "outcome": "RENAME_PARENT_REPAIR_SOURCE_PASS",
+  "commit": "33528beec24aee12093633c30c260c30ff383969",
+  "remoteVerified": true,
+  "evidence": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-parent-guard-repair-oct29/retained-evidence",
+  "nextTask": "toyvm-rename-parent-independent-accept-oct29",
+  "scope": "direct callback source tests only",
+  "remainingGates": [
+    "fresh independent acceptance",
+    "combined application",
+    "caller integration",
+    "mounted/runtime qualification"
+  ]
+}

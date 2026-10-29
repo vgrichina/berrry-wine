@@ -1,0 +1,22 @@
+{
+  "original/reproduce.py": {
+    "bytes": 7595,
+    "sha256": "99ba997bb2bbaaa4c7713dcecd7e42b1bfb1fc25fd73ae31a7c08153436621a2"
+  },
+  "original/results.json": {
+    "bytes": 9185,
+    "sha256": "212a351eec2cb3fb20327f3db1d94707423429b962670ac57c2401c5a94f389b"
+  },
+  "original/source-pins.json": {
+    "bytes": 1702,
+    "sha256": "61d820c21dbfa096a5e6db7ab29045d898bf8552c5eb345855ba7c6fd3b016d5"
+  },
+  "historical-provenance.json": {
+    "bytes": 953,
+    "sha256": "7e7d354e49e1c3014e8b10d12d51b879462e7b2c6db05c49805d0b62bbcd182b"
+  },
+  "repaired-results.json": {
+    "bytes": 7699,
+    "sha256": "12635fc1a7efb9a226f63b934da7e6ad8c1ac432c2ec6f07e8669ee48f3bea22"
+  }
+}

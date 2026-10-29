@@ -1,0 +1,79 @@
+{
+  "status": "PASS",
+  "candidate": "33528beec24aee12093633c30c260c30ff383969",
+  "independentCases": 55,
+  "regressionCases": 14,
+  "privateMutantsCaught": 4,
+  "files": {
+    "README.md": {
+      "bytes": 1954,
+      "sha256": "b79df23d35fa08ae296e171e20860bfb3898181efbb3d97524094eaf60e994eb"
+    },
+    "corrected-oracle.py": {
+      "bytes": 8137,
+      "sha256": "ae66a44d52df992f030d6a873eef75dee57c8c4a4cd5c82400c3b1ae0f7af34e"
+    },
+    "corrected-results.json": {
+      "bytes": 38560,
+      "sha256": "10d29b1af9aee082c85b3d1452b3cbd5bd780d809031792887676a5b62f8e55f"
+    },
+    "diagnostic-summary.json": {
+      "bytes": 467,
+      "sha256": "7141c54f8412fcde0f14fe2fac6f6c694c3ee31b56818dccb1ff522bf481a313"
+    },
+    "independent-regressions.py": {
+      "bytes": 2745,
+      "sha256": "a42ab9673a4a95b65fd6ab2eec3c0befa504493e0dbdf662d042f31a24160b86"
+    },
+    "original-historical-provenance.json": {
+      "bytes": 953,
+      "sha256": "7e7d354e49e1c3014e8b10d12d51b879462e7b2c6db05c49805d0b62bbcd182b"
+    },
+    "original-historical-results.json": {
+      "bytes": 9185,
+      "sha256": "212a351eec2cb3fb20327f3db1d94707423429b962670ac57c2401c5a94f389b"
+    },
+    "package-validation.json": {
+      "bytes": 406,
+      "sha256": "a1dc5de4f210968aa69b690aca8a0bfe024636c4a7d8a69fc03cdb71e786db2e"
+    },
+    "predecessor-completion-receipt.json": {
+      "bytes": 639,
+      "sha256": "d7ca3f0a307dc0acc40312e5b0eb34516c47aff44734ae77b172627a3152f5c3"
+    },
+    "predecessor-provenance.json": {
+      "bytes": 680,
+      "sha256": "c3d6146467f710c9970590414d6eea4d8603572d996e250c9f7debaee0a494c0"
+    },
+    "predecessor-results.json": {
+      "bytes": 7699,
+      "sha256": "12635fc1a7efb9a226f63b934da7e6ad8c1ac432c2ec6f07e8669ee48f3bea22"
+    },
+    "regression-results.json": {
+      "bytes": 6947,
+      "sha256": "87b9bfacde89a8f1f35eaa668aea62fbf2a781a46c4818c5bf706b9fdb71c616"
+    },
+    "reproduce.py": {
+      "bytes": 7595,
+      "sha256": "99ba997bb2bbaaa4c7713dcecd7e42b1bfb1fc25fd73ae31a7c08153436621a2"
+    },
+    "results.json": {
+      "bytes": 9216,
+      "sha256": "5a5be4dbcab5f58c1f5f548e8f9b08c4157d2e990cd382563793c97626927eb2"
+    },
+    "source-pins.json": {
+      "bytes": 1024,
+      "sha256": "1e0dc4f6180d9e8854b3e228d825ee8415bf5cfc4766170d47463136e4527b8a"
+    }
+  },
+  "walPositiveGrowth": 4096,
+  "sourceEdits": [],
+  "historicalFalseNegative": true,
+  "scope": "exact four-namespace backend plus RENAME parent checks only",
+  "remainingGates": [
+    "six-guard combined application",
+    "serve branch application",
+    "caller integration",
+    "mounted/runtime qualification"
+  ]
+}

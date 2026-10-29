@@ -1,0 +1,316 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "case": "overwrite-open-file-preserves-handles-and-payload",
+      "op": 12,
+      "passed": true
+    },
+    {
+      "case": "replacement-type-or-nonempty",
+      "op": 12,
+      "sourceParent": 2,
+      "destinationParent": 3,
+      "flags": 0,
+      "expectedErrno": 21,
+      "actual": {
+        "type": "IsADirectoryError",
+        "errno": 21,
+        "isOSError": true
+      },
+      "snapshotPreserved": true,
+      "snapshotKeys": [
+        "failure",
+        "file_limit",
+        "handles",
+        "live",
+        "live_limit",
+        "next",
+        "nodes",
+        "peak",
+        "root",
+        "write_limit",
+        "written"
+      ],
+      "operationsDelta": 1,
+      "requestHex": "030000000000000066696c65006d6f76656400"
+    },
+    {
+      "case": "replacement-type-or-nonempty",
+      "op": 12,
+      "sourceParent": 2,
+      "destinationParent": 3,
+      "flags": 0,
+      "expectedErrno": 20,
+      "actual": {
+        "type": "NotADirectoryError",
+        "errno": 20,
+        "isOSError": true
+      },
+      "snapshotPreserved": true,
+      "snapshotKeys": [
+        "failure",
+        "file_limit",
+        "handles",
+        "live",
+        "live_limit",
+        "next",
+        "nodes",
+        "peak",
+        "root",
+        "write_limit",
+        "written"
+      ],
+      "operationsDelta": 1,
+      "requestHex": "030000000000000066696c65006d6f76656400"
+    },
+    {
+      "case": "replacement-type-or-nonempty",
+      "op": 12,
+      "sourceParent": 2,
+      "destinationParent": 3,
+      "flags": 0,
+      "expectedErrno": 39,
+      "actual": {
+        "type": "OSError",
+        "errno": 39,
+        "isOSError": true
+      },
+      "snapshotPreserved": true,
+      "snapshotKeys": [
+        "failure",
+        "file_limit",
+        "handles",
+        "live",
+        "live_limit",
+        "next",
+        "nodes",
+        "peak",
+        "root",
+        "write_limit",
+        "written"
+      ],
+      "operationsDelta": 1,
+      "requestHex": "030000000000000066696c65006d6f76656400"
+    },
+    {
+      "case": "directory-cycle",
+      "op": 12,
+      "sourceParent": 2,
+      "destinationParent": 4,
+      "flags": 0,
+      "expectedErrno": 22,
+      "actual": {
+        "type": "OSError",
+        "errno": 22,
+        "isOSError": true
+      },
+      "snapshotPreserved": true,
+      "snapshotKeys": [
+        "failure",
+        "file_limit",
+        "handles",
+        "live",
+        "live_limit",
+        "next",
+        "nodes",
+        "peak",
+        "root",
+        "write_limit",
+        "written"
+      ],
+      "operationsDelta": 1,
+      "requestHex": "040000000000000066696c65006d6f76656400"
+    },
+    {
+      "case": "same-name-noop",
+      "op": 12,
+      "passed": true
+    },
+    {
+      "case": "sticky-existing-failure-preserved",
+      "op": 12,
+      "sourceParent": 2,
+      "destinationParent": 5,
+      "flags": 0,
+      "expectedErrno": 20,
+      "actual": {
+        "type": "NotADirectoryError",
+        "errno": 20,
+        "isOSError": true
+      },
+      "snapshotPreserved": true,
+      "snapshotKeys": [
+        "failure",
+        "file_limit",
+        "handles",
+        "live",
+        "live_limit",
+        "next",
+        "nodes",
+        "peak",
+        "root",
+        "write_limit",
+        "written"
+      ],
+      "operationsDelta": 1,
+      "requestHex": "050000000000000066696c65006d6f76656400"
+    },
+    {
+      "case": "overwrite-open-file-preserves-handles-and-payload",
+      "op": 45,
+      "passed": true
+    },
+    {
+      "case": "replacement-type-or-nonempty",
+      "op": 45,
+      "sourceParent": 2,
+      "destinationParent": 3,
+      "flags": 0,
+      "expectedErrno": 21,
+      "actual": {
+        "type": "IsADirectoryError",
+        "errno": 21,
+        "isOSError": true
+      },
+      "snapshotPreserved": true,
+      "snapshotKeys": [
+        "failure",
+        "file_limit",
+        "handles",
+        "live",
+        "live_limit",
+        "next",
+        "nodes",
+        "peak",
+        "root",
+        "write_limit",
+        "written"
+      ],
+      "operationsDelta": 1,
+      "requestHex": "0300000000000000000000000000000066696c65006d6f76656400"
+    },
+    {
+      "case": "replacement-type-or-nonempty",
+      "op": 45,
+      "sourceParent": 2,
+      "destinationParent": 3,
+      "flags": 0,
+      "expectedErrno": 20,
+      "actual": {
+        "type": "NotADirectoryError",
+        "errno": 20,
+        "isOSError": true
+      },
+      "snapshotPreserved": true,
+      "snapshotKeys": [
+        "failure",
+        "file_limit",
+        "handles",
+        "live",
+        "live_limit",
+        "next",
+        "nodes",
+        "peak",
+        "root",
+        "write_limit",
+        "written"
+      ],
+      "operationsDelta": 1,
+      "requestHex": "0300000000000000000000000000000066696c65006d6f76656400"
+    },
+    {
+      "case": "replacement-type-or-nonempty",
+      "op": 45,
+      "sourceParent": 2,
+      "destinationParent": 3,
+      "flags": 0,
+      "expectedErrno": 39,
+      "actual": {
+        "type": "OSError",
+        "errno": 39,
+        "isOSError": true
+      },
+      "snapshotPreserved": true,
+      "snapshotKeys": [
+        "failure",
+        "file_limit",
+        "handles",
+        "live",
+        "live_limit",
+        "next",
+        "nodes",
+        "peak",
+        "root",
+        "write_limit",
+        "written"
+      ],
+      "operationsDelta": 1,
+      "requestHex": "0300000000000000000000000000000066696c65006d6f76656400"
+    },
+    {
+      "case": "directory-cycle",
+      "op": 45,
+      "sourceParent": 2,
+      "destinationParent": 4,
+      "flags": 0,
+      "expectedErrno": 22,
+      "actual": {
+        "type": "OSError",
+        "errno": 22,
+        "isOSError": true
+      },
+      "snapshotPreserved": true,
+      "snapshotKeys": [
+        "failure",
+        "file_limit",
+        "handles",
+        "live",
+        "live_limit",
+        "next",
+        "nodes",
+        "peak",
+        "root",
+        "write_limit",
+        "written"
+      ],
+      "operationsDelta": 1,
+      "requestHex": "0400000000000000000000000000000066696c65006d6f76656400"
+    },
+    {
+      "case": "same-name-noop",
+      "op": 45,
+      "passed": true
+    },
+    {
+      "case": "sticky-existing-failure-preserved",
+      "op": 45,
+      "sourceParent": 2,
+      "destinationParent": 5,
+      "flags": 0,
+      "expectedErrno": 20,
+      "actual": {
+        "type": "NotADirectoryError",
+        "errno": 20,
+        "isOSError": true
+      },
+      "snapshotPreserved": true,
+      "snapshotKeys": [
+        "failure",
+        "file_limit",
+        "handles",
+        "live",
+        "live_limit",
+        "next",
+        "nodes",
+        "peak",
+        "root",
+        "write_limit",
+        "written"
+      ],
+      "operationsDelta": 1,
+      "requestHex": "0500000000000000000000000000000066696c65006d6f76656400"
+    }
+  ],
+  "productionUnchanged": true
+}

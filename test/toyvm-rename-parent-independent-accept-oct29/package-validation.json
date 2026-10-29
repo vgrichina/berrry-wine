@@ -1,0 +1,16 @@
+{
+  "status": "PACKAGE_VALIDATED_NOT_ACCEPTANCE",
+  "sourcePinsVerified": 5,
+  "unchangedOriginalReproducer": true,
+  "predecessorReceiptPinVerified": true,
+  "completeSnapshotEqual": true,
+  "currentErrno": 20,
+  "currentException": "NotADirectoryError",
+  "historicalActual": {
+    "type": "success",
+    "errno": null,
+    "replyHex": ""
+  },
+  "historicalStatePreserved": false,
+  "testBytes": 40439
+}

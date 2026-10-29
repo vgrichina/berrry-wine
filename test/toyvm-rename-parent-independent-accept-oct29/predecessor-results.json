@@ -1,0 +1,388 @@
+{
+  "scope": "direct callbacks may exceed kernel-reachable requests",
+  "normalization": "deepcopy every Backend instance variable except operations",
+  "productionSha256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb",
+  "cases": [
+    {
+      "op": 12,
+      "sourceDirectory": false,
+      "rootSource": false,
+      "parent": "source",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": false,
+      "rootSource": false,
+      "parent": "source",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": false,
+      "rootSource": false,
+      "parent": "destination",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": false,
+      "rootSource": false,
+      "parent": "destination",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": false,
+      "rootSource": true,
+      "parent": "source",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": false,
+      "rootSource": true,
+      "parent": "source",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": false,
+      "rootSource": true,
+      "parent": "destination",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": false,
+      "rootSource": true,
+      "parent": "destination",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": true,
+      "rootSource": false,
+      "parent": "source",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": true,
+      "rootSource": false,
+      "parent": "source",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": true,
+      "rootSource": false,
+      "parent": "destination",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": true,
+      "rootSource": false,
+      "parent": "destination",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": true,
+      "rootSource": true,
+      "parent": "source",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": true,
+      "rootSource": true,
+      "parent": "source",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": true,
+      "rootSource": true,
+      "parent": "destination",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "sourceDirectory": true,
+      "rootSource": true,
+      "parent": "destination",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "case": "valid-crossdirectory-file",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "case": "overwrite-open-file",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "case": "valid-crossdirectory-directory",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "case": "overwrite-directory",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "case": "replacement-guard",
+      "errno": 21,
+      "passed": true
+    },
+    {
+      "op": 12,
+      "case": "replacement-guard",
+      "errno": 20,
+      "passed": true
+    },
+    {
+      "op": 12,
+      "case": "replacement-guard",
+      "errno": 39,
+      "passed": true
+    },
+    {
+      "op": 12,
+      "case": "cycle-self-and-descendant",
+      "passed": true
+    },
+    {
+      "op": 12,
+      "case": "noop-missing-name-and-name-precedence",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": false,
+      "rootSource": false,
+      "parent": "source",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": false,
+      "rootSource": false,
+      "parent": "source",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": false,
+      "rootSource": false,
+      "parent": "destination",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": false,
+      "rootSource": false,
+      "parent": "destination",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": false,
+      "rootSource": true,
+      "parent": "source",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": false,
+      "rootSource": true,
+      "parent": "source",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": false,
+      "rootSource": true,
+      "parent": "destination",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": false,
+      "rootSource": true,
+      "parent": "destination",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": true,
+      "rootSource": false,
+      "parent": "source",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": true,
+      "rootSource": false,
+      "parent": "source",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": true,
+      "rootSource": false,
+      "parent": "destination",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": true,
+      "rootSource": false,
+      "parent": "destination",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": true,
+      "rootSource": true,
+      "parent": "source",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": true,
+      "rootSource": true,
+      "parent": "source",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": true,
+      "rootSource": true,
+      "parent": "destination",
+      "kind": "regular",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "sourceDirectory": true,
+      "rootSource": true,
+      "parent": "destination",
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "case": "valid-crossdirectory-file",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "case": "overwrite-open-file",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "case": "valid-crossdirectory-directory",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "case": "overwrite-directory",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "case": "replacement-guard",
+      "errno": 21,
+      "passed": true
+    },
+    {
+      "op": 45,
+      "case": "replacement-guard",
+      "errno": 20,
+      "passed": true
+    },
+    {
+      "op": 45,
+      "case": "replacement-guard",
+      "errno": 39,
+      "passed": true
+    },
+    {
+      "op": 45,
+      "case": "cycle-self-and-descendant",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "case": "noop-missing-name-and-name-precedence",
+      "passed": true
+    },
+    {
+      "op": 45,
+      "case": "unknown-flags-precedence",
+      "passed": true
+    }
+  ],
+  "controls": [
+    {
+      "removed": "source",
+      "kind": "regular",
+      "detected": true
+    },
+    {
+      "removed": "source",
+      "kind": "missing",
+      "detected": true
+    },
+    {
+      "removed": "destination",
+      "kind": "regular",
+      "detected": true
+    },
+    {
+      "removed": "destination",
+      "kind": "missing",
+      "detected": true
+    }
+  ],
+  "acceptanceClaim": false,
+  "status": "PASS"
+}

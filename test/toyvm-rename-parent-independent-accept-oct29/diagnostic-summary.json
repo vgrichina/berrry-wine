@@ -1,0 +1,18 @@
+{
+  "status": "STOPPED_ORIGINAL_ORACLE_FALSE_NEGATIVE",
+  "candidate": "33528beec24aee12093633c30c260c30ff383969",
+  "productionBehavior": {
+    "errno": 20,
+    "exceptionType": "NotADirectoryError",
+    "completeStateUnchanged": true
+  },
+  "originalOracle": {
+    "requiredTypeName": "OSError",
+    "reported": "COUNTEREXAMPLE",
+    "exit": 1
+  },
+  "independentAcceptance": false,
+  "matrixExecuted": false,
+  "mutantsExecuted": false,
+  "sourceReadOnly": true
+}

@@ -1,0 +1,26 @@
+{
+  "source": "/tmp/toyvm-rename-parent-validation-contract-oct29/repo/test/toyvm-rename-parent-validation-contract-oct29",
+  "files": {
+    "reproduce.py": {
+      "bytes": 7595,
+      "sha256": "99ba997bb2bbaaa4c7713dcecd7e42b1bfb1fc25fd73ae31a7c08153436621a2"
+    },
+    "results.json": {
+      "bytes": 9185,
+      "sha256": "212a351eec2cb3fb20327f3db1d94707423429b962670ac57c2401c5a94f389b"
+    },
+    "source-pins.json": {
+      "bytes": 1702,
+      "sha256": "61d820c21dbfa096a5e6db7ab29045d898bf8552c5eb345855ba7c6fd3b016d5"
+    },
+    "execution-receipt.json": {
+      "bytes": 2688,
+      "sha256": "6539fe3e0b6be83a7514df296b2203dbb3d51caa374772f5cb4ac02ed7d42680"
+    },
+    "README.md": {
+      "bytes": 3158,
+      "sha256": "5b944934eff1c1fbe6edf877e02abd0965bc2445f03d2603b20dd5763e485242"
+    }
+  },
+  "historicalPublication": "staged only; no commit or remote backup after RAM denial; original retained evidence remains outside Git"
+}
