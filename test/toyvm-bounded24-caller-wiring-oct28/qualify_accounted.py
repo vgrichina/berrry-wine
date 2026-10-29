@@ -51,8 +51,11 @@ def validate_receipt(path):
 
 def filesystem_clean(cleanup):
     return (isinstance(cleanup, dict)
-            and cleanup.get('remainingMounts') == []
-            and 'unmountExit' in cleanup and cleanup['unmountExit'] in (None, 0)
+            and type(cleanup.get('remainingMounts')) is list
+            and cleanup['remainingMounts'] == []
+            and 'unmountExit' in cleanup
+            and (cleanup['unmountExit'] is None
+                 or (type(cleanup['unmountExit']) is int and cleanup['unmountExit'] == 0))
             and type(cleanup.get('serverExit')) is int
             and cleanup['serverExit'] in (0, -15))
 
