@@ -1,0 +1,105 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "test/toyvm-transitive-loader-fresh-independent-accept-oct29/oracle.py"
+  ],
+  "cwd": "/tmp/toyvm-transitive-loader-fresh-independent-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.2589989178813994,
+  "admission": {
+    "at": 1793262103.011091,
+    "device": 1680253000807562931,
+    "f_bavail": 1146840,
+    "blockSize": 4096,
+    "free": 4697456640,
+    "MemAvailable": 3216855040,
+    "allocated": 2469888,
+    "budget": 25165824,
+    "aggregate": {
+      "at": "2026-10-29T08:17:54.618214+00:00",
+      "owners": {
+        "coordinator": 25165824,
+        "gltron-eager-integrity-independent-accept-oct29": 50331648,
+        "toyvm-seven-guards-selector-combined-candidate-oct29": 25165824,
+        "toyvm-accepted-seven-guards-caller-migration-oct29": 25165824,
+        "toyvm-transitive-loader-fresh-independent-accept-oct29": 25165824
+      },
+      "aggregate": 176160768,
+      "requiredBytes": 3200253952,
+      "futureGrowthIncludingUncertaintyBuffer": 150994944,
+      "freeBytes": 4703526912,
+      "remainingAfterForecast": 4552531968,
+      "MemAvailable": 3287769088,
+      "memRequired": 2147483648,
+      "device": 1680253000807562931,
+      "f_bavail": 1063445,
+      "blockSize": 4096,
+      "PASS": true,
+      "forecast": "Transferred24MiB predecessor allocation: sourceGit3 evidence1 WAL8 publication3 uncertainty9; other active owners retained through closeout. Current aggregate and unchanged per-operation floors.",
+      "previousAllocationCloseout": {
+        "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+        "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+      },
+      "transfers": {
+        "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+        "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+      },
+      "transfer": {
+        "tuxracer-glvertex2dv-independent-accept-oct29": "tuxracer-gltexcoord2dv-dispatch-repair-oct29"
+      },
+      "changedPrerequisite": "Repair worker completed; current completion-triggered capacity sample",
+      "shortfalls": {
+        "diskBytes": 0,
+        "memoryBytes": 0
+      },
+      "clientForecast": {
+        "at": "2026-10-29T08:17:54.618214+00:00",
+        "MemAvailable": 3287769088,
+        "activeOwners": [
+          {
+            "task": "toyvm-seven-guards-selector-combined-candidate-oct29",
+            "session": "01a186ba-5e39-7ad1-af25-dbc266ba7800",
+            "pid": 2704327,
+            "rssBytes": 246525952,
+            "remainingGrowthBytes": 134217728
+          },
+          {
+            "task": "toyvm-accepted-seven-guards-caller-migration-oct29",
+            "session": "01a186bb-e7d3-7c12-ad65-d44f2d4f4ad7",
+            "pid": 2706570,
+            "rssBytes": 311767040,
+            "remainingGrowthBytes": 134217728
+          }
+        ],
+        "residentRSSAlreadyInMemAvailable": true,
+        "additionalClients": 1,
+        "additionalClientBytes": 402653184,
+        "activeRemainingGrowth": 268435456,
+        "publicationReserve": 268435456,
+        "floor": 2147483648,
+        "changedPrerequisite": "Acceptance completion; exact next adapter source boundary inspected",
+        "remaining": 2348244992,
+        "PASS": true
+      }
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true,
+      "forecast": true,
+      "memory": true
+    }
+  },
+  "stdoutBytes": 402,
+  "stderrBytes": 0
+}

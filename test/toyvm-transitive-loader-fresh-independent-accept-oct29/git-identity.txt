@@ -1,0 +1,4 @@
+/tmp/toyvm-transitive-loader-fresh-independent-accept-oct29/repo
+/tmp/toyvm-transitive-loader-fresh-independent-accept-oct29/repo/.git
+a33f06c2df04f5b6770b293088f335578c5c8699
+task/toyvm-transitive-loader-fresh-independent-accept-oct29
