@@ -4064,29 +4064,333 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $l)))
     (call $gs16 (i32.add (local.get $dst) (i32.shl (local.get $i) (i32.const 1))) (i32.const 0)))
 
-  ;; Convert wide string at guest src to ANSI at guest dst, max bytes. Returns length.
-  (func $wide_to_ansi (param $src i32) (param $dst i32) (param $max i32) (result i32)
-    (local $i i32) (local $ch i32)
+  ;; ---- Code page character conversion (DBCS stage 1: CP950 tables) ----
+  ;; Single-character results are packed: bits 0..15 the character (decode)
+  ;; or the emitted bytes, first byte in bits 0..7 (encode); bits 16..23 the
+  ;; byte count consumed (decode) or produced (encode); bit 24 set when the
+  ;; decode input was an invalid/unmapped sequence, or when encode fell back
+  ;; to the default byte. $ansi_char_decode / $ansi_char_encode take an
+  ;; already-resolved code page (see $resolve_code_page below).
+  ;;
+  ;; Only CP950 has conversion tables so far. The dispatch is by code page,
+  ;; so 932/936/949 join by adding a table and one branch; until then they —
+  ;; and every SBCS page — keep the exact historical identity behavior
+  ;; (decode: byte -> same code point, encode: low-byte truncation), which is
+  ;; also what keeps the CP1252 path byte-for-byte unchanged, including the
+  ;; 0x80..0x9F identity convention the font layer uses.
+  (func $cp_has_conversion_tables (param $cp i32) (result i32)
+    (i32.eq (local.get $cp) (i32.const 950)))
+
+  ;; Big5 trail index: 0..62 for trails 0x40..0x7E, 63..156 for 0xA1..0xFE,
+  ;; -1 outside both ranges.
+  (func $big5_trail_index (param $ch i32) (result i32)
+    (if (i32.and (i32.ge_u (local.get $ch) (i32.const 0x40)) (i32.le_u (local.get $ch) (i32.const 0x7E)))
+      (then (return (i32.sub (local.get $ch) (i32.const 0x40)))))
+    (if (i32.and (i32.ge_u (local.get $ch) (i32.const 0xA1)) (i32.le_u (local.get $ch) (i32.const 0xFE)))
+      (then (return (i32.add (i32.sub (local.get $ch) (i32.const 0xA1)) (i32.const 63)))))
+    (i32.const -1))
+
+  ;; Decode one character from its first two bytes in resolved page $cp.
+  ;; $avail bounds the logical read: a pair is formed only when two bytes
+  ;; remain (string walkers with a NUL-terminated source pass a huge
+  ;; $avail and stop at the terminator before decoding it). Invalid input
+  ;; decodes to U+FFFD consuming one byte — the offending byte alone — so
+  ;; a bad trail byte is re-examined as the next character's start, as in
+  ;; Wine. A well-formed but unmapped pair also yields U+FFFD but consumes
+  ;; both bytes. The two entry points below are this core plus a byte
+  ;; source: guest addresses through $gl8 for the conversion family, raw
+  ;; linear memory for the GDI text funnels (stage 2), whose callers hand
+  ;; over pointers their own callers already resolved.
+  (func $cp_char_decode (param $cp i32) (param $b0 i32) (param $b1 i32) (param $avail i32) (result i32)
+    (local $tidx i32) (local $w i32)
+    (if (i32.eqz (call $cp_has_conversion_tables (local.get $cp)))
+      (then (return (i32.or (local.get $b0) (i32.const 0x10000)))))
+    ;; CP950.
+    (if (i32.lt_u (local.get $b0) (i32.const 0x80))
+      (then (return (i32.or (local.get $b0) (i32.const 0x10000)))))
+    ;; Lead bytes outside the table's 0xA1..0xFE repertoire (0x80..0xA0)
+    ;; have no pair mapping and surface singly, flagged invalid.
+    (if (i32.or (i32.lt_u (local.get $b0) (i32.const 0xA1)) (i32.gt_u (local.get $b0) (i32.const 0xFE)))
+      (then (return (i32.const 0x101FFFD))))
+    (if (i32.lt_u (local.get $avail) (i32.const 2))
+      (then (return (i32.const 0x101FFFD)))) ;; truncated pair at buffer end
+    (local.set $tidx (call $big5_trail_index (local.get $b1)))
+    (if (i32.lt_s (local.get $tidx) (i32.const 0))
+      (then (return (i32.const 0x101FFFD)))) ;; trail out of range: lead alone
+    (local.set $w (i32.load16_u (i32.add (global.get $BIG5_DECODE_TABLE)
+      (i32.shl (i32.add (i32.mul (i32.sub (local.get $b0) (i32.const 0xA1)) (i32.const 157)) (local.get $tidx)) (i32.const 1)))))
+    (if (i32.eqz (local.get $w))
+      (then (return (i32.const 0x102FFFD)))) ;; unmapped pair: both bytes consumed
+    (i32.or (local.get $w) (i32.const 0x20000)))
+
+  ;; Whether decoding the byte after $b0 is even a question in page $cp:
+  ;; a table-backed page, a lead-range first byte, a pair available. The
+  ;; entry points fetch the trail byte only then, so a read at the very
+  ;; edge of an allocation behaves exactly as the pre-core code did.
+  (func $cp_may_pair (param $cp i32) (param $b0 i32) (param $avail i32) (result i32)
+    (i32.and (call $cp_has_conversion_tables (local.get $cp))
+      (i32.and (i32.ge_u (local.get $b0) (i32.const 0xA1))
+        (i32.and (i32.le_u (local.get $b0) (i32.const 0xFE))
+          (i32.ge_u (local.get $avail) (i32.const 2))))))
+
+  ;; Decode the character at guest address $gp in resolved page $cp.
+  (func $ansi_char_decode (param $cp i32) (param $gp i32) (param $avail i32) (result i32)
+    (local $b0 i32)
+    (local.set $b0 (call $gl8 (local.get $gp)))
+    (call $cp_char_decode (local.get $cp) (local.get $b0)
+      (if (result i32) (call $cp_may_pair (local.get $cp) (local.get $b0) (local.get $avail))
+        (then (call $gl8 (i32.add (local.get $gp) (i32.const 1))))
+        (else (i32.const 0)))
+      (local.get $avail)))
+
+  ;; Decode the character at linear-memory address $wa in resolved page
+  ;; $cp — the GDI funnels' byte source. Every mapping decision is
+  ;; $cp_char_decode's; this is a second pair of eyes, not a second brain.
+  (func $ansi_char_decode_wa (param $cp i32) (param $wa i32) (param $avail i32) (result i32)
+    (local $b0 i32)
+    (local.set $b0 (i32.load8_u (local.get $wa)))
+    (call $cp_char_decode (local.get $cp) (local.get $b0)
+      (if (result i32) (call $cp_may_pair (local.get $cp) (local.get $b0) (local.get $avail))
+        (then (i32.load8_u (i32.add (local.get $wa) (i32.const 1))))
+        (else (i32.const 0)))
+      (local.get $avail)))
+
+  ;; Encode one WCHAR in resolved page $cp; $def is the default byte for
+  ;; unmapped characters. Packing mirrors $ansi_char_decode.
+  (func $ansi_char_encode (param $cp i32) (param $wc i32) (param $def i32) (result i32)
+    (local $lo i32) (local $hi i32) (local $mid i32) (local $entry i32)
+    (if (i32.eqz (call $cp_has_conversion_tables (local.get $cp)))
+      (then (return (i32.or (i32.and (local.get $wc) (i32.const 0xFF)) (i32.const 0x10000)))))
+    ;; CP950: ASCII encodes as itself.
+    (if (i32.lt_u (local.get $wc) (i32.const 0x80))
+      (then (return (i32.or (local.get $wc) (i32.const 0x10000)))))
+    ;; Binary search the code-point-sorted encode table.
+    (local.set $lo (i32.const 0))
+    (local.set $hi (global.get $BIG5_ENCODE_COUNT))
+    (block $done (loop $search
+      (br_if $done (i32.ge_u (local.get $lo) (local.get $hi)))
+      (local.set $mid (i32.shr_u (i32.add (local.get $lo) (local.get $hi)) (i32.const 1)))
+      (local.set $entry (i32.load (i32.add (global.get $BIG5_ENCODE_TABLE) (i32.shl (local.get $mid) (i32.const 2)))))
+      (if (i32.lt_u (local.get $wc) (i32.shr_u (local.get $entry) (i32.const 16)))
+        (then (local.set $hi (local.get $mid)))
+        (else
+          (if (i32.gt_u (local.get $wc) (i32.shr_u (local.get $entry) (i32.const 16)))
+            (then (local.set $lo (i32.add (local.get $mid) (i32.const 1))))
+            (else
+              ;; The table stores (lead << 8) | trail; the packed result
+              ;; wants emit order — lead in bits 0..7, trail in bits 8..15.
+              (return (i32.or
+                (i32.or
+                  (i32.and (i32.shr_u (local.get $entry) (i32.const 8)) (i32.const 0xFF))
+                  (i32.shl (i32.and (local.get $entry) (i32.const 0xFF)) (i32.const 8)))
+                (i32.const 0x20000)))))))
+      (br $search)))
+    ;; Unmapped: default byte, flagged.
+    (i32.or (i32.or (i32.and (local.get $def) (i32.const 0xFF)) (i32.const 0x10000)) (i32.const 0x1000000)))
+
+  ;; Convert ANSI string at guest src to wide string at guest dst in page
+  ;; $cp (unresolved; CP_ACP tracks the process page), at most $max wide
+  ;; slots including the terminator. Returns characters written, terminator
+  ;; excluded — the historical $ansi_to_wide contract.
+  (func $ansi_to_wide_cp (param $cp i32) (param $src i32) (param $dst i32) (param $max i32) (result i32)
+    (local $i i32) (local $n i32) (local $dec i32)
+    (local.set $cp (call $resolve_code_page (local.get $cp)))
     (block $d (loop $l
-      (br_if $d (i32.ge_u (local.get $i) (i32.sub (local.get $max) (i32.const 1))))
-      (local.set $ch (call $gl16 (i32.add (local.get $src) (i32.shl (local.get $i) (i32.const 1)))))
-      (br_if $d (i32.eqz (local.get $ch)))
-      (call $gs8 (i32.add (local.get $dst) (local.get $i)) (i32.and (local.get $ch) (i32.const 0xFF)))
-      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $l)))
-    (call $gs8 (i32.add (local.get $dst) (local.get $i)) (i32.const 0))
-    (local.get $i))
+      (br_if $d (i32.ge_u (local.get $n) (i32.sub (local.get $max) (i32.const 1))))
+      (br_if $d (i32.eqz (call $gl8 (i32.add (local.get $src) (local.get $i)))))
+      (local.set $dec (call $ansi_char_decode (local.get $cp) (i32.add (local.get $src) (local.get $i)) (i32.const 0x7FFFFFFF)))
+      (call $gs16 (i32.add (local.get $dst) (i32.shl (local.get $n) (i32.const 1))) (i32.and (local.get $dec) (i32.const 0xFFFF)))
+      (local.set $i (i32.add (local.get $i) (i32.shr_u (i32.and (local.get $dec) (i32.const 0xFF0000)) (i32.const 16))))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (br $l)))
+    (call $gs16 (i32.add (local.get $dst) (i32.shl (local.get $n) (i32.const 1))) (i32.const 0))
+    (local.get $n))
 
   ;; Convert ANSI string at guest src to wide string at guest dst, max wchars. Returns length.
   (func $ansi_to_wide (param $src i32) (param $dst i32) (param $max i32) (result i32)
-    (local $i i32) (local $ch i32)
+    (call $ansi_to_wide_cp (i32.const 0) (local.get $src) (local.get $dst) (local.get $max)))
+
+  ;; Counted, linear-memory counterpart of $ansi_to_wide_cp for the GDI
+  ;; text funnels (stage 2): decode $byte_count bytes at $src — negative
+  ;; reads to the NUL terminator, DrawText style — in unresolved page $cp
+  ;; into $dst, at most $max WCHARs, and return the character count. No
+  ;; terminator is stored: the funnels hand counted strings to a pipeline
+  ;; that takes counted strings.
+  (func $ansi_counted_to_wide_wa (param $cp i32) (param $src i32) (param $byte_count i32)
+        (param $dst i32) (param $max i32) (result i32)
+    (local $i i32) (local $n i32) (local $dec i32) (local $avail i32)
+    (local.set $cp (call $resolve_code_page (local.get $cp)))
     (block $d (loop $l
-      (br_if $d (i32.ge_u (local.get $i) (i32.sub (local.get $max) (i32.const 1))))
-      (local.set $ch (call $gl8 (i32.add (local.get $src) (local.get $i))))
+      (br_if $d (i32.ge_u (local.get $n) (local.get $max)))
+      (if (i32.lt_s (local.get $byte_count) (i32.const 0))
+        (then
+          (br_if $d (i32.eqz (i32.load8_u (i32.add (local.get $src) (local.get $i)))))
+          (local.set $avail (i32.const 0x7FFFFFFF)))
+        (else
+          (br_if $d (i32.ge_u (local.get $i) (local.get $byte_count)))
+          (local.set $avail (i32.sub (local.get $byte_count) (local.get $i)))))
+      (local.set $dec (call $ansi_char_decode_wa (local.get $cp)
+        (i32.add (local.get $src) (local.get $i)) (local.get $avail)))
+      (i32.store16 (i32.add (local.get $dst) (i32.shl (local.get $n) (i32.const 1)))
+        (i32.and (local.get $dec) (i32.const 0xFFFF)))
+      (local.set $i (i32.add (local.get $i)
+        (i32.shr_u (i32.and (local.get $dec) (i32.const 0xFF0000)) (i32.const 16))))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (br $l)))
+    (local.get $n))
+
+  ;; The gate the GDI text funnels apply before decoding an ANSI string:
+  ;; the resolved process ANSI page when it has conversion tables, else 0
+  ;; — 0 leaves the string on the historical byte-per-character path,
+  ;; byte-for-byte what unconverted pages have always done.
+  (func $text_decode_code_page (result i32)
+    (local $cp i32)
+    (local.set $cp (call $resolve_code_page (i32.const 0)))
+    (select (local.get $cp) (i32.const 0)
+      (call $cp_has_conversion_tables (local.get $cp))))
+
+  ;; Convert wide string at guest src to ANSI at guest dst in page $cp, at
+  ;; most $max bytes including the terminator; a two-byte character is never
+  ;; split to fit. Returns bytes written, terminator excluded — the
+  ;; historical $wide_to_ansi contract, with byte (not character) accounting
+  ;; so DBCS output is bounded by the same limit.
+  (func $wide_to_ansi_cp (param $cp i32) (param $src i32) (param $dst i32) (param $max i32) (result i32)
+    (local $i i32) (local $n i32) (local $enc i32) (local $elen i32) (local $ch i32)
+    (local.set $cp (call $resolve_code_page (local.get $cp)))
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $n) (i32.sub (local.get $max) (i32.const 1))))
+      (local.set $ch (call $gl16 (i32.add (local.get $src) (i32.shl (local.get $i) (i32.const 1)))))
       (br_if $d (i32.eqz (local.get $ch)))
-      (call $gs16 (i32.add (local.get $dst) (i32.shl (local.get $i) (i32.const 1))) (local.get $ch))
-      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $l)))
-    (call $gs16 (i32.add (local.get $dst) (i32.shl (local.get $i) (i32.const 1))) (i32.const 0))
-    (local.get $i))
+      (local.set $enc (call $ansi_char_encode (local.get $cp) (local.get $ch) (i32.const 0x3F)))
+      (local.set $elen (i32.shr_u (i32.and (local.get $enc) (i32.const 0xFF0000)) (i32.const 16)))
+      ;; Do not split a pair at the buffer edge; the terminator needs a slot.
+      (br_if $d (i32.gt_u (i32.add (local.get $n) (local.get $elen)) (i32.sub (local.get $max) (i32.const 1))))
+      (call $gs8 (i32.add (local.get $dst) (local.get $n)) (i32.and (local.get $enc) (i32.const 0xFF)))
+      (if (i32.eq (local.get $elen) (i32.const 2))
+        (then (call $gs8 (i32.add (local.get $dst) (i32.add (local.get $n) (i32.const 1))) (i32.and (i32.shr_u (local.get $enc) (i32.const 8)) (i32.const 0xFF)))))
+      (local.set $n (i32.add (local.get $n) (local.get $elen)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $l)))
+    (call $gs8 (i32.add (local.get $dst) (local.get $n)) (i32.const 0))
+    (local.get $n))
+
+  ;; Convert wide string at guest src to ANSI at guest dst, max bytes. Returns length.
+  (func $wide_to_ansi (param $src i32) (param $dst i32) (param $max i32) (result i32)
+    (call $wide_to_ansi_cp (i32.const 0) (local.get $src) (local.get $dst) (local.get $max)))
+
+  ;; MultiByteToWideChar semantics (Wine/Win32), shared by the API handler
+  ;; and the tests. $src_len is cbMultiByte (-1 = NUL-terminated, terminator
+  ;; counted in the result); $dst_len is cchWideChar. Returns the wide
+  ;; characters produced — or the count required when $dst is NULL or
+  ;; $dst_len is 0 — and 0 on failure with $last_error set
+  ;; (ERROR_INVALID_PARAMETER 87, ERROR_INSUFFICIENT_BUFFER 122,
+  ;; ERROR_NO_UNICODE_TRANSLATION 1115 for MB_ERR_INVALID_CHARS).
+  (func $multi_byte_to_wide_char (param $cp i32) (param $flags i32) (param $src i32) (param $src_len i32) (param $dst i32) (param $dst_len i32) (result i32)
+    (local $i i32) (local $n i32) (local $dec i32) (local $invalid i32)
+    (local.set $cp (call $resolve_code_page (local.get $cp)))
+    (if (i32.eqz (call $is_supported_code_page (local.get $cp)))
+      (then (global.set $last_error (i32.const 87)) (return (i32.const 0))))
+    (if (i32.eqz (local.get $src))
+      (then
+        (if (i32.ne (local.get $src_len) (i32.const 0)) (then (global.set $last_error (i32.const 87))))
+        (return (i32.const 0))))
+    (if (i32.eq (local.get $src_len) (i32.const -1))
+      (then
+        (local.set $src_len (i32.const 0))
+        (block $sd (loop $sl
+          (local.set $src_len (i32.add (local.get $src_len) (i32.const 1)))
+          (br_if $sd (i32.eqz (call $gl8 (i32.add (local.get $src) (i32.sub (local.get $src_len) (i32.const 1))))))
+          (br $sl)))))
+    (if (i32.le_s (local.get $src_len) (i32.const 0))
+      (then
+        (if (i32.lt_s (local.get $src_len) (i32.const 0)) (then (global.set $last_error (i32.const 87))))
+        (return (i32.const 0))))
+    ;; Pass 1: count output characters; note invalid sequences.
+    (block $pd (loop $pl
+      (br_if $pd (i32.ge_u (local.get $i) (local.get $src_len)))
+      (local.set $dec (call $ansi_char_decode (local.get $cp) (i32.add (local.get $src) (local.get $i)) (i32.sub (local.get $src_len) (local.get $i))))
+      (if (i32.and (local.get $dec) (i32.const 0x1000000)) (then (local.set $invalid (i32.const 1))))
+      (local.set $i (i32.add (local.get $i) (i32.shr_u (i32.and (local.get $dec) (i32.const 0xFF0000)) (i32.const 16))))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (br $pl)))
+    (if (i32.and (local.get $flags) (i32.const 8)) ;; MB_ERR_INVALID_CHARS
+      (then (if (local.get $invalid)
+        (then (global.set $last_error (i32.const 1115)) (return (i32.const 0))))))
+    (if (i32.or (i32.eqz (local.get $dst)) (i32.eqz (local.get $dst_len)))
+      (then (return (local.get $n)))) ;; size query: nothing is written
+    (if (i32.lt_s (local.get $dst_len) (i32.const 0))
+      (then (global.set $last_error (i32.const 87)) (return (i32.const 0))))
+    (if (i32.lt_u (local.get $dst_len) (local.get $n))
+      (then (global.set $last_error (i32.const 122)) (return (i32.const 0))))
+    ;; Pass 2: convert for real.
+    (local.set $i (i32.const 0))
+    (local.set $n (i32.const 0))
+    (block $wd (loop $wl
+      (br_if $wd (i32.ge_u (local.get $i) (local.get $src_len)))
+      (local.set $dec (call $ansi_char_decode (local.get $cp) (i32.add (local.get $src) (local.get $i)) (i32.sub (local.get $src_len) (local.get $i))))
+      (call $gs16 (i32.add (local.get $dst) (i32.shl (local.get $n) (i32.const 1))) (i32.and (local.get $dec) (i32.const 0xFFFF)))
+      (local.set $i (i32.add (local.get $i) (i32.shr_u (i32.and (local.get $dec) (i32.const 0xFF0000)) (i32.const 16))))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (br $wl)))
+    (local.get $n))
+
+  ;; WideCharToMultiByte semantics, mirroring $multi_byte_to_wide_char.
+  ;; $def_ptr / $used_ptr are the API's lpDefaultChar / lpUsedDefaultChar
+  ;; guest pointers (0 = API NULL). Unmapped characters emit the default
+  ;; byte and set *$used_ptr, as in Wine.
+  (func $wide_char_to_multi_byte (param $cp i32) (param $flags i32) (param $src i32) (param $src_len i32) (param $dst i32) (param $dst_len i32) (param $def_ptr i32) (param $used_ptr i32) (result i32)
+    (local $i i32) (local $n i32) (local $enc i32) (local $elen i32) (local $def i32) (local $used i32) (local $ch i32)
+    (local.set $cp (call $resolve_code_page (local.get $cp)))
+    (if (i32.eqz (call $is_supported_code_page (local.get $cp)))
+      (then (global.set $last_error (i32.const 87)) (return (i32.const 0))))
+    (if (i32.eqz (local.get $src))
+      (then
+        (if (i32.ne (local.get $src_len) (i32.const 0)) (then (global.set $last_error (i32.const 87))))
+        (return (i32.const 0))))
+    (local.set $def (i32.const 0x3F)) ;; "?" — CP950's GetCPInfo default char
+    (if (local.get $def_ptr) (then (local.set $def (call $gl8 (local.get $def_ptr)))))
+    (if (i32.eq (local.get $src_len) (i32.const -1))
+      (then
+        (local.set $src_len (i32.const 0))
+        (block $sd (loop $sl
+          (local.set $src_len (i32.add (local.get $src_len) (i32.const 1)))
+          (br_if $sd (i32.eqz (call $gl16 (i32.add (local.get $src) (i32.shl (i32.sub (local.get $src_len) (i32.const 1)) (i32.const 1))))))
+          (br $sl)))))
+    (if (i32.le_s (local.get $src_len) (i32.const 0))
+      (then
+        (if (i32.lt_s (local.get $src_len) (i32.const 0)) (then (global.set $last_error (i32.const 87))))
+        (return (i32.const 0))))
+    ;; Pass 1: count output bytes; note default-byte use.
+    (block $pd (loop $pl
+      (br_if $pd (i32.ge_u (local.get $i) (local.get $src_len)))
+      (local.set $ch (call $gl16 (i32.add (local.get $src) (i32.shl (local.get $i) (i32.const 1)))))
+      (local.set $enc (call $ansi_char_encode (local.get $cp) (local.get $ch) (local.get $def)))
+      (if (i32.and (local.get $enc) (i32.const 0x1000000)) (then (local.set $used (i32.const 1))))
+      (local.set $n (i32.add (local.get $n) (i32.shr_u (i32.and (local.get $enc) (i32.const 0xFF0000)) (i32.const 16))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $pl)))
+    (if (local.get $used_ptr) (then (call $gs32 (local.get $used_ptr) (local.get $used))))
+    (if (i32.or (i32.eqz (local.get $dst)) (i32.eqz (local.get $dst_len)))
+      (then (return (local.get $n)))) ;; size query
+    (if (i32.lt_s (local.get $dst_len) (i32.const 0))
+      (then (global.set $last_error (i32.const 87)) (return (i32.const 0))))
+    (if (i32.lt_u (local.get $dst_len) (local.get $n))
+      (then (global.set $last_error (i32.const 122)) (return (i32.const 0))))
+    ;; Pass 2: convert for real.
+    (local.set $i (i32.const 0))
+    (local.set $n (i32.const 0))
+    (block $wd (loop $wl
+      (br_if $wd (i32.ge_u (local.get $i) (local.get $src_len)))
+      (local.set $ch (call $gl16 (i32.add (local.get $src) (i32.shl (local.get $i) (i32.const 1)))))
+      (local.set $enc (call $ansi_char_encode (local.get $cp) (local.get $ch) (local.get $def)))
+      (local.set $elen (i32.shr_u (i32.and (local.get $enc) (i32.const 0xFF0000)) (i32.const 16)))
+      (call $gs8 (i32.add (local.get $dst) (local.get $n)) (i32.and (local.get $enc) (i32.const 0xFF)))
+      (if (i32.eq (local.get $elen) (i32.const 2))
+        (then (call $gs8 (i32.add (local.get $dst) (i32.add (local.get $n) (i32.const 1))) (i32.and (i32.shr_u (local.get $enc) (i32.const 8)) (i32.const 0xFF)))))
+      (local.set $n (i32.add (local.get $n) (local.get $elen)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $wl)))
+    (local.get $n))
 
   (func $crash_unimplemented (param $name_ptr i32)
     (call $host_crash_unimplemented (local.get $name_ptr) (i32.load offset=16 (global.get $reg_base)) (global.get $eip) (i32.load offset=20 (global.get $reg_base)))

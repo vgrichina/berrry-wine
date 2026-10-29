@@ -5834,58 +5834,29 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)
   )
 
-  ;; 43: MultiByteToWideChar
+  ;; 43: MultiByteToWideChar — real code page conversion via
+  ;; $multi_byte_to_wide_char (10-helpers.wat): CP950 decodes through the
+  ;; Big5 tables, other supported pages keep the identity expansion, and
+  ;; size query / insufficient buffer / invalid sequence follow Win32.
+  ;; arg2=src, arg3=srcLen, arg4=dst, [esp+24]=dstLen
   (func $handle_MultiByteToWideChar (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $v i32) (local $i i32) (local $src_wa i32) (local $dst_wa i32)
-    ;; Simple: copy each byte to 16-bit. arg2=src, arg3=srcLen, arg4=dst, [esp+24]=dstLen
+    (local $v i32)
     (local.set $v (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))) ;; arg5: dstLen
-    (local.set $src_wa (call $g2w (local.get $arg2)))
-    (if (local.get $arg4) (then (local.set $dst_wa (call $g2w (local.get $arg4)))))
-    (if (i32.eq (local.get $arg3) (i32.const -1)) ;; srcLen=-1 means NUL-terminated
-    (then (local.set $arg3 (i32.add (call $strlen (local.get $src_wa)) (i32.const 1)))))
-    (if (i32.eqz (local.get $arg4)) ;; query required size
-    (then (i32.store offset=0 (global.get $reg_base) (local.get $arg3)))
-    (else
-    (local.set $i (i32.const 0))
-    (block $done (loop $lp
-    (br_if $done (i32.ge_u (local.get $i) (local.get $arg3)))
-    (br_if $done (i32.ge_u (local.get $i) (local.get $v)))
-    (i32.store16 (i32.add (local.get $dst_wa) (i32.shl (local.get $i) (i32.const 1)))
-    (i32.load8_u (i32.add (local.get $src_wa) (local.get $i))))
-    (local.set $i (i32.add (local.get $i) (i32.const 1)))
-    (br $lp)))
-    (i32.store offset=0 (global.get $reg_base) (local.get $i))))
+    (i32.store offset=0 (global.get $reg_base)
+      (call $multi_byte_to_wide_char (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $v)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))) (return)
   )
 
-  ;; 44: WideCharToMultiByte
+  ;; 44: WideCharToMultiByte — real conversion via $wide_char_to_multi_byte
+  ;; (10-helpers.wat). arg2=src, arg3=srcLen, arg4=dst, [esp+24]=dstLen,
+  ;; [esp+28]=lpDefaultChar, [esp+32]=lpUsedDefaultChar
   (func $handle_WideCharToMultiByte (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $v i32) (local $i i32) (local $src_wa i32) (local $dst_wa i32)
-    ;; Simple: copy low byte of each 16-bit char. arg2=src, arg3=srcLen, arg4=dst, [esp+24]=dstLen
+    (local $v i32) (local $defp i32) (local $usedp i32)
     (local.set $v (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))) ;; arg5: dstLen
-    (local.set $src_wa (call $g2w (local.get $arg2)))
-    (if (local.get $arg4) (then (local.set $dst_wa (call $g2w (local.get $arg4)))))
-    (if (i32.eq (local.get $arg3) (i32.const -1))
-    (then
-    ;; Count wide string length
-    (local.set $arg3 (i32.const 0))
-    (block $d2 (loop $l2
-    (br_if $d2 (i32.eqz (i32.load16_u (i32.add (local.get $src_wa) (i32.shl (local.get $arg3) (i32.const 1))))))
-    (local.set $arg3 (i32.add (local.get $arg3) (i32.const 1)))
-    (br $l2)))
-    (local.set $arg3 (i32.add (local.get $arg3) (i32.const 1)))))
-    (if (i32.eqz (local.get $arg4))
-    (then (i32.store offset=0 (global.get $reg_base) (local.get $arg3)))
-    (else
-    (local.set $i (i32.const 0))
-    (block $done (loop $lp
-    (br_if $done (i32.ge_u (local.get $i) (local.get $arg3)))
-    (br_if $done (i32.ge_u (local.get $i) (local.get $v)))
-    (i32.store8 (i32.add (local.get $dst_wa) (local.get $i))
-    (i32.load8_u (i32.add (local.get $src_wa) (i32.shl (local.get $i) (i32.const 1)))))
-    (local.set $i (i32.add (local.get $i) (i32.const 1)))
-    (br $lp)))
-    (i32.store offset=0 (global.get $reg_base) (local.get $i))))
+    (local.set $defp (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))) ;; arg6: lpDefaultChar
+    (local.set $usedp (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32)))) ;; arg7: lpUsedDefaultChar
+    (i32.store offset=0 (global.get $reg_base)
+      (call $wide_char_to_multi_byte (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $v) (local.get $defp) (local.get $usedp)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))) (return)
   )
 

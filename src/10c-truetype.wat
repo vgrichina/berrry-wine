@@ -1390,7 +1390,12 @@
   ;; retains useful fractional coverage.
 
   (global $TT_SUBROWS i32 (i32.const 4))
-  (global $TT_RASTER_POINTS i32 (i32.const 256))
+  ;; 512, not 256: the heaviest common Big5 glyphs carry up to ~380 outline
+  ;; points (繼), and a glyph over the point budget is refused whole — drawn
+  ;; blank, not clipped. The raster scratch is heap-allocated from this
+  ;; constant ($tt_raster_scratch_bytes), so raising it moves nothing in
+  ;; the memory map; it costs ~1.5 KB of transient scratch.
+  (global $TT_RASTER_POINTS i32 (i32.const 512))
   (global $TT_RASTER_EDGES i32 (i32.const 1024))
   (global $TT_RASTER_CROSSINGS i32 (i32.const 256))
 
@@ -3422,7 +3427,11 @@
     (if (i32.eqz (local.get $dc)) (then (return (i32.const 0))))
     (local.set $font (load.field.memarg GdiDcState font (local.get $dc)))
     (if (i32.eqz (call $gdi_object_record (local.get $font))) (then (return (i32.const 0))))
-    (local.set $face (call $tt_face_for_logfont (call $gdi_font_face (local.get $font))
+    ;; The effective face, not the requested one: glyph-index rendering must
+    ;; open the same face the strike selection rasterized, including the
+    ;; charset fallback for names that resolve to nothing of their own.
+    (local.set $face (call $tt_face_for_logfont
+      (call $gdi_font_effective_face (local.get $font))
       (call $gdi_font_weight (local.get $font)) (call $gdi_font_italic (local.get $font))))
     (if (i32.lt_s (local.get $face) (i32.const 0)) (then (return (i32.const 0))))
     (local.set $ppem (call $tt_face_ppem (local.get $face) (call $gdi_font_height (local.get $font))))
@@ -3523,6 +3532,28 @@
     "Microsoft Sans Serif\00"
       "C:\\WINDOWS\\FONTS\\MICROSS.TTF\00"
       "\00" "\00" "\00"
+    ;; The Traditional Chinese faces of a Big5 Win98. They resolve by their
+    ;; Latin family names and by the names a Big5 guest actually asks with —
+    ;; the same characters as raw Big5 bytes, which is how CreateFontA hands
+    ;; them over. All four spellings share the one vendored TC substitute.
+    ;; They stay out of the main table for the same reason the faces above
+    ;; do: a US Win98 did not enumerate them either.
+    "MingLiU\00"
+      "C:\\WINDOWS\\FONTS\\MINGLIU.TTF\00"
+      "C:\\WINDOWS\\FONTS\\MINGLIUB.TTF\00"
+      "\00" "\00"
+    "\B2\D3\A9\FA\C5\E9\00"
+      "C:\\WINDOWS\\FONTS\\MINGLIU.TTF\00"
+      "C:\\WINDOWS\\FONTS\\MINGLIUB.TTF\00"
+      "\00" "\00"
+    "PMingLiU\00"
+      "C:\\WINDOWS\\FONTS\\MINGLIU.TTF\00"
+      "C:\\WINDOWS\\FONTS\\MINGLIUB.TTF\00"
+      "\00" "\00"
+    "\B7\73\B2\D3\A9\FA\C5\E9\00"
+      "C:\\WINDOWS\\FONTS\\MINGLIU.TTF\00"
+      "C:\\WINDOWS\\FONTS\\MINGLIUB.TTF\00"
+      "\00" "\00"
     "\00")
 
   ;; The face a name nobody knows falls back to. Real GDI answered an unknown
@@ -3533,6 +3564,17 @@
   ;; that every face resolves to a file we ship.
   (global $TT_SUBST_DEFAULT i32 (region.addr $TT_FONT_STRING_STORAGE 0x00000000))
   (data (region.addr $TT_FONT_STRING_STORAGE 0x00) "Arial\00")
+  ;; The face the font mapper falls back to for a charset whose family the
+  ;; substitution layer stocks, when the requested face name resolved to
+  ;; nothing of its own. A Big5 guest asking for its UI face in Big5 bytes
+  ;; can never byte-match a Latin table key, and real GDI matched such a
+  ;; request by charset, pitch and family — never by leaving it on a Latin
+  ;; face with no glyphs for the text. Only CHINESEBIG5_CHARSET (136) has a
+  ;; stocked family today; the other DBCS charsets join here when a face is
+  ;; vendored for them.
+  (global $TT_CHARSET_FALLBACK_BIG5 i32
+    (region.addr $TT_FONT_STRING_STORAGE 0x000000B8))
+  (data (region.addr $TT_FONT_STRING_STORAGE 0xB8) "MingLiU\00")
   ;; Win 3.x compatibility alias used by applications written before the
   ;; TrueType family names settled. Keep it out of enumeration, but resolve
   ;; it to the same installed face as Times New Roman.
@@ -3733,15 +3775,15 @@
     (call $heap_free (local.get $path_g))
     (call $heap_free (local.get $fd_g)))
 
-  (func $tt_subst_path (param $name i32) (param $weight i32) (param $italic i32)
-        (result i32)
+  ;; The file a face name resolves to on its own merits — a font the guest
+  ;; installed itself first, then the substitution table, then the faces we
+  ;; substitute for but do not advertise — or 0 when nothing names the face.
+  ;; $tt_subst_path adds the catch-all default on top of this; the font
+  ;; mapper's charset fallback needs the un-defaulted answer to know whether
+  ;; a name resolved at all.
+  (func $tt_subst_named_path (param $name i32) (param $weight i32)
+        (param $italic i32) (result i32)
     (local $found i32)
-    ;; No name at all is a different question from a name nobody knows. A
-    ;; LOGFONT with an empty face is asking GDI to choose by pitch and family,
-    ;; and the answer Win98 gave was its UI face, not a text face — so that
-    ;; choice belongs to the font-selection layer, which has the stock strikes
-    ;; to choose from. Only a face that was actually named falls through to the
-    ;; default below.
     (if (i32.eqz (local.get $name)) (then (return (i32.const 0))))
     (if (i32.eqz (i32.load8_u (local.get $name))) (then (return (i32.const 0))))
     (if (call $tt_subst_name_equal
@@ -3760,9 +3802,30 @@
       (local.get $name) (local.get $weight) (local.get $italic)))
     (if (local.get $found) (then (return (local.get $found))))
     ;; Then the faces we substitute for but do not advertise.
-    (local.set $found (call $tt_subst_table_lookup
+    (call $tt_subst_table_lookup
       (global.get $TT_SUBST_ALIAS_TABLE) (global.get $TT_SUBST_ALIAS_TABLE_SIZE)
       (local.get $name) (local.get $weight) (local.get $italic)))
+
+  ;; The stocked face name for a LOGFONT charset, or 0 when the substitution
+  ;; layer stocks no family for it. See $TT_CHARSET_FALLBACK_BIG5.
+  (func $tt_charset_fallback_face (param $charset i32) (result i32)
+    (if (i32.eq (local.get $charset) (i32.const 136))
+      (then (return (global.get $TT_CHARSET_FALLBACK_BIG5))))
+    (i32.const 0))
+
+  (func $tt_subst_path (param $name i32) (param $weight i32) (param $italic i32)
+        (result i32)
+    (local $found i32)
+    ;; No name at all is a different question from a name nobody knows. A
+    ;; LOGFONT with an empty face is asking GDI to choose by pitch and family,
+    ;; and the answer Win98 gave was its UI face, not a text face — so that
+    ;; choice belongs to the font-selection layer, which has the stock strikes
+    ;; to choose from. Only a face that was actually named falls through to the
+    ;; default below.
+    (if (i32.eqz (local.get $name)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load8_u (local.get $name))) (then (return (i32.const 0))))
+    (local.set $found (call $tt_subst_named_path (local.get $name)
+      (local.get $weight) (local.get $italic)))
     (if (local.get $found) (then (return (local.get $found))))
     ;; Nothing names this face. Answering with the default is what keeps the
     ;; promise that every face resolves to a file we ship, and that promise is

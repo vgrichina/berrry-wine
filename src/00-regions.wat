@@ -494,8 +494,21 @@
   ;; 8 bytes per API (hash, id); 0x8000 filled up at 4096 APIs (2026-10-06).
   (region.declare $API_HASH_TABLE (size 0x00010000) (align 0x00001000)
     (owner "10-helpers.wat:$lookup_api_id"))
+  ;; Big5 (CP950) conversion tables from tools/gen_big5_table.js: decode is
+  ;; 14758 u16 (0x7366 bytes), encode is 14686 u32 (0xE578 bytes) at the
+  ;; counts generated today; both regions carry headroom for index growth.
+  (region.declare $BIG5_DECODE_TABLE (size 0x00008000) (align 0x00001000)
+    (owner "10-helpers.wat:$cp_char_decode"))
+  (region.declare $BIG5_ENCODE_TABLE (size 0x00010000) (align 0x00001000)
+    (owner "10-helpers.wat:$ansi_char_encode"))
   (region.declare $TEXT_SCRATCH (size 0x00000400) (align 0x00001000)
     (owner "01-header.wat:$TEXT_SCRATCH"))
+  ;; WCHAR landing zone for the GDI funnels' ANSI decode (DBCS stage 2):
+  ;; 65536 WCHARs, the largest count the text pipeline accepts anywhere,
+  ;; so a decode never truncates a string the pipeline would have taken
+  ;; whole. WAT-private like $TEXT_SCRATCH.
+  (region.declare $TEXT_DECODE_SCRATCH (size 0x00020000) (align 0x00001000)
+    (owner "10f-gdi-dc.wat:$gdi_native_text_out"))
   (region.declare $CONSOLE_TEXT (size 0x00003000) (align 0x00001000)
     (stride 0x2 (count $CONSOLE_MAX_CELLS))
     (owner "09a2-handlers-console.wat:$console_buffers_init"))

@@ -188,7 +188,7 @@ const METRICS = [
   assert.ok(!/fonts\/(liberation|wine|comic-relief)/.test(deployCode),
     'the full-size vendored sources are not runtime assets; ship subsets');
 
-  assert.strictEqual(pairs, 20, 'every vendored font must have a subset');
+  assert.strictEqual(pairs, 22, 'every vendored font must have a subset');
   assert.ok(legacyKernPairs > 0,
     'the fixture set must exercise at least one nonzero legacy kern pair');
   assert.ok(subsetBytes * 4 < fullBytes,

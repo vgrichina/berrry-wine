@@ -157,17 +157,35 @@ Wine's own Win9x substitutes for Tahoma, Tahoma Bold, Small Fonts, Marlett,
 Symbol, Wingdings, and Webdings are pinned in `wine/` alongside the bitmap
 sources; see `wine/UPSTREAM.md` for hashes and caveats.
 
+Noto Sans TC stands in for the Traditional Chinese faces of a Big5 Win98 —
+MingLiU (細明體) and PMingLiU (新細明體) — at `noto-sans-tc/`, SIL OFL 1.1
+(`noto-sans-tc/OFL.txt`). It is a shape approximation with its own metrics
+(tier 3), not a metric match. The statics are instantiations of the
+google/fonts variable font `NotoSansTC[wght].ttf`, SHA-256
+`864727d210d54f2537bbe23b3a839436c3992af72de9322af5270897246bd44f`
+(wght 400 → Regular `0834167e1b5efbf2de69ef2fc2b0414edc4825d98eaf8363a791eadbcb6b9acd`,
+wght 700 → Bold `1ecbcef3e04f2b738434ceb81bc3d95b1aad45512275bcb047483266325ba7c5`);
+regenerate with `python3 tools/gen-noto-tc.py`, which re-verifies the pin.
+
 Metric compatibility is also checked against native Win98 application output;
 Klotski's FF_SCRIPT fallback is the first measured Comic Sans comparison.
 
 ## Deployed subsets
 
-The vendored TTFs above are 4,803,932 bytes, all of which the browser would fetch before
+The vendored TTFs above are 19,096,884 bytes, all of which the browser would fetch before
 a guest could draw its first character. `tools/gen-font-subsets.sh` cuts each
 ANSI face to the Windows-1252 repertoire — the only codepoints
 `$tt_cp1252_to_unicode` can ask for — and retains TrueType hinting so deployed
 glyphs take the same WAT hinting path as the full source fonts.
-That is 617,924 bytes deployed instead of 4,803,932 bytes.
+That is 4,560,700 bytes deployed instead of 19,096,884 bytes. Almost all of the
+growth is the Traditional Chinese face: a Big5 guest asks in characters, not
+bytes, so its subset is cut to the repertoire in
+`fonts/noto-sans-tc/subset-chars.txt` (the CP1252 set, the Big5 symbol block
+and first-level kanji, and the characters a reference Big5 corpus uses —
+derived by `tools/big5_charset.js`) and still comes to ~2 MB per style. The
+generator asserts with `tools/check_tt_cmap.py` that every character in that
+list resolves through the emulator's own cmap path — a (3,1) format 4
+subtable, the only CJK shape `$tt_cmap_best` can hit.
 
 The four symbol faces are copied **verbatim**. They are addressed through the
 Microsoft `(3,0)` cmap with the `0xF000` bias, and subsetting them by codepoint
@@ -212,6 +230,8 @@ reproducible source, and are not deployed.
 | `tahomabd.ttf` | 19,216 | `6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab` |
 | `webdings.ttf` | 4,300 | `bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a` |
 | `wingding.ttf` | 9,524 | `cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e` |
+| `NotoSansTC-Regular.ttf` | 1,972,804 | `cec3539f1ee4a4b4c0bfd5c79def1694845db5eb043dfcbdd8c3642064ec99ed` |
+| `NotoSansTC-Bold.ttf` | 1,969,972 | `255f19197bf48a296abeeabfb46b89b262f2a0ddc27b8ef608a3933139109f76` |
 
 ## Legacy web/CSS substitutes
 

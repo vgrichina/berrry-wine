@@ -4201,6 +4201,23 @@
   (func (export "test_mbsinc") (param $gp i32) (result i32)
     (call $mbsinc_ptr (local.get $gp)))
 
+  ;; Direct test surface for the code page conversion family (10-helpers.wat):
+  ;; the same functions the MultiByteToWideChar / WideCharToMultiByte
+  ;; handlers run, without the stdcall frame. Packed single-character
+  ;; results are documented at $ansi_char_decode.
+  (func (export "test_cp_char_decode") (param $cp i32) (param $gp i32) (param $avail i32) (result i32)
+    (call $ansi_char_decode (call $resolve_code_page (local.get $cp)) (local.get $gp) (local.get $avail)))
+  (func (export "test_cp_char_encode") (param $cp i32) (param $wc i32) (result i32)
+    (call $ansi_char_encode (call $resolve_code_page (local.get $cp)) (local.get $wc) (i32.const 0x3F)))
+  (func (export "test_multi_byte_to_wide_char") (param $cp i32) (param $flags i32) (param $src i32) (param $src_len i32) (param $dst i32) (param $dst_len i32) (result i32)
+    (call $multi_byte_to_wide_char (local.get $cp) (local.get $flags) (local.get $src) (local.get $src_len) (local.get $dst) (local.get $dst_len)))
+  (func (export "test_wide_char_to_multi_byte") (param $cp i32) (param $flags i32) (param $src i32) (param $src_len i32) (param $dst i32) (param $dst_len i32) (param $def_ptr i32) (param $used_ptr i32) (result i32)
+    (call $wide_char_to_multi_byte (local.get $cp) (local.get $flags) (local.get $src) (local.get $src_len) (local.get $dst) (local.get $dst_len) (local.get $def_ptr) (local.get $used_ptr)))
+  (func (export "test_ansi_to_wide") (param $src i32) (param $dst i32) (param $max i32) (result i32)
+    (call $ansi_to_wide (local.get $src) (local.get $dst) (local.get $max)))
+  (func (export "test_get_last_error") (result i32)
+    (global.get $last_error))
+
   ;; Direct test surface for the memory-backed OLE storage foundation. These
   ;; helpers intentionally bypass stdcall ESP bookkeeping while exercising the
   ;; same object/state helpers used by the public OLE32 and COM handlers.

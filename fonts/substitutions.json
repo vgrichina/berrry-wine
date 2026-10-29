@@ -300,6 +300,23 @@
         "regular": "micross.ttf"
       },
       "note": "The outline form of MS Sans Serif, named by usp10.dll. At UI sizes the bitmap strikes in MSSansSerif.fon answer first and this never runs; it covers the sizes above them."
+    },
+    {
+      "win98": "MingLiU",
+      "tier": 3,
+      "substitute": "Noto Sans TC",
+      "cssFamily": "WA MingLiU",
+      "license": "SIL OFL 1.1",
+      "charset": "CHINESEBIG5",
+      "styles": {
+        "regular": "noto-sans-tc/NotoSansTC-Regular.ttf",
+        "bold": "noto-sans-tc/NotoSansTC-Bold.ttf"
+      },
+      "win98Files": {
+        "regular": "mingliu.ttf",
+        "bold": "mingliub.ttf"
+      },
+      "note": "The Traditional Chinese UI face of a Big5 Win98 (細明體, with PMingLiU). Noto Sans TC is a shape approximation with its own metrics, not a metric match. No italic file: the native family had none either, and the substitution layer answers italic requests with the upright file. The deployed subset carries the CP1252 repertoire, the Big5 symbol block and first-level kanji, and the characters the reference Big5 corpus uses — see fonts/noto-sans-tc/subset-chars.txt."
     }
   ],
   "unsubstituted": {
