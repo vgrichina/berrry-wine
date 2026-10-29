@@ -1,0 +1,8 @@
+{
+  "createdAt": "2026-10-29T04:50:40.136Z",
+  "expiry": "2026-10-29T05:20:40.153Z",
+  "id": "bx_su4mgbyb",
+  "scheduledShutdown": "2026-10-29T05:18:00Z or expiry minus 120 seconds, whichever is earlier",
+  "shutdownOwner": "worker explicitly delegated preservation + snapshot-stop + actual stopped verification",
+  "state": "idle"
+}

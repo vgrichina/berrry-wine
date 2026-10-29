@@ -1,0 +1,22 @@
+{
+  "PASS": true,
+  "attemptedGrowth": 4096,
+  "canonicalGuestParser": "not applicable: no guest runner or filename-bearing guest mount argv; actual FUSE mount domain absolute /tmp/tvrn/w/domain",
+  "charges": [
+    4096,
+    16384,
+    28672,
+    32768
+  ],
+  "guestMountArgv": [],
+  "intendedGuestMountFiles": [],
+  "noNodeExecution": true,
+  "postReap": {
+    "inodes": 3,
+    "live": 12288,
+    "openHandles": 0,
+    "peak": 32768,
+    "written": 16384
+  },
+  "rename": "decrement replaced link; collect only links0 and opens0; release closes last handle and collects"
+}

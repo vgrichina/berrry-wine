@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "stop",
+    "bx_su4mgbyb"
+  ],
+  "cwd": "/tmp/toyvm-rename-open-destination-allocation-oct29/repo",
+  "elapsed": 0.14185701310634613,
+  "exit": 0,
+  "incident": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 1589
+}
