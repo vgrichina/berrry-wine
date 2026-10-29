@@ -1,0 +1,37 @@
+{
+  "appliedDATA": 134217728,
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/toyvm-offline-receipt-validation-cli-oct29/repo/test/toyvm-offline-receipt-validation-cli-oct29/test_offline_cli.py",
+    "/tmp/toyvm-offline-receipt-validation-cli-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/validate_receipt_offline_mutant.py"
+  ],
+  "cwd": "/tmp/toyvm-offline-receipt-validation-cli-oct29/repo",
+  "exit": 1,
+  "groupCap": 536870912,
+  "inheritedLimits": {
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      90,
+      90
+    ],
+    "RLIMIT_DATA": [
+      134217728,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      12582912,
+      12582912
+    ]
+  },
+  "peakCurrentPhysicalRSS": 54788096,
+  "remainingProcessGroup": [],
+  "rssMethod": "/proc/<pid>/stat resident pages; never getrusage",
+  "stderrBytes": 1047,
+  "stdoutBytes": 0,
+  "stopReason": null,
+  "wallSeconds": 0.2220443980768323
+}

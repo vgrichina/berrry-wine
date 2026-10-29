@@ -1,0 +1,1 @@
+{"accepted": false, "accountingAccepted": true, "childSucceeded": true, "cleanupComplete": true, "failures": ["output receipt rejected"], "offlineValidationOnly": true, "runtimeQualified": false, "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"}

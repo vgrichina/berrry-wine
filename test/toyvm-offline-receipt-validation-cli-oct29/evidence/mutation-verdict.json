@@ -1,0 +1,10 @@
+{
+  "PASS": true,
+  "expectedNormalExit": 1,
+  "mutantCLIExit": 0,
+  "mutationRejected": true,
+  "mutationSHA256": "e51362eb31ff2cabba2d6ccf8fb28bc1afcdc1edb6b2fea20b63ef87e457e2ec",
+  "reason": "unchanged False-unmount witness incorrectly accepted by accept-all mutant",
+  "runtimeQualified": false,
+  "testRunnerExit": 1
+}

@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os;print(os.getcwd())"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-actual-cli-accept-oct29/repo",
+  "descendantCleanup": "killpg after completion",
+  "exit": -9,
+  "limitFailure": "physicalRSS",
+  "peakGroupRSS": 383213568,
+  "stderr": "owned-sentinel.stderr",
+  "stdout": "owned-sentinel.stdout"
+}

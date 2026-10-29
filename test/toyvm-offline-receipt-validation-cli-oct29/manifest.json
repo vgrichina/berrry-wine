@@ -1,0 +1,1047 @@
+{
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "offlineValidationOnly": true,
+  "parent": "7e07875383031bc000b1e9417c39e86300ab2a3b",
+  "pins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/validate_receipt_offline.py": {
+      "bytes": 4558,
+      "sha256": "983221191bd9967fb828b27385533cea03bcb6db909f033f12ebb5ce3c437cf0"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/REPORT.md": {
+      "bytes": 7003,
+      "sha256": "f1de6d64808b7ff350e40d7fb759a98bdb0d838836f3c0dadcb53afa4f6ff346"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/accept-all-mutant.txt": {
+      "bytes": 4614,
+      "sha256": "e51362eb31ff2cabba2d6ccf8fb28bc1afcdc1edb6b2fea20b63ef87e457e2ec"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/admission.jsonl": {
+      "bytes": 69644,
+      "sha256": "b303d71eb799502ea070b78a89706c83cf544c3e00fb246151b23507ccd63810"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/base-alignment.json": {
+      "bytes": 371,
+      "sha256": "ab7dcf1e665b08e35126e733f88d838d594bc98d7204de2721aa06de0d5c5d36"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/base-caller-identity.json": {
+      "bytes": 826,
+      "sha256": "f7d9457a5ce905e8a8dfb0dfe36f7f10fd9169c8b7ba16c201fd230072e12b88"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/base-candidate-ancestry.json": {
+      "bytes": 836,
+      "sha256": "763bdefd2a02e043d64f3ae7ad98669c09fb58e890e77254cfd94962982ec5e1"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/base-candidate-ancestry.stderr": {
+      "bytes": 190,
+      "sha256": "e1a7f97b6c9e7bc15edd4535ac01fe407edeca954da8b1978ee3e6b4cb73fa0f"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/candidate-caller-identity.json": {
+      "bytes": 827,
+      "sha256": "7f116563860e57211b854e0a4c27ba4bcbcfb6dd52abe3bb56a9fbd04bd4d24a"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/checkout-absolute-git-dir.json": {
+      "bytes": 725,
+      "sha256": "22582a7b3334341077a1df32d8dd855c85da2a22fe27d7abb847367bfd94b9e3"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/checkout-absolute-git-dir.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/checkout-absolute-git-dir.stdout": {
+      "bytes": 58,
+      "sha256": "fa40eeca7d278f77deee2054fd02e3acaf72fe0378a4ce6bf46af2e3622ad51c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/checkout-show-toplevel.json": {
+      "bytes": 721,
+      "sha256": "54f4b8e6d85848dbed96ce28f0dc29c152fffd92dd7aa7d6fa722ea746efc022"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/checkout-show-toplevel.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/checkout-show-toplevel.stdout": {
+      "bytes": 53,
+      "sha256": "c6228f572d54b71c9e6c3bec0bb532d34c34c33321cdc283df223bb39d67e2c2"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/checkout.json": {
+      "bytes": 811,
+      "sha256": "491a4d053d2ba5b70f84a1e5d9ea14a7244703358ea256e04e077d5a1e763090"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/checkout.stderr": {
+      "bytes": 202,
+      "sha256": "839ab628e5df99d118483892c1594e39f4b67d53b43a5d29e97fbe20adcb3bc6"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/checkout.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-bool-child-exit.json": {
+      "bytes": 1163,
+      "sha256": "57de3049ce4050e387c38957fb03bf7922027fa8276452befc2eea8694d60dfe"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-bool-child-exit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-bool-child-exit.stdout": {
+      "bytes": 298,
+      "sha256": "f72301dfdfde3d5712f962d878d57731cdb1f15a5774d85b176faa097cd482ff"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-bool-filesystem-live.json": {
+      "bytes": 1162,
+      "sha256": "d64bf7ec46cfb3c71a5726a40b1b5eb8bedf5f57ffc7abdd2336b18159fa722c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-bool-filesystem-live.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-bool-filesystem-live.stdout": {
+      "bytes": 318,
+      "sha256": "5548461561f39d0b5b072fb5259fb6af199999859e2690b9481f95425556be8d"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-bool-server.json": {
+      "bytes": 1162,
+      "sha256": "781a83dfa66fa6c143fe5bbf7c3f600c50ad5fd3cb793aece994e22181e5d978"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-bool-server.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-bool-server.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-0.json": {
+      "bytes": 1163,
+      "sha256": "ceb729071cc8277e0a0ce0450c5a61ce9a912bf771414e0be29a07e0a059732f"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-0.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-0.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-1.json": {
+      "bytes": 1163,
+      "sha256": "409819ac676a0d410d8ebb5976b1672ed232f186e644c1faaf465a750ccb574d"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-1.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-1.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-2.json": {
+      "bytes": 1162,
+      "sha256": "45624c1a507cde287b10593c8d0891f5a0ebd1caaa23c57592778d68b62884be"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-2.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-2.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-3.json": {
+      "bytes": 1162,
+      "sha256": "dd8558139e0352265a2ae2a403ee9800bfc89fb48ee6464b6e03eca0f68f87cd"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-3.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-cleanup-shape-3.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-0.json": {
+      "bytes": 1163,
+      "sha256": "ad9db5280293bfac174f6b72874d9b45572fc9dccd360474a0f082b29d07beb2"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-0.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-0.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-1.json": {
+      "bytes": 1163,
+      "sha256": "14c099a4f92f133ce97dcf26f623957d65f56ed5fef8bf1cd4486acf0f4b086c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-1.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-1.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-2.json": {
+      "bytes": 1162,
+      "sha256": "83be194c7982b6d1a4381cff910366769d48ae43a312acb72ffa0d1d2cdf0aff"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-2.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-2.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-3.json": {
+      "bytes": 1162,
+      "sha256": "2c8a76cae0b1f92e68178447b0fbf90fc5494c1e7a10271dfee908efbc114f00"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-3.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-complete-shape-3.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-float-server.json": {
+      "bytes": 1162,
+      "sha256": "d65759d4fa912a68d25d09ecdfdb53e7a412cd66f838d635e59c2fca80fd634d"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-float-server.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-float-server.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-float-unmount.json": {
+      "bytes": 1163,
+      "sha256": "75322863d1b114b835d2546f6b2f3efecd74e8c93a5d073b3f0c978bd934d7c8"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-float-unmount.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-float-unmount.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-cpu_limit.json": {
+      "bytes": 1161,
+      "sha256": "7b2cbd8d11ec08123580609582b00ef5bb6be29009c60ef3f5217ff03fb1ab63"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-cpu_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-cpu_limit.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-file_limit.json": {
+      "bytes": 1162,
+      "sha256": "48e3c50f6e65a36f555320024e8a1767a9ee4d236440ffd4c04cc4419a437767"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-file_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-file_limit.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-rss_limit.json": {
+      "bytes": 1154,
+      "sha256": "4a202ececfbe74454158ea10433ddb1d04c6c94c26da0bc5b0a2da48a6713572"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-rss_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-rss_limit.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-wall_limit.json": {
+      "bytes": 1162,
+      "sha256": "2fd489ee184fead074a752a732de11813af732bbb98d7b33aa80607325bb0f2c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-wall_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-invalid-limit-wall_limit.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-legitimate-cleanup-control.json": {
+      "bytes": 1162,
+      "sha256": "f14fc7d47b75722ccf6f86971853783311998438ac8f6a0c1c45ed109b3b4a40"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-legitimate-cleanup-control.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-legitimate-cleanup-control.stdout": {
+      "bytes": 273,
+      "sha256": "6ef7bc7ee203889c52bb67674c1d9b15a9f26cc70612bbea441465cf2d985e9a"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-legitimate-null-unmount-control.json": {
+      "bytes": 1162,
+      "sha256": "1fbc30aff6b139adf66399bd0fadcb42d9fed3d37d14ef434618c8054b55e1b4"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-legitimate-null-unmount-control.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-legitimate-null-unmount-control.stdout": {
+      "bytes": 273,
+      "sha256": "6ef7bc7ee203889c52bb67674c1d9b15a9f26cc70612bbea441465cf2d985e9a"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-0.json": {
+      "bytes": 1162,
+      "sha256": "b7302b3cdee479cd5a85cc7803583249383a6a978ac281955fe0c7fefea2cad8"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-0.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-0.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-1.json": {
+      "bytes": 1162,
+      "sha256": "6b4376930e72f49b913757f57f89a65d4e6f93acacb1ea9318f44c69d29c7551"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-1.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-1.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-2.json": {
+      "bytes": 1162,
+      "sha256": "0b3870bd7da635456d3a0f235b3ae8517f4f0c10cbf70bbc7d48787a71b9f75b"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-2.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-2.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-3.json": {
+      "bytes": 1162,
+      "sha256": "0e09a502a6413fdf891f22a13ae8424b1a282a68806a202e9447bd94234c1a0b"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-3.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-3.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-4.json": {
+      "bytes": 1163,
+      "sha256": "379ada0a7255f7d0991e1a3b9dcd38c8cce006daae39a6ea6858675e59fc0df7"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-4.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-4.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-5.json": {
+      "bytes": 1162,
+      "sha256": "d148ed60343ed1b4441982b537725f04e07ec45a63ab856f209d0e87cfd74978"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-5.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-5.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-6.json": {
+      "bytes": 1162,
+      "sha256": "17ad11ac3d7181e066c913a5a309c6e4f73e258b7484c7ab23561ef47c552e0d"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-6.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-6.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-7.json": {
+      "bytes": 1162,
+      "sha256": "b1794d583b2043ce99949de59f4ad0091081001db59c5f61dd5d1cef89bef41a"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-7.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-json-7.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-0.json": {
+      "bytes": 1162,
+      "sha256": "a378ca16f87710c099c2412491eac1f44a47aa4bd653b11496f8a968b38baff1"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-0.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-0.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-1.json": {
+      "bytes": 1163,
+      "sha256": "2f9df31c034d8a1abc93c6933a8471002f2d0f0c9b8d78c9260592991253a36a"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-1.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-1.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-2.json": {
+      "bytes": 1162,
+      "sha256": "bebe48a6f575555a1379b9c0f9f849eff5f2ec0d309201ff2f8df9a68545176f"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-2.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-2.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-3.json": {
+      "bytes": 1162,
+      "sha256": "669195a1b3225078d0404267d08ce4d1424ed6d18ca01b0b45f073ac1b177c41"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-3.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-3.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-4.json": {
+      "bytes": 1162,
+      "sha256": "c47a804ec9f6d0c9e0e22880af1350ae692c2fe6912532416e583b118d930478"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-4.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-4.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-5.json": {
+      "bytes": 1162,
+      "sha256": "95ec018cee2733ba7f3a77998f0017a0c48c7e38efee7d7859a2b22e57528ad3"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-5.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-malformed-output-5.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-cpu_limit.json": {
+      "bytes": 1131,
+      "sha256": "a17c30d64bf1774a1d422345e9f3a59b5889e8f035fd0b035fcbe95679669718"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-cpu_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-cpu_limit.stdout": {
+      "bytes": 262,
+      "sha256": "558c26de82480612c409f7f96c9f5dac72c8ee1f7b7224a5d51a9d59adcfba07"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-file_limit.json": {
+      "bytes": 1127,
+      "sha256": "45179f0f78a1efe647754cc9aad4d628741d6e268a5db6a70193a725b7777566"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-file_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-file_limit.stdout": {
+      "bytes": 263,
+      "sha256": "e46de01226f85b1bd50a45329d13f6b2940fef50926d689ab50f15d9ff5689c0"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-live_limit.json": {
+      "bytes": 1129,
+      "sha256": "a473c75701dbda01fb55ff842cb02bc2649ae39007d70121a7a8d0f44011d0c1"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-live_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-live_limit.stdout": {
+      "bytes": 263,
+      "sha256": "1a987e715c0aaa290358d0a50bfdc504d5678115c63d2e4b58ff12ef796b9da6"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-output_limit.json": {
+      "bytes": 1128,
+      "sha256": "1f2cccddbcbc7a6561c7574fd0807c00669b999cf2642a340c213cd5d2b1e265"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-output_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-output_limit.stdout": {
+      "bytes": 265,
+      "sha256": "2fac6f5ee50528fed330dbd8af518aecbbbeeb005975f9960483298837f2db92"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-rss_limit.json": {
+      "bytes": 1126,
+      "sha256": "6bfe5d52f23dc68816d072b13daa0e5e5c9a2935f0b46e3b40185252b2b21286"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-rss_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-rss_limit.stdout": {
+      "bytes": 262,
+      "sha256": "c2c3ee4ddcf0a2aa08079f9305769c569469d88cc540ef3ee5a30a6fe6e941fe"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-wall_limit.json": {
+      "bytes": 1131,
+      "sha256": "eede1938c8821b3c1393d96752d5ca90f7db7cd155694b0745c77a6999d5ecc7"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-wall_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-wall_limit.stdout": {
+      "bytes": 263,
+      "sha256": "cdfd935593077b33e8f5a6ac12a85f0b4a866d1ff49c2ff5da25f6528d89da28"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-write_limit.json": {
+      "bytes": 1128,
+      "sha256": "580dd5595c74331187dd630b7d6193e9b7bc21a78202bbcd61b98dd4c7c151f2"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-write_limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-limit-write_limit.stdout": {
+      "bytes": 264,
+      "sha256": "7d6f5bc50f40d1c108abb1344a8bac4ea3a0c019f9f21d292c1781c7358f4757"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-remainingMounts.json": {
+      "bytes": 1163,
+      "sha256": "f2b125a809068de35bf1c936bc226fdf287236746d459abff7f1c7919b58f697"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-remainingMounts.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-remainingMounts.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-serverExit.json": {
+      "bytes": 1163,
+      "sha256": "e98f1c6f7d5befa753b126a2bd9d6ff2132212b93970855803dc6b3ddac5d056"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-serverExit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-serverExit.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-unmountExit.json": {
+      "bytes": 1162,
+      "sha256": "c03b1a51b71a8fa4c2b4d51b21497c413db24249245ad829c5c094c41669ff69"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-unmountExit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-missing-unmountExit.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-mount-remains.json": {
+      "bytes": 1162,
+      "sha256": "26301de0751b4371fdd5940e55bf97be80fa9d7d8066e9964e38a621250ba173"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-mount-remains.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-mount-remains.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-mounts-object.json": {
+      "bytes": 1162,
+      "sha256": "04e759442a2c4d63076143f8fa54dcb8e93a6d693043edc25aecab1829ad34bc"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-mounts-object.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-mounts-object.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-null-server.json": {
+      "bytes": 1163,
+      "sha256": "c280f6b68504699f2d1dd533c6624b1890d037e2da92a2d04b5432647242117f"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-null-server.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-null-server.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-output-over-limit.json": {
+      "bytes": 1163,
+      "sha256": "ca8a790ba3cc0ac2abe5376c6a3b0137450bba02bc675ddc0545feba18e669a5"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-output-over-limit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-output-over-limit.stdout": {
+      "bytes": 240,
+      "sha256": "80edc9a3e530e5dcb8edee2930bc6ad395ca7c96289a968240375a14ce3f4787"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-output-resource-rejection.json": {
+      "bytes": 1162,
+      "sha256": "45fe87af17ac2301562a39494663ba094460e5921c18e1fc8b5d6868bb05a963"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-output-resource-rejection.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-output-resource-rejection.stdout": {
+      "bytes": 299,
+      "sha256": "6875c52c71f354a1021a60a9ff92e2826aba733fc4d5f822b2782fdaee95952e"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-server-failure.json": {
+      "bytes": 1163,
+      "sha256": "e86784239a7c0e124bc7cec377aa6c877901e32865bba5a4499a2a3542893992"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-server-failure.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-server-failure.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-string-unmount.json": {
+      "bytes": 1162,
+      "sha256": "04b0aad1064ec1d0a61ee2011a3d0748e021926c7c3ef0b0d63be2efd982805c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-string-unmount.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-string-unmount.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-test-results.json": {
+      "bytes": 30411,
+      "sha256": "42ceaee8bdf768cd5a4bdfea8bb31135e099506cf465aca287e115199a4b045a"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-unchanged-bool-unmount-counterexample.json": {
+      "bytes": 1162,
+      "sha256": "63a6ff869777e4dcd7245d1768263d3dcd4c7f4f3b3b0ab631c37c6f739dcf7a"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-unchanged-bool-unmount-counterexample.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-unchanged-bool-unmount-counterexample.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-unmount-failure.json": {
+      "bytes": 1162,
+      "sha256": "ef0e0e5bdd7350b7055d1ee573703022300d262217e4c2a0aacd9f6c8215dcd8"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-unmount-failure.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-unmount-failure.stdout": {
+      "bytes": 300,
+      "sha256": "b9f0e9547ac0736f6df21a411e087d2b0452035460576c643f72caa4c76eef87"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-email-absolute-git-dir.json": {
+      "bytes": 725,
+      "sha256": "bb058cbb087a40386abe72b2130c501c7370c5034266fc05689522adc9e7584b"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-email-absolute-git-dir.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-email-absolute-git-dir.stdout": {
+      "bytes": 58,
+      "sha256": "fa40eeca7d278f77deee2054fd02e3acaf72fe0378a4ce6bf46af2e3622ad51c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-email-show-toplevel.json": {
+      "bytes": 722,
+      "sha256": "81803cf8b7b3c9d6e2dc5c9eef89fb7d3f1af0eb3f506e5352e2a3014d60900f"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-email-show-toplevel.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-email-show-toplevel.stdout": {
+      "bytes": 53,
+      "sha256": "c6228f572d54b71c9e6c3bec0bb532d34c34c33321cdc283df223bb39d67e2c2"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-email.json": {
+      "bytes": 739,
+      "sha256": "5ddad438aa886d26300badd116c262d1d6bea9b6c07e7d6f7b05948f68200317"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-email.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-email.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-gc-absolute-git-dir.json": {
+      "bytes": 725,
+      "sha256": "020eea4cd638b377133524a824ff2304cadd370b89548ff72ab97632e3ba384f"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-gc-absolute-git-dir.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-gc-absolute-git-dir.stdout": {
+      "bytes": 58,
+      "sha256": "fa40eeca7d278f77deee2054fd02e3acaf72fe0378a4ce6bf46af2e3622ad51c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-gc-show-toplevel.json": {
+      "bytes": 721,
+      "sha256": "e75026e3a7e92602f05d5b911b1a9f208eaf6c2e70e9b6f095d926cc7bf9f2fb"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-gc-show-toplevel.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-gc-show-toplevel.stdout": {
+      "bytes": 53,
+      "sha256": "c6228f572d54b71c9e6c3bec0bb532d34c34c33321cdc283df223bb39d67e2c2"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-gc.json": {
+      "bytes": 719,
+      "sha256": "88811273718cd5dbab3f1827e1a2edfa8c80242281253b538f4967a0d21278ce"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-gc.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-gc.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-hooks-absolute-git-dir.json": {
+      "bytes": 724,
+      "sha256": "2d80c3ec669df90760a3f306cdd1da817636db9a0e2e690e698aa69060b23dfe"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-hooks-absolute-git-dir.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-hooks-absolute-git-dir.stdout": {
+      "bytes": 58,
+      "sha256": "fa40eeca7d278f77deee2054fd02e3acaf72fe0378a4ce6bf46af2e3622ad51c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-hooks-show-toplevel.json": {
+      "bytes": 721,
+      "sha256": "f837e8c4594d7510700337d1b62ce4cc111ed27ad4dcef06d9844f3ef7447a1f"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-hooks-show-toplevel.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-hooks-show-toplevel.stdout": {
+      "bytes": 53,
+      "sha256": "c6228f572d54b71c9e6c3bec0bb532d34c34c33321cdc283df223bb39d67e2c2"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-hooks.json": {
+      "bytes": 734,
+      "sha256": "3373da8d8b0e082f4cc5ecbdccc61d7f8b0549e44295b81e32d22ff13eef4b5e"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-hooks.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-hooks.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-name-absolute-git-dir.json": {
+      "bytes": 723,
+      "sha256": "f42371a82439cfe5242fc130a1574258416d10ec2037795dd5acf395b37c05ad"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-name-absolute-git-dir.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-name-absolute-git-dir.stdout": {
+      "bytes": 58,
+      "sha256": "fa40eeca7d278f77deee2054fd02e3acaf72fe0378a4ce6bf46af2e3622ad51c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-name-show-toplevel.json": {
+      "bytes": 722,
+      "sha256": "fb49c35c3d4b0601b49b265daea3bbc1712005eb4fa3dbfc533b39b684c1b80c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-name-show-toplevel.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-name-show-toplevel.stdout": {
+      "bytes": 53,
+      "sha256": "c6228f572d54b71c9e6c3bec0bb532d34c34c33321cdc283df223bb39d67e2c2"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-name.json": {
+      "bytes": 734,
+      "sha256": "9d19e3257c6ef7116a8f663d86021e989f71d0ffb3b15f7cc8e4868991c949ca"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-name.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-name.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-sparse-absolute-git-dir.json": {
+      "bytes": 725,
+      "sha256": "7b30f03841ecc7d3ce975aff5112d09bab8f131ea128c2669196443c0053f94b"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-sparse-absolute-git-dir.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-sparse-absolute-git-dir.stdout": {
+      "bytes": 58,
+      "sha256": "fa40eeca7d278f77deee2054fd02e3acaf72fe0378a4ce6bf46af2e3622ad51c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-sparse-show-toplevel.json": {
+      "bytes": 721,
+      "sha256": "02789d02f045f340659992b18711746ae840033f0f38f3edde50aaf4e641fb66"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-sparse-show-toplevel.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-sparse-show-toplevel.stdout": {
+      "bytes": 53,
+      "sha256": "c6228f572d54b71c9e6c3bec0bb532d34c34c33321cdc283df223bb39d67e2c2"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-sparse.json": {
+      "bytes": 734,
+      "sha256": "6772db7f82ca78f7d9e533a854d744a62e21dd87e3e6f64489e7bc0fe84c047e"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-sparse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/config-sparse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/cwd-negative-controls.json": {
+      "bytes": 105,
+      "sha256": "ea5433cf2d86ab8de5ebbfd7f6e0a8ba95cf976ebc2611e250e0540f6cbef0e6"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/historical-failed-sentinel.json": {
+      "bytes": 359,
+      "sha256": "b064a36dd2a91801e836e5adcaa6173f26032311dc902c5a4c8535b78777eec6"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/init.json": {
+      "bytes": 695,
+      "sha256": "ee85106a19f32a3bb8e4591ed7b34ac7bab7ac8457d7232e3de8329b51022df5"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/init.stderr": {
+      "bytes": 485,
+      "sha256": "7cc74f74cc8a8f9938bd00571e2c171ce3c59d048f2242a836ccca722182d430"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/init.stdout": {
+      "bytes": 95,
+      "sha256": "61cb06fce5db114d13b6f1261040a97236fbaf96c89e2da66fb408e35629f21e"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/input-pins.json": {
+      "bytes": 1124,
+      "sha256": "3fdc5fe8551d37de4676decab5d2203dab85477973f9e7c4e4c29eac5511371f"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/mount-configuration.json": {
+      "bytes": 710,
+      "sha256": "c81bc0b24e200950631583c4ee647cbef078cc3c98b82357f6ffc9999f10c587"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/mutant-unchanged-bool-unmount-counterexample.json": {
+      "bytes": 1169,
+      "sha256": "1b9eaea8f5dfea5d1f1f022b8de33f2f548cb3f7199079ad8b10938368b79eae"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/mutant-unchanged-bool-unmount-counterexample.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/mutant-unchanged-bool-unmount-counterexample.stdout": {
+      "bytes": 273,
+      "sha256": "6ef7bc7ee203889c52bb67674c1d9b15a9f26cc70612bbea441465cf2d985e9a"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/mutation-verdict.json": {
+      "bytes": 325,
+      "sha256": "508d8692cc64275ecf56778ee08238fa68fe30fb1414e8f4d80c29cfb4762485"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/offline-cli-acceptance.json": {
+      "bytes": 779,
+      "sha256": "4871b996cc7c7641e53c0c5891edf50e167a2d9e65505f003b0214a06003c604"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/offline-cli-acceptance.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/offline-cli-acceptance.stdout": {
+      "bytes": 79,
+      "sha256": "af74120e98f20b3474de832468d184c0a67d13276620124ef766f5dd56fd17d0"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/owned-positive-sentinel.json": {
+      "bytes": 700,
+      "sha256": "15c20828727a53644355fc55ca7a111e372643976edb410e8342aee12fcd9bc9"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/owned-positive-sentinel.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/owned-positive-sentinel.stdout": {
+      "bytes": 53,
+      "sha256": "c6228f572d54b71c9e6c3bec0bb532d34c34c33321cdc283df223bb39d67e2c2"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/rejecting-mutation.json": {
+      "bytes": 918,
+      "sha256": "f0146e6f41bc60bb8d29879a5e5140a216bc9f16293e79b0c70cc7ec6e5d5fb0"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/rejecting-mutation.stderr": {
+      "bytes": 1047,
+      "sha256": "25a83317b3b1d84d33cbf2b33a9190902ba113dd94cacb28a3e33c51ed6bb858"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/rejecting-mutation.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/remote-add-absolute-git-dir.json": {
+      "bytes": 745,
+      "sha256": "adaac80baebd0c53e48f6aaea2f3378f1257187740a02ef2b6d3f43b6518f950"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/remote-add-absolute-git-dir.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/remote-add-absolute-git-dir.stdout": {
+      "bytes": 58,
+      "sha256": "fa40eeca7d278f77deee2054fd02e3acaf72fe0378a4ce6bf46af2e3622ad51c"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/remote-add-show-toplevel.json": {
+      "bytes": 741,
+      "sha256": "19c7cb22f3a4273b29632469a2522db24072de270f235754afcedc061a718911"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/remote-add-show-toplevel.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/remote-add-show-toplevel.stdout": {
+      "bytes": 53,
+      "sha256": "c6228f572d54b71c9e6c3bec0bb532d34c34c33321cdc283df223bb39d67e2c2"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/remote-add.json": {
+      "bytes": 789,
+      "sha256": "ea174b5804610dbfc24f600eeb591b01a8015ecf3d8b531acadbe742439d6881"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/remote-add.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/remote-add.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/status-before-add.json": {
+      "bytes": 764,
+      "sha256": "3bbe8b83b29dc0cb54344a09dde0d45568b2500dc2913af54e0567a7a3455d29"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/status-before-add.stderr": {
+      "bytes": 127,
+      "sha256": "a762e2e349a73db76c0aa36b8ef8885bdc5245687147064d5c2c9d8e57062042"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/status-before-add.stdout": {
+      "bytes": 124,
+      "sha256": "52c44c232b50da2ac2c0fbf3d03fdae897d67fed1412f289992bc87b52da6949"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/unchanged-live-caller.json": {
+      "bytes": 791,
+      "sha256": "e5bf13f8bb017d30f0966006c27e02a7d0eee57c664fe69f6dd9bc59f6670fc0"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/unchanged-live-caller.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/evidence/unchanged-live-caller.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/startup.json": {
+      "bytes": 1216,
+      "sha256": "cda0a7566dfb85f8657067560390c4fc84fd782ee9502a77ae7983148162428e"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/supervisor.py": {
+      "bytes": 7880,
+      "sha256": "6de43c5a07e0c3c0387e462741013c987d74e7ec55bb5f1d7af4d8bcaca48693"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/test_offline_cli.py": {
+      "bytes": 5283,
+      "sha256": "b8d5eec05cf4b8b984297b3d94f493545f4da7a2d19e45f53f30d66d82a36ba9"
+    }
+  },
+  "prior32Reused": true,
+  "runtimeQualified": false,
+  "task": "toyvm-offline-receipt-validation-cli-oct29",
+  "tests": {
+    "mutationRejected": true,
+    "passed": true,
+    "realCLIChildren": 52
+  }
+}

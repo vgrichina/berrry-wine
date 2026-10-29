@@ -1,0 +1,9 @@
+{
+  "PASS": true,
+  "rejectedBeforeSpawn": [
+    "omitted",
+    "root",
+    "donor",
+    "outside"
+  ]
+}
