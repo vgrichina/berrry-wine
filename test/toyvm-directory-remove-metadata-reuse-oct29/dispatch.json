@@ -1,0 +1,73 @@
+{
+  "admission": "/home/user/wine-assembly/scratch/usage-watch/toyvm-directory-remove-metadata-reuse-oct29-admission.json",
+  "box": {
+    "cutoffUTC": "2026-10-29T05:40:00Z",
+    "newOnly": true,
+    "shutdownOwner": "coordinator delegates snapshot-stop actualstopped EVERYhandback",
+    "ttlSeconds": 1800
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "gitReadiness": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/git-readiness.json",
+  "limitModule": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/limit_contract.py",
+  "limitModulePin": {
+    "bytes": 2510,
+    "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "noMain": true,
+  "objectStores": "/home/user/wine-assembly/scratch/usage-watch/toyvm-directory-remove-metadata-reuse-oct29-object-stores.json",
+  "originalCancellationReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+  "originalCancellationReceiptPin": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "ownedRepo": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo",
+  "previousRuntimeCases": "positive write/unlink and direct quota failure verified; DO NOT repeat",
+  "previousVerifiedReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-regrowth-retained-runtime-independent-accept-oct29/retained-evidence/completion-receipt.json",
+  "previousVerifiedReceiptPin": {
+    "bytes": 2893,
+    "sha256": "4cd8d3d9cca84d057102a0469dbc1ad7d377c7dee8b63feb8fb657a1bf6cf6ba"
+  },
+  "quotaPreflight": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/quota-preflight.json",
+  "remoteSocket": "/tmp/tvdr/w/status.sock",
+  "remoteWork": "/tmp/tvdr/w",
+  "runtimeFixture": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/fixture.py",
+  "runtimeFixturePin": {
+    "bytes": 513,
+    "sha256": "1d44688f673506b1776168f3a2563b0d690fcef45ad2985299c36622ca8e3046"
+  },
+  "runtimeObserver": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/runtime-observer.py",
+  "runtimeObserverPin": {
+    "bytes": 6785,
+    "sha256": "6b8cecc57abf08e023276b840f366c2e99fb4015b08165dbdc3971cbae94d20f"
+  },
+  "runtimeScope": "toyvm-directory-remove-metadata-reuse-oct29",
+  "socketPathBytes": 23,
+  "sourcePhaseOracle": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/source-phase-oracle.json",
+  "sourcePhaseOraclePin": {
+    "bytes": 625,
+    "sha256": "b524072a014ece7165a162677bacca475e80509413f5be9d4afe629bda5382a0"
+  },
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "task": "toyvm-directory-remove-metadata-reuse-oct29"
+}

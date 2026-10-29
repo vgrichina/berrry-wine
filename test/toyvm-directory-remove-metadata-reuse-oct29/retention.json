@@ -1,0 +1,22 @@
+{
+  "PASS": true,
+  "box": "bx_47z2wx6m",
+  "files": {
+    "cli.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "cli.stdout": {
+      "bytes": 1103,
+      "sha256": "00a61310ff36e157b1861bea2c1f62661ac58fc45758d745ae55d10e84535770"
+    },
+    "prelaunch.json": {
+      "bytes": 2242,
+      "sha256": "e5bf5d6acf7ef25a58aa1c7616d86a3cfd7efb7b02f22091e9be56d724d70031"
+    },
+    "result.json": {
+      "bytes": 18560,
+      "sha256": "deec8d0c3ceab8264e82e78b31cd45bbbf895200035b0274f9573ee81362279c"
+    }
+  }
+}

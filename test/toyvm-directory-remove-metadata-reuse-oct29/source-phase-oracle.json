@@ -1,0 +1,35 @@
+{
+  "phases": [
+    {
+      "phase": "root",
+      "live": 4096
+    },
+    {
+      "phase": "D",
+      "live": 8192
+    },
+    {
+      "phase": "D/E",
+      "live": 12288
+    },
+    {
+      "phase": "rmdir-E",
+      "live": 8192
+    },
+    {
+      "phase": "D/F",
+      "live": 12288
+    }
+  ],
+  "postReap": {
+    "live": 12288,
+    "peak": 12288,
+    "written": 0,
+    "inodes": 3,
+    "openHandles": 0
+  },
+  "cliExit": 0,
+  "accepted": true,
+  "stopReason": null,
+  "inference": "RMDIR op11 removes parent entry,decrementslinks,collect frees4096 on zero links and zero opens; next directory fits same live12288 budget"
+}

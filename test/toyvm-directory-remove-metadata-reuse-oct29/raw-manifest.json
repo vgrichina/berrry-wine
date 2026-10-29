@@ -1,0 +1,130 @@
+{
+  "files": {
+    "REPORT.md": {
+      "bytes": 4998,
+      "sha256": "267972082f5ec6b0b851755864cd93895ba3fa37fb56e4bfde6a8cb040451030"
+    },
+    "admissions.jsonl": {
+      "bytes": 8158,
+      "sha256": "287373a355e209738e0eb2e32607bdae8429c1112a5833170f2f800db393ec8e"
+    },
+    "boat-file-argv.json": {
+      "bytes": 4743,
+      "sha256": "c6978d5719e86e231f878e6ded2831d24976b4afe92110aa8b01f6cacd64ba23"
+    },
+    "create.py": {
+      "bytes": 1610,
+      "sha256": "b107dbed2e4794b3aee2b70728430aad59cc4bb420219f466f5720d462159c4e"
+    },
+    "dispatch-preflight.json": {
+      "bytes": 483,
+      "sha256": "34fd682c5d9841f53ed3f789d3898739d1cc829cceb12855f0197ab1a7c5ad06"
+    },
+    "dispatch.json": {
+      "bytes": 3541,
+      "sha256": "d86dc51b4b7a06648c18b9c8e40ab2468ef087f314256b3cdd808c169606e013"
+    },
+    "fixture.py": {
+      "bytes": 513,
+      "sha256": "1d44688f673506b1776168f3a2563b0d690fcef45ad2985299c36622ca8e3046"
+    },
+    "git-readiness.json": {
+      "bytes": 290,
+      "sha256": "ed857f6992bb171093728dc4c2b88aaf15ded17eda66748fba206de07883dd6c"
+    },
+    "invoke.py": {
+      "bytes": 580,
+      "sha256": "2a0d20868b0ab3a7537d1987ac1f90298dc374ba783363ae6e678fdbbfe8c286"
+    },
+    "launch-configuration.json": {
+      "bytes": 563,
+      "sha256": "9c5ddf3c1299eaf65f1520df5be0aa3e8f990b82d81e4a326de837bf7f593b7c"
+    },
+    "lifecycle-receipt.json": {
+      "bytes": 3843,
+      "sha256": "7554d9ceaee52ac89a1ce4833bd427eb3eb3e8b88f9499e1ff0b5ad66a5a4747"
+    },
+    "limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "ops.py": {
+      "bytes": 4113,
+      "sha256": "c0324a87f5f4683f308250aa5c4013adc48d590a979ca3b403eaee586466d5bd"
+    },
+    "preflight.py": {
+      "bytes": 3775,
+      "sha256": "e4c99fd9d2f317e5f84b28a3107ee8d9259e2b0a980ce94a1fbc5590853befdd"
+    },
+    "prelaunch-controls.json": {
+      "bytes": 546,
+      "sha256": "af827efe4c80be04e8f2d7a48cb6f7d597a3136060c714f249ac5fb87cc4fff8"
+    },
+    "preserve.py": {
+      "bytes": 1337,
+      "sha256": "da8b733584a0b8afd6ff87e78a0d4402099c86b7979b33b227fcbb6c8feb234f"
+    },
+    "quota-preflight.json": {
+      "bytes": 338,
+      "sha256": "9e807dcef053c655fa1276de938def3d9d0eeab2090110024809dac2a40f87af"
+    },
+    "raw/boat-create.jsonl": {
+      "bytes": 570,
+      "sha256": "5c60f4a4fd85173c1d44f6d8655e6308c5c1be74c97852c18896e711cf0431c6"
+    },
+    "raw/boat-stop.jsonl": {
+      "bytes": 1528,
+      "sha256": "02080675bd77c06fca8d77602d7f45a2434afdcd675797e8ae157ab1510ed1ee"
+    },
+    "raw/cli.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "raw/cli.stdout": {
+      "bytes": 1103,
+      "sha256": "00a61310ff36e157b1861bea2c1f62661ac58fc45758d745ae55d10e84535770"
+    },
+    "raw/runtime-api.json": {
+      "bytes": 20158,
+      "sha256": "10039cb7276adafd90cce7d2b559edbd8cc1fc7f6d3303b703ccc9c3544d4051"
+    },
+    "raw/runtime-observer.json": {
+      "bytes": 18560,
+      "sha256": "deec8d0c3ceab8264e82e78b31cd45bbbf895200035b0274f9573ee81362279c"
+    },
+    "remote-prelaunch.json": {
+      "bytes": 2242,
+      "sha256": "e5bf5d6acf7ef25a58aa1c7616d86a3cfd7efb7b02f22091e9be56d724d70031"
+    },
+    "retention.json": {
+      "bytes": 586,
+      "sha256": "d7126fbae223de5810b0cec135cc00268f86470dd0bbcc5742eeb50fd6f47b26"
+    },
+    "runtime-canonical.json": {
+      "bytes": 6430,
+      "sha256": "fd8ea2aca6eca665d497540a81da208ded1043e890c911238a146fac7953a168"
+    },
+    "runtime-observer.py": {
+      "bytes": 6785,
+      "sha256": "6b8cecc57abf08e023276b840f366c2e99fb4015b08165dbdc3971cbae94d20f"
+    },
+    "source-phase-independent.json": {
+      "bytes": 1967,
+      "sha256": "d7cf1f539888517d9ae6cc4af611613e48b86135c3da89b3b3ad0ecd2960b6e5"
+    },
+    "source-phase-oracle.json": {
+      "bytes": 625,
+      "sha256": "b524072a014ece7165a162677bacca475e80509413f5be9d4afe629bda5382a0"
+    },
+    "stop.py": {
+      "bytes": 609,
+      "sha256": "a533b2005c16f169c047ecf721bdc98d4341613127fbc6c4fa1d4f07323eb427"
+    },
+    "verify.py": {
+      "bytes": 2695,
+      "sha256": "f96d0e1b888183278cbbafb09acb654b1612a046dce6f4a80c30af4e4d08aec6"
+    }
+  },
+  "maxEvidenceBytes": 1048576,
+  "totalBytes": 105799
+}

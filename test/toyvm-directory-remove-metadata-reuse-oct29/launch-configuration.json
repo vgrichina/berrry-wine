@@ -1,0 +1,8 @@
+{
+  "canonicalGuestParser": "not applicable: unchanged empty guest mount argv; Boat file staging separately enumerated",
+  "gitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "intendedMountFiles": [],
+  "mountArgv": [],
+  "receiptSHA256": "a80c27d43a15a603eeb430933b1cbb8405aacdf690558efa8f3f5d12ae3d7b16",
+  "reusedReceipt": "toyvm-real-cli-descendant-timeout-qualification-oct29/retained-evidence/launch-configuration.json"
+}

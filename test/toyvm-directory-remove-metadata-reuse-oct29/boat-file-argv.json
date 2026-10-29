@@ -1,0 +1,88 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "new",
+    "--ttl",
+    "1800",
+    "--name",
+    "toyvm-dir-reuse-oct29",
+    "--file",
+    "/tmp/tvdr/dispatch.json=/tmp/toyvm-directory-remove-metadata-reuse-oct29/private/dispatch.json",
+    "--file",
+    "/tmp/tvdr/runtime-observer.py=/tmp/toyvm-directory-remove-metadata-reuse-oct29/runtime-observer.py",
+    "--file",
+    "/tmp/tvdr/fixture.py=/tmp/toyvm-directory-remove-metadata-reuse-oct29/fixture.py",
+    "--file",
+    "/tmp/tvdr/cancellation.json=/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+    "--file",
+    "/tmp/tvdr/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py=/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--file",
+    "/tmp/tvdr/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py=/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "--file",
+    "/tmp/tvdr/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py=/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "--file",
+    "/tmp/tvdr/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py=/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "--file",
+    "/tmp/tvdr/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py=/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py"
+  ],
+  "commaBearingFiles": [],
+  "guestMountArgv": [],
+  "intendedFiles": [
+    {
+      "bytes": 3541,
+      "local": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/private/dispatch.json",
+      "remote": "/tmp/tvdr/dispatch.json",
+      "sha256": "d86dc51b4b7a06648c18b9c8e40ab2468ef087f314256b3cdd808c169606e013"
+    },
+    {
+      "bytes": 6785,
+      "local": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/runtime-observer.py",
+      "remote": "/tmp/tvdr/runtime-observer.py",
+      "sha256": "6b8cecc57abf08e023276b840f366c2e99fb4015b08165dbdc3971cbae94d20f"
+    },
+    {
+      "bytes": 513,
+      "local": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/fixture.py",
+      "remote": "/tmp/tvdr/fixture.py",
+      "sha256": "1d44688f673506b1776168f3a2563b0d690fcef45ad2985299c36622ca8e3046"
+    },
+    {
+      "bytes": 12946,
+      "local": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+      "remote": "/tmp/tvdr/cancellation.json",
+      "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+    },
+    {
+      "bytes": 8105,
+      "local": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "remote": "/tmp/tvdr/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    {
+      "bytes": 3457,
+      "local": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+      "remote": "/tmp/tvdr/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    {
+      "bytes": 10877,
+      "local": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "remote": "/tmp/tvdr/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    {
+      "bytes": 4058,
+      "local": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "remote": "/tmp/tvdr/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    {
+      "bytes": 23268,
+      "local": "/tmp/toyvm-directory-remove-metadata-reuse-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+      "remote": "/tmp/tvdr/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  ],
+  "note": "Boat --file exact transfers; no guest runner mounts; actual API exec only"
+}
