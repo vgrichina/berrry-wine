@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "test/toyvm-rename-parent-production-wire-qualification-oct29/wire.py"
+  ],
+  "cwd": "/tmp/toyvm-rename-parent-production-wire-qualification-oct29/repo",
+  "exit": 0,
+  "elapsed": 1.6607195008546114,
+  "admission": {
+    "free": 4371587072,
+    "MemAvailable": 2225004544,
+    "allocated": 2215936,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 60,
+  "stderrBytes": 0,
+  "retainedWireFixture": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-setattr-production-serve-wire-contract-oct29/retained-evidence/test/wire.py",
+    "bytes": 7793,
+    "sha256": "fbbd5952cb2ad7ea6c552ab78181d22c836ee2070ac8fc04a771bebc2dacfab5"
+  },
+  "mountArgv": null,
+  "mountValidation": "not applicable: no mount or guest invocation",
+  "box": null,
+  "fixtureSHA256": "9e2641965da39f5ba9b71912a6b251d23e24b571453e4df16aa928ff04ffe1b0",
+  "resultsSHA256": "7eb91c7d6cab6008adf8227491119251a9ae43a19766c141a84ed58ca07304e0"
+}

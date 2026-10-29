@@ -1,0 +1,18 @@
+{
+  "source": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-parent-validation-contract-oct29/retained-evidence/test",
+  "pins": {
+    "reproduce.py": {
+      "bytes": 7595,
+      "sha256": "99ba997bb2bbaaa4c7713dcecd7e42b1bfb1fc25fd73ae31a7c08153436621a2"
+    },
+    "results.json": {
+      "bytes": 9185,
+      "sha256": "212a351eec2cb3fb20327f3db1d94707423429b962670ac57c2401c5a94f389b"
+    },
+    "source-pins.json": {
+      "bytes": 1702,
+      "sha256": "61d820c21dbfa096a5e6db7ab29045d898bf8552c5eb345855ba7c6fd3b016d5"
+    }
+  },
+  "history": "Historical diagnostic staged only; RAM denial prevented commit/push. No historical remote-backup claim. Copied unchanged, never rerun here."
+}
