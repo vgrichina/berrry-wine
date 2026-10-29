@@ -1,0 +1,11 @@
+# Retained UNLINK/RMDIR acceptance publication
+
+This publishes the previously passed independent acceptance for candidate `6e1ab35cf3e865cb00d8dd9f7c27e082835b17ae`. No behavior was replayed and no production source changed. Original results remain 14/14 PASS, 168 independent PASS, and nine source mutations rejected, at the direct actual `Backend.handle` boundary only. A kernel may reject before invoking that callback.
+
+The 46 staged historical files match the retained originals byte for byte, including the original test manifest. All 106 entries in the external retention manifest match their retained files. All five current source pins match; the index blob identities were checked against those exact historical bytes. Historical paths, task branch, blocked outcome and failed commit evidence are provenance and remain unchanged. The missing inherited blob was recovered into this fresh owned object store by the coordinator before launch. The initial staged tree is `53f41c2c989cf7c3a872df840d50f4ee5294b162`.
+
+`review.json` records source pins, manifest identity, owned repository identity and trusted origin. Cached whitespace review passed. Git reported ignored nested alternate stores while successfully building the exact supplied tree and reviewing the diff; those diagnostics remain in the external operation evidence. Publication uses task ref `refs/heads/task/toyvm-unlink-rmdir-accepted-closure-publication-oct29`. The resulting commit and exact remote SHA are recorded separately in the bounded coordinator handoff, after push verification, so the historical completion receipt is not rewritten.
+
+Canonical retained acceptance: `../toyvm-unlink-rmdir-absolute-checkpoint-accept-oct29/canonical.json`. External publication receipts: `/tmp/toyvm-unlink-rmdir-accepted-closure-publication-oct29/e/`; final handoff: `/tmp/toyvm-unlink-rmdir-accepted-closure-publication-oct29/coordinator-note.json`.
+
+Remaining gates: OLD caller backend pin; combined rename/cycle integration; full CLI; actual mounted kernel callback; browser; gameplay. Other workers retain cycle acceptance and READDIR ownership. No main integration or public deployment was performed. No Boat was assigned; runtime lifecycle remains with the coordinator. The coordinator appends the bounded handoff to the oversized messageboard.

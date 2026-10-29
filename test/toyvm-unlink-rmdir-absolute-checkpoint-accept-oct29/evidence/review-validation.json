@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-c",
+    "import pathlib,json,hashlib; r=pathlib.Path.cwd().resolve(); e=r.parent/\"e\"; t=r/\"test/toyvm-unlink-rmdir-absolute-checkpoint-accept-oct29\"; names=(e/\"cached-names.stdout\").read_text().splitlines(); assert len(names)==29 and all(n.startswith(str(t.relative_to(r))+\"/\") for n in names); assert json.loads((e/\"cached-whitespace.json\").read_text())[\"exit\"]==0; [(None if {\"bytes\":(t/n).stat().st_size,\"sha256\":hashlib.sha256((t/n).read_bytes()).hexdigest()}==p else (_ for _ in ()).throw(AssertionError(n))) for n,p in json.loads((t/\"manifest.json\").read_text()).items()]; print(\"PASS cached paths restricted to exclusive test directory; whitespace clean; manifest exact; source reviewed\")"
+  ],
+  "cwd": "/tmp/toyvm-unlink-rmdir-absolute-checkpoint-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.048960776068270206,
+  "admission": {
+    "free": 4492427264,
+    "MemAvailable": 3209166848,
+    "allocated": 2789376,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 108,
+  "stderrBytes": 0
+}

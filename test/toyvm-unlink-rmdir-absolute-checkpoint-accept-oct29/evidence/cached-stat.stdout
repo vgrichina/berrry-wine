@@ -1,0 +1,30 @@
+ .../README.md                                      |   22 +
+ .../canonical.json                                 | 7206 ++++++++++++++++++++
+ .../current-dispatch.json                          |   59 +
+ .../evidence/checkpoint.py                         |    8 +
+ .../evidence/coordinator-exact-checkpoint.json     |   37 +
+ .../evidence/coordinator-exact-checkpoint.stderr   |    0
+ .../evidence/coordinator-exact-checkpoint.stdout   |    1 +
+ .../evidence/git-readiness.json                    |    7 +
+ .../evidence/identity.json                         |   43 +
+ .../evidence/identity.stderr                       |    0
+ .../evidence/identity.stdout                       |    4 +
+ .../evidence/independent-final.json                |   37 +
+ .../evidence/independent-final.stderr              |    0
+ .../evidence/independent-final.stdout              |    1 +
+ .../evidence/limit_contract.py                     |   43 +
+ .../evidence/ops.py                                |   48 +
+ .../evidence/original14.json                       |   38 +
+ .../evidence/original14.stderr                     |    0
+ .../evidence/original14.stdout.json                |    1 +
+ .../evidence/prelaunch-controls.json               |   23 +
+ .../evidence/remote-config.json                    |   40 +
+ .../evidence/remote-config.stderr                  |    0
+ .../evidence/remote-config.stdout                  |    1 +
+ .../historical-provenance.json                     |   30 +
+ .../independent.py                                 |  184 +
+ .../manifest.json                                  |  114 +
+ .../original14.json                                | 1435 ++++
+ .../regression.py                                  |  197 +
+ .../source-pins.json                               |   25 +
+ 29 files changed, 9604 insertions(+)

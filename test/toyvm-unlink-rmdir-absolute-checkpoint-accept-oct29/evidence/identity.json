@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-unlink-rmdir-absolute-checkpoint-accept-oct29/repo",
+    "rev-parse",
+    "--show-toplevel",
+    "--absolute-git-dir",
+    "HEAD",
+    "--abbrev-ref",
+    "HEAD"
+  ],
+  "cwd": "/tmp/toyvm-unlink-rmdir-absolute-checkpoint-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.04841967113316059,
+  "admission": {
+    "free": 4500103168,
+    "MemAvailable": 3198382080,
+    "allocated": 2441216,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 227,
+  "stderrBytes": 0
+}

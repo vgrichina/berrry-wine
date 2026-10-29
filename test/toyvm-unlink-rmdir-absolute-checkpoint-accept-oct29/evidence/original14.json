@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-c",
+    "import pathlib,json,hashlib,sys,runpy; r=pathlib.Path(\"/tmp/toyvm-unlink-rmdir-absolute-checkpoint-accept-oct29/repo\"); d=json.loads(pathlib.Path(\"/home/user/wine-assembly/scratch/usage-watch/toyvm-unlink-rmdir-absolute-checkpoint-accept-oct29-dispatch.json\").read_text()); [(None if {\"bytes\":len((r/n).read_bytes()),\"sha256\":hashlib.sha256((r/n).read_bytes()).hexdigest()}==p else (_ for _ in ()).throw(AssertionError(n))) for n,p in d[\"sourcePins\"].items()]; t=r/\"test/toyvm-unlink-rmdir-absolute-checkpoint-accept-oct29\"; t.mkdir(); s=pathlib.Path(\"/home/user/wine-assembly/scratch/usage-watch/toyvm-unlink-rmdir-type-repair-oct29/retained-evidence/test\"); [(t/n).write_bytes((s/n).read_bytes()) for n in (\"regression.py\",\"source-pins.json\")]; (t/\"current-dispatch.json\").write_text(json.dumps(d,indent=2)+\"\\n\"); sys.argv=[str(t/\"regression.py\"),\"--allow-backend-change\",\"--output\",str(t/\"original14.json\")]; runpy.run_path(str(t/\"regression.py\"),run_name=\"__main__\")"
+  ],
+  "cwd": "/tmp/toyvm-unlink-rmdir-absolute-checkpoint-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.09440477681346238,
+  "admission": {
+    "free": 4502097920,
+    "MemAvailable": 3442892800,
+    "allocated": 2166784,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 900,
+  "stderrBytes": 0
+}
