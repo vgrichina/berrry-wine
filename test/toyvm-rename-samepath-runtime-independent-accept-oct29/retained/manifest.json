@@ -1,0 +1,126 @@
+{
+  "coordinator-note.json": {
+    "bytes": 1487,
+    "sha256": "831ecd8bfda64c44cb3592d91eeb99f7d8a2c13060c15453f0cbd8b5e73ade5a"
+  },
+  "remote-verified.stdout": {
+    "bytes": 93,
+    "sha256": "59e590760184055e4e845baacf109a5d7c01e57358ef024c1c53afdd8bbe3a5c"
+  },
+  "completion-receipt.json": {
+    "bytes": 1027,
+    "sha256": "4ab4c01a82c733687de29d5492542c98c39d34407ab0e20482fe952fd92882da"
+  },
+  "test/limit_contract.py": {
+    "bytes": 2510,
+    "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "test/source-phase-oracle.json": {
+    "bytes": 440,
+    "sha256": "0473087cf318e2af1e9b9f8315870295b0ce69ac8980b809757ed9c155a43ded"
+  },
+  "test/fixture.py": {
+    "bytes": 373,
+    "sha256": "35b4c74b78efb4c3ec23a154ef60b62c82bda02a46afc1f269d51badec508f70"
+  },
+  "test/validate.py": {
+    "bytes": 4524,
+    "sha256": "62fd45cc0174c622d6eab292cfc67bb0112f6e03515ee04dc645a3417bd1aea2"
+  },
+  "test/runtime-observer.py": {
+    "bytes": 6916,
+    "sha256": "6fe318c78a8156012e4e44f78f59d5c1760a6f1fdfe4600aef87e861ba0331ca"
+  },
+  "test/ops.py": {
+    "bytes": 2996,
+    "sha256": "5540d789c4952ebfa9ade34d974a18a8bf4306087fe2154aa879dc196a978892"
+  },
+  "test/REPORT.md": {
+    "bytes": 2306,
+    "sha256": "2e998e21f54e462ccd0f86ff57648f65014190cd10bb4691498c1d7f3bbf6f02"
+  },
+  "test/runtime-canonical.json": {
+    "bytes": 21214,
+    "sha256": "7dde3991fd90324fccf9d9fb164cd76e088ba47578d22dcfef440265cad78f87"
+  },
+  "test/raw-manifest.json": {
+    "bytes": 3638,
+    "sha256": "8d40fedca971ee99e5c2428b9f492da022e666069ff15dd279fbc38ca22ad3f6"
+  },
+  "test/raw/guest-result.json": {
+    "bytes": 17992,
+    "sha256": "77227f2f40701624dd805ab6dc2176b14bd2d2df9ac2b114b26801efb3bf3f23"
+  },
+  "test/raw/source-phase-validation.json": {
+    "bytes": 783,
+    "sha256": "b4fbea9db6319af3255e84e735d1cdb8f858754581218402a86141b052152ab1"
+  },
+  "test/raw/guest-cli.stdout": {
+    "bytes": 1195,
+    "sha256": "3e6f73b63d9dae59d22542b070a0d006b3d854705a0a9f2c7304d2d9eaf16ef2"
+  },
+  "test/raw/quota-preflight.json": {
+    "bytes": 338,
+    "sha256": "9e807dcef053c655fa1276de938def3d9d0eeab2090110024809dac2a40f87af"
+  },
+  "test/raw/boat-identity.json": {
+    "bytes": 269,
+    "sha256": "4d3a75506a06d8b6bf7374f3c26464b8436631da9950e747cbe13e4b0cd4f7b1"
+  },
+  "test/raw/boat-create.stdout": {
+    "bytes": 571,
+    "sha256": "160026e58db7082cc6932f3b05eb3720a8bb052c165ff611674a373812785695"
+  },
+  "test/raw/guest-cli.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "test/raw/dispatch-preflight.json": {
+    "bytes": 415,
+    "sha256": "a0cc9a88a27744c074b6f7d8c0b541bab9db43f2a85674d709e90cd0f538d14d"
+  },
+  "test/raw/boat-real-cli.json": {
+    "bytes": 2959,
+    "sha256": "d18205508a6df10be292b2d99dc8b4ce4f4624ac197a8ce28e7e06577386ce7f"
+  },
+  "test/raw/boat-snapshot-stop.json": {
+    "bytes": 822,
+    "sha256": "8ff271b42689cdf9ee00b261b813c6fb06175eb9117051b99b255e6b8c9dfb0a"
+  },
+  "test/raw/guest-prelaunch.json": {
+    "bytes": 2099,
+    "sha256": "30b2b3eb3a5bbe771781cff4c46716eb3c229b4b9d4d5a5de5a9a7b078ac3fad"
+  },
+  "test/raw/boat-real-cli.stdout": {
+    "bytes": 19529,
+    "sha256": "d3a8a41f361bb03dbe52fd7c0a3355d020086a8d71022379b17df3b22a7aec08"
+  },
+  "test/raw/boat-stopped-verification.json": {
+    "bytes": 822,
+    "sha256": "cd2e21722a5de16cc1588970feae2905f6ae1ef57c89f2d05e6c6d95aff6dfe6"
+  },
+  "test/raw/boat-real-cli.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "test/raw/boat-create.json": {
+    "bytes": 2591,
+    "sha256": "4815acbb1109eae97521b62e30e05c1f381e1958a0b2798d7cfceb19493aee5f"
+  },
+  "test/raw/git-readiness.json": {
+    "bytes": 266,
+    "sha256": "e99926bf7d66efb3570f107340b46396320c748697080acab2823b74e9e45b29"
+  },
+  "test/raw/boat-stopped-verification.stdout": {
+    "bytes": 1323,
+    "sha256": "fdd11606a62c71bdecaac5b22c76a8116827f388441881cedc80d1a83349d043"
+  },
+  "test/raw/launch-configuration.json": {
+    "bytes": 5222,
+    "sha256": "82cbbe136ebf7801534e278c8d61c2092ef028faf39ebaf09a7e3af869ab7e73"
+  },
+  "test/raw/boat-snapshot-stop.stdout": {
+    "bytes": 1541,
+    "sha256": "34273d849ce7ab69d920e65f84d7ff8acf4689c37864d8306d7dc9ecd9599e69"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "mountArgv": [],
+  "intendedGuestMountFiles": [],
+  "canonicalParser": "No guest-runner mount argv; same empty mount configuration as supplied shortpath receipt. Boat --file arguments are separate filename=value fields, never comma lists.",
+  "fileArgv": [
+    "boat",
+    "new",
+    "--ttl",
+    "1800",
+    "--name",
+    "toyvm-rename-samepath-runtime-oct29",
+    "--json",
+    "--file",
+    "/tmp/tvrs/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py=/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--file",
+    "/tmp/tvrs/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py=/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "--file",
+    "/tmp/tvrs/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py=/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "--file",
+    "/tmp/tvrs/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py=/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "--file",
+    "/tmp/tvrs/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py=/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+    "--file",
+    "/tmp/tvrs/fixture.py=/tmp/toyvm-rename-samepath-runtime-oct29/fixture.py",
+    "--file",
+    "/tmp/tvrs/runtime-observer.py=/tmp/toyvm-rename-samepath-runtime-oct29/runtime-observer.py",
+    "--file",
+    "/tmp/tvrs/cancellation.json=/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+    "--file",
+    "/tmp/tvrs/source-phase-oracle.json=/tmp/toyvm-rename-samepath-runtime-oct29/source-phase-oracle.json",
+    "--file",
+    "/tmp/tvrs/dispatch.json=/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-samepath-runtime-oct29-dispatch.json"
+  ],
+  "files": {
+    "/tmp/tvrs/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "local": "/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "/tmp/tvrs/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "local": "/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "/tmp/tvrs/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "local": "/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "/tmp/tvrs/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "local": "/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "/tmp/tvrs/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "local": "/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "/tmp/tvrs/fixture.py": {
+      "local": "/tmp/toyvm-rename-samepath-runtime-oct29/fixture.py",
+      "bytes": 373,
+      "sha256": "35b4c74b78efb4c3ec23a154ef60b62c82bda02a46afc1f269d51badec508f70"
+    },
+    "/tmp/tvrs/runtime-observer.py": {
+      "local": "/tmp/toyvm-rename-samepath-runtime-oct29/runtime-observer.py",
+      "bytes": 6916,
+      "sha256": "6fe318c78a8156012e4e44f78f59d5c1760a6f1fdfe4600aef87e861ba0331ca"
+    },
+    "/tmp/tvrs/cancellation.json": {
+      "local": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+      "bytes": 12946,
+      "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+    },
+    "/tmp/tvrs/source-phase-oracle.json": {
+      "local": "/tmp/toyvm-rename-samepath-runtime-oct29/source-phase-oracle.json",
+      "bytes": 440,
+      "sha256": "0473087cf318e2af1e9b9f8315870295b0ce69ac8980b809757ed9c155a43ded"
+    },
+    "/tmp/tvrs/dispatch.json": {
+      "local": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-samepath-runtime-oct29-dispatch.json",
+      "bytes": 4019,
+      "sha256": "860509af4b1a43875c409e96cdd85202721a6393af52f42a8e136905c5f6dfcb"
+    }
+  },
+  "trustedGitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "browserAllowanceUnspent": true
+}

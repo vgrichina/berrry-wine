@@ -1,0 +1,20 @@
+{
+  "eventId": "worker-completion:01a18625-4bcc-7bf1-b9c3-7d1e212f9061",
+  "reviewedAt": "2026-10-29T05:37:05.595830+00:00",
+  "outcome": "SCOPED_ACTUAL_RUNTIME_ACCEPTED",
+  "commit": "6cf18d270c053bf65af79dd5b02aeafd1891b163",
+  "remoteRef": "refs/heads/task/toyvm-rename-samepath-runtime-oct29",
+  "remoteVerified": true,
+  "canonical": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-samepath-runtime-oct29/retained-evidence/test/runtime-canonical.json",
+  "canonicalPin": {
+    "bytes": 21214,
+    "sha256": "7dde3991fd90324fccf9d9fb164cd76e088ba47578d22dcfef440265cad78f87"
+  },
+  "boat": "bx_h4faubeu",
+  "actualStoppedVerified": true,
+  "stoppedAt": "2026-10-29T05:34:09.218Z",
+  "snapshotVerifiedAt": "2026-10-29T05:34:09.182Z",
+  "incident": "Git reported ignored deeply nested alternate stores; all review, commit, push and exact remote verification operations exited0. No object-store repair attempted.",
+  "nextTask": "toyvm-rename-samepath-runtime-independent-accept-oct29",
+  "sourceUnchanged": true
+}

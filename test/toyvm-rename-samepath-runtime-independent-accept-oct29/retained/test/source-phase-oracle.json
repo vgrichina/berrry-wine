@@ -1,0 +1,14 @@
+{
+  "case": "same-directory same-name rename no-op",
+  "postReap": {
+    "live": 12288,
+    "peak": 12288,
+    "written": 0,
+    "inodes": 3,
+    "openHandles": 0
+  },
+  "cliExit": 0,
+  "accepted": true,
+  "guard": "same-path return before destination replacement",
+  "inferenceOnly": "Metadata arithmetic and guard ordering are source inference; final counters and fixture namespace observations are measured only after actual runtime."
+}

@@ -1,0 +1,5 @@
+{"event":"created","hostedPorts":null,"id":"bx_h4faubeu","org":null,"team":null,"ttlSeconds":1800}
+{"event":"state","id":"bx_h4faubeu","state":"starting"}
+{"event":"state","id":"bx_h4faubeu","state":"cloning"}
+{"event":"state","id":"bx_h4faubeu","state":"ready"}
+{"archiveAfter":"2026-10-29T06:03:31.190Z","commands":{"forward":"boat forward bx_h4faubeu --remote 3000 --local 3000","ssh":"boat ssh bx_h4faubeu"},"desktopUrl":null,"event":"ready","id":"bx_h4faubeu","ip":"2001:41d0:1004:3894:100::3d","state":"ready","url":"https://box-node-d0cac421f18508f2.on.boat.dev"}

@@ -1,0 +1,26 @@
+{
+  "task": "toyvm-rename-samepath-runtime-oct29",
+  "at": "2026-10-29T05:35:26.719683+00:00",
+  "outcome": "PASS one actual unmodified production CLI/FUSE invocation; same-path rename preserved directory inode identities at quota",
+  "commit": "6cf18d270c053bf65af79dd5b02aeafd1891b163",
+  "ref": "refs/heads/task/toyvm-rename-samepath-runtime-oct29",
+  "remoteVerified": true,
+  "canonical": "/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-rename-samepath-runtime-oct29/runtime-canonical.json",
+  "report": "/tmp/toyvm-rename-samepath-runtime-oct29/repo/test/toyvm-rename-samepath-runtime-oct29/REPORT.md",
+  "evidence": "/tmp/toyvm-rename-samepath-runtime-oct29/e",
+  "boat": {
+    "id": "bx_h4faubeu",
+    "state": "stopped",
+    "snapshotAvailable": true,
+    "snapshotVerifiedAt": "2026-10-29T05:34:09.182Z",
+    "actualStoppedAt": "2026-10-29T05:34:09.218Z",
+    "originalExpiry": "2026-10-29T06:03:31.190Z",
+    "earlierDispatchOuterDeadline": "2026-10-29T05:59:42Z"
+  },
+  "remainingGates": [
+    "Coordinator review/integration only; no main/public deployment",
+    "Backend callback execution was not observed; kernel may short-circuit same-path rename"
+  ],
+  "publicationDiagnostics": "Git reported ignored deeply nested alternate stores; all review, commit, push and exact remote verification operations exited0. No object-store repair attempted.",
+  "messageboard": "Coordinator append requested; worker did not write root/donor Git or oversized messageboard"
+}

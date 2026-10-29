@@ -1,0 +1,11 @@
+# Same-directory same-name rename at quota
+
+PASS: one invocation of the unmodified production CLI/FUSE closure at candidate `5a88ca099b962e946160afd2d4d71a950bf46db3`. The pinned fixture called `os.rename(E, E)` successfully at the 12,288-byte live quota, preserving directory inode identities D=2 and E=3. The exact fixture, observer and source-phase oracle are retained beside this report.
+
+The CLI exited 0 and accepted=true. Filesystem live=peak=12288, written=0, inodes=3 and openHandles=0; filesystem failure and stopReason were null. Both cleanupComplete flags were true. All three sampled PID/start identities were absent or reused after reaping, the production owned-identity subset matched observer samples, and no FUSE mount remained. No external safety cleanup ran. Source hashes remained unchanged. See runtime-canonical.json for the actual argv, executable pins, process samples and receipts.
+
+This proves the observed namespace/inode and quota behavior for this fixture. The same-path backend guard was established by the reused source-phase checks; the kernel may short-circuit same-path rename. No backend rename callback execution is claimed. There was no broader regression replay, browser invocation or second production invocation.
+
+The supervisor was run directly with original inherited DATA hard infinity, parent soft128 MiB, Python child128 MiB and Git-only256 MiB. Per-operation host disk/memory admission remained in effect under the transferred24 MiB allocation. Launch configuration records the exact file staging argv; no guest-runner filename-bearing mount argv exists for this Python/FUSE case. API exec verified all staged pins at /tmp/tvrs before invoking the observer; the observer recorded actual Python/FUSE executable identities. No Node startup configuration applied.
+
+Boat bx_h4faubeu was created with TTL1800 and actual original expiry2026-10-29T06:03:31.190Z; the dispatch outer deadline05:59:42Z was earlier. Delegated snapshot-stop completed: snapshot verified2026-10-29T05:34:09.182Z; actual stopped2026-10-29T05:34:09.218Z, independently confirmed by API info. The stopped snapshot preserves the remote tree. No main or public deployment occurred. Remaining integration gate: coordinator review; direct backend callback coverage is outside this observed case.

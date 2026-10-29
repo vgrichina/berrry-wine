@@ -1,0 +1,76 @@
+{
+  "outcome": "INDEPENDENT_SCOPED_ACCEPTANCE_PASS",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "predecessor": "6cf18d270c053bf65af79dd5b02aeafd1891b163",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "canonicalPin": {
+    "bytes": 21214,
+    "sha256": "7dde3991fd90324fccf9d9fb164cd76e088ba47578d22dcfef440265cad78f87"
+  },
+  "anchors": {
+    "dispatch.json": "2b36c60b10a2aa320462273a7197c7f20bd2bafcc1b00a5eb7658fde382147f2",
+    "retained/manifest.json": "9ee01de50d98f2d24919cd1f50ead3d9497a15a919018b176b741aa517d5ed56",
+    "retained/test/raw-manifest.json": "8d40fedca971ee99e5c2428b9f492da022e666069ff15dd279fbc38ca22ad3f6",
+    "prelaunch-controls.json": "e7899166477ada0da71bf6976f3d33389906c17c29e28f5999662a2d72a74cf5"
+  },
+  "retainedProductionBoundary": true,
+  "controls": {
+    "stale-identity": "REJECTED",
+    "changed-start-identity": "REJECTED",
+    "missing-marker": "REJECTED",
+    "wrong-counter": "REJECTED",
+    "changed-argv": "REJECTED",
+    "changed-source-after": "REJECTED",
+    "changed-source-before": "REJECTED",
+    "changed-executable": "REJECTED",
+    "cleanup-incomplete": "REJECTED",
+    "mount-remains": "REJECTED",
+    "external-safety-cleanup": "REJECTED",
+    "missing-source-guard": "REJECTED",
+    "late-source-guard": "REJECTED"
+  },
+  "controlsPassed": 13,
+  "measuredPostReap": {
+    "live": 12288,
+    "peak": 12288,
+    "written": 0,
+    "inodes": 3,
+    "openHandles": 0
+  },
+  "sourceInference": "root+D+E: 3*4096=12288; same-path return precedes replacement, link decrement, collection and source pop",
+  "backendCallbackExecution": "UNPROVEN: kernel may short-circuit same-path rename",
+  "newRuntimeInvocations": 0,
+  "boat": "bx_h4faubeu",
+  "boatState": "snapshot-stopped",
+  "stoppedAt": "2026-10-29T05:34:09.218Z",
+  "originalExpiry": "2026-10-29T06:03:31.190Z",
+  "lifecycleOperations": 0,
+  "alternateStoreWarning": "Git reported ignored deeply nested alternate stores; all review, commit, push and exact remote verification operations exited0. No object-store repair attempted.",
+  "limitations": [
+    "Retained evidence acceptance only",
+    "No browser/gameplay/general resource acceptance",
+    "No direct backend callback coverage",
+    "Coordinator integration review remains"
+  ]
+}
