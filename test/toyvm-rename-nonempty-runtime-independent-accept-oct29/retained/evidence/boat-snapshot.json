@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "snapshot",
+    "bx_th7j9v6r",
+    "toyvm-rename-nonempty-runtime-oct29",
+    "--json",
+    "--no-update"
+  ],
+  "cwd": "/tmp/toyvm-rename-nonempty-runtime-oct29/repo",
+  "exit": 0,
+  "elapsed": 12.324576667044312,
+  "admission": {
+    "free": 4542283776,
+    "MemAvailable": 3292397568,
+    "allocated": 2433024,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 173,
+  "stderrBytes": 0
+}

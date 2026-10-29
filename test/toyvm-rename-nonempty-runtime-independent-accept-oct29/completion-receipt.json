@@ -1,0 +1,20 @@
+{
+  "eventId": "worker-completion:01a18625-4c50-7d12-b5fb-d1c48fd35479",
+  "reviewedAt": "2026-10-29T05:37:47.555443+00:00",
+  "outcome": "SCOPED_ACTUAL_RUNTIME_ACCEPTED",
+  "commit": "250946ccb975bb9ea6a6a16c5093d67598614bb6",
+  "remoteRef": "refs/heads/task/toyvm-rename-nonempty-runtime-oct29",
+  "remoteVerified": true,
+  "canonical": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-nonempty-runtime-oct29/retained-evidence/test/runtime-canonical.json",
+  "canonicalPin": {
+    "bytes": 1866,
+    "sha256": "b263d6fe5f95ca7544db51b13504ace846f0d11e800f4964338b6f545db62b4c"
+  },
+  "boat": "bx_th7j9v6r",
+  "actualStoppedVerified": true,
+  "stoppedAt": "2026-10-29T05:34:53.158Z",
+  "snapshotVerifiedAt": "2026-10-29T05:34:52.082Z",
+  "incident": null,
+  "nextTask": "toyvm-rename-nonempty-runtime-independent-accept-oct29",
+  "sourceUnchanged": true
+}

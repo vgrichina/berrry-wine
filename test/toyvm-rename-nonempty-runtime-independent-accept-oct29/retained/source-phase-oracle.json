@@ -1,0 +1,14 @@
+{
+  "case": "rename over nonempty directory rejection",
+  "postReap": {
+    "live": 20480,
+    "peak": 20480,
+    "written": 0,
+    "inodes": 5,
+    "openHandles": 0
+  },
+  "cliExit": 0,
+  "accepted": true,
+  "guard": "nonempty destination ENOTEMPTY before links/collection/destination assignment",
+  "inferenceOnly": "Metadata arithmetic and guard ordering are source inference; final counters and fixture namespace observations are measured only after actual runtime."
+}

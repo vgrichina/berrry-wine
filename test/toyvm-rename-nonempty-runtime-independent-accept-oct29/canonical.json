@@ -1,0 +1,154 @@
+{
+  "task": "toyvm-rename-nonempty-runtime-independent-accept-oct29",
+  "outcome": "SCOPED_RETAINED_RUNTIME_ACCEPTED",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "predecessorCommit": "250946ccb975bb9ea6a6a16c5093d67598614bb6",
+  "replayInvocations": 0,
+  "retainedProductionInvocations": 1,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "rawManifestPin": {
+    "bytes": 4567,
+    "sha256": "39ba8616780e5a56d0430d4fff0ddbeee814ac7ab6d97d5d2e93a8abcdf70232"
+  },
+  "cliExit": 0,
+  "accepted": true,
+  "fixture": {
+    "checkpoint": "rename-nonempty-preserved",
+    "directoryInodes": {
+      "/tmp/tvrn/w/domain/D": 2,
+      "/tmp/tvrn/w/domain/D/S": 3,
+      "/tmp/tvrn/w/domain/D/T": 4,
+      "/tmp/tvrn/w/domain/D/T/E": 5
+    },
+    "errno": 39,
+    "nodesPreserved": true
+  },
+  "postReapMeasuredCounters": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 8192,
+    "inodes": 5,
+    "live": 20480,
+    "liveLimit": 20480,
+    "openHandles": 0,
+    "operations": 42,
+    "peak": 20480,
+    "writeLimit": 65536,
+    "written": 0
+  },
+  "controls": {
+    "stale-identity": "REJECTED",
+    "wrong-start-identity": "REJECTED",
+    "missing-marker": "REJECTED",
+    "wrong-errno": "REJECTED",
+    "changed-inode": "REJECTED",
+    "nodes-not-preserved": "REJECTED",
+    "wrong-counter": "REJECTED",
+    "missing-counter": "REJECTED",
+    "wrong-argv": "REJECTED",
+    "changed-source-before": "REJECTED",
+    "changed-source-after": "REJECTED",
+    "changed-executable": "REJECTED",
+    "cleanup-incomplete": "REJECTED",
+    "failed-unmount": "REJECTED",
+    "remaining-mount": "REJECTED",
+    "external-cleanup": "REJECTED",
+    "filesystem-failure": "REJECTED",
+    "stop-reason": "REJECTED",
+    "missing-source-guard": "REJECTED",
+    "late-source-guard": "REJECTED"
+  },
+  "sourceGuardBeforeLinkDecrementCollectionDestinationAssignment": true,
+  "sourceArithmeticInference": "root + D + S + T + E = 5 * 4096 = 20480; not phase counters",
+  "backendCallbackExecution": "UNPROVEN; syscall errno39 and preservation do not establish callback entry",
+  "executablePins": {
+    "/usr/bin/fusermount3": {
+      "bytes": 39296,
+      "realpath": "/usr/bin/fusermount3",
+      "sha256": "d278775c1528dd32efc85c2cb322423ee93aa8dcf76aaa595f7022d427910704"
+    },
+    "/usr/bin/python3": {
+      "bytes": 8020928,
+      "realpath": "/usr/bin/python3.12",
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    }
+  },
+  "exactArgv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvrn/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvrn/cancellation.json",
+    "--work",
+    "/tmp/tvrn/w",
+    "--live-limit",
+    "20480",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "8192",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "2",
+    "--wall-limit",
+    "5",
+    "--output-limit",
+    "4096",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os,stat,errno,json\nD='/tmp/tvrn/w/domain/D';S=D+'/S';T=D+'/T';E=T+'/E'\nfor x in (D,S,T,E):os.mkdir(x)\nbefore={x:os.stat(x).st_ino for x in (D,S,T,E)}\ntry:\n os.rename(S,T)\nexcept OSError as error:\n assert error.errno==errno.ENOTEMPTY,(error.errno,str(error))\n observed_errno=error.errno\nelse:\n raise AssertionError('nonempty destination replaced')\nfor x in (D,S,T,E):\n current=os.stat(x);assert stat.S_ISDIR(current.st_mode) and current.st_ino==before[x]\nprint(json.dumps(dict(checkpoint='rename-nonempty-preserved',errno=observed_errno,directoryInodes=before,nodesPreserved=True),sort_keys=True),flush=True)\n"
+  ],
+  "boat": {
+    "id": "bx_th7j9v6r",
+    "state": "stopped",
+    "expiry": "2026-10-29T06:03:17.123Z",
+    "stoppedAt": "2026-10-29T05:34:53.158Z",
+    "snapshotVerifiedAt": "2026-10-29T05:34:52.082Z",
+    "snapshotEvents": [
+      {
+        "event": "saving",
+        "name": "toyvm-rename-nonempty-runtime-oct29",
+        "sandboxId": "bx_th7j9v6r"
+      },
+      {
+        "event": "saved",
+        "name": "toyvm-rename-nonempty-runtime-oct29",
+        "sizeBytes": 6389760
+      }
+    ],
+    "stoppedArchiveAfter": null
+  },
+  "limitations": [
+    "Source guard ordering is source inference; runtime observed errno and namespace preservation do not instrument the callback.",
+    "No browser/gameplay/general-resource qualification; browser allowance unchanged.",
+    "RSS and process identities are sampled; no claim of exhaustive transient process observation.",
+    "Retained evidence only; no runtime replay or new Boat.",
+    "Git alternate-store nesting warnings retained; no alternate stores repaired."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "PASS": true,
+  "importSafe": true,
+  "unchangedDATA": [
+    134217728,
+    134217728
+  ],
+  "controls": {
+    "omitted": "REJECTED BEFORE SPAWN",
+    "root": "REJECTED BEFORE SPAWN",
+    "donor": "REJECTED BEFORE SPAWN"
+  },
+  "aggregateAdmission": {
+    "free": 4513214464,
+    "forecast": 150994944,
+    "floor": 3200253952,
+    "aggregate": 176160768,
+    "positiveWALOnce": true
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "task": "toyvm-rename-nonempty-runtime-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "objectStores": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-nonempty-runtime-oct29-object-stores.json",
+  "admission": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-nonempty-runtime-oct29-admission.json",
+  "originalCancellationReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+  "originalCancellationReceiptPin": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "previousVerifiedReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-directory-metadata-runtime-independent-accept-oct29/retained-evidence/completion-receipt.json",
+  "previousRuntimeCases": "Distinct rename namespace-preservation case, not prior overwrite/rename-file/open-handle cases.",
+  "runtimeScope": "toyvm-rename-nonempty-runtime-oct29",
+  "box": {
+    "newOnly": true,
+    "ttlSeconds": 1800,
+    "cutoffUTC": "2026-10-29T05:52:44Z",
+    "handbackUTC": "2026-10-29T05:54:44Z",
+    "shutdownUTC": "2026-10-29T05:56:44Z",
+    "shutdownOwner": "coordinator delegates snapshot-stop and actual stopped verification before handback; earlier actual expiry wins"
+  },
+  "noMain": true,
+  "limitModule": "/tmp/toyvm-rename-nonempty-runtime-oct29/limit_contract.py",
+  "limitModulePin": {
+    "bytes": 2510,
+    "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "ownedRepo": "/tmp/toyvm-rename-nonempty-runtime-oct29/repo",
+  "quotaPreflight": "/tmp/toyvm-rename-nonempty-runtime-oct29/quota-preflight.json",
+  "gitReadiness": "/tmp/toyvm-rename-nonempty-runtime-oct29/git-readiness.json",
+  "previousVerifiedReceiptPin": {
+    "bytes": 756,
+    "sha256": "77763d6bf0f1475459c7fcb52ee967d17a1a25c8ce8c2d34b610ad57fe55fb82"
+  },
+  "runtimeFixture": "/tmp/toyvm-rename-nonempty-runtime-oct29/fixture.py",
+  "runtimeFixturePin": {
+    "bytes": 615,
+    "sha256": "64c7073960d5fa92909897cf6cf8ad82c1716db8b0d88af512f3b670acdec044"
+  },
+  "runtimeObserver": "/tmp/toyvm-rename-nonempty-runtime-oct29/runtime-observer.py",
+  "runtimeObserverPin": {
+    "bytes": 6957,
+    "sha256": "a898818e474d6d861c13dc985cefb6248f233eafd4b6b4c53c188df0e9233b3a"
+  },
+  "remoteWork": "/tmp/tvrn/w",
+  "remoteSocket": "/tmp/tvrn/w/status.sock",
+  "socketPathBytes": 23,
+  "sourcePhaseOracle": "/tmp/toyvm-rename-nonempty-runtime-oct29/source-phase-oracle.json",
+  "sourcePhaseOraclePin": {
+    "bytes": 473,
+    "sha256": "c7bf3619a79740b17c3f69640c1457a5c0f285df1db65e2d06d01410a819f82f"
+  },
+  "taskSupervisor": "/tmp/toyvm-rename-nonempty-runtime-oct29/ops.py",
+  "taskSupervisorPin": {
+    "bytes": 2996,
+    "sha256": "5540d789c4952ebfa9ade34d974a18a8bf4306087fe2154aa879dc196a978892"
+  },
+  "validationScript": "/tmp/toyvm-rename-nonempty-runtime-oct29/validate.py",
+  "validationScriptPin": {
+    "bytes": 4554,
+    "sha256": "43459ca7f06dcb413ff359c0c0fff20fd8b76eabd3e52b2d208929ca948c323f"
+  }
+}

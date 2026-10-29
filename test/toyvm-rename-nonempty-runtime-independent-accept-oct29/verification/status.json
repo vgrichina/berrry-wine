@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-rename-nonempty-runtime-independent-accept-oct29/repo",
+    "status",
+    "--short"
+  ],
+  "cwd": "/tmp/toyvm-rename-nonempty-runtime-independent-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.050009519094601274,
+  "admission": {
+    "free": 4518756352,
+    "MemAvailable": 3209281536,
+    "allocated": 2158592,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 0,
+  "stderrBytes": 3933
+}

@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-rename-nonempty-runtime-independent-accept-oct29/repo",
+    "diff",
+    "--exit-code",
+    "5a88ca099b962e946160afd2d4d71a950bf46db3",
+    "--",
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py"
+  ],
+  "cwd": "/tmp/toyvm-rename-nonempty-runtime-independent-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.04936966602690518,
+  "admission": {
+    "free": 4513976320,
+    "MemAvailable": 3309498368,
+    "allocated": 2453504,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 0,
+  "stderrBytes": 3933
+}
