@@ -1,0 +1,1 @@
+{"PASS": true, "decision": "PASS_SCOPED_RENAME_CHARGE_LIFETIME", "artifacts": 21, "newInvocations": 0, "scope": "retained source and runtime; no general resource claim"}

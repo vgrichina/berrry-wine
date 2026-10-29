@@ -1,0 +1,34 @@
+{
+  "phases": [
+    {
+      "phase": "root",
+      "live": 4096,
+      "written": 0
+    },
+    {
+      "phase": "directory-D",
+      "live": 8192,
+      "written": 0
+    },
+    {
+      "phase": "empty-file-D/A",
+      "live": 12288,
+      "written": 0
+    },
+    {
+      "phase": "directory-D/E-would-require",
+      "live": 16384,
+      "written": 0
+    }
+  ],
+  "rejectionBefore": "new inode insertion and parent directory entry mutation",
+  "postReap": {
+    "live": 12288,
+    "peak": 12288,
+    "written": 0,
+    "inodes": 3,
+    "openHandles": 0
+  },
+  "reason": "filesystem allocation limit",
+  "inference": "4096 metadata per inode including directories; next4096 exceeds12288; no payload writes or perfile gate"
+}

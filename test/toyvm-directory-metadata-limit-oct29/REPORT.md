@@ -1,0 +1,17 @@
+# Directory metadata live-quota acceptance
+
+PASS for one unmodified production CLI invocation on candidate `5a88ca099b962e946160afd2d4d71a950bf46db3`.
+
+The fixture created directory D and empty file D/A, verified their types, emitted `before-directory-metadata-over-budget`, and attempted directory D/E. The CLI exited 1 with accepted=false and the exact filesystem allocation limit reason. Post-reap counters were live=peak=12288, written=0, inodes=3, openHandles=0. The observed owned PID/start identities were reaped, FUSE disconnected, and production source hashes stayed unchanged. No external safety cleanup ran.
+
+The independently preserved prelaunch oracle assigns 4096 metadata bytes to each inode including directories: root 4096; D 8192; empty D/A 12288; D/E would require 16384. Source inspection establishes the quota charge before inode insertion and parent entry mutation. No payload writes or per-file failure were needed. This source arithmetic and the retained runtime agree; runtime counters are post-reap, not instantaneous rejection-time observations. Direct errno was not observed.
+
+Exactly one production invocation used live=12288, write=65536, file=8192, RSS=134217728, CPU=2, wall=5, output=4096 with absolute domain paths. The immutable observer used the supplied gate. Source-phase oracle and structure checks preceded runtime. `accept.py` revalidates retained evidence without launching the CLI/backend and applies only negative report controls to the immutable gate. Those controls do not constitute runtime acceptance. An initial validation-helper globals/locals error was corrected and that source-only check passed; production was not repeated.
+
+Five production pins, fixture, observer, dispatch and original cancellation receipt were the only staged inputs. Remote executable hashes were independently recorded before invocation and matched the observer. Socket path is UTF-8 23 bytes, below 108, with no NUL. No guest filename-mount argv was present; the exact empty guest-mount receipt was reused. The original previous acceptance receipt and all 23 listed artifacts were independently pinned and checked without new invocation.
+
+Local controls retained parent DATA soft128 with original infinite hard limit; ordinary Python children hard128 and Git alone hard256. CPU90, wall120, file12MiB, capture2MiB, parentRSS128/groupRSS512 supervision and aggregate admission were retained. Task disk allocation remains 24MiB (source/Git3, evidence1, WAL8, publication3, uncertainty9); no limit was waived. No Node, browser, or gameplay was run. Browser allowance remains CPU35.353183/wall101.495550694/capture1; no general resource claim follows.
+
+Task-owned Boat bx_489jsaq6 was created with TTL1800 and expiry05:43:31.559Z; earlier cutoff05:40Z applied. Explicit lifecycle delegation was exercised: preservation completed, stop completed at05:14:14.679Z, actual stopped state and snapshot verified05:14:14.624Z were checked through supported API. No SSH was used for runtime.
+
+Evidence: runtime-canonical.json (bounded outcome), runtime-raw.json (observer samples and raw production report), prelaunch.json (actual argv/pins), source-phase.json and source-phase-oracle.json (prelaunch inference), lifecycle.json (actual stopped/snapshot). External raw API envelopes and resource-operation receipts remain in the owned task evidence directory with manifest. Publication is task branch only; no main merge or public deployment.

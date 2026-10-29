@@ -1,0 +1,70 @@
+{
+  "previous-receipt-validation.json": {
+    "bytes": 169,
+    "sha256": "69c3d3606a8d46cf501de5175089dc28bbe8a70a2f86e4161452e57b3a781ccb"
+  },
+  "accept.py": {
+    "bytes": 3639,
+    "sha256": "c5f0368b9b0577b7b56d18ab35fa780056c73a0aa5303b45b6289c16de1b9d6a"
+  },
+  "limit_contract.py": {
+    "bytes": 2510,
+    "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "source-phase.json": {
+    "bytes": 2124,
+    "sha256": "adead53790f4d65f191a4ac645421a7c8858f75766e2f0eda41a0e51f2a19380"
+  },
+  "lifecycle.json": {
+    "bytes": 575,
+    "sha256": "80707bc1df17f9b6c584cbd34f4f9f11dbc0b85ce922fac2eb844f072cfc0fed"
+  },
+  "acceptance-result.json": {
+    "bytes": 155,
+    "sha256": "2ac3699fa6b591273ba023cf4f254d3c056360fe7c2f859a807577f074a415fb"
+  },
+  "runtime-raw.json": {
+    "bytes": 27589,
+    "sha256": "e5af33af3203b0012572612073f99a44931ae74f735ea1d610d816f01dd20527"
+  },
+  "source-phase-oracle.json": {
+    "bytes": 723,
+    "sha256": "6cb5d4a0347144df08cef61d854bf7521aedc3be38e838e2075536de45180aab"
+  },
+  "raw-evidence-manifest.json": {
+    "bytes": 5933,
+    "sha256": "6a29d0b4c695670be5750026a2c0ecd05abcf5a63fa0257723aaf3dd03f0e0af"
+  },
+  "dispatch.json": {
+    "bytes": 3486,
+    "sha256": "3d773a6ebeafa2f48065de993af84f2fd1cf6bd094829086902233dfd45281b4"
+  },
+  "fixture.py": {
+    "bytes": 499,
+    "sha256": "7b452a24219520c527283883861e9c31b48edf83d3aae82d07b7566bcbedd222"
+  },
+  "runtime-observer.py": {
+    "bytes": 6849,
+    "sha256": "c7907a27d5841c08f808c17fb720dcb0b65b63e98d6704f890a7c6875dbac345"
+  },
+  "REPORT.md": {
+    "bytes": 3455,
+    "sha256": "52754db506a6d840c3d6d4096f30e4ba0396cf27d2ea4575d87c66edf650c83a"
+  },
+  "runtime-canonical.json": {
+    "bytes": 3288,
+    "sha256": "8aed67477c0e0663773c0303c27a5b47b8dbd1d44ac55af17e80f052bc82b663"
+  },
+  "limit-selftest.json": {
+    "bytes": 469,
+    "sha256": "44cac7c7e2852c4266ca54dcd6240fc03a76568556bbe43aac1ebac31da49283"
+  },
+  "prelaunch.json": {
+    "bytes": 2225,
+    "sha256": "dda3bbe7e834f8d7219252a5752a4fa9a1f72b4250dbc9bbf60891e47cad6af2"
+  },
+  "launch-configuration.json": {
+    "bytes": 1340,
+    "sha256": "97aee5aace435eb3a679590f6d9afb108574a9ac91c5994cd61f48106d311e5b"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "cutoff": "2026-10-29T05:40:00Z",
+  "expiryAtCreation": "2026-10-29T05:43:31.559Z",
+  "id": "bx_489jsaq6",
+  "shutdownDelegated": true,
+  "snapshotAvailable": true,
+  "snapshotCompletedAt": "2026-10-29T05:14:14.624Z",
+  "snapshotVerifiedAt": "2026-10-29T05:14:14.624Z",
+  "state": "stopped",
+  "stop": {
+    "endedAt": "2026-10-29T05:14:14.679Z",
+    "error": null,
+    "forced": false,
+    "id": "stop_c3efd95f92ad1940",
+    "lastAttemptAt": "2026-10-29T05:14:14.679Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "stoppedAt": "2026-10-29T05:14:14.658Z"
+}
