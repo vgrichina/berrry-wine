@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "exec",
+    "bx_nsk7cdtr",
+    "--cwd",
+    "/tmp/tvsp/repo",
+    "--timeout",
+    "30",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os,json,pathlib,hashlib; r=pathlib.Path('/tmp/tvsp'); d=json.loads((r/'dispatch.json').read_text()); pairs=[('fixture.py','runtimeFixturePin'),('runtime-observer.py','runtimeObserverPin'),('cancellation.json','originalCancellationReceiptPin')]; assert all(dict(bytes=len((r/n).read_bytes()),sha256=hashlib.sha256((r/n).read_bytes()).hexdigest())==d[k] for n,k in pairs); sock=d['remoteSocket'].encode('utf-8'); assert len(sock)==23 and len(sock)<108 and b'\\0' not in sock; os.execv('/usr/bin/python3',['/usr/bin/python3','-B','/tmp/tvsp/runtime-observer.py'])"
+  ],
+  "cwd": "/tmp/toyvm-sparse-supervised-offset-live-charge-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.3866317451465875,
+  "admission": {
+    "free": 4569481216,
+    "MemAvailable": 3570503680,
+    "allocated": 2289664,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 23441,
+  "stderrBytes": 0
+}

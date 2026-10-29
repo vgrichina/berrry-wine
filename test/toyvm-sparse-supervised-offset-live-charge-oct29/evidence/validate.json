@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/toyvm-sparse-supervised-offset-live-charge-oct29/validate.py"
+  ],
+  "cwd": "/tmp/toyvm-sparse-supervised-offset-live-charge-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.12862674403004348,
+  "admission": {
+    "free": 4574629888,
+    "MemAvailable": 3230326784,
+    "allocated": 2195456,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 457,
+  "stderrBytes": 0
+}

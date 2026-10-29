@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "exec",
+    "bx_nsk7cdtr",
+    "--cwd",
+    "/tmp/tvsp/repo",
+    "--timeout",
+    "30",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os,json,pathlib,hashlib; r=pathlib.Path('/tmp/tvsp'); d=json.loads((r/'dispatch.json').read_text()); pairs=[('fixture.py','runtimeFixturePin'),('runtime-observer.py','runtimeObserverPin'),('cancellation.json','originalCancellationReceiptPin')]; assert all(dict(bytes=len((r/n).read_bytes()),sha256=hashlib.sha256((r/n).read_bytes()).hexdigest())==d[k] for n,k in pairs); sock=d['remoteSocket'].encode('utf-8'); assert len(sock)==23 and len(sock)<108 and b'\\0' not in sock; os.execv('/usr/bin/python3',['/usr/bin/python3','-B','/tmp/tvsp/runtime-observer.py'])"
+  ],
+  "expiry": "2026-10-29T05:50:03.297Z",
+  "productionInvocationAuthorized": 1
+}

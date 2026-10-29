@@ -1,0 +1,76 @@
+{
+  "PASS": true,
+  "noRuntime": true,
+  "oracle": {
+    "phases": [
+      {
+        "phase": "root",
+        "live": 4096,
+        "written": 0
+      },
+      {
+        "phase": "empty-linked-A",
+        "live": 8192,
+        "written": 0
+      },
+      {
+        "phase": "pwrite-offset8191-one-byte-would-require",
+        "live": 16384,
+        "written": 1
+      }
+    ],
+    "rejectionBefore": "resize allocation/data mutation/cumulative write increment",
+    "postReap": {
+      "live": 8192,
+      "peak": 8192,
+      "written": 0,
+      "inodes": 2,
+      "openHandles": 0
+    },
+    "reason": "filesystem allocation limit",
+    "inference": "dense payload rounded to8192 plus root4096+A metadata4096; allocation16384 exceeds12288; perfile8192 and write65536 do not bind"
+  },
+  "sourceOrdering": true,
+  "controls": {
+    "missing-marker": "rejected offline by exact gate",
+    "wrong-reason": "rejected offline by exact gate",
+    "forged-accepted": "rejected offline by exact gate",
+    "wrong-counter": "rejected offline by exact gate",
+    "missing-identity": "rejected offline by exact gate",
+    "invalid-budget": "rejected by independently checked source predicate",
+    "allocation-before-mutation-deviation": "rejected by source ordering check"
+  },
+  "scope": "offline source/arithmetic/boolean gate controls only; no mocked runtime acceptance",
+  "previousReceipt": {
+    "outcome": "BLOCKED_BEFORE_RUNTIME",
+    "productionInvocations": 0,
+    "reason": "Task validation wrapper called configure_parent() in ordinary Python child with DATA hard128; immutable helper rejected; no retry.",
+    "commit": "7e1d9a0a5fee9382cab5bdc2c70ef78792bdc997",
+    "remoteRef": "refs/heads/task/toyvm-sparse-offset-live-charge-oct29",
+    "remoteSHA": "7e1d9a0a5fee9382cab5bdc2c70ef78792bdc997",
+    "pushVerified": true,
+    "box": null,
+    "state": "NOT_CREATED",
+    "expiry": null,
+    "snapshotStop": "NOT_APPLICABLE_NO_BOX",
+    "canonical": "/tmp/toyvm-sparse-offset-live-charge-oct29/repo/test/toyvm-sparse-offset-live-charge-oct29/runtime-canonical.json",
+    "evidence": "/home/user/wine-assembly/scratch/usage-watch/toyvm-sparse-offset-live-charge-oct29/retained-evidence",
+    "sourceUnchanged": true,
+    "controls": "Automated source/gate controls not reached; no acceptance claim.",
+    "publicationLimitations": [
+      "Existing recursive alternate-store warnings were retained; Git operations returned0.",
+      "Commit explicitly set core.hooksPath=/dev/null; no hook validation claim."
+    ],
+    "completionAt": "2026-10-29T05:14:34.448527+00:00"
+  },
+  "admission": {
+    "freeBytes": 4574629888,
+    "MemAvailable": 3221311488,
+    "allocated": 2195456,
+    "childDATA": [
+      134217728,
+      134217728
+    ],
+    "noSupervisorInitialization": true
+  }
+}

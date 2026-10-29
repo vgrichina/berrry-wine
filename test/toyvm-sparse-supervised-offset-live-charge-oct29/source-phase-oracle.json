@@ -1,0 +1,29 @@
+{
+  "phases": [
+    {
+      "phase": "root",
+      "live": 4096,
+      "written": 0
+    },
+    {
+      "phase": "empty-linked-A",
+      "live": 8192,
+      "written": 0
+    },
+    {
+      "phase": "pwrite-offset8191-one-byte-would-require",
+      "live": 16384,
+      "written": 1
+    }
+  ],
+  "rejectionBefore": "resize allocation/data mutation/cumulative write increment",
+  "postReap": {
+    "live": 8192,
+    "peak": 8192,
+    "written": 0,
+    "inodes": 2,
+    "openHandles": 0
+  },
+  "reason": "filesystem allocation limit",
+  "inference": "dense payload rounded to8192 plus root4096+A metadata4096; allocation16384 exceeds12288; perfile8192 and write65536 do not bind"
+}

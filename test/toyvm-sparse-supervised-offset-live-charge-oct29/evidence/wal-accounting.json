@@ -1,0 +1,57 @@
+{
+  "baseline": {
+    "/home/user/.codex/memories_1.sqlite-wal": {
+      "logical": 0,
+      "allocated": 0
+    },
+    "/home/user/.codex/logs_2.sqlite-wal": {
+      "logical": 12244672,
+      "allocated": 12251136
+    },
+    "/home/user/.codex/queue_1.sqlite-wal": {
+      "logical": 4152992,
+      "allocated": 4157440
+    },
+    "/home/user/.codex/goals_1.sqlite-wal": {
+      "logical": 0,
+      "allocated": 0
+    },
+    "/home/user/.codex/state_5.sqlite-wal": {
+      "logical": 4527912,
+      "allocated": 4534272
+    },
+    "/home/user/.codex/thread_history_1.sqlite-wal": {
+      "logical": 4326032,
+      "allocated": 4329472
+    }
+  },
+  "current": {
+    "/home/user/.codex/memories_1.sqlite-wal": {
+      "logical": 0,
+      "allocated": 0
+    },
+    "/home/user/.codex/logs_2.sqlite-wal": {
+      "logical": 12244672,
+      "allocated": 12251136
+    },
+    "/home/user/.codex/queue_1.sqlite-wal": {
+      "logical": 4152992,
+      "allocated": 4157440
+    },
+    "/home/user/.codex/goals_1.sqlite-wal": {
+      "logical": 0,
+      "allocated": 0
+    },
+    "/home/user/.codex/state_5.sqlite-wal": {
+      "logical": 4527912,
+      "allocated": 4534272
+    },
+    "/home/user/.codex/thread_history_1.sqlite-wal": {
+      "logical": 4326032,
+      "allocated": 4329472
+    }
+  },
+  "positiveGrowthCountedOnce": 0,
+  "limit": 8388608,
+  "limitation": "Baseline begins before task Boat creation, not before launcher startup; shared WAL attribution is conservative."
+}
