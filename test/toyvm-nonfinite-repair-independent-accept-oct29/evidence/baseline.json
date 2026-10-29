@@ -1,0 +1,64 @@
+{
+  "admission": {
+    "MemAvailable": 2494574592,
+    "PASS": true,
+    "admissionSHA256": "185ce18aa5371243e3bf24e90ad255440ebd63ad3a6e66a561f0800eee7a8b18",
+    "aggregate": 176160768,
+    "at": "2026-10-29T03:02:08.854164+00:00",
+    "blockSize": 4096,
+    "device": 64769,
+    "evidence": {
+      "allocated": 0,
+      "logical": 0
+    },
+    "f_bavail": 1200875,
+    "freeBytes": 4918784000,
+    "operation": "initial",
+    "projection": {
+      "aggregateFutureGrowth": 176160768,
+      "floor": 2982150144,
+      "positiveSharedWALGrowthCountedOnce": 0,
+      "remainingTaskAllocation": 24620097,
+      "sessionBytes": 480191,
+      "taskAllocated": 65536,
+      "taskLogical": 49582,
+      "uncertaintyAndHeadroom": 67108864
+    }
+  },
+  "allocationBytes": 25165824,
+  "at": "2026-10-29T03:02:08.852541+00:00",
+  "inheritedLimits": {
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      12582912,
+      12582912
+    ],
+    "2": [
+      134217728,
+      134217728
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "initialSharedWALBaseline": {
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/state_5.sqlite-wal": 4235392,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  },
+  "mountArgv": [],
+  "mountFiles": [],
+  "mountParserRequired": false,
+  "mountReason": "No mounts or guest invocation; empty argv",
+  "positiveGrowthCountedOnce": true,
+  "session": "01a18599-2473-7413-b864-d0d8e345f20a",
+  "sessionPath": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-59-28-01a18599-2473-7413-b864-d0d8e345f20a.jsonl",
+  "trustedGitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

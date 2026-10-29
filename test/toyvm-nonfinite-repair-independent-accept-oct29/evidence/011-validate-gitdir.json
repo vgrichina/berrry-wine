@@ -1,0 +1,59 @@
+{
+  "admission": {
+    "MemAvailable": 3508383744,
+    "PASS": true,
+    "admissionSHA256": "185ce18aa5371243e3bf24e90ad255440ebd63ad3a6e66a561f0800eee7a8b18",
+    "aggregate": 176160768,
+    "at": "2026-10-29T03:02:43.432269+00:00",
+    "blockSize": 4096,
+    "device": 64769,
+    "evidence": {
+      "allocated": 90112,
+      "logical": 19472
+    },
+    "f_bavail": 1200773,
+    "freeBytes": 4918366208,
+    "operation": "validate-gitdir",
+    "projection": {
+      "aggregateFutureGrowth": 176160768,
+      "floor": 2982150144,
+      "positiveSharedWALGrowthCountedOnce": 0,
+      "remainingTaskAllocation": 24420860,
+      "sessionBytes": 507396,
+      "taskAllocated": 237568,
+      "taskLogical": 96077,
+      "uncertaintyAndHeadroom": 67108864
+    }
+  },
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-nonfinite-repair-independent-accept-oct29/repo",
+    "rev-parse",
+    "--absolute-git-dir"
+  ],
+  "cleanupComplete": true,
+  "cwd": "/tmp/toyvm-nonfinite-repair-independent-accept-oct29/repo",
+  "exit": 0,
+  "failure": null,
+  "limits": {
+    "CPU": 90,
+    "DATA": 268435456,
+    "capture": 2097152,
+    "file": 12582912,
+    "groupPhysicalRSS": 536870912,
+    "physicalRSS": 134217728,
+    "wall": 120
+  },
+  "observedPIDs": [
+    2348792
+  ],
+  "peakGroupPhysicalRSS": 18743296,
+  "peakProcessPhysicalRSS": 0,
+  "procSamples": 2,
+  "remainingGroup": [],
+  "stderr": "011-validate-gitdir.stderr",
+  "stdout": "011-validate-gitdir.stdout",
+  "supervisorPhysicalRSS": 18743296,
+  "wallSeconds": 0.01119145192205906
+}

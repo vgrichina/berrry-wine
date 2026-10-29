@@ -1,0 +1,30 @@
+{
+  "PASS": true,
+  "expectedAcceptanceExit": 2,
+  "mutantExit": 0,
+  "mutantResult": {
+    "PASS": true,
+    "actualExit": 0,
+    "decision": {
+      "accepted": true,
+      "accountingAccepted": true,
+      "childSucceeded": true,
+      "cleanupComplete": true,
+      "failures": [],
+      "offlineValidationOnly": true,
+      "runtimeQualified": false,
+      "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+    },
+    "expectedExit": 0,
+    "inputBytes": 364,
+    "inputSHA256": "0a1537b8c35ac1379d7e4b028b47a1ba0656e692163ccf7b909d1ed08fffa11e",
+    "mutant": true,
+    "name": "restored-old-parser",
+    "sourceSHA256": "66dd97f54297f28cdfc38fcb40221a979ab3e9bbf2cbbb3a0d085cec24f937b0"
+  },
+  "mutantSHA256": "66dd97f54297f28cdfc38fcb40221a979ab3e9bbf2cbbb3a0d085cec24f937b0",
+  "oracleRejectsMutant": true,
+  "reproducerSHA256": "0a1537b8c35ac1379d7e4b028b47a1ba0656e692163ccf7b909d1ed08fffa11e",
+  "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7",
+  "transformation": "Remove exactly , parse_float=finite_float once"
+}

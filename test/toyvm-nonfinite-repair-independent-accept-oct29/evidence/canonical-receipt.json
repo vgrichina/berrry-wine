@@ -1,0 +1,84 @@
+{
+  "aggregate": 176160768,
+  "allocationBytes": 25165824,
+  "allocationRetainedThroughCoordinatorCloseout": true,
+  "candidate": "ebc6b453612ccab0dc9492341b014585d036b0b7",
+  "cleanup": {
+    "behavioralCLIProcessGroupsEmpty": true,
+    "fixturesRemoved": true,
+    "runtimeUsed": false,
+    "testBox": null
+  },
+  "evidenceUsageBeforeCanonical": {
+    "allocated": 397312,
+    "logical": 124248
+  },
+  "incidents": [
+    "wrapper-incident.json",
+    "FIRST-PUBLICATION-GUARD-INCIDENT.json"
+  ],
+  "lifecycleOwner": "coordinator",
+  "liveCLIFUSEBrowserGap": "OPEN",
+  "messageboardDeliveryOwner": "coordinator",
+  "offlineValidationOnly": true,
+  "pins": {
+    "test/toyvm-nonfinite-repair-independent-accept-oct29/REPORT.md": {
+      "bytes": 3349,
+      "sha256": "e3490cc9e2f709941590daded261da4f1710e5dcbb290ea8d3ad026ec3d4320b"
+    },
+    "test/toyvm-nonfinite-repair-independent-accept-oct29/acceptance_run.py": {
+      "bytes": 9325,
+      "sha256": "b71ccfbc3943f594e2d1e3b28f6827f9175116bc6bf4255356a285d1bca38243"
+    },
+    "test/toyvm-nonfinite-repair-independent-accept-oct29/acceptance_supervisor.py": {
+      "bytes": 9724,
+      "sha256": "9e43f3263e12f8185b4fd83c1035862b4f7723042b1b98c33b9c6322320ef2d6"
+    },
+    "test/toyvm-nonfinite-repair-independent-accept-oct29/evidence/FIRST-PUBLICATION-GUARD-INCIDENT.json": {
+      "bytes": 2042,
+      "sha256": "16dfce2b0c7f02bb4b8ea20442c5a7e5fcaa43d4874a5b67c3a1b2d0582d8c03"
+    },
+    "test/toyvm-nonfinite-repair-independent-accept-oct29/evidence/acceptance-checkpoint.json": {
+      "bytes": 1079,
+      "sha256": "b07caa85ff09a78f6ae61caad999393917dc825ccebe23fe1899fa7ddf9a82fb"
+    },
+    "test/toyvm-nonfinite-repair-independent-accept-oct29/evidence/delta-results.json": {
+      "bytes": 9769,
+      "sha256": "5f3213b991a33877c27dac54400e8ede9ec0ed3353460afff6f0664f3fef5849"
+    },
+    "test/toyvm-nonfinite-repair-independent-accept-oct29/evidence/mutation-verdict.json": {
+      "bytes": 1115,
+      "sha256": "6039c303329db6cfbebb5028494a8178e69dbcc688cc1dd3bd04471a7598d9d2"
+    },
+    "test/toyvm-nonfinite-repair-independent-accept-oct29/evidence/source-and-reuse.json": {
+      "bytes": 2415,
+      "sha256": "f7a078950b25bb74b646bf8d3e6cb740310f768cd8c84b66a607fbe65708d6d4"
+    },
+    "test/toyvm-nonfinite-repair-independent-accept-oct29/unchanged-reproducer.json": {
+      "bytes": 364,
+      "sha256": "0a1537b8c35ac1379d7e4b028b47a1ba0656e692163ccf7b909d1ed08fffa11e"
+    }
+  },
+  "publication": {
+    "branch": "task/toyvm-nonfinite-repair-independent-accept-oct29",
+    "mainPushed": false,
+    "newCommit": null,
+    "pushed": false,
+    "remoteVerification": null
+  },
+  "runtimeQualified": false,
+  "session": "01a18599-2473-7413-b864-d0d8e345f20a",
+  "sessionPath": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-59-28-01a18599-2473-7413-b864-d0d8e345f20a.jsonl",
+  "status": "ACCEPTANCE_PASS_PUBLICATION_BLOCKED_FIRST_GUARD_REJECTION",
+  "task": "toyvm-nonfinite-repair-independent-accept-oct29",
+  "taskUsageBeforeCanonical": {
+    "allocated": 2596864,
+    "logical": 2224970
+  },
+  "tests": {
+    "allPassed": true,
+    "mutationKilled": true,
+    "newRealCLIChecks": 14,
+    "prior53and72and52Reused": true
+  }
+}

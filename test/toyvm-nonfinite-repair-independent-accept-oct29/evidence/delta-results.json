@@ -1,0 +1,269 @@
+{
+  "candidate": "ebc6b453612ccab0dc9492341b014585d036b0b7",
+  "records": [
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputBytes": 364,
+      "inputSHA256": "0a1537b8c35ac1379d7e4b028b47a1ba0656e692163ccf7b909d1ed08fffa11e",
+      "mutant": false,
+      "name": "unchanged-overflow-reproducer",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputBytes": 345,
+      "inputSHA256": "6abe1e7832c7058c608c00bccc322fb83cbc830129bdc65cab84b671282a6445",
+      "mutant": false,
+      "name": "legitimate-control",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 1,
+      "decision": {
+        "accepted": false,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": false,
+        "failures": [
+          "cleanup not established"
+        ],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 1,
+      "inputBytes": 349,
+      "inputSHA256": "a95a799ab350361a9c1867d137146f51868230711b89596cc081e6368c069c63",
+      "mutant": false,
+      "name": "original-boolean-cleanup",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputBytes": 1048576,
+      "inputSHA256": "fb533bef134e00891faee190f2b959c5969b5543e2328af2bc28657c7b91e986",
+      "mutant": false,
+      "name": "exact-input-size",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputBytes": 1048577,
+      "inputSHA256": "4376cb32dd2458d70632729c617d78a2a9de9ac3ebb88bf87ad98e614a60f0a7",
+      "mutant": false,
+      "name": "over-input-size",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputBytes": 345,
+      "inputSHA256": "6abe1e7832c7058c608c00bccc322fb83cbc830129bdc65cab84b671282a6445",
+      "mutant": false,
+      "name": "finite-limit-cpu_limit",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputBytes": 345,
+      "inputSHA256": "6abe1e7832c7058c608c00bccc322fb83cbc830129bdc65cab84b671282a6445",
+      "mutant": false,
+      "name": "nonfinite-limit-cpu_limit",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputBytes": 345,
+      "inputSHA256": "6abe1e7832c7058c608c00bccc322fb83cbc830129bdc65cab84b671282a6445",
+      "mutant": false,
+      "name": "finite-limit-wall_limit",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputBytes": 345,
+      "inputSHA256": "6abe1e7832c7058c608c00bccc322fb83cbc830129bdc65cab84b671282a6445",
+      "mutant": false,
+      "name": "nonfinite-limit-wall_limit",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputBytes": 384,
+      "inputSHA256": "e5f268b2d0fcad85c0c090c02d3961957e2030426d8bfa4479e5d14b8a585781",
+      "mutant": false,
+      "name": "nested-uppercase-plus",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputBytes": 390,
+      "inputSHA256": "3a938f4cf5fb51400296e6999245e5828b5bd6191378648356c78a9b7d21fb75",
+      "mutant": false,
+      "name": "nested-negative-rounded-overflow",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputBytes": 385,
+      "inputSHA256": "87233b5a4dd93da373ef7a57c149d682bacc7dca4ce62df1d8e1b69aa56a3089",
+      "mutant": false,
+      "name": "nested-negative-zero-extreme-exponent",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputBytes": 421,
+      "inputSHA256": "ead3bdb67f755b4310124ca647655621cdffcd4132f6eaac961014dcd35e153a",
+      "mutant": false,
+      "name": "nested-finite-subnormal",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputBytes": 364,
+      "inputSHA256": "0a1537b8c35ac1379d7e4b028b47a1ba0656e692163ccf7b909d1ed08fffa11e",
+      "mutant": true,
+      "name": "restored-old-parser",
+      "sourceSHA256": "66dd97f54297f28cdfc38fcb40221a979ab3e9bbf2cbbb3a0d085cec24f937b0"
+    }
+  ]
+}
