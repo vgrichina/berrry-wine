@@ -1,0 +1,197 @@
+{
+  "status": "PASS",
+  "candidate": "8f3c4ab0d9d59bf7f065a8d56ec92e7ea1ac0c93",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "fd87f1a4c211d70daf60b2b201cf2f7b3665b1dc7b631de66baa263c491cac77"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "artifacts": {
+    "test/toyvm-final-accepted-components-candidate-oct29/accepted-pair-receipt.json": {
+      "bytes": 20614,
+      "sha256": "c87b5aa661cb1d3bd1b1637e63a80820df84d466203435e3f2fa89c76c41fdea"
+    },
+    "test/toyvm-final-accepted-components-candidate-oct29/artifact-pins.json": {
+      "bytes": 1859,
+      "sha256": "714a35f44facb04dd574f791b996d9491187057e678395087c98abb4922647de"
+    },
+    "test/toyvm-final-accepted-components-candidate-oct29/provenance.json": {
+      "bytes": 7044,
+      "sha256": "604c9c7aa4c2452799f3c3fe561b553303c746c5639a2077220445bd3012941a"
+    },
+    "test/toyvm-final-accepted-components-candidate-oct29/accepted-wire-receipt.json": {
+      "bytes": 11983,
+      "sha256": "3be7665a12f6550cba274848aeb7bc18ce7a4cb531c19d8bef6ded240dc4b03d"
+    },
+    "test/toyvm-final-accepted-components-candidate-oct29/focused-operation.json": {
+      "bytes": 3277,
+      "sha256": "f33e021145e2a4c588c561327f5b6aafc79848f61e15986608e86135b01d4a2a"
+    },
+    "test/toyvm-final-accepted-components-candidate-oct29/composition.py": {
+      "bytes": 8080,
+      "sha256": "6be38bd9c8d39be3ea4c257b62a56da37dc333adfcf8d2d25c9b7c641ba40b42"
+    },
+    "test/toyvm-final-accepted-components-candidate-oct29/accepted-transitive-receipt.json": {
+      "bytes": 34382,
+      "sha256": "a2aaec5de190c8bdf905230b9ee0e49c9b42b9cc30dc049775b38168d7f158e2"
+    },
+    "test/toyvm-final-accepted-components-candidate-oct29/REPORT.md": {
+      "bytes": 3207,
+      "sha256": "365a563fd315c046031aa592c64513ed129396abd7f04f7a10dc649b5360572e"
+    },
+    "test/toyvm-final-accepted-components-candidate-oct29/baseline-caller.py": {
+      "bytes": 8392,
+      "sha256": "bcc2ea9b51d3f4857b0fa9fd7ee67dee506c14e52ac07ae5eb5211058c981470"
+    },
+    "test/toyvm-final-accepted-components-candidate-oct29/accepted-adapter.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-final-accepted-components-candidate-oct29/results.json": {
+      "bytes": 2650,
+      "sha256": "07fe9aed8524f48a853efb321ebd2ac09037aa81150ed4a5de14339c7f3b8c49"
+    }
+  },
+  "canonicalCandidateReceipt": {
+    "bytes": 30387,
+    "sha256": "e0441567fc09b88646e4d02df478628ae421f34da3c212450fb4171013956804"
+  },
+  "sourceClosureGitBlobs": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": "22707d652a3580ed3a3030cb838c099fc9f279a4",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": "8764b548402401ef60904f01d36c1792ee675c57",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": "63c83a9eb3365f6da9b079239ce05bdef78a7a86",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": "cb81b6918c2d4fed74ba8ce441927c903d6ddaae",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": "6c4f83b48bb4c3f9245af76469af835180c0ebfb"
+  },
+  "remote": [
+    "8f3c4ab0d9d59bf7f065a8d56ec92e7ea1ac0c93",
+    "refs/heads/task/toyvm-final-accepted-components-candidate-oct29"
+  ],
+  "callerDelta": "one adapter SHA256 pin replacement only",
+  "adapter": "byte-identical accepted donor e45f6f6d",
+  "flatObjectStores": [
+    "/tmp/toyvm-final-composition-independent-accept-oct29/donor-object-view",
+    "/tmp/toyvm-final-accepted-components-candidate-oct29/donor-object-view",
+    "/tmp/toyvm-combined-backend-caller-independent-accept-oct29/donor-object-view",
+    "/tmp/toyvm-accepted-combined-backend-caller-migration-oct29/donor-object-view",
+    "/tmp/toyvm-seven-guards-selector-independent-accept-oct29/donor-object-view",
+    "/tmp/toyvm-seven-guards-selector-combined-candidate-oct29/donor-object-view",
+    "/tmp/toyvm-selector-rename-fresh-independent-accept-oct29/donor-object-view",
+    "/tmp/toyvm-selector-rename-ready-lifetime-continuation-oct29/donor-object-view",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/0",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/1",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/2",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/3",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/4",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/5",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/6",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/7",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/8",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/9",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/10",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/11",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/12",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/13",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/14",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/15",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/16",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/17",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/18",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/19",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/20",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/21",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/22",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/23",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/24",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/25",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/26",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/27",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/28",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/29",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/30",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/31",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/32",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/33",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/34",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/35",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/36",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/37",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/38",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/39",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/40",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/41",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/42",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/43",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/44",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/45",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/46",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/47",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/48",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/49",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/50",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/51",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/52",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/53",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/54",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/55",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/56",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/57",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/58",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/59",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/60",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/61",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/62",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/63",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/64",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/65",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/66",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/67",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/68",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/69",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/70",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/71",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/72",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/73",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/74",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/75",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/76",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/77",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/78",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/79",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/80",
+    "/tmp/toyvm-selector-rename-combined-candidate-oct29/readonly-object-views/81"
+  ],
+  "launchConfiguration": {
+    "SSH": "trusted task supervisor exact GIT_SSH_COMMAND",
+    "mountArgv": [],
+    "intendedMountFiles": [],
+    "mountParser": "not applicable: no mount operation authorized or executed"
+  },
+  "retainedScope": {
+    "componentSuites": "41 caller checks and 52 backend operations retained by verified pair source/artifact identity, not replayed.",
+    "transitive": "513f22d8db9fc9b7d65d0c224b25d6439268b9e8 independently accepted adapter e45f6f6d; exact donor copied.",
+    "wire": "c2352606f65b6d7aa51d036f524b87f378620301 receipt retained byte-identically; 83 source/local serve requests and seven-request distinguishing control. Historical full backend b8201b2c differs from accepted combined 75842ffa; this task does not extend that receipt to a newly accepted final wire pair.",
+    "finalPair": "Independent final composition acceptance is a coordinator-assigned next gate."
+  },
+  "python": {
+    "bytes": 8020928,
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  }
+}

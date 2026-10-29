@@ -1,0 +1,74 @@
+{
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/verify-inputs.json": {
+    "bytes": 3817,
+    "sha256": "58f8221a09cfc826af49a10bb6cc0ec4b1ed894cd66687113db0ea2f0142f83f"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/verify-inputs.stdout": {
+    "bytes": 116,
+    "sha256": "ac5fd6ec87d8cdac670457d5304eadc55455233320313c53226fb1de9af0fb4c"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/verify-inputs.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/independent-acceptance.json": {
+    "bytes": 3812,
+    "sha256": "d6998977b53c42afb91448b6eff6b66fb746cdbaad7564cb284aba4afee6e355"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/independent-acceptance.stdout": {
+    "bytes": 131,
+    "sha256": "0af328dd606b2c70d71d2ee81155a3f65c6d7de6036ae122e9243865794415d2"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/independent-acceptance.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-source-closure.json": {
+    "bytes": 4261,
+    "sha256": "9365c9d0a92620231ea2f2661c7954ec2a6b9233a4ed223d98c7986b27b3d9a0"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-source-closure.stdout": {
+    "bytes": 604,
+    "sha256": "3a5cf3e930a94e42ead69cd2797912983773d6cf7ca7417c60ae3ae80fd58a33"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-source-closure.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-source-remote.json": {
+    "bytes": 3940,
+    "sha256": "ede5ffc62e2ce1ee70d4cddbda654cb07686c95630e03d37a32ed7308b67bd74"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-source-remote.stdout": {
+    "bytes": 105,
+    "sha256": "718d57192553fc50a77cecf12149f6127056b6e2c8292adf49af68ad97d29dcc"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-source-remote.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-identity.json": {
+    "bytes": 3914,
+    "sha256": "e62a5ccf4a2077243e407ea04ff33c8da77d12fe497fca88701c40b12f740094"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-identity.stdout": {
+    "bytes": 218,
+    "sha256": "91dee7912d83613ec83829144e574d549c91778e46f41eee63a82f8a99cb234e"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-identity.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-closure-objects.json": {
+    "bytes": 3841,
+    "sha256": "ac57250bad065431b01f7da93bb57282b8765ad1fb7d1103a5ccabc8b8d95023"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-closure-objects.stdout": {
+    "bytes": 309,
+    "sha256": "4299b52640784e2f406f539697e3d937fe698c95c118814d385cbee7688ac4b1"
+  },
+  "/tmp/toyvm-final-composition-independent-accept-oct29/e/git-closure-objects.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

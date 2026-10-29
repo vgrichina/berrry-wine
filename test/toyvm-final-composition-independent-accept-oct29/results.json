@@ -1,0 +1,166 @@
+{
+  "status": "PASS",
+  "sourcePinsBefore": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "fd87f1a4c211d70daf60b2b201cf2f7b3665b1dc7b631de66baa263c491cac77"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "loader": {
+    "returnedFunction": "accepted_accounted_adapter.supervise_accounted",
+    "adapterInvocations": 0,
+    "codeMarshalSHA256": "86c0919977d3a3b86cf0e3a9b98e41c9a49342c463cdc3b42674d740e439ee51",
+    "origin": "/tmp/toyvm-final-composition-independent-accept-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "globalsVerified": [
+      "HERE",
+      "PIN",
+      "__file__",
+      "__spec__.origin",
+      "__name__",
+      "os",
+      "subprocess"
+    ],
+    "staleCallerPin": {
+      "type": "RuntimeError",
+      "message": "accepted backend identity mismatch: toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "errno": null
+    },
+    "tamperRejectedBeforeExecution": [
+      {
+        "relative": "toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+        "error": {
+          "type": "RuntimeError",
+          "message": "accepted backend identity mismatch: toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+          "errno": null
+        },
+        "dependencyExecEvents": []
+      },
+      {
+        "relative": "toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+        "error": {
+          "type": "RuntimeError",
+          "message": "accepted backend identity mismatch: toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+          "errno": null
+        },
+        "dependencyExecEvents": []
+      },
+      {
+        "relative": "toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+        "error": {
+          "type": "RuntimeError",
+          "message": "accepted backend identity mismatch: toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+          "errno": null
+        },
+        "dependencyExecEvents": []
+      },
+      {
+        "relative": "toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+        "error": {
+          "type": "RuntimeError",
+          "message": "accepted backend identity mismatch: toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+          "errno": null
+        },
+        "dependencyExecEvents": []
+      }
+    ]
+  },
+  "wire": [
+    {
+      "case": "eof",
+      "requests": 2,
+      "exception": null,
+      "namespaceErrno": 22,
+      "ownedFD": "EBADF",
+      "borrowedTransport": "usable byte transfer",
+      "selectorAndControl": "no leaked FDs",
+      "thread": "joined"
+    },
+    {
+      "case": "malformed",
+      "requests": 1,
+      "exception": {
+        "type": "RuntimeError",
+        "message": "FUSE request truncated",
+        "errno": null
+      },
+      "namespaceErrno": null,
+      "ownedFD": "EBADF",
+      "borrowedTransport": "usable byte transfer",
+      "selectorAndControl": "no leaked FDs",
+      "thread": "joined"
+    },
+    {
+      "case": "bind collision",
+      "exception": {
+        "type": "OSError",
+        "message": "[Errno 98] Address already in use",
+        "errno": 98
+      },
+      "ownedFD": "EBADF",
+      "borrowedListener": "connect/accept/byte transfer usable",
+      "borrowedTransport": "usable byte transfer",
+      "leaks": 0
+    },
+    {
+      "case": "valid regular file epoll registration",
+      "exception": {
+        "type": "PermissionError",
+        "message": "[Errno 1] Operation not permitted",
+        "errno": 1
+      },
+      "ownedFD": "EBADF",
+      "borrowedFile": "pread/pwrite usable",
+      "leaks": 0
+    }
+  ],
+  "mutant": {
+    "change": "remove only final owned transport os.close(self.fd)",
+    "rejectedBy": "owned transport remained open",
+    "sha256": "dc96f3e87ffb0083168b86e88d5f37989c10651da6a63dd262697eb3e80651c6",
+    "cleanup": "leaked owned fd independently closed; thread joined"
+  },
+  "selector": "actual selectors.EpollSelector",
+  "behavioralChildren": 0,
+  "sourcePinsAfter": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "fd87f1a4c211d70daf60b2b201cf2f7b3665b1dc7b631de66baa263c491cac77"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "descriptorCleanup": "all fixture FDs closed; pre/post fd maps equal",
+  "remainingGates": [
+    "mounted/kernel/CLI/browser/guest/gameplay acceptance not performed"
+  ]
+}
