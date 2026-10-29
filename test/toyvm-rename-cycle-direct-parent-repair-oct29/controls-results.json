@@ -1,0 +1,61 @@
+{
+  "sourceSha256": "3b7e370fd30319fb84991c77c9456491b73a2d1b98d723ebc8cc8e2c731d8860",
+  "mutantControls": {
+    "removed": {
+      "rejected": true,
+      "failedCases": [
+        "op12:self",
+        "op12:direct-child",
+        "op12:deeper-descendant",
+        "op45:self",
+        "op45:direct-child",
+        "op45:deeper-descendant"
+      ]
+    },
+    "wrong-errno": {
+      "rejected": true,
+      "failedCases": [
+        "op12:self",
+        "op12:direct-child",
+        "op12:deeper-descendant",
+        "op45:self",
+        "op45:direct-child",
+        "op45:deeper-descendant"
+      ]
+    },
+    "late-validation": {
+      "rejected": true,
+      "failedCases": [
+        "op12:self",
+        "op12:direct-child",
+        "op12:deeper-descendant",
+        "op45:self",
+        "op45:direct-child",
+        "op45:deeper-descendant"
+      ]
+    },
+    "overblock": {
+      "rejected": true,
+      "failedCases": [
+        "op12:unrelated-sibling",
+        "op12:to-root",
+        "op12:child-to-ancestor",
+        "op45:unrelated-sibling",
+        "op45:to-root",
+        "op45:child-to-ancestor"
+      ]
+    }
+  },
+  "additionalChecks": [
+    "op12:malformed-cycle:reject-descendant",
+    "op12:malformed-cycle:allow-sibling",
+    "op12:reject-before-replacement-link-collection",
+    "op12:regular-file-move",
+    "op45:malformed-cycle:reject-descendant",
+    "op45:malformed-cycle:allow-sibling",
+    "op45:reject-before-replacement-link-collection",
+    "op45:regular-file-move"
+  ],
+  "passed": true,
+  "scope": "Direct Backend.handle only; in-memory mutants; no mounts or kernel acceptance"
+}

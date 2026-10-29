@@ -148,6 +148,16 @@ class Backend:
             source=self.nodes[ino]['names'];dest=self.nodes[newdir]['names']
             if old not in source:raise OSError(errno.ENOENT,'rename source')
             if ino==newdir and old==new:return b''
+            moved=source[old]
+            if stat.S_ISDIR(self.nodes[moved]['mode']):
+                seen=set();pending=[moved]
+                while pending:
+                    child=pending.pop()
+                    if child==newdir:raise OSError(errno.EINVAL,'rename directory cycle')
+                    if child in seen:continue
+                    seen.add(child)
+                    node=self.nodes[child]
+                    if stat.S_ISDIR(node['mode']):pending.extend(node['names'].values())
             if new in dest:
                 previous=dest[new]
                 if self.nodes[previous]['names']:raise OSError(errno.ENOTEMPTY,'replacement directory')
