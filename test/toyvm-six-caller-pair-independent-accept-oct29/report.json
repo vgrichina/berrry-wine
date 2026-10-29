@@ -1,0 +1,87 @@
+{
+  "status": "REJECT_SOURCE_LOADER_INTEGRATION",
+  "candidate": "7f64decb2bbbfc71cd925e79200dedbeaad6326e",
+  "sourcePinsBefore": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "34fa9ae603634d80be7000affb67fdb8b640c49b19bd0510b97a2f3c46d40405"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12482,
+      "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourcePinsAfter": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "34fa9ae603634d80be7000affb67fdb8b640c49b19bd0510b97a2f3c46d40405"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12482,
+      "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "acceptedSourceReceiptVerified": true,
+  "migrationExactlyOneHashEntry": true,
+  "backendGuardsAndOtherFourFilesByteIdentical": true,
+  "firstDecisiveDefect": "SourceFileLoader accepts timestamp-valid unpinned cached adapter bytecode after caller verifies only source hashes. Returned code differs from compile(accepted source), even though __file__ and co_filename name the accepted adapter.",
+  "privateCache": "/tmp/toyvm-six-caller-pair-independent-accept-oct29/fixtures/stale-bytecode/test/toyvm-kernel-profile-accounting-backend-oct28/__pycache__/supervise_accounted.cpython-312.pyc",
+  "privateCachePin": {
+    "bytes": 383,
+    "sha256": "f868a72749f4706dae8ee16862e8da399a4dddd87d656914d8d64da797255503"
+  },
+  "checkCounts": {
+    "passed": 15,
+    "mutantKilled": 1,
+    "defects": 1
+  },
+  "adapterInvoked": false,
+  "productionEdited": false,
+  "sourceContract": "No BACKEND_PINS mutation. Fresh callers derive ROOT from absolute fixture source path. sys.modules poison ignored; on-disk edits rechecked. Existing timestamp .pyc is read despite PYTHONDONTWRITEBYTECODE=1; no pyc writes by loader are needed.",
+  "independence": "New code oracle compares returned function code to compile of accepted adapter bytes; predecessor tests were hash-verified only, never run. Guard-removal private mutant was caught by the same pre-import rejection oracle.",
+  "remainingGates": [
+    "repair and independently reaccept actual loader identity boundary",
+    "actual CLI",
+    "confinement",
+    "kernel/mounted filesystem",
+    "browser"
+  ],
+  "excluded": [
+    "adapter execution",
+    "backend callbacks",
+    "child runtime",
+    "mount",
+    "Boat",
+    "main merge",
+    "SIX+RENAME candidate",
+    "selector lifetime"
+  ],
+  "reproduce": "Use exact independent-production-loader argv recorded in e/independent-production-loader.json with a new empty --fixtures directory. Expected exit 1 and stale-bytecode DEFECT; this is a diagnostic rejection, not a passing acceptance suite.",
+  "resourceControls": "Pinned ops.py and limit_contract.py; per-operation admission; parent DATA soft128/hard unchanged, Python128, Git256 child only; physical parent128/group512 MiB; CPU90 wall120 file12MiB capture2MiB terminal8192 evidence1MiB; allocation24MiB. No denial or retry.",
+  "box": null,
+  "shutdownOwner": "coordinator; no box allocated"
+}
