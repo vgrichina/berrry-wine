@@ -1,0 +1,62 @@
+{
+  "task": "toyvm-orphan-descendant-cleanup-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "dispatchSHA256": "3a4c46ff3ad83f390b0282b6ba68b45f31cf006f976d4a686d8c5731a9c22509",
+  "admissionSHA256": "c273b20c7f22e5d1325ed285921e06005bd176531ad946adbfe2dc90f7242413",
+  "result": "BLOCKED_SOURCE_CONTRACT",
+  "runtimeInvocations": 0,
+  "boat": null,
+  "sourceCleanupAcceptance": "UNQUALIFIED",
+  "wholeRunResourceControlAcceptance": false,
+  "incidents": [
+    "Initial policy-read terminal output exceeded 8192 bytes; later policy reads also truncated. Pre-supervisor reads lacked enforced runtime resource caps."
+  ],
+  "blocker": "Pinned supervise() starts SIGTERM/SIGKILL cleanup upon root exit even if reason is None. Requested orphan continuation until wall deadline is incompatible with unchanged source contract. False CLI acceptance is a source-level risk, not an observed runtime result.",
+  "sourceBoundaryLines": [
+    180,
+    192
+  ],
+  "staticASTCheck": "PASS: exit_code is not None or reason gates signal_owned",
+  "controls": {
+    "omitted": "REJECTED BEFORE SPAWN",
+    "root": "REJECTED BEFORE SPAWN",
+    "donor": "REJECTED BEFORE SPAWN",
+    "outside": "REJECTED BEFORE SPAWN"
+  },
+  "fixtureExecuted": false,
+  "unchangedPredecessorTestsReplayed": false,
+  "browserAllowanceUntouched": {
+    "cpu": 35.353183,
+    "wall": 101.495550694,
+    "captures": 1
+  },
+  "lifecycle": "No Boat created; none to stop",
+  "publication": "blocker report only; candidate not qualified",
+  "unknownControls": [
+    "pre-supervisor controls not enforced",
+    "RSS sampling does not establish between-sample peak"
+  ],
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-orphan-descendant-cleanup-oct29/root-ref-digest.json"
+}
