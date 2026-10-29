@@ -1,0 +1,101 @@
+{
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "bc674160f1c7ced2a369f7b82067891e1fe51447121db8fcd543e881f7552b58"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "canonicalReceiptPin": {
+    "bytes": 34382,
+    "sha256": "a2aaec5de190c8bdf905230b9ee0e49c9b42b9cc30dc049775b38168d7f158e2"
+  },
+  "verified": true,
+  "acceptedArtifacts": {
+    "continuation.py": {
+      "bytes": 3761,
+      "sha256": "35b4688d64ad45b6ad6c2a200c3bb7de31342f48e6c5c99247ab319980f5ee97"
+    },
+    "prior-legacy-caller-loader-control.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "verify_inputs.py": {
+      "bytes": 2850,
+      "sha256": "36e5a3534156d68cfdd5f4e358bbc8b16cbd7c177eed37163b04a894cc4c986d"
+    },
+    "fixture-pins.json": {
+      "bytes": 4369,
+      "sha256": "0f6a327adabb7e0934d660be832523dbffacf41ffe4c907dd6d1e7fff932165e"
+    },
+    "prior-completion-receipt.json": {
+      "bytes": 12886,
+      "sha256": "2fb783d4632e41c32cec0f991c6044a4adcc0cb14fde65c6a9cb1e8dd40ff843"
+    },
+    "prior-oracle.py": {
+      "bytes": 11307,
+      "sha256": "7584783f2d818433eb5a800730a9e3a9561bb41e62119709cc516d171daf11a7"
+    },
+    "prior-independent-oracle.stdout": {
+      "bytes": 3099,
+      "sha256": "966f5264e2a0cbb75c1dd0eeff8e367ff1ae9151c63b9861b95f2e0a1eaba07f"
+    },
+    "input-verification.json": {
+      "bytes": 12793,
+      "sha256": "3ede4e92f5aeeddcdf5aeb2f3cc424a554785ad26e04be553092fa5c4c15c572"
+    },
+    "provenance.json": {
+      "bytes": 2482,
+      "sha256": "78d73610a769373c047f45368421490c26d17da872352815e68ae98e6e7f4755"
+    },
+    "preflight.json": {
+      "bytes": 1825,
+      "sha256": "2ae2ef291a0d659e0bbd991e75cee44dc31fd01157a2d85867e22c049246bbb8"
+    },
+    "prior-independent-oracle.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "oracle.py": {
+      "bytes": 6022,
+      "sha256": "80bec1e9d00913ac5d9de961438dc7e23dab89b73c16b85fd2f2db635eb7f907"
+    },
+    "REPORT.md": {
+      "bytes": 3642,
+      "sha256": "c195bbbd7f4be4c9097ce5ae8445c6dfe08507e91fd43b8be8f36d6319d4720f"
+    },
+    "prior-diagnose-control-identity.stdout": {
+      "bytes": 112,
+      "sha256": "54ba48727ee3deb7a9cb7a1ddd2b662f3aa6dcd7058ecd69dc9cf85ec2c86881"
+    },
+    "prior-legacy-caller-loader-control.stderr": {
+      "bytes": 138,
+      "sha256": "082125b2986dd9c4101830075298774e21b83098c4df147e62edc3552e763725"
+    },
+    "prior-results.json": {
+      "bytes": 4376,
+      "sha256": "e1bcfb6767df364d3ee1b9802a1d054077e85e81a412dea7b992296b24422dae"
+    },
+    "results.json": {
+      "bytes": 8251,
+      "sha256": "403759b691bc51f529216d07402226691999dcdc06d45e8f21ee67c9aaaf5243"
+    }
+  },
+  "mountConfiguration": "No mount argv or mount execution exists in this local-wire fixture",
+  "trustedSSH": "Exact coordinator-provided GIT_SSH_COMMAND is set by pinned ops.py"
+}
