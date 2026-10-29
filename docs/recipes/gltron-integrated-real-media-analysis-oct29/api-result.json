@@ -1,0 +1,69 @@
+{
+  "PASS": true,
+  "sourceSHA256": "aa7d8c7668a6ea466f2099bb1966d8f725ed660c47fcf961826e35f9c19be53d",
+  "modules": 11,
+  "unresolved": [],
+  "inventoryCount": 92,
+  "inventoryBytes": 4968893,
+  "pairSHA256": {
+    "inventory.json": "0f5c45647ac8d26104d01d4e052913382aaa9d73a3c6bc31339529a60508b341",
+    "closure.json": "179270655ca581ba88ebc56f0eeef8dec01ac7fd0e8143b8a1f8ecf8f14db135"
+  },
+  "realObjdumpLogs": [
+    {
+      "name": "MSVCR70.dll.objdump.txt",
+      "bytes": 264349,
+      "sha256": "8fb00917e2910fb40e298635c0dcee23a30592427817502223274bfc0cdb6803"
+    },
+    {
+      "name": "SDL.dll.objdump.txt",
+      "bytes": 175667,
+      "sha256": "9a9c9c12e24d35d222572f7e7a2c740e32bdb2da1f0a0028db8db37c1aa14486"
+    },
+    {
+      "name": "gltron.exe.objdump.txt",
+      "bytes": 9875,
+      "sha256": "7e943f2f27a84945e03c14abcad2f398907bda8bc5a0ab26bb90f758ad04eb2d"
+    },
+    {
+      "name": "libpng.dll.objdump.txt",
+      "bytes": 44419,
+      "sha256": "14e62e6b299645169ccf2f54a02f1c536cc73058a05d52a18cb4481b9bd7f61e"
+    },
+    {
+      "name": "mikmod.dll.objdump.txt",
+      "bytes": 326405,
+      "sha256": "5b590385a8674c3605374a4e2a4fce8466fb644098337db863c7e19a484cc9e6"
+    },
+    {
+      "name": "ogg.dll.objdump.txt",
+      "bytes": 32672,
+      "sha256": "7102d71d7be10d5fa42f718186840e3bde943b5c51b1ceba241b36578724cdf4"
+    },
+    {
+      "name": "sdl_sound.dll.objdump.txt",
+      "bytes": 299278,
+      "sha256": "a15a0c89fcc08eacf6a2f5b3cbdca6f457199149dcd3311687c9a3c15dc8437b"
+    },
+    {
+      "name": "smpeg.dll.objdump.txt",
+      "bytes": 63842,
+      "sha256": "6ef55a52da7bfb28897b84642969faebbd29c1378499750416d5dfe300707afa"
+    },
+    {
+      "name": "vorbis.dll.objdump.txt",
+      "bytes": 35989,
+      "sha256": "3ca79c3b30f0436c42a9b689365f95654b219ccbaee925d6da287030a427068c"
+    },
+    {
+      "name": "vorbisfile.dll.objdump.txt",
+      "bytes": 9517,
+      "sha256": "819cb79b36c74ce7f6d2ec0988431c2263803460a9d853d765735327fa4931e4"
+    },
+    {
+      "name": "zlib.dll.objdump.txt",
+      "bytes": 16352,
+      "sha256": "9f2025a159b1863ec54e73ec1230d002ed1d51713938bae10a715bdb258f2eb6"
+    }
+  ]
+}

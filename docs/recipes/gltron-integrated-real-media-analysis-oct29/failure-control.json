@@ -1,0 +1,8 @@
+{
+  "PASS": true,
+  "error": "invalid DOS header",
+  "boundary": "valid inventory -> actual pe_machine rejection",
+  "changedBytes": 2,
+  "priorPairPreserved": true,
+  "sourceSHA256": "aa7d8c7668a6ea466f2099bb1966d8f725ed660c47fcf961826e35f9c19be53d"
+}

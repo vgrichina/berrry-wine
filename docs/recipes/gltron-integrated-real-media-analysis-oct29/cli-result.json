@@ -1,0 +1,8 @@
+{
+  "PASS": true,
+  "pairedSameGeneration": true,
+  "pairSHA256": {
+    "inventory.json": "0f5c45647ac8d26104d01d4e052913382aaa9d73a3c6bc31339529a60508b341",
+    "closure.json": "179270655ca581ba88ebc56f0eeef8dec01ac7fd0e8143b8a1f8ecf8f14db135"
+  }
+}

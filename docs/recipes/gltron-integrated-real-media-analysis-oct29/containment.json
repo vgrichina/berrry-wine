@@ -1,0 +1,10 @@
+{
+  "rejected": [
+    "/",
+    "/home/user/wine-assembly",
+    "/tmp/tuxracer-accepted-lexical-current-main-integration-oct29/repo/tools/recovery/gltron-original-win32-recovery-oct28.py",
+    "/tmp",
+    "omitted"
+  ],
+  "sentinelAbsent": true
+}
