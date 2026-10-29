@@ -1,0 +1,17 @@
+{
+  "freeBytes": 4558004224,
+  "device": 64769,
+  "f_bavail": 1112794,
+  "blockSize": 4096,
+  "ownedAllocated": 2351104,
+  "positiveWALGrowthCountedOnce": true,
+  "WALAllocatedCurrent": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4534272,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4329472
+  },
+  "limitation": "No independently measured launcher-startup WAL baseline. Existing transferred aggregate reservation retains WAL8MiB and uncertainty9MiB; do not infer startup compliance from this snapshot."
+}

@@ -1,0 +1,186 @@
+{
+  "limit_contract.py": {
+    "bytes": 2510,
+    "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "actual-stopped.json": {
+    "bytes": 1550,
+    "sha256": "a4f851153851cb8be382b7ffe31c184d96a28acb4b1a4c8a3fe084676054e02f"
+  },
+  "git-remote-verify.stdout": {
+    "bytes": 106,
+    "sha256": "7acfcc48b9f143dca2c58876a24673dc1f986c37b0e0977e3f6a66ce4b69c6d2"
+  },
+  "git-push.json": {
+    "bytes": 966,
+    "sha256": "ca235fcdf7b4ea99b877596c62ed6ae1c14175dcfb61fcd7d09fa0ffc825bd2e"
+  },
+  "git-commit.stderr": {
+    "bytes": 7106,
+    "sha256": "eed50c55d2cefae6a5d3de129711f5f3ff21358cb0f931199022d67638879195"
+  },
+  "messageboard-note.txt": {
+    "bytes": 1129,
+    "sha256": "cbb695e607cbdbbb9d92e8f0a64830dc9552377e18baf55350fccd0493e788d2"
+  },
+  "git-review.stdout": {
+    "bytes": 2013,
+    "sha256": "3fcac3f694777ffe9936d22e35314e30e74d12d27dc4fa7d62341615f9b26f9f"
+  },
+  "git-commit.json": {
+    "bytes": 953,
+    "sha256": "4aa549e8cdb905292bbbf7c8bfbc375b579f5dde5e64f737ac437539c55f2312"
+  },
+  "git-remote-verify.json": {
+    "bytes": 985,
+    "sha256": "eb640fe4caf2dcae69b1cad9006da4bc2df5c2a092ddf25e4cf2e5e0bf8db08c"
+  },
+  "closeout.py": {
+    "bytes": 3458,
+    "sha256": "f2e2fb56a27d8cc685acf280681a68ea92f00ae086206594497e730cd930b336"
+  },
+  "validate.py": {
+    "bytes": 4904,
+    "sha256": "537ef7c3a6fd860a6b7340fab925fbff5c9369e20d935f83769920bfe9b8ad65"
+  },
+  "prepare-report.py": {
+    "bytes": 8897,
+    "sha256": "10a813323bdda7fc1f439dbe4c7a0b7e8efe7e0a84cda96edf79cfae9b4a7559"
+  },
+  "ops.py": {
+    "bytes": 2996,
+    "sha256": "5540d789c4952ebfa9ade34d974a18a8bf4306087fe2154aa879dc196a978892"
+  },
+  "git-push.stderr": {
+    "bytes": 7628,
+    "sha256": "cb53d229578b36f3d1cf55853c04bb0078693fdaee1fdbd915d01330081b614a"
+  },
+  "completion-receipt.json": {
+    "bytes": 1483,
+    "sha256": "0e22dd85668262f18e63c114cb49550045a00b3ac40637482ba4c0f61d7475ac"
+  },
+  "git-whitespace.json": {
+    "bytes": 909,
+    "sha256": "916b94fbdb0f8423e28ac345c7c7d6711fe407cad00b9de9d44244910289a228"
+  },
+  "test/source-phase-oracle.json": {
+    "bytes": 678,
+    "sha256": "1d2683311e9e3aa294d10a52dab7a51c9b66e2836ceb1b7da8b055063354af29"
+  },
+  "test/fixture.py": {
+    "bytes": 294,
+    "sha256": "eeab8ed22f87dfbbb9e8a6d2837640625286747940aea71b42f0d790a88bef8a"
+  },
+  "test/manifest.json": {
+    "bytes": 4051,
+    "sha256": "5137043a71ba1902fcf9f5b1ba9daf6c6fc3a372c37b9f9d7bf4419d8fa43c41"
+  },
+  "test/runtime-observer.py": {
+    "bytes": 6836,
+    "sha256": "994d7110efd93d5bc623869ac51a5bdd7b3cc966a884568d356f759b1edaee27"
+  },
+  "test/REPORT.md": {
+    "bytes": 3753,
+    "sha256": "18adc90f4ee4deb1d8f4f81f0076cf15219b6b70a3f56134c862547a60f32b09"
+  },
+  "test/runtime-canonical.json": {
+    "bytes": 3865,
+    "sha256": "f74ea59876675ff85d66f776eff03aae0a027b49abae7ff4c075097c57c9af3a"
+  },
+  "test/evidence/launch-config.json": {
+    "bytes": 5138,
+    "sha256": "94f6676d6fb7f5ef1c4b0818ecefe6ed76eaefce71d5b25c03f3b0aff28e27e9"
+  },
+  "test/evidence/wal-accounting.json": {
+    "bytes": 1477,
+    "sha256": "3b14f8b7826da98eee5b97f36ae22e838d5870e3b337e03b240591276f119b4b"
+  },
+  "test/evidence/runtime.json": {
+    "bytes": 1544,
+    "sha256": "4b18b8335d188487304a338e218608ecd9df4b0d62f99c7cad7b62beafad5806"
+  },
+  "test/evidence/previous-blocked-incident.json": {
+    "bytes": 1151,
+    "sha256": "1da23522ff045efddae06c418130992cadc5e485e4291771977ab8fea8dc8302"
+  },
+  "test/evidence/source-phase-validation.json": {
+    "bytes": 2788,
+    "sha256": "393f84a62547da71372da572baeebd9b777ab32825a632c92f2ebeac198b6381"
+  },
+  "test/evidence/actual-stopped.json": {
+    "bytes": 1550,
+    "sha256": "a4f851153851cb8be382b7ffe31c184d96a28acb4b1a4c8a3fe084676054e02f"
+  },
+  "test/evidence/prelaunch-controls.json": {
+    "bytes": 551,
+    "sha256": "73bbaa157610af80468b9acf7ae2c8dcc143d00755e62a8d57885cec0ea23eb7"
+  },
+  "test/evidence/initial-root-ref-digest.json": {
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "test/evidence/quota-preflight.json": {
+    "bytes": 338,
+    "sha256": "9e807dcef053c655fa1276de938def3d9d0eeab2090110024809dac2a40f87af"
+  },
+  "test/evidence/runtime.stdout": {
+    "bytes": 23441,
+    "sha256": "4207282fd3e5ab93a8ec24dc88fb1101af8e0a481a6a9907f67a12aa93665199"
+  },
+  "test/evidence/import-regression.stdout": {
+    "bytes": 25,
+    "sha256": "0a7a25fae89a700fa3076ebd2aedaed15659984ea69c53b925d6e4b96c58dc4a"
+  },
+  "test/evidence/validate.json": {
+    "bytes": 875,
+    "sha256": "c37ed6933c0259368c0cd2ec65cd26ba7e06a0e293590557a8a0f0bd13816efe"
+  },
+  "test/evidence/import-regression.json": {
+    "bytes": 1054,
+    "sha256": "3b647545bd5123dd28db5c88debc69af80ce2ba7bd42eab0a42f25b40beede95"
+  },
+  "test/evidence/previous-overwrite-scoped-acceptance.json": {
+    "bytes": 2719,
+    "sha256": "07c087b847ebbf50786e2d2dd3c6b640e6f3212077af5a0290be84448f8517a2"
+  },
+  "test/evidence/wal-baseline.json": {
+    "bytes": 579,
+    "sha256": "5e44fa66aca6a3d7e96dbe3c5a6894a491a4b162660d54d4247ccc8ee769deaf"
+  },
+  "test/evidence/dispatch.json": {
+    "bytes": 4030,
+    "sha256": "79db7cafec902ee87cfdaf9faf23fbc3002d6584667b5f65fc9dc86e3213138e"
+  },
+  "test/evidence/runtime-envelope-check.json": {
+    "bytes": 145,
+    "sha256": "c0973866a271fb8515af46e70bb0167034a650c189a2a879bdab13597254dc7d"
+  },
+  "test/evidence/create.json": {
+    "bytes": 2606,
+    "sha256": "a98eed2ed1c636765397ed8fa19df21b05ccaf2cac693f79169bbbe218575598"
+  },
+  "test/evidence/runtime-result.json": {
+    "bytes": 21680,
+    "sha256": "f5014638fbd170483774f43a11e9deb86f89e6b7c13a365aac230c5652769d5f"
+  },
+  "test/evidence/runtime-launch.json": {
+    "bytes": 863,
+    "sha256": "99c6f00a0d3b4b3ed741fd74e6d291408d1723a6d69cf0d364e633baa9b7fe01"
+  },
+  "test/evidence/stopped-info.stdout": {
+    "bytes": 1324,
+    "sha256": "b9469e65a4eb2099be433e47ec36f29e997ac0f2c7e24b3535fbaeceec148d90"
+  },
+  "test/evidence/git-readiness.json": {
+    "bytes": 305,
+    "sha256": "a0175c89baa2d07a6775bb29c8883505cfb22d466f4d3df2243b00e5715a35b7"
+  },
+  "test/evidence/snapshot-stop.stdout": {
+    "bytes": 1614,
+    "sha256": "fcd7c5c1c33bc5efc991741c4589551143ce198a5bc8cb7bd379f0955f64f34b"
+  },
+  "test/evidence/box.json": {
+    "bytes": 195,
+    "sha256": "ee3ccc1cd12ddc47b681e6517099c0157b10e896f2e770a0a90be29ec159f43e"
+  }
+}

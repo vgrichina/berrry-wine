@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/toyvm-sparse-offset-runtime-independent-accept-oct29/repo/test/toyvm-sparse-offset-runtime-independent-accept-oct29/accept.py"
+  ],
+  "cwd": "/tmp/toyvm-sparse-offset-runtime-independent-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.08953164494596422,
+  "admission": {
+    "free": 4558385152,
+    "MemAvailable": 2473824256,
+    "allocated": 2297856,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 450,
+  "stderrBytes": 0
+}

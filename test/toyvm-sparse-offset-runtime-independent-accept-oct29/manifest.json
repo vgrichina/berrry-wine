@@ -1,0 +1,118 @@
+{
+  "report.py": {
+    "bytes": 7166,
+    "sha256": "baba0729631ba3d12d4639808fbaa3f2314766879cdd90a2237bc41b5565c9ad"
+  },
+  "accept.py": {
+    "bytes": 12922,
+    "sha256": "30f9e9b531e15f8b0869f3f74dab4ba8bcae56903ff2d023ead10b1bfd607591"
+  },
+  "prepare.py": {
+    "bytes": 1628,
+    "sha256": "89e6684402eba934c452e47fa0a658269980fab7e32a75e299494d58f3d60d40"
+  },
+  "input-map.json": {
+    "bytes": 702,
+    "sha256": "946685c2bfcee2a20244c62daa2fc89f0eac349f10aed2153eddab6cf6029b20"
+  },
+  "dispatch.json": {
+    "bytes": 4530,
+    "sha256": "58c3d807355247abacf52c8e938186ba1efec5cdd662d902e69d8b3134049bd9"
+  },
+  "canonical.json": {
+    "bytes": 3756,
+    "sha256": "4720453f2af7ceece64c0bb10728915e6779aea1c7219fd58431e85fde142f44"
+  },
+  "REPORT.md": {
+    "bytes": 4432,
+    "sha256": "de4361e76f6c2a7985602b631982e7b62025b1b8384d9b6625563ac6ea8b8906"
+  },
+  "inputs/launch-config.json": {
+    "bytes": 5138,
+    "sha256": "94f6676d6fb7f5ef1c4b0818ecefe6ed76eaefce71d5b25c03f3b0aff28e27e9"
+  },
+  "inputs/wal-accounting.json": {
+    "bytes": 1477,
+    "sha256": "3b14f8b7826da98eee5b97f36ae22e838d5870e3b337e03b240591276f119b4b"
+  },
+  "inputs/previous-blocked-incident.json": {
+    "bytes": 1151,
+    "sha256": "1da23522ff045efddae06c418130992cadc5e485e4291771977ab8fea8dc8302"
+  },
+  "inputs/predecessor-REPORT.md": {
+    "bytes": 3753,
+    "sha256": "18adc90f4ee4deb1d8f4f81f0076cf15219b6b70a3f56134c862547a60f32b09"
+  },
+  "inputs/coordinator-stopped-info.json": {
+    "bytes": 1681,
+    "sha256": "64df30a2075cc11c7592e28480f3f0ba8343270515dc784483aac3fee29281b2"
+  },
+  "inputs/runtime.stdout": {
+    "bytes": 23441,
+    "sha256": "4207282fd3e5ab93a8ec24dc88fb1101af8e0a481a6a9907f67a12aa93665199"
+  },
+  "inputs/source-phase-oracle.json": {
+    "bytes": 678,
+    "sha256": "1d2683311e9e3aa294d10a52dab7a51c9b66e2836ceb1b7da8b055063354af29"
+  },
+  "inputs/fixture.py": {
+    "bytes": 294,
+    "sha256": "eeab8ed22f87dfbbb9e8a6d2837640625286747940aea71b42f0d790a88bef8a"
+  },
+  "inputs/runtime-observer.py": {
+    "bytes": 6836,
+    "sha256": "994d7110efd93d5bc623869ac51a5bdd7b3cc966a884568d356f759b1edaee27"
+  },
+  "inputs/retention-manifest.json": {
+    "bytes": 6397,
+    "sha256": "fe671e2ede86ac7a7a9be3b024b4930727cdccc84e0af329ac50fef57e6458a3"
+  },
+  "inputs/runtime-result.json": {
+    "bytes": 21680,
+    "sha256": "f5014638fbd170483774f43a11e9deb86f89e6b7c13a365aac230c5652769d5f"
+  },
+  "inputs/runtime-canonical.json": {
+    "bytes": 3865,
+    "sha256": "f74ea59876675ff85d66f776eff03aae0a027b49abae7ff4c075097c57c9af3a"
+  },
+  "evidence/independent-accept.json": {
+    "bytes": 944,
+    "sha256": "e3fd5e40e412e4ab06cb5f48e3055a480d90092140007aca2e33d60120531d7c"
+  },
+  "evidence/independent-accept.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "evidence/prelaunch-controls.json": {
+    "bytes": 555,
+    "sha256": "d89479638c69f376cb6a969c72f0069f66b83fa4e4fb7fac63abb685b4d4343b"
+  },
+  "evidence/quota-preflight.json": {
+    "bytes": 338,
+    "sha256": "9e807dcef053c655fa1276de938def3d9d0eeab2090110024809dac2a40f87af"
+  },
+  "evidence/dispatch-preflight.json": {
+    "bytes": 416,
+    "sha256": "8cb1d8c785d4967fcbcab7462efe826ece053f6d1d250b010597ba5d4b2741b5"
+  },
+  "evidence/publication-resources.json": {
+    "bytes": 719,
+    "sha256": "4c67d255f7453e181fdf2afeef9136a905c782562479810152cc0fd8a30cd60e"
+  },
+  "evidence/launch-reuse.json": {
+    "bytes": 1872,
+    "sha256": "8cc594b5b9d3ef74326da3f76563dcf8fca09ab693f9c75ad4fc21092fd73caf"
+  },
+  "evidence/git-readiness.json": {
+    "bytes": 317,
+    "sha256": "5418fc60b1746e6a7b230a95a99efed04b79d4a7264d7dec3b1565a9434a4273"
+  },
+  "evidence/initial.stderr": {
+    "bytes": 3680,
+    "sha256": "cc05f88a5c8239c2576764c26e7feced0cc1de7f2a0fda711caa28989c9077a5"
+  },
+  "evidence/independent-accept.stdout": {
+    "bytes": 450,
+    "sha256": "76c572469e0e89420506698a685a8e028761b5551e0ba7cc38f9af61cfe4fdd9"
+  }
+}

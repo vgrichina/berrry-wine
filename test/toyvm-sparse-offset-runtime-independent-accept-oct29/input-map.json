@@ -1,0 +1,14 @@
+{
+  "retention-manifest.json": "retention-manifest.json",
+  "fixture.py": "test/fixture.py",
+  "runtime-observer.py": "test/runtime-observer.py",
+  "source-phase-oracle.json": "test/source-phase-oracle.json",
+  "runtime-canonical.json": "test/runtime-canonical.json",
+  "runtime-result.json": "test/evidence/runtime-result.json",
+  "runtime.stdout": "test/evidence/runtime.stdout",
+  "launch-config.json": "test/evidence/launch-config.json",
+  "previous-blocked-incident.json": "test/evidence/previous-blocked-incident.json",
+  "wal-accounting.json": "test/evidence/wal-accounting.json",
+  "coordinator-stopped-info.json": "coordinator-stopped-info.json",
+  "predecessor-REPORT.md": "test/REPORT.md"
+}

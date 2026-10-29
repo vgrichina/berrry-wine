@@ -1,0 +1,18 @@
+{
+  "PASS": true,
+  "exactFiles": [
+    "/tmp/tvsp/dispatch.json=/home/user/wine-assembly/scratch/usage-watch/toyvm-sparse-supervised-offset-live-charge-oct29-dispatch.json",
+    "/tmp/tvsp/runtime-observer.py=/tmp/toyvm-sparse-supervised-offset-live-charge-oct29/runtime-observer.py",
+    "/tmp/tvsp/fixture.py=/tmp/toyvm-sparse-supervised-offset-live-charge-oct29/fixture.py",
+    "/tmp/tvsp/cancellation.json=/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+    "/tmp/tvsp/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py=/tmp/toyvm-sparse-supervised-offset-live-charge-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "/tmp/tvsp/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py=/tmp/toyvm-sparse-supervised-offset-live-charge-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "/tmp/tvsp/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py=/tmp/toyvm-sparse-supervised-offset-live-charge-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "/tmp/tvsp/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py=/tmp/toyvm-sparse-supervised-offset-live-charge-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "/tmp/tvsp/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py=/tmp/toyvm-sparse-supervised-offset-live-charge-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py"
+  ],
+  "parserApplicable": false,
+  "noNode": true,
+  "noNewExecution": true,
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

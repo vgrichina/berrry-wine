@@ -1,0 +1,103 @@
+{
+  "outcome": "SCOPED_PASS",
+  "task": "toyvm-sparse-supervised-offset-live-charge-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "productionInvocations": 1,
+  "cliExit": 1,
+  "accepted": false,
+  "reason": "filesystem allocation limit",
+  "counterPhase": "post-reap",
+  "observed": {
+    "live": 8192,
+    "peak": 8192,
+    "written": 0,
+    "inodes": 2,
+    "openHandles": 0
+  },
+  "marker": "{\"checkpoint\": \"before-sparse-offset-write\", \"attemptedOffset\": 8191, \"attemptedBytes\": 1, \"initialSize\": 0}\n",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourceUnchanged": true,
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cmdSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finalState": null,
+      "pid": 6472,
+      "ppid": 5973,
+      "rss": 0,
+      "start": "6958",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvsp/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvsp/w/domain /tmp/tvsp/w/status.sock 12288 65536 8192 ",
+      "cmdSHA256": "363ddd3670cef677f7c0e3677f5f7eb2673236642e0d745da5c4424ee074c750",
+      "finalState": null,
+      "pid": 6473,
+      "ppid": 6472,
+      "rss": 14286848,
+      "start": "6962",
+      "state": "S"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cmdSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finalState": null,
+      "pid": 6476,
+      "ppid": 6472,
+      "rss": 0,
+      "start": "6966",
+      "state": "Z"
+    }
+  ],
+  "productionOwnedIdentityCheck": true,
+  "remainingMounts": [],
+  "externalSafetyCleanup": null,
+  "browserAllowance": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "browserAllowed": false,
+  "box": {
+    "id": "bx_nsk7cdtr",
+    "state": "stopped",
+    "originalExpiry": "2026-10-29T05:50:03.297Z",
+    "stoppedAt": "2026-10-29T05:20:39.944Z",
+    "snapshotCompletedAt": "2026-10-29T05:20:39.909Z",
+    "snapshotVerifiedAt": "2026-10-29T05:20:39.909Z",
+    "stopStatus": "completed"
+  },
+  "limitations": [
+    "No direct syscall errno observation or instantaneous rejection-live measurement; post-reap counters only.",
+    "Source ordering and arithmetic are independent source inference; offline boolean controls are not runtime acceptance.",
+    "One exact sparse-offset allocation gate only; no general resource, browser or gameplay claim.",
+    "Previous sparse wrapper incident remains BLOCKED_BEFORE_RUNTIME with zero invocations. Previous overwrite scoped acceptance consulted without a new invocation.",
+    "No Node process or guest filename mount argv; Boat --file configuration enumerates the nine exact inputs.",
+    "Original pre-launch/WAL procedural limitations remain; no hard-limit waiver or production patch."
+  ],
+  "at": "2026-10-29T05:21:36.683269+00:00"
+}
