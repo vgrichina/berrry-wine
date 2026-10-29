@@ -1,0 +1,48 @@
+{
+  "at": 1793238467.7853427,
+  "session": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T01-47-13-01a18556-f33a-7f11-bcac-3e46b6165d65.jsonl",
+  "sessionInitialBytes": 293538,
+  "walBaselines": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4136512,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 3135352
+  },
+  "device": 64769,
+  "f_bavail": 1257071,
+  "blocksize": 4096,
+  "free": 5148962816,
+  "MemAvailable": 3006394368,
+  "aggregate": 100663296,
+  "minimum": 3149922304,
+  "projection": {
+    "source": 1048576,
+    "git": 3145728,
+    "evidence": 1048576,
+    "events": 4194304,
+    "sessionAndPositiveWALOnce": 4194304,
+    "future": 3145728,
+    "reserve": 8388608
+  },
+  "limits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "PASS": true
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "control": "omitted",
+    "rejectedBeforeSpawn": true,
+    "error": "run() missing 1 required keyword-only argument: 'cwd'"
+  },
+  {
+    "control": "root",
+    "rejectedBeforeSpawn": true,
+    "error": "outside owned task"
+  },
+  {
+    "control": "donor",
+    "rejectedBeforeSpawn": true,
+    "error": "outside owned task"
+  },
+  {
+    "ownedSentinel": "/tmp/toyvm-recovered-caller-acceptance-oct29"
+  }
+]

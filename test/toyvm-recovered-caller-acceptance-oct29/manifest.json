@@ -1,0 +1,50 @@
+{
+  "admission.jsonl": {
+    "bytes": 8472,
+    "sha256": "8a095fde74f8d4f2eaf515b6b856b3a95ff90b9c212a2cb34ca9a92ef093c59b"
+  },
+  "launch.json": {
+    "bytes": 353,
+    "sha256": "050a154c35d1b7af21b659782575d4fa0cb235cd07aec26c69ea153370b751bf"
+  },
+  "guard.py": {
+    "bytes": 3787,
+    "sha256": "8362d186a988127ce685664179dc876a055b8bcd44a016e22b907f32eb192574"
+  },
+  "op-008.err": {
+    "bytes": 152,
+    "sha256": "2921ee000fef198f3af8da9f483461a05781cde79582a912e561e0aa4829e2c4"
+  },
+  "op-008.out": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "initial.json": {
+    "bytes": 1118,
+    "sha256": "167e6ac6a9bb26d1da7ea243b7d70caac00bfc6516ad8c6f2711b1998df52945"
+  },
+  "containment.json": {
+    "bytes": 415,
+    "sha256": "9aab8757d1df8a53b3bdb712e39f843552f1f9b65306b6376daa760fbf4bc3ca"
+  },
+  "op-007.out": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "inputs.json": {
+    "bytes": 1761,
+    "sha256": "5b4038ee291d1b43a85dbf067a3a0d8d42bd5f495c5932bf453efbe91e4ffdee"
+  },
+  "REPORT.md": {
+    "bytes": 3592,
+    "sha256": "d4fc6962faa4d4a3d64c9b5a155a7857aaf3c7b82abdddb251c2ae4817720aaf"
+  },
+  "op-007.err": {
+    "bytes": 276,
+    "sha256": "b2d81cbf6e1eb524cca0571e26ec059a3bb59cb4f495f1021bcc54c0283536bf"
+  },
+  "commands.jsonl": {
+    "bytes": 4838,
+    "sha256": "a50554f2ce96f76c0168deab485a46c329242dae7574c656c44172d4df31a02c"
+  }
+}
