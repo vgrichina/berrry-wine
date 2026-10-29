@@ -1772,6 +1772,12 @@ async function main() {
   };
 
   const logs = [];
+  // Bounded output at process exit only; no allocation/hooks/output by default.
+  const callbackLifecycleTrace = hasFlag('trace-callback-lifecycle')
+    ? require('../lib/callback-lifecycle-trace').createCallbackLifecycleTrace() : null;
+  if (callbackLifecycleTrace) process.once('exit', () => {
+    console.log('[callback-lifecycle] ' + JSON.stringify(callbackLifecycleTrace.snapshot()));
+  });
   // Drain by walking forward, never with shift(). shift() moves the whole
   // backing store down one slot, so draining N buffered lines costs O(N^2) --
   // and N is not small: every Win32 call buffers an [API] line unless
@@ -2800,6 +2806,7 @@ async function main() {
     // One counter for the whole process: guest threads write the same file.
     _audioOutCount: AUDIO_OUT ? { max: AUDIO_OUT_MAX, bytes: 0 } : undefined,
     sharedAudio: {},  // shared waveOut state across threads
+    callbackLifecycleTrace,
     audioTap: () => (videoRecorder && videoRecorder.active ? videoRecorder : null),
     registerAudioTapPump: fn => { if (typeof fn === 'function') audioTapPumps.add(fn); },
     renderMidiForTap: (smf, options) => renderTinySynthNotes(smf, options),
@@ -5531,6 +5538,7 @@ async function main() {
     serialSlices: THREADS_SERIAL,
     csStealAfter: CS_STEAL_AFTER,
     traceThread: TRACE_THREAD,
+    callbackLifecycleTrace,
     traceYield: TRACE_YIELD,
     breakThreadFilter: breakThreadFilter,
     traceCallstack: TRACE_CALLSTACK,
