@@ -1,0 +1,31 @@
+{
+  "sourcePinsUnchanged": true,
+  "passed": 72,
+  "firstDefect": {
+    "name": "nonfinite-metadata-1e999",
+    "expectedExit": 2,
+    "actualExit": 0,
+    "PASS": false,
+    "decision": {
+      "accepted": true,
+      "accountingAccepted": true,
+      "childSucceeded": true,
+      "cleanupComplete": true,
+      "failures": [],
+      "offlineValidationOnly": true,
+      "runtimeQualified": false,
+      "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+    },
+    "inputBytes": 364,
+    "inputSHA256": "0a1537b8c35ac1379d7e4b028b47a1ba0656e692163ccf7b909d1ed08fffa11e",
+    "productionEvaluateCompared": false,
+    "offlineValidationOnly": true,
+    "runtimeQualified": false
+  },
+  "mutationRejected": true,
+  "allRecordedGroupsEmpty": true,
+  "noRuntime": true,
+  "evidenceBytes": 271038,
+  "offlineValidationOnly": true,
+  "runtimeQualified": false
+}

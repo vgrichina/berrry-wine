@@ -1,0 +1,28 @@
+{
+  "negativeControls": [
+    {
+      "cwd": "None",
+      "rejected": "TypeError"
+    },
+    {
+      "cwd": "/home/user/wine-assembly",
+      "rejected": "ValueError"
+    },
+    {
+      "cwd": "/tmp/toyvm-offline-receipt-validation-cli-oct29/repo",
+      "rejected": "ValueError"
+    },
+    {
+      "cwd": "/tmp",
+      "rejected": "ValueError"
+    }
+  ],
+  "sentinel": {
+    "cwd": "/tmp/toyvm-offline-command-independent-accept-oct29/repo",
+    "data": [
+      134217728,
+      134217728
+    ]
+  },
+  "PASS": true
+}

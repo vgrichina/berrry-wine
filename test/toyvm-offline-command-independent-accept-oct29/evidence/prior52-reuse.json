@@ -1,0 +1,25 @@
+{
+  "candidate": "354c5651f6f11bbd430424c3163d7e87e125fc9a",
+  "pins": {
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-offline-receipt-validation-cli-oct29/retained-evidence/canonical-receipt.json": {
+      "bytes": 11814,
+      "sha256": "4997f92033ad8ead06b0906d1241cc615d9c5490e9c47a682a32eff5982ed2b2"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-offline-receipt-validation-cli-oct29/retained-evidence/test/toyvm-offline-receipt-validation-cli-oct29/evidence/cli-test-results.json": {
+      "bytes": 30411,
+      "sha256": "42ceaee8bdf768cd5a4bdfea8bb31135e099506cf465aca287e115199a4b045a"
+    },
+    "/tmp/toyvm-offline-command-independent-accept-oct29/repo/test/toyvm-offline-receipt-validation-cli-oct29/test_offline_cli.py": {
+      "bytes": 5283,
+      "sha256": "b8d5eec05cf4b8b984297b3d94f493545f4da7a2d19e45f53f30d66d82a36ba9"
+    },
+    "/tmp/toyvm-offline-command-independent-accept-oct29/repo/test/toyvm-offline-receipt-validation-cli-oct29/REPORT.md": {
+      "bytes": 7003,
+      "sha256": "f1de6d64808b7ff350e40d7fb759a98bdb0d838836f3c0dadcb53afa4f6ff346"
+    }
+  },
+  "count": 52,
+  "rerun": false,
+  "offlineValidationOnly": true,
+  "runtimeQualified": false
+}

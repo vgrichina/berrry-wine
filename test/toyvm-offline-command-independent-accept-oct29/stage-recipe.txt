@@ -1,0 +1,15 @@
+from supervisor import *
+BASE='354c5651f6f11bbd430424c3163d7e87e125fc9a'
+dispatch=json.loads((ROOT/'scratch/usage-watch'/f'{TASK}-dispatch.json').read_text())
+git(['init'],cwd=OWN,label='init',init=True)
+git(['config','core.sparseCheckout','true'],cwd=OWN,label='sparse-config',mutate=True)
+(OWN/'.git/info/sparse-checkout').write_text(''.join('/'+p+'\n' for p in dispatch['sourcePins']))
+pins={}
+for i,(path,pin) in enumerate(dispatch['sourcePins'].items()):
+    data=git(['show',BASE+':'+path],cwd=OWN,label=f'source-{i}')
+    assert len(data)==pin['bytes'] and hashlib.sha256(data).hexdigest()==pin['sha256']
+    target=OWN/path; target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes(data); pins[path]=pin
+git(['read-tree',BASE],cwd=OWN,label='read-tree',mutate=True)
+git(['update-ref','refs/heads/task/'+TASK,BASE],cwd=OWN,label='task-ref',mutate=True)
+git(['symbolic-ref','HEAD','refs/heads/task/'+TASK],cwd=OWN,label='task-head',mutate=True)
+save('source-pins.json',dict(base=BASE,pins=pins,method='git show EXACTCOMMIT:PATH; git read-tree; no checkout',offlineValidationOnly=True,runtimeQualified=False))

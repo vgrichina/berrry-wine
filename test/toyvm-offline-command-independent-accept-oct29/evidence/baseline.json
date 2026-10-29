@@ -1,0 +1,59 @@
+{
+  "task": "toyvm-offline-command-independent-accept-oct29",
+  "thread": "01a18589-d8a3-7331-af57-e3fb8fed17e7",
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-42-46-01a18589-d8a3-7331-af57-e3fb8fed17e7.jsonl"
+  ],
+  "sessionBytes": 346325,
+  "initialSharedWAL": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4235392,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  },
+  "positiveSharedWALBaselineCountedOnce": 24831368,
+  "limits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "receipts": {
+    "dispatch": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-offline-command-independent-accept-oct29-dispatch.json",
+      "sha256": "8546ea7267fe5073193dca88011af7893d01b387518d51b12346ec3aae589c43"
+    },
+    "admission": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-offline-command-independent-accept-oct29-admission.json",
+      "sha256": "db706f7d85c101251d6b2a93baffd9ee8444c44e9173e593fd5f27444ee89072"
+    }
+  },
+  "mountArgv": [],
+  "mountFiles": [],
+  "mountExecution": false,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "allocationBreakdownMiB": {
+    "git": 3,
+    "tests": 1,
+    "evidence": 1,
+    "eventsWAL": 8,
+    "publication": 3,
+    "buffer": 8
+  },
+  "offlineValidationOnly": true,
+  "runtimeQualified": false
+}

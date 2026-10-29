@@ -1,0 +1,41 @@
+{
+  "case": "nonfinite-metadata-1e999",
+  "expectedExit": 2,
+  "actualExit": 0,
+  "report": {
+    "accepted": true,
+    "accountingAccepted": true,
+    "childSucceeded": true,
+    "cleanupComplete": true,
+    "failures": [],
+    "offlineValidationOnly": true,
+    "runtimeQualified": false,
+    "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+  },
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/toyvm-offline-command-independent-accept-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/validate_receipt_offline.py",
+    "--result-json",
+    "/tmp/toyvm-offline-command-independent-accept-oct29/repo/fixture.json",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "16384",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "1.25",
+    "--wall-limit",
+    "2.5",
+    "--output-limit",
+    "4096"
+  ],
+  "source": "983221191bd9967fb828b27385533cea03bcb6db909f033f12ebb5ce3c437cf0",
+  "inputSHA256": "0a1537b8c35ac1379d7e4b028b47a1ba0656e692163ccf7b909d1ed08fffa11e",
+  "offlineValidationOnly": true,
+  "runtimeQualified": false,
+  "originalLiveCLIGap": "OPEN"
+}
