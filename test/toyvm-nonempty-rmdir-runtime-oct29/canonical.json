@@ -1,0 +1,103 @@
+{
+  "task": "toyvm-nonempty-rmdir-runtime-oct29",
+  "outcome": "SCOPED_ACTUAL_RUNTIME_ACCEPTED",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "fixturePin": {
+    "bytes": 575,
+    "sha256": "c11babf4b092a883dea4729e843211cf936f6c03dbfc71a90780b85857f14ac1"
+  },
+  "observerPin": {
+    "bytes": 6956,
+    "sha256": "8f37e030f68587d5a2189688418c2afbc0392e672be531b888260ef0621cfa08"
+  },
+  "productionInvocations": 1,
+  "gatePASS": true,
+  "cliExit": 0,
+  "accepted": true,
+  "stopReason": null,
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 8192,
+    "inodes": 3,
+    "live": 12288,
+    "liveLimit": 12288,
+    "openHandles": 0,
+    "operations": 18,
+    "peak": 12288,
+    "writeLimit": 65536,
+    "written": 0
+  },
+  "fixtureOutput": {
+    "checkpoint": "nonempty-rmdir-preserved",
+    "childPreserved": true,
+    "directoryInodes": {
+      "/tmp/tvne/w/domain/D": 2,
+      "/tmp/tvne/w/domain/D/E": 3
+    },
+    "errno": 39
+  },
+  "cleanup": {
+    "safetyCleanup": null,
+    "remainingMounts": [],
+    "sampledIdentitiesReaped": true,
+    "productionOwnedIdentityCheck": true
+  },
+  "boat": {
+    "id": "bx_27q3w7ee",
+    "state": "stopped",
+    "originalExpiry": "2026-10-29T06:00:38.936Z",
+    "snapshotCompletedAt": "2026-10-29T05:31:34.510Z",
+    "snapshotVerifiedAt": "2026-10-29T05:31:34.510Z",
+    "stoppedAt": "2026-10-29T05:31:34.547Z",
+    "stopOperation": {
+      "endedAt": "2026-10-29T05:31:34.567Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_f42d6e8ba3ab88fe",
+      "lastAttemptAt": "2026-10-29T05:31:34.567Z",
+      "requestedAt": null,
+      "status": "completed"
+    }
+  },
+  "evidence": "raw-manifest.json",
+  "publication": {
+    "branch": "task/toyvm-nonempty-rmdir-runtime-oct29",
+    "verification": "External owned publication-receipt.json and coordinator-note.json after commit/push"
+  },
+  "limitations": [
+    "Post-reap filesystem counters, not instantaneous counters",
+    "Sampled PID/start identities only",
+    "No browser/gameplay or broad resource acceptance"
+  ],
+  "incidents": [
+    "Boat new returned JSONL; whole-document parser failed after successful allocation. Original response recovered with no provider/allocation retry.",
+    "Git status returned zero with alternate-store nesting warnings; original stderr retained."
+  ],
+  "remainingGates": [
+    "Coordinator messageboard append",
+    "Independent review before any integration; no main/public deployment in this task"
+  ]
+}

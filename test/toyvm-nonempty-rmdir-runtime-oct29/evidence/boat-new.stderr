@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-nonempty-rmdir-runtime-oct29/boat-action.py", line 38, in <module>
+    data=json.loads(q.stdout);(E/'boat-new-response.json').write_text(json.dumps(data,indent=2))
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 340, in decode
+    raise JSONDecodeError("Extra data", s, end)
+json.decoder.JSONDecodeError: Extra data: line 2 column 1 (char 99)

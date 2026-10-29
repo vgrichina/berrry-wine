@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "new",
+    "--ttl",
+    "1800",
+    "--name",
+    "toyvm-nonempty-rmdir-runtime-oct29",
+    "--file",
+    "/tmp/tvne/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py=/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--file",
+    "/tmp/tvne/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py=/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "--file",
+    "/tmp/tvne/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py=/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "--file",
+    "/tmp/tvne/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py=/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "--file",
+    "/tmp/tvne/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py=/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+    "--file",
+    "/tmp/tvne/fixture.py=/tmp/toyvm-nonempty-rmdir-runtime-oct29/fixture.py",
+    "--file",
+    "/tmp/tvne/runtime-observer.py=/tmp/toyvm-nonempty-rmdir-runtime-oct29/runtime-observer.py",
+    "--file",
+    "/tmp/tvne/cancellation.json=/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+    "--file",
+    "/tmp/tvne/dispatch.json=/home/user/wine-assembly/scratch/usage-watch/toyvm-nonempty-rmdir-runtime-oct29-dispatch.json"
+  ],
+  "exit": 0,
+  "at": "2026-10-29T05:30:39.927095+00:00",
+  "stdoutBytes": 568,
+  "stderrBytes": 0
+}

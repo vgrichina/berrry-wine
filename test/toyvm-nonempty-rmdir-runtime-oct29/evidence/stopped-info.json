@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/toyvm-nonempty-rmdir-runtime-oct29/boat-action.py",
+    "info"
+  ],
+  "cwd": "/tmp/toyvm-nonempty-rmdir-runtime-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.1285750709939748,
+  "admission": {
+    "free": 4546310144,
+    "MemAvailable": 3609284608,
+    "allocated": 2371584,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 1324,
+  "stderrBytes": 0
+}

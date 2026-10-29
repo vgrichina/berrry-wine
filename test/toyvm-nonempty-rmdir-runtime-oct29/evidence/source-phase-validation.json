@@ -1,0 +1,26 @@
+{
+  "PASS": true,
+  "noRuntime": true,
+  "sourceOrdering": true,
+  "fixtureCompiled": true,
+  "controls": {
+    "missing-nonempty-guard": "rejected source mutation",
+    "late-nonempty-guard": "rejected source mutation",
+    "wrong-errno": "rejected offline exact-gate control",
+    "wrong-counter": "rejected offline exact-gate control",
+    "cleanup-failed": "rejected offline exact-gate control",
+    "stale-identity": "rejected offline exact-gate control",
+    "missing-marker": "rejected offline exact-gate control"
+  },
+  "admission": {
+    "freeBytes": 4553580544,
+    "MemAvailable": 3200581632,
+    "allocated": 2162688,
+    "childDATA": [
+      134217728,
+      134217728
+    ],
+    "noSupervisorInitialization": true
+  },
+  "scope": "Source/fixture and offline boolean gate preflight only; not runtime acceptance"
+}
