@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-29T05:02:10.296196+00:00",
+  "owners": {
+    "coordinator": 25165824,
+    "gltron-eager-integrity-independent-accept-oct29": 50331648,
+    "toyvm-ftruncate-regrowth-write-budget-oct29": 25165824,
+    "toyvm-overwrite-runtime-independent-accept-oct29": 25165824,
+    "toyvm-rename-topology-corrected-independent-accept-oct29": 25165824
+  },
+  "aggregate": 176160768,
+  "requiredBytes": 3200253952,
+  "futureGrowthIncludingUncertaintyBuffer": 150994944,
+  "freeBytes": 4607475712,
+  "remainingAfterForecast": 4456480768,
+  "MemAvailable": 3396853760,
+  "memRequired": 2147483648,
+  "device": 64769,
+  "f_bavail": 1124872,
+  "blockSize": 4096,
+  "PASS": true,
+  "forecast": "48MiB transferred Tux source acceptance: minimal existing closure, new adversarial tests/report, <=1MiB evidence, task Git/publication and uncertainty; no media/runtime/full build.",
+  "previousAllocationCloseout": {
+    "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+    "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+  },
+  "transfers": {
+    "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+    "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+  },
+  "transfer": {
+    "tuxracer-glvertex2dv-independent-accept-oct29": "tuxracer-gltexcoord2dv-dispatch-repair-oct29"
+  },
+  "changedPrerequisite": {
+    "oldMemAvailable": 2016239616,
+    "newMemAvailable": 2390204416,
+    "change": "completed acceptance worker exited; current measured memory recovered above unchanged floor"
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "decision": "PASS_SCOPED_RENAME_CHARGE_LIFETIME",
+  "checks": [
+    "pinned-production-boundary-envelope",
+    "source-derived-inode-table",
+    "failed-growth-order",
+    "post-reap-timing",
+    "fragment-retained-charge-release",
+    "reject-premature-collect",
+    "reject-charge-guard",
+    "reject-release-leak",
+    "reject-sourcepin-mismatch",
+    "reject-close-B-before-C-write",
+    "reject-accepted-C-growth-forged-reason",
+    "reject-missing-descriptor-proof",
+    "reject-relabeled-postreap-live",
+    "reject-accepted-cli-forged-reason"
+  ],
+  "inodeAllocationTable": {
+    "root": {
+      "inodes": [
+        {
+          "inode": "root",
+          "size": 0,
+          "linked": true,
+          "open": false,
+          "metadata": 4096,
+          "payload": 0
+        }
+      ],
+      "total": 4096
+    },
+    "AB-created": {
+      "inodes": [
+        {
+          "inode": "root",
+          "size": 0,
+          "linked": true,
+          "open": false,
+          "metadata": 4096,
+          "payload": 0
+        },
+        {
+          "inode": "A",
+          "size": 0,
+          "linked": true,
+          "open": true,
+          "metadata": 4096,
+          "payload": 0
+        },
+        {
+          "inode": "oldB",
+          "size": 0,
+          "linked": true,
+          "open": true,
+          "metadata": 4096,
+          "payload": 0
+        }
+      ],
+      "total": 12288
+    },
+    "AB-written": {
+      "inodes": [
+        {
+          "inode": "root",
+          "size": 0,
+          "linked": true,
+          "open": false,
+          "metadata": 4096,
+          "payload": 0
+        },
+        {
+          "inode": "A",
+          "size": 8192,
+          "linked": true,
+          "open": true,
+          "metadata": 4096,
+          "payload": 8192
+        },
+        {
+          "inode": "oldB",
+          "size": 8192,
+          "linked": true,
+          "open": true,
+          "metadata": 4096,
+          "payload": 8192
+        }
+      ],
+      "total": 28672
+    },
+    "renamed": {
+      "inodes": [
+        {
+          "inode": "root",
+          "size": 0,
+          "linked": true,
+          "open": false,
+          "metadata": 4096,
+          "payload": 0
+        },
+        {
+          "inode": "A-at-B",
+          "size": 8192,
+          "linked": true,
+          "open": true,
+          "metadata": 4096,
+          "payload": 8192
+        },
+        {
+          "inode": "oldB",
+          "size": 8192,
+          "linked": false,
+          "open": true,
+          "metadata": 4096,
+          "payload": 8192
+        }
+      ],
+      "total": 28672
+    },
+    "before-C-write": {
+      "inodes": [
+        {
+          "inode": "root",
+          "size": 0,
+          "linked": true,
+          "open": false,
+          "metadata": 4096,
+          "payload": 0
+        },
+        {
+          "inode": "A-at-B",
+          "size": 8192,
+          "linked": true,
+          "open": true,
+          "metadata": 4096,
+          "payload": 8192
+        },
+        {
+          "inode": "oldB",
+          "size": 8192,
+          "linked": false,
+          "open": true,
+          "metadata": 4096,
+          "payload": 8192
+        },
+        {
+          "inode": "C",
+          "size": 0,
+          "linked": true,
+          "open": true,
+          "metadata": 4096,
+          "payload": 0
+        }
+      ],
+      "total": 32768
+    },
+    "C-growth-request": {
+      "inodes": [
+        {
+          "inode": "root",
+          "size": 0,
+          "linked": true,
+          "open": false,
+          "metadata": 4096,
+          "payload": 0
+        },
+        {
+          "inode": "A-at-B",
+          "size": 8192,
+          "linked": true,
+          "open": true,
+          "metadata": 4096,
+          "payload": 8192
+        },
+        {
+          "inode": "oldB",
+          "size": 8192,
+          "linked": false,
+          "open": true,
+          "metadata": 4096,
+          "payload": 8192
+        },
+        {
+          "inode": "C",
+          "size": 4096,
+          "linked": true,
+          "open": true,
+          "metadata": 4096,
+          "payload": 4096
+        }
+      ],
+      "total": 36864
+    },
+    "post-reap": {
+      "inodes": [
+        {
+          "inode": "root",
+          "size": 0,
+          "linked": true,
+          "open": false,
+          "metadata": 4096,
+          "payload": 0
+        },
+        {
+          "inode": "A-at-B",
+          "size": 8192,
+          "linked": true,
+          "open": false,
+          "metadata": 4096,
+          "payload": 8192
+        },
+        {
+          "inode": "C",
+          "size": 0,
+          "linked": true,
+          "open": false,
+          "metadata": 4096,
+          "payload": 0
+        }
+      ],
+      "total": 20480
+    }
+  },
+  "historicalRuntimeGate": false,
+  "historicalStartupFailureUnchanged": true,
+  "newRuntimeInvocations": 0,
+  "scope": "pinned source fragments plus preserved runtime envelope; no backend or fixture execution",
+  "unobserved": [
+    "instantaneous live at rejection",
+    "runtime errno",
+    "general resource/browser/gameplay acceptance"
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "task": "toyvm-rename-topology-corrected-independent-accept-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "decision": "PASS_SCOPED_RENAME_CHARGE_LIFETIME",
+  "historicalRuntimeGate": false,
+  "historicalRuntimeResult": "FAIL",
+  "historicalStartupResult": "FAIL",
+  "newRuntimeInvocations": 0,
+  "checks": 14,
+  "artifacts": {
+    "accept.py": {
+      "bytes": 12000,
+      "sha256": "28a878504214a2896a3c86814800111cb6f7bbbcec00fe4d68e7aba855bca900"
+    },
+    "acceptance-result.json": {
+      "bytes": 5091,
+      "sha256": "95486b2ba4ac5d5e5e793399ffc4e38b400b24291f275a50912645302e46fec2"
+    },
+    "input-pins.json": {
+      "bytes": 5058,
+      "sha256": "b7fc81ac3823601eed4f713fe6939cb793871ae7b0b8b3ed219d4043be955318"
+    },
+    "REPORT.md": {
+      "bytes": 6213,
+      "sha256": "7c9efbda0f477f68ab4e80182b4071304da93a6d96ff9e3ee9e522168963b3e0"
+    },
+    "evidence/limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "evidence/original-evidence-remote-result.json": {
+      "bytes": 22270,
+      "sha256": "261b6d00428d66ec3cb09475fd70c1d64c5192a9a21ef49d2783e1644c36f422"
+    },
+    "evidence/worker-admissions.jsonl": {
+      "bytes": 4695,
+      "sha256": "1a6dfbfe0e6c2d44ee787def7e97b8a97ee7af0b9308e646fcd93f8776c12ba4"
+    },
+    "evidence/allocation.json": {
+      "bytes": 1770,
+      "sha256": "131b2a3c0eaf8cff5030b9ab0ca770c637eda23cee7aad8c3f97ba75f1ff242e"
+    },
+    "evidence/prelaunch-controls.json": {
+      "bytes": 559,
+      "sha256": "3d487495302dd6121b8e141a4c7ee7ec1ded01320f41cf8668c7d2134e06669a"
+    },
+    "evidence/original-runtime-observer.py": {
+      "bytes": 6897,
+      "sha256": "35cadb51f0920044be0e9fc1cd28e5c7cbf3a02e2b321d2b73a0035a2bb2b2da"
+    },
+    "evidence/root-ref-digest.json": {
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    "evidence/historical-startup-fail.json": {
+      "bytes": 2536,
+      "sha256": "800e12cfa2e8c2f0d72e2049c3d922e9b26169d979a2a3426b99947563a60797"
+    },
+    "evidence/verified-stop.json": {
+      "bytes": 1539,
+      "sha256": "6508be280573974e0aa3f346b2d799277ce24173e8c3b5409960c2915517da4b"
+    },
+    "evidence/retained-runtime-canonical.json": {
+      "bytes": 5922,
+      "sha256": "9983c75eea53fd7e4849ef41ef0d8782c88682dc076546f3d1017f13f90fa40c"
+    },
+    "evidence/dispatch.json": {
+      "bytes": 3287,
+      "sha256": "6595b9f85b95cdaaf590fcfde880b7004e94ad031874e71686d051e116d586a2"
+    },
+    "evidence/resource-supervisor.py": {
+      "bytes": 2993,
+      "sha256": "23c78e59c4dabe25ab1e4935ef711f714f05f2a71b680690b4dd819daae4aa7a"
+    },
+    "evidence/original-evidence-remote-cli.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/runtime-canonical.json": {
+      "bytes": 5922,
+      "sha256": "9983c75eea53fd7e4849ef41ef0d8782c88682dc076546f3d1017f13f90fa40c"
+    },
+    "evidence/original-evidence-remote-cli.stdout": {
+      "bytes": 1332,
+      "sha256": "478e9f729f377873edba9cb780e1357451d4ef2d239fe4e6d67ed80be0324e5b"
+    },
+    "evidence/original-fixture.py": {
+      "bytes": 726,
+      "sha256": "c62441b9f3e8f7b1f79678fcf1055ce58136607693fd2a222e9a956f82739a01"
+    },
+    "evidence/git-readiness.json": {
+      "bytes": 329,
+      "sha256": "5d4338705a9c179615ace3b686489e9fc9bbc6a83bc33ed63de141413666414d"
+    }
+  },
+  "boat": {
+    "id": "bx_su4mgbyb",
+    "state": "stopped",
+    "snapshotVerified": true,
+    "expiry": null,
+    "owner": "coordinator; no operations by this task"
+  },
+  "publication": "task branch only; exact commit and verified remote SHA in external publication.json",
+  "remainingGate": "coordinator review/integration; rename-specific only; instantaneous live/errno and general resource/browser/gameplay unobserved"
+}

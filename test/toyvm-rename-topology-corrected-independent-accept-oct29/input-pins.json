@@ -1,0 +1,94 @@
+{
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "inputs": {
+    "evidence/original-fixture.py": {
+      "path": "/tmp/toyvm-rename-open-destination-allocation-oct29/repo/test/toyvm-rename-open-destination-allocation-oct29/fixture.py",
+      "bytes": 726,
+      "sha256": "c62441b9f3e8f7b1f79678fcf1055ce58136607693fd2a222e9a956f82739a01"
+    },
+    "evidence/original-runtime-observer.py": {
+      "path": "/tmp/toyvm-rename-open-destination-allocation-oct29/repo/test/toyvm-rename-open-destination-allocation-oct29/runtime-observer.py",
+      "bytes": 6897,
+      "sha256": "35cadb51f0920044be0e9fc1cd28e5c7cbf3a02e2b321d2b73a0035a2bb2b2da"
+    },
+    "evidence/original-evidence-remote-result.json": {
+      "path": "/tmp/toyvm-rename-open-destination-allocation-oct29/repo/test/toyvm-rename-open-destination-allocation-oct29/evidence/remote-result.json",
+      "bytes": 22270,
+      "sha256": "261b6d00428d66ec3cb09475fd70c1d64c5192a9a21ef49d2783e1644c36f422"
+    },
+    "evidence/original-evidence-remote-cli.stdout": {
+      "path": "/tmp/toyvm-rename-open-destination-allocation-oct29/repo/test/toyvm-rename-open-destination-allocation-oct29/evidence/remote-cli.stdout",
+      "bytes": 1332,
+      "sha256": "478e9f729f377873edba9cb780e1357451d4ef2d239fe4e6d67ed80be0324e5b"
+    },
+    "evidence/original-evidence-remote-cli.stderr": {
+      "path": "/tmp/toyvm-rename-open-destination-allocation-oct29/repo/test/toyvm-rename-open-destination-allocation-oct29/evidence/remote-cli.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/runtime-canonical.json": {
+      "path": "/tmp/toyvm-rename-open-destination-allocation-oct29/repo/test/toyvm-rename-open-destination-allocation-oct29/canonical.json",
+      "bytes": 5922,
+      "sha256": "9983c75eea53fd7e4849ef41ef0d8782c88682dc076546f3d1017f13f90fa40c"
+    },
+    "evidence/retained-runtime-canonical.json": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-open-destination-allocation-oct29/retained-evidence/canonical.json",
+      "bytes": 5922,
+      "sha256": "9983c75eea53fd7e4849ef41ef0d8782c88682dc076546f3d1017f13f90fa40c"
+    },
+    "evidence/historical-startup-fail.json": {
+      "path": "/tmp/toyvm-rename-retained-charge-independent-accept-oct29/repo/test/toyvm-rename-retained-charge-independent-accept-oct29/canonical.json",
+      "bytes": 2536,
+      "sha256": "800e12cfa2e8c2f0d72e2049c3d922e9b26169d979a2a3426b99947563a60797"
+    },
+    "evidence/verified-stop.json": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-open-destination-allocation-oct29/retained-evidence/coordinator-actual-stopped.json",
+      "bytes": 1539,
+      "sha256": "6508be280573974e0aa3f346b2d799277ce24173e8c3b5409960c2915517da4b"
+    },
+    "evidence/dispatch.json": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-topology-corrected-independent-accept-oct29-dispatch.json",
+      "bytes": 3287,
+      "sha256": "6595b9f85b95cdaaf590fcfde880b7004e94ad031874e71686d051e116d586a2"
+    },
+    "evidence/allocation.json": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-topology-corrected-independent-accept-oct29-admission.json",
+      "bytes": 1770,
+      "sha256": "131b2a3c0eaf8cff5030b9ab0ca770c637eda23cee7aad8c3f97ba75f1ff242e"
+    },
+    "evidence/prelaunch-controls.json": {
+      "path": "/tmp/toyvm-rename-topology-corrected-independent-accept-oct29/prelaunch-controls.json",
+      "bytes": 559,
+      "sha256": "3d487495302dd6121b8e141a4c7ee7ec1ded01320f41cf8668c7d2134e06669a"
+    },
+    "evidence/root-ref-digest.json": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-topology-corrected-independent-accept-oct29/root-ref-digest.json",
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    }
+  },
+  "originalRemoteCommit": "2735fde1fb75de4260932edb5b7894820759b33d",
+  "originalRemoteIdentity": "coordinator-verified; no network requery of predecessor"
+}

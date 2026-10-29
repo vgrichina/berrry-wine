@@ -1,0 +1,164 @@
+{
+  "artifacts": {
+    "REPORT.md": {
+      "bytes": 2850,
+      "sha256": "6609ff41504381fa98e35c045855ca73ada6fe11fc14e823c474f8aa1451b61c"
+    },
+    "assert_evidence.py": {
+      "bytes": 1403,
+      "sha256": "0ef374c5a73a80220150e3a5659853535e1cc8d38b56ca6b896a94376e86a6ab"
+    },
+    "evidence/actual-stopped.json": {
+      "bytes": 1538,
+      "sha256": "07e2cefbb725c029af49c0f1a33a9affd22c1ce71993bd113eaaeadbbcc96c47"
+    },
+    "evidence/admission.jsonl": {
+      "bytes": 7093,
+      "sha256": "b8bbbad7432ba396e09545da6a0999fcd21e73d285a99b75f48d2d4e0a73a063"
+    },
+    "evidence/dispatch-preflight.json": {
+      "bytes": 487,
+      "sha256": "5e68e3591d43f0f3e1af0d3fb4bf0889ce39a6ca1dfb4d09a7e7a672192cd30e"
+    },
+    "evidence/dispatch.json": {
+      "bytes": 3114,
+      "sha256": "c1666780b7977e81ba26fdc5e86b04b02ca83c5a6615b82e625e678b420c49cb"
+    },
+    "evidence/git-readiness.json": {
+      "bytes": 299,
+      "sha256": "d2952cb9694e583a8e0bb614866516e7b452267554d9dbc35310e6f4bc4d9824"
+    },
+    "evidence/lifecycle.json": {
+      "bytes": 333,
+      "sha256": "51fccd91a8177a2c9a22fe613bad837bd949cebf4d8ccd50042457097f456ee4"
+    },
+    "evidence/prelaunch-controls.json": {
+      "bytes": 549,
+      "sha256": "d1b0f2d71ccc106c770e7c8211a2d61d8c79045c74014b13b0515319d68990ff"
+    },
+    "evidence/quota-preflight.json": {
+      "bytes": 339,
+      "sha256": "2687e156862f62080b77f2c37f5e24ab72461710f9907f7ed9755ee396a78eca"
+    },
+    "evidence/recover.json": {
+      "bytes": 553,
+      "sha256": "f5bd789b31f326234a11a485aaf80f0261251abc9358c7b7f4484632ef372ef1"
+    },
+    "evidence/remote-cli.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/remote-cli.stdout": {
+      "bytes": 1332,
+      "sha256": "478e9f729f377873edba9cb780e1357451d4ef2d239fe4e6d67ed80be0324e5b"
+    },
+    "evidence/remote-command.json": {
+      "bytes": 801,
+      "sha256": "fe54fa050d86af30d2040cd9d0c55a0996ca23ecbeafec8291bbde516c62849f"
+    },
+    "evidence/remote-prelaunch.json": {
+      "bytes": 2466,
+      "sha256": "38b7acd11600fb2d6276203a4bbec5d2fb92b1ec37266ab0ede3f4559d151076"
+    },
+    "evidence/remote-result.json": {
+      "bytes": 22270,
+      "sha256": "261b6d00428d66ec3cb09475fd70c1d64c5192a9a21ef49d2783e1644c36f422"
+    },
+    "evidence/runtime.json": {
+      "bytes": 1083,
+      "sha256": "6fe1b5cf91c68c61fa7c222a07eec2f6e7020b8557f28ec8b1280c079fa77a87"
+    },
+    "evidence/snapshot-stop.json": {
+      "bytes": 272,
+      "sha256": "5aeb88de3887c78f8bf4a826e382eebfff5607f693ba6df26934a3c36a3cadff"
+    },
+    "evidence/static-oracle.json": {
+      "bytes": 574,
+      "sha256": "7b297c68ce1459658b4dd4b5b6736c8414e57198319eae3f8d59cc6c02f1823c"
+    },
+    "evidence/transfer-manifest.json": {
+      "bytes": 4670,
+      "sha256": "885bf1fd3b162a46ac3d6dfab69297423bd292089042d570034223799d845b27"
+    },
+    "evidence/verified-stopped.json": {
+      "bytes": 272,
+      "sha256": "230ee2c2e3e9b1e1605dbce7f63dd89804db93289442e9359cf4e2efc957b99c"
+    },
+    "fixture.py": {
+      "bytes": 726,
+      "sha256": "c62441b9f3e8f7b1f79678fcf1055ce58136607693fd2a222e9a956f82739a01"
+    },
+    "limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "runtime-observer.py": {
+      "bytes": 6897,
+      "sha256": "35cadb51f0920044be0e9fc1cd28e5c7cbf3a02e2b321d2b73a0035a2bb2b2da"
+    }
+  },
+  "boat": {
+    "expiry": null,
+    "id": "bx_su4mgbyb",
+    "snapshotVerifiedAt": "2026-10-29T04:51:21.098Z",
+    "state": "stopped",
+    "stoppedAt": "2026-10-29T04:51:21.135Z"
+  },
+  "browserAllowanceRemaining": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanupComplete": true,
+  "externalCleanup": false,
+  "fixturePin": {
+    "bytes": 726,
+    "sha256": "c62441b9f3e8f7b1f79678fcf1055ce58136607693fd2a222e9a956f82739a01"
+  },
+  "observedFilesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": "filesystem allocation limit",
+    "fileLimit": 16384,
+    "inodes": 3,
+    "live": 20480,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 28,
+    "peak": 32768,
+    "writeLimit": 65536,
+    "written": 16384
+  },
+  "observerPin": {
+    "bytes": 6897,
+    "sha256": "35cadb51f0920044be0e9fc1cd28e5c7cbf3a02e2b321d2b73a0035a2bb2b2da"
+  },
+  "productionInvocations": 1,
+  "publication": "task branch only; exact remote SHA in external publication receipt and coordinator note",
+  "reason": "prescribed post-reap live oracle 12288 differs from observed/source-derived 20480; pre-invocation oracle review missed arithmetic error",
+  "result": "FAIL",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourcePinsUnchanged": true,
+  "task": "toyvm-rename-open-destination-allocation-oct29"
+}
