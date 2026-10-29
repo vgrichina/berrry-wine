@@ -24,14 +24,20 @@ MAX_LIMITS = dict(live_limit=1048576, write_limit=1048576, file_limit=1048576,
 def load_backend():
     # Import only the accepted adapter. In particular, do not execute the pinned
     # supervisor as __main__: its top-level browser workload is not qualified.
+    validated_sources = {}
     for relative, expected in BACKEND_PINS.items():
         path = ROOT / 'test' / relative
-        if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+        source = path.read_bytes()
+        if hashlib.sha256(source).hexdigest() != expected:
             raise RuntimeError('accepted backend identity mismatch: ' + relative)
-    path = ROOT / 'test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py'
+        validated_sources[relative] = source
+    relative = 'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py'
+    path = ROOT / 'test' / relative
     spec = importlib.util.spec_from_file_location('accepted_accounted_adapter', path)
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    # Execute the bytes just verified, never a cached pyc or a second file read.
+    code = compile(validated_sources[relative], str(path), 'exec', dont_inherit=True)
+    exec(code, module.__dict__)
     return module.supervise_accounted
 
 

@@ -1,0 +1,86 @@
+{
+  "checks": [
+    {
+      "name": "normal",
+      "passed": true,
+      "identity": true,
+      "sourceReads": 1,
+      "cacheRetained": false,
+      "cacheSHA256": null
+    },
+    {
+      "name": "timestamp",
+      "passed": true,
+      "identity": true,
+      "sourceReads": 1,
+      "cacheRetained": true,
+      "cacheSHA256": "e3fe7fb4b5cd4972571004f4fbe6c667ad3b8da2d39f523b34050ba15570134d"
+    },
+    {
+      "name": "unchecked-hash",
+      "passed": true,
+      "identity": true,
+      "sourceReads": 1,
+      "cacheRetained": true,
+      "cacheSHA256": "54247ec0222b0928e31c3b9bd00ecc1181ccace2b6cde9cba7f7dcdbf123aaf4"
+    },
+    {
+      "name": "sys-modules",
+      "passed": true,
+      "identity": true,
+      "sourceReads": 1,
+      "cacheRetained": false,
+      "cacheSHA256": null
+    },
+    {
+      "name": "read-race",
+      "passed": true,
+      "identity": true,
+      "sourceReads": 1,
+      "cacheRetained": false,
+      "cacheSHA256": null
+    },
+    {
+      "name": "guard-supervise_accounted.py",
+      "passed": false,
+      "rejected": false,
+      "importAttempts": [
+        "/tmp/toyvm-source-pinned-loader-bytecode-repair-oct29/mutant-fixtures/guard-supervise_accounted.py/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py"
+      ]
+    },
+    {
+      "name": "guard-confine.py",
+      "passed": false,
+      "rejected": false,
+      "importAttempts": [
+        "/tmp/toyvm-source-pinned-loader-bytecode-repair-oct29/mutant-fixtures/guard-confine.py/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py"
+      ]
+    },
+    {
+      "name": "guard-fuse_backend.py",
+      "passed": false,
+      "rejected": false,
+      "importAttempts": [
+        "/tmp/toyvm-source-pinned-loader-bytecode-repair-oct29/mutant-fixtures/guard-fuse_backend.py/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py"
+      ]
+    },
+    {
+      "name": "guard-pinned-supervisor.py",
+      "passed": false,
+      "rejected": false,
+      "importAttempts": [
+        "/tmp/toyvm-source-pinned-loader-bytecode-repair-oct29/mutant-fixtures/guard-pinned-supervisor.py/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py"
+      ]
+    }
+  ],
+  "sourcePins": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "callerSHA256": "f7d03eacc25eca7aa9f228cf6548d3406b8bacd879a89eaa244633ed20088bdb",
+  "scope": "load_backend code identity only; adapter never invoked",
+  "python": "/usr/bin/python3",
+  "removeGuard": true
+}
