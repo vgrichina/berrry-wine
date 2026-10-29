@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_th7j9v6r",
+    "--cwd",
+    "/tmp/tvrn/repo",
+    "--timeout",
+    "100",
+    "--json",
+    "--no-update",
+    "--",
+    "/usr/bin/python3 -B -c 'import os;os.chdir('\"'\"'/tmp/tvrn/repo'\"'\"');os.execv('\"'\"'/usr/bin/python3'\"'\"',['\"'\"'/usr/bin/python3'\"'\"','\"'\"'-B'\"'\"','\"'\"'/tmp/tvrn/observer.py'\"'\"'])'"
+  ],
+  "cwd": "/tmp/toyvm-rename-nonempty-runtime-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.250276907812804,
+  "admission": {
+    "free": 4542758912,
+    "MemAvailable": 3269992448,
+    "allocated": 2330624,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 19187,
+  "stderrBytes": 0
+}

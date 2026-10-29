@@ -1,0 +1,42 @@
+{
+  "repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+    "bytes": 8105,
+    "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+  },
+  "repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+    "bytes": 3457,
+    "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+  },
+  "repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+    "bytes": 10877,
+    "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+  },
+  "repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+    "bytes": 4058,
+    "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+  },
+  "repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+    "bytes": 23268,
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "fixture.py": {
+    "bytes": 615,
+    "sha256": "64c7073960d5fa92909897cf6cf8ad82c1716db8b0d88af512f3b670acdec044"
+  },
+  "observer.py": {
+    "bytes": 6957,
+    "sha256": "a898818e474d6d861c13dc985cefb6248f233eafd4b6b4c53c188df0e9233b3a"
+  },
+  "oracle.json": {
+    "bytes": 473,
+    "sha256": "c7bf3619a79740b17c3f69640c1457a5c0f285df1db65e2d06d01410a819f82f"
+  },
+  "cancellation.json": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "dispatch.json": {
+    "bytes": 4024,
+    "sha256": "7e03898a844da8f05daac0b38af3f3d5e61a83ea504f866fb7e57e8f1c54bee4"
+  }
+}

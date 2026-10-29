@@ -1,0 +1,62 @@
+{
+  "task": "toyvm-rename-nonempty-runtime-oct29",
+  "outcome": "PASS",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "productionInvocations": 1,
+  "cliExit": 0,
+  "accepted": true,
+  "fixture": {
+    "checkpoint": "rename-nonempty-preserved",
+    "directoryInodes": {
+      "/tmp/tvrn/w/domain/D": 2,
+      "/tmp/tvrn/w/domain/D/S": 3,
+      "/tmp/tvrn/w/domain/D/T": 4,
+      "/tmp/tvrn/w/domain/D/T/E": 5
+    },
+    "errno": 39,
+    "nodesPreserved": true
+  },
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 8192,
+    "inodes": 5,
+    "live": 20480,
+    "liveLimit": 20480,
+    "openHandles": 0,
+    "operations": 42,
+    "peak": 20480,
+    "writeLimit": 65536,
+    "written": 0
+  },
+  "safetyCleanup": null,
+  "remainingMounts": [],
+  "sampledIdentitiesReaped": true,
+  "productionOwnedIdentityCheck": true,
+  "sourceUnchanged": true,
+  "boat": {
+    "id": "bx_th7j9v6r",
+    "state": "stopped",
+    "expiry": "2026-10-29T06:03:17.123Z",
+    "stoppedAt": "2026-10-29T05:34:53.158Z",
+    "snapshotVerifiedAt": "2026-10-29T05:34:52.082Z",
+    "snapshotEvents": [
+      {
+        "event": "saving",
+        "name": "toyvm-rename-nonempty-runtime-oct29",
+        "sandboxId": "bx_th7j9v6r"
+      },
+      {
+        "event": "saved",
+        "name": "toyvm-rename-nonempty-runtime-oct29",
+        "sizeBytes": 6389760
+      }
+    ],
+    "stoppedArchiveAfter": null
+  },
+  "limitations": [
+    "Source guard ordering is source inference; runtime observed errno and namespace preservation do not instrument the callback.",
+    "No browser/gameplay/general-resource qualification; browser allowance unchanged.",
+    "RSS and process identities are sampled; no claim of exhaustive transient process observation."
+  ]
+}

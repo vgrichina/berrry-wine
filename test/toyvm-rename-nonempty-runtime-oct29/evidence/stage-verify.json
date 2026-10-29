@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import json,pathlib; r=pathlib.Path(\"/tmp/toyvm-rename-nonempty-runtime-oct29\"); x=json.loads((r/\"e/boat-stage.stdout\").read_text()); assert x[\"success\"] and not x[\"stdoutTruncated\"] and json.loads(x[\"stdout\"])==json.loads((r/\"stage-manifest.json\").read_text());print(\"exact staged bytes PASS; no filename-bearing guest mounts\")"
+  ],
+  "cwd": "/tmp/toyvm-rename-nonempty-runtime-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.044605106115341187,
+  "admission": {
+    "free": 4542783488,
+    "MemAvailable": 3184181248,
+    "allocated": 2322432,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 58,
+  "stderrBytes": 0
+}
