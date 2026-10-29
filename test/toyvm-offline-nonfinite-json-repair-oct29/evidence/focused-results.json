@@ -1,0 +1,915 @@
+{
+  "offlineValidationOnly": true,
+  "originalLiveCLIGap": "OPEN",
+  "passed": 53,
+  "records": [
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "0a1537b8c35ac1379d7e4b028b47a1ba0656e692163ccf7b909d1ed08fffa11e",
+      "mutation": false,
+      "name": "repaired-unchanged-reproducer",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 1,
+      "decision": {
+        "accepted": false,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": false,
+        "failures": [
+          "cleanup not established"
+        ],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 1,
+      "inputSHA256": "a95a799ab350361a9c1867d137146f51868230711b89596cc081e6368c069c63",
+      "mutation": false,
+      "name": "original-boolean-cleanup-rejection",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "6abe1e7832c7058c608c00bccc322fb83cbc830129bdc65cab84b671282a6445",
+      "mutation": false,
+      "name": "legitimate-control",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "0a1537b8c35ac1379d7e4b028b47a1ba0656e692163ccf7b909d1ed08fffa11e",
+      "mutation": false,
+      "name": "overflow-root-3",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "c9905d8dfa5c57a9c7512a70449218dec44e32e8c47e5798ad5c1e6b5f7c22c7",
+      "mutation": false,
+      "name": "overflow-nested-4",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "269db408cc167206d8acab7c7692193f1b81ca616e417291b547a16d4c2112fb",
+      "mutation": false,
+      "name": "overflow-root-5",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "6e0b0d2ef0a5b7328e2dcc9af482382ba67de84d8fca9fe6d2599c5e29b95373",
+      "mutation": false,
+      "name": "overflow-nested-6",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "155d22c1f597342fa0d37e09f3c0562570447ec2479ea5c7093569c50b0e585f",
+      "mutation": false,
+      "name": "overflow-root-7",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "3f9e565735df53545c8ad7e467022e0994c85f933d94bba3d688bc0604b89675",
+      "mutation": false,
+      "name": "overflow-nested-8",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "d11346b1eb2bbfd04b849091316093ce43669ea0914d3e47b9744a8007920b5a",
+      "mutation": false,
+      "name": "overflow-root-9",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "672e037a416d3eb452804273b9f21a3bd66d5e155570761506c1cc97fed62397",
+      "mutation": false,
+      "name": "overflow-nested-10",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "d0a118814f0f20de85df64299d2b9c69f73802e4b90b4d43f764031a69b54fb1",
+      "mutation": false,
+      "name": "overflow-root-11",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "fa2e29572e945c73ccd42697f73cee4307006496598f4e324f1f97de9f633fa4",
+      "mutation": false,
+      "name": "overflow-nested-12",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "478f3d4637551898747d611d0d5c7bc2dc9d905515faf232228c48962abaace8",
+      "mutation": false,
+      "name": "overflow-root-13",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "7e2aa69ee88e620f52fc312aac05724865d581b65e0400da81d6d70a4c7585ea",
+      "mutation": false,
+      "name": "overflow-nested-14",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "e06d532737bd390a66596623a88c219969733bfe91ac54c623df4267a6e01a30",
+      "mutation": false,
+      "name": "nonfinite-literal-15",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "63e8281ec428891b0f5fd79c2cd70a663d424f1e1cd68b867821b6bf37282125",
+      "mutation": false,
+      "name": "nonfinite-literal-16",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "952882dd5d2b9a274130645dff500f350f7f72d17b482f972bb5045dedb3287b",
+      "mutation": false,
+      "name": "nonfinite-literal-17",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "74277efc7c289b29dacda1f962b0953a130458a793f20e3f90c08ecf57d52b39",
+      "mutation": false,
+      "name": "finite-and-data-18",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "65eaf6ba1676d0ec41ba8e8e5c993c38992bce83e536866f7371ddfbd8ccdfe8",
+      "mutation": false,
+      "name": "finite-and-data-19",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "9e3027dc5de87d8b46bcd29ceeaf3644d122bc0e494be8973225bdecbd7bd7f1",
+      "mutation": false,
+      "name": "finite-and-data-20",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "6f67e779f3fecdb599c005ae38e9237d4d379e121446276c276ac9f282e5286a",
+      "mutation": false,
+      "name": "finite-and-data-21",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "f526fb5cf99b3d59b646841046ecd68964b887bf68dd3e3866eaff026f505373",
+      "mutation": false,
+      "name": "finite-and-data-22",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "13e701cfd513fac1f18d3e91af6a256f04245fcbc51e084cf98d62a512360e2b",
+      "mutation": false,
+      "name": "finite-and-data-23",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "4d939698dc689908b1c4878f586da0d94c0c87ef5ae22bcf919a56992e2f962a",
+      "mutation": false,
+      "name": "finite-and-data-24",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "4a04c22c32daaed5dd56af7a4f0ade1560c52f81e149f0eb6d0299c285f4fdac",
+      "mutation": false,
+      "name": "finite-and-data-25",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "65412915fb015805dd118c9e01cdc6cda461e770912bdbe5a62196387f3c851a",
+      "mutation": false,
+      "name": "finite-and-data-26",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "59723f5f7c9f92f0375f586e6a909b1a10666a322fb742e34c46c3dcda23e84d",
+      "mutation": false,
+      "name": "finite-and-data-27",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "876366249c98a7ffdb69836fa04eda2edcf2fda074d2a5b0e811d8dd13a6e403",
+      "mutation": false,
+      "name": "finite-and-data-28",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "4a748e866200ecc5cc1d581d9320dc539fd6ca06635fb166551c582374f7c5d7",
+      "mutation": false,
+      "name": "finite-and-data-29",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "f20ca4ce37ba861ec57bb5bd41c4f418f50fd3216f5cfc30ad46d8b4798e2ace",
+      "mutation": false,
+      "name": "finite-and-data-30",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "dc8a8feeef558f27542d91e7af126a211aa3a50370a6335cc26aa662ba548fcb",
+      "mutation": false,
+      "name": "finite-and-data-31",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "f709503f497f2199fccefdaf95b9d7cf8f452901e6a5fc2bbfbb47f27b2a52f2",
+      "mutation": false,
+      "name": "finite-and-data-32",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "c94743668787300ed25f30504b4707cf6065cc57a2ee5668a42307161f669d8d",
+      "mutation": false,
+      "name": "finite-and-data-33",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 0,
+      "decision": {
+        "accepted": true,
+        "accountingAccepted": true,
+        "childSucceeded": true,
+        "cleanupComplete": true,
+        "failures": [],
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 0,
+      "inputSHA256": "25bf431d4e0c4abe6a96c8611704f947ade042337036de814c707a8e4c34df77",
+      "mutation": false,
+      "name": "finite-and-data-34",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "a1b3d17950a0eadfc164a490c9c5ca32f3b8c6a1176fa050e9567dfa9bfc5daf",
+      "mutation": false,
+      "name": "resource-overflow-cpuSeconds-35",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "27402d55d970524482ed096ed1445fa88e666e00d261a8f6c998d336f685113d",
+      "mutation": false,
+      "name": "resource-overflow-cpuSeconds-36",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "90435ae1c630afde5326ce805b7aec830656d21c6d6bf7cef8442283e329343e",
+      "mutation": false,
+      "name": "resource-overflow-wallSeconds-37",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "1dea48b3d99b62a3b13ceccdbdb1617e49f2dd1bd6612c610ec54c68b23721d0",
+      "mutation": false,
+      "name": "resource-overflow-wallSeconds-38",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "7eefcc675df191ecafcc2df4238df06b435eb0840d76251d553593d358dac71f",
+      "mutation": false,
+      "name": "resource-overflow-peakRSS-39",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "2bac2ed0c825ee8c6979bea0c64873e71138c4b09895262c69d12334fb9d82f0",
+      "mutation": false,
+      "name": "resource-overflow-peakRSS-40",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+      "mutation": false,
+      "name": "malformed-boundary-41",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "mutation": false,
+      "name": "malformed-boundary-42",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "mutation": false,
+      "name": "malformed-boundary-43",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b",
+      "mutation": false,
+      "name": "malformed-boundary-44",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "mutation": false,
+      "name": "malformed-boundary-45",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "1e1d0f251d3a76fa2b1bfc81164078572623403887db02988b504b0492e9f076",
+      "mutation": false,
+      "name": "malformed-boundary-46",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "d38245cfdb5d2239d67fe2a719312768b668a6928d8d97d04fbce83215e50b44",
+      "mutation": false,
+      "name": "malformed-boundary-47",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "c238cb6e9ac5407491b0988102620ab9445290d2ed7713c516a2b28bd2388968",
+      "mutation": false,
+      "name": "malformed-boundary-48",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "36781faac995a68b69aab7d540747e0c70efed427e66a608cdf64fc4feaaff12",
+      "mutation": false,
+      "name": "malformed-boundary-49",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "98ba95d50797aa344a32182ad1e03706625429100bf3ba23859fff64db6cff6d",
+      "mutation": false,
+      "name": "malformed-boundary-50",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "a668760fa2607f6d905a6665d4b0f16f5e67ef880ffa7803a8948c9c96b7e1a3",
+      "mutation": false,
+      "name": "duplicate-boundary-51",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    {
+      "PASS": true,
+      "actualExit": 2,
+      "decision": {
+        "accepted": false,
+        "error": "malformed input or unsupported resource limits",
+        "offlineValidationOnly": true,
+        "runtimeQualified": false,
+        "validationScope": "offline validation only; supplied receipt data, no execution or cleanup evidence"
+      },
+      "expectedExit": 2,
+      "inputSHA256": "fd2d9b551762c383149f5856701de1b0c1a44b4ee2d9104ebd913287077a87e2",
+      "mutation": false,
+      "name": "duplicate-boundary-52",
+      "sourceSHA256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    }
+  ],
+  "runtimeQualified": false
+}

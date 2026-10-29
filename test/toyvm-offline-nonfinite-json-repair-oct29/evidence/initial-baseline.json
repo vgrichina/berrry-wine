@@ -1,0 +1,36 @@
+{
+  "aggregateBytes": 150994944,
+  "allocationBytes": 25165824,
+  "at": "2026-10-29T02:53:38.985407+00:00",
+  "inheritedLimits": {
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "mountArgv": [],
+  "requiredBytes": 3200253952,
+  "runtimeAllowed": false,
+  "session": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-51-54-01a18592-37df-7ae1-a574-b1a398f25332.jsonl",
+  "sessionInitialBytes": 384655,
+  "sharedWAL": {
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/state_5.sqlite-wal": 4235392,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  }
+}

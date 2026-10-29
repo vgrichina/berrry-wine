@@ -1,0 +1,39 @@
+{
+  "atObserved": "2026-10-29T02:55:04 UTC",
+  "stage": "exact-input-bound pre-spawn admission evidence write",
+  "exception": "RuntimeError: evidence bound",
+  "cause": "1 MiB transient boundary fixture incorrectly placed inside evidence directory",
+  "fixtureBytes": 1048576,
+  "fixtureSHA256": "fb533bef134e00891faee190f2b959c5969b5543e2328af2bc28657c7b91e986",
+  "childSpawned": false,
+  "noRetry": true,
+  "exactFailureAdmissionRecord": "not persisted: evidence guard rejected its own record; see preceding fixture admission",
+  "priorAdmission": {
+    "MemAvailable": 2484609024,
+    "PASS": true,
+    "aggregate": 150994944,
+    "at": "2026-10-29T02:55:03.871032+00:00",
+    "blockSize": 4096,
+    "device": 64769,
+    "f_bavail": 1206237,
+    "freeBytes": 4940746752,
+    "measuredBytes": 2703975,
+    "operation": "fixture-exact-input-bound",
+    "ownedBytes": 2267107,
+    "positiveSharedWALGrowthCountedOnce": 0,
+    "projection": 25165824,
+    "remainingProjectionBytes": 22461849,
+    "requiredBytes": 3200253952,
+    "sessionBytes": 436868,
+    "supervisorRSS": 20000768
+  },
+  "evidenceLogicalBytes": 1241909,
+  "evidenceAllocatedBytes": 2232320,
+  "limitation": "Supervisor measured logical evidence bytes, not allocated blocks, and fixture writer did not enforce aggregate evidence cap before writing. Full per-operation control compliance NOT established.",
+  "completedFocusedChecks": 53,
+  "remainingChecks": [
+    "exact/over input byte boundary",
+    "explicit finite/nonfinite CLI limit delta",
+    "restored-parser rejecting mutation"
+  ]
+}

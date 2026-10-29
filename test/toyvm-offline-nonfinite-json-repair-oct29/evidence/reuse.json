@@ -1,0 +1,27 @@
+{
+  "candidate": "354c5651f6f11bbd430424c3163d7e87e125fc9a",
+  "prior52Reused": true,
+  "priorCanonicalPath": "/home/user/wine-assembly/scratch/usage-watch/toyvm-offline-command-independent-accept-oct29/retained-evidence/test/toyvm-offline-command-independent-accept-oct29/evidence/canonical-receipt.json",
+  "priorCanonicalSHA256": "8ebbf951c324cea0eb89c8339a92dc79072470005f46b179c92e41ec7bb44a4a",
+  "priorPassed": 72,
+  "rejectionCommit": "ef64b21875c04a34ea29ded0c31664feb3d45f8b",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/validate_receipt_offline.py": {
+      "bytes": 4558,
+      "sha256": "983221191bd9967fb828b27385533cea03bcb6db909f033f12ebb5ce3c437cf0"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/REPORT.md": {
+      "bytes": 7003,
+      "sha256": "f1de6d64808b7ff350e40d7fb759a98bdb0d838836f3c0dadcb53afa4f6ff346"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/test_offline_cli.py": {
+      "bytes": 5283,
+      "sha256": "b8d5eec05cf4b8b984297b3d94f493545f4da7a2d19e45f53f30d66d82a36ba9"
+    }
+  },
+  "status": "Historical unchanged-group evidence reused; parser-boundary delta tested separately, incomplete due control incident"
+}

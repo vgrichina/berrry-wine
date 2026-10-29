@@ -59,6 +59,13 @@ def reject_constant(value):
     raise ValueError('nonfinite JSON constant')
 
 
+def finite_float(value):
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError('nonfinite JSON number')
+    return number
+
+
 def read_result(path):
     # Bound reads even for oversized or changing files. No backend is imported.
     with pathlib.Path(path).open('rb') as source:
@@ -66,7 +73,7 @@ def read_result(path):
     if len(payload) > MAX_INPUT_BYTES:
         raise ValueError('input exceeds byte bound')
     result = json.loads(payload, object_pairs_hook=unique_object,
-                        parse_constant=reject_constant)
+                        parse_constant=reject_constant, parse_float=finite_float)
     if type(result) is not dict:
         raise ValueError('backend result must be a JSON object')
     output = result.get('output')
