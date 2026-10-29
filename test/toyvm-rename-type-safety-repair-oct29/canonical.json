@@ -1,0 +1,296 @@
+{
+  "task": "toyvm-rename-type-safety-repair-oct29",
+  "baselineCandidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "scope": "Direct Backend.handle contract only; kernel may reject before callback. No mounted defect, browser or gameplay claim.",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "baseline": {
+        "bytes": 8105,
+        "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+      },
+      "current": {
+        "bytes": 8105,
+        "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+      },
+      "changed": false
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "baseline": {
+        "bytes": 3457,
+        "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+      },
+      "current": {
+        "bytes": 3457,
+        "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+      },
+      "changed": false
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "baseline": {
+        "bytes": 10877,
+        "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+      },
+      "current": {
+        "bytes": 11245,
+        "sha256": "b27ebfe98312038bf7d8ec13a48c69a3a66a5e8b90af3d62798b296b852e6465"
+      },
+      "changed": true
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "baseline": {
+        "bytes": 4058,
+        "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+      },
+      "current": {
+        "bytes": 4058,
+        "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+      },
+      "changed": false
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "baseline": {
+        "bytes": 23268,
+        "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+      },
+      "current": {
+        "bytes": 23268,
+        "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+      },
+      "changed": false
+    }
+  },
+  "reproductionBefore": [
+    {
+      "source": 2,
+      "destination": 3,
+      "sourceMode": 32768,
+      "destinationMode": 16384,
+      "before": {
+        "live": 12288,
+        "peak": 12288,
+        "written": 0,
+        "failure": null,
+        "inodes": 3,
+        "openHandles": 0,
+        "operations": 0,
+        "liveLimit": 32768,
+        "writeLimit": 65536,
+        "fileLimit": 16384,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+      },
+      "after": {
+        "live": 8192,
+        "peak": 12288,
+        "written": 0,
+        "failure": null,
+        "inodes": 2,
+        "openHandles": 0,
+        "operations": 1,
+        "liveLimit": 32768,
+        "writeLimit": 65536,
+        "fileLimit": 16384,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+      },
+      "names": {
+        "T": 2
+      },
+      "destinationExists": false,
+      "result": "",
+      "errno": null
+    },
+    {
+      "source": 2,
+      "destination": 3,
+      "sourceMode": 16384,
+      "destinationMode": 32768,
+      "before": {
+        "live": 12288,
+        "peak": 12288,
+        "written": 0,
+        "failure": null,
+        "inodes": 3,
+        "openHandles": 0,
+        "operations": 0,
+        "liveLimit": 32768,
+        "writeLimit": 65536,
+        "fileLimit": 16384,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+      },
+      "after": {
+        "live": 8192,
+        "peak": 12288,
+        "written": 0,
+        "failure": null,
+        "inodes": 2,
+        "openHandles": 0,
+        "operations": 1,
+        "liveLimit": 32768,
+        "writeLimit": 65536,
+        "fileLimit": 16384,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+      },
+      "names": {
+        "T": 2
+      },
+      "destinationExists": false,
+      "result": "",
+      "errno": null
+    }
+  ],
+  "reproductionAfter": [
+    {
+      "source": 2,
+      "destination": 3,
+      "sourceMode": 32768,
+      "destinationMode": 16384,
+      "before": {
+        "live": 12288,
+        "peak": 12288,
+        "written": 0,
+        "failure": null,
+        "inodes": 3,
+        "openHandles": 0,
+        "operations": 0,
+        "liveLimit": 32768,
+        "writeLimit": 65536,
+        "fileLimit": 16384,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+      },
+      "after": {
+        "live": 12288,
+        "peak": 12288,
+        "written": 0,
+        "failure": null,
+        "inodes": 3,
+        "openHandles": 0,
+        "operations": 1,
+        "liveLimit": 32768,
+        "writeLimit": 65536,
+        "fileLimit": 16384,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+      },
+      "names": {
+        "S": 2,
+        "T": 3
+      },
+      "destinationExists": true,
+      "result": null,
+      "errno": 21
+    },
+    {
+      "source": 2,
+      "destination": 3,
+      "sourceMode": 16384,
+      "destinationMode": 32768,
+      "before": {
+        "live": 12288,
+        "peak": 12288,
+        "written": 0,
+        "failure": null,
+        "inodes": 3,
+        "openHandles": 0,
+        "operations": 0,
+        "liveLimit": 32768,
+        "writeLimit": 65536,
+        "fileLimit": 16384,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+      },
+      "after": {
+        "live": 12288,
+        "peak": 12288,
+        "written": 0,
+        "failure": null,
+        "inodes": 3,
+        "openHandles": 0,
+        "operations": 1,
+        "liveLimit": 32768,
+        "writeLimit": 65536,
+        "fileLimit": 16384,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+      },
+      "names": {
+        "S": 2,
+        "T": 3
+      },
+      "destinationExists": true,
+      "result": null,
+      "errno": 20
+    }
+  ],
+  "contract": {
+    "PASS": true,
+    "scope": "direct Backend.handle only; no mount",
+    "backendSha256": "b27ebfe98312038bf7d8ec13a48c69a3a66a5e8b90af3d62798b296b852e6465",
+    "cases": 70,
+    "mutations": {
+      "remove_guard": {
+        "rejected": true,
+        "reason": "('unexpected success', 12, 21)"
+      },
+      "swap_errnos": {
+        "rejected": true,
+        "reason": "(12, 20, 21)"
+      },
+      "guard_after_emptiness": {
+        "rejected": true,
+        "reason": "(12, 39, 21)"
+      },
+      "guard_after_collection": {
+        "rejected": true,
+        "reason": "3"
+      },
+      "guard_after_namespace_pop": {
+        "rejected": true,
+        "reason": "b'S'"
+      }
+    }
+  },
+  "controls": {
+    "prelaunch": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor",
+      "controls": {
+        "omitted": "REJECTED BEFORE SPAWN",
+        "root": "REJECTED BEFORE SPAWN",
+        "donor": "REJECTED BEFORE SPAWN"
+      },
+      "sentinel": "/tmp/toyvm-rename-type-safety-repair-oct29/repo",
+      "pythonChild": [
+        134217728,
+        134217728
+      ],
+      "gitVersion": "git version 2.43.0",
+      "PASS": true
+    },
+    "supervisorSha256": "5540d789c4952ebfa9ade34d974a18a8bf4306087fe2154aa879dc196a978892",
+    "limitContractSha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387",
+    "resourceAdmission": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-type-safety-repair-oct29-admission.json",
+    "allocationMiB": 24,
+    "noMountOrNodeOrBoatExecution": true,
+    "rootRefReceiptReused": {
+      "command": "git show-ref",
+      "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+      "streamedBytes": 148965,
+      "capturedListingBytes": 0,
+      "maxChunkBytes": 8192,
+      "exitCode": 0
+    }
+  },
+  "priorAcceptedScope": {
+    "canonical": "/home/user/wine-assembly/scratch/usage-watch/toyvm-nonempty-rmdir-runtime-independent-accept-oct29/retained-evidence/test/canonical.json",
+    "status": "unchanged; no receipt rewrite or accepted-test replay"
+  },
+  "remainingGates": [
+    "Independent acceptance before integration",
+    "No main merge or public deployment authorized"
+  ],
+  "box": null,
+  "evidenceRoot": "/tmp/toyvm-rename-type-safety-repair-oct29/e"
+}

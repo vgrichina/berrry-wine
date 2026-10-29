@@ -150,6 +150,10 @@ class Backend:
             if ino==newdir and old==new:return b''
             if new in dest:
                 previous=dest[new]
+                source_is_dir=stat.S_ISDIR(self.nodes[source[old]]['mode'])
+                dest_is_dir=stat.S_ISDIR(self.nodes[previous]['mode'])
+                if not source_is_dir and dest_is_dir:raise OSError(errno.EISDIR,'replacement is directory')
+                if source_is_dir and not dest_is_dir:raise OSError(errno.ENOTDIR,'replacement is not directory')
                 if self.nodes[previous]['names']:raise OSError(errno.ENOTEMPTY,'replacement directory')
                 self.nodes[previous]['links']-=1;self.collect(previous)
             dest[new]=source.pop(old)

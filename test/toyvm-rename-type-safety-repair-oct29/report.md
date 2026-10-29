@@ -1,0 +1,9 @@
+# Rename replacement type safety
+
+At baseline `5a88ca099b962e946160afd2d4d71a950bf46db3`, the unchanged direct `Backend.handle(12, 1, struct.pack('<Q', 1) + bytes([83, 0, 84, 0]))` reproducer wrongly succeeded for both file-to-directory and directory-to-file replacement. It collected the destination inode and changed live allocation from 12288 to 8192 bytes. The original backend and stdout remain in the task-owned evidence directory recorded in canonical.json.
+
+Four lines now classify source and destination before destination emptiness, link decrement, collection or namespace mutation. File-to-directory returns EISDIR (21), including nonempty destinations; directory-to-file returns ENOTDIR (20). Existing nonempty directory-to-directory ENOTEMPTY, flags, same-type replacement and same-path behavior remain covered. The repaired unchanged reproducer preserves both names, inode numbers and 12288 live bytes.
+
+`python3 -B test/toyvm-rename-type-safety-repair-oct29/test_contract.py` passes 70 cases through actual handler op12 and zero-flag op45. It checks same/cross-parent operations, complete state and object identity on rejection (operations alone may increment), nonzero flags, payload and open-handle accounting, collection on valid replacement and same-path no-ops. Five in-memory source mutations removing/swapping the guard or moving it after emptiness/collection/namespace mutation are rejected.
+
+Baseline five-pin provenance and the explicit changed backend hash are in canonical.json; the other four pins are unchanged. The accepted nonempty-RMDIR 12-control canonical receipt is untouched and was not replayed. This is a direct handler contract result: a kernel may reject before invoking the callback. No mounted defect, browser or gameplay qualification is claimed. No Boat assigned or used. Independent acceptance is required before integration.
