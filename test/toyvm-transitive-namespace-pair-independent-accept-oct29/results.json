@@ -1,0 +1,132 @@
+{
+  "candidate": "92d587a897d58561fcccfcaf88eac548d8e1efc0",
+  "status": "INCOMPLETE_INDEPENDENT_ACCEPTANCE_CONTROL_FAILURE",
+  "interactions": [
+    {
+      "boundary": "caller",
+      "mode": "normal",
+      "pass_": true
+    },
+    {
+      "boundary": "caller",
+      "mode": "timestamp",
+      "pass_": true
+    },
+    {
+      "boundary": "caller",
+      "mode": "unchecked",
+      "pass_": true
+    },
+    {
+      "boundary": "caller",
+      "mode": "modules",
+      "pass_": true
+    },
+    {
+      "boundary": "caller",
+      "mode": "replace",
+      "pass_": true
+    },
+    {
+      "boundary": "adapter",
+      "mode": "normal",
+      "pass_": true
+    },
+    {
+      "boundary": "adapter",
+      "mode": "timestamp",
+      "pass_": true
+    },
+    {
+      "boundary": "adapter",
+      "mode": "unchecked",
+      "pass_": true
+    },
+    {
+      "boundary": "adapter",
+      "mode": "modules",
+      "pass_": true
+    },
+    {
+      "boundary": "adapter",
+      "mode": "replace",
+      "pass_": true
+    }
+  ],
+  "controls": {
+    "legacy-caller": {
+      "status": "INVALID_CONTROL_NO_REJECTION",
+      "pinAlignedNormalPassed": true,
+      "pinAlignedTimestampUnexpectedlyPassed": true,
+      "legacyFileLoaderASTEqualsCandidate": true,
+      "evidence": "e/legacy-caller-loader-control.stderr"
+    },
+    "legacy-adapter": {
+      "boundary": "adapter",
+      "mode": "timestamp",
+      "error": "hostile bytecode executed"
+    },
+    "stale-pin": {
+      "boundary": "caller",
+      "mode": "normal",
+      "error": "accepted backend identity mismatch: toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py"
+    }
+  },
+  "namespace": "INIT first; invalid dotdot/slash and cycle rejected; rename/create positive after rejection",
+  "backendPinMismatches": 4,
+  "transitiveTamperRejected": true,
+  "actualChildInvocations": 0,
+  "returnedAdapterInvoked": false,
+  "sourcePinsBefore": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "bc674160f1c7ced2a369f7b82067891e1fe51447121db8fcd543e881f7552b58"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourcePinsAfter": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "bc674160f1c7ced2a369f7b82067891e1fe51447121db8fcd543e881f7552b58"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "candidateProductionDefectEstablished": false,
+  "originalRunStatus": "ACCEPT_SOURCE_ONLY was provisional and superseded: original legacy-caller control failed on stale pin rather than loader behavior.",
+  "stopReason": "First decisive oracle-control failure. No further behavioral execution, repair or queue refill.",
+  "evidenceRuns": [
+    "independent-oracle",
+    "legacy-caller-loader-control"
+  ],
+  "unexecuted": "Genuine private legacy caller-loader regression control remains required; no acceptance conclusion for combined candidate."
+}

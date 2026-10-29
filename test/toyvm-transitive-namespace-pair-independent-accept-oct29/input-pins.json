@@ -1,0 +1,67 @@
+{
+  "checks": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": true,
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": true,
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": true,
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": true,
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": true,
+    "limitModule": true,
+    "taskSupervisor": true,
+    "pythonExecutable": true,
+    "canonicalReceipt": true,
+    "artifact:source-pins.json": true,
+    "artifact:base-adapter.txt": true,
+    "artifact:base-caller.txt": true,
+    "artifact:REPORT.md": true,
+    "artifact:interaction.py": true,
+    "artifact:results.json": true
+  },
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "bc674160f1c7ced2a369f7b82067891e1fe51447121db8fcd543e881f7552b58"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "artifacts": {
+    "source-pins.json": {
+      "bytes": 3887,
+      "sha256": "991a0d46c63d1fc50ae4d4951a3d42746a3eb881da398d7dd4c33f13abb733ff"
+    },
+    "base-adapter.txt": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "base-caller.txt": {
+      "bytes": 8392,
+      "sha256": "292dead0e3e75143e898bbbfef3ebb386e9a0a1e4ec7348274c66acf2a47a7fc"
+    },
+    "REPORT.md": {
+      "bytes": 3670,
+      "sha256": "3b723aba3d69f584c4a9f7781771d8dfd657d951abcdf5a77bba0580f811c0af"
+    },
+    "interaction.py": {
+      "bytes": 11424,
+      "sha256": "3f3556c6938a2bef608f1c0d13b55aa36ff9744b7a1ad89d685bfb8f79ac1bb8"
+    },
+    "results.json": {
+      "bytes": 3736,
+      "sha256": "750ea0b48fc583dfb79d47f3c4880b4ea724724a88ba2a8df7d6f9467d265352"
+    }
+  }
+}
