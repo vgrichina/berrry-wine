@@ -1,0 +1,168 @@
+{
+  "base": "389745e7ea964cd0537d45ec376c6bb3f5e7686f",
+  "beforeSourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "bcc2ea9b51d3f4857b0fa9fd7ee67dee506c14e52ac07ae5eb5211058c981470"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "canonicalPair": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-combined-backend-caller-independent-accept-oct29/coordinator-retained/completion-receipt.json",
+    "pin": {
+      "bytes": 20614,
+      "sha256": "c87b5aa661cb1d3bd1b1637e63a80820df84d466203435e3f2fa89c76c41fdea"
+    }
+  },
+  "verifiedInputs": {
+    "accepted-pair-tests/verify_inputs.py": {
+      "bytes": 4161,
+      "sha256": "042a0115fd9b993c54c8b4c08ee8e889a98a370272485fc10d1db6bc2a98c8f7"
+    },
+    "accepted-pair-tests/input-verification.json": {
+      "bytes": 9185,
+      "sha256": "3f1c6006d386f7250d6e96b475b9dc2e723c255d117915d4ee6257e7b96620e0"
+    },
+    "accepted-pair-tests/oracle.py": {
+      "bytes": 11687,
+      "sha256": "8bee6eb9e1e509f9f30085a8a5ef49421ba9c2dd04138e7bff808147808409c5"
+    },
+    "accepted-pair-tests/REPORT.md": {
+      "bytes": 3553,
+      "sha256": "f914e722d8c9bbf21b237ace9901aa01a0c923eb52e4db92a73324c5c32173cf"
+    },
+    "accepted-pair-tests/results.json": {
+      "bytes": 5942,
+      "sha256": "0757abd7d691e0d8f14cda69ecd321e33b08aef97922666741eec040f59c0ef9"
+    },
+    "accepted-supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "accepted-wire-receipt.json": {
+      "bytes": 11983,
+      "sha256": "3be7665a12f6550cba274848aeb7bc18ce7a4cb531c19d8bef6ded240dc4b03d"
+    },
+    "accepted-transitive-receipt.json": {
+      "bytes": 34382,
+      "sha256": "a2aaec5de190c8bdf905230b9ee0e49c9b42b9cc30dc049775b38168d7f158e2"
+    }
+  },
+  "retainedCoverage": {
+    "callerChecks": 41,
+    "backendOperations": 52,
+    "byExactIdentity": true,
+    "replayed": false
+  },
+  "oldAdapterPin": {
+    "bytes": 4058,
+    "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+  },
+  "newAdapterPin": {
+    "bytes": 4241,
+    "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+  },
+  "scope": "Tested combined source candidate only; fresh independent final composition acceptance and runtime gates remain.",
+  "replayedPriorGroups": false,
+  "afterSourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "fd87f1a4c211d70daf60b2b201cf2f7b3665b1dc7b631de66baa263c491cac77"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "callerMigration": {
+    "before": {
+      "bytes": 8392,
+      "sha256": "bcc2ea9b51d3f4857b0fa9fd7ee67dee506c14e52ac07ae5eb5211058c981470"
+    },
+    "after": {
+      "bytes": 8392,
+      "sha256": "fd87f1a4c211d70daf60b2b201cf2f7b3665b1dc7b631de66baa263c491cac77"
+    },
+    "delta": "Exactly one BACKEND_PINS adapter SHA literal; every other caller byte unchanged"
+  },
+  "retainedReceipts": {
+    "accepted-pair-receipt.json": {
+      "bytes": 20614,
+      "sha256": "c87b5aa661cb1d3bd1b1637e63a80820df84d466203435e3f2fa89c76c41fdea"
+    },
+    "accepted-transitive-receipt.json": {
+      "bytes": 34382,
+      "sha256": "a2aaec5de190c8bdf905230b9ee0e49c9b42b9cc30dc049775b38168d7f158e2"
+    },
+    "accepted-wire-receipt.json": {
+      "bytes": 11983,
+      "sha256": "3be7665a12f6550cba274848aeb7bc18ce7a4cb531c19d8bef6ded240dc4b03d"
+    }
+  },
+  "reuseScope": {
+    "componentSuites": "41 caller checks and 52 backend operations retained by verified pair source/artifact identity, not replayed.",
+    "transitive": "513f22d8db9fc9b7d65d0c224b25d6439268b9e8 independently accepted adapter e45f6f6d; exact donor copied.",
+    "wire": "c2352606f65b6d7aa51d036f524b87f378620301 receipt retained byte-identically; 83 source/local serve requests and seven-request distinguishing control. Historical full backend b8201b2c differs from accepted combined 75842ffa; this task does not extend that receipt to a newly accepted final wire pair.",
+    "finalPair": "Independent final composition acceptance is a coordinator-assigned next gate."
+  },
+  "historicalSourceAvailability": {
+    "operation": "retained-wire-backend-source",
+    "exit": 128,
+    "detail": "Optional read-only Git show found no production backend path in c2352606 commit. No retry, fetch, alternate expansion or oracle replay. Supplied immutable wire receipt remains verified against canonical pair receipt; no historical source identity claimed beyond it."
+  },
+  "rootRefReceipt": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-final-accepted-components-candidate-oct29/root-ref-digest.json",
+    "pin": {
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    "reusedInitial": true,
+    "laterComparisonRequired": false
+  },
+  "controls": {
+    "python": "/usr/bin/python3",
+    "supervisor": {
+      "bytes": 3719,
+      "sha256": "e670eb14a6f2dc00a22b4ceef2a5898775c46cd474bed487f8e4a41fcf074085"
+    },
+    "limitContract": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "startup": {
+      "bytes": 550,
+      "sha256": "7442ce193abad351541c4dc05fcf9779ae2cda942d9fd81ccff8100d06d6f080"
+    },
+    "SSH": "Exact dispatch GIT_SSH_COMMAND supplied by ops.py; no trust-file writes",
+    "mount": "No mount or runtime execution; filename-bearing mount argv not applicable",
+    "box": null,
+    "sharedMain": false
+  }
+}

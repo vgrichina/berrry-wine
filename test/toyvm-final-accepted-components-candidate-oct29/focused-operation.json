@@ -1,0 +1,85 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "test/toyvm-final-accepted-components-candidate-oct29/composition.py"
+  ],
+  "cwd": "/tmp/toyvm-final-accepted-components-candidate-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.1400522137992084,
+  "admission": {
+    "at": 1793268370.3029094,
+    "device": 1680253000807562931,
+    "f_bavail": 1128892,
+    "blockSize": 4096,
+    "free": 4623941632,
+    "MemAvailable": 2641260544,
+    "allocated": 2629632,
+    "budget": 25165824,
+    "aggregate": {
+      "at": "2026-10-29T10:01:09.337392+00:00",
+      "owners": {
+        "coordinator": 25165824,
+        "gltron-eager-integrity-independent-accept-oct29": 50331648,
+        "toyvm-transitive-acceptance-recovered-publication-oct29": 25165824,
+        "toyvm-final-accepted-components-candidate-oct29": 25165824
+      },
+      "aggregate": 125829120,
+      "requiredBytes": 3200253952,
+      "futureGrowthIncludingUncertaintyBuffer": 100663296,
+      "freeBytes": 4631326720,
+      "remainingAfterForecast": 4513251328,
+      "MemAvailable": 3537211392,
+      "memRequired": 2147483648,
+      "device": 1680253000807562931,
+      "f_bavail": 1063445,
+      "blockSize": 4096,
+      "PASS": true,
+      "forecast": "Transferred24MiB predecessor allocation: sourceGit3 evidence1 WAL8 publication3 uncertainty9; other active owners retained through closeout. Current aggregate and unchanged per-operation floors.",
+      "previousAllocationCloseout": {
+        "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+        "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+      },
+      "transfers": {
+        "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+        "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+      },
+      "transfer": {
+        "tuxracer-glvertex2dv-independent-accept-oct29": "tuxracer-gltexcoord2dv-dispatch-repair-oct29"
+      },
+      "changedPrerequisite": "Exact combined caller/backend independently accepted and closed out; transfer24MiB to combining accepted components",
+      "shortfalls": {
+        "diskBytes": 0,
+        "memoryBytes": 0
+      },
+      "clientForecast": {
+        "at": "2026-10-29T10:00:29.087056+00:00",
+        "MemAvailable": 3537211392,
+        "requiredForOneNew": 2852126720,
+        "PASS": true,
+        "shortfall": 0,
+        "activeOwners": [],
+        "trigger": "independent pair acceptance completed, verified closeout and reserve release"
+      },
+      "memoryReservationLedger": "/home/user/wine-assembly/scratch/usage-watch/publication-memory-reservations-oct29.json"
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true,
+      "forecast": true,
+      "memory": true
+    }
+  },
+  "stdoutBytes": 2650,
+  "stderrBytes": 0
+}

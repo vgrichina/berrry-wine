@@ -1,0 +1,42 @@
+{
+  "test/toyvm-final-accepted-components-candidate-oct29/accepted-pair-receipt.json": {
+    "bytes": 20614,
+    "sha256": "c87b5aa661cb1d3bd1b1637e63a80820df84d466203435e3f2fa89c76c41fdea"
+  },
+  "test/toyvm-final-accepted-components-candidate-oct29/provenance.json": {
+    "bytes": 7044,
+    "sha256": "604c9c7aa4c2452799f3c3fe561b553303c746c5639a2077220445bd3012941a"
+  },
+  "test/toyvm-final-accepted-components-candidate-oct29/accepted-wire-receipt.json": {
+    "bytes": 11983,
+    "sha256": "3be7665a12f6550cba274848aeb7bc18ce7a4cb531c19d8bef6ded240dc4b03d"
+  },
+  "test/toyvm-final-accepted-components-candidate-oct29/focused-operation.json": {
+    "bytes": 3277,
+    "sha256": "f33e021145e2a4c588c561327f5b6aafc79848f61e15986608e86135b01d4a2a"
+  },
+  "test/toyvm-final-accepted-components-candidate-oct29/composition.py": {
+    "bytes": 8080,
+    "sha256": "6be38bd9c8d39be3ea4c257b62a56da37dc333adfcf8d2d25c9b7c641ba40b42"
+  },
+  "test/toyvm-final-accepted-components-candidate-oct29/accepted-transitive-receipt.json": {
+    "bytes": 34382,
+    "sha256": "a2aaec5de190c8bdf905230b9ee0e49c9b42b9cc30dc049775b38168d7f158e2"
+  },
+  "test/toyvm-final-accepted-components-candidate-oct29/REPORT.md": {
+    "bytes": 3207,
+    "sha256": "365a563fd315c046031aa592c64513ed129396abd7f04f7a10dc649b5360572e"
+  },
+  "test/toyvm-final-accepted-components-candidate-oct29/baseline-caller.py": {
+    "bytes": 8392,
+    "sha256": "bcc2ea9b51d3f4857b0fa9fd7ee67dee506c14e52ac07ae5eb5211058c981470"
+  },
+  "test/toyvm-final-accepted-components-candidate-oct29/accepted-adapter.py": {
+    "bytes": 4241,
+    "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+  },
+  "test/toyvm-final-accepted-components-candidate-oct29/results.json": {
+    "bytes": 2650,
+    "sha256": "07fe9aed8524f48a853efb321ebd2ac09037aa81150ed4a5de14339c7f3b8c49"
+  }
+}
