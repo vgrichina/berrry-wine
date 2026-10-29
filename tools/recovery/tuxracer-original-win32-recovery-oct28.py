@@ -311,8 +311,9 @@ def lexical_commands(text):
 
     Braces/quotes group words across lines; only ungrouped newline/semicolon
     ends a command. Escapes consume the following character, including newline.
-    A bracket substitution or malformed grouping stops the remaining audit as
-    UNKNOWN: its command boundaries cannot be established by this subset.
+    Simple bracket substitutions containing only plain words are retained as
+    computed words; their closing boundary is known without evaluating them.
+    Other substitutions or malformed grouping stop the remaining audit as UNKNOWN.
     Control-command bodies are retained as words, never scanned as scripts.
     """
     words, i, start = [], 0, 0
@@ -362,8 +363,15 @@ def lexical_commands(text):
                         i += 1
                         break
             elif c == '[':
-                yield [], text[start:start + 1024]
-                return
+                # Only a single command of plain words: no nested script,
+                # variables, escapes, quotes, braces or command separators.
+                # Preserve the spelling so source operands remain UNKNOWN.
+                bracket = re.match(r'\[[A-Za-z_][A-Za-z0-9_:]*(?:[ \t]+[A-Za-z0-9_:.+*/?-]+)*[ \t]*\]', text[i:])
+                if bracket is None:
+                    yield [], text[start:start + 1024]
+                    return
+                i += len(bracket.group(0))
+                continue
             elif quote:
                 if c == '"':
                     quote = False
