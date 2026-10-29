@@ -138,6 +138,8 @@ class Backend:
         if op in (10,11):
             name=data.split(b'\0',1)[0];n=self.nodes[ino];child=n['names'].get(name)
             if child is None:raise OSError(errno.ENOENT,'unlink missing')
+            if op==10 and stat.S_ISDIR(self.nodes[child]['mode']):raise OSError(errno.EISDIR,'unlink directory')
+            if op==11 and not stat.S_ISDIR(self.nodes[child]['mode']):raise OSError(errno.ENOTDIR,'rmdir non-directory')
             if op==11 and self.nodes[child]['names']:raise OSError(errno.ENOTEMPTY,'directory not empty')
             del n['names'][name];self.nodes[child]['links']-=1;self.collect(child)
             return b''
@@ -160,13 +162,24 @@ class Backend:
                     if stat.S_ISDIR(node['mode']):pending.extend(node['names'].values())
             if new in dest:
                 previous=dest[new]
+                source_is_dir=stat.S_ISDIR(self.nodes[source[old]]['mode'])
+                dest_is_dir=stat.S_ISDIR(self.nodes[previous]['mode'])
+                if not source_is_dir and dest_is_dir:raise OSError(errno.EISDIR,'replacement is directory')
+                if source_is_dir and not dest_is_dir:raise OSError(errno.ENOTDIR,'replacement is not directory')
                 if self.nodes[previous]['names']:raise OSError(errno.ENOTEMPTY,'replacement directory')
                 self.nodes[previous]['links']-=1;self.collect(previous)
             dest[new]=source.pop(old)
             return b''
         if op==28:
             fh,offset,size=unpack('2QI',data)
-            names=[(b'.',ino),(b'..',1)]+list(self.nodes[ino]['names'].items());out=b''
+            parent=1
+            if ino!=1:
+                parents=[p for p,n in self.nodes.items()
+                         if stat.S_ISDIR(n['mode']) and ino in n['names'].values()]
+                if len(parents)!=1:
+                    raise OSError(errno.EIO,'directory parent is not unique')
+                parent=parents[0]
+            names=[(b'.',ino),(b'..',parent)]+list(self.nodes[ino]['names'].items());out=b''
             for i,(name,child) in enumerate(names):
                 if i<offset:continue
                 kind=4 if stat.S_ISDIR(self.nodes[child]['mode']) else 8
