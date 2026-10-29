@@ -39051,5 +39051,12 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 177440212
+  },
+  {
+    "id": 4594,
+    "name": "gluScaleImage",
+    "nargs": 9,
+    "convention": "stdcall",
+    "hash": 1146032026
   }
 ]

@@ -21,6 +21,7 @@ new Uint8Array(memory, image, 64).forEach((_, i, a) => { a[i] = i; });
 const uploads = [];
 const frontend = {
   unpackAlignment: 4,
+  pixelStore: { 0x0CF5: 4 },
   texImage(level, internal, width, height, border, format, type, pixels) {
     uploads.push({ kind: 'image', width, height, format, alignment: this.unpackAlignment, pixels });
   },

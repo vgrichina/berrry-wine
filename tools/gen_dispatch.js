@@ -306,6 +306,7 @@ const gpuApis = new Map([
   ['glPushClientAttrib', 1], ['glPopClientAttrib', 0],
   ['glStencilMask', 1], ['glStencilFunc', 3], ['glStencilOp', 3], ['glClearStencil', 1],
   ['glColorMask', 4],
+  ['gluScaleImage', 9],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 

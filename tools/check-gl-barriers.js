@@ -48,7 +48,7 @@ const EXEMPT = new Map([
 // or returns a value the guest branches on. WGL is included wholesale: context
 // creation, make-current and the pixel-format calls all return a handle or a
 // status, and makeCurrent additionally retargets everything queued behind it.
-const REPORTS = /^(glGet|glIs|glGen|glReadPixels$|wgl|gpuPresent$)/;
+const REPORTS = /^(glGet|glIs|glGen|glReadPixels$|gluScaleImage$|wgl|gpuPresent$)/;
 
 const missing = [];
 const staleExemptions = new Set(EXEMPT.keys());
