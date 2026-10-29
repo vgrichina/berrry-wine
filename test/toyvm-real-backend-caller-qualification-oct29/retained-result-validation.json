@@ -1,0 +1,11 @@
+{
+  "PASS": true,
+  "browserAllowanceUnchanged": true,
+  "mountCleanup": true,
+  "newRuntimeCases": 2,
+  "positiveAccepted": true,
+  "processCleanup": true,
+  "quotaFailureRejected": true,
+  "reruns": 0,
+  "sourcePinsUnchanged": true
+}

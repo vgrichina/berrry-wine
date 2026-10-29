@@ -1,0 +1,10 @@
+{
+  "PASS": true,
+  "rejectedBeforeSpawn": [
+    "root",
+    "donor",
+    "outside",
+    "omitted"
+  ],
+  "sentinel": "/tmp/toyvm-real-backend-caller-qualification-oct29"
+}

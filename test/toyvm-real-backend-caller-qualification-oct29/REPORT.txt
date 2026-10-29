@@ -1,0 +1,10 @@
+Real CLI-to-accepted-backend qualification passed on one fresh dedicated Boat.
+Candidate: 5a88ca099b962e946160afd2d4d71a950bf46db3. All five production source hashes unchanged.
+Actual qualify_accounted.py CLI subprocess used its real load_backend(), pinned cancellation receipt, tiny-fixture domain, synchronous-fuse backend. No mock or saved-result backend adapter.
+Positive: CLI exit 0 / accepted true; bounded child writes and unlinks 20 bytes in accounted domain, comma-bearing filename. Filesystem peak 12288, final live 4096, written 20, openHandles 0.
+Rejecting control: CLI exit 1 / accepted false; first authoritative failure filesystem cumulative write limit (write limit 8); no rerun.
+Both cases: cleanupComplete true, unmountExit 0, serverExit -15, zero remaining mounts and owned processes.
+Boat bx_2qc29adz: TTL 1800, cutoff 03:18 UTC, original expiry 03:30:13.157 UTC. Explicit delegated snapshot-stop completed; stopped and fresh snapshot verified.
+No browser/game/build/download/installer execution; original browser allowance unchanged. No local FUSE execution.
+Only task test/receipt/report paths changed. Canonical completion receipt: /tmp/toyvm-real-backend-caller-qualification-oct29/receipt.json, written after remote SHA verification. Allocation retained through coordinator closeout.
+Limitations: tiny fixture only; browser qualification remains false. No production changes or main integration.

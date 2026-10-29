@@ -1,0 +1,99 @@
+{
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanup": "lifecycle.json",
+  "files": {
+    "REPORT.txt": {
+      "bytes": 1421,
+      "sha256": "b4e32b054cae99926374fe27ff5dc356a12b1a0d76e00cc64a2f15d56f5172bc"
+    },
+    "admission-through-runtime.jsonl": {
+      "bytes": 13283,
+      "sha256": "c49d5c37624c172eec2c3f7cf140f2cff622462016a72e6a52b9a45db8a1068a"
+    },
+    "baseline.json": {
+      "bytes": 761,
+      "sha256": "1517958ac66e3773ef09771bc50127f65b1f36bcf8429576c3f3db2e9505406b"
+    },
+    "boat-create.stdout": {
+      "bytes": 512,
+      "sha256": "94395d26ba19ebc465a7c607cf3368852680bd85cb244d252ff09a08470bd368"
+    },
+    "boat-final-info.stdout": {
+      "bytes": 1295,
+      "sha256": "d59164706b5a33a846b682143c57438e24c60d0a91303592a02cbcc4b1f6dc70"
+    },
+    "boat-fuse-helper.stdout": {
+      "bytes": 406,
+      "sha256": "f53758e1b5ae4e98a77692e65005cefb9433034f0b3ec16ed3ccc354bad213d1"
+    },
+    "boat-location-capability.stdout": {
+      "bytes": 661,
+      "sha256": "ee66c96cc0a715236b53b7d6e420d4c71978f9199ecf2f19287397abc692076b"
+    },
+    "boat-stop-status.stdout": {
+      "bytes": 214,
+      "sha256": "903ca29cc7c2de27e0d0b8a7e3e18addf6a2d309edcdece41e5d5bcdf6e4ce9c"
+    },
+    "cwd-controls.json": {
+      "bytes": 173,
+      "sha256": "6b79bf108434e1e3981a47e12aa5e6909cc12776485f0eb15b2d47edb9fc1e5b"
+    },
+    "launch-configuration.json": {
+      "bytes": 477,
+      "sha256": "07039a0c9c08f305f695c4188c2ec03d9d6e3142517349c4059039f621c67bd1"
+    },
+    "lifecycle.json": {
+      "bytes": 1219,
+      "sha256": "53cabeb4071c65293327ba04b2bdbbbff96275aedd9b41aea325a0f4ab8a8915"
+    },
+    "local_guard.py": {
+      "bytes": 7905,
+      "sha256": "4fa3c68c3e54f176ae80d1959947b1120c0aacf20df2e088b658d73b09714f9e"
+    },
+    "pins.json": {
+      "bytes": 2237,
+      "sha256": "98233846de6afbe884dd4cbd63d2ee126cbbb72f44c0e421ae8a737843bd4d8c"
+    },
+    "positive.cli.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "positive.cli.stdout": {
+      "bytes": 1027,
+      "sha256": "7ce0201aaa803faac01a27a9c7fccf5817d0cf7623f1fcdb48981755d1c10242"
+    },
+    "quota-rejection.cli.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "quota-rejection.cli.stdout": {
+      "bytes": 1188,
+      "sha256": "55357f91d0de7ac5eb66ae53025fb10bffbbdcccfac65d6b9887cb6655c4d757"
+    },
+    "real-cli-qualification.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "real-cli-qualification.stdout": {
+      "bytes": 8768,
+      "sha256": "e6e8fbc78f5eafc71de0f5a5be122c352752d7aa2d95ec2493043826fa08bb63"
+    },
+    "remote-result.json": {
+      "bytes": 8870,
+      "sha256": "23a8d3146a08ebd406363b1803c798549042c45e192a9f4ede5da059504da99b"
+    },
+    "remote_test.py": {
+      "bytes": 6907,
+      "sha256": "a1fa5f155364b96e3b8ab07c8cc5ddaa519f2e4fe38ee2d7d528eb2c4ae6169b"
+    },
+    "retained-result-validation.json": {
+      "bytes": 236,
+      "sha256": "796887a9a12b1694ec8c2500739accf8fc929d14ceff47a216e9cab52db69c8f"
+    }
+  },
+  "remotePublicationReceipt": "/tmp/toyvm-real-backend-caller-qualification-oct29/receipt.json",
+  "resourceIncidents": [],
+  "runtime": "remote-result.json",
+  "task": "toyvm-real-backend-caller-qualification-oct29",
+  "tests": "retained-result-validation.json"
+}

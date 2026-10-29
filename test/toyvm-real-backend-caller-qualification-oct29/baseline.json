@@ -1,0 +1,31 @@
+{
+  "allocationRetainedThroughCoordinatorCloseout": true,
+  "inheritedLimits": {
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "session": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-58-15-01a18598-06fc-7331-933a-8cf6ff35ba93.jsonl",
+  "sessionBytes": 542533,
+  "walBytes": {
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/state_5.sqlite-wal": 4235392,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  }
+}

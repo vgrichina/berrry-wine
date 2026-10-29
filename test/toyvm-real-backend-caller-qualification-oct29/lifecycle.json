@@ -1,0 +1,47 @@
+{
+  "box": "bx_2qc29adz",
+  "create": [
+    {
+      "event": "created",
+      "hostedPorts": null,
+      "id": "bx_2qc29adz",
+      "org": null,
+      "team": null,
+      "ttlSeconds": 1800
+    },
+    {
+      "event": "state",
+      "id": "bx_2qc29adz",
+      "state": "cloning"
+    },
+    {
+      "event": "state",
+      "id": "bx_2qc29adz",
+      "state": "ready"
+    },
+    {
+      "archiveAfter": "2026-10-29T03:30:13.157Z",
+      "commands": {
+        "forward": "boat forward bx_2qc29adz --remote 3000 --local 3000",
+        "ssh": "boat ssh bx_2qc29adz"
+      },
+      "desktopUrl": null,
+      "event": "ready",
+      "id": "bx_2qc29adz",
+      "ip": "2001:41d0:8:8d39:100::21",
+      "state": "ready",
+      "url": "https://box-node-7cec9118f737c49d.on.boat.dev"
+    }
+  ],
+  "cutoff": "2026-10-29T03:18:00Z",
+  "evidencePreservedLocally": true,
+  "expiry": "2026-10-29T03:30:13.157Z",
+  "finalInfo": "boat-final-info.stdout",
+  "shutdownActionNeeded": false,
+  "shutdownOwner": "coordinator; worker explicitly delegated snapshot-stop",
+  "snapshotAvailable": true,
+  "snapshotCompletedAt": "2026-10-29T03:02:59.421Z",
+  "state": "stopped",
+  "stopOperation": "stop_798d0f23bb37cb5e",
+  "stopVerified": true
+}

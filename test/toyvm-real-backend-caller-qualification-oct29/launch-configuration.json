@@ -1,0 +1,9 @@
+{
+  "backend": "synchronous-fuse",
+  "domain": "tiny-fixture",
+  "externalGuestMountParser": "not applicable: no guest runner or mount arguments; FUSE mount argv constructed from accepted pinned backend only",
+  "gitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "intendedMountFiles": [],
+  "mountArgv": [],
+  "sourcePinsUnchanged": true
+}
