@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; import json,hashlib; d=json.loads(Path(\"/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-cycle-fresh-independent-accept-oct29-dispatch.json\").read_text()); root=Path.cwd(); own=root/\"test/toyvm-rename-cycle-fresh-independent-accept-oct29\"; assert all({\"bytes\":len((root/n).read_bytes()),\"sha256\":hashlib.sha256((root/n).read_bytes()).hexdigest()}==pin for n,pin in d[\"sourcePins\"].items()); predecessor=Path(\"/tmp/toyvm-rename-cycle-direct-parent-repair-oct29/repo/test/toyvm-rename-cycle-direct-parent-repair-oct29/contract.py\"); assert (own/\"contract.py\").read_bytes()==predecessor.read_bytes(); c=json.loads((own/\"contract-report.json\").read_text()); i=json.loads((own/\"independent-report.json\").read_text()); assert c[\"passed\"]==14 and c[\"failed\"]==0 and len(c[\"oracleMutations\"])==16; assert i[\"passed\"]==24 and i[\"failed\"]==0 and i[\"mutantsCaught\"]==4; assert all(m[\"caught\"]>0 for m in i[\"mutations\"]); print(\"PASS final readonly five-pin / byte-identical contract / report consistency review\"); print(\"Owned evidence bytes\",sum(p.stat().st_size for p in own.iterdir() if p.is_file()))"
+  ],
+  "cwd": "/tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.08746502501890063,
+  "admission": {
+    "free": 4485521408,
+    "MemAvailable": 2851110912,
+    "allocated": 2674688,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 111,
+  "stderrBytes": 0
+}

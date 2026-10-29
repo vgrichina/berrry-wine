@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/repo",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "cwd": "/tmp/toyvm-rename-cycle-fresh-independent-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.054015515837818384,
+  "admission": {
+    "free": 4485046272,
+    "MemAvailable": 3175542784,
+    "allocated": 2805760,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 0,
+  "stderrBytes": 4455
+}
