@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "test/toyvm-create-mkdir-collision-contract-oct29/contract.py"
+  ],
+  "cwd": "/tmp/toyvm-create-mkdir-collision-contract-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.12483912403695285,
+  "admission": {
+    "free": 3968438272,
+    "MemAvailable": 3077947392,
+    "allocated": 2256896,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 2790,
+  "stderrBytes": 0
+}

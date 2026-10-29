@@ -1,0 +1,133 @@
+{
+  "passing": 1,
+  "failing": 4,
+  "mutationsRejected": 4,
+  "results": [
+    {
+      "case": "collision-and-controls",
+      "passed": true,
+      "details": {
+        "rejected": 8,
+        "successful": 8,
+        "rootCharge": 4096,
+        "inodeCharge": 4096
+      }
+    },
+    {
+      "case": "35-missing-parent",
+      "passed": false,
+      "counterexample": [
+        {
+          "op": 35,
+          "parent": 999,
+          "name": "child",
+          "expectedErrno": 2,
+          "actual": {
+            "type": "KeyError",
+            "detail": "999"
+          },
+          "statePreserved": true,
+          "before": {
+            "live": 4096,
+            "next": 2,
+            "inodes": 1,
+            "handles": 0
+          },
+          "after": {
+            "live": 4096,
+            "next": 2,
+            "inodes": 1,
+            "handles": 0
+          }
+        }
+      ]
+    },
+    {
+      "case": "35-nondirectory-parent",
+      "passed": false,
+      "counterexample": [
+        {
+          "op": 35,
+          "parent": 2,
+          "name": "child",
+          "expectedErrno": 20,
+          "actual": {
+            "type": "success",
+            "responseBytes": 144
+          },
+          "statePreserved": false,
+          "before": {
+            "live": 8192,
+            "next": 3,
+            "inodes": 2,
+            "handles": 1
+          },
+          "after": {
+            "live": 12288,
+            "next": 4,
+            "inodes": 3,
+            "handles": 2
+          }
+        }
+      ]
+    },
+    {
+      "case": "9-missing-parent",
+      "passed": false,
+      "counterexample": [
+        {
+          "op": 9,
+          "parent": 999,
+          "name": "child",
+          "expectedErrno": 2,
+          "actual": {
+            "type": "KeyError",
+            "detail": "999"
+          },
+          "statePreserved": true,
+          "before": {
+            "live": 4096,
+            "next": 2,
+            "inodes": 1,
+            "handles": 0
+          },
+          "after": {
+            "live": 4096,
+            "next": 2,
+            "inodes": 1,
+            "handles": 0
+          }
+        }
+      ]
+    },
+    {
+      "case": "9-nondirectory-parent",
+      "passed": false,
+      "counterexample": [
+        {
+          "op": 9,
+          "parent": 2,
+          "name": "child",
+          "expectedErrno": 20,
+          "actual": {
+            "type": "success",
+            "responseBytes": 128
+          },
+          "statePreserved": false,
+          "before": {
+            "live": 8192,
+            "next": 3,
+            "inodes": 2,
+            "handles": 1
+          },
+          "after": {
+            "live": 12288,
+            "next": 4,
+            "inodes": 3,
+            "handles": 1
+          }
+        }
+      ]
+    }
+  ]
+}

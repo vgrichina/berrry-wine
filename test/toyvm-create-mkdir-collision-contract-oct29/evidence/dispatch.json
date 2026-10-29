@@ -1,0 +1,59 @@
+{
+  "task": "toyvm-create-mkdir-collision-contract-oct29",
+  "candidate": "1fa831cbde34a5943fd7888b30409bd8e918663a",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11111,
+      "sha256": "b273dceaf1d648415fdc1c2aca54ab3d511c81b94bb911e6588a81e1b63c14dc"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "objectStores": "/home/user/wine-assembly/scratch/usage-watch/toyvm-create-mkdir-collision-contract-oct29-object-stores.json",
+  "admission": "/home/user/wine-assembly/scratch/usage-watch/toyvm-create-mkdir-collision-contract-oct29-admission.json",
+  "originalCancellationReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+  "originalCancellationReceiptPin": {
+    "bytes": 12946,
+    "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+  },
+  "previousVerifiedReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-unlink-rmdir-accepted-closure-publication-oct29/retained-evidence/completion-receipt.json",
+  "previousRuntimeCases": "Distinct rename namespace-preservation case, not prior overwrite/rename-file/open-handle cases.",
+  "runtimeScope": "toyvm-create-mkdir-collision-contract-oct29",
+  "box": null,
+  "noMain": true,
+  "limitModule": "/tmp/toyvm-create-mkdir-collision-contract-oct29/limit_contract.py",
+  "limitModulePin": {
+    "bytes": 2510,
+    "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "ownedRepo": "/tmp/toyvm-create-mkdir-collision-contract-oct29/repo",
+  "quotaPreflight": "/tmp/toyvm-create-mkdir-collision-contract-oct29/quota-preflight.json",
+  "gitReadiness": "/tmp/toyvm-create-mkdir-collision-contract-oct29/git-readiness.json",
+  "previousVerifiedReceiptPin": {
+    "bytes": 570,
+    "sha256": "5713149a383bbdd5d2e3c64e2b6b0ae222d4dad930192a8255165623b26ee89c"
+  },
+  "remoteWork": "/tmp/tvrs/w",
+  "remoteSocket": "/tmp/tvrs/w/status.sock",
+  "socketPathBytes": 23,
+  "taskSupervisor": "/tmp/toyvm-create-mkdir-collision-contract-oct29/ops.py",
+  "taskSupervisorPin": {
+    "bytes": 2996,
+    "sha256": "5540d789c4952ebfa9ade34d974a18a8bf4306087fe2154aa879dc196a978892"
+  },
+  "sourceChangeAuthorized": []
+}

@@ -1,0 +1,11 @@
+{
+  "task": "toyvm-create-mkdir-collision-contract-oct29",
+  "candidate": "1fa831cbde34a5943fd7888b30409bd8e918663a",
+  "branch": "task/toyvm-create-mkdir-collision-contract-oct29",
+  "status": "DIRECT-HANDLER COLLISIONS PASS; FOUR PARENT COUNTEREXAMPLES",
+  "boardAction": "Coordinator append-only messageboard entry after verified publication; worker did not write shared board",
+  "productionUnchanged": true,
+  "box": null,
+  "remainingGate": "combined repairs, caller backend pin, full CLI qualification",
+  "evidence": "test/toyvm-create-mkdir-collision-contract-oct29/results.json"
+}
