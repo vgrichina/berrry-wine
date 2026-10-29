@@ -1,0 +1,178 @@
+{
+  "status": "ACCEPT_SOURCE_LOCAL_ONLY",
+  "scope": "SOURCE/LOCAL ONLY",
+  "childrenAttempted": [],
+  "cases": [
+    {
+      "case": "candidate normal source",
+      "identity": {
+        "codeMatchesCheckedSource": true,
+        "origin": "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+        "globalsOwned": true,
+        "transitivePin": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+        "backendPin": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+      }
+    },
+    {
+      "case": "legacy normal source",
+      "identity": {
+        "codeMatchesCheckedSource": true,
+        "origin": "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+        "globalsOwned": true,
+        "transitivePin": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+        "backendPin": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+      }
+    },
+    {
+      "case": "legacy poisoned timestamp cache",
+      "exposed": "independent poisoned timestamp bytecode"
+    },
+    {
+      "case": "candidate poisoned timestamp cache",
+      "identity": {
+        "codeMatchesCheckedSource": true,
+        "origin": "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+        "globalsOwned": true,
+        "transitivePin": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+        "backendPin": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+      }
+    },
+    {
+      "case": "candidate wrong source pin",
+      "rejected": "accepted backend identity mismatch: toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py"
+    },
+    {
+      "case": "one namespace rejection plus selector registration failure cleanup",
+      "backend": {
+        "bytes": 12982,
+        "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+      },
+      "namespaceErrno": "ENOTDIR",
+      "stateUnchanged": true,
+      "events": [
+        "bind",
+        "listen",
+        "register1",
+        "register2",
+        "selector.close",
+        "control.close"
+      ],
+      "ownedFDClosed": true,
+      "borrowedFDAlive": true,
+      "sameCheckedModuleGlobals": true,
+      "transport": "mock control and selector; local anonymous pipe only"
+    }
+  ],
+  "controlPreflight": {
+    "onlyPairChanged": true,
+    "candidateCaller": {
+      "bytes": 8392,
+      "sha256": "bcc2ea9b51d3f4857b0fa9fd7ee67dee506c14e52ac07ae5eb5211058c981470"
+    },
+    "legacyCaller": {
+      "bytes": 8310,
+      "sha256": "19b1af89edf937da9f814edfde4ef09bb29fda69193c28065f213cf141e850b0"
+    },
+    "pinsIdentical": true,
+    "loaderReachable": "load_backend directly invoked and exact code/line traced",
+    "executedLines": {
+      "candidate": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        33,
+        34,
+        35,
+        36,
+        37,
+        39,
+        40,
+        41
+      ],
+      "legacy": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        33,
+        34,
+        35,
+        36,
+        37,
+        39,
+        40
+      ]
+    }
+  },
+  "fixture": {
+    "source": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "poisonedSource": {
+      "bytes": 4058,
+      "sha256": "bfe236568da819f08f513ba9d1045881217cc159c868f74ff8cca4584668d3a9"
+    },
+    "pyc": {
+      "bytes": 389,
+      "sha256": "34dc8d9dbb2b792695a0bfffce3b490f000137247d04da7b31935fc6c9531b5d"
+    },
+    "flags": 0,
+    "mtime": 1793267787,
+    "sourceSize": 4058,
+    "sourceUnchanged": true
+  },
+  "sourcePinsBefore": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "bcc2ea9b51d3f4857b0fa9fd7ee67dee506c14e52ac07ae5eb5211058c981470"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourcePinsAfter": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "bcc2ea9b51d3f4857b0fa9fd7ee67dee506c14e52ac07ae5eb5211058c981470"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "retainedCallerChecks": 41,
+  "retainedBackendChecks": 52,
+  "replayedPriorChecks": false,
+  "adapterInvocations": 0,
+  "children": 0,
+  "nextGate": "Separately reviewed transitive adapter repair/acceptance before production seven-guard wire, mounted/kernel and CLI/browser qualification; coordinator review before shared integration"
+}

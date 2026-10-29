@@ -1,0 +1,224 @@
+{
+  "candidate": "9a35e6b43c6c8968fc8df38c14d5e6f1252d9ab2",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "bcc2ea9b51d3f4857b0fa9fd7ee67dee506c14e52ac07ae5eb5211058c981470"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "canonicalReceipt": {
+    "bytes": 17151,
+    "sha256": "6346444d0cbc68dafb85eea51e0d9bba08992ecc19bd815577474d4239f68fd1"
+  },
+  "verifiedArtifacts": {
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-accepted-combined-backend-caller-migration-oct29/coordinator-retained/completion-receipt.json": {
+      "bytes": 17151,
+      "sha256": "6346444d0cbc68dafb85eea51e0d9bba08992ecc19bd815577474d4239f68fd1"
+    },
+    "inputs/migration-tests/provenance.json": {
+      "bytes": 4911,
+      "sha256": "e59cc49c695452b0de78c1626e9326e8fb7244de404810a718f500abe809c38b"
+    },
+    "inputs/migration-tests/retained-backend-acceptance.json": {
+      "bytes": 8115,
+      "sha256": "2caa2b919ba8f6a1054548382d87a414c51198a387782e64acf4d8f4127ea736"
+    },
+    "inputs/migration-tests/oracle.py": {
+      "bytes": 8777,
+      "sha256": "b1a88b9a30ddba5eff46c26961d92174d4f71e4c6665ae0cf91b60a82ff65700"
+    },
+    "inputs/migration-tests/REPORT.md": {
+      "bytes": 3280,
+      "sha256": "f7a369800f1eb7eb7abc1256d163d25a58373e6cd986ad9867f59c40991d0b83"
+    },
+    "inputs/migration-tests/retained-caller-acceptance.json": {
+      "bytes": 10100,
+      "sha256": "d253cfeb62cd6eab444aefe1d84b39133b69347d514538b358160c9d85e60e57"
+    },
+    "inputs/migration-tests/results.json": {
+      "bytes": 692,
+      "sha256": "6f3b305b2ff850970970a8259752781289f260abc45035d135bfc6ca29b1db48"
+    },
+    "inputs/genuine-control-recipe/prior-results.json": {
+      "bytes": 4376,
+      "sha256": "e1bcfb6767df364d3ee1b9802a1d054077e85e81a412dea7b992296b24422dae"
+    },
+    "inputs/genuine-control-recipe/prior-oracle.py": {
+      "bytes": 11307,
+      "sha256": "7584783f2d818433eb5a800730a9e3a9561bb41e62119709cc516d171daf11a7"
+    },
+    "inputs/genuine-control-recipe/prior-completion-receipt.json": {
+      "bytes": 12886,
+      "sha256": "2fb783d4632e41c32cec0f991c6044a4adcc0cb14fde65c6a9cb1e8dd40ff843"
+    },
+    "inputs/genuine-control-recipe/preflight.json": {
+      "bytes": 1825,
+      "sha256": "2ae2ef291a0d659e0bbd991e75cee44dc31fd01157a2d85867e22c049246bbb8"
+    },
+    "inputs/genuine-control-recipe/prior-independent-oracle.stdout": {
+      "bytes": 3099,
+      "sha256": "966f5264e2a0cbb75c1dd0eeff8e367ff1ae9151c63b9861b95f2e0a1eaba07f"
+    },
+    "inputs/genuine-control-recipe/prior-independent-oracle.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "inputs/genuine-control-recipe/prior-legacy-caller-loader-control.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "inputs/genuine-control-recipe/prior-legacy-caller-loader-control.stderr": {
+      "bytes": 138,
+      "sha256": "082125b2986dd9c4101830075298774e21b83098c4df147e62edc3552e763725"
+    },
+    "inputs/genuine-control-recipe/prior-diagnose-control-identity.stdout": {
+      "bytes": 112,
+      "sha256": "54ba48727ee3deb7a9cb7a1ddd2b662f3aa6dcd7058ecd69dc9cf85ec2c86881"
+    }
+  },
+  "suppliedInventory": {
+    "inputs/wire-scope-receipt.json": {
+      "bytes": 11983,
+      "sha256": "3be7665a12f6550cba274848aeb7bc18ce7a4cb531c19d8bef6ded240dc4b03d"
+    },
+    "inputs/accepted-backend-receipt.json": {
+      "bytes": 1738,
+      "sha256": "976544eae513f1270be34b0938e92eea5c1fc7b05737e3b1adaedc41c43cab3b"
+    },
+    "inputs/migration-tests/provenance.json": {
+      "bytes": 4911,
+      "sha256": "e59cc49c695452b0de78c1626e9326e8fb7244de404810a718f500abe809c38b"
+    },
+    "inputs/migration-tests/retained-backend-acceptance.json": {
+      "bytes": 8115,
+      "sha256": "2caa2b919ba8f6a1054548382d87a414c51198a387782e64acf4d8f4127ea736"
+    },
+    "inputs/migration-tests/oracle.py": {
+      "bytes": 8777,
+      "sha256": "b1a88b9a30ddba5eff46c26961d92174d4f71e4c6665ae0cf91b60a82ff65700"
+    },
+    "inputs/migration-tests/REPORT.md": {
+      "bytes": 3280,
+      "sha256": "f7a369800f1eb7eb7abc1256d163d25a58373e6cd986ad9867f59c40991d0b83"
+    },
+    "inputs/migration-tests/retained-caller-acceptance.json": {
+      "bytes": 10100,
+      "sha256": "d253cfeb62cd6eab444aefe1d84b39133b69347d514538b358160c9d85e60e57"
+    },
+    "inputs/migration-tests/results.json": {
+      "bytes": 692,
+      "sha256": "6f3b305b2ff850970970a8259752781289f260abc45035d135bfc6ca29b1db48"
+    },
+    "inputs/genuine-control-recipe/continuation.py": {
+      "bytes": 3761,
+      "sha256": "35b4688d64ad45b6ad6c2a200c3bb7de31342f48e6c5c99247ab319980f5ee97"
+    },
+    "inputs/genuine-control-recipe/prior-legacy-caller-loader-control.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "inputs/genuine-control-recipe/verify_inputs.py": {
+      "bytes": 2850,
+      "sha256": "36e5a3534156d68cfdd5f4e358bbc8b16cbd7c177eed37163b04a894cc4c986d"
+    },
+    "inputs/genuine-control-recipe/fixture-pins.json": {
+      "bytes": 4369,
+      "sha256": "0f6a327adabb7e0934d660be832523dbffacf41ffe4c907dd6d1e7fff932165e"
+    },
+    "inputs/genuine-control-recipe/prior-completion-receipt.json": {
+      "bytes": 12886,
+      "sha256": "2fb783d4632e41c32cec0f991c6044a4adcc0cb14fde65c6a9cb1e8dd40ff843"
+    },
+    "inputs/genuine-control-recipe/prior-oracle.py": {
+      "bytes": 11307,
+      "sha256": "7584783f2d818433eb5a800730a9e3a9561bb41e62119709cc516d171daf11a7"
+    },
+    "inputs/genuine-control-recipe/prior-independent-oracle.stdout": {
+      "bytes": 3099,
+      "sha256": "966f5264e2a0cbb75c1dd0eeff8e367ff1ae9151c63b9861b95f2e0a1eaba07f"
+    },
+    "inputs/genuine-control-recipe/input-verification.json": {
+      "bytes": 12793,
+      "sha256": "3ede4e92f5aeeddcdf5aeb2f3cc424a554785ad26e04be553092fa5c4c15c572"
+    },
+    "inputs/genuine-control-recipe/provenance.json": {
+      "bytes": 2482,
+      "sha256": "78d73610a769373c047f45368421490c26d17da872352815e68ae98e6e7f4755"
+    },
+    "inputs/genuine-control-recipe/preflight.json": {
+      "bytes": 1825,
+      "sha256": "2ae2ef291a0d659e0bbd991e75cee44dc31fd01157a2d85867e22c049246bbb8"
+    },
+    "inputs/genuine-control-recipe/prior-independent-oracle.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "inputs/genuine-control-recipe/oracle.py": {
+      "bytes": 6022,
+      "sha256": "80bec1e9d00913ac5d9de961438dc7e23dab89b73c16b85fd2f2db635eb7f907"
+    },
+    "inputs/genuine-control-recipe/REPORT.md": {
+      "bytes": 3642,
+      "sha256": "c195bbbd7f4be4c9097ce5ae8445c6dfe08507e91fd43b8be8f36d6319d4720f"
+    },
+    "inputs/genuine-control-recipe/prior-diagnose-control-identity.stdout": {
+      "bytes": 112,
+      "sha256": "54ba48727ee3deb7a9cb7a1ddd2b662f3aa6dcd7058ecd69dc9cf85ec2c86881"
+    },
+    "inputs/genuine-control-recipe/prior-legacy-caller-loader-control.stderr": {
+      "bytes": 138,
+      "sha256": "082125b2986dd9c4101830075298774e21b83098c4df147e62edc3552e763725"
+    },
+    "inputs/genuine-control-recipe/prior-results.json": {
+      "bytes": 4376,
+      "sha256": "e1bcfb6767df364d3ee1b9802a1d054077e85e81a412dea7b992296b24422dae"
+    },
+    "inputs/genuine-control-recipe/results.json": {
+      "bytes": 8251,
+      "sha256": "403759b691bc51f529216d07402226691999dcdc06d45e8f21ee67c9aaaf5243"
+    }
+  },
+  "donor": {
+    "bytes": 8392,
+    "sha256": "292dead0e3e75143e898bbbfef3ebb386e9a0a1e4ec7348274c66acf2a47a7fc"
+  },
+  "soleDonorSubstitution": {
+    "old": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40",
+    "new": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822",
+    "occurrences": 1
+  },
+  "loaderASTIdentical": true,
+  "otherFourUnchanged": true,
+  "retainedCoverage": {
+    "callerChecks": 41,
+    "backendOperations": 52,
+    "replayed": false,
+    "freshPairAcceptance": false,
+    "callerReceipt": {
+      "bytes": 10100,
+      "sha256": "d253cfeb62cd6eab444aefe1d84b39133b69347d514538b358160c9d85e60e57"
+    },
+    "backendReceipt": {
+      "bytes": 8115,
+      "sha256": "2caa2b919ba8f6a1054548382d87a414c51198a387782e64acf4d8f4127ea736"
+    },
+    "callerAcceptanceCommit": "8242750ad130cb3e9ad0df6738db21a4154e0075"
+  },
+  "priorOraclesExecuted": false
+}
