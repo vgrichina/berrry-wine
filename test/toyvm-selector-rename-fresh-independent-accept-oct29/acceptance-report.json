@@ -1,0 +1,80 @@
+{
+  "task": "toyvm-selector-rename-fresh-independent-accept-oct29",
+  "status": "independent source/local-wire acceptance PASS; publication recorded in final supervisor completion receipt",
+  "objectiveCompleted": true,
+  "candidateAccepted": "source/local-wire scope only",
+  "base": "a18e7cec020272ae1510e2aa68e286b86eeb83b7",
+  "qualifiedCandidate": "2b77dfd86200ceab0e253c956a03539b1053526e",
+  "branch": "task/toyvm-selector-rename-fresh-independent-accept-oct29",
+  "sourcePins": {
+    "before": {
+      "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+        "bytes": 8105,
+        "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+        "bytes": 3457,
+        "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+        "bytes": 12821,
+        "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+        "bytes": 4058,
+        "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+      },
+      "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+        "bytes": 23268,
+        "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+      }
+    },
+    "after": {
+      "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+        "bytes": 8105,
+        "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+        "bytes": 3457,
+        "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+        "bytes": 12821,
+        "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+        "bytes": 4058,
+        "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+      },
+      "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+        "bytes": 23268,
+        "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+      }
+    }
+  },
+  "productionUnchanged": true,
+  "carriedForward": {
+    "renameCases": 44,
+    "replayed": false,
+    "artifactManifest": "preflight.json",
+    "receipt": "carried/qualified-completion-receipt.json"
+  },
+  "behavioralEvidence": "results.json",
+  "readinessReview": "Qualified witness requires real second registration and SO_ACCEPTCONN=1 after listen. Independent witness additionally requires JSON status round-trip. Delayed listen proves bound path does not signal readiness.",
+  "negativeControl": "Observed selector close deliberately does nothing; production serve/handle unchanged; selector remains live before explicit fixture cleanup, control and transport close normally.",
+  "borrowedDescriptors": "Every baseline fd number has identical dev/ino/mode/proc target after each case; EPIPE peer identity checked before fixture cleanup.",
+  "firstDefect": null,
+  "firstAdmissionDenial": null,
+  "originalDenial": "carried/original-RAM-denial.json; immutable; historical unavailable samples not substituted",
+  "remainingAcceptanceGates": [
+    "mounted/kernel/CLI/browser execution unqualified; separate authorization required",
+    "coordinator integration decision; no main or SIX integration"
+  ],
+  "publicationFinalReceipt": "/tmp/toyvm-selector-rename-fresh-independent-accept-oct29/e/completion-receipt.json",
+  "box": {
+    "id": null,
+    "state": "none assigned or touched",
+    "expiry": null,
+    "shutdownOwner": "coordinator"
+  }
+}
