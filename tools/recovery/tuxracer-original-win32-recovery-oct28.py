@@ -306,10 +306,90 @@ def closure(directory, inventory):
             'dataFiles': [x['path'] for x in inventory['files'] if not Path(x['path']).suffix.casefold() in ('.exe', '.dll')]}
 
 
+def lexical_commands(text):
+    """Yield top-level word spellings, without evaluating Tcl.
+
+    Braces/quotes group words across lines; only ungrouped newline/semicolon
+    ends a command. Escapes consume the following character, including newline.
+    A bracket substitution or malformed grouping stops the remaining audit as
+    UNKNOWN: its command boundaries cannot be established by this subset.
+    Control-command bodies are retained as words, never scanned as scripts.
+    """
+    words, i, start = [], 0, 0
+    while i < len(text):
+        c = text[i]
+        if c in ' \t\r':
+            i += 1
+            continue
+        if text.startswith('\\\n', i):
+            words.append(text[i:i + 2])  # source continuations remain UNKNOWN
+            i += 2
+            continue
+        if c in ';\n':
+            if words:
+                yield words, None
+            words = []
+            i += 1
+            start = i
+            continue
+        if c == '#' and not words:
+            while i < len(text):
+                if text.startswith('\\\n', i):
+                    i += 2
+                elif text[i] == '\n':
+                    break
+                else:
+                    i += 1
+            continue
+        first, depth, quote = i, 0, False
+        if c == '{':
+            depth = 1
+            i += 1
+        elif c == '"':
+            quote = True
+            i += 1
+        while i < len(text):
+            c = text[i]
+            if c == '\\':
+                i += 2
+                continue
+            if depth:
+                if c == '{':
+                    depth += 1
+                elif c == '}':
+                    depth -= 1
+                    if depth == 0:
+                        i += 1
+                        break
+            elif c == '[':
+                yield [], text[start:start + 1024]
+                return
+            elif quote:
+                if c == '"':
+                    quote = False
+                    i += 1
+                    break
+            elif c in ' \t\r;\n':
+                break
+            elif c in '{}"':
+                yield [], text[start:start + 1024]
+                return
+            i += 1
+        if depth or quote or i > len(text):
+            yield [], text[start:start + 1024]
+            return
+        if i < len(text) and text[i] not in ' \t\r;\n' and not text.startswith('\\\n', i):
+            yield [], text[start:start + 1024]
+            return
+        words.append(text[first:i])
+    if words:
+        yield words, None
+
+
 def literal_sources(directory, inventory):
     """Conservative lexical audit, never a Tcl interpreter or a runtime proof.
 
-    Recognize standalone source commands at line/semicolon boundaries. Relative
+    Recognize literal source commands only at lexical command boundaries. Relative
     literals are checked against root and script directory (CWD is not known).
     Normalize dot components lexically, dropping any candidate that escapes the
     extraction root. If both candidates escape, retain an explicit unknown.
@@ -324,8 +404,18 @@ def literal_sources(directory, inventory):
         if Path(name).suffix.casefold() != '.tcl':
             continue
         text = (directory / name).read_text(encoding='utf8', errors='replace')
-        for match in re.finditer(r'(?:^|[;\n])[ \t]*source[ \t]+([^;\n]*)', text):
-            word = match.group(1).strip()
+        for words, uncertain in lexical_commands(text):
+            if uncertain is not None:
+                unknown.append({'script': name, 'expression': uncertain,
+                                'reason': 'unsupported or incomplete Tcl syntax; remaining commands unknown'})
+                continue
+            if words[0] != 'source':
+                # Even a literal control body is not known to execute. Never
+                # promote its contents to checked dependencies.
+                unknown.append({'script': name, 'expression': ' '.join(words)[:1024],
+                                'reason': 'non-source command/body not evaluated'})
+                continue
+            word = ' '.join(words[1:])
             if word.startswith('-encoding '):
                 option = re.fullmatch(r'-encoding\s+[A-Za-z0-9_-]+\s+(.+)', word)
                 if option:
@@ -445,9 +535,14 @@ def main():
     e.add_argument('archive', type=Path)
     e.add_argument('destination', type=Path)
     e.add_argument('--max-expanded-bytes', type=int, required=True)
+    e = sub.add_parser('literal-sources', help='lexical audit only; no Tcl execution')
+    e.add_argument('directory', type=Path)
+    e.add_argument('inventory', type=Path)
     args = p.parse_args()
     if args.action == 'guard':
         print(json.dumps(guard_fixture(args.directory), indent=2))
+    elif args.action == 'literal-sources':
+        print(json.dumps(literal_sources(args.directory, json.loads(args.inventory.read_text())), indent=2))
     elif args.action == 'download':
         print(json.dumps(acquire(args.directory), indent=2))
     elif args.action == 'inspect':
