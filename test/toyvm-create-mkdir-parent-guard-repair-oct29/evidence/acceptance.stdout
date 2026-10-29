@@ -1,0 +1,38 @@
+{
+  "passing": 5,
+  "failing": 0,
+  "mutationsRejected": 4,
+  "results": [
+    {
+      "case": "collision-and-controls",
+      "passed": true,
+      "details": {
+        "rejected": 8,
+        "successful": 8,
+        "rootCharge": 4096,
+        "inodeCharge": 4096
+      }
+    },
+    {
+      "case": "35-missing-parent",
+      "passed": true,
+      "details": null
+    },
+    {
+      "case": "35-nondirectory-parent",
+      "passed": true,
+      "details": null
+    },
+    {
+      "case": "9-missing-parent",
+      "passed": true,
+      "details": null
+    },
+    {
+      "case": "9-nondirectory-parent",
+      "passed": true,
+      "details": null
+    }
+  ]
+}
+{"PASS": true, "parentCases": 4, "collisions": 8, "validCreations": 8, "collisionMutationsRejected": 4, "parentMutationsRejected": 4, "supplementary": 23}

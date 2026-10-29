@@ -1,0 +1,15 @@
+{
+  "task": "toyvm-create-mkdir-parent-guard-repair-oct29",
+  "candidate": "2eddbe90d36681421949873d1b29ff65045fcf39",
+  "status": "tested; ready for task-branch publication",
+  "scope": "direct Backend.handle only",
+  "parentCases": 4,
+  "collisionRejections": 8,
+  "validCreations": 8,
+  "parentMutationsRejected": 4,
+  "collisionMutationsRejected": 4,
+  "supplementary": 23,
+  "remainingGate": "combined repairs/caller backend pin/full CLI qualification",
+  "box": null,
+  "messageboard": "Coordinator must append publication-note.json after exact remote verification; worker makes no shared board write."
+}

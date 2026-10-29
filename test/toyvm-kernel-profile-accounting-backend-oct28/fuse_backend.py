@@ -63,7 +63,9 @@ class Backend:
 
     def create(self,parent,name,mode):
         self.valid_name(name)
-        n=self.nodes[parent]
+        n=self.nodes.get(parent)
+        if n is None:raise OSError(errno.ENOENT,'parent missing')
+        if not stat.S_ISDIR(n['mode']):raise OSError(errno.ENOTDIR,'parent non-directory')
         if name in n['names']:raise OSError(errno.EEXIST,'exists')
         self.charge(4096);ino=self.next;self.next+=1
         self.nodes[ino]=dict(mode=mode,data=bytearray(),names={},links=1,opens=0)

@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/toyvm-create-mkdir-parent-guard-repair-oct29/repo/test/toyvm-create-mkdir-parent-guard-repair-oct29/accept.py",
+    "--strict"
+  ],
+  "cwd": "/tmp/toyvm-create-mkdir-parent-guard-repair-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.09709176910109818,
+  "admission": {
+    "free": 4305752064,
+    "MemAvailable": 3214151680,
+    "allocated": 2240512,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 817,
+  "stderrBytes": 0
+}
