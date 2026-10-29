@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/toyvm-real-cli-descendant-output-limit-oct29/limit_contract.py",
+    "/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-descendant-output-limit-oct29",
+  "exit": 1,
+  "incident": null,
+  "stderrBytes": 668,
+  "stdoutBytes": 0,
+  "wall": 0.11482494091615081
+}

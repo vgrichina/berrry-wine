@@ -1,0 +1,243 @@
+{
+  "apiEnvelopeSHA256": "c960b36871b451caadacd3e550beeb93311a5b0041ce3939ef52ad86e70618d9",
+  "box": "bx_jbsavpj2",
+  "boxLifecycle": {
+    "createdAt": "2026-10-29T04:22:26.261Z",
+    "cutoff": "2026-10-29T04:55:00Z",
+    "id": "bx_jbsavpj2",
+    "originalExpiry": "2026-10-29T04:52:26.261Z",
+    "snapshotStatus": "completed",
+    "snapshotVerifiedAt": "2026-10-29T04:23:01.715Z",
+    "state": "stopped",
+    "stop": {
+      "endedAt": "2026-10-29T04:23:01.764Z",
+      "error": null,
+      "id": "stop_6c12e362ad74fac5",
+      "lastAttemptAt": "2026-10-29T04:23:01.764Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "stoppedAt": "2026-10-29T04:23:01.748Z",
+    "ttlSeconds": 1800
+  },
+  "browserAllowance": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanupComplete": true,
+  "cliExit": 1,
+  "cpuSeconds": 0.148806,
+  "descendantObservation": {
+    "attemptEvidence": "immutable fixture source has exactly one os.write(1,2048 bytes); no syscall return count claimed",
+    "child": [
+      {
+        "cmd": "/usr/bin/python3 -B -c import os,time; time.sleep(0.15); os.write(1,b'D'*2048); time.sleep(0.3) ",
+        "cmdSHA256": "08960bebcb6fc98eb3d5e116c28d1944b8e08b89a8ed53647f27a798ce0baa7a",
+        "cpu": 0.0,
+        "pid": 5911,
+        "ppid": 5910,
+        "rss": 10616832,
+        "start": "3669",
+        "state": "S",
+        "stdoutLink": "pipe:[29226]",
+        "wchan": "hrtimer_nanosleep"
+      }
+    ],
+    "childAttemptedBytes": 2048,
+    "discardedExpectedBytes": 1024,
+    "parent": [
+      {
+        "cmd": "/usr/bin/python3 -B -c import subprocess\nchild = subprocess.Popen(['/usr/bin/python3','-B','-c',\"import os,time; time.sleep(0.15); os.write(1,b'D'*2048); time.sleep(0.3)\"])\nchild.wait()\n ",
+        "cmdSHA256": "c9dfa4656f8c0062452c56b4d965f6d37a7290b152acf009600f1c85d8593f5c",
+        "cpu": 0.01,
+        "pid": 5910,
+        "ppid": 5906,
+        "rss": 8912896,
+        "start": "3666",
+        "state": "R",
+        "stdoutLink": "pipe:[29226]",
+        "wchan": "0"
+      }
+    ],
+    "parentEmittedBytes": 0,
+    "productionCounters": "backend provides retained bytes and output-limit reason, no independent full attempted-byte counter",
+    "retainedMatches": true,
+    "retainedOutputBytes": 1024,
+    "waitingSharedPipe": [
+      {
+        "child": {
+          "cmd": "/usr/bin/python3 -B -c import os,time; time.sleep(0.15); os.write(1,b'D'*2048); time.sleep(0.3) ",
+          "cmdSHA256": "08960bebcb6fc98eb3d5e116c28d1944b8e08b89a8ed53647f27a798ce0baa7a",
+          "cpu": 0.0,
+          "pid": 5911,
+          "ppid": 5910,
+          "rss": 10616832,
+          "start": "3669",
+          "state": "S",
+          "stdoutLink": "pipe:[29226]",
+          "wchan": "hrtimer_nanosleep"
+        },
+        "parent": {
+          "cmd": "/usr/bin/python3 -B -c import subprocess\nchild = subprocess.Popen(['/usr/bin/python3','-B','-c',\"import os,time; time.sleep(0.15); os.write(1,b'D'*2048); time.sleep(0.3)\"])\nchild.wait()\n ",
+          "cmdSHA256": "c9dfa4656f8c0062452c56b4d965f6d37a7290b152acf009600f1c85d8593f5c",
+          "cpu": 0.02,
+          "pid": 5910,
+          "ppid": 5906,
+          "rss": 12058624,
+          "start": "3666",
+          "state": "S",
+          "stdoutLink": "pipe:[29226]",
+          "wchan": "do_wait"
+        },
+        "t": 0.11334003199999643
+      },
+      {
+        "child": {
+          "cmd": "/usr/bin/python3 -B -c import os,time; time.sleep(0.15); os.write(1,b'D'*2048); time.sleep(0.3) ",
+          "cmdSHA256": "08960bebcb6fc98eb3d5e116c28d1944b8e08b89a8ed53647f27a798ce0baa7a",
+          "cpu": 0.0,
+          "pid": 5911,
+          "ppid": 5910,
+          "rss": 10616832,
+          "start": "3669",
+          "state": "S",
+          "stdoutLink": "pipe:[29226]",
+          "wchan": "hrtimer_nanosleep"
+        },
+        "parent": {
+          "cmd": "/usr/bin/python3 -B -c import subprocess\nchild = subprocess.Popen(['/usr/bin/python3','-B','-c',\"import os,time; time.sleep(0.15); os.write(1,b'D'*2048); time.sleep(0.3)\"])\nchild.wait()\n ",
+          "cmdSHA256": "c9dfa4656f8c0062452c56b4d965f6d37a7290b152acf009600f1c85d8593f5c",
+          "cpu": 0.02,
+          "pid": 5910,
+          "ppid": 5906,
+          "rss": 12058624,
+          "start": "3666",
+          "state": "S",
+          "stdoutLink": "pipe:[29226]",
+          "wchan": "do_wait"
+        },
+        "t": 0.1269617519999997
+      }
+    ]
+  },
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 16384,
+    "inodes": 1,
+    "live": 4096,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 1,
+    "peak": 4096,
+    "writeLimit": 65536,
+    "written": 0
+  },
+  "gatePASS": true,
+  "limitations": [
+    "Original historical post-runtime WAL baseline and retention RAM rejection remain historical limitations; current task baseline is pre-operation, not launcher-startup proof.",
+    "Startup selftest first launched in incompatible hard128 child context rejected before any runtime; corrected to existing authorized parent context with inherited hard unchanged; no production retry.",
+    "Production exposes retained output and authoritative limit reason, not an independent attempted-byte counter; 2048 attempted bytes are fixture source evidence.",
+    "No guest mount argv or Node process; canonical guest mount parser and Node startup not invoked. Boat staging enumerates each exact --file argv separately, no comma-bearing files."
+  ],
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvdout/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvdout/cancellation.json --work /tmp/tvdout/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 1024 -- /usr/bin/python3 -B -c import subprocess\nchild = subprocess.Popen(['/usr/bin/python3',",
+      "cmdSHA256": "062406e4d76e7a0d46dd5fdfe71220f3949b855674b3346027fef3581c61e87b",
+      "cpu": 0.1,
+      "finalState": null,
+      "pid": 5906,
+      "ppid": 5856,
+      "rss": 21364736,
+      "start": "3659",
+      "state": "D",
+      "stdoutLink": "/tmp/tvdout/cli.stdout",
+      "wchan": "kernel_clone"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvdout/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvdout/w/domain /tmp/tvdout/w/status.sock 32768 65536 16384 ",
+      "cmdSHA256": "62e831cdb20378c97afa818f0860dae7636ad442430fac78f3f6980d3a18d403",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 5907,
+      "ppid": 5906,
+      "rss": 14286848,
+      "start": "3662",
+      "state": "S",
+      "stdoutLink": "pipe:[29219]",
+      "wchan": "ep_poll"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B -c import subprocess\nchild = subprocess.Popen(['/usr/bin/python3','-B','-c',\"import os,time; time.sleep(0.15); os.write(1,b'D'*2048); time.sleep(0.3)\"])\nchild.wait()\n ",
+      "cmdSHA256": "c9dfa4656f8c0062452c56b4d965f6d37a7290b152acf009600f1c85d8593f5c",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 5910,
+      "ppid": 5906,
+      "rss": 12058624,
+      "start": "3666",
+      "state": "S",
+      "stdoutLink": "pipe:[29226]",
+      "wchan": "do_wait"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B -c import os,time; time.sleep(0.15); os.write(1,b'D'*2048); time.sleep(0.3) ",
+      "cmdSHA256": "08960bebcb6fc98eb3d5e116c28d1944b8e08b89a8ed53647f27a798ce0baa7a",
+      "cpu": 0.0,
+      "finalState": null,
+      "pid": 5911,
+      "ppid": 5910,
+      "rss": 10616832,
+      "start": "3669",
+      "state": "S",
+      "stdoutLink": "pipe:[29226]",
+      "wchan": "hrtimer_nanosleep"
+    }
+  ],
+  "pathOverride": "User short path /tmp/tvdout overrides dispatch historical /tmp/tvdt; actual socket path is 25 bytes.",
+  "pinLocations": {
+    "local": "/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo",
+    "localAfterRuntimeVerified": true,
+    "remote": "/tmp/tvdout/repo",
+    "remoteBeforeRuntimeVerified": true,
+    "remoteWriteProtection": "Unchanged Landlock confinement grants mutation only below /tmp/tvdout/w/domain; workload cannot modify production sources."
+  },
+  "productionInvocations": 1,
+  "remainingMounts": [],
+  "retainedStdoutSHA256": "5fcc445a936b3b6b827a49a81703a0f15b4f47cdc267a28225d589b2149673c4",
+  "runtimeResult": "runtime-result.json",
+  "runtimeSHA256": "54a2aa2ff7f191c4c26450553a74d5b401cad663093d2d8981ddd1f55ef5254a",
+  "safetyCleanup": null,
+  "scope": "ordinary inherited descendant output only; arbitrary escaped descendants/fullresource/browser/gameplay UNKNOWN",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "stopReason": "output limit",
+  "task": "toyvm-real-cli-descendant-output-limit-oct29",
+  "wallSeconds": 0.23331220200000047
+}

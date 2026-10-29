@@ -1,0 +1,77 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "new",
+    "--ttl",
+    "1800",
+    "--name",
+    "toyvm-dout-oct29",
+    "--file",
+    "/tmp/tvdout/dispatch.json=/tmp/toyvm-real-cli-descendant-output-limit-oct29/private/pins.json",
+    "--file",
+    "/tmp/tvdout/remote_test.py=/tmp/toyvm-real-cli-descendant-output-limit-oct29/remote_test.py",
+    "--file",
+    "/tmp/tvdout/fixture.py=/tmp/toyvm-real-cli-descendant-output-limit-oct29/fixture.py",
+    "--file",
+    "/tmp/tvdout/cancellation.json=/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+    "--file",
+    "/tmp/tvdout/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py=/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--file",
+    "/tmp/tvdout/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py=/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "--file",
+    "/tmp/tvdout/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py=/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "--file",
+    "/tmp/tvdout/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py=/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "--file",
+    "/tmp/tvdout/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py=/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py"
+  ],
+  "commaBearingFiles": [],
+  "intendedFiles": [
+    {
+      "local": "/tmp/toyvm-real-cli-descendant-output-limit-oct29/private/pins.json",
+      "remote": "/tmp/tvdout/dispatch.json",
+      "sha256": "ee8c90a09775f398a6505b95fa1f638177db25e42f3a5f76570676163f53ad25"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-descendant-output-limit-oct29/remote_test.py",
+      "remote": "/tmp/tvdout/remote_test.py",
+      "sha256": "537c566d1b6ab81bd19700821cf352b2363fb5f4463a20e7bf7833e6ba98136f"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-descendant-output-limit-oct29/fixture.py",
+      "remote": "/tmp/tvdout/fixture.py",
+      "sha256": "a542d51e1dd178626e9c5c554ad37efbf0f9b43b82937e91cfecc28a300c1c96"
+    },
+    {
+      "local": "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json",
+      "remote": "/tmp/tvdout/cancellation.json",
+      "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "remote": "/tmp/tvdout/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+      "remote": "/tmp/tvdout/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "remote": "/tmp/tvdout/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "remote": "/tmp/tvdout/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    {
+      "local": "/tmp/toyvm-real-cli-descendant-output-limit-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+      "remote": "/tmp/tvdout/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  ]
+}
