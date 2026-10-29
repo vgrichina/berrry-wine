@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-rmdir-reuse-runtime-independent-accept-oct29/repo/test/toyvm-rmdir-reuse-runtime-independent-accept-oct29/accept.py", line 175, in <module>
+    main()
+  File "/tmp/toyvm-rmdir-reuse-runtime-independent-accept-oct29/repo/test/toyvm-rmdir-reuse-runtime-independent-accept-oct29/accept.py", line 150, in main
+    reject(name, lambda: evidence_contract(r, canonical, fixture, D['sourcePins']))
+  File "/tmp/toyvm-rmdir-reuse-runtime-independent-accept-oct29/repo/test/toyvm-rmdir-reuse-runtime-independent-accept-oct29/accept.py", line 132, in reject
+    raise AssertionError('negative control accepted: ' + name)
+AssertionError: negative control accepted: wrong-quota-gate

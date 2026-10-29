@@ -1,0 +1,92 @@
+{
+  "task": "toyvm-rmdir-reuse-runtime-independent-accept-oct29",
+  "outcome": "SCOPED_RETAINED_RUNTIME_ACCEPTED",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "fixturePin": {
+    "bytes": 513,
+    "sha256": "1d44688f673506b1776168f3a2563b0d690fcef45ad2985299c36622ca8e3046"
+  },
+  "originalRuntimeCanonical": "/home/user/wine-assembly/scratch/usage-watch/toyvm-directory-remove-metadata-reuse-oct29/retained-evidence/runtime-canonical.json",
+  "originalRuntimeCanonicalPin": {
+    "bytes": 6430,
+    "sha256": "fd8ea2aca6eca665d497540a81da208ded1043e890c911238a146fac7953a168"
+  },
+  "originalCommit": "dab3060be066a7f62b57e1f73d1b7ddd6daddc4c",
+  "rawManifestPin": {
+    "bytes": 4334,
+    "sha256": "cb81794c75b70d7000489d788da382e7c0f2ca06280712c2272102bbb464d5bc"
+  },
+  "postReap": {
+    "inodes": 3,
+    "live": 12288,
+    "openHandles": 0,
+    "peak": 12288,
+    "written": 0
+  },
+  "sourceInferredLivePhases": [
+    4096,
+    8192,
+    12288,
+    8192,
+    12288
+  ],
+  "rejectedControls": [
+    "wrong-quota-gate",
+    "missing-marker",
+    "stale-owned-start",
+    "identity-not-reaped",
+    "mounted-after-reap",
+    "wrong-counter",
+    "wrong-source",
+    "wrong-candidate",
+    "external-cleanup",
+    "failed-unmount",
+    "charge-after-next-mutation",
+    "missing-collect",
+    "collect-before-link-decrement",
+    "missing-refund",
+    "collect-open-inode",
+    "wrong-mkdir-type"
+  ],
+  "newRuntimeInvocations": 0,
+  "lifecycle": {
+    "box": "bx_47z2wx6m",
+    "cutoff": "2026-10-29T05:40:00Z",
+    "expiry": "2026-10-29T05:44:43.833Z",
+    "snapshotAvailable": true,
+    "snapshotVerifiedAt": "2026-10-29T05:15:29.504Z",
+    "state": "stopped",
+    "stopID": "stop_31a131c01fbc4958"
+  },
+  "proceduralDeviations": [
+    "Initial bounded policy reads and pwd used the inherited repository-root cwd before the task-owned cwd wrapper was established. No root/donor Git writes occurred. Subsequent tool executions used explicit task-owned cwd and child spawns validated containment.",
+    "Independent worker initial policy reads used inherited root cwd; subsequent commands used explicit owned cwd."
+  ],
+  "limitations": [
+    "No instantaneous intermediate measurements or direct errno proof.",
+    "No new runtime, gameplay, browser or general resource acceptance.",
+    "Git reads succeeded with retained alternate-store nesting warnings; no retry or source substitution."
+  ]
+}

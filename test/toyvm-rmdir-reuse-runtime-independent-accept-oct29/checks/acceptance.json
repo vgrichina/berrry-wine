@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/toyvm-rmdir-reuse-runtime-independent-accept-oct29/repo/test/toyvm-rmdir-reuse-runtime-independent-accept-oct29/accept.py"
+  ],
+  "cwd": "/tmp/toyvm-rmdir-reuse-runtime-independent-accept-oct29/repo",
+  "exit": 1,
+  "elapsed": 0.1778561701066792,
+  "admission": {
+    "free": 3767037952,
+    "MemAvailable": 3284135936,
+    "allocated": 2265088,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 0,
+  "stderrBytes": 724
+}
