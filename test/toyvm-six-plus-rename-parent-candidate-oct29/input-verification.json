@@ -1,0 +1,349 @@
+{
+  "authenticatedArtifacts": {
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-acceptance/baseline.json.gz": {
+      "bytes": 4418,
+      "sha256": "2e6a59f04ad819536aec25145e23f22886a4a24fc02712af5059140d45aa24f7"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-acceptance/mutant-remove-type.json.gz": {
+      "bytes": 1678,
+      "sha256": "7f0b5c66475a2c8392bfcc42c89e255496ac70c72429aa10cf362b7e8663dcc5"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-acceptance/mutant-setattr-flags.json.gz": {
+      "bytes": 3523,
+      "sha256": "2cfc84e9aa11f8a6980d78e0f4f0e34368e15850bf9b4b48f27000fce5fcab52"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-acceptance/mutant-readdir-parent.json.gz": {
+      "bytes": 2421,
+      "sha256": "dbfd4e818a78d984aebd1ef8d3904241e8c48178b745ce3186522157232c17e6"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-acceptance/acceptance-results.json": {
+      "bytes": 4215,
+      "sha256": "75e55e343d010ed21bb3077a13fd8ec19d036da4124a02e49d60cc92a396b6d2"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-acceptance/mutant-create-parent.json.gz": {
+      "bytes": 2613,
+      "sha256": "f6f0b77caa214c354a89409df4d71ab0cf55921befb6c1d85d4e65386baec284"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-acceptance/mutant-rename-type.json.gz": {
+      "bytes": 1602,
+      "sha256": "083d9d6a323cc626e6d6c15fcb3d245bb953f9fdb6c81f4e4f09c2ef5d1fef35"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-acceptance/mutant-rename-cycle.json.gz": {
+      "bytes": 1903,
+      "sha256": "bf3c8345b140bea584540bd3a92d352c7c35a30b87eee00a83f654b39a7d2e6f"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-acceptance/REPORT.md": {
+      "bytes": 2571,
+      "sha256": "849937ddb3420d24e8d9b289935bf78ea641f2328a6deebfe0e3107117944fa2"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/six-acceptance/accept_six.py": {
+      "bytes": 8868,
+      "sha256": "3c1352010fe0651a05cbb8ad136b8692e4ed84dd5b433d80febeb6e65a3398b1"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/rename-acceptance/reproduce.py": {
+      "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/reproduce.py",
+      "bytes": 7595,
+      "sha256": "99ba997bb2bbaaa4c7713dcecd7e42b1bfb1fc25fd73ae31a7c08153436621a2"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/rename-acceptance/corrected-oracle.py": {
+      "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/corrected-oracle.py",
+      "bytes": 8137,
+      "sha256": "ae66a44d52df992f030d6a873eef75dee57c8c4a4cd5c82400c3b1ae0f7af34e"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/rename-acceptance/independent-regressions.py": {
+      "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/independent-regressions.py",
+      "bytes": 2745,
+      "sha256": "a42ab9673a4a95b65fd6ab2eec3c0befa504493e0dbdf662d042f31a24160b86"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/rename-acceptance/results.json": {
+      "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/results.json",
+      "bytes": 9216,
+      "sha256": "5a5be4dbcab5f58c1f5f548e8f9b08c4157d2e990cd382563793c97626927eb2"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/rename-acceptance/corrected-results.json": {
+      "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/corrected-results.json",
+      "bytes": 38560,
+      "sha256": "10d29b1af9aee082c85b3d1452b3cbd5bd780d809031792887676a5b62f8e55f"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/rename-acceptance/regression-results.json": {
+      "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/regression-results.json",
+      "bytes": 6947,
+      "sha256": "87b9bfacde89a8f1f35eaa668aea62fbf2a781a46c4818c5bf706b9fdb71c616"
+    },
+    "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/inputs/rename-acceptance/acceptance-summary-pinned-relaunch.json": {
+      "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/acceptance-summary-pinned-relaunch.json",
+      "bytes": 2646,
+      "sha256": "c4678bdd0c4eb3d2894226ee9d8140cbb406afd41b541832cb63a6f1c082be83"
+    }
+  },
+  "inputInventory": {
+    "inputs/six-receipt.json": {
+      "bytes": 5207,
+      "sha256": "ad9f6f19886b7f27f549304489d61434c49a8db91437f6fc299cd00e0ef94b13"
+    },
+    "inputs/rename-backend.py": {
+      "bytes": 12580,
+      "sha256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb"
+    },
+    "inputs/six-acceptance/baseline.json.gz": {
+      "bytes": 4418,
+      "sha256": "2e6a59f04ad819536aec25145e23f22886a4a24fc02712af5059140d45aa24f7"
+    },
+    "inputs/six-acceptance/mutant-remove-type.json.gz": {
+      "bytes": 1678,
+      "sha256": "7f0b5c66475a2c8392bfcc42c89e255496ac70c72429aa10cf362b7e8663dcc5"
+    },
+    "inputs/six-acceptance/mutant-setattr-flags.json.gz": {
+      "bytes": 3523,
+      "sha256": "2cfc84e9aa11f8a6980d78e0f4f0e34368e15850bf9b4b48f27000fce5fcab52"
+    },
+    "inputs/six-acceptance/mutant-readdir-parent.json.gz": {
+      "bytes": 2421,
+      "sha256": "dbfd4e818a78d984aebd1ef8d3904241e8c48178b745ce3186522157232c17e6"
+    },
+    "inputs/six-acceptance/closeout-pins.json": {
+      "bytes": 3688,
+      "sha256": "f473bc60ad2aa9038c703e5b3cf960cbd2d7da1437a78d0e188ffbbaf19359b9"
+    },
+    "inputs/six-acceptance/acceptance-results.json": {
+      "bytes": 4215,
+      "sha256": "75e55e343d010ed21bb3077a13fd8ec19d036da4124a02e49d60cc92a396b6d2"
+    },
+    "inputs/six-acceptance/mutant-create-parent.json.gz": {
+      "bytes": 2613,
+      "sha256": "f6f0b77caa214c354a89409df4d71ab0cf55921befb6c1d85d4e65386baec284"
+    },
+    "inputs/six-acceptance/mutant-rename-type.json.gz": {
+      "bytes": 1602,
+      "sha256": "083d9d6a323cc626e6d6c15fcb3d245bb953f9fdb6c81f4e4f09c2ef5d1fef35"
+    },
+    "inputs/six-acceptance/blocked-report.json": {
+      "bytes": 1282,
+      "sha256": "d7c06c028e02bb2cf8bc46ea780ca4f7cfd5847ce9f1b519f8fa82baed7aa266"
+    },
+    "inputs/six-acceptance/mutant-rename-cycle.json.gz": {
+      "bytes": 1903,
+      "sha256": "bf3c8345b140bea584540bd3a92d352c7c35a30b87eee00a83f654b39a7d2e6f"
+    },
+    "inputs/six-acceptance/REPORT.md": {
+      "bytes": 2571,
+      "sha256": "849937ddb3420d24e8d9b289935bf78ea641f2328a6deebfe0e3107117944fa2"
+    },
+    "inputs/six-acceptance/accept_six.py": {
+      "bytes": 8868,
+      "sha256": "3c1352010fe0651a05cbb8ad136b8692e4ed84dd5b433d80febeb6e65a3398b1"
+    },
+    "inputs/rename-acceptance/predecessor-results.json": {
+      "bytes": 7699,
+      "sha256": "12635fc1a7efb9a226f63b934da7e6ad8c1ac432c2ec6f07e8669ee48f3bea22"
+    },
+    "inputs/rename-acceptance/source-pins.json": {
+      "bytes": 1024,
+      "sha256": "1e0dc4f6180d9e8854b3e228d825ee8415bf5cfc4766170d47463136e4527b8a"
+    },
+    "inputs/rename-acceptance/regression-results.json": {
+      "bytes": 6947,
+      "sha256": "87b9bfacde89a8f1f35eaa668aea62fbf2a781a46c4818c5bf706b9fdb71c616"
+    },
+    "inputs/rename-acceptance/original-historical-provenance.json": {
+      "bytes": 953,
+      "sha256": "7e7d354e49e1c3014e8b10d12d51b879462e7b2c6db05c49805d0b62bbcd182b"
+    },
+    "inputs/rename-acceptance/predecessor-provenance.json": {
+      "bytes": 680,
+      "sha256": "c3d6146467f710c9970590414d6eea4d8603572d996e250c9f7debaee0a494c0"
+    },
+    "inputs/rename-acceptance/corrected-results.json": {
+      "bytes": 38560,
+      "sha256": "10d29b1af9aee082c85b3d1452b3cbd5bd780d809031792887676a5b62f8e55f"
+    },
+    "inputs/rename-acceptance/original-historical-results.json": {
+      "bytes": 9185,
+      "sha256": "212a351eec2cb3fb20327f3db1d94707423429b962670ac57c2401c5a94f389b"
+    },
+    "inputs/rename-acceptance/package-validation.json": {
+      "bytes": 406,
+      "sha256": "a1dc5de4f210968aa69b690aca8a0bfe024636c4a7d8a69fc03cdb71e786db2e"
+    },
+    "inputs/rename-acceptance/diagnostic-summary.json": {
+      "bytes": 467,
+      "sha256": "7141c54f8412fcde0f14fe2fac6f6c694c3ee31b56818dccb1ff522bf481a313"
+    },
+    "inputs/rename-acceptance/corrected-oracle.py": {
+      "bytes": 8137,
+      "sha256": "ae66a44d52df992f030d6a873eef75dee57c8c4a4cd5c82400c3b1ae0f7af34e"
+    },
+    "inputs/rename-acceptance/reproduce.py": {
+      "bytes": 7595,
+      "sha256": "99ba997bb2bbaaa4c7713dcecd7e42b1bfb1fc25fd73ae31a7c08153436621a2"
+    },
+    "inputs/rename-acceptance/acceptance-summary-pinned-relaunch.json": {
+      "bytes": 2646,
+      "sha256": "c4678bdd0c4eb3d2894226ee9d8140cbb406afd41b541832cb63a6f1c082be83"
+    },
+    "inputs/rename-acceptance/independent-regressions.py": {
+      "bytes": 2745,
+      "sha256": "a42ab9673a4a95b65fd6ab2eec3c0befa504493e0dbdf662d042f31a24160b86"
+    },
+    "inputs/rename-acceptance/README.md": {
+      "bytes": 1954,
+      "sha256": "b79df23d35fa08ae296e171e20860bfb3898181efbb3d97524094eaf60e994eb"
+    },
+    "inputs/rename-acceptance/results.json": {
+      "bytes": 9216,
+      "sha256": "5a5be4dbcab5f58c1f5f548e8f9b08c4157d2e990cd382563793c97626927eb2"
+    },
+    "inputs/rename-acceptance/predecessor-completion-receipt.json": {
+      "bytes": 639,
+      "sha256": "d7ca3f0a307dc0acc40312e5b0eb34516c47aff44734ae77b172627a3152f5c3"
+    }
+  },
+  "sourceVerification": {
+    "checks": {
+      "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": true,
+      "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": true,
+      "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": true,
+      "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": true,
+      "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": true,
+      "limitModule": true,
+      "taskSupervisor": true,
+      "canonicalReceipt": true,
+      "pythonExecutable": true,
+      "rename-backend": true
+    },
+    "receipt": {
+      "task": "toyvm-rename-parent-independent-accept-oct29",
+      "outcome": "RENAME_PARENT_INDEPENDENT_ACCEPTANCE_PASS",
+      "completedAt": "2026-10-29T07:38:35.345559+00:00",
+      "candidate": "33528beec24aee12093633c30c260c30ff383969",
+      "sourcePins": {
+        "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+          "bytes": 8105,
+          "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+        },
+        "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+          "bytes": 3457,
+          "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+        },
+        "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+          "bytes": 12580,
+          "sha256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb"
+        },
+        "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+          "bytes": 4058,
+          "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+        },
+        "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+          "bytes": 23268,
+          "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+        }
+      },
+      "dispatch": {
+        "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-parent-independent-accept-oct29-pinned-relaunch-dispatch.json",
+        "bytes": 3170,
+        "sha256": "ea33881c2bc838ce1cc71eabf90dd23bf55a838e41239ca75632642876804a62"
+      },
+      "fixtures": {
+        "reproduce.py": {
+          "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/reproduce.py",
+          "bytes": 7595,
+          "sha256": "99ba997bb2bbaaa4c7713dcecd7e42b1bfb1fc25fd73ae31a7c08153436621a2"
+        },
+        "corrected-oracle.py": {
+          "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/corrected-oracle.py",
+          "bytes": 8137,
+          "sha256": "ae66a44d52df992f030d6a873eef75dee57c8c4a4cd5c82400c3b1ae0f7af34e"
+        },
+        "independent-regressions.py": {
+          "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/independent-regressions.py",
+          "bytes": 2745,
+          "sha256": "a42ab9673a4a95b65fd6ab2eec3c0befa504493e0dbdf662d042f31a24160b86"
+        }
+      },
+      "results": {
+        "results.json": {
+          "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/results.json",
+          "bytes": 9216,
+          "sha256": "5a5be4dbcab5f58c1f5f548e8f9b08c4157d2e990cd382563793c97626927eb2"
+        },
+        "corrected-results.json": {
+          "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/corrected-results.json",
+          "bytes": 38560,
+          "sha256": "10d29b1af9aee082c85b3d1452b3cbd5bd780d809031792887676a5b62f8e55f"
+        },
+        "regression-results.json": {
+          "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/regression-results.json",
+          "bytes": 6947,
+          "sha256": "87b9bfacde89a8f1f35eaa668aea62fbf2a781a46c4818c5bf706b9fdb71c616"
+        },
+        "acceptance-summary-pinned-relaunch.json": {
+          "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/acceptance-summary-pinned-relaunch.json",
+          "bytes": 2646,
+          "sha256": "c4678bdd0c4eb3d2894226ee9d8140cbb406afd41b541832cb63a6f1c082be83"
+        }
+      },
+      "counts": {
+        "independent": 55,
+        "regressions": 14,
+        "mutantsCaught": 4
+      },
+      "predecessorReceipt": {
+        "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/repo/test/toyvm-rename-parent-independent-accept-oct29/predecessor-completion-receipt.json",
+        "bytes": 639,
+        "sha256": "d7ca3f0a307dc0acc40312e5b0eb34516c47aff44734ae77b172627a3152f5c3"
+      },
+      "commit": "d328ef03d98ab00ec9fa647efc9ef75af5b47438",
+      "branch": "task/toyvm-rename-parent-independent-accept-oct29",
+      "publication": {
+        "remoteVerified": true,
+        "remoteLine": "d328ef03d98ab00ec9fa647efc9ef75af5b47438\trefs/heads/task/toyvm-rename-parent-independent-accept-oct29",
+        "push": {
+          "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/e/trusted-push.json",
+          "bytes": 3019,
+          "sha256": "8048180cc673caeec3dcd4b2f61b285af464b35253754f20f23c7d505dcc1fe6"
+        },
+        "verification": {
+          "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/e/exact-remote-verification.json",
+          "bytes": 3037,
+          "sha256": "fe3d40e94b926a6664e73644e4f60f6cffc7c7dbb0dac9c7bb7264ecd555273d"
+        }
+      },
+      "cleanup": {
+        "cleanOwnedCheckout": true,
+        "productionEdited": false,
+        "ownedCheckoutRetained": true,
+        "privateMutants": "memory only, released at exit",
+        "testBox": null,
+        "testBoxState": "not assigned",
+        "shutdownOwner": "coordinator"
+      },
+      "historicalFalseNegative": {
+        "preserved": true,
+        "reason": "OSError subclass name check was too strict",
+        "priorAdmissionSamples": "Preserved unchanged; unavailable/overwritten historical samples remain unavailable and are not replaced by new samples"
+      },
+      "currentRelaunchAdmissionDenials": 0,
+      "resources": {
+        "positiveWALBytes": 4096,
+        "latestAdmission": {
+          "path": "/tmp/toyvm-rename-parent-independent-accept-oct29/latest-successful-admission-pinned-relaunch.json",
+          "bytes": 2168,
+          "sha256": "ff43f2595c6e3fcaee56f06e45aec19a96515190fef603649346fd9e5e79e986"
+        },
+        "sourceTestBytes": 98853
+      },
+      "rootRefInitial": {
+        "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-parent-independent-accept-oct29-pinned-relaunch/root-ref-digest.json",
+        "bytes": 196,
+        "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+      },
+      "scope": "Exact repaired four-namespace backend plus RENAME parent checks; direct callbacks only",
+      "remainingGates": [
+        "six-guard combined-source application",
+        "serve branch application",
+        "caller integration",
+        "mounted/runtime qualification"
+      ]
+    }
+  }
+}

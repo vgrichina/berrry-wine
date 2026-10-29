@@ -1,0 +1,19 @@
+{
+  "baseSHA256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105",
+  "candidateSHA256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40",
+  "donorSHA256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb",
+  "addedLines": [
+    "            for parent in (ino,newdir):",
+    "                if parent not in self.nodes:raise OSError(errno.ENOENT,'rename parent missing')",
+    "                if not stat.S_ISDIR(self.nodes[parent]['mode']):raise OSError(errno.ENOTDIR,'rename parent not directory')"
+  ],
+  "serveByteIdentical": true,
+  "allOtherBytesIdentical": true,
+  "materializedBefore": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  }
+}

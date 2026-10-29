@@ -1,0 +1,17 @@
+{
+  "sourceAndUnrelatedMaterializedPinsVerified": true,
+  "baselineRequests": 84,
+  "rejectionChecks": 46,
+  "privateMutantsDetected": 7,
+  "reviewedEvidence": [
+    "mutant-destination-missing.json.gz",
+    "mutant-source-missing.json.gz",
+    "interactions.json.gz",
+    "mutant-old-create-missing.json.gz",
+    "mutant-source-type.json.gz",
+    "mutant-old-setattr-early-flags.json.gz",
+    "mutant-old-create-type.json.gz",
+    "mutant-destination-type.json.gz"
+  ],
+  "serveByteIdentical": true
+}

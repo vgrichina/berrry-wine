@@ -1,0 +1,117 @@
+{
+  "prelaunch": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor",
+    "controls": {
+      "omitted": "REJECTED BEFORE SPAWN",
+      "root": "REJECTED BEFORE SPAWN",
+      "donor": "REJECTED BEFORE SPAWN"
+    },
+    "sentinel": "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/repo",
+    "pythonChild": [
+      134217728,
+      134217728
+    ],
+    "gitVersion": "git version 2.43.0",
+    "PASS": true
+  },
+  "supervisorSHA256": "9b68f604ef34556e09d3b5718d974d48aded9568ff00146e1e2d36ae41e173f5",
+  "limitContractSHA256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387",
+  "testRun": {
+    "argv": [
+      "/usr/bin/python3",
+      "test/toyvm-six-plus-rename-parent-candidate-oct29/interactions.py"
+    ],
+    "cwd": "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.21785123203881085,
+    "admission": {
+      "at": 1793260195.4898825,
+      "device": 1680253000807562931,
+      "f_bavail": 1048573,
+      "blockSize": 4096,
+      "free": 4294955008,
+      "MemAvailable": 2526031872,
+      "allocated": 2625536,
+      "budget": 25165824,
+      "aggregate": {
+        "at": "2026-10-29T07:45:59.146786+00:00",
+        "owners": {
+          "coordinator": 25165824,
+          "gltron-eager-integrity-independent-accept-oct29": 50331648,
+          "toyvm-accepted-six-caller-pin-migration-oct29": 25165824,
+          "toyvm-six-plus-rename-parent-candidate-oct29": 25165824,
+          "toyvm-selector-rename-ready-lifetime-continuation-oct29": 25165824
+        },
+        "aggregate": 176160768,
+        "requiredBytes": 3200253952,
+        "futureGrowthIncludingUncertaintyBuffer": 150994944,
+        "freeBytes": 4307185664,
+        "remainingAfterForecast": 4156190720,
+        "MemAvailable": 3715170304,
+        "memRequired": 2147483648,
+        "device": 1680253000807562931,
+        "f_bavail": 1063445,
+        "blockSize": 4096,
+        "PASS": true,
+        "forecast": "Transferred24MiB predecessor allocation: sourceGit3 evidence1 WAL8 publication3 uncertainty9; other active owners retained through closeout. Current aggregate and unchanged per-operation floors.",
+        "previousAllocationCloseout": {
+          "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+          "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+        },
+        "transfers": {
+          "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+          "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+        },
+        "transfer": {
+          "tuxracer-glvertex2dv-independent-accept-oct29": "tuxracer-gltexcoord2dv-dispatch-repair-oct29"
+        },
+        "changedPrerequisite": "two predecessor clients exited; accepted RENAME parent and source-demonstrated bind-before-listen fixture race",
+        "shortfalls": {
+          "diskBytes": 0,
+          "memoryBytes": 0
+        },
+        "clientForecast": {
+          "at": "2026-10-29T07:45:59.146786+00:00",
+          "MemAvailable": 3715170304,
+          "additionalClients": 2,
+          "additionalClientBytes": 805306368,
+          "remaining": 2909863936,
+          "floor": 2147483648,
+          "changedPrerequisite": "two predecessor clients exited; accepted RENAME parent and source-demonstrated bind-before-listen fixture race",
+          "PASS": true
+        }
+      },
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      },
+      "checks": {
+        "allocation": true,
+        "disk": true,
+        "forecast": true,
+        "memory": true
+      }
+    },
+    "stdoutBytes": 98,
+    "stderrBytes": 0
+  },
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountValidation": "not applicable: no mount argv or mount execution in this task",
+  "nodeStartup": "not applicable: no Node execution",
+  "rootRefInitial": "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-plus-rename-parent-candidate-oct29/root-ref-digest.json"
+}

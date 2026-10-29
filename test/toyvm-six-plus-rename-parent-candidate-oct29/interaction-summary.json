@@ -1,0 +1,168 @@
+{
+  "status": "PASS_CANDIDATE_INTERACTIONS",
+  "baseline": {
+    "requests": 84,
+    "rejections": 46,
+    "finalState": [
+      [
+        "failure",
+        null
+      ],
+      [
+        "file_limit",
+        16384
+      ],
+      [
+        "handles",
+        1
+      ],
+      [
+        "live",
+        8192
+      ],
+      [
+        "live_limit",
+        1048576
+      ],
+      [
+        "next",
+        7
+      ],
+      [
+        "nodes",
+        [
+          [
+            1,
+            [
+              [
+                "data",
+                {
+                  "hex": ""
+                }
+              ],
+              [
+                "links",
+                1
+              ],
+              [
+                "mode",
+                16832
+              ],
+              [
+                "names",
+                [
+                  [
+                    {
+                      "hex": "6d61726b65722d61"
+                    },
+                    6
+                  ]
+                ]
+              ],
+              [
+                "opens",
+                0
+              ]
+            ]
+          ],
+          [
+            6,
+            [
+              [
+                "data",
+                {
+                  "hex": ""
+                }
+              ],
+              [
+                "links",
+                1
+              ],
+              [
+                "mode",
+                33152
+              ],
+              [
+                "names",
+                []
+              ],
+              [
+                "opens",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "operations",
+        84
+      ],
+      [
+        "peak",
+        32768
+      ],
+      [
+        "root",
+        "/tmp/toyvm-six-plus-rename-parent-candidate-oct29/repo/test/toyvm-six-plus-rename-parent-candidate-oct29/unmounted-fixture"
+      ],
+      [
+        "write_limit",
+        1048576
+      ],
+      [
+        "written",
+        40
+      ]
+    ]
+  },
+  "mutants": {
+    "source-missing": {
+      "detected": "('source missing', 2, {'type': 'KeyError', 'isOSError': False, 'errno': None, 'text': '999999'})",
+      "requests": 20,
+      "lastLabel": "source missing",
+      "sourceSHA256": "adb5135b081d2c96a1c4f0c400121d8e127dc113f606fb4e8215296cb09fbd33"
+    },
+    "source-type": {
+      "detected": "('source file', 20, {'type': 'FileNotFoundError', 'isOSError': True, 'errno': 2, 'text': '[Errno 2] rename source'})",
+      "requests": 24,
+      "lastLabel": "source file",
+      "sourceSHA256": "e88bf85ef6a4c9d7e5d51d739b670a63fd6b4a1ebba1ffb1e568a25607c8fe24"
+    },
+    "destination-missing": {
+      "detected": "('destination missing', 2, {'type': 'KeyError', 'isOSError': False, 'errno': None, 'text': '999999'})",
+      "requests": 28,
+      "lastLabel": "destination missing",
+      "sourceSHA256": "4226546668fd5d639899641f7450f53fa33fb314cc6b2da54ac48d537e7a636c"
+    },
+    "destination-type": {
+      "detected": "('destination file', 20, None)",
+      "requests": 32,
+      "lastLabel": "destination file",
+      "sourceSHA256": "860ecded0b686ed28ae69c04caa7a60cf1125bc602e3005bd2cffd2f099b22e4"
+    },
+    "old-create-missing": {
+      "detected": "('invalid create/mkdir parent', 2, {'type': 'TypeError', 'isOSError': False, 'errno': None, 'text': \"'NoneType' object is not subscriptable\"})",
+      "requests": 9,
+      "lastLabel": "invalid create/mkdir parent",
+      "sourceSHA256": "576d4568c67d417f3b5a27cf65c9e8ebe253ce19ad28cfe3ffe654414111c8b8"
+    },
+    "old-create-type": {
+      "detected": "('invalid create/mkdir parent', 20, None)",
+      "requests": 11,
+      "lastLabel": "invalid create/mkdir parent",
+      "sourceSHA256": "5e5e2e61ae4b22d757b794cc0d8561b42651dea96ac466a8d897715f86dae4c2"
+    },
+    "old-setattr-early-flags": {
+      "detected": "('SETATTR size and unsupported bit rejects before growth', 95, None)",
+      "requests": 17,
+      "lastLabel": "SETATTR size and unsupported bit rejects before growth",
+      "sourceSHA256": "31cfcd794c9699678521bc5717eb1a723d6448e5f30cda26f4d666070b4144c4"
+    }
+  },
+  "independentCombinedAcceptance": false,
+  "callerMigration": false,
+  "mountedExecution": false,
+  "oldSuitesReplayed": false,
+  "snapshotPolicy": "all Backend instance fields; only operations increment by one on rejection"
+}
