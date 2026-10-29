@@ -1,0 +1,152 @@
+{
+  "task": "toyvm-prechecked-output-limit-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "outcome": "BLOCKED BEFORE OUTPUT WORKLOAD",
+  "outputEnforcement": "UNKNOWN",
+  "productionCLIRuns": 1,
+  "productionCLIFailed": true,
+  "backendCapturedOutputBytes": null,
+  "stopReason": null,
+  "reason": "FUSE constructor rejects live-limit 4096; production minimum 8192",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "dispatchSHA256": "0570d390f38fdf0b9a958bd86a97bb147ed9037baea9d10d35aa94524075713e",
+  "admissionSHA256": "89de2f3f5439096574029d4667a59899eba397932a90b3d81d288415c2716559",
+  "ownedHelperSHA256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387",
+  "externalSafetyAction": null,
+  "workloadStarted": false,
+  "backendReceiptPresent": false,
+  "authoritativeCleanupAccepted": false,
+  "observedRemainingIdentities": [],
+  "observedRemainingMounts": [],
+  "box": {
+    "id": "bx_5582k6tn",
+    "state": "stopped",
+    "ttlSeconds": 1800,
+    "originalExpiryUTC": "2026-10-29T04:29:01.484Z",
+    "cutoffUTC": "2026-10-29T04:15:00Z",
+    "stop": {
+      "endedAt": "2026-10-29T03:59:46.107Z",
+      "error": null,
+      "id": "stop_e2e45488e5a101ba",
+      "lastAttemptAt": "2026-10-29T03:59:46.107Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "snapshotVerifiedAt": "2026-10-29T03:59:46.042Z"
+  },
+  "fullResourceAcceptance": "UNKNOWN",
+  "gameplayAcceptance": "UNKNOWN",
+  "browserAllowance": {
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694,
+    "captures": 1
+  },
+  "incidents": [
+    "Avoidable preflight failure: selected live_limit4096 without checking backend minimum8192; no retry",
+    "Initial git --version used Python DATA128 rather than Git child256; subsequent Git correctly256",
+    "Local physical RSS monitor added after initial help probes; no full resource acceptance claimed"
+  ],
+  "evidence": {
+    "canonical-receipt.json": {
+      "bytes": 5167,
+      "sha256": "facdddc591f0643d3ee1cc30fb78c297def8980dcfedbb245ea8f003f9cfe07f"
+    },
+    "cli.stdout": {
+      "bytes": 981,
+      "sha256": "b3f36439962c2f9fd6b8ec9661d0ecc22b51471bcadd3e83dcace0da2beaa648"
+    },
+    "snapshot-stop.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "box-identity.json": {
+      "bytes": 61,
+      "sha256": "72f12a5fcf15bca408f259b7b17a846e4538db57114ffdbb444513407728f077"
+    },
+    "stopped-verification.stdout": {
+      "bytes": 1309,
+      "sha256": "6542d95f190d3d4d2ba946cf52e175bfd6f5b5853bbab7c3cc808d1c092bd688"
+    },
+    "prelaunch-controls.json": {
+      "bytes": 538,
+      "sha256": "a0acc18fa896ce273b4a64719144bf619e09b89ce1581280ab9dc8573326135a"
+    },
+    "cli.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runtime.stdout": {
+      "bytes": 6525,
+      "sha256": "e723ff7efdbbbe224f85e812c5cb9494907d17104a1f244cafa5b108469845ac"
+    },
+    "preflight.json": {
+      "bytes": 1687,
+      "sha256": "4a031f9f0cb8c621d69610b49a411f33585bdbe96158c362c4fa8ce449788552"
+    },
+    "stopped-verification.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "control.py": {
+      "bytes": 3313,
+      "sha256": "b5f489e21519a18ad8a6ba4d55d625ec04d05bbd7631a006afe5014e67a80bc9"
+    },
+    "verified-inputs.json": {
+      "bytes": 3412,
+      "sha256": "83cdd2e703be8187aa575ccc48c6fc256ba64b6fafacb6056cb25763bd74ee20"
+    },
+    "REPORT.md": {
+      "bytes": 3007,
+      "sha256": "e4ca2fbfd8ac3b17feb32f85299e50436653c2aa1f78cc37d83157e0a8408749"
+    },
+    "runtime.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "creation-recipe.json": {
+      "bytes": 1673,
+      "sha256": "942b25467cb994539386732d52ca28087db56031db31a5f7745cc41a886bc0f2"
+    },
+    "snapshot-stop.stdout": {
+      "bytes": 1579,
+      "sha256": "6d9b85882759afc48d1e442b1c1388fd9970bafb494592bc125158a0ecd5e6d7"
+    },
+    "operations-before-publication.jsonl": {
+      "bytes": 6842,
+      "sha256": "49c183eef95b62450122ae13682b950cf0e49ac8ed2f826b40afb6dc64372240"
+    },
+    "runtime-receipt.json": {
+      "bytes": 1894,
+      "sha256": "ff7a6f0c2471befc1842350d97eb2e277d3d58fa885bc1c88f0f33874d94fedd"
+    },
+    "remote_once.py": {
+      "bytes": 5454,
+      "sha256": "fac3beba1b7962c73dce326f326dab592d48d746fa6e1feab6f5143fd46b43bb"
+    }
+  }
+}

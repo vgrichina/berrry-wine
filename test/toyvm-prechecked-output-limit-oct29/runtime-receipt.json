@@ -1,0 +1,55 @@
+{
+  "task": "toyvm-prechecked-output-limit-oct29",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cliExit": 1,
+  "cliReport": {
+    "accepted": false,
+    "accountingAccepted": false,
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": false,
+    "error": "RuntimeError: filesystem mount/backend failed",
+    "filesystemCleanup": {
+      "remainingMounts": [],
+      "serverExit": 1,
+      "serverStderr": "Traceback (most recent call last):\n  File \"/tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py\", line 212, in <module>\n    backend=Backend(sys.argv[1],*map(int,sys.argv[3:]))\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tvdt/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py\", line 31, in __init__\n    raise ValueError('tiny fixture backend limits required')\nValueError: tiny fixture backend limits required\n",
+      "serverStdout": "",
+      "unmountExit": null,
+      "unmountStderr": "",
+      "unmountStdout": ""
+    },
+    "filesystemCleanupComplete": false
+  },
+  "capturedOutputBytes": 0,
+  "stopReason": null,
+  "supervisorTruncated": false,
+  "externalSafetyAction": null,
+  "observedIdentities": [
+    {
+      "pid": 6424,
+      "ppid": 5925,
+      "start": "10151",
+      "rss": 0
+    },
+    {
+      "pid": 6425,
+      "ppid": 6424,
+      "start": "10153",
+      "rss": 0
+    }
+  ],
+  "remainingIdentities": [],
+  "remainingMounts": [],
+  "peakOuterGroupRSS": 70709248,
+  "wallSeconds": 0.11293064400000219,
+  "acceptance": false,
+  "limitations": [
+    "Only observed output gate qualified; full resource/gameplay acceptance unknown",
+    "Browser allowance unchanged: CPU35.353183 wall101.495550694 capture1"
+  ]
+}
