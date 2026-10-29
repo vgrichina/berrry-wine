@@ -13,7 +13,7 @@ RECEIPT_SHA256 = '543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed78
 BACKEND_PINS = {
     'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py': '5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf',
     'toyvm-kernel-profile-accounting-backend-oct28/confine.py': '0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8',
-    'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py': 'e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41',
+    'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py': 'cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105',
     'toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py': '9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85',
 }
 BROWSER_ALLOWANCE = dict(cpuSeconds=35.353183, wallSeconds=101.495550694, captures=1)
