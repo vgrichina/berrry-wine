@@ -1,0 +1,78 @@
+{
+  "task": "toyvm-transitive-loader-fresh-independent-accept-oct29",
+  "status": "BLOCKED_PUBLICATION_FIRST_ADMISSION_DENIAL",
+  "base": "a33f06c2df04f5b6770b293088f335578c5c8699",
+  "commitAbbreviationObserved": "efe33284e1",
+  "fullCommitSHA": null,
+  "branch": "task/toyvm-transitive-loader-fresh-independent-accept-oct29",
+  "remote": {
+    "url": "git@github.com:vgrichina/wine-assembly.git",
+    "pushStarted": false,
+    "verified": false,
+    "reason": "ops.py admission rejected memory before spawning Git push; no retry or ls-remote attempted"
+  },
+  "canonicalPredecessorReceipt": {
+    "bytes": 33547,
+    "sha256": "10c4c64c8867d05dbd4fa1095fd9363ac275ec0470bf9e08384b9fef1c839a83"
+  },
+  "sourcePinsBefore": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {"bytes": 8392, "sha256": "5d1fece5ef3b8c4ad07bf986f8b69fc14881a310499fed7b2ed1ac68da8cd439"},
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {"bytes": 4241, "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"},
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {"bytes": 3457, "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"},
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {"bytes": 12482, "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"},
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {"bytes": 23268, "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"}
+  },
+  "sourcePinsAfter": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {"bytes": 8392, "sha256": "5d1fece5ef3b8c4ad07bf986f8b69fc14881a310499fed7b2ed1ac68da8cd439"},
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {"bytes": 4241, "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"},
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {"bytes": 3457, "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"},
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {"bytes": 12482, "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"},
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {"bytes": 23268, "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"}
+  },
+  "behavior": {
+    "acceptedCandidate": true,
+    "cases": ["normal", "timestamp-pyc", "unchecked-hash-pyc", "sys-modules", "replace-after-read", "tampered"],
+    "checkedReadCountPerCase": 1,
+    "underlyingSourceOpensPerCase": 1,
+    "cacheReads": 0,
+    "tamperedRejectedBeforeModuleAndPopen": true,
+    "acceptedCases": "fresh module, correct metadata/functions, exact checked top-level code, absent stale markers, unchanged pyc",
+    "caller": "byte-identical except sole adapter pin substitution; loader AST identical; source pin mismatch rejects before module construction",
+    "realChildLaunches": 0,
+    "runtimeQualification": false
+  },
+  "controls": {
+    "privateOldLoader": "same oracle rejected stale top-level marker with unchecked-hash pyc",
+    "privateGuardRemoval": "same oracle rejected stale top-level marker on tampered source",
+    "initialOracleSerializationFailure": "preserved in initial-oracle-failure.txt; corrected code canonicalization plus direct top-level code equality passes; no production modification"
+  },
+  "evidence": {
+    "results": "results.json contains exact source and supplied artifact pins",
+    "resourceAcceptance": "acceptance-operation.json",
+    "firstAdmissionDenial": "/tmp/toyvm-transitive-loader-fresh-independent-accept-oct29/first-failed-admission-pinned-relaunch.json",
+    "artifactHashesForNewReports": null,
+    "unavailable": "New report hash manifest, full local SHA and remote SHA were not obtained after mandatory first-denial stop"
+  },
+  "resources": {
+    "firstDenialOperation": "push-tests",
+    "checks": {"allocation": true, "disk": true, "forecast": true, "memory": false},
+    "memoryFloorBytes": 2147483648,
+    "exactFailedSample": "retained immutably in first-failed-admission-pinned-relaunch.json; not replaced by later sample",
+    "retries": 0,
+    "limitChanges": false,
+    "allocationBytes": 25165824
+  },
+  "remainingAcceptanceGates": ["remote publication and exact SHA verification", "independent confinement", "kernel/FUSE/mounted execution", "actual CLI/browser", "deployment"],
+  "closeout": {
+    "productionFilesUnchanged": true,
+    "productionSkipWorktreeFlagsUnchanged": true,
+    "cachedWhitespaceCheck": "PASS",
+    "committedFiles": "nine own test/report files only",
+    "uncommittedCloseoutFiles": ["completion-receipt.json", "coordinator-note.txt"],
+    "board": "coordinator-note.txt supplied instead of oversized shared board write, per dispatch",
+    "box": null,
+    "mountAndNodeCheckpoints": "not applicable: no mount or Node execution",
+    "shutdownOwner": "coordinator",
+    "workerStopped": true
+  }
+}
