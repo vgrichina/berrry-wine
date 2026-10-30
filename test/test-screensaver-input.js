@@ -55,16 +55,27 @@ const wanted = new Set([
 // Include the production state accessors, including layout.field instructions.
 for (const [name, body] of funcs) if (/^(btn_|lb_|static_)/.test(name) && !calls(body).length) wanted.add(name);
 const applet = read('src/09ca-screensavers.wat');
-async function fixture({ baseline = false, mutation = null } = {}) {
+async function fixture({ baseline = false, mutation = null, lifetime = false, reuse = false, candidate = false } = {}) {
   let app = baseline ? cp.execFileSync('git', ['show', '4c98907328917f5917a59445bb4d5ce3e2caca09:src/09ca-screensavers.wat'], { cwd: root, encoding: 'utf8' }) : applet;
+  if (candidate) app = cp.execFileSync('git', ['show', 'a4e1100b:src/09ca-screensavers.wat'], { cwd: root, encoding: 'utf8' });
   if (mutation === 'no-input') app = app.replace('(call $host_check_input)', '(i32.const 0)');
   if (mutation === 'wrong-target') app = app.replace('(local.set $target (call $host_check_input_hwnd (global.get $focus_hwnd)))', '(local.set $target (global.get $scrsave_hwnd))');
   if (mutation === 'no-activation') app = app.replace('(call $message_mouse_activate32 (global.get $scrsave_msg))', '(i32.const 0)');
   let native = [...wanted].map(n => { assert.ok(funcs.has(n), n); return funcs.get(n); }).join('\n');
   if (mutation === 'no-notification') native = native.replace('(call $ctrl_notify_parent\n              (local.get $parent)', '(call $ctrl_notify_parent\n              (i32.const 0)');
+  // Explicit adversarial native callback instrumentation, not a shipped UI path.
+  // All production dispatcher branches remain intact; the hook runs at entry.
+  if (lifetime) {
+    const name = 'control_wndproc_dispatch', original = funcs.get(name);
+    const at = original.indexOf('(local.set');
+    assert.ok(at > 0);
+    native = native.replace(original, original.slice(0, at) +
+      '(call $test_callback (local.get $hwnd) (local.get $msg))\n' + original.slice(at));
+  }
   const own = new Set([...wanted, ...[...app.matchAll(/\(func\s+\$([\w.-]+)/g)].map(m => m[1])]);
   const deps = [...new Set(calls(native + app))].filter(n => !own.has(n));
   function signature(n) {
+    if (n === 'test_callback') return '(param i32 i32)';
     const f = strip(funcs.get(n) || '');
     assert.ok(f, `Missing signature ${n}`);
     let s = f.slice(f.indexOf(n) + n.length), out = '';
@@ -103,13 +114,31 @@ async function fixture({ baseline = false, mutation = null } = {}) {
   const mem = () => new DataView(e.memory.buffer);
   const str = p => { const b = new Uint8Array(e.memory.buffer); let end = p; while (b[end]) end++; return Buffer.from(b.slice(p, end)).toString('latin1'); };
   const get = h => windows.get(h);
-  const alloc = n => { const p = heap; heap += (n + 7) & ~7; assert.ok(heap < 1048576); return p; };
+  const allocations = [], sentinels = []; let armed = null, callbackCount = 0;
+  const alloc = n => { const p = heap; allocations.push({p, n, live:true}); heap += (n + 7) & ~7; assert.ok(heap < 1048576); return p; };
   const f = Object.fromEntries(deps.map(n => [n, () => { throw Error(`Unexpected peripheral call ${n}`); }]));
+  function checkRange(p, n) {
+    for (const a of allocations) if (!a.live && p < a.p + a.n && p + n > a.p)
+      assert.fail('access freed allocation range ' + p.toString(16));
+  }
+  function callback(h, msg) {
+    if (!armed || msg !== armed.msg || h !== armed.h) return;
+    armed = null; callbackCount++;
+    e.send(e.scrsave_window(), 0x10, 0, 0);
+    if (reuse) {
+      const a = allocations.find(a => a.p === 0x10000);
+      if (!a.live) { a.live = true; a.reused = true;
+        new Uint8Array(e.memory.buffer).fill(0xa5, a.p, a.p + a.n);
+        sentinels.push(a);
+      }
+    }
+  }
   let r;
   Object.assign(f, {
-    g2w: p => p, w2g: p => p, gl32: p => { assert.ok(!freed.includes(p), 'read freed scratch'); return mem().getInt32(p, true); },
-    gs32: (p, v) => { assert.ok(!freed.includes(p), 'write freed scratch'); mem().setInt32(p, v, true); },
-    heap_alloc: alloc, heap_free: p => { if (p) freed.push(p); }, strlen: p => str(p).length,
+    test_callback: callback,
+    g2w: p => p, w2g: p => p, gl32: p => { checkRange(p, 4); return mem().getInt32(p, true); },
+    gs32: (p, v) => { checkRange(p, 4); mem().setInt32(p, v, true); },
+    heap_alloc: alloc, heap_free: p => { if (p) { const a = allocations.find(a => a.p === p && a.live); assert.ok(a, 'free live allocation'); a.live = false; freed.push(p); } }, strlen: p => str(p).length,
     memcpy: (d, s, n) => new Uint8Array(e.memory.buffer).copyWithin(d, s, s + n),
     memset: (p, v, n) => new Uint8Array(e.memory.buffer).fill(v, p, p + n),
     wat_str_to_heap: (p, n) => { const d = alloc(n + 1); new Uint8Array(e.memory.buffer).copyWithin(d, p, p + n); return d; },
@@ -185,7 +214,9 @@ async function fixture({ baseline = false, mutation = null } = {}) {
   function down(h, y = 8) { target = h; r.handleMouseDown(108, 100 + y, 1); }
   function up(h, x = 8, y = 8) { target = h; r.handleMouseUp(100 + x, 100 + y, 1); }
   function pump() { now += 50; const v = e.wat_app_pump(); notifications.length = 0; return v; }
-  return { e, r, windows, freed, launches, activation, hwnd, down, up, pump, str, mem, wasmHash, wasmBytes: result.wasmBinary.length, funcs: wanted.size };
+  return { arm: (h, msg) => { armed = {h, msg}; }, callbackCount: () => callbackCount,
+    verifyReuse: () => { for (const a of sentinels) assert.ok(new Uint8Array(e.memory.buffer, a.p, a.n).every(v => v === 0xa5), 'reused MSG allocation corrupted'); },
+    allocations, f, e, r, windows, freed, launches, activation, hwnd, down, up, pump, str, mem, wasmHash, wasmBytes: result.wasmBinary.length, funcs: wanted.size };
 }
 async function exercise(options) {
   const f = await fixture(options), { e } = f;
@@ -230,7 +261,7 @@ async function exercise(options) {
   assert.ok(f.r.inputQueue.includes(afterClose), 'Close stops before consuming another queued event');
   return { wasmBytes: f.wasmBytes, wasmSha256: f.wasmHash, productionFunctions: f.funcs, launches: f.launches };
 }
-(async () => {
+if (require.main === module) (async () => {
   const result = await exercise({});
   await assert.rejects(() => exercise({ baseline: true }), /renderer DOWN selects real listbox row 2/);
   console.log('PASS baseline rejected at renderer DOWN -> real listbox selection');
@@ -245,3 +276,5 @@ async function exercise(options) {
   }
   console.log('PASS renderer -> owned host input -> compiled native listbox/button -> selection/Preview/Close; baseline FAIL, four mutations rejected', result);
 })().catch(e => { console.error(e); process.exitCode = 1; });
+
+module.exports = { fixture, exercise };

@@ -99,6 +99,7 @@
   (global $scrsave_desc1     (mut i32) (i32.const 0))
   (global $scrsave_desc2     (mut i32) (i32.const 0))
   (global $scrsave_msg       (mut i32) (i32.const 0))  ;; guest MSG scratch
+  (global $scrsave_pumping   (mut i32) (i32.const 0))  ;; pump owns MSG until callbacks return
   (global $scrsave_launched  (mut i32) (i32.const 0))  ;; entry index + 1
 
   ;; Control ids. 0x500 is outside every id range the common dialogs use.
@@ -179,6 +180,7 @@
   ;; stops the process when its last top-level window goes away.
   (func $scrsave_open (export "scrsave_open") (result i32)
     (local $hwnd i32) (local $i i32) (local $n i32) (local $s i32)
+    (if (global.get $scrsave_pumping) (then (return (i32.const 0))))
     (if (global.get $scrsave_hwnd) (then (return (global.get $scrsave_hwnd))))
     (global.set $scrsave_msg (call $heap_alloc (i32.const 28)))
     (if (i32.eqz (global.get $scrsave_msg)) (then (return (i32.const 0))))
@@ -383,7 +385,10 @@
     (global.set $scrsave_desc2 (i32.const 0))
     (if (global.get $scrsave_msg)
       (then
-        (call $heap_free (global.get $scrsave_msg))
+        ;; Activation restores the captured MSG after synchronous callbacks.
+        ;; The outer pump releases its borrow after all such writes complete.
+        (if (i32.eqz (global.get $scrsave_pumping))
+          (then (call $heap_free (global.get $scrsave_msg))))
         (global.set $scrsave_msg (i32.const 0))))
     (call $wnd_destroy_tree (local.get $hwnd))
     (call $host_destroy_window (local.get $hwnd))
@@ -403,6 +408,19 @@
   ;; Returns 1 while the applet still owns a window, 0 once it has closed, so
   ;; the host can end the process on the same tick.
   (func $scrsave_pump (export "wat_app_pump") (result i32)
+    (local $ptr i32) (local $result i32)
+    (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
+    ;; A nested pump must not overwrite an in-flight activation transaction.
+    (if (global.get $scrsave_pumping) (then (return (i32.const 1))))
+    (local.set $ptr (global.get $scrsave_msg))
+    (global.set $scrsave_pumping (i32.const 1))
+    (local.set $result (call $scrsave_pump_run))
+    (global.set $scrsave_pumping (i32.const 0))
+    (if (i32.eqz (global.get $scrsave_hwnd))
+      (then (call $heap_free (local.get $ptr)) (return (i32.const 0))))
+    (local.get $result))
+
+  (func $scrsave_pump_run (result i32)
     (local $guard i32) (local $hwnd i32) (local $target i32)
     (local $packed i32) (local $msg i32) (local $wp i32) (local $lp i32)
     (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
@@ -427,9 +445,10 @@
         (local.get $target) (local.get $msg) (local.get $lp))
       (if (i32.eqz (call $message_mouse_activate32 (global.get $scrsave_msg)))
         (then
+          (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
           (drop (call $wnd_send_message (local.get $target)
             (local.get $msg) (local.get $wp) (local.get $lp)))))
-      ;; Native BN_CLICKED can close synchronously and free scrsave_msg.
+      ;; Native BN_CLICKED can close synchronously; the outer pump owns MSG.
       (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
       (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
       (br $input)))
@@ -456,13 +475,14 @@
           (call $gl32 (i32.add (global.get $scrsave_msg) (i32.const 4)))
           (call $gl32 (i32.add (global.get $scrsave_msg) (i32.const 8)))
           (call $gl32 (i32.add (global.get $scrsave_msg) (i32.const 12)))))))
-      ;; A Close handled above frees the scratch block; stop before reading it.
+      ;; Close clears the scratch handle; stop before reading it.
       (br_if $posts (i32.eqz (global.get $scrsave_hwnd)))
       (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
       (br $post)))
     (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
     ;; 2. Native control repaints.
     (drop (call $paint_drain_native_control_paints))
+    (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
     ;; 3. Whatever is left dirty -- in practice the top-level frame.
     (local.set $guard (i32.const 0))
     (block $paints (loop $paint
@@ -475,6 +495,7 @@
         (i32.const 0) (i32.const 0) (i32.const 32767) (i32.const 32767)))
       (drop (call $wnd_send_message
         (local.get $hwnd) (i32.const 0x000F) (i32.const 0) (i32.const 0)))
+      (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
       (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
       (br $paint)))
     (i32.const 1))
