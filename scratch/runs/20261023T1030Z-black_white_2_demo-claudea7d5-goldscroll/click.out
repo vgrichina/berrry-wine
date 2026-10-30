@@ -1,8 +1,0 @@
-[ctl] {"id":"a0","ok":true,"value":{"cx":470,"cy":293,"cxf":0,"cyf":0,"dx":-25,"dy":7,"scale":1061158912,"scalef":0.75,"bits":0,"gate":0,"gmask":64,"lockA":0,"lockK":0,"poll":1,"wheel":0,"counts":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}}
-[ctl] {"id":"arm","ok":true,"value":"armed"}
-[ctl] {"id":"a1","ok":true,"value":{"cx":470,"cy":293,"cxf":0,"cyf":0,"dx":0,"dy":0,"scale":1061158912,"scalef":0.75,"bits":0,"gate":0,"gmask":64,"lockA":0,"lockK":0,"poll":1,"wheel":0,"counts":[1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0]}}
-[ctl] {"id":"a2","ok":true,"value":{"cx":470,"cy":293,"cxf":0,"cyf":0,"dx":0,"dy":0,"scale":1061158912,"scalef":0.75,"bits":0,"gate":0,"gmask":64,"lockA":0,"lockK":0,"poll":1,"wheel":0,"counts":[3,1,0,1,0,1,1,0,1,0,3,0,0,0,0,0]}}
-[ctl] {"id":"a3","ok":true,"value":{"cx":470,"cy":293,"cxf":0,"cyf":0,"dx":0,"dy":0,"scale":1061158912,"scalef":0.75,"bits":0,"gate":0,"gmask":64,"lockA":0,"lockK":0,"poll":1,"wheel":0,"counts":[3,1,0,1,0,1,1,0,1,0,3,0,0,0,0,0]}}
-[ctl] {"id":"a4","ok":true,"value":{"cx":470,"cy":293,"cxf":0,"cyf":0,"dx":0,"dy":0,"scale":1061158912,"scalef":0.75,"bits":0,"gate":0,"gmask":64,"lockA":0,"lockK":0,"poll":1,"wheel":0,"counts":[8,1,0,1,0,1,1,0,1,0,8,0,0,0,0,0]}}
-[ctl] {"id":"a5","ok":true,"value":{"cx":470,"cy":293,"cxf":0,"cyf":0,"dx":0,"dy":0,"scale":1061158912,"scalef":0.75,"bits":0,"gate":0,"gmask":64,"lockA":0,"lockK":0,"poll":1,"wheel":0,"counts":[16,1,0,1,0,1,1,0,1,0,16,0,0,0,0,0]}}
-CLICK_DONE

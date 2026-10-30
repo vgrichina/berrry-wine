@@ -1,8 +1,0 @@
-{
-  "node": "/usr/local/bin/node",
-  "nodeBytes": 123656816,
-  "nodeSHA256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
-  "donor": "/tmp/d3d-render-cache-focused-oct23/repo",
-  "donorReadOnly": true,
-  "sourceStageAccess": "Git object bytes only; no extraction"
-}

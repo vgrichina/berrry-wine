@@ -1,1 +1,0 @@
-{"status":"pass","qualification":"cheap controls only","records":14,"controls":["disabled identity","pins","missing/duplicate anchors","watch conflict before sentinel","missing exports","halt/EIP/bp/code readback","counter/halt execution mutants","skip","bounded records","no extra run/writes"]}
