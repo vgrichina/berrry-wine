@@ -3460,6 +3460,31 @@
     (call $fire_audio_callback_bound (local.get $handle) (local.get $hdr)
       (local.get $cb) (local.get $instance) (local.get $message)))
 
+  ;; Opt-in, per-instance, fixed-size observation only. The token is issued
+  ;; AFTER admission; return is marked only by the validated audio continuation.
+  (global $audio_trace_enabled (mut i32) (i32.const 0))
+  (global $audio_trace_serial (mut i32) (i32.const 0))
+  (global $audio_trace_active (mut i32) (i32.const 0))
+  (global $audio_trace_returned (mut i32) (i32.const 0))
+  (global $audio_trace_eip (mut i32) (i32.const 0))
+  (global $audio_trace_esp (mut i32) (i32.const 0))
+  (global $audio_trace_yield (mut i32) (i32.const 0))
+  (global $audio_trace_wait (mut i32) (i32.const 0))
+  (global $audio_trace_timeout (mut i32) (i32.const 0))
+  (global $audio_trace_stack (mut i32) (i32.const 0))
+  (func (export "set_audio_callback_trace") (param $enabled i32)
+    (global.set $audio_trace_enabled (local.get $enabled)))
+  (func (export "get_audio_callback_trace") (param $field i32) (result i32)
+    (if (i32.eqz (local.get $field)) (then (return (global.get $audio_trace_active))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (global.get $audio_trace_returned))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (global.get $audio_trace_eip))))
+    (if (i32.eq (local.get $field) (i32.const 3)) (then (return (global.get $audio_trace_esp))))
+    (if (i32.eq (local.get $field) (i32.const 4)) (then (return (global.get $audio_trace_yield))))
+    (if (i32.eq (local.get $field) (i32.const 5)) (then (return (global.get $audio_trace_wait))))
+    (if (i32.eq (local.get $field) (i32.const 6)) (then (return (global.get $audio_trace_timeout))))
+    (if (i32.eq (local.get $field) (i32.const 7)) (then (return (global.get $audio_trace_stack))))
+    (i32.const 0))
+
   (func $fire_audio_callback_bound
       (param $handle i32) (param $wave_hdr i32)
       (param $cb i32) (param $instance i32) (param $message i32) (result i32)
@@ -3499,6 +3524,13 @@
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $mm_timer_ret_thunk))
     (global.set $eip (local.get $cb))
+    (if (global.get $audio_trace_enabled)
+      (then
+        (global.set $audio_trace_serial (i32.add (global.get $audio_trace_serial) (i32.const 1)))
+        ;; Zero means no observed admission, including after 32-bit wrap.
+        (if (i32.eqz (global.get $audio_trace_serial))
+          (then (global.set $audio_trace_serial (i32.const 1))))
+        (global.set $audio_trace_active (global.get $audio_trace_serial))))
     (i32.const 1))
 
   ;; Existing cooperative entry retains its public signature.
@@ -3523,6 +3555,16 @@
     ;; This continuation belongs to waveOut, not a multimedia timer. A stale
     ;; timer resume value must not overwrite the exact restored wave wait.
     (global.set $mm_timer_resume_yield (i32.const 0))
+    (if (global.get $audio_trace_enabled)
+      (then
+        (global.set $audio_trace_eip (global.get $eip))
+        (global.set $audio_trace_esp (i32.load offset=16 (global.get $reg_base)))
+        (global.set $audio_trace_yield (global.get $yield_reason))
+        (global.set $audio_trace_wait (global.get $wait_handle))
+        (global.set $audio_trace_timeout (global.get $wait_timeout))
+        (global.set $audio_trace_stack (global.get $wait_stack_bytes))
+        (global.set $audio_trace_returned (global.get $audio_trace_active))
+        (global.set $audio_trace_active (i32.const 0))))
     (if (global.get $yield_reason) (then (global.set $steps (i32.const 0)))))
 
   ;; A host-side writer that fills guest memory directly (ReadFile into the

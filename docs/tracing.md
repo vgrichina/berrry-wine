@@ -14,6 +14,29 @@ decoding remain on the same exit callback. No new tracing is enabled by default.
 `node test/test-api-exit-observer.js` exercises the production callback wiring
 with stubbed guest exports, without starting a guest or compiling a module.
 
+`--trace-callback-lifecycle` enables the CLI cooperative waveOut lifecycle ring
+(128 records, at most 32 retained owner instances). At process exit it emits one
+`[callback-lifecycle]` JSON snapshot, including overwritten count and pending
+identities. It is off by default and does not honor the API trace window.
+Admissions carry owner/thread, immutable registration, header, submission,
+instance-local WAT token, queue lengths, and available saved/current EIP, ESP
+and wait context. `returned` requires the matching WAT marker written by
+`wave_callback_restore_wait`, called after register restoration in the validated
+`mm_callback_finish` continuation. A successful JS fire call proves admission
+only. Missing exports/tokens or unmatched markers remain explicitly incomplete;
+pending callbacks at exit do not prove deadlock. Rebuild the module for the WAT
+marker; an older module can report admission but cannot report guest completion.
+
+The same ring records actual ThreadManager semaphore releases (including failures),
+parked grants, grant consumption and ordinary count acquisition. Release IDs link
+grants to their release; ordinary count acquisition has no inferred release ID.
+Cooperative release context includes the active callback token when available;
+real-worker broker callers have unknown owner/context. Multiple-object waits and
+browser owner-offer delivery are outside this diagnostic's lifecycle coverage.
+The ring is finite, so absent records after overwriting do not prove noncompletion.
+`node test/test-callback-lifecycle-trace.js` tests production components and extracted
+WAT functions with synthetic continuation helpers, without running a guest.
+
 | Flag | What it prints |
 |---|---|
 | `--trace-api` (`=Name1,Name2`) | Every Win32 API call with args + return; with `=NAMES` filter, only those APIs. Args/returns are typed via `args:[{name,type[,out:true]}]` / `ret` fields in `src/api_table.json` (LPCSTR, HWND, LPMSG, flags:WS, etc.) — untyped entries fall back to an `nargs`-sized hex dump (or 6 dwords if `nargs` is unknown). Args flagged `out:true` are decoded **after** the handler runs (e.g. `LoadStringA buf=`, `GetMessageA msg=`) on a separate `out:` line. |

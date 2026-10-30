@@ -1,0 +1,96 @@
+{
+  "base": "5207a61edf9bf658e7c99ddc2ec0be94c7907bef",
+  "pins": {
+    "base": "5207a61edf9bf658e7c99ddc2ec0be94c7907bef",
+    "implementation": "fb314a9dcbc9075318123932a15c964fc230910e",
+    "acceptance": "d3c9e74f2e54c9294624f3e9ca9c0ac4d62b9a62",
+    "scheduler": "42dd96d4e76cb20af8215fe44e6c827f1a80c302",
+    "sevenPathDeltaAgainstImplementationParent": [
+      "src/13-exports.wat"
+    ],
+    "currentMainDelta": "20 added GDI per-thread scratch initializer lines; disjoint from audio trace hunks",
+    "ownership": "Host-owned MIDI and wave registrations/queues and cooperative ThreadManager state match implementation parent exactly; MIDI stays host-owned. Trace observes immutable registration, per-export WAT tokens, and scheduler-owned grants. No state ownership migration.",
+    "APIs": "Opt-in callbackLifecycleTrace through CLI/audio/ThreadManager. WAT set_audio_callback_trace(i32), get_audio_callback_trace(i32)->i32; existing admission API unchanged.",
+    "mount": "N/A: no guest launch or filename-bearing mount argv",
+    "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "canonicalReceiptSHA256": "39c428430c0f2357fc01df325682b504d67ab5926ec842738970c8f9797613c0"
+  },
+  "inputs": {
+    "docs/tracing.md": {
+      "bytes": 23567,
+      "sha256": "126685debf6771cdc2675439942f22bcf7e1ea316a95211aba5473f91ee21675"
+    },
+    "lib/callback-lifecycle-trace.js": {
+      "bytes": 4033,
+      "sha256": "92b7a6296f1c8883866321ed3dbdeaa422ec9a6b32d53a35a432dff10d641cac"
+    },
+    "lib/host-audio.js": {
+      "bytes": 207412,
+      "sha256": "954e76b678502d6147475ea737af85b96e2408a488a2bd19c643dd2cf7969438"
+    },
+    "lib/thread-manager.js": {
+      "bytes": 229006,
+      "sha256": "afbd576a564dcc304d11c885b70b4a1ccd65db9a40e1407ac45ea0f098d7f08a"
+    },
+    "src/13-exports.wat": {
+      "bytes": 346399,
+      "sha256": "47abf707971b8bf5ae27ed55c804a58258802d4aacdf68b8a5c7374bef532f1d"
+    },
+    "test/run.js": {
+      "bytes": 693262,
+      "sha256": "e01db98dddc51a9f4e65de9a1844010800ef2bfa74815e22610b68b7df8e0243"
+    },
+    "test/test-callback-lifecycle-trace.js": {
+      "bytes": 13375,
+      "sha256": "ad8cc8c3230f981329bdb000eab3438ed4b329dd2d6ccd17d6d073d2fecadb5f"
+    },
+    "tools/acceptance/enigma-callback-lifecycle-oct30.js": {
+      "bytes": 8792,
+      "sha256": "d34cc37c07ec09e8c758d60e798fc99dd4c2c2e2c18aa019241d56e6b99b5f52"
+    },
+    "tools/acceptance/enigma-callback-real-scheduler-oct30.js": {
+      "bytes": 10867,
+      "sha256": "96ac906dfc7d22cbf4dc852e265aec37377a5e8a5651bbb7aee1e7a0605202d0"
+    }
+  },
+  "tests": {
+    "lifecycle-suite": "PASS: production CLI initializer/pump first, disabled parity, omitted/mismatched return controls rejected",
+    "lifecycle-acceptance": "PASS: finite ring, owners, old modules, semaphore correlation, consistent wrap",
+    "scheduler-acceptance": "PASS: real unmodified runSlice first; grant consume/repark, wait restoration, owner isolation, callback-release correlation, disabled parity; stale ID 999 rejected"
+  },
+  "compiler": {
+    "tools/watx.js": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+    "tools/watx-src/compiler.js": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175",
+    "tools/watx-src/compiler-codegen.js": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+    "tools/watx-src/compiler-parser.js": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236",
+    "tools/watx-src/compiler-stages.js": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+  },
+  "extraction": {
+    "recipe": "test/test-callback-lifecycle-trace.js makeExports: strip ;; line comments; balanced form extraction in listed order; diagnostics range before fire_audio_callback_bound; exact production getter forms; synthetic continuation/memory helpers declared in fixture; watx compile production mode",
+    "forms": {
+      "fire_wave_out_callback_bound": {
+        "bytes": 324,
+        "sha256": "7e0874956453829d9c9566d002318f76293c89f790ddf73525ec319f95ea0d80"
+      },
+      "fire_audio_callback_bound": {
+        "bytes": 3188,
+        "sha256": "03fe4268330c9806054634be137222595360ed2a4fccd166bbcddf3bce16cd16"
+      },
+      "wave_callback_restore_wait": {
+        "bytes": 1441,
+        "sha256": "1098f5953868165ba0802af24a2bb2f502be610e2ae676914a2fc85fc93f1a8e"
+      },
+      "mm_callback_finish": {
+        "bytes": 706,
+        "sha256": "a5c569196671b7836011aa2f1470981b2a15b660dc80ce9f866e738a6e6f4cee"
+      },
+      "diagnostics": {
+        "bytes": 1545,
+        "sha256": "5bfc5b1adb2d422b86b76207865abe1e9e0b07d8f1dd80e9cf85ff3f95ec6860"
+      }
+    }
+  },
+  "scope": "Synthetic guest exports / extracted WAT fragments / real cooperative scheduler component only. No full build, x86 invocation authentication, full CLI execution, browser or gameplay qualification.",
+  "recovery": "Apply recovery.patch to pinned base using guarded owned repo. Run /usr/bin/node --max-old-space-size=192 for test/test-callback-lifecycle-trace.js and both tools/acceptance/enigma-callback-*-oct30.js suites with the same ops.py. No full module build.",
+  "mainPreservation": "All seven paths match accepted trace except 20 current-main GDI initializer lines retained; host MIDI unchanged."
+}
