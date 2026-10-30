@@ -1,9 +1,0 @@
-{
-  "argv": [
-    "node",
-    "--max-old-space-size=2048",
-    "/tmp/seh-corrected-memory-canonical-build-oct25/ops/build.cjs"
-  ],
-  "at": 1792961590.4078987,
-  "lock": "/tmp/wine-ops-heavy-runtime.lock"
-}

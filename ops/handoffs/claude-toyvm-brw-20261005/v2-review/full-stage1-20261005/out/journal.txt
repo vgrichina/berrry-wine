@@ -1,5 +1,0 @@
-15:06:47 [SLOT] stage1: 3300s this invocation (cap 3300s; 0s of 5700s already spent)
-15:06:48 [P0] prep ok (stack)
-15:13:03 [P1] tests ok (28 suites)
-15:16:43 [P2] sweep gate clean, 199/199 programs in both trees
-15:16:43 [STAGE1] checkpoint written: 199 programs (programs.txt 4f64303f3ddf), trees base:123 cand:124, 596s of 5700s spent

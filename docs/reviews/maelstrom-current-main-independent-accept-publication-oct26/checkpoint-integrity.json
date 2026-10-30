@@ -1,9 +1,0 @@
-{
-  "candidate": "aaa6254e7f4c55ad7019478089868dd374be2080",
-  "status": "INTEGRITY_SOURCE_AND_ADMITTED_EVIDENCE_PASS",
-  "remaining": [
-    "bounded pin-migration challenge",
-    "final independent decision",
-    "conditional publication"
-  ]
-}

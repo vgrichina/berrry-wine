@@ -1,6 +1,0 @@
-{
-  "failure": "Manifest pin literal accidentally included next two digits from 247entries; corrected to exact supplied 64-character SHA ending 44fe. No gate weakening; no guest started.",
-  "baselineReset": true,
-  "baselineQualification": "Initial failed manifest-literal check occurred immediately after SQLite baseline; setup rerun overwrote that baseline. Conservatively charge full current WAL in later accounting; no prior historical receipt reset.",
-  "unguardedPreparation": "Initial local prepare/reads and transport orchestration lacked complete outer CPU/wall wrappers. Remote transport operations each bounded30s; no guest run yet. Preserve deficiency."
-}
