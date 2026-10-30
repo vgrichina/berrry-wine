@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/maelstrom-frozen-capture-independent-integrate-oct25/ops/verify.py", line 31, in <module>
-    check(t is not None,'terminal required')
-  File "/tmp/maelstrom-frozen-capture-independent-integrate-oct25/ops/verify.py", line 11, in check
-    if not c:raise ValueError(m)
-             ^^^^^^^^^^^^^^^^^^^
-ValueError: terminal required

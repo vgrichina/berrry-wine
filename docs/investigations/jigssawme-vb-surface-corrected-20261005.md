@@ -1,9 +1,0 @@
-# Corrected VB Surface7 factory and drawing contract
-
-The prior offscreen-only candidate regressed JigSawedME startup and was reverted. That failure remains recorded in jigssawme-surface-startup-regression-20261005; passing offscreen tests did not establish compatibility.
-
-This correction retains the full71-slot VB identity for newly allocated image, offscreen and primary-only surfaces. The actual startup request is descriptorflags1/caps0x200 at caller42b876. Primary dimensions are read from current process display getters, then allocated by the existing native allocator; no fixed game size. Slot46 SetClipper follows original DX7VB73544d21: unwrap the optional clipper, call real native SetClipper, return its HRESULT directly. Authenticated wrapper checks reject fabricated objects; actual attachment ownership/refcounts are preserved. Slot6 Blt retains native pixels, zero-RECT handling, ESP28 and separate drawing statusOut/COM HRESULT. No changes to previously published native interface identities or existing API IDs.
-
-Private session95584 passed13 actual-COM groups in5.062s. The previous offscreen-only code fails the exact startup primary control. Candidate verifies nondefault37x29 dimensions, primary SetClipper attach/re-attach/detach/final-release ownership, fabricated-wrapper rejection, and all prior pixel/ABI/sparse/lifetime cases. The durable test is automatically included in the unit tier by the existing filename rule. Full production gates and ordinary startup plus valid-BMP Open remain required before source publication; no gameplay or FPS qualification.
-
-Scope remains bounded: plain offscreen RGB and primary-only allocation; no caller bits, padding override, chains or paletted offscreen formats. Copy/WAIT supports distinct same-format surfaces and in-bounds rectangles. Other VB methods and unsupported drawing modes return explicit failures. This is not a general DX7VB compatibility claim.
