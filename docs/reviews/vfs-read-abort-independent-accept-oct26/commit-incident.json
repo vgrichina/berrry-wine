@@ -1,3 +1,0 @@
-{
-  "incident": "First commit refused because fresh repository lacked author identity; no commit created. Copied existing donor git user.name/user.email to private repository config only, no global/root configuration changes."
-}

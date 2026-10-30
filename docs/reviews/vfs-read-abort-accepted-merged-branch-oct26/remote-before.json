@@ -1,5 +1,0 @@
-{
-  "refs": "f008f78fcb1c33f91d3c2f02d49c79a8fff148fa\trefs/heads/main\n17a22039cbaac87c4b713472d94c9fc01609e8f1\trefs/heads/task/vfs-read-abort-independent-accept-oct26",
-  "immutableTaskBaseline": "c3d394149406189cf1c5dbbc434491f0130666c9",
-  "note": "Remote main may advance under separately assigned owners; this task keeps the explicitly assigned immutable baseline and never updates main."
-}

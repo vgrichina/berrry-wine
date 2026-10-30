@@ -1,9 +1,0 @@
-{
-  "source": "/tmp/legacy-texture-caps-independent-accept-oct23/targeted-guard.py",
-  "beforeSHA256": "11d58fb9dbf515f6211290431e135c4b7dc1666df00be0fa8ae26fec752d55a4",
-  "afterSHA256": "2af53cee498b5a2420b9b8407a1540c27be57f4c740e5268e5924709f0ab65a0",
-  "CAP": 786432,
-  "retainedCapture": 562960,
-  "directMeasuredCharge": 9074,
-  "reason": "retain guard unchanged; extend actual and predecessor sessions; instruction reads allow measured sizes up to 65536"
-}

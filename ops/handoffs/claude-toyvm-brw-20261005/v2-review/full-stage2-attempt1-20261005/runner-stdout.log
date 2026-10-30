@@ -1,4 +1,0 @@
-15:47:17 [SLOT] stage2: 2400s this invocation (cap 2400s; 596s of 5700s already spent)
-15:47:17 [STAGE2] resuming on stage1 checkpoint 2026-10-05T15:16:43.129Z; 596s of 5700s already spent
-15:47:17 [ABORT] P3: not enough slot left
-runner exit=7
