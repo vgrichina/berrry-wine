@@ -1,0 +1,154 @@
+{
+  "task": "tuxracer-exact-log-runtime-disposition-oct30",
+  "status": "recovered-inspected-collector-tested-ready-to-publish",
+  "at": 1793352540.6689155,
+  "parent": "892b70f11a838ef72882fa6a45ffde0a8c24d5ad",
+  "session": "01a18c1e-3e08-7f83-a66a-21acedcbb96d",
+  "allocation": {
+    "at": 1793352540.6684902,
+    "sizes": {
+      "/tmp/tuxracer-glcolor4dv-repair-oct30": 17272832,
+      "/tmp/tuxracer-main-menu-race-progression-oct30": 10919936,
+      "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30": 720896,
+      "/tmp/tuxracer-vertex-color-gameplay-owner-policy-oct30": 487424,
+      "/tmp/tuxracer-retained-vertex-runtime-integration-oct30": 3559424,
+      "/tmp/tuxracer-vertex-color-isolated-capture-runtime-oct30": 1634304,
+      "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30-report-corrected": 5922816,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-post-title-poll-runtime-oct30": 114688,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-main-menu-race-progression-oct30": 81920,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-remote-rebuild-poll-runtime-oct30": 139264,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-exact-log-runtime-disposition-oct30": 409600,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-snapshot-fork-capture-recovery-oct30": 102400,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-bounded-transport-rebuild-runtime-oct30": 131072,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-post-title-poll-recovered-runtime-oct30": 151552,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-main-menu-input-consumption-repair-oct30": 94208,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-vertex-color-gameplay-owner-policy-oct30": 110592,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-vertex-runtime-integration-oct30": 98304,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-accepted-vertex-color-reconciliation-oct30": 77824,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-vertex-color-isolated-capture-runtime-oct30": 77824,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-deduplicated-runtime-evidence-recovery-oct30": 114688,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-log-recovery-allocation-fixed-oct30": 204800,
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T09-14-31-01a18c16-de51-70f2-bfe1-79b690094b60.jsonl": 667648,
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T09-19-22-01a18c1b-50df-74b3-8954-78e6724d348b.jsonl": 512000,
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T09-22-34-01a18c1e-3e08-7f83-a66a-21acedcbb96d.jsonl": 1474560,
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T09-05-28-01a18c0e-96de-7612-a9c0-7dee3f23d13b.jsonl": 368640,
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T08-46-49-01a18bfd-8102-7280-b47f-5743205e825b.jsonl": 1089536
+    },
+    "session": "01a18c1e-3e08-7f83-a66a-21acedcbb96d",
+    "used": 46538752,
+    "reserve": 8388608,
+    "newGrowth": 8388608,
+    "forecast": 63315968,
+    "cap": 67108864,
+    "free": 3295866880,
+    "remainingAggregate": 267292672,
+    "diskFloor": 2147483648,
+    "RAMAdmission": false,
+    "PASS": true
+  },
+  "lifecycle": {
+    "id": "bx_b9s6w3bm",
+    "createdAt": "2026-10-30T09:24:14.923Z",
+    "originalExpiry": "2026-10-30T09:54:14.892Z",
+    "ttlSeconds": 1800,
+    "scheduleReceipt": "boat-assignment.json",
+    "watchdog": "watchdog.json",
+    "cleanup": {
+      "PASS": true,
+      "id": "bx_b9s6w3bm",
+      "postRecovery": true,
+      "requiredAfter": 1793352269.2341614,
+      "snapshotVerifiedAt": "2026-10-30T09:25:36.312Z",
+      "snapshotCompletedAt": "2026-10-30T09:25:36.312Z",
+      "stoppedAt": "2026-10-30T09:25:36.353Z",
+      "expiry": null,
+      "state": "stopped",
+      "stop": {
+        "endedAt": "2026-10-30T09:25:36.372Z",
+        "error": null,
+        "forced": false,
+        "id": "stop_79f71bc11058bd2e",
+        "lastAttemptAt": "2026-10-30T09:25:36.372Z",
+        "requestedAt": null,
+        "status": "completed"
+      }
+    },
+    "initialVerificationWindowExceeded": true,
+    "initialFailureRetained": "recovery-failure.json",
+    "resolution": "continued read-only observation of same pending stop; no stop retry or additional exec",
+    "watchdogDisarmed": true
+  },
+  "actualResult": {
+    "app": "tuxracer_original_061a",
+    "source": "a998bf36b108275335af501d8ae774731495b9b2",
+    "inspected": [
+      "title",
+      "main-menu"
+    ],
+    "practice": false,
+    "race": false,
+    "gameplayQualified": false,
+    "originalRuntimeExit": -24,
+    "causeUnknown": true,
+    "analysis": "runtime-analysis.json"
+  },
+  "selected": {
+    "PASS": true,
+    "selected": [
+      {
+        "path": "title.png",
+        "bytes": 136760,
+        "sha256": "bc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9",
+        "local": "/tmp/tuxracer-main-menu-race-progression-oct30/capture/title.png",
+        "reused": true
+      },
+      {
+        "path": "before.png",
+        "bytes": 171779,
+        "sha256": "3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29",
+        "local": "/tmp/tuxracer-main-menu-race-progression-oct30/capture/before.png",
+        "reused": true
+      },
+      {
+        "path": "runtime.stdout",
+        "bytes": 58468,
+        "sha256": "bdecccd0e99d58aefa5758d784c8b0f519abd7d96a53c4bcb089c812b185dbd7",
+        "local": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-exact-log-runtime-disposition-oct30/runtime.stdout",
+        "reused": true
+      }
+    ],
+    "uniqueImages": 308539,
+    "totalSelected": 367007,
+    "limit": 524288,
+    "personallyInspected": [
+      "title.png",
+      "before.png"
+    ],
+    "inspection": "title splash; main menu Enter an event / Practice / Credits / Quit; no race shown",
+    "fetchCalls": 0
+  },
+  "recovery": {
+    "PASS": true,
+    "id": "bx_b9s6w3bm",
+    "bytes": 58468,
+    "sha256": "bdecccd0e99d58aefa5758d784c8b0f519abd7d96a53c4bcb089c812b185dbd7",
+    "rawChunk": 11264,
+    "onlyFile": "/home/user/tuxracer-render/capture/runtime.stdout",
+    "noGuestReplay": true
+  },
+  "tests": {
+    "collectorTests": 4,
+    "passReceipt": "collector-tests-final.json",
+    "wrapper": "wrapper-validation.json",
+    "mount": "mount-reuse.json"
+  },
+  "gaps": [
+    "No later input dequeue/dispatch observed; queue depth and complete contents unknown",
+    "Detailed event suppression after256; summaries continue",
+    "No post49700/terminal summary or after.png",
+    "Runtime start not retrieved; SIGXCPU cause unknown",
+    "Initial local client hard limits inherited infinite; soft limits enforced; corrected configuration controls pass; original receipts retained"
+  ],
+  "rawEvidenceRoot": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-exact-log-runtime-disposition-oct30",
+  "publication": "publication.json written after exact remote verification"
+}

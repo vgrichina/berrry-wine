@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-exact-log-runtime-disposition-oct30/repo/test/tuxracer-exact-log-runtime-disposition-oct30/test_collector.py"
+  ],
+  "cwd": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-exact-log-runtime-disposition-oct30/repo/test/tuxracer-exact-log-runtime-disposition-oct30",
+  "exit": 0,
+  "reason": null,
+  "peakRSS": 14811136,
+  "stdoutBytes": 0,
+  "stderrBytes": 102,
+  "generatedFileLimit": 12582912,
+  "captureLimit": 524288
+}
