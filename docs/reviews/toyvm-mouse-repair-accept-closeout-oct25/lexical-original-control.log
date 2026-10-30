@@ -1,9 +1,0 @@
-PASS actual tracked font closure includes both required loaders
-PASS block documentation comment cannot create a required import
-PASS inline documentation comment cannot create a required import
-PASS quoted documentation cannot create a required import
-PASS same actual required font import with legal spacing remains in closure
-PASS required font import after block comment remains in closure
-FAIL missing actual literal dependency must still reject: Missing expected exception.
-PASS full-line documentation and computed optional require retain established behavior
-{"failures":1,"scope":"read-only actual module graph with lexical equivalent source transformations"}

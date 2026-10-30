@@ -1,2 +1,0 @@
-PASS  a host import that throws in Worker mode stops its caller, not returns 0
-PASS D3D9 format capability query reaches the page broker
