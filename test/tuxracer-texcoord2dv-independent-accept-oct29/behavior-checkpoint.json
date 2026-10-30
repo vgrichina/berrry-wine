@@ -1,0 +1,127 @@
+{
+  "PASS": true,
+  "newIEEEBoundaryCases": 16,
+  "allPageOffsets": [
+    4080,
+    4081,
+    4082,
+    4083,
+    4084,
+    4085,
+    4086,
+    4087,
+    4088,
+    4089,
+    4090,
+    4091,
+    4092,
+    4093,
+    4094,
+    4095
+  ],
+  "lateTranslationAtomicity": 1,
+  "unsignedOverflowGuards": 2,
+  "outsideBeginState": 1,
+  "priorRecordImmutabilityComparisons": 136,
+  "mutations": {
+    "wrongCoordinate": "REJECTED assertion",
+    "wrongRoute": "REJECTED trap"
+  },
+  "baseline": {
+    "PASS": true,
+    "route": "actual dispatch_api_table -> page17 -> handle_glTexCoord2dv",
+    "fixtureSHA": "43a95e5f9ba938f7cb4888370207bd1b7d27857cb82a1ebe4036bcf71494d3df",
+    "runnerPrefixSHA": "67a94d5d68612df327eb75250026abc9ca0a41983c92e4cc57672a7a84a53df6",
+    "moduleSHA": "3b8f35f3128447a024eba8945d64db7eee3cb53effcae725396609b00c1c912a"
+  },
+  "fixtureSHA": "43a95e5f9ba938f7cb4888370207bd1b7d27857cb82a1ebe4036bcf71494d3df",
+  "runnerPrefixSHA": "67a94d5d68612df327eb75250026abc9ca0a41983c92e4cc57672a7a84a53df6",
+  "extraction": "byte prefix through but excluding function acceptance(h); published boot unchanged; only region.end DIRECT_WINDOW replacement inherited",
+  "originalForms": [
+    {
+      "bytes": 55618,
+      "sha256": "d10844ce3982de8e5e12028f11f05c4b9bb6ac4a4561a32523c216bf96a89051"
+    },
+    {
+      "bytes": 1171,
+      "sha256": "e621d139afa85cf76a41fd4aed894c4f21c94ab845c75c7f1829882199713739"
+    },
+    {
+      "bytes": 1712,
+      "sha256": "b98a6f945b650fc9e7eff664da15e89d1d1015b8b27cf4e0d07560d7a66a9184"
+    },
+    {
+      "bytes": 930,
+      "sha256": "78b86ee3443fc54919dfa0cb065b2d08c00b44d553f1ecc6f12a1af13c876f87"
+    },
+    {
+      "bytes": 158,
+      "sha256": "b5baf0e7618e543e66a6e3b275790f4f7deb04dbd881c7db72bd3937c29c18e1"
+    },
+    {
+      "bytes": 2886,
+      "sha256": "b4534b807c9b61db5b5d5a375b7481ce7d651a2353e9b0d808c2d26823f6bc38"
+    },
+    {
+      "bytes": 1172,
+      "sha256": "45602c0207899908941df41658b2c34614bddb265ead697237958731ff3ff582"
+    },
+    {
+      "bytes": 1443,
+      "sha256": "7b9775df77171413eb1e75161e0415141b05cbedd5eb6725b3666e3262fc419c"
+    },
+    {
+      "bytes": 13804,
+      "sha256": "a5517b82ced395eb17c95c64ba5d4ba69ce19208c09b5d35361f65ec0e143190"
+    },
+    {
+      "bytes": 5454,
+      "sha256": "331c3a7986ab4093d8a22001735f0bdceeb4dbba6a03c5175bb3484c2f87e2a6"
+    }
+  ],
+  "transformedForms": [
+    {
+      "bytes": 55618,
+      "sha256": "d10844ce3982de8e5e12028f11f05c4b9bb6ac4a4561a32523c216bf96a89051"
+    },
+    {
+      "bytes": 1171,
+      "sha256": "e621d139afa85cf76a41fd4aed894c4f21c94ab845c75c7f1829882199713739"
+    },
+    {
+      "bytes": 1712,
+      "sha256": "b98a6f945b650fc9e7eff664da15e89d1d1015b8b27cf4e0d07560d7a66a9184"
+    },
+    {
+      "bytes": 930,
+      "sha256": "78b86ee3443fc54919dfa0cb065b2d08c00b44d553f1ecc6f12a1af13c876f87"
+    },
+    {
+      "bytes": 158,
+      "sha256": "b5baf0e7618e543e66a6e3b275790f4f7deb04dbd881c7db72bd3937c29c18e1"
+    },
+    {
+      "bytes": 2886,
+      "sha256": "b4534b807c9b61db5b5d5a375b7481ce7d651a2353e9b0d808c2d26823f6bc38"
+    },
+    {
+      "bytes": 1162,
+      "sha256": "5b4b72f3fe2715835410b6d7bfcf84ad031309abb993599209503188ebab1782"
+    },
+    {
+      "bytes": 1443,
+      "sha256": "7b9775df77171413eb1e75161e0415141b05cbedd5eb6725b3666e3262fc419c"
+    },
+    {
+      "bytes": 13804,
+      "sha256": "a5517b82ced395eb17c95c64ba5d4ba69ce19208c09b5d35361f65ec0e143190"
+    },
+    {
+      "bytes": 5454,
+      "sha256": "331c3a7986ab4093d8a22001735f0bdceeb4dbba6a03c5175bb3484c2f87e2a6"
+    }
+  ],
+  "moduleSHA": "3b8f35f3128447a024eba8945d64db7eee3cb53effcae725396609b00c1c912a",
+  "mutationModuleSHA": "21c3b74e5dd9e636ad403258e713a41c6015fa57dd3efbe580152f76ae65faac",
+  "qualification": "production fragments only; translation and allocation fixture seams; no full module/game/browser/runtime"
+}

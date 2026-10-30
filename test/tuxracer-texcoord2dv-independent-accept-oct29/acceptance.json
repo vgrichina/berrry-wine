@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=96",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/accept.js"
+  ],
+  "cleanup": "group killed/reaped",
+  "cwd": "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo",
+  "exit": 0,
+  "peakGroupRSS": 86593536,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 189,
+  "topology": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+  },
+  "wall": 0.29554709792137146
+}

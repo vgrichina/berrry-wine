@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=96",
+    "-e",
+    "const fs=require('fs');console.log(JSON.stringify({exec:process.execPath,flags:process.execArgv,environment:process.env,limits:fs.readFileSync('/proc/self/limits','utf8'),startup:true}));"
+  ],
+  "cleanup": "group killed/reaped",
+  "cwd": "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo",
+  "exit": 0,
+  "peakGroupRSS": 36487168,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 1937,
+  "topology": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+  },
+  "wall": 0.33420615387149155
+}

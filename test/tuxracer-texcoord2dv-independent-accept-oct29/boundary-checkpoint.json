@@ -1,0 +1,7 @@
+{
+  "PASS": true,
+  "route": "actual dispatch_api_table -> page17 -> handle_glTexCoord2dv",
+  "fixtureSHA": "43a95e5f9ba938f7cb4888370207bd1b7d27857cb82a1ebe4036bcf71494d3df",
+  "runnerPrefixSHA": "67a94d5d68612df327eb75250026abc9ca0a41983c92e4cc57672a7a84a53df6",
+  "moduleSHA": "3b8f35f3128447a024eba8945d64db7eee3cb53effcae725396609b00c1c912a"
+}

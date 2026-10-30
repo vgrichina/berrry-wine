@@ -1,0 +1,11 @@
+{
+  "at": 1793247211.0136604,
+  "taskRoot": "/tmp/tuxracer-texcoord2dv-independent-accept-oct29",
+  "files": 95,
+  "physicalBytes": 5599232,
+  "logicalBytes": 5365393,
+  "allocationBytes": 50331648,
+  "newEvidenceBytes": 37419,
+  "evidenceCeilingBytes": 1048576,
+  "PASS": true
+}
