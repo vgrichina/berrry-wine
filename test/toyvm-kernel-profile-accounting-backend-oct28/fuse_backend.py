@@ -5,7 +5,9 @@ Protocol layouts follow Linux fuse.h 7.31. This helper is NOT a safe process
 confinement boundary on its own: callers must separately qualify confinement.
 No browser invocation is authorized by the presence of this implementation.
 """
+import argparse
 import array
+from collections import deque
 import errno
 import json
 import os
@@ -23,7 +25,13 @@ def unpack(fmt,data,offset=0): return struct.unpack_from('<'+fmt,data,offset)
 
 
 class Backend:
-    def __init__(self, root, live_limit=32768, write_limit=65536, file_limit=16384):
+    def __init__(self, root, live_limit=32768, write_limit=65536, file_limit=16384, *, rename_evidence_limit=0):
+        if type(rename_evidence_limit) is not int or not 0<=rename_evidence_limit<=64:
+            raise ValueError('rename evidence limit must be an integer from 0 to 64')
+        self.rename_evidence_limit=rename_evidence_limit
+        if rename_evidence_limit:
+            self.rename_callbacks=0
+            self.rename_evidence=deque(maxlen=rename_evidence_limit)
         self.root=pathlib.Path(root)
         if not self.root.is_absolute() or self.root.is_symlink():
             raise ValueError('absolute non-symlink mountpoint required')
@@ -35,11 +43,26 @@ class Backend:
         self.operations=0;self.handles=0
 
     def state(self):
-        return dict(live=self.live,peak=self.peak,written=self.written,
+        state=dict(live=self.live,peak=self.peak,written=self.written,
                     failure=self.failure,inodes=len(self.nodes),openHandles=self.handles,
                     operations=self.operations,liveLimit=self.live_limit,
                     writeLimit=self.write_limit,fileLimit=self.file_limit,
                     accounting='synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload')
+        if self.rename_evidence_limit:
+            state['renameEvidence']=dict(
+                limit=self.rename_evidence_limit,callbackCount=self.rename_callbacks,
+                countSaturated=self.rename_callbacks==0xffffffffffffffff,
+                records=[dict(record) for record in self.rename_evidence])
+        return state
+
+    def record_rename_callback(self,op,unique,ino,error):
+        # Called only by serve after handle returns/raises, before the wire reply.
+        # No names, request payload, credentials, exception text or timestamps.
+        if self.rename_evidence_limit and op in (12,45):
+            self.rename_callbacks=min(self.rename_callbacks+1,0xffffffffffffffff)
+            self.rename_evidence.append(dict(opcode=op,unique=unique,inode=ino,
+                                            errno=-error,callbackCount=self.rename_callbacks))
+
 
     def reject(self,reason):
         self.failure=self.failure or reason
@@ -232,6 +255,7 @@ class Backend:
                         except OSError as e:answer=b'';error=-e.errno
                         except BaseException as e:
                             self.failure='filesystem protocol failure: '+repr(e);answer=b'';error=-errno.EIO
+                        self.record_rename_callback(op,unique,ino,error)
                         if answer is not None:os.write(self.fd,pack('IiQ',16+len(answer),error,unique)+answer)
         finally:
             try:
@@ -244,6 +268,20 @@ class Backend:
                     os.close(self.fd)
 
 
+def main(argv=None):
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('root')
+    parser.add_argument('status')
+    parser.add_argument('live_limit',type=int,nargs='?',default=32768)
+    parser.add_argument('write_limit',type=int,nargs='?',default=65536)
+    parser.add_argument('file_limit',type=int,nargs='?',default=16384)
+    parser.add_argument('--rename-evidence',type=int,choices=range(65),default=0,
+                        metavar='0..64',help='retain up to N numeric RENAME/RENAME2 callback records; default off')
+    args=parser.parse_args(argv)
+    backend=Backend(args.root,args.live_limit,args.write_limit,args.file_limit,
+                    rename_evidence_limit=args.rename_evidence)
+    backend.mount();backend.serve(args.status)
+
+
 if __name__=='__main__':
-    backend=Backend(sys.argv[1],*map(int,sys.argv[3:]))
-    backend.mount();backend.serve(sys.argv[2])
+    main()
