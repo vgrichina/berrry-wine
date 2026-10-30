@@ -1,5 +1,0 @@
-PASS base toyvm-bundle.js ROM font loader present
-FAIL candidate toyvm-bundle.js: cannot resolve tools/fnt-read.js from tools/toyvm/browser-entry.js
-PASS base toyvm-jit-bundle.js ROM font loader present
-FAIL candidate toyvm-jit-bundle.js: cannot resolve tools/fnt-read.js from tools/toyvm/browser-entry.js
-{"passes":2,"failures":2,"scope":"JS module registry only; no rendering/guest"}

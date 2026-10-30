@@ -1,9 +1,0 @@
-{
-  "group": "mutable",
-  "status": "PASS",
-  "results": [
-    "mutable roots, hardlinks, types, path scope, positive WAL once, shrink qualified"
-  ],
-  "helperSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
-  "fixtureSHA256": "ecc12d6efeac563992bebf9042ecf13b456fade3840e6b9683a54f4e1ce6a62f"
-}

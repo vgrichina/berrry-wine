@@ -1,9 +1,0 @@
-{
-  "at": 1793351191.814171,
-  "allocated": 56999936,
-  "reserve": 8388608,
-  "futureGrowth": 267292672,
-  "free": 3283357696,
-  "RAMAdmission": false,
-  "MemAvailable": "MemAvailable:    4417156 kB"
-}
