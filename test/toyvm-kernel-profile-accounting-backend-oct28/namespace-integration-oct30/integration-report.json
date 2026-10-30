@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "result": "PASS",
+  "base": "eb0485865eb9abce4562f0ca56450138d86b22b1",
+  "acceptedCandidate": "3b6ea48a89510cf99e3d0d8167f80c56f0af79e4",
+  "independentAcceptance": "824e62d84e5e014c6bf3ed0b5086ff156c2aaf12",
+  "independentRef": "refs/heads/test/toyvm-namespace-observability-independent-oct30",
+  "sourcePins": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 16621,
+      "sha256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4857,
+      "sha256": "b003da4e6439bbd1502ffc92797420c2bc254b3e55394afdd24624b7d9005338"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 9337,
+      "sha256": "b0419070f5087d8b634a5a39c3873285817a799d340d0543e56ceebf974d4fc5"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": {
+      "bytes": 9626,
+      "sha256": "41c28dd6d35e0b91ee1c4cb52e738503e9769aad285aa2d56886458246e1e6da"
+    }
+  },
+  "transitivePins": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4857,
+      "sha256": "b003da4e6439bbd1502ffc92797420c2bc254b3e55394afdd24624b7d9005338"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 16621,
+      "sha256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": {
+      "bytes": 13811,
+      "sha256": "1a43a9305f1b3d92957ef03c34caec6eb0990dc03f2f23c0d20f0ca53b9fa751"
+    }
+  },
+  "integrationTestPin": {
+    "bytes": 3111,
+    "sha256": "95e00f201b8c9d45563ac8bf82a40ad41162ef8966427904d0e9814085851c3d"
+  },
+  "architecture": [
+    "__init__",
+    "state",
+    "serve"
+  ],
+  "unchangedDispatchAndRename": true,
+  "focusedTests": {
+    "groups": 3,
+    "productionOptionBoundary": "PASS",
+    "removedForwardingRejected": true,
+    "changedTransitiveSourcesRejected": 4,
+    "validatedBytesCompiled": true,
+    "namespaceOption": "default off; integer0..64; CLI propagated",
+    "browser": "fail closed",
+    "minimum8192": "unchanged dispatch method retained"
+  },
+  "reusedAcceptance": {
+    "namespaceGroups": 5,
+    "independentAdverse": 3,
+    "rejectingControls": 6,
+    "renameTests": 8,
+    "receipts": "independent-evidence/completion-receipt.json and privacy-finish-evidence/completion-receipt.json retained outside candidate"
+  },
+  "remainingGates": [
+    "serialized coordinator main integration",
+    "mounted/kernel namespace callback qualification after integrated caller publication",
+    "browser/gameplay"
+  ],
+  "noMount": true,
+  "noBoat": true,
+  "noWorkers": true,
+  "noTelegram": true,
+  "noMainPush": true
+}

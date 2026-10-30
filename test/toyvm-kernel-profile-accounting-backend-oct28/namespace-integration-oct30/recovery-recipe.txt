@@ -1,0 +1,16 @@
+Integration base: eb0485865eb9abce4562f0ca56450138d86b22b1
+Task ref: refs/heads/task/toyvm-accepted-namespace-caller-integration-oct30
+Integrate only after coordinator serializes shared-main ownership.
+The commit parent is the verified remote main above. Four production/test source
+bytes are identical to accepted3b6ea48a; source hashes are in integration-report.json.
+Reuse independent acceptance824e62d8 (five namespace groups, three adverse cases,
+six rejecting controls) and eight RENAME tests; no mounted qualification is claimed.
+Recover the four exact sources from source-recovery/, including test_namespace_wire.py.
+Run focused checks from test/toyvm-kernel-profile-accounting-backend-oct28:
+/usr/bin/python3 -B -m unittest -v test_namespace_integration
+Transitive closure: current-main confine.py, pinned-supervisor.py, test_rename_wire.py;
+verify hashes in integration-report.json before testing. No cached bytecode.
+Do not use historical build_publication.py, reset the original branch, or rewrite
+its2011078-byte index. This publication used index-free bounded tree replacement.
+Mounted/kernel callback qualification remains the next gate after publication.
+No Boat touched; bx_m75gmarq last-known stopped; coordinator owns lifecycle.

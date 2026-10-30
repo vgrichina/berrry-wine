@@ -3,9 +3,11 @@ import hashlib,importlib.util,json,os,pathlib,socket,subprocess,sys,time
 HERE=pathlib.Path(__file__).resolve().parent
 PIN='9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85'
 
-def supervise_accounted(argv,work,*,live_limit=32768,write_limit=65536,file_limit=16384,backend='synchronous-fuse',rename_evidence=0,**limits):
+def supervise_accounted(argv,work,*,live_limit=32768,write_limit=65536,file_limit=16384,backend='synchronous-fuse',rename_evidence=0,namespace_evidence=0,**limits):
     if type(rename_evidence) is not int or not 0<=rename_evidence<=64:
         raise ValueError('rename evidence limit must be an integer from 0 to 64')
+    if type(namespace_evidence) is not int or not 0<=namespace_evidence<=64:
+        raise ValueError('namespace evidence limit must be an integer from 0 to 64')
     if backend!='synchronous-fuse':raise ValueError('unsafe filesystem accounting backend')
     work=pathlib.Path(work);root=work/'domain';status=work/'status.sock'
     source=HERE.parent/'toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py'
@@ -17,6 +19,8 @@ def supervise_accounted(argv,work,*,live_limit=32768,write_limit=65536,file_limi
     server_argv=[sys.executable,'-B',str(HERE/'fuse_backend.py'),str(root),str(status),str(live_limit),str(write_limit),str(file_limit)]
     if rename_evidence:
         server_argv.extend(['--rename-evidence',str(rename_evidence)])
+    if namespace_evidence:
+        server_argv.extend(['--namespace-evidence',str(namespace_evidence)])
     server=subprocess.Popen(server_argv,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     final=None;result=None;cleanup=None;primary=None
     def snapshot():
@@ -27,7 +31,7 @@ def supervise_accounted(argv,work,*,live_limit=32768,write_limit=65536,file_limi
                 part=s.recv(8192)
                 if not part:break
                 data+=part
-                if len(data)>8192:raise RuntimeError('filesystem backend receipt too large')
+                if len(data)>(32768 if namespace_evidence else 8192):raise RuntimeError('filesystem backend receipt too large')
         state=json.loads(data)
         if set(('live','peak','written','failure','openHandles'))-state.keys():raise RuntimeError('filesystem backend receipt incomplete')
         return state
