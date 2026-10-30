@@ -379,9 +379,9 @@
     {
       "file": "lib/renderer.js",
       "name": "host-file",
-      "sha256": "6702c363929e969a57d4e817d2d3d638d138e145cf28a50cda93a468f4269afe",
+      "sha256": "577036a3fc6d12c7d69be5b236d1ff3251807ceb897fa258276294cf9fed39de",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Startup review a339395: SW_FORCEMINIMIZE joins existing non-child minimization path; existing window object and restoration rectangle ownership unchanged. Review 20261025: complete delta from seal 71d9c29a to 27e2a785 separates isChild traversal from popup owner links and adds ancestor clipping with save/try/finally/restore for single-source child composition. Reviewed recursive wasm/memory alias restoration, surface snapshots and window lifetimes; no guest ownership certification. See docs/reviews/host-census-four-row-reconcile-oct25.md; ownership remains pending. Uplink integration: canonical WAT child enumeration reads geometry synchronously and retains no callback/context; newer popup ownership and ancestor clipping retained.",
+      "reason": "Uplink background review 20261029: borderless dialog coverage reads the existing canonical dialog-proc getter synchronously; no callback invocation or retained context. Existing upload ordering and captioned chrome exclusion retained. Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Startup review a339395: SW_FORCEMINIMIZE joins existing non-child minimization path; existing window object and restoration rectangle ownership unchanged. Review 20261025: complete delta from seal 71d9c29a to 27e2a785 separates isChild traversal from popup owner links and adds ancestor clipping with save/try/finally/restore for single-source child composition. Reviewed recursive wasm/memory alias restoration, surface snapshots and window lifetimes; no guest ownership certification. See docs/reviews/host-census-four-row-reconcile-oct25.md; ownership remains pending. Uplink integration: canonical WAT child enumeration reads geometry synchronously and retains no callback/context; newer popup ownership and ancestor clipping retained.",
       "ownership": "pending"
     },
     {

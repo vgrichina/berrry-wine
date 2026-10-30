@@ -238,3 +238,39 @@ console.log('PASS  native child GDI pixels overlay exclusive DirectDraw by child
   delete gdi._waCanonicalPresentation;
 }
 console.log('PASS  exclusive overlay includes native WAT-only controls');
+
+// A borderless dialog also owns its painted background, not just the native
+// child rectangles. New uploads show; a later primary must cover them again.
+{
+  const r = new Win98Renderer(createCanvas(8, 8));
+  const w = r.windows[1] = {hwnd:1, x:0, y:0, w:8, h:8, visible:true,
+    isChild:false, style:0x90000040, wasm:{exports:{
+      get_dx_exclusive_hwnd:()=>1, dialog_get_proc_export:()=>0x401000,
+    }}};
+  r.attachWindowSurface(1, dx, true);
+  r.attachWindowSurface(1, gdi, false);
+  gdi._waCanonicalPresentation = {writeSeq:10,
+    writeRegions:[{x:0,y:0,w:8,h:8,writeSeq:10}]};
+  w._dxFrameLayer = {canvas:dx, writeSeq:9};
+  const read = source => Array.from(source.getContext('2d').getImageData(0,0,1,1).data);
+  for (const stack of [[w],null]) {
+    assert.deepStrictEqual(read(r._buildExclusivePresentationSource(w,stack,9)),
+      [0,0,255,255], 'newly painted borderless dialog background covers the paused game');
+    w.style=0x90c80000;
+    assert.deepStrictEqual(read(r._buildExclusivePresentationSource(w,stack,9)),
+      [255,0,0,255], 'captioned GDI chrome must not replace exclusive DirectDraw');
+    w.style=0x90000040;
+  }
+  r._drawPresentedCanvas(dx,0,0,8,8);
+  r._compositeExclusiveSharedChildren(w,null,9);
+  assert.deepStrictEqual(read(r.canvas),[0,0,255,255], 'direct compositor retains dialog background too');
+  w._dxFrameLayer={canvas:dx,writeSeq:11};
+  assert.deepStrictEqual(read(r._buildExclusivePresentationSource(w,[w],11)),
+    [255,0,0,255], 'resumed primary covers older dialog background');
+  gdi._waCanonicalPresentation={writeSeq:12,
+    writeRegions:[{x:2,y:3,w:3,h:2,writeSeq:12}]};
+  assert.deepStrictEqual(read(r._buildExclusivePresentationSource(w,[w],11)),
+    [255,0,0,255], 'a newer child-only upload cannot revive an older full background');
+  delete gdi._waCanonicalPresentation;
+}
+console.log('PASS  borderless dialog background preserves primary/upload ordering');

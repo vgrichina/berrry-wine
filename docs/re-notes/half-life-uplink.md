@@ -1436,3 +1436,28 @@ instances sharing memory, checks two independent objects, failure preservation,
 and returning to NORMAL. Flag roles follow the
 [DirectDraw cooperative-level documentation](https://learn.microsoft.com/nl-be/windows/win32/api/ddraw/nf-ddraw-idirectdraw7-setcooperativelevel);
 the error code is defined in [Wine's ddraw.h](https://github.com/wine-mirror/wine/blob/master/include/ddraw.h).
+
+Final runtime integration through `a5bc63b1f` builds module
+`3d4b51591ebb7a5684ddc673383aebd648c3043a677b461a8f1a7a81bad557d9`
+with the same layout. Sequential fresh Worker runs
+`20261029-uplink-final-{software,gl,d3d}` all reach textured gameplay and
+movement. D3D's final harness explicitly seeds the 640x480 mode values observed
+from the game's own UI; an unconfigured direct-D3D launch instead requests a
+320x240 viewport inside a 640x480 primary. The normal public launch is OpenGL.
+
+**Correction to the earlier Software menu qualification:** all labels were
+visible, but the game remained between them where the textured menu background
+belonged. `20261029-uplink-software-background-before/gdi-source.png` shows the
+complete correct background in the canonical GDI surface; the simultaneous
+displayed capture omits it. The visible root is a borderless guest dialog with
+a real dialog proc and newer upload regions than the paused DirectDraw frame.
+The exclusive overlay now includes those fresh dialog background regions,
+while captioned windows retain child-only overlays. A later primary still
+covers old GDI pixels; a partial control upload cannot revive an old full
+background. Regression coverage exercises direct and postprocessing composition,
+captioned-window exclusion and both ordering cases.
+
+`20261029-uplink-software-background-fixed` verifies a complete textured pause
+background, resume plus movement, another pause, Configuration/Video and an
+eight-second settled Video screen. No previous menu background remains over
+the resumed world. The WASM stays `3d4b51591ebb`; this final fix is compositor-only.
