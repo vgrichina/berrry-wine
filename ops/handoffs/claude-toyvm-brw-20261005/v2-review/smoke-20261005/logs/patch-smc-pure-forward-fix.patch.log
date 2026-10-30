@@ -1,5 +1,0 @@
-patching file tools/toyvm/compile.js
-Hunk #4 succeeded at 630 (offset 12 lines).
-Hunk #5 succeeded at 683 (offset 12 lines).
-Hunk #6 succeeded at 1141 (offset 12 lines).
-patching file tools/toyvm/dos-loop.js

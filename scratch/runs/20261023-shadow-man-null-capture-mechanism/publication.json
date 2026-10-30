@@ -1,0 +1,94 @@
+{
+  "commit": "6d145e98589caeab2d43c4bb54297d90c248b9de",
+  "branch": "task/shadow-man-null-capture-mechanism-oct23",
+  "actualRemoteRefs": {
+    "refs/heads/main": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+    "refs/heads/task/shadow-man-null-capture-mechanism-oct23": "6d145e98589caeab2d43c4bb54297d90c248b9de"
+  },
+  "remoteMatch": true,
+  "changedExistingPaths": 3,
+  "preservedBasePaths": 8303,
+  "ownedFiles": 13,
+  "seals": [
+    {
+      "path": "docs/re-notes/shadow-man-null-capture-mechanism-20261023/admission.json",
+      "bytes": 1518,
+      "sha256": "2794c41c50365f7d1a51d32ed67c2427dca08f8580566adf4bcf1e30a5038b5c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-capture-mechanism-20261023/checks.json",
+      "bytes": 633,
+      "sha256": "2cef5437f66e91ce085fefee4f42b1ff3b4140683ac06e67f415e1353ef6c0a1"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-capture-mechanism-20261023/fixture.wat",
+      "bytes": 4951,
+      "sha256": "96e06bda952d0017d9fdf44c5a8d35a1dcce079712936a0239d1f74b7eaa18cc"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-capture-mechanism-20261023/preload-record.jsonl",
+      "bytes": 2507,
+      "sha256": "d1fb9185f55065cc4aef1ec429bb531e7dbdfc5fbf5177d931c20e141492a45c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-capture-mechanism-20261023/setup.py",
+      "bytes": 2840,
+      "sha256": "b8bf624d53784d479ad7108c171fff7cb554a8295cfbe0764e87815f24806f4e"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-capture-mechanism-20261023/tests.json",
+      "bytes": 697,
+      "sha256": "55cfceab3deea5ae5b740c0d6dc27e09b1b6f255739dd78ce6ca238fa06107ba"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-capture-mechanism-20261023.md",
+      "bytes": 9068,
+      "sha256": "360648204a364016e12e910a474aedb611caf3167a4862a7006ee42320114836"
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "bytes": 113843,
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00"
+    },
+    {
+      "path": "src/09c3a-dialog-runtime.wat",
+      "bytes": 91488,
+      "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1"
+    },
+    {
+      "path": "src/13-exports.wat",
+      "bytes": 344898,
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86"
+    },
+    {
+      "path": "test/test-shadow-man-null-capture.cjs",
+      "bytes": 8628,
+      "sha256": "5533c6b60c616e1431a65453a59c734e47b0ac2e9133fc852d34ccae507d576f"
+    },
+    {
+      "path": "tools/shadow-man-null-capture.cjs",
+      "bytes": 4850,
+      "sha256": "f96c8e74102fe7aef25e8659d3158e30fac9096e36417efa34c65d5a444c4f2a"
+    },
+    {
+      "path": "tools/shadow-man-null-preload.cjs",
+      "bytes": 2237,
+      "sha256": "49f59e8183e6e7b0c94ad8041a2544e33dc00c2211d67007a540a03f656fa2d4"
+    }
+  ],
+  "testsExit": 0,
+  "diffCheckExit": 0,
+  "wholeTaskUpperBytes": 17252185,
+  "wholeParts": {
+    "actualTaskCheckoutIncludingGit": 6753785,
+    "reserve": 8388608,
+    "futureGitEvidenceGrowth": 2097152,
+    "temporaryScripts": "included by measured byte length"
+  },
+  "hostAvailableBytes": 6597922816,
+  "hostFloor": 2982150144,
+  "standingToolsAndReadOnlyDonors": "separate admission.json identities, not newly allocated",
+  "sourceFullHandlers": "NOT EXECUTED",
+  "nativeFragment": "902 bytes / 8MiB arena",
+  "runtime": "NONE"
+}
