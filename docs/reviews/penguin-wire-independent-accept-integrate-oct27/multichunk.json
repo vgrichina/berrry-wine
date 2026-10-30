@@ -1,1 +1,0 @@
-{"results": [{"case": "chunk-swap", "rejected": true}, {"case": "chunk-duplicate", "rejected": true}, {"case": "chunk-truncate", "rejected": true}, {"case": "chunk-last-missing", "rejected": true}], "positiveChunkCount": 14, "rawBytes": 7869, "hash": "52a36e3747c6c0fb9c933a85056e765eb9ded08f2e61d43bf46bb5202c440407"}

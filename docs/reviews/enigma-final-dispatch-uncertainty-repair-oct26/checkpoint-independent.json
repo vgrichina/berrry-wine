@@ -1,9 +1,0 @@
-{
-  "base": "3e40a69903cad91e1b2f089f6dc5e9dbb912fafa",
-  "sourceHashes": {
-    "tools/enigma-presented-menu-controller.cjs": "bec911b41208d3fbc39e0f62852ab7535eff204046dc6f7a096b047be610ba36",
-    "test/test-enigma-presented-menu-controller.cjs": "a222da82b149ffbeb06f9406b2ef789107e9111676913d783679fe86a6a17e87"
-  },
-  "evidenceSHA256": "5546ea674ac75e21a6e106387a48545e5e76c47d0d6bd15d68d48da335935c9f",
-  "remaining": "review diff and publication; independent acceptance and tracked-runner/runtime gates remain"
-}

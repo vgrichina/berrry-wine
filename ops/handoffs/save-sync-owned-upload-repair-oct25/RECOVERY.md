@@ -1,3 +1,0 @@
-Source base 397cdb6ca37c1f247cdd6e2618f6e1f3529342c4. Task branch task/save-sync-owned-upload-repair-oct25. No main integration.
-Reproduce on a normal checkout: node --max-old-space-size=128 --test test/test-save-sync-owned-upload.js and node --max-old-space-size=128 test/test-save-sync-upload-validation.js. Use provided run.py for original local resource limits and exact flat-view Git environment. Baseline source and final harness retained. Existing offline harness runs original testUrls/testSyncDeadline only; no server/CLI run.
-No box assigned; no runtime/gameplay acceptance. Preserve authentication/app identity/time policy. Coordinator owns integration/lifecycle.
