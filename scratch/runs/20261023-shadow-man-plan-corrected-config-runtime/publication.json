@@ -1,0 +1,10 @@
+{
+  "commit": "53407046c7817001001fdf27bfea3a70fd3a87d5",
+  "parent": "18c1e5ad58ea2d170dc0204a92626726ca50a517",
+  "branch": "task/shadow-man-plan-corrected-config-runtime-oct23",
+  "pushExit": 0,
+  "pushStdout": "",
+  "pushStderr": "remote: This repository moved. Please use the new location:        \nremote:   git@github.com:vgrichina/berrry-wine.git        \nTo github.com:vgrichina/wine-assembly.git\n   18c1e5a..5340704  HEAD -> task/shadow-man-plan-corrected-config-runtime-oct23\n",
+  "actualRemote": "53407046c7817001001fdf27bfea3a70fd3a87d5",
+  "independentRemoteVerified": true
+}
