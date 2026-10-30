@@ -1,0 +1,20 @@
+{
+  "PASS": true,
+  "candidate": "0398b45f47717da0f178779a34bc54aa0ef0ec53",
+  "sourcePins": 147,
+  "sourceManifestSHA256": "76005d3a1721c2b3edd782670e85f0934cebe34c5e34e9f61aceb09e09e41753",
+  "compilerSHA256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c",
+  "options": {
+    "mode": "production",
+    "standardWat": true,
+    "strictDeclarations": true,
+    "runtimeBuiltins": false,
+    "tailCalls": true
+  },
+  "wasmBytes": 1881490,
+  "wasmSHA256": "b239bf69a08c38e6d2edbe63ce356e338da67cd480936f3a3d72266591a94fe9",
+  "valid": true,
+  "imports": 291,
+  "exports": 2227,
+  "inventorySHA256": "0ca82c8da3cf4737e707de3e2793a71a6ee30a28b68ea71379fdc14302bccdd8"
+}

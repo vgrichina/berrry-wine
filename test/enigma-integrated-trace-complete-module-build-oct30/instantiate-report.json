@@ -1,0 +1,54 @@
+{
+  "PASS": true,
+  "wasmSHA256": "b239bf69a08c38e6d2edbe63ce356e338da67cd480936f3a3d72266591a94fe9",
+  "traceExports": [
+    {
+      "name": "set_audio_callback_trace",
+      "kind": "function"
+    },
+    {
+      "name": "get_audio_callback_trace",
+      "kind": "function"
+    }
+  ],
+  "initial": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "enabled": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "disabled": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "hostImportsInvoked": [],
+  "initialization": "WebAssembly data/global initialization only; sufficient for global-only trace setter/getter. No init_thread, heap, guest or backend initialization needed or attempted.",
+  "syntheticState": "zero-filled host.memory initial8192 maximum32768 shared pages; every function import fails closed if invoked",
+  "limitation": "No x86/native callback execution or game acceptance claimed."
+}
