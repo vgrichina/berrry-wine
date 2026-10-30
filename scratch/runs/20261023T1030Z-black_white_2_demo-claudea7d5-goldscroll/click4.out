@@ -1,5 +1,0 @@
-[ctl] {"id":"k1","ok":true,"value":{"batch":24204,"logs":["[input] di-mousedown button=1 at batch 24204"]}}
-[ctl] {"id":"k2","ok":true,"value":{"batch":24210,"logs":["[input] di-mouseup button=1 at batch 24210"]}}
-[ctl] {"id":"k3","ok":true,"value":{"c":[7,7,2],"first":"5f95c8","last":"64c510","ebp":"0","regs":["0","4d1c0310","4d1c0004","1","74ff280","0","4d1c0004","a6fe868"],"frames":["0","0","0","0","0","0","0","0"]}}
-[ctl] {"id":"pe","ok":true,"value":{"batch":24261,"frozen":false,"path":"/home/user/runs/20261023T1030Z-black_white_2_demo-claudea7d5-goldscroll/scroll/e1.png","bytes":411144}}
-CLICK4_DONE

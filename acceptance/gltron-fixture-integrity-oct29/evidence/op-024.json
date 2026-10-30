@@ -1,1 +1,0 @@
-{"at": "2026-10-29T02:26:26.064217+00:00", "argv": ["/usr/bin/node", "--max-old-space-size=96", "acceptance/gltron-registration-oct29/accept.js"], "cwd": "/tmp/gltron-fixture-authorized-integrity-repair-oct29/repo", "exit": 1, "peakRSS": 64348160, "wall": 0.11699751089327037, "violation": null, "descendantCleanup": true}
