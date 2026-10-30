@@ -1,8 +1,0 @@
-{
-  "ok": true,
-  "reasons": [],
-  "submissions": 120,
-  "seconds": 5.124655000000028,
-  "submissionsPerSecond": 23.416210457094056,
-  "meaning": "selected-layer compositor submissions, not logical game frames or physical refresh"
-}
