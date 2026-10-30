@@ -1,9 +1,0 @@
-{
-  "args": [
-    "snapshot"
-  ],
-  "exit": 0,
-  "stdout": "{\n  \"batch\": 434120,\n  \"eip\": \"0x7500218\",\n  \"quit\": false,\n  \"yieldReason\": 0,\n  \"focus\": \"0x10002\",\n  \"mainHwnd\": \"0x0\",\n  \"screen\": {\n    \"w\": 640,\n    \"h\": 480\n  },\n  \"frozen\": {\n    \"frozen\": false,\n    \"tickMs\": 200,\n    \"credits\": 0,\n    \"recording\": false\n  },\n  \"windows\": [\n    {\n      \"hwnd\": \"0x10001\",\n      \"x\": 0,\n      \"y\": 0,\n      \"w\": 549,\n      \"h\": 410,\n      \"visible\": true,\n      \"isChild\": false,\n      \"title\": \"ShadowMan Launcher\"\n    }\n  ]\n}\n",
-  "stderr": "",
-  "elapsed": 7.435024518999853
-}

@@ -1,8 +1,0 @@
-patching file tools/toyvm/compile.js
-patching file tools/toyvm/dos-loop.js
-patching file tools/toyvm/emit.js
-patching file tools/toyvm/handler-effects.js
-patching file tools/toyvm/region-jit.js
-patching file tools/toyvm/run-dos.js
-patching file tools/toyvm/trace-jit.js
-patching file tools/toyvm/uop-ir.js

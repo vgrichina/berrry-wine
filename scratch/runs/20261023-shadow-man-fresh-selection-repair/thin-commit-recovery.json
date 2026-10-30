@@ -1,0 +1,8 @@
+{
+  "initialCommitExit": 1,
+  "error": "thin input missing unchanged docs/re-notes/README.md blob",
+  "recovery": "exact single blob read from root object store read-only, SHA1 independently verified, materialized in task Git only",
+  "oid": "45b71ca3e1bbd663e413fa9932880d092c9a3900",
+  "bytes": 13772,
+  "newToolOrFetch": false
+}

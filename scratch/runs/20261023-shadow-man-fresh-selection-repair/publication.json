@@ -1,0 +1,20 @@
+{
+  "commit": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "branch": "task/shadow-man-fresh-selection-repair-oct23",
+  "actualRemoteSHA": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "actualRemoteMain": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+  "strictSSH": true,
+  "pushExit": 0,
+  "lsRemoteExit": 0,
+  "checkedSeals": 104,
+  "taskMaterializedBytesIncludingGitSourceEvidenceOutput": 9429139,
+  "externalTaskTempBytes": 8501,
+  "reserveBytes": 8388608,
+  "metadataAndAllocationAllowanceBytes": 2097152,
+  "finalUpper": 19923400,
+  "cap": 67108864,
+  "hostFree": 6352011264,
+  "hostFloor": 2982150144,
+  "qualification": "offline focused native fixtures only; no full compile/guest/runtime",
+  "box": "none assigned; bx_fn7pn7yg coordinator reported snapshotSTOPPED unprobed; historical expiry2026-10-23T03:46:00.580Z; coordinator lifecycle owner"
+}

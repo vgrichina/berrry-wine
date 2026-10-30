@@ -26,7 +26,7 @@
   },
   "sourcePins": {
     "test/run.js": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
-    "tools/shadow-man-null-capture.cjs": "06c5ee21127b29a9074b1a640cb7b4c21c783f2fcc7bbf06c34b75232bcb5535",
+    "tools/shadow-man-null-capture.cjs": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea",
     "tools/shadow-man-null-preload.cjs": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b",
     "src/13-exports.wat": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
     "src/09c3a-dialog-runtime.wat": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1",
