@@ -1,3 +1,0 @@
-PASS registration and 8 negative controls
-PASS actual candidate CLI launch planner and VFS resolver: 39 original files; empty/EXE-only controls
-PASS sealed intake, actual two-layer extraction, 39 file hashes, 38 companion VFS paths; corruption, 38 missing-companion and wrong-VFS controls

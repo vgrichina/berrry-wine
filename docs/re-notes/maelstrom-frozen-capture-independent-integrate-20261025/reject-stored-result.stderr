@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/maelstrom-frozen-capture-independent-integrate-oct25/ops/verify.py", line 26, in <module>
-    for k,v in expected.items():check(s.get(k)==v,'historical identity '+k)
-                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/maelstrom-frozen-capture-independent-integrate-oct25/ops/verify.py", line 11, in check
-    if not c:raise ValueError(m)
-             ^^^^^^^^^^^^^^^^^^^
-ValueError: historical identity result
