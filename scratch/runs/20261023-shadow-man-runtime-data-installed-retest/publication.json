@@ -1,0 +1,15 @@
+{
+  "commit": "11bd819165133846ac60b897e68a3c7efb14c068",
+  "branch": "task/shadow-man-runtime-data-installed-retest-oct23",
+  "canonicalRepository": "https://github.com/vgrichina/berrry-wine.git",
+  "actualRemoteRefs": {
+    "refs/heads/main": "58e90870a40a541a4083cae5e987ca8de31889e6",
+    "refs/heads/task/shadow-man-runtime-data-installed-retest-oct23": "11bd819165133846ac60b897e68a3c7efb14c068"
+  },
+  "pushExit": 0,
+  "changedEvidenceFiles": 28,
+  "basePathsPreserved": 8279,
+  "mainMerged": false,
+  "guestCommands": 0,
+  "verdict": "BLOCKED_RUNTIME_DATA_STAGING_API400"
+}
