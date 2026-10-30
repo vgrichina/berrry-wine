@@ -1,0 +1,12 @@
+{
+  "revision": "a5bc63b1f393aa1fd28b82b8408643a7b30e25e9",
+  "wasm": {"bytes":1886773,"sha256":"f37c0db9862159111bf38e104b163a5faf08d10dc38f8e3e28f2d85a2c45e49e"},
+  "sources": {
+    "CLAUDE.md":{"bytes":22221,"sha256":"305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"},
+    "test/run.js":{"bytes":692809,"sha256":"f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d"},
+    "tools/maelstrom-original-errno-adapter.cjs":{"bytes":10115,"sha256":"cbe04fef7e98c1ff607251812225b8314fc0aaff2c289331b95839cfe2df2b49"},
+    "tools/maelstrom-select-frozen-record.cjs":{"bytes":3612,"sha256":"be0165acd71ecfb65d920a178db647b39079b4c6abd351a23660cd8f4e6753a7"},
+    "lib/process-boot.js":{"bytes":52033,"sha256":"c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9"},
+    "lib/dll-loader.js":{"bytes":98961,"sha256":"8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145"}
+  }
+}
