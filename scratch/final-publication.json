@@ -1,0 +1,13 @@
+{
+  "commit": "444c44404d4e9ab51e6d4d20898fd4c95db661a0",
+  "parent": "c9681105dd96ab31a8a709eeb61242ad5ad60cae",
+  "source": "c9681105dd96ab31a8a709eeb61242ad5ad60cae",
+  "branch": "task/shadow-man-dsetup-fixture-fullmodule-oct22",
+  "actualRemoteRefs": "89f1e9d2c67aa94d56d2319115589d07204d42e0\trefs/heads/main\n444c44404d4e9ab51e6d4d20898fd4c95db661a0\trefs/heads/task/shadow-man-dsetup-fixture-fullmodule-oct22",
+  "evidenceFiles": 79,
+  "allCommittedEvidenceMatches": true,
+  "whitespaceReviewExclusions": [
+    "correction-push.log: raw GitHub transport trailing spaces",
+    "qualification.log: exact raw output trailing blank line"
+  ]
+}

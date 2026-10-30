@@ -31,14 +31,14 @@
     "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22": 843776,
     "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-region-fullmodule-oct22": 1671168,
     "/home/user/wine-assembly-shadow-man-dsetup-region-fullmodule-oct22": 4435968,
-    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-fixture-fullmodule-oct22": 446464,
-    "/home/user/wine-assembly-shadow-man-dsetup-fixture-fullmodule-oct22": 2605056
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-fixture-fullmodule-oct22": 487424,
+    "/home/user/wine-assembly-shadow-man-dsetup-fixture-fullmodule-oct22": 3444736
   },
-  "localAllocated": 36507648,
+  "localAllocated": 37388288,
   "localReserve": 8388608,
   "localFinalAllowance": 2097152,
   "localCap": 67108864,
-  "hostFree": 7011336192,
+  "hostFree": 7009726464,
   "hostFloor": 2982150144,
   "remote": {
     "verdict": "BLOCKED_OUT_OF_SCOPE_STATIC_DX_HARNESS",

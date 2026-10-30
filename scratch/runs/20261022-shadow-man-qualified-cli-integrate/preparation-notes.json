@@ -1,9 +1,0 @@
-{
-  "issue": "Optional full manifest-check dependency tools/check-test-timeouts.js was absent in retained thin object store; no lazy fetch occurred. Preparation stopped that read. No test had run yet.",
-  "resolution": "Only exact-main mem-utils and test-tiers needed by targeted checks were recovered from already present objects; focused checks then passed.",
-  "candidateFailures": 0,
-  "builds": 0,
-  "guestRuns": 0,
-  "runtimeQueries": 0,
-  "workersLaunched": 0
-}
