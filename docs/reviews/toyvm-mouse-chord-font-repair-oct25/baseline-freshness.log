@@ -1,2 +1,0 @@
-docs/dos-corpus/live/toyvm-bundle.js: STALE -- 2287573 B committed vs 2314391 B from source, first difference at byte 599263. Run tools/toyvm/bundle-browser.js and commit the result.
-docs/dos-corpus/live/toyvm-jit-bundle.js: STALE -- 2250833 B committed vs 2277651 B from source, first difference at byte 612076. Run tools/toyvm/bundle-browser.js and commit the result.
