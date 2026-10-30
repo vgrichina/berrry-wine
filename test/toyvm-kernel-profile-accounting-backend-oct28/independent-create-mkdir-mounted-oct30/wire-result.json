@@ -1,0 +1,21 @@
+{
+  "PASS": true,
+  "productionServeRequests": 8,
+  "handlerDerivedOpcodes": {
+    "MKDIR": 9,
+    "CREATE": 35
+  },
+  "positive": true,
+  "negativeControls": {
+    "disable-mkdir": "REJECTED missing corresponding callback",
+    "disable-create": "REJECTED missing corresponding callback"
+  },
+  "disabledOmittedExplicitZeroEnabledBehaviorParity": true,
+  "cap": 2,
+  "callbackCount": 8,
+  "retained": 2,
+  "numericOnly": true,
+  "privacy": true,
+  "scope": "independent distinguishing production serve wire; no mount claim",
+  "productionSourcesMutated": false
+}

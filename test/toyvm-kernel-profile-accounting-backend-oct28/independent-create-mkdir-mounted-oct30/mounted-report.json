@@ -1,0 +1,685 @@
+{
+  "schema": 1,
+  "result": "PASS",
+  "task": "toyvm-create-mkdir-independent-mounted-oct30",
+  "candidate": "797b8fce4c17ad3514afea63799519588da981c2",
+  "parent": "c43afee14ba2cb09fc83901beb2468e15bef78b0",
+  "candidateRef": "refs/heads/task/toyvm-create-mkdir-callback-observability-oct30",
+  "productionInvocations": 1,
+  "scope": "exact candidate real production CLI/FUSE; report and fixtures only",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 9350,
+      "sha256": "bdf4076c94a6d55977e5df79074201a7ac08b3cb8ad58242e05c558ae83bd179"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 16643,
+      "sha256": "520ed81ea0b7b25303df603a362b43cd8ad934c33bf4ae60337b311e0f1b52d4"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4857,
+      "sha256": "b003da4e6439bbd1502ffc92797420c2bc254b3e55394afdd24624b7d9005338"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_create_mkdir_wire.py": {
+      "bytes": 6873,
+      "sha256": "103fac67f3b894ee50683003fac9650792eaeafce15de7a8f26d68b036cb79a9"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_integration.py": {
+      "bytes": 3111,
+      "sha256": "95e00f201b8c9d45563ac8bf82a40ad41162ef8966427904d0e9814085851c3d"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": {
+      "bytes": 9704,
+      "sha256": "bc44904ead714926a8efaa3ba7483135e39a9d6dc0d581b43b228b93bae1dcc5"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": {
+      "bytes": 13811,
+      "sha256": "1a43a9305f1b3d92957ef03c34caec6eb0990dc03f2f23c0d20f0ca53b9fa751"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourceObjects": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": "9ca2345b83540d46ae547ddc8b9a2d6aa481ddbe",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": "8764b548402401ef60904f01d36c1792ee675c57",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": "0793690e67339e685a18482ae884f0df1554f732",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": "ffcf1f6852bb7486f5f1c60641112c55add5683e",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_create_mkdir_wire.py": "05c0e5616117ca32019eceac0ebce3864ddd7eba",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_integration.py": "c413df16c65b049892ce35ea2d456b6bb0544d8d",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": "2735922c02eadf9232089d316fc51a605db5d147",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": "6ad66fcc3f906cd309515f5290fcb9da59627a66",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": "6c4f83b48bb4c3f9245af76469af835180c0ebfb"
+  },
+  "fixturePin": {
+    "bytes": 2359,
+    "sha256": "b255c284a7636e4a273a8b01b7887c6ce38505cfcfa86e562875e97b00bba951"
+  },
+  "observerPin": {
+    "bytes": 7427,
+    "sha256": "97d3a380beb0dbf786846a1f91dc60848bd578e55acdd14dd216b61ffd04c12b"
+  },
+  "productionCLI": {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/tvmd-stage/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "--domain",
+      "tiny-fixture",
+      "--receipt",
+      "/tmp/tvmd-stage/cancellation-receipt.json",
+      "--work",
+      "/tmp/tvmd",
+      "--live-limit",
+      "262144",
+      "--write-limit",
+      "32768",
+      "--file-limit",
+      "32768",
+      "--rss-limit",
+      "67108864",
+      "--cpu-limit",
+      "10",
+      "--wall-limit",
+      "20",
+      "--output-limit",
+      "8192",
+      "--namespace-evidence",
+      "64",
+      "--",
+      "/usr/bin/python3",
+      "-B",
+      "-c",
+      {
+        "reconstructFrom": "fixture.py",
+        "bytes": 2359,
+        "sha256": "b255c284a7636e4a273a8b01b7887c6ce38505cfcfa86e562875e97b00bba951"
+      }
+    ],
+    "cwd": "/tmp/tvmd-stage/repo",
+    "fixtureCode": "reconstruct last argument byte-exact from fixture.py; kept separate from callback logs"
+  },
+  "wireControl": {
+    "PASS": true,
+    "productionServeRequests": 8,
+    "handlerDerivedOpcodes": {
+      "MKDIR": 9,
+      "CREATE": 35
+    },
+    "positive": true,
+    "negativeControls": {
+      "disable-mkdir": "REJECTED missing corresponding callback",
+      "disable-create": "REJECTED missing corresponding callback"
+    },
+    "disabledOmittedExplicitZeroEnabledBehaviorParity": true,
+    "cap": 2,
+    "callbackCount": 8,
+    "retained": 2,
+    "numericOnly": true,
+    "privacy": true,
+    "scope": "independent distinguishing production serve wire; no mount claim",
+    "productionSourcesMutated": false
+  },
+  "successfulCreateMkdir": [
+    {
+      "syscallOrdinal": 1,
+      "operation": "CREATE",
+      "syscallErrno": 0,
+      "callback": {
+        "callbackCount": 1,
+        "errno": 0,
+        "inode": 1,
+        "opcode": 35,
+        "unique": 28
+      }
+    },
+    {
+      "syscallOrdinal": 2,
+      "operation": "MKDIR",
+      "syscallErrno": 0,
+      "callback": {
+        "callbackCount": 2,
+        "errno": 0,
+        "inode": 1,
+        "opcode": 9,
+        "unique": 36
+      }
+    },
+    {
+      "syscallOrdinal": 3,
+      "operation": "MKDIR",
+      "syscallErrno": 0,
+      "callback": {
+        "callbackCount": 3,
+        "errno": 0,
+        "inode": 3,
+        "opcode": 9,
+        "unique": 42
+      }
+    },
+    {
+      "syscallOrdinal": 4,
+      "operation": "MKDIR",
+      "syscallErrno": 0,
+      "callback": {
+        "callbackCount": 4,
+        "errno": 0,
+        "inode": 3,
+        "opcode": 9,
+        "unique": 48
+      }
+    },
+    {
+      "syscallOrdinal": 5,
+      "operation": "CREATE",
+      "syscallErrno": 0,
+      "callback": {
+        "callbackCount": 5,
+        "errno": 0,
+        "inode": 5,
+        "opcode": 35,
+        "unique": 56
+      }
+    }
+  ],
+  "rejectedSyscalls": [
+    {
+      "op": "create",
+      "expected": 2,
+      "actual": 2,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 0,
+      "coverage": "unobserved; kernel may preempt"
+    },
+    {
+      "op": "create",
+      "expected": 20,
+      "actual": 20,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 0,
+      "coverage": "unobserved; kernel may preempt"
+    },
+    {
+      "op": "mkdir",
+      "expected": 2,
+      "actual": 2,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 0,
+      "coverage": "unobserved; kernel may preempt"
+    },
+    {
+      "op": "mkdir",
+      "expected": 20,
+      "actual": 20,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 0,
+      "coverage": "unobserved; kernel may preempt"
+    },
+    {
+      "op": "create",
+      "expected": 17,
+      "actual": 17,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 0,
+      "coverage": "unobserved; kernel may preempt"
+    },
+    {
+      "op": "mkdir",
+      "expected": 17,
+      "actual": 17,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 0,
+      "coverage": "unobserved; kernel may preempt"
+    },
+    {
+      "op": "unlink",
+      "expected": 21,
+      "actual": 21,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 0,
+      "coverage": "unobserved; kernel may preempt"
+    },
+    {
+      "op": "rmdir",
+      "expected": 20,
+      "actual": 20,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 0,
+      "coverage": "unobserved; kernel may preempt"
+    },
+    {
+      "op": "rmdir",
+      "expected": 39,
+      "actual": 39,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 1,
+      "coverage": "observed"
+    },
+    {
+      "op": "unlink",
+      "expected": 2,
+      "actual": 2,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 0,
+      "coverage": "unobserved; kernel may preempt"
+    },
+    {
+      "op": "rmdir",
+      "expected": 2,
+      "actual": 2,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "actualBackendCallbacks": 0,
+      "coverage": "unobserved; kernel may preempt"
+    }
+  ],
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 32768,
+    "inodes": 1,
+    "live": 4096,
+    "liveLimit": 262144,
+    "namespaceEvidence": {
+      "callbackCount": 11,
+      "countSaturated": false,
+      "limit": 64,
+      "records": [
+        {
+          "callbackCount": 1,
+          "errno": 0,
+          "inode": 1,
+          "opcode": 35,
+          "unique": 28
+        },
+        {
+          "callbackCount": 2,
+          "errno": 0,
+          "inode": 1,
+          "opcode": 9,
+          "unique": 36
+        },
+        {
+          "callbackCount": 3,
+          "errno": 0,
+          "inode": 3,
+          "opcode": 9,
+          "unique": 42
+        },
+        {
+          "callbackCount": 4,
+          "errno": 0,
+          "inode": 3,
+          "opcode": 9,
+          "unique": 48
+        },
+        {
+          "callbackCount": 5,
+          "errno": 0,
+          "inode": 5,
+          "opcode": 35,
+          "unique": 56
+        },
+        {
+          "callbackCount": 6,
+          "errno": 39,
+          "inode": 3,
+          "opcode": 11,
+          "unique": 16602
+        },
+        {
+          "callbackCount": 7,
+          "errno": 0,
+          "inode": 5,
+          "opcode": 10,
+          "unique": 21548
+        },
+        {
+          "callbackCount": 8,
+          "errno": 0,
+          "inode": 3,
+          "opcode": 11,
+          "unique": 21556
+        },
+        {
+          "callbackCount": 9,
+          "errno": 0,
+          "inode": 3,
+          "opcode": 11,
+          "unique": 21564
+        },
+        {
+          "callbackCount": 10,
+          "errno": 0,
+          "inode": 1,
+          "opcode": 10,
+          "unique": 21568
+        },
+        {
+          "callbackCount": 11,
+          "errno": 0,
+          "inode": 1,
+          "opcode": 11,
+          "unique": 21574
+        }
+      ]
+    },
+    "openHandles": 0,
+    "operations": 10804,
+    "peak": 28672,
+    "writeLimit": 32768,
+    "written": 4
+  },
+  "expectedCallbacks": [
+    [
+      35,
+      0,
+      1
+    ],
+    [
+      9,
+      0,
+      1
+    ],
+    [
+      9,
+      0,
+      3
+    ],
+    [
+      9,
+      0,
+      3
+    ],
+    [
+      35,
+      0,
+      5
+    ],
+    [
+      11,
+      39,
+      3
+    ],
+    [
+      10,
+      0,
+      5
+    ],
+    [
+      11,
+      0,
+      3
+    ],
+    [
+      11,
+      0,
+      3
+    ],
+    [
+      10,
+      0,
+      1
+    ],
+    [
+      11,
+      0,
+      1
+    ]
+  ],
+  "callbackPrivacy": "exact five-field bounded uint64 numeric records; no names/content/credentials",
+  "mountOwnership": [
+    "58 29 0:52 / /tmp/tvmd/domain rw,nosuid,nodev,relatime shared:175 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+  ],
+  "cleanup": {
+    "remainingMounts": [],
+    "serverExit": -15,
+    "serverStderr": "",
+    "serverStdout": "",
+    "unmountExit": 0,
+    "unmountStderr": "",
+    "unmountStdout": ""
+  },
+  "observerCleanup": {
+    "remainingMounts": [],
+    "processes": []
+  },
+  "remoteAllocation": {
+    "PASS": true,
+    "remainingMounts": [],
+    "processes": [],
+    "physicalAllocated": 241664,
+    "budget": 268435456,
+    "reserve": 8388608
+  },
+  "lifecycle": {
+    "id": "bx_fze3b6v4",
+    "state": "stopped",
+    "createdAt": "2026-10-30T07:54:10.963Z",
+    "stoppedAt": "2026-10-30T07:55:28.932Z",
+    "snapshotCompletedAt": "2026-10-30T07:55:28.897Z",
+    "snapshotVerifiedAt": "2026-10-30T07:55:28.897Z",
+    "lastSnapshotStatus": "completed",
+    "snapshotAvailable": true,
+    "stop": {
+      "endedAt": "2026-10-30T07:55:28.950Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_5c122ccdf4db9860",
+      "lastAttemptAt": "2026-10-30T07:55:28.950Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "originalExpiry": "2026-10-30T08:24:10.984Z",
+    "shutdownDelegated": true
+  },
+  "roundtripBytes": 4,
+  "nestedParentIdentity": true,
+  "finalEmpty": true,
+  "resources": {
+    "wall": 3.4478408190000067,
+    "groupPeakRSS": 52559872,
+    "payloadPeakRSS": 37224448,
+    "allocation": {
+      "physicalAllocated": 21880832,
+      "allocationBudget": 67108864,
+      "reserve": 8388608,
+      "diskFree": 3317174272,
+      "remainingAggregateGrowth": 267292672,
+      "diskFloor": 2147483648,
+      "MemAvailable": 4431978496,
+      "supervisorRSS": 21364736,
+      "RAMAdmission": false,
+      "resourcePolicy": "owner 2026-10-30; actual process enforcement retained"
+    },
+    "limits": {
+      "PythonChildDATA": 134217728,
+      "GitChildOnlyDATA": 268435456,
+      "nativeDATA": "unchanged inherited; no Git DATA on native Boat",
+      "AS": "inherited unchanged",
+      "FSIZE": 524288,
+      "captureCeiling": 524288,
+      "CPU": 60,
+      "wall": 90,
+      "supervisorRSS": 134217728,
+      "groupRSS": 536870912,
+      "payloadRSS": 67108864,
+      "payloadCPU": 10,
+      "payloadWall": 20,
+      "payloadOutput": 8192,
+      "RAMAdmission": false,
+      "remainingAggregateGrowth": 267292672,
+      "diskFloor": 2147483648
+    }
+  },
+  "exclusions": [
+    "all six rejected mounted CREATE/MKDIR calls had zero observed callbacks; kernel-preempted/unobserved, no backend-error coverage claimed for them",
+    "ten of eleven rejected mounted syscalls had zero observed backend callbacks",
+    "READDIR raw dot-dot not separately observed; nested parent stat identity passed",
+    "browser/gameplay/current-main integration unqualified"
+  ],
+  "reused": "prior exact19 source/wire groups and prior namespace acceptance not replayed",
+  "configurationCorrections": [
+    "first wire helper status socket path exceeded AF_UNIX length; shortened only temporary helper root, retained failed attempt",
+    "new API returns NDJSON; parsed saved allocation response and queried actual info; no second creation",
+    "stop asynchronous first info stopping/pending; later info verified stopped/completed; no repeated stop"
+  ]
+}

@@ -1,0 +1,30 @@
+Exact candidate 797b8fce4c17ad3514afea63799519588da981c2; independent acceptance is complete.
+Do not repeat production invocation. One unchanged fixture invocation completed.
+Reconstruct CLI argv from mounted-report.json, substituting fixture.py byte-exact
+for its pinned final -c argument. Fixture SHA and nine source object/blob hashes
+are sealed in source-pins.json. qualify_accounted.py verified transitive inputs.
+Wire.py drives actual production serve via SOCK_SEQPACKET first, rejects individually
+disabled CREATE/MKDIR hooks, then checks omitted/zero/enabled behavior and cap2.
+Mutation is in-memory control only; production source stays exact candidate bytes.
+Fixture creates a FUSE tree including comma filename; no comma-separated mount
+file argument. Canonical caller parser and short sockets validated before runtime.
+Runtime disk live limit262144 covers metadata24576 + rounded payload4096.
+Final state4096 live/one inode/four written/no handles. Eleven numeric callbacks:
+five CREATE/MKDIR successes, ENOTEMPTY RMDIR, five successful cleanup callbacks.
+All rejected mounted CREATE/MKDIR calls are unobserved at backend; no such error
+callback acceptance claim. Light wire independently covers EEXIST/ENOTDIR/ENOENT.
+Boat bx_fze3b6v4 is snapshot-stopped; completed/verified snapshot after
+mount/process cleanup. Never resume it for this acceptance. Original expiry
+2026-10-30T08:24:10.984Z; task lifecycle explicitly delegated snapshot-stop.
+Full compact logs, pins, failures and controls remain outside Git in /tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/independent-create-mkdir-mounted-evidence.
+No credentials are included. Callback state has only numeric five-field records.
+RAM admission OFF, actual process enforcement retained; host free after267292672
+growth >=2147483648. Local64MiB/remote256MiB each include8MiB reserve.
+Python child DATA128MiB; Git child DATA256MiB, never native Boat parent.
+FSIZE512KiB is distinct from stdout/stderr capture512KiB. Stricter capture64KiB
+control accepts legitimate128KiB generated file and rejects excess output.
+CPU60/wall90, supervisorRSS128MiB/group512MiB. PayloadRSS64MiB/CPU10/wall20.
+Index-free publication on refs/heads/test/toyvm-create-mkdir-independent-mounted-oct30, parent 797b8fce4c17ad3514afea63799519588da981c2; no index rewrite, main changes,
+production edits, rebuilds, packages, public deployment, Telegram or workers.
+If push errors, inspect exact ls-remote before considering any retry; an accepted
+remote commit is sufficient even if local post-push malloc subsequently fails.
