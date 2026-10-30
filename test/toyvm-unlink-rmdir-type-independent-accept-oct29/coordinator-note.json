@@ -1,0 +1,28 @@
+{
+  "task": "toyvm-unlink-rmdir-type-independent-accept-oct29",
+  "outcome": "BLOCKED BEFORE BEHAVIOR; NOT ACCEPTED",
+  "candidate": "6e1ab35cf3e865cb00d8dd9f7c27e082835b17ae",
+  "sourcePins": "All five dispatch pins verified in evidence/input-verification.json",
+  "blocker": "Startup selftest was incorrectly nested as a Python child of ops.py; child hard DATA128 conflicts with configure_parent requirement hard>=256MiB. Stopped without retry or limit change.",
+  "sequence": "Batch mistakenly continued read-only identity and input checks after startup failure; no behavioral tests ran.",
+  "commit": null,
+  "remoteRef": null,
+  "remoteVerified": false,
+  "canonical": null,
+  "evidence": "/tmp/toyvm-unlink-rmdir-type-independent-accept-oct29/repo/test/toyvm-unlink-rmdir-type-independent-accept-oct29/evidence",
+  "remainingGates": [
+    "valid original-parent startup controls",
+    "byte-identical original14case production Backend.handle replay",
+    "independent adversarial and guard mutation acceptance",
+    "qualify_accounted.py OLD backend caller pin",
+    "combined rename integration",
+    "full CLI",
+    "mounted callback (kernel may reject before callback)",
+    "browser/gameplay"
+  ],
+  "productionChanged": false,
+  "originalRuntimeEvidenceChanged": false,
+  "box": null,
+  "lifecycle": "No box assigned or used; coordinator ownership unchanged",
+  "publication": "Stopped on startup rejection: no Git mutation, commit or push; coordinator handles oversized board append"
+}

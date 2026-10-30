@@ -1,0 +1,161 @@
+{
+  "candidate": "6e1ab35cf3e865cb00d8dd9f7c27e082835b17ae",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11111,
+      "sha256": "b273dceaf1d648415fdc1c2aca54ab3d511c81b94bb911e6588a81e1b63c14dc"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "originalRegression": {
+    "bytes": 9346,
+    "sha256": "e9c5265d891a8fa9a1c650a122d5c81bb0f6b00dc69253544f2628a50c341f71"
+  },
+  "originalProvenance": {
+    "publishedCommit": "cd860b562d1524d49d98fc9b3a148f66bbbf3bc3",
+    "publishedPath": "test/toyvm-unlink-rmdir-type-contract-tests-oct29/regression.py",
+    "regressionSha256": "e9c5265d891a8fa9a1c650a122d5c81bb0f6b00dc69253544f2628a50c341f71",
+    "byteIdentical": true,
+    "baseline": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+    "sourcePins": {
+      "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+        "bytes": 8105,
+        "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+        "bytes": 3457,
+        "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+        "bytes": 10877,
+        "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+        "bytes": 4058,
+        "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+      },
+      "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+        "bytes": 23268,
+        "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+      }
+    },
+    "scope": "actual Backend.handle only; no mount argv, checkout, Node, Boat or gameplay execution"
+  },
+  "originalEvidencePins": {
+    "source-pins.json": {
+      "bytes": 1025,
+      "sha256": "132a83fdd5ff2150b8c8c5ce759844dd9fd018f4af065f61467dd5e45b1797d2"
+    },
+    "mutations.json": {
+      "bytes": 2554,
+      "sha256": "c51dcf111e0d0f687a06083f301f9904ce093f5f48bb4893ac681c5723a70c80"
+    },
+    "provenance.json": {
+      "bytes": 1390,
+      "sha256": "0f56fedf35d04da429b9094eecce3e60a6ff18a3ce8ddec9f87929925229733f"
+    },
+    "baseline.json": {
+      "bytes": 31809,
+      "sha256": "a621fe875d7fb99ca4972f2ec3ee669f7f15dd3217cf4d4223c9697ded90722f"
+    },
+    "canonical.json": {
+      "bytes": 32032,
+      "sha256": "d75a66f14eeeec012637b50c755e4edda46499c235576913684c8fada42b0a94"
+    },
+    "regression.py": {
+      "bytes": 9346,
+      "sha256": "e9c5265d891a8fa9a1c650a122d5c81bb0f6b00dc69253544f2628a50c341f71"
+    },
+    "mutations.py": {
+      "bytes": 2133,
+      "sha256": "a03bfb5cc82e200171a109628c21f9e7f4e7e05200b1e96cc0c13aadcca80093"
+    },
+    "README.md": {
+      "bytes": 2422,
+      "sha256": "5409f6ef4ac76f987ba02524b2edbd401e4a5b4c8f5775406f53561f35b6080f"
+    },
+    "evidence/repaired.json": {
+      "bytes": 963,
+      "sha256": "02aecf91366eafbd66982e85523c357448a4bff011c8671c296c9de0f425173f"
+    },
+    "evidence/baseline.stdout.json": {
+      "bytes": 1356,
+      "sha256": "6c36e5a31ac5ab6451800d0eb1dd9bcce45798d9978f75a343ab170fd454389f"
+    },
+    "evidence/mutations.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/repaired.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "evidence/mutations.json": {
+      "bytes": 852,
+      "sha256": "c349edfab084e1d95523bde420787db963a6771b606ffb9d79b852fab28e33e2"
+    },
+    "evidence/prelaunch-controls.json": {
+      "bytes": 539,
+      "sha256": "c9f92085cef41c97f79622393ba227d79ec0683920f176010d807f4fb3259843"
+    },
+    "evidence/quota-preflight.json": {
+      "bytes": 338,
+      "sha256": "9e807dcef053c655fa1276de938def3d9d0eeab2090110024809dac2a40f87af"
+    },
+    "evidence/baseline.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/baseline.json": {
+      "bytes": 933,
+      "sha256": "f2b1a97794942a75ae7450ff131a4112eb1fe3b53c5a48bb49be12b4a325f138"
+    },
+    "evidence/ops.py": {
+      "bytes": 2996,
+      "sha256": "5540d789c4952ebfa9ade34d974a18a8bf4306087fe2154aa879dc196a978892"
+    },
+    "evidence/mutations.stdout": {
+      "bytes": 55,
+      "sha256": "07f7a6ee4db4d62627f29ab09c345e4c644706f136860c5f290688ea741bc1fa"
+    },
+    "evidence/git-readiness.json": {
+      "bytes": 269,
+      "sha256": "e545779f2c70ae549ffeb1f17aeef615dbf642ff931fb6fecf502c999462508f"
+    },
+    "evidence/repaired.stdout.json": {
+      "bytes": 937,
+      "sha256": "af05c11703577320bc780fb96f88f8750e2f926d705a91927c8668ac0b1538c9"
+    }
+  },
+  "limits": [
+    134217728,
+    134217728
+  ],
+  "configuration": {
+    "ssh": "exact ops.py SSH constant; unchanged",
+    "checkout": false,
+    "mountArgv": null,
+    "mountParser": "not applicable: no mount or checkout execution",
+    "node": false,
+    "boat": false
+  }
+}

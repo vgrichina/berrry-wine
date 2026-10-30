@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/toyvm-unlink-rmdir-type-independent-accept-oct29/limit_contract.py",
+    "/tmp/toyvm-unlink-rmdir-type-independent-accept-oct29"
+  ],
+  "cwd": "/tmp/toyvm-unlink-rmdir-type-independent-accept-oct29/repo",
+  "exit": 1,
+  "elapsed": 0.17645499296486378,
+  "admission": {
+    "free": 4523597824,
+    "MemAvailable": 3211395072,
+    "allocated": 2146304,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 0,
+  "stderrBytes": 680
+}
