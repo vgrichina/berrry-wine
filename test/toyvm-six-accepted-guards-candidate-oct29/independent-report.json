@@ -1,0 +1,1982 @@
+{
+  "candidate": "combined namespace source cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105",
+  "sourceSha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105",
+  "scope": "direct Backend.handle op12/op45 only; no mount/kernel/CLI/gameplay",
+  "rows": [
+    {
+      "op": 12,
+      "case": "self",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "descendant-1",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "descendant-4",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "descendant-8",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "cycle-reachable",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "cycle-unrelated",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "cycle-back-to-source",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "upward",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "ancestor",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "unrelated",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "same-path",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 12,
+      "case": "file-into-deep",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "self",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "descendant-1",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "descendant-4",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "descendant-8",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "cycle-reachable",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "cycle-unrelated",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "cycle-back-to-source",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "upward",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "ancestor",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "unrelated",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "same-path",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "op": 45,
+      "case": "file-into-deep",
+      "passed": true,
+      "failures": []
+    }
+  ],
+  "mutations": [
+    {
+      "name": "guard-removed",
+      "sha256": "a4288a80bbbe8efee958dd4645e70d1bf02690ba128618775e59266f44a05d26",
+      "caught": 12,
+      "counterexample": {
+        "op": 12,
+        "case": "self",
+        "passed": false,
+        "failures": [
+          "errno",
+          "result",
+          "complete-instance-state"
+        ],
+        "request": {
+          "src": 1,
+          "dst": 2,
+          "old": {
+            "hex": "6430"
+          },
+          "new": {
+            "hex": "6d6f766564"
+          },
+          "wire": {
+            "hex": "02000000000000006430006d6f76656400"
+          }
+        },
+        "errno": null,
+        "result": {
+          "hex": ""
+        },
+        "before": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd0'": 2,
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        },
+        "expected": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd0'": 2,
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        },
+        "after": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3,
+                "b'moved'": 2
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        }
+      }
+    },
+    {
+      "name": "wrong-errno",
+      "sha256": "0ecca7d0face8d8648755b4fa023dfba114d89b79c86ff296328a2207f464156",
+      "caught": 12,
+      "counterexample": {
+        "op": 12,
+        "case": "self",
+        "passed": false,
+        "failures": [
+          "errno"
+        ],
+        "request": {
+          "src": 1,
+          "dst": 2,
+          "old": {
+            "hex": "6430"
+          },
+          "new": {
+            "hex": "6d6f766564"
+          },
+          "wire": {
+            "hex": "02000000000000006430006d6f76656400"
+          }
+        },
+        "errno": 5,
+        "result": null,
+        "before": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd0'": 2,
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        },
+        "expected": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd0'": 2,
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        },
+        "after": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd0'": 2,
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        }
+      }
+    },
+    {
+      "name": "late-guard",
+      "sha256": "9046f4215b0cf01df35f692684fe7d98eaa24b230299bb6e49958b9ed165bb2e",
+      "caught": 12,
+      "counterexample": {
+        "op": 12,
+        "case": "self",
+        "passed": false,
+        "failures": [
+          "complete-instance-state"
+        ],
+        "request": {
+          "src": 1,
+          "dst": 2,
+          "old": {
+            "hex": "6430"
+          },
+          "new": {
+            "hex": "6d6f766564"
+          },
+          "wire": {
+            "hex": "02000000000000006430006d6f76656400"
+          }
+        },
+        "errno": 22,
+        "result": null,
+        "before": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd0'": 2,
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        },
+        "expected": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd0'": 2,
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        },
+        "after": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3,
+                "b'moved'": 2
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        }
+      }
+    },
+    {
+      "name": "overbroad",
+      "sha256": "cb8c46624b712ad809a85e3de2f7d8fc05239bf28bd45c9525363341162e6c8f",
+      "caught": 10,
+      "counterexample": {
+        "op": 12,
+        "case": "cycle-unrelated",
+        "passed": false,
+        "failures": [
+          "errno",
+          "result",
+          "complete-instance-state"
+        ],
+        "request": {
+          "src": 1,
+          "dst": 11,
+          "old": {
+            "hex": "6430"
+          },
+          "new": {
+            "hex": "6d6f766564"
+          },
+          "wire": {
+            "hex": "0b000000000000006430006d6f76656400"
+          }
+        },
+        "errno": 22,
+        "result": null,
+        "before": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd0'": 2,
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10,
+                "b'loop'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        },
+        "expected": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10,
+                "b'loop'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'moved'": 2
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        },
+        "after": {
+          "root": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/never-mounted",
+          "live_limit": 262144,
+          "write_limit": 65536,
+          "file_limit": 16384,
+          "nodes": {
+            "1": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd0'": 2,
+                "b'sibling'": 11
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "2": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd1'": 3
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "3": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd2'": 4
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "4": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd3'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "5": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd4'": 6
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "6": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd5'": 7,
+                "b'payload'": 12
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "7": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd6'": 8
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "8": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd7'": 9
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "9": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {
+                "b'd8'": 10,
+                "b'loop'": 5
+              },
+              "links": 1,
+              "opens": 0
+            },
+            "10": {
+              "mode": 16872,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "11": {
+              "mode": 16832,
+              "data": {
+                "hex": ""
+              },
+              "names": {},
+              "links": 1,
+              "opens": 0
+            },
+            "12": {
+              "mode": 33152,
+              "data": {
+                "hex": "7061796c6f6164"
+              },
+              "names": {},
+              "links": 1,
+              "opens": 1
+            }
+          },
+          "next": 13,
+          "written": 7,
+          "peak": 53248,
+          "live": 53248,
+          "failure": null,
+          "handles": 1
+        }
+      }
+    }
+  ],
+  "passed": 24,
+  "failed": 0,
+  "mutantsCaught": 4
+}

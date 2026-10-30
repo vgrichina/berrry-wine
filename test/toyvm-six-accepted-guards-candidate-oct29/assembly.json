@@ -1,0 +1,366 @@
+{
+  "base": "545a51f4a11ac2e88293ac2c8dcc6be3b9ceb124",
+  "before": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12321,
+      "sha256": "d129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "after": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12482,
+      "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "donors": [
+    {
+      "path": "/tmp/toyvm-setattr-atomicity-independent-accept-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "pin": {
+        "bytes": 11583,
+        "sha256": "f25724c57b163417b07b6775a9bb05985a5ae8968498887d5e64e56fbf70ae4e"
+      }
+    },
+    {
+      "path": "/tmp/toyvm-create-mkdir-parent-independent-accept-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+      "pin": {
+        "bytes": 11272,
+        "sha256": "e32f69eddb107eede61ee6bbd23a1b8530bfb6b996ee14f098f5655a82ffe7ee"
+      }
+    }
+  ],
+  "productionDiff": "--- \n+++ \n@@ -63,7 +63,9 @@\n \n     def create(self,parent,name,mode):\n         self.valid_name(name)\n-        n=self.nodes[parent]\n+        n=self.nodes.get(parent)\n+        if n is None:raise OSError(errno.ENOENT,'parent missing')\n+        if not stat.S_ISDIR(n['mode']):raise OSError(errno.ENOTDIR,'parent non-directory')\n         if name in n['names']:raise OSError(errno.EEXIST,'exists')\n         self.charge(4096);ino=self.next;self.next+=1\n         self.nodes[ino]=dict(mode=mode,data=bytearray(),names={},links=1,opens=0)\n@@ -97,12 +99,12 @@\n         if op==3:return pack('2Q',0,0)+self.attr(ino)\n         if op==4:\n             valid=unpack('I',data)[0]\n+            if valid&~(1|2|4|8|16|32|64|128|256|512|1024):raise OSError(errno.EOPNOTSUPP,'setattr flags')\n             if valid&8:\n                 size=unpack('Q',data,16)[0];growth=max(0,size-len(self.nodes[ino]['data']))\n                 if self.written+growth>self.write_limit:self.reject('filesystem cumulative write limit')\n                 self.resize(ino,size);self.written+=growth\n             # chmod/chown and timestamps do not change the allocation domain.\n-            if valid&~(1|2|4|8|16|32|64|128|256|512|1024):raise OSError(errno.EOPNOTSUPP,'setattr flags')\n             return pack('2Q',0,0)+self.attr(ino)\n         if op==9:\n             mode=unpack('I',data)[0]\n",
+  "suiteCopies": [
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/accept.py",
+      "before": {
+        "bytes": 7619,
+        "sha256": "466fe4a489c6b7a42696d39a41b9ceb5839ce8373d9134cf9eb446e08befe151"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/accept.py",
+      "after": {
+        "bytes": 7619,
+        "sha256": "466fe4a489c6b7a42696d39a41b9ceb5839ce8373d9134cf9eb446e08befe151"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/cycle-independent.py",
+      "before": {
+        "bytes": 6573,
+        "sha256": "fe030b26b0965cd05ea4af8109b3ac90e67e90bc02d52a0a669928ce0e8847a6"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/cycle-independent.py",
+      "after": {
+        "bytes": 6573,
+        "sha256": "3eff69f3f049c1ea444666098927823dde0e036bc37ed203dd356c17af9089ec"
+      },
+      "diff": "--- \n+++ \n@@ -13,8 +13,8 @@\n HERE = Path(__file__).resolve().parent\n ROOT = HERE.parents[1]\n SOURCE = ROOT / 'test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n-PIN = 'd129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171'\n-CANDIDATE = 'combined namespace source d129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171'\n+PIN = 'cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'\n+CANDIDATE = 'combined namespace source cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'\n \n \n def encode(x):\n@@ -121,7 +121,7 @@\n \n def main():\n     raw = SOURCE.read_bytes()\n-    assert len(raw) == 12321 and hashlib.sha256(raw).hexdigest() == PIN\n+    assert len(raw) == 12482 and hashlib.sha256(raw).hexdigest() == PIN\n     spec = importlib.util.spec_from_file_location('pinned_production_cycle', SOURCE)\n     actual = importlib.util.module_from_spec(spec)\n     spec.loader.exec_module(actual)\n"
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/interactions.py",
+      "before": {
+        "bytes": 3333,
+        "sha256": "dd1165d11f372e4875e88ae051552e3673d614e44146a0e0722181317d27ccfb"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/interactions.py",
+      "after": {
+        "bytes": 3333,
+        "sha256": "d18afe878e876e9ff376a6739a8a01cd66e8eca95600161140a93225e21e0c47"
+      },
+      "diff": "--- \n+++ \n@@ -2,7 +2,7 @@\n import copy, errno, hashlib, importlib.util, json, pathlib, stat, struct\n HERE=pathlib.Path(__file__).resolve().parent\n SOURCE=HERE.parent/'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n-PIN='d129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171'\n+PIN='cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'\n assert hashlib.sha256(SOURCE.read_bytes()).hexdigest()==PIN\n def load(name,path):\n     spec=importlib.util.spec_from_file_location(name,path)\n"
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/contract.py",
+      "before": {
+        "bytes": 7008,
+        "sha256": "bbbc80d984fa962adb8c4bdff0af39cf74623e4ac4c9caeaae677f85f818f79a"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/contract.py",
+      "after": {
+        "bytes": 7008,
+        "sha256": "bbbc80d984fa962adb8c4bdff0af39cf74623e4ac4c9caeaae677f85f818f79a"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/cycle-contract.py",
+      "before": {
+        "bytes": 8447,
+        "sha256": "78b044bac514cdcc747499aebec2214348d92f65467849bf613351be7357fb40"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/cycle-contract.py",
+      "after": {
+        "bytes": 8447,
+        "sha256": "e6511ec2b76d521d695a2d625a704a7c3abc324277a394803b58cdd9788cbbcd"
+      },
+      "diff": "--- \n+++ \n@@ -16,8 +16,8 @@\n \n BASE = Path(__file__).resolve().parents[2]\n SOURCE = BASE / 'test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n-PIN = 'd129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171'\n-CANDIDATE = 'combined namespace source d129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171'\n+PIN = 'cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'\n+CANDIDATE = 'combined namespace source cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'\n CASES = ('self', 'direct-child', 'deeper-descendant', 'unrelated-sibling',\n          'to-root', 'child-to-ancestor', 'same-path')\n INVALID = set(CASES[:3])\n"
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/rename-type-reproduce.py",
+      "before": {
+        "bytes": 976,
+        "sha256": "14f2c2088171ce8837493d78ab056f260507410ba2d647a60571e43b685c58b3"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/rename-type-reproduce.py",
+      "after": {
+        "bytes": 976,
+        "sha256": "14f2c2088171ce8837493d78ab056f260507410ba2d647a60571e43b685c58b3"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/unlink-regression.py",
+      "before": {
+        "bytes": 9351,
+        "sha256": "f4de0e993e54c96ec407dfb104e964c29debe4cae7b552c20602ebb72f553eea"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/unlink-regression.py",
+      "after": {
+        "bytes": 9351,
+        "sha256": "f4de0e993e54c96ec407dfb104e964c29debe4cae7b552c20602ebb72f553eea"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/independent.py",
+      "before": {
+        "bytes": 7941,
+        "sha256": "2c1d998eefdaf351637dfad8dad395f6e507ffce93e79ee538997153dcac79cf"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/independent.py",
+      "after": {
+        "bytes": 7917,
+        "sha256": "a8b17897dccac9e39fcd5588edb6a2dfe9dcbcc4bbb51455336a0552164d6b4a"
+      },
+      "diff": "--- \n+++ \n@@ -10,7 +10,7 @@\n \n HERE = pathlib.Path(__file__).resolve().parent\n ROOT = HERE.parents[1]\n-DISPATCH = pathlib.Path(\"/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/current-dispatch.json\")\n+DISPATCH = pathlib.Path(\"/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/current-dispatch.json\")\n BACKEND = \"test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py\"\n \n class Mismatch(AssertionError):\n"
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/gate.py",
+      "before": {
+        "bytes": 1652,
+        "sha256": "8a1b126009ff9b791fd1e2c393458346ea54d57319931a3da46a8d1f5ae6f18a"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/gate.py",
+      "after": {
+        "bytes": 1628,
+        "sha256": "0a0277df82f39ec76cec36c033c44088601b091ed34dfc803fcacd5fc1dc21f8"
+      },
+      "diff": "--- \n+++ \n@@ -3,7 +3,7 @@\n import hashlib, importlib.util, json, pathlib\n HERE=pathlib.Path(__file__).resolve().parent\n ROOT=HERE.parents[1]\n-DISPATCH=pathlib.Path(\"/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/current-dispatch.json\")\n+DISPATCH=pathlib.Path(\"/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/current-dispatch.json\")\n def main():\n     d=json.loads(DISPATCH.read_text())\n     for name,pin in d[\"sourcePins\"].items():\n"
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/four-interactions.py",
+      "before": {
+        "bytes": 3842,
+        "sha256": "3baf2761e21886a61d7ba42d07c0f874b3930cd7247e5897fdfda52b3db15cf8"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/four-interactions.py",
+      "after": {
+        "bytes": 3842,
+        "sha256": "019ec867f32f192ab60fe5545ad6f4a8b8f6eb49712cbcae610b144759d0be10"
+      },
+      "diff": "--- \n+++ \n@@ -10,7 +10,7 @@\n \n HERE = Path(__file__).resolve().parent\n SOURCE = HERE.parent / 'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n-PIN = 'd129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171'\n+PIN = 'cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'\n assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == PIN\n spec = importlib.util.spec_from_file_location('production_interactions', SOURCE)\n module = importlib.util.module_from_spec(spec)\n"
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/rename-type-accept.py",
+      "before": {
+        "bytes": 9970,
+        "sha256": "0982b22a80d53627e2f3af926ec38a27362ed3d8f0a64c484b6ea44b1704ad3a"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/rename-type-accept.py",
+      "after": {
+        "bytes": 9970,
+        "sha256": "12a9ada82401c1585d007d7498cd4cbb7d4d6ae7e5eb45db049bc9054fc2a40e"
+      },
+      "diff": "--- \n+++ \n@@ -12,7 +12,7 @@\n \n HERE = Path(__file__).resolve().parent\n BACKEND = HERE.parent / 'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n-PIN = 'd129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171'\n+PIN = 'cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'\n \n \n def wire(op, destination_parent, old=b'from', new=b'to', flags=0):\n@@ -202,7 +202,7 @@\n \n if __name__ == '__main__':\n     raw = BACKEND.read_bytes()\n-    assert len(raw) == 12321 and hashlib.sha256(raw).hexdigest() == PIN\n+    assert len(raw) == 12482 and hashlib.sha256(raw).hexdigest() == PIN\n     spec = importlib.util.spec_from_file_location('exact_production_backend', BACKEND)\n     module = importlib.util.module_from_spec(spec)\n     spec.loader.exec_module(module)\n"
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/unlink-independent.py",
+      "before": {
+        "bytes": 9719,
+        "sha256": "764e16b78c280e73ffdc1a173936b994bae2ff90ef91eb3de9e1aceb440b54d2"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/unlink-independent.py",
+      "after": {
+        "bytes": 9719,
+        "sha256": "764e16b78c280e73ffdc1a173936b994bae2ff90ef91eb3de9e1aceb440b54d2"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/fixture.json",
+      "before": {
+        "bytes": 474,
+        "sha256": "1836abfcc48c568c2c78c0821464446c228e189aa63cf0cfc0a5b4c945f39bfe"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/fixture.json",
+      "after": {
+        "bytes": 474,
+        "sha256": "1836abfcc48c568c2c78c0821464446c228e189aa63cf0cfc0a5b4c945f39bfe"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/copy-receipt.json",
+      "before": {
+        "bytes": 379,
+        "sha256": "e772f876791d80e34a4b152ec22d1a877d0ec79f859f7b023b35009c4964e675"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/copy-receipt.json",
+      "after": {
+        "bytes": 379,
+        "sha256": "e772f876791d80e34a4b152ec22d1a877d0ec79f859f7b023b35009c4964e675"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-four-namespace-memory-recovered-candidate-oct29/repo/test/toyvm-four-namespace-memory-recovered-candidate-oct29/pin-update.json",
+      "before": {
+        "bytes": 348,
+        "sha256": "c676ebefa4823b74b0c79a7a0fb4e9a6bf50b08a7f97fea332494e3c5a32fa76"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/pin-update.json",
+      "after": {
+        "bytes": 348,
+        "sha256": "c676ebefa4823b74b0c79a7a0fb4e9a6bf50b08a7f97fea332494e3c5a32fa76"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-setattr-atomicity-independent-accept-oct29/repo/test/toyvm-setattr-atomicity-independent-accept-oct29/verify.py",
+      "before": {
+        "bytes": 8768,
+        "sha256": "433710323c7141982ba39c14c3506ec0016b4cee34c952b9eb5f77555498fdef"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/setattr/verify.py",
+      "after": {
+        "bytes": 8817,
+        "sha256": "577fd6468b9c39b379ab3ef388dbb0c349a55ff5bb94d61d7bdeff2ebcbfc01a"
+      },
+      "diff": "--- \n+++ \n@@ -10,7 +10,7 @@\n import sys\n \n HERE = Path(__file__).resolve().parent\n-SOURCE = HERE.parent / 'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n+SOURCE = Path('/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py')\n MASK = 2047\n \n \n"
+    },
+    {
+      "source": "/tmp/toyvm-setattr-atomicity-independent-accept-oct29/repo/test/toyvm-setattr-atomicity-independent-accept-oct29/independent.py",
+      "before": {
+        "bytes": 9260,
+        "sha256": "99dca7e4ec8b44ab0ee4f889ea93bcca76bd61045cd074a80e2c3a1ea46da611"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/setattr/independent.py",
+      "after": {
+        "bytes": 9309,
+        "sha256": "385b9d3e1434ee64d6d837758f263be5ad83f1e90b9f7f541932d990cc21ae19"
+      },
+      "diff": "--- \n+++ \n@@ -9,8 +9,8 @@\n import struct\n \n HERE = Path(__file__).resolve().parent\n-SOURCE = HERE.parent / 'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n-PIN = 'f25724c57b163417b07b6775a9bb05985a5ae8968498887d5e64e56fbf70ae4e'\n+SOURCE = Path('/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py')\n+PIN = 'cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'\n COUNTS = {}\n \n \n@@ -148,7 +148,7 @@\n \n def main():\n     source = SOURCE.read_bytes()\n-    assert len(source) == 11583 and hashlib.sha256(source).hexdigest() == PIN\n+    assert len(source) == 12482 and hashlib.sha256(source).hexdigest() == PIN\n     cls = load(source.decode())\n     try:\n         cases(cls)\n"
+    },
+    {
+      "source": "/tmp/toyvm-setattr-atomicity-independent-accept-oct29/repo/test/toyvm-setattr-atomicity-independent-accept-oct29/baseline.json",
+      "before": {
+        "bytes": 21857,
+        "sha256": "e085e2c575fd87a11b990c5b17b07adaf1a3981aeffe21e3206e1467bfe42a39"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/setattr/baseline.json",
+      "after": {
+        "bytes": 21857,
+        "sha256": "e085e2c575fd87a11b990c5b17b07adaf1a3981aeffe21e3206e1467bfe42a39"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-create-mkdir-parent-independent-accept-oct29/repo/test/toyvm-create-mkdir-parent-independent-accept-oct29/accept.py",
+      "before": {
+        "bytes": 6588,
+        "sha256": "c4ce9df362ba35ae04c2394d7fb28fbd9d96def7e0786bc14ba55cbb588a3ce0"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/parent/accept.py",
+      "after": {
+        "bytes": 6639,
+        "sha256": "8bfc7af8e85b2e28e66565944ee423586fc57f935ccae874865d7c368f52c2a9"
+      },
+      "diff": "--- \n+++ \n@@ -10,9 +10,9 @@\n import sys\n \n HERE = pathlib.Path(__file__).resolve().parent\n-REPO = HERE.parent.parent\n+REPO = pathlib.Path('/tmp/toyvm-six-accepted-guards-candidate-oct29/repo')\n BACKEND = 'test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n-REPAIRED = dict(bytes=11272, sha256='e32f69eddb107eede61ee6bbd23a1b8530bfb6b996ee14f098f5655a82ffe7ee')\n+REPAIRED = {'bytes': 12482, 'sha256': 'cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'}\n \n def pin(p):\n     blob = p.read_bytes()\n"
+    },
+    {
+      "source": "/tmp/toyvm-create-mkdir-parent-independent-accept-oct29/repo/test/toyvm-create-mkdir-parent-independent-accept-oct29/independent.py",
+      "before": {
+        "bytes": 7685,
+        "sha256": "f0770f2b5c604e6efa7314503d8f2d2d9e9aea1910bb86a50d07796dc424e1c3"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/parent/independent.py",
+      "after": {
+        "bytes": 7734,
+        "sha256": "7eeafda9c86a8eb1af767eebaa70212d8a8fcfa8462dcadc7ca85f452118a150"
+      },
+      "diff": "--- \n+++ \n@@ -11,7 +11,7 @@\n import types\n \n HERE = pathlib.Path(__file__).resolve().parent\n-REPO = HERE.parent.parent\n+REPO = pathlib.Path('/tmp/toyvm-six-accepted-guards-candidate-oct29/repo')\n SOURCE = REPO / 'test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n CANDIDATE = 'a09932adab2510eb1bb1367617708a0b459412b8'\n \n"
+    },
+    {
+      "source": "/tmp/toyvm-create-mkdir-parent-independent-accept-oct29/repo/test/toyvm-create-mkdir-parent-independent-accept-oct29/original-contract.py",
+      "before": {
+        "bytes": 8235,
+        "sha256": "e85608a11c074104a6bdeb0df0e886dc6595a7c778710a73b56a04e9beca1c9b"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/parent/original-contract.py",
+      "after": {
+        "bytes": 8235,
+        "sha256": "e85608a11c074104a6bdeb0df0e886dc6595a7c778710a73b56a04e9beca1c9b"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-create-mkdir-parent-independent-accept-oct29/repo/test/toyvm-create-mkdir-parent-independent-accept-oct29/baseline-results.json",
+      "before": {
+        "bytes": 4619,
+        "sha256": "4b08d5fe2be0e725f395a62aa8006980d5528e3ea573719001321a6fe54d4161"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/parent/baseline-results.json",
+      "after": {
+        "bytes": 4619,
+        "sha256": "4b08d5fe2be0e725f395a62aa8006980d5528e3ea573719001321a6fe54d4161"
+      },
+      "diff": ""
+    },
+    {
+      "source": "/tmp/toyvm-create-mkdir-parent-independent-accept-oct29/repo/test/toyvm-create-mkdir-parent-independent-accept-oct29/identity-update.json",
+      "before": {
+        "bytes": 1572,
+        "sha256": "0ff60c9b19901d71108704a53b06228ecdb7b17a49f40db52d6bec3e753998a9"
+      },
+      "destination": "test/toyvm-six-accepted-guards-candidate-oct29/parent/identity-update.json",
+      "after": {
+        "bytes": 1572,
+        "sha256": "0ff60c9b19901d71108704a53b06228ecdb7b17a49f40db52d6bec3e753998a9"
+      },
+      "diff": ""
+    }
+  ],
+  "scope": "direct Backend.handle only; independent combined acceptance remains required"
+}

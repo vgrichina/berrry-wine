@@ -1,0 +1,38 @@
+{
+  "candidate": "a09932adab2510eb1bb1367617708a0b459412b8",
+  "originalSourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11111,
+      "sha256": "b273dceaf1d648415fdc1c2aca54ab3d511c81b94bb911e6588a81e1b63c14dc"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "repairedBackend": {
+    "bytes": 12482,
+    "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+  },
+  "originalContract": {
+    "bytes": 8284,
+    "sha256": "bd825dcbd017975bbf943f4e85a21ce7763c70349bd466db794e60565a09bed8"
+  },
+  "baselineResults": {
+    "bytes": 4619,
+    "sha256": "4b08d5fe2be0e725f395a62aa8006980d5528e3ea573719001321a6fe54d4161"
+  },
+  "reason": "Explicit backend identity update only; original behavior oracle unchanged; historical candidate in retained artifacts is provenance only."
+}

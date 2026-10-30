@@ -1,0 +1,12 @@
+{
+  "path": "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+  "before": {
+    "bytes": 11245,
+    "sha256": "b27ebfe98312038bf7d8ec13a48c69a3a66a5e8b90af3d62798b296b852e6465"
+  },
+  "after": {
+    "bytes": 12482,
+    "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+  },
+  "onlyChangedPin": true
+}
