@@ -1,6 +1,0 @@
-[
-  "Initial gate incorrectly assigned every peer96MiB; failed then corrected to actual64/64/48/96/96 without executing checkout",
-  "Initial static checker compared parser source hash to receipt hash and asserted before checkout; corrected to named parserSHA256 field plus separate receipt hash",
-  "Subsequent sequential shell pool gitbatch encountered missing plan after preceding static assertion; no Git executed",
-  "Oversized readonly parser receipt cat truncated; no resource acceptance inferred; use compact parsed receipt subsequently"
-]

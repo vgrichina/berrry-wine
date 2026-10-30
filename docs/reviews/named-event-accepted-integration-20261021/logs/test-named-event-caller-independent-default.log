@@ -1,7 +1,0 @@
-PASS transport 0
-PASS malformed 0
-PASS qualification 0
-PASS reject-late-entry 1
-PASS ack-tick 0
-PASS ack-domain 0
-PASS ack-missing 0
