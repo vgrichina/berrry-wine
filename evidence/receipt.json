@@ -1,0 +1,104 @@
+{
+  "admission": {
+    "aggregate": 125829120,
+    "failures": [],
+    "lastSample": {
+      "MemAvailable": 2690424832,
+      "PASS": true,
+      "admissionSHA256": "d0a6308a59060745b2f663a46acd62139fb098e9a600477e38b992e4c08864b1",
+      "aggregate": 125829120,
+      "at": "2026-10-29T02:20:44.931036+00:00",
+      "blockSize": 4096,
+      "completeTaskFootprint": 4196396,
+      "device": 64769,
+      "eventBytes": 355815,
+      "f_bavail": 1226574,
+      "free": 5024047104,
+      "operation": "final-tracked-tree-check",
+      "ownedLogicalBytes": 3078884,
+      "positiveSharedWALGrowthCountedOnce": 0,
+      "projection": 125829120,
+      "publicationAndUncertaintyReserve": 8388608,
+      "requiredBytes": 3175088128,
+      "sessionBytes": 761697
+    },
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-cleanup-receipt-independent-accept-oct29-admission.json",
+    "reservation": 25165824,
+    "retainedThroughCoordinatorCloseout": true,
+    "sha256": "d0a6308a59060745b2f663a46acd62139fb098e9a600477e38b992e4c08864b1"
+  },
+  "at": "2026-10-29T02:20:44.986106+00:00",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanup": {
+    "boxExpiry": null,
+    "boxID": null,
+    "boxState": null,
+    "browserAllowanceConsumed": false,
+    "noBackendOrChildSpawned": true,
+    "noBoxAssigned": true,
+    "perOperationProcessGroupCleanup": true,
+    "rootAndDonorsReadOnly": true,
+    "shutdownOwner": "coordinator",
+    "trackedTaskTreeMatchesCommit": true
+  },
+  "dispatch": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-cleanup-receipt-independent-accept-oct29-dispatch.json",
+    "sha256": "a4c6f97ff500a901777c34d2fe2b6467cdc725ae237929ced66d6240efc41d6f"
+  },
+  "harnessIncidents": [
+    "initial mount counter shared across API/CLI, corrected fixture isolation only; initial stdout/stderr preserved",
+    "diff --check flags verbatim Git hint trailing spaces; code/report check passed, raw evidence retained"
+  ],
+  "inputPins": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo/evidence/input-pins.json",
+  "launcherInheritedLimitsAtCloseout": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "limitations": [
+    "deterministic fixtures only; no actual backend/kernel/mount/process reap/browser acceptance",
+    "CLI script entry executed in process with fake I/O, not a real runtime CLI process"
+  ],
+  "manifest": {
+    "path": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo/test/toyvm-cleanup-receipt-independent-accept-oct29/manifest.json",
+    "sha256": "4c8b640484810fa3be99a10e67cf10b1c9e8fd17dfd3a6126207ac50e144ce73",
+    "verified": true
+  },
+  "mountArgv": [],
+  "mountFiles": [],
+  "publication": {
+    "commit": "7e07875383031bc000b1e9417c39e86300ab2a3b",
+    "remoteBranch": "refs/heads/task/toyvm-cleanup-receipt-independent-accept-oct29",
+    "remoteSHA": "7e07875383031bc000b1e9417c39e86300ab2a3b",
+    "verified": true
+  },
+  "remainingGates": [
+    "coordinator board delivery",
+    "coordinator decision on integration; no main integration authorized here"
+  ],
+  "resourceIncidents": [],
+  "rootRefInitialReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-cleanup-receipt-independent-accept-oct29/root-ref-digest.json",
+  "sourceBlobs": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo/evidence/source-blobs.txt",
+  "task": "toyvm-cleanup-receipt-independent-accept-oct29",
+  "tests": {
+    "actualRuntimeSpawns": 0,
+    "mutation": "rejected exit1; malformed False accepted only by mutation; exact API+CLI witness in rejecting-mutation.stdout",
+    "newIndependentAPIScriptCLI": 32,
+    "prior78NotReplayed": true,
+    "unchangedReproducer": "PASS"
+  },
+  "verdict": "PASS bounded independent cleanup receipt contract acceptance"
+}

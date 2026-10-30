@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "import os;print(os.getcwd())"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+  "descendantCleanup": "killpg after completion",
+  "exit": 0,
+  "limitFailure": null,
+  "peakGroupRSS": 8650752,
+  "stderr": "owned-sentinel.stderr",
+  "stdout": "owned-sentinel.stdout"
+}

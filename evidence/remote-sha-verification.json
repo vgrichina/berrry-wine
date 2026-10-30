@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+    "ls-remote",
+    "--heads",
+    "origin",
+    "refs/heads/task/toyvm-cleanup-receipt-independent-accept-oct29"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+  "descendantCleanup": "killpg after completion",
+  "exit": 0,
+  "limitFailure": null,
+  "peakGroupRSS": 32489472,
+  "stderr": "remote-sha-verification.stderr",
+  "stdout": "remote-sha-verification.stdout"
+}

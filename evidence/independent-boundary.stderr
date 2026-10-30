@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo/accept_independent.py", line 119, in <module>
+    one('adapter-unmount-failure-after-success',None,mode='unmount-fails',unmount_exit=1)
+  File "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo/accept_independent.py", line 95, in one
+    assert json.loads(json.dumps(api))==cli,(name,'API CLI differ')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('adapter-unmount-failure-after-success', 'API CLI differ')

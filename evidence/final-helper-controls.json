@@ -1,0 +1,14 @@
+{
+  "helperSHA256": "cb69dbaa0b997f3082d0af8350141a22dad165307bcf061a6981c041642840e3",
+  "mountArgv": [],
+  "mountFiles": [],
+  "noNode": true,
+  "parserApplicable": false,
+  "rejected": [
+    "/home/user/wine-assembly",
+    "/",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+    "omitted"
+  ],
+  "sentinel": true
+}

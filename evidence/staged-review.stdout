@@ -1,0 +1,126 @@
+ .../REPORT.md                                      |  86 ++++
+ .../accept_independent.py                          | 128 ++++++
+ .../evidence/actual-cli-boundary-final.json        |  15 +
+ .../evidence/actual-cli-boundary-final.stderr      |   0
+ .../evidence/actual-cli-boundary-final.stdout      |  33 ++
+ ...dapter-mount-remains-after-success-witness.json |  48 ++
+ ...apter-server-failure-after-success-witness.json | 106 +++++
+ ...pter-unmount-failure-after-success-witness.json |  48 ++
+ .../evidence/admission.jsonl                       |  39 ++
+ .../checkout-identity-absolute-git-dir.json        |  16 +
+ .../checkout-identity-absolute-git-dir.stderr      |   0
+ .../checkout-identity-absolute-git-dir.stdout      |   1 +
+ .../evidence/checkout-identity-show-toplevel.json  |  16 +
+ .../checkout-identity-show-toplevel.stderr         |   0
+ .../checkout-identity-show-toplevel.stdout         |   1 +
+ .../evidence/checkout.json                         |  18 +
+ .../evidence/checkout.stderr                       |   2 +
+ .../evidence/checkout.stdout                       |   0
+ .../evidence/checkpoint.json                       |  10 +
+ .../config-email-identity-absolute-git-dir.json    |  16 +
+ .../config-email-identity-absolute-git-dir.stderr  |   0
+ .../config-email-identity-absolute-git-dir.stdout  |   1 +
+ .../config-email-identity-show-toplevel.json       |  16 +
+ .../config-email-identity-show-toplevel.stderr     |   0
+ .../config-email-identity-show-toplevel.stdout     |   1 +
+ .../evidence/config-email.json                     |  17 +
+ .../evidence/config-email.stderr                   |   0
+ .../evidence/config-email.stdout                   |   0
+ .../config-name-identity-absolute-git-dir.json     |  16 +
+ .../config-name-identity-absolute-git-dir.stderr   |   0
+ .../config-name-identity-absolute-git-dir.stdout   |   1 +
+ .../config-name-identity-show-toplevel.json        |  16 +
+ .../config-name-identity-show-toplevel.stderr      |   0
+ .../config-name-identity-show-toplevel.stdout      |   1 +
+ .../evidence/config-name.json                      |  17 +
+ .../evidence/config-name.stderr                    |   0
+ .../evidence/config-name.stdout                    |   0
+ .../disable-auto-gc-identity-absolute-git-dir.json |  16 +
+ ...isable-auto-gc-identity-absolute-git-dir.stderr |   0
+ ...isable-auto-gc-identity-absolute-git-dir.stdout |   1 +
+ .../disable-auto-gc-identity-show-toplevel.json    |  16 +
+ .../disable-auto-gc-identity-show-toplevel.stderr  |   0
+ .../disable-auto-gc-identity-show-toplevel.stdout  |   1 +
+ .../evidence/disable-auto-gc.json                  |  17 +
+ .../evidence/disable-auto-gc.stderr                |   0
+ .../evidence/disable-auto-gc.stdout                |   0
+ .../disable-hooks-identity-absolute-git-dir.json   |  16 +
+ .../disable-hooks-identity-absolute-git-dir.stderr |   0
+ .../disable-hooks-identity-absolute-git-dir.stdout |   1 +
+ .../disable-hooks-identity-show-toplevel.json      |  16 +
+ .../disable-hooks-identity-show-toplevel.stderr    |   0
+ .../disable-hooks-identity-show-toplevel.stdout    |   1 +
+ .../evidence/disable-hooks.json                    |  17 +
+ .../evidence/disable-hooks.stderr                  |   0
+ .../evidence/disable-hooks.stdout                  |   0
+ .../evidence/exact-source-blobs.json               |  34 ++
+ .../evidence/exact-source-blobs.stderr             |   1 +
+ .../evidence/exact-source-blobs.stdout             |  17 +
+ .../evidence/final-helper-controls.json            |  14 +
+ .../evidence/final-owned-sentinel.json             |  15 +
+ .../evidence/final-owned-sentinel.stderr           |   0
+ .../evidence/final-owned-sentinel.stdout           |   1 +
+ .../evidence/independent-boundary-final.json       |  15 +
+ .../evidence/independent-boundary-final.stderr     |   0
+ .../evidence/independent-boundary-final.stdout     |  33 ++
+ .../evidence/independent-boundary.json             |  15 +
+ .../evidence/independent-boundary.stderr           |   7 +
+ .../evidence/independent-boundary.stdout           |  29 ++
+ .../evidence/init.json                             |  16 +
+ .../evidence/init.stderr                           |  10 +
+ .../evidence/init.stdout                           |   1 +
+ .../evidence/input-pins.json                       |  46 ++
+ .../evidence/mutated-caller.txt                    | 156 +++++++
+ .../evidence/mutation.json                         |   7 +
+ .../evidence/owned-sentinel.json                   |  14 +
+ .../evidence/owned-sentinel.stderr                 |   0
+ .../evidence/owned-sentinel.stdout                 |   1 +
+ .../evidence/published-layout-check.json           |  15 +
+ .../evidence/published-layout-check.stderr         |   0
+ .../evidence/published-layout-check.stdout         |  33 ++
+ .../evidence/rejecting-mutation.json               |  16 +
+ .../evidence/rejecting-mutation.stderr             |   7 +
+ .../evidence/rejecting-mutation.stdout             |  32 ++
+ .../evidence/remote-branch-before.json             |  18 +
+ .../evidence/remote-branch-before.stderr           |   0
+ .../evidence/remote-branch-before.stdout           |   0
+ .../evidence/remote-identity-absolute-git-dir.json |  16 +
+ .../remote-identity-absolute-git-dir.stderr        |   0
+ .../remote-identity-absolute-git-dir.stdout        |   1 +
+ .../evidence/remote-identity-show-toplevel.json    |  16 +
+ .../evidence/remote-identity-show-toplevel.stderr  |   0
+ .../evidence/remote-identity-show-toplevel.stdout  |   1 +
+ .../evidence/remote.json                           |  18 +
+ .../evidence/remote.stderr                         |   0
+ .../evidence/remote.stdout                         |   0
+ .../evidence/reproducer-preservation.json          |   6 +
+ .../evidence/review-production-diff.json           |  16 +
+ .../evidence/review-production-diff.stderr         |   0
+ .../evidence/review-production-diff.stdout         |   0
+ .../evidence/source-blobs.txt                      |  17 +
+ .../sparse-init-identity-absolute-git-dir.json     |  16 +
+ .../sparse-init-identity-absolute-git-dir.stderr   |   0
+ .../sparse-init-identity-absolute-git-dir.stdout   |   1 +
+ .../sparse-init-identity-show-toplevel.json        |  16 +
+ .../sparse-init-identity-show-toplevel.stderr      |   0
+ .../sparse-init-identity-show-toplevel.stdout      |   1 +
+ .../evidence/sparse-init.json                      |  17 +
+ .../evidence/sparse-init.stderr                    |   0
+ .../evidence/sparse-init.stdout                    |   0
+ .../sparse-set-identity-absolute-git-dir.json      |  16 +
+ .../sparse-set-identity-absolute-git-dir.stderr    |   0
+ .../sparse-set-identity-absolute-git-dir.stdout    |   1 +
+ .../sparse-set-identity-show-toplevel.json         |  16 +
+ .../sparse-set-identity-show-toplevel.stderr       |   0
+ .../sparse-set-identity-show-toplevel.stdout       |   1 +
+ .../evidence/sparse-set.json                       |  34 ++
+ .../evidence/sparse-set.stderr                     |   0
+ .../evidence/sparse-set.stdout                     |   0
+ .../evidence/startup.json                          |  43 ++
+ .../evidence/test-summary.json                     |  11 +
+ .../evidence/unchanged-reproducer.json             |  15 +
+ .../evidence/unchanged-reproducer.stderr           |   0
+ .../evidence/unchanged-reproducer.stdout           |   1 +
+ .../manifest.json                                  | 501 +++++++++++++++++++++
+ .../supervisor.py                                  | 101 +++++
+ 125 files changed, 2206 insertions(+)

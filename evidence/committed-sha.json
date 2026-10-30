@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+    "rev-parse",
+    "HEAD"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+  "descendantCleanup": "killpg after completion",
+  "exit": 0,
+  "limitFailure": null,
+  "peakGroupRSS": 17301504,
+  "stderr": "committed-sha.stderr",
+  "stdout": "committed-sha.stdout"
+}

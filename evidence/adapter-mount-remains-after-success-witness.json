@@ -1,0 +1,48 @@
+{
+  "actualSpawns": 0,
+  "api": {
+    "accepted": false,
+    "accountingAccepted": false,
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": false,
+    "error": "RuntimeError: filesystem cleanup failed: {\"unmountExit\": 0, \"unmountStdout\": \"\", \"unmountStderr\": \"fixture cleanup failure\", \"remainingMounts\": [\"fixture /tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo/owned-fixture-9700eomw/domain\"], \"serverExit\": -15, \"serverStdout\": \"\", \"serverStderr\": \"\"}"
+  },
+  "cli": {
+    "accepted": false,
+    "accountingAccepted": false,
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": false,
+    "error": "RuntimeError: filesystem cleanup failed: {\"unmountExit\": 0, \"unmountStdout\": \"\", \"unmountStderr\": \"fixture cleanup failure\", \"remainingMounts\": [\"fixture /tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo/owned-fixture-9700eomw/domain\"], \"serverExit\": -15, \"serverStdout\": \"\", \"serverStderr\": \"\"}"
+  },
+  "cliExit": 1,
+  "expected": false,
+  "name": "adapter-mount-remains-after-success",
+  "trace": [
+    "exact-pinned-adapter-loaded",
+    "exact-pinned-supervisor-imported",
+    "fake-server-Popen",
+    "tiny-supervisor-fixture",
+    "fake-unmount",
+    "fake-server-terminate",
+    "fake-server-communicate",
+    "exact-pinned-adapter-loaded",
+    "exact-pinned-supervisor-imported",
+    "fake-server-Popen",
+    "tiny-supervisor-fixture",
+    "fake-unmount",
+    "fake-server-terminate",
+    "fake-server-communicate"
+  ]
+}

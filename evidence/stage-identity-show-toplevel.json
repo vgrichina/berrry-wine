@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+    "rev-parse",
+    "--show-toplevel"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+  "descendantCleanup": "killpg after completion",
+  "exit": 0,
+  "limitFailure": null,
+  "peakGroupRSS": 17956864,
+  "stderr": "stage-identity-show-toplevel.stderr",
+  "stdout": "stage-identity-show-toplevel.stdout"
+}

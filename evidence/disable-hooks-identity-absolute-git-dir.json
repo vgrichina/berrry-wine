@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+    "rev-parse",
+    "--absolute-git-dir"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+  "descendantCleanup": "killpg after completion",
+  "exit": 0,
+  "limitFailure": null,
+  "peakGroupRSS": 17825792,
+  "stderr": "disable-hooks-identity-absolute-git-dir.stderr",
+  "stdout": "disable-hooks-identity-absolute-git-dir.stdout"
+}

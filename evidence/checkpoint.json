@@ -1,0 +1,10 @@
+{
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "independentBoundary": "PASS",
+  "pending": [
+    "rejecting mutation",
+    "publication"
+  ],
+  "testSHA256": "4a0a2d741616eb9e9239426da0093866ecf45b3bbafa6cc5eeae1752cc7f0fd6",
+  "unchangedReproducer": "PASS"
+}

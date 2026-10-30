@@ -1,0 +1,7 @@
+{
+  "change": "remove exact-int unmountExit check only",
+  "exit": 1,
+  "mutantSHA256": "f8e2297c6dbe9189b806a44ac92274d825885e716c1664fecfa1fb113a36930f",
+  "rejected": true,
+  "sourceSHA256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+}

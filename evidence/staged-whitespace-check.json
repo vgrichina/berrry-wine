@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-independent-accept-oct29/repo",
+  "descendantCleanup": "killpg after completion",
+  "exit": 2,
+  "limitFailure": null,
+  "peakGroupRSS": 25952256,
+  "stderr": "staged-whitespace-check.stderr",
+  "stdout": "staged-whitespace-check.stdout"
+}
