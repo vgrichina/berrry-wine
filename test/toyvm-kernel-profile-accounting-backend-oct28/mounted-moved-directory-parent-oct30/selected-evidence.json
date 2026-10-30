@@ -1,0 +1,54 @@
+{
+  "uniqueArtifactBytes": 108676,
+  "target": 196608,
+  "artifacts": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/fixture.py": {
+      "bytes": 2236,
+      "sha256": "58dc4274a8faf37964e49c283609caf4a162143ef983f6adbb22466ffa8d1d65"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/observer.py": {
+      "bytes": 5327,
+      "sha256": "34bd21424bc2a0f16226f2b3be7b4068a99ea2b91e511b7f6770c656ec4f69f9"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/sitecustomize.py": {
+      "bytes": 1541,
+      "sha256": "d1d14797a441e040910e9636cf41da9cf51c7fd3702cd38ab2e9c59049e6b425"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/raw-runtime.json": {
+      "bytes": 29652,
+      "sha256": "74434595d4edbc8d6065a49e3290feb9220e9f318d16ac3c0ae93ac8a7679eb0"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/mounted-result.json": {
+      "bytes": 29300,
+      "sha256": "a324d57ed4535d0f6fd6734df54c549173f238175cc448c749790d3992cfe29d"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/source-pins.json": {
+      "bytes": 4173,
+      "sha256": "bd0d0ea3fd60fce74ee0dd218e23eb6247dedad81b531ad5a8fc9e1e7cea852f"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/preflight.json": {
+      "bytes": 13851,
+      "sha256": "eb321a78bd45e3c7233ac9d5895c5c728c4062ef90e31cd2e9f0636424262797"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/lifecycle-proof.json": {
+      "bytes": 616,
+      "sha256": "d497b93be12aefc8157f2357174fc1a3d63d657908a5e0b3fe8bd57742de2e60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/fork-source-receipt.json": {
+      "bytes": 1416,
+      "sha256": "e741909b21c5b85f77f8cb959c462835e0d7c5e9c8276a2df89bd5886ce7a64b"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/recovery-recipe.txt": {
+      "bytes": 4282,
+      "sha256": "e1aea5106f58f72acac7a9a22fca82e3c03e9914846afabc00b281c34cf75ef8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/allocation-publication-receipt.json": {
+      "bytes": 10116,
+      "sha256": "4c41765811e8e622330a0f99b889ba64495859bcbbf6ee0033c618fe6a9f5baa"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-moved-directory-parent-oct30/accept.py": {
+      "bytes": 6166,
+      "sha256": "f64d10126338ca2b8252dd55793b6945c0cfbfe9e9ea55bea3ed65ba5357e373"
+    }
+  }
+}
