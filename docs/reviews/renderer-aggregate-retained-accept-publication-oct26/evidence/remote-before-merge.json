@@ -1,7 +1,0 @@
-{
-  "remoteMain": "ef10196a82eaad6d374617fc4a08f108487d264a",
-  "mergeBase": "c3d394149406189cf1c5dbbc434491f0130666c9",
-  "candidate": "ac353e22af299eb6960f78edc1db0d5e8e81b4a4",
-  "head": "1edf0ba0ac9334d44c4285e966a2bc665933e664",
-  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
-}

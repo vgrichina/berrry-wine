@@ -1,9 +1,0 @@
-PASS awaiting-select UOP switch reproducer and unchanged-mode control
-PASS start mode and select ownership guards reject before beginning select
-PASS completion mode mismatch and established completion ABI
-PASS call guard inventory preserves source, register and return anchors
-PASS return guard inventory preserves frame and direct mapping rejection
-PASS nonowner hooks and nested CRT returns stay inert
-PASS first rejection is immutable, no reset, fresh instance has no stale reason
-PASS successful native capture keeps zero diagnostics
-{"schema":"offline-native-guard-regression/v1","baseline":true,"groups":8,"originalGameAcceptance":false,"measuredCause":"UNKNOWN"}
