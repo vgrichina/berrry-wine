@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-accepted-syntax-current-main-integration-oct29/repo",
+    "ls-remote",
+    "origin",
+    "refs/heads/main"
+  ],
+  "cwd": "/tmp/tuxracer-accepted-syntax-current-main-integration-oct29/repo",
+  "code": 0,
+  "peakPhysicalRSS": 15278080,
+  "wall": 1.767916192067787,
+  "incident": null,
+  "cleanup": "process group killed; child reaped",
+  "stdoutBytes": 57,
+  "stderrBytes": 0
+}

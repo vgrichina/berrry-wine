@@ -1,0 +1,35 @@
+{
+  "base": "00f76bfc8bfa5b99a778014cc0e89f3700f65393",
+  "candidate": "e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803",
+  "acceptance": "2383e626bfd0bbe254fb5d794f2e16b1a1f8618a",
+  "files": {
+    "tools/recovery/tuxracer-original-win32-recovery-oct28.py": {
+      "bytes": 25633,
+      "sha256": "17536ba93021a4d7061b542876eaecef6f1f716fa3e420ef283b2804c50b6c04"
+    },
+    "tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py": {
+      "bytes": 6044,
+      "sha256": "3ecefa68101ed95de354e598e290b0bbd6c1a5f959a252ec0e04b9e63906742c"
+    },
+    "tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md": {
+      "bytes": 4878,
+      "sha256": "b81b4dca51d849cb720db6dcdfb7d9b6120934ae8964b2b1e4115bb9734edb05"
+    },
+    "tools/recovery/test-tuxracer-published-syntax-independent-accept-oct29.py": {
+      "bytes": 5497,
+      "sha256": "43792772a2c60d9427a61da334047c92e695deff569ab116d899777c5a494c1c"
+    },
+    "tools/recovery/tuxracer-published-syntax-independent-accept-oct29-evidence.json": {
+      "bytes": 16405,
+      "sha256": "546d61c1be3e9537dac11455baf06fa0e028751f826d83a5911bf7518621a147"
+    },
+    "tools/recovery/tuxracer-published-syntax-independent-accept-oct29-report.md": {
+      "bytes": 4648,
+      "sha256": "de4d0f654328d7b6873623c9e8cd1be86b8b6cd40f4cc5b2821c28566556e3cf"
+    }
+  },
+  "mainScanner": {
+    "bytes": 25097,
+    "sha256": "69257615178adda7568036fc49e2f20b4ca602c6d3b734f1238caf6143021b17"
+  }
+}

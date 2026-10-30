@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-accepted-syntax-current-main-integration-oct29/repo",
+    "remote",
+    "add",
+    "origin",
+    "git@github.com:vgrichina/wine-assembly.git"
+  ],
+  "cwd": "/tmp/tuxracer-accepted-syntax-current-main-integration-oct29/repo",
+  "code": 0,
+  "peakPhysicalRSS": 0,
+  "wall": 0.03546529007144272,
+  "incident": null,
+  "cleanup": "process group killed; child reaped",
+  "stdoutBytes": 0,
+  "stderrBytes": 0
+}

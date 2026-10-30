@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "print(\"owned cwd positive control\")"
+  ],
+  "cwd": "/tmp/tuxracer-accepted-syntax-current-main-integration-oct29/repo",
+  "code": 0,
+  "peakPhysicalRSS": 8388608,
+  "wall": 0.03406134690158069,
+  "incident": null,
+  "cleanup": "process group killed; child reaped",
+  "stdoutBytes": 27,
+  "stderrBytes": 0
+}

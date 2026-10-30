@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-accepted-syntax-current-main-integration-oct29/repo",
+    "config",
+    "core.sparseCheckout",
+    "true"
+  ],
+  "cwd": "/tmp/tuxracer-accepted-syntax-current-main-integration-oct29/repo",
+  "code": 0,
+  "peakPhysicalRSS": 0,
+  "wall": 0.0338609809987247,
+  "incident": null,
+  "cleanup": "process group killed; child reaped",
+  "stdoutBytes": 0,
+  "stderrBytes": 0
+}

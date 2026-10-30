@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-accepted-syntax-current-main-integration-oct29/repo",
+    "config",
+    "user.email",
+    "wine-ops@users.noreply.github.com"
+  ],
+  "cwd": "/tmp/tuxracer-accepted-syntax-current-main-integration-oct29/repo",
+  "code": 0,
+  "peakPhysicalRSS": 0,
+  "wall": 0.03500656899996102,
+  "incident": null,
+  "cleanup": "process group killed; child reaped",
+  "stdoutBytes": 0,
+  "stderrBytes": 0
+}

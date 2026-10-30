@@ -1,0 +1,57 @@
+{
+  "at": 1793241047.445454,
+  "sessionID": "01a1857d-b0d6-75a2-b66d-9cd6dd61eb85",
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-29-29-01a1857d-b0d6-75a2-b66d-9cd6dd61eb85.jsonl"
+  ],
+  "sessionBaseline": {
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-29-29-01a1857d-b0d6-75a2-b66d-9cd6dd61eb85.jsonl": 385318
+  },
+  "walBaseline": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4235392,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  },
+  "eventsBaseline": 98304,
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_RSS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ],
+    "RLIMIT_NOFILE": [
+      1024,
+      1048576
+    ]
+  },
+  "mountArgv": [],
+  "runtime": false,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-accepted-syntax-current-main-integration-oct29/root-ref-digest.json",
+  "forecastMiB": {
+    "sourceGit": 3,
+    "tests": 1,
+    "evidence": 1,
+    "eventsWAL": 8,
+    "publication": 3,
+    "buffer": 8
+  }
+}
