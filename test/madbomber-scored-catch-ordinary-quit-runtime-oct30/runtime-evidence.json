@@ -1,0 +1,268 @@
+{
+  "app": "original Mad Bomber",
+  "qualification": "HISTORICAL build",
+  "startedAt": "2026-10-30T04:01:01.176788+00:00",
+  "finishedAt": "2026-10-30T04:02:37.297021+00:00",
+  "elapsed": 96.12022695399997,
+  "exitCode": 0,
+  "reason": "guest exited",
+  "peakGroupRSS": 321122304,
+  "command": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "test/run.js",
+    "--app=madbomber",
+    "--no-build",
+    "--wasm=/home/user/madbomber-runtime/runner/build/wine-assembly.wasm",
+    "--control-stdin",
+    "--no-threads",
+    "--real-ticks",
+    "--time-scale=1",
+    "--real-calendar",
+    "--tz=UTC",
+    "--batch-size=200000",
+    "--max-batches=10000000",
+    "--max-seconds=150",
+    "--quiet-api",
+    "--no-close",
+    "--trace-input"
+  ],
+  "events": [
+    {
+      "elapsed": 6.081717108000021,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    },
+    {
+      "elapsed": 6.306193752000013,
+      "event": {
+        "cmd": "keyup:13"
+      }
+    },
+    {
+      "elapsed": 8.076004542000021,
+      "event": {
+        "cmd": "mousemove:320:400"
+      }
+    },
+    {
+      "elapsed": 11.074527929999988,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "elapsed": 11.296654431999968,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "elapsed": 20.017768092999972,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture/scored20.png"
+      }
+    },
+    {
+      "elapsed": 35.03110365700002,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture/scored35.png"
+      }
+    },
+    {
+      "elapsed": 50.00833061200001,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture/scored50.png"
+      }
+    },
+    {
+      "elapsed": 65.057058858,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture/scored65.png"
+      }
+    },
+    {
+      "elapsed": 71.792972211,
+      "event": {
+        "cmd": "mousemove:308:400"
+      }
+    },
+    {
+      "elapsed": 71.79298011499998,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "elapsed": 72.01594404999997,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "elapsed": 72.45904067800001,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture/aim.png"
+      }
+    },
+    {
+      "elapsed": 80.063934002,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture/scored80.png"
+      }
+    },
+    {
+      "elapsed": 90.05824046800001,
+      "event": {
+        "cmd": "keydown:27"
+      }
+    },
+    {
+      "elapsed": 90.28111397599997,
+      "event": {
+        "cmd": "keyup:27"
+      }
+    },
+    {
+      "elapsed": 92.04253147200001,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture/title-quit.png"
+      }
+    },
+    {
+      "elapsed": 93.03480212800002,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 93.25855689600002,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 93.47847561599997,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 93.69939590799999,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 93.81083017899999,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 94.03034581700001,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 94.25083303999997,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 94.46910780999997,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 94.688402865,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 94.90730718100002,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 96.00891142299997,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    }
+  ],
+  "runtimeSource": "72e7a30d6e36df896eb25007b6139d750e715720",
+  "buildSource": "30a2c3fb1b5c2bfa8a6b001d7394d5cf50df295d",
+  "wasmSHA256": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c",
+  "captures": [
+    {
+      "path": "/home/user/madbomber-runtime/capture/aim.png",
+      "bytes": 301209,
+      "sha256": "ab7632ab134c3c02867206ba27de0e8023e36869fd4cf3b6acf874e3e68236e0"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture/scored35.png",
+      "bytes": 298364,
+      "sha256": "987d8f6e240b6c7b82d8333536b16ebba05eff751b0e12053cbc2ec0fb5dffbb"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture/scored20.png",
+      "bytes": 298334,
+      "sha256": "b415abd295b379386495f166d80b02662285ff62d3574277fa9606b32ab1cd4b"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture/scored50.png",
+      "bytes": 298334,
+      "sha256": "b415abd295b379386495f166d80b02662285ff62d3574277fa9606b32ab1cd4b"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture/scored80.png",
+      "bytes": 300947,
+      "sha256": "33058bb45ef18f9157092e69c3647b96fb347a526e1ac33b01d91be8be37b7b8"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture/title-quit.png",
+      "bytes": 169523,
+      "sha256": "0b251ad5c9b05bff3422f4e5571714ae388408cf54da752cb12a2d7c01932449"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture/scored65.png",
+      "bytes": 298740,
+      "sha256": "36f2ca9864565ea6937520ad16afc26ac9b7115f65a3b73b5c3acc8c94047437"
+    }
+  ],
+  "allocation": {
+    "MemAvailable": 7253303296,
+    "allocated": 31199232
+  },
+  "scope": "one production invocation; visual gates require inspection",
+  "acceptance": {
+    "scoredCatch": true,
+    "visibleScore": 3,
+    "scoreCapture": "scored80.png",
+    "scoreCaptureElapsed": 80,
+    "ordinaryGuestQuit": true,
+    "exitLog": "[Exit] code=0",
+    "exitVia": "Escape, five Down key presses, Enter on title Exit",
+    "renderOnly": false,
+    "guestMemoryOrSyntheticCallbacks": false,
+    "scope": "one historical original Mad Bomber run; no current-main qualification",
+    "remainingGates": [
+      "current-main runtime qualification",
+      "optional restart/reset not repeated"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "bx_mj8vhgjt",
+  "createdAt": "2026-10-30T03:59:40.722Z",
+  "nativeExpiry": "2026-10-30T04:29:40.722Z",
+  "guestCutoff": "2026-10-30T04:19:40.722Z",
+  "handback": "2026-10-30T04:22:40.722Z",
+  "shutdown": "2026-10-30T04:24:40.722Z",
+  "lifecycleOwner": "coordinator; worker explicitly delegated snapshot-stop on completion or blocker"
+}
