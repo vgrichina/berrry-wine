@@ -1,0 +1,16 @@
+{
+  "task": "toyvm-mounted-readdir-parent-qualification-oct30",
+  "id": "bx_eg52q6x8",
+  "expiry": "2026-10-30T03:00:12.083Z",
+  "cutoff": "2026-10-30T02:50:00Z",
+  "handback": "2026-10-30T02:52:00Z",
+  "stopBy": "2026-10-30T02:54:00Z",
+  "shutdownOwner": "coordinator; worker delegated verified snapshot-stop",
+  "preflight": {
+    "fuse": true,
+    "libfuse": "libfuse3.so.3",
+    "landlockABI": 4,
+    "procFD": true,
+    "MemAvailable": 7355043840
+  }
+}

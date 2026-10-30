@@ -1,0 +1,75 @@
+{
+  "PASS": true,
+  "source": "d9423bef0804604f94f5c8f6ba01656328f19a59",
+  "sourcePins": {
+    "CLAUDE.md": {
+      "bytes": 22221,
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8858,
+      "sha256": "ff757d0e57e12cbe4e0312d2cf824ed3ad489c3cc81672a112268f21a4dc937e"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 15060,
+      "sha256": "13bf42f071f5eb84542286f35faf2dc814aaf63bf1bcfe7bb306e3e2f7f4f963"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4535,
+      "sha256": "e7aaa8cdbbd0871918918de090b57585c8ed0ba21e7510583fabc745359c124e"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "absoluteMount": "/tmp/tvmd/domain",
+  "mountNameReason": "unchanged supervise_accounted.py defines root=work/'domain'; requested mount alias cannot be selected by CLI",
+  "socket": "/tmp/tvmd/status.sock",
+  "socketBytes": 21,
+  "metadata": 4096,
+  "inodes": 7,
+  "payloadBlocks": 2,
+  "livePeak": 36864,
+  "totalWrite": 23,
+  "maxFileGrowth": 13,
+  "budgets": {
+    "live": 262144,
+    "write": 32768,
+    "file": 32768,
+    "rss": 67108864,
+    "cpu": 10,
+    "wall": 20,
+    "output": 8192
+  },
+  "nativeLayout": {
+    "source": "remote glibc bits/dirent.h + bits/typesizes.h + bits/types.h",
+    "ino": "unsigned long 8",
+    "offset": "signed long 8",
+    "reclen": "unsigned short 2",
+    "type": "unsigned char 1",
+    "nameOffset": 19,
+    "structSize": 280,
+    "prefixReadBound": 19,
+    "nameReadBound": 256,
+    "entriesBound": 32
+  },
+  "launchConfiguration": {
+    "canonicalParser": "qualify_accounted.py argparse main (--help passed); actual argv retained by observer",
+    "fileMountArgv": false,
+    "reason": "No --mount filename-list parser is used by this production CLI; backend mounts one complete FUSE tree; no comma-bearing names supplied",
+    "treeMount": "/tmp/tvmd/domain",
+    "nodeAcceptance": false,
+    "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "fixtureControl": {
+    "fixtureControl": true,
+    "productionMutant": false,
+    "mountedCallback": false,
+    "rejectedFor": "READDIR entry inode invariant"
+  }
+}

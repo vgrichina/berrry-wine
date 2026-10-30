@@ -1,0 +1,19 @@
+# Mounted READDIR parent qualification, 2026-10-30
+
+The exact accepted caller/backend pair at d9423bef0804604f94f5c8f6ba01656328f19a59 passed one actual production CLI run on bx_eg52q6x8. No production code changed.
+
+Native libc opendir/readdir returned ten bounded expected/actual entry maps. The root returned dot=dotdot=1. Directory inode 4 returned dotdot=2 before cross-parent rename and dotdot=3 on a fresh reopened stream afterward. Its deeper directory retained dotdot=4. Directory/file identities 4/5/6/7 and both file contents survived. These are real directory-entry inode observations, not os.listdir or stat-dotdot substitutes.
+
+The backend defines work/domain and work/status.sock. Accordingly the actual absolute mount is /tmp/tvmd/domain (rather than the requested /tmp/tvmd/mount alias), and the actual socket is /tmp/tvmd/status.sock, 21 bytes. No mountpoint override exists in the unchanged CLI. The production argparse CLI and complete FUSE tree mount are used; there is no filename-list mount parser, comma-bearing filename argument, Node execution, or game runner in this task.
+
+Source derivation: backend opcode 28 constructs dot from ino and dotdot from the unique current parent (root special-cases 1); it serializes FUSE entries as <2Q2I plus name, aligned to 8 bytes. Glibc then supplies native dirent, independently derived from the remote installed glibc headers retained in native-layout.json: unsigned long ino and signed long off (8 bytes each), unsigned short reclen, unsigned char type, char name[256], name offset 19, structure size 280. The fixture bounds each header read to 19 bytes and validates reclen before reading at most 256 name bytes; 32 entries is a hard bound.
+
+Four directories and two files plus root give seven metadata charges (28,672 bytes); two dense payload blocks add 8,192, for 36,864 live/peak. Two writes total 23 bytes, maximum file growth 13. No overwrites, truncates or deletions occur. Production receipt matches all values, no open handles and no accounting failure. Budgets are live262144/write32768/file32768, payload RSS64MiB, CPU10/wall20/output8192. Original observer limits remain DATA128MiB, CPU60/wall90/file12MiB, groupRSS512MiB/parentRSS128MiB, disk48MiB including retained 8MiB reserve. Preflight passed /dev/fuse, libfuse3, LandlockABI4, procFD, Python/ctypes, original limits and MemAvailable >=2GiB+512MiB. Source hashes were checked before and after the real run.
+
+fixture-control.json is an off-runtime fixture-oracle control: corrupt dotdot=999 is rejected for the READDIR invariant. It is neither a production mutant nor a mounted callback. No synthetic FUSE, monkeypatch, production instrumentation, or earlier RENAME replay was used.
+
+The observed real FUSE mount was unmounted successfully; caller reaped its group, backend exited -15, and external observer found no residual work-path processes/mounts. Non-forced delegated snapshot-stop completed at 02:37:13Z; API confirms stopped, completed snapshot and snapshotVerifiedAt. The API's last snapshot timestamp is 02:36:27Z, before this run at 02:37:03Z. We therefore preserve the complete runtime evidence locally and in Git and do not claim the snapshot contains the post-run receipts. No resume or additional box was used.
+
+This qualifies mounted native READDIR parent identity and kernel-visible rename topology for this tiny fixture. No backend-specific READDIR callback counters exist and none are claimed. No browser/gameplay, concurrent-visibility atomicity, broader platform or public deployment acceptance is implied.
+
+Run retained-evidence verification with task ops.py: python3 -B test/toyvm-mounted-readdir-parent-qualification-oct30/verify.py. Actual runtime argv, CLI report, payload, source pins, native layout, lifecycle and resource parameters are retained alongside the fixture.
