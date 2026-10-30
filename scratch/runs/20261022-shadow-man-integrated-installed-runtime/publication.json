@@ -1,0 +1,15 @@
+{
+  "commit": "d2606f4f3415a79d6b2a2646e55b640932b46750",
+  "branch": "task/shadow-man-integrated-installed-runtime-oct22",
+  "actualCanonicalRemote": {
+    "refs/heads/main": "58e90870a40a541a4083cae5e987ca8de31889e6",
+    "refs/heads/task/shadow-man-integrated-installed-runtime-oct22": "d2606f4f3415a79d6b2a2646e55b640932b46750"
+  },
+  "pushExit": 0,
+  "initialTransportFailures": [
+    "HTTPS missing username/credential helper",
+    "unconfigured SSH host-key verification failed"
+  ],
+  "successfulTransport": "Existing integration donor SSH configuration reused read-only",
+  "mainMerged": false
+}
