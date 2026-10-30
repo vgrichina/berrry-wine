@@ -32,7 +32,8 @@ class Acceptance(unittest.TestCase):
             file=w.create(b'private-file',parent);directory=w.mkdir(b'private-nonempty',parent)
             child=w.create(b'private-child',directory)
             self.assertEqual(w.call(16,file,module.pack('2QI',file,0,4)+b'\0'*20+b'Q7z!')[0],0)
-            count=0
+            # Setup above now contributes five actual MKDIR/CREATE callbacks.
+            count=5
             for op,p,name,expected,identity in [(10,parent,b'private-empty',errno.EISDIR,MAX),(11,parent,b'private-file',errno.ENOTDIR,9),(11,parent,b'private-nonempty',errno.ENOTEMPTY,9),(10,parent,b'private-absent',errno.ENOENT,0),(11,parent,b'private-absent',errno.ENOENT,24),(10,parent,b'private-file',0,26),(11,parent,b'private-empty',0,25),(10,directory,b'private-child',0,4),(11,parent,b'private-nonempty',0,3)]:
                 before=stable(w);w.unique=identity-1
                 error,answer=w.call(op,p,name+b'\0');count+=1

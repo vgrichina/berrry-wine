@@ -1,0 +1,137 @@
+{
+  "schema": 1,
+  "result": "PASS_SOURCE_PRODUCTION_WIRE_ONLY",
+  "parent": "c43afee14ba2cb09fc83901beb2468e15bef78b0",
+  "productionBoundary": "exact pinned Backend.serve via existing SOCK_SEQPACKET Wire; no mounted/kernel/current-main acceptance",
+  "opcodes": {
+    "MKDIR": 9,
+    "CREATE": 35,
+    "UNLINK": 10,
+    "RMDIR": 11
+  },
+  "sourceDerivation": "handle branches op==9/op==35 call create; unchanged serve calls record_namespace_callback after handle result/error and before reply",
+  "tests": {
+    "total": 19,
+    "createMkdir": 4,
+    "namespace": 5,
+    "rename": 8,
+    "additionalSourceLoader": 2,
+    "existingOptionBoundaryReusedOnce": true,
+    "filterMutantsRejected": 3,
+    "existingNamespaceHookMutantsRejected": 5,
+    "existingRenameHookMutantsRejected": 1,
+    "sourceIdentityMutantsRejected": 4
+  },
+  "coverage": [
+    "successful CREATE/MKDIR wire replies",
+    "EEXIST/ENOTDIR/ENOENT/EINVAL from real handlers",
+    "malformed production payload translated to EIO",
+    "uint64 max/zero/repeated request IDs and uint64 max inode",
+    "numeric-only exact five-field record shape",
+    "all capacities1..64 FIFO eviction, saturated uint64 counter and snapshot copy isolation",
+    "omitted/explicit0 byte-identical JSON state and enabled behavior/accounting parity",
+    "nontrivial private comma filenames, credentials and written/read content absent from state",
+    "unrelated read/getattr/unsupported/RENAME requests excluded; RENAME evidence independent",
+    "UNLINK/RMDIR records retained with shared callback count including setup creation",
+    "caller compiles verified transitive bytes; each changed-source identity rejected"
+  ],
+  "filesystemBehavior": "all existing Backend method ASTs except evidence recorder unchanged; serve unchanged; only filter/comments and CLI help changed",
+  "defaultOff": "no new fields/attributes; old state shape unchanged",
+  "pins": {
+    "parent": "c43afee14ba2cb09fc83901beb2468e15bef78b0",
+    "allTested": {
+      "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+        "bytes": 9350,
+        "sha256": "bdf4076c94a6d55977e5df79074201a7ac08b3cb8ad58242e05c558ae83bd179"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+        "bytes": 3457,
+        "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+        "bytes": 16643,
+        "sha256": "520ed81ea0b7b25303df603a362b43cd8ad934c33bf4ae60337b311e0f1b52d4"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+        "bytes": 4857,
+        "sha256": "b003da4e6439bbd1502ffc92797420c2bc254b3e55394afdd24624b7d9005338"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/test_create_mkdir_wire.py": {
+        "bytes": 6873,
+        "sha256": "103fac67f3b894ee50683003fac9650792eaeafce15de7a8f26d68b036cb79a9"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_integration.py": {
+        "bytes": 3111,
+        "sha256": "95e00f201b8c9d45563ac8bf82a40ad41162ef8966427904d0e9814085851c3d"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": {
+        "bytes": 9704,
+        "sha256": "bc44904ead714926a8efaa3ba7483135e39a9d6dc0d581b43b228b93bae1dcc5"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": {
+        "bytes": 13811,
+        "sha256": "1a43a9305f1b3d92957ef03c34caec6eb0990dc03f2f23c0d20f0ca53b9fa751"
+      },
+      "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+        "bytes": 23268,
+        "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+      }
+    },
+    "changed": {
+      "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+        "bytes": 9350,
+        "sha256": "bdf4076c94a6d55977e5df79074201a7ac08b3cb8ad58242e05c558ae83bd179"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+        "bytes": 16643,
+        "sha256": "520ed81ea0b7b25303df603a362b43cd8ad934c33bf4ae60337b311e0f1b52d4"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/test_create_mkdir_wire.py": {
+        "bytes": 6873,
+        "sha256": "103fac67f3b894ee50683003fac9650792eaeafce15de7a8f26d68b036cb79a9"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": {
+        "bytes": 9704,
+        "sha256": "bc44904ead714926a8efaa3ba7483135e39a9d6dc0d581b43b228b93bae1dcc5"
+      }
+    }
+  },
+  "limits": {
+    "FSIZE": 524288,
+    "capture": 524288,
+    "PythonDATA": 134217728,
+    "GitChildDATA": 268435456,
+    "CPU": 60,
+    "wall": 90,
+    "supervisorRSS": 134217728,
+    "groupRSS": 536870912,
+    "RAMAdmission": false,
+    "diskFloor": 1610612736,
+    "remainingAggregateGrowth": 200183808
+  },
+  "resource": {
+    "physicalAllocated": 20217856,
+    "allocationBudget": 67108864,
+    "reserve": 8388608,
+    "diskFree": 3338522624,
+    "remainingAggregateGrowth": 200183808,
+    "diskFloor": 1610612736,
+    "MemAvailable": 3742162944,
+    "supervisorRSS": 20840448,
+    "RAMAdmission": false,
+    "resourcePolicy": "owner 2026-10-30; actual process enforcement retained"
+  },
+  "exclusions": [
+    "mounted FUSE CREATE/MKDIR acceptance",
+    "kernel-preempted syscalls are not backend callbacks",
+    "READDIR instrumentation or raw dot-dot acceptance",
+    "current-main integration/browser/gameplay"
+  ],
+  "lifecycle": {
+    "box": "bx_wasrdnpg",
+    "state": "last-known stopped with completed snapshot; unchanged",
+    "originalExpiry": "2026-10-30T08:04:39.575Z",
+    "owner": "coordinator",
+    "boxesTouched": []
+  }
+}

@@ -76,8 +76,8 @@ class Backend:
 
 
     def record_namespace_callback(self,op,unique,ino,error):
-        # Actual UNLINK/RMDIR dispatch outcome, before the wire reply. Numeric only.
-        if self.namespace_evidence_limit and op in (10,11):
+        # Actual MKDIR/UNLINK/RMDIR/CREATE outcome, before the wire reply. Numeric only.
+        if self.namespace_evidence_limit and op in (9,10,11,35):
             self.namespace_callbacks=min(self.namespace_callbacks+1,0xffffffffffffffff)
             self.namespace_evidence.append(dict(opcode=op,unique=unique,inode=ino,
                                                errno=-error,callbackCount=self.namespace_callbacks))
@@ -297,7 +297,7 @@ def main(argv=None):
     parser.add_argument('--rename-evidence',type=int,choices=range(65),default=0,
                         metavar='0..64',help='retain up to N numeric RENAME/RENAME2 callback records; default off')
     parser.add_argument('--namespace-evidence',type=int,choices=range(65),default=0,
-                        metavar='0..64',help='retain up to N numeric UNLINK/RMDIR callback records; default off')
+                        metavar='0..64',help='retain up to N numeric CREATE/MKDIR/UNLINK/RMDIR callback records; default off')
     args=parser.parse_args(argv)
     backend=Backend(args.root,args.live_limit,args.write_limit,args.file_limit,
                     rename_evidence_limit=args.rename_evidence,namespace_evidence_limit=args.namespace_evidence)
