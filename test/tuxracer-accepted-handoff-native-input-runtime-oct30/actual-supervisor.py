@@ -117,4 +117,3 @@ def main():
 PROBE='globalThis.__audioBoundarySnapshot()'
 if __name__=='__main__':
  p=spawn([N,*FLAGS,'-e',STARTUP],'mount'); r=watch(p,'mount',15); save('mount-validation.json',r); assert r['exit']==0 and not r['reason']; main()
-
