@@ -1,9 +1,0 @@
-{
-  "path": "lib/region-map.generated.js",
-  "oid": "7f96dd1a81886946eb5fccefd5676c24e9016349",
-  "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
-  "bytes": 36089,
-  "candidate": "425755ee5ee9be0734c7aca187521100f5487674",
-  "purpose": "read-only canonical layout expectation, not compiler input",
-  "algorithm": "source-review.py readobj/entries identical tree walk"
-}
