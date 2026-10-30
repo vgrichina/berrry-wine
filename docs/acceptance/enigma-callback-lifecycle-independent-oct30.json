@@ -1,0 +1,188 @@
+{
+  "candidate": "fb314a9dcbc9075318123932a15c964fc230910e",
+  "status": "PASS_BOUNDED_ACCEPTANCE",
+  "checksPassed": [
+    "unchanged-production-boundary",
+    "pending-survives-ring-eviction-and-reentrant-busy",
+    "three-owner-token-thread-isolation",
+    "old-and-partial-modules-remain-incomplete",
+    "independent-semaphore-release-consume-correlation",
+    "consistent-idle-token-wrap-no-premature-return"
+  ],
+  "fixture": {
+    "originalTestSHA256": "ad8cc8c3230f981329bdb000eab3438ed4b329dd2d6ccd17d6d073d2fecadb5f",
+    "unchangedBoundarySHA256": "f76f5ad7a3b28a426238a1621c5657264c40a9d8e00a73d016a7f3d26bf4f820",
+    "seededFixtureSHA256": "d0d90df4ef2e0da50124d4195b6b5a6dbbe660e9cda26b991ccc1e3fa20e5fa7",
+    "seedFunction": "(func (export \"seed_idle\") (param $n i32) (global.set $audio_trace_serial (local.get $n)) (global.set $audio_trace_returned (local.get $n)))",
+    "scope": "exact production WAT functions; synthetic continuation helpers and idle state setter only"
+  },
+  "transitions": [
+    {
+      "token": 4294967295,
+      "before": {
+        "active": -1,
+        "returned": -2,
+        "pending": 1
+      },
+      "returned": {
+        "sequence": 2,
+        "event": "returned",
+        "owner": 1,
+        "thread": 1,
+        "registration": 1,
+        "header": 4096,
+        "handle": 7,
+        "submission": 1,
+        "token": 4294967295,
+        "returned": {
+          "eip": 4660,
+          "esp": 60000,
+          "yield": 1,
+          "wait": 917508,
+          "timeout": 4294967295,
+          "stackBytes": 12
+        }
+      }
+    },
+    {
+      "token": 1,
+      "before": {
+        "active": 1,
+        "returned": -1,
+        "pending": 1
+      },
+      "returned": {
+        "sequence": 4,
+        "event": "returned",
+        "owner": 1,
+        "thread": 1,
+        "registration": 1,
+        "header": 8192,
+        "handle": 7,
+        "submission": 2,
+        "token": 1,
+        "returned": {
+          "eip": 4660,
+          "esp": 60000,
+          "yield": 1,
+          "wait": 917508,
+          "timeout": 4294967295,
+          "stackBytes": 12
+        }
+      }
+    }
+  ],
+  "reused": "implementation-oct29 completion-receipt.json and acceptance-checkpoint.json; independent-checks first five passing groups if --wrap-only",
+  "invalidatedExperiment": "independent-checks final wrap probe seeded serial alone while retaining an inconsistent historical return marker; REJECTED_COUNTEREXAMPLE there is invalid and is NOT a production counterexample",
+  "unqualified": [
+    "actual x86 callback invocation/authentication",
+    "guest execution",
+    "full build",
+    "browser",
+    "full CLI execution",
+    "enclosing runSlice"
+  ],
+  "checkFileSHA256": "d34cc37c07ec09e8c758d60e798fc99dd4c2c2e2c18aa019241d56e6b99b5f52",
+  "sourcePins": {
+    "docs/tracing.md": {
+      "bytes": 23567,
+      "sha256": "126685debf6771cdc2675439942f22bcf7e1ea316a95211aba5473f91ee21675",
+      "blob": "b64293c58bb8da54fca7b780e79f918d18f404e7"
+    },
+    "lib/callback-lifecycle-trace.js": {
+      "bytes": 4033,
+      "sha256": "92b7a6296f1c8883866321ed3dbdeaa422ec9a6b32d53a35a432dff10d641cac",
+      "blob": "86b10d18b32163f4009633d36afbd7d89498a994"
+    },
+    "lib/host-audio.js": {
+      "bytes": 207412,
+      "sha256": "954e76b678502d6147475ea737af85b96e2408a488a2bd19c643dd2cf7969438",
+      "blob": "2693f365189192fab8bcbfd0df6fc44540899eb8"
+    },
+    "lib/thread-manager.js": {
+      "bytes": 229006,
+      "sha256": "afbd576a564dcc304d11c885b70b4a1ccd65db9a40e1407ac45ea0f098d7f08a",
+      "blob": "6ca2991820d3111ee7dc7af49f756322eed0b9a9"
+    },
+    "src/13-exports.wat": {
+      "bytes": 345102,
+      "sha256": "c99c1a942c139a0c4fd80859e9a06a76a010a224cfc1cc9b2f974100928e2644",
+      "blob": "3d95ec8cebf6b9eda1974de012e26ad61efc2683"
+    },
+    "test/run.js": {
+      "bytes": 693262,
+      "sha256": "e01db98dddc51a9f4e65de9a1844010800ef2bfa74815e22610b68b7df8e0243",
+      "blob": "579bca6fb9b6ab117a403dead93eddd6ca0e2338"
+    },
+    "test/test-callback-lifecycle-trace.js": {
+      "bytes": 13375,
+      "sha256": "ad8cc8c3230f981329bdb000eab3438ed4b329dd2d6ccd17d6d073d2fecadb5f",
+      "blob": "8580c85d77a7eba3c841f1cafe5e3e49905d6b7c"
+    },
+    "lib/audio-worklet-host.js": {
+      "bytes": 14592,
+      "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14",
+      "blob": "48de5d91f00d558c1cace48168c16c4adc82cf6c"
+    },
+    "lib/dll-loader.js": {
+      "bytes": 98961,
+      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+      "blob": "b3964ba0ec83ac447b1fd8db0b38f33485198928"
+    },
+    "lib/mem-utils.js": {
+      "bytes": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+      "blob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1"
+    },
+    "lib/region-map.generated.js": {
+      "bytes": 36089,
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349"
+    },
+    "lib/worker-imports.js": {
+      "bytes": 22458,
+      "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9",
+      "blob": "b045ab80f2f57a166d43076b869fe00322572926"
+    },
+    "src/09a-handlers.wat": {
+      "bytes": 63111,
+      "sha256": "a1609ea58833a211be97da6fece5948a3e41b45ef954b299b0d1c6317e5354f7",
+      "blob": "e836bc8bed8c18daef4d94283744d29494284b97"
+    },
+    "tools/watx-src/compiler-codegen.js": {
+      "bytes": 302257,
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c"
+    },
+    "tools/watx-src/compiler-parser.js": {
+      "bytes": 38100,
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236",
+      "blob": "678b529d637f5c0ab4482570a55f85514cd682ac"
+    },
+    "tools/watx-src/compiler-stages.js": {
+      "bytes": 31195,
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03",
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3"
+    },
+    "tools/watx-src/compiler.js": {
+      "bytes": 18610,
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175",
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438"
+    },
+    "tools/watx.js": {
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+      "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71"
+    }
+  },
+  "canonicalInputs": {
+    "/tmp/enigma-callback-lifecycle-trace-implementation-oct29/completion-receipt.json": {
+      "bytes": 11416,
+      "sha256": "79e662b0f18c40f255044fcd6f22c2d94e6b7c26c910eb4b8cbbc19b7732b8f4"
+    },
+    "/tmp/enigma-callback-lifecycle-trace-implementation-oct29/acceptance-checkpoint.json": {
+      "bytes": 1419,
+      "sha256": "a228aee70912cd5c474bfd2798d5fc00f98c44ac5bf11778bc99eb1a9d5224ca"
+    }
+  }
+}
