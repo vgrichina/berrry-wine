@@ -1,0 +1,40 @@
+{
+  "task": "toyvm-directory-metadata-runtime-independent-accept-oct29",
+  "outcome": "PASS_SCOPED_RETAINED_RUNTIME_ACCEPTANCE",
+  "commit": "b9b6a0c9c2dfd5f722e4adc95a3a508bcd571242",
+  "remoteRef": "refs/heads/task/toyvm-directory-metadata-runtime-independent-accept-oct29",
+  "remoteVerified": true,
+  "canonical": "/tmp/toyvm-directory-metadata-runtime-independent-accept-oct29/repo/test/toyvm-directory-metadata-runtime-independent-accept-oct29/canonical.json",
+  "artifactPins": {
+    "accept.py": {
+      "bytes": 14943,
+      "sha256": "478b68b9dd436d85ae9b9265567f568c56420970b8fb30f5103be3803e1eae90"
+    },
+    "REPORT.md": {
+      "bytes": 5919,
+      "sha256": "5de0a1f407f48ab6c9ce0136230243de7da95027eceeaa7827549416a3294f4c"
+    },
+    "canonical.json": {
+      "bytes": 3683,
+      "sha256": "0d2296a6596241e0db2a1e3e43499de9628c0d7364ea24ebdade588dd33b53db"
+    }
+  },
+  "operationReceipts": "/tmp/toyvm-directory-metadata-runtime-independent-accept-oct29/e",
+  "messageboardOwner": "coordinator",
+  "box": {
+    "box": "bx_489jsaq6",
+    "retainedState": "stopped",
+    "snapshotAvailable": true,
+    "originalExpiry": "2026-10-29T05:43:31.559Z",
+    "owner": "coordinator",
+    "newAPICalls": 0
+  },
+  "sourceAndFixturePins": "canonical.json",
+  "newProductionInvocations": 0,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-directory-metadata-runtime-independent-accept-oct29/root-ref-digest.json",
+  "warnings": "Git ignored nested alternate stores; affected operations exited zero; raw stderr retained",
+  "remainingGates": [
+    "Coordinator append-only messageboard publication; no worker board mutation"
+  ],
+  "retention": "Completion receipt and coordinator note are task-owned post-commit handoff artifacts; committed tests/report/canonical are remotely backed up"
+}
