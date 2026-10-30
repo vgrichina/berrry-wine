@@ -1,0 +1,64 @@
+{
+  "sessionID": "01a18570-f089-75a0-b961-2e3c343f22ba",
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-15-33-01a18570-f089-75a0-b961-2e3c343f22ba.jsonl"
+  ],
+  "initialSharedWALBaseline": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4185952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  },
+  "positiveGrowthCount": "once against initial baseline",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ],
+    "RLIMIT_NOFILE": [
+      1024,
+      1048576
+    ]
+  },
+  "appliedLimits": {
+    "RLIMIT_DATA": [
+      134217728,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      90,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      12582912,
+      -1
+    ],
+    "RLIMIT_NOFILE": [
+      1024,
+      1048576
+    ]
+  },
+  "mountArgv": [],
+  "intendedFiles": [],
+  "runtime": false,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-tested-syntax-publication-oct29/root-ref-digest.json",
+  "allocationRetention": "through coordinator closeout"
+}

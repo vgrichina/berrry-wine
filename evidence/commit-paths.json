@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+    "diff-tree",
+    "--no-commit-id",
+    "--name-only",
+    "-r",
+    "HEAD"
+  ],
+  "cwd": "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+  "exitCode": 0,
+  "wallSeconds": 0.03214832884259522,
+  "peakGroupRSS": 8007680,
+  "incident": null,
+  "cleanup": "process group SIGKILL after operation; child reaped",
+  "stdoutBytes": 187,
+  "stderrBytes": 127
+}

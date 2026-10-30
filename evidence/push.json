@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+    "push",
+    "git@github.com:vgrichina/wine-assembly.git",
+    "e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803:refs/heads/task/tuxracer-tested-syntax-publication-oct29"
+  ],
+  "cwd": "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+  "exitCode": 0,
+  "wallSeconds": 2.8291855580173433,
+  "peakGroupRSS": 56573952,
+  "incident": null,
+  "cleanup": "process group SIGKILL after operation; child reaped",
+  "stdoutBytes": 0,
+  "stderrBytes": 788
+}

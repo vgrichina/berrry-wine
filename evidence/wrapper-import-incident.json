@@ -1,0 +1,4 @@
+{
+  "error": "First publication entry failed before supervisor import or subprocess creation: module filename used hyphens while import used underscores.",
+  "resolution": "Renamed own supervisor to matching underscore module filename; no production command, test, admission/provider denial or runtime was retried."
+}

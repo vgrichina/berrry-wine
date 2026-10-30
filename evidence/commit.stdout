@@ -1,0 +1,4 @@
+[task/tuxracer-tested-syntax-publication-oct29 e57ec87fb3] Preserve simple Tcl substitutions during TuxRacer lexical recovery
+ 3 files changed, 190 insertions(+), 4 deletions(-)
+ create mode 100644 tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py
+ create mode 100644 tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md

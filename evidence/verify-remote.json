@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+    "ls-remote",
+    "--exit-code",
+    "git@github.com:vgrichina/wine-assembly.git",
+    "refs/heads/task/tuxracer-tested-syntax-publication-oct29"
+  ],
+  "cwd": "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+  "exitCode": 0,
+  "wallSeconds": 1.46392046706751,
+  "peakGroupRSS": 16039936,
+  "incident": null,
+  "cleanup": "process group SIGKILL after operation; child reaped",
+  "stdoutBytes": 98,
+  "stderrBytes": 0
+}

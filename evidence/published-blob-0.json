@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+    "show",
+    "e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803:tools/recovery/tuxracer-original-win32-recovery-oct28.py"
+  ],
+  "cwd": "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+  "exitCode": 0,
+  "wallSeconds": 0.030865582870319486,
+  "peakGroupRSS": 7331840,
+  "incident": null,
+  "cleanup": "process group SIGKILL after operation; child reaped",
+  "stdoutBytes": 25633,
+  "stderrBytes": 127
+}

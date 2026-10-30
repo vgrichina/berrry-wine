@@ -1,0 +1,7 @@
+{
+  "root": "rejected before spawn",
+  "donor": "rejected before spawn",
+  "outside": "rejected before spawn",
+  "omitted": "rejected before spawn",
+  "ownedSentinel": "PASS"
+}

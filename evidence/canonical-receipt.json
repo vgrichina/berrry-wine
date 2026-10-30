@@ -1,0 +1,77 @@
+{
+  "task": "tuxracer-tested-syntax-publication-oct29",
+  "at": "2026-10-29T02:18:04.949199+00:00",
+  "status": "PUBLISHED_TASK_BRANCH",
+  "base": "3898e008861bad6c274506664b2804dbdc7d236a",
+  "branch": "task/tuxracer-tested-syntax-publication-oct29",
+  "commit": "e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803",
+  "remote": "git@github.com:vgrichina/wine-assembly.git",
+  "remoteRef": "refs/heads/task/tuxracer-tested-syntax-publication-oct29",
+  "verifiedRemoteSHA": "e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803",
+  "remoteVerification": "/tmp/tuxracer-tested-syntax-publication-oct29/repo/evidence/verify-remote.stdout",
+  "sourceAndTestPins": {
+    "tools/recovery/tuxracer-original-win32-recovery-oct28.py": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-real-media-tcl-syntax-gap-oct29/retained-evidence/tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+      "bytes": 25633,
+      "sha256": "17536ba93021a4d7061b542876eaecef6f1f716fa3e420ef283b2804c50b6c04"
+    },
+    "tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-real-media-tcl-syntax-gap-oct29/retained-evidence/tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py",
+      "bytes": 6044,
+      "sha256": "3ecefa68101ed95de354e598e290b0bbd6c1a5f959a252ec0e04b9e63906742c"
+    },
+    "tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-real-media-tcl-syntax-gap-oct29/retained-evidence/tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md",
+      "bytes": 4878,
+      "sha256": "b81b4dca51d849cb720db6dcdfb7d9b6120934ae8964b2b1e4115bb9734edb05"
+    }
+  },
+  "inheritedEvidence": "/tmp/tuxracer-tested-syntax-publication-oct29/repo/evidence/inherited-evidence",
+  "inheritedCanonicalReceipt": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-real-media-tcl-syntax-gap-oct29/retained-evidence/evidence/canonical-receipt.json",
+  "inheritedCanonicalSHA256": "e302a58de1914786885c54a20aa911f8679f0e936a3fd5e9514fded356d41b01",
+  "acceptance": "Reused unchanged exact source/test/media pins and retained PASS receipts. API equals actual CLI; literal sources1->4; syntax6->1; rejecting mutation killed; computed remains UNKNOWN.",
+  "newChecks": [
+    "dispatch/admission hashes",
+    "all retained manifest hashes",
+    "owned-CWD rejection controls and sentinel",
+    "exact SSH/empty mount configuration reuse",
+    "base scanner SHA",
+    "review exact staged diff",
+    "diff --check",
+    "commit parent/path/blob verification",
+    "push and exact remote SHA verification",
+    "tracked tree clean"
+  ],
+  "remainingGate": "fresh independent source acceptance before any main integration",
+  "main": "unchanged by this task",
+  "runtimeExecuted": false,
+  "boxes": [],
+  "shutdownOwner": "coordinator; no box assigned or altered",
+  "allocationBytes": 25165824,
+  "aggregateBytes": 125829120,
+  "allocationRetainedThrough": "coordinator closeout including publication-note board delivery",
+  "initialSessionLimitsAndWAL": "/tmp/tuxracer-tested-syntax-publication-oct29/repo/evidence/initial",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-tested-syntax-publication-oct29/root-ref-digest.json",
+  "cleanup": "Every supervisor subprocess group killed at closeout and direct child reaped. Local repository/evidence retained; no test, Git or runtime process retained.",
+  "predecessorIncidents": "Preserved unchanged in inherited receipt/manifest, including sparse staging rejection, alternate nesting diagnostic, setup/argv incidents and result-path collision. No assertion of retroactive compliance.",
+  "taskIncidents": [
+    "Initial read-only policy/dispatch tool output exceeded requested terminal byte ceiling and one later review output was truncated; retained in session. Subsequent production supervisor captures bounded separately. No production admission failure, subprocess rejection or provider denial occurred.",
+    "Pre-spawn local publication module-name mismatch fixed within task; receipt: /tmp/tuxracer-tested-syntax-publication-oct29/repo/evidence/wrapper-import-incident.json"
+  ],
+  "publicationNote": "/tmp/tuxracer-tested-syntax-publication-oct29/repo/publication-note.txt",
+  "taskGitDiagnostics": {
+    "pushExitCode": 0,
+    "alternateWarning": "Read-only alternate nesting-too-deep diagnostics retained; Git ignored nested alternates and publication succeeded. No configuration changed.",
+    "remoteNotice": "GitHub reports repository moved to git@github.com:vgrichina/berrry-wine.git; original configured repository URL redirected successfully; exact branch SHA verified.",
+    "stderr": "/tmp/tuxracer-tested-syntax-publication-oct29/repo/evidence/push.stderr"
+  },
+  "ownedSupervisor": {
+    "path": "/tmp/tuxracer-tested-syntax-publication-oct29/repo/publication_supervisor.py",
+    "sha256": "c9b016b34ccd6e357d74a0f0105549437af8e6faa3c55cb26b54be0234aa909a"
+  },
+  "publicationDriver": {
+    "path": "/tmp/tuxracer-tested-syntax-publication-oct29/repo/publish.py",
+    "sha256": "d06f1716e8bdaab75e4f7f8bb95b32f20f21b73d90af347c0b89d4373aa3814b"
+  },
+  "evidencePhysicalBytesBeforeFinalReceipt": 614400
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+    "commit",
+    "-m",
+    "Preserve simple Tcl substitutions during TuxRacer lexical recovery"
+  ],
+  "cwd": "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+  "exitCode": 0,
+  "wallSeconds": 0.060005621053278446,
+  "peakGroupRSS": 12812288,
+  "incident": null,
+  "cleanup": "process group SIGKILL after operation; child reaped",
+  "stdoutBytes": 348,
+  "stderrBytes": 254
+}

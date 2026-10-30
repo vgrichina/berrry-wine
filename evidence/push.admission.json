@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-29T02:18:00.614672+00:00",
+  "device": 64769,
+  "f_bavail": 1226331,
+  "blockSize": 4096,
+  "freeBytes": 5023051776,
+  "aggregate": 125829120,
+  "requiredBytes": 3175088128,
+  "MemAvailable": 3560116224,
+  "memRequired": 2147483648,
+  "allocation": 25165824,
+  "taskPhysicalBytes": 2781184,
+  "sessionPhysicalBytes": 516096,
+  "eventsPhysicalBytes": 131072,
+  "positiveSharedWALGrowthCountedOnce": 0,
+  "measuredOwnedBytes": 3428352,
+  "remainingGrowthAndBuffer": 125829120,
+  "projection": "aggregate remaining growth includes materialization/Git8MiB, evidence1MiB, session/events/WAL8MiB, publication3MiB, uncertainty4MiB in own24MiB; transferred allocation retained through coordinator closeout",
+  "admissionSHA256": "092d06578f3a125df527d04509f5365522c526097d3ecaf85434fa39502d94df",
+  "PASS": true
+}

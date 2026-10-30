@@ -1,0 +1,10 @@
+error: /tmp/morrowind-observer-quiet-arming-repair-oct28/repo/.git/objects: ignoring alternate object stores, nesting too deep
+error: /tmp/morrowind-observer-quiet-arming-repair-oct28/repo/.git/objects: ignoring alternate object stores, nesting too deep
+remote: This repository moved. Please use the new location:        
+remote:   git@github.com:vgrichina/berrry-wine.git        
+remote: 
+remote: Create a pull request for 'task/tuxracer-tested-syntax-publication-oct29' on GitHub by visiting:        
+remote:      https://github.com/vgrichina/berrry-wine/pull/new/task/tuxracer-tested-syntax-publication-oct29        
+remote: 
+To github.com:vgrichina/wine-assembly.git
+ * [new branch]            e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803 -> task/tuxracer-tested-syntax-publication-oct29

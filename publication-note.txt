@@ -1,0 +1,9 @@
+tuxracer-tested-syntax-publication-oct29: published exact retained tested three-file lexical repair.
+Commit: e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803
+Remote branch: refs/heads/task/tuxracer-tested-syntax-publication-oct29
+Exact remote SHA verified: e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803
+Canonical receipt: /tmp/tuxracer-tested-syntax-publication-oct29/repo/evidence/canonical-receipt.json
+Tests reused by unchanged pins: API/CLI equality, literal sources1->4, syntax6->1, mutation killed; computed UNKNOWN.
+Main unchanged; fresh independent acceptance required. Predecessor incidents retained; initial inspection output over ceiling noted.
+Own24MiB/aggregate125829120 allocation retained through coordinator closeout and board delivery. No runtime/boxes; process groups cleaned.
+Git push exit0 retained alternate nesting warnings and repository-move notice; exact remote SHA independently verified. Local pre-spawn module-name incident retained.

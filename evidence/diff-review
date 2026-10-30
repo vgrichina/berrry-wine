@@ -1,0 +1,13 @@
+{
+  "PASS": true,
+  "base": "3898e008861bad6c274506664b2804dbdc7d236a",
+  "paths": [
+    "tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+    "tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py",
+    "tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md"
+  ],
+  "diffSHA256": "ca20d6e5bb005383ad22153b321ea81adcb4670b888a50d01957ce3ae26a7bea",
+  "notes": "Exact three tested files; scanner change preserves bracket spelling as computed UNKNOWN and extends only lexical observation. Test/report reviewed. No implementation change or acceptance rerun.",
+  "inheritedAcceptance": "API equals actual CLI; literal sources1->4; syntax6->1; rejecting mutation killed",
+  "publicationAuthorization": "explicit fresh continuation; git add --sparse authorized"
+}

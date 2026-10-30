@@ -1,0 +1,8 @@
+{
+  "receipt": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-serial-lexical-independent-accept-oct29/retained-evidence/launch-configuration.json",
+  "sha256": "84c1c11306bd7265aa6765911faf2296e230b8d7c578212427d1d8a4514f2115",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "intendedFiles": [],
+  "validation": "reuse exact unchanged configuration receipt; no mount execution"
+}

@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+    "show",
+    "e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803:tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py"
+  ],
+  "cwd": "/tmp/tuxracer-tested-syntax-publication-oct29/repo",
+  "exitCode": 0,
+  "wallSeconds": 0.030263866996392608,
+  "peakGroupRSS": 7819264,
+  "incident": null,
+  "cleanup": "process group SIGKILL after operation; child reaped",
+  "stdoutBytes": 6044,
+  "stderrBytes": 127
+}
