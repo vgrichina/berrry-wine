@@ -1,0 +1,112 @@
+{
+  "box": "bx_bzsa3u6q",
+  "state": "stopped",
+  "snapshot": {
+    "PASS": true,
+    "id": "bx_bzsa3u6q",
+    "snapshotVerifiedAt": "2026-10-30T09:42:01.840Z",
+    "snapshotCompletedAt": "2026-10-30T09:42:01.840Z",
+    "stoppedAt": "2026-10-30T09:42:01.907Z",
+    "stop": {
+      "endedAt": "2026-10-30T09:42:01.932Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_f9abb669d7465083",
+      "lastAttemptAt": "2026-10-30T09:42:01.932Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "state": "stopped",
+    "postRunBoundary": 1793353261.5008268,
+    "closeStarted": 1793353319.859284
+  },
+  "root": "/home/user/tuxracer-render/capture-live-native-oct30",
+  "module": {
+    "bytes": 1881806,
+    "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+  },
+  "runtimeStdout": {
+    "bytes": 58125,
+    "sha256": "de660daecf6b36c66aac2da0bd2ea0abc809f76aabe00317be221526684788f6"
+  },
+  "localEvidenceRoot": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-live-native-practice-progression-oct30",
+  "imageRepresentative": "/tmp/tuxracer-main-menu-race-progression-oct30/capture/title.png",
+  "newCapture": "new-after-practice.png",
+  "selection": {
+    "rows": [
+      {
+        "name": "new-after-practice.png",
+        "bytes": 136760,
+        "sha256": "bc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9"
+      },
+      {
+        "name": "runtime-analysis.json",
+        "bytes": 11292,
+        "sha256": "c873c333227511592e24168fbc038cb06f2ab46b171fb8f59642d06c2fd9312b"
+      },
+      {
+        "name": "runtime-result.json",
+        "bytes": 831,
+        "sha256": "d92783fbc6392e1523f92133f115fc5ae085d17838994673d2445b5595870b0d"
+      },
+      {
+        "name": "prelaunch.json",
+        "bytes": 1046,
+        "sha256": "30e86598fb3265eb5d3e281c6814ba92fd47417f4d63885e53bfab74e2187c62"
+      },
+      {
+        "name": "mount-startup.json",
+        "bytes": 36319,
+        "sha256": "7ed08acce04d4272d4a1a793db6096d3b956a07eaba7dc4e6993cd9fd1f7909b"
+      },
+      {
+        "name": "startup-process.json",
+        "bytes": 106,
+        "sha256": "44e316439e8870a03ff2a8479f282678ee52c1a61402d18b1e0137b17faa0f1b"
+      },
+      {
+        "name": "controller.jsonl",
+        "bytes": 1823,
+        "sha256": "5539bdd69d1d1731958a97e850592448acf067886600337ba63ee649536104e2"
+      },
+      {
+        "name": "separate-controller.jsonl",
+        "bytes": 689,
+        "sha256": "b4799d8f7d5b0e70eebc323ffd7cc4d391731330a25437e5d57e2a7c2b8f0d25"
+      },
+      {
+        "name": "done.json",
+        "bytes": 60,
+        "sha256": "2f9d6d2ca1483ea6225508e229628ed7524b50b4b3881f87f43765f062489bc0"
+      },
+      {
+        "name": "prelaunch-failed-done.json",
+        "bytes": 89,
+        "sha256": "9ae9e63ec3ae560329ba35b0b6200f1e9d88e0fed1395f0d09bbc3df5c62ffbf"
+      }
+    ],
+    "rawLog": {
+      "bytes": 58125,
+      "sha256": "de660daecf6b36c66aac2da0bd2ea0abc809f76aabe00317be221526684788f6"
+    },
+    "rawStderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pngs": {
+      "new-live-boundary.png": {
+        "bytes": 136760,
+        "sha256": "bc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9"
+      },
+      "new-after-practice.png": {
+        "bytes": 136760,
+        "sha256": "bc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9"
+      }
+    },
+    "selectedBytes": 189015,
+    "selectionCeiling": 524288,
+    "root": "/home/user/tuxracer-render/capture-live-native-oct30"
+  },
+  "noGuestReplay": true,
+  "reportRef": "refs/heads/test/tuxracer-live-native-practice-progression-oct30"
+}

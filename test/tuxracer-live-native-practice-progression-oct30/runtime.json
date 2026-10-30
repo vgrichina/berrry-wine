@@ -1,0 +1,462 @@
+{
+  "schemaVersion": 1,
+  "task": "tuxracer-live-native-practice-progression-oct30",
+  "session": "01a18c29-7f0c-7933-953d-acb9357915fc",
+  "parent": "d95c4e57d87cfe354908df7c85e7403b78180b8f",
+  "source": "a998bf36b108275335af501d8ae774731495b9b2",
+  "pins": {
+    "allocation": {
+      "allocated": 61526016,
+      "reserve": 8388608,
+      "cap": 268435456
+    },
+    "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "nodePin": {
+      "bytes": 126879696,
+      "sha256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb"
+    },
+    "flags": [
+      "--max-old-space-size=512"
+    ],
+    "inheritedLimits": {
+      "2": [
+        -1,
+        -1
+      ],
+      "9": [
+        -1,
+        -1
+      ],
+      "0": [
+        -1,
+        -1
+      ],
+      "1": [
+        -1,
+        -1
+      ]
+    },
+    "source": "a998bf36b108275335af501d8ae774731495b9b2",
+    "module": {
+      "bytes": 1881806,
+      "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+    },
+    "runner": {
+      "bytes": 692809,
+      "sha256": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d"
+    },
+    "observer": {
+      "bytes": 4519,
+      "sha256": "01f4de4099a0e60c56cf6ea109f82ae12e1c42b6ba15309d0411b10fe8029040"
+    },
+    "trace": {
+      "bytes": 7361,
+      "sha256": "c8c85b12cfb76825ed64d2bc7a4a0afaea453ac5f3d1ba68f3db181ab4b146fe"
+    }
+  },
+  "node": "v24.22.1",
+  "app": "tuxracer_original_061a",
+  "run": {
+    "startedAt": 1793353206.022646,
+    "endedAt": 1793353261.5008268,
+    "wall": 55.47818088531494,
+    "exit": 0,
+    "signal": null,
+    "CPUuser": 55.889306,
+    "CPUsystem": 0.419883,
+    "peakRSS": 294178816,
+    "reason": null,
+    "descendantGroupReaped": true,
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=512",
+      "test/run.js",
+      "--app=tuxracer_original_061a",
+      "--no-build",
+      "--wasm=build/wine-assembly.wasm",
+      "--gl-renderer=software",
+      "--no-threads",
+      "--control-stdin",
+      "--max-seconds=55",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--quiet-fs",
+      "--trace-input-dispatch",
+      "--trace-main-scheduler",
+      "--trace-from=16000",
+      "--trace-to=100000"
+    ],
+    "allocation": {
+      "allocated": 61956096,
+      "reserve": 8388608,
+      "cap": 268435456
+    }
+  },
+  "input": [
+    {
+      "command": {
+        "id": "live-shot",
+        "action": "png",
+        "path": "/home/user/tuxracer-render/capture-live-native-oct30/new-live-boundary.png"
+      },
+      "sentAt": 1793353255.56659,
+      "ackObservedAt": 1793353255.6491024,
+      "ack": {
+        "ok": true,
+        "id": "live-shot",
+        "value": {
+          "batch": 34193,
+          "frozen": false,
+          "path": "/home/user/tuxracer-render/capture-live-native-oct30/new-live-boundary.png",
+          "bytes": 136760
+        }
+      }
+    },
+    {
+      "command": {
+        "id": "live-enter-down",
+        "cmd": "keydown:13"
+      },
+      "sentAt": 1793353255.7667844,
+      "ackObservedAt": 1793353255.7752068,
+      "ack": {
+        "ok": true,
+        "id": "live-enter-down",
+        "value": {
+          "batch": 34252,
+          "logs": [
+            "[input-schedule] scheduledBatch=34252 action=keydown correlation=unavailable batch=34252 guestMs=6850400 clock=batch lastGuestTick=6849400",
+            "[input] keydown vk=13 at batch 34252"
+          ]
+        }
+      }
+    },
+    {
+      "command": {
+        "id": "live-enter-up",
+        "cmd": "keyup:13"
+      },
+      "sentAt": 1793353256.0670767,
+      "ackObservedAt": 1793353256.1148846,
+      "ack": {
+        "ok": true,
+        "id": "live-enter-up",
+        "value": {
+          "batch": 34407,
+          "logs": [
+            "[input-schedule] scheduledBatch=34407 action=keyup correlation=unavailable batch=34407 guestMs=6881400 clock=batch lastGuestTick=6881200",
+            "[input] keyup vk=13 at batch 34407"
+          ]
+        }
+      }
+    },
+    {
+      "command": {
+        "id": "live-move",
+        "cmd": "mousemove:320:260"
+      },
+      "sentAt": 1793353257.067567,
+      "ackObservedAt": 1793353257.098292,
+      "ack": {
+        "ok": true,
+        "id": "live-move",
+        "value": {
+          "batch": 34899,
+          "logs": [
+            "[input-schedule] scheduledBatch=34899 action=mousemove correlation=unavailable batch=34899 guestMs=6979800 clock=batch lastGuestTick=6979400",
+            "[input] mousemove 320,260 at batch 34899"
+          ]
+        }
+      }
+    },
+    {
+      "command": {
+        "id": "live-practice",
+        "cmd": "click:320:260"
+      },
+      "sentAt": 1793353257.4678564,
+      "ackObservedAt": 1793353257.482942,
+      "ack": {
+        "ok": true,
+        "id": "live-practice",
+        "value": {
+          "batch": 35085,
+          "logs": [
+            "[input-schedule] scheduledBatch=35085 action=click correlation=unavailable batch=35085 guestMs=7017000 clock=batch lastGuestTick=7016800",
+            "[input] click 320,260 at batch 35085"
+          ]
+        }
+      }
+    },
+    {
+      "command": {
+        "id": "live-after",
+        "action": "png",
+        "path": "/home/user/tuxracer-render/capture-live-native-oct30/new-after-practice.png"
+      },
+      "sentAt": 1793353259.4681911,
+      "ackObservedAt": 1793353259.523705,
+      "ack": {
+        "ok": true,
+        "id": "live-after",
+        "value": {
+          "batch": 36065,
+          "frozen": false,
+          "path": "/home/user/tuxracer-render/capture-live-native-oct30/new-after-practice.png",
+          "bytes": 136760
+        }
+      }
+    }
+  ],
+  "analysis": {
+    "rawLog": {
+      "bytes": 58125,
+      "sha256": "de660daecf6b36c66aac2da0bd2ea0abc809f76aabe00317be221526684788f6"
+    },
+    "rawStderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "inputLines": [
+      {
+        "line": 315,
+        "text": "[ctl] {\"ok\":true,\"id\":\"live-shot\",\"value\":{\"batch\":34193,\"frozen\":false,\"path\":\"/home/user/tuxracer-render/capture-live-native-oct30/new-live-boundary.png\",\"bytes\":136760}}"
+      },
+      {
+        "line": 316,
+        "text": "[input-schedule] scheduledBatch=34252 action=keydown correlation=unavailable batch=34252 guestMs=6850400 clock=batch lastGuestTick=6849400"
+      },
+      {
+        "line": 317,
+        "text": "[input] keydown vk=13 at batch 34252"
+      },
+      {
+        "line": 318,
+        "text": "[ctl] {\"ok\":true,\"id\":\"live-enter-down\",\"value\":{\"batch\":34252,\"logs\":[\"[input-schedule] scheduledBatch=34252 action=keydown correlation=unavailable batch=34252 guestMs=6850400 clock=batch lastGuestTick=6849400\",\"[input] keydown vk=13 at batch 34252\"]}}"
+      },
+      {
+        "line": 319,
+        "text": "[input-schedule] scheduledBatch=34407 action=keyup correlation=unavailable batch=34407 guestMs=6881400 clock=batch lastGuestTick=6881200"
+      },
+      {
+        "line": 320,
+        "text": "[input] keyup vk=13 at batch 34407"
+      },
+      {
+        "line": 321,
+        "text": "[ctl] {\"ok\":true,\"id\":\"live-enter-up\",\"value\":{\"batch\":34407,\"logs\":[\"[input-schedule] scheduledBatch=34407 action=keyup correlation=unavailable batch=34407 guestMs=6881400 clock=batch lastGuestTick=6881200\",\"[input] keyup vk=13 at batch 34407\"]}}"
+      },
+      {
+        "line": 322,
+        "text": "[input-schedule] scheduledBatch=34899 action=mousemove correlation=unavailable batch=34899 guestMs=6979800 clock=batch lastGuestTick=6979400"
+      },
+      {
+        "line": 323,
+        "text": "[input] mousemove 320,260 at batch 34899"
+      },
+      {
+        "line": 324,
+        "text": "[ctl] {\"ok\":true,\"id\":\"live-move\",\"value\":{\"batch\":34899,\"logs\":[\"[input-schedule] scheduledBatch=34899 action=mousemove correlation=unavailable batch=34899 guestMs=6979800 clock=batch lastGuestTick=6979400\",\"[input] mousemove 320,260 at batch 34899\"]}}"
+      },
+      {
+        "line": 326,
+        "text": "[input-schedule] scheduledBatch=35085 action=click correlation=unavailable batch=35085 guestMs=7017000 clock=batch lastGuestTick=7016800"
+      },
+      {
+        "line": 327,
+        "text": "[input] click 320,260 at batch 35085"
+      },
+      {
+        "line": 328,
+        "text": "[ctl] {\"ok\":true,\"id\":\"live-practice\",\"value\":{\"batch\":35085,\"logs\":[\"[input-schedule] scheduledBatch=35085 action=click correlation=unavailable batch=35085 guestMs=7017000 clock=batch lastGuestTick=7016800\",\"[input] click 320,260 at batch 35085\"]}}"
+      },
+      {
+        "line": 330,
+        "text": "[ctl] {\"ok\":true,\"id\":\"live-after\",\"value\":{\"batch\":36065,\"frozen\":false,\"path\":\"/home/user/tuxracer-render/capture-live-native-oct30/new-after-practice.png\",\"bytes\":136760}}"
+      }
+    ],
+    "summaries": [
+      {
+        "batch": 16000,
+        "totals": {
+          "decisions": 0,
+          "suspended": 0,
+          "runnable": 0,
+          "runs": 0,
+          "returned": 0,
+          "threw": 0,
+          "mainPolls": 0,
+          "workerPolls": 0,
+          "outsidePolls": 0
+        },
+        "lastDecision": null,
+        "saturated": false
+      },
+      {
+        "batch": 17000,
+        "totals": {
+          "decisions": 64000,
+          "suspended": 0,
+          "runnable": 64000,
+          "runs": 64000,
+          "returned": 64000,
+          "threw": 0,
+          "mainPolls": 0,
+          "workerPolls": 0,
+          "outsidePolls": 0
+        },
+        "lastDecision": {
+          "path": "cooperative-interleaved",
+          "batch": 16999,
+          "suspended": false,
+          "reason": "runnable",
+          "yieldReason": 1
+        },
+        "saturated": false
+      },
+      {
+        "batch": 33000,
+        "totals": {
+          "decisions": 1086800,
+          "suspended": 3,
+          "runnable": 1086797,
+          "runs": 1086797,
+          "returned": 1086797,
+          "threw": 0,
+          "mainPolls": 2,
+          "workerPolls": 0,
+          "outsidePolls": 0
+        },
+        "lastDecision": {
+          "path": "cooperative-interleaved",
+          "batch": 32999,
+          "suspended": false,
+          "reason": "runnable",
+          "yieldReason": 1
+        },
+        "saturated": false
+      },
+      {
+        "batch": 34000,
+        "totals": {
+          "decisions": 1150800,
+          "suspended": 3,
+          "runnable": 1150797,
+          "runs": 1150797,
+          "returned": 1150797,
+          "threw": 0,
+          "mainPolls": 2,
+          "workerPolls": 0,
+          "outsidePolls": 0
+        },
+        "lastDecision": {
+          "path": "cooperative-interleaved",
+          "batch": 33999,
+          "suspended": false,
+          "reason": "runnable",
+          "yieldReason": 1
+        },
+        "saturated": false
+      },
+      {
+        "batch": 35000,
+        "totals": {
+          "decisions": 1214800,
+          "suspended": 3,
+          "runnable": 1214797,
+          "runs": 1214797,
+          "returned": 1214797,
+          "threw": 0,
+          "mainPolls": 2,
+          "workerPolls": 0,
+          "outsidePolls": 0
+        },
+        "lastDecision": {
+          "path": "cooperative-interleaved",
+          "batch": 34999,
+          "suspended": false,
+          "reason": "runnable",
+          "yieldReason": 1
+        },
+        "saturated": false
+      },
+      {
+        "batch": 36000,
+        "totals": {
+          "decisions": 1278800,
+          "suspended": 3,
+          "runnable": 1278797,
+          "runs": 1278797,
+          "returned": 1278797,
+          "threw": 0,
+          "mainPolls": 2,
+          "workerPolls": 0,
+          "outsidePolls": 0
+        },
+        "lastDecision": {
+          "path": "cooperative-interleaved",
+          "batch": 35999,
+          "suspended": false,
+          "reason": "runnable",
+          "yieldReason": 1
+        },
+        "saturated": false
+      }
+    ],
+    "summaryCount": 21,
+    "detailSuppressed": true
+  },
+  "render": {
+    "newRemoteCapture": "/home/user/tuxracer-render/capture-live-native-oct30/new-after-practice.png",
+    "bytes": 136760,
+    "sha256": "bc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9",
+    "width": 640,
+    "height": 480,
+    "personallyInspected": true,
+    "observed": "title PRESS ANY KEY TO START",
+    "matchesHistoricalTitle": true
+  },
+  "outcome": {
+    "newGuestRun": true,
+    "mainMenu": false,
+    "practice": false,
+    "gameplay": false,
+    "consumptionObserved": false,
+    "commandAcknowledgements": true,
+    "queuedInput": "unknown",
+    "cause": "unknown"
+  },
+  "lifecycle": {
+    "PASS": true,
+    "id": "bx_bzsa3u6q",
+    "snapshotVerifiedAt": "2026-10-30T09:42:01.840Z",
+    "snapshotCompletedAt": "2026-10-30T09:42:01.840Z",
+    "stoppedAt": "2026-10-30T09:42:01.907Z",
+    "stop": {
+      "endedAt": "2026-10-30T09:42:01.932Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_f9abb669d7465083",
+      "lastAttemptAt": "2026-10-30T09:42:01.932Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "state": "stopped",
+    "postRunBoundary": 1793353261.5008268,
+    "closeStarted": 1793353319.859284
+  },
+  "evidenceRoot": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-live-native-practice-progression-oct30",
+  "rawLog": {
+    "bytes": 58125,
+    "sha256": "de660daecf6b36c66aac2da0bd2ea0abc809f76aabe00317be221526684788f6"
+  },
+  "selectedBytes": 189015,
+  "gaps": [
+    "first snapshot id1 unacknowledged; cause unknown",
+    "initial supervisor executable full-read MemoryError fixed before Node startup",
+    "retained control documentation absent; implemented schema and local doc read",
+    "one duplicate-hash image unnecessarily downloaded then removed; actual bytes preserved in accounting",
+    "scheduler detailed trace capped256; final summary36000 before exit36930",
+    "queue depths/SDL consumption unknown; frozen input-state not used"
+  ]
+}
