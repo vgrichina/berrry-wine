@@ -1,2 +1,0 @@
-error: invalid object 100644 b126f1731a42f87638a922e44d1902a4cf912c23 for 'ops/reader-cycle.test.js'
-fatal: git-write-tree: error building trees

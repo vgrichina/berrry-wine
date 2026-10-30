@@ -1,9 +1,0 @@
-{
-  "allocated": 10985472,
-  "memAvailable": 7370592256,
-  "diskFree": 48937381888,
-  "heavyLockAvailable": true,
-  "box": "bx_h44cmz3t",
-  "state": "RUNNING/idle API reachable",
-  "expiry": "2026-10-26T09:48:43.654Z"
-}
