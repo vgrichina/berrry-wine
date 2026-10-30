@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo",
+    "rev-parse",
+    "--show-toplevel",
+    "--absolute-git-dir"
+  ],
+  "cwd": "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo",
+  "rc": 0,
+  "reason": null,
+  "peakGroupRSS": 0,
+  "descendantCleanup": "kill process group after wait",
+  "seconds": 0.039652980864048004
+}

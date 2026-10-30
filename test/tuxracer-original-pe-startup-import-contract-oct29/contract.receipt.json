@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo/test/tuxracer-original-pe-startup-import-contract-oct29/contract.py"
+  ],
+  "cwd": "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo",
+  "rc": 0,
+  "reason": null,
+  "peakGroupRSS": 33292288,
+  "descendantCleanup": "kill process group after wait",
+  "seconds": 0.43402871093712747
+}

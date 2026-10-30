@@ -1,0 +1,7 @@
+[
+  {
+    "kind": "inspection-terminal-output",
+    "scope": "initial read-only policy/source inspection before bounded production supervisor",
+    "detail": "Initial exec responses exceeded the requested 8192-byte terminal envelope (tool reported 8545 and 4108 tokens for two early reads). No runtime/access denial or resource-admission failure occurred. Subsequent production subprocess output was retained in owned captures; terminal summaries were bounded. This limits a claim of full envelope compliance."
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo",
+    "ls-tree",
+    "-l",
+    "3239df2388ec1599deb229b22ea1fb1e2b8f03fa",
+    "lib/host.js",
+    "lib/dll-loader.js",
+    "lib/pe-loader.js",
+    "host.js",
+    "src/09a0-handlers-base.wat",
+    "src/09a6-handlers-crt.wat",
+    "src/09a-handlers.wat",
+    "src/09a8b-handlers-opengl.wat",
+    "src/09a0b-handlers-base-late.wat"
+  ],
+  "cwd": "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo",
+  "rc": 0,
+  "reason": null,
+  "peakGroupRSS": 4587520,
+  "descendantCleanup": "kill process group after wait",
+  "seconds": 0.0353750002104789
+}

@@ -1,0 +1,226 @@
+{
+  "task": "tuxracer-original-pe-startup-import-contract-oct29",
+  "at": "2026-10-29T03:18:26.986081+00:00",
+  "outcome": "STATIC_CONTRACT_BLOCKED",
+  "main": "3239df2388ec1599deb229b22ea1fb1e2b8f03fa",
+  "session": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T03-12-57-01a185a5-7c29-7210-bad2-d05ce2e529d1.jsonl",
+  "dispatchSha256": "f60e0cb3da558d0f1239f1f5e3d478545b8af72e0637e1ae75b557cf2a2c7bf7",
+  "admissionSha256": "e16c361030fd3c703709b53854e008c88aecbe2defc3c670204623e603eb8220",
+  "sourcePins": {
+    "src/api_table.json": {
+      "bytes": 723350,
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+    },
+    "lib/pe.js": {
+      "bytes": 4787,
+      "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853"
+    },
+    "tools/pe-imports.js": {
+      "bytes": 2702,
+      "sha256": "e1ed7e584af5df4393158af8621810b8e7bc90b6ef46d2d82a03fdb3d265c61d"
+    },
+    "tools/unimplemented-imports.js": {
+      "bytes": 6296,
+      "sha256": "bee35baff84b724bbfb89f402709304e3944dabaf3f32ee67142009f73964582"
+    },
+    "lib/apps.js": {
+      "bytes": 414349,
+      "sha256": "ccd6feeb360ed289f5b6dce729e988e10157722fc11d43fc3363bdfc6e0c8f6a"
+    },
+    "test/candidate-corpus/tuxracer-original-files.json": {
+      "bytes": 29432,
+      "sha256": "2c2d29a9dc7e5f9bc9e972b408fd83dbb17e8ca48a6aed09ffd375830284d8d8"
+    }
+  },
+  "extraSourcePins": {
+    "src/main.watx": {
+      "bytes": 5893,
+      "sha256": "406483c69fb56dde99e1d161113a567268251fd09c3a088cb71eb7b51ec9a974"
+    },
+    "src/08-pe-loader.wat": {
+      "bytes": 392432,
+      "sha256": "ff07dec04916243590350dfcdf0c55825966dbea5c87cab4998a2fb58115c433"
+    },
+    "src/08b-dll-loader.wat": {
+      "bytes": 108860,
+      "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b"
+    },
+    "src/09b-dispatch.wat": {
+      "bytes": 113594,
+      "sha256": "d8f3ac461c9dca62cdf074cb28b3324080718bd98e5ba696de15577c598dbcce"
+    },
+    "src/09b2-dispatch-table.generated.wat": {
+      "bytes": 1375748,
+      "sha256": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e"
+    },
+    "host.js": {
+      "bytes": 369423,
+      "sha256": "7154fbbcfb3381cddfecaeb07dbf4301e6a68fc43850b4f085264b6cb412e993"
+    },
+    "lib/dll-loader.js": {
+      "bytes": 98961,
+      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145"
+    },
+    "src/09a8b-handlers-opengl.wat": {
+      "bytes": 16197,
+      "sha256": "f2dd5ff3a9874dc5f93de1764d37daef3e82ea60ba0fcfa3251a29905ddfbaae"
+    },
+    "src/09a6-handlers-crt.wat": {
+      "bytes": 246055,
+      "sha256": "bef449ab0bb1734802d384325fbfb1dc2246d5afdfc4f8e723401b396ab39f88"
+    },
+    "src/09a-handlers.wat": {
+      "bytes": 63111,
+      "sha256": "a1609ea58833a211be97da6fece5948a3e41b45ef954b299b0d1c6317e5354f7"
+    },
+    "src/10-helpers.wat": {
+      "bytes": 533986,
+      "sha256": "99dffb7a02f1db7a0a66eedac7ba43ce91170c9331ee06013e522ad30f3e2a5d"
+    },
+    "src/01b-api-hashes.generated.wat": {
+      "bytes": 289426,
+      "sha256": "a783e485ffde9a6194b90a91c0e092b039c3bbb442f65fe8353050e9d5c261ad"
+    }
+  },
+  "originalBinaryPins": {
+    "tcl83.dll": {
+      "path": "tuxracer-win32-0.61a/TCL83.DLL",
+      "bytes": 619520,
+      "sha256": "61697e854d7ef53d9757aedb33749b04dc7f7504515143732c92fdaa4c834eef"
+    },
+    "sdl_mixer.dll": {
+      "path": "tuxracer-win32-0.61a/SDL_mixer.dll",
+      "bytes": 200704,
+      "sha256": "160cb3f7f4dcfcfe66c539bc8440bb01e46913b8a941648d03baa6895df48aad"
+    },
+    "sdl.dll": {
+      "path": "tuxracer-win32-0.61a/SDL.dll",
+      "bytes": 210944,
+      "sha256": "101732c9f75df3574a66ee4094df549aad63960bdb56025a61244336e69b03b8"
+    },
+    "tuxracer.exe": {
+      "path": "tuxracer-win32-0.61a/tuxracer.exe",
+      "bytes": 274432,
+      "sha256": "a40fd89429d76f379bc7b36d17126bcc61ce487687cb5e951f7757aa6b740971"
+    }
+  },
+  "counts": {
+    "imports": 618,
+    "bundledExportMatches": 85,
+    "emulatedImportSlots": 533,
+    "forwardedExports": 0,
+    "ordinalImports": 0
+  },
+  "firstSourceBackedExeFailFast": {
+    "name": "glVertex2dv",
+    "apiId": 4448,
+    "route": "generated call -> handle_gl_unimplemented -> host_crash_unimplemented/unreachable"
+  },
+  "firstDirectExeMissing": "GLU32!gluScaleImage -> generated hash miss -> 65535 -> handle_fallback trap if called",
+  "tableMetadataOverride": "glGetTexLevelParameteriv row4298 metadata is superseded by generated handle_gpu_api(115,4)",
+  "firstExecutedFailure": "UNKNOWN",
+  "tests": {
+    "count": 7,
+    "result": "PASS",
+    "receipt": "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo/test/tuxracer-original-pe-startup-import-contract-oct29/tests.receipt.json"
+  },
+  "evidencePins": {
+    "analyze.py": {
+      "bytes": 3595,
+      "sha256": "94272e70706c80744206387c5cf9ac6356a970b02b5f823e78b5d12abfc2bc64"
+    },
+    "contract.py": {
+      "bytes": 4254,
+      "sha256": "f29c795407aaa6f78b869cd525c8c50a94ffef8f74e42a489af8590ec768f22d"
+    },
+    "supervisor.py": {
+      "bytes": 4143,
+      "sha256": "c2d56bfcf37c3a261e9f93cc34ca62af21d645924c4533f834e7f6c079907939"
+    },
+    "test_contract.py": {
+      "bytes": 4077,
+      "sha256": "ef00f812412f95d0dbc567d8439ff17f8aa1fb8a970fe28da7ae8b6cf6784b38"
+    },
+    "report.md": {
+      "bytes": 6755,
+      "sha256": "904bbecace3dd1647fa972a5eb860232938d5b4a20c2082e9a3fdf435d4f0b85"
+    },
+    "contract-evidence.json": {
+      "bytes": 594948,
+      "sha256": "2117e1b95518751b6e01c4afc0599a2bc451dd3ba3cad02b49eec68afd0bc64e"
+    },
+    "tests.stderr": {
+      "bytes": 783,
+      "sha256": "a731dd2e1e80221ccb60b6714e61675026699a6f0a9566cf2f1fb77a4df502c7"
+    },
+    "tests.receipt.json": {
+      "bytes": 413,
+      "sha256": "1c5468182b63ddf1a8afdbd275c9ff93a198e1423425b6d1759b964b642c1510"
+    },
+    "publication.json": {
+      "bytes": 495,
+      "sha256": "3ca244ac2a069d92be058d993cfb894c1bbf8f8269d254742e5d5599fc5ed370"
+    },
+    "publication-footprint.json": {
+      "bytes": 361,
+      "sha256": "0b414f8529fb90940fcd0a4d47cedd6f19054a1a80ca3061ce51d54b211a186b"
+    },
+    "initial-receipt.json": {
+      "bytes": 1750,
+      "sha256": "c8e4c51fd0c2504afd93e5800d15f5b4b647ff7a06472f9e8e675882daa4bde7"
+    },
+    "admissions.jsonl": {
+      "bytes": 14187,
+      "sha256": "67df6aabd1c3dbdfd008f773020ac9c8df26a798914a0781d1e7e6da136378f7"
+    },
+    "resource-incidents.json": {
+      "bytes": 517,
+      "sha256": "24cb04d127c619fa90183dd74b25ba5ae327506de2e3fe4e156da1c3a805f609"
+    }
+  },
+  "publication": {
+    "commit": "ce6dfc9e4c16b90a53a875cbb48f0676dcbe6c66",
+    "branch": "task/tuxracer-original-pe-startup-import-contract-oct29",
+    "remoteVerified": "ce6dfc9e4c16b90a53a875cbb48f0676dcbe6c66\trefs/heads/task/tuxracer-original-pe-startup-import-contract-oct29",
+    "mainPushed": false,
+    "force": false,
+    "trustedSsh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "resourceAdmissions": "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo/test/tuxracer-original-pe-startup-import-contract-oct29/admissions.jsonl",
+  "resourceFootprint": {
+    "at": "2026-10-29T03:17:51.728597+00:00",
+    "ownedLogicalBytes": 7679261,
+    "retainedPayloadCountedOnce": 13225945,
+    "sessionEventsBytes": 1204636,
+    "positiveSharedWALGrowthCountedOnce": 0,
+    "publicationReserve": 3145728,
+    "uncertaintyBuffer": 15728640,
+    "projection": 40984210,
+    "allocation": 50331648,
+    "retainedAllocation": true,
+    "PASS": true
+  },
+  "resourceIncidents": [
+    {
+      "kind": "inspection-terminal-output",
+      "scope": "initial read-only policy/source inspection before bounded production supervisor",
+      "detail": "Initial exec responses exceeded the requested 8192-byte terminal envelope (tool reported 8545 and 4108 tokens for two early reads). No runtime/access denial or resource-admission failure occurred. Subsequent production subprocess output was retained in owned captures; terminal summaries were bounded. This limits a claim of full envelope compliance."
+    }
+  ],
+  "cleanup": {
+    "guestExecuted": false,
+    "mediaCopied": false,
+    "donorMutations": false,
+    "rootMutations": false,
+    "allOwnedSubprocessGroups": "killed/reaped after supervised operation; no persistent child",
+    "sourceTransferDuplicateCaptures": "removed; identities preserved",
+    "testBox": null,
+    "lifecycleOwner": "coordinator",
+    "allocationRetained": 50331648,
+    "boardAppend": "delegated to coordinator"
+  },
+  "dynamicGetProcAddress": "UNKNOWN",
+  "computedTclClosure": "UNKNOWN",
+  "gameplay": "NOT TESTED",
+  "nextPrerequisite": "assigned fixes for real gluScaleImage and actual generated GL fail-fast contracts, then separately authorized initializer-aware production startup observation; no repair included"
+}

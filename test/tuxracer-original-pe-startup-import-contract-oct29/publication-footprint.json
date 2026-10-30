@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-29T03:17:51.728597+00:00",
+  "ownedLogicalBytes": 7679261,
+  "retainedPayloadCountedOnce": 13225945,
+  "sessionEventsBytes": 1204636,
+  "positiveSharedWALGrowthCountedOnce": 0,
+  "publicationReserve": 3145728,
+  "uncertaintyBuffer": 15728640,
+  "projection": 40984210,
+  "allocation": 50331648,
+  "retainedAllocation": true,
+  "PASS": true
+}

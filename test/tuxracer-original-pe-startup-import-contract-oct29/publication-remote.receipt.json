@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo",
+    "ls-remote",
+    "--exit-code",
+    "origin",
+    "refs/heads/task/tuxracer-original-pe-startup-import-contract-oct29"
+  ],
+  "cwd": "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo",
+  "rc": 0,
+  "reason": null,
+  "peakGroupRSS": 15368192,
+  "descendantCleanup": "kill process group after wait",
+  "seconds": 1.6035731909796596
+}

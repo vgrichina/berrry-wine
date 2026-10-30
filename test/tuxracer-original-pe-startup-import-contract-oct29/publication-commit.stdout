@@ -1,0 +1,16 @@
+[task/tuxracer-original-pe-startup-import-contract-oct29 ce6dfc9e4c] test: pin original TuxRacer PE startup import contract
+ 14 files changed, 22979 insertions(+)
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/analyze.py
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/contract-evidence.json
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/contract.py
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/extra-source-pins.json
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/initial-receipt.json
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/input-source-pins.json
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/materialize-source.py
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/report.md
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/run-contract.py
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/run-tests.py
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/sentinel-receipt.json
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/source-transfer-cleanup.json
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/supervisor.py
+ create mode 100644 test/tuxracer-original-pe-startup-import-contract-oct29/test_contract.py

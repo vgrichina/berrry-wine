@@ -1,0 +1,8 @@
+{
+  "commit": "ce6dfc9e4c16b90a53a875cbb48f0676dcbe6c66",
+  "branch": "task/tuxracer-original-pe-startup-import-contract-oct29",
+  "remoteVerified": "ce6dfc9e4c16b90a53a875cbb48f0676dcbe6c66\trefs/heads/task/tuxracer-original-pe-startup-import-contract-oct29",
+  "mainPushed": false,
+  "force": false,
+  "trustedSsh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

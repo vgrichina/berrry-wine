@@ -1,0 +1,12 @@
+test_bundled_export_rejecting_oracle (__main__.Contract.test_bundled_export_rejecting_oracle) ... ok
+test_cwd_rejections_before_sentinel (__main__.Contract.test_cwd_rejections_before_sentinel) ... ok
+test_exact_original_contract (__main__.Contract.test_exact_original_contract) ... ok
+test_fixture_ordinal_name_forward_oft_fallback (__main__.Contract.test_fixture_ordinal_name_forward_oft_fallback) ... ok
+test_name_presence_is_not_implementation (__main__.Contract.test_name_presence_is_not_implementation) ... ok
+test_reject_truncated_unbacked_nonpe (__main__.Contract.test_reject_truncated_unbacked_nonpe) ... ok
+test_source_identity (__main__.Contract.test_source_identity) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.616s
+
+OK

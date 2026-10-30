@@ -1,0 +1,15 @@
+ .../analyze.py                                     |    73 +
+ .../contract-evidence.json                         | 22465 +++++++++++++++++++
+ .../contract.py                                    |    62 +
+ .../extra-source-pins.json                         |    50 +
+ .../initial-receipt.json                           |    59 +
+ .../input-source-pins.json                         |    26 +
+ .../materialize-source.py                          |    12 +
+ .../report.md                                      |    50 +
+ .../run-contract.py                                |     2 +
+ .../run-tests.py                                   |     3 +
+ .../sentinel-receipt.json                          |     1 +
+ .../source-transfer-cleanup.json                   |    62 +
+ .../supervisor.py                                  |    59 +
+ .../test_contract.py                               |    55 +
+ 14 files changed, 22979 insertions(+)

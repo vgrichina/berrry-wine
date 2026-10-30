@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo",
+    "cat-file",
+    "blob",
+    "3239df2388ec1599deb229b22ea1fb1e2b8f03fa:lib/dll-loader.js"
+  ],
+  "cwd": "/tmp/tuxracer-original-pe-startup-import-contract-oct29/repo",
+  "rc": 0,
+  "reason": null,
+  "peakGroupRSS": 4456448,
+  "descendantCleanup": "kill process group after wait",
+  "seconds": 0.0338438069447875
+}
