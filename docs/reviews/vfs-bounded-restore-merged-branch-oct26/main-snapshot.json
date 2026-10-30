@@ -1,8 +1,0 @@
-{
-  "observedAt": "2026-10-26T06:58:33.027667+00:00",
-  "remote": "12e2dccc0ca16bbc327f2773f3352e8dfa787cb4\trefs/heads/main\n",
-  "base": "12e2dccc0ca16bbc327f2773f3352e8dfa787cb4",
-  "readCount": 1,
-  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
-  "laterRebaseGate": true
-}

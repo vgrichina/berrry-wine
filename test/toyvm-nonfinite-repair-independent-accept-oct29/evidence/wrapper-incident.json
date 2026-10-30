@@ -1,9 +1,0 @@
-{
-  "acceptanceTestsRunBeforeIncident": 0,
-  "cause": "Own initial wrapper imposed Python hard DATA128, incompatible with prescribed child Git DATA256",
-  "error": "SubprocessError: Exception occurred in preexec_fn",
-  "operation": "init-owned",
-  "resolution": "Fresh supervisor effective Python DATA128 and unchanged inherited hard ceiling; only Git child DATA256",
-  "resourceAdmissionFailure": false,
-  "spawned": false
-}
