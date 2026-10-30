@@ -1,7 +1,0 @@
-{"manual":true,"mixedProcessWorkerWinners":[true,true]}
-{"manual":false,"mixedProcessWorkerWinners":[true,false]}
-PASS 1 mixed actual subprocess/Worker pulses, repeated Set and idempotent terminal operations
-PASS 2 cross-session ownership and exact-reference cancellation; terminal generation detached from recreation
-PASS 3 pending forget rejection, cancellation before Set, expired registration preserves signal, foreign stamp rejection
-PASS 4 clock is not registration; duplicate registrations intentionally own two distinct results
-PASS 5 immediate terminal quota exhaustion and repeated explicit reclamation

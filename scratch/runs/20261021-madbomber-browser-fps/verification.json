@@ -1,5 +1,0 @@
-{
-  "exitCode": 0,
-  "stdout": "{\n  \"accepted\": true,\n  \"seals\": 76,\n  \"recoveryFiles\": 24,\n  \"source\": 6909,\n  \"canonicalSource\": 7299,\n  \"assets\": 168,\n  \"dependencies\": 2407,\n  \"liveCodeBytes\": 6848,\n  \"controls\": 7,\n  \"reasons\": [],\n  \"fps\": 21.17758645355393,\n  \"logicalFrames\": 94,\n  \"durationMs\": 4438.655000000028,\n  \"displayFps\": null,\n  \"owner\": \"main\",\n  \"samples\": 46\n}\n",
-  "stderr": ""
-}

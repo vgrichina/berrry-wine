@@ -1,8 +1,0 @@
-{
-  "candidate": "247539937fa52c86e3c86ca0f0dd46b9a78ed826",
-  "candidateTree": "ad1f2a0f01d9dc5d8bcd9ea1998c60ce7e443f81",
-  "sourceFixtureTestedTree": "2075eafb5a6fb8e253d8b6e5c777c584451ce163",
-  "productionSourceSHA256": "079da22e440c6a3eb6efb28a994b222fe827290ccfb0874ae48f1802ef08c78c",
-  "newFixtureSHA256": "560e0affb70e9f531b7bd5c61070fd7179297e4722013b35f9f473178560d866",
-  "suppliedOraclesUnchanged": true
-}
