@@ -1,0 +1,39 @@
+{
+  "status": "BLOCKED",
+  "firstRuntimeBlocker": "PARSE: Missing include '09a8ca-gl-lists.wat' referenced from <main>",
+  "missingDirectMainIncludes": [
+    "09a8ca-gl-lists.wat",
+    "09a8cb-gl-bitmap.wat",
+    "09a8cc-gl-stencil.wat",
+    "09a8cd-gl-color-mask.wat"
+  ],
+  "providedInputsVerified": 139,
+  "compilerReturnedKeys": [
+    "success",
+    "error",
+    "errorLine",
+    "errorCol",
+    "stages",
+    "diagnostics"
+  ],
+  "wasmProduced": false,
+  "instantiated": false,
+  "midiLifecycleExecuted": false,
+  "negativeControlExecuted": false,
+  "runtimeInvocations": 1,
+  "missingGitObjects": [
+    "commit 98d132898c963790f797ef3d00c812964e413cab",
+    "commit 36a7171e024551ad0c64046a84779c094d9496ef"
+  ],
+  "publication": "STOPPED: missing Git objects; no commit or push attempted",
+  "firstLocalEvidenceDenial": {
+    "operation": "git ls-files -s",
+    "denial": "cumulative evidence >=1MiB",
+    "bytes": 1711848,
+    "sha256": "bd6d5f29049282921a1b1cf8a476bd7854e67ae5eb86e02a0889d52a990c733a",
+    "action": "stop listing operation; compact captured listing, no unchanged retry"
+  },
+  "mountArgv": [],
+  "mountValidation": "No guest runner or mount argv used. Native Boat API archive transfer only.",
+  "archiveSHA256": "32f936d50f2fcde0fab5f909b994ee069799f59e21df26ab03741f6e6cfac76e"
+}

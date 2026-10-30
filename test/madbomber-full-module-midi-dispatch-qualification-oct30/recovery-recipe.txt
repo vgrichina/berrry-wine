@@ -1,0 +1,15 @@
+Do not resume or rerun this attempt unchanged. Coordinator must supply the exact pinned complete src/main.watx include closure, including the four missing GL include files, and resolve the two missing Git commit objects before publication.
+Owned root: /tmp/madbomber-full-module-midi-dispatch-qualification-oct30
+Owned repo: /tmp/madbomber-full-module-midi-dispatch-qualification-oct30/repo
+Task branch: task/madbomber-full-module-midi-dispatch-qualification-oct30
+Base: dc22b2b38624da40b2dcec29c76bfb986ae03a35
+Archive: ../source.tar.gz (SHA256 32f936d50f2fcde0fab5f909b994ee069799f59e21df26ab03741f6e6cfac76e)
+Pins: test/madbomber-full-module-midi-dispatch-qualification-oct30/pins.json
+Exact compile invocation and original limits: evidence/qualification.json
+Exact startup and inherited Node limits: evidence/startup.json and evidence/startup.stdout
+Local native API transfer client: ../transfer.py
+Original-parent wrapper: ../ops.py and ../limit_contract.py (pins in dispatch file)
+Remote original workspace: /home/user/madbomber-full-midi-oct30 on bx_8whp9564, preserved by delegated snapshot-stop. Do not resume without a fresh coordinator assignment.
+All behavioral and Git operations must retain the original task guards. Git DATA256 applies only to Git; no ancestor DATA cap for Node. Do not retry denied operations or compile unchanged inputs.
+New-task continuation, only after coordinator correction: verify source pins and full closure, exact Node startup, resource admission and original limits; compile the complete canonical module. No extracted helpers or historical overlays. Review actual exports before dispatch invocation; source inspection suggested no exported MIDI/Win32 dispatch wrapper but compilation failed before an actual inventory could confirm that. No negative control executed.
+Recovery patch contains new owned files only; review before applying. No remote Git branch/commit exists for this task.

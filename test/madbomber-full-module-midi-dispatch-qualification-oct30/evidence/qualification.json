@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=3072",
+    "test/madbomber-full-module-midi-dispatch-qualification-oct30/qualification.js"
+  ],
+  "cwd": "/home/user/madbomber-full-midi-oct30",
+  "originalLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "exit": 2,
+  "denial": null,
+  "peakGroupRSS": 87044096,
+  "elapsed": 0.35072233699997923,
+  "MemAvailable": 7447420928,
+  "allocated": 22585344
+}

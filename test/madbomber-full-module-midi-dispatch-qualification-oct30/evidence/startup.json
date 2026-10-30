@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=3072",
+    "-e",
+    "const fs=require('fs');console.log(JSON.stringify({node:process.execPath,version:process.version,limits:fs.readFileSync('/proc/self/limits','utf8'),shared:new WebAssembly.Memory({initial:1,maximum:1,shared:true}).buffer instanceof SharedArrayBuffer}))"
+  ],
+  "cwd": "/home/user/madbomber-full-midi-oct30",
+  "originalLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "exit": 0,
+  "denial": null,
+  "peakGroupRSS": 35586048,
+  "elapsed": 0.12201513299999078,
+  "MemAvailable": 7447420928,
+  "allocated": 22568960
+}
