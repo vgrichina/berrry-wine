@@ -1,0 +1,9 @@
+# Tux Racer post-title poll runtime: preflight blocked
+
+No new game execution, renders, compile, source change or Boat allocation occurred. Cause remains unknown; guest polling stop, scheduler gating and host queue consumption were not distinguished. Prior observer acceptance is reused, not presented as runtime coverage.
+
+Fresh charged footprint was 58314752 bytes with 405504 bytes before the mandatory8MiB reserve inside64MiB. The accepted1881806-byte module needs1884160 allocated bytes by itself: minimum shortfall 1478656 bytes before new PNG/log/publication growth. The historical55459840-byte baseline predates retained input-consumption artifacts and this launch. RAM is observational; host disk passes.
+
+The accepted module is absent from every charged local root and all three hash-verified retained archives. The standing packet contains a different historical module (see preflight-blocker.json). Its accepted hash is known from prior runtime receipts, but its actual bytes remain in stopped bx_jdx249hm snapshot40ad564a-7673-4d96-8842-a6163a971d0f. Supported snapshot tree confirms the path and1881806-byte size and exposes no content hash. This is not full exact-module verification. CLI snapshot pull supports a selected --path; even that single-file recovery exceeds the current headroom. No pull, fork, new or resume was issued.
+
+Recover the unchanged diagnostic from dbabdfc2a3e0386580d9feb3d7cd3b8eb5155262; use the exact prior README command, runner, source manifest and CPU90/wall120 controls. Resolve module availability and allocation first, including selected PNG and closeout growth, then complete canonical mount, Node startup and supported16KiB API transfer/capture smoke before the one new allocation/run. Do not compile, raise CPU or infer a production defect. Old stopped boxes remain untouched.

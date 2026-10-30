@@ -1,0 +1,137 @@
+{
+  "status": "BLOCKED_BEFORE_PROVISIONING",
+  "at": 1793347837.1780093,
+  "cause": "Accepted module absent from charged local roots and all three retained archives; exact stopped-snapshot module bytes cannot be restored locally within allocation plus mandatory reserve.",
+  "admission": {
+    "at": 1793347836.9883475,
+    "sizes": {
+      "/tmp/tuxracer-glcolor4dv-repair-oct30": 30752768,
+      "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30-report-corrected": 5922816,
+      "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30": 3428352,
+      "/tmp/tuxracer-vertex-color-gameplay-owner-policy-oct30": 487424,
+      "/tmp/tuxracer-vertex-color-isolated-capture-runtime-oct30": 1634304,
+      "/tmp/tuxracer-retained-vertex-runtime-integration-oct30": 6557696,
+      "/tmp/tuxracer-main-menu-race-progression-oct30": 7593984,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-main-menu-race-progression-oct30": 241664,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-vertex-runtime-integration-oct30": 266240,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-vertex-color-gameplay-owner-policy-oct30": 385024,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-vertex-color-isolated-capture-runtime-oct30": 233472,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-accepted-vertex-color-reconciliation-oct30": 192512,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-main-menu-input-consumption-repair-oct30": 294912,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-post-title-poll-runtime-oct30": 323584
+    },
+    "used": 58314752,
+    "budget": 67108864,
+    "reserve": 8388608,
+    "free": 3295043584,
+    "remainingAggregate": 267292672,
+    "diskFloor": 1610612736,
+    "MemAvailable": 4367319040,
+    "RAMAdmission": false,
+    "checks": {
+      "allocation": true,
+      "disk": true
+    }
+  },
+  "availableBeforeReserve": 405504,
+  "moduleAllocatedBytes": 1884160,
+  "minimumModuleOnlyShortfall": 1478656,
+  "acceptedModule": {
+    "bytes": 1881806,
+    "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+  },
+  "localModulePaths": [],
+  "archiveModules": [
+    {
+      "archive": "/tmp/tuxracer-software-render-msvcrt-retest-oct30/packet.tar.gz",
+      "member": "build/wine-assembly.wasm",
+      "bytes": 1880509,
+      "sha256": "3b07f522ea5f0bae43f285d0f8ae9ee2ed297eab6997cbefe2bb660abd8aa581"
+    }
+  ],
+  "snapshot": {
+    "id": "40ad564a-7673-4d96-8842-a6163a971d0f",
+    "box": "bx_jdx249hm",
+    "module": {
+      "kind": "file",
+      "path": "tuxracer-render/build/wine-assembly.wasm",
+      "size": 1881806
+    },
+    "contentHashExposed": false,
+    "treeSHA256": "5d954cdc5e573ef2b31232268e5a6d25ecd0203c775911d650c24f2e6b8afe22"
+  },
+  "pins": {
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/main-scheduler-observer.js": {
+      "bytes": 4519,
+      "sha256": "01f4de4099a0e60c56cf6ea109f82ae12e1c42b6ba15309d0411b10fe8029040"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/run.pinned.js": {
+      "bytes": 692809,
+      "sha256": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/README.md": {
+      "bytes": 6143,
+      "sha256": "a430298ac160299fd9e854ff8248c063d78962e42c5352e571856275f3955432"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/publication.json": {
+      "bytes": 1635,
+      "sha256": "f0d7aeb8da0e89c7f0052563b92b86266733a8864aa17f6d640d7a20f5857683"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/boundary-run.pinned.js.json": {
+      "bytes": 750,
+      "sha256": "6f6a268b1b539574bbfea463d97ca6e1ffb05a933b7641851bc6de52b33d17ee"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/regression-controls.json": {
+      "bytes": 403,
+      "sha256": "dda8ef18a58860906f285ee69dd6ac6a7c6722034e372d4c51ee733b12b32f20"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/source-manifest.json": {
+      "bytes": 28971,
+      "sha256": "b4c8e15abac596f027685b227548c435263355ac5ef6444c2d6bc3a7649198bb"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/limit-controls.json": {
+      "bytes": 319,
+      "sha256": "0780e8d47c36feca1a0edf9c0ea4b3d9ede286d98bf4f33819759613409efca7"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/remote-worker.py": {
+      "bytes": 4530,
+      "sha256": "cee99baded7f8a3fb6388c687c9ae9d601617879f3516f7bb9235a633f4bba30"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/control.py": {
+      "bytes": 1116,
+      "sha256": "0709450569bab3030b5c2060a998af91fd3751d39e4e7c8eb4a9b0fe1f214085"
+    }
+  },
+  "compile": false,
+  "newBoat": null,
+  "guestRuns": 0,
+  "newRenders": 0,
+  "pollDeltas": null,
+  "causalConclusion": "unknown",
+  "coverage": "No new source-boundary acceptance or runtime performed; unchanged prior observer tests referenced only.",
+  "preflight": {
+    "moduleClosure": false,
+    "provisioning": false,
+    "API16KiBSmoke": "not attempted because exact-input/allocation prerequisite failed",
+    "mount": "unchanged prior receipt exists; no runtime configuration executed",
+    "nodeStartup": "not attempted; no runtime executable/environment allocated"
+  },
+  "limits": {
+    "local": 67108864,
+    "reserve": 8388608,
+    "remote": 268435456,
+    "remoteReserve": 8388608,
+    "CPU": 90,
+    "wall": 120,
+    "capture": 524288,
+    "generatedFile": 12582912,
+    "pythonDATA": 134217728,
+    "gitChildDATA": 268435456,
+    "supervisorRSS": 134217728,
+    "groupRSS": 536870912,
+    "RAMAdmission": false,
+    "diskFloor": 1610612736,
+    "remainingAggregate": 267292672
+  },
+  "next": "Coordinator must reconcile retained local footprint and supply a verified accepted module execution/transfer route that fits local64MiB including8MiB reserve, selected new PNGs and report growth. Snapshot pull supports --path; restoring the module alone does not currently fit. No compile or old-box resume. A snapshot-backed new allocation still requires exact pre-provisioning hash verification and supported transfer/capture smoke, not size-only tree metadata."
+}

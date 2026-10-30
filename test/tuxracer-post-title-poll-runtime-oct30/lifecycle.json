@@ -1,0 +1,20 @@
+{
+  "newBoat": null,
+  "provisioned": false,
+  "oldBoxes": {
+    "bx_jdx249hm": {
+      "state": "stopped",
+      "snapshotVerifiedAt": "2026-10-30T07:44:30.414Z",
+      "stoppedAt": "2026-10-30T07:44:30.454Z",
+      "archiveAfter": null
+    },
+    "bx_7ky4nfwq": {
+      "state": "stopped",
+      "snapshotVerifiedAt": "2026-10-30T07:20:32.892Z",
+      "stoppedAt": "2026-10-30T07:20:32.948Z",
+      "archiveAfter": null
+    }
+  },
+  "stopRequired": false,
+  "reason": "No new Boat allocated; stopped boxes only queried, never resumed or mutated."
+}
