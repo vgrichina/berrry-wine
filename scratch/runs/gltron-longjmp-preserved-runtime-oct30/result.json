@@ -1,0 +1,160 @@
+{
+  "task": "gltron-longjmp-preserved-runtime-oct30",
+  "status": "BLOCKED_CANONICAL_COMPILE_UNKNOWN_API_ID_LONGJMP",
+  "sessionID": "01a18d60-a0f0-7033-90ab-01ecf0513a7e",
+  "parent": "704b2158f9dac73824b79a6c01dfc45b337e5e3c",
+  "branch": "refs/heads/task/gltron-longjmp-preserved-runtime-oct30",
+  "build": {
+    "attempted": true,
+    "command": "/usr/bin/node --max-old-space-size=512 tools/build-compile-wat.js",
+    "receipt": {
+      "argv": [
+        "/usr/bin/node",
+        "--max-old-space-size=512",
+        "tools/build-compile-wat.js"
+      ],
+      "startedAt": "2026-10-30T15:16:09.460399+00:00",
+      "exit": 1,
+      "wall": 2.3743844032287598,
+      "peakRSS": 230420480,
+      "violation": null,
+      "FSIZE": 12582912,
+      "capture": 524288,
+      "limits": {
+        "cpu": 60,
+        "wall": 90,
+        "heapMiB": 512,
+        "aggregateRSS": 2147483648
+      },
+      "nodeEnvironment": "/home/user/wine-assembly/node_modules"
+    },
+    "error": "Unknown global '$API_ID_longjmp' in $win32_dispatch_inner",
+    "module": null
+  },
+  "run": {
+    "attempted": false,
+    "guestInvocations": 0,
+    "app": "GLTron0.70",
+    "command": "/usr/bin/node --max-old-space-size=512 test/run.js --app=gltron --no-build --gl-renderer=software --wasm=build/wine-assembly.wasm --max-seconds=45 --max-batches=100000 --batch-size=10000 --png=capture/original.png",
+    "PNG": null,
+    "gameplayQualified": false
+  },
+  "blocker": "Canonical WATX EMIT rejected missing $API_ID_longjmp global; no second API repair authorized",
+  "publication": {
+    "status": "PENDING",
+    "pushAttempted": false,
+    "remoteVerified": false,
+    "remoteBackup": false,
+    "reason": "Unchanged trusted SSH publickey denial; no independent authorization-change signal"
+  },
+  "lifecycle": {
+    "sandbox": {
+      "access": "owner",
+      "archiveAfter": null,
+      "billingMultiplier": 1,
+      "createdAt": "2026-10-30T15:15:55.935Z",
+      "createdBy": "vgrichina",
+      "createdById": "sandbox_23337a3f0dc2ab057f51992768a51ce6",
+      "dataExpiredAt": null,
+      "degradedSince": null,
+      "desktopAvailable": true,
+      "desktopUrl": null,
+      "environment": "base",
+      "environmentVersion": 1,
+      "error": null,
+      "health": "ok",
+      "healthReason": null,
+      "holdsCreatorLogins": false,
+      "hydrated": true,
+      "hydratedAt": "2026-10-30T15:16:10.691Z",
+      "hydration": null,
+      "id": "bx_bg8hzjcq",
+      "ip": null,
+      "labels": {},
+      "lastReboot": null,
+      "lastSnapshotAttemptAt": "2026-10-30T15:16:14.317Z",
+      "lastSnapshotStatus": "completed",
+      "machineProvider": null,
+      "memoryGB": 8,
+      "monitoring": true,
+      "name": "tuxracer-bounded-transport-oct30 fork fork fork fork fork fork fork fork fork fork fork fork fork fork",
+      "setupError": null,
+      "setupStatus": null,
+      "snapshotAvailable": true,
+      "snapshotCompletedAt": "2026-10-30T15:16:20.958Z",
+      "snapshotVerifiedAt": "2026-10-30T15:16:20.958Z",
+      "snapshots": true,
+      "sshEndpoint": null,
+      "state": "stopped",
+      "stop": {
+        "endedAt": "2026-10-30T15:16:21.031Z",
+        "error": null,
+        "forced": false,
+        "id": "stop_38e51c67de3308e1",
+        "lastAttemptAt": "2026-10-30T15:16:21.031Z",
+        "requestedAt": null,
+        "status": "completed"
+      },
+      "stoppedAt": "2026-10-30T15:16:21.003Z",
+      "subdomain": "box-node-873bddd62ceda73b",
+      "team": null,
+      "ttlSeconds": 1800,
+      "type": "default",
+      "updatedAt": "2026-10-30T15:16:21.002Z",
+      "url": null,
+      "vcpu": 4,
+      "visibility": null,
+      "wipePendingUntilRestart": false
+    },
+    "originalExpiry": "2026-10-30T15:45:55.902Z",
+    "shutdownDelegated": true
+  },
+  "noSharedRootEdits": true,
+  "noOtherWorkers": true,
+  "noTelegram": true,
+  "noIntegration": true,
+  "noDeployment": true,
+  "controls": {
+    "nodeStartup": "evidence/retrieved/selected-ungetc/longjmp-preserved-compile-startup.stdout.log",
+    "FSIZE": 12582912,
+    "captureEach": 524288,
+    "captureAggregate": 4194304,
+    "APIRequestResponse": 16384,
+    "rawTransferChunk": 6000,
+    "RAMAdmission": false,
+    "GitDATAChildOnly": 268435456,
+    "PythonDATAChildOnly": 134217728,
+    "NodeDATA": "unlimited",
+    "CPU": 60,
+    "wall": 90,
+    "groupRSS": 2147483648,
+    "remoteAllocation": 268435456,
+    "remotePublicationReserve": 8388608
+  },
+  "limitations": [
+    "Guest startup/acceptance preflight not reached after canonical compiler rejection.",
+    "Wrapper generated-file/overflow controls retained in prior runner evidence; exact unchanged wrapper equivalence was not independently established before this compile. No retroactive compliance claim."
+  ],
+  "recovery": {
+    "path": "/tmp/gltron-longjmp-preserved-runtime-oct30/runtime-build-evidence.tar.xz",
+    "pin": {
+      "bytes": 260368,
+      "sha256": "71e44215e7b2e00b60da321562959e5874b79ec6b2dfc31d4ba7b3ccdbcd0f72"
+    },
+    "readback": true,
+    "repairBundle": "/tmp/gltron-longjmp-production-repair-oct30/repair-source-evidence.tar.xz",
+    "repairSHA256": "c09bf169ab54692656d1fe680202529e4f498ab98c8bb9f67875a7531c3416ca",
+    "rawLogs": "Full remote log identities and selected tails retained; stopped snapshot holds full original remote artifacts."
+  },
+  "sourceBoundary": {
+    "changed": [
+      "src/01b-api-hashes.generated.wat",
+      "src/09a6-handlers-crt.wat",
+      "src/09b-dispatch.wat",
+      "src/09b2-dispatch-table.generated.wat",
+      "src/api_table.json"
+    ],
+    "allOtherCompileDependenciesIdentical": true,
+    "canonicalIncludeFragments": 128
+  }
+}
