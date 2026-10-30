@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/enigma-supervisor-artifact-output-repair-oct24/repo/test/test-enigma-supervisor-output.py", line 161, in <module>
-    assert row['retainedBytes'] == 131072 and row['receipt']['reason'] == 'output-guard', row
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: {'name': 'flood-fast', 'exit': 1, 'elapsed': 0.06609603390097618, 'retainedBytes': 65536, 'dependentRan': False, 'artifact': False, 'stderr': '', 'receipt': {'TERM': False, 'KILL': False, 'returncode': 1, 'reaped': [], 'remainingGroup': False, 'reason': 'natural', 'elapsed': 0.04090261203236878, 'box': 'bx_fvkjwxap', 'lifecycle': 'leave RUNNING; coordinator owns shutdown09:57UTC', 'expires': '2026-10-24T10:02:44.741Z', 'outputBytes': 65536}}

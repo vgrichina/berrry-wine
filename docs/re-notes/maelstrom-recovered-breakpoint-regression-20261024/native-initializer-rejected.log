@@ -1,5 +1,0 @@
-Error: unexpected host import: host.beep_process_begin
-    at ns.<computed> (/tmp/maelstrom-recovered-breakpoint-regression-oct24/repo/tools/maelstrom-retained-breakpoint-probe.cjs:32:80)
-    at wasm://wasm/0072bb0a:wasm-function[442]:0x1b275
-    at wasm://wasm/0072bb0a:wasm-function[12372]:0x1ba3a8
-    at probe (/tmp/maelstrom-recovered-breakpoint-regression-oct24/repo/tools/maelstrom-retained-breakpoint-probe.cjs:39:5)
