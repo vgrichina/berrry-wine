@@ -1,0 +1,203 @@
+{
+  "commit": "43a1d1d7b8c0418cdc1d61f646e2ea5150a318c4",
+  "branch": "task/shadow-man-null-hook-independent-review-oct23",
+  "verdict": "REQUEST CHANGES",
+  "actualRemoteRefs": {
+    "refs/heads/main": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+    "refs/heads/task/shadow-man-null-hook-independent-review-oct23": "43a1d1d7b8c0418cdc1d61f646e2ea5150a318c4"
+  },
+  "remoteMatch": true,
+  "unchangedParentPaths": 8316,
+  "addedReviewFiles": 28,
+  "seals": [
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/actual-paths.wat",
+      "bytes": 33608,
+      "sha256": "d93b3b7834d270f25b7e68f0e4115f3cdb53d486131d29e873382ba30f3001b4"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/admission.json",
+      "bytes": 1316,
+      "sha256": "31f7ec57d54e1ac3bcf5cb011f4fbf80b9e01110d0835673640d353e3a854bf8"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/census-check.stdout",
+      "bytes": 1135,
+      "sha256": "dd509679062bc425bdd7b775993ed2ab3b190f5530f2bd7db5e41a90d5bf1d90"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/census-delta.json",
+      "bytes": 1351,
+      "sha256": "8745ef2bbc7da1f92f8ce4a0f8ac76916163c849c6c011fdcf59076936ff9657"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/check-census.cjs",
+      "bytes": 1222,
+      "sha256": "52ec6396713b30b605ba276bd69558c7a3b4f3d12bc20c2619efedf121bb6bff"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/check-source.py",
+      "bytes": 2617,
+      "sha256": "aa66a5eecf950a2b7b79f953b5f84c3f15227be0b3ca687d25fa6ed6c32500b0"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/exclusive.jsonl",
+      "bytes": 9,
+      "sha256": "bf6af9436aeee1de762785de6a1597ac9cc3062d7f571e3e6f47db77d8d64488"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/independent-tests.json",
+      "bytes": 13621,
+      "sha256": "5ff20478e676d1e13dd5001b5762e963e8e50626e7ae0bdd91a6d22a8a101369"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/independent-tests.stdout",
+      "bytes": 871,
+      "sha256": "194d488159c4ea99b6908911061c88c4976749b70bcf489ad2ade1e036daec0c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/measurement.json",
+      "bytes": 1115,
+      "sha256": "efa1fa2206f72490a55f422263490874ba563042cbaeffd116340b3476fe1b20"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/missing-exports.jsonl",
+      "bytes": 78,
+      "sha256": "a6f46b156fdfd411f59343f48f69eecc6660569fb1590b094bac1f838d174834"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/negative-driver.cjs",
+      "bytes": 410,
+      "sha256": "fdadf9c1571c44d40c7076af3d5d3e5224b6e222c7deac2915e6177d9911da39"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/normal.jsonl",
+      "bytes": 1268,
+      "sha256": "28851afe1e69d4eef704ce16bdd60d27b30bcc6ea438082de42870ef494450de"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/original-replay-fixture.wat",
+      "bytes": 4951,
+      "sha256": "96e06bda952d0017d9fdf44c5a8d35a1dcce079712936a0239d1f74b7eaa18cc"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/original-replay-preload-driver.cjs",
+      "bytes": 409,
+      "sha256": "6b01febb3068731aa3fa4f9c853a96af5bac3aa905851ba30d1f458f912878ad"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/original-replay-preload-record.jsonl",
+      "bytes": 2507,
+      "sha256": "29e4e7068487463da2803c37a8da0b9f40e2f65a74d21697ce13b0f69eb6f62b"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/original-replay-tests.json",
+      "bytes": 697,
+      "sha256": "55cfceab3deea5ae5b740c0d6dc27e09b1b6f255739dd78ce6ca238fa06107ba"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/pinned-build.sh",
+      "bytes": 38494,
+      "sha256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/pinned-callback-ownership-census.json",
+      "bytes": 274955,
+      "sha256": "d2a9682fce5581ea275d1fcbb7bc48208dc46507de57a3fcecf40622827e3bb0"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/pinned-check-test-manifest.sh",
+      "bytes": 662,
+      "sha256": "8cbf4b4c6155773809654602f4caf821df377d60991667a652837bc2c4f2f849"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/pinned-check-wat-fragments.js",
+      "bytes": 6395,
+      "sha256": "5e916cf3e66c31c4837a693d4d568b06437bdfb0ebadf5dd051eadeaa9a5d3f9"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/pinned-test-tiers.js",
+      "bytes": 7637,
+      "sha256": "cbbba34af225b74d5f7919580e87a3976a41b60dc1331e2b37a04d76ebfeda37"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/setup.py",
+      "bytes": 2532,
+      "sha256": "f561b977fe71fb421535ad6526b57c01c97e982e76882c5fc079e6e392925e2a"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/source-checks.json",
+      "bytes": 3074,
+      "sha256": "898043bf2fc03fa820faced26fb100e0d837e250c7f23a723edeb8937f5c959c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/source-checks.stdout",
+      "bytes": 3074,
+      "sha256": "898043bf2fc03fa820faced26fb100e0d837e250c7f23a723edeb8937f5c959c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023/wrong-module.jsonl",
+      "bytes": 1268,
+      "sha256": "7c03f1e2ca3bf85742f68135271eeb5960bab15d18733f02c05a9eb7bc2a7e19"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-hook-independent-review-20261023.md",
+      "bytes": 19818,
+      "sha256": "99d060258cef0e7f01b986e81c5a4ca325c0402965aee9dde2ef7261af1ca87a"
+    },
+    {
+      "path": "test/test-shadow-man-null-independent-review.cjs",
+      "bytes": 13312,
+      "sha256": "2e91d3a65edcbb8cad2e2b477dd8e2c7e758b7d3a6f6f03b71cb9a539f312aff"
+    }
+  ],
+  "checks": {
+    "original902BFixture": 0,
+    "independentActualPaths": 0,
+    "sourcePinsFragmentGate": 0,
+    "scopedCensusDelta": 0,
+    "diffCheck": 0
+  },
+  "nativeFragment": {
+    "bytes": 3394,
+    "sha256": "5b874002a970b97d246408739811bd1802a8c31a6dc2357973579ce67c55f8ab",
+    "arenaBytes": 8388608
+  },
+  "measurement": {
+    "taskTreeIncludingGit": 7189895,
+    "reserve": 8388608,
+    "futurePublicationGitGrowth": 2097152,
+    "temporarySetupPublishInputs": 9257,
+    "readOnlyDonors": {
+      "mechanism": {
+        "path": "/home/user/wine-assembly-shadow-man-null-capture-mechanism-oct23",
+        "bytes": 6762636,
+        "revision": "6d145e98589caeab2d43c4bb54297d90c248b9de",
+        "access": "existing read-only donor; no metadata/index writes"
+      },
+      "diagnosis": {
+        "path": "/home/user/wine-assembly-shadow-man-null-exit-diagnosis-oct23",
+        "bytes": 8439761,
+        "revision": "26dffaa0995cdf19d61ae30117729ca0588108b9",
+        "access": "existing read-only donor; no metadata/index writes"
+      },
+      "preflight": {
+        "path": "/home/user/wine-assembly-shadow-man-null-boundary-capture-preflight-oct23",
+        "bytes": 4883875,
+        "revision": "f0341d5d269baad2afed6a801768566e53d159be",
+        "access": "existing read-only donor; no metadata/index writes"
+      }
+    },
+    "installedTools": "see admission.json; execute in place",
+    "cap": 67108864,
+    "floor": 2982150144,
+    "hostFree": 6522707968,
+    "wholeUpper": 17684912
+  },
+  "runtime": "NONE",
+  "canonicalBuild": "NOT EXECUTED",
+  "productionSources": "UNCHANGED from parent candidate",
+  "independentPostPushRemoteVerification": "43a1d1d7b8c0418cdc1d61f646e2ea5150a318c4\trefs/heads/task/shadow-man-null-hook-independent-review-oct23",
+  "postPushSealCount": 28,
+  "postPushTaskBytes": 7405546
+}
