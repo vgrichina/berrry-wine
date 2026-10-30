@@ -1,2 +1,0 @@
-First verification exit1 before tests: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/enigma-final-dispatch-uncertainty-repair-oct26/repo/docs/reviews/enigma-atomic-click-independent-accept-oct26/README.md'
-At (R/p).read_bytes(), pathlib.read_bytes/open. Required immutable objects were present; sparse checkout pattern missing. Corrected once in same task; verification passed.
