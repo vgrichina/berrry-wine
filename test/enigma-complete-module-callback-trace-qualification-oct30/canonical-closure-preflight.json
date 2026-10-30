@@ -1,0 +1,17 @@
+{
+  "PASS": true,
+  "candidate": "207d55bed24c2ef1cd822a0d365b20207359cb14",
+  "recursiveManifestFiles": 128,
+  "sourcePins": 165,
+  "referenceOnlyHarness": {
+    "path": "/tmp/enigma-complete-module-callback-trace-qualification-oct30/reference-lifecycle.js",
+    "bytes": 9135,
+    "sha256": "60db59885a27d90664af20f1ecb8fd93e8a741f4f107355b572e28ca020dd4c9"
+  },
+  "index": {
+    "uniqueObjects": 13499,
+    "missing": [],
+    "PASS": true
+  },
+  "canonicalReceiptSHA256": "dbf376f38fc08019a5dfbd860236218944d0ce18be9f15876fe5fe7f1e203ebd"
+}

@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=3072",
+    "/home/user/enigma-complete/qualification.js",
+    "compile"
+  ],
+  "cwd": "/home/user/enigma-complete",
+  "original": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "nodeDATA": "unlimited",
+  "nodeAS": "unlimited",
+  "heapMiB": 3072,
+  "groupRSSMiB": 4096,
+  "parentRSSMiB": 256,
+  "available": 15710236672,
+  "allocated": 43675648,
+  "peakRSS": 343580672,
+  "elapsed": 6.074394321999989,
+  "exit": 0,
+  "denial": null
+}

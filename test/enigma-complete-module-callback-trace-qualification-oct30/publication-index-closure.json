@@ -1,0 +1,174 @@
+{
+  "PASS": true,
+  "indexEntries": 14979,
+  "uniqueObjects": 13499,
+  "missing": [],
+  "scope": "entire inherited index; no ancestor/history fsck",
+  "records": [
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/tmp/enigma-complete-module-callback-trace-qualification-oct30/repo",
+        "ls-files",
+        "--stage",
+        "-z"
+      ],
+      "cwd": "/tmp/enigma-complete-module-callback-trace-qualification-oct30/repo",
+      "exit": 0,
+      "elapsed": 0.3793007340282202,
+      "peakRSS": 7360512,
+      "stdoutBytes": 1714649,
+      "streamSHA256": "669eb8ef5e8d7b4a10d2aff015ef272f0335c2852802fa52d0c6702d9ecbff34",
+      "stderrBytes": 0,
+      "admission": {
+        "at": 1793329255.0539508,
+        "device": 1680253000807562931,
+        "f_bavail": 878614,
+        "blockSize": 4096,
+        "free": 3598802944,
+        "MemAvailable": 4787195904,
+        "allocated": 38735872,
+        "budget": 67108864,
+        "aggregate": {
+          "at": "2026-10-30T02:50:50.165405+00:00",
+          "task": "enigma-complete-module-callback-trace-qualification-oct30",
+          "MemAvailable": 3879006208,
+          "memRequired": 3296202752,
+          "requiredMemoryBytes": 3296202752,
+          "floor": 2147483648,
+          "incompleteOwners": [
+            {
+              "task": "madbomber-full-module-callback-evidence-independent-accept-oct30",
+              "pid": 3767387,
+              "rss": 260567040,
+              "publication": 268435456,
+              "receipt": 33554432
+            }
+          ],
+          "remainingExistingClientGrowthBytes": 142086144,
+          "prospectiveClientGrowthBytes": 402653184,
+          "publicationReceiptPerOwner": 301989888,
+          "residentRssAlreadyIncluded": true,
+          "freeBytes": 3643092992,
+          "futureGrowthIncludingUncertaintyBuffer": 268435456,
+          "requiredBytes": 3221225472,
+          "owners": [
+            "madbomber-full-module-callback-evidence-independent-accept-oct30",
+            "enigma-complete-module-callback-trace-qualification-oct30"
+          ],
+          "PASS": true,
+          "changedPrerequisite": "Reviewed Enigma completion released publication/receipt reserves and worker client exited",
+          "excludedAlreadyReleasedOwners": [
+            "maelstrom-integrated-full-transform-contract-oct30",
+            "toyvm-rename-caller-independent-accept-oct30",
+            "madbomber-accepted-midistreamstop-main-integration-oct30",
+            "madbomber-host-owned-midistreamstop-reconciliation-oct30"
+          ],
+          "correction": "Exclude historical owners with explicit released=true and zero reserves; forecast fields retained as historical allowances. Same measurement, corrected arithmetic, no probe retry.",
+          "threeWorkerRequirement": 4000845824,
+          "thirdSlotDeficit": 121839616
+        },
+        "parentLimits": {
+          "inheritedDATA": [
+            -1,
+            -1
+          ],
+          "parentDATA": [
+            134217728,
+            -1
+          ],
+          "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+        },
+        "checks": {
+          "allocation": true,
+          "disk": true,
+          "forecast": true,
+          "memory": true
+        }
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/tmp/enigma-complete-module-callback-trace-qualification-oct30/repo",
+        "cat-file",
+        "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+      ],
+      "cwd": "/tmp/enigma-complete-module-callback-trace-qualification-oct30/repo",
+      "exit": 0,
+      "elapsed": 2.1586070500779897,
+      "peakRSS": 91357184,
+      "stdoutBytes": 688554,
+      "streamSHA256": "471559adae19f5de5e954a1ea34b6800197ae03af70da6729f57bb3b9751c134",
+      "stderrBytes": 0,
+      "admission": {
+        "at": 1793329255.4408798,
+        "device": 1680253000807562931,
+        "f_bavail": 878478,
+        "blockSize": 4096,
+        "free": 3598245888,
+        "MemAvailable": 4819849216,
+        "allocated": 38735872,
+        "budget": 67108864,
+        "aggregate": {
+          "at": "2026-10-30T02:50:50.165405+00:00",
+          "task": "enigma-complete-module-callback-trace-qualification-oct30",
+          "MemAvailable": 3879006208,
+          "memRequired": 3296202752,
+          "requiredMemoryBytes": 3296202752,
+          "floor": 2147483648,
+          "incompleteOwners": [
+            {
+              "task": "madbomber-full-module-callback-evidence-independent-accept-oct30",
+              "pid": 3767387,
+              "rss": 260567040,
+              "publication": 268435456,
+              "receipt": 33554432
+            }
+          ],
+          "remainingExistingClientGrowthBytes": 142086144,
+          "prospectiveClientGrowthBytes": 402653184,
+          "publicationReceiptPerOwner": 301989888,
+          "residentRssAlreadyIncluded": true,
+          "freeBytes": 3643092992,
+          "futureGrowthIncludingUncertaintyBuffer": 268435456,
+          "requiredBytes": 3221225472,
+          "owners": [
+            "madbomber-full-module-callback-evidence-independent-accept-oct30",
+            "enigma-complete-module-callback-trace-qualification-oct30"
+          ],
+          "PASS": true,
+          "changedPrerequisite": "Reviewed Enigma completion released publication/receipt reserves and worker client exited",
+          "excludedAlreadyReleasedOwners": [
+            "maelstrom-integrated-full-transform-contract-oct30",
+            "toyvm-rename-caller-independent-accept-oct30",
+            "madbomber-accepted-midistreamstop-main-integration-oct30",
+            "madbomber-host-owned-midistreamstop-reconciliation-oct30"
+          ],
+          "correction": "Exclude historical owners with explicit released=true and zero reserves; forecast fields retained as historical allowances. Same measurement, corrected arithmetic, no probe retry.",
+          "threeWorkerRequirement": 4000845824,
+          "thirdSlotDeficit": 121839616
+        },
+        "parentLimits": {
+          "inheritedDATA": [
+            -1,
+            -1
+          ],
+          "parentDATA": [
+            134217728,
+            -1
+          ],
+          "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+        },
+        "checks": {
+          "allocation": true,
+          "disk": true,
+          "forecast": true,
+          "memory": true
+        }
+      }
+    }
+  ]
+}

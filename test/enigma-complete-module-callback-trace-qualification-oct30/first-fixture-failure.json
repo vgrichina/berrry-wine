@@ -1,0 +1,180 @@
+{
+  "scope": "complete canonical module; synthetic PE and backend; real run/export/API dispatch and production audio host",
+  "phase": "second invocation",
+  "calls": [
+    {
+      "name": "midiStreamOpen",
+      "args": [
+        4214784,
+        4214800,
+        1,
+        4198528,
+        624485,
+        196608
+      ],
+      "result": 0
+    },
+    {
+      "name": "midiStreamOpen",
+      "args": [
+        4214784,
+        4214800,
+        1,
+        4198528,
+        624485,
+        196608
+      ],
+      "result": 0
+    }
+  ],
+  "callbacks": [
+    {
+      "enabled": true,
+      "serial": 1,
+      "savedContext": {
+        "eip": 4198400,
+        "esp": 122679420,
+        "eax": 287454020,
+        "wait": [
+          0,
+          0,
+          -1,
+          12,
+          0,
+          0,
+          0
+        ]
+      },
+      "admitted": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "afterRet": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": [
+        0,
+        1,
+        4198400,
+        122679420,
+        0,
+        0,
+        4294967295,
+        12
+      ],
+      "frame": [
+        122683656,
+        786433,
+        967,
+        624485,
+        0,
+        0
+      ],
+      "rejectedAdmission": true
+    },
+    {
+      "enabled": true,
+      "serial": 2,
+      "savedContext": {
+        "eip": 4198400,
+        "esp": 122679420,
+        "eax": 287454020,
+        "wait": [
+          1,
+          0,
+          -1,
+          12,
+          0,
+          0,
+          1
+        ]
+      },
+      "admitted": [
+        2,
+        1,
+        4198400,
+        122679420,
+        0,
+        0,
+        4294967295,
+        12
+      ],
+      "afterRet": [
+        2,
+        1,
+        4198400,
+        122679420,
+        0,
+        0,
+        4294967295,
+        12
+      ],
+      "returned": [
+        0,
+        2,
+        4198400,
+        122679420,
+        1,
+        0,
+        4294967295,
+        12
+      ],
+      "frame": [
+        122683656,
+        786434,
+        967,
+        624485,
+        0,
+        0
+      ],
+      "rejectedAdmission": true
+    }
+  ],
+  "synthetic": {
+    "imageBase": 4194304,
+    "sectionRVA": 4096,
+    "initialClockMs": 100,
+    "backend": "recording TinySynth and running AudioContext clock; no audio hardware",
+    "guest": "one synthetic PE; MIDI IAT imports; callback x86 RET 20; idle JMP to self; no original Enigma binary",
+    "services": "unused host functions throw; log records diagnostics; get_ticks uses synthetic clock",
+    "apiLogging": "disabled by production set_api_log(0); API counter asserted",
+    "peSHA256": "a2d22a4fc1f3ebcc9261541be4afe3a92b676bc82f5c77ece2cc9f462b80f639"
+  },
+  "open": [
+    "original Enigma guest/gameplay",
+    "native application",
+    "audio hardware",
+    "browser"
+  ],
+  "moduleSHA256": "b239bf69a08c38e6d2edbe63ce356e338da67cd480936f3a3d72266591a94fe9",
+  "instantiated": true,
+  "initialized": true,
+  "identities": [
+    {
+      "name": "midiStreamOpen",
+      "id": 2341,
+      "nargs": 6,
+      "thunk": 122683392
+    }
+  ],
+  "secondHandle": 786434,
+  "PASS": false,
+  "blocker": {
+    "phase": "second invocation",
+    "error": "midiStreamOpen return\n\n122683392 !== 0\n",
+    "stack": "AssertionError [ERR_ASSERTION]: midiStreamOpen return\n\n122683392 !== 0\n\n    at call (/home/user/enigma-complete/callback.js:53:10)\n    at openAgain (/home/user/enigma-complete/callback.js:99:50)\n    at Object.<anonymous> (/home/user/enigma-complete/callback.js:114:32)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\n    at Module.require (node:internal/modules/cjs/loader:1674:12)\n    at require (node:internal/modules/helpers:157:16)"
+  }
+}
