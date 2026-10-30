@@ -1,0 +1,463 @@
+# Tux Racer 0.61 configuration file
+#
+
+# data_dir
+#
+# The location of the Tux Racer data files
+#
+set data_dir "."
+
+# fullscreen
+#
+# If true then the game will run in full-screen mode.
+#
+set fullscreen true
+
+# x_resolution
+#
+# The horizontal size of the Tux Racer window
+#
+set x_resolution 640
+
+# y_resolution
+#
+# The vertical size of the Tux Racer window
+#
+set y_resolution 480
+
+# bpp_mode
+#
+# Controls how many bits per pixel are used in the game.
+# Valid values are:
+#
+#  0: Use current bpp setting of operating system
+#  1: 16 bpp
+#  2: 32 bpp
+# Note that some cards (e.g., Voodoo1, Voodoo2, Voodoo3) only support
+# 16 bits per pixel.
+#
+set bpp_mode 0
+
+# capture_mouse
+#
+# If true, then the mouse will not be able to leave the 
+# Tux Racer window.
+# If you lose keyboard focus while running Tux Racer, try setting
+# this to true.
+#
+set capture_mouse false
+
+# force_window_position
+#
+# If true, then the Tux Racer window will automatically be
+# placed at (0,0)
+#
+set force_window_position false
+
+# quit_key
+#
+# Key binding for quitting a race
+#
+set quit_key "q escape"
+
+# turn_left_key
+#
+# Key binding for turning left
+#
+set turn_left_key "j left"
+
+# turn_right_key
+#
+# Key binding for turning right
+#
+set turn_right_key "l right"
+
+# trick_modifier_key
+#
+# Key binding for doing tricks
+#
+set trick_modifier_key "d"
+
+# brake_key
+#
+# Key binding for braking
+#
+set brake_key "k space down"
+
+# paddle_key
+#
+# Key binding for paddling (on the ground) and flapping (in the air)
+#
+set paddle_key "i up"
+
+# jump_key
+#
+# Key binding for jumping
+#
+set jump_key "e"
+
+# reset_key
+#
+# Key binding for resetting the player position
+#
+set reset_key "backspace"
+
+# follow_view_key
+#
+# Key binding for the "Follow" camera mode
+#
+set follow_view_key "1"
+
+# behind_view_key
+#
+# Key binding for the "Behind" camera mode
+#
+set behind_view_key "2"
+
+# above_view_key
+#
+# Key binding for the "Above" camera mode
+#
+set above_view_key "3"
+
+# view_mode
+#
+# Default view mode. Possible values are
+#
+#   0: Behind
+#   1: Follow
+#   2: Above
+#
+set view_mode 1
+
+# screenshot_key
+#
+# Key binding for taking a screenshot
+#
+set screenshot_key "="
+
+# pause_key
+#
+# Key binding for pausing the game
+#
+set pause_key "p"
+
+# joystick_paddle_button
+#
+# Joystick button for paddling (numbering starts at 0).
+# Set to -1 to disable.
+#
+set joystick_paddle_button 0
+
+# joystick_brake_button
+#
+# Joystick button for braking (numbering starts at 0).
+# Set to -1 to disable.
+#
+set joystick_brake_button 2
+
+# joystick_jump_button
+#
+# Joystick button for jumping (numbering starts at 0)
+#
+set joystick_jump_button 3
+
+# joystick_trick_button
+#
+# Joystick button for doing tricks (numbering starts at 0)
+#
+set joystick_trick_button 1
+
+# joystick_continue_button
+#
+# Joystick button for moving past intro, paused, and 
+# game over screens (numbering starts at 0)
+#
+set joystick_continue_button 0
+
+# joystick_x_axis
+#
+# Joystick axis to use for turning (numbering starts at 0)
+#
+set joystick_x_axis 0
+
+# joystick_y_axis
+#
+# Joystick axis to use for paddling/braking (numbering starts at 0)
+#
+set joystick_y_axis 1
+
+# no_audio
+#
+# If True, then audio in the game is completely disabled.
+#
+set no_audio false
+
+# sound_enabled
+#
+# Use this to turn sound effects on and off.
+#
+set sound_enabled true
+
+# music_enabled
+#
+# Use this to turn music on and off.
+#
+set music_enabled true
+
+# sound_volume
+#
+# This controls the sound volume (valid range is 0-127).
+#
+set sound_volume 127
+
+# music_volume
+#
+# This controls the music volume (valid range is 0-127).
+#
+set music_volume 64
+
+# audio_freq_mode
+#
+# The controls the frequency of the audio.  Valid values are:
+# 
+#   0: 11025 Hz
+#   1: 22050 Hz
+#   2: 44100 Hz
+#
+set audio_freq_mode 1
+
+# audio_format_mode
+#
+# This controls the number of bits per sample for the audio.
+# Valid values are:
+#
+#   0: 8 bits
+#   1: 16 bits
+#
+set audio_format_mode 1
+
+# audio_stereo
+#
+# Audio will be played in stereo of true, and mono if false
+#
+set audio_stereo true
+
+# audio_buffer_size
+#
+# [EXPERT] Controls the size of the audio buffer.  
+# Increase the buffer size if you experience choppy audio
+# (at the cost of greater audio latency)
+#
+set audio_buffer_size 2048
+
+# display_fps
+#
+# Set this to true to display the current framerate in Hz.
+#
+set display_fps false
+
+# course_detail_level
+#
+# [EXPERT] This controls how accurately the course terrain is 
+# rendered. A high value results in greater accuracy at the cost of 
+# performance, and vice versa.  This value can be decreased and 
+# increased in 10% increments at runtime using the F9 and F10 keys.
+# To better see the effect, activate wireframe mode using the F11 
+# key (this is a toggle).
+#
+set course_detail_level 75
+
+# forward_clip_distance
+#
+# Controls how far ahead of the camera the course
+# is rendered.  Larger values mean that more of the course is
+# rendered, resulting in slower performance. Decreasing this 
+# value is an effective way to improve framerates.
+#
+set forward_clip_distance 75
+
+# backward_clip_distance
+#
+# [EXPERT] Some objects aren't yet clipped to the view frustum, 
+# so this value is used to control how far up the course these 
+# objects are drawn.
+#
+set backward_clip_distance 10
+
+# tree_detail_distance
+#
+# [EXPERT] Controls the distance at which trees are drawn with 
+# two rectangles instead of one.
+#
+set tree_detail_distance 20
+
+# terrain_blending
+#
+# Controls the blending of the terrain textures.  Setting this
+# to false will help improve performance.
+#
+set terrain_blending true
+
+# perfect_terrain_blending
+#
+# [EXPERT] If true, then terrain triangles with three different
+# terrain types at the vertices will be blended correctly
+# (instead of using a faster but imperfect approximation).
+#
+set perfect_terrain_blending false
+
+# terrain_envmap
+#
+# If true, then the ice will be drawn with an "environment map",
+# which gives the ice a shiny appearance.  Setting this to false
+# will help improve performance.
+#
+set terrain_envmap true
+
+# disable_fog
+#
+# If true, then fog will be turned off.  Some Linux drivers for the
+# ATI Rage128 seem to have a bug in their fog implementation which
+# makes the screen nearly pure white when racing; if you experience
+# this problem then set this variable to true.
+#
+set disable_fog false
+
+# draw_tux_shadow
+#
+# Set this to true to display Tux's shadow.  Note that this is a 
+# hack and is quite expensive in terms of framerate.
+# [EXPERT] This looks better if your card has a stencil buffer; 
+# if compiling use the --enable-stencil-buffer configure option 
+# to enable the use of the stencil buffer
+#
+set draw_tux_shadow false
+
+# tux_sphere_divisions
+#
+# [EXPERT] Higher values result in a more finely subdivided mesh 
+# for Tux, and vice versa.  If you're experiencing low framerates,
+# try lowering this value.
+#
+set tux_sphere_divisions 6
+
+# tux_shadow_sphere_divisions
+#
+# [EXPERT] The level of subdivision of Tux's shadow.
+#
+set tux_shadow_sphere_divisions 3
+
+# draw_particles
+#
+# Controls the drawing of snow particles that are kicked up as Tux
+# turns and brakes.  Setting this to false should help improve 
+# performance.
+#
+set draw_particles true
+
+# track_marks
+#
+# If true, then the players will leave track marks in the snow.
+#
+set track_marks true
+
+# ui_snow
+#
+# If true, then the ui screens will have falling snow.
+#
+set ui_snow true
+
+# nice_fog
+#
+# [EXPERT] If true, then the GL_NICEST hint will be used when
+# rendering fog.  On some cards, setting this to false may improve
+# performance.
+#
+set nice_fog true
+
+# use_cva
+#
+# [EXPERT] If true, then compiled vertex arrays will be used when
+# drawing the terrain.  Whether or not this helps performance
+# is driver- and card-dependent.
+#
+set use_cva true
+
+# cva_hack
+#
+# Some card/driver combinations render the terrrain incorrectly
+# when using compiled vertex arrays.  This activates a hack 
+# to work around that problem.
+#
+set cva_hack true
+
+# use_sphere_display_list
+#
+# [EXPERT]  Mesa 3.1 sometimes renders Tux strangely when display 
+# lists are used.  Setting this to false should solve the problem 
+# at the cost of a few Hz.
+#
+set use_sphere_display_list true
+
+# do_intro_animation
+#
+# If false, then the introductory animation sequence will be skipped.
+#
+set do_intro_animation true
+
+# mipmap_type
+#
+# [EXPERT] Allows you to control which type of texture
+# interpolation/mipmapping is used when rendering textures.  The
+# values correspond to the following OpenGL settings:
+#
+#  0: GL_NEAREST
+#  1: GL_LINEAR
+#  2: GL_NEAREST_MIPMAP_NEAREST
+#  3: GL_LINEAR_MIPMAP_NEAREST
+#  4: GL_NEAREST_MIPMAP_LINEAR
+#  5: GL_LINEAR_MIPMAP_LINEAR
+#
+# On some cards, you may be able to improve performance by
+# decreasing this number, at the cost of lower image quality.
+#
+set mipmap_type 3
+
+# ode_solver
+#
+# Selects the ODE (ordinary differential equation) solver.  
+# Possible values are:
+#
+#   0: Modified Euler     (fastest but least accurate)
+#   1: Runge-Kutta (2,3)
+#   2: Runge-Kutta (4,5)  (slowest but most accurate)
+#
+set ode_solver 1
+
+# fov
+#
+# [EXPERT] Sets the camera field-of-view
+#
+set fov 60
+
+# debug
+#
+# [EXPERT] Controls the Tux Racer debugging modes
+#
+set debug ""
+
+# warning_level
+#
+# [EXPERT] Controls the Tux Racer warning messages
+#
+set warning_level 100
+
+# write_diagnostic_log
+#
+# If true, then a file called diagnostic_log.txt will be generated
+# which you should attach to any bug reports you make.
+# To generate the file, set this variable to "true", and
+# then run the game so that you reproduce the bug, if possible.
+#
+set write_diagnostic_log false

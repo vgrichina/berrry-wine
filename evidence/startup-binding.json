@@ -1,0 +1,9 @@
+{
+  "nodeSHA256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+  "heapFlag": "--max-old-space-size=96",
+  "environmentSHA256": "8bed04e26916724921c1195f4c9a50d024ad965fad0f17f3f1b2341a79863250",
+  "supervisorSHA256": "307f92f0c54e364eb8bbfce57befb74ae68a77737efa735efceb60884974e97f",
+  "virtualAddressContract": "inherited DATA/AS unchanged for Node, matching supported predecessor startup; no Python/Git cap applied; old-space flag is not total memory",
+  "physicalPerProcessCap": 134217728,
+  "groupCap": 536870912
+}

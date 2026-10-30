@@ -1,0 +1,148 @@
+{
+  "candidate": "4bbc6434443094239579ec07ec91a84e3a0958b9",
+  "pins": {
+    "test/run.js": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d",
+    "lib/app-files.js": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+    "lib/apps.js": "ccd6feeb360ed289f5b6dce729e988e10157722fc11d43fc3363bdfc6e0c8f6a"
+  },
+  "sliceSha256": "b05a3ff3d2a5ff9618a0b9dd955647d74d98fd97dca7694df2c9dcbaed7ad53a",
+  "sliceBytes": 1171,
+  "results": [
+    {
+      "label": "missing tuxracer.exe",
+      "error": "ENOENT: no such file or directory, open '/tmp/tuxracer-registration-independent-accept-oct29/repo/test/binaries/candidates/tuxracer-original-061a/game/tuxracer-win32-0.61a/tuxracer.exe'"
+    },
+    {
+      "label": "same-size wrong hash tuxracer.exe",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "wrong size tuxracer.exe",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "missing TCL83.DLL",
+      "error": "ENOENT: no such file or directory, open '/tmp/tuxracer-registration-independent-accept-oct29/repo/test/binaries/candidates/tuxracer-original-061a/game/tuxracer-win32-0.61a/TCL83.DLL'"
+    },
+    {
+      "label": "same-size wrong hash TCL83.DLL",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "wrong size TCL83.DLL",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "missing SDL.dll",
+      "error": "ENOENT: no such file or directory, open '/tmp/tuxracer-registration-independent-accept-oct29/repo/test/binaries/candidates/tuxracer-original-061a/game/tuxracer-win32-0.61a/SDL.dll'"
+    },
+    {
+      "label": "same-size wrong hash SDL.dll",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "wrong size SDL.dll",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "missing SDL_mixer.dll",
+      "error": "ENOENT: no such file or directory, open '/tmp/tuxracer-registration-independent-accept-oct29/repo/test/binaries/candidates/tuxracer-original-061a/game/tuxracer-win32-0.61a/SDL_mixer.dll'"
+    },
+    {
+      "label": "same-size wrong hash SDL_mixer.dll",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "wrong size SDL_mixer.dll",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "missing tuxracer_init.tcl",
+      "error": "ENOENT: no such file or directory, open '/tmp/tuxracer-registration-independent-accept-oct29/repo/test/binaries/candidates/tuxracer-original-061a/game/tuxracer-win32-0.61a/tuxracer_init.tcl'"
+    },
+    {
+      "label": "same-size wrong hash tuxracer_init.tcl",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "wrong size tuxracer_init.tcl",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "missing courses/course_idx.tcl",
+      "error": "ENOENT: no such file or directory, open '/tmp/tuxracer-registration-independent-accept-oct29/repo/test/binaries/candidates/tuxracer-original-061a/game/tuxracer-win32-0.61a/courses/course_idx.tcl'"
+    },
+    {
+      "label": "same-size wrong hash courses/course_idx.tcl",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "wrong size courses/course_idx.tcl",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "missing textures/checkmark.rgb",
+      "error": "ENOENT: no such file or directory, open '/tmp/tuxracer-registration-independent-accept-oct29/repo/test/binaries/candidates/tuxracer-original-061a/game/tuxracer-win32-0.61a/textures/checkmark.rgb'"
+    },
+    {
+      "label": "same-size wrong hash textures/checkmark.rgb",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "wrong size textures/checkmark.rgb",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "URL escape",
+      "error": "local media integrity: exact companion mappings required"
+    },
+    {
+      "label": "absolute URL",
+      "error": "local media integrity: exact companion mappings required"
+    },
+    {
+      "label": "guest escape",
+      "error": "local media integrity: exact companion mappings required"
+    },
+    {
+      "label": "missing mapping",
+      "error": "local media integrity: exact companion mappings required"
+    },
+    {
+      "label": "duplicate mapping",
+      "error": "local media integrity: exact companion mappings required"
+    },
+    {
+      "label": "untrusted extra key",
+      "error": "local media integrity: exact companion mappings required"
+    },
+    {
+      "label": "wrong manifest size",
+      "error": "local media integrity: exact companion mappings required"
+    },
+    {
+      "label": "schema",
+      "error": "tuxracer_original_061a: invalid local media manifest"
+    },
+    {
+      "label": "invalid manifest JSON",
+      "error": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+    },
+    {
+      "label": "inventory digest tamper",
+      "error": "local media integrity: identity mismatch"
+    },
+    {
+      "label": "missing inventory",
+      "error": "ENOENT: no such file or directory, open '/tmp/tuxracer-registration-independent-accept-oct29/repo/test/candidate-corpus/tuxracer-original-files.json'"
+    }
+  ],
+  "mutationBypassDetected": true,
+  "assetCount": 158,
+  "stagedPayloadBytes": 13225945,
+  "stagedInventoryExact": true,
+  "originalMediaWrites": 0,
+  "computedTclClosure": "UNKNOWN",
+  "fullMediaStaticClosure": "UNKNOWN",
+  "runtime": "NOT RUN"
+}

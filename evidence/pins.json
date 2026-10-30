@@ -1,0 +1,40 @@
+{
+  "task": "tuxracer-registration-independent-accept-oct29",
+  "candidate": "4bbc6434443094239579ec07ec91a84e3a0958b9",
+  "sourcePins": {
+    "lib/apps.js": {
+      "bytes": 414349,
+      "sha256": "ccd6feeb360ed289f5b6dce729e988e10157722fc11d43fc3363bdfc6e0c8f6a"
+    },
+    "lib/app-files.js": {
+      "bytes": 16426,
+      "sha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7"
+    },
+    "test/run.js": {
+      "bytes": 692809,
+      "sha256": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d"
+    },
+    "test/candidate-corpus/tuxracer-original-files.json": {
+      "bytes": 29432,
+      "sha256": "2c2d29a9dc7e5f9bc9e972b408fd83dbb17e8ca48a6aed09ffd375830284d8d8"
+    },
+    "tools/recovery/stage-tuxracer-original.py": {
+      "bytes": 2849,
+      "sha256": "1c24efb225639f5b74d628b939348e4b8c76428a321cb1c291dc1974f5d77311"
+    },
+    "test/test-tuxracer-original-registration.js": {
+      "bytes": 3819,
+      "sha256": "c79b46437ac5b3ba3367c90d9c153a4b2ddda180e9aaf62e63fd0a2511f49e6e"
+    },
+    "test/test-tuxracer-original-staging.py": {
+      "bytes": 2180,
+      "sha256": "3fe0a150b9dd42014f68b1cbc2c208d993c66f2a2d581c6c9132bf1fe21c51bb"
+    }
+  },
+  "objectStores": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-registration-independent-accept-oct29-object-stores.json",
+  "admission": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-registration-independent-accept-oct29-admission.json",
+  "canonicalPredecessor": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-original-launch-registration-oct29/retained-evidence/receipt.json",
+  "originalExtractedRoot": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-original-closure-oct28/payload/extracted",
+  "retainedPredecessorTree": "/tmp/tuxracer-original-launch-registration-oct29/repo/test/binaries/candidates/tuxracer-original-061a",
+  "runtimeAllowed": false
+}

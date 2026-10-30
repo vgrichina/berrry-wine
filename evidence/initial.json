@@ -1,0 +1,18 @@
+{
+  "at": 1793242914.8194408,
+  "session": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T03-00-35-01a1859a-2ac7-71e1-92d3-a36cd7c43aff.jsonl",
+  "sessionBytes": 459162,
+  "walBaseline": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4235392,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  },
+  "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "mountArgv": [],
+  "mountValidation": "empty argv: no files or mount operation requested",
+  "allocation": 50331648,
+  "aggregate": 176160768
+}

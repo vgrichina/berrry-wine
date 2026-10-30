@@ -1,0 +1,82 @@
+[
+  {
+    "label": "required TCL DLL missing: no destination",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 54, in <module>\n    print(json.dumps(stage(sys.argv[1])))\n                     ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 35, in stage\n    for row in rows:verified_source(source,row)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 22, in verified_source\n    raise ValueError('missing or escaping required original: '+row['path'])\nValueError: missing or escaping required original: tuxracer-win32-0.61a/TCL83.DLL\n",
+    "stdout": "",
+    "destinationExists": false,
+    "destinationSymlink": false
+  },
+  {
+    "label": "TCL DLL same-size hash corruption",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 54, in <module>\n    print(json.dumps(stage(sys.argv[1])))\n                     ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 35, in stage\n    for row in rows:verified_source(source,row)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 25, in verified_source\n    raise ValueError('corrupt required original: '+row['path'])\nValueError: corrupt required original: tuxracer-win32-0.61a/TCL83.DLL\n",
+    "stdout": "",
+    "destinationExists": false,
+    "destinationSymlink": false
+  },
+  {
+    "label": "TCL DLL size truncation",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 54, in <module>\n    print(json.dumps(stage(sys.argv[1])))\n                     ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 35, in stage\n    for row in rows:verified_source(source,row)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 25, in verified_source\n    raise ValueError('corrupt required original: '+row['path'])\nValueError: corrupt required original: tuxracer-win32-0.61a/TCL83.DLL\n",
+    "stdout": "",
+    "destinationExists": false,
+    "destinationSymlink": false
+  },
+  {
+    "label": "symlink to valid original rejected",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 54, in <module>\n    print(json.dumps(stage(sys.argv[1])))\n                     ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 35, in stage\n    for row in rows:verified_source(source,row)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 20, in verified_source\n    raise ValueError('symlink input rejected')\nValueError: symlink input rejected\n",
+    "stdout": "",
+    "destinationExists": false,
+    "destinationSymlink": false
+  },
+  {
+    "label": "later required asset missing after valid first DLL",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 54, in <module>\n    print(json.dumps(stage(sys.argv[1])))\n                     ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 35, in stage\n    for row in rows:verified_source(source,row)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 22, in verified_source\n    raise ValueError('missing or escaping required original: '+row['path'])\nValueError: missing or escaping required original: tuxracer-win32-0.61a/SDL_mixer.dll\n",
+    "stdout": "",
+    "destinationExists": false,
+    "destinationSymlink": false
+  },
+  {
+    "label": "inventory path escape",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 54, in <module>\n    print(json.dumps(stage(sys.argv[1])))\n                     ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 30, in stage\n    if hashlib.sha256(raw).hexdigest()!=INVENTORY_SHA:raise ValueError('inventory identity')\n                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: inventory identity\n",
+    "stdout": "",
+    "destinationExists": false,
+    "destinationSymlink": false
+  },
+  {
+    "label": "inventory absolute path",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 54, in <module>\n    print(json.dumps(stage(sys.argv[1])))\n                     ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 30, in stage\n    if hashlib.sha256(raw).hexdigest()!=INVENTORY_SHA:raise ValueError('inventory identity')\n                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: inventory identity\n",
+    "stdout": "",
+    "destinationExists": false,
+    "destinationSymlink": false
+  },
+  {
+    "label": "inventory incorrect hash",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 54, in <module>\n    print(json.dumps(stage(sys.argv[1])))\n                     ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 30, in stage\n    if hashlib.sha256(raw).hexdigest()!=INVENTORY_SHA:raise ValueError('inventory identity')\n                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: inventory identity\n",
+    "stdout": "",
+    "destinationExists": false,
+    "destinationSymlink": false
+  },
+  {
+    "label": "inventory incorrect size",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 54, in <module>\n    print(json.dumps(stage(sys.argv[1])))\n                     ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 30, in stage\n    if hashlib.sha256(raw).hexdigest()!=INVENTORY_SHA:raise ValueError('inventory identity')\n                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: inventory identity\n",
+    "stdout": "",
+    "destinationExists": false,
+    "destinationSymlink": false
+  },
+  {
+    "label": "inventory omitted executable",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 54, in <module>\n    print(json.dumps(stage(sys.argv[1])))\n                     ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/tuxracer-registration-independent-accept-oct29/repo/tools/recovery/stage-tuxracer-original.py\", line 30, in stage\n    if hashlib.sha256(raw).hexdigest()!=INVENTORY_SHA:raise ValueError('inventory identity')\n                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: inventory identity\n",
+    "stdout": "",
+    "destinationExists": false,
+    "destinationSymlink": false
+  }
+]

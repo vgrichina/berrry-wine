@@ -1,0 +1,11 @@
+{
+  "temporaryFixturesRemoved": true,
+  "heldTreeAbsent": true,
+  "ownedTrees": 1,
+  "payloadBytes": 13225945,
+  "originalMediaWrites": 0,
+  "testBox": null,
+  "mountArgv": [],
+  "descendants": "each supervised process group terminated and child reaped",
+  "allocationRelease": "coordinator closeout only"
+}

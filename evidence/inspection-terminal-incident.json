@@ -1,0 +1,6 @@
+{
+  "phase": "initial read-only required policy/source inspection",
+  "incident": "two initial tool outputs exceeded terminal8192B budget and were truncated; later output bounded",
+  "productionOutputCaps": "supervised operations retain <=2MiB capture and terminal displays <=6000B",
+  "admissionDenied": false
+}

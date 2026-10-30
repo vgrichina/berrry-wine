@@ -1,0 +1,9 @@
+{
+  "commit": "8ee1ac2d440de9ebf2171757129cd7ebf095a66a",
+  "branch": "task/tuxracer-registration-independent-accept-oct29",
+  "remote": "git@github.com:vgrichina/wine-assembly.git",
+  "remoteListing": "8ee1ac2d440de9ebf2171757129cd7ebf095a66a\trefs/heads/task/tuxracer-registration-independent-accept-oct29",
+  "verifiedExactSHA": true,
+  "mainPush": false,
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

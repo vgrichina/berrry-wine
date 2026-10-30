@@ -1,0 +1,790 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "url": "game/tuxracer-win32-0.61a/TCL83.DLL",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\TCL83.DLL",
+      "size": 619520
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/SDL_mixer.dll",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\SDL_mixer.dll",
+      "size": 200704
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/SDL.dll",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\SDL.dll",
+      "size": 210944
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/tux.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\tux.tcl",
+      "size": 14990
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\tuxracer_init.tcl",
+      "size": 7266
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/README-SDL.txt",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\README-SDL.txt",
+      "size": 455
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/README.txt",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\README.txt",
+      "size": 3632
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/COPYING.txt",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\COPYING.txt",
+      "size": 18332
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/checkmark.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\checkmark.rgb",
+      "size": 4676
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/conditions_button.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\conditions_button.rgb",
+      "size": 9418
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/gaugeenergymask.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\gaugeenergymask.rgb",
+      "size": 15897
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/gaugeoutline.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\gaugeoutline.rgb",
+      "size": 14628
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/gaugespeedmask.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\gaugespeedmask.rgb",
+      "size": 8127
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/herringicon.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\herringicon.rgb",
+      "size": 7942
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/listbox_arrows.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\listbox_arrows.rgb",
+      "size": 8287
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/menu_bottom_left.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\menu_bottom_left.rgb",
+      "size": 57729
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/menu_bottom_right.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\menu_bottom_right.rgb",
+      "size": 57377
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/menu_title.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\menu_title.rgb",
+      "size": 80279
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/menu_top_left.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\menu_top_left.rgb",
+      "size": 62156
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/menu_top_right.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\menu_top_right.rgb",
+      "size": 65309
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/mirror_button.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\mirror_button.rgb",
+      "size": 7568
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/mouse_cursor.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\mouse_cursor.rgb",
+      "size": 8141
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/noicon.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\noicon.rgb",
+      "size": 3584
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/snow_button.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\snow_button.rgb",
+      "size": 8111
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/splash_bl.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\splash_bl.rgb",
+      "size": 56929
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/splash_br.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\splash_br.rgb",
+      "size": 58913
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/splash_tl.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\splash_tl.rgb",
+      "size": 92968
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/splash_tr.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\splash_tr.rgb",
+      "size": 94111
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/tuxlife.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\tuxlife.rgb",
+      "size": 7535
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/textures/wind_button.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\textures\\wind_button.rgb",
+      "size": 6495
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/sounds/tux_hit_tree1.wav",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\sounds\\tux_hit_tree1.wav",
+      "size": 106028
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/sounds/tux_on_ice1.wav",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\sounds\\tux_on_ice1.wav",
+      "size": 423980
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/sounds/tux_on_rock1.wav",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\sounds\\tux_on_rock1.wav",
+      "size": 760364
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/sounds/tux_on_snow1.wav",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\sounds\\tux_on_snow1.wav",
+      "size": 373292
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/sounds/fish_pickup3.wav",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\sounds\\fish_pickup3.wav",
+      "size": 4380
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/sounds/fish_pickup2.wav",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\sounds\\fish_pickup2.wav",
+      "size": 5388
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/sounds/fish_pickup1.wav",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\sounds\\fish_pickup1.wav",
+      "size": 5660
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/music/options1-jt.it",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\music\\options1-jt.it",
+      "size": 25543
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/music/race1-jt.it",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\music\\race1-jt.it",
+      "size": 108588
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/music/race2-jt.it",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\music\\race2-jt.it",
+      "size": 93288
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/music/readme",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\music\\readme",
+      "size": 178
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/music/start1-jt.it",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\music\\start1-jt.it",
+      "size": 127397
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/music/wonrace1-jt.it",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\music\\wonrace1-jt.it",
+      "size": 64883
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/fonts/trebuchet.tfm",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\fonts\\trebuchet.tfm",
+      "size": 1048
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/fonts/trebuchet_white.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\fonts\\trebuchet_white.rgb",
+      "size": 39751
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/fonts/trebuchet_yel_blk.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\fonts\\trebuchet_yel_blk.rgb",
+      "size": 107434
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\course_idx.tcl",
+      "size": 4680
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/twisty_slope/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\twisty_slope\\course.tcl",
+      "size": 506
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/twisty_slope/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\twisty_slope\\elev.rgb",
+      "size": 74441
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/twisty_slope/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\twisty_slope\\preview.rgb",
+      "size": 51494
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/twisty_slope/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\twisty_slope\\terrain.rgb",
+      "size": 19922
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/twisty_slope/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\twisty_slope\\trees.rgb",
+      "size": 15832
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\path_of_daggers\\course.tcl",
+      "size": 670
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/path_of_daggers/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\path_of_daggers\\elev.rgb",
+      "size": 96512
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/path_of_daggers/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\path_of_daggers\\preview.rgb",
+      "size": 51174
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/path_of_daggers/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\path_of_daggers\\terrain.rgb",
+      "size": 96512
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/path_of_daggers/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\path_of_daggers\\trees.rgb",
+      "size": 96512
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/frozen_river/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\frozen_river\\course.tcl",
+      "size": 195
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/frozen_river/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\frozen_river\\elev.rgb",
+      "size": 267119
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/frozen_river/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\frozen_river\\preview.rgb",
+      "size": 47246
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/frozen_river/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\frozen_river\\terrain.rgb",
+      "size": 37828
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/frozen_river/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\frozen_river\\trees.rgb",
+      "size": 240512
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/twin_paths/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\twin_paths\\course.tcl",
+      "size": 243
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/twin_paths/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\twin_paths\\elev.rgb",
+      "size": 37310
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/twin_paths/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\twin_paths\\preview.rgb",
+      "size": 52158
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/twin_paths/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\twin_paths\\terrain.rgb",
+      "size": 22568
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/twin_paths/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\twin_paths\\trees.rgb",
+      "size": 9629
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\sentinel_towers\\course.tcl",
+      "size": 784
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/sentinel_towers/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\sentinel_towers\\elev.rgb",
+      "size": 169481
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/sentinel_towers/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\sentinel_towers\\preview.rgb",
+      "size": 45330
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/sentinel_towers/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\sentinel_towers\\terrain.rgb",
+      "size": 40979
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/sentinel_towers/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\sentinel_towers\\trees.rgb",
+      "size": 36926
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\penguins_cant_fly\\course.tcl",
+      "size": 726
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\penguins_cant_fly\\elev.rgb",
+      "size": 224825
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\penguins_cant_fly\\preview.rgb",
+      "size": 52887
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\penguins_cant_fly\\terrain.rgb",
+      "size": 432512
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\penguins_cant_fly\\trees.rgb",
+      "size": 61524
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\nebula\\course.tcl",
+      "size": 499
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/nebula/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\nebula\\elev.rgb",
+      "size": 106673
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/nebula/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\nebula\\preview.rgb",
+      "size": 51269
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/nebula/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\nebula\\terrain.rgb",
+      "size": 21068
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/nebula/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\nebula\\trees.rgb",
+      "size": 14152
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\jools_big_mountain\\course.tcl",
+      "size": 710
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\jools_big_mountain\\elev.rgb",
+      "size": 224289
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\jools_big_mountain\\preview.rgb",
+      "size": 52145
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\jools_big_mountain\\terrain.rgb",
+      "size": 86318
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\jools_big_mountain\\trees.rgb",
+      "size": 37065
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/ingos_speedway/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\ingos_speedway\\course.tcl",
+      "size": 479
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/ingos_speedway/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\ingos_speedway\\elev.rgb",
+      "size": 96512
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/ingos_speedway/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\ingos_speedway\\preview.rgb",
+      "size": 51112
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/ingos_speedway/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\ingos_speedway\\terrain.rgb",
+      "size": 96512
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/ingos_speedway/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\ingos_speedway\\trees.rgb",
+      "size": 72512
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\ice_canyon\\course.tcl",
+      "size": 511
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/ice_canyon/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\ice_canyon\\elev.rgb",
+      "size": 101441
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/ice_canyon/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\ice_canyon\\preview.rgb",
+      "size": 51518
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/ice_canyon/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\ice_canyon\\terrain.rgb",
+      "size": 27409
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/ice_canyon/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\ice_canyon\\trees.rgb",
+      "size": 1997
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\downhill_fear\\course.tcl",
+      "size": 708
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/downhill_fear/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\downhill_fear\\elev.rgb",
+      "size": 345555
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/downhill_fear/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\downhill_fear\\preview.rgb",
+      "size": 47114
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/downhill_fear/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\downhill_fear\\terrain.rgb",
+      "size": 107830
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/contrib/downhill_fear/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\contrib\\downhill_fear\\trees.rgb",
+      "size": 68055
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/buttprint.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\buttprint.rgb",
+      "size": 14280
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/buttstart.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\buttstart.rgb",
+      "size": 14590
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/buttstop.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\buttstop.rgb",
+      "size": 14400
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/cloudyback.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\cloudyback.rgb",
+      "size": 35561
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/cloudybottom.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\cloudybottom.rgb",
+      "size": 52098
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/cloudyfront.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\cloudyfront.rgb",
+      "size": 565223
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/cloudyleft.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\cloudyleft.rgb",
+      "size": 182752
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/cloudyright.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\cloudyright.rgb",
+      "size": 168668
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/cloudytop.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\cloudytop.rgb",
+      "size": 77155
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/cupicon.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\cupicon.rgb",
+      "size": 7272
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/envmap.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\envmap.rgb",
+      "size": 153919
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/finish.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\finish.rgb",
+      "size": 62271
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/flag.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\flag.rgb",
+      "size": 14681
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\foggy_light.tcl",
+      "size": 1190
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/herring_standard.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\herring_standard.rgb",
+      "size": 69488
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/herringrunicon.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\herringrunicon.rgb",
+      "size": 6685
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/ice.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\ice.rgb",
+      "size": 203307
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\night_light.tcl",
+      "size": 1146
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/nightback.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\nightback.rgb",
+      "size": 39683
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/nightbottom.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\nightbottom.rgb",
+      "size": 40485
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/nightenv.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\nightenv.rgb",
+      "size": 43108
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/nightfront.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\nightfront.rgb",
+      "size": 441369
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/nightleft.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\nightleft.rgb",
+      "size": 170068
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/nightright.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\nightright.rgb",
+      "size": 124528
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/nighttop.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\nighttop.rgb",
+      "size": 152772
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/nopreview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\nopreview.rgb",
+      "size": 14438
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/rock.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\rock.rgb",
+      "size": 207781
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/shrub.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\shrub.rgb",
+      "size": 175022
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/snow.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\snow.rgb",
+      "size": 142693
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/snowparticles.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\snowparticles.rgb",
+      "size": 12822
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/start.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\start.rgb",
+      "size": 61423
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\sunny_light.tcl",
+      "size": 1032
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/sunnyback.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\sunnyback.rgb",
+      "size": 54034
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/sunnybottom.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\sunnybottom.rgb",
+      "size": 53587
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/sunnyfront.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\sunnyfront.rgb",
+      "size": 513352
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/sunnyleft.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\sunnyleft.rgb",
+      "size": 189887
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/sunnyright.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\sunnyright.rgb",
+      "size": 195378
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/sunnytop.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\sunnytop.rgb",
+      "size": 148262
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/tree.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\tree.rgb",
+      "size": 113926
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/tree_barren.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\tree_barren.rgb",
+      "size": 87320
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/tree_polyhedron.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\tree_polyhedron.tcl",
+      "size": 477
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/tux_moonwalk.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\tux_moonwalk.tcl",
+      "size": 794
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/tux_walk.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\tux_walk.tcl",
+      "size": 1125
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\common\\courseinit.tcl",
+      "size": 3081
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/bunny_hill/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\bunny_hill\\course.tcl",
+      "size": 508
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/bunny_hill/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\bunny_hill\\elev.rgb",
+      "size": 71114
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/bunny_hill/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\bunny_hill\\preview.rgb",
+      "size": 46336
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/bunny_hill/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\bunny_hill\\terrain.rgb",
+      "size": 13643
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/bunny_hill/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\bunny_hill\\trees.rgb",
+      "size": 18636
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/bumpy_ride/course.tcl",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\bumpy_ride\\course.tcl",
+      "size": 508
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/bumpy_ride/elev.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\bumpy_ride\\elev.rgb",
+      "size": 56751
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/bumpy_ride/preview.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\bumpy_ride\\preview.rgb",
+      "size": 50481
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/bumpy_ride/terrain.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\bumpy_ride\\terrain.rgb",
+      "size": 20915
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/courses/bumpy_ride/trees.rgb",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\courses\\bumpy_ride\\trees.rgb",
+      "size": 17851
+    },
+    {
+      "url": "game/tuxracer-win32-0.61a/config/options.txt",
+      "vfsPath": "c:\\tuxracer-win32-0.61a\\config\\options.txt",
+      "size": 9922
+    }
+  ]
+}

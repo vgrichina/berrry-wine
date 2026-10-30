@@ -1,0 +1,14 @@
+{
+  "sourceRow": {
+    "path": "tuxracer-win32-0.61a/TCL83.DLL",
+    "bytes": 619520,
+    "sha256": "61697e854d7ef53d9757aedb33749b04dc7f7504515143732c92fdaa4c834eef"
+  },
+  "ownedSparseTCLDLLOriginalSHA256": "61697e854d7ef53d9757aedb33749b04dc7f7504515143732c92fdaa4c834eef",
+  "sameSizeCorruptSHA256": "b1c2cea516b28b108898d1431ac2a2365128afa259ee0dacd9ba0c7b0f5e5d21",
+  "truncatedSHA256": "0419f0fa5e9c719f017bebf13237fcea82a616abbcd3bd9ba72fba90ae20df90",
+  "fixtureRecipe": "staging_accept.py",
+  "boundaryMutations": "test/test-tuxracer-registration-independent-accept.js",
+  "noDonorMutation": true,
+  "predecessorStagedTreeReadOnly": true
+}

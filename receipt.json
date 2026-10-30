@@ -1,0 +1,121 @@
+{
+  "task": "tuxracer-registration-independent-accept-oct29",
+  "status": "PASS_INDEPENDENT_OFFLINE_REGISTRATION_STAGING_ACCEPTANCE",
+  "candidate": "4bbc6434443094239579ec07ec91a84e3a0958b9",
+  "sessionID": "01a1859a-2ac7-71e1-92d3-a36cd7c43aff",
+  "sessionPath": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T03-00-35-01a1859a-2ac7-71e1-92d3-a36cd7c43aff.jsonl",
+  "ownedRepo": "/tmp/tuxracer-registration-independent-accept-oct29/repo",
+  "at": 1793243136.0527096,
+  "commit": "8ee1ac2d440de9ebf2171757129cd7ebf095a66a",
+  "branch": "task/tuxracer-registration-independent-accept-oct29",
+  "verifiedRemoteSHA": "8ee1ac2d440de9ebf2171757129cd7ebf095a66a",
+  "sourceAndTestPins": "evidence/tested-pins.json",
+  "dispatchSHA256": "2b1b6ddc859be9a3b8acbeca46e2b09062ff4e15d1ad178373016992ecfa988a",
+  "admissionSHA256": "2233517b2c89403ff516cec7645fec3dded15933b343834b06e06d52fb9e96f9",
+  "reusedPredecessor": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-original-launch-registration-oct29/retained-evidence/receipt.json",
+  "newResults": {
+    "initialProductionBoundary": "missing manifest rejected before consumer success",
+    "productionBoundaryAdversarialRejections": 32,
+    "actualStagingCLIRejections": 10,
+    "assetsVerified": 158,
+    "payloadBytes": 13225945,
+    "eagerBypassMutationDetected": true,
+    "exactStagedInventory": true
+  },
+  "canonicalEvidence": {
+    "pins.json": {
+      "bytes": 1908,
+      "sha256": "2b1b6ddc859be9a3b8acbeca46e2b09062ff4e15d1ad178373016992ecfa988a"
+    },
+    "operations.jsonl": {
+      "bytes": 39246,
+      "sha256": "41dd58bb4b7f5d016b2b8e949082000a1577ded2953372fd3534380cc71fde26"
+    },
+    "fixture-binding.json": {
+      "bytes": 650,
+      "sha256": "989a12c92a016f7f98ce0ac0dd26280fa082d19360b1478ece287de7d0fc4f3b"
+    },
+    "initial.json": {
+      "bytes": 2024,
+      "sha256": "819b191c8921d36b5cb2b6966bc83af9965b4a9e471695d09277a2448203a55e"
+    },
+    "containment.json": {
+      "bytes": 168,
+      "sha256": "94316b2ad33af6e9a0faba1d0426b39e37179ed6659ecf952a29a4b6815fdb3d"
+    },
+    "first-boundary.json": {
+      "bytes": 599,
+      "sha256": "b76dcbb7f724083f9ca47b834161816abfd1cd0db31bca7883acdb3ac98331c2"
+    },
+    "root-ref-digest.json": {
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    "historical-wrapper-incident.json": {
+      "bytes": 318,
+      "sha256": "b73126f920774b156e72d0e68f6a34dc584db995821d1e23f62700c0f4b2e9cf"
+    },
+    "tested-pins.json": {
+      "bytes": 1616,
+      "sha256": "c66c902ff674d2e503ef221b8c173f85e8538a266dbe82591ea0f09539047b5c"
+    },
+    "historical-terminal-incident.json": {
+      "bytes": 234,
+      "sha256": "987c54d90cc5b4d6c3c54428017a1a7d939d57896be6bec1c326fce2fcc1fdeb"
+    },
+    "startup-binding.json": {
+      "bytes": 543,
+      "sha256": "ba719b6e4b001cfc9f2533cb4ad4f8f599832d8ef95713cfebf9d552a43ccc59"
+    },
+    "node-startup.json": {
+      "bytes": 1651,
+      "sha256": "2f417d892bcddcb4b832029617fc2435e2c3e61118a061cd6d4474caee532157"
+    },
+    "independent-boundary.json": {
+      "bytes": 5648,
+      "sha256": "bc9f16998a2f2a7be85edd9c84d827604ee05ccc2fe38562d870f992f4f9f882"
+    },
+    "staging-cli-progress.json": {
+      "bytes": 8513,
+      "sha256": "6de1e79511d58a7a1ad185fd6889b3ef4575c82caa51d15c2d6a926b0d9521d6"
+    },
+    "inspection-terminal-incident.json": {
+      "bytes": 313,
+      "sha256": "d52994ddabf572a053a902fdf304116b17d4b19eb679113cd3496873db3b91f1"
+    },
+    "publication.json": {
+      "bytes": 552,
+      "sha256": "8d671202aed29fcae5efe19357d7b890f721f49a524222db85533b07517275aa"
+    },
+    "cleanup.json": {
+      "bytes": 308,
+      "sha256": "c944280b3cfa61ec54564779348cde96141834ade6357a479eecd659b593195a"
+    },
+    "admissions.jsonl": {
+      "bytes": 33977,
+      "sha256": "80dfc5530cbbff3a1323f5718d5e2a234f9d9a42a9aad016340d48ebbf6a546d"
+    },
+    "staging-cli.json": {
+      "bytes": 8845,
+      "sha256": "fef699f3f64aeccc5e0ec9f711808fd7c5fc225d129191727b318228f8179004"
+    }
+  },
+  "resourceIncidents": [
+    "evidence/historical-wrapper-incident.json",
+    "evidence/historical-terminal-incident.json",
+    "evidence/inspection-terminal-incident.json"
+  ],
+  "resourceAdmissionFailures": [],
+  "computedTclClosure": "UNKNOWN",
+  "fullMediaStaticClosure": "UNKNOWN",
+  "runtime": "NOT RUN",
+  "mainIntegration": false,
+  "publicDeployment": false,
+  "allocationRetained": 50331648,
+  "aggregateAllocation": 176160768,
+  "cleanup": "evidence/cleanup.json",
+  "testBox": null,
+  "lifecycleOwner": "coordinator; no box assigned",
+  "boardAppend": false,
+  "coordinatorDelivery": "publication-note.txt"
+}
