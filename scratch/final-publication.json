@@ -1,0 +1,21 @@
+{
+  "finalCommit": "ba485e8a27ad8a0cc25a14d40427e8cbfd38eec3",
+  "branch": "task/shadow-man-original-install-continue-oct22",
+  "actualCanonicalRemoteSHA": "ba485e8a27ad8a0cc25a14d40427e8cbfd38eec3",
+  "canonicalRemote": "https://github.com/vgrichina/berrry-wine.git",
+  "verified": true,
+  "remoteRefs": "89f1e9d2c67aa94d56d2319115589d07204d42e0\trefs/heads/main\nba485e8a27ad8a0cc25a14d40427e8cbfd38eec3\trefs/heads/task/shadow-man-original-install-continue-oct22\n",
+  "pushExitCode": 0,
+  "initialHttpsPushFailed": "No configured HTTPS credentials in new focused checkout; ordinary existing donor push configuration reused",
+  "verifiedAt": "2026-10-22T20:13:29.823985+00:00",
+  "localFinalAllocated": 25083904,
+  "reserveWithinCap": 8388608,
+  "localWithReserve": 33472512,
+  "localCap": 67108864,
+  "hostFinalAvailable": 7163670528,
+  "hostFloor": 2982150144,
+  "protectedSealsUnchanged": true,
+  "committedFiles": 127,
+  "allSelectedFilesMatchCommit": true,
+  "boardWatcherCleaned": true
+}
