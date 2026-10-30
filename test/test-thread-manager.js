@@ -898,6 +898,36 @@ console.log('PASS  ThreadManager prioritizes hot audio threads');
 console.log('PASS  ThreadManager notifies thread exits once');
 console.log('PASS  ThreadManager completes nested infinite waits without losing callback state');
 console.log('PASS  ThreadManager keeps pending worker handles unsignaled');
+// CloseHandle on objects a parked thread is waiting on must not satisfy that
+// wait (Windows keeps the object alive for it). Slave Zero's music thread waits
+// on three events its owner closes without setting; woken, it Locked a freed
+// buffer. Objects nobody waits on keep the old unknown-handle reading.
+{
+  const orphanTm = makeThreadManager();
+  const view = new DataView(orphanTm.memory.buffer);
+  const events = [0, 1, 2].map(() => orphanTm.createEvent(false, false));
+  events.forEach((h, i) => view.setUint32(0x200 + i * 4, h, true));
+  orphanTm.threads.set(0xE1000, { tid: 2, state: 'active',
+    parkedWait: { waitHandle: 3, waitHandlesPtr: 0x200, waitAll: 0 } });
+  const coopEvent = orphanTm.createEvent(false, false);
+  orphanTm.threads.set(0xE1001, { tid: 3, state: 'active', instance: { exports: {
+    get_yield_reason: () => 1, get_wait_handle: () => coopEvent, get_wait_handles_ptr: () => 0 } } });
+  const unwaited = orphanTm.createEvent(false, false);
+  for (const h of [...events, coopEvent, unwaited]) assert.strictEqual(orphanTm.closeSyncHandle(h), true);
+  assert.strictEqual(orphanTm.waitMultiple(3, 0x200, false, 0, 2), 0x102,
+    'a worker wait-any on closed events stays unsatisfied');
+  assert.strictEqual(orphanTm.waitMultiple(3, 0x200, true, 0, 2), 0x102,
+    'a wait-all on closed events stays unsatisfied');
+  assert.strictEqual(orphanTm.waitMultiple(3, 0x200, false, 0xFFFFFFFF, 2), 0xFFFF,
+    'an infinite wait on closed events keeps the thread parked');
+  assert.strictEqual(orphanTm.waitSingle(coopEvent, 0, 3), 0x102,
+    'a cooperative thread parked on a closed event stays parked');
+  assert.strictEqual(orphanTm.waitSingle(unwaited, 0), 0,
+    'an event closed with no waiter keeps the unknown-handle reading');
+  const next = orphanTm.createEvent(false, false);
+  assert(![...events, coopEvent].includes(next), 'an orphaned handle value is not reissued');
+}
+console.log('PASS  ThreadManager keeps waits on handles closed under them unsatisfied');
 console.log('PASS  ThreadManager recycles closed event and semaphore handles');
 console.log('PASS  ThreadManager preserves and atomically consumes wait-all state');
 console.log('PASS  ThreadManager keeps main wait completion logs trace-only');
