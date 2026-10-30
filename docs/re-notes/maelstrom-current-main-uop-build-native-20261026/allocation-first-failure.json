@@ -1,8 +1,0 @@
-{
-  "peak": 118281378,
-  "cap": 67108864,
-  "ownedIncludingDirsAndSymlinks": 65053858,
-  "at": 1793004847.8421764,
-  "passChecks": false,
-  "reason": "Reused counter excluded directory/symlink allocations; all prior compilation/native groups resource-unqualified. Actual native behavior retained as evidence only; corrected admitted execution required."
-}
