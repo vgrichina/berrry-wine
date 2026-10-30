@@ -1,0 +1,27 @@
+{
+  "decision": "HOLD: independent acceptance not executed",
+  "candidate": "2566ab96e6a4f0f951435204f3972603ca1b8e77",
+  "failure": {
+    "phase": "supervisor invocation setup",
+    "command": "python /tmp/toyvm-published-six-guards-independent-accept-oct29/ops.py inputs python -c ...",
+    "exit": 127,
+    "stderr": "/bin/bash: line 1: python: command not found",
+    "minimalReproducer": "Invoke python in the task shell; executable lookup fails before ops.py starts"
+  },
+  "scope": "No production behavior or mutant controls executed; no source edits, runtime, mounts, Boats or deployment",
+  "remainingGates": [
+    "fresh independent six-guard combined acceptance",
+    "caller integration",
+    "CLI",
+    "mounted execution",
+    "browser"
+  ],
+  "boxes": "none assigned or changed",
+  "limitation": "Initial bounded instruction and supervisor reads used direct shell commands before supervisor invocation; all subsequent child operations use pinned supervisor.",
+  "publication": {
+    "commit": null,
+    "pushed": false,
+    "reason": "Git status exit0 emitted alternate-object-store nesting-too-deep errors; stopped without retry or source metadata repair",
+    "evidence": "/tmp/toyvm-published-six-guards-independent-accept-oct29/e/publication-status.stderr"
+  }
+}

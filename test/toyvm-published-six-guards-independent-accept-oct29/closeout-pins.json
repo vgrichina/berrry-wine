@@ -1,0 +1,70 @@
+{
+  "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+    "bytes": 8105,
+    "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+  },
+  "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+    "bytes": 3457,
+    "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+  },
+  "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+    "bytes": 12482,
+    "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+  },
+  "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+    "bytes": 4058,
+    "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+  },
+  "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+    "bytes": 23268,
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "/tmp/toyvm-published-six-guards-independent-accept-oct29/ops.py": {
+    "bytes": 3691,
+    "sha256": "844ffac5ec670b16dcb5d573cc61cccd200dafb7612dc6ab645135ecf1cfee60"
+  },
+  "/tmp/toyvm-published-six-guards-independent-accept-oct29/limit_contract.py": {
+    "bytes": 2510,
+    "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+  },
+  "/tmp/toyvm-published-six-guards-independent-accept-oct29/prelaunch-controls.json": {
+    "bytes": 554,
+    "sha256": "3dad94a95a9a8f6e9664f6b4da5398ebc030b66cfff456b686cc7de762f8fccb"
+  },
+  "/home/user/wine-assembly/scratch/usage-watch/toyvm-published-six-guards-independent-accept-oct29-dispatch.json": {
+    "bytes": 2676,
+    "sha256": "ee662c549b999a719a4463912fb0a5c8bc0ec68223a7285feb305d862523c581"
+  },
+  "/home/user/wine-assembly/scratch/usage-watch/toyvm-published-six-guards-independent-accept-oct29-admission.json": {
+    "bytes": 1783,
+    "sha256": "abab1f508964efb0ee9e7942e8f998c0baf747b529debd5185d00875b220d74c"
+  },
+  "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-guards-complete-fixtures-continuation-oct29-serial-publication/coordinator-retained/completion-receipt-serial-publication.json": {
+    "bytes": 3976,
+    "sha256": "86f7df1fe484f3ba111883e79f40ad47a981f11fc9b1a35ffec645f329053384"
+  },
+  "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-guards-complete-fixtures-continuation-oct29-serial-publication/coordinator-retained/publication-results.json": {
+    "bytes": 24039,
+    "sha256": "b3a0f7c1591610100ee9cefc25fd97a0951cc2e602adad7d2b17adbd44815f38"
+  },
+  "/tmp/toyvm-published-six-guards-independent-accept-oct29/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+    "bytes": 8105,
+    "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+  },
+  "/tmp/toyvm-published-six-guards-independent-accept-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+    "bytes": 3457,
+    "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+  },
+  "/tmp/toyvm-published-six-guards-independent-accept-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+    "bytes": 12482,
+    "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+  },
+  "/tmp/toyvm-published-six-guards-independent-accept-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+    "bytes": 4058,
+    "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+  },
+  "/tmp/toyvm-published-six-guards-independent-accept-oct29/repo/test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+    "bytes": 23268,
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  }
+}
