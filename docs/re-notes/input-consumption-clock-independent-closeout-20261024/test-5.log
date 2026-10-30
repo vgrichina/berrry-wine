@@ -1,6 +1,0 @@
-PASS  --real-ticks gives both threads the same wall reading
-PASS  --time-scale reaches worker threads too
-PASS  a publish shares the batch clock without spending a call step
-PASS  workers lag within one batch step and never lead or rewind
-PASS  a slope change rebases the worker clock with the main one
-PASS  one guest clock for every thread
