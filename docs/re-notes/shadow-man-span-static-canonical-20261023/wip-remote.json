@@ -1,8 +1,0 @@
-{
-  "commit": "8fee04cfae86a9eece2f27bb701250544ecc2be9",
-  "remote": "git@github.com:vgrichina/berrry-wine.git",
-  "branch": "refs/heads/task/shadow-man-span-static-canonical-oct23",
-  "actualRemoteSHA": "8fee04cfae86a9eece2f27bb701250544ecc2be9",
-  "strictSSH": true,
-  "GIT_NO_LAZY_FETCH": 1
-}

@@ -1,2 +1,0 @@
-{"label": "ONE consolidated pre-build admission before source staging", "owned": 1143086, "external": 933524, "growth": 4194304, "reserve": 8388608, "extra": 43489887, "total": 58149409, "cap": 67108864, "hostFree": 5978648576, "hostFloor": 2982150144, "admitted": true}
-{"label": "final publication projection before commit/push", "owned": 1263135, "external": 1020939, "growth": 4194304, "reserve": 8388608, "extra": 1048576, "total": 15915562, "cap": 67108864, "hostFree": 5976887296, "hostFloor": 2982150144, "admitted": true}

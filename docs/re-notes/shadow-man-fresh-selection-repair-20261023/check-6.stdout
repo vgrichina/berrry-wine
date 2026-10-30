@@ -1,1 +1,0 @@
-{"exit":0,"expectedContractFailures":[{"mode":"fresh-modal","exit":1},{"mode":"fresh-parent","exit":1},{"mode":"fresh-slot","exit":1},{"mode":"batch-modal","exit":1},{"mode":"fresh-env-update-modal","exit":1}],"normalControlExits":[86,86,86]}

@@ -1,9 +1,0 @@
-{
-  "receipt": "/home/user/wine-assembly/scratch/usage-watch/render-positiont-diagnostic-com-qualification-oct23/result.json",
-  "receiptSHA256": "9978348923cc81c65c02d6df2dea36815ab962d0d9faf5fa17f2fefd1a0f8eaa",
-  "ownedDescendants": [],
-  "MemAvailable": 2054897664,
-  "minimum": 2684354560,
-  "controlBufferReservation": 34603008,
-  "nativeLiveMax": 1
-}
