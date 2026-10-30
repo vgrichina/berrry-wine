@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-rename-retained-charge-independent-accept-oct29/repo",
+    "rev-parse",
+    "--show-toplevel",
+    "--absolute-git-dir"
+  ],
+  "cwd": "/tmp/toyvm-rename-retained-charge-independent-accept-oct29/repo",
+  "returncode": 0,
+  "peakRSS": 0,
+  "wall": 0.04078975599259138,
+  "stdout": "/tmp/toyvm-rename-retained-charge-independent-accept-oct29/identity.stdout",
+  "stderr": "/tmp/toyvm-rename-retained-charge-independent-accept-oct29/identity.stderr"
+}

@@ -1,0 +1,66 @@
+{
+  "task": "toyvm-rename-retained-charge-independent-accept-oct29",
+  "outcome": "BLOCKED_STARTUP_LIMIT_TOPOLOGY",
+  "acceptance": null,
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "branch": "task/toyvm-rename-retained-charge-independent-accept-oct29",
+  "commit": null,
+  "remoteVerified": false,
+  "productionInvocations": 0,
+  "runtimeInvocations": 0,
+  "originalEvidenceModified": false,
+  "reason": "Worker incorrectly nested limit_contract.selftest under Python child DATA hard128; configure_parent rejected because inherited hard cannot support Git child256. No retry or limit change.",
+  "remainingGate": "All requested independent source/runtime and adversarial acceptance remains unexecuted. Correct supervisor/child topology requires coordinator disposition; this failure is not a source/runtime counterexample.",
+  "box": {
+    "id": "bx_su4mgbyb",
+    "state": "stopped per coordinator supplied receipt, not queried",
+    "expiry": null,
+    "touched": false,
+    "owner": "coordinator"
+  },
+  "closeoutAdmission": {
+    "time": "2026-10-29T04:55:52.553337+00:00",
+    "free": 4614750208,
+    "MemAvailable": 3125370880,
+    "requiredBytes": 3200253952,
+    "futureGrowth": 150994944
+  },
+  "artifacts": {
+    "evidence/admission.jsonl": {
+      "bytes": 1076,
+      "sha256": "4033f1fb80c6abff5de41f8fc5d78619f29479fb343e36db474748b53aeddcd6"
+    },
+    "evidence/operation.stderr": {
+      "bytes": 719,
+      "sha256": "c505f7c6661d718352ab2853f5cf5f14a18530dd8fe7d13557e17aabdd08ec8e"
+    },
+    "evidence/limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "evidence/identity.stdout": {
+      "bytes": 133,
+      "sha256": "abf396db43152a606da4cd197c3511b2b26b95c4937bb124df76c7a9e279804d"
+    },
+    "evidence/operation.json": {
+      "bytes": 472,
+      "sha256": "8d1dc8492fa8bbd75ed686fff3b867f78fb18a35d61f781cef3a0e5551eaac62"
+    },
+    "evidence/operation.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/identity.json": {
+      "bytes": 498,
+      "sha256": "7c6fdab131cd411fb03b8853e484ed2e9387fd132e2ed83eb541f9da2bd0f927"
+    },
+    "evidence/identity.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/supervisor.py": {
+      "bytes": 3464,
+      "sha256": "310ff73bae96972197d053022e1d7964b7a02d7e588153a1e377f8a46d70cbe9"
+    }
+  }
+}

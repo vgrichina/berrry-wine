@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "../limit_contract.py",
+    "/tmp/toyvm-rename-retained-charge-independent-accept-oct29/repo"
+  ],
+  "cwd": "/tmp/toyvm-rename-retained-charge-independent-accept-oct29/repo",
+  "returncode": 1,
+  "peakRSS": 31834112,
+  "wall": 0.1611742728855461,
+  "stdout": "/tmp/toyvm-rename-retained-charge-independent-accept-oct29/operation.stdout",
+  "stderr": "/tmp/toyvm-rename-retained-charge-independent-accept-oct29/operation.stderr"
+}
