@@ -11,9 +11,9 @@ import pathlib
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RECEIPT_SHA256 = '543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870'
 BACKEND_PINS = {
-    'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py': 'e7aaa8cdbbd0871918918de090b57585c8ed0ba21e7510583fabc745359c124e',
+    'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py': 'b003da4e6439bbd1502ffc92797420c2bc254b3e55394afdd24624b7d9005338',
     'toyvm-kernel-profile-accounting-backend-oct28/confine.py': '0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8',
-    'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py': '13bf42f071f5eb84542286f35faf2dc814aaf63bf1bcfe7bb306e3e2f7f4f963',
+    'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py': 'd1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88',
     'toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py': '9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85',
 }
 BROWSER_ALLOWANCE = dict(cpuSeconds=35.353183, wallSeconds=101.495550694, captures=1)
@@ -103,7 +103,7 @@ def evaluate(result, limits):
                 cleanupComplete=cleanup, failures=failures, backendReceipt=retained)
 
 
-def qualify(*, domain, receipt, command, work, rename_evidence=0, **limits):
+def qualify(*, domain, receipt, command, work, rename_evidence=0, namespace_evidence=0, **limits):
     report = dict(accepted=False, browserAllowed=False, browserAllowanceRemaining=dict(BROWSER_ALLOWANCE),
                   childSucceeded=False, accountingAccepted=False, cleanupComplete=False)
     try:
@@ -113,6 +113,8 @@ def qualify(*, domain, receipt, command, work, rename_evidence=0, **limits):
             raise ValueError('unqualified browser/domain: ' + domain)
         if type(rename_evidence) is not int or not 0 <= rename_evidence <= 64:
             raise ValueError('rename evidence limit must be an integer from 0 to 64')
+        if type(namespace_evidence) is not int or not 0 <= namespace_evidence <= 64:
+            raise ValueError('namespace evidence limit must be an integer from 0 to 64')
         validate_receipt(receipt)
         if set(limits) != set(MAX_LIMITS):
             raise ValueError('all quota/resource limits must be explicit')
@@ -131,6 +133,8 @@ def qualify(*, domain, receipt, command, work, rename_evidence=0, **limits):
             raise ValueError('fresh empty owned work directory required')
         backend = load_backend()
         evidence = {'rename_evidence': rename_evidence} if rename_evidence else {}
+        if namespace_evidence:
+            evidence['namespace_evidence'] = namespace_evidence
         result = backend(list(command), work, backend='synchronous-fuse', **evidence, **limits)
         report.update(evaluate(result, limits))
     except Exception as error:
@@ -151,6 +155,8 @@ def main(argv=None):
     parser.add_argument('--work', required=True)
     parser.add_argument('--rename-evidence', type=int, choices=range(65), default=0,
                         help='retain at most this many backend RENAME callback records (0 disables)')
+    parser.add_argument('--namespace-evidence', type=int, choices=range(65), default=0,
+                        help='retain at most this many UNLINK/RMDIR callback records (0 disables)')
     for name in MAX_LIMITS:
         parser.add_argument('--' + name.replace('_', '-'), required=True,
                             type=float if name in ('cpu_limit', 'wall_limit') else int)

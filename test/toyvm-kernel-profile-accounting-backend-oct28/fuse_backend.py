@@ -25,13 +25,19 @@ def unpack(fmt,data,offset=0): return struct.unpack_from('<'+fmt,data,offset)
 
 
 class Backend:
-    def __init__(self, root, live_limit=32768, write_limit=65536, file_limit=16384, *, rename_evidence_limit=0):
+    def __init__(self, root, live_limit=32768, write_limit=65536, file_limit=16384, *, rename_evidence_limit=0, namespace_evidence_limit=0):
         if type(rename_evidence_limit) is not int or not 0<=rename_evidence_limit<=64:
             raise ValueError('rename evidence limit must be an integer from 0 to 64')
         self.rename_evidence_limit=rename_evidence_limit
         if rename_evidence_limit:
             self.rename_callbacks=0
             self.rename_evidence=deque(maxlen=rename_evidence_limit)
+        if type(namespace_evidence_limit) is not int or not 0<=namespace_evidence_limit<=64:
+            raise ValueError('namespace evidence limit must be an integer from 0 to 64')
+        self.namespace_evidence_limit=namespace_evidence_limit
+        if namespace_evidence_limit:
+            self.namespace_callbacks=0
+            self.namespace_evidence=deque(maxlen=namespace_evidence_limit)
         self.root=pathlib.Path(root)
         if not self.root.is_absolute() or self.root.is_symlink():
             raise ValueError('absolute non-symlink mountpoint required')
@@ -53,6 +59,11 @@ class Backend:
                 limit=self.rename_evidence_limit,callbackCount=self.rename_callbacks,
                 countSaturated=self.rename_callbacks==0xffffffffffffffff,
                 records=[dict(record) for record in self.rename_evidence])
+        if self.namespace_evidence_limit:
+            state['namespaceEvidence']=dict(
+                limit=self.namespace_evidence_limit,callbackCount=self.namespace_callbacks,
+                countSaturated=self.namespace_callbacks==0xffffffffffffffff,
+                records=[dict(record) for record in self.namespace_evidence])
         return state
 
     def record_rename_callback(self,op,unique,ino,error):
@@ -63,6 +74,13 @@ class Backend:
             self.rename_evidence.append(dict(opcode=op,unique=unique,inode=ino,
                                             errno=-error,callbackCount=self.rename_callbacks))
 
+
+    def record_namespace_callback(self,op,unique,ino,error):
+        # Actual UNLINK/RMDIR dispatch outcome, before the wire reply. Numeric only.
+        if self.namespace_evidence_limit and op in (10,11):
+            self.namespace_callbacks=min(self.namespace_callbacks+1,0xffffffffffffffff)
+            self.namespace_evidence.append(dict(opcode=op,unique=unique,inode=ino,
+                                               errno=-error,callbackCount=self.namespace_callbacks))
 
     def reject(self,reason):
         self.failure=self.failure or reason
@@ -256,6 +274,7 @@ class Backend:
                         except BaseException as e:
                             self.failure='filesystem protocol failure: '+repr(e);answer=b'';error=-errno.EIO
                         self.record_rename_callback(op,unique,ino,error)
+                        self.record_namespace_callback(op,unique,ino,error)
                         if answer is not None:os.write(self.fd,pack('IiQ',16+len(answer),error,unique)+answer)
         finally:
             try:
@@ -277,9 +296,11 @@ def main(argv=None):
     parser.add_argument('file_limit',type=int,nargs='?',default=16384)
     parser.add_argument('--rename-evidence',type=int,choices=range(65),default=0,
                         metavar='0..64',help='retain up to N numeric RENAME/RENAME2 callback records; default off')
+    parser.add_argument('--namespace-evidence',type=int,choices=range(65),default=0,
+                        metavar='0..64',help='retain up to N numeric UNLINK/RMDIR callback records; default off')
     args=parser.parse_args(argv)
     backend=Backend(args.root,args.live_limit,args.write_limit,args.file_limit,
-                    rename_evidence_limit=args.rename_evidence)
+                    rename_evidence_limit=args.rename_evidence,namespace_evidence_limit=args.namespace_evidence)
     backend.mount();backend.serve(args.status)
 
 
