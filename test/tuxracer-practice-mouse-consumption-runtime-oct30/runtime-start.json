@@ -1,0 +1,24 @@
+{
+  "pid": 11194,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "--require",
+    "/home/user/tuxracer-render/capture-mouse-consumption-oct30/boundary-preload.cjs",
+    "--require",
+    "/home/user/tuxracer-render/capture-mouse-consumption-oct30/input-observer.cjs",
+    "test/run.js",
+    "--app=tuxracer_original_061a",
+    "--no-build",
+    "--wasm=build/wine-assembly.wasm",
+    "--gl-renderer=software",
+    "--no-threads",
+    "--control-stdin",
+    "--max-seconds=70",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--quiet-fs",
+    "--trace-input-dispatch"
+  ],
+  "startedAt": 1793363837.3490121
+}

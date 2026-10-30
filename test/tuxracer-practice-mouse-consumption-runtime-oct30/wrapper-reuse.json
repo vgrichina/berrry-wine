@@ -1,0 +1,9 @@
+{
+  "PASS": true,
+  "runFunctionByteIdentical": true,
+  "prior": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-timely-practice-input-runtime-oct30/repo/test/tuxracer-timely-practice-input-runtime-oct30/wrapper-reuse.json",
+  "generatedFSIZE": 12582912,
+  "captureEach": 524288,
+  "aggregateCapture": 4194304,
+  "delta": "remote response size assertion only; allocation tracks actual task rollout"
+}

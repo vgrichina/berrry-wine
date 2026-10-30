@@ -1,0 +1,95 @@
+{
+  "archive": {
+    "path": "/home/user/tuxracer-render/mouse-consumption-closed-oct30.tar.xz",
+    "bytes": 1416696,
+    "sha256": "05703459ded965b082fdfd4f235fd60346436276fca376e18f37985e111d23fb",
+    "readback": true
+  },
+  "selected": {
+    "path": "/home/user/tuxracer-render/mouse-consumption-selected.tar.xz",
+    "bytes": 183040,
+    "sha256": "3c267357fa2aa108010567bc03b4c30b81f820b95e0ed5c59d721dff3ba04c53"
+  },
+  "files": {
+    "runtime-result.json": {
+      "bytes": 939,
+      "sha256": "9b2c11ad9b9e56c8ece56faf30812260bef0ca7cdea26d1524069b51c44a4fcb"
+    },
+    "runtime-start.json": {
+      "bytes": 661,
+      "sha256": "5755691e8125df0d04d407783bb79c42ca6eecfea7b72fd870ea7d72f0301b84"
+    },
+    "runtime-prelaunch.json": {
+      "bytes": 516,
+      "sha256": "40998cf6550af60914b3104a9b57ed53e77a3d33a787d4456ad0a08be1df1e95"
+    },
+    "controller.jsonl": {
+      "bytes": 15518,
+      "sha256": "6bc7611c18427183ec8f17c2bc1979970a8029cf0b9b3997524dae3a7527488b"
+    },
+    "mount.stdout": {
+      "bytes": 35198,
+      "sha256": "8ae761b644c1ec5095229bc052c91eedaecb48c4210e9d7599be28f1756d4e9b"
+    },
+    "mount-validation.json": {
+      "bytes": 105,
+      "sha256": "84a907310d23019266d0020f9f59186b6d5e3bf50478f4ac9e0caca98263f353"
+    },
+    "node256-startup.stdout": {
+      "bytes": 1629,
+      "sha256": "d50ce346a3e39d34101aaf5807affb7a2a841dd4e9cd42df1061c2724e0f61be"
+    },
+    "node256-startup.json": {
+      "bytes": 98,
+      "sha256": "ac0e7c4d3280b2278f119a33d039d6d44a3a31ceca31903a94f463ed1783ce48"
+    },
+    "schema-pipe.stdout": {
+      "bytes": 569,
+      "sha256": "14c1a14c06d03c3ea529e8f37e8406e8051755710c7745930d69489d0cb2d5d7"
+    },
+    "postclick-state.json": {
+      "bytes": 5821,
+      "sha256": "af04a70eb6d85438573a5e38433f5103333b7e91b778cdd1b061814ca41c16c9"
+    },
+    "postclick-settled-state.json": {
+      "bytes": 5829,
+      "sha256": "2d5835d1b6eb3d51b0ceeb449cc7a3c61ac38654c37fab55013826777adde929"
+    },
+    "postclick-settled-ready.json": {
+      "bytes": 269,
+      "sha256": "a28565c217a250cd54b111d9c832b50c4a6582274cd9b2f1d3c4e883fb8fc469"
+    },
+    "postclick-settled-display.png": {
+      "bytes": 60724,
+      "sha256": "60d3031d7c42fcbcfe12819d808fa168b36f421cf20f3934559e370d695170a8"
+    },
+    "aftermove-display.png": {
+      "bytes": 61485,
+      "sha256": "b56c0a3705e46e1097e90580278ff4a72711651419dc9e61fe6d3535a23ad08f"
+    },
+    "buttondown-display.png": {
+      "bytes": 60899,
+      "sha256": "b241c1fe6578e0b5d372dcbb8993a2986aa0051a024a6faf95e965a8cea5de94"
+    },
+    "aftermove-state.json": {
+      "bytes": 3130,
+      "sha256": "f0109db11587d3aba0d7267947db98aa9455621008dffece6e81e5a2e08dd041"
+    },
+    "buttondown-state.json": {
+      "bytes": 4547,
+      "sha256": "b2b66477a0965dda7b2d2d81d856fe33604bfa7b472ba59da8854d817a45e3ca"
+    },
+    "mouse-boundary.json": {
+      "bytes": 1561,
+      "sha256": "f38f5a3782c9899f07e55b3943ceccf940bb6e7d47a0b6a124b22642b32f0b37"
+    },
+    "canonical-mount-preflight.json": {
+      "bytes": 105,
+      "sha256": "cda7e84def4c5c3eea46b470ee3d7436e939d4d8a203a1a8d9affc56ee980ce0"
+    },
+    "runtime-input.log": {
+      "bytes": 3782,
+      "sha256": "987dffa05b242059117169f94e3f606678503ccd3d6a32ce2097de9f1bcfffc0"
+    }
+  }
+}

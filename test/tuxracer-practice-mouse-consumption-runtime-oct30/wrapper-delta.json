@@ -1,0 +1,14 @@
+{
+  "priorPassingWrapperReceipt": "wrapper-reuse.json",
+  "generatedFSIZE": 12582912,
+  "captureEach": 524288,
+  "aggregateCapture": 4194304,
+  "unchangedProcessLimits": true,
+  "delta": [
+    "API response envelope assertion16KiB",
+    "full inherited root union plus actual task streams",
+    "closed original693262-byte capture remains charged after lossless compression"
+  ],
+  "originalCaptureDenialPreserved": true,
+  "allocationStopDenialPreserved": true
+}

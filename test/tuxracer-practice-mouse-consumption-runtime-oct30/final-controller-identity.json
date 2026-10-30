@@ -1,0 +1,11 @@
+{
+  "PASS": true,
+  "files": {
+    "input-observer.cjs": "f9a1dabf140a5ed37fc7dae009bed2a443ad1699ef8a5180eddd269659b5fbb8",
+    "image-display.cjs": "3497fe351239f244eb8145d79ba1551357ae3780b39f94036ee3d41ac948e5ca",
+    "mouse-supervisor.py": "31864b2a3af4420bcdb4691a0ee6c596d8f205764cb9accf40a0fe3ee32b4c74",
+    "controller-schema-test.cjs": "64723ff138291b43282f182e61dbe0bff233bcc03d660c2a6567d27e73452225",
+    "menu-detector.cjs": "ea39e641e390083e89f4f6b402b65956a7c5196f70af3d02b28403b3d083faac"
+  },
+  "at": 1793363836.8219073
+}

@@ -1,0 +1,30 @@
+[input-schedule] scheduledBatch=10152 action=keydown correlation=unavailable batch=10152 guestMs=2030400 clock=batch lastGuestTick=2030204
+[input] keydown vk=13 at batch 10152
+[input-dequeue] dequeueId=1 source=renderer enqueueId=unavailable hwnd=0x0 msg=0x100 wParam=0xd lParam=0x1c0001 batch=10164 guestMs=2032800 clock=batch lastGuestTick=2032800
+[input-dequeue-route] dequeueId=1 focusHwnd=0x10001 hwnd=0x10001 batch=10164 guestMs=2032800 clock=batch lastGuestTick=2032800
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0xd lParam=0x1c0001 correlation=unavailable batch=10164 guestMs=2032800 clock=batch lastGuestTick=2032802
+[input-schedule] scheduledBatch=10185 action=keyup correlation=unavailable batch=10185 guestMs=2037000 clock=batch lastGuestTick=2036804
+[input] keyup vk=13 at batch 10185
+[input-dequeue] dequeueId=2 source=renderer enqueueId=unavailable hwnd=0x0 msg=0x101 wParam=0xd lParam=0xc01c0001 batch=10190 guestMs=2038000 clock=batch lastGuestTick=2038000
+[input-dequeue-route] dequeueId=2 focusHwnd=0x10001 hwnd=0x10001 batch=10190 guestMs=2038000 clock=batch lastGuestTick=2038000
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0xd lParam=0xc01c0001 correlation=unavailable batch=10190 guestMs=2038000 clock=batch lastGuestTick=2038002
+[input-schedule] scheduledBatch=10278 action=mousemove correlation=unavailable batch=10278 guestMs=2055600 clock=batch lastGuestTick=2055004
+[input] mousemove 320,260 at batch 10278
+[input-dequeue] dequeueId=3 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x200 wParam=0x0 lParam=0x1040140 batch=10283 guestMs=2056600 clock=batch lastGuestTick=2056600
+[input-dequeue-route] dequeueId=3 focusHwnd=0x10001 hwnd=0x10001 batch=10283 guestMs=2056600 clock=batch lastGuestTick=2056600
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x200 wParam=0x0 lParam=0x1040140 correlation=unavailable batch=10283 guestMs=2056600 clock=batch lastGuestTick=2056602
+[input-schedule] scheduledBatch=10381 action=mousedown correlation=unavailable batch=10381 guestMs=2076200 clock=batch lastGuestTick=2076008
+[input] mousedown 320,260 at batch 10381
+[input-dequeue] dequeueId=4 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x84 wParam=0x0 lParam=0x1040140 batch=10385 guestMs=2077000 clock=batch lastGuestTick=2077000
+[input-dequeue-route] dequeueId=4 focusHwnd=0x10001 hwnd=0x10001 batch=10385 guestMs=2077000 clock=batch lastGuestTick=2077000
+[input-dequeue] dequeueId=5 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x1040140 batch=10385 guestMs=2077000 clock=batch lastGuestTick=2077002
+[input-dequeue-route] dequeueId=5 focusHwnd=0x10001 hwnd=0x10001 batch=10385 guestMs=2077000 clock=batch lastGuestTick=2077002
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x1040140 correlation=unavailable batch=10385 guestMs=2077000 clock=batch lastGuestTick=2077004
+[input-schedule] scheduledBatch=10457 action=mouseup correlation=unavailable batch=10457 guestMs=2091400 clock=batch lastGuestTick=2091208
+[input] mouseup 320,260 at batch 10457
+[input-dequeue] dequeueId=6 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x1040140 batch=10460 guestMs=2092000 clock=batch lastGuestTick=2092000
+[input-dequeue-route] dequeueId=6 focusHwnd=0x10001 hwnd=0x10001 batch=10460 guestMs=2092000 clock=batch lastGuestTick=2092000
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x1040140 correlation=unavailable batch=10460 guestMs=2092000 clock=batch lastGuestTick=2092002
+Stats: 1282667 API calls, 10880 batches in 8.308s (1310 batches/s)
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x919ab2 esp=0x7edefee4 ebp=0x-2400 yield=0 waitH=0xe0004 sleepCount=0 csPark/steal=0/0

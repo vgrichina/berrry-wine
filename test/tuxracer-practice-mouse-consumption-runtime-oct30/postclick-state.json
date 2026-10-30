@@ -1,0 +1,274 @@
+{
+  "audio": {
+    "seq": 97534,
+    "counts": {
+      "transform": 1,
+      "waitSingle:917507:1:0": 84,
+      "releaseMutex:917507:1:1": 84,
+      "waitSingle:917511:1:0": 2,
+      "releaseMutex:917511:1:1": 2,
+      "slice": 54164,
+      "waitSingle:917508:2:0": 7104,
+      "waitSingle:234881024:2:0": 7103,
+      "releaseMutex:234881024:2:1": 7103,
+      "releaseMutex:917508:2:1": 7103,
+      "wave-submit": 7103,
+      "wave-done": 7103,
+      "waitSingle:917508:1:0": 76,
+      "releaseMutex:917508:1:1": 76,
+      "waitSingle:917508:1:65535": 74,
+      "waitSingle:917508:1:258": 279,
+      "waitSingle:917508:2:65535": 73
+    },
+    "last": {
+      "sync": [
+        917508,
+        3,
+        2,
+        1
+      ],
+      "running": 1,
+      "main": {
+        "get_eip": 4379919,
+        "get_dbg_prev_eip": 4379889,
+        "get_esp": 122682884,
+        "get_yield_reason": 0,
+        "get_wait_handle": 917508,
+        "get_current_thread_id": 1,
+        "get_api_calls": 1098195,
+        "is_mm_timer_callback_active": 0
+      },
+      "threads": [
+        {
+          "handle": 921600,
+          "tid": 1,
+          "state": "active",
+          "regs": {
+            "get_eip": 9542322,
+            "get_dbg_prev_eip": 9542299,
+            "get_esp": 2128543460,
+            "get_yield_reason": 0,
+            "get_wait_handle": 917508,
+            "get_current_thread_id": 2,
+            "get_api_calls": 51409,
+            "is_mm_timer_callback_active": 0
+          }
+        }
+      ]
+    }
+  },
+  "mouse": {
+    "observationOnly": true,
+    "events": [
+      {
+        "name": "handleMouseMove",
+        "args": [
+          320,
+          260
+        ],
+        "at": 1793363842527,
+        "before": {
+          "canvas": {
+            "width": 640,
+            "height": 480
+          },
+          "queue": [],
+          "windows": [
+            {
+              "hwnd": 65537,
+              "clientRect": {
+                "x": 0,
+                "y": 0,
+                "w": 640,
+                "h": 480
+              },
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "after": {
+          "x": 320,
+          "y": 260,
+          "canvas": {
+            "width": 640,
+            "height": 480
+          },
+          "queue": [
+            {
+              "msg": 512,
+              "hwnd": 65537,
+              "wParam": 0,
+              "lParam": 17039680
+            }
+          ],
+          "windows": [
+            {
+              "hwnd": 65537,
+              "clientRect": {
+                "x": 0,
+                "y": 0,
+                "w": 640,
+                "h": 480
+              },
+              "x": 0,
+              "y": 0
+            }
+          ]
+        }
+      },
+      {
+        "name": "handleMouseDown",
+        "args": [
+          320,
+          260,
+          1
+        ],
+        "at": 1793363843087,
+        "before": {
+          "x": 320,
+          "y": 240,
+          "canvas": {
+            "width": 640,
+            "height": 480
+          },
+          "queue": [],
+          "windows": [
+            {
+              "hwnd": 65537,
+              "clientRect": {
+                "x": 0,
+                "y": 0,
+                "w": 640,
+                "h": 480
+              },
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "after": {
+          "x": 320,
+          "y": 260,
+          "buttons": 1,
+          "canvas": {
+            "width": 640,
+            "height": 480
+          },
+          "queue": [
+            {
+              "msg": 132,
+              "hwnd": 65537,
+              "wParam": 0,
+              "lParam": 17039680
+            },
+            {
+              "msg": 513,
+              "hwnd": 65537,
+              "wParam": 1,
+              "lParam": 17039680
+            }
+          ],
+          "windows": [
+            {
+              "hwnd": 65537,
+              "clientRect": {
+                "x": 0,
+                "y": 0,
+                "w": 640,
+                "h": 480
+              },
+              "x": 0,
+              "y": 0
+            }
+          ]
+        }
+      },
+      {
+        "name": "handleMouseUp",
+        "args": [
+          320,
+          260,
+          1
+        ],
+        "at": 1793363843666,
+        "before": {
+          "x": 320,
+          "y": 260,
+          "buttons": 1,
+          "canvas": {
+            "width": 640,
+            "height": 480
+          },
+          "queue": [],
+          "windows": [
+            {
+              "hwnd": 65537,
+              "clientRect": {
+                "x": 0,
+                "y": 0,
+                "w": 640,
+                "h": 480
+              },
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "after": {
+          "x": 320,
+          "y": 260,
+          "buttons": 0,
+          "canvas": {
+            "width": 640,
+            "height": 480
+          },
+          "queue": [
+            {
+              "msg": 514,
+              "hwnd": 65537,
+              "wParam": 0,
+              "lParam": 17039680
+            }
+          ],
+          "windows": [
+            {
+              "hwnd": 65537,
+              "clientRect": {
+                "x": 0,
+                "y": 0,
+                "w": 640,
+                "h": 480
+              },
+              "x": 0,
+              "y": 0
+            }
+          ]
+        }
+      }
+    ],
+    "latest": {
+      "x": 320,
+      "y": 260,
+      "buttons": 0,
+      "canvas": {
+        "width": 640,
+        "height": 480
+      },
+      "queue": [],
+      "windows": [
+        {
+          "hwnd": 65537,
+          "clientRect": {
+            "x": 0,
+            "y": 0,
+            "w": 640,
+            "h": 480
+          },
+          "x": 0,
+          "y": 0
+        }
+      ]
+    }
+  }
+}
