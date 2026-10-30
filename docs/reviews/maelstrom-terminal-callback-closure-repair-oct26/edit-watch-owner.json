@@ -1,9 +1,0 @@
-{
-  "pid": 1908940,
-  "uid": 1000,
-  "startTicks": "102825446",
-  "argv": [
-    "/tmp/maelstrom-terminal-callback-closure-repair-oct26/ops/watch.py",
-    "edit-watch"
-  ]
-}

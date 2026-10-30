@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/enigma-supervisor-artifact-output-repair-oct24/repo/test/test-enigma-supervisor-output.py", line 216, in <module>
-    assert row['exit'] == 0 and row['dependentRan'] and row['artifact'], row
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: {'name': 'accept', 'exit': 1, 'elapsed': 0.18592120299581438, 'retainedBytes': 0, 'dependentRan': False, 'artifact': False, 'stderr': 'Traceback (most recent call last):\n  File "/tmp/enigma-supervisor-artifact-output-repair-oct24/tmp/enigma-full-supervisor-iedzuo15/accept/supervise.py", line 100, in <module>\n    assert os.statvfs(\'/tmp\').f_bavail*os.statvfs(\'/tmp\').f_frsize-60000000>=2982150144\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n', 'receipt': None}

@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/seh-qualifier-streamed-trust-repair-oct25/ops/setup.py", line 15, in <module>
-    for row in m['files']:
-               ~^^^^^^^^^
-TypeError: list indices must be integers or slices, not str

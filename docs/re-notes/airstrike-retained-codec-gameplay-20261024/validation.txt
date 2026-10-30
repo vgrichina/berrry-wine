@@ -1,1 +1,0 @@
-PASS: four historical native runs; actual ABI; eight providers; held/matched inputs; three distinct reviewed frames; watchdog/reap control; complete runtime recovery manifest; no binary payload committed
