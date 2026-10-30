@@ -4200,6 +4200,19 @@
           "**/*"
         ]
       }
+    },
+    {
+      "id": "tzar-the-burden-of-the-crown",
+      "name": "Tzar: The Burden of the Crown",
+      "kind": "game",
+      "version": "Windows (2000); owner-requested title, release package not yet verified",
+      "executables": [],
+      "sourcePage": "https://x.com/oldyzach/status/2115839577156161544",
+      "license": "Proprietary title; no acquisition or redistribution permission established by the linked post.",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Requested via Telegram inbox 135 on 2026-10-30. Locate an authorized original demo or owner-supplied installation and record source, hashes, executable and complete assets before adding a launch route.",
+      "notes": "Requested, untested catalog entry. No executable or game assets acquired; no runtime or gameplay qualification. See docs/re-notes/tzar-the-burden-of-the-crown.md."
     }
   ]
 }
