@@ -1,6 +1,0 @@
-15:52:35 [SLOT] stage2: 2400s this invocation (cap 2400s; 597s of 5700s already spent)
-15:52:35 [STAGE2] resuming on stage1 checkpoint 2026-10-05T15:16:43.129Z; 597s of 5700s already spent
-15:52:35 [P3] 1199s for P3, 1200s reserved for P4-P6
-16:04:13 [P3]    jit-early  before 195/199  after 197/199    fold64     before 190/199  after 190/199    jit-sepc   before 197/199  after 199/199    BROKE (agreed before, not after) -- BLOCKING: 0 C. health regressions (ok -> fail/timeout/stuck, or went blank) -- BLOCKING: 0 (796/796 rows per tree)
-16:05:46 [ABORT] control gate: 4 of 199 l1 rows moved (the patch leaks off the schedule)
-runner exit=6
