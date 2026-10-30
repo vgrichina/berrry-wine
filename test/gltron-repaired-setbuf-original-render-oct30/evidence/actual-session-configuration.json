@@ -1,0 +1,27 @@
+{
+  "session": {
+    "id": "01a18d0d-fbc2-71e3-9e7b-7497f48c506f",
+    "timestamp": "2026-10-30T13:44:26.389Z",
+    "model_provider": "openai",
+    "source": "exec",
+    "agent_role": null,
+    "cli_version": "0.166.0"
+  },
+  "turn": {
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "reasoning_effort": null,
+    "approval_policy": "never",
+    "sandbox_policy": {
+      "type": "danger-full-access"
+    },
+    "collaboration_mode": {
+      "mode": "default",
+      "settings": {
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "developer_instructions": null
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "test/run.js",
+    "--app=gltron",
+    "--no-build",
+    "--gl-renderer=software",
+    "--wasm=build/wine-assembly.wasm",
+    "--max-seconds=45",
+    "--max-batches=100000",
+    "--batch-size=10000",
+    "--png=capture/original.png"
+  ],
+  "startedAt": "2026-10-30T13:48:19.893078+00:00",
+  "exit": 1,
+  "wall": 1.2549805641174316,
+  "peakRSS": 109068288,
+  "violation": "stdout/stderr capture overflow",
+  "FSIZE": 12582912,
+  "capture": 8192,
+  "limits": {
+    "cpu": 60,
+    "wall": 90,
+    "heapMiB": 512,
+    "aggregateRSS": 2147483648
+  },
+  "nodeEnvironment": "/home/user/wine-assembly/node_modules"
+}

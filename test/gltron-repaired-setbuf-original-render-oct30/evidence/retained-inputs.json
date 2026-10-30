@@ -1,0 +1,35 @@
+{
+  "receipt": {
+    "label": "retained-inputs",
+    "request": {
+      "bytes": 1130,
+      "sha256": "ae72f03d404100033cf51e65e1afa1ad573cd90349b836516df204c4af5c434e"
+    },
+    "response": {
+      "bytes": 728,
+      "sha256": "11d7a2f2e96aec989fb45c2fe08b8687f3176cffacd22a7d361b9e1ab5904e89"
+    },
+    "elapsed": 13.829445600509644,
+    "exit": 0,
+    "success": true,
+    "responseBytes": 728
+  },
+  "response": {
+    "commandId": "cmd_z0uxzr8hrc1c",
+    "cwd": "gltron-render",
+    "exitCode": 0,
+    "finishedAt": "2026-10-30T13:47:42.981Z",
+    "launcherFailed": false,
+    "noticedMs": 17,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 4,
+    "startedAt": "2026-10-30T13:47:29.269Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"PASS\": true, \"sourceFiles\": 299, \"runnerFiles\": 105, \"eagerFiles\": 27, \"originalFiles\": 92, \"modules\": {\"build/wine-assembly.compat.wasm\": {\"bytes\": 1884379, \"sha256\": \"e96643502151d0ef23d339c4366ca49fc446dfadab162d8dfe968f1e92ecc19b\"}, \"build/wine-assembly.wasm\": {\"bytes\": 1881806, \"sha256\": \"5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb\"}}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

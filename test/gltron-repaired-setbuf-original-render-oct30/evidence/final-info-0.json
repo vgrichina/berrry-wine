@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--no-update",
+    "--json",
+    "info",
+    "bx_86wyr4qb"
+  ],
+  "exit": 0,
+  "wall": 0.1240377260837704,
+  "peakRSS": 5722112,
+  "violation": null,
+  "FSIZE": 12582912,
+  "capture": 524288,
+  "gitDataChildOnly": null
+}

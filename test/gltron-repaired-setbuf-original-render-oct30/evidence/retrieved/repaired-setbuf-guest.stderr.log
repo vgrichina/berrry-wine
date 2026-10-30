@@ -1,0 +1,24 @@
+[dll] msvcrt.dll is loaded as a real PE but is not on disk (msvcrt.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+
+=== UNIMPLEMENTED API: ungetc ===
+  EIP: 0x00418938  ESP: 0x074ffd4c  EBP: 0x074ffe88
+  EAX: 0x00000066  ECX: 0x00000066  EDX: 0x0000000d  EBX: 0x074ffef8
+  ESI: 0x074fff3c  EDI: 0x00000006
+  Stack:
+    [0x074ffd4c] = 0x0041894e  <- ret addr
+    [0x074ffd50] = 0x00000066
+    [0x074ffd54] = 0x00581ea4
+    [0x074ffd58] = 0x00000000
+    [0x074ffd5c] = 0x00581ea4
+    [0x074ffd60] = 0x00000066
+    [0x074ffd64] = 0x00000000
+    [0x074ffd68] = 0x00000000
+    [0x074ffd6c] = 0x00000000
+    [0x074ffd70] = 0x00000000
+    [0x074ffd74] = 0x00000000
+    [0x074ffd78] = 0x00000000
+    [0x074ffd7c] = 0x00000000
+    [0x074ffd80] = 0x00000000
+    [0x074ffd84] = 0x00000000
+    [0x074ffd88] = 0x00000000
+  FATAL: implement this API

@@ -1,0 +1,35 @@
+{
+  "receipt": {
+    "label": "remote-compile",
+    "request": {
+      "bytes": 137,
+      "sha256": "5c196caff67d9e97c6d0fc00487fff3788f99be40cea89b9a7bb83e94e10b609"
+    },
+    "response": {
+      "bytes": 397,
+      "sha256": "18e16391e6949454673127b06555e8bbf29d906f1501f42b7a77db979a6f33ef"
+    },
+    "elapsed": 30.531017541885376,
+    "exit": 0,
+    "success": true,
+    "responseBytes": 397
+  },
+  "response": {
+    "commandId": "cmd_lxsesmhix43y",
+    "cwd": "gltron-render",
+    "exitCode": 0,
+    "finishedAt": "2026-10-30T13:48:16.150Z",
+    "launcherFailed": false,
+    "noticedMs": 2,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 1,
+    "startedAt": "2026-10-30T13:47:45.712Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"mode\": \"compile\", \"physical\": 47669248, \"PASS\": true}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

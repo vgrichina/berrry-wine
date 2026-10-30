@@ -1,0 +1,35 @@
+{
+  "receipt": {
+    "label": "explicit-boat-smoke",
+    "request": {
+      "bytes": 239,
+      "sha256": "7081c7e75ca5198a1870e5013bc1effb7562968f2ffcc4b43398f62d7c4018ea"
+    },
+    "response": {
+      "bytes": 405,
+      "sha256": "cdd337dda91310597e774a3fb96395bc34ae22efb5fb0bcce80349337fafb08c"
+    },
+    "elapsed": 3.6798384189605713,
+    "exit": 0,
+    "success": true,
+    "responseBytes": 405
+  },
+  "response": {
+    "commandId": "cmd_kdpianwqlugr",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-30T13:47:29.150Z",
+    "launcherFailed": false,
+    "noticedMs": 64,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 8,
+    "startedAt": "2026-10-30T13:47:25.594Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"sha256\": \"d4511324a5986391113592b5976112c75cb5d7cb54250fe319c4ed27f57df581\"}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

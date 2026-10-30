@@ -1,0 +1,66 @@
+{
+  "repaired-setbuf-build.json": {
+    "bytes": 1596,
+    "sha256": "4b69e02299595988914f0ac5f08de035c9428dd9d67da6eb2c54e9441376ee36"
+  },
+  "repaired-setbuf-compile.json": {
+    "bytes": 447,
+    "sha256": "5b8db16668d416c01238aa6be92e0b34ae5b067e5e49285013f103b3575343fd"
+  },
+  "repaired-setbuf-compile.stdout.log": {
+    "bytes": 316,
+    "sha256": "f245caac3c25807c8ffd60fa70c6aa2358669a58e08fad378af340c822aa36de"
+  },
+  "repaired-setbuf-compile.stderr.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "repaired-setbuf-inputs.json": {
+    "bytes": 399,
+    "sha256": "39f6a681546825e8f73920cb8a8e34ff0dad820c227cfc5e43f858d50587d4dc"
+  },
+  "repaired-setbuf-preflight.json": {
+    "bytes": 131,
+    "sha256": "3864ab68181c17225df4deb1787d10345c374cc6f6ad30db91a035ccc74dc148"
+  },
+  "repaired-setbuf-result.json": {
+    "bytes": 2721,
+    "sha256": "7f685bbe9d90c56123bed28efb7d3710a1efb1f103dbd717bccd199142f6c875"
+  },
+  "repaired-setbuf-guest.json": {
+    "bytes": 679,
+    "sha256": "1e96722d9d68683cc4352b5d4bbca5228d782bc6080682e2dd154140bc02100f"
+  },
+  "repaired-setbuf-guest.stdout.log": {
+    "bytes": 7253,
+    "sha256": "75da09f0c0898965383d799f98ebe6893dd00f513625b2cbbc8a5e7270eb12a1"
+  },
+  "repaired-setbuf-guest.stderr.log": {
+    "bytes": 939,
+    "sha256": "6cbc29d8dbaf06e158d5d48eadfd820c629ded0b02a1f14fdb3ce208bf6ffbc1"
+  },
+  "repaired-setbuf-compile-startup.json": {
+    "bytes": 589,
+    "sha256": "38e3c3c29f48cf9d87364bb808fa7fd6500d1ec722fe851195e805a0f332555a"
+  },
+  "repaired-setbuf-compile-startup.stdout.log": {
+    "bytes": 1610,
+    "sha256": "13f2c86c1cdb49094e25b722bc770b40b2768ced07475125ce36e3bf38313e98"
+  },
+  "repaired-setbuf-startup-256.stdout.log": {
+    "bytes": 1610,
+    "sha256": "f1a215f35065792750a4154df7b86b93781215a79cd672b055915a503c8cc4c1"
+  },
+  "repaired-setbuf-startup-512.stdout.log": {
+    "bytes": 1610,
+    "sha256": "13f2c86c1cdb49094e25b722bc770b40b2768ced07475125ce36e3bf38313e98"
+  },
+  "repaired-setbuf-input-preflight.stdout.log": {
+    "bytes": 132,
+    "sha256": "41b7715d9e5f51e2f921b9f362767a29a289d15e9552a4410158fc802e139c0a"
+  },
+  "repaired-setbuf-input-preflight.stderr.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
