@@ -1,0 +1,6 @@
+{
+  "id": null,
+  "created": false,
+  "status": "blocked before provisioning",
+  "lifecycleOwner": "coordinator; explicit snapshot-stop delegation not exercised"
+}

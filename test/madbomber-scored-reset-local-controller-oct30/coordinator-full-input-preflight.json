@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-30T07:48:00.533397+00:00",
+  "PASS": true,
+  "files": 378,
+  "manifestSHA256": "fd3d36b179717a1f90539168b6ad2ceb6c28e208ff0e449381ea816a6a400def",
+  "scope": "retained historical original-game module/host/assets; no current-main claim",
+  "diskFree": 3338579968,
+  "remainingAggregateGrowth": 267292672,
+  "diskFloor": 2147483648,
+  "RAMAdmission": false
+}

@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-30T08:05:21.472498+00:00",
+  "status": "blocked-before-provisioning",
+  "objectiveGate": "UNQUALIFIED: no production invocation in this assignment",
+  "schedulingPreflight": "PASS: Fire25/score37/miss39/Fire53/GameOver63/Escape65/Enter69/newgame71; last input85.2; shared dispatch loop validated locally",
+  "actualRuntimeInvocations": 0,
+  "newPNGs": [],
+  "boat": null,
+  "snapshotStop": "not applicable; no Boat created/resumed or assigned",
+  "originalFailure": {
+    "operation": "boat --no-update exec self --timeout10 -- /usr/bin/python3 -B OWNED/precreation-smoke.py",
+    "exit": 1,
+    "error": "self can only be used inside a sandbox shell where BOAT_ID is set",
+    "unchangedRetry": false
+  },
+  "identityFollowup": {
+    "hostname": "box-node-5e91798b545b57de",
+    "BOAT_ID": null,
+    "supportedList": "one unrelated owner box bx_69aem736, subdomain box-node-071c0d87dd2540d8, idle; not task-owned/current host; not executed or modified"
+  },
+  "reason": "Explicit task prerequisite requires path-limited actual API transfer/capture smoke before creating the one new Boat. No supported task-owned precreation target was identified; no successful smoke receipt can be claimed. No provisioning or denied resume/SSH retry.",
+  "resumeCondition": "Coordinator supplies a supported task-owned precreation native API execution target, or explicitly orders creation before smoke on the newly created task Boat. Preserve this dry run/wrapper/schedule; no calibration-only runtime necessary.",
+  "scope": "No gameplay-completion/audio/current-main claim. Prior209d443a score5/GameOver timing failure remains unchanged.",
+  "PNGscope": "No new PNG; no screenshot/visual qualification claimed",
+  "resourceControls": "RAM admission OFF; disk2GiB after267292672 growth; process controls unchanged. ParentPython128MiB/Git256MiB only; Node unlimited inherited DATA/AS; remote CPU160/165,FSIZE4MiB,heap512MiB,group2GiB; no guest executed.",
+  "checks": [
+    "canonical mount parser exact args passed; 141 intended app files enumerated",
+    "378-entry manifest identity and retained full-input-hash receipt verified",
+    "standing packet exact9487608 bytes and SHA verified in place",
+    "local shared-loop dry run passed with all commands before150s",
+    "600000-byte generated file passed12MiB FSIZE independently of512KiB capture",
+    "530000-byte output deliberately rejected/reaped; raw denial preserved"
+  ],
+  "parent": "209d443a2fbc12515ff152bd23674e895e729da9",
+  "branch": "refs/heads/test/madbomber-scored-reset-local-controller-oct30"
+}

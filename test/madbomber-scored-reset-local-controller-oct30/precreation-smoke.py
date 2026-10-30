@@ -1,0 +1,1 @@
+import pathlib,hashlib,json; p=pathlib.Path('/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/native-api-smoke.bin'); b=b'bounded-native-api-transfer-capture-oct30'; assert not p.exists(); p.write_bytes(b); c=p.read_bytes(); assert c==b; print(json.dumps({'pass':True,'path':str(p),'bytes':len(c),'sha256':hashlib.sha256(c).hexdigest()}))

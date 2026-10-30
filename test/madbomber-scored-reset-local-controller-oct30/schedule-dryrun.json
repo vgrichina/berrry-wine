@@ -1,0 +1,273 @@
+{
+  "PASS": true,
+  "kind": "local dispatch dry run only; no guest execution or behavioral acceptance",
+  "events": [
+    {
+      "due": 6,
+      "elapsed": 6.0,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    },
+    {
+      "due": 6.2,
+      "elapsed": 6.2,
+      "event": {
+        "cmd": "keyup:13"
+      }
+    },
+    {
+      "due": 8,
+      "elapsed": 8.0,
+      "event": {
+        "cmd": "mousemove:308:400"
+      }
+    },
+    {
+      "due": 11,
+      "elapsed": 11.0,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "due": 11.2,
+      "elapsed": 11.2,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "due": 20,
+      "elapsed": 20.0,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/early20.png"
+      }
+    },
+    {
+      "due": 25,
+      "elapsed": 25.0,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "due": 25.2,
+      "elapsed": 25.2,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "due": 37,
+      "elapsed": 37.0,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/score37.png"
+      }
+    },
+    {
+      "due": 39,
+      "elapsed": 39.0,
+      "event": {
+        "cmd": "mousemove:0:400"
+      }
+    },
+    {
+      "due": 50,
+      "elapsed": 50.0,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/miss50.png"
+      }
+    },
+    {
+      "due": 53,
+      "elapsed": 53.0,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "due": 53.2,
+      "elapsed": 53.2,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "due": 63,
+      "elapsed": 63.0,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/gameover63.png"
+      }
+    },
+    {
+      "due": 65,
+      "elapsed": 65.0,
+      "event": {
+        "cmd": "keydown:27"
+      }
+    },
+    {
+      "due": 65.2,
+      "elapsed": 65.2,
+      "event": {
+        "cmd": "keyup:27"
+      }
+    },
+    {
+      "due": 67,
+      "elapsed": 67.0,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/title67.png"
+      }
+    },
+    {
+      "due": 69,
+      "elapsed": 69.0,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    },
+    {
+      "due": 69.2,
+      "elapsed": 69.2,
+      "event": {
+        "cmd": "keyup:13"
+      }
+    },
+    {
+      "due": 71,
+      "elapsed": 71.0,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/newgame71.png"
+      }
+    },
+    {
+      "due": 75,
+      "elapsed": 75.0,
+      "event": {
+        "cmd": "keydown:27"
+      }
+    },
+    {
+      "due": 75.2,
+      "elapsed": 75.2,
+      "event": {
+        "cmd": "keyup:27"
+      }
+    },
+    {
+      "due": 77,
+      "elapsed": 77.0,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/title-quit77.png"
+      }
+    },
+    {
+      "due": 79,
+      "elapsed": 79.0,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "due": 79.2,
+      "elapsed": 79.2,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "due": 79.6,
+      "elapsed": 79.6,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "due": 79.8,
+      "elapsed": 79.8,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "due": 80.2,
+      "elapsed": 80.2,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "due": 80.4,
+      "elapsed": 80.4,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "due": 80.8,
+      "elapsed": 80.8,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "due": 81.0,
+      "elapsed": 81.0,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "due": 81.4,
+      "elapsed": 81.4,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "due": 81.60000000000001,
+      "elapsed": 81.7,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "due": 83,
+      "elapsed": 83.0,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/exit-selected83.png"
+      }
+    },
+    {
+      "due": 85,
+      "elapsed": 85.0,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    },
+    {
+      "due": 85.2,
+      "elapsed": 85.2,
+      "event": {
+        "cmd": "keyup:13"
+      }
+    }
+  ],
+  "lastInputSeconds": 85.2,
+  "restartInputSeconds": 69,
+  "newgameCaptureSeconds": 71,
+  "headroomSeconds": 79,
+  "basis": "Prior209d443a Fire89.55 yielded score5 by100; idle-before-Fire reduced to25; bucket-left117 reduced39; Fire139.61/GameOver143.79 reduced53/63. Ordinary Escape then Enter from earlier unscored restart retained. Fixed schedule remains a bounded gameplay attempt, not predicted acceptance.",
+  "runtimeSHA256": "be75fdc7f4fc5884098c72c018cc4924fdf7c49aadbad5a1b6cfcda832102121",
+  "scheduleSHA256": "03d79d9b66eac22518beb0d7f6cb25a12cf6e281cd9d69bc25710514c3c129ee"
+}

@@ -1,0 +1,24 @@
+{
+  "wrapperSHA256": "8a459521504a4cbe7a0112be8aa5f3e23c702c6e7b8132728fb7a077dd42607a",
+  "localFSIZE": 12582912,
+  "captureCeiling": 524288,
+  "fileControl": "600000 byte legitimate file passed",
+  "overflowControl": "530000 stdout rejected/reaped; original raw output-control.stdout preserved",
+  "RAMAdmission": false,
+  "diskFloor": 2147483648,
+  "remainingAggregateGrowth": 267292672,
+  "localBudget": 67108864,
+  "publicationReserve": 8388608,
+  "remoteBudget": 268435456,
+  "remoteReserve": 8388608,
+  "CPU": [
+    160,
+    165
+  ],
+  "wall": 180,
+  "heapMiB": 512,
+  "groupMiB": 2048,
+  "logsMiB": 2,
+  "remoteFileMiB": 4,
+  "selectedRemotePNGsMiB": 16
+}

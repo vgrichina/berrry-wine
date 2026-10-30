@@ -1,0 +1,226 @@
+[
+  [
+    6,
+    {
+      "cmd": "keydown:13"
+    }
+  ],
+  [
+    6.2,
+    {
+      "cmd": "keyup:13"
+    }
+  ],
+  [
+    8,
+    {
+      "cmd": "mousemove:308:400"
+    }
+  ],
+  [
+    11,
+    {
+      "cmd": "keydown:32"
+    }
+  ],
+  [
+    11.2,
+    {
+      "cmd": "keyup:32"
+    }
+  ],
+  [
+    20,
+    {
+      "action": "png",
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/early20.png"
+    }
+  ],
+  [
+    25,
+    {
+      "cmd": "keydown:32"
+    }
+  ],
+  [
+    25.2,
+    {
+      "cmd": "keyup:32"
+    }
+  ],
+  [
+    37,
+    {
+      "action": "png",
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/score37.png"
+    }
+  ],
+  [
+    39,
+    {
+      "cmd": "mousemove:0:400"
+    }
+  ],
+  [
+    50,
+    {
+      "action": "png",
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/miss50.png"
+    }
+  ],
+  [
+    53,
+    {
+      "cmd": "keydown:32"
+    }
+  ],
+  [
+    53.2,
+    {
+      "cmd": "keyup:32"
+    }
+  ],
+  [
+    63,
+    {
+      "action": "png",
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/gameover63.png"
+    }
+  ],
+  [
+    65,
+    {
+      "cmd": "keydown:27"
+    }
+  ],
+  [
+    65.2,
+    {
+      "cmd": "keyup:27"
+    }
+  ],
+  [
+    67,
+    {
+      "action": "png",
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/title67.png"
+    }
+  ],
+  [
+    69,
+    {
+      "cmd": "keydown:13"
+    }
+  ],
+  [
+    69.2,
+    {
+      "cmd": "keyup:13"
+    }
+  ],
+  [
+    71,
+    {
+      "action": "png",
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/newgame71.png"
+    }
+  ],
+  [
+    75,
+    {
+      "cmd": "keydown:27"
+    }
+  ],
+  [
+    75.2,
+    {
+      "cmd": "keyup:27"
+    }
+  ],
+  [
+    77,
+    {
+      "action": "png",
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/title-quit77.png"
+    }
+  ],
+  [
+    79,
+    {
+      "cmd": "keydown:40"
+    }
+  ],
+  [
+    79.2,
+    {
+      "cmd": "keyup:40"
+    }
+  ],
+  [
+    79.6,
+    {
+      "cmd": "keydown:40"
+    }
+  ],
+  [
+    79.8,
+    {
+      "cmd": "keyup:40"
+    }
+  ],
+  [
+    80.2,
+    {
+      "cmd": "keydown:40"
+    }
+  ],
+  [
+    80.4,
+    {
+      "cmd": "keyup:40"
+    }
+  ],
+  [
+    80.8,
+    {
+      "cmd": "keydown:40"
+    }
+  ],
+  [
+    81.0,
+    {
+      "cmd": "keyup:40"
+    }
+  ],
+  [
+    81.4,
+    {
+      "cmd": "keydown:40"
+    }
+  ],
+  [
+    81.60000000000001,
+    {
+      "cmd": "keyup:40"
+    }
+  ],
+  [
+    83,
+    {
+      "action": "png",
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/exit-selected83.png"
+    }
+  ],
+  [
+    85,
+    {
+      "cmd": "keydown:13"
+    }
+  ],
+  [
+    85.2,
+    {
+      "cmd": "keyup:13"
+    }
+  ]
+]
