@@ -1,8 +1,0 @@
-PASS actual fork/import main delayed producer
-PASS unsignaled/deadline/no-local-producer accounting
-PASS same-host runnable producer
-PASS real ordinary Workers broker/scheduler auto-one/manual-both/reset
-PASS cooperative guest scheduler continuation
-PASS partial reference/final close/slot reuse
-PASS unsupported nested/infinite/multiwait preconsumption guards
-PASS transport failure explicit and retained poison
