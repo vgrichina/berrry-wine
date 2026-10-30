@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/maelstrom-select-hook-recovered-canonical-native-oct24/repo/test/maelstrom-select-hook-static.py", line 47, in <module>
-    assert now==(127,1,b'\x7f\x01\x41\x00\x0b')
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError

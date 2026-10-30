@@ -1,1 +1,0 @@
-{"pid": 3295018, "executable": "/usr/bin/git", "argv": ["git", "diff", "--cached", "--name-status"], "DATA": [536870912, 536870912], "AS": [-1, -1], "CPU": [90, 90], "FSIZE": [25165824, 25165824]}

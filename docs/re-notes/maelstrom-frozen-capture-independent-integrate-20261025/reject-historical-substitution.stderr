@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/maelstrom-frozen-capture-independent-integrate-oct25/ops/verify.py", line 29, in <module>
-    check(live['state']==dict(eax=0x53000001,esp=0x074ffb18,eip=0x075040f8) and live['batch']==36170,'later live binding')
-  File "/tmp/maelstrom-frozen-capture-independent-integrate-oct25/ops/verify.py", line 11, in check
-    if not c:raise ValueError(m)
-             ^^^^^^^^^^^^^^^^^^^
-ValueError: later live binding

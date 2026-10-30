@@ -1,1 +1,0 @@
-{"argv": ["git", "-c", "gc.auto=0", "-c", "pack.threads=1", "-c", "pack.window=0", "-c", "pack.windowMemory=16m", "cat-file", "blob", "4b8461338f4bcddde6b5d5504991523b28d3ac35"], "exit": 128, "stdout": "", "stderr": "fatal: git cat-file 4b8461338f4bcddde6b5d5504991523b28d3ac35: bad file\n"}

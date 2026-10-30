@@ -1,6 +1,0 @@
-{
-  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
-  "exit": 0,
-  "stdout": "606caff1de558f185487aed5e31ede159262ba7e\trefs/heads/main\nf977ded63e9bc13d12a3ea66966502a8abbd693e\trefs/heads/task/maelstrom-select-frozen-record-adapter-oct24\n",
-  "stderr": ""
-}
