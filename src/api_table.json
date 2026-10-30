@@ -39056,5 +39056,12 @@
     "nargs": 9,
     "convention": "stdcall",
     "hash": 1146032026
+  },
+  {
+    "id": 4595,
+    "name": "ungetc",
+    "nargs": 2,
+    "convention": "cdecl",
+    "hash": 2518170959
   }
 ]
