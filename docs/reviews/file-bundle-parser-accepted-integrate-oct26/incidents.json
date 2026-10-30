@@ -1,9 +1,0 @@
-{
-  "incidents": [
-    "Initial combined instruction/evidence reads exceeded 8192-byte excerpt cap; subsequent excerpts bounded.",
-    "Initial diff attempted across donor object databases; missing object resolved by owned flat readonly alternates.",
-    "Internal host blob stdout capture exceeded 128KiB; no blob displayed. Corrected Git blob extraction to owned bounded temporary file.",
-    "Rejecting short-read mutant OOM at16MiB (4/5controls); preserved first failure. Added immediate existing chunk-allocation bound in independent test harness to reach behavioral rejection within heap. Rerun only affected reader-independent and controls.",
-    "First early allocation guard applied too broadly: duplicate filename reopen and output Buffer allocation caused 2 failures. Corrected scope to exact one-byte fixture with its existing three-allocation expectation; no other fixtures guarded."
-  ]
-}
