@@ -1,0 +1,7 @@
+{
+  "branch": "task/toyvm-offline-receipt-validation-cli-oct29",
+  "commit": "354c5651f6f11bbd430424c3163d7e87e125fc9a",
+  "offlineValidationOnly": true,
+  "parent": "7e07875383031bc000b1e9417c39e86300ab2a3b",
+  "runtimeQualified": false
+}

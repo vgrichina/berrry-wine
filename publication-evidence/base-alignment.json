@@ -1,0 +1,8 @@
+{
+  "PASS": true,
+  "base": "7e07875383031bc000b1e9417c39e86300ab2a3b",
+  "callerSHA256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "initialAncestryCheck": "not ancestor; resolved by checkout assigned base containing identical pinned caller",
+  "testsReusedByUnchangedSource": true
+}

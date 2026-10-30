@@ -1,0 +1,9 @@
+Task toyvm-offline-receipt-validation-cli-oct29: implemented supported offline saved backend-result validation CLI using exact pinned production evaluate/filesystem_clean; live caller unchanged.
+52 real Python CLI subprocess cases passed; accept-all mutation rejected. Prior32 reused. runtimeQualified=false; original live CLI/FUSE/browser gap remains OPEN.
+Commit 354c5651f6f11bbd430424c3163d7e87e125fc9a
+Remote refs/heads/task/toyvm-offline-receipt-validation-cli-oct29 exact SHA 354c5651f6f11bbd430424c3163d7e87e125fc9a verified by trusted SSH ls-remote. No main push.
+Report /tmp/toyvm-offline-receipt-validation-cli-oct29/repo/test/toyvm-offline-receipt-validation-cli-oct29/REPORT.md
+Canonical receipt /tmp/toyvm-offline-receipt-validation-cli-oct29/repo/canonical-receipt.json
+Manifest /tmp/toyvm-offline-receipt-validation-cli-oct29/repo/test/toyvm-offline-receipt-validation-cli-oct29/manifest.json SHA256 473ed85c19db269be3ae97b9a75be3e545989d4602672b49f55f45fd6d84364f
+All recorded task process groups empty; temporary input/mutant removed. No box assigned; coordinator owns lifecycle. 24MiB allocation retained through coordinator closeout.
+Coordinator: append one bounded messageboard delivery pointer; worker did not append. Historical failed sentinel and inspection diagnostics preserved.

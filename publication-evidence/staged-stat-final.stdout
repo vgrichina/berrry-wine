@@ -1,0 +1,260 @@
+ .../validate_receipt_offline.py                    |  115 +++
+ .../REPORT.md                                      |  122 +++
+ .../evidence/accept-all-mutant.txt                 |  115 +++
+ .../evidence/admission.jsonl                       |  141 +++
+ .../evidence/base-alignment.json                   |    8 +
+ .../evidence/base-caller-identity.json             |   38 +
+ .../evidence/base-candidate-ancestry.json          |   40 +
+ .../evidence/base-candidate-ancestry.stderr        |    2 +
+ .../evidence/candidate-caller-identity.json        |   38 +
+ .../evidence/checkout-absolute-git-dir.json        |   38 +
+ .../evidence/checkout-absolute-git-dir.stderr      |    0
+ .../evidence/checkout-absolute-git-dir.stdout      |    1 +
+ .../evidence/checkout-show-toplevel.json           |   38 +
+ .../evidence/checkout-show-toplevel.stderr         |    0
+ .../evidence/checkout-show-toplevel.stdout         |    1 +
+ .../evidence/checkout.json                         |   40 +
+ .../evidence/checkout.stderr                       |    2 +
+ .../evidence/checkout.stdout                       |    0
+ .../evidence/cli-bool-child-exit.json              |   52 +
+ .../evidence/cli-bool-child-exit.stderr            |    0
+ .../evidence/cli-bool-child-exit.stdout            |    1 +
+ .../evidence/cli-bool-filesystem-live.json         |   52 +
+ .../evidence/cli-bool-filesystem-live.stderr       |    0
+ .../evidence/cli-bool-filesystem-live.stdout       |    1 +
+ .../evidence/cli-bool-server.json                  |   52 +
+ .../evidence/cli-bool-server.stderr                |    0
+ .../evidence/cli-bool-server.stdout                |    1 +
+ .../evidence/cli-cleanup-shape-0.json              |   52 +
+ .../evidence/cli-cleanup-shape-0.stderr            |    0
+ .../evidence/cli-cleanup-shape-0.stdout            |    1 +
+ .../evidence/cli-cleanup-shape-1.json              |   52 +
+ .../evidence/cli-cleanup-shape-1.stderr            |    0
+ .../evidence/cli-cleanup-shape-1.stdout            |    1 +
+ .../evidence/cli-cleanup-shape-2.json              |   52 +
+ .../evidence/cli-cleanup-shape-2.stderr            |    0
+ .../evidence/cli-cleanup-shape-2.stdout            |    1 +
+ .../evidence/cli-cleanup-shape-3.json              |   52 +
+ .../evidence/cli-cleanup-shape-3.stderr            |    0
+ .../evidence/cli-cleanup-shape-3.stdout            |    1 +
+ .../evidence/cli-complete-shape-0.json             |   52 +
+ .../evidence/cli-complete-shape-0.stderr           |    0
+ .../evidence/cli-complete-shape-0.stdout           |    1 +
+ .../evidence/cli-complete-shape-1.json             |   52 +
+ .../evidence/cli-complete-shape-1.stderr           |    0
+ .../evidence/cli-complete-shape-1.stdout           |    1 +
+ .../evidence/cli-complete-shape-2.json             |   52 +
+ .../evidence/cli-complete-shape-2.stderr           |    0
+ .../evidence/cli-complete-shape-2.stdout           |    1 +
+ .../evidence/cli-complete-shape-3.json             |   52 +
+ .../evidence/cli-complete-shape-3.stderr           |    0
+ .../evidence/cli-complete-shape-3.stdout           |    1 +
+ .../evidence/cli-float-server.json                 |   52 +
+ .../evidence/cli-float-server.stderr               |    0
+ .../evidence/cli-float-server.stdout               |    1 +
+ .../evidence/cli-float-unmount.json                |   52 +
+ .../evidence/cli-float-unmount.stderr              |    0
+ .../evidence/cli-float-unmount.stdout              |    1 +
+ .../evidence/cli-invalid-limit-cpu_limit.json      |   52 +
+ .../evidence/cli-invalid-limit-cpu_limit.stderr    |    0
+ .../evidence/cli-invalid-limit-cpu_limit.stdout    |    1 +
+ .../evidence/cli-invalid-limit-file_limit.json     |   52 +
+ .../evidence/cli-invalid-limit-file_limit.stderr   |    0
+ .../evidence/cli-invalid-limit-file_limit.stdout   |    1 +
+ .../evidence/cli-invalid-limit-rss_limit.json      |   52 +
+ .../evidence/cli-invalid-limit-rss_limit.stderr    |    0
+ .../evidence/cli-invalid-limit-rss_limit.stdout    |    1 +
+ .../evidence/cli-invalid-limit-wall_limit.json     |   52 +
+ .../evidence/cli-invalid-limit-wall_limit.stderr   |    0
+ .../evidence/cli-invalid-limit-wall_limit.stdout   |    1 +
+ .../evidence/cli-legitimate-cleanup-control.json   |   52 +
+ .../evidence/cli-legitimate-cleanup-control.stderr |    0
+ .../evidence/cli-legitimate-cleanup-control.stdout |    1 +
+ .../cli-legitimate-null-unmount-control.json       |   52 +
+ .../cli-legitimate-null-unmount-control.stderr     |    0
+ .../cli-legitimate-null-unmount-control.stdout     |    1 +
+ .../evidence/cli-malformed-json-0.json             |   52 +
+ .../evidence/cli-malformed-json-0.stderr           |    0
+ .../evidence/cli-malformed-json-0.stdout           |    1 +
+ .../evidence/cli-malformed-json-1.json             |   52 +
+ .../evidence/cli-malformed-json-1.stderr           |    0
+ .../evidence/cli-malformed-json-1.stdout           |    1 +
+ .../evidence/cli-malformed-json-2.json             |   52 +
+ .../evidence/cli-malformed-json-2.stderr           |    0
+ .../evidence/cli-malformed-json-2.stdout           |    1 +
+ .../evidence/cli-malformed-json-3.json             |   52 +
+ .../evidence/cli-malformed-json-3.stderr           |    0
+ .../evidence/cli-malformed-json-3.stdout           |    1 +
+ .../evidence/cli-malformed-json-4.json             |   52 +
+ .../evidence/cli-malformed-json-4.stderr           |    0
+ .../evidence/cli-malformed-json-4.stdout           |    1 +
+ .../evidence/cli-malformed-json-5.json             |   52 +
+ .../evidence/cli-malformed-json-5.stderr           |    0
+ .../evidence/cli-malformed-json-5.stdout           |    1 +
+ .../evidence/cli-malformed-json-6.json             |   52 +
+ .../evidence/cli-malformed-json-6.stderr           |    0
+ .../evidence/cli-malformed-json-6.stdout           |    1 +
+ .../evidence/cli-malformed-json-7.json             |   52 +
+ .../evidence/cli-malformed-json-7.stderr           |    0
+ .../evidence/cli-malformed-json-7.stdout           |    1 +
+ .../evidence/cli-malformed-output-0.json           |   52 +
+ .../evidence/cli-malformed-output-0.stderr         |    0
+ .../evidence/cli-malformed-output-0.stdout         |    1 +
+ .../evidence/cli-malformed-output-1.json           |   52 +
+ .../evidence/cli-malformed-output-1.stderr         |    0
+ .../evidence/cli-malformed-output-1.stdout         |    1 +
+ .../evidence/cli-malformed-output-2.json           |   52 +
+ .../evidence/cli-malformed-output-2.stderr         |    0
+ .../evidence/cli-malformed-output-2.stdout         |    1 +
+ .../evidence/cli-malformed-output-3.json           |   52 +
+ .../evidence/cli-malformed-output-3.stderr         |    0
+ .../evidence/cli-malformed-output-3.stdout         |    1 +
+ .../evidence/cli-malformed-output-4.json           |   52 +
+ .../evidence/cli-malformed-output-4.stderr         |    0
+ .../evidence/cli-malformed-output-4.stdout         |    1 +
+ .../evidence/cli-malformed-output-5.json           |   52 +
+ .../evidence/cli-malformed-output-5.stderr         |    0
+ .../evidence/cli-malformed-output-5.stdout         |    1 +
+ .../evidence/cli-missing-limit-cpu_limit.json      |   50 +
+ .../evidence/cli-missing-limit-cpu_limit.stderr    |    0
+ .../evidence/cli-missing-limit-cpu_limit.stdout    |    1 +
+ .../evidence/cli-missing-limit-file_limit.json     |   50 +
+ .../evidence/cli-missing-limit-file_limit.stderr   |    0
+ .../evidence/cli-missing-limit-file_limit.stdout   |    1 +
+ .../evidence/cli-missing-limit-live_limit.json     |   50 +
+ .../evidence/cli-missing-limit-live_limit.stderr   |    0
+ .../evidence/cli-missing-limit-live_limit.stdout   |    1 +
+ .../evidence/cli-missing-limit-output_limit.json   |   50 +
+ .../evidence/cli-missing-limit-output_limit.stderr |    0
+ .../evidence/cli-missing-limit-output_limit.stdout |    1 +
+ .../evidence/cli-missing-limit-rss_limit.json      |   50 +
+ .../evidence/cli-missing-limit-rss_limit.stderr    |    0
+ .../evidence/cli-missing-limit-rss_limit.stdout    |    1 +
+ .../evidence/cli-missing-limit-wall_limit.json     |   50 +
+ .../evidence/cli-missing-limit-wall_limit.stderr   |    0
+ .../evidence/cli-missing-limit-wall_limit.stdout   |    1 +
+ .../evidence/cli-missing-limit-write_limit.json    |   50 +
+ .../evidence/cli-missing-limit-write_limit.stderr  |    0
+ .../evidence/cli-missing-limit-write_limit.stdout  |    1 +
+ .../evidence/cli-missing-remainingMounts.json      |   52 +
+ .../evidence/cli-missing-remainingMounts.stderr    |    0
+ .../evidence/cli-missing-remainingMounts.stdout    |    1 +
+ .../evidence/cli-missing-serverExit.json           |   52 +
+ .../evidence/cli-missing-serverExit.stderr         |    0
+ .../evidence/cli-missing-serverExit.stdout         |    1 +
+ .../evidence/cli-missing-unmountExit.json          |   52 +
+ .../evidence/cli-missing-unmountExit.stderr        |    0
+ .../evidence/cli-missing-unmountExit.stdout        |    1 +
+ .../evidence/cli-mount-remains.json                |   52 +
+ .../evidence/cli-mount-remains.stderr              |    0
+ .../evidence/cli-mount-remains.stdout              |    1 +
+ .../evidence/cli-mounts-object.json                |   52 +
+ .../evidence/cli-mounts-object.stderr              |    0
+ .../evidence/cli-mounts-object.stdout              |    1 +
+ .../evidence/cli-null-server.json                  |   52 +
+ .../evidence/cli-null-server.stderr                |    0
+ .../evidence/cli-null-server.stdout                |    1 +
+ .../evidence/cli-output-over-limit.json            |   52 +
+ .../evidence/cli-output-over-limit.stderr          |    0
+ .../evidence/cli-output-over-limit.stdout          |    1 +
+ .../evidence/cli-output-resource-rejection.json    |   52 +
+ .../evidence/cli-output-resource-rejection.stderr  |    0
+ .../evidence/cli-output-resource-rejection.stdout  |    1 +
+ .../evidence/cli-server-failure.json               |   52 +
+ .../evidence/cli-server-failure.stderr             |    0
+ .../evidence/cli-server-failure.stdout             |    1 +
+ .../evidence/cli-string-unmount.json               |   52 +
+ .../evidence/cli-string-unmount.stderr             |    0
+ .../evidence/cli-string-unmount.stdout             |    1 +
+ .../evidence/cli-test-results.json                 |  864 ++++++++++++++++
+ .../cli-unchanged-bool-unmount-counterexample.json |   52 +
+ ...li-unchanged-bool-unmount-counterexample.stderr |    0
+ ...li-unchanged-bool-unmount-counterexample.stdout |    1 +
+ .../evidence/cli-unmount-failure.json              |   52 +
+ .../evidence/cli-unmount-failure.stderr            |    0
+ .../evidence/cli-unmount-failure.stdout            |    1 +
+ .../evidence/config-email-absolute-git-dir.json    |   38 +
+ .../evidence/config-email-absolute-git-dir.stderr  |    0
+ .../evidence/config-email-absolute-git-dir.stdout  |    1 +
+ .../evidence/config-email-show-toplevel.json       |   38 +
+ .../evidence/config-email-show-toplevel.stderr     |    0
+ .../evidence/config-email-show-toplevel.stdout     |    1 +
+ .../evidence/config-email.json                     |   39 +
+ .../evidence/config-email.stderr                   |    0
+ .../evidence/config-email.stdout                   |    0
+ .../evidence/config-gc-absolute-git-dir.json       |   38 +
+ .../evidence/config-gc-absolute-git-dir.stderr     |    0
+ .../evidence/config-gc-absolute-git-dir.stdout     |    1 +
+ .../evidence/config-gc-show-toplevel.json          |   38 +
+ .../evidence/config-gc-show-toplevel.stderr        |    0
+ .../evidence/config-gc-show-toplevel.stdout        |    1 +
+ .../evidence/config-gc.json                        |   39 +
+ .../evidence/config-gc.stderr                      |    0
+ .../evidence/config-gc.stdout                      |    0
+ .../evidence/config-hooks-absolute-git-dir.json    |   38 +
+ .../evidence/config-hooks-absolute-git-dir.stderr  |    0
+ .../evidence/config-hooks-absolute-git-dir.stdout  |    1 +
+ .../evidence/config-hooks-show-toplevel.json       |   38 +
+ .../evidence/config-hooks-show-toplevel.stderr     |    0
+ .../evidence/config-hooks-show-toplevel.stdout     |    1 +
+ .../evidence/config-hooks.json                     |   39 +
+ .../evidence/config-hooks.stderr                   |    0
+ .../evidence/config-hooks.stdout                   |    0
+ .../evidence/config-name-absolute-git-dir.json     |   38 +
+ .../evidence/config-name-absolute-git-dir.stderr   |    0
+ .../evidence/config-name-absolute-git-dir.stdout   |    1 +
+ .../evidence/config-name-show-toplevel.json        |   38 +
+ .../evidence/config-name-show-toplevel.stderr      |    0
+ .../evidence/config-name-show-toplevel.stdout      |    1 +
+ .../evidence/config-name.json                      |   39 +
+ .../evidence/config-name.stderr                    |    0
+ .../evidence/config-name.stdout                    |    0
+ .../evidence/config-sparse-absolute-git-dir.json   |   38 +
+ .../evidence/config-sparse-absolute-git-dir.stderr |    0
+ .../evidence/config-sparse-absolute-git-dir.stdout |    1 +
+ .../evidence/config-sparse-show-toplevel.json      |   38 +
+ .../evidence/config-sparse-show-toplevel.stderr    |    0
+ .../evidence/config-sparse-show-toplevel.stdout    |    1 +
+ .../evidence/config-sparse.json                    |   39 +
+ .../evidence/config-sparse.stderr                  |    0
+ .../evidence/config-sparse.stdout                  |    0
+ .../evidence/cwd-negative-controls.json            |    9 +
+ .../evidence/historical-failed-sentinel.json       |   15 +
+ .../evidence/init.json                             |   37 +
+ .../evidence/init.stderr                           |   10 +
+ .../evidence/init.stdout                           |    1 +
+ .../evidence/input-pins.json                       |   22 +
+ .../evidence/mount-configuration.json              |   16 +
+ ...tant-unchanged-bool-unmount-counterexample.json |   52 +
+ ...nt-unchanged-bool-unmount-counterexample.stderr |    0
+ ...nt-unchanged-bool-unmount-counterexample.stdout |    1 +
+ .../evidence/mutation-verdict.json                 |   10 +
+ .../evidence/offline-cli-acceptance.json           |   36 +
+ .../evidence/offline-cli-acceptance.stderr         |    0
+ .../evidence/offline-cli-acceptance.stdout         |    1 +
+ .../evidence/owned-positive-sentinel.json          |   37 +
+ .../evidence/owned-positive-sentinel.stderr        |    0
+ .../evidence/owned-positive-sentinel.stdout        |    1 +
+ .../evidence/rejecting-mutation.json               |   37 +
+ .../evidence/rejecting-mutation.stderr             |   10 +
+ .../evidence/rejecting-mutation.stdout             |    0
+ .../evidence/remote-add-absolute-git-dir.json      |   38 +
+ .../evidence/remote-add-absolute-git-dir.stderr    |    0
+ .../evidence/remote-add-absolute-git-dir.stdout    |    1 +
+ .../evidence/remote-add-show-toplevel.json         |   38 +
+ .../evidence/remote-add-show-toplevel.stderr       |    0
+ .../evidence/remote-add-show-toplevel.stdout       |    1 +
+ .../evidence/remote-add.json                       |   40 +
+ .../evidence/remote-add.stderr                     |    0
+ .../evidence/remote-add.stdout                     |    0
+ .../evidence/status-before-add.json                |   39 +
+ .../evidence/status-before-add.stderr              |    1 +
+ .../evidence/status-before-add.stdout              |    2 +
+ .../evidence/unchanged-live-caller.json            |   39 +
+ .../evidence/unchanged-live-caller.stderr          |    0
+ .../evidence/unchanged-live-caller.stdout          |    0
+ .../manifest.json                                  | 1047 ++++++++++++++++++++
+ .../startup.json                                   |   61 ++
+ .../supervisor.py                                  |  120 +++
+ .../test_offline_cli.py                            |   81 ++
+ 259 files changed, 6733 insertions(+)

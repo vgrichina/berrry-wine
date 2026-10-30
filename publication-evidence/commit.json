@@ -1,0 +1,39 @@
+{
+  "appliedDATA": 268435456,
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-offline-receipt-validation-cli-oct29/repo",
+    "commit",
+    "-m",
+    "Add offline receipt validation CLI using pinned production evaluator"
+  ],
+  "cwd": "/tmp/toyvm-offline-receipt-validation-cli-oct29/repo",
+  "exit": 0,
+  "groupCap": 536870912,
+  "inheritedLimits": {
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      90,
+      90
+    ],
+    "RLIMIT_DATA": [
+      134217728,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      12582912,
+      12582912
+    ]
+  },
+  "peakCurrentPhysicalRSS": 38367232,
+  "remainingProcessGroup": [],
+  "rssMethod": "/proc/<pid>/stat resident pages; never getrusage",
+  "stderrBytes": 127,
+  "stdoutBytes": 27536,
+  "stopReason": null,
+  "wallSeconds": 0.40649651479907334
+}

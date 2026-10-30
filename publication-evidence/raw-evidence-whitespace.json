@@ -1,0 +1,5 @@
+{
+  "issue": "git init emitted trailing spaces in retained raw stderr hints",
+  "resolution": "preserve raw stderr verbatim; check source/report/JSON and exclude only stdout/stderr captures",
+  "resourceFailure": false
+}
