@@ -1,7 +1,0 @@
-{
-  "base": "9148ceb18768955f647130c2e936228429892477",
-  "blob": "3e557cfb3429e80ca41426cf79797b2326dca3bc",
-  "sha256": "3683e564797c1df2c4e9e335b7eb2fca5edcf7e5f440f125bdadbcc846f5f848",
-  "bytes": 28589,
-  "candidateCommitHeader": "tree f359b63f78253dda7a5355c80ff7981e4efcca75\nparent 9148ceb18768955f647130c2e936228429892477\nauthor Wine Ops <wine-ops@localhost> 1792994008 +0000\ncommitter Wine Ops <wine-ops@localhost> 1792994008 +0000\n\nReject save bundle entries with colliding normalized guest paths\n"
-}

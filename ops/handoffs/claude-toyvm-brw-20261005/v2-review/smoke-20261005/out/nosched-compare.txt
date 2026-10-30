@@ -1,7 +1,0 @@
-A. cross-arm agreement with l1 (frame, wav, irqs, ints, dispatched +-64)
-   BROKE (agreed before, not after) -- BLOCKING: 0
-   fixed (disagreed before, agree after): 0
-B. l1 rows that moved (rubric: docs/toyvm-irq-schedule.md "The corpus run")
-   0 of 3 l1 rows moved
-C. health regressions (ok -> fail/timeout/stuck, or went blank) -- BLOCKING: 0
-rows present in only one file: 0

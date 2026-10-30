@@ -1,1 +1,0 @@
-Setup assumed independent fixture was tracked in repaired tree; it was donor-only. Copied exact pinned independent fixture into owned test path; no test or oracle change.
