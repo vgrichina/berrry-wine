@@ -1,8 +1,0 @@
-{
-  "failures": [
-    "Initial git add sparse-path rejection; corrected explicit --sparse",
-    "Inherited supervisor trailing whitespace rejected by diff --check; preserve exact executed bytes as JSON source instead of modifying executed code"
-  ],
-  "guestReruns": 0,
-  "policyWeakening": false
-}
