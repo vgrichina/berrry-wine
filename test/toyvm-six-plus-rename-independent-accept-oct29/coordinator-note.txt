@@ -1,0 +1,8 @@
+BLOCKED: First actual admission denial at inspect-inputs. ops.py raised at admission line 18 before starting the inspection child: allocation=true, disk=true, forecast=true, memory=false. Earlier bounded host AGENTS, CLAUDE and coordinator-policy reads succeeded. No retries or changed controls. No behavioral verification, Node startup, source/artifact hash verification, Git mutation, commit or push. Candidate remains unaccepted, not behaviorally rejected. No production edits were issued. No boxes used or lifecycle actions taken.
+
+Pinned requested candidate: 9faac38993abe6433115dcfbdafb5ed23c7c7ffb
+Expected backend SHA256 (not independently verified): b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40
+Assigned branch (not independently verified): task/toyvm-six-plus-rename-independent-accept-oct29
+First failure: /tmp/toyvm-six-plus-rename-independent-accept-oct29/first-failed-admission-pinned-relaunch.json
+Completion: /tmp/toyvm-six-plus-rename-independent-accept-oct29/completion-receipt.json
+Git publication stopped because every Git subprocess requires the same admission wrapper and the user forbids retries after first denial. Coordinator retains the uncommitted diagnostic and task directory. No main integration or public deployment.
