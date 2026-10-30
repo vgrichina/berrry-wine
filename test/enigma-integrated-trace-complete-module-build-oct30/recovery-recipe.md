@@ -45,3 +45,8 @@ change; messageboard-note.txt is for coordinator append because the shared board
 exceeds the worker file cap. Publication reserve remains until coordinator
 closeout. The coordinator owns later allocations; do not resume this stopped
 box without a new authorization.
+
+Verified snapshot-stop: `stop_234883445b7bb23c`, completed without force.
+Boat state `stopped`; snapshot completed and verified at
+`2026-10-30T02:46:55.613Z`. Original finite expiry was
+`2026-10-30T02:59:43.836Z`. See boat-final-state.json.
