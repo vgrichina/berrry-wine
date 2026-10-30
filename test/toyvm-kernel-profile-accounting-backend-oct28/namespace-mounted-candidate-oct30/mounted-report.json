@@ -1,0 +1,497 @@
+{
+  "schema": 1,
+  "result": "PASS",
+  "scope": "candidate-only mounted production CLI/FUSE; no shared-main integration or gameplay claim",
+  "candidate": "c43afee14ba2cb09fc83901beb2468e15bef78b0",
+  "candidateRef": "refs/heads/task/toyvm-accepted-namespace-caller-integration-oct30",
+  "baseMain": "eb0485865eb9abce4562f0ca56450138d86b22b1",
+  "productionInvocations": 1,
+  "productionCLI": {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/tvmd-stage/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "--domain",
+      "tiny-fixture",
+      "--receipt",
+      "/tmp/tvmd-stage/cancellation-receipt.json",
+      "--work",
+      "/tmp/tvmd",
+      "--live-limit",
+      "262144",
+      "--write-limit",
+      "32768",
+      "--file-limit",
+      "32768",
+      "--rss-limit",
+      "67108864",
+      "--cpu-limit",
+      "10",
+      "--wall-limit",
+      "20",
+      "--output-limit",
+      "8192",
+      "--namespace-evidence",
+      "64",
+      "--",
+      "/usr/bin/python3",
+      "-B",
+      "-c",
+      "import os,errno,json,time,hashlib\nR='/tmp/tvmd/domain'\ndef snapshot():\n    rows=[]\n    for base,dirs,files in os.walk(R):\n        for n in sorted(dirs+files):\n            p=base+'/'+n;s=os.stat(p)\n            content=hashlib.sha256(open(p,'rb').read()).hexdigest() if n in files else None\n            rows.append([os.path.relpath(p,R),s.st_ino,s.st_mode,s.st_size,content])\n    return hashlib.sha256(json.dumps(sorted(rows)).encode()).hexdigest()\ndef create(p):\n    fd=os.open(p,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600);os.close(fd)\ncreate(R+'/parent-file');os.mkdir(R+'/parent');os.mkdir(R+'/parent/empty')\nos.mkdir(R+'/parent/nonempty');create(R+'/parent/nonempty/child,comma')\nwith open(R+'/parent-file','wb',buffering=0) as f:assert f.write(b'Q7z!')==4\nwith open(R+'/parent-file','rb',buffering=0) as f:assert f.read()==b'Q7z!'\nidentity=os.stat(R+'/parent/nonempty/..').st_ino==os.stat(R+'/parent').st_ino\nassert identity\ncases=[]\nfor op,path,expected in [\n ('create','missing/new',errno.ENOENT),('create','parent-file/new',errno.ENOTDIR),\n ('mkdir','missing/new',errno.ENOENT),('mkdir','parent-file/new',errno.ENOTDIR),\n ('create','parent-file',errno.EEXIST),('mkdir','parent',errno.EEXIST),\n ('unlink','parent/empty',errno.EISDIR),('rmdir','parent-file',errno.ENOTDIR),\n ('rmdir','parent/nonempty',errno.ENOTEMPTY),('unlink','parent/absent',errno.ENOENT),\n ('rmdir','parent/absent',errno.ENOENT)]:\n    before=snapshot();begin=time.monotonic();time.sleep(.15);attempt=time.monotonic()\n    try:\n        {'create':create,'mkdir':os.mkdir,'unlink':os.unlink,'rmdir':os.rmdir}[op](R+'/'+path)\n    except OSError as e:actual=e.errno\n    else:actual=0\n    after=snapshot();finish=time.monotonic();time.sleep(.15);end=time.monotonic()\n    cases.append(dict(op=op,expected=expected,actual=actual,unchanged=before==after,snapshot=before,begin=begin,attempt=attempt,finish=finish,end=end))\n    assert actual==expected and before==after,dict(firstFailingCase=len(cases),observation=cases[-1])\nfor op,path in [('unlink','parent/nonempty/child,comma'),('rmdir','parent/nonempty'),('rmdir','parent/empty'),('unlink','parent-file'),('rmdir','parent')]:\n    {'unlink':os.unlink,'rmdir':os.rmdir}[op](R+'/'+path)\nassert os.listdir(R)==[]\nprint(json.dumps(dict(PASS=True,cases=cases,roundtrip=True,payloadBytes=4,nestedParentIdentity=identity,finalEmpty=True)),flush=True)\n"
+    ],
+    "cwd": "/tmp/tvmd-stage/repo"
+  },
+  "sourcePins": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 16621,
+      "sha256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4857,
+      "sha256": "b003da4e6439bbd1502ffc92797420c2bc254b3e55394afdd24624b7d9005338"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 9337,
+      "sha256": "b0419070f5087d8b634a5a39c3873285817a799d340d0543e56ceebf974d4fc5"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": {
+      "bytes": 9626,
+      "sha256": "41c28dd6d35e0b91ee1c4cb52e738503e9769aad285aa2d56886458246e1e6da"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": {
+      "bytes": 13811,
+      "sha256": "1a43a9305f1b3d92957ef03c34caec6eb0990dc03f2f23c0d20f0ca53b9fa751"
+    }
+  },
+  "sourceObjects": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": "42f24df8da67bd37c4fcbdbc18f0a0748dcd9082",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": "ffcf1f6852bb7486f5f1c60641112c55add5683e",
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": "ae655cbada1b3f520df47306dc540b12c564d0d5",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": "0f07665d670426801f5cf8b4da2939c51aa53be6",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": "8764b548402401ef60904f01d36c1792ee675c57",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": "6c4f83b48bb4c3f9245af76469af835180c0ebfb",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": "6ad66fcc3f906cd309515f5290fcb9da59627a66"
+  },
+  "fixturePin": {
+    "bytes": 2359,
+    "sha256": "b255c284a7636e4a273a8b01b7887c6ce38505cfcfa86e562875e97b00bba951"
+  },
+  "observerPin": {
+    "bytes": 6437,
+    "sha256": "cc6d86e94104f25d34c116fc81d29075cb358b1d0661bfcfc8d278bc68b850e6"
+  },
+  "syscalls": [
+    {
+      "op": "create",
+      "expected": 2,
+      "actual": 2,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "CREATE/MKDIR callbacks not instrumented by candidate; syscall errno only",
+      "observedNamespaceCallbacks": 0
+    },
+    {
+      "op": "create",
+      "expected": 20,
+      "actual": 20,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "CREATE/MKDIR callbacks not instrumented by candidate; syscall errno only",
+      "observedNamespaceCallbacks": 0
+    },
+    {
+      "op": "mkdir",
+      "expected": 2,
+      "actual": 2,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "CREATE/MKDIR callbacks not instrumented by candidate; syscall errno only",
+      "observedNamespaceCallbacks": 0
+    },
+    {
+      "op": "mkdir",
+      "expected": 20,
+      "actual": 20,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "CREATE/MKDIR callbacks not instrumented by candidate; syscall errno only",
+      "observedNamespaceCallbacks": 0
+    },
+    {
+      "op": "create",
+      "expected": 17,
+      "actual": 17,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "CREATE/MKDIR callbacks not instrumented by candidate; syscall errno only",
+      "observedNamespaceCallbacks": 0
+    },
+    {
+      "op": "mkdir",
+      "expected": 17,
+      "actual": 17,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "CREATE/MKDIR callbacks not instrumented by candidate; syscall errno only",
+      "observedNamespaceCallbacks": 0
+    },
+    {
+      "op": "unlink",
+      "expected": 21,
+      "actual": 21,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "unobserved; kernel may preempt",
+      "observedNamespaceCallbacks": 0
+    },
+    {
+      "op": "rmdir",
+      "expected": 20,
+      "actual": 20,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "unobserved; kernel may preempt",
+      "observedNamespaceCallbacks": 0
+    },
+    {
+      "op": "rmdir",
+      "expected": 39,
+      "actual": 39,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "observed",
+      "observedNamespaceCallbacks": 1
+    },
+    {
+      "op": "unlink",
+      "expected": 2,
+      "actual": 2,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "unobserved; kernel may preempt",
+      "observedNamespaceCallbacks": 0
+    },
+    {
+      "op": "rmdir",
+      "expected": 2,
+      "actual": 2,
+      "namespaceContentUnchanged": true,
+      "accountingBefore": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "accountingAfter": {
+        "live": 28672,
+        "peak": 28672,
+        "written": 4,
+        "inodes": 6,
+        "openHandles": 0
+      },
+      "coverage": "unobserved; kernel may preempt",
+      "observedNamespaceCallbacks": 0
+    }
+  ],
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 32768,
+    "inodes": 1,
+    "live": 4096,
+    "liveLimit": 262144,
+    "namespaceEvidence": {
+      "callbackCount": 6,
+      "countSaturated": false,
+      "limit": 64,
+      "records": [
+        {
+          "callbackCount": 1,
+          "errno": 39,
+          "inode": 3,
+          "opcode": 11,
+          "unique": 15454
+        },
+        {
+          "callbackCount": 2,
+          "errno": 0,
+          "inode": 5,
+          "opcode": 10,
+          "unique": 20010
+        },
+        {
+          "callbackCount": 3,
+          "errno": 0,
+          "inode": 3,
+          "opcode": 11,
+          "unique": 20018
+        },
+        {
+          "callbackCount": 4,
+          "errno": 0,
+          "inode": 3,
+          "opcode": 11,
+          "unique": 20024
+        },
+        {
+          "callbackCount": 5,
+          "errno": 0,
+          "inode": 1,
+          "opcode": 10,
+          "unique": 20028
+        },
+        {
+          "callbackCount": 6,
+          "errno": 0,
+          "inode": 1,
+          "opcode": 11,
+          "unique": 20032
+        }
+      ]
+    },
+    "openHandles": 0,
+    "operations": 10033,
+    "peak": 28672,
+    "writeLimit": 32768,
+    "written": 4
+  },
+  "namespaceCallbackExpected": [
+    [
+      11,
+      39,
+      3
+    ],
+    [
+      10,
+      0,
+      5
+    ],
+    [
+      11,
+      0,
+      3
+    ],
+    [
+      11,
+      0,
+      3
+    ],
+    [
+      10,
+      0,
+      1
+    ],
+    [
+      11,
+      0,
+      1
+    ]
+  ],
+  "mountOwnership": [
+    "57 29 0:52 / /tmp/tvmd/domain rw,nosuid,nodev,relatime shared:217 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+  ],
+  "cleanup": {
+    "remainingMounts": [],
+    "serverExit": -15,
+    "serverStderr": "",
+    "serverStdout": "",
+    "unmountExit": 0,
+    "unmountStderr": "",
+    "unmountStdout": ""
+  },
+  "observerCleanup": {
+    "remainingMounts": [],
+    "processes": []
+  },
+  "resources": {
+    "wall": 3.458745238000006,
+    "groupPeakRSS": 52690944,
+    "payloadPeakRSS": 37224448,
+    "allocation": {
+      "physicalAllocated": 19107840,
+      "allocationBudget": 67108864,
+      "reserve": 8388608,
+      "diskFree": 3352227840,
+      "remainingAggregateGrowth": 200183808,
+      "diskFloor": 1610612736,
+      "MemAvailable": 4280336384,
+      "supervisorRSS": 21102592,
+      "RAMAdmission": false,
+      "resourcePolicy": "owner 2026-10-30; actual process enforcement retained"
+    },
+    "RAMAdmission": false
+  },
+  "lifecycle": {
+    "id": "bx_wasrdnpg",
+    "state": "stopped",
+    "createdAt": "2026-10-30T07:34:39.561Z",
+    "stoppedAt": "2026-10-30T07:37:32.460Z",
+    "snapshotCompletedAt": "2026-10-30T07:37:32.423Z",
+    "snapshotVerifiedAt": "2026-10-30T07:37:32.423Z",
+    "lastSnapshotStatus": "completed",
+    "snapshotAvailable": true,
+    "stop": {
+      "endedAt": "2026-10-30T07:37:32.481Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_0ab1aa6bf8771a30",
+      "lastAttemptAt": "2026-10-30T07:37:32.481Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "originalExpiry": "2026-10-30T08:04:39.575Z"
+  },
+  "nestedParentIdentity": true,
+  "roundtrip": true,
+  "payloadBytes": 4,
+  "exclusions": [
+    "CREATE/MKDIR backend callbacks not instrumented",
+    "kernel-preempted UNLINK/RMDIR callbacks unobserved",
+    "READDIR raw dot-dot record not separately observed; nested parent stat identity passed",
+    "browser/gameplay and main integration unqualified"
+  ],
+  "deviations": [
+    "first small API smoke used server default cwd; corrected before production",
+    "API relative cwd representation and stale smoke hash checks rejected locally; preserved raw successful responses and validated actual cwd/hash before runtime"
+  ],
+  "unchangedSuitesReused": "integration 3 groups; independent namespace 5 groups/3 adverse/6 controls; not replayed"
+}

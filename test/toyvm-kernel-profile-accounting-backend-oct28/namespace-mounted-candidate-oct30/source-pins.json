@@ -1,0 +1,50 @@
+{
+  "candidate": "c43afee14ba2cb09fc83901beb2468e15bef78b0",
+  "sourcePins": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 16621,
+      "sha256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4857,
+      "sha256": "b003da4e6439bbd1502ffc92797420c2bc254b3e55394afdd24624b7d9005338"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 9337,
+      "sha256": "b0419070f5087d8b634a5a39c3873285817a799d340d0543e56ceebf974d4fc5"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": {
+      "bytes": 9626,
+      "sha256": "41c28dd6d35e0b91ee1c4cb52e738503e9769aad285aa2d56886458246e1e6da"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": {
+      "bytes": 13811,
+      "sha256": "1a43a9305f1b3d92957ef03c34caec6eb0990dc03f2f23c0d20f0ca53b9fa751"
+    }
+  },
+  "sourceObjects": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": "42f24df8da67bd37c4fcbdbc18f0a0748dcd9082",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": "ffcf1f6852bb7486f5f1c60641112c55add5683e",
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": "ae655cbada1b3f520df47306dc540b12c564d0d5",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": "0f07665d670426801f5cf8b4da2939c51aa53be6",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": "8764b548402401ef60904f01d36c1792ee675c57",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": "6c4f83b48bb4c3f9245af76469af835180c0ebfb",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": "6ad66fcc3f906cd309515f5290fcb9da59627a66"
+  },
+  "fixture": {
+    "bytes": 2359,
+    "sha256": "b255c284a7636e4a273a8b01b7887c6ce38505cfcfa86e562875e97b00bba951"
+  },
+  "observer": {
+    "bytes": 6437,
+    "sha256": "cc6d86e94104f25d34c116fc81d29075cb358b1d0661bfcfc8d278bc68b850e6"
+  }
+}

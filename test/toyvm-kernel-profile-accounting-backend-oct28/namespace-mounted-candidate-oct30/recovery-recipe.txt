@@ -1,0 +1,19 @@
+Candidate-only mounted qualification: c43afee14ba2cb09fc83901beb2468e15bef78b0
+Exactly one production CLI invocation completed; do not rerun as part of recovery.
+Source pins and exact Git object IDs are in source-pins.json. Extract only those
+paths from candidate using bounded raw object reader; never rewrite the original
+2011078-byte index. Fixture and observer are retained here; CLI argv is in report.
+The external evidence directory is /tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-mounted-candidate-evidence.
+The task Boat bx_wasrdnpg is snapshot-stopped, with final snapshot after FUSE
+cleanup and process reap. Do not resume it for independent acceptance.
+API transfer used <=16384 raw bytes per chunk and explicit --cwd /tmp/tvmd-stage.
+Original API diagnostics and immutable wrapper versions are retained separately.
+Resource policy: RAM observational; disk free minus remaining200183808 >=1610612736.
+Local64MiB includes8MiB reserve; remote256MiB includes8MiB reserve.
+CPU60/wall90, supervisorRSS128MiB/group512MiB, FSIZE512KiB/capture512KiB
+are independent controls. Native Boat keeps original-parent DATA; Python128MiB
+and Git256MiB apply to child only, preserving stricter inherited enforcement.
+No production repair, synthetic substitute, source-only acceptance, main write,
+Telegram, public deployment, workers or repeat mounted invocation occurred.
+Publication uses index-free object/tree construction with parent c43afee14ba2cb09fc83901beb2468e15bef78b0;
+the external completion-receipt.json records final commit and exact remote SHA.
