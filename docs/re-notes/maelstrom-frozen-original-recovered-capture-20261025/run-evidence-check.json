@@ -1,6 +1,0 @@
-{
-  "returncode": 0,
-  "stdout": "{\n  \"runs\": 0,\n  \"errors\": [],\n  \"missing\": [],\n  \"invalid\": []\n}\n",
-  "stderr": "",
-  "scope": "Zero dashboard runs; title is absent from corpus manifest, so evidence remains in investigation notes per ops convention."
-}

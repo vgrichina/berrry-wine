@@ -1,3 +1,0 @@
-{
-  "cause": "git read-tree -mu HEAD narrowed checkout but reset staged four-file patch to main; failed test used old production wording. Preserved first output; restore exact accepted patch and verify tree before rerun. No substantive correctness failure."
-}

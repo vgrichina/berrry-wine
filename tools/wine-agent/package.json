@@ -1,9 +1,0 @@
-{
-  "name": "wine-agent-build",
-  "private": true,
-  "description": "Build-time dependencies for the skills/wine-assembly-connect bridge (bundled into one file by build.js)",
-  "devDependencies": {
-    "esbuild": "^0.25.0",
-    "werift": "0.24.4"
-  }
-}

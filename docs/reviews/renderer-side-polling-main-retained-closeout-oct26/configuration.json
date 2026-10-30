@@ -1,7 +1,0 @@
-{
-  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
-  "mountArgv": null,
-  "intendedFiles": [],
-  "mountValidation": "No mount or guest execution; conditional mount parser checkpoint not applicable",
-  "limits": "24MiB file,128KiB output,2MiB capture,8192-byte excerpts; no new Node execution required if unchanged dependency closure"
-}
