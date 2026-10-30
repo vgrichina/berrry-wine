@@ -1,0 +1,5 @@
+Review corrected Shadow Man capture and demonstrate fresh-selection gap
+
+Request changes: exact runner/native sender controls show immutable pre-start
+selection rejects fresh HWND/batch. Accept corrected focused binding, OFF,
+quota, census and discovery controls within documented offline limits.

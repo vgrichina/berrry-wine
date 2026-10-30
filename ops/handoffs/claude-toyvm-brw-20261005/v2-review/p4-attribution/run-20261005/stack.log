@@ -1,6 +1,0 @@
-corpus-ab: 4 runs to go (0 already in /tmp/claude-1000/-home-user-wine-assembly/1863d2b5-bc58-4c0b-9c15-00fc951f0256/scratchpad/p4attr-run/stack.ndjson), jobs 1, tree /tmp/claude-1000/-home-user-wine-assembly/1863d2b5-bc58-4c0b-9c15-00fc951f0256/scratchpad/p4attr-run/trees/stack, loadavg 0.25 1.62 3.08
-[1/4] ACIDRAIN.EXE l1 8000000 86ce33da none irqs 0 d 8024454 0.4s
-[2/4] COLORS.EXE l1 8000000 7eb1ed94 none irqs 0 d 8001270 0.4s
-[3/4] NEWSBOX3.EXE l1 8000000 38c165c5 none irqs 0 d 8009532 0.4s
-[4/4] BRIAN.EXE l1 8000000 38c165c5 none irqs 0 d 8001780 0.4s
-done: 4 runs, 0 failed, loadavg 0.31
