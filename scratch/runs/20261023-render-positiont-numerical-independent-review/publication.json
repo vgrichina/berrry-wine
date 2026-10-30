@@ -1,0 +1,23 @@
+{
+  "commit": "6ac29d0c4bd8def2f5cf06d4cac1795a08f1e754",
+  "tree": "2ea4e57f9ecfdc91939fea0d5d62cf4d7a8b1265",
+  "preservedBasePaths": 8385,
+  "reviewAdditions": 31,
+  "branch": "task/render-positiont-numerical-independent-review-oct23",
+  "push": "success",
+  "verificationArgv": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/task/render-positiont-numerical-independent-review-oct23",
+    "refs/heads/main"
+  ],
+  "verificationExit": 0,
+  "remoteRefs": {
+    "refs/heads/main": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+    "refs/heads/task/render-positiont-numerical-independent-review-oct23": "6ac29d0c4bd8def2f5cf06d4cac1795a08f1e754"
+  },
+  "verifiedEvidenceSeals": 29,
+  "free": 6553284608,
+  "sourceOnly": true
+}

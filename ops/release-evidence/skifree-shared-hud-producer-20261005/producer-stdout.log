@@ -1,1 +1,0 @@
-{"passed":true,"root":{"bits":469762048,"id":6356993,"x":3,"y":5},"child":{"bits":469762048,"id":6356993,"x":103,"y":5},"flushBefore":0,"flushAfter":1,"limitation":"Synchronous actual host upload/flush; existing JS suite separately covers Worker broker and CanvasSurface. No browser measurement."}
