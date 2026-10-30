@@ -1,9 +1,0 @@
-{
-  "candidate": "aaa6254e7f4c55ad7019478089868dd374be2080",
-  "status": "PIN_MIGRATION_CHALLENGE_PASS",
-  "newRejectingControls": 8,
-  "remaining": [
-    "final independent decision",
-    "conditional publication"
-  ]
-}

@@ -1,7 +1,0 @@
-PASS source snapshot: a third-read substitution cannot reach output after pinned validation
-PASS source snapshot: each pinned value is read once and that exact string reaches output
-PASS source snapshot: an unpinned first value rejects even if subsequent reads would be pinned
-PASS source snapshot: inherited accessors and proxy reads obey the same snapshot contract
-PASS source snapshot: later getter mutation cannot replace an earlier captured source
-PASS source snapshot: disabled transform returns input without touching sources or unused options
-6 source snapshot groups passed; native errno/caller/gameplay UNKNOWN

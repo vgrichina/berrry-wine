@@ -1,2 +1,0 @@
-{"modeObservations": [{"source": "0o600", "destination": "0o600", "contentPreserved": true}, {"source": "0o755", "destination": "0o755", "contentPreserved": true}]}
-{"group": "modes", "mutation": "", "result": [{"contentPreserved": true, "destination": "0o600", "source": "0o600"}, {"contentPreserved": true, "destination": "0o755", "source": "0o755"}], "status": "PASS"}

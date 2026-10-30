@@ -1,5 +1,0 @@
-{
-  "supervisorSHA256": "0dccd283ae90dfcd46c75f4e4c483f06124c895da90c2bf22ead565d601246de",
-  "inPlace": "/tmp/seh-current-canonical-qualifier-oct25/ops/supervise.py",
-  "limits": "cheap only CPU/wall60 heap256 file24MiB output131072 reap5"
-}
