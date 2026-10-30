@@ -1,0 +1,141 @@
+{
+  "startup": [
+    {
+      "directory": "capture-audio-thread2-oct30",
+      "PASS": true,
+      "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "version": "v24.22.1",
+      "heapFlag": "--max-old-space-size=512",
+      "preload": "/home/user/tuxracer-render/capture-audio-thread2-oct30/boundary-preload.cjs",
+      "actualMountArgv": [
+        "--app=tuxracer_original_061a"
+      ],
+      "filesEnumerated": 157,
+      "filesSHA256": "4198311932f1e1a92e7963c80dc4720d1f9aed6f618e14d107c15643a1814c90",
+      "commaFiles": [],
+      "canonicalParser": "lib/app-files.validateLocalManifestSync",
+      "fullEnumerationRemote": "audio-thread2-handoff-closed-oct30.tar.xz/capture-audio-thread2-oct30/mount.stdout",
+      "stdoutBytes": 35102,
+      "stdoutSHA256": "a2979957ec206afa20eb0c9ed970b691cc518718e077734651ba844d8ed4f5b3",
+      "startupLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              60                   60                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+      "validation": {
+        "exit": 0,
+        "signal": null,
+        "wall": 0.5029385949999892,
+        "peakRSS": 0,
+        "reason": null
+      },
+      "runner": {
+        "bytes": 692809,
+        "sha256": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d"
+      },
+      "module": {
+        "bytes": 1881806,
+        "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+      }
+    },
+    {
+      "directory": "capture-audio-thread2-handoff-oct30",
+      "PASS": true,
+      "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "version": "v24.22.1",
+      "heapFlag": "--max-old-space-size=512",
+      "preload": "/home/user/tuxracer-render/capture-audio-thread2-handoff-oct30/boundary-preload.cjs",
+      "actualMountArgv": [
+        "--app=tuxracer_original_061a"
+      ],
+      "filesEnumerated": 157,
+      "filesSHA256": "4198311932f1e1a92e7963c80dc4720d1f9aed6f618e14d107c15643a1814c90",
+      "commaFiles": [],
+      "canonicalParser": "lib/app-files.validateLocalManifestSync",
+      "fullEnumerationRemote": "audio-thread2-handoff-closed-oct30.tar.xz/capture-audio-thread2-handoff-oct30/mount.stdout",
+      "stdoutBytes": 35110,
+      "stdoutSHA256": "921fad5d6fe5acc594fc8d5ca5c09830bcb4586fd0515ae9196c29deaa7ef5d8",
+      "startupLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              60                   60                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+      "validation": {
+        "exit": 0,
+        "signal": null,
+        "wall": 0.4944689940000444,
+        "peakRSS": 83177472,
+        "reason": null
+      },
+      "runner": {
+        "bytes": 692809,
+        "sha256": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d"
+      },
+      "module": {
+        "bytes": 1881806,
+        "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+      }
+    }
+  ],
+  "preloadTest": "PASS: original calls, receivers, args and results preserved; exact audio markers required; trace persisted",
+  "wrapperReuse": {
+    "PASS": true,
+    "source": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-title-poll-stall-causal-runtime-oct30-preserved-headroom/completion-receipt.json",
+    "unchangedWrapper": "219eb0f5c20b38ec83d3e57e78f687675c1b19590faea242048532c20a94221c",
+    "generatedFileLimit": 12582912,
+    "captureLimit": 524288,
+    "legitimateBytes": 655360,
+    "overflowRejected": true,
+    "byteIdenticalTo": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-title-poll-stall-causal-runtime-oct30-preserved-headroom/tasklib.py",
+    "verifiedByteIdentical": true
+  },
+  "lifecycle": {
+    "PASS": true,
+    "id": "bx_7t9jk37y",
+    "snapshotVerifiedAt": "2026-10-30T11:11:52.422Z",
+    "snapshotCompletedAt": "2026-10-30T11:11:52.422Z",
+    "stoppedAt": "2026-10-30T11:11:52.517Z",
+    "stop": {
+      "endedAt": "2026-10-30T11:11:52.547Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_7a8367c3363c1d7b",
+      "lastAttemptAt": "2026-10-30T11:11:52.547Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "state": "stopped",
+    "postRunBoundary": 1793358607.9523053,
+    "closeStarted": 1793358706.4459078
+  },
+  "remotePreservation": {
+    "summary": {
+      "bytes": 5078,
+      "sha256": "d11073c0fb0eef73580a07e715747ed6d301b47eea3eeb05963807b1e6147096"
+    },
+    "patch": {
+      "bytes": 1027,
+      "sha256": "06dad26b79b45a24a86c87fedbce8f446b82a2417bf3f77857116a294971c850"
+    },
+    "archive": {
+      "bytes": 363792,
+      "sha256": "9507ba51af0d3debaddc241fb9082e10862c8d279dc225be3e4d272f80321782"
+    },
+    "archivePath": "/home/user/tuxracer-render/audio-thread2-handoff-closed-oct30.tar.xz",
+    "before": {
+      "bytes": 136760,
+      "sha256": "bc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9"
+    },
+    "retest": {
+      "bytes": 150621,
+      "sha256": "9ebfe60b343a9bb79b18957d6bfc674f797d63bf1f6f97e264e1817ba3793bde"
+    }
+  },
+  "personallyInspected": {
+    "originalTitle": true,
+    "handoffTitle": true,
+    "observation": "Both640x480 frames show actual PRESS ANY KEY TO START title; snow differs. No menu/race visible."
+  },
+  "acceptance": {
+    "causalReleaseReacquireObserved": true,
+    "candidateMainWaitLivenessRestored": true,
+    "inputProgression": false,
+    "gameplay": false,
+    "currentMainQualified": false,
+    "nativeRetestKeys": 0,
+    "retestControllerRejectedAnimatedTitleHash": true
+  },
+  "sourceRevisionCaveat": "Reported a998bf36 does not recover exact deployed JS library; candidate is bound to actual retained f4ba190b hash, not current main."
+}

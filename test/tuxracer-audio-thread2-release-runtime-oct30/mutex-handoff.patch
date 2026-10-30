@@ -1,0 +1,21 @@
+--- a/lib/thread-manager.js
++++ b/lib/thread-manager.js
+@@ -1336,6 +1336,18 @@
+       Atomics.store(this.syncView, idx * 4 + 3, 0);
+       Atomics.store(this.syncView, idx * 4 + 2, 0);
+       Atomics.notify(this.syncView, idx * 4 + 2);
++      // A cooperative worker can release and reacquire in one WASM slice.
++      // Poll an already-parked main waiter at this real release boundary,
++      // before the releaser can take the mutex back. Use the ordinary wait
++      // completion path; never run the main interpreter recursively here.
++      const main = this.mainInstance && this.mainInstance.exports;
++      if (!this.workerBackend && threadId !== 1 && main &&
++          main.get_yield_reason() === 1 &&
++          (main.get_wait_handle() >>> 0) === (handle >>> 0) &&
++          !(main.get_wait_handles_ptr && main.get_wait_handles_ptr()) &&
++          (!main.get_wait_stack_bytes || main.get_wait_stack_bytes() === 12)) {
++        this.checkMainYield();
++      }
+       this._wakeWaitersSoon();
+     }
+     return 1;
