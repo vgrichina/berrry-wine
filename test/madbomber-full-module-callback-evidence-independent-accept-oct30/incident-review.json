@@ -1,0 +1,90 @@
+[
+  {
+    "file": "/tmp/madbomber-complete-input-full-module-midi-qualification-oct30/e/remote-lifecycle.stdout",
+    "bytes": 3221,
+    "sha256": "dbcd746ac8b191f1e417eeb0aed2d0466323cc77eca40963840e8f63f7162406",
+    "observations": [
+      {
+        "PASS": false,
+        "phase": "real exported run -> win32_dispatch -> registered MIDI handlers",
+        "error": "fail-closed unused host service: log_api_exit",
+        "callbacks": [],
+        "moduleSHA256": "3aa9db179499ba1d56e523620c40ac77ee57b5f5c75f89b2ae7d50691557d4ee"
+      }
+    ]
+  },
+  {
+    "file": "/tmp/madbomber-complete-input-full-module-midi-qualification-oct30/e/remote-lifecycle-corrected.stdout",
+    "bytes": 3557,
+    "sha256": "a0dbc36fd64db7a466d4a3c89001faf1203ae0d7d813cea557a40d773003d09a",
+    "observations": [
+      {
+        "PASS": false,
+        "phase": "real exported run -> win32_dispatch -> registered MIDI handlers",
+        "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 122683696\n- 4198400\n",
+        "callbacks": [
+          {
+            "message": 967,
+            "frame": [
+              122683696,
+              786433,
+              967,
+              624485,
+              0,
+              0
+            ]
+          }
+        ],
+        "moduleSHA256": "3aa9db179499ba1d56e523620c40ac77ee57b5f5c75f89b2ae7d50691557d4ee"
+      }
+    ]
+  },
+  {
+    "file": "/tmp/madbomber-complete-input-full-module-midi-qualification-oct30/e/remote-lifecycle-stepped.stdout",
+    "bytes": 3369,
+    "sha256": "46e013cf36a003a0e2696c39685cab339e0487cd550385ebd0ee49131e8a5ee2",
+    "observations": [
+      {
+        "PASS": true,
+        "phase": "complete",
+        "error": null,
+        "callbacks": [
+          {
+            "message": 967,
+            "frame": [
+              122683696,
+              786433,
+              967,
+              624485,
+              0,
+              0
+            ]
+          },
+          {
+            "message": 969,
+            "frame": [
+              122683696,
+              786433,
+              969,
+              624485,
+              4215040,
+              0
+            ]
+          },
+          {
+            "message": 968,
+            "frame": [
+              122683696,
+              786433,
+              968,
+              624485,
+              0,
+              0
+            ]
+          }
+        ],
+        "moduleSHA256": "3aa9db179499ba1d56e523620c40ac77ee57b5f5c75f89b2ae7d50691557d4ee"
+      }
+    ]
+  }
+]

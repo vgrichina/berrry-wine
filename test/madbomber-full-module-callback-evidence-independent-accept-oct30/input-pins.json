@@ -1,0 +1,90 @@
+{
+  "candidate": "c1ec0a3055f3d1d628fe7324f9715fabee21a0d8",
+  "inputs": {
+    "CLAUDE.md": {
+      "bytes": 22221,
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    "lib/host-audio.js": {
+      "bytes": 207077,
+      "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb"
+    },
+    "lib/audio-worklet-host.js": {
+      "bytes": 14592,
+      "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14"
+    },
+    "lib/mem-utils.js": {
+      "bytes": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+    },
+    "lib/region-map.generated.js": {
+      "bytes": 36333,
+      "sha256": "a0aba0e2e8bfd1e6767142cb240853b788dd430918e8bab767bc6398d4360763"
+    },
+    "src/13-exports.wat": {
+      "bytes": 343678,
+      "sha256": "c352e968b8eb7f52c2a83c8ac4e627b4c02e64ba1fa69973f3f907c36f1605c8"
+    },
+    "src/09a3-handlers-audio.wat": {
+      "bytes": 277811,
+      "sha256": "77e82f1cfae122553adf97f31f56e6bd16e05faedbfd83163433f94b9df3dd08"
+    },
+    "src/09a7c-mixer.wat": {
+      "bytes": 35586,
+      "sha256": "4374dce53f5af1e8f2d578958dd4b3fa7ac4803400311657571dbe5531bae090"
+    },
+    "src/api_table.json": {
+      "bytes": 723469,
+      "sha256": "20fddb8b01dcf9006e9c4db6b1c287c6f6713a911b28910774e99cee1491bbc4"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/README.md": {
+      "bytes": 3159,
+      "sha256": "629f24f4146c3b2f688b75d88166916de02917161d6cf26178751df2499ccc81"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/lifecycle.js": {
+      "bytes": 9135,
+      "sha256": "60db59885a27d90664af20f1ecb8fd93e8a741f4f107355b572e28ca020dd4c9"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/qualification.js": {
+      "bytes": 1988,
+      "sha256": "8f9271cdd24dfe892a3860d8d043fb06baf19c5c9b3fc40c2d53695ff5e51fde"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/lifecycle-report.json": {
+      "bytes": 3483,
+      "sha256": "ed7dec3a113d8d9e1ae83f210083411f14eae0244669e3351590092e54a5309b"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/compile-report.json": {
+      "bytes": 508,
+      "sha256": "b992e401f16cfb91cb05d35c0ba1db5348ca50938dfba587efc2146bc91a69a3"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/compile-supervisor.json": {
+      "bytes": 672,
+      "sha256": "f99867848c4563fcab11f65020550d71af1cd565af310510d712fc22597785c7"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/lifecycle-supervisor.json": {
+      "bytes": 675,
+      "sha256": "740df97d8848921d1ee4d3da25ae84998f64c82465df9a1a9e81c8066e57600f"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/artifact-manifest.json": {
+      "bytes": 3935,
+      "sha256": "13e1afe68fe74177fd05aba98b47c5328e8126e407752dab3f1d20a6211ac89a"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/source-pins.json": {
+      "bytes": 17836,
+      "sha256": "3fd5591bfe7f6c7290c3f48e84c004a0e000d77ff1e8f811fd827c394beb0888"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/recovery-recipe.md": {
+      "bytes": 3438,
+      "sha256": "8cc5e4e1baf8744b6dd438c65a8144dc433207d201be522780ad23ee6abe3b2f"
+    },
+    "test/madbomber-complete-input-full-module-midi-qualification-oct30/boat-final-state.json": {
+      "bytes": 661,
+      "sha256": "b518e0c7e5bafd7674c54c3e40fbbe81740ae38487fe36fd363b3847bbfcee46"
+    }
+  },
+  "canonicalReceiptPin": {
+    "bytes": 6957,
+    "sha256": "18097cad020db7f76d28e20144e7b8a4061cebe8e82e4e878f9fbd87c8555f4a"
+  },
+  "dispatchSHA256": "b64cc81b9b4b30a8a9d92727de4534fb9b352600f9c382a6ca43e0a734cc00ab"
+}

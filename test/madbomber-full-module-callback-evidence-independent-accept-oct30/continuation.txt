@@ -1,0 +1,31 @@
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat:1599:    (if (i32.eq (local.get $name_rva) (i32.const 0xCACA000A))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1600-      (then
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1601-        (call $mm_callback_finish)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1602-        (return)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1603-
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1604-    ;; Unresolved ordinal import from a system DLL (marker "ORD\0")
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1605-    ;; — $api_id holds the actual ordinal. Format "KERNEL32.#NNNNN" into
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1606-    ;; the scratch buffer at 0x2DA and crash with that name so the user
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1607-    ;; sees exactly which ordinal needs implementing.
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1608-    (if (i32.eq (local.get $name_rva) (i32.const 0x4F524400))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1609-      (then
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1610-        ;; Write 5 decimal digits of $api_id into buffer at WASM 0x2DA..0x2DE
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1611-        (local.set $arg0 (local.get $api_id))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1612-        (i32.store8 (i32.const 0x2DE) (i32.add (i32.const 0x30) (i32.rem_u (local.get $arg0) (i32.const 10))))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1613-        (local.set $arg0 (i32.div_u (local.get $arg0) (i32.const 10)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1614-        (i32.store8 (i32.const 0x2DD) (i32.add (i32.const 0x30) (i32.rem_u (local.get $arg0) (i32.const 10))))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1615-        (local.set $arg0 (i32.div_u (local.get $arg0) (i32.const 10)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1616-        (i32.store8 (i32.const 0x2DC) (i32.add (i32.const 0x30) (i32.rem_u (local.get $arg0) (i32.const 10))))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1617-        (local.set $arg0 (i32.div_u (local.get $arg0) (i32.const 10)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1618-        (i32.store8 (i32.const 0x2DB) (i32.add (i32.const 0x30) (i32.rem_u (local.get $arg0) (i32.const 10))))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1619-        (local.set $arg0 (i32.div_u (local.get $arg0) (i32.const 10)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1620-        (i32.store8 (i32.const 0x2DA) (i32.add (i32.const 0x30) (i32.rem_u (local.get $arg0) (i32.const 10))))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1621-        ;; Log as a synthetic API name so --verbose/--trace-api pick it up
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1622-        (call $host_log (i32.const 0x2D0) (i32.const 15))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1623-        (call $crash_unimplemented (i32.const 0x2D0))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1624-        (return)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1625-
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1626-    ;; ── Normal API dispatch ─────────────────────────────────────
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1627-
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1628-    ;; Resolved-ordinal import: thunk+0 holds (0x80000000 | ordinal), not an
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09b-dispatch.wat-1629-    ;; IMAGE_IMPORT_BY_NAME RVA. host_resolve_ordinal found a real api_id, so

@@ -1,0 +1,29 @@
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat:332:  (func $mm_callback_finish
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-333-    (local $frame i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-334-    (local.set $frame (call $mm_callback_check))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-335-    ;; Validate the retained child before ANY completion mutation.
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-336-    (call $invocation_leave (i64.load (local.get $frame)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-337-    (call $restore_caller_regs)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-338-    ;; A nested DispatchMessage timer must not restore its outer audio wait.
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-339-    (if (i32.load offset=20 (local.get $frame)) (then (call $wave_callback_restore_wait)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-340-    (if (global.get $mm_timer_resume_yield)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-341-      (then
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-342-        (global.set $yield_reason (global.get $mm_timer_resume_yield))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-343-        (global.set $steps (i32.const 0))))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-344-    (global.set $mm_timer_in_cb (i32.load offset=12 (local.get $frame)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-345-    (global.set $mm_timer_resume_yield (i32.load offset=16 (local.get $frame)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-346-    (global.set $mm_callback_depth (i32.sub (global.get $mm_callback_depth) (i32.const 1))))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-347-  (func $mm_timer_thread_check
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-348-    (call $invocation_validate)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-349-    (if (i32.and (i64.eq (global.get $mm_callback_owner) (global.get $invocation_root))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-350-          (i32.ne (global.get $mm_callback_depth) (i32.const 0))) (then (unreachable))))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-351-  ;; END MM CALLBACK OWNERSHIP
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-352-
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-353-  ;; Address of multimedia-timer slot $i.
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-354-  (func $mm_timer_slot (param $i i32) (result i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-355-    (i32.add (global.get $MM_TIMER_TABLE)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-356-      (i32.mul (local.get $i) (global.get $MM_TIMER_ENTRY))))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-357-
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-358-  ;; Slot holding timer id $id, or 0. Id 0 is the free marker, never a timer.
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-359-  (func $mm_timer_find (param $id i32) (result i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/09a-handlers.wat-360-    (local $i i32) (local $slot i32)

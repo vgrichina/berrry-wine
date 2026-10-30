@@ -1,0 +1,90 @@
+{
+  "kind": "independent retained-evidence and original-oracle controls; no production execution",
+  "candidate": "c1ec0a3055f3d1d628fe7324f9715fabee21a0d8",
+  "verifiedInputs": 20,
+  "checks": [
+    "20 exact SHA256 and byte pins",
+    "retained compile/lifecycle/module manifest agree",
+    "exact synthetic PE bytes and RET20 ABI",
+    "candidate source callback has five arguments plus continuation",
+    "retained IAT IDs/nargs match current candidate table",
+    "retained callback frames and final header flags",
+    "unchanged original pump accepts retained MOM_DONE frame",
+    "source-owned host stop/complete/owner model"
+  ],
+  "controls": [
+    {
+      "name": "falsified expected module identity",
+      "rejected": true,
+      "reason": "expected module identity\n+ actual - expected\n\n+ '3aa9db179499ba1d56e523620c40ac77ee57b5f5c75f89b2ae7d50691557d4ee'\n- '0000000000000000000000000000000000000000000000000000000000000000'\n",
+      "scope": "evidence/oracle control; no production mutation"
+    },
+    {
+      "name": "falsified expected source identity",
+      "rejected": true,
+      "reason": "expected source identity\n+ actual - expected\n\n+ '00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb'\n- '0000000000000000000000000000000000000000000000000000000000000000'\n",
+      "scope": "evidence/oracle control; no production mutation"
+    },
+    {
+      "name": "corrupt callback message frame",
+      "rejected": true,
+      "reason": "Expected values to be strictly equal:\n\n968 !== 969\n",
+      "scope": "evidence/oracle control; no production mutation"
+    },
+    {
+      "name": "corrupt return continuation",
+      "rejected": true,
+      "reason": "callback reaches real return continuation\n+ actual - expected\n\n+ 122683704\n- 122683696\n        ^\n",
+      "scope": "evidence/oracle control; no production mutation"
+    },
+    {
+      "name": "corrupt continuation marker",
+      "rejected": true,
+      "reason": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 3402235915\n- 3402235914\n           ^\n",
+      "scope": "evidence/oracle control; no production mutation"
+    },
+    {
+      "name": "corrupt restored stack",
+      "rejected": true,
+      "reason": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 121634940\n- 121634944\n          ^\n",
+      "scope": "evidence/oracle control; no production mutation"
+    },
+    {
+      "name": "corrupt restored EAX",
+      "rejected": true,
+      "reason": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 57005\n- 287454020\n",
+      "scope": "evidence/oracle control; no production mutation"
+    },
+    {
+      "name": "suppress accepted MOM_DONE",
+      "rejected": true,
+      "reason": "one stop delivery/callback required\n\n0 !== 1\n",
+      "scope": "evidence/oracle control; no production mutation"
+    }
+  ],
+  "counterexamples": [
+    {
+      "name": "original callback oracle accepts corrupt ECX/EDX/flags observations",
+      "acceptedByOriginalOracle": true,
+      "state": {
+        "eip": 4198400,
+        "esp": 121634944,
+        "eax": 287454020,
+        "ecx": 57005,
+        "edx": 48879,
+        "flags": 0
+      },
+      "scope": "oracle-adapter counterexample only; not a production mutation or demonstrated production defect"
+    },
+    {
+      "name": "post-stop service assertion excerpt accepts consumed stale callback",
+      "acceptedByOriginalOracle": true,
+      "deliveries": 1,
+      "eip": 4198528,
+      "scope": "excerpt-level only; full close pump may catch outstanding callback; no whole-harness bypass claimed"
+    }
+  ],
+  "decision": "ACCEPT retained synthetic-boundary evidence with scope downgrade; WITHHOLD independent full-module execution and general CPU-state restoration qualification",
+  "productionExecutedLocally": false,
+  "moduleBytesInspected": false
+}

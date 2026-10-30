@@ -1,0 +1,61 @@
+{
+  "candidate": "c1ec0a3055f3d1d628fe7324f9715fabee21a0d8",
+  "candidateTree": "622e343cabbfb0f815b5feb29b338ced9bed2920",
+  "initialIndexVerified": true,
+  "suppliedIndexObjects": 13495,
+  "canonicalReceiptPin": {
+    "bytes": 6957,
+    "sha256": "18097cad020db7f76d28e20144e7b8a4061cebe8e82e4e878f9fbd87c8555f4a"
+  },
+  "canonicalReceiptVerified": true,
+  "canonicalRemoteRef": "refs/heads/task/madbomber-complete-input-full-module-midi-qualification-oct30",
+  "canonicalRemoteSHA": "c1ec0a3055f3d1d628fe7324f9715fabee21a0d8",
+  "sourcePinOverlap": 9,
+  "supervisorPin": {
+    "bytes": 4364,
+    "sha256": "533c6d9ffcc9270a8cda5ea006b1afe26c7a12d22f0ff6ef9e6214f02d8a257b"
+  },
+  "limitModulePin": {
+    "bytes": 2510,
+    "sha256": "337538562f6a084e788a31b9e4ed989d7618ef8dad0a61929e7ef51bcf33a32b"
+  },
+  "gitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountValidation": {
+    "actualArgv": [],
+    "intendedMountedFiles": [],
+    "applicable": false,
+    "reason": "No checkout, runtime launch, mounts, or guest runner assigned; coordinator supplied born branch; no filename-bearing mount argv exists. Canonical parser not applicable."
+  },
+  "localFixtureImports": [
+    "fs",
+    "path",
+    "crypto",
+    "vm",
+    "assert/strict"
+  ],
+  "productionImportsExecuted": [],
+  "fixtureImportsVerified": "Only Node builtins imported by check.js; exact PE constructor and pump text extracted after verifying lifecycle SHA; production createAudioHost not required or replaced as execution.",
+  "priorModuleExecution": "retained only; no byte inspection or replay",
+  "boat": {
+    "id": "bx_3ckx3mvs",
+    "expiry": "2026-10-30T02:50:23.495Z",
+    "workCutoff": "2026-10-30T02:48:00Z",
+    "handback": "2026-10-30T02:49:00Z",
+    "shutdown": "2026-10-30T02:50:00Z",
+    "shutdownOwner": "coordinator; worker delegated snapshot-stop",
+    "remoteBudget": 134217728,
+    "reserve": 16777216,
+    "state": "stopped",
+    "snapshotCompletedAt": "2026-10-30T02:30:38.704Z",
+    "snapshotVerifiedAt": "2026-10-30T02:30:38.704Z",
+    "stop": {
+      "endedAt": "2026-10-30T02:30:38.763Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_eafd43bc72d6f7da",
+      "lastAttemptAt": "2026-10-30T02:30:38.763Z",
+      "requestedAt": null,
+      "status": "completed"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+node:assert:885
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: The input did not match the regular expression /3402235915 !== 3402235914/. Input:
+
+'Expected values to be strictly equal:\n' +
+  '+ actual - expected\n' +
+  '\n' +
+  '+ 3402235915\n' +
+  '- 3402235914\n' +
+  '           ^\n'
+
+    at reject (/tmp/madbomber-full-module-callback-evidence-independent-accept-oct30/repo/test/madbomber-full-module-callback-evidence-independent-accept-oct30/check.js:19:111)
+    at Object.<anonymous> (/tmp/madbomber-full-module-callback-evidence-independent-accept-oct30/repo/test/madbomber-full-module-callback-evidence-independent-accept-oct30/check.js:80:1)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'Expected values to be strictly equal:\n' +
+    '+ actual - expected\n' +
+    '\n' +
+    '+ 3402235915\n' +
+    '- 3402235914\n' +
+    '           ^\n',
+  expected: /3402235915 !== 3402235914/,
+  operator: 'match',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

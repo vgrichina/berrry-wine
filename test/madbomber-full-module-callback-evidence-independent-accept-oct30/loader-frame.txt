@@ -1,0 +1,16 @@
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat:606:    ;; Allocate mm_timer callback return thunk (marker 0xCACA000A)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-607-    (global.set $mm_timer_ret_thunk (i32.add
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-608-      (i32.sub (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-609-               (global.get $GUEST_BASE))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-610-      (global.get $image_base)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-611-    (i32.store (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-612-      (i32.const 0xCACA000A))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-613-    (global.set $num_thunks (i32.add (global.get $num_thunks) (i32.const 1)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-614-
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-615-        (call $update_thunk_end)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-616-  )
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-617-
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-618-;; BEGIN KERNEL32 IMAGE
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-619-  ;; Process-owned, permanently mapped native KERNEL32 identity. Publication
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-620-  ;; occurs under DLL_LOAD_LOCK only after the entire image is readable.
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-621-  (func $kernel32_module (result i32)

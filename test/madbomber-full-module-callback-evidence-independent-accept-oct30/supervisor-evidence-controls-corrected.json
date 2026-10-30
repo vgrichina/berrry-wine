@@ -1,0 +1,75 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=192",
+    "test/madbomber-full-module-callback-evidence-independent-accept-oct30/check.js",
+    "check"
+  ],
+  "cwd": "/tmp/madbomber-full-module-callback-evidence-independent-accept-oct30/repo",
+  "exit": 0,
+  "elapsed": 0.09923932398669422,
+  "admission": {
+    "at": 1793328636.166761,
+    "device": 1680253000807562931,
+    "f_bavail": 889443,
+    "blockSize": 4096,
+    "free": 3643158528,
+    "MemAvailable": 3836280832,
+    "allocated": 13180928,
+    "budget": 25165824,
+    "aggregate": {
+      "at": "2026-10-30T02:40:08.443816+00:00",
+      "task": "madbomber-full-module-callback-evidence-independent-accept-oct30",
+      "MemAvailable": 3573739520,
+      "memRequired": 3798016000,
+      "requiredMemoryBytes": 3798016000,
+      "floor": 2147483648,
+      "incompleteOwners": [
+        {
+          "task": "toyvm-mounted-readdir-parent-qualification-oct30",
+          "pid": 3756256,
+          "live": true,
+          "rss": 203546624
+        },
+        {
+          "task": "enigma-integrated-trace-complete-module-build-oct30",
+          "pid": 3761513,
+          "live": true,
+          "rss": 259850240
+        }
+      ],
+      "remainingExistingClientGrowthBytes": 341909504,
+      "prospectiveClientGrowthBytes": 402653184,
+      "publicationReceiptPerOwner": 301989888,
+      "residentRssAlreadyIncluded": true,
+      "freeBytes": 3664384000,
+      "futureGrowthIncludingUncertaintyBuffer": 268435456,
+      "requiredBytes": 3221225472,
+      "owners": [
+        "toyvm-mounted-readdir-parent-qualification-oct30",
+        "enigma-integrated-trace-complete-module-build-oct30",
+        "madbomber-full-module-callback-evidence-independent-accept-oct30"
+      ],
+      "PASS": false
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true,
+      "forecast": true,
+      "memory": true
+    }
+  },
+  "stdoutBytes": 3859,
+  "stderrBytes": 0
+}

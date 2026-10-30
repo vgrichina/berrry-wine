@@ -1,0 +1,29 @@
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat:4:  (func $load_pe (export "load_pe") (param $size i32) (result i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-5-    (local $pe_off i32) (local $num_sections i32) (local $opt_hdr_size i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-6-    (local $section_off i32) (local $i i32) (local $vaddr i32) (local $vsize i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-7-    (local $raw_off i32) (local $raw_size i32) (local $import_rva i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-8-    (local $tls_rva i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-9-    (local $src i32) (local $dst i32) (local $characteristics i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-10-    (local $mapped_size i32) (local $copy_size i32) (local $initialized_size i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-11-
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/08-pe-loader.wat-12-    (if (i32.ne (i32.load16_u (global.get $PE_STAGING)) (i32.const 0x5A4D)) (then (return (i32.const -1))))
+--
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat:31:  (func $run (export "run") (param $max_blocks i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-32-    (local $thread i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-33-    (local $hc_i i32) (local $hc_slot i32) (local $hc_fp i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-34-    (local $prev_eip i32) (local $prev_esp i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-35-    (local $saved_budget i32) (local $saved_start i32) (local $shared_cache_generation i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-36-    (local $saved_api_depth i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-37-    ;; A global rather than a local because $branch_end spends it too — see the
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-38-    ;; comment on $block_budget in 01-header.wat. Saved and restored because
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-39-    ;; run() is re-entrant: a COM class-factory callback is driven by calling
+--
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat:688:  (func $update_thunk_end (export "seal_thunks")
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-689-    (local $shared i32)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-690-    (call $thunk_publish)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-691-    (local.set $shared (i32.atomic.load (global.get $THUNK_NEXT_SHARED)))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-692-    (if (i32.gt_u (local.get $shared) (global.get $num_thunks))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-693-      (then (global.set $num_thunks (local.get $shared))))
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-694-    (global.set $thunk_guest_end
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-695-      (i32.add (global.get $thunk_guest_base)
+c1ec0a3055f3d1d628fe7324f9715fabee21a0d8:src/13-exports.wat-696-        (i32.mul (global.get $num_thunks) (i32.const 8)))))
