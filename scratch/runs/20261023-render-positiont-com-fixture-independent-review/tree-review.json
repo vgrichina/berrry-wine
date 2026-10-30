@@ -1,0 +1,26 @@
+{
+  "base": "7aef3ff22f0dbe4fbfe739196bf92ad7a9435fb6",
+  "tree": "0a89e04a72d1bdaa3d7e73bcf6d3836ef8ef9f54",
+  "commit": "aea185d3dfc1b772cea00ca1a4aed14b9553dfed",
+  "branch": "task/render-positiont-com-fixture-independent-review-oct23",
+  "preservedEntries": 8410,
+  "added": [
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023.md",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/admission.json",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-00.log",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-01.log",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-02.log",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-03.log",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-04.log",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-05.log",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-06.log",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/checks.json",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/resource-final.json",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/result.json",
+    "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/seals.json"
+  ],
+  "modifiedInherited": 0,
+  "deletedInherited": 0,
+  "sealsVerified": 13
+}

@@ -1,0 +1,67 @@
+[
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/admission.json",
+    "bytes": 109349,
+    "sha256": "29c6d006668aa2588f6b6a14ae75b7e63731660e1c6fb97814c3ce6e447365d9"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-00.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-01.log",
+    "bytes": 1048,
+    "sha256": "6740b979584a9b6e940e56481c55a7df2e498802a5771ef8c20dc18d9a49fa37"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-02.log",
+    "bytes": 1170,
+    "sha256": "5fd5bb2967103ab79cd15c529bc468de9b7c51c4e85c74116aadeabd187bde81"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-03.log",
+    "bytes": 1596,
+    "sha256": "0327944b73c7b96e6dbf5edde52009ae5a76d5900ab87ec83f7d975ce76a8620"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-04.log",
+    "bytes": 1297,
+    "sha256": "8fd0f813fbb541ef551bd8e84fd62d757eaebfc75bcf7f48465e35e647114076"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-05.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/check-06.log",
+    "bytes": 1486,
+    "sha256": "bd36ea8f897091e6601b1c706d038516975fa17c5b6cf3c98426ca0dcdc5dd5f"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/checks.json",
+    "bytes": 3036,
+    "sha256": "b2c30d1945de361cd5a37b43f72515d17e5e9a468f1bf96472338ad65c9297a9"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs",
+    "bytes": 11634,
+    "sha256": "caa317aa4a7c7485a985dd78922aaeb93eaf03f69fd2af118aec8a49bb43d7a8"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/resource-final.json",
+    "bytes": 390,
+    "sha256": "2a51d9952d03e1da1023ff7a6c0fc80a212e7180c6bd69e78f1c15fff7c7419c"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/result.json",
+    "bytes": 1154,
+    "sha256": "7c4ba7b7cb8ffbb4768eac55793a2f4a6ec511b4c02883e5429e5a08a4c4a002"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023.md",
+    "bytes": 16111,
+    "sha256": "9bfd1c618197f1105e2e53c6781fa1cc4668dd15414326ce19d27af5b357e3ca"
+  }
+]

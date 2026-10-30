@@ -1,0 +1,89 @@
+[
+  {
+    "argv": [
+      "node",
+      "--check",
+      "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23",
+    "exit": 0,
+    "timeoutSeconds": 40,
+    "elapsedSeconds": 0.014,
+    "log": "check-00.log"
+  },
+  {
+    "argv": [
+      "node",
+      "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23",
+    "exit": 1,
+    "timeoutSeconds": 40,
+    "elapsedSeconds": 0.077,
+    "log": "check-01.log"
+  },
+  {
+    "argv": [
+      "node",
+      "test/test-d3d9-positiont-com-qualification-guard.js"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23",
+    "exit": 0,
+    "timeoutSeconds": 40,
+    "elapsedSeconds": 0.122,
+    "log": "check-02.log"
+  },
+  {
+    "argv": [
+      "node",
+      "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23",
+    "exit": 1,
+    "timeoutSeconds": 40,
+    "log": "check-03.log"
+  },
+  {
+    "argv": [
+      "node",
+      "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23",
+    "exit": 0,
+    "timeoutSeconds": 40,
+    "log": "check-04.log"
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23",
+    "exit": 0,
+    "timeoutSeconds": 40,
+    "elapsedSeconds": 0.013,
+    "log": "check-05.log",
+    "environment": {
+      "REVIEW_TMP": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/scratch/runs/20261023-render-positiont-com-fixture-independent-review/tmp",
+      "TMPDIR": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/scratch/runs/20261023-render-positiont-com-fixture-independent-review/tmp",
+      "GIT_NO_LAZY_FETCH": "1"
+    }
+  },
+  {
+    "argv": [
+      "node",
+      "docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23",
+    "exit": 0,
+    "timeoutSeconds": 40,
+    "elapsedSeconds": 0.192,
+    "log": "check-06.log",
+    "environment": {
+      "REVIEW_TMP": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/scratch/runs/20261023-render-positiont-com-fixture-independent-review/tmp",
+      "TMPDIR": "/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/scratch/runs/20261023-render-positiont-com-fixture-independent-review/tmp",
+      "GIT_NO_LAZY_FETCH": "1"
+    }
+  }
+]

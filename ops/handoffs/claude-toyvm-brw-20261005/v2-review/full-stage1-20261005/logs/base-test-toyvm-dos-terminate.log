@@ -1,1 +1,0 @@
-PASS test-toyvm-dos-terminate: AH=4Ch through PSP+0Ah restored SI, DS and SS:SP (SDT)

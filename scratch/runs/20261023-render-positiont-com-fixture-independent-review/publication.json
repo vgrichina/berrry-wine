@@ -1,0 +1,26 @@
+{
+  "commit": "aea185d3dfc1b772cea00ca1a4aed14b9553dfed",
+  "branch": "task/render-positiont-com-fixture-independent-review-oct23",
+  "strictSSH": "ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -i /home/user/.ssh/wine_github_ed25519",
+  "argv": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/task/render-positiont-com-fixture-independent-review-oct23",
+    "refs/heads/main"
+  ],
+  "exit": 0,
+  "actualRemoteStdout": "bb9c496ed13095cc832fdf607f0937fb9c14b7de\trefs/heads/main\naea185d3dfc1b772cea00ca1a4aed14b9553dfed\trefs/heads/task/render-positiont-com-fixture-independent-review-oct23\n",
+  "remoteMainUnchanged": true,
+  "verifiedSeals": 13,
+  "materializedBytes": 37672354,
+  "reserveBytes": 8388608,
+  "publicationGrowthAllowanceBytes": 2097152,
+  "projectedTotalBytes": 48158114,
+  "hostFreeBytes": 6412476416,
+  "floorBytes": 2982150144,
+  "verdict": "PASS",
+  "treeReview": "tree-review.json",
+  "trackedEvidence": "docs/re-notes/render-positiont-com-fixture-independent-review-20261023",
+  "pushExit": 0
+}
