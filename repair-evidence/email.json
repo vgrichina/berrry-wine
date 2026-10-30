@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+    "config",
+    "user.email",
+    "wine-ops@localhost"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 0,
+  "wall": 0.03631024598143995,
+  "incident": null,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

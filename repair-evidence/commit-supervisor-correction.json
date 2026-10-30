@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+    "commit",
+    "-m",
+    "Preserve inherited DATA ceiling in repair verification supervisor"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 0,
+  "wall": 0.1192073579877615,
+  "incident": null,
+  "sampledPeakProcessRSS": 21217280,
+  "sampledPeakGroupRSS": 21217280,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

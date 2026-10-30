@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+    "add",
+    "--",
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "test/toyvm-cleanup-receipt-type-repair-oct29",
+    "test/toyvm-complete-objects-caller-acceptance-oct29"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 1,
+  "wall": 0.07618078892119229,
+  "incident": null,
+  "sampledPeakProcessRSS": 7135232,
+  "sampledPeakGroupRSS": 7135232,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

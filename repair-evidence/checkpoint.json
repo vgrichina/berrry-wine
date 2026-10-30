@@ -1,0 +1,15 @@
+{
+  "task": "toyvm-cleanup-receipt-type-repair-oct29",
+  "candidate": "635633c8bc665451fd5a981108147b1c783e2f8a",
+  "callerSHA256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60",
+  "tests": {
+    "originalReproExit": 1,
+    "originalCLIExit": 0,
+    "reboundReproExit": 0,
+    "focusedCases": 78,
+    "mutationExit": 1
+  },
+  "remaining": "commit, task-branch push/exact verification; independent acceptance before integration",
+  "resourceIncidents": [],
+  "harnessIncident": "API tuple / CLI JSON list equality, corrected without changing oracle"
+}

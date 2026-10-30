@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+    "ls-remote",
+    "--exit-code",
+    "origin",
+    "refs/heads/task/toyvm-cleanup-receipt-type-repair-oct29"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 0,
+  "wall": 1.5461735578719527,
+  "incident": null,
+  "sampledPeakProcessRSS": 8572928,
+  "sampledPeakGroupRSS": 15126528,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

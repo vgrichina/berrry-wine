@@ -1,0 +1,17 @@
+error: /tmp/morrowind-observer-quiet-arming-repair-oct28/repo/.git/objects: ignoring alternate object stores, nesting too deep
+The following paths and/or pathspecs matched paths that exist
+outside of your sparse-checkout definition, so will not be
+updated in the index:
+test/toyvm-cleanup-receipt-type-repair-oct29/REPORT.md
+test/toyvm-cleanup-receipt-type-repair-oct29/supervise_repair.py
+test/toyvm-cleanup-receipt-type-repair-oct29/test_cleanup.py
+test/toyvm-complete-objects-caller-acceptance-oct29/REPORT.md
+test/toyvm-complete-objects-caller-acceptance-oct29/accept_caller.py
+test/toyvm-complete-objects-caller-acceptance-oct29/accept_caller_rebound.py
+test/toyvm-complete-objects-caller-acceptance-oct29/first-counterexample-stderr.txt
+test/toyvm-complete-objects-caller-acceptance-oct29/first-counterexample.txt
+test/toyvm-complete-objects-caller-acceptance-oct29/input-pins.json
+hint: If you intend to update such entries, try one of the following:
+hint: * Use the --sparse option.
+hint: * Disable or modify the sparsity rules.
+hint: Disable this message with "git config advice.updateSparsePath false"

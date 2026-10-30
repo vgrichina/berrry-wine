@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo/test/toyvm-cleanup-receipt-type-repair-oct29/supervise_repair.py"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 0,
+  "wall": 0.10641617001965642,
+  "incident": null,
+  "sampledPeakProcessRSS": 17301504,
+  "sampledPeakGroupRSS": 17301504,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

@@ -1,0 +1,7 @@
+{
+  "originalSHA256": "743c777db902db133522e74568a14e0aafc6bb8153b1e2f0006daa3d750c88c8",
+  "oldSourceSHA256": "c6ea49a11917ac62777b4682013ce5bf3d086ab7a0b145c0513ed3478d0f06cb",
+  "newSourceSHA256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60",
+  "reboundSHA256": "23e3bbcf2e5a6b251e0857fc42545380cc4616960d13e7e4c1aefbcd653fb83f",
+  "onlyChange": "one exact old-source hash replaced by new-source hash; assertions and inputs unchanged"
+}

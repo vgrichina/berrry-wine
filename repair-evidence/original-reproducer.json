@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "test/toyvm-complete-objects-caller-acceptance-oct29/accept_caller.py",
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 1,
+  "wall": 0.24728840892203152,
+  "incident": null,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

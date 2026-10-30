@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo/test/toyvm-cleanup-receipt-type-repair-oct29/test_cleanup.py", line 53, in <module>
+    invoke(r,False,'cleanup:original-False-unmount')
+  File "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo/test/toyvm-cleanup-receipt-type-repair-oct29/test_cleanup.py", line 42, in invoke
+    assert api['accepted'] is expected and code==(0 if expected else 1),(name,api,code)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('cleanup:original-False-unmount', {'accepted': True, 'browserAllowed': False, 'browserAllowanceRemaining': {'cpuSeconds': 35.353183, 'wallSeconds': 101.495550694, 'captures': 1}, 'childSucceeded': True, 'accountingAccepted': True, 'cleanupComplete': True, 'failures': [], 'backendReceipt': {'exit': 0, 'stopReason': None, 'peakRSS': 10000000, 'cpuSeconds': 0.01, 'wallSeconds': 0.1, 'output': {'encoding': 'base64', 'data': 'Ym91bmRlZCBjaGlsZCBzdWNjZXNzCg=='}, 'cleanupComplete': True, 'filesystem': {'live': 12288, 'peak': 12288, 'written': 5, 'failure': None, 'openHandles': 0}, 'filesystemCleanup': {'unmountExit': False, 'remainingMounts': [], 'serverExit': -15, 'serverStdout': '', 'serverStderr': ''}}}, 0)

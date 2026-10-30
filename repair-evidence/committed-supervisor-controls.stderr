@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo/test/toyvm-cleanup-receipt-type-repair-oct29/supervise_repair.py", line 16, in <module>
+    resource.setrlimit(resource.RLIMIT_DATA,(128*1024**2,256*1024**2))
+ValueError: not allowed to raise maximum limit

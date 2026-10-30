@@ -1,0 +1,7 @@
+Task toyvm-cleanup-receipt-type-repair-oct29 COMPLETE: fail-closed cleanup type/shape repair. Independent acceptance REQUIRED before integration.
+Commit 5a88ca099b962e946160afd2d4d71a950bf46db3
+Remote branch task/toyvm-cleanup-receipt-type-repair-oct29
+Exact remote SHA verified 5a88ca099b962e946160afd2d4d71a950bf46db3 (repair-evidence/final-remote-sha.stdout).
+Canonical receipt /tmp/toyvm-cleanup-receipt-type-repair-oct29/repo/repair-evidence/receipt.json
+Report /tmp/toyvm-cleanup-receipt-type-repair-oct29/repo/test/toyvm-cleanup-receipt-type-repair-oct29/REPORT.md
+Unchanged repro before edit: expected assertion exit1, malformed False accepted API+CLI CLI0. Hash-only rebind after repair passes, both reject CLI1. 78 focused API/CLI cases pass; reverting type fix rejected. Supervisor nested inherited-limit setup rejection fixed preserving smaller hard ceiling; original stderr retained. Harness JSON comparison and sparse staging corrections retained. No real backend/child/FUSE/browser/guest/Boat/Node execution; allowance unused. No boxes assigned; shutdown coordinator-owned. Root/donors/media untouched; main not pushed; no board append. Resource admissions passed; 24MiB allocation retained until coordinator closeout. Coordinator should append this receipt pointer once and retain evidence separately from Git.

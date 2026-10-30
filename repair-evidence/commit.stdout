@@ -1,0 +1,11 @@
+[task/toyvm-cleanup-receipt-type-repair-oct29 9d5baed396] Reject ambiguous ToyVM cleanup receipt types
+ 10 files changed, 476 insertions(+), 2 deletions(-)
+ create mode 100644 test/toyvm-cleanup-receipt-type-repair-oct29/REPORT.md
+ create mode 100644 test/toyvm-cleanup-receipt-type-repair-oct29/supervise_repair.py
+ create mode 100644 test/toyvm-cleanup-receipt-type-repair-oct29/test_cleanup.py
+ create mode 100644 test/toyvm-complete-objects-caller-acceptance-oct29/REPORT.md
+ create mode 100644 test/toyvm-complete-objects-caller-acceptance-oct29/accept_caller.py
+ create mode 100644 test/toyvm-complete-objects-caller-acceptance-oct29/accept_caller_rebound.py
+ create mode 100644 test/toyvm-complete-objects-caller-acceptance-oct29/first-counterexample-stderr.txt
+ create mode 100644 test/toyvm-complete-objects-caller-acceptance-oct29/first-counterexample.txt
+ create mode 100644 test/toyvm-complete-objects-caller-acceptance-oct29/input-pins.json

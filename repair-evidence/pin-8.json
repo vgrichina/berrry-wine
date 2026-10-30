@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+    "show",
+    "7da22b4f4727d63f5305ff8ffd362c658a5b41b6:test/toyvm-complete-objects-caller-acceptance-oct29/accept_caller.py"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 0,
+  "wall": 0.037024777848273516,
+  "incident": null,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+    "show",
+    "3898e008861bad6c274506664b2804dbdc7d236a:test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 0,
+  "wall": 0.036408531945198774,
+  "incident": null,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

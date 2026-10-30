@@ -1,0 +1,10 @@
+{
+  "rejected": [
+    "None",
+    "/home/user/wine-assembly",
+    "/tmp/toyvm-complete-objects-caller-acceptance-oct29/repo/.git/objects",
+    "/tmp"
+  ],
+  "sentinel": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "PASS": true
+}

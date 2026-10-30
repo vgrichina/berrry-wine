@@ -1,0 +1,13 @@
+error: /tmp/morrowind-observer-quiet-arming-repair-oct28/repo/.git/objects: ignoring alternate object stores, nesting too deep
+warning: The following paths were already present and thus not updated despite sparse patterns:
+	test/toyvm-bounded24-caller-wiring-oct28/RECOVERY.md
+	test/toyvm-bounded24-caller-wiring-oct28/REPORT.md
+	test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py
+	test/toyvm-bounded24-caller-wiring-oct28/test_caller.py
+	test/toyvm-kernel-profile-accounting-backend-oct28/confine.py
+	test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py
+	test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py
+	test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py
+
+After fixing the above paths, you may want to run `git sparse-checkout reapply`.
+Switched to a new branch 'task/toyvm-cleanup-receipt-type-repair-oct29'

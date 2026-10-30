@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "test/toyvm-cleanup-receipt-type-repair-oct29/test_cleanup.py",
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-capture-cancellation-qualification-oct28/receipt.json"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 0,
+  "wall": 0.14036008180119097,
+  "incident": null,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

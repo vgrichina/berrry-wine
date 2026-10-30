@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo/test/toyvm-complete-objects-caller-acceptance-oct29/accept_caller.py", line 52, in <module>
+    assert not api['accepted'] and not cli['accepted'] and cli_code==1, 'malformed boolean unmount exit accepted by exact caller API and CLI'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: malformed boolean unmount exit accepted by exact caller API and CLI

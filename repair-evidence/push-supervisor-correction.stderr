@@ -1,0 +1,6 @@
+error: /tmp/morrowind-observer-quiet-arming-repair-oct28/repo/.git/objects: ignoring alternate object stores, nesting too deep
+error: /tmp/morrowind-observer-quiet-arming-repair-oct28/repo/.git/objects: ignoring alternate object stores, nesting too deep
+remote: This repository moved. Please use the new location:        
+remote:   git@github.com:vgrichina/berrry-wine.git        
+To github.com:vgrichina/wine-assembly.git
+   9d5baed396..5a88ca099b  HEAD -> task/toyvm-cleanup-receipt-type-repair-oct29

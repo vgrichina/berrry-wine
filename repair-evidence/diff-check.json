@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+    "diff",
+    "--check"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 0,
+  "wall": 0.07802115008234978,
+  "incident": null,
+  "sampledPeakProcessRSS": 7970816,
+  "sampledPeakGroupRSS": 7970816,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

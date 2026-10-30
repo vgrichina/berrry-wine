@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+    "remote",
+    "set-url",
+    "origin",
+    "git@github.com:vgrichina/wine-assembly.git"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 0,
+  "wall": 0.03743032808415592,
+  "incident": null,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}

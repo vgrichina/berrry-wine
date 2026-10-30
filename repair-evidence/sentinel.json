@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "import os;print(os.getcwd())"
+  ],
+  "cwd": "/tmp/toyvm-cleanup-receipt-type-repair-oct29/repo",
+  "exit": 0,
+  "wall": 0.035972371930256486,
+  "incident": null,
+  "sampledPeakProcessRSS": 8257536,
+  "sampledPeakGroupRSS": 8257536,
+  "descendantCleanup": "SIGKILL process group at terminal"
+}
