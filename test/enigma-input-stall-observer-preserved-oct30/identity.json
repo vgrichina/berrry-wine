@@ -1,0 +1,13 @@
+{
+  "source": "425755ee5ee9be0734c7aca187521100f5487674",
+  "archivedBase": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+  "recipeSHA": "566f219eec5c613b84a6ced637e26290631c5e60f063fe76b5928eb31bc3c347",
+  "retained": "96aa1313dabaf59a55875830b35fdd32ec3410fea2e3b2458828a9f49ccbe4b2",
+  "transformed": "61125d6937d2c0836d93146da5a2acceba0f44de1ae1b6e63ecaa7f863244312",
+  "fixtureSHA": "c230ac18bbcc8a1f3c65b42c77080ff162b16fa0262cdf445a2ffd568b49714c",
+  "runSites": 3,
+  "runtime": false,
+  "gitSourceRunnerBlob": "96564821da3e401b79985804f9d689439799edf0",
+  "archivedBaseGitBlob": "96564821da3e401b79985804f9d689439799edf0",
+  "gitRunnerEqualsArchivedBase": true
+}
