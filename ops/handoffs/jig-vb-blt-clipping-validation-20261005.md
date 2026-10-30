@@ -1,7 +1,0 @@
-# JigSawedME VB Blt clipping validation
-
-Scoped implementation b9155c8cb3761bf50b1931b824e0e8a50ce75fd5 passed expected-before control and70 candidate contracts in5.336sec (session32252). Full production/shake gates and durable8+9+11+42 contracts passed in27.754sec (session33661). Production module ad94407ccf5daf62ae0f205b061f8e45af2d2db44b36f6c8c8f13fa79bd6fd4a, 1672065 bytes. Shared canonical unchanged. All processes released; no browser run for this increment yet.
-
-The native-backed fix admits equal-size destination clipping, preserves literal NULL for zero RECTs and leaves ColorFill/BltFast guards and surface allocation unchanged. Tests reproduce primary640x480/source1016x694/destination[4,42,1020,736], verify every copied pixel and untouched margin, and compare existing native consumer output. Negative origin pairing, sparse pages, status/ESP/stack and unsupported boundaries also pass. This is not full-board or gameplay qualification: only636x438 of that source fits the observed destination, and preview flags0x20 remain unsupported.
-
-Immutable receipts: `/home/user/wine-assembly/scratch/new-games-pipeline-20261004/jigssawme/blt-clipping-repair-20261005/attempt1/receipt.json` and `/home/user/wine-assembly/scratch/new-games-pipeline-20261004/jigssawme/blt-clipping-repair-20261005/production-gates/receipt.json`. Ordinary source257/fixture20 pins prepared in `/home/user/wine-assembly/scratch/new-games-pipeline-20261004/jigssawme/blt-clipping-repair-20261005/ordinary-browser/preparation-receipt.json`; no private Worker override.

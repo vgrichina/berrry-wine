@@ -1,8 +1,0 @@
-{
-  "capture": "Initial combined metadata reads exceeded 8KiB excerpt target and were truncated; subsequent reads narrowed. No limit increase.",
-  "originalOverrun": "113292552B original candidate checkout remains noncompliant.",
-  "routineCorrections": [
-    "Initial seal reader used repair preflight (pre-repair source identities) rather than committed repair source seals. Corrected to exact committed source-seals list; all six matched, three unchanged pins and 43 supporting seals verified.",
-    "Initial lexical test compared module order for whitespace-equivalent imports. Another existing LiveRun import changed discovery order but preserved the set. Corrected the fixture to compare sets, retained as passing controls; rejected candidate only for the three real documentation false positives."
-  ]
-}
