@@ -1,0 +1,75 @@
+ACCEPT — glVertex2dv production-fragment boundary
+Candidate: 8c3ae312cdd0248b6a08baa99bf091e12ebf8106
+Independent worker: tuxracer-glvertex2dv-independent-accept-oct29
+Session: 01a185b8-d8ee-7542-b310-857798aae1c9
+
+The exact published API row, generated dispatcher, native handler, initializer,
+gl64/gl32 loads and packed vertex pipeline executed successfully. The independent
+fixture imports only the pinned loader's construction prefix, not its acceptance
+function or completed test groups. Production function/transform hashes and
+compiled module SHA match the predecessor canonical receipt exactly. Only the
+JavaScript fixture translator changes: pages 0..3 map to physical 0x380000,
+0x310000,0x3b0000,0x350000. This is not the predecessor's affine-stride formula.
+
+New evidence: eight vectors include fractional negative doubles, ties at f32
+rounding boundaries, subnormal and signed-zero behavior, high precision/larger
+values, unaligned pointers, both components crossing independently translated
+pages and direct-window boundary reads. Assert complete 19-float records,
+z=0,w=1, current attributes, unchanged input bytes, EAX=0, exact ESP+8 cleanup,
+unchanged stack bytes and all other tested register bytes. Adjacent 3/4-component
+helper calls preserve their packed semantics. API IDs4447/4449 and invalid IDs
+trap without changing prior stream or register state. Restoring the old
+unimplemented route traps before append/stack cleanup. Allocation failure traps
+before append/stack cleanup. No concrete correctness counterexample was found.
+
+Fallback seam review: the pinned harness supplies handle_fallback and every
+unrelated generated page/target as unreachable trap functions. No fallback seam
+can produce a successful vertex. The positive oracle inspects the real packed
+record, while negative neighboring/fallback probes preserve state. The mutation
+restores only the old generated call; a generic trap alone is never positive
+acceptance evidence. Heap allocation and g2w translation remain explicit fixture
+seams. Full module, host allocator/translator fault callbacks, browser, startup
+and gameplay are NOT QUALIFIED by this acceptance.
+
+Generator check: tools/gen_dispatch.js --check PASS, 4594 API rows.
+Reused unchanged original four-vector, unsupported-entry and allocation checks:
+/home/user/wine-assembly/scratch/usage-watch/tuxracer-glvertex2dv-dispatch-repair-oct29/retained-evidence/canonical-receipt.json
+Exact reuse binding and source/transform hashes: behavior-checkpoint.json.
+
+Contract inspection: /usr/include/GL/gl.h lines129/944 defines GLdouble as double
+and declares glVertex2dv(const GLdouble *v). Primary Khronos glVertex reference
+was read via web tooling, not installed or executed:
+https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl2.1/xhtml/glVertex.xml
+It defines a two-element vector as x,y and default z=0,w=1, with current
+attributes associated with the vertex. Outside-Begin behavior is not an OpenGL
+correctness claim. Binary64-to-f32 expectations test this existing packed pipeline.
+
+Recovery recipe: retain/create the exact owned task path and dispatch-specified
+source closure. The source-pins receipt and exact Git blob identities establish
+input identity. Run the task-owned supervisor, never a predecessor supervisor:
+python3 -B supervisor.py node test/tuxracer-glvertex2dv-independent-accept-oct29/accept.js
+python3 -B supervisor.py node tools/gen_dispatch.js --check
+The included supervisor.py and limit_contract.py are the exact used recipes;
+prepare applies only before initialization. Existing passed groups need not rerun.
+
+Resource/accounting: transferred48MiB; unchanged aggregate176160768-byte future
+forecast through staging/tests/session/WAL/evidence/push/coordinator closeout.
+Parent Python DATA soft128MiB, inherited hard unchanged; Python children128MiB;
+Git children256MiB only. Node retains original unlimited DATA/AS and uses installed
+/usr/bin/node --max-old-space-size=128; this flag is not a total physical cap.
+Physical parentRSS128MiB, groupRSS512MiB, CPU90s/wall120s/file12MiB,
+capture2MiB/terminal8192B/evidence1MiB. Actual new acceptance peak groupRSS:
+81858560 bytes. Initial WAL standing baseline24983808 bytes is recorded once;
+only positive later growth is counted. Admission allocation remains retained.
+No resource/platform rejection occurred in the production supervisor. Initial
+read-only policy/receipt inspection exceeded the8192B terminal envelope before
+bounded output was corrected; preserve this incident rather than claim complete
+envelope compliance. A checkpoint-serialization TypeError was corrected without
+repeating either passing test group or changing implementation/test inputs.
+
+Root refs/index/source, donor source/evidence/media and shared owners read-only.
+No donor configuration changes, worker launches, downloads to workspace, full
+build, browser, game/guest/installer, Boat/FUSE or main publication. No assigned
+boxes. Empty mount argv/intended-file list and trusted SSH configuration retained.
+Publication and final closeout evidence live in the task root canonical receipt;
+board append belongs to coordinator via bounded publication-note.txt.
