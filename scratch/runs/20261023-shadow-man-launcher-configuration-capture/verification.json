@@ -12,9 +12,9 @@
   "retries": 0,
   "box": "RUNNING",
   "ownedGroups": [],
-  "ownAllocated": 6782976,
-  "wholeLocalWithReserve": 64237568,
+  "ownAllocated": 6828032,
+  "wholeLocalWithReserve": 64282624,
   "cap": 67108864,
   "reserve": 8388608,
-  "hostFree": 6886891520
+  "hostFree": 6885732352
 }
