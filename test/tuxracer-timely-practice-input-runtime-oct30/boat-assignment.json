@@ -1,0 +1,12 @@
+{
+  "id": "bx_rht9232f",
+  "createdAt": "2026-10-30T12:22:03.632Z",
+  "createdEpoch": 1793362923.632,
+  "expiry": "2026-10-30T12:52:03.590Z",
+  "guestCutoff": 1793364123.632,
+  "retrieval": 1793364243.632,
+  "handback": 1793364303.632,
+  "shutdown": 1793364423.632,
+  "ttl": 1800,
+  "shutdownOwner": "this task explicit all-path snapshot-stop delegation"
+}

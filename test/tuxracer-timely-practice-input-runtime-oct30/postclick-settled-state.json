@@ -1,0 +1,58 @@
+{
+  "seq": 117432,
+  "counts": {
+    "transform": 1,
+    "waitSingle:917507:1:0": 151,
+    "releaseMutex:917507:1:1": 151,
+    "waitSingle:917511:1:0": 2,
+    "releaseMutex:917511:1:1": 2,
+    "slice": 72968,
+    "waitSingle:917508:2:0": 7172,
+    "waitSingle:234881024:2:0": 7171,
+    "releaseMutex:234881024:2:1": 7171,
+    "releaseMutex:917508:2:1": 7171,
+    "wave-submit": 7171,
+    "wave-done": 7171,
+    "waitSingle:917508:1:0": 144,
+    "releaseMutex:917508:1:1": 144,
+    "waitSingle:917508:1:65535": 142,
+    "waitSingle:917508:1:258": 560,
+    "waitSingle:917508:2:65535": 140
+  },
+  "last": {
+    "sync": [
+      917508,
+      3,
+      2,
+      1
+    ],
+    "running": 1,
+    "main": {
+      "get_eip": 4366983,
+      "get_dbg_prev_eip": 4366967,
+      "get_esp": 122682936,
+      "get_yield_reason": 0,
+      "get_wait_handle": 917508,
+      "get_current_thread_id": 1,
+      "get_api_calls": 1482347,
+      "is_mm_timer_callback_active": 0
+    },
+    "threads": [
+      {
+        "handle": 921600,
+        "tid": 1,
+        "state": "active",
+        "regs": {
+          "get_eip": 9542322,
+          "get_dbg_prev_eip": 9542299,
+          "get_esp": 2128543460,
+          "get_yield_reason": 0,
+          "get_wait_handle": 917508,
+          "get_current_thread_id": 2,
+          "get_api_calls": 53379,
+          "is_mm_timer_callback_active": 0
+        }
+      }
+    ]
+  }
+}

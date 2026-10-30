@@ -1,0 +1,19 @@
+{
+  "PASS": true,
+  "actualThisTask": true,
+  "argv": [
+    "--app=tuxracer_original_061a"
+  ],
+  "runner": {
+    "bytes": 692809,
+    "sha256": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d"
+  },
+  "module": {
+    "bytes": 1881806,
+    "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+  },
+  "files": 157,
+  "commaFiles": [],
+  "actualEnumeration": "mount.stdout",
+  "sameTaskBeforeGuest": true
+}
