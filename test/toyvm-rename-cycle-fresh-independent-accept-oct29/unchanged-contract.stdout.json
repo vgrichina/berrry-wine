@@ -1,5 +1,0 @@
-{
-  "bytes": 427,
-  "sha256": "e0e94e0a41fcc01e7f3a26455ec81d2380a5ba064608819e6d7005f0d1f03dd6",
-  "stdout": "PASS observation-oracle mutations (16)\nPASS op12 self: \nPASS op12 direct-child: \nPASS op12 deeper-descendant: \nPASS op12 unrelated-sibling: \nPASS op12 to-root: \nPASS op12 child-to-ancestor: \nPASS op12 same-path: \nPASS op45 self: \nPASS op45 direct-child: \nPASS op45 deeper-descendant: \nPASS op45 unrelated-sibling: \nPASS op45 to-root: \nPASS op45 child-to-ancestor: \nPASS op45 same-path: \n14 passed; 0 REQUIRED CONTRACT FAILURES\n"
-}

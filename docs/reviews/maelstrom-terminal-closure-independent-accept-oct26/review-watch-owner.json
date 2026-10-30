@@ -1,9 +1,0 @@
-{
-  "pid": 1918121,
-  "uid": 1000,
-  "startTicks": "102889944",
-  "argv": [
-    "/tmp/maelstrom-terminal-closure-independent-accept-oct26/ops/watch.py",
-    "review-watch"
-  ]
-}

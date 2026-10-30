@@ -1,3 +1,0 @@
-MODULE_IDENTITY {"arm":"candidate","bytes":1719493,"sha256":"794e9d9408f3dc0871dada08bdd1b8c4260185ad4929c987ccfbeec0c7590c59","sourceCommit":"b92d2f848e02183f2e6fcb50802d562df4b9b7cb","beforeSourceOverride":false}
-PASS D3D1/2/3/7 device enumeration: 16 nested pairs, payloads, ordering, ABI and 96 balanced cycles
-PASS 32 real x86 nested enumeration cases through COM and continuation thunks

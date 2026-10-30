@@ -1,9 +1,0 @@
-{
-  "completed": "conflict-free actual merge, exact accepted incoming entries, complete unrelated bytes/modes preservation",
-  "testedTree": "7a65e59d19e87e5cc7b0263591142a4fde651bec",
-  "remaining": [
-    "source/fixture/dependency/tools proof",
-    "docs commit",
-    "verified task/main publication"
-  ]
-}
