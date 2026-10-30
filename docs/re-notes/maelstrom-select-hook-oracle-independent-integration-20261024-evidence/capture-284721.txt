@@ -1,2 +1,0 @@
-0cd1121b01300ae157dd5af3580a4cf132865fdb	refs/heads/main
-f0facf0a89c17dc877894a6d76181bf40ab1a409	refs/heads/task/maelstrom-select-hook-oracle-repair-oct24
