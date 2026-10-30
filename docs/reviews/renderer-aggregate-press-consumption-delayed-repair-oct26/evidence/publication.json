@@ -1,7 +1,0 @@
-{
-  "sourceCommit": "0ebb852e339fe755f3c18a19f32f1dfe4da427b4",
-  "branch": "task/renderer-aggregate-press-consumption-delayed-repair-oct26",
-  "remote": "0ebb852e339fe755f3c18a19f32f1dfe4da427b4\trefs/heads/task/renderer-aggregate-press-consumption-delayed-repair-oct26",
-  "verified": true,
-  "trustedSsh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
-}

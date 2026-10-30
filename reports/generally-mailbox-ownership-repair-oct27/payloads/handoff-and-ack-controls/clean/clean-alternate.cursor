@@ -1,1 +1,0 @@
-{"last": {"action": "snapshot", "id": 20}, "next": 21, "pending": false, "reply": {"id": 20, "ok": true, "value": {"batch": 3, "eip": "0x0", "focus": "0x0", "frozen": {"credits": 0, "frozen": true, "recording": false, "tickMs": 2}, "mainHwnd": "0x0", "quit": false, "screen": {"h": 600, "w": 800}, "windows": [], "yieldReason": 0}}}

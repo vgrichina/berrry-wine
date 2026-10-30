@@ -1,1 +1,0 @@
-["/usr/bin/python3","-B","/tmp/penguin-streams-independent-accept-oct27/ops/fault_cli.py","open","supervise","/tmp/penguin-streams-independent-accept-oct27/ops/independent/fault-open/profile.json","--sha256","0837d6f1f7abb3ca1423d20fd3a967577d7da110671c20aa7d9352a7b94348db","--output","/tmp/penguin-streams-independent-accept-oct27/ops/independent/fault-open/out"]

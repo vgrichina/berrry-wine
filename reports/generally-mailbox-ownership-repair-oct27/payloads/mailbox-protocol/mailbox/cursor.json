@@ -1,1 +1,0 @@
-{"last": {"action": "input-message", "hwnd": 1, "id": 22, "lParam": 0, "msg": 256, "wParam": 38}, "next": 23, "pending": false, "reply": {"id": 22, "ok": true, "value": {"batch": 2501, "hwnd": 1, "lParam": 0, "msg": 256, "queued": true, "wParam": 38}}}

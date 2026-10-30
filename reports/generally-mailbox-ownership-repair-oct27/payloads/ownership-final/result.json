@@ -1,8 +1,0 @@
-{
-  "pass_": true,
-  "helperSHA256": "a42cd1e7f28131e0a9b8461b93855e618b3015b5fb0b6c4e84c9ea64d22ae339",
-  "cases": 7,
-  "ACKsWritten": 0,
-  "guestInvocations": 0,
-  "cleanupComplete": true
-}

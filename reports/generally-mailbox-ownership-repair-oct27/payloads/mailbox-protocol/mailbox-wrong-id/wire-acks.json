@@ -1,1 +1,0 @@
-["[ctl] {\"ok\":true,\"id\":12,\"value\":{\"batch\":0,\"eip\":\"0x0\",\"quit\":false,\"yieldReason\":0,\"focus\":\"0x0\",\"mainHwnd\":\"0x0\",\"screen\":{\"w\":800,\"h\":600},\"frozen\":{\"frozen\":true,\"tickMs\":2,\"credits\":0,\"recording\":false},\"windows\":[]}}\n", "[ctl] {\"ok\":true,\"id\":90,\"value\":{\"batch\":1000,\"ran\":1000,\"steps\":1000,\"frozen\":true}}\n"]

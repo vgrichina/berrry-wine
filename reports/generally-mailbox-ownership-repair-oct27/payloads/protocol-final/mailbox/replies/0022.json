@@ -1,1 +1,0 @@
-{"request": {"action": "input-message", "hwnd": 1, "id": 22, "lParam": 0, "msg": 256, "wParam": 38}, "reply": {"ok": true, "id": 22, "value": {"queued": true, "batch": 2501, "hwnd": 1, "msg": 256, "wParam": 38, "lParam": 0}}}
