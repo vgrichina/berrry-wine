@@ -1,1 +1,0 @@
-{"at": "2026-10-29T02:26:02.021440+00:00", "argv": ["git", "-C", "/tmp/gltron-fixture-authorized-integrity-repair-oct29/repo", "config", "user.email", "wine-ops@localhost"], "cwd": "/tmp/gltron-fixture-authorized-integrity-repair-oct29/repo", "exit": 0, "peakRSS": 0, "wall": 0.030982533004134893, "violation": null, "descendantCleanup": true}

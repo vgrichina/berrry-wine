@@ -1,2 +1,0 @@
-PASS 8 clock/startup/bench combinations: exact production initialization through ctx/renderer/audio/calendar wiring; trace on/off returns/state equal accepted main
-PASS observer receiver/arguments, exception preserves last successful return, disabled identity and zero snapshot probes

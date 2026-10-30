@@ -1,1 +1,0 @@
-PASS test-toyvm-operand-patch: imm8 03FC (2999/3000 breaks repaired, 0KB); imm16 0FF4 (2999/3000 breaks repaired, 0KB); alias 17B6 (3100/3100 breaks repaired, 1KB); disp16 00FC (2999/3000 breaks repaired, 1KB)

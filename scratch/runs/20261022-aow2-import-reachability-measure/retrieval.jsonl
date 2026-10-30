@@ -1,9 +1,0 @@
-{"remote": "/home/user/aow2-software/run/startup.png", "local": "captures/startup.png", "size": 155336, "sha256": "44bee1616291a8e7eaaeb6cb2781c75ac2922135a12198f9ea7c6e77ba2d8660"}
-{"remote": "/home/user/aow2-software/run/menu-check.png", "local": "captures/menu-check.png", "size": 521140, "sha256": "3e1516fe9bc74678740b0efdb678384efe630ba67a4d77ca25e0f61a14541ff5"}
-{"remote": "/home/user/aow2-software/run/scenario.png", "local": "captures/scenario.png", "size": 530323, "sha256": "694ca01a18a4d281d80b49aa538ec708211d6d44a787fd4af515f1a700043860"}
-{"remote": "/home/user/aow2-software/run/scenario-ready.png", "local": "captures/scenario-ready.png", "size": 467567, "sha256": "a0eeb29b2a79b663245f7956e041587f2bcb3692d2243ac77cc7e4926d55d840"}
-{"remote": "/home/user/aow2-software/run/single-setup.png", "local": "captures/single-setup.png", "size": 732217, "sha256": "9d766a83982d3b6b5b5f6ce159f6180a56e940a9d49a3b7d9e4d36c3c7b23fcb"}
-{"remote": "/home/user/aow2-software/run/world-entry.png", "local": "captures/world-entry.png", "size": 758254, "sha256": "cb36fd8f309e68fb19679c3a24e37c7b6a69704ec286673edf25620b510d1bbe"}
-{"remote": "/home/user/aow2-software/run/world-ready.png", "local": "captures/world-ready.png", "size": 729264, "sha256": "d4179caa6bbb1ed21ddbb57c8aa9e8db27cc975795f9773c0d577a64304cc739"}
-{"remote": "/home/user/aow2-software/run/scene.png", "local": "captures/scene.png", "size": 888944, "sha256": "0dc8946f5462decda67ba14fa6793f01cc793e10ccee7cf655f54eb580965dc8"}
-{"remote": "/home/user/aow2-software/evidence.tar.gz", "local": "evidence.tar.gz", "size": 6305282, "sha256": "ff023d5ccfefed47b06c177250429b7487e265c1425453d4814c5ee4be396a67"}

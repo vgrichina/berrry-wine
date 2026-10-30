@@ -1,69 +1,0 @@
-Preparing worktree (detached HEAD f5329feb1)
-Updating files:  20% (1792/8603)Updating files:  21% (1807/8603)Updating files:  22% (1893/8603)Updating files:  23% (1979/8603)Updating files:  24% (2065/8603)Updating files:  25% (2151/8603)Updating files:  26% (2237/8603)Updating files:  27% (2323/8603)Updating files:  28% (2409/8603)Updating files:  29% (2495/8603)Updating files:  30% (2581/8603)Updating files:  31% (2667/8603)Updating files:  32% (2753/8603)Updating files:  33% (2839/8603)Updating files:  34% (2926/8603)Updating files:  35% (3012/8603)Updating files:  36% (3098/8603)Updating files:  37% (3184/8603)Updating files:  38% (3270/8603)Updating files:  38% (3307/8603)Updating files:  39% (3356/8603)Updating files:  40% (3442/8603)Updating files:  41% (3528/8603)Updating files:  42% (3614/8603)Updating files:  43% (3700/8603)Updating files:  44% (3786/8603)Updating files:  45% (3872/8603)Updating files:  46% (3958/8603)Updating files:  47% (4044/8603)Updating files:  48% (4130/8603)Updating files:  49% (4216/8603)Updating files:  50% (4302/8603)Updating files:  51% (4388/8603)Updating files:  52% (4474/8603)Updating files:  53% (4560/8603)Updating files:  54% (4646/8603)Updating files:  55% (4732/8603)Updating files:  56% (4818/8603)Updating files:  57% (4904/8603)Updating files:  58% (4990/8603)Updating files:  59% (5076/8603)Updating files:  60% (5162/8603)Updating files:  61% (5248/8603)Updating files:  62% (5334/8603)Updating files:  63% (5420/8603)Updating files:  64% (5506/8603)Updating files:  65% (5592/8603)Updating files:  66% (5678/8603)Updating files:  67% (5765/8603)Updating files:  68% (5851/8603)Updating files:  69% (5937/8603)Updating files:  70% (6023/8603)Updating files:  71% (6109/8603)Updating files:  71% (6172/8603)Updating files:  72% (6195/8603)Updating files:  73% (6281/8603)Updating files:  74% (6367/8603)Updating files:  75% (6453/8603)Updating files:  76% (6539/8603)Updating files:  77% (6625/8603)Updating files:  78% (6711/8603)Updating files:  79% (6797/8603)Updating files:  80% (6883/8603)Updating files:  81% (6969/8603)Updating files:  82% (7055/8603)Updating files:  83% (7141/8603)Updating files:  84% (7227/8603)Updating files:  85% (7313/8603)Updating files:  86% (7399/8603)Updating files:  87% (7485/8603)Updating files:  88% (7571/8603)Updating files:  89% (7657/8603)Updating files:  90% (7743/8603)Updating files:  91% (7829/8603)Updating files:  92% (7915/8603)Updating files:  93% (8001/8603)Updating files:  94% (8087/8603)Updating files:  95% (8173/8603)Updating files:  96% (8259/8603)Updating files:  97% (8345/8603)Updating files:  98% (8431/8603)Updating files:  99% (8517/8603)Updating files: 100% (8603/8603)Updating files: 100% (8603/8603), done.
-HEAD is now at f5329feb1 Give the render worker its own lock identity
-== build 17:20:30
-build exit=0
-0570658b178d0ba4a77787f328ebc3407dd9e16953d1ecf4832dd9d71a9b7da3  build/wine-assembly.wasm
-node:internal/modules/cjs/loader:1210
-  throw err;
-  ^
-
-Error: Cannot find module 'pngjs'
-Require stack:
-- /var/lib/ascii-lazy/retired/home/ab/ctx/lib/raster-canvas.js
-- /var/lib/ascii-lazy/retired/home/ab/ctx/lib/canvas-compat.js
-- /var/lib/ascii-lazy/retired/home/ab/ctx/test/render-helper.js
-- /var/lib/ascii-lazy/retired/home/ab/ctx/test/test-d3d-software-ctx-arena-reuse.js
-    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
-    at Module._load (node:internal/modules/cjs/loader:1038:27)
-    at Module.require (node:internal/modules/cjs/loader:1289:19)
-    at require (node:internal/modules/helpers:182:18)
-    at Object.<anonymous> (/var/lib/ascii-lazy/retired/home/ab/ctx/lib/raster-canvas.js:20:17)
-    at Module._compile (node:internal/modules/cjs/loader:1521:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
-    at Module.load (node:internal/modules/cjs/loader:1266:32)
-    at Module._load (node:internal/modules/cjs/loader:1091:12)
-    at Module.require (node:internal/modules/cjs/loader:1289:19) {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: [
-    '/var/lib/ascii-lazy/retired/home/ab/ctx/lib/raster-canvas.js',
-    '/var/lib/ascii-lazy/retired/home/ab/ctx/lib/canvas-compat.js',
-    '/var/lib/ascii-lazy/retired/home/ab/ctx/test/render-helper.js',
-    '/var/lib/ascii-lazy/retired/home/ab/ctx/test/test-d3d-software-ctx-arena-reuse.js'
-  ]
-}
-
-Node.js v20.20.2
-fixed test exit=1
-node:internal/modules/cjs/loader:1210
-  throw err;
-  ^
-
-Error: Cannot find module 'pngjs'
-Require stack:
-- /home/user/ab/fix/lib/raster-canvas.js
-- /home/user/ab/fix/lib/canvas-compat.js
-- /home/user/ab/fix/test/render-helper.js
-- /home/user/ab/fix/test/test-d3d-software-ctx-arena-reuse.js
-    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
-    at Module._load (node:internal/modules/cjs/loader:1038:27)
-    at Module.require (node:internal/modules/cjs/loader:1289:19)
-    at require (node:internal/modules/helpers:182:18)
-    at Object.<anonymous> (/home/user/ab/fix/lib/raster-canvas.js:20:17)
-    at Module._compile (node:internal/modules/cjs/loader:1521:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
-    at Module.load (node:internal/modules/cjs/loader:1266:32)
-    at Module._load (node:internal/modules/cjs/loader:1091:12)
-    at Module.require (node:internal/modules/cjs/loader:1289:19) {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: [
-    '/home/user/ab/fix/lib/raster-canvas.js',
-    '/home/user/ab/fix/lib/canvas-compat.js',
-    '/home/user/ab/fix/test/render-helper.js',
-    '/home/user/ab/fix/test/test-d3d-software-ctx-arena-reuse.js'
-  ]
-}
-
-Node.js v20.20.2
-unfixed test exit=1
-EXIT=0
