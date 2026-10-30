@@ -1,1 +1,0 @@
-PASS test-toyvm-far-pointer-loads: 10 checks over lss/les/lfs, 16- and 32-bit
