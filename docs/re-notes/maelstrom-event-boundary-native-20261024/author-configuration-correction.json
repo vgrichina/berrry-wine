@@ -1,8 +1,0 @@
-{
-  "previousFailure": "Author identity unknown; no commit was created",
-  "changedOnlyOwnedLocalConfig": true,
-  "donorConfig": {
-    "user.name": "Codex",
-    "user.email": "codex@users.noreply.github.com"
-  }
-}
