@@ -1,3 +1,0 @@
-f3698d8827aa048af14e0f0cbaa733bb96801949	refs/heads/main
-73e767f310c0b72b1680affad5148f9baea459aa	refs/heads/review/named-event-coupled-ea2888d
-ea2888d76c9d69415e1fd15e1995d7f19a7125fd	refs/heads/task/named-event-cli-end-to-end-oct20

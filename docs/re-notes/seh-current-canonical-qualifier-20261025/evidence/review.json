@@ -1,9 +1,0 @@
-{
-  "sealVerified": true,
-  "qualifierSHA256": "c46880319a64721493daff2d45437be3a7f329045f2203194dbc3f25ba8a80a6",
-  "exactSynchronousBufferCallsite": true,
-  "forbiddenAPIsAbsent": true,
-  "nativeQualificationCodeUnchanged": true,
-  "binariesCopiedOrCommitted": false,
-  "scope": "complete source ABI + reused internal type contract + current hashes/layout/noStart; no runtime"
-}

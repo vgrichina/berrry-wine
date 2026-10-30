@@ -1,3 +1,0 @@
-{
-  "log": "{\"controls\": [\"remote-run.py:symlink\", \"remote-run.py:dangling\", \"remote-run.py:directory\", \"remote-run.py:fifo\", \"remote-run.py:hardlink\", \"remote-run.py:open-temp/read/metadata/directory-races\", \"collect-evidence.py:symlink\", \"collect-evidence.py:dangling\", \"collect-evidence.py:directory\", \"collect-evidence.py:fifo\", \"collect-evidence.py:hardlink\", \"collect-evidence.py:open-temp/read/metadata/directory-races\", \"collector:refuse-types-and-whole-inventory-replacement\"], \"externalWrites\": 0}\n"
-}
