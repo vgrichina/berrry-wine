@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-c",
+    "import pathlib,json,hashlib,shutil\nroot=pathlib.Path(\"/tmp/toyvm-unlink-rmdir-original-parent-accept-oct29\")\nrepo=root/\"repo\"; dest=repo/\"test/toyvm-unlink-rmdir-original-parent-accept-oct29\"\ndef pin(p): \n b=p.read_bytes();return {\"bytes\":len(b),\"sha256\":hashlib.sha256(b).hexdigest()}\ndispatch=json.loads(pathlib.Path(\"/home/user/wine-assembly/scratch/usage-watch/toyvm-unlink-rmdir-original-parent-accept-oct29-dispatch.json\").read_text())\nassert pin(root/\"prelaunch-controls.json\")=={\"bytes\":550,\"sha256\":\"31fcd86f7d33d9cab9b2f3e60c5d1cb1217a2d0bc437c3ea80ba93524310b38f\"}\nfor key,path in [(\"limitModule\",\"limit_contract.py\"),(\"taskSupervisor\",\"ops.py\")]:assert pin(root/path)==dispatch[key+\"Pin\"]\nreceipt=json.loads((root/\"prelaunch-controls.json\").read_text());assert receipt[\"PASS\"] and receipt[\"sentinel\"]==str(repo) and receipt[\"inheritedDATA\"]==[-1,-1]\noriginal=pathlib.Path(\"/home/user/wine-assembly/scratch/usage-watch/toyvm-unlink-rmdir-type-repair-oct29/retained-evidence/test\")\nprov=json.loads((original/\"provenance.json\").read_text())\nactual={n:pin(repo/n) for n in dispatch[\"sourcePins\"]}\nassert actual==prov[\"sourcePins\"],actual\nassert pin(original/\"regression.py\")[\"sha256\"]==prov[\"regressionSha256\"]\ndest.mkdir()\nfor n in [\"regression.py\",\"source-pins.json\"]:shutil.copyfile(original/n,dest/n)\nrecord={\"sourcePins\":actual,\"candidate\":dispatch[\"candidate\"],\"prelaunchControls\":pin(root/\"prelaunch-controls.json\"),\"startupReceiptReused\":True,\"regression\":pin(dest/\"regression.py\"),\"mountArgv\":None,\"mountReason\":\"No checkout or mount; direct Backend.handle only\",\"ssh\":\"Exact trusted SSH configuration in unchanged ops.py\",\"identityReceipt\":json.loads((root/\"e/identity.json\").read_text())}\n(dest/\"input-verification.json\").write_text(json.dumps(record,indent=2)+\"\\n\")\nprint(\"PASS: receipt identity, five exact candidate source pins, byte-identical original regression; no mount/Node/Boat\")"
+  ],
+  "cwd": "/tmp/toyvm-unlink-rmdir-original-parent-accept-oct29/repo",
+  "exit": 1,
+  "elapsed": 0.18694445001892745,
+  "admission": {
+    "free": 4518481920,
+    "MemAvailable": 3354214400,
+    "allocated": 2158592,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 0,
+  "stderrBytes": 923
+}

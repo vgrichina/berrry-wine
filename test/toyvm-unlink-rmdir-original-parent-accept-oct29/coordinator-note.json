@@ -1,0 +1,28 @@
+{
+  "task": "toyvm-unlink-rmdir-original-parent-accept-oct29",
+  "outcome": "STOPPED at first setup-check rejection; ZERO behavioral acceptance",
+  "cause": "Worker incorrectly compared candidate pins to retained provenance baseline pins. Observed five pins match dispatch sourcePins. Retained provenance backend is old 10877/e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41; actual candidate is dispatch 11111/b273dceaf1d648415fdc1c2aca54ab3d511c81b94bb911e6588a81e1b63c14dc. No production defect established.",
+  "candidate": "6e1ab35cf3e865cb00d8dd9f7c27e082835b17ae",
+  "branch": "task/toyvm-unlink-rmdir-original-parent-accept-oct29",
+  "commit": null,
+  "remoteVerification": null,
+  "publication": "Stopped on rejection; no Git mutation or publication attempted",
+  "canonical": null,
+  "sourcePinsReceipt": "evidence/pinned-inputs.stderr",
+  "remainingGates": [
+    "correct candidate-versus-dispatch pin checkpoint in fresh assigned task",
+    "byte-identical original 14-case production gate",
+    "independent supplementary acceptance and mutation controls",
+    "caller OLD backend pin",
+    "combined integration",
+    "full CLI",
+    "mounted callback",
+    "browser",
+    "gameplay"
+  ],
+  "productionChanges": false,
+  "box": null,
+  "lifecycle": "No box assigned; coordinator retains lifecycle ownership",
+  "board": "Coordinator append-only; no root/messageboard writes",
+  "evidence": "evidence/pinned-inputs.json"
+}
