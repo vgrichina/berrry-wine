@@ -1,0 +1,60 @@
+{
+  "commit": "f0341d5d269baad2afed6a801768566e53d159be",
+  "branch": "task/shadow-man-null-boundary-capture-preflight-oct23",
+  "actualRemoteRefs": {
+    "refs/heads/main": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+    "refs/heads/task/shadow-man-null-boundary-capture-preflight-oct23": "f0341d5d269baad2afed6a801768566e53d159be"
+  },
+  "remoteMatch": true,
+  "basePathsUnchanged": 8306,
+  "ownedAdditions": 4,
+  "diffCheckExit": 0,
+  "reportCheckExit": 0,
+  "helperCaptureFixtures": "NOT RUN",
+  "captureReady": false,
+  "seals": [
+    {
+      "path": "docs/re-notes/shadow-man-null-boundary-capture-preflight-20261023/admission.json",
+      "bytes": 1513,
+      "sha256": "ba20c283e2190c2e81c6c896dd07a5e9b69b45dddff578fdef9b443f46cdee46",
+      "blob": "8ec1c79ad9066e77bc43586d9142427834197fe4"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-boundary-capture-preflight-20261023/check.py",
+      "bytes": 2606,
+      "sha256": "0ed7c6c45fbed04e086697da5ffb5ecbd614ec13899255367d4a945e93ae7cd3",
+      "blob": "8c3b0af60045f98dd7b65f4443182a9c055023e2"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-boundary-capture-preflight-20261023/checks.json",
+      "bytes": 16530,
+      "sha256": "b264ac811232600d7c4ac4494e3f39eb5479cd1ed25b979c83fe838a56dc9b2f",
+      "blob": "5a5269948b9618388bd21e37a712a074b08a39aa"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-boundary-capture-preflight-20261023.md",
+      "bytes": 8354,
+      "sha256": "fa4d031433628e1d33744495821a8cf6c00a2df68241e1a8ac218da424b3d790",
+      "blob": "65789fe64c8dd22a90859dde25192909307620b6"
+    }
+  ],
+  "finalConservativeParts": {
+    "entireDiagnosisDonorIncludingGitSourceEvidence": 8439761,
+    "ownGitUpper": 5929917,
+    "otherReadInputsIncludingPoliciesInventory": 1048576,
+    "measuredToolExecutables": 14380072,
+    "toolLibrariesTempOutputAndEvidenceAllowance": 8388608,
+    "reserve": 8388608
+  },
+  "finalWholeUpperBytes": 46575542,
+  "hostFreeAfter": 6585470976,
+  "publicationPreparationFailure": {
+    "command": "git mktree -z",
+    "exit": 128,
+    "diagnostic": "unchanged parent README.md blob unavailable in thin donor",
+    "resolution": "mktree --missing preserves already-referenced unchanged parent blobs; all four new blobs written locally; no fetch"
+  },
+  "nodeStatExit": 0,
+  "admissionScriptExit": 0,
+  "sourceCheckCommand": "GIT_NO_LAZY_FETCH=1 python3 docs/re-notes/shadow-man-null-boundary-capture-preflight-20261023/check.py /home/user/wine-assembly-shadow-man-null-exit-diagnosis-oct23"
+}
