@@ -15,7 +15,7 @@ REPO = pathlib.Path(__file__).resolve().parents[2]
 CALLER = REPO / 'test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py'
 ADAPTER = 'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py'
 PINS = {
-    ADAPTER: 'e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb',
+    ADAPTER: 'e7aaa8cdbbd0871918918de090b57585c8ed0ba21e7510583fabc745359c124e',
     'toyvm-kernel-profile-accounting-backend-oct28/confine.py': '0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8',
     'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py': '13bf42f071f5eb84542286f35faf2dc814aaf63bf1bcfe7bb306e3e2f7f4f963',
     'toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py': '9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85',

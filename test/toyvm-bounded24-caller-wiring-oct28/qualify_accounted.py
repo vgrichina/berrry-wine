@@ -11,7 +11,7 @@ import pathlib
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RECEIPT_SHA256 = '543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870'
 BACKEND_PINS = {
-    'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py': 'e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb',
+    'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py': 'e7aaa8cdbbd0871918918de090b57585c8ed0ba21e7510583fabc745359c124e',
     'toyvm-kernel-profile-accounting-backend-oct28/confine.py': '0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8',
     'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py': '13bf42f071f5eb84542286f35faf2dc814aaf63bf1bcfe7bb306e3e2f7f4f963',
     'toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py': '9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85',
@@ -103,7 +103,7 @@ def evaluate(result, limits):
                 cleanupComplete=cleanup, failures=failures, backendReceipt=retained)
 
 
-def qualify(*, domain, receipt, command, work, **limits):
+def qualify(*, domain, receipt, command, work, rename_evidence=0, **limits):
     report = dict(accepted=False, browserAllowed=False, browserAllowanceRemaining=dict(BROWSER_ALLOWANCE),
                   childSucceeded=False, accountingAccepted=False, cleanupComplete=False)
     try:
@@ -111,6 +111,8 @@ def qualify(*, domain, receipt, command, work, **limits):
         # The unchanged tiny-fixture confinement policy remains mandatory beneath it.
         if domain != 'tiny-fixture':
             raise ValueError('unqualified browser/domain: ' + domain)
+        if type(rename_evidence) is not int or not 0 <= rename_evidence <= 64:
+            raise ValueError('rename evidence limit must be an integer from 0 to 64')
         validate_receipt(receipt)
         if set(limits) != set(MAX_LIMITS):
             raise ValueError('all quota/resource limits must be explicit')
@@ -128,7 +130,8 @@ def qualify(*, domain, receipt, command, work, **limits):
         if not work.is_dir() or any(work.iterdir()):
             raise ValueError('fresh empty owned work directory required')
         backend = load_backend()
-        result = backend(list(command), work, backend='synchronous-fuse', **limits)
+        evidence = {'rename_evidence': rename_evidence} if rename_evidence else {}
+        result = backend(list(command), work, backend='synchronous-fuse', **evidence, **limits)
         report.update(evaluate(result, limits))
     except Exception as error:
         report.update(accepted=False, error=type(error).__name__ + ': ' + str(error))
@@ -146,6 +149,8 @@ def main(argv=None):
     parser.add_argument('--domain', required=True)
     parser.add_argument('--receipt', required=True)
     parser.add_argument('--work', required=True)
+    parser.add_argument('--rename-evidence', type=int, choices=range(65), default=0,
+                        help='retain at most this many backend RENAME callback records (0 disables)')
     for name in MAX_LIMITS:
         parser.add_argument('--' + name.replace('_', '-'), required=True,
                             type=float if name in ('cpu_limit', 'wall_limit') else int)
