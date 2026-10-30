@@ -1,0 +1,429 @@
+{
+  "commit": "0012d7182cb3f2a860f51dacaa5d84e36c2b20a4",
+  "files": {
+    "test/run.js": {
+      "bytes": 693262,
+      "sha256": "e01db98dddc51a9f4e65de9a1844010800ef2bfa74815e22610b68b7df8e0243"
+    },
+    "lib/gl-compat.js": {
+      "bytes": 116057,
+      "sha256": "6593bc0ae954d750f1800513799005c1797cdefeb3e68c70a46e06f209ec41a2"
+    },
+    "lib/mem-utils.js": {
+      "bytes": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+    },
+    "lib/region-map.generated.js": {
+      "bytes": 36333,
+      "sha256": "a0aba0e2e8bfd1e6767142cb240853b788dd430918e8bab767bc6398d4360763"
+    },
+    "lib/gl-command-stream.js": {
+      "bytes": 7907,
+      "sha256": "ff09abb9f6c7d5a9d68082b1d1903ebdc7466eb50b9a265e249959b52477dc61"
+    },
+    "lib/gpu-backend.js": {
+      "bytes": 49276,
+      "sha256": "f0d70cfe6418d3297a4f414a7d4980e3cf279c0ee000bc923c0b0481cce1589d"
+    },
+    "lib/dib.js": {
+      "bytes": 12071,
+      "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34"
+    },
+    "tools/dump_sprites.js": {
+      "bytes": 3035,
+      "sha256": "e27a02645940ac5120f99127e6dabebd062b3c9b6e2873184d4bc770ee9ffe05"
+    },
+    "lib/save-bundle.js": {
+      "bytes": 29124,
+      "sha256": "4ac22b490b0c201d5c4d7ee0047882522eeb4690d93b095e4eb755d84590f3ee"
+    },
+    "lib/storage.js": {
+      "bytes": 79616,
+      "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe"
+    },
+    "lib/zip-mount.js": {
+      "bytes": 32525,
+      "sha256": "0992d15a85a3fa54dbcfe8bdecf2ce1a57e1922beba457f18af438e107e3d274"
+    },
+    "lib/byte-provider.js": {
+      "bytes": 35492,
+      "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce"
+    },
+    "lib/control-server.js": {
+      "bytes": 7126,
+      "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b"
+    },
+    "tools/disasm.js": {
+      "bytes": 29904,
+      "sha256": "4d64e8b9b49a1901feb05df182a112f7f1eb4c5875a45d9f376172e8a2668166"
+    },
+    "tools/simd-ops.js": {
+      "bytes": 8592,
+      "sha256": "7074fdaa3b026d976b7c995bbae37c7b64794b1f3329a5e03acea98620573e9e"
+    },
+    "lib/vfs-overlay.js": {
+      "bytes": 14961,
+      "sha256": "2d725c5ee5f05ef2f843083b895d4f5fce82223db1db0520db1515e11d28ebb5"
+    },
+    "lib/overlay-store.js": {
+      "bytes": 22883,
+      "sha256": "355c04686750794b161b725c00195fc84ea8d89f59a0ab773b4f7f93ecfbc0c9"
+    },
+    "lib/media-cli.js": {
+      "bytes": 3730,
+      "sha256": "86ee445779ccf36064890c3ef0ab2eaba8900c5c8dcd855a64d6d590d7c01fb4"
+    },
+    "lib/cdrom.js": {
+      "bytes": 14034,
+      "sha256": "99020671e2b3f3eaca930d4acad0d502ed33d5295fadaaa28d32736c6a0c6727"
+    },
+    "lib/media-import.js": {
+      "bytes": 37173,
+      "sha256": "016c7188b954ace6f573b6fdfb3ff383617b40311bcba45635ad4db77b8d1d47"
+    },
+    "lib/iso9660.js": {
+      "bytes": 23867,
+      "sha256": "c840f7b10a3cd02ba4c122db7a37876088d6062adfbde2fed297d520ad51d544"
+    },
+    "lib/app-files.js": {
+      "bytes": 16426,
+      "sha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7"
+    },
+    "lib/morrowind-name-observer.js": {
+      "bytes": 10064,
+      "sha256": "a2bbe6d15de3fc46d65f6e72e365e82cd223b5db5486dc3cdbc585aad9d75799"
+    },
+    "lib/process-boot.js": {
+      "bytes": 52033,
+      "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9"
+    },
+    "lib/ne-guest-bridge.js": {
+      "bytes": 4652,
+      "sha256": "38f4458597a38719f3d20964039b305016ead8536d7b22a911ae14d4c5da336a"
+    },
+    "lib/ne-invoke.js": {
+      "bytes": 5358,
+      "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5"
+    },
+    "lib/ne-load-error.js": {
+      "bytes": 676,
+      "sha256": "c4ef6991b40b903833dedbf8fff5d214b882b194dbbca7eb9259dd1c67b800fa"
+    },
+    "lib/ne-lifecycle.js": {
+      "bytes": 12104,
+      "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4"
+    },
+    "lib/ne-image.js": {
+      "bytes": 7091,
+      "sha256": "5ce051afa41391e63bd88b2084098c52ba515241c02e99a423c6d4f3632be7d0"
+    },
+    "lib/ne-sources.js": {
+      "bytes": 3473,
+      "sha256": "e2c12ce6a3f00dbad4649afe231a18b7cabb7d90369f402f98575f2acf6d60b2"
+    },
+    "lib/dll-loader.js": {
+      "bytes": 98961,
+      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145"
+    },
+    "lib/pe.js": {
+      "bytes": 4787,
+      "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853"
+    },
+    "lib/dll-registry.js": {
+      "bytes": 6443,
+      "sha256": "a5d814cd4af1639d189939d1b16e963218d0b8680d11cbbf9a3985e1fd00f981"
+    },
+    "lib/guest-thread-host.js": {
+      "bytes": 73126,
+      "sha256": "dab1418c519f4d094dd4d1357a6f4dd4a0d0fab21d9bf73b60eef8bb26bbdc7b"
+    },
+    "lib/d3d-command-stream.js": {
+      "bytes": 47664,
+      "sha256": "ea1080750e8557f261d2b62f646b2cbc317be1b639cdc566b022c9a6ad494945"
+    },
+    "lib/render-worker.js": {
+      "bytes": 17410,
+      "sha256": "15d9e5f7a4ca693cf3b41bc5763d9b2fff8e7f1f898f9b05a9736425722761aa"
+    },
+    "lib/thread-send-waits.js": {
+      "bytes": 14963,
+      "sha256": "6b6552898b00e7e5fa2a3ed293dc495107d15d6e3f6379dfab132f6105fe1747"
+    },
+    "lib/guest-rpc.js": {
+      "bytes": 59680,
+      "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1"
+    },
+    "lib/named-event-authority.js": {
+      "bytes": 15058,
+      "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278"
+    },
+    "lib/vlan-wire.js": {
+      "bytes": 13050,
+      "sha256": "d3d6eef27235b210519530aa746f29e29eb75558c3d8dcda79b8a72dd9faf659"
+    },
+    "lib/present-frame-audit.js": {
+      "bytes": 6506,
+      "sha256": "f11730a9baf9b668a3c80598ee59738425ff5f9fac46142e61b10498c2c0c6de"
+    },
+    "tools/build-page-translation-stats.js": {
+      "bytes": 6442,
+      "sha256": "65d9f4b968ec8d15b1de332195bc1f58672185155cfd2b672fa78be490aac0a9"
+    },
+    "tools/region-layout-hash.js": {
+      "bytes": 8031,
+      "sha256": "5bdbd6e5ee30c0facb821e78fc1de481c07839677796d09825573902ac8026ac"
+    },
+    "tools/region-layout.js": {
+      "bytes": 8616,
+      "sha256": "c781bbb5b3b5d31412bac1d6cb60329ca9612ba2a06d09e52d2c1854b62a8e30"
+    },
+    "test/compile-src.js": {
+      "bytes": 2508,
+      "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76"
+    },
+    "tools/watx-closure.js": {
+      "bytes": 5027,
+      "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c"
+    },
+    "lib/d3dim-gpu.js": {
+      "bytes": 53302,
+      "sha256": "f0bc4d36f5d80554bb236ff54bbec76024abc5b7e4ffd1797202d586c26db13b"
+    },
+    "lib/d3d9-backend.js": {
+      "bytes": 65687,
+      "sha256": "ba5063750e6c8caf684f6ce72c7b91437539e4e49008c3111f5978d3752c6773"
+    },
+    "lib/render-clear.js": {
+      "bytes": 4377,
+      "sha256": "f54281334bc40134e7a23208f6139045528e5fac600f448fe295d8d2671f0fc9"
+    },
+    "lib/d3d9-fixed.js": {
+      "bytes": 29976,
+      "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3"
+    },
+    "lib/d3d9-shader.js": {
+      "bytes": 47578,
+      "sha256": "fe0067d9c472ae48dffde9140e0000aaefdf41b489825ea1d8bee8e63d385440"
+    },
+    "lib/d3d-shader-ir.js": {
+      "bytes": 15243,
+      "sha256": "9ada4145c3c585418c841e605332622ccbba101805d66750dd57ce213b452056"
+    },
+    "lib/thread-manager.js": {
+      "bytes": 229006,
+      "sha256": "afbd576a564dcc304d11c885b70b4a1ccd65db9a40e1407ac45ea0f098d7f08a"
+    },
+    "lib/worker-imports.js": {
+      "bytes": 22458,
+      "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9"
+    },
+    "test/main-scheduler-observer.js": {
+      "bytes": 2554,
+      "sha256": "93775a00c7df506e4d5ad6f77349375a11a797b35c09aab9e0909115df3e7b20"
+    },
+    "tools/diablo-gameplay-bench.js": {
+      "bytes": 10737,
+      "sha256": "873269b5b8713afd313aea3ef74b196e6e1e5a9587d5820518bb8c1435268c58"
+    },
+    "lib/callback-lifecycle-trace.js": {
+      "bytes": 4033,
+      "sha256": "92b7a6296f1c8883866321ed3dbdeaa422ec9a6b32d53a35a432dff10d641cac"
+    },
+    "lib/headless-gl.js": {
+      "bytes": 14928,
+      "sha256": "7e79d93edd690f4c2338874bcde1961360547bfd031d4b58827484e7b03689fb"
+    },
+    "test/runner-experiments.js": {
+      "bytes": 39152,
+      "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209"
+    },
+    "test/runner-win-census.js": {
+      "bytes": 7071,
+      "sha256": "0c8a90e38c90df07d970d1fff068a015ae697f2a04dda56df05e4ba5aba0dde5"
+    },
+    "test/runner-experiment-report.js": {
+      "bytes": 24188,
+      "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408"
+    },
+    "lib/renderer.js": {
+      "bytes": 216514,
+      "sha256": "6702c363929e969a57d4e817d2d3d638d138e145cf28a50cda93a468f4269afe"
+    },
+    "lib/renderer-input.js": {
+      "bytes": 181810,
+      "sha256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78"
+    },
+    "lib/canvas-compat.js": {
+      "bytes": 984,
+      "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373"
+    },
+    "lib/raster-canvas.js": {
+      "bytes": 17590,
+      "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3"
+    },
+    "lib/presentation-filter.js": {
+      "bytes": 53087,
+      "sha256": "b8820a6da349c51a7a614b9b561f6cdf08358e23c7599136a5e6b67922aeb058"
+    },
+    "lib/surface.js": {
+      "bytes": 14312,
+      "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b"
+    },
+    "host.js": {
+      "bytes": 370860,
+      "sha256": "b6700f52d21e24f574f6c97207652d882009f24bc16e01e783b8a7b394b95dfc"
+    },
+    "lib/main-io-wait.js": {
+      "bytes": 3133,
+      "sha256": "e625fa54c9371b266bb7ca29cd92792bc35f560b4147cfda1bf101179a2ea4ef"
+    },
+    "lib/watx-launcher.js": {
+      "bytes": 34797,
+      "sha256": "c219f778dfa6de9086198b0b96edc364af1f3cdf31c70731bef3f1d4b61a5595"
+    },
+    "lib/dispatch-trampoline.js": {
+      "bytes": 5332,
+      "sha256": "21267e1bec969169b1a7a619e7fee03514a88957ac9abfcc63ba0c0905a910af"
+    },
+    "tools/watx.js": {
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    },
+    "lib/startup-clock.js": {
+      "bytes": 3363,
+      "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7"
+    },
+    "test/input-consumption-trace.js": {
+      "bytes": 7361,
+      "sha256": "c8c85b12cfb76825ed64d2bc7a4a0afaea453ac5f3d1ba68f3db181ab4b146fe"
+    },
+    "lib/guest-clock.js": {
+      "bytes": 3204,
+      "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91"
+    },
+    "lib/batch-clock.js": {
+      "bytes": 2726,
+      "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a"
+    },
+    "lib/tinysynth-offline.js": {
+      "bytes": 11712,
+      "sha256": "3e1c857d4478cd6b6ac3dcae4bdca8fdd68e00269d4d136032961bd59ab32f53"
+    },
+    "lib/vendor/webaudio-tinysynth.js": {
+      "bytes": 62376,
+      "sha256": "65aa9b78b1bdc8cccc1a7e83eb6cfc24310a548cb6be4334096a8fb1d303a52c"
+    },
+    "lib/cli-recorder.js": {
+      "bytes": 9287,
+      "sha256": "b0ec010dc076cb2edfbaeef615e0c7e262f4171d04e35e801ddfde23a7040eae"
+    },
+    "lib/apps.js": {
+      "bytes": 436637,
+      "sha256": "c401b67634a140470d0cf1b4b013ce3da2138754ff581f9cc20b99ca30ca91e2"
+    },
+    "lib/app-file-sizes.generated.js": {
+      "bytes": 304086,
+      "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0"
+    },
+    "lib/font-substitutions.js": {
+      "bytes": 2966,
+      "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16"
+    },
+    "lib/api-format.js": {
+      "bytes": 34699,
+      "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa"
+    },
+    "lib/vfs-export.js": {
+      "bytes": 4975,
+      "sha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d"
+    },
+    "lib/vfs-host-files.js": {
+      "bytes": 3689,
+      "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7"
+    },
+    "lib/vfs-seed.js": {
+      "bytes": 8258,
+      "sha256": "c4ea49c788a5c6331cc900742916315e4d5c68cc2a806b947ae26b4814489c1d"
+    },
+    "lib/app-profiles.js": {
+      "bytes": 18930,
+      "sha256": "8798f81a53fb45b89c54c4864fec96181a3f01c76bb8e73c229719535c5c45a8"
+    },
+    "lib/host-window.js": {
+      "bytes": 63752,
+      "sha256": "64a88ff88d204ad78a063137ba8b14c685f1fcb49fff02e91fe7b8c7637b717d"
+    },
+    "lib/render-wait-attribution.js": {
+      "bytes": 4614,
+      "sha256": "aa244e2741dc3eada31730b19a653f661b3fdd3c1e4bdfa1d09465a6a09745b0"
+    },
+    "lib/frame-intervals.js": {
+      "bytes": 5466,
+      "sha256": "a301b47329a5a474df65743f71e4a9a91fbf7e4d81158792cd99667b3cfbb53b"
+    },
+    "lib/host-imports.js": {
+      "bytes": 197066,
+      "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60"
+    },
+    "lib/filesystem.js": {
+      "bytes": 158109,
+      "sha256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1"
+    },
+    "lib/resources-icon.js": {
+      "bytes": 20791,
+      "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5"
+    },
+    "lib/d3d9-host.js": {
+      "bytes": 87629,
+      "sha256": "a5ff73ec46f02c883659fff62a83bbd6bdd2dd43483dc353c80682228c297ee9"
+    },
+    "lib/d3d9-software-backend.js": {
+      "bytes": 87802,
+      "sha256": "d73d855a6936881712c7b75e203cfc717c43dd82ca38fe67a576f4fc37da93ee"
+    },
+    "lib/d3d-geometry-batches.js": {
+      "bytes": 3149,
+      "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc"
+    },
+    "lib/d3d9-texture.js": {
+      "bytes": 3107,
+      "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e"
+    },
+    "lib/glide-host.js": {
+      "bytes": 17374,
+      "sha256": "4d010474960efb779ce7642495e94165110e430cee96a811a2443d7f560ec591"
+    },
+    "lib/glide-software.js": {
+      "bytes": 27955,
+      "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46"
+    },
+    "lib/glide-backend.js": {
+      "bytes": 41345,
+      "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3"
+    },
+    "lib/gl-render-host.js": {
+      "bytes": 15356,
+      "sha256": "0eb27b404eab6d5e078d4431dc5641743bcb85db8c858de8ab428602ebab6812"
+    },
+    "lib/host-audio.js": {
+      "bytes": 207412,
+      "sha256": "954e76b678502d6147475ea737af85b96e2408a488a2bd19c643dd2cf7969438"
+    },
+    "lib/audio-worklet-host.js": {
+      "bytes": 14592,
+      "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14"
+    },
+    "lib/gdi-surface.js": {
+      "bytes": 20152,
+      "sha256": "68878c4a105605274f29c4a0b9522c83db74909fd06ddb2192f6f3b11143b87a"
+    },
+    "lib/cli-failure-cleanup.js": {
+      "bytes": 717,
+      "sha256": "a345ba0788c9534f683d2b6579ecffe99d1bd6e974a510efedbbe34f0552a435"
+    }
+  },
+  "literalRelativeClosure": true,
+  "nodeSmoke": true,
+  "archive": "/tmp/gltron-runner-closure-original-render-oct30/runner-closure.tar.xz",
+  "archiveSHA256": "ff895832cc6c9aa3633b33f1cb1e14ac09e1975fbaf8a81ae4727dafd01e9d4d"
+}

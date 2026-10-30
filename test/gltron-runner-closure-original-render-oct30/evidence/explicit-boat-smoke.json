@@ -1,0 +1,35 @@
+{
+  "receipt": {
+    "label": "explicit-boat-smoke",
+    "request": {
+      "bytes": 429,
+      "sha256": "fdf5cdbf4f726f68357f9db49dc35e711b8dad1f436e6110593ac51ff3f6dee0"
+    },
+    "response": {
+      "bytes": 516,
+      "sha256": "8aa2784f4cc17c1746d94b116e967a4aac22113561a4ff125f8af0442b5be8d9"
+    },
+    "elapsed": 1.7320444583892822,
+    "exit": 0,
+    "success": true,
+    "responseBytes": 516
+  },
+  "response": {
+    "commandId": "cmd_cuza0gdi4ekx",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-30T13:23:44.376Z",
+    "launcherFailed": false,
+    "noticedMs": 37,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 17,
+    "startedAt": "2026-10-30T13:23:42.841Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"sha256\": \"fbcf75f7de27355b52b77a1200dba211a50379e41afcf875211f981f0079a2f1\", \"node\": true, \"limits\": {\"RLIMIT_DATA\": [-1, -1], \"RLIMIT_AS\": [-1, -1], \"RLIMIT_FSIZE\": [-1, -1]}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

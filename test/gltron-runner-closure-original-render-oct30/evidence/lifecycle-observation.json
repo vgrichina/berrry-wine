@@ -1,0 +1,6 @@
+{
+  "initialVerification": "8 two-second queries ended while supported stop was still pending; runtime supervisor raised actual snapshot-stop not verified",
+  "subsequentRead": "Same stop operation completed without another stop or runtime; supported info closeout-info-0 establishes actual snapshot+stop",
+  "snapshotCompletedAt": "2026-10-30T13:24:48.381Z",
+  "stoppedAt": "2026-10-30T13:24:48.424Z"
+}

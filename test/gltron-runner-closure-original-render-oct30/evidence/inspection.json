@@ -1,0 +1,25 @@
+{
+  "reviewed": true,
+  "at": "2026-10-30T13:25:32.427293+00:00",
+  "productionRunnerInvocations": 1,
+  "compileInvocations": 0,
+  "originalPELoaded": true,
+  "originalSDLInitializerReturned": true,
+  "mainLoopReached": true,
+  "batch": 1,
+  "originalRender": false,
+  "frameInspection": "No original frame or screenshot exists in the verified retrieval manifest; guest crashed before render",
+  "gameplayAccepted": false,
+  "inputEvents": [],
+  "firstFailure": {
+    "kind": "unimplemented-api",
+    "api": "setbuf",
+    "guestEIP": "0x00423cb6",
+    "guestReturn": "0x00423cc7",
+    "wasmFunction": 10757,
+    "wasmOffset": "0x18d326",
+    "exit": 1,
+    "batch": 1
+  },
+  "additionalWarning": "msvcrt.dll missing on disk; imports fall to WAT stubs. Original warning preserved; no repair/retest."
+}

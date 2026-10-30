@@ -1,0 +1,35 @@
+{
+  "receipt": {
+    "label": "runtime-data-restore",
+    "request": {
+      "bytes": 2715,
+      "sha256": "e90dbcb9bb3d9473e2e02351313ca93e2c17854ad72d92259ff753517cd580e1"
+    },
+    "response": {
+      "bytes": 527,
+      "sha256": "de0fb52ba95e539a1a2d72b6288f2e03ae2ddcb61e7865ac1a1acc66297e863c"
+    },
+    "elapsed": 0.3929471969604492,
+    "exit": 0,
+    "success": true,
+    "responseBytes": 527
+  },
+  "response": {
+    "commandId": "cmd_ak8ol3ay5uyi",
+    "cwd": "gltron-render",
+    "exitCode": 0,
+    "finishedAt": "2026-10-30T13:24:27.495Z",
+    "launcherFailed": false,
+    "noticedMs": 1,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 2,
+    "startedAt": "2026-10-30T13:24:27.180Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"PASS\": true, \"runnerMembers\": 105, \"allRunnerMembersVerified\": true, \"archive\": {\"bytes\": 1083392, \"sha256\": \"ff895832cc6c9aa3633b33f1cb1e14ac09e1975fbaf8a81ae4727dafd01e9d4d\"}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

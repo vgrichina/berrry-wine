@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=256",
+    "-e",
+    "const assert=require(\"assert\");assert(!process.env.WINE_REGION_MAP);const d=require(\"./tools/disasm\");assert.equal(typeof d.disasmAt,\"function\");for(const n of [\"./tools/simd-ops\",\"./tools/watx\",\"./lib/media-sniff\",\"./lib/zip-mount\",\"./lib/iso9660\",\"./lib/byte-provider\"])require(n);console.log(JSON.stringify({disasmAt:true,dynamicHelpers:true,regionOverrideAbsent:true}));"
+  ],
+  "startedAt": "2026-10-30T13:24:28.144229+00:00",
+  "exit": 0,
+  "wall": 0.08735990524291992,
+  "peakRSS": 43290624,
+  "violation": null,
+  "FSIZE": 12582912,
+  "capture": 8192,
+  "limits": {
+    "cpu": 60,
+    "wall": 30,
+    "heapMiB": 256,
+    "aggregateRSS": 2147483648
+  },
+  "nodeEnvironment": "/home/user/wine-assembly/node_modules"
+}

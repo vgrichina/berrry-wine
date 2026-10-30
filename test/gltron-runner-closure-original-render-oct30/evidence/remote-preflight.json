@@ -1,0 +1,35 @@
+{
+  "receipt": {
+    "label": "remote-preflight",
+    "request": {
+      "bytes": 137,
+      "sha256": "b015b4c084558d148e47f9b14249e3c6031f5d6f232c441f88b76d0a44bb8744"
+    },
+    "response": {
+      "bytes": 399,
+      "sha256": "d03a022f08b7e970bd3a7ec67da4ef6b71e7a7f9acbcde6e291d1a31ea43714b"
+    },
+    "elapsed": 0.969916820526123,
+    "exit": 0,
+    "success": true,
+    "responseBytes": 399
+  },
+  "response": {
+    "commandId": "cmd_qkgyoobdlp7l",
+    "cwd": "gltron-render",
+    "exitCode": 0,
+    "finishedAt": "2026-10-30T13:24:28.466Z",
+    "launcherFailed": false,
+    "noticedMs": 1,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 1,
+    "startedAt": "2026-10-30T13:24:27.571Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"mode\": \"preflight\", \"physical\": 47570944, \"PASS\": true}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

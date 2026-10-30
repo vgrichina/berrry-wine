@@ -1,0 +1,123 @@
+PE loaded. Entry: 0x0042366a
+DLL: sdl.dll at 0x53f000, DllMain=0x5688df, thunks=2071, origBase=0x10000000
+Patching EXE imports: SDL.dll -> DLL #0 (SDL.dll)
+After patching: 2071 thunks
+Calling DllMain at 0x5688df...
+DllMain returned, EAX=0x1
+[files] policy eager: small app: 92 eager (4968893 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[vfs] working directory: c:\games\gltron
+[API] malloc
+[API] _initterm
+[API] DisableThreadLibraryCalls
+[API] GetModuleHandleA
+[API] __set_app_type
+[API] __p__fmode
+[API] __p__commode
+[API] _controlfp
+[API] _initterm
+[API] _onexit
+[API] __getmainargs
+[API] _initterm
+[API] GetStartupInfoA
+[API] GetModuleHandleA
+[API] LoadLibraryA
+[API] FreeLibrary
+[0] EIP=0x00423c0c EAX=0x00000001 ECX=0x0042a004 EDX=0x00000000 EBX=0x00000000 ESP=0x074fff48 EBP=0x074fff54 ESI=0x0043f01e EDI=0x07500758
+[API] freopen
+[API] fopen
+[API] freopen
+[API] fopen
+[API] setvbuf
+[API] setbuf
+
+*** CRASH at batch 1: unreachable
+  Full stack: RuntimeError: unreachable
+        at wasm://wasm/0072db3a:wasm-function[10757]:0x18d326
+        at wasm://wasm/0072db3a:wasm-function[3902]:0x9c643
+        at wasm://wasm/0072db3a:wasm-function[8271]:0x13749d
+        at wasm://wasm/0072db3a:wasm-function[8253]:0x11fd61
+        at wasm://wasm/0072db3a:wasm-function[7778]:0x11a29e
+        at wasm://wasm/0072db3a:wasm-function[7777]:0x11819c
+        at wasm://wasm/0072db3a:wasm-function[541]:0x1de0b
+        at wasm://wasm/0072db3a:wasm-function[12107]:0x1b946e
+        at /home/user/gltron-render/test/run.js:10486:31
+        at async withCliFailureCleanup (/home/user/gltron-render/lib/cli-failure-cleanup.js:10:12)
+  EIP before batch: 0x00423c0c (gltron+0x00423c0c)
+  prev_eip:  0x00423cb6 (gltron+0x00423cb6)
+  prev2_eip: 0x00423c8b (gltron+0x00423c8b)
+  thread_alloc: 0x1a002058
+  EIP=0x00423cb6 EAX=0x07500730 ECX=0x00000000 EDX=0x07500710 EBX=0x07500688 ESP=0x074fff2c EBP=0x074fff54 ESI=0x0057c1a4 EDI=0x07500750
+  00423c0c  a1 98 41 42 00               mov eax, [0x424198]
+  00423c11  83 c0 20                     add dword eax, 0x20
+  00423c14  50                           push eax
+  00423c15  68 40 ab 42 00               push 0x42ab40
+  00423c1a  68 30 ab 42 00               push 0x42ab30
+  00423c1f  ff 15 98 40 42 00            call [0x424098]
+  00423c25  8b 1d 64 41 42 00            mov ebx, [0x424164]
+  00423c2b  83 c4 0c                     add dword esp, 0xc
+  00423c2e  85 c0                        test eax, eax
+  00423c30  75 25                        jnz short 0x423c57
+  00423c32  68 40 ab 42 00               push 0x42ab40
+  00423c37  68 30 ab 42 00               push 0x42ab30
+  00423c3c  ff d3                        call ebx
+  00423c3e  83 c4 08                     add dword esp, 0x8
+  00423c41  85 c0                        test eax, eax
+  00423c43  74 12                        jz short 0x423c57
+  00423c8b  8b 0d 98 41 42 00            mov ecx, [0x424198]
+  00423c91  8b f0                        mov esi, eax
+  00423c93  8d 79 40                     lea edi, [ecx+0x40]
+  00423c96  b9 08 00 00 00               mov ecx, 0x8
+  00423c9b  f3 a5                        rep movsd
+  00423c9d  8b 15 98 41 42 00            mov edx, [0x424198]
+  00423ca3  68 00 02 00 00               push 0x200
+  00423ca8  6a 40                        push 0x40
+  00423caa  83 c2 20                     add dword edx, 0x20
+  00423cad  6a 00                        push 0x0
+  00423caf  52                           push edx
+  00423cb0  ff 15 2c 40 42 00            call [0x42402c]
+  00423cb6  a1 98 41 42 00               mov eax, [0x424198]
+  00423cbb  6a 00                        push 0x0
+  00423cbd  83 c0 40                     add dword eax, 0x40
+  00423cc0  50                           push eax
+  00423cb6  a1 98 41 42 00               mov eax, [0x424198]
+  00423cbb  6a 00                        push 0x0
+  00423cbd  83 c0 40                     add dword eax, 0x40
+  00423cc0  50                           push eax
+  00423cc1  ff 15 28 40 42 00            call [0x424028]
+  00423cc7  83 c4 18                     add dword esp, 0x18
+  00423cca  ff 15 20 40 42 00            call [0x424020]
+  00423cd0  8b d8                        mov ebx, eax
+  00423cd2  83 c9 ff                     or dword ecx, -0x1
+  00423cd5  8b fb                        mov edi, ebx
+  00423cd7  33 c0                        xor eax, eax
+  00423cd9  f2 ae                        repne scasb
+  00423cdb  f7 d1                        not ecx
+  00423cdd  49                           dec ecx
+  00423cde  8b c1                        mov eax, ecx
+  00423ce0  83 c0 04                     add dword eax, 0x4
+  Stack around ESP=0x074fff2c:
+    [0x074fff24] = 0x00000000
+    [0x074fff28] = 0x00000000
+    [0x074fff2c] = 0x00423cc7 <-- ESP
+    [0x074fff30] = 0x07500730
+    [0x074fff34] = 0x00000000
+    [0x074fff38] = 0x07500710
+    [0x074fff3c] = 0x00000000
+    [0x074fff40] = 0x00000040
+    [0x074fff44] = 0x00000200
+    [0x074fff48] = 0x07500758
+    [0x074fff4c] = 0x0043f01e
+    [0x074fff50] = 0x00000000
+    [0x074fff54] = 0x074ffff8
+    [0x074fff58] = 0x004237fb
+    [0x074fff5c] = 0x00400000
+    [0x074fff60] = 0x00000000
+  WASM stack:
+    at wasm://wasm/0072db3a:wasm-function[10757]:0x18d326
+    at wasm://wasm/0072db3a:wasm-function[3902]:0x9c643
+    at wasm://wasm/0072db3a:wasm-function[8271]:0x13749d
+    at wasm://wasm/0072db3a:wasm-function[8253]:0x11fd61
+    at wasm://wasm/0072db3a:wasm-function[7778]:0x11a29e
+    at wasm://wasm/0072db3a:wasm-function[7777]:0x11819c
+    at wasm://wasm/0072db3a:wasm-function[541]:0x1de0b
+    at wasm://wasm/0072db3a:wasm-function[12107]:0x1b946e
