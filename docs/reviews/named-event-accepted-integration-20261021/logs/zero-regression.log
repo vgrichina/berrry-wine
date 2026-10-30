@@ -1,8 +1,0 @@
-PASS failed connection initialization is latched without reconnect
-{"originalGapCorrected":{"opened":917504,"acquired":0}}
-PASS 24 real subprocess auto-reset races
-PASS manual/reset/ref/generation/stale/unnamed/unsupported/error contracts
-PASS actual guest Worker nested wrapper explicitly fails without mirrored acquisition
-PASS actual guest Worker ordinary broker route acquires once from authority
-PASS actual guest Worker ordinary broker route propagates poison without false success
-PASS timeout throws, poisoned reuse throws, no replay/fallback
