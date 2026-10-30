@@ -1,5 +1,0 @@
-no default compilation; future admitted build requires --build-diagnostic MODULE PROVENANCE
-+ actual - expected
-
-+ undefined
-- '--build-diagnostic'

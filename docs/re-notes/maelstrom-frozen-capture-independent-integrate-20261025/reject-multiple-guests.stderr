@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/maelstrom-frozen-capture-independent-integrate-oct25/ops/verify.py", line 33, in <module>
-    check(summary['guestStarts']==1 and load('one-guest-launch.json')['guestStartsAuthorized']==1,'one guest')
-  File "/tmp/maelstrom-frozen-capture-independent-integrate-oct25/ops/verify.py", line 11, in check
-    if not c:raise ValueError(m)
-             ^^^^^^^^^^^^^^^^^^^
-ValueError: one guest

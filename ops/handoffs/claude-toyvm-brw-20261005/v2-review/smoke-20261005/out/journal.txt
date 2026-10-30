@@ -1,9 +1,0 @@
-14:58:09 [SMOKE P0] smoke list: 3 of 199 programs (BRW.EXE DHADREN.EXE CHANGE.EXE)
-14:58:10 [SMOKE P0] prep ok (stack)
-14:58:23 [SMOKE P2] sweep gate clean, 3/3 programs in both trees
-14:58:23 [SMOKE P1] tests ok (2 suites)
-14:58:30 [SMOKE P3]    jit-early  before 3/3  after 3/3    jit-sepc   before 3/3  after 3/3    fold64     before 3/3  after 3/3    BROKE (agreed before, not after) -- BLOCKING: 0 C. health regressions (ok -> fail/timeout/stuck, or went blank) -- BLOCKING: 0 (12/12 rows per tree)
-14:58:32 [SMOKE P4] 0 of 3 l1 rows moved
-14:58:36 [SMOKE P5] BRW parity on cand: 854 identical deliveries, frame 93f6deb5, dispatched 50000005
-14:58:36 [SMOKE P6] nothing moved
-14:58:36 [SMOKE DONE] harness smoke only, NOT the corpus A/B; elapsed 27s
