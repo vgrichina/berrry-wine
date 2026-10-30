@@ -1,0 +1,10 @@
+{
+  "commit": "b47634c719a289e2f1ab6e5067c0d8c1995c012a",
+  "parent": "e30b1524a832bbc92bd6a8724a1baa24c4c73c3f",
+  "branch": "task/shadow-man-settings-observer-repair-runtime-oct23",
+  "pushExit": 0,
+  "pushStdout": "",
+  "pushStderr": "remote: This repository moved. Please use the new location:        \nremote:   git@github.com:vgrichina/berrry-wine.git        \nTo github.com:vgrichina/wine-assembly.git\n   e30b152..b47634c  HEAD -> task/shadow-man-settings-observer-repair-runtime-oct23\n",
+  "actualRemote": "b47634c719a289e2f1ab6e5067c0d8c1995c012a",
+  "independentRemoteVerified": true
+}
