@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-offline-nonfinite-json-repair-oct29/repo",
+    "rev-parse",
+    "--absolute-git-dir"
+  ],
+  "captureBytes": 2097152,
+  "cpuSeconds": 90,
+  "cwd": "/tmp/toyvm-offline-nonfinite-json-repair-oct29/repo",
+  "exit": 0,
+  "fileBytes": 12582912,
+  "gitDataBytes": 268435456,
+  "groupPeakRSS": 17707008,
+  "groupRSSBytes": 536870912,
+  "incident": null,
+  "pythonDataBytes": 134217728,
+  "remainingProcessGroup": [],
+  "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdoutSHA256": "31defcadf9fd46f02b7c19902a92c511face0d61c5af1e3031008d5fec9918d2",
+  "wallLimitSeconds": 120,
+  "wallSeconds": 0.012522764038294554
+}

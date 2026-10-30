@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-offline-nonfinite-json-repair-oct29/repo",
+    "commit",
+    "-m",
+    "fix(toyvm): reject offline JSON exponent overflow; retain partial acceptance blocker"
+  ],
+  "captureBytes": 2097152,
+  "cpuSeconds": 90,
+  "cwd": "/tmp/toyvm-offline-nonfinite-json-repair-oct29/repo",
+  "exit": 0,
+  "fileBytes": 12582912,
+  "gitDataBytes": 268435456,
+  "groupPeakRSS": 39047168,
+  "groupRSSBytes": 536870912,
+  "incident": null,
+  "pythonDataBytes": 134217728,
+  "remainingProcessGroup": [],
+  "stderrSHA256": "9051b41132c9f74eb68e05752fc879e49b96ed62ea60d8e3b921ba7e5c5a9590",
+  "stdoutSHA256": "bdee544c5949622b3c2c76d463dac4a819c9f8621a48c21612120d7e82c25b41",
+  "wallLimitSeconds": 120,
+  "wallSeconds": 0.047366955084726214
+}

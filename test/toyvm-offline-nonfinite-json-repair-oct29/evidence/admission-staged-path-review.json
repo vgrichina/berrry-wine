@@ -1,0 +1,19 @@
+{
+  "MemAvailable": 3575517184,
+  "PASS": true,
+  "aggregate": 150994944,
+  "at": "2026-10-29T02:57:33.538894+00:00",
+  "blockSize": 4096,
+  "device": 64769,
+  "f_bavail": 1206272,
+  "freeBytes": 4940890112,
+  "measuredBytes": 2742380,
+  "operation": "staged-path-review",
+  "ownedBytes": 2211203,
+  "positiveSharedWALGrowthCountedOnce": 0,
+  "projection": 25165824,
+  "remainingProjectionBytes": 22423444,
+  "requiredBytes": 3200253952,
+  "sessionBytes": 531177,
+  "supervisorRSS": 17719296
+}

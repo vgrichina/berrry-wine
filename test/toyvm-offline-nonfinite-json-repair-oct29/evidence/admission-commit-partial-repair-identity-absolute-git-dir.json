@@ -1,0 +1,19 @@
+{
+  "MemAvailable": 3577901056,
+  "PASS": true,
+  "aggregate": 150994944,
+  "at": "2026-10-29T02:57:33.587558+00:00",
+  "blockSize": 4096,
+  "device": 64769,
+  "f_bavail": 1206265,
+  "freeBytes": 4940861440,
+  "measuredBytes": 2745547,
+  "operation": "commit-partial-repair-identity-absolute-git-dir",
+  "ownedBytes": 2214370,
+  "positiveSharedWALGrowthCountedOnce": 0,
+  "projection": 25165824,
+  "remainingProjectionBytes": 22420277,
+  "requiredBytes": 3200253952,
+  "sessionBytes": 531177,
+  "supervisorRSS": 17723392
+}

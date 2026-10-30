@@ -1,0 +1,10 @@
+[task/toyvm-offline-nonfinite-json-repair-oct29 ebc6b45361] fix(toyvm): reject offline JSON exponent overflow; retain partial acceptance blocker
+ 9 files changed, 1284 insertions(+), 1 deletion(-)
+ create mode 100644 supervisor.py
+ create mode 100644 test/toyvm-offline-nonfinite-json-repair-oct29/REPORT.md
+ create mode 100644 test/toyvm-offline-nonfinite-json-repair-oct29/evidence/first-control-incident.json
+ create mode 100644 test/toyvm-offline-nonfinite-json-repair-oct29/evidence/focused-results.json
+ create mode 100644 test/toyvm-offline-nonfinite-json-repair-oct29/evidence/initial-baseline.json
+ create mode 100644 test/toyvm-offline-nonfinite-json-repair-oct29/evidence/reuse.json
+ create mode 100644 test/toyvm-offline-nonfinite-json-repair-oct29/operation-evidence.tar.gz
+ create mode 100644 test/toyvm-offline-nonfinite-json-repair-oct29/regression.py

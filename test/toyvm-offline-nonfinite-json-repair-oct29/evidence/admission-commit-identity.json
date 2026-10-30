@@ -1,0 +1,19 @@
+{
+  "MemAvailable": 3576709120,
+  "PASS": true,
+  "aggregate": 150994944,
+  "at": "2026-10-29T02:57:33.703664+00:00",
+  "blockSize": 4096,
+  "device": 64769,
+  "f_bavail": 1206221,
+  "freeBytes": 4940681216,
+  "measuredBytes": 2831365,
+  "operation": "commit-identity",
+  "ownedBytes": 2300188,
+  "positiveSharedWALGrowthCountedOnce": 0,
+  "projection": 25165824,
+  "remainingProjectionBytes": 22334459,
+  "requiredBytes": 3200253952,
+  "sessionBytes": 531177,
+  "supervisorRSS": 17731584
+}

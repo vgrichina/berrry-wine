@@ -1,0 +1,81 @@
+{
+  "allocationBytes": 25165824,
+  "allocationRetainedThroughCoordinatorCloseout": true,
+  "candidate": "354c5651f6f11bbd430424c3163d7e87e125fc9a",
+  "cleanup": {
+    "allCompletedCLIProcessGroupsEmpty": true,
+    "noRuntime": true,
+    "perOperationEvidence": "operation-evidence.tar.gz",
+    "testBox": null,
+    "transientPaddingRemoved": true
+  },
+  "controlCompliance": "NOT_ESTABLISHED; retained first guard incident and logical-vs-allocated accounting limitation",
+  "lifecycleOwner": "coordinator",
+  "messageboardDeliveryOwner": "coordinator",
+  "offlineValidationOnly": true,
+  "originalLiveCLIFUSEBrowserGap": "OPEN",
+  "pins": {
+    "supervisor.py": {
+      "bytes": 7005,
+      "sha256": "2ee437b40c9e0e5dd09856dfbe16b02076af88903a4447816f87c72036e6921a"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/validate_receipt_offline.py": {
+      "bytes": 4739,
+      "sha256": "2ec1e51708b53aadbf084bf6b99253304991488214c9a0743ea45b1f92bfeac7"
+    },
+    "test/toyvm-offline-nonfinite-json-repair-oct29/REPORT.md": {
+      "bytes": 3782,
+      "sha256": "f7bd5a9efc4561c9ca0203f159c26956b080aab05771eca2a893a9813d5d0745"
+    },
+    "test/toyvm-offline-nonfinite-json-repair-oct29/evidence/first-control-incident.json": {
+      "bytes": 1564,
+      "sha256": "52bb1fce08a60ae34eeb24f8bc765644418d84a641cca9f10a91571879f9384a"
+    },
+    "test/toyvm-offline-nonfinite-json-repair-oct29/evidence/focused-results.json": {
+      "bytes": 34616,
+      "sha256": "42fed817b2c53f7214b879806dd20b8c500898265dc8551cf3704b6cc63c879f"
+    },
+    "test/toyvm-offline-nonfinite-json-repair-oct29/evidence/initial-baseline.json": {
+      "bytes": 895,
+      "sha256": "60fb1ec0115d6b39920472b797c4e9054e735fe644e6b0660739d57de1d6577f"
+    },
+    "test/toyvm-offline-nonfinite-json-repair-oct29/evidence/reuse.json": {
+      "bytes": 1378,
+      "sha256": "fc7d7d22a038cb61525902d93ddf6d4ee7c964eca7f25fa6f0eb361393bad626"
+    },
+    "test/toyvm-offline-nonfinite-json-repair-oct29/operation-evidence.tar.gz": {
+      "bytes": 27956,
+      "sha256": "4575e838a29e41594ef6ecc2427e23afdf3ae7f187775c77c6624488735bf750"
+    },
+    "test/toyvm-offline-nonfinite-json-repair-oct29/regression.py": {
+      "bytes": 6114,
+      "sha256": "ae1da4b648848aee1020c0450288763c32753dcf8d4ee5d2da6214e73fffc2aa"
+    }
+  },
+  "publication": {
+    "commit": "ebc6b453612ccab0dc9492341b014585d036b0b7",
+    "mainPushed": false,
+    "receipt": "evidence/verify-exact-remote.stdout",
+    "remoteRef": "refs/heads/task/toyvm-offline-nonfinite-json-repair-oct29",
+    "remoteSHA": "ebc6b453612ccab0dc9492341b014585d036b0b7",
+    "verifiedExactSHA": true
+  },
+  "rejectionCommit": "ef64b21875c04a34ea29ded0c31664feb3d45f8b",
+  "resourceIncidents": [
+    "evidence/first-control-incident.json"
+  ],
+  "runtimeQualified": false,
+  "session": "01a18592-37df-7ae1-a574-b1a398f25332",
+  "sessionPath": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-51-54-01a18592-37df-7ae1-a574-b1a398f25332.jsonl",
+  "status": "PARTIAL_REPAIR_BLOCKED_CONTROL_INCIDENT",
+  "task": "toyvm-offline-nonfinite-json-repair-oct29",
+  "tests": {
+    "completedPassingRealCLI": 53,
+    "cwdNegativeControls": 5,
+    "explicitLimitDelta": "NOT_RUN",
+    "inputBoundaryDelta": "NOT_RUN",
+    "prior72And52Reused": true,
+    "rejectingParserMutation": "NOT_RUN",
+    "sentinelAbsent": true
+  }
+}

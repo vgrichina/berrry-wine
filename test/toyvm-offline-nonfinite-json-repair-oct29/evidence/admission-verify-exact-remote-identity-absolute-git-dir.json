@@ -1,0 +1,19 @@
+{
+  "MemAvailable": 3602784256,
+  "PASS": true,
+  "aggregate": 150994944,
+  "at": "2026-10-29T02:57:36.475042+00:00",
+  "blockSize": 4096,
+  "device": 64769,
+  "f_bavail": 1206196,
+  "freeBytes": 4940578816,
+  "measuredBytes": 2840115,
+  "operation": "verify-exact-remote-identity-absolute-git-dir",
+  "ownedBytes": 2307406,
+  "positiveSharedWALGrowthCountedOnce": 0,
+  "projection": 25165824,
+  "remainingProjectionBytes": 22325709,
+  "requiredBytes": 3200253952,
+  "sessionBytes": 532709,
+  "supervisorRSS": 17752064
+}

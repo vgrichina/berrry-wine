@@ -1,0 +1,9 @@
+supervisor.py
+test/toyvm-bounded24-caller-wiring-oct28/validate_receipt_offline.py
+test/toyvm-offline-nonfinite-json-repair-oct29/REPORT.md
+test/toyvm-offline-nonfinite-json-repair-oct29/evidence/first-control-incident.json
+test/toyvm-offline-nonfinite-json-repair-oct29/evidence/focused-results.json
+test/toyvm-offline-nonfinite-json-repair-oct29/evidence/initial-baseline.json
+test/toyvm-offline-nonfinite-json-repair-oct29/evidence/reuse.json
+test/toyvm-offline-nonfinite-json-repair-oct29/operation-evidence.tar.gz
+test/toyvm-offline-nonfinite-json-repair-oct29/regression.py
