@@ -1,0 +1,82 @@
+[
+  {
+    "path": "runtime.json",
+    "bytes": 6841,
+    "sha256": "eed01ca86c35b7d92169cd0fc21eb7fb8098163fd47d20c328cc3ade8dc21c18"
+  },
+  {
+    "path": "done.json",
+    "bytes": 115,
+    "sha256": "9e6668aa8a69e9eb8577f954d80c0b4cb656c76a4303f0d78978856229a6448e"
+  },
+  {
+    "path": "compile.json",
+    "bytes": 1081,
+    "sha256": "06290d35a6dab624018ae7d990cdcba32b75733776bd26a13c622416117eebc5"
+  },
+  {
+    "path": "compile.stdout",
+    "bytes": 316,
+    "sha256": "0be9931764fb3cfeb9e43e64f13be338298be538b602f790ae2023c5e4c40807"
+  },
+  {
+    "path": "runtime.stdout",
+    "bytes": 5374,
+    "sha256": "e7fa512ea59ae8a9ea98b3ce4fd03349ea41e421943e196cb52770da24e6009b"
+  },
+  {
+    "path": "course.png",
+    "bytes": 171779,
+    "sha256": "3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29"
+  },
+  {
+    "path": "startup.stdout",
+    "bytes": 1646,
+    "sha256": "ce3b984da85aa7205799ec36e94a852c563490629085f188dbb79dcdcd5b5547"
+  },
+  {
+    "path": "before.png",
+    "bytes": 171779,
+    "sha256": "3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29"
+  },
+  {
+    "path": "title.png",
+    "bytes": 136760,
+    "sha256": "bc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9"
+  },
+  {
+    "path": "practice.png",
+    "bytes": 171779,
+    "sha256": "3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29"
+  },
+  {
+    "path": "startup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "startup.json",
+    "bytes": 2583,
+    "sha256": "7274f17edc0bdfeb80dd8a16828659847b830bb283cad2e5308e7eeb5620861b"
+  },
+  {
+    "path": "compile.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "runtime.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "remote-environment.json",
+    "bytes": 775,
+    "sha256": "0a7bd9c9cadcfdb7f147d238ae75ca85bbd90c1116458ecc3103b16dba71e9db"
+  },
+  {
+    "path": "module-manifest.json",
+    "bytes": 278,
+    "sha256": "6e1ad7015b05d177d7e7dea436594409a7bb62834311fc9077cb24b57a015d57"
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "test/run.js",
+    "--app=tuxracer_original_061a",
+    "--no-build",
+    "--wasm=build/wine-assembly.wasm",
+    "--gl-renderer=software",
+    "--no-threads",
+    "--max-seconds=100",
+    "--max-batches=1000000",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--quiet-fs",
+    "--png=capture/after.png",
+    "--gl-census",
+    "--input=17000:png:capture/title.png,18000:keydown:13,26000:keyup:13,30000:png:capture/before.png,31000:mousemove:320:260,32000:click:320:260,38000:png:capture/practice.png,40000:keydown:13,44000:keyup:13,49000:png:capture/course.png,51000:keydown:13,55000:keyup:13",
+    "--trace-input-dispatch"
+  ],
+  "startedAt": 1793346171.4457357,
+  "finishedAt": 1793346260.6905134,
+  "elapsed": 89.24477867099995,
+  "exit": -24,
+  "denial": null,
+  "peakProcessTreeRSS": 364089344,
+  "admission": {
+    "allocated": 60743680,
+    "budget": 268435456,
+    "reserve": 8388608,
+    "MemAvailable": 7189151744
+  },
+  "logs": {
+    "runtime.stdout": {
+      "bytes": 5374,
+      "sha256": "e7fa512ea59ae8a9ea98b3ce4fd03349ea41e421943e196cb52770da24e6009b",
+      "tail": "[threads] guest threads will use the cooperative scheduler (--no-threads)\nPE loaded. Entry: 0x0042e0cd\nDLL: TCL83.DLL at 0x774000, DllMain=0x7ed950, thunks=2095, origBase=0x10000000\nDLL: SDL_mixer.dll at 0x90f000, DllMain=0x92b06d, thunks=2172, origBase=0x10000000\nDLL: SDL.dll at 0xa47000, DllMain=0xa6f7d0, thunks=2309, origBase=0x10000000\nDLL: msvcrt.dll at 0xb82000, DllMain=0xb85428, thunks=2453, origBase=0x78000000\nPatching EXE imports: SDL_mixer.dll -> DLL #1 (SDL_mixer.dll)\nPatching EXE imports: tcl83.dll -> DLL #0 (tcl83.dll)\nPatching EXE imports: SDL.dll -> DLL #2 (SDL.dll)\nPatching DLL imports: TCL83.DLL\u2192MSVCRT.dll -> DLL #3 (MSVCRT.dll)\nPatching DLL imports: SDL_mixer.dll\u2192SDL.dll -> DLL #2 (SDL.dll)\nPatching DLL imports: SDL.dll\u2192MSVCRT.dll -> DLL #3 (MSVCRT.dll)\nAfter patching: 2462 thunks\nCalling DllMain at 0xb85428...\nDllMain returned, EAX=0x1\nCalling DllMain at 0x7ed950...\nDllMain returned, EAX=0x1\nCalling DllMain at 0xa6f7d0...\nDllMain returned, EAX=0x1\nCalling DllMain at 0x92b06d...\nDllMain returned, EAX=0x1\nPatched __p__wenviron [0xbbdedc] = 0xbe1cb4\nPatched __p__environ [0xbbcbe4] = 0xbe1c94\nPatched __p___winitenv [0xbbe0ec] = 0xbe1cb4\nPatched __p___initenv [0xbc0c9c] = 0xbe1c94\nCalling MSVCRT!_set_sbh_threshold(0) at 0xb8e99d...\nMSVCRT small-block heap disabled through _set_sbh_threshold(0)\n[files] policy eager: small app: 157 eager (12951513 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges\n[vfs] working directory: c:\\tuxracer-win32-0.61a\n[CreateWindow] hwnd=0x10001 title=\"tuxracer\" style=0xca0000 pos=0,0 size=0x0 menu=10977980\n[ShowWindow] hwnd=0x10001 cmd=0\n[i32] 0x0ed00001\n[i32] 0x0ed00101\n[i32] 0x0ed00201\n[i32] 0x0ed00301\n[i32] 0x0ed00401\n[i32] 0x0ed00501\n[i32] 0x0ed00601\n[i32] 0x0ed00701\n[i32] 0x0ed00801\n[i32] 0x0ed00901\n[i32] 0x0ed00a01\n[i32] 0x0ed00b01\n[i32] 0x0ed00c01\n[i32] 0x0ed00d01\n[i32] 0x0ed00e01\n[i32] 0x0ed00f01\n[i32] 0x0ed01001\n[i32] 0x0ed01101\n[i32] 0x0ed01201\n[i32] 0x0ed01501\n[i32] 0x0ed01601\n[i32] 0x0ed01701\n[i32] 0x0ed01801\n[i32] 0x0ed01901\n[i32] 0x0ed01a01\n[i32] 0x0ed01b01\n[i32] 0x0ed01c01\n[i32] 0x0ed01d01\n[SetWindowText] \"Tux Racer 0.61\"\n[waveOut] open: 22050Hz 2ch 16bit -> voice#720897\n[ThreadManager] CreateThread handle=0xe1000 start=0xa69640 param=0xc5dcac flags=0x0 suspendCount=0\n[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0xa69640 ESP=0x7edefff8\nCalling DllMain at 0xb85428...\nDllMain returned, EAX=0x1\nCalling DllMain at 0x7ed950...\nDllMain returned, EAX=0x1\nCalling DllMain at 0x92b06d...\nDllMain returned, EAX=0x1\n[input-schedule] scheduledBatch=17000 action=png correlation=unavailable batch=17000 guestMs=3400000 clock=batch lastGuestTick=3399600\n[input] png capture/title.png (136760 bytes) at batch 17000 guest-ms=3400000\n[input-schedule] scheduledBatch=18000 action=keydown correlation=unavailable batch=18000 guestMs=3600000 clock=batch lastGuestTick=3599000\n[input] keydown vk=13 at batch 18000\n[input-dequeue] dequeueId=1 source=renderer enqueueId=unavailable hwnd=0x0 msg=0x100 wParam=0xd lParam=0x1c0001 batch=21787 guestMs=4357400 clock=batch lastGuestTick=4357200\n[check_input] msg=0x100 wParam=0xd lParam=0x1c0001 packed=0xd0100\n[check_input_hwnd] keyboard \u2192 focus 0x10001\n[input-dequeue-route] dequeueId=1 focusHwnd=0x10001 hwnd=0x10001 batch=21787 guestMs=4357400 clock=batch lastGuestTick=4357200\n[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0xd lParam=0x1c0001 correlation=unavailable batch=21787 guestMs=4357400 clock=batch lastGuestTick=4357401\n[input-schedule] scheduledBatch=26000 action=keyup correlation=unavailable batch=26000 guestMs=5200000 clock=batch lastGuestTick=5199800\n[input] keyup vk=13 at batch 26000\n[input-schedule] scheduledBatch=30000 action=png correlation=unavailable batch=30000 guestMs=6000000 clock=batch lastGuestTick=5999400\n[input] png capture/before.png (171779 bytes) at batch 30000 guest-ms=6000000\n[input-schedule] scheduledBatch=31000 action=mousemove correlation=unavailable batch=31000 guestMs=6200000 clock=batch lastGuestTick=6199800\n[input] mousemove 320,260 at batch 31000\n[input-schedule] scheduledBatch=32000 action=click correlation=unavailable batch=32000 guestMs=6400000 clock=batch lastGuestTick=6399800\n[input] click 320,260 at batch 32000\n[input-schedule] scheduledBatch=38000 action=png correlation=unavailable batch=38000 guestMs=7600000 clock=batch lastGuestTick=7599400\n[input] png capture/practice.png (171779 bytes) at batch 38000 guest-ms=7600000\n[input-schedule] scheduledBatch=40000 action=keydown correlation=unavailable batch=40000 guestMs=8000000 clock=batch lastGuestTick=7999600\n[input] keydown vk=13 at batch 40000\n[input-schedule] scheduledBatch=44000 action=keyup correlation=unavailable batch=44000 guestMs=8800000 clock=batch lastGuestTick=8799600\n[input] keyup vk=13 at batch 44000\n[input-schedule] scheduledBatch=49000 action=png correlation=unavailable batch=49000 guestMs=9800000 clock=batch lastGuestTick=9799400\n[input] png capture/course.png (171779 bytes) at batch 49000 guest-ms=9800000\n[input-schedule] scheduledBatch=51000 action=keydown correlation=unavailable batch=51000 guestMs=10200000 clock=batch lastGuestTick=10199200\n[input] keydown vk=13 at batch 51000\n[input-schedule] scheduledBatch=55000 action=keyup correlation=unavailable batch=55000 guestMs=11000000 clock=batch lastGuestTick=10999400\n[input] keyup vk=13 at batch 55000\n"
+    },
+    "runtime.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": ""
+    }
+  }
+}

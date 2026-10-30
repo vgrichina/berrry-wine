@@ -1,0 +1,11 @@
+{
+  "box": "bx_jdx249hm",
+  "createdEpoch": 1793346015.8680189,
+  "expiry": "2026-10-30T08:10:15.186Z",
+  "cutoffEpoch": 1793347215.8680189,
+  "handbackEpoch": 1793347395.8680189,
+  "shutdownEpoch": 1793347515.8680189,
+  "ttl": 1800,
+  "owner": "this task; explicit delegated preservation plus snapshot-stop",
+  "task": "tuxracer-main-menu-race-progression-oct30"
+}

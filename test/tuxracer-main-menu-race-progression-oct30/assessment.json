@@ -1,0 +1,39 @@
+{
+  "status": "BLOCKED",
+  "summary": "Original title-to-main-menu passed; Practice/course/race not reached. Later menu inputs were host-delivered but no guest dequeue was observed; retained CPU90 limit ended the run with SIGXCPU.",
+  "report": "# Tux Racer original main-menu to Practice/race attempt\n\nOriginal title-to-main-menu passed; Practice/course/race not reached. Later menu inputs were host-delivered but no guest dequeue was observed; retained CPU90 limit ended the run with SIGXCPU.\n\nOne original-app attempt ran 2026-10-30T07:42:51.445736Z through2026-10-30T07:44:20.690513Z (89.245s wall). Full canonical compile took6.632s; moduleSHA2565a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb /1881806bytes exactly reproduced accepted sourcea998bf36 and current-main52de1079's141inputs. Exact unchanged production test/run.js, historical host898d2ec8, Nodev24.22.1 --max-old-space-size=512, software GL, no-threads,640x480. All four startup DllMain calls returned before the app loop. Original157-file media mount was eager (12951513bytes).\n\nPrecise host input sequence: titlePNG17000; Enterdown18000; Enterup26000; menuPNG30000; mousemove320,260 at31000; click320,260 at32000 (Practice); attemptedPracticePNG38000; Enterdown40000/up44000; attemptedCoursePNG49000; Enterdown51000/up55000. The only observed guest dequeue/DispatchMessageA was the first Enterdown at21787, focus/window0x10001; the26000keyup, Practice pointer events and later Enters have host scheduling/delivery lines but no guest-dequeue evidence. Batches and simulated guestMs are exact in runtime.stdout; individual input UTC/wall timestamps are unavailable in the unchanged runner. No guest-consumption claim for later actions.\n\nAll four PNGs were visually inspected. Title shows PRESS ANY KEY TO START; before/practice/course all show the original main menu (Enter an event, Practice, Credits, Quit), with0changed pixels between the three menu captures. Title-to-menu changes169881pixels. SHA256 titlebc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9; each menu3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29. after.png is absent: kernel SIGXCPU(exit-24) ended execution at the retained90CPU limit before the100-second runner deadline could flush its final capture/census. Supervisor recorded denial=null because this was the inherited/process CPU enforcement, not a supervisor RSS/wall/output rejection. No missing API, WASM trap or stderr error is reported before termination; current API/EIP at termination is unknown.\n\nRace result: NOT RACE. There is no Practice screen, selected event/course, first race view, individualglVertex execution, or gameplay acceptance. The concrete bounded blocker is post-title guest input consumption not observed before the retained CPU limit. Its cause is unproven. No second runtime attempt: observed queue nonconsumption does not establish a corrected timing, and blind replay is disallowed. No production repair.\n\nTask Boatbx_jdx249hm was preserved and snapshot-verified stopped2026-10-30T07:44:30.454Z (snapshot07:44:30.414Z). CreationTTL1800, original expiry08:10:15.186Z;20min cutoff/23min handback/25min shutdown recorded immediately. Explicit task shutdown delegation was exercised before publication. Old stopped Boatbx_7ky4nfwq was never touched.\n",
+  "imagesInspected": true,
+  "race": false,
+  "practice": false,
+  "course": false,
+  "missingAPI": null,
+  "trap": null,
+  "stopSignal": "SIGXCPU",
+  "exit": -24,
+  "supervisorDenial": null,
+  "reason": "retained CPU90 process enforcement; no later guest input dequeue observed",
+  "inputConsumption": {
+    "firstEnterScheduled": 18000,
+    "firstEnterDequeued": 21787,
+    "firstEnterDispatched": 21787,
+    "laterInputsHostDelivered": true,
+    "laterInputsGuestConsumed": false,
+    "laterConsumptionProof": "not observed",
+    "individualUTC": null
+  },
+  "pixelChange": {
+    "titleToMenu": 169881,
+    "menuToAttemptedPractice": 0,
+    "menuToAttemptedCourse": 0
+  },
+  "appBinaries": [
+    {
+      "path": "test/binaries/candidates/tuxracer-original-061a/game/tuxracer-win32-0.61a/tuxracer.exe",
+      "bytes": 274432,
+      "sha256": "a40fd89429d76f379bc7b36d17126bcc61ce487687cb5e951f7757aa6b740971"
+    }
+  ],
+  "secondAttempt": false,
+  "secondAttemptReason": "No concrete corrected timing; blind replay forbidden",
+  "afterPNG": null
+}

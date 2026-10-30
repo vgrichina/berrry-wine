@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "-e",
+    "console.log(JSON.stringify({execPath:process.execPath,version:process.version,flags:process.execArgv,limits:require('fs').readFileSync('/proc/self/limits','utf8')}))"
+  ],
+  "startedAt": 1793346164.7323172,
+  "finishedAt": 1793346164.803715,
+  "elapsed": 0.07139914899994437,
+  "exit": 0,
+  "denial": null,
+  "peakProcessTreeRSS": 0,
+  "admission": {
+    "allocated": 56950784,
+    "budget": 268435456,
+    "reserve": 8388608,
+    "MemAvailable": 7294246912
+  },
+  "logs": {
+    "startup.stdout": {
+      "bytes": 1646,
+      "sha256": "ce3b984da85aa7205799ec36e94a852c563490629085f188dbb79dcdcd5b5547",
+      "tail": "{\"execPath\":\"/home/user/.nvm/versions/node/v24.22.1/bin/node\",\"version\":\"v24.22.1\",\"flags\":[\"--max-old-space-size=512\",\"-e\",\"console.log(JSON.stringify({execPath:process.execPath,version:process.version,flags:process.execArgv,limits:require('fs').readFileSync('/proc/self/limits','utf8')}))\"],\"limits\":\"Limit                     Soft Limit           Hard Limit           Units     \\nMax cpu time              90                   unlimited            seconds   \\nMax file size             12582912             unlimited            bytes     \\nMax data size             unlimited            unlimited            bytes     \\nMax stack size            8388608              unlimited            bytes     \\nMax core file size        0                    unlimited            bytes     \\nMax resident set          unlimited            unlimited            bytes     \\nMax processes             31546                31546                processes \\nMax open files            524288               524288               files     \\nMax locked memory         8388608              8388608              bytes     \\nMax address space         unlimited            unlimited            bytes     \\nMax file locks            unlimited            unlimited            locks     \\nMax pending signals       31546                31546                signals   \\nMax msgqueue size         819200               819200               bytes     \\nMax nice priority         0                    0                    \\nMax realtime priority     0                    0                    \\nMax realtime timeout      unlimited            unlimited            us        \\n\"}\n"
+    },
+    "startup.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": ""
+    }
+  }
+}

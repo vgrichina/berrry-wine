@@ -1,0 +1,36 @@
+{
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environment": {
+    "PATH": "/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/snap/bin:/home/user/.dotnet/tools",
+    "NODE_OPTIONS": null,
+    "LANG": "en_US.UTF-8",
+    "TZ": null
+  },
+  "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "flags": [
+    "--max-old-space-size=512"
+  ],
+  "allocation": {
+    "allocated": 56946688,
+    "budget": 268435456,
+    "reserve": 8388608,
+    "MemAvailable": 7294246912
+  }
+}

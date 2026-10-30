@@ -1,0 +1,35 @@
+{
+  "name": "capture-overflow-control",
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os,time;os.write(1,b'x'*530000);time.sleep(.2)"
+  ],
+  "exit": -9,
+  "reason": "capture512KiB",
+  "elapsed": 0.014901038957759738,
+  "peakRSS": 10690560,
+  "stdoutBytes": 530000,
+  "stderrBytes": 0,
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "generatedFileLimit": 12582912,
+  "captureLimit": 524288
+}

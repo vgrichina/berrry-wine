@@ -1,0 +1,15 @@
+{
+  "PASS": true,
+  "fileBytes": 655360,
+  "fileLimit": 12582912,
+  "captureLimit": 524288,
+  "captureOverflowRejected": true,
+  "supervisorRSS": 134217728,
+  "groupRSS": 536870912,
+  "pythonDATA": 134217728,
+  "gitChildDATA": 268435456,
+  "CPU": 90,
+  "wall": 120,
+  "RAMAdmission": false,
+  "diskFloor": 1610612736
+}
