@@ -1,7 +1,0 @@
-{
-  "candidate": "a42e321f7a0d604503ad6f5ae6d76174130e525b",
-  "pinsSHA256": "54b5f71e19e75e06f0636c8f7b0432b2381ac23c326d347172d1e779c3992e71",
-  "beforeOracleSHA256": "a04f1938afab1743fdb02a2872567542f7530ef0ff5c6720649adcfd44d6706b",
-  "result": "34 manifest payloads, four source pins, seven exact full slices and candidate remote PASS",
-  "remaining": "independent focused protocol challenges; publication"
-}

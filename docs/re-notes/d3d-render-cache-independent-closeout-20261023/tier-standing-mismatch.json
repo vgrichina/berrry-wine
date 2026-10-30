@@ -1,5 +1,0 @@
-{
-  "candidateSHA256": "705ed852b9fff9a2942e1aaabe1e6bfffacb3547dcba9227010a5ac0f46e49b7",
-  "rootStandingSHA256": "4bc9a93340e03a9ef1adb5aa5f6a238b36ca5abc21f24ddee8f4a76bb0b91df8",
-  "action": "root file not used; evaluate exact candidate object bytes in private Module without materialization"
-}

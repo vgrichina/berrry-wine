@@ -1,6 +1,0 @@
-{
-  "sourceRoot": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
-  "originalRoot": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6",
-  "crt": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
-  "crtLoadedBase": 5382144
-}

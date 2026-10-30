@@ -1,9 +1,0 @@
-# ScummVM attributed intro capture
-
-Corrected ordinary attempt2 captured12.0047seconds from the launched Chrome process on the verified monitor sink, both attribution checks true. Original WAV SHA25629d40b561e9c78e166b686f381a94c915d59be9cf332db7934d60c8b83450904; no recorder cap/error. It is98.6984% zero stereo frames with peak2718. Root and corpus_categories reviewed Warner intro; this is not gameplay or a sound-quality fix. No preview should be presented as fixed audio.
-
-Transport progress is established separately: across8.997985wall seconds/8.997732audio-clock seconds, voice720897 submitted793728bytes=8.999184seconds22050Hz stereo16PCM. Queue stayed0, scheduled sources stayed2, streamStartTime did not rebase. The old two-undelivered-callback stall did not recur. Mostly silent source content versus absent music/synthesis remains unresolved; no inference that floppy means silent.
-
-Raw `scratch/scummvm-av-20261003/current-main-validation/attempt2`; durable metadata `ops/release-evidence/scummvm-attributed-intro-20261005`. Sourcef5b222ee relevant-equivalentb9174bf0, actualmodule1a343c5f;118capturedresponses with0mismatch. AbortedEXE/SDLrequests lacked independent full-body CDP receipts; pre-served allowlist hashes remain available. All errors retained. Ordinary original Worker, default timer, no callback/state/engine overrides, no fullscreen input.
-
-Session70093 exited0. Browser/server/recorder closed14:53:55.568Z, complete:true/errors[], process clear. No further runtime. Next source-only investigate the exact Queen/ScummVM intro music route and expected archive resources, keeping waveform silence separate from callback transport and subjective quality. Attempt1 remains intact; corrected startup polling required two consecutive fresh pairs within15seconds before capture.
