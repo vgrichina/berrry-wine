@@ -1,0 +1,10 @@
+{
+  "id": "bx_yvskdryx",
+  "createdAt": "2026-10-30T11:11:50.332Z",
+  "createdEpoch": 1793358710.332,
+  "cutoff": 1793359910.332,
+  "handback": 1793360090.332,
+  "shutdownEpoch": 1793360210.332,
+  "expiryEpoch": 1793360510.332,
+  "shutdownOwner": "enigma-executing-input-path-repair-oct30"
+}

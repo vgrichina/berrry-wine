@@ -1,0 +1,182 @@
+[
+  {
+    "iat": "0x68155440",
+    "dll": "KERNEL32.DLL",
+    "name": "CreateEventA"
+  },
+  {
+    "iat": "0x68155444",
+    "dll": "KERNEL32.DLL",
+    "name": "CreateFileA"
+  },
+  {
+    "iat": "0x68155448",
+    "dll": "KERNEL32.DLL",
+    "name": "CreateFileW"
+  },
+  {
+    "iat": "0x6815544c",
+    "dll": "KERNEL32.DLL",
+    "name": "CreateMutexA"
+  },
+  {
+    "iat": "0x68155450",
+    "dll": "KERNEL32.DLL",
+    "name": "CreateSemaphoreA"
+  },
+  {
+    "iat": "0x68155454",
+    "dll": "KERNEL32.DLL",
+    "name": "FindAtomA"
+  },
+  {
+    "iat": "0x68155458",
+    "dll": "KERNEL32.DLL",
+    "name": "FormatMessageA"
+  },
+  {
+    "iat": "0x6815545c",
+    "dll": "KERNEL32.DLL",
+    "name": "FreeLibrary"
+  },
+  {
+    "iat": "0x68155460",
+    "dll": "KERNEL32.DLL",
+    "name": "GetACP"
+  },
+  {
+    "iat": "0x68155464",
+    "dll": "KERNEL32.DLL",
+    "name": "GetAtomNameA"
+  },
+  {
+    "iat": "0x68155468",
+    "dll": "KERNEL32.DLL",
+    "name": "GetCurrentThread"
+  },
+  {
+    "iat": "0x6815546c",
+    "dll": "KERNEL32.DLL",
+    "name": "GetCurrentThreadId"
+  },
+  {
+    "iat": "0x68155470",
+    "dll": "KERNEL32.DLL",
+    "name": "GetDriveTypeA"
+  },
+  {
+    "iat": "0x68155474",
+    "dll": "KERNEL32.DLL",
+    "name": "GetEnvironmentVariableA"
+  },
+  {
+    "iat": "0x68155478",
+    "dll": "KERNEL32.DLL",
+    "name": "GetLastError"
+  },
+  {
+    "iat": "0x6815547c",
+    "dll": "KERNEL32.DLL",
+    "name": "GetLocaleInfoA"
+  },
+  {
+    "iat": "0x68155480",
+    "dll": "KERNEL32.DLL",
+    "name": "GetModuleHandleA"
+  },
+  {
+    "iat": "0x68155484",
+    "dll": "KERNEL32.DLL",
+    "name": "GetProcAddress"
+  },
+  {
+    "iat": "0x68155488",
+    "dll": "KERNEL32.DLL",
+    "name": "GetVersionExA"
+  },
+  {
+    "iat": "0x6815548c",
+    "dll": "KERNEL32.DLL",
+    "name": "InterlockedDecrement"
+  },
+  {
+    "iat": "0x68155490",
+    "dll": "KERNEL32.DLL",
+    "name": "InterlockedIncrement"
+  },
+  {
+    "iat": "0x68155494",
+    "dll": "KERNEL32.DLL",
+    "name": "LoadLibraryA"
+  },
+  {
+    "iat": "0x68155498",
+    "dll": "KERNEL32.DLL",
+    "name": "MultiByteToWideChar"
+  },
+  {
+    "iat": "0x6815549c",
+    "dll": "KERNEL32.DLL",
+    "name": "QueryPerformanceCounter"
+  },
+  {
+    "iat": "0x681554a0",
+    "dll": "KERNEL32.DLL",
+    "name": "ReadFile"
+  },
+  {
+    "iat": "0x681554a4",
+    "dll": "KERNEL32.DLL",
+    "name": "ReleaseMutex"
+  },
+  {
+    "iat": "0x681554a8",
+    "dll": "KERNEL32.DLL",
+    "name": "ReleaseSemaphore"
+  },
+  {
+    "iat": "0x681554ac",
+    "dll": "KERNEL32.DLL",
+    "name": "SetEnvironmentVariableA"
+  },
+  {
+    "iat": "0x681554b0",
+    "dll": "KERNEL32.DLL",
+    "name": "SetErrorMode"
+  },
+  {
+    "iat": "0x681554b4",
+    "dll": "KERNEL32.DLL",
+    "name": "SetFilePointer"
+  },
+  {
+    "iat": "0x681554b8",
+    "dll": "KERNEL32.DLL",
+    "name": "SetThreadPriority"
+  },
+  {
+    "iat": "0x681554bc",
+    "dll": "KERNEL32.DLL",
+    "name": "Sleep"
+  },
+  {
+    "iat": "0x681554c0",
+    "dll": "KERNEL32.DLL",
+    "name": "TerminateThread"
+  },
+  {
+    "iat": "0x681554c4",
+    "dll": "KERNEL32.DLL",
+    "name": "WaitForSingleObject"
+  },
+  {
+    "iat": "0x681554c8",
+    "dll": "KERNEL32.DLL",
+    "name": "WideCharToMultiByte"
+  },
+  {
+    "iat": "0x681554cc",
+    "dll": "KERNEL32.DLL",
+    "name": "WriteFile"
+  }
+]

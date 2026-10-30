@@ -1,0 +1,17 @@
+{
+  "observationAssertionsPassed": true,
+  "causalAcceptance": false,
+  "gameplayAccepted": false,
+  "reason": "UP reset wrapper overwritten before execution; earliest post-UP invocation ring not retained; worker API entries not captured",
+  "scope": "read-only actual production run evidence, no production correction",
+  "executions": 1,
+  "initializersIncluded": true,
+  "invocations": 6196,
+  "workerSlices": 388468,
+  "finalPolls": 8722,
+  "mainWaitHandle": "0xe0003",
+  "callbackReleaseHandle": "0xe0004",
+  "framePersonallyInspected": true,
+  "frameDescription": "Enigma Main Menu; Start Game, Level Pack, Options, Credits, Quit; no gameplay",
+  "originalFrameSHA": "31f5e3deb9bd70fd14352b06c3d187e57500f2313365bf584ab34bcd92f8f912"
+}

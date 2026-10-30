@@ -1,0 +1,61 @@
+{
+  "PASS": true,
+  "pinsVerified": true,
+  "actualArgv": [
+    "--no-build",
+    "--exe=/home/user/enigma-original/vfs/Enigma-1.01/enigma.exe",
+    "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+    "--cwd=C:\\Enigma-1.01",
+    "--dlls=/home/user/enigma-original/system/msvcrt.dll,/home/user/enigma-original/vfs/Enigma-1.01/zlib1.dll,/home/user/enigma-original/vfs/Enigma-1.01/libpng12-0.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL_image.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL_mixer.dll,/home/user/enigma-original/vfs/Enigma-1.01/libfreetype-6.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL_ttf.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/home/user/enigma-original/vfs",
+    "--max-batches=10000000",
+    "--quiet-fs",
+    "--control=18127",
+    "--trace-input",
+    "--wasm=/home/user/enigma-original/modules/wine-assembly.wasm",
+    "--no-threads",
+    "--png=/home/user/enigma-original/native-keyboard-capture/final.png",
+    "--trace-ctrl",
+    "--trace-input-dispatch",
+    "--trace-message-boundary",
+    "--trace-api=PeekMessageA,GetMessageA,DispatchMessageA,GetCursorPos,GetKeyState,GetAsyncKeyState,WaitMessage,SDL_PollEvent",
+    "--trace-api-paused",
+    "--trace-api-dedup",
+    "--trace-input-poll",
+    "--max-seconds=85"
+  ],
+  "parsed": {
+    "tree": [
+      "/home/user/enigma-original/vfs"
+    ],
+    "mounts": [],
+    "dlls": [
+      "/home/user/enigma-original/system/msvcrt.dll",
+      "/home/user/enigma-original/vfs/Enigma-1.01/zlib1.dll",
+      "/home/user/enigma-original/vfs/Enigma-1.01/libpng12-0.dll",
+      "/home/user/enigma-original/vfs/Enigma-1.01/SDL.dll",
+      "/home/user/enigma-original/vfs/Enigma-1.01/SDL_image.dll",
+      "/home/user/enigma-original/vfs/Enigma-1.01/SDL_mixer.dll",
+      "/home/user/enigma-original/vfs/Enigma-1.01/libfreetype-6.dll",
+      "/home/user/enigma-original/vfs/Enigma-1.01/SDL_ttf.dll"
+    ],
+    "exe": "/home/user/enigma-original/vfs/Enigma-1.01/enigma.exe"
+  },
+  "mountEnumeration": {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/mount-enumeration.json",
+    "sha256": "0bd48892728dc8d28e02a2cafd6e4a6ae52bc7ff36cabe976bfccd5b8d44af3d",
+    "files": 2460,
+    "commaFiles": []
+  },
+  "wrapperReceiptReused": true,
+  "wrapperSHA": "ad481c32324360e961b63521fb5f08aca837133992b60de33a8e41d2c43d9690",
+  "generatedFSIZE": 12582912,
+  "captureCeiling": 524288,
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA": "62b100884e01fb168f23df69c05f4050c7faeee8b4b19d9b0a7f5b8bd689d703"
+}

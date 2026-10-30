@@ -1,0 +1,9 @@
+{
+  "originalSHA": "31f5e3deb9bd70fd14352b06c3d187e57500f2313365bf584ab34bcd92f8f912",
+  "originalBytes": 390549,
+  "reviewSHA": "a60ab514fb740fa4f3eb1ec7ce1f4b927b13f63b63c3fd186a8e4f4bfd5a7207",
+  "reviewBytes": 103962,
+  "width": 320,
+  "height": 240,
+  "method": "nearest-neighbour half size"
+}
