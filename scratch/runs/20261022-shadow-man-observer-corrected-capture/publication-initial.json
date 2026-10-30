@@ -1,8 +1,0 @@
-{
-  "commit": "8d0148355a6ab06f016efc4fa06bd5e8d6532728",
-  "branch": "task/shadow-man-observer-corrected-capture-oct22",
-  "pushExit": 0,
-  "stdout": "",
-  "stderr": "remote: This repository moved. Please use the new location:        \nremote:   git@github.com:vgrichina/berrry-wine.git        \nremote: \nremote: Create a pull request for 'task/shadow-man-observer-corrected-capture-oct22' on GitHub by visiting:        \nremote:      https://github.com/vgrichina/berrry-wine/pull/new/task/shadow-man-observer-corrected-capture-oct22        \nremote: \nTo github.com:vgrichina/wine-assembly.git\n * [new branch]      HEAD -> task/shadow-man-observer-corrected-capture-oct22\n",
-  "strictTrust": true
-}

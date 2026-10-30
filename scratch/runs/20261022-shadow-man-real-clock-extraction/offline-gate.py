@@ -1,6 +1,0 @@
-import pathlib,json,subprocess,os,hashlib
-O=pathlib.Path('/home/user/shadow-man-real-clock-extraction-oct22');R=pathlib.Path('/home/user/shadow-man-original-oct22')
-s=(O/'launch.py').read_text(); start=s.index('original=json.loads');cfg=s[start:s.index('env=dict(os.environ,NODE_PATH=',start)]; namespace=dict(O=O,R=R,json=json);exec(cfg,namespace);cmd=namespace['cmd'];assert '--real-ticks' in cmd and '--max-seconds=55' in cmd;assert not any(x.startswith(('--spawn-processes','--input=','--time-scale=','--startup-clock','--pipe-child')) for x in cmd)
-env=dict(os.environ,NODE_PATH=str(R/'runner/node_modules'));p=subprocess.run(['node',str(O/'sealed/observer-fixture.cjs'),str(R/'runtime')],env=env,capture_output=True,text=True);assert p.returncode==0,(p.stdout,p.stderr)
-clock=(R/'runtime/lib/guest-clock.js').read_text();runner=(R/'runtime/test/run.js').read_text();assert 'if (realTicks)' in clock and 'ticks: wall, publish: wall' in clock;assert 'h.get_ticks = guestClock.ticks' in runner and 'Date.now() >= deadlineMs' in runner
-print(json.dumps(dict(passAll=True,configuration=cmd,fixture=json.loads(p.stdout),clockSha256=hashlib.sha256(clock.encode()).hexdigest(),runnerSha256=hashlib.sha256(runner.encode()).hexdigest(),maxSecondsWallClock=True,supervisorSeconds=60,traceDisabled=True)))
