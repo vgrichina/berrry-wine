@@ -1,0 +1,30 @@
+{
+  "result": "PASS",
+  "scope": "offline identity and evidence integrity only",
+  "candidate": "7a21579f9adb208164312961c249a0aa9080a8b7",
+  "testedCorrectedHEAD": "c2f50288da9e5a85995184c60bb2b94bdce35dd9",
+  "allCandidatePathsPreserved": 8256,
+  "censusEntries": 407,
+  "onlyChangedProductionMetadata": "two census row SHA/reason fields",
+  "moduleSHA256": null,
+  "buildAttempts": 1,
+  "buildExit": 1,
+  "fullModuleTests": 0,
+  "originalPins": 4,
+  "protectedMetadata": "UNCHANGED",
+  "resources": {
+    "amounts": {
+      "own": 6598656,
+      "readonlyDonor": 10612736,
+      "priorQualification": 4325376,
+      "sharedOriginals": 843776,
+      "launcher": 479232,
+      "reserve": 8388608,
+      "publicationAllowance": 2097152
+    },
+    "total": 33345536,
+    "cap": 67108864,
+    "hostFree": 6448242688,
+    "floor": 2982150144
+  }
+}

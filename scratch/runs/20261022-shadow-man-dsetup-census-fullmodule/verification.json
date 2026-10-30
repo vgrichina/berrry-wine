@@ -14,17 +14,17 @@
   "protectedMetadata": "UNCHANGED",
   "resources": {
     "amounts": {
-      "own": 5455872,
+      "own": 6606848,
       "readonlyDonor": 10612736,
       "priorQualification": 4325376,
       "sharedOriginals": 843776,
-      "launcher": 471040,
+      "launcher": 503808,
       "reserve": 8388608,
       "publicationAllowance": 2097152
     },
-    "total": 32194560,
+    "total": 33378304,
     "cap": 67108864,
-    "hostFree": 6487687168,
+    "hostFree": 7026360320,
     "floor": 2982150144
   }
 }
