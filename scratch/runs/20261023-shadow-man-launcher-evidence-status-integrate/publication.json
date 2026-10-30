@@ -1,0 +1,12 @@
+{
+  "localCommit": "9d49587d4cca3ff56c3373d325ea18de414f35f3",
+  "localBranch": "task/shadow-man-launcher-evidence-status-integrate-oct23",
+  "remoteMain": "58e90870a40a541a4083cae5e987ca8de31889e6",
+  "remoteTaskBranch": null,
+  "pushed": false,
+  "merged": false,
+  "status": "blocked-publication",
+  "basePathsPreservedExceptTodo": 8278,
+  "wholeLocalIncluding8MiBReserve": 55758848,
+  "hostFree": 6837129216
+}
