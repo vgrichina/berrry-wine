@@ -1,3 +1,0 @@
-199 programs in 146 directories; 684 files, 70.4 MiB; 199 .exe/.com files a --dir walk would find
-corpus content sha256 3f9b202376eec52a72f9c1c0eb9f0dfd993292c344d62b95a820a9e5606fc475 (path\0bytes over every file, sorted)
-written under /tmp/claude-1000/-home-user-wine-assembly/1863d2b5-bc58-4c0b-9c15-00fc951f0256/scratchpad/full-W/demos
