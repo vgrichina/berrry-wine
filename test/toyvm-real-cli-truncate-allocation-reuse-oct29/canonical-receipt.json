@@ -1,0 +1,179 @@
+{
+  "admissionBlocker": {
+    "MemAvailable": 2122854400,
+    "PASS": false,
+    "aggregateFutureGrowth": 176160768,
+    "aggregateVersion": "fresh dispatch owners",
+    "at": 1793248089.6800122,
+    "blockSize": 4096,
+    "device": 64769,
+    "f_bavail": 1142466,
+    "free": 4679540736,
+    "limits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "operation": "stopped-info",
+    "ownedBytes": 2120904,
+    "positiveWALGrowth": 0,
+    "projectedRemaining": 25165824,
+    "requiredBytes": 3225419776,
+    "walBudget": 8388608
+  },
+  "allObservedReaped": true,
+  "apiEnvelopeSHA256": "95b90e35dd677ed65f0adeec4bf75e18135e367485e9dc72eafe520c23ad8bb0",
+  "box": "bx_kzbn33q5",
+  "boxLifecycle": {
+    "actualStoppedVerified": false,
+    "createdAt": "2026-10-29T04:27:34.915Z",
+    "cutoff": "2026-10-29T05:10:00Z",
+    "id": "bx_kzbn33q5",
+    "lastObservedState": "stopping",
+    "originalExpiry": "2026-10-29T04:57:35.059Z",
+    "snapshotVerified": false,
+    "stopOperation": {
+      "endedAt": null,
+      "error": null,
+      "id": "stop_6a6a170a5c444dc0",
+      "lastAttemptAt": null,
+      "requestedAt": "2026-10-29T04:28:01.823Z",
+      "status": "pending"
+    },
+    "ttlSeconds": 1800
+  },
+  "browserAllowance": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanupComplete": true,
+  "cliExit": 0,
+  "completionStatus": "behavior PASS; lifecycle/publication BLOCKED by fresh memory admission; no retry",
+  "cpuSeconds": 0.05562400000000001,
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 16384,
+    "inodes": 3,
+    "live": 28672,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 18,
+    "peak": 28672,
+    "writeLimit": 65536,
+    "written": 32768
+  },
+  "fixtureAssertions": {
+    "AStillLinked": 1,
+    "BSize": 16384,
+    "closedA": true,
+    "closedB": true,
+    "truncateA": 0,
+    "writeA": 16384,
+    "writeB": 16384
+  },
+  "gatePASS": true,
+  "limitations": [
+    "One positive truncate-allocation-reuse fixture only; no other workload, browser/gameplay or arbitrary descendant claim.",
+    "Historical observer/procedural/publication limitations remain in prior retained receipts; no retroactive qualification.",
+    "WAL baseline precedes controlled identity, Boat staging and runtime; small supervisor/fixture preparation preceded baseline, so not launcher-startup proof.",
+    "No guest filename mount argv in this production CLI/FUSE task; canonical guest parser not invoked. Exact Boat file staging enumerated separately; no comma-bearing staging names."
+  ],
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvtrunc/cancellation.json --work /tmp/tvtrunc/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+",
+      "cmdSHA256": "cba2d8ee38eeb449bcce7a812b1db2b3faf3160eac32e91eb7141a3308664f12",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 5700,
+      "ppid": 5617,
+      "rss": 21364736,
+      "start": "3703",
+      "state": "S",
+      "stdoutLink": "/tmp/tvtrunc/cli.stdout",
+      "wchan": "hrtimer_nanosleep"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvtrunc/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvtrunc/w/domain /tmp/tvtrunc/w/status.sock 32768 65536 16384 ",
+      "cmdSHA256": "3e8baad1c23a3950353cdc573a61451a895b7f78d7cfb2a719435172a3b3209f",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 5701,
+      "ppid": 5700,
+      "rss": 14155776,
+      "start": "3705",
+      "state": "S",
+      "stdoutLink": "pipe:[27101]",
+      "wchan": "ep_poll"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B -c import os,json\nroot='/tmp/tvtrunc/w/domain/'\na=os.open(root+'A',os.O_CREAT|os.O_RDWR,0o600)\nwa=os.write(a,b'A'*16384);assert wa==16384\nassert os.fstat(a).st_size==16384\nos.ftruncate(a,0)\nsa=os.fstat(a);assert sa.st_size==0 and sa.st_nlink==1\nos.close(a)\nb=os.open(root+'B',os.O_CREAT|os.O_RDWR,0o600)\nwb=os.write(b,b'B'*16384);assert wb==16384\nsb=os.fstat(b);assert sb.st_size=",
+      "cmdSHA256": "03869206f13b393e566a7ab1fbfb1bb016fd2780cd89c847ff57b1e4632c70e1",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 5704,
+      "ppid": 5700,
+      "rss": 7602176,
+      "start": "3708",
+      "state": "R",
+      "stdoutLink": "pipe:[27104]",
+      "wchan": "0"
+    }
+  ],
+  "pinLocations": {
+    "local": "/tmp/toyvm-real-cli-truncate-allocation-reuse-oct29/repo",
+    "remote": "/tmp/tvtrunc/repo"
+  },
+  "productionInvocations": 1,
+  "productionOwned": [
+    [
+      5704,
+      "3708"
+    ]
+  ],
+  "publication": {
+    "branch": "task/toyvm-real-cli-truncate-allocation-reuse-oct29",
+    "commit": null,
+    "pushed": false,
+    "reason": "first decisive admission rejection stops publication"
+  },
+  "remainingMounts": [],
+  "runtimeSHA256": "725f1ea75365ea9fd8029d8b3059f83c456e614c1d9ded844a552637a8641fdd",
+  "safetyCleanup": null,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "stopReason": null,
+  "task": "toyvm-real-cli-truncate-allocation-reuse-oct29",
+  "wallSeconds": 0.04682712199999628
+}
