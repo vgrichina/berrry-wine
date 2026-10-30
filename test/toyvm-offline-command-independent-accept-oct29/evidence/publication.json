@@ -1,0 +1,9 @@
+{
+  "commit": "ef64b21875c04a34ea29ded0c31664feb3d45f8b",
+  "remoteRef": "refs/heads/task/toyvm-offline-command-independent-accept-oct29",
+  "remoteSHA": "ef64b21875c04a34ea29ded0c31664feb3d45f8b",
+  "verifiedExactSHA": true,
+  "mainPush": false,
+  "offlineValidationOnly": true,
+  "runtimeQualified": false
+}

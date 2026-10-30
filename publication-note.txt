@@ -1,0 +1,14 @@
+Task: toyvm-offline-command-independent-accept-oct29
+Session: 01a18589-d8a3-7331-af57-e3fb8fed17e7
+Outcome: REJECTED candidate 354c5651f6f11bbd430424c3163d7e87e125fc9a; nonfinite metadata 1e999 accepted offline.
+Tests: 72 new passed, stopped at case73 first defect; unchanged False cleanup rejected; legitimate control accepted; rejecting mutation caught; prior52 reused by pins.
+Commit: ef64b21875c04a34ea29ded0c31664feb3d45f8b
+Remote branch: refs/heads/task/toyvm-offline-command-independent-accept-oct29
+Exact remote SHA verified: ef64b21875c04a34ea29ded0c31664feb3d45f8b
+Receipt: /tmp/toyvm-offline-command-independent-accept-oct29/repo/test/toyvm-offline-command-independent-accept-oct29/evidence/canonical-receipt.json
+Reproducer: /tmp/toyvm-offline-command-independent-accept-oct29/repo/test/toyvm-offline-command-independent-accept-oct29/evidence/unchanged-reproducer.json
+Report: /tmp/toyvm-offline-command-independent-accept-oct29/repo/test/toyvm-offline-command-independent-accept-oct29/REPORT.md
+Candidate unchanged; publish independent rejection evidence only. No main push/board append.
+offlineValidationOnly=true/runtimeQualified=false; original live CLI/FUSE/browser gap OPEN.
+No test box assigned. Coordinator owns lifecycle and allocation release. 24MiB retained through coordinator closeout.
+Control limitations in report: early admission omitted itemized session/WAL, group-only monitor, empty mount argv not canonical-parser validated before staging, initial oversized read-only output.

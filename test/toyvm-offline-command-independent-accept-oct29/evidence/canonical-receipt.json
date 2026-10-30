@@ -1,0 +1,78 @@
+{
+  "task": "toyvm-offline-command-independent-accept-oct29",
+  "session": "01a18589-d8a3-7331-af57-e3fb8fed17e7",
+  "candidate": "354c5651f6f11bbd430424c3163d7e87e125fc9a",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/validate_receipt_offline.py": {
+      "bytes": 4558,
+      "sha256": "983221191bd9967fb828b27385533cea03bcb6db909f033f12ebb5ce3c437cf0"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/test_offline_cli.py": {
+      "bytes": 5283,
+      "sha256": "b8d5eec05cf4b8b984297b3d94f493545f4da7a2d19e45f53f30d66d82a36ba9"
+    },
+    "test/toyvm-offline-receipt-validation-cli-oct29/REPORT.md": {
+      "bytes": 7003,
+      "sha256": "f1de6d64808b7ff350e40d7fb759a98bdb0d838836f3c0dadcb53afa4f6ff346"
+    }
+  },
+  "tests": {
+    "newPassed": 72,
+    "firstDefect": "nonfinite-metadata-1e999",
+    "prior52Reused": true,
+    "mutationRejected": true
+  },
+  "result": "REJECTED: JSON exponent overflow in metadata accepted",
+  "sourceUnchanged": true,
+  "publication": {
+    "commit": "ef64b21875c04a34ea29ded0c31664feb3d45f8b",
+    "remoteRef": "refs/heads/task/toyvm-offline-command-independent-accept-oct29",
+    "remoteSHA": "ef64b21875c04a34ea29ded0c31664feb3d45f8b",
+    "verifiedExactSHA": true,
+    "verificationReceipt": "/tmp/toyvm-offline-command-independent-accept-oct29/repo/test/toyvm-offline-command-independent-accept-oct29/evidence/verify-exact-remote.stdout"
+  },
+  "cleanup": {
+    "allRecordedProcessGroupsEmpty": true,
+    "noRuntime": true
+  },
+  "testBox": null,
+  "lifecycleOwner": "coordinator",
+  "allocationBytes": 25165824,
+  "allocationRetainedThroughCoordinatorCloseout": true,
+  "incidents": [
+    "Control limitations documented in REPORT.md; no resource admission failure"
+  ],
+  "offlineValidationOnly": true,
+  "runtimeQualified": false,
+  "originalLiveCLIGap": "OPEN",
+  "testAndReportPins": {
+    "test/toyvm-offline-command-independent-accept-oct29/accept.py": {
+      "bytes": 7501,
+      "sha256": "2e7541a8f9ed216d4e29d52d336e6b610c4a461647481072c69b5b85088ff5ba"
+    },
+    "test/toyvm-offline-command-independent-accept-oct29/REPORT.md": {
+      "bytes": 5031,
+      "sha256": "4f6ed846a5afe06c09102d244b09517baeae5f8434c36bd4dfb732a4ba6c3ef2"
+    },
+    "test/toyvm-offline-command-independent-accept-oct29/evidence/acceptance-checkpoint.json": {
+      "bytes": 49975,
+      "sha256": "93a04a1e44deb2e0c63f5225fc61ea1fb99b1117b5bf7e6c4c6565548eb9c891"
+    },
+    "test/toyvm-offline-command-independent-accept-oct29/evidence/prior52-reuse.json": {
+      "bytes": 1209,
+      "sha256": "1814e1b312126a29a0c43333c57799a6a5af0666108ff354b88fb770b7d8eee2"
+    },
+    "test/toyvm-offline-command-independent-accept-oct29/evidence/first-defect.json": {
+      "bytes": 1175,
+      "sha256": "6e4358aa36bb08cb965fb7596338891bc5dcb81cc971f49a3e914b04a095f36f"
+    },
+    "test/toyvm-offline-command-independent-accept-oct29/evidence/unchanged-reproducer.json": {
+      "bytes": 364,
+      "sha256": "0a1537b8c35ac1379d7e4b028b47a1ba0656e692163ccf7b909d1ed08fffa11e"
+    }
+  }
+}

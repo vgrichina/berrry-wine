@@ -1,0 +1,239 @@
+ .../REPORT.md                                      |   82 ++
+ .../accept.py                                      |   99 ++
+ .../evidence/acceptance-checkpoint.json            | 1381 ++++++++++++++++++++
+ .../evidence/acceptance-supervisor-original.txt    |   95 ++
+ .../evidence/admission.jsonl                       |  185 +++
+ .../evidence/baseline.json                         |   59 +
+ .../evidence/bounded-argument-decision.stderr      |    0
+ .../evidence/bounded-argument-decision.stdout      |    1 +
+ .../evidence/changed-caller-identity.stderr        |    0
+ .../evidence/changed-caller-identity.stdout        |    1 +
+ .../config-core.hooksPath--absolute-git-dir.stderr |    0
+ .../config-core.hooksPath--absolute-git-dir.stdout |    1 +
+ .../config-core.hooksPath--show-toplevel.stderr    |    0
+ .../config-core.hooksPath--show-toplevel.stdout    |    1 +
+ .../evidence/config-core.hooksPath.stderr          |    0
+ .../evidence/config-core.hooksPath.stdout          |    0
+ .../config-gc.auto--absolute-git-dir.stderr        |    0
+ .../config-gc.auto--absolute-git-dir.stdout        |    1 +
+ .../evidence/config-gc.auto--show-toplevel.stderr  |    0
+ .../evidence/config-gc.auto--show-toplevel.stdout  |    1 +
+ .../evidence/config-gc.auto.stderr                 |    0
+ .../evidence/config-gc.auto.stdout                 |    0
+ .../config-user.email--absolute-git-dir.stderr     |    0
+ .../config-user.email--absolute-git-dir.stdout     |    1 +
+ .../config-user.email--show-toplevel.stderr        |    0
+ .../config-user.email--show-toplevel.stdout        |    1 +
+ .../evidence/config-user.email.stderr              |    0
+ .../evidence/config-user.email.stdout              |    0
+ .../config-user.name--absolute-git-dir.stderr      |    0
+ .../config-user.name--absolute-git-dir.stdout      |    1 +
+ .../config-user.name--show-toplevel.stderr         |    0
+ .../config-user.name--show-toplevel.stdout         |    1 +
+ .../evidence/config-user.name.stderr               |    0
+ .../evidence/config-user.name.stdout               |    0
+ .../evidence/contained-sentinel.stderr             |    0
+ .../evidence/contained-sentinel.stdout             |    1 +
+ .../evidence/containment.json                      |   28 +
+ .../evidence/deep-json.stderr                      |    0
+ .../evidence/deep-json.stdout                      |    1 +
+ .../evidence/duplicate-valid-key.stderr            |    0
+ .../evidence/duplicate-valid-key.stdout            |    1 +
+ .../evidence/escaped-duplicate-key.stderr          |    0
+ .../evidence/escaped-duplicate-key.stdout          |    1 +
+ .../evidence/exact-input-bound.stderr              |    0
+ .../evidence/exact-input-bound.stdout              |    1 +
+ .../evidence/first-defect.json                     |   41 +
+ .../evidence/first-unchanged-unmount-False.stderr  |    0
+ .../evidence/first-unchanged-unmount-False.stdout  |    1 +
+ .../evidence/init.stderr                           |   10 +
+ .../evidence/init.stdout                           |    1 +
+ .../evidence/invalid-utf8.stderr                   |    0
+ .../evidence/invalid-utf8.stdout                   |    1 +
+ .../evidence/legitimate-cleanup.stderr             |    0
+ .../evidence/legitimate-cleanup.stdout             |    1 +
+ .../evidence/limit-cpu_limit--inf.stderr           |    0
+ .../evidence/limit-cpu_limit--inf.stdout           |    1 +
+ .../evidence/limit-cpu_limit-1e999.stderr          |    0
+ .../evidence/limit-cpu_limit-1e999.stdout          |    1 +
+ .../evidence/limit-cpu_limit-above-maximum.stderr  |    0
+ .../evidence/limit-cpu_limit-above-maximum.stdout  |    1 +
+ .../evidence/limit-cpu_limit-inf.stderr            |    0
+ .../evidence/limit-cpu_limit-inf.stdout            |    1 +
+ .../evidence/limit-cpu_limit-missing.stderr        |    0
+ .../evidence/limit-cpu_limit-missing.stdout        |    1 +
+ .../evidence/limit-cpu_limit-nan.stderr            |    0
+ .../evidence/limit-cpu_limit-nan.stdout            |    1 +
+ .../evidence/limit-cpu_limit-negative.stderr       |    0
+ .../evidence/limit-cpu_limit-negative.stdout       |    1 +
+ .../evidence/limit-cpu_limit-nonnumeric.stderr     |    0
+ .../evidence/limit-cpu_limit-nonnumeric.stdout     |    1 +
+ .../evidence/limit-cpu_limit-zero.stderr           |    0
+ .../evidence/limit-cpu_limit-zero.stdout           |    1 +
+ .../evidence/limit-file_limit-above-maximum.stderr |    0
+ .../evidence/limit-file_limit-above-maximum.stdout |    1 +
+ .../evidence/limit-file_limit-missing.stderr       |    0
+ .../evidence/limit-file_limit-missing.stdout       |    1 +
+ .../evidence/limit-file_limit-negative.stderr      |    0
+ .../evidence/limit-file_limit-negative.stdout      |    1 +
+ .../evidence/limit-file_limit-nonnumeric.stderr    |    0
+ .../evidence/limit-file_limit-nonnumeric.stdout    |    1 +
+ .../evidence/limit-file_limit-zero.stderr          |    0
+ .../evidence/limit-file_limit-zero.stdout          |    1 +
+ .../evidence/limit-live_limit-above-maximum.stderr |    0
+ .../evidence/limit-live_limit-above-maximum.stdout |    1 +
+ .../evidence/limit-live_limit-missing.stderr       |    0
+ .../evidence/limit-live_limit-missing.stdout       |    1 +
+ .../evidence/limit-live_limit-negative.stderr      |    0
+ .../evidence/limit-live_limit-negative.stdout      |    1 +
+ .../evidence/limit-live_limit-nonnumeric.stderr    |    0
+ .../evidence/limit-live_limit-nonnumeric.stdout    |    1 +
+ .../evidence/limit-live_limit-zero.stderr          |    0
+ .../evidence/limit-live_limit-zero.stdout          |    1 +
+ .../limit-output_limit-above-maximum.stderr        |    0
+ .../limit-output_limit-above-maximum.stdout        |    1 +
+ .../evidence/limit-output_limit-missing.stderr     |    0
+ .../evidence/limit-output_limit-missing.stdout     |    1 +
+ .../evidence/limit-output_limit-negative.stderr    |    0
+ .../evidence/limit-output_limit-negative.stdout    |    1 +
+ .../evidence/limit-output_limit-nonnumeric.stderr  |    0
+ .../evidence/limit-output_limit-nonnumeric.stdout  |    1 +
+ .../evidence/limit-output_limit-zero.stderr        |    0
+ .../evidence/limit-output_limit-zero.stdout        |    1 +
+ .../evidence/limit-rss_limit-above-maximum.stderr  |    0
+ .../evidence/limit-rss_limit-above-maximum.stdout  |    1 +
+ .../evidence/limit-rss_limit-missing.stderr        |    0
+ .../evidence/limit-rss_limit-missing.stdout        |    1 +
+ .../evidence/limit-rss_limit-negative.stderr       |    0
+ .../evidence/limit-rss_limit-negative.stdout       |    1 +
+ .../evidence/limit-rss_limit-nonnumeric.stderr     |    0
+ .../evidence/limit-rss_limit-nonnumeric.stdout     |    1 +
+ .../evidence/limit-rss_limit-zero.stderr           |    0
+ .../evidence/limit-rss_limit-zero.stdout           |    1 +
+ .../evidence/limit-wall_limit--inf.stderr          |    0
+ .../evidence/limit-wall_limit--inf.stdout          |    1 +
+ .../evidence/limit-wall_limit-1e999.stderr         |    0
+ .../evidence/limit-wall_limit-1e999.stdout         |    1 +
+ .../evidence/limit-wall_limit-above-maximum.stderr |    0
+ .../evidence/limit-wall_limit-above-maximum.stdout |    1 +
+ .../evidence/limit-wall_limit-inf.stderr           |    0
+ .../evidence/limit-wall_limit-inf.stdout           |    1 +
+ .../evidence/limit-wall_limit-missing.stderr       |    0
+ .../evidence/limit-wall_limit-missing.stdout       |    1 +
+ .../evidence/limit-wall_limit-nan.stderr           |    0
+ .../evidence/limit-wall_limit-nan.stdout           |    1 +
+ .../evidence/limit-wall_limit-negative.stderr      |    0
+ .../evidence/limit-wall_limit-negative.stdout      |    1 +
+ .../evidence/limit-wall_limit-nonnumeric.stderr    |    0
+ .../evidence/limit-wall_limit-nonnumeric.stdout    |    1 +
+ .../evidence/limit-wall_limit-zero.stderr          |    0
+ .../evidence/limit-wall_limit-zero.stdout          |    1 +
+ .../limit-write_limit-above-maximum.stderr         |    0
+ .../limit-write_limit-above-maximum.stdout         |    1 +
+ .../evidence/limit-write_limit-missing.stderr      |    0
+ .../evidence/limit-write_limit-missing.stdout      |    1 +
+ .../evidence/limit-write_limit-negative.stderr     |    0
+ .../evidence/limit-write_limit-negative.stdout     |    1 +
+ .../evidence/limit-write_limit-nonnumeric.stderr   |    0
+ .../evidence/limit-write_limit-nonnumeric.stdout   |    1 +
+ .../evidence/limit-write_limit-zero.stderr         |    0
+ .../evidence/limit-write_limit-zero.stdout         |    1 +
+ .../evidence/mutation-verdict.json                 |   20 +
+ .../evidence/nested-duplicate.stderr               |    0
+ .../evidence/nested-duplicate.stdout               |    1 +
+ .../evidence/nonfinite-metadata-1e999.stderr       |    0
+ .../evidence/nonfinite-metadata-1e999.stdout       |    1 +
+ .../evidence/nonfinite-metadata-Infinity.stderr    |    0
+ .../evidence/nonfinite-metadata-Infinity.stdout    |    1 +
+ .../evidence/nonfinite-metadata-NaN.stderr         |    0
+ .../evidence/nonfinite-metadata-NaN.stdout         |    1 +
+ .../evidence/nonfinite-resource--1e999.stderr      |    0
+ .../evidence/nonfinite-resource--1e999.stdout      |    1 +
+ .../evidence/nonfinite-resource--Infinity.stderr   |    0
+ .../evidence/nonfinite-resource--Infinity.stdout   |    1 +
+ .../evidence/nonfinite-resource-1e999.stderr       |    0
+ .../evidence/nonfinite-resource-1e999.stdout       |    1 +
+ .../evidence/nonfinite-resource-Infinity.stderr    |    0
+ .../evidence/nonfinite-resource-Infinity.stdout    |    1 +
+ .../evidence/nonfinite-resource-NaN.stderr         |    0
+ .../evidence/nonfinite-resource-NaN.stdout         |    1 +
+ .../evidence/one-over-input-bound.stderr           |    0
+ .../evidence/one-over-input-bound.stdout           |    1 +
+ .../evidence/operations.jsonl                      |  109 ++
+ .../evidence/output-schema-62.stderr               |    0
+ .../evidence/output-schema-62.stdout               |    1 +
+ .../evidence/output-schema-63.stderr               |    0
+ .../evidence/output-schema-63.stdout               |    1 +
+ .../evidence/output-schema-64.stderr               |    0
+ .../evidence/output-schema-64.stdout               |    1 +
+ .../evidence/prepublication-review.json            |   31 +
+ .../evidence/prior52-reuse.json                    |   25 +
+ .../evidence/read-tree--absolute-git-dir.stderr    |    0
+ .../evidence/read-tree--absolute-git-dir.stdout    |    1 +
+ .../evidence/read-tree--show-toplevel.stderr       |    0
+ .../evidence/read-tree--show-toplevel.stdout       |    1 +
+ .../evidence/read-tree.stderr                      |    1 +
+ .../evidence/read-tree.stdout                      |    0
+ .../evidence/rejecting-mutant.txt                  |  116 ++
+ .../evidence/rejecting-mutation.stderr             |    0
+ .../evidence/rejecting-mutation.stdout             |    1 +
+ .../evidence/remote-add--absolute-git-dir.stderr   |    0
+ .../evidence/remote-add--absolute-git-dir.stdout   |    1 +
+ .../evidence/remote-add--show-toplevel.stderr      |    0
+ .../evidence/remote-add--show-toplevel.stdout      |    1 +
+ .../evidence/remote-add.stderr                     |    0
+ .../evidence/remote-add.stdout                     |    0
+ .../evidence/schema-cleanupComplete.stderr         |    0
+ .../evidence/schema-cleanupComplete.stdout         |    1 +
+ .../evidence/schema-cpuSeconds.stderr              |    0
+ .../evidence/schema-cpuSeconds.stdout              |    1 +
+ .../evidence/schema-exit.stderr                    |    0
+ .../evidence/schema-exit.stdout                    |    1 +
+ .../evidence/schema-filesystem.stderr              |    0
+ .../evidence/schema-filesystem.stdout              |    1 +
+ .../evidence/schema-filesystemCleanup.stderr       |    0
+ .../evidence/schema-filesystemCleanup.stdout       |    1 +
+ .../evidence/schema-peakRSS.stderr                 |    0
+ .../evidence/schema-peakRSS.stdout                 |    1 +
+ .../evidence/schema-stopReason.stderr              |    0
+ .../evidence/schema-stopReason.stdout              |    1 +
+ .../evidence/source-0.stderr                       |    1 +
+ .../evidence/source-0.stdout                       |  115 ++
+ .../evidence/source-1.stderr                       |    1 +
+ .../evidence/source-1.stdout                       |  156 +++
+ .../evidence/source-2.stderr                       |    1 +
+ .../evidence/source-2.stdout                       |   81 ++
+ .../evidence/source-3.stderr                       |    1 +
+ .../evidence/source-3.stdout                       |  122 ++
+ .../evidence/source-pins.json                      |   24 +
+ .../sparse-config--absolute-git-dir.stderr         |    0
+ .../sparse-config--absolute-git-dir.stdout         |    1 +
+ .../evidence/sparse-config--show-toplevel.stderr   |    0
+ .../evidence/sparse-config--show-toplevel.stdout   |    1 +
+ .../evidence/sparse-config.stderr                  |    0
+ .../evidence/sparse-config.stdout                  |    0
+ .../stage-owned-report--absolute-git-dir.stderr    |    0
+ .../stage-owned-report--absolute-git-dir.stdout    |    1 +
+ .../stage-owned-report--show-toplevel.stderr       |    0
+ .../stage-owned-report--show-toplevel.stdout       |    1 +
+ .../evidence/stage-owned-report.stderr             |    1 +
+ .../evidence/stage-owned-report.stdout             |    0
+ .../evidence/task-head--absolute-git-dir.stderr    |    0
+ .../evidence/task-head--absolute-git-dir.stdout    |    1 +
+ .../evidence/task-head--show-toplevel.stderr       |    0
+ .../evidence/task-head--show-toplevel.stdout       |    1 +
+ .../evidence/task-head.stderr                      |    0
+ .../evidence/task-head.stdout                      |    0
+ .../evidence/task-ref--absolute-git-dir.stderr     |    0
+ .../evidence/task-ref--absolute-git-dir.stdout     |    1 +
+ .../evidence/task-ref--show-toplevel.stderr        |    0
+ .../evidence/task-ref--show-toplevel.stdout        |    1 +
+ .../evidence/task-ref.stderr                       |    1 +
+ .../evidence/task-ref.stdout                       |    0
+ .../evidence/trailing-object.stderr                |    0
+ .../evidence/trailing-object.stdout                |    1 +
+ .../evidence/unchanged-reproducer.json             |    1 +
+ .../publish.py                                     |   48 +
+ .../stage-recipe.txt                               |   15 +
+ .../supervisor.py                                  |  104 ++
+ 238 files changed, 3050 insertions(+)
