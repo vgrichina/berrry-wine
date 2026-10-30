@@ -1,1 +1,0 @@
-PASS test-toyvm-volatile-forward-patch: dl 132 == 132 over 200 self-patching calls

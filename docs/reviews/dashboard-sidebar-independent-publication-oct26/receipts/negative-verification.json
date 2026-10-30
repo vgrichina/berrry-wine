@@ -1,7 +1,0 @@
-{
-  "sourceSHA256": "7c1c314cfaab858da8a840399b5c9785b0ca1626919304b6069886d119aa4132",
-  "fixtureSHA256": "7d5886edbdb57db7b6d88ff83e5e740c3f78471394aca97a8333335b5525207e",
-  "receipt": "independent-pinned-negative.json",
-  "result": "7 assertion failures,1 baseline hash control PASS,0 loader errors",
-  "captureIncident": "complete output retained; original supervisor excerpt exception corrected to bounded8192B return without rerun"
-}

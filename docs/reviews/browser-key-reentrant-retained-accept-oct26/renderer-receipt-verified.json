@@ -1,8 +1,0 @@
-{
-  "rendererRevision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
-  "manifest": "/tmp/renderer-side-polling-merged-branch-oct26/repo/docs/reviews/renderer-side-polling-merged-branch-oct26/evidence-manifest.json",
-  "manifestSHA256": "0c63a8591188907d8650be218c44d7f74a7eb024ddd44faa1a99a7f75d1a3c35",
-  "verifiedPayloads": 46,
-  "sourceClosureIdentical": true,
-  "reused": "119 cases plus legacy; three known aggregate failures retained; no rerun"
-}
