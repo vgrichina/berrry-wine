@@ -1,7 +1,0 @@
-[
-  {
-    "kind": "internal sparse pattern omission",
-    "firstError": "FileNotFoundError verifying prior review README.md; supplied objects already materialized but checkout omitted prior independent review directory",
-    "resolution": "Added exact assigned immutable review sparse pattern and read-tree once; no oracle/test changes"
-  }
-]

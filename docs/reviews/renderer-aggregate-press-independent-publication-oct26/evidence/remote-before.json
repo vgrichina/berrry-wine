@@ -1,5 +1,0 @@
-{
-  "exactRefs": "ef10196a82eaad6d374617fc4a08f108487d264a\trefs/heads/main",
-  "mainExpectedAtDispatch": "ef10196a82eaad6d374617fc4a08f108487d264a",
-  "scope": "Readonly main observation; no merge or main push authorized without acceptance."
-}

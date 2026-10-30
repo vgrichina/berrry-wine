@@ -1,3 +1,0 @@
-{
-  "log": "{\"productionEntryCompleted\": true, \"actualNodeStartup\": true, \"externalAllocatedBytes\": 4096, \"collectorBytes\": 2358, \"accountingComplete\": true, \"defectReproduced\": true}\nPASS unchanged original repro exposes historical escape; exact Node executable/flags/limits startup retained\n"
-}
