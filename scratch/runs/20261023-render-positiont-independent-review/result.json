@@ -1,0 +1,13 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "candidate": "5eb16d60dd9f5302060509185fb2ebbbad88bba4",
+  "gap": "Shared software POSITIONT migration adds homogeneous depth clipping and collapses screen depth when viewport MinZ equals MaxZ",
+  "independentRegressionCases": 4,
+  "donorChecksPassed": 10,
+  "controlScriptsPassed": 2,
+  "productionRepairs": false,
+  "actualWebGLPixels": false,
+  "canonicalModule": false,
+  "runtime": "unassigned, no operations; coordinator owns any existing box",
+  "note": "docs/re-notes/render-positiont-independent-review-20261023.md"
+}
