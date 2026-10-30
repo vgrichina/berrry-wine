@@ -1,0 +1,1425 @@
+{
+  "schemaVersion": 1,
+  "title": "Ultima IV: Quest of the Avatar",
+  "version": "GOG1.0 CS28045, bundled Windows DOSBox0.74-2.1",
+  "candidateId": "gog-free-ultima-iv",
+  "installer": {
+    "path": "test/binaries/candidates/gog-free-ultima-iv/setup_ultima_iv_-_quest_of_the_avatar_1.0_cs_(28045).exe",
+    "bytes": 12548400,
+    "sha256": "51ff74db64af93b8c4c7eeca2eb2a580978dd7c6310e9a9917023d669ee83e27"
+  },
+  "provenance": "Existing local GOG installation documented in docs/re-notes/ultima4-gog.md; archive.org/gog_collection package provenance in candidate-corpus manifest. No redistribution rights inferred.",
+  "installedRoot": "test/binaries/candidates/gog-free-ultima-iv/installed",
+  "files": [
+    {
+      "path": "ABACUS.EGA",
+      "bytes": 1877,
+      "sha256": "554537d749083453fb0ade2a1cd5df465739afa8784ba4ea101e85e20695e0e6"
+    },
+    {
+      "path": "ABACUS.PIC",
+      "bytes": 1670,
+      "sha256": "8a0af0f84a963113cc1cce7a39c93be45462cb6ff8657e23bc1fcc443ccbe1c6"
+    },
+    {
+      "path": "ABYSS.DNG",
+      "bytes": 16896,
+      "sha256": "769428c0f6680cf538cd0d3e4cf0a2813a4a944a3b03c5f104dc1511a01cc444"
+    },
+    {
+      "path": "ANIMATE.EGA",
+      "bytes": 6023,
+      "sha256": "a607e5db7cbdc658fdea083d33bf6871ee9aaf8b499ce95efb98d5d502494c74"
+    },
+    {
+      "path": "ANIMATE.PIC",
+      "bytes": 3956,
+      "sha256": "9facd42dc217c0752e434fbfa9aec3f1446cf5a36c9ee55cdeb870ef3e3256c5"
+    },
+    {
+      "path": "AVATAR.EXE",
+      "bytes": 98208,
+      "sha256": "84ec144394cb561b047d6ef80b7bd8e8652f0159891ff273a3c051b3f9dfd368"
+    },
+    {
+      "path": "BRICK.CON",
+      "bytes": 192,
+      "sha256": "afa44ab0f2054d9d54314133d04b9083e5dc6b4e08a37f3760d04160d18e86c0"
+    },
+    {
+      "path": "BRIDGE.CON",
+      "bytes": 192,
+      "sha256": "f27c385d2d0443704c696553112bfc3e83e9c884c1485870b6792bce5cfc42f8"
+    },
+    {
+      "path": "BRITAIN.TLK",
+      "bytes": 4608,
+      "sha256": "61f30252a9fd7adcab316f634a38be55b79320b1adbdf32a0e7074b5996d81bb"
+    },
+    {
+      "path": "BRITAIN.ULT",
+      "bytes": 1280,
+      "sha256": "95dcd37b65b85c6c073b6fad3d3e1abafeab40d2aa2a23aa6bd336152f5ac0eb"
+    },
+    {
+      "path": "BRUSH.CON",
+      "bytes": 192,
+      "sha256": "e3d79be9a046c7aa2c52ea7c5ed891db68cd32a5a823d3e7a410f4085caa3c36"
+    },
+    {
+      "path": "CAMP.CON",
+      "bytes": 192,
+      "sha256": "1278d92d0c5d1fd3613107a9cb36258eed08fc0d472f21af07b35c7dde7317d4"
+    },
+    {
+      "path": "CAMP.DNG",
+      "bytes": 192,
+      "sha256": "c84922e1bfa45b97890cedaf54b7ab58bb81f2f3622582da955899672ee1f880"
+    },
+    {
+      "path": "CGA.DRV",
+      "bytes": 3313,
+      "sha256": "b6bc692cf57f008def6a636a08a081c3193ca4900c59ade07a2c788bb9e16d20"
+    },
+    {
+      "path": "CHARSET.CGA",
+      "bytes": 2048,
+      "sha256": "b042dd586fd80debaff0dbf107a77675d722d1c11b719ba6ea0dd23c6ddde0a5"
+    },
+    {
+      "path": "CHARSET.EGA",
+      "bytes": 8192,
+      "sha256": "dd07a339132658a52fec94f716d1308fa597d5919682951bec81d1611efa6558"
+    },
+    {
+      "path": "COMPASSN.EGA",
+      "bytes": 719,
+      "sha256": "37645a33393587074e1af835373b7c0196edff5b36b1b0bfa10e39d9c4bc4d8a"
+    },
+    {
+      "path": "COMPASSN.PIC",
+      "bytes": 503,
+      "sha256": "ad04292ebb0132a8c9dfc820daf665b21e79d9823c149a7acf257df5f1de33eb"
+    },
+    {
+      "path": "COURAGE.EGA",
+      "bytes": 629,
+      "sha256": "52ec8899ca7accd9b2270a93d1c5d8a7c30540f19ca46d674784b07af20f1fb0"
+    },
+    {
+      "path": "COURAGE.PIC",
+      "bytes": 293,
+      "sha256": "e625482dcea6abe3ae01c3c47645b8b87c3cdce4c7589d6352a34b5b39665dba"
+    },
+    {
+      "path": "COVE.TLK",
+      "bytes": 4608,
+      "sha256": "6f0f36e358fb1d47482ad68b6b3834c79278a9290e10e39edc6a238a89deba59"
+    },
+    {
+      "path": "COVE.ULT",
+      "bytes": 1280,
+      "sha256": "0cf9d13c0df9b8d7012ee595655f5c4f10abcd82f457de2a05615fa6a1614f93"
+    },
+    {
+      "path": "COVETOUS.DNG",
+      "bytes": 4608,
+      "sha256": "b308bcec04ada246b0f1649cac566c3a2a17987fa2dc472abb4da86a15d65dc4"
+    },
+    {
+      "path": "DECEIT.DNG",
+      "bytes": 4608,
+      "sha256": "190b5e25e41bc17213bdb563f53c4c35b7d7c2cb273b96a6a350a4e04333949f"
+    },
+    {
+      "path": "DEN.TLK",
+      "bytes": 4608,
+      "sha256": "d99f96e9233ad340b2b611b158c8b97e4685dbfe17b134f6306d74649eacc8b8"
+    },
+    {
+      "path": "DEN.ULT",
+      "bytes": 1280,
+      "sha256": "627c786237df438c524739659335010124d3d96915266e683818bbb7296c6d58"
+    },
+    {
+      "path": "DESPISE.DNG",
+      "bytes": 4608,
+      "sha256": "79f7a907e9ecb08f485e68011ae5cf237675161e656534245ee80e9f130f4822"
+    },
+    {
+      "path": "DESTARD.DNG",
+      "bytes": 4608,
+      "sha256": "35c968197239ae1e677fd219ada104ffa47142f9da8c38ca75bd606bbf252e3c"
+    },
+    {
+      "path": "DNG0.CON",
+      "bytes": 192,
+      "sha256": "7e9d4f2413b0247504f965650d2162585088ca8180fa9d843368056a623e9c04"
+    },
+    {
+      "path": "DNG1.CON",
+      "bytes": 192,
+      "sha256": "8c44bd59dd00164d6aec0baf3039b3c210725753b9be8e4fe060a9e4f8d208b4"
+    },
+    {
+      "path": "DNG2.CON",
+      "bytes": 192,
+      "sha256": "aee10b4a725e6ce172105f702d7be1d862bf28792536392760d55af6a5bf8ead"
+    },
+    {
+      "path": "DNG3.CON",
+      "bytes": 192,
+      "sha256": "743d2e0a3e8580108d477f9da86fe8d8cfa330bf4d9052245a604e34d8dbcbd4"
+    },
+    {
+      "path": "DNG4.CON",
+      "bytes": 192,
+      "sha256": "adadcd6baa53095ae925c77f9b6dc48228bea0b3690b15ca55a476b9bf89dd53"
+    },
+    {
+      "path": "DNG5.CON",
+      "bytes": 192,
+      "sha256": "a5dfe4eb390e87525bc4ef75d8a126c7e0e05a588096dd14c315583ee53ff5d2"
+    },
+    {
+      "path": "DNG6.CON",
+      "bytes": 192,
+      "sha256": "a984639ae55431a04462297d3bb4d822b497c3aa7af68d1c6fc48c36d008c3d7"
+    },
+    {
+      "path": "DOSBOX/DOSBox 0.74-2 Manual.txt",
+      "bytes": 64230,
+      "sha256": "385e6fa44b10b5c4883598a0ced0ce2124661147ac5183dcc477a0701f044662"
+    },
+    {
+      "path": "DOSBOX/DOSBox.exe",
+      "bytes": 3802624,
+      "sha256": "8a7a7fedd222bf985b51191000557f9ee2ffb033be02c6c59594dbbec013cd41"
+    },
+    {
+      "path": "DOSBOX/Documentation/AUTHORS.txt",
+      "bytes": 276,
+      "sha256": "5a0d89da929c7241b2da13f2ae9407937f0a7e103698e179e443104e470dfa17"
+    },
+    {
+      "path": "DOSBOX/Documentation/COPYING.txt",
+      "bytes": 18332,
+      "sha256": "da0eca0fb517ac939d167924c9d4b3f8750a6b7191932ef2cb145acfa624ac7e"
+    },
+    {
+      "path": "DOSBOX/Documentation/INSTALL.txt",
+      "bytes": 3937,
+      "sha256": "49f4038a4e453abda45d480fc046bd86b6544fde5a32928ea8557e318a624e2c"
+    },
+    {
+      "path": "DOSBOX/Documentation/NEWS.txt",
+      "bytes": 32603,
+      "sha256": "3f8002db6a2bd1700f5ea98ec32ff25d1d7f8f5acad6b2bee83965006a0889d8"
+    },
+    {
+      "path": "DOSBOX/Documentation/README.txt",
+      "bytes": 64230,
+      "sha256": "385e6fa44b10b5c4883598a0ced0ce2124661147ac5183dcc477a0701f044662"
+    },
+    {
+      "path": "DOSBOX/Documentation/THANKS.txt",
+      "bytes": 1001,
+      "sha256": "acd9cbb904ebcea9ad6d0d871a1131c5262a0bb8bce94dfaf21ee4ed5140b45e"
+    },
+    {
+      "path": "DOSBOX/GOGDOSConfig.exe",
+      "bytes": 2989648,
+      "sha256": "0465cedb523cbaf56c7aa8f144f1ebdddb7e1ade23575ecf0a0ba2c934455c54"
+    },
+    {
+      "path": "DOSBOX/SDL.dll",
+      "bytes": 448231,
+      "sha256": "69037ebc43755296c0cc292d57d560028d7f2265f7b86ca84e714835c19bbd58"
+    },
+    {
+      "path": "DOSBOX/SDL_net.dll",
+      "bytes": 13312,
+      "sha256": "2f39dc04acbecf47efa45034891602b6ea7bf6fd2f27b5c0a5ca8d7fb155c929"
+    },
+    {
+      "path": "DOSBOX/Video Codec/Video Instructions.txt",
+      "bytes": 1608,
+      "sha256": "cca5a0516b2bebfd8089b1426762b641382dea9c42e50356007188a9eae6ea24"
+    },
+    {
+      "path": "DOSBOX/Video Codec/zmbv.dll",
+      "bytes": 94208,
+      "sha256": "be72d291901b4a67741732da3d6dfd87fb3e74c8d03d56d40c58dd4d9744a478"
+    },
+    {
+      "path": "DOSBOX/Video Codec/zmbv.inf",
+      "bytes": 4043,
+      "sha256": "94ce9d889b16da383185c40de25d5fd57d25a7b608c2ff87ab5998b4191ce4db"
+    },
+    {
+      "path": "DOSBOX/dosbox-0.74-2.1.tar.gz",
+      "bytes": 1334686,
+      "sha256": "1b6c865340e9d6119529c4ae61e2f12661424a38f07f8818202c5357a6b97ba2"
+    },
+    {
+      "path": "DUNGEON.CON",
+      "bytes": 192,
+      "sha256": "4ddbd85c2af315f8aa6b5d8216b0024800db8d8469994e44e763ab9cbf21b479"
+    },
+    {
+      "path": "EGA.DRV",
+      "bytes": 4730,
+      "sha256": "1a896d914ad5dfa2543800894300263c042af1e3080f798b613b3f1818a3cd45"
+    },
+    {
+      "path": "EMPATH.TLK",
+      "bytes": 4608,
+      "sha256": "aa34c9f0b1195ad09e8467575ee7ae957d07934a924fba80ced1e3e55efa4dcc"
+    },
+    {
+      "path": "EMPATH.ULT",
+      "bytes": 1280,
+      "sha256": "aa39f2db4224357d94ff223e5401f315a532b088b8c2f565ca247949b7b01d98"
+    },
+    {
+      "path": "FOREST.CON",
+      "bytes": 192,
+      "sha256": "392b7290ca8f07c74a2a01b5158a9667b65d6cb5380a7b912b5d84c08eaa9286"
+    },
+    {
+      "path": "GRASS.CON",
+      "bytes": 192,
+      "sha256": "82e39c8e33c40d7566c6285eb958be57e6373f1c3a9effee9343e7211e94d107"
+    },
+    {
+      "path": "GYPSY.EGA",
+      "bytes": 8616,
+      "sha256": "a72da23546c5a685640f3f338b264393291981a21e6bf3e5814cd75b70f3501c"
+    },
+    {
+      "path": "GYPSY.PIC",
+      "bytes": 6123,
+      "sha256": "87a47c0dbfb96a2f08337173738a78eaf64df2e7e2c9c359c08d7f070a553f2f"
+    },
+    {
+      "path": "HILL.CON",
+      "bytes": 192,
+      "sha256": "1f1a243caa789712e2838981b70e1885a9e0aa8e44545f77815b4385c4598e63"
+    },
+    {
+      "path": "HONCOM.EGA",
+      "bytes": 4250,
+      "sha256": "c359872dd2191468fbda7a65f35c5c0eb15f9f9f8fb3c3e644182bb4d895d83a"
+    },
+    {
+      "path": "HONCOM.PIC",
+      "bytes": 3311,
+      "sha256": "c488ef45e90835a721064dd00a7d18f23e4c4e1f6d6b53cb977386a4984e71fc"
+    },
+    {
+      "path": "HONESTY.EGA",
+      "bytes": 721,
+      "sha256": "1468f95c45c1006699b2995fa364893435c4491abc489fa9ae2ba99438c9e928"
+    },
+    {
+      "path": "HONESTY.PIC",
+      "bytes": 505,
+      "sha256": "e9c3156d80cea2ae59666b2a0e762c4a4f1c202bc3228721d6f0b945164a674e"
+    },
+    {
+      "path": "HONOR.EGA",
+      "bytes": 741,
+      "sha256": "5845f97e59b5204492745d5f22a416bdd6e717f045f5d7b73a6be46bc00f1d2c"
+    },
+    {
+      "path": "HONOR.PIC",
+      "bytes": 528,
+      "sha256": "30dd7cc007986162508a6f2180617cfac995271e59c8d247ce770696ce641acc"
+    },
+    {
+      "path": "HUMILITY.EGA",
+      "bytes": 1595,
+      "sha256": "abf6b52869cf7bc3456f2dffe7608aa9830aa344861000dfd251c71dc24baead"
+    },
+    {
+      "path": "HUMILITY.PIC",
+      "bytes": 1317,
+      "sha256": "5383f59c9cbb450756971582eff788ae216aa4b477fb0abcc811febd849aaf03"
+    },
+    {
+      "path": "HYTHLOTH.DNG",
+      "bytes": 4608,
+      "sha256": "5de1d41983dbd5a9afebe082bd176b809e904ed819503b36319dc6e96b77962e"
+    },
+    {
+      "path": "INN.CON",
+      "bytes": 192,
+      "sha256": "45ca6a3433031402de59c781a6f9f20200243b8b8da2f9a68cfa3741fd921ad1"
+    },
+    {
+      "path": "INSIDE.EGA",
+      "bytes": 8201,
+      "sha256": "45592f005310a86d831976acceed49825738af6abf0fe06aa9e2398a5918389c"
+    },
+    {
+      "path": "INSIDE.PIC",
+      "bytes": 4730,
+      "sha256": "9addd9a606832acbcead24feca9c22872082e1c69d355151f9166bef12277cb2"
+    },
+    {
+      "path": "JHELOM.TLK",
+      "bytes": 4608,
+      "sha256": "5f0d01365c1bbee4c6b5671c26572a40461bc951d774693e6c5895d5912e0a4d"
+    },
+    {
+      "path": "JHELOM.ULT",
+      "bytes": 1280,
+      "sha256": "fd090b2fe7b9b7cfb4283ec7d60ba09431ed76e9aec158cc320c0e38b2d17d9b"
+    },
+    {
+      "path": "JUSTICE.EGA",
+      "bytes": 387,
+      "sha256": "7f170648f2db88dda3f477192e36a648f2bb819021dfa0d32c34f1b396928809"
+    },
+    {
+      "path": "JUSTICE.PIC",
+      "bytes": 59,
+      "sha256": "7bf09f6105da56221df5251b6ff93aa31d42fef8b8ab971812facb6e5691072c"
+    },
+    {
+      "path": "KEY7.EGA",
+      "bytes": 572,
+      "sha256": "efd2c0e719c64eabc2057dca74be41dcd346db0917af7c51a63169c74ed8c53d"
+    },
+    {
+      "path": "KEY7.PIC",
+      "bytes": 218,
+      "sha256": "7a77bb4accb3e446d5a05cf68695b12b56309647c67d2c79dd08e25fc6db4e88"
+    },
+    {
+      "path": "LCB.TLK",
+      "bytes": 4608,
+      "sha256": "41842efb6b6ac57e172ca801c48744e94af4ae0dc20fbcc5064870e9c43d7503"
+    },
+    {
+      "path": "LCB_1.ULT",
+      "bytes": 1280,
+      "sha256": "d03695e8aa616a2ecdb35ddb98bdb0f12e08d6e2af81b428a1e91c7f3b4063a0"
+    },
+    {
+      "path": "LCB_2.ULT",
+      "bytes": 1280,
+      "sha256": "35af75e3f4ef52295b1784716bfba417720ae3e4bb2d95d937a788bde1ba2fca"
+    },
+    {
+      "path": "LOVE.EGA",
+      "bytes": 626,
+      "sha256": "2929b8fb30e2e929a6d4ebaf0849f3f2d58e1075ce1b8a9b3e13b8631eb8bad6"
+    },
+    {
+      "path": "LOVE.PIC",
+      "bytes": 288,
+      "sha256": "6f6eb1f0a981be095e02ec320da3a28628868c9a31352f01d0420d3703a93df7"
+    },
+    {
+      "path": "LYCAEUM.TLK",
+      "bytes": 4608,
+      "sha256": "34f4cd03c719106ab9b4761f772b13243bd8cf5c11057ca6719f50d2f51ffc29"
+    },
+    {
+      "path": "LYCAEUM.ULT",
+      "bytes": 1280,
+      "sha256": "168e826d10f804df87743e46e3c1c3bacfd3f3990d3c059e813c3689d379f1c5"
+    },
+    {
+      "path": "MAGINCIA.TLK",
+      "bytes": 4608,
+      "sha256": "b614469723843105c6466fb5a21cffeb620f39db691a16bfa7360f148b33f273"
+    },
+    {
+      "path": "MAGINCIA.ULT",
+      "bytes": 1280,
+      "sha256": "18528c09d4de3c81aecbe594adf616741587d189b1502b66cd46d3bd19475153"
+    },
+    {
+      "path": "MARSH.CON",
+      "bytes": 192,
+      "sha256": "85049a8625f9341f4732b6af7f60c1d7f821518e627821de6185b9f7aa8885c9"
+    },
+    {
+      "path": "MINOC.TLK",
+      "bytes": 4608,
+      "sha256": "4dcec9c31ef49689baaf9ba02aaf9cf2a5ce4ebbcd92acc8f782d20711d480a2"
+    },
+    {
+      "path": "MINOC.ULT",
+      "bytes": 1280,
+      "sha256": "ba10659621ff832dce95ba91699ea06dea76e3094fe8d24f76759aff0839ef03"
+    },
+    {
+      "path": "MOONGLOW.TLK",
+      "bytes": 4608,
+      "sha256": "f5bf3df504e317bddac1a7073e3a804e24066820b9d19fe79a7ff51a945eaff9"
+    },
+    {
+      "path": "MOONGLOW.ULT",
+      "bytes": 1280,
+      "sha256": "62a0ecdd11bba9a1458288179d593a77a068582117f58b961d5eac281766ca8e"
+    },
+    {
+      "path": "OUTSIDE.EGA",
+      "bytes": 8618,
+      "sha256": "88a9a466f8ee9eca6d0af05cb12c615cf995b3772ba9f14bc8cd671e77345436"
+    },
+    {
+      "path": "OUTSIDE.PIC",
+      "bytes": 5393,
+      "sha256": "68eab65b63880d13ea11d59581b0edc08beca6836666c1709ecc8bcf405493d5"
+    },
+    {
+      "path": "PARTY.NEW",
+      "bytes": 502,
+      "sha256": "f647ceab6d0e9dd619335988e0dfd5dfdc5b1d7690f9eac1cf686d32f04a0acb"
+    },
+    {
+      "path": "PAWS.TLK",
+      "bytes": 4608,
+      "sha256": "e5db787bc4336fdb8d4a5b873d5852504d014ee0aada7c285c23ca905e0d8421"
+    },
+    {
+      "path": "PAWS.ULT",
+      "bytes": 1280,
+      "sha256": "958416ecc6e92ee11d8340e2686cb9d973b47579ad5b7b914d2c908a77a78e22"
+    },
+    {
+      "path": "PORTAL.EGA",
+      "bytes": 8564,
+      "sha256": "bf3d33994c2c0f16d7e83d768c2085efa797720331f55b8cac0a8de87f1fde69"
+    },
+    {
+      "path": "PORTAL.PIC",
+      "bytes": 5228,
+      "sha256": "916b56bfbb2511c4ce5a1b949ed370b57121d580f909e32e1e2e7027772dc6f7"
+    },
+    {
+      "path": "RUNE_0.EGA",
+      "bytes": 532,
+      "sha256": "1fc6b7e97552a1b95b97bad4650a83dc4ae719fe85f35c0fbbed92fc511f7367"
+    },
+    {
+      "path": "RUNE_0.PIC",
+      "bytes": 213,
+      "sha256": "0a9ab4ffd349e9baa98ebd71a22f22259a3826af2431cf1c2a24bd985e2bc8c0"
+    },
+    {
+      "path": "RUNE_1.EGA",
+      "bytes": 466,
+      "sha256": "206a7b70e4fee8dba5177e5565647a12c27c29c3837f814b04b1191602e49fa4"
+    },
+    {
+      "path": "RUNE_1.PIC",
+      "bytes": 155,
+      "sha256": "a034dc408345e8f43f315afe9ea949809e0a61e710bd9307268d847acca23e02"
+    },
+    {
+      "path": "RUNE_2.EGA",
+      "bytes": 517,
+      "sha256": "0c83858b89631bbb9c28f546002f4b962488f606e9af4e537e4049452c9f1712"
+    },
+    {
+      "path": "RUNE_2.PIC",
+      "bytes": 188,
+      "sha256": "507f54a2e0643dfcf774c3c530238b765f74e1e6e2c091166b9e6c58953e5007"
+    },
+    {
+      "path": "RUNE_3.EGA",
+      "bytes": 492,
+      "sha256": "33ca5ea51856802e922196724e22a2eaafc8079934e9e041049d0de75e7b4722"
+    },
+    {
+      "path": "RUNE_3.PIC",
+      "bytes": 171,
+      "sha256": "9645f66a79416c9239763fb81e90b1fea94de0d5a19bfd202891e552959289f3"
+    },
+    {
+      "path": "RUNE_4.EGA",
+      "bytes": 655,
+      "sha256": "678cb36500ff6e322cf639a104d9c04fa9f181796811512901a1aa2fe31a6083"
+    },
+    {
+      "path": "RUNE_4.PIC",
+      "bytes": 295,
+      "sha256": "db38ce6911c7804f2222131c2633689afb2595b937187d0a0821419ae09d7246"
+    },
+    {
+      "path": "RUNE_5.EGA",
+      "bytes": 2405,
+      "sha256": "5b3c32b1f85de800742023927db74fb6012817774ea8af7687230bfa0c5bba1b"
+    },
+    {
+      "path": "RUNE_5.PIC",
+      "bytes": 1587,
+      "sha256": "8dfa8e00930f2e5f0fc68855dfec1a7c09709b85f42458a7a36537d431725c4c"
+    },
+    {
+      "path": "SACHONOR.EGA",
+      "bytes": 4430,
+      "sha256": "e3ee1841b4f2de681603ff01d2c6df8628e88668cf3f28aeb215f2ae99906c41"
+    },
+    {
+      "path": "SACHONOR.PIC",
+      "bytes": 3084,
+      "sha256": "76c181d3ed29673fe3efbbc1843489c6d4dd1d6f90867f8652d1c870b1d455f6"
+    },
+    {
+      "path": "SACRIFIC.EGA",
+      "bytes": 748,
+      "sha256": "9854a8b18dee1be35551f0c7f9cde749c23af3ce6aabfc7d813e21d4345951b8"
+    },
+    {
+      "path": "SACRIFIC.PIC",
+      "bytes": 532,
+      "sha256": "63c2aca580eee46cabda60b08135d7b09c73255aa9512b33aba859923cbe58e3"
+    },
+    {
+      "path": "SERPENT.TLK",
+      "bytes": 4608,
+      "sha256": "996e1733ec5e0f585da238159dba3a947f267a1297ee92bb067efdaa6744e69d"
+    },
+    {
+      "path": "SERPENT.ULT",
+      "bytes": 1280,
+      "sha256": "462b26db4231861939987ee3009f6127eaa1cc91206de8247fd7651ea9c06160"
+    },
+    {
+      "path": "SHAME.DNG",
+      "bytes": 4608,
+      "sha256": "df9aad2c43b0a266a5c482900b42599028260fd60d9ca73e45c60fdf7db35543"
+    },
+    {
+      "path": "SHAPES.CGA",
+      "bytes": 16384,
+      "sha256": "54850e9d531a315471bc41121a0cbd59f5cce2273d442c83813ef563325610b3"
+    },
+    {
+      "path": "SHAPES.EGA",
+      "bytes": 32768,
+      "sha256": "c9cd15339d90661ab92067c783aac30c91035f2d48e5da18b4c0c7d09e565bf8"
+    },
+    {
+      "path": "SHAPES.EGZ",
+      "bytes": 12258,
+      "sha256": "044202f259a0243a8703872385d73b586ebd974dd78fe3663dd0fe779d90fa91"
+    },
+    {
+      "path": "SHIPSEA.CON",
+      "bytes": 192,
+      "sha256": "ed540251833ad6bb7505c0e6dd1a816001b641d1fb338308e658b62e966b2a76"
+    },
+    {
+      "path": "SHIPSHIP.CON",
+      "bytes": 192,
+      "sha256": "ddc7c64704b591693970189639fdf78b686b798a5ecdf204c24e26e169ef2806"
+    },
+    {
+      "path": "SHIPSHOR.CON",
+      "bytes": 192,
+      "sha256": "13fffc683d7cde53114737a9f53b0bf667cd2cd65e3bd0fd3bb2dae53345720f"
+    },
+    {
+      "path": "SHORE.CON",
+      "bytes": 192,
+      "sha256": "564f5a95e9f735abe24dba9cebfd898b5881c53f17aa387ff4c8e6b1a8bdd79c"
+    },
+    {
+      "path": "SHORSHIP.CON",
+      "bytes": 192,
+      "sha256": "bd6024c1b193291a3c8300d213df3b407df4ead69f576517697fc2aebbb95450"
+    },
+    {
+      "path": "SHRINE.CON",
+      "bytes": 192,
+      "sha256": "d76a91cd98780eeed361a7ba56d6d08d394bbce82d58fe97f27ac6ad33758f72"
+    },
+    {
+      "path": "SKARA.TLK",
+      "bytes": 4608,
+      "sha256": "66a6a7b8b3bbca93d780bf1fd1ad4be8f8418926adf944c19f2e95d4cd0c0f45"
+    },
+    {
+      "path": "SKARA.ULT",
+      "bytes": 1280,
+      "sha256": "5f1bcaea086d916013339f4e3f822b951749acc4cf15f3fd0d091609d4f57538"
+    },
+    {
+      "path": "SPIRHUM.EGA",
+      "bytes": 3896,
+      "sha256": "1931c8bb8a19ec9255cfc348252e1000552a33c68eb3c5c154973033310e4668"
+    },
+    {
+      "path": "SPIRHUM.PIC",
+      "bytes": 2940,
+      "sha256": "3848e56f47b178c043577102f13e31494b838174b6f9cb3aa40cd29912f59752"
+    },
+    {
+      "path": "SPIRIT.EGA",
+      "bytes": 400,
+      "sha256": "a62197c432c24e037cb532f12ee51d136ea12e3476db6551c63a1b23ce998ed2"
+    },
+    {
+      "path": "SPIRIT.PIC",
+      "bytes": 66,
+      "sha256": "bbab2b193504b20d802cb22612d51b87667c3a8d37af507ae6fa9834f449bbdb"
+    },
+    {
+      "path": "START.EGA",
+      "bytes": 2736,
+      "sha256": "a0c1b6032a4e1a86c7e6a5483c0db023e516ba186e6d847faf112303a5057b82"
+    },
+    {
+      "path": "START.PIC",
+      "bytes": 2167,
+      "sha256": "04d410d2d60b8402bbfe7c6dc7042e57fda1efd94352e21106c218e3b4af82a1"
+    },
+    {
+      "path": "STONCRCL.EGA",
+      "bytes": 11428,
+      "sha256": "0ceac7208e756efaf775ab95c7f815dcbe916dc526fb1576d746a9e5ba96534b"
+    },
+    {
+      "path": "STONCRCL.PIC",
+      "bytes": 2509,
+      "sha256": "0a4ab358e87389a7e94c3a05cd3800a19c42d64a697450939d30e94f7d63c3ec"
+    },
+    {
+      "path": "TANDY.DRV",
+      "bytes": 3484,
+      "sha256": "8608968b27cdd2d55d2080a7aa58686a0940ce55aea52fefac8e48821a6574f8"
+    },
+    {
+      "path": "TITLE.EGA",
+      "bytes": 3204,
+      "sha256": "c97944a5a9d95c09e0c04b61fac8cfa42130277ba74de12a350338f40a9f9973"
+    },
+    {
+      "path": "TITLE.EXE",
+      "bytes": 44672,
+      "sha256": "d372686cf4b2500cc9087462c5a565bd261ca8b2f61b8e7be0814852fc2a3218"
+    },
+    {
+      "path": "TITLE.PIC",
+      "bytes": 1959,
+      "sha256": "ade11f66cf69332bcdac3b94419bc2c3cfa65abf3eece5eb4920778ae53b9f48"
+    },
+    {
+      "path": "TREE.EGA",
+      "bytes": 9626,
+      "sha256": "cb70e5d67903e3ad2938013f0cab20a934e3633a8283f34f8e59b24d1b3de572"
+    },
+    {
+      "path": "TREE.PIC",
+      "bytes": 8792,
+      "sha256": "41b349eea89472c11fa6b4ac28f0c52e1ad4f4d382e988f2bf6303b33d9283c7"
+    },
+    {
+      "path": "TRINSIC.TLK",
+      "bytes": 4608,
+      "sha256": "03faac9f4a3a3b77164c4e9a799cf589f90dfef7a8a3310b42b13892cf6664e3"
+    },
+    {
+      "path": "TRINSIC.ULT",
+      "bytes": 1280,
+      "sha256": "36ed2e898e87751e2555681ae5c639c30a159da986d6c90cf0385a8623ee07e9"
+    },
+    {
+      "path": "TRUTH.EGA",
+      "bytes": 617,
+      "sha256": "8803a944eb2bb6b60f34ad6acfbd2cb8390264574c5dd811259d7e0555f7dbc6"
+    },
+    {
+      "path": "TRUTH.PIC",
+      "bytes": 287,
+      "sha256": "1c4c21f8f17915fa94d3247563c443f005bba3b7f234d1b70d9e40dccddb845c"
+    },
+    {
+      "path": "ULTIMA.COM",
+      "bytes": 480,
+      "sha256": "e95ea2ad2f4865bbd507f6fadfe35104445876e48fad5b1303b37f48601f46f9"
+    },
+    {
+      "path": "ULTIMA4.TXT",
+      "bytes": 98903,
+      "sha256": "626280ac99781fb219a5b07e3f1342ed9edfebc91baf10e5ddbf745cffc3980f"
+    },
+    {
+      "path": "VALJUS.EGA",
+      "bytes": 4730,
+      "sha256": "35567a1d863e87e3dba1bf6623e9f1401158a5e98249d99561e8964c6d73c2ee"
+    },
+    {
+      "path": "VALJUS.PIC",
+      "bytes": 3341,
+      "sha256": "6bd417fe11beea1de71927b4e52493867f9385cb2e376c00d49a91e5907f707b"
+    },
+    {
+      "path": "VALOR.EGA",
+      "bytes": 386,
+      "sha256": "f02a12dca60dd4c2aef42983a90df0795ef5ada2e25a138c13b32fe137c4480a"
+    },
+    {
+      "path": "VALOR.PIC",
+      "bytes": 57,
+      "sha256": "57f995d92c8981ec456cb2b14b9a887fb23afcb3c0b2e15506c8afa7aa8ca202"
+    },
+    {
+      "path": "VESPER.TLK",
+      "bytes": 4608,
+      "sha256": "bb236798f643e419c2af0e1f88aa78c2040ec97b3c836ef56f25636bb4b7d2d7"
+    },
+    {
+      "path": "VESPER.ULT",
+      "bytes": 1280,
+      "sha256": "ae9e9e711316741fb8c04f82ef5d5738f4ef2be3dbb5e2439c0d94eac9b0f88a"
+    },
+    {
+      "path": "WAGON.EGA",
+      "bytes": 12786,
+      "sha256": "8fd514678593debe1b2717be26b735022e412ae33058ee75bb5c529e481f09a1"
+    },
+    {
+      "path": "WAGON.PIC",
+      "bytes": 11244,
+      "sha256": "c11e97a6d426cf0d64076766742fcc63bea0b177a3045f7942d1dd4da63c9305"
+    },
+    {
+      "path": "WORLD.MAP",
+      "bytes": 65536,
+      "sha256": "255ed28a43fa25549bbc43a8ecf242e11264f9809d6ca5896f234ff0ebe6cb70"
+    },
+    {
+      "path": "WRONG.DNG",
+      "bytes": 4608,
+      "sha256": "4234a87fb73a765e1fbfb0389a3dc0abbcd22c5078b30f09fa64cd84c94bdd62"
+    },
+    {
+      "path": "YEW.TLK",
+      "bytes": 4608,
+      "sha256": "f807c9a8928c66cc81f10746cce3f4df350cc12b74610c81a6ac139d0294ec40"
+    },
+    {
+      "path": "YEW.ULT",
+      "bytes": 1280,
+      "sha256": "d0e48be256b0ce96c89760c16bc0c30bc44dc2c8e13c4c05e10aa0e12da2531a"
+    },
+    {
+      "path": "__redist/ISI/scriptinterpreter.exe",
+      "bytes": 1162680,
+      "sha256": "b895f6999c4b7ed7eb3f85c17af9167d12017cd1f5ebc8755adeb969ef4b7fb4"
+    },
+    {
+      "path": "__support/app/dosboxULTIMA4.conf",
+      "bytes": 11441,
+      "sha256": "e02e8f6ecdedcaf4e956e787e0b02e700870bdf8d1fe1797a2363173c6198713"
+    },
+    {
+      "path": "__support/app/dosboxULTIMA4_single.conf",
+      "bytes": 212,
+      "sha256": "236b371397ae314df0c348faec5d819042b227ded5052e16f221268684e1b32f"
+    },
+    {
+      "path": "__support/save/DNGMAP.SAV",
+      "bytes": 512,
+      "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+    },
+    {
+      "path": "__support/save/MONSTERS.SAV",
+      "bytes": 256,
+      "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+    },
+    {
+      "path": "__support/save/OUTMONST.SAV",
+      "bytes": 256,
+      "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+    },
+    {
+      "path": "__support/save/PARTY.SAV",
+      "bytes": 502,
+      "sha256": "f647ceab6d0e9dd619335988e0dfd5dfdc5b1d7690f9eac1cf686d32f04a0acb"
+    },
+    {
+      "path": "app/goggame-1207662433.ico",
+      "bytes": 160865,
+      "sha256": "979291efd2ff9236552a73c5bf407cf77bc60f7e229cf9e04d019490607da01a"
+    },
+    {
+      "path": "app/webcache.zip",
+      "bytes": 309550,
+      "sha256": "3603c1fe8e159e696aaa7af901b27f56d2f973d1578426b93980991ec5eb268a"
+    },
+    {
+      "path": "commonappdata/GOG.com/supportInstaller/uninstall.dll",
+      "bytes": 708096,
+      "sha256": "cc685dbcf798549ad1a51c1dde45462e2a451ec59f48ee91219182a3871cd5b0"
+    },
+    {
+      "path": "goggame-1207662433.hashdb",
+      "bytes": 4505,
+      "sha256": "11c78c7086ce465fe6c31428240062da90b0f88cdbb83f521df0684c2a7ab989"
+    },
+    {
+      "path": "goggame-1207662433.info",
+      "bytes": 1494,
+      "sha256": "2dcafc87733b188528e0ac2855105d96b3db2b13f7887c6630121dfa9d4ebada"
+    },
+    {
+      "path": "goggame-1207662433.script",
+      "bytes": 1839,
+      "sha256": "e38355fec6ad733aa4ca13762a835dcec8041183b87bccf4a07e0a7ebf93f1e8"
+    },
+    {
+      "path": "manual.pdf",
+      "bytes": 125282,
+      "sha256": "9c28c5f8c98953f2c5f0ec1f6224b3db90b3c332f8a5fdffd615ad0daa2b6a40"
+    },
+    {
+      "path": "readme.rtf",
+      "bytes": 162714,
+      "sha256": "087797e09f24555aa6b376d461174e7b763c8eef71ee7778f3f54fbc5efca4f8"
+    },
+    {
+      "path": "tmp/1444206831_brazilian.jpg",
+      "bytes": 179807,
+      "sha256": "f78b6ca44f826f5b38a7c2aaf6514cd44f611c7e342a222710ba6a46d508f087"
+    },
+    {
+      "path": "tmp/1444206831_chinese.jpg",
+      "bytes": 179732,
+      "sha256": "a9a53987e0938b2ffa738d0ba7531af6b7049b6c46dc1b837a6d90071ffe1674"
+    },
+    {
+      "path": "tmp/1444206831_english.jpg",
+      "bytes": 180370,
+      "sha256": "ebe7da5d84cb3f6bfff6d5719344ae2c68857d3d960c55b16f54e1ba40a88f6e"
+    },
+    {
+      "path": "tmp/1444206831_french.jpg",
+      "bytes": 179836,
+      "sha256": "5fc0d39aa2b74a184e6f0550db8fb910a5c7cc2bc8d99e98715cf60f592bc244"
+    },
+    {
+      "path": "tmp/1444206831_german.jpg",
+      "bytes": 179761,
+      "sha256": "dca488682d9d6c19f2d3c330860c5ccdfe9381ba0136947a5065daed04f7ace8"
+    },
+    {
+      "path": "tmp/1444206831_polish.jpg",
+      "bytes": 178877,
+      "sha256": "4e3471c8c3fb6a667229cd165d88fffdd62761cbdc86fb90d7f01f1431fe0962"
+    },
+    {
+      "path": "tmp/1444206831_russian.jpg",
+      "bytes": 178996,
+      "sha256": "1265d133244c4b80b605e3a2f50a45edef48a72e510525d34ae3a04d757f7bae"
+    },
+    {
+      "path": "tmp/2023071927_brazilian.jpg",
+      "bytes": 135101,
+      "sha256": "2f92394e2b37481ba93af0643fd16a61e7381d171c050559369eb4a63fbbdda1"
+    },
+    {
+      "path": "tmp/2023071927_chinese.jpg",
+      "bytes": 134959,
+      "sha256": "f385e205f00c78e1293ad0c60e8b217d2514a58eae2367e9f508f123e4e311d8"
+    },
+    {
+      "path": "tmp/2023071927_english.jpg",
+      "bytes": 135694,
+      "sha256": "17bb84655364d64bf886e754f661894917729270d7bf52978616f8d5eb61c0b4"
+    },
+    {
+      "path": "tmp/2023071927_french.jpg",
+      "bytes": 135161,
+      "sha256": "077953af62063979d4011a56ec35dd64a5847e001f2cb74225587d07fc41d31b"
+    },
+    {
+      "path": "tmp/2023071927_german.jpg",
+      "bytes": 135015,
+      "sha256": "07016e7df0755d8fb2a91f96bc0725e9bfdf1bec92d59332383c1bcc004963f3"
+    },
+    {
+      "path": "tmp/2023071927_polish.jpg",
+      "bytes": 134142,
+      "sha256": "da89c9a0c2e716e90898f6b7ce6584c785a33a992b53870c36b1114af62350fd"
+    },
+    {
+      "path": "tmp/2023071927_russian.jpg",
+      "bytes": 134263,
+      "sha256": "55120fb084f08d85dcc2b1ef35bb463e3dd5d7e86f18622bcf34569c3af2d0b8"
+    },
+    {
+      "path": "tmp/BigFail.png",
+      "bytes": 1673,
+      "sha256": "1aa14a70e8fa82d3769e8edcf5b6a9b2d6102dffd14e249901b27cb156d9889b"
+    },
+    {
+      "path": "tmp/BigFail200.png",
+      "bytes": 3490,
+      "sha256": "ba39deaaf965bcd56749102c7af54b6471cbeaf04b2d85c9a836bc4ac97bcea9"
+    },
+    {
+      "path": "tmp/BigOK.png",
+      "bytes": 3415,
+      "sha256": "59d8bb3e87a89ef523c0495addce38d69560af42aaa82f56dd41b12e6612c13a"
+    },
+    {
+      "path": "tmp/BigOK200.png",
+      "bytes": 13114,
+      "sha256": "0e639270a1325d079c3c645b79ded173ae20382dc66b18ff4e5936e7d97b9ebd"
+    },
+    {
+      "path": "tmp/BigWarn.png",
+      "bytes": 1619,
+      "sha256": "c2313c6cd564b058d2481f1550ecf7ad3b255a1d0b09f625cfc31e1c49142d4d"
+    },
+    {
+      "path": "tmp/BigWarn200.png",
+      "bytes": 3345,
+      "sha256": "42df8d9503d3a005391174fdf62d85091862e69e45f5e5032f020aa795631c76"
+    },
+    {
+      "path": "tmp/EULA.png",
+      "bytes": 2374,
+      "sha256": "5467c1a52fde71bea40f1798698337425a7d2412cc31ec3e09c7509117b2ffd9"
+    },
+    {
+      "path": "tmp/EULA.txt",
+      "bytes": 60933,
+      "sha256": "f2f09afe300be16c5fdd695a76aeb01ecb9beec55c7d75df613c54944fbd4c2f"
+    },
+    {
+      "path": "tmp/EULA200.png",
+      "bytes": 10741,
+      "sha256": "336139d6569cf1d7381f563e10ff206d71e8464ac58b730de2afaa6649b50264"
+    },
+    {
+      "path": "tmp/EULAAccepted.png",
+      "bytes": 2693,
+      "sha256": "0de278f5ca6d8570d9bda592268a14a28b87d3631fea2d25721947397aaab79c"
+    },
+    {
+      "path": "tmp/EULAAccepted200.png",
+      "bytes": 11682,
+      "sha256": "c4ba6f0af5d0f0fb53bc7a69ca09c3dad78c021bf6c465b4875f428eaae095f9"
+    },
+    {
+      "path": "tmp/EULAShow.png",
+      "bytes": 1508,
+      "sha256": "6112851daea2aaa7174e8cfac4a0f61c968bc090342503804c476eff47cc2462"
+    },
+    {
+      "path": "tmp/EULAShow200.png",
+      "bytes": 2202,
+      "sha256": "73f9c01885d15b13c59bb3b4ba21063547a55d579395bdde60ede0d0408d1bfb"
+    },
+    {
+      "path": "tmp/EULA_bkg.png",
+      "bytes": 3602,
+      "sha256": "b6498286d490ca11aa9f507750fc41dcffa4678e745f65580a71e5e8f80e0012"
+    },
+    {
+      "path": "tmp/EULA_de-DE.txt",
+      "bytes": 67341,
+      "sha256": "47934a4bfb59a15370a9fe6007c45d21d1dca3f4b20a26b1feb15e59117cab73"
+    },
+    {
+      "path": "tmp/EULA_en-US.txt",
+      "bytes": 60933,
+      "sha256": "f2f09afe300be16c5fdd695a76aeb01ecb9beec55c7d75df613c54944fbd4c2f"
+    },
+    {
+      "path": "tmp/EULA_fr-FR.txt",
+      "bytes": 69312,
+      "sha256": "7adfdcd5a86ab63bba45e8e90a1302449e232f7afb5566d5ba2efbd32d82492c"
+    },
+    {
+      "path": "tmp/EULA_pl-PL.txt",
+      "bytes": 63692,
+      "sha256": "67429b28c4b99e251ecba21c115492f4c679febe667ccbce64c36a414a435919"
+    },
+    {
+      "path": "tmp/EULA_pt-BR.txt",
+      "bytes": 65227,
+      "sha256": "322fcbb820e253a8a35ad13a06ad25fbd11942d4d3dc4b1a31a177a69c3daed3"
+    },
+    {
+      "path": "tmp/EULA_ru-RU.txt",
+      "bytes": 97813,
+      "sha256": "097ff88b2a681913f6463c94e6871d5e05b2da2b086bdcf041a5b34dad7b02e7"
+    },
+    {
+      "path": "tmp/EULA_zh-Hans.txt",
+      "bytes": 59307,
+      "sha256": "e1e43708c4753d75763e640dadc4c0d7332a92be2111b6f44d88dec68597d491"
+    },
+    {
+      "path": "tmp/GOG.png",
+      "bytes": 2429,
+      "sha256": "52f864c55083116055ba4e314ac18ada9452a98211f5c15e2e7925cc95139402"
+    },
+    {
+      "path": "tmp/GOG200.png",
+      "bytes": 2429,
+      "sha256": "52f864c55083116055ba4e314ac18ada9452a98211f5c15e2e7925cc95139402"
+    },
+    {
+      "path": "tmp/GOG200_new.png",
+      "bytes": 2844,
+      "sha256": "79e09001a64136898e3d6a54b1344a85da822d3198fbf26600c14ad2aef7006e"
+    },
+    {
+      "path": "tmp/InnoCallback.dll",
+      "bytes": 65024,
+      "sha256": "6afa2d104be6efe3d9a2ab96dbb75db31565dad64dd0b791e402ecc25529809f"
+    },
+    {
+      "path": "tmp/OpenSans-Regular.ttf",
+      "bytes": 217360,
+      "sha256": "e64e508b2aa2880f907e470c4550980ec4c0694d103a43f36150ac3f93189bee"
+    },
+    {
+      "path": "tmp/OpenSans-Semibold.ttf",
+      "bytes": 221328,
+      "sha256": "aa3b0ef53db12e3d45094030cac0e69d384e44cc5978643dd4390041cad546e2"
+    },
+    {
+      "path": "tmp/Support.ico",
+      "bytes": 62895,
+      "sha256": "05fe749ef47d1ec862d6c55be78e66d1011226bf1f78409acf57cb79cec5eb20"
+    },
+    {
+      "path": "tmp/background.jpg",
+      "bytes": 370245,
+      "sha256": "e0b9a2c26b4fc25fc4e38f18bd2528ebec52c91c3aefed507a275d485a2b6c17"
+    },
+    {
+      "path": "tmp/background.png",
+      "bytes": 4954,
+      "sha256": "af42068199251b31295685ec393b6666237fecf92ae7de8f23dc20c4ada36c6d"
+    },
+    {
+      "path": "tmp/bg-bot@2x.jpg",
+      "bytes": 1250,
+      "sha256": "2c9b1f810bda80edc6a0150fe821dd0aea77422b0decd223eec8e66e9497fdd8"
+    },
+    {
+      "path": "tmp/bottombar.png",
+      "bytes": 340,
+      "sha256": "8f7981f7c886b309310c7c243a6fe3db469504c52bad6a5b68c258d7447b1502"
+    },
+    {
+      "path": "tmp/bottombar200.png",
+      "bytes": 938,
+      "sha256": "2a6b5073d8171e04733a31ad58a4fdfa81f982eb7af5afea8d203058ee9bc7c8"
+    },
+    {
+      "path": "tmp/botva2.dll",
+      "bytes": 35840,
+      "sha256": "a4b61626a1626fdabec794e4f323484aa0644baa1c905a5dcf785dc34564f008"
+    },
+    {
+      "path": "tmp/btn_browse.png",
+      "bytes": 4934,
+      "sha256": "dcfd8e16a9dcf64480dfd3c3e42706ead1e8fcf47875987bcae22b52302bed39"
+    },
+    {
+      "path": "tmp/btn_browse200.png",
+      "bytes": 11811,
+      "sha256": "6373bd6a82a4bec2a8beaa261ee2fa0fe2b215750d00b47cf41fcabdc1b823f8"
+    },
+    {
+      "path": "tmp/btn_close.png",
+      "bytes": 3442,
+      "sha256": "6111c6025b6140557b39048f5baedb57e337d41438b6d58f700ed53fe9d30726"
+    },
+    {
+      "path": "tmp/btn_close200.png",
+      "bytes": 9556,
+      "sha256": "c3594c69c7fbbcb27d6686618d6a4c1bf681800b5016920415016a5a1fae3de1"
+    },
+    {
+      "path": "tmp/btn_continue.png",
+      "bytes": 4276,
+      "sha256": "9ec8d9099e7c22cc7d8ad07a180abae77f791c0e1c798c44ade23618eab245a7"
+    },
+    {
+      "path": "tmp/btn_continue200.png",
+      "bytes": 11493,
+      "sha256": "aafcf8949110aa763224642b08775bc734f7c1017ae658893737b409f9e2e527"
+    },
+    {
+      "path": "tmp/btn_exit.png",
+      "bytes": 3846,
+      "sha256": "d15329fe6ac78a340463d6f0fa13969d5e2ff809f2564a5245a3e7f3a0aa8229"
+    },
+    {
+      "path": "tmp/btn_exit200.png",
+      "bytes": 8575,
+      "sha256": "9724f2b7a8e7830aed6fcf0790eb3b1dc507effcd376b0cba1898fbff40a6742"
+    },
+    {
+      "path": "tmp/btn_launch.png",
+      "bytes": 10203,
+      "sha256": "d98750832eb53e548bd94f972c54ec3123236c6cbf7606a9fc0cb125aefa3127"
+    },
+    {
+      "path": "tmp/btn_launch200.png",
+      "bytes": 22015,
+      "sha256": "78099fbe8707b9999468815247a66fe45ae9462584e1137de24a67f12b483235"
+    },
+    {
+      "path": "tmp/btn_md5.png",
+      "bytes": 8944,
+      "sha256": "b0193ab375f604fa4a25cabdea8f713babde1c07ab562ffc5679352c8e01db47"
+    },
+    {
+      "path": "tmp/btn_md5200.png",
+      "bytes": 12831,
+      "sha256": "7f7f7dfff25795bee041666b91f01f28e8da222c180ca4faa026a6a9884fa501"
+    },
+    {
+      "path": "tmp/btn_options.png",
+      "bytes": 5127,
+      "sha256": "2a283443dfaa6cd2326da96c3af006f2b3b665798f49febc1fd18064ab911a52"
+    },
+    {
+      "path": "tmp/btn_options200.png",
+      "bytes": 12831,
+      "sha256": "7f7f7dfff25795bee041666b91f01f28e8da222c180ca4faa026a6a9884fa501"
+    },
+    {
+      "path": "tmp/btn_save_as.png",
+      "bytes": 5773,
+      "sha256": "776bbb434e324fa8826be0c525af03f21b96b9b4f7803caeeca5d2b845db929d"
+    },
+    {
+      "path": "tmp/btn_save_as200.png",
+      "bytes": 15961,
+      "sha256": "00c38cee2eee117d1f1b2440e62265d2b4ca00346b87fe8b3db5c21d7689408c"
+    },
+    {
+      "path": "tmp/btn_skip.png",
+      "bytes": 3308,
+      "sha256": "b39c0bff3fa675f2f2886d6397fee9a66b7cefc0bd9ab7434137898cb444880b"
+    },
+    {
+      "path": "tmp/btn_skip200.png",
+      "bytes": 8728,
+      "sha256": "769842a27a8da5cba84dc95f4445be00fe2069fd4e4695250dc5ad65f6498e59"
+    },
+    {
+      "path": "tmp/btn_start.png",
+      "bytes": 4316,
+      "sha256": "00bbefaa1336404fe86b5b84cd91de1d48fe50c3a756c0de5ca62cc5418f2d42"
+    },
+    {
+      "path": "tmp/btn_start200.png",
+      "bytes": 9817,
+      "sha256": "1cd14e812abfba142f2f8ad6e013cce523f15bab2fbe000157c0065022dc2c09"
+    },
+    {
+      "path": "tmp/btn_tryagain.png",
+      "bytes": 10747,
+      "sha256": "213cb436c08c83a353ac63765b34db678e3c6a55f5eb3246b5c0b1e1b627e0eb"
+    },
+    {
+      "path": "tmp/btn_tryagain200.png",
+      "bytes": 24823,
+      "sha256": "65d2818980bd002fde49f877b6f02d402e83b3055455f6766d3918f5b534f712"
+    },
+    {
+      "path": "tmp/crcdll.dll",
+      "bytes": 71168,
+      "sha256": "23e90ce5a1f2d634a7bf5d5d0522fafeea6df9e536e16f5ce91035d5197128ec"
+    },
+    {
+      "path": "tmp/empty",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tmp/error.png",
+      "bytes": 726,
+      "sha256": "142b16dc6239421691fa6e619d1a61e61176d89fa018a88b46893c29a57aad8b"
+    },
+    {
+      "path": "tmp/error200.png",
+      "bytes": 1818,
+      "sha256": "3f3798c8e0e572f44b543e427bdb3bf83a6bc68eaa4088c485252f06594d0ee2"
+    },
+    {
+      "path": "tmp/error_icon.png",
+      "bytes": 1474,
+      "sha256": "acdf96ee4261fae138e6350a0ad50b367022ed5b908fa168baad92644f566ee8"
+    },
+    {
+      "path": "tmp/error_icon200.png",
+      "bytes": 2189,
+      "sha256": "49010d559bcd670aea5a3effed6b29206dce72a8638d61bca01f8fb84bd7334c"
+    },
+    {
+      "path": "tmp/gog.ico",
+      "bytes": 69248,
+      "sha256": "f6a71321521ba89713f0bd38b21f809e87e8a789cb172e8e4693f9479e30b1e4"
+    },
+    {
+      "path": "tmp/gog_installer_background.jpg",
+      "bytes": 370245,
+      "sha256": "e0b9a2c26b4fc25fc4e38f18bd2528ebec52c91c3aefed507a275d485a2b6c17"
+    },
+    {
+      "path": "tmp/gog_new.png",
+      "bytes": 3948,
+      "sha256": "0804b385c1736e009fe8c3b1b14085b9b9abb40ce487360002ab4a8f3505f4e0"
+    },
+    {
+      "path": "tmp/innoSetupEula.txt",
+      "bytes": 1559,
+      "sha256": "b4f4c66bdbf72c0b620041b556293f79f90cb8bcacd43718438e96a5a10e9de0"
+    },
+    {
+      "path": "tmp/md5log.ini",
+      "bytes": 7,
+      "sha256": "eb9fba98ed5bb733f20b4769852d6578eab8a5d76325cead6405bd2697ee6e72"
+    },
+    {
+      "path": "tmp/ok.png",
+      "bytes": 1209,
+      "sha256": "0d37d4421a39ca8852eb6760b8e914302bdc6cfcc7b170dc1b6c9bb9be148b7e"
+    },
+    {
+      "path": "tmp/ok200.png",
+      "bytes": 2229,
+      "sha256": "9747c18d583d3d0fdb7b8506a4500d772c38ff6715fe0a8b2c832c97a25cc8a4"
+    },
+    {
+      "path": "tmp/progress_center.png",
+      "bytes": 1152,
+      "sha256": "2b9dae87340e66b67ab1d8247d4a137628e324969f92fe1098f95a7c5bab2f43"
+    },
+    {
+      "path": "tmp/progress_center200.png",
+      "bytes": 1291,
+      "sha256": "3c5757fb624de6b7459b302e24033a064ddabec1b4285a240af3e1ffd553002a"
+    },
+    {
+      "path": "tmp/progress_left.png",
+      "bytes": 1174,
+      "sha256": "85e39d909a7300fa2043ec42818582867b981401264b14fc5408e477ae0b4668"
+    },
+    {
+      "path": "tmp/progress_left200.png",
+      "bytes": 792,
+      "sha256": "2be8a347b163bc661a6fc6ed58d0fa24d57f0919cc7f647b996edd1f5f49c07b"
+    },
+    {
+      "path": "tmp/progress_right.png",
+      "bytes": 1177,
+      "sha256": "396a3351fe409328782ab138282cf9cec061a5a9540a3506700a620db1f54e7d"
+    },
+    {
+      "path": "tmp/progress_right200.png",
+      "bytes": 828,
+      "sha256": "43688e577bb8f137103067758038c405666e22af88c4e2de859f37f7ba31d8d8"
+    },
+    {
+      "path": "tmp/scroll-handle-bot.png",
+      "bytes": 1025,
+      "sha256": "305b67d300181c31765a6e20ed4e439f491b9d2ef01deb6f89e09d176aa6df0d"
+    },
+    {
+      "path": "tmp/scroll-handle-top.png",
+      "bytes": 1032,
+      "sha256": "84805429bf3e7859e01013f89a25af2106b822b4e10e4839ff688dd2ef14fdc0"
+    },
+    {
+      "path": "tmp/slideshow.ini",
+      "bytes": 261,
+      "sha256": "ee99563ed9e31687ae76055017334ed7c2e7af7e03b12c1ed8d6212a5a238f40"
+    },
+    {
+      "path": "tmp/track_center.png",
+      "bytes": 1118,
+      "sha256": "794f9eeca7fd99846968376b76a296c927532cef1271325cbf555caa0d0d5860"
+    },
+    {
+      "path": "tmp/track_center200.png",
+      "bytes": 1236,
+      "sha256": "e125f4b8476980da62785c5fdc781d5fe8c5928e64aebfcc20fe8d63140bd1fe"
+    },
+    {
+      "path": "tmp/track_left.png",
+      "bytes": 1137,
+      "sha256": "a8340fb5380c922b60ea40043590dba067dcfed6e22636851691df38156a3aa8"
+    },
+    {
+      "path": "tmp/track_left200.png",
+      "bytes": 558,
+      "sha256": "343aef896f25a15ef4cfe6db777ca0ccb83f040f1c2d135ebe14bf5674eae416"
+    },
+    {
+      "path": "tmp/track_right.png",
+      "bytes": 1147,
+      "sha256": "f54cd6e42f2b2bc5cb8a15f6a28f1499abf094a519ebdf39f4c4e167312c9c16"
+    },
+    {
+      "path": "tmp/track_right200.png",
+      "bytes": 557,
+      "sha256": "004a3253facbac99cae9e0581f3dbe53783da421cce49cac62f1bc93bb749ac6"
+    },
+    {
+      "path": "tmp/trackbar_back.png",
+      "bytes": 1737,
+      "sha256": "f13470207828bfd2a0f02dfb513e2438f224e69a730b4787fcf72276d90d8ded"
+    },
+    {
+      "path": "tmp/trackbar_back200.png",
+      "bytes": 4504,
+      "sha256": "be74e603de71aa05f0336112b9a57c13a14da482523c9ea0f84ff028fe4b546a"
+    },
+    {
+      "path": "tmp/trackbar_btn.png",
+      "bytes": 2045,
+      "sha256": "72a872f80f232c813d629234c52445049c57e83ace8650fb84451f763aa9f392"
+    },
+    {
+      "path": "tmp/trackbar_btn200.png",
+      "bytes": 5787,
+      "sha256": "45f2104bd9ec23edc935c5e65865232cbe0ebb61bb232f02624d7147a0c0ea7f"
+    }
+  ],
+  "excludedMigratedSymlinks": [
+    {
+      "path": "test/binaries/candidates/gog-free-ultima-iv/installed/DOSBOX/DOSBox",
+      "reason": "migrated host symlink; not a package file",
+      "target": "/Users/vg/Documents/projects/phone/wine-assembly/test/binaries/./candidates/gog-free-ultima-iv/installed/DOSBOX/DOSBox"
+    }
+  ],
+  "config": {
+    "path": "test/configs/ultima4-wine-assembly.conf",
+    "sha256": "683594b760aeb142585566f0cac9bd3ba7aa1a455addf85370ab8954dfa02b9d",
+    "limitations": "Existing documented fixed3000 dynamic-core/surface/sound-disabled configuration retained; no sound/FPS claim",
+    "previousSha256": "2a04f130e8c8c4de3484044eaaa63cc65120347ea0b1a074d785c3372cd32cf3",
+    "previousBytes": 429,
+    "previousManifestSha256": "fa84c94fcacb742c1be32e3fd591f5a22db221376b2687c8c24d69f2fe52c650"
+  },
+  "saveOverlay": {
+    "directory": "cloud_saves",
+    "templates": [
+      "__support/save/DNGMAP.SAV",
+      "__support/save/MONSTERS.SAV",
+      "__support/save/OUTMONST.SAV",
+      "__support/save/PARTY.SAV"
+    ],
+    "provenance": "Original __support/app/dosboxULTIMA4_single.conf overlay and original __support/save templates; no generated saves"
+  }
+}

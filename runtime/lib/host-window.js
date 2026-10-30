@@ -1,0 +1,1357 @@
+// Window half of the host import layer: the imports WAT calls to create,
+// move, show, order, style and destroy windows, plus scrollbars, capture,
+// the cursor, and the input pollers both hosts override.
+//
+// Split out of lib/host-imports.js, which still owns the flat `host` import
+// namespace: it calls createWindowHost() once and spreads `.imports` into the
+// same object the guest sees, so nothing about the WASM import shape changed.
+// Everything here talks to ctx.renderer; the four things it needs from the
+// other half arrive through `shared`.
+
+// Which window a dequeued input event is for, or 0 to let WAT route it to
+// main_hwnd. An event that names its own hwnd wins. Keyboard messages
+// (WM_KEYDOWN..WM_SYSCHAR) do not: the queue that produced them has no idea
+// which control has focus, so they go to the guest's focus owner -- without
+// this a native child like WordPad's RichEdit20A never sees a keystroke,
+// because GetMessage would substitute the top-level window.
+//
+// Both hosts asked this question separately, and the CLI's copy still carried
+// a hard-coded 0x10002 (notepad's edit child) long after focus tracking landed.
+function inputEventHwnd(evt, exports, onDecision, keyboardFallback) {
+  const say = onDecision || (() => {});
+  if (!evt) return 0;
+  if (evt.hwnd) { say(`explicit hwnd=0x${(evt.hwnd >>> 0).toString(16)}`); return evt.hwnd | 0; }
+  const msg = evt.msg;
+  if (msg >= 0x0100 && msg <= 0x0108) {
+    const focus = (exports && exports.get_focus_hwnd) ? (exports.get_focus_hwnd() | 0) : 0;
+    if (focus) { say(`keyboard \u2192 focus 0x${focus.toString(16)}`); return focus; }
+    const fallback = typeof keyboardFallback === 'function' ? (keyboardFallback() | 0) : 0;
+    if (fallback) {
+      say(`keyboard \u2192 active 0x${(fallback >>> 0).toString(16)}`);
+      return fallback;
+    }
+    say('keyboard \u2192 0 (main_hwnd)');
+    return 0;
+  }
+  say(`msg=0x${(msg >>> 0).toString(16)} \u2192 0 (main_hwnd)`);
+  return 0;
+}
+
+// Turn the host-side CreateMenu/AppendMenu tree into the compact menu blob
+// consumed by src/09c5-menu.wat. Resource menus already arrive in this format;
+// Visual Basic 1 builds menu bars dynamically instead, and JigSawed is the
+// first app in the corpus whose only route to File -> Open is such a tree.
+function serializeHostMenuTree(menus, rootHandle) {
+  const itemsFor = handle => (menus && menus.get(handle >>> 0)) || [];
+  const bars = itemsFor(rootHandle).map(item => ({ item, children: [] }));
+  let structSize = 4 + bars.length * 16;
+
+  for (const bar of bars) {
+    if (!bar.item.popup) continue;
+    bar.children = itemsFor(bar.item.submenu).map(item => ({ item, children: [] }));
+    bar.childOffset = structSize;
+    structSize += 4 + bar.children.length * 28;
+  }
+  // The native menu blob supports one nested popup below a dropdown. That is
+  // enough for Win9x menu bars (and for JigSawed's Options -> Piece size /
+  // Shape submenus); deeper items remain ordinary commands, matching the WAT
+  // reader's existing three-level contract.
+  for (const bar of bars) for (const child of bar.children) {
+    if (!child.item.popup) continue;
+    child.children = itemsFor(child.item.submenu).map(item => ({ item, children: [] }));
+    child.childOffset = structSize;
+    structSize += 4 + child.children.length * 28;
+  }
+
+  const bytes = text => {
+    const out = new Uint8Array(String(text || '').length);
+    for (let i = 0; i < out.length; i++) out[i] = text.charCodeAt(i) & 0xff;
+    return out;
+  };
+  const textParts = item => {
+    if (item.separator || (item.flags & 0x0104)) return { label: new Uint8Array(0), shortcut: new Uint8Array(0) };
+    const text = String(item.text || '');
+    const tab = text.indexOf('\t');
+    return {
+      label: bytes(tab < 0 ? text : text.slice(0, tab)),
+      shortcut: bytes(tab < 0 ? '' : text.slice(tab + 1)),
+    };
+  };
+  const all = [];
+  for (const bar of bars) {
+    bar.text = textParts(bar.item);
+    all.push(bar);
+    for (const child of bar.children) {
+      child.text = textParts(child.item);
+      all.push(child);
+      for (const sub of child.children) {
+        sub.text = textParts(sub.item);
+        all.push(sub);
+      }
+    }
+  }
+  const stringSize = all.reduce((n, rec) => n + rec.text.label.length + rec.text.shortcut.length, 0);
+  const out = new Uint8Array(structSize + stringSize);
+  const dv = new DataView(out.buffer);
+  let stringAt = structSize;
+  const putText = (rec, off) => {
+    if (rec.text.label.length) {
+      dv.setUint32(off, stringAt, true);
+      dv.setUint32(off + 4, rec.text.label.length, true);
+      out.set(rec.text.label, stringAt);
+      stringAt += rec.text.label.length;
+    }
+    if (rec.text.shortcut.length) {
+      dv.setUint32(off + 8, stringAt, true);
+      dv.setUint32(off + 12, rec.text.shortcut.length, true);
+      out.set(rec.text.shortcut, stringAt);
+      stringAt += rec.text.shortcut.length;
+    }
+  };
+  const internalFlags = item =>
+    (item.separator || !item.id ? 1 : 0) |
+    (item.disabled ? 2 : 0) |
+    ((item.flags & 0x0008) ? 4 : 0);
+  const putChildren = (records, blockOffset) => {
+    if (!blockOffset) return;
+    dv.setUint32(blockOffset, records.length, true);
+    records.forEach((rec, index) => {
+      const off = blockOffset + 4 + index * 28;
+      putText(rec, off);
+      dv.setUint32(off + 16, internalFlags(rec.item), true);
+      dv.setUint32(off + 20, rec.item.popup ? 0 : rec.item.id >>> 0, true);
+      dv.setUint32(off + 24, rec.childOffset || 0, true);
+      if (rec.childOffset) putChildren(rec.children, rec.childOffset);
+    });
+  };
+
+  dv.setUint32(0, bars.length, true);
+  bars.forEach((bar, index) => {
+    const off = 4 + index * 16;
+    putText(bar, off);
+    dv.setUint32(off + 8, bar.childOffset || 0, true);
+    dv.setUint32(off + 12, bar.item.popup ? 0 : bar.item.id >>> 0, true);
+    if (bar.childOffset) putChildren(bar.children, bar.childOffset);
+  });
+  return out;
+}
+
+// Register contexts, not rendered HWNDs: an entire native/dialog tree may
+// have no surface. Resolve renderer/exports lazily (hosts install them after
+// creating imports). Weak references do not keep exited processes alive.
+const windowLookupContexts = new Set();
+
+function createWindowHost(ctx, shared) {
+  windowLookupContexts.add(new WeakRef(ctx));
+  const readStr = shared.readStr;
+  const readStrW = shared.readStrW;
+  const _cursorCssForHandle = shared.cursorCssForHandle;
+  const _cursorCssFromPixels = shared.cursorCssFromPixels;
+  const _builtCursorCssFor = shared.builtCursorCssFor;
+  const _env = (typeof process !== 'undefined' && process.env) ? process.env : {};
+  const KEY_LPARAM_EXTENDED = 1 << 24;
+  const KEY_LPARAM_CONTEXT = 1 << 29;
+  const KEY_LPARAM_PREVIOUS = 1 << 30;
+  const KEY_LPARAM_TRANSITION = 1 << 31;
+
+  // GetKeyState is the state at the time the current input message was
+  // generated, not necessarily the physical state by the time the app pumps
+  // it. Synthetic chords are often queued down/down/up/up in one guest slice,
+  // so retain a compact snapshot on each event; otherwise the early keydown
+  // would already see the later keyup and hot-key/accelerator matching fails.
+  const _keyDownState = (vKey) => {
+    const renderer = ctx.renderer;
+    if (!renderer) return 0;
+    const key = vKey & 0xFF;
+    const active = renderer._activeInputEvent;
+    const snapshot = active && active.keyStateSnapshot;
+    if (snapshot && snapshot.length >= 8) {
+      return (snapshot[key >>> 5] & (1 << (key & 31))) !== 0 ? 0x8000 : 0;
+    }
+    const peek = renderer.peekKeyDownState || renderer.peekAsyncKeyState;
+    return peek ? peek.call(renderer, key) : 0;
+  };
+
+  const _snapshotKeyState = (renderer) => {
+    const snapshot = new Uint32Array(8);
+    const peek = renderer.peekKeyDownState || renderer.peekAsyncKeyState;
+    if (!peek) return snapshot;
+    for (let key = 0; key < 256; key++) {
+      if (peek.call(renderer, key) & 0x8000) {
+        snapshot[key >>> 5] |= (1 << (key & 31));
+      }
+    }
+    return snapshot;
+  };
+
+  // Window title bookkeeping. GetWindowText/GetWindowTextLength answer from
+  // here first, because the renderer's record is a *display* title and can be
+  // decorated. Both hosts override create_window and set_window_text to add
+  // their own logging, and each used to poke this Map itself — three copies of
+  // the same two lines, which meant a change here (clearing on destroy, say)
+  // would silently not apply to either host.
+  ctx.recordWindowText = (hwnd, text) => {
+    if (!ctx._windowText) ctx._windowText = new Map();
+    ctx._windowText.set(hwnd >>> 0, text);
+  };
+  ctx.forgetWindowText = (hwnd) => {
+    if (ctx._windowText) ctx._windowText.delete(hwnd >>> 0);
+  };
+  const _windowTextOf = (hwnd) => {
+    const local = ctx._windowText && ctx._windowText.get(hwnd >>> 0);
+    if (local !== undefined) return local;
+    const win = ctx.renderer && ctx.renderer.windows && ctx.renderer.windows[hwnd >>> 0];
+    return (win && win.title) || '';
+  };
+  const _queueParentExposePaint = (win) => {
+    const r = ctx.renderer;
+    if (!r || !win || !win.isChild || !win.parentHwnd) return;
+    if (!r.windows[win.parentHwnd]) return;
+    if (r.restoreParentUnderChild) r.restoreParentUnderChild(win);
+    let root = r.windows[win.parentHwnd];
+    while (root && root.isChild && r.windows[root.parentHwnd]) {
+      root = r.windows[root.parentHwnd];
+    }
+    if (root && r.invalidateVisibleTree) r.invalidateVisibleTree(root.hwnd);
+    else if (r.queuePaint) r.queuePaint(win.parentHwnd);
+    if (r.scheduleRepaint) r.scheduleRepaint();
+  };
+
+  const _windowExports = win =>
+    (win && win.wasm && win.wasm.exports) || ctx.exports ||
+    (ctx.renderer && ctx.renderer.wasm && ctx.renderer.wasm.exports) || null;
+
+  const _lookupOwner = () => ctx.exports || (ctx.instance && ctx.instance.exports);
+  const _sameLookupOwner = (win, e, memory) =>
+    !!e && ((win.wasm && win.wasm.exports === e) ||
+      (memory && win.wasmMemory && win.wasmMemory.buffer === memory));
+  const _bindLookupPublication = (win, publisher) => {
+    if (!win || (!publisher && win._lookupLifetime)) return;
+    const owner = publisher || (win.wasm && win.wasm.exports);
+    if (!owner || !owner.wnd_lookup_generation) return;
+    const generation = owner.wnd_lookup_generation(win.hwnd);
+    // A renderer-only publication has no WND identity. Do not convert that
+    // fact into a permanent negative entry: a later WND allocation can bind.
+    if (generation) win._lookupLifetime = {owner, generation};
+  };
+
+  // Absolute client geometry, sourced from the same WAT-owned coordinates
+  // used by MapWindowPoints. Renderer records cache these values for normal
+  // top-level windows; WAT exports cover native children with no JS record.
+  const _clientGeometry = (hwnd, win, e) => {
+    if ((hwnd >>> 0) === 0x10000) {
+      return { x: 0, y: 0, w: ctx.renderer.canvas.width | 0, h: ctx.renderer.canvas.height | 0 };
+    }
+    if (win && !win.clientRect && ctx.renderer && ctx.renderer._computeClientRect) {
+      try { ctx.renderer._computeClientRect(win); } catch (_) {}
+    }
+    if (win && win.clientRect) {
+      return {
+        x: win.clientRect.x | 0, y: win.clientRect.y | 0,
+        w: win.clientRect.w | 0, h: win.clientRect.h | 0,
+      };
+    }
+    if (e && e.wnd_client_screen_x && e.wnd_client_screen_y &&
+        e.get_client_rect_l && e.get_client_rect_t &&
+        e.get_client_rect_r && e.get_client_rect_b) {
+      try {
+        const l = e.get_client_rect_l(hwnd) | 0;
+        const t = e.get_client_rect_t(hwnd) | 0;
+        return {
+          x: e.wnd_client_screen_x(hwnd) | 0,
+          y: e.wnd_client_screen_y(hwnd) | 0,
+          w: (e.get_client_rect_r(hwnd) | 0) - l,
+          h: (e.get_client_rect_b(hwnd) | 0) - t,
+        };
+      } catch (_) {}
+    }
+    if (win) return { x: win.x | 0, y: win.y | 0, w: win.w | 0, h: win.h | 0 };
+    return null;
+  };
+
+  // The window slice of the flat host import namespace. host-imports.js
+  // spreads these into `host` in place, so the guest still sees one object.
+  const imports = {
+    // --- Window management ---
+    set_parent: (hwnd, newParent) => {
+      const r = ctx.renderer;
+      if (!r) return;
+      const win = r.windows[hwnd];
+      if (!win) return;
+      let ancestor = newParent && r.windows[newParent];
+      let guard = 0;
+      while (ancestor && guard++ < 64) {
+        if ((ancestor.hwnd >>> 0) === (hwnd >>> 0)) return;
+        ancestor = ancestor.parentHwnd && r.windows[ancestor.parentHwnd];
+      }
+      if (ancestor) return;
+      const wasChild = !!win.isChild;
+      win.parentHwnd = newParent || 0;
+      // SetParent does not turn a window into a child window: WS_CHILD does,
+      // and both createWindow and createDialog read exactly that bit. A popup
+      // that is given a parent is still a popup, clipped to it and destroyed
+      // with it. Treating any reparented window as a child costs it every
+      // top-level facility the renderer gates on `isChild` -- the menu bar
+      // first: Moraff's Jiggler hangs its whole game menu on a WS_POPUP
+      // dialog and then SetParents that strip onto the game window, so the
+      // bar WAT had already loaded (six items) was never painted and never
+      // hit-tested. The strip came up blank grey and ate the clicks aimed at
+      // it, which reads as a menu that failed to load rather than one that
+      // was never asked for.
+      win.isChild = !!(newParent && r.windows[newParent] &&
+        ((win.style >>> 0) & 0x40000000));
+      // A toolbar reparented into a control bar gets clipped to it, and its
+      // client rect recomputed against the new parent either way.
+      if (r._toolbarWidthLimit(win)) {
+        r._clampToolbarWidth(win);
+        r._computeClientRect(win);
+      } else if (wasChild !== win.isChild) {
+        // Gaining or losing child status changes the non-client layout (a
+        // menu bar's 18px among it), so the client rect has to be recomputed
+        // or the window keeps the geometry of the role it no longer has.
+        r._computeClientRect(win);
+      }
+    },
+    create_window: (hwnd, style, x, y, cx, cy, titlePtr, menuId) => {
+      const title = readStr(titlePtr);
+      console.log(`[CreateWindow] hwnd=0x${hwnd.toString(16)} title="${title}" menu=${menuId}`);
+      ctx.recordWindowText(hwnd, title);
+      if (ctx.renderer) {
+        ctx.renderer.createWindow(hwnd, style, x, y, cx, cy, title, menuId, ctx.instance || null, ctx.wasmMemory || null);
+        const win = ctx.renderer.windows && ctx.renderer.windows[hwnd];
+        if (win) win.processId = (ctx.processId >>> 0) || 1000;
+      }
+      return hwnd;
+    },
+    sys_command: (hwnd, sc) => {
+      // WAT DefWindowProcA routes SC_MINIMIZE/SC_MAXIMIZE/SC_RESTORE here
+      // so renderer-side window state stays in sync with the guest.
+      const r = ctx.renderer;
+      if (!r) return;
+      const win = r.windows[hwnd];
+      if (!win) return;
+      // Each of the three is an SW_* by another name, so route them through the
+      // one transition renderer.showWindow already implements. This used to be
+      // a second copy of it that had drifted: its SC_RESTORE un-maximized and
+      // un-minimized in the same step, so a window minimized from maximized
+      // came back to its pre-maximize size.
+      const swCmd = sc === 0xF020 ? 6 : sc === 0xF030 ? 3 : sc === 0xF120 ? 9 : 0;
+      if (!swCmd) return;
+      r.showWindow(hwnd, swCmd);
+      if (typeof r._computeClientRect === 'function') r._computeClientRect(win);
+      if (r.invalidate) r.invalidate(hwnd);
+      if (r.repaint) r.repaint();
+    },
+    show_window: (hwnd, cmd) => {
+      if (ctx.renderer && [0, 2, 6, 7].includes(cmd) &&
+          ctx.renderer._foregroundWindow === ctx.renderer.windows[hwnd]) {
+        ctx.renderer._foregroundWindow = null;
+      }
+      console.log(`[ShowWindow] hwnd=0x${hwnd.toString(16)} cmd=${cmd}`);
+      if (ctx.renderer) ctx.renderer.showWindow(hwnd, cmd);
+      const win = ctx.renderer && ctx.renderer.windows[hwnd];
+      if (win && win.clientRect) {
+        const packed = (win.clientRect.w & 0xFFFF) | ((win.clientRect.h & 0xFFFF) << 16);
+        return packed;
+      }
+      return 0;
+    },
+    dialog_loaded: (hwnd, parentHwnd) => {
+      // WAT's $dlg_load has parsed the RT_DIALOG template into WND_DLG_RECORDS
+      // and CONTROL_TABLE. The renderer reads all state from WAT exports —
+      // there is no JS-side template parser left.
+      if (ctx.renderer) {
+        ctx.renderer.createDialog(hwnd, parentHwnd);
+        const win = ctx.renderer.windows && ctx.renderer.windows[hwnd];
+        if (win) win.processId = (ctx.processId >>> 0) || 1000;
+      }
+    },
+    load_icon: (hInstance, resourceId) => {
+      return 0x50000 | (resourceId & 0xFFFF);
+    },
+    load_cursor: (hInstance, resourceId) => {
+      if (!hInstance) return 0x60000 | (resourceId & 0xFFFF);
+      return 0x680000 | (resourceId & 0xFFFF);
+    },
+    // A cursor the guest composited from its own bitmaps. WAT sends the pixels
+    // once per handle and then names the handle alone, so a game that selects
+    // one of its cursors every frame does not re-encode an image every frame.
+    set_cursor_image: (hcur, width, height, hotX, hotY, bgraWa) => {
+      if (bgraWa && _cursorCssFromPixels) {
+        const size = (width >>> 0) * (height >>> 0) * 4;
+        const mem = new Uint8Array(ctx.getMemory(), bgraWa >>> 0, size);
+        _cursorCssFromPixels(hcur >>> 0, width | 0, height | 0,
+          hotX | 0, hotY | 0, mem);
+      }
+      const canvas = ctx.renderer && ctx.renderer.canvas;
+      if (!canvas || !canvas.style) return;
+      const css = _builtCursorCssFor && _builtCursorCssFor(hcur >>> 0);
+      if (css && canvas.style.cursor !== css) canvas.style.cursor = css;
+    },
+    set_cursor: (hcur) => {
+      const canvas = ctx.renderer && ctx.renderer.canvas;
+      if (!canvas || !canvas.style) return;
+      // SetCursor(NULL) removes the cursor independently of ShowCursor's
+      // signed display count. Software-cursor games such as Broken Sword use
+      // this while drawing their own context-sensitive pointer into the game
+      // surface. Treating NULL as an unknown IDC and falling back to
+      // `default` put the browser arrow on top of that pointer.
+      if (!(hcur >>> 0)) {
+        if (canvas.style.cursor !== 'none') canvas.style.cursor = 'none';
+        return;
+      }
+      if ((hcur & 0xFF0000) === 0x680000) {
+        const custom = _cursorCssForHandle(hcur);
+        if (custom && canvas.style.cursor !== custom) canvas.style.cursor = custom;
+        return;
+      }
+      const idc = hcur & 0xFFFF;
+      let css;
+      switch (idc) {
+        case 0x7F00: css = 'default'; break;      // IDC_ARROW
+        case 0x7F01: css = 'text'; break;         // IDC_IBEAM
+        case 0x7F02: css = 'wait'; break;         // IDC_WAIT
+        case 0x7F03: css = 'crosshair'; break;    // IDC_CROSS
+        case 0x7F04: css = 'crosshair'; break;    // IDC_UPARROW → no good CSS match
+        case 0x7F82: css = 'nwse-resize'; break;  // IDC_SIZENWSE
+        case 0x7F83: css = 'nesw-resize'; break;  // IDC_SIZENESW
+        case 0x7F84: css = 'ew-resize'; break;    // IDC_SIZEWE
+        case 0x7F85: css = 'ns-resize'; break;    // IDC_SIZENS
+        case 0x7F86: css = 'move'; break;         // IDC_SIZEALL
+        case 0x7F88: css = 'not-allowed'; break;  // IDC_NO
+        case 0x7F89: css = 'pointer'; break;      // IDC_HAND
+        case 0x7F8A: css = 'progress'; break;     // IDC_APPSTARTING
+        case 0x7F8B: css = 'help'; break;         // IDC_HELP
+        default:     css = 'default'; break;
+      }
+      if (canvas.style.cursor !== css) canvas.style.cursor = css;
+    },
+    send_ctrl_msg: (ctrlHwnd, msg, wParam, lParam) => {
+      // Progress bar / richedit-style messages to a child control. WAT
+      // CONTROL_TABLE and the renderer's GDI paint path are the source of
+      // truth; this host import is a no-op stub kept so WAT's call site
+      // doesn't trap.
+    },
+    richedit_stream: (ctrlHwnd, textPtr) => {
+      let text = readStr(textPtr, 65536);
+      // Strip RTF if it starts with '{'
+      if (text.startsWith('{\\rtf')) {
+        text = text.replace(/\{[^{}]*\}/g, '').replace(/\\[a-z]+\d* ?/g, '').replace(/[{}]/g, '').trim();
+      }
+      console.log(`[RichEdit] hwnd=0x${ctrlHwnd.toString(16)} text=${text.length} chars`);
+    },
+    set_window_text: (hwnd, textPtr) => {
+      const text = readStr(textPtr);
+      ctx.recordWindowText(hwnd, text);
+      if (ctx.renderer) ctx.renderer.setWindowText(hwnd, text);
+    },
+    set_window_class: (hwnd, classPtr) => {
+      const win = ctx.renderer && ctx.renderer.windows && ctx.renderer.windows[hwnd >>> 0];
+      if ((classPtr | 0) === -2) {
+        // Internal removal notification, before the WND row disappears.
+        // Equal HWND numbers in different memories are different windows.
+        const owner = _lookupOwner();
+        if (win && (_sameLookupOwner(win, owner, ctx.getMemory && ctx.getMemory()) ||
+            (win._lookupLifetime && win._lookupLifetime.owner === owner))) {
+          const generation = owner.wnd_lookup_generation && owner.wnd_lookup_generation(hwnd);
+          win._lookupLifetime = {owner, generation, invalid: true};
+        }
+        return;
+      }
+      const builtin = ['Button', 'Edit', 'Static', 'ListBox', 'ScrollBar', 'ComboBox'];
+      const name = classPtr >= 0x80 && classPtr <= 0x85 ? builtin[classPtr - 0x80]
+        : classPtr ? readStr(classPtr) : '';
+      if (ctx.renderer) ctx.renderer.setWindowClass(hwnd, name);
+      _bindLookupPublication(win, _lookupOwner());
+    },
+    get_window_class: (hwnd, bufWA, maxLen) => {
+      const win = ctx.renderer && ctx.renderer.windows && ctx.renderer.windows[hwnd >>> 0];
+      const className = (win && win.className) || '';
+      if (maxLen <= 0) return 0;
+      const bytes = new Uint8Array(ctx.getMemory());
+      const len = Math.min(className.length, maxLen - 1);
+      for (let i = 0; i < len; i++) bytes[bufWA + i] = className.charCodeAt(i) & 0xFF;
+      bytes[bufWA + len] = 0;
+      return len;
+    },
+    get_window_text: (hwnd, bufWA, maxLen) => {
+      const text = _windowTextOf(hwnd);
+      if (maxLen <= 0) return 0;
+      const bytes = new Uint8Array(ctx.getMemory());
+      const len = Math.min(text.length, maxLen - 1);
+      for (let i = 0; i < len; i++) bytes[bufWA + i] = text.charCodeAt(i) & 0xFF;
+      bytes[bufWA + len] = 0;
+      return len;
+    },
+    get_window_text_length: (hwnd) => _windowTextOf(hwnd).length,
+    // Desktop-wide query for FindWindow. Pointers name strings in the
+    // calling process's memory, never a foreign process's guest address.
+    // WAT resolves application class atoms to names; USER's six built-in
+    // atoms have stable names here. Encoding bits: title=1, class=2.
+    // -1 means this host has no desktop; 0 means a searched desktop had no
+    // match. This distinction lets a headless caller retain its local table.
+    find_window: (parent, after, classWA, titleWA, wide) => {
+      const windows = ctx.renderer && ctx.renderer.windows;
+      if (!windows) return -1;
+      parent >>>= 0;
+      after >>>= 0;
+      if (parent === 0x10000) parent = 0; // GetDesktopWindow
+      const e = ctx.exports || (ctx.instance && ctx.instance.exports);
+      const owners = [];
+      const addOwner = (exports, memory, context) => {
+        if (!exports) return;
+        const existing = owners.find(o => o.exports === exports || (memory && o.memory === memory));
+        if (existing) {
+          if (!existing.memory) existing.memory = memory;
+          if (context) existing.context = context;
+          return;
+        }
+        owners.push({exports, memory, context});
+      };
+      // Publication owners also cover hosts in another module realm and
+      // Worker instances sharing the desktop. Deduplicate shared memories.
+      for (const win of Object.values(windows)) {
+        if (win) addOwner(win.wasm && win.wasm.exports,
+          win.wasmMemory && win.wasmMemory.buffer, null);
+      }
+      for (const ref of windowLookupContexts) {
+        const c = ref.deref();
+        if (!c) { windowLookupContexts.delete(ref); continue; }
+        if (c.renderer === ctx.renderer) addOwner(c.exports || (c.instance && c.instance.exports),
+          c.getMemory && c.getMemory(), c);
+      }
+      addOwner(e, ctx.getMemory && ctx.getMemory(), ctx);
+      const canReconcile = owners.length > 0;
+      const local = new Map();
+      const livePublished = w => {
+        if (!w) return false;
+        _bindLookupPublication(w);
+        const life = w._lookupLifetime;
+        if (life) return !life.invalid && !!life.owner.wnd_lookup_live(w.hwnd) &&
+          life.owner.wnd_lookup_generation(w.hwnd) === life.generation;
+        const owner = w.wasm && w.wasm.exports;
+        return !(owner && owner.wnd_lookup_retired && owner.wnd_lookup_retired(w.hwnd));
+      };
+      // Bind even retired publications before enumerating. Never replace old
+      // metadata with a newly allocated row carrying the same numeric HWND.
+      const published = Object.values(windows).filter(livePublished);
+      if (canReconcile) {
+        for (const owner of owners) {
+          const oe = owner.exports;
+          if (!oe.wnd_lookup_slot || !oe.wnd_lookup_live || !oe.wnd_get_parent || !oe.wnd_z_get) continue;
+          for (let slot = 0; ; slot++) {
+            const h = oe.wnd_lookup_slot(slot);
+            if (h === -1) break;
+            if (!h || !oe.wnd_lookup_live(h)) continue;
+            const w = windows[h >>> 0];
+            if (w && w.wasm && !_sameLookupOwner(w, oe, owner.memory)) continue;
+            const rendered = w && livePublished(w);
+            if (w && !rendered) {
+              const life = w._lookupLifetime;
+              // A new native lifetime may reuse an HWND whose old surface
+              // has not yet been deleted. Enumerate the new WND data, never
+              // the old surface's class/title or sibling relationship.
+              if (!life || !oe.wnd_lookup_generation ||
+                  oe.wnd_lookup_generation(h) === life.generation) continue;
+            }
+            if (local.has(h >>> 0)) continue;
+            const p = oe.wnd_get_parent(h) >>> 0;
+            local.set(h >>> 0, {hwnd: h >>> 0, isChild: !!p, parentHwnd: p,
+              zOrder: oe.wnd_z_get(h), localOnly: !rendered, owner});
+          }
+        }
+      }
+      if (parent && !local.has(parent) && !livePublished(windows[parent])) return 0;
+      const isSibling = w => w && w.hwnd && (parent
+        ? w.isChild && (w.parentHwnd >>> 0) === parent
+        : !w.isChild);
+      if (after && !isSibling(local.get(after) ||
+          (livePublished(windows[after]) && windows[after]))) return 0;
+      const builtin = ['button', 'edit', 'static', 'listbox', 'scrollbar', 'combobox'];
+      const className = !classWA ? null : classWA >= 0x80 && classWA <= 0x85 ? builtin[classWA - 0x80]
+        : (wide & 2 ? readStrW : readStr)(classWA).toLowerCase();
+      const title = titleWA ? (wide & 1 ? readStrW : readStr)(titleWA).toLowerCase() : null;
+      const siblings = published.filter(isSibling).sort((a, b) =>
+        ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd >>> 0) - (a.hwnd >>> 0)));
+      // Preserve desktop order, inserting each owner's unpublished rows at
+      // its own WAT anchors. Owner ordering is independent of the caller and
+      // its local counters, so FindWindowEx continuation is consistent.
+      const unpublished = [...local.values()].filter(w => w.localOnly && isSibling(w))
+        .sort((a, b) => owners.indexOf(a.owner) - owners.indexOf(b.owner) ||
+          b.zOrder - a.zOrder || b.hwnd - a.hwnd);
+      for (const w of unpublished) {
+        let at = siblings.findIndex(s => local.get(s.hwnd >>> 0)?.owner === w.owner &&
+          local.get(s.hwnd >>> 0).zOrder < w.zOrder);
+        if (at < 0) {
+          at = siblings.length;
+          for (let i = siblings.length - 1; i >= 0; i--) {
+            if (local.get(siblings[i].hwnd >>> 0)?.owner === w.owner) { at = i + 1; break; }
+          }
+        }
+        siblings.splice(at, 0, w);
+      }
+      const start = after ? siblings.findIndex(w => (w.hwnd >>> 0) === after) + 1 : 0;
+      for (let i = start; i < siblings.length; i++) {
+        const w = siblings[i];
+        if (w.localOnly) {
+          const oe = w.owner.exports;
+          if (oe === e && oe.find_window_local_match) {
+            if (oe.find_window_local_match(w.hwnd, classWA, titleWA, wide)) return w.hwnd >>> 0;
+            continue;
+          }
+          const readOwner = (ptr, wideString) => {
+            if (!ptr) return '';
+            const dv = new DataView(w.owner.memory);
+            let text = '';
+            for (let at = ptr >>> 0; at + (wideString ? 2 : 1) <= dv.byteLength; at += wideString ? 2 : 1) {
+              const c = wideString ? dv.getUint16(at, true) : dv.getUint8(at);
+              if (!c) return text.toLowerCase();
+              text += String.fromCharCode(c);
+            }
+            throw new RangeError('Unterminated owner window string');
+          };
+          if (className !== null) {
+            const ptr = oe.wnd_lookup_class(w.hwnd);
+            const name = ptr >= 0x80 && ptr <= 0x85 ? builtin[ptr - 0x80]
+              : readOwner(ptr, oe.wnd_lookup_class_wide(w.hwnd));
+            if (name !== className) continue;
+          }
+          if (title !== null && readOwner(oe.wnd_lookup_title(w.hwnd), false) !== title) continue;
+          return w.hwnd >>> 0;
+        }
+        if (className !== null && String(w.className || '').toLowerCase() !== className) continue;
+        const own = !w.wasm || _sameLookupOwner(w, e, ctx.getMemory && ctx.getMemory());
+        if (title !== null && (own ? _windowTextOf(w.hwnd) : String(w.title || '')).toLowerCase() !== title) continue;
+        return w.hwnd >>> 0;
+      }
+      return 0;
+    },
+    get_window_related: (hwnd, cmd) => {
+      const r = ctx.renderer;
+      const windows = r && r.windows;
+      if (!windows) return 0;
+      const win = windows[hwnd >>> 0];
+      const sortedByZ = list => list
+        .filter(w => w && w.hwnd)
+        .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+      // GetDesktopWindow is a WAT-side phantom handle. Its GW_CHILD relation
+      // is the renderer's top-level z-order, spanning every app instance.
+      if ((!win && (hwnd >>> 0) === 0x10000) || (!win && !hwnd)) {
+        if (cmd !== 5) return 0;
+        const top = sortedByZ(Object.values(windows).filter(w => w && !w.isChild));
+        return top.length ? (top[0].hwnd >>> 0) : 0;
+      }
+      if (!win) return 0;
+      const sameSiblingGroup = w => {
+        if (!w) return false;
+        if (!!w.isChild !== !!win.isChild) return false;
+        if (win.isChild) return (w.parentHwnd >>> 0) === (win.parentHwnd >>> 0);
+        return !w.isChild;
+      };
+      if (cmd === 0 || cmd === 1 || cmd === 2 || cmd === 3) { // GW_HWNDFIRST/LAST/NEXT/PREV
+        const siblings = sortedByZ(Object.values(windows).filter(sameSiblingGroup));
+        if (!siblings.length) return 0;
+        if (cmd === 0) return siblings[0].hwnd >>> 0;
+        if (cmd === 1) return siblings[siblings.length - 1].hwnd >>> 0;
+        const pos = siblings.findIndex(w => (w.hwnd >>> 0) === (hwnd >>> 0));
+        if (pos < 0) return 0;
+        if (cmd === 2) return pos + 1 < siblings.length ? (siblings[pos + 1].hwnd >>> 0) : 0;
+        return pos > 0 ? (siblings[pos - 1].hwnd >>> 0) : 0;
+      }
+      if (cmd === 4) { // GW_OWNER
+        return (win.ownerHwnd || 0) >>> 0;
+      }
+      if (cmd === 5) { // GW_CHILD
+        const children = sortedByZ(Object.values(windows).filter(w =>
+          w && w.isChild && (w.parentHwnd >>> 0) === (hwnd >>> 0)));
+        return children.length ? (children[0].hwnd >>> 0) : 0;
+      }
+      if (cmd === 6) { // GW_ENABLEDPOPUP
+        const popups = sortedByZ(Object.values(windows).filter(w =>
+          w && !w.isChild &&
+          (w.ownerHwnd >>> 0) === (hwnd >>> 0) &&
+          w.visible !== false &&
+          w.enabled !== false));
+        return popups.length ? (popups[0].hwnd >>> 0) : (hwnd >>> 0);
+      }
+      return 0;
+    },
+    get_window_info: (hwnd, prop) => {
+      const win = ctx.renderer && ctx.renderer.windows && ctx.renderer.windows[hwnd >>> 0];
+      if (!win) return 0;
+      if (prop === 0) return win.style >>> 0;
+      if (prop === 1) return win.visible !== false ? 1 : 0;
+      if (prop === 2) return win.enabled === false ? 0 : 1;
+      if (prop === 3) return (win.processId >>> 0) || 0;
+      if (prop === 4) return 1;
+      if (prop === 5) {
+        const broker = ctx.renderer && ctx.renderer._processSendBroker;
+        return broker && broker.processes.has(ctx.processId >>> 0) &&
+          broker.processes.has(win.processId >>> 0) ? 1 : 0;
+      }
+      return 0;
+    },
+    foreground_window: () => {
+      const r = ctx.renderer;
+      if (!r || !r.windows) return 0;
+      // Z-order is not activation: topmost/no-activate windows and pending
+      // pointer hit testing must not become foreground merely by being above
+      // another surface. Keep the accepted record identity, not just an HWND
+      // which another instance may later reuse.
+      const active = r._foregroundWindow;
+      if (!active || r.windows[active.hwnd >>> 0] !== active ||
+          !active.visible || active.isChild) {
+        r._foregroundWindow = null;
+        return 0;
+      }
+      return active.hwnd >>> 0;
+    },
+    post_window_message: (hwnd, msg, wParam, lParam) => {
+      const r = ctx.renderer;
+      const win = r && r.windows && r.windows[hwnd >>> 0];
+      const e = (win && win.wasm && win.wasm.exports) || ctx.exports || (r && r.wasm && r.wasm.exports);
+      if (!e || typeof e.post_message_q !== 'function') return 0;
+      e.post_message_q(hwnd >>> 0, msg >>> 0, wParam >>> 0, lParam >>> 0);
+      return 1;
+    },
+    // A registered message broadcast by one app reaches every other app that
+    // has a window on this renderer. The id is per-instance numbering, so it
+    // travels as the name's hash and each instance maps it back itself.
+    broadcast_registered_message: (nameHash, wParam, lParam) => {
+      const r = ctx.renderer;
+      if (!r || !r.windows) return 0;
+      // processId first: in Worker mode the caller's exports are the worker's
+      // while its windows hold the idle main-thread instance, so identity
+      // alone would deliver the broadcast back into the sender.
+      const ownPid = ctx.processId >>> 0;
+      const own = ctx.exports || (r.wasm && r.wasm.exports);
+      const others = new Set();
+      for (const win of Object.values(r.windows)) {
+        const e = win && win.wasm && win.wasm.exports;
+        if (!e || e === own || typeof e.registered_broadcast_deliver !== 'function') continue;
+        if (ownPid && (win.processId >>> 0) === ownPid) continue;
+        others.add(e);
+      }
+      let posted = 0;
+      for (const e of others) {
+        posted += e.registered_broadcast_deliver(nameHash >>> 0, wParam >>> 0, lParam >>> 0) | 0;
+      }
+      return posted;
+    },
+    activate_window: (hwnd) => {
+      const r = ctx.renderer;
+      if (!r || !r.windows) return 1;
+      const win = r.windows[hwnd >>> 0];
+      if (!win) return 0;
+      // USER activates the top-level ancestor when BringWindowToTop is given
+      // a child HWND. Keep SetForegroundWindow on the same rule: keyboard
+      // ownership belongs to the app's top-level surface, not a child record.
+      let active = win;
+      let guard = 0;
+      while (active.isChild && active.parentHwnd &&
+             r.windows[active.parentHwnd] && guard++ < 64) {
+        active = r.windows[active.parentHwnd];
+      }
+      r._foregroundWindow = active;
+      if (typeof r._raiseWindowGroup === 'function') r._raiseWindowGroup(active);
+      else active.zOrder = r._nextZ++;
+      if (typeof r._setKeyboardInputOwner === 'function') r._setKeyboardInputOwner(active);
+      if (typeof r.invalidate === 'function') r.invalidate(active.hwnd);
+      if (typeof r.scheduleRepaint === 'function') r.scheduleRepaint();
+      else if (typeof r.repaint === 'function') r.repaint();
+      return 1;
+    },
+    arrange_windows: (mode, flags, rectWa, count, hwndsWa) => {
+      const r = ctx.renderer;
+      if (!r || !r.windows) return 0;
+      const dv = new DataView(ctx.getMemory());
+      let left = 0, top = 0, right = r.canvas ? r.canvas.width : 640;
+      let bottom = r.canvas ? r.canvas.height : 480;
+      if (rectWa && rectWa + 16 <= dv.byteLength) {
+        left = dv.getInt32(rectWa, true);
+        top = dv.getInt32(rectWa + 4, true);
+        right = dv.getInt32(rectWa + 8, true);
+        bottom = dv.getInt32(rectWa + 12, true);
+      }
+      if (r.canvas) {
+        left = Math.max(0, Math.min(left, r.canvas.width - 1));
+        top = Math.max(0, Math.min(top, r.canvas.height - 1));
+        right = Math.max(left + 1, Math.min(right, r.canvas.width));
+        bottom = Math.max(top + 1, Math.min(bottom, r.canvas.height));
+      }
+      const width = Math.max(1, right - left);
+      const height = Math.max(1, bottom - top);
+      let windows = [];
+      if (mode === 2) {
+        windows = Object.values(r.windows).filter(win =>
+          win && !win.isChild && win._minimized && win.hasCaption !== false);
+      } else if (mode === 3 && (!count || !hwndsWa)) {
+        // Win98 SHELL32 ordinal 184 enumerates the parent's visible,
+        // non-iconic, non-popup children when the caller omits lpKids. The
+        // desktop's children are our renderer-wide top-level windows.
+        const parent = flags >>> 0;
+        windows = Object.values(r.windows).filter(win => win &&
+          (parent && parent !== 0x10000
+            ? !!win.isChild && (win.parentHwnd >>> 0) === parent
+            : !win.isChild));
+      } else {
+        const limit = Math.max(0, Math.min(count | 0, 256));
+        for (let i = 0; i < limit && hwndsWa + i * 4 + 4 <= dv.byteLength; i++) {
+          const win = r.windows[dv.getUint32(hwndsWa + i * 4, true)];
+          if (win && (mode === 3 || !win.isChild)) windows.push(win);
+        }
+      }
+      if (mode === 3) {
+        windows = windows.filter(win => win.visible && !win._minimized &&
+          !win.isPopup && !((win.style >>> 0) & 0x80000000)); // WS_POPUP
+      }
+      if (!windows.length) return 0;
+      if (mode === 0) {
+        const step = 24;
+        const w = Math.max(160, width - step * Math.max(0, windows.length - 1));
+        const h = Math.max(100, height - step * Math.max(0, windows.length - 1));
+        windows.forEach((win, i) => {
+          win.x = left + i * step; win.y = top + i * step;
+          win.w = w; win.h = h; win.visible = true; win._minimized = false;
+          const e = win.wasm && win.wasm.exports;
+          if (e && e.post_resize_messages) e.post_resize_messages(win.hwnd, 0);
+          if (r._computeClientRect) r._computeClientRect(win);
+        });
+      } else if (mode === 1 || mode === 3) {
+        const horizontal = !!(flags & 1); // MDITILE_HORIZONTAL
+        windows.forEach((win, i) => {
+          if (mode === 1 && horizontal) {
+            const y0 = top + Math.floor(height * i / windows.length);
+            const y1 = top + Math.floor(height * (i + 1) / windows.length);
+            win.x = left; win.y = y0; win.w = width; win.h = y1 - y0;
+          } else {
+            const x0 = left + Math.floor(width * i / windows.length);
+            const x1 = left + Math.floor(width * (i + 1) / windows.length);
+            win.x = x0; win.y = top; win.w = x1 - x0; win.h = height;
+          }
+          if (mode === 1) { win.visible = true; win._minimized = false; }
+          const e = win.wasm && win.wasm.exports;
+          if (e && e.post_resize_messages) e.post_resize_messages(win.hwnd, 0);
+          if (r._computeClientRect) r._computeClientRect(win);
+        });
+      } else {
+        const iconW = 160, iconH = 28;
+        const cols = Math.max(1, Math.floor(width / iconW));
+        windows.forEach((win, i) => {
+          const row = Math.floor(i / cols);
+          const col = i % cols;
+          win.x = left + col * iconW;
+          win.y = bottom - (row + 1) * iconH;
+          win.w = Math.min(iconW, width);
+          win.h = iconH;
+          if (r._computeClientRect) r._computeClientRect(win);
+        });
+        if (r.scheduleRepaint) r.scheduleRepaint();
+        return Math.ceil(windows.length / cols) * iconH;
+      }
+      for (const win of windows) {
+        win.zOrder = r._nextZ++;
+        if (r.invalidate) r.invalidate(win.hwnd);
+      }
+      if (r.scheduleRepaint) r.scheduleRepaint();
+      return windows.length;
+    },
+    // Client-area damage. WAT has already recorded the update region and set
+    // the paint flag; all that is owed here is a composite. Posting WM_NCPAINT
+    // from here would make every keystroke in an edit control redraw its
+    // top-level window's caption, border and menu bar.
+    invalidate: (hwnd) => {
+      if (_env.DBG_INV) console.log('[INVALIDATE] hwnd=0x' + hwnd.toString(16));
+      if (ctx.renderer) ctx.renderer.scheduleRepaint();
+    },
+    // Non-client damage: the caller changed something the frame draws.
+    invalidate_frame: (hwnd) => {
+      if (_env.DBG_INV) console.log('[INVALIDATE-NC] hwnd=0x' + hwnd.toString(16));
+      if (ctx.renderer) ctx.renderer.invalidate(hwnd);
+    },
+    get_window_client_size: (hwnd) => {
+      if (!ctx.renderer) return (640 & 0xFFFF) | (480 << 16);
+      // Prefer WAT get_client_rect_wh (authoritative after NCCALCSIZE). This
+      // matters for child controls with non-client borders such as Solitaire's
+      // status child. Ask before requiring a renderer record: dialog-template
+      // children are real WAT HWNDs painted into their top-level back-canvas,
+      // but deliberately have no separate JS window record.
+      const e = ctx.exports || (ctx.renderer.wasm && ctx.renderer.wasm.exports);
+      if (e && e.get_client_rect_wh) {
+        const packed = e.get_client_rect_wh(hwnd) | 0;
+        if (packed) return packed;
+      }
+      const win = ctx.renderer.windows[hwnd];
+      if (!win) return (640 & 0xFFFF) | (480 << 16);
+      const cr = win.clientRect;
+      if (cr) return (cr.w & 0xFFFF) | (cr.h << 16);
+      if (win.isChild) {
+        return (win.w & 0xFFFF) | (win.h << 16);
+      }
+      return (win.w & 0xFFFF) | (win.h << 16);
+    },
+    get_window_rect: (hwnd, rectPtr) => {
+      const mem = new DataView(ctx.getMemory());
+      if (!ctx.renderer) {
+        // Desktop fallback
+        mem.setInt32(rectPtr, 0, true);
+        mem.setInt32(rectPtr + 4, 0, true);
+        mem.setInt32(rectPtr + 8, 640, true);
+        mem.setInt32(rectPtr + 12, 480, true);
+        return;
+      }
+      const win = ctx.renderer.windows[hwnd];
+      if (win) {
+        const we = ctx.exports || (ctx.renderer.wasm && ctx.renderer.wasm.exports);
+        if (win.isChild && !ctx._getWindowRectWasmDepth && we &&
+            we.wnd_window_screen_x && we.wnd_window_screen_y &&
+            we.wnd_screen_w && we.wnd_screen_h) {
+          try {
+            ctx._getWindowRectWasmDepth = 1;
+            const x = we.wnd_window_screen_x(hwnd) | 0;
+            const y = we.wnd_window_screen_y(hwnd) | 0;
+            const w = we.wnd_screen_w(hwnd) | 0;
+            const h = we.wnd_screen_h(hwnd) | 0;
+            mem.setInt32(rectPtr, x, true);
+            mem.setInt32(rectPtr + 4, y, true);
+            mem.setInt32(rectPtr + 8, x + w, true);
+            mem.setInt32(rectPtr + 12, y + h, true);
+            return;
+          } catch (_) {
+            // A partially initialized/corrupt guest tree still gets the
+            // bounded renderer fallback below.
+          } finally {
+            ctx._getWindowRectWasmDepth = 0;
+          }
+        }
+        let x = win.x | 0;
+        let y = win.y | 0;
+        if (win.isChild && win.parentHwnd) {
+          const parent = ctx.renderer.windows[win.parentHwnd];
+          if (parent) {
+            // Renderer client rectangles are already in screen coordinates.
+            // Add the immediate parent origin once; walking every ancestor
+            // double-counts it for nested native controls (WinRAR's rebar).
+            // Do not recompute here. _computeClientRect prefers WAT's absolute
+            // geometry exports, and those exports may call this import while
+            // resolving a child that has no renderer record. Re-entering Wasm
+            // from an active host import recursively grows until the browser
+            // drops the frame. Window creation/movement keeps this cache current.
+            const origin = parent.clientRect || parent;
+            x += origin.x | 0;
+            y += origin.y | 0;
+          }
+        }
+        mem.setInt32(rectPtr, x, true);
+        mem.setInt32(rectPtr + 4, y, true);
+        mem.setInt32(rectPtr + 8, x + (win.w | 0), true);
+        mem.setInt32(rectPtr + 12, y + (win.h | 0), true);
+        return;
+      }
+      if (ctx._getWindowRectFallbackDepth) {
+        mem.setInt32(rectPtr, 0, true);
+        mem.setInt32(rectPtr + 4, 0, true);
+        mem.setInt32(rectPtr + 8, 640, true);
+        mem.setInt32(rectPtr + 12, 480, true);
+        return;
+      }
+      const we = ctx.exports || (ctx.renderer.wasm && ctx.renderer.wasm.exports);
+      if (we && we.wnd_get_style_export && we.wnd_window_screen_x && we.wnd_window_screen_y && we.wnd_screen_w && we.wnd_screen_h) {
+        try {
+          ctx._getWindowRectFallbackDepth = (ctx._getWindowRectFallbackDepth || 0) + 1;
+          const style = we.wnd_get_style_export(hwnd) >>> 0;
+          if (style & 0x40000000) {
+            const x = we.wnd_window_screen_x(hwnd) | 0;
+            const y = we.wnd_window_screen_y(hwnd) | 0;
+            const w = we.wnd_screen_w(hwnd) | 0;
+            const h = we.wnd_screen_h(hwnd) | 0;
+            mem.setInt32(rectPtr, x, true);
+            mem.setInt32(rectPtr + 4, y, true);
+            mem.setInt32(rectPtr + 8, x + w, true);
+            mem.setInt32(rectPtr + 12, y + h, true);
+            return;
+          }
+        } catch (_) {
+        } finally {
+          ctx._getWindowRectFallbackDepth = Math.max(0, (ctx._getWindowRectFallbackDepth || 1) - 1);
+        }
+      }
+      // hwnd=0 or unknown → desktop rect
+      mem.setInt32(rectPtr, 0, true);
+      mem.setInt32(rectPtr + 4, 0, true);
+      mem.setInt32(rectPtr + 8, 640, true);
+      mem.setInt32(rectPtr + 12, 480, true);
+    },
+    draw_animated_rects: (hwnd, idAni,
+      fromLeft, fromTop, fromRight, fromBottom,
+      toLeft, toTop, toRight, toBottom) => {
+      const r = ctx.renderer;
+      if (!r || !r.windows || typeof r.animateCaptionRect !== 'function') return 0;
+      const handle = hwnd >>> 0;
+      const win = r.windows[handle];
+      if (handle !== 0x10000 && !win) {
+        // WAT-native child windows need not have their own renderer record.
+        const probe = _windowExports(null);
+        if (!probe || !probe.wnd_get_style_export || !(probe.wnd_get_style_export(handle) >>> 0)) return 0;
+      }
+      const e = _windowExports(win);
+      const origin = _clientGeometry(handle, win, e);
+      if (!origin) return 0;
+
+      let parent = 0;
+      if (win && win.isChild) parent = win.parentHwnd >>> 0;
+      else if (!win && e && e.wnd_get_style_export && e.wnd_get_parent) {
+        try {
+          if ((e.wnd_get_style_export(handle) >>> 0) & 0x40000000) {
+            parent = e.wnd_get_parent(handle) >>> 0;
+          }
+        } catch (_) { return 0; }
+      }
+      let clip = { x: 0, y: 0, w: r.canvas.width | 0, h: r.canvas.height | 0 };
+      if (parent) {
+        const parentWin = r.windows[parent];
+        clip = _clientGeometry(parent, parentWin, _windowExports(parentWin));
+        if (!clip || clip.w <= 0 || clip.h <= 0) return 0;
+      }
+      const absolute = (left, top, right, bottom) => ({
+        left: origin.x + (left | 0),
+        top: origin.y + (top | 0),
+        right: origin.x + (right | 0),
+        bottom: origin.y + (bottom | 0),
+      });
+      return r.animateCaptionRect(
+        absolute(fromLeft, fromTop, fromRight, fromBottom),
+        absolute(toLeft, toTop, toRight, toBottom),
+        clip,
+        idAni | 0) ? 1 : 0;
+    },
+    move_window: (hwnd, x, y, w, h, flags) => {
+      if (!ctx.renderer) return;
+      const win = ctx.renderer.windows[hwnd];
+      if (!win) return;
+      const wasVisible = !!win.visible;
+      // CW_USEDEFAULT (-2147483648) means "keep existing position/size";
+      // common when MFC echoes back unset WINDOWPLACEMENT fields.
+      const useDefault = v => v === -2147483648 || v === 0x80000000 | 0;
+      if (!(flags & 2)) {
+        if (!useDefault(x)) win.x = x;
+        if (!useDefault(y)) win.y = y;
+      }
+      if (!(flags & 1)) {
+        const preserveHiddenTopLevelSize =
+          !win.isChild && !win.visible &&
+          w === 0 && h === 0 &&
+          win.w > 0 && win.h > 0;
+        if (!preserveHiddenTopLevelSize) {
+          if (!useDefault(w)) win.w = Math.max(0, w);
+          if (!useDefault(h)) win.h = Math.max(0, h);
+        }
+        // Fixed resource dialogs (Win98 Calculator standard view) can issue a
+        // SetWindowPos with the template width and an oversized height while
+        // probing/changing layout. Real USER keeps the fixed dialog frame at
+        // the template bounds; otherwise our per-window canvas becomes a tall
+        // stale gray hit target.
+        if (win.isDialog && win._templateW && win._templateH &&
+            Math.abs(win.w - win._templateW) <= 8 &&
+            win.h > win._templateH + 64) {
+          win.w = win._templateW;
+          win.h = win._templateH;
+        }
+      }
+      // SWP_SHOWWINDOW=0x40 / SWP_HIDEWINDOW=0x80 — SDL relies on this to reveal
+      // the window after SetVideoMode (no explicit ShowWindow(SW_SHOW) call).
+      if (flags & 0x40) {
+        win.visible = true;
+        // Re-bump windows that are actually becoming visible. Reused popups
+        // also need a fresh bump so a combobox dropdown stays above its
+        // parent. Repeated SWP_SHOWWINDOW on an already-visible normal window
+        // must not steal z-order from a later SetForegroundWindow call.
+        if (!wasVisible || win.isPopup) {
+          win.zOrder = ctx.renderer._nextZ++ + (win.isPopup ? 1000000 : 0);
+        }
+      }
+      if (flags & 0x80) win.visible = false;
+      // A moved toolbar re-clips against its control bar, and a moved control
+      // bar re-clips every toolbar it contains.
+      ctx.renderer._clampToolbarWidth(win);
+      if (String(win.className || '').toLowerCase() === 'afxcontrolbar42') {
+        for (const child of Object.values(ctx.renderer.windows)) {
+          if (!child || child.parentHwnd !== hwnd) continue;
+          if (ctx.renderer._clampToolbarWidth(child)) ctx.renderer._computeClientRect(child);
+        }
+      }
+      ctx.renderer._computeClientRect(win);
+      if (wasVisible && !win.visible) _queueParentExposePaint(win);
+      if (!win.visible && ctx.renderer._foregroundWindow === win) ctx.renderer._foregroundWindow = null;
+      if (!win.isChild) ctx.renderer.scheduleRepaint();
+    },
+    set_window_zorder: (hwnd, insertAfter) => {
+      if (!ctx.renderer) return;
+      const win = ctx.renderer.windows[hwnd];
+      if (!win) return;
+      const siblings = Object.values(ctx.renderer.windows)
+        .filter(other => other && other !== win &&
+          !!other.isChild === !!win.isChild &&
+          (!win.isChild || other.parentHwnd === win.parentHwnd))
+        .sort((a, b) => (a.zOrder || 0) - (b.zOrder || 0));
+      if (insertAfter === 0 || insertAfter === -1) {
+        siblings.push(win); // HWND_TOP / HWND_TOPMOST
+      } else if (insertAfter === 1) {
+        siblings.unshift(win); // HWND_BOTTOM
+      } else {
+        const target = siblings.findIndex(other => other.hwnd === insertAfter);
+        if (target < 0) return;
+        // The Win32 list is described top-to-bottom; our compositor is stored
+        // bottom-to-top, so "after target" inserts immediately below it.
+        siblings.splice(target, 0, win);
+      }
+      const base = siblings.reduce((min, other) => Math.min(min, other.zOrder || 0),
+        win.zOrder || 0);
+      for (let i = 0; i < siblings.length; i++) siblings[i].zOrder = base + i;
+      ctx.renderer._nextZ = Math.max(ctx.renderer._nextZ, base + siblings.length + 1);
+      ctx.renderer.scheduleRepaint();
+    },
+    sync_window_client: (hwnd, x, y, w, h) => {
+      if (!ctx.renderer) return;
+      const win = ctx.renderer.windows[hwnd];
+      if (!win) return;
+      const width = ctx.renderer._clampToolbarClientWidth(win, Math.max(0, w | 0));
+      win.clientRect = {
+        x: x | 0,
+        y: y | 0,
+        w: width,
+        h: Math.max(0, h | 0),
+      };
+    },
+    destroy_window: (hwnd) => {
+      const retire = (h, win) => {
+        const owner = (win && win.wasm && win.wasm.exports) || ctx.exports ||
+          (ctx.instance && ctx.instance.exports);
+        if (owner && owner.wnd_lookup_retire) owner.wnd_lookup_retire(h);
+      };
+      retire(hwnd, ctx.renderer && ctx.renderer.windows[hwnd]);
+      if (!ctx.renderer) return;
+      const destroyed = ctx.renderer.windows[hwnd];
+      const wasTopLevel = destroyed && !destroyed.isChild;
+      const exposedParent = destroyed && destroyed.isChild ? destroyed : (destroyed && destroyed.visible ? destroyed : null);
+      const destroyedHwnds = new Set([hwnd >>> 0]);
+      // Drop any per-window menu data the WAT side is holding for this hwnd.
+      const we = ctx.exports || (ctx.renderer.wasm && ctx.renderer.wasm.exports);
+      if (we && we.menu_clear) we.menu_clear(hwnd);
+      for (const k of Object.keys(ctx.renderer.windows)) {
+        if (ctx.renderer.windows[k].parentHwnd === hwnd) {
+          retire(ctx.renderer.windows[k].hwnd, ctx.renderer.windows[k]);
+          destroyedHwnds.add(ctx.renderer.windows[k].hwnd >>> 0);
+          delete ctx.renderer.windows[k];
+        }
+      }
+      delete ctx.renderer.windows[hwnd];
+      if (ctx.renderer._foregroundWindow && destroyedHwnds.has(ctx.renderer._foregroundWindow.hwnd >>> 0)) {
+        ctx.renderer._foregroundWindow = null;
+      }
+      // USER discards queued input for an HWND as part of DestroyWindow. WAT
+      // already purges its posted-message queues in wnd_destroy_recursive;
+      // do the same for browser events that have not crossed host_check_input
+      // yet. Otherwise a delayed mouse-up can reach MFC after its dialog CWnd
+      // has left the permanent handle map (Half-Life Uplink's Start button).
+      // Compact in place because the input-depth publishers retain this array.
+      const inputQueue = ctx.renderer.inputQueue;
+      if (Array.isArray(inputQueue) && inputQueue.length) {
+        let write = 0;
+        for (let read = 0; read < inputQueue.length; read++) {
+          const event = inputQueue[read];
+          if (event && event.hwnd && destroyedHwnds.has(event.hwnd >>> 0)) continue;
+          inputQueue[write++] = event;
+        }
+        inputQueue.length = write;
+      }
+      const targetsDestroyedHwnd = state => !!(state && [
+        state.hwnd, state.targetHwnd, state.parent, state.target,
+        state.topHwnd, state.childHwnd,
+      ].some(value => value && destroyedHwnds.has(value >>> 0)));
+      if (targetsDestroyedHwnd(ctx.renderer._directMouseDown)) ctx.renderer._directMouseDown = null;
+      if (targetsDestroyedHwnd(ctx.renderer._dialogBtnDrag)) ctx.renderer._dialogBtnDrag = null;
+      if (targetsDestroyedHwnd(ctx.renderer._lastDeepChild)) ctx.renderer._lastDeepChild = null;
+      if (wasTopLevel && ctx.renderer.notifyShellWindow) {
+        ctx.renderer.notifyShellWindow(2, hwnd);
+      }
+      if (wasTopLevel && ctx.onTopLevelWindowDestroyed) {
+        try { ctx.onTopLevelWindowDestroyed(hwnd, destroyed); } catch (_) {}
+      }
+      _queueParentExposePaint(exposedParent);
+      ctx.renderer.scheduleRepaint();
+    },
+    set_menu: (hwnd, menuResId) => {
+      let watReady = false;
+      const menuKey = menuResId >>> 0;
+      const menu = ctx._hostMenus && ctx._hostMenus.get(menuKey);
+      const e = ctx.exports || (ctx.renderer && ctx.renderer.wasm && ctx.renderer.wasm.exports);
+      if (menu && e && e.guest_alloc && e.guest_free && e.guest_write8 && e.menu_set_source_guest) {
+        const blob = serializeHostMenuTree(ctx._hostMenus, menuKey);
+        const guest = e.guest_alloc(blob.length) >>> 0;
+        if (guest) {
+          for (let i = 0; i < blob.length; i++) e.guest_write8(guest + i, blob[i]);
+          e.menu_set_source_guest(hwnd, guest, blob.length, menuKey);
+          e.guest_free(guest);
+          watReady = true;
+        }
+      }
+      if (ctx.renderer) ctx.renderer.setMenu(hwnd, menuResId, watReady);
+    },
+    menu_create: () => {
+      if (!ctx._hostMenus) ctx._hostMenus = new Map();
+      const h = ctx._nextHostMenu || 0x800001;
+      ctx._nextHostMenu = h + 1;
+      ctx._hostMenus.set(h, []);
+      return h;
+    },
+    menu_destroy: (hMenu) => {
+      if (ctx._hostMenus) ctx._hostMenus.delete(hMenu >>> 0);
+      return 1;
+    },
+    menu_append: (hMenu, flags, idOrSubmenu, textWA, isWide) => {
+      if (!ctx._hostMenus) ctx._hostMenus = new Map();
+      const h = hMenu >>> 0;
+      if (!ctx._hostMenus.has(h)) ctx._hostMenus.set(h, []);
+      const text = textWA ? (isWide ? readStrW(textWA) : readStr(textWA)) : '';
+      const f = flags >>> 0;
+      ctx._hostMenus.get(h).push({
+        flags: f,
+        id: idOrSubmenu >>> 0,
+        submenu: (f & 0x0010) ? (idOrSubmenu >>> 0) : 0, // MF_POPUP
+        popup: !!(f & 0x0010),
+        separator: !!(f & 0x0800), // MF_SEPARATOR
+        disabled: !!(f & 0x0003),  // MF_GRAYED | MF_DISABLED
+        text,
+        isWide: !!isWide,
+      });
+      return 1;
+    },
+    menu_remove: (hMenu, item, flags, destroySubmenu) => {
+      const menus = ctx._hostMenus;
+      const items = menus && menus.get(hMenu >>> 0);
+      if (!items) return 0;
+      const byPosition = !!((flags >>> 0) & 0x0400); // MF_BYPOSITION
+      const index = byPosition
+        ? (item | 0)
+        : items.findIndex(entry => (entry.id >>> 0) === (item >>> 0));
+      if (index < 0 || index >= items.length) return 0;
+      const [removed] = items.splice(index, 1);
+      if (destroySubmenu && removed && removed.submenu) {
+        const destroyTree = handle => {
+          const children = menus.get(handle >>> 0);
+          if (!children) return;
+          for (const child of children) {
+            if (child && child.submenu) destroyTree(child.submenu);
+          }
+          menus.delete(handle >>> 0);
+        };
+        destroyTree(removed.submenu);
+      }
+      return 1;
+    },
+    // --- Input (override for interactive/test) ---
+    check_input: () => 0,
+    check_input_lparam: () => 0,
+    check_input_wparam: () => 0,
+    check_input_hwnd: () => 0,
+    queue_keyboard_input: (vKey, scanCode, flags, extraInfo, targetHwnd) => {
+      const renderer = ctx.renderer;
+      const key = vKey >>> 0;
+      if (!renderer || !Array.isArray(renderer.inputQueue) || key < 1 || key > 254) return 0;
+
+      const code = key & 0xFF;
+      const options = flags >>> 0;
+      const keyUp = (options & 0x02) !== 0;       // KEYEVENTF_KEYUP
+      const extended = (options & 0x01) !== 0;    // KEYEVENTF_EXTENDEDKEY
+      const peek = renderer.peekKeyDownState || renderer.peekAsyncKeyState;
+      const wasDown = !!(peek && (peek.call(renderer, code) & 0x8000));
+      const altWasDown = !!(peek && (peek.call(renderer, 0x12) & 0x8000));
+
+      if (renderer.pokeKeyDownState) renderer.pokeKeyDownState(code, !keyUp);
+      else {
+        if (!renderer._physicalKeys) renderer._physicalKeys = Object.create(null);
+        renderer._physicalKeys[code] = !keyUp;
+      }
+      if (!keyUp) {
+        if (renderer.pokeAsyncKeyState) renderer.pokeAsyncKeyState(code, true);
+        else {
+          if (!renderer._asyncKeys) renderer._asyncKeys = Object.create(null);
+          renderer._asyncKeys[code] = true;
+        }
+        if (!renderer._asyncPressedKeys) renderer._asyncPressedKeys = Object.create(null);
+        renderer._asyncPressedKeys[code] = true;
+      } else {
+        // Match browser key-up ordering: an earlier queued keydown remains
+        // visible until takeInput reaches this release.
+        const keyInFlight = renderer.inputQueue.some(event => event && event.type === 'key');
+        if (!keyInFlight && renderer.pokeAsyncKeyState) renderer.pokeAsyncKeyState(code, false);
+        else if (!keyInFlight && renderer._asyncKeys) renderer._asyncKeys[code] = false;
+      }
+
+      // Alt and F10 use the system-key message family. The context bit records
+      // whether Alt was already down before this event; previous/transition
+      // retain their documented meanings even for an unmatched key-up.
+      const systemKey = code === 0x12 || code === 0x79 || altWasDown;
+      const message = keyUp
+        ? (systemKey ? 0x0105 : 0x0101)
+        : (systemKey ? 0x0104 : 0x0100);
+      const lParam = (1 | ((scanCode & 0xFF) << 16) |
+        (extended ? KEY_LPARAM_EXTENDED : 0) |
+        (altWasDown ? KEY_LPARAM_CONTEXT : 0) |
+        (wasDown ? KEY_LPARAM_PREVIOUS : 0) |
+        (keyUp ? KEY_LPARAM_TRANSITION : 0)) >>> 0;
+      renderer.inputQueue.push({
+        type: 'key',
+        hwnd: targetHwnd >>> 0,
+        processId: ctx.processId >>> 0,
+        msg: message,
+        wParam: code,
+        lParam,
+        extraInfo: extraInfo >>> 0,
+        keyStateSnapshot: _snapshotKeyState(renderer),
+      });
+      if (renderer._signalDirectInputDevice) renderer._signalDirectInputDevice(1);
+      if (renderer._wakeMessageWait) renderer._wakeMessageWait(true);
+      else if (renderer._publishInputQueueDepth) renderer._publishInputQueueDepth();
+      return 1;
+    },
+    queue_mouse_input: (flags, dx, dy, data, extraInfo) => {
+      if (!ctx.renderer || !ctx.renderer.queueMouseInput) throw new Error('mouse_event requires an input renderer');
+      return ctx.renderer.queueMouseInput(flags, dx, dy, data, extraInfo);
+    },
+    get_mouse_position: () => ctx.renderer && ctx.renderer.getMousePosition ? ctx.renderer.getMousePosition() : 0,
+    set_mouse_position: (x, y) => { if (ctx.renderer && ctx.renderer.setMousePosition) ctx.renderer.setMousePosition(x, y); },
+    get_mouse_buttons: () => ctx.renderer && ctx.renderer.getMouseButtons ? ctx.renderer.getMouseButtons() : 0,
+    // DirectInput immediate/button reconciliation must not consume message snapshots.
+    get_mouse_buttons_live: () => {
+      const r = ctx.renderer;
+      if (!r || typeof r.peekKeyDownState !== 'function') return 0;
+      // MK_ bits, as the WAT reads them: left 1, right 2, middle 0x10.
+      return ((r.peekKeyDownState(0x01) & 0x8000) ? 1 : 0) |
+        ((r.peekKeyDownState(0x02) & 0x8000) ? 2 : 0) |
+        ((r.peekKeyDownState(0x04) & 0x8000) ? 0x10 : 0);
+    },
+    get_async_key_state: (vKey) => ctx.renderer ? ctx.renderer.getAsyncKeyState(vKey) : 0,
+    get_key_down_state: (vKey) => _keyDownState(vKey),
+    get_keyboard_state: (bufferWa) => {
+      try {
+        const out = new Uint8Array(ctx.getMemory(), bufferWa >>> 0, 256);
+        for (let vKey = 0; vKey < 256; vKey++) {
+          out[vKey] = _keyDownState(vKey) & 0x8000 ? 0x80 : 0;
+        }
+        return 1;
+      } catch (_) {
+        return 0;
+      }
+    },
+    set_key_down_state: (vKey, down) => { if (ctx.renderer && ctx.renderer.pokeAsyncKeyState) ctx.renderer.pokeAsyncKeyState(vKey, down); },
+
+  };
+
+  return { imports };
+}
+
+if (typeof module !== 'undefined') module.exports = {
+  createWindowHost, inputEventHwnd, serializeHostMenuTree,
+};

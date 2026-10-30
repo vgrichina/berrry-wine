@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "winboard-installer",
+  "version": "4.2.7",
+  "license": "GPL; bundled COPYRIGHT/COPYING retained",
+  "installer": {
+    "path": "test/binaries/candidates/winboard-installer/winboard-4_2_7.exe",
+    "bytes": 5629711,
+    "sha256": "697c584d21a87c9851a83e763ceff38d03e1916e1b0bda4ae5558dc8c92dd852",
+    "sha1": "ffb4527ade3380973b5e68d9f7cfacc0c348a0b0",
+    "source": "https://ftp.gnu.org/old-gnu/xboard/winboard/winboard-4_2_7.exe"
+  },
+  "extraction": "Original ZIP SFX then InstallShield data1.cab, Program Executable Files group, old compression (unshield -O). This is static preparation, not installer acceptance.",
+  "files": [
+    {
+      "name": "COPYING",
+      "bytes": 18043,
+      "sha256": "4d23c8c814e5baf007d854f01d8502e77dc56a41144934e003fb32c4e052d20f"
+    },
+    {
+      "name": "COPYRIGHT",
+      "bytes": 2509,
+      "sha256": "235baacad8098c188907ff897fab8d9e10554f7cb13426de93a992322ac5631f"
+    },
+    {
+      "name": "ChangeLog",
+      "bytes": 142195,
+      "sha256": "e234f032fff00c64932a925b66ffa83f90c64a8d7c8a30c4bcfae6317e515b63"
+    },
+    {
+      "name": "FAQ.html",
+      "bytes": 73859,
+      "sha256": "cec18b3e50b401a4e2321d598d08b1dd663b64d205c845aa84272aa857772215"
+    },
+    {
+      "name": "GNUChes5.exe",
+      "bytes": 438172,
+      "sha256": "d218d84057f5317b80318ead9de0d590585cdfe0aabc9ba2b3cfa1984b13c862"
+    },
+    {
+      "name": "GNUChess.exe",
+      "bytes": 205824,
+      "sha256": "fb1201aedf4250ba1c4ea069c2874adfff728a7df94ee2ebf9f4363f448e4f62"
+    },
+    {
+      "name": "NEWS",
+      "bytes": 1987,
+      "sha256": "133b64d806dca4a2adebb77cb014ade57c5ad74f4af50e1e3bbb750917d345b9"
+    },
+    {
+      "name": "READ_ME.txt",
+      "bytes": 1873,
+      "sha256": "745344f87cb7f45ed6c6f8a9455a3db7018b28700a3e999676c8a1260c90ef00"
+    },
+    {
+      "name": "RJF60.pgn",
+      "bytes": 38187,
+      "sha256": "bbcf23ed65fe2f51c377a90ea76dde0227d49e3ec139d920b696e8a695f20336"
+    },
+    {
+      "name": "book.dat",
+      "bytes": 3710751,
+      "sha256": "fb6531a7309bcd4004a8cedfe01906be72fd9829a8a2ac877795ad3257650ed4"
+    },
+    {
+      "name": "bughouse.bat",
+      "bytes": 782,
+      "sha256": "1d6163bbc302216e040858eaa140addd2d8bf29602afec113a0f3e9d7ea387af"
+    },
+    {
+      "name": "cygncurses7.dll",
+      "bytes": 229376,
+      "sha256": "2eb10e2c37d04cecbcb61ff99276317a1692758984c3791e2a32dfb60a52e159"
+    },
+    {
+      "name": "cygreadline5.dll",
+      "bytes": 151552,
+      "sha256": "ac2141ed97f7df3fa758cf8c2cd97da6d634851b2916112f2c3dad674b38207e"
+    },
+    {
+      "name": "cygwin1.dll",
+      "bytes": 971618,
+      "sha256": "7d54c7e74e4ff9f8d76ba99e6c5cf353da594df75d873a9a93564bb3fbefe423"
+    },
+    {
+      "name": "gnuches5.txt",
+      "bytes": 18016,
+      "sha256": "d8cf0e1c5513824eadf8fa8bb367e4a1500d61edc1e61d11e1d2ea17d072b07d"
+    },
+    {
+      "name": "gnuchesr.exe",
+      "bytes": 205312,
+      "sha256": "471f92427e463b5e6a51532e95c0db626926296c9300ff1badf93b642428c190"
+    },
+    {
+      "name": "gnuchess.README",
+      "bytes": 793,
+      "sha256": "9ecfe813f93a2b8da625ccef5568bfde0b71dde979c7e42f371d469ee78173bd"
+    },
+    {
+      "name": "gnuchess.dat",
+      "bytes": 144012,
+      "sha256": "a0a46a9daf8fbb1c5c90b66b7922dc7b68df77953c65627f720ec6d37823241f"
+    },
+    {
+      "name": "gnuchess.lan",
+      "bytes": 20787,
+      "sha256": "2cbd66f6803c098f990e74a3fd0b346ce6416530e3b5972ae283c9526959c9e9"
+    },
+    {
+      "name": "gnuchess.txt",
+      "bytes": 13849,
+      "sha256": "1faf026afb1f130e2db060f9e01847f89531b5ddd5a3b56301444cf0123f51d1"
+    },
+    {
+      "name": "kk13.pgn",
+      "bytes": 6475,
+      "sha256": "f65a6d6631233a4db37b430a6bf5d015f807bc555defba2108190153a02d235c"
+    },
+    {
+      "name": "timeseal.exe",
+      "bytes": 48640,
+      "sha256": "24594560ebbb91d0eb97f862e6250953f4f285e281f2107b838c835d0df33260"
+    },
+    {
+      "name": "timestamp.exe",
+      "bytes": 52736,
+      "sha256": "73f066f387fc62192e96e1e4e48b0ffbe91c4ccde0802176e99582039da6c7bb"
+    },
+    {
+      "name": "winboard.exe",
+      "bytes": 1996284,
+      "sha256": "be902e8e96cd44b250b743eb48a1cd1dafea3f4ad9d06dcb6790c6c3af3cf86d"
+    },
+    {
+      "name": "winboard.hlp",
+      "bytes": 140586,
+      "sha256": "99d56a21828a1e10c96b43ae19a57c9992cd9642671f452de797a8b2d06de1e6"
+    },
+    {
+      "name": "zippy.README",
+      "bytes": 18512,
+      "sha256": "32e188098791b404b9d96d9a7a06501920fd4f1eb137bed768dce9f1b94c3af9"
+    },
+    {
+      "name": "zippy.lines",
+      "bytes": 1503,
+      "sha256": "5e6458ee52541a79e34c8b395cdfa84110f9acf3cf41226fe5fe6eba6f4ec13f"
+    }
+  ]
+}

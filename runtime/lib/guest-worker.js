@@ -1,0 +1,1285 @@
+// The guest's main thread, running in a Worker.
+//
+// Receives the compiled module and the shared memory from the page, instantiates
+// against them with brokered host imports (lib/guest-rpc.js), and then runs
+// slices on command. Host calls go back to the main thread; the guest's own
+// execution never leaves this thread, which is the entire point: the UI thread
+// is no longer in the guest's critical path.
+//
+// This worker deliberately does NOT own the renderer, the audio graph or the
+// registry. Those stay where the browser keeps them, and the broker reaches
+// them. See docs/design-real-threads.md.
+
+'use strict';
+
+// This file runs in two hosts: a browser Worker (the shipped path) and a Node
+// worker_thread (test/run.js --threads). The message bodies below are identical
+// in both — only the bootstrap differs, so the fork is isolated here rather than
+// duplicated into a second worker file that would drift.
+//
+// The Node host exists because worker mode had no automated coverage at all:
+// every test ran the cooperative backend, and the wait-completion bug that made
+// worker mode quietly wrong for a whole phase was found by hand in a browser.
+const IS_WEB_WORKER = typeof importScripts === 'function';
+let parentPort = null;
+
+// The page puts its one deploy identity on this Worker's own URL. Read it
+// before loading dependencies so this entire nested graph is one cache
+// generation; Node worker_threads use require() and need no browser key.
+const SOURCE_VERSION = IS_WEB_WORKER
+  ? (new URL(self.location.href).searchParams.get('v') || 'dev')
+  : 'node';
+const versionedWorkerUrl = source => {
+  const separator = source.includes('?') ? '&' : '?';
+  return source + separator + 'v=' + encodeURIComponent(SOURCE_VERSION);
+};
+
+if (IS_WEB_WORKER) {
+  // The generated memory map first: guest-rpc.js and dll-loader.js read their
+  // region bases out of the global it installs (Node gets it through require()).
+  const WORKER_SCRIPTS = Object.freeze([
+    'region-map.generated.js',
+    'mem-utils.js',
+    'worker-imports.js',
+    'gl-command-stream.js',
+    'gl-software-producer.js',
+    'd3d-command-stream.js',
+    'guest-rpc.js',
+    'thread-send-waits.js',
+    'dll-loader.js',
+    'process-boot.js',
+  ]);
+  // The DLL loader drives guest execution — it sets EIP/ESP and calls run() to
+  // execute each DllMain — so it belongs on whichever thread owns the instance.
+  importScripts(...WORKER_SCRIPTS.map(versionedWorkerUrl));
+  // The D3DIM WebGL executor and the backend chain under it are loaded only
+  // when a run opts in. They are the largest graph this Worker can pull, and
+  // every guest thread pays the parse cost — a sound or input thread never
+  // issues a draw.
+  self.loadD3DIMGpuScripts = () => {
+    if (self.D3DIMGpu) return true;
+    importScripts(...[
+      'gpu-backend.js', 'd3d9-shader.js', 'd3d-shader-ir.js', 'd3d9-fixed.js',
+      'd3d9-texture.js', 'd3d9-backend.js', 'd3dim-gpu.js',
+    ].map(versionedWorkerUrl));
+    return !!self.D3DIMGpu;
+  };
+} else {
+  parentPort = require('worker_threads').parentPort;
+  // The bodies below reach for `self.DllLoader` and the global `GuestRpc`, the
+  // names importScripts would have defined. Node has no `self`, so alias it.
+  globalThis.self = globalThis;
+  globalThis.workerImports = require('./worker-imports.js');
+  globalThis.GuestRpc = require('./guest-rpc.js');
+  globalThis.DllLoader = require('./dll-loader.js');
+  globalThis.processBoot = require('./process-boot.js');
+}
+
+const GuestSoftwareGLProducer = IS_WEB_WORKER ? self.GLSoftwareProducer : require('./gl-software-producer');
+const GuestWorkerMemUtils = IS_WEB_WORKER ? self.memUtils : require('./mem-utils');
+
+// Only the dedicated lookup reply can bypass the command queue. In
+// particular, a slice or callExport must not mutate registers while an outer
+// DllMain continuation is suspended awaiting a nested module's bytes.
+let dllLookupSequence = 0;
+const pendingDllLookups = new Map();
+function findDllForWorker(fileName, fullName) {
+  const lookup = ++dllLookupSequence;
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      pendingDllLookups.delete(lookup);
+      reject(new Error('DLL lookup timed out: ' + fullName));
+    }, 30000);
+    pendingDllLookups.set(lookup, { resolve, reject, timer });
+    send({ t: 'dllLookup', lookup, fileName, fullName });
+  });
+}
+function workerDllOptions() {
+  return { exports: instance.exports, memoryBuffer: memory.buffer,
+    neBackend: 'worker',
+    findDll: findDllForWorker, advanceGuestTime,
+    onLoaded: record => send({ t: 'dllMapped', record }),
+    onUnloaded: record => send({ t: 'dllRetired', record }),
+  };
+}
+let instance = null;
+let broker = null;
+let advanceGuestTime = null;
+let memory = null;
+// Sleeps this Worker waited out itself (see the 'slice' handler), cumulative.
+let localSleeps = 0;
+// Empty message waits (yield 7) this Worker waited out itself, cumulative.
+let localMessageWaits = 0;
+let workerSlot = 0;
+// How often a locally parked message wait re-checks for a message. Nothing
+// notifies a post or a due timer, so this is the wake latency.
+const LOCAL_MESSAGE_POLL_MS = 1;
+let stats = null;
+let namedWaitTransport = null;
+// Drains the batched fire-and-forget imports (GuestRpc flushAsync). Called
+// before every message this Worker posts and before it parks, so the page
+// never sees a reply ahead of calls the guest made first.
+let flushAsyncCalls = null;
+let d3dCommands = null;
+let sharedRenderPort = null;
+// Set when the D3DIM WebGL executor was built for this Worker. WAT only emits
+// the executor opcodes once its own switch is on, so the instance has to be
+// told after instantiation.
+let d3dimGpuEnable = false;
+let guestThreadDlls = [];
+let guestThreadDetached = false;
+const threadSendFrames = [];
+const ThreadSendWaits = IS_WEB_WORKER ? self.ThreadSendWaits : require('./thread-send-waits');
+const threadSendWaits = new ThreadSendWaits(threadSendFrames);
+let endpointIdentity = null, scopedRetirement = null, scopedRetiring = false;
+let lastThreadSendFrameToken = 0;
+function ownsThreadSendFrame(frameToken) {
+  const top = threadSendFrames[threadSendFrames.length - 1];
+  return !!top && top.frameToken === frameToken;
+}
+
+// asyncMultimediaTimer in Worker mode: one slice as ~1ms run quanta, with a
+// due timeSetEvent callback injected at each boundary (fire_mm_timer) and a
+// quantum ended early at the next timer deadline. The cooperative twin is
+// WineAssembly._runCooperativeSlice. Returns the blocks retired.
+let mmQuantumBlocks = 128;
+function runServingMmTimers(ex, steps) {
+  let left = Math.max(1, steps | 0);
+  let total = 0;
+  for (;;) {
+    ex.fire_mm_timer();
+    let quantum = Math.min(left, mmQuantumBlocks);
+    let capped = false;
+    const due = ex.mm_timer_ms_until_due() | 0;
+    if (due > 0) {
+      const cap = Math.max(16, Math.ceil(due * mmQuantumBlocks));
+      if (cap < quantum) { quantum = cap; capped = true; }
+    }
+    const t0 = performance.now();
+    ex.run(quantum);
+    const ran = ex.get_last_run_blocks ? Math.max(0, ex.get_last_run_blocks() | 0) : 0;
+    const elapsed = performance.now() - t0;
+    total += ran;
+    left -= ran;
+    if (!capped && ran >= quantum && elapsed > 0) {
+      // Target roughly 1ms per quantum, as the cooperative loop does.
+      mmQuantumBlocks = Math.max(16, Math.min(4096, quantum * 2, Math.floor(ran / elapsed)));
+    }
+    if (!ran || left <= 0 || !ex.get_last_run_halt || ex.get_last_run_halt() !== 1 ||
+        (ex.get_yield_reason && ex.get_yield_reason()) || (ex.get_eip && !ex.get_eip())) break;
+  }
+  return total;
+}
+
+async function notifyGuestThreadDetach(ex) {
+  if (guestThreadDetached) return;
+  guestThreadDetached = true;
+  const L = self.DllLoader || {};
+  if (!L.notifyDllThreadAsync) throw new Error('DLL notification driver is unavailable');
+  await L.notifyDllThreadAsync({ ...workerDllOptions(), onLoadLibraryYield: async () => {
+    await self.processBoot.handleLoadLibraryYield(workerDllOptions()); return true;
+  } }, 3, guestThreadDlls);
+}
+
+function threadSendArgs(msg) {
+  return {
+    hwnd: msg.hwnd | 0, msg: msg.msg | 0,
+    wparam: msg.wparam | 0, lparam: msg.lparam | 0,
+    postKind: msg.postKind | 0,
+  };
+}
+
+function snapshotThreadSend(ex) {
+  const g = name => ex[name] ? ex[name]() | 0 : 0;
+  return {
+    eip: g('get_eip'), esp: g('get_esp'), ebp: g('get_ebp'), eax: g('get_eax'),
+    ebx: g('get_ebx'), ecx: g('get_ecx'), edx: g('get_edx'),
+    esi: g('get_esi'), edi: g('get_edi'),
+    handlerSetEip: g('get_handler_set_eip'), steps: g('get_steps'),
+    yieldReason: g('get_yield_reason'), yieldFlag: g('get_yield_flag'),
+    renderToken: g('get_d3d_render_token'),
+  };
+}
+
+function restoreThreadSend(ex, s) {
+  ex.set_esp(s.esp); ex.set_ebp(s.ebp); ex.set_eax(s.eax);
+  ex.set_ebx(s.ebx); ex.set_ecx(s.ecx); ex.set_edx(s.edx);
+  ex.set_esi(s.esi); ex.set_edi(s.edi);
+  ex.set_handler_set_eip(s.handlerSetEip); ex.set_steps(s.steps);
+  ex.set_yield_state(s.yieldReason, s.yieldFlag);
+  if (ex.set_d3d_render_token) ex.set_d3d_render_token(s.renderToken || 0);
+  ex.set_eip(s.eip);
+}
+
+function threadSendYield(ex, trapped) {
+  const y = ex.get_yield_reason ? ex.get_yield_reason() | 0 : 0;
+  const base = {
+    ...threadSendWaits.observe(y), trapped: trapped || null, yield: y,
+    renderToken: ex.get_d3d_render_token ? ex.get_d3d_render_token() | 0 : 0,
+    waitHandle: ex.get_wait_handle ? ex.get_wait_handle() >>> 0 : 0,
+    waitHandlesPtr: ex.get_wait_handles_ptr ? ex.get_wait_handles_ptr() >>> 0 : 0,
+    waitAll: ex.get_wait_all ? !!ex.get_wait_all() : false,
+    waitTimeout: ex.get_wait_timeout ? ex.get_wait_timeout() >>> 0 : 0xFFFFFFFF,
+    waitStackBytes: ex.get_wait_stack_bytes ? ex.get_wait_stack_bytes() | 0 : 12,
+  };
+  if (y === 10) {
+    return Object.assign(base, {
+      nested: true,
+      targetTid: ex.get_send_target_tid() | 0,
+      hwnd: ex.get_send_hwnd() | 0, msg: ex.get_send_msg() | 0,
+      wparam: ex.get_send_wparam() | 0, lparam: ex.get_send_lparam() | 0,
+      postKind: ex.get_send_post_kind ? ex.get_send_post_kind() | 0 : 0,
+    });
+  }
+  if (y) return Object.assign(base, { blocked: true });
+  return base;
+}
+
+function finishThreadSend(ex, result) {
+  const entry = threadSendFrames.pop();
+  if (entry && ex.thread_send_post) {
+    const s = entry.send;
+    result = ex.thread_send_post(
+      s.hwnd, s.msg, s.wparam, s.lparam, s.postKind, result | 0) | 0;
+  }
+  if (entry) restoreThreadSend(ex, entry.snapshot);
+  return result | 0;
+}
+
+function driveThreadSend(ex) {
+  let trapped = null;
+  for (let round = 0; round < 64; round++) {
+    try {
+      if (!threadSendWaits.driveLoader(ex)) ex.run(1000000);
+    } catch (err) { trapped = String(err && err.message || err); }
+    const publication = threadSendWaits.loaderPublication();
+    if (!trapped && publication) return publication;
+    if (trapped || (ex.get_yield_reason && (ex.get_yield_reason() | 0))) {
+      return threadSendYield(ex, trapped);
+    }
+    if (!ex.get_eip || !(ex.get_eip() >>> 0)) {
+      const result = ex.thread_send_end ? ex.thread_send_end() | 0 : ex.get_eax() | 0;
+      return { done: true, result: finishThreadSend(ex, result) };
+    }
+  }
+  return { blocked: true, yield: 0, budget: true };
+}
+
+function abortThreadSend(ex, restore) {
+  const entry = threadSendFrames.pop();
+  if (!entry) return false;
+  // Balance thread_send_begin even when the WndProc trapped, exited its thread,
+  // or blocked on an operation the synchronous dispatcher cannot service.
+  if (ex.thread_send_end) ex.thread_send_end();
+  // ExitThread/traps belong to the target thread and must remain visible to its
+  // scheduler. Ordinary unsupported blocking yields abandon only this nested
+  // callback and resume the interrupted target context.
+  if (restore !== false) restoreThreadSend(ex, entry.snapshot);
+  return true;
+}
+
+// Wait out an empty GetMessage/WaitMessage inside the slice (yield 7), as the
+// local Sleep below does for Sleep. Ending the slice instead hands the wait to
+// the page, which re-slices at once in free-run: NFS II SE's message thread
+// made ~12,700 of those empty round trips a second, each a postMessage pair
+// for nothing. True = a message is ready and the frame was resumed; false =
+// the slice's time or the host step ran out, and the slice ends parked.
+function waitMessageLocally(ex, local, t0) {
+  // Mail from the page (a cross-thread SendMessage dispatch, an export call)
+  // waits for this slice to end, so it ends the local wait too.
+  const mail = GuestRpc.readMail(memory, workerSlot);
+  for (;;) {
+    if (resumeMessageWait(ex, false)) return true;
+    const left = (local.maxMs | 0) - (performance.now() - t0);
+    if (left <= 0 || GuestRpc.readMail(memory, workerSlot) !== mail) return false;
+    if (flushAsyncCalls) flushAsyncCalls();
+    if (GuestRpc.waitStepEpoch(memory, local.epoch, Math.min(LOCAL_MESSAGE_POLL_MS, left)))
+      return resumeMessageWait(ex, false);
+  }
+}
+
+function resumeMessageWait(ex, forceHostInput) {
+  if (!ex.get_yield_reason || (ex.get_yield_reason() >>> 0) !== 7) return false;
+  const hasLocal = ex.has_pending_message ? (ex.has_pending_message() | 0) : 0;
+  const hasHostInput = forceHostInput || GuestRpc.readInputPending(memory);
+  if (!hasLocal && !hasHostInput) return false;
+  const retAddr = ex.guest_read32 ? ex.guest_read32(ex.get_esp()) >>> 0 : 0;
+  if (ex.resume_message_wait && (ex.resume_message_wait() | 0)) {
+    ex.set_eip(retAddr);
+    return true;
+  }
+  return false;
+}
+
+// --- stdcall epilogue audit (opt-in, --esp-audit) -------------------------
+//
+// A stdcall handler must leave ESP exactly 4*(nargs+1) higher than it found it:
+// the return address plus the arguments. A cdecl one must move it by 4 — the
+// return address only, because the caller cleans the arguments. The expected
+// number per API is computed by the caller and passed in. tools/esp-epilogue.js checks that
+// STATICALLY, by reading each handler's epilogue, which catches a mistyped
+// constant and nothing else. What it cannot see is a handler that adjusts ESP
+// somewhere other than its epilogue — a blocking API that pops on the pass that
+// completes and must un-pop on the passes that park, a trampoline that builds a
+// guest frame, a park helper that subtracts the wrong amount. Two of those were
+// real bugs this month, and both presented the same way: a `ret` thousands of
+// instructions later landing on data, with nothing near the crash to blame.
+//
+// This measures the rule as it actually happens, per call, per thread. It lives
+// in the worker rather than in test/run.js because run.js reads
+// instance.exports.get_esp() — the MAIN instance — and is therefore blind to
+// exactly the threads that trap. Here the instance is local.
+//
+// The dispatch already calls log(name) on entry and log_api_exit() on exit, so
+// there is nothing to add on the WAT side.
+let espAudit = null;
+
+function espAuditInit(expectedByName) {
+  espAudit = {
+    expect: expectedByName || {},
+    name: null, esp: 0, eip: 0,
+    calls: 0, checked: 0,
+    // One entry per offending API, with the first delta seen. A single bad
+    // handler is called thousands of times; the list is the interesting part.
+    bad: new Map(),
+  };
+}
+
+// Called on the dispatch's entry hook.
+function espAuditEnter(namePtr, len) {
+  if (!espAudit || !instance) return;
+  // Everything here is wrapped: this is a diagnostic, and an exception thrown
+  // out of a host import does not return an error to the guest, it TRAPS the
+  // guest. A measurement that can kill the thing it measures is worse than no
+  // measurement — an out-of-range name pointer alone would do it.
+  try {
+    const ex = instance.exports;
+    const size = memory.buffer.byteLength;
+    const ptr = namePtr >>> 0;
+    let name = '';
+    if (ptr > 0 && ptr < size) {
+      const end = Math.min(ptr + Math.min(len >>> 0, 128), size);
+      const bytes = new Uint8Array(memory.buffer, ptr, end - ptr);
+      for (let i = 0; i < bytes.length && bytes[i]; i++) name += String.fromCharCode(bytes[i]);
+    }
+    espAudit.name = name || null;
+    espAudit.esp = ex.get_esp ? ex.get_esp() >>> 0 : 0;
+    espAudit.eip = ex.get_eip ? ex.get_eip() >>> 0 : 0;
+    espAudit.calls++;
+  } catch (_) { espAudit.name = null; }
+}
+
+// Called on the dispatch's exit hook, before $run's thunk auto-pop.
+function espAuditExit() {
+  if (!espAudit || !espAudit.name || !instance) return;
+  const name = espAudit.name;
+  espAudit.name = null;
+  try {
+    espAuditCompare(name);
+  } catch (_) { /* see espAuditEnter: never trap the guest for a measurement */ }
+}
+
+function espAuditCompare(name) {
+  const ex = instance.exports;
+  const expected = espAudit.expect[name];
+  if (expected === undefined) return;              // unknown arity or convention
+  // A handler that parked or redirected EIP has not finished its call, so its
+  // frame is deliberately still there. Those are the CACA000x continuations,
+  // the blocking socket and section waits, and the synchronous wndproc sends.
+  if (ex.get_yield_reason && (ex.get_yield_reason() >>> 0) !== 0) return;
+  if (ex.get_eip && (ex.get_eip() >>> 0) !== espAudit.eip) return;
+  const esp = ex.get_esp ? ex.get_esp() >>> 0 : 0;
+  const delta = (esp - espAudit.esp) | 0;
+  espAudit.checked++;
+  if (delta !== expected && !espAudit.bad.has(name)) {
+    espAudit.bad.set(name, { delta, expected, esp: espAudit.esp, eip: espAudit.eip });
+  }
+}
+
+function espAuditReport() {
+  if (!espAudit) return null;
+  return {
+    calls: espAudit.calls,
+    checked: espAudit.checked,
+    bad: [...espAudit.bad.entries()].map(([name, d]) => ({ name, ...d })),
+  };
+}
+
+const rawSend = IS_WEB_WORKER ? (msg => self.postMessage(msg)) : (msg => parentPort.postMessage(msg));
+const send = msg => { if (flushAsyncCalls) flushAsyncCalls(); rawSend(msg); };
+
+// Registration is captured on the interpreter that actually called waveOutOpen.
+// A recycled handle cannot authenticate an old queued callback.
+const waveRegistrations = new Map();
+let waveRegistrationSerial = 0;
+let waveAcceptedToken = 0;
+let waveAcceptedSignature = '';
+let waveDeliveryFault = false;
+function installWaveRegistrationImports(host) {
+  const open = host.wave_out_open, close = host.wave_out_close;
+  host.wave_out_open = function(...args) {
+    const handle = open.apply(this, args) >>> 0;
+    if (handle && (args[3] | 0) === 3 && (args[4] >>> 0)) {
+      const registration = { handle, generation: ++waveRegistrationSerial,
+        callback: args[4] >>> 0, instance: args[5] >>> 0 };
+      waveRegistrations.set(handle, registration);
+      send({t:'waveRegistered', registration});
+    }
+    return handle;
+  };
+  host.wave_out_close = function(handle, ...rest) {
+    const result = close.call(this, handle, ...rest);
+    if ((result | 0) === 0) {
+      const registration = waveRegistrations.get(handle >>> 0);
+      if (registration) {
+        waveRegistrations.delete(handle >>> 0);
+        send({t:'waveRetired', registration});
+      }
+    }
+    return result;
+  };
+}
+function offerWaveCallback(msg) {
+  const reply = status => send({t:'waveCallbackResult',seq:msg.seq,status,token:msg.token});
+  const r = msg.registration;
+  if (!Number.isSafeInteger(msg.token) || msg.token <= 0 || !r ||
+      !Number.isSafeInteger(r.generation) || r.generation <= 0 ||
+      ![r.handle,r.callback,r.instance,msg.waveHdr].every(x=>Number.isInteger(x)&&x>=0&&x<=0xffffffff) ||
+      !r.handle || !r.callback || !msg.waveHdr) return reply('invalid');
+  const signature = [r.handle,r.generation,r.callback,r.instance,msg.waveHdr].join(':');
+  // A lost acknowledgement may be retried with precisely the same token/body.
+  if (msg.token === waveAcceptedToken) return reply(signature === waveAcceptedSignature ? 'accepted' : 'token-conflict');
+  if (msg.token < waveAcceptedToken) return reply('stale-token');
+  if (msg.cancelled === true) return reply('retired');
+  // Main currently has synchronous DLL initialization. Preserve the same guard
+  // when an async transaction-capable loader is integrated independently.
+  if (typeof dynamicLoadTransaction !== 'undefined' && (dynamicLoadTransaction || dynamicLoadDraining)) return reply('busy');
+  if (msg.requestDeadline && Date.now() > msg.requestDeadline) return reply('expired');
+  if (waveDeliveryFault) return reply('faulted');
+  const live = waveRegistrations.get(r.handle);
+  if (!live || live.generation !== r.generation || live.callback !== r.callback || live.instance !== r.instance) return reply('retired');
+  const ex=instance && instance.exports;
+  if (!ex || !ex.get_eip() || ex.get_yield_reason()===2) return reply('retired');
+  let admitted;
+  try { admitted=ex.fire_wave_out_callback_bound(r.handle,msg.waveHdr,r.callback,r.instance); }
+  catch(error) {
+    // A trap can follow partial EIP/stack mutation. Never offer this owner again.
+    waveDeliveryFault=true;
+    return reply('faulted');
+  }
+  if (!admitted) return reply('busy');
+  // Commit before sending: a transport failure is ambiguous, never a fresh offer.
+  waveAcceptedToken=msg.token; waveAcceptedSignature=signature;
+  return reply('accepted');
+}
+
+const handleMessage = async (msg) => {
+  if (msg.t === 'waveCallback') {
+    if (scopedRetiring || threadSendWaits.fenced()) {
+      send({ t: 'waveCallbackResult', seq: msg.seq, status: 'busy', token: msg.token });
+      return;
+    }
+    try { return offerWaveCallback(msg); } catch (error) {
+      send({t:'waveCallbackResult',seq:msg.seq,status:'error',token:msg.token,error:String(error.message||error)});
+      return;
+    }
+  }
+  try {
+    if (msg.t === 'retireScopedLoaders') {
+      if (msg.endpointIdentity !== endpointIdentity || !Number.isSafeInteger(endpointIdentity))
+        throw new Error('Scoped loader retirement identity mismatch');
+      scopedRetiring = true;
+      if (!scopedRetirement) scopedRetirement = { ...threadSendWaits.retireLoaders(), endpointIdentity };
+      send({ t: 'scopedLoadersRetired', seq: msg.seq, ...scopedRetirement });
+      return;
+    }
+    if (scopedRetiring) throw new Error('Callback endpoint retired');
+    if (threadSendWaits.fenced() && ![
+      'reserveThreadSendWait', 'cancelThreadSendWait', 'completeWait',
+      'resumeThreadSendMessageWait', 'dispatchThreadSend', 'resumeThreadSendDispatch',
+      'abortThreadSendDispatch', 'slice', 'callExport', 'readExports', 'renderLegacyEvent',
+      'acknowledgeThreadSendResume', 'scopedThreadSendYield', 'scopedThreadSendLoader',
+      'beginProcessSendWait', 'completeProcessSendWait',
+    ].includes(msg.t)) throw new Error('Callback wait reservation fences command ' + msg.t);
+    if (msg.t === 'renderLegacyEvent') {
+      sharedRenderPort?.onmessage?.({data:msg.message});
+      if(msg.message?.t==='stats')sharedRenderPort.stats=msg.message.stats;
+      return;
+    }
+    if (msg.t === 'init') {
+      endpointIdentity = msg.endpointIdentity;
+      memory = msg.memory;
+      // The D3DIM WebGL executor reads its draw state through this instance's
+      // own exports, so it has to live on the thread that owns the instance.
+      // A Worker has no document: the target is an OffscreenCanvas, never
+      // presented directly. Its fence reads back into the guest DIB in shared
+      // memory, and the main thread presents that DIB exactly as it does for
+      // the software rasterizer — so no canvas is transferred and the
+      // renderer's compositing is untouched.
+      if (msg.sharedRenderWorker) d3dimGpuEnable = !!msg.d3dimGpu;
+      if (msg.sharedRenderWorker) {
+        let encoder=null;
+        const ensure=()=>encoder||(encoder=new self.D3DCommandStream.Encoder({
+          memory,module:msg.module,sigs:msg.sigs,explicitFence:true,strictReady:true,gpuCalls:!!msg.d3dimGpu,sharedSurfaceSync:true,
+          getImageBase:()=>instance.exports.get_image_base()>>>0,
+          guestToWasm:pointer=>instance.exports.guest_to_wasm(pointer>>>0)>>>0,
+          workerFactory:()=>sharedRenderPort={
+            postMessage:message=>send({t:'renderLegacy',message}),
+            terminate:()=>send({t:'renderLegacy',message:{t:'legacy-close'}}),
+            onmessage:null,onerror:null,stats:null,
+          },
+        }));
+        d3dCommands={call:(opcode,wa,length)=>opcode>=0x20000&&opcode<=0x20007?ensure().call(opcode,wa,length):-1,
+          snapshot:()=>Object.assign({},encoder?.snapshot(),sharedRenderPort?.stats),
+          stop:()=>encoder?.stop()};
+      }
+      if (IS_WEB_WORKER && !msg.sharedRenderWorker && msg.d3dimGpu && typeof OffscreenCanvas === 'function') {
+        try {
+          if (!self.loadD3DIMGpuScripts()) throw new Error('lib/d3dim-gpu.js did not load');
+          d3dCommands = new self.D3DIMGpu.D3DIMGpu({
+            getExports: () => instance.exports,
+            getMemory: () => memory.buffer,
+            createCanvas: (width, height) => new OffscreenCanvas(width, height),
+            onError: message => send({ t: 'log', message: `[d3dim-gpu] ${message}` }),
+          });
+          d3dimGpuEnable = true;
+        } catch (error) {
+          // A device without WebGL in Workers must still run the game. Report
+          // it once and leave d3dCommands null: WAT then takes the software
+          // path it would have taken without the opt-in.
+          d3dCommands = null;
+          d3dimGpuEnable = false;
+          send({ t: 'log', message: `[d3dim-gpu] unavailable in this Worker: ${error.message}` });
+        }
+      }
+      if (IS_WEB_WORKER && !msg.sharedRenderWorker && !d3dCommands && msg.d3dRenderWorker && self.D3DCommandStream) {
+        d3dCommands = new self.D3DCommandStream.Encoder({
+          memory, module: msg.module, sigs: msg.sigs,
+          workerUrl: versionedWorkerUrl('d3d-render-worker.js'),
+          guestToWasm: pointer => instance.exports.guest_to_wasm(pointer >>> 0) >>> 0,
+          getImageBase: () => instance.exports.get_image_base() >>> 0,
+        });
+      }
+      const softwareGLProducer = msg.sharedRenderWorker
+        ? new GuestSoftwareGLProducer.Producer(() => instance.exports) : null;
+      workerSlot = msg.slot || 0;
+      const built = GuestRpc.createWorkerImports(memory, msg.sigs, rawSend, {
+        slot: msg.slot || 0,
+        guestToWasm: pointer => instance.exports.guest_to_wasm(pointer >>> 0) >>> 0,
+        forwardGuestLogs: msg.forwardGuestLogs === undefined
+          ? !!msg.forwardGlLogs : !!msg.forwardGuestLogs,
+        getSyncMsgDepth: () => instance && instance.exports.get_sync_msg_depth
+          ? instance.exports.get_sync_msg_depth() | 0 : 0,
+        d3dCommands,
+        sharedRenderWorker: !!msg.sharedRenderWorker,
+        getExports: () => instance.exports,
+        softwareGLConfig: softwareGLProducer?.config,
+        configureSoftwareGL: config => softwareGLProducer?.configure(config),
+        dxTraceLocal: !!msg.dxTraceLocal,
+      });
+      advanceGuestTime = built.advanceGuestTime;
+      namedWaitTransport = built;
+      stats = built.stats;
+      flushAsyncCalls = built.flushAsync || null;
+      // --esp-audit: measure the stdcall epilogue on this thread's own instance.
+      // Wrapping the two hooks the dispatch already calls means the brokered
+      // versions still run — the audit observes, it does not replace.
+      if (msg.espExpect) {
+        espAuditInit(msg.espExpect);
+        const host = built.imports.host;
+        const brokeredLog = host.log;
+        const brokeredExit = host.log_api_exit;
+        host.log = (ptr, len) => { espAuditEnter(ptr, len); return brokeredLog(ptr, len); };
+        host.log_api_exit = (...a) => { espAuditExit(); return brokeredExit(...a); };
+      }
+      installWaveRegistrationImports(built.imports.host);
+      const result = await WebAssembly.instantiate(msg.module, built.imports);
+      instance = result.exports ? result : (result.instance || result);
+      // This agent may block in a brokered host call (the page or the CLI's
+      // main serves every import), which a nested WAT run relies on to fill a
+      // lazy ReadFile it cannot yield for (11-seh $seh_fault_sync).
+      instance.exports.set_guest_can_block?.(1);
+      // Per-instance mut global: a Worker that is not told keeps rendering in
+      // software while the executor it holds never sees an opcode.
+      if (d3dimGpuEnable && instance.exports.d3dim_gpu_enable) {
+        instance.exports.d3dim_gpu_enable(1);
+      }
+      // Only the process render owner can service a foreign thread's first
+      // surface access. Private executors and software remain eager.
+      if (msg.sharedRenderWorker && d3dimGpuEnable && msg.d3dimLazySync !== false) {
+        instance.exports.d3dim_lazy_enable?.(1);
+      }
+      send({
+        t: 'ready',
+        exports: Object.keys(instance.exports).length,
+        imports: built.names.length,
+      });
+      return;
+    }
+
+    if (msg.t === 'slice') {
+      // A yielded SendMessage callback is resumed by its dispatch protocol.
+      // An ordinary slice must not consume its return-to-zero sentinel: the
+      // main scheduler would mistake that nested return for process exit.
+      if (threadSendFrames.length || threadSendWaits.rootSend) {
+        send({ t: 'sliceDone', seq: msg.seq, threadSendPending: true, blocks: 0, ms: 0 });
+        return;
+      }
+      // Process-wide state that lives in per-instance globals has to be pushed in
+      // before every slice, not just at spawn. The thunk cursor is the dangerous
+      // one: $num_thunks is BOTH the count and the next free index, so an
+      // instance running with a stale one hands out a thunk address another
+      // instance already used. The guest then calls a thunk whose api id belongs
+      // to a different function — which is how a guest ends up at EIP=0xffffffff
+      // with no bad pointer anywhere in its own code. The cooperative scheduler
+      // does exactly this sync around every slice; carrying it in the slice
+      // message costs no extra round trip.
+      if (msg.sync && instance) {
+        const ex = instance.exports;
+        if (msg.sync.csStealAfter && ex.set_cs_steal_after) {
+          ex.set_cs_steal_after(msg.sync.csStealAfter | 0);
+        }
+        if (!ex.has_shared_dll_registry?.() && msg.sync.dllCount !== undefined && ex.get_dll_count
+            && (msg.sync.dllCount | 0) > (ex.get_dll_count() | 0)) {
+          if (ex.set_dll_count) ex.set_dll_count(msg.sync.dllCount | 0);
+          else if (ex.test_set_dll_count) ex.test_set_dll_count(msg.sync.dllCount | 0);
+        }
+        if (msg.sync.numThunks !== undefined && ex.sync_thunk_state && ex.get_num_thunks
+            && (msg.sync.numThunks >>> 0) > (ex.get_num_thunks() >>> 0)) {
+          ex.sync_thunk_state(msg.sync.thunkEnd >>> 0, msg.sync.numThunks >>> 0);
+        }
+        // Renderer focus changes happen on the browser thread, while slot 0
+        // owns the live guest globals and wndprocs. Apply the transition here,
+        // before this slice can dequeue a following key. set_focus supplies
+        // the real focus messages; set_focus_hwnd preserves the renderer path's
+        // established fallback for guest wndprocs that do not update USER's
+        // bookkeeping themselves (notably Win16 VB forms).
+        // A display beat the page saw while this thread was parked in a
+        // vblank wait (yield 13). Carried on the slice so a frame costs one
+        // rendezvous instead of three: as two callExports ahead of the
+        // slice, DX-Ball's Worker caught ~36 of 60 vblanks a second.
+        if (msg.sync.vblank) {
+          if (ex.vblank_tick) ex.vblank_tick();
+          if (ex.clear_yield) ex.clear_yield();
+        }
+        if (msg.sync.focusHwnd !== undefined) {
+          const focus = msg.sync.focusHwnd | 0;
+          if (ex.set_focus) ex.set_focus(focus);
+          if (ex.set_focus_hwnd && (!ex.get_focus_hwnd || (ex.get_focus_hwnd() | 0) !== focus)) {
+            ex.set_focus_hwnd(focus);
+          }
+        }
+      }
+
+      // Message-wait resume, ported from ThreadManager.checkMainYield's yr===7
+      // branch. It belongs here: every call it makes is on the guest instance,
+      // which now lives in this thread, so what was a cross-thread problem is
+      // three local calls. Clearing the yield without this leaves the guest
+      // re-entering the wait forever — the window frame paints, the caption,
+      // sysbuttons and scrollbars never do, because the messages that draw them
+      // are never delivered.
+      if (instance) resumeMessageWait(instance.exports, false);
+      // One uninterrupted guest slice. The page is not blocked by it, but the
+      // main thread publishes DirectDraw/GDI only after this reply, so the host
+      // uses the duration and retired-block count to tune presentation cadence.
+      const t0 = performance.now();
+      let trapped = null;
+      const ex = instance.exports;
+      // Local timed sleep (msg.localSleep = { epoch, maxMs }): a short Sleep
+      // does not end this slice. The Worker waits the Sleep out right here and
+      // runs on, until the page ends the host step (bumps the step epoch). The
+      // page grants one slice per thread per step, so otherwise a Sleep(5)
+      // mixer thread wakes once per step — every 17-63ms on a busy page —
+      // and a cursor-paced mixer like fmod's writes half the audio it should.
+      // Cut short, the rest of the Sleep goes back as sleepLeftMs, and the next
+      // slice brings it back as preWaitMs, so the thread does not sit out a
+      // whole host step waiting for a page-side deadline.
+      const local = msg.localSleep && ex.get_sleep_yielded ? msg.localSleep : null;
+      let blocks = 0;
+      let sleepYielded = false;
+      let sleepMs = 0;
+      let sleepLeftMs = 0;
+      let preWaitMs = local ? Math.max(0, +local.preWaitMs || 0) : 0;
+      if (preWaitMs > 0) {
+        const wakeAt = t0 + preWaitMs;
+        if (flushAsyncCalls) flushAsyncCalls();
+        if (GuestRpc.waitStepEpoch(memory, local.epoch, preWaitMs)) {
+          sleepLeftMs = Math.max(0, Math.ceil(wakeAt - performance.now()));
+        }
+        if (!sleepLeftMs) { localSleeps++; if (ex.seal_thunks) ex.seal_thunks(); }
+      }
+      const mmPump = !!(msg.sync && msg.sync.mmTimer) && !!ex.fire_mm_timer && !!ex.mm_timer_ms_until_due;
+      while (!sleepLeftMs) {
+        let ranBlocks = 0;
+        try {
+          if (mmPump) ranBlocks = runServingMmTimers(ex, msg.steps | 0);
+          else {
+            ex.run(msg.steps | 0);
+            ranBlocks = ex.get_last_run_blocks ? ex.get_last_run_blocks() | 0 : 0;
+          }
+        } catch (err) {
+          trapped = String(err && err.message || err);
+          if (!mmPump && ex.get_last_run_blocks) ranBlocks = ex.get_last_run_blocks() | 0;
+        }
+        blocks += ranBlocks;
+        // get_sleep_yielded reads AND clears the flag, so it must be read exactly
+        // once per run — here, not by a later probe that would find it gone.
+        sleepYielded = (!trapped && ex.get_sleep_yielded) ? !!ex.get_sleep_yielded() : false;
+        sleepMs = (sleepYielded && ex.get_sleep_timeout) ? ex.get_sleep_timeout() >>> 0 : 0;
+        if (local && !trapped && !sleepYielded && ex.get_yield_reason
+            && (ex.get_yield_reason() >>> 0) === 7) {
+          if (!waitMessageLocally(ex, local, t0)) break;
+          localMessageWaits++;
+          if (ex.seal_thunks) ex.seal_thunks();
+          continue;
+        }
+        if (!local || trapped || !sleepYielded || !sleepMs || sleepMs > (local.maxMs | 0)) break;
+        if ((ex.get_yield_reason && ex.get_yield_reason() >>> 0) || !(ex.get_eip && ex.get_eip())) break;
+        if (performance.now() - t0 > (local.maxMs | 0)) break;
+        const wakeAt = performance.now() + sleepMs;
+        if (flushAsyncCalls) flushAsyncCalls();
+        if (GuestRpc.waitStepEpoch(memory, local.epoch, sleepMs)) {
+          sleepLeftMs = Math.max(0, Math.ceil(wakeAt - performance.now()));
+          sleepYielded = false;
+          sleepMs = 0;
+          break;
+        }
+        localSleeps++;
+        // The slice's sync ran once, at its start, and a slice that sleeps
+        // through can outlive many host steps. Adopt thunks another instance
+        // allocated meanwhile (the cursor is shared; this instance's bound on
+        // the zone is not), so a function pointer handed over by another
+        // thread still dispatches here.
+        if (ex.seal_thunks) ex.seal_thunks();
+      }
+      const sliceYield = ex.get_yield_reason ? ex.get_yield_reason() >>> 0 : 0;
+      if (sliceYield === 18) throw new Error('Worker NE guest lifecycle is not implemented');
+      const sliceEip = ex.get_eip ? ex.get_eip() >>> 0 : 0;
+      // A trap in a worker used to report its EIP and nothing else, which is the
+      // least useful register in the case that actually happens: EIP=0xffffffff
+      // means the guest jumped through a bad pointer, and the question is always
+      // where it jumped FROM. Collected only on a trap, so the normal path pays
+      // nothing. A slice that ends at EIP 0 without ExitThread (a return into
+      // the zero the thread was started with, or a call through NULL) carries
+      // them too: that is the only clue to where the thread went.
+      let regs = null;
+      if (trapped || (!sliceEip && sliceYield !== 2)) {
+        const g = (name) => (ex[name] ? ex[name]() >>> 0 : 0);
+        regs = {
+          prevEip: g('get_dbg_prev_eip'), prev2Eip: g('get_dbg_prev2_eip'),
+          esp: g('get_esp'), eax: g('get_eax'),
+          ebx: g('get_ebx'), ecx: g('get_ecx'), edx: g('get_edx'),
+          esi: g('get_esi'), edi: g('get_edi'), ebp: g('get_ebp'),
+        };
+      }
+      // Natural return and ExitThread both notify on the owning Worker before
+      // its instance is torn down. Traps and host-side TerminateThread do not
+      // execute arbitrary guest cleanup, matching the Windows distinction.
+      if (!trapped && (sliceYield === 2 || !sliceEip)) await notifyGuestThreadDetach(ex);
+      send({
+        t: 'sliceDone',
+        waveCallbackActive:!!(ex.is_mm_timer_callback_active && ex.is_mm_timer_callback_active()),
+        seq: msg.seq,
+        ms: performance.now() - t0,
+        blocks,
+        localSleeps,
+        localMessageWaits,
+        eip: sliceEip,
+        yield: sliceYield,
+        renderToken: ex.get_d3d_render_token ? ex.get_d3d_render_token() | 0 : 0,
+        esp: ex.get_esp ? ex.get_esp() >>> 0 : 0,
+        // Focus is a per-instance global. The browser-side instance is idle in
+        // guest-main Worker mode, so keyboard routing needs this value carried
+        // with the slice result it already receives.
+        focusHwnd: ex.get_focus_hwnd ? ex.get_focus_hwnd() >>> 0 : 0,
+        // Wait parameters, so the scheduler on the main thread can resolve a
+        // wait without a second round trip per parked slice.
+        namedWaitSequence: namedWaitTransport?.getNamedWaitSequence() || 0,
+        waitHandle: ex.get_wait_handle ? ex.get_wait_handle() >>> 0 : 0,
+        waitHandlesPtr: ex.get_wait_handles_ptr ? ex.get_wait_handles_ptr() >>> 0 : 0,
+        waitAll: ex.get_wait_all ? !!ex.get_wait_all() : false,
+        waitTimeout: ex.get_wait_timeout ? ex.get_wait_timeout() >>> 0 : 0xFFFFFFFF,
+        waitStackBytes: ex.get_wait_stack_bytes ? ex.get_wait_stack_bytes() | 0 : 12,
+        sendTargetTid: ex.get_send_target_tid ? ex.get_send_target_tid() | 0 : 0,
+        sendHwnd: ex.get_send_hwnd ? ex.get_send_hwnd() | 0 : 0,
+        sendMsg: ex.get_send_msg ? ex.get_send_msg() | 0 : 0,
+        sendWparam: ex.get_send_wparam ? ex.get_send_wparam() | 0 : 0,
+        sendLparam: ex.get_send_lparam ? ex.get_send_lparam() | 0 : 0,
+        sendPostKind: ex.get_send_post_kind ? ex.get_send_post_kind() | 0 : 0,
+        sleepYielded,
+        sleepMs,
+        sleepLeftMs,
+        // Until this thread's soonest WM_TIMER, -1 for none. A main thread
+        // parked in GetMessage has nothing else that can wake it except input
+        // (which wakes the host step directly), so the host parks on this
+        // instead of re-polling the queue every step.
+        timerDue: ex.next_timer_due_ms ? ex.next_timer_due_ms() | 0 : -1,
+        // A clock spin park (yield 14): ms until the tick the guest is
+        // spinning for, read here because both clocks live in this instance.
+        spinOwedMs: sliceYield === 14 && ex.get_spin_deadline_ms && ex.get_tick_count
+          ? ((ex.get_spin_deadline_ms() >>> 0) - (ex.get_tick_count() >>> 0)) | 0 : 0,
+        // Critical-section contention, so the scheduler can report it without a
+        // round trip into this thread.
+        csWaits: ex.get_cs_waits ? ex.get_cs_waits() >>> 0 : 0,
+        csSteals: ex.get_cs_steals ? ex.get_cs_steals() >>> 0 : 0,
+        // Every CS counter is a per-instance global, so the main thread's copy
+        // reads 0 for whatever a worker did — and a Leave from a thread that did
+        // not own the section is the one number that separates "the guest's own
+        // lock order deadlocked" from "we lost a release and the section is now
+        // owned by a thread that is not in it".
+        csBadLeaves: ex.get_cs_bad_leaves ? ex.get_cs_bad_leaves() >>> 0 : 0,
+        csBarges: ex.get_cs_barges ? ex.get_cs_barges() >>> 0 : 0,
+        // The micro-op tier's counters are per instance too (installs, kills,
+        // enters, blocks run inside programs), so a worker's are only visible
+        // if it says them. Null while the tier is off.
+        uop: ex.get_uop && ex.get_uop() && ex.uop_stats
+          ? [2, 3, 4, 5].map(k => ex.uop_stats(k) >>> 0) : null,
+        espAudit: espAuditReport(),
+        csBadLeaveAddr: ex.get_cs_bad_leave_addr ? ex.get_cs_bad_leave_addr() >>> 0 : 0,
+        csBadLeaveOwner: ex.get_cs_bad_leave_owner ? ex.get_cs_bad_leave_owner() >>> 0 : 0,
+        // Which section, held by whom. A blocked thread is not a diagnosis; a
+        // blocked thread naming its section and its holder is one.
+        csWaitAddr: ex.get_cs_wait_addr ? ex.get_cs_wait_addr() >>> 0 : 0,
+        csWaitOwner: ex.get_cs_wait_owner ? ex.get_cs_wait_owner() >>> 0 : 0,
+        csParkEip: ex.get_cs_park_eip ? ex.get_cs_park_eip() >>> 0 : 0,
+        thunkEnd: ex.get_thunk_end ? ex.get_thunk_end() >>> 0 : 0,
+        numThunks: ex.get_num_thunks ? ex.get_num_thunks() >>> 0 : 0,
+        trapped, regs,
+        rpc: stats ? { sync: stats.sync, async: stats.async, local: stats.local } : null,
+        d3d: d3dCommands ? d3dCommands.snapshot() : null,
+      });
+      return;
+    }
+
+    // Main-thread code occasionally needs to call an export on the guest
+    // instance (renderer-input does this in three places). It cannot block on a
+    // worker, so those are one-way: the call happens, the result comes back in
+    // a message, and callers that need an answer have to be restructured to
+    // publish it instead. Enumerated rather than general on purpose.
+    // ---- guest threads (phase 2) -------------------------------------------
+
+    // Become guest thread `tid`. This is spawnPending's body, minus everything
+    // that can be computed on the main thread: the stack, the TIB and the TLS
+    // block are allocated over there out of the shared heap, and only the calls
+    // that touch THIS instance happen here. They have to: set_esp, set_eip and
+    // guest_write32 write per-instance state, and writing them into the idle
+    // main-thread instance is the mistake that made set_winver silently do
+    // nothing in phase 1.
+    if (msg.t === 'initGuestThread') {
+      const ex = instance.exports;
+      ex.init_thread(msg.tid | 0, msg.imageBase | 0, msg.codeStart | 0, msg.codeEnd | 0,
+        msg.thunkBase | 0, msg.thunkEnd | 0, msg.numThunks | 0);
+      if (!ex.has_shared_dll_registry?.() && msg.dllCount) {
+        if (ex.set_dll_count) ex.set_dll_count(msg.dllCount | 0);
+        else if (ex.test_set_dll_count) ex.test_set_dll_count(msg.dllCount | 0);
+      }
+      // The room address is a property of the process, not of one thread — a
+      // worker that opens a socket without it sends frames from address 0.
+      if (msg.vlanIp && ex.set_vlan_local_ip) ex.set_vlan_local_ip(msg.vlanIp | 0);
+      if (msg.vlanNagleMs && ex.set_vlan_nagle_ms) ex.set_vlan_nagle_ms(msg.vlanNagleMs | 0);
+      // The stack, TIB and TLS block are allocated HERE rather than on the main
+      // thread, even though the heap cursor is shared. In worker mode the
+      // main-thread instance never loaded the PE, so its $image_base is 0 — and
+      // g2w is image-base relative, so every address it computed would be wrong.
+      // This instance has just been told the real one by init_thread.
+      // The thread manager sizes this (_threadStackReserve); 1MB is Windows'
+      // default reserve if it ever did not.
+      const stackSize = (msg.stackSize | 0) || 0x100000;
+      // Above the main thread's stack, as Win9x's VirtualAlloc'd thread stacks
+      // are: see guest_stack_alloc in 13-exports.wat.
+      const stackMapped = ex.guest_stack_alloc ? ex.guest_stack_alloc(stackSize) >>> 0 : 0;
+      const stackBase = (stackMapped || ex.guest_alloc(stackSize)) >>> 0;
+      const stackTop = (stackBase + stackSize) >>> 0;
+      // Stacks normally fit in the direct image-relative window, but a process
+      // that has nearly filled that low heap legitimately receives a sparse
+      // high guest address. Resolve it through the WAT's complete mapper so
+      // zero-filling worker 3+ does not index beyond the WASM buffer.
+      const g2w = ga => GuestWorkerMemUtils.guestToWasm(
+        ga, ex, memory, msg.imageBase >>> 0);
+      // Windows zero-fills new stack pages, and code that reads an uninitialised
+      // local behaves differently if we do not.
+      // A commit can be split across backing extents, so zero page by page.
+      for (let off = 0; off < stackSize;) {
+        const ga = (stackBase + off) >>> 0;
+        const len = Math.min(0x1000 - (ga & 0xFFF), stackSize - off);
+        const wa = g2w(ga);
+        new Uint8Array(memory.buffer, wa, len).fill(0);
+        off += len;
+      }
+      ex.guest_write32(stackTop - 4, msg.param | 0);   // the thread parameter
+      ex.guest_write32(stackTop - 8, 0);               // return address: halt on return
+      ex.set_esp(stackTop - 8);
+      ex.set_eip(msg.startAddr | 0);
+      if (ex.set_hwnd_base) ex.set_hwnd_base(msg.hwndBase | 0);
+      // Real Win32 gives each thread its own TIB and TLS values while sharing
+      // TLS indexes across the process.
+      const tib = ex.guest_alloc(0x30) >>> 0;
+      const tlsSlots = ex.ensure_tls_slots() >>> 0;
+      if (!tlsSlots) throw new Error('Unable to allocate thread TLS vector');
+      ex.guest_write32(tib, 0xFFFFFFFF);        // SEH head = -1
+      ex.guest_write32(tib + 4, stackTop);      // stack top
+      ex.guest_write32(tib + 8, stackBase);     // stack bottom
+      ex.guest_write32(tib + 0x18, tib);        // self pointer
+      ex.guest_write32(tib + 0x2c, tlsSlots);   // ThreadLocalStoragePointer
+      if (ex.set_fs_base) ex.set_fs_base(tib);
+      if (msg.tlsNextIndex !== undefined && ex.set_tls_next_index) {
+        ex.set_tls_next_index(msg.tlsNextIndex | 0);
+      }
+      // Runtime/debug/decoder configuration is process state stored in
+      // instance-local globals. Consume the exact same ordered setter table as
+      // ThreadManager's cooperative spawn path; no backend-specific subset.
+      const inheritedWasmCalls = workerImports.inheritedWasmCalls(msg.wasmGlobals);
+      workerImports.applyInheritedWasmGlobals(ex, msg.wasmGlobals);
+      // The browser's real-Worker backend owns this instance, so loader thread
+      // notifications must run here after TIB/TLS setup and before the guest's
+      // start routine. Consult shared WAT loader state at call time: a DLL may
+      // have disabled notifications from its DLL_PROCESS_ATTACH entry point.
+      const L = self.DllLoader || {};
+      guestThreadDlls = (msg.loadedDlls || [])
+        .filter(dll => dll && dll.dllMain)
+        .map(dll => ({ loadAddr: dll.loadAddr | 0, dllMain: dll.dllMain | 0 }));
+      guestThreadDetached = false;
+      if (!L.notifyDllThreadAsync) throw new Error('DLL notification driver is unavailable');
+      await L.notifyDllThreadAsync({ ...workerDllOptions(), onLoadLibraryYield: async () => {
+        await self.processBoot.handleLoadLibraryYield(workerDllOptions()); return true;
+      } }, 2, guestThreadDlls);
+      send({
+        t: 'threadReady', seq: msg.seq,
+        eip: ex.get_eip ? ex.get_eip() >>> 0 : 0,
+        esp: ex.get_esp ? ex.get_esp() >>> 0 : 0,
+        stackBase, stackTop, stackMapped, tib, tlsSlots,
+        inheritedWasmSetters: inheritedWasmCalls.map(call => call.setter),
+      });
+      return;
+    }
+
+    // A wait this instance parked on has been satisfied. The scheduler on the
+    // main thread decides that (it owns the sync table's bookkeeping); the
+    // resume itself is three writes to per-instance state plus a return-address
+    // recovery that reads linear memory, so it belongs here.
+    if (msg.t === 'reserveThreadSendWait' || msg.t === 'cancelThreadSendWait') {
+      const result = msg.t === 'reserveThreadSendWait'
+        ? threadSendWaits.reserve(msg.waitToken) : threadSendWaits.cancel(msg.waitToken);
+      send({ t: 'threadSendWaitReservation', seq: msg.seq, ...result });
+      return;
+    }
+    if (msg.t === 'completeWait') {
+      if (msg.namedWaitSequence || namedWaitTransport?.getNamedWaitSequence()) {
+        if (threadSendFrames.length || !namedWaitTransport?.consumeNamedWait(msg.namedWaitSequence)) {
+          send({ t: 'waitCompleted', seq: msg.seq, ownershipMismatch: true });
+          return;
+        }
+      }
+      const apply = kind => {
+      if (kind !== 1) throw new Error('Wrong callback wait kind');
+      const ex = instance.exports;
+      let retAddr = ex.guest_read32(ex.get_esp()) >>> 0;
+      const stackRet = retAddr;
+      const codeStart = ex.get_code_start ? (ex.get_code_start() >>> 0) : 0;
+      const codeEnd = ex.get_code_end ? (ex.get_code_end() >>> 0) : 0;
+      // The saved return address is usually just at [ESP]. When it is not — the
+      // yield unwound through a thunk — recover it by finding the call
+      // instruction that got us here, which is what the cooperative backend's
+      // _readWaitReturnAddress does.
+      if (codeStart && codeEnd && (retAddr < codeStart || retAddr >= codeEnd) && ex.get_dbg_prev_eip) {
+        const prev = ex.get_dbg_prev_eip() >>> 0;
+        const imageBase = ex.get_image_base ? (ex.get_image_base() >>> 0) : 0;
+        if (prev >= codeStart && prev < codeEnd && imageBase) {
+          const mem8 = new Uint8Array(memory.buffer);
+          const start = GuestWorkerMemUtils.guestToWasm(
+            prev, ex, memory, imageBase);
+          for (let off = 0; off < 16 && start + off + 5 < mem8.length; off++) {
+            if (mem8[start + off] === 0xFF && mem8[start + off + 1] === 0x15) {
+              retAddr = (prev + off + 6) >>> 0; break;
+            }
+            if (mem8[start + off] === 0xE8) { retAddr = (prev + off + 5) >>> 0; break; }
+          }
+        }
+      }
+      ex.clear_yield();
+      ex.set_eax(msg.result | 0);
+      ex.set_esp(ex.get_esp() + (msg.waitStackBytes | 0));
+      ex.set_eip(retAddr);
+      // `rewrote` says the heuristic above replaced what was on the stack. That
+      // guess is judged against the EXE's code section alone, so a return
+      // address into a DLL — which is where every one of Winamp's threads
+      // returns to — fails the test through no fault of its own. Reported so
+      // that a wrong guess is visible at the moment it is made rather than
+      // thousands of instructions later, when the thread returns into nothing.
+      return {
+        eip: retAddr >>> 0,
+        rewrote: retAddr !== stackRet ? { from: stackRet >>> 0, to: retAddr >>> 0 } : null,
+      };
+      };
+      const result = threadSendFrames.length
+        ? threadSendWaits.complete(msg.waitToken, [msg.result, msg.waitStackBytes], apply, 1)
+        : msg.waitToken ? { ownershipMismatch: true } : apply(1);
+      send({ t: 'waitCompleted', seq: msg.seq, ...result });
+      return;
+    }
+
+    if (msg.t === 'beginProcessSendWait' || msg.t === 'completeProcessSendWait') {
+      const result = msg.t === 'beginProcessSendWait'
+        ? threadSendWaits.beginRootSend(instance.exports)
+        : threadSendWaits.completeRootSend(msg.waitToken, msg.result, instance.exports);
+      send({ t: 'processSendWait', seq: msg.seq, ...result });
+      return;
+    }
+    if (msg.t === 'completeThreadSend') {
+      if (threadSendFrames.length || threadSendWaits.rootSend) throw new Error('Unowned send completion');
+      const ex = instance.exports;
+      ex.complete_thread_send(msg.result | 0);
+      send({ t: 'threadSendCompleted', seq: msg.seq, result: msg.result | 0 });
+      return;
+    }
+
+    if (msg.t === 'dispatchThreadSend') {
+      const ex = instance.exports;
+      // Independent process schedulers cannot safely read the receiver's yield
+      // and dispatch in a second command: a normal slice can run between them.
+      // Admit these requests inside the receiving Worker, before saving or
+      // changing any guest state. The caller retains the request on deferral
+      // and retries after the receiver reaches a USER message point.
+      if (msg.requireMessagePoint) {
+        const y = ex.get_yield_reason() | 0;
+        // The scheduler must first capture this ordinary outgoing request.
+        // A callback can overwrite its send-argument globals before that.
+        if (y === 10 && !threadSendFrames.length && !threadSendWaits.rootSend) {
+          send({ t: 'threadSendDispatch', seq: msg.seq, deferred: true });
+          return;
+        }
+        if ((threadSendFrames.length || threadSendWaits.rootSend) && !threadSendWaits.admission(msg.admission, y)) {
+          send({ t: 'threadSendDispatch', seq: msg.seq, deferred: true });
+          return;
+        }
+        if (y === 2 || !ex.get_eip()) {
+          send({ t: 'threadSendDispatch', seq: msg.seq, unavailable: true });
+          return;
+        }
+        if (y !== 7 && y !== 10 && y !== 15 && y !== 17) {
+          ex.set_incoming_send_pending(1);
+          send({ t: 'threadSendDispatch', seq: msg.seq, deferred: true });
+          return;
+        }
+      }
+      // Tokens are per WorkerLink lifetime, monotonic even across deferrals.
+      // Reject duplicates before changing any interpreter state.
+      if (!Number.isSafeInteger(msg.frameToken) || msg.frameToken <= lastThreadSendFrameToken) {
+        send({ t: 'threadSendDispatch', seq: msg.seq, ownershipMismatch: true });
+        return;
+      }
+      lastThreadSendFrameToken = msg.frameToken;
+      const frame = snapshotThreadSend(ex);
+      if (ex.set_d3d_render_token) ex.set_d3d_render_token(0);
+      const sendArgs = threadSendArgs(msg);
+      threadSendFrames.push({ snapshot: frame, send: sendArgs, frameToken: msg.frameToken });
+      if (sendArgs.postKind === 1 && (!sendArgs.wparam || !sendArgs.lparam)) {
+        const result = finishThreadSend(ex, 0);
+        send({ t: 'threadSendDispatch', seq: msg.seq, frameToken: msg.frameToken, done: true, result });
+        return;
+      }
+      const asyncDispatch = ex.thread_send_begin(
+        msg.hwnd | 0, msg.msg | 0, msg.wparam | 0, msg.lparam | 0) | 0;
+      if (!asyncDispatch) {
+        const result = finishThreadSend(ex, ex.get_eax ? ex.get_eax() | 0 : 0);
+        send({ t: 'threadSendDispatch', seq: msg.seq, frameToken: msg.frameToken, done: true, result });
+      } else {
+        send(Object.assign({ t: 'threadSendDispatch', seq: msg.seq, frameToken: msg.frameToken }, driveThreadSend(ex)));
+      }
+      return;
+    }
+
+    if (msg.t === 'resumeThreadSendDispatch') {
+      const receipt = threadSendWaits.resumeReceipt(msg.frameToken, msg.waitEpoch);
+      if (receipt) {
+        send({ t: 'threadSendDispatch', seq: msg.seq, ...receipt });
+        return;
+      }
+      if (!ownsThreadSendFrame(msg.frameToken)) {
+        const waiting = threadSendFrames.some(f => f.frameToken === msg.frameToken && (f.wait || f.sendWait || f.scope));
+        send({ t: 'threadSendDispatch', seq: msg.seq, ownershipMismatch: true, waitPending: waiting });
+        return;
+      }
+      if (!threadSendWaits.beforeResume(msg.frameToken, msg.waitEpoch)) {
+        send({ t: 'threadSendDispatch', seq: msg.seq, waitPending: true });
+        return;
+      }
+      const ex = instance.exports;
+      if (msg.lastError !== undefined) ex.set_last_error(msg.lastError | 0);
+      if (msg.nestedResult !== undefined) ex.complete_thread_send(msg.nestedResult | 0);
+      else if (ex.get_yield_reason && (ex.get_yield_reason() | 0) === 9) ex.clear_yield();
+      const result = { frameToken: msg.frameToken, ...driveThreadSend(ex) };
+      threadSendWaits.saveResume(msg.frameToken, msg.waitEpoch, result);
+      send({ t: 'threadSendDispatch', seq: msg.seq, ...result });
+      return;
+    }
+    if (msg.t === 'acknowledgeThreadSendResume') {
+      send({ t: 'threadSendResumeAcknowledged', seq: msg.seq,
+        ...threadSendWaits.acknowledgeResume(msg.frameToken, msg.waitEpoch) });
+      return;
+    }
+
+    if (msg.t === 'resumeThreadSendMessageWait') {
+      const apply = kind => {
+        if (kind !== 7) throw new Error('Wrong callback wait kind');
+        return { resumed: resumeMessageWait(instance.exports, !!msg.hostInput) };
+      };
+      let result;
+      if (threadSendFrames.length) {
+        result = threadSendWaits.reserve(msg.waitToken, 7);
+        if (result.reserved) result = threadSendWaits.complete(msg.waitToken, ['message'], apply, 7);
+      } else result = msg.waitToken ? { ownershipMismatch: true } : apply(7);
+      send({ t: 'threadSendMessageWaitResumed', seq: msg.seq, ...result });
+      return;
+    }
+
+    if (msg.t === 'abortThreadSendDispatch') {
+      if (!ownsThreadSendFrame(msg.frameToken)) {
+        send({ t: 'threadSendDispatchAborted', seq: msg.seq, aborted: false, ownershipMismatch: true });
+        return;
+      }
+      if (!threadSendWaits.canAbort(msg.frameToken)) {
+        send({ t: 'threadSendDispatchAborted', seq: msg.seq, aborted: false, waitPending: true });
+        return;
+      }
+      const aborted = abortThreadSend(instance.exports, msg.restore !== false);
+      send({ t: 'threadSendDispatchAborted', seq: msg.seq, aborted });
+      return;
+    }
+
+    // Thunk allocation is per-instance bookkeeping over a shared thunk zone, so
+    // a thread that allocated thunks has to tell the others where the zone now
+    // ends or they hand out the same addresses.
+    if (msg.t === 'syncThunks') {
+      const ex = instance.exports;
+      if (ex.sync_thunk_state) ex.sync_thunk_state(msg.thunkEnd >>> 0, msg.numThunks >>> 0);
+      send({
+        t: 'thunksSynced', seq: msg.seq,
+        thunkEnd: ex.get_thunk_end ? ex.get_thunk_end() >>> 0 : 0,
+        numThunks: ex.get_num_thunks ? ex.get_num_thunks() >>> 0 : 0,
+      });
+      return;
+    }
+
+    if (msg.t === 'loadDlls') {
+      // Same call host.js makes single-threaded, with local exports. Results
+      // (load addresses) go back so the main thread can register bitmap
+      // resources, which is its own bookkeeping rather than guest work.
+      const loader = self.DllLoader;
+      if (!loader || !loader.loadDlls) throw new Error('dll-loader did not load in the worker');
+      const loaderOpts = Object.assign({}, msg.opts || {}, { advanceGuestTime });
+      const results = loader.loadDlls(
+        instance.exports, memory.buffer, msg.exeBytes, msg.configs, () => {}, loaderOpts);
+      send({
+        t: 'dllsLoaded', seq: msg.seq,
+        results: (results || []).map(r => ({ loadAddr: r && r.loadAddr })),
+      });
+      return;
+    }
+
+    if (msg.t === 'loadWin16Dlls') {
+      // Unlike PE DLL loading, the NE loader mutates per-instance selector and
+      // module globals as well as shared memory. Run the existing synchronous
+      // loader beside the instance and return only its diagnostics/results.
+      const loader = self.DllLoader;
+      if (!loader || !loader.loadWin16Dlls) {
+        throw new Error('Win16 DLL loader did not load in the worker');
+      }
+      const files = new Map(msg.files || []);
+      const lines = [];
+      const loaded = loader.loadWin16Dlls(
+        instance.exports, memory, msg.exeBytes, '',
+        (_dir, name) => files.get(name) || null,
+        line => lines.push(String(line)), msg.extraNames || []);
+      send({ t: 'win16DllsLoaded', seq: msg.seq, loaded: loaded || [], lines });
+      return;
+    }
+
+    if (msg.t === 'serviceDllYield') {
+      const result = await self.processBoot.handleLoadLibraryYield(workerDllOptions());
+      if ((instance.exports.get_yield_reason() >>> 0) === 2) await notifyGuestThreadDetach(instance.exports);
+      send({ t: 'dllYieldComplete', seq: msg.seq, loadAddr: result && result.loadAddr || 0,
+        terminal: (instance.exports.get_yield_reason() >>> 0) === 2 });
+      return;
+    }
+
+    if (msg.t === 'loadLibrary' || msg.t === 'comLoadDll') {
+      const supplied = new Map((msg.deps || []).map(dep => [String(dep.fileName).toLowerCase(), dep.bytes]));
+      supplied.set(String(msg.fileName || '').toLowerCase(), msg.bytes || null);
+      const options = workerDllOptions(), mapped = [];
+      options.exeBytes = msg.exeBytes;
+      options.findDll = (name, fullName) => supplied.has(name.toLowerCase())
+        ? supplied.get(name.toLowerCase()) : findDllForWorker(name, fullName);
+      const publish = options.onLoaded;
+      options.onLoaded = record => { mapped.push(record); publish(record); };
+      const result = msg.t === 'comLoadDll'
+        ? await self.processBoot.handleComDllYield(options)
+        : await self.processBoot.handleLoadLibraryYield(options);
+      if ((instance.exports.get_yield_reason() >>> 0) === 2) await notifyGuestThreadDetach(instance.exports);
+      send({ t: msg.t === 'comLoadDll' ? 'comDllLoaded' : 'libLoaded', seq: msg.seq,
+        loadAddr: result && result.loadAddr || 0,
+        terminal: (instance.exports.get_yield_reason() >>> 0) === 2,
+        deps: mapped.filter(row => row.result !== result).map(row => ({ fileName: row.fileName,
+          loadAddr: row.result.loadAddr, generation: row.result.generation })),
+      });
+      return;
+    }
+
+    if (msg.t === 'scopedThreadSendLoader') {
+      if (msg.endpointIdentity !== endpointIdentity || !Number.isSafeInteger(endpointIdentity))
+        throw new Error('Scoped loader endpoint identity mismatch');
+      send({ t: 'scopedThreadSendLoaderResult', seq: msg.seq,
+        ...threadSendWaits.loader(msg.token, instance.exports, memory.buffer, self.processBoot, msg.request, advanceGuestTime) });
+      return;
+    }
+    if (msg.t === 'scopedThreadSendYield') {
+      send({ t: 'scopedThreadSendYieldResult', seq: msg.seq,
+        ...threadSendWaits.scopedYield(msg.token, instance.exports, msg.finish) });
+      return;
+    }
+
+    if (msg.t === 'callExport') {
+      threadSendWaits.checkExport(msg.name);
+      const fn = instance && instance.exports[msg.name];
+      if (typeof fn !== 'function') {
+        send({ t: 'exportResult', seq: msg.seq, name: msg.name, missing: true });
+        return;
+      }
+      const value = fn(...(msg.args || []));
+      send({ t: 'exportResult', seq: msg.seq, name: msg.name, value: typeof value === 'number' ? value : null });
+      return;
+    }
+
+    if (msg.t === 'readExports') {
+      const out = {};
+      for (const name of msg.names || []) {
+        threadSendWaits.checkExport(name);
+        const fn = instance && instance.exports[name];
+        out[name] = typeof fn === 'function' ? (fn() >>> 0) : null;
+      }
+      send({ t: 'exportsRead', seq: msg.seq, values: out });
+      return;
+    }
+  } catch (err) {
+    send({ t: 'error', seq: msg.seq, stage: msg.t, message: String(err && err.message || err) });
+  }
+};
+
+let commandQueue = Promise.resolve();
+function receiveMessage(msg) {
+  if (msg.t === 'dllLookupResult') {
+    const pending = pendingDllLookups.get(msg.lookup);
+    if (!pending) return;
+    pendingDllLookups.delete(msg.lookup);
+    clearTimeout(pending.timer);
+    if (msg.error) pending.reject(new Error(msg.error));
+    else pending.resolve(msg.bytes || null);
+    return;
+  }
+  commandQueue = commandQueue.then(() => handleMessage(msg));
+  commandQueue = commandQueue.catch(error => send({ t: 'error', stage: msg.t,
+    seq: msg.seq, message: String(error && error.message || error) }));
+  return commandQueue;
+}
+if (IS_WEB_WORKER) self.onmessage = event => receiveMessage((event && event.data) || {});
+else parentPort.on('message', msg => receiveMessage(msg || {}));
