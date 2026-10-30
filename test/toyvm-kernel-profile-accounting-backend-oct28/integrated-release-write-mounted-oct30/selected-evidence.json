@@ -1,0 +1,48 @@
+{
+  "uniqueArtifactCount": 10,
+  "uniqueArtifactBytes": 130542,
+  "target": 196608,
+  "absoluteBound": 524288,
+  "artifacts": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/integrated-release-write-mounted-oct30/fixture.py": {
+      "bytes": 2025,
+      "sha256": "1af041e6375808d509796e05ce315669d47b000b4d0cd4260eadf9c836636518"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/integrated-release-write-mounted-oct30/observer.py": {
+      "bytes": 4979,
+      "sha256": "af60b359f51bc2ab6e605991d99da9771486d8d6646a97d2014597a4882ae3ed"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/integrated-release-write-mounted-oct30/raw-runtime.json": {
+      "bytes": 77877,
+      "sha256": "397f1fc49d9cdc43a2d155e93e921e8f043936631824a66e6099b29a4483b141"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/integrated-release-write-mounted-oct30/mounted-result.json": {
+      "bytes": 13766,
+      "sha256": "1e6d8babb34bfbd0f9ce9dd0f7f9e5f18eb576ad0958f87d91327cd214c4f2de"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/integrated-release-write-mounted-oct30/source-pins.json": {
+      "bytes": 4239,
+      "sha256": "be9b8c381e239d95bbc7c607471623f490c564101dcafbfe351aa9c03922e407"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/integrated-release-write-mounted-oct30/oracle.json": {
+      "bytes": 1407,
+      "sha256": "c39d499edb44b72a60673399714f01fb8a10181a6855796d34d0858766d8773c"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/integrated-release-write-mounted-oct30/recovery-recipe.txt": {
+      "bytes": 3441,
+      "sha256": "6f916db838b7eb96f129f5a15faaccee187020d734a67c1275083b9d8e982bf9"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/integrated-release-write-mounted-oct30/lifecycle-proof.json": {
+      "bytes": 616,
+      "sha256": "9412b29f2536a1d258cada9a58495c3d6de2b3e303cc4489a7c6ce319fc2e761"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/integrated-release-write-mounted-oct30/preflight.json": {
+      "bytes": 12194,
+      "sha256": "ed7af6a56d0ad83fd00c689e5e2d2b03d67a2658f0a14f4b89c4a6d47dff10c2"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/integrated-release-write-mounted-oct30/allocation-publication-receipt.json": {
+      "bytes": 9998,
+      "sha256": "d6668cfefbedd79dce7681b33ddffae5bfe236c608ed59048d3ae3b3891b64e4"
+    }
+  }
+}

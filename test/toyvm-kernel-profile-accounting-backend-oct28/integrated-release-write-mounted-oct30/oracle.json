@@ -1,0 +1,55 @@
+{
+  "kind": "SOURCE_DERIVED_PREDICTION_NOT_RUNTIME_OBSERVATION",
+  "base": "a446067d700ee54378a333cba199b8a47ba11514",
+  "metadataPerInode": 4096,
+  "payloadRounding": 4096,
+  "quota": {
+    "liveLimit": 20480,
+    "writeLimit": 65536,
+    "fileLimit": 16384
+  },
+  "stages": {
+    "before": {
+      "live": 20480,
+      "inodes": 3,
+      "written": 8192
+    },
+    "retained": {
+      "live": 20480,
+      "inodes": 3,
+      "written": 8192
+    },
+    "released": {
+      "live": 12288,
+      "inodes": 2,
+      "written": 8192
+    },
+    "reused": {
+      "live": 16384,
+      "inodes": 2,
+      "written": 8193
+    },
+    "cleanup": {
+      "live": 4096,
+      "inodes": 1,
+      "written": 8193,
+      "openHandles": 0
+    }
+  },
+  "protocol": {
+    "version": "Linux FUSE7.31",
+    "header": "2I2Q4I,40bytes; unique offset8,inode16",
+    "WRITE": {
+      "opcode": 16,
+      "body": "fh:u64 offset:u64 size:u32; payload offset40",
+      "result": "size:u32 padding:u32"
+    },
+    "RELEASE": {
+      "opcode": 18,
+      "body": "fh:u64; verified equal inode and opens>0",
+      "result": "empty success"
+    }
+  },
+  "requiredCallback": "actual serve RELEASE18 on old fixture inode: live20480->12288,inodes3->2,written8192 unchanged; actual WRITE16 on source fixture inode: live12288->16384,written8192->8193. Match unique/inode/opcode/result; no guessed callback IDs.",
+  "intentionalENOSPC": false
+}

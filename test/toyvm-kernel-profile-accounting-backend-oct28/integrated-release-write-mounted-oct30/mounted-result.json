@@ -1,0 +1,518 @@
+{
+  "status": "ACTUAL_INTEGRATED_MOUNTED_RELEASE_WRITE_PASS",
+  "objectiveQualified": true,
+  "qualifiedSource": "a446067d700ee54378a333cba199b8a47ba11514",
+  "productionMountedInvocations": 1,
+  "productionCLI": {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/tvsa-stage/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "--domain",
+      "tiny-fixture",
+      "--receipt",
+      "/tmp/tvsa-stage/cancellation-receipt.json",
+      "--work",
+      "/tmp/tvsa",
+      "--live-limit",
+      "20480",
+      "--write-limit",
+      "65536",
+      "--file-limit",
+      "16384",
+      "--rss-limit",
+      "67108864",
+      "--cpu-limit",
+      "10",
+      "--wall-limit",
+      "20",
+      "--output-limit",
+      "8192",
+      "--rename-evidence",
+      "64",
+      "--io-evidence",
+      "64",
+      "--",
+      "/usr/bin/python3",
+      "-B",
+      "-c",
+      "import os,json,time,hashlib\nR='/tmp/tvsa/domain'\nS=R+'/source,retained';D=R+'/destination,retained'\nsource=b'S'*4096;old=b'D'*4096\ndef emit(step,**kw):\n    print(json.dumps(dict(step=step,at=time.monotonic(),**kw)),flush=True)\ndef state(fd):\n    data=os.pread(fd,8192,0);s=os.fstat(fd)\n    return dict(inode=s.st_ino,length=s.st_size,sha256=hashlib.sha256(data).hexdigest())\nsf=df=None\ntry:\n    sf=os.open(S,os.O_CREAT|os.O_EXCL|os.O_RDWR,0o600)\n    df=os.open(D,os.O_CREAT|os.O_EXCL|os.O_RDWR,0o600)\n    assert os.write(sf,source)==4096 and os.write(df,old)==4096\n    assert os.pread(sf,8192,0)==source and os.pread(df,8192,0)==old\n    before=state(df)\n    emit('before',source=state(sf),destination=before,heldDescriptors=['source','old-destination'])\n    time.sleep(.5)\n    os.rename(S,D)\n    assert not os.path.exists(S)\n    with open(D,'rb') as f:assert f.read()==source\n    assert os.pread(df,8192,0)==old and state(df)==before\n    emit('retained',sourceAbsent=True,newDestinationSourceBytes=True,oldHandleOldBytes=True,oldDestination=state(df),source=state(sf),heldDescriptors=['source','old-destination'])\n    time.sleep(.5)\n    emit('closing-old',oldDestination=state(df))\n    os.close(df);df=None\n    emit('closed-old',heldDescriptors=['source'])\n    # RELEASE is asynchronous. The external status observer must see the exact\n    # lower accounting before reuse; this sleep is not itself acceptance.\n    time.sleep(.7)\n    emit('before-reuse',heldDescriptors=['source'])\n    assert os.pwrite(sf,b'X',4096)==1\n    expected=source+b'X'\n    assert os.pread(sf,8192,0)==expected and os.fstat(sf).st_size==4097\n    with open(D,'rb') as f:assert f.read()==expected\n    emit('reused',source=state(sf),exactPrefix=True,newByte=True,destinationSourceBytes=True,heldDescriptors=['source'])\n    time.sleep(.5)\nfinally:\n    for fd in (df,sf):\n        if fd is not None:os.close(fd)\n    for path in (S,D):\n        try:os.unlink(path)\n        except FileNotFoundError:pass\nemit('cleanup',empty=os.listdir(R)==[])\ntime.sleep(.25)\n"
+    ],
+    "exit": 0,
+    "startedAt": "2026-10-30T11:38:18.792071+00:00",
+    "finishedAt": "2026-10-30T11:38:21.487810+00:00",
+    "wall": 2.6957904889995916,
+    "groupPeakRSS": 52559872
+  },
+  "actualReleaseCallback": {
+    "after": {
+      "inodes": 2,
+      "live": 12288,
+      "openHandles": 1,
+      "peak": 20480,
+      "written": 8192
+    },
+    "before": {
+      "inodes": 3,
+      "live": 20480,
+      "openHandles": 2,
+      "peak": 20480,
+      "written": 8192
+    },
+    "callbackCount": 4,
+    "errno": 0,
+    "inode": 3,
+    "opcode": 18,
+    "unique": 542
+  },
+  "actualWriteCallback": {
+    "after": {
+      "inodes": 2,
+      "live": 16384,
+      "openHandles": 1,
+      "peak": 20480,
+      "written": 8193
+    },
+    "before": {
+      "inodes": 2,
+      "live": 12288,
+      "openHandles": 1,
+      "peak": 20480,
+      "written": 8192
+    },
+    "callbackCount": 5,
+    "errno": 0,
+    "inode": 2,
+    "opcode": 16,
+    "unique": 806
+  },
+  "actualRenameCallback": {
+    "callbackCount": 1,
+    "errno": 0,
+    "inode": 1,
+    "opcode": 12,
+    "unique": 294
+  },
+  "actualStageObservations": {
+    "before": {
+      "markerWindow": [
+        2900.388300058,
+        2900.889343054
+      ],
+      "samplingWindow": [
+        2900.438300058,
+        2900.839343054
+      ],
+      "rawSampleIndices": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "live": 20480,
+      "inodes": 3,
+      "written": 8192,
+      "openHandles": 2
+    },
+    "retained": {
+      "markerWindow": [
+        2900.889343054,
+        2901.389858015
+      ],
+      "samplingWindow": [
+        2900.9393430540003,
+        2901.3398580149997
+      ],
+      "rawSampleIndices": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "live": 20480,
+      "inodes": 3,
+      "written": 8192,
+      "openHandles": 2
+    },
+    "released": {
+      "markerWindow": [
+        2901.389982259,
+        2902.090169746
+      ],
+      "samplingWindow": [
+        2901.4399822590003,
+        2902.0401697459997
+      ],
+      "rawSampleIndices": [
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ],
+      "live": 12288,
+      "inodes": 2,
+      "written": 8192,
+      "openHandles": 1
+    },
+    "reused": {
+      "markerWindow": [
+        2902.092031973,
+        2902.593616987
+      ],
+      "samplingWindow": [
+        2902.142031973,
+        2902.543616987
+      ],
+      "rawSampleIndices": [
+        28,
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "live": 16384,
+      "inodes": 2,
+      "written": 8193,
+      "openHandles": 1
+    }
+  },
+  "fixtureMarkers": [
+    {
+      "step": "before",
+      "at": 2900.388300058,
+      "source": {
+        "inode": 2,
+        "length": 4096,
+        "sha256": "9ce2519c0561bb0b06617143d723160ce3a095ce9fa2bada3403d84d32045e47"
+      },
+      "destination": {
+        "inode": 3,
+        "length": 4096,
+        "sha256": "267e5d2bb42138bdf23ccb5fbdea09385169de4c686f7c12034ccd7bb0c6899d"
+      },
+      "heldDescriptors": [
+        "source",
+        "old-destination"
+      ]
+    },
+    {
+      "step": "retained",
+      "at": 2900.889343054,
+      "sourceAbsent": true,
+      "newDestinationSourceBytes": true,
+      "oldHandleOldBytes": true,
+      "oldDestination": {
+        "inode": 3,
+        "length": 4096,
+        "sha256": "267e5d2bb42138bdf23ccb5fbdea09385169de4c686f7c12034ccd7bb0c6899d"
+      },
+      "source": {
+        "inode": 2,
+        "length": 4096,
+        "sha256": "9ce2519c0561bb0b06617143d723160ce3a095ce9fa2bada3403d84d32045e47"
+      },
+      "heldDescriptors": [
+        "source",
+        "old-destination"
+      ]
+    },
+    {
+      "step": "closing-old",
+      "at": 2901.389858015,
+      "oldDestination": {
+        "inode": 3,
+        "length": 4096,
+        "sha256": "267e5d2bb42138bdf23ccb5fbdea09385169de4c686f7c12034ccd7bb0c6899d"
+      }
+    },
+    {
+      "step": "closed-old",
+      "at": 2901.389982259,
+      "heldDescriptors": [
+        "source"
+      ]
+    },
+    {
+      "step": "before-reuse",
+      "at": 2902.090169746,
+      "heldDescriptors": [
+        "source"
+      ]
+    },
+    {
+      "step": "reused",
+      "at": 2902.092031973,
+      "source": {
+        "inode": 2,
+        "length": 4097,
+        "sha256": "e5e9526cab53c7e0a47fc5eeee650f47dd3e13186fd36c1ec623775ac15eeedd"
+      },
+      "exactPrefix": true,
+      "newByte": true,
+      "destinationSourceBytes": true,
+      "heldDescriptors": [
+        "source"
+      ]
+    },
+    {
+      "step": "cleanup",
+      "at": 2902.593616987,
+      "empty": true
+    }
+  ],
+  "finalFilesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 16384,
+    "inodes": 1,
+    "ioEvidence": {
+      "callbackCount": 7,
+      "countSaturated": false,
+      "limit": 64,
+      "records": [
+        {
+          "after": {
+            "inodes": 3,
+            "live": 16384,
+            "openHandles": 2,
+            "peak": 16384,
+            "written": 4096
+          },
+          "before": {
+            "inodes": 3,
+            "live": 12288,
+            "openHandles": 2,
+            "peak": 12288,
+            "written": 0
+          },
+          "callbackCount": 1,
+          "errno": 0,
+          "inode": 2,
+          "opcode": 16,
+          "unique": 34
+        },
+        {
+          "after": {
+            "inodes": 3,
+            "live": 20480,
+            "openHandles": 2,
+            "peak": 20480,
+            "written": 8192
+          },
+          "before": {
+            "inodes": 3,
+            "live": 16384,
+            "openHandles": 2,
+            "peak": 16384,
+            "written": 4096
+          },
+          "callbackCount": 2,
+          "errno": 0,
+          "inode": 3,
+          "opcode": 16,
+          "unique": 36
+        },
+        {
+          "after": {
+            "inodes": 3,
+            "live": 20480,
+            "openHandles": 2,
+            "peak": 20480,
+            "written": 8192
+          },
+          "before": {
+            "inodes": 3,
+            "live": 20480,
+            "openHandles": 3,
+            "peak": 20480,
+            "written": 8192
+          },
+          "callbackCount": 3,
+          "errno": 0,
+          "inode": 2,
+          "opcode": 18,
+          "unique": 312
+        },
+        {
+          "after": {
+            "inodes": 2,
+            "live": 12288,
+            "openHandles": 1,
+            "peak": 20480,
+            "written": 8192
+          },
+          "before": {
+            "inodes": 3,
+            "live": 20480,
+            "openHandles": 2,
+            "peak": 20480,
+            "written": 8192
+          },
+          "callbackCount": 4,
+          "errno": 0,
+          "inode": 3,
+          "opcode": 18,
+          "unique": 542
+        },
+        {
+          "after": {
+            "inodes": 2,
+            "live": 16384,
+            "openHandles": 1,
+            "peak": 20480,
+            "written": 8193
+          },
+          "before": {
+            "inodes": 2,
+            "live": 12288,
+            "openHandles": 1,
+            "peak": 20480,
+            "written": 8192
+          },
+          "callbackCount": 5,
+          "errno": 0,
+          "inode": 2,
+          "opcode": 16,
+          "unique": 806
+        },
+        {
+          "after": {
+            "inodes": 2,
+            "live": 16384,
+            "openHandles": 1,
+            "peak": 20480,
+            "written": 8193
+          },
+          "before": {
+            "inodes": 2,
+            "live": 16384,
+            "openHandles": 2,
+            "peak": 20480,
+            "written": 8193
+          },
+          "callbackCount": 6,
+          "errno": 0,
+          "inode": 2,
+          "opcode": 18,
+          "unique": 826
+        },
+        {
+          "after": {
+            "inodes": 2,
+            "live": 16384,
+            "openHandles": 0,
+            "peak": 20480,
+            "written": 8193
+          },
+          "before": {
+            "inodes": 2,
+            "live": 16384,
+            "openHandles": 1,
+            "peak": 20480,
+            "written": 8193
+          },
+          "callbackCount": 7,
+          "errno": 0,
+          "inode": 2,
+          "opcode": 18,
+          "unique": 1016
+        }
+      ]
+    },
+    "live": 4096,
+    "liveLimit": 20480,
+    "openHandles": 0,
+    "operations": 572,
+    "peak": 20480,
+    "renameEvidence": {
+      "callbackCount": 1,
+      "countSaturated": false,
+      "limit": 64,
+      "records": [
+        {
+          "callbackCount": 1,
+          "errno": 0,
+          "inode": 1,
+          "opcode": 12,
+          "unique": 294
+        }
+      ]
+    },
+    "writeLimit": 65536,
+    "written": 8193
+  },
+  "cleanup": {
+    "observer": {
+      "remainingMounts": [],
+      "processes": []
+    },
+    "filesystem": {
+      "remainingMounts": [],
+      "serverExit": -15,
+      "serverStderr": "",
+      "serverStdout": "",
+      "unmountExit": 0,
+      "unmountStderr": "",
+      "unmountStdout": ""
+    },
+    "remote": {
+      "PASS": true,
+      "remainingMounts": [],
+      "processes": [],
+      "reaped": [],
+      "physicalAllocated": 229376,
+      "budget": 268435456,
+      "reserve": 8388608
+    }
+  },
+  "lifecycle": {
+    "id": "bx_eq4e29yb",
+    "state": "stopped",
+    "createdAt": "2026-10-30T11:38:10.171Z",
+    "stoppedAt": "2026-10-30T11:38:50.477Z",
+    "snapshotCompletedAt": "2026-10-30T11:38:50.436Z",
+    "snapshotVerifiedAt": "2026-10-30T11:38:50.436Z",
+    "lastSnapshotStatus": "completed",
+    "snapshotAvailable": true,
+    "stop": {
+      "endedAt": "2026-10-30T11:38:50.497Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_4c72ae93273ff89f",
+      "lastAttemptAt": "2026-10-30T11:38:50.497Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "originalExpiry": "2026-10-30T12:08:10.191Z",
+    "shutdownDelegated": true
+  },
+  "limits": {
+    "localFSIZE": 12582912,
+    "remoteObserverFSIZE": 524288,
+    "capturePerCommand": 524288,
+    "captureAggregate": 4194304,
+    "PythonChildDATA": 134217728,
+    "GitChildOnlyDATA": 268435456,
+    "remoteRuntimeGroupRSS": 2147483648,
+    "remoteDiskBudget": 268435456,
+    "remoteReserve": 8388608,
+    "CPU": 60,
+    "wall": 90,
+    "RAMAdmission": false
+  },
+  "scope": [
+    "Exactly pinned integrated a446067d700ee54378a333cba199b8a47ba11514 Python CLI/FUSE closure qualified; subsequent main revisions unqualified.",
+    "No source changes, new instrumentation, synthetic acceptance cycle, main integration, public deployment or ENOSPC/sticky retry.",
+    "32 component groups and15 mutants reused from independent coordinator verification."
+  ]
+}
