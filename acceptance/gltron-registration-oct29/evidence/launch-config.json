@@ -1,7 +1,0 @@
-{
-  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
-  "mountArgv": [],
-  "intendedMountedHostFiles": [],
-  "mountParser": "No mount flags or filenames: empty argv; no runtime invocation authorized",
-  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/gltron-registration-independent-accept-oct29/root-ref-digest.json"
-}

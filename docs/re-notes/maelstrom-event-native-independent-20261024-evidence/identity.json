@@ -1,9 +1,0 @@
-{
-  "candidate": "f79ac8af5876ceb7356a07b16d47003719cac29c",
-  "tree": "65cfcd8817b0a9e9a2080ed298ffc8cf61422b6c",
-  "initialClean": true,
-  "testBytes": 15663,
-  "testSHA256": "2159e84c0960679855b330adf813f94351cb59f4a5cc09fc9ef27e91b7ce303c",
-  "observerSHA256": "52909f8dc9e39c9c294602c952d9bbbf4e91c52d5c56ddbba45fb3cb30d9e226",
-  "rawIdentityLog": "/tmp/maelstrom-event-native-bounded-closeout-oct24/ops/identity.log"
-}
