@@ -1,1 +1,0 @@
-PASS test-toyvm-sb-highspeed-autoinit: DSP 4.05 + 8237 auto-init: 10 block interrupts in 0.5s (~10 blocks); DSP 4.05 + 8237 single: one block, then the transfer ends; DSP 2.01 + 8237 auto-init: one block, per the high-speed rule; 90h auto-init on DSP 2.01: 10 block interrupts, unaffected; a guest sending 91h once got 5 block interrupts
