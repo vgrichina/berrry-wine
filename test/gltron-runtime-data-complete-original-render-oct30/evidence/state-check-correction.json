@@ -1,7 +1,0 @@
-{
-  "originalFailure": "first-failure.json",
-  "supportedReadyEvent": true,
-  "observedInfoState": "idle",
-  "APIExecsBeforeCorrection": 0,
-  "reusedSameFork": true
-}

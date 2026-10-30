@@ -1,7 +1,0 @@
-Quake III Arena demo 1.11 (original Win32 demo, 3 December 1999).
-Source: https://github.com/Jason2Brownlee/Quake3OfficialArchive/blob/main/bin/Q3ADemo.exe
-Installer SHA256: 6af96cb1b5c97535c9923d8855ca85ec21b21b65b48738b2c5e674e17c65835d
-Installed by running the original Installer VISE package in Wine-Assembly.
-The complete installed payload and its extras/help/q3a eula.htm accompany the demo.
-First-launch controls are supplied separately by Wine-Assembly; the executable
-and game data are unmodified. See docs/re-notes/quake3-demo.md for provenance.
