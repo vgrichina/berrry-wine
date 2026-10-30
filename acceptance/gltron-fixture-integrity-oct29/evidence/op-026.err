@@ -1,3 +1,0 @@
-AssertionError [ERR_ASSERTION]: Missing expected rejection.
-    at async synthetic (/tmp/gltron-fixture-authorized-integrity-repair-oct29/repo/test/test-eager-asset-integrity.js:47:3)
-    at async /tmp/gltron-fixture-authorized-integrity-repair-oct29/repo/test/test-eager-asset-integrity.js:100:63

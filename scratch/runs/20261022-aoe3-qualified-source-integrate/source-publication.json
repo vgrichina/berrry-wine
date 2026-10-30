@@ -1,7 +1,0 @@
-{
-  "at": "2026-10-22T14:41:13.976799+00:00",
-  "strictDedicatedKeyPushExit": 0,
-  "actualCanonicalHTTPSLsRemote": "63d563df7a2b901d222a311ceaf55a0823a22261\trefs/heads/main\n42c676fa9ffc7b76c069e1111a2800f460608898\trefs/heads/task/aoe3-qualified-source-integrate-oct22\n",
-  "sourceCommit": "42c676fa9ffc7b76c069e1111a2800f460608898",
-  "finalEvidenceAndMainPublication": "final exact refs recorded outside self-referential commit in /home/user/wine-assembly/scratch/usage-watch/aoe3-qualified-source-integrate-oct22/publication.json and append-only root messageboard"
-}
