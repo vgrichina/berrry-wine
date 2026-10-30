@@ -1,8 +1,0 @@
-{
-  "incident": "post-test summary parser expected TAP but Node selected spec output",
-  "assertionsPassed": 3,
-  "testRepeated": false,
-  "correction": "accept either exact TAP or spec summary count",
-  "originalLogPreserved": true,
-  "futureAllowance": "12MiB combined future session/launcher/WAL +8MiB staging +8MiB reserve; all existing old/new bytes measured separately once"
-}

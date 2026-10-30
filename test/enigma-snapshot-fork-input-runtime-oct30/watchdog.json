@@ -1,8 +1,0 @@
-{
-  "pid": 36282,
-  "parent": 36267,
-  "shutdownEpoch": 1793353344.282,
-  "independentCapture": true,
-  "stdout": "watchdog-process.stdout",
-  "stderr": "watchdog-process.stderr"
-}

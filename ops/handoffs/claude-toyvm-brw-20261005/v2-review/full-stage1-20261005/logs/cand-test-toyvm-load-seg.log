@@ -1,1 +1,0 @@
-PASS test-toyvm-load-seg (psp 100: free 8dff, dos 3f; psp d00: free 81ff, dos c3f)

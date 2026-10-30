@@ -1,6 +1,0 @@
-{
-  "directInspectionAndOuterAllowance": 327680,
-  "additionalCharge": 131072,
-  "reason": "conservative charge for initial instruction reads, direct inspection, web responses and receipt reprints; guarded child bytes separately counted",
-  "captureAfterCharge": 454957
-}

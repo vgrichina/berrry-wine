@@ -1,8 +1,0 @@
-{
-  "PASS": true,
-  "at": 1793351844.0414183,
-  "immutablePreflightPins": 23,
-  "correctedHelper": "c404ec694a4e65b291a70d5dc5617c1991325dbf6f6a626f39f82c94616bfe81",
-  "verifier": "45fcf83493ef7721fbd093fa50681de47c1ec7ba918cff5da3ea7dd0d4def199",
-  "guest": "1e2973db1926065b48686763f1953f3c4457ff8dad9d81ceff05056722b7b105"
-}
