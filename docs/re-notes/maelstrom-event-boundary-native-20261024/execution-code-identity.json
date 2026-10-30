@@ -1,8 +1,0 @@
-{
-  "test": "/tmp/maelstrom-event-observer-native-qualification-oct24/repo/test/maelstrom-event-boundary-native.cjs",
-  "bytes": 15663,
-  "sha256": "2159e84c0960679855b330adf813f94351cb59f4a5cc09fc9ef27e91b7ce303c",
-  "mtime": 1792867193.4286957,
-  "nativeAttemptTime": 1792867199.3769097,
-  "testUnchangedSinceNative": true
-}
