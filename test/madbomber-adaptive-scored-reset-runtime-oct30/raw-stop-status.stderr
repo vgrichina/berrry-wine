@@ -1,7 +1,0 @@
-error: unrecognized subcommand 'stop-status'
-
-  tip: some similar subcommands exist: 'snapshot-ids', 'stop'
-
-Usage: boat [OPTIONS] [COMMAND]
-
-For more information, try '--help'.

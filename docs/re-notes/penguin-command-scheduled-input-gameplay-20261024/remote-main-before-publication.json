@@ -1,7 +1,0 @@
-{
-  "at": 1792810290.4878628,
-  "actual": "9b263cea5801886d43b6e818f0b415645bb32a50\trefs/heads/main",
-  "taskBase": "e29c89251e917bb15d549c9eb921d32e6f7aa4c1",
-  "integrationPerformed": false,
-  "transport": "strict SSH trusted known_hosts"
-}

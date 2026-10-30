@@ -1,9 +1,0 @@
-{
-  "at": "2026-10-07T10:28:54.460669+00:00",
-  "test": "gate-inputs.test.js",
-  "exitCode": 0,
-  "stdout": "PASS raw captured gate/target layout, real TSS offsets, stack/CPL, unchanged memory and bounded invalid states\n",
-  "readerSha256": "05bd2bb79180fb58483e972b1b812fcd71da31c580f14124c8e72f5189c500d1",
-  "testSha256": "4bef5389732b7b4f6c3ac312ae930b3c8c8501d208f1cb529b8e6d66f8fc52f5",
-  "scope": "pure JS synthetic memory fixture; no compile, WASM instantiation, guest execution or real memory writes"
-}

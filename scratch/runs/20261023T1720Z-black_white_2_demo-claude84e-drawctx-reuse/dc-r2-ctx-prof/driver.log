@@ -1,6 +1,0 @@
-18:10:02 {"id":"i","action":"input","cmd":"relmousemove:-2000:-2000"}
-18:10:06 {"id":"i","action":"input","cmd":"relmousemove:250:277"}
-18:10:10 {"id":"i","action":"input","cmd":"di-mousedown:1"}
-18:10:13 {"id":"i","action":"input","cmd":"di-mouseup:1"}
-18:10:33 {"id":"i","action":"input","cmd":"keydown:13"}
-boot-done
