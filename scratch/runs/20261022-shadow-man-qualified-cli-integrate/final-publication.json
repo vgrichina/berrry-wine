@@ -1,0 +1,25 @@
+{
+  "integrationCommit": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+  "branch": "task/shadow-man-qualified-cli-integrate-oct22",
+  "integration": "ordinary fast-forward main push",
+  "base": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+  "canonicalRemote": "https://github.com/vgrichina/berrry-wine.git",
+  "actualRemote": {
+    "refs/heads/main": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+    "refs/heads/task/shadow-man-qualified-cli-integrate-oct22": "89f1e9d2c67aa94d56d2319115589d07204d42e0"
+  },
+  "pushExit": 0,
+  "verified": true,
+  "at": "2026-10-22T19:42:46.688596+00:00",
+  "protectedRootDonorsUnchanged": true,
+  "selectedCheckoutClean": true,
+  "localAllocatedBytes": 7696384,
+  "launcherGrowthAllowance": 4194304,
+  "reserve": 8388608,
+  "totalWithAllowances": 20279296,
+  "cap": 67108864,
+  "hostFreeBytes": 7199551488,
+  "hostFloor": 2982150144,
+  "boxState": "coordinator snapshot-stopped per retained 19:37:46.968 receipt; not queried",
+  "noRuntimeBuildDownloadOrWorkers": true
+}

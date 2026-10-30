@@ -1,2 +1,0 @@
-PASS independent coupled identity/digest, entry gap, register-once/status-only, WorkerLink completion, stale invocation, close and exhaustion
-PASS independent two-Worker shared-object manual-all/auto-one Set-Reset

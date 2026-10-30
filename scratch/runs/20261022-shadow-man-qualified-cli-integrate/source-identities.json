@@ -8,6 +8,5 @@
   "lib/region-map.generated.js": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
   "lib/storage.js": "92639c192ce2d34ed140e4e7312bcaa663acc0f4cb5bec33b6e97310e51e744a",
   "lib/browser-shell.js": "91bc8086de848cf900a8f96fe0e187458776cbb108271acc5cedb07c70cf0eb2",
-  "lib/dll-registry.js": "3ec807f95e31d613167104af9af48123cdbb8bd0cb1da26e4019d9f74eacc014",
-  "lib/mem-utils.js": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+  "lib/dll-registry.js": "3ec807f95e31d613167104af9af48123cdbb8bd0cb1da26e4019d9f74eacc014"
 }
