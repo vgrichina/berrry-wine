@@ -1,1 +1,0 @@
-PASS test-toyvm-sb-single-cycle: channel hunt: an open channel completes the block at the port write, per width; 14h on channel 1: IRQ fired, 800 bytes consumed; B6h on channel 5: IRQ fired once the channel was unmasked

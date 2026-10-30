@@ -1,8 +1,0 @@
-{
-  "ENIGMA_RUNNER_ROOT": "/tmp/enigma-provider-complete-startup-oct24/runner",
-  "MAELSTROM_CAPTURE_INSTALL": "1",
-  "remove": [
-    "WINE_RUN_EXTRA_ARGS",
-    "WINE_REGION_MAP"
-  ]
-}
