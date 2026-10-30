@@ -1,0 +1,265 @@
+{
+  "task": "tuxracer-handoff-publication-practice-runtime-oct30",
+  "guestRuns": 1,
+  "runtime": {
+    "startedAt": 1793361491.0409656,
+    "endedAt": 1793361549.3131807,
+    "wall": 58.272215127944946,
+    "exit": -9,
+    "peakRSS": 341213184,
+    "reason": null,
+    "CPUuser": 60.327092,
+    "CPUsystem": 0.383418,
+    "descendantGroupReaped": true,
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=512",
+      "--require",
+      "/home/user/tuxracer-render/capture-practice-publication-oct30/boundary-preload.cjs",
+      "test/run.js",
+      "--app=tuxracer_original_061a",
+      "--no-build",
+      "--wasm=build/wine-assembly.wasm",
+      "--gl-renderer=software",
+      "--no-threads",
+      "--control-stdin",
+      "--max-seconds=70",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--quiet-fs",
+      "--trace-input-dispatch"
+    ],
+    "allocation": {
+      "allocated": 67424256,
+      "reserve": 8388608,
+      "cap": 268435456
+    }
+  },
+  "acceptance": {
+    "title": true,
+    "mainMenu": true,
+    "practice": false,
+    "race": false,
+    "gameplay": false,
+    "productionFix": false
+  },
+  "input": {
+    "nativeSent": 2,
+    "dequeued": 2,
+    "dispatched": 2,
+    "practiceClicksSent": 0,
+    "enterDequeueBatches": [
+      15888,
+      15893
+    ],
+    "menuCaptureBatch": 15974
+  },
+  "controllerRejection": {
+    "command": {
+      "action": "keydown",
+      "code": 13
+    },
+    "id": "3",
+    "accepted": false,
+    "guestInput": false,
+    "source": "controller.jsonl"
+  },
+  "recovery": "same running original guest; ordinary cmd:keydown:13 then cmd:keyup:13 via existing stdin pipe; no replay of a delivered command",
+  "blocker": {
+    "commandId": "cmd_lwc3bxi8bcm7",
+    "cwd": ".",
+    "exitCode": 1,
+    "finishedAt": "2026-10-30T11:59:15.778Z",
+    "launcherFailed": false,
+    "noticedMs": 2,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 1,
+    "startedAt": "2026-10-30T11:59:15.677Z",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nFileNotFoundError: [Errno 2] No such file or directory: '/proc/8376/fd/0'\n",
+    "stderrTruncated": false,
+    "stdout": "",
+    "stdoutTruncated": false,
+    "success": false,
+    "timedOut": false
+  },
+  "render": {
+    "personallyInspected": true,
+    "title": "Tux Racer PRESS ANY KEY TO START",
+    "mainMenu": "Enter an event, Practice, Credits, Quit",
+    "dimensions": [
+      640,
+      480
+    ],
+    "displayDimensions": [
+      320,
+      240
+    ],
+    "originals": {
+      "title.png": {
+        "bytes": 152224,
+        "sha256": "bfc11b0416e77ce8ce6a65899c9e106934c252710ad4c1f2c462dc1ae6c23703"
+      },
+      "main-menu.png": {
+        "bytes": 186855,
+        "sha256": "89416bfa8562731a99a1f55cd06b31440839c3015d48227a5c016fb3e1841ff5"
+      }
+    }
+  },
+  "prerequisite": {
+    "image": "installed pngjs 7.0.0; no install",
+    "imageRead": {
+      "exit": 0,
+      "signal": null,
+      "wall": 0.09601412899999673,
+      "peakRSS": 66650112,
+      "reason": null
+    },
+    "invalidImage": {
+      "rejected": true,
+      "exit": 1,
+      "signal": null,
+      "wall": 0.046985351999978775,
+      "peakRSS": 35188736,
+      "reason": null
+    },
+    "preGuestTransport": "actual stdin pipe to a smoke fixture, not the production parser; this failed to catch the later malformed schema",
+    "productionSchemaTest": "post-runtime exact production parser/handler extraction: 3 positives and 3 rejections; no guest",
+    "validatorTest": "6 positives,5 rejections; final controller is not runtime-retested"
+  },
+  "observer": {
+    "preload": {
+      "bytes": 3610,
+      "sha256": "7c03a89a4d6c88812f386c9927fccfa579fe9ba3a8f17a9f6c006984158aedd6"
+    },
+    "forwarding": "unchanged retained exact-once wrappers",
+    "finalState": null,
+    "titleState": {
+      "seq": 93051,
+      "counts": {
+        "transform": 1,
+        "waitSingle:917507:1:0": 58,
+        "releaseMutex:917507:1:1": 58,
+        "waitSingle:917511:1:0": 2,
+        "releaseMutex:917511:1:1": 2,
+        "slice": 49984,
+        "waitSingle:917508:2:0": 7085,
+        "waitSingle:234881024:2:0": 7084,
+        "releaseMutex:234881024:2:1": 7084,
+        "releaseMutex:917508:2:1": 7084,
+        "wave-submit": 7084,
+        "wave-done": 7084,
+        "waitSingle:917508:1:0": 57,
+        "releaseMutex:917508:1:1": 57,
+        "waitSingle:917508:1:65535": 55,
+        "waitSingle:917508:1:258": 219,
+        "waitSingle:917508:2:65535": 53
+      },
+      "last": {
+        "sync": [
+          917508,
+          3,
+          2,
+          1
+        ],
+        "running": 1,
+        "main": {
+          "get_eip": 10844752,
+          "get_dbg_prev_eip": 10917616,
+          "get_esp": 122682988,
+          "get_yield_reason": 0,
+          "get_wait_handle": 917508,
+          "get_current_thread_id": 1,
+          "get_api_calls": 1018334,
+          "is_mm_timer_callback_active": 1
+        },
+        "threads": [
+          {
+            "handle": 921600,
+            "tid": 1,
+            "state": "active",
+            "regs": {
+              "get_eip": 9542322,
+              "get_dbg_prev_eip": 9542299,
+              "get_esp": 2128543460,
+              "get_yield_reason": 0,
+              "get_wait_handle": 917508,
+              "get_current_thread_id": 2,
+              "get_api_calls": 51030,
+              "is_mm_timer_callback_active": 0
+            }
+          }
+        ]
+      }
+    },
+    "exitTrace": "boundary-trace.json is startup-only; SIGKILL prevented a final exit callback; no final guest state claimed"
+  },
+  "preservation": {
+    "remote": "/home/user/tuxracer-render/practice-publication-closed-oct30.tar.xz",
+    "bytes": 510440,
+    "sha256": "fb3385220b57268efb7142e66120689612cf4e631427a13ee4639d9e1ee57699",
+    "readback": true,
+    "selectedLocalArchive": "selected-text.tar.xz",
+    "selectedLocalArchiveSHA": "35e56e0f63f319b38313f5dd0c7637ffb8ca8842a9d63a830cfe12d9057e911f"
+  },
+  "lifecycle": {
+    "assignment": {
+      "id": "bx_txkt9z7e",
+      "createdAt": "2026-10-30T11:56:51.829Z",
+      "createdEpoch": 1793361411.829,
+      "expiry": "2026-10-30T12:26:51.629Z",
+      "guestCutoff": 1793362611.829,
+      "retrieval": 1793362731.829,
+      "handback": 1793362791.829,
+      "shutdown": 1793362911.829,
+      "ttl": 1800,
+      "shutdownOwner": "this task explicit all-path snapshot-stop delegation"
+    },
+    "watchdog": {
+      "pid": 192559,
+      "armedAt": 1793361412.219969,
+      "deadline": 1793362911.829
+    },
+    "proof": {
+      "PASS": true,
+      "id": "bx_txkt9z7e",
+      "snapshotVerifiedAt": "2026-10-30T12:01:17.807Z",
+      "snapshotCompletedAt": "2026-10-30T12:01:17.807Z",
+      "stoppedAt": "2026-10-30T12:01:17.848Z",
+      "stop": {
+        "endedAt": "2026-10-30T12:01:17.871Z",
+        "error": null,
+        "forced": false,
+        "id": "stop_d80befcaf8a6a526",
+        "lastAttemptAt": "2026-10-30T12:01:17.871Z",
+        "requestedAt": null,
+        "status": "completed"
+      },
+      "state": "stopped",
+      "postRunBoundary": 1793361549.3131807,
+      "closeStarted": 1793361662.7366927
+    }
+  },
+  "sources": {
+    "runner": {
+      "bytes": 692809,
+      "sha256": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d"
+    },
+    "module": {
+      "bytes": 1881806,
+      "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+    },
+    "actualThreadManager": {
+      "bytes": 227988,
+      "sha256": "92a5671ad712d9ac943559a009496000e28a7fe98f34e66c2f453ba8fc9bac3d"
+    },
+    "executedSupervisor": {
+      "bytes": 8027,
+      "sha256": "0f2a585111b1d49b5c26c826eac44beea5e2c63eaac0142e9f32b9567e5deff6"
+    },
+    "finalSupervisor": {
+      "bytes": 8672,
+      "sha256": "65be4458037f5645992890b5bcad307ec08d9743145c63b118afbdd8d29069aa"
+    }
+  }
+}

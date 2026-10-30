@@ -1,0 +1,19 @@
+{
+  "PASS": true,
+  "id": "bx_txkt9z7e",
+  "snapshotVerifiedAt": "2026-10-30T12:01:17.807Z",
+  "snapshotCompletedAt": "2026-10-30T12:01:17.807Z",
+  "stoppedAt": "2026-10-30T12:01:17.848Z",
+  "stop": {
+    "endedAt": "2026-10-30T12:01:17.871Z",
+    "error": null,
+    "forced": false,
+    "id": "stop_d80befcaf8a6a526",
+    "lastAttemptAt": "2026-10-30T12:01:17.871Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "state": "stopped",
+  "postRunBoundary": 1793361549.3131807,
+  "closeStarted": 1793361662.7366927
+}

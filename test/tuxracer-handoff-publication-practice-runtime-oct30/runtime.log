@@ -1,0 +1,89 @@
+[threads] guest threads will use the cooperative scheduler (--no-threads)
+PE loaded. Entry: 0x0042e0cd
+DLL: TCL83.DLL at 0x774000, DllMain=0x7ed950, thunks=2095, origBase=0x10000000
+DLL: SDL_mixer.dll at 0x90f000, DllMain=0x92b06d, thunks=2172, origBase=0x10000000
+DLL: SDL.dll at 0xa47000, DllMain=0xa6f7d0, thunks=2309, origBase=0x10000000
+DLL: msvcrt.dll at 0xb82000, DllMain=0xb85428, thunks=2453, origBase=0x78000000
+Patching EXE imports: SDL_mixer.dll -> DLL #1 (SDL_mixer.dll)
+Patching EXE imports: tcl83.dll -> DLL #0 (tcl83.dll)
+Patching EXE imports: SDL.dll -> DLL #2 (SDL.dll)
+Patching DLL imports: TCL83.DLL→MSVCRT.dll -> DLL #3 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #2 (SDL.dll)
+Patching DLL imports: SDL.dll→MSVCRT.dll -> DLL #3 (MSVCRT.dll)
+After patching: 2462 thunks
+Calling DllMain at 0xb85428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7ed950...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xa6f7d0...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x92b06d...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0xbbdedc] = 0xbe1cb4
+Patched __p__environ [0xbbcbe4] = 0xbe1c94
+Patched __p___winitenv [0xbbe0ec] = 0xbe1cb4
+Patched __p___initenv [0xbc0c9c] = 0xbe1c94
+Calling MSVCRT!_set_sbh_threshold(0) at 0xb8e99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[files] policy eager: small app: 157 eager (12951513 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[vfs] working directory: c:\tuxracer-win32-0.61a
+[CreateWindow] hwnd=0x10001 title="tuxracer" style=0xca0000 pos=0,0 size=0x0 menu=10977980
+[ShowWindow] hwnd=0x10001 cmd=0
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[SetWindowText] "Tux Racer 0.61"
+[waveOut] open: 22050Hz 2ch 16bit -> voice#720897
+[ThreadManager] CreateThread handle=0xe1000 start=0xa69640 param=0xc5dcac flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0xa69640 ESP=0x7edefff8
+Calling DllMain at 0xb85428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7ed950...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x92b06d...
+DllMain returned, EAX=0x1
+[ctl] {"ok":true,"id":"1","value":{"seq":93051,"counts":{"transform":1,"waitSingle:917507:1:0":58,"releaseMutex:917507:1:1":58,"waitSingle:917511:1:0":2,"releaseMutex:917511:1:1":2,"slice":49984,"waitSingle:917508:2:0":7085,"waitSingle:234881024:2:0":7084,"releaseMutex:234881024:2:1":7084,"releaseMutex:917508:2:1":7084,"wave-submit":7084,"wave-done":7084,"waitSingle:917508:1:0":57,"releaseMutex:917508:1:1":57,"waitSingle:917508:1:65535":55,"waitSingle:917508:1:258":219,"waitSingle:917508:2:65535":53},"last":{"sync":[917508,3,2,1],"running":1,"main":{"get_eip":10844752,"get_dbg_prev_eip":10917616,"get_esp":122682988,"get_yield_reason":0,"get_wait_handle":917508,"get_current_thread_id":1,"get_api_calls":1018334,"is_mm_timer_callback_active":1},"threads":[{"handle":921600,"tid":1,"state":"active","regs":{"get_eip":9542322,"get_dbg_prev_eip":9542299,"get_esp":2128543460,"get_yield_reason":0,"get_wait_handle":917508,"get_current_thread_id":2,"get_api_calls":51030,"is_mm_timer_callback_active":0}}]}}}
+[ctl] {"ok":true,"id":"2","value":{"batch":10451,"frozen":false,"path":"/home/user/tuxracer-render/capture-practice-publication-oct30/title.png","bytes":152224}}
+[ctl] {"ok":false,"id":"3","error":"need {cmd:\"action:args\"} or action: ping|snapshot|eval|png|input-message|frozen|tick|step|record|quit"}
+[input-schedule] scheduledBatch=15883 action=keydown correlation=unavailable batch=15883 guestMs=3176600 clock=batch lastGuestTick=3176404
+[input] keydown vk=13 at batch 15883
+[ctl] {"ok":true,"id":"ordinary-enter-down","value":{"batch":15883,"logs":["[input-schedule] scheduledBatch=15883 action=keydown correlation=unavailable batch=15883 guestMs=3176600 clock=batch lastGuestTick=3176404","[input] keydown vk=13 at batch 15883"]}}
+[input-dequeue] dequeueId=1 source=renderer enqueueId=unavailable hwnd=0x0 msg=0x100 wParam=0xd lParam=0x1c0001 batch=15888 guestMs=3177600 clock=batch lastGuestTick=3177600
+[check_input] msg=0x100 wParam=0xd lParam=0x1c0001 packed=0xd0100
+[check_input_hwnd] keyboard → focus 0x10001
+[input-dequeue-route] dequeueId=1 focusHwnd=0x10001 hwnd=0x10001 batch=15888 guestMs=3177600 clock=batch lastGuestTick=3177600
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0xd lParam=0x1c0001 correlation=unavailable batch=15888 guestMs=3177600 clock=batch lastGuestTick=3177602
+[input-schedule] scheduledBatch=15891 action=keyup correlation=unavailable batch=15891 guestMs=3178200 clock=batch lastGuestTick=3177607
+[input] keyup vk=13 at batch 15891
+[ctl] {"ok":true,"id":"ordinary-enter-up","value":{"batch":15891,"logs":["[input-schedule] scheduledBatch=15891 action=keyup correlation=unavailable batch=15891 guestMs=3178200 clock=batch lastGuestTick=3177607","[input] keyup vk=13 at batch 15891"]}}
+[input-dequeue] dequeueId=2 source=renderer enqueueId=unavailable hwnd=0x0 msg=0x101 wParam=0xd lParam=0xc01c0001 batch=15893 guestMs=3178600 clock=batch lastGuestTick=3178600
+[check_input] msg=0x101 wParam=0xd lParam=0xc01c0001 packed=0xd0101
+[check_input_hwnd] keyboard → focus 0x10001
+[input-dequeue-route] dequeueId=2 focusHwnd=0x10001 hwnd=0x10001 batch=15893 guestMs=3178600 clock=batch lastGuestTick=3178600
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0xd lParam=0xc01c0001 correlation=unavailable batch=15893 guestMs=3178600 clock=batch lastGuestTick=3178602
+[ctl] {"ok":true,"id":"ordinary-main-menu","value":{"batch":15974,"frozen":false,"path":"/home/user/tuxracer-render/capture-practice-publication-oct30/main-menu.png","bytes":186855}}

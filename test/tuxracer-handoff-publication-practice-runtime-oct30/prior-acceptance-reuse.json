@@ -1,0 +1,76 @@
+{
+  "parent": "c679fa0b5badd14bbaacc1c591d36b980d7c00aa",
+  "independentHandoff": "unchanged accepted positives and removal mutant, not rerun",
+  "publishedBeforeRuntime": {
+    "commit": "1f6289cac96efc851d5e9d233919b8a76cbfdeb2",
+    "remote": "1f6289cac96efc851d5e9d233919b8a76cbfdeb2\trefs/heads/test/tuxracer-handoff-publication-practice-runtime-oct30\n",
+    "PASS": true
+  },
+  "sourcePins": {
+    "test/tuxracer-stall-probe-implementation-oct30/stall-sampler.cjs": {
+      "bytes": 4266,
+      "sha256": "523e20a0d582a3ce2abc1f3c2e670a023d185fd5a68ce0ae917824925060e020"
+    },
+    "test/tuxracer-stall-probe-implementation-oct30/observe-supervisor.py": {
+      "bytes": 8197,
+      "sha256": "1ebc13030237218ea98cc4c117212fc5f4eec307aa947ff72343b08659f41aed"
+    },
+    "docs/re-notes/tuxracer-stall-probe-implementation-oct30.md": {
+      "bytes": 3361,
+      "sha256": "e4551e679a750e93495fb531432a8aa6ea0d93a3383f48cb735f60396274ae18"
+    },
+    "test/tuxracer-accepted-handoff-native-input-runtime-oct30/actual-supervisor.py": {
+      "bytes": 8555,
+      "sha256": "e19f874824ac179c95be7098d687098c3a9488545178c4d3ab6d89b5756506bb"
+    },
+    "test/tuxracer-accepted-handoff-native-input-runtime-oct30/acceptance.cjs": {
+      "bytes": 3737,
+      "sha256": "ae6189a08f7476b58e3bb8266fad9d50b040bd2955ed92fe90c2dfe145d09156"
+    },
+    "test/tuxracer-accepted-handoff-native-input-runtime-oct30/runtime-observation.json": {
+      "bytes": 10104,
+      "sha256": "49c79fce49d1094f8409c96f09052bdbc0090e43d902cc23e8531f66af3560d2"
+    },
+    "test/tuxracer-accepted-handoff-native-input-runtime-oct30/tests.json": {
+      "bytes": 1473,
+      "sha256": "637a2c9743761615bf21f224e520679595f9f3ac992a0cd7614d9ff56e19c1bb"
+    },
+    "test/tuxracer-accepted-handoff-native-input-runtime-oct30/pinned-parent.json": {
+      "bytes": 1148,
+      "sha256": "fc9fddd52560ddaeac1fd8884a31c18e2f7abed5f842dbedfe2ce7bfe3d49bc9"
+    },
+    "test/tuxracer-accepted-handoff-native-input-runtime-oct30/wrapper-reuse.json": {
+      "bytes": 330,
+      "sha256": "7cfa0a53640a0cf28b0cc02625f6c186a9fdc7c089968abfdcd926c3d88dd966"
+    },
+    "test/tuxracer-accepted-handoff-native-input-runtime-oct30/media.json": {
+      "bytes": 899,
+      "sha256": "17762009d663558d8161f9cd4e2ca9ce604f57002494190dd9fb9d5e3f8a0751"
+    },
+    "test/tuxracer-accepted-handoff-native-input-runtime-oct30/snapshot-stop-proof.json": {
+      "bytes": 524,
+      "sha256": "ec83673aa4903e5690c3daf283dcd3831c172ce82e05dfbf1f5343239898378e"
+    },
+    "test/tuxracer-accepted-handoff-native-input-runtime-oct30/menu.jpg": {
+      "bytes": 55880,
+      "sha256": "e79ade7f9b776a76826fbc93e87e4504f165294dd961c9d2783d6a879e68c36e"
+    },
+    "test/tuxracer-accepted-handoff-native-input-runtime-oct30/title.jpg": {
+      "bytes": 54469,
+      "sha256": "dca6f1eef3b774fb23a1b5f0056f4382f66ea62b3a17daa7f0ff8b553c50d459"
+    },
+    "docs/re-notes/tuxracer-accepted-handoff-native-input-runtime-oct30.md": {
+      "bytes": 6948,
+      "sha256": "147712bfcdc82dfa717db733fca100268cfd4dcb9806380f8d9ca7419dce817f"
+    }
+  },
+  "wrapperReceipt": {
+    "PASS": true,
+    "sha256": "219eb0f5c20b38ec83d3e57e78f687675c1b19590faea242048532c20a94221c",
+    "exactByteIdentical": true,
+    "priorReceipt": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-audio-thread2-release-runtime-oct30/wrapper-reuse.json",
+    "generatedFSIZE": 12582912,
+    "captureEach": 524288,
+    "aggregateCapture": 4194304
+  }
+}

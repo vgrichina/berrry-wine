@@ -1,0 +1,7 @@
+{
+  "PASS": true,
+  "positive": 6,
+  "rejecting": 5,
+  "supervisorSHA": "65be4458037f5645992890b5bcad307ec08d9743145c63b118afbdd8d29069aa",
+  "note": "post-runtime controller repair; not executed in another guest"
+}
