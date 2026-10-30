@@ -1,3 +1,0 @@
-{"label": "combined admission BEFORE staging", "owned": 77243, "external": 693176, "growth": 2097152, "reserve": 8388608, "extra": 41392735, "total": 52648914, "cap": 67108864, "hostFree": 6041243648, "hostFloor": 2982150144, "admitted": true}
-{"label": "blocked publication checkpoint", "owned": 1675495, "external": 931399, "growth": 2097152, "reserve": 8388608, "extra": 2097152, "total": 15189806, "cap": 67108864, "hostFree": 6037463040, "hostFloor": 2982150144, "admitted": true}
-{"label": "final publication allowance", "owned": 1865812, "external": 1013446, "growth": 2097152, "reserve": 8388608, "extra": 2097152, "total": 15462170, "cap": 67108864, "hostFree": 6036807680, "hostFloor": 2982150144, "admitted": true}

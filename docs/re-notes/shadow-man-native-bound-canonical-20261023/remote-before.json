@@ -1,8 +1,0 @@
-{
-  "ssh": "ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -i /home/user/.ssh/wine_github_ed25519",
-  "GIT_NO_LAZY_FETCH": "1",
-  "remote": "git@github.com:vgrichina/wine-assembly.git",
-  "main": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
-  "donor": "514c644863927749a90d7d7c2aeb6e8567f2e027",
-  "exit": 0
-}

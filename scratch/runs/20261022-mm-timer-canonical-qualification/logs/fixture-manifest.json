@@ -1,7 +1,0 @@
-{
-  "path": "test/binaries/notepad.exe",
-  "source": "/home/user/wine-assembly/test/binaries/notepad.exe",
-  "size": 53248,
-  "sha256": "e7b01ab85a35ba6f577067d13efa522dc3d605de7712340e4acaf7065f866340",
-  "provenance": "Existing main-host ignored test fixture, not a tracked candidate blob; required by unchanged wave-wait test. No download or archived asset restore."
-}
