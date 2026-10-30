@@ -1,5 +1,0 @@
-{
-  "files": 3,
-  "allocated": 8192,
-  "basis": "all process artifacts since worker start, conservatively includes any coordinator commands"
-}

@@ -1,6 +1,0 @@
-{
-  "pid": 247348,
-  "group": 247348,
-  "stoppedAt": 1792879695.2727091,
-  "qualification": "Background messageboard watcher mistakenly used1800s lifetime rather than60s percommand; stopped explicitly. No guest/runtime, this is retained command-limit defect."
-}
