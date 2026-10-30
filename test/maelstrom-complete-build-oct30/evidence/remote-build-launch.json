@@ -1,0 +1,65 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_ssjeeb8p",
+    "--timeout",
+    "300",
+    "--json",
+    "--detach",
+    "--",
+    "bash",
+    "-c",
+    "cd /tmp/maelbuild && ulimit -t 180 && ulimit -f 65536 && node --max-old-space-size=192 supervise.cjs"
+  ],
+  "cwd": "/tmp/maelstrom-complete-transformed-module-build-oct30/repo",
+  "exit": 2,
+  "elapsed": 0.05352216912433505,
+  "admission": {
+    "at": 1793322548.8614676,
+    "device": 1680253000807562931,
+    "f_bavail": 968207,
+    "blockSize": 4096,
+    "free": 3965775872,
+    "MemAvailable": 4098281472,
+    "allocated": 12046336,
+    "budget": 25165824,
+    "aggregate": {
+      "at": "2026-10-30T01:03:54.562288+00:00",
+      "MemAvailable": 4695072768,
+      "memRequired": 3858759680,
+      "memoryFloor": 2147483648,
+      "prospectiveClients": 805306368,
+      "publicationAndReceipt": 905969664,
+      "noDoubleCharge": true,
+      "owners": [
+        "madbomber-accepted-midistreamstop-main-integration-oct30",
+        "toyvm-accepted-caller-mounted-rename-oct30",
+        "maelstrom-complete-transformed-module-build-oct30"
+      ],
+      "diskFreeBytes": 4054220800,
+      "futureGrowthIncludingUncertaintyBuffer": 201326592,
+      "requiredBytes": 3401580544,
+      "PASS": true
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true,
+      "forecast": true,
+      "memory": true
+    }
+  },
+  "stdoutBytes": 0,
+  "stderrBytes": 179
+}

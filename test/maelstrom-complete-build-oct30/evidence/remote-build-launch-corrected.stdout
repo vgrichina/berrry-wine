@@ -1,0 +1,1 @@
+{"command":"bash -c 'cd /tmp/maelbuild && ulimit -t 180 && ulimit -f 65536 && node --max-old-space-size=192 supervise.cjs'","commandId":"cmd_go5pdxshlqua","cwd":".","errLogPath":"/home/user/.ascii/processes/13186.err.log","logPath":"/home/user/.ascii/processes/13186.log","pid":13186,"processId":13186,"startedAt":"2026-10-30T01:09:14.810Z","success":true}
