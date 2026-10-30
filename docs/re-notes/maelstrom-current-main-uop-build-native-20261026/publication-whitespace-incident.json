@@ -1,4 +1,0 @@
-{
-  "reason": "git diff --cached --check flagged literal whitespace in raw diff evidence; preserved exact bytes as gzip, no source/test change",
-  "resolution": "Only raw evidence containers changed; immutable hashes recover original diff bytes"
-}

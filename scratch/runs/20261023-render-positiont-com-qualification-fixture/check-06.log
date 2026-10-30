@@ -1,1 +1,0 @@
-{"result":"PASS","basis":"exact candidate Git filenames plus two fixture tests; metadata only","total":2087,"tiers":{"unit":1655,"e2e":426,"smoke":6,"quarantine":0}}

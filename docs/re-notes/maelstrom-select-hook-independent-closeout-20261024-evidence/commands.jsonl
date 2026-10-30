@@ -1,5 +1,0 @@
-{"argv": ["python3", "/tmp/maelstrom-select-hook-independent-closeout-oct24/ops/checkout.py"], "exit": 0, "rejection": null, "bytes": 335, "seconds": 0.16648611903656274, "pid": 260846, "reaped": true}
-{"argv": ["node", "/tmp/maelstrom-select-hook-independent-closeout-oct24/repo/test/test-maelstrom-select-completion-hook.cjs", "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23"], "exit": 0, "rejection": null, "bytes": 1156, "seconds": 0.23752928199246526, "pid": 260894, "reaped": true}
-{"argv": ["node", "/tmp/maelstrom-select-hook-independent-closeout-oct24/ops/independent.cjs"], "exit": 1, "rejection": null, "bytes": 1285, "seconds": 0.03947467193938792, "pid": 261822, "reaped": true}
-{"argv": ["node", "/tmp/maelstrom-select-hook-independent-closeout-oct24/ops/source-controls.cjs"], "exit": 0, "rejection": null, "bytes": 150, "seconds": 0.07048421993386, "pid": 262140, "reaped": true}
-{"argv": ["node", "/tmp/maelstrom-select-hook-independent-closeout-oct24/ops/evaluator-blindspot.cjs"], "exit": 1, "rejection": null, "bytes": 275, "seconds": 0.018573084962554276, "pid": 262628, "reaped": true}
