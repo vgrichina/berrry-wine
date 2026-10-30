@@ -1,5 +1,0 @@
-test/version-source-fixture.js:55  0x00012000 = $GUEST_BASE (base)
-    (func (export "get_guest_base") (result i32) (i32.const 0x00012000))
-test/version-source-fixture.js:57  0x00012000 = $GUEST_BASE (base)
-    (func $g2w (param $p i32) (result i32) (i32.add (i32.sub (local.get $p) (i32.const 0x00400000)) (i32.const 0x0
-2 raw literal(s)
