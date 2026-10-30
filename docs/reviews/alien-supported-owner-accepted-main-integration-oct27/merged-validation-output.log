@@ -1,1 +1,0 @@
-{"status": "PASS", "publishedPayloads": 190, "syntaxFiles": 9, "resolvedProductionClosure": ["tools/alien-supervised-gameplay.py", "tools/alien-menu-gameplay-controller.py", "test/alien-gameplay-sequence.py", "test/helpers/alien-control-sequence.py"], "reusedGroups": 4, "reusedControls": 45, "next": "four affected legacy attachment tests"}

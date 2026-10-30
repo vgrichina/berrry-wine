@@ -1,7 +1,0 @@
-{
-  "candidate": "a42e321f7a0d604503ad6f5ae6d76174130e525b",
-  "treeBlob": "4b8461338f4bcddde6b5d5504991523b28d3ac35",
-  "fixtureBlob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
-  "fixtureSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
-  "result": "NOT candidate test/run.js; do not claim equality"
-}
