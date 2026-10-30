@@ -1,9 +1,0 @@
-PASS stable emitted fragments identical to original reviewed semantic tree
-PASS all inherited nonenumerable accessors are captured once with no fallback read
-PASS proxy sees only one get per pinned path without descriptors/enumeration
-PASS bad first value at every path rejects once before alternate authentic value
-PASS throwing first getter propagates same error without retry for every path
-PASS later getters cannot redirect earlier captured fragments
-PASS boxed or coercible source rejected without invoking coercion
-PASS disabled source and unused options have zero reads and preserve object identity
-{"groups":8,"pass":true,"outputHashes":{"src/09d-winsock.wat":"410dbfc80e2cba4498dee4683ca456f9018b118c14d76cffc3a55a8cb00e85ff","src/09b-dispatch.wat":"c4e008a70c51bdc3eedfbc0603ba13d2a43864c41f654143b0f05c684ffeca25","src/09b2-dispatch-table.generated.wat":"5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e","src/05-alu.wat":"817ee26a7dc9e2aa31c1e9fd39d0be551f1d994b6f69350166123717abc0eb16","src/06b-core-handlers.wat":"d723b875ddf3c42a670ddca5c9e78199c0b8aceced8ef739fee3e521cfd25db1","src/13-exports.wat":"739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86","src/03-registers.wat":"79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d","src/04-cache.wat":"42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd","src/07-decoder.wat":"fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837","src/02-thread-table.wat":"e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426","src/07c-block-exec.wat":"5c4b4227b656ddcb919825c5942ce109bf6ea21b95b739a7bf5173d032e55e95","src/07d-uop-engine.wat":"cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3"}}

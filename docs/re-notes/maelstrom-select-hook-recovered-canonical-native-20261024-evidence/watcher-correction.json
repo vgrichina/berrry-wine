@@ -1,6 +1,0 @@
-{
-  "terminated": [
-    313480
-  ],
-  "qualification": "Initial timeout watcher lacked explicit regular-file guard; terminated before build. Retained log charged; subsequent supervisor enforces finite files."
-}

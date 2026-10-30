@@ -1,9 +1,0 @@
-{
-  "command": [
-    "node",
-    "scratch/runs/20261021-hype-counter-owner-measure/source/hype-glide-emission-observer.js",
-    "scratch/runs/20261021-hype-counter-owner-measure/measurement.json"
-  ],
-  "exit": 0,
-  "stderr": ""
-}
