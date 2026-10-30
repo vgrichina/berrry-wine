@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "new",
+    "--ttl",
+    "1800",
+    "--json",
+    "--no-update"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo",
+  "exit": 0,
+  "peakPhysicalGroupRSS": 5726208,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 570,
+  "wall": 2.3230885821394622
+}

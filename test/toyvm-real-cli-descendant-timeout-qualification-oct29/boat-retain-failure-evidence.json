@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_axf3v3mg",
+    "--cwd",
+    "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo",
+    "--timeout",
+    "100",
+    "--json",
+    "--",
+    "/usr/bin/python3 -B -c 'import pathlib,json,base64; root=pathlib.Path('\"'\"'/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo/test/toyvm-real-cli-descendant-timeout-qualification-oct29'\"'\"'); names=['\"'\"'remote-admission.json'\"'\"', '\"'\"'invocation.json'\"'\"', '\"'\"'fixture.py'\"'\"', '\"'\"'cli.stdout'\"'\"', '\"'\"'cli.stderr'\"'\"', '\"'\"'live-observations.json'\"'\"', '\"'\"'process-cleanup.json'\"'\"', '\"'\"'qualification.json'\"'\"']; print(json.dumps({n:base64.b64encode((root/n).read_bytes()).decode() for n in names if (root/n).exists()}))'"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo",
+  "exit": 0,
+  "peakPhysicalGroupRSS": 5713920,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 6161,
+  "wall": 0.12393211899325252
+}

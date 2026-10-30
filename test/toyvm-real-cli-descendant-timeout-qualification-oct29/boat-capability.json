@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_axf3v3mg",
+    "--cwd",
+    "/home/user",
+    "--timeout",
+    "100",
+    "--json",
+    "--",
+    "/usr/bin/python3 -B -c 'import os,pathlib,platform,importlib.util,ctypes.util,json,shutil,resource;print(json.dumps(dict(python=shutil.which(\"python3\"),pythonResolved=str(pathlib.Path(\"/usr/bin/python3\").resolve()),fuseDevice=pathlib.Path(\"/dev/fuse\").exists(),fuseAccess=os.access(\"/dev/fuse\",os.R_OK|os.W_OK),fuseLibrary=ctypes.util.find_library(\"fuse\"),fusePython=importlib.util.find_spec(\"fuse\") is not None,architecture=platform.machine(),MemAvailable=[x for x in pathlib.Path(\"/proc/meminfo\").read_text().splitlines() if x.startswith(\"MemAvailable\")],device=os.stat(\"/tmp\").st_dev,statvfs=list(os.statvfs(\"/tmp\")),limits={str(x):resource.getrlimit(x) for x in (resource.RLIMIT_DATA,resource.RLIMIT_CPU,resource.RLIMIT_FSIZE)})))'"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo",
+  "exit": 0,
+  "peakPhysicalGroupRSS": 5857280,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 765,
+  "wall": 0.7612587800249457
+}

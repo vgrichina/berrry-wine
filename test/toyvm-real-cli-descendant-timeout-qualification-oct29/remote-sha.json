@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo",
+    "ls-remote",
+    "origin",
+    "refs/heads/task/toyvm-real-cli-descendant-timeout-qualification-oct29"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo",
+  "exit": 0,
+  "peakPhysicalGroupRSS": 15437824,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 111,
+  "wall": 1.5415227329358459
+}

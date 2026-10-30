@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo",
+    "rev-parse",
+    "--absolute-git-dir"
+  ],
+  "cwd": "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo",
+  "exit": 0,
+  "peakPhysicalGroupRSS": 0,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 69,
+  "wall": 0.035245396895334125
+}

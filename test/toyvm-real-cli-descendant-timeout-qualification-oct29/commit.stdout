@@ -1,0 +1,30 @@
+[task/toyvm-real-cli-descendant-timeout-qualification-oct29 bcbc4ded68] test: retain blocked real CLI descendant timeout qualification
+ 28 files changed, 772 insertions(+)
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/REPORT.txt
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/artifact-manifest.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/baseline.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/blocker-validation.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/boat-capability.stdout
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/boat-create.stdout
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/boat-real-cli.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/boat-real-cli.stderr
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/boat-real-cli.stdout
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/boat-snapshot-stop.stdout
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/boat-stopped-verification.stdout
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/boat_control.py
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/cli.stderr
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/cli.stdout
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/closeout.py
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/containment-controls.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/fixture.py
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/guard.py
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/invocation.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/launch-configuration.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/lifecycle.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/live-observations.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/process-cleanup.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/publish.py
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/remote-admission.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/remote-source-pins.json
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/remote_test.py
+ create mode 100644 test/toyvm-real-cli-descendant-timeout-qualification-oct29/stage_run.py

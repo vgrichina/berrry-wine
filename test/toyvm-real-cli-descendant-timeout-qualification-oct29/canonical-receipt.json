@@ -1,0 +1,117 @@
+{
+  "artifactManifest": {
+    "path": "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo/test/toyvm-real-cli-descendant-timeout-qualification-oct29/artifact-manifest.json",
+    "sha256": "03d4e36db70ada6a729841e3006ba155df91da36a9f391553132c34f56d76f68"
+  },
+  "boardAppendDelegatedToCoordinator": true,
+  "browserAllowanceUnchanged": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanup": {
+    "box": "bx_axf3v3mg",
+    "createEvents": [
+      {
+        "event": "created",
+        "hostedPorts": null,
+        "id": "bx_axf3v3mg",
+        "org": null,
+        "team": null,
+        "ttlSeconds": 1800
+      },
+      {
+        "event": "state",
+        "id": "bx_axf3v3mg",
+        "state": "starting"
+      },
+      {
+        "event": "state",
+        "id": "bx_axf3v3mg",
+        "state": "cloning"
+      },
+      {
+        "event": "state",
+        "id": "bx_axf3v3mg",
+        "state": "ready"
+      },
+      {
+        "archiveAfter": "2026-10-29T03:42:22.509Z",
+        "commands": {
+          "forward": "boat forward bx_axf3v3mg --remote 3000 --local 3000",
+          "ssh": "boat ssh bx_axf3v3mg"
+        },
+        "desktopUrl": null,
+        "event": "ready",
+        "id": "bx_axf3v3mg",
+        "ip": "2001:41d0:303:1dae:100::24",
+        "state": "ready",
+        "url": "https://box-node-aebaae3752f2a883.on.boat.dev"
+      }
+    ],
+    "cutoff": "2026-10-29T03:35:00Z",
+    "expiry": "2026-10-29T03:42:22.509Z",
+    "shutdownActionNeeded": false,
+    "shutdownOwner": "coordinator; worker delegated preserve snapshot-stop and verify",
+    "snapshotAvailable": true,
+    "snapshotCompletedAt": "2026-10-29T03:14:01.687Z",
+    "state": "stopped",
+    "stopVerified": true
+  },
+  "outcome": "BLOCKED: real backend status socket path too long; descendant timeout not reached",
+  "proceduralLimitations": [
+    "Initial diagnostic reads exceeded bounded terminal target; recorded in committed REPORT.txt.",
+    "Local guard Python parent inherited unlimited DATA; its spawned Python children received 128MiB DATA, Git children 256MiB only. Remote test supervisor lowered its own DATA to128MiB. Local parent DATA and own physicalRSS cap were not fully enforced. This run must not be represented as full resource-control acceptance."
+  ],
+  "publication": {
+    "branch": "task/toyvm-real-cli-descendant-timeout-qualification-oct29",
+    "commit": "bcbc4ded68659a30373eda632d2b4c432bc0a513",
+    "pushExit": 0,
+    "remote": "git@github.com:vgrichina/wine-assembly.git",
+    "remoteVerifiedSHA": "bcbc4ded68659a30373eda632d2b4c432bc0a513"
+  },
+  "resourceIncidents": [
+    "unbounded initial diagnostic reads recorded in REPORT.txt"
+  ],
+  "resources": {
+    "admissionSHA256": "c08f4c9b190ca45ea3adceb42cbff676803e0d575708fecab7ff5515029b3ab9",
+    "admissions": "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo/test/toyvm-real-cli-descendant-timeout-qualification-oct29/admissions.jsonl",
+    "allocationRetained": true,
+    "baseline": "/tmp/toyvm-real-cli-descendant-timeout-qualification-oct29/repo/test/toyvm-real-cli-descendant-timeout-qualification-oct29/baseline.json"
+  },
+  "rootRefsInitialReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-real-cli-descendant-timeout-qualification-oct29/root-ref-digest.json",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "task": "toyvm-real-cli-descendant-timeout-qualification-oct29",
+  "tests": {
+    "backendStartupFailed": true,
+    "blockerValidation": true,
+    "containmentControls": true,
+    "descendantTimeoutQualified": false,
+    "fixtureNeverLaunched": true,
+    "localRemoteSourcePins": true,
+    "realUnmodifiedCLIInvokedOnce": true,
+    "retries": 0
+  }
+}
