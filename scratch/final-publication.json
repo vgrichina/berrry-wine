@@ -1,0 +1,9 @@
+{
+  "commit": "a90e0dac5bea1594825c6a135c3f39fc1a40dd0a",
+  "branch": "task/shadow-man-pinned-dependency-qualification-oct22",
+  "parent": "84f2a0165798f30d7a131dccdcc054a224fbf57b",
+  "actualRemoteRefs": "89f1e9d2c67aa94d56d2319115589d07204d42e0\trefs/heads/main\na90e0dac5bea1594825c6a135c3f39fc1a40dd0a\trefs/heads/task/shadow-man-pinned-dependency-qualification-oct22",
+  "pushExit": 0,
+  "committedFilesVerified": 115,
+  "onlyEvidencePaths": true
+}

@@ -43,16 +43,16 @@
     "/home/user/wine-assembly-shadow-man-static-dx-harness-qualification-oct22": 3137536,
     "/home/user/wine-assembly/scratch/usage-watch/shadow-man-static-dx-harness-qualification-oct22": 380928,
     "/home/user/wine-assembly/scratch/usage-watch/shadow-man-static-dx-harness-qualification-oct22.task.txt": 8192,
-    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-pinned-dependency-qualification-oct22": 434176,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-pinned-dependency-qualification-oct22": 499712,
     "/home/user/wine-assembly/scratch/usage-watch/shadow-man-pinned-dependency-qualification-oct22.task.txt": 8192,
     "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22": 180224,
-    "/home/user/wine-assembly-shadow-man-pinned-dependency-qualification-oct22": 3223552
+    "/home/user/wine-assembly-shadow-man-pinned-dependency-qualification-oct22": 4292608
   },
-  "localAllocated": 44761088,
+  "localAllocated": 45895680,
   "localReserve": 8388608,
   "localFinishingAllowance": 2097152,
   "localCap": 67108864,
-  "hostFree": 6997921792,
+  "hostFree": 6996316160,
   "hostFloor": 2982150144,
   "remote": {
     "verdict": "PASS_ALL_NINE",
