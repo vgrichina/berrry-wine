@@ -1,0 +1,30 @@
+{
+  "commit": "7a21579f9adb208164312961c249a0aa9080a8b7",
+  "remote": "https://github.com/vgrichina/berrry-wine.git",
+  "refs": {
+    "refs/heads/main": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+    "refs/heads/task/shadow-man-dsetup-native-version-repair-oct22": "7a21579f9adb208164312961c249a0aa9080a8b7"
+  },
+  "pushExit": 0,
+  "completeBasePaths": 8242,
+  "completeResultPaths": 8256,
+  "changedFiles": 22,
+  "noDeletions": true,
+  "implementationHashesMatch": true,
+  "diffSha256": "9b6d3a7543a5f2631489658eff4e337aade635950c4ab40a91b6e4c4d5f4fe98",
+  "resources": {
+    "ownAllocated": 10608640,
+    "sharedNativeAllocated": 843776,
+    "launcherAllocated": 634880,
+    "reserve": 8388608,
+    "publicationGrowthAllowance": 4194304,
+    "total": 24670208,
+    "cap": 67108864,
+    "hostFree": 7111151616,
+    "hostFloor": 2982150144
+  },
+  "noGuestExecution": true,
+  "noFullBuild": true,
+  "actualRegistryBranch": null,
+  "boxState": "coordinator receipt: bx_m4xrrj5a stopped 2026-10-22T20:31:48.291Z; no lifecycle access"
+}

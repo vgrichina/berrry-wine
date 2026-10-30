@@ -5,7 +5,7 @@
       "test/test-storage-registry.js"
     ],
     "exit": 0,
-    "elapsed": 0.031231993110850453,
+    "elapsed": 0.03971471800468862,
     "stdout": "PASS  registry REG_SZ stores guest strings through g2w\nPASS  setRegValue materializes parent registry keys\nPASS  Win98 Explorer Shell Folders expose the program-group directory\nPASS  registry roots, subkeys, and values enumerate with Win32 buffer semantics\nPASS  RegQueryInfoKey-style registry metadata reports counts and max lengths\nPASS  INI section/key writes persist through VFS, retain Unicode, and reject read-only writes\nPASS  app startup INI values are visible to profile APIs\nPASS  system.ini exposes supported MCI drivers with case-insensitive overrides\nPASS  win.ini exposes the supported Media Player file extensions\nPASS  COM activation resolves CLSID registry paths case-insensitively\nPASS  process-registered COM class factories resolve and revoke by cookie\nPASS  registry/INI snapshots export and restore across runs\nPASS  shell registry deletion removes mixed-case subtrees and retains an open key on NULL\n",
     "stderr": ""
   },
@@ -15,7 +15,7 @@
       "test/test-directx-registry-metadata.js"
     ],
     "exit": 0,
-    "elapsed": 0.0329605849692598,
+    "elapsed": 0.03264676802791655,
     "stdout": "PASS DirectX registry absence, supplied metadata, A/W sizes, canaries, errors and restore\n",
     "stderr": ""
   },
@@ -25,7 +25,7 @@
       "test/test-dsetup-loading.js"
     ],
     "exit": 0,
-    "elapsed": 0.0821062009781599,
+    "elapsed": 0.15965864493045956,
     "stdout": "PASS synthetic DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed\n",
     "stderr": ""
   },
@@ -36,7 +36,7 @@
       "--native-dir=/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22"
     ],
     "exit": 0,
-    "elapsed": 0.08492730103898793,
+    "elapsed": 0.09300335601437837,
     "stdout": "PASS authentic sealed DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed\n",
     "stderr": ""
   },
@@ -48,7 +48,7 @@
       "--native-dir=/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22"
     ],
     "exit": 0,
-    "elapsed": 0.12214045599102974,
+    "elapsed": 0.14442855201195925,
     "stdout": "PASS authentic setup/config RT_VERSION bytes through DDRAW path, A/W exact copy and root query; no runtime capability claim\nPASS file-backed GetFileVersionInfo A/W resource lookup\n",
     "stderr": ""
   },
@@ -59,7 +59,7 @@
       "--source-fixture"
     ],
     "exit": 0,
-    "elapsed": 0.11840165802277625,
+    "elapsed": 0.11998486297670752,
     "stdout": "PASS  DirectX file presence preserves static loading without invented versions\n",
     "stderr": ""
   },
@@ -69,7 +69,7 @@
       "/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/mutations.js"
     ],
     "exit": 0,
-    "elapsed": 0.2454161330824718,
+    "elapsed": 0.2342647589975968,
     "stdout": "PASS rejecting control skipped-load\nPASS rejecting control fabricated-file\nPASS rejecting control fabricated-registry\nPASS rejecting control fabricated-ansi\n",
     "stderr": ""
   },
@@ -82,7 +82,7 @@
       "--quiet"
     ],
     "exit": 0,
-    "elapsed": 0.03167867090087384,
+    "elapsed": 0.026311389985494316,
     "stdout": "",
     "stderr": ""
   },
@@ -95,7 +95,7 @@
       "--quiet"
     ],
     "exit": 0,
-    "elapsed": 0.027692607953213155,
+    "elapsed": 0.029679093975573778,
     "stdout": "",
     "stderr": ""
   },
@@ -105,7 +105,7 @@
       "tools/check-wat-logical-and.js"
     ],
     "exit": 0,
-    "elapsed": 0.15762422105763108,
+    "elapsed": 0.14178684807848185,
     "stdout": "PASS  WAT logical i32.and operands are boolean-normalized\n",
     "stderr": ""
   },
@@ -116,7 +116,7 @@
       "/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22"
     ],
     "exit": 0,
-    "elapsed": 0.01772647292818874,
+    "elapsed": 0.016871901927515864,
     "stdout": "{\n  \"runs\": 0,\n  \"errors\": [],\n  \"missing\": [],\n  \"invalid\": []\n}\n",
     "stderr": ""
   },
@@ -127,7 +127,7 @@
       "lib/dll-registry.js"
     ],
     "exit": 0,
-    "elapsed": 0.01708577200770378,
+    "elapsed": 0.012339234934188426,
     "stdout": "",
     "stderr": ""
   },
@@ -138,7 +138,7 @@
       "lib/process-boot.js"
     ],
     "exit": 0,
-    "elapsed": 0.01440483599435538,
+    "elapsed": 0.015239191008731723,
     "stdout": "",
     "stderr": ""
   },
@@ -149,7 +149,7 @@
       "lib/storage.js"
     ],
     "exit": 0,
-    "elapsed": 0.01605592097621411,
+    "elapsed": 0.012525953934527934,
     "stdout": "",
     "stderr": ""
   },
@@ -160,7 +160,7 @@
       "test/test-directx-system-files.js"
     ],
     "exit": 0,
-    "elapsed": 0.014014463988132775,
+    "elapsed": 0.012010006932541728,
     "stdout": "",
     "stderr": ""
   },
@@ -171,7 +171,7 @@
       "test/test-file-version-info.js"
     ],
     "exit": 0,
-    "elapsed": 0.014388096053153276,
+    "elapsed": 0.01182212505955249,
     "stdout": "",
     "stderr": ""
   },
@@ -182,7 +182,7 @@
       "test/test-static-dx-version.js"
     ],
     "exit": 0,
-    "elapsed": 0.012410065974108875,
+    "elapsed": 0.014811208005994558,
     "stdout": "",
     "stderr": ""
   },
@@ -193,7 +193,7 @@
       "test/test-directx-registry-metadata.js"
     ],
     "exit": 0,
-    "elapsed": 0.012583630974404514,
+    "elapsed": 0.012719025951810181,
     "stdout": "",
     "stderr": ""
   },
@@ -204,7 +204,7 @@
       "test/test-dsetup-loading.js"
     ],
     "exit": 0,
-    "elapsed": 0.012506027007475495,
+    "elapsed": 0.012469468056224287,
     "stdout": "",
     "stderr": ""
   },
@@ -215,7 +215,7 @@
       "test/dsetup-binding-fixture.js"
     ],
     "exit": 0,
-    "elapsed": 0.012895595980808139,
+    "elapsed": 0.013346713036298752,
     "stdout": "",
     "stderr": ""
   },
@@ -226,7 +226,7 @@
       "test/version-source-fixture.js"
     ],
     "exit": 0,
-    "elapsed": 0.014316641027107835,
+    "elapsed": 0.01199470809660852,
     "stdout": "",
     "stderr": ""
   },
@@ -237,7 +237,7 @@
       "test/wat-source-function.js"
     ],
     "exit": 0,
-    "elapsed": 0.013862649095244706,
+    "elapsed": 0.012623939081095159,
     "stdout": "",
     "stderr": ""
   },
@@ -262,7 +262,7 @@
       "test/wat-source-function.js"
     ],
     "exit": 0,
-    "elapsed": 0.006600082968361676,
+    "elapsed": 0.002542686997912824,
     "stdout": "",
     "stderr": ""
   }

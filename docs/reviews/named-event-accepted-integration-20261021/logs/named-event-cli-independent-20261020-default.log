@@ -1,8 +1,0 @@
-PASS main/nested unsupported and stale mixtures reject before acquisition; supported ordering
-PASS stale-local convention matches exact base; named token is preserved
-PASS actual Worker: 18 mixed stale/named/local waits reject with no partial acquisition; stale-only delegates
-PASS 40 slot/name generations, partial CloseHandle and final CloseEvent
-PASS mutex/semaphore cross-kind conflicts preserved in both directions
-PASS 4096-slot exhaustion creates no remote reference; freeing slot recovers
-PASS 4096 remote references: Create returns zero, Open throws, accounting and recovery exact
-PASS independent CLI owner normal exit removes directory; unrelated namespace survives

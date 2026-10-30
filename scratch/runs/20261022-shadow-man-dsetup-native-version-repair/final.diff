@@ -1,0 +1,1732 @@
+diff --git a/lib/dll-registry.js b/lib/dll-registry.js
+index 83ec50b..72b18b0 100644
+--- a/lib/dll-registry.js
++++ b/lib/dll-registry.js
+@@ -55,6 +55,9 @@ const DLL_PATHS = {
+ // `files` list. Listing them here is what says "load this as a real PE" rather
+ // than "let the WAT stubs answer for it".
+ const APP_LOCAL_DLLS = [
++  // Redistributed DirectX setup reader. Execute the installed PE, including
++  // DirectXSetupGetVersion's ordinal export, rather than a generic API thunk.
++  'dsetup.dll',
+   'msvcp50.dll',
+   // Blizzard's Storm runtime is shipped beside StarCraft/Diablo and exports
+   // game-specific ordinal APIs. Treating it like a stubbed system DLL turns
+diff --git a/lib/process-boot.js b/lib/process-boot.js
+index c1b826d..2c8bc8c 100644
+--- a/lib/process-boot.js
++++ b/lib/process-boot.js
+@@ -128,42 +128,23 @@ function mountWin16SystemModules(vfs) {
+   return mounted;
+ }
+ 
+-// The DirectX DLLs the emulator dispatches statically ($STATIC_SYS_DLL_NAMES'
+-// DirectX range in src/01-header.wat). Installers decide whether DirectX is
+-// present by looking for the file before they read its version: NFS II's
+-// InstallShield script tests GetFileAttributes("C:\WINDOWS\SYSTEM\DDRAW.DLL"),
+-// and when that failed it reported "No versions of DirectX have been detected"
+-// and offered to run DirectX 3 setup on a machine that answers DirectX 6.1a.
+-//
+-// Each file is a minimal PE DLL with no code and one RT_VERSION resource
+-// holding the same VS_FIXEDFILEINFO as $DX_VERSION_INFO (4.06.03.0518), so a
+-// version read that goes to the file (GetFileVersionInfoW has no by-name
+-// answer) agrees with the one GetFileVersionInfoA gives by name. The entries
+-// are marked `staticModule`: has_dll_file skips them, so LoadLibrary of the
+-// full path keeps resolving to the static module instead of mapping this stub.
+-//
+-// D3D8.DLL is a file only (no by-name entry): we implement Direct3D 8, and the
+-// DirectX SDK's GetDXVersion sample -- which games ship -- decides "8.1 or
+-// newer" by d3d8.dll's file version alone (>= 4.08.01.0881) once the DxDiag
+-// provider is unavailable. Without the file Crimsonland refused to start with
+-// "DirectX8.1 or newer not detected". The DirectPlay8 and Direct3D 9 files
+-// (dpnet.dll, d3d9.dll) are deliberately absent: a game that finds them may
+-// switch to a path we do not provide (DirectPlay8) or have not chosen to claim.
++// File-presence placeholders for statically dispatched modules. These have
++// no code/exports; `staticModule` keeps both hosts from mapping them as PEs.
++// DirectX placeholders have no RT_VERSION: implementing an interface supplies
++// no installed Microsoft runtime's file version. Native version readers must
++// see ordinary absence unless an actual file with a resource was installed.
++// mountDirectXSystemModules preserves installed files at the system path.
+ //
+ // OPENGL32.DLL is here for the same reason as the DirectX files, though it is
+ // not DirectX: we dispatch it statically, and a game may look for the file
+ // before loading it. Serious Sam's Engine SearchPathA's OPENGL32.DLL (then
+ // 3DFXVGL.DLL) and, finding neither, reported "Cannot set display mode! ...
+ // unable to find display mode with OpenGL acceleration". It carries Win98
+-// SE's own version, not a DirectX one.
++// SE's version remains as before; OpenGL metadata is outside this repair.
+ const DIRECTX_SYSTEM_MODULE_FILES = ['DDRAW.DLL', 'DSOUND.DLL', 'DPLAYX.DLL', 'D3DRM.DLL', 'D3D8.DLL',
+   'OPENGL32.DLL'];
+-// File version per stub as [major, minor, build, private]; 6.1a (Win98 SE)
+-// unless listed. 4.08.01.0881 is the DirectX 8.1 runtime's d3d8.dll.
+-const DIRECTX_MODULE_VERSIONS = { 'D3D8.DLL': [4, 8, 1, 881], 'OPENGL32.DLL': [4, 10, 0, 2222] };
+-const DIRECTX_DEFAULT_VERSION = [4, 6, 3, 518];
+-
+-function directXVersionInfo(version = DIRECTX_DEFAULT_VERSION) {
++const DIRECTX_MODULE_VERSIONS = { 'OPENGL32.DLL': [4, 10, 0, 2222] };
++function directXVersionInfo(version) {
+   const blob = new Uint8Array(92);
+   const dv = new DataView(blob.buffer);
+   dv.setUint16(0, 92, true);                      // wLength
+@@ -181,9 +162,9 @@ function directXVersionInfo(version = DIRECTX_DEFAULT_VERSION) {
+ function directXModuleStub(file) {
+   const RSRC_FILE = 0x200;
+   const RSRC_RVA = 0x1000;
+-  const version = directXVersionInfo(
+-    DIRECTX_MODULE_VERSIONS[String(file || '').toUpperCase()] || DIRECTX_DEFAULT_VERSION);
+-  const rsrcSize = 0x58 + version.length;
++  const versionFields = DIRECTX_MODULE_VERSIONS[String(file || '').toUpperCase()];
++  const version = versionFields ? directXVersionInfo(versionFields) : null;
++  const rsrcSize = version ? 0x58 + version.length : 0;
+   const bytes = new Uint8Array(RSRC_FILE + 0x200);
+   const dv = new DataView(bytes.buffer);
+   bytes[0] = 0x4d; bytes[1] = 0x5a;               // MZ
+@@ -204,7 +185,7 @@ function directXModuleStub(file) {
+   dv.setUint32(opt + 60, RSRC_FILE, true);        // SizeOfHeaders
+   dv.setUint16(opt + 68, 2, true);                // Windows GUI
+   dv.setUint32(opt + 92, 16, true);               // NumberOfRvaAndSizes
+-  dv.setUint32(opt + 96 + 2 * 8, RSRC_RVA, true); // resource directory
++  dv.setUint32(opt + 96 + 2 * 8, version ? RSRC_RVA : 0, true);
+   dv.setUint32(opt + 96 + 2 * 8 + 4, rsrcSize, true);
+   const sec = opt + 0xE0;
+   bytes.set([0x2e, 0x72, 0x73, 0x72, 0x63], sec); // .rsrc
+@@ -213,6 +194,7 @@ function directXModuleStub(file) {
+   dv.setUint32(sec + 16, 0x200, true);
+   dv.setUint32(sec + 20, RSRC_FILE, true);
+   dv.setUint32(sec + 36, 0x40000040, true);       // initialized data, readable
++  if (!version) return bytes;
+   // Type 16 (RT_VERSION) -> id 1 -> language 0x409 -> the data entry.
+   const dir = (at, id, target) => {
+     dv.setUint16(RSRC_FILE + at + 14, 1, true);   // one id entry
+@@ -255,8 +237,15 @@ function mountDirectXSystemModules(vfs) {
+   let mounted = 0;
+   for (const file of DIRECTX_SYSTEM_MODULE_FILES) {
+     const key = 'c:\\windows\\system\\' + file.toLowerCase();
+-    if (vfs.files.has(key)) continue;
+-    vfs.files.set(key, { data: directXModuleStub(file), attrs: 0x20, staticModule: true });
++    const existing = vfs.files.get(key);
++    // Retained VFS snapshots can contain our old versioned placeholders.
++    // Only the explicit staticModule marker identifies those as synthetic;
++    // never replace an installed file based on its version/name alone.
++    if (existing && (!existing.staticModule || file === 'OPENGL32.DLL')) continue;
++    const data = directXModuleStub(file);
++    if (existing && existing.data && existing.data.length === data.length &&
++        data.every((value, i) => existing.data[i] === value)) continue;
++    vfs.files.set(key, { data, attrs: 0x20, staticModule: true });
+     mounted++;
+   }
+   return mounted;
+diff --git a/lib/storage.js b/lib/storage.js
+index 4bf7b38..0ce0b10 100644
+--- a/lib/storage.js
++++ b/lib/storage.js
+@@ -282,20 +282,9 @@ function _initDefaultRegistry() {
+         'SystemRoot': { type: 1, data: 'C:\\Windows' },
+       }
+     },
+-    // Every DirectX runtime since DX2 stamps its version here, and games read
+-    // it to decide whether the installed runtime is new enough. Total
+-    // Annihilation opens this key before its main menu and puts up a modal
+-    // "DirectX may not function properly" warning when it is missing. We
+-    // expose the DirectX 7 object model (IDirectX7, IDirectDraw7), so 7 is
+-    // what we honestly report: "4.07.00.0700" is the DX7 runtime's own string,
+-    // and InstalledVersion is its 8-byte little-endian {major=4, minor=7}
+-    // twin, which DX7-aware installers read instead.
+-    'HKLM\\SOFTWARE\\Microsoft\\DirectX': {
+-      values: {
+-        'Version': { type: 1, data: '4.07.00.0700' },
+-        'InstalledVersion': { type: 3, data: [0x00, 0x00, 0x00, 0x04, 0x07, 0x00, 0x00, 0x00] },
+-      }
+-    },
++    // DirectX installation metadata is supplied by an installer or imported
++    // registry, never inferred from the interfaces the emulator implements.
++    // With no such state, the key/values remain ordinarily absent.
+     // Standard system keys every real Win98 has. Welcome98 reserves a
+     // MAX_PATH block in its string pool only when it can open Control and read
+     // "Current User"; without the key the block is skipped, its pool base ends
+@@ -1840,8 +1829,8 @@ function importStore(snapshot) {
+ // right default; restoring a save bundle in "replace" mode is the case where
+ // that is wrong — a key the bundle does not carry has to be gone afterwards,
+ // not left showing through from the state being replaced. Re-seeding is part of
+-// the same story: the defaults are machine facts (Shell Folders, the DirectX
+-// version, the PerfStats catalogue), not saved state, and an app that came back
++// the same story: the defaults are machine facts (Shell Folders and the
++// PerfStats catalogue), not saved state, and an app that came back
+ // to a registry without them would fail in ways no save bundle caused.
+ function clearStore() {
+   let n = 0;
+diff --git a/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/RECOVERY.md b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/RECOVERY.md
+new file mode 100644
+index 0000000..9a0bbf2
+--- /dev/null
++++ b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/RECOVERY.md
+@@ -0,0 +1,15 @@
++# Recovery
++
++Base canonical main: `89f1e9d2c67aa94d56d2319115589d07204d42e0`.
++Task branch: `task/shadow-man-dsetup-native-version-repair-oct22`.
++Final verified SHA is in the ignored post-push `publication.json` and root append-only messageboard. A local commit alone is not a backup.
++
++Recreate only the paths in source-pins.json plus the task commit's changed files using existing verified Git blobs/read-only donors, `GIT_NO_LAZY_FETCH=1`, and a tree-preserving explicit index. This local checkout intentionally omits most tracked files; never `git add -A`, commit sparse absence, mutate donor Git metadata, or use a broad fetch to reproduce it. Dependencies for the small source fixtures are pinned; no package download is necessary.
++
++Replay the command in REPORT.md. It writes checks/resources and mutation diagnostics inside this evidence directory. Those are bounded offline source checks: they compile only small in-memory source fixtures and never run an x86 guest or write a Wasm artifact. Default tests can later be run by the coordinator against a qualified full module.
++
++Native inputs remain read-only at `/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22/{dsetup.dll,dsetup32.dll,dsetup16.dll,d3dconfigutility.exe,receipt.json}`. The receipt lists exact size and SHA256 for all four; 830976 logical and 843776 allocated bytes including receipt/directory. They count within this task's allocation and are not in Git. They were already locally available; this task did not extract/download/recover them. `test/test-dsetup-loading.js --native-dir=...` checks seals before use; do not supply replacements from another release.
++
++Original full installation and registry are preserved in coordinator-owned stopped bx_m4xrrj5a and its existing retained installation/game backups. Earlier recovery recipes remain at the original-install-continue and installed-game-bounded-launch donor paths named in the accepted ordinal-support donor RECOVERY.md. Do not resume/recover a runtime as part of this offline replay. On another host, coordinator must authorize native-input recovery separately. Source pins and test fixtures remain usable without binaries, but authentic-input acceptance must then be marked unavailable, not silently substituted.
++
++No full current Wasm was built. Historical f644bbb2 is not the current canonical build. No registry branch/output or capability version was established from offline inputs. Existing imported registry metadata is preserved; historical seed provenance cannot be inferred from a version string.
+diff --git a/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/REPORT.md b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/REPORT.md
+new file mode 100644
+index 0000000..40c4e2d
+--- /dev/null
++++ b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/REPORT.md
+@@ -0,0 +1,48 @@
++# Native DSETUP loading and truthful version metadata source repair
++
++Implemented against canonical remote main `89f1e9d2c67aa94d56d2319115589d07204d42e0`, verified with actual canonical HTTPS `ls-remote` before checkout and before publication. Branch: `task/shadow-man-dsetup-native-version-repair-oct22`. Final commit/actual remote verification are recorded in `publication.json` and the append-only root messageboard. No main merge.
++
++## Implementation
++
++`lib/dll-registry.js` now allows **installed app-local DSETUP.DLL** through the shared native dependency graph. There is no bundled download path, ordinal alias, replacement handler or executable patch. DSETUP32/16 are not newly allowlisted: they are not static dependencies of this version-reader call. Existing DSETUP static imports and all other real-PE and child lookup paths remain unchanged.
++
++`GetFileVersionInfoSizeA` and `GetFileVersionInfoA` now always use the existing named-file resource reader, as their W counterparts already did. A static DirectX basename no longer overrides a real file or returns canned metadata when no resource exists. The fabricated `$DX_VERSION_INFO` initializer was removed; its region and globals remain reserved, avoiding unrelated region moves and generated-map changes. Return values, DWORD handle writes, length-bounded copies and stdcall cleanup continue through the existing helpers/epilogues. No new last-error contract is invented: the unchanged named-file reader/host filesystem determines existing failure/error behavior.
++
++The shared boot helper retains DirectX file-presence placeholders and `staticModule` loader exclusion, but gives them **no RT_VERSION**. This covers DDRAW, DSOUND, DPLAYX, D3DRM and D3D8 rather than leaving another invented DirectX fallback. Real installed entries are preserved. Previously retained placeholders explicitly marked `staticModule` are refreshed idempotently, so their old version resources cannot survive a normal mount. Unrelated OpenGL placeholder/version behavior is preserved, not qualified by this task.
++
++`lib/storage.js` no longer seeds a fabricated DirectX `Version`/`InstalledVersion` registry key. Ordinary missing-key/value behavior therefore survives in fresh/reset state. Installer-supplied and imported registry values remain normal metadata, read verbatim with existing A/W encoding and buffer/error semantics. No runtime-support policy or minimum-version assertion was added.
++
++**Persisted-state limit:** old registry snapshots have no provenance marker distinguishing a previous synthetic default from an installer writing the same string. This change does not delete existing values by guessing from their numeric content, or claim those values prove an installed/capable runtime. Likewise an imported file without the synthetic marker is treated as a supplied file, not classified by version number. The actual stopped installation's registry is unavailable here: its current branch, value and eventual native detector output remain unknown. Inspection of that exact preserved state belongs to coordinator qualification; no snapshot was queried or modified.
++
++## Acceptance evidence
++
++Run from this checkout:
++
++```sh
++GIT_NO_LAZY_FETCH=1 python3 scratch/runs/20261022-shadow-man-dsetup-native-version-repair/verify.py
++```
++
++`checks.json` records exact commands, exit statuses, output and elapsed times. All **23 commands pass**, including:
++
++- Existing storage/registry suite, plus new DirectX registry absence/supplied-value tests: case-insensitive lookup, REG_SZ A/W byte counts and terminators, undersized-buffer `ERROR_MORE_DATA` with unchanged canaries, missing InstalledVersion `ERROR_FILE_NOT_FOUND`, snapshot restore, and reset without reseeding.
++- Existing `test-file-version-info.js` in explicit `--source-fixture` mode: named-file PE resource parsing, absent/malformed resource handling, bounded short copies, hierarchy/languages/translation, string lifetime, ANSI and Unicode queries and malformed-child rejection. Optional sealed native inputs additionally compare actual DSETUP and DSETUP32 RT_VERSION bytes verbatim through the DDRAW filename, both A/W, with four-byte output canaries and root fixed-info size 52. Authentic config has no resource and correctly fails without writing output. Aliasing these setup/config bytes to DDRAW is solely a **test fixture**, not installing them as runtime files or asserting their versions describe DirectX capabilities.
++- Existing DirectX system-file test in explicit source-fixture mode: file attributes/presence, preserved supplied file, refreshed known synthetic snapshot, idempotence, CLI static-module byte-lookup exclusion, no invented A/W DirectX version, zero DWORD handle, unchanged failed-output buffers and ret+args increments 12/20. The full-host `has_dll_file` assertion remains in default mode but is explicitly omitted in this small fixture; no browser qualification is claimed.
++- New loader regression with tiny source images and separately the **sealed original D3DConfigUtility.exe and DSETUP.DLL**. The real JS graph selects authentic bytes; missing-file and wrong-name controls fail selection. Verbatim production WAT `parse_exports`, `patch_caller_iat`, `resolve_ordinal`/locked reader and name matching are compiled into a small standalone fixture. The actual production JS `patchExeImports` then reaches those WAT functions and binds original IAT **0x409024 to 0x100018b0**. Missing EAT slot and out-of-range ordinal controls return no binding. Named/CRT/thunk detours deliberately trap in this ordinal-only fixture. Mapping is a source fixture's section copy; allocator/lifecycle/lock boundaries are substitutes. This does **not** qualify full `load_dll`, DllMain, concurrency, PE relocation or native x86 execution.
++- Four semantic rejecting controls: restore exact baseline DLL registry (skipped load); exact baseline process-boot helper (synthetic file versions); exact baseline storage module (synthetic registry); exact baseline ANSI handlers and DX block in the focused VERSION fixture (by-name fabrication). Each reaches an AssertionError, not a compiler/setup failure. `mutation-results.json` retains diagnostics. The old ANSI classifier boundary is fixed to this test's known DirectX path; handlers and data are the exact old source.
++- Changed JS syntax; both changed WAT fragments' parentheses/labels; logical-AND check on the materialized relevant source subset; explicit-path Git whitespace check; evidence containment checker (no invalid or missing artifacts). ShadowMan remains intentionally unregistered; no misleading dashboard `result.json` is attached to another candidate.
++
++The accepted donor `504f904510ffeedea6c9824c992788db30ea76d1` already establishes the native optional DWORD-output wrapper, BOOL=1 even with zero detection and `ret 8`; its evidence was reused, not re-analyzed. All four original seals are checked before the native graph probe. No API table or native wrapper changed. Neither these fixtures nor this report claim that wrapper executed. No guest, fullmodule or historical f644bbb2 Wasm was used.
++
++## Compatibility and remaining qualification
++
++Software that previously passed prerequisites solely on synthesized DX6.1a/DX7/DX8.1 metadata can now warn or fail. That is intentional: the prerequisite may remain failing when no actual metadata exists. Authentic existing resources are still readable regardless of whether their capabilities are implemented. Numeric metadata is not capability qualification. File presence and static dispatch remain available, and unrelated DLL policy/child execution paths were not refactored.
++
++Default full-emulator versions of `test-static-dx-version.js` (updated to expect named-file behavior), DirectX setup/ordinal tests, NE version tests and full PE lifecycle/import tests were **not run** because this task prohibits a full build/runtime. Cheap source checks and focused fixtures do not replace them. Coordinator owns independent review, exact canonical build and runtime qualification, including native initialization and actual registry/OS/fallback selection. There is no gameplay, successful prerequisite, supported DirectX version, installation or user-interface claim.
++
++## Recovery, resources and operational limits
++
++`source-pins.json` records exact base blob/SHA/size/source for the focused verified files. Historical root files were accepted only when byte-identical to those pins; no fetch/lazy-fetch, broad checkout or source-version substitution occurred. Own `.git` was copied into an isolated thin checkout and its index reset to the complete base tree; only named files are staged, never sparse absences. Baseline blobs needed for scoped diff were written only to own object database. An initial unscoped Git diff failed on the intentionally incomplete object store (no retained core); subsequent review uses explicit paths and stored pinned blobs. The normal commit command also required an unrelated missing base blob (lib/agent-connect-ui.js), so publication uses `git write-tree --missing-ok` and `git commit-tree` from the reviewed explicit index, preserving the complete base tree. The initial push after that failed commit created only the unchanged-base task ref; the implementation updates it by ordinary fast-forward, never force. Root/donor HEAD/index/config/alternates remain sealed against the accepted donor's earlier metadata receipt.
++
++`resources.json` counts own Git/source/artifacts, shared read-only native inputs, launcher directory/task prompt, **8 MiB reserve inside 64 MiB**, and a further 4 MiB publication allowance. It enforces host free floor 2982150144 bytes. This task used no obsolete 16 MiB subcap. Final publication remeasures allocation and records actual remote refs.
++
++No native binary is committed or duplicated. See RECOVERY.md for original paths and commands. No runtime, new compute, rebuild, reinstall, extraction, download, public deployment, laptop, other game, approval or other worker actions occurred. **All boxes remain stopped**: coordinator evidence says bx_m4xrrj5a snapshot-stop completed 2026-10-22T20:31:48.291Z (previous expiry 21:52:45.530Z). No lifecycle query/action occurred here; coordinator retains ownership. One bounded task ends at publication.
+diff --git a/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/checks.json b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/checks.json
+new file mode 100644
+index 0000000..49e2d67
+--- /dev/null
++++ b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/checks.json
+@@ -0,0 +1,269 @@
++[
++  {
++    "command": [
++      "node",
++      "test/test-storage-registry.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.031231993110850453,
++    "stdout": "PASS  registry REG_SZ stores guest strings through g2w\nPASS  setRegValue materializes parent registry keys\nPASS  Win98 Explorer Shell Folders expose the program-group directory\nPASS  registry roots, subkeys, and values enumerate with Win32 buffer semantics\nPASS  RegQueryInfoKey-style registry metadata reports counts and max lengths\nPASS  INI section/key writes persist through VFS, retain Unicode, and reject read-only writes\nPASS  app startup INI values are visible to profile APIs\nPASS  system.ini exposes supported MCI drivers with case-insensitive overrides\nPASS  win.ini exposes the supported Media Player file extensions\nPASS  COM activation resolves CLSID registry paths case-insensitively\nPASS  process-registered COM class factories resolve and revoke by cookie\nPASS  registry/INI snapshots export and restore across runs\nPASS  shell registry deletion removes mixed-case subtrees and retains an open key on NULL\n",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "test/test-directx-registry-metadata.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.0329605849692598,
++    "stdout": "PASS DirectX registry absence, supplied metadata, A/W sizes, canaries, errors and restore\n",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "test/test-dsetup-loading.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.0821062009781599,
++    "stdout": "PASS synthetic DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed\n",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "test/test-dsetup-loading.js",
++      "--native-dir=/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22"
++    ],
++    "exit": 0,
++    "elapsed": 0.08492730103898793,
++    "stdout": "PASS authentic sealed DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed\n",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "test/test-file-version-info.js",
++      "--source-fixture",
++      "--native-dir=/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22"
++    ],
++    "exit": 0,
++    "elapsed": 0.12214045599102974,
++    "stdout": "PASS authentic setup/config RT_VERSION bytes through DDRAW path, A/W exact copy and root query; no runtime capability claim\nPASS file-backed GetFileVersionInfo A/W resource lookup\n",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "test/test-directx-system-files.js",
++      "--source-fixture"
++    ],
++    "exit": 0,
++    "elapsed": 0.11840165802277625,
++    "stdout": "PASS  DirectX file presence preserves static loading without invented versions\n",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/mutations.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.2454161330824718,
++    "stdout": "PASS rejecting control skipped-load\nPASS rejecting control fabricated-file\nPASS rejecting control fabricated-registry\nPASS rejecting control fabricated-ansi\n",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "tools/check-parens.js",
++      "src/09a1-comctl-handlers.wat",
++      "--no-diff",
++      "--quiet"
++    ],
++    "exit": 0,
++    "elapsed": 0.03167867090087384,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "tools/check-parens.js",
++      "src/01-header.wat",
++      "--no-diff",
++      "--quiet"
++    ],
++    "exit": 0,
++    "elapsed": 0.027692607953213155,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "tools/check-wat-logical-and.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.15762422105763108,
++    "stdout": "PASS  WAT logical i32.and operands are boolean-normalized\n",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "ops/check-run-evidence.js",
++      "/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22"
++    ],
++    "exit": 0,
++    "elapsed": 0.01772647292818874,
++    "stdout": "{\n  \"runs\": 0,\n  \"errors\": [],\n  \"missing\": [],\n  \"invalid\": []\n}\n",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "lib/dll-registry.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.01708577200770378,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "lib/process-boot.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.01440483599435538,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "lib/storage.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.01605592097621411,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "test/test-directx-system-files.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.014014463988132775,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "test/test-file-version-info.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.014388096053153276,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "test/test-static-dx-version.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.012410065974108875,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "test/test-directx-registry-metadata.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.012583630974404514,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "test/test-dsetup-loading.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.012506027007475495,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "test/dsetup-binding-fixture.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.012895595980808139,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "test/version-source-fixture.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.014316641027107835,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "node",
++      "--check",
++      "test/wat-source-function.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.013862649095244706,
++    "stdout": "",
++    "stderr": ""
++  },
++  {
++    "command": [
++      "git",
++      "diff",
++      "--check",
++      "--",
++      "lib/dll-registry.js",
++      "lib/process-boot.js",
++      "lib/storage.js",
++      "src/01-header.wat",
++      "src/09a1-comctl-handlers.wat",
++      "test/test-directx-system-files.js",
++      "test/test-file-version-info.js",
++      "test/test-static-dx-version.js",
++      "test/test-directx-registry-metadata.js",
++      "test/test-dsetup-loading.js",
++      "test/dsetup-binding-fixture.js",
++      "test/version-source-fixture.js",
++      "test/wat-source-function.js"
++    ],
++    "exit": 0,
++    "elapsed": 0.006600082968361676,
++    "stdout": "",
++    "stderr": ""
++  }
++]
+diff --git a/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/implementation-pins.json b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/implementation-pins.json
+new file mode 100644
+index 0000000..b93b0f6
+--- /dev/null
++++ b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/implementation-pins.json
+@@ -0,0 +1,70 @@
++{
++  "base": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
++  "files": [
++    {
++      "path": "lib/dll-registry.js",
++      "sha256": "a5d814cd4af1639d189939d1b16e963218d0b8680d11cbbf9a3985e1fd00f981",
++      "bytes": 6443
++    },
++    {
++      "path": "lib/process-boot.js",
++      "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9",
++      "bytes": 52033
++    },
++    {
++      "path": "lib/storage.js",
++      "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe",
++      "bytes": 79616
++    },
++    {
++      "path": "src/01-header.wat",
++      "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4",
++      "bytes": 297934
++    },
++    {
++      "path": "src/09a1-comctl-handlers.wat",
++      "sha256": "fc1ed2d372df182952a3e5d9f390fff9e178a64c1f0b90ec2f7708fc9e95b9fb",
++      "bytes": 165456
++    },
++    {
++      "path": "test/test-directx-system-files.js",
++      "sha256": "e1d9cc0bec539e9d6ffa7222f613a12cd176456c310a51229b5c33abd3e791e3",
++      "bytes": 6214
++    },
++    {
++      "path": "test/test-file-version-info.js",
++      "sha256": "3fa0aa45156778b812c8821a21e4c5de7b2a08b86e24a5c496fb26b7f6f645b5",
++      "bytes": 12139
++    },
++    {
++      "path": "test/test-static-dx-version.js",
++      "sha256": "08ea73f0d6596ca16724a080ee1dfc9ef1eba26395b977883d4fa6b89cfbadb4",
++      "bytes": 4819
++    },
++    {
++      "path": "test/test-directx-registry-metadata.js",
++      "sha256": "34a1ae4552294078e43ed728d599dbb0124340a16917e364d81122e2c9cf9469",
++      "bytes": 2614
++    },
++    {
++      "path": "test/test-dsetup-loading.js",
++      "sha256": "43761036d2a28e4e8bd576a7335ef0e6c7ac66895394ff8af170152d523147f4",
++      "bytes": 5380
++    },
++    {
++      "path": "test/dsetup-binding-fixture.js",
++      "sha256": "d54d3d98ffc4ea2bef4d800dba4bcd92a9470a05d0d222209f60d8bebacbe310",
++      "bytes": 3131
++    },
++    {
++      "path": "test/version-source-fixture.js",
++      "sha256": "52d6d20d3b11ec05d370288cdb946b6a41df20fe115f55195343c6be83a4bba2",
++      "bytes": 5007
++    },
++    {
++      "path": "test/wat-source-function.js",
++      "sha256": "0c64050ec1722564d7d7399635c84fa8993406af1c2433bcab0a62c3638503d8",
++      "bytes": 1504
++    }
++  ]
++}
+diff --git a/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/mutation-results.json b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/mutation-results.json
+new file mode 100644
+index 0000000..9b4ee89
+--- /dev/null
++++ b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/mutation-results.json
+@@ -0,0 +1,26 @@
++[
++  {
++    "mutation": "skipped-load",
++    "exit": 1,
++    "stdout": "",
++    "stderr": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(registry.isLoadableDll('DSETUP.DLL'))\n\n    at main (/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22/test/test-dsetup-loading.js:59:3)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22/test/test-dsetup-loading.js:106:1)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n"
++  },
++  {
++    "mutation": "fabricated-file",
++    "exit": 1,
++    "stdout": "",
++    "stderr": "AssertionError [ERR_ASSERTION]: known synthetic snapshot placeholder is refreshed\n    at main (/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22/test/test-directx-system-files.js:31:10)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22/test/test-directx-system-files.js:118:1)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: [Object],\n  expected: [Object],\n  operator: 'notStrictEqual',\n  diff: 'simple'\n}\n"
++  },
++  {
++    "mutation": "fabricated-registry",
++    "exit": 1,
++    "stdout": "",
++    "stderr": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: fresh state invents no DirectX key\n\n-1091633151 !== 0\n\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22/test/test-directx-registry-metadata.js:16:8)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: -1091633151,\n  expected: 0,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n"
++  },
++  {
++    "mutation": "fabricated-ansi",
++    "exit": 1,
++    "stdout": "",
++    "stderr": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n92 !== 0\n\n    at main (/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22/test/test-directx-system-files.js:85:14) {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: 92,\n  expected: 0,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n"
++  }
++]
+diff --git a/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/mutations.js b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/mutations.js
+new file mode 100644
+index 0000000..6c6d145
+--- /dev/null
++++ b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/mutations.js
+@@ -0,0 +1,54 @@
++'use strict';
++const assert = require('assert'), fs = require('fs'), path = require('path');
++const Module = require('module'), cp = require('child_process');
++const root = path.resolve(__dirname, '../../..');
++const pins = JSON.parse(fs.readFileSync(path.join(__dirname, 'source-pins.json')));
++const baseline = file => fs.readFileSync(pins.files.find(r => r.path === file).source, 'utf8');
++function replaceModule(file, text) {
++  const target = path.join(root, file), m = new Module(target, module);
++  m.filename = target; m.paths = Module._nodeModulePaths(path.dirname(target));
++  require.cache[target] = m; m._compile(text, target);
++}
++if (process.env.DSETUP_MUTATION) {
++  const kind = process.env.DSETUP_MUTATION;
++  if (kind === 'skipped-load') replaceModule('lib/dll-registry.js', baseline('lib/dll-registry.js'));
++  if (kind === 'fabricated-file') replaceModule('lib/process-boot.js', baseline('lib/process-boot.js'));
++  if (kind === 'fabricated-registry') replaceModule('lib/storage.js', baseline('lib/storage.js'));
++  if (kind === 'fabricated-ansi') {
++    const {sourceFunction} = require(path.join(root, 'test/wat-source-function'));
++    const fixture = require(path.join(root, 'test/version-source-fixture'));
++    const original = fixture.compileSrcWasm;
++    let source = fs.readFileSync(path.join(root, 'src/09a1-comctl-handlers.wat'), 'utf8');
++    const old = baseline('src/09a1-comctl-handlers.wat');
++    for (const name of ['handle_GetFileVersionInfoSizeA', 'handle_GetFileVersionInfoA'])
++      source = source.replace(sourceFunction(source, name), sourceFunction(old, name));
++    const header = baseline('src/01-header.wat');
++    const start = header.indexOf('  (data (region.addr $DX_VERSION_INFO 0)');
++    const end = header.indexOf('\n\n', start);
++    const data = header.slice(start, end).replace('(region.addr $DX_VERSION_INFO 0)', '(i32.const 0x2000)');
++    // Classifier boundary restricted to this fixture's known DDRAW filename;
++    // the actual old A handlers and exact old data block run verbatim.
++    const extraWat = `(global $DX_VERSION_INFO i32 (i32.const 0x2000))
++      (global $DX_VERSION_INFO_SIZE i32 (i32.const 92))
++      (func $name_is_static_dx_dll (param i32) (result i32) (i32.const 1))\n` + data;
++    fixture.compileSrcWasm = () => original(undefined, {source, extraWat});
++  }
++} else {
++  const cases = [
++    ['skipped-load', 'test/test-dsetup-loading.js', []],
++    ['fabricated-file', 'test/test-directx-system-files.js', ['--source-fixture']],
++    ['fabricated-registry', 'test/test-directx-registry-metadata.js', []],
++    ['fabricated-ansi', 'test/test-directx-system-files.js', ['--source-fixture']],
++  ];
++  const outcomes = [];
++  for (const [mutation, file, args] of cases) {
++    const result = cp.spawnSync(process.execPath, ['--require', __filename, file, ...args],
++      {cwd: root, env: {...process.env, DSETUP_MUTATION: mutation}, encoding:'utf8', timeout:20000});
++    assert.strictEqual(result.status, 1, mutation + ': regression must reject');
++    assert(result.stderr.includes('AssertionError'), mutation + ': must reach semantic assertion');
++    assert(!result.stderr.includes('Compilation failed'), mutation + ': compilation failure is not a control');
++    outcomes.push({mutation, exit:result.status, stdout:result.stdout, stderr:result.stderr});
++    console.log('PASS rejecting control', mutation);
++  }
++  fs.writeFileSync(path.join(__dirname, 'mutation-results.json'), JSON.stringify(outcomes, null, 2)+'\n');
++}
+diff --git a/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/resources.json b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/resources.json
+new file mode 100644
+index 0000000..4cb5645
+--- /dev/null
++++ b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/resources.json
+@@ -0,0 +1,12 @@
++{
++  "ownAllocated": 10051584,
++  "sharedNativeAllocated": 843776,
++  "launcherAllocated": 602112,
++  "reserve": 8388608,
++  "publicationGrowthAllowance": 4194304,
++  "total": 24080384,
++  "cap": 67108864,
++  "hostFree": 7112192000,
++  "hostFloor": 2982150144,
++  "protectedMetadataMatchesAcceptedDonorSeals": true
++}
+diff --git a/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/source-pins.json b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/source-pins.json
+new file mode 100644
+index 0000000..9eaf6f1
+--- /dev/null
++++ b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/source-pins.json
+@@ -0,0 +1,256 @@
++{
++  "base": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
++  "files": [
++    {
++      "path": "AGENTS.md",
++      "gitBlob": "d927ee7495d02f582713a5a5644a50a95e33b156",
++      "bytes": 273,
++      "sha256": "aeffaeb4ac29a0c3fdb6a69b27fece9f2d55058f4b93d059184eabb402a4bbb8",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/AGENTS.md"
++    },
++    {
++      "path": "CLAUDE.md",
++      "gitBlob": "22b8a3f554ae0fbf4bcc62d64098c96d05484f64",
++      "bytes": 22221,
++      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/CLAUDE.md"
++    },
++    {
++      "path": "lib/dll-registry.js",
++      "gitBlob": "83ec50b267443d42b184df3092d1027e60483705",
++      "bytes": 6271,
++      "sha256": "3ec807f95e31d613167104af9af48123cdbb8bd0cb1da26e4019d9f74eacc014",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/lib/dll-registry.js"
++    },
++    {
++      "path": "lib/process-boot.js",
++      "gitBlob": "c1b826d72807c88725259ce915f0b17bfed99d0e",
++      "bytes": 52725,
++      "sha256": "3b3103b5783900c1783be3a5683bba87058d81dc42958b12623facbd71d157fd",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/lib/process-boot.js"
++    },
++    {
++      "path": "lib/dll-loader.js",
++      "gitBlob": "b3964ba0ec83ac447b1fd8db0b38f33485198928",
++      "bytes": 98961,
++      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/lib/dll-loader.js"
++    },
++    {
++      "path": "lib/mem-utils.js",
++      "gitBlob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
++      "bytes": 13470,
++      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/lib/mem-utils.js"
++    },
++    {
++      "path": "lib/region-map.generated.js",
++      "gitBlob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
++      "bytes": 36089,
++      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/lib/region-map.generated.js"
++    },
++    {
++      "path": "lib/storage.js",
++      "gitBlob": "4bf7b38e6bf1665d0bfec2ecbeec1c2785d39898",
++      "bytes": 80223,
++      "sha256": "92639c192ce2d34ed140e4e7312bcaa663acc0f4cb5bec33b6e97310e51e744a",
++      "source": "/home/user/wine-assembly-mm-timer-qualified-integrate-oct22/lib/storage.js"
++    },
++    {
++      "path": "lib/filesystem.js",
++      "gitBlob": "d1d97aab7235ae58ff0fbff6ac84687744a92f40",
++      "bytes": 157994,
++      "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
++      "source": "/home/user/wine-assembly-mm-timer-qualified-integrate-oct22/lib/filesystem.js"
++    },
++    {
++      "path": "lib/pe.js",
++      "gitBlob": "e0bd3181a9599f47c0af0b77718f0c136694fd95",
++      "bytes": 4787,
++      "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853",
++      "source": "/home/user/wine-assembly/lib/pe.js"
++    },
++    {
++      "path": "src/01-header.wat",
++      "gitBlob": "a429a428ea6f84ac01c404f50a152a8b0960799f",
++      "bytes": 298773,
++      "sha256": "cc3d6142c12414c33bd3f650319e74fbefb0203c44288bd1ada6fff63b78e861",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/01-header.wat"
++    },
++    {
++      "path": "src/09a1-comctl-handlers.wat",
++      "gitBlob": "6a607be584c316d45c2ab04328264846ba23d2ef",
++      "bytes": 167344,
++      "sha256": "5aee5d64ae43d10c2ddee8088714ca22cf31daa0f2a82638544ae68380d2c047",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/09a1-comctl-handlers.wat"
++    },
++    {
++      "path": "src/08b-dll-loader.wat",
++      "gitBlob": "9a1c9fea07e4daf9300dc0d37a6c501e4b18397d",
++      "bytes": 108860,
++      "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/08b-dll-loader.wat"
++    },
++    {
++      "path": "src/09a0-handlers-base.wat",
++      "gitBlob": "06c9f8fad18d5a3eb6f352a20187236e0036b435",
++      "bytes": 399740,
++      "sha256": "65b108f43813c4a9ac1eac9ccffec132ca34dabe6b35c570ab28a50dc4bc758d",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/09a0-handlers-base.wat"
++    },
++    {
++      "path": "src/api_table.json",
++      "gitBlob": "285f81e4b392839549bc2cf549b4826890c1e18f",
++      "bytes": 723350,
++      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/api_table.json"
++    },
++    {
++      "path": "test/test-directx-system-files.js",
++      "gitBlob": "82177f0c6bba8ac607ad7b22f5c7e095b17988be",
++      "bytes": 4848,
++      "sha256": "e326016c6d904cb9e4b39560f9c420f014e9577b08b94873f91a74caeccdba2b",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/test/test-directx-system-files.js"
++    },
++    {
++      "path": "test/test-static-dx-version.js",
++      "gitBlob": "d80fd41bd09aecb254a4266b68f1575522dcbab9",
++      "bytes": 4751,
++      "sha256": "019ede45a0c25f35ac026c520f2179ea812162f47b5d3a6c57324fa7394a9f48",
++      "source": "/home/user/wine-assembly/test/test-static-dx-version.js"
++    },
++    {
++      "path": "test/test-file-version-info.js",
++      "gitBlob": "12c209db7001fb1eebc7e4656f1f512c2056d66d",
++      "bytes": 9766,
++      "sha256": "7087e9e2b750b0dc5ee84b8f76265f97f3cd3fe63c7df0c313592b454f5a6433",
++      "source": "/home/user/wine-assembly/test/test-file-version-info.js"
++    },
++    {
++      "path": "test/test-ne-file-version.js",
++      "gitBlob": "6ad0f107794b483ed11866a5d97c804014683f0e",
++      "bytes": 10882,
++      "sha256": "3967febd95be92aa0c43da590bbb40bdabfb551c2b4447eb2cad0c629af4cec4",
++      "source": "/home/user/wine-assembly/test/test-ne-file-version.js"
++    },
++    {
++      "path": "test/test-directx-setup.js",
++      "gitBlob": "350ce80ea3da3730b36e1f0429608062754d9084",
++      "bytes": 1306,
++      "sha256": "e3a3ee7f2495af5b14afb15c1712a26d62aee8fb5e2674259e66cc53107d0188",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/test/test-directx-setup.js"
++    },
++    {
++      "path": "test/test-directx-ordinals.js",
++      "gitBlob": "16440f707af90cd4104eb4bcb705c315209591ee",
++      "bytes": 1687,
++      "sha256": "ecddafa5dc3ef6ab86e7d0d874c9160cffaafb2f7e5b623c5e6c3eca39f01515",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/test/test-directx-ordinals.js"
++    },
++    {
++      "path": "test/test-storage-registry.js",
++      "gitBlob": "f940116f0a13517551ad681e11c6f471272807c6",
++      "bytes": 24636,
++      "sha256": "f66a349cd2411ff5293c1081f947d7ffdf300236f2b4d529f0c18df2bb563bcb",
++      "source": "/home/user/wine-assembly/test/test-storage-registry.js"
++    },
++    {
++      "path": "test/test-dll-import-no-ilt.js",
++      "gitBlob": "f5e648a3894401c4d1fc149b60c1721e5125a461",
++      "bytes": 6910,
++      "sha256": "6a5d6ff6a225a463de2fe6559f80503b97fb24cdc9a3e93a8411e462c01e534e",
++      "source": "/home/user/wine-assembly/test/test-dll-import-no-ilt.js"
++    },
++    {
++      "path": "tools/pe-version.js",
++      "gitBlob": "7c6fefeff9ab18e9ce1ef3750fed2c3c82d7a0c4",
++      "bytes": 7271,
++      "sha256": "664cfa029cc7f82a8d39d6a667470f6f4c2045af473d34c61579835bebef342f",
++      "source": "/home/user/wine-assembly/tools/pe-version.js"
++    },
++    {
++      "path": "tools/check-parens.js",
++      "gitBlob": "a768be5e00485fee5a97adbe95e1cc78b3871fd1",
++      "bytes": 13065,
++      "sha256": "68f64f8f91e44faa75c09834c0ee24356992f8c58d17a61c83503e0817d1c2a7",
++      "source": "/home/user/wine-assembly/tools/check-parens.js"
++    },
++    {
++      "path": "tools/check-wat-logical-and.js",
++      "gitBlob": "f07e0a8e7c53c23693e68442cb8f0518be7853a5",
++      "bytes": 6759,
++      "sha256": "db81c73d21d2999f2bc6fbc67b95e20710fe30c424b0f467bd0fb0b92eb8bb22",
++      "source": "/home/user/wine-assembly/tools/check-wat-logical-and.js"
++    },
++    {
++      "path": "tools/watx.js",
++      "gitBlob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
++      "bytes": 2663,
++      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
++      "source": "/home/user/wine-assembly/tools/watx.js"
++    },
++    {
++      "path": "tools/watx-src/compiler.js",
++      "gitBlob": "29d724bec5888623d9a0a9466301d0001bd30438",
++      "bytes": 18610,
++      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175",
++      "source": "/home/user/wine-assembly/tools/watx-src/compiler.js"
++    },
++    {
++      "path": "tools/watx-src/compiler-parser.js",
++      "gitBlob": "678b529d637f5c0ab4482570a55f85514cd682ac",
++      "bytes": 38100,
++      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236",
++      "source": "/home/user/wine-assembly-callback-concurrency-independent-integrate/tools/watx-src/compiler-parser.js"
++    },
++    {
++      "path": "tools/watx-src/compiler-stages.js",
++      "gitBlob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
++      "bytes": 31195,
++      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03",
++      "source": "/home/user/wine-assembly/tools/watx-src/compiler-stages.js"
++    },
++    {
++      "path": "tools/watx-src/compiler-codegen.js",
++      "gitBlob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
++      "bytes": 302257,
++      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
++      "source": "/home/user/wine-assembly/tools/watx-src/compiler-codegen.js"
++    },
++    {
++      "path": "ops/README.md",
++      "gitBlob": "296fd00fc973fe2476543b95218ad936443a2672",
++      "bytes": 50264,
++      "sha256": "8488f509bad35828a5fbe10f9403926fcc2c098037d018cffcc8e4f60d1c67c7",
++      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/ops/README.md"
++    },
++    {
++      "path": "src/10-helpers.wat",
++      "gitBlob": "bd7a457b57f74c625a12c919b66a4bd9350f16c6",
++      "source": "/home/user/wine-assembly-mm-timer-qualified-integrate-oct22/src/10-helpers.wat",
++      "bytes": 529243,
++      "sha256": "7fa0c6e66a45c9fabe52dc6db0110fc4a726b4314d2d6b8fb8378db405877574"
++    },
++    {
++      "path": "src/10c-truetype.wat",
++      "gitBlob": "f612273cccb3c86511a844121cc34a26e1b0cdd7",
++      "source": "/home/user/wine-assembly/src/10c-truetype.wat",
++      "bytes": 284451,
++      "sha256": "3c3f3a7758976eed86e6fa7f73182b0a520e6143fbb36851d1de0ca9339c2e91"
++    },
++    {
++      "path": "ops/check-run-evidence.js",
++      "gitBlob": "734402fd3e0d121443111cd0db9ef9b14219cb6b",
++      "bytes": 6474,
++      "sha256": "48dc34e9174c9be98c12f0ae7bf84d00f898d54d2cbec179ce5afb54a82b5925",
++      "source": "/home/user/wine-assembly/ops/check-run-evidence.js"
++    }
++  ],
++  "admission": {
++    "projectedBytes": 34617987,
++    "sharedNativeBytes": 843776,
++    "reserveBytes": 8388608,
++    "capBytes": 67108864
++  }
++}
+diff --git a/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/verify.py b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/verify.py
+new file mode 100644
+index 0000000..eca2042
+--- /dev/null
++++ b/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/verify.py
+@@ -0,0 +1,99 @@
++#!/usr/bin/env python3
++"""Bounded offline source acceptance; never builds the emulator or runs a PE."""
++import hashlib
++import json
++import os
++from pathlib import Path
++import subprocess
++import time
++
++EVIDENCE = Path(__file__).resolve().parent
++ROOT = EVIDENCE.parents[2]
++NATIVE = Path('/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22')
++LAUNCHER = Path('/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-version-repair-oct22')
++SHARED = Path('/home/user/wine-assembly')
++ENV = dict(os.environ, GIT_NO_LAZY_FETCH='1')
++CHANGED = ['lib/dll-registry.js', 'lib/process-boot.js', 'lib/storage.js',
++           'src/01-header.wat', 'src/09a1-comctl-handlers.wat',
++           'test/test-directx-system-files.js', 'test/test-file-version-info.js',
++           'test/test-static-dx-version.js', 'test/test-directx-registry-metadata.js',
++           'test/test-dsetup-loading.js', 'test/dsetup-binding-fixture.js',
++           'test/version-source-fixture.js', 'test/wat-source-function.js']
++
++def sha(path):
++    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++def allocated(path):
++    if not path.exists():
++        return 0
++    total = path.lstat().st_blocks * 512
++    if path.is_dir():
++        for child in path.iterdir():
++            total += allocated(child)
++    return total
++
++def resource_guard():
++    own = allocated(ROOT)
++    shared = allocated(NATIVE)
++    launch = allocated(LAUNCHER) + allocated(Path(str(LAUNCHER) + '.task.txt'))
++    reserve = 8388608
++    growth = 4194304
++    total = own + shared + launch + reserve + growth
++    free = os.statvfs(ROOT).f_bavail * os.statvfs(ROOT).f_frsize
++    assert total < 67108864, total
++    assert free >= 2982150144, free
++    return dict(ownAllocated=own, sharedNativeAllocated=shared, launcherAllocated=launch,
++                reserve=reserve, publicationGrowthAllowance=growth, total=total,
++                cap=67108864, hostFree=free, hostFloor=2982150144)
++
++def main():
++    resources = resource_guard()
++    pins = json.loads((EVIDENCE / 'source-pins.json').read_text())
++    for row in pins['files']:
++        assert sha(row['source']) == row['sha256'], row['source']
++        if row['path'] not in CHANGED:
++            assert sha(ROOT / row['path']) == row['sha256'], row['path']
++    receipt = json.loads((NATIVE / 'receipt.json').read_text())
++    for row in receipt['originalInstalledFiles']:
++        assert (NATIVE / row['name']).stat().st_size == row['size']
++        assert sha(NATIVE / row['name']) == row['sha256']
++    # Accepted donor's earlier seals independently protect shared Git state.
++    donor = Path('/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22')
++    old = json.loads((donor / 'scratch/runs/20261022-shadow-man-dsetup-ordinal-support/resources.json').read_text())
++    seals = old['protectedGitMetadataUnchanged']
++    for directory, files in seals.items():
++        for file, digest in files.items():
++            p = Path(directory) / '.git' / file
++            assert (sha(p) if p.exists() else None) == digest, str(p)
++    native_arg = '--native-dir=' + str(NATIVE)
++    commands = [
++        ['node', 'test/test-storage-registry.js'],
++        ['node', 'test/test-directx-registry-metadata.js'],
++        ['node', 'test/test-dsetup-loading.js'],
++        ['node', 'test/test-dsetup-loading.js', native_arg],
++        ['node', 'test/test-file-version-info.js', '--source-fixture', native_arg],
++        ['node', 'test/test-directx-system-files.js', '--source-fixture'],
++        ['node', str(EVIDENCE / 'mutations.js')],
++        ['node', 'tools/check-parens.js', 'src/09a1-comctl-handlers.wat', '--no-diff', '--quiet'],
++        ['node', 'tools/check-parens.js', 'src/01-header.wat', '--no-diff', '--quiet'],
++        ['node', 'tools/check-wat-logical-and.js'],
++        ['node', 'ops/check-run-evidence.js', str(ROOT)],
++    ]
++    commands += [['node', '--check', f] for f in CHANGED if f.endswith('.js')]
++    commands += [['git', 'diff', '--check', '--'] + CHANGED]
++    checks = []
++    for args in commands:
++        started = time.monotonic()
++        result = subprocess.run(args, cwd=ROOT, env=ENV, capture_output=True, text=True, timeout=30)
++        assert len(result.stdout) + len(result.stderr) < 100000
++        checks.append(dict(command=args, exit=result.returncode, elapsed=time.monotonic()-started,
++                           stdout=result.stdout, stderr=result.stderr))
++        assert result.returncode == 0, checks[-1]
++    (EVIDENCE / 'checks.json').write_text(json.dumps(checks, indent=2) + '\n')
++    resources.update(resource_guard())
++    resources['protectedMetadataMatchesAcceptedDonorSeals'] = True
++    (EVIDENCE / 'resources.json').write_text(json.dumps(resources, indent=2) + '\n')
++    print('PASS', len(checks), 'commands; 4 rejecting mutations; original seals; protected Git seals; allocation/floor')
++
++if __name__ == '__main__':
++    main()
+diff --git a/src/01-header.wat b/src/01-header.wat
+index a429a42..a568afa 100644
+--- a/src/01-header.wat
++++ b/src/01-header.wat
+@@ -1051,26 +1051,9 @@
+   (data (region.addr $BROWSE_DIALOG_STRINGS 0x3B) "My Documents\00")
+   (data (region.addr $BROWSE_DIALOG_STRINGS 0x48) "C:\\My Documents\00")
+ 
+-  ;; A complete VS_VERSIONINFO block (header + VS_FIXEDFILEINFO, no string
+-  ;; tables) reporting DirectX 6.1a — dplayx.dll 4.06.03.0518, the version
+-  ;; Windows 98 SE shipped. The file-version APIs hand this back for the
+-  ;; DirectX modules we dispatch statically, which have no file on disk to
+-  ;; read a real resource out of. Age of Empires II refuses to start below
+-  ;; 4.6.3.516, and it asks dplayx, not the display driver.
+-  ;;   +0x00 wLength=92  wValueLength=52  wType=0
+-  ;;   +0x06 "VS_VERSION_INFO" UTF-16 + NUL, then 2 bytes of padding
+-  ;;   +0x28 VS_FIXEDFILEINFO: signature, struct version, file/product
+-  ;;         version, flags mask, flags, VOS__WINDOWS32, VFT_DLL, dates
+-  (data (region.addr $DX_VERSION_INFO 0)
+-    "\5c\00\34\00\00\00"
+-    "V\00S\00_\00V\00E\00R\00S\00I\00O\00N\00_\00I\00N\00F\00O\00\00\00"
+-    "\00\00"
+-    "\bd\04\ef\fe\00\00\01\00"
+-    "\06\00\04\00\06\02\03\00"
+-    "\06\00\04\00\06\02\03\00"
+-    "\3f\00\00\00\00\00\00\00"
+-    "\04\00\00\00\02\00\00\00"
+-    "\00\00\00\00\00\00\00\00\00\00\00\00")
++  ;; DX_VERSION_INFO's region remains reserved to avoid moving unrelated
++  ;; allocations. File version APIs now read actual named-file resources;
++  ;; no fabricated DirectX version block is initialized here.
+ 
+   ;; Dialog-template string class names. Win32 templates may use either
+   ;; builtin ordinal classes (0x80..0x85) or string names.
+diff --git a/src/09a1-comctl-handlers.wat b/src/09a1-comctl-handlers.wat
+index 6a607be..ab9630e 100644
+--- a/src/09a1-comctl-handlers.wat
++++ b/src/09a1-comctl-handlers.wat
+@@ -969,64 +969,16 @@
+ 
+   ;; === VERSION.DLL APIs ===
+ 
+-  ;; GetFileVersionInfoSizeA(lptstrFilename, lpdwHandle) → size or 0
+-  ;; Reads RT_VERSION (16) from the PE named by lptstrFilename.
++  ;; Both encodings read the named file's RT_VERSION. A static module name
++  ;; alone supplies no file version, and must not shadow an installed file.
+   (func $handle_GetFileVersionInfoSizeA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+-    (local $entry i32) (local $size i32)
+-    ;; If lpdwHandle is non-null, set *lpdwHandle = 0
+-    (if (local.get $arg1)
+-      (then (call $gs32 (local.get $arg1) (i32.const 0))))
+-    ;; A DirectX component we dispatch statically has no file on disk, so the
+-    ;; EXE's own resource would be answered instead — which is how an app's
+-    ;; "do you have DirectX 6.1a?" probe ends up reading its own version.
+-    (if (call $name_is_static_dx_dll (local.get $arg0))
+-      (then
+-        (i32.store offset=0 (global.get $reg_base) (global.get $DX_VERSION_INFO_SIZE))
+-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+-        (return)))
+-    ;; Ordinary calls inspect the named file, including freshly extracted DLLs.
+     (call $file_version_info_size_named
+       (local.get $arg0) (local.get $arg1) (i32.const 0) (i32.const 1))
+-    (drop (local.get $entry))
+-    (drop (local.get $size))
+-
+-
+-
+-
+     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+ 
+-  ;; GetFileVersionInfoA(lptstrFilename, dwHandle, dwLen, lpData) → BOOL
+-  ;; Copies the RT_VERSION resource data into the caller's buffer.
+   (func $handle_GetFileVersionInfoA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+-    (local $entry i32) (local $rva i32) (local $size i32) (local $len i32)
+-    (if (call $name_is_static_dx_dll (local.get $arg0))
+-      (then
+-        (local.set $len (local.get $arg2))
+-        (if (i32.gt_u (local.get $len) (global.get $DX_VERSION_INFO_SIZE))
+-          (then (local.set $len (global.get $DX_VERSION_INFO_SIZE))))
+-        (memory.copy (call $g2w (local.get $arg3))
+-          (global.get $DX_VERSION_INFO) (local.get $len))
+-        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+-        (return)))
+-    ;; The file reader maps RVA through section headers rather than assuming
+-    ;; the on-disk image has already been loaded at image_base.
+     (call $file_version_info_named
+       (local.get $arg0) (local.get $arg2) (local.get $arg3) (i32.const 0))
+-    (drop (local.get $entry))
+-    (drop (local.get $rva))
+-    (drop (local.get $size))
+-    (drop (local.get $len))
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+ 
+   ;; The VERSION resource itself is encoding-neutral; only the path width
+diff --git a/test/dsetup-binding-fixture.js b/test/dsetup-binding-fixture.js
+new file mode 100644
+index 0000000..0934400
+--- /dev/null
++++ b/test/dsetup-binding-fixture.js
+@@ -0,0 +1,54 @@
++'use strict';
++
++// Ordinal-only fixture: real JS import patch dispatcher -> verbatim WAT
++// patch_caller_iat -> verbatim resolve_ordinal. Never execute mapped x86.
++// Untested named/CRT/thunk paths trap so an accidental detour cannot pass.
++const fs = require('fs');
++const { sourceFunction } = require('./wat-source-function');
++const { compile } = require('../tools/watx');
++
++function compileBindingFixture() {
++  const source = fs.readFileSync(require.resolve('../src/08b-dll-loader.wat'), 'utf8');
++  const helper = fs.readFileSync(require.resolve('../src/10-helpers.wat'), 'utf8');
++  const functions = ['patch_caller_iat', 'resolve_ordinal', 'resolve_ordinal_locked', 'parse_exports']
++    .map(n => sourceFunction(source, n));
++  functions.push(...['dll_name_match', 'tolower'].map(n => sourceFunction(helper, n)));
++  const trap = (name, count, result = true) => `(func $${name} ${'(param i32) '.repeat(count)}
++    ${result ? '(result i32)' : ''} (unreachable))`;
++  const wat = `
++    (import "host" "memory" (memory 16 8192 shared))
++    (global $DLL_SHARED i32 (i32.const 0x1000))
++    (global $DLL_TABLE i32 (i32.const 0x1100))
++    (global $DLL_LIFE_FREE i32 (i32.const 0))
++    (global $DLL_LOAD_LOCK i32 (i32.const 0x1200))
++    (global $THUNK_BASE i32 (i32.const 0))
++    (global $GUEST_BASE i32 (i32.const 0x12000))
++    (global $image_base i32 (i32.const 0x400000))
++    (global $num_thunks (mut i32) (i32.const 0))
++    (func $g2w (param $p i32) (result i32)
++      (i32.add (i32.sub (local.get $p) (global.get $image_base)) (global.get $GUEST_BASE)))
++    (func $gl8 (param $p i32) (result i32) (i32.load8_u (call $g2w (local.get $p))))
++    (func $dll_lifecycle_row (param i32) (result i32) (i32.const 0x1300))
++    (func $dll_load_lock_begin) (func $lock_release (param i32))
++    ${trap('iat_slot_name_rva', 2)} ${trap('native_override_export_api_id', 1)}
++    ${trap('crt_dll_is_msvcr', 1)} ${trap('crt_native_override_defers', 1)}
++    ${trap('resolve_name_export', 2)} ${trap('crt_override_api_id', 1)}
++    ${trap('thunk_reserve', 0)} ${trap('crt_override_record', 2)} ${trap('update_thunk_end', 0, false)}
++    ${functions.join('\n')}
++    (func (export "prepare") (param $base i32) (param $exp i32)
++      (i32.store (global.get $DLL_SHARED) (i32.const 1))
++      (i32.store (i32.const 0x1300) (i32.const 2))
++      (i32.store (global.get $DLL_TABLE) (local.get $base))
++      (call $parse_exports (global.get $DLL_TABLE) (local.get $base) (local.get $exp)))
++    (func (export "get_image_base") (result i32) (global.get $image_base))
++    (func (export "get_guest_base") (result i32) (global.get $GUEST_BASE))
++    (func (export "get_dll_count") (result i32) (i32.load (global.get $DLL_SHARED)))
++    (func (export "get_dll_table") (result i32) (global.get $DLL_TABLE))
++    (func (export "ordinal") (param $n i32) (result i32) (call $resolve_ordinal (i32.const 0) (local.get $n)))
++  `;
++  const r = compile(wat, new Map(), {mode: 'production', standardWat: true,
++    runtimeBuiltins: false, strictDeclarations: true});
++  if (!r.success) throw new Error(JSON.stringify(r));
++  return r.wasmBinary;
++}
++module.exports = { compileBindingFixture };
+diff --git a/test/test-directx-registry-metadata.js b/test/test-directx-registry-metadata.js
+new file mode 100644
+index 0000000..3a9d51f
+--- /dev/null
++++ b/test/test-directx-registry-metadata.js
+@@ -0,0 +1,43 @@
++#!/usr/bin/env node
++'use strict';
++const assert = require('assert');
++const storage = require('../lib/storage');
++const { g2w } = require('../lib/mem-utils');
++const memory = new ArrayBuffer(0x30000), bytes = new Uint8Array(memory), dv = new DataView(memory);
++const base = 0x400000, wa = p => g2w(p, base);
++const api = storage.createStorageImports({getMemory: () => memory, exports: {get_image_base: () => base}});
++const key = base + 0x1000, name = base + 0x1100, type = base + 0x1200;
++const data = base + 0x1300, size = base + 0x1400;
++const put = (p, s, wide = 0) => bytes.set(Buffer.from(s + '\0', wide ? 'utf16le' : 'latin1'), wa(p));
++const u32 = p => dv.getUint32(wa(p), true);
++const set32 = (p, n) => dv.setUint32(wa(p), n, true);
++put(key, 'Software\\Microsoft\\Directx');
++storage.clearStore();
++assert.strictEqual(api.reg_open_key(0x80000002, wa(key), 0), 0, 'fresh state invents no DirectX key');
++// Test supplied metadata, not a capability policy or the stopped installation.
++storage.setRegValue('HKLM\\Software\\Microsoft\\DirectX', 'Version', 1, '1.02.003.0004');
++const h = api.reg_open_key(0x80000002, wa(key), 0);
++assert(h);
++for (const wide of [0, 1]) {
++  put(name, 'vErSiOn', wide);
++  const expected = Buffer.from('1.02.003.0004\0', wide ? 'utf16le' : 'latin1');
++  set32(size, 0);
++  assert.strictEqual(api.reg_query_value(h, wa(name), type, 0, size, wide), 0);
++  assert.strictEqual(u32(type), 1); assert.strictEqual(u32(size), expected.length);
++  bytes.fill(0xa5, wa(data), wa(data) + 64); set32(size, expected.length - 1);
++  assert.strictEqual(api.reg_query_value(h, wa(name), type, data, size, wide), 234);
++  assert.strictEqual(u32(size), expected.length);
++  assert(bytes.subarray(wa(data), wa(data) + 64).every(v => v === 0xa5));
++  set32(size, expected.length);
++  assert.strictEqual(api.reg_query_value(h, wa(name), type, data, size, wide), 0);
++  assert.deepStrictEqual(Buffer.from(bytes.subarray(wa(data), wa(data) + expected.length)), expected);
++  assert.strictEqual(bytes[wa(data) + expected.length], 0xa5, 'terminator/width bounded');
++}
++put(name, 'InstalledVersion'); set32(size, 64);
++assert.strictEqual(api.reg_query_value(h, wa(name), type, data, size, 0), 2, 'no binary twin invented');
++const snapshot = storage.exportStore();
++storage.clearStore(); storage.importStore(snapshot);
++assert(api.reg_open_key(0x80000002, wa(key), 0), 'imported installer metadata retained');
++storage.clearStore();
++assert.strictEqual(api.reg_open_key(0x80000002, wa(key), 0), 0, 'reset does not reseed version');
++console.log('PASS DirectX registry absence, supplied metadata, A/W sizes, canaries, errors and restore');
+diff --git a/test/test-directx-system-files.js b/test/test-directx-system-files.js
+index 82177f0..9bafa7a 100644
+--- a/test/test-directx-system-files.js
++++ b/test/test-directx-system-files.js
+@@ -3,19 +3,19 @@
+ 
+ // The DirectX DLLs we dispatch statically must also exist as files in
+ // C:\WINDOWS\SYSTEM: installers look for the file before they read its
+-// version. NFS II's InstallShield script GetFileAttributes's SYSTEM\DDRAW.DLL
+-// and, when it was missing, reported "No versions of DirectX have been
+-// detected" and offered to install DirectX 3 over our DirectX 6.1a.
++// version. File presence keeps those lookups working; it supplies no version
++// provenance and must not satisfy an installer's version requirement alone.
+ //
+ // Checks the shared boot helper mounts each one, that a version read through
+-// the file (GetFileVersionInfoW, which has no by-name answer) reports the same
+-// 4.6.3.518 as the by-name path, that a shipped file is kept, and that
++// the file reports no invented DirectX version, that a shipped file is kept, and that
+ // LoadLibrary is not offered the stub as a PE to map.
+ 
+ const assert = require('assert');
+ const boot = require('../lib/process-boot');
+-const { createHostImports } = require('../lib/host-imports');
+-const { compileSrcWasm } = require('./compile-src');
++const { buildVersionBlob, buildVersionPe } = require('../tools/pe-version');
++const fixture = process.argv.includes('--source-fixture');
++const { createHostImports } = require(fixture ? './version-source-fixture' : '../lib/host-imports');
++const { compileSrcWasm } = require(fixture ? './version-source-fixture' : './compile-src');
+ 
+ async function main() {
+   const shippedVfs = { files: new Map() };
+@@ -24,6 +24,13 @@ async function main() {
+   boot.mountSystemDataFiles(shippedVfs, []);
+   assert.strictEqual(shippedVfs.files.get('c:\\windows\\system\\ddraw.dll'), shipped,
+     'a file already at the path is not replaced');
++  const oldPlaceholder = {data: buildVersionPe(buildVersionBlob([
++    0xFEEF04BD, 0x10000, 0x00040006, 0x00030206])), attrs: 0x20, staticModule: true};
++  const retained = {files: new Map([['c:\\windows\\system\\ddraw.dll', oldPlaceholder]])};
++  boot.mountDirectXSystemModules(retained);
++  assert.notStrictEqual(retained.files.get('c:\\windows\\system\\ddraw.dll'), oldPlaceholder,
++    'known synthetic snapshot placeholder is refreshed');
++  assert.strictEqual(boot.mountDirectXSystemModules(retained), 0, 'mount remains idempotent');
+ 
+   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+   const ctx = { getMemory: () => memory.buffer, renderer: null, resourceJson: {} };
+@@ -59,7 +66,7 @@ async function main() {
+   for (const file of boot.DIRECTX_SYSTEM_MODULE_FILES) {
+     const full = 'C:\\WINDOWS\\SYSTEM\\' + file;
+     assert.strictEqual(ctx.vfs.getFileAttributes(full), 0x20, `${file} exists`);
+-    assert.strictEqual(imports.host.has_dll_file(wa(writeStr(full, false))), 0,
++    if (!fixture) assert.strictEqual(imports.host.has_dll_file(wa(writeStr(full, false))), 0,
+       `${file} is not offered to LoadLibrary as a PE`);
+     // The CLI's LoadLibrary byte lookup must agree with the page: mapping the
+     // stub zeroed every DDRAW import of NFS III's softtria.dll/d3da.dll.
+@@ -70,6 +77,22 @@ async function main() {
+ 
+     const wide = writeStr(full, true);
+     const size = e.test_call_GetFileVersionInfoSizeW(wide, 0) >>> 0;
++    if (file !== 'OPENGL32.DLL') {
++      assert.strictEqual(size, 0, `${file} has no invented version resource`);
++      const handleOut = e.guest_alloc(4);
++      dv.setUint32(wa(handleOut), 0xdeadbeef, true);
++      const ansi = writeStr(full, false);
++      assert.strictEqual(e.test_call_GetFileVersionInfoSizeA(ansi, handleOut), 0);
++      if (fixture) assert.strictEqual(e.get_esp(), 0x00b0000c, 'ret + two arguments');
++      assert.strictEqual(dv.getUint32(wa(handleOut), true), 0, 'DWORD handle output cleared');
++      const output = e.guest_alloc(96);
++      u8.fill(0xa5, wa(output), wa(output) + 96);
++      assert.strictEqual(e.test_call_GetFileVersionInfoA(ansi, 0, 92, output), 0);
++      if (fixture) assert.strictEqual(e.get_esp(), 0x00b00014, 'ret + four arguments');
++      assert.strictEqual(e.test_call_GetFileVersionInfoW(wide, 0, 92, output), 0);
++      assert(u8.subarray(wa(output), wa(output) + 96).every(v => v === 0xa5), 'no data fabricated on failure');
++      continue;
++    }
+     assert(size >= 92, `${file} has a version resource (${size})`);
+     const block = e.guest_alloc(size);
+     assert.strictEqual(e.test_call_GetFileVersionInfoW(wide, 0, size, block), 1,
+@@ -80,11 +103,8 @@ async function main() {
+       `${file} root query`);
+     const fixed = wa(dv.getUint32(wa(outPtr), true));
+     assert.strictEqual(dv.getUint32(fixed, true), 0xFEEF04BD, `${file} signature`);
+-    // The four by-name modules answer 4.6.3.518 (6.1a) either way; d3d8.dll is
+-    // the DirectX 8.1 runtime's 4.8.1.881, which GetDXVersion's 8.1 tier reads.
+-    // opengl32.dll is Win98 SE's 4.10.0.2222, not a DirectX version.
+-    const expected = file === 'D3D8.DLL' ? [0x00040008, 0x00010371]
+-      : file === 'OPENGL32.DLL' ? [0x0004000a, 0x000008ae] : [0x00040006, 0x00030206];
++    // Preserve unrelated OpenGL placeholder behavior in this narrow repair.
++    const expected = [0x0004000a, 0x000008ae];
+     assert.deepStrictEqual([dv.getUint32(fixed + 8, true), dv.getUint32(fixed + 12, true)],
+       expected, `${file} file version`);
+   }
+@@ -92,7 +112,7 @@ async function main() {
+   const realDll = { data: new Uint8Array([0x4d, 0x5a]), attrs: 0x20 };
+   ctx.vfs.files.set('c:\\plugins\\real.dll', realDll);
+   assert.strictEqual(boot.findVfsDllBytes(ctx.vfs, 'real.dll', 'real.dll'), realDll.data);
+-  console.log('PASS  DirectX system modules exist as versioned files in C:\\WINDOWS\\SYSTEM');
++  console.log('PASS  DirectX file presence preserves static loading without invented versions');
+ }
+ 
+ main().catch(err => { console.error(err); process.exit(1); });
+diff --git a/test/test-dsetup-loading.js b/test/test-dsetup-loading.js
+new file mode 100644
+index 0000000..15d6af6
+--- /dev/null
++++ b/test/test-dsetup-loading.js
+@@ -0,0 +1,106 @@
++#!/usr/bin/env node
++'use strict';
++const assert = require('assert');
++const fs = require('fs');
++const path = require('path');
++const crypto = require('crypto');
++const boot = require('../lib/process-boot');
++const loader = require('../lib/dll-loader');
++const registry = require('../lib/dll-registry');
++const { readPE } = require('../lib/pe');
++const { buildVersionPe, buildVersionBlob } = require('../tools/pe-version');
++const { compileBindingFixture } = require('./dsetup-binding-fixture');
++
++// Normal CI uses tiny source fixtures. The task's offline replay can also use
++// sealed originals, supplied explicitly; no original binary is stored in Git.
++function images() {
++  const arg = process.argv.find(x => x.startsWith('--native-dir='));
++  if (arg) {
++    const dir = arg.slice('--native-dir='.length);
++    const receipt = JSON.parse(fs.readFileSync(path.join(dir, 'receipt.json')));
++    for (const row of receipt.originalInstalledFiles) {
++      const bytes = fs.readFileSync(path.join(dir, row.name));
++      assert.strictEqual(bytes.length, row.size);
++      assert.strictEqual(crypto.createHash('sha256').update(bytes).digest('hex'), row.sha256);
++    }
++    return {exe: fs.readFileSync(path.join(dir, 'd3dconfigutility.exe')),
++      dll: fs.readFileSync(path.join(dir, 'dsetup.dll')), native: true};
++  }
++  const make = base => {
++    const b = buildVersionPe(buildVersionBlob([]));
++    b.writeUInt32LE(base, 0x98 + 28);
++    b.fill(0, 0x98 + 96, 0x98 + 96 + 24);
++    b.fill(0, 0x200);
++    return b;
++  };
++  const exe = make(0x400000), dll = make(0x600000);
++  const set = (b, rva, value) => b.writeUInt32LE(value >>> 0, rva - 0x1000 + 0x200);
++  exe.writeUInt32LE(0x1000, 0x98 + 104);
++  set(exe, 0x1000, 0x1040); set(exe, 0x100c, 0x1060); set(exe, 0x1010, 0x1050);
++  set(exe, 0x1040, 0x8000000b); set(exe, 0x1050, 0x07500000);
++  exe.write('DSETUP.DLL\0', 0x260, 'latin1');
++  dll.writeUInt32LE(0x1000, 0x98 + 96);
++  set(dll, 0x100c, 0x1060); set(dll, 0x1010, 1); set(dll, 0x1014, 11);
++  set(dll, 0x101c, 0x1080); set(dll, 0x10a8, 0x1100);
++  dll.write('DSETUP.DLL\0', 0x260, 'latin1');
++  return {exe, dll, native: false};
++}
++
++async function main() {
++  const {exe, dll, native} = images();
++  const requests = [], missing = [];
++  const plan = async (present, wrongName = false) => boot.resolveDllGraph({exeBytes: exe,
++    detectRequiredDlls: loader.detectRequiredDlls,
++    loadSpec(name) {
++      requests.push(name.toLowerCase());
++      return present && name.toLowerCase() === (wrongName ? 'dsetup32.dll' : 'dsetup.dll')
++        ? {name: 'dsetup.dll', bytes: dll} : null;
++    }, onMissing: name => missing.push(name.toLowerCase())});
++  assert(registry.isLoadableDll('DSETUP.DLL'));
++  assert.strictEqual(registry.dllPath('dsetup.dll'), null, 'only installed app/VFS bytes');
++  assert(!loader.isWindowsSystemDll('dsetup.dll'), 'preserve native PE route');
++  const selected = await plan(true);
++  assert(requests.includes('dsetup.dll'));
++  assert(selected.some(x => x.name === 'dsetup.dll' && x.bytes === dll));
++  assert(!(await plan(false)).some(x => x.name === 'dsetup.dll'));
++  assert(missing.includes('dsetup.dll'));
++  assert(!(await plan(true, true)).some(x => x.name === 'dsetup.dll'));
++
++  const memory = new WebAssembly.Memory({initial: 8192, maximum: 8192, shared: true});
++  const {instance} = await WebAssembly.instantiate(compileBindingFixture(), {host: {memory}});
++  const e = instance.exports, bytes = new Uint8Array(memory.buffer), dv = new DataView(memory.buffer);
++  const wa = g => g - e.get_image_base() + e.get_guest_base();
++  function map(image) {
++    const pe = readPE(image);
++    for (const s of pe.sections) bytes.set(image.subarray(s.rawOff, s.rawOff + s.rawSize), wa(pe.imageBase + s.rva));
++    return pe;
++  }
++  const ep = map(exe), dp = map(dll);
++  const exp = dll.readUInt32LE(dp.peOff + 120);
++  e.prepare(dp.imageBase, exp);
++  const importRva = exe.readUInt32LE(ep.peOff + 128);
++  let desc = wa(ep.imageBase + importRva), slot = 0;
++  while (dv.getUint32(desc + 12, true)) {
++    const np = wa(ep.imageBase + dv.getUint32(desc + 12, true));
++    let end = np; while (bytes[end]) end++;
++    if (Buffer.from(bytes.subarray(np, end)).toString('latin1').toLowerCase() === 'dsetup.dll')
++      slot = ep.imageBase + dv.getUint32(desc + 16, true);
++    desc += 20;
++  }
++  assert(slot);
++  const expected = dp.imageBase + (native ? 0x18b0 : 0x1100);
++  assert.strictEqual(e.ordinal(11) >>> 0, expected >>> 0);
++  assert.strictEqual(e.ordinal(0), 0); assert.strictEqual(e.ordinal(65535), 0);
++  const before = dv.getUint32(wa(slot), true);
++  loader.patchExeImports(e, memory.buffer, exe, selected);
++  assert.strictEqual(dv.getUint32(wa(slot), true), expected >>> 0, 'actual JS -> WAT ordinal binding');
++  if (native) assert.strictEqual(slot, 0x409024);
++  // Missing EAT entry must not bind to a fabricated handler/address.
++  const eat = dp.imageBase + dll.readUInt32LE(dp.va2off(dp.imageBase + exp + 28));
++  dv.setUint32(wa(eat + 10 * 4), 0, true);
++  dv.setUint32(wa(slot), before, true);
++  loader.patchExeImports(e, memory.buffer, exe, selected);
++  assert.strictEqual(dv.getUint32(wa(slot), true), before, 'absent export leaves normal unresolved slot');
++  console.log(`PASS ${native ? 'authentic sealed' : 'synthetic'} DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed`);
++}
++main().catch(e => {console.error(e); process.exitCode = 1;});
+diff --git a/test/test-file-version-info.js b/test/test-file-version-info.js
+index 12c209d..51cc14c 100644
+--- a/test/test-file-version-info.js
++++ b/test/test-file-version-info.js
+@@ -2,9 +2,10 @@
+ 
+ const assert = require('assert');
+ const path = require('path');
+-const { createHostImports } = require('../lib/host-imports');
+-const { buildVersionBlob, buildVersionPe } = require('../tools/pe-version');
+-const { compileSrcWasm } = require('./compile-src');
++const fixture = process.argv.includes('--source-fixture');
++const { createHostImports } = require(fixture ? './version-source-fixture' : '../lib/host-imports');
++const { buildVersionBlob, buildVersionPe, findVersionBlob } = require('../tools/pe-version');
++const { compileSrcWasm } = require(fixture ? './version-source-fixture' : './compile-src');
+ 
+ async function main() {
+   const blob = buildVersionBlob([
+@@ -186,6 +187,42 @@ async function main() {
+   // A zero-sized child must fail rather than looping forever or fabricating a value.
+   dv.setUint16(wa(resource) + 92, 0, true);
+   assert.strictEqual(query('\\StringFileInfo\\040904B0\\FileVersion').ok, 0);
++  const nativeArg = process.argv.find(a => a.startsWith('--native-dir='));
++  if (nativeArg) {
++    const fs = require('fs');
++    const dir = nativeArg.slice('--native-dir='.length);
++    for (const name of ['dsetup.dll', 'dsetup32.dll', 'd3dconfigutility.exe']) {
++      const native = fs.readFileSync(path.join(dir, name));
++      const actual = findVersionBlob(native);
++      if (name !== 'd3dconfigutility.exe') assert(actual, `${name} has an authentic version resource`);
++      // Deliberately use the name the native Win9x detector reads. The source
++      // bytes are the sealed setup/config files, not a claimed DDRAW runtime.
++      const file = 'c:\\windows\\system\\ddraw.dll';
++      ctx.vfs.files.set(file, {data: native, attrs: 0x20});
++      for (const wide of [false, true]) {
++        const gp = wide ? writeWide(file) : writeAscii(file);
++        const suffix = wide ? 'W' : 'A';
++        if (!actual) {
++          assert.strictEqual(e['test_call_GetFileVersionInfoSize' + suffix](gp, 0), 0);
++          const out = e.guest_alloc(96);
++          u8.fill(0xa5, wa(out), wa(out) + 96);
++          assert.strictEqual(e['test_call_GetFileVersionInfo' + suffix](gp, 0, 92, out), 0);
++          assert(u8.subarray(wa(out), wa(out) + 96).every(v => v === 0xa5));
++          continue;
++        }
++        assert.strictEqual(e['test_call_GetFileVersionInfoSize' + suffix](gp, 0), actual.length);
++        const out = e.guest_alloc(actual.length + 4);
++        u8.fill(0xa5, wa(out), wa(out) + actual.length + 4);
++        assert.strictEqual(e['test_call_GetFileVersionInfo' + suffix](gp, 0, actual.length, out), 1);
++        assert.deepStrictEqual(Buffer.from(u8.subarray(wa(out), wa(out) + actual.length)), actual,
++          `${name} ${suffix}: actual resource bytes, no inferred capability/version`);
++        assert(u8.subarray(wa(out) + actual.length, wa(out) + actual.length + 4).every(v => v === 0xa5));
++        assert.strictEqual(e.test_call_VerQueryValueA(out, writeAscii('\\'), outPtr, outLen), 1);
++        assert.strictEqual(dv.getUint32(wa(outLen), true), 52);
++      }
++    }
++    console.log('PASS authentic setup/config RT_VERSION bytes through DDRAW path, A/W exact copy and root query; no runtime capability claim');
++  }
+   console.log('PASS file-backed GetFileVersionInfo A/W resource lookup');
+ }
+ 
+diff --git a/test/test-static-dx-version.js b/test/test-static-dx-version.js
+index d80fd41..baed5d5 100644
+--- a/test/test-static-dx-version.js
++++ b/test/test-static-dx-version.js
+@@ -1,15 +1,14 @@
+ #!/usr/bin/env node
+-// A DirectX component we dispatch statically has no PE image and no file on
+-// disk, but a game still asks Windows how old it is before it will start:
++// A static component's handle/path alone must not invent a file version:
+ // GetModuleHandle("dplayx") -> GetModuleFileName -> GetFileVersionInfoSize ->
+ // GetFileVersionInfo -> VerQueryValue("\") -> compare VS_FIXEDFILEINFO.
+-// Age of Empires II refuses to run unless that chain reports 4.6.3.518 or
+-// newer ("requires DirectX 6.1a or higher"), so every link is load-bearing.
++// A real installed file resource remains readable independently of capability.
+ 
+ const fs = require('fs');
+ const path = require('path');
+ const { createHostImports } = require('../lib/host-imports');
+ const { compileSrcWasm } = require('./compile-src');
++const { buildVersionBlob, buildVersionPe } = require('../tools/pe-version');
+ 
+ const ROOT = path.join(__dirname, '..');
+ const SRC = path.join(ROOT, 'src');
+@@ -72,8 +71,12 @@ async function main() {
+   check('GetModuleFileNameA returns the character count', len === filename.length,
+     `${len} vs ${filename.length}`);
+ 
++  check('static handle/path without a file has no version',
++    e.test_call_GetFileVersionInfoSizeA(buf, 0) === 0);
++  const actual = buildVersionBlob([0xFEEF04BD, 0x10000, 0x00050006, 0x00070008]);
++  ctx.vfs.files.set(filename.toLowerCase(), {data: buildVersionPe(actual), attrs: 0x20});
+   const size = e.test_call_GetFileVersionInfoSizeA(buf, 0) >>> 0;
+-  check('GetFileVersionInfoSizeA sizes the synthesized block', size >= 92, String(size));
++  check('the installed named file supplies its resource size', size === actual.length, String(size));
+ 
+   const block = e.guest_alloc(size + 16);
+   check('GetFileVersionInfoA fills the block',
+@@ -94,13 +97,11 @@ async function main() {
+   const ms = dv.getUint32(wa(ffi) + 8, true) >>> 0;
+   const ls = dv.getUint32(wa(ffi) + 12, true) >>> 0;
+   const version = [ms >>> 16, ms & 0xFFFF, ls >>> 16, ls & 0xFFFF];
+-  // 4.6.3.518 is DirectX 6.1a, the oldest build AoE2 accepts.
+-  check('the reported file version is DirectX 6.1a or newer',
+-    version[0] === 4 && version[1] === 6 && version[2] === 3 && version[3] >= 0x204,
++  check('the reported version is exactly the file resource, with no minimum policy',
++    version.join('.') === '5.6.7.8',
+     version.join('.'));
+ 
+-  // A file we do not dispatch statically must still read the EXE's own
+-  // resource, so this shortcut can't hide a missing RT_VERSION.
++  // An absent unrelated named file also has no version resource.
+   check('a non-DirectX filename does not get the DirectX block',
+     (e.test_call_GetFileVersionInfoSizeA(writeAscii('C:\\SOMEAPP.EXE'), 0) >>> 0) !== size ||
+     size === 0);
+diff --git a/test/version-source-fixture.js b/test/version-source-fixture.js
+new file mode 100644
+index 0000000..262c6b0
+--- /dev/null
++++ b/test/version-source-fixture.js
+@@ -0,0 +1,82 @@
++'use strict';
++
++// Standalone VERSION source fixture, not the full emulator or an x86 guest.
++// Execute the real resource parser, query walker and A/W handlers. Substitute
++// only flat guest memory, allocator and host wiring; use the real VFS imports.
++const fs = require('fs');
++const path = require('path');
++const { sourceFunction } = require('./wat-source-function');
++const { compile } = require('../tools/watx');
++const { createFilesystemImports } = require('../lib/filesystem');
++const root = path.resolve(__dirname, '..');
++
++function createHostImports(ctx) {
++  const host = createFilesystemImports(ctx);
++  return { host };
++}
++
++function compileSrcWasm(_transform, { source: override, extraWat = '' } = {}) {
++  const source = override || fs.readFileSync(path.join(root, 'src/09a1-comctl-handlers.wat'), 'utf8');
++  const helper = fs.readFileSync(path.join(root, 'src/10-helpers.wat'), 'utf8');
++  const names = [
++    'version_read_exact', 'version_rsrc_child', 'version_ne_resource',
++    'file_version_resource', 'file_version_info_size_named', 'file_version_info_named',
++    'version_is_ne', 'version_value_offset', 'version_value_bytes',
++    'version_find_node', 'version_ne_text_path', 'version_query',
++    'handle_GetFileVersionInfoSizeA', 'handle_GetFileVersionInfoA',
++    'handle_GetFileVersionInfoSizeW', 'handle_GetFileVersionInfoW',
++    'handle_VerQueryValueA', 'handle_VerQueryValueW',
++  ];
++  const functions = names.map(n => sourceFunction(source, n));
++  // Encoding helpers are also taken from production, with their dependencies.
++  functions.push(sourceFunction(helper, 'tolower'));
++  functions.push(sourceFunction(fs.readFileSync(path.join(root, 'src/10c-truetype.wat'), 'utf8'), 'tt_cp1252_to_unicode'));
++  const wrappers = [
++    ['GetFileVersionInfoSizeA', 2], ['GetFileVersionInfoSizeW', 2],
++    ['GetFileVersionInfoA', 4], ['GetFileVersionInfoW', 4],
++    ['VerQueryValueA', 4], ['VerQueryValueW', 4],
++  ].map(([name, count]) => `(func (export "test_call_${name}")
++    ${Array.from({length: count}, (_, i) => `(param $p${i} i32)`).join(' ')} (result i32)
++    (i32.store offset=16 (global.get $reg_base) (i32.const 0x00b00000))
++    (call $handle_${name} ${Array.from({length: 6}, (_, i) => i < count ? `(local.get $p${i})` : '(i32.const 0)').join(' ')})
++    (i32.load (global.get $reg_base)))`).join('\n');
++  const wat = `
++    (import "host" "memory" (memory 16 8192 shared))
++    (import "host" "fs_create_file" (func $host_fs_create_file (param i32 i32 i32 i32 i32) (result i32)))
++    (import "host" "fs_read_file" (func $host_fs_read_file (param i32 i32 i32 i32) (result i32)))
++    (import "host" "fs_close_handle" (func $host_fs_close_handle (param i32) (result i32)))
++    (import "host" "fs_set_file_pointer" (func $host_fs_set_file_pointer (param i32 i32 i32) (result i32)))
++    (import "host" "fs_get_file_size" (func $host_fs_get_file_size (param i32) (result i32)))
++    (global $reg_base i32 (i32.const 0x1000))
++    (global $heap (mut i32) (i32.const 0x00500000))
++    (global $version_query_scratch (mut i32) (i32.const 0))
++    ${extraWat}
++    (func (export "get_image_base") (result i32) (i32.const 0x00400000))
++    (func (export "get_guest_base") (result i32) (i32.const 0x00012000))
++    (func (export "get_esp") (result i32) (i32.load offset=16 (global.get $reg_base)))
++    (func $g2w (param $p i32) (result i32) (i32.add (i32.sub (local.get $p) (i32.const 0x00400000)) (i32.const 0x00012000)))
++    (func $gl8 (param $p i32) (result i32) (i32.load8_u (call $g2w (local.get $p))))
++    (func $gl16 (param $p i32) (result i32) (i32.load16_u (call $g2w (local.get $p))))
++    (func $gl32 (param $p i32) (result i32) (i32.load (call $g2w (local.get $p))))
++    (func $gs8 (param $p i32) (param $v i32) (i32.store8 (call $g2w (local.get $p)) (local.get $v)))
++    (func $gs16 (param $p i32) (param $v i32) (i32.store16 (call $g2w (local.get $p)) (local.get $v)))
++    (func $gs32 (param $p i32) (param $v i32) (i32.store (call $g2w (local.get $p)) (local.get $v)))
++    (func $fmt_get (param $p i32) (param $wide i32) (result i32)
++      (if (result i32) (local.get $wide) (then (call $gl16 (local.get $p))) (else (call $gl8 (local.get $p)))))
++    (func $heap_alloc (export "guest_alloc") (param $size i32) (result i32) (local $p i32)
++      (local.set $p (global.get $heap))
++      (global.set $heap (i32.and (i32.add (i32.add (global.get $heap) (local.get $size)) (i32.const 7)) (i32.const -8)))
++      (local.get $p))
++    (func $heap_free (param i32))
++    ${functions.join('\n')}
++    ${wrappers}
++    (func (export "query_wide") (param $b i32) (param $p i32) (param $o i32) (param $n i32) (result i32)
++      (call $version_query (local.get $b) (local.get $p) (local.get $o) (local.get $n) (i32.const 1)))
++  `;
++  const result = compile(wat, new Map(), {mode: 'production', standardWat: true,
++    runtimeBuiltins: false, strictDeclarations: true});
++  if (!result.success) throw new Error(JSON.stringify(result));
++  return result.wasmBinary;
++}
++
++module.exports = { createHostImports, compileSrcWasm };
+diff --git a/test/wat-source-function.js b/test/wat-source-function.js
+new file mode 100644
+index 0000000..4fe53bd
+--- /dev/null
++++ b/test/wat-source-function.js
+@@ -0,0 +1,37 @@
++'use strict';
++
++// Extract verbatim function text for small source fixtures. Mask strings and
++// nested comments before balancing, so neither can end a function early.
++function sourceFunction(source, name) {
++  let masked = '', block = 0, string = false;
++  for (let i = 0; i < source.length; i++) {
++    const c = source[i], n = source[i + 1];
++    if (string) {
++      masked += ' ';
++      if (c === '\\') { masked += ' '; i++; }
++      else if (c === '"') string = false;
++    } else if (block) {
++      masked += ' ';
++      if (c === '(' && n === ';') { block++; masked += ' '; i++; }
++      else if (c === ';' && n === ')') { block--; masked += ' '; i++; }
++    } else if (c === ';' && n === ';') {
++      const end = source.indexOf('\n', i);
++      const size = (end < 0 ? source.length : end) - i;
++      masked += ' '.repeat(size); i += size - 1;
++    } else if (c === '(' && n === ';') { block++; masked += '  '; i++; }
++    else if (c === '"') { string = true; masked += ' '; }
++    else masked += c;
++  }
++  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
++  const match = new RegExp('\\(func \\$' + escaped + '(?=[\\s(])').exec(masked);
++  if (!match) throw new Error('Missing function ' + name);
++  const start = match.index;
++  let depth = 0;
++  for (let i = start; i < masked.length; i++) {
++    if (masked[i] === '(') depth++;
++    if (masked[i] === ')' && --depth === 0) return source.slice(start, i + 1);
++  }
++  throw new Error('Unbalanced function ' + name);
++}
++
++module.exports = { sourceFunction };
