@@ -1,0 +1,179 @@
+{
+  "task": "toyvm-mounted-create-mkdir-parent-guards-oct30",
+  "candidate": "88b90ff3c7bbafd763e75306d938484a6b98d286",
+  "PASS": true,
+  "scope": "Real pinned production CLI/FUSE mounted namespace CREATE/MKDIR parent guards only",
+  "acceptance": {
+    "PASS": true,
+    "fixture": {
+      "PASS": true,
+      "cases": [
+        {
+          "operation": "create",
+          "path": "/tmp/tvmd/domain/missing/rejected-create",
+          "expectedErrno": 2,
+          "actualErrno": 2,
+          "namespaceUnchanged": true
+        },
+        {
+          "operation": "create",
+          "path": "/tmp/tvmd/domain/parent-file/rejected-create",
+          "expectedErrno": 20,
+          "actualErrno": 20,
+          "namespaceUnchanged": true
+        },
+        {
+          "operation": "mkdir",
+          "path": "/tmp/tvmd/domain/missing/rejected-mkdir",
+          "expectedErrno": 2,
+          "actualErrno": 2,
+          "namespaceUnchanged": true
+        },
+        {
+          "operation": "mkdir",
+          "path": "/tmp/tvmd/domain/parent-file/rejected-mkdir",
+          "expectedErrno": 20,
+          "actualErrno": 20,
+          "namespaceUnchanged": true
+        }
+      ],
+      "baseline": [
+        [
+          "parent-file",
+          2,
+          33152,
+          0
+        ]
+      ],
+      "final": [
+        [
+          "parent-file",
+          2,
+          33152,
+          0
+        ],
+        [
+          "valid-dir",
+          3,
+          16832,
+          0
+        ],
+        [
+          "valid-dir/content",
+          4,
+          33188,
+          31
+        ]
+      ],
+      "baselineAt": 112.326792079,
+      "invalidStart": 112.926900641,
+      "invalidEnd": 112.929891949,
+      "validStart": 113.530139245,
+      "payloadBytes": 31,
+      "roundtrip": true
+    },
+    "countersBefore": {
+      "at": 112.394449545,
+      "live": 8192,
+      "peak": 8192,
+      "written": 0,
+      "inodes": 2
+    },
+    "countersAfter": {
+      "at": 113.458163257,
+      "live": 8192,
+      "peak": 8192,
+      "written": 0,
+      "inodes": 2
+    },
+    "invalidCountersUnchanged": true,
+    "callbackCoverage": "not established; kernel may reject before backend",
+    "scope": "mounted namespace gate only"
+  },
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 32768,
+    "inodes": 4,
+    "live": 20480,
+    "liveLimit": 262144,
+    "openHandles": 0,
+    "operations": 966,
+    "peak": 20480,
+    "writeLimit": 32768,
+    "written": 31
+  },
+  "mountOwnership": [
+    "92 29 0:52 / /tmp/tvmd/domain rw,nosuid,nodev,relatime shared:217 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+  ],
+  "observerCleanup": {
+    "remainingMounts": [],
+    "workPathProcesses": []
+  },
+  "cleanupComplete": true,
+  "runtimeWall": 1.439036944999998,
+  "groupPeakRSS": 50069504,
+  "sourcePins": {
+    "CLAUDE.md": {
+      "bytes": 22221,
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8858,
+      "sha256": "ff757d0e57e12cbe4e0312d2cf824ed3ad489c3cc81672a112268f21a4dc937e"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 15060,
+      "sha256": "13bf42f071f5eb84542286f35faf2dc814aaf63bf1bcfe7bb306e3e2f7f4f963"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4535,
+      "sha256": "e7aaa8cdbbd0871918918de090b57585c8ed0ba21e7510583fabc745359c124e"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "fixturePin": {
+    "bytes": 1883,
+    "sha256": "3d294d2d74ea630f4a2065031fbb5d07322709c15163bc68ced10c1aad666a4e"
+  },
+  "pythonPin": {
+    "bytes": 8020928,
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  },
+  "identitiesAfter": true,
+  "landlockABI": 4,
+  "runtimePrerequisites": {
+    "fuse": true,
+    "libfuse": true,
+    "procFDseccomp": true
+  },
+  "remoteAllocation": {
+    "at": 1793331292.0223973,
+    "remainingMounts": [],
+    "workPathProcesses": [],
+    "remoteAllocated": 184320,
+    "budget": 268435456,
+    "reserve": 8388608
+  },
+  "boat": {
+    "id": "bx_mjxycjep",
+    "state": "stopped",
+    "snapshotCompletedAt": "2026-10-30T03:35:03.196Z",
+    "snapshotVerifiedAt": "2026-10-30T03:35:03.196Z",
+    "snapshotAfterCleanup": true
+  },
+  "remainingGates": [
+    "Backend callback coverage not established; kernel may reject before backend",
+    "No gameplay acceptance or broader rename/readdir replay"
+  ],
+  "compiledModule": "not applicable; exact pinned Python source production runner; no WASM module in task",
+  "assets": "cancellation-receipt.json hash verified by observer before/after",
+  "node": "not invoked; native ELF Boat client"
+}
