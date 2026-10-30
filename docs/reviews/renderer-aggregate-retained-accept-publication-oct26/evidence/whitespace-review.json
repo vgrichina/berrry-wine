@@ -1,7 +1,0 @@
-{
-  "wholeDiffCheckExit": 2,
-  "log": "historical-evidence-whitespace.log",
-  "logSHA256": "c311b0eeb5417ceef177c30eb7d203778dbe5665018e5320a061e27f498c9117",
-  "productionTestDiffCheck": "PASS",
-  "preservedHistoricalEvidence": true
-}
