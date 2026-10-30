@@ -3976,15 +3976,138 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
-  ;; _setjmp3(jmp_buf, ...) — cdecl. First return from setjmp is zero; the
-  ;; caller retains varargs cleanup. Store a conservative zeroed frame so code
-  ;; that inspects the buffer does not see stale heap/stack bytes.
+  ;; MSVC i386 _JUMP_BUFFER (16 DWORDs): EBP, EBX, EDI, ESI, entry ESP,
+  ;; return EIP, FS:[0], TryLevel, VC20 cookie, stdcall unwind function,
+  ;; six unwind arguments. ESP is saved BEFORE the return-address pop.
+  ;; See Wine include/msvcrt/setjmp.h and dlls/msvcrt/except_i386.c.
+  ;; Invalid/unmapped buffers fail fast; ISO C gives them no defined result.
+  (func $crt_jump_buffer (param $p i32) (result i32)
+    (local $w i32)
+    (local.set $w (call $g2w (local.get $p)))
+    (if (i32.or (i32.eqz (local.get $p))
+          (i32.or (i32.gt_u (local.get $p) (i32.const 0xffffffc0))
+            (i32.or (i32.eq (local.get $w) (i32.const 0xf0))
+              (i32.ne (call $g2w (i32.add (local.get $p) (i32.const 63)))
+                      (i32.add (local.get $w) (i32.const 63))))))
+      (then (unreachable)))
+    (local.get $w))
+
   (func $handle__setjmp3 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (local.get $arg0)
-      (then (call $zero_memory (call $g2w (local.get $arg0)) (i32.const 64))))
+    (local $b i32) (local $sp i32) (local $reg i32) (local $i i32)
+    (local.set $b (call $crt_jump_buffer (local.get $arg0)))
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $reg (call $gl32 (global.get $fs_base)))
+    (call $zero_memory (local.get $b) (i32.const 64))
+    (i32.store offset=0 (local.get $b) (i32.load offset=20 (global.get $reg_base)))
+    (i32.store offset=4 (local.get $b) (i32.load offset=12 (global.get $reg_base)))
+    (i32.store offset=8 (local.get $b) (i32.load offset=28 (global.get $reg_base)))
+    (i32.store offset=12 (local.get $b) (i32.load offset=24 (global.get $reg_base)))
+    (i32.store offset=16 (local.get $b) (local.get $sp))
+    (i32.store offset=20 (local.get $b) (call $gl32 (local.get $sp)))
+    (i32.store offset=24 (local.get $b) (local.get $reg))
+    (i32.store offset=28 (local.get $b) (i32.const -1))
+    (i32.store offset=32 (local.get $b) (i32.const 0x56433230))
+    (if (i32.and (i32.ne (local.get $reg) (i32.const -1))
+                 (i32.ne (local.get $reg) (i32.const 0)))
+      (then
+        (i32.store offset=28 (local.get $b)
+          (if (result i32) (i32.gt_s (local.get $arg1) (i32.const 1))
+            (then (local.get $arg3))
+            (else (call $gl32 (i32.add (local.get $reg) (i32.const 12))))))
+        (if (i32.gt_s (local.get $arg1) (i32.const 0))
+          (then (i32.store offset=36 (local.get $b) (local.get $arg2))))
+        (block $done (loop $copy
+          (br_if $done (i32.ge_u (local.get $i) (i32.const 6)))
+          (br_if $done (i32.ge_s (i32.add (local.get $i) (i32.const 2)) (local.get $arg1)))
+          (i32.store (i32.add (local.get $b) (i32.add (i32.const 40) (i32.shl (local.get $i) (i32.const 2))))
+            (call $gl32 (i32.add (local.get $sp) (i32.add (i32.const 20) (i32.shl (local.get $i) (i32.const 2))))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $copy)))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-  )
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  ;; Invocation-owned state below the longjmp frame survives real guest SEH
+  ;; handlers and the optional stdcall UnwindFunc. No singleton saved context:
+  ;; separate buffers, nested callbacks and threads cannot overwrite it.
+  (global $crt_longjmp_thunk (mut i32) (i32.const 0))
+  (func $crt_longjmp_continue
+    (local $s i32) (local $b i32) (local $buf i32) (local $value i32)
+    (local.set $s (i32.load offset=16 (global.get $reg_base)))
+    (if (i32.ne (call $gl32 (local.get $s)) (i32.const 0x504d4a4c))
+      (then (unreachable)))
+    (local.set $buf (call $gl32 (i32.add (local.get $s) (i32.const 4))))
+    (local.set $b (call $crt_jump_buffer (local.get $buf)))
+    (if (i32.and (i32.eqz (call $gl32 (i32.add (local.get $s) (i32.const 12))))
+                 (i32.ne (i32.load offset=36 (local.get $b)) (i32.const 0)))
+      (then
+        (call $gs32 (i32.add (local.get $s) (i32.const 12)) (i32.const 1))
+        (call $gs32 (i32.sub (local.get $s) (i32.const 8)) (global.get $crt_longjmp_thunk))
+        (call $gs32 (i32.sub (local.get $s) (i32.const 4)) (local.get $buf))
+        (i32.store offset=16 (global.get $reg_base) (i32.sub (local.get $s) (i32.const 8)))
+        (global.set $eip (i32.load offset=36 (local.get $b)))
+        (global.set $handler_set_eip (i32.const 1))
+        (global.set $steps (i32.const 0))
+        (return)))
+    (local.set $value (call $gl32 (i32.add (local.get $s) (i32.const 8))))
+    (i32.store offset=20 (global.get $reg_base) (i32.load offset=0 (local.get $b)))
+    (i32.store offset=12 (global.get $reg_base) (i32.load offset=4 (local.get $b)))
+    (i32.store offset=28 (global.get $reg_base) (i32.load offset=8 (local.get $b)))
+    (i32.store offset=24 (global.get $reg_base) (i32.load offset=12 (local.get $b)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (local.get $b)) (i32.const 4)))
+    (i32.store offset=0 (global.get $reg_base)
+      (select (local.get $value) (i32.const 1) (local.get $value)))
+    (global.set $eip (i32.load offset=20 (local.get $b)))
+    ;; Decoded CALL/JMP tests steps; thunk-zone run tests handler_set_eip.
+    (global.set $resume_ip (i32.const 0))
+    (global.set $eip_redirected (i32.const 1))
+    (global.set $handler_set_eip (i32.const 1))
+    (global.set $steps (i32.const 0)))
+
+  (func $handle_longjmp (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $b i32) (local $s i32) (local $cur i32) (local $target i32) (local $n i32)
+    (local.set $b (call $crt_jump_buffer (local.get $arg0)))
+    ;; This handler supports the observed _setjmp3 ABI, not legacy _setjmp's
+    ;; cookie-less local-unwind format. Reject it rather than skipping cleanup.
+    (if (i32.or (i32.ne (i32.load offset=32 (local.get $b)) (i32.const 0x56433230))
+          (i32.or (i32.eqz (i32.load offset=16 (local.get $b)))
+                  (i32.eqz (i32.load offset=20 (local.get $b)))))
+      (then (unreachable)))
+    ;; Stack bounds come from the active thread TIB, so a context belonging to
+    ;; another thread is rejected even when both exception chains end in -1.
+    (if (i32.or
+          (i32.lt_u (i32.load offset=16 (local.get $b)) (call $gl32 (i32.add (global.get $fs_base) (i32.const 8))))
+          (i32.ge_u (i32.load offset=16 (local.get $b)) (call $gl32 (i32.add (global.get $fs_base) (i32.const 4)))))
+      (then (unreachable)))
+    (local.set $target (i32.load offset=24 (local.get $b)))
+    (local.set $cur (call $gl32 (global.get $fs_base)))
+    ;; A saved registration must belong to THIS thread's live chain. Bounded
+    ;; validation rejects missing targets/cycles before RtlUnwind can unlink.
+    (block $found (loop $chain
+      (br_if $found (i32.eq (local.get $cur) (local.get $target)))
+      (if (i32.or (i32.ge_u (local.get $n) (i32.const 4096))
+            (i32.or (i32.eqz (local.get $cur)) (i32.eq (local.get $cur) (i32.const -1))))
+        (then (unreachable)))
+      (local.set $cur (call $gl32 (local.get $cur)))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (br $chain)))
+    ;; MSVCR70 restores EBP before invoking either unwind path: MSVC cleanup
+    ;; funclets may address the saving frame through it.
+    (i32.store offset=20 (global.get $reg_base) (i32.load offset=0 (local.get $b)))
+    (if (i32.eqz (global.get $crt_longjmp_thunk))
+      (then (global.set $crt_longjmp_thunk (call $com_cont_thunk (i32.const 0xCACA0041)))))
+    (local.set $s (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 32)))
+    (call $gs32 (local.get $s) (i32.const 0x504d4a4c))
+    (call $gs32 (i32.add (local.get $s) (i32.const 4)) (local.get $arg0))
+    (call $gs32 (i32.add (local.get $s) (i32.const 8)) (local.get $arg1))
+    (call $gs32 (i32.add (local.get $s) (i32.const 12)) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (local.get $s))
+    (global.set $resume_ip (i32.const 0))
+    (global.set $eip_redirected (i32.const 1))
+    (global.set $handler_set_eip (i32.const 1))
+    (global.set $steps (i32.const 0))
+    (if (i32.ne (call $gl32 (global.get $fs_base)) (local.get $target))
+      (then (call $rtl_unwind_begin (local.get $target) (i32.const 0) (i32.const 0) (global.get $crt_longjmp_thunk)))
+      (else (call $crt_longjmp_continue))))
 
   ;; ── CRT exports answered natively, with the authentic export behind them ──
   ;;

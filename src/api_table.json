@@ -39063,5 +39063,12 @@
     "nargs": 2,
     "convention": "cdecl",
     "hash": 2518170959
+  },
+  {
+    "id": 4596,
+    "name": "longjmp",
+    "nargs": 2,
+    "convention": "cdecl",
+    "hash": 3371346902
   }
 ]

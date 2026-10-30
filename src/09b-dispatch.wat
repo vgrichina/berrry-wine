@@ -1623,6 +1623,10 @@
         (call $crash_unimplemented (i32.const 0x2D0))
         (return)))
 
+    ;; Global unwind or the stdcall _setjmp3 unwind callback completed.
+    (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0041))
+      (then (call $crt_longjmp_continue) (return)))
+
     ;; ── Normal API dispatch ─────────────────────────────────────
 
     ;; Resolved-ordinal import: thunk+0 holds (0x80000000 | ordinal), not an
@@ -1726,6 +1730,16 @@
         (call $restore_win32_nonvolatile
           (local.get $saved_ebx) (local.get $saved_esi)
           (local.get $saved_edi) (i32.load offset=20 (global.get $reg_base)))
+        (if (global.get $api_log_on) (then (call $host_log_api_exit)))
+        (return)))
+
+    ;; longjmp deliberately replaces the caller's nonvolatiles and owns EIP.
+    ;; Ordinary ABI preservation would undo its restored context.
+    (if (i32.eq (local.get $api_id) (global.get $API_ID_longjmp))
+      (then
+        (call $handle_longjmp
+          (local.get $arg0) (local.get $arg1) (local.get $arg2)
+          (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
         (if (global.get $api_log_on) (then (call $host_log_api_exit)))
         (return)))
 

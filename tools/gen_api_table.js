@@ -329,6 +329,7 @@ const extra = [
   { name: '_global_unwind2', nargs: 1 },
   { name: '_getdcwd', nargs: 3 },
   { name: '_setjmp3', nargs: -1, convention: 'cdecl' },
+  { name: 'longjmp', nargs: 2, convention: 'cdecl' },
   // W-suffix Win32 APIs
   { name: 'GetModuleHandleW', nargs: 1 },
   { name: 'GetModuleFileNameW', nargs: 3 },
