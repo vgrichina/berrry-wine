@@ -1,0 +1,13 @@
+{
+  "finalCommit": "d2988e91d53c35ad0c1ab2bed0ced9e40bf8a205",
+  "branch": "task/shadow-man-top-level-ui-capture-oct22",
+  "actualCanonicalRemoteSHA": "d2988e91d53c35ad0c1ab2bed0ced9e40bf8a205",
+  "canonicalRemote": "https://github.com/vgrichina/berrry-wine.git",
+  "verified": true,
+  "remoteMain": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+  "localAllocatedBytes": 10571776,
+  "withGrowthAndReserve": 23154688,
+  "protectedSealsUnchanged": true,
+  "checkoutClean": true,
+  "verifiedAt": "2026-10-22T19:32:36.282471+00:00"
+}
