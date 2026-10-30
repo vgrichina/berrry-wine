@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "title": "The Elder Scrolls II: Daggerfall",
+  "candidateId": "gog-free-elder-scrolls-daggerfall",
+  "provenance": "Existing original local GOG installation documented docs/re-notes/daggerfall-gog.md. No redistribution inferred; no payload included.",
+  "installedRoot": "test/binaries/candidates/gog-free-elder-scrolls-daggerfall/installed",
+  "criticalFiles": [
+    {
+      "path": "test/binaries/candidates/gog-free-elder-scrolls-daggerfall/installed/DOSBOX/DOSBox.exe",
+      "bytes": 3802624,
+      "sha256": "8a7a7fedd222bf985b51191000557f9ee2ffb033be02c6c59594dbbec013cd41"
+    },
+    {
+      "path": "test/binaries/candidates/gog-free-elder-scrolls-daggerfall/installed/DOSBOX/SDL.dll",
+      "bytes": 448231,
+      "sha256": "69037ebc43755296c0cc292d57d560028d7f2265f7b86ca84e714835c19bbd58"
+    },
+    {
+      "path": "test/binaries/candidates/gog-free-elder-scrolls-daggerfall/installed/DOSBOX/SDL_net.dll",
+      "bytes": 13312,
+      "sha256": "2f39dc04acbecf47efa45034891602b6ea7bf6fd2f27b5c0a5ca8d7fb155c929"
+    },
+    {
+      "path": "test/binaries/candidates/gog-free-elder-scrolls-daggerfall/installed/FALL.EXE",
+      "bytes": 1864183,
+      "sha256": "0c89487dc2e08f5a811c548d509d873fc7c868c6ab5b191cdca087ccff4c1bea"
+    },
+    {
+      "path": "test/binaries/candidates/gog-free-elder-scrolls-daggerfall/installed/Z.CFG",
+      "bytes": 202,
+      "sha256": "d90e5e90eb1947d162f241dcfcaf514bbfd180e8ecbeccbd1fc8a4d87a21674c"
+    },
+    {
+      "path": "test/binaries/candidates/gog-free-elder-scrolls-daggerfall/installed/__support/app/dosbox_daggerfall.conf",
+      "bytes": 11451,
+      "sha256": "eab9504a727961b37463eac9a183b509f6626f3551749c7dcbdfca535ee4b610"
+    }
+  ],
+  "configs": [
+    {
+      "path": "test/configs/daggerfall-wine-assembly.conf",
+      "sha256": "e0081a2acd40bf4a5e28025b36c52ac99a33b45b112956d7a141b0ad2d3e5dda"
+    },
+    {
+      "path": "test/configs/daggerfall-launch.conf",
+      "sha256": "737f172e28b4b10ca5398f0eb04d81c5ea1e71381f69aa42bb9c69098ee44682"
+    }
+  ],
+  "inventoryPolicy": "Enumerate regular local installed files; exclude symlinks, reject case-insensitive VFS collisions. Full payload hashes not asserted by this recipe; critical executable/config pins enforced."
+}

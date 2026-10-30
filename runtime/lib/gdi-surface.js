@@ -1,0 +1,475 @@
+// Canonical pixel storage for the software GDI migration. Geometry and text
+// remain outside this module; it owns native-format pixel access and dirtiness.
+(function (root, factory) {
+  const api = factory();
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  if (root) root.gdiSurfaceLib = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  const DEFAULT_PALETTE_16 = [
+    [0, 0, 0], [128, 0, 0], [0, 128, 0], [128, 128, 0],
+    [0, 0, 128], [128, 0, 128], [0, 128, 128], [192, 192, 192],
+    [128, 128, 128], [255, 0, 0], [0, 255, 0], [255, 255, 0],
+    [0, 0, 255], [255, 0, 255], [0, 255, 255], [255, 255, 255],
+  ];
+
+  const clampByte = value => Math.max(0, Math.min(255, value | 0));
+  const colorRef = (r, g, b) => clampByte(r) | (clampByte(g) << 8) | (clampByte(b) << 16);
+  const colorParts = color => [color & 0xFF, (color >>> 8) & 0xFF, (color >>> 16) & 0xFF];
+
+  function maskInfo(mask) {
+    mask >>>= 0;
+    if (!mask || (mask & 0xFFFF0000)) throw new RangeError('16-bpp channel mask is invalid');
+    let shift = 0;
+    while (((mask >>> shift) & 1) === 0) shift++;
+    const shifted = mask >>> shift;
+    if ((shifted & (shifted + 1)) !== 0) throw new RangeError('16-bpp channel mask must be contiguous');
+    return { mask, shift, max: shifted };
+  }
+
+  function defaultStride(width, bpp, alignment) {
+    const bits = Math.max(0, width | 0) * Math.max(1, bpp | 0);
+    const align = alignment === 2 ? 2 : 4;
+    return Math.ceil(Math.ceil(bits / 8) / align) * align;
+  }
+
+  class GdiSurface {
+    constructor(options) {
+      options = options || {};
+      this.width = options.width | 0;
+      this.height = options.height | 0;
+      this.bpp = options.bpp | 0;
+      if (this.width <= 0 || this.height <= 0) throw new RangeError('surface dimensions must be positive');
+      if (![1, 4, 8, 16, 24, 32].includes(this.bpp)) throw new RangeError(`unsupported surface bpp ${this.bpp}`);
+
+      this.format = options.format || (this.bpp === 32 ? 'bgra32' : `dib${this.bpp}`);
+      this.stride = options.stride === undefined
+        ? defaultStride(this.width, this.bpp, options.alignment)
+        : options.stride | 0;
+      if (this.stride < Math.ceil(this.width * this.bpp / 8)) throw new RangeError('surface stride is too small');
+      this.topDown = options.topDown !== false;
+      this.storageOffset = options.storageOffset >>> 0;
+      this.storage = options.storage instanceof Uint8Array
+        ? options.storage
+        : new Uint8Array(options.storage || this.storageOffset + this.stride * this.height);
+      if (this.storageOffset + this.stride * this.height > this.storage.length) {
+        throw new RangeError('surface storage is too small');
+      }
+      this.palette = options.palette || null;
+      this.onWrite = options.onWrite || null;
+      if (this.bpp === 16) {
+        const masks = options.masks || [0x7C00, 0x03E0, 0x001F];
+        if (!Array.isArray(masks) || masks.length !== 3) throw new RangeError('16-bpp surfaces require three masks');
+        this.maskInfo = masks.map(maskInfo);
+        if ((this.maskInfo[0].mask & this.maskInfo[1].mask) ||
+            (this.maskInfo[0].mask & this.maskInfo[2].mask) ||
+            (this.maskInfo[1].mask & this.maskInfo[2].mask)) {
+          throw new RangeError('16-bpp channel masks overlap');
+        }
+      } else {
+        this.maskInfo = null;
+      }
+      this.onDirty = typeof options.onDirty === 'function' ? options.onDirty : null;
+      this.dirtyRect = null;
+      this._paletteCache = new Map();
+    }
+
+    contains(x, y) {
+      return (x | 0) === x && (y | 0) === y && x >= 0 && y >= 0 && x < this.width && y < this.height;
+    }
+
+    _rowOffset(y) {
+      const storageY = this.topDown ? y : this.height - 1 - y;
+      return this.storageOffset + storageY * this.stride;
+    }
+
+    _paletteColor(index) {
+      const entry = this.palette && this.palette[index];
+      if (entry) {
+        if (Array.isArray(entry) || ArrayBuffer.isView(entry)) return colorRef(entry[0], entry[1], entry[2]);
+        if (typeof entry === 'number') return entry & 0xFFFFFF;
+        return colorRef(entry.r, entry.g, entry.b);
+      }
+      if (this.bpp === 1) return index ? 0xFFFFFF : 0;
+      if (this.bpp === 4) {
+        const c = DEFAULT_PALETTE_16[index & 15];
+        return colorRef(c[0], c[1], c[2]);
+      }
+      return colorRef(index, index, index);
+    }
+
+    _nearestPaletteIndex(color) {
+      color &= 0xFFFFFF;
+      const cached = this._paletteCache.get(color);
+      if (cached !== undefined) return cached;
+      const count = this.bpp === 1 ? 2 : this.bpp === 4 ? 16 : 256;
+      const [r, g, b] = colorParts(color);
+      let best = 0;
+      let bestDistance = Infinity;
+      for (let i = 0; i < count; i++) {
+        const candidate = this._paletteColor(i);
+        const [pr, pg, pb] = colorParts(candidate);
+        const distance = (r - pr) ** 2 + (g - pg) ** 2 + (b - pb) ** 2;
+        if (distance < bestDistance) {
+          best = i;
+          bestDistance = distance;
+          if (distance === 0) break;
+        }
+      }
+      this._paletteCache.set(color, best);
+      return best;
+    }
+
+    // 64K-entry RGBA expansion of every 16-bit value under this surface's
+    // channel masks, in the same 0xFF000000 | colorRef() layout rgbaRect
+    // writes. Masks are set in the constructor and never change, so this is
+    // built once per surface and reused by every flush.
+    _rgba16Lut() {
+      if (this._rgba16LutCache) return this._rgba16LutCache;
+      const [ri, gi, bi] = this.maskInfo;
+      const lut = new Uint32Array(65536);
+      for (let value = 0; value < 65536; value++) {
+        const r = Math.round(((value & ri.mask) >>> ri.shift) * 255 / ri.max);
+        const g = Math.round(((value & gi.mask) >>> gi.shift) * 255 / gi.max);
+        const b = Math.round(((value & bi.mask) >>> bi.shift) * 255 / bi.max);
+        lut[value] = (0xFF000000 | colorRef(r, g, b)) >>> 0;
+      }
+      this._rgba16LutCache = lut;
+      return lut;
+    }
+
+    readPixel(x, y) {
+      x |= 0;
+      y |= 0;
+      if (!this.contains(x, y)) return null;
+      const row = this._rowOffset(y);
+      const bytes = this.storage;
+      if (this.bpp === 1) {
+        return this._paletteColor((bytes[row + (x >> 3)] >>> (7 - (x & 7))) & 1);
+      }
+      if (this.bpp === 4) {
+        const packed = bytes[row + (x >> 1)];
+        return this._paletteColor((x & 1) ? packed & 15 : packed >>> 4);
+      }
+      if (this.bpp === 8) return this._paletteColor(bytes[row + x]);
+      if (this.bpp === 16) {
+        const offset = row + x * 2;
+        const value = bytes[offset] | (bytes[offset + 1] << 8);
+        const [ri, gi, bi] = this.maskInfo;
+        const r = Math.round(((value & ri.mask) >>> ri.shift) * 255 / ri.max);
+        const g = Math.round(((value & gi.mask) >>> gi.shift) * 255 / gi.max);
+        const b = Math.round(((value & bi.mask) >>> bi.shift) * 255 / bi.max);
+        return colorRef(r, g, b);
+      }
+      const offset = row + x * (this.bpp >>> 3);
+      if (this.format === 'rgba32') return colorRef(bytes[offset], bytes[offset + 1], bytes[offset + 2]);
+      return colorRef(bytes[offset + 2], bytes[offset + 1], bytes[offset]);
+    }
+
+    _writePixelUnchecked(x, y, color) {
+      const row = this._rowOffset(y);
+      const bytes = this.storage;
+      if (this.bpp === 1) {
+        const offset = row + (x >> 3);
+        const mask = 1 << (7 - (x & 7));
+        const index = this._nearestPaletteIndex(color);
+        bytes[offset] = index ? bytes[offset] | mask : bytes[offset] & ~mask;
+      } else if (this.bpp === 4) {
+        const offset = row + (x >> 1);
+        const index = this._nearestPaletteIndex(color) & 15;
+        bytes[offset] = (x & 1) ? (bytes[offset] & 0xF0) | index : (bytes[offset] & 0x0F) | (index << 4);
+      } else if (this.bpp === 8) {
+        bytes[row + x] = this._nearestPaletteIndex(color);
+      } else {
+        const [r, g, b] = colorParts(color);
+        if (this.bpp === 16) {
+          const offset = row + x * 2;
+          const [ri, gi, bi] = this.maskInfo;
+          const value = ((Math.round(r * ri.max / 255) << ri.shift) & ri.mask) |
+            ((Math.round(g * gi.max / 255) << gi.shift) & gi.mask) |
+            ((Math.round(b * bi.max / 255) << bi.shift) & bi.mask);
+          bytes[offset] = value & 0xFF;
+          bytes[offset + 1] = value >>> 8;
+        } else {
+          const offset = row + x * (this.bpp >>> 3);
+          if (this.format === 'rgba32') {
+            bytes[offset] = r;
+            bytes[offset + 1] = g;
+            bytes[offset + 2] = b;
+          } else {
+            bytes[offset] = b;
+            bytes[offset + 1] = g;
+            bytes[offset + 2] = r;
+          }
+          if (this.bpp === 32) bytes[offset + 3] = 255;
+        }
+      }
+    }
+
+    writePixel(x, y, color) {
+      x |= 0;
+      y |= 0;
+      color &= 0xFFFFFF;
+      if (!this.contains(x, y)) return null;
+      this._writePixelUnchecked(x, y, color);
+      this._noteWrite(y, y + 1);
+      const stored = this.readPixel(x, y);
+      this.markDirty(x, y, 1, 1);
+      return stored;
+    }
+
+    fillRect(x, y, width, height, color) {
+      x |= 0;
+      y |= 0;
+      width |= 0;
+      height |= 0;
+      const left = Math.max(0, x);
+      const top = Math.max(0, y);
+      const right = Math.min(this.width, x + width);
+      const bottom = Math.min(this.height, y + height);
+      if (right <= left || bottom <= top) return false;
+      // A solid fill stores the same bytes in every pixel, so encode one --
+      // including the palette nearest-index search at 8bpp, which the
+      // per-pixel path repeats for every pixel of the rect -- then widen it
+      // to a row by doubling and copy that row down. 1 and 4bpp keep the
+      // per-pixel path: their edge pixels share a byte with neighbours
+      // outside the rect, which a byte copy would overwrite.
+      if (this.bpp >= 8) {
+        const bytes = this.storage;
+        const stride = this.bpp >>> 3;
+        const start = this._rowOffset(top) + left * stride;
+        const span = (right - left) * stride;
+        this._writePixelUnchecked(left, top, color);
+        let filled = stride;
+        while (filled < span) {
+          const n = Math.min(filled, span - filled);
+          bytes.copyWithin(start + filled, start, start + n);
+          filled += n;
+        }
+        for (let py = top + 1; py < bottom; py++) {
+          bytes.copyWithin(this._rowOffset(py) + left * stride, start, start + span);
+        }
+      } else {
+        for (let py = top; py < bottom; py++) {
+          for (let px = left; px < right; px++) this._writePixelUnchecked(px, py, color);
+        }
+      }
+      this._noteWrite(top, bottom);
+      this.markDirty(left, top, right - left, bottom - top);
+      return true;
+    }
+
+    // Write a block of RGBA pixels straight into the canonical bits. The
+    // inverse of rgbaRect, and the only way a host-side producer (an OpenGL
+    // front buffer sharing the window's DC) can put pixels somewhere a later
+    // canonical flush will not overwrite: the canvas is a derived cache, the
+    // storage is the truth. Source rows are tightly packed RGBA of `width`.
+    writeRgbaRect(x, y, width, height, rgba) {
+      x |= 0;
+      y |= 0;
+      width |= 0;
+      height |= 0;
+      const left = Math.max(0, x);
+      const top = Math.max(0, y);
+      const right = Math.min(this.width, x + width);
+      const bottom = Math.min(this.height, y + height);
+      if (right <= left || bottom <= top) return false;
+      const bytes = this.storage;
+      const bgra = this.bpp === 32 && this.format !== 'rgba32';
+      for (let py = top; py < bottom; py++) {
+        const src = ((py - y) * width + (left - x)) * 4;
+        if (this.bpp === 32) {
+          let target = this._rowOffset(py) + left * 4;
+          for (let px = 0, s = src; px < right - left; px++, s += 4, target += 4) {
+            bytes[target] = bgra ? rgba[s + 2] : rgba[s];
+            bytes[target + 1] = rgba[s + 1];
+            bytes[target + 2] = bgra ? rgba[s] : rgba[s + 2];
+            bytes[target + 3] = 255;
+          }
+        } else {
+          for (let px = 0, s = src; px < right - left; px++, s += 4) {
+            this._writePixelUnchecked(left + px, py,
+              colorRef(rgba[s], rgba[s + 1], rgba[s + 2]));
+          }
+        }
+      }
+      this._noteWrite(top, bottom);
+      this.markDirty(left, top, right - left, bottom - top);
+      return true;
+    }
+
+    _noteWrite(top, bottom) {
+      if (!this.onWrite) return;
+      const start = Math.min(this._rowOffset(top), this._rowOffset(bottom - 1));
+      this.onWrite(this.storage.byteOffset + start, (bottom - top) * this.stride);
+    }
+
+    markDirty(x, y, width, height) {
+      let left = Math.max(0, x | 0);
+      let top = Math.max(0, y | 0);
+      let right = Math.min(this.width, (x | 0) + (width | 0));
+      let bottom = Math.min(this.height, (y | 0) + (height | 0));
+      if (right <= left || bottom <= top) return;
+      const current = this.dirtyRect;
+      this.dirtyRect = current ? {
+        x: Math.min(current.x, left),
+        y: Math.min(current.y, top),
+        w: Math.max(current.x + current.w, right) - Math.min(current.x, left),
+        h: Math.max(current.y + current.h, bottom) - Math.min(current.y, top),
+      } : { x: left, y: top, w: right - left, h: bottom - top };
+      if (this.onDirty) this.onDirty({ x: left, y: top, w: right - left, h: bottom - top });
+    }
+
+    takeDirtyRect() {
+      const dirty = this.dirtyRect;
+      this.dirtyRect = null;
+      return dirty;
+    }
+
+    // `out` lets a caller supply the destination instead of allocating one per
+    // call. The presentation path passes an ImageData's own buffer, which is
+    // the difference between two multi-megabyte allocations plus a copy on
+    // every presented frame and none at all. Reuse requires an exact size
+    // match, so a caller can never receive an array longer than the rect it
+    // asked for.
+    rgbaRect(x, y, width, height, out) {
+      x |= 0;
+      y |= 0;
+      width |= 0;
+      height |= 0;
+      if (x < 0 || y < 0 || width < 0 || height < 0 || x + width > this.width || y + height > this.height) {
+        throw new RangeError('RGBA read rectangle is outside the surface');
+      }
+      const needed = width * height * 4;
+      const output = (out && out.BYTES_PER_ELEMENT === 1 && out.length === needed)
+        ? out
+        : new Uint8ClampedArray(needed);
+      if (this.bpp === 32) {
+        const out32 = new Uint32Array(output.buffer, output.byteOffset, width * height);
+        const bytes = this.storage;
+        for (let py = 0; py < height; py++) {
+          const row = this._rowOffset(y + py) + x * 4;
+          if (((bytes.byteOffset + row) & 3) === 0) {
+            const source = new Uint32Array(bytes.buffer, bytes.byteOffset + row, width);
+            const outRow = py * width;
+            if (this.format === 'rgba32') {
+              for (let px = 0; px < width; px++) {
+                out32[outRow + px] = (source[px] & 0x00FFFFFF) | 0xFF000000;
+              }
+            } else {
+              for (let px = 0; px < width; px++) {
+                const value = source[px];
+                out32[outRow + px] = 0xFF000000 | (value & 0x0000FF00) |
+                  ((value & 0x000000FF) << 16) | ((value >>> 16) & 0xFF);
+              }
+            }
+          } else {
+            for (let px = 0; px < width; px++) {
+              const source = row + px * 4;
+              const target = (py * width + px) * 4;
+              if (this.format === 'rgba32') {
+                output[target] = bytes[source];
+                output[target + 1] = bytes[source + 1];
+                output[target + 2] = bytes[source + 2];
+              } else {
+                output[target] = bytes[source + 2];
+                output[target + 1] = bytes[source + 1];
+                output[target + 2] = bytes[source];
+              }
+              output[target + 3] = 255;
+            }
+          }
+        }
+        return output;
+      }
+      // Writing whole pixels needs a 4-aligned view of the destination; a
+      // caller-supplied `out` that does not start on a dword boundary keeps
+      // the byte-at-a-time walk below.
+      const packable = (output.byteOffset & 3) === 0;
+      if (this.bpp === 16 && packable) {
+        // A DirectDraw game presents its whole 800x600 frame through here on
+        // every flip. Going pixel-by-pixel through readPixel costs a bounds
+        // check, a row-offset recompute, a maskInfo destructure and three
+        // Math.round divides per pixel — 480k times a frame, which a v8 --prof
+        // of Caesar III gameplay put at a quarter of the whole process. The
+        // masks are fixed for the life of the surface, so every possible
+        // 16-bit value can be expanded once into a 64K RGBA lookup.
+        const lut = this._rgba16Lut();
+        const out32 = new Uint32Array(output.buffer, output.byteOffset, width * height);
+        const bytes = this.storage;
+        for (let py = 0; py < height; py++) {
+          const row = this._rowOffset(y + py) + x * 2;
+          const outRow = py * width;
+          if (((bytes.byteOffset + row) & 1) === 0) {
+            const source = new Uint16Array(bytes.buffer, bytes.byteOffset + row, width);
+            for (let px = 0; px < width; px++) out32[outRow + px] = lut[source[px]];
+          } else {
+            for (let px = 0; px < width; px++) {
+              const offset = row + px * 2;
+              out32[outRow + px] = lut[bytes[offset] | (bytes[offset + 1] << 8)];
+            }
+          }
+        }
+        return output;
+      }
+      if (this.bpp <= 8 && packable) {
+        // Same idea for the palettised formats: resolve the palette once per
+        // call (it is at most 256 entries and _refreshGdiSurfacePalette can
+        // replace it between flushes, so this is rebuilt rather than cached)
+        // and index it per pixel instead of calling through _paletteColor.
+        const count = this.bpp === 1 ? 2 : this.bpp === 4 ? 16 : 256;
+        const lut = new Uint32Array(count);
+        for (let i = 0; i < count; i++) lut[i] = 0xFF000000 | this._paletteColor(i);
+        const out32 = new Uint32Array(output.buffer, output.byteOffset, width * height);
+        const bytes = this.storage;
+        for (let py = 0; py < height; py++) {
+          const row = this._rowOffset(y + py);
+          const outRow = py * width;
+          if (this.bpp === 8) {
+            for (let px = 0; px < width; px++) out32[outRow + px] = lut[bytes[row + x + px]];
+          } else if (this.bpp === 4) {
+            for (let px = 0; px < width; px++) {
+              const sx = x + px;
+              const packed = bytes[row + (sx >> 1)];
+              out32[outRow + px] = lut[(sx & 1) ? packed & 15 : packed >>> 4];
+            }
+          } else {
+            for (let px = 0; px < width; px++) {
+              const sx = x + px;
+              out32[outRow + px] = lut[(bytes[row + (sx >> 3)] >>> (7 - (sx & 7))) & 1];
+            }
+          }
+        }
+        return output;
+      }
+      if (this.bpp === 24) {
+        const bytes = this.storage;
+        for (let py = 0; py < height; py++) {
+          let source = this._rowOffset(y + py) + x * 3;
+          let target = py * width * 4;
+          for (let px = 0; px < width; px++, source += 3, target += 4) {
+            output[target] = bytes[source + 2];
+            output[target + 1] = bytes[source + 1];
+            output[target + 2] = bytes[source];
+            output[target + 3] = 255;
+          }
+        }
+        return output;
+      }
+      for (let py = 0; py < height; py++) {
+        for (let px = 0; px < width; px++) {
+          const color = this.readPixel(x + px, y + py);
+          const offset = (py * width + px) * 4;
+          output[offset] = color & 0xFF;
+          output[offset + 1] = (color >>> 8) & 0xFF;
+          output[offset + 2] = (color >>> 16) & 0xFF;
+          output[offset + 3] = 255;
+        }
+      }
+      return output;
+    }
+  }
+
+  return { GdiSurface, defaultStride, colorRef };
+});

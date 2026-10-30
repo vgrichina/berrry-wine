@@ -1,0 +1,1843 @@
+// Compile WAT source files to WASM binary
+// Pure-JS WAT→WASM compiler, zero dependencies. Works in Node.js and browser.
+// Two-pass streaming design: pass 1 collects declarations, pass 2 re-reads files
+// and emits function bodies one at a time. Only ~20KB of metadata stays in memory.
+
+// DERIVED, NOT TYPED. The source order lives in exactly one file —
+// src/main.watx, the root of the WATX `(include ...)` closure — and
+// lib/wat-manifest.js parses it. This array used to be a hand-maintained second
+// copy of that list, kept honest by a gate whose only job was to compare the
+// two; deriving it deletes the copy, and with it the class of bug where a new
+// src/*.wat reached build/combined.wat but not the shipped wasm.
+//
+// Read LAZILY, and never at require time. This file is not only a Node module:
+// tools/toyvm/bundle-browser.js inlines it verbatim into the browser bundle
+// (see its file list), where `require` is a shim over the inlined set and
+// `__dirname` belongs to the bundler, not to lib/. Reading src/main.watx while
+// the module is being required therefore broke that bundle's self-check with an
+// ENOENT from a path nobody wrote. Nothing in the browser wants this list —
+// the page's source-compile path goes through lib/watx-launcher.js, which
+// fetches src/main.watx and reads the include manifest out of it directly — so
+// the fs access happens only if a caller actually asks for the default list.
+//
+// The parts carry no (module ...) wrapper of their own; each fragment balances
+// its own parens (tools/check-wat-fragments.js) and iterTopLevel() below takes
+// bare top-level forms as module fields.
+let watFilesCache;
+
+function loadWatFiles() {
+  if (watFilesCache !== undefined) return watFilesCache;
+  watFilesCache = null;
+  if (typeof require === 'function' && typeof module !== 'undefined' && module.exports) {
+    try {
+      watFilesCache = require('./wat-manifest.js').WAT_FILES;
+    } catch (e) {
+      // A bundled/browser context has no lib/wat-manifest.js and no fs. Keep the
+      // reason for the caller below rather than reporting a bare "no list".
+      watFilesCache = null;
+      loadWatFiles.reason = e.message;
+    }
+  }
+  return watFilesCache;
+}
+
+function requireWatFiles(files) {
+  if (files) return files;
+  const list = loadWatFiles();
+  if (list) return list;
+  throw new Error('compile-wat: no source list. The src/main.watx include manifest is ' +
+    'only read under Node (lib/wat-manifest.js); in the browser pass options.files ' +
+    'explicitly, or compile through lib/watx-launcher.js, which reads main.watx itself.' +
+    (loadWatFiles.reason ? ` (${loadWatFiles.reason})` : ''));
+}
+
+// ============================================================
+// OPCODE TABLE
+// ============================================================
+const OPCODES = {
+  'unreachable': 0x00, 'nop': 0x01, 'block': 0x02, 'loop': 0x03,
+  'if': 0x04, 'else': 0x05, 'end': 0x0B, 'br': 0x0C, 'br_if': 0x0D,
+  'br_table': 0x0E, 'return': 0x0F, 'call': 0x10, 'call_indirect': 0x11, 'return_call': 0x12,
+  'drop': 0x1A, 'select': 0x1B,
+  'local.get': 0x20, 'local.set': 0x21, 'local.tee': 0x22,
+  'global.get': 0x23, 'global.set': 0x24,
+  // Memory
+  'i32.load': 0x28, 'i64.load': 0x29, 'f32.load': 0x2A, 'f64.load': 0x2B,
+  'i32.load8_s': 0x2C, 'i32.load8_u': 0x2D, 'i32.load16_s': 0x2E, 'i32.load16_u': 0x2F,
+  'i64.load8_s': 0x30, 'i64.load8_u': 0x31, 'i64.load16_s': 0x32, 'i64.load16_u': 0x33,
+  'i64.load32_s': 0x34, 'i64.load32_u': 0x35,
+  'i32.store': 0x36, 'i64.store': 0x37, 'f32.store': 0x38, 'f64.store': 0x39,
+  'i32.store8': 0x3A, 'i32.store16': 0x3B,
+  'i64.store8': 0x3C, 'i64.store16': 0x3D, 'i64.store32': 0x3E,
+  'memory.size': 0x3F, 'memory.grow': 0x40,
+  // Constants
+  'i32.const': 0x41, 'i64.const': 0x42, 'f32.const': 0x43, 'f64.const': 0x44,
+  // i32 comparison
+  'i32.eqz': 0x45, 'i32.eq': 0x46, 'i32.ne': 0x47,
+  'i32.lt_s': 0x48, 'i32.lt_u': 0x49, 'i32.gt_s': 0x4A, 'i32.gt_u': 0x4B,
+  'i32.le_s': 0x4C, 'i32.le_u': 0x4D, 'i32.ge_s': 0x4E, 'i32.ge_u': 0x4F,
+  // i64 comparison
+  'i64.eqz': 0x50, 'i64.eq': 0x51, 'i64.ne': 0x52,
+  'i64.lt_s': 0x53, 'i64.lt_u': 0x54, 'i64.gt_s': 0x55, 'i64.gt_u': 0x56,
+  'i64.le_s': 0x57, 'i64.le_u': 0x58, 'i64.ge_s': 0x59, 'i64.ge_u': 0x5A,
+  // f64 comparison
+  'f64.eq': 0x61, 'f64.ne': 0x62, 'f64.lt': 0x63, 'f64.gt': 0x64,
+  'f64.le': 0x65, 'f64.ge': 0x66,
+  // i32 arithmetic
+  'i32.clz': 0x67, 'i32.ctz': 0x68, 'i32.popcnt': 0x69,
+  'i32.add': 0x6A, 'i32.sub': 0x6B, 'i32.mul': 0x6C,
+  'i32.div_s': 0x6D, 'i32.div_u': 0x6E, 'i32.rem_s': 0x6F, 'i32.rem_u': 0x70,
+  'i32.and': 0x71, 'i32.or': 0x72, 'i32.xor': 0x73,
+  'i32.shl': 0x74, 'i32.shr_s': 0x75, 'i32.shr_u': 0x76,
+  'i32.rotl': 0x77, 'i32.rotr': 0x78,
+  // i64 arithmetic
+  'i64.clz': 0x79, 'i64.ctz': 0x7A, 'i64.popcnt': 0x7B,
+  'i64.add': 0x7C, 'i64.sub': 0x7D, 'i64.mul': 0x7E,
+  'i64.div_s': 0x7F, 'i64.div_u': 0x80, 'i64.rem_s': 0x81, 'i64.rem_u': 0x82,
+  'i64.and': 0x83, 'i64.or': 0x84, 'i64.xor': 0x85,
+  'i64.shl': 0x86, 'i64.shr_s': 0x87, 'i64.shr_u': 0x88,
+  'i64.rotl': 0x89, 'i64.rotr': 0x8A,
+  // f64 arithmetic
+  'f32.eq': 0x5B, 'f32.ne': 0x5C, 'f32.lt': 0x5D, 'f32.gt': 0x5E,
+  'f32.le': 0x5F, 'f32.ge': 0x60,
+
+  'f32.abs': 0x8B, 'f32.neg': 0x8C, 'f32.ceil': 0x8D, 'f32.floor': 0x8E,
+  'f32.trunc': 0x8F, 'f32.nearest': 0x90, 'f32.sqrt': 0x91,
+  'f32.add': 0x92, 'f32.sub': 0x93, 'f32.mul': 0x94, 'f32.div': 0x95,
+  'f32.min': 0x96, 'f32.max': 0x97, 'f32.copysign': 0x98,
+
+  'f64.abs': 0x99, 'f64.neg': 0x9A, 'f64.ceil': 0x9B, 'f64.floor': 0x9C,
+  'f64.trunc': 0x9D, 'f64.nearest': 0x9E, 'f64.sqrt': 0x9F,
+  'f64.add': 0xA0, 'f64.sub': 0xA1, 'f64.mul': 0xA2, 'f64.div': 0xA3,
+  'f64.min': 0xA4, 'f64.max': 0xA5, 'f64.copysign': 0xA6,
+  // Conversions
+  'i32.wrap_i64': 0xA7,
+  'i32.trunc_f32_s': 0xA8, 'i32.trunc_f32_u': 0xA9,
+  'i32.trunc_f64_s': 0xAA, 'i32.trunc_f64_u': 0xAB,
+  'i64.extend_i32_s': 0xAC, 'i64.extend_i32_u': 0xAD,
+  'i64.trunc_f32_s': 0xAE, 'i64.trunc_f32_u': 0xAF,
+  'i64.trunc_f64_s': 0xB0, 'i64.trunc_f64_u': 0xB1,
+  'f32.convert_i32_s': 0xB2, 'f32.convert_i32_u': 0xB3,
+  'f32.convert_i64_s': 0xB4, 'f32.convert_i64_u': 0xB5,
+  'f32.demote_f64': 0xB6,
+  'f64.convert_i32_s': 0xB7, 'f64.convert_i32_u': 0xB8,
+  'f64.convert_i64_s': 0xB9, 'f64.convert_i64_u': 0xBA,
+  'f64.promote_f32': 0xBB,
+  'i32.reinterpret_f32': 0xBC, 'i64.reinterpret_f64': 0xBD,
+  'f32.reinterpret_i32': 0xBE, 'f64.reinterpret_i64': 0xBF,
+  'i32.extend8_s': 0xC0, 'i32.extend16_s': 0xC1,
+  'i64.extend8_s': 0xC2, 'i64.extend16_s': 0xC3, 'i64.extend32_s': 0xC4,
+};
+
+// 0xFC-prefixed ops
+const FC_OPS = {
+  'i32.trunc_sat_f32_s': 0x00, 'i32.trunc_sat_f32_u': 0x01,
+  'i32.trunc_sat_f64_s': 0x02, 'i32.trunc_sat_f64_u': 0x03,
+  'i64.trunc_sat_f32_s': 0x04, 'i64.trunc_sat_f32_u': 0x05,
+  'i64.trunc_sat_f64_s': 0x06, 'i64.trunc_sat_f64_u': 0x07,
+  'memory.copy': 0x0A, 'memory.fill': 0x0B,
+};
+
+// 0xFE-prefixed ops — the threads proposal's atomics.
+//
+// Every one of these takes a memarg whose alignment must be EXACTLY natural, so
+// the required alignment is carried here rather than inferred from the mnemonic:
+// naturalAlign()'s substring heuristic reads `i64.atomic.rmw32.add_u` as a 64-bit
+// access (no '8', no '16', starts with i64) and would emit align=3, which every
+// engine rejects with "invalid alignment". Only atomic.fence has no memarg.
+//
+// Alignment is not advisory for atomics the way it is for plain loads: a
+// mis-declared alignment is a validation error, not a slow path, so a wrong
+// entry here fails loudly at instantiate rather than corrupting anything.
+const FE_OPS = {
+  'memory.atomic.notify': [0x00, 2],
+  'memory.atomic.wait32': [0x01, 2],
+  'memory.atomic.wait64': [0x02, 3],
+  'atomic.fence': [0x03, null],
+
+  'i32.atomic.load': [0x10, 2],
+  'i64.atomic.load': [0x11, 3],
+  'i32.atomic.load8_u': [0x12, 0],
+  'i32.atomic.load16_u': [0x13, 1],
+  'i64.atomic.load8_u': [0x14, 0],
+  'i64.atomic.load16_u': [0x15, 1],
+  'i64.atomic.load32_u': [0x16, 2],
+  'i32.atomic.store': [0x17, 2],
+  'i64.atomic.store': [0x18, 3],
+  'i32.atomic.store8': [0x19, 0],
+  'i32.atomic.store16': [0x1A, 1],
+  'i64.atomic.store8': [0x1B, 0],
+  'i64.atomic.store16': [0x1C, 1],
+  'i64.atomic.store32': [0x1D, 2],
+
+  'i32.atomic.rmw.add': [0x1E, 2],
+  'i64.atomic.rmw.add': [0x1F, 3],
+  'i32.atomic.rmw8.add_u': [0x20, 0],
+  'i32.atomic.rmw16.add_u': [0x21, 1],
+  'i64.atomic.rmw8.add_u': [0x22, 0],
+  'i64.atomic.rmw16.add_u': [0x23, 1],
+  'i64.atomic.rmw32.add_u': [0x24, 2],
+  'i32.atomic.rmw.sub': [0x25, 2],
+  'i64.atomic.rmw.sub': [0x26, 3],
+  'i32.atomic.rmw8.sub_u': [0x27, 0],
+  'i32.atomic.rmw16.sub_u': [0x28, 1],
+  'i64.atomic.rmw8.sub_u': [0x29, 0],
+  'i64.atomic.rmw16.sub_u': [0x2A, 1],
+  'i64.atomic.rmw32.sub_u': [0x2B, 2],
+  'i32.atomic.rmw.and': [0x2C, 2],
+  'i64.atomic.rmw.and': [0x2D, 3],
+  'i32.atomic.rmw8.and_u': [0x2E, 0],
+  'i32.atomic.rmw16.and_u': [0x2F, 1],
+  'i64.atomic.rmw8.and_u': [0x30, 0],
+  'i64.atomic.rmw16.and_u': [0x31, 1],
+  'i64.atomic.rmw32.and_u': [0x32, 2],
+  'i32.atomic.rmw.or': [0x33, 2],
+  'i64.atomic.rmw.or': [0x34, 3],
+  'i32.atomic.rmw8.or_u': [0x35, 0],
+  'i32.atomic.rmw16.or_u': [0x36, 1],
+  'i64.atomic.rmw8.or_u': [0x37, 0],
+  'i64.atomic.rmw16.or_u': [0x38, 1],
+  'i64.atomic.rmw32.or_u': [0x39, 2],
+  'i32.atomic.rmw.xor': [0x3A, 2],
+  'i64.atomic.rmw.xor': [0x3B, 3],
+  'i32.atomic.rmw8.xor_u': [0x3C, 0],
+  'i32.atomic.rmw16.xor_u': [0x3D, 1],
+  'i64.atomic.rmw8.xor_u': [0x3E, 0],
+  'i64.atomic.rmw16.xor_u': [0x3F, 1],
+  'i64.atomic.rmw32.xor_u': [0x40, 2],
+  'i32.atomic.rmw.xchg': [0x41, 2],
+  'i64.atomic.rmw.xchg': [0x42, 3],
+  'i32.atomic.rmw8.xchg_u': [0x43, 0],
+  'i32.atomic.rmw16.xchg_u': [0x44, 1],
+  'i64.atomic.rmw8.xchg_u': [0x45, 0],
+  'i64.atomic.rmw16.xchg_u': [0x46, 1],
+  'i64.atomic.rmw32.xchg_u': [0x47, 2],
+  'i32.atomic.rmw.cmpxchg': [0x48, 2],
+  'i64.atomic.rmw.cmpxchg': [0x49, 3],
+  'i32.atomic.rmw8.cmpxchg_u': [0x4A, 0],
+  'i32.atomic.rmw16.cmpxchg_u': [0x4B, 1],
+  'i64.atomic.rmw8.cmpxchg_u': [0x4C, 0],
+  'i64.atomic.rmw16.cmpxchg_u': [0x4D, 1],
+  'i64.atomic.rmw32.cmpxchg_u': [0x4E, 2],
+};
+
+// 0xFD-prefixed ops (the fixed-width SIMD proposal). The whole table is here
+// rather than only the opcodes MMX needs, because the expensive part is looking
+// the numbers up, not storing them: a half-table would have to be revisited the
+// first time an XMM handler wants a float op. Opcodes >= 0x80 are ULEB, so the
+// emitter writes them with uleb() and not byte().
+const FD_OPS = {
+  // Memory
+  'v128.load': 0x00,
+  'v128.load8x8_s': 0x01, 'v128.load8x8_u': 0x02,
+  'v128.load16x4_s': 0x03, 'v128.load16x4_u': 0x04,
+  'v128.load32x2_s': 0x05, 'v128.load32x2_u': 0x06,
+  'v128.load8_splat': 0x07, 'v128.load16_splat': 0x08,
+  'v128.load32_splat': 0x09, 'v128.load64_splat': 0x0A,
+  'v128.store': 0x0B,
+  'v128.load32_zero': 0x5C, 'v128.load64_zero': 0x5D,
+  'v128.load8_lane': 0x54, 'v128.load16_lane': 0x55,
+  'v128.load32_lane': 0x56, 'v128.load64_lane': 0x57,
+  'v128.store8_lane': 0x58, 'v128.store16_lane': 0x59,
+  'v128.store32_lane': 0x5A, 'v128.store64_lane': 0x5B,
+  // Constants / lane shuffling
+  'v128.const': 0x0C, 'i8x16.shuffle': 0x0D, 'i8x16.swizzle': 0x0E,
+  // Splat
+  'i8x16.splat': 0x0F, 'i16x8.splat': 0x10, 'i32x4.splat': 0x11,
+  'i64x2.splat': 0x12, 'f32x4.splat': 0x13, 'f64x2.splat': 0x14,
+  // Lane access
+  'i8x16.extract_lane_s': 0x15, 'i8x16.extract_lane_u': 0x16, 'i8x16.replace_lane': 0x17,
+  'i16x8.extract_lane_s': 0x18, 'i16x8.extract_lane_u': 0x19, 'i16x8.replace_lane': 0x1A,
+  'i32x4.extract_lane': 0x1B, 'i32x4.replace_lane': 0x1C,
+  'i64x2.extract_lane': 0x1D, 'i64x2.replace_lane': 0x1E,
+  'f32x4.extract_lane': 0x1F, 'f32x4.replace_lane': 0x20,
+  'f64x2.extract_lane': 0x21, 'f64x2.replace_lane': 0x22,
+  // Integer compares
+  'i8x16.eq': 0x23, 'i8x16.ne': 0x24, 'i8x16.lt_s': 0x25, 'i8x16.lt_u': 0x26,
+  'i8x16.gt_s': 0x27, 'i8x16.gt_u': 0x28, 'i8x16.le_s': 0x29, 'i8x16.le_u': 0x2A,
+  'i8x16.ge_s': 0x2B, 'i8x16.ge_u': 0x2C,
+  'i16x8.eq': 0x2D, 'i16x8.ne': 0x2E, 'i16x8.lt_s': 0x2F, 'i16x8.lt_u': 0x30,
+  'i16x8.gt_s': 0x31, 'i16x8.gt_u': 0x32, 'i16x8.le_s': 0x33, 'i16x8.le_u': 0x34,
+  'i16x8.ge_s': 0x35, 'i16x8.ge_u': 0x36,
+  'i32x4.eq': 0x37, 'i32x4.ne': 0x38, 'i32x4.lt_s': 0x39, 'i32x4.lt_u': 0x3A,
+  'i32x4.gt_s': 0x3B, 'i32x4.gt_u': 0x3C, 'i32x4.le_s': 0x3D, 'i32x4.le_u': 0x3E,
+  'i32x4.ge_s': 0x3F, 'i32x4.ge_u': 0x40,
+  'i64x2.eq': 0xD6, 'i64x2.ne': 0xD7, 'i64x2.lt_s': 0xD8, 'i64x2.gt_s': 0xD9,
+  'i64x2.le_s': 0xDA, 'i64x2.ge_s': 0xDB,
+  // Float compares
+  'f32x4.eq': 0x41, 'f32x4.ne': 0x42, 'f32x4.lt': 0x43, 'f32x4.gt': 0x44,
+  'f32x4.le': 0x45, 'f32x4.ge': 0x46,
+  'f64x2.eq': 0x47, 'f64x2.ne': 0x48, 'f64x2.lt': 0x49, 'f64x2.gt': 0x4A,
+  'f64x2.le': 0x4B, 'f64x2.ge': 0x4C,
+  // Bitwise
+  'v128.not': 0x4D, 'v128.and': 0x4E, 'v128.andnot': 0x4F, 'v128.or': 0x50,
+  'v128.xor': 0x51, 'v128.bitselect': 0x52, 'v128.any_true': 0x53,
+  // i8x16
+  'i8x16.abs': 0x60, 'i8x16.neg': 0x61, 'i8x16.popcnt': 0x62,
+  'i8x16.all_true': 0x63, 'i8x16.bitmask': 0x64,
+  'i8x16.narrow_i16x8_s': 0x65, 'i8x16.narrow_i16x8_u': 0x66,
+  'i8x16.shl': 0x6B, 'i8x16.shr_s': 0x6C, 'i8x16.shr_u': 0x6D,
+  'i8x16.add': 0x6E, 'i8x16.add_sat_s': 0x6F, 'i8x16.add_sat_u': 0x70,
+  'i8x16.sub': 0x71, 'i8x16.sub_sat_s': 0x72, 'i8x16.sub_sat_u': 0x73,
+  'i8x16.min_s': 0x76, 'i8x16.min_u': 0x77, 'i8x16.max_s': 0x78, 'i8x16.max_u': 0x79,
+  'i8x16.avgr_u': 0x7B,
+  // Pairwise widening adds
+  'i16x8.extadd_pairwise_i8x16_s': 0x7C, 'i16x8.extadd_pairwise_i8x16_u': 0x7D,
+  'i32x4.extadd_pairwise_i16x8_s': 0x7E, 'i32x4.extadd_pairwise_i16x8_u': 0x7F,
+  // i16x8
+  'i16x8.abs': 0x80, 'i16x8.neg': 0x81, 'i16x8.q15mulr_sat_s': 0x82,
+  'i16x8.all_true': 0x83, 'i16x8.bitmask': 0x84,
+  'i16x8.narrow_i32x4_s': 0x85, 'i16x8.narrow_i32x4_u': 0x86,
+  'i16x8.extend_low_i8x16_s': 0x87, 'i16x8.extend_high_i8x16_s': 0x88,
+  'i16x8.extend_low_i8x16_u': 0x89, 'i16x8.extend_high_i8x16_u': 0x8A,
+  'i16x8.shl': 0x8B, 'i16x8.shr_s': 0x8C, 'i16x8.shr_u': 0x8D,
+  'i16x8.add': 0x8E, 'i16x8.add_sat_s': 0x8F, 'i16x8.add_sat_u': 0x90,
+  'i16x8.sub': 0x91, 'i16x8.sub_sat_s': 0x92, 'i16x8.sub_sat_u': 0x93,
+  'i16x8.mul': 0x95,
+  'i16x8.min_s': 0x96, 'i16x8.min_u': 0x97, 'i16x8.max_s': 0x98, 'i16x8.max_u': 0x99,
+  'i16x8.avgr_u': 0x9B,
+  'i16x8.extmul_low_i8x16_s': 0x9C, 'i16x8.extmul_high_i8x16_s': 0x9D,
+  'i16x8.extmul_low_i8x16_u': 0x9E, 'i16x8.extmul_high_i8x16_u': 0x9F,
+  // i32x4
+  'i32x4.abs': 0xA0, 'i32x4.neg': 0xA1, 'i32x4.all_true': 0xA3, 'i32x4.bitmask': 0xA4,
+  'i32x4.extend_low_i16x8_s': 0xA7, 'i32x4.extend_high_i16x8_s': 0xA8,
+  'i32x4.extend_low_i16x8_u': 0xA9, 'i32x4.extend_high_i16x8_u': 0xAA,
+  'i32x4.shl': 0xAB, 'i32x4.shr_s': 0xAC, 'i32x4.shr_u': 0xAD,
+  'i32x4.add': 0xAE, 'i32x4.sub': 0xB1, 'i32x4.mul': 0xB5,
+  'i32x4.min_s': 0xB6, 'i32x4.min_u': 0xB7, 'i32x4.max_s': 0xB8, 'i32x4.max_u': 0xB9,
+  'i32x4.dot_i16x8_s': 0xBA,
+  'i32x4.extmul_low_i16x8_s': 0xBC, 'i32x4.extmul_high_i16x8_s': 0xBD,
+  'i32x4.extmul_low_i16x8_u': 0xBE, 'i32x4.extmul_high_i16x8_u': 0xBF,
+  // i64x2
+  'i64x2.abs': 0xC0, 'i64x2.neg': 0xC1, 'i64x2.all_true': 0xC3, 'i64x2.bitmask': 0xC4,
+  'i64x2.extend_low_i32x4_s': 0xC7, 'i64x2.extend_high_i32x4_s': 0xC8,
+  'i64x2.extend_low_i32x4_u': 0xC9, 'i64x2.extend_high_i32x4_u': 0xCA,
+  'i64x2.shl': 0xCB, 'i64x2.shr_s': 0xCC, 'i64x2.shr_u': 0xCD,
+  'i64x2.add': 0xCE, 'i64x2.sub': 0xD1, 'i64x2.mul': 0xD5,
+  'i64x2.extmul_low_i32x4_s': 0xDC, 'i64x2.extmul_high_i32x4_s': 0xDD,
+  'i64x2.extmul_low_i32x4_u': 0xDE, 'i64x2.extmul_high_i32x4_u': 0xDF,
+  // f32x4
+  'f32x4.ceil': 0x67, 'f32x4.floor': 0x68, 'f32x4.trunc': 0x69, 'f32x4.nearest': 0x6A,
+  'f32x4.abs': 0xE0, 'f32x4.neg': 0xE1, 'f32x4.sqrt': 0xE3,
+  'f32x4.add': 0xE4, 'f32x4.sub': 0xE5, 'f32x4.mul': 0xE6, 'f32x4.div': 0xE7,
+  'f32x4.min': 0xE8, 'f32x4.max': 0xE9, 'f32x4.pmin': 0xEA, 'f32x4.pmax': 0xEB,
+  // f64x2
+  'f64x2.ceil': 0x74, 'f64x2.floor': 0x75, 'f64x2.trunc': 0x7A, 'f64x2.nearest': 0x94,
+  'f64x2.abs': 0xEC, 'f64x2.neg': 0xED, 'f64x2.sqrt': 0xEF,
+  'f64x2.add': 0xF0, 'f64x2.sub': 0xF1, 'f64x2.mul': 0xF2, 'f64x2.div': 0xF3,
+  'f64x2.min': 0xF4, 'f64x2.max': 0xF5, 'f64x2.pmin': 0xF6, 'f64x2.pmax': 0xF7,
+  // Conversions
+  'i32x4.trunc_sat_f32x4_s': 0xF8, 'i32x4.trunc_sat_f32x4_u': 0xF9,
+  'f32x4.convert_i32x4_s': 0xFA, 'f32x4.convert_i32x4_u': 0xFB,
+  'i32x4.trunc_sat_f64x2_s_zero': 0xFC, 'i32x4.trunc_sat_f64x2_u_zero': 0xFD,
+  'f64x2.convert_low_i32x4_s': 0xFE, 'f64x2.convert_low_i32x4_u': 0xFF,
+  'f32x4.demote_f64x2_zero': 0x5E, 'f64x2.promote_low_f32x4': 0x5F,
+};
+
+// FD ops that carry a memarg, and the alignment each one naturally wants.
+const FD_MEMARG_ALIGN = {
+  'v128.load': 4, 'v128.store': 4,
+  'v128.load8x8_s': 3, 'v128.load8x8_u': 3,
+  'v128.load16x4_s': 3, 'v128.load16x4_u': 3,
+  'v128.load32x2_s': 3, 'v128.load32x2_u': 3,
+  'v128.load8_splat': 0, 'v128.load16_splat': 1,
+  'v128.load32_splat': 2, 'v128.load64_splat': 3,
+  'v128.load32_zero': 2, 'v128.load64_zero': 3,
+  'v128.load8_lane': 0, 'v128.load16_lane': 1,
+  'v128.load32_lane': 2, 'v128.load64_lane': 3,
+  'v128.store8_lane': 0, 'v128.store16_lane': 1,
+  'v128.store32_lane': 2, 'v128.store64_lane': 3,
+};
+
+// FD ops taking a single lane-index immediate byte after the opcode (and, for
+// the *_lane memory ops, after the memarg).
+const FD_LANE_OPS = new Set([
+  'i8x16.extract_lane_s', 'i8x16.extract_lane_u', 'i8x16.replace_lane',
+  'i16x8.extract_lane_s', 'i16x8.extract_lane_u', 'i16x8.replace_lane',
+  'i32x4.extract_lane', 'i32x4.replace_lane',
+  'i64x2.extract_lane', 'i64x2.replace_lane',
+  'f32x4.extract_lane', 'f32x4.replace_lane',
+  'f64x2.extract_lane', 'f64x2.replace_lane',
+  'v128.load8_lane', 'v128.load16_lane', 'v128.load32_lane', 'v128.load64_lane',
+  'v128.store8_lane', 'v128.store16_lane', 'v128.store32_lane', 'v128.store64_lane',
+]);
+
+// v128.const / i8x16.shuffle both carry 16 immediate bytes. v128.const accepts
+// the usual shape prefixes; whichever shape is named, the 16 bytes on the wire
+// are the same little-endian image, so they are assembled here rather than
+// pushed onto the caller.
+function encodeV128Immediate(op, atoms) {
+  const bytes = new Uint8Array(16);
+  if (op === 'i8x16.shuffle') {
+    for (let i = 0; i < 16; i++) bytes[i] = parseNumber(atoms[i]) & 0xFF;
+    return bytes;
+  }
+  const shape = atoms[0];
+  const vals = atoms.slice(1);
+  const view = new DataView(bytes.buffer);
+  switch (shape) {
+    case 'i8x16':
+      for (let i = 0; i < 16; i++) view.setUint8(i, parseNumber(vals[i]) & 0xFF);
+      break;
+    case 'i16x8':
+      for (let i = 0; i < 8; i++) view.setUint16(i * 2, parseNumber(vals[i]) & 0xFFFF, true);
+      break;
+    case 'i32x4':
+      for (let i = 0; i < 4; i++) view.setInt32(i * 4, parseNumber(vals[i]) | 0, true);
+      break;
+    case 'i64x2':
+      for (let i = 0; i < 2; i++) view.setBigInt64(i * 8, BigInt.asIntN(64, parseBigInt(vals[i])), true);
+      break;
+    case 'f32x4':
+      for (let i = 0; i < 4; i++) view.setFloat32(i * 4, parseNumber(vals[i]), true);
+      break;
+    case 'f64x2':
+      for (let i = 0; i < 2; i++) view.setFloat64(i * 8, parseNumber(vals[i]), true);
+      break;
+    default:
+      throw new Error(`compile-wat: v128.const needs a shape (i8x16/i16x8/i32x4/i64x2/f32x4/f64x2), got ${shape}`);
+  }
+  return bytes;
+}
+
+const VALTYPES = { 'i32': 0x7F, 'i64': 0x7E, 'f32': 0x7D, 'f64': 0x7C, 'v128': 0x7B };
+const BLOCKTYPE_VOID = 0x40;
+
+// Set of ops that take memarg (align + offset)
+const MEMARG_OPS = new Set([
+  'i32.load', 'i64.load', 'f32.load', 'f64.load',
+  'i32.load8_s', 'i32.load8_u', 'i32.load16_s', 'i32.load16_u',
+  'i64.load8_s', 'i64.load8_u', 'i64.load16_s', 'i64.load16_u',
+  'i64.load32_s', 'i64.load32_u',
+  'i32.store', 'i64.store', 'f32.store', 'f64.store',
+  'i32.store8', 'i32.store16',
+  'i64.store8', 'i64.store16', 'i64.store32',
+]);
+
+function naturalAlign(op) {
+  if (op.includes('8')) return 0;
+  if (op.includes('16')) return 1;
+  if (op.startsWith('i32') || op.startsWith('f32')) return 2;
+  return 3; // i64, f64
+}
+
+// ============================================================
+// BINARY WRITER
+// ============================================================
+class BinaryWriter {
+  constructor(initSize) {
+    this.buf = new Uint8Array(initSize || 65536);
+    this.pos = 0;
+  }
+  ensure(n) {
+    if (this.pos + n <= this.buf.length) return;
+    let size = this.buf.length;
+    while (size < this.pos + n) size *= 2;
+    const nb = new Uint8Array(size);
+    nb.set(this.buf);
+    this.buf = nb;
+  }
+  byte(v) { this.ensure(1); this.buf[this.pos++] = v & 0xFF; }
+  bytes(arr) {
+    const n = arr.length;
+    this.ensure(n);
+    if (arr instanceof Uint8Array) this.buf.set(arr, this.pos);
+    else for (let i = 0; i < n; i++) this.buf[this.pos + i] = arr[i];
+    this.pos += n;
+  }
+  uleb(v) {
+    this.ensure(5);
+    v = v >>> 0;
+    do {
+      let b = v & 0x7F; v >>>= 7;
+      if (v) b |= 0x80;
+      this.buf[this.pos++] = b;
+    } while (v);
+  }
+  sleb(v) {
+    this.ensure(5);
+    v = v | 0;
+    for (;;) {
+      const b = v & 0x7F; v >>= 7;
+      if ((v === 0 && !(b & 0x40)) || (v === -1 && (b & 0x40))) { this.buf[this.pos++] = b; return; }
+      this.buf[this.pos++] = b | 0x80;
+    }
+  }
+  sleb64(v) {
+    this.ensure(10);
+    for (;;) {
+      const b = Number(v & 0x7Fn); v >>= 7n;
+      if ((v === 0n && !(b & 0x40)) || (v === -1n && (b & 0x40))) { this.buf[this.pos++] = b; return; }
+      this.buf[this.pos++] = b | 0x80;
+    }
+  }
+  f64(v) {
+    this.ensure(8);
+    new DataView(this.buf.buffer, this.buf.byteOffset).setFloat64(this.pos, v, true);
+    this.pos += 8;
+  }
+  f32(v) {
+    this.ensure(4);
+    new DataView(this.buf.buffer, this.buf.byteOffset).setFloat32(this.pos, v, true);
+    this.pos += 4;
+  }
+  // Write section: id byte, then LEB-prefixed content via callback
+  section(id, fn) {
+    this.byte(id);
+    const tmp = new BinaryWriter(32768);
+    fn(tmp);
+    this.uleb(tmp.pos);
+    this.ensure(tmp.pos);
+    this.buf.set(tmp.buf.subarray(0, tmp.pos), this.pos);
+    this.pos += tmp.pos;
+  }
+  appendWriter(other) {
+    this.ensure(other.pos);
+    this.buf.set(other.buf.subarray(0, other.pos), this.pos);
+    this.pos += other.pos;
+  }
+  result() { return this.buf.slice(0, this.pos); }
+}
+
+// ============================================================
+// TOKENIZER — processes one string at a time, returns flat token array
+// ============================================================
+function tokenize(src) {
+  const tokens = [];
+  let i = 0;
+  const len = src.length;
+  while (i < len) {
+    const c = src.charCodeAt(i);
+    if (c <= 32) { i++; continue; } // whitespace
+    if (c === 59 /* ; */) { // line comment
+      if (i + 1 < len && src.charCodeAt(i + 1) === 59) {
+        i += 2; while (i < len && src.charCodeAt(i) !== 10) i++; continue;
+      }
+    }
+    if (c === 40 /* ( */) {
+      if (i + 1 < len && src.charCodeAt(i + 1) === 59) { // block comment
+        i += 2; let depth = 1;
+        while (i < len && depth) {
+          if (src.charCodeAt(i) === 40 && i + 1 < len && src.charCodeAt(i + 1) === 59) { depth++; i += 2; }
+          else if (src.charCodeAt(i) === 59 && i + 1 < len && src.charCodeAt(i + 1) === 41) { depth--; i += 2; }
+          else i++;
+        }
+        continue;
+      }
+      tokens.push('('); i++; continue;
+    }
+    if (c === 41 /* ) */) { tokens.push(')'); i++; continue; }
+    if (c === 34 /* " */) {
+      let s = '';
+      i++;
+      while (i < len && src.charCodeAt(i) !== 34) {
+        if (src.charCodeAt(i) === 92 /* \ */) {
+          i++;
+          if (i >= len) break;
+          const e = src.charCodeAt(i);
+          if (e === 110) { s += '\n'; i++; }
+          else if (e === 116) { s += '\t'; i++; }
+          else if (e === 114) { s += '\r'; i++; }
+          else if (e === 92) { s += '\\'; i++; }
+          else if (e === 34) { s += '"'; i++; }
+          else { // hex escape \XX
+            const h1 = src[i], h2 = i + 1 < len ? src[i + 1] : '0';
+            s += String.fromCharCode(parseInt(h1 + h2, 16));
+            i += 2;
+          }
+        } else { s += src[i++]; }
+      }
+      if (i < len) i++; // closing "
+      tokens.push({ str: s });
+      continue;
+    }
+    // Atom
+    const start = i;
+    while (i < len) {
+      const cc = src.charCodeAt(i);
+      if (cc <= 32 || cc === 40 || cc === 41 || cc === 59 || cc === 34) break;
+      i++;
+    }
+    tokens.push(src.substring(start, i));
+  }
+  return tokens;
+}
+
+// ============================================================
+// S-EXPRESSION PARSER — returns nested arrays from flat token array
+// ============================================================
+function parseSExprs(tokens) {
+  const result = [];
+  let i = 0;
+  function parse() {
+    if (tokens[i] === '(') {
+      i++;
+      const list = [];
+      while (i < tokens.length && tokens[i] !== ')') list.push(parse());
+      if (i < tokens.length) i++; // ')'
+      return list;
+    }
+    return tokens[i++];
+  }
+  while (i < tokens.length) result.push(parse());
+  return result;
+}
+
+// Validate the structure of the aggregate WAT stream before the permissive
+// S-expression parser sees it. Since Milestone 2.2 of
+// docs/watx-migration-plan.md the source parts carry NO `(module ...)` wrapper —
+// each src/*.wat balances on its own (gated by tools/check-wat-fragments.js) and
+// iterTopLevel below accepts bare top-level module fields. Lexer state is still
+// carried across parts here, so an unbalanced part is reported at the file and
+// line where it goes wrong rather than at the end of the stream.
+//
+// parseSExprs historically accepted EOF as an implicit close parenthesis and
+// ignored a stray top-level `)`. That let malformed source produce a valid but
+// incomplete wasm module; WebAssembly.Module could not catch it because the
+// damage had already been normalized into valid binary structure.
+function validateWatStructure(sources, files) {
+  let depth = 0;
+  let blockDepth = 0;
+  let inString = false;
+  let escaped = false;
+  let stringStart = null;
+  let commentStart = null;
+  const opens = [];
+
+  for (let sourceIndex = 0; sourceIndex < sources.length; sourceIndex++) {
+    const src = String(sources[sourceIndex]);
+    const file = files[sourceIndex] || `<source ${sourceIndex + 1}>`;
+    let line = 1;
+    let lineComment = false;
+
+    for (let i = 0; i < src.length; i++) {
+      const ch = src[i];
+      const next = src[i + 1];
+
+      if (ch === '\n') {
+        line++;
+        lineComment = false;
+        if (inString && escaped) escaped = false;
+        continue;
+      }
+      if (lineComment) continue;
+
+      if (blockDepth) {
+        if (ch === '(' && next === ';') {
+          blockDepth++;
+          i++;
+        } else if (ch === ';' && next === ')') {
+          blockDepth--;
+          i++;
+        }
+        continue;
+      }
+
+      if (inString) {
+        if (escaped) {
+          escaped = false;
+        } else if (ch === '\\') {
+          escaped = true;
+        } else if (ch === '"') {
+          inString = false;
+        }
+        continue;
+      }
+
+      if (ch === ';' && next === ';') {
+        lineComment = true;
+        i++;
+      } else if (ch === '(' && next === ';') {
+        blockDepth = 1;
+        commentStart = { file, line };
+        i++;
+      } else if (ch === '"') {
+        inString = true;
+        stringStart = { file, line };
+      } else if (ch === '(') {
+        depth++;
+        opens.push({ file, line });
+      } else if (ch === ')') {
+        if (depth === 0) {
+          throw new Error(`compile-wat: unexpected ')' at ${file}:${line}`);
+        }
+        depth--;
+        opens.pop();
+      }
+    }
+  }
+
+  if (blockDepth) {
+    throw new Error(`compile-wat: unterminated block comment starting at ` +
+      `${commentStart.file}:${commentStart.line}`);
+  }
+  if (inString) {
+    throw new Error(`compile-wat: unterminated string starting at ` +
+      `${stringStart.file}:${stringStart.line}`);
+  }
+  if (depth !== 0) {
+    const open = opens[opens.length - 1];
+    throw new Error(`compile-wat: final parenthesis depth ${depth} (expected 0); ` +
+      `unclosed '(' at ${open.file}:${open.line}`);
+  }
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function parseNumber(s) {
+  if (typeof s !== 'string') return 0;
+  s = s.replace(/_/g, '');
+  const neg = s.startsWith('-');
+  let raw = neg ? s.substring(1) : s;
+  let v;
+  if (raw.startsWith('0x') || raw.startsWith('0X')) v = parseInt(raw.substring(2), 16);
+  else if (raw.includes('.') || raw.includes('e') || raw.includes('E') ||
+           raw === 'inf' || raw === 'nan') v = parseFloat(raw);
+  else v = parseInt(raw, 10);
+  return neg ? -v : v;
+}
+
+function parseBigInt(s) {
+  if (typeof s !== 'string') return 0n;
+  s = s.replace(/_/g, '');
+  const neg = s.startsWith('-');
+  let raw = neg ? s.substring(1) : s;
+  const v = raw.startsWith('0x') || raw.startsWith('0X')
+    ? BigInt('0x' + raw.substring(2)) : BigInt(raw);
+  // The text format lets an i64 constant be written either signed or unsigned,
+  // so 0x8000000000000000 and -9223372036854775808 are the same bit pattern.
+  // Without this wrap the unsigned spelling LEBs out to a 10th byte with bits
+  // above 64 set, and the engine rejects the whole function with "extra bits in
+  // varint" -- which reads as a bug anywhere inside it.
+  return BigInt.asIntN(64, neg ? -v : v);
+}
+
+function sigKey(params, results) {
+  return params.join(',') + ':' + results.join(',');
+}
+
+function encodeUTF8(s) {
+  const b = [];
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charCodeAt(i);
+    if (c < 0x80) b.push(c);
+    else if (c < 0x800) { b.push(0xC0 | (c >> 6), 0x80 | (c & 0x3F)); }
+    else { b.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F)); }
+  }
+  return b;
+}
+
+function resolveRef(ref, nameMap, kind) {
+  if (typeof ref === 'string' && ref.startsWith('$')) {
+    const v = nameMap[ref];
+    if (v !== undefined) return v;
+    // Resolving to 0 does not mean "does nothing": index 0 is the first import
+    // ($host_log), so an unknown $handle_Foo compiled into a call to that with
+    // the wrong arity, which then never popped ESP for the guest's stdcall
+    // args. Every enclosing dispatch arm ends in (return), and return is
+    // stack-polymorphic, so the leftover operands validated fine and the whole
+    // thing shipped silently. Three handlers were being called that way at
+    // HEAD on 2026-08-18, and a WAT file whose (func header had been eaten by
+    // a bad edit compiled without complaint for weeks. A name that does not
+    // resolve is a build failure.
+    throw new Error(`compile-wat: unknown ${kind}: ${ref}`);
+  }
+  return parseNumber(ref) || 0;
+}
+
+const REPLICATED_DISPATCH_FN_LOCAL = '$repl_dispatch_fn';
+const REPLICATED_DISPATCH_OP_LOCAL = '$repl_dispatch_op';
+
+function replicatedDispatchKey(value) {
+  if (value === true) return 'replicated-all';
+  if (!value) return 'shared';
+  if (value instanceof Set) return `replicated:${Array.from(value).sort().join(',')}`;
+  if (Array.isArray(value)) return `replicated:${value.slice().sort().join(',')}`;
+  if (typeof value === 'string') return value === 'all' ? 'replicated-all' : `replicated:${value}`;
+  return `replicated:${JSON.stringify(value)}`;
+}
+
+function shouldReplicateDispatch(value, funcName) {
+  if (value === true || value === 'all') return true;
+  if (!value || !funcName) return false;
+  if (value instanceof Set) return value.has(funcName);
+  if (Array.isArray(value)) return value.includes(funcName);
+  if (typeof value === 'string') {
+    return value.split(',').map(s => s.trim()).filter(Boolean).includes(funcName);
+  }
+  return false;
+}
+
+function isReturnCallNext(expr) {
+  return Array.isArray(expr) && expr.length === 2 &&
+    expr[0] === 'return_call' && expr[1] === '$next';
+}
+
+function containsReturnCallNext(expr) {
+  if (isReturnCallNext(expr)) return true;
+  if (!Array.isArray(expr)) return false;
+  for (const part of expr) {
+    if (containsReturnCallNext(part)) return true;
+  }
+  return false;
+}
+
+function replicatedDispatchTail(handlerCount) {
+  return [
+    ['global.set', '$steps',
+      ['i32.sub', ['global.get', '$steps'], ['i32.const', '1']]],
+    ['if',
+      ['i32.le_s', ['global.get', '$steps'], ['i32.const', '0']],
+      ['then',
+        ['global.set', '$resume_ip', ['global.get', '$ip']],
+        ['return']]],
+    ['local.set', REPLICATED_DISPATCH_FN_LOCAL, ['i32.load', ['global.get', '$ip']]],
+    ['local.set', REPLICATED_DISPATCH_OP_LOCAL, ['i32.load', 'offset=4', ['global.get', '$ip']]],
+    ['global.set', '$ip',
+      ['i32.add', ['global.get', '$ip'], ['i32.const', '8']]],
+    ['if',
+      ['i32.ge_u', ['local.get', REPLICATED_DISPATCH_FN_LOCAL], ['i32.const', String(handlerCount)]],
+      ['then',
+        ['return_call', '$dispatch_bad', ['local.get', REPLICATED_DISPATCH_FN_LOCAL]]]],
+    ['return_call_indirect',
+      ['type', '$handler_t'],
+      ['local.get', REPLICATED_DISPATCH_OP_LOCAL],
+      ['local.get', REPLICATED_DISPATCH_FN_LOCAL]],
+  ];
+}
+
+// Parse (param ...) (result ...) (local ...) (export ...) (type ...) from func body items
+function parseFuncSig(items) {
+  const params = [], paramNames = [], results = [];
+  const locals = [], localNames = [];
+  let bodyStart = 0, inlineExport = null, typeRef = null;
+
+  for (let i = 0; i < items.length; i++) {
+    const e = items[i];
+    if (!Array.isArray(e)) { bodyStart = i; break; }
+    const h = e[0];
+    if (h === 'param') {
+      for (let j = 1; j < e.length; j++) {
+        if (typeof e[j] === 'string' && e[j][0] === '$') {
+          paramNames.push(e[j]);
+          if (j + 1 < e.length) { params.push(e[++j]); }
+        } else { paramNames.push(null); params.push(e[j]); }
+      }
+    } else if (h === 'result') {
+      for (let j = 1; j < e.length; j++) results.push(e[j]);
+    } else if (h === 'local') {
+      for (let j = 1; j < e.length; j++) {
+        if (typeof e[j] === 'string' && e[j][0] === '$') {
+          localNames.push(e[j]);
+          if (j + 1 < e.length) { locals.push(e[++j]); }
+        } else { localNames.push(null); locals.push(e[j]); }
+      }
+    } else if (h === 'export') {
+      const v = e[1];
+      inlineExport = (typeof v === 'object' && v.str !== undefined) ? v.str : v;
+    } else if (h === 'type') {
+      typeRef = e[1];
+    } else { bodyStart = i; break; }
+    bodyStart = i + 1;
+  }
+  return { params, paramNames, results, locals, localNames, bodyStart, inlineExport, typeRef };
+}
+
+// Flatten top-level items, unwrapping (module ...) wrappers
+function* iterTopLevel(exprs) {
+  for (const item of exprs) {
+    if (Array.isArray(item) && item[0] === 'module') {
+      yield* item.slice(1).filter(e => Array.isArray(e));
+    } else if (Array.isArray(item)) {
+      yield item;
+    }
+  }
+}
+
+// ============================================================
+// PASS 1: Collect declarations (types, imports, func sigs, globals, etc.)
+// No function bodies are stored — only signatures.
+// ============================================================
+// `files` overrides the emulator's own source list. The compiler is otherwise
+// only ever pointed at src/*.wat, which makes it impossible to compile a small
+// module with it — and therefore impossible to test the compiler, or to build a
+// probe module, without dragging in the whole emulator.
+function pass1(readFile, files) {
+  files = requireWatFiles(files);
+  const mod = {
+    types: [], typeMap: {},
+    imports: [],
+    funcs: [],          // [{name, typeIdx, params, results, paramNames}] — no bodies
+    globals: [],        // [{name, valtype, mut, init?, isImport}]
+    tables: [],
+    memories: [],
+    exports: [],
+    elems: [],
+    dataSegments: [],
+    funcNameMap: {}, globalNameMap: {}, typeNameMap: {}, tableNameMap: {},
+    numImportFuncs: 0, numImportGlobals: 0,
+  };
+
+  function ensureType(params, results) {
+    const key = sigKey(params, results);
+    if (mod.typeMap[key] !== undefined) return mod.typeMap[key];
+    const idx = mod.types.length;
+    mod.types.push({ params, results });
+    mod.typeMap[key] = idx;
+    return idx;
+  }
+
+  // Sub-pass A: collect explicit (type ...) declarations first
+  // wat2wasm assigns type indices to named types before implicit types
+  return async function() {
+    // Read all files, tokenize+parse, collect types first
+    const allSrc = [];
+    for (const f of files) {
+      allSrc.push(await readFile(f));
+    }
+    validateWatStructure(allSrc, files);
+
+    // Sub-pass A: types only
+    for (const src of allSrc) {
+      const tokens = tokenize(src);
+      const exprs = parseSExprs(tokens);
+      for (const item of iterTopLevel(exprs)) {
+        if (item[0] !== 'type') continue;
+        const name = typeof item[1] === 'string' && item[1][0] === '$' ? item[1] : null;
+        const ft = name ? item[2] : item[1];
+        if (Array.isArray(ft) && ft[0] === 'func') {
+          const sig = parseFuncSig(ft.slice(1));
+          const idx = ensureType(sig.params, sig.results);
+          if (name) mod.typeNameMap[name] = idx;
+        }
+      }
+    }
+
+    // Sub-pass B: everything except types
+    for (const src of allSrc) {
+      const tokens = tokenize(src);
+      const exprs = parseSExprs(tokens);
+
+      for (const item of iterTopLevel(exprs)) {
+        const head = item[0];
+
+        if (head === 'type') continue; // done in sub-pass A
+
+        if (head === 'import') {
+          const modName = typeof item[1] === 'object' ? item[1].str : item[1];
+          const impName = typeof item[2] === 'object' ? item[2].str : item[2];
+          const desc = item[3];
+          if (!Array.isArray(desc)) continue;
+          const kind = desc[0];
+          if (kind === 'func') {
+            const name = typeof desc[1] === 'string' && desc[1][0] === '$' ? desc[1] : null;
+            const sig = parseFuncSig(desc.slice(name ? 2 : 1));
+            const typeIdx = ensureType(sig.params, sig.results);
+            const funcIdx = mod.funcs.length;
+            mod.funcs.push({ name, typeIdx, params: sig.params, results: sig.results,
+                             isImport: true, declarationIdx: funcIdx });
+            if (name) mod.funcNameMap[name] = funcIdx;
+            mod.imports.push({ module: modName, name: impName, kind: 'func', typeIdx });
+            mod.numImportFuncs++;
+          } else if (kind === 'memory') {
+            const min = parseNumber(desc[1]);
+            let max = null, shared = false;
+            for (let j = 2; j < desc.length; j++) {
+              if (desc[j] === 'shared') shared = true;
+              else if (typeof desc[j] === 'string') max = parseNumber(desc[j]);
+            }
+            mod.memories.push({ min, max, shared, isImport: true });
+            mod.imports.push({ module: modName, name: impName, kind: 'memory', min, max, shared });
+          } else if (kind === 'global') {
+            const name = typeof desc[1] === 'string' && desc[1][0] === '$' ? desc[1] : null;
+            const ts = desc[name ? 2 : 1];
+            const mut = Array.isArray(ts) && ts[0] === 'mut';
+            const valtype = mut ? ts[1] : ts;
+            const idx = mod.globals.length;
+            mod.globals.push({ name, valtype, mut, isImport: true });
+            if (name) mod.globalNameMap[name] = idx;
+            mod.imports.push({ module: modName, name: impName, kind: 'global', valtype, mut });
+            mod.numImportGlobals++;
+          } else if (kind === 'table') {
+            const name = typeof desc[1] === 'string' && desc[1][0] === '$' ? desc[1] : null;
+            const s = name ? 2 : 1;
+            const min = parseNumber(desc[s]);
+            mod.tables.push({ min, isImport: true });
+            if (name) mod.tableNameMap[name] = mod.tables.length - 1;
+            mod.imports.push({ module: modName, name: impName, kind: 'table', min });
+          }
+          continue;
+        }
+
+        if (head === 'func') {
+          const name = typeof item[1] === 'string' && item[1][0] === '$' ? item[1] : null;
+          const bodyItems = item.slice(name ? 2 : 1);
+          const sig = parseFuncSig(bodyItems);
+          const typeIdx = ensureType(sig.params, sig.results);
+          const funcIdx = mod.funcs.length;
+          // Store sig only, no body
+          mod.funcs.push({ name, typeIdx, params: sig.params, results: sig.results,
+                           paramNames: sig.paramNames, isImport: false,
+                           declarationIdx: funcIdx });
+          if (name) mod.funcNameMap[name] = funcIdx;
+          if (sig.inlineExport) {
+            mod.exports.push({ name: sig.inlineExport, kind: 'func', idx: funcIdx });
+          }
+          continue;
+        }
+
+        if (head === 'global') {
+          const name = typeof item[1] === 'string' && item[1][0] === '$' ? item[1] : null;
+          let pos = name ? 2 : 1;
+          const ts = item[pos];
+          const mut = Array.isArray(ts) && ts[0] === 'mut';
+          const valtype = mut ? ts[1] : ts;
+          pos++;
+          const init = item[pos];
+          const idx = mod.globals.length;
+          mod.globals.push({ name, valtype, mut, init, isImport: false });
+          if (name) mod.globalNameMap[name] = idx;
+          continue;
+        }
+
+        if (head === 'table') {
+          const name = typeof item[1] === 'string' && item[1][0] === '$' ? item[1] : null;
+          const s = name ? 2 : 1;
+          mod.tables.push({ min: parseNumber(item[s]), isImport: false });
+          if (name) mod.tableNameMap[name] = mod.tables.length - 1;
+          continue;
+        }
+
+        if (head === 'memory') {
+          const name = typeof item[1] === 'string' && item[1][0] === '$' ? item[1] : null;
+          let s = name ? 2 : 1;
+          const min = parseNumber(item[s]);
+          let max = null, shared = false;
+          for (let j = s + 1; j < item.length; j++) {
+            if (item[j] === 'shared') shared = true;
+            else max = parseNumber(item[j]);
+          }
+          mod.memories.push({ min, max, shared, isImport: false });
+          continue;
+        }
+
+        if (head === 'export') {
+          const expName = typeof item[1] === 'object' ? item[1].str : item[1];
+          const desc = item[2];
+          if (Array.isArray(desc)) {
+            mod.exports.push({ name: expName, kind: desc[0], ref: desc[1] });
+          }
+          continue;
+        }
+
+        if (head === 'elem') {
+          mod.elems.push({ offsetExpr: item[1], funcNames: item.slice(2) });
+          continue;
+        }
+
+        if (head === 'data') {
+          const bytes = [];
+          for (let j = 2; j < item.length; j++) {
+            const seg = item[j];
+            if (typeof seg === 'object' && seg.str !== undefined) {
+              for (let k = 0; k < seg.str.length; k++) bytes.push(seg.str.charCodeAt(k) & 0xFF);
+            }
+          }
+          mod.dataSegments.push({ offsetExpr: item[1], bytes });
+          continue;
+        }
+      }
+    }
+
+    // WebAssembly function indices always place imports before module-defined
+    // functions, even when the WAT declarations are interleaved. Preserve the
+    // declaration order within each group and remap named/inline references.
+    const reorderedFuncs = [
+      ...mod.funcs.filter(func => func.isImport),
+      ...mod.funcs.filter(func => !func.isImport),
+    ];
+    const declarationToBinaryIdx = new Map();
+    mod.funcNameMap = {};
+    for (let binaryIdx = 0; binaryIdx < reorderedFuncs.length; binaryIdx++) {
+      const func = reorderedFuncs[binaryIdx];
+      declarationToBinaryIdx.set(func.declarationIdx, binaryIdx);
+      if (func.name) mod.funcNameMap[func.name] = binaryIdx;
+    }
+    for (const exp of mod.exports) {
+      if (exp.kind === 'func' && exp.idx !== undefined) {
+        exp.idx = declarationToBinaryIdx.get(exp.idx);
+      }
+    }
+    mod.funcs = reorderedFuncs;
+
+    return mod;
+  };
+}
+
+// ============================================================
+// PASS 2: Emit binary — re-reads files to stream function bodies
+// ============================================================
+function emitBinary(mod, readFile, files) {
+  files = requireWatFiles(files);
+  return async function() {
+    const w = new BinaryWriter(131072);
+
+    // Magic + version
+    w.bytes([0x00, 0x61, 0x73, 0x6D, 0x01, 0x00, 0x00, 0x00]);
+
+    // --- Section 1: Type ---
+    w.section(1, s => {
+      s.uleb(mod.types.length);
+      for (const t of mod.types) {
+        s.byte(0x60);
+        s.uleb(t.params.length);
+        for (const p of t.params) s.byte(VALTYPES[p]);
+        s.uleb(t.results.length);
+        for (const r of t.results) s.byte(VALTYPES[r]);
+      }
+    });
+
+    // --- Section 2: Import ---
+    if (mod.imports.length) {
+      w.section(2, s => {
+        s.uleb(mod.imports.length);
+        for (const imp of mod.imports) {
+          const mb = encodeUTF8(imp.module), nb = encodeUTF8(imp.name);
+          s.uleb(mb.length); s.bytes(mb);
+          s.uleb(nb.length); s.bytes(nb);
+          if (imp.kind === 'func') { s.byte(0x00); s.uleb(imp.typeIdx); }
+          else if (imp.kind === 'table') { s.byte(0x01); s.byte(0x70); s.byte(0x00); s.uleb(imp.min); }
+          else if (imp.kind === 'memory') { s.byte(0x02); s.byte(0x00); s.uleb(imp.min); }
+          else if (imp.kind === 'global') { s.byte(0x03); s.byte(VALTYPES[imp.valtype]); s.byte(imp.mut ? 1 : 0); }
+        }
+      });
+    }
+
+    // --- Section 3: Function ---
+    const nonImportFuncs = mod.funcs.filter(f => !f.isImport);
+    w.section(3, s => {
+      s.uleb(nonImportFuncs.length);
+      for (const f of nonImportFuncs) s.uleb(f.typeIdx);
+    });
+
+    // --- Section 4: Table ---
+    const niTables = mod.tables.filter(t => !t.isImport);
+    if (niTables.length) {
+      w.section(4, s => {
+        s.uleb(niTables.length);
+        for (const t of niTables) { s.byte(0x70); s.byte(0x00); s.uleb(t.min); }
+      });
+    }
+
+    // --- Section 5: Memory ---
+    const niMem = mod.memories.filter(m => !m.isImport);
+    if (niMem.length) {
+      w.section(5, s => {
+        s.uleb(niMem.length);
+        for (const m of niMem) { s.byte(0x00); s.uleb(m.min); }
+      });
+    }
+
+    // --- Section 6: Global ---
+    const niGlobals = mod.globals.filter(g => !g.isImport);
+    if (niGlobals.length) {
+      w.section(6, s => {
+        s.uleb(niGlobals.length);
+        for (const g of niGlobals) {
+          s.byte(VALTYPES[g.valtype]); s.byte(g.mut ? 1 : 0);
+          emitInitExpr(s, g.init); s.byte(0x0B);
+        }
+      });
+    }
+
+    // --- Section 7: Export ---
+    if (mod.exports.length) {
+      w.section(7, s => {
+        s.uleb(mod.exports.length);
+        for (const exp of mod.exports) {
+          const nb = encodeUTF8(exp.name);
+          s.uleb(nb.length); s.bytes(nb);
+          let kindByte, idx;
+          if (exp.kind === 'func') {
+            kindByte = 0x00;
+            idx = exp.idx !== undefined ? exp.idx : resolveRef(exp.ref, mod.funcNameMap, 'func');
+          } else if (exp.kind === 'table') {
+            kindByte = 0x01;
+            idx = exp.idx !== undefined ? exp.idx : resolveRef(exp.ref, mod.tableNameMap, 'table');
+          } else if (exp.kind === 'memory') {
+            kindByte = 0x02;
+            idx = typeof exp.ref === 'string' && exp.ref[0] === '$' ? 0 : (parseNumber(exp.ref) || 0);
+          } else if (exp.kind === 'global') {
+            kindByte = 0x03;
+            idx = exp.idx !== undefined ? exp.idx : resolveRef(exp.ref, mod.globalNameMap, 'global');
+          }
+          s.byte(kindByte); s.uleb(idx);
+        }
+      });
+    }
+
+    // --- Section 9: Element ---
+    if (mod.elems.length) {
+      w.section(9, s => {
+        s.uleb(mod.elems.length);
+        for (const el of mod.elems) {
+          s.byte(0x00);
+          emitInitExpr(s, el.offsetExpr); s.byte(0x0B);
+          s.uleb(el.funcNames.length);
+          for (const fn of el.funcNames) s.uleb(resolveRef(fn, mod.funcNameMap, 'func'));
+        }
+      });
+    }
+
+    // --- Section 10: Code --- (streaming: re-read files, emit one func at a time)
+    w.section(10, s => {
+      s.uleb(nonImportFuncs.length);
+      // We need to re-read and parse files to get function bodies.
+      // But we're inside an async function wrapped in section() which is sync.
+      // So we pre-collect the code bodies into codeBodies[] before this call.
+      // Actually, section() is sync with a callback. We need a different approach.
+      // We'll pre-build the code section content separately.
+      // -- this is handled below via codeSectionBuf --
+    });
+    // Rewind: we'll replace the code section. Remove the empty one we just wrote.
+    // Better approach: build code section content first, then write it.
+
+    // Actually, let's build the code section by re-reading files
+    const codeBuf = new BinaryWriter(65536);
+    codeBuf.uleb(nonImportFuncs.length);
+
+    let funcCounter = 0;
+    for (const f of files) {
+      const src = await readFile(f);
+      const tokens = tokenize(src);
+      const exprs = parseSExprs(tokens);
+      // tokens and exprs freed after this iteration
+
+      for (const item of iterTopLevel(exprs)) {
+        if (item[0] !== 'func') continue;
+        const name = typeof item[1] === 'string' && item[1][0] === '$' ? item[1] : null;
+        const bodyItems = item.slice(name ? 2 : 1);
+        const sig = parseFuncSig(bodyItems);
+        const body = bodyItems.slice(sig.bodyStart);
+
+        // Get the stored func metadata (params/paramNames for local name map)
+        const funcMeta = nonImportFuncs[funcCounter++];
+
+        // Emit function body into temp writer
+        const bodyW = new BinaryWriter(1024);
+        emitFuncBody(bodyW, funcMeta, sig.locals, sig.localNames, body, mod);
+
+        // Write size-prefixed body
+        codeBuf.uleb(bodyW.pos);
+        codeBuf.appendWriter(bodyW);
+        // bodyW, body, sig are now eligible for GC
+      }
+    }
+
+    // Now rewind w to before the empty code section and write the real one
+    // Find where to put code section: we wrote an empty section 10 above.
+    // Instead, let's not write the empty one. Rebuild w without it.
+    // Simplest fix: redo the approach — don't call w.section(10,...) above.
+    // We already did though. Let's just reset w.pos to before that section.
+
+    // Actually the section(10,...) above wrote: byte(10) + uleb(size) + content.
+    // The content was just uleb(count). Let's just back up.
+    // But we don't know exactly how many bytes it took. Let's use a different approach entirely.
+
+    // I'll restructure: build everything except code section, then insert code section at the right spot.
+    // Nah, simplest: we know the position. Let's track it.
+
+    // OK, this got messy. Let me just not use section() for code, and manually write it.
+    // The problem is we already wrote the empty code section. Let me back up.
+
+    // Let's redo: don't write sections 10-11 above. After section 9, save pos, then
+    // write code and data sections manually.
+
+    // For now, the simplest correct approach: rebuild w from scratch after collecting code bodies.
+    // But that defeats streaming too. The real fix is to not use section() for code.
+
+    // Let me just track the position before section 10 was written.
+    // ... we already wrote it. The cleanest fix:
+
+    // Remove the empty code section by resetting w.pos to before it was written.
+    // We need to know where section 10 started. Let's re-approach.
+
+    // PLAN: Reset w to right before section 10, write code section from codeBuf, then data section.
+    // We saved no bookmark, so let's compute: section 10 was the last thing written.
+    // The empty section 10 has: 0x0A (1 byte), uleb(content_len), uleb(count).
+    // count = nonImportFuncs.length. Content = just uleb(count).
+    // So total = 1 + ulebSize(ulebSize(count)) + ulebSize(count) bytes.
+    // Instead of computing, let's just redo the whole thing properly.
+
+    return null; // signal to redo
+  };
+}
+
+// ============================================================
+// INIT EXPR EMITTER
+// ============================================================
+function emitInitExpr(w, expr) {
+  if (Array.isArray(expr)) {
+    if (expr[0] === 'i32.const') { w.byte(0x41); w.sleb(parseNumber(expr[1]) | 0); }
+    else if (expr[0] === 'i64.const') { w.byte(0x42); w.sleb64(parseBigInt(expr[1])); }
+    else if (expr[0] === 'f64.const') { w.byte(0x44); w.f64(parseNumber(expr[1])); }
+    else if (expr[0] === 'f32.const') { w.byte(0x43); w.f32(parseNumber(expr[1])); }
+  }
+}
+
+// ============================================================
+// FUNCTION BODY EMITTER — called once per func in pass 2, body discarded after
+// ============================================================
+function emitFuncBody(w, funcMeta, localDecls, localDeclNames, bodyExprs, mod, options) {
+  const useTailCalls = !options || options.tailCalls !== false;
+  const replicateDispatch = shouldReplicateDispatch(options && options.replicatedDispatch, funcMeta.name) &&
+    bodyExprs.some(containsReturnCallNext);
+  let replicatedDispatchHandlerCount = 0;
+  if (replicateDispatch) {
+    if (localDeclNames.includes(REPLICATED_DISPATCH_FN_LOCAL) ||
+        localDeclNames.includes(REPLICATED_DISPATCH_OP_LOCAL)) {
+      throw new Error(`compile-wat: replicated dispatch local collision in ${funcMeta.name}`);
+    }
+    const handlersTableIdx = mod.tableNameMap['$handlers'];
+    const handlersTable = handlersTableIdx !== undefined ? mod.tables[handlersTableIdx] : null;
+    replicatedDispatchHandlerCount = options.replicatedDispatchHandlerCount ||
+      (handlersTable && handlersTable.min);
+    if (!replicatedDispatchHandlerCount) {
+      throw new Error('compile-wat: replicated dispatch requires a $handlers table size');
+    }
+    localDecls = localDecls.concat(['i32', 'i32']);
+    localDeclNames = localDeclNames.concat([REPLICATED_DISPATCH_FN_LOCAL, REPLICATED_DISPATCH_OP_LOCAL]);
+  }
+  // Build local name map: params first, then declared locals
+  const localNameMap = {};
+  let idx = 0;
+  const paramNames = funcMeta.paramNames || [];
+  for (let i = 0; i < paramNames.length; i++) {
+    if (paramNames[i]) localNameMap[paramNames[i]] = idx;
+    idx++;
+  }
+  if (!paramNames.length) idx = funcMeta.params.length;
+
+  for (let i = 0; i < localDeclNames.length; i++) {
+    if (localDeclNames[i]) localNameMap[localDeclNames[i]] = idx;
+    idx++;
+  }
+
+  // Local declarations grouped by type
+  const groups = [];
+  if (localDecls.length) {
+    let ct = localDecls[0], cc = 1;
+    for (let i = 1; i < localDecls.length; i++) {
+      if (localDecls[i] === ct) cc++;
+      else { groups.push([cc, ct]); ct = localDecls[i]; cc = 1; }
+    }
+    groups.push([cc, ct]);
+  }
+  w.uleb(groups.length);
+  for (const [count, type] of groups) { w.uleb(count); w.byte(VALTYPES[type]); }
+
+  const labelStack = [];
+
+  function resolveLocal(ref) {
+    if (typeof ref === 'string' && ref[0] === '$') {
+      const v = localNameMap[ref];
+      if (v !== undefined) return v;
+      console.warn(`compile-wat: unknown local: ${ref}`);
+      return 0;
+    }
+    return parseNumber(ref);
+  }
+
+  function resolveLabel(ref) {
+    if (typeof ref === 'string' && ref[0] === '$') {
+      for (let i = labelStack.length - 1; i >= 0; i--)
+        if (labelStack[i] === ref) return labelStack.length - 1 - i;
+      console.warn(`compile-wat: unknown label: ${ref}`);
+      return 0;
+    }
+    return parseNumber(ref);
+  }
+
+  function emitExpr(expr) {
+    if (typeof expr === 'string') {
+      // Could be a bare instruction (return, unreachable, nop, drop, select)
+      // or a $name that somehow ended up at top level (shouldn't happen)
+      if (expr[0] === '$') return; // stray $name, ignore
+      emitOp(expr, []);
+      return;
+    }
+    if (!Array.isArray(expr) || !expr.length) return;
+    const head = expr[0];
+    if (typeof head !== 'string') return;
+    if (replicateDispatch && isReturnCallNext(expr)) {
+      for (const tailExpr of replicatedDispatchTail(replicatedDispatchHandlerCount)) emitExpr(tailExpr);
+      return;
+    }
+
+    const args = expr.slice(1);
+
+    // Block/loop
+    if (head === 'block' || head === 'loop') {
+      let label = null, resultType = null, bodyStart = 0;
+      for (let i = 0; i < args.length; i++) {
+        if (typeof args[i] === 'string' && args[i][0] === '$') { label = args[i]; bodyStart = i + 1; }
+        else if (Array.isArray(args[i]) && args[i][0] === 'result') { resultType = args[i][1]; bodyStart = i + 1; }
+        else { bodyStart = i; break; }
+      }
+      w.byte(head === 'block' ? 0x02 : 0x03);
+      w.byte(resultType ? VALTYPES[resultType] : BLOCKTYPE_VOID);
+      labelStack.push(label);
+      for (let i = bodyStart; i < args.length; i++) emitExpr(args[i]);
+      labelStack.pop();
+      w.byte(0x0B);
+      return;
+    }
+
+    // If
+    if (head === 'if') {
+      let label = null, resultType = null, i = 0;
+      if (i < args.length && typeof args[i] === 'string' && args[i][0] === '$') { label = args[i++]; }
+      if (i < args.length && Array.isArray(args[i]) && args[i][0] === 'result') { resultType = args[i++][1]; }
+
+      // Find (then ...) to determine folded vs stacked
+      let hasThen = false;
+      for (let j = i; j < args.length; j++)
+        if (Array.isArray(args[j]) && args[j][0] === 'then') { hasThen = true; break; }
+
+      if (hasThen) {
+        // Emit condition exprs before (then)
+        for (; i < args.length; i++) {
+          if (Array.isArray(args[i]) && (args[i][0] === 'then' || args[i][0] === 'else')) break;
+          emitExpr(args[i]);
+        }
+        w.byte(0x04);
+        w.byte(resultType ? VALTYPES[resultType] : BLOCKTYPE_VOID);
+        labelStack.push(label);
+        for (; i < args.length; i++) {
+          if (Array.isArray(args[i]) && args[i][0] === 'then') {
+            for (let j = 1; j < args[i].length; j++) emitExpr(args[i][j]);
+          } else if (Array.isArray(args[i]) && args[i][0] === 'else') {
+            w.byte(0x05);
+            for (let j = 1; j < args[i].length; j++) emitExpr(args[i][j]);
+          }
+        }
+        labelStack.pop();
+        w.byte(0x0B);
+      } else {
+        w.byte(0x04);
+        w.byte(resultType ? VALTYPES[resultType] : BLOCKTYPE_VOID);
+        labelStack.push(label);
+        for (; i < args.length; i++) emitExpr(args[i]);
+        labelStack.pop();
+        w.byte(0x0B);
+      }
+      return;
+    }
+
+    if (head === 'then' || head === 'else') {
+      for (let i = 1; i < expr.length; i++) emitExpr(expr[i]);
+      return;
+    }
+
+    // Separate sub-exprs (arrays) and atoms (strings/objects)
+    const subExprs = [], atoms = [];
+    for (const a of args) {
+      if (Array.isArray(a)) subExprs.push(a);
+      else atoms.push(a);
+    }
+
+    // br_table
+    if (head === 'br_table') {
+      for (const se of subExprs) emitExpr(se);
+      w.byte(0x0E);
+      const labels = atoms.filter(a => typeof a === 'string');
+      w.uleb(labels.length - 1); // N labels, last is default
+      for (const l of labels) w.uleb(resolveLabel(l));
+      return;
+    }
+
+    // call_indirect / return_call_indirect
+    if (head === 'call_indirect' || head === 'return_call_indirect') {
+      let typeRef = null;
+      const callArgs = [];
+      for (const a of args) {
+        if (Array.isArray(a) && a[0] === 'type') typeRef = a[1];
+        else callArgs.push(a);
+      }
+      for (const a of callArgs) emitExpr(a);
+      const tail = head === 'return_call_indirect';
+      if (tail && useTailCalls) {
+        w.byte(0x13);
+      } else {
+        w.byte(0x11);
+      }
+      w.uleb(resolveRef(typeRef, mod.typeNameMap, 'type'));
+      w.byte(0x00);
+      // Same compatibility lowering $return_call gets on engines without the
+      // tail-call proposal: call_indirect; return. Sound for the one caller
+      // that uses it ($next, whose dispatch is the last thing in the function),
+      // and it is the shape the interpreter already ran with before this op
+      // existed, so the compat build simply keeps the old stack behaviour.
+      if (tail && !useTailCalls) w.byte(0x0F);
+      return;
+    }
+
+    // Standard folded: emit sub-exprs, then the instruction
+    for (const se of subExprs) emitExpr(se);
+    emitOp(head, atoms);
+  }
+
+  function emitOp(op, atoms) {
+    // FC-prefixed ops
+    if (FC_OPS[op] !== undefined) {
+      w.byte(0xFC);
+      w.uleb(FC_OPS[op]);
+      if (op === 'memory.copy') { w.byte(0x00); w.byte(0x00); }
+      else if (op === 'memory.fill') { w.byte(0x00); }
+      return;
+    }
+
+    // FE-prefixed ops (atomics)
+    if (FE_OPS[op] !== undefined) {
+      const [code, align] = FE_OPS[op];
+      w.byte(0xFE);
+      w.uleb(code);
+      if (align === null) { w.byte(0x00); return; }   // atomic.fence
+      let offset = 0;
+      for (const a of atoms)
+        if (typeof a === 'string' && a.startsWith('offset=')) offset = parseNumber(a.substring(7));
+      w.uleb(align);
+      w.uleb(offset);
+      return;
+    }
+
+    // FD-prefixed ops (SIMD). Immediate order on the wire is memarg, then lane
+    // index — v128.load32_lane carries both.
+    if (FD_OPS[op] !== undefined) {
+      w.byte(0xFD);
+      w.uleb(FD_OPS[op]);
+      if (op === 'v128.const' || op === 'i8x16.shuffle') {
+        w.bytes(encodeV128Immediate(op, atoms.filter(a => typeof a === 'string')));
+        return;
+      }
+      const align = FD_MEMARG_ALIGN[op];
+      if (align !== undefined) {
+        let offset = 0;
+        for (const a of atoms)
+          if (typeof a === 'string' && a.startsWith('offset=')) offset = parseNumber(a.substring(7));
+        w.uleb(align);
+        w.uleb(offset);
+      }
+      if (FD_LANE_OPS.has(op)) {
+        const lane = atoms.find(a => typeof a === 'string' && !a.startsWith('offset=') && !a.startsWith('align='));
+        w.byte(parseNumber(lane) & 0xFF);
+      }
+      return;
+    }
+
+    const opc = OPCODES[op];
+    if (opc === undefined) {
+      if (op[0] !== '$') console.warn(`compile-wat: unknown op: ${op}`);
+      w.byte(0x00); // unreachable
+      return;
+    }
+
+    // Memory ops with memarg
+    if (MEMARG_OPS.has(op)) {
+      w.byte(opc);
+      let offset = 0;
+      for (const a of atoms)
+        if (typeof a === 'string' && a.startsWith('offset=')) offset = parseNumber(a.substring(7));
+      w.uleb(naturalAlign(op));
+      w.uleb(offset);
+      return;
+    }
+
+    // Ops with immediates
+    if (op === 'i32.const') { w.byte(0x41); w.sleb(parseNumber(atoms[0]) | 0); return; }
+    if (op === 'i64.const') { w.byte(0x42); w.sleb64(parseBigInt(atoms[0])); return; }
+    if (op === 'f64.const') { w.byte(0x44); w.f64(parseNumber(atoms[0])); return; }
+    if (op === 'f32.const') { w.byte(0x43); w.f32(parseNumber(atoms[0])); return; }
+
+    if (op === 'local.get' || op === 'local.set' || op === 'local.tee') {
+      w.byte(opc); w.uleb(resolveLocal(atoms[0])); return;
+    }
+    if (op === 'global.get' || op === 'global.set') {
+      w.byte(opc); w.uleb(resolveRef(atoms[0], mod.globalNameMap, 'global')); return;
+    }
+    if (op === 'call') { w.byte(0x10); w.uleb(resolveRef(atoms[0], mod.funcNameMap, 'func')); return; }
+    if (op === 'return_call') {
+      if (useTailCalls) {
+        w.byte(0x12);
+        w.uleb(resolveRef(atoms[0], mod.funcNameMap, 'func'));
+      } else {
+        // Compatibility lowering for engines without the WebAssembly tail-call
+        // proposal (notably current iOS Safari): return_call $f -> call $f; return.
+        // wine-assembly only uses return_call for void threaded-dispatch handlers,
+        // and $run caps each inner chain, so this stays stack-bounded.
+        w.byte(0x10);
+        w.uleb(resolveRef(atoms[0], mod.funcNameMap, 'func'));
+        w.byte(0x0F);
+      }
+      return;
+    }
+    if (op === 'br' || op === 'br_if') { w.byte(opc); w.uleb(resolveLabel(atoms[0])); return; }
+
+    if (op === 'memory.size' || op === 'memory.grow') { w.byte(opc); w.byte(0x00); return; }
+
+    // Simple opcode, no immediates
+    w.byte(opc);
+  }
+
+  emitExprList(bodyExprs);
+  w.byte(0x0B); // end
+
+  // Emit a list of expressions, handling flat/stacked syntax where bare instructions
+  // consume following tokens as operands (e.g. "global.set $eax" without parens)
+  function emitExprList(exprs) {
+    for (let i = 0; i < exprs.length; i++) {
+      const e = exprs[i];
+      if (typeof e === 'string' && e[0] !== '$' && needsOperand(e) &&
+          i + 1 < exprs.length && typeof exprs[i + 1] === 'string') {
+        emitOp(e, [exprs[++i]]);
+      } else {
+        emitExpr(e);
+      }
+    }
+  }
+
+  function needsOperand(op) {
+    return op === 'local.get' || op === 'local.set' || op === 'local.tee' ||
+           op === 'global.get' || op === 'global.set' ||
+           op === 'call' || op === 'return_call' || op === 'br' || op === 'br_if';
+  }
+}
+
+// ============================================================
+// MAIN ENTRY POINT — two passes, streaming
+// ============================================================
+const compilePromises = new Map();
+
+// Browser development can update related WAT files while compilation is in
+// progress. Capture every source once so declaration and body passes cannot
+// observe different revisions of the same file.
+async function compileWatSnapshot(readFile, options = {}) {
+  const sources = new Map();
+  await Promise.all(requireWatFiles(options.files).map(async file => {
+    sources.set(file, await readFile(file));
+  }));
+  return compileWat(file => {
+    if (!sources.has(file)) throw new Error(`Missing WAT source in snapshot: ${file}`);
+    return sources.get(file);
+  }, options);
+}
+
+async function compileWat(readFile, options = {}) {
+  const version = options.cacheKey || options.sourceVersion || 'default';
+  const dispatchKey = replicatedDispatchKey(options.replicatedDispatch);
+  const handlerCountKey = options.replicatedDispatchHandlerCount || 'table';
+  const cacheKey = `${options.tailCalls === false ? 'compat-no-tail-calls' : 'tail-calls'}:${dispatchKey}:${handlerCountKey}:${version}`;
+  if (compilePromises.has(cacheKey)) return compilePromises.get(cacheKey);
+
+  const compilePromise = (async () => {
+    try {
+      // --- Pass 1: collect declarations ---
+      const sourceFiles = requireWatFiles(options.files);
+      const mod = await (pass1(readFile, sourceFiles))();
+
+      // --- Pass 2: emit binary, re-reading files for function bodies ---
+      const w = new BinaryWriter(131072);
+
+      // Magic + version
+      w.bytes([0x00, 0x61, 0x73, 0x6D, 0x01, 0x00, 0x00, 0x00]);
+
+      // Section 1: Type
+      w.section(1, s => {
+        s.uleb(mod.types.length);
+        for (const t of mod.types) {
+          s.byte(0x60);
+          s.uleb(t.params.length);
+          for (const p of t.params) s.byte(VALTYPES[p]);
+          s.uleb(t.results.length);
+          for (const r of t.results) s.byte(VALTYPES[r]);
+        }
+      });
+
+  // Section 2: Import
+  if (mod.imports.length) {
+    w.section(2, s => {
+      s.uleb(mod.imports.length);
+      for (const imp of mod.imports) {
+        const mb = encodeUTF8(imp.module), nb = encodeUTF8(imp.name);
+        s.uleb(mb.length); s.bytes(mb);
+        s.uleb(nb.length); s.bytes(nb);
+        if (imp.kind === 'func') { s.byte(0x00); s.uleb(imp.typeIdx); }
+        else if (imp.kind === 'table') { s.byte(0x01); s.byte(0x70); s.byte(0x00); s.uleb(imp.min); }
+        else if (imp.kind === 'memory') {
+          s.byte(0x02);
+          let flags = 0;
+          if (imp.max !== null) flags |= 0x01;
+          if (imp.shared) flags |= 0x02;
+          s.byte(flags);
+          s.uleb(imp.min);
+          if (flags & 0x01) s.uleb(imp.max);
+        }
+        else if (imp.kind === 'global') { s.byte(0x03); s.byte(VALTYPES[imp.valtype]); s.byte(imp.mut ? 1 : 0); }
+      }
+    });
+  }
+
+  // Section 3: Function
+  const nonImportFuncs = mod.funcs.filter(f => !f.isImport);
+  w.section(3, s => {
+    s.uleb(nonImportFuncs.length);
+    for (const f of nonImportFuncs) s.uleb(f.typeIdx);
+  });
+
+  // Section 4: Table
+  const niTables = mod.tables.filter(t => !t.isImport);
+  if (niTables.length) {
+    w.section(4, s => {
+      s.uleb(niTables.length);
+      for (const t of niTables) { s.byte(0x70); s.byte(0x00); s.uleb(t.min); }
+    });
+  }
+
+  // Section 5: Memory
+  const niMem = mod.memories.filter(m => !m.isImport);
+  if (niMem.length) {
+    w.section(5, s => {
+      s.uleb(niMem.length);
+      for (const m of niMem) {
+        let flags = 0;
+        if (m.max !== null) flags |= 0x01;
+        if (m.shared) flags |= 0x02;
+        s.byte(flags);
+        s.uleb(m.min);
+        if (flags & 0x01) s.uleb(m.max);
+      }
+    });
+  }
+
+  // Section 6: Global
+  const niGlobals = mod.globals.filter(g => !g.isImport);
+  if (niGlobals.length) {
+    w.section(6, s => {
+      s.uleb(niGlobals.length);
+      for (const g of niGlobals) {
+        s.byte(VALTYPES[g.valtype]); s.byte(g.mut ? 1 : 0);
+        emitInitExpr(s, g.init); s.byte(0x0B);
+      }
+    });
+  }
+
+  // Section 7: Export
+  if (mod.exports.length) {
+    w.section(7, s => {
+      s.uleb(mod.exports.length);
+      for (const exp of mod.exports) {
+        const nb = encodeUTF8(exp.name);
+        s.uleb(nb.length); s.bytes(nb);
+        let kindByte, idx;
+        if (exp.kind === 'func') {
+          kindByte = 0x00;
+          idx = exp.idx !== undefined ? exp.idx : resolveRef(exp.ref, mod.funcNameMap, 'func');
+        } else if (exp.kind === 'table') {
+          kindByte = 0x01;
+          idx = exp.idx !== undefined ? exp.idx : resolveRef(exp.ref, mod.tableNameMap, 'table');
+        } else if (exp.kind === 'memory') {
+          kindByte = 0x02;
+          idx = typeof exp.ref === 'string' && exp.ref[0] === '$' ? 0 : (parseNumber(exp.ref) || 0);
+        } else if (exp.kind === 'global') {
+          kindByte = 0x03;
+          idx = exp.idx !== undefined ? exp.idx : resolveRef(exp.ref, mod.globalNameMap, 'global');
+        }
+        s.byte(kindByte); s.uleb(idx);
+      }
+    });
+  }
+
+  // Section 9: Element
+  if (mod.elems.length) {
+    w.section(9, s => {
+      s.uleb(mod.elems.length);
+      for (const el of mod.elems) {
+        s.byte(0x00);
+        emitInitExpr(s, el.offsetExpr); s.byte(0x0B);
+        s.uleb(el.funcNames.length);
+        for (const fn of el.funcNames) s.uleb(resolveRef(fn, mod.funcNameMap, 'func'));
+      }
+    });
+  }
+
+  // Section 10: Code — streaming, re-read files one at a time
+  const codeBuf = new BinaryWriter(65536);
+  codeBuf.uleb(nonImportFuncs.length);
+
+  let funcIdx = 0;
+  for (const f of sourceFiles) {
+    const src = await readFile(f);
+    const tokens = tokenize(src);
+    const exprs = parseSExprs(tokens);
+    // After this loop iteration, tokens/exprs/src are GC-eligible
+
+    for (const item of iterTopLevel(exprs)) {
+      if (item[0] !== 'func') continue;
+      const name = typeof item[1] === 'string' && item[1][0] === '$' ? item[1] : null;
+      const bodyItems = item.slice(name ? 2 : 1);
+      const sig = parseFuncSig(bodyItems);
+      const body = bodyItems.slice(sig.bodyStart);
+
+      const funcMeta = nonImportFuncs[funcIdx++];
+      const bodyW = new BinaryWriter(1024);
+      emitFuncBody(bodyW, funcMeta, sig.locals, sig.localNames, body, mod, options);
+
+      codeBuf.uleb(bodyW.pos);
+      codeBuf.appendWriter(bodyW);
+      // bodyW, body, sig eligible for GC
+    }
+  }
+
+  // Write code section: id + size + content
+  w.byte(10);
+  w.uleb(codeBuf.pos);
+  w.appendWriter(codeBuf);
+
+  // Section 11: Data
+  if (mod.dataSegments.length) {
+    w.section(11, s => {
+      s.uleb(mod.dataSegments.length);
+      for (const seg of mod.dataSegments) {
+        s.byte(0x00);
+        emitInitExpr(s, seg.offsetExpr); s.byte(0x0B);
+        s.uleb(seg.bytes.length);
+        s.bytes(seg.bytes);
+      }
+    });
+  }
+
+  return w.result();
+    } catch (e) {
+      compilePromises.delete(cacheKey);
+      throw e;
+    }
+  })();
+  compilePromises.set(cacheKey, compilePromise);
+  return compilePromise;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { compileWat, compileWatSnapshot };
+  // WAT_FILES stays exported for the Node tools that have always read it here
+  // (region-census, wat-globals, region-mirrors, check-region-decls,
+  // struct-offset-census, test-wat-memory-map, ...). It is a GETTER so that
+  // merely requiring this module — which tools/toyvm/bundle-browser.js does,
+  // inlining it into a browser bundle — still touches no filesystem. The list
+  // itself comes from lib/wat-manifest.js, i.e. from src/main.watx: this module
+  // no longer holds a copy of the source order, it forwards the one copy.
+  Object.defineProperty(module.exports, 'WAT_FILES', {
+    enumerable: true,
+    get() { return requireWatFiles(null); },
+  });
+}
