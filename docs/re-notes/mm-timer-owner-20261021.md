@@ -358,3 +358,16 @@ paths with a measured 41,540,061-byte projection plus 16 MiB reserve under the
 Box `bx_pfv6b6wu` remains running (idle/health ok, exec reachable), expiry
 02:53:01.742 UTC, coordinator shutdown checkpoint 02:43 UTC. Shutdown ownership
 is returned to the coordinator; this task issued no lifecycle mutation.
+
+## CACA003B retained lifetime boundary — 2026-10-22
+
+**Scoped FAIL** on exact accepted main `c26252c4a95babe583ade1d1c6e2da0c050be45c`:
+executed production slices accept a callback return under an unrelated valid
+child, a same-depth replacement child, or an explicitly rebound thread root.
+Normal return, stale-instance rejection and CACA000A collision protection pass.
+The existing stack-pinning convention tolerance is preserved, not called a
+defect. No production repair or change to prior CACA000A acceptance was made.
+See [focused report and reproducer](timer-thread-lifetime-boundary-oct22/report.md)
+for exact commands, the failing safety assertion, controls, smallest repair
+dependency and execution limits. No runtime box was used; coordinator recorded
+the prior box stopped before this task.
