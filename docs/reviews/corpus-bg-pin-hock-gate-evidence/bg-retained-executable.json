@@ -1,6 +1,0 @@
-{
-  "path": "/home/user/wine-assembly/test/binaries/candidates/baldurs-gate-interactive-demo/installed-extracted/MinimumData/BGDemo.exe",
-  "sha256": "ed7f1efd9df8d9a62c1a32f2598e8cc19e5dc601689aeebb72a3bc835db343d9",
-  "pinSource": "2e2c363e8a6229ce6938b4284cb57c119809f62f:test/test-baldurs-gate-demos.js",
-  "scope": "original executable identity only; no new media extraction or gameplay"
-}
