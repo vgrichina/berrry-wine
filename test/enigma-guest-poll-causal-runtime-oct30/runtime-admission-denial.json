@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-30T06:56:39.530513Z",
+  "operation": "preprovision full local runtime admission",
+  "required": 4436865024,
+  "MemAvailable": 4386586624,
+  "shortfall": 50278400,
+  "diskFree": 3492900864,
+  "aggregateRemainingGrowth": 200183808,
+  "diskFloor": 3221225472,
+  "allocated": 37502976,
+  "allocationCap": 67108864,
+  "closeoutReserve": 8388608,
+  "passed": [
+    "disk",
+    "physical allocation",
+    "canonical parser",
+    "node startup",
+    "compact/raw accounting",
+    "current owned runner availability",
+    "instrumented runner syntax"
+  ],
+  "runtimeGate": "REJECTED; no retry",
+  "boatCreated": false,
+  "guestInvocations": 0,
+  "newImages": [],
+  "renderInspected": false
+}

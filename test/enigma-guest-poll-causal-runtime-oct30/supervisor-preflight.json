@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/enigma-original-menu-render-runtime-oct30/guest-poll-preflight.py"
+  ],
+  "cwd": "/tmp/enigma-original-menu-render-runtime-oct30/repo",
+  "exit": 1,
+  "elapsed": 0.12492336495779455,
+  "admission": {
+    "at": 1793343378.2958825,
+    "free": 3493142528,
+    "MemAvailable": 4538245120,
+    "allocated": 37437440,
+    "aggregateRemaining": 200183808,
+    "memoryRequired": 4436865024,
+    "checks": {
+      "memory": true,
+      "disk": true,
+      "allocation": true
+    }
+  },
+  "stdoutBytes": 0,
+  "stderrBytes": 632
+}

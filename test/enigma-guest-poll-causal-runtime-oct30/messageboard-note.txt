@@ -1,0 +1,1 @@
+2026-10-30 guest-poll task BLOCKED before provisioning. Full local memory gate 4386586624 <4436865024 (shortfall50278400); no retry, Boat, transfer, guest, new image or causal claim. Preserved immutable wrapper failure/correction and unexecuted opt-in observer. Branch test/enigma-guest-poll-causal-runtime-oct30; publication follows. No renderer/WAT changes.

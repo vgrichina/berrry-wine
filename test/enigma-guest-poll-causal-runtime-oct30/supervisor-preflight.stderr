@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-original-menu-render-runtime-oct30/guest-poll-preflight.py", line 3, in <module>
+    g.setup();r=g.ops.ROOT;e=g.ops.E
+    ^^^^^^^^^
+  File "/tmp/enigma-original-menu-render-runtime-oct30/guest_poll_gate.py", line 11, in setup
+    ops.BASE=ops.configure_parent();ops.E=OUT/'e'
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-original-menu-render-runtime-oct30/guest_poll_ops.py", line 9, in configure_parent
+    raise RuntimeError('inherited DATA hard limit incompatible; stop, never raise it')
+RuntimeError: inherited DATA hard limit incompatible; stop, never raise it
