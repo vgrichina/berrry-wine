@@ -1,4 +1,0 @@
-[ctl] {"id":"d0","ok":true,"value":{"cx":472,"cy":281,"cxf":0,"cyf":0,"dx":2,"dy":-12,"scale":1061158912,"scalef":0.75,"bits":0,"gate":0,"gmask":64,"lockA":0,"lockK":0,"poll":1,"wheel":0,"counts":[29,2,0,1,1,1,1,1,2,1,29,1,0,0,0,0]}}
-[ctl] {"id":"d1","ok":true,"value":{"cx":472,"cy":281,"cxf":0,"cyf":0,"dx":0,"dy":0,"scale":1061158912,"scalef":0.75,"bits":0,"gate":0,"gmask":64,"lockA":0,"lockK":0,"poll":1,"wheel":0,"counts":[31,3,0,2,2,2,2,2,3,2,31,2,0,0,0,0]}}
-[ctl] {"id":"d2","ok":true,"value":{"cx":472,"cy":281,"cxf":0,"cyf":0,"dx":0,"dy":0,"scale":1061158912,"scalef":0.75,"bits":0,"gate":0,"gmask":64,"lockA":0,"lockK":0,"poll":1,"wheel":0,"counts":[2,2,1,2,2,2,2,2,3,2,35,2,0,0,0,0]}}
-CLICK3_DONE

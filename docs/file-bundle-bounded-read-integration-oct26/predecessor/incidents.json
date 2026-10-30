@@ -1,7 +1,0 @@
-{
-  "incidents": [
-    "Initial sparse checkout omitted packed standing donor objects; recovered using readonly flat donor alternate.",
-    "Initial flatten copy dereferenced donor loose symlinks, materializing about 201434854 bytes beyond allocation; stopped dependent operations immediately, removed duplicate objects and retained only donor-local loose objects. No tests/publication during exceedance.",
-    "Sparse checkout left file absent after initial read failure; restored exact pinned file with path checkout."
-  ]
-}
