@@ -1,7 +1,0 @@
-{
-  "raw_patch": "/tmp/d3d9-fresh-cache-independent-integrate-oct24/source.diff",
-  "reason": "git diff --cached --check flags intentional blank context line in raw patch; raw patch retained outside committed evidence",
-  "previous_failed_log": "/tmp/d3d9-fresh-cache-independent-integrate-oct24/integration.log",
-  "source_and_oracles_changed": false,
-  "final_tests": 40
-}

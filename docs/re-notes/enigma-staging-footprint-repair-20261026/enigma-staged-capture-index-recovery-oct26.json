@@ -1,7 +1,0 @@
-{
-  "operation": "lossless isolated completed-repo Git index prefix compression, no source/ref changes",
-  "beforeAllocated": 1556480,
-  "afterAllocated": 1007616,
-  "indexVersion": 4,
-  "head": "86ac66885c45866c2cbd57cb464cddccadca6893"
-}

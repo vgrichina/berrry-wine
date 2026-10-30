@@ -1,2 +1,0 @@
-PASS test-toyvm-region-install-clock: bx=0x7c4c si=48892, 1 install(s), 1 return frame(s) re-pointed and 0 cut, wav 95a785581b59c7da == interpreter, 1051 handbacks == interpreter
-  control (--no-install-repair-rtop): 1 frame(s) cut, 1051 handbacks against 1051 interpreted
