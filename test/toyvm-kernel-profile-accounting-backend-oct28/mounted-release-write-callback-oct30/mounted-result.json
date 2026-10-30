@@ -1,0 +1,523 @@
+{
+  "schema": 1,
+  "task": "toyvm-release-write-callback-runtime-oct30",
+  "status": "ACTUAL_MOUNTED_RELEASE_WRITE_CALLBACK_PASS",
+  "objectiveQualified": true,
+  "qualifiedSource": "3994d4c577101ded890b0840d0382a643f0a5452",
+  "parent": "ac4d15a40ffdf05462b2c92c6625529bd2916437",
+  "productionMountedInvocations": 1,
+  "application": "pinned production qualify_accounted.py tiny-fixture CLI and synchronous FUSE backend",
+  "productionCLI": {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/tvsa-stage/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "--domain",
+      "tiny-fixture",
+      "--receipt",
+      "/tmp/tvsa-stage/cancellation-receipt.json",
+      "--work",
+      "/tmp/tvsa",
+      "--live-limit",
+      "20480",
+      "--write-limit",
+      "65536",
+      "--file-limit",
+      "16384",
+      "--rss-limit",
+      "67108864",
+      "--cpu-limit",
+      "10",
+      "--wall-limit",
+      "20",
+      "--output-limit",
+      "8192",
+      "--rename-evidence",
+      "64",
+      "--io-evidence",
+      "64",
+      "--",
+      "/usr/bin/python3",
+      "-B",
+      "-c",
+      {
+        "reconstructFrom": "fixture.py",
+        "bytes": 2025,
+        "sha256": "1af041e6375808d509796e05ce315669d47b000b4d0cd4260eadf9c836636518"
+      }
+    ],
+    "cwd": "/tmp/tvsa-stage/repo",
+    "startedAt": "2026-10-30T11:10:00.852229+00:00",
+    "finishedAt": "2026-10-30T11:10:03.480287+00:00",
+    "wall": 2.6280924900000002,
+    "exit": 0
+  },
+  "actualCLIAccepted": true,
+  "sourcePredictionsFile": "oracle.json",
+  "actualStageObservations": {
+    "before": {
+      "markerWindow": [
+        184.741476622,
+        185.24230737
+      ],
+      "samplingWindow": [
+        184.791476622,
+        185.19230736999998
+      ],
+      "rawSampleIndices": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "live": 20480,
+      "inodes": 3,
+      "written": 8192,
+      "openHandles": 2
+    },
+    "retained": {
+      "markerWindow": [
+        185.24230737,
+        185.742719537
+      ],
+      "samplingWindow": [
+        185.29230737,
+        185.692719537
+      ],
+      "rawSampleIndices": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "live": 20480,
+      "inodes": 3,
+      "written": 8192,
+      "openHandles": 2
+    },
+    "released": {
+      "markerWindow": [
+        185.742841701,
+        186.442942391
+      ],
+      "samplingWindow": [
+        185.79284170100001,
+        186.392942391
+      ],
+      "rawSampleIndices": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "live": 12288,
+      "inodes": 2,
+      "written": 8192,
+      "openHandles": 1
+    },
+    "reused": {
+      "markerWindow": [
+        186.443438616,
+        186.944109217
+      ],
+      "samplingWindow": [
+        186.49343861600002,
+        186.894109217
+      ],
+      "rawSampleIndices": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "live": 16384,
+      "inodes": 2,
+      "written": 8193,
+      "openHandles": 1
+    }
+  },
+  "fixtureMarkers": [
+    {
+      "step": "before",
+      "at": 184.741476622,
+      "source": {
+        "inode": 2,
+        "length": 4096,
+        "sha256": "9ce2519c0561bb0b06617143d723160ce3a095ce9fa2bada3403d84d32045e47"
+      },
+      "destination": {
+        "inode": 3,
+        "length": 4096,
+        "sha256": "267e5d2bb42138bdf23ccb5fbdea09385169de4c686f7c12034ccd7bb0c6899d"
+      },
+      "heldDescriptors": [
+        "source",
+        "old-destination"
+      ]
+    },
+    {
+      "step": "retained",
+      "at": 185.24230737,
+      "sourceAbsent": true,
+      "newDestinationSourceBytes": true,
+      "oldHandleOldBytes": true,
+      "oldDestination": {
+        "inode": 3,
+        "length": 4096,
+        "sha256": "267e5d2bb42138bdf23ccb5fbdea09385169de4c686f7c12034ccd7bb0c6899d"
+      },
+      "source": {
+        "inode": 2,
+        "length": 4096,
+        "sha256": "9ce2519c0561bb0b06617143d723160ce3a095ce9fa2bada3403d84d32045e47"
+      },
+      "heldDescriptors": [
+        "source",
+        "old-destination"
+      ]
+    },
+    {
+      "step": "closing-old",
+      "at": 185.742719537,
+      "oldDestination": {
+        "inode": 3,
+        "length": 4096,
+        "sha256": "267e5d2bb42138bdf23ccb5fbdea09385169de4c686f7c12034ccd7bb0c6899d"
+      }
+    },
+    {
+      "step": "closed-old",
+      "at": 185.742841701,
+      "heldDescriptors": [
+        "source"
+      ]
+    },
+    {
+      "step": "before-reuse",
+      "at": 186.442942391,
+      "heldDescriptors": [
+        "source"
+      ]
+    },
+    {
+      "step": "reused",
+      "at": 186.443438616,
+      "source": {
+        "inode": 2,
+        "length": 4097,
+        "sha256": "e5e9526cab53c7e0a47fc5eeee650f47dd3e13186fd36c1ec623775ac15eeedd"
+      },
+      "exactPrefix": true,
+      "newByte": true,
+      "destinationSourceBytes": true,
+      "heldDescriptors": [
+        "source"
+      ]
+    },
+    {
+      "step": "cleanup",
+      "at": 186.944109217,
+      "empty": true
+    }
+  ],
+  "actualReleaseCallback": {
+    "after": {
+      "inodes": 2,
+      "live": 12288,
+      "openHandles": 1,
+      "peak": 20480,
+      "written": 8192
+    },
+    "before": {
+      "inodes": 3,
+      "live": 20480,
+      "openHandles": 2,
+      "peak": 20480,
+      "written": 8192
+    },
+    "callbackCount": 4,
+    "errno": 0,
+    "inode": 3,
+    "opcode": 18,
+    "unique": 542
+  },
+  "actualWriteCallback": {
+    "after": {
+      "inodes": 2,
+      "live": 16384,
+      "openHandles": 1,
+      "peak": 20480,
+      "written": 8193
+    },
+    "before": {
+      "inodes": 2,
+      "live": 12288,
+      "openHandles": 1,
+      "peak": 20480,
+      "written": 8192
+    },
+    "callbackCount": 5,
+    "errno": 0,
+    "inode": 2,
+    "opcode": 16,
+    "unique": 858
+  },
+  "allIOCallbacks": {
+    "callbackCount": 7,
+    "countSaturated": false,
+    "limit": 64,
+    "records": [
+      {
+        "after": {
+          "inodes": 3,
+          "live": 16384,
+          "openHandles": 2,
+          "peak": 16384,
+          "written": 4096
+        },
+        "before": {
+          "inodes": 3,
+          "live": 12288,
+          "openHandles": 2,
+          "peak": 12288,
+          "written": 0
+        },
+        "callbackCount": 1,
+        "errno": 0,
+        "inode": 2,
+        "opcode": 16,
+        "unique": 34
+      },
+      {
+        "after": {
+          "inodes": 3,
+          "live": 20480,
+          "openHandles": 2,
+          "peak": 20480,
+          "written": 8192
+        },
+        "before": {
+          "inodes": 3,
+          "live": 16384,
+          "openHandles": 2,
+          "peak": 16384,
+          "written": 4096
+        },
+        "callbackCount": 2,
+        "errno": 0,
+        "inode": 3,
+        "opcode": 16,
+        "unique": 36
+      },
+      {
+        "after": {
+          "inodes": 3,
+          "live": 20480,
+          "openHandles": 2,
+          "peak": 20480,
+          "written": 8192
+        },
+        "before": {
+          "inodes": 3,
+          "live": 20480,
+          "openHandles": 3,
+          "peak": 20480,
+          "written": 8192
+        },
+        "callbackCount": 3,
+        "errno": 0,
+        "inode": 2,
+        "opcode": 18,
+        "unique": 312
+      },
+      {
+        "after": {
+          "inodes": 2,
+          "live": 12288,
+          "openHandles": 1,
+          "peak": 20480,
+          "written": 8192
+        },
+        "before": {
+          "inodes": 3,
+          "live": 20480,
+          "openHandles": 2,
+          "peak": 20480,
+          "written": 8192
+        },
+        "callbackCount": 4,
+        "errno": 0,
+        "inode": 3,
+        "opcode": 18,
+        "unique": 542
+      },
+      {
+        "after": {
+          "inodes": 2,
+          "live": 16384,
+          "openHandles": 1,
+          "peak": 20480,
+          "written": 8193
+        },
+        "before": {
+          "inodes": 2,
+          "live": 12288,
+          "openHandles": 1,
+          "peak": 20480,
+          "written": 8192
+        },
+        "callbackCount": 5,
+        "errno": 0,
+        "inode": 2,
+        "opcode": 16,
+        "unique": 858
+      },
+      {
+        "after": {
+          "inodes": 2,
+          "live": 16384,
+          "openHandles": 1,
+          "peak": 20480,
+          "written": 8193
+        },
+        "before": {
+          "inodes": 2,
+          "live": 16384,
+          "openHandles": 2,
+          "peak": 20480,
+          "written": 8193
+        },
+        "callbackCount": 6,
+        "errno": 0,
+        "inode": 2,
+        "opcode": 18,
+        "unique": 878
+      },
+      {
+        "after": {
+          "inodes": 2,
+          "live": 16384,
+          "openHandles": 0,
+          "peak": 20480,
+          "written": 8193
+        },
+        "before": {
+          "inodes": 2,
+          "live": 16384,
+          "openHandles": 1,
+          "peak": 20480,
+          "written": 8193
+        },
+        "callbackCount": 7,
+        "errno": 0,
+        "inode": 2,
+        "opcode": 18,
+        "unique": 1094
+      }
+    ]
+  },
+  "actualRenameCallback": {
+    "callbackCount": 1,
+    "errno": 0,
+    "inode": 1,
+    "opcode": 12,
+    "unique": 294
+  },
+  "finalFilesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 16384,
+    "inodes": 1,
+    "live": 4096,
+    "liveLimit": 20480,
+    "openHandles": 0,
+    "operations": 600,
+    "peak": 20480,
+    "writeLimit": 65536,
+    "written": 8193
+  },
+  "cleanup": {
+    "observer": {
+      "remainingMounts": [],
+      "processes": []
+    },
+    "filesystem": {
+      "remainingMounts": [],
+      "serverExit": -15,
+      "serverStderr": "",
+      "serverStdout": "",
+      "unmountExit": 0,
+      "unmountStderr": "",
+      "unmountStdout": ""
+    },
+    "remote": {
+      "PASS": true,
+      "remainingMounts": [],
+      "processes": [],
+      "reaped": [],
+      "physicalAllocated": 237568,
+      "budget": 268435456,
+      "reserve": 8388608
+    }
+  },
+  "lifecycle": {
+    "id": "bx_e26vd7dy",
+    "state": "stopped",
+    "createdAt": "2026-10-30T11:09:54.464Z",
+    "stoppedAt": "2026-10-30T11:10:18.025Z",
+    "snapshotCompletedAt": "2026-10-30T11:10:17.996Z",
+    "snapshotVerifiedAt": "2026-10-30T11:10:17.996Z",
+    "lastSnapshotStatus": "completed",
+    "snapshotAvailable": true,
+    "stop": {
+      "endedAt": "2026-10-30T11:10:18.046Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_fbe6ca247ad32c00",
+      "lastAttemptAt": "2026-10-30T11:10:18.046Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "originalExpiry": "2026-10-30T11:39:54.481Z",
+    "shutdownDelegated": true
+  },
+  "sourceSemanticsUnchanged": true,
+  "limitations": [
+    "No ENOSPC operation or sticky-failure retry was exercised or qualified.",
+    "Observer records callback order, identity and exact counters; no callback timestamp is recorded. Stable external samples correlate the retained/released/reused fixture windows.",
+    "Only the recorded source byte closure is qualified; independent acceptance and main integration remain separate."
+  ],
+  "resources": {
+    "groupPeakRSS": 52559872,
+    "payloadCPU": 0.673245,
+    "payloadWall": 2.5109065910000083,
+    "localFSIZE": 12582912,
+    "remoteObserverFSIZE": 524288,
+    "capturePerCommand": 524288,
+    "captureAggregate": 4194304,
+    "PythonChildDATA": 134217728,
+    "GitChildOnlyDATA": 268435456,
+    "localHelperGroupRSS": 536870912,
+    "remoteRuntimeGroupRSS": 2147483648,
+    "remoteDiskBudget": 268435456,
+    "remoteReserve": 8388608,
+    "CPU": 60,
+    "wall": 90,
+    "RAMAdmission": false
+  },
+  "rawRuntime": "raw-runtime.json",
+  "sourcePins": "source-pins.json"
+}

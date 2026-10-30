@@ -1,0 +1,213 @@
+{
+  "PASS": true,
+  "parent": "ac4d15a40ffdf05462b2c92c6625529bd2916437",
+  "dispatchPin": {
+    "bytes": 5814,
+    "sha256": "9fdf1a564518cf2fecb40ed39318ef9068588fbcdf3d086485dac666959c9909"
+  },
+  "canonicalReceiptPin": {
+    "bytes": 7235,
+    "sha256": "d5651701dc2ac6c639103ff1cb0775b8e7667cc1a3d1674d1f51af414ece136b"
+  },
+  "sourceObjectsVerified": true,
+  "fullRuntimeClosure": [
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py"
+  ],
+  "manifestPin": {
+    "bytes": 8896,
+    "sha256": "e2b1c2e92b33fa9cf468aad754aea451cd27406ade1946bdc7bbba9fa8c04135"
+  },
+  "canonicalParser": true,
+  "intendedFiles": [
+    "/tmp/tvsa/domain/source,retained",
+    "/tmp/tvsa/domain/destination,retained"
+  ],
+  "mountType": "production synchronous FUSE tree; literal inline Python comma filenames",
+  "socket": "/tmp/tvsa/status.sock",
+  "socketBytes": 21,
+  "exactParentDefaultOffParity": true,
+  "wrapperReusedFrom": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-normal-release-charge-reuse-runtime-oct30",
+  "wrapperPin": {
+    "bytes": 6591,
+    "sha256": "7da2c9ced109b565f200d46bb9c4b55c13790acb9d5575da9f414ec6a962356c"
+  },
+  "originalWrapperPin": {
+    "bytes": 6465,
+    "sha256": "3e373a0c6f68d415178cae8d4efbbe6e01c3e2cc2080043736bf0f9a04e71bf3"
+  },
+  "generatedFileControl": {
+    "bytes": 600000,
+    "captureCeiling": 524288,
+    "FSIZE": 12582912
+  },
+  "outputOverflowRejected": true,
+  "resource": {
+    "sessionID": "01a18c7b-28a1-7ed0-a86d-a660b4ae8ffe",
+    "rollout": "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T11-04-04-01a18c7b-28a1-7ed0-a86d-a660b4ae8ffe.jsonl",
+    "roots": [
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-accepted-setattr-accounting-main-integration-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-setattr-accounting-independent-accept-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-mounted-unlink-rmdir-owner133-disk-recovered-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-mounted-unlink-rmdir-type-guards-oct30-fresh-capacity",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-mounted-unlink-rmdir-owner133-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-mounted-unlink-rmdir-type-guards-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-mounted-create-mkdir-parent-guards-oct30-isolated-publication-continuation",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-mounted-create-mkdir-parent-guards-oct30-publication-recovery",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-unlink-rmdir-callback-observability-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-namespace-fixture-continuation-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-namespace-finish-owner-policy-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-namespace-observability-independent-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-mounted-setattr-compatible-fixture-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-integrated-mounted-setattr-atomicity-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-accepted-create-mkdir-main-integration-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-create-mkdir-independent-mounted-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-create-mkdir-callback-observability-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-accepted-namespace-caller-integration-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-namespace-mounted-candidate-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-accepted-mounted-setattr-main-integration-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-setattr-rejection-accounting-runtime-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-setattr-accounting-mounted-continuation-oct30",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T09-18-42-01a18c1a-b52c-7ec0-8409-779c32ea4796.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T05-54-56-01a18b60-23c4-7c40-84b1-6abb2465d49d.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T04-41-33-01a18b1c-f65b-70f3-a25c-e610ef878296.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T05-52-14-01a18b5d-ab16-76c0-982b-3e5ef8508e7b.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T04-35-00-01a18b16-f8a6-7793-be64-aac0532e918b.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T03-55-33-01a18af2-d89a-7cd0-9cf0-590a082adb59.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T03-46-33-01a18aea-9bda-74f3-9074-2d8911f75b5e.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T06-17-10-01a18b74-8112-7231-9682-96361971710f.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T06-32-18-01a18b82-5af5-7572-9d9c-c07b2f6bd3fb.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T07-02-36-01a18b9e-178c-7312-95c5-33936e60f764.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T07-08-56-01a18ba3-e5b2-74d3-87a7-14f8485fe219.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T08-24-38-01a18be9-33fd-76b0-adcd-789101119d79.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T08-13-40-01a18bdf-2921-7663-bc6d-6366ee26be75.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T08-05-53-01a18bd8-0905-7e22-843a-62097a69d713.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T07-50-30-01a18bc9-f073-7770-8b35-79475a3d194b.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T07-42-48-01a18bc2-e40d-7792-8468-26a5c80b34ed.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T07-19-01-01a18bad-2225-7443-84be-4f21bb8e03ce.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T07-30-31-01a18bb7-a7a2-7370-b0f5-9eae49b3c9f4.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T08-33-04-01a18bf0-ed46-76f1-8ec6-970aa19d0112.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T08-56-55-01a18c06-c21c-7a92-8ed3-b0c0e838305f.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T09-06-45-01a18c0f-c130-7050-83e0-6ea99642af08.jsonl",
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-mounted-open-destination-retained-charge-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-mounted-open-destination-retained-charge-oct30",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T09-40-54-01a18c2f-0829-7ed0-9c11-e1f487d060c2.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T09-29-35-01a18c24-a83d-7972-b38d-8636c2b269b6.jsonl",
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-retained-destination-accept-main-integration-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-retained-destination-accept-main-integration-oct30",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T09-53-47-01a18c3a-cfd2-7de1-8f4c-5a23eff4932a.jsonl",
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-retained-destination-accept-main-integration-oct30-preserved-headroom",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-retained-destination-accept-main-integration-oct30-preserved-headroom",
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-mounted-sticky-enospc-release-runtime-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-mounted-sticky-enospc-release-runtime-oct30",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T09-57-01-01a18c3d-c590-79a2-9699-02137f4603bd.jsonl",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T10-07-39-01a18c47-8465-7cd0-9f42-21b453358bb7.jsonl",
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-sticky-release-provider-recovered-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-sticky-release-provider-recovered-oct30",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T10-33-59-01a18c5f-9d07-7fa1-90b3-1297139d20c6.jsonl",
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-normal-release-charge-reuse-runtime-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-normal-release-charge-reuse-runtime-oct30",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T10-38-45-01a18c63-fcad-7322-8917-60637d5110a2.jsonl",
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-release-charge-evidence-main-integration-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-release-charge-evidence-main-integration-oct30",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T10-47-09-01a18c6b-abc6-7b63-a2d0-a87182e7c3fa.jsonl",
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-release-charge-preserved-main-integration-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-release-charge-preserved-main-integration-oct30",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T10-52-02-01a18c70-2762-7282-a9db-ce8648cb0d89.jsonl",
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-release-charge-candidate-finish-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-release-charge-candidate-finish-oct30",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T10-59-08-01a18c76-a6c2-7b82-92cb-e0b07062a90c.jsonl",
+      "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-release-write-callback-runtime-oct30",
+      "/home/user/wine-assembly/scratch/usage-watch/toyvm-release-write-callback-runtime-oct30",
+      "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T11-04-04-01a18c7b-28a1-7ed0-a86d-a660b4ae8ffe.jsonl"
+    ],
+    "physicalAllocated": 47034368,
+    "allocationBudget": 67108864,
+    "reserve": 8388608,
+    "diskFree": 3237212160,
+    "remainingAggregateGrowth": 267292672,
+    "diskFloor": 2147483648,
+    "MemAvailable": 4385153024,
+    "supervisorRSS": 30023680,
+    "RAMAdmission": false,
+    "resourcePolicy": "owner 2026-10-30; actual process enforcement retained"
+  },
+  "node": "not used; native Boat CLI and Python fixture",
+  "inherited": {
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "oracle": {
+    "kind": "SOURCE_DERIVED_PREDICTION_NOT_RUNTIME_OBSERVATION",
+    "base": "ac4d15a40ffdf05462b2c92c6625529bd2916437",
+    "metadataPerInode": 4096,
+    "payloadRounding": 4096,
+    "quota": {
+      "liveLimit": 20480,
+      "writeLimit": 65536,
+      "fileLimit": 16384
+    },
+    "stages": {
+      "before": {
+        "live": 20480,
+        "inodes": 3,
+        "written": 8192
+      },
+      "retained": {
+        "live": 20480,
+        "inodes": 3,
+        "written": 8192
+      },
+      "released": {
+        "live": 12288,
+        "inodes": 2,
+        "written": 8192
+      },
+      "reused": {
+        "live": 16384,
+        "inodes": 2,
+        "written": 8193
+      },
+      "cleanup": {
+        "live": 4096,
+        "inodes": 1,
+        "written": 8193,
+        "openHandles": 0
+      }
+    },
+    "protocol": {
+      "version": "Linux FUSE7.31",
+      "header": "2I2Q4I,40bytes; unique offset8,inode16",
+      "WRITE": {
+        "opcode": 16,
+        "body": "fh:u64 offset:u64 size:u32; payload offset40",
+        "result": "size:u32 padding:u32"
+      },
+      "RELEASE": {
+        "opcode": 18,
+        "body": "fh:u64; verified equal inode and opens>0",
+        "result": "empty success"
+      }
+    },
+    "requiredCallback": "actual serve RELEASE18 on old fixture inode: live20480->12288,inodes3->2,written8192 unchanged; actual WRITE16 on source fixture inode: live12288->16384,written8192->8193. Match unique/inode/opcode/result; no guessed callback IDs.",
+    "intentionalENOSPC": false
+  },
+  "stageBytes": 82698,
+  "forecastWorkGrowth": 8388608,
+  "publicationReserve": 8388608
+}
