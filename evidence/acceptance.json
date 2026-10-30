@@ -1,0 +1,18 @@
+{
+  "passed": [
+    "all 158 original sizes/digests",
+    "correct executable, DLL and data VFS mappings",
+    "missing/corrupt rejected: tuxracer.exe",
+    "missing/corrupt rejected: TCL83.DLL",
+    "missing/corrupt rejected: SDL.dll",
+    "missing/corrupt rejected: SDL_mixer.dll",
+    "missing/corrupt rejected: tuxracer_init.tcl",
+    "missing/corrupt rejected: courses/course_idx.tcl",
+    "URL escape, VFS escape and omitted required mapping rejected"
+  ],
+  "boundarySha256": "b05a3ff3d2a5ff9618a0b9dd955647d74d98fd97dca7694df2c9dcbaed7ad53a",
+  "source": "test/run.js:getAssetFiles",
+  "originalMediaBytes": 13225945,
+  "computedTclClosure": "UNKNOWN",
+  "runtime": "NOT RUN"
+}

@@ -1,0 +1,1 @@
+{"operation":"git init","spawnedGit":false,"cause":"supervisor incorrectly lowered its own hard DATA to128MiB before Git256MiB child setup","resolution":"new supervisor retains original inherited hard ceiling; Python soft DATA128MiB, Git child hard/soft256MiB, Node original inherited DATA; no enforced limit changed"}

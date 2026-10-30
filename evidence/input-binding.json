@@ -1,0 +1,14 @@
+{
+  "base": "4f48ba55572815d015ec9ac15f1f1284f770b40d",
+  "dispatchSHA256": "2467bf0baa4e87c711870d3ec3351e104059fa926a0257e08be06f733e86bedc",
+  "originalInventory": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-original-closure-oct28/payload/inventory.json",
+    "bytes": 29710,
+    "sha256": "9ac1ac56933cbeae45b0ada2162af298dbc768a5f82a0e2131faa218b0644dc5"
+  },
+  "derivedRowsExactlyEqual": true,
+  "initialPositiveWalBaselineBytesCountedOnce": 24831368,
+  "walAccounting": "standing initial shared baseline recorded once; only positive post-baseline growth counted in task forecast",
+  "rootRefInitialReceipt": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-original-launch-registration-oct29/root-ref-digest.json",
+  "rootMutation": false
+}

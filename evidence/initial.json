@@ -1,0 +1,35 @@
+{
+  "at": 1793242312.4254622,
+  "session": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-50-26-01a18590-dd6a-7610-a237-4b960957fd46.jsonl",
+  "sessionBytes": 444758,
+  "walBaseline": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4235392,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  },
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "mountArgv": [],
+  "mountValidation": "empty; no mount operation authorized",
+  "allocation": 50331648,
+  "aggregate": 150994944
+}

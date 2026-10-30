@@ -1,0 +1,13 @@
+{
+  "passed": [
+    "tuxracer.exe",
+    "TCL83.DLL",
+    "SDL.dll",
+    "SDL_mixer.dll",
+    "tuxracer_init.tcl",
+    "courses/course_idx.tcl"
+  ],
+  "missingCorruptSizeEscapeSymlinkRejected": true,
+  "mediaCopies": 1,
+  "originalMediaWrites": 0
+}

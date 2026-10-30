@@ -1,0 +1,1 @@
+{"phase": "initial read-only policy/source inspection", "incident": "terminal output exceeded requested8192B; source rg was too broad", "resolution": "bounded subsequent reads; no admission denied; discarded truncated source excerpt"}

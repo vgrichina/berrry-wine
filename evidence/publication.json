@@ -1,0 +1,9 @@
+{
+  "commit": "4bbc6434443094239579ec07ec91a84e3a0958b9",
+  "remoteSHA": "4bbc6434443094239579ec07ec91a84e3a0958b9",
+  "branch": "task/tuxracer-original-launch-registration-oct29",
+  "remote": "git@github.com:vgrichina/wine-assembly.git",
+  "verifiedAt": 1793242648.4076493,
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mainPush": false
+}

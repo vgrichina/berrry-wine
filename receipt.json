@@ -1,0 +1,60 @@
+{
+  "task": "tuxracer-original-launch-registration-oct29",
+  "status": "COMPLETE_REGISTRATION_AND_STATIC_LOADER_ACCEPTANCE_NO_RUNTIME",
+  "at": "2026-10-29T02:58:18.398584+00:00",
+  "sessionID": "01a18590-dd6a-7610-a237-4b960957fd46",
+  "ownedRepo": "/tmp/tuxracer-original-launch-registration-oct29/repo",
+  "base": "4f48ba55572815d015ec9ac15f1f1284f770b40d",
+  "commit": "4bbc6434443094239579ec07ec91a84e3a0958b9",
+  "branch": "task/tuxracer-original-launch-registration-oct29",
+  "verifiedRemoteSHA": "4bbc6434443094239579ec07ec91a84e3a0958b9",
+  "publication": "evidence/publication.json",
+  "inputPins": "evidence/input-binding.json",
+  "testedPins": "evidence/tested-pins.json",
+  "tests": [
+    "evidence/acceptance.json",
+    "evidence/staging-acceptance.json"
+  ],
+  "productionBoundary": "test/run.js:getAssetFiles -> lib/app-files.js:validateLocalManifestSync",
+  "sourceChanges": [
+    "lib/apps.js",
+    "test/candidate-corpus/tuxracer-original-files.json",
+    "test/test-tuxracer-original-registration.js",
+    "test/test-tuxracer-original-staging.py",
+    "tools/recovery/stage-tuxracer-original.py",
+    "tools/recovery/tuxracer-original-launch-registration-oct29-report.md"
+  ],
+  "computedTclClosure": "UNKNOWN",
+  "fullMediaStaticClosure": "UNKNOWN",
+  "runtime": "NOT RUN",
+  "reusedRecoveryAndScanner": true,
+  "resources": {
+    "allocationRetainedBytes": 50331648,
+    "aggregateAdmissionBytes": 150994944,
+    "admission": "evidence/admissions.jsonl",
+    "initialSessionWalLimits": "evidence/initial.json",
+    "nodeStartup": "evidence/node-startup-bound.json",
+    "operations": "evidence/operations.jsonl",
+    "resourceAdmissionFailures": [],
+    "incidents": [
+      "evidence/wrapper-incident.json",
+      "evidence/terminal-incident.json"
+    ]
+  },
+  "cleanup": {
+    "descendants": "process-group cleanup after each supervised operation",
+    "mediaTrees": 1,
+    "retainedStaging": "test/binaries/candidates/tuxracer-original-061a",
+    "retainedPayloadBytes": 13225945,
+    "originalMediaWrites": 0,
+    "binariesCommitted": false,
+    "mountArgv": [],
+    "testBox": null,
+    "runtimeOwner": "coordinator; no box assigned",
+    "allocationRelease": "coordinator closeout only"
+  },
+  "mainIntegration": false,
+  "boardAppend": false,
+  "boardDelivery": "publication-note.txt",
+  "independentAcceptanceRequiredBeforeMain": true
+}
