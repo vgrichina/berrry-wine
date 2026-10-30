@@ -1,6 +1,0 @@
-Compiler: watx (from default)
-WATX entry: src/main.watx
-Region layout: CANONICAL — 271 regions (14 pinned/derived, 256 allocated, 1 span), floor 0x00000100
-Region layout hash: a23715cdaba2f34b
-Build complete: build/wine-assembly.wasm (1881672 bytes)
-Build complete: build/wine-assembly.compat.wasm (1884245 bytes)

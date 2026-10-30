@@ -1,3 +1,0 @@
-{"revision":"candidate ffe822a9","expectedRejection":true,"writes":[0.25,1,0.5],"clears":[{"mask":4,"depth":1},{"mask":4,"depth":0.5}]}
-{"revision":"base f6571101","expectedRejection":true,"writes":[0.25,1,0.5],"clears":[{"mask":4,"depth":1},{"mask":4,"depth":0.5}]}
-PASS independent clipping/clone/validation checks; candidate and baseline GPU depth regressions independently REJECTED
