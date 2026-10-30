@@ -8,16 +8,16 @@
   "protectedMetadata": "UNCHANGED",
   "resources": {
     "amounts": {
-      "own": 3031040,
+      "own": 4317184,
       "entireReadonlyDonor": 10612736,
       "sharedNative": 843776,
-      "launcher": 610304,
+      "launcher": 663552,
       "reserve": 8388608,
       "publicationAllowance": 2097152
     },
-    "total": 25583616,
+    "total": 26923008,
     "cap": 67108864,
-    "hostFree": 7038861312,
+    "hostFree": 7037104128,
     "hostFloor": 2982150144
   },
   "buildAttempts": 1,

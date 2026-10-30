@@ -1,0 +1,52 @@
+{
+  "at": "2026-10-22T21:29:37.363373+00:00",
+  "verdict": "BLOCKED_CANONICAL_CALLBACK_CENSUS",
+  "candidate": "7a21579f9adb208164312961c249a0aa9080a8b7",
+  "moduleSHA256": null,
+  "commit": "9b7ea601cc926fb4ee5c047a8ed6760e9b95d625",
+  "remoteBranch": "task/shadow-man-dsetup-canonical-qualification-oct22",
+  "pushExit": 0,
+  "actualCanonicalRemote": "https://github.com/vgrichina/berrry-wine.git",
+  "actualRefs": "89f1e9d2c67aa94d56d2319115589d07204d42e0\trefs/heads/main\n9b7ea601cc926fb4ee5c047a8ed6760e9b95d625\trefs/heads/task/shadow-man-dsetup-canonical-qualification-oct22\n4d7c40955935ec466b9e30b44c520b60048335a6\trefs/heads/task/shadow-man-dsetup-independent-accept-oct22\n7a21579f9adb208164312961c249a0aa9080a8b7\trefs/heads/task/shadow-man-dsetup-native-version-repair-oct22\n",
+  "remoteVerified": true,
+  "committedEvidenceFilesVerified": 46,
+  "protectedRootDonorMetadata": "UNCHANGED",
+  "originalPinsVerified": 4,
+  "buildAttempts": 1,
+  "buildExit": 1,
+  "fullModuleTests": 0,
+  "local": {
+    "amounts": {
+      "own": 4313088,
+      "readonlyDonor": 10612736,
+      "sharedNative": 843776,
+      "launcher": 634880,
+      "reserve": 8388608,
+      "remainingReceiptAllowance": 1048576
+    },
+    "total": 25841664,
+    "cap": 67108864,
+    "hostFree": 7037313024,
+    "floor": 2982150144
+  },
+  "remote": {
+    "box": "bx_f3gs8qm2",
+    "state": "RUNNING; API exec responding",
+    "expiry": "2026-10-22T23:20:32.491Z",
+    "lifecycleOwner": "coordinator",
+    "taskProcesses": "No owned build/test process remains; build subprocess reaped",
+    "retainedRoot": "/home/user/shadow-man-dsetup-canonical-qualification-oct22",
+    "retainedEvidence": "/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence",
+    "bytesAllocated": 117833728,
+    "freeBytes": 48965955584,
+    "cap": 1073741824,
+    "reserve": 67108864,
+    "buildAttempts": 1,
+    "buildExit": 1,
+    "moduleIdentity": null,
+    "fullModuleTests": 0,
+    "nativeCalls": 0,
+    "gameLaunches": 0
+  },
+  "boxInfo": "/home/user/wine-assembly-shadow-man-dsetup-canonical-qualification-oct22/scratch/runs/20261022-shadow-man-dsetup-canonical-qualification/boat-handback-info.json"
+}
