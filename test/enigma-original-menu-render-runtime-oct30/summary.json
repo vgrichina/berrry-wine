@@ -1,0 +1,93 @@
+{
+  "task": "enigma-original-menu-render-runtime-oct30",
+  "outcome": "Original menu rendered; ordinary Start Game progression attempted but not observed",
+  "gameplayAccepted": false,
+  "runtimeInvocationCount": 1,
+  "runtimeSeconds": 84.41584527600003,
+  "exit": 0,
+  "peakRSS": 424550400,
+  "runtimeSource": "425755ee5ee9be0734c7aca187521100f5487674",
+  "acceptedHostRevision": "facebcb2e6d04b84e80211a7814654e528566b0f",
+  "historicalPairing": true,
+  "currentIntegratedTraceClaim": false,
+  "identities": {
+    "runner/test/run.js": {
+      "bytes": 690150,
+      "sha256": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e"
+    },
+    "runner/lib/host-imports.js": {
+      "bytes": 197359,
+      "sha256": "0d2dc6eff2b2ff9153f0b6b8b3caca69f71ae02bd62fe58599786d0d8f500347"
+    },
+    "modules/wine-assembly.wasm": {
+      "bytes": 1880854,
+      "sha256": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b"
+    },
+    "vfs/Enigma-1.01/enigma.exe": {
+      "bytes": 6287872,
+      "sha256": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45"
+    }
+  },
+  "captures": {
+    "initial.png": {
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    },
+    "after-start.png": {
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    },
+    "after-enter.png": {
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    }
+  },
+  "finalSnapshot": {
+    "batch": 182816,
+    "eip": "0xecc7a1",
+    "quit": false,
+    "yieldReason": 0,
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "screen": {
+      "w": 640,
+      "h": 480
+    },
+    "frozen": {
+      "frozen": false,
+      "tickMs": 200,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "x": 20,
+        "y": 20,
+        "w": 646,
+        "h": 507,
+        "visible": true,
+        "isChild": false,
+        "title": "Enigma - Main Menu"
+      }
+    ]
+  },
+  "remainingGate": "Original Start Game input must produce visible progression; SDL/input delivery beyond control ACK is unverified",
+  "boat": {
+    "id": "bx_tm2ab54w",
+    "state": "stopped",
+    "snapshotCompletedAt": "2026-10-30T03:53:22.005Z",
+    "snapshotVerifiedAt": "2026-10-30T03:53:22.005Z",
+    "snapshotLocation": "Boat bx_tm2ab54w snapshot; /home/user/enigma-original/capture; normal stop retention 14 days",
+    "stop": {
+      "endedAt": "2026-10-30T03:53:22.062Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_abc81223d62377a1",
+      "lastAttemptAt": "2026-10-30T03:53:22.062Z",
+      "requestedAt": null,
+      "status": "completed"
+    }
+  },
+  "artifactDirectory": "/home/user/wine-assembly/scratch/usage-watch/enigma-original-menu-render-runtime-oct30-render-relaunch"
+}

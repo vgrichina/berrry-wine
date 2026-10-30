@@ -1,0 +1,179 @@
+{
+  "utc": "2026-10-30T03:51:24.315841+00:00",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "test/run.js",
+    "--no-build",
+    "--exe=/home/user/enigma-original/vfs/Enigma-1.01/enigma.exe",
+    "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+    "--cwd=C:\\Enigma-1.01",
+    "--dlls=/home/user/enigma-original/system/msvcrt.dll,/home/user/enigma-original/vfs/Enigma-1.01/zlib1.dll,/home/user/enigma-original/vfs/Enigma-1.01/libpng12-0.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL_image.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL_mixer.dll,/home/user/enigma-original/vfs/Enigma-1.01/libfreetype-6.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL_ttf.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/home/user/enigma-original/vfs",
+    "--max-batches=10000000",
+    "--quiet-fs",
+    "--control=18127",
+    "--trace-input",
+    "--wasm=/home/user/enigma-original/modules/wine-assembly.wasm",
+    "--max-seconds=108",
+    "--no-threads",
+    "--frozen",
+    "--png=/home/user/enigma-original/capture/final.png"
+  ],
+  "phase": "stopped",
+  "events": [
+    {
+      "utc": "2026-10-30T03:51:24.642194+00:00",
+      "command": {
+        "action": "ping"
+      },
+      "ack": {
+        "ok": true,
+        "value": {
+          "pong": true,
+          "batch": 0,
+          "frozen": true,
+          "app": "enigma.exe"
+        }
+      }
+    },
+    {
+      "utc": "2026-10-30T03:51:24.645081+00:00",
+      "command": {
+        "action": "frozen",
+        "mode": "off"
+      },
+      "ack": {
+        "ok": true,
+        "value": {
+          "frozen": false,
+          "batch": 0,
+          "tickMs": 200
+        }
+      }
+    },
+    {
+      "utc": "2026-10-30T03:51:46.642500+00:00",
+      "command": {
+        "action": "png",
+        "path": "/home/user/enigma-original/capture/initial.png"
+      },
+      "ack": {
+        "ok": true,
+        "value": {
+          "batch": 73326,
+          "frozen": false,
+          "path": "/home/user/enigma-original/capture/initial.png",
+          "bytes": 389913
+        }
+      }
+    },
+    {
+      "utc": "2026-10-30T03:52:48.689901+00:00",
+      "command": {
+        "action": "png",
+        "path": "/home/user/enigma-original/capture/final.png"
+      },
+      "ack": {
+        "ok": true,
+        "value": {
+          "batch": 182918,
+          "frozen": false,
+          "path": "/home/user/enigma-original/capture/final.png",
+          "bytes": 389913
+        }
+      }
+    },
+    {
+      "utc": "2026-10-30T03:52:48.691651+00:00",
+      "command": {
+        "action": "quit"
+      },
+      "ack": {
+        "ok": true,
+        "value": {
+          "quitting": true
+        }
+      }
+    }
+  ],
+  "gameplayAccepted": false,
+  "startup": {
+    "exit": 0,
+    "stdout": "{\"node\":\"/home/user/.nvm/versions/node/v24.22.1/bin/node\",\"limits\":\"Limit                     Soft Limit           Hard Limit           Units     \\nMax cpu time              150                  155                  seconds   \\nMax file size             4194304              4194304              bytes     \\nMax data size             unlimited            unlimited            bytes     \\nMax stack size            8388608              unlimited            bytes     \\nMax core file size        0                    unlimited            bytes     \\nMax resident set          unlimited            unlimited            bytes     \\nMax processes             31546                31546                processes \\nMax open files            524288               524288               files     \\nMax locked memory         8388608              8388608              bytes     \\nMax address space         unlimited            unlimited            bytes     \\nMax file locks            unlimited            unlimited            locks     \\nMax pending signals       31546                31546                signals   \\nMax msgqueue size         819200               819200               bytes     \\nMax nice priority         0                    0                    \\nMax realtime priority     0                    0                    \\nMax realtime timeout      unlimited            unlimited            us        \\n\",\"heap\":738197504}\n",
+    "stderr": ""
+  },
+  "pid": 9572,
+  "peakRSS": 424550400,
+  "lastControlError": "URLError(ConnectionRefusedError(111, 'Connection refused'))",
+  "exit": 0,
+  "reason": "controller finished",
+  "elapsed": 84.41584527600003,
+  "files": [
+    {
+      "path": "identities.json",
+      "bytes": 560,
+      "sha256": "f7581c0702b42580545233cfeab7ddcafddb8146a10ab24c89a55e4feeebfa30"
+    },
+    {
+      "path": "initial.png",
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    },
+    {
+      "path": "start-game-ack.json",
+      "bytes": 299,
+      "sha256": "cc63db7e9a8e02749e5f34556217cff463f497aacb3bc3ee41085e2494b75ca3"
+    },
+    {
+      "path": "diagnostic.json",
+      "bytes": 1186,
+      "sha256": "a7d58f8231e4739b044dce054bf4adb2b54932f1fd9027036498c3283ef611f9"
+    },
+    {
+      "path": "after-enter.png",
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    },
+    {
+      "path": "after-start-ack.json",
+      "bytes": 342,
+      "sha256": "4e7d1007835ebb3e8dad72137a68e746f9daa90a5f1a527a20b0a8f196052172"
+    },
+    {
+      "path": "stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "enter-start-ack.json",
+      "bytes": 536,
+      "sha256": "aa9fd42717b31d87b5f0583737c094c89b3a6b3fb2ad9a41f307eb33b6fdd9a5"
+    },
+    {
+      "path": "after-start.png",
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    },
+    {
+      "path": "stdout.log",
+      "bytes": 6280,
+      "sha256": "365d00341bf20731843a687baac3ed4ae019e64ca0a0e7653db2a7c07cb11df4"
+    },
+    {
+      "path": "finish",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "final.png",
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    }
+  ]
+}

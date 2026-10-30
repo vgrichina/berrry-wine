@@ -1,0 +1,18 @@
+{
+  "runner/test/run.js": {
+    "bytes": 690150,
+    "sha256": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e"
+  },
+  "runner/lib/host-imports.js": {
+    "bytes": 197359,
+    "sha256": "0d2dc6eff2b2ff9153f0b6b8b3caca69f71ae02bd62fe58599786d0d8f500347"
+  },
+  "modules/wine-assembly.wasm": {
+    "bytes": 1880854,
+    "sha256": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b"
+  },
+  "vfs/Enigma-1.01/enigma.exe": {
+    "bytes": 6287872,
+    "sha256": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45"
+  }
+}

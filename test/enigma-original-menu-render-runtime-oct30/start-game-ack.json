@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-30T03:52:12.972024+00:00",
+  "input": {
+    "cmd": "click:343:213"
+  },
+  "ack": {
+    "ok": true,
+    "value": {
+      "batch": 119381,
+      "logs": [
+        "[input] click 343,213 at batch 119381"
+      ]
+    }
+  },
+  "reason": "visible Start Game at initial PNG x343 y213"
+}
