@@ -1,9 +1,0 @@
-{
-  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
-  "checkoutConfigurationReceipt": "/tmp/maelstrom-select-hook-recovered-canonical-native-oct24/ops/checkout.json",
-  "nativeMountReceiptReused": "/tmp/maelstrom-event-observer-native-qualification-oct24/ops/mount-parser.json",
-  "actualMountArgv": [],
-  "intendedFiles": [],
-  "sameConfiguration": true,
-  "box": null
-}

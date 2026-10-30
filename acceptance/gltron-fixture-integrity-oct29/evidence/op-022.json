@@ -1,1 +1,0 @@
-{"at": "2026-10-29T02:26:25.790417+00:00", "argv": ["git", "-C", "/tmp/gltron-fixture-authorized-integrity-repair-oct29/repo", "read-tree", "-mu", "HEAD"], "cwd": "/tmp/gltron-fixture-authorized-integrity-repair-oct29/repo", "exit": 0, "peakRSS": 20836352, "wall": 0.05766151403076947, "violation": null, "descendantCleanup": true}

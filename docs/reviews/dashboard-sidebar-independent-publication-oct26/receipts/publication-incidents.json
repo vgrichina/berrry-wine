@@ -1,5 +1,0 @@
-{
-  "rawEvidenceWhitespace": "diff--check reports original assertion output trailing spaces; retained unchanged. Executable source/README pass focused check.",
-  "missingDocsObjects": "seven missing immutable documentation blobs recovered locally; original failure and source/hash/byte receipts retained",
-  "resourceDenials": []
-}
