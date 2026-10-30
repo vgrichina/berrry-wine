@@ -1,0 +1,9 @@
+{
+  "PASS": true,
+  "candidate": "a998bf36b108275335af501d8ae774731495b9b2",
+  "paths": 141,
+  "allTreeOIDsMatch": true,
+  "ownedRepository": "/tmp/tuxracer-main-menu-race-progression-oct30/remote-rebuild-poll-runtime/publication.git",
+  "indexAbsent": true,
+  "note": "Read-only exact-path Git tree check; no compile/runtime."
+}

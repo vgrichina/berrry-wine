@@ -1,0 +1,27 @@
+{
+  "PASS": true,
+  "rejections": {
+    "omitted": true,
+    "root": true,
+    "donor": true
+  },
+  "owned": "/tmp/tuxracer-main-menu-race-progression-oct30/remote-rebuild-poll-runtime",
+  "limits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "reason": "Exact new main commit absent from supplied root object store",
+  "route": "single depth1 blob-filtered exact commit fetch into owned index-free repository; no checkout/history walk",
+  "revision": "a370b362ad41c39109b96510c49246e77e54e0b0"
+}

@@ -1,0 +1,6 @@
+{
+  "id": "bx_tx8433mc",
+  "actualCreatedAt": "2026-10-30T08:29:59.700Z",
+  "assignmentCreatedEpoch": 1793349000.353658,
+  "note": "Assignment used local creation-response time; all deadlines were also bounded by exact server expiry and remained earlier."
+}

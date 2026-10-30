@@ -1,0 +1,6 @@
+{
+  "originalBaseline": "a370b362ad41c39109b96510c49246e77e54e0b0",
+  "observed": "d6413ab42f6e0feac149e4fa312e159aac76b3f4\trefs/heads/main\n",
+  "reportOnly": true,
+  "reason": "Remote main advanced during staging closeout; no push was attempted. Rebase only report tree parent, preserve new main source and unrelated ToyVM paths."
+}

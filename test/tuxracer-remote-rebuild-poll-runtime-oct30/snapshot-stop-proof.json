@@ -1,0 +1,24 @@
+{
+  "PASS": true,
+  "id": "bx_tx8433mc",
+  "actualState": "stopped",
+  "snapshotStatus": "completed",
+  "snapshotCompletedAt": "2026-10-30T08:32:40.550Z",
+  "snapshotVerifiedAt": "2026-10-30T08:32:40.550Z",
+  "stoppedAt": "2026-10-30T08:32:46.378Z",
+  "operation": {
+    "endedAt": "2026-10-30T08:32:46.407Z",
+    "error": null,
+    "forced": false,
+    "id": "stop_2b7aa5ae8cc466e7",
+    "lastAttemptAt": "2026-10-30T08:32:46.407Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "lastPossibleStagingMutationBefore": 1793349111.5538669,
+  "snapshotAfterLastStaging": true,
+  "compileRuns": 0,
+  "guestRuns": 0,
+  "verificationLimit": "The successful snapshot preceded the stop request but followed all staging mutations; stop reused that completed snapshot. No post-stop snapshot creation is claimed.",
+  "initialValidationFailure": "Over-strict local assertion required snapshot timestamp after stop call start; preserved stopped response proves later-than-workload snapshot instead. No stop retry."
+}

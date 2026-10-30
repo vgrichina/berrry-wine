@@ -1,0 +1,22 @@
+{
+  "name": "git-cat-file",
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-main-menu-race-progression-oct30/remote-rebuild-poll-runtime/publication.git",
+    "--git-dir=/tmp/tuxracer-main-menu-race-progression-oct30/remote-rebuild-poll-runtime/publication.git",
+    "cat-file",
+    "-t",
+    "a370b362ad41c39109b96510c49246e77e54e0b0"
+  ],
+  "exit": 128,
+  "reason": null,
+  "elapsed": 0.02786406595259905,
+  "peakRSS": 0,
+  "stdoutBytes": 0,
+  "stderrBytes": 47,
+  "stdoutSHA": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr": "fatal: git cat-file: could not get object info\n",
+  "generatedFileLimit": 12582912,
+  "captureLimit": 524288
+}
