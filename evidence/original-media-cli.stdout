@@ -1,0 +1,3210 @@
+{
+  "checked": [
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "literal": "courses/course_idx.tcl",
+      "candidatesPresent": [
+        "tuxracer-win32-0.61a/courses/course_idx.tcl"
+      ]
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tux_moonwalk.tcl",
+      "literal": "../common/tux_walk.tcl",
+      "candidatesPresent": [
+        "tuxracer-win32-0.61a/courses/common/tux_walk.tcl"
+      ]
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "literal": "tree_polyhedron.tcl",
+      "candidatesPresent": [
+        "tuxracer-win32-0.61a/courses/common/tree_polyhedron.tcl"
+      ]
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "literal": "tux_walk.tcl",
+      "candidatesPresent": [
+        "tuxracer-win32-0.61a/courses/common/tux_walk.tcl"
+      ]
+    }
+  ],
+  "unknown": [
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set xlation_node :t1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rotation_node :t1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set root :t1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_root_node $root",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_material white_penguin \\\n {0.58 0.58 0.58 } {0.2 0.2 0.2} 50.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_material black_penguin {0.1 0.1 0.1} {0.5 0.5 0.5} 20.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_material beak_colour \\\n {0.64 0.54 0.06} {0.4 0.4 0.4} 5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_material nostril_colour \\\n {0.48039 0.318627 0.033725} {0.0 0.0 0.0} 1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_material iris_colour {0.01 0.01 0.01} {0.4 0.4 0.4} 90.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "proc makeBody { parent } {\n    set torso_bl \"$parent:b\"\n    tux_sphere $parent b 1.0\n    tux_surfaceproperty $torso_bl black_penguin\n    tux_scale $torso_bl {0 0 0} { 0.95 1.0 0.8 }\n\n    set torso_wh1 $parent:w1\n    tux_sphere $parent w1 1.0\n    tux_surfaceproperty $torso_wh1 white_penguin\n    tux_translate $torso_wh1 { 0.0 0 0.17 }\n    tux_scale $torso_wh1 {0 0 0} {0.8 0.9 0.7}\n    tux_shadow $torso_wh1 off\n\n    #set torso_wh1 $parent:w1\n    #tux_sphere $parent w1\n    #tux_surfaceproperty $torso_wh1 white_penguin\n    #tux_translate $torso_wh1 { -0.04 0 0.14 }\n    #tux_scale $torso_wh1 {0 0 0} {0.8 0.9 0.7}\n    #tux_shadow $torso_wh1 off\n\n    #set torso_wh2 $parent:w2\n    #tux_sphere $parent w2\n    #tux_surfaceproperty $torso_wh2 white_penguin\n    #tux_translate $torso_wh2 { 0.04 0 0.14 }\n    #tux_scale $torso_wh2 {0 0 0} {0.8 0.9 0.7}\n    #tux_shadow $torso_wh2 off\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform : t1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set root :t1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set xlation_node :t1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform :t1 r1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rotation_node :t1:r1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $rotation_node {0 0 0} { 0.35 0.35 0.35 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rotation_node tors_scl",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set torso_scl \"$rotation_node:tors_scl\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $torso_scl {0 0 0} { 0.90 0.9 0.9 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "makeBody $torso_scl",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rotation_node t2",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set shoulder_xlate \"$rotation_node:t2\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $shoulder_xlate { 0 0.4 0.05 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $shoulder_xlate scl",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set shoulder_scale \"$shoulder_xlate:scl\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $shoulder_scale {0 0 0} { 0.72 0.72 0.72 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "makeBody $shoulder_scale",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rotation_node t3",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set neck_xlate \"$rotation_node:t3\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $neck_xlate { 0 0.9 0.07 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $neck_xlate y +90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $neck_xlate neckjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set neck_joint \"$neck_xlate:neckjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_neck $neck_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $neck_joint t4",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set neck_org \"$neck_joint:t4\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $neck_org y -90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $neck_org scl",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set neck_scale \"$neck_org:scl\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $neck_scale {0 0 0} { 0.45 0.5 0.45 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $neck_scale neck 0.8",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set neck \"$neck_scale:neck\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $neck black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $neck_scale neckw 0.66",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set neckw \"$neck_scale:neckw\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $neckw white_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $neckw {0 -0.08 0.35 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $neckw {0 0 0} {0.8 0.9 0.7}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_shadow $neckw off",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $neck_org t5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set head_xlate \"$neck_org:t5\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $head_xlate { 0 0.3 0.07 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $head_xlate y +90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $head_xlate hdjtrot",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set head_joint_rot \"$head_xlate:hdjtrot\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $head_joint_rot hdjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set head_joint \"$head_joint_rot:hdjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_head $head_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $head_joint hdorg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set head_org \"$head_joint:hdorg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $head_org y -90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $head_org {0 0.20 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $head_org hd 1.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set head \"$head_org:hd\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $head black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $head {0 0 0} {0.42 0.5 0.42}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $head_org bk1 0.8",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set beak1 \"$head_org:bk1\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $beak1 beak_colour",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $beak1 { 0 -0.205 0.3 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $beak1 x +10",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $beak1 {0 0 0} { 0.23 0.12 0.4 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $head_org bk3 0.66",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set beak3 \"$head_org:bk3\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $beak3 beak_colour",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $beak3 { 0 -0.23 0.3 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $beak3 x +10",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $beak3 {0 0 0} { 0.21 0.17 0.38 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_shadow $beak3 off",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $head_org le 0.66",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set left_eye \"$head_org:le\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $left_eye white_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $left_eye {0.13 -0.03 0.38}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $left_eye y 18",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $left_eye z 5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $left_eye x 5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $left_eye {0 0 0} {0.1 0.13 0.03}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_shadow $left_eye off",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $head_org re 0.66",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set right_eye \"$head_org:re\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $right_eye white_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $right_eye {-0.13 -0.03 0.38}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $right_eye y -18",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $right_eye z -5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $right_eye x 5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $right_eye {0 0 0} {0.1 0.13 0.03}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_shadow $right_eye off",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $head_org li 0.66",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set left_iris \"$head_org:li\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $left_iris iris_colour",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $left_iris {0.12 -0.045 0.40}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $left_iris y 18",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $left_iris z 5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $left_iris x 5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $left_iris {0 0 0} {0.055 0.07 0.03}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_shadow $left_iris off",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_eye $left_iris left",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $head_org ri 0.66",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set right_iris \"$head_org:ri\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $right_iris iris_colour",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $right_iris {-0.12 -0.045 0.40}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $right_iris y -18",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $right_iris z -5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $right_iris x 5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $right_iris {0 0 0} {0.055 0.07 0.03}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_shadow $right_iris off",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_eye $right_iris right",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $shoulder_xlate luarmxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set luparm_xlate \"$shoulder_xlate:luarmxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $luparm_xlate y 180",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $luparm_xlate {-0.56 0.3 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $luparm_xlate z +45",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $luparm_xlate x +90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $luparm_xlate lshjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lshoulder_joint \"$luparm_xlate:lshjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_left_shoulder $lshoulder_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lshoulder_joint luarmorg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set luparm_org \"$lshoulder_joint:luarmorg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $luparm_org x -90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $luparm_org {-0.22 0 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $luparm_org uparm 0.66",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set luparm \"$luparm_org:uparm\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $luparm black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $luparm {0 0 0} {0.34 0.1 0.2}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $shoulder_xlate ruarmxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set ruparm_xlate \"$shoulder_xlate:ruarmxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $ruparm_xlate {-0.56 0.3 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $ruparm_xlate z +45",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $ruparm_xlate x -90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $ruparm_xlate rshjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rshoulder_joint \"$ruparm_xlate:rshjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_right_shoulder $rshoulder_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rshoulder_joint ruarmorg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set ruparm_org \"$rshoulder_joint:ruarmorg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $ruparm_org x +90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $ruparm_org {-0.22 0 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $ruparm_org uparm 0.66",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set ruparm \"$ruparm_org:uparm\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $ruparm black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $ruparm {0 0 0} {0.34 0.1 0.2}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $luparm_org llarmxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set llowarm_xlate \"$luparm_org:llarmxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $llowarm_xlate {-0.23 0 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $llowarm_xlate z 20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $llowarm_xlate x +90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $llowarm_xlate lelbjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lelbow_joint \"$llowarm_xlate:lelbjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lelbow_joint llarmorg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set llowarm_org \"$lelbow_joint:llarmorg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $llowarm_org x -90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $llowarm_org {-0.19 0 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $llowarm_org llowarm 0.66",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set llowarm \"$llowarm_org:llowarm\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $llowarm black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $llowarm {0 0 0} {0.30 0.07 0.15}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $ruparm_org rlarmxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rlowarm_xlate \"$ruparm_org:rlarmxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $rlowarm_xlate {-0.23 0 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rlowarm_xlate z 20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rlowarm_xlate x -90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rlowarm_xlate relbjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set relbow_joint \"$rlowarm_xlate:relbjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $relbow_joint rlarmorg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rlowarm_org \"$relbow_joint:rlarmorg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rlowarm_org x +90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $rlowarm_org {-0.19 0 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $rlowarm_org rlowarm 0.66",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rlowarm \"$rlowarm_org:rlowarm\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $rlowarm black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $rlowarm {0 0 0} {0.30 0.07 0.15}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $llowarm_org lhandxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lhand_xlate \"$llowarm_org:lhandxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $lhand_xlate {-0.24 0 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $lhand_xlate z 20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $lhand_xlate x +90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lhand_xlate lwrtjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lwrist_joint \"$lhand_xlate:lwrtjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lwrist_joint lhndorg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lhand_org \"$lwrist_joint:lhndorg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $lhand_org x -90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $lhand_org {-0.10 0 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $lhand_org lhand 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lhand \"$lhand_org:lhand\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $lhand black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $lhand {0 0 0} {0.12 0.05 0.12}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rlowarm_org rhandxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rhand_xlate \"$rlowarm_org:rhandxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $rhand_xlate {-0.24 0 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rhand_xlate z 20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rhand_xlate x -90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rhand_xlate rwrtjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rwrist_joint \"$rhand_xlate:rwrtjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rwrist_joint rhndorg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rhand_org \"$rwrist_joint:rhndorg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rhand_org x +90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $rhand_org {-0.10 0 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $rhand_org rhand 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rhand \"$rhand_org:rhand\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $rhand black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $rhand {0 0 0} {0.12 0.05 0.12}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rotation_node lthgxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lthigh_xlate \"$rotation_node:lthgxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $lthigh_xlate y +180",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $lthigh_xlate {-0.28 -0.8 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $lthigh_xlate y +110",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lthigh_xlate lhipjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lhip_joint \"$lthigh_xlate:lhipjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_left_hip $lhip_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lhip_joint lthgorg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lthigh_org \"$lhip_joint:lthgorg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $lthigh_org y -110",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $lthigh_org { 0 -0.1 0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $lthigh_org lthigh 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lthigh \"$lthigh_org:lthigh\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $lthigh beak_colour",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $lthigh {0 0 0} {0.07 0.30 0.07}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $lthigh_org lhipball 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lhipball \"$lthigh_org:lhipball\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $lhipball black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $lhipball {0.0 0.05 0.0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $lhipball {0 0 0} {0.09 0.18 0.09}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_shadow $lhipball off",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rotation_node rthgxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rthigh_xlate \"$rotation_node:rthgxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $rthigh_xlate {-0.28 -0.8 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rthigh_xlate y -110",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rthigh_xlate rhipjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rhip_joint \"$rthigh_xlate:rhipjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_right_hip $rhip_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rhip_joint rthgorg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rthigh_org \"$rhip_joint:rthgorg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rthigh_org y +110",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $rthigh_org { 0 -0.1 0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $rthigh_org rthigh 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rthigh \"$rthigh_org:rthigh\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $rthigh beak_colour",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $rthigh {0 0 0} {0.07 0.30 0.07}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $rthigh_org rhipball 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rhipball \"$rthigh_org:rhipball\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $rhipball black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $rhipball {0.0 0.05 0.0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $rhipball {0 0 0} {0.09 0.18 0.09}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_shadow $rhipball off",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lthigh_org lclfxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lcalf_xlate \"$lthigh_org:lclfxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $lcalf_xlate {0 -0.21 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $lcalf_xlate y +90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lcalf_xlate lkneejt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lknee_joint \"$lcalf_xlate:lkneejt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_left_knee $lknee_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lknee_joint lclforg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lcalf_org \"$lknee_joint:lclforg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $lcalf_org y -90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $lcalf_org { 0 -0.13 0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $lcalf_org lcalf 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lcalf \"$lcalf_org:lcalf\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $lcalf beak_colour",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $lcalf {0 0 0} {0.06 0.18 0.06}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rthigh_org rclfxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rcalf_xlate \"$rthigh_org:rclfxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $rcalf_xlate {0 -0.21 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rcalf_xlate y -90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rcalf_xlate rkneejt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rknee_joint \"$rcalf_xlate:rkneejt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_right_knee $rknee_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rknee_joint rclforg",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rcalf_org \"$rknee_joint:rclforg\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rcalf_org y +90",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $rcalf_org { 0 -0.13 0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $rcalf_org rcalf 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rcalf \"$rcalf_org:rcalf\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $rcalf beak_colour",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $rcalf {0 0 0} {0.06 0.18 0.06}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "proc makeFoot { parent } {\n    tux_transform $parent footorg\n\n    set foot_org \"$parent:footorg\"\n    tux_translate $foot_org { -0.13 0 0 }\n    tux_surfaceproperty $foot_org beak_colour\n    tux_scale $foot_org { 0 0 0 } { 1.1 1.0 1.3 }\n\n    tux_sphere $foot_org base 0.66\n    set foot_base \"$foot_org:base\"\n    tux_scale $foot_base {0 0 0} {0.25 0.08 0.18}\n\n    tux_sphere $foot_org toe1 0.66\n    set toe1 \"$foot_org:toe1\"\n    tux_surfaceproperty $toe1 beak_colour\n    tux_translate $toe1 {-0.07 0 0.1}\n    tux_rotate $toe1 y 30\n    tux_scale $toe1 {0 0 0} {0.27 0.07 0.11}\n\n    tux_sphere $foot_org toe2 0.66\n    set toe2 \"$foot_org:toe2\"\n    tux_surfaceproperty $toe2 beak_colour\n    tux_translate $toe2 {-0.07 0 -0.1}\n    tux_rotate $toe2 y -30\n    tux_scale $toe2 {0 0 0} {0.27 0.07 0.11}\n\n    tux_sphere $foot_org toe3 0.66\n    set toe3 \"$foot_org:toe3\"\n    tux_surfaceproperty $toe3 beak_colour\n    tux_translate $toe3 {-0.08 0 0}\n    tux_scale $toe3 {0 0 0} {0.27 0.07 0.10}\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lcalf_org lftxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lfoot_xlate \"$lcalf_org:lftxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $lfoot_xlate { 0 -0.18 0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $lfoot_xlate y -50",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $lfoot_xlate lankjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set lankle_joint \"$lfoot_xlate:lankjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_left_ankle $lankle_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "makeFoot $lankle_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rcalf_org rftxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rfoot_xlate \"$rcalf_org:rftxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $rfoot_xlate { 0 -0.18 0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $rfoot_xlate y +50",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rfoot_xlate rankjt",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set rankle_joint \"$rfoot_xlate:rankjt\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_right_ankle $rankle_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "makeFoot $rankle_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $rotation_node tailxlate",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set tail_xlate \"$rotation_node:tailxlate\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $tail_xlate {0 -0.4 -0.5}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_rotate $tail_xlate x -60",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $tail_xlate tail_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set tail_joint \"$tail_xlate:tail_joint\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_tail $tail_joint",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_transform $tail_joint tail_orig",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set tail_orig \"$tail_joint:tail_orig\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_translate $tail_orig {0 0.15 0}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_sphere $tail_orig tail 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "set tail \"$tail_orig:tail\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_surfaceproperty $tail black_penguin",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tux.tcl",
+      "expression": "tux_scale $tail {0 0 0} {0.2 0.3 0.1}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "set tux_data_dir [pwd]",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "proc tux_goto_data_dir {} {\n    global tux_data_dir\n    cd $tux_data_dir\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "proc tux_course_init {} {\n    global tux_data_dir\n    source \"$tux_data_dir/courses/common/courseinit.tcl\"\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "if { [tux_load_music start_screen music/start1-jt.it] } {\n    tux_bind_music splash_screen start_screen -1\n    tux_bind_music start_screen start_screen -1\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "if { [tux_load_music options_screen music/options1-jt.it] } {\n    tux_bind_music credits_screen options_screen -1\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "if { [tux_load_music racing music/race1-jt.it] } {\n    tux_bind_music intro racing -1\n    tux_bind_music racing racing -1\n    tux_bind_music paused racing -1\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "if { [tux_load_music game_over music/wonrace1-jt.it] } {\n    tux_bind_music game_over game_over 1\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "if { [tux_load_sound tree_hit1 sounds/tux_hit_tree1.wav] } {\n    tux_bind_sounds tree_hit tree_hit1 \n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "if { [tux_load_sound fish_pickup_sound_1 sounds/fish_pickup1.wav]&& \n     [tux_load_sound fish_pickup_sound_2 sounds/fish_pickup2.wav]&& \n     [tux_load_sound fish_pickup_sound_3 sounds/fish_pickup3.wav] } \\\n {\n    tux_bind_sounds item_collect fish_pickup_sound_1 \\\n\t                         fish_pickup_sound_2 \\\n\t\t\t\t fish_pickup_sound_3\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "if { [tux_load_sound snow_sound sounds/tux_on_snow1.wav] } {\n    tux_bind_sounds snow_sound snow_sound\n    tux_bind_sounds flying_sound snow_sound\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "if { [tux_load_sound rock_sound sounds/tux_on_rock1.wav] } {\n    tux_bind_sounds rock_sound rock_sound\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "if { [tux_load_sound ice_sound sounds/tux_on_ice1.wav] } {\n    tux_bind_sounds ice_sound ice_sound\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture track_head courses/common/buttstart.rgb 1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture track_mark courses/common/buttprint.rgb 1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture track_tail courses/common/buttstop.rgb 1",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture track_head track_head",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture track_mark track_mark",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture track_tail track_tail",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture splash_screen_tr textures/splash_tr.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture splash_screen_br textures/splash_br.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture splash_screen_tl textures/splash_tl.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture splash_screen_bl textures/splash_bl.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture splash_screen_tr splash_screen_tr",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture splash_screen_br splash_screen_br",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture splash_screen_tl splash_screen_tl",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture splash_screen_bl splash_screen_bl",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture snow_particle courses/common/snowparticles.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture snow_particle snow_particle",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture trebuchet_yel_blk fonts/trebuchet_yel_blk.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_font -name trebuchet_yel_blk -file fonts/trebuchet.tfm \\\n -texture trebuchet_yel_blk",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding time_label -font trebuchet_yel_blk -size 20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding time_value -font trebuchet_yel_blk -size 30",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding time_hundredths -font trebuchet_yel_blk -size 20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding herring_count -font trebuchet_yel_blk -size 30",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding speed_digits -font trebuchet_yel_blk -size 35",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding speed_units -font trebuchet_yel_blk -size 20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding fps -font trebuchet_yel_blk -size 20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture trebuchet_white fonts/trebuchet_white.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_font -name trebuchet_white -file fonts/trebuchet.tfm \\\n -texture trebuchet_white",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding button_label -font trebuchet_white -size 30",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding button_label_hilit -font trebuchet_white -size 30 \\\n -colour { 1.00 0.89 0.01 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding button_label_disabled -font trebuchet_white -size 30 \\\n -colour { 1.0 1.0 1.0 0.5 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding menu_label -font trebuchet_white -size 30",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding listbox_item -font trebuchet_white -size 22 \\\n -colour { 1.00 0.89 0.01 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding event_and_cup_label -font trebuchet_white -size 22",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding race_description -font trebuchet_white -size 16",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding race_requirements_label -font trebuchet_white -size 13 \\\n -colour { 1.00 0.95 0.01 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding race_requirements -font trebuchet_white -size 13",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding cup_status -font trebuchet_white -size 16 \\\n -colour { 1.00 0.89 0.01 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding race_over -font trebuchet_yel_blk -size 40",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding race_stats -font trebuchet_yel_blk -size 25",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding race_stats_label -font trebuchet_yel_blk -size 25",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding race_result_msg -font trebuchet_yel_blk -size 25",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding paused -font trebuchet_yel_blk -size 40",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding credits_h1 -font trebuchet_yel_blk -size 30",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding credits_h2 -font trebuchet_yel_blk -size 20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding credits_text -font trebuchet_white -size 20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding credits_text_small -font trebuchet_white -size 14",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_font -binding loading -font trebuchet_yel_blk -size 30",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture herring_icon textures/herringicon.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture herring_icon herring_icon",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture gauge_outline textures/gaugeoutline.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture gauge_outline gauge_outline",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture gauge_energy_mask textures/gaugeenergymask.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture gauge_energy_mask gauge_energy_mask",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture gauge_speed_mask textures/gaugespeedmask.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture gauge_speed_mask gauge_speed_mask",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture listbox_arrows textures/listbox_arrows.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture listbox_arrows listbox_arrows",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture textarea_arrows listbox_arrows",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture mirror_button textures/mirror_button.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture mirror_button mirror_button",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture conditions_button textures/conditions_button.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture conditions_button conditions_button",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture snow_button textures/snow_button.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture snow_button snow_button",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture wind_button textures/wind_button.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture wind_button wind_button",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture menu_bottom_left textures/menu_bottom_left.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture menu_bottom_left menu_bottom_left",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture menu_bottom_right textures/menu_bottom_right.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture menu_bottom_right menu_bottom_right",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture menu_top_left textures/menu_top_left.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture menu_top_left menu_top_left",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture menu_top_right textures/menu_top_right.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture menu_top_right menu_top_right",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture menu_title textures/menu_title.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture menu_title menu_title",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture tux_life textures/tuxlife.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture tux_life tux_life",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_load_texture mouse_cursor textures/mouse_cursor.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "expression": "tux_bind_texture mouse_cursor mouse_cursor",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "proc get_course_info { } {\n    if [catch {open course.tcl r} fileId] {\n\tputs stderr \"Couldn't open course.tcl in [pwd]\"\n\treturn {}\n    }\n\n    set name \"\"\n    set author \"\"\n    set par_time \"\"\n\n    while {[gets $fileId line] >= 0} {\n\tregexp {tux_course_name *([^;]*)} $line match name\n\tregexp {tux_course_author *([^;]*)} $line match author\n\tregexp {tux_par_time *([^;]*)} $line match par_time\n\n\tif { $author != \"\" && $name != \"\" && $par_time != \"\" } {\n\t    break;\n\t}\n    }\n\n    if { $author == \"\" } {\n\tset author \"Unknown\"\n    }\n\n    if { $name == \"\" } {\n\tset name \"Unknown\"\n    }\n\n    if { $par_time == \"\" } {\n        set par_time 120.0\n    } \n\n    # Remove quotes around strings, etc.; e.g. \"Jasmin Patry\" -> Jasmin Patry\n    eval \"set name $name\"\n    eval \"set author $author\"\n    eval \"set par_time $par_time\"\n\n    return [list $name $author $par_time];\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "set cwd [pwd]",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "tux_goto_data_dir",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "tux_load_texture noicon textures/noicon.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "cd courses",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "tux_load_texture no_preview common/nopreview.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "tux_bind_texture no_preview no_preview",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "foreach course [glob -nocomplain *] {\n    if { $course == \"common\" || $course == \"contrib\" } {\n\tcontinue;\n    }\n    if [file exists \"$course/preview.rgb\"] {\n\ttux_load_texture $course \"$course/preview.rgb\"\n\ttux_bind_texture $course $course\n    }\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "cd contrib",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "foreach course [glob -nocomplain *] {\n    if [file exists \"$course/preview.rgb\"] {\n\ttux_load_texture \"contrib/$course\" \"$course/preview.rgb\"\n\ttux_bind_texture \"contrib/$course\" \"contrib/$course\"\n    }\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "cd ..",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "cd contrib",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "set contrib_course_list {}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "foreach course [glob -nocomplain *] {\n    if { $course == \"CVS\" } {\n\tcontinue;\n    }\n\n    if [catch {cd $course}] {\n\tputs stderr \"Couldn't change directory to $course\"\n\tcontinue;\n    }\n\n    set course_info [get_course_info]\n\n    cd ..\n\n    set description \"Contributed by: [lindex $course_info 1]\"\n    \n    lappend contrib_course_list \\\n\t    [list -course \"contrib/$course\" -name [lindex $course_info 0] \\\n\t    -description $description -par_time [lindex $course_info 2] ] \n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "cd ..",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "tux_open_courses [concat \\\n    { \\\n\t{ \\\n\t    -course frozen_river -name \"Frozen River\" \\\n\t\t    -description \"Keep your speed down to collect herring!\" \\\n                    -par_time 80.0 \\\n\t} \\\n\t{ \\\n\t    -course path_of_daggers -name \"Path of Daggers\" \\\n\t\t    -description \"Big spikes may prove to be the least of your worries on this course.  Muliple paths allow you to take low or high roads, each with their own challenges.\" \\\n                    -par_time 70.0 \\\n\t} \\\n\t{ \\\n\t    -course bunny_hill -name \"Bunny Hill\" \\\n\t\t    -description \"Use clever turning to conquer the Bunny Hill.\" \\\n                    -par_time 40.0 \\\n\t} \\\n\t{ \\\n\t    -course twisty_slope -name \"Twisty Slope\" \\\n\t\t    -description \"Tight twists make grabbing herring difficult.  Hard turns will lead you to victory.\" \\\n                    -par_time 40.0 \\\n\t} \\\n\t{ \\\n\t    -course bumpy_ride -name \"Bumpy Ride\" \\\n\t\t    -description \"This hill has a series of ramps tackle.  Make sure to line yourself up before getting airborne.\" \\\n                  ",
+      "reason": "unsupported or incomplete Tcl syntax; remaining commands unknown"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/twisty_slope/course.tcl",
+      "expression": "tux_course_name \"Windy Slope\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/twisty_slope/course.tcl",
+      "expression": "tux_course_dim 90 480 55 470",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/twisty_slope/course.tcl",
+      "expression": "tux_start_pt 45 3.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/twisty_slope/course.tcl",
+      "expression": "tux_angle 25",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/twisty_slope/course.tcl",
+      "expression": "tux_elev_scale 7.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/twisty_slope/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/twisty_slope/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/twisty_slope/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "expression": "tux_course_name \"Path of Daggers\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "expression": "tux_course_author \"Jasmin Patry <jfpatry@cgl.uwaterloo.ca>\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "expression": "tux_course_dim 54 800 48 795",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "expression": "tux_start_pt 45 3.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "expression": "tux_angle 23",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "expression": "tux_elev_scale 12",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "expression": "tux_base_height_value 80",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/path_of_daggers/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/frozen_river/course.tcl",
+      "expression": "tux_course_name \"Frozen River\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/frozen_river/course.tcl",
+      "expression": "tux_course_dim 100 800 60 785",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/frozen_river/course.tcl",
+      "expression": "tux_start_pt 50 3.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/frozen_river/course.tcl",
+      "expression": "tux_angle 28",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/frozen_river/course.tcl",
+      "expression": "tux_elev_scale 22",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/frozen_river/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/frozen_river/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/frozen_river/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/twin_paths/course.tcl",
+      "expression": "tux_course_name \"Twin Paths\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/twin_paths/course.tcl",
+      "expression": "tux_course_author \"David Fries dfries@mail.win.org\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/twin_paths/course.tcl",
+      "expression": "tux_course_dim 100 1100 90 1098",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/twin_paths/course.tcl",
+      "expression": "tux_start_pt 50 3.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/twin_paths/course.tcl",
+      "expression": "tux_angle 25",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/twin_paths/course.tcl",
+      "expression": "tux_elev_scale 10",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/twin_paths/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/twin_paths/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/twin_paths/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "expression": "tux_course_name \"Sentinel Towers\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "expression": "tux_course_author \"Steve, Mathieu, Jerome (Flat 6.3, Leeds 2000)\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "expression": "tux_course_dim 80 900",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "expression": "tux_start_pt 44 4",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "expression": "tux_angle 22.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "expression": "tux_elev_scale 15.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "expression": "tux_base_height_value 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/sentinel_towers/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "expression": "tux_course_name \"Who Says Penguins Can't Fly?\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "expression": "tux_course_author \"Bill Scherer <bscherer@bestweb.net>\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "expression": "tux_course_dim 60 2500",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "expression": "tux_start_pt 30 3.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "expression": "tux_angle 30",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "expression": "tux_elev_scale 10.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "expression": "tux_base_height_value 255",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/penguins_cant_fly/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "expression": "tux_course_dim 100 400",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "expression": "tux_course_name \"Nebula\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "expression": "tux_course_author \"Ingo Ruhnke <grumbel@gmx.de>\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "expression": "tux_start_pt 50 3.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "expression": "tux_angle 24",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "expression": "tux_elev_scale 12",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "expression": "tux_base_height_value 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/nebula/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "expression": "tux_course_name \"Jool's Big Mountain\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "expression": "tux_course_author \"Julien Canet <jools@free.fr>\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "expression": "tux_course_dim 60 1200",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "expression": "tux_start_pt 30 3.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "expression": "tux_angle 24",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "expression": "tux_elev_scale 7.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "expression": "tux_base_height_value 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/jools_big_mountain/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ingos_speedway/course.tcl",
+      "expression": "tux_course_name \"Ingo's Speedway\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ingos_speedway/course.tcl",
+      "expression": "tux_course_author \"Ingo Ruhnke <grumbel@gmx.de>\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ingos_speedway/course.tcl",
+      "expression": "tux_course_dim 54 800",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ingos_speedway/course.tcl",
+      "expression": "tux_start_pt 20 5.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ingos_speedway/course.tcl",
+      "expression": "tux_angle 23",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ingos_speedway/course.tcl",
+      "expression": "tux_elev_scale 12",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ingos_speedway/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ingos_speedway/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ingos_speedway/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "expression": "tux_course_dim 200 400 180 397",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "expression": "tux_course_name \"Ice Canyon\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "expression": "tux_course_author \"Ingo Ruhnke <grumbel@gmx.de>\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "expression": "tux_start_pt 100 2.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "expression": "tux_angle 23",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "expression": "tux_elev_scale 25",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "expression": "tux_base_height_value 67",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/ice_canyon/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "expression": "tux_course_name \"The Downhill Fear\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "expression": "tux_course_author \"Julien Canet <jools@free.fr>\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "expression": "tux_course_dim 60 1800",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "expression": "tux_start_pt 30 3.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "expression": "tux_angle 23",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "expression": "tux_elev_scale 7.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "expression": "tux_base_height_value 202",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/contrib/downhill_fear/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_course_light 0 -on -position { 1 1 1 0 } -diffuse { 0.45 0.43 0.47 1 } \\\n -specular { 0.3 0.3 0.3 1 } -ambient { 0.39 0.4 0.44 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_course_light 1 -on -position { 1 1 2 0 } -specular { 0.5 0.5 0.5 1 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "set fog_dist 40",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "set far_clip [tux_get_param forward_clip_distance]",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "if { $fog_dist > $far_clip } {\n    set fog_dist $far_clip\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_fog -on -mode linear -start -10 -end $fog_dist -colour { 0.58 0.59 0.65 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_particle_colour { 0.36 0.41 0.49 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_load_texture envmap ../common/envmap.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_bind_texture terrain_envmap envmap",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_load_texture alpine1-front ../common/cloudyfront.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_load_texture alpine1-right ../common/cloudyright.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_load_texture alpine1-left ../common/cloudyleft.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_load_texture alpine1-back ../common/cloudyback.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_load_texture alpine1-top ../common/cloudytop.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_load_texture alpine1-bottom ../common/cloudybottom.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_bind_texture sky_front alpine1-front",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_bind_texture sky_right alpine1-right",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_bind_texture sky_left alpine1-left",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_bind_texture sky_back alpine1-back",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_bind_texture sky_top alpine1-top",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "expression": "tux_bind_texture sky_bottom alpine1-bottom",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_course_light 0 -on -position { 1 1 0 0 } -diffuse { 0.39 0.51 0.88 1 } \\\n -specular { 0.0 0.0 0.0 1 } -ambient { 0.0 0.09 0.34 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_course_light 1 -on -position { 1 1 1 0 } -specular { 0.8 0.8 0.8 1 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_fog -on -mode linear -density 0.005 -colour { 0.0 0.09 0.34 1 } -start 0 \\\n -end [tux_get_param forward_clip_distance]",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_load_texture alpine1-sphere ../common/nightenv.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_bind_texture terrain_envmap alpine1-sphere",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_particle_colour { 0.39 0.51 0.88 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_load_texture alpine1-front ../common/nightfront.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_load_texture alpine1-right ../common/nightright.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_load_texture alpine1-left ../common/nightleft.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_load_texture alpine1-back ../common/nightback.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_load_texture alpine1-top ../common/nighttop.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_load_texture alpine1-bottom ../common/nightbottom.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_bind_texture sky_front alpine1-front",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_bind_texture sky_right alpine1-right",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_bind_texture sky_left alpine1-left",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_bind_texture sky_back alpine1-back",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_bind_texture sky_top alpine1-top",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "expression": "tux_bind_texture sky_bottom alpine1-bottom",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_course_light 0 -on -position { 1 1 0 0 } -diffuse { 1.0 0.9 1.0 1 } \\\n -specular { 0.0 0.0 0.0 1 } -ambient { 0.45 0.53 0.75 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_course_light 1 -on -position { 1 1 2 0 } -specular { 0.8 0.8 0.8 1 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_fog -on -mode linear -density 0.005 -colour { 1.0 1.0 1.0 1 } -start 0 \\\n -end [tux_get_param forward_clip_distance]",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_load_texture envmap ../common/envmap.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_bind_texture terrain_envmap envmap",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_particle_colour { 0.85 0.9 1.0 1.0 }",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_load_texture sky_front ../common/sunnyfront.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_load_texture sky_right ../common/sunnyright.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_load_texture sky_left ../common/sunnyleft.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_load_texture sky_back ../common/sunnyback.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_load_texture sky_top ../common/sunnytop.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_load_texture sky_bottom ../common/sunnybottom.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_bind_texture sky_front sky_front",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_bind_texture sky_right sky_right",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_bind_texture sky_left sky_left",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_bind_texture sky_back sky_back",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_bind_texture sky_top sky_top",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "expression": "tux_bind_texture sky_bottom sky_bottom",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tree_polyhedron.tcl",
+      "expression": "set tree_poly {{              \n    { 0 0 0 }\n    { 0.0 0.15  0.5 }\n    { 0.5 0.15  0.0 }\n    { 0.0 0.15 -0.5 }\n    {-0.5 0.15  0.0 }\n    { 0 1 0 }\n} {\n    { 0 1 4 }\n    { 0 2 1 }\n    { 0 3 2 }\n    { 0 4 3 }\n    { 1 5 4 }\n    { 2 5 1 }\n    { 3 5 2 }\n    { 4 5 3 }\n}}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tux_walk.tcl",
+      "expression": "tux_key_frame 0.5 -1.05 -1.0 0.455 90 0 -20.6 39.8 -23.4 18.2",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tux_walk.tcl",
+      "expression": "tux_key_frame 1.0 -0.7 -1.0 0.455 90 0 39.8 -20.6 18.2 -23.4",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tux_walk.tcl",
+      "expression": "tux_key_frame 1.5 -0.35 -1.0 0.455 90 0 -20.6 39.8 -23.4 18.2",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tux_walk.tcl",
+      "expression": "tux_key_frame 2.0 0.0 -1.0 0.455 90 0 39.8 -20.6 18.2 -23.4",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tux_walk.tcl",
+      "expression": "tux_key_frame 2.5 0.0 -1.0 0.455 180 0 0 0 0 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tux_walk.tcl",
+      "expression": "tux_key_frame 3.0 0.0 -1.0 0.455 180 0 -60 -60 0 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tux_walk.tcl",
+      "expression": "tux_key_frame 3.2 0.0 -1.0 0.455 180 0 20 20 0 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tux_walk.tcl",
+      "expression": "tux_key_frame 3.6 0.0 -0.3 0.8 180 60 90 90 -20 -20",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/tux_walk.tcl",
+      "expression": "tux_key_frame 4.0 0.0 0.0 0.0 180 120 0 0 -40 -40",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "set cwd [pwd]",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_goto_data_dir",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "cd courses/common",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_load_texture fish herring_standard.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_item_spec -name herring -diameter 1.0 -height 1.0 \\\n -texture fish -colour {28 185 204} -above_ground 0.2",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_load_texture shrub shrub.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_tree_props -name tree3 -diameter 1.4 -height 1.0 \\\n -texture shrub -colour {0 255 48} -polyhedron $tree_poly \\\n -size_varies 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_load_texture tree tree.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_tree_props -name tree1 -diameter 1.4 -height 2.5 \\\n -texture tree -colour {255 255 255} -polyhedron $tree_poly \\\n -size_varies 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_load_texture tree_barren tree_barren.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_tree_props -name tree2 -diameter 1.4 -height 2.5 \\\n -texture tree_barren -colour {255 96 0} -polyhedron $tree_poly \\\n -size_varies 0.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_load_texture flag1 flag.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_item_spec -name flag -diameter 1.0 -height 1.0 \\\n -texture flag1 -colour {194 40 40} -nocollision",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_load_texture finish finish.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_item_spec -name finish -diameter 9.0 -height 6.0 \\\n -texture finish -colour {255 255 0} -nocollision \\\n -normal {0 0 1}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_load_texture start start.rgb 0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_item_spec -name start -diameter 9.0 -height 6.0 \\\n -texture start -colour {128 128 0} -nocollision \\\n -normal {0 0 1}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_item_spec -name float -nocollision -colour {255 128 255} -reset_point",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_trees \"$cwd/trees.rgb\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_ice_tex ice.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_rock_tex rock.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_snow_tex snow.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "tux_friction 0.22 0.9 0.35",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "set conditions [tux_get_race_conditions]",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "if { $conditions == \"sunny\" } {\n    source sunny_light.tcl\n} elseif { $conditions == \"cloudy\" } {\n    source foggy_light.tcl\n} elseif { $conditions == \"night\" } {\n    source night_light.tcl\n}",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "expression": "cd $cwd",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bunny_hill/course.tcl",
+      "expression": "tux_course_name \"Bunny Hill\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bunny_hill/course.tcl",
+      "expression": "tux_course_dim 90 480 55 470",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bunny_hill/course.tcl",
+      "expression": "tux_start_pt 45 3.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bunny_hill/course.tcl",
+      "expression": "tux_angle 25",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bunny_hill/course.tcl",
+      "expression": "tux_elev_scale 7.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bunny_hill/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bunny_hill/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bunny_hill/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bumpy_ride/course.tcl",
+      "expression": "tux_course_name \"Bumpy Ride\"",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bumpy_ride/course.tcl",
+      "expression": "tux_course_dim 60 560 30 550",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bumpy_ride/course.tcl",
+      "expression": "tux_start_pt 30 2.5",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bumpy_ride/course.tcl",
+      "expression": "tux_angle 30",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bumpy_ride/course.tcl",
+      "expression": "tux_elev_scale 8.0",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bumpy_ride/course.tcl",
+      "expression": "tux_elev elev.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bumpy_ride/course.tcl",
+      "expression": "tux_terrain terrain.rgb",
+      "reason": "non-source command/body not evaluated"
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/bumpy_ride/course.tcl",
+      "expression": "tux_course_init",
+      "reason": "non-source command/body not evaluated"
+    }
+  ],
+  "limitations": "lexical command subset; normalized in-root root/script-directory candidates only; candidate presence is not runtime resolution; all-escaping literals, computed and other Tcl forms/runtime CWD unknown"
+}

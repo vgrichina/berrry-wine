@@ -1,0 +1,7 @@
+{
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "intendedMountedFiles": [],
+  "mountValidation": "empty argv: no mount execution or filename parsing applicable",
+  "runtime": false
+}

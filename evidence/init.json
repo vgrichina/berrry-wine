@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+    "init"
+  ],
+  "cwd": "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+  "exitCode": 0,
+  "failure": null,
+  "peakGroupRSS": 4194304,
+  "seconds": 0.02753285295329988,
+  "descendantCleanup": "process group SIGKILL; direct child reaped",
+  "stdoutBytes": 103,
+  "stderrBytes": 485
+}

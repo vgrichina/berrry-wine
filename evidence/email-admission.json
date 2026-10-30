@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-29T02:22:37.421217+00:00",
+  "device": 64769,
+  "f_bavail": 1225704,
+  "blockSize": 4096,
+  "freeBytes": 5020483584,
+  "aggregate": 125829120,
+  "requiredBytes": 3175088128,
+  "MemAvailable": 2425851904,
+  "physicalOwned": 204800,
+  "sessionBytes": 450659,
+  "positiveWALGrowthCountedOnce": 0,
+  "allocation": 25165824,
+  "forecast": "Git/source3 tests1 evidence1 events/WAL8 publication3 buffer8 MiB",
+  "remainingProjection": 125829120,
+  "PASS": true
+}

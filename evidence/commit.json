@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+    "commit",
+    "-m",
+    "test: independently accept published TuxRacer lexical syntax subset"
+  ],
+  "cwd": "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+  "exitCode": 0,
+  "failure": null,
+  "peakGroupRSS": 19898368,
+  "seconds": 0.12979405699297786,
+  "descendantCleanup": "process group SIGKILL; direct child reaped",
+  "stdoutBytes": 463,
+  "stderrBytes": 254
+}

@@ -1,0 +1,16 @@
+{
+  "case": {
+    "name": "missing-path",
+    "text": "set x [pwd]\nsource missing.tcl\n",
+    "checked": [],
+    "syntax": false,
+    "reject": true,
+    "targets": [
+      "child.tcl"
+    ]
+  },
+  "sourceSHA256": "17536ba93021a4d7061b542876eaecef6f1f716fa3e420ef283b2804c50b6c04",
+  "api": null,
+  "rejection": "missing literal Tcl source: main.tcl -> missing.tcl",
+  "sentinelAbsent": true
+}

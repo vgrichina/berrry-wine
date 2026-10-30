@@ -1,0 +1,26 @@
+{
+  "candidate": "e57ec87fb3a37260abb5c7e45ad8d37f3cc4e803",
+  "sourceAndTestPins": {
+    "tools/recovery/tuxracer-original-win32-recovery-oct28.py": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-real-media-tcl-syntax-gap-oct29/retained-evidence/tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+      "bytes": 25633,
+      "sha256": "17536ba93021a4d7061b542876eaecef6f1f716fa3e420ef283b2804c50b6c04"
+    },
+    "tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-real-media-tcl-syntax-gap-oct29/retained-evidence/tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py",
+      "bytes": 6044,
+      "sha256": "3ecefa68101ed95de354e598e290b0bbd6c1a5f959a252ec0e04b9e63906742c"
+    },
+    "tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-real-media-tcl-syntax-gap-oct29/retained-evidence/tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md",
+      "bytes": 4878,
+      "sha256": "b81b4dca51d849cb720db6dcdfb7d9b6120934ae8964b2b1e4115bb9734edb05"
+    }
+  },
+  "inventory": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-original-closure-oct28/payload/inventory.json",
+    "bytes": 29710,
+    "sha256": "9ac1ac56933cbeae45b0ada2162af298dbc768a5f82a0e2131faa218b0644dc5"
+  },
+  "mediaRoot": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-original-closure-oct28/payload/extracted"
+}

@@ -1,0 +1,26 @@
+{
+  "checked": [
+    {
+      "script": "main.tcl",
+      "literal": "child.tcl",
+      "candidatesPresent": [
+        "child.tcl"
+      ]
+    },
+    {
+      "script": "main.tcl",
+      "literal": "semi;colon.tcl",
+      "candidatesPresent": [
+        "semi;colon.tcl"
+      ]
+    }
+  ],
+  "unknown": [
+    {
+      "script": "main.tcl",
+      "expression": "set x [pwd]",
+      "reason": "non-source command/body not evaluated"
+    }
+  ],
+  "limitations": "lexical command subset; normalized in-root root/script-directory candidates only; candidate presence is not runtime resolution; all-escaping literals, computed and other Tcl forms/runtime CWD unknown"
+}

@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+    "literal-sources",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/fixtures/nested",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/fixtures/nested/inventory.json"
+  ],
+  "cwd": "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+  "exitCode": 0,
+  "failure": null,
+  "peakGroupRSS": 20316160,
+  "seconds": 0.052675073966383934,
+  "descendantCleanup": "process group SIGKILL; direct child reaped",
+  "stdoutBytes": 450,
+  "stderrBytes": 0
+}

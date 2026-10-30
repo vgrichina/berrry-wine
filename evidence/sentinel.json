@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "import os; print(os.getcwd())"
+  ],
+  "cwd": "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+  "exitCode": 0,
+  "failure": null,
+  "peakGroupRSS": 7995392,
+  "seconds": 0.02666025678627193,
+  "descendantCleanup": "process group SIGKILL; direct child reaped",
+  "stdoutBytes": 61,
+  "stderrBytes": 0
+}

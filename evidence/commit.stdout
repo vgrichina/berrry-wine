@@ -1,0 +1,5 @@
+[task/tuxracer-published-syntax-independent-accept-oct29 2383e626bf] test: independently accept published TuxRacer lexical syntax subset
+ 3 files changed, 577 insertions(+)
+ create mode 100644 tools/recovery/test-tuxracer-published-syntax-independent-accept-oct29.py
+ create mode 100644 tools/recovery/tuxracer-published-syntax-independent-accept-oct29-evidence.json
+ create mode 100644 tools/recovery/tuxracer-published-syntax-independent-accept-oct29-report.md

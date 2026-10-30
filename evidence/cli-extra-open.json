@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+    "literal-sources",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/fixtures/extra-open",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/fixtures/extra-open/inventory.json"
+  ],
+  "cwd": "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+  "exitCode": 0,
+  "failure": null,
+  "peakGroupRSS": 22282240,
+  "seconds": 0.10709714400582016,
+  "descendantCleanup": "process group SIGKILL; direct child reaped",
+  "stdoutBytes": 445,
+  "stderrBytes": 0
+}

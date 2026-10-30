@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+    "config",
+    "user.name",
+    "Wine Ops Worker"
+  ],
+  "cwd": "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+  "exitCode": 0,
+  "failure": null,
+  "peakGroupRSS": 0,
+  "seconds": 0.02759030112065375,
+  "descendantCleanup": "process group SIGKILL; direct child reaped",
+  "stdoutBytes": 0,
+  "stderrBytes": 0
+}

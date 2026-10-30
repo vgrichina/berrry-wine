@@ -1,0 +1,30 @@
+{
+  "case": {
+    "name": "continued-comment",
+    "text": "# [pwd] \\\nsource missing.tcl\nsource child.tcl\n",
+    "checked": [
+      "child.tcl"
+    ],
+    "syntax": false,
+    "reject": false,
+    "targets": [
+      "child.tcl"
+    ]
+  },
+  "sourceSHA256": "17536ba93021a4d7061b542876eaecef6f1f716fa3e420ef283b2804c50b6c04",
+  "api": {
+    "checked": [
+      {
+        "script": "main.tcl",
+        "literal": "child.tcl",
+        "candidatesPresent": [
+          "child.tcl"
+        ]
+      }
+    ],
+    "unknown": [],
+    "limitations": "lexical command subset; normalized in-root root/script-directory candidates only; candidate presence is not runtime resolution; all-escaping literals, computed and other Tcl forms/runtime CWD unknown"
+  },
+  "rejection": null,
+  "sentinelAbsent": true
+}

@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/tools/recovery/test-tuxracer-published-syntax-independent-accept-oct29.py",
+    "--source",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+    "--task-dir",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+    "--case",
+    "continuation"
+  ],
+  "cwd": "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+  "exitCode": 0,
+  "failure": null,
+  "peakGroupRSS": 20316160,
+  "seconds": 0.08240601001307368,
+  "descendantCleanup": "process group SIGKILL; direct child reaped",
+  "stdoutBytes": 40,
+  "stderrBytes": 0
+}

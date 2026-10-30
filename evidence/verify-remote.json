@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+    "ls-remote",
+    "--exit-code",
+    "origin",
+    "refs/heads/task/tuxracer-published-syntax-independent-accept-oct29"
+  ],
+  "cwd": "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+  "exitCode": 0,
+  "failure": null,
+  "peakGroupRSS": 15568896,
+  "seconds": 1.6212467111181468,
+  "descendantCleanup": "process group SIGKILL; direct child reaped",
+  "stdoutBytes": 108,
+  "stderrBytes": 0
+}

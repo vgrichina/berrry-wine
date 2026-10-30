@@ -1,0 +1,47 @@
+{
+  "at": "2026-10-29T02:21:29.927732+00:00",
+  "device": 64769,
+  "f_bavail": 1226342,
+  "blockSize": 4096,
+  "free": 5023096832,
+  "aggregate": 125829120,
+  "required": 3175088128,
+  "MemAvailable": 2539753472,
+  "forecastMiB": {
+    "gitSource": 3,
+    "tests": 1,
+    "evidence": 1,
+    "eventsWAL": 8,
+    "publication": 3,
+    "buffer": 8
+  },
+  "limits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ]
+  },
+  "session": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-20-31-01a18575-79cf-72f2-8c57-441cd1877f9a.jsonl",
+  "WALBaseline": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 4185952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4198312
+  },
+  "WALAccounting": "initial standing bytes; positive growth counted once in task forecast",
+  "PASS": true
+}

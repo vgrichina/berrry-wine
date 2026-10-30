@@ -1,0 +1,7 @@
+{
+  "case": "continued-comment",
+  "cause": "An overbroad test assertion required UNKNOWN for every fixture. The continued comment was correctly ignored and following child.tcl checked, matching the case oracle.",
+  "correction": "Exempt this comment-only fixture from the unrelated UNKNOWN assertion. Reused the 29 completed unchanged fixture/API/CLI receipts. No production modification.",
+  "originalFailure": "api-continued-comment exited1 at assert actual[unknown]; retained verbatim in initial worker session tool output. Same-name rerun replaced the local subprocess capture; this incident record preserves that limitation.",
+  "session": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-20-31-01a18575-79cf-72f2-8c57-441cd1877f9a.jsonl"
+}

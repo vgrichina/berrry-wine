@@ -1,0 +1,9 @@
+{
+  "rejectedBeforeSpawn": [
+    "omitted",
+    "root",
+    "donor",
+    "outside"
+  ],
+  "sentinel": true
+}

@@ -1,0 +1,11 @@
+{
+  "checked": [],
+  "unknown": [
+    {
+      "script": "main.tcl",
+      "expression": "set value [probe; pwd]\nsource child.tcl\n",
+      "reason": "unsupported or incomplete Tcl syntax; remaining commands unknown"
+    }
+  ],
+  "limitations": "lexical command subset; normalized in-root root/script-directory candidates only; candidate presence is not runtime resolution; all-escaping literals, computed and other Tcl forms/runtime CWD unknown"
+}

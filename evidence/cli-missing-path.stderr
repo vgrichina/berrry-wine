@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/tools/recovery/tuxracer-original-win32-recovery-oct28.py", line 564, in <module>
+    main()
+  File "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/tools/recovery/tuxracer-original-win32-recovery-oct28.py", line 553, in main
+    print(json.dumps(literal_sources(args.directory, json.loads(args.inventory.read_text())), indent=2))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo/tools/recovery/tuxracer-original-win32-recovery-oct28.py", line 458, in literal_sources
+    raise Rejected('missing literal Tcl source: ' + name + ' -> ' + target)
+Rejected: missing literal Tcl source: main.tcl -> missing.tcl

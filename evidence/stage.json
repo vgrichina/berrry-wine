@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+    "add",
+    "--sparse",
+    "tools/recovery/test-tuxracer-published-syntax-independent-accept-oct29.py",
+    "tools/recovery/tuxracer-published-syntax-independent-accept-oct29-report.md",
+    "tools/recovery/tuxracer-published-syntax-independent-accept-oct29-evidence.json"
+  ],
+  "cwd": "/tmp/tuxracer-published-syntax-independent-accept-oct29/repo",
+  "exitCode": 0,
+  "failure": null,
+  "peakGroupRSS": 11866112,
+  "seconds": 0.2828175378963351,
+  "descendantCleanup": "process group SIGKILL; direct child reaped",
+  "stdoutBytes": 0,
+  "stderrBytes": 127
+}
