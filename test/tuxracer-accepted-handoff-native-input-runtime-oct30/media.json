@@ -1,0 +1,26 @@
+{
+  "title": {
+    "originalPNG": {
+      "bytes": 164405,
+      "sha256": "057ad3d001f167e74166aebc73866883c545f56d21abebcf3f0214a16aa7727e"
+    },
+    "derivativeJPG": {
+      "bytes": 54469,
+      "sha256": "dca6f1eef3b774fb23a1b5f0056f4382f66ea62b3a17daa7f0ff8b553c50d459"
+    },
+    "recipe": "ImageMagick convert input.png -quality 90 output.jpg",
+    "originalRemote": "/home/user/tuxracer-render/capture-accepted-handoff-oct30/title.png"
+  },
+  "menu": {
+    "originalPNG": {
+      "bytes": 186995,
+      "sha256": "a84507668a70f63a9866cef78a61f0f7e890e937e1b504f2d3aac1d1819dc4b0"
+    },
+    "derivativeJPG": {
+      "bytes": 55880,
+      "sha256": "e79ade7f9b776a76826fbc93e87e4504f165294dd961c9d2783d6a879e68c36e"
+    },
+    "recipe": "ImageMagick convert input.png -quality 90 output.jpg",
+    "originalRemote": "/home/user/tuxracer-render/capture-accepted-handoff-oct30/menu.png"
+  }
+}

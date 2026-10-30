@@ -1,0 +1,20 @@
+[
+  {
+    "label": "original-final",
+    "exit": 0,
+    "stdout": "CONTROL: real release then same-slice reacquire wins before main poll\nPASS ordinary, recursive, wrong-owner, invalid, worker-backend, other-handle, other-main-wait; no interpreter recursion\n",
+    "stderr": ""
+  },
+  {
+    "label": "candidate-final",
+    "exit": 0,
+    "stdout": "CANDIDATE: actual checkMainYield/_completeWait acquire and resume main once\nPASS ordinary, recursive, wrong-owner, invalid, worker-backend, other-handle, other-main-wait; no interpreter recursion\n",
+    "stderr": ""
+  },
+  {
+    "label": "remove-handoff",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: 0 == 1\n    at Object.<anonymous> (/home/user/tuxracer-render/capture-accepted-handoff-oct30/acceptance.cjs:24:15)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: 0,\n  expected: 1,\n  operator: '==',\n  diff: 'simple'\n}\n\nNode.js v24.22.1\n"
+  }
+]
