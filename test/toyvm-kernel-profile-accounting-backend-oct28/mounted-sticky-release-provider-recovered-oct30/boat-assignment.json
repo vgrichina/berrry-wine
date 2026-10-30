@@ -1,0 +1,14 @@
+{
+  "id": "bx_uxkd35mc",
+  "expiry": "2026-10-30T11:05:16.167Z",
+  "createdEpoch": 1793356516.152,
+  "cutoffEpoch": 1793357716.152,
+  "retrieveEpoch": 1793357836.152,
+  "handbackEpoch": 1793357896.152,
+  "shutdownEpoch": 1793358016.152,
+  "shutdownDelegated": true,
+  "lifecycleOwner": "coordinator delegates snapshot-stop on all completion/blocker paths",
+  "remoteBudget": 268435456,
+  "reserve": 8388608,
+  "createdAt": "2026-10-30T10:35:16.152Z"
+}

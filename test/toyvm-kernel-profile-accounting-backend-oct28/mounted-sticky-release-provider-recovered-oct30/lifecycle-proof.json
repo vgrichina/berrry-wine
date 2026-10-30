@@ -1,0 +1,21 @@
+{
+  "id": "bx_uxkd35mc",
+  "state": "stopped",
+  "createdAt": "2026-10-30T10:35:16.152Z",
+  "stoppedAt": "2026-10-30T10:35:36.813Z",
+  "snapshotCompletedAt": "2026-10-30T10:35:36.642Z",
+  "snapshotVerifiedAt": "2026-10-30T10:35:36.642Z",
+  "lastSnapshotStatus": "completed",
+  "snapshotAvailable": true,
+  "stop": {
+    "endedAt": "2026-10-30T10:35:36.876Z",
+    "error": null,
+    "forced": false,
+    "id": "stop_4fbcd3fe757c57d0",
+    "lastAttemptAt": "2026-10-30T10:35:36.876Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "originalExpiry": "2026-10-30T11:05:16.167Z",
+  "shutdownDelegated": true
+}

@@ -1,0 +1,24 @@
+{
+  "PASS": true,
+  "landlockABI": 4,
+  "fuseOpened": true,
+  "libfuse": true,
+  "limits": {
+    "RLIMIT_DATA": [
+      134217728,
+      134217728
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      60,
+      60
+    ],
+    "RLIMIT_FSIZE": [
+      524288,
+      524288
+    ]
+  }
+}
