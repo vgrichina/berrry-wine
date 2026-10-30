@@ -1,9 +1,0 @@
-{
-  "app": "dungeons_of_dredmor_release",
-  "budgetMs": 180000,
-  "root": "/home/user/wine-assembly/scratch/wt-dredmor-lazy-20261005",
-  "ordinary": true,
-  "observer": "visible-window coalesced GDI presentation counter; setup<=120sec,measurement5sec,total180sec",
-  "module": "40cc834b014b46a9ea5c81f21ee000a41e3a70c6422e70c8aa42f22407bfaced",
-  "manifest": "test/binaries/candidates/dungeons-of-dredmor-release/.wine-assembly-browser.json"
-}
