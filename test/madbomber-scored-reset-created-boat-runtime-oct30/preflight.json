@@ -1,0 +1,15 @@
+{
+  "packetSHA256": "e77cb5b768c4b07026250d815f264c590dcde12c4426500d1522bba84ece19d1",
+  "manifestSHA256": "fd3d36b179717a1f90539168b6ad2ceb6c28e208ff0e449381ea816a6a400def",
+  "reuse": [
+    "input-preflight.json",
+    "schedule-dryrun.json",
+    "mount-startup-receipt.json",
+    "e/file-capture-controls.json"
+  ],
+  "unchangedControllerSHA256": "be75fdc7f4fc5884098c72c018cc4924fdf7c49aadbad5a1b6cfcda832102121",
+  "free": 3293360128,
+  "RAMAdmission": false,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/madbomber-scored-reset-created-boat-runtime-oct30/root-ref-digest.json",
+  "diskFloor": 2147483648
+}

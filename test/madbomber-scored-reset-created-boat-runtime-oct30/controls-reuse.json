@@ -1,0 +1,14 @@
+{
+  "limitContractSHA256": "337538562f6a084e788a31b9e4ed989d7618ef8dad0a61929e7ef51bcf33a32b",
+  "opsSHA256": "8a459521504a4cbe7a0112be8aa5f3e23c702c6e7b8132728fb7a077dd42607a",
+  "fileSizeLimit": 12582912,
+  "captureLimit": 524288,
+  "legitimateFileControl": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/e/file-control.stdout",
+  "overflowControl": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/e/output-control.stdout",
+  "mountValidatedThisTask": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/mount-startup-receipt.json",
+  "scheduleDryRun": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/schedule-dryrun.json",
+  "unchangedStartup": "remote exact startup probe is part of retained local-runtime.py; before production invocation",
+  "localCap": 67108864,
+  "reserve": 8388608,
+  "standingChargedWithReserveBeforeTask": 37208064
+}

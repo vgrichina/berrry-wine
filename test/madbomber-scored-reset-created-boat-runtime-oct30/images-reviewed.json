@@ -1,0 +1,74 @@
+[
+  {
+    "name": "early20.png",
+    "sha256": "5f0fd047138e405cdd7dc7d517ea55dec6ba4af159a42a8780fb803fcdeb0d4c",
+    "bytes": 299556,
+    "localPath": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/images/early20.png",
+    "remotePath": "/home/user/madbomber-runtime/capture-local-controller-oct30/early20.png",
+    "reviewed": true,
+    "observation": "score0, two remaining buckets; no catch proven"
+  },
+  {
+    "name": "exit-selected83.png",
+    "sha256": "6e31e75a9d6c6d9079c99b8e25caf1a233507293559b440c097ca5c54d2ae200",
+    "bytes": 166954,
+    "localPath": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/images/exit-selected83.png",
+    "remotePath": "/home/user/madbomber-runtime/capture-local-controller-oct30/exit-selected83.png",
+    "reviewed": true,
+    "observation": "title, Exit selected"
+  },
+  {
+    "name": "gameover63.png",
+    "sha256": "5bdc9f62bc7f068a3b8619e1b497a3d9b8d5994c8c3672c46eb1171967507cbd",
+    "bytes": 283602,
+    "localPath": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/images/gameover63.png",
+    "remotePath": "/home/user/madbomber-runtime/capture-local-controller-oct30/gameover63.png",
+    "reviewed": true,
+    "observation": "GAME OVER banner; score0"
+  },
+  {
+    "name": "miss50.png",
+    "sha256": "cc773020e8c6a090b2655d81a79c51823a7e922c48d240f6c539cc8563ff6574",
+    "bytes": 300593,
+    "localPath": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/images/miss50.png",
+    "remotePath": "/home/user/madbomber-runtime/capture-local-controller-oct30/miss50.png",
+    "reviewed": true,
+    "observation": "score0, one bucket at left"
+  },
+  {
+    "name": "newgame71.png",
+    "sha256": "0e94b350c7d37abc4f73389755334cafa425d7458b0b8be9add137bbe017b128",
+    "bytes": 298185,
+    "localPath": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/images/newgame71.png",
+    "remotePath": "/home/user/madbomber-runtime/capture-local-controller-oct30/newgame71.png",
+    "reviewed": true,
+    "observation": "score0, three fresh buckets at left"
+  },
+  {
+    "name": "score37.png",
+    "sha256": "2bdedbbf47f05b899a15c736311d00633d70a7639b652903127334b1048e7087",
+    "bytes": 300383,
+    "localPath": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/images/score37.png",
+    "remotePath": "/home/user/madbomber-runtime/capture-local-controller-oct30/score37.png",
+    "reviewed": true,
+    "observation": "score0, one remaining bucket; nonzero gate fails"
+  },
+  {
+    "name": "title-quit77.png",
+    "sha256": "0b251ad5c9b05bff3422f4e5571714ae388408cf54da752cb12a2d7c01932449",
+    "bytes": 169523,
+    "localPath": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/images/title-quit77.png",
+    "remotePath": "/home/user/madbomber-runtime/capture-local-controller-oct30/title-quit77.png",
+    "reviewed": true,
+    "observation": "title, One Player selected"
+  },
+  {
+    "name": "title67.png",
+    "sha256": "0b251ad5c9b05bff3422f4e5571714ae388408cf54da752cb12a2d7c01932449",
+    "bytes": 169523,
+    "localPath": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/images/title67.png",
+    "remotePath": "/home/user/madbomber-runtime/capture-local-controller-oct30/title67.png",
+    "reviewed": true,
+    "observation": "title, One Player selected"
+  }
+]

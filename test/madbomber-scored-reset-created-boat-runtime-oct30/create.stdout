@@ -1,0 +1,5 @@
+{"event":"created","hostedPorts":null,"id":"bx_8954svmz","org":null,"team":null,"ttlSeconds":1800}
+{"event":"state","id":"bx_8954svmz","state":"starting"}
+{"event":"state","id":"bx_8954svmz","state":"cloning"}
+{"event":"state","id":"bx_8954svmz","state":"ready"}
+{"archiveAfter":"2026-10-30T08:42:24.596Z","commands":{"forward":"boat forward bx_8954svmz --remote 3000 --local 3000","ssh":"boat ssh bx_8954svmz"},"desktopUrl":null,"event":"ready","id":"bx_8954svmz","ip":"2001:41d0:a:4061:100::2f","state":"ready","url":"https://box-node-442f433b9fa4b958.on.boat.dev"}

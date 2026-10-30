@@ -1,0 +1,300 @@
+{
+  "app": "original Mad Bomber",
+  "qualification": "HISTORICAL build",
+  "startedAt": "2026-10-30T08:14:07.448516+00:00",
+  "finishedAt": "2026-10-30T08:15:32.600136+00:00",
+  "elapsed": 85.15160635500001,
+  "exitCode": 0,
+  "reason": "guest exited",
+  "peakGroupRSS": 323158016,
+  "command": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "test/run.js",
+    "--app=madbomber",
+    "--no-build",
+    "--wasm=/home/user/madbomber-runtime/runner/build/wine-assembly.wasm",
+    "--control-stdin",
+    "--no-threads",
+    "--real-ticks",
+    "--time-scale=1",
+    "--real-calendar",
+    "--tz=UTC",
+    "--batch-size=200000",
+    "--max-batches=10000000",
+    "--max-seconds=150",
+    "--quiet-api",
+    "--no-close",
+    "--trace-input"
+  ],
+  "events": [
+    {
+      "elapsed": 6.053224497000002,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    },
+    {
+      "elapsed": 6.278971767000002,
+      "event": {
+        "cmd": "keyup:13"
+      }
+    },
+    {
+      "elapsed": 8.067528446000011,
+      "event": {
+        "cmd": "mousemove:308:400"
+      }
+    },
+    {
+      "elapsed": 11.010831929000005,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "elapsed": 11.235984420000023,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "elapsed": 20.012865304,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/early20.png"
+      }
+    },
+    {
+      "elapsed": 25.013272502000007,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "elapsed": 25.23716185400002,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "elapsed": 37.072757572,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/score37.png"
+      }
+    },
+    {
+      "elapsed": 39.00038634500001,
+      "event": {
+        "cmd": "mousemove:0:400"
+      }
+    },
+    {
+      "elapsed": 50.11002457000001,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/miss50.png"
+      }
+    },
+    {
+      "elapsed": 53.01120382000002,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "elapsed": 53.237555724,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "elapsed": 63.00344318500001,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/gameover63.png"
+      }
+    },
+    {
+      "elapsed": 65.06420881000003,
+      "event": {
+        "cmd": "keydown:27"
+      }
+    },
+    {
+      "elapsed": 65.29513395800001,
+      "event": {
+        "cmd": "keyup:27"
+      }
+    },
+    {
+      "elapsed": 67.01932606700001,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/title67.png"
+      }
+    },
+    {
+      "elapsed": 69.10006986200003,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    },
+    {
+      "elapsed": 69.21490293400001,
+      "event": {
+        "cmd": "keyup:13"
+      }
+    },
+    {
+      "elapsed": 71.09321212700002,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/newgame71.png"
+      }
+    },
+    {
+      "elapsed": 75.02989345,
+      "event": {
+        "cmd": "keydown:27"
+      }
+    },
+    {
+      "elapsed": 75.260649408,
+      "event": {
+        "cmd": "keyup:27"
+      }
+    },
+    {
+      "elapsed": 77.09683389700001,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/title-quit77.png"
+      }
+    },
+    {
+      "elapsed": 79.04988836200002,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 79.27652845,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 79.61976210600002,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 79.84763307100002,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 80.31551197900001,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 80.4328945,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 80.90587178800001,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 81.01954855900001,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 81.47822813600001,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 81.70829371800002,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 83.082292134,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/exit-selected83.png"
+      }
+    },
+    {
+      "elapsed": 85.03783898600003,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    }
+  ],
+  "runtimeSource": "72e7a30d6e36df896eb25007b6139d750e715720",
+  "buildSource": "30a2c3fb1b5c2bfa8a6b001d7394d5cf50df295d",
+  "wasmSHA256": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c",
+  "captures": [
+    {
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/gameover63.png",
+      "bytes": 283602,
+      "sha256": "5bdc9f62bc7f068a3b8619e1b497a3d9b8d5994c8c3672c46eb1171967507cbd"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/title67.png",
+      "bytes": 169523,
+      "sha256": "0b251ad5c9b05bff3422f4e5571714ae388408cf54da752cb12a2d7c01932449"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/title-quit77.png",
+      "bytes": 169523,
+      "sha256": "0b251ad5c9b05bff3422f4e5571714ae388408cf54da752cb12a2d7c01932449"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/score37.png",
+      "bytes": 300383,
+      "sha256": "2bdedbbf47f05b899a15c736311d00633d70a7639b652903127334b1048e7087"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/exit-selected83.png",
+      "bytes": 166954,
+      "sha256": "6e31e75a9d6c6d9079c99b8e25caf1a233507293559b440c097ca5c54d2ae200"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/miss50.png",
+      "bytes": 300593,
+      "sha256": "cc773020e8c6a090b2655d81a79c51823a7e922c48d240f6c539cc8563ff6574"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/early20.png",
+      "bytes": 299556,
+      "sha256": "5f0fd047138e405cdd7dc7d517ea55dec6ba4af159a42a8780fb803fcdeb0d4c"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-local-controller-oct30/newgame71.png",
+      "bytes": 298185,
+      "sha256": "0e94b350c7d37abc4f73389755334cafa425d7458b0b8be9add137bbe017b128"
+    }
+  ],
+  "allocation": {
+    "MemAvailable": 7323381760,
+    "allocated": 31240192
+  },
+  "scope": "one production invocation; visual gates require inspection"
+}

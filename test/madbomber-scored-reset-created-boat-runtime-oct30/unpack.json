@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "node",
+    "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/api.cjs",
+    "remote",
+    "/tmp/madbomber-original-gameover-restart-runtime-oct30/unpack.py"
+  ],
+  "cwd": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/repo",
+  "exit": 0,
+  "elapsed": 0.3032962470315397,
+  "admission": {
+    "at": 1793348046.7650416,
+    "free": 3291709440,
+    "MemAvailable": 4215406592,
+    "allocated": 1695744,
+    "budget": 67108864,
+    "aggregate": {
+      "futureGrowthIncludingUncertaintyBuffer": 267292672,
+      "requiredBytes": 2147483648,
+      "RAMAdmission": false
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true
+    }
+  },
+  "stdoutBytes": 164,
+  "stderrBytes": 0
+}

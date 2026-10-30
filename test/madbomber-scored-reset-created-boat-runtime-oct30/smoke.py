@@ -1,0 +1,1 @@
+import pathlib,base64,hashlib,json; p=pathlib.Path('/tmp/mad-created-boat-smoke-oct30'); assert not p.exists(); b=base64.b64decode('bWFkLWNyZWF0ZWQtYm9hdC1zbW9rZQo='); p.write_bytes(b); r=p.read_bytes(); assert r==b; print(json.dumps({'path':str(p),'bytes':len(r),'sha256':hashlib.sha256(r).hexdigest(),'captured':True}))

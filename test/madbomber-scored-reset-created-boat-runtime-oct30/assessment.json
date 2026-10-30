@@ -1,0 +1,54 @@
+{
+  "status": "bounded unsuccessful production attempt; task complete",
+  "combinedScoredResetGate": "UNQUALIFIED: no visibly nonzero score in this run",
+  "productionInvocations": 1,
+  "elapsedSeconds": 85.15160635500001,
+  "runtimeInterval": [
+    "2026-10-30T08:14:07.448516+00:00",
+    "2026-10-30T08:15:32.600136+00:00"
+  ],
+  "inputScheduling": {
+    "restart": 69.10006986200003,
+    "newgameCapture": 71.09321212700002,
+    "deadlineSeconds": 150
+  },
+  "ordinaryQuit": "Exit selected83s, Enter85.038s, [Exit] code=0; guest process exit0; no harness quit sent",
+  "cleanup": {
+    "guestPID": 9413,
+    "processGroupExists": false
+  },
+  "PNGCount": 8,
+  "scope": "Original Mad Bomber historical pinned runtime/build only; no gameplay-completion, audio, or current-main claim. Prior score5 timing failure and exec-self denial preserved unchanged.",
+  "boat": {
+    "id": "bx_8954svmz",
+    "createdAt": "2026-10-30T08:12:24.578Z",
+    "expiry": "2026-10-30T08:42:24.596Z",
+    "ttlSeconds": 1800,
+    "cutoff": "2026-10-30T08:32:24.578000+00:00",
+    "handback": "2026-10-30T08:35:24.578000+00:00",
+    "shutdown": "2026-10-30T08:37:24.578000+00:00",
+    "shutdownOwner": "worker explicitly delegated snapshot-stop and verification",
+    "creationTimestampNote": "Actual native createdAt used for deadlines; initial archiveAfter-minus-TTL estimate differed by18ms."
+  },
+  "lifecycle": {
+    "state": "stopped",
+    "stop": {
+      "endedAt": "2026-10-30T08:16:09.970Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_0d3bca38fcce2603",
+      "lastAttemptAt": "2026-10-30T08:16:09.970Z",
+      "requestedAt": "2026-10-30T08:16:09.247Z",
+      "status": "completed"
+    },
+    "snapshotCompletedAt": "2026-10-30T08:16:01.703Z",
+    "snapshotVerifiedAt": "2026-10-30T08:16:01.703Z"
+  },
+  "remoteAllocation": {
+    "MemAvailable": 7323381760,
+    "allocated": 31240192
+  },
+  "peakGroupRSS": 323158016,
+  "RAMAdmission": false,
+  "sourceChanges": false
+}

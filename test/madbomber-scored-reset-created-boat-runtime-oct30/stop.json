@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--no-update",
+    "--json",
+    "stop",
+    "bx_8954svmz"
+  ],
+  "cwd": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-controller/reset-created-boat/repo",
+  "exit": 0,
+  "elapsed": 0.17374175391159952,
+  "admission": {
+    "at": 1793348169.1427689,
+    "free": 3290042368,
+    "MemAvailable": 4218572800,
+    "allocated": 3854336,
+    "budget": 67108864,
+    "aggregate": {
+      "futureGrowthIncludingUncertaintyBuffer": 267292672,
+      "requiredBytes": 2147483648,
+      "RAMAdmission": false
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true
+    }
+  },
+  "stdoutBytes": 1601,
+  "stderrBytes": 0
+}
