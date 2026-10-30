@@ -1,5 +1,0 @@
-PASS lost registerWait reply: fatal ambiguity, no replay, owner cleanup
-PASS lost waitStatus reply: fatal ambiguity, no replay, owner cleanup
-PASS lost cancelWait reply: fatal ambiguity, no replay, owner cleanup
-PASS lost forgetWait reply: fatal ambiguity, no replay, owner cleanup
-PASS missing authority clock acknowledgment rejects before registration
