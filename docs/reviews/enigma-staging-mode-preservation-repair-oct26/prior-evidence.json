@@ -1,8 +1,0 @@
-{
-  "commit": "00bdb5504bc28e1ef17e15c15dbbc81773dbb5f8",
-  "payloads": 51,
-  "allCommittedPayloadsRehashed": true,
-  "originalEvidenceManifestSHA256": "57ba309d2b08a45d3049380f46175b3916a932010e3a9f48da5d3484b4fdc71b",
-  "preservedSevenGroupsAnd2659SourceHashes": true,
-  "testsNotRepeated": true
-}

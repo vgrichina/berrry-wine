@@ -1,8 +1,0 @@
-test_boundary (__main__.Challenge.test_boundary) ... ok
-
-----------------------------------------------------------------------
-Ran 1 test in 0.194s
-
-OK
-{"mode": "dispatch-boundary", "oracleRejected": false}
-PASS: unchanged original assertions, true production main + real HTTP; snapshot only, durable pending PNG, no replay. Legacy success exit1 interpreted.

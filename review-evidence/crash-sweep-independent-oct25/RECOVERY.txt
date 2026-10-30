@@ -1,4 +1,0 @@
-Exact candidate 8018c56eab16741a2e16af8e9e216817b3fa8b0d, parent ae188c981dad2337050acf88d74d567d5644c367. Review commit is a descendant with fixtures/evidence only.
-Run from a checkout: python3 review-evidence/crash-sweep-independent-oct25/supervise.py /tmp/crash-supplied.log node --max-old-space-size=128 test/registry-crash-sweep.test.js
-Then equivalent command with /tmp/crash-independent.log and test/registry-crash-sweep.independent-oct25.js.
-No runner, compiler, guest or native execution; registry/child_process replaced in VM. Temporary fixture files are removed. Pin SHA256 verified before VM evaluation.

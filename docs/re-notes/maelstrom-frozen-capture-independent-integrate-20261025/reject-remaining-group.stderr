@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/maelstrom-frozen-capture-independent-integrate-oct25/ops/verify.py", line 32, in <module>
-    check(t['returncode']==0 and t['reason']=='natural' and t['remainingGroup'] is False and t['TERM'] is False and t['KILL'] is False,'natural reaped terminal/no group')
-  File "/tmp/maelstrom-frozen-capture-independent-integrate-oct25/ops/verify.py", line 11, in check
-    if not c:raise ValueError(m)
-             ^^^^^^^^^^^^^^^^^^^
-ValueError: natural reaped terminal/no group

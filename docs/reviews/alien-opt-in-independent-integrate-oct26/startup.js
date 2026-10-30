@@ -1,1 +1,0 @@
-console.log(JSON.stringify({exec:process.execPath,args:process.execArgv,env:Object.fromEntries(Object.entries(process.env).filter(([k])=>/^(NODE|WINE)/.test(k))),limits:require('fs').readFileSync('/proc/self/limits','utf8')}))

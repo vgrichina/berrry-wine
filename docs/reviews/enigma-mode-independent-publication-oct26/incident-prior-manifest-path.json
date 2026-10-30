@@ -1,6 +1,0 @@
-{
-  "error": "Rejected review is not an ancestor of repair; its direct path is absent",
-  "resolution": "use inherited byte-exact prior-evidence-manifest.json",
-  "astAndDependencyChecksCompleted": true,
-  "noTestOrSemanticFailure": true
-}

@@ -1,5 +1,0 @@
-{
-  "pid": 279612,
-  "reaped": true,
-  "qualification": "Initial background watcher had no 60-second lifetime bound; terminated/reaped when identified. Historical lifetime not retroactively qualified. Replacement integration watcher will be bounded inside integration supervision."
-}
