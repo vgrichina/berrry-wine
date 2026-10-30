@@ -1,0 +1,32 @@
+{
+  "commit": "e7adc994f4d56a1e8e6fc72267d6ac9cfc9b5d8c",
+  "sourceCorrection": "0ee5103fbe521b9c5ea577716d67b155f14f9e11",
+  "branch": "task/shadow-man-dsetup-region-fullmodule-oct22",
+  "canonicalRemote": "https://github.com/vgrichina/berrry-wine.git",
+  "actualRemoteRefs": "89f1e9d2c67aa94d56d2319115589d07204d42e0\trefs/heads/main\ne7adc994f4d56a1e8e6fc72267d6ac9cfc9b5d8c\trefs/heads/task/shadow-man-dsetup-region-fullmodule-oct22",
+  "pushExit": 0,
+  "mainUnchanged": true,
+  "evidenceOnlyFinalCommit": true,
+  "allCommittedFilesMatch": true,
+  "committedEvidenceFiles": 51,
+  "protectedGitUnchanged": true,
+  "localAllocationByPath": {
+    "/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22": 10612736,
+    "/home/user/wine-assembly-shadow-man-dsetup-independent-accept-oct22": 4960256,
+    "/home/user/wine-assembly-shadow-man-dsetup-canonical-qualification-oct22": 4325376,
+    "/home/user/wine-assembly-shadow-man-dsetup-census-fullmodule-oct22": 6606848,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22": 843776,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-region-fullmodule-oct22": 1642496,
+    "/home/user/wine-assembly-shadow-man-dsetup-region-fullmodule-oct22": 4431872
+  },
+  "localTotal": 33423360,
+  "localReserve": 8388608,
+  "finalReceiptAllowance": 1048576,
+  "hostFree": 7017369600,
+  "cap": 67108864,
+  "verdict": "BLOCKED_CHEAP_REGION_CENSUS",
+  "newBuildAttempts": 0,
+  "moduleSHA256": null,
+  "box": "bx_f3gs8qm2",
+  "boxLeftRunning": true
+}
