@@ -1,8 +1,0 @@
-{
-  "commandId": "cmd_kbuwqhhiuzns",
-  "exitCode": 1,
-  "startedAt": "2026-10-22T03:49:53.785Z",
-  "finishedAt": "2026-10-22T03:49:54.044Z",
-  "stderr": "AssertionError: ['package-lock.json', 'package.json']",
-  "cause": "npm walked to parent package because runtime had no package.json; remote byte gate caught changes before browser"
-}
