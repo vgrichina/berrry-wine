@@ -1,2 +1,0 @@
-c26252c4a95babe583ade1d1c6e2da0c050be45c	refs/heads/main
-3bd7e25c8f4d48ba62f21a51bf4e27458e43b814	refs/heads/task/deus-ex-training-runtime-oct22

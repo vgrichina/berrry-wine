@@ -1,5 +1,0 @@
-{
-  "links": 17814,
-  "reason": "Long symlink target allocation previously omitted; replace only task-owned object views by short relative references through declared readonly donor aliases; no new materialized input bytes concealed",
-  "allTargetsReadonly": true
-}

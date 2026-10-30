@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/seh-current-canonical-qualifier-oct25/ops/publish.py", line 27, in <module>
-    git('add','docs/re-notes/seh-current-canonical-qualifier-20261025');git('diff','--cached','--check')
-                                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/seh-current-canonical-qualifier-oct25/ops/publish.py", line 8, in git
-    p=subprocess.run(['git','-C',str(R),*args],capture_output=True,timeout=55);assert p.returncode==0,(args,p.returncode,p.stderr[:2000]);return p.stdout.decode().strip()
-                                                                                      ^^^^^^^^^^^^^^^
-AssertionError: (('diff', '--cached', '--check'), 2, b'')
