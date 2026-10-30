@@ -1,0 +1,9 @@
+{
+  "source": "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/main-scheduler-observer.js",
+  "remote": "observer.js",
+  "bytes": 4519,
+  "sha256": "01f4de4099a0e60c56cf6ea109f82ae12e1c42b6ba15309d0411b10fe8029040",
+  "rawChunkBytes": 11264,
+  "argumentEnvelopeCeiling": 16384,
+  "incrementalDigest": true
+}

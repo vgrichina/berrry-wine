@@ -1,0 +1,9 @@
+{
+  "source": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-bounded-transport-rebuild-runtime-oct30/staging-manifest.json",
+  "remote": "staging-manifest.json",
+  "bytes": 79967,
+  "sha256": "4933aadda639159ba58ded65eb8bda8b11aac3c58a6ddf834916bee559c2445e",
+  "rawChunkBytes": 11264,
+  "argumentEnvelopeCeiling": 16384,
+  "incrementalDigest": true
+}

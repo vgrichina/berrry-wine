@@ -1,0 +1,9 @@
+{
+  "source": "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30-report-corrected/candidate.tar.gz",
+  "remote": "packet-1.tar.gz",
+  "bytes": 3555658,
+  "sha256": "7cf0738a328c086ba454feb6e88dbcb7d2881ccc761106f2747f7c7f73b52403",
+  "rawChunkBytes": 11264,
+  "argumentEnvelopeCeiling": 16384,
+  "incrementalDigest": true
+}

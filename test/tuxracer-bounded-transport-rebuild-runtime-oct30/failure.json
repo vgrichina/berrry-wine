@@ -1,0 +1,4 @@
+{
+  "at": 1793350546.2346072,
+  "error": "AssertionError([{'path': 'course.png', 'bytes': 171779, 'sha256': '3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29'}, {'path': 'before.png', 'bytes': 171779, 'sha256': '3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29'}, {'path': 'title.png', 'bytes': 136760, 'sha256': 'bc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9'}, {'path': 'practice.png', 'bytes': 171779, 'sha256': '3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29'}])"
+}

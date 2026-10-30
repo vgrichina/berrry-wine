@@ -1,0 +1,9 @@
+{
+  "source": "/tmp/tuxracer-software-render-msvcrt-retest-oct30/packet.tar.gz",
+  "remote": "packet-0.tar.gz",
+  "bytes": 10722706,
+  "sha256": "0c1b282fcb6f720c78090dce8156b2d321f9ee5839f414b09a068d033961629b",
+  "rawChunkBytes": 11264,
+  "argumentEnvelopeCeiling": 16384,
+  "incrementalDigest": true
+}

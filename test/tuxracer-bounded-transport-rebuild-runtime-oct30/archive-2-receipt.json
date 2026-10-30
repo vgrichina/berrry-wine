@@ -1,0 +1,9 @@
+{
+  "source": "/tmp/tuxracer-vertex-color-gameplay-owner-policy-oct30/candidate-delta.tar.gz",
+  "remote": "packet-2.tar.gz",
+  "bytes": 104819,
+  "sha256": "96158178be44976471c7fc8a986eb7d5c71beada50808f1b66178557af2ef1bf",
+  "rawChunkBytes": 11264,
+  "argumentEnvelopeCeiling": 16384,
+  "incrementalDigest": true
+}

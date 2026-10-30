@@ -1,0 +1,9 @@
+{
+  "source": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-bounded-transport-rebuild-runtime-oct30/smoke.bin",
+  "remote": "smoke.bin",
+  "bytes": 16384,
+  "sha256": "a1f259d4365ed4320c377ce26f5c8c56dcdc9a89e7b641bfd8eabfbbeac86654",
+  "rawChunkBytes": 11264,
+  "argumentEnvelopeCeiling": 16384,
+  "incrementalDigest": true
+}

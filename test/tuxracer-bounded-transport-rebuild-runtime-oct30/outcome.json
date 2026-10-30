@@ -1,0 +1,45 @@
+{
+  "status": "BLOCKED_EVIDENCE_RETRIEVAL_AFTER_STOP",
+  "objectiveComplete": false,
+  "compileAttempts": 1,
+  "guestAttempts": 1,
+  "guestExit": -24,
+  "selected": [
+    {
+      "path": "title.png",
+      "bytes": 136760,
+      "sha256": "bc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9"
+    },
+    {
+      "path": "before.png",
+      "bytes": 171779,
+      "sha256": "3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29"
+    }
+  ],
+  "selectedBytes": 308539,
+  "allRemotePNGBytes": 652097,
+  "localPNGBytes": 0,
+  "inspectedPNG": false,
+  "collectorError": "All remote PNGs counted before selecting; deduplicated selection would fit. No collection request made.",
+  "pollDeltas": null,
+  "mainPollDeltas": null,
+  "workerPollDeltas": null,
+  "dispatch": null,
+  "runReturnSuspensionReasonYield": null,
+  "saturationCoverage": "unknown; raw runtime.stdout retained remotely",
+  "cause": "unknown",
+  "practice": false,
+  "race": false,
+  "expectedModule": {
+    "bytes": 1881806,
+    "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+  },
+  "moduleIdentity": "Remote worker strict expected hash/size assertion passed before runtime; manifest contents not retrieved",
+  "rawRuntime": {
+    "path": "runtime.stdout",
+    "bytes": 58468,
+    "sha256": "bdecccd0e99d58aefa5758d784c8b0f519abd7d96a53c4bcb089c812b185dbd7"
+  },
+  "recovery": "Supported CLI only offers snapshot pull for stopped-file download; explicitly prohibited full-layer route not retried. Requires coordinator-authorized bounded exact-file recovery.",
+  "denialsPreserved": true
+}

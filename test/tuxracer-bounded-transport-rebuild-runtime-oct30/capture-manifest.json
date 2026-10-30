@@ -1,0 +1,102 @@
+[
+  {
+    "path": "compile-startup.stdout",
+    "bytes": 1646,
+    "sha256": "0d91f08d9a5877235b5324d7c7242f6302aab8df16ed97c48db2b63e99e6f6de"
+  },
+  {
+    "path": "runtime.json",
+    "bytes": 17009,
+    "sha256": "9e66a23f6a7e4a2be58ab70ad5a0460d2845e70eded12d35c1ad034b45b95af8"
+  },
+  {
+    "path": "stage-verified.json",
+    "bytes": 250,
+    "sha256": "4d482200b55a491c27bcb19cb19c21bfaa7b1040ae8596de9b482421d2921cfe"
+  },
+  {
+    "path": "compile-startup.json",
+    "bytes": 2665,
+    "sha256": "1916a941c583e2d2fdba2710b4ba7b4a0ad366197bb4c12725d11cb683cd218c"
+  },
+  {
+    "path": "done.json",
+    "bytes": 114,
+    "sha256": "3fd2e545171b174ee9240653f401157e55b17bbe441fad4b8b1716bbe10853cb"
+  },
+  {
+    "path": "compile.json",
+    "bytes": 1138,
+    "sha256": "95aa23d89c3e6b768e366d7729c9fca868616383d537e59c19eecb0ee8a2af13"
+  },
+  {
+    "path": "compile.stdout",
+    "bytes": 316,
+    "sha256": "0be9931764fb3cfeb9e43e64f13be338298be538b602f790ae2023c5e4c40807"
+  },
+  {
+    "path": "runtime.stdout",
+    "bytes": 58468,
+    "sha256": "bdecccd0e99d58aefa5758d784c8b0f519abd7d96a53c4bcb089c812b185dbd7"
+  },
+  {
+    "path": "course.png",
+    "bytes": 171779,
+    "sha256": "3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29"
+  },
+  {
+    "path": "startup.stdout",
+    "bytes": 1646,
+    "sha256": "ce3b984da85aa7205799ec36e94a852c563490629085f188dbb79dcdcd5b5547"
+  },
+  {
+    "path": "before.png",
+    "bytes": 171779,
+    "sha256": "3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29"
+  },
+  {
+    "path": "title.png",
+    "bytes": 136760,
+    "sha256": "bc919a5423476c23686c8d0231a4480e51b20250338cec7b09b50447641014f9"
+  },
+  {
+    "path": "practice.png",
+    "bytes": 171779,
+    "sha256": "3bb94234063fbb1eb6876a1d52857d963c04bd1f1f3a7f5ae6a91a43f3216c29"
+  },
+  {
+    "path": "startup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "startup.json",
+    "bytes": 2642,
+    "sha256": "bced53e5cff15b164736d9c18fea6b35db88bc7ef5794e9461065e3d5127944c"
+  },
+  {
+    "path": "compile.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "runtime.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "compile-startup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "remote-environment.json",
+    "bytes": 775,
+    "sha256": "ccafcb624aee7780053ccd4b50c6033d5558ed6d75bb0a6488496b6154d63565"
+  },
+  {
+    "path": "module-manifest.json",
+    "bytes": 278,
+    "sha256": "6e1ad7015b05d177d7e7dea436594409a7bb62834311fc9077cb24b57a015d57"
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "PASS": true,
+  "compressedBytes": 24811,
+  "records": 1360,
+  "decodedBytes": 119309,
+  "decodedSHA256": "29c4d1b634e59eb1d93ac234072c8a49feff4adbe62be706947770cb4199ceb5",
+  "oneAppendOnlyFile": true,
+  "periodicAndFinalDigestChecks": true,
+  "archivesBytes": 14383183,
+  "noLocalArchiveRebuild": true,
+  "localCPUIncident": "local-supervisor-terminal.json",
+  "sameBoatContinuation": true
+}

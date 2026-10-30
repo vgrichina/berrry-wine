@@ -1,0 +1,80 @@
+{
+  "PASS": true,
+  "baseline": "a370b362ad41c39109b96510c49246e77e54e0b0",
+  "candidate": "a998bf36b108275335af501d8ae774731495b9b2",
+  "canonical": 128,
+  "pins": 141,
+  "staticImports": 102,
+  "missing": [],
+  "manifestSHA": "b4c8e15abac596f027685b227548c435263355ac5ef6444c2d6bc3a7649198bb",
+  "overlayCount": 454,
+  "overlayBytes": 43285455,
+  "archiveBytes": 14383183,
+  "watInputBytes": 20731058,
+  "combinedWATGenerated": false,
+  "combinedWATNote": "Canonical build-compile-wat.js compiles VFS in memory; it does not write combined.wat",
+  "buildFileLimit": 4194304,
+  "transportFileLimit": 12582912,
+  "expectedWASMFiles": [
+    1881806,
+    1900000
+  ],
+  "moduleExpectedBytes": 1881806,
+  "hostABI": {
+    "PASS": true,
+    "unchangedPaths": [
+      "src/01-header.wat",
+      "lib/region-map.generated.js",
+      "lib/gl-compat.js",
+      "lib/gl-render-host.js",
+      "lib/gl-command-stream.js"
+    ],
+    "previousCandidate": "4068d12a28b5a96260dfbdd8fb26a8954f35d923",
+    "candidate": "a998bf36b108275335af501d8ae774731495b9b2",
+    "hostBaseline": "898d2ec8d9db7d4f9236d9eb705adfd431ea19c9",
+    "wholeRuntimeCurrentMain": false,
+    "priorABIComparisonSHA": "e4d14989efaac987c7ddcce8575fd05bbe5301919701aabe83677b7a4c1ff3d5",
+    "standingManifestSHA": "725e4b802145fa9bf8dc8e35506dc5d410f8074a1c0ebd534c031215b940a436"
+  },
+  "runnerSHA": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d",
+  "remoteBudget": 268435456,
+  "remoteReserve": 8388608,
+  "remoteProjection": 99611678,
+  "localProjection": {
+    "at": 1793348836.7491102,
+    "device": 64769,
+    "f_bavail": 799483,
+    "blockSize": 4096,
+    "sizes": {
+      "/tmp/tuxracer-glcolor4dv-repair-oct30": 30752768,
+      "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30-report-corrected": 5922816,
+      "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30": 3428352,
+      "/tmp/tuxracer-vertex-color-gameplay-owner-policy-oct30": 487424,
+      "/tmp/tuxracer-vertex-color-isolated-capture-runtime-oct30": 1634304,
+      "/tmp/tuxracer-retained-vertex-runtime-integration-oct30": 3559424,
+      "/tmp/tuxracer-main-menu-race-progression-oct30": 8749056,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-main-menu-race-progression-oct30": 241664,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-vertex-runtime-integration-oct30": 266240,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-vertex-color-gameplay-owner-policy-oct30": 385024,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-vertex-color-isolated-capture-runtime-oct30": 233472,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-accepted-vertex-color-reconciliation-oct30": 192512,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-main-menu-input-consumption-repair-oct30": 294912,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-post-title-poll-runtime-oct30": 339968,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-post-title-poll-recovered-runtime-oct30": 339968,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-remote-rebuild-poll-runtime-oct30": 323584
+    },
+    "used": 57151488,
+    "budget": 67108864,
+    "reserve": 8388608,
+    "futureGrowth": 9437184,
+    "free": 3274682368,
+    "remainingAggregate": 267292672,
+    "diskFloor": 2147483648,
+    "RAMAdmission": false,
+    "MemAvailable": "MemAvailable:    3863304 kB",
+    "checks": {
+      "allocation": true,
+      "disk": true
+    }
+  }
+}

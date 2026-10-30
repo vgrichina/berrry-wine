@@ -1,0 +1,9 @@
+{
+  "source": "/tmp/tuxracer-main-menu-race-progression-oct30/tuxracer-bounded-transport-rebuild-runtime-oct30/remote-worker.py",
+  "remote": "remote-worker.py",
+  "bytes": 5542,
+  "sha256": "fc99f6fe7a5ef37e7f021b76d68a24e80e3fe61e8af1416e9a0ed5330217423b",
+  "rawChunkBytes": 11264,
+  "argumentEnvelopeCeiling": 16384,
+  "incrementalDigest": true
+}
