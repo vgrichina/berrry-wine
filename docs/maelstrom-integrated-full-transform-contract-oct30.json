@@ -1,0 +1,146 @@
+{
+  "schema": "maelstrom-integrated-full-transform-contract/v1",
+  "passed": true,
+  "productionRevision": "b115cacaf93ba01f526610126c72a185e6abf5c5",
+  "historicalBase": "55f9724ef127100c3bb54aebca73e5cda5472c5f",
+  "productionPins": {
+    "tools/maelstrom-native-errno-latch.cjs": "6d6105f10636bc160eec3baa62b5abe42fa6c1306958bfa786717bfb8b109e42",
+    "tools/maelstrom-select-completion-hook.cjs": "b8fbdf8bc259f903c4b0c0b78f2834698c97759b7cf3cb9fc0d1f5a77a0c932d",
+    "tools/maelstrom-original-errno-adapter.cjs": "cbe04fef7e98c1ff607251812225b8314fc0aaff2c289331b95839cfe2df2b49",
+    "tools/watx.js": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+    "tools/watx-src/compiler-parser.js": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236",
+    "tools/watx-src/compiler-stages.js": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03",
+    "tools/watx-src/compiler-codegen.js": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+    "tools/watx-src/compiler.js": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+  },
+  "sourcePins": {
+    "src/09d-winsock.wat": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+    "src/09b-dispatch.wat": "d8f3ac461c9dca62cdf074cb28b3324080718bd98e5ba696de15577c598dbcce",
+    "src/09b2-dispatch-table.generated.wat": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e",
+    "src/05-alu.wat": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+    "src/06b-core-handlers.wat": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+    "src/13-exports.wat": "bf07357361b6d6f1e9c6bd93953d2ca14ccbb55c68f8647149d2a47eaefbb51e",
+    "src/03-registers.wat": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d",
+    "src/04-cache.wat": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd",
+    "src/07-decoder.wat": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837",
+    "src/02-thread-table.wat": "e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426",
+    "src/07c-block-exec.wat": "5c4b4227b656ddcb919825c5942ce109bf6ea21b95b739a7bf5173d032e55e95",
+    "src/07d-uop-engine.wat": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3",
+    "src/07e-uop-compiler.wat": "e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3"
+  },
+  "binaryPins": {
+    "net": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95",
+    "crt": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1",
+    "exe": "0eca5703e512d33c5e5a0bc1a27f14bd3aa4ecddded6e09b4d4019c2f27a15e5"
+  },
+  "binaryPaths": {
+    "net": "/tmp/maelstrom-frozen-original-recovered-capture-oct25/vfs/maelstrom/SDL_net.dll",
+    "crt": "/tmp/maelstrom-frozen-original-recovered-capture-oct25/runtime/system/msvcrt.dll",
+    "exe": "/tmp/maelstrom-frozen-original-recovered-capture-oct25/vfs/maelstrom/Maelstrom.exe"
+  },
+  "options": {
+    "enabled": true,
+    "crtLoadedBase": 5382144,
+    "uopNativeBoundaries": true
+  },
+  "changed": [
+    "src/05-alu.wat",
+    "src/06b-core-handlers.wat",
+    "src/07d-uop-engine.wat",
+    "src/07e-uop-compiler.wat",
+    "src/09b-dispatch.wat",
+    "src/09d-winsock.wat"
+  ],
+  "outputs": {
+    "src/02-thread-table.wat": {
+      "bytes": 33956,
+      "sha256": "e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426",
+      "changed": false
+    },
+    "src/03-registers.wat": {
+      "bytes": 61869,
+      "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d",
+      "changed": false
+    },
+    "src/04-cache.wat": {
+      "bytes": 162508,
+      "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd",
+      "changed": false
+    },
+    "src/05-alu.wat": {
+      "bytes": 256844,
+      "sha256": "817ee26a7dc9e2aa31c1e9fd39d0be551f1d994b6f69350166123717abc0eb16",
+      "changed": true
+    },
+    "src/06b-core-handlers.wat": {
+      "bytes": 103372,
+      "sha256": "d723b875ddf3c42a670ddca5c9e78199c0b8aceced8ef739fee3e521cfd25db1",
+      "changed": true
+    },
+    "src/07-decoder.wat": {
+      "bytes": 321708,
+      "sha256": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837",
+      "changed": false
+    },
+    "src/07c-block-exec.wat": {
+      "bytes": 444010,
+      "sha256": "5c4b4227b656ddcb919825c5942ce109bf6ea21b95b739a7bf5173d032e55e95",
+      "changed": false
+    },
+    "src/07d-uop-engine.wat": {
+      "bytes": 164636,
+      "sha256": "eac412fabd0bf675db6c540fa03c7f3b1843b2ae31b932e2b1bdd2c2c6ad3ed5",
+      "changed": true
+    },
+    "src/07e-uop-compiler.wat": {
+      "bytes": 316165,
+      "sha256": "a25bf4e68bf38faa5b425e33724f23d6e9747d585d03edb7006d7a746dc3dc62",
+      "changed": true
+    },
+    "src/09b-dispatch.wat": {
+      "bytes": 114241,
+      "sha256": "2a6a3c0c22654e1ec9d9c9305ebd90cdf8cd72905e94f875c117540f2cfdcd04",
+      "changed": true
+    },
+    "src/09b2-dispatch-table.generated.wat": {
+      "bytes": 1375748,
+      "sha256": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e",
+      "changed": false
+    },
+    "src/09d-winsock.wat": {
+      "bytes": 311550,
+      "sha256": "f96242732e3a177a78648838df177e7eddf2f547e90c89ce279b08dcfd241f69",
+      "changed": true
+    },
+    "src/13-exports.wat": {
+      "bytes": 342381,
+      "sha256": "bf07357361b6d6f1e9c6bd93953d2ca14ccbb55c68f8647149d2a47eaefbb51e",
+      "changed": false
+    }
+  },
+  "checks": {
+    "sourceTamper": 13,
+    "binaryTamper": 3,
+    "disabledIdentity": 3,
+    "invalidBases": 6,
+    "switches": 24,
+    "noops": 24,
+    "terminal": 6,
+    "normalizedRequests": 3,
+    "adapterPersistedRejections": 27,
+    "diagnosticRemovalMutantKilled": true
+  },
+  "fixture": {
+    "sourceSHA256": "fd7cca6396cb2729ebb8d653d52b60326a650a9fbadf7b25d8f0404763caf8ff",
+    "wasmSHA256": "e245fa86f3cbb54f51f5f74653a7e612362a236c20a9220e8cdac7195ee358bd",
+    "extractedSwitchSHA256": "c6b0b5d1f0dfc185b046dba5dae896e742f02ab4263afea5acfb0998f62333ff",
+    "extractedSetterSHA256": "e8111d95f97bd31f8a48f18ae94ca383647ed933a8150b00f2fc9ae350599cb5"
+  },
+  "limitations": [
+    "Complete production transform accepted; complete generated module not compiled or instantiated.",
+    "Only emitted set_uop and mne_uop_switch executed with synthetic pre-state and counted flush/refresh stubs.",
+    "CALL/RET/select instrumentation checked as emitted source only; guest ordering and native errno capture unqualified.",
+    "No browser, guest, gameplay, runtime, Boat, full build, performance or causal-instruction claim."
+  ],
+  "testSHA256": "c5614387ca608fb3bcd0b95d934cd88b2e68889b1b32f640d38917ee5a402eb4"
+}
