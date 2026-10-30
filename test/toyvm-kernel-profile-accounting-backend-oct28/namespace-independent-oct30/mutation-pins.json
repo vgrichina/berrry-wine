@@ -1,0 +1,8 @@
+{
+  "candidateSourceSHA256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88",
+  "mutatedSourceSHA256": "b28f427ca7437ce2adef14a37e5f1cd1a6a14f4af148cc5d3c8d8a1775af2053",
+  "mutation": "premature namespace recording before length validation",
+  "executedInMemory": true,
+  "oracleRejected": true,
+  "productionUnchanged": true
+}

@@ -1,0 +1,9 @@
+test_api_validation_and_propagation (test_namespace_wire.Acceptance.test_api_validation_and_propagation) ... ok
+test_default_off_equivalence (test_namespace_wire.Acceptance.test_default_off_equivalence) ... ok
+test_limits_eviction_saturation_and_unrelated (test_namespace_wire.Acceptance.test_limits_eviction_saturation_and_unrelated) ... ok
+test_rejecting_source_controls (test_namespace_wire.Acceptance.test_rejecting_source_controls) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.213s
+
+OK

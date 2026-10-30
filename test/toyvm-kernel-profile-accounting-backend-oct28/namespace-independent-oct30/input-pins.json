@@ -1,0 +1,25 @@
+{
+  "candidate": "3b6ea48a89510cf99e3d0d8167f80c56f0af79e4",
+  "ref": "refs/heads/test/toyvm-namespace-observability-independent-oct30",
+  "sourcePins": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 16621,
+      "sha256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4857,
+      "sha256": "b003da4e6439bbd1502ffc92797420c2bc254b3e55394afdd24624b7d9005338"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 9337,
+      "sha256": "b0419070f5087d8b634a5a39c3873285817a799d340d0543e56ceebf974d4fc5"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": {
+      "bytes": 9626,
+      "sha256": "41c28dd6d35e0b91ee1c4cb52e738503e9769aad285aa2d56886458246e1e6da"
+    }
+  },
+  "indexSHA256": "02a8297ffcda2cd9527ee0861c80195023c6c564f2c81618006cb577f73d6ebf",
+  "indexBytes": 2011078,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-namespace-observability-independent-oct30/root-ref-digest.json"
+}

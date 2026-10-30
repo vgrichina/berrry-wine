@@ -1,0 +1,8 @@
+test_parser_rejection_has_no_callback (test_namespace_independent_wire.IndependentAcceptance.test_parser_rejection_has_no_callback) ... ok
+test_rejects_fabricated_undispatched_callback (test_namespace_independent_wire.IndependentAcceptance.test_rejects_fabricated_undispatched_callback) ... ok
+test_status_snapshot_cannot_mutate_callback_records (test_namespace_independent_wire.IndependentAcceptance.test_status_snapshot_cannot_mutate_callback_records) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.006s
+
+OK
