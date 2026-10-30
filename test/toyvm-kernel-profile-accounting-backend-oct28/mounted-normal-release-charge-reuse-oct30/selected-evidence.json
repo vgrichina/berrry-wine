@@ -1,0 +1,53 @@
+{
+  "uniqueArtifactCount": 11,
+  "uniqueArtifactBytes": 154681,
+  "target": 196608,
+  "absoluteBound": 524288,
+  "artifacts": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/fixture.py": {
+      "bytes": 2025,
+      "sha256": "1af041e6375808d509796e05ce315669d47b000b4d0cd4260eadf9c836636518"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/observer.py": {
+      "bytes": 4980,
+      "sha256": "f32bfa9281de733517cd98e6daaa800a418cc6e1da3ba29c791620aa1566ad27"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/raw-runtime.json": {
+      "bytes": 74428,
+      "sha256": "bdf616d9cebd9762ae42359bb46c97825e3b009a3b715abe0ea2ddb964f5b1dd"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/mounted-result.json": {
+      "bytes": 23654,
+      "sha256": "8adba931ad16a64ae1f10859ac7cf35dcd565e81c641134672577dfab181e444"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/source-pins.json": {
+      "bytes": 9078,
+      "sha256": "fd054d6ddede611074691ec7cc0338a30fe98dcbea955de1d42303aed4c5f6be"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/oracle.json": {
+      "bytes": 1783,
+      "sha256": "86521b0576a959d4c3ed4aa6563474b23a7a5fe2bfbbfa0f35bd3c1a2378fc9b"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/recovery-recipe.txt": {
+      "bytes": 3949,
+      "sha256": "149adb2277a9e0d419ce285d01b62be81453848232a920f003befcfbf9b52d47"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/lifecycle-proof.json": {
+      "bytes": 616,
+      "sha256": "e349d68a260d05650aca10156f517e2cc7b58f418cd9821930957681f849bd98"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/preflight.json": {
+      "bytes": 11275,
+      "sha256": "3233a8e36d72be180f3753b40dd20b0bc5f67968771573c28809751e70136d46"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/launch-manifest.json": {
+      "bytes": 15018,
+      "sha256": "5e274b0de350ff9f81a83293ec8f1cf65cd156def40d402e5fa206f4ea52f7eb"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-normal-release-charge-reuse-oct30/allocation-publication-receipt.json": {
+      "bytes": 7875,
+      "sha256": "e006c72a22a80570d993c5c696ba7a33054b85eca3e9078424b58607571ebe52"
+    }
+  },
+  "inventorySelfExcluded": true
+}

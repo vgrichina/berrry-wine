@@ -1,0 +1,49 @@
+{
+  "kind": "SOURCE_DERIVED_PREDICTION_NOT_RUNTIME_OBSERVATION",
+  "base": "b6cdf927cda965d1f2ee7cde447e38c9f79a9342",
+  "metadataPerInode": 4096,
+  "payloadRounding": 4096,
+  "quota": {
+    "liveLimit": 20480,
+    "writeLimit": 65536,
+    "fileLimit": 16384
+  },
+  "stages": {
+    "before": {
+      "live": 20480,
+      "inodes": 3,
+      "written": 8192
+    },
+    "retained": {
+      "live": 20480,
+      "inodes": 3,
+      "written": 8192
+    },
+    "released": {
+      "live": 12288,
+      "inodes": 2,
+      "written": 8192
+    },
+    "reused": {
+      "live": 16384,
+      "inodes": 2,
+      "written": 8193,
+      "openHandles": 1
+    },
+    "cleanup": {
+      "live": 4096,
+      "inodes": 1,
+      "written": 8193,
+      "openHandles": 0
+    }
+  },
+  "openHandlePrediction": "Two stable fixture descriptors before/retained, one after final old-destination close, one after reuse. Transient path reads and directory enumeration may add handles; compare stable external windows and actual descriptor markers, never infer instantaneous guessed counts.",
+  "releaseObservation": "Require an external status sample after closed-old and before before-reuse with live12288/inodes2; RELEASE opcode is not instrumented, infer collection from accounting with source pin and exact final handle close.",
+  "rename": "Require existing production opcode12 or45 success record with correlated stable retained sample; records do not carry numeric before/after.",
+  "unknowns": [
+    "exact RELEASE callback unique/opcode record unavailable",
+    "exact counter at unsampled instants unknown"
+  ],
+  "intentionalENOSPC": false,
+  "reuse": "pwrite one byte X at offset4096: rounded payload grows4096 ->8192, delta4096; written8192+1=8193; source size4097; retained source prefix unchanged"
+}
