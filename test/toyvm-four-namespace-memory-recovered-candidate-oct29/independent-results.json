@@ -1,0 +1,130 @@
+{
+  "status": "PASS",
+  "candidate": "combined source d129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171; baseline d96285b9f62c081baa333f2952acbad9885d675f",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12321,
+      "sha256": "d129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "scope": "direct Backend.handle op28 source behavior only",
+  "production": {
+    "wireCases": 7329,
+    "observationSha256": "66885cc3510e32313937029ea07280a1f9c48e28cb4c437497bb02873b5f8df4",
+    "corruptStateEIOCases": 10
+  },
+  "rejectingSourceCopyControls": {
+    "rootconstant": {
+      "status": "REJECTED",
+      "firstCounterexample": {
+        "stage": "initial-root-child-deep-raw-names",
+        "inode": 3,
+        "offset": 0,
+        "size": 64,
+        "requestHex": "0300000000000000000000000000000040000000",
+        "expectedHex": "0300000000000000010000000000000001000000040000002e000000000000000200000000000000020000000000000002000000040000002e2e000000000000",
+        "actualHex": "0300000000000000010000000000000001000000040000002e000000000000000100000000000000020000000000000002000000040000002e2e000000000000"
+      },
+      "sourceSha256": "2b49c5431d6b4f465f82504dc607e6a54bc2adb04ef6f475528349c398480baa"
+    },
+    "wrongparent": {
+      "status": "REJECTED",
+      "firstCounterexample": {
+        "stage": "initial-root-child-deep-raw-names",
+        "inode": 2,
+        "offset": 0,
+        "size": 64,
+        "requestHex": "0200000000000000000000000000000040000000",
+        "expectedHex": "0200000000000000010000000000000001000000040000002e000000000000000100000000000000020000000000000002000000040000002e2e000000000000",
+        "actualHex": "0200000000000000010000000000000001000000040000002e000000000000000200000000000000020000000000000002000000040000002e2e000000000000"
+      },
+      "sourceSha256": "080186be6c2c17e815dc16c648280c59520a012b2bb4653fa981d6758f8403ec"
+    },
+    "wrongdot": {
+      "status": "REJECTED",
+      "firstCounterexample": {
+        "stage": "initial-root-child-deep-raw-names",
+        "inode": 2,
+        "offset": 0,
+        "size": 32,
+        "requestHex": "0200000000000000000000000000000020000000",
+        "expectedHex": "0200000000000000010000000000000001000000040000002e00000000000000",
+        "actualHex": "0100000000000000010000000000000001000000040000002e00000000000000"
+      },
+      "sourceSha256": "081fb29e8cdb1ecc3b75215f09c89f2579053fe8fb337a179ddb9bda9531064e"
+    },
+    "offset-skip": {
+      "status": "REJECTED",
+      "firstCounterexample": {
+        "stage": "initial-root-child-deep-raw-names",
+        "inode": 1,
+        "offset": 0,
+        "size": 32,
+        "requestHex": "0100000000000000000000000000000020000000",
+        "expectedHex": "0100000000000000010000000000000001000000040000002e00000000000000",
+        "actualHex": "0100000000000000020000000000000002000000040000002e2e000000000000"
+      },
+      "sourceSha256": "f77c4592cbbcf970ce0205d65dfe9289958ae744f1b36fb02d557cefdc9b05c4"
+    },
+    "offset-cookie": {
+      "status": "REJECTED",
+      "firstCounterexample": {
+        "stage": "initial-root-child-deep-raw-names",
+        "inode": 1,
+        "offset": 0,
+        "size": 32,
+        "requestHex": "0100000000000000000000000000000020000000",
+        "expectedHex": "0100000000000000010000000000000001000000040000002e00000000000000",
+        "actualHex": "0100000000000000000000000000000001000000040000002e00000000000000"
+      },
+      "sourceSha256": "c93e3caae4a6b08389eaabbca2028d711c71abf42254f219de8cdffbdbefbacb"
+    },
+    "wrong-name-length": {
+      "status": "REJECTED",
+      "firstCounterexample": {
+        "stage": "initial-root-child-deep-raw-names",
+        "inode": 1,
+        "offset": 0,
+        "size": 32,
+        "requestHex": "0100000000000000000000000000000020000000",
+        "expectedHex": "0100000000000000010000000000000001000000040000002e00000000000000",
+        "actualHex": "0100000000000000010000000000000002000000040000002e00000000000000"
+      },
+      "sourceSha256": "00176031e5053ae602f7fdca37fd333b69be20f5dcf92c80309da0b61a9ea68a"
+    },
+    "wrong-dot-type": {
+      "status": "REJECTED",
+      "firstCounterexample": {
+        "stage": "initial-root-child-deep-raw-names",
+        "inode": 1,
+        "offset": 0,
+        "size": 32,
+        "requestHex": "0100000000000000000000000000000020000000",
+        "expectedHex": "0100000000000000010000000000000001000000040000002e00000000000000",
+        "actualHex": "0100000000000000010000000000000001000000080000002e00000000000000"
+      },
+      "sourceSha256": "f4b1adafd40b997b02d8fff6dce4dddb8ba01110400791c1d9b51a5d0d52886d"
+    }
+  },
+  "remainingGates": [
+    "combined repairs",
+    "caller still pins OLD backend",
+    "full CLI qualification"
+  ]
+}
