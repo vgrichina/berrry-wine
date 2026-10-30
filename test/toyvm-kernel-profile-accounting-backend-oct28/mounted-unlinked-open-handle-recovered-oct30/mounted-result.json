@@ -1,0 +1,61 @@
+{
+  "objectiveQualified": true,
+  "qualifiedSource": "311c42abb41adc1fc16e06b4276005d15db553b2",
+  "unlinkedInode": 2,
+  "ordinaryInode": 3,
+  "unlinkedFD": 3,
+  "unlinkUnique": 262,
+  "postUnlinkReadUnique": [
+    266,
+    272,
+    432,
+    438
+  ],
+  "postUnlinkWriteUnique": 430,
+  "releaseUnique": 624,
+  "extensionUnique": 918,
+  "retainedLive": 20480,
+  "releasedLive": 12288,
+  "reclaimed": 8192,
+  "extendedLive": 16384,
+  "withoutReleaseExtension": 24576,
+  "liveLimit": 20480,
+  "wireCallbacks": 21,
+  "final": {
+    "live": 4096,
+    "peak": 20480,
+    "written": 4232,
+    "inodes": 1,
+    "openHandles": 0
+  },
+  "boundary": "Callback order and backend counters prove reclamation at RELEASE; close markers alone do not prove synchronous RELEASE.",
+  "cleanup": {
+    "remainingMounts": [],
+    "processes": []
+  },
+  "productionExit": 0,
+  "mountOwnership": [
+    "532 29 0:51 / /tmp/tvsa/domain rw,nosuid,nodev,relatime shared:630 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+  ],
+  "lifecycle": {
+    "id": "bx_f7mqnty6",
+    "state": "stopped",
+    "createdAt": "2026-10-30T12:43:29.027Z",
+    "stoppedAt": "2026-10-30T12:45:03.569Z",
+    "snapshotCompletedAt": "2026-10-30T12:45:03.513Z",
+    "snapshotVerifiedAt": "2026-10-30T12:45:03.513Z",
+    "snapshotAvailable": true,
+    "lastSnapshotStatus": "completed",
+    "stop": {
+      "endedAt": "2026-10-30T12:45:03.597Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_6d187f9305490b68",
+      "lastAttemptAt": "2026-10-30T12:45:03.597Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "originalExpiry": "2026-10-30T13:13:29.000Z",
+    "shutdownDelegated": true
+  }
+}
