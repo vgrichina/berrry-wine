@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "node",
+    "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-task/api.cjs",
+    "remote",
+    "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-task/unpause.py"
+  ],
+  "cwd": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-task/repo",
+  "exit": 0,
+  "elapsed": 0.43061428098008037,
+  "admission": {
+    "at": 1793346755.2307167,
+    "free": 3327459328,
+    "MemAvailable": 4056182784,
+    "allocated": 22638592,
+    "budget": 67108864,
+    "aggregate": {
+      "futureGrowthIncludingUncertaintyBuffer": 267292672,
+      "requiredBytes": 1610612736,
+      "RAMAdmission": false
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true
+    }
+  },
+  "stdoutBytes": 29,
+  "stderrBytes": 0
+}

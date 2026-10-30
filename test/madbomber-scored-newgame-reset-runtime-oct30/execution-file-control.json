@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-c",
+    "import pathlib; p=pathlib.Path(\"../large-control.tmp\"); p.write_bytes(bytes(600000)); assert p.stat().st_size>524288; p.unlink(); print(\"PASS file larger than capture limit under 12MiB FSIZE\")"
+  ],
+  "cwd": "/tmp/madbomber-original-gameover-restart-runtime-oct30/reset-task/repo",
+  "exit": 0,
+  "elapsed": 0.043098510010167956,
+  "admission": {
+    "at": 1793346534.7983341,
+    "free": 3336802304,
+    "MemAvailable": 4452941824,
+    "allocated": 19062784,
+    "budget": 67108864,
+    "aggregate": {
+      "futureGrowthIncludingUncertaintyBuffer": 267292672,
+      "requiredBytes": 1610612736,
+      "RAMAdmission": false
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true
+    }
+  },
+  "stdoutBytes": 54,
+  "stderrBytes": 0
+}

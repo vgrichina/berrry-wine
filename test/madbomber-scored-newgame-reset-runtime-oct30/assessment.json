@@ -1,0 +1,83 @@
+{
+  "status": "bounded-unsuccessful",
+  "combinedScoredNewgameReset": "UNQUALIFIED",
+  "productionInvocations": 1,
+  "observed": [
+    "score 5",
+    "ordinary Game Over"
+  ],
+  "notObserved": [
+    "title/new-game score reset",
+    "fresh buckets after scored game",
+    "ordinary Quit"
+  ],
+  "runLimitSeconds": 150,
+  "runnerReportedSeconds": 150.0,
+  "supervisorElapsedSeconds": 150.33008839700003,
+  "exitInterpretation": "runner max-seconds limit; active guest thread remains in final log. Raw supervisor reason guest exited means Node exited, not ordinary guest Quit.",
+  "restartAttempt": "Enter inputs queued after production invocation ended; never sent to guest; final PNG absent. Original download error preserved; no retry.",
+  "scope": "historical pinned original Mad Bomber only; no completion/audio/current-main claims",
+  "runtimeSource": "72e7a30d6e36df896eb25007b6139d750e715720",
+  "buildSource": "30a2c3fb1b5c2bfa8a6b001d7394d5cf50df295d",
+  "wasmSHA256": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c",
+  "originalEXESHA256": "72ad26d11ddabf72c668b69eda0c7c1daa634f5cade631303ba4e05eb5f5cc09",
+  "startedAt": "2026-10-30T07:51:05.911271+00:00",
+  "finishedAt": "2026-10-30T07:53:36.241348+00:00",
+  "peakGuestGroupRSS": 280825856,
+  "captures": [
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/20261030T075105Z-madbomber-scored-reset/after-score.png",
+      "bytes": 300662,
+      "sha256": "6b775febd318484d4104f1bafb1d04406a20bee63f2d5a54b4957b69ace768af",
+      "inspection": "score 5, one bucket moved to left",
+      "reviewed": true
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/20261030T075105Z-madbomber-scored-reset/gameover-check.png",
+      "bytes": 283074,
+      "sha256": "5f4643c2180878816aada5f3c6470158bcb19e22d81ed790c264bc9fbf4c56d1",
+      "inspection": "score 5 and GAME OVER, no bucket",
+      "reviewed": true
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/20261030T075105Z-madbomber-scored-reset/reset100.png",
+      "bytes": 300844,
+      "sha256": "850d9863cdf775c6928383498b61799f093209baae46b6a41c22392d4a2e90f0",
+      "inspection": "score 5, one bucket",
+      "reviewed": true
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/20261030T075105Z-madbomber-scored-reset/reset20.png",
+      "bytes": 299427,
+      "sha256": "5293a2c4c31020082d03def4d60808bfebdc35c70906635d2e7396596a46d925",
+      "inspection": "score 0, fresh three buckets",
+      "reviewed": true
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/20261030T075105Z-madbomber-scored-reset/reset50.png",
+      "bytes": 299051,
+      "sha256": "a4bd647abbcecd87ec82dbe63e6d50170f5f9c4e23b0560bc6e62fda547e42ea",
+      "inspection": "score 0, two buckets; not a new-game reset",
+      "reviewed": true
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/20261030T075105Z-madbomber-scored-reset/reset80.png",
+      "bytes": 299359,
+      "sha256": "73e8bfa2bce5e53d90182afce5b4297de0cfc8307c7cfd09dbc6d3f96bda3f0f",
+      "inspection": "score 0, two buckets; not a new-game reset",
+      "reviewed": true
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/20261030T075105Z-madbomber-scored-reset/resumed.png",
+      "bytes": 301201,
+      "sha256": "dcdac19d3f0a6a9f33dfb8ff1115aba1ba54394b88229d1eb69d7e44f73a8e4a",
+      "inspection": "score 5, one bucket",
+      "reviewed": true
+    }
+  ],
+  "rawLog": {
+    "path": "/home/user/wine-assembly/scratch/runs/20261030T075105Z-madbomber-scored-reset/stdout.log",
+    "sha256": "907cc9aeec05d657e1e0938da16c33661de68fc536cfa42a0091705b2bcec0ca"
+  },
+  "recovery": "Retained packet ../runtime.tar.gz 9487608 bytes SHA256 e77cb5b768c4b07026250d815f264c590dcde12c4426500d1522bba84ece19d1. API chunks <=16384 bytes, remote hash verification; use reset-runtime.py against pinned standing runner. No new run/resume authorized by this receipt."
+}

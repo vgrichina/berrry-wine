@@ -1,0 +1,10 @@
+{
+  "id": "bx_s5dj8767",
+  "createdAt": "2026-10-30T07:49:04.255000+00:00",
+  "expiry": "2026-10-30T08:19:04.255Z",
+  "ttlSeconds": 1800,
+  "cutoff": "2026-10-30T08:09:04.255000+00:00",
+  "handback": "2026-10-30T08:12:04.255000+00:00",
+  "shutdown": "2026-10-30T08:14:04.255000+00:00",
+  "shutdownOwner": "worker explicit delegation snapshot-stop and verify"
+}
