@@ -1,9 +1,0 @@
-{
-  "routineCorrections": [
-    "New test Function evaluation initially retained bundler shebang; stripped shebang, no oracle changes.",
-    "Complete closure scan discovered missing tracked disasm.js/simd-ops.js and a full-line documentation require example; added measured tracked files and excluded documentation lines with regression.",
-    "Fresh isolated Git repository lacked author identity; used same local-only Wine Assembly Worker identity as review donor. No global/root config modified."
-  ],
-  "captureIncident": "Early combined instruction/evidence metadata read exceeded requested 8KiB excerpt size; remained below command128KiB/cumulative2MiB gates; later reads narrowed.",
-  "originalCandidateIncident": "Original113292552B overrun remains noncompliant; not relabeled by repair."
-}

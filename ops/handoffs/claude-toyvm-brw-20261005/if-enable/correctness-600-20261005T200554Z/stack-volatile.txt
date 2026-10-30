@@ -1,1 +1,0 @@
-PASS test-toyvm-volatile: 0006 from both arms; arena 96KB -> 2KB, 2 paragraph(s) promoted, 2947 scratch compiles

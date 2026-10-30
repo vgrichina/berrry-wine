@@ -138,6 +138,8 @@ class Backend:
         if op in (10,11):
             name=data.split(b'\0',1)[0];n=self.nodes[ino];child=n['names'].get(name)
             if child is None:raise OSError(errno.ENOENT,'unlink missing')
+            if op==10 and stat.S_ISDIR(self.nodes[child]['mode']):raise OSError(errno.EISDIR,'unlink directory')
+            if op==11 and not stat.S_ISDIR(self.nodes[child]['mode']):raise OSError(errno.ENOTDIR,'rmdir non-directory')
             if op==11 and self.nodes[child]['names']:raise OSError(errno.ENOTEMPTY,'directory not empty')
             del n['names'][name];self.nodes[child]['links']-=1;self.collect(child)
             return b''

@@ -1,0 +1,29 @@
+{
+  "status": "BLOCKED_FIRST_BEHAVIORAL_REJECTION",
+  "branch": "task/toyvm-accepted-namespace-repairs-combined-candidate-oct29",
+  "commit": null,
+  "remoteSHA": null,
+  "published": false,
+  "reason": "dispatch-pinned backend lacks rename-type guards; first retained rename-type fixture succeeds instead of EISDIR",
+  "candidateSHA256": "bb07cae2b018ac4123640af1d18c9ee666b89c048cf7ab9e27039d699989d72f",
+  "passing": {
+    "cycleOriginal": 14,
+    "cycleIndependent": 24,
+    "cycleOracle": 16,
+    "cycleMutants": 4,
+    "removalOriginal": 14,
+    "removalIndependent": 168,
+    "removalOracle": 12,
+    "removalMutants": 9
+  },
+  "renameTypePassed": false,
+  "interactionsReached": false,
+  "boxes": [],
+  "sourceBackup": "/tmp/toyvm-accepted-namespace-repairs-combined-candidate-oct29/retained-tested-candidate.py",
+  "evidence": "/tmp/toyvm-accepted-namespace-repairs-combined-candidate-oct29/repo/test/toyvm-accepted-namespace-repairs-combined-candidate-oct29",
+  "preservationLimitations": [
+    "No commit/push after behavioral rejection",
+    "Git skip-worktree hid backend change from git add --sparse; physical source and minimal diff retained",
+    "Cached whitespace check rejected verbatim test stdout trailing whitespace; evidence unchanged, no commit attempted"
+  ]
+}
