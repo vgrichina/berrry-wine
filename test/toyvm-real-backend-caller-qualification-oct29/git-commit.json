@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-real-backend-caller-qualification-oct29/repo",
+    "commit",
+    "-m",
+    "test: qualify ToyVM real caller with accepted FUSE backend"
+  ],
+  "cleanup": "owned descendants terminated; child reaped",
+  "cwd": "/tmp/toyvm-real-backend-caller-qualification-oct29/repo",
+  "exit": 0,
+  "peakGroupRSS": 14675968,
+  "reason": null,
+  "stderrBytes": 254,
+  "stdoutBytes": 2299,
+  "wall": 0.06641416694037616
+}

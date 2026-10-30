@@ -1,0 +1,69 @@
+Boat CLI
+
+Usage: boat [OPTIONS] [COMMAND]
+
+Commands:
+  onboard         Set this machine up: sign in, then only what the account still needs. Safe to re-run on a reinstall or a second machine
+  login           Sign in with a sandbox token, GitHub, Google, AgentID, or email
+  logout          Revoke this device's session and clear the stored token
+  feedback        Send feedback to the Boat team by email (5 per minute, 30 per day)
+  api-key         Manage API keys for SDKs and programmatic use
+  webhook         Manage Sandbox lifecycle webhooks
+  telemetry       Show the account's OpenTelemetry export: sandbox metrics and lifecycle events over OTLP
+  ci              CI on Boat VMs (`runs-on: boat`). Alone: setup steps, problems, 7-day stats and jobs
+  env             Manage named sandbox environments: repos, env vars, secret files, safety toggles
+  ai              Manage AI credentials: profiles, keys, custom APIs, the credentials proxy, usage, block
+  new             Create a new sandbox
+  rename          Rename a sandbox
+  org             Show or switch the organization wallet that new sandboxes bill to
+  info            Show details for one sandbox
+  list            List your sandboxes
+  extend          Extend or set how long a sandbox stays on
+  delete          Permanently delete a sandbox and all of its data
+  deletion        Inspect an asynchronous data deletion operation
+  stop            Stop a running sandbox and snapshot it for resume/fork. The data is kept 14 days; `boat snapshot <id> <name>` keeps it longer
+  share           Share an org sandbox with every member. If it holds your personal logins (GitHub token, model keys, secrets), they are wiped off it first; that wipe is one-way
+  unshare         Make an org sandbox private again: only you can use it. Teammates still see it and can stop it. Takes effect at once. Undo with `boat share`
+  recover         Power-cycle a sandbox that stopped responding. The disk is not touched
+  resume          Resume a stopped sandbox from its latest snapshot
+  prompt          Send a prompt to a coding agent (Claude Code, Codex, pi, OpenCode, Prime Agent, Kimi Code, Mistral Vibe) inside a sandbox
+  steer           Send a running turn a new message without stopping it. The agent takes it into account and keeps what it was doing
+  interrupt       Stop the agent running in a sandbox
+  events          Stream a sandbox's agent chat events (prompts, responses). A Sandbox that was never prompted returns nothing; use `boat info` for state
+  conversations   List a sandbox's conversations: id, last activity, prompt count, running, harness/model, last prompt. Pass an id to `prompt --resume` [aliases: convos]
+  limits          Show plan limits, the VM time included left, and the wallet balance
+  billing         Plan, plan limits and wallet of the account in scope (personal, or the org from `boat org switch` / `--org`)
+  wallet          The wallet in scope: dollars that pay overage, never the plan. Alone, it shows the wallet
+  usage           Show the machine time one sandbox has consumed, and what it costs
+  fork            Fork a sandbox from its latest snapshot
+  ssh             Open an SSH session into a sandbox, or run a command non-interactively
+  exec            Run a command in a sandbox over the Boat API (no SSH), optionally in the background
+  run             Run one command in a new sandbox, print its output, report its cost, and delete the sandbox. Exits with the command's exit code
+  push            Copy a local directory into a sandbox. In a git repository, only the files git tracks or does not ignore
+  history         List the commands run in a sandbox, or print the stored output of one. Works while the sandbox is stopped
+  ps              List the processes in a sandbox. A stopped sandbox shows its last stored sample
+  host            Expose a sandbox port on a stable HTTPS URL
+  desktop         Open the sandbox desktop URL
+  browser         Return a browser-only stream from an existing running sandbox
+  scp             Copy files to or from a sandbox over scp
+  forward         Forward a TCP port from a sandbox to your machine, or the other way with --reverse
+  dashboard       Open the Boat dashboard in a browser
+  status          Show API health, account, plan, and CLI configuration
+  data-retention  Show or enable delete-on-stop data retention
+  snapshots       List filesystem snapshots taken of your sandboxes
+  snapshot        Save a sandbox's state under a name, or inspect/download snapshots
+  self-update     Check for and install the latest CLI release for this channel
+  completions     Print a shell completion script (sandbox IDs included) for bash, zsh, fish, or powershell
+  help            Print this message or the help of the given subcommand(s)
+
+Options:
+      --api-url <API_URL>  [env: BOAT_API_URL=]
+      --org <ID_OR_NAME>   Run this command in an organization's billing scope. See `boat org list`. [env: BOAT_ORG=]
+      --json               Force machine-readable JSON/JSONL output
+      --no-update          Skip the automatic CLI update (also BOAT_NO_UPDATE=1) [env: BOAT_NO_UPDATE=]
+  -h, --help               Print help
+  -V, --version            Print version
+
+Docs: https://docs.boat.dev/cli-reference
+Programmatic use: https://docs.boat.dev/sdks/overview
+Environment (variables, secret files, repos): https://boat.dev/dashboard?tab=environment

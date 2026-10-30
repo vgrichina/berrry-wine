@@ -1,0 +1,16 @@
+Stop a running sandbox and snapshot it for resume/fork. The data is kept 14 days; `boat snapshot <id> <name>` keeps it longer
+
+Usage: boat stop [OPTIONS] [ID]
+
+Arguments:
+  [ID]  Sandbox ID, "current" or "self". Omit for this shell's current sandbox, or the sandbox you are inside.
+
+Options:
+      --api-url <API_URL>  [env: BOAT_API_URL=]
+      --force              Stop even if the sandbox cannot be snapshotted. Keeps the last completed snapshot; everything written since then is LOST. Only use this after a stop has already failed.
+      --org <ID_OR_NAME>   Run this command in an organization's billing scope. See `boat org list`. [env: BOAT_ORG=]
+      --status <STOP_ID>   Read an earlier stop by its id instead of stopping: pending, failing, completed or superseded.
+      --json               Force machine-readable JSON/JSONL output
+  -y, --yes                Accepted for scripts. A stop never asks for confirmation: the snapshot keeps the data for 14 days.
+      --no-update          Skip the automatic CLI update (also BOAT_NO_UPDATE=1) [env: BOAT_NO_UPDATE=]
+  -h, --help               Print help

@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-real-backend-caller-qualification-oct29/repo",
+    "ls-remote",
+    "--exit-code",
+    "origin",
+    "refs/heads/task/toyvm-real-backend-caller-qualification-oct29"
+  ],
+  "cleanup": "owned descendants terminated; child reaped",
+  "cwd": "/tmp/toyvm-real-backend-caller-qualification-oct29/repo",
+  "exit": 0,
+  "peakGroupRSS": 15482880,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 103,
+  "wall": 1.657344063045457
+}

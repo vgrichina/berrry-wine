@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_2qc29adz",
+    "--timeout",
+    "30",
+    "--json",
+    "--",
+    "python3 -c 'import os,pathlib,platform,importlib.util,json,ctypes.util; print(json.dumps(dict(cwd=os.getcwd(),home=str(pathlib.Path.home()),arch=platform.machine(),fuseDevice=pathlib.Path(\"/dev/fuse\").exists(),fuseAccess=os.access(\"/dev/fuse\",os.R_OK|os.W_OK),fuseLibrary=ctypes.util.find_library(\"fuse\"),fusePython=importlib.util.find_spec(\"fuse\") is not None,MemAvailable=[x for x in pathlib.Path(\"/proc/meminfo\").read_text().splitlines() if x.startswith(\"MemAvailable\")],disk=list(os.statvfs(\"/tmp\")),device=os.stat(\"/tmp\").st_dev)))'"
+  ],
+  "cleanup": "owned descendants terminated; child reaped",
+  "cwd": "/tmp/toyvm-real-backend-caller-qualification-oct29",
+  "exit": 0,
+  "peakGroupRSS": 5857280,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 661,
+  "wall": 0.1417705120984465
+}

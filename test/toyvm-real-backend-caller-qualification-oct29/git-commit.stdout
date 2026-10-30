@@ -1,0 +1,25 @@
+[task/toyvm-real-backend-caller-qualification-oct29 c83d37537d] test: qualify ToyVM real caller with accepted FUSE backend
+ 23 files changed, 705 insertions(+)
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/REPORT.txt
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/admission-through-runtime.jsonl
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/artifact-manifest.json
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/baseline.json
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/boat-create.stdout
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/boat-final-info.stdout
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/boat-fuse-helper.stdout
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/boat-location-capability.stdout
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/boat-stop-status.stdout
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/cwd-controls.json
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/launch-configuration.json
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/lifecycle.json
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/local_guard.py
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/pins.json
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/positive.cli.stderr
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/positive.cli.stdout
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/quota-rejection.cli.stderr
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/quota-rejection.cli.stdout
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/real-cli-qualification.stderr
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/real-cli-qualification.stdout
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/remote-result.json
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/remote_test.py
+ create mode 100644 test/toyvm-real-backend-caller-qualification-oct29/retained-result-validation.json

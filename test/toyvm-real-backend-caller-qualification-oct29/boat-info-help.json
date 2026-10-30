@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "info",
+    "--help"
+  ],
+  "cleanup": "owned descendants terminated; child reaped",
+  "cwd": "/tmp/toyvm-real-backend-caller-qualification-oct29",
+  "exit": 0,
+  "peakGroupRSS": 0,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 571,
+  "wall": 0.012436108896508813
+}

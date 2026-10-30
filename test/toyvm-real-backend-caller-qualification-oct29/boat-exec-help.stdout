@@ -1,0 +1,21 @@
+Run a command in a sandbox over the Boat API (no SSH), optionally in the background
+
+Usage: boat exec [OPTIONS] [ID] [COMMAND]...
+
+Arguments:
+  [ID]          Sandbox ID, "current" or "self". Omit for this shell's current sandbox, or the sandbox you are inside.
+  [COMMAND]...  Command to run.
+
+Options:
+      --api-url <API_URL>  [env: BOAT_API_URL=]
+      --cwd <DIR>          Working directory, relative to the sandbox work directory.
+      --org <ID_OR_NAME>   Run this command in an organization's billing scope. See `boat org list`. [env: BOAT_ORG=]
+      --timeout <SECS>     Timeout in seconds. Default: 30. 0 = no limit. Above 600 or 0, the output streams live and the command survives network cuts.
+      --detach             Run in the background and print the process id. Output goes to a log file on the sandbox.
+      --json               Force machine-readable JSON/JSONL output
+      --no-update          Skip the automatic CLI update (also BOAT_NO_UPDATE=1) [env: BOAT_NO_UPDATE=]
+      --stream             Print stdout/stderr as the command writes them instead of when it ends. Same exit code. With --json, one JSON frame per line.
+      --status <PID>       Show status and logs of a background process started with --detach.
+      --kill <PID>         Stop a background process started with --detach, and every process it started.
+      --attach <PID>       Print the output of a background process started with --detach as it writes it, from its start, until it ends. Same exit code.
+  -h, --help               Print help

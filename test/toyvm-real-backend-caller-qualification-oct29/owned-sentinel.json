@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/usr/bin/pwd"
+  ],
+  "cleanup": "owned descendants terminated; child reaped",
+  "cwd": "/tmp/toyvm-real-backend-caller-qualification-oct29",
+  "exit": 0,
+  "peakGroupRSS": 0,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 51,
+  "wall": 0.01426289789378643
+}

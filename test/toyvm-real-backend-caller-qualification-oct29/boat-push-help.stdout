@@ -1,0 +1,15 @@
+Copy a local directory into a sandbox. In a git repository, only the files git tracks or does not ignore
+
+Usage: boat push [OPTIONS] <ID> <DIR>
+
+Arguments:
+  <ID>   Sandbox ID, or "current".
+  <DIR>  Local directory to copy.
+
+Options:
+      --api-url <API_URL>  [env: BOAT_API_URL=]
+      --to <PATH>          Directory on the sandbox. Default: /home/user/<dir name>.
+      --org <ID_OR_NAME>   Run this command in an organization's billing scope. See `boat org list`. [env: BOAT_ORG=]
+      --json               Force machine-readable JSON/JSONL output
+      --no-update          Skip the automatic CLI update (also BOAT_NO_UPDATE=1) [env: BOAT_NO_UPDATE=]
+  -h, --help               Print help

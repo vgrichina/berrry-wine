@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_2qc29adz",
+    "--cwd",
+    "/home/user",
+    "--timeout",
+    "30",
+    "--json",
+    "--",
+    "python3 -c 'import pathlib,os,json; p=pathlib.Path(\"/usr/bin/fusermount3\"); print(json.dumps(dict(fusermount3=p.exists(),executable=os.access(p,os.X_OK),selfMounts=pathlib.Path(\"/proc/self/mountinfo\").read_text().count(\"toyvm-accounting\"),landlock=pathlib.Path(\"/sys/kernel/security\").exists())))'"
+  ],
+  "cleanup": "owned descendants terminated; child reaped",
+  "cwd": "/tmp/toyvm-real-backend-caller-qualification-oct29",
+  "exit": 0,
+  "peakGroupRSS": 5603328,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 406,
+  "wall": 0.172091563930735
+}

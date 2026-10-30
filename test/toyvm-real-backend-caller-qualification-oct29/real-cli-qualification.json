@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_2qc29adz",
+    "--cwd",
+    "/tmp/toyvm-real-backend-caller-qualification-oct29",
+    "--timeout",
+    "110",
+    "--json",
+    "--",
+    "python3 -B /tmp/toyvm-real-backend-caller-qualification-oct29/repo/test/toyvm-real-backend-caller-qualification-oct29/remote_test.py"
+  ],
+  "cleanup": "owned descendants terminated; child reaped",
+  "cwd": "/tmp/toyvm-real-backend-caller-qualification-oct29",
+  "exit": 0,
+  "peakGroupRSS": 5853184,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 8768,
+  "wall": 0.433662598952651
+}

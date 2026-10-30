@@ -1,0 +1,27 @@
+Create a new sandbox
+
+Usage: boat new [OPTIONS]
+
+Options:
+      --api-url <API_URL>               [env: BOAT_API_URL=]
+      --ttl <TTL>                       Lifetime in seconds before the sandbox is eligible for cleanup.
+      --no-auto-stop                    Disable automatic stop. The Sandbox runs until you stop it.
+      --org <ID_OR_NAME>                Run this command in an organization's billing scope. See `boat org list`. [env: BOAT_ORG=]
+  -e, --env <KEY=VALUE>                 Per-sandbox environment variable. Repeat for multiple values. Overrides dashboard variables with the same name.
+      --json                            Force machine-readable JSON/JSONL output
+      --no-env                          Create a sandbox with none of your account's stored secrets, for sandboxes you give to your own users. SSH, desktop, snapshots, and public URLs still work.
+      --no-update                       Skip the automatic CLI update (also BOAT_NO_UPDATE=1) [env: BOAT_NO_UPDATE=]
+      --no-snapshots                    Never snapshot this sandbox: no background capture on it, and stopping it erases it. It cannot be resumed, forked, or saved to a saved snapshot.
+      --no-monitoring                   Monitoring off: Boat keeps no command or process output, process list or CPU/RAM samples for this sandbox. Live output of a running command still works.
+      --fail-fast                       Create only if a machine of this type is ready right now. Answers within about 1.5 s; when none is ready it fails with no_ready_machine and nothing is created, billed, or counted against your start limits.
+      --environment <NAME>              Named environment to start from (repos, secrets, credentials). Defaults to your default environment ('base').
+      --type <TYPE>                     Machine size: small (2 vCPU, 4GB, half rate), default (4 vCPU, 8GB), large (8 vCPU, 16GB, 2x rate), or xlarge (16 vCPU, 32GB, $0.20/hour, $100+ plan). Default: default.
+      --setup-file <PATH>               Shell script file to run on the sandbox after it is ready (max 64KB). Runs in the background; watch `setupStatus` in boat info for the result.
+      --from <NAME|CODE>                Create the sandbox from a saved snapshot (saved with `boat snapshot <id> <name>`) or a share code (bsh_...).
+      --count <N>                       Create N sandboxes from --from in one request (1-1000). Prints every sandbox id and returns without waiting for each to be ready.
+      --personal                        Bill this sandbox to your personal account even when an org wallet is active (`boat org switch`).
+      --name <NAME>                     Name the sandbox (up to 120 characters). Change it later with `boat rename`.
+      --visibility <VISIBILITY>         For an org sandbox: private (only you) or shared (every member). Set before the sandbox gets a machine. Default: the org's default-visibility. [possible values: private, shared]
+      --host <PORT[:public]>            Host a port on an HTTPS URL as part of the create, like `boat host`. Private (token in the URL) unless you add :public. Repeat for more ports. The URLs print with the sandbox id.
+      --file <SANDBOX_PATH=LOCAL_FILE>  Write a local text file on the sandbox before it reports ready (and before --setup-file runs). SANDBOX_PATH is under /home/user or /tmp; relative paths start in /home/user. Repeat for more files, 256KB in total.
+  -h, --help                            Print help

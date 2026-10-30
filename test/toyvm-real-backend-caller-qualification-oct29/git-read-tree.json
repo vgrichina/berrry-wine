@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-real-backend-caller-qualification-oct29/repo",
+    "read-tree",
+    "5a88ca099b962e946160afd2d4d71a950bf46db3"
+  ],
+  "cleanup": "owned descendants terminated; child reaped",
+  "cwd": "/tmp/toyvm-real-backend-caller-qualification-oct29/repo",
+  "exit": 0,
+  "peakGroupRSS": 7864320,
+  "reason": null,
+  "stderrBytes": 127,
+  "stdoutBytes": 0,
+  "wall": 0.04452658398076892
+}
