@@ -1,6 +1,0 @@
-{
-  "initialObservation": "16 short queries ended before actual supported stop completion; runtime supervisor raised verification timeout",
-  "subsequentRead": "Same stop completed; no second stop, no resume",
-  "snapshotCompletedAt": "2026-10-30T13:49:17.641Z",
-  "stoppedAt": "2026-10-30T13:49:17.678Z"
-}

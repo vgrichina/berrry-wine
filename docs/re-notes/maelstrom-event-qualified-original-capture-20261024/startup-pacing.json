@@ -1,5 +1,0 @@
-{
-  "returncode": 0,
-  "stdout": "{\"passStartupPacing\": true, \"actual\": 1000, \"expected\": 1000}\n",
-  "stderr": ""
-}

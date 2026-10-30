@@ -1,6 +1,0 @@
-{
-  "test/test-d3d9-clear-fresh-target-independent.js": "4b550a8b7966228cddb3957c789803835c1df05bc128c45c5fac14a3b7e86408",
-  "test/test-d3d9-clear-independent-review.js": "b164d9cc75e9a44f0175acecd810264c5e047407ce76ae1277f6c92eb0e37498",
-  "test/test-d3d9-clear-depth-cache.js": "62c1945840235aeff1b02e912b1c704a9cbbffea977b3fe7564d76a961cb02e6",
-  "test/test-d3d9-clear-contract.js": "f17716d038ad6ce7473dee79226b9928ce221dbd39200c6fc70d27c113b693f7"
-}
