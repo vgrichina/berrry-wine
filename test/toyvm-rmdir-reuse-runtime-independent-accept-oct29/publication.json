@@ -1,0 +1,15 @@
+{
+  "outcome": "SCOPED_RETAINED_RUNTIME_ACCEPTED",
+  "commit": "618e1e62c30cfd9d68951eb57ad04fdcd81b0f68",
+  "remoteRef": "refs/heads/task/toyvm-rmdir-reuse-runtime-independent-accept-oct29",
+  "remoteSHA": "618e1e62c30cfd9d68951eb57ad04fdcd81b0f68",
+  "remoteVerified": true,
+  "canonical": "/tmp/toyvm-rmdir-reuse-runtime-independent-accept-oct29/repo/test/toyvm-rmdir-reuse-runtime-independent-accept-oct29/canonical.json",
+  "pushReceipt": "/tmp/toyvm-rmdir-reuse-runtime-independent-accept-oct29/e/push.json",
+  "remoteReceipt": "/tmp/toyvm-rmdir-reuse-runtime-independent-accept-oct29/e/remote-verify.json",
+  "coordinatorNote": "/tmp/toyvm-rmdir-reuse-runtime-independent-accept-oct29/repo/test/toyvm-rmdir-reuse-runtime-independent-accept-oct29/coordinator-note.txt",
+  "boardOwner": "coordinator",
+  "newRuntimeInvocations": 0,
+  "remainingGate": "coordinator root messageboard append",
+  "closeoutFiles": "This publication receipt and coordinator note are post-commit task-owned handoff evidence."
+}
