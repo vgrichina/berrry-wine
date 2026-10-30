@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--no-update",
+    "--json",
+    "resume",
+    "bx_w72496sc",
+    "--ttl",
+    "1800",
+    "--no-env"
+  ],
+  "cwd": "/tmp/enigma-original-menu-render-runtime-oct30/repo",
+  "exit": 1,
+  "elapsed": 0.05137649201788008,
+  "admission": {
+    "at": 1793345112.8571506,
+    "free": 3369963520,
+    "MemAvailable": 4695494656,
+    "allocated": 52801536,
+    "aggregateRemaining": 200183808,
+    "memoryPolicy": "observational only; owner 2026-10-30",
+    "accounting": "fixed roots at verified exclusive boundary plus current owned outputs and launcher logs",
+    "checks": {
+      "disk": true,
+      "allocation": true
+    }
+  },
+  "stdoutBytes": 119,
+  "stderrBytes": 0
+}

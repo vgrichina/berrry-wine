@@ -1,0 +1,8 @@
+{
+  "id": "bx_w72496sc",
+  "armedEpoch": 1793345112.855401,
+  "absoluteCutoffEpoch": 1793346312.855401,
+  "handbackEpoch": 1793346072.855401,
+  "shutdownEpoch": 1793346192.855401,
+  "shutdownDelegated": true
+}

@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "-e",
+    "console.log(JSON.stringify({node:process.execPath,limits:require('fs').readFileSync('/proc/self/limits','utf8'),heap:require('v8').getHeapStatistics().heap_size_limit}))"
+  ],
+  "cwd": "/tmp/enigma-original-menu-render-runtime-oct30",
+  "exit": 0,
+  "elapsed": 0.13145652483217418,
+  "admission": {
+    "at": 1793345056.7014666,
+    "free": 3371331584,
+    "MemAvailable": 4482117632,
+    "allocated": 52043776,
+    "aggregateRemaining": 200183808,
+    "memoryPolicy": "observational only; owner 2026-10-30",
+    "accounting": "fixed roots at verified exclusive boundary plus current owned outputs and launcher logs",
+    "checks": {
+      "disk": true,
+      "allocation": true
+    }
+  },
+  "stdoutBytes": 1394,
+  "stderrBytes": 0
+}

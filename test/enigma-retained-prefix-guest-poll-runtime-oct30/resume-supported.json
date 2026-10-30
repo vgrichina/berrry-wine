@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--no-update",
+    "resume",
+    "--help"
+  ],
+  "cwd": "/tmp/enigma-original-menu-render-runtime-oct30",
+  "exit": 0,
+  "elapsed": 0.04424852691590786,
+  "admission": {
+    "at": 1793345056.9810655,
+    "free": 3370700800,
+    "MemAvailable": 4547379200,
+    "allocated": 52674560,
+    "aggregateRemaining": 200183808,
+    "memoryPolicy": "observational only; owner 2026-10-30",
+    "accounting": "fixed roots at verified exclusive boundary plus current owned outputs and launcher logs",
+    "checks": {
+      "disk": true,
+      "allocation": true
+    }
+  },
+  "stdoutBytes": 1985,
+  "stderrBytes": 0
+}

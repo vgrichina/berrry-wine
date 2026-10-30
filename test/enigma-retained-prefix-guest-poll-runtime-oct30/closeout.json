@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-30T07:25:12.909801+00:00",
+  "id": "bx_w72496sc",
+  "stop": {
+    "exit": 1,
+    "stdout": "{\"code\":\"stop_failed\",\"error\":\"Sandbox is archived, so it cannot be stopped.\",\"event\":\"error\",\"status\":400}\n",
+    "stderr": ""
+  },
+  "info": {
+    "exit": 0,
+    "stdout": "{\"sandbox\":{\"access\":\"owner\",\"archiveAfter\":null,\"billingMultiplier\":1,\"createdAt\":\"2026-10-30T07:11:18.504Z\",\"createdBy\":\"vgrichina\",\"createdById\":\"sandbox_23337a3f0dc2ab057f51992768a51ce6\",\"dataExpiredAt\":null,\"degradedSince\":null,\"desktopAvailable\":true,\"desktopUrl\":null,\"environment\":\"base\",\"environmentVersion\":1,\"error\":null,\"health\":\"ok\",\"healthReason\":null,\"holdsCreatorLogins\":false,\"hydrated\":true,\"hydratedAt\":null,\"hydration\":null,\"id\":\"bx_w72496sc\",\"ip\":null,\"labels\":{},\"lastReboot\":null,\"lastSnapshotAttemptAt\":\"2026-10-30T07:14:37.752Z\",\"lastSnapshotStatus\":\"completed\",\"machineProvider\":null,\"memoryGB\":8,\"monitoring\":true,\"name\":\"enigma-small-transfer-oct30\",\"setupError\":null,\"setupStatus\":null,\"snapshotAvailable\":true,\"snapshotCompletedAt\":\"2026-10-30T07:14:38.646Z\",\"snapshotVerifiedAt\":\"2026-10-30T07:14:38.646Z\",\"snapshots\":true,\"sshEndpoint\":null,\"state\":\"stopped\",\"stop\":{\"endedAt\":\"2026-10-30T07:14:38.746Z\",\"error\":null,\"forced\":false,\"id\":\"stop_8c45d479a9bcee7e\",\"lastAttemptAt\":\"2026-10-30T07:14:38.746Z\",\"requestedAt\":null,\"status\":\"completed\"},\"stoppedAt\":\"2026-10-30T07:14:38.704Z\",\"subdomain\":\"box-node-784d101bbf2b6296\",\"team\":null,\"ttlSeconds\":1800,\"type\":\"default\",\"updatedAt\":\"2026-10-30T07:14:38.703Z\",\"url\":null,\"vcpu\":4,\"visibility\":null,\"wipePendingUntilRestart\":false}}\n",
+    "stderr": ""
+  },
+  "verifiedStopped": true,
+  "snapshotVerifiedAt": "2026-10-30T07:14:38.646Z",
+  "stoppedAt": "2026-10-30T07:14:38.704Z"
+}

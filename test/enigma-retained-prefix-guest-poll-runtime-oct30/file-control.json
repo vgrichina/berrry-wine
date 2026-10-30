@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "from pathlib import Path;p=Path('retained-prefix/raw/disposable');p.write_bytes(b'x'*2097152);assert p.stat().st_size==2097152;p.unlink()"
+  ],
+  "cwd": "/tmp/enigma-original-menu-render-runtime-oct30",
+  "exit": 0,
+  "elapsed": 0.04231362999416888,
+  "admission": {
+    "at": 1793345056.9236388,
+    "free": 3371307008,
+    "MemAvailable": 4538556416,
+    "allocated": 52068352,
+    "aggregateRemaining": 200183808,
+    "memoryPolicy": "observational only; owner 2026-10-30",
+    "accounting": "fixed roots at verified exclusive boundary plus current owned outputs and launcher logs",
+    "checks": {
+      "disk": true,
+      "allocation": true
+    }
+  },
+  "stdoutBytes": 0,
+  "stderrBytes": 0
+}

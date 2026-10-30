@@ -1,0 +1,27 @@
+[
+  {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/retained-prefix/raw/overflow-control.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/retained-prefix/raw/overflow-control.stdout",
+    "bytes": 600000,
+    "sha256": "34e95fe8877d07873716a3f575a4ea908b2e776b18e0b5122d33f7a93ff012b4"
+  },
+  {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/retained-prefix/raw/preflight-terminal.log",
+    "bytes": 9670,
+    "sha256": "3b80ffce99c4f854a257d2107cdd8a5780b12e1c69bb0049619bf8c5daad5e26"
+  },
+  {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/retained-prefix/raw/publication-terminal.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/retained-prefix/raw/runtime-terminal.log",
+    "bytes": 280,
+    "sha256": "a1b52e7275acaeca41940b0e8705a6dd7f7d4212d6620c1ffabb4a684b52fe65"
+  }
+]

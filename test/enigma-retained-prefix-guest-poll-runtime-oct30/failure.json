@@ -1,0 +1,4 @@
+{
+  "at": "2026-10-30T07:25:12.909579+00:00",
+  "error": "AssertionError(('first failed operation', '0002-resume', 1, '{\"code\":\"api_key_action_forbidden\",\"error\":\"This API key cannot perform sandbox.resume.\",\"event\":\"error\",\"status\":403}\\n'))"
+}
