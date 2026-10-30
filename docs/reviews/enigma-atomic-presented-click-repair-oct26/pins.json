@@ -1,8 +1,0 @@
-{
-  "tools/enigma-presented-menu-controller.cjs": "b405130b6189e6a6c4115720c40464f45548be7613e11c48f0311c0c27d5bed5",
-  "test/test-enigma-presented-menu-controller.cjs": "47f5a32cad9c408970ead76f9989a68a8c29431385ca0adbbc78cbbc956d904c",
-  "test/fixtures/enigma-presented-menu-contract.json": "c038866f8cc3a779ae9c8c16b57531a310872ba056f58140118b4f27c11c8037",
-  "docs/reviews/enigma-presented-controller-independent-accept-oct26/independent.cjs": "a04f1938afab1743fdb02a2872567542f7530ef0ff5c6720649adcfd44d6706b",
-  "docs/reviews/enigma-presented-controller-independent-accept-oct26/runner-slices.json": "ec4ea0f309d0e05b736ab4aeb97ad6d9aaed812948aa12135b5474c997709c6f",
-  "docs/reviews/enigma-presented-controller-independent-accept-oct26/source-checkpoint.json": "302f863c7e63979c8504752ba328e098a750344776146d517130e0bde600418f"
-}

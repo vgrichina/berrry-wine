@@ -1,9 +1,0 @@
-{
-  "tools/toyvm/bundle-browser.js": "e855cfb97558d3070fbc33cfeee8fbc11821edc80b39881ee104a9bd3603690f",
-  "test/test-toyvm-bundle-lexical-repair.js": "6dfcbbc286b03c10cfb601336324d9c93c74d45ae9dac40bb60ab00babc33830",
-  "test/test-toyvm-bundle-lexical-independent-oct25.js": "31f1f93997577c624071c0172a0357258bf2429f37fe7ce102ed323330b1580a",
-  "tools/toyvm/live.js": "a65ed5136c1bf83a14b45b2d925ff56ee50429cee866b57d6d03e35838c60bec",
-  "tools/toyvm/dos.js": "eb60e2775196edd80113836830a36482ac50a1d425f3e505d09c4bac68b0f4bc",
-  "docs/dos-corpus/live/toyvm-bundle.js": "881080a4598991119cd11c0dd1daf71b45d0c33198d70abc389b93a7a97a2c99",
-  "docs/dos-corpus/live/toyvm-jit-bundle.js": "149c92ffcb33c5983cb5f6cc0105801543f661f0dda312cc2fd363e0803f327e"
-}

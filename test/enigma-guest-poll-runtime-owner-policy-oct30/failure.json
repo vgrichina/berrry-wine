@@ -1,4 +1,0 @@
-{
-  "at": "2026-10-30T07:03:55.102402+00:00",
-  "error": "AssertionError(('first failed operation', 'transfer-000', 126, '{\"commandId\":\"cmd_mosv5pikihre\",\"cwd\":\".\",\"exitCode\":126,\"finishedAt\":\"2026-10-30T07:03:55.093Z\",\"launcherFailed\":false,\"noticedMs\":46,\"oomKilled\":false,\"signal\":null,\"startMs\":46,\"startedAt\":\"2026-10-30T07:03:55.044Z\",\"stderr\":\"ascii-exec-spare: line 1: /usr/bin/bash: Argument list too long\\\\nascii-'))"
-}

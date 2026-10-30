@@ -1,1 +1,0 @@
-{"verdict":"PASS","independentCases":9,"realWasm":0,"controls":["inherited disabled options","revoked opaque arguments","detached methods","explicit enabled pin reads","invalid config before pins","primitive exception identity","no reads after finish","closed identity never revives"]}
