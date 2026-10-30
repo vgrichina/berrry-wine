@@ -1,2 +1,0 @@
-PASS exact fixture boundary: script/symlink rejected without sentinel; explicit ELF checked without invocation
-PASS Git identity subprocess DATA=512MiB both calls; Node limits unchanged
