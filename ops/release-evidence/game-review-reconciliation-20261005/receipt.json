@@ -1,8 +1,0 @@
-{
-  "at": "2026-10-05T14:32:38.884Z",
-  "run": "scratch/runs/20261005-snood-restored-gameplay",
-  "resultBeforeSha256": "87f8132c97371cb95f354713ea21964ed1894de2c8448a7f2209cf690714011a",
-  "resultAfterSha256": "c597874a4cee6fd66a72ffe594dceca9f0a8f1024da1cd5309bc2e319ebd1aa4",
-  "scope": "Only Snood reviewer metadata; other artifact bytes unchanged. Two task blocks changed under exclusive directory lock. Main TODOS lacks these local task records, so commit preserves exact deltas rather than staging inherited ledger.",
-  "validation": "Accepted actual root review; all artifact hashes verified, only result hash updated; no runtime"
-}

@@ -1,9 +1,0 @@
-{
-  "status": "PASS",
-  "isolatedLimit": 32,
-  "capturedAndCharged": 32,
-  "failure": "capture guard",
-  "cleanupVerified": true,
-  "sentinelAbsent": true,
-  "realHistoryReset": false
-}
