@@ -1,0 +1,125 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvmr/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--rename-evidence",
+    "16",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvmr/cancellation-receipt.json",
+    "--work",
+    "/tmp/tvmr/work",
+    "--live-limit",
+    "262144",
+    "--write-limit",
+    "32768",
+    "--file-limit",
+    "32768",
+    "--rss-limit",
+    "67108864",
+    "--cpu-limit",
+    "10",
+    "--wall-limit",
+    "20",
+    "--output-limit",
+    "8192",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os, sys, json, errno, hashlib, stat\nroot=sys.argv[1]\nassert os.path.isabs(root)\ndef snapshot():\n    rows=[]\n    for base,dirs,files in os.walk(root):\n        for name in ['']+sorted(files):\n            p=os.path.join(base,name) if name else base\n            s=os.stat(p)\n            data=None\n            if stat.S_ISREG(s.st_mode):\n                with open(p,'rb') as f:data=f.read().hex()\n            rows.append([os.path.relpath(p,root),s.st_ino,s.st_mode,s.st_nlink,s.st_size,data])\n    return sorted(rows)\nfor d in ['dir','tree','tree/child']:\n    os.mkdir(root+'/'+d)\nfor f,data in [('file',b'file-original'),('tree/child/leaf',b'leaf-original')]:\n    with open(root+'/'+f,'wb') as out:out.write(data)\ninitial=snapshot()\nprint(json.dumps(dict(event='initial',tree=initial)),flush=True)\ncases=[('file-to-dir','file','dir',errno.EISDIR),\n       ('dir-to-file','dir','file',errno.ENOTDIR),\n       ('absent-parent','file','missing/new',errno.ENOENT),\n       ('nondirectory-parent','file','file/new',errno.ENOTDIR),\n       ('descendant-cycle','tree','tree/child/new',errno.EINVAL),\n       ('same-path','file','file',0)]\nfor label,src,dst,expected in cases:\n    before=snapshot();actual=0\n    try:os.rename(root+'/'+src,root+'/'+dst)\n    except OSError as e:actual=e.errno\n    after=snapshot()\n    result=dict(event='case',name=label,source=src,destination=dst,expected=expected,actual=actual,\n                unchanged=before==after,treeSHA256=hashlib.sha256(json.dumps(after).encode()).hexdigest())\n    print(json.dumps(result),flush=True)\n    if actual!=expected or before!=after:\n        print(json.dumps(dict(event='FIRST_UNEXPECTED',before=before,after=after)),flush=True)\n        raise SystemExit(1)\nassert snapshot()==initial\nsrc=root+'/file';dst=root+'/dir/moved,file'\nparents=dict(sourceParent=os.stat(root).st_ino,destinationParent=os.stat(root+'/dir').st_ino)\nbefore=snapshot();expected=[list(row) for row in before]\nfor row in expected:\n    if row[0]=='file':row[0]='dir/moved,file'\nos.rename(src,dst)\nafter=snapshot()\nresult=dict(event='valid-cross-parent',source='file',destination='dir/moved,file',parents=parents,tree=after,expectedTree=sorted(expected),correct=after==sorted(expected))\nprint(json.dumps(result),flush=True)\nassert result['correct'] and parents['sourceParent']!=parents['destinationParent']\nprint('MOUNTED_RENAME_GUARDS_COMPLETED',flush=True)\n",
+    "/tmp/tvmr/work/domain"
+  ],
+  "cwd": "/tmp/tvmr/repo",
+  "exit": 0,
+  "stderr": "",
+  "wall": 0.16022093899999845,
+  "groupPeakRSS": 52690944,
+  "mountOwnership": [
+    "123 29 0:52 / /tmp/tvmr/work/domain rw,nosuid,nodev,relatime shared:217 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+  ],
+  "report": {
+    "accepted": true,
+    "accountingAccepted": true,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.086131,
+      "exit": 0,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": null,
+        "fileLimit": 32768,
+        "inodes": 6,
+        "live": 32768,
+        "liveLimit": 262144,
+        "openHandles": 0,
+        "operations": 1216,
+        "peak": 32768,
+        "renameEvidence": {
+          "callbackCount": 1,
+          "countSaturated": false,
+          "limit": 16,
+          "records": [
+            {
+              "callbackCount": 1,
+              "errno": 0,
+              "inode": 1,
+              "opcode": 12,
+              "unique": 2162
+            }
+          ]
+        },
+        "writeLimit": 32768,
+        "written": 26
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "eyJldmVudCI6ICJpbml0aWFsIiwgInRyZWUiOiBbWyIuIiwgMSwgMTY4MzIsIDEsIDAsIG51bGxdLCBbImRpciIsIDIsIDE2ODc3LCAxLCAwLCBudWxsXSwgWyJmaWxlIiwgNSwgMzMxODgsIDEsIDEzLCAiNjY2OTZjNjUyZDZmNzI2OTY3Njk2ZTYxNmMiXSwgWyJ0cmVlIiwgMywgMTY4NzcsIDEsIDAsIG51bGxdLCBbInRyZWUvY2hpbGQiLCA0LCAxNjg3NywgMSwgMCwgbnVsbF0sIFsidHJlZS9jaGlsZC9sZWFmIiwgNiwgMzMxODgsIDEsIDEzLCAiNmM2NTYxNjYyZDZmNzI2OTY3Njk2ZTYxNmMiXV19CnsiZXZlbnQiOiAiY2FzZSIsICJuYW1lIjogImZpbGUtdG8tZGlyIiwgInNvdXJjZSI6ICJmaWxlIiwgImRlc3RpbmF0aW9uIjogImRpciIsICJleHBlY3RlZCI6IDIxLCAiYWN0dWFsIjogMjEsICJ1bmNoYW5nZWQiOiB0cnVlLCAidHJlZVNIQTI1NiI6ICI3YmI5MzAwZjEwNzhkYTA2ODk4MWNhY2Y3NDZmM2VhMWZhMTJkN2RlNDBhNWE1MGUyZjAxYmMzZjFlZjY4NmM5In0KeyJldmVudCI6ICJjYXNlIiwgIm5hbWUiOiAiZGlyLXRvLWZpbGUiLCAic291cmNlIjogImRpciIsICJkZXN0aW5hdGlvbiI6ICJmaWxlIiwgImV4cGVjdGVkIjogMjAsICJhY3R1YWwiOiAyMCwgInVuY2hhbmdlZCI6IHRydWUsICJ0cmVlU0hBMjU2IjogIjdiYjkzMDBmMTA3OGRhMDY4OTgxY2FjZjc0NmYzZWExZmExMmQ3ZGU0MGE1YTUwZTJmMDFiYzNmMWVmNjg2YzkifQp7ImV2ZW50IjogImNhc2UiLCAibmFtZSI6ICJhYnNlbnQtcGFyZW50IiwgInNvdXJjZSI6ICJmaWxlIiwgImRlc3RpbmF0aW9uIjogIm1pc3NpbmcvbmV3IiwgImV4cGVjdGVkIjogMiwgImFjdHVhbCI6IDIsICJ1bmNoYW5nZWQiOiB0cnVlLCAidHJlZVNIQTI1NiI6ICI3YmI5MzAwZjEwNzhkYTA2ODk4MWNhY2Y3NDZmM2VhMWZhMTJkN2RlNDBhNWE1MGUyZjAxYmMzZjFlZjY4NmM5In0KeyJldmVudCI6ICJjYXNlIiwgIm5hbWUiOiAibm9uZGlyZWN0b3J5LXBhcmVudCIsICJzb3VyY2UiOiAiZmlsZSIsICJkZXN0aW5hdGlvbiI6ICJmaWxlL25ldyIsICJleHBlY3RlZCI6IDIwLCAiYWN0dWFsIjogMjAsICJ1bmNoYW5nZWQiOiB0cnVlLCAidHJlZVNIQTI1NiI6ICI3YmI5MzAwZjEwNzhkYTA2ODk4MWNhY2Y3NDZmM2VhMWZhMTJkN2RlNDBhNWE1MGUyZjAxYmMzZjFlZjY4NmM5In0KeyJldmVudCI6ICJjYXNlIiwgIm5hbWUiOiAiZGVzY2VuZGFudC1jeWNsZSIsICJzb3VyY2UiOiAidHJlZSIsICJkZXN0aW5hdGlvbiI6ICJ0cmVlL2NoaWxkL25ldyIsICJleHBlY3RlZCI6IDIyLCAiYWN0dWFsIjogMjIsICJ1bmNoYW5nZWQiOiB0cnVlLCAidHJlZVNIQTI1NiI6ICI3YmI5MzAwZjEwNzhkYTA2ODk4MWNhY2Y3NDZmM2VhMWZhMTJkN2RlNDBhNWE1MGUyZjAxYmMzZjFlZjY4NmM5In0KeyJldmVudCI6ICJjYXNlIiwgIm5hbWUiOiAic2FtZS1wYXRoIiwgInNvdXJjZSI6ICJmaWxlIiwgImRlc3RpbmF0aW9uIjogImZpbGUiLCAiZXhwZWN0ZWQiOiAwLCAiYWN0dWFsIjogMCwgInVuY2hhbmdlZCI6IHRydWUsICJ0cmVlU0hBMjU2IjogIjdiYjkzMDBmMTA3OGRhMDY4OTgxY2FjZjc0NmYzZWExZmExMmQ3ZGU0MGE1YTUwZTJmMDFiYzNmMWVmNjg2YzkifQp7ImV2ZW50IjogInZhbGlkLWNyb3NzLXBhcmVudCIsICJzb3VyY2UiOiAiZmlsZSIsICJkZXN0aW5hdGlvbiI6ICJkaXIvbW92ZWQsZmlsZSIsICJwYXJlbnRzIjogeyJzb3VyY2VQYXJlbnQiOiAxLCAiZGVzdGluYXRpb25QYXJlbnQiOiAyfSwgInRyZWUiOiBbWyIuIiwgMSwgMTY4MzIsIDEsIDAsIG51bGxdLCBbImRpciIsIDIsIDE2ODc3LCAxLCAwLCBudWxsXSwgWyJkaXIvbW92ZWQsZmlsZSIsIDUsIDMzMTg4LCAxLCAxMywgIjY2Njk2YzY1MmQ2ZjcyNjk2NzY5NmU2MTZjIl0sIFsidHJlZSIsIDMsIDE2ODc3LCAxLCAwLCBudWxsXSwgWyJ0cmVlL2NoaWxkIiwgNCwgMTY4NzcsIDEsIDAsIG51bGxdLCBbInRyZWUvY2hpbGQvbGVhZiIsIDYsIDMzMTg4LCAxLCAxMywgIjZjNjU2MTY2MmQ2ZjcyNjk2NzY5NmU2MTZjIl1dLCAiZXhwZWN0ZWRUcmVlIjogW1siLiIsIDEsIDE2ODMyLCAxLCAwLCBudWxsXSwgWyJkaXIiLCAyLCAxNjg3NywgMSwgMCwgbnVsbF0sIFsiZGlyL21vdmVkLGZpbGUiLCA1LCAzMzE4OCwgMSwgMTMsICI2NjY5NmM2NTJkNmY3MjY5Njc2OTZlNjE2YyJdLCBbInRyZWUiLCAzLCAxNjg3NywgMSwgMCwgbnVsbF0sIFsidHJlZS9jaGlsZCIsIDQsIDE2ODc3LCAxLCAwLCBudWxsXSwgWyJ0cmVlL2NoaWxkL2xlYWYiLCA2LCAzMzE4OCwgMSwgMTMsICI2YzY1NjE2NjJkNmY3MjY5Njc2OTZlNjE2YyJdXSwgImNvcnJlY3QiOiB0cnVlfQpNT1VOVEVEX1JFTkFNRV9HVUFSRFNfQ09NUExFVEVECg==",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          8178,
+          "35451"
+        ]
+      ],
+      "peakRSS": 37093376,
+      "reapedPeakRSS": 15728640,
+      "sampledPeakRSS": 37093376,
+      "stopReason": null,
+      "wallSeconds": 0.0722725280000418
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": true,
+    "cleanupComplete": true,
+    "failures": []
+  },
+  "identitiesAfter": true,
+  "observerCleanup": {
+    "remainingMounts": [],
+    "workPathProcesses": []
+  },
+  "fixturePin": {
+    "bytes": 2384,
+    "sha256": "04e874b452bcee38c2c634984b419557df05a164cec00c9faa6fa822b94344a7"
+  },
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "inheritedEnvironmentValues": "not captured; no credential exposure"
+  }
+}
