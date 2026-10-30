@@ -1,0 +1,11 @@
+{
+  "actualError": "PermissionError EPERM at fixture state()->os.statvfs before first emit or truncate",
+  "sourceAllowedTruncate": true,
+  "sourceAllowedFtruncate": true,
+  "sourceAllowedStatfs": false,
+  "sourceAllowedFstatfs": false,
+  "defaultAction": "SECCOMP_RET_ERRNO|1",
+  "syscallNumberObserved": false,
+  "coverage": "Denial inferred from exact default-deny source and actual EPERM; syscall number not traced",
+  "noRetry": true
+}

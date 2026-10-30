@@ -1,0 +1,25 @@
+BLOCKED actual mounted runtime on exact integrated main 6d354a7c827bdd951c1d87568bf570b44f1fd431.
+One production CLI invocation at 2026-10-30T08:17:20.892336+00:00 exit1; do not replay this task.
+The immutable fixture failed in initial state()->os.statvfs with EPERM before
+its first emitted event or either truncate call. Create4096-byte write/read and
+unlink/final clean filesystem completed; no SETATTR acceptance is claimed.
+Exact confinement source omits statfs137/fstatfs138 from default-deny allowlist;
+truncate76/ftruncate77 are present. The syscall number was not traced.
+Preserve original denial and failing fixture. Runtime argv reconstructed from
+mounted-report.json by substituting fixture.py text byte-exact for final -c arg.
+Nine source pins and exact source objects are in source-pins.json; caller verifies
+all backend/supervisor/confine transitive bytes before execution.
+Oracle: file8192, oversized8193, live262144, write32768. Initial4096; shrink1024;
+regrow8192 would consume11264 cumulative. Per-file rejection expected ENOSPC28
+before allocation/data/written mutation; failure latch persists and supervisor
+may terminate. These predictions have NOT been qualified by this mounted run.
+Any new invocation requires coordinator assignment. An allowed follow-up fixture
+can omit statvfs and use the existing outside-confinement socket sampling for
+accounting. Do not extend confinement or instrument production in this task.
+Boat bx_5fv5hztq snapshot-stopped after clean mount/process proof;
+snapshot completed 2026-10-30T08:17:32.948Z, original expiry
+2026-10-30T08:47:16.619Z. No resume or additional Boat is authorized here.
+All raw API output, source manifests, resource guards, original failures and
+snapshot evidence retained outside Git in /tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/integrated-setattr-mounted.
+Publication is fixture/report only on refs/heads/test/toyvm-integrated-mounted-setattr-atomicity-oct30, exact parent 6d354a7c827bdd951c1d87568bf570b44f1fd431; no index writes,
+production repair, main writes, installs, builds, workers, Telegram or deployment.

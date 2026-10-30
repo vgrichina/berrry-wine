@@ -1,0 +1,492 @@
+{
+  "schema": 1,
+  "result": "BLOCKED",
+  "task": "toyvm-integrated-mounted-setattr-atomicity-oct30",
+  "base": "6d354a7c827bdd951c1d87568bf570b44f1fd431",
+  "productionInvocations": 1,
+  "actualProductionCLI": {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/tvsa-stage/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "--domain",
+      "tiny-fixture",
+      "--receipt",
+      "/tmp/tvsa-stage/cancellation-receipt.json",
+      "--work",
+      "/tmp/tvsa",
+      "--live-limit",
+      "262144",
+      "--write-limit",
+      "32768",
+      "--file-limit",
+      "8192",
+      "--rss-limit",
+      "67108864",
+      "--cpu-limit",
+      "10",
+      "--wall-limit",
+      "20",
+      "--output-limit",
+      "8192",
+      "--namespace-evidence",
+      "64",
+      "--",
+      "/usr/bin/python3",
+      "-B",
+      "-c",
+      {
+        "reconstructFrom": "fixture.py",
+        "bytes": 1531,
+        "sha256": "02a4db6b68b35aca1f2dba0419f8ec267422ea53c2cf897d77cc90c8b4c26ae2"
+      }
+    ],
+    "cwd": "/tmp/tvsa-stage/repo",
+    "startedAt": "2026-10-30T08:17:20.892336+00:00",
+    "finishedAt": "2026-10-30T08:17:21.208114+00:00",
+    "exit": 1,
+    "fixtureSubstitution": "Last argv element is byte-exact fixture.py text after -c"
+  },
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 9350,
+      "sha256": "bdf4076c94a6d55977e5df79074201a7ac08b3cb8ad58242e05c558ae83bd179"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 16643,
+      "sha256": "520ed81ea0b7b25303df603a362b43cd8ad934c33bf4ae60337b311e0f1b52d4"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4857,
+      "sha256": "b003da4e6439bbd1502ffc92797420c2bc254b3e55394afdd24624b7d9005338"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_create_mkdir_wire.py": {
+      "bytes": 6873,
+      "sha256": "103fac67f3b894ee50683003fac9650792eaeafce15de7a8f26d68b036cb79a9"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_integration.py": {
+      "bytes": 3111,
+      "sha256": "95e00f201b8c9d45563ac8bf82a40ad41162ef8966427904d0e9814085851c3d"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": {
+      "bytes": 9704,
+      "sha256": "bc44904ead714926a8efaa3ba7483135e39a9d6dc0d581b43b228b93bae1dcc5"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": {
+      "bytes": 13811,
+      "sha256": "1a43a9305f1b3d92957ef03c34caec6eb0990dc03f2f23c0d20f0ca53b9fa751"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourceObjects": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": "9ca2345b83540d46ae547ddc8b9a2d6aa481ddbe",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": "8764b548402401ef60904f01d36c1792ee675c57",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": "0793690e67339e685a18482ae884f0df1554f732",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": "ffcf1f6852bb7486f5f1c60641112c55add5683e",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_create_mkdir_wire.py": "05c0e5616117ca32019eceac0ebce3864ddd7eba",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_integration.py": "c413df16c65b049892ce35ea2d456b6bb0544d8d",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_namespace_wire.py": "2735922c02eadf9232089d316fc51a605db5d147",
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": "6ad66fcc3f906cd309515f5290fcb9da59627a66",
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": "6c4f83b48bb4c3f9245af76469af835180c0ebfb"
+  },
+  "fixturePin": {
+    "bytes": 1531,
+    "sha256": "02a4db6b68b35aca1f2dba0419f8ec267422ea53c2cf897d77cc90c8b4c26ae2"
+  },
+  "observerPin": {
+    "bytes": 4978,
+    "sha256": "78b674a9447c640a511339e873e8bf0619bf3ccaf14d9b7706314b23cbe5ffec"
+  },
+  "oracle": {
+    "perFileLimit": 8192,
+    "attempt": 8193,
+    "expectedErrno": 28,
+    "errnoName": "ENOSPC",
+    "initialBytes": 4096,
+    "shrinkBytes": 1024,
+    "regrowBytes": 8192,
+    "expectedWritten": 11264,
+    "maxLive": 16384,
+    "liveLimit": 262144,
+    "writeLimit": 32768,
+    "rejectGrowth": 4097,
+    "rejectCumulativeCandidate": 8193,
+    "initialLive": 12288,
+    "initialWritten": 4096,
+    "finalLiveIfCleanup": 4096,
+    "stickyFailure": "filesystem per-file limit",
+    "order": "handle4 checks written+growth before resize; resize checks per-file before charge/mutation; written increments only after resize success",
+    "atomicity": "length/content/live/peak/written/inodes/openHandles unchanged; failure intentionally latches and operations increments",
+    "recovery": "handle4 has no self.failure guard; shrink and regrowth may succeed before supervisor polls; supervisor detects latch and CLI rejects even if child completes",
+    "coverage": "No SETATTR numeric callback hook exists; failure string plus mounted syscall and exact source support per-file handler coverage. No unsupported-flags claim."
+  },
+  "blocker": {
+    "operation": "fixture initial os.statvfs before oversized ftruncate",
+    "errno": 1,
+    "name": "EPERM",
+    "scope": "fixture syscall compatibility with unchanged production confinement",
+    "diagnostic": "Traceback (most recent call last):\n  File \"<string>\", line 14, in <module>\n  File \"<string>\", line 6, in state\nPermissionError: [Errno 1] Operation not permitted: '/tmp/tvsa/domain'\n",
+    "denialAnalysis": {
+      "actualError": "PermissionError EPERM at fixture state()->os.statvfs before first emit or truncate",
+      "sourceAllowedTruncate": true,
+      "sourceAllowedFtruncate": true,
+      "sourceAllowedStatfs": false,
+      "sourceAllowedFstatfs": false,
+      "defaultAction": "SECCOMP_RET_ERRNO|1",
+      "syscallNumberObserved": false,
+      "coverage": "Denial inferred from exact default-deny source and actual EPERM; syscall number not traced",
+      "noRetry": true
+    },
+    "responsibility": "Worker preparation omitted checking statvfs against confinement allowlist. No production repair or retry.",
+    "resumeCondition": "Coordinator may authorize a fresh bounded runtime task whose fixture reads accounting only from external production status samples and uses the existing allowed truncate/ftruncate syscalls; no allowlist change needed."
+  },
+  "coverage": {
+    "createWriteRead": true,
+    "knownContentBytes": 4096,
+    "truncateAttempted": false,
+    "setattrSizeRejection": "UNQUALIFIED",
+    "rejectionAtomicity": "UNQUALIFIED",
+    "shrinkRegrowthZeroFill": "UNQUALIFIED",
+    "unsupportedSetattrFlags": "UNQUALIFIED",
+    "syscallOutcomes": [],
+    "warning": "The listed oracle is source-derived only, not mounted truncate acceptance."
+  },
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 8192,
+    "inodes": 1,
+    "live": 4096,
+    "liveLimit": 262144,
+    "namespaceEvidence": {
+      "callbackCount": 2,
+      "countSaturated": false,
+      "limit": 64,
+      "records": [
+        {
+          "callbackCount": 1,
+          "errno": 0,
+          "inode": 1,
+          "opcode": 35,
+          "unique": 50
+        },
+        {
+          "callbackCount": 2,
+          "errno": 0,
+          "inode": 1,
+          "opcode": 10,
+          "unique": 66
+        }
+      ]
+    },
+    "openHandles": 0,
+    "operations": 67,
+    "peak": 12288,
+    "writeLimit": 32768,
+    "written": 4096
+  },
+  "backendReceipt": {
+    "cleanupComplete": true,
+    "cpuSeconds": 0.329684,
+    "exit": 1,
+    "filesystem": {
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+      "failure": null,
+      "fileLimit": 8192,
+      "inodes": 1,
+      "live": 4096,
+      "liveLimit": 262144,
+      "namespaceEvidence": {
+        "callbackCount": 2,
+        "countSaturated": false,
+        "limit": 64,
+        "records": [
+          {
+            "callbackCount": 1,
+            "errno": 0,
+            "inode": 1,
+            "opcode": 35,
+            "unique": 50
+          },
+          {
+            "callbackCount": 2,
+            "errno": 0,
+            "inode": 1,
+            "opcode": 10,
+            "unique": 66
+          }
+        ]
+      },
+      "openHandles": 0,
+      "operations": 67,
+      "peak": 12288,
+      "writeLimit": 32768,
+      "written": 4096
+    },
+    "filesystemCleanup": {
+      "remainingMounts": [],
+      "serverExit": -15,
+      "serverStderr": "",
+      "serverStdout": "",
+      "unmountExit": 0,
+      "unmountStderr": "",
+      "unmountStdout": ""
+    },
+    "output": {
+      "data": "VHJhY2ViYWNrIChtb3N0IHJlY2VudCBjYWxsIGxhc3QpOgogIEZpbGUgIjxzdHJpbmc+IiwgbGluZSAxNCwgaW4gPG1vZHVsZT4KICBGaWxlICI8c3RyaW5nPiIsIGxpbmUgNiwgaW4gc3RhdGUKUGVybWlzc2lvbkVycm9yOiBbRXJybm8gMV0gT3BlcmF0aW9uIG5vdCBwZXJtaXR0ZWQ6ICcvdG1wL3R2c2EvZG9tYWluJwo=",
+      "encoding": "base64"
+    },
+    "owned": [
+      [
+        5765,
+        "4956"
+      ]
+    ],
+    "peakRSS": 53207040,
+    "reapedPeakRSS": 31862784,
+    "sampledPeakRSS": 53207040,
+    "stopReason": null,
+    "wallSeconds": 0.16607609300000092
+  },
+  "mountOwnership": [
+    "53 29 0:51 / /tmp/tvsa/domain rw,nosuid,nodev,relatime shared:96 - fuse.toyvm-accounting toyvm-accounting rw,user_id=1000,group_id=1000"
+  ],
+  "accountingSamples": [
+    {
+      "at": 49.558099989,
+      "state": {
+        "live": 4096,
+        "peak": 4096,
+        "written": 0,
+        "failure": null,
+        "inodes": 1,
+        "openHandles": 0,
+        "operations": 1,
+        "liveLimit": 262144,
+        "writeLimit": 32768,
+        "fileLimit": 8192,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "namespaceEvidence": {
+          "limit": 64,
+          "callbackCount": 0,
+          "countSaturated": false,
+          "records": []
+        }
+      }
+    },
+    {
+      "at": 49.602389106,
+      "state": {
+        "live": 4096,
+        "peak": 4096,
+        "written": 0,
+        "failure": null,
+        "inodes": 1,
+        "openHandles": 0,
+        "operations": 12,
+        "liveLimit": 262144,
+        "writeLimit": 32768,
+        "fileLimit": 8192,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "namespaceEvidence": {
+          "limit": 64,
+          "callbackCount": 0,
+          "countSaturated": false,
+          "records": []
+        }
+      }
+    },
+    {
+      "at": 49.636162277,
+      "state": {
+        "live": 4096,
+        "peak": 12288,
+        "written": 4096,
+        "failure": null,
+        "inodes": 1,
+        "openHandles": 0,
+        "operations": 34,
+        "liveLimit": 262144,
+        "writeLimit": 32768,
+        "fileLimit": 8192,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "namespaceEvidence": {
+          "limit": 64,
+          "callbackCount": 2,
+          "countSaturated": false,
+          "records": [
+            {
+              "opcode": 35,
+              "unique": 50,
+              "inode": 1,
+              "errno": 0,
+              "callbackCount": 1
+            },
+            {
+              "opcode": 10,
+              "unique": 66,
+              "inode": 1,
+              "errno": 0,
+              "callbackCount": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": 49.669084933,
+      "state": {
+        "live": 4096,
+        "peak": 12288,
+        "written": 4096,
+        "failure": null,
+        "inodes": 1,
+        "openHandles": 0,
+        "operations": 45,
+        "liveLimit": 262144,
+        "writeLimit": 32768,
+        "fileLimit": 8192,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "namespaceEvidence": {
+          "limit": 64,
+          "callbackCount": 2,
+          "countSaturated": false,
+          "records": [
+            {
+              "opcode": 35,
+              "unique": 50,
+              "inode": 1,
+              "errno": 0,
+              "callbackCount": 1
+            },
+            {
+              "opcode": 10,
+              "unique": 66,
+              "inode": 1,
+              "errno": 0,
+              "callbackCount": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": 49.70145878,
+      "state": {
+        "live": 4096,
+        "peak": 12288,
+        "written": 4096,
+        "failure": null,
+        "inodes": 1,
+        "openHandles": 0,
+        "operations": 56,
+        "liveLimit": 262144,
+        "writeLimit": 32768,
+        "fileLimit": 8192,
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "namespaceEvidence": {
+          "limit": 64,
+          "callbackCount": 2,
+          "countSaturated": false,
+          "records": [
+            {
+              "opcode": 35,
+              "unique": 50,
+              "inode": 1,
+              "errno": 0,
+              "callbackCount": 1
+            },
+            {
+              "opcode": 10,
+              "unique": 66,
+              "inode": 1,
+              "errno": 0,
+              "callbackCount": 2
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "cleanup": {
+    "remainingMounts": [],
+    "processes": []
+  },
+  "remoteAllocation": {
+    "PASS": true,
+    "remainingMounts": [],
+    "processes": [],
+    "reaped": [],
+    "physicalAllocated": 200704,
+    "budget": 268435456,
+    "reserve": 8388608
+  },
+  "lifecycle": {
+    "id": "bx_5fv5hztq",
+    "state": "stopped",
+    "createdAt": "2026-10-30T08:17:16.605Z",
+    "stoppedAt": "2026-10-30T08:17:32.997Z",
+    "snapshotCompletedAt": "2026-10-30T08:17:32.948Z",
+    "snapshotVerifiedAt": "2026-10-30T08:17:32.948Z",
+    "lastSnapshotStatus": "completed",
+    "snapshotAvailable": true,
+    "stop": {
+      "endedAt": "2026-10-30T08:17:33.026Z",
+      "error": null,
+      "forced": false,
+      "id": "stop_a5caac13d3e46fa7",
+      "lastAttemptAt": "2026-10-30T08:17:33.026Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "originalExpiry": "2026-10-30T08:47:16.619Z",
+    "shutdownDelegated": true
+  },
+  "resources": {
+    "productionWall": 0.31581577800000105,
+    "groupPeakRSS": 68673536,
+    "payloadPeakRSS": 53207040,
+    "allocation": {
+      "physicalAllocated": 25366528,
+      "allocationBudget": 67108864,
+      "reserve": 8388608,
+      "diskFree": 3283972096,
+      "remainingAggregateGrowth": 267292672,
+      "diskFloor": 2147483648,
+      "MemAvailable": 4529840128,
+      "supervisorRSS": 21233664,
+      "RAMAdmission": false,
+      "resourcePolicy": "owner 2026-10-30; actual process enforcement retained"
+    },
+    "limits": {
+      "PythonChildDATA": 134217728,
+      "GitChildOnlyDATA": 268435456,
+      "supervisorRSS": 134217728,
+      "groupRSS": 536870912,
+      "CPU": 60,
+      "wall": 90,
+      "FSIZE": 524288,
+      "captureCeiling": 524288,
+      "payloadRSS": 67108864,
+      "payloadCPU": 10,
+      "payloadWall": 20,
+      "payloadOutput": 8192,
+      "AS": "inherited unchanged",
+      "nativeDATA": "inherited unchanged; no Git DATA applied",
+      "RAMAdmission": false
+    }
+  },
+  "noRetry": true,
+  "noSourceChange": true,
+  "noMainWrites": true,
+  "noWorkers": true,
+  "noTelegram": true,
+  "noPublicDeployment": true
+}
