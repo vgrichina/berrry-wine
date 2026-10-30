@@ -1,0 +1,23 @@
+{
+  "runtimeDataArchive": {
+    "path": "/tmp/gltron-runtime-data-complete-original-render-oct30/eager-runtime-data.tar.xz",
+    "bytes": 305168,
+    "sha256": "b07994430b7ba2741b36b543fce0ac164f3c646c0ddd562ec3c0a69c22ec5729"
+  },
+  "apiJournal": {
+    "bytes": 34697,
+    "sha256": "0eb207ad2d2a113edf0d5c7f6e18c5250bd37de09158ac01aeec80097b314b55"
+  },
+  "originalInventory": {
+    "bytes": 17574,
+    "sha256": "0f5c45647ac8d26104d01d4e052913382aaa9d73a3c6bc31339529a60508b341"
+  },
+  "initialRootRef": {
+    "command": "git show-ref",
+    "sha256": "01d3a0575ae20f8f7564be9ae91ecb5d7e0686f9de340a1a24caa3faa9be0251",
+    "streamedBytes": 234389,
+    "capturedListingBytes": 0,
+    "maxChunkBytes": 8192,
+    "exitCode": 0
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "status": "GUEST_ATTEMPTED",
+  "guestInvocations": 1,
+  "guest": {
+    "argv": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "test/run.js",
+      "--app=gltron",
+      "--no-build",
+      "--gl-renderer=software",
+      "--wasm=build/wine-assembly.wasm",
+      "--max-seconds=45",
+      "--max-batches=100000",
+      "--batch-size=10000",
+      "--png=capture/original.png"
+    ],
+    "startedAt": "2026-10-30T13:11:29.664153+00:00",
+    "exit": 1,
+    "wall": 0.24235177040100098,
+    "peakRSS": 94175232,
+    "violation": null,
+    "FSIZE": 12582912,
+    "capture": 8192,
+    "limits": {
+      "cpu": 60,
+      "wall": 90,
+      "heapMiB": 512,
+      "aggregateRSS": 2147483648
+    },
+    "nodeEnvironment": "/home/user/wine-assembly/node_modules"
+  },
+  "build": {
+    "source": "311c42abb41adc1fc16e06b4276005d15db553b2",
+    "modules": {
+      "build/wine-assembly.compat.wasm": {
+        "bytes": 1884379,
+        "sha256": "e96643502151d0ef23d339c4366ca49fc446dfadab162d8dfe968f1e92ecc19b"
+      },
+      "build/wine-assembly.wasm": {
+        "bytes": 1881806,
+        "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+      }
+    }
+  },
+  "images": {},
+  "gameplayAccepted": false,
+  "inputEvents": [],
+  "scope": "Single original Win32 invocation using unchanged canonical modules and restored eager data; no repair/retest."
+}

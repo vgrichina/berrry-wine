@@ -1,0 +1,104 @@
+{
+  "status": "BLOCKED_BY_DYNAMIC_RUNNER_DEPENDENCY",
+  "objectiveQualified": false,
+  "parent": "c1af564002d53e7eafa4e6f0ad61e6578cfff12d",
+  "qualifiedProduction": "311c42abb41adc1fc16e06b4276005d15db553b2",
+  "build": {
+    "source": "311c42abb41adc1fc16e06b4276005d15db553b2",
+    "modules": {
+      "build/wine-assembly.compat.wasm": {
+        "bytes": 1884379,
+        "sha256": "e96643502151d0ef23d339c4366ca49fc446dfadab162d8dfe968f1e92ecc19b"
+      },
+      "build/wine-assembly.wasm": {
+        "bytes": 1881806,
+        "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+      }
+    }
+  },
+  "productionRunner": "test/run.js",
+  "route": "--app=gltron --no-build --gl-renderer=software",
+  "startedAt": "2026-10-30T13:11:29.664153+00:00",
+  "outcome": "harness-error",
+  "verification": "reviewed",
+  "productionRunnerInvocations": 1,
+  "compileInvocations": 0,
+  "originalPELoaded": true,
+  "originalSDLInitializerReturned": true,
+  "mainLoopReached": false,
+  "originalExeEntryExecution": "not established",
+  "originalRender": false,
+  "screenshots": [],
+  "gameplayAccepted": false,
+  "firstFailure": {
+    "code": "MODULE_NOT_FOUND",
+    "module": "../tools/disasm",
+    "sourceLocation": "test/run.js:6400",
+    "exit": 1,
+    "apiCommandID": "cmd_qlxswmbwwrs3"
+  },
+  "guest": {
+    "argv": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "test/run.js",
+      "--app=gltron",
+      "--no-build",
+      "--gl-renderer=software",
+      "--wasm=build/wine-assembly.wasm",
+      "--max-seconds=45",
+      "--max-batches=100000",
+      "--batch-size=10000",
+      "--png=capture/original.png"
+    ],
+    "startedAt": "2026-10-30T13:11:29.664153+00:00",
+    "exit": 1,
+    "wall": 0.24235177040100098,
+    "peakRSS": 94175232,
+    "violation": null,
+    "FSIZE": 12582912,
+    "capture": 8192,
+    "limits": {
+      "cpu": 60,
+      "wall": 90,
+      "heapMiB": 512,
+      "aggregateRSS": 2147483648
+    },
+    "nodeEnvironment": "/home/user/wine-assembly/node_modules"
+  },
+  "eagerData": {
+    "PASS": true,
+    "uniqueFiles": 27,
+    "systemFiles": 1,
+    "bitmapFonts": 5,
+    "scalableFontMounts": 28,
+    "archive": {
+      "path": "/tmp/gltron-runtime-data-complete-original-render-oct30/eager-runtime-data.tar.xz",
+      "bytes": 305168,
+      "sha256": "b07994430b7ba2741b36b543fce0ac164f3c646c0ddd562ec3c0a69c22ec5729"
+    },
+    "manifest": {
+      "bytes": 4574,
+      "sha256": "f5cf5ab5004e6102da9874ae77aa7d33f6b464f6ff57518ade12cc1b192443f6"
+    },
+    "tlb": {
+      "bytes": 15088,
+      "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895"
+    }
+  },
+  "originalFiles": 92,
+  "originalBytes": 4968893,
+  "inputEvents": [],
+  "additionalWarning": "msvcrt.dll absent on disk warning; original MSVCR70.dll and all92 registry files verified; no independent guest compatibility conclusion",
+  "deviations": [
+    {
+      "kind": "local-Boat-state-check",
+      "detail": "initial local state assertion expected running, supported ready event plus info idle accepted before first API exec; original receipt preserved"
+    },
+    {
+      "kind": "diagnostic-capture-overflow",
+      "detail": "One diagnostic git status --short --untracked-files=no was issued directly outside control.run; the tool reported 263187 original output tokens and truncated output to max_output_tokens=3000. Raw output exceeded intended512KiB command capture; exact bytes unavailable. No acceptance or publication claim of full capture compliance. No repeat."
+    }
+  ],
+  "scope": "One original production startup attempt after restoring and verifying eager runtime data. Original PE and SDL initialized; unconditional dynamic require tools/disasm.js failed before main execution loop. No screenshot, original frame or gameplay acceptance. Concrete runtime failure ends task without repair/retest."
+}

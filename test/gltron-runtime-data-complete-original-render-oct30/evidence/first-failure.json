@@ -1,0 +1,5 @@
+{
+  "error": "AssertionError()",
+  "traceback": "Traceback (most recent call last):\n  File \"/tmp/gltron-runtime-data-complete-original-render-oct30/runtime.py\", line 57, in <module>\n    info=native(['info',box],'created-info')[-1]['sandbox'];assert info['state']=='running' and info['ttlSeconds']==1800\n                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "at": 1793365860.4198186
+}

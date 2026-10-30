@@ -1,0 +1,11 @@
+PE loaded. Entry: 0x0042366a
+DLL: sdl.dll at 0x53f000, DllMain=0x5688df, thunks=2071, origBase=0x10000000
+Patching EXE imports: SDL.dll -> DLL #0 (SDL.dll)
+After patching: 2071 thunks
+Calling DllMain at 0x5688df...
+DllMain returned, EAX=0x1
+[files] policy eager: small app: 92 eager (4968893 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[vfs] working directory: c:\games\gltron
+[API] malloc
+[API] _initterm
+[API] DisableThreadLibraryCalls

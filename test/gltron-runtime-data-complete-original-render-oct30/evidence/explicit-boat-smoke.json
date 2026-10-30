@@ -1,0 +1,35 @@
+{
+  "receipt": {
+    "label": "explicit-boat-smoke",
+    "request": {
+      "bytes": 428,
+      "sha256": "1b1df90837bf121c76a4a2b6d63433e31737a8dc007ee051fb95e1abcd7dc317"
+    },
+    "response": {
+      "bytes": 514,
+      "sha256": "a20b3c218b1b82ed899bee31f25961c1dc6235520f20bff86f1dfddcff175845"
+    },
+    "elapsed": 0.11368894577026367,
+    "exit": 0,
+    "success": true,
+    "responseBytes": 514
+  },
+  "response": {
+    "commandId": "cmd_tsqv6jhrn4bx",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-30T13:11:21.612Z",
+    "launcherFailed": false,
+    "noticedMs": 1,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 1,
+    "startedAt": "2026-10-30T13:11:21.583Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"sha256\": \"3aa59cb42da2bac7eb29a87568dc533cf8db933a1faa6d2c26ea751ebd957622\", \"node\": true, \"limits\": {\"RLIMIT_DATA\": [-1, -1], \"RLIMIT_AS\": [-1, -1], \"RLIMIT_FSIZE\": [-1, -1]}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

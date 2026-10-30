@@ -1,0 +1,26 @@
+{
+  "at": 1793365974.722274,
+  "roots": [
+    "/tmp/gltron-original-main-render-runtime-oct30",
+    "/home/user/wine-assembly/scratch/usage-watch/gltron-original-main-render-runtime-oct30",
+    "/home/user/wine-assembly/scratch/usage-watch/gltron-original-win32-recovery-oct28/payload",
+    "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T12-53-59-01a18cdf-c81a-72c0-b62e-495fb747dcf6.jsonl",
+    "/tmp/gltron-runtime-data-complete-original-render-oct30",
+    "/home/user/wine-assembly/scratch/usage-watch/gltron-runtime-data-complete-original-render-oct30",
+    "/home/user/.codex/sessions/2026/10/30/rollout-2026-10-30T13-07-58-01a18cec-97b2-7ab2-a630-cedd5fd45573.jsonl"
+  ],
+  "sessionID": "01a18cec-97b2-7ab2-a630-cedd5fd45573",
+  "physical": 31318016,
+  "workReserve": 8388608,
+  "publicationReserve": 8388608,
+  "startupReserve": 3145728,
+  "plannedArtifactsAndTransfer": 2097152,
+  "forecast": 53338112,
+  "cap": 67108864,
+  "hostFree": 3183558656,
+  "futureGrowth": 267292672,
+  "hostFloor": 2147483648,
+  "RAMAdmission": false,
+  "processRSS": 20316160,
+  "PASS": true
+}
