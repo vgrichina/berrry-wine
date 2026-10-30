@@ -8,9 +8,9 @@
   "canonicalSHA256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
   "installedBytesRecovered": false,
   "registryIdentityNewlyVerified": false,
-  "ownAllocated": 4673536,
+  "ownAllocated": 4964352,
   "admittedTotalIncludingReserve": 57122816,
-  "hostFree": 6956576768,
+  "hostFree": 6955384832,
   "protectedGitMetadata": "MATCH",
   "guestBuildCompileExecComputeLifecycleWorkerCounts": 0
 }

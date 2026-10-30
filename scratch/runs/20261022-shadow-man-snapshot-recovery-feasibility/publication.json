@@ -1,0 +1,14 @@
+{
+  "commit": "52df78cebde81742fa2ec959e1196d5be873a972",
+  "branch": "task/shadow-man-snapshot-recovery-feasibility-oct22",
+  "remote": "https://github.com/vgrichina/berrry-wine.git",
+  "transport": "Existing donor SSH command reused read-only for canonical repository",
+  "pushExit": 0,
+  "actualRemoteRefs": {
+    "refs/heads/main": "58e90870a40a541a4083cae5e987ca8de31889e6",
+    "refs/heads/task/shadow-man-snapshot-recovery-feasibility-oct22": "52df78cebde81742fa2ec959e1196d5be873a972"
+  },
+  "basePathsPreserved": 8279,
+  "committedEvidenceFiles": 19,
+  "primaryBinaryCommitted": false
+}
