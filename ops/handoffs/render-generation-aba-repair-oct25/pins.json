@@ -1,7 +1,0 @@
-{
-  "base": "397cdb6ca37c1f247cdd6e2618f6e1f3529342c4",
-  "candidate": "9f3fcdc221ec48b64293f212500cbeadfd7f21fc",
-  "hostSHA256": "15f5a3fc1e24ae273cdcb720b331d51408d0b4fc20eccc3686e033fb490b88e0",
-  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/render-generation-aba-repair-oct25/root-ref-digest.json",
-  "flatViewReceipt": "/tmp/seh-coordinator-object-view-oct25/receipt.json"
-}

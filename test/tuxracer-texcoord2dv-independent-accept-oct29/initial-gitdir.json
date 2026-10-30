@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo",
+    "rev-parse",
+    "--absolute-git-dir"
+  ],
+  "cleanup": "group killed/reaped",
+  "cwd": "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo",
+  "exit": 0,
+  "peakGroupRSS": 0,
+  "reason": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 61,
+  "topology": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+  },
+  "wall": 0.007664291886612773
+}

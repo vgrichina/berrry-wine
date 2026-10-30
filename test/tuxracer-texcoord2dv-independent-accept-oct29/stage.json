@@ -1,0 +1,49 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo",
+    "add",
+    "--sparse",
+    "--",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/accept.js",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/supervisor.py",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/limit_contract.py",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/report.txt",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/source-pins.json",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/footprint.json",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/admission-through-tests.jsonl",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/containment.json",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/configuration.json",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/boundary-checkpoint.json",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/behavior-checkpoint.json",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/node-startup.stdout",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/node-startup.stderr",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/node-startup.json",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/acceptance.stdout",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/acceptance.stderr",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/acceptance.json",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/generator.stdout",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/generator.stderr",
+    "test/tuxracer-texcoord2dv-independent-accept-oct29/generator.json"
+  ],
+  "cleanup": "group killed/reaped",
+  "cwd": "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo",
+  "exit": 0,
+  "peakGroupRSS": 18276352,
+  "reason": null,
+  "stderrBytes": 251,
+  "stdoutBytes": 0,
+  "topology": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+  },
+  "wall": 0.08142906404100358
+}

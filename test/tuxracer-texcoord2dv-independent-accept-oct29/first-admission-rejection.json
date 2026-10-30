@@ -1,0 +1,14 @@
+{
+  "at": 1793247256.667917,
+  "label": "before-cached-check-root",
+  "device": 64769,
+  "f_bavail": 1153052,
+  "blockSize": 4096,
+  "free": 4722900992,
+  "MemAvailable": 2076590080,
+  "requiredBytes": 3225419776,
+  "futureGrowth": 176160768,
+  "aggregateSHA": "d042945bdccfc32ef312e9cb066927930a55810dea30dda2ead718284f28030f",
+  "allocation": 50331648,
+  "PASS": false
+}

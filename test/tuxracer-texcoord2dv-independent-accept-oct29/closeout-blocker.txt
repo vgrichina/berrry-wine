@@ -1,0 +1,7 @@
+Behavioral acceptance PASS (20 new cases, two rejecting mutations), generator fresh and 36 source/evidence pins unchanged.
+Publication blocked BEFORE cached review Git spawn: first MemAvailable 2076590080 < 2147483648 (shortfall 70893568).
+No new commit/push, no own remote verification. All 20 intended test/report paths staged.
+The original candidate HEAD is retained; no repair or production mutation.
+One redundant second read-only admission check after first rejection is preserved; no further retry.
+Initial staging preceded the later bounded board watcher; retain as procedural limitation.
+Coordinator must record capacity/allocation change before resumed admission/review/publication.

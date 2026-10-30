@@ -1,0 +1,70 @@
+{
+  "task": "tuxracer-texcoord2dv-independent-accept-oct29",
+  "outcome": "BEHAVIOR_ACCEPTED_PUBLICATION_BLOCKED_RESOURCE",
+  "candidate": "f356bcac0727ed3aa5e0fde2f9cc829061fe6a59",
+  "candidatePublicationBranch": "task/tuxracer-valid-base-texcoord2dv-publication-oct29",
+  "sourcePins": "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo/test/tuxracer-texcoord2dv-independent-accept-oct29/source-pins.json",
+  "sourcePinsSHA256": "1333ac2a35af22c5ecb314929bb401588525d95983f568a33cbeaead3631c03d",
+  "tests": {
+    "newCases": 20,
+    "PASS": true,
+    "mutations": {
+      "wrongCoordinate": "REJECTED assertion",
+      "wrongRoute": "REJECTED trap"
+    },
+    "behaviorReceipt": "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo/test/tuxracer-texcoord2dv-independent-accept-oct29/behavior-checkpoint.json",
+    "boundaryReceipt": "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo/test/tuxracer-texcoord2dv-independent-accept-oct29/boundary-checkpoint.json",
+    "priorEightCases": "reused exact published receipt; no historical suite rerun",
+    "generatorFreshness": true
+  },
+  "resource": {
+    "admissionFile": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-texcoord2dv-independent-accept-oct29-admission.json",
+    "firstRejection": {
+      "at": 1793247256.667917,
+      "label": "before-cached-check-root",
+      "device": 64769,
+      "f_bavail": 1153052,
+      "blockSize": 4096,
+      "free": 4722900992,
+      "MemAvailable": 2076590080,
+      "requiredBytes": 3225419776,
+      "futureGrowth": 176160768,
+      "aggregateSHA": "d042945bdccfc32ef312e9cb066927930a55810dea30dda2ead718284f28030f",
+      "allocation": 50331648,
+      "PASS": false
+    },
+    "memRequired": 2147483648,
+    "shortfall": 70893568,
+    "allSamples": "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo/test/tuxracer-texcoord2dv-independent-accept-oct29/admissions.jsonl",
+    "reservationBytes": 50331648,
+    "reservationHeldForCoordinator": true,
+    "retryIncident": "One redundant cached-stat identity/admission was issued after the first failure before handling that returned result; preserved second rejection in admissions.jsonl, no Git subprocess created for either rejected operation; no further retry."
+  },
+  "publication": {
+    "branch": "task/tuxracer-texcoord2dv-independent-accept-oct29",
+    "bornHEAD": "f356bcac0727ed3aa5e0fde2f9cc829061fe6a59",
+    "newCommit": null,
+    "pushAttempted": false,
+    "remoteVerified": false,
+    "state": "20 exact new files staged successfully; cached diff check blocked before Git spawn; commit/push not run",
+    "sshConfiguration": "/tmp/tuxracer-texcoord2dv-independent-accept-oct29/repo/test/tuxracer-texcoord2dv-independent-accept-oct29/configuration.json",
+    "requiredNext": "capacity/allocation change recorded by coordinator, then fresh admission, cached diff/check review, commit, trusted SSH push and exact remote verification"
+  },
+  "limitations": [
+    "Production fragment/source acceptance only; no full module or game, browser, runtime or Boat execution.",
+    "Translation/allocation are fixture seams; lazy initializer allocation rollback not asserted.",
+    "Original output-cap/resource incident and publication hard128 topology incident retained, not retroactively requalified.",
+    "Shared messageboard already exceeds 12MiB file ceiling: no append attempt; coordinator publication-note handoff.",
+    "Mandatory cached Git review and publication incomplete because fresh MemAvailable failed.",
+    "Read-only bounded board watcher added before closeout checks; initial stage used direct supervised Git helper before that watcher was active, a procedural limitation."
+  ],
+  "cleanup": {
+    "supervisedProcessGroups": "killed/reaped at operation completion",
+    "runtimeBoxes": [],
+    "productionChanges": false,
+    "donorRootGitWrites": false,
+    "destructiveCleanup": false,
+    "allocationHandback": "Coordinator receives owned staged WIP, 48MiB reservation and evidence; do not release until recovery/publication/board handback is resolved."
+  },
+  "at": 1793247295.1480093
+}

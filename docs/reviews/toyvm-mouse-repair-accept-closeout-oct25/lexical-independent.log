@@ -1,9 +1,0 @@
-PASS actual tracked font closure includes both required loaders
-FAIL block documentation comment cannot create a required import: bundle: tools/toyvm/dos.js requires missing literal dependency ./not-an-import (resolved tools/toyvm/not-an-import.js)
-FAIL inline documentation comment cannot create a required import: bundle: tools/toyvm/dos.js requires missing literal dependency ./not-an-import (resolved tools/toyvm/not-an-import.js)
-FAIL quoted documentation cannot create a required import: bundle: tools/toyvm/dos.js requires missing literal dependency ./not-an-import (resolved tools/toyvm/not-an-import.js)
-PASS same actual required font import with legal spacing remains in closure
-PASS required font import after block comment remains in closure
-PASS missing actual literal dependency must still reject
-PASS full-line documentation and computed optional require retain established behavior
-{"failures":3,"scope":"read-only actual module graph with lexical equivalent source transformations"}
