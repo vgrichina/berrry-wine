@@ -1,9 +1,0 @@
-{
-  "files": 1959,
-  "expandedBytes": 100354053,
-  "note": "Static original cabinet listing, not installed payload",
-  "sourceCopyBytes": 73339636,
-  "conservativeChildInputPlusInstalledOutputBytes": 257033325,
-  "runtimeTmpfsQuotaBytes": 419430400,
-  "fitsBeforeInstall": true
-}

@@ -1,8 +1,8 @@
 {
-  "wholeAllocated": 1466368,
+  "wholeAllocated": 1978368,
   "reserve": 8388608,
   "publicationGrowthAllowance": 8388608,
-  "totalProjected": 18243584,
+  "totalProjected": 18755584,
   "cap": 67108864,
-  "hostFree": 6993276928
+  "hostFree": 7143198720
 }
