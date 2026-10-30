@@ -1,8 +1,0 @@
-{
-  "local": [
-    "Initial broad instruction/board/rg reads exceeded excerpt/output intent; no protected data changes; replaced by bounded targeted reads.",
-    "One guessed control filename was absent; resolved to accepted canonical filename.",
-    "Supplied tests exited0 pass8/fail0 using Node spec reporter; capture parser expected TAP prefix and raised. Retained unchanged successful supplied log; generalized summary prefix parser and reused it, no source/test/oracle changes."
-  ],
-  "historical": "All accepted original incident payloads retained byte-exact, including donor duplicate allocation, nested Node control and publication index refresh incidents."
-}

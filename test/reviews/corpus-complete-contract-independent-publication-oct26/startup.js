@@ -1,1 +1,0 @@
-const fs=require('fs'); console.log(JSON.stringify({execPath:process.execPath,version:process.version,execArgv:process.execArgv,nodeOptions:process.env.NODE_OPTIONS,tmpdir:process.env.TMPDIR,reviewOutput:process.env.CORPUS_REVIEW_OUTPUT,limits:fs.readFileSync('/proc/self/limits','utf8'),rss:process.memoryUsage().rss}));
