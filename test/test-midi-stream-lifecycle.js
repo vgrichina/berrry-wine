@@ -14,7 +14,7 @@ const sha = s => crypto.createHash('sha256').update(s).digest('hex');
 const files = ['src/09a3-handlers-audio.wat', 'src/01-header.wat', 'src/13-exports.wat',
   'src/03-registers.wat', 'src/10-helpers.wat', 'src/api_table.json',
   'src/01b-api-hashes.generated.wat', 'src/09b2-dispatch-table.generated.wat',
-  'lib/host-audio.js', 'host.js'];
+  'lib/host-audio.js', 'host.js', 'src/09a-handlers.wat', 'src/04-cache.wat'];
 const sources = Object.fromEntries(files.map(p => [p, read(p)]));
 const table = JSON.parse(sources['src/api_table.json']);
 const stop = table.find(r => r.name === 'midiStreamStop');
@@ -103,7 +103,11 @@ function form(source, marker) {
   }
   throw Error('unbalanced ' + marker);
 }
-const fn = (file, name) => form(sources[file], `(func $${name}`);
+const fn = (file, name) => {
+  const match = new RegExp(`\\(func \\$${name}(?=[\\s)])`).exec(sources[file]);
+  assert(match, `${file}: exact function ${name}`);
+  return form(sources[file].slice(match.index), '(func');
+};
 const audioFile = 'src/09a3-handlers-audio.wat';
 const names = ['midiStreamOpen', 'midiStreamOut', 'midiStreamPause',
   'midiStreamRestart', 'midiStreamStop', 'midiStreamClose', 'midiStreamProperty',
@@ -116,6 +120,15 @@ for (const n of ['fire_midi_out_callback_bound', 'fire_wave_out_callback_bound',
 for (const n of ['save_caller_regs', 'restore_caller_regs', 'get_cf', 'set_flags_inc', 'set_flags_dec'])
   bodies.push(fn('src/03-registers.wat', n));
 for (const n of ['hash_api_name', 'lookup_api_id']) bodies.push(fn('src/10-helpers.wat', n));
+// Keep the actual callback admission/return and invocation identity closure.
+// Only its private storage is relocated into this two-page fixture.
+for (const n of ['mm_callback_begin', 'mm_callback_frame_at', 'mm_callback_frame',
+  'mm_callback_check', 'mm_callback_finish']) bodies.push(fn('src/09a-handlers.wat', n));
+for (const n of ['invocation_new_id', 'invocation_install', 'invocation_process_begin',
+  'invocation_validate', 'invocation_current', 'invocation_enter', 'invocation_leave'])
+  bodies.push(fn('src/04-cache.wat', n).replace(
+    /\(region.addr \$CALLBACK_OWNERSHIP (\d+)\)/g,
+    (_, offset) => `(i32.const ${16384 + Number(offset)})`));
 const page = Math.floor(stop.id / 256);
 const dispatch = fn('src/09b2-dispatch-table.generated.wat', 'dispatch_api_table_page_' + page);
 bodies.push(dispatch);
@@ -129,13 +142,15 @@ for (const n of new Set([...dispatch.matchAll(/\(call \$(handle_\S+)/g)].map(m =
 const globals = new Set([...bodies.join('\n').matchAll(/\(global\.(?:get|set) \$(\w+)/g)].map(m => m[1]));
 globals.delete('API_HASH_COUNT'); // supplied by the actual generated hash source
 const initial = { reg_base: 64, API_HASH_TABLE: 65536, API_HASH_COUNT: table.length,
-  mm_timer_ret_thunk: 0xcaca000a };
-const imports = [...sources['src/01-header.wat'].matchAll(/\(import "host" "(midi_\w+|get_ticks)"/g)]
+  mm_timer_ret_thunk: 0xcaca000a, current_thread_id: 1, MM_CALLBACK_CONTEXTS: 32768 };
+const typedGlobals = new Map(['invocation_epoch', 'invocation_root', 'mm_callback_owner']
+  .map(g => [g, form(sources[g === 'mm_callback_owner' ? 'src/09a-handlers.wat' : 'src/04-cache.wat'], `(global $${g} `)]));
+const imports = [...sources['src/01-header.wat'].matchAll(/\(import "host" "(midi_\w+|get_ticks|beep_process_begin|beep_thread_begin)"/g)]
   .map(m => form(sources['src/01-header.wat'], m[0]));
 const wasmSource = `
- (import "host" "memory" (memory 2))
+ (import "host" "memory" (memory 2 2 shared))
  ${imports.join('\n')}
- ${[...globals].map(g => `(global $${g} (mut i32) (i32.const ${initial[g] || 0}))
+ ${[...globals].map(g => `${typedGlobals.get(g) || `(global $${g} (mut i32) (i32.const ${initial[g] || 0}))`}
    (export "${g}" (global $${g}))`).join('\n')}
  (func $g2w (param $p i32) (result i32) (local.get $p))
  (func $gl32 (param $p i32) (result i32) (i32.load (local.get $p)))
@@ -151,13 +166,16 @@ const wasmSource = `
  (export "incFlags" (func $set_flags_inc))
  (export "decFlags" (func $set_flags_dec))
  (export "restoreWait" (func $wave_callback_restore_wait))
+ (export "beginProcess" (func $invocation_process_begin))
+ (export "currentInvocation" (func $invocation_current))
+ (export "finishCallback" (func $mm_callback_finish))
 `;
 const compiled = compileClosure({ source: wasmSource, vfs: new Map() }, { tailCalls: false });
 assert(compiled.success, compiled.error);
 const moduleUnderTest = new WebAssembly.Module(compiled.wasmBinary);
-let cases = 0;
+let cases = 0, callbacksExecuted = 0;
 function setup() {
-  const memory = new WebAssembly.Memory({ initial: 2 });
+  const memory = new WebAssembly.Memory({ initial: 2, maximum: 2, shared: true });
   const dv = new DataView(memory.buffer);
   const synths = [], notifications = [], events = [], windows = [];
   let now = 100;
@@ -187,6 +205,8 @@ function setup() {
   const e = new WebAssembly.Instance(moduleUnderTest, { host: { ...audio.imports,
     memory, get_ticks: () => now } }).exports;
   ctx.exports = { ...e, post_message_q: (...args) => windows.push(args) };
+  e.beginProcess();
+  assert.notEqual(e.currentInvocation(), 0n, 'production initializer establishes root');
   e.eip.value = 0x11111;
   dv.setUint32(80, 8192, true);
   function call(name, ...args) {
@@ -236,6 +256,10 @@ function setup() {
         e.flag_sign_shift.value, carry].map(v => v >>> 0);
       audio.pumpWaveOutCompletions();
       assert.equal(e.mm_timer_in_cb.value, 1);
+      assert.equal(e.invocation_depth.value, 1, 'real callback admission entered a child');
+      assert.equal(e.mm_callback_depth.value, 1);
+      assert.notEqual(e.currentInvocation(), e.invocation_root.value);
+      callbacksExecuted++;
       const sp = dv.getUint32(80, true);
       const frame = Array.from({ length: 10 }, (_, i) => dv.getUint32(sp + 24 + i * 4, true));
       const args = Array.from({ length: 6 }, (_, i) => dv.getUint32(sp + i * 4, true));
@@ -251,8 +275,10 @@ function setup() {
       assert.equal(e.getCF(), 1 - carry, 'callback changed lazy carry');
       // Simulate the guest's ret 20; use the production restore helpers.
       dv.setUint32(80, sp + 24, true);
-      e.mm_timer_in_cb.value = 0;
-      e.restore(); e.restoreWait();
+      e.finishCallback();
+      assert.equal(e.invocation_depth.value, 0, 'production callback return releases child');
+      assert.equal(e.mm_callback_depth.value, 0);
+      assert.equal(e.currentInvocation(), e.invocation_root.value);
       // Check behavior before layout so the pre-fix control fails on lost CF.
       assert.equal(e.getCF(), carry, 'MIDI callback must restore interrupted lazy carry');
       assert.equal(sp, before - 64, 'invocation-owned 40-byte saved frame + ret/5 args');
@@ -273,6 +299,36 @@ function property(s, h, value, flags = 0x80000001) {
   return s.call('midiStreamProperty', h, 700, flags);
 }
 function notes(s, index = 0) { return s.synths[index]?.notes.get('0:60') || 0; }
+test('production callback ownership rejects invalid admission and return before mutation', () => {
+  const s = setup();
+  const root = s.e.invocation_root.value;
+  for (const [global, invalid] of [['invocation_root', 0n], ['invocation_tid', 2]]) {
+    const prior = s.e[global].value;
+    s.e[global].value = invalid;
+    const before = Buffer.from(s.dv.buffer);
+    assert.throws(() => s.e.fire_midi_out_callback_bound(77, 1024, 0x12345, 9, 0x3c9),
+      WebAssembly.RuntimeError, 'invalid owner must trap');
+    assert.deepEqual(Buffer.from(s.dv.buffer), before, 'rejection precedes memory writes');
+    assert.equal(s.e.invocation_depth.value, 0);
+    assert.equal(s.e.mm_callback_depth.value, 0);
+    assert.equal(s.e.mm_timer_in_cb.value, 0);
+    s.e[global].value = prior;
+  }
+  assert.equal(s.e.fire_midi_out_callback_bound(77, 1024, 0x12345, 9, 0x3c9), 1);
+  assert.notEqual(s.e.currentInvocation(), root);
+  const sp = s.dv.getUint32(80, true);
+  assert.throws(() => s.e.finishCallback(), WebAssembly.RuntimeError,
+    'return must match retained ESP before releasing child');
+  assert.equal(s.e.invocation_depth.value, 1);
+  assert.equal(s.e.mm_callback_depth.value, 1);
+  s.dv.setUint32(80, sp + 24, true);
+  s.e.finishCallback();
+  assert.equal(s.e.currentInvocation(), root);
+  assert.equal(s.e.invocation_depth.value, 0);
+  assert.equal(s.e.mm_callback_depth.value, 0);
+  assert.equal(s.e.mm_timer_in_cb.value, 0);
+  callbacksExecuted++;
+});
 test('fractional deltas accumulate to 50ms across 96 events', () => {
   const s = setup(), h = s.open(0);
   assert.equal(property(s, h, 960), 0);
@@ -485,7 +541,7 @@ test('wave ABI and saved wait/flags survive MIDI callback admission/return', () 
   assert.equal(s.dv.getUint32(sp + 8, true), 0x3bd, 'wave still WOM_DONE');
   assert.equal(s.e.fire_midi_out_callback_bound(18, 1536, 0x6666, 88, 0x3c9), 0);
   s.e.flag_a.value = 0;
-  s.dv.setUint32(80, sp + 24, true); s.e.mm_timer_in_cb.value = 0; s.e.restore(); s.e.restoreWait();
+  s.dv.setUint32(80, sp + 24, true); s.e.finishCallback();
   assert.equal(s.dv.getUint32(80, true), before);
   assert.equal(s.e.wait_handle.value, 444); assert.equal(s.e.yield_reason.value, 1);
   assert.equal(s.e.flag_a.value, 0x234);
@@ -591,7 +647,7 @@ test('window callback backpressure preserves ordered open/done/close notificatio
   assert.equal(gate.threadManager._mainWaitPolls, 0);
   let sp = s.dv.getUint32(80, true);
   assert.equal(s.dv.getUint32(sp + 8, true), 0x3c7);
-  s.dv.setUint32(80, sp + 24, true); s.e.mm_timer_in_cb.value = 0; s.e.restore(); s.e.restoreWait();
+  s.dv.setUint32(80, sp + 24, true); s.e.finishCallback();
   gate.hostCtx = {}; // Only test the actual boundary's completed-wait restore.
   await gate._pumpWaveCallbacksAtBoundary();
   assert.equal(gate.threadManager._mainWaitStartedAt, 123);
@@ -604,7 +660,8 @@ test('window callback backpressure preserves ordered open/done/close notificatio
   assert.equal(s.e.mm_timer_in_cb.value, 0);
   cases++;
   console.log('PASS actual browser cooperative owner/wait/busy/retirement gate');
-console.log(JSON.stringify({ cases, moduleBytes: compiled.wasmBinary.length,
+assert(callbacksExecuted > 0, 'must execute real callback admission and return');
+console.log(JSON.stringify({ cases, callbacksExecuted, moduleBytes: compiled.wasmBinary.length,
   moduleSHA256: sha(compiled.wasmBinary), sourceSHA256: Object.fromEntries(files.map(f => [f, sha(sources[f])])),
   qualification: 'isolated production WAT/import execution; no fullVM/x86/native/audio-output claim' }, null, 2));
 if (process.argv.includes('--mutations')) {
