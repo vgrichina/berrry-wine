@@ -1,0 +1,14 @@
+{
+  "pre-change": {
+    "rejected": true,
+    "exit": 1,
+    "assertion": "bounded summary must survive detail exhaustion",
+    "stderrSHA256": "e9803b67a996619d37c55c4a77525c009fd1f245a9567b1fc4441f2c7ae62780"
+  },
+  "missing-host-poll-hook": {
+    "rejected": true,
+    "exit": 1,
+    "assertion": "0 == 2",
+    "stderrSHA256": "dae58bf3cb4b381c7a9c210ce181314bb9cc71fdbe3e3d1f3c34c5e6957d3300"
+  }
+}
