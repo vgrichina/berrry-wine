@@ -1,9 +1,0 @@
-# JigSawedME continues after BltFast; next failure is SetForeColor
-
-Private ed3a022b2463fbe226405fbbf565ae7cf4a31987 / WASM01bdccd69779c358e7b4022bfeeb5b98b21d2009e826f2ef53ac4b21e7518b97. Ordinary49352 stillshows imageerror after Upload/Open. Diagnostic50151 positively captures oversized BltFast3964/caller41a299 completed COM_S_OK withstatusOut0x88760096,ESP32. This is the designed no-clipping drawing-error contract; guest continues beyond it.
-
-First retained completed COM failure is sequence16044, IVBImageSurface7_SetForeColor/API4010, caller0x439664, args[this0x08009088,color0x00ffffff], E_NOTIMPL0x80004001, ESP+12. No successful text/puzzle rendering inferred. Native SetForeColor and downstream DrawText need real per-surface GDI state/pixel effects, not fake success.
-
-The bounded observer retained126records and reported no capture errors; it explicitly dropped{"IVBImageSurface7_Release":5505,"IVBImageSurface7_AddRef":4811,"IVBDirectDraw7_CreateSurface":828,"IVBImageSurface7_BltFast":3726,"IVBImageSurface7_BltColorFill":829,"IVBImageSurface7_SetColorKey":220,"IVBImageSurface7_Blt":1,"IVBImageSurface7_QueryInterface":1}. Independent first COM, drawing-status and dialog reservations prevent an expected early drawing error from hiding the later COM boundary. Missing/capped calls do not establish absence. All original imports restored. Observer4ec6df1dda9213f989a1b536213f201c9e209a88fb5f1916757beb7a7a780645; privateWorker22432afc3a4501869e1257925afbe00ca6bd6fe1b26ea666f0602b0590721ce8.
-
-50151 exit0; cleanup13:21:42.603Z/browser+serverclosed/errors[], process checkclear. scratch/new-games-pipeline-20261004/jigssawme/surface-blt-repair-20261005/corrected/color-fill/color-key/blt-fast/drawing-error/attempt1/validation.json pins41 artifacts. No gameplay/FPS qualification. Candidate remains private.
