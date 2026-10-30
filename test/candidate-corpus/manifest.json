@@ -1512,6 +1512,42 @@
       }
     },
     {
+      "id": "slave-zero-demo",
+      "name": "Slave Zero Demo",
+      "kind": "game",
+      "version": "1999 Accolade/Ronin PC demo (InstallShield 5 Setup tree in a zip; file group DEFAULT is the game); Direct3D",
+      "executables": [
+        "installed/Slave Zero/SlaveZero.exe"
+      ],
+      "sourcePage": "https://archive.org/details/SlaveZeroDemo",
+      "license": "proprietary Infogrames/Accolade demo: readme says it may not be copied, distributed, transferred or sold, so a local ignored compatibility fixture only, never deploy or ship it",
+      "localOnly": true,
+      "packages": [
+        {
+          "url": "https://archive.org/download/SlaveZeroDemo/SlaveZeroDemo.zip",
+          "sha1": "881fdbf2d7e239e7986be34f8fbc1e19199e1326",
+          "type": "archive",
+          "into": "zip"
+        }
+      ],
+      "postExtract": [
+        { "type": "unshield", "cab": "zip/data1.cab", "into": "groups", "group": "DEFAULT" },
+        { "type": "copyTree", "from": "groups/DEFAULT", "into": "installed/Slave Zero" },
+        { "type": "copyFile", "from": "zip/InstData/GameData/INSTSUPP/szHardware.ini", "into": "installed/Slave Zero/szHardware.ini" }
+      ],
+      "browser": {
+        "fileRoot": "installed",
+        "exe": "installed/Slave Zero/SlaveZero.exe"
+      },
+      "cli": {
+        "maxBatches": 2600,
+        "batchSize": 200000,
+        "vfsInclude": [
+          "**/*"
+        ]
+      }
+    },
+    {
       "id": "shogo-demo",
       "name": "Shogo: Mobile Armor Division Demo",
       "kind": "game",

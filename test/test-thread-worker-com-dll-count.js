@@ -104,5 +104,42 @@ function manager(main, localLink) {
     assert(replies[0].loadAddr && !replies[0].error,'dynamic load completes');
   }
 
+  // A server the host could not fetch: the Worker fails the parked
+  // CoCreateInstance the way the CLI does -- *ppv cleared and EIP back at the
+  // caller. Its old copy only set EAX and popped ESP, so EIP stayed on the
+  // thunk and Slave Zero (absent a3d.dll) trapped in garbage in the browser.
+  {
+    const vm = require('vm'), fs = require('fs');
+    const replies = [], mem = new Map();
+    const esp = 0x7000, ret = 0x401234, ppv = 0x6000;
+    [ret, 0, 0, 0, 0, ppv].forEach((v, i) => mem.set(esp + i * 4, v));
+    mem.set(ppv, 0xdeadbeef);
+    const s = { eip: 0x7501000, esp, eax: 0, yieldCleared: false };
+    const sandbox = {
+      URL, importScripts() {},
+      location: { href: 'https://example.invalid/lib/guest-worker.js?v=test' },
+      postMessage: reply => replies.push(reply),
+      DllLoader: { loadDll() { throw new Error('not reached'); },
+        failComDllYield: require('../lib/dll-loader').failComDllYield },
+      fixtureInstance: { exports: {
+        clear_yield() { s.yieldCleared = true; },
+        get_esp: () => s.esp, set_esp: v => { s.esp = v; },
+        set_eip: v => { s.eip = v; }, set_eax: v => { s.eax = v >>> 0; },
+        guest_read32: a => mem.get(a) || 0, guest_write32: (a, v) => { mem.set(a, v); },
+      } },
+    };
+    sandbox.self = sandbox;
+    const context = vm.createContext(sandbox);
+    vm.runInContext(fs.readFileSync(require.resolve('../lib/guest-worker'), 'utf8'), context);
+    vm.runInContext('instance = fixtureInstance; memory = {buffer: new ArrayBuffer(64)};', context);
+    await sandbox.onmessage({ data: { t: 'comLoadDll', seq: 7, fileName: 'a3d.dll', bytes: null } });
+    assert.deepStrictEqual(replies.map(r => [r.t, r.loadAddr]), [['comDllLoaded', 0]]);
+    assert(s.yieldCleared, 'miss clears the COM yield');
+    assert.strictEqual(s.eax, 0x80040154, 'miss returns REGDB_E_CLASSNOTREG');
+    assert.strictEqual(s.eip, ret, 'miss returns to the caller, not the parked thunk');
+    assert.strictEqual(s.esp, esp + 24, 'miss drops the return address and 5 args');
+    assert.strictEqual(mem.get(ppv), 0, 'miss clears *ppv');
+  }
+
   console.log('PASS  worker COM/LoadLibrary loads publish dll_count and thunks to main');
 })().catch(err => { console.error(err); process.exit(1); });
