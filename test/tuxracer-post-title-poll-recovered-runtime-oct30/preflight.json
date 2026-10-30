@@ -1,0 +1,72 @@
+{
+  "status": "BLOCKED",
+  "pins": {
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/main-scheduler-observer.js": {
+      "bytes": 4519,
+      "sha256": "01f4de4099a0e60c56cf6ea109f82ae12e1c42b6ba15309d0411b10fe8029040"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/README.md": {
+      "bytes": 6143,
+      "sha256": "a430298ac160299fd9e854ff8248c063d78962e42c5352e571856275f3955432"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/boundary-run.pinned.js.json": {
+      "bytes": 750,
+      "sha256": "6f6a268b1b539574bbfea463d97ca6e1ffb05a933b7641851bc6de52b33d17ee"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/boundary-run.current.js.json": {
+      "bytes": 750,
+      "sha256": "97620b5c1095c2599809aadae879f15700352c6b615953fff68e2dd920e62605"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/regression-controls.json": {
+      "bytes": 403,
+      "sha256": "dda8ef18a58860906f285ee69dd6ac6a7c6722034e372d4c51ee733b12b32f20"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/input-consumption/publication.json": {
+      "bytes": 1635,
+      "sha256": "f0d7aeb8da0e89c7f0052563b92b86266733a8864aa17f6d640d7a20f5857683"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/source-manifest.json": {
+      "bytes": 28971,
+      "sha256": "b4c8e15abac596f027685b227548c435263355ac5ef6444c2d6bc3a7649198bb"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/limit-controls.json": {
+      "bytes": 319,
+      "sha256": "0780e8d47c36feca1a0edf9c0ea4b3d9ede286d98bf4f33819759613409efca7"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/remote-worker.py": {
+      "bytes": 4530,
+      "sha256": "cee99baded7f8a3fb6388c687c9ae9d601617879f3516f7bb9235a633f4bba30"
+    },
+    "/tmp/tuxracer-main-menu-race-progression-oct30/control.py": {
+      "bytes": 1116,
+      "sha256": "0709450569bab3030b5c2060a998af91fd3751d39e4e7c8eb4a9b0fe1f214085"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-index-recovery-compaction-oct30.json": {
+      "bytes": 1256,
+      "sha256": "569330a45191d968658775d793f761a1cbf3b4497d54ab93d759816aaa71c144"
+    }
+  },
+  "mount": {
+    "receipt": {
+      "path": "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30/raw/mount-configuration-filename-only.stdout",
+      "sha256": "14c73c68d0afa4886d9530ee121c0c94b3af50c48a7cc33f8dc9fee90e2ca6f9",
+      "count": 157,
+      "argv": [
+        "--app=tuxracer_original_061a"
+      ],
+      "parser": "validateLocalManifestSync",
+      "unchanged": true
+    },
+    "count": 157,
+    "commaFiles": [],
+    "configurationUnchanged": true,
+    "reusedParserReceipt": true
+  },
+  "boundaryTests": "unchanged passing receipts reused; not rerun",
+  "canonicalInputs": 141,
+  "moduleVerified": false,
+  "completeClosure": false,
+  "API16KiBSmoke": "not reached: no new Boat created",
+  "nodeStartup": "not reached",
+  "guestRuns": 0
+}

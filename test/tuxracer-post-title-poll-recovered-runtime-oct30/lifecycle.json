@@ -1,0 +1,14 @@
+{
+  "newBoat": null,
+  "provisioned": false,
+  "guestRuns": 0,
+  "newRenders": 0,
+  "oldBoxes": "not resumed/forked/execed or otherwise mutated",
+  "shutdownRequired": false,
+  "reason": "Exact module prerequisite failed before authorized creation; no new allocation to snapshot-stop",
+  "localChild": {
+    "snapshotPull": "terminal -25 SIGXFSZ, waited/reaped by retained supervisor",
+    "partial": "hashed and removed",
+    "recoveryDirectoryExists": false
+  }
+}

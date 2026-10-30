@@ -1,0 +1,39 @@
+{
+  "at": 1793348203.8839025,
+  "sizes": {
+    "/tmp/tuxracer-glcolor4dv-repair-oct30": 30752768,
+    "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30-report-corrected": 5922816,
+    "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30": 3428352,
+    "/tmp/tuxracer-vertex-color-gameplay-owner-policy-oct30": 487424,
+    "/tmp/tuxracer-vertex-color-isolated-capture-runtime-oct30": 1634304,
+    "/tmp/tuxracer-retained-vertex-runtime-integration-oct30": 3559424,
+    "/tmp/tuxracer-main-menu-race-progression-oct30": 7925760,
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-main-menu-race-progression-oct30": 241664,
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-vertex-runtime-integration-oct30": 266240,
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-vertex-color-gameplay-owner-policy-oct30": 385024,
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-vertex-color-isolated-capture-runtime-oct30": 233472,
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-accepted-vertex-color-reconciliation-oct30": 192512,
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-main-menu-input-consumption-repair-oct30": 294912,
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-post-title-poll-runtime-oct30": 339968,
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-post-title-poll-recovered-runtime-oct30": 167936
+  },
+  "used": 55832576,
+  "budget": 67108864,
+  "reserve": 8388608,
+  "free": 3287470080,
+  "remainingAggregate": 267292672,
+  "diskFloor": 1610612736,
+  "MemAvailable": 4282626048,
+  "RAMAdmission": false,
+  "checks": {
+    "allocation": true,
+    "disk": true
+  },
+  "plannedGrowth": {
+    "module": 1884160,
+    "selectedPNG": 524288,
+    "compactReport": 262144
+  },
+  "required": 11059200,
+  "fits": true
+}

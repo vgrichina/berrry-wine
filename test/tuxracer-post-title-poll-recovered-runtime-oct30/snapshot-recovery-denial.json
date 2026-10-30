@@ -1,0 +1,86 @@
+{
+  "status": "BLOCKED_BEFORE_PROVISIONING",
+  "at": 1793348240.8792834,
+  "operation": {
+    "name": "recover-only-accepted-module",
+    "argv": [
+      "/home/user/.ascii/boat",
+      "--no-update",
+      "--json",
+      "snapshot",
+      "pull",
+      "40ad564a-7673-4d96-8842-a6163a971d0f",
+      "--path",
+      "/home/user/tuxracer-render/build/wine-assembly.wasm",
+      "--out",
+      "/tmp/tuxracer-main-menu-race-progression-oct30/post-title-poll-recovered-runtime/recovery"
+    ],
+    "exit": -25,
+    "reason": null,
+    "elapsed": 6.838695868151262,
+    "peakRSS": 17420288,
+    "stdoutBytes": 0,
+    "stderrBytes": 0,
+    "inheritedLimits": {
+      "2": [
+        -1,
+        -1
+      ],
+      "9": [
+        -1,
+        -1
+      ],
+      "0": [
+        -1,
+        -1
+      ],
+      "1": [
+        -1,
+        -1
+      ]
+    },
+    "generatedFileLimit": 12582912,
+    "captureLimit": 524288,
+    "stdout": "",
+    "stderr": ""
+  },
+  "selectedPath": "/home/user/tuxracer-render/build/wine-assembly.wasm",
+  "snapshot": "40ad564a-7673-4d96-8842-a6163a971d0f",
+  "partial": {
+    "path": "/tmp/tuxracer-main-menu-race-progression-oct30/post-title-poll-recovered-runtime/recovery/.sandbox-snapshot-pull-tmp/layer-2.tar.zst",
+    "bytes": 12582912,
+    "allocated": 12582912,
+    "sha256": "1d5f036d407e71a08b1203cffa1ac92cbf022ac1d78980ca8b40ccc347181972"
+  },
+  "allocationAtDiscovery": {
+    "sizes": {
+      "/tmp/tuxracer-glcolor4dv-repair-oct30": 30752768,
+      "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30-report-corrected": 5922816,
+      "/tmp/tuxracer-glcolor4dv-canonical-enter-runtime-oct30": 3428352,
+      "/tmp/tuxracer-vertex-color-gameplay-owner-policy-oct30": 487424,
+      "/tmp/tuxracer-vertex-color-isolated-capture-runtime-oct30": 1634304,
+      "/tmp/tuxracer-retained-vertex-runtime-integration-oct30": 3559424,
+      "/tmp/tuxracer-main-menu-race-progression-oct30": 20537344,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-main-menu-race-progression-oct30": 241664,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-vertex-runtime-integration-oct30": 266240,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-vertex-color-gameplay-owner-policy-oct30": 385024,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-vertex-color-isolated-capture-runtime-oct30": 233472,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-accepted-vertex-color-reconciliation-oct30": 192512,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-main-menu-input-consumption-repair-oct30": 294912,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-post-title-poll-runtime-oct30": 339968,
+      "/home/user/wine-assembly/scratch/usage-watch/tuxracer-post-title-poll-recovered-runtime-oct30": 196608
+    },
+    "used": 68472832,
+    "budget": 67108864,
+    "reserve": 8388608,
+    "overBudget": 1363968
+  },
+  "cause": "Supported snapshot pull --path staged full layer-2.tar.zst and hit unchanged RLIMIT_FSIZE12MiB (SIGXFSZ25); selected module never extracted. Full-layer temporary requirement exceeds authorized recovery allocation.",
+  "retry": false,
+  "newBoat": null,
+  "guestRuns": 0,
+  "renders": 0,
+  "moduleVerified": false,
+  "cleanup": "Partial task-created download hashed then removed; no source/index/old artifacts touched",
+  "next": "Coordinator must provide accepted1881806byte module via a supported exact-file transfer/recovery route whose intermediate storage fits local allocation and unchanged12MiB file limit. No unchanged retry, old resume, compile or limit increase."
+}

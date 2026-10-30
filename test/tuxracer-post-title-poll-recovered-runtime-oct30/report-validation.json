@@ -1,0 +1,11 @@
+{
+  "PASS": true,
+  "denialPreserved": true,
+  "partialRemoved": true,
+  "noNewBoat": true,
+  "noRuntime": true,
+  "pinnedRunnerVerified": true,
+  "mountReceiptVerified": true,
+  "boundaryReceiptsReused": true,
+  "sourceChanged": false
+}
