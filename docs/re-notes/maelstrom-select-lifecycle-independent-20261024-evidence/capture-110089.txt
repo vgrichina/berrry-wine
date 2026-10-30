@@ -1,2 +1,0 @@
-8fe3b51b94f59a17e3af58e08e0cb87cdbb4165a	refs/heads/main
-0e1b2df6e3adff9ad43424966a389c2ea6af227e	refs/heads/task/maelstrom-select-lifecycle-observer-oct24

@@ -1,4 +1,0 @@
-{"name":"disabled-transform-pin","verdict":"PASS","unusedGetterAccesses":0}
-{"name":"disabled-transform-lifecycle","verdict":"PASS","unusedGetterAccesses":0}
-{"name":"disabled-observer-limit","verdict":"PASS","unusedGetterAccesses":0}
-{"verdict":"PASS_DISABLED_INERTNESS","cases":3,"unusedGetterAccesses":0,"nativeAPIs":0}

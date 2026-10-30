@@ -1,9 +1,0 @@
-{
-  "test/render-helper.js": "03503da5d51b7d860f011c30f671e0e12cb47e50a946fc930b5169fd14bbf3e4",
-  "test/render-artifact.js": "8fb62a8ed695e552490e80890eaa9ea490f0fe377f5b27a975ee845e093fddfa",
-  "test/test-render-artifact-protocol.js": "213ab245bb63af78d4463f3c7f2f10d8a6fffc88299e05377ceeefd35938dd0c",
-  "test/compile-src.js": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76",
-  "tools/watx-closure.js": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c",
-  "test/test-d3d-software-compaction.js": "1aafe258ccb8497a081f4cca64c2adc831284138356b29a8446e7c6a02a45034",
-  "test/test-d3d-software-ctx-arena-reuse.js": "5a3d22ad6f50de6e59436dd0e209c4ffc386ee5dfa7dcb1196fd65563a4188de"
-}

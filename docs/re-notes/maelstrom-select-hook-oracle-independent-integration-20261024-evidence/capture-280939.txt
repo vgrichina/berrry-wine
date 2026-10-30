@@ -1,9 +1,0 @@
-PASS explicit source contract compares exact object; equal functions on another object cannot pass
-PASS routing labels confer no source authentication; actual source remains a host prerequisite
-PASS two precreated oracles cannot reset a leased source with a fresh capture
-PASS record prototype traps and extra accessor fields are not consulted
-PASS same-value accessor substitution rejects without invoking it and closes
-PASS signed Wasm i32 results retain full unsigned bits without coercing objects
-PASS fresh readonly export objects work; function proxies and revoked sources are never invoked
-PASS capture failure preserves primitive and hostile exception identity and poisons prior capture
-{"independentBoundaryGroups":8,"realWasm":false,"runtimeGate":"UNRESOLVED","contract":"Exact source-object equality when supplied; owner routing only; trusted exports and synchronous safe capture are host prerequisites. Omitted/undefined source selects documented legacy binding."}

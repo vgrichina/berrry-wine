@@ -1,9 +1,0 @@
-ACCEPT exact graphics equal-content repair fbd7ffe64d4d7e8e14e8d28815484845a354dfe0.
-
-Distinct captures may have identical file/pixel content. SHA-256 identifies content, not capture identity. Source removes only global digest uniqueness. The unchanged b675d6c0 fixture is byte-identical (SHA-256 9241dbb93788e85d6164c272d5cba618a5efe424f2d3147fd3eecd8b2e0cbe10). Its deterministic valid PNG case now passes; parent fails only that case.
-
-Independent41/41; supplied26/26; narrow5/5. Parent40/41 with the expected equal-content PNG failure. Narrow checks begin with valid equal-content distinct-file evidence and then prove all members reject for duplicate runs, normalized resolved-path reuse and symlink aliases; hash mismatch still rejects; malformed app/backend competitors poison every member in either record order.
-
-The static census blob is identical to immutable source ae188c98 and repair parent. No source repair or shared integration. Review fixtures and evidence only. All evidence is synthetic; no runtime authenticity, corpus completeness, gameplay or real capture claim. No guest/browser/native WASM/compiler/benchmark/test-run/box/service use. No successor.
-
-Reproduction commands and exact limits: result.json and supervise.py. The supervisor retains logs at the task ops path; create that directory before reproducing elsewhere. Unchanged41 fixture remains at repair/gfx-equal-pixel-evidence-oct25/independent.test.js. It regenerates deterministic PNG files when GFX_REPRO_DIR is set; retained local example: ops/reproducer. Evidence manifest records every reviewed input and retained text evidence.
