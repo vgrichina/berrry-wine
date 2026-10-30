@@ -251,6 +251,28 @@
     (i32.store offset=16 (global.get $reg_base)
       (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
+  ;; glTexCoord2dv(const GLdouble *v): unit zero's current (s,t,0,1).
+  ;; Validate both ends of this at-most-two-page vector: gl64 itself permits
+  ;; the null sentinel on a missing translation. A miss must not install zero
+  ;; coordinates. Load both doubles before changing any current attribute.
+  ;; Demotion is the existing packed-f32 encoder boundary, as for glTexCoord2f.
+  (func $handle_glTexCoord2dv (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $s f32) (local $t f32)
+    (if (i32.eqz (call $gl_wat_init)) (then (unreachable)))
+    (if (i32.gt_u (local.get $arg0) (i32.const 0xfffffff0)) (then (unreachable)))
+    (if (i32.eq (call $g2w (local.get $arg0)) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (if (i32.eq (call $g2w (i32.add (local.get $arg0) (i32.const 15))) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (local.set $s (f32.demote_f64 (f64.reinterpret_i64 (call $gl64 (local.get $arg0)))))
+    (local.set $t (f32.demote_f64 (f64.reinterpret_i64 (call $gl64 (i32.add (local.get $arg0) (i32.const 8))))))
+    (global.set $gl_tex_s (local.get $s))
+    (global.set $gl_tex_t (local.get $t))
+    (global.set $gl_tex_r (f32.const 0))
+    (global.set $gl_tex_q (f32.const 1))
+    (global.set $gl_wat_stat_calls (i64.add (global.get $gl_wat_stat_calls) (i64.const 1)))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
   ;; The OpenGL 1.1 surface outside the measured set. Unreal-engine OpenGlDrv
   ;; resolves its whole GL table through GetProcAddress and refuses to bind if
   ;; a single name is missing, so every GL 1.1 entry point is an api_table

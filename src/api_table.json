@@ -37641,7 +37641,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 3914060928,
-    "handler": "gl_unimplemented"
+    "handler": "glTexCoord2dv"
   },
   {
     "id": 4416,
