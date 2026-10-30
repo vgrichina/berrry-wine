@@ -1692,44 +1692,25 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
-  ;; setbuf supports NULL (unbuffered) for our canonical open FILEs only.
-  ;; A copied FILE does not copy the private ownership record/handle. Reject
-  ;; that state, buffered state, and custom buffers before changing any byte.
-  ;; All supported streams already perform I/O immediately; no flush is owed.
+  ;; setbuf(FILE*, buf) is setvbuf(file, buf, buf ? _IOFBF : _IONBF,
+  ;; BUFSIZ), with MSVCRT BUFSIZ = 512. Share setvbuf's immediate-I/O
+  ;; policy: never advertise a guest buffer that our stdio does not fill or
+  ;; drain. No bytes are pending, and the caller buffer is not retained.
+  ;; Invalid/closed streams leave memory alone and report EINVAL via errno.
   (func $handle_setbuf (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $rec i32) (local $rw i32) (local $flags i32) (local $expected_fd i32)
-    (local $base i32) (local $ptr i32)
-    (block $unsupported
-      (br_if $unsupported (local.get $arg1))
-      (local.set $rec (call $crt_stream_lookup (local.get $arg0)))
-      (br_if $unsupported (i32.eqz (local.get $rec)))
-      (local.set $rw (call $g2w (local.get $rec)))
-      (local.set $flags (call $crt_file_flags (local.get $arg0)))
-      (br_if $unsupported (i32.eqz (i32.and (local.get $flags) (i32.const 0x83))))
-      ;; _IOMYBUF, _IOSTRG, _IOYOURBUF are not implemented here.
-      (br_if $unsupported (i32.and (local.get $flags) (i32.const 0x148)))
-      (br_if $unsupported (call $gl32 (i32.add (local.get $arg0) (i32.const 4))))
-      (local.set $expected_fd (i32.load offset=4 (local.get $rw)))
-      (if (i32.eqz (local.get $expected_fd))
-        (then
-          (br_if $unsupported (i32.eqz (i32.and (i32.load offset=12 (local.get $rw)) (i32.const 2))))
-          (local.set $expected_fd (i32.shr_u
-            (i32.sub (local.get $arg0) (i32.atomic.load offset=12 (global.get $CRT_STREAM_STATE)))
-            (i32.const 5)))))
-      (br_if $unsupported (i32.ne (call $gl32 (i32.add (local.get $arg0) (i32.const 16))) (local.get $expected_fd)))
-      (local.set $base (call $gl32 (i32.add (local.get $arg0) (i32.const 8))))
-      (local.set $ptr (call $gl32 (local.get $arg0)))
-      (br_if $unsupported (i32.ne (local.get $ptr) (local.get $base)))
-      (if (local.get $base)
-        (then (br_if $unsupported (i32.ne (local.get $base) (i32.add (local.get $arg0) (i32.const 20))))))
-      (call $gs32 (local.get $arg0) (i32.add (local.get $arg0) (i32.const 20)))
-      (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.add (local.get $arg0) (i32.const 20)))
-      (call $gs32 (i32.add (local.get $arg0) (i32.const 24)) (i32.const 2))
-      (call $crt_file_set_flags (local.get $arg0) (i32.or (local.get $flags) (i32.const 4)))
-      ;; void, cdecl: preserve EAX and pop only the return address.
-      (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (local $saved_eax i32)
+    (local.set $saved_eax (i32.load (global.get $reg_base)))
+    (block $invalid
+      (br_if $invalid (i32.eqz (call $crt_stream_lookup (local.get $arg0))))
+      (br_if $invalid (i32.eqz (i32.and (call $crt_file_flags (local.get $arg0)) (i32.const 0x83))))
+      (call $handle_setvbuf (local.get $arg0) (local.get $arg1)
+        (select (i32.const 0) (i32.const 4) (local.get $arg1))
+        (i32.const 512) (i32.const 0) (local.get $name_ptr))
+      ;; setvbuf already consumed the return address. setbuf returns void.
+      (i32.store (global.get $reg_base) (local.get $saved_eax))
       (return))
-    (call $crash_unimplemented (local.get $name_ptr)))
+    (drop (call $crt_fdopen_error (i32.const 22)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
 
   ;; setvbuf(FILE*, buf, mode, size) -> 0, or -1 (cdecl). msvcrt refuses a
   ;; stream it does not know, a mode other than _IOFBF 0 / _IOLBF 0x40 /
