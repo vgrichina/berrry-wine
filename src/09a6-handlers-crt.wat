@@ -736,7 +736,12 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
+  ;; atof ignores the end pointer; strtod shares the same decimal scanner.
   (func $crt_strtod_simple (param $nptr i32) (result f64)
+    (call $crt_strtod_parse (local.get $nptr) (i32.const 0)))
+
+  (func $crt_strtod_parse (param $nptr i32) (param $endptr i32) (result f64)
+    (local $exp_start i32) (local $exp_digits i32)
     (local $s i32) (local $ch i32) (local $val i32)
     (local $neg i32) (local $digits i32) (local $exp_neg i32) (local $exp i32)
     (local $fval f64) (local $frac f64)
@@ -778,6 +783,7 @@
         (local.set $ch (i32.load8_u (local.get $s)))
         (if (i32.or (i32.eq (local.get $ch) (i32.const 0x65)) (i32.eq (local.get $ch) (i32.const 0x45)))
           (then
+            (local.set $exp_start (local.get $s))
             (local.set $s (i32.add (local.get $s) (i32.const 1)))
             (local.set $ch (i32.load8_u (local.get $s)))
             (if (i32.or (i32.eq (local.get $ch) (i32.const 0x2D)) (i32.eq (local.get $ch) (i32.const 0x2B)))
@@ -787,9 +793,13 @@
             (block $ex_done (loop $ex
               (local.set $val (call $crt_digit_value (i32.load8_u (local.get $s))))
               (br_if $ex_done (i32.or (i32.lt_s (local.get $val) (i32.const 0)) (i32.gt_u (local.get $val) (i32.const 9))))
+              (local.set $exp_digits (i32.add (local.get $exp_digits) (i32.const 1)))
               (local.set $exp (i32.add (i32.mul (local.get $exp) (i32.const 10)) (local.get $val)))
               (local.set $s (i32.add (local.get $s) (i32.const 1)))
               (br $ex)))
+            ;; An incomplete exponent is not part of the converted prefix.
+            (if (i32.eqz (local.get $exp_digits))
+              (then (local.set $s (local.get $exp_start))))
             (block $scale_done (loop $scale
               (br_if $scale_done (i32.eqz (local.get $exp)))
               (if (local.get $exp_neg)
@@ -797,6 +807,15 @@
                 (else (local.set $fval (f64.mul (local.get $fval) (f64.const 10)))))
               (local.set $exp (i32.sub (local.get $exp) (i32.const 1)))
               (br $scale)))))))
+    ;; No conversion means endptr is nptr, before whitespace/sign/dot.
+    (if (i32.eqz (local.get $digits))
+      (then
+        (local.set $s (call $g2w (local.get $nptr)))
+        (local.set $neg (i32.const 0))))
+    (if (local.get $endptr)
+      (then (call $gs32 (local.get $endptr)
+        (i32.add (local.get $nptr)
+          (i32.sub (local.get $s) (call $g2w (local.get $nptr)))))))
     (if (local.get $neg) (then (return (f64.neg (local.get $fval)))))
     (local.get $fval))
 
@@ -806,9 +825,7 @@
   )
 
   (func $handle_strtod (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $fpu_push (call $crt_strtod_simple (local.get $arg0)))
-    (if (local.get $arg1)
-      (then (call $gs32 (local.get $arg1) (local.get $arg0))))
+    (call $fpu_push (call $crt_strtod_parse (local.get $arg0) (local.get $arg1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
