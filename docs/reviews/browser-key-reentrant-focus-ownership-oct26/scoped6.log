@@ -1,7 +1,0 @@
-PASS nested actual renderer down, repeat and hide release both keys once
-PASS nested cancellation during release drains remaining ownership exactly once
-PASS release callback replaces pending ownership without stale snapshot release
-PASS throw after actual down delivery retains original ownership for later cancellation
-PASS throw during actual release still releases other held keys and propagates first error
-PASS canceled printable down cannot resume stale char delivery or swallow later input
-6 passed; 0 failed

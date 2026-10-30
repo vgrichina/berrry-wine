@@ -1,5 +1,0 @@
-PASS source pointer release/resume, outside clamp/deltas, edge reset, retry/disposal
-PASS source fallback release/resume, outside clamp/deltas, edge reset, retry/disposal
-PASS bundle pointer release/resume, outside clamp/deltas, edge reset, retry/disposal
-PASS bundle fallback release/resume, outside clamp/deltas, edge reset, retry/disposal
-{"passes":36,"scope":"DOM and actual LiveRun/INT33 methods only; exit invokes release methods, not guest execution"}

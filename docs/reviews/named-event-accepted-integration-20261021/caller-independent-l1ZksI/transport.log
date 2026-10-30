@@ -1,3 +1,0 @@
-{"kind":"subprocess","stamp":{"epoch":"c2a10875-36ec-4664-a891-79b0dd55fbbb","tick":"63855077","callerClock":{"domain":"linux-monotonic:94c9a980-ad8e-4e67-bff6-7f08b68b1b49:time:[4026531834]","tick":"597104678721941"}},"state":"timed-out"}
-{"kind":"Worker","stamp":{"epoch":"c2a10875-36ec-4664-a891-79b0dd55fbbb","tick":"293231412","callerClock":{"domain":"linux-monotonic:94c9a980-ad8e-4e67-bff6-7f08b68b1b49:time:[4026531834]","tick":"597104908098276"}},"state":"timed-out"}
-PASS transport
