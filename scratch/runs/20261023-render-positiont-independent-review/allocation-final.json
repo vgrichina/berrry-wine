@@ -1,0 +1,9 @@
+{
+  "wholeMeasuredBytes": 18489663,
+  "donorAndReviewBytes": 9052479,
+  "reserve": 8388608,
+  "rootToolsPolicyAllowance": 1048576,
+  "cap": 67108864,
+  "freeBytes": 6718308352,
+  "floor": 2982150144
+}

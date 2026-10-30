@@ -1,0 +1,13 @@
+{
+  "command": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/render-positiont-recovered-input-oct23"
+  ],
+  "exit": 0,
+  "stdout": "bb9c496ed13095cc832fdf607f0937fb9c14b7de\trefs/heads/main\n5eb16d60dd9f5302060509185fb2ebbbad88bba4\trefs/heads/task/render-positiont-recovered-input-oct23\n",
+  "strictSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o BatchMode=yes -o StrictHostKeyChecking=yes",
+  "mainEqualsBase": true
+}
