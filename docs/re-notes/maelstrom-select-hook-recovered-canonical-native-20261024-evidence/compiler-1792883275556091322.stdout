@@ -1,5 +1,0 @@
-{"beginCompile":{"tailCalls":true,"entry":"src/main.watx"}}
-{"compiled":{"path":"/tmp/maelstrom-select-hook-recovered-canonical-native-oct24/ops/select-hook.wasm","bytes":1880716,"sha256":"ed9d74e5ab4c8bf03bb9f94a56ec41e6e28d9abfa282a20c6654e35e9d177ea7","layout":"9a3bc9149d58209c"}}
-{"beginCompile":{"tailCalls":false,"entry":"src/main.watx"}}
-{"compiled":{"path":"/tmp/maelstrom-select-hook-recovered-canonical-native-oct24/ops/select-hook.compat.wasm","bytes":1883289,"sha256":"b0674d48d612fad540bc7dd6da1c431ac29682108dfbf13cac3dddad2bf650e8","layout":"9a3bc9149d58209c"}}
-{"status":"PASS","compiled":2,"nativeInstances":0}

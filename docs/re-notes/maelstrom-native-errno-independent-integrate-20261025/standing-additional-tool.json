@@ -1,6 +1,0 @@
-{
-  "path": "/usr/bin/objdump",
-  "bytes": 390848,
-  "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745",
-  "usage": "Read-only narrow PE disassembly; not native execution or new tool copy"
-}
