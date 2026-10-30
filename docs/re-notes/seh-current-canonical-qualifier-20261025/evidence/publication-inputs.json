@@ -1,7 +1,0 @@
-{
-  "base": "9d85af30e9ed0c19bac7f9ba99d1b540a508f4e4",
-  "remoteMainAtPublication": "a3fe340b962da3f31df249881074afe41d6c69a2\trefs/heads/main",
-  "remoteDonor": "9d85af30e9ed0c19bac7f9ba99d1b540a508f4e4\trefs/heads/task/seh-corrected-memory-canonical-build-oct25",
-  "noMerge": true,
-  "strictSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
-}
