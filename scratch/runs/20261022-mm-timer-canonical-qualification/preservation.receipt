@@ -1,4 +1,0 @@
-{"processId":28411,"stderrOffset":0,"stdoutOffset":0,"type":"attached"}
-{"data":"{\"verifiedFiles\": 5626, \"mismatches\": [], \"remoteFreeBytes\": 48878579712, \"gitHead\": \"ce4ce4f95eacaedff1b3e386f3ce3ae5d85bd16c\", \"uname\": \"Linux box-node-b50ceb91cc50b2d5 7.0.0-38-generic #38~24.04.4-Ubuntu SMP PREEMPT_DYNAMIC Mon Sep 14 16:37:11 UTC 2 x86_64 x86_64 x86_64 GNU/Linux\", \"compilerOverrides\": {}, \"nodeVersion\": \"v24.18.1\", \"nodeSHA256\": \"f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a\"}\n","nextOffset":420,"type":"stdout"}
-{"data":"3e308c0012e996070a01c1f77d6f399e9aaf7adb2d2620b27af018a80d29e248  qualification-artifacts.tar.gz\n3495683\n","nextOffset":525,"type":"stdout"}
-{"exitCode":0,"signal":null,"status":"exited","stderrOffset":0,"stdoutOffset":525,"type":"exit"}
