@@ -1,6 +1,0 @@
-{"test":"entry-delay","slot":0,"done":true,"result":258,"namedWaitSequence":0,"elapsed":191.05275}
-PASS production Worker timing, identity, errors and repeated calls slot 0
-{"test":"entry-delay","slot":7,"done":true,"result":258,"namedWaitSequence":0,"elapsed":186.452527}
-PASS production Worker timing, identity, errors and repeated calls slot 7
-PASS reservations, pulse, status, single completion, stale continuation, teardown, quotas
-PASS qualified source-slice end-to-end acceptance; no full VM/game/Windows qualification

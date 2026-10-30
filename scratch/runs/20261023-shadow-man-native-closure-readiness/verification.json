@@ -17,7 +17,7 @@
   "guestInstancesThisTask": 0,
   "buildsThisTask": 0,
   "protectedMetadata": "UNCHANGED",
-  "ownAllocated": 7954432,
-  "wholeLocalWithReserve": 64180224,
-  "hostFree": 6898212864
+  "ownAllocated": 8056832,
+  "wholeLocalWithReserve": 64282624,
+  "hostFree": 6897508352
 }

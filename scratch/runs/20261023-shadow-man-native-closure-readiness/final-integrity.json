@@ -1,0 +1,26 @@
+{
+  "passAll": true,
+  "basePathsPreserved": 8279,
+  "pinChecks": "original receipt, accepted installed manifest, actual registry, raw trace and exact main source blobs",
+  "controls": {
+    "omitDsetup": "REJECT native ordinal11",
+    "omitComctl": "ACCEPT mapped ordinal17; no blanket ordinal claim",
+    "omitOle32": "named system fallback; API presence is not execution proof",
+    "omitMssSeed": "REJECT declared seed"
+  },
+  "completeRecursiveClosure": false,
+  "missingExactPEInputs": [
+    "mss32.dll",
+    "shadowman.exe",
+    "ole32.dll (only for optional full-native plan)"
+  ],
+  "guestInstancesThisTask": 0,
+  "buildsThisTask": 0,
+  "protectedMetadata": "UNCHANGED",
+  "ownAllocated": 8052736,
+  "wholeLocalWithReserve": 64278528,
+  "hostFree": 6260809728,
+  "commit": "02afdb6cb7ff3249cef2b92cfa6123ceec1cea5d",
+  "committedEvidenceFiles": 37,
+  "remoteBackupVerified": true
+}
