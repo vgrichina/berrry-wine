@@ -1,7 +1,0 @@
-PASS owner and child JS blocked; auto-reset; normal process-exit reclamation
-PASS UTF-8 byte boundary, exact names, validation failure recovery
-PASS session reference cap, recovery after close, idempotent shutdown and recreation
-PASS shutdown releases before acknowledgement without relying on EOF
-PASS session shutdown preserves other owned references
-PASS dead transport worker yields bounded failure and poisons client
-PASS owner shutdown, filesystem cleanup, disconnect and refused connection

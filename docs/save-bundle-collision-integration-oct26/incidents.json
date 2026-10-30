@@ -1,6 +1,0 @@
-[
-  "Setup guard initially expected compatibility commit to contain tests/docs only; it also carries the exact accepted bundle overlay as documented. Verified overlay blob equality and excluded the duplicate path from compatibility additions. No checkout or tests preceded this correction.",
-  "Initial combined repository instruction and retained-review reads exceeded 8192-byte excerpt target; no file mutations or access denials occurred. Subsequent reads narrowed.",
-  "Same-task setup rerun found already-configured origin; made the check idempotent and verified its exact trusted URL. No trust substitution or unchanged denial retry.",
-  "Two guessed recovery/baseline-pin paths were absent; no required input was missing. Used committed manifests and the exact main baseline blob instead."
-]

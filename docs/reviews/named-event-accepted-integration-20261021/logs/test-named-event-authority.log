@@ -1,9 +1,0 @@
-PASS transport progress: two forked clients, synchronous calls complete before main-thread callbacks
-PASS auto reset: 40 two-process races have exactly one winner, repeated set coalesces, reset shared
-PASS manual reset broadcast/persistence/reset and unrelated name isolation
-PASS owned references, partial close, last close, generation recreation and stale handle rejection
-PASS explicit shutdown and SIGKILL session cleanup, survivor references retained
-PASS independent-authority control REJECTED: two successes cannot satisfy one-consumer oracle
-PASS authority loss fails closed
-PASS unresponsive live peer: bounded timeout and poisoned client
-PASS named-event authority suite
