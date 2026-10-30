@@ -3428,6 +3428,127 @@
   (global $midi_stream_due_ms (mut i32) (i32.const 0))
   (global $midi_stream_event_pending (mut i32) (i32.const 0))
   (global $midi_stream_paused_at (mut i32) (i32.const 0))
+  (global $midi_stream_callback (mut i32) (i32.const 0))
+  (global $midi_stream_instance (mut i32) (i32.const 0))
+  (global $midi_stream_callback_type (mut i32) (i32.const 0))
+
+  ;; Return one stopped buffer through the callback selected by midiStreamOpen.
+  ;; Function callbacks borrow this interpreter synchronously, using the same
+  ;; bounded sync_msg_ret_thunk convention as property-sheet page callbacks.
+  ;; Save the registers on the guest stack so nested stops cannot overwrite us.
+  (func $midi_stream_notify_done (param $handle i32) (param $callback i32)
+      (param $instance i32) (param $kind i32) (param $hdr_ga i32) (result i32)
+    (local $sp i32) (local $saved i32) (local $ok i32) (local $rounds i32)
+    (local $old_eip i32) (local $old_steps i32) (local $old_handler i32)
+    (local $old_reason i32) (local $old_flag i32)
+    (if (i32.or (i32.eqz (local.get $callback)) (i32.eqz (local.get $kind)))
+      (then (return (i32.const 1))))
+    (if (i32.eq (local.get $kind) (i32.const 1))
+      (then (return (call $post_queue_push (local.get $callback)
+        (i32.const 0x3C9) (local.get $handle) (local.get $hdr_ga))))) ;; MM_MOM_DONE
+    (if (i32.eq (local.get $kind) (i32.const 5))
+      (then (return (call $host_set_event (local.get $callback)))))
+    (local.set $saved (call $g2w
+      (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
+    (memory.copy (local.get $saved) (global.get $reg_base) (i32.const 32))
+    (if (i32.eq (local.get $kind) (i32.const 2))
+      (then
+        (call $handle_PostThreadMessageA (local.get $callback) (i32.const 0x3C9)
+          (local.get $handle) (local.get $hdr_ga) (i32.const 0) (i32.const 0))
+        (local.set $ok (i32.load (global.get $reg_base))))
+      (else (if (i32.eq (local.get $kind) (i32.const 3))
+        (then
+          (local.set $old_eip (global.get $eip))
+          (local.set $old_steps (global.get $steps))
+          (local.set $old_handler (global.get $handler_set_eip))
+          (local.set $old_reason (global.get $yield_reason))
+          (local.set $old_flag (global.get $yield_flag))
+          (local.set $sp (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 56)))
+          (call $gs32 (local.get $sp) (global.get $sync_msg_ret_thunk))
+          (call $gs32 (i32.add (local.get $sp) (i32.const 4)) (local.get $handle))
+          (call $gs32 (i32.add (local.get $sp) (i32.const 8)) (i32.const 0x3C9))
+          (call $gs32 (i32.add (local.get $sp) (i32.const 12)) (local.get $instance))
+          (call $gs32 (i32.add (local.get $sp) (i32.const 16)) (local.get $hdr_ga))
+          (call $gs32 (i32.add (local.get $sp) (i32.const 20)) (i32.const 0))
+          (i32.store offset=16 (global.get $reg_base) (local.get $sp))
+          (global.set $eip (local.get $callback))
+          (global.set $steps (i32.const 0))
+          (global.set $yield_reason (i32.const 0))
+          (global.set $yield_flag (i32.const 0))
+          (call $sync_depth_enter)
+          (block $done (loop $run_callback
+            (call $run (i32.const 1000000))
+            (br_if $done (i32.eqz (global.get $eip)))
+            (local.set $rounds (i32.add (local.get $rounds) (i32.const 1)))
+            (br_if $done (i32.ge_u (local.get $rounds) (i32.const 64)))
+            (br $run_callback)))
+          (call $sync_depth_leave)
+          (local.set $ok (i32.eqz (global.get $eip)))
+          (global.set $eip (local.get $old_eip))
+          (global.set $steps (local.get $old_steps))
+          (global.set $handler_set_eip (local.get $old_handler))
+          (global.set $yield_reason (local.get $old_reason))
+          (global.set $yield_flag (local.get $old_flag))))))
+    (memory.copy (global.get $reg_base) (local.get $saved) (i32.const 32))
+    (local.get $ok))
+
+  ;; midiStreamStop(hms): detach the whole ring before returning buffers. A
+  ;; callback may unprepare/requeue a header or stop again; the snapshot on the
+  ;; guest stack gives each original header exactly one FIFO completion.
+  (func $handle_midiStreamStop (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $sp i32) (local $list i32) (local $count i32) (local $i i32)
+    (local $hdr i32) (local $entry i32) (local $ch i32) (local $error i32)
+    (local $callback i32) (local $instance i32) (local $kind i32)
+    (if (i32.or (i32.eqz (local.get $arg0))
+          (i32.ne (local.get $arg0) (global.get $midi_stream_handle)))
+      (then
+        (i32.store (global.get $reg_base) (i32.const 5)) ;; MMSYSERR_INVALHANDLE
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        (return)))
+    (global.set $midi_stream_running (i32.const 0))
+    (global.set $midi_stream_due_ms (i32.const 0))
+    (global.set $midi_stream_event_pending (i32.const 0))
+    (global.set $midi_stream_paused_at (i32.const 0))
+    (local.set $callback (global.get $midi_stream_callback))
+    (local.set $instance (global.get $midi_stream_instance))
+    (local.set $kind (global.get $midi_stream_callback_type))
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $list (call $g2w (i32.sub (local.get $sp) (i32.const 128))))
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (local.get $sp) (i32.const 128)))
+    (block $empty (loop $drain
+      (br_if $empty (i32.eq (global.get $midi_stream_queue_head) (global.get $midi_stream_queue_tail)))
+      (local.set $entry (i32.add (global.get $midi_stream_queue_wa)
+        (i32.shl (global.get $midi_stream_queue_head) (i32.const 3))))
+      (local.set $hdr (i32.load (local.get $entry)))
+      (i32.store (i32.add (local.get $list) (i32.shl (local.get $count) (i32.const 2))) (local.get $hdr))
+      (i32.store offset=16 (local.get $hdr)
+        (i32.or (i32.and (i32.load offset=16 (local.get $hdr)) (i32.const 0xFFFFFFEF)) (i32.const 1)))
+      (i32.store (local.get $entry) (i32.const 0))
+      (i32.store offset=4 (local.get $entry) (i32.const 0))
+      (global.set $midi_stream_queue_head
+        (i32.and (i32.add (global.get $midi_stream_queue_head) (i32.const 1)) (i32.const 31)))
+      (local.set $count (i32.add (local.get $count) (i32.const 1)))
+      (br $drain)))
+    ;; All Notes Off affects notes started by note-on; unlike host reset it
+    ;; does not destroy the synth/patch state. Release sustain on each channel.
+    (loop $notes
+      (drop (call $host_midi_out_short_msg (local.get $arg0)
+        (i32.or (i32.add (i32.const 0xB0) (local.get $ch)) (i32.const 0x4000))))
+      (drop (call $host_midi_out_short_msg (local.get $arg0)
+        (i32.or (i32.add (i32.const 0xB0) (local.get $ch)) (i32.const 0x7B00))))
+      (local.set $ch (i32.add (local.get $ch) (i32.const 1)))
+      (br_if $notes (i32.lt_u (local.get $ch) (i32.const 16))))
+    (block $notified (loop $notify
+      (br_if $notified (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $hdr (i32.load (i32.add (local.get $list) (i32.shl (local.get $i) (i32.const 2)))))
+      (if (i32.eqz (call $midi_stream_notify_done (local.get $arg0)
+          (local.get $callback) (local.get $instance) (local.get $kind) (call $w2g (local.get $hdr))))
+        (then (local.set $error (i32.const 1)))) ;; MMSYSERR_ERROR: callback could not complete
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $notify)))
+    (i32.store (global.get $reg_base) (local.get $error))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $sp) (i32.const 8))))
 
   ;; Advance queued MIDIEVENTs up to `now`. timeGetTime calls this once per
   ;; game frame, preserving delta-time/tempo ordering without blocking WAT or
@@ -3533,6 +3654,10 @@
               (call $g2w (call $heap_alloc (i32.const 256))))
             (call $zero_memory (global.get $midi_stream_queue_wa) (i32.const 256))))
         (global.set $midi_stream_handle (local.get $handle))
+        (global.set $midi_stream_callback (local.get $arg3))
+        (global.set $midi_stream_instance (local.get $arg4))
+        (global.set $midi_stream_callback_type
+          (i32.and (i32.shr_u (local.get $flags) (i32.const 16)) (i32.const 7)))
         (global.set $midi_stream_tempo (i32.const 500000)) ;; 120 BPM
         (global.set $midi_stream_division (i32.const 480))
         (global.set $midi_stream_queue_head (i32.const 0))

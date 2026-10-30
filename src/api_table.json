@@ -38626,5 +38626,12 @@
     "convention": "stdcall",
     "hash": 1976379696,
     "handler": "grSstResetPerfStats"
+  },
+  {
+    "id": 4534,
+    "name": "midiStreamStop",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 177440212
   }
 ]
