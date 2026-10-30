@@ -1,1 +1,0 @@
-{"command": "timeout --kill-after=2s 50s tail -n 0 -f /home/user/wine-assembly/messageboard.txt", "session": 32480, "exit": 124, "reaped": true, "outputBytes": 0}

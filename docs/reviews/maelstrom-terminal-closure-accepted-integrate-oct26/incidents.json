@@ -1,8 +1,0 @@
-{
-  "current": [
-    "Initial pwd lacked per-child limits. Initial bounded bootstrap inspections had CPU60/file24MiB/AS128MiB/wall60 kill5 but lacked full output supervisor; one output truncated; no retrospective compliance. Missing ops/README.md was read-only ENOENT; resolve actual published README.",
-    "Checkout failed twice reference-not-tree and readonly root cat-file confirmed unavailable. Recovery added renderer integration readonly object/flat leaves. No source edits or remote mutation on failures; no recursive alternates/full clone/repack.",
-    "Bounded candidate-names log exceeded64KiB whole-file read gate; read stopped before output. Used scoped Git path queries instead, no read/output allowance increased."
-  ],
-  "historical": "/tmp/maelstrom-terminal-closure-independent-accept-oct26/ops/incidents.json"
-}

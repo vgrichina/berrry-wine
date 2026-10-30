@@ -1,5 +1,0 @@
-Base 52de1079f2ce7f89e082b033e80d01231fc53d5f; exact accepted sources 797b8fce4c17ad3514afea63799519588da981c2; mounted report 0bbc0afa9599a3a878430017a64263f6c27c52ca.
-Recover six changed source/test files directly from this task ref. No wholesale historical evidence import.
-Run /usr/bin/python3 -B -m unittest -v test_create_mkdir_wire test_namespace_wire test_rename_wire plus test_namespace_integration.Integration.test_removed_forwarding_is_rejected and test_transitive_source_identity from backend test directory.
-Pins and coverage: acceptance.json. No cached bytecode, runtime replay, new Boat or public deployment.
-External completion receipt binds resulting commit/tree, exact SSH refs and original-source preservation.
