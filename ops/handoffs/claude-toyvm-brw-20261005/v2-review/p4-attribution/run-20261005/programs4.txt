@@ -1,4 +1,0 @@
-/tmp/claude-1000/-home-user-wine-assembly/1863d2b5-bc58-4c0b-9c15-00fc951f0256/scratchpad/full-W/demos/1995-a-acidrain/ACIDRAIN.EXE
-/tmp/claude-1000/-home-user-wine-assembly/1863d2b5-bc58-4c0b-9c15-00fc951f0256/scratchpad/full-W/demos/1995-a-acolors/COLORS.EXE
-/tmp/claude-1000/-home-user-wine-assembly/1863d2b5-bc58-4c0b-9c15-00fc951f0256/scratchpad/full-W/demos/1995-b-boxtro/NEWSBOX3.EXE
-/tmp/claude-1000/-home-user-wine-assembly/1863d2b5-bc58-4c0b-9c15-00fc951f0256/scratchpad/full-W/demos/1995-b-brian/BRIAN.EXE

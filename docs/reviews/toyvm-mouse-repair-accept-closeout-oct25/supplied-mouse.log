@@ -1,7 +1,0 @@
-PASS mouse pointer: coordinates/buttons/INT33/deltas/release/retry/detach/stopped/unsupported
-PASS mouse mouse: coordinates/buttons/INT33/deltas/release/retry/detach/stopped/unsupported
-PASS mouse pointer: coordinates/buttons/INT33/deltas/release/retry/detach/stopped/unsupported
-PASS mouse mouse: coordinates/buttons/INT33/deltas/release/retry/detach/stopped/unsupported
-PASS generated main bundle binding; forbidden Wasm guards armed
-REJECTED mouseInput removal: scaled/offset browser movement must reach INT33 state
-REJECTED releaseMouse removal: Expected values to be strictly equal:

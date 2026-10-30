@@ -1,9 +1,0 @@
-{
-  "command": [
-    "node",
-    "scratch/runs/20261021-hype-browser-fps-authorized/source/ops/check-run-evidence.js",
-    "/home/user/wine-assembly"
-  ],
-  "exit": 1,
-  "stderr": ""
-}

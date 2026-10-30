@@ -1,9 +1,0 @@
-PASS capture routing, repeated downs and cancellation are balanced exactly once
-PASS both modifier sides preserve first metadata across shifted layout keyup
-PASS real focus transition to page input preserves ownership until captured up
-PASS proxy focus and composition retain independent physical ownership
-PASS swallowed Alt Enter stays unowned across cancellation and next plain Enter
-PASS actual production renderer queue receives ordinary cancellation release
-OBSERVED callback-hidden=true physical=0 queue=[{"type":"key","hwnd":0,"wParam":65,"msg":256,"lParam":1966081},{"type":"key","hwnd":0,"wParam":65,"msg":257,"lParam":3223191553}]
-PASS actual renderer wake callback hiding document during down cannot leak ownership
-7 passed; 0 failed
