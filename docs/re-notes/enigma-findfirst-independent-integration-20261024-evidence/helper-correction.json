@@ -1,9 +1,0 @@
-{
-  "initialHelperAssertions": [
-    "generic end-anchor suffix matched two existing matchers",
-    "specific suffix initially omitted closing replacement parenthesis"
-  ],
-  "correction": "exact reviewed callback plus closing parenthesis and end anchor, unique occurrence",
-  "candidateTestsRepeated": false,
-  "scope": "owned control helper only; both assertions preceded execution"
-}

@@ -1,1 +1,0 @@
-{"privatePeak": 16000000, "futureGrowth": 16777216, "reserve": 8388608, "allocation": 67108864, "note": "all retained old private bytes counted anew; no copied tools; read-only donor; no full compiler/native commands; direct inspection output conservatively reserved; initial two inspection commands unguarded, disclosed"}

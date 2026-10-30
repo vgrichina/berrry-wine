@@ -1,2 +1,0 @@
-PASS 27 actual CLI-parser/init/hooks/summary cases; baseline return/error/order/100ms/deadline/waits unchanged
-PASS 12 independent omitted-control rejections on production boundaries

@@ -1,9 +1,0 @@
-{
-  "originalOracle": "608d6fb2e87a59c0fe65445d057bed30fc40b6906f4ab48a61fafebb08d48a67",
-  "relocatedOracle": "1132c67e55063a342086ea045bfd44f49a571cfa47cad3755d57a13bd5d55da9",
-  "repairedAdapter": "f34e2b9fca0cafe2304f9231d9c5e759ddce66c01cf8c5b5dae15bc4edea5ee6",
-  "originalSupervisor": "73be15954cedc19340779ff6bda2397cb94927ca702d2baebdccd5e763cf7b73",
-  "composition": "e7997032a68f4c9de6332b302cce3f8f34fd7d527ba45ebcf2bf5e9716f86458",
-  "compositionRelocation": "byte-exact gzip content moved into test/ so original repo=__dirname/.. resolves correctly",
-  "oracleChange": "evidence directory only; every assertion and execution unchanged"
-}

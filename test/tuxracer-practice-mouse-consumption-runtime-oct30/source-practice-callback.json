@@ -1,6 +1,0 @@
-{
-  "archiveSHA256": "a311d09080598fe556134d4b9faed7dc0c2ed956ebb10d062e5d4df022f91eff",
-  "member": "tuxracer-0.61/src/game_type_select.c",
-  "sha256": "09ff6d8afaa72606cee558b99bfb6aae42ac2dd53b9ff976ca4568a592c9ea04",
-  "excerpt": "54: void practice_click_cb( button_t *button, void *userdata )\n55: {\n56:     check_assertion( userdata == NULL, \"userdata is not null\" );\n57: \n58:     g_game.current_event = NULL;\n59:     g_game.current_cup = NULL;\n60:     g_game.current_race = -1;\n61:     g_game.practicing = True;\n62: \n63:     set_game_mode( RACE_SELECT );\n64: \n65:     ui_set_dirty();"
-}

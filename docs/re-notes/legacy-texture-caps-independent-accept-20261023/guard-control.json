@@ -1,6 +1,0 @@
-{
-  "limitBytes": 32,
-  "rejected": true,
-  "sentinelAbsent": true,
-  "reason": "command failed: capture guard; bounded output retained in /tmp/legacy-texture-caps-independent-accept-oct23/execution.jsonl"
-}
