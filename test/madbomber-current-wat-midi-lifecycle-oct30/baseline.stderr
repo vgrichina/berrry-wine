@@ -1,0 +1,23 @@
+[watx] [WATX] Compilation failed at stage EMIT: Unknown function '$mm_callback_begin' called in $fire_audio_callback_bound: no such import, builtin, or user function (typo or missing definition?).
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: Unknown function '$mm_callback_begin' called in $fire_audio_callback_bound: no such import, builtin, or user function (typo or missing definition?).
+    at Object.<anonymous> (/tmp/madbomber-current-wat-midi-lifecycle-qualification-oct30/repo/test/test-midi-stream-lifecycle.js:156:1)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

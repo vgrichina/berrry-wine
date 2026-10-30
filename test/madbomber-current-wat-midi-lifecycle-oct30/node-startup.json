@@ -1,0 +1,58 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=192",
+    "-e",
+    "const fs=require(\"fs\"); console.log(JSON.stringify({execPath:process.execPath,execArgv:process.execArgv.slice(0,1),node:process.version,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),env:{MIDI_MUTATION:process.env.MIDI_MUTATION||null,MIDI_TEST_ROOT:process.env.MIDI_TEST_ROOT||null,MIDI_BASELINE_HOST:process.env.MIDI_BASELINE_HOST||null,NODE_OPTIONS:process.env.NODE_OPTIONS||null},rss:process.memoryUsage().rss,startup:\"PASS\"}));"
+  ],
+  "cwd": "/tmp/madbomber-current-wat-midi-lifecycle-qualification-oct30/repo",
+  "exit": 0,
+  "elapsed": 0.13692801794968545,
+  "admission": {
+    "at": 1793324290.298467,
+    "device": 1680253000807562931,
+    "f_bavail": 957517,
+    "blockSize": 4096,
+    "free": 3921989632,
+    "MemAvailable": 3736457216,
+    "allocated": 7581696,
+    "budget": 25165824,
+    "aggregate": {
+      "at": "2026-10-30T01:36:24.466778+00:00",
+      "MemAvailable": 3676168192,
+      "memRequired": 3456106496,
+      "prospectiveClients": 402653184,
+      "publicationAndReceipt": 905969664,
+      "noDoubleCharge": true,
+      "owners": [
+        "maelstrom-pinned-full-loader-harness-oct30",
+        "toyvm-rename-evidence-option-independent-accept-oct30",
+        "madbomber-current-wat-midi-lifecycle-qualification-oct30"
+      ],
+      "diskFreeBytes": 3931877376,
+      "free": 3931877376,
+      "futureGrowthIncludingUncertaintyBuffer": 201326592,
+      "requiredBytes": 3401580544,
+      "PASS": true
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true,
+      "forecast": true,
+      "memory": true
+    }
+  },
+  "stdoutBytes": 1602,
+  "stderrBytes": 0
+}
