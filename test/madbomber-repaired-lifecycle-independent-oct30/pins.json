@@ -1,0 +1,106 @@
+{
+  "CLAUDE.md": {
+    "bytes": 22221,
+    "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+  },
+  "test/test-midi-stream-lifecycle.js": {
+    "bytes": 37144,
+    "sha256": "9f0cbf649709fb12589dba2e310e07e58138dd05b8e69ad2f75f31067f37a1e9"
+  },
+  "test/test-midi-stream-stop-host-owned.js": {
+    "bytes": 7324,
+    "sha256": "938aa4402f446ed1fdb559c4214ec3bf7fc7ef2fe05e69fbba8dc505155aa5b6"
+  },
+  "test/test-midi-stream-stop-independent.js": {
+    "bytes": 9346,
+    "sha256": "632eb7a2405dbf2175400172c1f373f6b269f378d9d0eda88ae127a07211625c"
+  },
+  "src/09a3-handlers-audio.wat": {
+    "bytes": 277811,
+    "sha256": "77e82f1cfae122553adf97f31f56e6bd16e05faedbfd83163433f94b9df3dd08"
+  },
+  "src/01-header.wat": {
+    "bytes": 298412,
+    "sha256": "36322f9a20412a872eb82ec1eb83ce2d3034be169763e0657d51a043cd446264"
+  },
+  "src/13-exports.wat": {
+    "bytes": 343678,
+    "sha256": "c352e968b8eb7f52c2a83c8ac4e627b4c02e64ba1fa69973f3f907c36f1605c8"
+  },
+  "src/03-registers.wat": {
+    "bytes": 61869,
+    "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+  },
+  "src/10-helpers.wat": {
+    "bytes": 534705,
+    "sha256": "63b37e23a0b4691765fd06418a357e5a68b3c33b3596fdff6ce9132f5bcb3309"
+  },
+  "src/api_table.json": {
+    "bytes": 723469,
+    "sha256": "20fddb8b01dcf9006e9c4db6b1c287c6f6713a911b28910774e99cee1491bbc4"
+  },
+  "src/01b-api-hashes.generated.wat": {
+    "bytes": 289481,
+    "sha256": "4c713e7530a92b6c0ba043a6c1bbe6ba6cad9dc7252295594f6a7a5ab5d762ee"
+  },
+  "src/09b2-dispatch-table.generated.wat": {
+    "bytes": 1376087,
+    "sha256": "7886e49373fd8be4f05fb10dd77d7d8246c35868901ea0e416705539b71e7c22"
+  },
+  "lib/host-audio.js": {
+    "bytes": 207077,
+    "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb"
+  },
+  "lib/audio-worklet-host.js": {
+    "bytes": 14592,
+    "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14"
+  },
+  "lib/region-map.generated.js": {
+    "bytes": 36333,
+    "sha256": "a0aba0e2e8bfd1e6767142cb240853b788dd430918e8bab767bc6398d4360763"
+  },
+  "host.js": {
+    "bytes": 369423,
+    "sha256": "7154fbbcfb3381cddfecaeb07dbf4301e6a68fc43850b4f085264b6cb412e993"
+  },
+  "tools/watx-closure.js": {
+    "bytes": 5027,
+    "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c"
+  },
+  "tools/watx.js": {
+    "bytes": 2663,
+    "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+  },
+  "tools/watx-src/compiler-parser.js": {
+    "bytes": 38100,
+    "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236"
+  },
+  "tools/watx-src/compiler-stages.js": {
+    "bytes": 31195,
+    "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+  },
+  "tools/watx-src/compiler-codegen.js": {
+    "bytes": 302257,
+    "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+  },
+  "tools/watx-src/compiler.js": {
+    "bytes": 18610,
+    "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+  },
+  "src/09a-handlers.wat": {
+    "bytes": 63111,
+    "sha256": "a1609ea58833a211be97da6fece5948a3e41b45ef954b299b0d1c6317e5354f7"
+  },
+  "src/04-cache.wat": {
+    "bytes": 162508,
+    "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd"
+  },
+  "test/madbomber-midi-fixture-source-closure-oct30/report.json": {
+    "bytes": 7414,
+    "sha256": "b397120bd9dc30cd677208f374f15149203169bb360fb3c44f31db8ce9462b17"
+  },
+  "test/madbomber-midi-fixture-source-closure-oct30/replay.js": {
+    "bytes": 393,
+    "sha256": "6287734ba3449df3af3b01fb71df15753b897369a300891834214b669cb99beb"
+  }
+}

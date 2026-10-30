@@ -1,0 +1,57 @@
+{
+  "verdict": "ACCEPT_SCOPED",
+  "publishedRepair": "87943e00f951c70d0f8aefe12a76d3670709921a",
+  "originalCandidate": "cd0612927f4bc6db7ee5f5c90ab323442fa5d341",
+  "canonicalReceipt": "/tmp/madbomber-midi-fixture-source-closure-repair-oct30/completion-receipt.json",
+  "canonicalReceiptPin": {
+    "bytes": 8912,
+    "sha256": "b23080d3c27412880e370dbfc692d11a13d7ab5a4a84e924b8a439228504d34c"
+  },
+  "sourcePins": "pins.json",
+  "baseline": {
+    "cases": 29,
+    "callbacks": 45,
+    "moduleSHA256": "a6576cf8ad57624a27757874c0bfeead0e7c41978a4c2210259043f67eb3e0ec",
+    "runs": 1
+  },
+  "independentControls": 7,
+  "sourceControl": {
+    "source": "src/04-cache.wat:invocation_leave",
+    "change": "retain depth instead of decrementing on return",
+    "compileInstantiate": "PASS",
+    "expectedAssertion": "production callback return releases child"
+  },
+  "inspection": {
+    "exactness": "Independent top-level lexical scan compares all 12 extracted helper bodies byte-for-byte after the same comment removal; only CALLBACK_OWNERSHIP region addresses relocate.",
+    "typedGlobals": "All three i64 declarations retained from production; other referenced scalar state is fixture-owned i32.",
+    "storage": "CALLBACK_OWNERSHIP 16384..24848, MM_CALLBACK_CONTEXTS 32768..65536; API hash data starts 65536. Only main-thread fixture executed.",
+    "initializer": "Real process begin and callback finish executed; shared serial/epoch/root slots verified; second initialization creates new identity.",
+    "failClosed": "Renamed invocation_leave with similarly named decoy and missing mm_callback_owner declaration rejected before compilation.",
+    "return": "Production mm_callback_finish validates retained frame, leaves invocation, restores real caller regs and wait state."
+  },
+  "distinction": "No production defect found. Deliberately omitted fixture initializer traps during setup; source-derived callback return mutation reaches a specific behavioral assertion after successful compile/instantiate.",
+  "developmentCorrections": [
+    "Owned loader stripped Node shebang before Function evaluation.",
+    "Owned omission oracle corrected to expect the actual invocation_current trap before the following setup assertion."
+  ],
+  "limits": [
+    "Isolated two-page shared WAT/import execution; identity g2w and minimal memory access helpers.",
+    "Guest ret 20 is simulated. No full VM/x86 continuation, native, browser rendering, audio device/output or gameplay qualification.",
+    "Existing full mutation suite not replayed; coordinator-verified lifecycle mutation receipts reused.",
+    "Exact compile gate receipt PASS reused as instructed; no full build run.",
+    "Independent scanner/extractor acceptance binds these exact pins; no general WAT parser robustness claim."
+  ],
+  "runtime": {
+    "boxId": null,
+    "state": "UNALLOCATED",
+    "expiry": null,
+    "shutdownOwner": "coordinator"
+  },
+  "mount": {
+    "argv": [],
+    "status": "NOT_APPLICABLE_NO_MOUNT"
+  },
+  "productionChanged": false,
+  "mainIntegrated": false,
+  "evidenceDirectory": "/tmp/madbomber-repaired-lifecycle-fixture-independent-accept-oct30/e"
+}
