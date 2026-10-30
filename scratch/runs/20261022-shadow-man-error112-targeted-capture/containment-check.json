@@ -1,6 +1,0 @@
-{
-  "exitCode": 0,
-  "stdout": "{\n  \"runs\": 0,\n  \"errors\": [],\n  \"missing\": [],\n  \"invalid\": []\n}\n",
-  "stderr": "",
-  "scope": "No dashboard result.json: exact candidate unregistered. Artifact verification performed by verify.py."
-}
