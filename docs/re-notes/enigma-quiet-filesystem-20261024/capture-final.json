@@ -1,9 +1,0 @@
-{
-  "initialConservativeCharge": 110000,
-  "cumulativeConservativeCharge": 254234,
-  "captureLimit": 1048576,
-  "instructionConservativeCharge": 46000,
-  "instructionLimit": 65536,
-  "sourceReadLimitPerCall": 8192,
-  "qualification": "Initial board capture included once in conservative initial charge and again in full-session tool count; never subtract prior charges."
-}

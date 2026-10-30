@@ -1,5 +1,0 @@
-{
-  "incident": "Expected mutation summary8PASS4FAIL was miscounted; actual original exit1 with9PASS3FAIL correctly rejects mutation. Retained original log; corrected metadata only, no passed case rerun.",
-  "fixtureSha256": "fb94849fa1cd5a27406e607e3797ac67c8325cb0672becc7d5021f61ba2e7749",
-  "logSha256": "16b55915d557652c23b31edff80c828ee8b6042e6ad61e8c44b15845c7bb01ba"
-}
