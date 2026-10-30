@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=3072",
+    "/home/user/madbomber-midi/qualification.js",
+    "startup"
+  ],
+  "cwd": "/home/user/madbomber-midi",
+  "original": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "nodeDATA": "unlimited",
+  "nodeAS": "unlimited",
+  "heapMiB": 3072,
+  "groupRSSMiB": 4096,
+  "parentRSSMiB": 256,
+  "available": 15675707392,
+  "allocated": 26402816,
+  "peakRSS": 0,
+  "elapsed": 0.15119865100001562,
+  "exit": 0,
+  "denial": null
+}

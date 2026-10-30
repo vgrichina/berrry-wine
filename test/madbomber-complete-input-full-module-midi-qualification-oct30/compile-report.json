@@ -1,0 +1,24 @@
+{
+  "PASS": true,
+  "entry": "src/main.watx",
+  "options": {
+    "mode": "production",
+    "standardWat": true,
+    "strictDeclarations": true,
+    "runtimeBuiltins": false,
+    "tailCalls": true
+  },
+  "sourcePins": 143,
+  "moduleSHA256": "3aa9db179499ba1d56e523620c40ac77ee57b5f5c75f89b2ae7d50691557d4ee",
+  "moduleBytes": 1881185,
+  "importCount": 291,
+  "exportCount": 2225,
+  "compilerResultKeys": [
+    "success",
+    "wasmBinary",
+    "importMeta",
+    "stages",
+    "diagnostics",
+    "regions"
+  ]
+}

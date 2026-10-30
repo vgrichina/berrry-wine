@@ -1,0 +1,186 @@
+{
+  "scope": "complete canonical module; synthetic PE and backend; real run/export/API dispatch and production audio host",
+  "phase": "complete",
+  "calls": [
+    {
+      "name": "midiStreamOpen",
+      "args": [
+        4214784,
+        4214800,
+        1,
+        4198528,
+        624485,
+        196608
+      ],
+      "result": 0
+    },
+    {
+      "name": "midiOutPrepareHeader",
+      "args": [
+        786433,
+        4215040,
+        64
+      ],
+      "result": 0
+    },
+    {
+      "name": "midiStreamOut",
+      "args": [
+        786433,
+        4215040,
+        64
+      ],
+      "result": 0
+    },
+    {
+      "name": "midiStreamRestart",
+      "args": [
+        786433
+      ],
+      "result": 0
+    },
+    {
+      "name": "midiStreamStop",
+      "args": [
+        786433
+      ],
+      "result": 0
+    },
+    {
+      "name": "midiStreamRestart",
+      "args": [
+        786433
+      ],
+      "result": 0
+    },
+    {
+      "name": "midiStreamOut",
+      "args": [
+        786433,
+        4215040,
+        64
+      ],
+      "result": 0
+    },
+    {
+      "name": "midiStreamRestart",
+      "args": [
+        786433
+      ],
+      "result": 0
+    },
+    {
+      "name": "midiStreamStop",
+      "args": [
+        786433
+      ],
+      "result": 0
+    },
+    {
+      "name": "midiStreamClose",
+      "args": [
+        786433
+      ],
+      "result": 0
+    }
+  ],
+  "callbacks": [
+    {
+      "message": 967,
+      "frame": [
+        122683696,
+        786433,
+        967,
+        624485,
+        0,
+        0
+      ]
+    },
+    {
+      "message": 969,
+      "frame": [
+        122683696,
+        786433,
+        969,
+        624485,
+        4215040,
+        0
+      ]
+    },
+    {
+      "message": 968,
+      "frame": [
+        122683696,
+        786433,
+        968,
+        624485,
+        0,
+        0
+      ]
+    }
+  ],
+  "synthetic": {
+    "imageBase": 4194304,
+    "sectionRVA": 4096,
+    "initialClockMs": 100,
+    "backend": "recording TinySynth and running AudioContext clock; no audio hardware",
+    "guest": "one synthetic PE; MIDI IAT imports; callback x86 RET 20; idle JMP to self; no Mad Bomber binary",
+    "services": "unused host functions throw; log records diagnostics; get_ticks uses synthetic clock",
+    "apiLogging": "disabled by production set_api_log(0); API counter asserted",
+    "peSHA256": "15eddb960a875b46fd0814367b0eb8725d0adba996e94960dbbd2703718a9a49"
+  },
+  "open": [
+    "Mad Bomber guest/gameplay",
+    "native application",
+    "audio hardware",
+    "browser"
+  ],
+  "moduleSHA256": "3aa9db179499ba1d56e523620c40ac77ee57b5f5c75f89b2ae7d50691557d4ee",
+  "instantiated": true,
+  "initialized": true,
+  "identities": [
+    {
+      "name": "midiStreamOpen",
+      "id": 2341,
+      "nargs": 6,
+      "thunk": 122683392
+    },
+    {
+      "name": "midiOutPrepareHeader",
+      "id": 2343,
+      "nargs": 3,
+      "thunk": 122683400
+    },
+    {
+      "name": "midiStreamOut",
+      "id": 2344,
+      "nargs": 3,
+      "thunk": 122683408
+    },
+    {
+      "name": "midiStreamRestart",
+      "id": 2345,
+      "nargs": 1,
+      "thunk": 122683416
+    },
+    {
+      "name": "midiStreamStop",
+      "id": 4593,
+      "nargs": 1,
+      "thunk": 122683424
+    },
+    {
+      "name": "midiStreamClose",
+      "id": 2340,
+      "nargs": 1,
+      "thunk": 122683432
+    }
+  ],
+  "negativeControl": {
+    "rejected": true,
+    "error": "one stop delivery/callback required\n\n2 !== 3\n"
+  },
+  "flags": 3,
+  "noStaleReplay": true,
+  "PASS": true
+}

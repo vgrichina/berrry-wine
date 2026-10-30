@@ -1,0 +1,22 @@
+{
+  "id": "bx_3ckx3mvs",
+  "expiry": "2026-10-30T02:50:23.495Z",
+  "workCutoff": "2026-10-30T02:48:00Z",
+  "handback": "2026-10-30T02:49:00Z",
+  "shutdown": "2026-10-30T02:50:00Z",
+  "shutdownOwner": "coordinator; worker delegated snapshot-stop",
+  "remoteBudget": 134217728,
+  "reserve": 16777216,
+  "state": "stopped",
+  "snapshotCompletedAt": "2026-10-30T02:30:38.704Z",
+  "snapshotVerifiedAt": "2026-10-30T02:30:38.704Z",
+  "stop": {
+    "endedAt": "2026-10-30T02:30:38.763Z",
+    "error": null,
+    "forced": false,
+    "id": "stop_eafd43bc72d6f7da",
+    "lastAttemptAt": "2026-10-30T02:30:38.763Z",
+    "requestedAt": null,
+    "status": "completed"
+  }
+}

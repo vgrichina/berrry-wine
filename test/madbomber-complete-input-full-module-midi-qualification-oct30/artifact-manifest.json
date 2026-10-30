@@ -1,0 +1,118 @@
+{
+  "source-pins.json": {
+    "bytes": 17836,
+    "sha256": "3fd5591bfe7f6c7290c3f48e84c004a0e000d77ff1e8f811fd827c394beb0888"
+  },
+  "fixture-incident-1-lifecycle-report.json": {
+    "bytes": 2555,
+    "sha256": "e3616864b32730c1331dc8a0e3b0b2eefdad3f736f73bec312354dbcbd134368"
+  },
+  "fixture-incident-2-lifecycle.stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "compile-report.json": {
+    "bytes": 508,
+    "sha256": "b992e401f16cfb91cb05d35c0ba1db5348ca50938dfba587efc2146bc91a69a3"
+  },
+  "compile-supervisor.json": {
+    "bytes": 672,
+    "sha256": "f99867848c4563fcab11f65020550d71af1cd565af310510d712fc22597785c7"
+  },
+  "fixture-incident-1-lifecycle-supervisor.json": {
+    "bytes": 675,
+    "sha256": "cf9bfa57006d16658d568b70074e4b92baf66979a0b645e30a9bcca49f15f26f"
+  },
+  "CLAUDE.md": {
+    "bytes": 22221,
+    "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+  },
+  "lifecycle-report.json": {
+    "bytes": 3483,
+    "sha256": "ed7dec3a113d8d9e1ae83f210083411f14eae0244669e3351590092e54a5309b"
+  },
+  "synthetic-midi.exe": {
+    "bytes": 4608,
+    "sha256": "15eddb960a875b46fd0814367b0eb8725d0adba996e94960dbbd2703718a9a49"
+  },
+  "fixture-incident-1-lifecycle.stderr": {
+    "bytes": 2151,
+    "sha256": "6e1cbe8ef40156f6f4b02c6bd39eb778a397074cd2e0b91aab0bd76e9248de41"
+  },
+  "source.tar.gz": {
+    "bytes": 3758313,
+    "sha256": "d5af048c35258b4906cc63b28350a4c314d8f4fddb0a72d87f051b587793b5e1"
+  },
+  "compile.stdout": {
+    "bytes": 406,
+    "sha256": "b77cca0d339c3decdcb356db92f0d6f38440514d3a1d32284c609c77daf9334c"
+  },
+  "startup.stdout": {
+    "bytes": 1987,
+    "sha256": "ee8191d040d63a908c190316c82191221fe09a041eb8a699732a0ba5e471ca83"
+  },
+  "fixture-incident-2-lifecycle-report.json": {
+    "bytes": 3051,
+    "sha256": "654d43e59baafd673c6cd8b00180a92db79e9407201570e1e65239e8d4cb16e2"
+  },
+  "fixture-incident-2-lifecycle-supervisor.json": {
+    "bytes": 675,
+    "sha256": "c9df0c9746e8d4c715ad1a7c65a8382e50d924cd26800671875dde896bd83eb5"
+  },
+  "lifecycle.stdout": {
+    "bytes": 2217,
+    "sha256": "7aeb6763f21dd0c46c03466a00799441205091a2e5e36df207740dc1a43efcbb"
+  },
+  "startup.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "startup-supervisor.json": {
+    "bytes": 666,
+    "sha256": "54fa7fa261e6becb2fbd999e3fc3883bc5b06a392cd92aae0a3dc9798d299403"
+  },
+  "module-inventory.json": {
+    "bytes": 198816,
+    "sha256": "5ca75365b910b5bda148378e51dd3fb409c31e08c6c5332f871074a725a8f2a3"
+  },
+  "lifecycle-supervisor.json": {
+    "bytes": 675,
+    "sha256": "740df97d8848921d1ee4d3da25ae84998f64c82465df9a1a9e81c8066e57600f"
+  },
+  "compiler-result-keys.json": {
+    "bytes": 70,
+    "sha256": "d720924b510167f80be636669074218cb96436ca8aa92e72b5595c0b9fedb2e5"
+  },
+  "remote-supervisor.py": {
+    "bytes": 2961,
+    "sha256": "187bd1bf54d9823d4f802d98b070c7ca8b51c958957e468b322b52e7c78ca745"
+  },
+  "fixture-incident-2-lifecycle.stderr": {
+    "bytes": 2465,
+    "sha256": "4ee71dee046da19beffbeeeedabd9c7fe6abc9bf01360f5821e64f5b0ab43f09"
+  },
+  "compile.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "complete.wasm": {
+    "bytes": 1881185,
+    "sha256": "3aa9db179499ba1d56e523620c40ac77ee57b5f5c75f89b2ae7d50691557d4ee"
+  },
+  "lifecycle.js": {
+    "bytes": 9135,
+    "sha256": "60db59885a27d90664af20f1ecb8fd93e8a741f4f107355b572e28ca020dd4c9"
+  },
+  "qualification.js": {
+    "bytes": 1988,
+    "sha256": "8f9271cdd24dfe892a3860d8d043fb06baf19c5c9b3fc40c2d53695ff5e51fde"
+  },
+  "lifecycle.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "fixture-incident-1-lifecycle.stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

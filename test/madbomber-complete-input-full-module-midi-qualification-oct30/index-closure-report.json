@@ -1,0 +1,134 @@
+{
+  "PASS": true,
+  "indexEntries": 14956,
+  "uniqueObjects": 13476,
+  "missing": [],
+  "scope": "entire inherited index; no ancestor/history fsck",
+  "records": [
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/tmp/madbomber-complete-input-full-module-midi-qualification-oct30/repo",
+        "ls-files",
+        "--stage",
+        "-z"
+      ],
+      "cwd": "/tmp/madbomber-complete-input-full-module-midi-qualification-oct30/repo",
+      "exit": 0,
+      "elapsed": 0.5292778869625181,
+      "peakRSS": 8126464,
+      "stdoutBytes": 1711848,
+      "streamSHA256": "50fd5d55b2f2fa35e9e0c1949812231be83ec40c1657eade188b11634cbf0e51",
+      "stderrBytes": 0,
+      "admission": {
+        "at": 1793327464.7632453,
+        "device": 1680253000807562931,
+        "f_bavail": 907574,
+        "blockSize": 4096,
+        "free": 3717423104,
+        "MemAvailable": 3769630720,
+        "allocated": 38727680,
+        "budget": 67108864,
+        "aggregate": {
+          "at": "2026-10-30T02:24:02.534287+00:00",
+          "owners": [
+            "enigma-accepted-current-trace-main-integration-oct30",
+            "toyvm-mounted-callback-retained-independent-accept-oct30",
+            "madbomber-complete-input-full-module-midi-qualification-oct30"
+          ],
+          "MemAvailable": 3840053248,
+          "memRequired": 3456106496,
+          "free": 3771744256,
+          "diskFreeBytes": 3771744256,
+          "futureGrowthIncludingUncertaintyBuffer": 268435456,
+          "requiredBytes": 3221225472,
+          "prospectiveClients": 402653184,
+          "publicationAndReceipt": 905969664,
+          "noDoubleCharge": true,
+          "change": "Prior Mad worker terminal and memory reservations released; all 127 direct canonical include blobs now verified resolvable; add four omitted includes to materialization.",
+          "PASS": true
+        },
+        "parentLimits": {
+          "inheritedDATA": [
+            -1,
+            -1
+          ],
+          "parentDATA": [
+            134217728,
+            -1
+          ],
+          "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+        },
+        "checks": {
+          "allocation": true,
+          "disk": true,
+          "forecast": true,
+          "memory": true
+        }
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/tmp/madbomber-complete-input-full-module-midi-qualification-oct30/repo",
+        "cat-file",
+        "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+      ],
+      "cwd": "/tmp/madbomber-complete-input-full-module-midi-qualification-oct30/repo",
+      "exit": 0,
+      "elapsed": 0.266471975017339,
+      "peakRSS": 92930048,
+      "stdoutBytes": 687385,
+      "streamSHA256": "9c7cb74248c74f520b3f687cd1e0df0f865dcf487413ebb4a45ecc72309de78a",
+      "stderrBytes": 0,
+      "admission": {
+        "at": 1793327465.3032715,
+        "device": 1680253000807562931,
+        "f_bavail": 907435,
+        "blockSize": 4096,
+        "free": 3716853760,
+        "MemAvailable": 3763662848,
+        "allocated": 38727680,
+        "budget": 67108864,
+        "aggregate": {
+          "at": "2026-10-30T02:24:02.534287+00:00",
+          "owners": [
+            "enigma-accepted-current-trace-main-integration-oct30",
+            "toyvm-mounted-callback-retained-independent-accept-oct30",
+            "madbomber-complete-input-full-module-midi-qualification-oct30"
+          ],
+          "MemAvailable": 3840053248,
+          "memRequired": 3456106496,
+          "free": 3771744256,
+          "diskFreeBytes": 3771744256,
+          "futureGrowthIncludingUncertaintyBuffer": 268435456,
+          "requiredBytes": 3221225472,
+          "prospectiveClients": 402653184,
+          "publicationAndReceipt": 905969664,
+          "noDoubleCharge": true,
+          "change": "Prior Mad worker terminal and memory reservations released; all 127 direct canonical include blobs now verified resolvable; add four omitted includes to materialization.",
+          "PASS": true
+        },
+        "parentLimits": {
+          "inheritedDATA": [
+            -1,
+            -1
+          ],
+          "parentDATA": [
+            134217728,
+            -1
+          ],
+          "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+        },
+        "checks": {
+          "allocation": true,
+          "disk": true,
+          "forecast": true,
+          "memory": true
+        }
+      }
+    }
+  ]
+}
