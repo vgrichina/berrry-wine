@@ -1,0 +1,31 @@
+{
+  "verdict": "ACCEPT_SCOPED_SOURCE",
+  "candidate": "7a21579f9adb208164312961c249a0aa9080a8b7",
+  "commit": "4d7c40955935ec466b9e30b44c520b60048335a6",
+  "branch": "task/shadow-man-dsetup-independent-accept-oct22",
+  "pushExit": 0,
+  "actualRemoteRefs": {
+    "refs/heads/main": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+    "refs/heads/task/shadow-man-dsetup-independent-accept-oct22": "4d7c40955935ec466b9e30b44c520b60048335a6",
+    "refs/heads/task/shadow-man-dsetup-native-version-repair-oct22": "7a21579f9adb208164312961c249a0aa9080a8b7"
+  },
+  "evidenceFilesVerified": 9,
+  "preservedCandidatePaths": 8256,
+  "noDeletions": true,
+  "protectedMetadataUnchanged": true,
+  "allocation": {
+    "own": 4956160,
+    "readonlyDonor": 10612736,
+    "native": 843776,
+    "launcher": 434176,
+    "reserve": 8388608,
+    "finalReceiptAllowance": 65536
+  },
+  "total": 25300992,
+  "cap": 67108864,
+  "hostFree": 7055024128,
+  "hostFloor": 2982150144,
+  "noRuntime": true,
+  "noFullBuild": true,
+  "box": "bx_m4xrrj5a stopped per coordinator20:31:48.291Z receipt; formerexpiry21:52:45.530Z; no lifecycle query"
+}
