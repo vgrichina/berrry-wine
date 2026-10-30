@@ -1,1 +1,0 @@
-Coordinator owns snapshot-stop. Leave this SAME box RUNNING until coordinator shutdown. All task test processes have exited. Retained source c26252c4, shipping module f644bbb2, original assets, fonts, runner, and one browser session at /home/user/aow2-software. No further task authorized.

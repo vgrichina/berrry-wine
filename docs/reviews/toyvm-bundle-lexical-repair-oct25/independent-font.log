@@ -1,5 +1,0 @@
-PASS base toyvm-bundle.js ROM font loader present
-PASS candidate toyvm-bundle.js ROM font loader present
-PASS base toyvm-jit-bundle.js ROM font loader present
-PASS candidate toyvm-jit-bundle.js ROM font loader present
-{"passes":4,"failures":0,"scope":"JS module registry only; no rendering/guest"}
