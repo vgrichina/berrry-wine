@@ -1,5 +1,0 @@
-{
-  "exact": "af39b18a9afa37df2e37bb0f27db004ff4cbc20a\trefs/heads/main",
-  "readCount": 1,
-  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
-}

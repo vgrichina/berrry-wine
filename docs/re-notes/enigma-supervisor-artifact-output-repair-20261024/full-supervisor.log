@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/enigma-supervisor-artifact-output-repair-oct24/repo/test/test-enigma-supervisor-output.py", line 38, in <module>
-    transformed = subprocess.run(['node', '--max-old-space-size=256', '-e',
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/subprocess.py", line 571, in run
-    raise CalledProcessError(retcode, process.args,
-subprocess.CalledProcessError: Command '['node', '--max-old-space-size=256', '-e', 'process.stdout.write(require(process.argv[1]).transformSupervisor(require("fs").readFileSync(process.argv[2],"utf8")))', '/tmp/enigma-supervisor-artifact-output-repair-oct24/repo/tools/enigma-terminal-capture-guard.cjs', '/tmp/enigma-supervisor-artifact-output-repair-oct24/tmp/enigma-full-supervisor-_2_103nl/original.py']' returned non-zero exit status 1.
