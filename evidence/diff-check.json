@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo",
+    "diff",
+    "--check"
+  ],
+  "cwd": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo",
+  "exitCode": 0,
+  "reason": null,
+  "peakGroupRSS": 7995392,
+  "wall": 0.034664417151361704,
+  "descendantsCleaned": true
+}

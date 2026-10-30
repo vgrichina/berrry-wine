@@ -1,0 +1,70 @@
+{
+  "at": "2026-10-29T02:08:52.012038+00:00",
+  "device": 64769,
+  "f_bavail": 1032299,
+  "blockSize": 4096,
+  "freeBytes": 4228296704,
+  "aggregate": 125829120,
+  "projection": {
+    "Git": 3,
+    "source": 1,
+    "tests": 1,
+    "evidence": 1,
+    "events": 4,
+    "sessionWAL": 4,
+    "future": 2,
+    "reserve": 8
+  },
+  "minimumRemaining": 3175088128,
+  "MemAvailable": 3144933376,
+  "limits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "sessionId": "01a1856a-61cc-7530-9f6b-6fedb039ec86",
+  "PASS": true,
+  "initialSharedWAL": [
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "bytes": 12244672
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "bytes": 4152992
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4185952
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "bytes": 4198312
+    }
+  ],
+  "positiveWALCountedOnce": true,
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-08-24-01a1856a-61cc-7530-9f6b-6fedb039ec86.jsonl"
+  ]
+}

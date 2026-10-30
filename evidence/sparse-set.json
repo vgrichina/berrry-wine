@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo",
+    "sparse-checkout",
+    "set",
+    "/tools/recovery/tuxracer-original-win32-recovery-oct28.py"
+  ],
+  "cwd": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo",
+  "exitCode": 0,
+  "reason": null,
+  "peakGroupRSS": 0,
+  "wall": 0.040903479093685746,
+  "descendantsCleaned": true
+}

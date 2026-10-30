@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "python3",
+    "tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py",
+    "--source",
+    "tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+    "--media-root",
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-original-closure-oct28/payload/extracted",
+    "--inventory",
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-original-closure-oct28/payload/inventory.json",
+    "--prior",
+    "/home/user/wine-assembly/scratch/usage-watch/tuxracer-admitted-workdir-real-media-oct29/retained-evidence/api-output/closure.json",
+    "--cli-output",
+    "evidence/changed-real-media-cli.stdout",
+    "--task-dir",
+    "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo",
+    "--result",
+    "evidence/focused-acceptance.json"
+  ],
+  "cwd": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo",
+  "exitCode": 0,
+  "reason": null,
+  "peakGroupRSS": 22413312,
+  "wall": 0.07772416085936129,
+  "descendantsCleaned": true
+}

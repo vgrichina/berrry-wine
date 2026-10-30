@@ -1,0 +1,93 @@
+{
+  "PASS": true,
+  "sourceSHA256": "17536ba93021a4d7061b542876eaecef6f1f716fa3e420ef283b2804c50b6c04",
+  "apiEqualsActualCLI": true,
+  "priorChecked": 1,
+  "checked": 4,
+  "unknown": 635,
+  "focusedControls": "simple brackets; computed source UNKNOWN; complex/incomplete stop; bodies; unsafe/missing paths",
+  "rejectingMutationKilled": true,
+  "runtimeExecuted": false,
+  "originalSix": [
+    {
+      "script": "tuxracer-win32-0.61a/tuxracer_init.tcl",
+      "sha256": "c3405294b169d289230c848044f38ca9fb3b6aaba625308955ec8eed7c73833f",
+      "firstMissingLine": 6,
+      "firstMissingText": "set tux_data_dir [pwd]",
+      "literalSourceLines": [
+        {
+          "line": 18,
+          "text": "    source \"$tux_data_dir/courses/common/courseinit.tcl\""
+        },
+        {
+          "line": 24,
+          "text": "source courses/course_idx.tcl"
+        }
+      ]
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "sha256": "10b39df43e216b2aad64d7b10415fa50eb67bec31f1cd19a70bd297af4ee373c",
+      "firstMissingLine": 45,
+      "firstMissingText": "set cwd [pwd]",
+      "literalSourceLines": []
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/foggy_light.tcl",
+      "sha256": "902f3ce8cb96f9291028e2b21f1048dbd003af0b443f8973f52b3524add40c58",
+      "firstMissingLine": 7,
+      "firstMissingText": "set far_clip [tux_get_param forward_clip_distance]",
+      "literalSourceLines": []
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/night_light.tcl",
+      "sha256": "aed962b348b5e789b82dfa612c38a71fd795bf887c31ce06006ac5bcc0cd6d11",
+      "firstMissingLine": 6,
+      "firstMissingText": "tux_fog -on -mode linear -density 0.005 -colour { 0.0 0.09 0.34 1 } -start 0 \\",
+      "literalSourceLines": []
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/sunny_light.tcl",
+      "sha256": "c4805b9546651991811e9a91b9039d2295c444721826d50ff53412d436849c33",
+      "firstMissingLine": 6,
+      "firstMissingText": "tux_fog -on -mode linear -density 0.005 -colour { 1.0 1.0 1.0 1 } -start 0 \\",
+      "literalSourceLines": []
+    },
+    {
+      "script": "tuxracer-win32-0.61a/courses/common/courseinit.tcl",
+      "sha256": "cf669ca48fbfe690c5db52fc70db0cb2b1db4df3f623784a831de24c6c7c81a6",
+      "firstMissingLine": 4,
+      "firstMissingText": "set cwd [pwd]",
+      "literalSourceLines": [
+        {
+          "line": 8,
+          "text": "source tree_polyhedron.tcl"
+        },
+        {
+          "line": 81,
+          "text": "source tux_walk.tcl"
+        },
+        {
+          "line": 88,
+          "text": "    source sunny_light.tcl"
+        },
+        {
+          "line": 90,
+          "text": "    source foggy_light.tcl"
+        },
+        {
+          "line": 92,
+          "text": "    source night_light.tcl"
+        }
+      ]
+    }
+  ],
+  "remainingSyntaxUnknown": [
+    {
+      "script": "tuxracer-win32-0.61a/courses/course_idx.tcl",
+      "expression": "tux_open_courses [concat \\\n    { \\\n\t{ \\\n\t    -course frozen_river -name \"Frozen River\" \\\n\t\t    -description \"Keep your speed down to collect herring!\" \\\n                    -par_time 80.0 \\\n\t} \\\n\t{ \\\n\t    -course path_of_daggers -name \"Path of Daggers\" \\\n\t\t    -description \"Big spikes may prove to be the least of your worries on this course.  Muliple paths allow you to take low or high roads, each with their own challenges.\" \\\n                    -par_time 70.0 \\\n\t} \\\n\t{ \\\n\t    -course bunny_hill -name \"Bunny Hill\" \\\n\t\t    -description \"Use clever turning to conquer the Bunny Hill.\" \\\n                    -par_time 40.0 \\\n\t} \\\n\t{ \\\n\t    -course twisty_slope -name \"Twisty Slope\" \\\n\t\t    -description \"Tight twists make grabbing herring difficult.  Hard turns will lead you to victory.\" \\\n                    -par_time 40.0 \\\n\t} \\\n\t{ \\\n\t    -course bumpy_ride -name \"Bumpy Ride\" \\\n\t\t    -description \"This hill has a series of ramps tackle.  Make sure to line yourself up before getting airborne.\" \\\n                  ",
+      "reason": "unsupported or incomplete Tcl syntax; remaining commands unknown"
+    }
+  ],
+  "evidenceRecovery": "Result file collided with supervisor receipt filename; original passing test stdout and exit0 preserved. Reconstructed only static spans from unchanged media; no tests repeated."
+}

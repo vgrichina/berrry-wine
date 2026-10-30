@@ -1,0 +1,1 @@
+{"stage": "Git init preexec before spawn", "error": "Python self-imposed hard DATA128 prevented child DATA256", "correction": "Python soft DATA128, retain original inherited hard unlimited; Git child DATA256 only", "authorization": "explicit process-specific wrapper resolution checkpoint", "noGitInitializationOccurred": true}

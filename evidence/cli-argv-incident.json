@@ -1,0 +1,1 @@
+{"error": "inventory descriptor passed instead of descriptor.path", "spawned": false, "correction": "use canonical descriptor.path"}

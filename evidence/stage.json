@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo",
+    "add",
+    "--",
+    "tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+    "tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py",
+    "tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md"
+  ],
+  "cwd": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo",
+  "exitCode": 1,
+  "reason": null,
+  "peakGroupRSS": 11882496,
+  "wall": 0.20865011285059154,
+  "descendantsCleaned": true
+}

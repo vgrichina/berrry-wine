@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-29T02:10:26.489759+00:00",
+  "device": 64769,
+  "f_bavail": 1241301,
+  "blockSize": 4096,
+  "freeBytes": 5084368896,
+  "aggregate": 125829120,
+  "minimumRemaining": 3175088128,
+  "MemAvailable": 2422636544,
+  "memRequired": 2147483648,
+  "aggregateVersion": "3fff298eda25cd0f800aeb79bf2e9a0601a623365d20813d4ba45cf168cdb1bf",
+  "projection": {
+    "Git": 3,
+    "source": 1,
+    "tests": 1,
+    "evidence": 1,
+    "events": 4,
+    "sessionWAL": 4,
+    "future": 2,
+    "reserve": 8
+  },
+  "PASS": true
+}

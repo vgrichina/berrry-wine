@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-29T02:13:13.309093+00:00",
+  "device": 64769,
+  "f_bavail": 1232389,
+  "blockSize": 4096,
+  "freeBytes": 5047865344,
+  "aggregate": 125829120,
+  "minimumRemaining": 3175088128,
+  "MemAvailable": 2847113216,
+  "memRequired": 2147483648,
+  "aggregateVersion": "3fff298eda25cd0f800aeb79bf2e9a0601a623365d20813d4ba45cf168cdb1bf",
+  "projection": {
+    "Git": 3,
+    "source": 1,
+    "tests": 1,
+    "evidence": 1,
+    "events": 4,
+    "sessionWAL": 4,
+    "future": 2,
+    "reserve": 8
+  },
+  "PASS": true,
+  "sharedWALPositiveGrowthCountedOnce": 0,
+  "taskPhysicalBytes": 2560000,
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T02-08-24-01a1856a-61cc-7530-9f6b-6fedb039ec86.jsonl"
+  ]
+}

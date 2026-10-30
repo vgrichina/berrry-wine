@@ -1,0 +1,1 @@
+{"collision": "test result path evidence/focused-acceptance.json also used by supervisor", "originalPassRetained": "focused-acceptance.stdout and focused-acceptance.json exitCode0", "resolution": "distinct focused-acceptance-result.json reconstructed from passing stdout plus unchanged static spans; no repeat execution"}

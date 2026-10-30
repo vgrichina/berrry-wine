@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "import os;print(os.getcwd())"
+  ],
+  "cwd": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo",
+  "exitCode": 0,
+  "reason": null,
+  "peakGroupRSS": 9568256,
+  "wall": 0.0400116469245404,
+  "descendantsCleaned": true
+}

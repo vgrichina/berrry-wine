@@ -1,0 +1,8 @@
+ M tools/recovery/tuxracer-original-win32-recovery-oct28.py
+?? __pycache__/
+?? evidence/
+?? initial-admission.json
+?? probe-original.py
+?? supervisor.py
+?? tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py
+?? tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md

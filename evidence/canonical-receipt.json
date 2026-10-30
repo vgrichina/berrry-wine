@@ -1,0 +1,153 @@
+{
+  "task": "tuxracer-real-media-tcl-syntax-gap-oct29",
+  "at": "2026-10-29T02:13:49.987010+00:00",
+  "status": "BLOCKED_AT_FIRST_GIT_STAGING_REJECTION",
+  "productionAcceptance": "PASS; actual media API equals actual CLI; checked1->4; syntax6->1; rejecting mutation killed",
+  "sourceBase": "3898e008861bad6c274506664b2804dbdc7d236a",
+  "branch": "task/tuxracer-real-media-tcl-syntax-gap-oct29",
+  "commit": null,
+  "remoteSHA": null,
+  "publication": "not attempted; no commit; no push; main unchanged",
+  "blocker": "git add rejected new task-specific test and report outside sparse-checkout definition; stopped without retry per explicit instruction",
+  "additionalGitDiagnostic": "one read-only alternate nesting-too-deep warning; Git continued but sparse-path restriction rejected add",
+  "requiredNextAction": "Coordinator must authorize continuation after first rejection, extend owned sparse definition to include the new test/report (or explicitly authorized git add --sparse), review staged/unstaged content, commit and push task branch, verify exact remote SHA. Fresh independent source acceptance required before main.",
+  "retainedAllocationBytes": 25165824,
+  "allocationRetainedThrough": "coordinator closeout",
+  "runtimeExecuted": false,
+  "boxes": [],
+  "lifecycleOwner": "coordinator; no boxes assigned or altered",
+  "cleanup": "supervisor terminated process groups after each subprocess; no test or Git subprocess retained",
+  "sourcePins": {
+    "task": "tuxracer-real-media-tcl-syntax-gap-oct29",
+    "at": "2026-10-29T01:46:59.582098+00:00",
+    "main": "3898e008861bad6c274506664b2804dbdc7d236a",
+    "admission": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-real-media-tcl-syntax-gap-oct29-admission.json",
+    "objectStores": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-real-media-tcl-syntax-gap-oct29-object-stores.json",
+    "allocationBytes": 25165824,
+    "runtimeAllowed": false,
+    "source": {
+      "path": "tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+      "bytes": 25097,
+      "sha256": "69257615178adda7568036fc49e2f20b4ca602c6d3b734f1238caf6143021b17"
+    },
+    "archive": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-original-win32-recovery-oct28/payload/tuxracer-win32-0.61a.zip",
+      "bytes": 8009319,
+      "sha256": "1497e326af9aa591243f4ff1083d4d99de7dc5f0396e37f45ca7bf4f98823c34"
+    },
+    "inventory": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-original-closure-oct28/payload/inventory.json",
+      "bytes": 29710,
+      "sha256": "9ac1ac56933cbeae45b0ada2162af298dbc768a5f82a0e2131faa218b0644dc5"
+    },
+    "extracted": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-retained-original-closure-oct28/payload/extracted",
+    "priorValidationCommit": "032f75ff582aa635ff78baf71febbd0e9a77bd78",
+    "priorReview": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-admitted-workdir-real-media-oct29/coordinator-review.json",
+    "observedClosure": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-admitted-workdir-real-media-oct29/retained-evidence/api-output/closure.json"
+  },
+  "rootRefs": "reuse canonical launcher root-ref-digest.json, no task root ref mutation",
+  "evidence": [
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/tools/recovery/tuxracer-original-win32-recovery-oct28.py",
+      "bytes": 25633,
+      "sha256": "17536ba93021a4d7061b542876eaecef6f1f716fa3e420ef283b2804c50b6c04"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py",
+      "bytes": 6044,
+      "sha256": "3ecefa68101ed95de354e598e290b0bbd6c1a5f959a252ec0e04b9e63906742c"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md",
+      "bytes": 4878,
+      "sha256": "b81b4dca51d849cb720db6dcdfb7d9b6120934ae8964b2b1e4115bb9734edb05"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/supervisor.py",
+      "bytes": 5958,
+      "sha256": "30dce7cec8483ae6314d139a3dd5649b7df17be58f8ab04807c44ac26dabd1ad"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/probe-original.py",
+      "bytes": 1026,
+      "sha256": "382469a53b4ac3a84e61a1cb736a24aa31cce1c5b2a80765008f0254ec27a8cd"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/initial-admission.json",
+      "bytes": 1404,
+      "sha256": "49c3068474dcc07b5763d5c639197417454950196de674625575c707fb21727d"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/original-reproducer.json",
+      "bytes": 467,
+      "sha256": "9d02619fa873681ca91f799feb1d1cd477e78d252ed3f3e48c26e097e3e90624"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/focused-acceptance-result.json",
+      "bytes": 4383,
+      "sha256": "085ae683badfa7185dd63b83062a258ecb79cc2a0e19db1bb1e5ca17f76e2e86"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/focused-acceptance.stdout",
+      "bytes": 353,
+      "sha256": "8c78f267f57e93c285280813697967ad789bb2ce0520ad9a15442772ab19dc3c"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/focused-acceptance.json",
+      "bytes": 987,
+      "sha256": "ba141fbd5247abb421c9815d1ae79418260b05f62f3300f29b704c21c7602679"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/changed-real-media-cli.stdout",
+      "bytes": 128289,
+      "sha256": "7f6eb192bd13ededb1acdfa7a3439ae1bdef7e745afa274707f72bce13926e4f"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/changed-real-media-cli.json",
+      "bytes": 534,
+      "sha256": "3b39905e079537a3c393fa9522b7ff8724fecb22d07ca7e01954e42548ff24ad"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/stage.json",
+      "bytes": 513,
+      "sha256": "afbd9d2c9bf20078d0fb84d8f5e0aa8936dd4918d53f167349d1e88b3ee27425"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/stage.stderr",
+      "bytes": 624,
+      "sha256": "07a798aef2ca05abd366db944e4294db331f5e065cb4a17b463ca35d5e9e7540"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/stage.admission.json",
+      "bytes": 737,
+      "sha256": "589cabb2c03253f167e39ca06dedac4a67c718c3c0f0f278a985f8dacb2dbf7b"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/containment.json",
+      "bytes": 256,
+      "sha256": "7fe049c6741f76ead921a9f0c0c6bf0588766af711784c7358d8423d0651866c"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/launch-reuse.json",
+      "bytes": 395,
+      "sha256": "b4461073b8d2549818d95e914007693c7a43bd5f7de0a2486ae8b3ccc631baea"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/wrapper-incident.json",
+      "bytes": 327,
+      "sha256": "37a18b94097b3759fa18d1d1442ae2c7c379c4219cc19935f34ac0540993a7c4"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/cli-argv-incident.json",
+      "bytes": 132,
+      "sha256": "8a1c0aff40ea1301d06d6431f519e6571892d04f131db215d0857a38e8942812"
+    },
+    {
+      "path": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo/evidence/result-path-incident.json",
+      "bytes": 321,
+      "sha256": "3826a700a3b2acec0814b3ffaa0d8a1ae0170c46c4eb0d19f140989d065ad5c2"
+    }
+  ],
+  "evidencePhysicalBytes": 434176,
+  "taskPhysicalBytes": 2584576
+}

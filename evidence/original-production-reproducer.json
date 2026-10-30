@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "python3",
+    "probe-original.py"
+  ],
+  "cwd": "/tmp/tuxracer-real-media-tcl-syntax-gap-oct29/repo",
+  "exitCode": 0,
+  "reason": null,
+  "peakGroupRSS": 21000192,
+  "wall": 0.11361343809403479,
+  "descendantsCleaned": true
+}

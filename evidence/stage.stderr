@@ -1,0 +1,10 @@
+error: /tmp/morrowind-observer-quiet-arming-repair-oct28/repo/.git/objects: ignoring alternate object stores, nesting too deep
+The following paths and/or pathspecs matched paths that exist
+outside of your sparse-checkout definition, so will not be
+updated in the index:
+tools/recovery/test-tuxracer-real-media-tcl-syntax-gap-oct29.py
+tools/recovery/tuxracer-real-media-tcl-syntax-gap-oct29-report.md
+hint: If you intend to update such entries, try one of the following:
+hint: * Use the --sparse option.
+hint: * Disable or modify the sparsity rules.
+hint: Disable this message with "git config advice.updateSparsePath false"
