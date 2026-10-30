@@ -1,9 +1,0 @@
-{
-  "tree": "95cc5acead30a50a0a66097264d5b5625a037801",
-  "parents": [
-    "c3d394149406189cf1c5dbbc434491f0130666c9",
-    "17a22039cbaac87c4b713472d94c9fc01609e8f1"
-  ],
-  "completed": "Conflict-free actual merged tree; no semantic resolution",
-  "remaining": "identity proof, affected compatibility only, commit/task publication"
-}
