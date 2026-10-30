@@ -1,1 +1,0 @@
-{"expected":"same original exception thrown","actual":{"thrown":true},"finding":"Model.run catches any truthy .modelReturn, including original import exceptions; this is an evaluator blindspot, not evidence the actual WAT swallows exceptions","realWasm":false}

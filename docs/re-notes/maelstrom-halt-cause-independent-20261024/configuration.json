@@ -1,9 +1,0 @@
-{
-  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
-  "identityFileExists": true,
-  "knownHostsExists": true,
-  "mountArgv": [],
-  "mountParser": "not applicable: no mount argv or runtime operation",
-  "sparseMode": "explicit NONCONE",
-  "checkoutBase": "f879fd0cd81d918ea54a18b1b222fae25dd6d618"
-}
