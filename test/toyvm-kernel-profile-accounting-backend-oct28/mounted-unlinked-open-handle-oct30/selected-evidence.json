@@ -1,0 +1,66 @@
+{
+  "status": "BLOCKED_BEFORE_REMOTE_PREFLIGHT_AND_PRODUCTION",
+  "objectiveQualified": false,
+  "artifacts": {
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/source-pins.json": {
+      "bytes": 4042,
+      "sha256": "299dabca1c25a7a7507b2f02f3484399126da419b2cabb7e19d7208f901e9955"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/preflight.json": {
+      "bytes": 14353,
+      "sha256": "68b2e4dd41b333dcd76d608afcad82be334dc6117f3df27dff39be8d8865e62c"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/allocation-runtime-denial.json": {
+      "bytes": 12133,
+      "sha256": "d5b7b19b6cc140034f7b11c309784a80c3539a31e3377e786d5a3dc2e00c3018"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/runtime-error.json": {
+      "bytes": 1244,
+      "sha256": "71e4811a0c06e7b118e9494f7c7e0b2bd10851fd34bb49c7d5d3625c75a758cd"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/cleanup-error.json": {
+      "bytes": 77,
+      "sha256": "5a9df3a90d1914bbe86c4bdd0ea73366e755657c4e205fed56bec1164984d426"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/lifecycle-proof.json": {
+      "bytes": 616,
+      "sha256": "59ca0fb4fd4c9e9f7832a96f0decd68fa395741c3e6e21a1f1758d13e85129b9"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/fork-source-receipt.json": {
+      "bytes": 1443,
+      "sha256": "0dbd8c5df1883f538687fecf55b80d1aa88ef3882f97d0b5e2f405859bae7255"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/transfer-receipt.json": {
+      "bytes": 1564,
+      "sha256": "30e4af43f3338c6df0bae51733c8bf8e81ff6b0a97dd4a859b295e3b3b336386"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/smoke-receipt.json": {
+      "bytes": 707,
+      "sha256": "c34af9568628dd480edacca1d0ca066ef1d355de5128ac9a95a445c22062ccdc"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/watchdog-armed.json": {
+      "bytes": 113,
+      "sha256": "582a640b0f855842fea1cd76c5586eb7d72def55a2d8368d613c823b95639572"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/fixture.py": {
+      "bytes": 2109,
+      "sha256": "ba75f252c76efa2846c1001f88e717a651961f72a00b3912f80fedf02ab339e1"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/observer.py": {
+      "bytes": 5327,
+      "sha256": "34bd21424bc2a0f16226f2b3be7b4068a99ea2b91e511b7f6770c656ec4f69f9"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/sitecustomize.py": {
+      "bytes": 1244,
+      "sha256": "66d7650edd1fd9affa9134b3479882de2a61176de09fb1f99fa80688640ead0f"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/result.json": {
+      "bytes": 14909,
+      "sha256": "990c8d0673918988f2df9decd2b00944d2080a3e5b09c352fa3714307f438257"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/mounted-unlinked-open-handle-oct30/recovery-recipe.txt": {
+      "bytes": 2965,
+      "sha256": "3d0b61b7f8519ecf53441a9a820c9728c7ea46a1d6ed7dce417af124af3e61dc"
+    }
+  }
+}
