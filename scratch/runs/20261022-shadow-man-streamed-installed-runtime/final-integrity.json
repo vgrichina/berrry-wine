@@ -1,0 +1,22 @@
+{
+  "passAll": true,
+  "verdict": "BLOCKED_MUTABLE_CLONE_PERMISSION",
+  "basePathsPreserved": 8279,
+  "originalPayloadFilesVerified": 1959,
+  "restoredFiles": 2083,
+  "registrySHA256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3",
+  "moduleSHA256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+  "guestAttempts": 0,
+  "preguestGate": "INCOMPLETE; stopped before remote fixtures/command plan",
+  "protectedMetadata": "UNCHANGED",
+  "ownAllocated": 13979648,
+  "wholeLocalConservative": 47620096,
+  "cap": 67108864,
+  "hostFree": 6931345408,
+  "committedEvidenceFilesMatch": 40,
+  "publishedCommit": "f452b79ec724512fc8bf9f19d805f9d4c49b0166",
+  "actualRemoteRefs": {
+    "refs/heads/main": "58e90870a40a541a4083cae5e987ca8de31889e6",
+    "refs/heads/task/shadow-man-streamed-installed-runtime-oct22": "f452b79ec724512fc8bf9f19d805f9d4c49b0166"
+  }
+}

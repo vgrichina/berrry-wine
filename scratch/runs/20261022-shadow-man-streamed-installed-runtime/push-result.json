@@ -1,0 +1,7 @@
+{
+  "commit": "f452b79ec724512fc8bf9f19d805f9d4c49b0166",
+  "branch": "task/shadow-man-streamed-installed-runtime-oct22",
+  "exit": 0,
+  "stdout": "",
+  "stderr": "remote: \nremote: Create a pull request for 'task/shadow-man-streamed-installed-runtime-oct22' on GitHub by visiting:        \nremote:      https://github.com/vgrichina/berrry-wine/pull/new/task/shadow-man-streamed-installed-runtime-oct22        \nremote: \nTo github.com:vgrichina/berrry-wine.git\n * [new branch]      HEAD -> task/shadow-man-streamed-installed-runtime-oct22\n"
+}

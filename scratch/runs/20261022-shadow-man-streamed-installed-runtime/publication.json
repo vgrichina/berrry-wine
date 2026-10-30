@@ -1,0 +1,15 @@
+{
+  "commit": "f452b79ec724512fc8bf9f19d805f9d4c49b0166",
+  "branch": "task/shadow-man-streamed-installed-runtime-oct22",
+  "canonicalRepository": "https://github.com/vgrichina/berrry-wine.git",
+  "pushExit": 0,
+  "actualRemoteRefs": {
+    "refs/heads/main": "58e90870a40a541a4083cae5e987ca8de31889e6",
+    "refs/heads/task/shadow-man-streamed-installed-runtime-oct22": "f452b79ec724512fc8bf9f19d805f9d4c49b0166"
+  },
+  "changedEvidenceFiles": 40,
+  "basePathsPreserved": 8279,
+  "mainMerged": false,
+  "transport": "Existing donor SSH configuration read-only",
+  "guestAttempts": 0
+}
