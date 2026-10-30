@@ -1,2 +1,0 @@
-PASS D3D9 clear: native excerpt pixels/depth/stencil, immutable host/queue snapshots, GPU command mocks, seven semantic rejecting controls
-{"compiler":"/tmp/legacy-texture-disable-independent-integrate-oct24/repo/tools/watx.js","sourceBytes":5257,"sourceSHA256":"4cae063bfb82249f7f09f85fe41a8b65ded473a787bb359492ef88ce605a61a4","moduleBytes":755,"moduleSHA256":"61cf1906c68d4cd76ca8a3c3ad7c76aad06bed2728e105cee5943adc085c8b4b"}
