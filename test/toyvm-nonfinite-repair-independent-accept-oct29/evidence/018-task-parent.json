@@ -1,0 +1,60 @@
+{
+  "admission": {
+    "MemAvailable": 3505561600,
+    "PASS": true,
+    "admissionSHA256": "185ce18aa5371243e3bf24e90ad255440ebd63ad3a6e66a561f0800eee7a8b18",
+    "aggregate": 176160768,
+    "at": "2026-10-29T03:02:43.527694+00:00",
+    "blockSize": 4096,
+    "device": 64769,
+    "evidence": {
+      "allocated": 139264,
+      "logical": 30539
+    },
+    "f_bavail": 1200758,
+    "freeBytes": 4918304768,
+    "operation": "task-parent",
+    "projection": {
+      "aggregateFutureGrowth": 176160768,
+      "floor": 2982150144,
+      "positiveSharedWALGrowthCountedOnce": 0,
+      "remainingTaskAllocation": 24367612,
+      "sessionBytes": 507396,
+      "taskAllocated": 290816,
+      "taskLogical": 107536,
+      "uncertaintyAndHeadroom": 67108864
+    }
+  },
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-nonfinite-repair-independent-accept-oct29/repo",
+    "update-ref",
+    "refs/heads/task/toyvm-nonfinite-repair-independent-accept-oct29",
+    "ebc6b453612ccab0dc9492341b014585d036b0b7"
+  ],
+  "cleanupComplete": true,
+  "cwd": "/tmp/toyvm-nonfinite-repair-independent-accept-oct29/repo",
+  "exit": 0,
+  "failure": null,
+  "limits": {
+    "CPU": 90,
+    "DATA": 268435456,
+    "capture": 2097152,
+    "file": 12582912,
+    "groupPhysicalRSS": 536870912,
+    "physicalRSS": 134217728,
+    "wall": 120
+  },
+  "observedPIDs": [
+    2348799
+  ],
+  "peakGroupPhysicalRSS": 22937600,
+  "peakProcessPhysicalRSS": 4194304,
+  "procSamples": 4,
+  "remainingGroup": [],
+  "stderr": "018-task-parent.stderr",
+  "stdout": "018-task-parent.stdout",
+  "supervisorPhysicalRSS": 18743296,
+  "wallSeconds": 0.023759718984365463
+}

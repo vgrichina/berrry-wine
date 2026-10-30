@@ -1,0 +1,1 @@
+{"exit": 0, "stopReason": null, "cpuSeconds": 0.01, "wallSeconds": 0.1, "peakRSS": 10000000, "output": {"encoding": "base64", "data": "b2sK"}, "cleanupComplete": true, "filesystem": {"live": 12288, "peak": 12288, "written": 5, "failure": null, "openHandles": 0}, "filesystemCleanup": {"unmountExit": 0, "remainingMounts": [], "serverExit": -15}, "metadata": 1e999}

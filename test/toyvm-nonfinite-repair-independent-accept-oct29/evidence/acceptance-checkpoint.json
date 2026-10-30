@@ -1,0 +1,38 @@
+{
+  "PASS": true,
+  "admission": {
+    "MemAvailable": 3476709376,
+    "PASS": true,
+    "admissionSHA256": "185ce18aa5371243e3bf24e90ad255440ebd63ad3a6e66a561f0800eee7a8b18",
+    "aggregate": 176160768,
+    "at": "2026-10-29T03:02:44.437391+00:00",
+    "blockSize": 4096,
+    "device": 64769,
+    "evidence": {
+      "allocated": 389120,
+      "logical": 121127
+    },
+    "f_bavail": 1200187,
+    "freeBytes": 4915965952,
+    "operation": "acceptance-complete",
+    "projection": {
+      "aggregateFutureGrowth": 176160768,
+      "floor": 2982150144,
+      "positiveSharedWALGrowthCountedOnce": 0,
+      "remainingTaskAllocation": 22096751,
+      "sessionBytes": 509073,
+      "taskAllocated": 2560000,
+      "taskLogical": 2199451,
+      "uncertaintyAndHeadroom": 67108864
+    }
+  },
+  "candidate": "ebc6b453612ccab0dc9492341b014585d036b0b7",
+  "fixturesClean": true,
+  "liveCLIFUSEBrowserGap": "OPEN",
+  "mutationKilled": true,
+  "newRealCLIChecks": 14,
+  "remainingChecks": [],
+  "runtimeQualified": false,
+  "sourceUnchanged": true,
+  "unchanged53and72and52Reused": true
+}

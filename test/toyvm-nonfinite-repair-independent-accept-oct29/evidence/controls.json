@@ -1,0 +1,26 @@
+{
+  "PASS": true,
+  "positive": {
+    "CPU": [
+      90,
+      90
+    ],
+    "DATA": [
+      134217728,
+      134217728
+    ],
+    "FSIZE": [
+      12582912,
+      12582912
+    ],
+    "cwd": "/tmp/toyvm-nonfinite-repair-independent-accept-oct29/repo"
+  },
+  "rejected": [
+    "omitted",
+    "root",
+    "donor",
+    "outside",
+    "git-no-C"
+  ],
+  "sentinelAbsent": true
+}
