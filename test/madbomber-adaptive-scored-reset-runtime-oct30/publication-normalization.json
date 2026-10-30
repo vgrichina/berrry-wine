@@ -1,0 +1,9 @@
+{
+  "reason": "diff-tree --check found raw guest log trailing whitespace; published copy trims line-end spaces only; immutable original retained locally and in first task commit",
+  "rawSHA256": "a8b158541a64684392d8dfd31171cf8d4bac0c3130a33f285fcb6196a85a8e42",
+  "publishedSHA256": "c867d1fb7b12faa4a3000d05617a0d4557277256729fd21b05f19a9342c7efa1",
+  "rawBytes": 28669,
+  "publishedBytes": 28668,
+  "firstCommit": "aea7be12c09e721afe84d26c9374558e75e831d0",
+  "firstDiffCheck": "e/diff-check.stdout"
+}
