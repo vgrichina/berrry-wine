@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "-e",
+    "const fs=require('fs');console.log(JSON.stringify({execPath:process.execPath,execArgv:process.execArgv,limits:fs.readFileSync('/proc/self/limits','utf8'),rss:process.memoryUsage().rss}));"
+  ],
+  "cwd": "/tmp/enigma-original-menu-render-runtime-oct30/repo",
+  "exit": 0,
+  "peakGroupRSS": 7827456,
+  "seconds": 0.03392330091446638,
+  "admission": {
+    "MemAvailable": 4457549824,
+    "physicalBytes": 31510528,
+    "diskFree": 3425415168,
+    "remainingForecast": 171151360
+  },
+  "sha256": "fc6f17c82359c5552eede0aba938fb890790ccf1c58a89277a5447a84ec39def",
+  "bytes": 1604
+}

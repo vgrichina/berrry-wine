@@ -1,0 +1,151 @@
+{
+  "status": "PASS renderer boundary; guest completion unresolved",
+  "productionDefectEstablished": false,
+  "productionFilesChanged": [],
+  "candidate": "ff9e0f8845c8e7fdb753a5718437609517009249",
+  "observedRemoteMain": "eb0485865eb9abce4562f0ca56450138d86b22b1",
+  "sourcePins": {
+    "lib/renderer-input.js": {
+      "bytes": 181810,
+      "sha256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78"
+    },
+    "lib/renderer.js": {
+      "bytes": 216514,
+      "sha256": "6702c363929e969a57d4e817d2d3d638d138e145cf28a50cda93a468f4269afe"
+    }
+  },
+  "results": {
+    "routing-final": {
+      "argv": [
+        "/usr/bin/node",
+        "test/enigma-native-input-routing-repair-oct30/routing-reproducer.js"
+      ],
+      "cwd": "/tmp/enigma-original-menu-render-runtime-oct30/repo",
+      "exit": 0,
+      "peakGroupRSS": 23220224,
+      "seconds": 0.033465461106970906,
+      "admission": {
+        "MemAvailable": 4317556736,
+        "physicalBytes": 31993856,
+        "diskFree": 3419631616,
+        "remainingForecast": 171151360
+      },
+      "sha256": "8f868fc1b58805da0be2174866d497edb97ddd9cedf8d6469a4006b897ff729f",
+      "bytes": 4056
+    },
+    "drag-baseline": {
+      "argv": [
+        "/usr/bin/node",
+        "test/test-renderer-mouse-drag-mask.js"
+      ],
+      "cwd": "/tmp/enigma-original-menu-render-runtime-oct30/repo",
+      "exit": 0,
+      "peakGroupRSS": 46723072,
+      "seconds": 0.11223428114317358,
+      "admission": {
+        "MemAvailable": 3898290176,
+        "physicalBytes": 31895552,
+        "diskFree": 3423248384,
+        "remainingForecast": 171151360
+      },
+      "sha256": "fc91da1ae6e77002d29af5f6f26d659ad1bad5db6eadf38abb62513e7625e8d1",
+      "bytes": 51
+    },
+    "hold-regression": {
+      "argv": [
+        "/usr/bin/node",
+        "test/test-renderer-input-button-hold.js"
+      ],
+      "cwd": "/tmp/enigma-original-menu-render-runtime-oct30/repo",
+      "exit": 0,
+      "peakGroupRSS": 24231936,
+      "seconds": 0.035185497952625155,
+      "admission": {
+        "MemAvailable": 4085014528,
+        "physicalBytes": 31936512,
+        "diskFree": 3421188096,
+        "remainingForecast": 171151360
+      },
+      "sha256": "ba3f10b72dd45a5b10dab177c7c72c4b974b2b3655e6b99ac440cf2512111da1",
+      "bytes": 1857
+    },
+    "mutant-drop-final": {
+      "argv": [
+        "/usr/bin/node",
+        "test/enigma-native-input-routing-repair-oct30/routing-reproducer.js",
+        "--mutant=drop-top-button"
+      ],
+      "cwd": "/tmp/enigma-original-menu-render-runtime-oct30/repo",
+      "exit": 1,
+      "peakGroupRSS": 23486464,
+      "seconds": 0.03346011182293296,
+      "admission": {
+        "MemAvailable": 4201648128,
+        "physicalBytes": 32002048,
+        "diskFree": 3420381184,
+        "remainingForecast": 171151360
+      },
+      "sha256": "1cbc79a3fd20edf59bad1fc75cddca35a8fe40ad546c78b58cd8b2fbc394a35e",
+      "bytes": 1054
+    },
+    "mutant-false-final": {
+      "argv": [
+        "/usr/bin/node",
+        "test/enigma-native-input-routing-repair-oct30/routing-reproducer.js",
+        "--mutant=false-down-result"
+      ],
+      "cwd": "/tmp/enigma-original-menu-render-runtime-oct30/repo",
+      "exit": 1,
+      "peakGroupRSS": 23416832,
+      "seconds": 0.033425888046622276,
+      "admission": {
+        "MemAvailable": 4200624128,
+        "physicalBytes": 32010240,
+        "diskFree": 3420372992,
+        "remainingForecast": 171151360
+      },
+      "sha256": "414030c4c2d2471a4cedbe78bf295e9129d0466bce6c2921ef073dc4d80922f0",
+      "bytes": 875
+    }
+  },
+  "reusedReceipts": {
+    "/tmp/enigma-original-menu-render-runtime-oct30/completion-receipt.json": {
+      "bytes": 4158,
+      "sha256": "0c87259808790751da4dcbae8b0fc2f96fd3f1b6548cac31477e21740ee9a953"
+    },
+    "/tmp/enigma-original-menu-render-runtime-oct30/routing-controls.json": {
+      "bytes": 282,
+      "sha256": "38ed4de54e8be7bc0bda45d73bba6814b4dccf9f51ba75be10016826fa474f14"
+    },
+    "/tmp/enigma-original-menu-render-runtime-oct30/routing-node-startup.json": {
+      "bytes": 1874,
+      "sha256": "59f1f9f1b08fed9b1f6bd7303562247691eb5ac7f511ab371c46083fa9ea32a7"
+    },
+    "/tmp/enigma-original-menu-render-runtime-oct30/e/canonical-parser.json": {
+      "bytes": 3763,
+      "sha256": "e4cde5810d7a8291a746a16d5b2011531d28f409243adaea4a700a44b98cddf0"
+    },
+    "/tmp/enigma-original-menu-render-runtime-oct30/mount-enumeration.json": {
+      "bytes": 127845,
+      "sha256": "0bd48892728dc8d28e02a2cafd6e4a6ae52bc7ff36cabe976bfccd5b8d44af3d"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/enigma-native-input-routing-bounded-discovery-oct30/root-ref-digest.json": {
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    }
+  },
+  "configuration": "Strict trusted SSH unchanged. No mount execution; unchanged filename-bearing tree mount/parser receipt reused. Node exact /usr/bin/node, no heap flags, unchanged environment; original DATA/AS restored only for Node children; Git DATA256MiB children only.",
+  "limits": {
+    "MemAvailable": 4398288896,
+    "physicalBytes": 32096256,
+    "diskFree": 3419901952,
+    "remainingForecast": 171151360
+  },
+  "boundary": "actual guest host.check_input entry after enqueue, queue head/depth and pending-source selection; then qualified returned MSG and actual guest callback completion",
+  "guestRuntimeExecuted": false,
+  "boat": {
+    "id": "bx_uzcekkxr",
+    "state": "stopped per coordinator; not queried or touched",
+    "expiry": "not refreshed; no Boat assigned"
+  }
+}

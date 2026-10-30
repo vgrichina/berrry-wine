@@ -1,0 +1,37 @@
+PASS  the press is delivered at once
+PASS  the release is withheld: the pump that took the press ends
+PASS  nothing behind the release jumps ahead of it
+PASS  a wake is scheduled so a parked GetMessage polls again: 30ms
+PASS  the wake reaches the host step hooks
+PASS  still withheld before the 30ms floor
+PASS  after an empty poll and the floor the release is delivered
+PASS  then the move
+PASS  a late release with no poll in between waits one poll
+PASS  and is delivered on the next one
+PASS  an empty queue poll while held
+PASS  a slow click (an empty poll while held) is not delayed at all
+PASS  and schedules nothing
+PASS  an unmatched release passes straight through
+PASS  a left release is not held by a right press
+PASS  __waMinButtonHoldMs < 0 turns the hold off (A/B)
+PASS  host clock: release withheld in the press pump
+PASS  host clock: release delivered once guest time passes the floor, wall clock frozen
+PASS  host clock: the queued move follows it
+PASS  floor 0: release still withheld in the press pump
+PASS  floor 0: delivered on the next poll with the batch clock frozen
+PASS  floor 0: the next press keeps its place behind the release
+PASS  negative host floor: the hold is off for that host
+PASS  tap: the move onto the button is delivered first
+PASS  tap: the press waits: the pump that took the move ends
+PASS  tap: press and release keep their order behind it
+PASS  tap: a wake is scheduled for the held press: 30ms
+PASS  tap: still held before the floor
+PASS  tap: after an empty poll and the floor the press is delivered
+PASS  tap: and the release is then held as before
+PASS  tap: then the release
+PASS  rest: an empty poll after the move
+PASS  rest: a press on a spot the guest has seen is not delayed
+PASS  same spot: a repeated move does not hold the press
+PASS  negative host floor: no press hold either
+
+35 passed, 0 failed
