@@ -1,2 +1,0 @@
-PASS  A persistReset token drops stale saved files exactly once
-PASS  Browser VFS persistence restores only bounded opt-in app files

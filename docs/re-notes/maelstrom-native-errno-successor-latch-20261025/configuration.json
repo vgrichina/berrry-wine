@@ -1,9 +1,0 @@
-{
-  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
-  "returncode": 0,
-  "stdout": "1ccd6130970d3151a1be23e388f0aa2b820188b2\trefs/heads/main\n",
-  "stderr": "",
-  "donorRevision": "1ccd6130970d3151a1be23e388f0aa2b820188b2",
-  "tree": "e4b3cb1f54353e986bd031c4409db7f91daea398",
-  "mountArgv": []
-}

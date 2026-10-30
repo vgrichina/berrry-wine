@@ -1,8 +1,0 @@
-{
-  "note": "Initial conservative merge guard also encountered inherited Enigma capture documentation from the pinned candidate ancestry. Exact docs namespace explicitly admitted; no production paths added to allowance.",
-  "paths": [
-    "docs/re-notes/enigma-api-single-frame-startup-20261026.md",
-    "docs/re-notes/enigma-api-single-frame-startup-20261026/"
-  ],
-  "semanticConflict": false
-}
