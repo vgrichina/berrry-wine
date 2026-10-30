@@ -1,9 +1,0 @@
-{
-  "searched": [
-    "/home/user/wine-assembly-mm-timer-owner-recovered",
-    "/home/user/wine-assembly-mm-timer-owner-release-review-oct22",
-    "/home/user/wine-assembly/build"
-  ],
-  "preservedModules": [],
-  "decision": "No modules at candidate/reviewer/build paths; prior candidate and acceptance explicitly did not run full builds. No exact-source module available for reuse."
-}

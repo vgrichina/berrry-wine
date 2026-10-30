@@ -1,5 +1,0 @@
---- original-independent.py
-+++ accepted-binding.py
-@@ -16 +16 @@
--evidence = repo / 'docs/re-notes/enigma-runner-repairs-independent-20261024'
-+evidence = repo / 'docs/re-notes/enigma-supervisor-independent-20261024'

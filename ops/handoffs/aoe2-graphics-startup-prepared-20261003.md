@@ -1,5 +1,0 @@
-# AoE2 graphics-startup trace prepared
-
-Ordinary post-repair qualification advances to an exact DirectDraw graphics initialization error, with no gameplay. The next private diagnostic retains the previously reviewed observer/browser unchanged and changes only its bounded selected API list and current source/module pins. Prepared in `scratch/aoe2-graphics-startup-20261003`, plan and full hashes in plan.json/preparation-receipt.json.
-
-The owning Worker observer captures genuine dispatch counters, original ESP arguments, return address, HRESULT and completion/ABI status. Graphics factories, DirectDraw QI/mode/capability/surface setup and final MessageBox are selected. Original caps remain128 records/24 per API; drops or ambiguous pairing prohibit absence/completion claims. No new decoder, guest calls or writes. Three offline tests pass. Runtime not granted or launched. A120-second EULA→exacterror route is sufficient; exact rejecting API and caller disassembly follow its captured evidence before any repair proposal.

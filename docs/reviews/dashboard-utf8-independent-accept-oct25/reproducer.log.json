@@ -1,1 +1,0 @@
-"{\n  \"fixtureBytes\": 1356240,\n  \"windowStart\": 307664,\n  \"cutWithinEmojiByte\": 1,\n  \"expected\": \"goal é漢😀 complete\",\n  \"scanGoal\": \"goal é漢😀 complete\",\n  \"analyticsGoal\": \"goal é漢😀 complete\",\n  \"usage\": {\n    \"input\": 60,\n    \"output\": 5\n  },\n  \"repeatedSnapshotGoal\": \"goal é漢😀 complete\"\n}\n"
