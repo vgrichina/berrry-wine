@@ -1,0 +1,8 @@
+{
+  "PASS": true,
+  "physical": 41349120,
+  "generatedFSIZE": 12582912,
+  "capture": 8192,
+  "PNGParser": true,
+  "stdoutController": true
+}

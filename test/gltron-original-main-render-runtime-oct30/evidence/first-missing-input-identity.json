@@ -1,0 +1,9 @@
+{
+  "source": "311c42abb41adc1fc16e06b4276005d15db553b2",
+  "path": "test/binaries/tlbs/stdole2.tlb",
+  "gitBlob": "bfeaae67adfeee211d18928b5ee7b129dcf8a13c",
+  "bytes": 15088,
+  "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895",
+  "copiedOrExecuted": false,
+  "discoveredAfterFailure": true
+}

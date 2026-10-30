@@ -1,0 +1,491 @@
+{
+  "PASS": true,
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "canonicalParser": "exact test/run.js getArg/getArgs/hasFlag; registry mount with no comma-delimited flags",
+  "configuration": {
+    "args": [
+      "--app=gltron",
+      "--no-build",
+      "--gl-renderer=software",
+      "--wasm=build/wine-assembly.wasm",
+      "--max-seconds=45",
+      "--max-batches=100000",
+      "--batch-size=10000",
+      "--png=capture/original.png"
+    ],
+    "parsed": {
+      "app": "gltron",
+      "mounts": [],
+      "trees": [],
+      "wasm": "build/wine-assembly.wasm"
+    },
+    "exe": "binaries/gltron-0.70/gltron.exe",
+    "exeGuestPath": "c:\\games\\gltron\\gltron.exe",
+    "files": [
+      {
+        "url": "binaries/gltron-0.70/MSVCR70.dll",
+        "size": 344064,
+        "sha256": "f68e4cdbc879423ea47d763a6768567f5f8063924f13a74239750c13fa8d168a"
+      },
+      {
+        "url": "binaries/gltron-0.70/SDL.dll",
+        "size": 225280,
+        "sha256": "bb7415d220af8f1a140c5c01a2edd5e1b91343a5a0b6791ed9ddcb5db361a547"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/artpack.lua",
+        "size": 26,
+        "sha256": "0c6659ff22677def541cd810cabbd5ae0e0f20ed83a42b7f4447b95cfe82acc6"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/babbage.0.png",
+        "size": 72741,
+        "sha256": "3a57444d74b0ba7293bcb03f096afb66721d6b255e3d10fae7c5d32da182ea97"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/babbage.1.png",
+        "size": 27535,
+        "sha256": "72b00053582bba97836c33a9768fd2b2ba5ad3b8261d2941dafa243f2df674c7"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/gltron_floor.png",
+        "size": 3345,
+        "sha256": "b69886a0657f781371942eae8ea1ffb62bab3624105f9b42943941b730691af7"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/gltron_trail.png",
+        "size": 1302,
+        "sha256": "59301b2a6b2d53cfb7ad0b6f4f67fbb7b01cd0bd32ad8204a71ce1675ff803e4"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/gltron_traildecal.png",
+        "size": 226,
+        "sha256": "257faf9a29851d28fbefda3eca0ac513e65e23c7051f0d2ffb857f2eb1a94186"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/gltron_wall_1.png",
+        "size": 6539,
+        "sha256": "d66c65c6687b0b96573f9155a0ac67d852e7584f2655dee46ef989843757bb07"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/gltron_wall_2.png",
+        "size": 6388,
+        "sha256": "296b1b70fa3d892a32a6e50e7cf05e7cf834f6bb292cab1e133bdafd0fc6f58b"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/gltron_wall_3.png",
+        "size": 6899,
+        "sha256": "7d63dff954cc4497b75cb1c16b68285364037958682162a91c2ab187858744b2"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/gltron_wall_4.png",
+        "size": 7145,
+        "sha256": "63fdc42bb8be6662daf0fa0e9617f6cf6b9e5bc11b6b17ac705668bd1ca12739"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/readme.txt",
+        "size": 29,
+        "sha256": "078721088930c17b11fb2ccf074bf591ad25209c8053862029d8ba923472da90"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/skybox0.png",
+        "size": 32092,
+        "sha256": "e6e87f4098351e3440cdb5310adcf2b2f3cc37a3c5e307331b3c3a30b4294a4a"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/skybox1.png",
+        "size": 6136,
+        "sha256": "c0043e221b88690084b900423a3b8501e21d44df8af4df6fd230f4f61f9e222e"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/skybox2.png",
+        "size": 32092,
+        "sha256": "e6e87f4098351e3440cdb5310adcf2b2f3cc37a3c5e307331b3c3a30b4294a4a"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/skybox3.png",
+        "size": 32092,
+        "sha256": "e6e87f4098351e3440cdb5310adcf2b2f3cc37a3c5e307331b3c3a30b4294a4a"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/skybox4.png",
+        "size": 6154,
+        "sha256": "f123e13082211046f3074fd6c0a8278e9253c1e38644eb1310ded914a6d1061a"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/skybox5.png",
+        "size": 32092,
+        "sha256": "e6e87f4098351e3440cdb5310adcf2b2f3cc37a3c5e307331b3c3a30b4294a4a"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/xenotron.0.png",
+        "size": 5026,
+        "sha256": "2917778d87b82709049f91418afa4b36e98d7d84a595748e4f6fa083891d0a2c"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/classic/xenotron.1.png",
+        "size": 2612,
+        "sha256": "211ebea3ff247340b7f8706291da4094c005aa4c0ba61e5fb6f8c78f91a0187d"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/artpack.lua",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/babbage.0.png",
+        "size": 72605,
+        "sha256": "b0cac720ca12376d28bba097c1ae729021ac14f325560404c5b39b9c9307b293"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/babbage.1.png",
+        "size": 40742,
+        "sha256": "d58defd8e209d0cdf86b662b204fabae7a4e0807540795d862544297b5516b83"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron.png",
+        "size": 46135,
+        "sha256": "b9c5f4be6dd7f53c82cdab32df918d8e3f91bea46454e764334c36e9c7d0ca67"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron_bitmap.png",
+        "size": 51401,
+        "sha256": "d46eeea63621a54400abdb5180e3ed9dccb06bed37ae3c3064e67b3cc2844c8b"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron_floor.png",
+        "size": 1127,
+        "sha256": "fc360031b7cea7cd895d8873bd3f5f4633226fa1dc455695fee2e5c21d365b8b"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron_impact.png",
+        "size": 4004,
+        "sha256": "5ad74dbbf0b74c6a6cd19a59c1c8653aa4b8359dad6214037467c99124345669"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron_logo.png",
+        "size": 20141,
+        "sha256": "6f597850a0188e5cf54866405ff86ee3c16c1da0d90af795b8253e8c891e05d6"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron_trail.png",
+        "size": 1056,
+        "sha256": "201ae985db58718d145048ffe679cd6b183c80093e00b343519d3208a2de1fb5"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron_traildecal.png",
+        "size": 226,
+        "sha256": "caca4876caabab1c77467bc2912990329764ff8563097b518940392bef59e884"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron_wall_1.png",
+        "size": 15788,
+        "sha256": "0e36ee146878fa0ca4e792d766667be1dc309bb10e2afd98702756bad29a3a81"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron_wall_2.png",
+        "size": 13944,
+        "sha256": "7e46f96058414347db38da9dd41e2f3c7c6a9fe77d3792617bd55c1b7fd357b9"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron_wall_3.png",
+        "size": 18827,
+        "sha256": "82b232ee84adc52a3bf4b909f7e0bddc4006b5eb1dee9aedd686e0c8d5d4efde"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/gltron_wall_4.png",
+        "size": 17497,
+        "sha256": "76f02ffa6a72d5b686b07da52b00eab74311f6ae6d1f1865f90c9627490b1eb0"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/skybox0.png",
+        "size": 81,
+        "sha256": "73433b58ccdeb63e15738243972903b41cba550b5ef02d2a3bc6a4d4220b2aa3"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/skybox1.png",
+        "size": 81,
+        "sha256": "73433b58ccdeb63e15738243972903b41cba550b5ef02d2a3bc6a4d4220b2aa3"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/skybox2.png",
+        "size": 81,
+        "sha256": "73433b58ccdeb63e15738243972903b41cba550b5ef02d2a3bc6a4d4220b2aa3"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/skybox3.png",
+        "size": 81,
+        "sha256": "73433b58ccdeb63e15738243972903b41cba550b5ef02d2a3bc6a4d4220b2aa3"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/skybox4.png",
+        "size": 81,
+        "sha256": "73433b58ccdeb63e15738243972903b41cba550b5ef02d2a3bc6a4d4220b2aa3"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/skybox5.png",
+        "size": 81,
+        "sha256": "73433b58ccdeb63e15738243972903b41cba550b5ef02d2a3bc6a4d4220b2aa3"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/test.bitmap.png",
+        "size": 6242,
+        "sha256": "9e9994e45ad5a1c1d8907fd0664ef3b629f8979de5681232e7833b9b7054614f"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/xenotron.0.png",
+        "size": 12918,
+        "sha256": "e7fa8da91b1cd49b9c3c369dbd9a40af66a72744e558858ad9505193fb73bec2"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/default/xenotron.1.png",
+        "size": 5800,
+        "sha256": "199defbf1aa6419e232bb82c573dac924eda5efa1c742da93f7c5e78057ee8f4"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/artpack.lua",
+        "size": 54,
+        "sha256": "fa37083f45312bb5b80583d165957ec48d36179ea43f090e7747188b6c32431f"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/gltron_floor.png",
+        "size": 9394,
+        "sha256": "e3f29d9f2f2759e17d5826b662f8e2521c1c19f782e4aa9fd054169fe4dfa09b"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/gltron_wall_1.png",
+        "size": 35992,
+        "sha256": "fe314886c288b02bb9c44776c30dcabcd1f33dc0fa971ed68b9628a37b71ea1a"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/gltron_wall_2.png",
+        "size": 36809,
+        "sha256": "8a7d4da2075665de4f4d944db0d91d5e720cd3c05bf0fc71f6a68549017afe91"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/gltron_wall_3.png",
+        "size": 36046,
+        "sha256": "cbdab48f8d62422d690e8b8558520fffae15376ed0fa33be0b202d7868a35863"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/gltron_wall_4.png",
+        "size": 36346,
+        "sha256": "beec1481d6636bdeb109dfd9c86c3f032af54598efdb6c28f5d3d0aecfbb13f3"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/skybox0.png",
+        "size": 76508,
+        "sha256": "781593f2aafcd796f9311cff67c84c12dd1db3188f9bcf0671cccdfd38b7b9fe"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/skybox1.png",
+        "size": 81,
+        "sha256": "73433b58ccdeb63e15738243972903b41cba550b5ef02d2a3bc6a4d4220b2aa3"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/skybox2.png",
+        "size": 72964,
+        "sha256": "0799e25b59db691a4c24f0b32be1646c9b7f924503b8f38bbc92ca93582da428"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/skybox3.png",
+        "size": 65511,
+        "sha256": "2133f1b35ab47dc6d90637931181173f48c7e20a228b3c076f393f2da9e977e1"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/skybox4.png",
+        "size": 81280,
+        "sha256": "64bd28f0598eb1adca2807e4062c6d092b75ccc07ed1b22008f27d117a3391d2"
+      },
+      {
+        "url": "binaries/gltron-0.70/art/metalTron/skybox5.png",
+        "size": 79681,
+        "sha256": "054d6cd7b110babcb403b7da6114cb474bc93e2a6d8f7adea0c11f451453e67a"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/babbage.ftx",
+        "size": 52,
+        "sha256": "aba49053af898659364c5f1e30c4afff26dcabdcdf1139eb1f20011aac9565b4"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/fonts.txt",
+        "size": 37,
+        "sha256": "e9a5a1ffd5cdb634eb2b2f7c1ec12624d841b3855a8e20e9873af0ea1fdffa43"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/game_crash.wav",
+        "size": 277972,
+        "sha256": "b02c7b0c13dd6b40fbc91efd3fbb659313d1b31b8dfa01e16c01ab27fcb3d858"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/game_engine.wav",
+        "size": 231096,
+        "sha256": "c414df4b949bc56d97cd796d99a8551dc2b635a6d99353c24bf5aa2839e084f4"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/game_recognizer.wav",
+        "size": 394892,
+        "sha256": "f14abbf4c239bb8b560382f4b7bf3de1a591db601ce90649bad437ea7ce99ced"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/lightcycle-high.obj",
+        "size": 166877,
+        "sha256": "65735ae91f5399867cd4c68856c847c81f7dc6996068e7d4e8d2542dccc193c0"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/lightcycle-low.obj",
+        "size": 11282,
+        "sha256": "5508aa2322af83b9e06a71d31b187048558f9f1c197f0f8e8c7d8c7c5b02d258"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/lightcycle-med.obj",
+        "size": 61957,
+        "sha256": "32422c814c31992a9cf9ed9367baf967d00036446c64001bfcf30acf0b28588d"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/lightcycle.mtl",
+        "size": 527,
+        "sha256": "f975ed75c623c7110c98475e39d090672899a53e7d5ca15c0068c456472a38fe"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/recognizer.mtl",
+        "size": 242,
+        "sha256": "3081d6e5488f444bfa7e38e154aa734acbd26e142252f348a7866709045e9b55"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/recognizer.obj",
+        "size": 20843,
+        "sha256": "4639e8a840f24b5365c8335c576e87226aa60eb79fc316f8b77bd4cdc27fe3b9"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/recognizer_quad.obj",
+        "size": 17931,
+        "sha256": "8dcc4e4ee5cce0753d8fc1fe9a331b38f9cf0ce7af316fabe6129e9d6dc2353f"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/test.fbmp",
+        "size": 30,
+        "sha256": "71aecef77463157ecd2c78247b657d3f61010641652f5ce9ab9fa66f1ae80b43"
+      },
+      {
+        "url": "binaries/gltron-0.70/data/xenotron.ftx",
+        "size": 55,
+        "sha256": "d112313073f07f34220e6b4d328d038e3d97163d7a6b94872dd7167c0aa9f619"
+      },
+      {
+        "url": "binaries/gltron-0.70/docs/README.html",
+        "size": 1173,
+        "sha256": "f87f2df1140e693412e9a9da33601d6a5cc44df4effb736563d5f1f64d4c85a4"
+      },
+      {
+        "url": "binaries/gltron-0.70/gltron.exe",
+        "size": 180224,
+        "sha256": "85fb5184262490f0b5967c2b12ee27c77da058364e594b0fc86be7b5814e40ec"
+      },
+      {
+        "url": "binaries/gltron-0.70/libpng.dll",
+        "size": 102400,
+        "sha256": "7852caab38839b9fa4aa62c056a7de33fb7bdc5e0d321a0bfb98dcfca15706c9"
+      },
+      {
+        "url": "binaries/gltron-0.70/mikmod.dll",
+        "size": 266240,
+        "sha256": "4693b2563b01c12324ddf048606763b5843bd8ac9d517b826af11c02a9bbded6"
+      },
+      {
+        "url": "binaries/gltron-0.70/music/revenge_of_cats.it",
+        "size": 638032,
+        "sha256": "799424a91b480a8e2552f30dd13849db3440bea7483886401b7387ec4d0dff25"
+      },
+      {
+        "url": "binaries/gltron-0.70/ogg.dll",
+        "size": 49152,
+        "sha256": "5c42869347f7f94b16bfb6e198584ccca0dc70e4d966a0b46fc83d3ea57660ec"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/artpack.lua",
+        "size": 983,
+        "sha256": "553fcd450d41149f2d98e52be38ba3b4fd71d51d162dffa6b23c60dd316ba4f1"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/audio.lua",
+        "size": 1521,
+        "sha256": "502fd4908b331b1b2336b105715a021b3b9d458b611239527d7af1338d74101a"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/basics.lua",
+        "size": 116,
+        "sha256": "d524b0051a38da282f028ccdadab9f564b9a4313f16f75a5955c5b9ec343b57d"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/config.lua",
+        "size": 2757,
+        "sha256": "aeb9beec3f2c3a1ef3d202acbb28c4bf941738abd3d6ec2d8dbf4aca5c45777e"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/joystick.lua",
+        "size": 345,
+        "sha256": "4bc4627992cc3f9be4c66bbab99ac3272c4f3568041299cf3d91a07f1a102b11"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/layout.lua",
+        "size": 1451,
+        "sha256": "1a4792b8bc3bcf2e2b6ca1df255ff8679d90e670de7bae64d24d10e844c002e2"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/main.lua",
+        "size": 1508,
+        "sha256": "3c63e65a7da27ff01d326d5b1f4edb0f4292e80843df37298e8c7eacb63d5be4"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/menu.lua",
+        "size": 19094,
+        "sha256": "87b7f31b760b3121ae9e388a89e31c918afdbcac1a9d6eaed451aaa0b107291f"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/menu_functions.lua",
+        "size": 2136,
+        "sha256": "1ad4934c4d3d31d184d26f412c5a4da9811fbb9dcc68b5d678d1dbd498621c4a"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/save.lua",
+        "size": 797,
+        "sha256": "15471f3fb3717d0f6d01d28fbb50a077906597be4ded8d51bc25d7df80fe4a66"
+      },
+      {
+        "url": "binaries/gltron-0.70/scripts/video.lua",
+        "size": 839,
+        "sha256": "d037787ce1d62bda5147674d721fad15ad5df1675a3e2da194ecfe4298ca82e5"
+      },
+      {
+        "url": "binaries/gltron-0.70/sdl_sound.dll",
+        "size": 364544,
+        "sha256": "31babd4f1e8ed6dfd412aeea8a6bbd48bf01aa24a9fe7c08a78944b0dee9142a"
+      },
+      {
+        "url": "binaries/gltron-0.70/smpeg.dll",
+        "size": 266240,
+        "sha256": "8ac7e5ca4216805221b554db515c33002d4bbc9221229f9090bf6ff8128bfb7d"
+      },
+      {
+        "url": "binaries/gltron-0.70/vorbis.dll",
+        "size": 94208,
+        "sha256": "beffa08c7cb38b097a0dc952f87103bc1446feaf89a967ec1c60cab568444aa8"
+      },
+      {
+        "url": "binaries/gltron-0.70/vorbisfile.dll",
+        "size": 28672,
+        "sha256": "62fca20840e45118c2da437802a06e65e622b78a8c9289863a42bb040a8ee40e"
+      },
+      {
+        "url": "binaries/gltron-0.70/zlib.dll",
+        "size": 53248,
+        "sha256": "ddef1b72573bb5699b22123d16c8fcc40425f3ff53b699cd6b9c2122839dd5e9"
+      }
+    ]
+  },
+  "source": {
+    "bytes": 693262,
+    "sha256": "e01db98dddc51a9f4e65de9a1844010800ef2bfa74815e22610b68b7df8e0243"
+  }
+}

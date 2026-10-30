@@ -1,0 +1,35 @@
+{
+  "receipt": {
+    "label": "remote-guest",
+    "request": {
+      "bytes": 103,
+      "sha256": "fbe1c3a899f0c33bfbf10168e54f4732e405e30f941769350898e2fbcbe815e3"
+    },
+    "response": {
+      "bytes": 412,
+      "sha256": "5650b903f816110b5a29a482acfd7dfb22d419c73f2a2b9cf65ae936689cb062"
+    },
+    "elapsed": 0.3469820022583008,
+    "exit": 0,
+    "success": true,
+    "responseBytes": 412
+  },
+  "response": {
+    "commandId": "cmd_zwfxh7gjd7k3",
+    "cwd": "gltron-render",
+    "exitCode": 0,
+    "finishedAt": "2026-10-30T13:00:46.237Z",
+    "launcherFailed": false,
+    "noticedMs": 0,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 0,
+    "startedAt": "2026-10-30T13:00:46.013Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"mode\": \"guest\", \"physical\": 45162496, \"status\": \"GUEST_ATTEMPTED\"}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

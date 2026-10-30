@@ -1,0 +1,21 @@
+{
+  "PASS": true,
+  "manifest": {
+    "bytes": 43768,
+    "sha256": "bc3f33a6438e6b872d34d4c6c80bce610cf04de9672439a42542eb2f0c2f2f58"
+  },
+  "sourceArchive": {
+    "bytes": 3981232,
+    "sha256": "d7d00595b7c7336934dd2277afddcf7db335c3a0a9c8577a67aaf768befab50f"
+  },
+  "mediaArchive": {
+    "bytes": 2984304,
+    "sha256": "e536b45b5a4fb2acbbdcaa9a2772318a166b47555f37b6336e601e2574e3a0f2"
+  },
+  "canonicalWATFiles": 128,
+  "archiveMembers": 299,
+  "generatedFSIZE": 12582912,
+  "captureCeiling": 524288,
+  "overflowRejected": true,
+  "mountValidation": true
+}

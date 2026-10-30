@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "tools/build-compile-wat.js"
+  ],
+  "startedAt": "2026-10-30T13:00:36.621404+00:00",
+  "exit": 0,
+  "wall": 9.110806465148926,
+  "peakRSS": 314126336,
+  "violation": null,
+  "FSIZE": 12582912,
+  "capture": 8192,
+  "limits": {
+    "cpu": 120,
+    "wall": 180,
+    "heapMiB": 512,
+    "aggregateRSS": 2147483648
+  },
+  "nodeEnvironment": "/home/user/wine-assembly/node_modules"
+}

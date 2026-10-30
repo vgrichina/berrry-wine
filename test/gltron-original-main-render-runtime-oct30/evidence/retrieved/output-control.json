@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os;os.write(1,b\"x\"*9000)"
+  ],
+  "startedAt": "2026-10-30T13:00:34.973744+00:00",
+  "exit": 0,
+  "wall": 0.024942874908447266,
+  "peakRSS": 0,
+  "violation": "stdout/stderr capture overflow",
+  "FSIZE": 12582912,
+  "capture": 8192,
+  "limits": {
+    "cpu": 60,
+    "wall": 20,
+    "heapMiB": 512,
+    "aggregateRSS": 2147483648
+  },
+  "nodeEnvironment": "/home/user/wine-assembly/node_modules"
+}

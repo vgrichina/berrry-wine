@@ -1,0 +1,74 @@
+{
+  "source-verification.json": {
+    "bytes": 101,
+    "sha256": "162bb6136029c4c2436a1499dc62d210309806d6b1fa897d87ce13557b215044"
+  },
+  "remote-preflight.json": {
+    "bytes": 140,
+    "sha256": "4d5e7574412518052df23400971f03457245ec2b41dbdd09d839f25bd8b5626d"
+  },
+  "node-startup-120.json": {
+    "bytes": 599,
+    "sha256": "91ca3b543d6c27f985f948d31828b1999b61fa7c5062a398f340ccee46cff85f"
+  },
+  "node-startup-120.stdout.log": {
+    "bytes": 1610,
+    "sha256": "ab419df800ee7615697b8c4e9751a615b87aa1338cf9c69710281ef12596fe9e"
+  },
+  "node-startup-60.json": {
+    "bytes": 591,
+    "sha256": "8ada8024a62579a4c2c796975a0f453a51dc43ea738fc86977d7764145d241f7"
+  },
+  "node-startup-60.stdout.log": {
+    "bytes": 1610,
+    "sha256": "13f2c86c1cdb49094e25b722bc770b40b2768ced07475125ce36e3bf38313e98"
+  },
+  "png-parser-smoke.json": {
+    "bytes": 782,
+    "sha256": "00756da5bc6964dbb6b529ba8bd679a34647bda9a751f3753a02b20fecfd2644"
+  },
+  "png-parser-smoke.stdout.log": {
+    "bytes": 106,
+    "sha256": "3cc9a58025dd08a4456563c292449cf64867ce404896d830e7f47922b495834a"
+  },
+  "generated-control.json": {
+    "bytes": 511,
+    "sha256": "3010ac486f95645a1d034b0b1fcca7fb5f5fe3bd0c1a43454987e78499591809"
+  },
+  "output-control.json": {
+    "bytes": 467,
+    "sha256": "745104cc5625f720d08e3a2616d7694410818843f045d591852e47f3999638a5"
+  },
+  "compile.json": {
+    "bytes": 448,
+    "sha256": "85c029accba5ef6784e8f826248168853322370841ba70d26e65188fa9a0cac6"
+  },
+  "compile.stdout.log": {
+    "bytes": 316,
+    "sha256": "0be9931764fb3cfeb9e43e64f13be338298be538b602f790ae2023c5e4c40807"
+  },
+  "compile.stderr.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "result.json": {
+    "bytes": 1369,
+    "sha256": "67b5fd7e363b575a0efc38f90e557d21b0f49f092c99ff24b22f227741ef4391"
+  },
+  "build-identity.json": {
+    "bytes": 380,
+    "sha256": "825735f0bcdbe65dfd841210774338507aed4b80055bd9d91d1bb6d938916f37"
+  },
+  "guest.json": {
+    "bytes": 651,
+    "sha256": "34e1850be93b20a727798a0b906eabb6bcc02336de541f5a8d04a1e434333ad5"
+  },
+  "guest.stdout.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "guest.stderr.log": {
+    "bytes": 804,
+    "sha256": "c5ab3aa124bf607eaabf217077c952c84b2318793ff17a23ad7af88a4cab22b2"
+  }
+}

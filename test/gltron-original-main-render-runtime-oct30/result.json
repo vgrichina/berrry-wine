@@ -1,0 +1,84 @@
+{
+  "status": "BLOCKED_BEFORE_ORIGINAL_GLTRON_PE_EXECUTION",
+  "objectiveQualified": false,
+  "source": "311c42abb41adc1fc16e06b4276005d15db553b2",
+  "productionRunner": "test/run.js",
+  "route": "--app=gltron --no-build --gl-renderer=software",
+  "productionRunnerInvocations": 1,
+  "originalGuestExecutionReached": false,
+  "firstFailure": {
+    "code": "ENOENT",
+    "syscall": "open",
+    "path": "/home/user/gltron-render/test/binaries/tlbs/stdole2.tlb",
+    "sourceLocation": "test/run.js:2871",
+    "exit": 1,
+    "apiCommandID": "cmd_zwfxh7gjd7k3"
+  },
+  "screenshots": [],
+  "gameplayAccepted": false,
+  "inputEvents": [],
+  "build": {
+    "source": "311c42abb41adc1fc16e06b4276005d15db553b2",
+    "modules": {
+      "build/wine-assembly.compat.wasm": {
+        "bytes": 1884379,
+        "sha256": "e96643502151d0ef23d339c4366ca49fc446dfadab162d8dfe968f1e92ecc19b"
+      },
+      "build/wine-assembly.wasm": {
+        "bytes": 1881806,
+        "sha256": "5a39225e1a8381ce1c4530d2ce7cd6311bd75576d10968c20e963baf033d41eb"
+      }
+    }
+  },
+  "guest": {
+    "argv": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "test/run.js",
+      "--app=gltron",
+      "--no-build",
+      "--gl-renderer=software",
+      "--wasm=build/wine-assembly.wasm",
+      "--max-seconds=45",
+      "--max-batches=100000",
+      "--batch-size=10000",
+      "--png=capture/original.png"
+    ],
+    "startedAt": "2026-10-30T13:00:46.047267+00:00",
+    "exit": 1,
+    "wall": 0.17815136909484863,
+    "peakRSS": 77094912,
+    "violation": null,
+    "FSIZE": 12582912,
+    "capture": 8192,
+    "limits": {
+      "cpu": 60,
+      "wall": 90,
+      "heapMiB": 512,
+      "aggregateRSS": 2147483648
+    },
+    "nodeEnvironment": "/home/user/wine-assembly/node_modules"
+  },
+  "boat": {
+    "id": "bx_auex6kaq",
+    "state": "stopped",
+    "snapshotCompletedAt": "2026-10-30T13:01:04.275Z",
+    "stoppedAt": "2026-10-30T13:01:04.317Z",
+    "originalExpiry": "2026-10-30T13:27:51.314Z"
+  },
+  "scope": "Canonical build succeeded; unchanged pinned production runner failed during eager host system-data mounting before original PE launch. No original menu/game render was reached. No engine compatibility defect established; no repair/retest.",
+  "deviations": [
+    {
+      "kind": "dynamic-input-closure-gap",
+      "detail": "Static require/canonical WAT source closure and original 92 assets passed, but unconditional runtime SYSTEM_DATA_FILES were not included. stdole2.tlb absence was found by the single production-runner invocation, rather than before provisioning. No guest execution or render acceptance."
+    },
+    {
+      "kind": "smoke-heap-configuration",
+      "detail": "PNG/controller smoke used --max-old-space-size=512, whereas task prescribed 256 MiB for smoke. Compile/guest and their exact-configuration startup checks used prescribed 512 MiB. Actual PNG-smoke RSS and all CPU/wall/output limits are preserved; this is not a retroactive compliance claim."
+    },
+    {
+      "kind": "deadline-scheduling-origin",
+      "detail": "Watchdog and cutoff offsets used ready-event receipt time, 4.853 seconds after actual createdAt, rather than creation. Actual guest attempt ended at 13:00:46Z and actual snapshot-stop completed 13:01:04Z, more than 16 minutes before even the stricter creation-based guest cutoff. No operation approached either cutoff."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+Error: ENOENT: no such file or directory, open '/home/user/gltron-render/test/binaries/tlbs/stdole2.tlb'
+    at Object.openSync (node:fs:573:18)
+    at Object.readFileSync (node:fs:452:35)
+    at /home/user/gltron-render/test/run.js:2871:32
+    at Array.map (<anonymous>)
+    at /home/user/gltron-render/test/run.js:2869:53
+    at withCliFailureCleanup (/home/user/gltron-render/lib/cli-failure-cleanup.js:10:18)
+    at main (/home/user/gltron-render/test/run.js:1709:10)
+    at Object.<anonymous> (/home/user/gltron-render/test/run.js:12712:1)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/user/gltron-render/test/binaries/tlbs/stdole2.tlb'
+}

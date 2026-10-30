@@ -1,0 +1,12 @@
+{
+  "id": "bx_auex6kaq",
+  "source": "bx_rht9232f",
+  "createdEpoch": 1793365076.206403,
+  "expiry": "2026-10-30T13:27:51.314Z",
+  "cutoffEpoch": 1793366276.206403,
+  "retrieveEpoch": 1793366396.206403,
+  "handbackEpoch": 1793366456.206403,
+  "shutdownEpoch": 1793366576.206403,
+  "shutdownDelegated": true,
+  "remoteRoot": "/home/user/gltron-render"
+}

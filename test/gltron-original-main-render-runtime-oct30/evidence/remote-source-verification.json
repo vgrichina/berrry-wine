@@ -1,0 +1,35 @@
+{
+  "receipt": {
+    "label": "remote-source-verification",
+    "request": {
+      "bytes": 2270,
+      "sha256": "2c8d28f842983f854d960b4b56f5f572981d7f9811ddf2e49c1350c8292a7c8b"
+    },
+    "response": {
+      "bytes": 445,
+      "sha256": "21205ec86cba0e652e533682ace9bd44f51c2b64aacf20b3c774aa3f6a6e96a3"
+    },
+    "elapsed": 1.037963628768921,
+    "exit": 0,
+    "success": true,
+    "responseBytes": 445
+  },
+  "response": {
+    "commandId": "cmd_asq7ns2vz7zm",
+    "cwd": "gltron-render",
+    "exitCode": 0,
+    "finishedAt": "2026-10-30T13:00:34.110Z",
+    "launcherFailed": false,
+    "noticedMs": 1,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 1,
+    "startedAt": "2026-10-30T13:00:33.218Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"PASS\": true, \"sourceFiles\": 299, \"canonicalWATFiles\": 128, \"mediaFiles\": 92, \"mediaBytes\": 4968893}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

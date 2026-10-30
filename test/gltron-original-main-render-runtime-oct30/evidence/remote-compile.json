@@ -1,0 +1,35 @@
+{
+  "receipt": {
+    "label": "remote-compile",
+    "request": {
+      "bytes": 105,
+      "sha256": "e6362ef85e42ca93990131cd5c511733e274157c3aeb424097a9a820fd95f371"
+    },
+    "response": {
+      "bytes": 407,
+      "sha256": "2340d5cc5ac15e10076153ab29e1788b3e6282acfa4920d3c435f652bb462ac2"
+    },
+    "elapsed": 9.286347389221191,
+    "exit": 0,
+    "success": true,
+    "responseBytes": 407
+  },
+  "response": {
+    "commandId": "cmd_5mqrsb3qwsd8",
+    "cwd": "gltron-render",
+    "exitCode": 0,
+    "finishedAt": "2026-10-30T13:00:45.744Z",
+    "launcherFailed": false,
+    "noticedMs": 1,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 1,
+    "startedAt": "2026-10-30T13:00:36.595Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"mode\": \"compile\", \"physical\": 45146112, \"status\": \"COMPILED\"}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}
