@@ -1,9 +1,0 @@
-{
-  "original_probe_prefix_bytes": 2072,
-  "original_probe_prefix_sha256": "12c84f2b97688fdee0c805d746e78d52c6e1d90397e0041d33210c4b04b5e522",
-  "probe_prefix_unchanged": true,
-  "gpu_wrapper_exact_baseline_blob_unchanged": true,
-  "candidate": "77180c76b312efe465ad91e60286d40330d77d0d",
-  "reviewer": "c1bfc2c696e8b88749a3b8ab04f935b5e52d7cb1",
-  "new_probe_sha256": "4b550a8b7966228cddb3957c789803835c1df05bc128c45c5fac14a3b7e86408"
-}

@@ -1,8 +1,0 @@
-{
-  "parent": "5457be008868798b51a7e0a33bf01e2cb5121d55",
-  "initialCandidate": "ac862dffbd44ccef00ed1fa171f5c9a94ed7d38c",
-  "sourceChanged": false,
-  "GLTronPreserved": true,
-  "recovery": "one depth1 blob-filtered exact main fetch; no checkout/index",
-  "priorMissingObjectPreserved": true
-}
