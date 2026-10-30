@@ -1,2 +1,0 @@
-EXPECTED FAIL baseline toyvm-bundle.js full tracked closure freshness (44 modules)
-EXPECTED FAIL baseline toyvm-jit-bundle.js full tracked closure freshness (43 modules)
