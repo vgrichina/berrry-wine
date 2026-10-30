@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/enigma-original-menu-render-runtime-oct30/guest-poll-parser.cjs"
+  ],
+  "cwd": "/tmp/enigma-original-menu-render-runtime-oct30",
+  "exit": 0,
+  "elapsed": 0.09232293581590056,
+  "admission": {
+    "at": 1793344239.8484921,
+    "free": 3394686976,
+    "MemAvailable": 4353392640,
+    "allocated": 40984576,
+    "aggregateRemaining": 200183808,
+    "memoryPolicy": "observational only; owner 2026-10-30",
+    "checks": {
+      "disk": true,
+      "allocation": true
+    }
+  },
+  "stdoutBytes": 719,
+  "stderrBytes": 0
+}

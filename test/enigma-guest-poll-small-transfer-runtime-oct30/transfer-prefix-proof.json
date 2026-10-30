@@ -1,0 +1,18 @@
+{
+  "successfulChunks": 803,
+  "bytes": 13156352,
+  "remaining": 4125714,
+  "remoteOffsetVerified": true,
+  "everyRemoteChunkSHARecheckedAgainstRetainedArchive": true,
+  "retainedPrefixSHA256": "1600f60cdbf1733d0f88ee0592fa31e642dc607ffa7bfc933a6d95e3a1b4696f",
+  "firstReceipt": {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/small-transfer/raw/transfer-0000.stdout",
+    "sha256": "f834173344f7bf45316d7fb212aa609c7f16c22d3eaa56c788bcda92e9512dbb"
+  },
+  "lastReceipt": {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/small-transfer/e/transfer-0802.stdout",
+    "sha256": "1c9a1761f98d6bb91fddd258b25b2808b9ff4a6172a88279a3984557d5740861"
+  },
+  "fullRemoteArchiveSHAVerified": false,
+  "guestInvocations": 0
+}

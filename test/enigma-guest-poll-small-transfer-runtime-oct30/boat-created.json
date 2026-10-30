@@ -1,0 +1,13 @@
+{
+  "archiveAfter": "2026-10-30T07:41:18.518Z",
+  "commands": {
+    "forward": "boat forward bx_w72496sc --remote 3000 --local 3000",
+    "ssh": "boat ssh bx_w72496sc"
+  },
+  "desktopUrl": null,
+  "event": "ready",
+  "id": "bx_w72496sc",
+  "ip": "2001:41d0:8:8d4c:100::2a",
+  "state": "ready",
+  "url": "https://box-node-784d101bbf2b6296.on.boat.dev"
+}

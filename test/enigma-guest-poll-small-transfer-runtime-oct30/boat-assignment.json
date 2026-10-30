@@ -1,0 +1,10 @@
+{
+  "id": "bx_w72496sc",
+  "nativeExpiry": "2026-10-30T07:41:18.518Z",
+  "createdEpoch": 1793344279.1735444,
+  "guestCutoffEpoch": 1793345478.518,
+  "handbackEpoch": 1793345658.518,
+  "shutdownEpoch": 1793345778.518,
+  "shutdownDelegated": true,
+  "owner": "owner133 worker; coordinator retains oversight"
+}
