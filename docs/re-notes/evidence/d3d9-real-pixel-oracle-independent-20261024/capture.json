@@ -1,8 +1,0 @@
-{
-  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T08-12-47-01a16cf8-30a2-7751-a54a-e9218e9937b2.jsonl",
-  "capturedToolOutputBytes": 174288,
-  "largestToolOutput": 40608,
-  "captureFutureAllowance": 131072,
-  "limit": 1048576,
-  "priorTruncatedOutputChargesRetained": true
-}

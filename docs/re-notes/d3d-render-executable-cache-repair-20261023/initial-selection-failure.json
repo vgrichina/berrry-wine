@@ -1,1 +1,0 @@
-{"failure": "clone --no-checkout left index empty; branch checkout did not populate selection", "materializedFiles": 0, "boundsExceeded": false, "correction": "initialize index and materialize through read-tree -mu HEAD with verified sparse path list already present"}

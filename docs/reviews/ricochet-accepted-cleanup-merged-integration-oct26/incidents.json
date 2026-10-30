@@ -1,8 +1,0 @@
-[
-  {
-    "operation": "stage-coherent",
-    "returncode": 1,
-    "diagnostic": "The following paths are ignored by one of your .gitignore files:\ntest/fixtures/ricochet-serial-controller/later.png\nhint: Use -f if you really want to add them.\nhint: Turn this message off by running\nhint: \"git config advice.addIgnoredFile false\"\n",
-    "resolution": "Explicitly stage the exact pinned ignored PNG fixture with git add -f; no change to ignore policy or controls"
-  }
-]

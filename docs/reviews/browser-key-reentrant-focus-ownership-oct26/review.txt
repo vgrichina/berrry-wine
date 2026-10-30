@@ -1,1 +1,0 @@
-Self-review: only browser ownership ordering/release logic changed. Repeats retain first VK/side metadata, stale ups remain ignored, AltEnter/page routing/composition paths unchanged. Identity checks prevent snapshot/reentrant duplicate release. All 32 groups passed at exact pins. Independent oracle unchanged. git diff --check PASS. Main/integration/runtime remain unqualified.
