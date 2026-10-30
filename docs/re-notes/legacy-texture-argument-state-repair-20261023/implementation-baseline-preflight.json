@@ -1,8 +1,0 @@
-{
-  "baseline": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
-  "status": "PASS",
-  "compilerPreflight": "implementation-preflight.json",
-  "manifest": "implementation-baseline-manifest.json",
-  "assembledSHA256": "686556cd0f4789316c4a31ab6ed319c8d11a50f9c864211add298f7095ec87ba",
-  "assembledBytes": 99590
-}

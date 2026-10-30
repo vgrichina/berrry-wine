@@ -1,4 +1,0 @@
-{
-  "exact": "6449fbab9d0537783ad5fdc5cfdfca826d0153c8\trefs/heads/main\n2cb2c4a6b36a6d1db25e227fa423dac1ea05d566\trefs/heads/task/vfs-read-abort-accepted-merged-branch-oct26",
-  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
-}

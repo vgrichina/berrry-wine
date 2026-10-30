@@ -1,8 +1,0 @@
-{
-  "PASS": true,
-  "physical": 46338048,
-  "FSIZE": 12582912,
-  "logCapture": 8192,
-  "smokeHeapMiB": 256,
-  "guestHeapMiB": 512
-}

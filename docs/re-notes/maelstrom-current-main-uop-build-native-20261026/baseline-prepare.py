@@ -1,4 +1,0 @@
-from pathlib import Path
-O=Path(__file__).parent;R=O.parent/'repo';s=(R/'tools/maelstrom-diagnostic-canonical-build.cjs').read_text();a=s.index('const changed=');b=s.index('const overlays=',a);s=s[:a]+'''// Uninstrumented exact current-main control, for independently parsed ABI/storage.
-const changed=original;
-'''+s[b:];a=s.index('assert.deepEqual(overlays.map');b=s.index('const reached=',a);s=s[:a]+"assert.equal(overlays.length,0);\n"+s[b:];s=s.replace('for(const tailCalls of [true,false])','for(const tailCalls of [!process.argv.includes("--compat")])').replace("H+(tailCalls?'/errno-latch.wasm':'/errno-latch.compat.wasm')","H+'/baseline.wasm'").replace("H+'/build-outputs.json'","H+'/baseline-build-outputs.json'").replace("H+'/build-inputs.json'","H+'/baseline-build-inputs.json'");(R/'tools/maelstrom-current-main-baseline.cjs').write_text(s)
