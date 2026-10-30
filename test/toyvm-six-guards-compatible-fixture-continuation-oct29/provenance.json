@@ -1,0 +1,608 @@
+{
+  "base": "545a51f4a11ac2e88293ac2c8dcc6be3b9ceb124",
+  "productionPins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12482,
+      "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "copied": {
+    "accept.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/accept.py",
+      "before": {
+        "bytes": 7619,
+        "sha256": "466fe4a489c6b7a42696d39a41b9ceb5839ce8373d9134cf9eb446e08befe151"
+      },
+      "after": {
+        "bytes": 7619,
+        "sha256": "995a378acfe6febb8abb6a6bc01b9910ccaf37151d4837834d48442e44ac1008"
+      },
+      "diff": "--- accept.py\n+++ accept.py\n@@ -143,7 +143,7 @@\n             rejected[name] = \"REJECTED\"\n         else:\n             raise AssertionError(name + \" mutation escaped\")\n-    result = {\"status\": \"PASS\", \"candidate\": \"82a1023a6d84b229389b53c2a9a7a46a112b7797\",\n+    result = {\"status\": \"PASS\", \"candidate\": \"545a51f4a11ac2e88293ac2c8dcc6be3b9ceb124\",\n               \"scope\": \"direct Backend.handle only; no mounted/kernel/browser/gameplay claim\",\n               \"originalContract\": original, \"originalOracleControls\": controls,\n               \"adversarialCases\": extra, \"productionMutations\": rejected,\n"
+    },
+    "contract.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/contract.py",
+      "before": {
+        "bytes": 7008,
+        "sha256": "bbbc80d984fa962adb8c4bdff0af39cf74623e4ac4c9caeaae677f85f818f79a"
+      },
+      "after": {
+        "bytes": 7008,
+        "sha256": "bbbc80d984fa962adb8c4bdff0af39cf74623e4ac4c9caeaae677f85f818f79a"
+      },
+      "diff": ""
+    },
+    "fixture.json": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/fixture.json",
+      "before": {
+        "bytes": 474,
+        "sha256": "1836abfcc48c568c2c78c0821464446c228e189aa63cf0cfc0a5b4c945f39bfe"
+      },
+      "after": {
+        "bytes": 474,
+        "sha256": "1836abfcc48c568c2c78c0821464446c228e189aa63cf0cfc0a5b4c945f39bfe"
+      },
+      "diff": ""
+    },
+    "copy-receipt.json": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/copy-receipt.json",
+      "before": {
+        "bytes": 379,
+        "sha256": "e772f876791d80e34a4b152ec22d1a877d0ec79f859f7b023b35009c4964e675"
+      },
+      "after": {
+        "bytes": 379,
+        "sha256": "e772f876791d80e34a4b152ec22d1a877d0ec79f859f7b023b35009c4964e675"
+      },
+      "diff": ""
+    },
+    "pin-update.json": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/pin-update.json",
+      "before": {
+        "bytes": 348,
+        "sha256": "e0f61c3ae8ab7970b6b1ff2aca2e13b55e6f85c8cd4d69542cec7b1b7bc78dbe"
+      },
+      "after": {
+        "bytes": 348,
+        "sha256": "e0f61c3ae8ab7970b6b1ff2aca2e13b55e6f85c8cd4d69542cec7b1b7bc78dbe"
+      },
+      "diff": ""
+    },
+    "source-pins.json": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/source-pins.json",
+      "before": {
+        "bytes": 904,
+        "sha256": "114c7b18d43246c72cffd419501a521e9140123ecd90c57200bf08ad8e921856"
+      },
+      "after": {
+        "bytes": 904,
+        "sha256": "114c7b18d43246c72cffd419501a521e9140123ecd90c57200bf08ad8e921856"
+      },
+      "diff": ""
+    },
+    "independent.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/independent.py",
+      "before": {
+        "bytes": 7917,
+        "sha256": "a8b17897dccac9e39fcd5588edb6a2dfe9dcbcc4bbb51455336a0552164d6b4a"
+      },
+      "after": {
+        "bytes": 7943,
+        "sha256": "4e2c0500ebd272699cada044557fba7bcbc798f783a17e845a74716a05c7f76d"
+      },
+      "diff": "--- independent.py\n+++ independent.py\n@@ -10,7 +10,7 @@\n \n HERE = pathlib.Path(__file__).resolve().parent\n ROOT = HERE.parents[1]\n-DISPATCH = pathlib.Path(\"/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/current-dispatch.json\")\n+DISPATCH = pathlib.Path(\"/tmp/toyvm-six-guards-compatible-fixture-continuation-oct29/repo/test/toyvm-six-guards-compatible-fixture-continuation-oct29/current-dispatch.json\")\n BACKEND = \"test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py\"\n \n class Mismatch(AssertionError):\n"
+    },
+    "unlink-independent.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/unlink-independent.py",
+      "before": {
+        "bytes": 9719,
+        "sha256": "764e16b78c280e73ffdc1a173936b994bae2ff90ef91eb3de9e1aceb440b54d2"
+      },
+      "after": {
+        "bytes": 9802,
+        "sha256": "0ceb857654489504bc685b0115423f747df957a2d1cfdab2a54d66b0afc5f09d"
+      },
+      "diff": "--- unlink-independent.py\n+++ unlink-independent.py\n@@ -90,9 +90,10 @@\n     if children:\n         if kind == 'dir': directory(target, b'child')\n         else:\n-            # Backend.create represents this state even though a kernel would not\n-            # issue child creation under a regular file. This is direct API only.\n-            b.create(target, b'child', stat.S_IFREG | 0o600)\n+            # Construct the identical corrupt namespace via a valid sibling.\n+            # No extra inode or temporary mode change; direct API only.\n+            child = b.create(sibling, b'child', stat.S_IFREG | 0o600)\n+            b.nodes[target]['names'][b'child'] = b.nodes[sibling]['names'].pop(b'child')\n     for _ in range(opens): b.handle(27 if kind == 'dir' else 14, target, b'')\n     return b, parent, name, target\n \n"
+    },
+    "four-interactions.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/four-interactions.py",
+      "before": {
+        "bytes": 3842,
+        "sha256": "019ec867f32f192ab60fe5545ad6f4a8b8f6eb49712cbcae610b144759d0be10"
+      },
+      "after": {
+        "bytes": 3842,
+        "sha256": "019ec867f32f192ab60fe5545ad6f4a8b8f6eb49712cbcae610b144759d0be10"
+      },
+      "diff": ""
+    },
+    "rename-type-reproduce.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/rename-type-reproduce.py",
+      "before": {
+        "bytes": 976,
+        "sha256": "14f2c2088171ce8837493d78ab056f260507410ba2d647a60571e43b685c58b3"
+      },
+      "after": {
+        "bytes": 976,
+        "sha256": "14f2c2088171ce8837493d78ab056f260507410ba2d647a60571e43b685c58b3"
+      },
+      "diff": ""
+    },
+    "rename-type-accept.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/rename-type-accept.py",
+      "before": {
+        "bytes": 9970,
+        "sha256": "12a9ada82401c1585d007d7498cd4cbb7d4d6ae7e5eb45db049bc9054fc2a40e"
+      },
+      "after": {
+        "bytes": 9970,
+        "sha256": "12a9ada82401c1585d007d7498cd4cbb7d4d6ae7e5eb45db049bc9054fc2a40e"
+      },
+      "diff": ""
+    },
+    "cycle-contract.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/cycle-contract.py",
+      "before": {
+        "bytes": 8447,
+        "sha256": "e6511ec2b76d521d695a2d625a704a7c3abc324277a394803b58cdd9788cbbcd"
+      },
+      "after": {
+        "bytes": 8447,
+        "sha256": "e6511ec2b76d521d695a2d625a704a7c3abc324277a394803b58cdd9788cbbcd"
+      },
+      "diff": ""
+    },
+    "cycle-independent.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/cycle-independent.py",
+      "before": {
+        "bytes": 6573,
+        "sha256": "3eff69f3f049c1ea444666098927823dde0e036bc37ed203dd356c17af9089ec"
+      },
+      "after": {
+        "bytes": 6573,
+        "sha256": "3eff69f3f049c1ea444666098927823dde0e036bc37ed203dd356c17af9089ec"
+      },
+      "diff": ""
+    },
+    "unlink-regression.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/unlink-regression.py",
+      "before": {
+        "bytes": 9351,
+        "sha256": "f4de0e993e54c96ec407dfb104e964c29debe4cae7b552c20602ebb72f553eea"
+      },
+      "after": {
+        "bytes": 9351,
+        "sha256": "f4de0e993e54c96ec407dfb104e964c29debe4cae7b552c20602ebb72f553eea"
+      },
+      "diff": ""
+    },
+    "setattr/verify.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/setattr/verify.py",
+      "before": {
+        "bytes": 8817,
+        "sha256": "577fd6468b9c39b379ab3ef388dbb0c349a55ff5bb94d61d7bdeff2ebcbfc01a"
+      },
+      "after": {
+        "bytes": 8830,
+        "sha256": "9f313a0efb55c0d05a644f3450d69a805a0db7afcc477dc21744ed068acb6be8"
+      },
+      "diff": "--- setattr/verify.py\n+++ setattr/verify.py\n@@ -10,7 +10,7 @@\n import sys\n \n HERE = Path(__file__).resolve().parent\n-SOURCE = Path('/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py')\n+SOURCE = Path('/tmp/toyvm-six-guards-compatible-fixture-continuation-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py')\n MASK = 2047\n \n \n"
+    },
+    "setattr/independent.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/setattr/independent.py",
+      "before": {
+        "bytes": 9309,
+        "sha256": "385b9d3e1434ee64d6d837758f263be5ad83f1e90b9f7f541932d990cc21ae19"
+      },
+      "after": {
+        "bytes": 9322,
+        "sha256": "44d0282069767a5a2d717f35b7ffeddeace2c721c5172228ecefad6b38705d22"
+      },
+      "diff": "--- setattr/independent.py\n+++ setattr/independent.py\n@@ -9,7 +9,7 @@\n import struct\n \n HERE = Path(__file__).resolve().parent\n-SOURCE = Path('/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py')\n+SOURCE = Path('/tmp/toyvm-six-guards-compatible-fixture-continuation-oct29/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py')\n PIN = 'cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'\n COUNTS = {}\n \n"
+    },
+    "setattr/baseline.json": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/setattr/baseline.json",
+      "before": {
+        "bytes": 21857,
+        "sha256": "e085e2c575fd87a11b990c5b17b07adaf1a3981aeffe21e3206e1467bfe42a39"
+      },
+      "after": {
+        "bytes": 21857,
+        "sha256": "e085e2c575fd87a11b990c5b17b07adaf1a3981aeffe21e3206e1467bfe42a39"
+      },
+      "diff": ""
+    },
+    "parent/accept.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/parent/accept.py",
+      "before": {
+        "bytes": 6639,
+        "sha256": "8bfc7af8e85b2e28e66565944ee423586fc57f935ccae874865d7c368f52c2a9"
+      },
+      "after": {
+        "bytes": 6652,
+        "sha256": "cfebbe17e386e6e07f31ae0579986f882aee20a5d96b020fe6e7976b28a4791b"
+      },
+      "diff": "--- parent/accept.py\n+++ parent/accept.py\n@@ -10,7 +10,7 @@\n import sys\n \n HERE = pathlib.Path(__file__).resolve().parent\n-REPO = pathlib.Path('/tmp/toyvm-six-accepted-guards-candidate-oct29/repo')\n+REPO = pathlib.Path('/tmp/toyvm-six-guards-compatible-fixture-continuation-oct29/repo')\n BACKEND = 'test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n REPAIRED = {'bytes': 12482, 'sha256': 'cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105'}\n \n@@ -20,7 +20,7 @@\n \n def main():\n     identity = json.loads((HERE / 'identity-update.json').read_text())\n-    assert identity['candidate'] == 'a09932adab2510eb1bb1367617708a0b459412b8'\n+    assert identity['candidate'] == '545a51f4a11ac2e88293ac2c8dcc6be3b9ceb124'\n     assert identity['repairedBackend'] == REPAIRED == pin(REPO / BACKEND)\n     assert pin(HERE / 'original-contract.py') == identity['originalContract']\n     assert pin(HERE / 'baseline-results.json') == identity['baselineResults']\n"
+    },
+    "parent/independent.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/parent/independent.py",
+      "before": {
+        "bytes": 7734,
+        "sha256": "7eeafda9c86a8eb1af767eebaa70212d8a8fcfa8462dcadc7ca85f452118a150"
+      },
+      "after": {
+        "bytes": 7747,
+        "sha256": "008b56d48d3177cb1a821204659d5973dc0617f4940ec812dcbb89a200766e82"
+      },
+      "diff": "--- parent/independent.py\n+++ parent/independent.py\n@@ -11,9 +11,9 @@\n import types\n \n HERE = pathlib.Path(__file__).resolve().parent\n-REPO = pathlib.Path('/tmp/toyvm-six-accepted-guards-candidate-oct29/repo')\n+REPO = pathlib.Path('/tmp/toyvm-six-guards-compatible-fixture-continuation-oct29/repo')\n SOURCE = REPO / 'test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py'\n-CANDIDATE = 'a09932adab2510eb1bb1367617708a0b459412b8'\n+CANDIDATE = '545a51f4a11ac2e88293ac2c8dcc6be3b9ceb124'\n \n def pin(path):\n     b = path.read_bytes()\n"
+    },
+    "parent/original-contract.py": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/parent/original-contract.py",
+      "before": {
+        "bytes": 8284,
+        "sha256": "bd825dcbd017975bbf943f4e85a21ce7763c70349bd466db794e60565a09bed8"
+      },
+      "after": {
+        "bytes": 8297,
+        "sha256": "cbc1e53629f4105fc5846438227ba15a750830c72bfd7c2c0afc2fa6a10c3bb1"
+      },
+      "diff": "--- parent/original-contract.py\n+++ parent/original-contract.py\n@@ -11,7 +11,7 @@\n import types\n \n HERE = pathlib.Path(__file__).resolve().parent\n-REPO = pathlib.Path('/tmp/toyvm-six-accepted-guards-candidate-oct29/repo')\n+REPO = pathlib.Path('/tmp/toyvm-six-guards-compatible-fixture-continuation-oct29/repo')\n SOURCE = REPO / \"test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py\"\n PINS = {\"test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py\":{\"bytes\":8105,\"sha256\":\"73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60\"},\"test/toyvm-kernel-profile-accounting-backend-oct28/confine.py\":{\"bytes\":3457,\"sha256\":\"0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8\"},\"test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py\":{\"bytes\":11111,\"sha256\":\"b273dceaf1d648415fdc1c2aca54ab3d511c81b94bb911e6588a81e1b63c14dc\"},\"test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py\":{\"bytes\":4058,\"sha256\":\"5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf\"},\"test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py\":{\"bytes\":23268,\"sha256\":\"9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85\"}}\n # JSON null/bools do not occur in this literal.\n"
+    },
+    "parent/identity-update.json": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/parent/identity-update.json",
+      "before": {
+        "bytes": 1572,
+        "sha256": "ec7c1982bb7760ecf44f1d2e130b0c409617e3ecce3d1af612933226d7a429d3"
+      },
+      "after": {
+        "bytes": 1572,
+        "sha256": "144aae4539b491a6d955927075866bbb2029e296d21519339b6e4937a9a4136b"
+      },
+      "diff": "--- \n+++ \n@@ -1,5 +1,5 @@\n {\n-  \"candidate\": \"a09932adab2510eb1bb1367617708a0b459412b8\",\n+  \"candidate\": \"545a51f4a11ac2e88293ac2c8dcc6be3b9ceb124\",\n   \"originalSourcePins\": {\n     \"test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py\": {\n       \"bytes\": 8105,\n@@ -27,8 +27,8 @@\n     \"sha256\": \"cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105\"\n   },\n   \"originalContract\": {\n-    \"bytes\": 8284,\n-    \"sha256\": \"bd825dcbd017975bbf943f4e85a21ce7763c70349bd466db794e60565a09bed8\"\n+    \"bytes\": 8297,\n+    \"sha256\": \"cbc1e53629f4105fc5846438227ba15a750830c72bfd7c2c0afc2fa6a10c3bb1\"\n   },\n   \"baselineResults\": {\n     \"bytes\": 4619,\n"
+    },
+    "parent/source-pins.json": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/parent/source-pins.json",
+      "before": {
+        "bytes": 904,
+        "sha256": "114c7b18d43246c72cffd419501a521e9140123ecd90c57200bf08ad8e921856"
+      },
+      "after": {
+        "bytes": 904,
+        "sha256": "114c7b18d43246c72cffd419501a521e9140123ecd90c57200bf08ad8e921856"
+      },
+      "diff": ""
+    },
+    "parent/baseline-results.json": {
+      "originalPath": "/tmp/toyvm-six-accepted-guards-candidate-oct29/repo/test/toyvm-six-accepted-guards-candidate-oct29/parent/baseline-results.json",
+      "before": {
+        "bytes": 4619,
+        "sha256": "4b08d5fe2be0e725f395a62aa8006980d5528e3ea573719001321a6fe54d4161"
+      },
+      "after": {
+        "bytes": 4619,
+        "sha256": "4b08d5fe2be0e725f395a62aa8006980d5528e3ea573719001321a6fe54d4161"
+      },
+      "diff": ""
+    }
+  },
+  "retained": {
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/coordinator-note.txt": {
+      "bytes": 1395,
+      "sha256": "dafd302549cbd4d2eb1a0f89cd03ed90d8771d3b009ea78261c015f63337835b"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/candidate-backend.py": {
+      "bytes": 12482,
+      "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/worker-receipt.json": {
+      "bytes": 4129,
+      "sha256": "b92c3e10ebe905624852eb1fcb83bb46674ca84695d5692519871851fa37edf4"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/manifest.json": {
+      "bytes": 9481,
+      "sha256": "41f546e8abcb7d22261eef9d68982c12507c9ecb273850996cf3296c4f34c4f1"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/completion-receipt.json": {
+      "bytes": 878,
+      "sha256": "851f9f8862c82e4780a4b1f886fd019a14df7a239b53cb8101afdb29dfb61afa"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/git-status.stderr": {
+      "bytes": 4963,
+      "sha256": "3c57b864770e59feb3875ca0b5587ce54ffc5e16bd7297f0be9319aa0655333e"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/rename-type-accept.json": {
+      "bytes": 862,
+      "sha256": "316a030e139cd4d85e2458a79967beed7c003f3d78aad3fed0a210c51f4e0d52"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/coordinator-checkpoint.stdout": {
+      "bytes": 45,
+      "sha256": "fa1783e41a59544ee0bfcd70758d2b6dd38eb711579461fa6efac3371071a06d"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/cycle-independent.json": {
+      "bytes": 859,
+      "sha256": "af1f56767e4947422260bb5c0eb73a23aa883a854aa09897d04cd6601c91fb55"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/unlink-regression.stdout": {
+      "bytes": 900,
+      "sha256": "abe1005ac13ef2c1c6d60682a519e9d8f643f12373afa32825733ecd9b9b9a0e"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/rename-type-accept.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/assemble.stdout": {
+      "bytes": 136,
+      "sha256": "39b81dbb34d930fe642431df7f9978d4c2cf534f17c40826cb6d14627b7d80e9"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/checkpoint.json": {
+      "bytes": 853,
+      "sha256": "b4e8783ffc188285d19d647fa6b3b2d82138d32966601c389964695b97e5d720"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/git-identity.json": {
+      "bytes": 927,
+      "sha256": "b1bd292152480eefe7568b9ea3c8bc619fdd41cf7239aa82a3d24f2939a44b60"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/git-status.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/cycle-contract.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/unlink-independent.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/cycle-contract.stdout": {
+      "bytes": 427,
+      "sha256": "e0e94e0a41fcc01e7f3a26455ec81d2380a5ba064608819e6d7005f0d1f03dd6"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/cycle-independent.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/git-identity.stdout": {
+      "bytes": 150,
+      "sha256": "25cc704edf52b6ab69095f16137b0a61dbfd6d2d81e6d47d365be0652a92fe56"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/unlink-regression.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/source-boundary.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/assemble.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/git-status.json": {
+      "bytes": 887,
+      "sha256": "a63a422d8030eedec103d3d929ff90064e7aa929d868b406996eb520adf852c2"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/checkpoint.stdout": {
+      "bytes": 45,
+      "sha256": "fa1783e41a59544ee0bfcd70758d2b6dd38eb711579461fa6efac3371071a06d"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/unlink-independent.json": {
+      "bytes": 862,
+      "sha256": "2dc2b627490b0cdb17d59358859b960645f8b915001872aeaad7b5bc0079e064"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/source-boundary.json": {
+      "bytes": 990,
+      "sha256": "14df75c46b8209aa52c1396e79bbf2ac1df0b2e8feeb600184cdc6a6092606b7"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/git-identity.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/source-boundary.stdout": {
+      "bytes": 1967,
+      "sha256": "3ab4f2703d8abbbde67c1fc27a45bcf1b34b181acb78bf86003ea39c564abfc6"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/checkpoint.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/coordinator-checkpoint.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/unlink-regression.json": {
+      "bytes": 860,
+      "sha256": "ea49fe90a160d20cfdad6fdfc703f1cca68a314ea370d05bf80ba8c4c62bfe5f"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/cycle-independent.stdout": {
+      "bytes": 68,
+      "sha256": "d7a9265d6c40d0b32918fde5afc4a0f99070579dfc79b8b5b38110a3947a79e4"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/coordinator-checkpoint.json": {
+      "bytes": 862,
+      "sha256": "320709fbdfa5f1bd810c4620f323eeb13cb756a3518ce782d2e1e349496d8ae6"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/cycle-contract.json": {
+      "bytes": 857,
+      "sha256": "b227786f09800817c31795ef7fb8bb634ef6fb157e0f8ed0ffa22575a5827c3b"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/rename-type-accept.stdout": {
+      "bytes": 1592,
+      "sha256": "7013667e76c72f25b0cf433e7e2be2d9e809de81564ada5abf7ba009f7cf3d45"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/assemble.json": {
+      "bytes": 851,
+      "sha256": "d782b4a9d1237eab7cd1a22ba3abd38ffb591aeb07b235b93f7fcf97eaf56620"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/e/unlink-independent.stderr": {
+      "bytes": 1449,
+      "sha256": "21039633435022e7bf5cb03c5fa15d88bbb285a2b13938b6033a16cedb8723bc"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/source-pins.json": {
+      "bytes": 904,
+      "sha256": "114c7b18d43246c72cffd419501a521e9140123ecd90c57200bf08ad8e921856"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/accept.py": {
+      "bytes": 7619,
+      "sha256": "466fe4a489c6b7a42696d39a41b9ceb5839ce8373d9134cf9eb446e08befe151"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/assembly.json": {
+      "bytes": 23263,
+      "sha256": "e5acda69636daffca1aa33e46ac2f477ce47900395c5c693b41b707d9fb4ee3a"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/cycle-independent.py": {
+      "bytes": 6573,
+      "sha256": "3eff69f3f049c1ea444666098927823dde0e036bc37ed203dd356c17af9089ec"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/independent-report.json": {
+      "bytes": 46373,
+      "sha256": "6aec2bc79c335d3881f17c532e504a52dc923d4d4fa5e3504746003d471d14b1"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/mutant-overbroad.py": {
+      "bytes": 12067,
+      "sha256": "cb8c46624b712ad809a85e3de2f7d8fc05239bf28bd45c9525363341162e6c8f"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/interactions.py": {
+      "bytes": 3333,
+      "sha256": "d18afe878e876e9ff376a6739a8a01cd66e8eca95600161140a93225e21e0c47"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/contract.py": {
+      "bytes": 7008,
+      "sha256": "bbbc80d984fa962adb8c4bdff0af39cf74623e4ac4c9caeaae677f85f818f79a"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/pin-update.json": {
+      "bytes": 348,
+      "sha256": "e0f61c3ae8ab7970b6b1ff2aca2e13b55e6f85c8cd4d69542cec7b1b7bc78dbe"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/cycle-contract.py": {
+      "bytes": 8447,
+      "sha256": "e6511ec2b76d521d695a2d625a704a7c3abc324277a394803b58cdd9788cbbcd"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/rename-type-reproduce.py": {
+      "bytes": 976,
+      "sha256": "14f2c2088171ce8837493d78ab056f260507410ba2d647a60571e43b685c58b3"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/current-dispatch.json": {
+      "bytes": 3062,
+      "sha256": "b7932395907631f59f04ff18575d8bfae7ac646712bfb93ed42fa54b7ddf3ff0"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/mutant-late-guard.py": {
+      "bytes": 12482,
+      "sha256": "9046f4215b0cf01df35f692684fe7d98eaa24b230299bb6e49958b9ed165bb2e"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/unlink-regression.py": {
+      "bytes": 9351,
+      "sha256": "f4de0e993e54c96ec407dfb104e964c29debe4cae7b552c20602ebb72f553eea"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/canonical.json": {
+      "bytes": 32074,
+      "sha256": "42947fd8f192f919562d475b05783d4c8b9afe7acfe1d6e183311daec5667a27"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/independent.py": {
+      "bytes": 7917,
+      "sha256": "a8b17897dccac9e39fcd5588edb6a2dfe9dcbcc4bbb51455336a0552164d6b4a"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/mutant-guard-removed.py": {
+      "bytes": 12008,
+      "sha256": "a4288a80bbbe8efee958dd4645e70d1bf02690ba128618775e59266f44a05d26"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/fixture.json": {
+      "bytes": 474,
+      "sha256": "1836abfcc48c568c2c78c0821464446c228e189aa63cf0cfc0a5b4c945f39bfe"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/gate.py": {
+      "bytes": 1628,
+      "sha256": "0a0277df82f39ec76cec36c033c44088601b091ed34dfc803fcacd5fc1dc21f8"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/mutant-wrong-errno.py": {
+      "bytes": 12479,
+      "sha256": "0ecca7d0face8d8648755b4fa023dfba114d89b79c86ff296328a2207f464156"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/four-interactions.py": {
+      "bytes": 3842,
+      "sha256": "019ec867f32f192ab60fe5545ad6f4a8b8f6eb49712cbcae610b144759d0be10"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/rename-type-accept.py": {
+      "bytes": 9970,
+      "sha256": "12a9ada82401c1585d007d7498cd4cbb7d4d6ae7e5eb45db049bc9054fc2a40e"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/unlink-independent.py": {
+      "bytes": 9719,
+      "sha256": "764e16b78c280e73ffdc1a173936b994bae2ff90ef91eb3de9e1aceb440b54d2"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/copy-receipt.json": {
+      "bytes": 379,
+      "sha256": "e772f876791d80e34a4b152ec22d1a877d0ec79f859f7b023b35009c4964e675"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/parent/source-pins.json": {
+      "bytes": 904,
+      "sha256": "114c7b18d43246c72cffd419501a521e9140123ecd90c57200bf08ad8e921856"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/parent/accept.py": {
+      "bytes": 6639,
+      "sha256": "8bfc7af8e85b2e28e66565944ee423586fc57f935ccae874865d7c368f52c2a9"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/parent/identity-update.json": {
+      "bytes": 1572,
+      "sha256": "ec7c1982bb7760ecf44f1d2e130b0c409617e3ecce3d1af612933226d7a429d3"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/parent/independent.py": {
+      "bytes": 7734,
+      "sha256": "7eeafda9c86a8eb1af767eebaa70212d8a8fcfa8462dcadc7ca85f452118a150"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/parent/baseline-results.json": {
+      "bytes": 4619,
+      "sha256": "4b08d5fe2be0e725f395a62aa8006980d5528e3ea573719001321a6fe54d4161"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/parent/original-contract.py": {
+      "bytes": 8284,
+      "sha256": "bd825dcbd017975bbf943f4e85a21ce7763c70349bd466db794e60565a09bed8"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/setattr/verify.py": {
+      "bytes": 8817,
+      "sha256": "577fd6468b9c39b379ab3ef388dbb0c349a55ff5bb94d61d7bdeff2ebcbfc01a"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/setattr/baseline.json": {
+      "bytes": 21857,
+      "sha256": "e085e2c575fd87a11b990c5b17b07adaf1a3981aeffe21e3206e1467bfe42a39"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-accepted-guards-candidate-oct29/retained-evidence/test/setattr/independent.py": {
+      "bytes": 9309,
+      "sha256": "385b9d3e1434ee64d6d837758f263be5ad83f1e90b9f7f541932d990cc21ae19"
+    }
+  },
+  "previouslyPassed": {
+    "source-boundary": "Unchanged rename-type reproducer, explicit absolute candidate source argument; errno21/20 and namespace/accounting preserved; first behavioral operation.",
+    "rename-type-accept": "156 cases; nine source mutants rejected",
+    "cycle-contract": "14 cases; 16 observation-oracle controls rejected",
+    "cycle-independent": "24 cases; four source mutants rejected",
+    "unlink-regression": "14 cases; 12 oracle mutations rejected"
+  },
+  "originalFailure": {
+    "operation": "unlink-independent",
+    "exit": 1,
+    "stdout": "/tmp/toyvm-six-accepted-guards-candidate-oct29/e/unlink-independent.stdout",
+    "stderr": "/tmp/toyvm-six-accepted-guards-candidate-oct29/e/unlink-independent.stderr",
+    "operationReceipt": "/tmp/toyvm-six-accepted-guards-candidate-oct29/e/unlink-independent.json",
+    "fixture": "test/toyvm-six-accepted-guards-candidate-oct29/unlink-independent.py:95",
+    "call": "b.create(target, b'child', stat.S_IFREG | 0o600)",
+    "exception": "NotADirectoryError: [Errno 20] parent non-directory",
+    "reason": "Retained removal oracle deliberately creates a corrupt child namespace beneath a regular file through Backend.create. The accepted parent guard makes that fixture construction invalid before the removal oracle runs.",
+    "requiredDecision": "Coordinator must explicitly authorize a fixture construction adaptation that preserves all removal assertions and corrupt-state coverage, or provide a compatible accepted fixture. No oracle was weakened or case skipped."
+  }
+}
