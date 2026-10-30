@@ -1,0 +1,49 @@
+{
+  "status": "BLOCKED: first API exec transfer rejected with argument list too long",
+  "objectiveAchieved": false,
+  "productionDefectProved": false,
+  "guestInvocations": 0,
+  "newRender": false,
+  "guestInputEnqueued": false,
+  "hostCheckInputObserved": false,
+  "returnedMSGObserved": false,
+  "wndprocCompletionObserved": false,
+  "SDLConsumptionObserved": false,
+  "branch": "enigma-guest-poll-runtime-owner-policy-oct30",
+  "bornHEAD": "f1cd3914550c521157f42ca19bcfc06654e37b60",
+  "newBoat": "bx_p42km2d7",
+  "lifecycle": {
+    "created": true,
+    "TTL": 1800,
+    "snapshotVerifiedAt": "2026-10-30T07:04:08.046Z",
+    "stoppedAt": "2026-10-30T07:04:08.091Z",
+    "verifiedStopped": true,
+    "priorBoxesAccessed": false
+  },
+  "blocker": {
+    "operation": "transfer-000",
+    "commandId": "cmd_mosv5pikihre",
+    "exitCode": 126,
+    "stderr": "ascii-exec-spare: line 1: /usr/bin/bash: Argument list too long\nascii-exec-spare: line 1: /usr/bin/bash: Success\n",
+    "at": "2026-10-30T07:03:55.093Z",
+    "completedTransferBytes": 0,
+    "retry": false
+  },
+  "evidence": "/tmp/enigma-original-menu-render-runtime-oct30/repo/test/enigma-guest-poll-runtime-owner-policy-oct30",
+  "policy": {
+    "RAMAdmission": false,
+    "RSSObservationOnly": false,
+    "processRSSLimitsRetained": true,
+    "MemAvailableObservational": true,
+    "hostDiskFloor": 1610612736,
+    "remainingAggregateGrowth": 200183808,
+    "captureCeiling": 524288,
+    "generatedFileCeiling": 12582912
+  },
+  "priorReceipt": {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/guest-poll-completion-receipt.json",
+    "sha256": "b49ca9fbd39b11f72f75f9e8662ecf35a07be659f3ec5ffa6703fa2bfcff79ac"
+  },
+  "commit": null,
+  "remoteSHA": null
+}

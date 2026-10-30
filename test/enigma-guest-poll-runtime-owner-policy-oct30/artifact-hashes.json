@@ -1,0 +1,94 @@
+{
+  "owner_policy_ops.py": {
+    "bytes": 7252,
+    "sha256": "a362bfdd5cb769e80636311bddd668ed0e11e709cefc87e74f5537397772c5f0"
+  },
+  "guest-poll-completion-receipt.json": {
+    "bytes": 1731,
+    "sha256": "424ade8a445d6d63f0daf5bafd1093675f12f4ed6a513e86afaecbe88f7e9c5a"
+  },
+  "boat-assignment.json": {
+    "bytes": 308,
+    "sha256": "94c3f223b84bb03f8abab4bfa57dc7305e7ff305a285c4eda47f1f2c352bbe88"
+  },
+  "closeout.json": {
+    "bytes": 3525,
+    "sha256": "9468eb88c340ec658fcf1df58acc9f4e23ef6fd90e245120dae79ecf70645aa5"
+  },
+  "input-identities.json": {
+    "bytes": 2760,
+    "sha256": "38598f3381461a85922a9f3961604ea4a88232dc2f2e92bd98a7868436815f5b"
+  },
+  "transfer-000.json": {
+    "bytes": 1686,
+    "sha256": "d2dd3ff23b04043cdbf256ddca7d6d7d21fc4ef5eb61f09fc328c1f34fffcd35"
+  },
+  "messageboard-note.txt": {
+    "bytes": 351,
+    "sha256": "89ea4c2f4fe0727eba9e28e08ae664d55e0dbc07377b7f66c1601c2a020496c2"
+  },
+  "watchdog.json": {
+    "bytes": 65,
+    "sha256": "e38b17110fdd8e7fb8908d7feb1ca0cbeba46f8fb5cf665e5c951fd1498748fb"
+  },
+  "owner-policy-guest.py": {
+    "bytes": 5403,
+    "sha256": "18994ec4d7ae4509e07aca2c8a10a0beb1f9f41e3480105a07481a5748d4cf92"
+  },
+  "preflight.json": {
+    "bytes": 1874,
+    "sha256": "3fdc9392d57e3238e661ed4a782aac16f97eae42a033431ee3e00530890942bb"
+  },
+  "file-control.json": {
+    "bytes": 655,
+    "sha256": "a32eeddd5e4717f4c13518fc7c630c0e0b51e9f0f188afcb37dd6e6cb36d4fa9"
+  },
+  "owner-policy-create.py": {
+    "bytes": 2342,
+    "sha256": "73404b7d190897c6ba33cefff2fe466532c3bdd2fa47b92f2ace7375d7664a2a"
+  },
+  "schedule.json": {
+    "bytes": 308,
+    "sha256": "94c3f223b84bb03f8abab4bfa57dc7305e7ff305a285c4eda47f1f2c352bbe88"
+  },
+  "transfer-000.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "failure.json": {
+    "bytes": 463,
+    "sha256": "cd65c3d845f39fed3afce529a03045db329eeb89ccc4e648db0398a323e7b06d"
+  },
+  "owner-policy-preflight.py": {
+    "bytes": 2668,
+    "sha256": "6ca6ca980b41c82dba21d2ae6862d7885cd20b26005e24e1978eed9c64857854"
+  },
+  "boat-create.json": {
+    "bytes": 690,
+    "sha256": "e915e04f919d6b4ffde2f3749a4ced0c597fe6160d50d52fed00c1e50d2b413c"
+  },
+  "README.md": {
+    "bytes": 3049,
+    "sha256": "1477daa9ae97478e855629d4140cc5bf332dc97af97b8530210e50af618d0cf1"
+  },
+  "boat-created.json": {
+    "bytes": 353,
+    "sha256": "de3cfdbca5c6bedcd5343d59ead15ac2693e8cf581ae29ed90999a91eaa0b95b"
+  },
+  "owner_policy_gate.py": {
+    "bytes": 748,
+    "sha256": "a166424037491ac5a459ea686c2d1c98f8d7dec6d43c9a1c5ce4fd281349ec49"
+  },
+  "controls.json": {
+    "bytes": 103,
+    "sha256": "71cffd5d0e3d84b05c0cbc144b0329d5ba24197057d6910431ac664a9ea1c276"
+  },
+  "owner-policy-runtime.py": {
+    "bytes": 9632,
+    "sha256": "1289b89b560444ffe9f419d610bd7655e02e3399dc8822e014217ac7dcdffa0e"
+  },
+  "transfer-000.stdout": {
+    "bytes": 440,
+    "sha256": "64b9baac05ff868967b4ff11efacd66a0cba03e8e9b5ff5b0932335709bff729"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "PASS": true,
+  "admission": {
+    "at": 1793343828.5082164,
+    "free": 3384778752,
+    "MemAvailable": 3830591488,
+    "allocated": 38187008,
+    "aggregateRemaining": 200183808,
+    "memoryPolicy": "observational only; owner 2026-10-30",
+    "checks": {
+      "disk": true,
+      "allocation": true
+    }
+  },
+  "verifiedPublishedArtifacts": 25,
+  "parserReused": {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/repo/test/enigma-guest-poll-causal-runtime-oct30/canonical-parser.json",
+    "sha256": "811d2082ab8ed40e8cb8b0351c2c6dbf3470c65262216c324e066d192aa619c7"
+  },
+  "startupReused": {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/repo/test/enigma-guest-poll-causal-runtime-oct30/startup.json",
+    "sha256": "188982883284bbe651dc7526b62a7b320cb9ac6e77dae16d4065ab64cb411065"
+  },
+  "limits": {
+    "RLIMIT_DATA": [
+      134217728,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      60,
+      60
+    ],
+    "RLIMIT_FSIZE": [
+      12582912,
+      12582912
+    ]
+  },
+  "captureCeiling": 524288,
+  "fileCeiling": 12582912,
+  "captureOverflowRejected": {
+    "capture-control.stdout": 600000,
+    "capture-control.stderr": 0
+  },
+  "runnerBase": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+  "runnerInstrumented": "96aa1313dabaf59a55875830b35fdd32ec3410fea2e3b2458828a9f49ccbe4b2",
+  "argvSHA256": "80194f366b579a2604eec56df0d1dd7ff4a633d731b6d4792688f1da8b85a9a0",
+  "wrappers": {
+    "owner_policy_ops.py": "a362bfdd5cb769e80636311bddd668ed0e11e709cefc87e74f5537397772c5f0",
+    "owner_policy_gate.py": "a166424037491ac5a459ea686c2d1c98f8d7dec6d43c9a1c5ce4fd281349ec49",
+    "owner-policy-runtime.py": "1289b89b560444ffe9f419d610bd7655e02e3399dc8822e014217ac7dcdffa0e",
+    "owner-policy-guest.py": "18994ec4d7ae4509e07aca2c8a10a0beb1f9f41e3480105a07481a5748d4cf92"
+  }
+}

@@ -1,0 +1,1 @@
+2026-10-30 owner-policy Enigma runtime BLOCKED at first API exec transfer exit126 argument list too long; no retry/guest/render/input conclusion. bx_p42km2d7 snapshot verified07:04:08.046Z stopped07:04:08.091Z. New resource-policy wrappers and original denials preserved; branch test/enigma-guest-poll-runtime-owner-policy-oct30. Publication pending.
