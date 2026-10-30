@@ -1,0 +1,8 @@
+{
+  "command": "cat historical file-control.stdout and output-control.stdout plus compact runtime summary",
+  "toolReportedOriginalTokens": 133851,
+  "toolTokenBudget": 2600,
+  "outputWasTruncated": true,
+  "historicalOverflowFileBytes": 530000,
+  "exception": "historical deliberate overflow-control body inadvertently included in diagnostic tool read; no overflow control re-executed, no resource cap increased; excluded from wrapper-compliance claim"
+}

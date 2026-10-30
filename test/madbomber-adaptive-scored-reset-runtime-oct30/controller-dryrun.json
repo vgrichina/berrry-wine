@@ -1,0 +1,349 @@
+{
+  "PASS": true,
+  "clock": "virtual 0..149 in0.1s ticks; actual image decoder, production Controller",
+  "traces": {
+    "catch-reset": {
+      "scored": true,
+      "gameover": true,
+      "transition": 30.8,
+      "dispatch": [
+        {
+          "at": 6.0,
+          "cmd": "keydown:13"
+        },
+        {
+          "at": 6.2,
+          "cmd": "keyup:13"
+        },
+        {
+          "at": 8.0,
+          "cmd": "mousemove:320:400"
+        },
+        {
+          "at": 11.0,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 11.2,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 12.6,
+          "cmd": "mousemove:305:400"
+        },
+        {
+          "at": 20.3,
+          "save": "scored.png"
+        },
+        {
+          "at": 20.3,
+          "cmd": "mousemove:0:400"
+        },
+        {
+          "at": 20.3,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 20.5,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 27.3,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 27.5,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 30.8,
+          "save": "gameover.png"
+        },
+        {
+          "at": 31.8,
+          "cmd": "keydown:27"
+        },
+        {
+          "at": 32.0,
+          "cmd": "keyup:27"
+        },
+        {
+          "at": 33.8,
+          "capture": "title.png"
+        },
+        {
+          "at": 34.8,
+          "cmd": "keydown:13"
+        },
+        {
+          "at": 35.0,
+          "cmd": "keyup:13"
+        },
+        {
+          "at": 36.8,
+          "capture": "newgame.png"
+        },
+        {
+          "at": 39.8,
+          "cmd": "keydown:27"
+        },
+        {
+          "at": 40.0,
+          "cmd": "keyup:27"
+        },
+        {
+          "at": 41.8,
+          "cmd": "keydown:40"
+        },
+        {
+          "at": 42.0,
+          "cmd": "keyup:40"
+        },
+        {
+          "at": 42.4,
+          "cmd": "keydown:40"
+        },
+        {
+          "at": 42.6,
+          "cmd": "keyup:40"
+        },
+        {
+          "at": 43.0,
+          "cmd": "keydown:40"
+        },
+        {
+          "at": 43.2,
+          "cmd": "keyup:40"
+        },
+        {
+          "at": 43.6,
+          "cmd": "keydown:40"
+        },
+        {
+          "at": 43.9,
+          "cmd": "keyup:40"
+        },
+        {
+          "at": 44.2,
+          "cmd": "keydown:40"
+        },
+        {
+          "at": 44.5,
+          "cmd": "keyup:40"
+        },
+        {
+          "at": 46.8,
+          "capture": "exit-selected.png"
+        },
+        {
+          "at": 47.8,
+          "cmd": "keydown:13"
+        },
+        {
+          "at": 48.0,
+          "cmd": "keyup:13"
+        }
+      ]
+    },
+    "no-catch-deadline": {
+      "scored": false,
+      "gameover": false,
+      "transition": 112.0,
+      "dispatch": [
+        {
+          "at": 6.0,
+          "cmd": "keydown:13"
+        },
+        {
+          "at": 6.2,
+          "cmd": "keyup:13"
+        },
+        {
+          "at": 8.0,
+          "cmd": "mousemove:320:400"
+        },
+        {
+          "at": 11.0,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 11.2,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 12.6,
+          "cmd": "mousemove:305:400"
+        },
+        {
+          "at": 50.4,
+          "cmd": "mousemove:0:400"
+        },
+        {
+          "at": 50.4,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 50.6,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 57.4,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 57.6,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 64.4,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 64.7,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 71.4,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 71.7,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 78.4,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 78.7,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 85.4,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 85.7,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 92.4,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 92.7,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 99.4,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 99.7,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 106.4,
+          "cmd": "keydown:32"
+        },
+        {
+          "at": 106.7,
+          "cmd": "keyup:32"
+        },
+        {
+          "at": 112.0,
+          "save": "gameover.png"
+        },
+        {
+          "at": 113.0,
+          "cmd": "keydown:27"
+        },
+        {
+          "at": 113.2,
+          "cmd": "keyup:27"
+        },
+        {
+          "at": 115.0,
+          "capture": "title.png"
+        },
+        {
+          "at": 116.0,
+          "cmd": "keydown:13"
+        },
+        {
+          "at": 116.2,
+          "cmd": "keyup:13"
+        },
+        {
+          "at": 118.0,
+          "capture": "newgame.png"
+        },
+        {
+          "at": 121.0,
+          "cmd": "keydown:27"
+        },
+        {
+          "at": 121.2,
+          "cmd": "keyup:27"
+        },
+        {
+          "at": 123.0,
+          "cmd": "keydown:40"
+        },
+        {
+          "at": 123.2,
+          "cmd": "keyup:40"
+        },
+        {
+          "at": 123.6,
+          "cmd": "keydown:40"
+        },
+        {
+          "at": 123.8,
+          "cmd": "keyup:40"
+        },
+        {
+          "at": 124.2,
+          "cmd": "keydown:40"
+        },
+        {
+          "at": 124.4,
+          "cmd": "keyup:40"
+        },
+        {
+          "at": 124.8,
+          "cmd": "keydown:40"
+        },
+        {
+          "at": 125.0,
+          "cmd": "keyup:40"
+        },
+        {
+          "at": 125.4,
+          "cmd": "keydown:40"
+        },
+        {
+          "at": 125.7,
+          "cmd": "keyup:40"
+        },
+        {
+          "at": 128.0,
+          "capture": "exit-selected.png"
+        },
+        {
+          "at": 129.0,
+          "cmd": "keydown:13"
+        },
+        {
+          "at": 129.2,
+          "cmd": "keyup:13"
+        }
+      ]
+    }
+  },
+  "pins": {
+    "controller.py": "c6b2f3576091f22ba27569689c3c580fa689a0a2d7d51fda80668e4885b8c7fc",
+    "feedback.py": "7c2571beaf0c3004acb83c432eecca2249b8960d5f4fb5cc3497ea6de587808e",
+    "adaptive-runtime.py": "c95cd74f2d7f0c748d958edd9a69a93c3a602c5d07fea845d5a09a1a280f1195"
+  }
+}

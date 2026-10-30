@@ -1,0 +1,74 @@
+{
+  "boat": {
+    "id": "bx_jqep6r45",
+    "createdAt": "2026-10-30T08:29:06.160Z",
+    "creationTimeSource": "native createdAt",
+    "expiry": "2026-10-30T08:59:06.178Z",
+    "ttlSeconds": 1800,
+    "guestCutoff": "2026-10-30T08:49:06.160000+00:00",
+    "handback": "2026-10-30T08:52:06.160000+00:00",
+    "shutdown": "2026-10-30T08:54:06.160000+00:00",
+    "shutdownOwner": "this worker explicitly delegated preserve snapshot-stop actual stopped and completed post-run snapshot verification on every path",
+    "preflightSHA256": "5e26525b4a9cb0bc8feb642e183b25ef389ff5571a0b0a7ab7e8f05d7ae87ed6"
+  },
+  "actualState": "stopped",
+  "stop": {
+    "endedAt": "2026-10-30T08:33:43.191Z",
+    "error": null,
+    "forced": false,
+    "id": "stop_acaed1ae2e842908",
+    "lastAttemptAt": "2026-10-30T08:33:43.191Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "snapshotCompletedAt": "2026-10-30T08:33:43.132Z",
+  "snapshotVerifiedAt": "2026-10-30T08:33:43.132Z",
+  "snapshots": [
+    {
+      "chainId": "35ffa057-da4f-45f5-819a-95f368e259f4",
+      "completedAt": "2026-10-30T08:33:43.132Z",
+      "contentFileCount": 2,
+      "contentSizeBytes": 62,
+      "createdAt": "2026-10-30T08:33:42.299Z",
+      "fileCount": 2,
+      "generation": 3,
+      "id": "69fa6dfb-f008-4fd5-8805-162d9a157ba5",
+      "kind": "incremental",
+      "origin": "captured",
+      "sandboxId": "bx_jqep6r45",
+      "sizeBytes": 339,
+      "status": "completed"
+    },
+    {
+      "chainId": "ceba18a5-97eb-4cc1-b955-42d57b4a23ec",
+      "completedAt": "2026-10-30T08:33:21.191Z",
+      "contentFileCount": 428,
+      "contentSizeBytes": 19012254,
+      "createdAt": "2026-10-30T08:33:21.196Z",
+      "fileCount": 428,
+      "generation": 1,
+      "id": "e541d316-bc90-4aa2-8cbf-062c11c7b998",
+      "kind": "incremental",
+      "origin": "captured",
+      "sandboxId": "bx_jqep6r45",
+      "sizeBytes": 8507639,
+      "status": "completed"
+    },
+    {
+      "chainId": "ceba18a5-97eb-4cc1-b955-42d57b4a23ec",
+      "completedAt": "2026-10-30T08:33:21.190Z",
+      "contentFileCount": 22480,
+      "contentSizeBytes": 6165530,
+      "createdAt": "2026-10-30T08:33:21.196Z",
+      "fileCount": 22480,
+      "generation": 0,
+      "id": "830e7d09-2422-453c-a55f-e9798dbcf19f",
+      "kind": "base",
+      "origin": "captured",
+      "sandboxId": "bx_jqep6r45",
+      "sizeBytes": 662964,
+      "status": "completed"
+    }
+  ],
+  "verification": "actual stopped and completed post-run snapshot confirmed through native info and bounded snapshots list"
+}

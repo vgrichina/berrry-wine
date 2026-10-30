@@ -1,0 +1,916 @@
+{
+  "app": "original Mad Bomber",
+  "qualification": "HISTORICAL build",
+  "startedAt": "2026-10-30T08:31:30.417267+00:00",
+  "finishedAt": "2026-10-30T08:32:23.188884+00:00",
+  "elapsed": 52.771640631,
+  "exitCode": 0,
+  "reason": "guest exited",
+  "peakGroupRSS": 279449600,
+  "command": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "test/run.js",
+    "--app=madbomber",
+    "--no-build",
+    "--wasm=/home/user/madbomber-runtime/runner/build/wine-assembly.wasm",
+    "--control-stdin",
+    "--no-threads",
+    "--real-ticks",
+    "--time-scale=1",
+    "--real-calendar",
+    "--tz=UTC",
+    "--batch-size=200000",
+    "--max-batches=10000000",
+    "--max-seconds=150",
+    "--quiet-api",
+    "--no-close",
+    "--trace-input"
+  ],
+  "events": [
+    {
+      "elapsed": 6.091194209999998,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    },
+    {
+      "elapsed": 6.203862338999983,
+      "event": {
+        "cmd": "keyup:13"
+      }
+    },
+    {
+      "elapsed": 8.087597283999997,
+      "event": {
+        "cmd": "mousemove:320:400"
+      }
+    },
+    {
+      "elapsed": 11.079306454999994,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "elapsed": 11.29857144899998,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "elapsed": 12.069128511999992,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 12.365169488999982,
+      "event": {
+        "cmd": "mousemove:543:400"
+      }
+    },
+    {
+      "elapsed": 12.807625786999978,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 13.563471164999982,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 14.216251929999999,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 14.887374233000003,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 15.566124059999993,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 16.299036629,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 16.961850106999975,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 17.635684949999984,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 18.349863895999988,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 19.047182014999976,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 19.705694952999977,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 20.466531476,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 20.822799624999988,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "elapsed": 20.93763311699999,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "elapsed": 21.186848930999986,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 21.509168862999985,
+      "event": {
+        "cmd": "mousemove:559:400"
+      }
+    },
+    {
+      "elapsed": 21.853002603999983,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 22.179301425999995,
+      "event": {
+        "cmd": "mousemove:0:400"
+      }
+    },
+    {
+      "elapsed": 22.52512716999999,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 23.183966774999988,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 23.889609405999977,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 24.57112478099998,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 25.2797568,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 25.96292523599999,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 26.643740251999986,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 27.353797711999988,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 28.018531024999987,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 28.356532533999996,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "elapsed": 28.469141691999994,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "elapsed": 28.70271601099998,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 29.39007887599999,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 30.06287680599999,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 30.735794594999987,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 31.39906331399999,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 32.097992995,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 32.757112819999975,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 33.418363905999996,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 34.09925622,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 34.77620179499999,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 35.46116915599998,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png"
+      }
+    },
+    {
+      "elapsed": 35.79954927199998,
+      "event": {
+        "cmd": "keydown:32"
+      }
+    },
+    {
+      "elapsed": 35.91663256699999,
+      "event": {
+        "cmd": "keyup:32"
+      }
+    },
+    {
+      "elapsed": 36.60540421899998,
+      "event": {
+        "cmd": "keydown:27"
+      }
+    },
+    {
+      "elapsed": 36.833955850999985,
+      "event": {
+        "cmd": "keyup:27"
+      }
+    },
+    {
+      "elapsed": 38.65707698899999,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/title.png"
+      }
+    },
+    {
+      "elapsed": 39.57893258799999,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    },
+    {
+      "elapsed": 39.81711687799998,
+      "event": {
+        "cmd": "keyup:13"
+      }
+    },
+    {
+      "elapsed": 41.587745372,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/newgame.png"
+      }
+    },
+    {
+      "elapsed": 44.674511067,
+      "event": {
+        "cmd": "keydown:27"
+      }
+    },
+    {
+      "elapsed": 44.791919326,
+      "event": {
+        "cmd": "keyup:27"
+      }
+    },
+    {
+      "elapsed": 46.679137406999985,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 46.79609800399999,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 47.26537938199999,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 47.382315060999986,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 47.852536187,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 48.086057665,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 48.435726818999996,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 48.66744836699999,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 49.017969736,
+      "event": {
+        "cmd": "keydown:40"
+      }
+    },
+    {
+      "elapsed": 49.252745941,
+      "event": {
+        "cmd": "keyup:40"
+      }
+    },
+    {
+      "elapsed": 51.60914727699998,
+      "event": {
+        "action": "png",
+        "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/exit-selected.png"
+      }
+    },
+    {
+      "elapsed": 52.65839580099998,
+      "event": {
+        "cmd": "keydown:13"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "elapsed": 12.179448553999976,
+      "bombs": [
+        {
+          "x": 543,
+          "y": 291,
+          "area": 216
+        },
+        {
+          "x": 519,
+          "y": 219,
+          "area": 216
+        }
+      ],
+      "buckets": 3,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 12.918141323999976,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 13.682074838999995,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 14.332069421,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 15.007778557999984,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 15.681414367999992,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 16.413232620000002,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 17.074040660999998,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 17.750515482999987,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 18.468978419999985,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 19.163969469999984,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 19.818380456,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 20.583559458999986,
+      "bombs": [],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 21.301354148,
+      "bombs": [
+        {
+          "x": 559,
+          "y": 239,
+          "area": 216
+        },
+        {
+          "x": 567,
+          "y": 167,
+          "area": 215
+        }
+      ],
+      "buckets": 2,
+      "scorePixelsSHA256": "41368638b2f28648a56ae98a8131dbeda4e8175e63349045f3a53c79d21b4c2b"
+    },
+    {
+      "elapsed": 21.967254481999987,
+      "bombs": [
+        {
+          "x": 567,
+          "y": 323,
+          "area": 217
+        },
+        {
+          "x": 479,
+          "y": 251,
+          "area": 216
+        },
+        {
+          "x": 443,
+          "y": 179,
+          "area": 216
+        }
+      ],
+      "buckets": 2,
+      "scorePixelsSHA256": "7546be24f6aff390580abda659d5b626c635cbb31613be91f6fcdf3c0c665dc3"
+    },
+    {
+      "elapsed": 22.641645705000002,
+      "bombs": [
+        {
+          "x": 443,
+          "y": 291,
+          "area": 216
+        },
+        {
+          "x": 443,
+          "y": 219,
+          "area": 216
+        }
+      ],
+      "buckets": 2,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 23.308533584000003,
+      "bombs": [],
+      "buckets": 1,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 24.008099423999994,
+      "bombs": [],
+      "buckets": 1,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 24.687981074999982,
+      "bombs": [],
+      "buckets": 1,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 25.394328105,
+      "bombs": [],
+      "buckets": 1,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 26.07996480899999,
+      "bombs": [],
+      "buckets": 1,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 26.760696475999993,
+      "bombs": [],
+      "buckets": 1,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 27.470380705999986,
+      "bombs": [],
+      "buckets": 1,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 28.134029973999986,
+      "bombs": [],
+      "buckets": 1,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 28.815947258999984,
+      "bombs": [
+        {
+          "x": 325,
+          "y": 239,
+          "area": 216
+        },
+        {
+          "x": 325,
+          "y": 167,
+          "area": 215
+        }
+      ],
+      "buckets": 1,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 29.508965785999976,
+      "bombs": [
+        {
+          "x": 331,
+          "y": 343,
+          "area": 45
+        },
+        {
+          "x": 297,
+          "y": 279,
+          "area": 216
+        },
+        {
+          "x": 219,
+          "y": 207,
+          "area": 216
+        }
+      ],
+      "buckets": 1,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 30.17866135999998,
+      "bombs": [
+        {
+          "x": 144,
+          "y": 235,
+          "area": 108
+        },
+        {
+          "x": 560,
+          "y": 227,
+          "area": 139
+        }
+      ],
+      "buckets": 0,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 30.85117097899999,
+      "bombs": [
+        {
+          "x": 144,
+          "y": 235,
+          "area": 108
+        },
+        {
+          "x": 560,
+          "y": 227,
+          "area": 139
+        }
+      ],
+      "buckets": 0,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 31.512945280999986,
+      "bombs": [
+        {
+          "x": 144,
+          "y": 235,
+          "area": 108
+        },
+        {
+          "x": 560,
+          "y": 227,
+          "area": 139
+        }
+      ],
+      "buckets": 0,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 32.21052955599998,
+      "bombs": [
+        {
+          "x": 144,
+          "y": 235,
+          "area": 108
+        },
+        {
+          "x": 560,
+          "y": 227,
+          "area": 139
+        }
+      ],
+      "buckets": 0,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 32.872377836,
+      "bombs": [
+        {
+          "x": 144,
+          "y": 235,
+          "area": 108
+        },
+        {
+          "x": 560,
+          "y": 227,
+          "area": 139
+        }
+      ],
+      "buckets": 0,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 33.53299655799998,
+      "bombs": [
+        {
+          "x": 144,
+          "y": 235,
+          "area": 108
+        },
+        {
+          "x": 560,
+          "y": 227,
+          "area": 139
+        }
+      ],
+      "buckets": 0,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 34.21723491399999,
+      "bombs": [
+        {
+          "x": 144,
+          "y": 235,
+          "area": 108
+        },
+        {
+          "x": 560,
+          "y": 227,
+          "area": 139
+        }
+      ],
+      "buckets": 0,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 34.88971504999998,
+      "bombs": [
+        {
+          "x": 144,
+          "y": 235,
+          "area": 108
+        },
+        {
+          "x": 560,
+          "y": 227,
+          "area": 139
+        }
+      ],
+      "buckets": 0,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    },
+    {
+      "elapsed": 35.577603099999976,
+      "bombs": [
+        {
+          "x": 144,
+          "y": 235,
+          "area": 108
+        },
+        {
+          "x": 560,
+          "y": 227,
+          "area": 139
+        }
+      ],
+      "buckets": 0,
+      "scorePixelsSHA256": "fd50a8d63081af1c0149031d9e07b34ae38db1a7aa4a04d158d1fdf192c97658"
+    }
+  ],
+  "controller": {
+    "scoredPixelsChanged": true,
+    "gameoverBucketObservation": true,
+    "transition": 35.577603099999976
+  },
+  "runtimeSource": "72e7a30d6e36df896eb25007b6139d750e715720",
+  "buildSource": "30a2c3fb1b5c2bfa8a6b001d7394d5cf50df295d",
+  "wasmSHA256": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c",
+  "captures": [
+    {
+      "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/scored.png",
+      "bytes": 300035,
+      "sha256": "dc53fc32305498f0da9ed17a2641192cc621d879e45bb7b1606e825857347533"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/feedback.png",
+      "bytes": 283037,
+      "sha256": "b77f0d510c4101ba10c41d1d28f0b767c257e1f38b09c2958a4e2c7c426ae29d"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/gameover.png",
+      "bytes": 283037,
+      "sha256": "b77f0d510c4101ba10c41d1d28f0b767c257e1f38b09c2958a4e2c7c426ae29d"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/title.png",
+      "bytes": 169523,
+      "sha256": "0b251ad5c9b05bff3422f4e5571714ae388408cf54da752cb12a2d7c01932449"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/exit-selected.png",
+      "bytes": 166954,
+      "sha256": "6e31e75a9d6c6d9079c99b8e25caf1a233507293559b440c097ca5c54d2ae200"
+    },
+    {
+      "path": "/home/user/madbomber-runtime/capture-adaptive-oct30/newgame.png",
+      "bytes": 297796,
+      "sha256": "81a242b0c323b2f2832d29f50b8c2d719db095b2867dc8c747e82ea635d50256"
+    }
+  ],
+  "allocation": {
+    "MemAvailable": 7319920640,
+    "allocated": 30760960
+  },
+  "scope": "one production invocation; visual gates require inspection"
+}

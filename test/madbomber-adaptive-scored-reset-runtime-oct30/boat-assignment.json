@@ -1,0 +1,12 @@
+{
+  "id": "bx_jqep6r45",
+  "createdAt": "2026-10-30T08:29:06.160Z",
+  "creationTimeSource": "native createdAt",
+  "expiry": "2026-10-30T08:59:06.178Z",
+  "ttlSeconds": 1800,
+  "guestCutoff": "2026-10-30T08:49:06.160000+00:00",
+  "handback": "2026-10-30T08:52:06.160000+00:00",
+  "shutdown": "2026-10-30T08:54:06.160000+00:00",
+  "shutdownOwner": "this worker explicitly delegated preserve snapshot-stop actual stopped and completed post-run snapshot verification on every path",
+  "preflightSHA256": "5e26525b4a9cb0bc8feb642e183b25ef389ff5571a0b0a7ab7e8f05d7ae87ed6"
+}
