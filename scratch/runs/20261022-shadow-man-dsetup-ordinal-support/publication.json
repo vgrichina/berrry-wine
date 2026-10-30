@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-10-22T20:40:41.734969+00:00",
+  "commit": "504f904510ffeedea6c9824c992788db30ea76d1",
+  "remote": "https://github.com/vgrichina/berrry-wine.git",
+  "verifiedRemoteRefs": {
+    "refs/heads/main": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+    "refs/heads/task/shadow-man-dsetup-ordinal-support-oct22": "504f904510ffeedea6c9824c992788db30ea76d1"
+  },
+  "pushExit": 0,
+  "committedEvidenceFilesVerified": 21,
+  "protectedGitMetadataUnchanged": true,
+  "verdict": "BLOCKED_UNQUALIFIED_VERSION_SOURCE",
+  "ownAllocated": 9814016,
+  "readOnlyNativeAllocated": 843776,
+  "reserve": 8388608,
+  "total": 19046400,
+  "cap": 67108864,
+  "receiptGrowthBudget": 1048576,
+  "hostFree": 7128125440,
+  "hostFloor": 2982150144,
+  "box": "bx_m4xrrj5a",
+  "boxState": "snapshot-stopped per coordinator board; not independently queried",
+  "boxStopTime": "2026-10-22T20:31:48.291Z",
+  "boxExpiryPreviously": "2026-10-22T21:52:45.530Z",
+  "runtimeOperations": 0
+}
