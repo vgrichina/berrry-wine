@@ -1,0 +1,1 @@
+{"argv":["/usr/bin/node","--max-old-space-size=128","tools/gen_dispatch.js","--check"],"cwd":"/tmp/tuxracer-glvertex2dv-independent-accept-oct29/repo","code":0,"stdout":"dispatch table OK: 09b2-dispatch-table.generated.wat matches api_table.json (4594 APIs).\n","stderr":"","peakGroupRSS":62750720,"parentRSS":19042304,"seconds":0.12695922679267824}
