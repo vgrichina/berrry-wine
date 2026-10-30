@@ -1,0 +1,20 @@
+{
+  "finalCommit": "24a1af2160475ed56c3b264c63cdbae79bfa2b37",
+  "coherentCommit": "87356f7fe61448276a1e3bb93a5e6e3d4cc5b461",
+  "branch": "task/shadow-man-child-window-runtime-oct22",
+  "actualRemoteSHA": "24a1af2160475ed56c3b264c63cdbae79bfa2b37",
+  "remoteURL": "https://github.com/vgrichina/berrry-wine.git",
+  "pushVerified": true,
+  "remoteMainSHA": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+  "protectedSealsUnchanged": true,
+  "checkoutClean": true,
+  "localAllocatedBytes": 21606400,
+  "localPlus4MiBGrowth8MiBReserve": 34189312,
+  "localCap": 67108864,
+  "hostFree": 7225372672,
+  "box": "bx_495585da",
+  "boxState": "RUNNING (API idle)",
+  "expiry": "2026-10-22T20:13:56.453Z",
+  "coordinatorOwnsShutdown": true,
+  "finishedAt": "2026-10-22T19:19:38.936734+00:00"
+}
