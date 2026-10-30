@@ -1,9 +1,0 @@
-PASS idle polls and unchanged parks preserve next legitimate attempt
-PASS unseen initial or intermediate park rejects and closes permanently
-PASS fault cap counters wrong API and wrong pending identity cannot emit
-PASS invalid batch failed start duplicate start and closed adapter cannot replay
-PASS actual generated sink persists newline framed independently parseable records
-PASS all three actual run boundaries isolate sink/readLive failure and preserve guest catches
-PASS disabled setup remains inert and main suspension omits both run and observation
-PASS exact transform restores original and rejects altered source and duplicate anchors
-{"groups":8,"modelSourceHostOnly":true,"nativeRuns":0,"guestRuns":0}

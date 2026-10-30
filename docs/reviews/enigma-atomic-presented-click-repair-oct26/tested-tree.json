@@ -1,7 +1,0 @@
-{
-  "parent": "90a65119543037f17f5db17a2ef00880fc659c30",
-  "sourceTree": "86a0d22de63ec23ba0a06cbf6261f32123ffa8f1",
-  "controllerSHA256": "f1ec14673324e6490285b91146463bb238017272d266ba0e3336cbf6618649c8",
-  "testSHA256": "73ec15ffba05a0acc2f41555d1b3006fb3edb9a02b40fa1d424d60d9ff6b6ede",
-  "remaining": "Only focused evidence additions; publish; independent acceptance/runtime"
-}
