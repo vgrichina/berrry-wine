@@ -1,4 +1,0 @@
-{"processId":23867,"stderrOffset":0,"stdoutOffset":0,"type":"attached"}
-{"data":"Verified exact candidate manifest 5623\npack\td5ffa684b46eb5a4b22b9192f85e6a2e61b53eb9\nv24.18.1\nf3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a  /usr/local/bin/node\nce4ce4f95eacaedff1b3e386f3ce3ae5d85bd16c\n\nadded 2 packages in 483ms\nwine-assembly@1.0.0 /home/user/timer-qualification\n├── pngjs@7.0.0\n└── wabt@1.0.39\n\n\u001b[3J","nextOffset":348,"type":"stdout"}
-{"data":"TERM environment variable not set.\n","nextOffset":35,"type":"stderr"}
-{"exitCode":0,"signal":null,"status":"exited","stderrOffset":35,"stdoutOffset":348,"type":"exit"}
