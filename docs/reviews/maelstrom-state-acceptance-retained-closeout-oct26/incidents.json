@@ -1,8 +1,0 @@
-{
-  "current": [
-    "First pwd and CLAUDE read lacked explicit per-child controls; next bootstrap reads bounded CPU/wall/file but did not yet use output supervisor. No retrospective compliance claimed.",
-    "Bootstrap prepare.py shell quoting SyntaxError before checkout; fixed by reusing donor setup with task identity override. No donor mutation.",
-    "First watcher outer timeout raced supervisor wall guard, session exited124; subsequent exact argv/cwd scan found no surviving owned tail. No process signalled."
-  ],
-  "historical": "Retained donor incidents unchanged; predecessor capacity exit no verdict; guessed sparse path setup error; batch36170 cause UNKNOWN."
-}

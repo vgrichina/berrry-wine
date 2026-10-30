@@ -1,9 +1,0 @@
-{
-  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
-  "mountArgv": [],
-  "intendedMountedFiles": [],
-  "mountValidation": "not applicable: no guest or mount execution authorized/planned",
-  "flatReceiptSHA256": "3ceddbedfe2b299d1a95878199a371ebf38dcdc912dfe7723d5f92a3835a106d",
-  "donorOwnObjectsFirst": true,
-  "flatViewReused": true
-}

@@ -1,4 +1,0 @@
-base test-toyvm-region-install-clock 0
-cand test-toyvm-region-install-clock 0
-cand test-toyvm-region-live 0
-base test-toyvm-region-live 0

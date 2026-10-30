@@ -1,2 +1,0 @@
-(include "00-regions.wat")
-(include "01-header.wat")
