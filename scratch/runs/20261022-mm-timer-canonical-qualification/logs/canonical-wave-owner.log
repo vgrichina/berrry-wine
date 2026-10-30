@@ -1,1 +1,0 @@
-{"result":"PASS","cases":3,"assertions":26,"moduleSha256":"f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7","moduleBytes":1878971,"node":"v24.18.1","coverage":"exact shipping module; real guest INC/RET20; normal parked wave return and stale root/epoch return rejection"}
