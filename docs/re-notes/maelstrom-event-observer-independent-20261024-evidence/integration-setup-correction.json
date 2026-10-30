@@ -1,4 +1,0 @@
-{
-  "failure": "git merge --no-commit rejected missing identity before changing tree",
-  "correction": "set isolated checkout identity from root configured Codex/codex@users.noreply.github.com; reuse successful immutable fetch receipt; do not rerun fetch"
-}

@@ -1,6 +1,0 @@
-{
-  "immutableReview": "2ff9d314807c517a2338233021ac75132dc7c949",
-  "originalSha256": "9109256868d2eb66ff936072b897220ca42f99577f25a885ff0dc51b554b9677",
-  "changes": "only pinned policy hash, repaired-boundary title and old defect expectation; all other assertions byte-exact",
-  "repairedSourceSha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7"
-}
