@@ -1,0 +1,26 @@
+{
+  "passAll": true,
+  "verdict": "BLOCKED_REQUIRED_RUNTIME_DATA",
+  "ownershipCorrection": "PASS",
+  "fullCommandGate": "FAIL; mandatory data missing",
+  "commandAttempts": 1,
+  "guestInstances": 0,
+  "basePathsPreserved": 8279,
+  "protectedMetadata": "UNCHANGED",
+  "ownedGroups": [],
+  "ownAllocated": 3899392,
+  "donors": {
+    "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22": 4964352,
+    "/home/user/wine-assembly-shadow-man-installed-game-bounded-launch-oct22": 1978368,
+    "/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22": 1925120,
+    "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22": 6086656,
+    "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22": 13983744
+  },
+  "wholeLocalIncludingReserveAndPublication": 48377856,
+  "cap": 67108864,
+  "hostFree": 6924288000,
+  "committedEvidenceFiles": 41,
+  "committedEvidenceMatches": true,
+  "actualRemoteSHA": "e3c39e5cf890795eb2f33a75f0e366d7ddc51064",
+  "mainUnchanged": true
+}

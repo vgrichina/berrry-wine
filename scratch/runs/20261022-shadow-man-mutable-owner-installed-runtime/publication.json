@@ -1,0 +1,15 @@
+{
+  "commit": "e3c39e5cf890795eb2f33a75f0e366d7ddc51064",
+  "branch": "task/shadow-man-mutable-owner-installed-runtime-oct22",
+  "canonicalRepository": "https://github.com/vgrichina/berrry-wine.git",
+  "actualRemoteRefs": {
+    "refs/heads/main": "58e90870a40a541a4083cae5e987ca8de31889e6",
+    "refs/heads/task/shadow-man-mutable-owner-installed-runtime-oct22": "e3c39e5cf890795eb2f33a75f0e366d7ddc51064"
+  },
+  "pushExit": 0,
+  "changedEvidenceFiles": 41,
+  "basePathsPreserved": 8279,
+  "mainMerged": false,
+  "commandAttempts": 1,
+  "guestInstances": 0
+}
