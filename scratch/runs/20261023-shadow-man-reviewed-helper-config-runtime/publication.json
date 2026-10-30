@@ -1,0 +1,10 @@
+{
+  "commit": "3e64d839d234a21fcfd11b7c0d1189e1715ce7ae",
+  "parent": "933c30951cddb30f048a311fe973662f645db15f",
+  "branch": "task/shadow-man-reviewed-helper-config-runtime-oct23",
+  "pushExit": 0,
+  "pushStdout": "",
+  "pushStderr": "remote: This repository moved. Please use the new location:        \nremote:   git@github.com:vgrichina/berrry-wine.git        \nTo github.com:vgrichina/wine-assembly.git\n   933c309..3e64d83  HEAD -> task/shadow-man-reviewed-helper-config-runtime-oct23\n",
+  "actualRemote": "3e64d839d234a21fcfd11b7c0d1189e1715ce7ae",
+  "independentRemoteVerified": true
+}
