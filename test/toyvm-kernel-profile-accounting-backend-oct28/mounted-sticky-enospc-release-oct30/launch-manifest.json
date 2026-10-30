@@ -1,0 +1,141 @@
+{
+  "task": "toyvm-mounted-sticky-enospc-release-runtime-oct30",
+  "selectedEvidenceUpperBytes": 196608,
+  "selectedEvidenceCap": 524288,
+  "uniqueArtifactAccounting": true,
+  "localCap": 67108864,
+  "workReserve": 8388608,
+  "publicationReserve": 8388608,
+  "remoteCap": 268435456,
+  "remotePublicationReserve": 8388608,
+  "timingMinutes": {
+    "cutoff": 20,
+    "retrieveBy": 22,
+    "handback": 23,
+    "stop": 25,
+    "expiry": 30
+  },
+  "transferPlan": {
+    "chunkBytesMax": 8000,
+    "envelopeBytesMax": 16384,
+    "payload": "tiny pinned Python only; actual API smoke after creation",
+    "evidenceUpperBytes": 196608
+  },
+  "noExistingBoatProvisioned": true,
+  "PASS": true,
+  "preflightCompleted": 1793355034.855164,
+  "preflightReceipt": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-mounted-sticky-enospc-release-runtime-oct30/evidence/preflight.json",
+  "expectedProductionStop": "sticky failure returned by adapter owned_check; SIGTERM expected before requested release/retry stable windows",
+  "plannedArtifacts": [
+    "raw-runtime.json",
+    "oracle.json",
+    "source-pins.json",
+    "lifecycle-proof.json",
+    "mounted-result.json",
+    "fixture.py",
+    "observer.py",
+    "recovery-recipe.txt"
+  ],
+  "actualTransferSeconds": 0,
+  "actualTransferBytes": 0,
+  "actualTransferArtifacts": 0,
+  "actualProvisionSeconds": 20.097970874980092,
+  "outcome": "BLOCKED_BOAT_CREATE_HTTP525",
+  "createdBoatID": null,
+  "selectedArtifacts": {
+    "mounted-result.json": {
+      "bytes": 9899,
+      "sha256": "8d44ec04f03dab72bcfdc433eb622f652e777b700b8d121652ebc2b4ebb6579d"
+    },
+    "source-pins.json": {
+      "bytes": 8846,
+      "sha256": "ab4783e5fa859c615a2e303bab94601b850c986c2d4f38b75417fd225d4dceec"
+    },
+    "oracle.json": {
+      "bytes": 1122,
+      "sha256": "43894f9ceb1b7d920c5d28b6a3ce98a41e48e3e2c1666c07490130fadad01e27"
+    },
+    "preflight.json": {
+      "bytes": 9399,
+      "sha256": "b519e167d926a820c4552708091d25c3910f339b9a85e111ea866eeb1997fb4b"
+    },
+    "fixture-preflight.json": {
+      "bytes": 75,
+      "sha256": "e796b16cff7e4af6fe8afaf846255458e9c9cfb5517dfc8f419e0a35750da23a"
+    },
+    "recovery-recipe.txt": {
+      "bytes": 4002,
+      "sha256": "950c37d272b47499ce2a7a864a9562a0383b5fb27d39e830ccc5be5ba5ccb9f2"
+    },
+    "create-lifecycle-reconciliation.json": {
+      "bytes": 201,
+      "sha256": "9f354c18170288e2d9f7d1350720b8cda2ef43b5d17e546a085415cf7cc70baf"
+    },
+    "closed-output-preservation.json": {
+      "bytes": 12156,
+      "sha256": "65879a33fdfde9ef2e5a88a211cca0d2c378e1e939f48c6389c4e4cdd5da9235"
+    },
+    "initial-allocation-denial.json": {
+      "bytes": 147,
+      "sha256": "0140a46aee1d2b50668aaa815791203491be1ded6ba6295f64f0ec2edcb6496f"
+    },
+    "generated-file-control.json": {
+      "bytes": 7201,
+      "sha256": "c667beb0ab78ac97e55fd5b73183dfa83f2e59af45be43b0dcaed1fe39051b87"
+    },
+    "wrapper-child-compatibility.json": {
+      "bytes": 7167,
+      "sha256": "8c5ec52cc7baf73a6e02a50cea3330344d36e04a6c5d86bf4c7e9e06e2db2bc8"
+    },
+    "output-overflow-control.json": {
+      "bytes": 7025,
+      "sha256": "c843f57b51ec3d66e94a8fb0123ba7e18a8d9bce4ab531f6a045593cdc6d6e55"
+    },
+    "provision.json": {
+      "bytes": 7101,
+      "sha256": "c145c87dc775cb67de08d41ca6dc7c78745f98006d75b2a0472c1db141331227"
+    },
+    "provision.stdout": {
+      "bytes": 399,
+      "sha256": "9bb10dc19a2f7945573daa018425659434db642f453103c524ab6d5c858af137"
+    },
+    "runtime-error.json": {
+      "bytes": 1333,
+      "sha256": "ee842edbcc33a557abb86b46a72b69c2763d277d8318c2bc681404abc3d5cbea"
+    },
+    "fixture.py": {
+      "bytes": 1803,
+      "sha256": "9d2491fc1c5294fb505e98d0bf21b34d0bc1fd9722296186932df420f562992d"
+    },
+    "observer.py": {
+      "bytes": 4980,
+      "sha256": "f32bfa9281de733517cd98e6daaa800a418cc6e1da3ba29c791620aa1566ad27"
+    },
+    "recipes/runtime.py": {
+      "bytes": 9133,
+      "sha256": "3a45ac7ba466f8fedf7c447c2a49108ed6e72fb3204770fedbf24f48ae6fe068"
+    },
+    "recipes/supervisor.py": {
+      "bytes": 6639,
+      "sha256": "dd213b820d32b2e0be9d2d3bbc1f36d2902ecbbbdb0cf67c46a7d29ddaa2aee3"
+    },
+    "recipes/watchdog.py": {
+      "bytes": 1050,
+      "sha256": "a9efd4de385797b4cf29226c59a7063287999708d3ef798b5a2685978b7b0fcb"
+    },
+    "recipes/prepare.py": {
+      "bytes": 7036,
+      "sha256": "f963f237abe515ee7b7aad6f286d389ee4876059d21f53be3040ba43ca53daee"
+    },
+    "recipes/objects.py": {
+      "bytes": 3022,
+      "sha256": "194b7b9f0a032a010873a67570cdd6f425733e7dd2726d0b25ab6f8127f4edcc"
+    },
+    "recipes/packed_reader.py": {
+      "bytes": 3667,
+      "sha256": "02e937c340496709329933ede3514b6693eb2e6a2e009a3a110e16805e37ccb1"
+    }
+  },
+  "selectedEvidenceActualBytes": 113403,
+  "deadlineStarted": false
+}

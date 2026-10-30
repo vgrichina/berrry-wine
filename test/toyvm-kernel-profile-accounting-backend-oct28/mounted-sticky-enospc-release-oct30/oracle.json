@@ -1,0 +1,28 @@
+{
+  "kind": "SOURCE_PREDICTIONS_ONLY",
+  "source": "b6cdf927cda965d1f2ee7cde447e38c9f79a9342",
+  "quotas": {
+    "live": 20480,
+    "write": 65536,
+    "perfile": 16384
+  },
+  "arithmetic": {
+    "before": 20480,
+    "retained": 20480,
+    "growthAttempt": 4096,
+    "afterRejection": 20480,
+    "afterFinalOldClose": 12288,
+    "retryAdditionalAllocation": 0,
+    "writtenThroughout": 8192
+  },
+  "firstFailure": "filesystem allocation limit",
+  "WRITE": "rejects subsequent writes while failure set",
+  "READ": "remains possible",
+  "RELEASE": "still decrements opens and collects unlinked inode",
+  "productionBoundary": "Adapter owned_check returns sticky failure; supervisor sends SIGTERM on next check (~10ms loop). Stable post-rejection/release/retry windows may be unreachable in exact production CLI. Do not suppress termination or substitute runner.",
+  "CLIContract": {
+    "acceptedFalseExit": 1,
+    "reason": "qualify main returns 0 if accepted else1; accounting rejects filesystem.failure"
+  },
+  "callbackLimitations": "WRITE/RELEASE callbacks not instrumented; do not claim direct callback observations"
+}

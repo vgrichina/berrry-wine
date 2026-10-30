@@ -1,0 +1,226 @@
+[
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/callback-evidence/current-main-source-4.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/callback-evidence/current-main-source-4.stdout.closed-verified.gz",
+    "bytes": 23268,
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "closedFDVerified": true,
+    "saved": 16384
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/e/recovery-patch-recovered.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/e/recovery-patch-recovered.stdout.closed-verified.gz",
+    "bytes": 17509,
+    "sha256": "0bfba3d87d3b98e72752f1ab20035a84d3730b11c3b45536d46a143bd909b250",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/e/retrieve-runtime.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/e/retrieve-runtime.stdout.closed-verified.gz",
+    "bytes": 19021,
+    "sha256": "47e3318b3f42fbb0ed457bf40e197b33c7dd06b67c9af18b15978c549cbdf4b4",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/e/recovered-fetch.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/e/recovered-fetch.stdout.closed-verified.gz",
+    "bytes": 30864,
+    "sha256": "c2d47b3d74437b31f6b69d09cab3ebb688682fd1f410a53cfff0562f000224b7",
+    "closedFDVerified": true,
+    "saved": 20480
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/privacy-finish-evidence/exact-tree-5f2b9400ab959e7f874afb937205fda76f1d62d5.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/privacy-finish-evidence/exact-tree-5f2b9400ab959e7f874afb937205fda76f1d62d5.stdout.closed-verified.gz",
+    "bytes": 132714,
+    "sha256": "ba1c456959e71779329daed0d26ed05f6adf0cb5c8f7038ae39b1bcb173f447b",
+    "closedFDVerified": true,
+    "saved": 61440
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/setattr-compatible-fixture/exact-path-3.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/setattr-compatible-fixture/exact-path-3.stdout.closed-verified.gz",
+    "bytes": 21847,
+    "sha256": "93a43e636885a0b5bc1ebfb4d7ebcd0ee79ab286ece1d37f74d6f72e87cb604a",
+    "closedFDVerified": true,
+    "saved": 16384
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/accepted-source-0.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/accepted-source-0.stdout.closed-verified.gz",
+    "bytes": 16621,
+    "sha256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/v2-proposed-source-7.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/v2-proposed-source-7.stdout.closed-verified.gz",
+    "bytes": 16621,
+    "sha256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/scoped-compatibility.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/scoped-compatibility.stdout.closed-verified.gz",
+    "bytes": 21085,
+    "sha256": "56f3ba862672e52d6def70acd182dc91342fd749867ad94f3b485b2a83c15c78",
+    "closedFDVerified": true,
+    "saved": 16384
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/main-transitive-3.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/main-transitive-3.stdout.closed-verified.gz",
+    "bytes": 23268,
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "closedFDVerified": true,
+    "saved": 16384
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/final-exact-source-0.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/final-exact-source-0.stdout.closed-verified.gz",
+    "bytes": 16621,
+    "sha256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/v2-proposed-source-0.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/v2-proposed-source-0.stdout.closed-verified.gz",
+    "bytes": 16621,
+    "sha256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/output-overflow-control.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-integration-evidence/output-overflow-control.stdout.closed-verified.gz",
+    "bytes": 65536,
+    "sha256": "1f8745f0d2d1387ec1af2211a3cf417b2e9e885e853472649c1d979d0e9370e3",
+    "closedFDVerified": true,
+    "saved": 61440
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/independent-evidence/candidate-source-0.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/independent-evidence/candidate-source-0.stdout.closed-verified.gz",
+    "bytes": 16621,
+    "sha256": "d1c202bb1287000737ecc1eacd2795d1cc5a65c4ec142fc01103223b624fbe88",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/independent-evidence/output-overflow-control.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/independent-evidence/output-overflow-control.stdout.closed-verified.gz",
+    "bytes": 65536,
+    "sha256": "1f8745f0d2d1387ec1af2211a3cf417b2e9e885e853472649c1d979d0e9370e3",
+    "closedFDVerified": true,
+    "saved": 61440
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/independent-create-mkdir-mounted-evidence/published-path-3.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/independent-create-mkdir-mounted-evidence/published-path-3.stdout.closed-verified.gz",
+    "bytes": 17860,
+    "sha256": "ebcbdcd35db8cd25b3ca1f0042e8afb1c7dd34ec6d11a9b221eb7f7eb75d64d5",
+    "closedFDVerified": true,
+    "saved": 16384
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/independent-create-mkdir-mounted-evidence/output-overflow-control.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/independent-create-mkdir-mounted-evidence/output-overflow-control.stdout.closed-verified.gz",
+    "bytes": 65536,
+    "sha256": "1f8745f0d2d1387ec1af2211a3cf417b2e9e885e853472649c1d979d0e9370e3",
+    "closedFDVerified": true,
+    "saved": 61440
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-mounted-candidate-evidence/output-overflow-control.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/namespace-mounted-candidate-evidence/output-overflow-control.stdout.closed-verified.gz",
+    "bytes": 65536,
+    "sha256": "1f8745f0d2d1387ec1af2211a3cf417b2e9e885e853472649c1d979d0e9370e3",
+    "closedFDVerified": true,
+    "saved": 61440
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/create-mkdir-callback-evidence/published-path-1.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/create-mkdir-callback-evidence/published-path-1.stdout.closed-verified.gz",
+    "bytes": 16643,
+    "sha256": "520ed81ea0b7b25303df603a362b43cd8ad934c33bf4ae60337b311e0f1b52d4",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/create-mkdir-callback-evidence/overflow-control.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/create-mkdir-callback-evidence/overflow-control.stdout.closed-verified.gz",
+    "bytes": 65536,
+    "sha256": "1f8745f0d2d1387ec1af2211a3cf417b2e9e885e853472649c1d979d0e9370e3",
+    "closedFDVerified": true,
+    "saved": 61440
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/integrated-setattr-mounted/exact-path-3.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/integrated-setattr-mounted/exact-path-3.stdout.closed-verified.gz",
+    "bytes": 16076,
+    "sha256": "92547eb6ff92207b2e565ac03964f1f20791bdaa705e21c3e5ed4cec2c82ab6d",
+    "closedFDVerified": true,
+    "saved": 8192
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/accepted-cm-integration/exact-path-1.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/accepted-cm-integration/exact-path-1.stdout.closed-verified.gz",
+    "bytes": 16643,
+    "sha256": "520ed81ea0b7b25303df603a362b43cd8ad934c33bf4ae60337b311e0f1b52d4",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/accepted-cm-integration/overflow-control.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/accepted-cm-integration/overflow-control.stdout.closed-verified.gz",
+    "bytes": 65536,
+    "sha256": "1f8745f0d2d1387ec1af2211a3cf417b2e9e885e853472649c1d979d0e9370e3",
+    "closedFDVerified": true,
+    "saved": 61440
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-accepted-setattr-accounting-main-integration-oct30/evidence/review-production-diff.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-accepted-setattr-accounting-main-integration-oct30/evidence/review-production-diff.stdout.closed-verified.gz",
+    "bytes": 24485,
+    "sha256": "883c92ba8bdc87e28383f8ef5b5f4afe027ee5b95ed0c421334092cb7600638b",
+    "closedFDVerified": true,
+    "saved": 16384
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-setattr-accounting-mounted-continuation-oct30/evidence/capture-guards.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-setattr-accounting-mounted-continuation-oct30/evidence/capture-guards.stdout.closed-verified.gz",
+    "bytes": 18354,
+    "sha256": "dc5fe6415bc4d470eeb6f92b243ea44a4c52d2702e0597341bb5a8bfc38c7037",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-setattr-rejection-accounting-runtime-oct30/evidence/base-source-8.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-setattr-rejection-accounting-runtime-oct30/evidence/base-source-8.stdout.closed-verified.gz",
+    "bytes": 23268,
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "closedFDVerified": true,
+    "saved": 16384
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-setattr-rejection-accounting-runtime-oct30/evidence/base-source-2.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-setattr-rejection-accounting-runtime-oct30/evidence/base-source-2.stdout.closed-verified.gz",
+    "bytes": 16643,
+    "sha256": "520ed81ea0b7b25303df603a362b43cd8ad934c33bf4ae60337b311e0f1b52d4",
+    "closedFDVerified": true,
+    "saved": 12288
+  },
+  {
+    "path": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-setattr-rejection-accounting-runtime-oct30/evidence/output-overflow-control.stdout",
+    "archive": "/tmp/toyvm-mounted-create-mkdir-parent-guards-oct30/toyvm-setattr-rejection-accounting-runtime-oct30/evidence/output-overflow-control.stdout.closed-verified.gz",
+    "bytes": 65536,
+    "sha256": "1f8745f0d2d1387ec1af2211a3cf417b2e9e885e853472649c1d979d0e9370e3",
+    "closedFDVerified": true,
+    "saved": 61440
+  }
+]
