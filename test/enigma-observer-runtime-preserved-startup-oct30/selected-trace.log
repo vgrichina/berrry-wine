@@ -1,0 +1,40 @@
+[check_input] msg=0x101 wParam=0x9 lParam=0xc00f0001 packed=0x90101
+[check_input_hwnd] keyboard → focus 0x10001
+[input-dequeue-route] dequeueId=2 focusHwnd=0x10001 hwnd=0x10001 batch=89291 guestMs=17858200 clock=batch lastGuestTick=17857805
+[guest-poll] {"phase":"entry","entry":17315,"batch":91309,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[guest-poll] {"phase":"return","entry":17315,"result":0,"event":{"type":"key","hwnd":0,"wParam":9,"msg":257,"lParam":3222208513},"batch":91309,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[guest-poll] {"phase":"entry","entry":17316,"batch":91311,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[guest-poll] {"phase":"return","entry":17316,"result":0,"event":{"type":"key","hwnd":0,"wParam":9,"msg":257,"lParam":3222208513},"batch":91311,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[guest-poll] {"phase":"entry","entry":17317,"batch":91313,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[guest-poll] {"phase":"return","entry":17317,"result":0,"event":{"type":"key","hwnd":0,"wParam":9,"msg":257,"lParam":3222208513},"batch":91313,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[guest-poll] {"phase":"entry","entry":17318,"batch":91315,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[guest-poll] {"phase":"return","entry":17318,"result":0,"event":{"type":"key","hwnd":0,"wParam":9,"msg":257,"lParam":3222208513},"batch":91315,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[input-schedule] scheduledBatch=91316 action=keydown correlation=unavailable batch=91316 guestMs=18263200 clock=batch lastGuestTick=18263001
+[input] keydown vk=38 at batch 91316
+[guest-poll] {"phase":"entry","entry":17319,"batch":91317,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":1,"rendererHead":{"type":"key","hwnd":0,"wParam":38,"asyncPressPublished":true,"msg":256,"lParam":21495809},"choice":"renderer"}
+[input-dequeue] dequeueId=3 source=renderer enqueueId=unavailable hwnd=0x0 msg=0x100 wParam=0x26 lParam=0x1480001 batch=91317 guestMs=18263400 clock=batch lastGuestTick=18263400
+[check_input] msg=0x100 wParam=0x26 lParam=0x1480001 packed=0x260100
+[guest-poll] {"phase":"return","entry":17319,"result":2490624,"event":{"type":"key","hwnd":0,"wParam":38,"asyncPressPublished":true,"msg":256,"lParam":21495809},"batch":91317,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[check_input_hwnd] keyboard → focus 0x10001
+[input-dequeue-route] dequeueId=3 focusHwnd=0x10001 hwnd=0x10001 batch=91317 guestMs=18263400 clock=batch lastGuestTick=18263400
+[guest-poll] {"phase":"entry","entry":17320,"batch":91317,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[guest-poll] {"phase":"return","entry":17320,"result":0,"event":{"type":"key","hwnd":0,"wParam":38,"asyncPressPublished":true,"msg":256,"lParam":21495809},"batch":91317,"pending":null,"crossThreadDepth":0,"buttonQueueDepth":0,"rendererDepth":0,"rendererHead":null,"choice":"renderer"}
+[input-schedule] scheduledBatch=91470 action=keyup correlation=unavailable batch=91470 guestMs=18294000 clock=batch lastGuestTick=18293400
+[input] keyup vk=38 at batch 91470
+[input-schedule] scheduledBatch=91680 action=keydown correlation=unavailable batch=91680 guestMs=18336000 clock=batch lastGuestTick=18335000
+[input] keydown vk=13 at batch 91680
+[input-schedule] scheduledBatch=91819 action=keyup correlation=unavailable batch=91819 guestMs=18363800 clock=batch lastGuestTick=18363000
+[input] keyup vk=13 at batch 91819
+[input-schedule] scheduledBatch=92559 action=mousemove correlation=unavailable batch=92559 guestMs=18511800 clock=batch lastGuestTick=18510800
+[input] mousemove 343,213 at batch 92559
+[input-route] down 343,213 candidates: 0x10001@20,20 646x507
+[input-route] down 343,213 -> child 0x10001 of 0x10001 dispatched=1
+[input-schedule] scheduledBatch=92594 action=mousedown correlation=unavailable batch=92594 guestMs=18518800 clock=batch lastGuestTick=18517800
+[input] mousedown 343,213 at batch 92594
+[input-route] up 343,213 enter: outside=0 directDown=0x10001 btnDrag=none resizing=0 dragging=0
+[input-route] up 343,213 -> native child 0x10001 (matching its DOWN)
+[input-schedule] scheduledBatch=92737 action=mouseup correlation=unavailable batch=92737 guestMs=18547400 clock=batch lastGuestTick=18546800
+[input] mouseup 343,213 at batch 92737
+[trace-api] on at batch 92756
+[message-boundary] {"kind":"post-handler-unqualified","sequence":2,"batch":92760,"correlation":"unknown","invocation":"unknown","successfulReturn":null,"msg":null,"eaxRaw":1,"esp":122680732,"eip":15523504,"thread":1,"yieldFlag":0,"yieldReason":0}
+[trace-api] paused at batch 92774

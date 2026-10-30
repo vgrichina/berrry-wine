@@ -1,0 +1,10 @@
+{
+  "id": "bx_dkb7b2mx",
+  "createdAt": "2026-10-30T10:59:37.722Z",
+  "createdEpoch": 1793357977.722,
+  "cutoff": 1793359177.722,
+  "handback": 1793359357.722,
+  "shutdownEpoch": 1793359477.722,
+  "expiryEpoch": 1793359777.722,
+  "shutdownOwner": "enigma-observer-runtime-preserved-startup-oct30"
+}

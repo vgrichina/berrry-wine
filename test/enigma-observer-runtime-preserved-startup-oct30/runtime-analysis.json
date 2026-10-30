@@ -1,0 +1,144 @@
+{
+  "PASS": true,
+  "gameExecutions": 1,
+  "productionReplayComplete": true,
+  "gameplayAccepted": false,
+  "mainMenuPersonallyInspected": true,
+  "pollsFlat": 17320,
+  "firstAfterUp": {
+    "available": true,
+    "scope": "main run sites; thread records at control boundary",
+    "batch": 91319,
+    "polls": 17320,
+    "entered": 347754,
+    "completed": 347754,
+    "main": {
+      "pc": 11590274,
+      "threadId": 1,
+      "apiCalls": 3790414,
+      "yieldFlag": 0,
+      "yieldReason": 0
+    },
+    "delta": {
+      "batch": 7,
+      "polls": 4,
+      "entered": 28,
+      "completed": 28
+    },
+    "evidence": "input-poll-progress",
+    "input": {
+      "batch": 91319,
+      "pending": null,
+      "crossThreadDepth": 0,
+      "buttonQueueDepth": 0,
+      "rendererDepth": 0,
+      "rendererHead": null,
+      "choice": "renderer"
+    },
+    "threads": [
+      {
+        "tid": 1,
+        "state": "active",
+        "suspendCount": 0,
+        "continuation": {
+          "pc": 24246757,
+          "threadId": 2,
+          "apiCalls": 209438,
+          "yieldFlag": 0,
+          "yieldReason": 0
+        }
+      }
+    ],
+    "threadRecordsTruncated": false,
+    "apiName": {
+      "available": false,
+      "reason": "no invocation-owned current API binding"
+    },
+    "schedulerStarvation": {
+      "available": false,
+      "reason": "dispatch absence alone cannot exclude host parking; no worker slice heartbeat"
+    },
+    "uninterruptedExecution": {
+      "available": false,
+      "reason": "control HTTP cannot sample a synchronous run in progress"
+    },
+    "continuation": "saved PC/yield only; no continuation callbacks invoked",
+    "runtimeQualified": false
+  },
+  "lastSample": {
+    "utc": "2026-10-30T11:01:03.806958+00:00",
+    "available": true,
+    "scope": "main run sites; thread records at control boundary",
+    "batch": 93430,
+    "polls": 17320,
+    "entered": 482198,
+    "completed": 482198,
+    "main": {
+      "pc": 15523552,
+      "threadId": 1,
+      "apiCalls": 3790793,
+      "yieldFlag": 0,
+      "yieldReason": 1
+    },
+    "delta": {
+      "batch": 333,
+      "polls": 0,
+      "entered": 21312,
+      "completed": 21312
+    },
+    "evidence": "yield-or-wait-observed",
+    "input": {
+      "batch": 93430,
+      "pending": null,
+      "crossThreadDepth": 0,
+      "buttonQueueDepth": 0,
+      "rendererDepth": 7,
+      "rendererHead": {
+        "type": "key",
+        "hwnd": 0,
+        "wParam": 38,
+        "msg": 257,
+        "lParam": 3242721281
+      },
+      "choice": "renderer"
+    },
+    "threads": [
+      {
+        "tid": 1,
+        "state": "active",
+        "suspendCount": 0,
+        "continuation": {
+          "pc": 24242069,
+          "threadId": 2,
+          "apiCalls": 210638,
+          "yieldFlag": 0,
+          "yieldReason": 0
+        }
+      }
+    ],
+    "threadRecordsTruncated": false,
+    "apiName": {
+      "available": false,
+      "reason": "no invocation-owned current API binding"
+    },
+    "schedulerStarvation": {
+      "available": false,
+      "reason": "dispatch absence alone cannot exclude host parking; no worker slice heartbeat"
+    },
+    "uninterruptedExecution": {
+      "available": false,
+      "reason": "control HTTP cannot sample a synchronous run in progress"
+    },
+    "continuation": "saved PC/yield only; no continuation callbacks invoked",
+    "runtimeQualified": false
+  },
+  "all47SamplesAvailable": true,
+  "mainSlicePairsBalanced": true,
+  "mainSlicesAfterUp": 134444,
+  "apiCallsAfterUp": 379,
+  "mediaBytes": 389913,
+  "identicalFrames": true,
+  "peakRSS": 378531840,
+  "exit": 0,
+  "reason": "bounded production completion"
+}

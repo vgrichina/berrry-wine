@@ -1,0 +1,9 @@
+{
+  "reviewedAt": "2026-10-30T11:04:01.145283+00:00",
+  "file": "main-menu.png",
+  "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+  "bytes": 389913,
+  "observed": "640x480 software-rendered Enigma - Main Menu window, Enigma logo and Start Game / Level Pack / Options / Credits / Quit buttons. No level or gameplay visible.",
+  "comparison": "Before, after-keyboard and final captures have identical SHA-256; one deduplicated image retained.",
+  "gameplayAccepted": false
+}
