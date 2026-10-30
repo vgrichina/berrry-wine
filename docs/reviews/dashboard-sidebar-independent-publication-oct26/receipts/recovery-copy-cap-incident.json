@@ -1,5 +1,0 @@
-{
-  "firstFailure": "bounded broad loose-store copy reached internal 6MiB cap before completion; assertion stopped it",
-  "resolution": "retain materialized own files, enumerate hashes, recover only specifically missing trees next",
-  "noResourceDenial": true
-}

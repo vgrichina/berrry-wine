@@ -1,4 +1,0 @@
-PASS test-toyvm-region-live: --region-jit-sep: 2 install(s) / 1 drop(s) and the side exit identical with no module swap; worker 2 install(s), values identical
-PASS test-toyvm-region-live: --region-jit + --tree-fold in one run: 1 region install(s) and 4 tree handler(s) in one table, bx/si/bp and frame identical to the interpreter
-PASS test-toyvm-region-live: side exit bp=177 bx=0x707f identical over 1 install(s), wav 5b1e14bbcc0fcb07, 0 dispatch(es) apart
-PASS test-toyvm-region-live: bx=0xd87c si=65236 identical interpreted and jitted; 2 install(s), 1 drop(s), region at 0x160, 34405852 dispatches vs 34405852 (0 apart)
