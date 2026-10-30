@@ -1,0 +1,18 @@
+{
+  "finalCommit": "2817b44582bc7198203b532584b0fa3259566943",
+  "coherentCommit": "5be6a3b9f2b4aa1e029b06f968138e6c8758efaf",
+  "branch": "task/shadow-man-worker-preload-retest-oct22",
+  "pushExit": 0,
+  "actualRemoteVerified": true,
+  "canonicalHttpsRefs": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9\trefs/heads/main\n2817b44582bc7198203b532584b0fa3259566943\trefs/heads/task/shadow-man-worker-preload-retest-oct22\n",
+  "protectedUnchanged": true,
+  "clean": true,
+  "localFinalAllocated": 10670080,
+  "launcherAllowance": 4194304,
+  "localReserve": 8388608,
+  "localCap": 67108864,
+  "hostFree": 7259418624,
+  "at": "2026-10-22T19:09:42.834834+00:00",
+  "boxLeftRunning": "bx_495585da",
+  "coordinatorOwnsShutdown": true
+}
