@@ -1,0 +1,28 @@
+{
+  "operation": {
+    "argv": [
+      "/home/user/.ascii/boat",
+      "--no-update",
+      "--json",
+      "exec",
+      "bx_jtdgbp9t",
+      "--cwd",
+      "/home/user/enigma-original",
+      "--timeout",
+      "50",
+      "--",
+      "/usr/bin/python3",
+      "-B",
+      "-c",
+      "import json,pathlib,collections\nx=json.loads(pathlib.Path('capture/runtime-evidence.json').read_text())\nv={'events':[{'index':i,'event':x['events'][i]} for i in [6,8,9,13,14,17]],'tracePrefixes':dict(collections.Counter(t.split(' ',1)[0] for t in x['traceSelected'])),'traceSamples':[{'index':i,'line':v[:500],'fullLength':len(v)} for i,v in enumerate(x['traceSelected']) if i<5 or any(t in v for t in ['returned','wndproc','SDL','check_input'])][:20]}\nprint(json.dumps(v,separators=(',',':'))[:10000])\n"
+    ],
+    "at": 1793352535.3081214,
+    "exit": 1,
+    "stdoutFile": "op-49404-002.stdout",
+    "stderrFile": "op-49404-002.stderr",
+    "wall": 0.1025518081150949
+  },
+  "response": "{\"code\":\"machine_not_running\",\"error\":\"Sandbox bx_jtdgbp9t is stopped. Run `boat resume bx_jtdgbp9t`, then retry.\",\"event\":\"error\",\"status\":409}\n",
+  "retry": false,
+  "secondBoat": false
+}

@@ -1,0 +1,19 @@
+{
+  "PASS": true,
+  "cwdRejects": [
+    "omitted",
+    "shared",
+    "donor"
+  ],
+  "pins": true,
+  "selectionOversizeRejected": true,
+  "selectionUniqueBeforeCap": true,
+  "mountConfiguration": "unchanged exact parent prelaunch receipt; no guest/mount subprocess authorized or invoked",
+  "mountReceiptSHA": "22560a2bc16dd6a367e79ed5d5f13d71a1322305e6ba82e82299a18ba8f97c05",
+  "wrapperReceiptSHA": "ad481c32324360e961b63521fb5f08aca837133992b60de33a8e41d2c43d9690",
+  "generatedFSIZE": 12582912,
+  "capture": 524288,
+  "gitDATA": 268435456,
+  "pythonDATA": 134217728,
+  "trustedGitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

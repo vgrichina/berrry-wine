@@ -1,0 +1,11 @@
+{
+  "id": "bx_jtdgbp9t",
+  "createdAt": "2026-10-30T09:28:37.455Z",
+  "createdEpoch": 1793352517.455,
+  "guestCutoff": 1793353717.455,
+  "handback": 1793353897.455,
+  "shutdownEpoch": 1793354017.455,
+  "expiry": "2026-10-30T09:58:37.404Z",
+  "shutdownOwner": "enigma-retained-input-capture-disposition-oct30",
+  "expirySource": "fork-response.sandbox.archiveAfter"
+}
