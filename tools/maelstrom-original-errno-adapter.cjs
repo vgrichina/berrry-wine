@@ -47,7 +47,8 @@ function decodeRejection(native, diagnostic, modeSwitch = null) {
     } else {
       const s = modeSwitch;
       if (s.rejectRequestedMode > 1 || s.rejectLatchedMode > 1 ||
-          s.rejectRequestedMode === s.rejectLatchedMode || s.rejectStatus < 1 ||
+          s.rejectRequestedMode === s.rejectLatchedMode ||
+          ((d.rejectModes >>> 2) & 1) !== s.rejectLatchedMode || s.rejectStatus < 1 ||
           s.rejectStatus > 3 || native.event !== s.rejectStatus - 1)
         throw Error('invalid native mode-switch diagnostic: guard context');
       switchContext = {requestedMode:s.rejectRequestedMode, latchedMode:s.rejectLatchedMode,
