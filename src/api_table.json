@@ -39070,5 +39070,12 @@
     "nargs": 2,
     "convention": "cdecl",
     "hash": 3371346902
+  },
+  {
+    "id": 4597,
+    "name": "remove",
+    "nargs": 1,
+    "convention": "cdecl",
+    "hash": 3683784189
   }
 ]
