@@ -1,0 +1,65 @@
+{
+  "candidate": "d9423bef0804604f94f5c8f6ba01656328f19a59",
+  "files": {
+    "CLAUDE.md": {
+      "bytes": 22221,
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8858,
+      "sha256": "ff757d0e57e12cbe4e0312d2cf824ed3ad489c3cc81672a112268f21a4dc937e"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 15060,
+      "sha256": "13bf42f071f5eb84542286f35faf2dc814aaf63bf1bcfe7bb306e3e2f7f4f963"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4535,
+      "sha256": "e7aaa8cdbbd0871918918de090b57585c8ed0ba21e7510583fabc745359c124e"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "test/toyvm-integrated-evidenced-mounted-rename-oct30/verify.py": {
+      "bytes": 3212,
+      "sha256": "65fcd987d2580baac601e6b5b3a3a74fe38ca2ac6733a37d1c09db3cafadff0e"
+    },
+    "test/toyvm-integrated-evidenced-mounted-rename-oct30/checkpoint.json": {
+      "bytes": 3661,
+      "sha256": "9a6f84ef467e030f836f4c486d2204970cce2539b5e77665fbdce27ac4e1bb59"
+    },
+    "test/toyvm-integrated-evidenced-mounted-rename-oct30/lifecycle.json": {
+      "bytes": 1671,
+      "sha256": "be80f5dae40fd8f891ddb960b0ae262b7ee495b1a4a4703d2aff780d29992574"
+    },
+    "test/toyvm-integrated-evidenced-mounted-rename-oct30/observer.py": {
+      "bytes": 5088,
+      "sha256": "c9482d5792e7b8fb871b3153bb7556f9ae32e30f8899eac76ab0c8792e6a78d9"
+    },
+    "test/toyvm-integrated-evidenced-mounted-rename-oct30/report.json": {
+      "bytes": 2523,
+      "sha256": "7cec3e8461944da2308952105993e285f1407c3427843bfd793ff6065daa6679"
+    },
+    "test/toyvm-integrated-evidenced-mounted-rename-oct30/fixture.py": {
+      "bytes": 2384,
+      "sha256": "04e874b452bcee38c2c634984b419557df05a164cec00c9faa6fa822b94344a7"
+    },
+    "test/toyvm-integrated-evidenced-mounted-rename-oct30/manifest.json": {
+      "bytes": 1337,
+      "sha256": "54a3f2d86f9d6fe213fa0a63a2eb64cd4862c3296aa8d6c4da73360b8ef7a947"
+    },
+    "test/toyvm-integrated-evidenced-mounted-rename-oct30/cancellation-receipt.json": {
+      "bytes": 12946,
+      "sha256": "543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870"
+    },
+    "test/toyvm-integrated-evidenced-mounted-rename-oct30/guards.json": {
+      "bytes": 8550,
+      "sha256": "c1befecbd65226c84159e6cc3cdc940cf75295fdcc98e102e4c95c2af75ac25b"
+    }
+  }
+}

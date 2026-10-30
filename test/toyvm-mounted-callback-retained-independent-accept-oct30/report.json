@@ -1,0 +1,61 @@
+{
+  "syscalls": 7,
+  "callbackCases": [
+    "valid-cross-parent"
+  ],
+  "kernelOnly": [
+    "file-to-dir",
+    "dir-to-file",
+    "absent-parent",
+    "nondirectory-parent",
+    "descendant-cycle",
+    "same-path"
+  ],
+  "destinationParent": 2,
+  "destinationParentEvidence": "payload tree, absent from callback fields",
+  "payloadSHA256": "c0360794562203e44371b12faa9ebb89e578ba7b0c5f85c7e269e2e0c35c231e",
+  "boat": {
+    "id": "bx_eyhtr684",
+    "state": "stopped",
+    "snapshotVerifiedAt": "2026-10-30T02:09:06.929Z",
+    "ttlSeconds": 1800
+  },
+  "decision": "ACCEPT_RETAINED_SCOPED_EVIDENCE",
+  "candidate": "d9423bef0804604f94f5c8f6ba01656328f19a59",
+  "controls": [
+    {
+      "name": "missing-callback",
+      "rejectedFor": "callback-cardinality"
+    },
+    {
+      "name": "duplicate-callback",
+      "rejectedFor": "callback-cardinality"
+    },
+    {
+      "name": "self-consistent-wrong-destination-tree",
+      "rejectedFor": "valid-tree"
+    },
+    {
+      "name": "source-pin-drift",
+      "rejectedFor": "manifest-source-pin"
+    },
+    {
+      "name": "observer-residual-process",
+      "rejectedFor": "observer-cleanup"
+    },
+    {
+      "name": "snapshot-incomplete",
+      "rejectedFor": "snapshot-stopped-lifecycle"
+    }
+  ],
+  "runtimeReplayed": false,
+  "productionMutated": false,
+  "boundary": "exact retained runner argv and unchanged fixture; pinned serializer AST and request header source",
+  "limitations": [
+    "No browser/gameplay acceptance",
+    "Six kernel-only cases have no backend callback coverage",
+    "Offline evidence consistency; no independent runtime observation or replay",
+    "Atomicity is retained before/after snapshot evidence, not concurrent visibility proof",
+    "Lifecycle is the retained API receipt, not a new live query"
+  ]
+}

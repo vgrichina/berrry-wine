@@ -1,0 +1,80 @@
+{
+  "cwd": "/tmp/toyvm-mounted-callback-retained-independent-accept-oct30/repo",
+  "command": [
+    "python3",
+    "-B",
+    "test/toyvm-mounted-callback-retained-independent-accept-oct30/oracle.py"
+  ],
+  "supervisor": "/tmp/toyvm-mounted-callback-retained-independent-accept-oct30/ops.py",
+  "executionReceipt": {
+    "argv": [
+      "python3",
+      "-B",
+      "test/toyvm-mounted-callback-retained-independent-accept-oct30/oracle.py"
+    ],
+    "cwd": "/tmp/toyvm-mounted-callback-retained-independent-accept-oct30/repo",
+    "exit": 0,
+    "elapsed": 0.04571887315250933,
+    "admission": {
+      "at": 1793326820.3316455,
+      "device": 1680253000807562931,
+      "f_bavail": 921880,
+      "blockSize": 4096,
+      "free": 3776020480,
+      "MemAvailable": 3527622656,
+      "allocated": 2904064,
+      "budget": 25165824,
+      "aggregate": {
+        "at": "2026-10-30T02:17:39.218499+00:00",
+        "owners": [
+          "madbomber-full-module-midi-dispatch-qualification-oct30",
+          "enigma-accepted-current-trace-main-integration-oct30",
+          "toyvm-mounted-callback-retained-independent-accept-oct30"
+        ],
+        "MemAvailable": 3714170880,
+        "memRequired": 3456106496,
+        "free": 3778011136,
+        "diskFreeBytes": 3778011136,
+        "futureGrowthIncludingUncertaintyBuffer": 268435456,
+        "requiredBytes": 3221225472,
+        "prospectiveClients": 402653184,
+        "publicationAndReceipt": 905969664,
+        "noDoubleCharge": true,
+        "startupSerialization": "launch one client at a time; remeasure before next launch",
+        "providerSignal": "Enigma successful final response02:11:37 follows ToyVM provider rejection02:09:56",
+        "PASS": true
+      },
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      },
+      "checks": {
+        "allocation": true,
+        "disk": true,
+        "forecast": true,
+        "memory": true
+      }
+    },
+    "stdoutBytes": 1792,
+    "stderrBytes": 0
+  },
+  "initialOracleImplementationError": "First offline oracle run selected AccountingFS instead of actual Backend class; corrected before passing run. Initial stderr retained in task root e/acceptance.stderr.",
+  "noNode": true,
+  "mountCheckpoint": "No checkout, new mount argv or runtime execution; retained dispatch argv and comma-bearing destination validated offline. No mount configuration is executed.",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-mounted-callback-retained-independent-accept-oct30/root-ref-digest.json",
+  "captureDenial": {
+    "operation": "git ls-files --stage -z",
+    "rawBytes": 1712233,
+    "sha256": "e61c650a609364c324ec03a33757e9c2830ba8d5acb59983be8ee131c0b38415",
+    "evidence": "../e/index.stdout.gz",
+    "firstDenialReceipt": "../first-denial.json",
+    "resolution": "lossless compression with roundtrip SHA256; replace full capture with bounded streaming; no unchanged retry"
+  }
+}
