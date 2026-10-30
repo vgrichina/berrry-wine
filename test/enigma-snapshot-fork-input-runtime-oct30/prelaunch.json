@@ -1,0 +1,71 @@
+{
+  "PASS": true,
+  "controls": {
+    "omitted": "REJECTED BEFORE SPAWN",
+    "shared": "REJECTED BEFORE SPAWN",
+    "donor": "REJECTED BEFORE SPAWN",
+    "sentinel": "/tmp/enigma-original-menu-render-runtime-oct30/enigma-snapshot-fork-input-runtime-oct30"
+  },
+  "parser": {
+    "manifestKeys": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "parsed": {
+      "tree": [
+        "/home/user/enigma-original/vfs"
+      ],
+      "mounts": [],
+      "dlls": [
+        "/home/user/enigma-original/system/msvcrt.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/zlib1.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/libpng12-0.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/SDL.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/SDL_image.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/SDL_mixer.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/libfreetype-6.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/SDL_ttf.dll"
+      ],
+      "exe": "/home/user/enigma-original/vfs/Enigma-1.01/enigma.exe"
+    },
+    "parserSHA": "46ef678e3bcd5a1d6c6d36e26d3adf5d0a5ea545978e5699635d12e58c989a97"
+  },
+  "mountEnumeration": {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/mount-enumeration.json",
+    "sha256": "0bd48892728dc8d28e02a2cafd6e4a6ae52bc7ff36cabe976bfccd5b8d44af3d",
+    "files": 2460,
+    "commaFiles": []
+  },
+  "reusedFileCaptureReceipt": {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/enigma-fresh-boat-efficient-transfer-runtime-oct30/preflight.json",
+    "sha256": "ad481c32324360e961b63521fb5f08aca837133992b60de33a8e41d2c43d9690"
+  },
+  "generatedFSIZE": 12582912,
+  "captureCeiling": 524288,
+  "aggregateCapture": 4194304,
+  "gitDATA": 268435456,
+  "pythonDATA": 134217728,
+  "NodeDATA": "inherited unrestricted; no Git cap",
+  "trustedGitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/enigma-snapshot-fork-input-runtime-oct30/root-ref-digest.json",
+  "inputs": {
+    "/tmp/enigma-original-menu-render-runtime-oct30/enigma-snapshot-fork-input-runtime-oct30/guest.py": {
+      "bytes": 6001,
+      "sha256": "1e2973db1926065b48686763f1953f3c4457ff8dad9d81ceff05056722b7b105"
+    },
+    "/tmp/enigma-original-menu-render-runtime-oct30/guest-poll-args.json": {
+      "bytes": 1287,
+      "sha256": "80194f366b579a2604eec56df0d1dd7ff4a633d731b6d4792688f1da8b85a9a0"
+    },
+    "/tmp/enigma-original-menu-render-runtime-oct30/guest-poll-instrument.py": {
+      "bytes": 2332,
+      "sha256": "566f219eec5c613b84a6ced637e26290631c5e60f063fe76b5928eb31bc3c347"
+    }
+  }
+}

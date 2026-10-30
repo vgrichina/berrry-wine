@@ -1,0 +1,10 @@
+{
+  "id": "bx_6j9h42np",
+  "createdAt": "2026-10-30T09:17:24.282Z",
+  "createdEpoch": 1793351844.282,
+  "guestCutoff": 1793353044.282,
+  "handback": 1793353224.282,
+  "shutdownEpoch": 1793353344.282,
+  "expiry": "2026-10-30T09:47:24.224Z",
+  "shutdownOwner": "enigma-snapshot-fork-input-runtime-oct30"
+}
