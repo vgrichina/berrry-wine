@@ -1,0 +1,5 @@
+{
+  "exit": 0,
+  "stdout": "{\"PASS\":true,\"productionBindingOrder\":true,\"oldOverwrittenHookRejected\":true,\"missingWorkerBindingRejected\":true,\"firstRingFrozen\":true,\"returnValuesPreserved\":true}\n",
+  "stderr": ""
+}
