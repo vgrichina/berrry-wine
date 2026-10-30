@@ -1,0 +1,19 @@
+{
+  "task": "toyvm-unlink-rmdir-dispatch-pinned-accept-oct29",
+  "outcome": "STOPPED_FIRST_PREFLIGHT_REJECTION",
+  "candidate": "6e1ab35cf3e865cb00d8dd9f7c27e082835b17ae",
+  "reason": "Worker-authored prepare.py line 3 used HERE.parents[2].parent, resolving ROOT to /tmp rather than the assigned task directory. Reading /tmp/prelaunch-controls.json raised FileNotFoundError. No retry or repair performed under the first-rejection stop instruction.",
+  "supervisor": "Direct shell invocation of ops.py; inherited DATA [-1,-1], parent DATA [134217728,-1], Python child hard128. Supervisor completed with exit 1; no resource denial observed.",
+  "evidence": "/tmp/toyvm-unlink-rmdir-dispatch-pinned-accept-oct29/e/pins.json",
+  "stderr": "/tmp/toyvm-unlink-rmdir-dispatch-pinned-accept-oct29/e/pins.stderr",
+  "sourcePins": "Five dispatch pins were read as expectations, but worker verification did not reach source comparison. Coordinator's prior source-pin verification is not claimed as independent worker verification.",
+  "originalRegression": "Read supported flags: --allow-backend-change is supported; --backend-sha256 is not. No regression copy or behavior execution occurred.",
+  "canonical": null,
+  "commit": null,
+  "remoteRef": null,
+  "publication": "Not attempted after rejection; no acceptance claim. This note and prepare.py remain uncommitted in assigned test directory; supervisor evidence remains separately retained.",
+  "production": "Unchanged; no Git, checkout, mount, Node, Boat, runtime, browser or gameplay operation issued.",
+  "box": null,
+  "remainingGates": ["correct bounded receipt-path verification in a newly authorized attempt", "independent five dispatch source pins", "byte-identical original 14-case Backend.handle gate", "independent adversarial removal tests and mutation controls", "caller pin update (qualify_accounted.py still pins OLD backend)", "combined rename integration", "full CLI", "mounted callback", "browser", "gameplay"],
+  "ownership": "No worker spawned; no coordinator board append; no unrelated files modified. Coordinator retains runtime lifecycle ownership."
+}
