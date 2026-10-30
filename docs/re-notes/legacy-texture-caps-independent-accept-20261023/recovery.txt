@@ -1,8 +1,0 @@
-Recovery requires fresh complete admission; do not run raw examples without guard.
-Private guard: /tmp/legacy-texture-caps-independent-accept-oct23/guard.py
-Checkout: /tmp/legacy-texture-operation-caps-oct23/repo
-Producer: TASK_CWD=<checkout> LEGACY_CAPS_RECEIPT=<new.json> python3 <guard> cheap node --max-old-space-size=256 test/test-legacy-texture-operation-caps.js --negative-controls
-Independent: TASK_CWD=<checkout> REVIEW_DIR=/tmp/legacy-texture-caps-independent-accept-oct23 python3 <guard> cheap node --max-old-space-size=256 <review>/independent-probe.js
-Rejecting reproduction (expected exit1): TASK_CWD=<checkout> REPRO_RECEIPT=<new.json> python3 <guard> cheap node --max-old-space-size=256 <review>/argument-reproducer.js
-Exact baseline additionally sets LEGACY_CAPS_CORE=<review>/baseline-core.wat; recreate that immutable input with git show 5406777ecbcef9cf9b03b40d592d722bb0086de0:src/09ab-handlers-d3dim-core.wat through a fresh guarded recovery command if absent. No old accounting resets.
-The Git branch contains report/evidence only above candidate547460d4, not an accepted main integration. Original native qualification artifacts are unrelated and must remain untouched.

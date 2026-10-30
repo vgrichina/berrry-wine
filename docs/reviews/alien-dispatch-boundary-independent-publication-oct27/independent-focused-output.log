@@ -1,8 +1,0 @@
-test_atomic_receipt_and_failed_latch_keep_intent_without_wire_or_replay (__main__.Independent.test_atomic_receipt_and_failed_latch_keep_intent_without_wire_or_replay) ... ok
-test_default_off_never_constructs_transport_or_ledger (__main__.Independent.test_default_off_never_constructs_transport_or_ledger) ... ok
-test_independent_oracle_rejects_missing_final_guard (__main__.Independent.test_independent_oracle_rejects_missing_final_guard) ... ok
-
-----------------------------------------------------------------------
-Ran 3 tests in 0.121s
-
-OK

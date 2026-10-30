@@ -1,6 +1,0 @@
-{
-  "base": "5427a9e2e7d20984249cadcf67f1cb33cc9d85c0",
-  "method": "git mktree -z --missing preserves inherited thin Git references; only explicitly staged owned paths overlay exact base entries; git commit-tree with exact candidate parent; no fetch or deleted-file staging",
-  "reason": "git write-tree rejects inherited absent blob docs/re-notes/README.md 45b71ca3e1bbd663e413fa9932880d092c9a3900; materializing unrelated source/binaries is unnecessary",
-  "checks": "compare every flattened base entry against resulting tree; permit only render-helper.js and tools/test-tiers.js modifications and declared fixture/support/note/evidence additions"
-}
