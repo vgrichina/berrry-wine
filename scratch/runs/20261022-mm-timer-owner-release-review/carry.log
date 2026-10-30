@@ -1,7 +1,0 @@
-PASS audio saved carry: 29 compiled cases; nested frames, INC/DEC, MIDI/wave, wait restore, stack guards
-DETECTED drop-save
-DETECTED drop-restore
-DETECTED save-size
-DETECTED restore-size
-DETECTED wrong-slot
-DETECTED overwrite-shift
