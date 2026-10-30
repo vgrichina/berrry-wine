@@ -1,1 +1,0 @@
-{"baselineObjectLookup": {"exit": 128, "stderr": "fatal: git cat-file: could not get object info", "resolution": "bounded depth1 blobless fetch exact a370b362a via prescribed trustedSSH"}, "manifestSchema": {"error": "KeyError: target", "resolution": "honor manifest dest entries; all378 pins subsequently passed"}, "noPlatformDenialsThisTask": true}
