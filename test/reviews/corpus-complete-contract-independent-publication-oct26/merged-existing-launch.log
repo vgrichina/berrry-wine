@@ -1,3 +1,0 @@
-PASS actual runner launch arguments, missing media, distinct roots, directory validation
-PASS CPU-bound child hard deadline; timeout remains BLOCKED
-PASS conditional warning vs genuine crash/stuck/error/missing-DLL/exit/signal/timeout controls

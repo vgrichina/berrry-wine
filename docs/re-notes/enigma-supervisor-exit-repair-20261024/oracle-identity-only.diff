@@ -1,5 +1,0 @@
---- unchanged-independent.py
-+++ identity-only-repaired.py
-@@ -16 +16 @@
--evidence = repo / 'docs/re-notes/enigma-runner-repairs-independent-20261024'
-+evidence = repo / 'docs/re-notes/enigma-supervisor-exit-repair-20261024'
