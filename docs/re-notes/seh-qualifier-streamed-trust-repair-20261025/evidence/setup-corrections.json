@@ -1,8 +1,0 @@
-{
-  "beforeCheckout": true,
-  "issues": [
-    "Initial heredoc shell quoting syntax error; no script executed",
-    "Manifest schema was a list, not a dictionary; corrected local setup reader before checkout"
-  ],
-  "controls": "No resource/access gate denial or unchanged retry; original previous-worker blocker files verified and preserved"
-}

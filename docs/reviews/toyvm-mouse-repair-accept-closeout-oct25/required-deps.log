@@ -1,2 +1,0 @@
-PASS required font-loader closure, importer diagnostics, optional bare/computed dependencies
-REJECTED silent required-dependency omission

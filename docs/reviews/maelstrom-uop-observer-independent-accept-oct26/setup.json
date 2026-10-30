@@ -1,9 +1,0 @@
-{
-  "pass_": true,
-  "compiler": {
-    "path": "/tmp/maelstrom-uop-owned-native-observer-repair-oct26/repo/src/07e-uop-compiler.wat",
-    "sha256": "e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3",
-    "gitBlob": "edfb3a323b323917385b5eae92497796351dc868"
-  },
-  "rootReceipt": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-uop-observer-independent-accept-oct26/root-ref-digest.json"
-}
