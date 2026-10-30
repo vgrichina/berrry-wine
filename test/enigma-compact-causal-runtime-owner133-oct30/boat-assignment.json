@@ -1,0 +1,10 @@
+{
+  "id": "bx_uzcekkxr",
+  "nativeExpiry": "2026-10-30T06:45:51.862Z",
+  "createdEpoch": 1793340952.5581663,
+  "guestCutoffEpoch": 1793342151.862,
+  "handbackEpoch": 1793342331.862,
+  "shutdownEpoch": 1793342451.862,
+  "shutdownDelegated": true,
+  "owner": "owner133 worker; coordinator retains oversight"
+}

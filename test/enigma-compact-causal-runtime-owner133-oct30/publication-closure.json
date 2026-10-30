@@ -1,0 +1,47 @@
+{
+  "PASS": true,
+  "HEAD": "aa2b1ba260b62375ddddb5f7d8e0058bb9372325",
+  "indexEntries": 15011,
+  "treeEntries": 15653,
+  "objectsChecked": 14173,
+  "missing": [],
+  "indexSHA256": "b9e72e6a69cead1849f0ce819de0e2f673465f9502c388f630ce435d94e5b5d9",
+  "treeSHA256": "c001932eb2d96a02bf88aeb061fff36cfef11f5b4fc65fd17cc9d179762b3573",
+  "scope": "exact index/HEAD tree closure, no ancestry traversal, no new alternate stores",
+  "admission": {
+    "at": 1793341074.469455,
+    "MemAvailable": 3721293824,
+    "free": 3473477632,
+    "allocated": 33415168,
+    "remainingGrowth": 33693696,
+    "policy": {
+      "memoryFloor": 2147483648,
+      "diskFloor": 3221225472,
+      "initialEnvelope": 268435456,
+      "budget": 67108864,
+      "reserve": 8388608,
+      "owner": "owner133 causal Enigma",
+      "supplementalForecast": false
+    },
+    "parent": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "memory": true,
+      "disk": true,
+      "allocation": true,
+      "compact": true,
+      "images": true
+    },
+    "compactBytes": 341168,
+    "imageBytes": 389913
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "actualCollectedEvidenceVerifier": "PASS",
+  "evidenceVerifierOutput": {"PASS": true, "guestInvocations": 1, "buttonDequeueObserved": false, "returnedMSGQualified": false, "gameplayAccepted": false},
+  "canonicalParser": "PASS, actual retained production parser and unchanged filename-bearing argv",
+  "canonicalTreeCommaFixture": "PASS",
+  "streamingArchivePins": "PASS, 2663 files",
+  "accountingFixture": "PASS, raw placeholder charged and compact overflow rejected",
+  "cwdControls": "PASS, omitted/root/donor reject before spawn",
+  "localAndRemoteNodeStartup": "PASS",
+  "stagedWhitespace": "PASS",
+  "exactStagedIndexAndHeadTreeClosure": {"PASS": true, "objectsChecked": 14192, "missing": []},
+  "productionDefectProved": false,
+  "gameplayAccepted": false
+}

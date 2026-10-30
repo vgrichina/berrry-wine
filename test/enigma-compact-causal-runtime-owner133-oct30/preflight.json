@@ -1,0 +1,117 @@
+{
+  "PASS": true,
+  "archive": {
+    "sha256": "43dcac837bfe6b2eaa1c3aa4c2a3a63ea42ffeed54f1128ef192c2cbd5e757c3",
+    "bytes": 17282066,
+    "parts": [
+      "archive-000",
+      "archive-001",
+      "archive-002",
+      "archive-003",
+      "archive-004",
+      "archive-005",
+      "archive-006",
+      "archive-007",
+      "archive-008",
+      "archive-009",
+      "archive-010",
+      "archive-011",
+      "archive-012",
+      "archive-013",
+      "archive-014",
+      "archive-015",
+      "archive-016"
+    ],
+    "rows": 2663,
+    "chunkRawMax": 49152,
+    "staging": "all rows materialized and verified before bounded split recovery archive"
+  },
+  "rowsChecked": 2663,
+  "mount": {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/mount-enumeration.json",
+    "sha256": "0bd48892728dc8d28e02a2cafd6e4a6ae52bc7ff36cabe976bfccd5b8d44af3d",
+    "files": 2460,
+    "commaCount": 0,
+    "commaSample": []
+  },
+  "manifest": {
+    "path": "/tmp/enigma-original-menu-render-runtime-oct30/transfer-manifest.json",
+    "sha256": "39611681bbda249790b1b567780894515ec800b80732dc4fd372af5b563fd10d"
+  },
+  "runnerSHA256": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+  "argv": [
+    "--no-build",
+    "--exe=/home/user/enigma-original/vfs/Enigma-1.01/enigma.exe",
+    "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+    "--cwd=C:\\Enigma-1.01",
+    "--dlls=/home/user/enigma-original/system/msvcrt.dll,/home/user/enigma-original/vfs/Enigma-1.01/zlib1.dll,/home/user/enigma-original/vfs/Enigma-1.01/libpng12-0.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL_image.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL_mixer.dll,/home/user/enigma-original/vfs/Enigma-1.01/libfreetype-6.dll,/home/user/enigma-original/vfs/Enigma-1.01/SDL_ttf.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/home/user/enigma-original/vfs",
+    "--max-batches=10000000",
+    "--quiet-fs",
+    "--control=18127",
+    "--trace-input",
+    "--wasm=/home/user/enigma-original/modules/wine-assembly.wasm",
+    "--max-seconds=108",
+    "--no-threads",
+    "--frozen",
+    "--png=/home/user/enigma-original/capture/final.png",
+    "--trace-ctrl",
+    "--trace-input-dispatch",
+    "--trace-message-boundary",
+    "--trace-api=PeekMessageA,GetMessageA,DispatchMessageA,GetCursorPos,GetKeyState,GetAsyncKeyState,WaitMessage,SDL_PollEvent",
+    "--trace-api-paused",
+    "--trace-api-dedup"
+  ],
+  "argvSHA256": "2d35f40a137d507affa7ea9683c5322e095a7056bd1268b46ef348e25fcb9c4d",
+  "module": {
+    "target": "modules/wine-assembly.wasm",
+    "bytes": 1880854,
+    "sha256": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b"
+  },
+  "traceDiagnosis": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/enigma-start-game-causal-repair-owner133-oct30/trace-reproducer-fixed.stdout"
+  },
+  "admission": {
+    "at": 1793340935.268999,
+    "MemAvailable": 4453818368,
+    "free": 3475603456,
+    "allocated": 32579584,
+    "remainingGrowth": 34529280,
+    "policy": {
+      "memoryFloor": 2147483648,
+      "diskFloor": 3221225472,
+      "initialEnvelope": 268435456,
+      "budget": 67108864,
+      "reserve": 8388608,
+      "owner": "owner133 causal Enigma",
+      "supplementalForecast": false
+    },
+    "parent": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "memory": true,
+      "disk": true,
+      "allocation": true,
+      "compact": true,
+      "images": true
+    },
+    "compactBytes": 13164,
+    "imageBytes": 0
+  },
+  "standingArchiveCounted": true,
+  "remainingGrowthIncludes": "raw launcher logs, transport ledger, PNG collection, Git publication; no duplicated archive"
+}
