@@ -10,6 +10,7 @@
   (global $API_ID_PeekMessageA i32 (i32.const 490))
   (global $API_ID_PeekMessageW i32 (i32.const 491))
   (global $API_ID__EH_prolog i32 (i32.const 743))
+  (global $API_ID_longjmp i32 (i32.const 4596))
   (global $API_ID_IDirectDraw_BASE i32 (i32.const 978))
   (global $API_ID_IAMMultiMediaStream_BASE i32 (i32.const 3219))
   (global $API_ID_IShellLinkA_BASE i32 (i32.const 3265))

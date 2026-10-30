@@ -166,7 +166,16 @@ const constants={reg_base:0x100,fs_base:0x200,thunk_guest_base:0x10000,THREAD_EN
  THREAD_BASE:0x20000,thread_alloc:0x20000,bp_addr:-1,SHARED_COUNTERS:0x400};
 const globalWat=[...globals].filter(g=>!defs.has(g)).map(g=>{
   const name=g.slice(1),type=name==='rsrc_api_pins'?'i64':'i32';
-  const value=name.startsWith('API_ID_')?(ids[name.slice(7)]??-999):constants[name]??0;
+  if (name.startsWith('API_ID_')) {
+    // Only the canonical generated declaration can supply a production API ID.
+    // Missing declarations must fail here rather than be invented by this fixture.
+    const declaration = sources['09b2-dispatch-table.generated'].match(
+      new RegExp('\\(global \\$' + name + ' i32 \\(i32.const ([0-9]+)\\)\\)'));
+    assert(declaration, `missing production global ${g}; run tools/gen_dispatch.js`);
+    assert.equal(Number(declaration[1]), ids[name.slice(7)], `${g} matches API table`);
+    return declaration[0] + ` (export "${name}" (global ${g}))`;
+  }
+  const value=constants[name]??0;
   return `(global ${g} (mut ${type}) (${type}.const ${value})) (export "${name}" (global ${g}))`;
 }).join('\n');
 const wat=globalWat+'\n'+stubs.join('\n')+'\n'+all;
