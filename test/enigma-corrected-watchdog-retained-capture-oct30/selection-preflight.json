@@ -1,0 +1,44 @@
+{
+  "existingRemoteManifest": [
+    {
+      "path": "stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "before.png",
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    },
+    {
+      "path": "stdout.log",
+      "bytes": 108060,
+      "sha256": "c96e68e088666bb64453f2fa86b527a23cee1ae08a8c45534a9ef243729b860b"
+    },
+    {
+      "path": "after-mouse.png",
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    },
+    {
+      "path": "runtime-evidence.json",
+      "bytes": 66561,
+      "sha256": "10c942183341bdfaf795fc4059e876f2879b9c303b3d531a740e0662c284b18d"
+    },
+    {
+      "path": "final.png",
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    }
+  ],
+  "selection": [
+    "final.png",
+    "diagnostic-summary.json"
+  ],
+  "PNGBytes": 389913,
+  "summaryMaximumBytes": 8192,
+  "totalUpperBound": 398105,
+  "ceiling": 400000,
+  "fullRawLogPreservedRemoteNotSelected": true,
+  "summaryRequirement": "Bounded truthful exact diagnostic fields selected from retained runtime-evidence.json; include full raw length/SHA and original keys/arrays with explicit truncation, no invented input consumption."
+}

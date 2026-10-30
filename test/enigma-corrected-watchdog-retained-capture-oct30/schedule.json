@@ -1,0 +1,10 @@
+{
+  "id": "bx_kawj2f2n",
+  "createdAt": "2026-10-30T09:40:43.413Z",
+  "createdEpoch": 1793353243.413,
+  "cutoff": 1793354443.413,
+  "handback": 1793354623.413,
+  "shutdownEpoch": 1793354743.413,
+  "expiry": null,
+  "shutdownOwner": "enigma-corrected-watchdog-retained-capture-oct30"
+}
