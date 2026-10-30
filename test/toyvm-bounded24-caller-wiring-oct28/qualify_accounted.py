@@ -11,9 +11,9 @@ import pathlib
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RECEIPT_SHA256 = '543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870'
 BACKEND_PINS = {
-    'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py': '032d0fd17c378a1f3db7605ec8ef3648a3b6ce06c07e1c4a15a2370f4a9e2484',
+    'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py': '1fb84be205955d79e3bbf12bbfb24159ddea1da1342848195d43630df852ac73',
     'toyvm-kernel-profile-accounting-backend-oct28/confine.py': '0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8',
-    'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py': 'ae6c1e2619a300edf97164ae208167d9f5e6fbf32fcb4685c365aa54685de1e4',
+    'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py': '4032587874347385afc94c3738959c85d738adf20467f5f6eec505dc26a27137',
     'toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py': '9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85',
 }
 BROWSER_ALLOWANCE = dict(cpuSeconds=35.353183, wallSeconds=101.495550694, captures=1)
@@ -103,12 +103,14 @@ def evaluate(result, limits):
                 cleanupComplete=cleanup, failures=failures, backendReceipt=retained)
 
 
-def qualify(*, domain, receipt, command, work, rename_evidence=0, namespace_evidence=0, setattr_evidence=0, **limits):
+def qualify(*, domain, receipt, command, work, rename_evidence=0, namespace_evidence=0, setattr_evidence=0, io_evidence=0, **limits):
     report = dict(accepted=False, browserAllowed=False, browserAllowanceRemaining=dict(BROWSER_ALLOWANCE),
                   childSucceeded=False, accountingAccepted=False, cleanupComplete=False)
     try:
         # Domain is an explicit caller contract, not a guess from executable names.
         # The unchanged tiny-fixture confinement policy remains mandatory beneath it.
+        if type(io_evidence) is not int or not 0 <= io_evidence <= 64:
+            raise ValueError('io evidence limit must be an integer from 0 to 64')
         if domain != 'tiny-fixture':
             raise ValueError('unqualified browser/domain: ' + domain)
         if type(setattr_evidence) is not int or not 0 <= setattr_evidence <= 64:
@@ -139,6 +141,8 @@ def qualify(*, domain, receipt, command, work, rename_evidence=0, namespace_evid
             evidence['namespace_evidence'] = namespace_evidence
         if setattr_evidence:
             evidence['setattr_evidence'] = setattr_evidence
+        if io_evidence:
+            evidence['io_evidence'] = io_evidence
         result = backend(list(command), work, backend='synchronous-fuse', **evidence, **limits)
         report.update(evaluate(result, limits))
     except Exception as error:
@@ -163,6 +167,8 @@ def main(argv=None):
                         help='retain at most this many CREATE/MKDIR/UNLINK/RMDIR callback records (0 disables)')
     parser.add_argument('--setattr-evidence', type=int, choices=range(65), default=0,
                         help='retain at most this many SETATTR callback/accounting records (0 disables)')
+    parser.add_argument('--io-evidence', type=int, choices=range(65), default=0,
+                        help='retain at most this many WRITE/RELEASE callback/accounting records (0 disables)')
     for name in MAX_LIMITS:
         parser.add_argument('--' + name.replace('_', '-'), required=True,
                             type=float if name in ('cpu_limit', 'wall_limit') else int)
