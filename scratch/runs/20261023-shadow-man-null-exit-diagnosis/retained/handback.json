@@ -1,0 +1,112 @@
+{
+  "allOriginalHashesVerified": true,
+  "stageEntriesVerified": 224,
+  "immutableClosureIncludingCtlReceipt": 217,
+  "immutableReadOnly": true,
+  "cloneCount": 1,
+  "cloneFiles": 2045,
+  "cloneUnchanged": true,
+  "registrySHA256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3",
+  "nativeSeals": {
+    "d3dconfigutility.exe": {
+      "bytes": 573440,
+      "sha256": "850c69cfa4a0d610072a67763d54179bc4cdc58875560ce5ede33bfa44d19fe0"
+    },
+    "mss32.dll": {
+      "bytes": 328704,
+      "sha256": "09e2dec3d1e996571fb2c95e5de393410d486f1728c86473b550282edd83588c"
+    },
+    "dsetup.dll": {
+      "bytes": 135680,
+      "sha256": "5112c736fa664cfd658c465fad781fe7ffd2753470cbcf7019b5a6ab08c4800f"
+    },
+    "shadowman.exe": {
+      "bytes": 1896448,
+      "sha256": "4b32868bb30a8ca089483203f8c2b637507f12de4f11f39bf45b1fa41d5f5772"
+    }
+  },
+  "guestAttempts": 1,
+  "configurationActions": 2,
+  "settingsWrites": 1,
+  "gameLaunches": 0,
+  "ownedNodeProcesses": [],
+  "ownedGroups": [],
+  "watchdogFixture": {
+    "reason": "external-monotonic-bound",
+    "observationError": null,
+    "elapsedSeconds": 1.2127524300003643,
+    "boundSeconds": 2,
+    "boundPassed": true,
+    "pgid": 43446,
+    "parentOsExit": -15,
+    "seen": [
+      {
+        "pid": 43446,
+        "state": "R",
+        "ppid": 43442,
+        "pgid": 43446,
+        "command": "node -e for(;;){} "
+      }
+    ],
+    "reapedDescendants": [],
+    "remaining": [],
+    "receiptOutsideGuestQuota": true
+  },
+  "settingsCaptureFixture": {
+    "exit": 1,
+    "stdout": "",
+    "stderr": "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/settings-observer.cjs:21\n   if(!/^c:\\\\/.test(x.path)||x.path.split('\\\\').includes('..'))throw Error('unsafe diagnostic guest path');\n                                                               ^\n\nError: unsafe diagnostic guest path\n    at globalThis.__shadowCapture (/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/settings-observer.cjs:21:70)\n    at [eval]:1:602\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:118:14\n    at [eval]-wrapper:6:24\n    at runScript (node:internal/process/execution:101:62)\n    at evalScript (node:internal/process/execution:133:3)\n    at node:internal/main/eval_string:51:3\n\nNode.js v20.20.2\n"
+  },
+  "fixedReceipts": {},
+  "allocation": {
+    "immutable": 206180352,
+    "fixed": 434176,
+    "tmpfsUsed": 297472000,
+    "tmpfsCap": 939524096,
+    "freeBytes": 48836108288
+  },
+  "acceptedDestinationReceiptUnchanged": true,
+  "box": "bx_fn7pn7yg",
+  "boxState": "RUNNING (API idle)",
+  "health": "ok",
+  "stop": null,
+  "expiry": "2026-10-23T03:46:00.580Z",
+  "coordinatorLifecycleOwner": true,
+  "coordinatorShutdown": "2026-10-23T03:10:00Z",
+  "handbackBefore": "2026-10-23T03:05:00Z",
+  "settings": {
+    "bytes": 50,
+    "sha256": "0407969d4bf39f2287f8d99bd37feac1212e6492f41038a817f77f39ef79d42d"
+  },
+  "actualPlayEnabled": true,
+  "reopenPersistence": "UNTESTED: first guest blocker on ordinary exit",
+  "actualPlayLaunch": "UNTESTED",
+  "session": {
+    "reason": "first-real-error",
+    "observationError": null,
+    "elapsedSeconds": 47.39587419500003,
+    "boundSeconds": 90,
+    "boundPassed": true,
+    "pgid": 54631,
+    "parentOsExit": -9,
+    "seen": [
+      {
+        "pid": 54631,
+        "state": "R",
+        "ppid": 54626,
+        "pgid": 54631,
+        "command": "node --require /home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/compile-guard.cjs --require /home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/game-observer.cjs --require /home/user/shadow-man-launcher-configuration-capture-oct23/fixed/settings-observer-repaired.cjs /home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/test/run.js --exe=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe --exe-guest-path=c:\\program files\\acclaim entertainment\\shadowman\\D3DConfigUtility.exe --vfs-tree=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs --cwd=c:\\program files\\acclaim entertainment\\shadowman --reg-import=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/registry.json --no-build --wasm=/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/build/wine-assembly.wasm --dll-seed=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll --spawn-processes --max-seconds=84 --max-batches=1000000000 --stuck-after=0 --no-close --quiet-api --quiet-blocks --real-ticks --pipe-child-args=--real-ticks --control=33901 --png=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-final.png --save-vfs=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs --reg-export=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-registry.json --trace-ctrl --trace-input --trace-api=ShowWindow,UpdateWindow,ExitProcess,InitCommonControls,DialogBoxParamA,EndDialog,CreateProcessA,LoadLibraryA,GetProcAddress,DirectDrawEnumerateA,DirectDrawCreate,StringFromGUID2,EnableWindow,RegCreateKeyExA,RegSetValueExA,WriteFile,CreateFileA,CloseHandle,WritePrivateProfileStringA "
+      }
+    ],
+    "reapedDescendants": [],
+    "remaining": [],
+    "receiptOutsideGuestQuota": true,
+    "firstFailure": {
+      "reason": "first-real-error",
+      "line": "[eip-zero] guest called through NULL at batch 2578996",
+      "seconds": 47.179891294999834
+    },
+    "peakTmpfsUsed": 186097664,
+    "guestExitObserved": false
+  }
+}

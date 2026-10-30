@@ -1,0 +1,21 @@
+{
+  "commit": "26dffaa0995cdf19d61ae30117729ca0588108b9",
+  "remoteSHA": "26dffaa0995cdf19d61ae30117729ca0588108b9",
+  "branch": "task/shadow-man-null-exit-diagnosis-oct23",
+  "unchangedBasePaths": 8306,
+  "ownedAddedPaths": 15,
+  "evidenceSealsVerified": 13,
+  "checks": {
+    "offlineEvidenceAndFrameControls": 0,
+    "sixRejectingControls": "PASS",
+    "exactRuntimeSourcePins": 9,
+    "cachedDiffCheck": 0,
+    "finalDiffCheck": 0,
+    "porcelainCommit": 1,
+    "reason": "Thin donor lacks unrelated apps/abe.md blob; no fetch. Reused unchanged parent subtrees and rebuilt only owned docs tree via mktree --missing/commit-tree. All 8306 baseline paths independently verified unchanged. Initial push before this correction carried base SHA only; corrected fast-forward push and two independent ls-remote checks match final commit."
+  },
+  "runtimeActions": 0,
+  "box": "bx_fn7pn7yg",
+  "boxState": "STOPPED per coordinator task receipt, not contacted",
+  "hostFree": 6691807232
+}
