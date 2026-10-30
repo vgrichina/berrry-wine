@@ -1,1 +1,0 @@
-Same stdout-open fault through repaired production main/runpy PASS; causal stderr retained, unavailable stdout explicit, no PID/child
