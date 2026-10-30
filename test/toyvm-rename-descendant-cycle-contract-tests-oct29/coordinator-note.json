@@ -1,0 +1,18 @@
+{
+  "task": "toyvm-rename-descendant-cycle-contract-tests-oct29",
+  "outcome": "Tests and diagnosis complete; publication blocked at first resource admission denial; worker stopped without retry",
+  "commit": "6273bc3af5e27c4363b2f8944d4ac0b17e0130bb",
+  "branch": "task/toyvm-rename-descendant-cycle-contract-tests-oct29",
+  "remoteBackup": "NOT VERIFIED: push subprocess never launched",
+  "publicationBlocker": "ops.py admission asserted MemAvailable >= 2147483648; assertion failed before spawning Git push. No waiver, cap change or retry.",
+  "lastPassingAdmissionMemAvailable": 2267873280,
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "productionChanged": false,
+  "canonicalCommand": "python3 -B test/toyvm-rename-descendant-cycle-contract-tests-oct29/contract.py --report test/toyvm-rename-descendant-cycle-contract-tests-oct29/baseline-results.json",
+  "results": {"exit": 1, "requiredFailures": 6, "validControlsPassed": 8, "oracleMutationsPassed": 16, "oracleOnlyExit": 0, "cachedWhitespaceExit": 0},
+  "defect": "Both op12 and zero-flag op45 allow moving directory into itself/direct child/deeper descendant. dest[new]=source.pop(old) lacks ancestor validation, removes root reachability and forms a cycle while retaining nodes and accounting.",
+  "evidence": ["README.md", "baseline-results.json", "/tmp/toyvm-rename-descendant-cycle-contract-tests-oct29/e/reproduce-unchanged.json", "/tmp/toyvm-rename-descendant-cycle-contract-tests-oct29/e/required-contract-final.json", "/tmp/toyvm-rename-descendant-cycle-contract-tests-oct29/e/final-pin-evidence-review.json", "/tmp/toyvm-rename-descendant-cycle-contract-tests-oct29/e/commit.json"],
+  "remainingGates": ["Coordinator publishes existing local commit after actual resource admission changes and verifies exact remote SHA", "Coordinator appends this outcome/commit/branch to shared append-only messageboard; worker has no shared-write ownership", "Source owner repairs cycle rejection serially; rerun unchanged contract with explicit repaired SHA, require 14 passes", "Mounted/kernel/gameplay behavior remains untested and outside scope"],
+  "noteStatus": "This handoff note is untracked; created after committed work when publication hit first actual blocker",
+  "runtime": {"box": null, "actions": "none", "lifecycleOwner": "coordinator"}
+}
