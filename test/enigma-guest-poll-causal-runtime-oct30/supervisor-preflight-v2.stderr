@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/enigma-original-menu-render-runtime-oct30/guest-poll-preflight.py", line 30, in <module>
-    a=g.admission();assert a['MemAvailable']>=4436865024,('predispatch full admission',a)
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: ('predispatch full admission', {'at': 1793343399.530513, 'free': 3492900864, 'MemAvailable': 4386586624, 'allocated': 37502976, 'aggregateRemaining': 200183808, 'memoryRequired': 4436865024, 'checks': {'memory': True, 'disk': True, 'allocation': True}})
