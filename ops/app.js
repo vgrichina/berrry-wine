@@ -40,6 +40,7 @@ const taskStates = [
   ['backlog', 'Backlog', 'Not scheduled yet', '○'],
   ['deferred', 'Deferred', 'Intentionally set aside', 'Ⅱ'],
   ['done', 'Done', 'Completed tasks; evidence remains available', '✓'],
+  ['duplicate', 'Duplicate', 'Duplicate records retained for provenance; not queued or completed work', '·'],
   ['unknown', 'Historical notes', 'No current task status recorded', '·'],
 ];
 const expandedTaskGroups = new Map();
@@ -253,10 +254,12 @@ function blockerRows(tasks) {
   }).join('') || empty('No matching blockers.');
 }
 function blockersView() {
-  const {blocked,approvals}=BlockerModel.blockerSummary(state);
+  const {blocked,approvals,counts,repeatedIds}=BlockerModel.blockerSummary(state);
   const relevant=blocked.filter(t=>matches(t)||blocked.some(c=>matches(c)&&blockerDependencies(c).some(d=>d.id===t.id)));
   const roots=BlockerModel.primaryRoots(state,relevant),{user,agent}=BlockerModel.split(state,roots);
-  return title('Blockers',`${approvals.length} live approval${approvals.length===1?'':'s'} · ${user.length} need${user.length===1?'s':''} your input · ${agent.length} agent-resolvable · ${relevant.length-roots.length} dependent task${relevant.length-roots.length===1?'':'s'}`) +
+  return title('Blockers',BlockerModel.countSummaryText(counts)) +
+    `<p class="source-note">${approvals.length} live approvals · ${user.length} need your input · ${agent.length} agent-resolvable · ${relevant.length-roots.length} dependent rows (filtered row classifications; not current eligibility).</p>`+
+    (repeatedIds.length?section('Repeated task IDs / recorded ambiguity')+BlockerModel.repeatedIdNotes(repeatedIds).map(note=>`<pre class="source-note">${escape(note)}</pre>`).join(''):'')+
     section('Needs your input')+(approvals.length?`<div class="blocker-list">${approvals.map(p=>`<article class="blocker panel blocker-action"><div class="blocker-heading"><strong>${escape(p.reason||'Command approval needed')}</strong>${badge('Live approval','warn')}</div><p class="sub">${escape(p.label)} · waiting ${age(p.firstSeenAt)} · checked against the live terminal</p><button data-approval="${escape(p.id)}">Review command →</button></article>`).join('')}</div>`:'<p class="sub">No live command approvals.</p>')+
     (user.length?`<div class="blocker-list">${blockerRows(user)}</div>`:'<p class="sub">No blocked task records a request for your input.</p>')+
     section('Agent-resolvable')+`<p class="source-note">Classified from recorded waitingOn, needs and dependencies (shared with Telegram /blockers); a task that records nothing stays with its owner.</p><div class="blocker-list">${blockerRows(agent)}</div>`;
@@ -266,7 +269,7 @@ function blockerDetail(id) {
   show('BLOCKER / ' + t.id, `<h1>${escape(t.title)}</h1><p>${escape(t.blocker || 'No blocker reason recorded.')}</p>${t.needs ? `<p><strong>Needs:</strong> ${escape(t.needs)}</p>` : ''}<p class="sub">Owner: ${escape(blockerOwner(t))} · Waiting on: ${escape(t.waitingOn || 'unspecified')}</p>${t.replyAllowed ? `<form id="blocker-reply" data-task-id="${escape(t.id)}"><label for="reply-text">Decision or help for the owner</label><textarea id="reply-text" required maxlength="2000" rows="4" placeholder="What changed, what to try, or which decision to follow…"></textarea><p class="source-note">Posts to the shared messageboard as dashboard-user. The owner must verify and update the task; posting does not unblock it.</p><button type="submit">Post reply to messageboard</button><p id="reply-status" role="status"></p></form>` : '<p class="notice">Add an explicit id: to this task in TODOS.md before posting a reply.</p>'}${section('Recent replies')}<div class="panel">${feedRows(t.replies || [])}</div><details class="blocker-source"><summary>Task source</summary><pre>${escape(t.body)}</pre></details>`);
 }
 function overview() {
-  const tasks = sortedTasks(state.tasks.filter(t => !['done', 'deferred', 'unknown'].includes(t.status) && matches(t)));
+  const tasks = sortedTasks(state.tasks.filter(t => !['done', 'deferred', 'duplicate', 'unknown'].includes(t.status) && matches(t)));
   return title('Operations console', 'Track the work. Inspect the evidence. Keep the agents in view.') +
     statusSummary()+
     `<div class="stats">${['active','ready','blocked','review'].map(status=>`<a class="stat" href="#tasks"><div class="sub">${escape(taskState(status)[1])}</div><div class="value task-label-${status}">${state.tasks.filter(t=>t.status===status).length}</div><div class="sub">From the task ledger</div></a>`).join('')}</div>` +
@@ -472,7 +475,9 @@ function render() {
   renderApprovals();
   renderChrome();
   $('#task-count').textContent = state.tasks.filter(t=>!['done','deferred','unknown'].includes(t.status)).length; $('#task-count').title='Open tasks; completed, deferred and historical records excluded'; $('#corpus-count').textContent = state.candidates.length; $('#dos-count').textContent = state.dosCorpus?.rows?.length || '';
-  $('#blocker-count').textContent = state.tasks.filter(t => t.status === 'blocked').length || '';
+  const blockerCounts = BlockerModel.countSummary(state);
+  $('#blocker-count').textContent = blockerCounts.rawBlockedRows ? `${blockerCounts.distinctBlockedTaskIds} distinct IDs${blockerCounts.anonymousBlockedRows ? ` + ${blockerCounts.anonymousBlockedRows} anonymous rows` : ''}` : '';
+  $('#blocker-count').title = BlockerModel.countSummaryText(blockerCounts);
   $('#updated').textContent = `Snapshot ${new Date(state.generatedAt).toLocaleTimeString()} · refresh every 5s`;
   const views = { home: homeView, games: gamesView, tasks: tasksBoard, agents: agentsGrouped, activity: activityView, more: moreView, overview, tasklist: tasksView, agentlist: agentsView, blockers: blockersView, corpus: corpusView, dos: dosView, release: desktopView, analytics: analyticsView };
   const classic = ['overview', 'tasklist', 'agentlist', 'blockers', 'corpus', 'dos', 'release', 'analytics'].includes(view);

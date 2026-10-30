@@ -4,6 +4,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const os = require('node:os');
 const crypto = require('node:crypto');
+const Module = require('node:module');
 const { createProcessObserver } = require('./processes');
 const { classifyCandidate } = require('./corpus-categories');
 const { inventory } = require('./corpus-inventory');
@@ -13,7 +14,10 @@ const { createActivityReader, boardEntry, linkCommits } = require('./activity');
 const { buildDosCorpus } = require('./dos-corpus');
 
 const MB = 1024 * 1024;
-const clip = (value, n = 220) => typeof value === 'string' ? value.replace(/\s+/g, ' ').slice(0, n) : '';
+// V8 slices can retain their entire transcript-sized parent. Copy only the
+// clipped UTF-16 code units, preserving even unmatched surrogates verbatim.
+const clip = (value, n = 220) => typeof value === 'string'
+  ? Buffer.from(value.replace(/\s+/g, ' ').slice(0, n), 'utf16le').toString('utf16le') : '';
 const number = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : null;
 const date = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value)) ? new Date(value).toISOString() : null;
 const inside = (root, file) => file === root || file.startsWith(root + path.sep);
@@ -47,7 +51,16 @@ async function readText(file, limit = 2 * MB) {
   try {
     const stat = await h.stat();
     if (stat.size > limit) throw new Error(`file exceeds ${limit / MB} MiB read limit`);
-    return await h.readFile('utf8');
+    // Reading to EOF after stat can allocate without limit when a writer keeps
+    // appending. Pin this read to the bounded size we actually checked.
+    const buffer = Buffer.alloc(stat.size);
+    let offset = 0;
+    while (offset < buffer.length) {
+      const { bytesRead } = await h.read(buffer, offset, buffer.length - offset, offset);
+      if (!bytesRead) break;
+      offset += bytesRead;
+    }
+    return buffer.subarray(0, offset).toString('utf8');
   } finally { await h.close(); }
 }
 
@@ -80,20 +93,22 @@ function goalOf(e, time) {
 async function scanGoal(file, end, stop) {
   const h = await fs.open(file, 'r');
   try {
-    let carry = '';
+    let carry = Buffer.alloc(0);
     while (end > stop) {
       const start = Math.max(stop, end - MB), buffer = Buffer.alloc(end - start);
       await h.read(buffer, 0, buffer.length, start);
-      let text = buffer.toString('utf8') + carry;
-      const first = start > 0 ? text.indexOf('\n') : -1;
-      carry = first >= 0 ? text.slice(0, first) : '';
-      if (first >= 0) text = text.slice(first + 1);
+      // Join record bytes before decoding: a byte window can split UTF-8.
+      const bytes = carry.length ? Buffer.concat([buffer, carry]) : buffer;
+      const first = start > 0 ? bytes.indexOf(10) : -1;
+      carry = first >= 0 ? Buffer.from(bytes.subarray(0, first)) : Buffer.alloc(0);
+      const text = bytes.subarray(first >= 0 ? first + 1 : 0).toString('utf8');
       const lines = text.split('\n');
       for (let i = lines.length - 1; i >= 0; i--) {
-        if (!lines[i].includes('"goal_status"') && !lines[i].includes('Goal set: ') && !lines[i].includes('Goal cleared')) continue;
+        if (!lines[i].includes('"goal_status"') && !/Goal (?:set: |cleared|removed)/i.test(lines[i])) continue;
         try { const e = JSON.parse(lines[i]); const goal = goalOf(e, date(e.timestamp)); if (goal !== undefined) return goal; } catch { /* partial line */ }
       }
-      if (carry.length > 16 * MB) carry = '';
+      // Preserve the existing UTF-16 length limit, with a cheap byte precheck.
+      if (carry.length > 16 * MB && carry.toString('utf8').length > 16 * MB) carry = Buffer.alloc(0);
       end = start;
     }
     return undefined;
@@ -131,7 +146,9 @@ function parseTasks(text, candidates = []) {
     const explicit = metadata(meta, 'status');
     const candidateIds = candidates.filter(c => new RegExp(`(^|[^a-zA-Z0-9_-])${c.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[^a-zA-Z0-9_-])`).test(body)).map(c => c.id);
     tasks.push({ id: metadata(meta, 'id') || `todo-${line}`, title: clip(title, 250), body: body.slice(0, 24000), line, endLine,
-      section, kind, status: ['backlog', 'ready', 'active', 'blocked', 'review', 'deferred', 'done'].includes(explicit) ? explicit : status,
+      // A duplicate is retained for provenance, not queued by its stale checkbox
+      // or counted as completed work (including dependency satisfaction).
+      section, kind, status: ['backlog', 'ready', 'active', 'blocked', 'review', 'deferred', 'done', 'duplicate'].includes(explicit) ? explicit : status,
       next: field(meta, 'next',2000), done: field(meta,'done',2000), notes:field(meta,'notes',4000), evidence:field(meta,'evidence',4000),
       explicitCandidates:field(meta,'candidate',4000).split(/[,\s]+/).filter(Boolean),
       dependencies:field(meta,'depends-on',4000).split(/[,\s]+/).filter(Boolean),
@@ -331,9 +348,13 @@ function createReader(options = {}) {
     for (const entry of discovery) {
       try {
         const stat = await fs.stat(entry.file);
-        const key = `${stat.size}:${stat.mtimeMs}`;
+        const identity = `${stat.dev}:${stat.ino}:${stat.birthtimeMs}`;
+        const key = `${identity}:${stat.size}:${stat.mtimeMs}:${stat.ctimeMs}`;
         let cached = sessionCache.get(entry.file);
         if (!cached || cached.key !== key) {
+          // A replacement or truncation is a new history, not an append. In
+          // particular, never inherit the former file's goal after rotation.
+          if (cached && (cached.identity !== identity || stat.size <= cached.goalSize)) cached = null;
           const { records, partial } = await logWindows(entry.file, stat.size);
           const session = parseSession(entry.provider, records, entry.file, partial, root);
           // In a windowed log the newest goal record may sit in the unread middle:
@@ -344,11 +365,14 @@ function createReader(options = {}) {
             const found = await scanGoal(entry.file, stat.size, Math.max(0, Math.min(before, stat.size) - MB));
             session.goal = found !== undefined ? found : cached?.session ? cached.session.goal : session.goal;
           }
-          cached = { key, session, goalSize: stat.size };
+          cached = { key, identity, session, goalSize: stat.size };
           sessionCache.set(entry.file, cached);
         }
         if (cached.session) result.push({ ...cached.session, logFile: entry.file });
-      } catch (e) { warnings.push(`${entry.provider}: could not read a session log (${e.code || e.message}).`); }
+      } catch (e) {
+        sessionCache.delete(entry.file);
+        warnings.push(`${entry.provider}: could not read a session log (${e.code || e.message}).`);
+      }
     }
     const seen = new Set();
     return result.sort((a, b) => (b.lastActivityAt || '').localeCompare(a.lastActivityAt || '')).filter(a => {
@@ -453,8 +477,30 @@ function createReader(options = {}) {
     try {
       const registryFile = await safeFile(inventoryRoot, 'lib/apps.js');
       if (registryFile) {
-        delete require.cache[require.resolve(registryFile)];
-        const registry = require(registryFile);
+        // A disposable parent keeps retired registries out of this long-lived
+        // reader's children. Use the native loader for cyclic partial exports,
+        // loaded flags, dependency caching and circular-warning cleanup.
+        // Read before changing global loader state; evaluation is synchronous.
+        const registrySource = await readText(registryFile);
+        const registryParent = new Module(registryFile);
+        const hadCached = Object.prototype.hasOwnProperty.call(require.cache, registryFile);
+        const cached = require.cache[registryFile];
+        const jsLoader = Module._extensions['.js'];
+        let registry;
+        try {
+          // Only this exact registry consumes the already bounded source.
+          // All dependencies retain their normal extension/path/cache behavior.
+          Module._extensions['.js'] = function(loaded, filename) {
+            return filename === registryFile
+              ? loaded._compile(registrySource, filename) : jsLoader.call(this, loaded, filename);
+          };
+          delete require.cache[registryFile];
+          registry = registryParent.require(registryFile);
+        } finally {
+          Module._extensions['.js'] = jsLoader;
+          if (hadCached) require.cache[registryFile] = cached;
+          else delete require.cache[registryFile];
+        }
         let assessments = [];
         try { assessments = JSON.parse(await readText(path.join(root, 'ops/corpus-status.json'), MB)).entries || []; }
         catch (e) { if (e.code !== 'ENOENT') warnings.push(`Registry associations: ${e.message}`); }

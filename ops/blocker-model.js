@@ -6,7 +6,7 @@
   'use strict';
 
   function dependencies(snapshot, task) {
-    return (snapshot.tasks || []).filter(other => other.id !== task.id && other.status === 'blocked' &&
+    return (snapshot.tasks || []).filter(other => hasId(other) && other !== task && other.id !== task.id && other.status === 'blocked' &&
       ((task.dependencies || []).includes(other.id) || (task.waitingOn || '').split(/[^a-zA-Z0-9_.-]+/).includes(other.id)));
   }
 
@@ -50,13 +50,57 @@
     return { user, agent };
   }
 
+  const hasId = task => task.id != null && String(task.id).trim() !== '';
+  // Identity is exact: do not trim IDs, merge anonymous rows, or select a
+  // preferred record. These counts describe evidence, not scheduling eligibility.
+  function countSummary(snapshot) {
+    const rows = (snapshot.tasks || []).filter(task => task.status === 'blocked');
+    const ids = new Set(rows.filter(hasId).map(task => task.id));
+    const anonymousBlockedRows = rows.filter(task => !hasId(task)).length;
+    return {
+      distinctBlockedTaskIds: ids.size,
+      rawBlockedRows: rows.length,
+      duplicateBlockedRows: rows.length - anonymousBlockedRows - ids.size,
+      anonymousBlockedRows,
+    };
+  }
+
+  function countSummaryText(counts) {
+    return `${counts.distinctBlockedTaskIds} distinct blocked task IDs · ${counts.rawBlockedRows} blocked rows · ${counts.duplicateBlockedRows} duplicate-ID blocked rows · ${counts.anonymousBlockedRows} anonymous blocked rows (counted separately)`;
+  }
+
+  // Include nonblocked records sharing a blocked ID: status disagreement must
+  // remain visible. Fields compared here affect identity, ownership or unblocking.
+  const evidenceFields = ['status', 'title', 'blocker', 'waitingOn', 'needs', 'next', 'owner', 'dependencies'];
+  function repeatedIds(snapshot) {
+    const groups = new Map();
+    for (const task of snapshot.tasks || []) {
+      if (!hasId(task)) continue;
+      if (!groups.has(task.id)) groups.set(task.id, []);
+      groups.get(task.id).push(task);
+    }
+    return [...groups].filter(([, rows]) => rows.length > 1 && rows.some(t => t.status === 'blocked'))
+      .map(([id, rows]) => ({id, rows, conflictingFields: evidenceFields.filter(field =>
+        new Set(rows.map(row => JSON.stringify(row[field] ?? null))).size > 1)}));
+  }
+
+  function repeatedIdNotes(groups) {
+    return groups.map(({id, rows, conflictingFields}) => {
+      const label = conflictingFields.length ? `AMBIGUOUS (${conflictingFields.join(', ')})` : 'repeated records';
+      const evidence = rows.map((row, index) => `Record ${index + 1}${row.line == null ? '' : ' / line ' + row.line}: ` +
+        evidenceFields.map(field => `${field}: ${JSON.stringify(row[field] ?? null)}`).join('; '));
+      return [`ID ${id}: ${rows.length} records — ${label}. All records retained; reconcile with owner before acting.`, ...evidence].join('\n');
+    });
+  }
+
   function blockerSummary(snapshot) {
     const blocked = order(snapshot, (snapshot.tasks || []).filter(task => task.status === 'blocked'));
     const roots = primaryRoots(snapshot, blocked);
     const approvals = (snapshot.approvals?.items || []).filter(item => !item.sent);
     const { user, agent } = split(snapshot, roots);
-    return { blocked, roots, dependentCount: blocked.length - roots.length, approvals, needsUser: user, agentResolvable: agent };
+    return { blocked, roots, dependentCount: blocked.length - roots.length, approvals, needsUser: user, agentResolvable: agent,
+      counts: countSummary(snapshot), repeatedIds: repeatedIds(snapshot) };
   }
 
-  return { actor, blockerSummary, dependencies, kind, order, primaryRoots, split };
+  return { actor, blockerSummary, countSummary, countSummaryText, repeatedIds, repeatedIdNotes, dependencies, kind, order, primaryRoots, split };
 });

@@ -40,8 +40,21 @@ async function readUnread(file,cursor=0){return (await readInbox(file)).filter(e
 function readUnreadSync(file,cursor=0){
   try{return parseLines(fs.readFileSync(file,'utf8')).filter(e=>e.id>cursor);}catch(e){if(e.code==='ENOENT')return [];throw e;}
 }
-const nudgeLine=n=>`[Telegram inbox] ${n} unread in ${INBOX} - read past your cursor`;
-const NUDGE_RE=/^\[Telegram inbox\] \d{1,9} unread in scratch\/telegram\/inbox\.jsonl - read past your cursor$/;
+// Opt-in migration boundary: earlier history keeps its legacy read-cursor
+// semantics. New messages remain pending until a durable delivery receipt exists.
+function readPendingSync(file,consumer){
+ const dir=path.dirname(file),cursor=readCursorSync(cursorPath(dir,consumer.agent));
+ if(!Number.isSafeInteger(consumer.deliveryRequiredAfter))return readUnreadSync(file,cursor);
+ const {receiptPath}=require('./telegram-delivery');
+ return readUnreadSync(file,consumer.deliveryRequiredAfter).filter(e=>{
+  try{
+   const r=JSON.parse(fs.readFileSync(receiptPath(dir,consumer.agent,e.id),'utf8'));
+   return !(r.consumer===consumer.agent&&r.inboxId===e.id&&r.status==='delivered'&&r.chunks?.length>0&&r.messageIds?.length===r.chunks.length&&r.messageIds.every(Number.isSafeInteger));
+  }catch{return true;}
+ });
+}
+const nudgeLine=(n,delivery=false)=>delivery?`[Telegram inbox] ${n} pending in ${INBOX} - check delivery receipts`:`[Telegram inbox] ${n} unread in ${INBOX} - read past your cursor`;
+const NUDGE_RE=/^\[Telegram inbox\] \d{1,9} (?:unread in scratch\/telegram\/inbox\.jsonl - read past your cursor|pending in scratch\/telegram\/inbox\.jsonl - check delivery receipts)$/;
 // Screen states that leave a consumer unable to pick up its inbox by itself.
 const stalledScreen=screen=>/Goal stalled|usage limit|limit reached|hit your (?:usage )?limit|rate limit/i.test(String(screen||'').slice(-4000));
 // Pure decision: unread entries older than staleMs, consumer at an empty prompt
@@ -58,7 +71,7 @@ function nudgeDecision({unread=[],terminal,consumer={},previous={},now=Date.now(
   if(terminal.promptOpen)return skip('draft or prompt open');
   if(!terminal.idle&&!terminal.stalled)return skip('consumer busy');
   if(previous.lastNudgeAt&&now-previous.lastNudgeAt<(config.cooldownMs??900000))return skip('cooldown');
-  return {send:true,message:nudgeLine(unread.length),goalResume:consumer.kind==='codex'&&!!terminal.stalled,
+  return {send:true,message:nudgeLine(unread.length,Number.isSafeInteger(consumer.deliveryRequiredAfter)),goalResume:consumer.kind==='codex'&&!!terminal.stalled,
     record:{...record,reason:terminal.stalled?'stalled consumer with unread inbox':'idle consumer with unread inbox'}};
 }
-module.exports={INBOX,cursorPath,appendInbox,readInbox,readUnread,readUnreadSync,readCursorSync,nudgeLine,NUDGE_RE,stalledScreen,nudgeDecision};
+module.exports={INBOX,cursorPath,appendInbox,readInbox,readUnread,readUnreadSync,readPendingSync,readCursorSync,nudgeLine,NUDGE_RE,stalledScreen,nudgeDecision};
