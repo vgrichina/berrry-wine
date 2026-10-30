@@ -1,0 +1,12 @@
+{
+  "finalCommit": "be6492988bc1d107482b919f6803c8cfd5a044ea",
+  "coherentCommit": "04561a2f631aaf954116121ac0451a425b75f93b",
+  "actualRemoteRefs": {
+    "refs/heads/main": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+    "refs/heads/task/shadow-man-tools-ready-child-runtime-oct22": "be6492988bc1d107482b919f6803c8cfd5a044ea"
+  },
+  "verifiedAt": "2026-10-22T18:29:18.216840+00:00",
+  "pushExit": 0,
+  "localFinalBytes": 15135476,
+  "wholeWith4MiBGrowth8MiBReserve": 27718388
+}
