@@ -1,0 +1,88 @@
+{
+  "candidate": "bacb4b61b85acf9aa148212a122dd024cd13295a",
+  "dispatchPin": {
+    "bytes": 3757,
+    "sha256": "81911f320f5261485025e9de79e8d7892cb109c56a1c65b224ae9c13163c933a"
+  },
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8858,
+      "sha256": "ff757d0e57e12cbe4e0312d2cf824ed3ad489c3cc81672a112268f21a4dc937e"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/test_accepted_rename_pin.py": {
+      "bytes": 10581,
+      "sha256": "eaafa20d16265cb6e7c69206acd9b5f4b8411e30cc1bfefc0e722fadfc6cef11"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/accepted-rename-pin.md": {
+      "bytes": 2815,
+      "sha256": "0ba7be4667a6fc9314e1ec33c255b84c437ba102a13c8577834405d898f0115b"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/test_rename_wire.py": {
+      "bytes": 13811,
+      "sha256": "1a43a9305f1b3d92957ef03c34caec6eb0990dc03f2f23c0d20f0ca53b9fa751"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/rename-evidence.md": {
+      "bytes": 3210,
+      "sha256": "b15581ce3ab29df68fe0bab0d220ae943d96e3bde96b36a352e95511ff01c8e1"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 15060,
+      "sha256": "13bf42f071f5eb84542286f35faf2dc814aaf63bf1bcfe7bb306e3e2f7f4f963"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4535,
+      "sha256": "e7aaa8cdbbd0871918918de090b57585c8ed0ba21e7510583fabc745359c124e"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "CLAUDE.md": {
+      "bytes": 22221,
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    "test/toyvm-rename-wire-independent-oct30.py": {
+      "bytes": 8112,
+      "sha256": "fc5928d383be5dcd3a60cafd57d35fe950bbdea1cc05c76021df5b9c7750bacc"
+    },
+    "test/toyvm-rename-wire-independent-oct30.md": {
+      "bytes": 4246,
+      "sha256": "63bcd763a44eb07a5ac3398ce0a5d829d8d5f4d346410c7410db0cec0d87ead6"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/test_rename_evidence_option.py": {
+      "bytes": 11247,
+      "sha256": "eedeb0ae81e43bd7195a171dcdfcfa8a0eba90b615f40afb798758b505abb919"
+    },
+    "test/toyvm-bounded24-caller-wiring-oct28/rename-evidence-option-report.json": {
+      "bytes": 5015,
+      "sha256": "011ac3ab9296825e241c4cc7b1acc0132f4c2a087120353f73a29e52e42b6bc7"
+    }
+  },
+  "canonicalReceiptPin": {
+    "bytes": 6153,
+    "sha256": "67c4a8a0a922f6d5960240c0aa506afc3a949581675edaecddf17fae9d6d4d06"
+  },
+  "controls": "unchanged ops.py + original-parent prelaunch receipt",
+  "node": "not used",
+  "mount": "not applicable: no runtime/mount argv",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-evidence-option-independent-accept-oct30/root-ref-digest.json",
+  "tests": 1,
+  "success": true,
+  "failures": 0,
+  "errors": 0,
+  "observations": [
+    {
+      "value": 3,
+      "cli": false,
+      "snapshotBytes": null,
+      "accepted": true,
+      "syntheticCallbacks": 80,
+      "actualAdapter": true,
+      "supervisorPin": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  ]
+}
