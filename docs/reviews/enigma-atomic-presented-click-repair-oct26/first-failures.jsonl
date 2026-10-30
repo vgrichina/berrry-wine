@@ -1,1 +1,0 @@
-{"argv": ["git", "-c", "gc.auto=0", "-c", "pack.threads=1", "-c", "pack.window=0", "-c", "pack.windowMemory=16m", "diff", "--cached", "--check"], "exit": 2, "stdout": "test/test-enigma-presented-menu-controller.cjs:113: trailing whitespace.\n+        \n", "stderr": ""}
