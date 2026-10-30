@@ -1,0 +1,9 @@
+{
+  "id": "bx_jvne7b63",
+  "createdEpoch": 1793350027.868866,
+  "expiry": "2026-10-30T09:17:06.851Z",
+  "cutoffEpoch": 1793351226.851,
+  "handbackEpoch": 1793351406.851,
+  "shutdownEpoch": 1793351526.851,
+  "shutdownDelegated": true
+}

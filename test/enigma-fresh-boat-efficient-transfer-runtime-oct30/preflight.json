@@ -1,0 +1,226 @@
+{
+  "PASS": true,
+  "at": "2026-10-30T08:47:06.462461+00:00",
+  "archiveSHA256": "43dcac837bfe6b2eaa1c3aa4c2a3a63ea42ffeed54f1128ef192c2cbd5e757c3",
+  "bytes": 17282066,
+  "parts": 17,
+  "parser": {
+    "manifestKeys": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "parsed": {
+      "tree": [
+        "/home/user/enigma-original/vfs"
+      ],
+      "mounts": [],
+      "dlls": [
+        "/home/user/enigma-original/system/msvcrt.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/zlib1.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/libpng12-0.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/SDL.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/SDL_image.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/SDL_mixer.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/libfreetype-6.dll",
+        "/home/user/enigma-original/vfs/Enigma-1.01/SDL_ttf.dll"
+      ],
+      "exe": "/home/user/enigma-original/vfs/Enigma-1.01/enigma.exe"
+    },
+    "parserSHA": "46ef678e3bcd5a1d6c6d36e26d3adf5d0a5ea545978e5699635d12e58c989a97"
+  },
+  "mountFiles": 2460,
+  "commaFiles": [],
+  "startup": {
+    "node": "/usr/bin/node",
+    "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              60                   60                   seconds   \nMax file size             12582912             12582912             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1048576              1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "heap": 587202560
+  },
+  "generatedFileCeiling": 12582912,
+  "captureCeiling": 524288,
+  "legitimate2MiBFilePassed": true,
+  "captureOverflowRejected": true,
+  "localPerChunkCPU": 0.00023874650999999996,
+  "forecast1055LocalCPU": 0.25187756804999994,
+  "CPU": 0.393638224,
+  "CPUCap": 60,
+  "guestSupervisionReserveCPU": 8,
+  "immutablePins": {
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-000": [
+      64769,
+      2778337,
+      1048576,
+      1793330579939022415,
+      1793330579939022415
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-001": [
+      64769,
+      2778338,
+      1048576,
+      1793330580021021752,
+      1793330580021021752
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-002": [
+      64769,
+      2778344,
+      1048576,
+      1793330580121020944,
+      1793330580121020944
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-003": [
+      64769,
+      2778347,
+      1048576,
+      1793330580540017560,
+      1793330580540017560
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-004": [
+      64769,
+      2778336,
+      1048576,
+      1793330580971014079,
+      1793330580971014079
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-005": [
+      64769,
+      2778356,
+      1048576,
+      1793330581066013312,
+      1793330581066013312
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-006": [
+      64769,
+      2778357,
+      1048576,
+      1793330581116012908,
+      1793330581116012908
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-007": [
+      64769,
+      2778358,
+      1048576,
+      1793330581184012360,
+      1793330581184012360
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-008": [
+      64769,
+      2778359,
+      1048576,
+      1793330581230011988,
+      1793330581230011988
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-009": [
+      64769,
+      2778360,
+      1048576,
+      1793330581273011642,
+      1793330581273011642
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-010": [
+      64769,
+      2778361,
+      1048576,
+      1793330581309011351,
+      1793330581309011351
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-011": [
+      64769,
+      2778362,
+      1048576,
+      1793330581560009326,
+      1793330581560009326
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-012": [
+      64769,
+      2778363,
+      1048576,
+      1793330581798007405,
+      1793330581798007405
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-013": [
+      64769,
+      2778364,
+      1048576,
+      1793330582192004227,
+      1793330582192004227
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-014": [
+      64769,
+      2778365,
+      1048576,
+      1793330582424002356,
+      1793330582424002356
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-015": [
+      64769,
+      2778366,
+      1048576,
+      1793330582625000736,
+      1793330582625000736
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive-016": [
+      64769,
+      2778367,
+      504850,
+      1793330582724999930,
+      1793330582724999930
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/archive.json": [
+      64769,
+      2778369,
+      486,
+      1793330582730999882,
+      1793330582730999882
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/transfer-manifest.json": [
+      64769,
+      2778368,
+      398137,
+      1793330582727999906,
+      1793330582727999906
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/mount-enumeration.json": [
+      64769,
+      2781151,
+      127845,
+      1793330452592113777,
+      1793330452592113777
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/guest-poll-args.json": [
+      64769,
+      2782379,
+      1287,
+      1793343298216639975,
+      1793343298216639975
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/owner-policy-guest.py": [
+      64769,
+      2782600,
+      5403,
+      1793343801178345185,
+      1793343801184345158
+    ],
+    "/tmp/enigma-original-menu-render-runtime-oct30/guest-poll-instrument.py": [
+      64769,
+      2782389,
+      2332,
+      1793343318762542101,
+      1793343318762542101
+    ]
+  },
+  "admission": {
+    "at": "2026-10-30T08:47:06.487254+00:00",
+    "allocated": 56287232,
+    "reserve": 8388608,
+    "free": 3257946112,
+    "aggregateRemaining": 267292672,
+    "MemAvailable": 3728039936,
+    "CPU": 0.418629906,
+    "RAMAdmission": false
+  }
+}

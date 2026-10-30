@@ -1,0 +1,9 @@
+{
+  "providedMain": "d6413ab42f6e0feac149e4fa312e159aac76b3f4",
+  "observedRemoteMain": "5457be008868798b51a7e0a33bf01e2cb5121d55",
+  "providedMainReadableInDeclaredStores": false,
+  "observedMainReadableInDeclaredStores": false,
+  "reportParent": "c0e99224ede470b3937dc2d038738566363f16d7",
+  "noFullTreeFetch": true,
+  "integrationInstruction": "Apply only new test/enigma-fresh-boat-efficient-transfer-runtime-oct30 report delta; no historical source/main merge"
+}

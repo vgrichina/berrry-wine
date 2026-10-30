@@ -1,0 +1,74 @@
+{
+  "transport-forecast.json": {
+    "bytes": 259,
+    "sha256": "64784d21ab213740fcb718ba6e66a6c669decd788b2affe4ef24c210a7ef5a7b"
+  },
+  "transfer-complete.json": {
+    "bytes": 216,
+    "sha256": "7fded2fed88883ab6a4e9e40acbc1eefd4f90578d80f024bce6819a2aaa5df20"
+  },
+  "closeout.json": {
+    "bytes": 3616,
+    "sha256": "f3d1e1690839a4645cdd3308a5e230a9d438bfa34ad60dd90960d4be415e515f"
+  },
+  "verifier-correction.json": {
+    "bytes": 790,
+    "sha256": "74fef1af68b98d5b678d66c44e3ab5cd681b73d7fa53d6677ac5898c0452ba4c"
+  },
+  "lossless-preservation.json": {
+    "bytes": 654,
+    "sha256": "c409f68941748e71ad518df97a0aac1482e18ce910866a3b203f015d11e1a0a1"
+  },
+  "watchdog.json": {
+    "bytes": 86,
+    "sha256": "29d10c57b36f060cf1676a056ab8ca9eb9632038d2ff91a4e998fc01ef6bd170"
+  },
+  "publication-base-availability.json": {
+    "bytes": 468,
+    "sha256": "9fb868ffcabb310140355568a1049718728210ee9a2a86256f45ecc3132ff68b"
+  },
+  "preflight.json": {
+    "bytes": 7163,
+    "sha256": "ad481c32324360e961b63521fb5f08aca837133992b60de33a8e41d2c43d9690"
+  },
+  "api-smoke.json": {
+    "bytes": 1376,
+    "sha256": "313cbdac7edfa0274638664d2595537aca1eb8da57588b296f33035011184df8"
+  },
+  "raw-evidence-references.json": {
+    "bytes": 246,
+    "sha256": "30401f889e7daa02d735cf57cf327812ce61ebb6edee2db93f17e5e188a87191"
+  },
+  "schedule.json": {
+    "bytes": 235,
+    "sha256": "2974d0c5f660529cd8818de7e65f1c608961e0772aaad064acc68824ea643ae6"
+  },
+  "observations.json": {
+    "bytes": 1598,
+    "sha256": "c16a440497c8068ffc7586381f16465da9bf31d6a31d4e251eec4f7c563b45b9"
+  },
+  "completion-receipt.json": {
+    "bytes": 10901,
+    "sha256": "c61aa7d8992568ad579fe64dc9aad7c7011689796af3a25bf01a0739349dfba8"
+  },
+  "efficient-runtime.executed.py": {
+    "bytes": 20037,
+    "sha256": "e5b3b91efa75afe846dd70eea474aca0f0bc5d80054b0dcd9934489e18ef7ec2"
+  },
+  "failure.json": {
+    "bytes": 2506,
+    "sha256": "4cc51f49c407255c5095ce806e67ece3f9612f00602ffc60aa726c8532f21e17"
+  },
+  "README.md": {
+    "bytes": 4161,
+    "sha256": "687a5740f0282619ec63e3230ea39601b12c4590ba0cbb0336db436492141c0e"
+  },
+  "guest.py": {
+    "bytes": 5697,
+    "sha256": "7703cd804c281bddf92bd8f59b963e007a4e9f8bb1606c55e08c311cad65858e"
+  },
+  "efficient-runtime.py": {
+    "bytes": 20195,
+    "sha256": "c404ec694a4e65b291a70d5dc5617c1991325dbf6f6a626f39f82c94616bfe81"
+  }
+}
