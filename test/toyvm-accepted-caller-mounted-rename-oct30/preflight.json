@@ -1,0 +1,65 @@
+{
+  "PASS": true,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "f0e7d5ecc55613c64706e2849b33852cb577c18adc811ef7e869fc8b5ae7ab09"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 15060,
+      "sha256": "13bf42f071f5eb84542286f35faf2dc814aaf63bf1bcfe7bb306e3e2f7f4f963"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "landlockABI": 4,
+  "MemAvailable": 7378604032,
+  "fuseOpened": true,
+  "libfuse": true,
+  "procFDseccomp": true,
+  "absoluteRoot": "/tmp/tvmr",
+  "socketBytes": 26,
+  "help": {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/tvmr/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+      "--help"
+    ],
+    "cwd": "/tmp/tvmr/repo",
+    "exit": 0,
+    "stdout": "usage: qualify_accounted.py [-h] --domain DOMAIN --receipt RECEIPT --work WORK\n                            --live-limit LIVE_LIMIT --write-limit WRITE_LIMIT\n                            --file-limit FILE_LIMIT --rss-limit RSS_LIMIT\n                            --cpu-limit CPU_LIMIT --wall-limit WALL_LIMIT\n                            --output-limit OUTPUT_LIMIT\n                            ...\n\nSource-owned tiny-fixture caller. Browser qualification remains fail-closed.\n\npositional arguments:\n  command\n\noptions:\n  -h, --help            show this help message and exit\n  --domain DOMAIN\n  --receipt RECEIPT\n  --work WORK\n  --live-limit LIVE_LIMIT\n  --write-limit WRITE_LIMIT\n  --file-limit FILE_LIMIT\n  --rss-limit RSS_LIMIT\n  --cpu-limit CPU_LIMIT\n  --wall-limit WALL_LIMIT\n  --output-limit OUTPUT_LIMIT\n",
+    "stderr": "",
+    "wall": 0.05094636399985575,
+    "groupPeakRSS": 0,
+    "mountOwnership": []
+  },
+  "limits": {
+    "RLIMIT_DATA": [
+      134217728,
+      134217728
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      60,
+      60
+    ],
+    "RLIMIT_FSIZE": [
+      8388608,
+      8388608
+    ]
+  }
+}

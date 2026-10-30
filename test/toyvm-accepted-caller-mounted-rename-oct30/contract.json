@@ -1,0 +1,76 @@
+{
+  "PASS": true,
+  "limits": [
+    262144,
+    32768,
+    32768
+  ],
+  "expectedErrnos": [
+    21,
+    20,
+    2,
+    20,
+    22,
+    0
+  ],
+  "derivedFinal": {
+    "inodes": 6,
+    "live": 32768,
+    "peak": 32768,
+    "written": 26,
+    "openHandles": 0
+  },
+  "derivation": "root + three directories + two files = six metadata blocks; two nonempty payload blocks; payload 13+13 bytes",
+  "limitations": "Mounted syscall contract only: kernel may reject parent/type/cycle or short-circuit same-path before FUSE RENAME. No claim that each backend guard branch executed.",
+  "mountArgv": [
+    "/usr/bin/fusermount3",
+    "-o",
+    "rw,nosuid,nodev,fsname=toyvm-accounting,subtype=toyvm-accounting",
+    "--",
+    "/tmp/tvmr/work/domain"
+  ],
+  "filenameBearingMounts": [],
+  "enumeratedFixtureFiles": [
+    "file",
+    "tree/child/leaf"
+  ],
+  "commaBearingFilename": false,
+  "parser": "Production caller argparse via --help; backend fusermount3 fixed argv. Emulator VFS mount parser not applicable: no --mount/--vfs-tree arguments.",
+  "noNodeExecution": true,
+  "noBehavioralBackendMethodCalls": true,
+  "canonicalParser": "AST-extracted unchanged production main; qualify intercepted only during parser validation, no backend invoked",
+  "callerCLI": [
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvmr/cancellation-receipt.json",
+    "--work",
+    "/tmp/tvmr/work",
+    "--live-limit",
+    "262144",
+    "--write-limit",
+    "32768",
+    "--file-limit",
+    "32768",
+    "--rss-limit",
+    "67108864",
+    "--cpu-limit",
+    "10",
+    "--wall-limit",
+    "20",
+    "--output-limit",
+    "8192",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os, sys, json, errno, hashlib, stat\nroot=sys.argv[1]\nassert os.path.isabs(root)\ndef snapshot():\n    rows=[]\n    for base,dirs,files in os.walk(root):\n        for name in ['']+sorted(files):\n            p=os.path.join(base,name) if name else base\n            s=os.stat(p)\n            data=None\n            if stat.S_ISREG(s.st_mode):\n                with open(p,'rb') as f:data=f.read().hex()\n            rows.append([os.path.relpath(p,root),s.st_ino,s.st_mode,s.st_nlink,s.st_size,data])\n    return sorted(rows)\nfor d in ['dir','tree','tree/child']:\n    os.mkdir(root+'/'+d)\nfor f,data in [('file',b'file-original'),('tree/child/leaf',b'leaf-original')]:\n    with open(root+'/'+f,'wb') as out:out.write(data)\ninitial=snapshot()\nprint(json.dumps(dict(event='initial',tree=initial)),flush=True)\ncases=[('file-to-dir','file','dir',errno.EISDIR),\n       ('dir-to-file','dir','file',errno.ENOTDIR),\n       ('absent-parent','file','missing/new',errno.ENOENT),\n       ('nondirectory-parent','file','file/new',errno.ENOTDIR),\n       ('descendant-cycle','tree','tree/child/new',errno.EINVAL),\n       ('same-path','file','file',0)]\nfor label,src,dst,expected in cases:\n    before=snapshot();actual=0\n    try:os.rename(root+'/'+src,root+'/'+dst)\n    except OSError as e:actual=e.errno\n    after=snapshot()\n    result=dict(event='case',name=label,source=src,destination=dst,expected=expected,actual=actual,\n                unchanged=before==after,treeSHA256=hashlib.sha256(json.dumps(after).encode()).hexdigest())\n    print(json.dumps(result),flush=True)\n    if actual!=expected or before!=after:\n        print(json.dumps(dict(event='FIRST_UNEXPECTED',before=before,after=after)),flush=True)\n        raise SystemExit(1)\nassert snapshot()==initial\nprint('MOUNTED_RENAME_GUARDS_COMPLETED',flush=True)\n",
+    "/tmp/tvmr/work/domain"
+  ],
+  "fixtureCompatibility": "three directories, two 13byte files, 6 metadata blocks plus 2 payload blocks =32768; written26",
+  "startupReceipt": "prelaunch-controls.json reused; invalid nested selftest retained separately",
+  "boatExecutable": {
+    "path": "/home/user/.ascii/boat",
+    "sha256": "5d7933a238dcea0446bbbee0e2506692961d16537b9960003e4ece9ecb1ec498"
+  }
+}

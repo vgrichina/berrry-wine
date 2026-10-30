@@ -1,0 +1,86 @@
+{
+  "PASS": true,
+  "cases": [
+    {
+      "event": "case",
+      "name": "file-to-dir",
+      "source": "file",
+      "destination": "dir",
+      "expected": 21,
+      "actual": 21,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    },
+    {
+      "event": "case",
+      "name": "dir-to-file",
+      "source": "dir",
+      "destination": "file",
+      "expected": 20,
+      "actual": 20,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    },
+    {
+      "event": "case",
+      "name": "absent-parent",
+      "source": "file",
+      "destination": "missing/new",
+      "expected": 2,
+      "actual": 2,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    },
+    {
+      "event": "case",
+      "name": "nondirectory-parent",
+      "source": "file",
+      "destination": "file/new",
+      "expected": 20,
+      "actual": 20,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    },
+    {
+      "event": "case",
+      "name": "descendant-cycle",
+      "source": "tree",
+      "destination": "tree/child/new",
+      "expected": 22,
+      "actual": 22,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    },
+    {
+      "event": "case",
+      "name": "same-path",
+      "source": "file",
+      "destination": "file",
+      "expected": 0,
+      "actual": 0,
+      "unchanged": true,
+      "treeSHA256": "7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9"
+    }
+  ],
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": null,
+    "fileLimit": 32768,
+    "inodes": 6,
+    "live": 32768,
+    "liveLimit": 262144,
+    "openHandles": 0,
+    "operations": 1085,
+    "peak": 32768,
+    "writeLimit": 32768,
+    "written": 26
+  },
+  "limitations": "Syscall scope only; callback execution not observable; per-case accounting snapshots unavailable under actual caller, final authoritative accounting unchanged",
+  "groupPeakRSS": 52559872,
+  "payloadPeakRSS": 37093376,
+  "wall": 0.06893377500000497,
+  "cleanup": {
+    "remainingMounts": [],
+    "workPathProcesses": []
+  }
+}

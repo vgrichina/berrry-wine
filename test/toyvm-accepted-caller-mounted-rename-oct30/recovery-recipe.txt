@@ -1,0 +1,9 @@
+Recovery:
+- Preserve /tmp/toyvm-accepted-caller-mounted-rename-oct30 including 8MiB publication.reserve until coordinator closeout.
+- Base b01114f77294f1f49451b18029fe183d782ac173; task branch task/toyvm-accepted-caller-mounted-rename-oct30. manifest.json pins all five production sources and exact Python/fixture/cancellation receipt.
+- No production edits; recovery.patch adds this qualification directory. Fetch published task branch to recover tracked artifacts.
+- Harness files live in test/toyvm-accepted-caller-mounted-rename-oct30. Original local root layout has repo/, e/, scripts at root; remote layout /tmp/tvmr/repo plus observer.py, fixture.py, manifest.json, cancellation-receipt.json and actual8MiB reserve.
+- Cancellation receipt is standing read-only /tmp/toyvm-integrated-mounted-rename-guards-oct29/inputs/cancellation-receipt.json, SHA256 543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870. Boat snapshot preserves exact transferred bytes.
+- Replay requires a NEW explicit assignment and admitted task-owned Boat; do not resume stopped box by default. Restore scripts at owned root, configure exact inherited original-parent limit_contract, validate trusted SSH and canonical caller argv, change ONLY observer cutoff and assigned box in remote.py with new authorization, create reserve and enforce local+remote admission, transfer each pinned file<=64KiB via API, run preflight then guards once, verify compact receipts, unmount/reap and delegated snapshot-stop. No installing tools or changing production.
+- Through ops.py, Git SSH is: ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes
+- Unchanged passing groups must be reused. First genuine denial stops dependent operation; no unchanged retry. First unexpected runtime failure stops further cases.

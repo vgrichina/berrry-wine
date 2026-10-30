@@ -1,0 +1,15 @@
+# Accepted production caller: mounted RENAME qualification
+
+Candidate b01114f77294f1f49451b18029fe183d782ac173 passed an actual mounted synchronous-FUSE CLI run on bx_w5kuxjed on 2026-10-30. No production source changed. Five source bytes are bound in manifest.json (caller f0e7d5ec…; backend 13bf42f0… plus confine, adapter, immutable supervisor). identities were checked before and after execution.
+
+The unchanged prior mounted fixture ran inline under /usr/bin/python3 -B -c with absolute /tmp/tvmr/work/domain paths. Six operations passed: file→directory EISDIR(21), directory→file ENOTDIR(20), missing parent ENOENT(2), nondirectory parent ENOTDIR(20), descendant cycle EINVAL(22), and same-path success(0). Inode/mode/link/size/tree/data snapshots were equal before and after every call, with identical tree SHA256 7bb9300f1078da068981cacf746f3ea1fa12d7de40a5a50e2f01bc3f1ef686c9.
+
+Final authoritative accounting: six inodes; live=peak=32768; written=26; openHandles=0; failure=null. Derivation: six 4096-byte metadata charges plus two 4096-byte dense payload blocks; two original 13-byte writes. Rename guards precede namespace mutation in the pinned source. Exact per-call accounting snapshots are unavailable through this caller; final authoritative accounting and every-call tree/data checks are the observed scope.
+
+**Callback limitation:** accepted caller does not opt into the backend's optional rename evidence. Linux can reject or short-circuit these calls before FUSE RENAME dispatch. Errno is not proof of callback execution. This qualifies the actual mounted syscall contract, not individual backend callback branch coverage. No undocumented flag, production monkeypatch, or alternate evidence-enabled caller was used.
+
+Budgets: live262144/write32768/file32768, payload RSS64MiB CPU10s wall20s output8192. Observed payload peakRSS37093376, wall0.068934s; observer group peakRSS52559872. Remote group ceiling512MiB/parent128MiB CPU60/wall90/output8192/disk48MiB including actual8MiB reserve. Preflight had MemAvailable7378604032 and LandlockABI4, opened /dev/fuse, loaded libfuse3 and checked procFD/seccomp availability. Python executable pin was exact. Mountinfo confirms fuse.toyvm-accounting. Status socket pathname26bytes.
+
+Caller accepted=true, browserAllowed=false, cleanupComplete=true; unmountExit0/serverExit-15, no remaining mounts or work-path processes. Mounted run had no unexpected failure. First diagnostic retained: an invalid nested parent-selftest encountered the child128MiB DATA hard guard; it was not retried. Supplied original-parent prelaunch-controls receipt was reused. Boat executable is native ELF; no Node acceptance executed. ops.py restores only exact Boat child's original DATA and retains CPU/file/RSS/wall/disk/output checks; Git256MiB applies only to Git child.
+
+Only this mounted group ran; no prior offline acceptance, baseline or quota regression suites reran. This is not browser qualification or permission for public deployment. Lifecycle and publication receipt are recorded separately.
