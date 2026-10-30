@@ -89,13 +89,13 @@
     "/home/user/wine-assembly/scratch/usage-watch/shadow-man-genuine-dsetup-native-abi-oct22": 1495040,
     "/home/user/wine-assembly/scratch/usage-watch/shadow-man-genuine-dsetup-native-abi-oct22.task.txt": 8192,
     "/home/user/wine-assembly-shadow-man-genuine-dsetup-native-abi-oct22": 2240512,
-    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-qualified-integrate-oct22": 368640,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-qualified-integrate-oct22": 462848,
     "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-qualified-integrate-oct22.task.txt": 8192,
-    "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22": 5439488
+    "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22": 6086656
   },
-  "localAllocated": 55455744,
+  "localAllocated": 56197120,
   "reserve": 8388608,
   "publicationAllowance": 1048576,
   "cap": 67108864,
-  "hostFree": 6972489728
+  "hostFree": 6970208256
 }

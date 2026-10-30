@@ -52,7 +52,7 @@
   "localReserve": 8388608,
   "localFinishingAllowance": 2097152,
   "localCap": 67108864,
-  "hostFree": 6972489728,
+  "hostFree": 6970212352,
   "hostFloor": 2982150144,
   "remote": {
     "verdict": "PASS_ALL_NINE",
