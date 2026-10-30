@@ -1,8 +1,0 @@
-{
-  "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
-  "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197",
-  "unchanged": true,
-  "limit": 8388608,
-  "qualification": "identity receipt recorded after compiler dispatch; same readonly guard preloaded before driver",
-  "noGuardWeakening": true
-}

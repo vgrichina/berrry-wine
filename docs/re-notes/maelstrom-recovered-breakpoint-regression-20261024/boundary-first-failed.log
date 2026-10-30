@@ -1,7 +1,0 @@
-Error: EFBIG: file too large, write
-    at Object.writeFileSync (node:fs:2422:20)
-    at /tmp/maelstrom-recovered-breakpoint-regression-oct24/repo/test/test-maelstrom-breakpoint-boundary-audit.js:202:8 {
-  errno: -27,
-  code: 'EFBIG',
-  syscall: 'write'
-}

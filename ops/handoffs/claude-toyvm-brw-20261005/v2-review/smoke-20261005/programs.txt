@@ -1,3 +1,0 @@
-/tmp/claude-1000/-home-user-wine-assembly/1863d2b5-bc58-4c0b-9c15-00fc951f0256/scratchpad/smoke-W/demos/1995-c-cma_brw/BRW.EXE
-/tmp/claude-1000/-home-user-wine-assembly/1863d2b5-bc58-4c0b-9c15-00fc951f0256/scratchpad/smoke-W/demos/1993-a-adrenali/DHADREN.EXE
-/tmp/claude-1000/-home-user-wine-assembly/1863d2b5-bc58-4c0b-9c15-00fc951f0256/scratchpad/smoke-W/demos/1993-a-akm-chan/CHANGE.EXE

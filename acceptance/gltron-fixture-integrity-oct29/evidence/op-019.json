@@ -1,1 +1,0 @@
-{"at": "2026-10-29T02:26:02.487703+00:00", "argv": ["git", "-C", "/tmp/gltron-fixture-authorized-integrity-repair-oct29/repo", "remote", "add", "origin", "git@github.com:vgrichina/wine-assembly.git"], "cwd": "/tmp/gltron-fixture-authorized-integrity-repair-oct29/repo", "exit": 0, "peakRSS": 0, "wall": 0.0299862630199641, "violation": null, "descendantCleanup": true}

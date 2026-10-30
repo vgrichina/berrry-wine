@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/enigma-supervisor-artifact-output-repair-oct24/repo/test/test-enigma-supervisor-output.py", line 220, in <module>
-    assert row['exit'] == 0 and row['dependentRan'] and row['retainedBytes'] == 126000, row
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: {'name': 'flood-eof-case-no-final-drain', 'exit': 1, 'elapsed': 0.22971394401974976, 'retainedBytes': 131072, 'dependentRan': False, 'artifact': False, 'stderr': '', 'receipt': {'TERM': True, 'KILL': False, 'returncode': -15, 'reaped': [], 'remainingGroup': False, 'reason': 'output-guard', 'elapsed': 0.19418745301663876, 'box': 'bx_fvkjwxap', 'lifecycle': 'leave RUNNING; coordinator owns shutdown09:57UTC', 'expires': '2026-10-24T10:02:44.741Z', 'outputBytes': 131072}}

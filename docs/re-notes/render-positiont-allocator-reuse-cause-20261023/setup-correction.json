@@ -1,5 +1,0 @@
-{
-  "error": "Git alternate nesting exceeded while read-tree; no native or source materialization",
-  "correction": "private alternate file explicitly lists measured standing stores deepest first; donor unchanged",
-  "admissionRepeated": false
-}
