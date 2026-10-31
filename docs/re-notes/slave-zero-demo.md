@@ -878,3 +878,112 @@ Boat ID/state/expiry: N/A. No deployment, extra browser, agent, worker or
 successor was launched. Focused observer/source tests, identity/HTTP/evidence
 checks and documentation diff checks pass; no full-build claim is made for
 this documentation-only publication.
+
+## 2026-10-31: preclose initiator recovered from retained callers
+
+Evidence: `scratch/runs/20261031T2013Z-slave-zero-preclose/` (`review.py`,
+`findings.json`, selected owning-thread records and original disassembly).
+This read-only review narrows the missing boundary without another browser
+attempt. Input main was `7c510cfe06582313faa2ce6ff2deccaf2a95f0ad`, containing
+accepted `0d2c79f484ba38f91b5f6b43c97c544206bf36e8`. The retained 1931Z
+findings, first-fatal order, observer tests and raw 1,116 Worker / 1,292 page
+records were reviewed before deriving these findings.
+
+### Original destruction dispatch precedes both stops
+
+The retained main-Worker stack at sequence 912 has enough outer callers to
+identify an original destruction path. With the recorded DLL base `0xa64000`,
+the reconstructed chain is:
+
+| Original location | Meaning and retained support |
+| --- | --- |
+| EXE `0x41b9b9`, return `0x41b9bc` | Calls the plugin callback at object `+0x50`; the return is stack word 43 at main sequence 912. |
+| DLL `0x10007e14`, return `0x10007e19` | Forwards to command dispatcher `0x10007f10`. |
+| `0x10007f82`, call `0x10007f86`, return `0x10007f8b` | The original jump-table entry for command `0x837` loads message `+0x18` and calls `0x10005ea0`. Sequence 912 retains EBX=`0x837` and this return. |
+| `0x10005ea0`, return `0x10005eb5` | Dereferences the supplied handle and invokes its deleting destructor with argument 1. The handle is `0x1a00bbc`, outer object `0x1a00aec`. |
+| `0x10003b40` / `0x10003b60` | Outer deleting destructor calls stop helper `0x10005340`, return `0x10003b70`; helper calls stream stop `0x100068a0`, return `0x100053d6`. |
+| `0x10003b7d`, return `0x10003b7f` | Outer destructor invokes the stream's deleting destructor through outer object `+0x10`. |
+| `0x10006e00` / `0x10006e20` | Stream deleting destructor calls teardown `0x10006420`, return `0x10006e50`; teardown calls stop again, return `0x10006428`. These nested returns occur in main sequence 925. |
+
+This is a reconstruction from same-owning-thread stacks and byte-verified
+original instructions, not a complete function entry/return recording.
+In particular, stack word `0x10009b18` is the destructor's installed SEH
+handler, not another initiating caller. Other code-looking words deeper in
+these stacks must not all be interpreted as live frames.
+
+The original DLL SHA-256 is
+`62340d97042917cd8c5163ec6ae02bbb1b4ecde835d35bd46667e1fc443c2c18`;
+the EXE is
+`41ddb7507f2f2c279f9e96b3a8b0b8fb6af55cdca551cef67af294ec21a9a74e`.
+All 436 selected disassembly lines match current original DLL bytes, including
+the switch-table target for `0x837`. The original EXE at `0x41b920` writes
+the command from EBX into message `+0`, clears `+4`, and calls the callback.
+The retained message pointer is `0x074ff9b4`; its full contents and generation
+were not captured. The producer above this EXE dispatch remains unknown.
+The balanced Escape near this transition does not prove that producer.
+
+### Defined preclose outcomes and completion limit
+
+Main sequences 912–924 show the first stop: mutex acquisition returns zero,
+normal-buffer Stop returns HRESULT zero, and ReleaseMutex returns one.
+Stop's original state-2 branch calls stream virtual method `+0x24` at
+`0x100068df`, writes state zero at `0x100068e5`, optionally invokes a callback
+at `0x100068f8`, and releases the mutex. Those virtual call/return boundaries
+are not observed by the API-only logger. Host `voice_stop` returns zero;
+the page observer separately records stop-event signaling. Current unchanged
+`lib/host-audio.js` routes voice stop through `notifyStop`, which signals
+registered `0xffffffff` stop offsets. This source path is consistent with
+the signal, without supplying its missing native call stack.
+
+The second stop, within teardown, acquires the same mutex (925–928) with
+the stream already in state zero. Original `0x100068bb` then skips to
+`0x10006904` and returns one **without releasing that acquisition**. Teardown
+immediately acquires the mutex recursively (929–932), releases once
+(933–936), then closes it (937–938). The page's own sequence 1255–1260
+independently records recursion count 0→1→2→1→closed. This acquisition
+imbalance follows original control flow; it is not evidence of an emulator
+mutex defect or a thread join. Neither original stop nor teardown waits on
+an audio-thread handle. The thread's original normal exit is `_endthread`
+at `0x10006373`, reached after the wait-loop exit; thread 2's completion
+before this teardown is not recorded.
+
+All twelve retained API entry/exit pairs from 912 through 955 have one
+matching exit and no pending yield. Notification Release (940–941) returns
+reference count **one**, then events close (943–950); base normal-buffer
+Release (952–955) returns reference count zero. These counts are not
+HRESULTs. The stream belongs to main's recorded HeapAlloc generation 22597
+at `0x19b4b94` and successful HeapFree generation 58352 at sequence 956.
+The audio Worker's exact allocation/reuse generation remains unobserved;
+no replacement allocation is inferred from the later damaged object.
+
+The earliest precise missing initiator boundary is now **entry and producer
+of command `0x837` through EXE `0x41b920` / callback `+0x50`**, with the
+message and outer-handle generations and caller above return `0x41b9bc`.
+Within that dispatch, the remaining preclose boundaries are stream method
+`+0x24` and optional callback return, then audio-thread normal completion
+versus the destructor's second stop. A future bounded observation should
+record those entries/returns and object generations on their owning thread,
+alongside the existing wait identity and terminal reserve. Successful API
+results and the original deleting-destructor path explain how teardown was
+entered; they do not establish why its producer requested destruction or
+prove all preceding emulator operations correct. No defined-use emulator
+violation, production repair or controlled gameplay is established here.
+
+### Verification and runtime scope
+
+The scratch review asserts original pins, switch target, selected instruction
+bytes, caller stack positions, allocation/free generation and all twelve
+balanced API outcomes. It passes. The predecessor's retained flood,
+saturation, first-fatal transport and unchanged-manager tests were reviewed;
+the observer was not changed. A copy of the unchanged-manager focused test
+also passes on current main (acquire stop index two, close after completion,
+one retained delivery). The flood/saturation observer test was not rerun.
+No new build was necessary for this
+documentation change. Reconciliation finds five changed files among the
+1931Z 528 source pins and three among 866 compiler pins (listed exactly in
+`findings.json`); the module remains `d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+The old browser evidence applies to its recorded revision, not a new run of
+current main. No browser, server, monitor, input or runtime lock was started
+or acquired; CURRENT SiN's runtime was left untouched. Boat ID/state/expiry:
+N/A. This is the permitted bounded missing-boundary result; post-close
+index-zero/null-buffer symptoms supply no new cause or patch authorization.
