@@ -1558,3 +1558,88 @@ regressions, installed-payload main-menu test, JS syntax/diff checks and browser
 cache-version self-test pass. The WASM is unchanged from the FVF candidate;
 source hashes and runtime patch are archived with this run. Work remains
 uncommitted on `fix/uplink-startup-20261030`; dev server 52671 serves it.
+
+### Idle submission experiment after c98d17dd6
+
+`20261030-uplink-idle-batch-sweep` adds submission-reason counters to the
+legacy Encoder without changing its default behavior. In one visible Chrome
+session, the guest remains at 10k blocks. The experiment overrides only the
+idle submission decision to require 1/4/4/1 commands, reloading the same save
+and settling 30 seconds before each 60-second sample. Capacity, presentation,
+fence, clear and publication barriers retain their immediate flush behavior.
+
+Immediate-mode samples: 12.66 and 10.80 presents/s; four-command samples:
+12.00 and 12.46. Weighted means are 11.73 versus 12.23 (+4.3% observed), smaller
+than baseline drift under competing system load. This does not establish a
+repeatable FPS gain, so the production idle-submission rule remains unchanged.
+
+Counters identify the cause conclusively: 99.3-99.4% of baseline submissions
+come from the idle-consumer rule, not capacity or synchronization. Batches
+average 1.91 commands and about 87 submissions/frame. Requiring four commands
+raises the mean to 4.29 and reduces submissions to about 39/frame, without a
+convincing throughput benefit. The counters and shared submission-decision
+helper remain for diagnosis; the four-command override exists only in the
+scratch benchmark. This legacy path's capacity is 2 MiB and its size threshold
+does not fire in this scene; increasing that capacity cannot remove these
+idle-triggered submissions.
+
+Separate CPU profiles show 4.12 s guest/render overlap over 31.03 s with
+immediate submission (67.8% of renderer active time), versus 3.53 s over
+30.56 s with four-command batching (63.8%). Profiled rates are 10.91/11.11/s.
+These approximate CPU sampling results exclude recognized waits and are not
+GPU timings; neither FPS nor overlap supports changing the default. Reviewed
+captures retain the textured staircase/HUD in both conditions, with no page
+errors. Counters/helper and these notes are uncommitted; no release was made.
+
+Next measured target: `$d3dim_lights_refresh` takes 1.54 seconds of self
+samples in the 31-second immediate-submit profile (~4.9%). It scans
+DX_OBJECTS up to DX_MAX=16384 until four initialized lights are found, on
+each refresh. Investigate a correctly invalidated shared light index or a
+safe scan bound; do not cache pointers per Worker without accounting for
+light creation, mutation and release by other instances. No light-scan
+optimization has been implemented by this experiment.
+
+Validation of the retained counters/helper: neutral command-stream ordering,
+OpenGL command-stream barriers, real software-GL producer/Worker bitmap pixel
+parity and synchronous visibility, browser cache-version self-test, JS syntax
+and diff checks pass. All six browser samples used actual slice10000, remained
+visible, and reported no page errors.
+
+### Shared light scan bound (2026-10-30)
+
+`$dx_alloc` now publishes a monotonic exclusive upper bound for slots ever
+allocated as legacy light objects, under LOCK_DX in shared memory. Refresh
+atomically reads that bound and retains the existing type/buffer/dwSize checks,
+slot ordering and four-light limit. It does not cache guest pointers across
+refreshes. Releases never lower the bound; both initial allocation and recycled
+allocation update it. A scene with no legacy lights skips the table scan.
+The bound can still reach DX_MAX in a long-lived process; this is a safe scan
+reduction, not a full live-light index.
+
+Evidence: `20261030-uplink-light-bound-baseline` and
+`20261030-uplink-light-bound-candidate`. Visible Chrome, threads, WebGL-backed
+Direct3D, 640x480, automatic 10k budget, same saved staircase checkpoint,
+30-second settling before each of two 60-second samples, then a separate
+30-second CPU profile without full timeline tracing. Baseline rates are
+14.73/16.07 presents/s (mean 15.40); candidate 22.31/21.17 (mean 21.74).
+These sequential runs are subject to variable background load: the observed
+41% difference is not an isolated estimate of this optimization's FPS gain.
+
+The targeted CPU result is clear: light refresh self samples fall from
+1776.976 ms / 30171.804 ms (5.89%) to 5.974 ms / 30136.601 ms (0.020%).
+A live read before timing confirmed the candidate light bound was zero.
+Sampled guest/render overlap is 4.475/4.459 seconds, 69.0/64.6% of renderer
+active time; this is not GPU execution timing and shows no overlap improvement.
+Reviewed captures retain textured geometry and the HUD; all samples remain
+visible, use slice10000 and report no page errors. No combat/traversal claim.
+
+Loaded WASM: baseline ff157b84e37bc99ce8e1839026b8a4030f398276dd255ec0b861656325129f52;
+candidate df83d2d4939e2409687c02162544f07609049ff93dd9535c0ed25ab2b6e0ccf0,
+layout 84cbc24fabc77b4b. Both runs retain the preexisting desktop-query change
+and JS submission diagnostics. Native/compat builds pass. ProcessVertices
+regression covers another WASM instance allocating, initializing, changing,
+retiring and reusing lights, four-light cap, and fallback recycling into the
+last table slot. Viewport ownership, D3D7 lighting, fog and queued Worker pixel
+parity pass. The prior scheduling commit's two stale callback-census hashes
+were reconciled after reviewing closure lifetimes; ownership remains pending.
+Changes remain uncommitted; dev server 52671 serves the candidate.

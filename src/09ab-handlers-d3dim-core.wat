@@ -2863,8 +2863,8 @@
 
   ;; ── Fixed-function lighting ───────────────────────────────────
   ;; IDirect3DLight slots are DX_OBJECTS type 24 with their 76-byte D3DLIGHT
-  ;; buffer hanging off entry+8 (see $dx_light_buf). Scanning all 1024 slots per
-  ;; vertex would be absurd, so the callers refresh this four-slot cache once per
+  ;; buffer hanging off entry+8 (see $dx_light_buf). The shared allocation bound
+  ;; skips slots that have never held lights. Callers refresh this cache once per
   ;; draw call — every entry point that lights vertices already calls
   ;; $d3ddev_composite_wvp, and the refresh sits next to it.
   (global $d3dim_light_n (mut i32) (i32.const 0))
@@ -2877,10 +2877,12 @@
 
   (func $d3dim_lights_refresh (param $state_guest i32)
     (local $i i32) (local $entry i32) (local $buf i32) (local $n i32) (local $mat i32)
+    (local $limit i32)
+    (local.set $limit (i32.atomic.load (global.get $DX_LIGHT_LIMIT)))
     (local.set $n (i32.const 0))
     (local.set $i (i32.const 1))
     (block $done (loop $lp
-      (br_if $done (i32.ge_u (local.get $i) (global.get $DX_MAX)))
+      (br_if $done (i32.ge_u (local.get $i) (local.get $limit)))
       (br_if $done (i32.ge_u (local.get $n) (i32.const 4)))
       (local.set $entry (i32.add (global.get $DX_OBJECTS)
         (i32.mul (local.get $i) (i32.const 32))))

@@ -792,6 +792,10 @@
   (region.declare $DX_OBJECTS (size 0x00080000) (align 0x00001000)
     (stride $DX_ENTRY_SIZE (count $DX_MAX))
     (owner "09a8-handlers-directx.wat:$dx_alloc"))
+  ;; Exclusive upper bound of slots ever allocated as legacy lights. Shared
+  ;; across WASM instances; never shrinks on release or slot recycling.
+  (region.declare $DX_LIGHT_LIMIT (size 0x4) (align 0x4)
+    (owner "09a8-handlers-directx.wat:$dx_alloc"))
   (region.declare $COM_WRAPPERS (size 0x00020000) (align 0x00001000)
     (owner "09a8-handlers-directx.wat:$dx_alloc_locked"))
   (region.declare $DX_SURF_FMT (size 0x00010000) (align 0x00001000)

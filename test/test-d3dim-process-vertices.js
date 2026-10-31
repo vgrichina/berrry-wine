@@ -95,10 +95,30 @@ const extraWat = String.raw`
     (i32.load offset=0 (global.get $reg_base)))
 
   (func (export "pv_esp") (result i32) (i32.load offset=16 (global.get $reg_base)))
+  (func (export "light_alloc") (result i32) (call $dx_alloc (i32.const 24)))
+  (func (export "light_init") (param $entry i32) (param $size i32) (result i32)
+    (local $buf i32)
+    (local.set $buf (call $dx_light_buf (local.get $entry)))
+    (call $gs32 (local.get $buf) (local.get $size))
+    (local.get $buf))
+  (func (export "light_count") (result i32)
+    (call $d3dim_lights_refresh (i32.const 0)) (global.get $d3dim_light_n))
+  (func (export "light_slot") (param $i i32) (result i32)
+    (call $d3dim_light_slot (local.get $i)))
+  (func (export "light_retire") (param $entry i32)
+    (i32.store (local.get $entry) (i32.const 0)))
+  (func (export "light_limit") (result i32)
+    (i32.atomic.load (global.get $DX_LIGHT_LIMIT)))
+  (func (export "light_force_recycle_last")
+    ;; Model wrapper-retired slots so the allocator must use its fallback.
+    (memory.fill (global.get $COM_WRAPPERS) (i32.const 1)
+      (i32.mul (global.get $DX_MAX) (i32.const 8)))
+    (global.set $dx_recycle_cursor (i32.sub (global.get $DX_MAX) (i32.const 1))))
 `;
 
 (async () => {
-  const { exports: wat } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const harness = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const wat = harness.exports;
 
   const writeF32 = (addr, value) => {
     const bits = new DataView(new ArrayBuffer(4));
@@ -279,6 +299,45 @@ const extraWat = String.raw`
       `overlapping transform vertex ${i}`);
   }
 
+  // A second WASM instance has separate globals but the same object table,
+  // like a guest Worker. Allocate/mutate there and refresh from this instance.
+  const peer = await WebAssembly.instantiate(harness.module,
+    { host: harness.host, gdi: harness.gdi });
+  const other = peer.exports;
+  assert.strictEqual(wat.light_count(), 0);
+  assert.strictEqual(wat.light_limit(), 0, 'non-light allocations do not expand the scan');
+  const light = other.light_alloc();
+  assert(light);
+  assert(wat.light_limit() > 0, 'allocation bound is shared');
+  assert.strictEqual(wat.light_count(), 0, 'uninitialized light is ignored');
+  const buf = other.light_init(light, 76);
+  assert.strictEqual(wat.light_count(), 1, 'later initialization is visible');
+  assert.strictEqual(wat.light_slot(0), buf);
+  other.light_init(light, 0);
+  assert.strictEqual(wat.light_count(), 0, 'record changes are not cached');
+  other.light_init(light, 76);
+  const lights = [light];
+  for (let i = 0; i < 5; i++) {
+    const entry = other.light_alloc();
+    other.light_init(entry, 76);
+    lights.push(entry);
+  }
+  assert.strictEqual(wat.light_count(), 4, 'retain the four-light limit');
+  const limit = wat.light_limit();
+  other.light_retire(light);
+  assert.strictEqual(wat.light_count(), 4, 'retired lights are skipped');
+  assert.notStrictEqual(wat.light_slot(0), buf);
+  for (const entry of lights) other.light_retire(entry);
+  assert.strictEqual(wat.light_count(), 0);
+  const reused = other.light_alloc();
+  other.light_init(reused, 76);
+  assert.strictEqual(wat.light_count(), 1, 'reused slot remains visible');
+  assert.strictEqual(wat.light_limit(), limit, 'bound never shrinks');
+  other.light_force_recycle_last();
+  const lastLight = other.light_alloc();
+  other.light_init(lastLight, 76);
+  assert.strictEqual(wat.light_limit(), 16384, 'recycling also publishes the last slot');
+  assert.strictEqual(wat.light_count(), 2, 'exclusive bound includes the final table entry');
   console.log('test-d3dim-process-vertices: PASS');
 })().catch((err) => {
   console.error(err);
