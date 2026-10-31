@@ -203,3 +203,73 @@ was 2,613,260,288 bytes. Boat ID/state/expiry: N/A. No further browser/heavy CLI
 public deployment, redistribution, guest overrides, or successor worker was
 launched. The app remains local-only and excluded from the public desktop;
 browser menu/jungle gameplay, movement/look/fire, audio, and touch remain open.
+
+## 2026-10-31: white presentation repaired; collapsed geometry remains
+
+Evidence: `scratch/runs/20261031T1733Z-evolva-white-presentation/`.
+The first diagnostic used the existing GPU `readColor()` and shared surface
+metadata without forcing a draw, flush, or writeback. Actual GPU pixels, its
+cached 16-bit DIB, both flip-chain DIBs, and the window's canonical back canvas
+were black. The browser screen and `_dxFrameLayer` were white. The second
+capture isolated the divergence: explicitly presented primary slot 12 and back
+slot 13 were all zero, while unrelated offscreen slot 15 was all white. Gamma
+was unset. `lib/host-imports.js` rejected the explicit primary because a byte
+sampler equated all-zero storage with “never written”, then selected the white
+offscreen surface. This was a presentation ownership defect, not evidence of a
+GPU fence or DIB writeback defect.
+
+The generic repair keeps a live, explicitly presented primary authoritative,
+including all-zero frames. Existing surface retirement (`dx_trace` kind 22)
+already clears its ownership; a recreated surface can use fallback until it
+presents. The unused content sampler is removed. The new
+`test/test-dx-explicit-primary-black.js` fails against the old implementation
+and passes after correction, covering 8-, 16-, and 32-bit black primaries,
+retained writes, clears, retirement/recreation, and replacement presentation.
+The older blank-primary test now exercises actual retirement instead of
+asserting content-based ownership. The callback census host-imports seal was
+reviewed and updated; no callback/context ownership claim was added.
+`lib/d3dim-gpu.js` and `lib/d3d-render-worker.js` remain unchanged.
+
+One corrected original/default-worker WebGL browser attempt ran
+17:41:00–17:42:17 UTC. Reviewed `repaired-browser/01-authoritative-primary.png`
+and `02-projection-boundary.png` are black, matching GPU, shared DIB, canonical
+canvas, and frame layer. White presentation is fixed; no visible menu, jungle,
+movement, look, fire, or gameplay screenshot is qualified. Only trusted,
+balanced host Launch input was sent; no blind guest menu route was attempted.
+
+The remaining captured boundary is upstream vertex projection. The last
+four-vertex triangle-strip descriptor has TL vertex type 3; all four screen
+positions are `(0,0)`, with `z=0.5`, `rhw=1`, white diffuse colour, and nonzero
+texture coordinates. The queued GPU vertices are likewise collapsed. Decoded
+texture caches contain nonzero pixels and many colours. The captured render
+workspace has zero viewport rectangle at offset 3088, zero XY scale at 3104,
+and zero origin at 3120, despite populated matrices. These are snapshots, not
+a captured viewport setter call or HRESULT. The existing bounded draw trace
+stopped at an unsupported legacy call with no commands; it does not establish
+call ordering. Next work must capture the actual device/viewport API version,
+setter arguments and return, selected viewport descriptor, and their path
+through `src/09ab-handlers-d3dim-core.wat` into vertex projection. No viewport
+default, guest state edit, or speculative renderer bypass was introduced.
+
+Ten focused presentation/GPU suites and callback census check pass
+(`focused-tests.log`); the causal before-failure and after-pass are preserved.
+The corrected full `flock /tmp/wine-build.lock bash tools/build.sh` passed under
+inherited lifetime FD9 `/tmp/wine-browser.lock`. The exact executed module is
+SHA-256 `078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`.
+Each browser attempt cached and hashed current checkout source bytes, rather
+than serving an old frozen image: 295 source files, seven compiler files,
+1,163 original fixture pins plus two system DLL pins matched before and after.
+Per-response receipts identify the bytes actually served; all 202/203/203 HTTP
+responses carried COOP/COEP. Isolation, normal WebGL, default guest Worker,
+1024×768 geometry and defaultViewport-null were checked before input. Large
+pixel captures are losslessly stored as `.json.gz`, with summaries/hash receipts.
+
+All three bounded attempts followed SlaveZero FULLRELEASE 17:29:35 and their
+own independent whole-Chrome/global-crashpad/profile PID/start gate under FD9.
+Explicit shutdown returned all runtimes/controllers/wrappers/monitors zero,
+without monitor signals. Release proofs find every owned runtime/supervisor
+PID/start absent, both ports closed, profiles absent, held input empty, and
+lifetime lock available. Lowest monitored free disk across all attempts was
+2,354,913,280 bytes. No further browser/heavy CLI is planned in this task.
+Boat ID/state/expiry: N/A. The candidate remains local-only; no public desktop
+selection, deployment, redistribution, guest overrides, or audio/worker changes.

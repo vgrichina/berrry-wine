@@ -2,24 +2,9 @@
 
 'use strict';
 
-// A pinned primary that was never written must not blank the screen.
-//
-// Once an app explicitly presents a primary surface, the presenter pins that
-// slot: a primary is video memory, and CPU writes through a retained Lock
-// pointer become visible without another Flip, so we keep signature-checking
-// that exact surface (Heroes II's Smacker player depends on it).
-//
-// But an app can throw its DirectDraw objects away and build new ones. The
-// Falling Leaves screensaver does it at every scene change, and the pin then
-// named a freshly allocated, still-zeroed primary while the frame the user
-// should have been seeing sat in an offscreen surface. We uploaded the empty
-// one, and the saver showed a blank screen for thousands of batches at a time
-// -- six of eight sampled frames were flat before this rule, two after.
-//
-// So the pin holds only while the surface has something in it. "Never
-// written" is a question about the raw DIB bytes, not about the colours they
-// map to: index 0 of an 8bpp palette can be any colour, so a deliberately
-// black frame still counts as content and still holds the pin.
+// Rebuilding DirectDraw objects retires the previous primary's ownership.
+// A replacement that has not presented can use the fallback chooser. Once
+// explicitly presented, even an all-zero primary owns scan-out until release.
 
 const assert = require('assert');
 const path = require('path');
@@ -94,8 +79,11 @@ for (let y = 0; y < H; y++) {
   for (let x = 0; x < W; x++) bytes[offscreenBits + y * W + x] = offPixel(x, y);
 }
 
-// The app presented the primary once -- that is what pins the slot.
+// Retire an explicitly presented primary and reuse its slot, as an app
+// rebuilding its DirectDraw objects does. The replacement has not presented.
 host.dx_trace(5, 1);
+host.dx_trace(22, 1);
+makeSurface(1, primaryBits, 1);
 
 assert.strictEqual(gdi.presentBestDxOffscreen(true), 1,
   'something must be presented while the pinned primary is empty');
@@ -105,13 +93,18 @@ assert.deepStrictEqual(layerPixel(0, 0), grey(offPixel(0, 0)),
 assert.deepStrictEqual(layerPixel(W - 1, H - 1), grey(offPixel(W - 1, H - 1)),
   'and the whole offscreen frame must be uploaded, not just its corner');
 
-// As soon as the primary carries anything at all, the pin holds again --
-// including an all-index-0 frame, which is content the app chose.
+// A present by the replacement establishes its own ownership.
 bytes.fill(0x88, primaryBits, primaryBits + W * H);
+host.dx_trace(5, 1);
 assert.strictEqual(gdi.presentBestDxOffscreen(true), 1, 'the written primary must upload');
 assert.deepStrictEqual(layerPixel(0, 0), [0x88, 0x88, 0x88, 255],
   'a written primary keeps the pin, whatever the chooser would have preferred');
 assert.deepStrictEqual(layerPixel(W - 1, H - 1), [0x88, 0x88, 0x88, 255],
   'across the whole surface');
 
-console.log('PASS  a pinned DirectX primary that was never written does not blank the window');
+bytes.fill(0, primaryBits, primaryBits + W * H);
+gdi.presentBestDxOffscreen(true);
+assert.deepStrictEqual(layerPixel(0, 0), [0, 0, 0, 255],
+  'all-index-0 is still an explicit primary frame');
+
+console.log('PASS DirectX primary retirement/recreation fallback and explicit black-frame ownership');
