@@ -1017,3 +1017,115 @@ all 71 observed owned PIDs are absent, ports `38077/38443/45869` closed and
 profile removed. No Boat was allocated (ID/state/expiry N/A). Recovery and
 small replayable evidence remain in the run directory. No successor is
 started by this worker.
+
+## Fresh default Worker replay after 81f47554e (2026-10-31 08:58 UTC)
+
+**Startup remains blocked; no fresh sailing or gameplay is claimed.** The
+repair retains the contended DLL callback, but the host prevents its lock
+owner from running until worker bootstrap finishes. The subsequent bootstrap
+timeout terminates that callback owner and leaves the DLL callback gate held.
+This is the first remaining host dependency, before ordinary title input.
+Evidence and replay checks are in
+`scratch/runs/20261031T0858Z-pirates-patched-default/RECOVERY.md`.
+
+Preparation stayed static while Deus durable owned the lane. After its
+explicit 09:30:57 release, the sole guest ran 09:31:35–09:35:06 under a
+detached wrapper and monitor holding `/tmp/wine-browser.lock` for the entire
+controller/browser/cleanup lifetime. The actual Chrome, crashpad, heavy CLI
+and live-profile gate was clear. The maximum was 18 minutes; this guest
+stopped after approximately 3½ minutes once the dependency was established.
+
+This uses the **fresh canonical** `build/wine-assembly.wasm` produced by the
+existing successful 08:50 locked build, SHA-256
+`d2c1df73d975daa4e7425152fb900274ebd9552c5a689249415084cfe8ac026b`
+(1,898,571 bytes), with current repaired source at `81f47554e`. The complete
+296-file runtime/compiler snapshot has manifest SHA-256
+`c12552b31fcdbd6808ae8bd7f1bb35a5ed5315025ce12f8a4711964fdd4f08f3`;
+40 current support files are separately frozen. The module was served through
+a hardlink to the canonical artifact; after cleanup, the one 1.9 MB retained
+image was detached and hash-verified so a later build cannot overwrite it.
+The loaded response is hash-only, with no second module capture.
+This does not reuse retained `8459597` with current host files. All 352
+served responses and 106 source URLs, including the loaded module, match
+their frozen bytes; all 1,374 originals match before and after.
+
+Execution uses default guest Workers, explicit WebGL, 1024×768 and the shipped
+5k slice. The bridge reports backend/device kind `webgl`, seven submitted
+and completed operations and no queue error; GPU class/context-loss fields
+were unavailable in this worker-backed identity query. The read-only attach
+observer forwards the unchanged owning exports and run budget, with one page
+roundtrip before each thread-init command. That adds host timing. No factory,
+shader, property or breakpoint probe was installed, and no guest, original,
+clock or INI was changed.
+
+The causal sequence is recorded directly:
+
+1. Slots 1–5 complete reason-2 DLL notifications. Slot 6 enters original
+   `MSVCR71.dll` attach and parks at `halt=4`, `yield=9`, guest critical
+   section `0xb3c190` / WASM `0x74e190`, held by main thread 1. Its live
+   stack retains the original EnterCriticalSection argument and return.
+   The repaired loader preserves this frame instead of rejecting it.
+2. This is pending handle `0xe1006`, `CREATE_SUSPENDED`, suspend count 1.
+   CRT parameter `0x8d4a6c0` names game thread entry `0x4fac80` with argument
+   `0x8d4a760`; it is not the prior run's `0x551550` resource-job thread.
+   Main is at original CRT `0xaf3139`, immediately after EnterCriticalSection,
+   ESP `0x74ffd54`. Two snapshots 10,366 ms apart retain main slice sequence
+   8980, the same registers, pending child and lock ownership.
+3. The frozen host awaits `threadManager.spawnPending()` before the next
+   main slice. `runWorkerSlices()` also awaits pending spawns. The single
+   spawn pass awaits `spawnThread()`, which awaits `initGuestThread()`;
+   that command awaits all DLL notifications before sending `threadReady`.
+   Thus the creator cannot release the CRT lock while the child waits for it.
+4. At 09:32:16.968, 30,003 ms after attach began, the host reports
+   `worker 6 did not answer initGuestThread in 30000ms`. The failed-bootstrap
+   cleanup drops the worker. Its callback never reports success or failure;
+   the scheduler records handle `0xe1006` exited with code 1 and a stopped
+   link. Slot 6 is absent from the live link inventory.
+5. Main then advances and the CRT lock becomes free. However, two later
+   snapshots retain the shared DLL callback gate at **owner 6, depth 2**,
+   with generation pins on MSVCR71, binkw32 and OLEAUT32. Main is parked at
+   LoadLibraryA thunk `0x7500180`, return `0x614179`, requesting `d3d9.dll`.
+   Original call `0x614173` and the shipped LoadLibraryA handler's callback
+   gate check explain this yield-9 retry. This is an orphaned host callback
+   gate, not evidence that the original DLL or shader asset is missing.
+
+One targeted trusted Enter down/up leaves three renderer messages queued;
+`takeInput` remains at zero polls before and after. No additional key sweep
+was attempted. The resource manager's current-job and queue are empty in
+later samples, but that does not establish completion of all startup jobs:
+execution has not reached ordinary input or the later resource-worker
+boundary. Fresh title screenshots were personally inspected. The 05:35
+cooperative sailing screenshot was also inspected and remains historical.
+
+The next generic repair must let the creator and existing threads run while
+a new thread's attach continuation is blocked, preserving single-flight
+bootstrap and suspended-thread semantics. Failed bootstrap must also retire
+the notification's frame, gate and pins before terminating its Worker.
+Increasing the timeout alone would retain the dependency cycle. No production
+change or patched-game success is claimed by this documentation-only run.
+
+`check-cause.py` verifies the sequence and rejects five corrupted controls
+(creator progress, CRT ownership, callback ownership, live worker inventory
+and consumed input). Fourteen original instruction checks, seven repair
+contracts, observer fidelity, module/source/support/original pins, served
+hashes, trusted released inputs and focused documentation diff checks pass.
+No new build was necessary. Page wrappers and all surviving Worker observers
+are restored; slot 6's observer ended with its timed-out Worker. Browser and
+launcher exit zero. All 41 observed owned PIDs, three ports
+`37547/46669/44117` and the profile are verified closed/absent. The monitor
+ended without emergency termination. No Boat was allocated (ID/state/expiry
+N/A), the lane is released, and this worker starts no successor.
+
+The coordinator identified a monitoring limitation during this run: Chrome's
+flattened command line defeated the monitor's exact-argv profile matcher.
+Its empty `profilePIDs` arrays are not cleanup proof. The original monitor
+is preserved; the independent process-tree/profile command capture and final
+PID/port/profile checks establish actual cleanup. The ignored recovery monitor
+and gate now match the exact bounded profile token in both NUL-separated and
+flattened commands, and validate PID start time plus command hash before
+signals. Captured commands from ten owned Chrome processes reproduce the old
+false negative and pass the corrected matcher; four token-boundary controls
+and a changed PID-start identity are rejected. A later read-only gate check
+correctly rejects the new foreign Deus light-exit runtime. No guest was
+restarted, no foreign process was signaled, and the corrected monitor has
+not been tested against another live Pirates runtime.
