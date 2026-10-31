@@ -2,6 +2,15 @@
 
 ## October 31: known-source browser gameplay and remaining rendering blockers
 
+Heretic II `6e91d9608`, run `20261031T1941Z-heretic2-original-browser`,
+reaches tutorial and Easy docks gameplay with native walking, turning, spell
+attacks and jumping/landing. The coordinator inspected captures07/13/32/35.
+All1825 upstream package members matched; source/compiler/module and fixture
+pins matched before/after. All24 runtime processes exited, both ports closed
+and the browser lock was released. No hit, kill, objective, audio or FPS is
+established; tutorial-caption carryover and health100 to94 remain unexplained.
+See [the gameplay notes](re-notes/heretic2-demo.md).
+
 ### Darkstone accepted combat reconciliation
 
 The accepted October30 software result `be70e8f86`, run
