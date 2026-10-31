@@ -7,6 +7,13 @@ access controls take precedence. Public deployment needs its existing authorizat
 
 ## Dispatch and context
 
+- Target builds are pinned by hashes of the game files actually run, with the
+  manifest and executable identity recorded in the game's notes. Owner decision
+  2026-10-31: a multi-GB compilation container is not the target or a download
+  prerequisite. Preserve the distinction between an owner-designated local pin
+  and an independently compared upstream package. Blood II uses the local
+  DEMO V1.0A (BUILD 109) pin in `docs/re-notes/blood2-demo.md`; do not download
+  `Win98_Games-A-D.7z`. Apply this rule to every lane.
 - The coordinator assigns games and bounded tasks. Use at most **two** production
   workers; the ceiling is not a target. Serialize shared integration and heavy
   runtime tests. Respect laptop and other agents' ownership.

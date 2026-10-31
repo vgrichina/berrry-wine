@@ -15,12 +15,14 @@ this is not current-main parity, FPS, audio, save/reload or child-renderer
 qualification. The outer harness exit143 remains unexplained despite local
 cleanup and acknowledged quit. See [the original combat notes](re-notes/darkstone-demo.md).
 
-BloodII's newer provenance check `dbd1a8adf`, run
-`20261031T1932Z-blood2-native-browser`, stopped before runtime. All98 local
-hashes and97 companion sizes match, but local consistency does not prove
-original provenance. Only whole-container checksums for the7.17GB archive
-were available. Historical table entries below are not a new current-main
-or original-fixture qualification; no new browser gameplay claim applies.
+Blood II's check `dbd1a8adf`, run `20261031T1932Z-blood2-native-browser`,
+stopped before runtime. The owner subsequently designated the local
+DEMO V1.0A (BUILD 109), pinned by its 98 file hashes, as the target build.
+All 98 files and the manifest were rechecked in `20261031T1950Z-blood2-owner-pin`.
+The 7.17 GB compilation is no longer a provenance target or prerequisite;
+do not download it. The browser lane is unblocked. See
+[the exact executable and manifest pins](re-notes/blood2-demo.md).
+Historical table entries below do not establish a new current-main run.
 
 UT2003 ordinary visible-menu SOFTWARE route is now verified by `62ee90c86`,
 run `20261031T1628Z-ut2003-native-menu-play`: native Instant Action, Antalus

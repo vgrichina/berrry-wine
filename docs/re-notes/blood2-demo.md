@@ -1,5 +1,23 @@
 # Blood II: The Chosen (demo)
 
+## Target build and provenance pin (owner decision, 2026-10-31)
+
+The target is the local approximately 58 MB **DEMO V1.0A (BUILD 109)**.
+Its provenance record is the 98 per-file SHA-256 hashes in
+`scratch/runs/20261031T1932Z-blood2-native-browser/local-current-hashes.json`:
+
+- `Client.exe`: `1fea9e1400b948153341bd38f8b66beba885d45d21d202cab3c39bcc173b53b2`.
+- `Game/.wine-assembly-browser.json`: `a46bb10441eeb182ff5a28effd8112f507d6a510a25fba48d06870b8fea19519`.
+
+The owner designated these local bytes as the target; this does not claim an
+independent comparison with an upstream package. All 98 current files and the
+manifest were rechecked successfully in `20261031T1950Z-blood2-owner-pin`.
+The 7.17 GB `Win98_Games-A-D.7z` compilation is no longer a provenance target
+or a gameplay prerequisite. Do not download it. This supersedes the historical
+provenance blocker below and unblocks the browser gameplay lane, subject to
+the normal serialized runtime and cleanup gates. Future runs must match this
+file pin before and after execution.
+
 Monolith's 1998 LithTech demo in `test/binaries/win98-games-a-d/Blood2-demoD3D/`.
 The CD layout has an InstallShield 5 setup (`SETUP.EXE`, `_INST32I.EX_`) beside
 `Game\`, which is already the unpacked install: `B2Demo.exe` (MFC launcher),
@@ -74,7 +92,7 @@ take enemy fire to a death camera).
   `test/binaries/dlls`, so ole32 imports fall to WAT stubs here.
 - FPS and the browser.
 
-## 2026-10-31 original-fixture gate: stopped before runtime
+## 2026-10-31 historical original-fixture gate (superseded by owner decision)
 
 Run `20261031T1932Z-blood2-native-browser` reread published main
 `e2a73b33a23a27c9fae7d581ca045e434cf36572` after task input `1b4af19af`.
@@ -123,9 +141,8 @@ Validation: all 98 baseline hashes, 97 companion sizes, documented archive
 metadata pins, evidence containment/schema checks, and documentation diff
 check; no full-build or runtime test claim.
 
-Next boundary: obtain a preserved independently pinned original container,
-or a bounded original package/per-member hash record for this exact demo,
-then compare every fixture file. Only after that passes may a fresh task
-enter the current Slave Zero terminal-lifecycle release and independent
-whole-Chrome/global-crashpad/profile PID/start-time gate under inherited
-lifetime FD9, before following the native menu route with balanced inputs.
+Next boundary, revised by the owner: use the pinned local build above for
+ordinary browser menu navigation and player-controlled gameplay. Match all
+98 file hashes and the manifest, then enter the current predecessor's release
+and independent whole-Chrome/global-crashpad/profile PID/start-time gate under
+inherited lifetime FD9. No compilation archive acquisition is required.
