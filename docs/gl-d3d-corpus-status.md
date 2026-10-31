@@ -1,5 +1,37 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-10-20
 
+## October 31: known-source UT2004 match and Forsaken GPU blocker
+
+UT2004 documentation `2342e9288` records original DM-Rankin software CLI
+play in `20261031T0427Z-ut2004-match`: native movement, look and firing,
+health100 and ammo100 to96 then94. The coordinator inspected the readable
+firing frame. The runtime completed 8,425 batches in636.949 seconds and
+exited zero; 998 original inputs and1,283 retained pins verified unchanged.
+This qualifies that software CLI route, with no enemy hit/kill or match
+completion claim. A default guestWorker browser follow-up is running;
+its outcome and browser/backend coverage remain unverified. See the
+[UT2004 native route](re-notes/unreal-family-demos.md#ut2004-original-dm-rankin-movementfire-retest-2026-10-31).
+
+Forsaken documentation `50bb30050` records a known-source WebGL frame
+investigation in `20261031T0427Z-forsaken-frame`. The coordinator inspected
+`thrust-short-gpu.png`: briefing text, loading bar and incomplete world
+exist inside the GPU color target, alongside projectiles. Earlier firing
+frames show a readable room, but sustained readable world coverage remains
+unverified. The first missing/ineffective world draw has not been located;
+clear, blend or lighting changes lack a demonstrated cause. No production
+repair landed. Original873 files, runtime107 pins and26 trusted native
+events verified; three GPU mock tests passed, while an unchanged fallback
+counter test failed. This is a rendering blocker, despite zero measured
+GPU errors or fallbacks. See the
+[Forsaken investigation](re-notes/forsaken-demo.md#known-source-webgl-frame-investigation-2026-10-31).
+
+Both runs pin module `8459597c` to the retained ReVolt locked build's exact
+292-file source snapshot, including then-concurrent font edits; observed
+HEAD is not substituted for compiled source. Own runtimes were cleaned.
+These results extend the per-app evidence without establishing software /
+WebGL parity, audio, real-time performance or completion of the full27.
+
+
 ## October 31: Re-Volt attachment repair reaches native WebGL driving
 
 Repair `59a615fc5` fixes GetAttachedSurface matching for allocations created
