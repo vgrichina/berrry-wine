@@ -1,7 +1,9 @@
-Current 2026-10-31T11:20Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T11:37Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Pirates terrain factories requested four vertex streams, but D3D9 advertised one. Published44d8b27fd now advertises the implemented16 streams. Source review, causal regression, stream15 pixel comparison and full serialized build pass. A fresh worker tests original terrain creation and coast rendering with the fix, deadline12:12UTC. Visual repair remains unproven.
+Pirates now renders textured green, rock and beach coast during original native sailing. Accepted7a850207f validates the MaxStreams16 correction in44d8b27fd: original four-stream terrain factory declarations return shaders, and actual programmed textured draws and coast captures pass review. Later draw meshes differ from factory meshes; no same-mesh causal claim. Town arrival and combat remain unproven.
 
-Deus Ex recharge and native save restore remain verified. The gap worker has released runtime and is preparing final evidence; it reports route-save restore but no stable gap landing or camera response. Review follows completion.
+Deus Ex native LoadGame count5 restores the authentic route checkpoint (71a805ae1). Gap attempts fall below the grate; landing, camera/alarm and onward progress remain unproven. No emulator defect established.
 
-Two workers maximum, one browser/heavy runtime. Full GL/D3D27 coverage remains open. Laptop HeroesII/fonts protected; no public deployment. No owner action needed.
+Fresh Pirates01a191bd-77ee-7303-89f2-f7fdd333bddf (handle41965, deadline12:29UTC) pursues arrival or encounter. Fresh Deus01a191bd-8873-74a2-8656-84b95b708bf4 (handle8616, deadline12:34UTC) first diagnoses grounded route geometry/state from existing evidence. Output directories: scratch/usage-watch/pirates-textured-coast-onward-main-oct31/ and scratch/usage-watch/deusex-grounded-gap-cause-main-oct31/.
+
+Two workers maximum, one browser/heavy runtime; Pirates first. Both predecessor checkers rerun PASS, captures personally inspected, complete runtime cleanup and remote publication verified. Full GL/D3D27 remains open. Laptop HeroesII/fonts protected; no public deployment. No owner action needed.

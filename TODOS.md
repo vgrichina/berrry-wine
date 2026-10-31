@@ -988,11 +988,11 @@ commit output — do not assume your hunks landed.**
 
 - [ ] Diagnose Pirates stopping before the target rendering operation
   id: PIRATES-ROUTE-FOLLOWUP
-  status: active (fresh patched defaultWorker gameplay)
+  status: active (textured native coast accepted; onward arrival or encounter running)
   created: 2026-10-02T04:00:31.545Z
   created-by: user-request via ops-dashboard
   candidate: pirates-2004
-  Next: Reviewed81f47554e fixes generic DLL attach critical-section continuation with focused old-source rejection/full locked build. Fresh worker01a1912e-a48f-77b1-8801-ee695222066e (handle82549, deadline10:15UTC) prepares matched current build, then native defaultWorker startup/sailing after Deus lane release. Patched game startup and terrain remain unverified. Historical route: Native Play/Crew/captain/cast-off now reaches Port Royale sailing with visible ship motion (run20261031T0215Z-pirates-small-slice, notes 90c0c0c48). Historical notes b089a0600 claimed a matching canonical573e235d build, but a7725adaf review found its full compiled-source closure insufficient amid concurrent edits. Current verified native sailing uses retained8459597 and exact292-file source snapshot (run20261031T0458Z-pirates-knownsource); white coast persists. Trace separate-map writer/consumer under PIRATES-TERRAIN-REVIEW before choosing a renderer repair. Rectangular/filter2 transfer and nested ownership remain unqualified under PIRATES-TRANSFER-REENTRANCY; route progress does not prove transfer/readback acceptance.
+  Next: Accepted7a850207f: original four-stream terrain factories return shaders with caps16; personally inspected green, rock and beach coast and trusted onward sailing from Antigua toward Montserrat. No town arrival or combat proven. Fresh worker01a191bd-77ee-7303-89f2-f7fdd333bddf handle41965 deadline12:29UTC pursues native arrival or encounter with exact matched078d81 module/296source/40support/1374original closure. First browser priority; no production edits. Transfer/readback and nested ownership remain separately unqualified.
   Done: Identify the route failure and either validate the actual game transfer/readback with reviewed images or record a precise blocking dependency. Link unresolved terrain defects separately; a zero-transfer run is not a rendering pass.
   Evidence: docs/re-notes/pirates-2004.md; scratch/runs/20261031T0215Z-pirates-small-slice/result.json; scratch/runs/20261031T0220Z-pirates-main-sailing/result.json; ops/handoffs/mig-pirates-stretch.md; ops/handoffs/mig-pirates-stretch-recipe.md
 
@@ -1055,14 +1055,14 @@ commit output — do not assume your hunks landed.**
   Done: Selected changes validated on current integration base with affected API games/tests and exact identities; unvalidated changes kept separate and any merge follows explicit ownership review.
   Evidence: ops/handoffs/01a0eb29-4302-7e20-9b06-7084fb37358b.md; ops/handoffs/mig-render-textures-validation.md
 
-- [ ] Diagnose Pirates white terrain with a controlled capture
+- [x] Diagnose Pirates white terrain with a controlled capture
   id: PIRATES-TERRAIN-REVIEW
-  status: active (MaxStreams mismatch fixed; native terrain/coast validation running)
+  status: done (four-stream capability mismatch corrected; textured native coast verified)
   created: 2026-10-02T04:16:51.185761+00:00
   created-by: orchestrator-handoff-audit
   depends-on: PIRATES-ROUTE-FOLLOWUP
   candidate: pirates-2004
-  Next: Accepted44d8b27fd/run20261031T1100Z-pirates-terrain: three actual original terrain factories pass NSB/name/requirements but reject four packing streams against advertised MaxStreams1 at5d74d4. Generic caps16 matches existing16-stream backend; old-source causal rejection, stream15 pixel parity, focused regressions/full serialized build pass. Coordinator source review/verify.py rerun PASS296source40support1374original2112responses, inspected18 white coast. Later regenerated draw mesh IDs do not intersect these factory calls; no same-mesh or post-fix visual claim. Fresh worker01a191ad-7212-7292-8193-2c67c9ac5075 handle39495 deadline12:12:10UTC tests matched fixed native original terrain creation/coast texture and ordinary input. Native lane acquired after Deus11:18:40 full release.
+  Next: Accepted44d8b27fd plus7a850207f: original four-stream declarations rejected by cap1 now pass cap16 with NSB/requirements/native return/cache hit verified. Coordinator personally inspected23/28 green/rock/beach coast; focused checker rerun PASS296source40support1374original2129responses104URLs5negativecontrols24draws31programmed52trusted and complete cleanup. Later draw meshes differ from factory meshes; shared shader alone does not prove same-mesh causality. Focused white-terrain defect corrected; broader rendering/transfer/FPS qualification remains open.
   Done: Reviewed terrain evidence identifies the failing contract and focused correction or concrete dependency; no zero-transfer pass used as terrain proof.
   Evidence: docs/re-notes/pirates-2004.md; scratch/runs/20261031T0215Z-pirates-small-slice/result.json; scratch/runs/20261031T0220Z-pirates-main-sailing/result.json; scratch/runs/20261031T0458Z-pirates-knownsource/verification.json; ops/handoffs/01a0f736-78f1-7822-8b37-159d6f8ed94d.md
 
@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: pirates-cap16-native-coast-main-oct31; deusex-gap-native-jump-main-oct31
-  status: active (Pirates MaxStreams repair accepted, native coast test running; Deus gap-route result pending review; one runtime at a time)
+  worker: pirates-textured-coast-onward-main-oct31; deusex-grounded-gap-cause-main-oct31
+  status: active (textured Pirates coast accepted; onward sailing and Deus grounded gap diagnosis running)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Current2026-10-31T11:20Z: accepted44d8b27fd actual original terrain factory rejection four streams versus caps1; generic MaxStreams16 repair, old-source causal rejection, stream15 pixel parity/focused regressions/full serialized build/publication verified. Coordinator verify.py rerun PASS and white coast inspected; fixed native visual result pending worker01a191ad handle39495 deadline12:12:10UTC. Deus worker01a191a0 handle76960 deadline11:58:18UTC has released runtime11:18:40 and reports count5 native route-save LoadGame, but stable gap landing/camera response unproven; await final artifacts/review before acceptance. Prior c6fa4878a bootstrap cleanup, f13fa567a recharge0->75%/fresh count4 restore, f1a3e1333 pipe/stairs traversal and9b1126f01/5c9593c68 native sailing remain accepted. Two workers maximum/one runtime. Full GL27 remains open; protected laptop HeroesII/fonts and no public deployment.
+  Next: Current2026-10-31T11:37Z: accepted7a850207f actual native textured coast after44d8b27fd MaxStreams16 correction; native factory returns/caps/cache and programmed textured draws verified, personally inspected23/28. Accepted71a805ae1 fresh native count5 route-save LoadGame and corridor/footing; gap landing/camera/alarm/onward unproven, inspected108/110 below grate. Both focused checkers rerun PASS; complete runtime cleanup/publication reviewed. Fresh Pirates01a191bd-77ee-7303-89f2-f7fdd333bddf handle41965 deadline12:29UTC pursues arrival/encounter; Deus01a191bd-8873-74a2-8656-84b95b708bf4 handle8616 deadline12:34UTC first diagnoses grounded gap geometry/state from existing evidence. Two workers maximum/one runtime, Pirates first. Full GL/D3D27 remains open; laptop HeroesII/fonts protected; no public deployment.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1412,16 +1412,16 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Gameplay screenshot and FPS: Deus Ex demo
   id: GAMEPLAY-deus-ex-demo
-  status: ready
+  status: active (grounded gap route diagnosis)
 
   candidate: deus-ex-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: deusex-gap-native-jump-main-oct31 (01a191a0-bed5-7bf2-839b-219eb4c08995; handle76960; deadline12:00UTC)
+  worker: deusex-grounded-gap-cause-main-oct31 (01a191bd-8873-74a2-8656-84b95b708bf4; handle8616; deadline12:34UTC)
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Reviewed5781cc8cf native body carry, MedicalRoom keyring unlock and table interaction trigger onward to distinct Jaime light exercise. Exported light checkpoint fresh native Load Game/F12 response proven; coordinator inspected119/165/167 and earlier97/146. Checker292source131original105served598trusted167PNG/native save scope/19PID/twoport/profile PASS. Fresh worker continues dark-room exit from unchanged native checkpoint, then next exercise/new save. Healing, resting-body pose, FPS and Training completion remain unproven.
+  Next: Accepted71a805ae1: native LoadGame count5 restores the two authentic route files and corridor/footing. Coordinator inspected23/26 and108/110; original Space/X bindings and released duck state established, but exact Space+Up1200 falls below grate. No stable gap landing, camera/alarm or onward progress; no emulator defect established. Focused checker rerun PASS292source131original105served19DLL110trusted45PNG/19PID cleanup. Fresh worker first diagnoses grounded launch/route geometry from existing evidence, then one distinct browser test only if warranted after Pirates full release. Count5 fallback retained; no Training/recharge replay. FPS and Training completion remain open.
   Done: Reviewed gameplay screenshot and scene-qualified frame measurement with raw samples, counter proof and tested build identity; retain explicit failures.
   Evidence: docs/re-notes/deus-ex-demo.md; scratch/runs/20261031T0447Z-deusex-browser/; scratch/gameplay-coverage-20261003/tasks/GAMEPLAY-deus-ex-demo.json
   notes: Original Training gameplay and first-door traversal are verified on the default guestWorker software browser route. This does not qualify WebGL, audio, FPS, Liberty Island or completion. Historical missing-path reports are superseded for registered deus_ex_demo.
