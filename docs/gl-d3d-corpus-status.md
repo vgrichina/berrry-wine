@@ -50,6 +50,13 @@ health100 and ammo146 after movement/look/fire through the game's console
 failures. Runtime cleanup recovered an interrupted finalizer and verifies all
 owned processes/ports/profile closed. Menu PLAY, FPS, audio, kills, match
 completion and a matching software-arm qualification remain unverified.
+Software follow-up `a14e5e309`, run `20261031T1533Z-ut2003-software-antalus`,
+stopped before guest input: its custom frozen-response handler omitted COOP/COEP,
+leaving isolation and the default guest worker inactive. The inspected NVIDIA
+startup and 85 completed software operations do not qualify gameplay or establish
+an emulator defect. All 295 source, seven compiler and 881 original inputs verify;
+all runtime resources closed. The next attempt must verify HTTP isolation headers
+and actual isolation/default guest worker before native input.
 
 Deus Ex documentation `940371775` verifies the default guestWorker browser
 Training route on actual SoftDrv: native approach/retreat, first door opened
@@ -79,9 +86,17 @@ two-small-crate stack: the exported upper actor names the lower actor as Base.
 The coordinator inspected restored gameplay, the stack and the failed climb;
 450 balanced trusted events, 56 captures, frozen module/source/original pins
 and cleanup checks pass. Stack access remains unresolved; no stable96 landing
-or training exit was reached. Its diagnostic count8/time01:22:17 is unverified:
-the disk guard stopped runtime before fresh-page Load validation. Count7
-remains preferred. These runs retain module `8459597c`, 292 source files,
+or training exit was reached. Follow-up `cc4aa4124`, run
+`20261031T1521Z-deusex-stack-recovery`, validates that exact diagnostic
+count8/time01:22:17 through native Load, original actor/save crosscheck and
+inspected gameplay. Count7 remains preferred; the different 1301Z diagnostic
+count8 is not promoted. A native air-crouch attempt reached positive vertical
+velocity 300 but retained height 43 during sampled flight, reaching crouched
+height 16 only after returning to the old wood support. It establishes no new
+stack footing, intermediate support, 96 landing or exit. The interrupted original
+worker's launcher exit 143 remains unexplained; recovery closed the inherited runtime
+with actual Chrome/controller/wrapper/monitor exits of 0. These runs retain module
+`8459597c`, 292 source files,
 131 original/support inputs, 105 canonical served responses and19 DLL mounts.
 They establish further native SoftDrv gameplay, without qualifying a matching
 WebGL renderer, FPS/audio or training completion.
@@ -122,9 +137,24 @@ Follow-up `18aa9d6a5`, run `20261031T1503Z-pirates-boarding-duel`, stalls at the
 native title on both page attempts. The coordinator inspected that failure;
 34 balanced DOM-trusted events do not prove guest consumption. No native Load,
 new combat or fencing occurred in that run. Earlier boarding evidence remains
-valid; title-to-Load recovery, duel outcome, software parity, FPS/audio and full
-corpus qualification remain open. See the [Pirates boundary notes](re-notes/pirates-2004.md).
+valid. Cheap follow-up `ce79828e8`, run `20261031T1515Z-pirates-title-load-cause`,
+compares 13 retained recipe files and finds identical bytes. It establishes no
+causal harness drift, guest input consumption or supported repair and launches
+no new runtime. Title-to-Load recovery, duel outcome, software parity, FPS/audio
+and full corpus qualification remain open. See the [Pirates boundary notes](re-notes/pirates-2004.md).
 
+Diablo II follow-up `a58fb9844`, run `20261031T1523Z-diablo2-den-checkpoint`,
+retains four whole unedited native DENMAP save files and verifies fresh-page
+character selection, native Load, inspected town gameplay and ordinary movement
+with actual isolation/default guest worker/WebGL. The coordinator inspected the
+restored gameplay frame. The earlier page lacked isolation/default guest worker
+because its custom responder omitted headers; its Blood Moor Zombie combat is
+outside the requested worker configuration and does not qualify that target.
+Den entry remains unverified. Frozen module `7f9da4e9` has unknown compiled-source
+identity; 144 frozen inputs and 25 original runtime files verify unchanged.
+The disk guard stopped cooperatively above 2 GB and all owned runtime resources
+closed. This is native checkpoint evidence, not full both-backend corpus coverage.
+See the [Diablo II native restore notes](re-notes/diablo2-demo.md).
 
 Forsaken documentation `50bb30050` records a known-source WebGL frame
 investigation in `20261031T0427Z-forsaken-frame`. The coordinator inspected
