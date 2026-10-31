@@ -1555,3 +1555,61 @@ no further native/heavy CLI work is planned. No Boat allocated: ID/state/expiry
 N/A. Remaining limits are the differing initial port and shader/mesh names,
 no St. Kitts arrival/combat acceptance, and no same-mesh factory-to-draw claim;
 they do not erase the observed fixed-native terrain/coast improvement.
+
+## Onward Montserrat landing; disk floor ends town approach (2026-10-31 11:34 UTC)
+
+Evidence/recovery: `scratch/runs/20261031T1134Z-pirates-onward/RECOVERY.md`.
+**A native landing party and movement ashore are inspected; onward town
+arrival, Enter/Attack response and combat remain unproven.** The first observed
+dependency ending this attempt is the required free-disk floor, not an
+identified game/emulator fault. There is no startup-only acceptance.
+
+Before freezing the new run, all 296 current source/compiler files and 40
+support files exactly matched the accepted 11:17 closure. The served and
+loaded module is again SHA256
+`078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`.
+All 1,374 original files match before/after. This fresh default guestWorker,
+WebGL 1024×768 session has cache disabled and tiny disk caches. No factory,
+draw, guest-run or thread-init observer is installed. The only input observer
+forwards the original renderer input poll unchanged. No production, original
+asset, INI, clock, save-byte or guest-memory changes were made.
+
+Ordinary input follows the English captain to Antigua's initial town menu
+(`16-antigua-approach.png`), then Sail Away → “No matter, cast off!” and
+trusted Numpad4 steering. The visible approach frames `21` and `22` lead to
+the actual landing-party prompt at Montserrat's northern shore (`23`).
+Selecting “Yes, we'll anchor here” and pressing Enter changes the scene to
+the party at Hangman's Point, with “Press 'r' to return to ship” and native
+Move Forward/Turn controls (`25-ashore.png`). Personally inspected `26`,
+`28`, `30-town-walk.png` and `31-inland-turn.png` show the party moving along
+textured coast toward the visible Montserrat buildings. This is a real
+ashore transition and subsequent movement; a town label or destination speech
+alone is not accepted as arrival. The later town interaction was not reached.
+
+The sole browser lifetime is 11:35:35–11:39:41 UTC. Free disk passed the
+prelaunch gate, sampled at 2,051,796,992 bytes at 11:39:04, then fell to
+1,908,424,704 bytes at 11:39:41. The bounded controller/monitor closed the
+session during the last requested Numpad8 hold. Its requested final screenshot
+`32-town-approach.png` was never produced. No second native session was
+launched. No original native save/export was reached or claimed.
+
+Cleanup is explicitly qualified: the trusted final input stream includes
+Numpad8 keyup at 11:39:41.033, and all 58 trusted key/mouse events balance
+to no held input. `held-final.json` retains a stale controller Set entry for
+Numpad8 because the interrupted request's timer had not finished; that Set is
+not accepted as the input state. Browser exit is 0 at 11:39:41.451, the input
+observer was restored, all 16 unique observed PID/start identities including
+both global crashpads are absent, the profile and HTTP/CDP/control ports
+`35767/38981/45679` are gone, and the full browser flock is released.
+The owned monitor sent one PID/start-qualified SIGTERM to its still-live
+controller after browser closure; wrapper/controller exit 143 is preserved,
+not represented as a clean harness exit. No foreign process was signalled.
+
+Focused closure/native-input/cleanup checks pass for 296 source/compiler
+files, 40 support files, 1,374 originals, 2,130 served responses and 31 PNGs.
+The checker explicitly retains the negative goal result, disk-floor crossing,
+missing final capture and interrupted-controller limitations. Full lane
+release was posted at 11:40:16. No Boat: ID/state/expiry N/A. Recovery keeps
+the frozen closure and complete ordinary-input route. Next requires restoring
+disk headroom before a separately authorized native attempt toward actual
+Montserrat town Enter/Attack or a nearby ship encounter.
