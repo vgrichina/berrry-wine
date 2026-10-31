@@ -48,7 +48,13 @@ Training route on actual SoftDrv: native approach/retreat, first door opened
 with right mouse, then crossed into the red-floor room. The coordinator
 inspected that gameplay frame. Run `20261031T0447Z-deusex-browser` verifies
 131 original/support inputs, 292 source files and 105 served responses.
-Key pickup, the next locked door and Training completion remain unverified.
+Follow-up `2546fb407`, run `20261031T0606Z-deusex-key-door`, verifies
+NanoKey pickup, slot0/left-click unlocking, right-click opening and traversal
+of the next locked door. The coordinator inspected pickup/unlock/corridor
+frames;74 trusted inputs and the same131 original/292 source/105 served pins
+pass. Actual guest canvas640x480 differs from browser viewport1024x768;
+1024x768 guest rendering is unqualified. Runtime cleanup verified. Training
+completion and FPS remain unverified; a fresh worker advances the next exercise.
 See the [Deus Ex browser notes](re-notes/deus-ex-demo.md).
 
 Pirates documentation `a7725adaf` verifies native sailing near St. Kitts
@@ -75,13 +81,18 @@ investigation in `20261031T0427Z-forsaken-frame`. The coordinator inspected
 `thrust-short-gpu.png`: briefing text, loading bar and incomplete world
 exist inside the GPU color target, alongside projectiles. Earlier firing
 frames show a readable room, but sustained readable world coverage remains
-unverified. The first missing/ineffective world draw has not been located;
-clear, blend or lighting changes lack a demonstrated cause. No production
-repair landed. Original873 files, runtime107 pins and26 trusted native
-events verified; three GPU mock tests passed, while an unchanged fallback
-counter test failed. This is a rendering blocker, despite zero measured
-GPU errors or fallbacks. See the
-[Forsaken investigation](re-notes/forsaken-demo.md#known-source-webgl-frame-investigation-2026-10-31).
+unverified. Follow-up `20e6b97a8`, run `20261031T0552Z-forsaken-boundary`,
+retains two complete clear-to-clear intervals, one Flip each. All16 owning
+Execute/transport/GPU submissions match. Six world draws per frame contain
+670 triangles already collapsed at Execute entry and change zero pixels;
+nondegenerate object draws do change pixels. Exact565 uploads from alternating
+backings explain room versus briefing fragments; depth-only clear preserves
+color. The coordinator inspected both frame colors and reran the offline
+check:873 original/292 source/107 runtime pins pass. The first historical
+vertex/cache mutation remains uncaptured; source-cache feedback is a candidate,
+not a proven cause. No production repair. Runtime cleanup verified; a fresh
+worker captures initialization/Lock/Unlock/native stores before first divergence.
+See the [Forsaken investigation](re-notes/forsaken-demo.md).
 
 The earlier gameplay runs pin module `8459597c` to the retained ReVolt locked build's exact
 292-file source snapshot, including then-concurrent font edits; observed

@@ -1,9 +1,9 @@
-Current 2026-10-31T06:10Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T06:17Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-UT2004 repair fb698d57e shares windowed-device HWND across instances. Reviewed native DM-Rankin now has the complete clock/HUD, visible-coordinate menu clicks, movement/look/fire and health100/ammo98. Full build and focused regressions pass, including rejection of old source. Run20261031T0514Z-ut2004-origin pins new9b4e39a2 to exact295 source plus7 compiler inputs. Earlier UT and Deus Ex browser gameplay retains8459597/292source; Deus first door opened and crossed. No audio, WebGL, kill or completion claim.
+Deus Ex now has reviewed NanoKey pickup, locked-door unlocking and corridor traversal (2546fb407). Native-input checks pass; guest resolution is 640×480, browser 1024×768. A fresh worker advances into the next exercise.
 
-UT2003 generic cube LOD repair5fa12b1be reviewed:8880 WebGL1/2 pixels/full locked build PASS and old-source regression rejects. Original DRAW29/READBACK48/LockRect now complete. Coordinator inspected native DM-Antalus movement/look/fire via game console, health100ammo146; actual WebGL2 records21049 completed draws. Run20261031T0542Z-ut2003-cube-lod pins9b4e39a2 exact295source/7compiler/881original/107served and88trusted events; recovered orphan runtime fully closed. Menu PLAY, audio/FPS/kills/completion unverified. Freed slot now fresh Deus Ex key/next-locked-door worker01a19090-b5b5-7f32-873a-4c38ee0c8af7 launcher1637655,30min deadline0640UTC.
+Forsaken's complete-frame replay (20e6b97a8) proves world vertices collapse before GPU submission; alternating backing uploads explain the misleading full-room frames. A fresh worker traces the first vertex/cache mutation. No repair yet.
 
-Pirates de5d26f5f reviewed: original terrain factory returns null;9same-mesh correlations explain default-shader draws. White coast persists in reviewed sailing.png; static stage decoder and causal checks PASS. Next dependency is original5bd720 cache/library/requirements/creation rejection, no source repair. Other live worker Forsaken01a19083-3b7d-7f90-8587-48c5048a7395 launcher1622498 has40min until0635UTC for one complete-frame missing-world-draw investigation. Serialize all browser/heavyCLI with lifetime lock and orphan-process gate.
+UT2003 WebGL cube-LOD repair 5fa12b1be passes 8,880 pixels and the full build; native DM-Antalus movement/look/fire reviewed. UT2004 software HUD/origin repair remains accepted. Pirates factory rejection and full GL/D3D 27-app coverage remain open.
 
-Owner triage landed four tested commits; CRT jumps await the invocation-ownership/dual-dispatch prerequisite. Full GL/D3D27 and Forsaken world coverage remain open. Disk minimum2GB; laptop fonts/HeroesII protected. No public deployment or owner input needed.
+Two workers, serialized runtime, disk above 2 GB. Laptop HeroesII/fonts protected. No public deployment or owner action needed.
