@@ -491,3 +491,73 @@ run. No browser, runtime, ports, profile or test box was started by this worker;
 no Boat was allocated (ID/state/expiry N/A). The foreign Deus runtime was left
 untouched and all heavy work waited for its lane release. Disk stayed above
 2 GiB. No public deployment or successor is part of this task.
+
+### 2026-10-31: landed final build, further native Volcano play
+
+Run `scratch/runs/20261031T0713Z-forsaken-repaired-gameplay/` gives the landed
+**d2c1df73… final build its own native gameplay evidence**. It serves the exact
+retained `20261031T0658Z-forsaken-output-land/final.wasm` and matching
+`after/source` closure, never the historical 41f5 candidate or current host
+files. All 295 runtime files match the landed `df174b3cf` git objects; all seven
+compiler inputs and the final module hash verify. No source repair or rebuild
+was needed for this gameplay task; the locked build/six focused regressions
+remain the landing run's evidence.
+
+Personally inspected native menu captures establish Single Player → Start →
+Level Volcano → loading/briefing → game. Default guestWorker, Threads, explicit
+`d3d-renderer=webgl` and 1024×768 stayed enabled. The original readme controls
+were used through trusted browser keyboard/mouse events: A thrust, arrow look,
+Ctrl primary, Space secondary, Alt+arrow strafe and Escape pause/resume.
+No game state, clock, INI, asset, cheat or input-queue edits were made.
+
+- `level-ready.png` shows the full teal starting room, doorway and readable
+  HUD: lives **5**, SHLD/HULL **128**, PULS **2000**, MUG **5**.
+  `forward-door.png` shows translation up to the doorway.
+- `through-door-fire.png` shows entry into the metal corridor with readable
+  geometry/HUD and visible projectiles/impact effects: PULS **1978**, SHLD **0**,
+  HULL **76**. This exceeds the prior brief pitch/ammo-two response.
+- Following a death/respawn, `look-right.png`, `corridor-push.png`,
+  `corridor-deeper.png` and `turn-corridor.png` show another corridor advance
+  and changed look/bank beside its wall. PULS **1976 → 1954 → 1952**, MUG **0**,
+  and SHLD/HULL changes establish repeated combat responses within that life.
+- `post-resume-thrust.png` shows a readable far corridor wall/right recess
+  and the original instruction **“DESTROY ALL ENEMIES TO OPEN THE HIDDEN
+  DOOR.”** It does **not** establish that any enemy died or the door opened.
+  Later captures show another respawn/near-wall view, lives **1**, and PULS
+  **1990 → 1960**; they do not prove a new-room traversal.
+
+Readable gameplay captures span **07:26:21–07:29:47 UTC**, including several
+movement/look/firing sequences, deaths and pauses rather than uninterrupted
+survival. Lives fell **5 → 1**; ammunition resets on respawn, so the entire run
+is not a monotonic ammunition sequence. Bright combat effects remain. Pause/
+resume captures also contain white menu/background frames. In particular,
+`beyond-corridor.png` and `sustained-thrust-fire.png` are command labels whose
+images show the pause menu, **not movement proof**. `route-pause.png` shows a
+death transition. Subsequent native thrust restored the readable far-corridor
+view above. These limitations are retained in `visual-review.json`; correct
+pixels on every intervening frame are not claimed. No enemy kill, hidden-door
+opening, level completion, FPS or audio claim is made.
+
+The strict server initially omitted five required launcher fonts and stopped
+before game startup. That failed attempt is preserved under
+`startup-font-rejection/` and closed cleanly. The retry adds 18 pinned ancillary
+static assets, all matching historical response hashes; no font file was
+edited. All successful responses are retained by hash; fixed-body optional
+404 responses are separately recorded. Fresh checks pass for **873** original
+files before/after, **609** successful responses (**555** distinct URLs),
+**95** trusted native events, balanced keys and **41** intact 1024×768 PNGs.
+Read-only runtime telemetry confirms the default guestWorker/selected WebGL
+route and live D3D draw/flip counters; zero errors/fallbacks are not pixel proof.
+Recovery and replay checks are in this run's `RECOVERY.md` and `verify.py`.
+
+The browser lane lock covered startup, gameplay and cleanup, after waiting for
+the Deus worker and passing the actual live-process gate. Browser **1726273**
+exited **0**; controller **1726264**, holder **1726255** and all **59** recorded
+owned PIDs (controller/descendants, including transient helpers/crashpads) are absent. HTTP
+**37653** and CDP **40157** are closed; profile removed and no keys held.
+The failed startup's owned processes/ports are independently checked too.
+The final outer runtime tool returned **143**, cause unknown, despite the
+browser exit-0 receipt and verified cleanup; controller exit 0 is not claimed.
+No watcher, Boat/test box, public deployment or successor was started
+(ID/state/expiry N/A). Next gameplay work can continue toward the hidden-door
+objective; its enemy/door conditions are still unproved.
