@@ -2,6 +2,57 @@
 
 Historical source last updated, 2026-10-12. Runtime and implementation claims below describe that dated source; see current app notes and source for subsequent changes.
 
+## 2026-10-31: consistent builtin execution with authentic system files
+
+Integration validation: the mandatory locked build passed for tail-call and
+compatibility WASM, including data-segment overlap checks. Focused registration,
+builtin execution and callback-census mutation checks passed. Evidence:
+`scratch/runs/20261031T2327Z-coordinator-census/`. The compiler-managed string
+pool grew from 6144 to 6656 bytes for the additional module names; its generated
+JavaScript layout mirror was regenerated and all layout gates passed.
+
+Run `scratch/runs/20261031T2325Z-builtin-execution-repair/` retains the focused
+repair evidence. No candidate files or manifest were changed; this is not an
+installation or runtime qualification.
+
+The patch centralizes system/native policy in `lib/dll-registry.js`, keeps
+explicit native-loadable exceptions, and rejects attempts to map builtin-only
+modules through the native mapper. The actual `LoadLibraryA` handler chooses
+builtin execution independently of `has_dll_file`; existing filesystem attributes
+check qualified requests so a missing path cannot inherit an available basename.
+Builtin module identity names extend the existing 64-slot table to 50 names,
+preserving the original eleven slots and four-entry DirectX ordinal range.
+`GetModuleHandle` and `GetProcAddress` use those identities and builtin thunks.
+Original file data and its resource/version lookup remain independent; no original
+file receives `staticModule`, no resources/registry/DxDiag are fabricated, and no
+DDRAW native closure or game-specific exception is introduced.
+
+The new small source fixture compiles and calls the actual WAT loader, identity
+and export handlers with real VFS/host imports and JS dependency planners; it
+does not execute x86. Against the original assigned WAT, the first full-path
+D3D8 assertion fails with native-map yield 5. The changed WAT passes with both
+synthetic and retained authentic D3D8 input (SHA-256
+`c999fb98e33efaf1c2667501de5cb91fdd816f5f3c1f87f4f76b7a60e8efafbe`).
+Controls cover basename/full-path/stem identity, distinct builtin handles,
+Direct3DCreate8 API binding, absent private exports, missing qualified paths,
+native-loadable modules and startup/dependency policy. The authentic bytes and
+RT_VERSION blob remain identical. Exact commands/statuses are retained in
+`focused-results.json` and its individual logs.
+
+The coordinator reviewed the three changed callback-census hashes, retaining
+pending ownership and the nonlocal API gate. The new builtin branch resolves a
+handle synchronously through the existing DLL lock and reference machinery;
+no callback boundary or EIP restoration target changed. Integration checks and
+the required build are recorded in
+`scratch/runs/20261031T2327Z-coordinator-census/`. Full-tree compatibility,
+including legacy tests that assume missing system paths load without a mounted
+file, remains outside the focused validation.
+
+The full authentic `WIN98_INSTALL` 138-action installation/INF review remains
+outstanding, followed by separately authorized ordinary runtime validation.
+No browser, guest, game, installer, download, remote runtime access or box
+lifecycle action occurred. Boat ID/state/expiry N/A; no runtime was acquired.
+
 ## 2026-10-31: authentic installation stopped at a reproducible loader-policy blocker
 
 Run `scratch/runs/20261031T2306Z-crimsonland-dx81-mount/` audits main

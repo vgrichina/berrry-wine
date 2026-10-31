@@ -66,7 +66,7 @@
         (then (local.set $start (i32.add (local.get $scan) (i32.const 1)))))
       (local.set $scan (i32.add (local.get $scan) (i32.const 1)))
       (br $base)))
-    (local.set $entry (global.get $STATIC_SYS_DLL_NAMES))
+    (local.set $entry (call $static_sys_dll_name_at (local.get $idx)))
     (block $done (loop $names
       (br_if $done (i32.eqz (i32.load8_u (local.get $entry))))
       (local.set $i (i32.const 0))
@@ -84,13 +84,8 @@
           (br_if $mismatch (i32.ne (local.get $a) (local.get $b)))
           (local.set $i (i32.add (local.get $i) (i32.const 1)))
           (br $chars)))
-      ;; Step past this entry's NUL to the next one.
-      (block $adv (loop $skip
-        (br_if $adv (i32.eqz (i32.load8_u (local.get $entry))))
-        (local.set $entry (i32.add (local.get $entry) (i32.const 1)))
-        (br $skip)))
-      (local.set $entry (i32.add (local.get $entry) (i32.const 1)))
       (local.set $idx (i32.add (local.get $idx) (i32.const 1)))
+      (local.set $entry (call $static_sys_dll_name_at (local.get $idx)))
       (br $names)))
     (i32.const 0)
   )
@@ -98,6 +93,48 @@
   ;; Address of the 0-based list entry $idx names.
   (func $static_sys_dll_name_at (param $idx i32) (result i32)
     (local $entry i32)
+    ;; Preserve all eleven legacy slots; append builtin-only identities in the
+    ;; existing 64-slot table. Mirrored against dll-registry by the focused test.
+    (if (i32.eq (local.get $idx) (i32.const 11)) (then (return "advapi32")))
+    (if (i32.eq (local.get $idx) (i32.const 12)) (then (return "avicap32")))
+    (if (i32.eq (local.get $idx) (i32.const 13)) (then (return "avifil32")))
+    (if (i32.eq (local.get $idx) (i32.const 14)) (then (return "comdlg32")))
+    (if (i32.eq (local.get $idx) (i32.const 15)) (then (return "crtdll")))
+    (if (i32.eq (local.get $idx) (i32.const 16)) (then (return "d3d8")))
+    (if (i32.eq (local.get $idx) (i32.const 17)) (then (return "d3d9")))
+    (if (i32.eq (local.get $idx) (i32.const 18)) (then (return "d3dim")))
+    (if (i32.eq (local.get $idx) (i32.const 19)) (then (return "dciman32")))
+    (if (i32.eq (local.get $idx) (i32.const 20)) (then (return "dinput")))
+    (if (i32.eq (local.get $idx) (i32.const 21)) (then (return "dinput8")))
+    (if (i32.eq (local.get $idx) (i32.const 22)) (then (return "dplay")))
+    (if (i32.eq (local.get $idx) (i32.const 23)) (then (return "glu32")))
+    (if (i32.eq (local.get $idx) (i32.const 24)) (then (return "imagehlp")))
+    (if (i32.eq (local.get $idx) (i32.const 25)) (then (return "imm32")))
+    (if (i32.eq (local.get $idx) (i32.const 26)) (then (return "lz32")))
+    (if (i32.eq (local.get $idx) (i32.const 27)) (then (return "mapi32")))
+    (if (i32.eq (local.get $idx) (i32.const 28)) (then (return "mpr")))
+    (if (i32.eq (local.get $idx) (i32.const 29)) (then (return "msacm32")))
+    (if (i32.eq (local.get $idx) (i32.const 30)) (then (return "msimg32")))
+    (if (i32.eq (local.get $idx) (i32.const 31)) (then (return "msvfw32")))
+    (if (i32.eq (local.get $idx) (i32.const 32)) (then (return "netapi32")))
+    (if (i32.eq (local.get $idx) (i32.const 33)) (then (return "olecli32")))
+    (if (i32.eq (local.get $idx) (i32.const 34)) (then (return "oledlg")))
+    (if (i32.eq (local.get $idx) (i32.const 35)) (then (return "olesvr32")))
+    (if (i32.eq (local.get $idx) (i32.const 36)) (then (return "opengl32")))
+    (if (i32.eq (local.get $idx) (i32.const 37)) (then (return "rasapi32")))
+    (if (i32.eq (local.get $idx) (i32.const 38)) (then (return "rpcrt4")))
+    (if (i32.eq (local.get $idx) (i32.const 39)) (then (return "svrapi")))
+    (if (i32.eq (local.get $idx) (i32.const 40)) (then (return "tapi32")))
+    (if (i32.eq (local.get $idx) (i32.const 41)) (then (return "url")))
+    (if (i32.eq (local.get $idx) (i32.const 42)) (then (return "urlmon")))
+    (if (i32.eq (local.get $idx) (i32.const 43)) (then (return "version")))
+    (if (i32.eq (local.get $idx) (i32.const 44)) (then (return "wininet")))
+    (if (i32.eq (local.get $idx) (i32.const 45)) (then (return "winmm")))
+    (if (i32.eq (local.get $idx) (i32.const 46)) (then (return "winspool.drv")))
+    (if (i32.eq (local.get $idx) (i32.const 47)) (then (return "wintrust")))
+    (if (i32.eq (local.get $idx) (i32.const 48)) (then (return "ws2_32")))
+    (if (i32.eq (local.get $idx) (i32.const 49)) (then (return "wsock32")))
+    (if (i32.ge_u (local.get $idx) (i32.const 11)) (then (return "")))
     (local.set $entry (global.get $STATIC_SYS_DLL_NAMES))
     (block $done (loop $skip
       (br_if $done (i32.eqz (local.get $idx)))
@@ -174,8 +211,9 @@
       (local.get $limit) (global.get $STATIC_SYS_DIR) (local.get $wide)))
     (local.set $at (call $emit_path_part (local.get $buf_g) (local.get $at)
       (local.get $limit) (call $static_sys_dll_name_at (local.get $idx)) (local.get $wide)))
-    (local.set $at (call $emit_path_part (local.get $buf_g) (local.get $at)
-      (local.get $limit) (global.get $STATIC_SYS_DLL_EXT) (local.get $wide)))
+    (if (i32.eqz (call $str_eq (call $static_sys_dll_name_at (local.get $idx)) "winspool.drv"))
+      (then (local.set $at (call $emit_path_part (local.get $buf_g) (local.get $at)
+        (local.get $limit) (global.get $STATIC_SYS_DLL_EXT) (local.get $wide)))))
     (local.set $step (select (i32.const 2) (i32.const 1) (local.get $wide)))
     (call $store_char
       (i32.add (local.get $buf_g) (i32.mul (local.get $at) (local.get $step)))
@@ -1702,6 +1740,31 @@
     (i32.or (call $loadlib_path_in_dir (local.get $name) "c:\\windows\\system")
             (call $loadlib_path_in_dir (local.get $name) "c:\\windows")))
 
+  (func $loadlib_name_is_qualified (param $name i32) (result i32)
+    (local $c i32)
+    (loop $scan
+      (local.set $c (call $gl8 (local.get $name)))
+      (if (i32.eqz (local.get $c)) (then (return (i32.const 0))))
+      (if (i32.or (i32.eq (local.get $c) (i32.const 92))
+            (i32.or (i32.eq (local.get $c) (i32.const 47)) (i32.eq (local.get $c) (i32.const 58))))
+        (then (return (i32.const 1))))
+      (local.set $name (i32.add (local.get $name) (i32.const 1)))
+      (br $scan))
+    (i32.const 0))
+
+  ;; Four legacy identity slots also have explicit native-loadable policy.
+  ;; KERNEL32 has its own identity/export image rather than a static slot.
+  (func $loadlib_builtin_only (param $name i32) (result i32)
+    (if (call $dll_name_match (local.get $name) "kernel32.dll")
+      (then (return (i32.const 1))))
+    (if (i32.eqz (call $guest_name_is_static_system_dll (local.get $name)))
+      (then (return (i32.const 0))))
+    (i32.eqz (i32.or
+      (i32.or (call $dll_name_match (local.get $name) "ole32.dll")
+              (call $dll_name_match (local.get $name) "comctl32.dll"))
+      (i32.or (call $dll_name_match (local.get $name) "d3drm.dll")
+              (call $dll_name_match (local.get $name) "oleaut32.dll")))))
+
   ;; Optional modules a stock Win98 box does not have, by bare name. Each one
   ;; must fail to load with ERROR_MOD_NOT_FOUND rather than take the
   ;; image_base handle below, because programs probe for them and take a
@@ -1771,6 +1834,27 @@
         (i32.store offset=0 (global.get $reg_base) (global.get $image_base))
         (call $freelib_mark_loaded (i32.load offset=0 (global.get $reg_base)))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        (return)))
+    ;; Builtin execution and original-file visibility are independent. A
+    ;; qualified request must still name an existing file; basename aliases
+    ;; in has_dll_file must not turn a nonexistent private path into a module.
+    (if (call $loadlib_builtin_only (local.get $arg0))
+      (then
+        (if (i32.and (call $loadlib_name_is_qualified (local.get $arg0))
+              (i32.eq (call $host_fs_get_file_attributes
+                (call $g2w (local.get $arg0)) (i32.const 0)) (i32.const -1)))
+          (then
+            (i32.store (global.get $reg_base) (i32.const 0))
+            (global.set $last_error (i32.const 126)))
+          (else
+            (call $dll_load_lock_begin)
+            (call $handle_GetModuleHandleA_locked (local.get $arg0)
+              (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+            (call $lock_release (global.get $DLL_LOAD_LOCK))
+            (call $freelib_mark_loaded (i32.load (global.get $reg_base)))
+            (return)))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
     ;; Not already loaded — check if DLL file exists in VFS
     (local.set $name_wa (call $g2w (local.get $arg0)))

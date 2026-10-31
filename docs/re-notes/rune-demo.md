@@ -1,5 +1,49 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-10-31: local candidate registration
+
+Integration validation: the mandatory locked build passed for tail-call and
+compatibility WASM, including data-segment overlap checks. Focused registration,
+builtin execution and callback-census mutation checks passed. Evidence:
+`scratch/runs/20261031T2327Z-coordinator-census/`. The compiler-managed string
+pool grew from 6144 to 6656 bytes for the additional module names; its generated
+JavaScript layout mirror was regenerated and all layout gates passed.
+
+`APPS.rune_demo` uses the durable original fixture and exact launch row below.
+The coordinator reviewed the metadata-only callback census change; existing
+boot and file-loading lifetimes are unchanged and ownership remains pending.
+
+`LOCAL_CANDIDATE_APPS` labels it **Rune Demo (original, experimental)**;
+it is absent from `DESKTOP_APPS` and `DEBUG_ONLY_APPS`. Public eligibility
+is unchanged. No guest files, configs, DLL-loading code or manifest policy
+changed; `localManifestIntegrity` remains absent without a bypass.
+
+Evidence: `scratch/runs/20261031T2317Z-rune-demo-registration/`.
+The accepted `.host/check-fixture.js` passed before registration; the focused
+registration check with `--fixture` verifies the actual registry row against
+the accepted launch plan, the production page's local/public selector
+expressions, and the actual CLI manifest resolver. All 141 companion URLs,
+VFS paths and sizes match, including three companion EXEs; the main EXE is
+separate. Ordinary loading remains 51 eager / 90 streamable companions,
+or 141 eager with synchronous fault reads. These are static local checks;
+no HTTP, browser, installer or game ran. No gameplay claim follows.
+
+The exact future ordinary local route is
+`http://127.0.0.1:8098/emulator/?candidates&app=rune_demo`
+when using `node ops/server.js --port=8098 --no-agents` rooted at this checkout.
+A host serving the emulator at its root uses `/?candidates&app=rune_demo`.
+`debug` may be added for diagnostics, but **does not replace `candidates`**.
+The page requires a local hostname and `candidates`; `prod` overrides it.
+No server was started and no live route was tested.
+
+Next, in a separately authorized runtime task with browser access, rerun
+`node test/binaries/candidates/rune-demo/.host/check-fixture.js` before launch.
+Stop on any changed pin or missing media. Launch original `c:\System\Rune.exe`,
+cwd `c:\System`, empty args; observe the original first-run wizard with empty
+`FirstRun` and shipped `Rune.ini`/`User.ini`. Keep default renderer/audio/assets
+and stop at the first actual dependency failure. No safe-mode flags, config
+edits or registry injection. Boat ID/state/expiry and lifecycle ownership: N/A.
+
 ## 2026-10-31: durable local candidate prepared (no registration or runtime)
 
 On main `65224c0ca25da0937337734303740847f14ee34e` or its descendants,
@@ -65,18 +109,18 @@ are checked by the external preflight before launch. Ordinary host loading
 does not itself enforce those hashes or prevent later guest changes: recheck
 before each fresh run and preserve the original package.
 
-### Concrete future registration and first startup
+### Accepted registration row and first startup
 
-Browser access is unavailable and was neither retried nor investigated.
-When that prerequisite is supplied in a separately authorized runtime task:
+Browser access was unavailable during preparation and was neither retried nor
+investigated during registration. With separately authorized runtime access:
 
 1. From the repository root, run
    `node test/binaries/candidates/rune-demo/.host/check-fixture.js` and require
    success. Stop on changed bytes or missing media; do not repin changed files.
-2. In that future task, claim `lib/apps.js` and add the following proposed
-   `rune_demo` row to `APPS`, with a local label in `LOCAL_CANDIDATE_APPS`
-   using then-current registry conventions.
-   Keep it out of the public desktop list. This task made **no registry edit**.
+2. Use the registered `rune_demo` row in `APPS` and local candidate label.
+   The preparation task proposed this row; the uncommitted patch above supplies
+   it, keeping it out of the public desktop list. Finish its build and publication
+   before runtime use.
 
    ```js
    rune_demo: {
@@ -95,14 +139,14 @@ When that prerequisite is supplied in a separately authorized runtime task:
    }
    ```
 
-3. After the future registry change's required validation, use the ordinary
+3. After the static preflight, use the ordinary
    local host rooted at this checkout, e.g. `node ops/server.js --port=8098
    --no-agents`, and open
-   `http://127.0.0.1:8098/emulator/?debug&app=rune_demo`. Ops mounts the
+   `http://127.0.0.1:8098/emulator/?candidates&app=rune_demo`. Ops mounts the
    emulator at `/emulator/`; a host serving the emulator at its root uses
-   `/?debug&app=rune_demo` instead.
+   `/?candidates&app=rune_demo` instead.
    That command/URL is an instruction for the future; no server was started
-   here. **The route is not currently registered or live.**
+   here. **Registration is uncommitted WIP; the live route remains untested.**
 4. Launch the shipped `[PlayShortcut]`: guest `c:\System\Rune.exe`, cwd
    `c:\System`, empty arguments. Observe the original first-run wizard;
    preserve empty `FirstRun` and original `Rune.ini`/`User.ini`. Do not select
