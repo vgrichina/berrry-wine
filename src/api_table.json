@@ -180,7 +180,8 @@
     "name": "CharNextA",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 3557305107
+    "hash": 3557305107,
+    "test_call": true
   },
   {
     "id": 20,
@@ -194,7 +195,8 @@
     "name": "CharPrevA",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 3193941035
+    "hash": 3193941035,
+    "test_call": true
   },
   {
     "id": 22,
@@ -1715,7 +1717,8 @@
     "name": "GetCPInfo",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 2296535320
+    "hash": 2296535320,
+    "test_call": true
   },
   {
     "id": 184,
@@ -3725,7 +3728,8 @@
     "name": "IsDBCSLeadByte",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 2327450265
+    "hash": 2327450265,
+    "test_call": true
   },
   {
     "id": 410,
@@ -4263,7 +4267,8 @@
     "name": "MultiByteToWideChar",
     "nargs": 6,
     "convention": "stdcall",
-    "hash": 2421422530
+    "hash": 2421422530,
+    "test_call": true
   },
   {
     "id": 473,
@@ -6578,7 +6583,8 @@
     "name": "WideCharToMultiByte",
     "nargs": 8,
     "convention": "stdcall",
-    "hash": 3867336062
+    "hash": 3867336062,
+    "test_call": true
   },
   {
     "id": 726,
@@ -38936,7 +38942,8 @@
     "name": "IsDBCSLeadByteEx",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 956716356
+    "hash": 956716356,
+    "test_call": true
   },
   {
     "id": 4579,
@@ -39095,5 +39102,21 @@
     "nargs": 1,
     "convention": "cdecl",
     "hash": 3683784189
+  },
+  {
+    "id": 4600,
+    "name": "CharNextExA",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1846958252,
+    "test_call": true
+  },
+  {
+    "id": 4601,
+    "name": "CharPrevExA",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 825856340,
+    "test_call": true
   }
 ]

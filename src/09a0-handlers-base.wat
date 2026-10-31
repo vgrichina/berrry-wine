@@ -5803,6 +5803,17 @@
     (if (call $is_dbcs_code_page (local.get $cp))
       (then
         (call $gs32 (local.get $arg1) (i32.const 2)) ;; MaxCharSize = 2
+        ;; CP950: default char and lead range straight from the conversion
+        ;; table (bestfit950.txt CPINFO / DBCSRANGE) — the same globals
+        ;; $is_dbcs_lead_byte_for_cp and the decoder read.
+        (if (i32.eq (local.get $cp) (i32.const 950))
+          (then
+            (i32.store8 offset=4 (local.get $info) (global.get $BIG5_DEFAULT_CHAR))
+            (i32.store8 offset=6 (local.get $info) (global.get $BIG5_LEAD_FIRST))
+            (i32.store8 offset=7 (local.get $info) (global.get $BIG5_LEAD_LAST))
+            (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+            (return)))
         (if (i32.eq (local.get $cp) (i32.const 932))
           (then
             (i32.store8 offset=6 (local.get $info) (i32.const 0x81))

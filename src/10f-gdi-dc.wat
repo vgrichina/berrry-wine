@@ -1763,10 +1763,16 @@
   (func $gdi_native_text_out (param $hdc i32) (param $x i32) (param $y i32)
         (param $text i32) (param $count i32) (param $wide i32) (result i32)
     (local $bitmap_result i32) (local $decode_cp i32)
+    ;; The count is validated BEFORE any decode: a count the pipeline
+    ;; rejects (< 0 or > 65536) skips the decode and reaches
+    ;; $gdi_bitmap_text_out untouched, so TextOutA(..., -1) is FALSE in a
+    ;; CP950 launch exactly as in every other launch. (A decode would read
+    ;; -1 as NUL-terminated and shrink > 65536 into range.)
     (local.set $decode_cp (call $text_decode_cp_for_dc (local.get $hdc)))
     (if (i32.and (i32.eqz (local.get $wide))
           (i32.and (i32.ne (local.get $decode_cp) (i32.const 0))
-            (i32.ne (local.get $text) (i32.const 0))))
+            (i32.and (i32.ne (local.get $text) (i32.const 0))
+              (i32.le_u (local.get $count) (i32.const 65536)))))
       (then
         (local.set $count (call $ansi_counted_to_wide_wa (local.get $decode_cp)
           (local.get $text) (local.get $count)
@@ -1795,7 +1801,8 @@
     (local.set $decode_cp (call $text_decode_cp_for_dc (local.get $hdc)))
     (if (i32.and (i32.eqz (local.get $wide))
           (i32.and (i32.ne (local.get $decode_cp) (i32.const 0))
-            (i32.ne (local.get $text) (i32.const 0))))
+            (i32.and (i32.ne (local.get $text) (i32.const 0))
+              (i32.le_u (local.get $count) (i32.const 65536)))))
       (then
         (local.set $count (call $ansi_counted_to_wide_wa (local.get $decode_cp)
           (local.get $text) (local.get $count)
@@ -2072,14 +2079,17 @@
     ;; second exception keeps an ETO_PDY call whose per-byte dx cannot
     ;; fit the re-expression scratch (over 32768 bytes) on the historical
     ;; path whole, rather than decoding it and dropping its spacing.
+    ;; The count is validated BEFORE any decode, as at $gdi_native_text_out:
+    ;; ExtTextOutA(..., -1, lpDx) must fail like the undecoded path instead
+    ;; of decoding to a NUL and reading lpDx past the caller's buffer.
     (local.set $decode_cp (call $text_decode_cp_for_dc (local.get $hdc)))
     (if (i32.and (i32.eqz (local.get $wide))
           (i32.and (i32.ne (local.get $decode_cp) (i32.const 0))
             (i32.and (i32.ne (local.get $text) (i32.const 0))
-              (i32.and (i32.eqz (i32.and (local.get $options) (i32.const 16)))
-                (i32.or (i32.eqz (local.get $dx_array))
-                  (i32.or (i32.eqz (i32.and (local.get $options) (i32.const 0x2000)))
-                    (i32.and (i32.ge_s (local.get $count) (i32.const 0))
+              (i32.and (i32.le_u (local.get $count) (i32.const 65536))
+                (i32.and (i32.eqz (i32.and (local.get $options) (i32.const 16)))
+                  (i32.or (i32.eqz (local.get $dx_array))
+                    (i32.or (i32.eqz (i32.and (local.get $options) (i32.const 0x2000)))
                       (i32.le_u (local.get $count)
                         (i32.shr_u (global.get $TEXT_DX_SCRATCH_SIZE) (i32.const 3))))))))))
       (then
@@ -2153,13 +2163,17 @@
   (func $gdi_native_draw_text (param $hdc i32) (param $text i32) (param $count i32)
         (param $rect i32) (param $format i32) (param $wide i32) (result i32)
     (local $decode_cp i32)
-    ;; Stage-2 decode, as at $gdi_native_text_out. A negative count
-    ;; decodes to the terminator and comes back as a character count —
-    ;; the same length the wide path computes for itself downstream.
+    ;; Stage-2 decode, as at $gdi_native_text_out. DrawText's -1 means
+    ;; NUL-terminated: it decodes to the terminator and comes back as a
+    ;; character count — the same length the wide path computes for itself
+    ;; downstream. Any other count the pipeline rejects (< -1, > 65536)
+    ;; skips the decode and is rejected there, as without a decode.
     (local.set $decode_cp (call $text_decode_cp_for_dc (local.get $hdc)))
     (if (i32.and (i32.eqz (local.get $wide))
           (i32.and (i32.ne (local.get $decode_cp) (i32.const 0))
-            (i32.ne (local.get $text) (i32.const 0))))
+            (i32.and (i32.ne (local.get $text) (i32.const 0))
+              (i32.or (i32.eq (local.get $count) (i32.const -1))
+                (i32.le_u (local.get $count) (i32.const 65536))))))
       (then
         (local.set $count (call $ansi_counted_to_wide_wa (local.get $decode_cp)
           (local.get $text) (local.get $count)

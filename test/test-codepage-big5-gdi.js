@@ -184,7 +184,7 @@ const extraWat = String.raw`
   // and the total advance must be the 7-per-character one ExtTextOutW
   // produces from per-character entries.
   const dxBuf2 = alloc(128);
-  const setDx = (ptr, vals) => vals.forEach((v, i) => e.guest_write32(ptr + i * 4, v));
+  function setDx(ptr, vals) { vals.forEach((v, i) => e.guest_write32(ptr + i * 4, v)); }
   setDx(dxBuf2, [3, 4, 3, 4, 3, 4, 3, 4]);
   resetSurface();
   assert.strictEqual(e.test_call_ExtTextOutA(dc, 0, 0, 0, 0, gameA, 8, dxBuf2), 1);
@@ -214,6 +214,28 @@ const extraWat = String.raw`
   const drawA = drawRect(e.test_call_DrawTextA, gameA, 8);
   assert.strictEqual(drawA.right, drawW.right, 'CP950: DrawTextA CALCRECT width == DrawTextW');
   assert.strictEqual(drawA.height, drawW.height, 'CP950: DrawTextA CALCRECT height == DrawTextW');
+  // DrawText's -1 is NUL-terminated, and still decodes.
+  const drawAz = drawRect(e.test_call_DrawTextA, gameA, -1);
+  assert.strictEqual(drawAz.right, drawW.right, 'CP950: DrawTextA(-1) measures the NUL-terminated decoded string');
+
+  // Count validation comes BEFORE the decode: TextOutA/ExtTextOutA reject
+  // count < 0 or > 65536 with FALSE in a CP950 launch, exactly as the
+  // undecoded path does, instead of decoding -1 as NUL-terminated.
+  for (const bad of [-1, 65537]) {
+    resetSurface();
+    assert.strictEqual(e.test_call_TextOutA(dc, 0, 0, gameA, bad), 0, `CP950: TextOutA count ${bad} is FALSE`);
+    assert.strictEqual(currentX(), 0, `CP950: TextOutA count ${bad} does not advance`);
+    resetSurface();
+    assert.strictEqual(e.test_call_ExtTextOutA(dc, 0, 0, 0, 0, gameA, bad, 0), 0, `CP950: ExtTextOutA count ${bad} is FALSE`);
+  }
+  setDx(dxBuf2, [3, 4, 3, 4, 3, 4, 3, 4]);
+  resetSurface();
+  assert.strictEqual(e.test_call_ExtTextOutA(dc, 0, 0, 0, 0, gameA, -1, dxBuf2), 0,
+    'CP950: ExtTextOutA count -1 with lpDx is FALSE (no decode, no lpDx read)');
+  e.set_ansi_code_page(1252);
+  resetSurface();
+  assert.strictEqual(e.test_call_TextOutA(dc, 0, 0, gameA, -1), 0, 'CP1252: TextOutA count -1 is FALSE (unchanged)');
+  e.set_ansi_code_page(950);
 
   // ETO_GLYPH_INDEX: the WORD array is glyph indices, never characters —
   // under ACP 950 it must reach the pipeline exactly as under any page.
@@ -262,7 +284,19 @@ const extraWat = String.raw`
   e.test_call_SelectObject(dc, font136);
   assert.strictEqual(extentA(gameA, 8), decodedWidth,
     'ACP1252 + charset 136: A extent decodes by the charset alone');
+  // The charset decides for drawing too: TextOutW of the decoded chars
+  // with the same font is the reference advance.
+  resetSurface();
+  assert.strictEqual(e.test_call_TextOutW(dc, 0, 0, gameW, 4), 1);
+  const advance136W = currentX();
+  resetSurface();
+  assert.strictEqual(e.test_call_TextOutA(dc, 0, 0, gameA, 8), 1);
+  assert.strictEqual(currentX(), advance136W, 'ACP1252 + charset 136: TextOutA advances by the 4 decoded characters');
+  const drawW136 = drawRect(e.test_call_DrawTextW, gameW, 4);
+  assert.strictEqual(drawRect(e.test_call_DrawTextA, gameA, 8).right, drawW136.right,
+    'ACP1252 + charset 136: DrawTextA measures the decoded string');
   e.test_call_SelectObject(dc, font);
+  assert.strictEqual(extentA(gameA, 8), legacyWidth, 'ACP1252 + ANSI font again: legacy byte width');
 
-  console.log('PASS codepage-big5-gdi: CP950 funnels decode (extent/ExPoint fit+dx/TextOut/ExtTextOut/DrawText), ETO_GLYPH_INDEX exempt, CP1252 byte-for-byte');
+  console.log('PASS codepage-big5-gdi: CP950 funnels decode (extent/ExPoint fit+dx/TextOut/ExtTextOut/DrawText), count validated before decode, charset 136 decodes in CP1252, ETO_GLYPH_INDEX exempt, CP1252 byte-for-byte');
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

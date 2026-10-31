@@ -4106,48 +4106,64 @@
       (then (return (i32.add (i32.sub (local.get $ch) (i32.const 0xA1)) (i32.const 63)))))
     (i32.const -1))
 
-  ;; Decode one character from its first two bytes in resolved page $cp.
+  ;; Decode one character from its first two bytes in resolved page $cp,
+  ;; from Microsoft's CP950 table (bestfit950.txt, 01c-big5-tables).
   ;; $avail bounds the logical read: a pair is formed only when two bytes
   ;; remain (string walkers with a NUL-terminated source pass a huge
-  ;; $avail and stop at the terminator before decoding it). Invalid input
-  ;; decodes to U+FFFD consuming one byte — the offending byte alone — so
-  ;; a bad trail byte is re-examined as the next character's start, as in
-  ;; Wine. A well-formed but unmapped pair also yields U+FFFD but consumes
-  ;; both bytes. The two entry points below are this core plus a byte
-  ;; source: guest addresses through $gl8 for the conversion family, raw
-  ;; linear memory for the GDI text funnels (stage 2), whose callers hand
-  ;; over pointers their own callers already resolved.
+  ;; $avail and stop at the terminator before decoding it).
+  ;;   - a non-lead byte decodes through the table's single-byte part
+  ;;     (ASCII, 0x80 -> U+0080, 0xFF -> U+F8F8);
+  ;;   - whether a byte leads a pair is $is_dbcs_lead_byte_for_cp's answer,
+  ;;     the same one IsDBCSLeadByte, CharNextA, _mbsinc and GetCPInfo give
+  ;;     (0x81..0xFE, the table's DBCSRANGE);
+  ;;   - a lead with a trail in 0x40..0x7E / 0xA1..0xFE decodes through the
+  ;;     table's pair part; every EUDC pair is a Private Use Area character;
+  ;;   - what the table does not map decodes to its default char U+003F,
+  ;;     flagged invalid (bit 24) for MB_ERR_INVALID_CHARS: an unmapped
+  ;;     pair consumes both bytes; a lead byte with no byte after it, or
+  ;;     whose next byte is outside both trail ranges, consumes the lead
+  ;;     alone, so a NUL / ASCII / control byte is never swallowed as a
+  ;;     trail. (Those two consumption choices are not defined by
+  ;;     Microsoft's data; they are the conservative reading.)
+  ;; The two entry points below are this core plus a byte source: guest
+  ;; addresses through $gl8 for the conversion family, raw linear memory
+  ;; for the GDI text funnels (stage 2), whose callers hand over pointers
+  ;; their own callers already resolved.
   (func $cp_char_decode (param $cp i32) (param $b0 i32) (param $b1 i32) (param $avail i32) (result i32)
     (local $tidx i32) (local $w i32)
     (if (i32.eqz (call $cp_has_conversion_tables (local.get $cp)))
       (then (return (i32.or (local.get $b0) (i32.const 0x10000)))))
-    ;; CP950.
-    (if (i32.lt_u (local.get $b0) (i32.const 0x80))
-      (then (return (i32.or (local.get $b0) (i32.const 0x10000)))))
-    ;; Lead bytes outside the table's 0xA1..0xFE repertoire (0x80..0xA0)
-    ;; have no pair mapping and surface singly, flagged invalid.
-    (if (i32.or (i32.lt_u (local.get $b0) (i32.const 0xA1)) (i32.gt_u (local.get $b0) (i32.const 0xFE)))
-      (then (return (i32.const 0x101FFFD))))
-    (if (i32.lt_u (local.get $avail) (i32.const 2))
-      (then (return (i32.const 0x101FFFD)))) ;; truncated pair at buffer end
+    ;; CP950 single byte: the generator guarantees every non-lead byte has
+    ;; a single-byte entry.
+    (if (i32.eqz (call $is_dbcs_lead_byte_for_cp (local.get $cp) (local.get $b0)))
+      (then (return (i32.or
+        (i32.load16_u (i32.add (global.get $BIG5_DECODE_TABLE)
+          (i32.shl (local.get $b0) (i32.const 1))))
+        (i32.const 0x10000)))))
+    (if (i32.lt_u (local.get $avail) (i32.const 2)) ;; lone lead at buffer end
+      (then (return (i32.or (global.get $BIG5_DEFAULT_WCHAR) (i32.const 0x1010000)))))
     (local.set $tidx (call $big5_trail_index (local.get $b1)))
-    (if (i32.lt_s (local.get $tidx) (i32.const 0))
-      (then (return (i32.const 0x101FFFD)))) ;; trail out of range: lead alone
+    (if (i32.lt_s (local.get $tidx) (i32.const 0)) ;; not a trail: lead alone
+      (then (return (i32.or (global.get $BIG5_DEFAULT_WCHAR) (i32.const 0x1010000)))))
     (local.set $w (i32.load16_u (i32.add (global.get $BIG5_DECODE_TABLE)
-      (i32.shl (i32.add (i32.mul (i32.sub (local.get $b0) (i32.const 0xA1)) (i32.const 157)) (local.get $tidx)) (i32.const 1)))))
-    (if (i32.eqz (local.get $w))
-      (then (return (i32.const 0x102FFFD)))) ;; unmapped pair: both bytes consumed
+      (i32.shl
+        (i32.add (global.get $BIG5_SB_ENTRIES)
+          (i32.add
+            (i32.mul (i32.sub (local.get $b0) (global.get $BIG5_LEAD_FIRST)) (i32.const 157))
+            (local.get $tidx)))
+        (i32.const 1)))))
+    (if (i32.eqz (local.get $w)) ;; unmapped pair: both bytes consumed
+      (then (return (i32.or (global.get $BIG5_DEFAULT_WCHAR) (i32.const 0x1020000)))))
     (i32.or (local.get $w) (i32.const 0x20000)))
 
   ;; Whether decoding the byte after $b0 is even a question in page $cp:
-  ;; a table-backed page, a lead-range first byte, a pair available. The
-  ;; entry points fetch the trail byte only then, so a read at the very
-  ;; edge of an allocation behaves exactly as the pre-core code did.
+  ;; a table-backed page, a lead byte, a pair available. The entry points
+  ;; fetch the trail byte only then, so a read at the very edge of an
+  ;; allocation behaves exactly as the pre-core code did.
   (func $cp_may_pair (param $cp i32) (param $b0 i32) (param $avail i32) (result i32)
     (i32.and (call $cp_has_conversion_tables (local.get $cp))
-      (i32.and (i32.ge_u (local.get $b0) (i32.const 0xA1))
-        (i32.and (i32.le_u (local.get $b0) (i32.const 0xFE))
-          (i32.ge_u (local.get $avail) (i32.const 2))))))
+      (i32.and (call $is_dbcs_lead_byte_for_cp (local.get $cp) (local.get $b0))
+        (i32.ge_u (local.get $avail) (i32.const 2)))))
 
   ;; Decode the character at guest address $gp in resolved page $cp.
   (func $ansi_char_decode (param $cp i32) (param $gp i32) (param $avail i32) (result i32)
@@ -4176,6 +4192,10 @@
   ;; bits 0..7, second in bits 8..15) — in a DBCS page the API's default
   ;; character is itself two bytes and must be emitted whole, never
   ;; truncated to its first byte. Packing mirrors $ansi_char_decode.
+  ;; CP950 encodes through Microsoft's WCTABLE, best-fit entries included
+  ;; (U+00A5 -> A2 44): that is WideCharToMultiByte's default on every
+  ;; Windows, and Win98 has no way to turn it off. Characters WCTABLE does
+  ;; not list (HKSCS-only ones among them) take the default char.
   (func $ansi_char_encode (param $cp i32) (param $wc i32) (param $def i32) (param $def_len i32) (result i32)
     (local $lo i32) (local $hi i32) (local $mid i32) (local $entry i32)
     (if (i32.eqz (call $cp_has_conversion_tables (local.get $cp)))
@@ -4196,6 +4216,11 @@
           (if (i32.gt_u (local.get $wc) (i32.shr_u (local.get $entry) (i32.const 16)))
             (then (local.set $lo (i32.add (local.get $mid) (i32.const 1))))
             (else
+              ;; A single-byte entry (0x80 for U+0080, 0xFF for U+F8F8,
+              ;; best-fit single bytes) is emitted as one byte.
+              (if (i32.lt_u (i32.and (local.get $entry) (i32.const 0xFFFF)) (i32.const 0x100))
+                (then (return (i32.or (i32.and (local.get $entry) (i32.const 0xFF))
+                  (i32.const 0x10000)))))
               ;; The table stores (lead << 8) | trail; the packed result
               ;; wants emit order — lead in bits 0..7, trail in bits 8..15.
               (return (i32.or
@@ -4308,10 +4333,11 @@
   ;; The pre-conversion MultiByteToWideChar, preserved exactly: the page
   ;; argument was ignored, every byte expanded to its own WCHAR, a short
   ;; buffer silently truncated the copy, and no error was ever set. This
-  ;; remains the behavior of the API in every launch but a CP950 one — the
-  ;; conversion semantics below are opt-in per launch (ansiCodePage: 950),
-  ;; so an app that did not ask for a DBCS page observes no change at all,
-  ;; whatever page it names (CP65001 and CP850 included).
+  ;; remains the behavior of the API in every launch but a CP950 one, and
+  ;; in a CP950 launch for every page but 950 — the conversion semantics
+  ;; below are opt-in per launch (ansiCodePage: 950), so an app that did
+  ;; not ask for a DBCS page observes no change at all, whatever page it
+  ;; names (CP65001 and CP850 included).
   (func $multi_byte_to_wide_char_legacy (param $src i32) (param $src_len i32) (param $dst i32) (param $dst_len i32) (result i32)
     (local $i i32) (local $src_wa i32) (local $dst_wa i32)
     (local.set $src_wa (call $g2w (local.get $src)))
@@ -4355,9 +4381,44 @@
       (br $lp)))
     (local.get $i))
 
+  ;; Whether MultiByteToWideChar / WideCharToMultiByte convert for real for
+  ;; resolved page $cp: only in a CP950 launch (the per-launch opt-in), and
+  ;; only for a page with tables. Every other page — CP_UTF8 (65001), 850,
+  ;; an explicit 1252, an unknown page — keeps the legacy path above in a
+  ;; CP950 launch exactly as it does in a Western one, never error 87.
+  (func $cp_converts_in_launch (param $cp i32) (result i32)
+    (i32.and (call $cp_has_conversion_tables (global.get $ansi_code_page))
+      (call $cp_has_conversion_tables (local.get $cp))))
+
+  ;; One WCHAR for WideCharToMultiByte: $ansi_char_encode (best fit on, the
+  ;; Windows default), plus WC_NO_BEST_FIT_CHARS (0x400). Win98 does not
+  ;; know that flag (it is Win2000+); honoring it is harmless: a mapping
+  ;; whose bytes do not decode back to the same WCHAR is a best fit, and
+  ;; with the flag it becomes the default char instead.
+  (func $wc2mb_char (param $cp i32) (param $wc i32) (param $def i32) (param $def_len i32) (param $flags i32) (result i32)
+    (local $enc i32)
+    (local.set $enc (call $ansi_char_encode (local.get $cp) (local.get $wc) (local.get $def) (local.get $def_len)))
+    (if (i32.and (i32.ne (i32.and (local.get $flags) (i32.const 0x400)) (i32.const 0))
+          (i32.eqz (i32.and (local.get $enc) (i32.const 0x1000000))))
+      (then
+        (if (i32.ne (i32.and (call $cp_char_decode (local.get $cp)
+                (i32.and (local.get $enc) (i32.const 0xFF))
+                (i32.and (i32.shr_u (local.get $enc) (i32.const 8)) (i32.const 0xFF))
+                (i32.shr_u (i32.and (local.get $enc) (i32.const 0xFF0000)) (i32.const 16)))
+              (i32.const 0xFFFF))
+              (local.get $wc))
+          (then (local.set $enc (i32.or
+            (i32.or
+              (i32.and (local.get $def)
+                (select (i32.const 0xFFFF) (i32.const 0xFF)
+                  (i32.eq (local.get $def_len) (i32.const 2))))
+              (i32.shl (local.get $def_len) (i32.const 16)))
+            (i32.const 0x1000000)))))))
+    (local.get $enc))
+
   ;; MultiByteToWideChar semantics (Wine/Win32), shared by the API handler
-  ;; and the tests — CP950 launches only; every other launch takes the
-  ;; legacy path above and never reaches here. $src_len is cbMultiByte
+  ;; and the tests — only where $cp_converts_in_launch; everything else
+  ;; takes the legacy path above and never reaches here. $src_len is cbMultiByte
   ;; (-1 = NUL-terminated, terminator counted in the result); $dst_len is
   ;; cchWideChar. Returns the wide characters produced — or the count
   ;; required when $dst is NULL or $dst_len is 0 — and 0 on failure with
@@ -4366,12 +4427,10 @@
   ;; MB_ERR_INVALID_CHARS).
   (func $multi_byte_to_wide_char (param $cp i32) (param $flags i32) (param $src i32) (param $src_len i32) (param $dst i32) (param $dst_len i32) (result i32)
     (local $i i32) (local $n i32) (local $dec i32) (local $invalid i32)
-    (if (i32.eqz (call $cp_has_conversion_tables (global.get $ansi_code_page)))
+    (local.set $cp (call $resolve_code_page (local.get $cp)))
+    (if (i32.eqz (call $cp_converts_in_launch (local.get $cp)))
       (then (return (call $multi_byte_to_wide_char_legacy
         (local.get $src) (local.get $src_len) (local.get $dst) (local.get $dst_len)))))
-    (local.set $cp (call $resolve_code_page (local.get $cp)))
-    (if (i32.eqz (call $is_supported_code_page (local.get $cp)))
-      (then (global.set $last_error (i32.const 87)) (return (i32.const 0))))
     (if (i32.eqz (local.get $src))
       (then
         (if (i32.ne (local.get $src_len) (i32.const 0)) (then (global.set $last_error (i32.const 87))))
@@ -4417,7 +4476,7 @@
     (local.get $n))
 
   ;; WideCharToMultiByte semantics, mirroring $multi_byte_to_wide_char —
-  ;; CP950 launches only, as there. $def_ptr / $used_ptr are the API's
+  ;; only where $cp_converts_in_launch, as there. $def_ptr / $used_ptr are the API's
   ;; lpDefaultChar / lpUsedDefaultChar guest pointers (0 = API NULL).
   ;; Unmapped characters emit the default character and set *$used_ptr, as
   ;; in Wine; in a DBCS page the default character is read as the pair it
@@ -4425,12 +4484,10 @@
   (func $wide_char_to_multi_byte (param $cp i32) (param $flags i32) (param $src i32) (param $src_len i32) (param $dst i32) (param $dst_len i32) (param $def_ptr i32) (param $used_ptr i32) (result i32)
     (local $i i32) (local $n i32) (local $enc i32) (local $elen i32) (local $def i32) (local $used i32) (local $ch i32)
     (local $def_len i32) (local $defb i32)
-    (if (i32.eqz (call $cp_has_conversion_tables (global.get $ansi_code_page)))
+    (local.set $cp (call $resolve_code_page (local.get $cp)))
+    (if (i32.eqz (call $cp_converts_in_launch (local.get $cp)))
       (then (return (call $wide_char_to_multi_byte_legacy
         (local.get $src) (local.get $src_len) (local.get $dst) (local.get $dst_len)))))
-    (local.set $cp (call $resolve_code_page (local.get $cp)))
-    (if (i32.eqz (call $is_supported_code_page (local.get $cp)))
-      (then (global.set $last_error (i32.const 87)) (return (i32.const 0))))
     (if (i32.eqz (local.get $src))
       (then
         (if (i32.ne (local.get $src_len) (i32.const 0)) (then (global.set $last_error (i32.const 87))))
@@ -4465,7 +4522,7 @@
     (block $pd (loop $pl
       (br_if $pd (i32.ge_u (local.get $i) (local.get $src_len)))
       (local.set $ch (call $gl16 (i32.add (local.get $src) (i32.shl (local.get $i) (i32.const 1)))))
-      (local.set $enc (call $ansi_char_encode (local.get $cp) (local.get $ch) (local.get $def) (local.get $def_len)))
+      (local.set $enc (call $wc2mb_char (local.get $cp) (local.get $ch) (local.get $def) (local.get $def_len) (local.get $flags)))
       (if (i32.and (local.get $enc) (i32.const 0x1000000)) (then (local.set $used (i32.const 1))))
       (local.set $n (i32.add (local.get $n) (i32.shr_u (i32.and (local.get $enc) (i32.const 0xFF0000)) (i32.const 16))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
@@ -4483,7 +4540,7 @@
     (block $wd (loop $wl
       (br_if $wd (i32.ge_u (local.get $i) (local.get $src_len)))
       (local.set $ch (call $gl16 (i32.add (local.get $src) (i32.shl (local.get $i) (i32.const 1)))))
-      (local.set $enc (call $ansi_char_encode (local.get $cp) (local.get $ch) (local.get $def) (local.get $def_len)))
+      (local.set $enc (call $wc2mb_char (local.get $cp) (local.get $ch) (local.get $def) (local.get $def_len) (local.get $flags)))
       (local.set $elen (i32.shr_u (i32.and (local.get $enc) (i32.const 0xFF0000)) (i32.const 16)))
       (call $gs8 (i32.add (local.get $dst) (local.get $n)) (i32.and (local.get $enc) (i32.const 0xFF)))
       (if (i32.eq (local.get $elen) (i32.const 2))
@@ -4566,11 +4623,17 @@
                      (i32.le_u (local.get $ch) (i32.const 0x9F)))
             (i32.and (i32.ge_u (local.get $ch) (i32.const 0xE0))
                      (i32.le_u (local.get $ch) (i32.const 0xFC)))))))
-    ;; CP936/949/950: 0x81-0xFE.
-    (if (i32.or
-          (i32.or (i32.eq (local.get $cp) (i32.const 936))
-                  (i32.eq (local.get $cp) (i32.const 949)))
-          (i32.eq (local.get $cp) (i32.const 950)))
+    ;; CP950: the conversion table's own DBCSRANGE (bestfit950.txt,
+    ;; 0x81-0xFE), so IsDBCSLeadByte(Ex), CharNextA/CharPrevA(Ex), the
+    ;; _mbs* walkers, GetCPInfo and the decoder are one truth.
+    (if (i32.eq (local.get $cp) (i32.const 950))
+      (then
+        (return
+          (i32.and (i32.ge_u (local.get $ch) (global.get $BIG5_LEAD_FIRST))
+                   (i32.le_u (local.get $ch) (global.get $BIG5_LEAD_LAST))))))
+    ;; CP936/949: 0x81-0xFE.
+    (if (i32.or (i32.eq (local.get $cp) (i32.const 936))
+                (i32.eq (local.get $cp) (i32.const 949)))
       (then
         (return
           (i32.and (i32.ge_u (local.get $ch) (i32.const 0x81))

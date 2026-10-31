@@ -1160,6 +1160,16 @@ const APP_ENTRY = (() => {
     Object.keys(APPS).sort().join(' '));
   process.exit(1);
 })();
+// The process ANSI code page: --codepage=<cp> wins, else the registry
+// entry's `ansiCodePage` (the browser host's precedence); 0 = the CP1252
+// default. Parsed once: the optional code-page font mounts and the WAT
+// setter read it, and CreateProcess children inherit the page actually in
+// effect (it is a system-wide setting on Windows, never per process).
+const ANSI_CODE_PAGE = (() => {
+  const flag = getArg('codepage', null);
+  if (flag !== null) return parseInt(flag, 10) || 0;
+  return APP_ENTRY && Number.isFinite(APP_ENTRY.ansiCodePage) ? APP_ENTRY.ansiCodePage : 0;
+})();
 // An explicit --fault-null wins; otherwise an app registered with
 // `nullPageFaults: true` takes Win98's NULL-guard-page rule (mode 4), the
 // same as the browser does.
@@ -2895,9 +2905,7 @@ async function main() {
     }
     // Optional code-page faces built by tools/fetch-fonts.js (never
     // committed): only for an app under that ANSI page, only if present.
-    const codePageFlag = getArg('codepage', null);
-    const fontCodePage = codePageFlag !== null ? parseInt(codePageFlag, 10)
-      : (APP_ENTRY && Number.isFinite(APP_ENTRY.ansiCodePage) ? APP_ENTRY.ansiCodePage : 0);
+    const fontCodePage = ANSI_CODE_PAGE;
     const optionalMounts = optionalFontMounts(substitutions, {
       codePage: fontCodePage,
       isAvailable: rel => fs.existsSync(path.join(ROOT, 'fonts', rel)),
@@ -4213,6 +4221,7 @@ async function main() {
         '--spawned-child', '--spawn-processes',
         `--save-vfs=${outDir}`, `--reg-import=${regIn}`, `--reg-export=${regOut}`,
         ...(childDllSeeds.length ? [`--dll-seed=${childDllSeeds.join(',')}`] : []),
+        ...childCodePageArgs(),
         ...PIPE_CHILD_ARGS,
         ...startupShowArgs(showCmd),
         // and on down the tree: instmsi's msiexec is a grandchild.
@@ -4288,6 +4297,7 @@ async function main() {
       // The child's side of a wire question is half the answer.
       // (never --verbose: its per-batch output, relayed here, is unbounded)
       ...(TRACE_NET ? ['--trace-net'] : []),
+      ...childCodePageArgs(),
       ...PIPE_CHILD_ARGS,
       ...startupShowArgs(showCmd),
     ];
@@ -4949,21 +4959,21 @@ async function main() {
   // were logged (and so counted twice, by h.log and by $api_calls) and a
   // --trace-api-paused run printed them before it was switched on.
   if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);
-  // Process ANSI code page, applied before the PE is staged below:
-  // --codepage=<cp> wins, else the registry entry's `ansiCodePage`
-  // (lib/apps.js) — the same precedence as the browser host. The WAT
-  // setter validates the page; pages without conversion tables keep the
-  // historical identity conversion, so this is observable only for
-  // CP950 today.
-  {
-    const cpFlag = getArg('codepage', null);
-    const cp = cpFlag !== null ? parseInt(cpFlag, 10)
-      : (APP_ENTRY && Number.isFinite(APP_ENTRY.ansiCodePage) ? APP_ENTRY.ansiCodePage : 0);
-    if (cp && instance.exports.set_ansi_code_page) {
-      instance.exports.set_ansi_code_page(cp);
-      console.log(`[run] ANSI code page: ${cp}`);
-    }
+  // Process ANSI code page (ANSI_CODE_PAGE above), applied before the PE
+  // is staged below. The WAT setter validates the page; pages without
+  // conversion tables keep the historical identity conversion, so this is
+  // observable only for CP950 today.
+  if (ANSI_CODE_PAGE && instance.exports.set_ansi_code_page) {
+    instance.exports.set_ansi_code_page(ANSI_CODE_PAGE);
+    console.log(`[run] ANSI code page: ${ANSI_CODE_PAGE}`);
   }
+  // CreateProcess children run under the page this process actually has
+  // (the WAT may have refused an unsupported one); the CP1252 default
+  // needs no flag, so a Western child's command line is unchanged.
+  const childCodePageArgs = () => {
+    const cp = instance.exports.get_ansi_code_page ? instance.exports.get_ansi_code_page() | 0 : 0;
+    return cp && cp !== 1252 ? [`--codepage=${cp}`] : [];
+  };
   // Apply the app's page-index layout before decoding or creating threads.
   // Positive CLI flags override app defaults (expanded wins if both are set).
   // Each --no-* flag disables that app default; an explicit positive wins

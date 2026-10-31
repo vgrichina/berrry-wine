@@ -6823,11 +6823,13 @@
       (then (call $win16_LocalSize) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 11))
       (then (call $win16_LocalHandle) (return (i32.const 1))))
-    ;; IsDBCSLeadByte(ch). The runtime exposes the US ANSI code page, which has
-    ;; no double-byte lead characters; Win95 InstallShield still probes every
-    ;; path component through this before it starts its 32-bit engine.
+    ;; IsDBCSLeadByte(ch): the process ANSI page's lead bytes, the same
+    ;; answer the Win32 IsDBCSLeadByte gives — none under the default
+    ;; CP1252 (Win95 InstallShield probes every path component through
+    ;; this before it starts its 32-bit engine), 0x81..0xFE under CP950.
     (if (i32.eq (local.get $ordinal) (i32.const 207))
-      (then (call $win16_local_identity (i32.const 2) (i32.const 0))
+      (then (call $win16_local_identity (i32.const 2)
+              (call $is_dbcs_lead_byte (call $win16_arg16 (i32.const 0))))
             (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 13))   ;; LocalCompact
       (then (call $win16_local_identity (i32.const 2)
@@ -8216,14 +8218,17 @@
   ;; USER.472 AnsiNext(lpszCurrentChar) -> the next character. With a
   ;; single-byte character set that is the pointer plus one, except at the
   ;; terminating NUL, where AnsiNext stands still so a walk cannot run off the
-  ;; end of the string.
+  ;; end of the string. Under a DBCS process page a lead byte followed by a
+  ;; non-NUL byte is one two-byte character ($char_next_a_cp, as CharNextA).
   (func $win16_AnsiNext
-    (local $sel i32) (local $off i32)
+    (local $sel i32) (local $off i32) (local $gp i32)
     (local.set $off (call $win16_arg16 (i32.const 0)))
     (local.set $sel (call $win16_arg16 (i32.const 1)))
-    (if (call $gl8 (call $win16_far_to_guest (local.get $sel) (local.get $off)))
-      (then (local.set $off (i32.and (i32.add (local.get $off) (i32.const 1))
-                                     (i32.const 0xFFFF)))))
+    (local.set $gp (call $win16_far_to_guest (local.get $sel) (local.get $off)))
+    (local.set $off (i32.and
+      (i32.add (local.get $off)
+        (i32.sub (call $char_next_a_cp (local.get $gp) (i32.const 0)) (local.get $gp)))
+      (i32.const 0xFFFF)))
     (i32.store offset=8 (global.get $reg_base) (local.get $sel))
     (i32.store offset=0 (global.get $reg_base) (local.get $off))
     (call $win16_api_return (i32.const 4)))
@@ -8238,6 +8243,22 @@
     (local.set $sel (call $win16_arg16 (i32.const 1)))
     (local.set $start_off (call $win16_arg16 (i32.const 2)))
     (local.set $start_sel (call $win16_arg16 (i32.const 3)))
+    (if (i32.and (call $is_dbcs_code_page (i32.const 0))
+          (i32.and (i32.eq (local.get $sel) (local.get $start_sel))
+                   (i32.gt_u (local.get $off) (local.get $start_off))))
+      (then
+        ;; DBCS: walk forward from the start, as CharPrevA does.
+        (local.set $off (i32.add (local.get $start_off)
+          (i32.sub
+            (call $char_prev_a_cp
+              (call $win16_far_to_guest (local.get $start_sel) (local.get $start_off))
+              (call $win16_far_to_guest (local.get $sel) (local.get $off))
+              (i32.const 0))
+            (call $win16_far_to_guest (local.get $start_sel) (local.get $start_off)))))
+        (i32.store offset=8 (global.get $reg_base) (local.get $sel))
+        (i32.store offset=0 (global.get $reg_base) (local.get $off))
+        (call $win16_api_return (i32.const 8))
+        (return)))
     (if (i32.eqz (i32.and (i32.eq (local.get $sel) (local.get $start_sel))
                           (i32.eq (local.get $off) (local.get $start_off))))
       (then (local.set $off (i32.and (i32.sub (local.get $off) (i32.const 1))
