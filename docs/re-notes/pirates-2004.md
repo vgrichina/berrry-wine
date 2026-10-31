@@ -1237,3 +1237,83 @@ post-cleanup actual-process gate was clear before releasing the lane; no
 emergency or foreign signals were needed. No Boat was allocated (ID/state/
 expiry N/A). Recovery, raw traces, original-source rejection logs and bounded
 replay commands remain in `scratch/runs/20261031T0953Z-pirates-bootstrap/`.
+
+### Failed-bootstrap notification retirement, 2026-10-31
+
+The remaining notification ownership boundary above now has a generic source
+repair. This task does **not** replay Pirates: the accepted native sailing and
+input evidence remains the preceding 9b1126f01 run. The new evidence is local
+correctness testing of the failed path, rather than another normal attach.
+
+Each Worker binds its actual exports to an endpoint-owned DLL callback owner.
+That owner tracks asynchronous gate scopes and callback generators, including
+nested LoadLibrary initializers whose options do not carry the outer thread
+notification's wait resolver. A retirement control message validates endpoint
+identity and bypasses the blocked command queue to fence admission, reject
+pending DLL lookups and signal cancellation. The critical-section wait checks
+that signal without executing the guest or clearing the unresolved wait.
+Retirement then **joins the real command queue**: nested service calls must
+return, callback generators close through `finally`, and their own gate scopes
+release before the endpoint can produce its receipt. The existing scoped-loader
+registry is retired as part of that same acknowledgment.
+
+Cancellation produces an incomplete callback outcome, allowing the actual
+mapping iterator to roll back its transaction. It never reports that DllMain
+completed. Notification/lookup pins release by their captured generation;
+failed notification pins remain reachable until endpoint retirement can release
+them. An unfinished DLL_PROCESS_ATTACH keeps its distinct mapping quarantine
+pin. Generation cleanup faults refuse acknowledgment, and an unresponsive
+Worker retains its endpoint, gate, pins, stack and slot for an explicit retry.
+There is no shared gate reset, blanket pin decrement, guest patch, callback
+bypass, Worker disabling or timeout increase.
+
+WorkerLink fences new requests and settles pending ordinary requests as soon
+as retirement starts. It still serves an already inflight synchronous RPC:
+otherwise that Worker's Atomics.wait could prevent cancellation delivery.
+Lookup replies carry endpoint identity; stale replies and late bytes cannot
+publish into a retired endpoint. The Worker reports stack allocation before
+fallible TLS setup/attach, so failure without `threadReady` still transfers the
+stack lease to the host. Existing ThreadManager barriers require acknowledged
+Worker termination and a successful native stack free before slot reuse.
+Neither host.js nor ThreadManager needed a source change for this repair.
+
+`test/test-worker-bootstrap-retirement.js` runs the production Worker queue,
+loader, LoadLibrary mapping iterator, RPC broker and scheduler retirement over
+deterministic interpreter exports in actual Node Workers. It covers nested
+attach cancellation in both a critical-section wait and a second DLL lookup;
+failure before attach and inside a nested initializer; the actual bootstrap
+request timer; pending ordinary requests; real inflight synchronous RPC;
+stale endpoint replies/control and DLL generations; lost acknowledgment;
+an endpoint unable to service cancellation while blocked in RPC; exactly-once
+generator unwind; the acknowledgment/Worker-exit gap; a busy native stack lease;
+cancellation while another endpoint owns the gate; and ordinary successful
+nested attach with caller registers restored. All owned fixture Workers exit.
+
+The causal retained-source control compiles the exact original WorkerLink at
+its production filename with real sibling imports. Its older lookup reply
+envelope receives only the current endpoint-identity field in the test transport,
+so both variants reach the same genuine nested callback. Original stop/admission/
+handshake code is unchanged. It actually terminates the Worker with gate
+`[6,4]`, provider pins 2 and unfinished mapping pin 1, then fails the orphan-gate
+assertion. The repaired path has gate `[0,0]`, provider pins 0, mapping pin 1,
+and a real receipt recording two generators/two unwinds. This rejection is
+ownership leakage, not a missing import, changed reply schema or absent API.
+
+Bootstrap progress, all 58 scheduler checks, ThreadManager, critical-section
+notification, scoped-loader retirement, scoped DLL lifecycle, thread-send
+ownership, browser Worker slice/suspend/input source checks and affected callback
+census/mutation checks pass. The extra retired-stack fixture still fails before
+its own assertions because its Object.create fixture omits `_authorityEvents`.
+The retained pre-repair ThreadManager reproduces that same failure; the fixture
+is unchanged. The new regression independently checks the full acknowledged
+exit/busy-free/retry stack lease path without weakening those old assertions.
+
+Run evidence and reproducible commands are in
+`scratch/runs/20261031T1022Z-pirates-retirement/RECOVERY.md`. After the Deus
+camera worker explicitly released the lane at 10:54:06 UTC, the full build
+passed at 10:55:16 under the browser lock followed by the build lock. Actual
+Chrome/crashpad/heavy-process/profile gates were clear before and after; free
+disk remained above 2 GB. No browser/native replay or Boat allocation is part
+of this task. Unresponsive endpoints and unfinished initializer images retain
+their respective quarantines; reclaiming arbitrary guest-owned locks is outside
+this local correctness repair.
