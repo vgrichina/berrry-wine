@@ -1,7 +1,9 @@
-Current 2026-10-31T04:42Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T04:48Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-UT2004 reached original DM-Rankin with native movement, mouse-look and firing. I inspected the readable firing frame: health100, ammo96. Notes2342e9288 are on main; run20261031T0427Z-ut2004-match retains exact8459597 dirty source identity. Browser and match completion remain unverified.
+UT2004 original DM-Rankin native movement/look/fire is verified; inspected firing frame health100/ammo96. Notes2342e9288, run20261031T0427Z-ut2004-match. No browser or match-completion claim.
 
-Two workers now run: Forsaken WebGL frame repair and the owner's seven-topic integration task. The latter takes UT's freed slot; the next Deus Ex Training browser lane is queued until capacity opens. All game runtimes share /tmp/wine-browser.lock. Heavy benchmarks use separate boats.
+Forsaken50bb30050 confirms stale briefing and partial world inside the known-source GPU target; missing-world-draw cause remains unproved, no repair. Inspected thrust-short-gpu.png in run20261031T0427Z-forsaken-frame; runtime cleaned.
 
-ReVolt59a615fc5 repairs legacy attachment matching and reaches native WebGL driving, without a lap; corpus status updated in d57e4c500. DeusEx849d6a527 CLI Training movement remains verified. Forsaken's earlier stale/overbright rendering and full GL/D3D27 software/WebGL coverage remain open. Disk last verified4.5GB, minimum2GB. Laptop fonts/HeroesII stay laptop-owned; no public deployment. No owner input needed.
+Two workers run: owner seven-topic integration and fresh Deus Ex Training browser gameplay. Integration has pushed CRT remove431e1922b, dialog overlay9e0860421, Win16 handlesbedaaaa7f, selector68ac26542; full completion review pending. Setjmp/longjmp blocked by repository ownership gate. All game runtimes serialize under /tmp/wine-browser.lock; heavy benchmarks use separate boats.
+
+ReVolt59a615fc5 native WebGL driving and DeusEx849d6a527 CLI Training movement remain accepted; full GL/D3D27 coverage open. Disk4.6GB, minimum2GB. Laptop fonts/HeroesII protected; no public deployment. No owner input needed.
