@@ -1010,6 +1010,81 @@ not strengthen the sampler-causation claim. Do not repeat this observer
 unchanged; establish that the diagnostic execution reaches the relevant draw
 before another sampler capture. No production source changed.
 
+### First completed readback failure on exact source (2026-10-31)
+
+`20261031T0531Z-ut2003-readback` establishes the causal chain on UTorigin's
+retained locked build, SHA-256
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`,
+with its exact 295-file source/host snapshot, seven compiler files and original
+build log. This includes the window-origin repair published as `fb698d57e`.
+It uses neither the unknown-source `8333a35b` module nor mixed current-host
+CLI evidence. All 881 original entries (879 data files, executable and manifest)
+verify unchanged before/after; 107 served snapshots match the retained pins.
+The original registered `-d3d -window -nosound` startup is unchanged.
+
+Unlike the earlier observers, this single serialized native browser execution
+reaches device creation, actual draws and the game's original crash dialog
+(`startup-15.png`, personally inspected). The live render worker attests endpoint
+1, API `neutral`, backend **`webgl`**, device `0x18721038`, generation 1.
+This establishes this endpoint's identity, without qualifying gameplay or backend
+parity. The capped diagnostic wraps existing WASM import hooks and bridge
+methods through CDP/page evaluation; production served source bytes are intact.
+
+The first LockRect is Surface8 `0x18832010`, DX slot 6, output `0x179ff76c`,
+rectangle pointer `0x179ff75c` containing `(0,0,1,1)`, flags `0x10`, return
+address `0x11ae7d78`. It resolves to the live device's lockable 640×480
+backbuffer, pitch 2560, format 22. Source admission succeeds: it captures the
+valid output/rectangle and submits backbuffer readback `0x30016` with descriptor
+`0x014656d4` (device program state `0x11d53004`).
+
+At 05:32:47.020 UTC, the initial handler exit has raw EAX `0x8876086c`, token
+`-3`, yield reason 16 and unchanged ESP `0x179ff71c`: **parked, not completed**.
+At 05:32:47.031, the same call re-enters and polls `0x30007/-3`; the completed
+request carries `QueueError: D3D9 draw: WebGL sampler LOD bias/MAXMIPLEVEL is not
+implemented`. Poll returns `-1`. At 05:32:47.035, token/yield are zero, ESP is
+`0x179ff730` (+20), EAX remains `0x8876086c`, and the output words are unchanged.
+This is the first completed guest failure. `d3d9_backbuffer_lock` takes its
+post-poll `result != 1` branch and clears the reserved lock; none of its initial
+surface/flag/rectangle/output gates rejected this call.
+
+The rejecting command precedes that readback: **DRAW sequence 29** on the same
+device/generation, after the contiguous successful prefix 1–28. Its sampler
+snapshots have LOD bias `-0.5`, MAXMIPLEVEL **0**, min/mag 2, mip filter 1.
+Stage 0 is a 512×512 ten-level 2D image; stage 1 is a 128×128 eight-level cube
+image. The retained backend routes used biased 2D stages through
+`Shader.withMipSampling`, explicitly excludes cube images from those stages,
+and rejects nonzero bias in ordinary `uploadTexture` unless the image has one
+level and matching min/mag filters. Thus stage 1's multi-level cube satisfies
+the rejecting condition; this stage attribution follows from that source path
+and captured command metadata. **READBACK sequence 48**, token `-3`, inherits
+the same poisoned-queue error; readback does not originate it. Later rejected
+draw fences are propagation, not additional independently executed failures.
+
+`check-cause.cjs` passes exact completion/ESP/token/argument/endpoint/sequence
+checks and exercises the retained production `uploadTexture` rejection with
+the observed cube metadata. `post-failure-state.json` records the surviving
+surface/device/program state separately: its stack rectangle has already been
+reused and must not replace the entry-hook rectangle evidence. The final
+05:35 capture shows the game window gone, not a menu or world.
+
+No source repair was made: this is a concrete unsupported multi-level cube LOD
+bias path, not an invalid rectangle or a demonstrated small lock-handler bug.
+Removing the rejection would silently sample the wrong mip; the existing 2D
+atlas explicitly cannot handle cube sampling. Next work is correct generic
+cube sampler LOD support with mip-selection pixel regressions, then a matched
+original startup/menu/play retest. Native DM-Antalus gameplay remains blocked.
+No guest/assets/clock/startup changes or swallowed errors were used.
+
+The run retains `RECOVERY.md`, helpers, source/compiler manifests, original
+pins, command metadata, closure checks and captures. A harness preflight path
+error closed before any guest launch and is separately preserved under
+`preflight-failure/`; it is not a second native execution. Chrome `1599903`
+exited zero; owned controller/lock holder, HTTP 40325/CDP 36417, profile and
+watchers closed. No Boat was allocated (ID/state/expiry N/A); other workers'
+runtimes, laptop fonts and Heroes were untouched. Focused evidence checks and
+helper syntax pass; no new full build is claimed because production source is
+unchanged and the tested module is the exact previously locked build above.
+
 ## UT2004 explicit CLI renderer startup check (2026-10-31)
 
 Run `20261031T0327Z-ut2004-startup` reached an inspected black game window
