@@ -5,6 +5,93 @@ from Archive item `icewind_dale_eng_demo`. Its README expressly prohibits
 copying/electronic distribution, so the extracted fixture stays ignored and
 must not be deployed or rehosted.
 
+## 2026-10-31 original optical scan and labelled native menu reached
+
+Run `20261031T2137Z-icewind-optical` **executed the unchanged original demo's
+optical scan and reached its labelled native menu**. Character creation,
+Prologue DONE, tavern, and floor-click movement remain unverified: the first
+Create Game click failed in this run's scratch coordinate helper before any
+mouse event was dispatched. This is a harness failure, not an observed guest
+disc failure or an emulator API violation. There was one browser allocation,
+no retry, and no production change or build.
+
+At 21:43:18, the actual guest called `GetLogicalDrives` with return address
+`0x0043AD68`; the host returned mask 12 (C:/D:). Two `GetDriveTypeA` calls
+returned to `0x0043ADFC`; the second host lookup reported type 5. The native
+`GetVolumeInformationA` call returned to `0x0043AE65` and proceeded to
+`FindFirstFileA` through the original MFC wrapper, return address
+`0x00929F05`, for **`D:\cd2\data\iwdcd.2`**. Its VFS result was handle
+1778384913, entry `iwdcd.2`, size 1. `original-optical-runtime.json` retains
+these actual calls and results. Direct Win32 BOOL/handle return logs were
+not captured; the successful volume branch is established by the subsequent
+native marker lookup. There is no observed failing optical call to fix.
+The intro then read the original `C:\CD2\data\MVEfile1.bif`; two ordinary
+Escape presses reached the detailed GAME MODE menu with CREATE GAME, LOAD
+GAME, MOVIES, and QUIT GAME labels. No character or gameplay is inferred
+from that menu.
+
+All 1,106 retained original files (1,079 installed files totaling 470,164,222
+bytes and the 27 CD2 files), 528 source pins, and 867 compiler pins matched
+before and after. The EXE/KEY/INI identities below are unchanged. The run
+reused the retained native installation directly and presented the same
+original CD2 URLs under read-only DRIVE_CDROM D:, preserving the original
+C: paths. No reinstall, download, full fixture copy, marker/volume/KEY/INI
+manufacturing, BIF expansion, save injection, WININIT edit, or foreign cleanup
+occurred.
+
+The exact executed response callback passed 14 cheap cases before launch:
+optional HTTP404s, same-origin HTTP200 script, isolated/unisolated/missing
+document, data/blob URLs, required asset/script/module HTTP failures, and
+module hash mismatch. The scratch server additionally passed actual
+200/400/404/416/500 requests with consistent COOP/COEP headers. It applies
+headers before the static handler's success/error branches. In the browser,
+`crossOriginIsolated=true`, normal Worker/Threads and WebGL were verified;
+the previous optional404 guard failure did not recur. Audio/clock remained
+default, with a native 1024×768 viewport. No FPS or audible-output claim.
+
+Heavy work waited for the **current SlaveZero producer
+01a193e2-c9b5's 21:43:06 NEWFULLRELEASE**, then independently checked actual
+PID/start identities, whole Chrome/global crashpad, profiles, ports, inputs,
+and the inherited FD9 lock. Runtime Git HEAD was independently captured as
+`5efa420458517d3eacbab60f27946e9cdef80a8d`. The actual HTTP-loaded module
+was independently hashed: HTTP200, no cache, 1,898,762 bytes, SHA-256
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+
+The sole browser ran approximately 21:43:11–21:44:51. At the first Create
+Game request, the scratch helper treated the DirectDraw OffscreenCanvas
+as a DOM canvas and threw `TypeError: c.getBoundingClientRect is not a
+function`. The mouse never moved or pressed; input evidence contains only
+the four trusted, balanced Escape key edges. The reviewed
+`browser-failure.png` and `browser-final-before-teardown.png` genuinely
+capture the labelled menu before teardown. `executed-browser.cjs` preserves
+the actual driver. The retained `browser.cjs` now guards the optional DOM
+method and falls back to the displayed renderer canvas and native client
+rectangle. Cheap tests extract the exact helper body: oldFAIL1/newPASS3 for
+OffscreenCanvas, DOM canvas, and absent native layer. **This geometry
+correction has not been browser-executed.**
+
+The controller has a durable wait with exit **1**, honestly preserving the
+harness failure. Supervisor, runtime launcher, board watcher, and monitor
+have durable successful waits; six adopted children were reaped. Chrome
+exited 0 without a signal. Final audit found all 23 own PID/start identities
+absent, whole Chrome/global crashpad empty, ports 43113/46145 closed,
+profile gone, inputs released, and FD9 free. Minimum observed runtime free
+space was 2,668,838,912 bytes. Boat ID/state/expiry N/A. Runtime release
+was announced separately from pending documentation publication.
+
+Recovery: `RECOVERY.txt`, `original-optical-runtime.json`,
+`first-causal-failure.json`, `header-guard-tests.json`,
+`layer-geometry-tests.json`, `runtime-git.json`, the actual HTTP module
+receipt, and `full-release-final.json`. The next authorized task should
+cheaply verify the native canvas coordinate helper, reuse this exact
+original optical presentation, and perform native character creation,
+Prologue DONE, then paired unpaused floor-click movement. Do not rerun
+Setup or change the original KEY/INI to address a scratch geometry error.
+The run's 44 artifact references and four screenshots pass existence and
+containment checks; notes pass `git diff --check`. The global checker remains
+non-green with 9 historical containment errors, 200 missing references, and
+114 invalid records; none names this run.
+
 ## 2026-10-31 original optical scan identified; runtime stopped by harness
 
 Run `20261031T2126Z-icewind-disc` **did not establish original-demo startup
