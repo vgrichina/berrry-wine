@@ -57,6 +57,15 @@ startup and 85 completed software operations do not qualify gameplay or establis
 an emulator defect. All 295 source, seven compiler and 881 original inputs verify;
 all runtime resources closed. The next attempt must verify HTTP isolation headers
 and actual isolation/default guest worker before native input.
+Follow-up `98e807e69`, run `20261031T1543Z-ut2003-software-isolated`,
+fixes those scratch-response headers and verifies isolation/default guest worker
+before native input and throughout the route. The coordinator inspected software
+Antalus at “Fire to Start”; the ordinary console route remains explicit. Actual
+software execution completed12,389 operations with no queue error. The disk guard
+stopped before join; queued join22/23 never executed. No joined HUD, movement,
+look, firing, health/ammo/clock progression or software gameplay qualification.
+All frozen inputs and22 focused checks pass; all runtime exits0 and whole-process
+cleanup verifies. The next bounded join attempt requires more disk headroom.
 
 Deus Ex documentation `940371775` verifies the default guestWorker browser
 Training route on actual SoftDrv: native approach/retreat, first door opened
