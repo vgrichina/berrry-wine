@@ -1,5 +1,5 @@
-Current 2026-10-31T19:52:30.726858+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T20:07:16.540045+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Blood II and SiN are the active browser gameplay lanes, using hashes of the actual local game files as their target builds. Blood II verifies its 98-file DEMO V1.0A (BUILD 109) pin; fresh SiN worker01a19384 verifies23 local file pins and waits for Blood II to release the browser. No compilation archive downloads are required.
+Shogo is running its pinned local-build browser route. A fresh SiN worker investigates native air-assault control and the transition to RESTART LEVEL; it waits for Shogo to release the browser.
 
-Heretic II6e91d9608 is published and reviewed: tutorial and Easy docks captures show walking, spell attacks and jumping. No hit, kill, objective, audio or FPS is established. Kingpin controls and Darkstone combat remain accepted. Slave Zero's audio fatal remains unresolved. Two workers, serialized browser/builds; full27 coverage and crash sweep remain open.
+Blood II64c9d009b is published and reviewed: elevator exit, movement, turning and pistol fire, ammo50 to48. No enemy hit, kill or objective is established. SiNb16c76d3c shows turning but leaves walking/fire unproven; later font/runtime changes were not tested in that run. Heretic II, Kingpin controls and Darkstone combat remain accepted. Slave Zero's audio fatal remains unresolved. Game-file hashes pin target builds; no compilation-container download. Two workers, serialized browser/builds; full27 coverage and crash sweep remain open.

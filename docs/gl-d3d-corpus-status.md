@@ -2,6 +2,25 @@
 
 ## October 31: known-source browser gameplay and remaining rendering blockers
 
+Blood II `64c9d009b`, run `20261031T1949Z-blood2-pinned-browser`, now
+shows native elevator exit, walking, turning and pistol fire (ammo50 to48).
+The coordinator inspected captures09/11, including muzzle flash and casing.
+All98 owner-pinned local BUILD109 files plus the manifest matched before/after;
+source/compiler/module and served-byte checks passed. All24 runtime processes
+exited and both ports/profile/browser lock were released. Health100 to29 to0
+and the death camera were observed; the cause and any enemy hit, kill,
+objective, jump, audio or FPS remain unproven. See [Blood II notes](re-notes/blood2-demo.md).
+
+SiN `b16c76d3c`, run `20261031T1953Z-sin-pinned-browser`, reaches native
+menus and the scripted HQ/helipad/city route into first-person Air Assault on
+FCB. Captures13/16 show turning; capture17 ends at RESTART LEVEL. Forward
+translation, settled on-foot play, firing and jumping remain unproven, and no
+restart cause or emulator repair is established. All23 local pins matched;
+runtime cleanup completed at20:01:05. Evidence applies to tested `0d9913225`;
+later publication merged unrelated font/runtime changes without executing them.
+Fresh Shogo and SiN air-assault assignments continue under the shared browser
+lock. See [SiN notes](re-notes/sin-demo.md).
+
 Heretic II `6e91d9608`, run `20261031T1941Z-heretic2-original-browser`,
 reaches tutorial and Easy docks gameplay with native walking, turning, spell
 attacks and jumping/landing. The coordinator inspected captures07/13/32/35.
