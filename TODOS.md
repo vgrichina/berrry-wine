@@ -1124,12 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: crimsonland-native-combat-main-oct31 (01a19411-7a40-7d01-9ba4-8ea56f4ed4f7; handle77387); return-fire-presentation-cause-main-oct31 (01a19405-13ff-7ec0-af1f-f538c72b1a54; handle79715)
-  status: active (Crimsonland native combat; Return Fire repair publishing; Icewind unresolved local-session dependency; Slave Zero automatic-review hold)
+  worker: crimsonland-native-combat-main-oct31 (01a19411-7a40-7d01-9ba4-8ea56f4ed4f7; handle77387); return-fire-launcher-visibility-main-oct31 (01a19414-2064-74a3-89fa-a244fc2a1a96; handle73994)
+  status: active (Crimsonland native combat; Return Fire launcher visibility; Icewind local-session dependency; Slave Zero hold)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Current update 2026-10-31T22:28:49.786047+00:00: ReturnFire9f695796c reviewed oldFAIL/newPASS/build logs and retained before/after colored Play/H deployment/W movement-release captures; accepted at actual HTTP module aee25464, unchanged58 original files. Incoming Big5 merge outside tested source. All32 runtime identities absent, durable waits0; launcher visibility/audio/FPS remain open. Fresh ReturnFire01a19414-2064 handle73994 investigates visible launcher, cheap prep until CURRENT Crimsonland01a19411 explicitrelease+actualgate. Crimsonland sole runtime started222757 target224457 hard224557 cleanup224657. Review20261031T2231Z-coordinator-review.
   Current update 2026-10-31T22:26:07.580692+00:00: Icewind fd4d9bba2 and966bba074 reviewed: local provider0 intentionally skips network initialization/Open then polls retained activation reference; valid NOCONNECTION triggers cleanup, no proven generic COM identity/refcount/ABI defect. Park at original local-provider handling dependency; no Party/gameplay. Fresh Crimsonland01a19411-7a40 handle77387 targets native combat/enemy/kill/score beyond accepted Tutorial; cheap prep until current ReturnFire terminal publication+actual runtime gate. ReturnFire worker reports generic caps repair oldFAIL/newPASS/buildPASS and complete-color deployment after NEWFULLRELEASE222500; final publication/capture review pending. Review20261031T2226Z-coordinator-review.
   Current update 2026-10-31T22:09:33.825135+00:00: Icewind eccebf738 terminal0 reviewed once: trusted CreateGame clears then returns to menu, personally reviewed paired captures; no character/gameplay or defined generic defect. Native CoCreate succeeds; first session-initialization failure remains unknown, late faulty observers quarantined. Original1106/CD2/module pins unchanged and own runtime released. Fresh Icewind01a19402-8ae2-7440-b5b6-3d2ab21e0936 handle74539 examines first caller/order and waits CURRENT ReturnFire explicit release plus independent actual gate before heavy work. ReturnFire65465 remains live with sole browser priority. Review20261031T2210Z-coordinator-review.
   Current update 2026-10-31T22:06:00.000009+00:00: SlaveZero01a193f0-a63e terminal1 automatic possible-cybersecurity-risk rejection, no final message; no retry/rephrase/delegation. Coordinator existing normal quit acknowledged220429, independent22PID-start absence/wholeChrome+crashpad empty/portsclosed/profilegone/inputclear/FD9free220514; controller/helpers/adopted wait0, outer supervisor wait missing. Hold original diagnostic; no new gameplay/causal acceptance. Fresh independent ReturnFire01a193ff-449f-7a50-88a4-b23df8211dbe handle65465 targets original58-file registered indexed browser Play/H/W paired deployment/movement, replacing absent historical captures. Icewind01a193f0-6bdc runtime released220256 after CreateGame clearing then menu; worker still publishing, no character/tavern/gameplay acceptance. Two workers, serializedheavy. Review20261031T2205Z-coordinator-review.
@@ -1551,13 +1552,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] User priority: Return Fire demo
   id: NEW-GAME-RETURN-FIRE-DEMO-20261009
-  blocker: Original scratch/runs/20261009T2046Z-return-fire-realized-native and scratch/runs/20261009T2050Z-return-fire-realized-browser are absent locally; recovery source availability is unknown, no remote probe.
-  worker: none (capture recovery needed)
-  status: blocked (historical capture recovery; no new gameplay review)
+  blocker: Initial launcher captures show only teal despite visible internal window; gameplay rendering and native H/W are now accepted at pinned repaired build.
+  worker: return-fire-launcher-visibility-main-oct31 (01a19414-2064; handle73994)
+  status: gameplay accepted at pinned repaired build; launcher visibility follow-up active
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: return-fire-demo
   priority: user-first
-  Next: Recover original2046native/2050browser build/input/screenshots before renewed review. Registration/palette/media recovery are on main. Audio/FPS are separate from Done; exact locally absent capture directories are recorded in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
+  Next: Fresh worker resolves visible native launcher using ordinary controls after Crimsonland runtime release. Reviewed20261031T2213Z-return-fire-presentation replaces absent historical captures with pinned full-color deployment/movement; fix9f695796c. Audio/FPS remain separate.
   Done: Registered launch, ordinary input visibly changes gameplay, reviewed screenshot with original source/build evidence; FPS/audio separate.
 
 - [ ] Serialize shared DLL mapping and lifetime mutation
