@@ -1688,3 +1688,81 @@ It explicitly preserves the negative coast/combat result, untested restore,
 missing raw exits and unproven full-lifetime wrapper. The next useful work is
 an authorized native restore check and a northern landing route that avoids
 the harbor, with a durable wrapper/controller/monitor lifetime.
+
+## Fresh native slot restore and live sea combat (2026-10-31 12:20 UTC)
+
+Evidence/recovery: `scratch/runs/20261031T1220Z-pirates-restore/RECOVERY.md`.
+**The unchanged native slot restores an actual responsive world, and ordinary
+input subsequently enters sea combat and fires a broadside.** A coast
+landing/Enter/Attack route, battle victory, captured ship and confirmed hit
+are not claimed.
+
+Cheap original analysis preceded launch. The original `lang0.FPK` contains
+`keymap_enu.ini` and encyclopedia instructions for attacking nearby vessels
+and forming landing parties by steering into shoreline. The native save
+header reads `Incognito|(Apprentice)|near Montserrat|8 February, 1660`.
+The existing startup registry and Config.ini registration were preserved.
+The harness adds only the original 1,028,097-byte slot file to the ordinary
+file mounts, taking its exact guest path directly from the previous native
+export JSON: `c:\\my documents\\my games\\c:\\slot1.pirates_savegame`.
+Its source, served response and mounted VFS bytes retain SHA256
+`af989794bb4bce19b583806d42b69ec83d8985e79fe4108ad1a1584b6aca1d60`.
+There is no path repair, save-byte edit or New Game replay.
+
+The fresh native main menu (`05`) → Load A Game (`06`) → slot1 selection
+(`07`) produces the actual sailing world (`09-load-pending.png`, despite
+that filename): “Game loaded,” February 8, 1660, 600 gold, 41 crew, five
+months, and the ship at Hangman's Reef beside Montserrat and Nevis. No slot
+metadata preview was observed. Keypad 7 removes the Paused overlay (`11`);
+keypad steering visibly moves the ship and coast (`12`, `13`, `17`, `18`).
+These inspected scene changes establish a responsive restored world.
+An initial queued title-screen click opened Quit confirmation; ordinary No
+returned to the main menu before selecting Load A Game.
+
+Clicking the rendered Attack button (`20`) opens the native selector for
+English Merchantman **Lovely Mary**, six guns/50 men, against the player's
+Revenge, a sloop with eight guns/40 men. Selecting that ship enters a distinct
+sea-battle view (`21`), with both ships, their separate status displays and
+combat controls. Clicking native FIRE produces smoke and cannonballs beside
+Revenge and changes **8 guns loaded → 0 guns loaded** (`23`). A later capture
+(`24`) retains the active battle with changed ship speeds and further visible
+smoke/projectiles. No damage or outcome is inferred from those effects.
+
+The earlier keypad-5 taps reached the guest as VK_CLEAR (`12`), not
+VK_NUMPAD5; they did not open the attack selector. Short `a` and Space taps
+also produced no accepted immediate attack/fire response. Their cause was
+not isolated. The accepted attack and firing actions use ordinary trusted
+mouse clicks on the game's rendered controls, with no input bypass.
+
+The game automatically created `battle.pirates_savegame` at the same native
+directory. A read-only export is retained: 1,028,093 bytes, SHA256
+`c6cdb98307401c401d70505d6ea6677757aeffdc8bccf89316cc3e625b92ba38`.
+**Restore of this new automatic battle save is untested.** The original slot
+remains byte-identical after combat.
+
+Before/after checks match all 296 source/compiler files, 40 support files and
+1,374 originals to the accepted 11:17/11:49 closure. Frozen, served and loaded
+WASM is again SHA256
+`078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`;
+there is no old-module/current-host mixture. Default guestWorker, threads,
+WebGL and 1024×768 remain active, with final device error null. Cache is
+disabled; no factory/draw instrumentation, production, asset, INI, clock or
+guest-memory changes were made.
+
+The sole local browser ran 12:39:55–12:48:43 UTC, after fresh Deus Ex
+FULLRELEASE and actual global process clearance. A new durable Python
+supervisor retains the wrapper's real wait status; wrapper/controller/monitor
+share the inherited browser-lock FD. All 670 sampled live-profile observations
+retain those three holders. Actual Chrome, controller and wrapper exits are
+0; the monitor also exits 0. Cleanup verifies 20 PID/start identities absent,
+including both global crashpads, three ports closed, profile removed, held
+input empty and full flock available. Runtime cleanup needed no signals;
+owned board watchers receive only PID/start/command-qualified cleanup.
+Minimum sampled free disk is 2,183,057,408 bytes. FULLRELEASE was posted at
+12:49:13. This proves this new lifetime, not the old 11:49 wrapper's lifetime.
+
+Focused checks pass 2,143 served responses, 42 trusted balanced native input
+events, 24 PNGs, immutable saves, inspected restore/combat evidence and cleanup;
+`git diff --check` passes. No Boat: ID/state/expiry N/A. The next useful work
+is separately bounded validation of the automatic battle checkpoint and
+further combat; coast Enter/Attack remains untested in this run.
