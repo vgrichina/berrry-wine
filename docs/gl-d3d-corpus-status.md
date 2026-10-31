@@ -2,6 +2,26 @@
 
 ## October 31: known-source browser gameplay and remaining rendering blockers
 
+### Darkstone accepted combat reconciliation
+
+The accepted October30 software result `be70e8f86`, run
+`20261030T2206Z-darkstone-software-combat`, already establishes native manual
+skeleton combat: EXP0 to79 and surviving LIFE17/35 after a held-left attack.
+Its screenshot review and publication are recorded in the processed completion
+ledger; no repeat runtime or new acceptance is needed. WebGL skeleton combat
+was accepted separately in `dc988e7cb`, run `20261030T2158Z-darkstone-combat`.
+Both use retained module `4649ee5f` at committed main `10952264c`;
+this is not current-main parity, FPS, audio, save/reload or child-renderer
+qualification. The outer harness exit143 remains unexplained despite local
+cleanup and acknowledged quit. See [the original combat notes](re-notes/darkstone-demo.md).
+
+BloodII's newer provenance check `dbd1a8adf`, run
+`20261031T1932Z-blood2-native-browser`, stopped before runtime. All98 local
+hashes and97 companion sizes match, but local consistency does not prove
+original provenance. Only whole-container checksums for the7.17GB archive
+were available. Historical table entries below are not a new current-main
+or original-fixture qualification; no new browser gameplay claim applies.
+
 UT2003 ordinary visible-menu SOFTWARE route is now verified by `62ee90c86`,
 run `20261031T1628Z-ut2003-native-menu-play`: native Instant Action, Antalus
 and PLAY reach a joined match without console input. The coordinator inspected
