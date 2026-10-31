@@ -561,9 +561,10 @@ pairs, including 2,880-, 12,128- and 40,048-byte buffers. No shader identity
 is inferred from those buffers.
 
 The ordinary seven map pointers at texturing-property `+0x2c` are zero in
-all four boundary samples. The separate array at `+0x44` contains five
+all four boundary samples. The first seven sampled slots of the separate array at `+0x44` contain five
 non-null entries; `map-arrays.json` preserves its actual data-pointer
-indirection and raw descriptor words. This does not prove valid texture
+indirection and raw descriptor words. This is a bounded prefix, not the total
+array occupancy: its retained headers have ends 9, 7, 11 and 11. This does not prove valid texture
 contents. `consumption-final-export.json` supplies two same-mesh consumer
 records for `0x09f179b0`: default setup `0x5d458a` receives the matching
 property state, and `0x5d4600` has UV count one while the ordinary map slots
@@ -602,3 +603,111 @@ watcher PIDs are absent, three ports closed, profile removed. No Boat or
 assigned box was used (ID/state/expiry N/A); delegated local shutdown is
 complete. This docs-only change has no new production build or code-fix
 claim. The investigation and cleanup finished within the 30-minute bound.
+
+
+### 2026-10-31 separate-map writer/consumer contract (05:20Z)
+
+Evidence: `scratch/runs/20261031T0520Z-pirates-maps/`, including
+`RECOVERY.md`, original-EXE disassembly, `writer-export.json`,
+`consumer-export.json`, `identity-export.json`, `draws-export.json` and
+`causal-validation.json`. This bounded follow-up establishes the original
+writer and the encoded separate-map reader, with four matching generated
+mesh/property pairs at the default setup boundary. It does **not** establish
+the production source cause of white coast or a repair.
+
+The run retains the exact `8459597c…` module, all 292 matching source files,
+manifest `9dee97b3…`, historical successful build log and 1,374 original
+input pins described above. Original EXE SHA-256 is
+`6e88b90e4e2e30248d9e4de747b521cc03822b7ffeb214fd272b8ad1817447c9`.
+No current host source was served with the old module.
+
+The original application mesh builder at `0x51c490` constructs and attaches
+NiTexturingProperty (`0x51c894–0x51c927`), then walks map definitions. At
+`0x51cb19` it constructs a descriptor using the source texture reference;
+`0x51cb27` stores the low-byte index at descriptor `+0x1c`.
+`0x51cb35` calls `0x542cb0` with ECX = destination property and arguments
+index/descriptor. That setter lazily creates the separate array and stores
+it at property `+0x44` (`0x542ce9`); it does not populate ordinary `+0x2c`
+slots. Array `+4` is data, `+8` capacity, `+0xc` end and `+0x10` non-null
+count; original `0x5606f0` explicitly maintains those fields. The stream
+reader at `0x542d70` also loads ordinary and separate arrays independently;
+its separate-array allocation/store is `0x54300e` / `0x5430e7`.
+Thus zero ordinary slots alongside populated separate slots can result from
+an explicit original writer; it is not proof of lost property attachment.
+
+The original consumer contract is equally explicit. `0x5cb4b0` masks its
+stage object's encoded map reference with `0x0f000000`. Kind `0x02000000`
+(`0x5cb59f`) selects property `+0x44` (`0x5cb5aa`), bounds the low 16-bit
+index by array end, and calls getter `0x4b1230` at `0x5cb5be`. The getter
+follows array `+4` to that indexed descriptor. Descriptor `+4` is then
+passed through the renderer texture-resource resolver (`0x5cb620`) and the
+result to the stage-binding virtual call (`0x5cb631`). Caller `0x5bef00`
+walks pass stages, obtains texturing property from effective state `+0x28`
+at `0x5bef2e`, and calls through `0x5cb790` to this consumer. A second
+encoded-kind reader at `0x5e3d90` uses the same getter at `0x5e3e67`.
+This establishes an original separate-map consumption interface, not the
+identity of the shader/pass intended for these particular coastal meshes,
+valid texture pixels, or successful live binding through that interface.
+
+Before the native probe, the diagnostic boundary error was isolated using
+only the retained module and copied original instructions `0x5d4600–0x5d465d`.
+`block-smoke.cjs` passes with chaining on and off: branch target `0x5d465c`
+positively halts after ordinary-map loads; interior instruction `0x5d462a`
+does not halt. The pinned debugger checks EIP at decoded-block entry
+(`source-after/src/13-exports.wat`, run-loop breakpoint check); its
+`set_bp` does not reset `bp_skip_once`. The observer therefore retains the
+old breakpoint during `run(1)` before retargeting and records the owning
+instance/thread plus mesh, property, ESP and shader pointer. The synthetic
+observer test verifies bounded capture, guarded advance and restoration;
+these tests are not live gameplay evidence.
+
+One browser, acquired only after UT2004's owner closed its browser and the
+process guard found no conflicts, followed native menu/bartender/crew/
+English-captain inputs into sailing. `system.png` and `native-coast.png`
+were personally inspected: ship/HUD near St. Kitts and Nevis, 600 gold,
+41 crew, white coast. The writer observer captured 545 post-call records
+at `0x51cb3a`, on cooperative thread 5. Every stored descriptor equals the
+argument retained in ESI. Four mesh/property pairs match later default
+setup on the main instance:
+
+| Mesh | Property | Separate end / populated | Matching large draw |
+| --- | --- | --- | --- |
+| `0x09de7f20` | `0x09de7d70` | 9 / 7 | 1,392 triangles, FVF `0x112` |
+| `0x09de6e80` | `0x09de6cc0` | 7 / 5 | Not in bounded draw sample |
+| `0x09de5730` | `0x09de5520` | 11 / 9 | 4,784 triangles, FVF `0x112` |
+| `0x09de5f20` | `0x09de5d80` | 7 / 5 | Not in bounded draw sample |
+
+For each pair, writer index/descriptor records exactly reproduce every
+populated separate slot at the consumer boundary. All ordinary slots are
+zero. Each has a complete same-instance, same-mesh/property/ESP/shader
+sequence at `0x5d458a`, `0x5d4600` and **`0x5d465c`**. Effective property
+state equals geometry `+0xb4`, its texturing pointer equals the actual
+attached property, UV count is one, and the positive final branch has zero
+ordinary-map registers and saved map locals. Shader RTTI independently
+reads NiD3DDefaultShader (`0x083f6cd0`); geometry `+0xc8` is zero.
+This proves that the sampled default setup reads the empty ordinary map
+namespace. It does not prove that every subsequent render stage ignores
+separate maps. No absent breakpoint event is used to assert skipped guest
+execution. The previous five-entry observation was only a seven-slot
+prefix; this capture reads each full bounded array end.
+
+**Remaining dependency:** identify the original pass/stage selection or
+construction that should produce `0x02000000 | index` references for these
+same generated meshes, and establish its relationship to shader selection
+at `0x5c4270`. Its relationship to the attached renderer-specific payload
+is unproved. Neither the payload's shader identity nor the need to install
+it at geometry `+0xc8` follows from these records. No production fix,
+shader substitution, asset/guest-state/clock/startup change is justified.
+
+The probe stopped after those correlations. Natural simulation docked at
+Nevis before `final-coast.png` (personally inspected; a town menu, despite
+the filename). All observer instances/breakpoints and the bounded draw hook
+were restored before quit. Browser exit zero and all owned browser,
+controller, lock-holder and crashpad PIDs/ports/profile are verified closed;
+no Boat was used (ID/state/expiry N/A). Cheap stderr/process/crash diagnostics
+are retained; no crash was reproduced and no OOM/helper cause is assigned.
+Exact source/module, originals, served responses, trusted released inputs,
+helper tests, instruction checks, four correlations and scoped evidence
+references pass. This is a documentation-only result with no new production
+build claim; the retained build log is historical provenance. Investigation,
+cleanup and publication finished within the 35-minute bound.
