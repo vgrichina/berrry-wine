@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: ut2003-webgl-native-menu-main-oct31 (01a192d5-fb35-7e63-983f-ae48ef152db7; handle14166); diablo2-unexplored-den-main-oct31 (01a192d4-7259-7143-ad79-c29683f03848; handle54268)
-  status: active (UT2003 ordinary WebGL menu arm; Diablo II unexplored automap frontier from newer verified restore)
+  worker: evolva-native-control-main-oct31 (01a192e0-6353-7b43-832c-3a75642ae746; handle33636); ut2003-webgl-menu-execution-main-oct31 (01a192e0-519a-70b0-949a-ad0192aa8310; handle49239; existing-title backend coverage)
+  status: active (Evolva newly assigned controlled-gameplay lane; UT2003 serialized backend arm; second genuinely new candidate still being selected)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Accepted950e4940e original SOFTWARE/defaultworker Antalus console/FIRE join and movement/look/fire, coordinator inspected15/17/21/24 and24checksPASS. Accepted35d3d2ec4 new Diablo nativeSaveExit/title/wholeexport/freshpage character+OK/town111/movement113/stats115 XP66; four new798/902/24/5420B checkpoint hashes independently PASS. Den remains unlocated. Fresh Diablo worker selects unexplored native automap frontier, avoids exhausted east-tree/stone-corner loops. Accepted62ee90c86 ordinary visible-menu SOFTWARE match withoutconsole; coordinator inspected18HUD/24ammo148/27remaining14:42;25savedchecksPASS FULLRELEASE163632. ExtraEnter/clickduringloading prevents singlepress attribution; no emulator defect. FreshWebGL ordinary-menu arm waits CURRENTDiablo164002 NEWFULLRELEASE plus actualwholeprocessgate. Two workers onebrowser, reserve>=2.8GB continuous>2GB/early2.1stop; full27/FPS/combat open.
+  Next: Fresh UT WebGL worker reuses accepted SOFTWARE native menu route, launch reserve2.6GB continuous>2GB stop2.1GB; predecessor03fbca521 never launched (1.3MB below obsolete2.8GB gate). Evolva cheap-prepares, waits NEW UT FULLRELEASE plus independent wholeChrome/crashpad/PIDstart FD9 gate, then native menu/jungle W/S/look/fire. Public DESKTOP_APPS checked20261031T165125 excludes Evolva; historical mission scene lacked input/browser qualification. Exact public hash and selection evidence scratch/runs/20261031T1655Z-public-candidate-selection/. Diablo933a533cd reached new hut88, noDen; controller partialJSON89unexecuted, no new save; both checkpoints unchanged, FULLRELEASE164803. Require atomic scratchcommand writes in new workers. Two productionworkers onebrowser; UT coverage does not count as a new title. Select a second genuine candidate without retrying held approvals.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
