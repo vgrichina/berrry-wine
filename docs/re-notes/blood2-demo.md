@@ -73,3 +73,59 @@ take enemy fire to a death camera).
 - `ole32.dll` is in `APP_LOCAL_DLLS` but absent from this box's
   `test/binaries/dlls`, so ole32 imports fall to WAT stubs here.
 - FPS and the browser.
+
+## 2026-10-31 original-fixture gate: stopped before runtime
+
+Run `20261031T1932Z-blood2-native-browser` reread published main
+`e2a73b33a23a27c9fae7d581ca045e434cf36572` after task input `1b4af19af`.
+The candidate preflight's public registry SHA-256 is
+`63bb9815e404dd7e446d3748e195c621782a04c8358580bd2cf1a864cb57e209`;
+its `DESKTOP_APPS` excludes `blood2_demo`. The local registration and assets
+were preserved. All 97 companion sizes match the manifest, and fresh hashes
+of those files plus `Client.exe` match all 98 preflight baseline hashes.
+The manifest SHA-256 is
+`a46bb10441eeb182ff5a28effd8112f507d6a510a25fba48d06870b8fea19519`;
+`Client.exe` SHA-256 is
+`1fea9e1400b948153341bd38f8b66beba885d45d21d202cab3c39bcc173b53b2`.
+These comparisons establish local consistency, not original provenance.
+
+The documented source in `test/binaries/SOURCES.md` is
+[Win98_Games-A-D.7z](https://archive.org/details/win-98-games-a-d.-7z).
+A single bounded metadata request (20-second timeout, 2 MiB response cap)
+returned HTTP 200 and 5,134 bytes. It confirms the documented container size
+7,169,873,753 bytes, SHA-1 `c53417bcc617790d9671ec385c49ee6f018846c9`
+and MD5 `7610b389f075be9f4ea8b521157e87d2`. It supplies whole-container
+checksums, with no individual game-file hashes. A filename search under
+`/home/user` and `/tmp` found no preserved original container or matching
+Blood II demo package. Only about 2.57 GB was free at the initial disk check;
+acquiring this 7.17 GB container would exceed the bounded verification and
+disk constraints. No archive download or asset overwrite was attempted.
+
+**Blocker:** no independently pinned original bytes or per-member hash record
+were available to compare the 98 local fixture files. Per task instruction,
+work stopped before runtime. No build, browser, heavy CLI, guest input,
+server, profile, or runtime helper was launched. The browser lifetime lock
+and the current Slave Zero terminal-lifecycle release gate were not entered;
+foreign work was left alone. Boat ID/state/expiry are N/A for this local task.
+
+There are no new screenshots to review and no new browser menu, intro,
+player-control, hit, kill, objective, audio, or FPS findings. The historical
+headless route above remains a navigation reference; its movement, ammo
+change, and enemy fire do not establish current browser control. No emulator
+failure or repair boundary was observed, and no source repair was attempted.
+
+Evidence is in the ignored run directory: `archive-metadata.json`,
+`archive-metadata-check.json`, `candidate-result.json`,
+`candidate-local-file-hashes.json`, `local-current-hashes.json`, and
+`findings.json`. No candidate-corpus entry matches this game, so the findings
+remain linked here without attaching a dashboard capture to another candidate.
+Validation: all 98 baseline hashes, 97 companion sizes, documented archive
+metadata pins, evidence containment/schema checks, and documentation diff
+check; no full-build or runtime test claim.
+
+Next boundary: obtain a preserved independently pinned original container,
+or a bounded original package/per-member hash record for this exact demo,
+then compare every fixture file. Only after that passes may a fresh task
+enter the current Slave Zero terminal-lifecycle release and independent
+whole-Chrome/global-crashpad/profile PID/start-time gate under inherited
+lifetime FD9, before following the native menu route with balanced inputs.
