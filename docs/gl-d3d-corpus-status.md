@@ -110,10 +110,13 @@ Volcano retest of separate-output candidate `41f5c4c7` preserves 162 source
 vertices over 12 Executes; two complete frames redraw 642 world triangles.
 The coordinator inspected a complete room/HUD and changed pitch with firing
 2000→1998, and reran mutation/source/redraw checks. Owned processes and ports
-are closed. The four-file repair remains uncommitted: the final allocation-
-failure guard differs from the native candidate and needs fresh focused
-failure/retry checks plus full build. A fresh implementation worker owns that
-finish. Sustained gameplay, hardware GPU, FPS and completion remain unverified.
+are closed. Repair `df174b3cf` is now on remote main. The final allocation-
+failure guard passes injected OOM/retry, 32 color-only cycles, six focused tests
+and the full locked build; both old-source and defective-guard mutations reject.
+Final module `d2c1df73` pins 295 runtime sources and seven compiler files. Native
+screenshots belong to candidate `41f5c4c7`; the final guard has no fresh native
+run yet. A fresh worker pursues sustained movement/combat on the landed repair.
+Sustained gameplay, hardware GPU, FPS and completion remain unverified.
 See the [Forsaken investigation](re-notes/forsaken-demo.md).
 
 The earlier gameplay runs pin module `8459597c` to the retained ReVolt locked build's exact
