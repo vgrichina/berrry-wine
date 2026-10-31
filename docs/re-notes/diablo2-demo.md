@@ -1828,3 +1828,56 @@ profile removed, inputs released and full flock available. FULLRELEASE was
 posted 16:31:03. Boat/test-box ID/state/expiry are N/A. No build, deployment,
 audio/FPS or full-playability qualification occurred. `recovery.txt` records
 the frozen replay, newer native restore recipe and exhausted local landmarks.
+
+## Bounded unexplored frontier attempt, 2026-10-31
+
+Run `20261031T1640Z-diablo2-unexplored-den` starts from the **verified newer
+1612Z checkpoint**, with native whole-file sizes 798/902/24/5,420 bytes.
+Both that checkpoint and the older 1523Z checkpoint remain unchanged.
+Native Single Player 05 shows DENMAP, Level 1 Barbarian in 06; selection 07 and
+OK 08 load inspected town 10 before movement 12. Blood Moor 50 shows the native
+area-entry label. No new combat or Den entrance was observed in this attempt.
+
+Prior captures 90/91 were inspected before launch: dense east trees and the
+stone corner were marked exhausted in `route-plan.json`. The new field map 50
+instead selects the visibly unrevealed south/southwest ground below the bridge.
+Short 500–900ms terrain-guided presses reveal open grass, a dirt trail, a chest
+and finally a stone hut at the left edge of 88. No boundary loop, external map
+or seed assumption was used. The final inspected 88 remains Blood Moor, with
+no Den label or cave transition.
+
+The first unmet execution dependency is the **scratch command-file handoff**.
+At 16:47:00 the controller's `JSON.parse` of `command.json` raised
+`SyntaxError: Unexpected end of JSON input` (`driver.cjs` line 25). The request
+writer uses an ordinary direct file write; the observed partial-read failure
+is consistent with polling during that write. Command 89, east of the newly
+revealed hut, never entered `commands.jsonl`; its requester timed out with
+exit 1. There was no retry or second browser, and no emulator defect was
+established. The controller's normal cleanup closed Chrome before the planned
+Save and Exit/export/fresh-page verification reserve. No newer save was
+exported or claimed verified. Continue from the unchanged verified 1612Z save;
+a future attempt needs a complete command-file handoff before further native
+navigation, then inspection around the new hut/frontier rather than the
+exhausted east corner.
+
+The exact frozen 0402Z closure remains 144 entries with Wasm
+`7f9da4e9da5183e9f7f061d2356cd34626fe74bdbaf7da0345f6693dd81152be`,
+compiled source unknown. All 148 frozen responses among 217 served responses
+match their pins; 25 original runtime files and both checkpoint bundles verify
+before and after. No production, asset, INI, clock, save-byte or memory edits
+occurred. Actual HTTP responses have COOP same-origin/COEP require-corp.
+Initial isolation/default guestWorker passed before input; all 46 captures retain
+isolation, WebGL and stable 1024x768 geometry. Backend errors and completed
+software draws are zero; 94 trusted native events are balanced.
+
+The sole browser ran 16:40:02–16:47:00 UTC after UT's 16:36:32 FULLRELEASE and
+independent whole-Chrome/global-crashpad/profile PID/start gates, repeated under
+lifetime FD9, with 2,850,725,888 bytes free before launch. Runtime target/hard/
+cleanup deadlines were 16:57:02/16:58:02/16:59:02. Minimum free disk was
+2,653,806,592 bytes; 387 active samples retain all three FD9 holders. Chrome,
+wrapper and monitor raw exits are 0; controller exit 1 records the handoff
+failure. No signals were sent. Cleanup verifies all owned runtime processes,
+supervisor, watcher and requester absent, ports closed, profile removed, held
+inputs empty and full flock available. FULLRELEASE was announced 16:48:03.
+Boat/test-box ID/state/expiry are N/A. Recovery and focused checks remain in
+the run directory. This was a docs-only change, with no full build or deployment.
