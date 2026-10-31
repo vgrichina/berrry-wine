@@ -5,6 +5,73 @@ from Archive item `icewind_dale_eng_demo`. Its README expressly prohibits
 copying/electronic distribution, so the extracted fixture stays ignored and
 must not be deployed or rehosted.
 
+## 2026-10-31 local COM lifetime audit; no repair contract established
+
+Run `20261031T2220Z-icewind-local-lifetime` performed only a cheap static audit
+of the retained original executable and current implementation. No browser,
+build, engine edit, guest edit or new gameplay capture occurred. Party Formation,
+creation, Prologue and tavern movement remain blocked. The earlier polling trace
+and its first-failure/final captures remain evidence of the earlier run only;
+expired asynchronous frame values are excluded.
+
+The original call/dataflow now distinguishes ownership from session bookkeeping:
+
+- Message `0x406` at `0x008B083F` passes the session address as the output
+  pointer to `0x008D3602`, with the all-zero GUID at `0x0099B130`. This
+  selects the direct activation branch, independently of provider index.
+- That branch requests CLSID_DirectPlay at `0x00997C50` and IID_IDirectPlay4A
+  at `0x00997C40`, with no aggregation and CLSCTX_INPROC_SERVER. It stores
+  the successful interface pointer into the caller's output at `0x008D3741`.
+  The alternative branch's QueryInterface/temporary Release sequence is not
+  executed for this zero GUID. GUIDs were decoded from original PE sections,
+  not inferred from the shim's method names.
+- Reinitialization releases an existing interface through `0x008D42F1`.
+  This routine calls vtable slot 2 at `0x008D431C`, then explicitly writes
+  zero to the session's first field at `0x008D4322`, and clears `+0x9C`.
+  The successful local initialization path retains its newly activated pointer.
+- Create-session writes caller bytes `+0x686`, `+0x6E0` and `+0x6E1` to one
+  at `0x008D586B` onward. Poll `0x008D4CB9` first checks `+0x6E0 == 1`,
+  then checks the first-field COM pointer and calls slot 22. It has no provider
+  index guard. These caller fields are separate from COM reference counts and
+  from the implementation's open-session state.
+
+The implementation's activation path allocates a primary object, queries the
+requested ANSI interface, increments its reference count, and releases the
+temporary factory reference. The query returns that primary identity; the
+DirectPlay4A upgrade preserves inherited slots. AddRef uses the shared COM
+counter; Release decrements it and closes/frees the owner at zero. The audited
+stdcall cleanup is 24 bytes for CoCreateInstance, 16 for QueryInterface, eight
+for AddRef/Release and 16 for GetSessionDesc, matching return address plus
+arguments. No mismatched interface, missing activation reference or ABI defect
+was established on this path. This is a source audit, not a fresh runtime
+refcount measurement or comprehensive COM conformance claim.
+
+Microsoft documents an acquired interface as a reference the client must
+[release](https://learn.microsoft.com/en-us/windows/win32/learnwin32/managing-the-lifetime-of-an-object),
+and requires returned interface pointers to carry an
+[added reference](https://learn.microsoft.com/en-us/windows/win32/com/implementing-reference-counting).
+Neither rule supplies a reason to clear the guest's stored output or fabricate
+an open DirectPlay session. The concrete unresolved dependency is the original
+engine's intended handling of **provider zero + retained interface + active
+local-session byte**: the inspected caller itself makes that combination and
+then polls it. No proven generic API obligation resolves it. Work stopped at
+this dependency; changing NOCONNECTION, activation output, caller flags or
+release behavior would be speculative.
+
+Evidence: `audit.py`, `audit.json`, `audit.log`, `native-network.asm`, focused
+`native-activation.asm`, `native-message406.asm`, `native-release.asm`,
+`native-local-create.asm`, `native-poll.asm` and `RECOVERY.txt` in this run.
+No heavy gate or browser lock was acquired; the current Return Fire allocation
+was left untouched. Boat ID/state/expiry N/A.
+
+All 1,106 original pins and 27 CD2 joins matched again. All 867 compiler pins
+matched; the 528-file source comparison found only the separately owned Return
+Fire edit to `src/09a8-handlers-directx.wat`. `source-audit.json` preserves the
+audited excerpts and hashes. The concurrently rebuilt local module was hashed
+as local build output only; there is no actual HTTP-loaded module in this run.
+The first scratch assertion used a transposed IID text suffix (`a1a7`); the PE
+bytes decode `a7a1`. That failed assertion and the corrected audit are retained.
+
 ## 2026-10-31 native local-session ordering and cleanup branch identified
 
 Run `20261031T2210Z-icewind-session-order` reused the original retained 2058
