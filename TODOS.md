@@ -1433,7 +1433,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   worker: none; browser41887 exited0; bx_2sdgzsm6 stopped03:11:23.355Z
   candidate: test/binaries/win98-games-a-d/Age of Wonders2 demo-SW.exe
   Next: Initial ordinary gameplay verified: select party and click destination twice, army moves and movement20->13. Generic FVF RESERVED1 fix plus control-failing/candidate-passing native tests integrated with this task update. Evidence run20261009T0306Z-age-of-wonders2-gameplay,67 hashes. Rendering overlap/FPS/audio tracked separately; no release claim.
-  Evidence: Original installer SHA256 1244f0114965d011d1e28b97e207db15c902d124ebb25af8a6c97748beb73dc0. Runs20261008T1518Z-age-of-wonders2-demo-before and-after retain crash/menu evidence, original payload identities and runtime inputs. No gameplay qualification yet; held Scenario click eventual outcome unknown.
+  Evidence: Original installer SHA256 1244f0114965d011d1e28b97e207db15c902d124ebb25af8a6c97748beb73dc0. Historical runs20261008T1518Z-age-of-wonders2-demo-before and-after record the earlier crash/menu investigation; its unknown Scenario outcome was superseded by the October9 army-movement observation described above and in docs/re-notes/age-of-wonders2-demo.md. These are historical reports; the October9 run is absent locally and has not been re-reviewed here.
   Done: Normal registered launch, actual player-controlled gameplay, reviewed screenshot with original/source/build identity and tested changes pushed main. FPS/audio require separately valid measurements.
 
 - [ ] New-game lane: Dungeon Siege demo
@@ -1510,8 +1510,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: AOW2-RENDERING-COVERAGE-20261009
   status: ready
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Diagnose terrain crossing lower UI/black polygons after validated FVF fix; measure actual gameplay FPS and audio separately. Initial army movement is verified, release readiness is not. Use temporary box and serialized browser.
-  Evidence: scratch/runs/20261009T0306Z-age-of-wonders2-gameplay/result.json
+  Next: Recover retained AoWII captures or make a bounded original-game observation before qualifying current-main visuals; then measure logical gameplay FPS and audio separately on an allocated temporary box. Do not repeat the viewport-clipping repair9a438f1b9 or cooperative vblank continuation918f25772: both are ancestors of main and remain described in the app notes with focused regression coverage. Initial army movement and the repaired panel are historical observations; current-main visual parity/FPS/audio remain unqualified.
+  Evidence: docs/re-notes/age-of-wonders2-demo.md; main9a438f1b9 and918f25772; test/test-d3dim-viewport-clip.js; test/test-cross-thread-send-vblank.js; scratch/runs/20261031T1420Z-aow2-task-refresh/verification.json. Historical runs20261009T0306Z-age-of-wonders2-gameplay and20261010T1145-aow2-viewport-clip-fix are referenced by the notes; the October9 run is absent locally, so no new screenshot review is claimed.
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
