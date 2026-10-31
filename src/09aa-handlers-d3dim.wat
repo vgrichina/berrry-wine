@@ -647,7 +647,7 @@
         (local.set $instr_len (load.field DxObject flags (local.get $entry)))
         (if (i32.and (i32.ne (local.get $buf) (i32.const 0))
                      (i32.ne (local.get $instr_len) (i32.const 0))) (then
-          (local.set $vbase (i32.add (local.get $buf) (local.get $vert_off)))
+          (local.set $vbase (i32.add (call $d3dim_execbuf_output_guest (local.get $buf) (i32.const 0)) (local.get $vert_off)))
           (local.set $base (i32.add (local.get $buf) (local.get $instr_off)))
           (local.set $cursor (local.get $base))
           (local.set $end (i32.add (local.get $cursor) (local.get $instr_len)))

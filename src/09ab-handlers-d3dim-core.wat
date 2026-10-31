@@ -1465,9 +1465,10 @@
               (i32.const 24))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
-  ;; D3D execute buffers may PROCESSVERTICES in-place every frame. Keep the
-  ;; original source vertex bytes so repeated transforms do not read TLVERTEX
-  ;; output as D3DVERTEX input.
+  ;; Execute-buffer source bytes and processed TL vertices have separate owners.
+  ;; Lock/Unlock publishes application source; PROCESSVERTICES must never write
+  ;; its TL result back into that source (color-only locks would feed TL into XYZ).
+  ;; Allocation: 32-byte status header, source[size], output[size], processed u32.
   ;; One owner for lazy snapshots and Unlock refreshes. Return a guest header.
   ;; Keep an old cache owned until a replacement has allocated and initialized.
   (func $d3dim_execbuf_cache_ensure
@@ -1496,7 +1497,8 @@
               (local.get $buf) (local.get $size))))
           (return (local.get $old))))))
     (local.set $cache (call $heap_alloc
-      (i32.add (local.get $size) (global.get $D3DIM_EB_CACHE_HEADER))))
+      (i32.add (i32.mul (local.get $size) (i32.const 2))
+        (i32.add (global.get $D3DIM_EB_CACHE_HEADER) (i32.const 4)))))
     (if (i32.eqz (local.get $cache)) (then (return (i32.const 0))))
     (call $gs32 (local.get $cache) (local.get $buf))
     (call $gs32 (i32.add (local.get $cache) (i32.const 4)) (local.get $size))
@@ -1504,6 +1506,11 @@
     (call $guest_memmove
       (i32.add (local.get $cache) (global.get $D3DIM_EB_CACHE_HEADER))
       (local.get $buf) (local.get $size))
+    (call $guest_memmove
+      (i32.add (i32.add (local.get $cache) (global.get $D3DIM_EB_CACHE_HEADER)) (local.get $size))
+      (local.get $buf) (local.get $size))
+    (call $gs32 (i32.add (i32.add (local.get $cache) (global.get $D3DIM_EB_CACHE_HEADER))
+      (i32.mul (local.get $size) (i32.const 2))) (i32.const 0))
     (i32.store (local.get $tbl) (local.get $cache))
     (if (local.get $old) (then (call $heap_free (local.get $old))))
     (local.get $cache))
@@ -1528,6 +1535,20 @@
     (if (i32.eqz (local.get $cache_g))
       (then (return (local.get $buf_guest))))
     (i32.add (local.get $cache_g) (global.get $D3DIM_EB_CACHE_HEADER)))
+
+  ;; Primitives/Pick consume the driver's processed stream. Before any
+  ;; PROCESSVERTICES, preserve the legacy direct-TL path from the live buffer.
+  (func $d3dim_execbuf_output_guest (param $buf_guest i32) (param $activate i32) (result i32)
+    (local $source i32) (local $size i32) (local $flag i32)
+    (local.set $source (call $d3dim_execbuf_source_guest (local.get $buf_guest)))
+    (if (i32.or (i32.eqz (local.get $source)) (i32.eq (local.get $source) (local.get $buf_guest)))
+      (then (return (local.get $buf_guest))))
+    (local.set $size (call $gl32 (i32.sub (local.get $source) (i32.const 28))))
+    (local.set $flag (i32.add (local.get $source) (i32.mul (local.get $size) (i32.const 2))))
+    (if (local.get $activate) (then (call $gs32 (local.get $flag) (i32.const 1))))
+    (if (result i32) (call $gl32 (local.get $flag))
+      (then (i32.add (local.get $source) (local.get $size)))
+      (else (local.get $buf_guest))))
 
   ;; Return the guest cache header for one execute-buffer COM object. Unlock creates
   ;; this before SetExecuteData, which is the order used by the DX1 runtime.
@@ -7880,7 +7901,7 @@
     (if (i32.or (i32.eqz (local.get $buf_guest)) (i32.eqz (local.get $wCount))) (then (return)))
     (local.set $rt (call $d3ddev_rt_entry (local.get $dev_this)))
     (if (i32.eqz (local.get $rt)) (then (return)))
-    (local.set $vbase (local.get $buf_guest))
+    (local.set $vbase (call $d3dim_execbuf_output_guest (local.get $buf_guest) (i32.const 0)))
     (local.set $state (call $d3ddev_state (local.get $dev_this)))
     (if (local.get $state) (then
       (local.set $sw (call $g2w (local.get $state)))
@@ -8001,7 +8022,7 @@
     (local.set $rt (call $d3ddev_rt_entry (local.get $dev_this)))
     (if (i32.eqz (local.get $rt)) (then (return)))
     (call $d3dim_worker_fence)
-    (local.set $vbase (local.get $buf_guest))
+    (local.set $vbase (call $d3dim_execbuf_output_guest (local.get $buf_guest) (i32.const 0)))
     (local.set $i (i32.const 0))
     (block $done (loop $lp
       (br_if $done (i32.ge_u (local.get $i) (local.get $wCount)))
@@ -8066,7 +8087,7 @@
     (local.set $rt (call $d3ddev_rt_entry (local.get $dev_this)))
     (if (i32.eqz (local.get $rt)) (then (return)))
     (call $d3dim_worker_fence)
-    (local.set $vbase (local.get $buf_guest))
+    (local.set $vbase (call $d3dim_execbuf_output_guest (local.get $buf_guest) (i32.const 0)))
     (local.set $i (i32.const 0))
     (block $done (loop $lp
       (br_if $done (i32.ge_u (local.get $i) (local.get $wCount)))
@@ -8183,9 +8204,13 @@
     (if (i32.eqz (local.get $state_g)) (then (return)))
     (call $d3ddev_composite_wvp (local.get $state_g))
     (call $d3dim_lights_refresh (local.get $state_g))
-    (local.set $vbase (local.get $buf_guest))
+    (local.set $vbase (call $d3dim_execbuf_output_guest (local.get $buf_guest) (i32.const 1)))
     (local.set $srcbase (call $d3dim_execbuf_source_guest (local.get $buf_guest)))
     (local.set $header (call $d3dim_execbuf_cache_header_guest (local.get $eb_this)))
+    ;; A real execute buffer must not fall back to modifying application bytes
+    ;; when the separate driver allocation could not be created.
+    (if (i32.and (i32.ne (local.get $eb_this) (i32.const 0))
+          (i32.eq (local.get $vbase) (local.get $buf_guest))) (then (return)))
     ;; vertex_project leaves the clip-volume-normalized homogeneous vector
     ;; here, before its near-zero divisor clamp. State is owned affine storage.
     (local.set $clip (i32.add (call $g2w (local.get $state_g)) (i32.const 4064)))

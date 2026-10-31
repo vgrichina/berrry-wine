@@ -440,3 +440,54 @@ The native-tested candidate, exact closure, screenshots and pixel proof above
 are complete; `normal-native-to-final-guard.json` checks the exact one-condition
 difference. Next required work is the final guard regression/build before any
 scoped source commit.
+
+### 2026-10-31: final separate-output repair verified
+
+Fresh run `scratch/runs/20261031T0658Z-forsaken-output-land/` completes the
+released repair's final checks. The final module is SHA256
+`d2c1df73d975daa4e7425152fb900274ebd9552c5a689249415084cfe8ac026b`
+(1,898,571 bytes). Its exact 295-source manifest is SHA256
+`4d8c8330e34c5230fb9e17855b3f7db9394857d2ed49de0789e3d98d2f33b132`;
+all source, seven compiler inputs and two changed test files match before/after
+verification. `final.wasm`, manifests, snapshots, patch and
+`final-build-identity.json` retain the tested dirty-source closure based on
+`f992c7fa84b2804aa877697377ac5044f9ebca20`.
+
+The generic repair owns source and processed output in one cache allocation.
+Unlock refreshes only source; PROCESSVERTICES writes driver output, which is
+consumed by triangles, lines, points and Pick. Direct TL buffers keep their
+live-buffer path until processing begins. Replacement allocation preserves the
+old owner until success, and release frees both streams together. The final
+guard normalizes the COM-pointer condition and skips processing when output
+still aliases live application storage after allocation failure.
+
+Cheap syntax, manifest, fragment, logical-operand and whitespace prerequisites
+passed before heavy work. Under the full-lifetime browser lock and a clean live
+process/profile gate, the released reproducer rejects old source on Lock-visible
+source corruption and rejects the native candidate's guard specifically on OOM
+source corruption. Final source passes 32 color-only cycles, allocation failure
+without source mutation, and successful retry with matching projected positions
+and color. The checked-in sparse regression now runs 32 cycles across all three
+PROCESSVERTICES modes and owned/sparse cache cases, preserving all source bytes
+outside application color edits. All six focused scripts pass: vertices-sparse,
+cache, buffer-lifetime, buffer-oom, data-sparse and instructions-sparse. Coverage
+includes replacement/retry/release ownership, 16 buffer allocation failures,
+descriptor/status transactions, 2,470 vertex pixel comparisons and viewport
+behavior. `flock /tmp/wine-build.lock bash tools/build.sh` also passed.
+
+The native-tested candidate remains the historical **41f5c4c7…** module above.
+Read-only verification of its 295 source and seven compiler snapshots proves
+that final runtime source differs only by the failure guard; compiler inputs
+are unchanged. Replaying its 24 native pre-PROCESSVERTICES observations confirms
+matching cache allocations, separate output and unchanged original XYZ for 162
+vertices across 12 Executes. Both guards continue on every captured normal-path
+observation. **The final d2c1df73… build received no fresh native retest**;
+Volcano redraw, pitch and ammunition evidence belongs to the prior candidate.
+No further normal-path engine change was made during this final verification.
+
+Historical evidence and native-candidate snapshots were preserved; the old
+`checks.sh` was not rerun. Fresh `RECOVERY.md` documents safe replay into the new
+run. No browser, runtime, ports, profile or test box was started by this worker;
+no Boat was allocated (ID/state/expiry N/A). The foreign Deus runtime was left
+untouched and all heavy work waited for its lane release. Disk stayed above
+2 GiB. No public deployment or successor is part of this task.

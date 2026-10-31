@@ -3,6 +3,8 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 const apis = require('../src/api_table.json');
 const extraWat = String.raw`
+ (func (export "output") (param $buf i32) (result i32)
+   (call $d3dim_execbuf_output_guest (local.get $buf) (i32.const 0)))
  (func (export "device") (result i32)
    (local $p i32) (local $s i32)
    (local.set $p (call $dx_create_com_obj (i32.const 20) (global.get $DX_VTBL_D3DDEV1)))
@@ -118,7 +120,10 @@ const extraWat = String.raw`
         assert.strictEqual(matrices[48 + i], i % 5 === 0 ? 4 : 0);
         assert.strictEqual(new Float32Array(memory.buffer, e.guest_to_wasm(state), 16)[i], matrices[48 + i]);
       }
-      for (let i = 0; i < 32; i++) assert.strictEqual(e.guest_read8(buf + 64 + i), i + 1, 'COPY record');
+      for (let i = 0; i < 32; i++) {
+        assert.strictEqual(e.guest_read8(e.output(buf) + 64 + i), i + 1, 'COPY driver output');
+        assert.strictEqual(e.guest_read8(buf + 64 + i), 0xcc, 'COPY preserves application source');
+      }
       call('IDirect3DExecuteBuffer_GetExecuteData', 12, eb, out);
       [1, 0xabcdef01, 0, 0, 0, 0].forEach((v, i) => assert.strictEqual(e.guest_read32(out + 24 + i * 4) >>> 0, v));
       assert.deepStrictEqual(trace, expectedTrace.map(([code, stride, n, rel]) => [code, stride, n, offset + rel]));
@@ -532,7 +537,7 @@ const extraWat = String.raw`
     const expected = [[7 + width / 2 + 0.25 * scaleX, 11 + height / 2],
       [7 + width / 2, 11 + height / 2 - 0.25 * scaleY]];
     for (let i = 0; i < 2; i++) for (let axis = 0; axis < 2; axis++)
-      assert(Math.abs(readFloat(regular + i * 32 + axis * 4) - expected[i][axis]) < 0.0001,
+      assert(Math.abs(readFloat(e.output(regular) + i * 32 + axis * 4) - expected[i][axis]) < 0.0001,
         `DX1 Execute must honor descriptor scale ${width}x${height} vertex=${i} axis=${axis}`);
   }
   console.log('PASS DX1 Execute viewport transform: equal scaling in nonsquare original Globe sizes, offset, explicit unequal scales and normalization reset');
