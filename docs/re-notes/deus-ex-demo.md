@@ -1660,3 +1660,112 @@ tail watcher's raw exit was unavailable after its parent exited; its own PID/sta
 absence was checked, with no raw-exit0 claim. No production edits, build, heavy
 CLI, asset/INI/clock/save-byte edits, cheats, input bypass, guestWorker disable,
 public deployment, Boat(ID/state/expiry N/A), agents or successor.
+
+### 2026-10-31 native crate reposition: genuine raised stack; launch access unresolved
+
+Run `scratch/runs/20261031T1450Z-deusex-reposition/` changed the native crate
+layout and produced a genuine two-small stack. **No stable96 landing, exit or
+ladder exercise was reached. The new diagnostic save is NOT accepted: fresh-page
+nativeLoad/gameplay validation did not execute before the disk guard shut down.**
+Original count7/time01:09:32 remains preferred, prior1301Z count8 remains
+unpromoted and count6 remains untouched. No emulator defect is established.
+
+Recovery starts with the immutable two-file count7 manifest in
+`../20261031T1220Z-deusex-crates/progress-native-checkpoint/manifest.json`.
+Use the exact0403Z `after.wasm`/`source-after/` and0736Z canonical support,
+original SoftDrv/default guestWorker/three workers,640×480 guest and1024×768
+browser. This run's keyboard nativeLoad showed count7/time01:09:32 (`18`), then
+actual crate-room gameplay (`22`) and the unchanged original observer passed
+its exact unique-player/save crosscheck (`21-exact-count7-crosscheck-observer.json`).
+Early startup labels `08`/`12` were premature:12 is the actual main menu, not a
+Load dialog. No Training selection or exercise replay occurred.
+
+Original `DropDecoration` was read before launch: a highlighted actor gets a
+zero-velocity placement with randomized XY above its collision height; without
+a target, Tab throws forward with view-based velocity. Native traces and
+collision decide acceptance. Mass40 small crates are liftable under limit50,
+but original `DoJump` refuses jumping while carrying mass>20. The BSP wooden
+support cannot be highlighted. Original User.ini confirms Delete/R LookUp,
+PageDown/V LookDown, F/End CenterView, X Duck; PageUp is unbound. Two PageUp
+holds had no effect; subsequent Delete holds were ordinary bound input.
+
+| Native action and inspected evidence | Actual result |
+| --- | --- |
+| RightMouse34 from the floor north side,36 | “There's no room to lift that”; no carried floor crate. Tab41 therefore did not create a stack. |
+| RightMouse44,46; untargeted Tab54,56 | Lifted the original upper small crate, then threw it back onto the wooden support. The throw shifted it west rather than toward the exit. |
+| RightMouse67 from clear east side,69; highlighted-target Tab84/90,83/86/89/92 | Floor small was lifted. Both target drops were refused with “Can't drop that here”; crate remained carried. No stack was inferred. |
+| Untargeted Tab96,98; climbs107/113/121 | Floor small settled near the wooden support. Genuine positive-Vz climbs reached stable centerZ48.09,79.8 and109.66. The moved upper footing was (7015.09,−1709.86,109.66), not a closer launch than count7. |
+| Crouched raised RightMouse151 | From wood centerZ79.8 at (7017.76,−1727.91), native X crouch brought the floor crate within reach. RightMouse lifted it; X was released in finally. Attached Puppeteer used defaultViewport:null and explicitly1024×768. |
+| Highlighted-target Tab161,160/163 | Raised target drop succeeded. The carried crate became opaque above the other small crate. Later decoded native save independently confirms small1.Base=small0, with centers32.515 units apart vertically and11.22 horizontally. |
+| Stack climb165 | Started stable Physics1, observed Vz+159.40, apex centerZ125.87, then returned to wood at (7019.12,−1725.67,79.8), zero velocity. The raised stack's upper surface was not reached. |
+
+The saved actual dynamic positions supersede any reused checkpoint coordinates:
+
+| Actor | Position | Saved base |
+| --- | --- | --- |
+| Small0, lower | (6984.11865,−1699.88647,49.28199) | LevelInfo0 |
+| Small1, upper | (6989.43408,−1709.77527,81.79706) | CrateUnbreakableSmall0 |
+| Player | (7019.12061,−1725.66577,79.80000),yaw286431,Physics1,height43 | LevelInfo0 |
+
+This is a genuine raised stack but still leaves access to its upper surface
+unresolved. Its nominal upper top is about97.05; from wood standing center79.8,
+the tested jump apex stayed below the approximately144.85 standing center
+needed there. Native collision remains authoritative. A usable lower intermediate
+step or a different supported arrangement is the next dependency; repeating
+exit-jump timing from the old upper location is not supported by this result.
+The tallwood/wood96 bounds and radius20 hypothesis remain as in the1403Z recovery.
+
+A native Escape→Save Game→Enter created **diagnostic count8/time01:22:17**.
+The first export174 caught an in-progress save.tmp and unchanged map bytes;
+only completed export177 was used. Its whole, unedited files are chmod444 in
+`progress-native-checkpoint/`, with exact pins:
+
+| File | Bytes | SHA256 |
+| --- | --- | --- |
+| 0.bin,saveinfo.dxs | 34576 | b3f199bdc14d67e3e518dc7e19b7145e2a541e101b44cc12df3f084059f26884 |
+| 1.bin,00_training.dxs | 3232834 | 18799fe3c57787ed97291c231be8ce8e403dd2b1a0b44be3171ae2581ab4a48f |
+
+These pins identify this new diagnostic count8, not the earlier1301Z count8.
+`prepare-save.py` decoded only named player/crate exports from the native save;
+`observer-new-save.cjs` changes only the decoded expected position/yaw in the
+original observer. It was prepared but never installed. Do not promote or choose
+this save as preferred without an actual fresh-page nativeLoad, inspected
+gameplay and original observer/save crosscheck.
+
+The monitor submitted quit after completed-export177, before pending
+fresh-load178 executed. No fresh launch/reload/nativeLoad occurred;
+the fresh request timed out with tool raw exit1. All runtime processes exited
+cleanly; this request timeout is not a guest crash. The original observer timer
+had reached20000 samples; later direct reads used the unchanged checked function,
+original exports/offsets, unique actor and owning-worker return boundary. No
+arbitrary live actor reads, scans, writes or input bypass were introduced.
+
+Identity checks retain module
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`,
+292-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`,
+131 original/support files before/after,105 canonical served responses and19 DLL
+mounts. Unpinned build-info.js was refused404. `check.py` passes immutable
+count7/source/module/native-input/stack-base/trajectory/cleanup checks and the
+original observer's positive/five-rejection fixtures.450 trusted input events
+are balanced, including5 RightMouse,6 Tab,10 Space and1 X presses. All56 PNGs
+are1024×768; the exact named inspected-image hashes are in focused-checks.json.
+No stable96/exit/new-save-acceptance claim is made.
+
+Pirates explicit FULLRELEASE14:49:01 plus an actual whole Chrome/global-crashpad/
+profile PID-start gate preceded the sole14:50:41–15:04:52 browser session
+(850.202s from controller start). The2.1GB guard fired at2075869184B; minimum
+sampled free disk2068295680B remained above2GB. All907 active-profile samples
+show inherited fd9 in wrapper/controller/monitor. Actual browser/controller/
+wrapper/monitor exits0/0/0/0 were retained by the durable Python supervisor;
+monitor used no signals. Cleanup confirmed23 tracked PID/start identities absent,
+plus the guarded helper and qualified own request processes absent, both ports
+closed, profile gone, held inputs empty and full flock available. FULLRELEASE
+was announced15:06:11 after actual cleanup. No further browser, heavy CLI,
+production edits/build, asset/INI/clock/save-byte/memory edits, cheats,
+guestWorker disable, public deployment, Boat(ID/state/expiry N/A), agents or
+successors. Only this game document and new scratch evidence were changed.
+
+The run evidence checker reports no outside-run, missing or invalid references
+for this run. Its global report still contains9 historical outside-run errors,
+13 missing references and103 invalid records; unrelated evidence was unchanged.
