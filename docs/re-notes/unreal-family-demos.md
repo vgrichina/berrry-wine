@@ -1157,6 +1157,64 @@ browser lock, with native input/end pins saved first. All tracked owned PIDs,
 HTTP 43345/CDP 34225 and profile are verified gone. No Boat was allocated
 (ID/state/expiry N/A); other runtimes and protected files were untouched.
 
+## UT2003 frozen SOFTWARE attempt: isolation prerequisite failed (2026-10-31)
+
+`20261031T1533Z-ut2003-software-antalus` stopped at its first execution
+prerequisite, before guest input. It does **not** close the missing original
+SOFTWARE gameplay evidence. The preceding `5fa12b1be`/0542Z Antalus run remains
+WebGL evidence only; neither run establishes full-27 qualification.
+
+The single browser launched at 15:35:48 UTC after Diablo II's new 15:34:16
+FULLRELEASE for runtime 15:24:30–15:32:47, plus an independent actual whole-Chrome,
+global crashpad and profile PID/start gate. Free disk was 2,318,245,888 bytes.
+The run retains the exact 0542Z 295-file source snapshot, seven compiler inputs
+and module SHA-256
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`.
+All 881 original files, retained source/compiler/module and 102 pinned responses
+served in this execution verify unchanged; all 107 predecessor served pins also
+match the frozen closure. No current host source was substituted. The original
+registration and `-d3d -window -nosound` arguments were unchanged. Only the normal
+host GPU selector changed to Software before Launch; the guest-worker default
+was retained, with a 1024×768 browser viewport.
+
+The first capture (`01-startup.json`/`.png`) reports **Software selected,
+`crossOriginIsolated=false`, `guestWorker=false`**, despite Threads being checked.
+Its inspected NVIDIA intro and toolbar “not isolated” state corroborate that
+failure. The actual main-thread bridge has backend/kind `software`, device
+410128440, generation 1, submitted/consumed/completed **85/85/85**, no inflight
+operations and no queue error; `01-startup-executor.json` has no render-worker
+executor. These completed startup operations are outside the required default
+guest-worker configuration, not qualifying gameplay or a software graphics
+failure.
+
+The cause is in this run's harness: its custom frozen-response handler omitted
+`Cross-Origin-Opener-Policy: same-origin` and
+`Cross-Origin-Embedder-Policy: require-corp`. `first-dependency-http.json` retains
+the completed HTTP 200 response without either header. The static server's
+`crossOriginIsolated: true` option applies those headers only to responses it
+serves itself; a completed custom response returns earlier. The fallback
+isolation-service-worker request was refused as unpinned. The 0542Z driver
+explicitly included both headers in its custom responder; this adaptation
+accidentally omitted them. This is an identified harness prerequisite failure,
+not an established emulator defect. No retry was made. The next attempt must
+restore those response headers and assert isolation
+and an active default guest worker before guest input, then perform the
+prepared ordinary menu PLAY route, allowing its documented no-Present load
+period. Menu PLAY remains open; the explicitly labelled native-console
+`open DM-Antalus` fallback was not used here.
+
+Only the host Launch click occurred; no guest movement/look/fire, health/ammo/
+clock progression, audio, FPS, benchmark or match-completion claim follows.
+The controller cooperatively quit at 15:36:27. Durable Python `Popen.wait()`
+receipts record Chrome/controller/wrapper/monitor exit 0; the monitor sent no
+signals. Three PID/start-qualified holders retained FD9 on
+`/tmp/wine-browser.lock` during runtime. Cleanup verifies all owned processes
+and crashpads absent, both ports closed, profile gone, held inputs empty and
+the full flock available. FULLRELEASE was posted at 15:37:07. No Boat was
+allocated (ID/state/expiry N/A). `RECOVERY.md`, `verification.json` and
+`focused-check.json` preserve the precise prerequisite, identity and cleanup
+checks. No production files changed.
+
 ## UT2004 explicit CLI renderer startup check (2026-10-31)
 
 Run `20261031T0327Z-ut2004-startup` reached an inspected black game window
