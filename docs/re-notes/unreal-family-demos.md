@@ -1270,6 +1270,36 @@ the bounded result. No production source, assets, INI, clock, save bytes or
 guest memory changed. Next work needs enough disk for a fresh bounded run,
 then native join and inspected gameplay under the same proven configuration.
 
+### SOFTWARE join follow-up: launch reserve unavailable (2026-10-31)
+
+`20261031T1603Z-ut2003-software-join` stopped before browser launch at the
+requested disk prerequisite. The required new Diablo II FULLRELEASE arrived
+at 16:03:08 UTC for its sole 15:51:57–16:01:44 execution. At 16:03:23, an
+independent process/PID-start scan under an exclusive FD9 browser flock found
+no actual Chrome or global crashpad processes and confirmed the predecessor
+profile absent. Free disk was **2,542,460,928 bytes**, **57,539,072 bytes short**
+of the required **2,600,000,000-byte** prelaunch reserve. The saved
+`post-predecessor-gate.json` records that first dependency. No browser retry,
+guest input, queued join or gameplay capture occurred, and no existing evidence
+was removed.
+
+Cheap preparation verifies the exact 0542Z module
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`,
+295 frozen source files, seven compiler files, 881 original inputs and 107
+predecessor served pins. New scratch helpers retain the repaired custom
+COOP/COEP responses, isolation/default-worker checks before guest input,
+1024×768 viewport, original `-d3d -window -nosound` registration and normal
+Software selector. Helper syntax and focused prerequisite checks pass; this
+is preparation evidence only. No production files changed; no Boat was
+allocated (ID/state/expiry N/A).
+
+The next execution requires the disk reserve, a fresh sole-browser release
+gate and the same frozen identity. Use the authorized native console
+`open DM-Antalus`, then ordinary FIRE to join and inspect the actual HUD,
+movement/look/fire and health/ammo/clock response. Software gameplay remains
+unverified, and menu PLAY remains open. The preceding WebGL gameplay and
+Software pre-join screenshot do not supply those missing observations.
+
 ## UT2004 explicit CLI renderer startup check (2026-10-31)
 
 Run `20261031T0327Z-ut2004-startup` reached an inspected black game window
