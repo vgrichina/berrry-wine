@@ -1124,12 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: crimsonland-combat-recovery-main-oct31 (01a19416-c2ae-76a0-9fdf-6fa2ccacd078; handle27945); return-fire-launcher-visibility-main-oct31 (01a19414-2064-74a3-89fa-a244fc2a1a96; handle73994)
-  status: active (Crimsonland native combat; Return Fire launcher visibility; Icewind local-session dependency; Slave Zero hold)
+  worker: alice-original-recovery-main-oct31 (01a1941c-b70b-7560-a618-030dd2045bd4; handle44538); crimsonland-dx-component-contract-main-oct31 (01a1941c-c75d-7243-aef2-c9ea353725fb; handle32255)
+  status: active (Alice original-media recovery; Crimsonland authentic DirectX contract audit; Return Fire launcher resolved; Icewind dependency and Slave Zero hold)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Current update 2026-10-31T22:38:19.054333+00:00: ReturnFire launcher5d014a0e reviewed complete visible native controls and trusted Play; prior teal-only view was viewer error, no paint defect. Crimsonland2a64e65c reviewed original DirectX8.1 warning before launcher, no combat/input. Both terminal/published with full cleanup. Fresh Alice01a1941c-b70b handle44538 recovers authentic demo media for ordinary gameplay; fresh Crimsonland01a1941c-c75d handle32255 audits exact original installed-component/version-resource contract. Both cheap-only, no runtime allocated; no repeated warning run. Two-worker cap.
   Current update 2026-10-31T22:31:46.148187+00:00: Crimsonland01a19411 interrupted143 without final, cause unknown; viewport setup timed out before navigation, no game result. Independently verified full cleanup/release223105 in 20261031T2232Z-crimsonland-interruption. Fresh Crimsonland01a19416 handle27945 repairs harness then targets native combat, cheap prep until CURRENT ReturnFire01a19414 full release. ReturnFire consumed reconstructed release and began sole heavy slot223131 target224831 hard224931 cleanup225031. Two workers.
   Current update 2026-10-31T22:28:49.786047+00:00: ReturnFire9f695796c reviewed oldFAIL/newPASS/build logs and retained before/after colored Play/H deployment/W movement-release captures; accepted at actual HTTP module aee25464, unchanged58 original files. Incoming Big5 merge outside tested source. All32 runtime identities absent, durable waits0; launcher visibility/audio/FPS remain open. Fresh ReturnFire01a19414-2064 handle73994 investigates visible launcher, cheap prep until CURRENT Crimsonland01a19411 explicitrelease+actualgate. Crimsonland sole runtime started222757 target224457 hard224557 cleanup224657. Review20261031T2231Z-coordinator-review.
   Current update 2026-10-31T22:26:07.580692+00:00: Icewind fd4d9bba2 and966bba074 reviewed: local provider0 intentionally skips network initialization/Open then polls retained activation reference; valid NOCONNECTION triggers cleanup, no proven generic COM identity/refcount/ABI defect. Park at original local-provider handling dependency; no Party/gameplay. Fresh Crimsonland01a19411-7a40 handle77387 targets native combat/enemy/kill/score beyond accepted Tutorial; cheap prep until current ReturnFire terminal publication+actual runtime gate. ReturnFire worker reports generic caps repair oldFAIL/newPASS/buildPASS and complete-color deployment after NEWFULLRELEASE222500; final publication/capture review pending. Review20261031T2226Z-coordinator-review.
@@ -1527,9 +1528,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
-  status: blocked (original media/evidence recovery and post-merge gameplay revalidation pending)
+  status: active (bounded original-media recovery; post-merge gameplay pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none (evidence recovery pending)
+  worker: alice-original-recovery-main-oct31 (01a1941c-b70b-7560-a618-030dd2045bd4; handle44538)
   candidate: test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe
   Next: Serialization and generation-aware unload already merged (cfe411bdc/83947f6a6 and followups); do not redo staging/lifetime fix. Original archive/extracted media and scratch/alice-preflight-20261009 absent locally. Recover hash-pinned archive and2151 captures; then current-main ordinary New Game/Easy/W and browser input. Historical native gameplay usesa2dae641/main23614c85e+candidate.patch, not later held candidates. See docs/re-notes/alice-return-fire-reconciliation-20261018.md.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
@@ -1553,13 +1554,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] User priority: Return Fire demo
   id: NEW-GAME-RETURN-FIRE-DEMO-20261009
-  blocker: Initial launcher captures show only teal despite visible internal window; gameplay rendering and native H/W are now accepted at pinned repaired build.
-  worker: return-fire-launcher-visibility-main-oct31 (01a19414-2064; handle73994)
-  status: gameplay accepted at pinned repaired build; launcher visibility follow-up active
+  blocker: none for bounded launcher/deployment/movement scope; sustained play/audio/FPS remain separate.
+  worker: none (bounded launcher follow-up complete)
+  status: bounded gameplay and visible native launcher accepted; broader coverage open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: return-fire-demo
   priority: user-first
-  Next: Fresh worker resolves visible native launcher using ordinary controls after Crimsonland runtime release. Reviewed20261031T2213Z-return-fire-presentation replaces absent historical captures with pinned full-color deployment/movement; fix9f695796c. Audio/FPS remain separate.
+  Next: Launcher follow-up5d014a0e complete: reviewed visible Hard/Easy controls and trusted Play route in20261031T2230Z-return-fire-launcher at actualHTTPed3f924a. No paint defect; prior teal-only image view corrected. Retain pinned full-color deployment/movement20261031T2213Z-return-fire-presentation fix9f695796c. Sustained play/audio/FPS remain separate.
   Done: Registered launch, ordinary input visibly changes gameplay, reviewed screenshot with original source/build evidence; FPS/audio separate.
 
 - [ ] Serialize shared DLL mapping and lifetime mutation
