@@ -17,6 +17,10 @@
 #
 #   bash tools/gen-font-subsets.sh          # regenerate
 #   bash tools/gen-font-subsets.sh --check  # verify the committed files match
+#   bash tools/gen-font-subsets.sh --one SRC DEST CHARSET STRIKES
+#                                           # one font, same flags; used by
+#                                           # tools/fetch-fonts.js for the
+#                                           # optional, never-committed CJK faces
 #
 # Needs fontTools (pip install fonttools).
 
@@ -24,7 +28,15 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 CHECK=0
+ONE=0
 [ "${1:-}" = "--check" ] && CHECK=1
+if [ "${1:-}" = "--one" ]; then
+  if [ "$#" -ne 5 ]; then
+    echo "usage: $0 --one SRC DEST ansi|cp950 drop|keep" >&2
+    exit 2
+  fi
+  ONE=1
+fi
 
 OUT=fonts/subset
 mkdir -p "$OUT"
@@ -48,8 +60,27 @@ print(','.join(codes))
 PY
 )
 
+# The Big5 repertoire as Windows code page 950 decodes it, plus ASCII: every
+# character a CP950 ANSI string can name. Python's cp950 codec is Microsoft's
+# table (not WHATWG/HKSCS Big5) and leaves the user-defined EUDC rows
+# undecoded, so no private-use codepoints are requested. Computed only when a
+# CP950 subset is asked for - it is ~13,800 codepoints the Western run never
+# needs.
+cp950_unicodes() {
+  python3 - <<'PY'
+codes = set(range(0x20, 0x7F))
+for lead in range(0x81, 0xFF):
+    for trail in list(range(0x40, 0x7F)) + list(range(0xA1, 0xFF)):
+        try:
+            codes.add(ord(bytes([lead, trail]).decode('cp950')))
+        except Exception:
+            pass
+print(','.join('U+%04X' % c for c in sorted(codes)))
+PY
+}
+
 subset() {
-  local src="$1" charset="$2" strikes="${3:-drop}"
+  local src="$1" charset="$2" strikes="${3:-drop}" dest_override="${4:-}"
   local name unicodes
   local strike_tables=--drop-tables+=EBDT,EBLC
   # Opt in explicitly for a future CJK subset: subset "$uming" ansi keep.
@@ -61,7 +92,7 @@ subset() {
   esac
   name=$(basename "$src")
 
-  local dest="$OUT/$name"
+  local dest="${dest_override:-$OUT/$name}"
   local tmp="$dest.tmp"
 
   # Symbol faces are copied whole. They are addressed through the Microsoft
@@ -85,7 +116,11 @@ subset() {
     fi
     return
   fi
-  unicodes="$ANSI_UNICODES"
+  case "$charset" in
+    ansi) unicodes="$ANSI_UNICODES" ;;
+    cp950) unicodes=$(cp950_unicodes) ;;
+    *) echo "Unknown charset: $charset" >&2; exit 1 ;;
+  esac
 
   python3 -m fontTools.subset "$src" \
     --unicodes="$unicodes" \
@@ -121,6 +156,11 @@ subset() {
       "$(wc -c <"$dest" | tr -d ' ')" "$(wc -c <"$src" | tr -d ' ')"
   fi
 }
+
+if [ "$ONE" = "1" ]; then
+  subset "$2" "$4" "$5" "$3"
+  exit 0
+fi
 
 # Kept in step with fonts/substitutions.json; test/test-font-subsets.js fails
 # if the manifest names a file with no subset here. Small Fonts is absent on

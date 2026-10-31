@@ -487,6 +487,35 @@ function collectFonts() {
       push('fonts/subset/' + entry, path.join(subsetDir, entry));
     }
   }
+
+  // Optional faces tools/fetch-fonts.js built for this deploy (the CP950 Ming
+  // face and its license). Never committed; a deploy without them is normal
+  // and skips silently. host.js asks for them only for an app whose
+  // ansiCodePage names them, through fetched.json.
+  //
+  // A user's own MINGLIU.TTC build (mingliu.ttc) is Microsoft's font and must
+  // never be published: it is left out, and the published fetched.json is
+  // rewritten without it so the browser falls through to the open face
+  // instead of 404ing on the preferred one.
+  const fetchedDir = path.join(dir, 'fetched');
+  const listingPath = path.join(fetchedDir, 'fetched.json');
+  if (fs.existsSync(listingPath)) {
+    const USER_ONLY = new Set(['mingliu.ttc']);
+    const listing = JSON.parse(fs.readFileSync(listingPath, 'utf8'));
+    for (const name of USER_ONLY) delete (listing.files || {})[name];
+    for (const name of Object.keys(listing.files || {})) {
+      const full = path.join(fetchedDir, name);
+      if (!fs.existsSync(full)) { delete listing.files[name]; continue; }
+      files.push(...encodeBinaryBytes('fonts/fetched/' + name, fs.readFileSync(full)));
+    }
+    const license = path.join(fetchedDir, 'ARPHICPL.TXT');
+    if (fs.existsSync(license)) push('fonts/fetched/ARPHICPL.TXT', license);
+    files.push({
+      name: 'fonts/fetched/fetched.json',
+      content: Buffer.from(JSON.stringify(listing, null, 2) + '\n').toString('base64'),
+      encoding: 'base64',
+    });
+  }
   return files;
 }
 

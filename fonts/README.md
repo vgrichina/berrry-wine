@@ -266,6 +266,73 @@ the current generator will intentionally change those two outputs.
 
 `test/fixtures/ttc-ebdt/` contains tiny original CC0 test fonts and a reproducible
 fontTools generator. Headless tests need no network or third-party CJK font.
-Original MINGLIU.TTC must remain user-supplied and uncommitted. Optional AR PL
-UMing comparisons belong in scratch only. Vertical `@` face synthesis and ACP
+Original MINGLIU.TTC must remain user-supplied and uncommitted. AR PL UMing
+builds come from `tools/fetch-fonts.js` (below) and are never committed. Vertical `@` face synthesis and ACP
 950 conversion/localized enumeration are separate work.
+
+## Optional Traditional Chinese (CP950) Ming face — fetched, never committed
+
+Win98's Traditional Chinese edition drew text in MingLiU / PMingLiU
+(細明體 / 新細明體): a Ming face with hand-tuned 1-bit bitmap strikes at UI
+sizes. `tools/fetch-fonts.js` builds a drop-in for `C:\WINDOWS\FONTS\MINGLIU.TTC`
+at build/deploy time. Nothing it produces is committed (`fonts/fetched/` and
+the download cache `.cache/fonts/` are gitignored), and absence is the normal
+state: no build gate, test, or Western app depends on it.
+
+```sh
+node tools/fetch-fonts.js                    # download (once, cached) + build
+node tools/fetch-fonts.js --mingliu PATH     # also build your own MINGLIU.TTC
+node tools/fetch-fonts.js --check [...]      # rebuild in a temp dir, require
+                                             # byte-identical output
+node test/test-fetch-fonts.js [--fetched]    # offline test (+ the real output)
+```
+
+Options: `--out DIR`, `--cache DIR`, `--tarball FILE` (a local copy, still
+hash-verified), `--offline` (never download), `--no-uming`. Needs system `tar`
+and fontTools; network only for the first download.
+
+| Output in `fonts/fetched/` | Source | License |
+|---|---|---|
+| `mingliu-uming.ttc` | AR PL UMing TW, face 2 of `uming.ttc` in Debian's `fonts-arphic-uming_0.2.20080216.2.orig.tar.bz2` ([URL](https://deb.debian.org/debian/pool/main/f/fonts-arphic-uming/fonts-arphic-uming_0.2.20080216.2.orig.tar.bz2), 9,608,089 bytes, SHA-256 `e3c19e04ea7a565b4acff6f1e4248084d2e10752e305bf7dd6c76e80860dc1db`) | Arphic Public License |
+| `ARPHICPL.TXT` | `license/english/ARPHICPL.TXT` from the same tarball | — |
+| `mingliu.ttc` | your own Win98 `MINGLIU.TTC` (`--mingliu`) | Microsoft; local use only |
+| `fetched.json` | listing of what is present (hash, bytes, faces, strike ppems) | — |
+
+The tarball hash is pinned in the tool; a mismatch is fatal, never re-fetched
+silently. The face is selected by its name-table family ("AR PL UMing TW"), not
+trusted by index.
+
+Processing is the same for both sources: each face is extracted, cut to the
+CP950 repertoire (Microsoft's Big5 table as Python's `cp950` codec decodes it,
+13,742 characters, no EUDC) plus ASCII by
+`tools/gen-font-subsets.sh --one SRC DEST cp950 keep` — the existing per-font
+strike opt-in, so EBDT/EBLC survive — and its hhea/OS/2 restored from the
+source. The UMing face is then written twice into a two-face collection named
+MingLiU and PMingLiU (English, Mac and zh-TW 細明體 / 新細明體 family records);
+the faces share every table but `name`, so the collection costs one face. The
+APL permits renaming and requires a notice of how and when the file changed;
+that notice is appended to name ID 0 and written as name ID 10. A user's
+MINGLIU.TTC keeps its own names; both faces must be present.
+
+Current UMing build: 13,074,352 bytes, 1-bit strikes at 11, 12, 13, 14, 15
+and 16 px (Firefly's Big5 bitmaps), outlines above that. PMingLiU uses the
+same (fixed-pitch) glyphs as MingLiU.
+
+**Precedence and gating.** `fonts/substitutions.json` `optional` lists the
+candidates in order: `fetched/mingliu.ttc` (yours), then
+`fetched/mingliu-uming.ttc`. `optionalFontMounts()` in
+`lib/font-substitutions.js` mounts the first one present at
+`c:\windows\fonts\mingliu.ttc`, and only for an app under ANSI code page 950
+(`ansiCodePage: 950` in `lib/apps.js`, or `test/run.js --codepage=950`). A
+Western app never fetches, mounts or enumerates these faces. The WAT collection
+loader registers each face from its own name table, so no WAT substitution
+table names them. Browser hosts discover what was deployed through
+`fonts/fetched/fetched.json`; a missing listing is silent.
+
+**Deploy.** `tools/deploy-berrry.js` ships `fonts/fetched/` when it exists and
+skips it silently otherwise. A user's `mingliu.ttc` is never published: it is
+left out and dropped from the published `fetched.json`, so browsers fall
+through to the open face.
+
+Not covered here: Big5 ANSI conversion and localized enumeration (the ACP 950
+work), and vertical `@` faces.
