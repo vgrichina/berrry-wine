@@ -1,5 +1,109 @@
 # American McGee's Alice demo
 
+## Original media recovered; browser task ready (2026-10-31)
+
+Media/preflight only, starting from main
+`2a64e65cc17c137d2d816d33dd0a132d6d9ff2fa`; registry inspection also covers its
+descendant `c24d17db6629c06d36dd1fd6dfbc6b92c869e6dd`. No browser, game,
+build, remote box, installer execution, guest patch or configuration write was
+performed. The loader/serialization/lifetime fixes are already integrated:
+the [October 18 reconciliation](alice-return-fire-reconciliation-20261018.md)
+supersedes the old implementation-status statements below.
+
+Initial local `/home/user` filename inventory found no Alice package or
+extracted media. The old preflight/candidate paths were absent. Before recovery,
+the local registry had 46 `DESKTOP_APPS` and the actual public
+[`lib/apps.js`](https://wine-assembly.berrry.app/lib/apps.js) response had 44;
+neither `DESKTOP_APPS` nor `APPS` contained Alice/McGee. The public response,
+headers and both inventories are retained in
+`scratch/runs/20261031T2239Z-alice-original-recovery/`. No registration or
+public deployment was added.
+
+Recovered the direct Windows demo package from
+[Internet Archive's Alice demo item](https://archive.org/details/AmericanMcgeesAliceDemo),
+using its [direct storage URL](https://ia800804.us.archive.org/32/items/AmericanMcgeesAliceDemo/alice_demo.exe).
+The ordinary `/download/` route returned HTTP 500; the direct storage request
+returned HTTP 200 and all 82,499,584 bytes. The package exactly matches the
+historical SHA256
+`ce873bf2525041a624c1a5a27b513f135b51ffdbeae9f68a6ede3edd8c7078e6`.
+
+**Actual file hashes define this target build.** Independently retrieved
+[upstream item metadata](https://archive.org/metadata/AmericanMcgeesAliceDemo)
+lists that filename/size, MD5 `29a995e2b543972a571e93eb88827e5b` and SHA1
+`45c6e346a86f468db9f67d36aaa29e96e4b0d074`; both digests were independently
+recomputed and match. This establishes the archived upstream object's identity,
+not a publisher signature or an inferred executable version. Its original
+readme identifies the November 27, 2000 demo. PE header metadata is retained
+separately in the payload inventory; no version was invented from a timestamp.
+
+All **15 original files, 85,622,092 bytes**, are now extracted unchanged under
+`test/binaries/candidates/alice-demo/`. All outer ZIP CRCs pass, and every
+extracted file equals its archived member byte for byte. Key target identities:
+
+| Original file | Bytes | SHA256 |
+|---|---:|---|
+| `alice.exe` | 1,454,142 | `61857b521eb7260c28b3ae6960fa8ee18d4d3679b6190f5221131e382e0f3a72` |
+| `demo/cgamex86.dll` | 409,665 | `2fc6c957d8f554ff296271c9c50ec6aa3b5f72531061bf8a23af8d219e6d8c24` |
+| `demo/fgamex86.dll` | 1,970,241 | `42838c2a96520c4b8b42e710d7d5bcf3a7a7f2a71b141a9f75bff01ee28f3d4c` |
+| `demo/pak0.pk3` | 80,849,066 | `14ce74568458078f51f5b4f42a65c5a5888c01c487bbf8c064f541039a306556` |
+
+The complete 15-file size/SHA256/CRC32 inventory is the run's
+`payload-manifest.json`, SHA256
+`68668d496dbabdb3b3803b8de12dda356796ba0ce26051ffb0a03df3a2022509`.
+The PK3's 2,459 files also pass every CRC, including six original BSP maps
+(`d_intro`, `d_gvillage`, `d_garden`, `d_chess`, `d_fortress1`, `d_fortress2`).
+Its original embedded configs remain inside the unmodified PK3; none was
+fabricated, extracted as an override, or edited.
+
+Host manifest `test/binaries/candidates/alice-demo/.wine-assembly-browser.json`
+maps all **14 companions**, preserving `demo/` and `snddrivers/` under `c:\`.
+It is host metadata, separate from the 15 original payload files. An exact copy
+is the run's `browser-manifest.json`, SHA256
+`f723279905dc6649a17933c7907eacbaf5f33eb3bff7e9f2ac4cb80a07878d0a`.
+`launch-plan.json` supplies `alice.exe`, the manifest path, empty inline files
+and `requiredFiles: true` for the later browser task. Static resolution through
+the current shared manifest helpers passes: all 14 URLs exist with exact sizes,
+all guest paths are unique, and no sizes are unknown. Default file policy yields
+12 eager companions and two streamed data files; this is a static policy check,
+not HTTP delivery or runtime qualification.
+
+Recovery recipe: download the direct package above, verify its exact size and
+SHA256 before extraction, then use Python `zipfile.ZipFile` to test CRCs and
+extract all members into an empty candidate directory. No installer is needed.
+Recreate the host manifest by mapping every original member except `alice.exe`
+to `{url: memberName, vfsPath: 'c:\\' + memberName.replace('/', '\\'), size: bytes}`
+under `{schemaVersion: 1, files: [...]}`. Keep its relative URLs beside the
+extracted tree. The retained run contains the package, upstream metadata,
+original readme, exact manifests, source/probe failures and `RECOVERY.txt`.
+Run from the checkout root:
+
+```sh
+python3 scratch/runs/20261031T2239Z-alice-original-recovery/verify-media.py
+```
+
+This checks both upstream digests, historical SHA256, complete original closure,
+byte equality, manifest mappings, every PK3 CRC and free disk above 2 GiB.
+No known original media path is missing. Generated Wasm, host font/system
+support and actual HTTP/module identities must be pinned by the fresh runtime
+task; this preflight does not claim to qualify those dependencies.
+
+**Next:** use this exact media in a fresh ordinary current-main browser task,
+prepare its local app entry from `launch-plan.json`, select New Game → Easy,
+hold and release W, and inspect the resulting movement captures. The readme
+documents those menu choices and W as Move Forward. No saved config, console
+command, synthetic guest file, memory patch or licence workaround is required
+by this media preparation. Record actual served module/source/input identities
+when that task runs.
+
+Historical `20261009T2151Z-alice-lifetime-gameplay/{finding.json,candidate.patch,
+step-6.png,step-8.png}` remain unavailable in the bounded local inventory;
+old boat paths are unverified recovery leads. The native movement reported
+below belongs to `a2dae641…` on `23614c85e` plus its candidate patch, not later
+held builds or current main. Those capture gaps remain explicit and are **not
+a prerequisite for collecting fresh browser evidence**. Browser gameplay,
+audio, FPS and sustained play remain unverified. Boat ID/state/expiry: N/A;
+no runtime was allocated or box lifecycle changed.
+
 ## Original-media preflight (2026-10-09)
 
 Original: `test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe`,
