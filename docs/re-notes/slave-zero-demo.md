@@ -521,9 +521,10 @@ operator new at `0x10004fb9` through `0x1000962c`, then constructs it at
 `0x10006390` and initializes it at `0x100064b0`. The constructor zeros normal
 buffer `+0x28`, alternate buffer `+0x44`, stream `+0x48`, notification
 interface `+0x4c`, events `+0x50/+0x54/+0x58`, mutex `+0x5c` and state `+0x64`.
-The audio thread starts at `0x10006290`; its wait-any/infinite call returns at
-`0x10006304`. Index zero acquires the mutex at `0x10006348` and calls refill
-at `0x10006356`. Refill calls buffer lock at `0x10006bf3`. The null-buffer
+The audio thread starts at `0x10006290`; its wait-any/infinite call is at
+`0x10006304` and returns to `0x1000630a`. Index zero acquires the mutex at
+`0x10006348` and calls refill at `0x10006356`. Refill calls buffer lock at
+`0x10006bf3`. The null-buffer
 error call is `0x1000191a`, returning to `0x1000191c`, before the actual
 DirectSound Lock call at `0x10001945`.
 
@@ -616,3 +617,125 @@ audio order is defined and noncausal should investigation move to the exact
 deferred node's `0x405be0` enqueue, heads `0x453260/0x45325c`, `0x405c2e`
 dispatch, constructor callback `+0x50`, destruction and free generation.
 Postfatal effects remain insufficient evidence for a generic emulator patch.
+
+## 2026-10-31: Filtered audio observer and first-fatal reservation
+
+Evidence is in `scratch/runs/20261031T1900Z-slave-zero-filtered-audio/`.
+The observer correction is scratch-only; it establishes no emulator cause.
+Unrelated heap events are filtered before transport. Their counters and last
+16 events remain available, while unidentified allocation candidates occupy
+at most 128 address histories, each holding at most 16 events. Identified
+stream objects retain their address history through candidate eviction;
+promotion emits the retained allocation/free/reuse history. Exact allocation
+addresses take precedence over older containing allocations. Relevant original
+audio callsites, stream snapshots and synchronization operations remain
+observable. A separate first-fatal channel bypasses the normal 4 MB payload
+budget and preserves the full 512-word stack, registers, arguments, stream
+snapshots, recent events and bounded retention diagnostics in chunked durable
+CDP records.
+
+The real shared WebAssembly.Memory test uses an actual Wasm `i32.load` reader
+with fixture-controlled register getters and drives 240,000 unrelated HeapAlloc/
+HeapFree hooks plus 3,000 unidentified candidate allocations. The complete
+test, including relevant allocation/free/reuse and first-fatal transport,
+emits 100,773 bytes, retains 128 address histories and a 16-event unrelated
+ring, and preserves existing hooks, exact results, guest bytes, registers and
+WebAssembly.instantiate Promise identity. A separate 5,000-call saturation
+test fills the ordinary payload budget and still reassembles the complete
+first fatal. The CRT small-block unlock path remains mock coverage until
+actual execution records that path; neither test supplies actual CRT events.
+
+The page observer preserves original Promise identity and associates nested
+acquisition, retained completion and delivery fulfillment with a wait identity.
+Its unchanged-ThreadManager test signals stop index two, acquires it once,
+retains the completion across repeated polls, closes only after acquisition,
+and delivers exactly once. This is a passing valid-use case, not an emulator
+oldFAIL/newPASS. Same-page invocation order and same-Worker event sequence
+are usable ordering evidence; cross-Worker clocks alone remain insufficient.
+
+### Actual run: intro stop completions, menu activation, unresolved exit
+
+After Evolva native-combat's published `e875d370578dee0318b75bceb51b0238fca21e28`
+and 19:10:25 NEWFULLRELEASE, the supervisor independently checked the entire
+actual Chrome/crashpad/profile PID/start gate under inherited lifetime FD9.
+Launch free disk was 2,626,441,216 bytes, meeting the original 2.6 GB reserve.
+It reread both predecessor source/compiler/original manifests and the prior
+168 Slave Zero fixture pins; all matched. The executed final module remained
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+No build or emulator source edit was needed for this diagnostic.
+
+The sole run used the original default Worker, normal audio/clock and native
+WebGL, inner 1024×768 with `defaultViewport:null`. HTTP isolation was checked
+before the trusted launch click. Personally reviewed `01-startup.png` and
+`02-intro-or-menu.png` show scripted intro scenes. Balanced Escape reached
+the native menu (`05-native-menu.png`). A click at guest (319,153) acquired
+pointer lock but did not visibly activate the selection; balanced Enter then
+opened the Easy/Medium/Hard menu (`09-enter-result.png`), proving NEW GAME
+activation in this run. After accepting highlighted Easy, the render endpoint
+closed at 19:16:24.833 and the 19:16:42 capture gate found no guest Worker.
+That gate refused the capture. No level, controlled movement/look/fire,
+MessageBox, first-fatal record or terminal exit/trap snapshot was captured.
+The exit's code and cause remain unknown.
+
+The new trace retains exact HeapAlloc histories for stream objects
+`0x19bb54c`, `0x19b4b94` and `0x3da7d84`: size `0x90`, thread-1 heap-generation
+sequences 22325, 22597 and 44522 respectively. These generation counters are
+separate from emitted record sequence numbers. No actual CRT small-block
+record was captured. `stream-lifetimes.json` preserves initialization and
+`actual-stop-order.json` contains the full selected page/Worker records.
+
+The same-page ordering for the two running intro streams is concrete:
+
+| Stream | Signal stop event | Acquire index 2 | Retain | Delivery fulfilled | Close mutex | Close events |
+| --- | --- | --- | --- | --- | --- | --- |
+| `0x19b4b94` | 2110 | 2113 | 2114 | 2119 | 2125 | 2127/2129/2131 |
+| `0x19bb54c` | 3048 | 3051 | immediate delivery | 3054 | 3062 | 3064/3066/3073 |
+
+Numbers in this table are **page observer sequence numbers**, not timestamps.
+The corresponding wait identities are 16248 and 30580. This proves stop
+acquisition before event close in these invocations, rather than an invented
+post-close index-zero refill. It does not make all later audio use defined:
+page sequence 2132 waits on already-closed cached mutex `0xe000001`; sequence
+3068 resolves the `0xe000000` mutex wait after its close. For the latter,
+Worker-thread-3 sequence 1045 returns the pending sentinel `0xffff`, and its
+sequence-1047 API-exit snapshot has yield reason 1 and the mutex missing.
+Subsequent calls also pass the now-zero object mutex field. These are actual
+closed-mutex/pending-close observations, not a valid-use oldFAIL/newPASS or a
+reproduction of the earlier pre-Lock null-buffer fatal. No held patch, null
+guard, slot alias or scheduler repair was applied. The condition for moving
+to the deferred node investigation was not established.
+
+### Remaining retention limit and release
+
+Heap noise no longer exhausted the 48 MB controller limit: transport retained
+3,998 Worker records, 3,238 manager records and 6,413,725 payload bytes, with
+no transport errors or incomplete chunks. However, frequent ordinary audio
+calls exhausted the main Worker's separate 4 MB normal payload budget. Later
+main-thread API records, including a possible terminal call, were suppressed.
+The first-fatal reservation remained available but was unused because no
+MessageBox was observed. Consequently this is not a complete actual
+buffer-release/refill history at the historical first fatal. The next
+observer boundary is to filter routine non-stream audio status traffic before
+that budget, preserve lifecycle transitions independently, and reserve the
+terminal ExitProcess/trap record as well as MessageBox. Do not infer a new
+emulator cause from this run's exit or from incomplete/postfatal effects.
+
+All 368 HTTP responses carry isolation headers; all 347 successful response
+hashes match served pins. The 168 original fixture, 362 source and 866 compiler
+identities and executed module stayed unchanged. All 13 native events are
+trusted and balanced. The flood/saturation/unchanged-manager units, syntax,
+HTTP/hash checks and documentation diff checks pass; no full-build claim is
+made for this documentation-only publication.
+The raw Worker and manager logs were losslessly gzipped with SHA-256
+roundtrip verification; `RECOVERY.json` records exact reconstruction commands.
+
+The diagnostic explicitly quit at 19:17:26. Durable Python waits reaped the
+controller, monitor and lifetime wrapper; supervisor and all recorded runtime
+identities are absent. Independent release at 19:17:58 verifies the whole
+actual Chrome/crashpad/profile gate empty, ports 42109/40441 closed, profile
+gone, inputs empty and FD9 lock free. Runtime shutdown needed no signals;
+the separate owned board watcher was PID/start-qualified and stopped.
+Minimum monitored free disk was 2,330,177,536 bytes. Boat ID/state/expiry are
+N/A. No public deployment, extra browser, agent, worker or successor was
+launched. This remains findings-only: controlled gameplay and a defined-use
+emulator cause are unproved.
