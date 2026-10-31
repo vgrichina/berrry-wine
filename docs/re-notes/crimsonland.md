@@ -2,6 +2,71 @@
 
 Historical source last updated, 2026-10-12. Runtime and implementation claims below describe that dated source; see current app notes and source for subsequent changes.
 
+## 2026-10-31: browser geometry repaired; original DirectX prerequisite blocks combat
+
+Run `scratch/runs/20261031T2232Z-crimsonland-combat-recovery/` repairs the
+scratch harness setup and records the first genuine game failure. The preceding
+`20261031T2226Z-crimsonland-native-combat` directory is unchanged. Its controller
+timed out at browser.cjs:37 while sizing a blank window, before navigation or
+module loading. Worker termination 143 has unknown cause; no denial was observed.
+The coordinator's reconstructed release is retained separately in
+`20261031T2232Z-crimsonland-interruption/full-release-final.json`.
+
+The fresh harness keeps `defaultViewport:null`, uses the existing initial tab,
+allows browser chrome geometry to settle, and requests the outer size derived
+from the measured content-area difference. Actual geometry changed from
+1016×621 content / 1024×768 outer to **1024×768 content / 1032×915 outer**.
+The exact content-size assertion passed before navigation and every capture;
+there was no emulated viewport, forced focus/cursor, or bypassed geometry wait.
+This validates the corrected setup, without proving which part of initial-tab
+selection or geometry settling caused the predecessor's timeout.
+
+Tested HEAD was `09935fa5d870a5f9b3912459aba1d157a1136737`. All retained
+60 original-file, 529 source-file and 867 compiler-file SHA-256 pins matched
+before reuse and after execution, as did the original manifest. The original
+EXE is `93cdcdc872c836e75122e3a1d41312c74761cf4736181d3541521e82f6cb2031`.
+The actually loaded uncached HTTP 200 module was 2,023,821 bytes,
+`ed3f924ab4c2d8805d862ccb4ca0747f37632bfa1bf2bc4b21bececa820ec622`,
+matching the prior canonical build exactly. No build, engine change, compilation
+container download, or guest/config/save/memory edit was needed for this run.
+
+The normal `index.html?candidates&app=crimsonland` route ran an isolated guest
+Worker with WebGL selected and reached the original **“DirectX8.1 or newer not
+detected”** message. The full logged text requires installed DirectX 8.1 and
+asks whether to open its download page. Reviewed captures `01-native-startup.png`
+and `02-first-dependency-still-visible.png` are byte-identical
+(`e5a35234022058f7b3979c08876c9c3420123df348cfae89814cdd03d974c992`),
+with 52,080 non-teal pixels and 69 colors. A second image-view rendering appeared
+teal, but decoded PNG pixels and exact hashes confirm the same visible warning;
+that viewer observation is not a guest paint-loss diagnosis.
+
+This is the first unresolved dependency: the original installed-component/version
+check does not accept the current original-file closure. It is not evidence of
+a generic engine defect. The retained original disassembly calls detection at
+`0x41cf90`, compares its reported generation against `0x80100`, and enters this
+warning branch at `0x42c737`; non-Yes answers take the exit path. No button was
+clicked and no input was sent. The native launcher, Pointer Lock, movement,
+firing, enemies, kills and score were not reached or newly qualified. Historical
+Tutorial acceptance remains limited to its dated source/module.
+
+Recovery: use the retained scripts and exact pins, require the current heavy
+slot's explicit full release and independently verify process/port/profile/input
+state before inheriting FD9. Resolve the authentic installed DirectX
+component/resource requirement, or prove a precise generic API contract defect,
+before another combat attempt. Do not fabricate component versions or bypass
+the original check. `RECOVERY.txt`, `first-unresolved-dependency.json`, the HTTP
+receipt, source inventories and paired captures preserve the concrete checkpoint.
+
+The sole allocation ran 22:33:56–22:34:22 UTC after ReturnFire's explicit release
+and an independent gate. Header-guard tests and scratch JS syntax checks passed.
+Normal browser/server closure produced Chrome exit 0; controller, supervisor and
+launcher were durably reaped with exit 0, six adopted children with status 0,
+and the owned board watcher with qualified TERM / wait -15. The monitor exited 0.
+Independent release found all 20 owned PID/start identities absent, no whole-host
+Chrome/crashpad, ports 38633/34067 closed, profile absent, input set empty and
+FD9 free. Minimum free disk was 2,656,055,296 bytes. Local host: Boat ID/state/
+expiry N/A. No agents, successor, or deployment was launched.
+
 ## 2026-10-31: pinned-module startup recheck
 
 Run `scratch/runs/20261031T0114Z-crimson-alien-startup-sweep/` pins module
