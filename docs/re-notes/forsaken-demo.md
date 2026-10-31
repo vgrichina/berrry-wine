@@ -121,3 +121,92 @@ HTTP/CDP ports were removed/closed. No Boat/test box allocated (ID/state/expiry
 not applicable); ownership returned. Next investigate the WebGL transition /
 frame-clear or presentation boundary with this retained module and originals;
 those are investigation targets, not established causes.
+
+## Known-source WebGL frame investigation, 2026-10-31
+
+Evidence: `scratch/runs/20261031T0427Z-forsaken-frame/`. This bounded
+investigation made **no production repair**. It reproduced the rendering
+blocker on known source and separated GPU target contents from page display.
+
+Source identity is module SHA-256
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`,
+the retained ReVolt `20261031T0403Z-revolt-backbuffer/after.wasm` from its
+successful locked canonical build. All 292 entries of that run's
+`source-after-manifest.json` matched the checkout before this execution.
+The browser served those retained source bytes and module, with fetched
+runtime snapshots retained again in this bundle. This identifies an exact
+saved source tree, including the then-concurrent font work; it is not a
+clean-commit build claim. The previous `7f9…` module remains source-unknown,
+and its old images are not current regression evidence. Other workers began
+source edits during wrap-up; the retained pins identify this run independently.
+
+The runtime waited for UT2004 to close, acquired `/tmp/wine-browser.lock`
+at 04:37:13 UTC, checked the process list, and held the lock for its entire
+lifetime. One original Enter route reached Start Volcano, the briefing and
+the room. Default guestWorker, Threads, explicit `d3d-renderer=webgl`, and
+1024×768 stayed enabled. Native Ctrl 500 ms, A 500 ms, Right 300 ms,
+A+Ctrl 1200 ms, A 1800 ms, and Escape exercised firing, movement/rotation
+and the native pause menu. PULS fell from 2000 to 1994 and then 1978.
+Personally inspected `briefing-continue.png` and `primary-fire.png` show a
+readable room and green projectiles. `thrust-short.png`, `rotate-short.png`,
+`corridor-move.png` and `pause.png` show retained briefing/world fragments;
+`advance-fire.png` and `settled-no-fire.png` show saturated projectile areas.
+Sustained readable movement, an enemy kill and level completion are unproved.
+
+The observation wrappers delegate the original renderer methods unchanged;
+they record clear arguments, draw states, uploads and completed readbacks.
+The built-in owning-draw trace omits clears and initial color/depth/CPU
+writes, so it cannot alone answer this question. Full-target `readPixels`
+samples were also taken without flushing or changing render state. Their
+bottom-up RGBA bytes are retained and converted losslessly to PNGs.
+
+- `thrust-short-gpu.png` contains the actual Volcano title, briefing text,
+  loading bar, partial room and projectiles **inside the GPU color target**.
+  Its metadata records no deferred draw pending. Thus the stale fragments
+  are not solely a page compositor/presentation artifact, or merely a
+  lighting interpretation of an otherwise complete room.
+- `primary-fire-gpu.png` contains the full room on DIB `472317952`;
+  `thrust-short-gpu.png`, `rotate-short-gpu.png` and `advance-fire-gpu.png`
+  contain fragments on DIB `471678976`, for the same render target
+  `131805408`. Logs show alternating DIB uploads. These are this module's
+  observed addresses, not an ABI. GPU samples and page screenshots are
+  sequential observations, not synchronized identical-frame pairs.
+- The retained gameplay trace windows request flags **2**, depth only,
+  over `(0,0,640,480)`, with Z=1 and successful GPU clear results. A sampled
+  completed readback updates only `[340,206,582,288]`; subsequent samples
+  likewise show bounded partial updates. Source review confirms that the
+  clear path forwards the requested flags. This does not justify inventing
+  a color clear when the game asks to preserve color.
+- Bright projectile areas also appear in the full GPU samples. Additive
+  draw states occur, but their presence does not establish incorrect blend
+  factors, accumulation across complete frames, or incorrect game lighting.
+  Zero GPU errors/fallbacks likewise does not establish correct pixels.
+
+**First unresolved blocker:** why full world coverage is absent while the
+flip-chain backing still contains briefing/projectile pixels. The sampled
+render states/readbacks do not preserve a complete frame's initial
+color/depth, owning draw/resource inputs and intervening CPU writes. They
+cannot assign the fault to execute-buffer/front-end coverage, backing
+synchronization, or GPU rasterization. No speculative clear/blend/lighting
+change, guest state/clock patch, cheat, asset edit or validation bypass was
+made. A repair requires identifying the first missing/ineffective world draw
+across that boundary; no successor task was launched.
+
+Original input hashes pass before/after (873 files). All 107 runtime pins
+verify, and 26 recorded native events are trusted.
+The measured live legacy/WebGL endpoint uses ANGLE on Intel UHD 620 / Mesa
+23.2.1, despite launch flags requesting SwiftShader, with zero GPU errors,
+fallbacks and completed software draws.
+Existing pure-JS mock
+tests for GPU batching/clear ordering, depthless Z, and async Flip pass.
+`test-d3dim-gpu-fallback-counters.js` fails on unchanged source at
+`fallbackDrawTexture` (expected 1, actual 0); this is recorded, not claimed
+as the game cause or repaired. No new build or new source regression is
+claimed for this docs-only investigation. Helper syntax and evidence checks
+are retained in the bundle.
+
+Browser PID `1536530` exited 0; controller `1536494`, lock holder `1527163`
+and watcher `1528360` are absent. HTTP `35875` and CDP `34131` are closed,
+the profile is removed, and no keys remain held. The controller tool returned
+143 after its finally completed; that exit's cause is unknown. No Boat/test
+box was allocated (ID/state/expiry N/A); delegated local shutdown is complete.
