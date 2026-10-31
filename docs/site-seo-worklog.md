@@ -36,6 +36,14 @@ Rules the generator enforces, so new content follows them for free:
 - The desktop's intro text moved from an off-screen header into a draggable Win98-styled Read Me window that opens on a first visit, with a desktop icon and a Start menu entry (`index.html`, `#readme-window`).
 - Articles in README order with a dateline and a Previous/Next pager; a Start here list of five pages at the top of the hub.
 
+## Game pages filled (2026-10-30)
+
+The ten desktop games added after the September pass (StarCraft, Diablo, Quake II and III, both NFS demos, SimCity 2000, Moorhuhn, JezzBall) had live pages with the fallback blurb, no screenshot, the site-wide OG image and generic controls and sound answers. Each now has a blurb, a controls answer, a sound answer from a 30-second `--trace-api` run on the DirectSound/MCI/wave entry points (NFS II SE did not open a sound device in that window, and its page says so), and a screenshot. SimCity, NFS III and JezzBall were shot headless with the routes in their RE notes; the other six are crops of reviewed browser captures under `scratch/runs/` (Quake II gameplay takes about 300 s to load headless). Weak game blurbs (Heroes II, RCT, Blobby Volley, Reversi, Minesweeper) were rewritten for a player rather than for this repo.
+
+Generator changes: a game's title and H1 read "Play X in your browser" (accessories and the `_not_games` list keep "X in your browser"); a description too long for the full "Runs in your browser on Wine-Assembly" tail gets a short "Plays in your browser, no install." instead of none; the saving answer names the registry's `persistFiles`.
+
+Search Console, berrry.app domain property, three months to 2026-10-29 (export, not in the repo). Wine-Assembly rows only: the home page 234 clicks from 1,560 impressions at position 5.6; the v86 comparison 30 / 786; `apps/nfs2se_glide_demo.html` 13 / 225 at 6.5, the best app page while it was still a stub; `apps/quake2_demo.html` 3 / 162 at 8.8, a 1.9% click rate that the old title and description explain; `design/` 7 / 511. Queries: "windows 98 emulator" 20 / 261 at 8.7, "space cadet pinball online" 1 / 18 at 42.6, "winmine.exe" 4 / 32, "nfs 2 se browser" 1 / 4. Desktop impressions rank around 30, mobile around 11. Re-read after the deploy has been indexed for a few weeks.
+
 ## Remaining
 
 Ranked by search value per hour. The first two need a machine that is not running other sweeps; the rest are the site owner's.
@@ -44,6 +52,9 @@ Ranked by search value per hour. The first two need a machine that is not runnin
 2. **Short clips per app with `VideoObject` JSON-LD**: 3 to 5 seconds each, recorded headful (headless frame timing is not real), served beside the OG cards. Hold until the apps whose input paths are still rough would not record a still frame.
 3. **Deploy and submit**: build green, `node tools/deploy-berrry.js --update`, then `/sitemap.xml` to Google Search Console and Bing Webmaster Tools, a Rich Results test on one `apps/` URL (expect `SoftwareApplication` and `FAQPage`), and a link-preview check on the same URL for the OG card.
 4. **Outreach**: the comparison pages are the hook for Hacker News and the emulation subreddits. Wait for the deploy so the first visitors see the finished pages.
+5. **A compatibility list page**: one indexable table of every title in the registry (about 280, not only the 45 desktop apps) with a factual status and a link to its RE note, in the style of the WineHQ AppDB. It catches "does X run" searches without publishing binaries.
+6. **Thin `docs/` pages**: 456 of the 519 sitemap URLs are `docs/`, many of them dated investigation logs (`*-2026MMDD.md`). Keep one RE note per title in the sitemap and leave the dated logs out of it, so the site's weight sits on the app and article pages.
+7. **Pinball**: "space cadet pinball online" ranks 42; `apps/pinball.html` (20 impressions at 31) is the page that should rank, so compare it with the pages above it.
 
 Skipped on purpose: crawlable launch links (the apps index already links every app page, each carrying the launch link), re-shooting the demoscene entries, Core Web Vitals work, cross-links into the toy VM mini-site.
 

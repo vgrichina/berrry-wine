@@ -304,7 +304,9 @@ function appFaq(app, faq) {
       ? `Yes. On a phone the desktop scales to the screen and ${app.name} gets on-screen controls for the keys it needs, plus a keyboard button for anything else.`
       : `It loads in mobile Safari and Chrome and the desktop scales to the screen, but ${app.name} was made for a mouse and a keyboard, so it plays best on a desktop browser. Taps act as clicks.`]);
   qa.push([`Are my scores and settings saved?`,
-    `Whatever ${app.name} writes to the Windows registry or to its INI file is kept in this browser's local storage, so it is there next time on the same device and browser. Clearing site data removes it.`]);
+    `Whatever ${app.name} writes to the Windows registry or to its INI file is kept in this browser's local storage, so it is there next time on the same device and browser.` +
+    (app.persist.length ? ` So are the files it writes to ${app.persist.map(p => '`' + p + '`').join(' and ')}, which is where it keeps its ${/\.cfg$/i.test(app.persist[0]) ? 'settings' : 'saved games'}.` : '') +
+    ` Clearing site data removes it.`]);
   qa.push([`Does ${app.name} have sound here?`,
     (faq._sound && faq._sound[app.id])
       || `Yes. Sound the program plays through the Windows wave and DirectSound APIs is routed to the browser's Web Audio. Browsers only allow audio after a click or a key press, so it starts with your first input.`]);
@@ -325,9 +327,15 @@ const faqLd = qa => ({
 // sentence end rather than padded.
 function appDescription(app) {
   const tail = ` Runs in your browser on ${SITE_NAME}, a Windows 98 emulator in WebAssembly.`;
+  const short = app.game ? ' Plays in your browser, no install.' : ' Runs in your browser, no install.';
   const base = app.blurb.length <= DESC_MAX ? app.blurb : extractMeta(app.blurb).description;
-  return base.length + tail.length <= DESC_MAX ? base + tail : base;
+  if (base.length + tail.length <= DESC_MAX) return base + tail;
+  return base.length + short.length <= DESC_MAX ? base + short : base;
 }
+
+// Searches for these pages are "play X online" / "X in browser": a game's
+// title and H1 lead with the verb. Accessories and players keep the plain form.
+const appHeading = app => `${app.game ? 'Play ' : ''}${app.name} in your browser`;
 
 function dropdownGroups() {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf-8');
@@ -374,6 +382,7 @@ function loadDesktopApps() {
   // desktop yet, or no usable screenshot. The live site's lib/apps.js is the
   // reference for "production desktop", not this checkout's.
   const skip = new Set(blurbs._skip || []);
+  const notGames = new Set(blurbs._not_games || []);
   return DESKTOP_APPS.filter(([id]) => !skip.has(id)).map(([id, name, emoji]) => {
     const app = APPS[id] || {};
     const exe = app.exe || '';
@@ -381,10 +390,13 @@ function loadDesktopApps() {
     const notes = reNotes
       .filter(n => n.md.includes('`' + id + '`') || n.md.includes(`--app=${id}`))
       .map(n => ({ rel: n.rel, title: extractMeta(n.md).title }));
+    const group = groups.get(id) || NO_GROUP;
     return {
       id, name, emoji,
       blurb: blurbs[id] || `${name}, one of the programs on the Wine-Assembly desktop.`,
-      group: groups.get(id) || NO_GROUP,
+      group,
+      game: group !== 'Win98 Accessories' && !notGames.has(id),
+      persist: app.persistFiles || [],
       exe: exe ? path.posix.basename(exe) : null,
       format: exe ? exeFormat(exe) : null,
       dlls: (app.dlls || []).map(d => path.posix.basename(d)),
@@ -406,7 +418,7 @@ const ARTICLE_FOR_FORMAT = {
 
 function appPageMd(app, siblings, qa) {
   const L = [];
-  L.push(`# ${app.name} in your browser`);
+  L.push(`# ${appHeading(app)}`);
   L.push('');
   L.push(`${app.blurb} ${app.name} runs in Wine-Assembly, a Windows 98 emulator written in WebAssembly Text, so it starts in the browser with nothing to install.`);
   L.push('');
@@ -612,7 +624,7 @@ function generatePages() {
       name: `apps/${app.id}.html`,
       content: pageHtml({
         md,
-        title: `${app.name} in your browser`,
+        title: appHeading(app),
         // The blurb is the description; the boilerplate sentence after it
         // in the page body only pads a snippet.
         description: appDescription(app),
