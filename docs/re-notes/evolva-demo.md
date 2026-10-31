@@ -273,3 +273,84 @@ lifetime lock available. Lowest monitored free disk across all attempts was
 2,354,913,280 bytes. No further browser/heavy CLI is planned in this task.
 Boat ID/state/expiry: N/A. The candidate remains local-only; no public desktop
 selection, deployment, redistribution, guest overrides, or audio/worker changes.
+
+## 2026-10-31: render-target interface repaired; native menu and briefing visible
+
+Evidence: `scratch/runs/20261031T1749Z-evolva-viewport-projection/`.
+Two unchanged diagnostics captured the actual original executable's Device7
+path before a production edit. `IDirect3D7_CreateDevice` returns at `0x602520`;
+the resulting device has the Device7 vtable. `GetRenderTarget` returns at
+`0x640892` with S_OK, but returns the surface's canonical Surface2 wrapper
+(vtable 8642908), despite the Device7 output contract requiring Surface7.
+The underlying slot 5 already has dimensions 640×480. The next
+`GetSurfaceDesc`, returning at `0x640915`, receives a 124-byte
+`DDSURFACEDESC2` and fails with `0x80070057`, leaving the dimensions zero.
+The guest ignores this failure and constructs `D3DVIEWPORT7 {0,0,0,0,0,1}`.
+`SetViewport`, returning at `0x640a9d`, receives exactly that descriptor and
+returns S_OK; its cached rectangle, XY scale, and origin remain zero. Original
+draw input uses XYZ FVF `0x1e2` with nonzero coordinates before emulator
+projection. This establishes the upstream cause of the collapsed TL vertices.
+The earlier static `0x71bd17` candidate was not the observed setter call.
+
+The generic repair in `d3dim_get_render_target` returns an interface matching
+the visible calling device: Device2 → Surface1, Device3 → Surface4, Device7 →
+Surface7. These signatures are also specified in the
+[Windows SDK header](https://github.com/microsoft/win32metadata/blob/main/generation/WinSDK/RecompiledIdlHeaders/um/d3d.h).
+It obtains the matching wrapper and reference under `LOCK_DX`, retains COM
+identity and the canonical wrapper's vtable, and clears the output on wrapper
+allocation failure. No viewport defaults or projection math changed, and
+`src/09a8-handlers-directx.wat` was not edited.
+
+The valid-use regression `test/test-d3dim-viewport-projection.js` creates an
+actual 640×480 render-target surface, creates a Device7, gets its render target,
+queries the descriptor, builds the viewport from the returned dimensions,
+and projects opposite XYZ corners. It fails against the unchanged core with
+the same `0x80070057` descriptor failure and passes after the repair, projecting
+to `(0,0)` and `(640,480)`. It also covers Device2/3 interface views, descriptor
+sizes, stable canonical identity/vtable, acquired and released references,
+null output, stdcall cleanup, and a stack guard. The full build passed under
+lifetime FD9 `/tmp/wine-browser.lock` with
+`flock /tmp/wine-build.lock bash tools/build.sh`. Five focused suites passed:
+viewport-projection, viewport-query-interface, transform-alias, viewport-clip,
+and directdraw-surface3-desc. Parenthesis and diff checks passed.
+
+One repaired original/default-worker normal-WebGL route ran
+17:58:29–18:02:12 UTC. The read-only API observer now records Surface7 vtable
+8650820, `GetSurfaceDesc` S_OK with 640×480, and `SetViewport` S_OK with
+`{0,0,640,480,0,1}` and nonzero XY scale/origin. Personally reviewed screenshots
+`repaired-browser/01-repaired-menu.png`, `05-team-select.png`, and
+`08-native-briefing.png` show the textured main menu, four rendered team
+characters, and Land 4 mission briefing with a rendered planet. Trusted native
+relative mouse movement and clicks reached each screen. These are menu and
+briefing evidence, not jungle gameplay screenshots.
+
+The next exact boundary occurs at 18:01:37 UTC after the briefing confirmation:
+`ini_get_string` throws `VfsPendingError` because
+`c:\evolva\level\level4.lvl` is backed by an async-only VFS provider.
+The retained stack is `_vfsReadText` (`lib/storage.js:693`) → `_iniResolve`
+(`:714`) → `ini_get_string` (`:1622`) → guest RPC. The render endpoint then
+closes and the guest Worker disappears; the next capture command correctly
+rejects further input at its Worker gate. The next investigation is the host
+INI read/materialization boundary with the original level bytes. No jungle,
+movement, look, fire, audio, or touch qualification is claimed. There was no
+retry, asset/INI/save edit, guest override, or expansion into storage code.
+
+The repaired module SHA-256 is
+`bfb6ef7c5a20ce2f439a02c64e2ed94df2543f6ebd7ba03f7b0e0de275a955b6`
+(1,898,654 bytes). Each runtime served actual current checkout bytes and
+verified 362 source files, 866 compiler/tool files, and 1,165 original fixture
+pins before and after; response receipts identify the exact served bytes.
+All 202/201/289 HTTP responses carried COOP/COEP. Isolation, normal WebGL,
+default guest Worker, threads, 1024×768 geometry and defaultViewport-null were
+checked before guest input. All 33 native events were trusted; the five mouse
+down/up pairs were balanced. Diagnostic observers were read-only and their
+hook/result/memory preservation check passed.
+
+All attempts followed the current SlaveZero NEW FULLRELEASE 17:50:44 and an
+independent entire-Chrome/global-crashpad/profile PID/start gate under inherited
+FD9. Explicit shutdown returned controllers, monitors and wrappers zero without
+signals. `full-release-proof.json` checks all 58 recorded owned identities
+absent, the entire Chrome/crashpad set empty, all three ports closed, profiles
+removed, held input empty and lifetime lock available. Minimum monitored free
+disk was 2,459,082,752 bytes. Boat ID/state/expiry: N/A. No public deployment,
+new worker, successor, or further browser/heavy CLI was launched.

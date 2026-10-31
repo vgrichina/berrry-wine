@@ -3776,6 +3776,7 @@
 
   (func $d3dim_get_render_target (param $this i32) (param $ppRt i32)
     (local $entry i32) (local $slot i32) (local $rt_entry i32) (local $rt_guest i32)
+    (local $device_vtbl i32) (local $surface_vtbl i32)
     (if (i32.eqz (local.get $ppRt))
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004003)) (return)))
     (local.set $entry (call $dx_from_this (local.get $this)))
@@ -3789,12 +3790,28 @@
       (call $gs32 (local.get $ppRt) (i32.const 0))
       (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004005))
       (return)))
+    ;; The output ABI follows the calling device interface: Device2 returns
+    ;; Surface1, Device3 Surface4, Device7 Surface7. A canonical Surface2
+    ;; wrapper rejects a Device7 caller's valid DDSURFACEDESC2 query, leaving
+    ;; zero dimensions for its viewport. QI aliases select the output ABI
+    ;; without changing the device or render-target COM identity.
+    (local.set $device_vtbl (call $gl32 (local.get $this)))
+    (local.set $surface_vtbl (global.get $DX_VTBL_DDSURF))
+    (if (i32.eq (local.get $device_vtbl) (global.get $DX_VTBL_D3DDEV3))
+      (then (local.set $surface_vtbl (global.get $DX_VTBL_DDSURF4))))
+    (if (i32.eq (local.get $device_vtbl) (global.get $DX_VTBL_D3DDEV7))
+      (then (local.set $surface_vtbl (global.get $DX_VTBL_DDSURF7))))
+    (call $lock_acquire (global.get $LOCK_DX))
+    (local.set $rt_guest (call $dx_get_wrapper_for_vtbl_locked (local.get $slot) (local.get $surface_vtbl)))
+    (if (i32.eqz (local.get $rt_guest)) (then
+      (call $lock_release (global.get $LOCK_DX))
+      (call $gs32 (local.get $ppRt) (i32.const 0))
+      (i32.store (global.get $reg_base) (i32.const 0x8007000e))
+      (return)))
     (i32.store (i32.add (local.get $rt_entry) (i32.const 4))
       (i32.add (i32.load (i32.add (local.get $rt_entry) (i32.const 4))) (i32.const 1)))
-    (local.set $rt_guest (i32.add
-      (i32.sub (i32.add (global.get $COM_WRAPPERS) (i32.mul (local.get $slot) (i32.const 8)))
-               (global.get $GUEST_BASE))
-      (global.get $image_base)))
+    (drop (call $dx_aux_ref_add (local.get $rt_guest) (i32.const 1)))
+    (call $lock_release (global.get $LOCK_DX))
     (call $gs32 (local.get $ppRt) (local.get $rt_guest))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
