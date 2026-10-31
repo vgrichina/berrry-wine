@@ -12,9 +12,15 @@ Native press/release drained the DirectInput ring; the retained menu image
 covered loading. Additional Enter/click during loading prevent attributing
 joining to one press. No generic emulator defect was demonstrated. All runtime
 exits0 and FULLRELEASE16:36:32; actual SOFTWARE executor has no queue error.
-This supersedes the software menu gap below. A fresh matching ordinary WebGL
-menu arm is queued behind the current Diablo browser; full27, FPS, audio,
-player kills and match completion remain open.
+This supersedes the software menu gap below. Matching original ordinary-menu
+WebGL gameplay is now accepted in `09cedce52`, run
+`20261031T1653Z-ut2003-webgl-menu-execution`: inspected joined HUD17,
+firing23 (ammo150 to149, health100), and scoreboard26 remaining14:48
+(previous25 was14:51). Native movement/look/fire completed; owning WebGL2
+receiver completed19,248 with pending0/failedfalse, and24 focused checks pass.
+The same frozen module/source/input closure was retained. All runtime exits0,
+FULLRELEASE16:58:19. This closes the UT2003 ordinary-menu backend gap;
+full27, FPS, audio, player kills and match completion remain open.
 
 UT2004 documentation `2342e9288` records original DM-Rankin software CLI
 play in `20261031T0427Z-ut2004-match`: native movement, look and firing,
