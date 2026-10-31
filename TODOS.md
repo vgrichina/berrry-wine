@@ -992,7 +992,7 @@ commit output — do not assume your hunks landed.**
   created: 2026-10-02T04:00:31.545Z
   created-by: user-request via ops-dashboard
   candidate: pirates-2004
-  Next: Native Play/Crew/captain/cast-off now reaches Port Royale sailing with visible ship motion (run20261031T0215Z-pirates-small-slice, notes 90c0c0c48). Canonical build of main 90c0c0c48 produces the exact retained 573e235d module (run20261031T0220Z-pirates-main-sailing, notes b089a0600); its separate replay reached Main Menu before browser loss, not sailing. Pursue unsupported WebGL specular lighting and a matched sailing retest under PIRATES-TERRAIN-REVIEW. Rectangular/filter2 transfer and nested ownership remain unqualified under PIRATES-TRANSFER-REENTRANCY; route progress does not prove transfer/readback acceptance.
+  Next: Native Play/Crew/captain/cast-off now reaches Port Royale sailing with visible ship motion (run20261031T0215Z-pirates-small-slice, notes 90c0c0c48). Historical notes b089a0600 claimed a matching canonical573e235d build, but a7725adaf review found its full compiled-source closure insufficient amid concurrent edits. Current verified native sailing uses retained8459597 and exact292-file source snapshot (run20261031T0458Z-pirates-knownsource); white coast persists. Trace separate-map writer/consumer under PIRATES-TERRAIN-REVIEW before choosing a renderer repair. Rectangular/filter2 transfer and nested ownership remain unqualified under PIRATES-TRANSFER-REENTRANCY; route progress does not prove transfer/readback acceptance.
   Done: Identify the route failure and either validate the actual game transfer/readback with reviewed images or record a precise blocking dependency. Link unresolved terrain defects separately; a zero-transfer run is not a rendering pass.
   Evidence: docs/re-notes/pirates-2004.md; scratch/runs/20261031T0215Z-pirates-small-slice/result.json; scratch/runs/20261031T0220Z-pirates-main-sailing/result.json; ops/handoffs/mig-pirates-stretch.md; ops/handoffs/mig-pirates-stretch-recipe.md
 
@@ -1057,14 +1057,14 @@ commit output — do not assume your hunks landed.**
 
 - [ ] Diagnose Pirates white terrain with a controlled capture
   id: PIRATES-TERRAIN-REVIEW
-  status: backlog
+  status: active (separate-map writer/consumer investigation)
   created: 2026-10-02T04:16:51.185761+00:00
   created-by: orchestrator-handoff-audit
   depends-on: PIRATES-ROUTE-FOLLOWUP
   candidate: pirates-2004
   Next: Trace original separate-map writer/intended consumer using known8459597 module and exact292-file source snapshot. Reviewed a7725adaf/run20261031T0458Z-pirates-knownsource shows native sailing with white coast; four matched sequences preserve attached properties, ordinary maps empty and separate array populated. Downstream consumption unproved; no speculative shader/lighting fix. Fresh worker01a19065-3a1b-7422-aeb1-76611de94408 launcher1584662, bound35min deadline05:54UTC, serial runtime after UT2004 owner. Earlier573e235d full source identity remains insufficient; do not relabel it from HEAD.
   Done: Reviewed terrain evidence identifies the failing contract and focused correction or concrete dependency; no zero-transfer pass used as terrain proof.
-  Evidence: docs/re-notes/pirates-2004.md; scratch/runs/20261031T0215Z-pirates-small-slice/result.json; scratch/runs/20261031T0220Z-pirates-main-sailing/result.json; ops/handoffs/01a0f736-78f1-7822-8b37-159d6f8ed94d.md
+  Evidence: docs/re-notes/pirates-2004.md; scratch/runs/20261031T0215Z-pirates-small-slice/result.json; scratch/runs/20261031T0220Z-pirates-main-sailing/result.json; scratch/runs/20261031T0458Z-pirates-knownsource/verification.json; ops/handoffs/01a0f736-78f1-7822-8b37-159d6f8ed94d.md
 
 - [ ] Review nested transfer packet preservation
   id: PIRATES-TRANSFER-REENTRANCY
@@ -1125,7 +1125,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
   worker: pirates-separate-map-consumer-main-oct31; ut2004-windowed-origin-repair-main-oct31
-  status: active (Pirates crash/effective-state and UT2004 windowed-origin repair; one runtime at a time)
+  status: active (Pirates separate-map consumer and UT2004 windowed-origin repair; one runtime at a time)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
@@ -1195,7 +1195,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: GLD3D-CORPUS-27-20261006
   Observed gameplay (updated 2026-10-31): QuakeII original browser ref_gl/WebGL1 reached seven kills at health21; native F6 checkpoint exported as eight files and restored byte-for-byte in a fresh browser (run20261031T0055Z-quake2-courtyard). Root inspected seventh-kills.png and verification.json: 65 original assets, 424 served responses and external remount pass. Observed renderer is ANGLE Intel Mesa UHD620, software flag0; retained moduled69d1158 has unknown compiled-source identity. Later doorway attempt found no eighth kill and recovered the retained21HP/7-kill checkpoint (run20261031T0213Z-quake2-door); level completion remains open. Earlier GLTron original browser WebGL round reached crash/winner and native restart (run20261030T2230Z-gltron-browser, module7e8d3194, notes802fc9e66). Four screensaver apps retain bounded software observations in20261030T2226Z-d3drm-four-scenes: Architecture/RockRoll/OrganicArt recognizable scenes, Jazz partial; retained1dbddeaf predates current main. These observations do not establish current-main parity or full27 coverage.
   note: 2026-10-31T04:00Z bounded original Forsaken software route reached inspected Volcano briefing/loading scene at1129batches/60.030s; firing scheduled1180 was not reached, so no movement/combat acceptance. All876 original/runtime input hashes unchanged; retained module7f9da4e9 compiledsource unknown, run20261031T0400Z-forsaken-volcano. Fresh worker pursues actual browser gameplay past briefing. Daikatana route80b11f423 preserved without verified exit; Pirates8581ed6dd records effective-state boundary and generic page crashes without production cause/fix.
-  status: active (known-source Re-Volt repair; full27 software/WebGL coverage incomplete)
+  status: active (UT2004 windowed-origin repair and Pirates map-consumption investigation; full27 software/WebGL coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   worker: pirates-separate-map-consumer-main-oct31; ut2004-windowed-origin-repair-main-oct31 (two gameplay workers, serialized runtimes)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
