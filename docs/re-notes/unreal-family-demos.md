@@ -1067,7 +1067,7 @@ surface/device/program state separately: its stack rectangle has already been
 reused and must not replace the entry-hook rectangle evidence. The final
 05:35 capture shows the game window gone, not a menu or world.
 
-No source repair was made: this is a concrete unsupported multi-level cube LOD
+At this checkpoint no source repair was made: this is a concrete unsupported multi-level cube LOD
 bias path, not an invalid rectangle or a demonstrated small lock-handler bug.
 Removing the rejection would silently sample the wrong mip; the existing 2D
 atlas explicitly cannot handle cube sampling. Next work is correct generic
@@ -1084,6 +1084,78 @@ watchers closed. No Boat was allocated (ID/state/expiry N/A); other workers'
 runtimes, laptop fonts and Heroes were untouched. Focused evidence checks and
 helper syntax pass; no new full build is claimed because production source is
 unchanged and the tested module is the exact previously locked build above.
+
+### Cube LOD repair and original native DM-Antalus (2026-10-31)
+
+Run `20261031T0542Z-ut2003-cube-lod` first reran the predecessor's
+`check-cause.cjs`: the retained DRAW29 cube rejection and inherited READBACK48
+error pass the causal checks. The generic repair extends the WebGL mip atlas
+and shader lowering to cube images. All six supplied face chains remain
+available; sampler bias, MAXMIPLEVEL, resident base LOD, partial-chain clamps,
+point/bilinear min/mag filtering and point/trilinear mip filtering use the
+existing native-reference policy. Face selection uses X/Y/Z tie order. Quad
+helper directions are projected onto the receiving fragment's face before
+computing the footprint, preventing artificial LOD jumps across face edges.
+Filtering clamps taps within that face. Keyed textures and GPU resource levels
+retain their existing caching/revision and feedback checks.
+
+This lowering explicitly requires six square CLAMP faces and a supported atlas
+size; invalid LOD/filter/chain metadata and missing WebGL1 derivative support
+still reject. The ordinary upload admission check remains in place: biased
+sampling needs the corresponding shader lowering. No queue errors are cleared,
+validation removed, mip chains shortened, assets edited, guest sampler state
+changed or alternative backend selected.
+
+`test/test-d3d9-cube-lod-web.js` passes **8,880 actual WebGL1/2 pixel checks**
+with distinct face, mip and texel colors. It covers fixed/programmed pixel
+shaders, stages 0/1, positive/negative/zero bias, MAXMIPLEVEL beyond the chain,
+all mip modes, distinct min/mag filters, partial/resident/keyed chains, GPU
+resource faces and adjacent lanes crossing a face edge. The same regression
+rejects the saved old source at its original LOD error. Existing fixed cube
+(48 cases), single-level cube (288), shader/native-IR/2D-atlas and software-mip
+tests pass. The optional Node headless-GL partial-mip test skips because its
+native dependencies are absent; browser partial cube chains are exercised by
+the new regression. `flock /tmp/wine-build.lock bash tools/build.sh` passes.
+
+The fresh build remains WASM SHA-256
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`
+because the repair is in JavaScript. This run retains its own exact 295-file
+source/host snapshot, seven compiler files, dirty patch and full build log;
+107 served snapshots match those pins. All **881 original input entries**
+verify unchanged before and after the single native execution. Registered
+`-d3d -window -nosound` startup is preserved. Endpoint 1 is neutral/WebGL,
+device `0x18721038`, generation 1. A bounded live executor observer additionally
+records a real `WebGL2RenderingContext`, 21,049 successfully completed backend
+draws, and original 128×128/eight-level cube samplers with bias −0.5/MAXMIPLEVEL
+0 on stages 0–2. It preserves return values/exceptions and is restored afterward.
+
+DRAW29 now completes through sequence 29 with the predecessor's exact cube
+sampler state; READBACK48 completes through 48. The identical first LockRect
+arguments/rectangle/flags first park on ticket −4, then complete with **EAX 0**,
+token/yield zero, ESP +20 and output pitch 2560/nonzero pixels. Twenty completed
+successful locks are retained. `check-repair.cjs` verifies this transition
+against the saved original failure. No bridge rejection/error is recorded;
+the final capture's queue has completed through 121100.
+
+Personally inspected captures show the original main menu, Instant Action's
+selected DM-Antalus preview, native `open DM-Antalus` typed into the game's own
+console, loading screen, first-person Fire prompt, and spawned HUD. Native
+Control (the original Jump binding) joins the match; W/S move, mouse movement
+changes the view, and held left mouse fire reduces ammo **150 → 146**, health
+**100** (`join-settled.png`, `forward-settled.png`, `mouse-fire-settled.png`). All
+88 recorded native key/button events are trusted. Menu PLAY activation was not
+established; gameplay uses the explicitly recorded native console route.
+This establishes basic native DM-Antalus movement/look/fire, without an audio,
+performance, kill or match-completion claim. No next graphics-operation failure
+was observed.
+
+`RECOVERY.md` preserves replay/cleanup commands and the source/compiler/input
+closure. The controller/lock holder unexpectedly ended with status 143 during
+final shutdown, before its finalizer; the signal sender is unknown. The owned
+Chrome was recovered and closed via its retained CDP endpoint under a reacquired
+browser lock, with native input/end pins saved first. All tracked owned PIDs,
+HTTP 43345/CDP 34225 and profile are verified gone. No Boat was allocated
+(ID/state/expiry N/A); other runtimes and protected files were untouched.
 
 ## UT2004 explicit CLI renderer startup check (2026-10-31)
 
