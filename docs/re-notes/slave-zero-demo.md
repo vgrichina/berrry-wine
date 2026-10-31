@@ -258,3 +258,108 @@ empty held-input set and free browser lock are preserved in
 No signals were needed. Boat ID/state/expiry: N/A. The causal emulator defect
 and native controlled gameplay remain unproven; this run's first observed
 terminal dependency is the mip-surface lookup/null-call path above.
+
+## 2026-10-31: mip observer — successful samples, earlier fatal boundary
+
+Evidence: `scratch/runs/20261031T1737Z-slave-zero-mip-surface/`.
+This investigation made **no production or tracked test change**. The original
+failing lookup from slice 7078 above remains unresolved; the new execution did
+not reach that NEW GAME path. Neither a null guard nor the held `4a3f01ad5`
+was applied.
+
+The single diagnostic/default-Worker browser attempt ran
+17:47:23–17:49:50 UTC on published main
+`2dc6457f4b885b653b7cf06f706cda3b6345a84b`, module SHA-256
+`078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`.
+It followed current Evolva FULLRELEASE 17:44:49. Published remote HEAD and
+Evolva's tested source/compiler/module hashes matched under lifetime FD9;
+an independent whole-Chrome/global-crashpad/profile PID/start scan was clear.
+No stale source image or extra build was used.
+
+`observer.cjs` was installed through CDP before Worker Wasm instantiation.
+It wraps the existing logging imports, reads entry arguments and exit EAX,
+and preserves the original hooks, guest memory/registers and return values.
+Creation records retain the supplied descriptor, creator interface, complete
+initial chain and backing pointers. Lookup records include caps, source,
+output, interface vtable and before/after reference counts. A bounded ring and
+failure records limit retention. This instrumentation adds overhead and can
+change scheduling; this is not a timing or untouched-host comparison.
+
+There is a diagnostic limitation: decoding **named** APIs directly from a
+SharedArrayBuffer view throws in this Chrome. The scratch mock unit check
+used an ordinary ArrayBuffer and missed it. The observer catches these errors
+and still calls the original logging hook. Its COM-ID branch does not use
+that decoder: CreateSurface, QueryInterface, GetAttachedSurface and Lock
+records remain available. The exact executed observer hash and capped error
+list are preserved; no corrected observer was substituted for this execution.
+
+### What the mip records establish
+
+The last sampled main-Worker counters are 13,646 CreateSurface exits and
+1,589 GetAttachedSurface exits, including backbuffer and mip retrievals;
+the failure list is empty. These are cumulative calls, not simultaneous live
+objects. Sampling retained 627 distinct call records, including 35 attachment
+lookups and 52 creations, rather than every call. See
+`sampled-mip-calls.json`, `mip-observation-summary.json` and
+`successful-native-mip-example.json`.
+
+One concrete texture creation (observer sequence 4611) supplied DDSURFACEDESC2
+size 124, flags `0x21007`, width/height 64, mip count 7, caps `0x405008`,
+caps2 `8`, word `+120=1` (DDSD_TEXTURESTAGE unset), and 16-bit ARGB1555 masks
+`0x7c00/0x03e0/0x001f/0x8000`. Its creating DirectDraw4 interface is identified
+by captured QueryInterface IID `0x9c59509a`; the chain initially contains
+64/32/16/8/4/2/1 square levels with distinct backing storage.
+
+At sequence 4618, source `0x08334d50` (slot 1466, 32×32, Surface4 vtable
+`0x004777fc`) requests caps `0x401000`, with extension words zero. HRESULT is
+DD_OK and output is `0x08334d58`, slot 1467, 16×16, with the same vtable.
+The child's shared reference count rises from 1 to 2 and its acquired
+auxiliary-view count is 1. The immediately following Lock (4619) returns
+DD_OK with a 124-byte descriptor, dimensions 16×16 and pitch 32; Unlock
+(4620) also succeeds. This establishes successful acquisition and immediate
+use, not full subsequent release/lifetime correctness or the original failed
+lookup. The game did not request a terminal attachment in these retained
+samples. Allocation-failure state at the original failure is still unknown.
+
+### Earlier first failure and remaining boundary
+
+Reviewed captures `02-intro.png`, `06-story-progress.png`,
+`08-after-cutscene.png` and `09-native-story-escape.png` show the native intro
+and scripted city/mech scenes. They are **not controlled gameplay**. Trusted,
+balanced focus/intro Escape inputs were sent. Before the next observation,
+the guest Worker retired and the input gate withheld that command.
+`console.jsonl` records the original MessageBox call:
+`Slave Zero Fatal Error` / `PassMessage: null gatewaycallback: node 16f0c28,
+command 2`, followed by ExitProcess code `0xdcdcdcdc`. The dialog text was
+logged, not captured in a reviewed dialog screenshot. The retained last slice
+is sequence 5657 with yield 15, not the earlier slice-7078 zero-EIP mip
+receipt. `15-retained-stop-state.png` shows the retired desktop.
+
+Thus no defined-use causal regression or corrected pair was obtained. Source
+review finds candidate boundaries—silent child-allocation truncation and
+finite auxiliary-interface allocation—but neither is tied to an actual
+failed lookup. The next mip investigation still needs the **original failing
+invocation's** descriptor/count, source generation, HRESULT/output,
+allocation state and ownership through the next Lock. The successful sample
+above must not stand in for it. This attempt also exposes an earlier native
+PassMessage failure whose triggering call/order would need capture before
+expanding into that separate boundary. No scheduler, renderer, guest fixture,
+INI/save/memory/clock or worker/audio override was introduced. NEW GAME and
+native movement/look/fire remain unverified.
+
+Validation: the unchanged `test-directdraw-mip-chain.js` and
+`test-directdraw-enum-attached.js` pass under inherited FD9 after another
+independent browser-process gate; the scratch observer mock and syntax checks
+pass with the decoder limitation above. All 168 fixture, 362 source and 866
+tool/compiler pins match before/after; all 344 successful HTTP responses
+match their server-file hashes and all 365 responses carry COOP/COEP.
+Default Worker/isolation and 1024×768 geometry (`defaultViewport:null`)
+were checked before input. All 15 captured native events are trusted and
+balanced. No new full build was needed for this findings-only result.
+
+Explicit quit, durable Python waits and `full-release-proof.json` establish
+all owned runtime/supervisor/helper processes absent, both ports closed,
+profile absent, held inputs empty and lifetime lock available; no signals
+were needed. FULLRELEASE was published at 17:50:44 UTC. Minimum monitored
+free disk was 2,504,740,864 bytes. Boat ID/state/expiry: N/A. No retry,
+public deployment or successor worker was launched.
