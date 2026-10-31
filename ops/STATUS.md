@@ -1,7 +1,7 @@
-Current 2026-10-31T07:38Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T08:17Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Forsaken's landed rendering repair now has reviewed native Volcano room-to-corridor movement, look and repeated firing on the final build. Findings501f52cf1 are on remote main. Identity/input checks and cleanup pass. Deaths, respawns and white pause frames are disclosed; kills, hidden-door opening, FPS and completion remain unverified.
+Deus Ex has reviewed native multitool pickup/use, keypad bypass, door traversal and cadet search granting the Medical Room NanoKey (e8e86b767). Four screenshots, input/identity checks and cleanup pass. A fresh worker pursues the Medical Room exercise; Training completion, healing and FPS remain open.
 
-Deus Ex has reviewed DataCube code0012, keypad GRANTED and traversal into the multitool exercise (26d6dacae). A fresh worker pursues native multitool use through08:17UTC. A second fresh worker investigates Pirates' precise shader-factory rejection, static analysis first and at most one native probe, through08:18UTC.
+Pirates findings49776fcc4 establish the static shader-library chain and original program files present. Its single default-worker probe remained at the title with zero factory calls; no shader rejection cause was established. A fresh worker investigates that title blocker, static first and at most one targeted runtime.
 
-Two workers maximum; one browser/heavy runtime at a time. UT2003/UT2004 WebGL gameplay remain accepted. Full GL/D3D27 coverage remains open. Laptop HeroesII/fonts protected; no public deployment.
+Both workers are bounded through08:57UTC; two maximum, one browser/heavy runtime at a time, disk above2GB. Forsaken final-build native room/corridor/fire and UT2003/UT2004 WebGL gameplay remain accepted. Full GL/D3D27 coverage remains open. Laptop HeroesII/fonts protected; no public deployment.
