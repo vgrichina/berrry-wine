@@ -988,11 +988,11 @@ commit output — do not assume your hunks landed.**
 
 - [ ] Diagnose Pirates stopping before the target rendering operation
   id: PIRATES-ROUTE-FOLLOWUP
-  status: active (Montserrat tavern accepted; native restore/onward gameplay followup)
+  status: active (native restore and cannonfire accepted; battle checkpoint/onward combat followup)
   created: 2026-10-02T04:00:31.545Z
   created-by: user-request via ops-dashboard
   candidate: pirates-2004
-  Next: Accepted19f7251cb: actual Montserrat port ->VisitTavern stable11sec ->return; coordinator inspected45 and focused296/40/1374/2225/126trusted/72PNG+3negatives PASS. Native offshore save1028097B exported, restore untested. CoastEnterAttack/combat unproven. Missing originalharness finalizers/rawexits and full-lifetimewrapper unproven disclosed; samebrowserrecovery0/all15PIDcleanup verified. Fresh 01a191e7-4eef-7743-9c30-aec821ee2464 handle22450 native restore/onward task waits fresh Deus FULLRELEASE+actualgate; use durable harness.
+  Next: original Pirates slot1 native restore, responsive sailing, LovelyMary sea battle and native FIRE smoke/projectiles/8to0loaded; hit/victory/capture unproven. Coordinator inspected23/24 and focused checks passed; new battle checkpoint restore untested. New durable supervisor retained all raw exits0 and20PID cleanup verified. Fresh Pirates 01a1920d-0ff0-7762-b9fe-f1bc7a4be1c9 handle45393 validates battle checkpoint/onward combat with firstbrowserpriority.
   Done: Identify the route failure and either validate the actual game transfer/readback with reviewed images or record a precise blocking dependency. Link unresolved terrain defects separately; a zero-transfer run is not a rendering pass.
   Evidence: docs/re-notes/pirates-2004.md; scratch/runs/20261031T0215Z-pirates-small-slice/result.json; scratch/runs/20261031T0220Z-pirates-main-sailing/result.json; ops/handoffs/mig-pirates-stretch.md; ops/handoffs/mig-pirates-stretch-recipe.md
 
@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: deusex-crate-stacking-main-oct31; pirates-native-restore-onward-main-oct31
+  worker: deusex-crate-exit-main-oct31; pirates-battle-restore-onward-main-oct31
   status: active (both previous workers completed and reviewed; two fresh onward tasks)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Current2026-10-31T12:22Z accepted65110a368 actualpipes/farthergap/crateRoominstruction and genuinecount6 freshLoad/decodedactor/stablefeet; inspected44/77 and focused+observernegatives PASS. FreshDeus 01a191e7-4473-7003-a6c8-2dd9cc87e4b4 handle30036 aims actualmetalcrate stacking/exit, first browserpriority. Accepted19f7251cb actualMontserrattavern/nativeSave export only; inspected45/focused PASS, restore/combat unproven and harnesslifetime gap disclosed despite actualcleanup. FreshPirates 01a191e7-4eef-7743-9c30-aec821ee2464 handle22450 prepares nativeLoad/onward encounter and waits DeusFULLRELEASE+actualgate. Both deadline about13:22UTC; two workers/onebrowser. Observedfree2.350GB. Full27/crashsweep open; laptopHeroesII/fonts protected; no publicdeploy.
+  Next: Accepted208c41480: native Deus crate pickup/drop, stable small-on-medium and small-on-wood climbs; exit untraversed. Genuine count7/time010932 restored with decoded actor and stable layout. Coordinator inspected216; focused and five observer negative checks passed. Browser/controller exits0; wrapper raw exit unavailable, actual42PID cleanup verified. Accepted92b438875: original Pirates slot1 native restore, responsive sailing, LovelyMary sea battle and native FIRE smoke/projectiles/8to0loaded; hit/victory/capture unproven. Coordinator inspected23/24 and focused checks passed; new battle checkpoint restore untested. New durable supervisor retained all raw exits0 and20PID cleanup verified. Fresh Pirates 01a1920d-0ff0-7762-b9fe-f1bc7a4be1c9 handle45393 first browserpriority validates battle checkpoint/onward combat; fresh Deus 01a1920d-0fed-74e0-bcc9-c66479c71bc8 handle42640 prepares crate exit and waits Pirates FULLRELEASE plus actualprocessgate. Both60min from12:59 start, approximate deadline14:00UTC; two workers/onebrowser, free2.416GB; full27/crashsweep open, laptopHeroesII/fonts protected, no publicdeploy.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
