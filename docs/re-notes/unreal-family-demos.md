@@ -1041,3 +1041,92 @@ input caused the transition or establish menu interaction or gameplay. All
 same `7f9da4e9` module with unknown compiled-source identity. The runner exited
 zero and loopback control port 18127 closed; no Boat was used. Exact command,
 snapshots, input replies and validation remain in the run folder.
+
+## UT2004 original DM-Rankin movement/fire retest (2026-10-31)
+
+Run `scratch/runs/20261031T0427Z-ut2004-match/` reached an inspected,
+playable original DeathMatch through the registered title/menu route. The
+software CLI ran 8,425 batches in 636.949 seconds and exited zero. This is
+fresh gameplay evidence; the September route above remains a historical
+control, and the earlier October CLI title result alone did not qualify it.
+
+Personally inspected captures:
+
+- `38-after-enter.png`: textured DM-Rankin with **Press [Fire] to join the match!**.
+- `44-player-hud.png`, batch 8,185: assault rifle, health **100**, ammo **100**,
+  clock **19:59**, and **The match has begun!**; bot entry messages are visible.
+- `45-forward.png`, batch 8,265: position changed from the ramp into the
+  adjacent brick/concrete corner after ordinary **W** down/up at 8,185/8,245.
+- `46-fired.png`, batch 8,330: bullet marks/ejected cases and ammo **96** after
+  normal viewport mouse down/up at 8,265/8,315. Subsequent ammo reached **94**.
+- `47-retreat-look.png`, batch 8,400: changed position/view after **S**
+  down/up at 8,330/8,380 and relative mouse motion `90,-40`. Clock reads **19:54**.
+
+These readable world/HUD images establish ordinary player movement, look and
+fire. No enemy hit/kill or completed match is claimed. An additional short
+press at 8,400/8,415 did not establish another shot before the final capture.
+This does not qualify browser Worker operation, WebGL parity, audio or
+real-time performance.
+
+### Route and input recovery
+
+`launch.json` preserves the exact invocation: registered `--app=ut2004_demo`,
+unchanged `-d3d -window -nosound`, `--no-build`, retained `--wasm`,
+`--no-threads --d3d9-renderer=software`, `--batch-size=200000`,
+`--tick-ms-per-batch=25`, `--frozen --control=18128`, quiet API/block logs,
+`--trace-input-dispatch`, and a 900-second internal guard. No asset, INI,
+guest state, or production source was patched.
+
+Startup was inspected before Escape, and the menu was inspected at batch
+2,475. The default host capture clipped the window bottom; the existing
+`canvas-resize:800:600` input expanded the capture. Instant Action was reached
+using native menu navigation/Enter; the Gametype page was inspected at 3,620.
+Normal mouse down/up at `(195,214)` selected DeathMatch, and the Select Map
+page showed the original **DM-Rankin** by batch 4,050.
+
+Do not replay old coordinates/timing blindly. Current read-only geometry was
+outer window `(20,20,648,488)`, client `(24,44,640,460)`. The visible PLAY
+label was around `(450,494)`, but clicks there did not establish activation.
+After the historical relative-mouse sync (move to client origin, step; move
+to `(300,300)`, step; move to target, step), target `(450,514)` with a
+DirectInput button hold highlighted PLAY. Enter down/up at 7,752/7,803 was
+also delivered. The join prompt was inspected at 7,849; the evidence does
+not isolate whether Enter was necessary or loading was already proceeding.
+No input-mapping production defect is diagnosed from this sequence.
+
+Loading retained the menu image while sampled Engine addresses and batches
+advanced. A read-only SEH walk was finite, without the historical self-cycle.
+Those stale menu captures were not sufficient to diagnose rendering failure.
+The **normal viewport** mouse down/up at `(340,280)`, batches 8,005/8,065,
+triggered the join countdown. The preceding DirectInput-only button hold
+at 7,904/7,954 had not joined. Use normal mouse input for this recovered
+route. Full commands, actual replies and dispatch observations are in
+`input-log.jsonl`/`runtime.log`; `RECOVERY.md` explains bounded stepping and
+cancelling an outstanding step before issuing another. Several exploratory
+step requests were deliberately cancelled; one overlapping step was refused.
+
+### Identity, checks and cleanup
+
+The original executable remains SHA-256
+`2a95e2fa8c22ae94eb1c361fdb49ea8ec44c5e2a93faa00831308c01e951db8d`.
+All **998 original inputs** matched the earlier original manifest; all
+**1,283 pinned input/runtime/source files** passed the after-run comparison.
+All 39 PNGs passed signature/hash checks. The live backend reported
+`software`, with no bridge error at the sampled player frame.
+
+Module SHA-256 was
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`,
+matching the retained ReVolt locked after-build module. Its 292-entry source
+manifest had zero current drift (`module-provenance.json`). Observed initial
+checkout `849d6a527` is recorded separately; it is not asserted to be the
+compiled module's source commit. No rebuild or source repair was needed.
+
+Before launch, process inspection found no active game Chrome/CLI runtime;
+the previous Deus Ex runtime had ended. `/tmp/wine-browser.lock` serialized
+the entire CLI lifetime. Explicit quit left owned runtime 1524823 and
+controller 1524815 absent, control port 18128 closed, and exit status zero
+(`cleanup.json`). The waiting Forsaken worker acquired the released lock;
+its processes were not touched. No browser, server, Boat or test box was
+created; box ID/state/expiry are N/A. Free disk stayed above 2 GB (about
+4.5 GiB at cleanup). Next useful extension is a separately serialized default
+Worker browser replay of this inspected native route; no successor launched.
