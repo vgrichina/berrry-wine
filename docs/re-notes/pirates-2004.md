@@ -1959,3 +1959,76 @@ remaining request helper. No Boat: ID/state/expiry N/A.
 Focused checks pass identity, 146 trusted balanced input events, 54 captures,
 immutable saves, inspected transitions and runtime lifecycle evidence. The
 single browser is used; there is no second runtime or promoted checkpoint.
+
+## Native ram reaches the boarding deck (2026-10-31 14:23 UTC)
+
+Evidence/recovery: `scratch/runs/20261031T1423Z-pirates-native-turn/RECOVERY.md`.
+**Actual contact and entry into the native boarding duel are established.**
+The last capture shows the initial, still-fading deck scene, fencing controls,
+50 Englishmen and 40 Pirates (`57`). No duel input, victory, surrender,
+sinking or captured-ship outcome is established. There is no new checkpoint.
+
+Original `lang0.FPK` keymap/encyclopedia and prior native captures were read
+first. The encyclopedia describes boarding by ramming. The unchanged 12:20
+battle export is mounted at its exact native path and loaded through the
+ordinary menu. Actual Nevis port (`10`), Sail Away/Cast Off, the selector
+naming Lovely Mary with six guns/50 men (`13`), and combat (`14`) are inspected.
+No New Game or tavern route is replayed. The early title/menu sequence also
+visits an unintended quit prompt and Hall of Champions; both are dismissed
+before the inspected main menu and Load sequence. They are not gameplay claims.
+
+The first steering actions are ordinary rendered Turn Left holds of two and
+six seconds (`15`–`16`), followed by eight rendered taps (`17`). The overhead
+views show a small heading change as Revenge accelerates from about three to
+nine knots. An ordinary eight-second Numpad4 hold (`18`) continues the same
+qualitative direction. Chase view and further left steering bring Lovely Mary
+ahead while retaining 10–11 knots (`20`–`22`). This short comparison does not
+establish an emulator defect, corrected keypad mapping or measured turn rate.
+No shifted-keypad workaround or input bypass is used.
+
+Rendered Full Sails and the early course close the gap (`23`–`29`), with
+Revenge slowing to seven knots against six. A short rendered right correction
+and overhead inspection (`30`–`32`) expose the crossing geometry. Subsequent
+ordinary right steering follows the merchantman's changing course, retaining
+roughly 7–12 knots rather than reproducing the previous two-knot late turn.
+The first crossing misses; later overhead captures show the stern approach,
+temporary increasing separation and renewed convergence. One rendered FIRE
+command discharges (`39`); no enemy gun/crew reduction is established, with
+six guns/50 men still displayed. Generic firing/reload is not requalified.
+
+After the final right correction (`53`), the course is held. Capture `54`
+shows a new native close-up of Revenge meeting the merchantman's side;
+`55`–`56` show the black transition, and `57` shows the boarding deck and
+duel interface. This sequence establishes boarding entry beyond apparent
+proximity. The remaining gameplay dependency is playing and resolving that
+duel. The runtime deadline arrives immediately after its first captured scene.
+
+Before/after checks match 296 source/compiler files, 40 support files and
+1,374 originals. Frozen, served and loaded WASM remains
+`078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`;
+all 2,745 responses, 106 source URLs and three auxiliary pins match. Default
+guestWorker/threads, WebGL and 1024×768 are retained. Device snapshots at
+14:34:16 and 14:48:01 have null queue error; the latter precedes the deck
+scene. The last evaluation's device value was overwritten by screenshot
+metadata, so final boarding-scene device error remains unknown. The source
+battle export and slot1 are unchanged. A read-only VFS inspection fails with
+HTTP 500; no pre/post VFS save validation, export or recoverable boarding save
+is claimed. No production, factory/draw/input-forwarder instrumentation,
+assets, INI, clock, guest memory or save bytes were edited; no build or heavy
+CLI ran.
+
+The sole browser ran 14:31:25.071–14:48:25.222 UTC (1,020.151 seconds), after
+Deus Ex's 14:30:36 FULLRELEASE and actual global Chrome/crashpad/profile
+clearance. The fresh deadline ends the session; minimum sampled free disk is
+2,146,115,584 bytes, above the early-stop threshold. All 1,270 live-profile
+samples retain three inherited FD9 holders. Actual browser/controller/wrapper/
+monitor/request-daemon exits are zero. Durable Popen waits retain all 70
+request-helper exits: the VFS query returns one, the other 69 return zero.
+Cleanup checks 90 tracked PID/start identities absent, both global crashpads
+absent, three ports closed, profile removed, 108 trusted balanced input events
+and full flock available. No runtime cleanup signals were needed; FULLRELEASE
+was posted at 14:49:01. No Boat: ID/state/expiry N/A.
+
+Focused identity, served-pin, input, capture-hash, immutable-save and lifecycle
+checks pass. The single browser is used. Boarding entry is the tested result;
+duel play, capture and save recovery remain untested.
