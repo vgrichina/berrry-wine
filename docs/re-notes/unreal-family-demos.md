@@ -1471,6 +1471,75 @@ Next work requires sufficient sustained disk reserve and a fresh serialized
 ordinary-menu WebGL execution with actual completed executor/gameplay evidence;
 this run does not close that backend arm.
 
+### Original visible menu WebGL gameplay completed (2026-10-31)
+
+Run `20261031T1653Z-ut2003-webgl-menu-execution` completes the requested
+WebGL backend arm in **one original ordinary-menu execution**. This adds
+backend coverage for UT2003, not another title. The coordinator's revised
+**2.6 GB launch reserve** replaces the preceding run's 2.8 GB gate; no evidence
+was deleted. No production code changed or generic emulator defect was found.
+
+Personally inspected captures follow the original NVIDIA intro, main menu,
+**Instant Action / selected DM-Antalus** (`09-map-settled.png`), visible PLAY
+(`12-play.png`), actual Antalus loading (`13-loading.png`) and native **Press
+[Fire] to join** (`15-loaded.png`). Click `(350,538)` plus two Enter presses
+opened Instant Action. After hover, PLAY `(637,663)` received a native
+1,200 ms down/up; no extra Enter or click was sent during map loading.
+Fire-to-join `(350,440)` produced `17-joined.png`: **The match has begun!**,
+weapon/crosshair HUD, **health 100 / ammo 150**. Native W **1,800 ms** moves
+into the arena (`19-forward-settled.png`); mouse motion to `(430,400)` in
+eight steps changes the view as it settles (`21-look-settled.png` through
+`23-fire-settled.png`). A native fire hold **2,300 ms** reduces ammo to **149**,
+health stays **100**. S **1,800 ms** moves backward (`29-final.png`). Native
+F1 shows Player and five bots in **AVERAGE DeathMatch in Antalus**, frag limit
+25, with remaining time **14:51 → 14:48** (`25-clock.png`,
+`26-clock-later.png`). No hit/kill, FPS, audio or match-completion claim follows.
+
+Read-only CDP inspection traverses the actual render endpoint's adapter and
+receiver closures. Endpoint **1**, neutral/WebGL, owns device **410128440**,
+generation **1**. Both the D3D device and its GPU object match the frozen
+WebGL constructors; the real **WebGL2RenderingContext** is not lost. The
+640×480 drawing/presentation buffer is distinct from the **1024×768** browser
+viewport and 684×570 desktop canvas. Chrome uses ANGLE SwiftShader; this
+establishes the WebGL API route without a hardware-GPU claim. The final
+receiver has sequence **19,248**, pending **0**, failed **false**. Frozen
+adapter/receiver source confirms completion follows actual executor return,
+not queue submission (`executor-provenance.json`). The later page snapshot
+records **19,283 completed / 19,284 submitted**, error null and empty bridge
+lastError; the remaining pending command is not a failed completion. There
+are no draw or input wrappers.
+
+The unchanged exact0542Z WASM SHA-256 is
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`.
+**295 frozen source/host files, seven compiler files, 881 original inputs,
+107 predecessor and 107 actual served pins** pass before/after verification.
+Original `-d3d -window -nosound`, normal WebGL selector, default guestWorker,
+`defaultViewport:null` and stable 1024×768 are retained. Actual HTTP responses,
+including a custom 404, carry COOP `same-origin` and COEP `require-corp`;
+isolation/default-worker checks precede all guest input. No console, asset,
+INI, save, guest-memory or clock edits, cheats or worker bypass occurred.
+
+Launch **16:52:57 UTC** followed NEW Diablo FULLRELEASE **16:48:03** for
+sole runtime 16:40:02–16:47:00 and independent entire actual Chrome/global
+crashpad/profile PID/start scans, repeated under lifetime FD9. All **261 active
+profile samples** show wrapper/controller/monitor holding that lock. Minimum
+free disk **2,521,784,320 bytes** stays above the 2.1 GB early-stop threshold.
+Atomic temp-file/rename command handoff avoided partially parsed JSON. One
+request helper timed out waiting for action 14; the controller subsequently
+recorded that action's successful completion before the next command.
+**All 30 issued commands completed**, including explicit quit at **16:58:02**.
+Chrome/controller/wrapper/monitor exit zero, with no monitor signals. Actual
+PID/start-qualified cleanup confirms owned helpers absent, both ports closed,
+profile gone, held inputs empty and full flock available. NEW FULLRELEASE was
+posted **16:58:19** for the waiting successor.
+
+**24 focused checks, 40 trusted balanced native events, 30 PNG signatures/
+hashes**, helper syntax and documentation diff checks pass. `RECOVERY.md`,
+`focused-check.json`, `commands.jsonl`, `completed-commands.jsonl`, executor
+snapshots and cleanup receipts preserve the execution. No build was required
+for this documentation-only change; no further browser, heavy CLI, public
+deployment, agent or worker was launched. Boat ID/state/expiry are N/A.
+
 ## UT2004 explicit CLI renderer startup check (2026-10-31)
 
 Run `20261031T0327Z-ut2004-startup` reached an inspected black game window
