@@ -512,3 +512,80 @@ Capture idle/before, held Space trajectory and released landing, followed by
 balanced left-button Action frames if useful. Only visible original effects
 may support an action or combat claim. This worker stops after documenting and
 publishing this first causal harness failure; no further browser was allocated.
+
+## Native Space Jump/landing and left Action demonstrated (2026-10-31 21:27 UTC)
+
+Run `20261031T2127Z-nox-jump-action` extends the accepted Bunker movement
+result with original **Space Jump/landing and left-mouse Action animation**.
+This was one browser allocation, without restart, rebuild, acquisition, external
+peers, guest-state injection or guessed bindings. No right-button movement was
+repeated. No enemy damage, kill, audio quality, FPS or complete-game result is
+claimed. No emulator failure occurred.
+
+Before runtime, the worker copied the predecessor's `driver-fixed.cjs` into this
+run and reran its exact `test-response-guard.cjs` unchanged. All six cases passed:
+data/blob responses retain inherited isolation; HTTP missing/wrong isolation
+headers still stop. The regenerated corrected driver matched the copied hash
+exactly and became this run's `driver.cjs`. `commandloop-test.json` exercises
+extracted actual key/mouse/move/wait/capture branches with mocked DOM controls,
+including balanced release; it checks the quit contract. This cheap check is
+not browser evidence. The detached lifetime check separately durably waited for
+controller/server/monitor/helper and supervisor, all zero, with socket closed,
+profile gone and child identities absent. Neither predecessor was edited.
+
+All 125 original game files matched retained SHA256 and shipped `FILESIZE.INI`
+sizes; all 528 source and 867 compiler pins matched. The actual tested revision
+is recorded in `build-identity.json` (assigned input
+`a1183384798d9981d8fd4f9a0f65177cb442a3e7` remains an ancestor).
+`actual-http-module.json` records both fetched module responses, including the
+browser's `/build/wine-assembly.wasm?v=dev`: SHA256
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+Post-run original/source/compiler/module checks also matched. The shipped
+`default.cfg` remains `SPACE = Jump`, `MOUSE_BUTTON_LEFT = Action`.
+
+The registered private `?candidates&app=nox_demo&no-log` route reached native
+Network → Host Game → flag placement → Conjurer → Jack acceptance → Chat Area.
+After dismissing its native explanation, Home opened the game panel with Bunker
+selected; Go loaded the arena corridor. The first Home pair did not leave the
+panel visible; a second balanced Home pair opened it. No navigation shortcut or
+binding change was needed. Normal isolated guest Workers, WebGL, audio defaults
+and wall clock ran in Chrome 151.0.7922.108 with a native 1024×768 viewport.
+
+Reviewed full-frame evidence, all inside this run:
+
+| Input | Before | During | Released / settled | Visible result |
+|---|---|---|---|---|
+| Space, actual 674 ms | `35-jump-before.png` | `36-jump-held-02.png` | `36-jump.png`, `38-landed.png` | Bent airborne pose and world/camera displacement; landing partly occluded by the corridor wall. |
+| Space aimed toward crystal room, actual 353 ms | `40-jump-clear-before.png` | `41-jump-clear-held-02.png` | `42-landing-clear-01.png`, `42-landing-clear-03.png`, `43-landed-clear.png` | Extended jump pose and travel out of the occluded corridor, then upright landing and settled room view. |
+| Left Action, actual 1,204 ms including screenshots | `45-action-before.png` | `46-action-held-01.png` | `46-action.png`, `48-action-settled.png` | Character extends an arm in an unarmed attack pose, then returns to idle at the same room position. No hit target or damage is established. |
+
+`native-input.json` contains 105 trusted DOM events; `input-pairs.json` records
+all balanced key/button pairs. There are no remaining held inputs. The left
+Action renderer mask is 0 before, 1 during each held capture, and 0 on release
+and settled capture. Space keydown/keyup events are trusted and balanced.
+The screenshots show native animation/travel, not merely input acceptance.
+The shorter second jump improves the wall-occluded first pair; both attempts
+occurred inside the same uninterrupted browser session.
+
+Runtime started 21:27:05 UTC (target/hard/cleanup 21:44:05/21:45:05/21:46:05)
+and Chrome exited at 21:29:45. Minimum observed free disk was 2,702,876,672
+bytes. Before FD9 acquisition, the actual independent gate checked terminal
+Noxaction and Icewind releases, their recorded PID/start identities, whole
+Chrome/global crashpad absence, ports, profiles and input release. Supervisor,
+controller, monitor and board watcher inherited FD9 on `/tmp/wine-browser.lock`.
+Boat ID/state/expiry are N/A; local shutdown was explicitly delegated.
+
+`full-release-final.json` at 21:30:10 records controller, monitor, watcher and
+supervisor durable waits all zero, Chrome exit zero without signal, internal
+server closed, all 22 recorded OWN PID/start identities absent, whole
+Chrome/global crashpad empty, ports 46501/45319 closed, profile gone, inputs
+released and lock free. No runtime signals were needed. NEWFULLRELEASE was
+announced immediately for the waiting Icewind disc-contract worker; that worker
+must independently gate its own allocation. No foreign profile, transcript,
+evidence, process or WININIT WIP was mutated.
+
+Recovery: retain this run, accepted module and original fixture. The corrected
+scratch driver is now browser-tested through native Jump/landing and Action.
+No emulator fix or further runtime is required for this assignment. Any future
+combat claim needs an actually observed target and damage in a separately
+assigned task; this worker stops after publishing this outcome.
