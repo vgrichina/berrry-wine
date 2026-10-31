@@ -1,7 +1,7 @@
-Current 2026-10-31T10:35Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T11:03Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Deus Ex repair-bot recharge from 0% to 75% is verified, preserved in an actual native save and restored in a fresh app. Published f13fa567a passes identity/input/save/cleanup checks. A fresh worker navigates the raised camera route; deadline11:19UTC. Camera activation and Training completion remain unproven.
+Pirates failed-bootstrap cleanup repair c6fa4878a is published. Source review and actual Worker/RPC cancellation, timeout, generation and quarantine regression pass; full serialized build passes. Unfinished initializer images and unresponsive endpoints retain quarantine. Native sailing was already verified; a fresh worker now traces white-coast shader-factory rejection, deadline11:58UTC.
 
-Pirates native sailing and input are verified on published9b1126f01. Coast rendering remains imperfect. Its fresh worker repairs failed-bootstrap callback cleanup; deadline11:27UTC.
+Deus Ex repair-bot recharge0->75% and fresh native save restore remain verified. The camera-route worker released runtime10:54; its final evidence review is pending. Camera activation and Training completion remain unproven.
 
-Two workers maximum, one browser/heavy runtime. Full GL/D3D27 coverage remains open. Disk2.38GB. Laptop HeroesII/fonts protected; no public deployment. No owner action needed.
+Two workers maximum, one browser/heavy runtime. Full GL/D3D27 coverage remains open. Disk2.28GB. Laptop HeroesII/fonts protected; no public deployment. No owner action needed.
