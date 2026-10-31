@@ -152,3 +152,109 @@ includes WAT wait entry/APC abandonment, manager completion/timeout/exit,
 Worker shared-table acquisition and broker/continuation ownership—not merely
 `closeSyncHandle`. Do not broaden this hold into a scheduler change without
 that causal trace. NEW GAME, movement and firing remain unverified.
+
+## 2026-10-31: current browser NEW GAME trace — different first failure
+
+Run `scratch/runs/20261031T1720Z-slave-zero-current-trace/` executed published
+main `9eff3d3722e4b7c289afa0d1bc2a5828ba1c902a`, after Evolva's new
+17:21:45 FULLRELEASE and independent Chrome/crashpad/profile process gate under
+lifetime FD9. The current sources matched Evolva's tested full-build manifest;
+module SHA-256 was
+`078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`.
+No old build, production edit, tombstone patch or additional build was used.
+
+The single original/default-Worker, normal-clock WebGL execution ran
+17:24:15–17:28:55 UTC. Reviewed captures `10-after-cutscene.png` and
+`12-native-new-game-enter.png` show the native main menu and NEW GAME
+difficulty menu. Native focus/intro Escape, NEW GAME click and Enter were
+used. Before the next intended difficulty-selection input, the guest Worker
+was already gone; the input gate withheld that command. No player movement,
+look, fire or gameplay screenshot was reached. `14-post-worker-loss.png`
+shows the retired app, not gameplay. There was no AudBuffer dialog in the
+captured trace.
+
+### Actual audio ordering
+
+`console.jsonl`, `input-state.jsonl` and extracted `audio-ordering.json`
+preserve API entries, stack-array identities, manager signal/resume records,
+DirectSound calls and voice closure. These are observed browser broker/log
+delivery order, not a global instruction timestamp. In this live Worker path,
+API entries **do** forward arguments and COM names; the preparation's concern
+about the separate secondary logger did not describe these observed entries.
+API exits/HRESULTs and exact atomic acquisition timestamps remain unavailable.
+Repeated waits have no unique invocation counter; the nearest preceding entry,
+array pointer and parked snapshot bound the observations below.
+
+- Audio thread 1: the parked snapshot identifies wait-any/INFINITE array
+  `0x7e78ffb8`, events `0xe0005/0xe0006/0xe0007`, 20-byte frame.
+  At 17:25:56.365 the last wait entry returns to runtime `0xa6a30a`
+  (wDSound original `0x1000630a`, after the wait call). Stop signals
+  `0xe0007`; the manager delivers result **2** before the three event closes.
+  Entries 1394–1416 then show mutex close, notification release, event closes,
+  buffer `0x08224fe8` release, voice `0xb0003` close and thread exit.
+  The refill Lock/Unlock pair precedes this final wait; no refill after this
+  buffer release is recorded.
+- Audio thread 2: array `0x7e28ffb8`, events
+  `0xe0001/0xe0002/0xe0003`, buffer `0x08224fd0`, voice `0xb0002`.
+  Entries 2343–2366 show wait, stop signal `0xe0003`, manager result **2**,
+  then event closes, buffer/voice release and exit. The intervening worker
+  `WaitForSingleObject(0x0e000000, INFINITE)` parks; the mutex closes before
+  the manager's resumed/result-zero record. This is a pending-close mutex
+  case, not evidence that Windows required a different result. No earlier
+  defined-use emulator violation was established.
+
+Thus this execution does not reproduce the proposed multiple-event
+close→index-zero→refill-after-buffer-release failure. It supplies real
+signal/completion/close/release ordering instead of another manager probe.
+The pending-close hold remains; `4a3f01ad5` must not be ported.
+
+### First observed terminal boundary
+
+`15-retained-stop-state.json` retains the actual final main-Worker
+`sliceDone` receipt, sequence 7078: `EIP=0`, `yield=0`, `trapped=null`,
+`prevEip=0x94af24`, `prev2Eip=0x94afcc`, `ECX=EDX=0`,
+`EAX=0x074ff96c`, `ESP=0x074ff92c`, `EBP=0x40`. The host's existing
+zero-EIP/zero-yield branch retires the process; its stored exit code is zero.
+That host classification does not establish a successful guest exit.
+
+The loaded `d3d.dll` base was `0x945000`, preferred base `0x10000000`;
+the last blocks map to original `0x10005f24/0x10005fcc`.
+Read-only `d3d-final-block-disassembly.txt` shows the texture mip upload loop:
+`0x10005fc9` calls surface `GetAttachedSurface` with caps `0x401000`,
+`0x10005fcc` loads the next surface and loops to `0x10005f24`, and
+`0x10005f46` calls surface Lock through `[vtable+0x64]`.
+The final registers and block sequence match a null next surface/vtable
+reaching an indirect null call, rather than a return from this routine.
+This is the narrow terminal-path inference supported by the receipt and
+disassembly; the GetAttachedSurface HRESULT, exact source surface, descriptor
+and output slot were not traced. An invalid guest use, exhausted/short chain
+or earlier emulator failure cannot yet be distinguished.
+
+Next dependency is that exact GetAttachedSurface→output→next Lock boundary,
+including texture creation descriptor/mip count, interface generation,
+HRESULT, output pointer and reference ownership. If a valid nonterminal mip
+lookup fails, extend `test-directdraw-mip-chain.js` / attachment tests with
+the captured descriptor: verify each declared mip's dimensions/caps/interface,
+successful lookup AddRef lifetime, terminal NOTFOUND/output-zero and allocation
+failure behavior. Do not substitute a guessed chain, null guard, slot-zero
+alias or audio scheduler patch. `regression-proposal.json` records the proposal;
+no tracked test or production change was made.
+
+Validation: all 168 original-fixture, 362 current source and 866 tool/compiler
+hash pins match before/after; all 347 successful HTTP responses have matching
+server file hashes. All 368 HTTP responses, including 404s, carry COOP
+`same-origin` and COEP `require-corp`; isolation/default Worker and stable
+1024×768 geometry were checked before input (`defaultViewport:null`). Native
+events are trusted. Trace is bounded and did not reach its log cap; logging,
+read-only Worker sampling and WebGL readbacks can change scheduling, so this
+is not a timing benchmark or a proof that the intermittent audio failure cannot
+occur. Minimum free disk was 2,600,890,368 bytes. Syntax/hash/evidence checks
+and documentation diff checks passed; no new build or guest rerun.
+
+Completed quit, durable Python `Popen.wait`, PID-start-qualified absence of
+all owned runtime processes, closed server/CDP ports, deleted owned profile,
+empty held-input set and free browser lock are preserved in
+`full-release-proof.json`; FULLRELEASE was published at 17:29:35 UTC.
+No signals were needed. Boat ID/state/expiry: N/A. The causal emulator defect
+and native controlled gameplay remain unproven; this run's first observed
+terminal dependency is the mip-surface lookup/null-call path above.
