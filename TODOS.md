@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: slave-zero-deferred-node-lifetime-main-oct31 (01a1933a-f243-7253-8afe-ec5e5b0144bb; handle49720); evolva-async-ini-level-main-oct31 (01a1932d-73e0-7e53-9799-2c218fbf5661; handle63061)
-  status: active (Evolva async INI repair build; Slave Zero first audio/deferred-node lifetime)
+  worker: slave-zero-deferred-node-lifetime-main-oct31 (01a1933a-f243-7253-8afe-ec5e5b0144bb; handle49720); evolva-native-combat-main-oct31 (01a19349-a034-7172-82fc-b122ca290f2d; handle75091)
+  status: active (Evolva native onward combat; Slave Zero first audio/deferred-node lifetime)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Accepted71f2618f8 findings-only: personally reviewed07 native menu, audio pre-Lock null-buffer fatal precedes malformed deferred node PassMessage. Exact lifetime/acquire/wait/close/release/refill order unproved, no generic patch or gameplay qualification. FreshSlaveZero targets first audio failure before later deferred-node effects; its build/runtime waits CURRENT Evolva asyncINI NEWFULLRELEASE and independent actualwholeChrome/globalcrashpad/profile PIDstartFD9gate. Evolva causal async original254bytelevel4.lvl OLDFAIL/newPASS TerrainMesh read now passes unit coverage; fullbuild+15focused started183116 afterSlaveZero FULLRELEASE182238, no native result yet. Prior c95f363a9 viewportABI repair accepted with Land4briefing, notjungle/gameplay. Two workers onebrowser/heavyCLI, disk>2GB; lossless closedprocessedlogs restored2.6GB launchreserve. OriginalSlaveZero7078mipfailure/audio cause unproved held4a3neverport. Full27/crashsweep open.
+  Next: Accepted025bd9091 generic asyncINI repair with original254bytelevel OLDFAIL/newPASS, compiled A/W+StructA atomic retry/output/stack regression, finalfullbuild+15focused PASS. Personally inspected native texturedjungle13, movement14, firing18/20; trusted55balanced events. No hit/kill/objective/audio/touch/performance qualification. Executedmodule3c832ec6 preceded final compiledtested StructA race closure moduled39f3621 (not browser rerun). FULLRELEASE184406 actualallabsent portsclosed heldempty lockfree remoteMAINverified. FreshEvolva continues native combat after CURRENT SlaveZero deferred-node-lifetime NEWFULLRELEASE plus independent wholeChrome/globalcrashpad/profile PIDstartFD9gate. SlaveZero traces first original pre-Lock audio null-buffer fatal before malformed deferred node; no emulator cause proved, held4a3 neverport. Two workers onebrowser/heavyCLI; disk>2GB. Full27/crashsweep open.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 - [~] Inventory every game and complete gameplay screenshot/FPS coverage
