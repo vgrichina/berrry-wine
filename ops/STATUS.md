@@ -1,7 +1,7 @@
-Current 2026-10-31T19:00:04.497880+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T19:14:19.345269+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Evolva is running alone in the browser on the final repaired build, aiming at sustained combat. Its published async INI repair passes causal regression, full build and focused tests. I previously inspected textured jungle movement and firing; hits, kills and objectives remain unverified.
+Evolva reached sustained native combat on the final repaired build. I reviewed creatures, incoming damage, squad switching and continued control. Findings e875d3705 are published; outgoing hits, kills and objectives remain unverified. Three new reviewed pictures were delivered to the owner.
 
-Slave Zero findings cd5c5fd86 are published and reviewed. Its broad heap trace filled the evidence cap before the first fatal. A fresh worker will filter unrelated traffic and prove bounded retention before tracing the audio failure again; gameplay and an emulator cause remain unverified.
+Slave Zero is running the sole browser diagnostic with its filtered audio observer. Kingpin is the fresh second lane: verify original assets and prepare its native browser gameplay route, then wait for Slave Zero to release the runtime.
 
 Two workers, serialized browser/builds; disk above 2 GB. Full 27-app and crash coverage remain open. No public deployment.
