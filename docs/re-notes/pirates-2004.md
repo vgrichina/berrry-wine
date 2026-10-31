@@ -711,3 +711,124 @@ helper tests, instruction checks, four correlations and scoped evidence
 references pass. This is a documentation-only result with no new production
 build claim; the retained build log is historical provenance. Investigation,
 cleanup and publication finished within the 35-minute bound.
+
+## Coastal terrain selection and serialized stages (2026-10-31, 05:35 run)
+
+The next dependency is now localized **before pass construction**: the
+original application requests `TTerrain_*B_UC` for generated coastal meshes,
+but the shader factory returns null. The renderer consequently selects
+NiD3DDefaultShader. This establishes the requested shader family and the
+immediate fallback cause; it does not establish the underlying source defect.
+Evidence and runnable checks are in
+`scratch/runs/20261031T0535Z-pirates-selection/RECOVERY.md`.
+
+Original-EXE selection chain (all addresses are guest VAs):
+
+1. Coastal cell rebuild `0x51cf40` calls its generator's virtual slot zero
+   at `0x51d073`. Constructor `0x51c440` installs table `0x71289c`, whose
+   entry is the already-proved mesh/property builder `0x51c490`. The
+   returned mesh remains in EBP. After attaching it, rebuild obtains its
+   texturing property, reads separate-array `property+0x44`, and loads the
+   array's **populated count** at `+0x10` (`0x51d154`). At `0x51d161` it
+   passes that count and the same mesh to manager `0x8cad50` virtual slot zero.
+2. Manager table `0x710328` resolves this call to `0x4f0130` and its name
+   selector at slot `+0x18` to `0x4efc50`. That selector formats
+   `TTerrain_%dB_UC` when manager byte `+0x10c` is nonzero, otherwise
+   `TTerrain_%dB`. Constructor `0x4f0230` derives that byte from bit zero
+   of a device-query result (`not; and 1`). This static bit operation does
+   not establish a capability-reporting defect. The measured requests
+   positively establish the UC branch for this run.
+3. `0x4f0130` calls `0x547730(mesh, name, 0)`, which delegates to factory
+   virtual slot `+8`, `0x5be060`. This calls factory slot `+0x10`,
+   `0x5bd720`, with name, implementation and report-failure flag. At the
+   decoded-block continuation **`0x5be077`**, EAX is the selected shader.
+   Null takes the error return without writing geometry `+0xc8`. A
+   nonnull result proceeds through shader geometry setup at `0x5be0bd`
+   and is installed at `0x5be0f6`; even a false setup result logs and
+   continues to installation. Thus null lookup and failed geometry setup
+   are distinct cases.
+4. Renderer `0x5c4270` reads geometry `+0xc8` at `0x5c427e`, casts it to
+   the expected shader type, and on null loads renderer `+0x898` at
+   `0x5c4298`. The setup/cache path at `0x5c4080` makes the same choice.
+   Empty `+0xc8` therefore explains the observed default shader without
+   deriving a shader identity from the renderer-specific property payload.
+
+The encoded stage references already exist in the original binary shader
+assets. Original pass stage reader `0x5ed660` reads a count, allocates
+stage descriptions, and invokes `0x5eeff0` at `0x5ed6f4`. The latter reads
+a string, a uint32 into description `+4`, then the **serialized encoded map
+uint32 into description `+8`** at `0x5ef023`, followed by two optional state
+groups and the transform fields. During pass construction, `0x5ed955`
+calls `0x5eef20 -> 0x5f0740`; `0x5f074e..0x5f0751` copies description
+`+8` to runtime stage `+8`. `0x5ed962 -> 0x5bf1f0` installs the stage
+at the loop's pass slot. This connects to the accepted
+`0x5cb4b0 -> 0x4b1230` separate-map consumer. It is not necessary to
+infer a new OR operation in this binary-pass branch.
+
+A targeted decoder follows those original readers through complete stage
+records, including state groups and transforms. It validates these stage
+arrays in the unchanged `Assets/Shaders/FX/TerrainShader/*.NSB` files:
+
+| Requested asset | Array starts (file offsets) | Encoded base-map references |
+| --- | --- | --- |
+| `TTerrain_5B_UC.NSB` | `0xbd0`, count 3 | `0x02000004..0x02000006` |
+| `TTerrain_7B_UC.NSB` | `0xc44`, count 4; `0x109a`, count 1 | `0x02000004..0x02000008` |
+| `TTerrain_9B_UC.NSB` | `0xc98`, count 4; `0x10ee`, count 3 | `0x02000004..0x0200000a` |
+
+The original `terrain_11_uncompressed.nsf` agrees: texture attributes
+`TerrainTextureBase0` onward use indices 4 onward. For 7B and 9B,
+`TerrainSinglePass` uses the first four base textures and
+`TerrainDoublePass` uses the remaining one or three; 5B uses three in
+`TerrainSinglePass`. These are original definitions associated with the
+requested names, **not observed runtime terrain passes**: creation failed
+before a shader was returned. No claim is made about every later default
+stage or about separate slots 0/1 from this targeted base-stage decode.
+
+One bounded native probe, after the prior browser owner released the lock,
+tested whether factory lookup actually returned a shader for these meshes.
+It used exact module `8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`
+and its retained 292-file source snapshot (manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`).
+Served-source hashes and actual WebGLBackend identity are retained;
+execution used the main/cooperative instances, with guest worker disabled.
+The observer paired positive entries at `0x5be060` and `0x5be077`, checking
+owning instance, stack displacement, saved mesh and name pointer. A
+synthetic test of the original first block validated both chaining modes.
+No writer capture or old interior-breakpoint observer was repeated.
+
+All 66 captured `TTerrain_*B_UC` lookups returned null (implementation 0);
+104 other shader lookups returned nonnull results. Nine distinct terrain
+meshes match 21 later large draws by mesh **and identical property,
+separate-array header and complete descriptor list**. All have empty
+ordinary slots, null geometry `+0xc8`, and independently read RTTI
+NiD3DDefaultShader (`0x083f6cd0`). Representative positive pairs:
+
+| Mesh / property | Requested name | Separate populated | Later draw |
+| --- | --- | --- | --- |
+| `0x09e10410` / `0x09e101e0` | `TTerrain_7B_UC` | 7 | 1,392 triangles, FVF `0x112` |
+| `0x09e0fb70` / `0x09e0f960` | `TTerrain_9B_UC` | 9 | 4,784 triangles, FVF `0x112` |
+
+These are fresh run identities, not assertions that addresses match the
+prior capture. `sailing.png` was personally inspected: ship/HUD by St.
+Kitts and St. Eustatius, 600 gold, 41 crew, white coast. `native-coast.png`
+shows system options and is not sailing evidence.
+
+**Remaining dependency:** determine why `0x5bd720` cannot return the
+requested UC terrain shader. Its static path checks the renderer/name,
+queries the shader cache at virtual `+0x18`, then enumerates libraries at
+`+0x34/+0x38` and calls library `+4` with renderer/name/implementation.
+The captured null return does not distinguish registration, library lookup,
+requirements rejection or shader creation/compilation failure. Trace that
+factory/library decision next, retaining same-mesh identity; do not infer a
+source cause from missing events or substitute another shader.
+
+The 15 original instruction checks, complete targeted stage decodes,
+nine correlations and a deliberately corrupted selected-pointer negative
+control pass. All 1,374 original inputs and 292 saved source files match
+before/after, including the served module and responses. All six observer
+instances and draw hooks were restored. Browser exit zero; owned browser,
+controller, holder, watcher and crashpad PIDs, three ports and profile are
+verified closed. Cheap stderr/process/target diagnostics remain in the run;
+no crash or OOM cause is assigned. No Boat was allocated (ID/state/expiry
+N/A). This is documentation only, with no production changes or new build
+claim; no source fix is justified by the current evidence.
