@@ -503,3 +503,116 @@ boundary still needs the exact handle invocation/completion/close and buffer
 release/refill ordering before any guest undefined operation. These missing
 histories prevent a proved generic emulator repair. Native menu display is
 verified; NEW GAME activation and controlled movement/look/fire are not.
+
+## 2026-10-31: Audio allocation and wait lifetime, bounded diagnostic
+
+Findings-only evidence is in
+`scratch/runs/20261031T1832Z-slave-zero-audio-lifetime/`. No emulator source
+was changed: no meaningful defined-use oldFAIL/newPASS was established.
+The earlier thread-2 **AudBuffer error in lock**, original `0x1000191c`,
+remains the first captured fatal. Neither the later deferred command-2
+PassMessage nor successful mip calls explain that fatal or the separate
+original slice-7078 failure. Controlled gameplay remains unverified.
+
+### Original allocation and teardown contract
+
+Original wDSound requests a `0x88`-byte stream object at `0x10004fb4`, calls
+operator new at `0x10004fb9` through `0x1000962c`, then constructs it at
+`0x10006390` and initializes it at `0x100064b0`. The constructor zeros normal
+buffer `+0x28`, alternate buffer `+0x44`, stream `+0x48`, notification
+interface `+0x4c`, events `+0x50/+0x54/+0x58`, mutex `+0x5c` and state `+0x64`.
+The audio thread starts at `0x10006290`; its wait-any/infinite call returns at
+`0x10006304`. Index zero acquires the mutex at `0x10006348` and calls refill
+at `0x10006356`. Refill calls buffer lock at `0x10006bf3`. The null-buffer
+error call is `0x1000191a`, returning to `0x1000191c`, before the actual
+DirectSound Lock call at `0x10001945`.
+
+Stop is `0x100068a0`. Teardown at `0x10006420` has no thread join: it acquires
+and releases/closes the mutex, destroys the stream, releases notification
+state, and closes the three events at `0x10006486/0x10006493/0x100064a0`.
+Base cleanup releases the normal buffer at `0x10001bcb` and zeros `+0x28`
+at `0x10001bce`. This static order permits a pending-close lifetime question;
+it does not establish what happened in the failing execution. A signal
+acquired before close can be delivered later, so delivery time alone cannot
+prove a wrong wait result.
+
+Source review covered ThreadManager waits/retained completions/close,
+guest RPC and Worker completion, host audio notifications and DirectSound
+handlers. The current manager removes a closed handle's mapping and has an
+unknown-handle success fallback, but a close while a Windows wait is pending
+does not define the required result. That case supplies no valid-use repair
+contract. The held `4a3f01ad5`, guessed guards and slot aliases were not used.
+Evolva's async INI files and callback census were preserved.
+
+### Sole diagnostic and its limit
+
+After Evolva's published `025bd909148a4202aa9099151c0b0a03fdda3c8b` and
+18:44:06 NEWFULLRELEASE, the supervisor reread its final tested overrides and
+source/compiler/original manifests, verified remote main, and independently
+checked the entire actual Chrome/crashpad/profile PID/start gate under
+lifetime FD9. This run served the **final** module
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+It used the original default Worker, normal audio/clock and native WebGL,
+inner 1024×768 with `defaultViewport:null`. Isolation was checked before the
+trusted balanced launch click. Those three mouse events were the only input;
+there was no in-game key, click, Enter or attempt to dismiss a fatal.
+
+The 18:45:12–18:46:36 diagnostic stopped automatically at its 48 MB evidence
+limit. Unrelated heap traffic dominated retention: 98,105 allocation records
+and 68,550 frees among 173,253 Worker records. This was an observer capacity
+failure, not a new emulator failure. No fatal record was captured. Personally
+inspected `00-firstlaunch.png` shows fixture loading, not menu or gameplay;
+later startup/audio events do not substitute for a reviewed gameplay image.
+There was no second browser attempt.
+
+The trace does preserve stream initialization at `0x19bb54c`, `0x19b4b94`
+and `0x3da7d84`. Matching HeapAlloc returns are size `0x90`, thread 1 sequence
+23146, 23479 and 46547 respectively; no free of those addresses was captured.
+For `0x19b4b94`, buffer `0x8224fe8`, events `0xe0005/0xe0006/0xe0007`
+and mutex `0xe000001` appear before CreateThread (thread-1 sequence 49979).
+Thread 2 first observes that object at sequence 4 with state 2 and those
+fields intact. These are initialization observations, **not** the missing
+first-fatal invocation/generation. No actual CRT small-block allocation/free
+record was observed; the observer's static unlock-frame method was tested
+only in its mock. Cross-Worker observation clocks are not an instruction
+order proof. `audio-ordering.json` and `stream-allocation-events.json`
+preserve the bounded analysis.
+
+### Observer verification, release and remaining boundary
+
+The scratch observer copies shared bytes before decoding and preserves
+existing hooks, state and results. Fatal records use chunked CDP bindings,
+independent of console truncation and Worker retirement. A real shared
+WebAssembly.Memory mock passes named decoding, full fatal reassembly,
+allocation/address-reuse generation and unchanged hook/results/bytes/registers.
+The page observer also preserves exact Promise identity and results. A
+focused test against unchanged ThreadManager passes the valid-use sequence:
+unsatisfied wait, stop-index-2 signal/acquisition, close after completion,
+then exactly one retained delivery. This is observer validation and a
+passing valid-use case, not an emulator oldFAIL/newPASS.
+
+All 352 HTTP responses carry isolation headers; all 331 successful responses
+match served pins. All 168 original fixture, 362 source and 866 compiler
+identities, plus the executed module, stayed unchanged. Observer installation
+and transport report no errors or incomplete chunks. The large raw event log
+was losslessly gzipped with SHA-256 roundtrip verification; `RECOVERY.json`
+contains the exact recovery command. No full build was run for this
+documentation-only result.
+
+Independent release at 18:48:22 verifies all recorded runtime PID/start
+identities, supervisor and helpers absent; whole actual Chrome/crashpad gate
+empty; ports 44649/39235 closed; profile gone; input held set empty; FD9 lock
+free. Durable Python waits reaped the processes without runtime signals.
+The own board watcher was separately PID/start-qualified, stopped and reaped
+(143). Minimum monitored free disk was 2,437,419,008 bytes. Boat ID/state/expiry
+are N/A; no deployment, agents, workers or successor were launched.
+
+The next bounded boundary is still the **first audio fatal**: retain relevant
+stream allocation/free generations and same-invocation acquire, signal,
+wait acquisition, retained completion, delivery, close, buffer release and
+refill. Filter unrelated heap emission before another diagnostic; tracking
+every heap return exhausted this run before the required branch. Only if
+audio order is defined and noncausal should investigation move to the exact
+deferred node's `0x405be0` enqueue, heads `0x453260/0x45325c`, `0x405c2e`
+dispatch, constructor callback `+0x50`, destruction and free generation.
+Postfatal effects remain insufficient evidence for a generic emulator patch.
