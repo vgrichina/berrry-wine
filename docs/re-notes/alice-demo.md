@@ -1,5 +1,58 @@
 # American McGee's Alice demo
 
+## Fresh browser attempt: assigned-host access failed (2026-10-31)
+
+Run `scratch/runs/20261031T2245Z-alice-original-browser/` began on main
+`3a3e28d622d397513699be75f9eeaf05a29fed6a`, a descendant of the recovered-media
+commit `d41903f45db7f4cb31da9df910019fe30dd8f84a`. The sole assigned browser
+host was `bx_knya4u7y`. **The first failure was host access, before transfer or
+guest execution; this run establishes no Alice runtime defect or gameplay.**
+
+`boat ssh bx_knya4u7y` returned exit 1, HTTP 403,
+`api_key_action_forbidden`: `This API key cannot perform ssh.` Direct SSH to
+the assigned private SSH endpoint using the installed `ascii_box_ed25519` key
+and account `user` returned exit 255, `Permission denied (publickey)`.
+`access-failures.json` retains both exact errors. No remote command executed;
+no runtime bundle, originals or archive were transferred. No browser, guest,
+input, runtime port or profile was created. Existing browser geometry, native-input,
+static-server and HTTP/module guard harnesses were read, but never run on the
+host. No coordinator browser/heavy game test was run.
+
+The local 15 originals and 14-companion manifest were checked against the
+recovery pins before and after closeout. Local source/support and compiler/tool
+manifests were also hashed before and after: 529 source/support and 867
+compiler/tool paths from the preceding Crimsonland manifest scope, all
+unchanged. Existing local Wasm was
+2,023,821 bytes, SHA256
+`ed3f924ab4c2d8805d862ccb4ca0747f37632bfa1bf2bc4b21bececa820ec622`.
+This assignment performed **no engine edit or build**. That local artifact's
+identity does not prove it was built from current source. Served module,
+served source/compiler and browser-loaded module identities are all **null**:
+there was no runtime HTTP server or browser. There are no fresh screenshots, New Game,
+Easy, W-held/released or changed-view observations.
+
+All available access logs and the pre-stop runtime receipt were saved locally
+before the explicitly delegated shutdown. Nothing existed remotely to retrieve.
+Stop `stop_650bee9b3a37a520` completed without force; the box stopped at
+**2026-10-31T22:45:19.061Z**, verified by `boat --json info bx_knya4u7y`.
+The verified state is **`stopped`**, with no SSH endpoint or URL. Its original
+expiry was `2026-10-31T23:13:53.166Z`; `archiveAfter` is null after stopping.
+Shutdown preceded the 23:03 guest cutoff, 23:06 handback and 23:08 shutdown
+deadline. No successor, resume, public hosting or deployment was attempted.
+
+**Next prerequisite:** restore authorized SSH access for a separately assigned
+browser host before another bounded ordinary New Game → Easy → native W
+attempt. The recovered media remain ready; historical screenshots and already
+integrated loader fixes are not prerequisites. This assignment ends at the
+concrete access failure and returns the stopped box to the coordinator.
+
+Cheap copied HTTP-guard checks passed all 14 cases and five ephemeral local
+server cases, without a browser or guest. Doc diff checking and before/after
+identity checks passed; free local disk remained above 2 GiB. The global run
+evidence checker returned 1 for historical entries, with no mention of this
+run. Alice has no candidate-manifest entry, so this evidence stays in these
+notes rather than attaching a `result.json` to an unrelated candidate.
+
 ## Original media recovered; browser task ready (2026-10-31)
 
 Media/preflight only, starting from main
