@@ -4678,7 +4678,12 @@ function helpers() {
     (then (return (i32.shl (i32.and (local.get $v) (i32.const 0xFFFF)) (i32.const 4)))))
   ;; A null selector addresses nothing, and the low three bits are the
   ;; requested privilege level and table indicator, not part of the index.
-  (if (i32.eqz (i32.and (local.get $v) (i32.const 0xFFF8))) (then (return (i32.const 0))))
+  ;; Only the GDT has a null slot, so the test is 0xFFFC and not 0xFFF8: the
+  ;; table indicator has to stay in it, because selector 4 is LDT entry 0 --
+  ;; an ordinary descriptor -- and reading it as the null selector hands back
+  ;; base 0. ANGEL.EXE's extender lives at LDT entries 0 and 1 and jumped
+  ;; through exactly that one.
+  (if (i32.eqz (i32.and (local.get $v) (i32.const 0xFFFC))) (then (return (i32.const 0))))
   ;; Past the table's own limit there is no descriptor, and reading one anyway
   ;; is how a real-mode segment number that never went through a selector load
   ;; -- 0x9bf0, say -- comes back with a plausible base and a random D bit.
@@ -4714,7 +4719,7 @@ function helpers() {
 (func $descaddr (param $v i32) (result i32)
   (if (i32.eqz (i32.and (global.get $cr0) (i32.const 1)))
     (then (return (i32.const 0))))
-  (if (i32.eqz (i32.and (local.get $v) (i32.const 0xFFF8))) (then (return (i32.const 0))))
+  (if (i32.eqz (i32.and (local.get $v) (i32.const 0xFFFC))) (then (return (i32.const 0))))
   (if (i32.gt_u (i32.and (local.get $v) (i32.const 0xFFF8))
                 (i32.and (global.get $gdtl) (i32.const 0xFFFF)))
     (then (return (i32.const 0))))
@@ -4736,10 +4741,20 @@ function helpers() {
 (func $segd32 (param $v i32) (result i32)
   ;; V86 code is 16-bit by definition -- there is no descriptor to carry a D
   ;; bit. Same ordering argument as $segbase.
-  (if (i32.or (i32.eqz (i32.and (global.get $cr0) (i32.const 1)))
-              (global.get $vm86))
-    (then (return (i32.const 0))))
-  (if (i32.eqz (i32.and (local.get $v) (i32.const 0xFFF8))) (then (return (i32.const 0))))
+  (if (global.get $vm86) (then (return (i32.const 0))))
+  ;; Real mode keeps the D bit the cached descriptor already had, rather than
+  ;; forcing 16-bit. Clearing PE does not reload CS -- the far jump that
+  ;; follows it does, and a real-mode CS load rewrites the base and the limit
+  ;; and leaves the cached size alone. A program that never entered protected
+  ;; mode is unaffected: $d32 starts at 0 and nothing but a descriptor can
+  ;; raise it. ANGEL.EXE's extender is the case that needs this -- it drops to
+  ;; real mode through a 32-bit descriptor and the next block -- a cs-override
+  ;; lidt over its own real-mode IDT pseudo-descriptor -- only decodes as
+  ;; 32-bit code. Read as 16-bit the same bytes come out as push es / add
+  ;; al,0xb / leave, which is where its stack pointer and its AH=3Fh both went.
+  (if (i32.eqz (i32.and (global.get $cr0) (i32.const 1)))
+    (then (return (global.get $d32))))
+  (if (i32.eqz (i32.and (local.get $v) (i32.const 0xFFFC))) (then (return (i32.const 0))))
   ;; No descriptor, no D bit -- see $segbase. Guessing one here is what made a
   ;; real-mode segment look like a 32-bit code selector.
   (if (i32.gt_u (i32.and (local.get $v) (i32.const 0xFFF8))
