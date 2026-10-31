@@ -1506,3 +1506,70 @@ the pending capture helper timed out and exited. FULLRELEASE was announced
 global gate is rerun during the next worker's session. No foreign signals,
 production edits,build,asset/INI/clock/save-byte/memory edits,cheats,input
 bypass,guestWorker disable,public deployment,Boat or subagents.
+
+## 2026-10-31 13:40 UTC: corrected bearing and earlier release, takeoff dependency
+
+Run `scratch/runs/20261031T1340Z-deusex-wood/` restored accepted count7 through
+app.files/vfsPaths and ordinary native Load. The count7/time01:09:32 dialog
+(`13`), actual restored crate room (`17`), and original owning-worker observer
+save crosscheck were inspected. Stable small-crate/wood/upper-crate climbs
+reached centers Z47.23/79.8/109.73. **No stable Z96 landing, exit traversal or
+ladder exercise was reached; no new save was created.** Count7 remains preferred,
+count6 untouched, and count8's previous LOADING limitation remains unresolved.
+
+Cheap original analysis first reread the accepted recovery and trajectory90,
+original decoded BSP nodes8270/8276 and original DoJump. Radius20 puts the prior
+7102.9736,−1797.7441 contact18.1492 units from lowerwood's southeast corner;
+it lies outside both face bounds. A conservative full-footprint target is
+X7044..7068,Y−1852..−1828, not a demonstrated reachable landing. The prior
+trace also retains substantial airborne velocity after acceleration becomes
+zero. Releasing Up cannot be assumed to stop airborne motion immediately.
+
+The original collision remains authoritative. The rotated top32 base's actual
+BSP top is a diamond centered near6992,−1684, with vertices extending to
+X6946.75..7037.25 andY−1729.26..−1638.75. Crates drift during native collisions;
+visual layout and observed footing must be checked after each approach.
+Native RightMouse pickup succeeded. Forward Tab drops first returned "Can't
+drop that here"; a backward offset allowed a drop to the floor, then ordinary
+count7 Load restored the accepted layout. There was no Training/pipes replay.
+
+| Checked attempt | Actual result |
+| --- | --- |
+| `97`: target yaw52500, Up190ms then Space190ms, release | Physics changed to falling125ms into the trace, before Space; no upward velocity. Player walked off the upper crate. |
+| `127`: back to7015.20,−1691.53,109.58; target yaw52500; Up220ms then Space220ms, release | Actual jump, first observed upward velocity236.4. Tallwood collision reduced northward speed near7041.92,−1768.63,155.96; after early release, northward velocity fell to about−10.3. Fell to floor. |
+| `143`: back to7013.73,−1692.47,109.73; target yaw53500; Up220ms then Space240ms, release | Wider bearing, but support lost before Space. No upward jump or landing. |
+| `161`: upper footing7012.53,−1693.83,109.60; target yaw53500; Up140ms then Space500ms, release | Support was already lost93ms into the trace; no upward jump. Final inspected gameplay (`162`) is still the crate room floor. |
+
+The first dependency is **grounded takeoff before the moving upper crate loses
+support**, followed by sufficient east clearance of tallwood. Earlier Up release
+and a corrected bearing have now been tried together, but these attempts do
+not establish whether they retain a Z96 landing after a valid clear jump.
+A stationary Space-first takeoff from rechecked footing is untested; its
+horizontal range must be measured, not assumed. No emulator defect established.
+
+Prelaunch initially stopped at2.130GB free, below required2.3GB. The coordinator
+reclaimed released historical diagnostics; this worker deleted no foreign files.
+Pirates13:40:11 FULLRELEASE and a fresh actual whole Chrome/global-crashpad gate
+preceded sole browser launch13:42:36. New deadlines were generated, not reused.
+Original frozen module8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676,
+292-source manifest,131 original/support hashes before/after, original SoftDrv,
+default guestWorker,three workers,guest640/browser1024 were retained.
+
+`check.py` passes identity, accepted observer byte equality, positive plus five
+rejection fixtures, native save crosscheck,540 trusted balanced input events,
+54 PNG dimensions, actual trajectory classifications, and cleanup. One repeated
+observer install after native reload returned "observer already installed";
+the original observer continued sampling its checked actor. The final quit
+command deliberately exits the controller before command acknowledgement;
+its sender timed out and was confirmed absent. Neither is a guest failure.
+
+Actual browser cleanup13:56:56 completed858.995s after controller start, within
+18min; raw browser/controller/wrapper/monitor exits0/0/0/0 are retained by the
+durable Python supervisor. All1002 active-profile monitor samples show wrapper,
+controller and monitor holding inherited fd9; minimum free disk2228436992B.
+Historical cleanup audit confirms22 owned PID/start identities absent, including
+global crashpads and the final command helper, both ports closed, profile gone,
+held inputs empty and full flock available. Monitor used no signals. FULLRELEASE
+was announced after actual absence. No further browser, production edits, build,
+heavy CLI, asset/INI/clock/save-byte/memory edits, cheats, input bypass, guestWorker
+disable, public deployment, Boat(ID/state/expiry N/A), agents or successor.
