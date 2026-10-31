@@ -302,6 +302,26 @@
       "note": "The outline form of MS Sans Serif, named by usp10.dll. At UI sizes the bitmap strikes in MSSansSerif.fon answer first and this never runs; it covers the sizes above them."
     }
   ],
+  "optional": [
+    {
+      "comment": [
+        "Faces built at build/deploy time by tools/fetch-fonts.js into the",
+        "gitignored fonts/fetched/ and never committed. Absence is normal: a",
+        "group mounts only for an app whose ansiCodePage matches (lib/apps.js,",
+        "or test/run.js --codepage) and only from the first candidate that",
+        "exists, so Western apps never see these faces in enumeration.",
+        "Precedence: the user's own MINGLIU.TTC, then the AR PL UMing TW",
+        "stand-in renamed MingLiU / PMingLiU. Both are two-face collections;",
+        "WAT registers each face by its own name table, so no WAT table names",
+        "them."
+      ],
+      "win98": ["MingLiU", "PMingLiU", "細明體", "新細明體"],
+      "ansiCodePage": 950,
+      "charset": "CHINESEBIG5",
+      "win98File": "mingliu.ttc",
+      "candidates": ["fetched/mingliu.ttc", "fetched/mingliu-uming.ttc"]
+    }
+  ],
   "unsubstituted": {
     "comment": [
       "Win98 faces with no vendored substitute of their own. Every one of these",

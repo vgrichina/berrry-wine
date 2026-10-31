@@ -4085,6 +4085,34 @@ class WineAssembly {
       url: 'fonts/' + mount.file,
       vfsPath: mount.vfsPath,
     })), { required: false });
+    await this.loadOptionalCodePageFonts(manifest);
+  }
+
+  // Faces tools/fetch-fonts.js builds at deploy time (the CP950 Ming face):
+  // never committed, possibly not deployed. Only an app registered with a
+  // matching `ansiCodePage` asks, and a missing listing means "not deployed",
+  // which is silent - the default faces still draw every character they can.
+  async loadOptionalCodePageFonts(manifest) {
+    const subs = typeof window !== 'undefined' && window.fontSubstitutions;
+    const codePage = Number.isFinite(this.ansiCodePage) ? this.ansiCodePage | 0 : 0;
+    if (!subs || !subs.optionalFontMounts || !codePage) return;
+    if (!(manifest.optional || []).some(group => group.ansiCodePage === codePage)) return;
+    let listing;
+    try {
+      const response = await fetch(
+        WineAssembly.versionedUrl('fonts/' + subs.FETCHED_MANIFEST));
+      if (!response.ok) return;
+      listing = await response.json();
+    } catch (_) {
+      return;
+    }
+    const mounts = subs.optionalFontMounts(manifest, {
+      codePage, isAvailable: subs.fetchedAvailability(listing) });
+    if (!mounts.length) return;
+    await this.loadFiles(mounts.map(mount => ({
+      url: 'fonts/' + mount.file,
+      vfsPath: mount.vfsPath,
+    })), { required: false });
   }
 
   async _decodeMountedImage(data, url) {

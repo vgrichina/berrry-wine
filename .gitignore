@@ -5,6 +5,10 @@ node_modules/
 .claude/
 scratch/
 .cache/v86-reference/
+# tools/fetch-fonts.js: the pinned font tarball cache and everything built from
+# it (and from a user's MINGLIU.TTC). Optional, never committed.
+.cache/fonts/
+fonts/fetched/
 screenshots/v86-reference/generated/
 !screenshots/v86-reference/
 !screenshots/v86-reference/reviewed/

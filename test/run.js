@@ -44,7 +44,7 @@ const {
   formatFrames,
 } = require('../lib/mem-utils');
 const { formatCall: fmtApiCall, formatRet: fmtApiRet, formatOutParams: fmtApiOutParams, walkFrames } = require('../lib/api-format');
-const { fontMounts, BUNDLED_BITMAP_FONTS } = require('../lib/font-substitutions');
+const { fontMounts, optionalFontMounts, BUNDLED_BITMAP_FONTS } = require('../lib/font-substitutions');
 const { APPS, resolveCopySuperops } = require('../lib/apps');
 const { CliVideoRecorder } = require('../lib/cli-recorder');
 const { renderTinySynthNotes } = require('../lib/tinysynth-offline');
@@ -2892,6 +2892,27 @@ async function main() {
       ctx.vfs.files.set(mount.vfsPath, {
         data: new Uint8Array(fs.readFileSync(file)), attrs: 0x20,
       });
+    }
+    // Optional code-page faces built by tools/fetch-fonts.js (never
+    // committed): only for an app under that ANSI page, only if present.
+    const codePageFlag = getArg('codepage', null);
+    const fontCodePage = codePageFlag !== null ? parseInt(codePageFlag, 10)
+      : (APP_ENTRY && Number.isFinite(APP_ENTRY.ansiCodePage) ? APP_ENTRY.ansiCodePage : 0);
+    const optionalMounts = optionalFontMounts(substitutions, {
+      codePage: fontCodePage,
+      isAvailable: rel => fs.existsSync(path.join(ROOT, 'fonts', rel)),
+    });
+    for (const mount of optionalMounts) {
+      ctx.vfs.files.set(mount.vfsPath, {
+        data: new Uint8Array(fs.readFileSync(path.join(ROOT, 'fonts', mount.file))),
+        attrs: 0x20,
+      });
+      console.log(`[run] CP${fontCodePage} font: fonts/${mount.file} -> ${mount.vfsPath}`);
+    }
+    if (fontCodePage && !optionalMounts.length &&
+        (substitutions.optional || []).some(g => g.ansiCodePage === fontCodePage)) {
+      console.log(`[run] CP${fontCodePage} fonts absent (node tools/fetch-fonts.js); ` +
+        'using the default faces');
     }
   }
   const { readStr } = base;
