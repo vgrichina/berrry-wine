@@ -104,6 +104,7 @@ const seen = new Set(existing.map(e => e.name));
 
 // APIs from sub-dispatchers (not in main dispatch comment pattern)
 const extra = [
+  { name: 'remove', nargs: 1, convention: 'cdecl' },
   { name: 'gluScaleImage', nargs: 9 },
   { name: 'waveOutGetErrorTextA', nargs: 3 },
   { name: 'waveOutGetErrorTextW', nargs: 3 },

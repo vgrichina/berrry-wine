@@ -39088,5 +39088,12 @@
     "test_call": true,
     "convention": "stdcall",
     "hash": 2865508172
+  },
+  {
+    "id": 4599,
+    "name": "remove",
+    "nargs": 1,
+    "convention": "cdecl",
+    "hash": 3683784189
   }
 ]

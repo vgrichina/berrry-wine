@@ -2019,6 +2019,14 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
+  ;; MSVCRT remove(filename) has the same file deletion and cdecl contract as
+  ;; _unlink. Keep deletion in the owning VFS, including read-only policy.
+  ;; The current boolean host interface supplies no detailed errno value.
+  (func $handle_remove (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle__unlink (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+  )
+
   (func $handle__unlink (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (if (result i32) (call $host_fs_delete_file (call $g2w (local.get $arg0)) (i32.const 0))
         (then (i32.const 0))
