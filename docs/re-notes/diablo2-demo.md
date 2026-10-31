@@ -1617,3 +1617,85 @@ server, native action logs and validated captures are retained; no checkpoint
 was exported. Next work should preserve a useful native save if available and
 continue from inspected automap landmarks, using short local presses at narrow
 approaches. Audio, FPS and cave playability remain unqualified.
+
+## Native whole-file checkpoint and fresh-page restore, 2026-10-31
+
+Run `20261031T1523Z-diablo2-den-checkpoint` preserves a native save and verifies
+its consumption through a fresh-page native character load and inspected
+movement. **Den entry remains unverified, and this run does not qualify combat
+under the requested default guestWorker configuration.** The first execution
+dependency was a launch-harness mistake: its frozen-response handler omitted
+COOP/COEP headers. Captures01–69 record `crossOriginIsolated=false` and
+`guestWorker=false`, despite the enabled Threads preference. This was missed
+at launch and detected in the final evidence audit; execution should have
+stopped at that first failed configuration check. The later fresh page records
+isolation and default guest workers active. No emulator defect is established.
+
+The exact 144 frozen inputs come from the 0402Z replay manifest, including
+repaired Wasm
+`7f9da4e9da5183e9f7f061d2356cd34626fe74bdbaf7da0345f6693dd81152be`.
+Compiled source remains **unknown**; this is not a current-main retest. All
+144 pins verify before and after; all 248 frozen responses among 387 total
+served responses match their pins. The 25 existing original runtime files
+verify before and after; only the previously absent unused installer is
+missing. No production code changed; no external edits were made to original assets,
+INI, clocks, save bytes or guest memory. Explicit WebGL was selected. All 52 captures
+are 1024x768 with unchanged presentation/game-canvas geometry; the separate
+cursor overlay moves normally. Launch uses `defaultViewport:null`, one
+viewport setup, and no browser reconnect.
+
+Fresh Barbarian DENMAP followed the inspected southeast river approach with
+500–900ms local mouse holds, using automap and terrain checks at the bridge.
+Capture49 shows **Entering The Blood Moor**. Open-ground exploration reached
+three approaching zombies in64. Native targeted left attack identifies
+**Zombie** and a visible swing in65;66 shows the adjacent zombie collapsed.
+These are native combat observations on the initial page **without guest
+workers**, not acceptance for the requested configuration or combat in the
+Den. Low life prompted native Escape, **Save and Exit Game**, and the title
+menu in69.
+
+The frozen app has no `persistFiles` setting, so automatic browser persistence
+is unavailable. After native Save and Exit, read-only VFS extraction preserved
+all four complete original files in `native-checkpoint/`, with original paths,
+sizes and SHA-256 in its manifest:
+
+| Native path | Bytes | Retained whole file |
+| --- | ---: | --- |
+| `c:\save\denmap.d2s` | 813 | `0.bin` |
+| `c:\save\denmap.key` | 902 | `1.bin` |
+| `c:\save\denmap.map` | 24 | `2.bin` |
+| `c:\save\denmap.ma0` | 5,190 | `3.bin` |
+
+A new document mounted only those unchanged whole files through the normal
+app-file loader, at their original paths. Served hashes match the manifest.
+Native Single Player displays **DENMAP, Level 1 Barbarian** in77; selecting
+that existing character and native OK in79 loads town in81. Ordinary ground
+input visibly moves the hero and scrolls town in83. Saved low life is visible;
+a normal belt potion restores it in85–87. This verifies native consumption and
+playable restoration, beyond export or trusted DOM events alone. Native
+restoration returns to town, not the saved field position. The retained export
+remains immutable; no later save overwrote it. Fresh-page captures72–95 record
+isolation and default guestWorker active; final backend census is ready,
+`requestedBackend=webgl`, with zero errors and software-completed draws zero.
+
+The sole browser ran 15:24:31.308–15:32:47.055 UTC. The new Deus Ex
+`sole151455` FULLRELEASE at15:22:33 and an independent whole-Chrome/global
+crashpad PID/start gate preceded launch. A durable Python supervisor waited for
+the wrapper, controller and monitor; all three inherited FD9 for the full
+browser lock. At15:32:46, free disk reached 2,097,459,200 bytes, below the
+2.1GB early-stop threshold but above 2GB. The monitor cooperatively quit;
+Chrome/controller/wrapper/monitor exited zero without signals. A concurrent
+movement request96 arrived after quit and timed out unexecuted; it is not in
+the controller action log. The last inspected worker-backed frame95 remains
+in town approaching the palisade. No further browser was launched.
+
+Focused checks preserve the failed initial-configuration finding, whole-save
+and served hashes, balanced 112 trusted input events, stable game geometry,
+519 active full-FD9 samples and raw exits. PID/start cleanup confirms owned
+processes absent, both ports closed, profile removed, held inputs empty and
+full flock available. Boat/test-box ID, state and expiry are N/A. No build,
+public deployment, audio/FPS or complete-playability claim is made.
+`recovery.txt` describes the retained native restore route. Next execution
+must first prove isolation/default guestWorker on the initial page, then load
+this unchanged checkpoint normally and navigate from inspected landmarks to
+the Den; the initial-page combat cannot substitute for that check.
