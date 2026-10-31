@@ -311,3 +311,124 @@ runtime, including the process/profile gate; another worker's orphan was
 left to its owner to close before launch. No Boat was allocated
 (ID/state/expiry N/A); delegated local cleanup is verified. Evidence and
 replay instructions are retained in the run's `RECOVERY.md`; no successor.
+
+### 2026-10-31: first native source-cache feedback captured
+
+Run `scratch/runs/20261031T0617Z-forsaken-first-mutation/` retains the
+predecessor's exact `8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`
+module, matching 292-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`,
+107 pinned runtime responses and 873 original inputs. No current runtime was
+substituted into that retained build. Original input checks passed before and
+after the native run. Default guest workers, Threads and explicit WebGL ran at
+640×480 inside the 1024×768 page; no guest state, clock, asset or DLL changes.
+
+A CDP auto-attach observer pauses each guest worker immediately before
+`WebAssembly.instantiate`, wraps the actual host imports, and removes the
+breakpoint. `startup-observer.json` records installation with no instance;
+the first DX observation finds no execute buffers in the actual 16384-slot,
+32-byte table. This fixes the predecessor's startup installation race.
+
+The authoritative `after-native-a-worker-2.json` segment has no overflow or
+observer errors. Slot 1352, buffer size 6784, is observed from creation (event
+415), first Lock (417), 876 initialization byte-delta observations, first
+Unlock (1294/1295), cache population and first Execute. Replaying every delta
+reconstructs Unlock-entry bytes exactly. Changes are sampled at original
+block boundaries and API boundaries; this is not an instruction write barrier.
+The original color loop is retained and disassembled: `0x43a445 mov [edi],eax`,
+with 32-byte source/destination strides. Addresses identify this run only.
+
+The causal chain is now established for this original native buffer:
+
+- First PROCESSVERTICES (1377) reads original source XYZ
+  `(6.8727074,-767.9973145,2658.7331543)`. Its output mutates the live vertex
+  bytes, while the source cache keeps original XYZ through Execute return.
+- The next Lock returns exactly that engine-written live payload. Original
+  guest code changes 29 bytes, all at offset 16 modulo 32 (diffuse color).
+  All observed deltas reconstruct Unlock entry (1416); XYZ/RHW are unchanged.
+- Unlock (1417) replaces the source-cache payload with the live payload.
+  The next PROCESSVERTICES (1420) therefore reads the preceding engine output
+  `(352.1822510,202.0121155,0.9938518,0.0003065896)` as input XYZ.
+  This is engine output fed back by Unlock, rather than original game XYZ
+  stores. `check-mutation.py` asserts the full chain, including byte identity.
+
+Both first and first-divergent PROCESSVERTICES include the 4096-byte device
+state, WORLD/VIEW/PROJ/previous composite and canonical viewport descriptor;
+`first-pv-state.json` decodes these. The trace occurs before composite
+recomputation, so the retained composite is explicitly the previous value.
+
+This buffer's instruction offset/counts differ from the predecessor's six
+Volcano world draws: offset 5408, PROCESSVERTICES groups 40/21/108. Personally
+inspected startup/room/copyright screenshots do **not** establish the Volcano
+briefing route. Do not relabel this startup/attract-room observation as the
+predecessor's exact first Volcano world buffer. It proves the generic mutation
+mechanism; that exact route identity remains a separate observation dependency.
+Earlier unfiltered initialization segments hit the observer's event bound and
+are excluded from the causal claim. A TextDecoder SharedArrayBuffer issue in
+the initial observer was corrected before the authoritative segment; retained
+secondary-worker errors and earlier saturated segments are not hidden.
+
+The generic repair keeps application source and processed TL output in separate
+regions within one owned cache block. Unlock refreshes source; transforms
+write output, and triangles/points/lines/Pick read output after processing.
+Before processing, direct TL buffers retain their live-buffer path. Release
+frees both streams together. Allocation failure must not transform live source.
+The sparse-vertex regression now asserts source preservation, stable positions
+and updated colors after a color-only Unlock; the instruction regression reads
+COPY/viewport results from driver output and separately checks unchanged source.
+
+The fresh repaired native candidate is
+`41f5c4c737ce7b428455aaa9dfe0c5045cd1ead7b00b96070feebb8368d4a2a4`,
+with matching 295-source/7-compiler snapshots in `repaired/`, identical source
+and compiler manifests before/after the locked build, 106 pinned runtime
+responses and 873 unchanged originals. Personally inspected `enter2.png`,
+`single-player.png`, `start.png`, `native-enter-volcano.png` establish the
+native menu → single player → START → VOLCANO → briefing route.
+`world-frame.png` shows a complete room and HUD; `native-response.png` shows
+the view pitched downward and pulse ammunition **2000 → 1998** after trusted
+ArrowUp+Control for 500 ms. All 18 retained browser events are trusted.
+
+`repaired/check-source.py` verifies the matching original Volcano instruction
+layout, offset **5184**, first PROCESSVERTICES **5196**, slot 536 in this run.
+All **162 original XYZ vertices stay unchanged across 12 Execute cycles**;
+24 pre-PROCESSVERTICES observations retain source/live equality, separate TL
+output, device state and viewport. Thus the repaired source cannot accumulate
+the proven feedback from the earlier native trace.
+
+`repaired/check-redraw.py` verifies two complete depth-only-clear intervals
+(flags **2**, unchanged valid semantics). Each has six world draws totaling
+**642 triangles**, followed by two object draws. Every world draw has distinct
+positions and changes actual GPU pixels. Frame 1 world changes per draw are
+**166618 / 126250 / 5938 / 1058 / 4181 / 3056**; frame 2 is likewise effective.
+Summed pixel-change events are **307101 / 307489** (overdraw counts repeatedly;
+these are not unique frame pixels). This proves current world rasterization,
+rather than relying on a full-looking inherited backing. The visible native
+view differs from the predecessor's 670-triangle view; no identical-camera
+pixel comparison, sustained play, performance or completion claim is made.
+
+Focused old-source rejection fails specifically on preserving Lock-visible
+source. The repaired reproducer passes 32 color-only cycles. Focused sparse,
+cache replacement/OOM, lifetime, descriptor, instruction/branch, 2470 vertex
+pixel comparisons and viewport checks pass, as does the locked build.
+A final review corrected an allocation-failure guard after this native capture;
+its final build/identity and focused allocation-failure result are recorded below.
+The captured native normal path always had separate output; the guard concerns
+only missing output storage. Native candidate and final build closures remain
+separately pinned, without substituting current runtime into either module.
+
+A later optional screenshot capture stalled after the demonstrated input.
+An external connection captured `final-live.png` while changing its viewport
+to Puppeteer's default 800×600, then closed our browser. Exclude that teal
+cleanup frame and the failed `native-after` capture from visual validation.
+The controller's finalizer closed the server and removed its profile; its
+`browserExit:null` is **not** an exit-0 receipt. Independent cleanup verifies
+all 17 recorded owned PIDs absent, HTTP **44385** and CDP **37021** closed,
+profile/process match absent, no held keys and original 873 inputs unchanged.
+No foreign processes were touched. Browser/heavy checks held the browser lock
+for their entire lifetime. No Boat was allocated (ID/state/expiry N/A).
+
+At this evidence checkpoint the final allocation-failure guard is **uncommitted
+WIP**, pending its focused regression and locked build behind the other worker's
+runtime. The native-tested candidate, source closure, screenshots and pixel
+proof above are complete. No final-guard build or production publication is
+claimed by this checkpoint; its exact queue/dependency is retained on the board.
