@@ -878,3 +878,72 @@ profile removed, browser exit 0, wrapper lifetime exit 0 and monitor ended.
 The lock was verified available and the lane explicitly released at 09:30Z;
 free disk stayed above 2GB. No Boat: ID/state/expiry N/A. No worker or successor
 was launched. `focused-checks.json` and `check.py` retain the exact checks.
+
+## 2026-10-31 0940Z — Native checkpoint to dark-room exit and repair-bot briefing
+
+**Passed: restore the accepted light checkpoint, exit the dark storage room,
+and reach the next distinct exercise.** New evidence:
+`scratch/runs/20261031T0940Z-deusex-light-exit/`. Only the two unedited
+`5781cc8cf` light checkpoint files were added through ordinary
+`app.files`/`vfsPaths`; native Load Game recognized save count 2 and restored
+the world. No Training replay occurred. `12-native-light-response.png` and
+`13-room-view.png` show native F12 deactivation/activation receipts.
+
+The original inspected controls use arrows for movement/strafe, Z/C for
+turning, Space for jumping and right mouse for interaction. Navigation
+included backtracking and missed crate routes. `40-north-perimeter-end.png`
+labels the final door **Unlocked**; native RightMouse180ms opens it in `41`.
+`42` crosses into a distinct red-lit passage and grated ramp. Personally
+inspected `44-next-instructions.png` shows Jaime explaining that repair bots
+can recharge bioelectric energy spent crossing the dark area. The later
+`57-native-quicksave-result.png` also contains his readable security-camera
+and security-grid alarm briefing. **Repair-bot use/recharge, camera interaction
+and Training completion are not demonstrated.** No previous-table healing or
+resting-body claim is added.
+
+Save Game could not be activated while the transmissions were active:
+keyboard navigation skipped it, mouse clicks did nothing, and the inspected
+keypad-plus QuickSave binding left exported hashes unchanged. These are
+retained failed save attempts, not new checkpoints. After speech ended, the
+same normal mouse control opened Save Game (`61`); Enter180ms and a six-second
+wait wrote actual new bytes. The native save replaced slot 1 in this new
+guest VFS; frozen predecessor files remain unchanged.
+`repair-native-checkpoint/` preserves immutable indexed copies and a manifest:
+
+- `c:\save\save0001\saveinfo.dxs`: 34,576 bytes, SHA-256
+  `4736503e333b3a5072df30ec278fba07ad9b808b18d53d481728be48976c8775`.
+- `c:\save\save0001\00_training.dxs`: 3,231,218 bytes, SHA-256
+  `ba261fca2dea36bb9ccabad868a04df239bcfc2bf94e3fd0aebe50b552fd8c6c`.
+
+A fresh native application, created by page reload in the same continuously
+locked browser, mounted only those two new save files. `66-fresh-load-state.png`
+recognizes save count 3 and the ramp preview; native Enter loads it;
+`67-fresh-repair-load-result.png` restores the ramp boundary; `69` shows native
+F12 **Light deactivated**. `RECOVERY.md`, `make-restore.py`, `fresh-load.cjs`,
+`inspected-proof.json` and manifests retain recovery and the exact limits.
+The next gameplay boundary is the repair-bot/camera exercise beyond the ramp.
+
+Runtime remains exact retained WASM
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`
+with 292-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+Before/after checks pass 292 sources and 131 original/support files; all 105
+served source URL/hash pairs match verified canonical snapshots, and the
+original 19 DLL paths match. There is no retained-module/current-host mix.
+SoftDrv/default guestWorker/three workers, guest640×480/browser1024×768 remain
+unchanged. No production-source, asset/INI/clock, save-byte or guest-memory
+edits, cheats, input bypasses, FPS/audio diversion or public deployment.
+Focused checks pass 196 trusted events, empty held inputs and 69 valid PNGs.
+
+One detached browser lifetime ran09:39:43–09:56:23UTC, within the18min bound;
+cleanup ended09:56:29. Wrapper1870426, controller1870429 and monitor1870428
+held the same fd9 flock throughout, with initial/final proofs. The live
+process gate and bounded profile matcher handle collapsed Chrome cmdlines.
+Crashpads used a global configuration directory, so they were additionally
+identified through the own Chrome handler-PID reference and matching launch
+start identities, then stopped under the full flock before browser shutdown.
+All20 owned runtime PID/start identities are absent, HTTP/CDP ports closed,
+profile removed, browser/lifetime exit0 and monitor ended; full flock release
+was verified before lane handoff. Free disk stayed above2GB. No Boat:
+ID/state/expiry N/A. No worker/subagent/successor was launched. `check.py`,
+`focused-checks.json` and `cleanup-audit.json` retain the checks.
