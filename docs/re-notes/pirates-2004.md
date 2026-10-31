@@ -1178,3 +1178,62 @@ fixture (`_authorityEvents` missing at closeSyncHandle); the exact retained old
 ThreadManager reproduces that same failure. The fixture is unchanged.
 Native replay outcome will be recorded separately; these source tests do not
 establish fresh sailing or input progress.
+
+### Fresh default Worker replay of 9b1126f01
+
+**Fresh native sailing is now observed with default guest Workers enabled.**
+The sole local guest ran 10:02:34–10:10:27 UTC, under eight minutes, after the
+explicit Deus lane release and a clear actual Chrome/crashpad/heavy-CLI/profile
+gate. The detached wrapper held `/tmp/wine-browser.lock` through browser,
+monitor and cleanup. No second guest or successor was launched.
+
+This uses the newly built canonical module SHA-256
+`d2c1df73d975daa4e7425152fb900274ebd9552c5a689249415084cfe8ac026b`
+with repaired source commit `9b1126f019dba2005f40773393076f59d4cde3f2`.
+The unchanged WAT produces the same module bytes as the previous canonical
+build; the host and ThreadManager are the new repair. All 296 frozen source
+files, 40 support files, 1,374 originals and 2,112 served responses / 106
+source URLs match. The complete source manifest SHA-256 is
+`f3890c7f0ec55c6bc9633495f3929400cfcafd9556305c59f9c24a6a3b1d8e3b`.
+The loaded response hash matches the fresh retained module. The prior run's
+read-only attach observer is retained, including its per-init host roundtrip;
+it changes timing and does not change guest instructions or callback budgets.
+
+All **135 reason-2 attach notifications complete**, including slot 6. No
+bootstrap timeout or notification failure occurs. Main advances through the
+resource-job startup, consumes the queued trusted Enter and reaches the main
+menu. Native navigation continues through Crew Signups, bartender, captain
+selection, the English captain's welcome, St. Kitts and its Sail away / cast
+off choices. The final snapshots have no pending spawns, callback gate
+`[0,0]` and zero pins on all 14 live DLL lifecycle rows. This demonstrates
+normal callback completion; it does not test failed-bootstrap retirement.
+
+Personally inspected `19-world.png`, `20-turn-left.png` and
+`21-final-sailing.png` show the ship and sailing HUD, the St. Kitts/Nevis
+coast receding, and the date advancing January 9 → January 12, 1660. A trusted
+Numpad-4/ArrowLeft down/up is consumed as WM_KEYDOWN/UP VK_LEFT. The final
+snapshot records 93 input polls; all 32 native events are trusted, and no key
+or mouse button remains held. No quantitative turn-rate, FPS, combat or broader
+rendering-correctness claim is made. The final bridge reports WebGL device
+kind, 126,574 submitted / 126,573 completed operations and no queue error;
+GPU class and context-loss fields remain unavailable through this identity query.
+
+One harness limitation is explicit: a cache-control Puppeteer connection
+temporarily reset the viewport to 800×600. The original driver still captured
+1024×768 screenshots, so those intervening screenshot coordinates were not
+reliable click coordinates. The mismatch was diagnosed from actual DOM bounds
+and restored at 10:06:07 with no guest restart. Captain/world navigation and
+the final identity run at verified 1024×768. Cache clearing/disabling was used
+to preserve the disk floor; minimum sampled free space was 2,030,845,952 bytes.
+No guest file, game INI or interpreter clock was changed.
+
+The evidence verifier passes and rejects four corrupted controls: unfinished
+slot-6 attach, orphan callback gate, retained pin and zero consumed input.
+The corrected profile matcher detects live flattened/NUL command lines and
+uses PID-start/command identities, including the referenced crashpad. Browser,
+controller and wrapper exit zero; all 66 observed owned PIDs are absent, ports
+`33425/45119/33045` closed, profile absent and the full lock released. The
+post-cleanup actual-process gate was clear before releasing the lane; no
+emergency or foreign signals were needed. No Boat was allocated (ID/state/
+expiry N/A). Recovery, raw traces, original-source rejection logs and bounded
+replay commands remain in `scratch/runs/20261031T0953Z-pirates-bootstrap/`.
