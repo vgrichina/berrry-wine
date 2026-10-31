@@ -5,6 +5,92 @@ from Archive item `icewind_dale_eng_demo`. Its README expressly prohibits
 copying/electronic distribution, so the extracted fixture stays ignored and
 must not be deployed or rehosted.
 
+## 2026-10-31 original Create Game dispatched; creation still blocked
+
+Run `20261031T2150Z-icewind-native` sent **trusted native Create Game
+clicks in the unchanged original demo**. It reached the labelled
+`CLEARING GAME DATA` progress screen, then returned to the labelled menu.
+**Party Formation, character creation, Prologue DONE, unpaused tavern, and
+paired floor-click movement were not reached.** There was one browser launch,
+21:50:58–22:02:00, with six balanced mouse clicks within that session. No
+production repair or build is claimed.
+
+The previous optional-DOM-method correction passed cheap tests but still
+omitted the renderer's exclusive presentation transform. Before any mouse
+input, browser inspection found its proposed rectangle `(0,34,640,480)`
+differed from the displayed native viewport `(22,34,979,734)`. The corrected
+scratch helper requires an uncropped 640×480 native viewport and uses
+`getPresentedRectClient()`. Its native `(480,175)` maps to CSS
+`(756.25,301.6041666666667)`. The exact exported helper passed scaled-coordinate,
+balanced-dispatch and ambiguous-crop refusal checks and was executed through
+Puppeteer in the same browser. Actual DOM evidence records trusted mouse
+move/down/up events; the native last-message data independently contained
+`WM_LBUTTONUP` at `(479,174)`. The attached helper inherited FD9 pointing to
+the lock inode while the original runtime supervisor retained its exclusive
+flock. It did not acquire another lock or launch another browser.
+
+Before the later diagnostic logging error, the native Create Game transition
+already returned to the menu. Native session initialization performed the
+compound-address sizing/allocation calls; a read-only return observation
+captured `CoCreateInstance(CLSID_DirectPlay, IID_IDirectPlay4A)` returning
+`S_OK` and output `0x08221620`. The existing API trace then recorded
+`GetSessionDesc(NULL, size)` from native return address `0x008D4D12`, followed
+by `DestroyPlayer(1)` and `Close`. No Party Formation transition was accepted.
+
+Later instrumentation captured that query returning `0x887700AA`
+(`DPERR_NOCONNECTION`), size zero, shared session state zero and session pointer
+zero. The next native `LeaveCriticalSection`, return address `0x008D4D2E`,
+exposed the saved HRESULT at `sizePtr-8`, consistent with the original
+function's disassembly. The actual object's slots 6/22/24/38 resolve to
+CreatePlayer/GetSessionDesc/Open/InitializeConnection as expected. No Open
+call was observed. **This does not establish a generic API violation:** the
+query result is valid outside an open session, and the first native caller
+or ordering error that causes the menu return remains unknown.
+
+Late scratch diagnostics had real failures: one helper syntax error, a
+`TextDecoder` attempt on a shared view in a host-log observer, and an incorrect
+`RegionMap.regions` lookup. The bounded replacement copies the view and reads
+`RegionMap.REGIONS`. The logging failure happened after the original menu
+return had been retained; later query results are explicitly quarantined from
+claims about an uncontaminated first cause. No guest bytes or API return values
+were patched. Optional missing music-file probes and directory-open errors
+were retained without treating them as a repair contract.
+
+The exact HTTP guard's 14 cases and isolated server's 200/400/404/416/500
+checks passed. All 1,106 original pins, 528 source pins, 867 compiler pins, and
+27 original CD2 joins matched before and after. The retained installation and
+original C: paths plus read-only D: CD2 presentation were reused directly;
+no reinstall, download, fixture copy, manufactured marker/volume, KEY/INI/BIF
+rewrite, save injection, WININIT edit, or foreign cleanup occurred. Runtime
+HEAD was `b7ea3fcc500ecd346dcf656a4c4f37c35b7fcadc`. The actual HTTP-loaded
+module was HTTP200, uncached, 1,898,762 bytes, SHA-256
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+Chrome 151 used isolated Worker/Threads, WebGL, native 1024×768 viewport,
+default audio and normal clock. No FPS, audible-output, or gameplay claim.
+
+After the preteardown failure capture, controller, supervisor, runtime launcher,
+board watcher and monitor all completed durable waits with code zero. All 26
+attached Node helpers were durably waited; two diagnostic helpers truthfully
+exited one. Six adopted children were reaped, Chrome exited zero without a
+signal, all 49 recorded own PID/start identities were absent, ports 37827/44305
+closed, profile gone, all 24 trusted input events balanced, and FD9 free.
+Minimum observed free space was 2,488,537,088 bytes; start reserve exceeded
+2.5 GB and runtime remained above the 2.1 GB early-stop threshold. Boat
+ID/state/expiry N/A. Explicit NEWFULLRELEASE was announced at 22:02:56.
+
+Evidence and recovery: `session-boundary.json`, `10l-cocreate-result-returns.json`,
+`10q-final-contracts-safe.json`, `10r-object-contract-vtable.json`,
+`native-geometry.json`, `displayed-native-tests.json`, trusted-input and actual
+HTTP receipts, reviewed captures, `full-release-final.json`, and `RECOVERY.txt`.
+The original log is retained as `browser-console-before-safe.jsonl.gz` plus
+`browser-console.jsonl`. `native-layer.cjs` preserves the tested input helper;
+`recovery-browser.cjs` integrates it but that combined driver has not been
+browser launched. Next: establish the first native session caller/order
+between successful COM activation and the first session query/menu return;
+require a defined contract and oldFAIL/newPASS regression plus build before
+any generic production repair. Do not change the original installation to
+bypass character creation.
+
 ## 2026-10-31 original optical scan and labelled native menu reached
 
 Run `20261031T2137Z-icewind-optical` **executed the unchanged original demo's
