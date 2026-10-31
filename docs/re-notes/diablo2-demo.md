@@ -1766,3 +1766,65 @@ Boat/test-box ID/state/expiry are N/A. No build or deployment occurred.
 `recovery.txt` retains the normal restore recipe. Next work needs sufficient
 sustained disk headroom, then a fresh native restore and inspected local route
 to an actual Den entrance, reserving time to validate any newer native save.
+
+## New native checkpoint restored after field combat, 2026-10-31
+
+Run `20261031T1612Z-diablo2-den-route-reserve` verifies a newer native save
+through fresh-page character selection and inspected gameplay. **The Den
+remains unlocated.** The original four-file checkpoint remains unchanged.
+The exact 144 frozen inputs and repaired Wasm
+`7f9da4e9da5183e9f7f061d2356cd34626fe74bdbaf7da0345f6693dd81152be`
+were retained; compiled source remains unknown, with no current-main retest.
+All 296 frozen responses among 434 served responses match their pins, and the
+25 existing original runtime files verify before and after. No production,
+asset, INI, clock, save-byte or guest-memory edits occurred.
+
+After UT's new 16:17:30 FULLRELEASE, independent actual Chrome/global-crashpad,
+profile PID/start and exclusive-lock checks passed with 2,946,596,864 bytes
+free. The lifetime gate repeated these checks under FD9. Actual HTTP headers,
+`crossOriginIsolated=true`, default `guestWorker=true` and explicit WebGL
+passed before guest input. All 62 captures retain isolation/default workers
+and the 1024x768 viewport. Launch uses `defaultViewport:null`, one viewport
+setup and no reconnect. Fresh-page startup99 temporarily uses the desktop
+canvas; all other captures retain the same 640x480 game buffer and 684x536
+presentation geometry. Backend errors and completed software draws are zero.
+
+Native Single Player04 shows DENMAP in05; selection06 and OK07 load inspected
+town09 before movement. Potion10 heals the saved low life. Short 500–900ms
+presses follow inspected terrain around the palisade stakes and bridge
+parapet, then across the deck to Blood Moor52. The northeast ground reaches
+a stone wall/corner58–64; east/south interior exploration finds a live enemy
+in80. Targeted native melee shows a swing84 and the enemy collapsed in86.
+This is Blood Moor combat, not Den combat. The final route90/91 ends at dense
+trees against stone walls, with no entrance label or transition. Locating the
+entrance remains the concrete navigation dependency; no emulator defect was
+established. These revealed walls and trees should not be blindly swept again.
+
+Native Escape92 opens the menu and Save and Exit93 eventually returns to the
+title in96. The three-second capture94 still shows the menu; a read-only
+seven-second wait confirms completion without repeating the input. An early
+export95 is retained separately. Whole-file export97 after the title yields
+the same four hashes and preserves `native-checkpoint/manifest.json`:
+`denmap.d2s`798 bytes, `denmap.key`902, `denmap.map`24 and `denmap.ma0`5,420.
+All bytes are complete native files, unedited. The app has no automatic
+`persistFiles` configuration.
+
+Fresh document98 mounts those four files unchanged through the normal app
+loader. Native Single Player103 displays DENMAP, Level 1 Barbarian in105;
+selection106/107 and OK108 load town111. Ordinary ground input112 visibly
+moves the hero and scrolls town113. Saved healthy life and the empty first
+potion slot remain visible. Native character panel115 shows experience 66.
+This verifies actual consumption and playable restoration of the newer
+checkpoint, beyond export or trusted DOM events. Restoration returns to town;
+there is no saved Den position or claim that the field position is restored.
+The original checkpoint and newer export both remain immutable.
+
+The sole browser ran 16:17:54–16:30:23 UTC and closed on explicit quit116.
+Chrome/controller/wrapper/monitor raw exits are zero, without signals. Checks
+verify 114 balanced trusted events, 706 active samples with all three FD9
+holders, and minimum free disk 2,716,598,272 bytes. Cleanup confirms owned
+processes, supervisor and watcher parent/child absent, both ports closed,
+profile removed, inputs released and full flock available. FULLRELEASE was
+posted 16:31:03. Boat/test-box ID/state/expiry are N/A. No build, deployment,
+audio/FPS or full-playability qualification occurred. `recovery.txt` records
+the frozen replay, newer native restore recipe and exhausted local landmarks.
