@@ -4,6 +4,8 @@
   "_skip": [],
   "_not_games_comment": "Desktop ids outside the Win98 Accessories group that are not games: their page title says '<name> in your browser' rather than 'Play <name> in your browser'.",
   "_not_games": ["winamp"],
+  "_titles_comment": "Page name for an id whose short desktop label is not what people search for. Used in the title, H1, FAQ and JSON-LD; the desktop icon keeps its label.",
+  "_titles": { "pinball": "3D Pinball Space Cadet" },
 
   "notepad": "The Windows 98 text editor, and the first program this emulator ever ran. Typing, selection, word wrap, Find and Replace, the Font and Open/Save dialogs and the help file all work.",
   "calc": "The Windows 98 Calculator in standard and scientific modes. It needs the real msvcrt.dll, which is loaded beside it.",
@@ -25,7 +27,7 @@
   "reversi": "Reversi from the Entertainment Pack: flip the computer's discs to your colour on the 8x8 board.",
   "winmine_wep": "Minesweeper, the Entertainment Pack build: clear the minefield from the numbered hints in beginner, intermediate or expert size.",
   "ski32": "SkiFree, the 32-bit port of the Entertainment Pack skiing game by Chris Pirih. Playable end to end, yeti included.",
-  "pinball": "3D Pinball: Space Cadet from Windows 98, the Maxis table. Flippers, plunger, sound and the high-score dialog all work.",
+  "pinball": "The Space Cadet pinball table that shipped with Windows XP, the original program: flippers, plunger, nudges, sound and high scores, tap-to-flip on phones.",
   "spider": "Spider Solitaire from Microsoft Plus! 98. Fully playable, including maximize.",
   "marbles": "Marbles from Microsoft Plus! 98, the first DirectDraw program the emulator rendered end to end.",
 
