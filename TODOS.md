@@ -1885,4 +1885,3 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   worker: none (independent historical API review complete)
   Evidence: Implementation7fd352855 and source reviewfe540cf2; retained native qualification01dfb0d98 independently accepted in docs/re-notes/madbomber-winmm-native-independent-review-20261024.md. Exact historicalb41a7c5 normal module8fac3993: unchanged public A/W native fixture exit0, host exit0, wrong-hash rejection exit1 before compile/memory. This does not qualify the current-main module or original SDL.
   Next: Coordinator-owned original SDL observation remains outside this API evidence; keep this checkbox open until its exact requirement is reviewed. Existing original gameplay acceptance under NEW-GAME-MADBOMBER-20261018 remains intact. No runtime allocation or retry is implied.
-
