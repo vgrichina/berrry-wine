@@ -1832,3 +1832,61 @@ the documentation diff check passes. Direct battle resume is a negative
 finding, not an accepted checkpoint capability. Next work must account for
 the automatic file's observed Nevis restore semantics; the original slot
 remains the separately proven fallback. Victory/capture remains untested.
+
+## Combat interception attempt; disk guard stopped the outcome (2026-10-31 13:15 UTC)
+
+Evidence/recovery: `scratch/runs/20261031T1315Z-pirates-outcome/RECOVERY.md`.
+**New live combat, repeated reload/fire and closer positioning are inspected;
+boarding, surrender and capture were not reached.** The one browser ended
+early when free disk fell below the required 2.1 GB guard.
+
+The unchanged 1,028,093-byte battle export, SHA256
+`c6cdb98307401c401d70505d6ea6677757aeffdc8bccf89316cc3e625b92ba38`,
+is mounted at the exact previous native path. Ordinary Load restores Nevis
+port (`10`); Sail Away/Cast Off and rendered Attack lead to a fresh battle
+(`14`). No New Game or tavern replay occurs. The original 11:49 slot and
+12:20 battle exports remain byte-identical. No new checkpoint was exported.
+
+Revenge starts with eight guns/40 crew against the merchantman's six
+guns/50 crew. Enemy guns fall to four (`22`); enemy crew remains **50** in
+this run. Rendered FIRE discharges at `15`, `25` and `39`; full reloads to
+eight are inspected in `24` and `37`, followed by zero loaded guns after
+each subsequent discharge. Chase view (`24`) identifies Revenge as the
+smaller black-flagged vessel and makes the approach easier to inspect.
+Sustained port steering brings the merchantman nearly ahead (`30`–`31`),
+but Revenge stalls at zero and briefly minus one knot into the wind
+(`33`–`36`). Reefing restores forward motion to two knots (`39`–`40`).
+After further steering and full sails, the last inspected overhead frame
+(`47`) shows Revenge at eight knots against the enemy's four, two guns
+reloaded and the vessels still separated on converging courses. Contact,
+boarding/duel, surrender, sinking and capture are not established.
+
+Capture filenames are historical labels, not scene assertions: `13` shows
+the world, `14` actual combat and `15` the first FIRE response. The attack
+selector itself was not captured. The original keymap/encyclopedia were
+read before launch; native keypad steering/sails and rendered FIRE were
+used. No short-Space or VK_CLEAR fix is claimed.
+
+Before/after identity checks match 296 source/compiler files, 40 support
+files and 1,374 originals. Frozen, served and loaded WASM remains
+`078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`;
+all served responses, including the three auxiliary pins, are checked.
+Default guestWorker/threads, WebGL and 1024×768 are retained. The disk guard
+closed the browser before a final device-error or VFS snapshot; neither is
+claimed. No production, factory/draw instrumentation, assets, INI, clock,
+guest memory or save bytes were edited; no build or heavy CLI ran.
+
+The sole browser ran 13:28:40.667–13:39:48.143 UTC (667.476 seconds), after
+Deus Ex FULLRELEASE and actual global Chrome/crashpad clearance. The guard
+triggered at 2,077,941,760 free bytes; the minimum sampled during shutdown
+was 2,038,018,048 bytes, still above the 2 GB floor.
+The pending `48` capture was interrupted; no `48` or `49` image exists.
+Durable supervisor/wrapper/controller/monitor retain actual zero wait
+results, including Chrome. Cleanup verifies all tracked PID/start identities
+absent, both global crashpads absent, three ports closed, profile removed,
+held inputs empty and full flock available; no runtime cleanup signals were
+needed. FULLRELEASE was posted at 13:40:11. No Boat: ID/state/expiry N/A.
+
+The immediate blocker was disk headroom. Gameplay still requires completing
+the intercept or landing further effective broadsides. This session is used;
+no second browser or new save-validation claim follows from these captures.
