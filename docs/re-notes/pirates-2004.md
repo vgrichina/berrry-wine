@@ -1766,3 +1766,69 @@ events, 24 PNGs, immutable saves, inspected restore/combat evidence and cleanup;
 `git diff --check` passes. No Boat: ID/state/expiry N/A. The next useful work
 is separately bounded validation of the automatic battle checkpoint and
 further combat; coast Enter/Attack remains untested in this run.
+
+## Automatic battle-file load and onward combat damage (2026-10-31 13:01 UTC)
+
+Evidence/recovery: `scratch/runs/20261031T1301Z-pirates-battle/RECOVERY.md`.
+**The automatic battle file loads a real Nevis port scene; direct resumption
+of the previous battle is not established. Onward ordinary play enters a new
+Lovely Mary battle, damages the enemy, reloads fully and fires again.**
+
+The sole fresh browser mounts the unchanged 1,028,093-byte export, SHA256
+`c6cdb98307401c401d70505d6ea6677757aeffdc8bccf89316cc3e625b92ba38`,
+at the exact path from the previous `battle-export.json`. Native Load A Game
+(`08`) → battle (`09`) → Enter leads to the actual English Trading Post of
+Nevis menu (`11`). The unmodified save header says “near Nevis,” February 12,
+1660. Both pre-load and post-load mounted hashes match the export. This
+establishes a working native load, but does not establish why a file named
+battle restores this state or whether an earlier transient battle was present
+before the first inspected real scene. No New Game or tavern replay occurs.
+The original 11:49 slot and 12:20 battle exports remain byte-identical.
+
+Native Sail Away → No matter, cast off! returns to the responsive world
+(`14`, February 19, 600 gold, 41 crew). Rendered Attack opens a selector
+(`16`) for Lovely Mary or Le Negociant Honnete. Choosing Lovely Mary enters
+actual sea combat (`18`): Revenge has eight guns/40 crew; the English
+merchantman has six guns/50 crew. Native FIRE produces smoke/projectiles
+and **8 guns loaded → 0** (`20`). Sustained native keypad steering changes
+heading, wake and speed. Reload progresses through **1, 2, 4, 5, then 8 guns
+loaded** (`22`–`26`). After the first broadside, the enemy HUD falls to
+**four guns/44 crew** (`24`), persisting in subsequent inspected frames.
+Revenge remains at eight guns/40 crew. A second rendered FIRE click returns
+eight loaded guns to zero (`27`), followed by visible smoke/projectiles (`28`).
+These are observed enemy losses, not an inferred hit from smoke alone.
+No hull percentage, sinking, surrender, victory or captured ship is claimed.
+
+Cheap read-only extraction of the original keymap and encyclopedia preceded
+launch: round shot damages hulls, broadsides require maneuvering, and combat
+may end through surrender, sinking or separation. This run uses rendered FIRE
+and native keypad steering; it does not claim a fix for earlier short Space
+or VK_CLEAR/keypad-5 behavior. Native onward attack replaces the mounted VFS
+battle entry with a new automatic save; that in-session version is not exported
+or claimed as a validated recovery checkpoint. Existing source exports survive.
+
+Before/after checks again match all 296 source/compiler files, 40 support
+files and 1,374 originals. Frozen, served and loaded WASM remains
+`078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`.
+All 2,226 served responses, including the three pinned auxiliary files, match.
+Default guestWorker, threads, WebGL and 1024×768 remain active; final device
+error is null. No production, factory/draw instrumentation, assets, INI,
+clock, guest memory or save bytes were edited; no build or heavy CLI ran.
+
+The one browser ran 13:02:37–13:08:45 UTC (367.462 seconds), after prior
+FULLRELEASE and actual whole-Chrome/global-crashpad clearance. Durable
+supervisor/wrapper/controller/monitor retain real wait results, all zero,
+including Chrome. All 468 live-profile samples retain three inherited FD9
+holders. Minimum sampled free disk is 2,126,659,584 bytes; the 2.1 GB early
+stop was not triggered. Cleanup verifies 20 PID/start identities absent,
+including both global crashpads; HTTP/CDP/control ports 34689/41907/33355
+closed, profile removed, inputs balanced and full flock available. Runtime
+cleanup used no signals. FULLRELEASE was posted at 13:09:15; later publication
+watchers receive only qualified cleanup. No Boat: ID/state/expiry N/A.
+
+Focused checks pass identity, 42 trusted balanced input events, 28 captures,
+unchanged source saves, inspected scene transitions and lifecycle evidence;
+the documentation diff check passes. Direct battle resume is a negative
+finding, not an accepted checkpoint capability. Next work must account for
+the automatic file's observed Nevis restore semantics; the original slot
+remains the separately proven fallback. Victory/capture remains untested.
