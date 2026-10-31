@@ -5,6 +5,78 @@ from Archive item `icewind_dale_eng_demo`. Its README expressly prohibits
 copying/electronic distribution, so the extracted fixture stays ignored and
 must not be deployed or rehosted.
 
+## 2026-10-31 original-browser prerequisite audit: blocked before launch
+
+Run `20261031T2040Z-icewind-browser` inspected main input revision
+`6ae0e926a61e7e6e0edb3d099c9a0ebaf16e91fc`. **No new browser gameplay or
+movement acceptance was obtained.** The existing local fixture is the legacy
+prepared asset set, not the intact original installation described below.
+No browser, CLI guest, build, or acquisition was launched.
+
+Cheap verification recorded SHA-256 and sizes for all 920 local files
+(903,400,058 bytes). The registered `icewind_dale_demo` EXE plus its 919 file
+entries all exist; every declared registry size matches. This is a local
+inventory pin, not a new upstream-package comparison. The actual EXE is
+6,283,264 bytes, SHA-256
+`b94816d10029cb99c0315f175330c917be2fff298394e853e2764973d8d13af4`,
+matching the existing acceptance pin. Asset identity prevents treating this
+as an original-install route:
+
+- Original `CHITIN.KEY` is absent. The registry maps the 181,980-byte
+  `CHITIN-full.KEY` to `C:\CHITIN.KEY`; its SHA-256 is
+  `6ce928886dbc5df2da1121d37b4b917698c63f54112f3626186ffd53605fe753`.
+  The manifest explicitly prepares this altered key and 24 host-expanded BIFs.
+- The 319-byte `icewind.ini`, SHA-256
+  `feceb019b2d6945e85d0bedcb00367b9e5d5d65d722ad625ce4b81539eaf4e14`,
+  contains the prepared `HD0:=C:\`, `CD1:=D:\`, `CD2:=D:\` aliases.
+  It is not the original installed configuration quoted below.
+- The historical `/private/tmp/iwd-profile-fixed-installed-vfs`, other named
+  original-install exports, and original browser harness are unavailable at
+  their documented paths. The candidate directory has neither the original
+  package ZIP nor its unpacked installer tree. A bounded broader filename
+  search found no additional Icewind key before it was explicitly stopped;
+  this does not establish absence from every archive or remote machine.
+- `test/test-icewind-dale-demo.js` reads and hashes the absent original key
+  before it launches a guest. Its eventual `--app` route would still mount
+  the prepared key. `test/test-icewind-dale-menu-web.js` tests sustained menu
+  labels only and uses renderer input helpers; it does not establish the
+  requested trusted browser input or movement. Neither test was run here.
+
+Before considering another build, 1,151 preceding accepted build-input pins
+from `20261031T2026Z-nox-browser` were compared: 1,150 match. Only
+`index.html` differs while the current Nox worker owns its selector repair.
+The existing WASM SHA-256 remains
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+This is a file/source comparison, not proof of a browser-loaded module. No
+emulator failure was demonstrated and no implementation/test paths were edited.
+Foreign `lib/wininit-boot.js` and `test/test-wininit-boot.js` remain untouched.
+
+Recovery: recover the intact private guest-installed export, including its
+original KEY, installed INI, full override set, and original CD2 layout, or
+recover and authenticate the standalone original demo package and complete its
+ordinary installer into a separate context. Preserve the existing fixture and
+authored state. Do not reconstruct a key by reversing the legacy filtering or
+inject saves/configuration to satisfy the route. Pin every file actually served
+and use the existing original-tree import path before diagnosing a loader bug.
+The manifest package SHA-1 remains `cc6345ae7decb43341bde25bb1302f422a42666c`;
+it was not checked against newly acquired bytes in this run.
+
+Only after that prerequisite is met, wait for **CURRENT
+`nox-candidates-browser-gameplay-main-oct31` NEWFULLRELEASE** (or its explicit
+terminal no-runtime release), then independently check FD9, whole Chrome,
+global crashpad, PID starts, profiles, and ports before heavy work. This audit
+did not consume that dependency or acquire FD9; no runtime/profile/port or
+held input was created. Boat ID/state/expiry are N/A.
+
+The next acceptance remains the ordinary native menu → authored character →
+Prologue **DONE** → unpaused tavern, with reviewed before/after screenshots of
+the same character moving to a distant floor click under trusted balanced DOM
+input. Party Formation, loading, a paused HUD, NO DISC, and red log glyphs do
+not satisfy it. Native save evidence counts only if the guest writes it.
+Evidence is in the run's `registered-files.json`, `fixture-inventory.json`,
+`prep-summary.json`, `source-parity.json`, and `lifecycle.json`; no screenshot
+exists because no guest ran. Historical CLI movement below remains historical.
+
 Legacy fetch and test (the fetch recipe requires `unshield`; this is not
 evidence that the original installer works):
 
