@@ -1454,3 +1454,91 @@ also stopped. Free disk remained above 2 GB (about 4.2 GiB at cleanup).
 No Boat/test box was allocated; ID/state/expiry are N/A. The repair and
 original software browser route are verified; other backends remain separate
 work if requested.
+
+## UT2004 original default Worker WebGL gameplay (2026-10-31)
+
+Run `scratch/runs/20261031T0629Z-ut2004-webgl/` supplies the missing
+**WebGL** arm on current main containing the window-origin and cube-LOD
+repairs. One original startup followed visible title → Instant Action →
+DeathMatch → DM-Rankin → PLAY → Fire-to-join. An early Escape opened the
+ordinary quit prompt; Escape canceled it before successful menu selection.
+Native clicks used visible Instant Action `(410,522)`, DeathMatch
+`(204,380)` and PLAY `(459,674)`, without an added coordinate offset.
+`gametype-settled.png`, `deathmatch-map.png` and `rankin-loading-5.png`
+were personally inspected; the last shows the textured world and native
+Fire-to-join prompt, rather than retained loading backing.
+
+Personally inspected `player-hud-first.png` shows full clock **20:00**,
+health **100**, ammo **100**, weapon and **The match has begun!** Native W
+held 2,200 ms advances up the ramp (`native-forward-settled.png`, clock
+19:56). A 2,300 ms left-button hold reduces ammo to **99**, then **98** as
+the queued input settles. Native mouse motion `(340,400)` → `(430,360)`
+changes the view toward the ceiling and right-hand room
+(`native-look-settled.png`, clock 19:52, health 98/ammo 98). Native S held
+2,200 ms moves backward (`native-retreat-settled.png`, clock **19:51**,
+health **96**, ammo **98**). These frames retain readable top clock/score
+and bottom health/ammo HUD. Health changed during the live match; this run
+makes no enemy-hit, kill, FPS, audio or match-completion claim.
+
+### Actual endpoint, dimensions and command evidence
+
+This is the unchanged default **guestWorker** route. Browser viewport is
+**1024×768**, emulated desktop/presentation canvas **684×570**, and actual
+guest/render drawing buffer **640×480**. `final-owner-eval.json` and
+`final-workers.json` confirm shared windowed HWND **65541**, client origin
+**(24,44)** in guest/page/render instances, and no bridge error. The desktop
+canvas begins at browser `(10,160)`, placing the guest client at `(34,204)`.
+The viewport size is not a claim of a 1024×768 guest render target.
+
+`executor-restore.json` records an actual **WebGL2RenderingContext**, context
+not lost, **68,545 completed backend draws** and **68,885 completed actual
+GL draw calls**, with zero observed executor failures. The last observed
+`drawElements(TRIANGLES,114,UNSIGNED_SHORT,0)` belongs to adapter 1,
+command **69959**, device **410128432**, generation **1**. The same adapter
+belongs to render endpoint **1**, whose actual options are neutral/WebGL.
+Chrome 151 uses ANGLE SwiftShader; this establishes the WebGL API route,
+without a hardware-GPU or throughput claim. The bounded observer preserves
+returns/exceptions and was restored; helper checks verify ownership,
+successful-call counting and restoration.
+
+Startup/readback diagnostics are retained. The first LockRect parks with
+token −7/yield 16, then resumes with **EAX 0**, token/yield zero, ESP +20,
+pitch 2560 and nonzero pixels. The temporary parked EAX is not a completed
+API failure. Twenty completed successful locks are recorded. All sampled
+bridge error/rejection lists are empty. The final owner capture samples
+queue completed **69672**, submitted **69682**, with ten pending commands
+and no error; the later executor observation above advances further.
+No first completed graphics/API failure was observed, so no new source
+repair was justified.
+
+### Frozen identity, checks and cleanup
+
+Pre-runtime checkout HEAD was `3d04b4841d5ec3744bb4f124073f0bf4dafcc356`;
+the exact build/launch snapshot HEAD was
+`bf9c495b6b83049342347155f3954d0f971a4eac` after concurrent documentation
+publication. The fresh locked canonical build yields WASM SHA-256
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`.
+Its matching **295 current source/host files**, **seven compiler files**,
+shared dirty/status records, runtime identities and helpers are retained.
+The current JavaScript cube repair is included; the equal historical WASM
+hash does not authorize mixing old host files.
+
+All **998 original inputs** verify unchanged before and after, including
+the EXE SHA-256
+`2a95e2fa8c22ae94eb1c361fdb49ea8ec44c5e2a93faa00831308c01e951db8d`.
+Retained source/compiler hashes, **107 served snapshots**, **41 PNG
+signatures/hashes**, **26 trusted native events**, observer/evidence checks
+and documentation diff checks pass. Registered `-d3d -window -nosound`,
+assets, INI, guest state, clock, shaders, validation and queues were not
+patched or bypassed. No protected fonts/Heroes II files were touched.
+
+The full-lifetime browser lock serialized this execution after Forsaken;
+the actual process/profile gate was clean. Quit at 06:43 UTC exited Chrome
+**1670515** zero. Controller **1670055**, holder **1661318**, wrapper and
+all tracked descendants/crashpads are absent; HTTP **44079**, CDP **40213**
+are closed and the profile is gone. `cleanup-under-lock.json` verifies
+cleanup before releasing the lock; `cleanup-verified.json` checks actual
+PID/port/profile absence afterward. The board watcher was also stopped.
+Free disk stayed above 2 GB. No Boat/test box was allocated
+(ID/state/expiry N/A), public deployment or successor launch occurred.
+`RECOVERY.md`, `result.json` and `final.txt` retain replay and limitations.
