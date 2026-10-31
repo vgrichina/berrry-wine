@@ -2,6 +2,137 @@
 
 Historical source last updated, 2026-10-12. Runtime and implementation claims below describe that dated source; see current app notes and source for subsequent changes.
 
+## 2026-10-31: static audit resolves the authentic DirectX resource requirement
+
+Run `scratch/runs/20261031T2240Z-crimsonland-dx-contract/` audits descendant
+`c24d17db6629c06d36dd1fd6dfbc6b92c869e6dd` of input `2a64e65c` without
+executing a browser/game, building, downloading, or changing engine/guest files.
+All **60 predecessor original-file pins match**, including EXE SHA-256
+`93cdcdc872c836e75122e3a1d41312c74761cf4736181d3541521e82f6cb2031`.
+The predecessor directory remains byte-for-byte unchanged. Its retained
+`native-dx-startup.asm`, `native-dx-detection.asm` and
+`first-unresolved-dependency.json` are reused; the new
+`native-component-check.asm` extends the original disassembly through
+`0x41df5c`. `native-data.json` resolves strings, GUIDs and import slots directly
+from the original PE; `source-pins.json` identifies the audited API sources.
+
+**Concrete recovery target:** an authentic installed
+`C:\WINDOWS\SYSTEM\d3d8.dll` whose `VS_FIXEDFILEINFO.dwFileVersionMS/LS`
+reports **major 4 and version >= 4.8.1.881**, or **major 5 and version >=
+5.1.2600.881**, is sufficient for this fallback to identify DirectX 8.1.
+These are original comparison constants, not versions assigned to our static
+module handles. Earlier DirectDraw/DirectPlay checks need not succeed first.
+This establishes the startup requirement, not subsequent DLL execution or
+gameplay compatibility. No causal generic API contract defect was proved.
+
+### Native control flow and all component comparisons
+
+At `0x41cf90`, detection first tries the DxDiag COM provider (`0x41d090`),
+CLSID `{A65B8071-3BFE-4213-9A5B-491DA4461CA7}`, IID
+`{9C6B4CB0-23F8-49CC-A3ED-45A55000A6D2}`. It initializes the provider with
+SDK header version `0x6f`, obtains `DxDiag_SystemInfo`, and reads
+`dwDirectXVersionMajor` / `dwDirectXVersionMinor` as `VT_UI4` (`0x13`) and
+`szDirectXVersionLetter` as `VT_BSTR` (`8`). A negative HRESULT falls through
+at `0x41cfdc` to the component scan (`0x41d2c0`). The current local COM class
+handlers have no DxDiag provider; host activation in `lib/storage.js` requires
+an actual registered in-process server and returns `REGDB_E_CLASSNOTREG`
+with a null output when registration is absent. Crimsonland's registration
+does not seed that server. The separate Pirates app's DxDiag registration is
+not a Crimsonland dependency installation.
+
+The component scan calls `GetSystemDirectoryA(buffer, 260)` at `0x41d2d7`
+(IAT `0x46f020`) and appends these original suffix strings. Every threshold
+below is inclusive, using unsigned MS-then-LS comparison at `0x41df30`;
+`0x41def0` packs `(a,b,c,d)` into `MS=(a<<16)|b`, `LS=(c<<16)|d`.
+Checks run in table order and successful checks write the reported generation;
+this is a heuristic scan, not a requirement that every DLL exist.
+
+| File suffix (string VA) | Original file-version threshold | Reported generation; comparison area |
+| --- | --- | --- |
+| `\ddraw.dll` (`0x473a30`) | `4.2.0.95`; `4.3.0.1096`; `4.4.0.68` | 1.0; 2.0; 3.0 (`0x41d365`–`0x41d452`) |
+| `\d3drg8x.dll` (`0x473a20`) | `4.4.0.70` | 3.0a (`0x41d4c3`) |
+| `\ddraw.dll` | `4.5.0.155`; `4.6.0.318`; `4.6.0.436` | 5.0; 6.0; 6.1 (`0x41d587`–`0x41d67b`) |
+| `\dplayx.dll` (`0x473a14`) | `4.6.3.518` | 6.1a (`0x41d6ec`) |
+| `\ddraw.dll` | `4.7.0.700` | 7.0 (`0x41d7af`) |
+| `\dinput.dll` (`0x473a08`) | `4.7.0.716` | 7.0a (`0x41d872`) |
+| `\ddraw.dll` | major 4, `4.8.0.400`; or major 5, `5.1.2258.400` | 8.0 (`0x41d939`–`0x41d9ce`) |
+| `\d3d8.dll` (`0x4739fc`) | major 4, `4.8.1.881`; or major 5, `5.1.2600.881` | **8.1** (`0x41da43`–`0x41dade`) |
+| `\d3d8.dll` | major 4, `4.8.1.901`; or major 5, `5.1.2600.901` | 8.1a (`0x41daf7`–`0x41db7a`) |
+| `\mpg2splt.ax` (`0x4739ec`) | `6.3.1.885` | 8.1b (`0x41dbeb`) |
+| `\dpnet.dll` (`0x4739e0`) | major 4, `4.9.0.134`; or major 5, `5.2.3677.134` | 8.2 (`0x41dcb2`–`0x41dd47`) |
+| `\d3d9.dll` (`0x4739d4`) | readable root fixed-file version; **no numerical threshold** | 9.0 (`0x41ddac`–`0x41dde1`) |
+
+`0x41de30` requires a positive `GetFileVersionInfoSizeA(filename,&ignored)`
+result, allocates that many bytes, requires nonzero BOOL from
+`GetFileVersionInfoA(filename,0,size,block)`, then requires nonzero BOOL and a
+non-null result from `VerQueryValueA(block,"\\",&fixed,&length)`.
+The VERSION import thunks `0x46ddf4/0x46ddee/0x46dde8` resolve to IAT
+`0x46f198/0x46f19c/0x46f1a0`. At `0x41deb3`/`0x41deba` it reads the root
+fixed structure at **+8 (`dwFileVersionMS`) and +12 (`dwFileVersionLS`)**.
+It ignores product version, localized string versions, the returned length,
+and the DirectX registry Version string. Missing/unreadable resources make
+this helper return `E_FAIL`, not a made-up version.
+
+The scan itself returns `S_OK` even when no component matches, writing
+major/minor zero and a space letter (`0x41ddef`–`0x41de27`). Therefore a
+successful detection HRESULT does not mean DirectX is installed.
+`0x41d020` packs the reported generation as `(major<<16)|(minor<<8)|letter`,
+where a space contributes zero and lowercase a–z contributes 1–26.
+Startup checks HRESULT sign at `0x42c725`, then performs an **unsigned**
+comparison of the output DWORD against `0x00080100` at `0x42c729`.
+Only a nonnegative result with a lower generation enters `0x42c737`.
+A negative detection HRESULT instead enters the different error dialog at
+`0x42c7a3`. The prerequisite warning uses `MessageBoxA(...,0x23)` and requires
+`IDYES=6` to enter the hyperlink path; other responses exit. The retained
+warning is consistent with the zero-generation successful fallback.
+
+### Current API audit and actionable recovery
+
+`src/09a0b-handlers-base-late.wat`'s `$get_fixed_windows_directory` supplies
+`C:\WINDOWS\SYSTEM`, returns 17 characters excluding NUL, and has room for
+the terminator in this 260-byte call. The original app adds its own separator.
+`src/09a1-comctl-handlers.wat`'s VERSION handlers delegate to
+`$file_version_resource` / `$file_version_info_size_named` /
+`$file_version_info_named`: they open the named VFS file read-only with
+`OPEN_EXISTING`, parse its PE/NE RT_VERSION, copy the actual resource, and
+query its root binary value through `$version_query`. The A handlers clean
+up 12/20/20 stack bytes respectively, matching these stdcall imports.
+`lib/filesystem.js` resolves exact normalized paths; absent files fail rather
+than substituting a basename. Static module handles and dispatched D3D exports
+do not supply version-resource bytes. No mismatch in this exercised contract
+is established by the static audit. This is not exhaustive validation of all
+VERSION API edge cases, and no new runtime return trace was collected.
+
+The pinned Crimsonland manifest/registration supplies none of the eight scan
+filenames or DxDiag. A local filename search found `d3d8.dll`/`ddraw.dll` in
+the UT2003/UT2004 `installed/windows/system/` trees, but each is a **1,024-byte
+PE with only a non-executable `.rsrc` section**. Raw fixed words encode
+4.8.1.881 / 4.6.3.518, respectively; these files lack authentic runtime code
+and recovery provenance and must not be reused as an authentic DirectX install.
+`excluded-local-fixtures.json` retains their hashes and sections. Version
+decoding here uses raw fixed offsets +8/+12: `tools/pe-version.js`'s current
+`describe()` display reads shifted fields and is unsuitable for quoting those
+versions without that correction; this offline utility issue does not cause
+the guest's VERSION API result.
+
+Next action: recover the real Win9x DirectX 8.1 `d3d8.dll` from provenance-backed
+Microsoft redistributable media or a licensed installation, retaining the
+package/file hashes, extraction recipe and unmodified RT_VERSION. Verify its
+raw fixed-file words against the **4.8.1.881** threshold before adding the
+authentic file at the exact system VFS path in a separate reviewed dependency
+change. Prefer the appropriate complete authentic runtime set where required;
+one resource suffices for this detector, not for full runtime compatibility.
+An authentic NT-family DLL is not implied to be executable on this Win98 model.
+If the authentic named resource is subsequently present but this chain fails,
+capture the first incorrect API return and write an old-fail/new-pass generic
+regression then. Do not restore the historical invented 4.8.1.901/4.9.0.904
+versions or manufacture a resource-only DLL to pass the scan.
+
+Cheap checks: original 60-file SHA-256/size verification, full predecessor-file
+preservation, original import/string/GUID decoding, manifest absence, audited
+source hashes, scratch script syntax and documentation diff whitespace check.
+No engine tests/build or runtime were allocated; Boat ID/state/expiry N/A.
+
 ## 2026-10-31: browser geometry repaired; original DirectX prerequisite blocks combat
 
 Run `scratch/runs/20261031T2232Z-crimsonland-combat-recovery/` repairs the
