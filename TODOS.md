@@ -1116,13 +1116,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: ut2004-original-match-gameplay-main-oct31; forsaken-original-webgl-frame-repair-main-oct31
-  status: active (two new-game lanes; Deus Ex Training movement verified, UT match and Forsaken rendering open)
+  worker: forsaken-original-webgl-frame-repair-main-oct31; second gameplay worker queued behind owner-priority land-triage-small-topics-oct31-run1
+  status: active (UT2004 gameplay reviewed; Forsaken running, next Deus Ex browser lane queued while owner integration task uses second slot)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: October31 fresh coordinator reviewed ReVolt59a615fc5 legacy attachment repair/race controls and DeusEx849d6a527 original Training corridor/native forward-back movement; run20261031T0416Z-deusex-training, personally inspected07/08 captures. No ReVolt lap or DeusEx browser/completion claim. Diabloe11eeb2e0 explored BloodMoor but noDen. Fresh UT2004 match-entry and Forsaken WebGL frame-repair workers fill two slots; serialize all runtime tests with /tmp/wine-browser.lock. Forsaken readable sustained play remains open. Preserve historical accepted results; no public deployment; Heroes II and laptop font work remain laptop-owned.
+  Next: UT2004 original DM-Rankin native movement/look/fire verified in run20261031T0427Z-ut2004-match, notes2342e9288 pushed; coordinator inspected46-fired health100ammo96. Retained8459597 exact dirty source snapshot, no browser or match completion claim. Forsaken WebGL frame repair continues. Owner queued seven-topic integration task takes freed second slot (thread01a19043-368b-7ad2-9464-2d03bdd2142c); queue Deus Ex original Training browser follow-up after it or Forsaken finishes, without exceeding two workers. ReVolt59a615fc5 race input and DeusEx849d6a527 CLI Training remain accepted; Diablo noDen. Serialize runtime, preserve laptop ownership and no public deployment.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1189,7 +1189,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   note: 2026-10-31T04:00Z bounded original Forsaken software route reached inspected Volcano briefing/loading scene at1129batches/60.030s; firing scheduled1180 was not reached, so no movement/combat acceptance. All876 original/runtime input hashes unchanged; retained module7f9da4e9 compiledsource unknown, run20261031T0400Z-forsaken-volcano. Fresh worker pursues actual browser gameplay past briefing. Daikatana route80b11f423 preserved without verified exit; Pirates8581ed6dd records effective-state boundary and generic page crashes without production cause/fix.
   status: active (known-source Re-Volt repair; full27 software/WebGL coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: ut2004-original-match-gameplay-main-oct31; forsaken-original-webgl-frame-repair-main-oct31 (two live production workers; Forsaken terminal)
+  worker: forsaken-original-webgl-frame-repair-main-oct31; land-triage-small-topics-oct31-run1 (owner seven-topic integration priority; two live production workers)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
