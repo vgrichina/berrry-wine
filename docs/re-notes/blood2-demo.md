@@ -90,7 +90,7 @@ take enemy fire to a death camera).
 - The InstallShield setup and the `B2Demo.exe` launcher dialog.
 - `ole32.dll` is in `APP_LOCAL_DLLS` but absent from this box's
   `test/binaries/dlls`, so ole32 imports fall to WAT stubs here.
-- FPS and the browser.
+- FPS (browser control is now reviewed below).
 
 ## 2026-10-31 historical original-fixture gate (superseded by owner decision)
 
@@ -146,3 +146,70 @@ ordinary browser menu navigation and player-controlled gameplay. Match all
 98 file hashes and the manifest, then enter the current predecessor's release
 and independent whole-Chrome/global-crashpad/profile PID/start-time gate under
 inherited lifetime FD9. No compilation archive acquisition is required.
+
+## 2026-10-31 pinned-build browser gameplay: reviewed
+
+Run `20261031T1949Z-blood2-pinned-browser` tested published main
+`0d9913225` with the owner-designated local DEMO V1.0A (BUILD 109).
+All 98 file hashes and the manifest pin above matched before and after
+execution. No archive was downloaded. The complete local `Readme.txt` was
+read; execution stayed private, with no distribution or deployment. A fresh
+public `lib/apps.js` fetch returned HTTP 200 and SHA-256
+`63bb9815e404dd7e446d3748e195c621782a04c8358580bd2cf1a864cb57e209`;
+its `DESKTOP_APPS` still excludes `blood2_demo`.
+
+The sole browser session ran 19:53:23–19:55:02 UTC, using the unchanged
+registration and arguments, default isolated guest Worker, normal WebGL
+(Chrome SwiftShader harness), unchanged clock and audio, and a native
+1024×768 content area with `defaultViewport: null`. No guest state, assets,
+configuration, saves, cvars, or clocks were edited or injected. HTTP isolation
+was verified before launch and guest input. All recorded native inputs were
+trusted and balanced: eight key down/up pairs and the launch mouse click.
+
+Personally reviewed captures establish this browser route:
+
+| Capture | Observed checkpoint |
+|---|---|
+| `01-startup.png` | Single Player selected; DEMO V1.0A (BUILD 109) visible |
+| `02-single-player.png`, `03-caleb.png` | Caleb selection, then Homicide selected |
+| `05-demo-level1.png` | Demo Level 1, Center for Disease Management |
+| `07-starting-elevator.png` | First-person elevator, health 100, ammo 50 |
+| `08-open-elevator.png` | After Space, open doorway into the crate room |
+| `09-walk-out.png` | After ArrowUp, player outside the elevator near the crates |
+| `10-turn-right.png` | After ArrowRight, view turns toward the adjacent wall |
+| `11-fire-held.png`, `11-fire.png` | After Left Ctrl, muzzle flash, ejected casing, ammo 49 |
+| `12-after-fire.png` | Ammo 48, health 0, third-person death camera |
+
+`04-homicide.png` was also reviewed: it still shows the difficulty screen
+immediately after Enter; the level card appeared after waiting. The observed
+health sequence was 100 → 29 → 0. The cause of damage was not separately
+qualified. These captures establish player-controlled browser opening,
+movement, turning and firing. They do not establish an enemy hit or kill,
+objective completion, jump, audio correctness, or FPS. No emulator failure
+blocked the route, so no source repair or further runtime attempt was made.
+
+The loaded module SHA-256 was
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+Before/after checks matched 528 source files, 866 compiler/tool files and 119
+original/runtime input files, including the 98 owner-pinned files and their
+manifest. Served-file hashes were joined to those pins. Evidence includes
+`build-identity.json`, `identity-before.json`, `identity-after.json`,
+`pin-before.json`, `pin-after.json`, HTTP records, `native-input.json`,
+`reviewed-scenes.json`, and `findings.json`, all in the ignored run directory.
+There is still no matching candidate-corpus entry; no unrelated dashboard
+record was created. Validation covered hash joins, input balance, capture
+containment, evidence JSON and the documentation diff. This was a
+documentation-only change; no new build or code-test claim.
+
+The current Heretic II `NEWFULLRELEASE194602` preceded the independent empty
+whole-Chrome/global-crashpad/profile gate under FD9. The durable Python parent
+held the lifetime lock through controller and monitor cleanup. At 19:55:09,
+all 24 recorded owned PID/start identities, including supervisor, controller,
+server, monitor and helpers, were absent; ports 40305 and 42137 were closed,
+the profile was gone, held inputs were empty and the lock was free. No signals
+were needed. Minimum monitored free disk was 3,638,812,672 bytes. The runtime
+lane was released before publication; foreign work was preserved. Boat
+ID/state/expiry are N/A for this local correctness run.
+
+Next boundary: a separately authorized native route to a confirmed targeted
+enemy hit or objective; audio and FPS remain separate verification work.
