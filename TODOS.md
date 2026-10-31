@@ -1114,15 +1114,23 @@ commit output — do not assume your hunks landed.**
 
 Current scoped ownership after reconciling the stopped fleet. The shared operational ledger retains other historical and released tasks. See ops/handoffs/codex-resume-20261007.md.
 
+- [ ] Finish rescued CRT nonlocal jumps after invocation ownership prerequisite
+  id: CRT-NONLOCAL-TRIAGE-20261031
+  owner: codex
+  status: waiting on existing callback/JS/concurrency/SEH ownership and dual-dispatch prerequisite
+  Next: Resolve the existing census gate before porting rescued 704b2158f/6828ee2ac; do not bypass it. Owner seven-topic integration otherwise reconciled: remove431e1922b, Uplink9e0860421, Win16bedaaaa7f and ToyVM68ac26542 pushed with focused tests and four full builds. D3D9 alpha5649dd4d7, P8 guard3186dd59ca and DOS renamecdddc109b/568009245 already on main/superseded. Older ToyVM IP-width test fails identically before/after; stencil browser harness unavailable (missing puppeteer), not a pass. GLTron50batch CLI only startup, no gameplay claim.
+  Evidence: scratch/runs/20261031T0443Z-land-seven-topics/result.json; tools/callback-ownership-census.js; existing callback ownership task below
+
+
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: deusex-original-training-browser-main-oct31; land-triage-small-topics-oct31-run1 (owner integration priority)
-  status: active (UT2004 gameplay reviewed; Forsaken investigation terminal without repair; Deus Ex browser and owner integration workers running)
+  worker: deusex-original-training-browser-main-oct31; ut2004-original-browser-match-main-oct31
+  status: active (two browser gameplay workers: Deus Ex and UT2004; one runtime at a time)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: UT2004 original DM-Rankin native movement/look/fire verified in run20261031T0427Z-ut2004-match, notes2342e9288 pushed; coordinator inspected46-fired health100ammo96. Retained8459597 exact dirty source snapshot, no browser or match completion claim. Forsaken50bb30050 reproduced stale briefing/partial world inside known-source GPU target, upstream missing-draw cause unproved; no repair. Fresh Deus Ex original Training browser worker thread01a19048-2afb-7623-8f32-40b047fdf5fe uses its freed slot. Owner seven-topic integration thread01a19043-368b-7ad2-9464-2d03bdd2142c remains the second worker. ReVolt59a615fc5 race input and DeusEx849d6a527 CLI Training remain accepted; Diablo noDen. Serialize runtime, preserve laptop ownership and no public deployment.
+  Next: UT2004 original DM-Rankin native movement/look/fire verified in run20261031T0427Z-ut2004-match, notes2342e9288 pushed; coordinator inspected46-fired health100ammo96. Retained8459597 exact dirty source snapshot, no browser or match completion claim. Forsaken50bb30050 reproduced stale briefing/partial world inside known-source GPU target, upstream missing-draw cause unproved; no repair. Fresh Deus Ex original Training browser worker thread01a19048-2afb-7623-8f32-40b047fdf5fe uses its freed slot. Owner seven-topic integration completed: four tested commits on main, three duplicate/superseded topics; CRT jumps remain blocked by ownership/dual-dispatch prerequisite. UT2004 browser follow-up thread01a1904b-b8be-7da0-83c6-cc1f95ed7f61 takes its freed slot, waits for Deus Ex runtime release. ReVolt59a615fc5 race input and DeusEx849d6a527 CLI Training remain accepted; Diablo noDen. Serialize runtime, preserve laptop ownership and no public deployment.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1189,7 +1197,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   note: 2026-10-31T04:00Z bounded original Forsaken software route reached inspected Volcano briefing/loading scene at1129batches/60.030s; firing scheduled1180 was not reached, so no movement/combat acceptance. All876 original/runtime input hashes unchanged; retained module7f9da4e9 compiledsource unknown, run20261031T0400Z-forsaken-volcano. Fresh worker pursues actual browser gameplay past briefing. Daikatana route80b11f423 preserved without verified exit; Pirates8581ed6dd records effective-state boundary and generic page crashes without production cause/fix.
   status: active (known-source Re-Volt repair; full27 software/WebGL coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: deusex-original-training-browser-main-oct31; land-triage-small-topics-oct31-run1 (owner seven-topic integration priority; two live production workers)
+  worker: deusex-original-training-browser-main-oct31; ut2004-original-browser-match-main-oct31 (two gameplay workers, serialized runtimes)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c

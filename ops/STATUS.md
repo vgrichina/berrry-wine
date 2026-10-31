@@ -1,9 +1,7 @@
-Current 2026-10-31T04:48Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T04:52Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-UT2004 original DM-Rankin native movement/look/fire is verified; inspected firing frame health100/ammo96. Notes2342e9288, run20261031T0427Z-ut2004-match. No browser or match-completion claim.
+Owner seven-topic triage reviewed: four commits pushed — CRT remove431e1922b, Uplink dialog overlay9e0860421, Win16 invalid handlesbedaaaa7f, ToyVM selectors/real-mode D68ac26542. Focused regressions and full build passed before each. Three topics already present/superseded. CRT jumps remain blocked by invocation ownership/dual-dispatch prerequisite; remaining work recorded in TODOS. Baseline ToyVM IP-width failure unchanged; stencil harness missing puppeteer. Run20261031T0443Z-land-seven-topics.
 
-Forsaken50bb30050 confirms stale briefing and partial world inside the known-source GPU target; missing-world-draw cause remains unproved, no repair. Inspected thrust-short-gpu.png in run20261031T0427Z-forsaken-frame; runtime cleaned.
+Two gameplay workers now run: Deus Ex Training browser and UT2004 DM-Rankin browser. UT waits for Deus Ex runtime release; all game runtimes hold /tmp/wine-browser.lock. Heavy benchmarks use separate boats.
 
-Two workers run: owner seven-topic integration and fresh Deus Ex Training browser gameplay. Integration has pushed CRT remove431e1922b, dialog overlay9e0860421, Win16 handlesbedaaaa7f, selector68ac26542; full completion review pending. Setjmp/longjmp blocked by repository ownership gate. All game runtimes serialize under /tmp/wine-browser.lock; heavy benchmarks use separate boats.
-
-ReVolt59a615fc5 native WebGL driving and DeusEx849d6a527 CLI Training movement remain accepted; full GL/D3D27 coverage open. Disk4.6GB, minimum2GB. Laptop fonts/HeroesII protected; no public deployment. No owner input needed.
+UT2004 CLI movement/look/fire2342e9288, ReVolt WebGL driving59a615fc5 and DeusEx CLI movement849d6a527 remain accepted. Forsaken50bb30050 confirms stale pixels inside known-source GPU target, without established cause/repair. Full GL/D3D27 coverage open. Disk4.6GB, minimum2GB. Laptop fonts/HeroesII protected; no public deployment. No owner input needed.
