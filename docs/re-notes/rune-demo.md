@@ -1,5 +1,61 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-10-31: assigned browser attempt stopped at transfer authorization
+
+**First blocker: runtime-bundle upload was denied before browser or guest
+startup.** On shared main `0ce288d29f8ed763aa4ac3ca413974bc4b0b33de`
+(descendant of `81f5df0c8966ef74e23bb0961cf8cc1e746d0efe`), the assigned
+fresh box was `bx_wqqv4dah`. API exec succeeded, observing Node `v24.22.1`
+and Google Chrome `151.0.7922.108 stable`. The first and only `boat scp -r`
+upload to `/home/user/rune-runtime/` returned HTTP **403**,
+`api_key_action_forbidden`: **“This API key cannot perform ssh.”** Successful
+API exec did not authorize the SCP transport. No retry, credential change,
+alternate channel, remote resume, other box or local heavy runtime followed.
+This establishes an access prerequisite, not an engine dependency failure.
+
+Evidence is local in `scratch/runs/20261031T2350Z-rune-original-browser/`:
+`scp-upload.log`, `runtime-exec-observation.json`, `outcome.json`,
+`transfer-manifest.json`, `source-compiler-identity.json`, `build-identity.json`,
+`pins-after.json`, `registration-check.log`, and shutdown receipts.
+The ordinary intended route remains
+`http://127.0.0.1:8098/emulator/?candidates&app=rune_demo` via
+`node ops/server.js --port=8098 --no-agents`, original `c:\System\Rune.exe`,
+cwd `c:\System`, empty args. No host, browser, first-run wizard, New Game,
+movement/look/fire or gameplay screenshots were reached. No guest failure
+module can be identified because guest execution never began.
+
+The full fixture check passed before staging. Read-only local hardlink
+staging then temporarily raised guest link counts to two; a second preflight
+correctly rejected that state at `.host/check-fixture.js:28`
+(`game/Help/Logo.bmp`, expected link count one). All staging links were removed.
+The durable final check again passes **142 originals / 128,542,865 bytes**,
+exact file set, package SHA-256, all four original EXEs, no guest hardlinks,
+and the unchanged 141-companion manifest pin `ed536fbc…e0baf48` above.
+No original bytes/configuration/registry entries changed. The focused
+`node test/test-rune-demo-registration.js --fixture` also passes.
+The staging diagnostic is preserved separately; it is not a guest dependency.
+Observed local free space remained above 2 GB (final fixture check: 2,359,427,072
+bytes). No archive copy or second checkout was created; reusable fixtures remain.
+
+Existing coordinator build/focused evidence at
+`scratch/runs/20261031T2327Z-coordinator-census/` was reused without rebuilding.
+The prepared tail-call module is 2,025,029 bytes, SHA-256
+`2be3cebaa1c08a8e12075de000bfb83fb8692841c1452d9e317203f5c2fce8cf`;
+compatibility module is 2,027,602 bytes, SHA-256
+`ab6bac597310f042d2e51e03109105a1f2d1449e8be19f9d44d04c16e0a3fee1`.
+These identify existing local binaries, **not browser-loaded modules**.
+Source/compiler input hashes and the staged runtime-file inventory are retained;
+no compilation or runtime qualification is claimed.
+
+The original assignment explicitly delegated shutdown after evidence handback.
+Denial evidence was already local before stop request
+`2026-10-31T23:50:38.738Z`; operation `stop_b2461b2cfa4bf7de` completed,
+and `stopped-state.json` verifies **stopped at 23:50:39.864Z**. Assigned expiry
+was `2026-11-01T00:23:29.680Z`; guest cutoff 00:12, handback 00:16 and
+shutdown deadline 00:18 were met early. No runtime ownership remains.
+Any future ordinary browser attempt requires a separately authorized working
+transfer path and fresh allocation; this worker launches no successor.
+
 ## 2026-10-31: local candidate registration
 
 Integration validation: the mandatory locked build passed for tail-call and
