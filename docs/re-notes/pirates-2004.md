@@ -832,3 +832,83 @@ verified closed. Cheap stderr/process/target diagnostics remain in the run;
 no crash or OOM cause is assigned. No Boat was allocated (ID/state/expiry
 N/A). This is documentation only, with no production changes or new build
 claim; no source fix is justified by the current evidence.
+
+
+## Original shader factory/library trace (2026-10-31 07:37 UTC)
+
+Evidence: `scratch/runs/20261031T0737Z-pirates-factory/`, with recovery
+instructions in `RECOVERY.md`. Static analysis precedes the single native
+probe. This run references the retained `8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`
+module and its matching 292-file source/compiler and frozen support closure
+from `20261031T0535Z-pirates-selection`; it does not combine that module with
+current host files. No production source is changed.
+
+The original EXE installs factory vtable `0x6c70d0` in constructor
+`0x5be670`. Its library registry is factory `+0x20`, iterator `+0x1c`;
+registration virtual `+0x24` is `0x5be470`, first/next library virtuals
+`+0x34/+0x38` are `0x5be570/0x5be5f0`. The registration callback
+`0x500460`, installed at `0x5004ef`, routes `NSBShaderLib` to `0x5e7c90`
+and `NiD3DXEffectShaderLib` to `0x5e0220`. Loader `0x5478d0` registers its
+nonnull callback output through factory virtual `+0x24`.
+
+`0x5e7c90` creates the NSB library through `0x5e8050`, installing vtable
+`0x6c9a58`. Library virtual `+4` is `0x5e7eb0`: exact name search
+`0x5e7e20`, then `0x5e9fb0(renderer, implementation)` on the matched binary
+shader. That function checks the requested implementation at
+`0x5e9ff7 -> 0x5e8a70`, tries suitable alternatives through `0x5e9bf0`,
+then constructs and sets up the binary shader. Requirements failure and
+later setup/compilation/API failure remain distinct. Original NSB header
+names and hashes for all nine `TTerrain_2B_UC` through `TTerrain_10B_UC`
+files are retained in `original-terrain-names.json`; no stage decode was
+repeated.
+
+The NSF references 16 distinct VS/PS program filenames; all 16 original
+files exist under `Assets/Shaders/FX/DX9` and their hashes are retained in
+`nsf-program-files.json`. This establishes disk presence, not successful
+runtime resolution or compilation. The 15 original instruction checks and
+factory/NSB vtable checks pass (`static-check.py`).
+
+**Outcome: incomplete; no causal rejection or missing original dependency
+established.** The one guest probe ran from 08:01:31 to 08:06:08 UTC with
+default guestWorker enabled (five guest workers), explicit WebGL and a
+stable 1024×768 viewport. Native Enter, Escape, Space and mouse input left
+it at the title screen. The host slice setting was raised from 5k to 50k;
+this changed the run budget, not guest state or clock. The five observers
+captured zero factory calls, including zero skipped names. Clearing their
+breakpoints during startup did not advance the title; all hooks were then
+restored, and a final unhooked Enter/wait also remained at the title.
+`unhooked-title-final.png` was personally inspected. The main worker was
+still retiring blocks (50,000 in the final unhooked snapshot); this is not
+proof of a shader or thread source cause.
+
+Consequently, the selected **runtime** library/vtable and same-call terrain
+name/requirements/API result remain unproved. The static NSB registration
+chain above is not a runtime selection claim. `check-evidence.py` correctly
+rejects the empty call trace; `check-outcome.py` verifies the static findings,
+executor identity, restored observers, retained inputs and explicitly false
+causal-discrimination result. It also rejects an unrestored-observer negative
+control. No library null is labelled a source fix.
+
+The accepted prior run's `sailing.png` was personally inspected: actual
+ship/HUD, St. Kitts/St. Eustatius, 600 gold, 41 crew and white coast. Its
+Threads box is unchecked. That is retained cooperative-run evidence, not
+a fresh sailing frame from this default-worker probe. No property writer,
+NSB stage decode or default-shader draw capture was repeated.
+
+A preceding browser startup failed before loading any page/guest or
+installing a probe: the harness compared a resolved frozen-source path
+against its symlink alias and returned HTTP 500. Correcting that harness
+allow check enabled the sole guest probe; `failed-startup/` preserves the
+failure and cleanup separately. Both browser exits were zero.
+
+Before/after checks pass for all 1,374 originals and 292 exact saved source
+files including compiler sources. All 374 served responses and 106 source
+URLs, plus the loaded module, match the frozen closure. All 18 recorded
+inputs were trusted and no keys remain held. `cleanup-check.py` verifies
+all observed owned processes absent, HTTP/CDP/control ports
+`42137/36491/41127` closed and profile removed; failed startup ports
+`36693/40615` and its profile/processes are also closed/absent. No Boat was
+allocated (ID/state/expiry N/A). Documentation only; no production change,
+new build, shader substitution or source-fix claim. Work stops here without
+a successor; the requested causal result remains blocked by failure to
+reach a factory call in the required default-worker execution.
