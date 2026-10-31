@@ -1130,3 +1130,92 @@ its processes were not touched. No browser, server, Boat or test box was
 created; box ID/state/expiry are N/A. Free disk stayed above 2 GB (about
 4.5 GiB at cleanup). Next useful extension is a separately serialized default
 Worker browser replay of this inspected native route; no successor launched.
+
+## UT2004 original default Worker browser gameplay (2026-10-31)
+
+Run `scratch/runs/20261031T0451Z-ut2004-browser/` qualifies the original
+registered demo in the **default guestWorker browser**, with the **software**
+renderer. Personally inspected browser screenshots show:
+
+- `deathmatch-windowed-origin-result.png`: DeathMatch maps, original DM-Rankin.
+- `rankin-load-progress2.png`: textured Rankin and the Fire-to-join prompt.
+- `player-hud-first.png`: assault rifle, health **100**, ammo **100**, and
+  **The match has begun!** after an ordinary viewport mouse press.
+- `native-forward-settled.png`: the player advanced down the corridor after
+  native **W** down/up held 2,200 ms.
+- `native-fire-settled.png`: ammo **99** after a native left-button hold;
+  `native-look-settled.png` subsequently shows **98**, with a changed view
+  after native mouse motion from `(340,400)` to `(430,360)`.
+- `native-retreat-settled.png`: the player retreated to the doorway after
+  native **S** down/up held 2,200 ms; health remains **100**, ammo **98**.
+
+`player-hud-workers.json` and `final-gameplay-workers.json` record a running
+`ut2004_demo` with `guestWorker: true`, an instantiated guest Worker, and a
+live render endpoint whose options specify `backend: "software"`. The page
+host bridge independently reports software with `lastError: null`. This is
+actual browser transport/gameplay evidence, beyond the earlier CLI result.
+It does not qualify WebGL, audio, throughput, enemy hits/kills or completion.
+
+### Native route and presentation limitation
+
+The registered executable, DLLs, manifest and `-d3d -window -nosound`
+arguments were unchanged. Escape reached the title. Tab/Enter selected
+Instant Action; early uncalibrated pointer attempts selected Assault.
+Ctrl+Shift+Tab returned from Select Map to Gametype, where a calibrated
+ordinary mouse press selected DeathMatch and the original DM-Rankin page.
+PLAY was selected by native mouse, loading was inspected, then a normal
+viewport left-button hold joined. `commands.jsonl`, screenshot-side JSON and
+`native-input.json` preserve commands and trusted key/button events. Capture
+names describe intended actions; only inspected outcomes above are claims.
+
+There is a measured **24-pixel horizontal / 44-pixel vertical presentation
+offset** in this pinned default Worker software route. Menu headers and the
+upper/left HUD are cropped, while the world, weapon, health and ammo remain
+readable. Native pointer targets needed the visible position plus `(24,44)`:
+DeathMatch `(204,380)`, PLAY `(459,674)`. These are calibrated browser input
+coordinates, not a guest-state or startup-route patch.
+
+The first cause is recorded in `presentation-geometry-workers.json` and
+`presentation-owner-state-eval.json`. The live guest instance reports
+`get_d3d9_windowed_hwnd() == 65541`, with client origin `(24,44)`. The page
+presentation owner's `hostCtx.exports` reports windowed hwnd **0** and main
+hwnd **0**, but shared `get_dx_present_hwnd()` correctly finds **65541**;
+the render Worker also reports windowed hwnd 0. In the frozen
+`lib/host-imports.js`, `_presentDxSurfaceToMainWindow` consequently starts
+the surface at screen `(0,0)`, then clips it against the correct client
+rectangle. The surviving source starts at `(24,44)`, explaining the lost
+headers and input offset. No production repair was attempted. The narrow
+next repair is to carry the windowed device origin to the page presentation
+owner, with a focused default Worker/software regression, then repeat the
+same original route. Retained menu frames during loading were separate:
+execution/RPC observations advanced before the world appeared.
+
+### Frozen identity, checks and cleanup
+
+Module SHA-256 remains
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`.
+The browser served the matching ReVolt0403Z **292-file source-after** snapshot,
+including host bytes; observed checkout `08b6288f2` is recorded separately
+and is not its compiled-source identity. All **998 original inputs**, all
+292 retained source files and **107 served snapshots** passed before/after
+or retained-byte comparisons; all **106 PNGs** passed signature/hash checks.
+The original EXE remains SHA-256
+`2a95e2fa8c22ae94eb1c361fdb49ea8ec44c5e2a93faa00831308c01e951db8d`.
+Unpinned application code was refused; optional `/build-info.js` returned
+404. Font-substitution bytes were separately frozen and hashed. No assets,
+guest memory, production code or registry entries were changed; no build
+was required for this documentation-only result.
+
+Chrome **151.0.7922.108**, headless at **1024x768**, used a loopback isolated
+server; the default Threads setting was untouched. The runtime lock and
+process gate serialized launch after Deus Ex closed. At shutdown the
+controller **1555850** unexpectedly exited **143**, with finalizer unfinished;
+its cause is unknown. Chrome **1555861** remained alive. Explicit delegated
+cleanup re-acquired the lock and used CDP `Browser.close`; both PIDs were
+then absent, HTTP **33513** and CDP **42377** closed, and the owned profile
+and watcher were removed/stopped. The waiting Pirates process gate refused
+the orphan interval, so no overlapping game runtime started. Cleanup and
+verification JSON preserve this limitation rather than claiming a clean
+controller exit. Free disk was about **4.4 GiB**. No Boat/test box was
+allocated; box ID/state/expiry are N/A. The bounded task finished within
+30 minutes and launched no successor.
