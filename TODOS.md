@@ -927,16 +927,16 @@ commit output — do not assume your hunks landed.**
   owner: codex:01a0f9db-89c0-73b3-b528-fe8bf239e061
   Notes: Planned60s observation ended normally4290batches/exit0; outer90s guard unused,6084 frozen hashes unchanged. Root reviewed640x480 title/loading PNG; no hang or gameplay claim. Both earlier harness failures preserved.
 
-- [~] Compare NFS3 speed and correctness in Glide, D3D and original software
+- [ ] Compare NFS3 speed and correctness in Glide, D3D and original software
   id: NFS3-RENDERER-BENCH
-  status: active
+  status: backlog
   created: 2026-10-02T04:00:31.545Z
   created-by: user-request via ops-dashboard
   candidate: need-for-speed-3-demo
-  Next: Review CDP SwiftShader versus Glide endpoint Intel/Mesa identity discrepancy from the completed failed attempt; propose evidence-backed correction without rerunning.
+  Next: Reclaimed 2026-10-31 from released Codex owner. Review the retained CDP SwiftShader versus Glide Intel/Mesa discrepancy and define the same-source three-renderer comparison; any heavy benchmark runs on a separate boat after a gameplay route is verified. Existing failed attempt is not a timing baseline.
   Done: Report all three guest renderer paths on the same identified source/WASM/browser/CPU/GPU, resolution and controlled race/weather/input route. Separate original game software rendering from our software backend; verify no hidden GPU fallback or SwiftShader substitution. Save reviewed race images, repeated warmed-up FPS/frame-time median and p95, CPU profiles, draw/triangle/texture/upload/readback/fallback counters, sample counts and spread, plus same-path control. Report unavailable paths explicitly. Record bottlenecks and a predeclared performance acceptance budget; historical high-load FPS is not a current baseline.
   Evidence: ops/handoffs/nfs3-renderer-bench.md; scratch/nfs3-renderer-bench-20261002/closure-report.json; scratch/nfs3-renderer-bench-20261002/local-resource-preflight.json; ops/handoffs/nfs3-capacity-recheck.md; ops/handoffs/nfs3-software-prep.md
-  owner: codex:01a0f9db-07f4-71d2-9fe8-42d5efc7f642
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-02T04:11:37.233064+00:00
   accepted-by: codex:01a0f9d8-c0cd-73b3-a357-fb3ff1c784c0
   Notes: Root34 downloaded hashes/cleanup/post-input checks pass; car/road image reviewed but no qualified timing. Failure occurred before qualification windows at backend identity gate. Host explicitly released for GTA2 then Unreal; all three original renderer paths remain required.
@@ -1086,14 +1086,14 @@ commit output — do not assume your hunks landed.**
   Evidence: ops/handoffs/01a08812-a2da-7333-83fc-851ef8fff7b1.md
 
 
-- [~] Measure browser FPS for strongest local and desktop game candidates
+- [ ] Measure browser FPS for strongest local and desktop game candidates
   id: OPS-GAME-FPS-BASELINE
-  status: active
+  status: backlog
   candidate: jazz-jackrabbit-2-demo-installer, reflexive-collapse-crunch, reflexive-ricochet-xtreme, unreal-special-edition, gta2-demo
   done: Publish run performance metadata with guest present counts, wall duration, per-sample p95 frame time, renderer/GPU, hardware-versus-SwiftShader, scene, build hash and measurement date; review playable route before measuring. No menu, browser rAF or CLI batch timing relabelled as gameplay FPS.
-  Next: Review ordinary Ricochet ball-launch input and evolving-gameplay scene admission; preserve ready-board diagnostic without publishing it as gameplay FPS. Continue GTA2 after NFS3 clean release.
+  Next: Reclaimed 2026-10-31 from released Codex owner. Select a verified evolving-gameplay route before measuring; retain unlaunched Ricochet board as diagnostic only. Heavy benchmarks run on a separate boat. Current UT2003/Pirates gameplay work keeps priority over benchmark dispatch.
   Notes: Ricochet root100hash/arithmetic audit and eight images reviewed: apparently unlaunched ball/full bricks/zero score, gameplay measurement unaccepted. Host released; NFS3 transferring. Collapse association preparation under root review/callsite proof assigned; Jazz route and Unreal package remain pending.
-  owner: codex:01a0f9db-07f4-71d2-9fe8-42d5efc7f642
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-02T05:21:49.472399+00:00
   accepted-by: codex:01a0f9d8-c0cd-73b3-a357-fb3ff1c784c0
   Evidence: ops/handoffs/ops-game-fps-baseline.md; ops/handoffs/ops-fps-labels.md; ops/handoffs/ops-historical-fps-semantics.md; scratch/ops-gta2-fps-20261002/root-review.md; ops/handoffs/ops-unreal-fps-preparation.md; ops/handoffs/ops-jazz2-package.md; ops/handoffs/ops-collapse-v2-package.md; ops/handoffs/ops-ricochet-measurement.md
