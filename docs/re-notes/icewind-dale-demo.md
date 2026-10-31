@@ -5,6 +5,138 @@ from Archive item `icewind_dale_eng_demo`. Its README expressly prohibits
 copying/electronic distribution, so the extracted fixture stays ignored and
 must not be deployed or rehosted.
 
+## 2026-10-31 original native installation complete; browser reports No Disc
+
+Run `20261031T2058Z-icewind-install` completed a fresh ordinary installation
+from the retained authenticated standalone ZIP. The inspected **Setup Complete**
+screen says installation finished; its native Finish button produced guest
+`[Exit] code=0`, followed by an explicit successful `Popen.wait`. The installed
+destination contains **1,079 files totaling 470,164,222 bytes**. No legacy
+preparation, host cabinet/BIF expansion, filtered KEY, rewritten configuration,
+save injection, or emulator change was used. The prepared fixture, authored
+state, and foreign WININIT prototype were not changed or reinventoried.
+
+Before extraction, the ZIP's 645,596,503 bytes, SHA-1
+`cc6345ae7decb43341bde25bb1302f422a42666c`, and SHA-256
+`992b3d9054ff089f40dba40debd0fe902117c1a21f80d7e34678ae3313c9ff80`
+were freshly verified. All 56 extracted files passed ZIP CRC checks and were
+hash-pinned without transforming their contents. Heavy work waited for the
+**current Nox direct-route successor's 21:03:51 NEWFULLRELEASE**, then independent
+actual PID-start, whole Chrome/global crashpad, profile, ports, and FD9 checks.
+That predecessor explicitly lacked durable wait receipts; this run checked
+actual absence instead of treating the old 20:43:34 release as sufficient.
+
+The documented bootstrap/replay commands below were reused with paths under
+this run: `original-source/icewind_dale_eng_demo/Setup.exe`, `bootstrap/`, and
+`installed-vfs/`. The original Setup emitted a 111-file capture and its
+557,056-byte `_ins5576._mp`, SHA-256
+`a8657371f03e2e66db951c3dcd3aeb42c576894908ca2eb1b3806aa0404cb083`.
+The engine and both emitted seed DLLs are pinned in `final-check.json`.
+Only SHA-identical source/capture files were hardlinked to keep export space
+available; the guest still decompressed its original cabinet itself.
+
+The native Welcome, License, Recommended, CPU Speed, Destination, and Program
+Folder choices retained their defaults. At batches 6,100, 12,100, 20,100, and
+24,100 the inspected copy screens showed 24%, 41%, 64%, and 86%. The post-copy
+DirectX 7.0a prompt was declined with its native No command, ID 7. At batch
+30,201, `10-after-optional-directx.png` shows Setup Complete. The attempt to
+clear Readme with `dlg-input-click:501` did **not** toggle its check; the
+retained control dump and `11-finish-options.png` show it still checked, with
+Run Game unchecked. Finish ID 1 at batch 30,213 requested the Readme shell
+open and exited normally. No successful Readme launch is claimed. The
+controller reported “guest exited while command pending 0” because natural
+guest exit interrupted its requested 50-batch step; the guest Exit log and
+durable exit-0 wait distinguish this from a deadline or synthetic success.
+
+| Original installed file | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `iddemo.exe` | 6,283,264 | `b94816d10029cb99c0315f175330c917be2fff298394e853e2764973d8d13af4` |
+| `chitin.key` | 216,476 | `c04920810d6663f6e23779c16dadbed88408b4a0528fd79c686d81fd535f6292` |
+| `icewind.ini` | 449 | `eec07e40a941ea22c9ebf19631250bac021ecc57cdb8b251b3506b2c004be9fb` |
+
+The installer itself finalized the earlier 316-byte relative INI to
+`HD0:=C:\Program Files\Black Isle\Icewind Dale Demo\`,
+`CD1:=C:\Program Files\Black Isle\Icewind Dale Demo\CD1\`, and
+`CD2:=C:\CD2\`. These are guest-written bytes, not a host correction.
+All 27 exported CD2 files match the authenticated source sizes/SHA-256;
+246 installed override files and the entire installed closure are pinned.
+EXE/KEY match their retained original pins. The new output manifest is a
+local pin with native-installer provenance, not an independently compared
+upstream installed-tree manifest.
+
+The optional fresh Chrome 151.0.7922.108 probe served those original installed
+and CD2 files at their exported guest paths, with an isolated profile,
+default Worker/Threads, WebGL, audio/clock behavior, and trusted balanced
+Escape inputs. A private app-registry response changed only asset URLs,
+guest paths, and working directory; no tracked registry or guest bytes were
+edited. The native log reported **“No Disc Detected. Game Aborted.”** at
+21:15:59. There was no accepted menu, character, Prologue DONE, tavern, or
+movement, and no retry or save injection. Later gray frames are not gameplay.
+The next investigation is the original CD2 optical-drive presentation and
+native disc scan, preserving this KEY/INI/export. Do not assume that another
+INI rewrite or a prepared KEY is required.
+
+The accepted canonical module file stayed
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`;
+all 1,395 accepted source/compiler pins matched before and after. No build
+was needed because no emulator implementation changed. The browser-loaded
+module hash was not independently captured. All installed closure hashes
+still matched after the probe. No FPS or audible-output result is claimed.
+
+### Space recovery and an ownership mistake
+
+Safe net reclaim was **2,013,306,880 allocated bytes** after correction:
+lossless gzip of stopped terminal transcripts and released completed-run
+data, plus 277 SHA-verified hardlink replacements of identical retained WASM
+files. Per-file original/decompressed SHA-256 and size pairs, original
+timestamps/modes, and hardlink sources are retained in the run's receipts.
+`RECOVERY.txt` and `recover-transcript.py` restore a selected compressed
+original with hash verification, retain the gzip, and require more than
+2.1 GB free after restoration. Hardlinked evidence must be detached by
+verified copy/replace before future editing. No original package/fixture
+was compressed or removed. Minimum recorded free space during compression
+was 2,729,975,808 bytes; final runtime release had 2,873,475,072 bytes free.
+
+The initial release filter incorrectly matched `NEWFULLRELEASE` as well as
+explicit `RELEASE`. It compressed the **active Nox profile's**
+`ActorSafetyLists/9.8200.9609/listdata.json`, a scope violation. Its original
+and decompressed size/hash matched before replacement, but Nox's subsequent
+own profile cleanup removed the directory and gzip, so that temporary file
+is no longer recoverable here. No foreign process was signaled; the cause
+of Nox's separately reported supervisor exit 143 remains unknown. The full
+mutation audit and correction were announced on the board. Forty-eight
+older files with uncertain release status were restored and hash-verified,
+with their gzip archives retained. The filter was corrected to explicit
+release records; restored storage and the profile incident are excluded
+from the safe net reclaim above. Eighteen tracked evidence originals were
+also restored byte-identically, retaining their gzip archives; their storage
+is deducted from this final total. Guarded operations also stopped on an
+absent target and a changed-size file without modifying those files.
+
+The single combined runtime lasted approximately 10.5 minutes, within the
+17-minute target. Extraction, bootstrap, engine, installed audit, and browser
+controller have durable successful child waits; supervisor tool sessions
+also returned 0. At 21:19, all 23 recorded own PID-start identities were
+absent, whole Chrome/global crashpad was empty, ports 34721/40747 were closed,
+the profile was gone, inputs were released, and FD9 was free. No runtime
+signals were needed. Boat ID/state/expiry N/A. This NEWFULLRELEASE handed
+the runtime to the waiting Nox successor; it is not a claim about later
+foreign processes.
+
+Recovery starts with this run's retained `installed-vfs/`, not the legacy
+prepared fixture or the old partial exports. `runtime.py`,
+`extract-original.py`, and the bootstrap `launch.json` preserve the exact
+native install route. `installed-all-files.json`, `installed-closure.json`,
+`original-cd2-joins.json`, `completion-reviewed.json`, `engine.log`, browser
+console/input records, and `full-release-final.json` retain the evidence.
+The run's 31 artifact references pass existence/containment checks, and the
+notes pass `git diff --check`. The repository-wide evidence checker remains
+non-green (9 containment errors, 200 missing references, 114 invalid records);
+none names this run. Compressed historical originals require the documented
+restore recipe before consumers expecting their former raw paths can read them.
+Next: qualify the original CD2 browser mount, then require native character
+creation, Prologue DONE, and paired unpaused floor-click movement images.
+
 ## 2026-10-31 original package recovered; installation awaits disk space
 
 Run `20261031T2045Z-icewind-recovery` recovered the exact standalone original
