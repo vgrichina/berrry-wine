@@ -222,3 +222,75 @@ or helper process was launched; the own CLI was durably reaped, its PID/start
 identity absent, whole Chrome/crashpad census empty, predecessor ports closed,
 no profile or held input, and `/tmp/wine-browser.lock` free. See
 `full-release-final.json`. Boat ID/state/expiry: N/A.
+
+## WININIT follow-up: semantics gate retained (2026-10-31)
+
+The follow-up preserves the genuine NEEDRESTART checkpoint unchanged. Setup
+was not rerun, pending operations were not applied, and FreeSpace was not
+launched. Evidence: `scratch/runs/20261031T2029Z-freespace-wininit/`.
+`candidate-vfs/` is a private, byte-matching copy of all 250 exported files;
+`checkpoint-manifest.json` pins them. `installer-registry.json` is a byte-for-byte
+copy of the installer export, not a Version-only import. `raw-wininit.ini`
+retains the exact original bytes, including duplicate NUL entries. The original
+checkpoint remains the authoritative recovery state.
+
+Primary-source review established a narrower contract than a complete Win98
+boot emulator:
+
+- [Microsoft KB140570](https://ftp.zx.net.nz/pub/archive/ftp.microsoft.com/MISC/KB/en-us/140/570.HTM)
+  describes destination=source, NUL deletion, duplicate destinations,
+  case-insensitive names, same-volume short paths, replacement of an existing
+  file, and consumption as WININIT.BAK. Its relevant section addresses Win95.
+- [Microsoft's archived MoveFileEx documentation](https://techshelps.github.io/MSDN/WINBASE/devdoc/live/pdwbase/filesio_9oe0.htm)
+  explicitly covers Win95/98 WININIT and backup. Its separate guarantee about
+  execution order addresses the NT registry queue; it does not establish that
+  guarantee for Win98 WININIT.
+- [Wine's wineboot implementation](https://github.com/wine-mirror/wine/blob/master/programs/wineboot/wineboot.c)
+  iterates entries in order, logs per-operation failures, continues and archives
+  the INI. This is direct evidence of Wine's behavior, not proof of original
+  Win98 error handling. `sources.json` pins the retrieved source bytes; no
+  original Win98 WININIT executable was found under /home/user or /opt.
+
+**Remaining blocker:** authenticate Win98 ordering and failure/retention rules
+from original code or sufficient primary documentation before declaring an
+actual boot completion. The installer-written order strongly suggests the
+intended delete-before-replace sequence, but that inference is not acceptance
+evidence for the boot implementation. Neither Wine's error policy nor the NT
+queue's documented order was silently substituted for Win98 behavior.
+
+Uncommitted WIP is retained at `lib/wininit-boot.js` and
+`test/test-wininit-boot.js`; these paths are deliberately not integrated into
+process startup. The prototype operates on an offline VirtualFS, preserves
+ordered duplicate entries, moves entry identity and bytes, archives raw INI
+bytes, and makes a second application a no-op. It rejects unsupported paths,
+other boot sections, control-file mutations, cross-volume moves, open handles,
+read-only files/volumes and missing sources before mutation. That transactional
+failure policy is an emulator safety restriction, **not verified Windows
+behavior**. Its passing tests do not qualify the prototype for installation
+completion or demonstrate safe execution of the installed DirectX DLLs.
+
+Cheap checks passed: six generic test groups covering duplicate NUL entries,
+ordered chained/duplicate replacements, case, backup/replay, missing sources,
+path confinement and offline/error boundaries; and
+`test/test-directx-registry-metadata.js`. The baseline-module experiment fails
+because the existing boot helper has no explicit transition API; this establishes
+the missing feature, not a measured Win98 behavior mismatch. Logs and WIP hashes
+are in `cheap-tests.json`, `new-pass.log`, `baseline-fail.log`,
+`registry-test.log` and `wip-pins.json`.
+
+No code is committed by this follow-up. No canonical build, source-compiling
+system-files test, WASM version test, heavy CLI or browser was run: the current
+Nox successor holds runtime priority and its release gate was not consumed.
+The earlier three policy-test results remain historical evidence only. No
+registry/default metadata or DLL policy changed. No own runtime, controller,
+server, monitor, profile or held inputs were created; FD9 was not acquired.
+Foreign Nox processes were left alone. Boat ID/state/expiry: N/A.
+
+Recovery: verify `checkpoint-manifest.json` against both the original
+`20261031T2018Z-freespace-real-dx/result-vfs/` and the private candidate; compare
+both registry exports byte-for-byte. Review the pinned sources and prototype,
+then establish the missing Win98 semantics. Only after that gate, the current
+runtime dependency release, an independent actual-process/ports/profile/FD9
+gate, focused tests and the locked canonical build should the six original
+operations be applied and joined against the package hashes. Original-game
+startup must then capture its first actual failure before any override or retry.
