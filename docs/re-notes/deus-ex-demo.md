@@ -613,3 +613,64 @@ this is retained in cleanup evidence without attributing a cause. Cleanup
 verified2.42GiB free disk. No Boat allocated: ID/state/expiry N/A. Recovery,
 native commands, source/build identities and focused checks are retained in
 the run directory. Stopped on the demonstrated bounded outcome; no successor.
+
+## 2026-10-31: DataCube code, security keypad and next multitool room
+
+**Passed: identify/read the desk DataCube, enter its code at the security
+keypad, and traverse the opened door into the next exercise.** Evidence:
+`scratch/runs/20261031T0713Z-deusex-lockpick/`. This fresh original Training
+launch replayed the visible menu, NanoKey pickup/unlock, crowbar/crate and
+native lockpick route. Receipts and world changes were personally inspected;
+turn durations required fresh corrections. The first crate attacks and first
+lockpick use missed; successful later actions are preserved separately.
+
+`desk-item-identified.png` labels the item **DataCube** and shows Jaime's
+instructions: right-click the cube, read its contents, type the code into the
+keypad, and activate the keypad with the right mouse button.
+`desk-item-close-view.png` says the door code is stored in that cube. Native
+RightMouse180ms produced `datacube-contents.png`: **Note Received — Check
+DataVault For Details**, with Jaime's message giving code **0012**. This item
+is read in place; no belt slot or inventory pickup was assumed.
+
+`keypad-label.png` identifies **Security Keypad, Bypass Str: 20%, 2 tools**.
+Native RightMouse180ms opened its interface. Four ordinary keyboard presses,
+0/0/1/2, populated the masked display (`keypad-first-digit.png`,
+`keypad-second-digit.png`, `keypad-third-digit.png`); `keypad-two.png` shows
+green **GRANTED**. The interface then closed automatically. The later
+`keypad-code-result.png` notification “It's secure” does not negate the
+captured GRANTED or subsequent open door. `code-door-after-granted.png`
+shows the automatically opened passage and a different closed door beyond.
+Native strafe corrections and forward movement crossed the open passage.
+`next-exercise-arrival.png`, `next-exercise-instructions.png` and
+`next-exercise-room.png` show the next room and Jaime's new transmission
+about disposable multitools, finite resources and hacking devices.
+`code-door-behind.png` looks back through the open door at the DataCube desk.
+These are distinct visible progression states. **The multitool exercise was
+not performed, and Training completion is not claimed.**
+
+Runtime SHA-256 remains
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`;
+the exact292-file saved-source manifest remains
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+All131 original/support files and292 saved source files passed before/after
+verification. The105 served snapshots exactly match the predecessor's
+URL/hash closure; current-host/old-module mixing was not used. Original
+19-DLL closure, mount-time SoftDrv/fullscreen INI, default guestWorker with
+three workers, guest640×480 and browser1024×768 are preserved. Observed
+checkout HEADdf174b3cf is metadata, not the runtime build identity. No source
+repair/build, asset/INI/state/clock patch, cheat, input bypass, resolution/FPS/
+audio diversion or public deployment occurred. Focused checks passed224
+trusted native events, ten interaction deltas, four keypad digits,196 PNG
+signatures and35 personally inspected captures.
+
+Preparation began07:12UTC; the browser lock was acquired07:13:06UTC and
+cleanup completed07:24:00UTC. Chrome1713772 exited0; controller1713762,
+holder1713750, all tracked children/crashpads, own quit wrapper1725079 and
+watcher1713955 are absent. HTTP42491/CDP32957 are closed, profile removed,
+no keys held, and2.26GiB remained free. Full browser lifetime and shutdown
+were under `/tmp/wine-browser.lock`; the post-lock live-process gate passed.
+The quit helper waited30 seconds for an acknowledgement that the controller
+does not emit on quit, then exited normally; this was not a runtime failure.
+`RECOVERY.md`, identity, gameplay, verification and cleanup records are
+retained. No Boat allocated: ID/state/expiry N/A. The next work, if assigned,
+is the visible multitool exercise; no successor was launched.
