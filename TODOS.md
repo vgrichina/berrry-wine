@@ -1124,16 +1124,15 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: slave-zero-passmessage-cause-main-oct31 (01a19320-a81a-7b93-80b4-d9de67fa4ea1; handle2253); evolva-async-ini-level-main-oct31 (01a1932d-73e0-7e53-9799-2c218fbf5661; handle63061)
-  status: active (Evolva async INI level read; Slave Zero first PassMessage failure)
+  worker: slave-zero-deferred-node-lifetime-main-oct31 (01a1933a-f243-7253-8afe-ec5e5b0144bb; handle49720); evolva-async-ini-level-main-oct31 (01a1932d-73e0-7e53-9799-2c218fbf5661; handle63061)
+  status: active (Evolva async INI repair build; Slave Zero first audio/deferred-node lifetime)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Acceptedc95f363a9 render-target ABI repair: actualDevice7 nowreturnsSurface7, DDSD2 dimensions640x480 and viewportprojectioncorrect; meaningfuloldFAIL80070057/newPASS, fivefocused+fullbuildPASS, personallyreviewed08nativeLand4briefing notjungle/gameplay. FreshEvolvaworker repairs exact ini_get_string->_iniResolve->_vfsReadText VfsPendingError onasync-only originallevel4.lvl with valid-use regression, no guessed defaults/asset edits. Its build/runtime waits CURRENT SlaveZero PassMessage NEWFULLRELEASE + independent actualwholeChrome/globalcrashpad/profile PIDstartFD9gate. SlaveZero07794dfd4 findings-only accepted: sampledSurface4 mip/GetAttached/AddRef/Lock succeed, original7078 unresolved; nativePassMessage nullgatewaycallback node16f0c28 command2 thenExitProcess beforeNEWGAME is currentfirst-failure target, cityscript notgameplay; held4a3neverport. Earlier2dc6457f4 blackprimary and9eff3d372 workerregistry accepted. Two workers onebrowser/heavyCLI; launch2.6GB continuous>2GB stop2.1GB. Neither newtitle gameplayqualified; UT2003software/WebGLaccepted existingtitle, full27/crashsweep open.
+  Next: Accepted71f2618f8 findings-only: personally reviewed07 native menu, audio pre-Lock null-buffer fatal precedes malformed deferred node PassMessage. Exact lifetime/acquire/wait/close/release/refill order unproved, no generic patch or gameplay qualification. FreshSlaveZero targets first audio failure before later deferred-node effects; its build/runtime waits CURRENT Evolva asyncINI NEWFULLRELEASE and independent actualwholeChrome/globalcrashpad/profile PIDstartFD9gate. Evolva causal async original254bytelevel4.lvl OLDFAIL/newPASS TerrainMesh read now passes unit coverage; fullbuild+15focused started183116 afterSlaveZero FULLRELEASE182238, no native result yet. Prior c95f363a9 viewportABI repair accepted with Land4briefing, notjungle/gameplay. Two workers onebrowser/heavyCLI, disk>2GB; lossless closedprocessedlogs restored2.6GB launchreserve. OriginalSlaveZero7078mipfailure/audio cause unproved held4a3neverport. Full27/crashsweep open.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
-
 - [~] Inventory every game and complete gameplay screenshot/FPS coverage
   id: OPS-ALL-GAMEPLAY-COVERAGE
   status: blocked (saved runtime box stopped; owner resume required)
@@ -1197,7 +1196,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   note: 2026-10-31T04:00Z bounded original Forsaken software route reached inspected Volcano briefing/loading scene at1129batches/60.030s; firing scheduled1180 was not reached, so no movement/combat acceptance. All876 original/runtime input hashes unchanged; retained module7f9da4e9 compiledsource unknown, run20261031T0400Z-forsaken-volcano. Fresh worker pursues actual browser gameplay past briefing. Daikatana route80b11f423 preserved without verified exit; Pirates8581ed6dd records effective-state boundary and generic page crashes without production cause/fix.
   status: active (UT2003 repair/UT2004 WebGL/Forsaken movement accepted; Pirates textured coast repaired/native landing party accepted; full27 both-backend coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: shared two-worker queue; current new-title workers slave-zero-mip-surface-cause-main-oct31 and evolva-viewport-projection-cause-main-oct31
+  worker: current new-game workers above; existing corpus results retained, additional runtime serialized behind them
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
@@ -1207,7 +1206,6 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   note: 2026-10-31 fresh coordinator reviewed Forsaken598564490 and explicit/combat-final.png: native movement/fire/ammo consumption and player death are observed, but retained briefing fragments/overbrightness prevent readable sustained gameplay. Module7f9da4e9 compiled source unknown; no production fix or full backend acceptance. Run20261031T0401Z-forsaken-play.
   Done: Status table for the full GL/D3D set in docs (software + WebGL per app, with run ids), and each fixed app has a reviewed in-game screenshot and commit on main.
   Evidence: memory project_gl_d3d_corpus_goal (27-app set, 2026-09-22); tools/gfx-app-census.js; tools/gl-name-census.js
-
 - [ ] D3DIM async-flip PBO trips Chrome "READ-usage buffer written again before being read back"
   id: D3DIM-ASYNC-PBO-WARN-20261006
   status: blocked
