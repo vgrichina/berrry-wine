@@ -1699,3 +1699,70 @@ public deployment, audio/FPS or complete-playability claim is made.
 must first prove isolation/default guestWorker on the initial page, then load
 this unchanged checkpoint normally and navigate from inspected landmarks to
 the Den; the initial-page combat cannot substitute for that check.
+
+## Isolated native restore and field combat, 2026-10-31 (Den incomplete)
+
+Run `20261031T1543Z-diablo2-isolated-den` repairs the isolation omission in a
+**new scratch harness** and verifies native DENMAP restoration before movement.
+The custom responder sets `Cross-Origin-Opener-Policy: same-origin` and
+`Cross-Origin-Embedder-Policy: require-corp` before every response branch.
+Actual HTTP checks cover frozen HTML/Wasm, static native-save files and both
+404 paths; every recorded runtime response has both headers. The initial
+page positively records `crossOriginIsolated=true`, default `guestWorker=true`
+and explicit WebGL before any game input. All 59 captures retain that
+configuration, a 1024x768 viewport and stable game-canvas geometry. Launch uses
+`defaultViewport:null`, one viewport setup and no reconnect.
+
+This replays the exact 144 frozen inputs from the 0402Z manifest, including
+repaired Wasm
+`7f9da4e9da5183e9f7f061d2356cd34626fe74bdbaf7da0345f6693dd81152be`.
+Compiled source remains **unknown**; this is not a current-main retest.
+All inputs verify before and after, and all 148 frozen responses among 217
+served responses match their pins. The 25 existing original runtime files
+verify before and after; the previously absent unused installer remains absent.
+No production code, original assets, INI, clocks, save bytes or guest memory
+were edited. No guest tracing or input bypass was used.
+
+The four immutable whole files from the 1523Z `native-checkpoint/manifest.json`
+were mounted unchanged at their original guest paths through the normal app
+file loader. Native Single Player shows **DENMAP, Level 1 Barbarian** in05;
+selection06 and native OK07 load inspected town08 **before movement**.
+Ground movement12 verifies playable consumption. A normal belt potion restores
+the saved low life. Short local presses, with automap and terrain inspections,
+clear the palisade approach and stone bridge;42 explicitly shows
+**Entering The Blood Moor**. No prior seed or blind route was assumed.
+
+Two zombies approach in70/72. Native targeted attack identifies **Zombie**
+and shows the hero's raised weapon in74;76 shows one zombie collapsed beside
+the remaining standing enemy. Further targeted melee79 and native belt potions
+lead to two fallen bodies in82, with life restored. These are inspected native
+combat observations under isolation/default guestWorker/WebGL, in **Blood
+Moor**, not inside the Den. Final115 remains Blood Moor beside a barrel and
+stone boundary; neither a Den label nor a cave transition was observed.
+Backend snapshots report ready WebGL, zero errors and zero completed software
+draws. Audio, FPS and extended play remain unqualified.
+
+The first unmet continuation prerequisite was **free disk**, not an established
+emulator defect. At16:01:44 UTC the monitor observed 2,090,258,432 bytes free,
+below the required 2.1GB early-stop threshold but above 2GB, and cooperatively
+quit. This interrupted the search before the planned native Save and Exit,
+new whole-file export and second fresh-page restore. No newer checkpoint was
+exported or verified; the original four-file checkpoint remains unchanged.
+Request116 arrived after quit, timed out unexecuted and is absent from the
+controller command log. There was no retry or second browser.
+
+The sole browser ran15:51:57.845–16:01:44.706 UTC, following UT2003's **new**
+15:50:01 FULLRELEASE and an independent prelaunch whole-Chrome/global-crashpad
+PID/start gate with 2.414GB free. An earlier inline precheck falsely matched
+its own shell text; that result is retained, and the subsequent lifetime gate
+was clear before Chrome launched. The durable Python supervisor waited for
+wrapper/controller/monitor; all raw exits, including Chrome, are zero and no
+signals were sent. Focused checks verify 124 balanced trusted events, unchanged
+save/fixture/served hashes, geometry/backend/isolation and 651 active FD9
+samples with all three lock holders. PID/start cleanup confirms all owned
+processes and watcher absent, both ports closed, profile removed, held inputs
+empty and full flock available; FULLRELEASE was posted16:03:08.
+Boat/test-box ID/state/expiry are N/A. No build or deployment occurred.
+`recovery.txt` retains the normal restore recipe. Next work needs sufficient
+sustained disk headroom, then a fresh native restore and inspected local route
+to an actual Den entrance, reserving time to validate any newer native save.
