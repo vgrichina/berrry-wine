@@ -21,7 +21,8 @@ bottom HUD during native movement/look/fire, health100 and ammo100 to98.
 Visible DeathMatch and PLAY clicks work at their displayed coordinates.
 The full build and focused real-instance/pixel/Reset/DirectDraw tests pass;
 the new regression rejects the saved old source. Enemy hits/kills, match
-completion and WebGL remain unverified. See the
+completion and WebGL remain unverified. A fresh worker tests the missing
+actual WebGL native match arm. See the
 [UT2004 native route](re-notes/unreal-family-demos.md#ut2004-original-dm-rankin-movementfire-retest-2026-10-31).
 
 UT2003 diagnosis `b2647538c` in `20261031T0531Z-ut2003-readback`
@@ -54,7 +55,12 @@ of the next locked door. The coordinator inspected pickup/unlock/corridor
 frames;74 trusted inputs and the same131 original/292 source/105 served pins
 pass. Actual guest canvas640x480 differs from browser viewport1024x768;
 1024x768 guest rendering is unqualified. Runtime cleanup verified. Training
-completion and FPS remain unverified; a fresh worker advances the next exercise.
+completion and FPS remain unverified. Follow-up `3d04b4841`, run
+`20261031T0617Z-deusex-next-exercise`, verifies crowbar pickup/equip and
+breaking an upper wooden supply crate with native input. The coordinator
+inspected pickup, intact/broken crate and Jaime lock-picking follow-up frames;
+102 trusted events/five interaction deltas and131 original/292 source/105 served
+pins pass. Runtime cleanup verified. Lock-picking remains unattempted.
 See the [Deus Ex browser notes](re-notes/deus-ex-demo.md).
 
 Pirates documentation `a7725adaf` verifies native sailing near St. Kitts
