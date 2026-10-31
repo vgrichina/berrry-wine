@@ -1423,3 +1423,86 @@ after its process disappeared; no raw wrapper-exit0 claim is made.
 No foreign signals, production edits, full build, arbitrary memory scans or
 writes, asset/INI/clock/save-byte edits, cheats, input bypass, guestWorker
 disable, public deployment, Boat (ID/state/expiry N/A), subagents or successor.
+
+### 2026-10-31 crate exit: repositioned launch reaches a transient wood contact; exit remains blocked
+
+Run `20261031T1301Z-deusex-exit` restored only the immutable count7/time01:09:32
+two-file manifest through app.files/vfsPaths and ordinary native Load Game.
+The accepted observer matched player (7058.3203,-1773.3511,15.9),yaw184635,
+Physics1,height43,radius20 and zero velocity before movement. Count6 and count7
+files remain unchanged. Training, pipes and recharge were not replayed.
+
+Original BSP analysis identifies the intended lower wood at X7024–7088,
+Y−1872–−1808,topZ96. The adjacent tall wood at X6960–7024,Y−1856–−1792,
+topZ160 intercepts an approach from the left. The actual next exercise is the
+original `dl_ladder` trigger near (6991.97,−2362.70,5.55), beyond the crate-room
+doors near Y−2000. Neither those doors nor that exercise was reached.
+
+Ordinary climbs again reached the floor small crate, low wood and upper metal.
+Attempts with insufficient running speed fell short; longer approaches could
+leave the upper crate before Space took effect. RightMouse then lifted the
+upper crate (`63`/`65`); ordinary movement while carrying and a downward-aimed
+Tab drop repositioned it (`69`/`74`). Subsequent stable standing centerZ111.427
+is recorded. Carrying mass40 prevents jumping in the original DoJump script;
+the crate was dropped before every subsequent jump.
+
+The repositioned diagonal jump `78` reached centerZ158.77, but its forward
+velocity collapsed near (7019.78,−1770.71,157.87). Original geometry explains
+this as contact with the front of the topZ160 wood, before the player cleared
+its right edge. A more easterly ordinary running jump (`90`:Up220ms,then
+Space650ms,then both released) cleared that obstruction. Its read-only trace
+records Physics1 and zero vertical velocity at
+(7102.9736,−1797.7441,143.4226), consistent with brief contact at the topZ96
+wood's east edge. Horizontal velocity was still (206.73,−106.78). This contact
+lasted only two observer samples,25ms apart; no image captured that instant.
+The player continued into the east floor area, where the inspected final
+image shows no new exercise. This is **not a stable landing or exit traversal**.
+
+The precise remaining dependency is to retain the topZ96 landing after
+clearing the topZ160 wood, then cross its far edge toward the actual doors.
+Releasing Up earlier is the next control hypothesis, not a verified solution.
+The attempted repeat failed to regain the same launch state. Native save
+decoding later showed that contact had shifted the floor small crate north
+to (7061.5371,−1666.8571,−13.1472), and the repositioned upper crate to
+(6968.7236,−1743.5118,51.05). Reusing earlier approach coordinates was therefore
+unreliable. No emulator defect is established.
+
+An ordinary native save produced count8/time01:24:25. Whole immutable files
+are retained in this run's `progress-native-checkpoint/`:
+saveinfo34576B,SHA256`ba471693be27576e9dd30a4b901415ad00b916a2d828a8443eb37d7f46e7dc68`;
+Training3232653B,SHA256`b25220987668c04f8346f21cb925d8151d1e55d286b6787f1e618331abb4bd4b`.
+A reserved fresh page mounted only those two files, showed native count8 in
+the Load dialog (`141`), and ordinary native Load restored the decoded player
+(6948.3442,−1755.5117,111.427),yaw335104,Physics1,BaseCrateUnbreakableSmall0.
+The observer independently matched location/rotation and zero velocity, then
+remained stable2908ms. **The final screenshot (`145`) still shows LOADING**:
+restored gameplay rendering/layout was not visually validated before the
+bounded deadline. A requested second capture was never executed. Count8 is
+a diagnostic save with this explicit limit; accepted count7 remains preferred.
+
+Exact module8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676,
+292-source manifest9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379,
+131 original/support hashes,105 canonical served sources and19 DLL mounts
+pass before/after checks. Frozen0403Z source/module and0736 canonical support,
+SoftDrv/default guestWorker,three workers,guest640×480,browser1024×768 remain.
+All528 native events are trusted and balanced, including30 Space,one
+RightMouse and one Tab; all58 PNGs are1024×768. The initial observer is byte
+identical to the accepted count7 observer; the fresh observer changes only
+decoded-save initial location/yaw. Positive and five negative fixtures pass.
+
+Fresh Pirates FULLRELEASE13:09:15 and the actual process gate preceded the
+single bounded session. Controller start13:09:32.735 to cleanup13:26:34.562
+was1021.827s. A detached durable supervisor retained actual Popen wait results:
+wrapper0,controller0,monitor0; browser exit0. Full-lifetime fd9 history covers
+wrapper/controller/monitor while the profile existed. Disk started>=2.3GB,
+minimum2227294208B; the2.1GB early stop did not fire. The timed final wait
+crossed the17-minute controller deadline by less than one second; browser
+cleanup still finished before18 minutes,all cleanup before19 minutes.
+Historical audit verifies21 runtime PID/start identities absent,including
+both global crashpads,two ports closed,profile absent,held inputs empty and
+full flock available. The board watcher was separately qualified/terminated;
+the pending capture helper timed out and exited. FULLRELEASE was announced
+13:27:50 after actual absence checks. No further browser was launched; no
+global gate is rerun during the next worker's session. No foreign signals,
+production edits,build,asset/INI/clock/save-byte/memory edits,cheats,input
+bypass,guestWorker disable,public deployment,Boat or subagents.
