@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: pirates-known-source-crash-main-oct31; ut2004-original-browser-match-main-oct31
-  status: active (Pirates crash/effective-state and UT2004 browser gameplay; one runtime at a time)
+  worker: pirates-known-source-crash-main-oct31; ut2004-windowed-origin-repair-main-oct31
+  status: active (Pirates crash/effective-state and UT2004 windowed-origin repair; one runtime at a time)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: UT2004 original DM-Rankin native movement/look/fire verified in run20261031T0427Z-ut2004-match, notes2342e9288 pushed; coordinator inspected46-fired health100ammo96. Retained8459597 exact dirty source snapshot, no browser or match completion claim. Forsaken50bb30050 reproduced stale briefing/partial world inside known-source GPU target, upstream missing-draw cause unproved; no repair. Deus Ex940371775 default guestWorker browser Training native movement, right-click door opening and traversal accepted; coordinator inspected beyond-first-door.png, matching8459597/292source and cleanup verified. Pirates known-source crash/effective-state follow-up launcher1560386 takes freed slot, 30min bound. Owner seven-topic integration completed: four tested commits on main, three duplicate/superseded topics; CRT jumps remain blocked by ownership/dual-dispatch prerequisite. UT2004 browser follow-up thread01a1904b-b8be-7da0-83c6-cc1f95ed7f61 takes its freed slot, uses serialized runtime after Deus Ex cleanup. ReVolt59a615fc5 race input and DeusEx849d6a527 CLI Training remain accepted; Diablo noDen. Serialize runtime, preserve laptop ownership and no public deployment.
+  Next: UT2004 original DM-Rankin native movement/look/fire verified in run20261031T0427Z-ut2004-match, notes2342e9288 pushed; coordinator inspected46-fired health100ammo96. Retained8459597 exact dirty source snapshot, no browser or match completion claim. Forsaken50bb30050 reproduced stale briefing/partial world inside known-source GPU target, upstream missing-draw cause unproved; no repair. Deus Ex940371775 default guestWorker browser Training native movement, right-click door opening and traversal accepted; coordinator inspected beyond-first-door.png, matching8459597/292source and cleanup verified. Pirates known-source crash/effective-state follow-up launcher1560386 takes freed slot, 30min bound. Owner seven-topic integration completed: four tested commits on main, three duplicate/superseded topics; CRT jumps remain blocked by ownership/dual-dispatch prerequisite. UT2004 browser09eb0ecbe accepted: native DM-Rankin HUDhealth100ammo100->99->98; coordinator inspected native-look-settled.png. Windowed24,44crop caused by pageownerdeviceHWND0 vs guest65541; fresh repair launcher1577758 owns next slot, prepares focused tests/build while Pirates uses browserlock. No WebGL/audio/kill/completion claim. ReVolt59a615fc5 race input and DeusEx849d6a527 CLI Training remain accepted; Diablo noDen. Serialize runtime, preserve laptop ownership and no public deployment.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1197,7 +1197,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   note: 2026-10-31T04:00Z bounded original Forsaken software route reached inspected Volcano briefing/loading scene at1129batches/60.030s; firing scheduled1180 was not reached, so no movement/combat acceptance. All876 original/runtime input hashes unchanged; retained module7f9da4e9 compiledsource unknown, run20261031T0400Z-forsaken-volcano. Fresh worker pursues actual browser gameplay past briefing. Daikatana route80b11f423 preserved without verified exit; Pirates8581ed6dd records effective-state boundary and generic page crashes without production cause/fix.
   status: active (known-source Re-Volt repair; full27 software/WebGL coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: pirates-known-source-crash-main-oct31; ut2004-original-browser-match-main-oct31 (two gameplay workers, serialized runtimes)
+  worker: pirates-known-source-crash-main-oct31; ut2004-windowed-origin-repair-main-oct31 (two gameplay workers, serialized runtimes)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
