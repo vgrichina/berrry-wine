@@ -1084,3 +1084,9 @@ were unchanged at teardown. Minimum observed runtime free space was
 2,597,023,744 bytes. Icewind could independently acquire the runtime after
 the explicit NEWFULLRELEASE. Boat ID/state/expiry: N/A. This task stops at
 the missing producer boundary; a generic production repair is not justified.
+
+## Filtered follow-up stopped by automatic review, 2026-10-31
+
+The fresh worker `01a193f0-a63e-7802-b242-7c0b6c8f1ba4` exited1 after automatic review flagged the diagnostic task for possible cybersecurity risk. No retry, rephrasing or delegated continuation is authorized by this closeout. Its final message is absent; the launcher result and event log retain the rejection in `scratch/usage-watch/slave-zero-filtered-producer-main-oct31/`. Run `20261031T2151Z-slave-zero-filtered` is retained without a new diagnostic or gameplay acceptance.
+
+The coordinator sent the existing controller's normal quit command, acknowledged at22:04:29 UTC. The controller, its two helpers and six adopted children have durable zero-status wait receipts; Chrome exited0 without a signal. The outer supervisor wait receipt is missing, so full durable supervisor closure is not claimed. Independent `scratch/runs/20261031T2205Z-coordinator-review/slave-zero-release.json` at22:05:14 verifies all22 recorded PID/start identities absent, whole Chrome/global crashpad empty, ports38495/37437 closed, profile gone, no held input and browser lock free. Free disk was2,750,808,064 bytes. The task is held; an independent Return Fire gameplay lane replaces it.
