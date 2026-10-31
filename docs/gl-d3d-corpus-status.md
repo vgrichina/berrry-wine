@@ -2,6 +2,17 @@
 
 ## October 31: known-source browser gameplay and remaining rendering blockers
 
+Shogo `7c510cfe0`, run `20261031T2006Z-shogo-pinned-browser`, shows
+first-person street walking, a Bullgut pickup, turning and Ctrl firing
+(ammo40 to38). The coordinator inspected captures12/13/14, including weapon
+flash. All69 local target pins matched before/after, along with source,
+compiler, module and served bytes. Cleanup verified all23 owned runtime
+processes absent, ports closed, profile gone and browser lock free.
+New Game/difficulty screens were not separately captured; targeted hits,
+kills, mission progress, audio and FPS remain unproven. This owner-pinned
+local build has no independent upstream package comparison. See
+[Shogo notes](re-notes/shogo-demo.md).
+
 Blood II `64c9d009b`, run `20261031T1949Z-blood2-pinned-browser`, now
 shows native elevator exit, walking, turning and pistol fire (ammo50 to48).
 The coordinator inspected captures09/11, including muzzle flash and casing.
@@ -18,8 +29,8 @@ translation, settled on-foot play, firing and jumping remain unproven, and no
 restart cause or emulator repair is established. All23 local pins matched;
 runtime cleanup completed at20:01:05. Evidence applies to tested `0d9913225`;
 later publication merged unrelated font/runtime changes without executing them.
-Fresh Shogo and SiN air-assault assignments continue under the shared browser
-lock. See [SiN notes](re-notes/sin-demo.md).
+Fresh SiN air-assault and Slave Zero pre-close crash assignments continue
+under the shared browser lock. See [SiN notes](re-notes/sin-demo.md).
 
 Heretic II `6e91d9608`, run `20261031T1941Z-heretic2-original-browser`,
 reaches tutorial and Easy docks gameplay with native walking, turning, spell
