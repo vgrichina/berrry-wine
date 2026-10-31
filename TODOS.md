@@ -1125,7 +1125,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
   worker: deusex-native-crate-reposition-main-oct31; pirates-boarding-duel-main-oct31
-  status: active (Deus grounded-takeoff runtime; Pirates native-turn/intercept preparation)
+  status: active (Deus native crate repositioning; Pirates boarding duel preparation)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
