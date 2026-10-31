@@ -508,3 +508,53 @@ ID/state/expiry N/A. `RECOVERY.md`, `verification.json`, `gameplay-check.json`
 and `cleanup-verification.json` record recovery and focused checks. The next
 bounded gameplay check, if assigned, is to follow the corridor into the next
 Training exercise with ordinary native input. This assignment stops here.
+
+## 2026-10-31: next Training exercise — crowbar and crate breaking
+
+**Passed: follow the corridor beyond the NanoKey door, collect/equip the
+crowbar and break a wooden supply crate with native attacks.** Evidence is in
+`scratch/runs/20261031T0617Z-deusex-next-exercise/`. This was a fresh launch,
+replaying the accepted first-door/key/unlock route rather than restoring old
+guest state. I personally inspected `door-unlocked.png` ("Your NanoKey Ring
+unlocked it"), `next-door-open.png` and `beyond-locked-door.png`, then followed
+the corridor into the next red-floored exercise room. `next-exercise-instructions.png`
+shows Jaime's request to pick up a weapon and break open the crates.
+
+`crowbar-before-pickup.png` shows the targeted **Crowbar** on the striped
+bench. RightMouse180ms collected it: `crowbar-collected.png` shows its
+absence, "You found a Crowbar" and belt slot1. Native1 equipped it.
+`crate-target-before.png` shows the intact upper **General Supply Crate**
+within crowbar range. Native LeftMouse180ms, then LeftMouse1800ms broke that
+crate. `crate-after-strikes.png` shows the upper crate gone;
+`crate-broken-result.png` and `exercise-completed-view.png` show the lower
+wooden crate and adjacent metal crate still present, with an exposed item
+above the lower crate. `exercise-response.png` shows Jaime's follow-up
+lock-picking instructions. The exposed item was not collected or identified by
+interaction. This demonstrates the requested next exercise interaction;
+lock-picking, subsequent progression and full Training completion remain open.
+
+The replay preserves module SHA-256
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`
+and the matching saved292-source manifest SHA-256
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+All131 original/support pins,292 saved source files and105 retained runtime
+responses passed verification. The original19-native-DLL route and registered
+SoftDrv/fullscreen mount-time INI are unchanged; only the explicit DLL URLs
+are supplied as in the predecessor. Chrome151.0.7922.108 used default
+`guestWorker === true` with three workers. The browser captures are1024×768;
+the preserved guest canvas is640×480, confirmed by this run's resize log.
+No resolution change, build, engine/source repair, asset/state/clock patch,
+cheat, input bypass, FPS qualification or public deployment occurred.
+Commands and102 trusted native key/button records are retained. Input timings
+are scene-dependent: inspect the fresh view rather than blindly replaying
+turn durations.
+
+The browser/controller ran06:17:07–06:24:02UTC under the full-lifetime
+`/tmp/wine-browser.lock` after the live-process/profile gate passed.
+Chrome1649556 exited0; controller1649529, holder1649528, all tracked children
+and crashpads1649572/1649574 are absent. HTTP35159/CDP35299 are closed, the
+profile is removed, all held keys were released and no watcher was started.
+Cleanup verified3.58GiB free disk. No Boat allocated: ID/state/expiry N/A.
+`RECOVERY.md`, `verification.json`, `gameplay-check.json` and
+`cleanup-verification.json` preserve recovery and focused checks. Gameplay
+stopped on demonstrated progression; no successor was launched.
