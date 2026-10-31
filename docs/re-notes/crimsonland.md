@@ -2,6 +2,138 @@
 
 Historical source last updated, 2026-10-12. Runtime and implementation claims below describe that dated source; see current app notes and source for subsequent changes.
 
+## 2026-10-31: authentic Win9x DirectX 8.1 media recovered; installation review ready
+
+Run `scratch/runs/20261031T2243Z-crimsonland-authentic-dx81/` starts from a
+descendant of `c6733097a2ff970a388aeaa15906b96dc8d93ba3`. It recovers the
+**Win98/Me final DirectX 8.1 package**, without executing its installer, a game,
+or a browser. No engine, registry, candidate manifest or original guest file
+was changed. Boat ID/state/expiry N/A; no runtime or box was allocated.
+
+The local search is retained in `home-media-paths.txt` and
+`local-d3d8-pins.json`: all 36 discovered local `d3d8.dll` copies are 1,024-byte
+fixture variants, including the excluded UT files. The historical Morrowind
+`dx81/x` directory is absent. The inspected Icewind CAB is DX7-era media and
+does not supply the target. No compilation archive was downloaded.
+
+### Package provenance and repeatable extraction
+
+Selected source: [direct DX81eng.exe mirror](https://am.net/lib/tools/Microsoft/DirectX/dx81eng.exe).
+Actual package **12,144,784 bytes**, SHA-256
+`d1762981f497a623b2f3e725c0916b96e716bd4a8845c5a4cc7f764b1a5cc5f7`;
+SHA-1 `c3fc3333c083a0344af15c6c4a56fbfa7f3a83f8` independently agrees with
+the [historical package catalogue](https://www.shoplack.com/detail.aspx?id=409).
+The old Microsoft `download/win98/Install/8.1/W98Me/EN-US/DX81eng.exe`
+URL and the tested Microsoft alternatives return HTTP 404. Fetch headers,
+final URLs, failures and the distinct DX8.1b mirror pin are retained in
+`fetch-*.json` and `provenance.json`. The alternate 8.1b package was not used
+for this component set and its redundant downloaded copy was removed.
+[Bethesda's publisher instructions](https://help.bethesda.net/app/answers/detail/a_id/17667/~/a-message%2C-a-required-.dll-file-is-missing%2C-dinput8.dll%2C-was-not-found%2C)
+also distinguish Win98/Me `DX81eng.exe` from the Windows 2000 `DX81NT` package.
+
+`verify-authenticode.py` verifies the actual PE Authenticode file digest,
+signed-content digest, RSA signature and embedded certificate-chain signatures
+through **Microsoft Corporation → Microsoft Code Signing PCA → Microsoft Root
+Authority**. `authenticode-verification.json` pins all three certificates.
+This is historical cryptographic evidence using legacy MD5, with no claim of
+current trust-store, revocation or timestamp trust validation. Initial generic
+OpenSSL CMS/SMIME attempts did not handle the old Authenticode content correctly;
+their failures remain recorded, and the explicit format-aware check passed.
+
+Recovery recipe: claim a fresh ignored destination, require `/home` free above
+2 GB plus package/extraction headroom, fetch the exact selected URL if necessary,
+check its SHA-256 above, then use **7-Zip 23.01**, without running the EXE:
+
+```sh
+7z t DX81eng.exe
+7z x -y -oRECOVERY_DIRECTORY DX81eng.exe
+```
+
+The PE resource `.rsrc/RCDATA/CABINET` is an embedded LZX:21 CAB, ID 28547.
+All **327 files / 26,608,972 bytes** passed archive CRC validation; each extracted
+file's size and SHA-256 is in `payload-manifest.json`. `package-list.txt` and
+`extract.log` retain the extraction details. A second streaming extraction of
+`d3d8.dll` reproduced its exact SHA-256 (`d3d8-reextract.sha256`). The signed
+package, 16 proposed core files, authentic INFs and catalog remain retained.
+Other extracted copies were removed to reduce disk use; recover them from the
+pinned package and compare against the complete manifest. Free disk was
+2,513,637,376 bytes initially, 2,455,703,552 after extraction, and briefly
+2,004,103,168 during unrelated shared-tree growth; media writes then stopped.
+Removing 32,204,908 redundant owned bytes left 2,400,190,464 bytes free, including
+concurrent external cleanup. Another worker reported a shared-disk dip to
+1,419,689,984 bytes at 22:50, below the requested floor; this run was then doing
+static planning, with no media extraction/download writes. The coordinator
+subsequently recovered duplicate storage and this run's final check saw
+2,823,360,512 bytes free. The floor was therefore not maintained by the shared
+host throughout the task; these are observations, not continuous disk telemetry.
+
+### Authentic component and installation contract
+
+Recovered `extracted/d3d8.dll`: **1,209,344 bytes**, SHA-256
+`c999fb98e33efaf1c2667501de5cb91fdd816f5f3c1f87f4f76b7a60e8efafbe`.
+Its unmodified 844-byte RT_VERSION is retained separately, SHA-256
+`ddecc77fc5c2f5c45eb0f50ca4cbb88abc128342e7728c7c0601805daf5fbae7`.
+The 13 raw root `VS_FIXEDFILEINFO` DWORDs, in order, are:
+
+```text
+feef04bd 00010000 00040008 00010371 00040008 00010371
+0030003f 00000008 00010001 00000002 00000000 00000000 00000000
+```
+
+Thus **file MS/LS = `00040008` / `00010371` → 4.8.1.881**, exactly meeting
+the original major-4 threshold. Its PE sections are executable `.text`
+(1,102,336 raw bytes), `.data`, `.data1`, `.rsrc`, `.reloc`; direct imports are
+USER32, ADVAPI32, VERSION, GDI32, **DDRAW**, KERNEL32. Full symbol lists,
+sections and fixed words for all 98 payload PEs are in `payload-manifest.json`;
+the original EXE/four game DLL import lists are in `game-imports.json`.
+Authentic NE/LE companions are identified separately, not mistaken for PE errors.
+Although this DLL's PE OS header says 5.1, the signed package's Win9x INF,
+major-4 fixed version and `VOS_DOS_WINDOWS32` fixed OS word establish its intended
+Win9x distribution. Neither that header nor a major-5 detector match alone
+establishes Win98 runtime compatibility.
+
+`directx.inf` has `$CHICAGO$`, catalog `dx8w9x.cat`, driver version
+`10-30-2001,4.08.01.0881`, and explicit WIN98/WIN98SE/WINME install sections.
+`installation-plan.py` resolves its copy directives and destination IDs into
+`installation-plan.json`: **138 Win98 / 136 Win98SE / 93 Me copy actions**, each
+with exact source, destination, size and SHA-256. All referenced source files
+were present in the selected package. Default destination ID 11 is
+`C:\WINDOWS\SYSTEM`; help, INF, sysbckup, migrate and driver directories are
+resolved separately. Authentic INF registry/deletion directives are retained
+for review and have not been applied.
+
+For a narrower app dependency review, `core-component-plan.json` pins 16 files:
+`d3d8`, `ddraw`, `ddhelp`, `d3dim`, `d3dim700`, `d3dramp`, `ddraw16`, `ddraw.vxd`,
+`dxapi.sys`, `dinput8`, `dinput`, `dinput.vxd`, `dsound`, `dsound3d`, `dsound.vxd`,
+`msvcrt` (normal DLL/EXE suffixes as listed in the plan). The original app imports
+D3D8 and DSOUND; grim.dll additionally imports DINPUT8 and MSVCRT. D3D8 itself
+requires authentic DDRAW. Same-package core versions are 4.8.1.881, while
+legitimate older companions retain their own versions. External OS imports
+include NTDLL `RtlUnwind` through DDRAW and RPCRT4 `UuidFromStringA` through
+DSOUND; the complete names are preserved. Dynamic helpers, NE/LE/VxDs and driver
+behavior still require review. This 16-file proposal is not a complete Windows
+installation or a proven minimal executable closure.
+
+**Next separate change:** select the appropriate authentic INF installation
+scope, claim the candidate dependency paths, and recover exact pinned bytes.
+For manifest mounting, the concrete target entry is, for example,
+`{"url":"dependencies/dx81/d3d8.dll","vfsPath":"c:\\windows\\system\\d3d8.dll","size":1209344,"loadMode":"required","httpRange":false}`
+relative to the existing Crimsonland manifest; retain the SHA-256 in its recovery
+pins and verify the actual mounted bytes. Use the same explicit system mapping
+for the selected companions, preserving original60. Review loading policy first:
+`mountDirectXSystemModules` preserves existing authentic files, but real files
+lack the synthetic `staticModule` flag and can be offered to native DLL loading
+by `has_dll_file` / `findVfsDllBytes`. Merely adding an entry can therefore affect
+more than detection. Do not mark authentic bytes synthetic to force a result,
+manufacture DxDiag registration, or infer rendering/input/audio compatibility
+from the version resource. Then run the ordinary startup in a separately
+allocated session and diagnose its first real failure.
+
+Checks: archive CRC327; repeat target extraction; authentic signature/digest;
+raw fixed words/sections/imports; all payload pins and INF copy-source coverage;
+original60 and all157 files in the three predecessor evidence directories
+unchanged; scratch syntax and docs diff whitespace. No build or heavy tests.
+
 ## 2026-10-31: static audit resolves the authentic DirectX resource requirement
 
 Run `scratch/runs/20261031T2240Z-crimsonland-dx-contract/` audits descendant
