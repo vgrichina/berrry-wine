@@ -11,10 +11,16 @@ The default guestWorker browser follow-up `09eb0ecbe` also verifies original
 DM-Rankin movement, look and firing on the actual software endpoint:
 health100, ammo100 to99 then98. The coordinator inspected the readable
 world/HUD frame. Run `20261031T0451Z-ut2004-browser` verifies 998 original
-inputs, 292 source files and 107 served responses. Cropped headers and
-input offset remain: the presentation owner loses the guest windowed-device
-HWND and its client origin24,44. A focused source repair is in progress;
-no repaired-browser result is claimed here. Enemy hits/kills, match
+inputs, 292 source files and 107 served responses. Repair `fb698d57e`
+then moves the windowed-device HWND into shared atomic process state so
+presentation instances retain the correct client origin24,44. Run
+`20261031T0514Z-ut2004-origin` verifies the actual software browser route on
+new module `9b4e39a2`, with its exact295 source files and seven compiler
+inputs retained. The coordinator inspected the complete top clock and
+bottom HUD during native movement/look/fire, health100 and ammo100 to98.
+Visible DeathMatch and PLAY clicks work at their displayed coordinates.
+The full build and focused real-instance/pixel/Reset/DirectDraw tests pass;
+the new regression rejects the saved old source. Enemy hits/kills, match
 completion and WebGL remain unverified. See the
 [UT2004 native route](re-notes/unreal-family-demos.md#ut2004-original-dm-rankin-movementfire-retest-2026-10-31).
 
@@ -49,9 +55,11 @@ counter test failed. This is a rendering blocker, despite zero measured
 GPU errors or fallbacks. See the
 [Forsaken investigation](re-notes/forsaken-demo.md#known-source-webgl-frame-investigation-2026-10-31).
 
-These runs pin module `8459597c` to the retained ReVolt locked build's exact
+The earlier gameplay runs pin module `8459597c` to the retained ReVolt locked build's exact
 292-file source snapshot, including then-concurrent font edits; observed
-HEAD is not substituted for compiled source. Own runtimes were cleaned.
+HEAD is not substituted for compiled source. The UT2004 repair uses the
+separately retained `9b4e39a2` source/compiler snapshot described above.
+Own runtimes were cleaned.
 These results extend the per-app evidence without establishing software /
 WebGL parity, audio, real-time performance or completion of the full27.
 
