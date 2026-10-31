@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: slave-zero-terminal-lifecycle-main-oct31 (01a19371-4073-7723-a626-709da7d6c131; handle97136); Kingpin completed 7d3458055 awaiting coordinator review
-  status: active (Slave Zero terminal/lifecycle observer; Kingpin completion awaiting review and refill)
+  worker: slave-zero-terminal-lifecycle-main-oct31 (01a19371-4073-7723-a626-709da7d6c131; handle97136); blood2-native-browser-gameplay-main-oct31 (01a19372-8f77-7fd2-889e-d387ad75d23b; handle88053)
+  status: active (Slave Zero terminal/lifecycle diagnosis; Blood II original provenance and browser gameplay preparation)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Accepted SlaveZero8c69b3abf findings-only: personally reviewed09 difficulty, guest absent afterEasy with no capturedterminal/fatal, no controlledgameplay or emulatorcause. Sharedmemory240kheap/3kcandidate/fullsaturation tests PASS; original168/source362/compiler866/module unchanged, HTTP368isolated, trusted13balanced; FULLRELEASE191758 reviewed; commitancestorofremoteMAIN7d3458055. Fresh97136 first reserves terminal/lifecycle evidence independently of routineaudio then onebounded original diagnostic; heavy waits currentKingpinNEWFULLRELEASE192502 plus actualFD9 wholeChrome gate. Kingpin reports nativebrowsercontrols published7d3458055; review separately before acceptance/refill. Evolva e875d3705 accepted incomingdamage/squadcontrol; owner141 threepictures and reply1755 delivered. Two-worker cap onebrowser/heavyCLI continuousdisk>2GB; full27/crashsweep open.
+  Next: Accepted Kingpin7d3458055 original browser gameplay: personally reviewed08/09/15/17 settledalley forwardwall pipeswing jump; no hit/kill/objective/audio/FPS. All800originalmemberhashes match, source528/compiler866/fixture821 beforeafter unchanged finald39f3621; HTTP285isolated283joins52trustedbalanced; FULLRELEASE192502 all38PIDstart+helpers absent fourportsclosed profilesgone lockfree. FreshBloodII absentcurrentpublicDESKTOP_APPS SHA63bb9815e404;97manifestfiles present/sizematch ClientSHA1fea9e1400b9. Worker verifies originalprovenance first then nativebrowserroute, heavy waits CURRENT SlaveZero terminal-lifecycle NEWFULLRELEASE plus actualFD9wholeChrome gate. SlaveZero accepted8c69 findings-only difficulty then guestabsent no terminal/cause; fresh observer protects terminal/lifecycle before onebounded diagnostic. Two workers onebrowser/heavyCLI continuousdisk>2GB; full27/crashsweep open.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 - [~] Inventory every game and complete gameplay screenshot/FPS coverage
