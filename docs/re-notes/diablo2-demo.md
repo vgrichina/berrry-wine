@@ -1574,3 +1574,46 @@ checks confirm closure. No Boat/test box was used (ID/state/expiry N/A).
 `recovery.txt`, native action logs and `replay-server.cjs` preserve the exact
 fresh-launch route; there is no exported save. Next work should use the
 river/bridge landmark to search unexplored Blood Moor interior for the cave.
+
+## Native automap search, 2026-10-31 (Den still unverified)
+
+Run `20261031T0402Z-diablo2-automap` ran 04:02:11.771–04:20:57.597 UTC
+(18m46s) with retained repaired Wasm
+`7f9da4e9da5183e9f7f061d2356cd34626fe74bdbaf7da0345f6693dd81152be`.
+Compiled source remains **unknown**; this is not a current-main build retest.
+All 144 frozen entries and 148 served frozen responses match their pins.
+The 25 original runtime files verify before and after; only the previously
+absent unused installer is missing. No assets, saves or guest state were edited.
+Explicit WebGL/default guestWorker and trusted native input were used; all 83
+captures retain the same canvas geometry in a 1024x768 viewport. Puppeteer
+launch uses `defaultViewport:null` before one explicit viewport setup; reconnects
+must also use `defaultViewport:null`. Final backend/page/action errors are zero.
+
+Fresh Barbarian MAP had a different exit arrangement: the Gheed-side and north
+palisades were enclosed. Native Tab automap inspection identified a river
+crossing; long held presses repeatedly overshot its approach. Short 500–900ms
+presses aligned with the visible stone bridge in inspected captures51/52;
+`53-on-bridge.png` shows the hero on it, and `55-field-entry.png` explicitly
+shows **Entering The Blood Moor**. These coordinates are seed observations,
+not a reusable blind route.
+
+Automap-guided field search inspected the north stone boundary58/59, interior
+shrines63–65, Flavie's map label65/68, southeast forest boundary66/67, and a
+lower sweep72–78 including the mana shrine75. Dark treeline candidates71/80/81
+produced no entrance label or transition. Final82/83 show Blood Moor and an
+armed red enemy nearby; no attack, hit or kill is verified in this run.
+Den entry and combat inside remain unverified. The concrete blocker is finding
+and navigating the entrance within the time bound, including held-input
+overshoot and repeated stone/forest barriers. No emulator failure at the cave
+was established, and no source fix or build claim is made.
+
+Explicit quit returned successfully, then the controller shell exited143 before
+its finalizer wrote cleanup or a browser-exit event. The cause and browser exit
+code are unknown. Independent checks confirm browser1493231/controller1493210
+absent, HTTP44607/control33081/CDP37477 closed, and profile removal after those
+checks. The owned messageboard watcher is closed. No Boat/test box was used
+(ID/state/expiry N/A); delegated shutdown is complete. `recovery.txt`, replay
+server, native action logs and validated captures are retained; no checkpoint
+was exported. Next work should preserve a useful native save if available and
+continue from inspected automap landmarks, using short local presses at narrow
+approaches. Audio, FPS and cave playability remain unqualified.
