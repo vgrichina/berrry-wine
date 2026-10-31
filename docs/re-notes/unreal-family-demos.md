@@ -1215,6 +1215,61 @@ allocated (ID/state/expiry N/A). `RECOVERY.md`, `verification.json` and
 `focused-check.json` preserve the precise prerequisite, identity and cleanup
 checks. No production files changed.
 
+## UT2003 isolated SOFTWARE Antalus entry: disk stop before join (2026-10-31)
+
+`20261031T1543Z-ut2003-software-isolated` repairs the preceding harness
+omission in a **new scratch helper only**. Both COOP `same-origin` and COEP
+`require-corp` are set before every custom-response branch, including rejected
+unpinned URLs. Actual HTTP checks of HTML, host JS, WASM and a custom 404 retain
+both headers. Before any guest input, `firstlaunch-gate.json` verifies
+`crossOriginIsolated=true`, `wine.guestWorker=true`, Threads enabled, Software
+selected and a 1024×768 viewport. Every subsequent completed action rechecks
+isolation, worker and backend. The original 0542Z/1533Z frozen sources remain
+unchanged.
+
+This single execution uses the exact 0542Z module SHA-256
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`,
+295-file source snapshot and seven compiler inputs. All 881 original inputs,
+107 predecessor served pins and this run's 107 served pins verify unchanged
+before/after. Registration and `-d3d -window -nosound` remain original; only
+the normal host selector changes to Software. Read-only executor inspection
+finds an actual software `Device`, its native software exports, accumulated
+completed samples and `gpu=false`; no draw/input wrappers are installed.
+
+Inspected captures show NVIDIA startup, the main menu, native console and
+**DM-Antalus with “Press FIRE to start!” / “Press [Fire] to join the match!”**
+(`21-antalus-load-settled.png`). Menu navigation did not establish Instant
+Action or PLAY; those remain open. Entry explicitly used the ordinary native
+console: Backquote, trusted keyboard typing `open DM-Antalus`, then Enter.
+Captures immediately after input lagged the settled display; the typed-command
+capture is partial, while the later Antalus view establishes map entry. A
+logged `.PAG <- .PAX` C++ throw during loading was followed by that rendered
+map, so it does not establish a terminal guest failure. The last bridge
+snapshot completes **12,389 / 12,391 submitted operations**, with no queue
+error; remaining work is pending, not a completed graphics failure.
+
+The first unmet continuation prerequisite is **free disk**. Prelaunch had
+2,311,340,032 bytes free. At 15:48:45 UTC the monitor observed
+**2,093,572,096 bytes**, below the mandated 2.1 GB early-stop threshold, and
+cooperatively quit. No deletion or retry was attempted. The requested native
+join and following capture timed out after shutdown and are **unexecuted**;
+there is no spawned HUD, inspected movement/look/fire, or health/ammo/clock
+progression evidence. This run closes the isolation prerequisite and proves
+Software map entry, while the SOFTWARE gameplay gap and full-27 qualification
+remain open. The preceding 0542Z success remains WebGL evidence only.
+
+Runtime 15:43:37–15:48:47 followed both predecessor FULLRELEASE records and an
+independent actual whole-Chrome/global-crashpad/profile PID/start gate. The
+wrapper/controller/monitor inherited FD9 for the full browser lifetime; Python
+`Popen.wait()` receipts record exit 0, and the monitor sent no signals. Cleanup
+verifies all owned runtime processes absent, both ports closed, profile removed,
+inputs balanced/released and the full flock available. FULLRELEASE was posted
+at 15:50:01. No Boat was allocated (ID/state/expiry N/A). `RECOVERY.md`,
+`verification.json`, `focused-check.json` and the saved cleanup audit retain
+the bounded result. No production source, assets, INI, clock, save bytes or
+guest memory changed. Next work needs enough disk for a fresh bounded run,
+then native join and inspected gameplay under the same proven configuration.
+
 ## UT2004 explicit CLI renderer startup check (2026-10-31)
 
 Run `20261031T0327Z-ut2004-startup` reached an inspected black game window
