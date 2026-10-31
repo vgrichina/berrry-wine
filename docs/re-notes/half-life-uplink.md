@@ -1461,3 +1461,100 @@ captioned-window exclusion and both ordering cases.
 background, resume plus movement, another pause, Configuration/Video and an
 eight-second settled Video screen. No previous menu background remains over
 the resumed world. The WASM stays `3d4b51591ebb`; this final fix is compositor-only.
+
+## Headed renderer profiling (2026-10-30)
+
+Visible Chrome 156, release base `14b05c8d8`, threads enabled, same saved
+640x480 staircase: two 60-second presentation-rate samples give OpenGL
+22.75/30.46, Direct3D 6.67/7.43, and game Software 4.33/4.63 per second.
+Evidence: `20261030-uplink-headed-{gl,d3d,software-640}`. Count only `gpu:-1`,
+`directdraw:6`, and `directdraw:3`, respectively; generic DirectDraw events
+duplicate surface notifications. This is stationary animated gameplay, not
+combat or unique-frame proof. Software mode index 0 is 640x480; hardware uses
+index 3. The initial Software index-3 run is excluded (1152x864).
+
+Four 30-second profiles use the same save in visible Chrome:
+`20261030-uplink-{d3d-profile,gl-webgl-profile,gl-wat-profile,d3d-wat-profile}`.
+The last two force our software rasterizer, distinct from game Software.
+All show textured staircase geometry and HUD. GPU runs confirm WebGL through
+ANGLE/Metal on Apple M1; D3D has zero software fallbacks. Profiled rates include
+instrumentation overhead and are not clean FPS benchmarks.
+
+D3D's guest spends 13.22 seconds in heap_alloc via ProcessVertices FVF packing.
+Renderer replay totals 1.72 seconds, including 0.39 seconds of readback sync;
+the renderer is roughly 93% idle. ProcessVertices-only reuse moves allocation
+to DrawIndexedPrimitiveVB (11.39 seconds): `20261030-uplink-d3d-pv-reuse` is
+superseded. The complete candidate reuses growable per-instance FVF storage
+across ProcessVertices and both VB draw paths. Whole-source packing preserves
+overlapping VBs; queued draws copy into owned packets before returning.
+Other allocating callers retain their contract.
+
+`20261030-uplink-d3d-fvf-reuse` samples only 0.298 ms in heap_alloc over 30 s.
+WASM: `ff157b84e37bc99ce8e1839026b8a4030f398276dd255ec0b861656325129f52`.
+Its profiled presentation rate is 8.40/s, but heavy competing Safari load was
+observed during candidate measurements: a clean FPS improvement is unverified.
+
+Approximate simultaneous CPU activity, guest execution versus render worker:
+
+| Baseline API/backend | Guest active | Renderer active | Overlap | Share of renderer activity |
+| --- | ---: | ---: | ---: | ---: |
+| OpenGL/WebGL | 15.16 s | 2.20 s | 1.07 s | 48.8% |
+| Direct3D/WebGL | 20.13 s | 2.04 s | 0.90 s | 44.1% |
+| OpenGL/our software | 8.79 s | 21.99 s | 4.70 s | 21.4% |
+| Direct3D/our software | 13.04 s | 11.90 s | 4.54 s | 38.2% |
+
+Each interval is about 30 s. Exclude idle, unattributed samples and recognized
+blocking waits. Reconstruct and sort CDP timestamps (negative deltas occur),
+and map functions against each saved combined.wat. This is sampled CPU overlap,
+not GPU execution timing. Do not count entire Atomics.wait tasks as active.
+Baseline D3D has no saved timeline, only CPU profiles. Candidate overlap is
+0.36 s, with 5.04 s guest and 2.33 s renderer active; contention and changed
+bottlenecks prevent calling this a regression.
+
+Next lead: browser-shell classifies DirectDraw presents as software, setting
+runSlice=1000 even with D3D/WebGL, versus GL's 10000. This remains unchanged;
+the candidate guest profile is largely idle and warrants a scheduling test.
+
+Validation passes: ProcessVertices growth/reuse/alias, v3 VB draws, fog,
+camera-position texgen, worker parity with queued indexed draws, neutral
+command-stream ownership, and native/compat builds. Intro offset, menu cursor,
+reported Safari white gameplay, and repeated-switch menu issues remain open.
+No newer main was merged, no release deployed, and this work is uncommitted.
+
+### Direct3D Worker slice experiment
+
+`20261030-uplink-slice-sweep` keeps the FVF-reuse module above and alternates
+1k/10k/10k/1k blocks in one visible Chrome session. Each round reloads the
+same save, settles for 30 seconds and measures for 60 seconds. Correct
+surface-specific presentation rates are 8.08, 10.91, 15.68, and 6.21/s.
+Weighted means: 7.14/s at 1k, 13.29/s at 10k (1.86x observed). The page stays
+visible throughout all four samples. Competing Safari, screen recording,
+audio and other system activity varies, so the exact gain is not a quiet-box
+estimate; both 10k samples nevertheless exceed both 1k samples.
+
+The app policy now distinguishes Direct3D's EngineType=3 from Software's
+EngineType=1 even though both present through DirectDraw. A confirmed guest
+Worker uses the measured 10k D3D budget; cooperative D3D and game Software
+retain their existing 1k policy. Successful registry writes track in-process
+switches, and initial selection includes restored registry state. Selecting
+Software still defers the smaller budget until presentation so setup dialogs
+are not throttled. Explicit slice dropdown choices remain authoritative.
+Callback tests cover these transitions and restored D3D selection.
+
+Separate 30-second CPU profiles, without full timeline tracing, estimate
+guest/render overlap at 2.01 s (53.2% of renderer active time) for 1k versus
+4.30 s (66.3%) for 10k. Guest active samples are 18.76/23.92 s; renderer
+active samples are 3.78/6.48 s. Profiled presentation rates are 5.54/7.63/s
+and are excluded from the unprofiled FPS comparison. These remain sampled
+CPU estimates under variable load, not GPU timing or scheduling proof.
+
+`20261030-uplink-d3d-slice-policy` validates the final browser policy in a
+fresh visible Chrome launch without runtime slice overrides: actual budget
+10000, 596 surface presents in 60.03 seconds (9.93/s), no visibility changes
+or page errors. Reviewed captures show textured staircase/HUD, complete pause
+menu and resumed gameplay. The single fresh-run rate is a functional check
+under current load, not a replacement for the paired comparison. Callback
+regressions, installed-payload main-menu test, JS syntax/diff checks and browser
+cache-version self-test pass. The WASM is unchanged from the FVF candidate;
+source hashes and runtime patch are archived with this run. Work remains
+uncommitted on `fix/uplink-startup-20261030`; dev server 52671 serves it.

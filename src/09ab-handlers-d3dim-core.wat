@@ -1648,7 +1648,15 @@
 
   (func $d3dim_pack_fvf_vertices
     (param $fvf i32) (param $src_g i32) (param $count i32) (param $tex_index i32) (result i32)
-    (local $type i32) (local $stride i32) (local $dst_stride i32) (local $size i32) (local $dst_g i32)
+    (call $d3dim_pack_fvf_vertices_into (local.get $fvf) (local.get $src_g)
+      (local.get $count) (local.get $tex_index) (i32.const 0)))
+
+  ;; A nonzero destination is caller-owned storage for count * 32 bytes.
+  ;; Ordinary draw callers retain the allocating/freeing contract above.
+  (func $d3dim_pack_fvf_vertices_into
+    (param $fvf i32) (param $src_g i32) (param $count i32) (param $tex_index i32)
+    (param $dst_g i32) (result i32)
+    (local $type i32) (local $stride i32) (local $dst_stride i32) (local $size i32)
     (local $src_wa i32) (local $dst_wa i32) (local $i i32) (local $src i32) (local $dst i32)
     (local $offset i32) (local $tex_count i32)
     (local $head v128)
@@ -1664,7 +1672,8 @@
     (local.set $size (i32.mul (local.get $count) (local.get $dst_stride)))
     (if (i32.or (i32.eqz (local.get $size)) (i32.gt_u (local.get $size) (i32.const 0x400000)))
       (then (return (i32.const 0))))
-    (local.set $dst_g (call $heap_alloc (local.get $size)))
+    (if (i32.eqz (local.get $dst_g))
+      (then (local.set $dst_g (call $heap_alloc (local.get $size)))))
     (if (i32.eqz (local.get $dst_g)) (then (return (i32.const 0))))
     (local.set $src_wa (call $g2w (local.get $src_g)))
     (local.set $dst_wa (call $g2w (local.get $dst_g)))
@@ -1924,6 +1933,43 @@
   ;; dwVertexOp's TRANSFORM bit is not consulted because it is mandatory --
   ;; D3D rejects a call without it, and every other bit (LIGHT, CLIP, EXTENTS)
   ;; either already happens here or is an output we do not compute.
+  ;; ProcessVertices consumes these bytes synchronously. VB draw paths either
+  ;; consume them inline or copy them into an owned command-stream packet
+  ;; before returning; none calls guest code. The per-instance buffer therefore
+  ;; supports both without sharing mutable input with another guest/renderer.
+  ;; Packing the whole source before writing still supports overlapping VBs.
+  (global $d3dim_fvf_buffer (mut i32) (i32.const 0))
+  (global $d3dim_fvf_capacity (mut i32) (i32.const 0))
+  (func $d3dim_fvf_scratch_reserve (param $count i32) (result i32)
+    (local $need i32) (local $cap i32) (local $grown i32)
+    (if (i32.gt_u (local.get $count) (i32.const 0x20000))
+      (then (return (i32.const 0))))
+    (local.set $need (i32.add (i32.shl (local.get $count) (i32.const 5)) (i32.const 32)))
+    (if (i32.gt_u (local.get $need) (global.get $d3dim_fvf_capacity)) (then
+      (local.set $cap (select (global.get $d3dim_fvf_capacity) (i32.const 1024)
+        (i32.ne (global.get $d3dim_fvf_capacity) (i32.const 0))))
+      (block $sized (loop $grow
+        (br_if $sized (i32.ge_u (local.get $cap) (local.get $need)))
+        (local.set $cap (i32.shl (local.get $cap) (i32.const 1)))
+        (br $grow)))
+      (if (i32.gt_u (local.get $cap) (i32.const 0x400020))
+        (then (local.set $cap (i32.const 0x400020))))
+      (local.set $grown (call $heap_alloc (local.get $cap)))
+      (if (i32.eqz (local.get $grown)) (then (return (i32.const 0))))
+      (if (global.get $d3dim_fvf_buffer)
+        (then (call $heap_free (global.get $d3dim_fvf_buffer))))
+      (global.set $d3dim_fvf_buffer (local.get $grown))
+      (global.set $d3dim_fvf_capacity (local.get $cap))))
+    (global.get $d3dim_fvf_buffer))
+
+  (func $d3dim_pack_fvf_scratch
+    (param $fvf i32) (param $src i32) (param $count i32) (param $tex_index i32) (result i32)
+    (local $dst i32)
+    (local.set $dst (call $d3dim_fvf_scratch_reserve (local.get $count)))
+    (if (i32.eqz (local.get $dst)) (then (return (i32.const 0))))
+    (call $d3dim_pack_fvf_vertices_into (local.get $fvf) (local.get $src)
+      (local.get $count) (local.get $tex_index) (local.get $dst)))
+
   (func $d3dim_vb_process_vertices
       (param $dst_this i32) (param $vertex_op i32) (param $dest_index i32) (param $count i32)
       (param $src_this i32) (param $src_index i32) (param $device i32) (param $flags i32)
@@ -1989,18 +2035,18 @@
     (if (i32.gt_u (local.get $count) (i32.sub (local.get $dst_max) (local.get $dest_index)))
       (then (local.set $count (i32.sub (local.get $dst_max) (local.get $dest_index)))))
     (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
-    (local.set $packed_g (call $d3dim_pack_fvf_vertices
+    (local.set $packed_g (call $d3dim_fvf_scratch_reserve (local.get $count)))
+    (if (i32.eqz (local.get $packed_g)) (then (return (i32.const 0x8007000E))))
+    (local.set $packed_g (call $d3dim_pack_fvf_vertices_into
       (local.get $src_fvf)
       (i32.add (local.get $src_data_g) (i32.mul (local.get $src_index) (local.get $src_stride)))
       (local.get $count)
-      (call $d3dim_texcoord_index (local.get $device))))
+      (call $d3dim_texcoord_index (local.get $device)) (local.get $packed_g)))
     (if (i32.eqz (local.get $packed_g)) (then (return (i32.const 0x8007000E))))
     ;; One scratch TLVERTEX for the whole call. Transforming in place would
     ;; alias $vertex_project's source with its destination.
-    (local.set $scratch_g (call $heap_alloc (i32.const 32)))
-    (if (i32.eqz (local.get $scratch_g)) (then
-      (call $heap_free (local.get $packed_g))
-      (return (i32.const 0x8007000E))))
+    (local.set $scratch_g (i32.add (local.get $packed_g)
+      (i32.shl (local.get $count) (i32.const 5))))
     (call $d3ddev_composite_wvp (local.get $state))
     (call $d3dim_lights_refresh (local.get $state))
     (local.set $packed_wa (call $g2w (local.get $packed_g)))
@@ -2038,8 +2084,6 @@
       (i32.load (local.get $dst_wa))
       (i32.load (i32.add (local.get $dst_wa) (i32.const 4)))
       (i32.load (i32.add (local.get $dst_wa) (i32.const 12))))
-    (call $heap_free (local.get $scratch_g))
-    (call $heap_free (local.get $packed_g))
     (i32.const 0))
 
   (func $d3dim_vb_draw_primitive
@@ -2061,7 +2105,7 @@
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
     (if (i32.gt_u (local.get $count) (i32.sub (local.get $max_count) (local.get $start)))
       (then (local.set $count (i32.sub (local.get $max_count) (local.get $start)))))
-    (local.set $packed (call $d3dim_pack_fvf_vertices
+    (local.set $packed (call $d3dim_pack_fvf_scratch
       (local.get $fvf)
       (i32.add (local.get $data_g) (i32.mul (local.get $start) (local.get $stride)))
       (local.get $count)
@@ -2072,8 +2116,7 @@
     (if (local.get $packed) (then
       (call $d3dim_draw_primitive
         (local.get $this) (local.get $primType) (local.get $vtxType)
-        (local.get $packed) (local.get $count))
-      (call $heap_free (local.get $packed))))
+        (local.get $packed) (local.get $count))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
   (func $d3dim_vb_draw_indexed_primitive
@@ -2140,7 +2183,7 @@
         (local.get $fvf)
         (i32.or (local.get $stride) (i32.shl (local.get $vtxType) (i32.const 16)))
         (local.get $count))))
-    (local.set $packed (call $d3dim_pack_fvf_vertices
+    (local.set $packed (call $d3dim_pack_fvf_scratch
       (local.get $fvf)
       (i32.add (local.get $data_g) (i32.mul (local.get $start) (local.get $stride)))
       (local.get $count)
@@ -2152,8 +2195,7 @@
       (call $d3dim_draw_indexed_primitive
         (local.get $this) (local.get $primType) (local.get $vtxType)
         (local.get $packed) (local.get $count)
-        (local.get $indices) (local.get $index_count))
-      (call $heap_free (local.get $packed))))
+        (local.get $indices) (local.get $index_count))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
   (func $d3dim_pack_strided_tl

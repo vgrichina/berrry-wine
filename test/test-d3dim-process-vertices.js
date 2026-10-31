@@ -245,6 +245,40 @@ const extraWat = String.raw`
       'the stack-resident device argument reached the transform');
   }
 
+  // A larger call grows temporary storage; a later smaller call must consume
+  // fresh source bytes rather than stale packed vertices from that call.
+  for (const desc of [srcDesc, dstDesc]) wat.guest_write32(desc + 12, 80);
+  assert.strictEqual(wat.pv_create_vb(srcDesc, ppvb) >>> 0, 0);
+  const bigSrc = wat.guest_read32(ppvb) >>> 0;
+  assert.strictEqual(wat.pv_create_vb(dstDesc, ppvb) >>> 0, 0);
+  const bigDst = wat.guest_read32(ppvb) >>> 0;
+  const bigData = wat.pv_vb_data(bigSrc) >>> 0;
+  for (let i = 0; i < 80; i++) {
+    writeF32(bigData + i * 24, 0.5);
+    writeF32(bigData + i * 24 + 4, 0.25);
+    writeF32(bigData + i * 24 + 8, 1);
+    wat.guest_write32(bigData + i * 24 + 12, 0xff334455);
+    writeF32(bigData + i * 24 + 16, i / 80);
+  }
+  assert.strictEqual(wat.pv_process(bigDst, 0x401, 0, 80, bigSrc, 0, device, 0), 0);
+  const last = (wat.pv_vb_data(bigDst) >>> 0) + 79 * 32;
+  near(readF32(last), originX + 0.5 * scaleX, 'grown batch last x');
+  near(readF32(last + 24), 79 / 80, 'grown batch last u');
+  for (let i = 0; i < 20; i++) {
+    writeF32(srcData, i / 20);
+    assert.strictEqual(wat.pv_process(dstVb, 0x401, 0, 1, srcVb, 0, device, 0), 0);
+    near(readF32(dstData), originX + i / 20 * scaleX, 'reused storage reads fresh input');
+  }
+
+  // Overlapping source/destination ranges must snapshot all source vertices
+  // before writing output, even when temporary storage is reused.
+  writeF32(srcData, source[0].x);
+  assert.strictEqual(wat.pv_process(srcVb, 0x401, 1, 3, srcVb, 0, device, 0), 0);
+  for (let i = 0; i < 3; i++) {
+    near(readF32(srcData + (i + 1) * 24), originX + source[i].x * scaleX,
+      `overlapping transform vertex ${i}`);
+  }
+
   console.log('test-d3dim-process-vertices: PASS');
 })().catch((err) => {
   console.error(err);
