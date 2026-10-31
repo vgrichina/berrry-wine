@@ -1432,6 +1432,45 @@ and saved cleanup preserve the exact route and its limits. No Boat was
 allocated (ID/state/expiry N/A), no build was needed for this docs-only change,
 and no further browser, heavy CLI, deployment, worker or successor was launched.
 
+### Original visible menu WebGL arm: prelaunch reserve dependency (2026-10-31)
+
+Run `20261031T1642Z-ut2003-webgl-native-menu` prepared the matching ordinary
+visible-menu WebGL arm; **no browser, guest or native input was launched**.
+The accepted `62ee90c86` SOFTWARE result above remains unchanged. This run
+adds no WebGL gameplay or input-failure claim and demonstrates no generic
+emulator defect. No production source changed.
+
+The required **NEW Diablo2 unexplored-den FULLRELEASE at 16:48:03 UTC**,
+for sole runtime **16:40:02–16:47:00**, arrived before the independent gate.
+At **16:48:21**, the actual whole-Chrome/global-crashpad PID/start scan and
+active-profile scan were clear under exclusive **FD9** on
+`/tmp/wine-browser.lock`. Free disk was **2,798,702,592 bytes**, below the
+required **2,800,000,000-byte prelaunch reserve** by **1,297,408 bytes**.
+This is the first concrete dependency; no launch, retry, evidence removal,
+foreign signal, console route or speculative source repair followed. The
+older UT and Diablo releases were not used as authorization.
+
+Cheap preparation verified the immutable exact0542Z module SHA-256
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`,
+**295 matching frozen source files, seven compiler files, 881 original inputs
+and 107 predecessor served pins** retained through the accepted 1612Z/1628Z
+closure. There are no new served pins, HTTP launch assertions, completed
+WebGL operations or screenshots in this unlaunched run. The scratch-only
+controller was prepared for the normal WebGL selector, default guestWorker,
+actual HTTP isolation headers, stable 1024×768/defaultViewport null, native
+visible-menu input and read-only inspection of endpoint-owned devices and
+receiver completion streams. Preparation is not execution evidence.
+
+`RECOVERY.md`, `first-dependency.json`, `independent-prelaunch-gate.json`,
+`predecessor-releases.json`, `verification.json` and `focused-check.json`
+preserve the dependency and cheap checks. Helper syntax, frozen identities,
+no-runtime checks and documentation diff checks pass. No build, heavy CLI,
+public deployment, worker/agent/successor or Boat allocation occurred
+(ID/state/expiry N/A). Ownership and the transient gate lock are released.
+Next work requires sufficient sustained disk reserve and a fresh serialized
+ordinary-menu WebGL execution with actual completed executor/gameplay evidence;
+this run does not close that backend arm.
+
 ## UT2004 explicit CLI renderer startup check (2026-10-31)
 
 Run `20261031T0327Z-ut2004-startup` reached an inspected black game window
