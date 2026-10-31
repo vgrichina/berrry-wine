@@ -1,9 +1,7 @@
-Current 2026-10-31T17:48:26.149290+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T18:02:53.610831+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Evolva’s presentation fix is published (2dc6457f4), with a failing-before/passing-after regression, ten focused suites and full build. A valid black primary now replaces the unrelated white fallback. Reviewed output is black, matching the GPU. A fresh worker is tracing zero viewport values and collapsed vertex coordinates before another generic repair.
+Evolva found a render-target interface mismatch that made the game's surface query fail and produced a zero-sized viewport. Its worker reports a causal regression and repair passing five focused suites and full build; completion review remains pending. Native menu, team selection and briefing are reported. Jungle loading now fails on an async-only level-file read; controlled gameplay remains unverified.
 
-Slave Zero’s worker is capturing exact mip-surface calls behind retirement at NEW GAME difficulty. Its runtime started after Evolva released all browser resources. No valid-use audio defect was proved; the orphan-handle patch remains held.
+Slave Zero07794dfd4 findings are accepted: sampled mip acquisition and Lock succeed, while an earlier native PassMessage failure prevents NEW GAME. Reviewed city/mech scenes are scripted. A fresh worker traces that first failure, with runtime waiting for Evolva's full release. The original mip failure and audio cause remain unproved; held patch stays held.
 
-Neither new title has qualified gameplay. UT2003 has reviewed normal-menu movement, look and firing on software and WebGL. Full27 coverage and crash sweep remain open.
-
-Two workers; serialized browser/heavy CLI; disk above2GB. No public deployment.
+Neither new title has qualified gameplay. UT2003 normal-menu software/WebGL gameplay is accepted; full27 and crash sweep remain open. Two workers, serialized browser/heavy CLI; disk above2GB. No public deployment.
