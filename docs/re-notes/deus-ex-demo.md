@@ -1573,3 +1573,90 @@ held inputs empty and full flock available. Monitor used no signals. FULLRELEASE
 was announced after actual absence. No further browser, production edits, build,
 heavy CLI, asset/INI/clock/save-byte/memory edits, cheats, input bypass, guestWorker
 disable, public deployment, Boat(ID/state/expiry N/A), agents or successor.
+
+### 2026-10-31 grounded takeoff: Space-first is genuine; wood96 landing remains unreached
+
+Run `scratch/runs/20261031T1403Z-deusex-grounded/` establishes a genuine
+stationary upper-crate jump. **No stable topZ96 landing, exit or ladder exercise
+was reached. No manual checkpoint was created or exported.** Count7 remains
+preferred, count6 untouched and diagnostic count8 unpromoted. No emulator defect
+is established.
+
+Cheap preparation checked original `DoJump`, the earlier trajectories and
+original BSP bounds before launch. `DoJump` supplies vertical velocity only;
+the approximately154-unit range from the earlier upper footing to (7056,−1840)
+cannot be assumed reachable from rest. Tallwood occupies X6960–7024,
+Y−1856–−1792,top160; lower wood occupies X7024–7088,Y−1872–−1808,top96.
+The radius20 full-footprint inset remains a planning hypothesis, with native
+collision authoritative. No Up140–220ms blind upper-crate lead-in was repeated.
+
+Ordinary native Load showed count7/time01:09:32 (`13`); inspected actual gameplay
+(`17`) and the unchanged original observer independently matched the immutable
+save. Short native climbs reached upper-crate centerZ109.55. The new Space-first
+action required two Physics1/zero-velocity samples120ms apart before input,
+then confirmed positive vertical velocity before applying Up.
+
+| Actual checked action | Result |
+| --- | --- |
+| `28`, stationary Space-first, actual yaw54272 | Grounded at (7014.9941,−1714.2648,109.5548); native Space followed by observed Vz+239.2064 while horizontal velocity was zero; only then native Up. Apex centerZ156.6893. Returned to upper support at (7021.3589,−1726.1774,109.6133), confirmed stationary by `30`. Horizontal range13.5063 units. |
+| `32`, observed approach | Last supported sample near (7019.71,−1723.09), speed142; next sample fell. Guard released Up without pressing Space. This was a canceled approach, not a jump. |
+| `50`, earlier observed Space, actual yaw53308 | Physics1 at (7018.5864,−1722.1311), velocity(55.87,−132.71,0) before Space; actual Vz300 confirmed. Near (7039.80,−1769.65,156.13), north speed collapsed to−52.19, then−19.31: another tallwood collision. Up was already released; airborne momentum persisted. Fell to floor. |
+| `76`, eastward preparation | Initial stable-upper gate refused because footing had dropped to the low wood. No jump input. |
+| `115`, more easterly actual yaw54983 | The last Space-decision sample was Physics1 near (7030.65,−1719.51), but the next state was Falling/Vz0. Support was lost during input delivery; stopped immediately without claiming takeoff. |
+
+This separates two remaining requirements: a supported approach that survives
+input delivery, and enough east clearance plus range to reach wood96. A
+Physics1 decision sample alone is insufficient; positive Vz is necessary
+evidence of takeoff. The stationary jump solves the original false-takeoff
+dependency, but supplies far too little range. Ordinary climbs also shifted
+the useful footing: an eastward step later dropped from centerZ109.73 to79.8.
+Reusing an earlier coordinate as current support is unsafe. A changed native
+crate layout or measured longer supported approach remains unverified.
+
+Limits and recovery are explicit. The attached helper initially used
+Puppeteer's default800×600 viewport for `32` and `50`; it was corrected to
+preserve the owned page and1024×768 was restored at `51`. Those two PNGs are
+800×600; the other41 PNGs are1024×768. The accepted observer's background timer
+reached its20000-sample cap; subsequent on-demand samples still used the same
+original function, checked exports/offsets, unique actor/class and owning-worker
+return boundary. No guest memory or actor writes were introduced.
+
+An attempted native menu click unexpectedly started Training instead of Load.
+Its delayed LOADING view (`87`) was followed by the start hall (`90`), where
+the observer rejected the route envelope. No Training exercise was continued.
+Keyboard navigation first opened Save Game (`95`), which was canceled without
+saving, then actual Load Game (`100`) showed count7/time01:09:32. Native Load
+restored the crate room (`103`); clearing only the old JavaScript observer state
+and reinstalling the unchanged observer passed the exact save crosscheck on
+the new actor. Neither the misleading intermediate labels nor the start hall
+are treated as progress. Final inspected gameplay (`117`) is the crate-room
+floor. No fresh-page checkpoint validation was attempted without a meaningful
+landing, and no new save is promoted.
+
+Identity remains module
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`,
+292-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`,
+131 original/support files before/after,105 canonical served responses and19 DLL
+mounts. Original SoftDrv/default guestWorker,three workers and original640×480
+guest mode were retained; the browser viewport exception is stated above.
+An unpinned `/build-info.js` request was refused404, not served from current host.
+`check.py` and `analyze.py` pass immutable count7/source/module checks, accepted
+observer positive/five rejection fixtures,392 trusted balanced input events
+(18 Space presses), actual trajectory classifications and retained cleanup.
+All26 references in this run pass containment, existence and schema checks.
+The global evidence checker still reports9 historical outside-run errors,
+10 missing references and103 invalid records; these were not changed.
+
+Pirates14:16:30 explicit FULLRELEASE and a fresh whole Chrome/global-crashpad
+gate preceded the sole14:17:03–14:30:17 browser session (792.692s from controller
+start). The durable supervisor retained actual browser/controller/wrapper/monitor
+exits0/0/0/0. All1018 active-profile samples show wrapper/controller/monitor
+holding inherited fd9; minimum free disk2392264704B. Cleanup confirmed30 tracked
+PID/start identities absent, including guarded helpers, global crashpads and the
+preparatory watcher; both ports closed, profile gone, inputs empty and full flock
+available before14:30:36 FULLRELEASE. No monitor signals were needed. The initial
+tail watcher's raw exit was unavailable after its parent exited; its own PID/start
+absence was checked, with no raw-exit0 claim. No production edits, build, heavy
+CLI, asset/INI/clock/save-byte edits, cheats, input bypass, guestWorker disable,
+public deployment, Boat(ID/state/expiry N/A), agents or successor.
