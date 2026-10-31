@@ -28,7 +28,8 @@ time budget on a full map load. A separate frozen controlled acceptance loaded
 the Training map, rendered its 3D HUD and transmission sequence, and moved JC
 through the world with ordinary Win32 keyboard input.
 
-The browser's experimental Worker backend is functional but substantially
+Historical browser result (superseded by the 2026-10-31 browser acceptance below):
+the browser's experimental Worker backend is functional but substantially
 slower during UE1 startup. An exact isolated Chrome run stayed live (changing
 main-thread EIPs, no trapped Worker), created its third Worker and 648x508 game
 window after roughly 45 seconds, and progressed from the gray allocation frame
@@ -385,3 +386,70 @@ audio quality and game completion remain unverified by this CLI result.
 Next useful check is the same ordinary Training movement route on a separate
 idle test host with the complete recorded support closure; no new task or
 worker was launched here.
+
+## 2026-10-31: default guestWorker browser Training and first-door traversal
+
+**Passed: original Training world/HUD, ordinary movement, door opening and
+traversal in Chrome's default guestWorker transport.** Evidence is in
+`scratch/runs/20261031T0447Z-deusex-browser/`. I personally inspected the
+location text, corridor, health silhouette, compass, inventory belt, Jaime
+Reyes transmissions, closed unlocked door, open doorway and red-floored room
+beyond it. This supersedes the older browser-input limitation above for this
+specific retained baseline; it does not qualify current HEAD or completion.
+
+The private local page used Chrome151.0.7922.108, a fixed1024×768 viewport,
+`index.html?debug&no-log`, default Threads checked and actual
+`wine.guestWorker === true`. Read-only telemetry identifies three
+`lib/guest-worker.js` instances, main slot0/thread1, main HWND65539, and
+increasing presentation counters. No cooperative fallback, clock/state patch,
+renderer switch, source repair, build or public deployment was used. The
+game's registered mount-time INI selected `SoftDrv.SoftwareRenderDevice` and
+fullscreen. The page's GPU selector read WebGL; that does not change the
+game's SoftDrv selection or establish a renderer throughput result.
+
+The module remains SHA-256
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`.
+The browser server supplied the matching saved292-file ReVolt source snapshot,
+whose manifest hash is
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+Every source byte was checked against that manifest before serving; requested
+runtime bytes are retained by hash in `served-snapshots/` and mapped in
+`snapshots.json`. Checkout HEAD was observed separately and is not claimed as
+the compiled source. The optional `/build-info.js` request returned404 because
+it was absent from the saved source; launch and gameplay proceeded. Font
+substitutions used the separately retained prior browser response.
+
+The registered app and mount-time transform were reused, with only the launch
+configuration's DLL URL list replaced by the exact19 existing native paths
+from the successful CLI recovery. The original112 registered inputs and all
+131 asset/support hash checks passed before and after. Named and ordinal
+closure evidence is preserved; no original asset or support DLL was altered.
+
+Native browser input is recorded with trusted key/button events in
+`native-input.json` and commands in `commands.jsonl`. Escape opened the visible
+menu. Initial short Down presses did not establish a usable selection, so the
+actual game cursor was moved onto the visible Training button, inspected in
+`hover-training-settled.png`, then pressed for180ms. Loading led to
+`training-world-first.png`, showing UNATCO Training Facilities and the HUD.
+Up-arrow1800ms approached the door (`forward-settled.png`); Down-arrow900ms
+retreated (`retreat-settled.png`). Up-arrow3200ms reached the closed door with
+its “Unlocked” indicator (`door-before-interact.png`). The shipped User.ini
+binds RightMouse to ParseRightClick: a native180ms right-button press opened
+it (`door-after-right-click.png`). Up-arrow2100ms then crossed into the
+red-floored room (`beyond-first-door.png`); the next Jaime transmission
+described the key on the desk. `mouse-look-settled.png` also shows that room,
+wall panel and plants. Later captures named `look-back-turn*` were attempts:
+Left is actually StrafeLeft in the shipped bindings, and those captures do
+not prove a view back through the doorway.
+
+The controller ran04:47:38–04:51:16UTC, well inside the25-minute investigation
+bound. It acquired `/tmp/wine-browser.lock` after triage's GLTron CLI closed,
+checked processes before launching and held the lock through browser/server
+cleanup. Chrome1551364 exited0; controller1551290 and lock holder1551289 are
+absent, HTTP38133/CDP41333 are closed, the profile is removed and the board
+watcher is stopped. Cleanup and focused evidence/helper checks are retained.
+No Boat/test box was allocated; ID/state/expiry are N/A. Audio quality,
+sustained play, collecting the key, opening the next locked door, Liberty
+Island and Training/game completion remain unverified. The next narrow
+gameplay check is the visible desk key and next locked door, if requested;
+this single-task assignment ends here.
