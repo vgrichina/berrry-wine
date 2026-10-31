@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: deusex-crate-exit-main-oct31; pirates-combat-outcome-main-oct31
-  status: active (both previous workers completed and reviewed; two fresh onward tasks)
+  worker: deusex-wood-landing-main-oct31; pirates-combat-outcome-main-oct31
+  status: active (fresh landing task and live Pirates combat outcome)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Deus208c41480 actualcrateclimbs/genuinecount7 nativeLoad accepted; livecrate-exit task continues. Accepted719349915: exact automatic battle save ordinaryLoad restored Nevis port, not direct battle. Native SailAway/CastOff/AttackLovelyMary ->actual combat, enemy6guns50crew->4guns44crew, full reload0to8 and secondFIRE8to0 smoke/projectiles. Coordinator inspected11/18/26/28 and focused2226served/42trusted/28PNG/468live3FD/20PIDstart/rawall0 checks rerunPASS; no victory/capture claim. Original saves preserved. Fresh Pirates 01a19219-6078-7d61-97e3-fa76b35149ec handle84424 targets actual surrender/capture/boarding outcome; cheap prep waits live Deus01a1920d-0fed-74e0-bcc9-c66479c71bc8 handle42640 crate-exit FULLRELEASE plus actualprocessgate. Two workers/onebrowser. Deus deadline140140UTC; freshPirates deadline about1415UTC. Free2.351GB after five closed-log lossless gzip archives, saved123846408B with SHA/size roundtrip and atomic recovery manifests; no assets/saves/live inputs touched. Full27 and crashsweep open; laptopHeroesII/fonts protected; no publicdeploy.
+  Next: Accepted f1bf96688: ordinary crate pickup/drop/reposition reached stable upper centerZ111.427 and only25ms contact on96wood at7102.97,-1797.74,143.42, then eastward overshoot; exit/ladder unreached. Coordinator inspected74/90/145 and reran focused528trusted58PNG21PIDrawall0 plus both observer positive5negative sets PASS. New native count8 decoded actor stable2908ms after Load but145 remains LOADING; count7 preferred/count6 untouched. Fresh Deus01a19230-a37b-7b72-a78c-47142692b2c1 handle37715 targets stable96wood landing then actual exit, cheap originalphysics prep waits live Pirates01a19219 handle84424 FULLRELEASE plus actualgate. Pirates solebrowser132840 runtimeend134540 cleanup<=134740, taskend141505; previous719349915 enemy6guns50crew->4guns44crew/fullreload/secondfire remains accepted. Two workers/onebrowser; full27/crashsweep/FPS/Training completion open, laptop tracks protected, no publicdeploy.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1197,7 +1197,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   note: 2026-10-31T04:00Z bounded original Forsaken software route reached inspected Volcano briefing/loading scene at1129batches/60.030s; firing scheduled1180 was not reached, so no movement/combat acceptance. All876 original/runtime input hashes unchanged; retained module7f9da4e9 compiledsource unknown, run20261031T0400Z-forsaken-volcano. Fresh worker pursues actual browser gameplay past briefing. Daikatana route80b11f423 preserved without verified exit; Pirates8581ed6dd records effective-state boundary and generic page crashes without production cause/fix.
   status: active (UT2003 repair/UT2004 WebGL/Forsaken movement accepted; Pirates textured coast repaired/native landing party accepted; full27 both-backend coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: deusex-crate-stacking-main-oct31; pirates-native-restore-onward-main-oct31
+  worker: deusex-wood-landing-main-oct31; pirates-combat-outcome-main-oct31
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
@@ -1412,16 +1412,16 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Gameplay screenshot and FPS: Deus Ex demo
   id: GAMEPLAY-deus-ex-demo
-  status: active (first gap verified; pipe and farther gap next)
+  status: active (crate landing dependency; exit and FPS open)
 
   candidate: deus-ex-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: deusex-pipe-far-gap-main-oct31 (01a191d9-42ca-7032-8c72-c927dedf4c85; handle50525; deadline13:05UTC)
+  worker: deusex-wood-landing-main-oct31 (01a19230-a37b-7b72-a78c-47142692b2c1; handle37715; task60min from actualstart)
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Accepted da0dadb05 original BSP156-unit gap plus grounded running launch, Physics2 trajectory and stationary far-grate Physics1 landing atY-500.57; personally inspected26/28, focused292source131original105served19DLL38trusted13PNG25PID cleanup/observernegative checks rerunPASS. No emulator defect; original cameras bNoAlarm=True. Fresh pipe/far-gap worker prepares originalX Duck pipe passage and farther178-unit gap toward dl_cratestack, waiting Pirates full runtime release. Count5 authentic2files retained; genuine new save only with actual freshLoad validation. No Training/recharge replay; FPS and Training completion open.
+  Next: Accepted f1bf96688: ordinary crate pickup/drop/reposition reached stable upper centerZ111.427 and only25ms contact on96wood at7102.97,-1797.74,143.42, then eastward overshoot; exit/ladder unreached. Coordinator inspected74/90/145 and reran focused528trusted58PNG21PIDrawall0 plus both observer positive5negative sets PASS. New native count8 decoded actor stable2908ms after Load but145 remains LOADING; count7 preferred/count6 untouched. Fresh Deus01a19230-a37b-7b72-a78c-47142692b2c1 handle37715 targets stable96wood landing then actual exit, cheap originalphysics prep waits live Pirates01a19219 handle84424 FULLRELEASE plus actualgate. Pirates solebrowser132840 runtimeend134540 cleanup<=134740, taskend141505; previous719349915 enemy6guns50crew->4guns44crew/fullreload/secondfire remains accepted. Two workers/onebrowser; full27/crashsweep/FPS/Training completion open, laptop tracks protected, no publicdeploy.
   Done: Reviewed gameplay screenshot and scene-qualified frame measurement with raw samples, counter proof and tested build identity; retain explicit failures.
   Evidence: docs/re-notes/deus-ex-demo.md; scratch/runs/20261031T0447Z-deusex-browser/; scratch/gameplay-coverage-20261003/tasks/GAMEPLAY-deus-ex-demo.json
   notes: Original Training gameplay and first-door traversal are verified on the default guestWorker software browser route. This does not qualify WebGL, audio, FPS, Liberty Island or completion. Historical missing-path reports are superseded for registered deus_ex_demo.
