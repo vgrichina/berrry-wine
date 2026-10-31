@@ -29,8 +29,11 @@ translation, settled on-foot play, firing and jumping remain unproven, and no
 restart cause or emulator repair is established. All23 local pins matched;
 runtime cleanup completed at20:01:05. Evidence applies to tested `0d9913225`;
 later publication merged unrelated font/runtime changes without executing them.
-Fresh SiN air-assault and Slave Zero pre-close crash assignments continue
-under the shared browser lock. See [SiN notes](re-notes/sin-demo.md).
+SiN `2d14f5852` adds reviewed Air Assault aim, barrel animation and wall/roof
+impact particles; no enemy damage, objective or exact restart cause is proved.
+FreeSpace `9ed9d4b54` completes genuine DX7a setup pending four WININIT DLL
+replacements; flight remains untested. Fresh Nox browser gameplay and generic
+FreeSpace reboot completion assignments share serialized runtime/build access. See [SiN notes](re-notes/sin-demo.md).
 
 Heretic II `6e91d9608`, run `20261031T1941Z-heretic2-original-browser`,
 reaches tutorial and Easy docks gameplay with native walking, turning, spell
@@ -1339,7 +1342,7 @@ This updates retained evidence against main fac1dc0ba; it is not a new corpus sw
 | UT2004 | Merged `fc0d7bf10`; `20261010T2240Z-ut2004-sw-menu-input-w5` retains software DM-Rankin and Up movement. | Historical installer route, not a fresh registered-app or full backend-pair certification. |
 | UT2003 | `20261010T2140Z-ut2003-server-sw-w4` and both named artifacts are present; TLS/OOM fixes are merged. | Unattended listen server does not prove player movement; module hash absent. |
 | Daikatana | Retained software `20261006T1830Z-daikatana-demo-gameplay` and explicit CLI WebGL `20261010T2140Z-daikatana-webgl-w4` record world, ordinary movement and weapon pickup. Fresh browser `20261031T0256Z-daikatana-webgl` records the live GL endpoint's `backend: webgl`, inspected original world/HUD and native ArrowUp movement, with 458 unchanged input entries and 106 verified host snapshots. DLL repair remains merged. | Historical module hashes are incomplete. Fresh browser module `8333a35b…` has unknown compiled source identity; Chrome ANGLE SwiftShader is not hardware-GPU evidence. Combat, level completion and full renderer parity remain unqualified. Do not duplicate generic CLI WebGL qualification. |
-| FreeSpace | Historical codec/API fixes and flight predate removal of fabricated DirectX metadata. The Oct31 original startup stops at DirectX required because no installer-produced registry record is present. | Fresh worker01a1939c examines retained locally pinned6.34MB dx7aeng.exe (SHA564de93dcc50) and attempts genuine installation before native flight; waits current SiN browser release. No registry fabrication or current flight claim. |
+| FreeSpace | Historical flight predates removal of fabricated DirectX metadata. Genuine DX7a setup9ed9d4b54 now produces real files and registry but requires restart: four DLL replacements remain queued. | Fresh worker01a193a3-efe3 implements/tests generic WININIT completion from retained private VFS before flight; heavy work waits current Nox release. No registry fabrication or current flight claim. |
 
 The falling-leaf repair, registered saver clock and headless resize fix are merged. Historical 14/14 crash revisits are retained launch evidence, not a fresh full-game certification. MilkDrop remains held after automatic review; Morrowind remains paused and Heroes II belongs to the laptop.
 
