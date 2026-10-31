@@ -1300,6 +1300,61 @@ movement/look/fire and health/ammo/clock response. Software gameplay remains
 unverified, and menu PLAY remains open. The preceding WebGL gameplay and
 Software pre-join screenshot do not supply those missing observations.
 
+### SOFTWARE join and native gameplay verified (2026-10-31)
+
+`20261031T1612Z-ut2003-software-join-reserve` closes that bounded Software
+gameplay gap. Personally inspected `12-antalus-settled.png` shows original
+Antalus and Fire-to-join after ordinary Backquote, typed `open DM-Antalus`,
+and Enter. Native left click `(350,430)` starts the countdown in frame 14;
+`15-joined-settled.png` shows the joined weapon/crosshair HUD, **health 100
+and ammo 150**. No menu PLAY attempt was repeated; that issue remains open.
+
+Native W held **2,200 ms** moves from the overlook onto the lower path in
+`17-forward-settled.png`. Mouse motion to `(430,400)` in eight steps turns
+the view toward the rock wall (`19-look-settled.png`). A **2,300 ms** native
+left-button hold reduces ammo **150 → 148** (`21-fire-settled.png`); health
+stays **100**. Native F1 opens the scoreboard, identifying **DeathMatch in
+Antalus**, frag limit 25, player score/deaths 0/0, and elapsed time **00:24**
+(`23-scoreboard.png`). A later inspected capture shows **00:33**
+(`24-scoreboard-clock-later.png`). The ordinary HUD has no visible countdown
+clock; these are the native scoreboard's elapsed-time readings. F1 dismisses
+scores, and S held **1,800 ms** moves backward in `27-final-gameplay.png`,
+still health 100/ammo 148. No damage, enemy-hit, kill, FPS, audio, match
+completion or full-27 qualification is claimed.
+
+This uses exact0542Z WASM SHA-256
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`,
+**295 frozen source files, seven compiler files, 881 original inputs and
+107 served pins**, verified before/after. Original `-d3d -window -nosound`
+registration is unchanged. The normal host selector alone chooses Software;
+the repaired custom COOP/COEP responder and first-input isolation/default
+guestWorker gates pass, with the browser consistently **1024×768**. Actual
+Software Device inspection finds `gpu=false`, native software exports and
+completed samples advancing from **199,850,535** at the joined HUD to
+**301,598,102** at final gameplay. Final queue evidence records **25,202
+completed / 25,220 submitted**, error null and empty bridge lastError;
+18 pending operations are not completed failures. All sampled queues have
+no error. The load-time `.PAG <- .PAX` diagnostic was followed by the
+inspected match. No draw/input wrappers, guestworker disable, validation
+removal, current-host mixing, asset/INI/clock/save/memory edits or cheats
+were used.
+
+The fresh whole-Chrome/global-crashpad/profile PID/start gate ran under
+exclusive lifetime FD9 after Diablo FULLRELEASE16:03:08. The **2.8 GB**
+prelaunch assertion passed; the first monitor sample, before profile PIDs
+appeared, had **2,968,604,672 bytes** free. Minimum sampled free space was
+**2,701,918,208 bytes**, above both the 2.1 GB stop and 2 GB floor. The
+browser ran **16:12:10–16:16:11 UTC**, within fresh 17/18/19-minute bounds.
+Python actual `Popen.wait()` receipts record wrapper/controller/monitor exits
+zero, and the Chrome exit receipt records zero; no monitor signals were sent.
+Cleanup verifies owned PID/start identities absent, both ports closed,
+profile removed, inputs released and full flock available. **63 trusted
+balanced native events**, **17 PNGs**, frozen identity and focused evidence
+checks pass. No production files changed, public deployment or Boat
+allocation occurred (ID/state/expiry N/A). `RECOVERY.md`, `verification.json`,
+`focused-check.json` and saved cleanup receipts retain this completed
+execution; predecessor unexecuted join requests remain unexecuted.
+
 ## UT2004 explicit CLI renderer startup check (2026-10-31)
 
 Run `20261031T0327Z-ut2004-startup` reached an inspected black game window
