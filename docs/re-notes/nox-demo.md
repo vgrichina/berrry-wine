@@ -318,3 +318,106 @@ handler's two-click contract. A fresh authorized browser allocation must first
 establish actual Nox execution, then follow Network/Host/Bunker and capture
 room-relative before/held/released right-button movement. Original readme and
 bindings remain the only basis for any additional native action.
+
+
+## Registered direct browser gameplay (2026-10-31 20:56–21:03 UTC)
+
+Run `20261031T2057Z-nox-direct` establishes original-demo browser execution
+and narrow trusted right-button movement. The working route is private
+`/index.html?candidates&app=nox_demo&no-log`, using the existing direct-launch
+implementation in `index.html` (around line 2607). No desktop double-click,
+launcher edit, emulator repair, acquisition or additional runtime was needed.
+
+The tested checkout was `41b2af821707ea44d918a7fc9890a54b96e140d8` on main,
+a documentation-only descendant of assigned `e0a17ba9351bfe1e50cbf96d3e9174dfca922abb`.
+All 528 accepted source pins and 867 compiler pins matched the predecessor's
+successful canonical build. The existing module and the actual HTTP-served
+module both matched SHA256
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+It was therefore reused without rebuilding unchanged inputs. Independent
+post-run checking found all source/compiler and 149 original-input pins
+unchanged. The foreign WININIT prototype was neither edited nor integrated.
+
+Before launch, all 125 original game files again matched retained SHA256 and
+shipped `FILESIZE.INI` paths/sizes (50,450,550 bytes). Original configuration,
+manifest, distribution table and DLL inputs were preserved. This is the
+accepted local-byte comparison, not new upstream authentication. The preflight
+asserted selected registry ID `nox_demo` and the registered original path
+`test/binaries/candidates/nox-demo/game/nox.exe`; an HTTP 200 returned its
+1,593,344 original bytes and SHA256 `496123ad275e5d626f31a845033c7ddb7d86fbbf3c2532d2e1f639f8bc77a781`.
+The same target/selection/path were checked again while pausing the executable
+request on the direct route. A Worker had already been instantiated at that
+point; its existence alone was not counted as guest execution. Subsequent
+`running: true`, the NOX window, title and game scenes establish execution.
+
+Chrome was `151.0.7922.108`, headless with an actual 1024×768 native page
+viewport (`defaultViewport: null`, no viewport emulation). COOP/COEP and
+`crossOriginIsolated` passed. Normal guest Workers, WebGL and wall clock were
+used, with no SwiftShader-selection, audio, clock or guest-state overrides.
+No audio-quality or FPS measurement was made. External page requests were
+blocked; no external game peers were supplied. Missing optional desktop icons,
+build-info/auth and font-bundle endpoints fell back normally; served source,
+fonts, module and game files were hash-pinned. The original shell32/ole32
+absence warnings remained and did not prevent this route.
+
+Trusted balanced DOM input reached Click to Continue → Multiplay → Network →
+Host Game → map flag → Conjurer → default Jack → Chat Area. The information
+dialog was dismissed with its visible OK. Chat Area was not counted as arena
+play. Shipped `default.cfg` defines Home as `ToggleServerMenu`; Home opened
+the Game panel, which visibly selected `bunker`. Clicking GO loaded the tiled
+Bunker corridor. Escape opens the quit menu, not this server panel. The game
+recenters its software cursor at flag placement; ordinary mouse motion to an
+edge and back allowed visible cursor alignment without changing guest state.
+Menu presses were held across execution and released between actions.
+
+Reviewed movement captures are:
+
+- `60-arena-before.png` and `61-idle-control.png`: Jack stands in the same
+  dead-end corridor; tiled floor and wall/torch geometry retain their positions.
+- `62-right-held.png`: during a requested 1,400 ms right-button hold, Jack runs
+  northeast along the corridor into the adjoining room with two blue crystal
+  pillars. The fixed corridor torch moves from above/right of Jack to
+  below/left as the camera follows. This is movement relative to the room.
+- `62-right.png`: immediately after release; the renderer mask is cleared and
+  WM_RBUTTONUP (`0x205`) is queued to NOX hwnd `0x10001`.
+- `63-idle-after-release.png` and `64-released-settled.png`: released captures
+  show the crystal room; the later capture retains its settled geometry.
+
+`native-input.json` records trusted button-2 down/up at page point (718,230),
+1,466 ms apart including capture overhead. `input-state.jsonl` records masks
+`0,0,2,0,0,0` across the six captures above, with focus `0x10001`. The release
+queue is subsequently drained. The initial released frame still differs from
+the later frame in camera/world placement, so this proves balanced release,
+not immediate motion cessation. No attack, jump, networking with peers, audio,
+FPS or complete-game qualification is claimed. No emulator failure was observed.
+
+The allocation began at 20:56:50 UTC, with target/hard/cleanup deadlines
+21:13:50/21:14:50/21:15:50. Before inherited-FD9 heavy work, an actual independent
+gate checked predecessor PID/start identities, whole Chrome/global crashpad,
+ports 44345/44817 and profile absence, together with Icewind's terminal
+no-runtime record. Controller, supervisor, monitor and board watcher inherited
+FD9 on `/tmp/wine-browser.lock`. Free disk started above 2.75 GB and remained
+above the 2.1 GB early-stop threshold. Boat ID/state/expiry are N/A.
+
+**Lifecycle limitation:** the supervising tool returned exit 143; the supervisor
+identity disappeared before the final quit command, and the remaining process
+tree disappeared before `finally` and the controller/helper `Popen.wait`
+receipts were written. The sender/cause is unknown. No successful durable
+controller/helper reap or orderly browser close is claimed. The final live
+screenshot and balanced input record were saved before disappearance; an image
+at the termination itself could not be captured. There was no restart or retry.
+`interrupted-lifecycle.json` retains this first observed failure.
+
+At 21:03:51, independent `/proc` PID/start checks found all 21 recorded OWN
+identities absent, whole Chrome/global crashpad empty, ports 46121/42971 closed,
+and FD9 free. Only then was this run's remaining profile removed. Final input
+records have no held keys/buttons. `full-release-final.json` records actual
+release and the missing wait receipts; NEWFULLRELEASE was announced for the
+waiting Icewind worker, which must still perform its own actual gate.
+
+Recovery: retain the current private original fixture and all run evidence;
+use the same registered direct URL and verify pins before any fresh allocation.
+If further runtime work is requested, first repair the supervisor lifetime so
+it survives the full allocation and records durable waits. No additional Nox
+build or acquisition is needed while the accepted source/compiler pins match.
+This assignment stops after publishing these findings.
