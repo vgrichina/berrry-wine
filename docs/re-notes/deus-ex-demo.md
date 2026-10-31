@@ -947,3 +947,74 @@ profile removed, browser/lifetime exit0 and monitor ended; full flock release
 was verified before lane handoff. Free disk stayed above2GB. No Boat:
 ID/state/expiry N/A. No worker/subagent/successor was launched. `check.py`,
 `focused-checks.json` and `cleanup-audit.json` retain the checks.
+
+## 2026-10-31 1007Z — RepairBot recharge and fresh native checkpoint validation
+
+**Passed: native RepairBot recharge from 0% to 75%, actual native save export,
+and fresh-application native Load Game validation.** Evidence is in
+`scratch/runs/20261031T1007Z-deusex-repair-camera/`. The accepted `173d88a99`
+repair checkpoint was mounted only as its two immutable, unedited files through
+ordinary `app.files`/`vfsPaths`. Native Load Game recognized count3 (`18`),
+restored the ramp (`20`), and F12 produced “Light deactivated” (`22`). There
+was no Training replay.
+
+The Repair Bot is in the red-lit alcove beside the ramp. Navigation included
+backtracking, missed alignment and travel beneath the raised walkway. The
+inspected original controls also bind PageDown to LookDown and F to CenterView.
+`57-target-bot.png` labels the bot; native right mouse opens its actual
+interface in `63-bot-ui.png`, showing **Bio Energy 0%** and **Ready**. A mouse
+click on Recharge did not change that state (`65`). Native Enter then produced
+**Bio Energy 75%** and **Recharging: 58 seconds** (`67-energy-result.png`).
+This is an inspected recharge result, beyond approach or instructions.
+
+Escape → Save Game → Enter wrote actual new bytes, overwriting slot1 only in
+this new guest VFS. `recharge-native-checkpoint/` preserves immutable indexed
+copies, guest paths and a manifest:
+
+- `c:\save\save0001\saveinfo.dxs`: 34,577 bytes, SHA-256
+  `f316e13876c9ec4986a9e95f76c09e9078bc447f8d885be463a7d590f30d707a`.
+- `c:\save\save0001\00_training.dxs`: 3,231,626 bytes, SHA-256
+  `e938b055c8c87d6d78220cb68919aaef941dd0824658e3e23481faacc611714a`.
+
+A page reload created a fresh native application in the same locked browser,
+mounting only these two exported files. `126-fresh-list.png` recognizes
+**save count4** and the bot preview. Native Enter restores the bot (`128`);
+native right mouse opens its interface with **75% Bio Energy** (`130`).
+`RECOVERY.md`, `make-restore.py`, `fresh-load.cjs`, `inspected-proof.json` and
+the checkpoint manifest preserve recovery and the exact boundary.
+
+The camera corridor beyond the ramp was approached (`163-camera-area.png`),
+including a native jump attempt. Subsequent frames show movement **below the
+raised walkway**, with a green camera visible (`168`). There is no inspected
+camera activation/detection, alarm receipt, camera-exercise completion or next
+distinct instruction/area. The first unresolved gameplay dependency is
+navigating the raised camera route and obtaining an actual camera response or
+onward trigger. No Training completion, healing or resting-body claim is added.
+Transient teal captures recovered without a restart. Console evidence includes
+caught native C++ throws during menus and blocked optional `/build-info.js`
+requests; no page error was recorded.
+
+Exact retained WASM remains
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`, with
+292-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+Before/after checks pass all292 saved sources and131 original/support files;
+105 served source URL/hash pairs match the verified canonical closure, and
+the19 original DLL paths match. SoftDrv/default guestWorker/three workers,
+guest640×480/browser1024×768 remain unchanged. No production, asset/INI/clock,
+save-byte or memory edits, cheats, input bypass, FPS/audio diversion or public
+deployment occurred. Frozen predecessor evidence stayed read-only.
+
+Pirates explicitly released the lane at10:11:20UTC. This single detached
+wrapper/controller/monitor lifetime acquired the full browser flock and passed
+the actual live-process gate before launch at10:12:16; browser exit was
+10:26:57, cleanup10:27:03, within the18/19min bounds. Initial/final fd9 proofs
+cover all three holders. Both global-database crashpads were identified through
+own profile Chrome child handler references; the secondary started one tick
+after the primary. Their exact PID/start identities were recorded and stopped
+under the full flock before browser closure. No foreign process was signalled.
+All21 owned runtime PID/start identities are absent; HTTP34857/CDP36113 closed,
+profile removed, browser/lifetime exit0, monitor ended and full flock release
+verified before explicit lane handoff. Focused checks pass266 trusted events,
+empty held inputs and106 PNGs. Free disk stayed above2GB. No Boat:
+ID/state/expiry N/A. No worker/subagent/successor was launched.
