@@ -1,5 +1,156 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-10-31: durable local candidate prepared (no registration or runtime)
+
+On main `65224c0ca25da0937337734303740847f14ee34e` or its descendants,
+the accepted recovery below is now copied to the ignored, persistent candidate
+`test/binaries/candidates/rune-demo/` (`F` below). **The future launch no longer
+uses recovery-run URLs.** No source search, download, extraction, installer,
+browser, game, project build or box lifecycle operation was repeated.
+The only tracked change is this note; keep the ignored fixture when cleaning
+scratch. Evidence for this preparation is
+`scratch/runs/20261031T2305Z-rune-demo-fixture/`.
+
+Candidate layout:
+
+| Relative path under `F` | Purpose |
+| --- | --- |
+| `game/` | Exact complete original relative layout: 142 files / 128,542,865 bytes |
+| `original-package/runedemo.exe` | Independent 90,741,739-byte original installer archive; never executed |
+| `.wine-assembly-browser.json` | Ordinary schema-version-1 host manifest; 141 exact companions |
+| `.host/original-payload-inventory.json` | Byte-for-byte accepted complete SHA-256 inventory |
+| `.host/launch-plan.json` | Proposed entry, dependency plan and future route; no registration performed |
+| `.host/pe-imports.json` | Accepted supplied-module imports, copied without reinspection |
+| `.host/check-fixture.js` | Static local package/full-tree/manifest/policy preflight |
+| `.host/RECOVERY.txt` | Local recovery instructions and identity pins |
+
+All originals, six Help files, license, shipped INIs, assets and four EXEs
+(`Setup.exe`, `System/Rune.exe`, `System/Setup.exe`, `System/UCC.exe`) remain
+byte-for-byte equal to the accepted inventory. Package and guest files were
+copied to distinct inodes with link count one, so guest changes cannot mutate
+archival originals through a hardlink. Originals in the accepted recovery were
+read only. Metadata stays outside `game/` and is never mounted as guest content.
+No guest/configuration/registry/resource bytes were fabricated or patched.
+
+Before copying, `/home` had **2,588,631,040 free bytes**. The package and
+payload require **219,284,604 bytes**; admission included a further 20 MB
+reserve, projecting 2,349,346,436 bytes free. Guards checked before each file
+and MiB write; after copying, free space was **2,368,950,272 bytes**. All
+observed checks stayed above the 2,000,000,000-byte floor. No foreign cleanup.
+
+The new manifest SHA-256 is
+`ed536fbc320e683319cfb824a7c901dfebf4633a578be5890b09eb549e0baf48`.
+Each companion has exactly `url: 'game/<original-relative-path>'`,
+`vfsPath: 'c:\\<original-relative-path with backslashes>'` and its accepted
+byte size. Only the main `System/Rune.exe` is excluded from companions.
+Its relative URL base is the manifest's directory, as both ordinary hosts
+currently implement; all DLL seeds and main executable use repository-relative
+candidate URLs. No manifest or entry URL needs the accepted scratch directory.
+
+Static checks verify every package/payload hash, exact complete guest file set,
+case-insensitive uniqueness, all four EXEs, independent copies, exact companion
+set/paths/sizes, browser URL versus CLI path resolution, ordinary merge and
+case-insensitive override precedence. Current helper
+`lib/app-files.js` still hashes to
+`4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7`.
+Loading policy remains **51 eager / 7,411,746 bytes**, **90 streamable /
+120,897,647 bytes**, no unknown sizes; all DLL/EXE/INI/INT companions are
+eager. The synchronous-fault-read route correctly makes all 141 companions
+eager. These are local policy checks, not HTTP or browser results.
+
+`localManifestIntegrity` remains **absent**. Its existing opt-in requires one
+EXE and rejects the original four-EXE inventory; the restriction was confirmed
+without removing files, changing shared policy or adding a bypass. Full hashes
+are checked by the external preflight before launch. Ordinary host loading
+does not itself enforce those hashes or prevent later guest changes: recheck
+before each fresh run and preserve the original package.
+
+### Concrete future registration and first startup
+
+Browser access is unavailable and was neither retried nor investigated.
+When that prerequisite is supplied in a separately authorized runtime task:
+
+1. From the repository root, run
+   `node test/binaries/candidates/rune-demo/.host/check-fixture.js` and require
+   success. Stop on changed bytes or missing media; do not repin changed files.
+2. In that future task, claim `lib/apps.js` and add the following proposed
+   `rune_demo` row to `APPS`, with a local label in `LOCAL_CANDIDATE_APPS`
+   using then-current registry conventions.
+   Keep it out of the public desktop list. This task made **no registry edit**.
+
+   ```js
+   rune_demo: {
+     exe: 'test/binaries/candidates/rune-demo/game/System/Rune.exe',
+     exeGuestPath: 'c:\\System\\Rune.exe',
+     workingDirectory: 'c:\\System',
+     args: '',
+     dlls: ['MSVCRT.dll', 'Core.dll', 'Engine.dll', 'Window.dll']
+       .map(name => 'test/binaries/candidates/rune-demo/game/System/' + name),
+     files: [],
+     localFileManifest:
+       'test/binaries/candidates/rune-demo/.wine-assembly-browser.json',
+     requiredFiles: true,
+     relativeMouse: true,
+     fileConcurrency: 8
+   }
+   ```
+
+3. After the future registry change's required validation, use the ordinary
+   local host rooted at this checkout, e.g. `node ops/server.js --port=8098
+   --no-agents`, and open
+   `http://127.0.0.1:8098/emulator/?debug&app=rune_demo`. Ops mounts the
+   emulator at `/emulator/`; a host serving the emulator at its root uses
+   `/?debug&app=rune_demo` instead.
+   That command/URL is an instruction for the future; no server was started
+   here. **The route is not currently registered or live.**
+4. Launch the shipped `[PlayShortcut]`: guest `c:\System\Rune.exe`, cwd
+   `c:\System`, empty arguments. Observe the original first-run wizard;
+   preserve empty `FirstRun` and original `Rune.ini`/`User.ini`. Do not select
+   the shipped safe-mode shortcut (`-nosound -nohard -noddraw`) as a substitute.
+   Stop at the first genuine startup dependency failure and retain its evidence.
+
+Accepted direct imports are bundled Window/Core/Engine/MSVCRT plus USER32,
+KERNEL32, GDI32, ADVAPI32 and SHELL32. The supplied dependency closure also
+uses COMCTL32, comdlg32, ole32, OLEAUT32, WINMM, IMM32 and WSOCK32; these Win32
+interfaces require host support, not fabricated guest DLLs. Supplied dynamic
+modules and first-run settings remain as documented below: default D3DDrv,
+windowed SoftDrv, Galaxy audio, `intro.run`, 640×480/fullscreen. DirectX 7+
+behavior is unqualified. Glide/MeTaL are optional alternatives with absent
+`glide2x.dll`/`metal.dll`; they are not prerequisites to copy into the default
+route. OpenGlDrv and SGLDrv are supplied alternatives, not boot preload seeds.
+Native exports, renderer/audio initialization, registry necessity and gameplay
+remain untested. No forced success or runtime compatibility claim.
+
+### Durable recovery without recovery-directory launch paths
+
+The ignored fixture is local, not a Git or off-machine backup. Keep
+`original-package/runedemo.exe`, inventory and license together. The package
+and inventory SHA-256 pins below remain authoritative. `.host/RECOVERY.txt`
+also records these steps. Recovery is an explicit future operation; none of
+the extraction steps were run during fixture preparation.
+
+If only `game/` is lost or modified, first claim a fresh ignored work directory
+and the candidate paths, ensure package plus expanded output stays above 2 GB,
+and verify the retained package pin. Use the pinned REWise revision/command
+below with `F/original-package/runedemo.exe` as input and a **fresh** output
+directory. Require the accepted 143-member CRC result; compare the full
+`TEMP/runedemo` subtree against the pinned 142-file inventory, including exact
+set equality and every size/SHA-256. Restore only with independent byte copies
+into a new empty `game/` destination; preserve modified copies for diagnosis.
+Wise's extra `UNINSTALL_PATH` member is installer material, not a guest file.
+If the candidate package is absent, the accepted package remains a verified
+local fallback; if both disappear, use the historical source recovery below
+under fresh authorization. Never hardlink mutable guest files to either copy.
+
+Host manifest reconstruction is deterministic: read the accepted inventory in
+its stored order, omit only `System/Rune.exe`, map each remaining row to
+`{url: 'game/' + path, vfsPath: 'c:\\' + path.replaceAll('/', '\\'),
+size: bytes}`, wrap in `{schemaVersion: 1, files}`, and serialize as UTF-8
+two-space JSON plus final newline. Require the new manifest hash above.
+Recreate the proposed entry from this note; no shared registry or engine
+changes are needed to recover the fixture itself. Re-run the static preflight.
+Boat/runtime allocation, box ID/state/expiry and lifecycle ownership: **N/A**.
+
 ## 2026-10-31: original media recovered; ordinary launch prepared
 
 **Static media recovery succeeded.** Shipped `System/Manifest.ini` identifies
@@ -10,7 +161,7 @@ No installer, game or browser ran. Compatibility and gameplay remain untested.
 Browser availability is the next prerequisite; it was not investigated or
 retried. No engine, registry, public app list or guest bytes changed.
 
-All recovery media, evidence and host metadata are ignored under
+Historical recovery media, evidence and original host metadata are ignored under
 `scratch/runs/20261031T2253Z-rune-demo-media-resume/` (`R` below). Only this note
 is committed. The historical disk-only outcome below is superseded by this
 recovery; predecessor registry/local-media findings were reused, not repeated.
