@@ -558,3 +558,58 @@ Cleanup verified3.58GiB free disk. No Boat allocated: ID/state/expiry N/A.
 `RECOVERY.md`, `verification.json`, `gameplay-check.json` and
 `cleanup-verification.json` preserve recovery and focused checks. Gameplay
 stopped on demonstrated progression; no successor was launched.
+
+## 2026-10-31: native lock-picking and traversal into the next room
+
+**Passed: collect the exposed Lockpick, pick the exercise door, open it and
+walk through into the next room.** Fresh replay evidence is in
+`scratch/runs/20261031T0648Z-deusex-lockpick/`. I personally inspected the
+original visible Training menu, first-door opening, desk NanoKey pickup
+("Trainer Door added to Nano Key Ring"), slot0/LeftMouse unlock receipt and
+RightMouse opening, then replayed the corridor and crowbar/crate exercise.
+Recorded turn durations varied enough to require visible navigation corrections;
+the command log preserves missed pickup/attack attempts as well as successes.
+
+`object-target-before.png` identifies the exposed object as **Lockpick** above
+the remaining lower wooden crate. Native RightMouse180ms collected it:
+`lockpick-receipt.png` reads "You found a Lockpick" and shows belt slot2.
+Original F1 inventory, then native selection of the item, produced
+`lockpick-description.png`: **Lockpick, Uses: 1**. No item or slot was assumed.
+`locked-door-before.png` shows **Locked, Lock Str: 5%, 1 pick, Door Str: INF**.
+Native2 equipped the observed belt slot; native LeftMouse180ms began use.
+`lockpick-in-progress.png` reads **Picking the lock...**, with strength reduced
+to2%. `lockpick-door-after-use.png` shows **Unlocked** and slot2 empty. These
+world/inventory changes establish success beyond elapsed time.
+
+Native RightMouse180ms opened the picked door (`picked-door-open.png`), and
+ArrowUp1200ms crossed it. `corridor-south-view.png` looks back through the
+doorway into the red crate room. Following the blue corridor east reached a
+distinct room with a wall map, desk item and observation window, personally
+inspected in `next-scene-after-lockpick.png` and `final-next-room-view.png`.
+That desk item was not identified or collected; no next exercise interaction
+or Training completion is claimed. F2 displayed no listed goals, which is not
+completion evidence.
+
+Module SHA-256 remains
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`,
+with matching292-file source manifest SHA-256
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+The retained ReVolt0403 source/build pair supplied the runtime, independently
+of observed checkout HEAD939ff7db0. Before/after checks passed131 original and
+support files,292 saved source files and105 served responses; the19-native-DLL
+closure and mount-time SoftDrv/fullscreen INI remain unchanged. Default
+guestWorker/three workers, guest640×480 and browser1024×768 were observed.
+No source/build change, asset/INI/state/clock patch, cheat, input bypass,
+resolution/FPS/audio diversion or deployment occurred. `gameplay-check.json`
+records212 trusted native events, eight interaction deltas and32 personally
+inspected frames.
+
+Preparation began06:47UTC; the browser lock was acquired06:49:19UTC and the
+browser closed07:06:13UTC. Chrome1685329 exited0. Controller1685276,
+holder1683955, wrapper1683945, all tracked descendants/crashpads and owned
+watcher1684069 are absent; HTTP36975/CDP41383 are closed, profile removed and
+no keys held. The outer tool session returned143 despite browser exit0;
+this is retained in cleanup evidence without attributing a cause. Cleanup
+verified2.42GiB free disk. No Boat allocated: ID/state/expiry N/A. Recovery,
+native commands, source/build identities and focused checks are retained in
+the run directory. Stopped on the demonstrated bounded outcome; no successor.
