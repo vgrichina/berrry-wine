@@ -2081,3 +2081,61 @@ available. No cleanup signals were needed. FULLRELEASE was posted at
 15:12:06 UTC. Boat ID/state/expiry are N/A. The next gameplay dependency is
 restoring ordinary title-to-Load navigation on these exact pins; the prepared
 fencing and early-intercept plan remains unexecuted.
+
+### 2026-10-31 15:15 UTC — title/Load recipe comparison; no supported repair
+
+Evidence: `scratch/runs/20261031T1515Z-pirates-title-load-cause/RECOVERY.md`.
+This is a cheap comparison of accepted `70589baac` and `18aa9d6a5`, with
+fresh immutable-file checks. **No new browser was launched, no harness was
+repaired, and title-to-Load remains unresolved.** The live Deus Ex 15:14
+browser was left alone; no older FULLRELEASE was used as launch permission.
+
+Actual files rule out a demonstrated controller-version difference: the
+drivers are byte-identical, SHA-256
+`ddbb6aa1d153ec718f9edabfd702a4dc3e034ab7a98fa57bfab9496516b35b42`.
+Thirteen compared files match, including driver, supervisor, monitor,
+process guard, request daemon, preparation, registrations and manifests.
+The lifetime wrapper differs only in the required predecessor release name
+and timestamp. Both actual screenshots show 5k, Threads and WebGL; the same
+driver selects `5000` before launching. Frozen `selectedRunSlice` reads this
+selection at `wine.run`; `applyRunSlice` before launch has no running app to
+update. No scheduler drift is established. Realized worker scheduling state
+was not separately retained and is not inferred from these settings.
+
+Readiness does differ observationally. Driver `ready.json` means the control
+server is listening, not that the guest accepts input. The successful first
+capture already shows the title; the failed first capture is still teal.
+The failed first Enter precedes the final canvas resize. The successful run
+also remains at the title through captures `01`–`04`; the first captured
+response is the quit prompt at `05`, after its later 500 ms Enter. Failed
+later clicks and held keys still leave the title, so an early-input race
+alone does not explain the retained failure. Asset and thread-creation logs
+progress substantially more slowly in the failed first page, but those
+counts do not identify a cause or prove guest input consumption.
+
+Frozen launch code focuses the canvas. The failed run's retained DOM sample
+at 15:09:03 identifies `canvas#screen` as active; successful DOM focus was
+not sampled. Initial registrations match exactly, including the unchanged
+12:20 export and native path. The failed reload's later Notepad picker label
+does not establish a wrong guest: its actual launch log and title identify
+Pirates. Neither focus nor picker evidence supports changing the harness.
+
+No discriminating ordinary-input test or safe repair follows from this
+comparison within the task's restrictions. Repeating title keys, choosing
+a different scheduler budget, or extending waits without a measured readiness
+condition would not isolate the cause. The precise first dependency remains
+the frozen runtime's title-to-native-main-menu/Load transition, reproduced
+as title persistence on both pages in the accepted 15:03 run. Guest
+consumption and cause remain unknown; no crash is established. Native Load,
+fresh-page restored Nevis gameplay, duel play/victory/capture and a new
+recoverable save are not claimed. The prior boarding result remains entry
+only, and its read-only VFS helper failure remains a separate limit.
+
+Fresh before/after checks retain the exact `078d81cb…` module, all 296
+source/compiler files, 40 support files, 1,374 originals and both immutable
+saves. Only this documentation and new scratch evidence were written.
+No production, guest/input instrumentation, memory reads, game clock,
+assets, INI or save-byte edits were made. No browser, input, server, profile,
+runtime lock or test box was created; no foreign process was signalled.
+Boat ID/state/expiry are N/A. This attempt stops at the documented first
+dependency without spending another runtime.
