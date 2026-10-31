@@ -5,6 +5,80 @@ from Archive item `icewind_dale_eng_demo`. Its README expressly prohibits
 copying/electronic distribution, so the extracted fixture stays ignored and
 must not be deployed or rehosted.
 
+## 2026-10-31 native local-session ordering and cleanup branch identified
+
+Run `20261031T2210Z-icewind-session-order` reused the original retained 2058
+installation and read-only CD2 mapping. One browser ran 22:11:54–22:14:42;
+three balanced native Escape presses and one trusted Create Game click returned
+to GAME MODE. Fresh failure/final captures are retained; this run did not capture
+the brief CLEARING GAME DATA screen. **No Party Formation, character creation,
+Prologue or tavern movement; no engine repair or build.**
+
+Original disassembly and the fresh read-only trace narrow the cause beyond the
+previous late, quarantined observer:
+
+- Create Game calls initialization at `0x0068F058 -> 0x008D4143`. Its
+  `SendMessageA(0x10001, 0x406, session, 0)` dispatches COM activation.
+  `CoCreateInstance` succeeds: saved HRESULT zero, output `0x08221530`;
+  the actual 53-slot object has the expected DirectPlay methods.
+- The original provider-index-zero path skips `InitializeConnection` at
+  `0x008D424D`, then marks initialization active at `0x008D42E2`.
+  Create-session caller `0x0068F24C -> 0x008D5539` also skips `Open` at
+  `0x008D581F` when provider index is zero, and sets local session flags.
+  No InitializeConnection, Open or CreatePlayer call appears in this trace.
+- The subsequent poll calls `GetSessionDesc(0x08221530, NULL, 0x7EDFFF7C)`
+  with native return `0x008D4D12`. The saved result is `0x887700AA`
+  (`DPERR_NOCONNECTION`) at `0x7EDFFF74`. It is retained in the still-active
+  poll frame during cleanup's `Sleep(1000)`: matching entry return
+  `0x008D48F9`, parent EBP `0x7EDFFF84`, parent return `0x008D4F2A`.
+  This independently matches the original `EBP-0x10 = sizePtr-8` layout.
+  The native comparison at `0x008D4F0A` takes cleanup at `0x008D4F25`,
+  followed by DestroyPlayer(1), Close, and false return.
+
+Thus an earlier failing initialization/Open call was **not** found: native
+code deliberately bypasses both calls in this local path. The retained COM
+object is nevertheless queried, and the valid outside-session result triggers
+native cleanup. **This is not a defined generic API contract defect and is not
+permission to change GetSessionDesc's result.** The remaining question is why
+this original local path retains and polls that object. A generic repair still
+requires an independently defined contract and focused oldFAIL/newPASS test.
+
+The exact exported scratch observer passed cheap tests before launch: copied
+shared views, `RegionMap.REGIONS`, unchanged guest memory, original log
+return/receiver/error forwarding, COM/vtable resolution, filtering before the
+bounded cap, and error containment. The shared-decoder oldFAIL/newPASS used an
+explicit strict-browser decoder mock; Node itself accepts shared views. Browser
+observer errors and dropped records were zero. Live memory is asynchronous:
+the guessed `savedInitializeResult` in record 13 belongs to an expired frame
+and is excluded. Only qualified active-frame reads support the result above.
+The previous late armDesc/armSafe results remain quarantined.
+
+All 1,106 original files and 27 CD2 joins matched, as did the prelaunch 528
+source and 867 compiler pins. The uncached actual HTTP module was 1,898,762
+bytes, SHA-256 `d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+Exact geometry/input, 14 HTTP guard cases, five isolated-server statuses and
+original read-only CD2 prerequisites passed. No guest edits, copies, reinstall,
+manufactured markers, injected saves or API-result changes occurred.
+
+Controller, supervisor, launcher, monitor, board watcher, attached inspection
+helper and six adopted children were durably reaped with zero status; Chrome
+closed normally. The stop-request sender exited one after an acknowledgement
+timeout because the controller exited after capturing its final image without
+writing the command acknowledgement; this is retained, not reported as a
+successful sender wait. Final audit found all 23 owned PID/start identities
+absent, whole Chrome/global crashpad empty, ports 44041/42313 closed, profile
+gone, nine trusted events balanced, and lock free. Minimum free space was
+2,562,224,128 bytes. A source-file change by the next worker after runtime
+(`src/09a8-handlers-directx.wat`, OWN 22:14:49) is recorded separately from the
+unchanged original inputs and loaded module. NEWFULLRELEASE was announced at
+22:17:05; Boat ID/state/expiry N/A.
+
+Evidence: `session-boundary.json`, `session-observer-latest.json`, exact observer
+and tests, `native-*.asm`, `09-first-failure-before-teardown.png`,
+`10-final-before-teardown.png`, `stop-request-wait.json`,
+`full-release-final.json` and `RECOVERY.txt` in the run directory. The combined
+recovery driver, previously unlaunched, was browser-tested in this run.
+
 ## 2026-10-31 original Create Game dispatched; creation still blocked
 
 Run `20261031T2150Z-icewind-native` sent **trusted native Create Game
