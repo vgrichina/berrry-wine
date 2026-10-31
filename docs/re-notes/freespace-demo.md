@@ -129,3 +129,96 @@ Focused checks passed: `test/test-directx-registry-metadata.js`,
 source changed, so no canonical build was required. The own browser/controller
 exited, profile was removed and server port was verified closed. No Boat or
 assigned test box was used (ID/state/expiry: N/A).
+
+## Genuine DX7a setup: reboot pending (2026-10-31, evening)
+
+One real setup run now supplies the missing installer provenance, but **the
+installation is not complete enough to launch the game**. The installer reports
+success requiring restart, and four core DLL replacements remain queued.
+No FreeSpace launch, Choose Pilot, main hall, targeting or flight was attempted
+from this incomplete state.
+
+The owner-designated local source is
+`test/binaries/win98-games-a-d/Colin-Mcrae-Rally2-demo-D3D/extracted/dx7aeng.exe`,
+6,340,040 bytes, SHA256
+`564de93dcc50691480332e2ccb5565908760b295faa70f8c68854f69dad87189`.
+This is a pinned local candidate, not an independently authenticated upstream
+package. `7z x` recovers 109 cabinet members. `directx.inf` selects actual
+`WIN98_INSTALL` file-copy and registry sections; `dxver.inf` contains the
+version entry. Neither INF was manually applied.
+
+Evidence and recovery: `scratch/runs/20261031T2018Z-freespace-real-dx/`.
+`package/` retains every extracted member; `original-pins.json` and
+`input-vfs-pins.json` pin all installer members, the original game fixture and
+available DLL fixtures before execution. Important native installer identities:
+
+| File | SHA256 |
+| --- | --- |
+| dxsetup.exe | a4f7e853c6b910ecc421d10ade8fa7b2da83dc3ee11424eea320788bd02fad16 |
+| DSETUP.dll | 58224deca14927e84d876f1a353d9996303fa61be6990da2470d5635ad692f18 |
+| dsetup32.dll | e1ab548cc74c1a81002176174122f75c555f4b0ba9857f3da99e2a0339392a46 |
+| setupapi.dll | 51f2682279e28386aa9c0eb8ba4f8ac3000c9ff75cf7e2456e8cdd9f0c544159 |
+| cfgmgr32.dll | 572387372791a7bc8d336fbbb6af6a9651a627124599f862ac2bd235145b7b80 |
+
+The isolated CLI run executes `C:\directx\dxsetup.exe /silent` with real
+elapsed ticks, default guest threading, the pinned canonical module and private
+`--vfs-tree`, `--save-vfs` and `--reg-export` destinations. The exact argument
+array is `installer-command.json`. `installer.log` records native
+`DirectXSetupA` at `0x012e02d7`, then native `iDirectXSetup` in `dsetup32.dll`;
+the built-in success-only `DirectXSetup` handler was not called. Native
+SETUPAPI/CFGMGR32 and the ordinary retained COMCTL32 were loaded. No global DLL
+policy, registry default, installed foreign fixture or production source changed.
+
+`result-vfs/` preserves the real resulting files, including
+`windows/directx.log` and `windows/wininit.ini`; `result-vfs-pins.json` hashes
+every exported file. `installer-registry.json` is the unedited installer-produced
+export, containing `HKLM\Software\Microsoft\DirectX\Version=4.07.00.0716`
+and `RC=1`. The final installer log says
+`Installation ended with value 1 = Installation succeeded need restart`.
+The guest exits with 1; the CLI host exits with 0. No unimplemented API trapped.
+
+**Exact remaining prerequisite:** native setup queued these `[Rename]`
+operations in WININIT.INI. Each staged file exactly matches its package member
+(full hashes and joins in `pending-reboot.json`), while each current target
+remains a 1,024-byte built-in placeholder:
+
+| Target in C:\WINDOWS\SYSTEM | Queued source | Bytes |
+| --- | --- | ---: |
+| ddraw.dll | SETP5.tmp | 352528 |
+| d3drm.dll | SETPc.tmp | 437008 |
+| dplayx.dll | SETP13.tmp | 218384 |
+| dsound.dll | SETP21.tmp | 399120 |
+
+The file also queues deletion of old dplayx.dll and dsound.dll. No retained
+`wininit.exe` or existing WININIT replay path was located in the current runner,
+boot helper or VFS implementation. Complete the genuine reboot/install
+transition against this retained private state before importing it into an
+original-game context. Merely importing its now-present Version value would
+skip the installer's pending file operations. No manual rename, registry stamp,
+INF-only shortcut or setup retry was performed.
+
+Recovery without another download: verify the source hash, extract with
+`7z x -o<private-package> <source>`, verify all members against
+`original-pins.json`, and use the retained `result-vfs/` plus
+`installer-registry.json` as the reboot-pending checkpoint. Preserve the raw
+WININIT file, including duplicate NUL entries and ordered operations.
+`prepare.py`, `install.py` and `finalize.py` document the actual preparation,
+single execution, hash joins and cleanup; do not rerun setup just to recover
+state already retained here.
+
+Input main was `eecf56f5c`; actual preparation/run main was `2d61cfa16`.
+All 528 retained source and 867 compiler/input hashes matched the preceding
+canonical build, whose module SHA256 is
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+Before/after original, source and compiler checks passed. The registry metadata
+test passed; static version test passed all 12 assertions against that module;
+system-files test passed with current source compilation. Fabricated-metadata
+removal policy and tests remain intact. No source change required a new build.
+
+The silent setup's final PNG was personally inspected: plain teal desktop,
+not an installer-success or gameplay screen. The log, exported files and pending
+operations establish the result. No audio/FPS claim applies. No browser/server
+or helper process was launched; the own CLI was durably reaped, its PID/start
+identity absent, whole Chrome/crashpad census empty, predecessor ports closed,
+no profile or held input, and `/tmp/wine-browser.lock` free. See
+`full-release-final.json`. Boat ID/state/expiry: N/A.
