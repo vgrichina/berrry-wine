@@ -1164,3 +1164,103 @@ held inputs empty and actual full flock release verified before11:18:40
 handoff. Later documentation-watcher cleanup is recorded separately. Disk
 stayed above2GB. No foreign kills, Boat (ID/state/expiry N/A), subagents,
 additional guest launch or successor.
+
+### 2026-10-31 11:34Z — first gap resolved with grounded running launch
+
+Run `scratch/runs/20261031T1134Z-deusex-grounded/` resolves the first raised
+grate-to-grate jump. This is actual stable footing, not camera visibility.
+The remaining pipe, farther gap and next instruction were not tested. No
+new save was created; the two immutable1034Z count5 files remain recovery.
+
+Read-only analysis preceded the single native session. Scratch `decode.py`
+parses original UE1 v68 package tables, state headers and tagged properties;
+`geometry.py` follows compiled Model36 BSP references through its exact
+object end. Bounds, names, object references, compact-index cases and
+truncation rejection are checked. Original map and saved Model36 both have
+16184 points,9376 nodes and5300 surfaces. Selected corridor faces place the
+near platform end at Y=-274.0007 and next platform beginning at Y=-429.9999:
+a **156-unit gap**. The next grate interior is Z=-36. The lower floor is
+Z=-192; the pipe ahead spans approximately Y=-630..-666, Z=16..52. The
+farther gap is about178 units, Y=-830..-1008. These measurements describe
+compiled faces, not a full collision simulator; some original faces are
+nonplanar, so no global zero-residual claim is made.
+
+Saved JCDentonMale0 is PlayerWalking/Physics1 at
+(6953.8433,-272.4012,16.9320), yaw114962, radius20 and standing height43:
+its center starts only1.60 units from the near edge. Structurally decoded
+class defaults give JumpZ300, GroundSpeed320 and Human AccelRate1000.
+Original `DeusExPlayer.DoJump` requires Walking and sets vertical velocity
+before switching to Falling; it supplies no forward velocity. This made a
+running launch from a backed-away grounded position a distinct test, rather
+than another guessed simultaneous Space/Up duration from the saved edge.
+It does not retrospectively assign every earlier failed comparison a cause.
+
+A narrow scratch observer established state mapping before movement. It
+uses original Core exports' GObjObjects/FName arrays, enumerates only that
+declared object array, and requires unique JCDentonMale0/class identity.
+Original native disassembly supplies Physics+0x30, Location+0x114,
+Rotation+0x120, Velocity+0x144, Acceleration+0x150 and cylinder+0x1d4/+0x1d8.
+The initial values independently match the immutable save's exact position,
+rotation, Physics1, radius20 and height43, with zero velocity. Reads run in
+the owning slot0/thread1 worker's timer callbacks after JS/Wasm returns;
+there are no guest writes or guest gameplay calls. Wrong position, physics,
+array capacity, duplicate actor and radius fixtures are rejected. An initial
+FName-count ceiling rejected the real74583-name array; the recorded rejection
+was resolved with a bounded200000 ceiling before gameplay. The initial
+URL-only worker selector also refused the three-worker ambiguity; explicit
+slot/thread identification resolved it.
+
+Native Load Game showed count5/time00:53:38 (`12-count5-dialog.png`) and
+restored the original corridor (`15-restored-world.png`). Only the two
+immutable files were mounted through `app.files`/`vfsPaths`. Native Back
+moved to a stationary grounded run-up at Y=-164.9484. Up then accelerated
+along the original grate. The Space-down gate required Physics1, correct corridor X and measured
+forward speed; standing height43 was observed at launch.
+
+| Observed boundary | Native state / inspected evidence |
+| --- | --- |
+| Grounded launch (`22-grounded-launch.json`) | (6953.1431,-245.6348,16.9320), Physics1, velocity(8.3388,-319.8913,0), height43. |
+| Airborne (`helper-jump-observer-final.json`) | Physics2, first observed upward velocity226.85; peak observed center Z63.9063. Up remained held across the gap. |
+| Release and stationary wait (`25`–`28`) | (6959.7808,-500.5729,15.8000), Physics1, velocity/acceleration zero, height43. |
+| Inspected feet (`26-landing-feet.png`, `27-landing-feet-still.png`) | Next platform's grate fills the view beneath the player and remains unchanged after an additional2-second wait. `28` shows the pipe ahead. |
+
+All38 browser events were trusted and balanced, with exactly one Space-down
+while Up was held and Duck released. The observer confirms trajectory and
+stable contact; screenshots independently confirm raised grate underfoot.
+No emulator defect is established.
+
+Original map **and save** mark all four SecurityCamera actors `bNoAlarm=True`,
+including UN_obst_jump. Original bundled `SecurityCamera.uc` gates its normal
+visibility/detection block on `!bNoAlarm`. Thus green camera visibility here
+cannot establish an alarm milestone, and a normal camera alarm is not an
+appropriate acceptance condition for these actors. Original Mission00
+script provides no jump-camera gate; the later dl_cratestack trigger lies
+near (7063.58,-1632.38,8.1). Reaching that instruction remains unproven.
+
+The retained module8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676,
+292-source manifest9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379,
+131 original/support hashes,105 canonical served sources and19 DLL mounts
+pass before/after checks. Original SoftDrv/default guestWorker/three workers
+and guest640×480 were retained. A helper's initial Puppeteer connection
+briefly set browser800×600 (`20`/`21`); this was corrected to1024×768 before
+the jump. All launch/trajectory/landing captures use1024×768. Reused `17`/`18`
+filenames show the backed-away run-up after that correction, not the exact
+initial save. No claim of uninterrupted browser viewport identity is made.
+
+Pirates'11:40:16 explicit FULLRELEASE and the actual global Chrome/crashpad
+gate preceded the11:43:52 launch. Wrapper1997135, controller1997138 and
+monitor1997137 held the full-lifetime lock. At11:48:56 the disk guard closed
+the browser successfully at1989124096 free bytes, below the2GB floor, after
+the landing proof. A later pipe helper could not attach and sent no inputs;
+there was no second launch or onward test. No fresh save/Load validation was
+attempted. Cache was disabled; the guard acted as required, but continuous
+free space above2GB was not maintained.
+
+Cleanup verified25 owned runtime/helper/watcher PID/start identities absent,
+both global crashpads gone, HTTP34907/CDP35571 closed, profile removed, held
+inputs empty, actual whole browser gate clear and full flock released before
+11:50:27 FULLRELEASE. No foreign signals or Boat (ID/state/expiry N/A).
+Focused identity/save/input/observer/decoder/landing/cleanup checks and doc
+diffcheck pass. No production edits, full build, Training/recharge replay,
+asset/INI/clock/save-byte/memory mutation, cheats, input bypass, FPS/audio
+diversion, public deployment, subagent or successor.
