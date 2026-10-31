@@ -811,3 +811,70 @@ preserve the evidence and limitations. No Boat was allocated: ID/state/expiry
 N/A. No worker or successor was launched. The next dependency is a durable,
 continuously locked fresh replay reaching the already accepted cadet state,
 then native key/body/table interaction with personally inspected final proof.
+
+
+## 2026-10-31 0849Z — MedicalRoom onward to light exercise; native save restored
+
+Run `scratch/runs/20261031T0849Z-deusex-medical-durable/` extends the accepted
+`e8e86b767` cadet NanoKey receipt with personally inspected native gameplay.
+A fresh original Training replay reached the cadet, searched him for the
+Medical Room key (`96-medical-key-receipt.png`) and picked up his body
+(`97-native-body-carry.png`: held cadet, cleared floor, “You found a body”).
+After temporarily putting him down, the equipped keyring's native left-click
+unlocked the signed MedicalRoom door: `119-medical-key-receipt.png` shows
+“Your NanoKey Ring unlocked it” and “Unlocked.” The cadet was retrieved and
+carried through the open door (`124`, `130`) to the medical table (`131`).
+
+Native right-click toward the table cleared the held cadet and started an
+incoming transmission (`132-table-placement.png`). No retained frame shows
+a body resting on the table, and no readable Winslow acknowledgement or
+healing is claimed. Table acceptance is inferred from that trigger, the
+opened onward route, and the next distinct exercise. `144`–`146` personally
+show Jaime's instruction to use the light augmentation with F12 and find the
+exit from a dark room; `147-light-exercise.png` shows “Light activated.”
+The next gameplay is that light/dark-room exit exercise.
+
+At the first new body-carrying progress, F6 proved to be an empty augmentation
+slot. The ordinary Escape → Save Game → Enter UI then wrote actual native
+save bytes. `first-native-checkpoint/` preserves the completed first export:
+`c:\save\save0001\saveinfo.dxs` (34,576 bytes) and
+`c:\save\save0001\00_training.dxs` (3,227,383 bytes), with guest paths and
+SHA-256 in its manifest. `light-native-checkpoint/` separately preserves the
+later save count 2 light-room checkpoint (34,577 and 3,229,336 bytes).
+No save bytes were fabricated or edited. Same-application native Load Game
+restored it, then a page reload created a fresh native application in the
+same continuously locked browser. Only the two exact exported save files
+were added through the normal file loader. `163-fresh-save-list.png` recognizes
+save count 2; native Enter loads it; `165-fresh-load-result.png` restores the
+lit room; `167-fresh-native-light-response.png` shows native F12 “Light
+deactivated.” Early teal/loading frames were transient, not guest failures.
+`RECOVERY.md`, `make-restore.py` (prepares a fresh bounded run without launching),
+`fresh-load.cjs`, both checkpoint manifests and `inspected-proof.json` retain
+recovery steps, hashes, observations and limits. The earlier cadet checkpoint's
+fresh load was not separately tested; the later checkpoint's was.
+
+Exact retained WASM SHA-256
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`
+and 292-file saved-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`
+were used throughout, never current host sources with an old module.
+Before/after 292-source and 131-original/support hashes pass; all 105 served
+source URL/hash pairs and 19 DLL paths match the accepted predecessor.
+Duplicate response bytes reference verified 0736Z canonical snapshots.
+The restore adds only two authentic user-save data responses to the 97
+original native data files. SoftDrv/default guestWorker/three workers,
+guest 640×480/browser 1024×768 remain the original configuration. There were
+no production-source, asset/INI/clock, guest-memory or executable changes,
+cheats, input bypasses, FPS/audio diversion or public deployment.
+
+The detached setsid wrapper, controller and independent cleanup monitor kept
+fd9 on `/tmp/wine-browser.lock` across the entire runtime; proof at 09:25Z
+shows all three alive after 35min. This resolves the prior 15min harness-lifetime
+failure without treating it as guest behavior. The process/profile orphan
+gate passed before launch. Final checks pass 598 trusted native input events,
+empty held inputs, 167 valid 1024×768 PNGs, both save hashes and fresh-restore
+registry scope. All 19 tracked owned PIDs are absent, HTTP 34127/CDP 38929 closed,
+profile removed, browser exit 0, wrapper lifetime exit 0 and monitor ended.
+The lock was verified available and the lane explicitly released at 09:30Z;
+free disk stayed above 2GB. No Boat: ID/state/expiry N/A. No worker or successor
+was launched. `focused-checks.json` and `check.py` retain the exact checks.
