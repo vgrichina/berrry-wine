@@ -210,3 +210,104 @@ and watcher `1528360` are absent. HTTP `35875` and CDP `34131` are closed,
 the profile is removed, and no keys remain held. The controller tool returned
 143 after its finally completed; that exit's cause is unknown. No Boat/test
 box was allocated (ID/state/expiry N/A); delegated local shutdown is complete.
+
+## Complete renderer boundary: world vertices already degenerate (2026-10-31)
+
+Run `scratch/runs/20261031T0552Z-forsaken-boundary/` advances the 0427Z
+partial-window observation. One native Volcano run captured two complete
+clear-entry-to-next-clear-entry intervals, each containing exactly one original
+Flip. Frame 1 spans epoch milliseconds
+`1793426468823.48–1793426469383.7852`. This identifies the first ineffective
+world draw in that frame; the first historical corrupting operation remains
+unproved. No production repair was made.
+
+The retained module is SHA256
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`,
+with the exact matching **292-source** ReVolt0403Z snapshot. Its manifest is
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+All 107 runtime response pins and original 873 inputs verify; current host
+sources were not substituted. Default guestWorker, Threads, explicit WebGL
+and 1024×768 were measured live. The actual legacy endpoint uses ANGLE on
+Intel UHD 620 / Mesa 23.2.1. Native Enter reached Single Player/Start Volcano;
+the synchronized capture used trusted A for 500 ms. No game state, asset,
+clock or validation edits were used.
+
+`boundary-trace.json` retains initial/end GPU color, framebuffer/depth
+attachment identities, CPU backing/object snapshots at renderer handoffs,
+uploads, clear arguments, owning command/state bytes, texture bytes, all
+actual submissions, per-draw before/after GPU pixels and readback. The
+initial depth renderbuffer contents cannot be read directly; the first
+successful full `(0,0,640,480)` flags **2**, Z=1 clear defines the depth used
+by every captured draw. CPU snapshots do not record every individual guest
+instruction store. The separate original Execute/TRIANGLE/Flip trace has
+no overflow and brackets the same complete intervals.
+
+- Frame 1 begins with a full room in the GPU color target. The incoming CPU
+  backing already contains Volcano briefing fragments. A full 480-row upload
+  of those bytes exactly reproduces the post-clear GPU color, including the
+  briefing; the depth-only clear preserves it. Target `131805408` and observed
+  alternating backings `471678976`/`472317952` are evidence addresses, not an
+  ABI. The upload observer's old `t.dib` label precedes `_prepare` updating
+  that field; its retained bytes and live backing pointer identify the upload.
+- The first world draw is endpoint **1**, sequence **33070**, ordinal **0**:
+  76 triangles from execute buffer `22496756`, TRIANGLE offset **5232**,
+  following PROCESSVERTICES offset **5196** (TRANSFORM, start/destination 0,
+  count 96). Every referenced vertex already has identical XYZW at Execute
+  entry: approximately `(580.0194,285.7600,0.9982571,0.000130648)`.
+  After PROCESSVERTICES they all equal
+  `(580.9359131,285.9217529,0.9982455969,0.000131108522)`.
+- The six world draws contain **76/60/102/106/238/88 = 670 triangles**.
+  Each has one unique position and changes **zero actual GPU pixels**.
+  Indexed Execute expansion matches every owning transport vertex byte;
+  actual submit/raster inputs match after the expected BGRA-to-RGBA color
+  conversion. The world geometry is therefore already ineffective before
+  GPU rasterization. Later object draws of 8 and 6 triangles have distinct
+  positions and change 18 and 1,890 pixels. Readback is bounded to
+  `[340,205,583,288]`.
+- Frame 2 also has 670 collapsed world triangles and zero world pixel
+  changes, but its incoming backing already contains a full room. Personally
+  inspected synchronized `boundary-f1-start.png`, `boundary-f1-end.png` and
+  `boundary-f2-end.png` show full room → briefing fragments → full room.
+  Full-looking color can thus be inherited from a backing even when the
+  current world draws do no work. This does not require a color clear or
+  implicate blending/lighting. Zero GPU errors are not used as pixel proof.
+
+**Precise missing capture dependency:** the first native initialization of
+these world buffers, first source-cache creation, subsequent Lock/Unlock and
+vertex writes, and source-cache/matrix/viewport inputs immediately before the
+first divergent PROCESSVERTICES. The successful guest trace began after all
+referenced world positions were already collapsed. Later correctly decoded
+`world-caches.json` also contains collapsed screen-like coordinates. Retained
+`09ab-handlers-d3dim-core.wat` reads the source cache and writes transformed
+TL vertices into the live execute buffer; `09aa-handlers-d3dim.wat` Unlock
+refreshes the whole source cache from that buffer. Feedback through that
+refresh is a candidate mechanism, not an established first cause. This run
+cannot distinguish it from original game writes or another earlier front-end
+operation. No speculative cache, clear, blend or lighting change is justified.
+
+Replay the focused evidence check with
+`python3 scratch/runs/20261031T0552Z-forsaken-boundary/check-boundary.py`.
+It passes both complete intervals, all 16 Execute/transport/submit matches,
+1,340 degenerate world triangles with zero changed pixels, four effective
+object draws, exact 565 upload/color reconstruction, and all input/source/
+runtime hashes. This is an observation check, not an old-source-rejecting
+repair regression. No new build is claimed for this docs-only change.
+
+Capture limitations are preserved in `late-observation-limit.json`: the
+startup instantiate hook missed its instance; the successful observer used
+an always-false conditional breakpoint in the original `dx_trace` import.
+The initial cache decoder assumed 8192 slots/64 bytes; actual retained layout
+is **16384 slots/32 bytes**, so its half-index slot and `cacheGuest:0`
+metadata are invalid. Raw Execute bytes are independently validated against
+the transport. A subsequent Ctrl 500 ms screenshot failed; a later live
+observation found no guest workers, cause unknown. No new primary-fire image
+contrast is claimed. A late empty-page capture overwrote `boundary.png`;
+exclude it and use only the synchronized GPU PNGs above.
+
+Own Chrome `1630186` exited 0; controller `1630169`, holder `1630168`,
+tracked children/crashpads are absent. HTTP `41779` and CDP `44313` are closed,
+profile removed and keys released. The browser lock covered the entire
+runtime, including the process/profile gate; another worker's orphan was
+left to its owner to close before launch. No Boat was allocated
+(ID/state/expiry N/A); delegated local cleanup is verified. Evidence and
+replay instructions are retained in the run's `RECOVERY.md`; no successor.
