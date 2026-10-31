@@ -101,10 +101,19 @@ Execute/transport/GPU submissions match. Six world draws per frame contain
 nondegenerate object draws do change pixels. Exact565 uploads from alternating
 backings explain room versus briefing fragments; depth-only clear preserves
 color. The coordinator inspected both frame colors and reran the offline
-check:873 original/292 source/107 runtime pins pass. The first historical
-vertex/cache mutation remains uncaptured; source-cache feedback is a candidate,
-not a proven cause. No production repair. Runtime cleanup verified; a fresh
-worker captures initialization/Lock/Unlock/native stores before first divergence.
+check:873 original/292 source/107 runtime pins pass. Follow-up `24b5bd55a`/`7867342ee`, run
+`20261031T0617Z-forsaken-first-mutation`, reconstructs 876 initialization
+deltas and 29 original color-only stores: engine-transformed output becomes
+the next source through Unlock1417, diverging at PROCESSVERTICES1420. The
+startup/attract trace does not independently identify Volcano. A fresh native
+Volcano retest of separate-output candidate `41f5c4c7` preserves 162 source
+vertices over 12 Executes; two complete frames redraw 642 world triangles.
+The coordinator inspected a complete room/HUD and changed pitch with firing
+2000→1998, and reran mutation/source/redraw checks. Owned processes and ports
+are closed. The four-file repair remains uncommitted: the final allocation-
+failure guard differs from the native candidate and needs fresh focused
+failure/retry checks plus full build. A fresh implementation worker owns that
+finish. Sustained gameplay, hardware GPU, FPS and completion remain unverified.
 See the [Forsaken investigation](re-notes/forsaken-demo.md).
 
 The earlier gameplay runs pin module `8459597c` to the retained ReVolt locked build's exact
