@@ -453,3 +453,58 @@ sustained play, collecting the key, opening the next locked door, Liberty
 Island and Training/game completion remain unverified. The next narrow
 gameplay check is the visible desk key and next locked door, if requested;
 this single-task assignment ends here.
+
+## 2026-10-31: desk NanoKey and next locked door traversed
+
+**Passed: collect the desk key, unlock the next door, open it and walk through.**
+Evidence: `scratch/runs/20261031T0606Z-deusex-key-door/`. I personally inspected
+`key-center-before.png` showing the targeted **NanoKey** on the desk and
+`key-after-pickup.png` showing the empty desktop and “Trainer Door added to
+Nano Key Ring”. `locked-door-target.png` shows **Locked**, and ordinary
+right-click produces “It's locked” in `locked-door-interaction.png`. Slot0
+equips the ring (`key-ring-equipped.png`); a180ms native left-button press
+produces “Your NanoKey Ring unlocked it” and **Unlocked** in
+`door-after-key-use.png`. A180ms right-button press opens the doorway
+(`next-door-open.png`), and Up1000ms crosses into the gray corridor
+(`beyond-next-locked-door.png`). `doorway-behind.png`, viewed from that corridor,
+shows the red-floored desk room through the doorway and the next Jaime
+transmission about goals/notes. This establishes passage beyond the locked
+door, not Training completion.
+
+The unchanged original User.ini binds Z/C to TurnLeft/TurnRight, arrows to
+movement/strafe, PageDown/Delete to LookDown/LookUp, End to CenterView,
+RightMouse to ParseRightClick, 0 to ActivateBelt0 and LeftMouse to
+ParseLeftClick|Fire. Native C700ms revealed the desk after replaying the first
+door. Further native turns/movement/look and small mouse deltas targeted the
+visible key; RightMouse180ms collected it. Commands and74 trusted native
+key/button records are retained. Short menu/aim attempts are recorded as
+attempts; successful actions are identified by the inspected captures above.
+
+The private Chrome151.0.7922.108 page used a1024×768 browser viewport, default Threads checked,
+actual `guestWorker === true`, three guest workers and registered mount-time
+SoftDrv/fullscreen INI. Module SHA-256 remains
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`;
+the exact292-file saved source manifest remains
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+The server supplied matching saved source bytes, not the separately observed
+checkout HEAD. All131 original/support pins,292 saved source hashes and105
+served runtime snapshots passed, with the original19-DLL closure preserved.
+The launch registry differs only in its explicit existing native DLL URLs.
+No build, source repair, asset change, guest memory/state/clock patch, cheat,
+input bypass or public deployment occurred. No FPS or audio-quality claim is
+made. **Resolution limitation:** the preserved INI requests640×480 and the
+runtime console records `canvas 684x570 -> 640x480`. Thus1024×768 describes
+the browser capture, not the guest render resolution; this run did not meet
+the requested1024×768 guest-render qualification. The runtime was already
+closed when this distinction was checked; no second startup was run.
+
+Preparation started06:06UTC; the browser/controller ran06:07:16–06:12:14UTC,
+within the30-minute assignment. The full-lifetime `/tmp/wine-browser.lock`
+and process/profile gate serialized execution after Forsaken. Chrome1639004
+exited0; controller1638968, holder1638050, watcher1638049, tracked children and
+crashpads1639020/1639022 are absent. HTTP41963/CDP40803 are closed and the
+profile is removed; cleanup verified4.00GB free disk. No Boat allocated:
+ID/state/expiry N/A. `RECOVERY.md`, `verification.json`, `gameplay-check.json`
+and `cleanup-verification.json` record recovery and focused checks. The next
+bounded gameplay check, if assigned, is to follow the corridor into the next
+Training exercise with ordinary native input. This assignment stops here.
