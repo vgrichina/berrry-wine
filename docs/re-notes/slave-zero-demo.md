@@ -739,3 +739,142 @@ Minimum monitored free disk was 2,330,177,536 bytes. Boat ID/state/expiry are
 N/A. No public deployment, extra browser, agent, worker or successor was
 launched. This remains findings-only: controlled gameplay and a defined-use
 emulator cause are unproved.
+
+## 2026-10-31: terminal reservation — first audio fatal captured
+
+Evidence: `scratch/runs/20261031T1931Z-slave-zero-terminal-lifecycle/`.
+This is a single bounded diagnostic and a documentation-only result. There
+is no emulator patch or defined-use oldFAIL/newPASS. The requested terminal
+after NEW GAME/Easy remains unresolved: this execution encountered the earlier
+audio fatal while leaving the intro, before reaching that menu. No retry was
+made, and controlled gameplay was not established.
+
+### Observer correction and verification
+
+The scratch observer filters routine non-stream DirectSound status, frequency,
+mixing and spatial calls before snapshots, emission and the ordinary 4 MB
+budget. Stream allocation/free histories, object changes, relevant wait/close/
+release calls and host transitions bypass that budget. MessageBox and terminal
+snapshots have separate transport: ExitProcess entry, host exit/thread exit,
+and outgoing Worker error, trapped, exit-yield or zero-EIP receipts. Terminal
+records preserve registers, the 512-word stack, stream snapshots, bounded
+history and recent events before forwarding the original operation. Full
+terminal records are not recursively embedded in the recent-event ring.
+The existing 128-address/16-event history bounds and 16-event unrelated ring
+remain; at most eight distinct terminal reasons are retained per instance.
+
+`observer-test.cjs` uses real shared WebAssembly.Memory and an actual Wasm
+reader. It drives 240,000 unrelated heap events, 3,000 allocation candidates
+and 100,000 non-stream status calls. A separate 5,000-call saturation case
+exhausts ordinary logging, then verifies allocation/free, wait/acquire,
+mutex release/close, six terminal snapshot types and complete first-fatal
+chunk reassembly. Existing hooks, exact results, guest bytes/registers,
+postMessage forwarding and instantiate/manager Promise identity are preserved.
+The new test fails against the previous scratch observer at routine-status
+emission; the corrected observer passes. Transport is 717,839 bytes in the
+flood case and 7,082,778 bytes with saturation and reserved snapshots.
+The unchanged-ThreadManager focused test also passes stop-index-two
+acquisition, close after completion and exactly one retained delivery. This
+tests the valid-use boundary without choosing semantics for pending close.
+
+### Actual first fatal and same-invocation ordering
+
+The sole browser ran 19:34:24–19:35:09 UTC on published main
+`e2a73b33a23a27c9fae7d581ca045e434cf36572`, which includes input
+`7d3458055077dcc56645416732192237612b7f33` and accepted findings `8c69b3abf`.
+It followed CURRENT Kingpin NEWFULLRELEASE 19:25:02 and an independent
+whole-Chrome/global-crashpad/profile PID/start gate under inherited lifetime
+FD9. Source/compiler/module pins matched the predecessor's tested build;
+no new build was needed. Module SHA-256 remained
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+The run used the original default isolated Worker, native WebGL, normal
+audio/clock, inner 1024×768 and `defaultViewport:null`. HTTP isolation was
+checked before trusted launch input. Original assets, INI, saves, guest
+memory and registration were not patched.
+
+Personally reviewed startup and city-intro captures precede a balanced
+Escape at 19:35:08. `03-native-intro-escape.png` shows a dark transition with
+a HUD; it proves neither a menu nor player control. At 19:35:08.925, audio
+Worker thread 2 records **AudBuffer error in lock**, title **Slave Zero
+Fatal Error**. `fatal-2-104.json` preserves the complete stack and registers;
+the host window metadata also records the fatal title. The reviewed
+`first-fatal.png` is dark and does not display legible dialog text. Further
+input was withheld and the controller stopped automatically at this fatal.
+No NEW GAME/Easy, movement, look or firing input followed.
+
+The loaded wDSound base is `0xa64000`. Stack words 261, 264 and 280 contain
+`0xa6591c`, `0xa6abf8` and `0xa6a35b`, mapping to original
+`0x1000191c`, `0x10006bf8` and `0x1000635b`: the null-buffer error path,
+refill return and audio-thread refill caller. The final observed stream
+address is `0x19b4b94`, with buffer `+0x28` and mutex `+0x5c` both zero.
+No actual DirectSound Lock entry occurs between its last cached-mutex use
+and the fatal. This is the original pre-Lock fatal, not a failed Lock HRESULT.
+
+`actual-first-fatal-order.json` retains the exact selected records. Page
+observer sequence numbers establish this order for **wait identity 1651**:
+
+| Event | Page sequence |
+| --- | --- |
+| Three-event wait observed pending, all handles present | 1242 |
+| Stop event `0xe0007` signaled | 1251–1252 |
+| Mutex `0xe000001` closed | 1259–1260 |
+| Events `0xe0005/6/7` closed, same wait still parked | 1261–1266 |
+| Missing-handle fallback acquires result zero | 1267–1269 |
+| Result zero retained, then delivery fulfilled | 1270–1273 |
+| Cached closed mutex used by audio thread 2 | 1274 |
+
+The wait is wait-any/INFINITE, guest array `0x7e78ffb8`, with a 20-byte
+frame. Its Worker sequence 94–97 records entry and pending yield; sequence
+99–102 records the subsequent closed-mutex call; sequence 104 is the fatal.
+Unlike the preceding run's stop-index-two completions, this invocation
+remains pending through event close and later obtains index zero. These are
+same-page and same-owning-Worker orders, not cross-Worker clock causality.
+
+Main-Worker records independently retain exact HeapAlloc size `0x90` for
+`0x19b4b94`, heap generation 22597, and successful HeapFree generation 58352
+(emitted sequence 956). Main sequence 952–955 records buffer `0x08224fe8`
+release and voice `0xb0003` closure immediately before that free. The secondary
+observer first saw the same address with matching initialized buffer/events/
+mutex, but its local generation has `allocation:null`; no actual CRT
+small-block event or exact later reuse generation was captured. Malformed
+fatal object words must not be labeled a proven replacement allocation.
+
+This execution now reproduces the pending-close→index-zero→refill/null-buffer
+failure path. **Closing a handle while its wait is pending is already the
+undefined case described above.** No emulator violation before that boundary
+was established. The trace therefore does not authorize the held lifetime
+patch, a scheduler change, null guard or deferred-node repair. The next
+concrete boundary is before page sequence 1261: determine why original
+stop/teardown closes the events without wait completion or thread join, or
+identify a separately defined-use emulator violation that initiated teardown.
+Post-close symptoms cannot select a Windows-correct repair. The separate
+post-NEW GAME mip-surface terminal path remains unresolved.
+
+### Evidence integrity and full release
+
+All 365 HTTP responses carry isolation headers; all 344 successful responses
+match served hashes. All 168 original fixture, 528 source and 866 compiler
+pins and the executed module match before/after. Five native events are
+trusted and balanced. Worker transport retains 1,116 records and 2,465,548
+payload bytes, without incomplete chunks, observer errors or a budget stop.
+The actual terminal reservation was not exercised because this run stopped
+at MessageBox; its terminal coverage is a unit-test result.
+
+The executed controller's screenshot basename reused `first-fatal.json` for
+image metadata. `fatal-2-104.json`, raw event log and durable chunk records
+remained intact. The metadata was preserved as `first-fatal-screenshot.json`
+and the canonical fatal restored from the per-thread record; independent
+chunk reassembly matches its full stack/objects/text. `first-fatal-recovery.json`
+records this diagnostic defect and recovery. The executed observer/controller
+were not silently substituted or rerun.
+
+Durable Python waits reaped controller, monitor, lifetime wrapper and owned
+board watcher. Independent release at 19:36:05 verifies all 19 recorded
+runtime PID/start identities, supervisor and helpers absent, whole actual
+Chrome/crashpad/profile gate empty, ports 40985/33129 closed, profile gone,
+inputs empty and FD9 lock free. No runtime signals were needed. Launch free
+disk was 2,564,648,960 bytes; monitored minimum was 2,529,902,592 bytes.
+Boat ID/state/expiry: N/A. No deployment, extra browser, agent, worker or
+successor was launched. Focused observer/source tests, identity/HTTP/evidence
+checks and documentation diff checks pass; no full-build claim is made for
+this documentation-only publication.
