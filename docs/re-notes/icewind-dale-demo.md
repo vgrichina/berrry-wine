@@ -5,6 +5,65 @@ from Archive item `icewind_dale_eng_demo`. Its README expressly prohibits
 copying/electronic distribution, so the extracted fixture stays ignored and
 must not be deployed or rehosted.
 
+## 2026-10-31 original package recovered; installation awaits disk space
+
+Run `20261031T2045Z-icewind-recovery` recovered the exact standalone original
+package into its own ignored directory, without running the legacy fetch or
+preparation recipe. The prior `8f72fa264` original-install absence findings
+were reused; the prepared fixture was not inventoried again or modified.
+No installed export was recovered and no guest ran.
+
+The retained private file is
+`scratch/runs/20261031T2045Z-icewind-recovery/icewind_dale_eng_demo.zip`:
+
+| Check | Result |
+| --- | --- |
+| Size | 645,596,503 bytes, matching Archive metadata |
+| SHA-1 | `cc6345ae7decb43341bde25bb1302f422a42666c`, matching the candidate manifest |
+| SHA-256 | `992b3d9054ff089f40dba40debd0fe902117c1a21f80d7e34678ae3313c9ff80` |
+| ZIP directory | 60 entries, 679,877,981 uncompressed bytes; no absolute or traversal paths |
+| Original `Setup.exe` | 73,728 bytes; SHA-256 `5656e87da0641c9dcfcd0ee8949ce72b3fa6a7d0e8b1fd985a16f6bd6c34ce52` |
+
+Archive metadata and the source HEAD were checked before transfer. The public
+download URL returned HTTP 500 before any bytes were received. The storage
+host named by that item's metadata returned HTTP 200 and the expected length:
+`https://ia600609.us.archive.org/33/items/icewind_dale_eng_demo/icewind_dale_eng_demo.zip`.
+The successful transfer computed both hashes while writing a unique partial
+file, fsynced it, and renamed it only after the expected size/SHA-1 matched.
+Reading Setup.exe, README.TXT, and DirectX/dxsetup.exe from the ZIP also passed
+their ZIP CRC checks; this is not a full cabinet extraction or install test.
+
+The transfer started with about 3.40 GB available and retained at least
+2,758,266,880 free bytes during transfer. At the extraction decision,
+2,758,172,672 bytes remained. Full source extraction alone would leave
+2,078,294,691 bytes, below the requested 2.1 GB early-stop threshold and
+2.5 GB reserve. Source plus the historical 470,164,222-byte installed game
+would leave only 1,608,130,469 bytes, before bootstrap capture/export overhead.
+Consequently no source extraction, unshield operation, installer, build, CLI
+guest, or browser was launched. The authenticated ZIP is the completed
+checkpoint; original installed KEY/INI/CD2 closure and browser gameplay remain
+unverified. Existing prepared assets/authored state and foreign WININIT WIP
+were preserved.
+
+Next: make at least another 2 GB available without deleting foreign work,
+then extract this authenticated ZIP into a new ignored source directory.
+Use the documented native Setup.exe bootstrap and guest-emitted
+`_ins5576._mp` replay below, replacing all historical `/private/tmp` outputs
+with unique run-local paths. Budget for the source, copied bootstrap capture,
+and installed export together. Require actual Setup Complete, guest exit 0,
+and hashes of the original installed KEY, installer-written INI, complete CD2,
+override set, and served closure. Do not present cabinet extraction as an
+installed export. Then apply the current browser-release/actual-process/FD9
+gate before the native character → Prologue DONE → unpaused tavern route and
+trusted balanced floor click with paired screenshots. No loading, menu,
+paused HUD, or historical screenshot is new gameplay evidence.
+
+Evidence: `source-metadata.json`, `source-routing.json`,
+`direct-source-head.json`, `package-authentication.json`, `zip-directory.json`,
+`checkpoint.json`, and the two recovery scripts in this run. No runtime lock,
+profile, server, held input, or test box was created; Boat ID/state/expiry N/A.
+The current Nox NEWFULLRELEASE was observed, but no runtime gate was consumed.
+
 ## 2026-10-31 original-browser prerequisite audit: blocked before launch
 
 Run `20261031T2040Z-icewind-browser` inspected main input revision
