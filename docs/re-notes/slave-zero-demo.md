@@ -363,3 +363,143 @@ profile absent, held inputs empty and lifetime lock available; no signals
 were needed. FULLRELEASE was published at 17:50:44 UTC. Minimum monitored
 free disk was 2,504,740,864 bytes. Boat ID/state/expiry: N/A. No retry,
 public deployment or successor worker was launched.
+
+
+## 2026-10-31: PassMessage producer and actual deferred-dispatch boundary
+
+Findings-only run `scratch/runs/20261031T1804Z-slave-zero-passmessage/`
+started from published `c95f363a99ed838afdfcd61ca1484447ea115e36`, after
+Evolva's 18:04:56 NEWFULLRELEASE, published-source readback and an independent
+whole Chrome/crashpad/profile PID/start gate under lifetime FD9. The executed
+module SHA-256 was
+`bfb6ef7c5a20ce2f439a02c64e2ed94df2543f6ebd7ba03f7b0e0de275a955b6`,
+matching Evolva's tested source/compiler/module manifests. There is no
+production change or defined-use oldFAIL/newPASS repair from this task.
+
+### Original guest contract
+
+Cheap original disassembly preceded the browser. EXE SHA-256 is
+`41ddb7507f2f2c279f9e96b3a8b0b8fb6af55cdca551cef67af294ec21a9a74e`.
+The exported `PassMessage` is `0x41b920`. It reads controller, command and
+message arguments, handles the disabled flag, checks the message, then loads
+controller `+0x50` at `0x41b998`. A zero value calls the fatal formatter at
+`0x41b9a6`; otherwise `0x41b9b9` dispatches through that callback. Thus this
+message is an explicit guest invariant check, before an indirect callback,
+and is not itself a failed emulator callback lookup.
+
+`CreateController` (`0x41bb00`) resolves the script module through
+`0x41cc30`, invokes its gateway at module-record `+0x24` with command zero,
+and records the returned controller's module at `+0x4c` (`0x41bb6e`). Script
+registration calls LoadLibraryA (`0x41ce1a`) and GetProcAddress (`0x41ce89`)
+for `<SCRIPT>_Gateway_Callback`, storing the export at module-record `+0x24`.
+The original wGameScript constructor (`0x10001230`) allocates/zeros its
+controller, initializes its links and writes `0x10001000` into controller
+`+0x50` at `0x1000126e`. Its exported WGAMESCRIPT_Gateway_Callback is that
+same address. All 103 scanned script DLL callback setters have HIGHLOW
+relocation coverage for their callback immediates. These static contracts do
+not prove the failed node was constructed successfully or remained live.
+
+Read-only source review covered GetProcAddress in
+`src/09a0-handlers-base.wat`, relocation processing in
+`src/08b-dll-loader.wat`, `lib/dll-loader.js` and the heap implementation in
+`src/10-helpers.wat`. No generic export/relocation/heap violation was proved.
+No source ownership was expanded; the held audio patch, null guards and slot
+aliases were not applied.
+
+### One current native diagnostic: earlier audio fatal, then PassMessage
+
+The sole original/default-Worker, normal audio/clock WebGL run lasted
+18:16:10–18:21:57 UTC. HTTP isolation and actual inner 1024×768 geometry with
+`defaultViewport:null` were checked before input. Reviewed captures
+`03-native-intro-escape.png`, `04-native-story.png` and
+`06-after-cutscene.png` show the native intro and scripted city/mech scene,
+**not controlled gameplay**. Read-only capture `07-first-failure.png` shows
+the native main menu with NEW GAME highlighted and a Slave Zero Fatal Error
+taskbar entry. This proves menu display, not NEW GAME activation or gameplay.
+
+The first captured fatal was **AudBuffer error in lock**, at 18:17:44.530 on
+guest thread 2. `first-failure-worker-state.json` preserves its full probe
+and stack. With wDSound runtime base `0xa64000`, the stack contains
+`0xa6591c` (original `0x1000191c`), the return following the normal buffer
+`+0x28` null-error call, and refill/thread return addresses
+`0xa6abf8`/`0xa6a35b`. The actual DirectSound Lock call is later at original
+`0x10001945`. This is consistent with the pre-Lock null-buffer branch,
+not a failing Lock HRESULT. The object words read at 18:19:11 were captured
+later, while other guest threads continued, and cannot substitute for the
+object's state at the earlier branch. This probe did not establish the exact
+cross-thread acquisition, signal, close, release and refill order. It supplies
+no valid-use basis for the held pending-close repair.
+
+A trusted balanced Enter at 18:21:15.998 was intended for highlighted NEW
+GAME. At 18:21:16.580 the main thread instead reported
+`PassMessage: null gatewaycallback: node 3da1cf8, command 2`, followed by
+ExitProcess `0xdcdcdcdc` at 18:21:17.295. Because the audio fatal was already
+open, the input recipient and NEW GAME activation are not established. A
+subsequent command was withheld by the missing-Worker input gate; no further
+input or retry followed. `10-post-fatal.png` is the retired desktop.
+
+The PassMessage stack fixes a more precise boundary than the previous run:
+`0x409ac9` calls `0x405c10`, which drains the guest's deferred controller
+queue at `0x45325c`. It obtains the queued node from `[queueEntry]`, calls
+`PassMessage(node, 2, message)` at `0x405c2e` (captured return `0x405c33`),
+then frees the queue entry. Pending entries are created at `0x405be0`, stored
+on `0x453260`, and transferred to `0x45325c` at `0x405c44–0x405c54`.
+At the fatal, node `0x3da1cf8` has callback zero, parent `0x18`, sibling
+`0x845004`, ID `0x3da13ac` and a binary/non-name prefix. These are malformed
+controller contents; this is insufficient to distinguish a stale queue
+pointer, guest lifetime violation, earlier corruption or allocator defect.
+The captured stack and original code establish this dispatch route, not the
+node's allocation/free history or its cause.
+
+The scratch observer copies SharedArrayBuffer-backed bytes before decoding.
+Its real shared WebAssembly.Memory mock verifies named API decoding, changing
+node/fatal capture and preservation of existing hooks, state and returns.
+It samples only existing host/API boundaries and cannot establish causal
+scheduling between Workers. Tree walks cap at 512 nodes per boundary and
+retention at 4096; the failed node was not in the retained earlier tree
+samples, which does not prove it was freed. The console listener truncated
+the main-thread fatal at 24,000 characters. The complete early fields,
+320-word stack and node were extracted without inventing the missing tail
+in `passmessage-fatal-extracted.json`; its recent-call prefix is explicitly
+partial. `[PASSMESSAGE-FATAL]` is the observer's label for **any** fatal
+MessageBox, including the earlier audio error, not evidence of PassMessage
+by itself.
+
+The retained pre-exit sample has 1,666 successful attached-surface lookups
+and no observed mip failure. These include non-mip attachments and cannot
+explain the original slice-7078 EIP-zero lookup/next-Lock failure. That
+original invocation and its allocation/output/reference state remain
+separately unresolved; this run did not reproduce it.
+
+### Validation, release and next boundary
+
+Observer shared-memory mock and syntax checks pass. All 367 HTTP responses
+carry isolation headers; all 346 successful response hashes match the served
+files, with source/module hashes joined to launch pins. All 168 original
+fixture pins and the executed module remain unchanged; all 13 native events
+are trusted and balanced. Another worker edited eight source files and one
+compiler/census file after launch. The shutdown identity check correctly
+rejected current-checkout equality, after closing browser/server and removing
+the profile, so it did not write its usual cleanup summary. The separate
+validation preserves that drift and verifies actual served bytes against the
+original launch manifest rather than claiming the checkout stayed unchanged.
+No full build was run for this documentation-only result.
+
+Durable Python waits reaped controller, monitor and supervisor. Independent
+`full-release-proof.json` at 18:22:38 verifies all recorded runtime processes
+and helpers absent, whole actual Chrome/crashpad/profile gate clear, ports
+43917/40965 closed, profile gone, inputs empty and lifetime lock free; runtime
+shutdown needed no signals. The separate own board watcher was then stopped
+with PID/start qualification and reaped (terminal 143). Minimum monitored free
+disk was 2,425,290,752 bytes. Boat ID/state/expiry: N/A. No public deployment,
+extra browser, worker, agent or successor was launched.
+
+The next PassMessage boundary is the **specific deferred node's** enqueue,
+constructor/callback write, removal/destruction/free and subsequent command-2
+dispatch, correlated by pointer and allocation generation. Capture the queue
+entry and both queue heads, not only the controller tree; a full fatal record
+must survive Worker retirement without console truncation. The earlier audio
+boundary still needs the exact handle invocation/completion/close and buffer
+release/refill ordering before any guest undefined operation. These missing
+histories prevent a proved generic emulator repair. Native menu display is
+verified; NEW GAME activation and controlled movement/look/fire are not.
