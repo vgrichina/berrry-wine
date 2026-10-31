@@ -1,7 +1,7 @@
-Current 2026-10-31T11:05Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T11:20Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Pirates failed-bootstrap cleanup repair c6fa4878a is published. Source review and actual Worker/RPC cancellation, timeout, generation and quarantine regression pass; full serialized build passes. Unfinished initializer images and unresponsive endpoints retain quarantine. Native sailing was already verified; a fresh worker now traces white-coast shader-factory rejection, deadline11:58UTC.
+Pirates terrain factories requested four vertex streams, but D3D9 advertised one. Published44d8b27fd now advertises the implemented16 streams. Source review, causal regression, stream15 pixel comparison and full serialized build pass. A fresh worker tests original terrain creation and coast rendering with the fix, deadline12:12UTC. Visual repair remains unproven.
 
-Deus Ex repair-bot recharge0->75% and fresh native save restore remain verified. Camera-route f1a3e1333 review and focused checks pass: pipe/stairs traversed, first gap landing unproven. A fresh worker verifies native jump controls and route-save restore before another gap attempt, deadline12:00UTC; Pirates has browser priority. Camera activation and Training completion remain unproven.
+Deus Ex recharge and native save restore remain verified. The gap worker has released runtime and is preparing final evidence; it reports route-save restore but no stable gap landing or camera response. Review follows completion.
 
-Two workers maximum, one browser/heavy runtime. Full GL/D3D27 coverage remains open. Disk2.28GB. Laptop HeroesII/fonts protected; no public deployment. No owner action needed.
+Two workers maximum, one browser/heavy runtime. Full GL/D3D27 coverage remains open. Laptop HeroesII/fonts protected; no public deployment. No owner action needed.
