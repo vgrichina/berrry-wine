@@ -2,6 +2,124 @@
 
 Historical source last updated, 2026-10-12. Runtime and implementation claims below describe that dated source; see current app notes and source for subsequent changes.
 
+## 2026-10-31: complete INF review; host installation replay prerequisite
+
+Run `scratch/runs/20261031T2334Z-crimsonland-authentic-install/` reviews
+`cd62d1dd74299b301642d2d6c16ba11c97b3621b` and descendant
+`a0db7c56da9f42a6ce3ba8777d61cc8254a2e888`. The generic builtin repair is
+present. **No candidate installation or mount recipe was enabled:** the first
+concrete unsupported host operation is the selected INF's registry deletion.
+The local manifest imports an additive registry snapshot; it cannot express
+the required subtree removal. Component registration also requires actual
+installer effects absent from the copy plan. This is a host installation
+prerequisite, not an observed guest failure or a new loader-policy defect.
+
+### Full baseline, source and destination review
+
+`full-scope-review.json` independently parses the original `directx.inf`,
+retains every directive's source line and CSV fields, and matches all138
+baseline copy rows against the predecessor's `selected-scope.json` and the
+signed package's retained size/SHA-256 inventory. Nothing reruns or rewrites
+the predecessor audit. There are96 distinct package sources and138 distinct
+destinations; all rows have a bare filename, with no per-row rename, temporary
+name or copy flags. The selected backup sections copy **package bytes** into
+`sysbckup`; they are not a plan to save the guest's current DLLs there.
+
+| Copy sections | Actions | Destination |
+| --- | ---: | --- |
+| DirectX_System_98, DXSystemFiles, DirectX8_System, WIN9X_DXTRANS | 43 + 1 + 38 + 2 | `C:\windows\system` |
+| WIN_SYSBACKUP, DXSysbackup | 40 + 1 | `C:\windows\sysbckup` |
+| Help_Subsection | 2 | `C:\windows\help` |
+| DirectX_Drivers | 2 | `C:\windows\System32\Drivers` |
+| Inf_Subsection | 3 | `C:\windows\inf` |
+| DirectX_Migrate | 6 | `C:\windows\system\DirectX\Migrate` |
+
+The four AddReg groups expand to114 rows:10 HKLM and104 HKCR, comprising111
+default string rows, two key-only rows and one binary `FilterData` row. They
+cover the authentic DxDiag executable App Paths entry, DirectMusic GM path,
+CheckVerDLLs settings, DirectX VB classes/interfaces/type library and MPEG
+decoder registration. They do not supply a fabricated DxDiag COM provider.
+`del.control` has three rows: remove `DisplayName`, `UninstallString`, then
+the `DirectXDrivers` uninstall subtree. The five DelFiles groups expand to31
+rows:10 setup files, three `dxbackup` paths, one help file,11 obsolete INFs
+and six obsolete system files. `DXSetupDelFiles` uses DIRID28700 with
+`directx\setup`; its base remains unresolved by the host recipe contract.
+It must not be guessed as a Windows/system directory. These are reviewed
+actions, not applied changes; queue ordering, replacement decisions and
+directory deletion behavior are not inferred from the filenames alone.
+
+### Original selector corrects the conservative Win98 baseline
+
+Only four small setup binaries were extracted into this new run, all verified
+against the accepted full payload inventory. No entire media copy was made.
+Original `dsetup32.dll` at its preferred base `0x400000` provides the missing
+selection evidence (`os-selection.asm`, `section-selection.asm`):
+
+* `0x4061a1`: Win98-family predicate requires platform1, major4, minor10,
+  and `HIWORD(dwBuildNumber) != 0x045a`.
+* `0x4061e5`: the SE predicate additionally requires
+  `LOWORD(dwBuildNumber) >= 2222`.
+* `0x40627b` classifies that family; `0x40b61c..0x40b63d` chooses
+  `WIN98SE_INSTALL` when the SE predicate succeeds, otherwise `WIN98_INSTALL`.
+
+Current `$winver=0xC0000A04` is expanded by `version_info` to4.10,
+build16384, platform1. Consequently **the original selector, if reached,
+chooses `WIN98SE_INSTALL` (136 actions)**. The predecessor correctly left
+selection unproved, but its conservative138-action Win98 baseline is not
+the actual branch predicted from today's engine responses. The only copy
+difference is `WIN9X_DXTRANS` (`dxtrans.dll`, `dxtmsft.dll`); all four directive
+lists are identical. Both complete scopes and this explicit difference remain
+in the evidence; no silent reduction was installed. This result does not
+establish that the emulated environment is an authentic98SE installation.
+`installer-selection.json` records boundary controls at builds1998,2221,
+2222 and16384, plus Me encodings. This is static branch translation, not
+guest setup execution.
+
+### First unsupported host action and causal limit
+
+The original copy path calls `SetupInstallFromInfSectionA` at `0x40b686`
+through the function pointer resolved at `0x407749..0x407767`, with section
+flags `0x16`, copy flags `0x80000002` and callback `0x409343`. It does not
+merely enumerate files. `lib/browser-shell.js` reads the local manifest's
+`files` and `registry`; `StorageImports.importStore` in `lib/storage.js`
+overlays values and explicitly skips null entries. A fresh process-local JS
+fixture proves that neither null nor omission removes an existing sentinel
+key. No persistent or DirectX registry state was changed by this fixture.
+Thus the required `DelReg` subtree operation cannot be faithfully encoded by
+that existing candidate manifest contract. Guest registry-delete imports do
+exist; the manifest has no operation that invokes them. No builtin
+`SetupInstallFromInfSectionA` API is registered either; the package's native
+SetupAPI is a distinct, unexecuted path, not evidence of host replay support.
+
+The original setup also processes `Win98_DirectX_Inf` (13 component entries,
+including `dinput.inf,Win98RegInstall` and `dxver.inf`) and separately schedules
+`DXDllRegister` / `DX8RetailDLLs` from `dxdllreg.inf`. The latter contains
+`RegisterOCXs` for DirectShow, sound, play, input and retail music DLLs;
+copying those INFs does not execute their DLL registration. The genuine
+`dxver.inf` contains Version/RC writes, but these were not applied or used as
+a detector shortcut. `component-actions.json`, `component-setup.asm` and
+`registration-flow.asm` retain the original actions and callers. A verified
+installed-state export or supported replay of these effects is missing.
+
+**Resume condition:** supply a reviewed installation replay that handles the
+original section selection, deletion, setup queue/component registration and
+their initial-state conditions, or an authentic verified installation result
+with a recovery recipe. That work exceeds a file/manifest-only change under
+the present constraints. Preserve this checkpoint before any new candidate
+mutation; do not substitute16 core files or detector-only DLLs. Ordinary
+browser Play/combat remains pending separately authorized host access.
+
+Validation: static full-scope comparison and selector boundary controls,
+four extracted setup pins, actual pure JS manifest/policy fixture, syntax
+and documentation whitespace checks. Original60, predecessor157, recovered
+media84, predecessor mount12 and all61 candidate files including its manifest
+remain unchanged. No engine/lib/src, tools/test source, original guest,
+resource/version, builtin policy or persistent registry changes; no build was
+required for this documentation-only commit. No browser/game/installer,
+downloads, runtime remote access, agents or boxes. Boat ID/state/expiry N/A.
+The run retains pins, disassembly, full directive inventory and recovery
+instructions; final disk verification remains above2GB.
+
 ## 2026-10-31: consistent builtin execution with authentic system files
 
 Integration validation: the mandatory locked build passed for tail-call and
