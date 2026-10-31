@@ -988,11 +988,11 @@ commit output — do not assume your hunks landed.**
 
 - [ ] Diagnose Pirates stopping before the target rendering operation
   id: PIRATES-ROUTE-FOLLOWUP
-  status: active (textured native coast accepted; onward arrival or encounter running)
+  status: active (native landing party/coast walking accepted; town-entry attempt queued)
   created: 2026-10-02T04:00:31.545Z
   created-by: user-request via ops-dashboard
   candidate: pirates-2004
-  Next: Accepted7a850207f: original four-stream terrain factories return shaders with caps16; personally inspected green, rock and beach coast and trusted onward sailing from Antigua toward Montserrat. No town arrival or combat proven. Fresh worker01a191bd-77ee-7303-89f2-f7fdd333bddf handle41965 deadline12:29UTC pursues native arrival or encounter with exact matched078d81 module/296source/40support/1374original closure. First browser priority; no production edits. Transfer/readback and nested ownership remain separately unqualified.
+  Next: Accepted468ad518a/run20261031T1134Z-pirates-onward: Montserrat landing prompt ->Yes/Enter ->Hangmans Point landing party and native coast walking toward visible buildings; personally inspected25/30 and reran focused296/40/1374/2130/58trusted/31PNG checker PASS. Town Enter/Attack/combat unproven. Disk floor1.908GB ended sole run; browser0/controller143 and stale controller heldSet disclosed, actual final input balanced/fullcleanup verified. Coordinator restored263483595B losslessly from closed logs, free2.404GB. Fresh worker01a191cb-45ec-7513-968b-1c5387cc2f3a handle31763 deadline12:49:40UTC prepares town-entry route with matched078d81 closure; waits Deus explicitFULLRELEASE+actualgate, prelaunch>=2.3GB/continuous>2GB. Transfer/readback remains separately unqualified.
   Done: Identify the route failure and either validate the actual game transfer/readback with reviewed images or record a precise blocking dependency. Link unresolved terrain defects separately; a zero-transfer run is not a rendering pass.
   Evidence: docs/re-notes/pirates-2004.md; scratch/runs/20261031T0215Z-pirates-small-slice/result.json; scratch/runs/20261031T0220Z-pirates-main-sailing/result.json; ops/handoffs/mig-pirates-stretch.md; ops/handoffs/mig-pirates-stretch-recipe.md
 
@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: pirates-textured-coast-onward-main-oct31; deusex-grounded-gap-cause-main-oct31
-  status: active (textured Pirates coast accepted; onward sailing and Deus grounded gap diagnosis running)
+  worker: pirates-montserrat-town-entry-main-oct31; deusex-grounded-gap-cause-main-oct31
+  status: active (Pirates landing-party coast walking accepted; Deus grounded gap test running)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Current2026-10-31T11:37Z: accepted7a850207f actual native textured coast after44d8b27fd MaxStreams16 correction; native factory returns/caps/cache and programmed textured draws verified, personally inspected23/28. Accepted71a805ae1 fresh native count5 route-save LoadGame and corridor/footing; gap landing/camera/alarm/onward unproven, inspected108/110 below grate. Both focused checkers rerun PASS; complete runtime cleanup/publication reviewed. Fresh Pirates01a191bd-77ee-7303-89f2-f7fdd333bddf handle41965 deadline12:29UTC pursues arrival/encounter; Deus01a191bd-8873-74a2-8656-84b95b708bf4 handle8616 deadline12:34UTC first diagnoses grounded gap geometry/state from existing evidence. Two workers maximum/one runtime, Pirates first. Full GL/D3D27 remains open; laptop HeroesII/fonts protected; no public deployment.
+  Next: Current2026-10-31T11:50Z: accepted468ad518a native Montserrat landing party/coast walking; coordinator inspected25/30, focusedchecker rerunPASS and fullcleanup/publication reviewed. Town entry/combat unproven; disk floor stopped run, coordinator lossless archives restored263MB/free2.404GB. Fresh Pirates01a191cb-45ec-7513-968b-1c5387cc2f3a handle31763 deadline12:49:40UTC prepares actual town-entry attempt pending Deus fullrelease. Deus01a191bd-8873-74a2-8656-84b95b708bf4 handle8616 deadline12:34UTC running distinct grounded gap test after static package/BSP analysis; not yet accepted. Prior textured coast/cap16 and native count5 restore remain accepted. Two workers maximum/one runtime. Full GL/D3D27 open; laptop HeroesII/fonts protected; no public deployment.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1195,9 +1195,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: GLD3D-CORPUS-27-20261006
   Observed gameplay (updated 2026-10-31): QuakeII original browser ref_gl/WebGL1 reached seven kills at health21; native F6 checkpoint exported as eight files and restored byte-for-byte in a fresh browser (run20261031T0055Z-quake2-courtyard). Root inspected seventh-kills.png and verification.json: 65 original assets, 424 served responses and external remount pass. Observed renderer is ANGLE Intel Mesa UHD620, software flag0; retained moduled69d1158 has unknown compiled-source identity. Later doorway attempt found no eighth kill and recovered the retained21HP/7-kill checkpoint (run20261031T0213Z-quake2-door); level completion remains open. Earlier GLTron original browser WebGL round reached crash/winner and native restart (run20261030T2230Z-gltron-browser, module7e8d3194, notes802fc9e66). Four screensaver apps retain bounded software observations in20261030T2226Z-d3drm-four-scenes: Architecture/RockRoll/OrganicArt recognizable scenes, Jazz partial; retained1dbddeaf predates current main. These observations do not establish current-main parity or full27 coverage.
   note: 2026-10-31T04:00Z bounded original Forsaken software route reached inspected Volcano briefing/loading scene at1129batches/60.030s; firing scheduled1180 was not reached, so no movement/combat acceptance. All876 original/runtime input hashes unchanged; retained module7f9da4e9 compiledsource unknown, run20261031T0400Z-forsaken-volcano. Fresh worker pursues actual browser gameplay past briefing. Daikatana route80b11f423 preserved without verified exit; Pirates8581ed6dd records effective-state boundary and generic page crashes without production cause/fix.
-  status: active (UT2003 repair and UT2004 WebGL gameplay accepted; Forsaken final-build movement/firing accepted; Pirates cause and Deus Ex progression active; full27 software/WebGL coverage incomplete)
+  status: active (UT2003 repair/UT2004 WebGL/Forsaken movement accepted; Pirates textured coast repaired/native landing party accepted; full27 both-backend coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: pirates-default-worker-terrain-main-oct31; deusex-camera-raised-route-main-oct31 (two bounded workers, serialized runtimes)
+  worker: pirates-montserrat-town-entry-main-oct31; deusex-grounded-gap-cause-main-oct31 (two bounded workers, serialized runtimes)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
