@@ -66,6 +66,11 @@ stopped before join; queued join22/23 never executed. No joined HUD, movement,
 look, firing, health/ammo/clock progression or software gameplay qualification.
 All frozen inputs and22 focused checks pass; all runtime exits0 and whole-process
 cleanup verifies. The next bounded join attempt requires more disk headroom.
+`cd0272077`, run `20261031T1603Z-ut2003-software-join`, then correctly
+declined launch: actual predecessor cleanup/process gate passed, but free space
+was57,539,072 bytes below the2.6GB reserve. Its14 preparation checks pass;
+there is no new runtime or gameplay evidence. The next attempt follows disk
+recovery and uses a2.8GB initial reserve.
 
 Deus Ex documentation `940371775` verifies the default guestWorker browser
 Training route on actual SoftDrv: native approach/retreat, first door opened
@@ -163,6 +168,12 @@ Den entry remains unverified. Frozen module `7f9da4e9` has unknown compiled-sour
 identity; 144 frozen inputs and 25 original runtime files verify unchanged.
 The disk guard stopped cooperatively above 2 GB and all owned runtime resources
 closed. This is native checkpoint evidence, not full both-backend corpus coverage.
+Follow-up `23affb46a`, run `20261031T1543Z-diablo2-isolated-den`,
+verifies isolation/default guest worker from launch through all59 captures.
+The coordinator inspected native restored town08 and Blood Moor combat82;
+124 balanced trusted events and frozen/original/save identities pass. The disk
+guard stopped before Den entry or a newer checkpoint; no new save is claimed.
+All runtime exits0 and whole cleanup verifies at16:03:08.
 See the [Diablo II native restore notes](re-notes/diablo2-demo.md).
 
 Forsaken documentation `50bb30050` records a known-source WebGL frame
