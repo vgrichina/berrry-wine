@@ -498,3 +498,107 @@ No shader substitution is justified by the current evidence.
 PIDs, profiles, controllers and static/control/CDP ports are closed; no Boat
 or test box was used (ID/state/expiry N/A). Disk remained above 2 GB. This
 is documentation-only; no new production build or focused code-test claim.
+
+### 2026-10-31 known-source crash/boundary investigation (04:55Z)
+
+Evidence: `scratch/runs/20261031T0458Z-pirates-knownsource/`. The prior
+`573e235d…` module's retained locked build log proves a successful build and
+map `54a33f1054df7c3f`, but its HEAD/renderer-patch metadata does not enumerate
+all compiled inputs amid concurrent edits. The earlier recovery claim of a
+reproducible revision is therefore insufficient to establish complete source
+identity. This investigation uses the explicitly recoverable fallback:
+module SHA-256
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`
+with all **292 exact matching files** from
+`20261031T0403Z-revolt-backbuffer/source-after/`, copied into this run and
+individually verified. The source manifest SHA-256 is
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+The retained successful `build-after.log` supplies build provenance; there
+is no claim that current HEAD compiled this module. All 1,374 original
+Pirates input hashes passed before launch. Host source requests are confined
+to the saved source tree, with separately frozen supporting fonts/icons.
+
+The prepared observer distinguishes geometry `+0xb4` property state from
+`+0xb8` effect state, records renderer `+0x14` and raw property slots
+`+0x18/+0x28`, and retains wrapper/object/map words. It records prepass EAX
+at `0x5c42c2` before selecting a later breakpoint; a nonzero return skips
+`0x5c4375`. A synthetic helper smoke test passes zero/nonzero return paths,
+bounded stopping and original-instance restoration; this is not live guest
+evidence. The corrected observer caps each thread at four complete meshes,
+240 hits or 30 seconds. Original-EXE excerpts additionally identify object `+0x10` as
+entry count and `+0x14` as `0x18`-byte entry storage at `0x5c9680`;
+`0x5c96f0` copies separately indexed size/data pairs and `0x5c9560` retrieves
+them. These raw structures do not establish shader identity or valid texture
+consumption.
+
+**Live result:** one browser followed the native Main Menu → bartender →
+English captain → System Options → sailing route. `native-coast.png` was
+personally inspected before helper installation: ship/HUD near St. Kitts
+and Nevis, 600 gold, 41 crew, white coast. Natural simulation subsequently
+docked at Nevis; native Sail away / No matter, cast off selections returned
+to sea. `native-turn.png` shows changed ship/coast placement after an
+800 ms Right input plus elapsed simulation. `final-sailing.png` shows the
+ship offshore. This is native sailing progress, not a repair, voyage,
+combat, save, audio or complete rendering qualification.
+
+`third-boundary-export.json` contains **12 identity-checked records: four
+complete same-mesh sequences** at `0x5c429e`, `0x5c42c2` and `0x5c4375`.
+All four prepasses return EAX zero. At all three boundaries, geometry
+`+0xb4` equals renderer `+0x10`; slots `+0x18` and `+0x28` equal the actual
+attached NiRendererSpecificProperty and NiTexturingProperty pointers.
+The effect-state pointers are captured separately. All four select
+NiD3DDefaultShader and have geometry `+0xc8` zero. Therefore the attached
+properties are **not lost between attachment and these effective-state
+boundaries** in these samples. Null shader-extra does not establish a
+missing property.
+
+Three sampled mesh pointers also match actual large indexed draw
+submissions in `consumption-export.json`: `0x09f179b0` / 1,392 triangles,
+`0x09f15160` / 4,784, and `0x09f14c60` / 5,338, all FVF `0x112`.
+The fourth boundary mesh lacks that draw correlation in the bounded capture.
+Payload wrapper `+4` objects have two or three entries with retained size/data
+pairs, including 2,880-, 12,128- and 40,048-byte buffers. No shader identity
+is inferred from those buffers.
+
+The ordinary seven map pointers at texturing-property `+0x2c` are zero in
+all four boundary samples. The separate array at `+0x44` contains five
+non-null entries; `map-arrays.json` preserves its actual data-pointer
+indirection and raw descriptor words. This does not prove valid texture
+contents. `consumption-final-export.json` supplies two same-mesh consumer
+records for `0x09f179b0`: default setup `0x5d458a` receives the matching
+property state, and `0x5d4600` has UV count one while the ordinary map slots
+remain zero. The attempted later map-load breakpoint and subsequent capped
+probe supply no records; **actual downstream map loading/consumption remains
+unverified**. The next causal work is why this geometry has empty ordinary
+maps plus populated separate maps while using the default shader, and which
+consumer is intended to use those separate maps. No renderer repair or
+shader substitution is justified.
+
+The first observer sequence is explicitly rejected for cross-boundary
+comparison: its later EBP values belonged to different meshes because the
+helper cleared the breakpoint before its one-block advance. The corrected
+helper keeps that advance guarded, verifies mesh/renderer identity and
+restores all instances/breakpoints on completion. A second installation
+while in town found no matching meshes; that is not evidence of missing
+properties. All attempts and limits are preserved in `RECOVERY.md`.
+
+Crash sweep: Chrome stderr, page/worker events, CDP target/Inspector crash
+events and 142 cheap process/memory samples cover the browser lifetime,
+including a sample before launch. No page/CDP crash or page exception was
+recorded; browser exit is zero. Peak sampled renderer RSS was 2,735,096 KiB;
+summed RSS includes shared pages and is not unique memory. Cgroup memory
+counters were unavailable. There is no new crash diagnostic, no established
+cause for the earlier crashes, and no helper/OOM attribution. The controller
+tool reported 143 after completed cleanup; its cause is unknown.
+
+The runtime guard first refused to launch when UT2004's orphaned Chrome
+remained alive despite its free lock; that browser was left to its owner.
+Pirates launched only after the owner closed it and the process guard found
+no conflict. Full-lifetime locking then covered the single Pirates browser.
+Original inputs, exact source/module, all 467 served responses, 22 trusted
+input events, helper syntax/control-flow and sequence identities pass the
+retained checks. All owned browser/child/crashpad/controller/lock-holder/
+watcher PIDs are absent, three ports closed, profile removed. No Boat or
+assigned box was used (ID/state/expiry N/A); delegated local shutdown is
+complete. This docs-only change has no new production build or code-fix
+claim. The investigation and cleanup finished within the 30-minute bound.
