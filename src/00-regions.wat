@@ -671,7 +671,7 @@
     (owner "09c2-treeview.wat:$tv_slot_limit"))
   (region.declare $TV_HANDLE_SEQ (size 0x00000004)
     (owner "01-header.wat:$TV_HANDLE_SEQ"))
-  (region.declare $DX_PROCESS_STATE (size 0x00000020) (align 0x00000010)
+  (region.declare $DX_PROCESS_STATE (size 0x00000030) (align 0x00000010)
     (owner "09a8-handlers-directx.wat:$dx_display_w_get"))
   (region.declare $LOOP_PROCESS_STATE (size 0x00000004) (align 0x00000010)
     (owner "07b-loop-match.wat:$LOOP_PROCESS_STATE"))

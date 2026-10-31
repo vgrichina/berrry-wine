@@ -946,7 +946,7 @@
   ;; compositor that the surface it is presenting is that window's client
   ;; area at (0,0) rather than a screen-coordinate DirectDraw primary.
   (func (export "get_d3d9_windowed_hwnd") (result i32)
-    (global.get $d3d9_windowed_hwnd))
+    (call $d3d9_windowed_hwnd_get))
 
   ;; Vertex declarations $d3d9_declaration_create refused. It refuses by
   ;; returning D3DERR_INVALIDCALL with *out left at 0, which a guest that does

@@ -1219,3 +1219,91 @@ verification JSON preserve this limitation rather than claiming a clean
 controller exit. Free disk was about **4.4 GiB**. No Boat/test box was
 allocated; box ID/state/expiry are N/A. The bounded task finished within
 30 minutes and launched no successor.
+
+## UT2004 windowed presentation origin repair (2026-10-31)
+
+Run `scratch/runs/20261031T0514Z-ut2004-origin/` repairs the measured
+default guestWorker/software origin loss and repeats the original DM-Rankin
+route on a freshly built, matched candidate. Personally inspected
+`deathmatch-visible-result.png` shows the complete **Instant Action | Select
+Map** header and tabs. Native clicks at the **visible** DeathMatch label
+`(204,380)` and PLAY label `(459,674)` selected DeathMatch/DM-Rankin and
+started loading. Those labels now occupy those positions; no additional
+`(24,44)` pointer correction was used. An early title-pointer attempt opened
+Join Game; ordinary Escape and Shift+Tab/Enter returned to Instant Action.
+The settled map-page clicks, rather than that early attempt, establish the
+pointer/presentation alignment.
+
+`rankin-loading-3.png` shows the original world and Fire-to-join prompt.
+After normal viewport Fire, `player-hud-first.png` shows the complete top
+HUD, including clock **19:58**, health **100**, ammo **100**, and **The match
+has begun!** Native W advanced along the corridor
+(`native-forward-settled.png`); a native left-button hold reduced ammo to
+**98** (`native-fire-settled.png`). Mouse motion `(340,400)` to `(430,360)`
+changed the view (`native-look-settled.png`), and S returned to the doorway
+(`native-retreat-settled.png`). The final frame retains the full clock/score
+area, health **100** and ammo **98**. No WebGL, audio, throughput, enemy
+hit/kill or match-completion qualification is claimed.
+
+### Cause and ownership
+
+Before production edits, current main still declared
+`$d3d9_windowed_hwnd` as an instance-local mutable global in
+`src/09ad-handlers-d3d9.wat`; CreateDevice and Reset wrote it and the exported
+getter read it. The page compositor correctly resolved shared window 65541,
+but could not observe that device state. Its existing client clipping then
+discarded source pixels `(24,44)`, exactly as the earlier frozen evidence
+showed. That frozen module is a historical comparison, not current-build
+acceptance.
+
+The authoritative windowed HWND now occupies atomic word **+32** of the
+existing shared `DX_PROCESS_STATE`. Successful CreateDevice and committed
+Reset publish the windowed HWND, or zero for fullscreen. All WAT readers and
+`get_d3d9_windowed_hwnd` read that same shared word. The region grows from
+32 to 48 bytes, with the generated JS layout updated. Guest, page and render
+Worker instances already share this memory, so no extra JS state or message
+protocol is needed. `lib/host-imports.js` remains byte-unchanged: its existing
+getter-based distinction still places DirectDraw primaries in screen
+coordinates and explicitly windowed D3D at the device client origin.
+
+Live `final-owner-state-eval.json` reports page windowed HWND **65541**,
+page main HWND **0**, shared target **65541**, client origin **(24,44)**,
+software backend and no bridge error. `final-gameplay-workers.json` confirms
+default guestWorker and an actual software render endpoint; guest and render
+instances both read windowed HWND **65541**.
+
+### Regression, identity and cleanup
+
+`test/test-d3d-windowed-origin-worker.js` creates a real D3D device and uses
+separate guest/page/render WASM instances over shared memory. It checks the
+page's local main HWND remains zero, the shared target is nonzero, both
+client-edge pixel markers survive, chrome remains transparent, and fullscreen
+clears the shared windowed state. The identical regression rejects saved
+pre-edit production source with page getter **0**, expected **65541**
+(`reject-old-final.log`), and passes the repair. The initial fixture omitted
+its window record and failed earlier; `before-regression.log` is retained
+but is not the intended old-source rejection. Existing DirectDraw placement,
+GPU layer origin, browser Worker presentation and direct/Worker D3D Reset
+regressions pass. Full `flock /tmp/wine-build.lock bash tools/build.sh`
+passes (`build-final.log`); no broad suite or benchmark was substituted.
+
+The tested module is SHA-256
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`.
+The loopback browser served this build with **295 frozen current source/host
+files**, a retained compiler manifest and the dirty shared-checkout diff.
+Observed checkout is recorded separately from compiled-source identity.
+All **998 original inputs**, **295 retained source files**, **107 served
+snapshots** and **34 trusted native key/button events** passed checks;
+all 48 PNGs, including the explicitly historical comparison, passed hash and
+signature checks. No executable, asset, argument, font, guest-state or clock
+patch was applied; no public deployment occurred.
+
+Chrome 151 at 1024x768 ran from 05:17 to 05:25 UTC under the full-lifetime
+browser lock, after the prior Pirates browser closed. Explicit quit exited
+Chrome **1583479** zero; controller **1583452**, holder **1583451** and owned
+crashpad processes were absent, HTTP **45739** and CDP **36791** closed, and
+the profile was removed (`cleanup-verified.json`). The board watcher was
+also stopped. Free disk remained above 2 GB (about 4.2 GiB at cleanup).
+No Boat/test box was allocated; ID/state/expiry are N/A. The repair and
+original software browser route are verified; other backends remain separate
+work if requested.

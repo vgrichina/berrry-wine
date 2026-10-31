@@ -134,7 +134,7 @@ assert.deepStrictEqual(layerPixel(0, 0), [0, 0, 0, 0],
 const d3d9Wat = fs.readFileSync(path.join(ROOT, 'src', '09ad-handlers-d3d9.wat'), 'utf8');
 const exportsWat = fs.readFileSync(path.join(ROOT, 'src', '13-exports.wat'), 'utf8');
 assert.match(d3d9Wat,
-  /\$handle_IDirect3D9_CreateDevice[\s\S]*?global\.set \$d3d9_windowed_hwnd/,
+  /\$handle_IDirect3D9_CreateDevice[\s\S]*?call \$d3d9_windowed_hwnd_set/,
   'CreateDevice must record the device window of a windowed device');
 assert.match(exportsWat, /\(export "get_d3d9_windowed_hwnd"\)/,
   'the compositor needs that window exported to tell the two surface kinds apart');

@@ -170,7 +170,7 @@
   (call $d3d9_color_unbind (i32.load offset=22020 (local.get $old)))
   (call $heap_free (local.get $state)) (call $heap_free (local.get $shared))
   (drop (call $dx_surface_release (i32.load offset=20 (local.get $wa))))
-  (global.set $d3d9_windowed_hwnd (select (i32.load offset=48 (local.get $wa)) (i32.const 0) (i32.load offset=44 (local.get $wa))))
+  (call $d3d9_windowed_hwnd_set (select (i32.load offset=48 (local.get $wa)) (i32.const 0) (i32.load offset=44 (local.get $wa))))
   ;; Host-visible mode/window changes occur only after backend completion.
   (call $dx_coop_hwnd_set (i32.load offset=48 (local.get $wa)))
   (if (i32.load offset=44 (local.get $wa)) (then
