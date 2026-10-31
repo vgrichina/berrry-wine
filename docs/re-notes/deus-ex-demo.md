@@ -1264,3 +1264,73 @@ Focused identity/save/input/observer/decoder/landing/cleanup checks and doc
 diffcheck pass. No production edits, full build, Training/recharge replay,
 asset/INI/clock/save-byte/memory mutation, cheats, input bypass, FPS/audio
 diversion, public deployment, subagent or successor.
+
+### 2026-10-31 12:05Z — pipes, farther gap and crate instruction reached
+
+**The onward obstacle passage passed, and a genuine count6 save passed fresh
+native Load Game.** Run `scratch/runs/20261031T1205Z-deusex-pipe/` reused the
+accepted original package/geometry/control analysis and restored only the two
+immutable1034Z count5 files through `app.files`/`vfsPaths` and native Load Game.
+No Training or recharge replay occurred. I inspected the platform footing,
+crate-room transmission and fresh restored world captures.
+
+The original X binding is Duck; original `bToggleCrouch=False` makes release
+restore standing when clear. Original player code lowers collision height
+43→16 while crouching, lowering the center27 units. The scratch pipe guard
+therefore permits the expected centerZ=-11.2 while requiring Walking contact;
+it does not mistake crouching on the grate for a fall. The farther jump uses
+its own grounded launch gate before the measured178-unit gap, Y=-830..-1008.
+The narrow observer retains the checked original exports, actor offsets,
+unique actor/class, owning slot0/thread1 and JS/Wasm return-boundary reads.
+Its corridor envelope alone extends fromY=-1600 to-1800 to include the already
+decoded crate trigger; fresh validation changes only the expected position to
+the newly decoded save. There are no guest writes or gameplay calls.
+
+| Native passage | Observed stable result / evidence |
+| --- | --- |
+| Reproduce first gap | Grounded launchY=-251.29, velocityY=-319.89, height43; Physics2 then stationary Physics1 atY=-506.78 (`22`, `25`–`28`). |
+| X+Up under pipeY=-630..-666 | Height16 throughout movement; release restores43 atY=-718.68, Z15.8, zero velocity (`29`–`31`). |
+| Running Space across178-unit gap | Grounded launchY=-816.80, velocityY=-319.89, height43; Physics2 peak observedZ62.99, then stationary Physics1 atY=-1055.49 (`32`–`37`). Feet captures two seconds apart show the farther grate. |
+| Last pipe nearY=-1090 | Native X+Up and release reach standing Physics1 atY=-1145.18 (`38`–`40`). |
+| Door and crate room | Native Up reaches the unlocked door; a bounded attempt stops there. Original RightMouse opens it (`43`), then Up reaches stationary(7003.7866,-1550.2075,15.8). |
+| Next instruction | `instruction2-centered`, `44` and `46` show Jaime Reyes explaining that the wooden crates are too large/heavy and metal crates should build steps; RightMouse picks up and Tab drops. This is the reached `dl_cratestack` instruction, not completion of crate stacking. |
+
+The save used the ordinary Escape → Save Game → Enter path (`49`–`58`).
+Only the newly written `save0001/saveinfo.dxs` and `00_training.dxs` were copied
+to immutable `progress-native-checkpoint/0.bin` and `1.bin`, with hashes and
+VFS destinations in its manifest. Original count5 recovery remains unchanged.
+Original-format decoding gives count6/time00:55:58 and the crate-room actor
+position above. A fresh page/game instance mounted only those two count6 files,
+then ordinary native Load Game displayed count6/time00:55:58 (`70`) and restored
+the room (`73`). The observer independently matched the saved position,
+rotation, Physics1, radius20, height43 and zero velocity. Inspected feet frames
+`75`/`76`, separated by2200ms, remain stable; `77` restores the forward view.
+This validates recovery beyond both gaps. Crate manipulation remains next.
+
+The matched module remains
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`,
+292-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+Before/after292 sources,131 original/support files,105 canonical served
+URL/hash pairs and19 DLL mounts pass. Original SoftDrv/default guestWorker,
+three workers, guest640×480 and browser1024×768 were retained. All49 PNGs
+are1024×768. All102 native events are trusted and balanced, including two
+Space presses with Up held/Duck released and two Duck holds. Observer positive,
+five rejection fixtures, process-identity guards and focused checks pass.
+`RECOVERY.md` gives the restore recipe; `check.py` reproduces the checks.
+No production edit or full build was needed.
+
+Pirates'12:07:47 FULLRELEASE and12:08:00 cleanup correction preceded the actual
+whole Chrome/crashpad process gate and full-lifetime flock. The sole browser
+session ran12:08:09–12:13:15 UTC, about305 seconds, including the fresh page
+restore. Cache was disabled and console evidence capped; prelaunch free disk
+exceeded2.3GB and the one-second monitor never reached its2.1GB stop threshold.
+Wrapper2022756/controller2022759/monitor2022758 retained fd9; browser2022769
+closed with exit0. Cleanup checked30 owned PID/start identities absent,
+both global crashpads gone, HTTP42785/CDP37541 closed, profile removed,
+empty held inputs, actual global gate clear and full flock release before
+12:13:43 FULLRELEASE. No foreign signals, Boat (ID/state/expiry N/A), subagents,
+successor, additional browser, heavy CLI, build, old-module/current-host mix,
+asset/INI/clock/save-byte/memory mutation, cheats, input bypass, FPS/audio
+diversion or public deployment. Camera alarm remains an unsuitable milestone
+because the original Training cameras have `bNoAlarm=True`.
