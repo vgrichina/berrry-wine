@@ -32,8 +32,12 @@ later publication merged unrelated font/runtime changes without executing them.
 SiN `2d14f5852` adds reviewed Air Assault aim, barrel animation and wall/roof
 impact particles; no enemy damage, objective or exact restart cause is proved.
 FreeSpace `9ed9d4b54` completes genuine DX7a setup pending four WININIT DLL
-replacements; flight remains untested. Fresh Nox browser gameplay and generic
-FreeSpace reboot completion assignments share serialized runtime/build access. See [SiN notes](re-notes/sin-demo.md).
+replacements; flight remains untested. The reboot follow-up retains that
+checkpoint pending authentic Win98 ordering and failure/retention semantics;
+its offline prototype is uncommitted and has not completed installation.
+Nox subsequently gained native Bunker movement and reviewed jumping/landing
+in `20261031T2127Z-nox-jump-action`. See [FreeSpace notes](re-notes/freespace-demo.md),
+[Nox notes](re-notes/nox-demo.md) and [SiN notes](re-notes/sin-demo.md).
 
 Heretic II `6e91d9608`, run `20261031T1941Z-heretic2-original-browser`,
 reaches tutorial and Easy docks gameplay with native walking, turning, spell
@@ -1705,7 +1709,10 @@ size until the next swap, so `resizeContext` now swaps once after resizing.
      These are retained observations, not fresh current-main qualification.
      The historical UT2004 software menu-input
      blocker is superseded by October31 `fb698d57e` and the reviewed
-     DM-Rankin browser gameplay evidence above; this does not qualify WebGL.
+     software DM-Rankin browser gameplay evidence above. The separate WebGL
+     native-menu/movement/look/fire result `f81b9a35f`, run
+     `20261031T0629Z-ut2004-webgl`, is also accepted above; FPS, audio,
+     enemy hits/kills and match completion remain open on both arms.
    - **Not split:** bg2 is DirectDraw as registered.
 2. **Heavy D3D8/D3D9 titles**: Pirates (PIRATES-* rows), BW2
    (GAMEPLAY-black_white_2_demo), Morrowind software (heavy route needs user
