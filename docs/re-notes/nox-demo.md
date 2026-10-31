@@ -421,3 +421,94 @@ If further runtime work is requested, first repair the supervisor lifetime so
 it survives the full allocation and records durable waits. No additional Nox
 build or acquisition is needed while the accepted source/compiler pins match.
 This assignment stops after publishing these findings.
+
+## Native Jump/Action follow-up: harness stop, durable lifetime (2026-10-31 21:19 UTC)
+
+Run `20261031T2112Z-nox-action` did **not** extend gameplay verification.
+The sole browser attempt stopped during startup because the scratch harness
+incorrectly applied its HTTP response-header guard to an embedded `data:image`
+response. No Jump, Action, menu navigation, movement, enemy hit or kill was
+observed in this run. The preceding Bunker movement evidence remains the latest
+gameplay result. No emulator violation or repair is established.
+
+Before allocating the browser, the worker inspected the predecessor's
+`lifetime.py` and `interrupted-lifecycle.json`. Its exit 143 remains attributed
+to an unknown sender, not the emulator. A cheap scratch-only detached-supervisor
+check then started and durably waited for four child roles (controller, server,
+monitor and helper), with all return codes zero. Its socket closed, temporary
+profile disappeared, and recorded child identities were absent. The caller also
+durably waited for that supervisor. Evidence is `cheap-start.json`,
+`cheap-waits.json`, `cheap-cleanup.json` and `cheap-supervisor-wait.json`.
+
+The current Icewind original-install worker's **21:19:01 NEWFULLRELEASE** was
+required; the older Nox release was insufficient. `independent-preheavy-gate.json`
+records fresh PID/start absence checks against both workers, whole Chrome/global
+crashpad absence, closed ports including Icewind's 34721/40747, absent profiles,
+and cleared held-input records. Only then did the supervisor acquire FD9 on
+`/tmp/wine-browser.lock`; controller, monitor and board watcher inherited it.
+`lock-history.jsonl` contains a simultaneous four-holder PID/start/FD9 proof.
+No foreign signals, deletion, profile/transcript mutation or WININIT integration
+was performed. Boat ID/state/expiry are N/A.
+
+The actual tested main revision was
+`75a2966e602c932efefb0eaf98ed3d7168dae4b0`, descending from assigned
+`776db4c83a4d574934d4448d3a9ea1df0de4120e`. All 528 accepted source and
+867 compiler pins matched; all 125 original game files matched retained hashes
+and shipped `FILESIZE.INI` sizes. The accepted module was reused without a
+build, and its actual HTTP response matched SHA256
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+Post-run pin checks remained unchanged. The original `default.cfg` explicitly
+binds `SPACE = Jump` and `MOUSE_BUTTON_LEFT = Action`; no guessed bindings were
+needed. Neither binding was exercised because startup was interrupted first.
+
+The one allocation began at 21:19:18 UTC with target/hard/cleanup deadlines
+21:36:18/21:37:18/21:38:18. It used the registered private
+`?candidates&app=nox_demo&no-log` route, Chrome 151.0.7922.108, normal isolated
+guest Workers/WebGL/audio/clock and a native 1024×768 viewport. No external game
+peers, injected guest state or game-specific bypass was used. Minimum recorded
+free disk exceeded 2.84 GB. No FPS, audio-quality or full-game claim is made.
+
+The copied predecessor harness's `page.on('response')` listener sets
+`closing = true` whenever a response lacks COOP/COEP. Its response log contains
+an embedded PNG with a `data:` URL and no HTTP headers. That URL is allowed by
+the request policy, but its response erroneously trips the guard. All actual
+HTTP responses in this run had the required headers. Page isolation itself was
+true. Replaying the exact listener with the recorded response reproduces this
+early stop; no page-error or emulator-error record exists. The controller
+finished its initial capture, skipped the command loop and closed normally.
+
+`00-firstlaunch.png` was captured before teardown and reviewed: it shows
+"Starting Nox Multiplayer Demo / Loading program", not an arena or action.
+This is the retained failure-state image, taken by the initial snapshot rather
+than a dedicated failure callback. The subsequently submitted startup-wait
+command timed out unprocessed. `native-input.json` has no keyboard/button
+down/up events; there are no before/during/after Jump or Action pairs.
+
+The narrow scratch-only correction in `driver-fixed.cjs` limits the response
+header guard to HTTP(S). `test-response-guard.cjs` extracts and executes the
+actual old listener, then the corrected listener: old FAIL/new PASS on embedded
+data and inherited-origin blob responses; valid HTTP passes, while missing
+COOP, missing COEP and wrong COEP still stop. Six cases pass for the correction.
+`response-guard-test.json` records this result. The corrected driver was **not**
+executed in a browser: the one-attempt/no-restart limit was retained. Neither
+emulator implementation nor registered selector/acquisition code was changed.
+
+This run establishes durable orderly cleanup for its short allocation, not
+proof against every possible future supervisor interruption. Detached session
+supervision and fsynced receipts retained controller `Popen.wait = 0`, monitor
+and board-watcher waits zero, and the caller's supervisor `Popen.wait = 0`.
+The static server ran inside the controller, so its evidence is successful
+server closure rather than a separate server-process wait. Chrome exited zero
+with no signal; no runtime signals were recorded. `full-release-final.json`
+at 21:20:41 independently found all 20 recorded PID/start identities absent,
+whole Chrome/global crashpad empty, ports 33833/33501 closed, profile gone,
+held inputs empty and FD9 free. NEWFULLRELEASE was announced at 21:20:52.
+
+Recovery: retain this run, the unchanged original fixture and accepted module.
+A future authorized allocation should copy the corrected scratch driver into
+its own unique run, retain the tested detached supervision and actual release
+gate, then use the proven direct route and Network/Host/Bunker sequence.
+Capture idle/before, held Space trajectory and released landing, followed by
+balanced left-button Action frames if useful. Only visible original effects
+may support an action or combat claim. This worker stops after documenting and
+publishing this first causal harness failure; no further browser was allocated.
