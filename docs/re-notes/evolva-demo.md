@@ -439,3 +439,80 @@ checks also passed handler stack/epilogue, A/W clone, callback census and test
 tier validation. Final module SHA-256:
 `d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`
 (1,898,762 bytes), recorded separately in `final-verified-build.json`.
+
+
+### 2026-10-31: sustained native combat, incoming hits and health loss
+
+Evidence: `scratch/runs/20261031T1848Z-evolva-native-combat/`.
+This sole bounded browser run executed the final StructA-closure module
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`
+from published main `cd5c5fd86d0bdd859d4d4957687f49e378886b05`.
+The original native menu, team selection and Land4 briefing led back into the
+jungle. The unchanged original level profile returned pending 997 and then
+length 16 eight milliseconds later, with ESP 122680152 preserved. No further
+emulator failure was captured; no production source or fixture was changed.
+
+Cheap preparation read the original mission text, entity placements and EXE
+control table. The mission asks the player to find the underground entrance
+and destroy the bio-signature. Native defaults include W/A/S/D movement,
+relative mouse look, left fire, right jump, number-key weapons, F1–F4 squad
+selection, T grouping, O objectives and Shift beam-up. These informed trusted
+input only; original assets, INI, saves, guest memory and clock were preserved.
+
+Personally reviewed screenshots establish the following narrower outcome:
+
+- `13-native-jungle-check.png`, `18-advance-toward-opening.png` and
+  `19-follow-jungle-channel.png`: living squad and sustained native movement
+  along the jungle channel.
+- `21-select-ranged-weapon.png`: a nearby orange/brown creature, blood at the
+  controlled Genohunter and a red damage overlay in a squad view.
+- `35-cross-water-toward-objective.png`: incoming flash from the ledge, blood
+  at the controlled character's head and a depleted green health track.
+  `38-fire-up-at-ledge-target-held.png` shows further depletion while firing.
+- `42-close-fire-on-ledge-held.png`: squad views one and four are black and
+  control has transferred to Geno two, consistent with native squad losses.
+  F3 selection and subsequent movement remain functional in
+  `45-heavy-control-view.png` and `46-heavy-advance-toward-objective.png`.
+- `52-heavy-fire-at-ground-creature-held.png` and
+  `54-heavy-advance-and-fire-held.png`: a visible large armored creature and
+  native firing poses. `57-heavy-close-attack-held.png` shows close contact,
+  blood and nearly depleted health. By `58-heavy-continue-close-combat-held.png`,
+  squad view three is black and control has returned to the last Geno two.
+- `61-last-geno-return-fire-held.png` and
+  `63-last-geno-native-beam-up-approach-held.png`: the surviving Geno remains
+  controllable near creatures. `65-native-combat-end-state.png` shows the
+  responsive original pause menu after combat; no save/restart was selected.
+
+Read-only PNG measurements corroborate visible health loss. On row 581, green
+pixels in the same first squad health track decrease 56 → 30 → 21 → 0 across
+screenshots 13/35/38-held/42-held. The third squad track decreases
+31 → 18 → 3 across 45/54-held/57-held before its view goes black in 58-held.
+These are image measurements, not native numeric health values. Outgoing
+player hits, enemy kills, DNA pickup, underground transition and objective
+completion remain unverified. Blood or nearby creature geometry alone does
+not establish a successful player attack. No audio, touch or performance
+claim is made. The next control task is a clearly live target with reviewed
+before/impact/after evidence, then navigation to the original underground
+entrance; this run establishes no new repair boundary.
+
+The 18:51–19:06 UTC run used the default guest Worker, threads, normal WebGL,
+audio and clock, a native 1024×768 window and `defaultViewport:null`. All 253
+native events were trusted, with 17 mouse and 29 key pairs balanced. Before
+and after pins match all 362 source, 866 compiler and 1,165 original fixture
+files plus the exact module. All 1,158 HTTP responses carry COOP/COEP;
+1,130 successful served receipts join pinned hashes (1,106 distinct paths).
+The shared-memory observer preservation unit, harness syntax, identity,
+input-balance and release checks passed. This findings-only update does not
+claim another full build; the final module's full build and fifteen focused
+suites are recorded above.
+
+Current SlaveZero release/publication and independent entire-Chrome,
+global-crashpad/profile PID/start gates preceded launch under inherited
+lifetime FD9. Explicit quit reaped controller, monitor, lifetime and supervisor
+with zero exits and no runtime signals. Release evidence verifies all 19
+recorded identities absent, the browser set empty, ports 39227/34415 closed,
+profile gone, held input empty and lock free. Minimum monitored free disk was
+2,316,406,784 bytes. Retired viewport/input-state/console diagnostics were
+losslessly gzip-compressed with byte-for-byte roundtrip verification;
+`lossless-evidence-archive.json` records recovery. Boat ID/state/expiry: N/A.
+No agent, successor or public deployment was launched.
