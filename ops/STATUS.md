@@ -1,7 +1,7 @@
-Current 2026-10-31T23:05:03.969194+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T23:16:09.268884+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Rune’s original demo is recovered: 142 files with verified hashes, archive CRCs and a proposed launch manifest. A fresh worker is preparing a durable candidate fixture with the original first-run configuration intact. Crimsonland now has authentic Win98 DirectX8.1 media, including d3d8.dll4.8.1.881; its fresh worker is preparing dependency mappings after checking native-loader policy. Neither recovery establishes gameplay.
+Rune’s canonical local fixture is ready: all 142 original files, four executables and the 141-companion manifest passed hash and loading-policy checks. A fresh worker is adding its local-only launch entry with original first-run settings.
 
-Alice’s original demo remains ready, but its assigned boat denied SSH before launch and is confirmed stopped. Browser testing awaits authorized host access; the owner has been notified. No denied access will be retried.
+Crimsonland’s authentic DirectX8.1 media exposed a loader inconsistency: an explicit DLL load selects native D3D8 while dependency walking skips DDRAW’s private imports. A second worker is repairing consistent builtin execution while keeping authentic files and resources readable. No dependency installation or new gameplay is claimed.
 
-The disk prerequisite is cleared after verified duplicate-file storage reclamation; original paths, bytes and evidence remain. Two workers are active with no runtime allocated. Return Fire’s accepted launcher/Play and movement evidence remain; sustained play, audio and FPS remain open. Separate test boats, disk above2GB and no public deployment apply.
+Browser tests remain pending authorized host access. Alice’s denied boat is stopped; denied access will not be retried. Two workers are active, with serialized builds and no runtime boxes allocated. Disk stays above2GB; no public deployment.
