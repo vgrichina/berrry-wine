@@ -36,9 +36,13 @@ Pirates documentation `a7725adaf` verifies native sailing near St. Kitts
 and Nevis in `20261031T0458Z-pirates-knownsource`; the coordinator inspected
 the ship/HUD and persistent white coast. Four matched mesh sequences retain
 attached properties into effective renderer state; ordinary map slots are
-empty while a separate array is populated. Downstream consumption remains
-unproved and is the next investigation. No crash reproduced or repair
-landed; 1,374 original inputs, 292 source files and 467 served responses
+empty while a separate array is populated. Follow-up `83ae79866` in
+`20261031T0520Z-pirates-maps` proves the original separate-map writer and
+encoded reader contract. Four matching writer/default-setup mesh sequences
+include two actual large-draw correlations; the coordinator inspected the
+native coast image. Which original shader/pass selection should consume
+those separate maps remains unproved and is the next investigation.
+No crash reproduced or repair landed; 1,374 original inputs, 292 source files and 467 served responses
 verified. See the [Pirates boundary notes](re-notes/pirates-2004.md).
 
 
