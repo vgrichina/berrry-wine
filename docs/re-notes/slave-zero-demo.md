@@ -987,3 +987,100 @@ current main. No browser, server, monitor, input or runtime lock was started
 or acquired; CURRENT SiN's runtime was left untouched. Boat ID/state/expiry:
 N/A. This is the permitted bounded missing-boundary result; post-close
 index-zero/null-buffer symptoms supply no new cause or patch authorization.
+
+## 2026-10-31: bounded producer trace — entry still missing
+
+Evidence: `scratch/runs/20261031T2135Z-slave-zero-producer/`.
+The original `0x837` producer and the first defined-use generic emulator
+violation remain **unidentified**. No production code or guest bytes changed;
+no lifetime patch, forced thread completion, New Game or movement result is
+claimed. The accepted original DLL/EXE hashes in the preceding section remain
+unchanged across all 168 fixture files.
+
+One browser allocation ran 21:37:43–21:41:39 UTC on main
+`5efa420458517d3eacbab60f27946e9cdef80a8d` (documentation descendants of the
+assigned `78f63a919`). All 528 source and 867 compiler pins matched the
+released Icewind predecessor. The actual uncached HTTP response was 1,898,762
+bytes with module SHA-256
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+No compilation or download was needed.
+
+The copied driver initially omitted the current page's `?candidates` opt-in.
+Consequently its selection silently remained Notepad, which it launched.
+The retained selector record and startup screenshot establish that harness
+error; changing renderer order alone did not fix it. Native Stop All, then
+navigation to the local candidates route, an explicit selector/isolation/
+Worker/WebGL gate, and native Launch started Slave Zero in the same browser
+and original deadline. There was no second browser allocation. The reviewed
+`03-intro.png` and `04-native-intro-escape.png` show the original intro; the
+single Escape down/up is balanced and does not establish a destruction
+producer. New Game was not reached.
+
+### Owning-thread observation and retention limit
+
+The scratch observer used the existing block-entry EIP trace import, with
+narrow EXE and per-audio-Worker ranges. Its main-thread routine command
+`0x420`/`0x3ea` traffic exhausted each address's 48-sample cap before the
+first destruction dispatch. It therefore retained **no direct `0x837`
+entry**, caller, message contents or outer-handle allocation generation.
+Main sequence 1377 still carries the accepted destruction stack, command
+`0x837`, message `0x074ff9b4` and return `0x41b9bc`; this is supporting context,
+not a newly observed producer. No additional disassembly/API-pair inventory
+was performed.
+
+The observer map was later filtered to reserve samples for `0x837` through
+read-only register/stack reads. That late change produced no retained `0x837`
+record and does not repair the missing earlier capture. An attempted CDP
+observer live edit was rejected because Chrome no longer supports
+`Debugger.setScriptSource`; it changed no script or guest state. These
+attempts and their limits remain in the run directory.
+
+Thread 2 does have a direct record at original `_endthread` call
+`0x10006373`: sequence 1172, followed by its own `host-exit_thread` terminal
+1173 and exit receipt 1174. Its observed object is `0x019b4b94`, with no
+allocation generation in that Worker's observer. The first fatal instead
+belongs to thread 3 and object `0x019bb54c`. Neither equal addresses in another
+run nor cross-Worker timestamps join those lifetimes. In particular this
+normal exit does not prove thread 3 completed before its destruction.
+
+The complete first fatal is `fatal-3-1016.json`: **AudBuffer error in lock**,
+512 stack words, owning registers and retained lifecycle context. Its chunks
+were fully reassembled with no pending transport fragments. The preteardown
+`first-fatal.png` was reviewed; further guest input was withheld. The executed
+snapshot writer overwrote `first-fatal.json` with screen metadata; the unique
+fatal receipt, event log and reserved chunks preserve the full original
+record. Recovery code fixes this filename collision. No post-close damaged
+object or wait index is used to select a repair.
+
+The first missing causal boundary remains entry to **EXE `0x41b920` and
+callback `+0x50` for command `0x837`, with the actual caller above return
+`0x41b9bc`, message storage lifetime and outer-handle generation**. Next are
+the stream virtual `+0x24` return and optional callback return, and the
+matching audio object's generation/normal completion versus destruction.
+Original second-stop acquisition imbalance remains original behavior, not
+an emulator mutex finding.
+
+### Tests, recovery and release
+
+The executed observer passed its 240,000-event heap flood, unrelated-call
+filter, saturation, first-fatal/terminal reserve, shared-memory read-only and
+Promise/result identity tests. The prior observer rejects the added direct
+producer-hook assertion. A stronger recovery test then injected 5,000 routine
+producer entries before `0x837`: the executed capped observer fails to retain
+the required entry; `observer-recovery.cjs`, filtering before the cap, passes
+including saturation and terminal checks. This is a **diagnostic observer**
+oldFAIL/newPASS, not an emulator regression or a browser-qualified fix.
+`recovery-driver.cjs` also opts into candidates, checks the exact selection
+before Launch, and separates fatal receipts from screenshots. Neither
+recovery file was browser-executed. `RECOVERY.txt` records the next bounded
+observation recipe; no further runtime was launched.
+
+`full-release-final.json` at 21:43:00 UTC verifies all 22 recorded OWN
+PID/start identities absent, whole Chrome/global crashpad empty, ports
+37023/46339 closed, profile gone, inputs released and FD9 free. Controller,
+supervisor, monitor, board watcher and six adopted-child waits completed with
+zero status; Chrome exited without a signal. Source/compiler/original pins
+were unchanged at teardown. Minimum observed runtime free space was
+2,597,023,744 bytes. Icewind could independently acquire the runtime after
+the explicit NEWFULLRELEASE. Boat ID/state/expiry: N/A. This task stops at
+the missing producer boundary; a generic production repair is not justified.
