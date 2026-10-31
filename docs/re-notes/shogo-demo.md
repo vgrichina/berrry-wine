@@ -2,6 +2,32 @@
 
 App id `shogo_demo`, candidate `shogo-demo` (registered 2026-10-11, w5).
 
+## Target build pin (owner decision, 2026-10-31)
+
+The target is the local **PC Gamer Demo Version** actually run. Its69
+size/SHA256 pins are retained in
+`scratch/runs/20261031T1957Z-shogo-local-pin/target-file-hashes.json`:
+67 manifest members, the separately loaded Client.exe and the manifest itself.
+All67 earlier member pins matched. The manifest omits Client.exe, so verifying
+its members alone does not verify the executable being run.
+
+Client.exe SHA256 is `129b5f625ebcc2ce5f4a4d836dc1127c77837b220351ec5bf832327a5adbf45e`; manifest SHA256 is
+`24418ab0a2f4912fb7c1dfb5af018d51b4f8e0e817ca59a058cbfa5f409de40d`. Verification and fresh public desktop exclusion are in
+`scratch/runs/20261031T1957Z-shogo-local-pin/verification.json`.
+
+These local file pins select the build under the owner's file-based target
+rule; an upstream package comparison has not been performed. The earlier
+HTTP500 fetching ShogoDemo.zip does not block this local target. Do not
+fetch compilation containers. Keep the local-only registration and read the
+complete local terms before investigation. This check launched no runtime;
+the historical CLI route below does not establish browser gameplay.
+
+Next: a fresh worker, once a slot is free, should verify all69 pins and use
+the original Single Player/New Game/difficulty/briefing route to the Avernus
+street, then capture ordinary movement, turning and firing. Serialize it
+behind the current browser owner and distinguish incoming damage from
+confirmed outgoing hits, kills or objectives.
+
 ## Source and licence
 
 - archive.org item `ShogoMobileArmorDivisionDemo`, `ShogoDemo.zip`: 30,823,950 bytes, SHA-1 `f372ab1a822002107980e6648fe101d10c19fb19`.
