@@ -674,3 +674,73 @@ does not emit on quit, then exited normally; this was not a runtime failure.
 `RECOVERY.md`, identity, gameplay, verification and cleanup records are
 retained. No Boat allocated: ID/state/expiry N/A. The next work, if assigned,
 is the visible multitool exercise; no successor was launched.
+
+## 2026-10-31: Multitool bypass and next cadet exercise
+
+**Passed: identify and collect the multitools, bypass the intended keypad,
+traverse into the next exercise, and interact with its unconscious cadet.**
+Fresh evidence: `scratch/runs/20261031T0736Z-deusex-multitool/`. A new original
+Training launch replayed the visible menu, NanoKey, crowbar/crate, lockpick,
+DataCube0012 and keypad route. Labels and world changes guided corrections;
+missed menu presses, attacks, aiming, pickups and door activations remain in
+the evidence. The fresh `keypad-granted.png` filename describes the intended
+checkpoint but captures four masked dots, not GRANTED. The subsequent open
+door and crossing into the multitool room prove code progression; the prior
+0713Z run retains the actual green GRANTED capture.
+
+`multitool-room-view.png` and `multitool-target-instructions.png` show Jaime
+instructing use of the table's disposable multitools on the keypad ahead,
+explaining finite resources and reduced requirements at higher skill levels.
+`multitool-label.png` identifies the yellow table object as **Multitool**.
+Three individually targeted native right-click pickups remove the three
+devices; `multitool-belt-one.png`, `multitool-belt-two.png` and
+`multitool-stack-three.png` show the receipt and growing stack. F1, then an
+ordinary mouse selection, produced `multitool-description-confirmed.png`:
+**Multitool, Count:3, Uses:3**, inventory top row/third column after the
+two-column crowbar, and **belt slot2**. Its description identifies an
+electronics tool for code locks and other security systems. The used-up
+lockpick's earlier slot was observed empty before collecting these tools.
+
+`hack-keypad-label-confirmed.png` identifies the actual target as **Security
+Keypad, Bypass Str:5%, 1 tool**, distinct from the preceding code keypad's
+20%/2 tools. Native **2**180ms, wait1000ms, then **LeftMouse180ms** starts the
+hack. `native-hacking-progress.png` shows **Bypassing the device...**, a red
+scan and strength2%. After4000ms, `native-hack-result.png` shows **You bypassed
+the device**, **Security Keypad: Bypassed**, and belt **Uses:2**. The door has
+opened automatically; `hacked-door-open.png` shows its blue corridor.
+
+Native movement crosses the passage. `next-door-before.png` shows a UNATCO
+troop collecting equipment and the belt cleared except for the NanoKey ring.
+Opening the next door and crossing produces Jaime's new cadet transmission
+(`next-exercise-world.png`) and a different observation room with a body.
+`cadet-label.png` labels that body **Unconscious**. Native RightMouse180ms
+produces `cadet-interaction-result.png`: **Medical Room added to Nano Key
+Ring**, **You found:** and **Received: NANO**. This proves next-exercise
+interaction as well as traversal. Body carrying, medical-room unlocking,
+healing and **Training completion are not demonstrated**. No unresolved
+runtime/control dependency blocked the assigned multitool outcome.
+
+Runtime SHA-256 remains
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`,
+paired with exact292-file saved-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+Before/after checks pass131 original/support files,292 saved source files
+and105 served snapshots matching the prior URL/hash closure exactly. The
+19-native-DLL mount closure, original SoftDrv/fullscreen configuration,
+default guestWorker/three workers, guest640×480 and browser1024×768 remain
+preserved. Checkout HEAD501f52cf1 at startup is metadata, not the runtime
+build identity. No source/build change, asset/INI/state/clock patch, cheat,
+input bypass, FPS/resolution/audio diversion or deployment occurred. Focused
+checks pass366 trusted native events,13 interaction deltas, four code digits,
+291 PNG signatures/dimensions and40 personally inspected captures.
+
+Preparation began07:36UTC; the browser lock was acquired07:36:27UTC and the
+browser closed08:00:17UTC. Chrome1738864 exited0; controller1738854,
+holder1738845, all tracked descendants/crashpads and own watcher1739217 are
+absent (19 recorded PIDs including watcher wrapper). HTTP33489/CDP40745 are
+closed, profile removed and no keys held. The full browser/controller lifetime
+used `/tmp/wine-browser.lock`, with a post-lock foreign-runtime gate; cleanup
+left2.07GiB free. Helpers, commands, recovery, identities and focused evidence
+checks are retained in the fresh run; prior evidence was read-only. No Boat
+allocated: ID/state/expiry N/A. Next work, if assigned, is the Medical Room
+NanoKey/cadet exercise. No successor was launched.
