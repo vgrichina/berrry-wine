@@ -912,3 +912,108 @@ allocated (ID/state/expiry N/A). Documentation only; no production change,
 new build, shader substitution or source-fix claim. Work stops here without
 a successor; the requested causal result remains blocked by failure to
 reach a factory call in the required default-worker execution.
+
+## Default Worker title/startup boundary (2026-10-31 08:17 UTC)
+
+Evidence: `scratch/runs/20261031T0817Z-pirates-worker-title/`; replay
+instructions and scope are in its `RECOVERY.md`. The comparison uses the
+same retained `8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`
+module, `9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`
+292-file source/compiler manifest and 40 frozen support files as both prior
+runs. At initial comparison, seven current scheduling, loader and input files
+also matched those retained sources. The accepted sailing route has Threads unchecked;
+the factory run has default guestWorker enabled. Sailing remains historical
+cooperative evidence, separately inspected from the title screenshots.
+
+The prior factory console contains two concrete startup errors: Workers 6
+and 7 fail `initGuestThread` because DLL module `0xaf1000` does not complete
+reason 2 (`DLL_THREAD_ATTACH`). The main-thread samples are inside original
+`0x5516a0` and `0x5007e0`, called by `0x4baaa0`. That original function loops
+while resource-object field `+0x50` is nonzero, waiting on the job manager at
+`0x8ca4e0` and pumping its queue at `0x8ca4c8`/current job at `0x8ca4cc`.
+Manager creation at `0x5515a0` starts a suspended CRT thread, stores its
+handle at `+0x1ac`, then resumes it; manager state is `+0x198`.
+`static-check.py` pins eleven original instruction sites and eight source
+contracts. These establish a resource-job wait, but alone do not establish
+that either failed Worker owns the required job.
+
+The source scheduling distinction is specific. `guest-worker.js` awaits
+`notifyDllThreadAsync` before posting `threadReady`, including for a thread
+created suspended. The asynchronous loader's noncooperative callback runner
+stops on a blocking halt, restores the caller's frame and rejects incomplete
+notification. `ThreadManager._spawnOnePendingWorker` then records the failed
+thread as exited; `_spawnPendingWorkersPass` removes its pending entry.
+Cooperative scheduling skips suspended threads before notification and uses
+`beginDllThreadNotification` to retain the callback frame and scheduler
+continuation between turns. This static distinction motivates the bounded read-only trace below;
+static comparison alone does not justify a source fix.
+
+The sole fresh default-Worker guest ran 08:43:46–08:46:17 UTC after the
+foreign MedicalRoom lane was released. An earlier process-gate rejection
+started no Pirates browser or guest. The full lifetime used the browser lock
+and an actual process gate. Source responses, module and originals stayed on
+the retained closure; explicit WebGL, 1024×768 and the shipped 5k slice were
+unchanged. The page observer adds one host roundtrip before each thread-init
+command; callback observations wrap the supplied `run` without changing its
+budget, owning instance, registers or guest memory. No breakpoint, factory,
+shader or property probe was installed.
+
+**Causal scheduling failure reproduced.** Workers 6 and 7 enter original
+`MSVCR71.dll` at load address `0xaf1000`, then park during reason-2 attach:
+`halt=4`, `yield=9`, critical section guest `0xb3c190` (WASM `0x74e190`),
+owner main thread 1. Their stack retains the EnterCriticalSection return and
+argument. The loader restores the caller and rejects notification immediately.
+The same section is subsequently free, so the failed attach was a temporary
+wait, not evidence of an unreleasable original dependency.
+
+Worker 7's CRT parameter names game entrypoint `0x551550`, argument/job manager
+`0x83f3e40`, handle `0xe1007`, state 1 and filename
+`fx_ship_bowfroth.nif`. At that failure the manager and current-job pointer
+`0x9704a10` match the main Worker. Later snapshots retain that current job,
+with the thread exited code 1 and manager state 0; main executes `0x4baaa3`
+with resource `0x8dd640` field `+0x50` still nonzero. The manager's name buffer
+later contains `bullet_down.nif`; that later string must not be substituted
+for the filename captured at attach failure. Original `0x551550` calls the
+load virtual then completion virtual `+0x1c` (`0x500730`); dropping the thread
+before its entrypoint prevents that completion path. `0x5007e0` will not
+dequeue another job while the current-job pointer remains set.
+
+A single targeted native Enter has trusted down/up events. Before and after,
+`takeInput` has zero calls and its key/character/release messages remain in
+the renderer queue. This is a pre-input resource-job stall. Both fresh title
+screenshots were personally inspected, with five Workers enabled. Worker 6
+was pending suspended at observation; Worker 7 had already been resumed.
+Consequently merely deferring suspended creation is insufficient to address
+the observed second failure.
+
+The source repair adds an asynchronous blocking-wait continuation to DLL
+thread notification. The owning Worker recognizes the live CS argument,
+waits without executing guest code until the owner word changes, verifies
+unchanged EIP/ESP/yield, clears that wait and lets the original guest handler
+retry acquisition. The callback generator, saved caller, DLL gate and mapping
+pins remain owned throughout. Unrelated waits and synchronous incomplete
+callbacks still fail. Workers remain enabled. The two callback-inventory
+entries retain `ownership: pending` with an explicit lifetime review; no build
+validation was removed.
+
+`test-worker-dll-critical-section.js` exercises the shipped notification path
+and Worker resolver with deterministic interpreter exports: retained frame,
+no guest retry while held, asynchronous release, caller restoration, stale
+frame/argument rejection and unsupported waits. It passes on the repair and
+rejects the exact retained old loader. The full locked build, 58 Worker
+scheduler checks, ThreadManager checks and callback-inventory mutation tests
+pass. An additional native serialization test never started: it waited behind
+the next foreign browser and its own queued lock was canceled. No pass is
+claimed for it. `check-cause.py` passes and rejects three corrupted causal
+controls (owner, completion and current job).
+
+This proves and fixes the generic callback scheduling failure; **patched
+Pirates startup/sailing is not runtime-verified** within the one-probe limit.
+The retained cooperative sailing frame remains a separate historical result.
+All 1,374 originals, 292 frozen sources, 374 served responses and 106 source
+URLs match, including the loaded module. Four native events are trusted,
+no keys remain held and page/Worker observers are restored. Browser exit zero;
+all 71 observed owned PIDs are absent, ports `38077/38443/45869` closed and
+profile removed. No Boat was allocated (ID/state/expiry N/A). Recovery and
+small replayable evidence remain in the run directory. No successor is
+started by this worker.

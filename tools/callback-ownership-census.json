@@ -299,9 +299,9 @@
     {
       "file": "lib/dll-loader.js",
       "name": "host-file",
-      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+      "sha256": "4c5c4db98ed12da9231d9652b3f9204bb6da747ebdad231885160bd3b95954de",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261031 Pirates: asynchronous thread notification retains its existing DLL gate, generation pins, generator and saved caller frame across a blocking CS yield. Worker resolver reads the mapped owner word and exact parked stack argument, awaits without guest execution, verifies unchanged EIP/ESP/yield before clearing only that wait, then lets native EnterCriticalSection retry acquisition. Unsupported waits and synchronous callbacks still reject incomplete completion. Focused test-worker-dll-critical-section.js rejects retained old source; broader ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -315,9 +315,9 @@
     {
       "file": "lib/guest-worker.js",
       "name": "host-file",
-      "sha256": "d1ae471298f667510b5fb3fbec56157e50f706896ededd4ca3450429f48af062",
+      "sha256": "012d28de19bf67e378f1308128657d34e2a8303b01fb846e209ad12f57367371",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. CS park-EIP reporting reads an existing diagnostic export after a slice; it creates no guest context or continuation. Named-wait review 20261021: retains import transport and reports current sequence; completeWait rejects active thread-send frames or mismatched/already-consumed sequence before guest register/stack restoration. Exactly one successful consumption per named wait; callback/nonlocal coverage remains pending. Integration 20261022: Retry-yield review: clear_yield runs only for the explicit slice retry flag and live yield 9, after both incoming-send guards. A changed nonzero yield returns its normal diagnostic snapshot without sync callbacks, wait resume, guest execution, sleep flag consumption or detach callbacks; incoming-send skipped slices retain their owned frames. Review 20261025: complete delta from seal 8b6d676c to 27e2a785 adds only versioned render-clear.js before d3d9-backend.js in the lazy browser D3DIM import list. No slice, wait completion, callback, cancellation or register restoration edits. See docs/reviews/host-census-four-row-reconcile-oct25.md; ownership remains pending.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. CS park-EIP reporting reads an existing diagnostic export after a slice; it creates no guest context or continuation. Named-wait review 20261021: retains import transport and reports current sequence; completeWait rejects active thread-send frames or mismatched/already-consumed sequence before guest register/stack restoration. Exactly one successful consumption per named wait; callback/nonlocal coverage remains pending. Integration 20261022: Retry-yield review: clear_yield runs only for the explicit slice retry flag and live yield 9, after both incoming-send guards. A changed nonzero yield returns its normal diagnostic snapshot without sync callbacks, wait resume, guest execution, sleep flag consumption or detach callbacks; incoming-send skipped slices retain their owned frames. Review 20261025: complete delta from seal 8b6d676c to 27e2a785 adds only versioned render-clear.js before d3d9-backend.js in the lazy browser D3DIM import list. No slice, wait completion, callback, cancellation or register restoration edits. See docs/reviews/host-census-four-row-reconcile-oct25.md; ownership remains pending. Review 20261031 Pirates: asynchronous thread notification retains its existing DLL gate, generation pins, generator and saved caller frame across a blocking CS yield. Worker resolver reads the mapped owner word and exact parked stack argument, awaits without guest execution, verifies unchanged EIP/ESP/yield before clearing only that wait, then lets native EnterCriticalSection retry acquisition. Unsupported waits and synchronous callbacks still reject incomplete completion. Focused test-worker-dll-critical-section.js rejects retained old source; broader ownership remains pending.",
       "ownership": "pending"
     },
     {
