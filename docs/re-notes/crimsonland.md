@@ -2,6 +2,103 @@
 
 Historical source last updated, 2026-10-12. Runtime and implementation claims below describe that dated source; see current app notes and source for subsequent changes.
 
+## 2026-10-31: authentic installation stopped at a reproducible loader-policy blocker
+
+Run `scratch/runs/20261031T2306Z-crimsonland-dx81-mount/` audits main
+`65224c0ca25da0937337734303740847f14ee34e` and reuses the recovered package,
+INF/core plans and pins from `20261031T2243Z-crimsonland-authentic-dx81`.
+**Candidate installation is blocked before mutation.** The package is ready;
+ordinary startup with these dependencies is not ready under current loading
+policy. No candidate dependency paths or host manifest were changed. The
+original60, existing host manifest, all157 predecessor pins and all84 retained
+recovery-run files remain unchanged. No browser, guest, installer, build,
+download, remote box, agent or lifecycle operation ran; Boat ID/state/expiry N/A.
+
+### Selected installation scope and actual file identity
+
+The review baseline is **the complete `WIN98_INSTALL` scope**, all138 copy
+actions plus its associated authentic directives. `selected-scope.json`
+preserves their exact source/destination/size/SHA-256 plan. Crimsonland has no
+`winver` override: `src/01-header.wat` defaults to `0xC0000A04`; the version
+handler reports Win9x4.10, build16384, empty CSD. This does not identify 98SE
+build2222 or Me. The Win98 baseline is conservative, not proof of the setup
+program's conditional branch selection. Neither the16-file proposal nor a
+single detector-satisfying DLL substitutes for the full INF installation.
+CopyFiles, AddReg, DelReg, DelFiles, LoadDLLS and component/setup actions were
+not applied; a copy-only tree must not be described as a completed installation.
+
+The actual package SHA-256 remains
+`d1762981f497a623b2f3e725c0916b96e716bd4a8845c5a4cc7f764b1a5cc5f7`.
+All40 retained payload files and16 core pins match. A temporary **in-memory**
+`VirtualFS`, using the real `mountDirectXSystemModules` helper, demonstrates
+the exact proposed system mapping: authentic `d3d8.dll`,1209344bytes, at
+`c:\windows\system\d3d8.dll`, SHA-256
+`c999fb98e33efaf1c2667501de5cb91fdd816f5f3c1f87f4f76b7a60e8efafbe`.
+The helper preserves these bytes. Actual `has_dll_file` returns1 for the full
+path, and actual `findVfsDllBytes` returns the same hash. The explicit
+`loadMode:required,httpRange:false` manifest example survives the ordinary
+lazy-policy helper unchanged. This is a local mapping check, not a candidate
+installation, HTTP receipt, WASM mapping or guest execution.
+
+The original synthetic D3D8 placeholder is1024bytes, has `staticModule:true`
+and no RT_VERSION, and is excluded by native DLL lookup. The authentic file
+contains real executable code/imports and its original4.8.1.881 resource;
+it carries no synthetic marker. Marking it `staticModule` would misrepresent
+its identity and is not a supported solution.
+
+### Exact causal loader contract
+
+1. `lib/dll-registry.js` excludes D3D8/DDRAW/DSOUND/DINPUT8 from its native
+   loadable list. `resolveDllGraph` therefore leaves their startup imports to
+   builtin dispatch even if authentic files are visible. Seeds bypass that
+   gate, so adding native DLL seeds would change execution policy as well.
+2. `handle_LoadLibraryA` in `src/09a0-handlers-base.wat` checks real-file
+   availability before falling back to a static system identity. An explicit
+   load of the authentic full path can consequently select native D3D8.
+3. The actual `loadLibraryDependencies` generator, given these original D3D8
+   bytes and API names from current `src/api_table.json`, requests **zero**
+   dependencies. DDRAW is unlisted for native loading but classified as a
+   Windows system DLL, so the walk skips it despite its authentic file being
+   available. `missingImportDependencies` likewise reports no missing DLL.
+4. Authentic D3D8 imports16 private DDRAW names:
+   `DdEntry12,11,6,2,3,10,9,20,7,17,19,18,1,8,16,13` (each with the
+   `DdEntry` prefix). **None exists in the current API table.** With DDRAW
+   unmapped, `process_dll_imports` in `src/08b-dll-loader.wat` creates unknown
+   API thunks; `patchDllImports` can resolve exports only from mapped modules.
+   Thus that native closure cannot correctly execute a private import call.
+
+This is a demonstrated policy/dependency mismatch, not an observed game crash
+or a claim about which call startup would reach first. Copying the complete
+INF file set does not change the native dependency gate; copying only D3D8
+would conceal the same issue behind detector success. Making DDRAW native is
+also a wider runtime change requiring its Win9x helper/driver contracts, not
+an app-local manifest correction.
+
+**Next executable step:** a separately authorized generic loader change must
+make the module execution choice explicit and consistent across startup imports,
+LoadLibrary, dependency walking, module handles and export resolution while
+keeping authentic files/resources independently readable. If builtin DirectX
+execution is selected, native file visibility must not silently override it;
+do not encode that choice as a false `staticModule` file marker. If native
+execution is selected, resolve the full authentic DDRAW closure rather than
+treating its16 private exports as builtin APIs. Use this retained pure-helper
+reproducer for an old-fail/new-pass regression in that change. No generic
+implementation was attempted here and no such change is presumed approved.
+
+After that policy is resolved, claim exact dependency/manifest paths, recover
+the138-action scope from the retained package, verify every pin and actual VFS
+mapping, and separately review the INF actions. The subsequent ordinary route
+is `index.html?candidates&app=crimsonland`, original EXE, empty extra arguments,
+normal launcher Play. Until installation/policy is resolved, the unchanged
+route retains the original DirectX warning; no new startup success is claimed.
+
+Verification: `node scratch/runs/20261031T2306Z-crimsonland-dx81-mount/audit.cjs`
+passes original/media/source/manifest hashes and actual pure JS loader/VFS
+checks without instantiating WASM. Scratch syntax and documentation diffcheck
+pass. `loader-contract.json`, `source-pins.json`, `validation.json`,
+`blocked-mapping-example.json` and `RECOVERY.txt` retain the exact checkpoint.
+Final local free disk exceeded2GB; no original or predecessor cleanup occurred.
+
 ## 2026-10-31: authentic Win9x DirectX 8.1 media recovered; installation review ready
 
 Run `scratch/runs/20261031T2243Z-crimsonland-authentic-dx81/` starts from a
