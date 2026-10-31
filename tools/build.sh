@@ -111,6 +111,7 @@ node tools/check-api-table.js
 # know -- is silently reverted by the next regeneration, and the build then
 # fails far away as an unknown $handle_* function. Refuse that drift here.
 node tools/gen_api_table.js --check
+node tools/gen_big5_table.js --check
 node tools/gen_dispatch.js --check
 node tools/gen-kernel32-image.js --check
 node tools/check-hash-table.js > /dev/null || { node tools/check-hash-table.js; exit 1; }

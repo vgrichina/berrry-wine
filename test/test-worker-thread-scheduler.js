@@ -142,6 +142,7 @@ function makeBackend(scripts) {
         get_image_base: 0x400000, get_code_start: 0x401000, get_code_end: 0x420000,
         get_thunk_base: 0x7500000, get_thunk_end: 0x7502818, get_num_thunks: 1283,
         get_dll_count: 3, get_vlan_local_ip: 0x0A4D0001, get_tls_next_index: 2,
+        get_ansi_code_page: 950,
       };
     },
     async spawnThread(spec) {
@@ -475,7 +476,7 @@ function makeManager(backend, extraOpts) {
     check(s.stackSize === 0x100000 && backend.specs[1].stackSize === 0x100000,
       'thread stacks get the Windows reserve, whether or not a commit size is given',
       `${s.stackSize}, ${backend.specs[1].stackSize}`);
-    check(s.dllCount === 3 && s.vlanIp === 0x0A4D0001 && s.tlsNextIndex === 2,
+    check(s.dllCount === 3 && s.vlanIp === 0x0A4D0001 && s.tlsNextIndex === 2 && s.ansiCodePage === 950,
       'process-wide state a new instance cannot infer is passed in');
     check(tm.threads.get(h1).state === 'active' && tm.threads.get(h2).state === 'active',
       'both threads are live in the same handle map the waits read');

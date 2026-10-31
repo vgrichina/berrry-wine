@@ -494,6 +494,15 @@
   ;; 8 bytes per API (hash, id); 0x8000 filled up at 4096 APIs (2026-10-06).
   (region.declare $API_HASH_TABLE (size 0x00010000) (align 0x00001000)
     (owner "10-helpers.wat:$lookup_api_id"))
+  ;; CP950 (Microsoft Big5) conversion tables from tools/gen_big5_table.js,
+  ;; generated from the pinned bestfit950.txt: decode is 256 single-byte +
+  ;; 19782 pair u16 entries (20038 u16, 0x9C8C bytes), encode is 20193 u32
+  ;; (0x13B84 bytes, best fit included). The table is frozen by Microsoft's
+  ;; data, so the sizes are the next 4 KB multiple, not growth headroom.
+  (region.declare $BIG5_DECODE_TABLE (size 0x0000A000) (align 0x00001000)
+    (owner "10-helpers.wat:$cp_char_decode"))
+  (region.declare $BIG5_ENCODE_TABLE (size 0x00014000) (align 0x00001000)
+    (owner "10-helpers.wat:$ansi_char_encode"))
   (region.declare $TEXT_SCRATCH (size 0x00000400) (align 0x00001000)
     (owner "01-header.wat:$TEXT_SCRATCH"))
   (region.declare $CONSOLE_TEXT (size 0x00003000) (align 0x00001000)
@@ -1076,3 +1085,19 @@
   ;; Standalone Screen Savers applet strings, appended to preserve allocations.
   (region.declare $SCRSAVE_TEXT (size 0x00001000) (align 0x00000010)
     (owner "09ca-screensavers.wat:$SCRSAVE_TEXT"))
+
+  ;; GDI funnel decode scratches, appended to preserve allocations.
+  ;; WCHAR landing zone for the GDI funnels' ANSI decode (DBCS stage 2):
+  ;; 65536 WCHARs, the largest count the text pipeline accepts anywhere,
+  ;; so a decode never truncates a string the pipeline would have taken
+  ;; whole. WAT-private like $TEXT_SCRATCH.
+  (region.declare $TEXT_DECODE_SCRATCH (size 0x00020000) (align 0x00001000)
+    (owner "10f-gdi-dc.wat:$gdi_native_text_out"))
+  ;; Per-character spacing for a decoded ExtTextOutA call: the guest's
+  ;; lpDx is per BYTE, the pipeline's is per character, so the funnel
+  ;; re-expresses it here, summing each DBCS character's bytes. Sized for
+  ;; the pipeline's largest count at 4 bytes per character; ETO_PDY pairs
+  ;; (2 i32 per character) halve that, and the funnel leaves such an
+  ;; oversized call on its historical path instead of overflowing.
+  (region.declare $TEXT_DX_SCRATCH (size 0x00040000) (align 0x00001000)
+    (owner "10f-gdi-dc.wat:$gdi_native_ext_text_out"))

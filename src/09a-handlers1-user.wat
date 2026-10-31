@@ -1804,20 +1804,59 @@
 
   ;; 125: CharNextA
   ;; CharNext{A,W}(lpsz) — advance one character, stopping on the terminator.
-  ;; One character is one byte in ANSI and one UTF-16 code unit wide.
+  ;; One character is one UTF-16 code unit wide; in ANSI it is one byte, or
+  ;; two in a DBCS process code page ($char_next_a_cp).
   (func $char_next (param $p i32) (param $wide i32) (result i32)
+    (if (i32.eqz (local.get $wide))
+      (then (return (call $char_next_a_cp (local.get $p) (i32.const 0)))))
     (select
       (local.get $p)
       (i32.add (local.get $p) (select (i32.const 2) (i32.const 1) (local.get $wide)))
       (i32.eqz (call $gl_char (local.get $p) (local.get $wide)))))
 
   ;; CharPrev{A,W}(lpszStart, lpszCurrent) — step back one character, never
-  ;; before the start of the string.
+  ;; before the start of the string. ANSI goes through $char_prev_a_cp in
+  ;; the process code page.
   (func $char_prev (param $start i32) (param $cur i32) (param $wide i32) (result i32)
+    (if (i32.eqz (local.get $wide))
+      (then (return (call $char_prev_a_cp (local.get $start) (local.get $cur) (i32.const 0)))))
     (select
       (local.get $start)
       (i32.sub (local.get $cur) (select (i32.const 2) (i32.const 1) (local.get $wide)))
       (i32.le_u (local.get $cur) (local.get $start))))
+
+  ;; CharNextA / CharNextExA in code page $cp (0 = CP_ACP): a lead byte
+  ;; ($is_dbcs_lead_byte_for_cp, the one lead-byte truth) followed by a
+  ;; non-NUL byte is one two-byte character; the terminator stands still.
+  ;; In an SBCS page this is exactly $char_next's one byte.
+  (func $char_next_a_cp (param $p i32) (param $cp i32) (result i32)
+    (local $ch i32)
+    (local.set $ch (call $gl8 (local.get $p)))
+    (if (i32.eqz (local.get $ch)) (then (return (local.get $p))))
+    (if (i32.and (call $is_dbcs_lead_byte_for_cp (local.get $cp) (local.get $ch))
+          (i32.ne (call $gl8 (i32.add (local.get $p) (i32.const 1))) (i32.const 0)))
+      (then (return (i32.add (local.get $p) (i32.const 2)))))
+    (i32.add (local.get $p) (i32.const 1)))
+
+  ;; CharPrevA / CharPrevExA in code page $cp. A DBCS string cannot be
+  ;; walked backwards (a trail byte can look like a lead), so in a DBCS
+  ;; page walk forward from $start to the last character boundary before
+  ;; $cur, as Windows does; an SBCS page steps one byte back.
+  (func $char_prev_a_cp (param $start i32) (param $cur i32) (param $cp i32) (result i32)
+    (local $next i32)
+    (if (i32.eqz (call $is_dbcs_code_page (local.get $cp)))
+      (then (return (select
+        (local.get $start)
+        (i32.sub (local.get $cur) (i32.const 1))
+        (i32.le_u (local.get $cur) (local.get $start))))))
+    (block $done (loop $walk
+      (br_if $done (i32.ge_u (local.get $start) (local.get $cur)))
+      (br_if $done (i32.eqz (call $gl8 (local.get $start))))
+      (local.set $next (call $char_next_a_cp (local.get $start) (local.get $cp)))
+      (br_if $done (i32.ge_u (local.get $next) (local.get $cur)))
+      (local.set $start (local.get $next))
+      (br $walk)))
+    (local.get $start))
 
   (func $handle_CharNextA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $char_next (local.get $arg0) (i32.const 0)))
@@ -1828,6 +1867,21 @@
   (func $handle_CharPrevA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $char_prev (local.get $arg0) (local.get $arg1) (i32.const 0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)
+  )
+
+  ;; CharNextExA(CodePage, lpCurrentChar, dwFlags): CharNextA in an explicit
+  ;; page (0 = CP_ACP); dwFlags is reserved.
+  (func $handle_CharNextExA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (call $char_next_a_cp (local.get $arg1) (i32.and (local.get $arg0) (i32.const 0xFFFF))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)
+  )
+
+  ;; CharPrevExA(CodePage, lpStart, lpCurrentChar, dwFlags).
+  (func $handle_CharPrevExA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (call $char_prev_a_cp (local.get $arg1) (local.get $arg2) (i32.and (local.get $arg0) (i32.const 0xFFFF))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))) (return)
   )
 
   ;; 127: IsDialogMessageA(hDlg, lpMsg)

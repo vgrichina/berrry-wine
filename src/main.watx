@@ -29,6 +29,7 @@
 (include "00-regions.wat")
 (include "01-header.wat")
 (include "01b-api-hashes.generated.wat")
+(include "01c-big5-tables.generated.wat")
 (include "02-thread-table.wat")
 (include "03-registers.wat")
 (include "03a-page-watch.wat")

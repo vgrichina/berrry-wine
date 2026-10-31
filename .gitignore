@@ -8,6 +8,10 @@ scratch/
 # tools/fetch-fonts.js: the pinned font tarball cache and everything built from
 # it (and from a user's MINGLIU.TTC). Optional, never committed.
 .cache/fonts/
+# tools/gen_big5_table.js: the pinned Microsoft code page sources (bestfit950.txt,
+# CP950.TXT), fetched and SHA-256-verified on demand. The generated table is
+# committed; the sources are not.
+.cache/codepages/
 fonts/fetched/
 screenshots/v86-reference/generated/
 !screenshots/v86-reference/
