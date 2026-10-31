@@ -5,6 +5,88 @@ from Archive item `icewind_dale_eng_demo`. Its README expressly prohibits
 copying/electronic distribution, so the extracted fixture stays ignored and
 must not be deployed or rehosted.
 
+## 2026-10-31 original optical scan identified; runtime stopped by harness
+
+Run `20261031T2126Z-icewind-disc` **did not establish original-demo startup
+or gameplay**. Static analysis found a missing prerequisite in the preceding
+C-only presentation, and a cheap VFS test passed with the original CD2 tree
+on D:. The sole browser attempt then stopped during asset loading because
+this run's scratch HTTP response guard incorrectly rejected optional 404s.
+No runtime disc-scan result, menu, character creation, Prologue DONE, tavern,
+or floor-click movement is accepted. There was no retry or emulator change.
+
+The unchanged original EXE's scan at `0x0043ACE7` calls `GetLogicalDrives`
+at `0x0043AD62`, tests each assigned letter with `GetDriveTypeA` at
+`0x0043ADF6`, and accepts only type 5 (`DRIVE_CDROM`). It calls
+`GetVolumeInformationA(root, NULL, 0, NULL, NULL, NULL, NULL, 0)` at
+`0x0043AE5F`. After a successful volume probe it concatenates the root,
+`cd`, digit `2`, `\data\iwdcd.`, and digit `2`. Its call at `0x0043AF05`
+reaches the MFC finder at `0x00929EC7`, which calls `FindFirstFileA` at
+`0x00929EFF`. Thus this scan requires **`D:\cd2\data\iwdcd.2`**, not
+`D:\data\iwdcd.2`. Disassembly and import/string references are retained
+in `optical-scan.asm`, `find-wrapper.asm`, and `static-imports.json`.
+This is a static necessary-condition diagnosis; the failing original guest
+call has not yet been observed dynamically.
+
+The predecessor supplied the 27 original CD2 files only at `C:\CD2\`.
+C: reports fixed disk and is excluded by that scan; its original marker
+does not satisfy the optical path. The new private app entry additionally
+presents those same retained URLs below `D:\CD2\`, with D: recorded as
+type 5 and read-only through the existing generic VFS interfaces. The
+installed C: paths and native INI aliases remain present. No ISO, volume
+label, serial, marker, KEY, INI, resource, save, or decompressed BIF was
+manufactured. The prerequisite test verifies the old missing-path failure,
+drive enumeration/type, root enumeration/chdir, original one-byte marker
+`32` hex, successful marker lookup, and write-protect error 19. These checks
+do not prove guest startup. No generic implementation violation was shown,
+so no production API change or build was justified.
+
+All 1,106 retained input files were freshly size/hash checked: the 1,079
+installed files totaling 470,164,222 bytes plus all 27 original CD2 files.
+The original EXE/KEY/INI pins recorded below remain unchanged. All 528 accepted source
+and 867 compiler pins also matched before and after. No reinstall, download,
+fixture copy, recovery inventory, WININIT edit, or foreign cleanup occurred.
+
+Heavy work waited for the **fresh corrected Nox jump/action task's
+21:30:16 NEWFULLRELEASE**, followed by an independent actual gate. The sole
+attempt ran at approximately 21:30:42–21:30:44 with default Worker/Threads,
+WebGL, audio/clock behavior, isolation, and a native 1024×768 viewport.
+Crucially, `actual-http-loaded-module.json` hashes the actual browser response
+body: HTTP 200, no cache, 1,898,762 bytes, SHA-256
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+The runtime Git HEAD was not independently recorded; source/compiler and
+loaded-module identities are byte-pinned instead.
+
+The scratch listener wrongly required COOP/COEP headers on every HTTP
+response. The optional `build-info.js`, favicon, and font-bundle 404s lack
+those headers and set its closing flag. The inspected pre-teardown
+`browser-first.png` shows the download window; its state has no guest windows,
+`running=false`, and an empty drive trace. The queued Escape was never
+processed; trusted-input evidence is empty. Exact guest entry-point execution
+is unproven. There is no additional failure screenshot. The executed driver
+is preserved separately as `executed-browser.cjs`. The corrected scratch
+guard checks document isolation, retaining the independent mandatory loaded
+module check; eight focused cases pass, including four failures of the old
+guard. **The corrected driver has not been browser-executed.**
+
+Supervisor, controller, board watcher, and monitor have durable successful
+waits; six adopted children were explicitly reaped. Chrome exited 0 without
+a signal. The final audit found all 20 recorded own PID/start identities
+absent, whole Chrome/global crashpad empty, ports 39977/37637 closed, profile
+gone, inputs empty, and FD9 free. Minimum observed free space was
+2,802,823,168 bytes. Boat ID/state/expiry N/A. No FPS/audio/gameplay claim.
+
+Recovery is in this run's `RECOVERY.txt`, corrected `browser.cjs`, mount
+manifest, prerequisite/guard tests, and `full-release-final.json`. Reuse the
+retained native installation; do not rerun Setup or legacy preparation.
+Next requires a new authorized runtime allocation using the corrected guard
+and original D: presentation, then an actual optical-call trace before native
+character creation, Prologue DONE, and paired unpaused movement acceptance.
+The 42 run artifact references pass schema, existence, and containment checks;
+the notes pass `git diff --check`. The global evidence checker still reports
+9 historical containment errors, 200 missing references, and 114 invalid
+records, with no issue naming this run.
+
 ## 2026-10-31 original native installation complete; browser reports No Disc
 
 Run `20261031T2058Z-icewind-install` completed a fresh ordinary installation
