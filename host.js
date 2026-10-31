@@ -5610,13 +5610,9 @@ class WineAssembly {
         ? window.WinePerf : null;
       if (perf) perf.stepBegin();
       try {
-        // A CreateThread from the preceding slice may still need its WASM
-        // instance. Finish that setup before resuming the creating thread:
-        // otherwise its timer/readiness deadline runs during worker startup.
-        if (self.threadManager && self.threadManager._pendingThreads?.length) {
-          await self.threadManager.spawnPending();
-          if (!self.running) return;
-        }
+        // DLL_THREAD_ATTACH may need a lock held by the creating guest. Start
+        // bootstrap without joining it so the creator can release that lock.
+        if (self.threadManager) self.threadManager.startPendingWorkers();
         self._beginGuestTickBatch();
         await self._pumpWaveCallbacksAtBoundary();
         if(!self.running) return;

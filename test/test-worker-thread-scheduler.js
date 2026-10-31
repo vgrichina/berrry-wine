@@ -11,6 +11,9 @@
 // from data in shared memory. Driving real x86 through real Workers would test
 // the same logic behind two layers of chance; test-worker-guest.js covers the
 // real path end to end in a browser.
+// Fixtures await spawnPending explicitly before slicing ready Workers. The
+// asynchronous creator/bootstrap dependency has its own focused regression in
+// test-worker-bootstrap-progress.js; scheduler assertions below stay unchanged.
 //
 // Each fake link records what it was asked to do, so the assertions are about
 // the protocol: "this thread was given a slice", "that one was told to complete
@@ -410,6 +413,7 @@ function makeManager(backend, extraOpts) {
     if (workerMode) {
       tm.createThread(0x401500, 0, 0, 0);
       tm.createThread(0x401600, 0, 0, 0);
+      await tm.spawnPending();
       await tm.runWorkerSlices(50000);
       assert(backend.links.every(link => link.exports.includes('clear_yield')));
     } else {
@@ -455,6 +459,7 @@ function makeManager(backend, extraOpts) {
       'a pending real Worker owns a nested STA apartment');
     const h1Duplicate = tm.duplicateCurrentThread(2);
     check(!!h1Duplicate, 'a pending real Worker can materialize a durable duplicate');
+    await tm.spawnPending();
     await tm.runWorkerSlices(50000);
     check(backend.specs.length === 3, 'each CreateThread became a Worker', `${backend.specs.length}`);
     const s = backend.specs[0];
@@ -495,6 +500,7 @@ function makeManager(backend, extraOpts) {
     const tm = makeManager(backend);
     for (let i = 0; i < 3; i++) tm.createThread(0x401500 + i, 0, 0, 0);
     FakeLink.peak = 0; FakeLink.inFlight = 0;
+    await tm.spawnPending();
     await tm.runWorkerSlices(50000);
     check(FakeLink.peak === 3, 'all three threads are in a slice at the same time',
       `peak in flight = ${FakeLink.peak}`);
@@ -512,7 +518,8 @@ function makeManager(backend, extraOpts) {
     const backend = makeBackend([[{}]]);
     const tm = makeManager(backend);
     tm.createThread(0x401500, 0, 0, 0);
-    await tm.runWorkerSlices(1000);           // spawn + first slice
+    await tm.spawnPending();
+    await tm.runWorkerSlices(1000);           // ready Worker + first slice
     const ev = tm.createEvent(false, false);  // auto-reset, unsignaled
     backend.links[0].script = [{ yield: 1, waitHandle: ev, waitStackBytes: 12, waitTimeout: 0xFFFFFFFF }];
     await tm.runWorkerSlices(1000);
@@ -537,6 +544,7 @@ function makeManager(backend, extraOpts) {
     tm.createThread(0x401500, 0, 0, 0);
     tm.createEvent(false, false);            // idx 0 → handle 0xE0000
     tm.createEvent(false, false);            // idx 1 → handle 0xE0001, unsignaled
+    await tm.spawnPending();
     await tm.runWorkerSlices(1000);
     check(backend.links[0].completed.length === 0, 'inside the timeout it keeps waiting');
     clock += 50;
@@ -554,6 +562,7 @@ function makeManager(backend, extraOpts) {
     const backend = makeBackend([[{ yield: 7 }]]);
     const tm = makeManager(backend);
     const h = tm.createThread(0x401500, 0, 0, 0);
+    await tm.spawnPending();
     await tm.runWorkerSlices(1000);
     await tm.runWorkerSlices(1000);
     check(!backend.links[0].exports.includes('clear_yield'),
@@ -598,6 +607,7 @@ function makeManager(backend, extraOpts) {
     const backend = makeBackend([[{ yield: 2 }]]);
     const tm = makeManager(backend);
     const h = tm.createThread(0x401500, 0, 0, 0);
+    await tm.spawnPending();
     await tm.runWorkerSlices(1000);
     check(tm.threads.get(h).state === 'exited', 'yield 2 marks the thread exited');
     check(backend.dropped.length === 1, 'and its Worker is dropped', `${backend.dropped}`);
@@ -614,6 +624,7 @@ function makeManager(backend, extraOpts) {
     const backend = makeBackend([[{ eip: 0 }]]);
     const tm = makeManager(backend);
     const h = tm.createThread(0x401500, 0, 0, 0);
+    await tm.spawnPending();
     await tm.runWorkerSlices(1000);
     check(tm.threads.get(h).state === 'exited', 'returning from the threadproc (EIP=0) also exits');
   }
@@ -623,6 +634,7 @@ function makeManager(backend, extraOpts) {
     const backend = makeBackend([[{ trapped: 'unreachable', eip: 0x401234 }]]);
     const tm = makeManager(backend);
     const h = tm.createThread(0x401500, 0, 0, 0);
+    await tm.spawnPending();
     await tm.runWorkerSlices(1000);
     check(tm.threads.get(h).state === 'exited', 'a trapped thread is exited, not left active');
     check(backend.dropped.length === 1, 'and its Worker is dropped too');
@@ -635,6 +647,7 @@ function makeManager(backend, extraOpts) {
     let clock = 5000;
     tm._now = () => clock;
     tm.createThread(0x401500, 0, 0, 0);
+    await tm.spawnPending();
     await tm.runWorkerSlices(1000);
     const after = backend.links[0].calls.length;
     await tm.runWorkerSlices(1000);
@@ -648,6 +661,7 @@ function makeManager(backend, extraOpts) {
     const backend = makeBackend([[{}]]);
     const tm = makeManager(backend);
     const h = tm.createThread(0x401500, 0, 0, 0x4);   // CREATE_SUSPENDED
+    await tm.spawnPending();
     await tm.runWorkerSlices(1000);
     check(backend.links.length === 1, 'a CREATE_SUSPENDED thread still gets its Worker');
     check(backend.links[0].calls.length === 0, 'but is given no slice while suspended');
@@ -664,6 +678,7 @@ function makeManager(backend, extraOpts) {
     const backend = makeBackend([[{}]]);
     const tm = makeManager(backend);
     const h = tm.createThread(0x401500, 0, 0, 0);
+    await tm.spawnPending();
     await tm.runWorkerSlices(1000);
     backend.onRpcSlot(backend.links[0].slot);
     tm.exitThread(7);
@@ -682,6 +697,7 @@ function makeManager(backend, extraOpts) {
     const backend = makeBackend([[{ yield: 8 }]]);
     const tm = makeManager(backend);
     tm.createThread(0x401500, 0, 0, 0);
+    await tm.spawnPending();
     await tm.runWorkerSlices(1000);
     check(backend.links[0].exports.includes('clear_yield')
       && backend.links[0].exports.includes('vlan_pump'),
@@ -699,6 +715,7 @@ function makeManager(backend, extraOpts) {
     }]]);
     const tm = makeManager(backend);
     tm.createThread(0x401500, 0, 0, 0);
+    await tm.spawnPending();
     await tm.runWorkerSlices(1000);
     check(backend.resolvedSends.length === 1
       && backend.resolvedSends[0].targetTid === 1

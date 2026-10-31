@@ -1129,3 +1129,52 @@ and a changed PID-start identity are rejected. A later read-only gate check
 correctly rejects the new foreign Deus light-exit runtime. No guest was
 restarted, no foreign process was signaled, and the corrected monitor has
 not been tested against another live Pirates runtime.
+
+## Generic bootstrap creator progress (2026-10-31 09:53 UTC)
+
+The independently safe creator-progress repair starts asynchronous Worker
+bootstrap without awaiting it in the browser main loop or Worker scheduler.
+The creating thread and existing runnable Workers retain their ordinary slices
+while DLL_THREAD_ATTACH waits. Explicit readiness callers can still await
+`spawnPending()`. The pass remains single-flight, including synchronous backend
+reentry and threads appended during an await; unexpected background errors are
+observed once and delivered at the next scheduler boundary.
+
+Running the creator also permits TerminateThread during pending attach. That
+request now retains its exit intent without signaling the handle or releasing
+locks owned by a live callback. Once attach unwinds, the scheduler retargets
+aliases to the completed record and retires its real Worker link before any
+user slice. CREATE_SUSPENDED remains effective throughout and after attach.
+
+`test-worker-bootstrap-progress.js` drives the shipped host loop, ThreadManager,
+DLL notification generator and Worker critical-section resolver with controlled
+interpreter exports. Creator-owned and existing-thread-owned locks release,
+attach completes, both callback gate scopes unwind, and suspended user entry
+receives no slice until ResumeThread. It also covers multiple pending threads,
+backend reentry, pending termination through an alias, failed-link stack
+ownership and background metadata failure. The exact retained old host rejects
+the creator case and old ThreadManager rejects the existing-thread case, both
+at the held-lock dependency rather than a missing import or API. Existing
+scheduler fixtures explicitly await readiness; all 58 assertions are retained.
+Evidence and commands are in
+`scratch/runs/20261031T0953Z-pirates-bootstrap/RECOVERY.md`.
+
+**Failed-bootstrap callback retirement remains unresolved.** Notifications run
+outside the scoped-loader transaction registry. WorkerLink.stop only asks for
+scoped-loader retirement when that registry was used; it has no endpoint-owned
+notification cancellation/acknowledgment. A safe repair must fence new commands,
+unwind the actual nested async generators/gate scopes, settle lookup and RPC
+continuations, and preserve generation quarantine and stack leases before
+termination. The current notification error path deliberately retains the
+unfinished image's quarantine pin; blindly decrementing every pin would be
+unsafe. This change adds no gate reset, callback skipping, guest patch or
+timeout increase. It fixes the scheduling cycle, without claiming that a
+separate timeout/error can no longer orphan callback ownership.
+
+The focused causal regression, scheduler, ThreadManager, scoped-loader
+retirement and callback census/mutation checks pass. An additional
+`test-thread-retired-stack-lease.js` check fails in its pre-existing incomplete
+fixture (`_authorityEvents` missing at closeSyncHandle); the exact retained old
+ThreadManager reproduces that same failure. The fixture is unchanged.
+Native replay outcome will be recorded separately; these source tests do not
+establish fresh sailing or input progress.
