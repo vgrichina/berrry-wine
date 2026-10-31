@@ -1,7 +1,7 @@
-Current 2026-10-31T10:07Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T10:23Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Deus Ex exited the dark room and reached repair-bot and security-camera instructions. Commit173d88a99 preserves a new native save, verified by fresh Load Game and F12 response. A fresh worker continues those exercises; deadline10:57UTC. Recharge, camera interaction and Training completion remain unproven.
+Pirates reaches native sailing with default guest Workers enabled. Reviewed frames show the ship moving from St. Kitts toward Nevis as January9 advances to January12; steering input is consumed. Published creator-progress repair9b1126f01 passes causal regression and evidence checks. Coast rendering remains imperfect. A fresh worker tackles failed-bootstrap callback cleanup; deadline11:27UTC.
 
-Pirates’ worker published a creator-progress fix and is attempting one bounded native retest. Final review is pending; failed-bootstrap callback retirement remains unresolved. No fresh sailing claimed.
+Deus Ex continues repair-bot and camera exercises from its verified native save; deadline10:57UTC. Recharge, camera interaction and Training completion remain unproven.
 
-Two workers maximum, one browser/heavy runtime. Closed diagnostic logs were losslessly compressed with recovery hashes; disk2.30GB. Full GL/D3D27 coverage remains open. Laptop HeroesII/fonts protected; no public deployment.
+Two workers maximum, one browser/heavy runtime. Full GL/D3D27 coverage remains open. Disk2.26GB. Laptop HeroesII/fonts protected; no public deployment. No owner action needed.
