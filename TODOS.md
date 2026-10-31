@@ -1124,12 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: rune-demo-media-resume-main-oct31 (01a1942a-5c12-7721-98ea-13a315c27c6d; handle52865); crimsonland-authentic-dx81-recovery-main-oct31 (01a19421-6158-7ce3-b4ab-26fe569bc90a; handle92614)
-  status: active (Rune original demo media preflight; Crimsonland authentic DirectX8.1 recovery; Alice browser host access unavailable)
+  worker: rune-demo-fixture-main-oct31 (01a19435-4e19-7070-b02a-f94e4c290879; handle14147); crimsonland-dx81-dependency-mount-main-oct31 (01a19435-49fe-7b32-a954-5b8e60c57997; handle29328)
+  status: active (Rune canonical fixture preparation; Crimsonland authentic DX81 dependency mounting/policy; browser access unavailable)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Current update 2026-10-31T23:05:03.969194+00:00: Rune65224c0ca original142-file demo and Crimsonland0f897faee authenticDX81 media reviewed once; both commits ancestors of main, no runtime qualification. Fresh Rune01a19435-4e19 handle14147 prepares canonical candidate fixture/host manifest using unchanged originals; Crimsonland01a19435-49fe handle29328 prepares justified authentic dependency mappings with native-loader policy first. No engine/shared registry edits, no browser/access retry; disk >2GB, cap2.
   Current update 2026-10-31T22:53:05.035248+00:00: Rune1b8e2b411 reviewed disk-only prerequisite stop; no recovered pins or gameplay. Disk now2.82GB after verified341251986B Icewind cabinet dedup; all original bytes/paths retained, recovery receipt scratch/runs/20261031T2258Z-coordinator-disk/. Fresh Rune01a1942a-5c12 handle52865 direct-source/media recovery with package+expanded-size preflight and >2GB floor. Crimsonland01a19421-6158 remains live authenticDX81 media/documentation; no runtime allocated.
   Current update 2026-10-31T22:50:12.850283+00:00: Alice239b5e259 reviewed assigned-host SSH403/publickey failure before any transfer/runtime; no gameplay. Box bx_knya4u7y independently verified stopped224519, no retry/resume/new box. Media stays ready pending authorized host access. Fresh Rune01a19427-a9bb handle6001 recovers original demo/pins/launch prerequisites, cheap-only; Crimsonland01a19421-6158 handle92614 remains authenticDX81 media-only. Two workers, no runtime allocated. Owner notified Telegram1767.
   Current update 2026-10-31T22:44:52.858805+00:00: Alice recovery d41903f45 reviewed exact archive/original15/PK3CRC/14-companion manifest; fresh Alice01a19422-9f22 handle18068 owns ordinary NewGame/Easy/W browser test on separate temporary boat bx_knya4u7y, sole runtime. Guest cutoff23:03, handback23:06, explicit delegated shutdown23:08, expiry23:13:53 UTC. No second checkout/public hosting. Crimsonland01a19421-6158 handle92614 authentic Win9xDX8.1 media recovery remains cheap-only. Two slots occupied.
