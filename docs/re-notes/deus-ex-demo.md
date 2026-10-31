@@ -1334,3 +1334,92 @@ successor, additional browser, heavy CLI, build, old-module/current-host mix,
 asset/INI/clock/save-byte/memory mutation, cheats, input bypass, FPS/audio
 diversion or public deployment. Camera alarm remains an unsuitable milestone
 because the original Training cameras have `bNoAlarm=True`.
+
+### 2026-10-31 12:20Z — native crate manipulation and recoverable placed steps
+
+**Pickup, drop, stacking and climbing passed; the blocked exit remains
+untraversed.** Run `scratch/runs/20261031T1220Z-deusex-crates/` restored only
+the immutable count6/time00:55:58 two-file checkpoint from1205Z through
+`app.files`/`vfsPaths` and ordinary native Load Game. The original actor observer
+matched (7003.7866,-1550.2075,15.8), rotation114962 and standing Physics1 before
+movement. No Training, pipe or recharge replay occurred.
+
+Cheap original-package analysis preceded the browser. Original small metal
+crate defaults have mass40, below the player's default lift limit50; the
+medium crate has mass80. `MaxFrobDistance=112` explains why several distant
+aims did not highlight. Original `DropDecoration` places a carried object on
+a highlighted target; without one it throws it. Original bindings are
+RightMouse pickup, Tab drop, C/Z turn, arrows move/strafe, PageDown look down
+and F center view. The wooden barricade is original BSP geometry, with low
+topZ32, adjacent topZ96 and taller topZ160 surfaces. It cannot be highlighted
+as a decoration for the target-placement branch.
+
+| Inspected ordinary manipulation | Result |
+| --- | --- |
+| Small crate pickup (`33`) | RightMouse produces the translucent carried crate. |
+| Targeted Tab drop (`40`,`42`) | Small metal crate rests on the medium metal crate; it is then picked up again. |
+| Relocation (`57`,`77`) | The crate is dropped near the barricade and a continuous native run/Space sequence lands on it at standing Z47.57. |
+| Second small crate (`98`,`110`) | Pickup succeeds. The attempted two-small stack lands beside the first crate; `110-two-small-stack.png` is a label, not a successful stack. |
+| Useful steps (`127`,`130`,`135`,`140`) | A level Tab throw places one small crate on the low wooden crate. JC climbs the floor crate, low wooden crate and upper metal crate, reaching stationary Physics1 at Z47.23,79.8 and109.73. |
+| Upper jumps (`142`,`173`) | Both return to the floor. No doorway crossing or next exercise is claimed. |
+
+The final upper jump peaks at centerZ156.913. Its last sampled descending
+center above143.8 is (7026.23,-1749.40,147.58), still short of the topZ96
+wooden surface beginning nearY=-1808. It finishes stationary on the floor at
+(7058.3203,-1773.3511,15.9). The concrete next dependency is a closer upper
+crate placement/run-up that reaches that surface at sufficient height.
+This attempt does not establish an emulator defect. Timed turns vary enough
+that screenshots and observed state are needed between approaches.
+
+Ordinary Escape → Save Game → Enter created a genuine **count7/time01:09:32**
+checkpoint (`181-native-save`). Whole native output bytes were exported to
+immutable `progress-native-checkpoint/0.bin` and `1.bin`; its manifest records
+the two VFS paths, sizes and SHA256 hashes. Count6 remains immutable and intact.
+Original-format decoding records the new player position above and relocated
+small crates at (7061.3101,-1701.6576,-13.1472) and
+(6997.2246,-1707.7416,49.3502). The medium crate remains in its original place.
+
+A fresh page/game instance mounted only those two count7 files. Native Load
+Game showed count7/time01:09:32 (`208`) and restored the world. The owning
+slot0/thread1 observer independently matched decoded location, rotation184635,
+Physics1, height43, radius20 and zero velocity. Feet frames two seconds apart
+remain stable. The copied helper retained `75/76-fresh-count6-*` filenames;
+these files actually depict count7. Inspected `214`/`216`, separated by2200ms,
+show the restored upper metal crate still resting on the low wooden crate.
+`RECOVERY.md` supplies the exact restore recipe and focused checks.
+
+The exact module remains
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`,
+with292-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+Before/after292 sources,131 original/support hashes,105 canonical served
+responses and19 DLL mounts match. Original SoftDrv/default guestWorker,
+three workers, guest640×480 and browser1024×768 were retained. All68 PNGs are
+1024×768. All294 native events are trusted and balanced, including seven
+RightMouse presses, four Tab presses and16 Space presses. The accepted
+read-only observer changes only its route envelope toX<=7450,Y>=-2500,
+justified by decoded room actors/geometry; exact initial save crosschecks,
+original exports/offsets, unique actor/class and return-boundary reads remain.
+The observer positive case and five rejection fixtures pass.
+
+Harness limits are preserved: the first fresh-load command reloaded before
+the checkpoint manifest existed and rejected ENOENT before guest launch.
+After the manifest was prepared, fresh restore succeeded in the same browser.
+The second reload overwrote `pre-fresh-native-input.json`; complete first-page
+events survive in `183-after-save.json`, combined with the fresh page's final
+log by `check.py`. The controller's final observer-stop sees the detached old
+worker; the initial observer had already stopped before reload and the fresh
+helper separately stopped its observer. No guest failure is inferred.
+
+Prior Deus/Pirates explicit FULLRELEASE and the actual global process gate
+preceded the sole12:22:10–12:38:45 browser session (994.9 seconds). The durable
+wrapper/controller/monitor held fd9 for the browser lock. Cache was disabled;
+prelaunch free disk exceeded2.3GB and the one-second2.1GB guard never fired.
+Cleanup verified42 tracked PID/start identities absent, including all helpers,
+watcher and both global crashpads; both ports closed, profile removed, inputs
+released and full flock available before12:39:18 FULLRELEASE. Browser exit0
+and controller wait0 are recorded. The wrapper's raw exit code was unavailable
+after its process disappeared; no raw wrapper-exit0 claim is made.
+No foreign signals, production edits, full build, arbitrary memory scans or
+writes, asset/INI/clock/save-byte edits, cheats, input bypass, guestWorker
+disable, public deployment, Boat (ID/state/expiry N/A), subagents or successor.
