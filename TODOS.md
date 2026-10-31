@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: ut2003-native-menu-play-main-oct31 (01a192c9-94ad-7273-83cf-b37866ca0f4e; handle99356); diablo2-unexplored-den-main-oct31 (01a192d4-7259-7143-ad79-c29683f03848; handle54268)
-  status: active (UT2003 menu worker finishing; Diablo II unexplored automap frontier from newer verified restore)
+  worker: ut2003-webgl-native-menu-main-oct31 (01a192d5-fb35-7e63-983f-ae48ef152db7; handle14166); diablo2-unexplored-den-main-oct31 (01a192d4-7259-7143-ad79-c29683f03848; handle54268)
+  status: active (UT2003 ordinary WebGL menu arm; Diablo II unexplored automap frontier from newer verified restore)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Accepted950e4940e original SOFTWARE/defaultworker Antalus console/FIRE join and movement/look/fire, coordinator inspected15/17/21/24 and24checksPASS. Accepted35d3d2ec4 new Diablo nativeSaveExit/title/wholeexport/freshpage character+OK/town111/movement113/stats115 XP66; four new798/902/24/5420B checkpoint hashes independently PASS. Den remains unlocated. Fresh Diablo worker selects unexplored native automap frontier, avoids exhausted east-tree/stone-corner loops. UT menu worker reports ordinary menu-to-match success and FULLRELEASE163632, final artifacts pending review. Two workers onebrowser, reserve>=2.8GB continuous>2GB/early2.1stop; full27/FPS/combat open.
+  Next: Accepted950e4940e original SOFTWARE/defaultworker Antalus console/FIRE join and movement/look/fire, coordinator inspected15/17/21/24 and24checksPASS. Accepted35d3d2ec4 new Diablo nativeSaveExit/title/wholeexport/freshpage character+OK/town111/movement113/stats115 XP66; four new798/902/24/5420B checkpoint hashes independently PASS. Den remains unlocated. Fresh Diablo worker selects unexplored native automap frontier, avoids exhausted east-tree/stone-corner loops. Accepted62ee90c86 ordinary visible-menu SOFTWARE match withoutconsole; coordinator inspected18HUD/24ammo148/27remaining14:42;25savedchecksPASS FULLRELEASE163632. ExtraEnter/clickduringloading prevents singlepress attribution; no emulator defect. FreshWebGL ordinary-menu arm waits CURRENTDiablo164002 NEWFULLRELEASE plus actualwholeprocessgate. Two workers onebrowser, reserve>=2.8GB continuous>2GB/early2.1stop; full27/FPS/combat open.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 

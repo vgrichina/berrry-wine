@@ -2,6 +2,20 @@
 
 ## October 31: known-source browser gameplay and remaining rendering blockers
 
+UT2003 ordinary visible-menu SOFTWARE route is now verified by `62ee90c86`,
+run `20261031T1628Z-ut2003-native-menu-play`: native Instant Action, Antalus
+and PLAY reach a joined match without console input. The coordinator inspected
+joined HUD18, firing24 (ammo150 to148, health100) and scoreboard27 (remaining
+14:42; previous26 was14:46). All25 saved focused checks pass, with the same
+frozen9b4e39a2/295 source/seven compiler/881 original/107 served identities.
+Native press/release drained the DirectInput ring; the retained menu image
+covered loading. Additional Enter/click during loading prevent attributing
+joining to one press. No generic emulator defect was demonstrated. All runtime
+exits0 and FULLRELEASE16:36:32; actual SOFTWARE executor has no queue error.
+This supersedes the software menu gap below. A fresh matching ordinary WebGL
+menu arm is queued behind the current Diablo browser; full27, FPS, audio,
+player kills and match completion remain open.
+
 UT2004 documentation `2342e9288` records original DM-Rankin software CLI
 play in `20261031T0427Z-ut2004-match`: native movement, look and firing,
 health100 and ammo100 to96 then94. The coordinator inspected the readable
