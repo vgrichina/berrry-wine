@@ -263,11 +263,18 @@
     ;; Two hex digits per byte, two checksum digits, NUL, and one extra byte
     ;; so a truncated longer value cannot masquerade as an exact-length value.
     (local.set $encoded (i32.add (i32.shl (local.get $size) (i32.const 1)) (i32.const 2)))
-    (local.set $buffer (call $heap_alloc (i32.add (local.get $encoded) (i32.const 2))))
+    (local.set $buffer (call $heap_alloc (i32.add (local.get $encoded) (i32.const 6))))
     (if (i32.eqz (local.get $buffer)) (then (return (i32.const 0))))
-    (if (i32.eq (call $ini_get_string (local.get $app) (local.get $key) (i32.const 0)
+    ;; Readiness and consumption share one RPC, including after a namespace
+    ;; replacement. A private result cell leaves EAX and caller output atomic.
+    (if (i32.eq (call $host_ini_read_result (i32.const 0)
+        (call $g2w (local.get $app)) (call $g2w (local.get $key)) (i32.const 0)
         (local.get $buffer) (i32.add (local.get $encoded) (i32.const 2))
-        (local.get $file) (i32.const 0)) (local.get $encoded))
+        (if (result i32) (local.get $file) (then (call $g2w (local.get $file))) (else (i32.const 0)))
+        (i32.const 0) (call $g2w (i32.add (local.get $buffer) (i32.add (local.get $encoded) (i32.const 2))))
+        (global.get $current_thread_id)) (i32.const 997))
+      (then (call $heap_free (local.get $buffer)) (return (i32.const -1))))
+    (if (i32.eq (call $gl32 (i32.add (local.get $buffer) (i32.add (local.get $encoded) (i32.const 2)))) (local.get $encoded))
       (then
         (loop $decode
           (local.set $value (i32.or
@@ -289,8 +296,12 @@
 
   ;; GetPrivateProfileStructA(appName, keyName, lpStruct, nSize, fileName) — 5 args stdcall
   (func $handle_GetPrivateProfileStructA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $ini_get_struct
+    (local $result i32)
+    (local.set $result (call $ini_get_struct
       (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
+    (if (i32.eq (local.get $result) (i32.const -1))
+      (then (call $io_block (i32.const 0)) (return)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
   )
 

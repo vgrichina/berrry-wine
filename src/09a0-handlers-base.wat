@@ -1216,21 +1216,10 @@
 
   ;; 9: GetProfileStringA(appName, keyName, default, retBuf, nSize) → chars copied
   (func $handle_GetProfileStringA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    ;; GetProfileStringA(appName, keyName, default, retBuf, nSize) — 5 args stdcall
-    ;; Same as GetPrivateProfileStringA with fileName="win.ini"
-    (local $wa_esp i32) (local $nSize i32)
-    (local.set $wa_esp (call $g2w (i32.load offset=16 (global.get $reg_base))))
-    (local.set $nSize (i32.load (i32.add (local.get $wa_esp) (i32.const 20))))
-    (i32.store offset=0 (global.get $reg_base) (call $host_ini_get_string
-      (if (result i32) (local.get $arg0) (then (call $g2w (local.get $arg0))) (else (i32.const 0)))
-      (if (result i32) (local.get $arg1) (then (call $g2w (local.get $arg1))) (else (i32.const 0)))
-      (if (result i32) (local.get $arg2) (then (call $g2w (local.get $arg2))) (else (i32.const 0)))
-      (local.get $arg3)
-      (local.get $nSize)
-      (global.get $win_ini_name_ptr)  ;; WASM ptr to "win.ini\0"
-      (i32.const 0)))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
-  )
+    (if (call $ini_read_result (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)
+          (global.get $win_ini_name_ptr) (i32.const 0))
+      (then (return)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
 
   ;; GetProfileSectionA(appName, retBuf, nSize) → chars copied
   ;;
@@ -1259,14 +1248,10 @@
 
   ;; 10: GetProfileIntA(appName, keyName, nDefault) — 3 args stdcall
   (func $handle_GetProfileIntA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $host_ini_get_int
-      (call $g2w (local.get $arg0))
-      (call $g2w (local.get $arg1))
-      (local.get $arg2)
-      (global.get $win_ini_name_ptr)
-      (i32.const 0)))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
-  )
+    (if (call $ini_read_result (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0) (i32.const 0)
+          (global.get $win_ini_name_ptr) (i32.const 0))
+      (then (return)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   (func $locale_put_ascii (param $out_g i32) (param $index i32)
       (param $ch i32) (param $wide i32)

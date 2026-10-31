@@ -2726,15 +2726,10 @@
   ;; 191: GetPrivateProfileIntA(lpAppName, lpKeyName, nDefault, lpFileName)
   ;; No INI file support — return nDefault (arg2)
   (func $handle_GetPrivateProfileIntA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    ;; GetPrivateProfileIntA(appName, keyName, nDefault, fileName) — 4 args stdcall
-    (i32.store offset=0 (global.get $reg_base) (call $host_ini_get_int
-      (call $g2w (local.get $arg0))
-      (call $g2w (local.get $arg1))
-      (local.get $arg2)
-      (call $g2w (local.get $arg3))
-      (i32.const 0)))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
-  )
+    (if (call $ini_read_result (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0) (i32.const 0)
+          (call $g2w (local.get $arg3)) (i32.const 0))
+      (then (return)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
 
   ;; 192: WritePrivateProfileStringA(appName, keyName, string, fileName) — 4 args stdcall
   (func $handle_WritePrivateProfileStringA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

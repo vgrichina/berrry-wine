@@ -354,3 +354,88 @@ absent, the entire Chrome/crashpad set empty, all three ports closed, profiles
 removed, held input empty and lifetime lock available. Minimum monitored free
 disk was 2,459,082,752 bytes. Boat ID/state/expiry: N/A. No public deployment,
 new worker, successor, or further browser/heavy CLI was launched.
+
+### 2026-10-31: async profile materialization repaired; native jungle control visible
+
+Evidence: `scratch/runs/20261031T1817Z-evolva-async-ini/`. The previous
+18:01:37 failure is repaired at the generic host profile-read boundary. An
+async-only VFS profile now records the exact selected entry in the calling
+thread's existing pending-I/O slot, materializes it, yields through IO_WAIT,
+and retries the original import thunk. Readiness and consumption share one
+host RPC. Pending reads publish neither output nor EAX and preserve the full
+stdcall frame. Separate status/result cells preserve every signed profile
+integer, including 997. Concurrent readers share one in-flight materialization;
+retired threads and replaced entries do not revive stale operations. Provider
+failures propagate rather than becoming missing-file defaults. Existing INI
+path/basename lookup, localStorage priority, byte decoding, case, quotation,
+section and integer behavior remain in the existing readers. No preload,
+per-game exception, asset edit, or scheduler/RPC change was introduced.
+
+The public string and integer A/W readers, section reader, and StructA reader
+use this boundary. StructA retains its existing WAT decoder, permissive native
+nibble mapping and checksum behavior, including decoded output on checksum
+failure. A review caught its initial separate preflight/read RPCs; the final
+version reads into a private temporary/result cell in one RPC and frees that
+allocation before yielding. Its compiled regression replaces a resident file
+with an async provider after readiness, verifies pending EAX/ESP/output
+atomicity, then checks successful and failed checksums and exactly-once stack
+cleanup. This StructA closure followed the sole browser run and is covered by
+the final compiled regression/full build; it was not rerun in a browser.
+
+`test/test-ini-async-vfs.js` exercises real async VFS providers and compiled
+public A/W import handlers, original thunk retry, unchanged stack guards,
+truncation, sections, signed integer results, per-thread waits, shared fill,
+thread retirement, provider failure/retry, namespace/write replacement,
+persisted overrides and basename fallback. The original `c95f363a9` source
+fails the same valid-use read with `VfsPendingError`; repaired source passes.
+A separate causal test uses the untouched 254-byte original `level4.lvl`:
+old FAIL, new PASS returning `TerrainMesh=Level4-level.msh`, one fetch and
+unchanged SHA-256
+`29705723c337c41041344f2e3bd1af4506e03d36da05debd151f3730433c1236`.
+
+The original/default-worker normal-WebGL runtime ran 18:33:18–18:40:37 UTC.
+At 18:35:16.790, the original level read returned pending status 997; at
+18:35:16.804 it completed with length 16 and the same ESP 122680152. The
+Worker survived, subsequent profile reads completed normally, and the jungle
+became visible. Personally reviewed screenshots show:
+
+- `13-loading-or-jungle.png`: original jungle, controlled green Genohunter,
+  textured ground/rocks/plants, radar and squad views.
+- `14-native-forward-held.png` and `14-native-forward.png`: native W down/up,
+  running stride and advanced position.
+- `15-native-look.png`: trusted relative mouse input turns the view toward
+  the rock wall.
+- `18-native-fire-short-held.png` and `20-native-third-fire-held.png`: native
+  left fire, raised firing pose and visible discharge after native weapon 3.
+
+This establishes visible native movement/look/fire in the original jungle.
+Audio, touch, sustained combat, performance and mission completion remain
+unqualified. No further failure or scope expansion occurred in this run.
+All 55 native events were trusted; eight mouse pairs and three key pairs were
+balanced. The 1024×768 browser used `defaultViewport:null`, default guest
+Worker, threads and normal WebGL, with isolation checked before input. All
+1,158 HTTP responses carried COOP/COEP. Exact served receipts and unchanged
+before/after pins cover 362 source files, 866 compiler files, 1,165 original
+fixture files and 134 served byte identities. The executed module SHA-256 was
+`3c832ec6f3dc3cf2f907e29de37a0315a1a1cc8d9b5fd17a402eaab3500b2548`
+(1,898,724 bytes); its exact source delta is retained in `build-identity.json`.
+
+The run followed current SlaveZero NEWFULLRELEASE and published main, with an
+independent entire-Chrome/global-crashpad/profile PID/start gate under
+inherited lifetime FD9. Explicit quit reaped controller, monitor, lifetime and
+supervisor without signals. `full-release-proof.json` verifies all 19 recorded
+identities absent, the entire browser set empty, ports 37247/37433 closed,
+profile gone, held input empty and lock free. Minimum monitored free disk was
+2,402,349,056 bytes. Large diagnostic JSON/logs were losslessly gzip-compressed
+with roundtrip SHA checks; `lossless-evidence-archive.json` records recovery.
+Boat ID/state/expiry: N/A. No new worker, successor or public deployment.
+
+After the StructA closure, the final causal regression, full flock build and
+fifteen existing focused suites all passed again under inherited FD9. These
+cover storage/registry, profile quotation/section/struct, lazy VFS entry/miss,
+RTF lazy open, Worker imports/RPC exceptions/COM pending slots, viewport
+projection/query/clip, transform aliasing and Surface3 descriptors. Build
+checks also passed handler stack/epilogue, A/W clone, callback census and test
+tier validation. Final module SHA-256:
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`
+(1,898,762 bytes), recorded separately in `final-verified-build.json`.

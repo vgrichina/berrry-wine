@@ -384,6 +384,10 @@
   ;; audio_mixer_* controls and meters the shared master(0), wave(1), and MIDI(2) buses.
 
   ;; INI file host imports — backed by localStorage
+  (import "host" "ini_read_result" (func $host_ini_read_result (param i32 i32 i32 i32 i32 i32 i32 i32 i32 i32) (result i32)))
+  ;; ini_read_result(kind, appWA, keyWA, default, bufGA, size, fileWA, wide, resultWA, tid) -> 997 = park
+  (import "host" "ini_prepare_read" (func $host_ini_prepare_read (param i32 i32 i32) (result i32)))
+  ;; ini_prepare_read(fileNameWA, isWide, threadId) -> 1 = IO_WAIT, 0 = ready
   (import "host" "ini_get_string" (func $host_ini_get_string (param i32 i32 i32 i32 i32 i32 i32) (result i32)))
   ;; ini_get_string(appNameWA, keyNameWA, defaultWA, bufGA, bufSize, fileNameWA, isWide) → chars written
   (import "host" "ini_get_section" (func $host_ini_get_section (param i32 i32 i32 i32 i32) (result i32)))

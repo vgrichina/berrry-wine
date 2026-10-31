@@ -387,9 +387,9 @@
     {
       "file": "lib/storage.js",
       "name": "host-file",
-      "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe",
+      "sha256": "a31f11a6c33b7e4a27f475bebca5e1a48ce4ebde43bd06716bc16a6439cf3df1",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Seal review 2026-10-22: complete producer delta from recorded seal reviewed; DirectX metadata changes only, callback/async/reset ownership paths unchanged. See scratch/runs/20261022-shadow-man-dsetup-census-fullmodule/REVIEW.md; ownership remains pending.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Seal review 2026-10-22: complete producer delta from recorded seal reviewed; DirectX metadata changes only, callback/async/reset ownership paths unchanged. See scratch/runs/20261022-shadow-man-dsetup-census-fullmodule/REVIEW.md; ownership remains pending. Review 2026-10-31 async profile read: complete storage delta adds entry-scoped shared materialization flights and per-thread pending I/O before Win32 profile read output. Retains VFS entry/provider only; active/state guards retire cancelled fills, settled flights leave the WeakMap, fetch errors propagate rather than becoming defaults, and existing materializeEntry preserves newer writes. No guest callback, retained WASM context, nonlocal unwind, or ownership certification. Evidence scratch/runs/20261031T1817Z-evolva-async-ini/; ownership remains pending. Combined read_result rechecks and consumes in one RPC, writes the supplied calling-thread EAX cell synchronously only on completion, and returns pending status separately from all valid signed integer values; no asynchronous guest-memory writes.",
       "ownership": "pending"
     },
     {

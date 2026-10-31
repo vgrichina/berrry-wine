@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 291,
+  "count": 293,
   "sigs": {
     "log": {
       "params": [
@@ -1263,6 +1263,33 @@
     },
     "audio_mixer_get_peak": {
       "params": [
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "ini_read_result": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "ini_prepare_read": {
+      "params": [
+        "i32",
+        "i32",
         "i32"
       ],
       "results": [

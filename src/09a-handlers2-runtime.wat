@@ -1023,6 +1023,23 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
 
+  ;; Result and I/O status travel separately, so every signed profile integer
+  ;; is representable. The host checks residency and reads in the same RPC.
+  (func $ini_read_result (param $kind i32) (param $app i32) (param $key i32)
+      (param $default i32) (param $buf i32) (param $size i32)
+      (param $file_wa i32) (param $wide i32) (result i32)
+    (if (i32.eq (call $host_ini_read_result
+          (local.get $kind)
+          (if (result i32) (local.get $app) (then (call $g2w (local.get $app))) (else (i32.const 0)))
+          (if (result i32) (local.get $key) (then (call $g2w (local.get $key))) (else (i32.const 0)))
+          (if (result i32) (i32.eqz (local.get $kind))
+            (then (if (result i32) (local.get $default) (then (call $g2w (local.get $default))) (else (i32.const 0))))
+            (else (local.get $default)))
+          (local.get $buf) (local.get $size) (local.get $file_wa) (local.get $wide)
+          (global.get $reg_base) (global.get $current_thread_id)) (i32.const 997))
+      (then (call $io_block (i32.const 0)) (return (i32.const 1))))
+    (i32.const 0))
+
   ;; GetPrivateProfileString{A,W}(appName, keyName, default, retBuf, nSize, fileName)
   ;; — 6 args stdcall. One INI read for both spellings; $wide picks the encoding.
   (func $ini_get_string (param $app_g i32) (param $key_g i32) (param $def_g i32)
@@ -1038,24 +1055,18 @@
       (local.get $wide)))
 
   (func $handle_GetPrivateProfileStringA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $ini_get_string
-      (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)
-      (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
-      (i32.const 0)))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
-  )
+    (if (call $ini_read_result (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)
+          (call $g2w (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))) (i32.const 0))
+      (then (return)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
 
   ;; GetPrivateProfileSectionA(appName, returnedString, size, fileName)
   ;; returns a double-NUL-terminated sequence of key=value strings.
   (func $handle_GetPrivateProfileSectionA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $host_ini_get_section
-      (call $g2w (local.get $arg0))
-      (local.get $arg1)
-      (local.get $arg2)
-      (call $g2w (local.get $arg3))
-      (i32.const 0)))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
-  )
+    (if (call $ini_read_result (i32.const 2) (local.get $arg0) (i32.const 0) (i32.const 0) (local.get $arg1) (local.get $arg2)
+          (call $g2w (local.get $arg3)) (i32.const 0))
+      (then (return)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
 
   ;; 257: __wgetmainargs
   (func $handle___wgetmainargs (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
