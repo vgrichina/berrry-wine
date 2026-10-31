@@ -1890,3 +1890,72 @@ needed. FULLRELEASE was posted at 13:40:11. No Boat: ID/state/expiry N/A.
 The immediate blocker was disk headroom. Gameplay still requires completing
 the intercept or landing further effective broadsides. This session is used;
 no second browser or new save-validation claim follows from these captures.
+
+## Longer straight close; no boarding before the runtime deadline (2026-10-31 13:46 UTC)
+
+Evidence/recovery: `scratch/runs/20261031T1346Z-pirates-close/RECOVERY.md`.
+**The straight approach closes visibly, but contact, boarding, surrender and
+capture remain unproven.** This attempt reaches its runtime deadline with
+adequate disk headroom; it is not another disk-guard stop.
+
+Original `lang0.FPK` controls and encyclopedia were read before launch, along
+with prior captures `14`, `24`, `31` and `47`. The encyclopedia describes
+boarding by ramming. The unchanged 12:20 battle export again restores Nevis
+port (`08`), followed by ordinary Sail Away/Cast Off. This run captures the
+actual selector naming English Merchantman Lovely Mary, six guns/50 men
+(`12`), and actual combat (`13`). No New Game or tavern route is replayed.
+
+The initial starboard correction points Revenge away from the target and
+costs time. Later port steering brings the merchantman into the forward
+chase view (`35`–`40`). Rendered FIRE discharges the broadside (`23`), and
+enemy guns subsequently fall from six to four (`30`), with crew remaining
+50. Revenge fully reloads to eight (`34`). No second discharge is claimed.
+
+After releasing port steering at approximately 14:10:50, the course is held
+until 14:15:07: over four minutes without a steering command. The only
+intervening control is rendered Full Sails. Inspected frames `40`, `42`,
+`44`, `46`, `48`, `50` and `52` show the ships drawing nearer, while Revenge
+slows from eight to five knots and the merchantman from five to four.
+The target drifts left of the bow; two late port corrections reduce Revenge
+to three and then two knots (`53`–`54`). The last frame still shows separated
+vessels, enemy four guns/50 crew, and eight loaded guns. There is no native
+boarding/duel, surrender, sinking or capture screen. The remaining gameplay
+dependency is completing the intercept while retaining closing speed. This
+run does not demonstrate the previous zero/minus-one-knot stall.
+
+Trusted input observation records unshifted `Numpad6` as ArrowRight/VK39.
+An ordinary Shift+keypad chord produces VK102, matching the original Num6
+binding, but its steering effectiveness is **not established**. Rendered
+turn controls, shifted/unshifted keypad holds and ordinary port taps were
+tried. These observations do not establish a keypad fix or isolate the cause
+of slow alignment; no input bypass or production input change was made.
+
+Before/after identity checks pass all 296 source/compiler files, 40 support
+files and 1,374 originals. Frozen, served and loaded WASM remains
+`078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`;
+all 2,226 served responses, 106 source URLs and three auxiliary pins match.
+Default guestWorker/threads, WebGL and 1024×768 are retained. A 14:06:34
+device snapshot has null error; the final query was refused after shutdown,
+so no final device-error claim is made. Both immutable source saves remain
+unchanged. No new checkpoint or final VFS export was made. No production,
+factory/draw instrumentation, assets, INI, clock, guest memory or save bytes
+were edited; no build or heavy CLI ran.
+
+The sole browser ran 13:58:59.464–14:16:02.730 UTC (1,023.266 seconds), after
+Deus Ex's 13:57:56 FULLRELEASE and actual global Chrome/crashpad clearance.
+The fresh runtime deadline triggered shutdown; minimum sampled free disk is
+2,216,898,560 bytes, above the required floor and early-stop threshold.
+All 1,234 live-profile samples retain three inherited FD9 holders. Actual
+browser/controller/wrapper/monitor exits are zero. Cleanup verifies 20
+tracked PID/start identities absent, both global crashpads absent, three
+ports closed, profile removed, balanced inputs and full flock available.
+No runtime cleanup signals were needed; FULLRELEASE was posted at 14:16:30.
+The initial board watcher and two request shell sessions returned 143; their
+completed action/capture artifacts survive, and this is not reported as an
+all-helper-zero result. The request shells' Python-helper PID/start identities
+and raw Python exits were not separately retained; a qualified scan found no
+remaining request helper. No Boat: ID/state/expiry N/A.
+
+Focused checks pass identity, 146 trusted balanced input events, 54 captures,
+immutable saves, inspected transitions and runtime lifecycle evidence. The
+single browser is used; there is no second runtime or promoted checkpoint.
