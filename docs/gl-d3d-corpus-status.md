@@ -1693,8 +1693,17 @@ size until the next swap, so `resizeContext` now swaps once after resizing.
    Closed later on 10-10: mw3 on WebGL (w5); cmr2, tdr2000, drakan and
    carmageddon2 on WebGL (w4); ut2003 on both arms and ut2004 on WebGL
    (1863d2b5); darkstone_demo on both arms (w5).
-   - **Still open:** diablo2_demo on both arms (w6); the daikatana and arcanum WebGL backends and a ut2003_demo_server
-     software result.json (w4). The historical UT2004 software menu-input
+   - **Remaining after later evidence:** the historical diablo2_demo pair and
+     ut2003_demo_server software result remain to reconcile. Arcanum's explicit
+     software/WebGL crash-site movement was reviewed in
+     `20261008T1431Z-arcanum-gameplay-qualified`; software scene-qualified FPS
+     remains open, and the missing full provenance bundle noted above is not
+     repaired by that gameplay acceptance. Daikatana's explicit CLI WebGL
+     `20261010T2140Z-daikatana-webgl-w4` and browser
+     `20261031T0256Z-daikatana-webgl` supersede its missing-WebGL entry; the
+     historical module/source identity and combat/parity limits above remain.
+     These are retained observations, not fresh current-main qualification.
+     The historical UT2004 software menu-input
      blocker is superseded by October31 `fb698d57e` and the reviewed
      DM-Rankin browser gameplay evidence above; this does not qualify WebGL.
    - **Not split:** bg2 is DirectDraw as registered.
