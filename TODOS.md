@@ -1124,7 +1124,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: forsaken-repaired-gameplay-main-oct31; deusex-training-observation-room-main-oct31
+  worker: forsaken-repaired-gameplay-main-oct31; deusex-training-multitool-main-oct31
   status: active (Forsaken repaired-build gameplay and Deus Ex next Training exercise; one runtime at a time)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
@@ -1197,7 +1197,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   note: 2026-10-31T04:00Z bounded original Forsaken software route reached inspected Volcano briefing/loading scene at1129batches/60.030s; firing scheduled1180 was not reached, so no movement/combat acceptance. All876 original/runtime input hashes unchanged; retained module7f9da4e9 compiledsource unknown, run20261031T0400Z-forsaken-volcano. Fresh worker pursues actual browser gameplay past briefing. Daikatana route80b11f423 preserved without verified exit; Pirates8581ed6dd records effective-state boundary and generic page crashes without production cause/fix.
   status: active (UT2003 repair and UT2004 WebGL gameplay accepted; Forsaken repair and Deus Ex progression active; full27 software/WebGL coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: forsaken-repaired-gameplay-main-oct31; deusex-training-observation-room-main-oct31 (two gameplay workers, serialized runtimes)
+  worker: forsaken-repaired-gameplay-main-oct31; deusex-training-multitool-main-oct31 (two gameplay workers, serialized runtimes)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
@@ -1416,12 +1416,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
   candidate: deus-ex-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none (follow-up queued under two-worker cap; browser tests serialized)
+  worker: deusex-training-multitool-main-oct31 (01a190e2-fb00-78c1-a937-3dae01d0ae6e; handle74337; deadline08:17UTC)
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Accepted 2026-10-31 browser Training evidence from 940371775: original world/HUD, native approach/retreat, right-click door opening and traversal into the red-floored room. Coordinator inspected beyond-first-door.png; retained8459597 exact292-source snapshot and131 original/support checks identify this run. Next bounded gameplay step is collecting the visible desk key and opening the next locked door with native input. Scene-qualified FPS, sustained play and Training completion remain open.
+  Next: Reviewed26d6dacae: native DataCube0012 -> keypad GRANTED -> automatic door opening and traversal into multitool exercise. Coordinator inspected code, GRANTED, open passage and next instructions; original131/source292/served105/trusted224 checks pass and owned runtime cleanup verified. Fresh40min worker uses native multitool and advances the exercise. FPS, sustained play and Training completion remain open.
   Done: Reviewed gameplay screenshot and scene-qualified frame measurement with raw samples, counter proof and tested build identity; retain explicit failures.
   Evidence: docs/re-notes/deus-ex-demo.md; scratch/runs/20261031T0447Z-deusex-browser/; scratch/gameplay-coverage-20261003/tasks/GAMEPLAY-deus-ex-demo.json
   notes: Original Training gameplay and first-door traversal are verified on the default guestWorker software browser route. This does not qualify WebGL, audio, FPS, Liberty Island or completion. Historical missing-path reports are superseded for registered deus_ex_demo.
@@ -1885,3 +1885,4 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   worker: none (independent historical API review complete)
   Evidence: Implementation7fd352855 and source reviewfe540cf2; retained native qualification01dfb0d98 independently accepted in docs/re-notes/madbomber-winmm-native-independent-review-20261024.md. Exact historicalb41a7c5 normal module8fac3993: unchanged public A/W native fixture exit0, host exit0, wrong-hash rejection exit1 before compile/memory. This does not qualify the current-main module or original SDL.
   Next: Coordinator-owned original SDL observation remains outside this API evidence; keep this checkbox open until its exact requirement is reviewed. Existing original gameplay acceptance under NEW-GAME-MADBOMBER-20261018 remains intact. No runtime allocation or retry is implied.
+
