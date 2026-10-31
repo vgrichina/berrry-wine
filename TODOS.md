@@ -988,11 +988,11 @@ commit output — do not assume your hunks landed.**
 
 - [ ] Diagnose Pirates stopping before the target rendering operation
   id: PIRATES-ROUTE-FOLLOWUP
-  status: active (native landing party/coast walking accepted; town-entry attempt queued)
+  status: active (Montserrat tavern accepted; native restore/onward gameplay followup)
   created: 2026-10-02T04:00:31.545Z
   created-by: user-request via ops-dashboard
   candidate: pirates-2004
-  Next: Accepted468ad518a/run20261031T1134Z-pirates-onward: Montserrat landing prompt ->Yes/Enter ->Hangmans Point landing party and native coast walking toward visible buildings; personally inspected25/30 and reran focused296/40/1374/2130/58trusted/31PNG checker PASS. Town Enter/Attack/combat unproven. Disk floor1.908GB ended sole run; browser0/controller143 and stale controller heldSet disclosed, actual final input balanced/fullcleanup verified. Coordinator restored263483595B losslessly from closed logs, free2.404GB. Fresh worker01a191cb-45ec-7513-968b-1c5387cc2f3a handle31763 deadline12:49:40UTC prepares town-entry route with matched078d81 closure; waits Deus explicitFULLRELEASE+actualgate, prelaunch>=2.3GB/continuous>2GB. Transfer/readback remains separately unqualified.
+  Next: Accepted19f7251cb: actual Montserrat port ->VisitTavern stable11sec ->return; coordinator inspected45 and focused296/40/1374/2225/126trusted/72PNG+3negatives PASS. Native offshore save1028097B exported, restore untested. CoastEnterAttack/combat unproven. Missing originalharness finalizers/rawexits and full-lifetimewrapper unproven disclosed; samebrowserrecovery0/all15PIDcleanup verified. Fresh 01a191e7-4eef-7743-9c30-aec821ee2464 handle22450 native restore/onward task waits fresh Deus FULLRELEASE+actualgate; use durable harness.
   Done: Identify the route failure and either validate the actual game transfer/readback with reviewed images or record a precise blocking dependency. Link unresolved terrain defects separately; a zero-transfer run is not a rendering pass.
   Evidence: docs/re-notes/pirates-2004.md; scratch/runs/20261031T0215Z-pirates-small-slice/result.json; scratch/runs/20261031T0220Z-pirates-main-sailing/result.json; ops/handoffs/mig-pirates-stretch.md; ops/handoffs/mig-pirates-stretch-recipe.md
 
@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: pirates-montserrat-town-entry-main-oct31; deusex-pipe-far-gap-main-oct31
-  status: active (Pirates town entry running; Deus first gap accepted and pipe/far-gap followup preparing)
+  worker: deusex-crate-stacking-main-oct31; pirates-native-restore-onward-main-oct31
+  status: active (both previous workers completed and reviewed; two fresh onward tasks)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Current2026-10-31T12:05Z: accepted da0dadb05 first grounded running jump and stable far-grate landing; coordinator inspected26/28 and reran focused identity/input/landing/observernegative checks PASS. Native original cameras bNoAlarm=True; pipe/farthergap/onward/newsave unproven, count5 recovery unchanged. Fresh Deus 01a191d9-42ca-7032-8c72-c927dedf4c85 handle50525 deadline13:05UTC prepares next pipe/farthergap route while Pirates01a191cb-45ec-7513-968b-1c5387cc2f3a handle31763 deadline12:49:40UTC runs actual town-entry attempt. Browser serialized; fresh Deus waits Pirates FULLRELEASE and actual gate. Closed-run lossless logs saved another133MB/free2.394GB. Full GL/D3D27 open; laptop HeroesII/fonts protected; no public deployment.
+  Next: Current2026-10-31T12:22Z accepted65110a368 actualpipes/farthergap/crateRoominstruction and genuinecount6 freshLoad/decodedactor/stablefeet; inspected44/77 and focused+observernegatives PASS. FreshDeus 01a191e7-4473-7003-a6c8-2dd9cc87e4b4 handle30036 aims actualmetalcrate stacking/exit, first browserpriority. Accepted19f7251cb actualMontserrattavern/nativeSave export only; inspected45/focused PASS, restore/combat unproven and harnesslifetime gap disclosed despite actualcleanup. FreshPirates 01a191e7-4eef-7743-9c30-aec821ee2464 handle22450 prepares nativeLoad/onward encounter and waits DeusFULLRELEASE+actualgate. Both deadline about13:22UTC; two workers/onebrowser. Observedfree2.350GB. Full27/crashsweep open; laptopHeroesII/fonts protected; no publicdeploy.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1197,7 +1197,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   note: 2026-10-31T04:00Z bounded original Forsaken software route reached inspected Volcano briefing/loading scene at1129batches/60.030s; firing scheduled1180 was not reached, so no movement/combat acceptance. All876 original/runtime input hashes unchanged; retained module7f9da4e9 compiledsource unknown, run20261031T0400Z-forsaken-volcano. Fresh worker pursues actual browser gameplay past briefing. Daikatana route80b11f423 preserved without verified exit; Pirates8581ed6dd records effective-state boundary and generic page crashes without production cause/fix.
   status: active (UT2003 repair/UT2004 WebGL/Forsaken movement accepted; Pirates textured coast repaired/native landing party accepted; full27 both-backend coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: pirates-montserrat-town-entry-main-oct31; deusex-pipe-far-gap-main-oct31 (two bounded workers, serialized runtimes)
+  worker: deusex-crate-stacking-main-oct31; pirates-native-restore-onward-main-oct31
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c

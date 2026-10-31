@@ -1,7 +1,7 @@
-Current 2026-10-31T12:05Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T12:22Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Accepted da0dadb05: Deus Ex first gap crossed with a grounded running jump and stable landing on the far grate. Coordinator inspected captures and reran identity, input, landing and observer checks. Original Training cameras have alarms disabled; pipe, farther gap and next instruction remain unproven. Count5 recovery is unchanged.
+Accepted65110a368: Deus crossed both pipes and farther gap, reached crate-room instruction and retained genuine count6 recovery validated by fresh native Load Game, decoded actor and stable footing. Coordinator inspected44/77 and focused checks plus five observer rejection fixtures passed. Fresh Deus 01a191e7-4473-7003-a6c8-2dd9cc87e4b4 (handle30036) aims native metal-crate stacking/blocked exit.
 
-Pirates town-entry worker01a191cb-45ec-7513-968b-1c5387cc2f3a (handle31763, deadline12:49UTC) is running. Fresh Deus pipe/far-gap worker01a191d9-42ca-7032-8c72-c927dedf4c85 (handle50525, deadline13:05UTC) prepares and waits Pirates full browser release plus actual process gate. Native Pirates landing-party/coast walking remains accepted; town entry/combat unproven.
+Accepted19f7251cb: actual Montserrat tavern, stable11sec, town return and native offshore save export. Coordinator inspected45 and focused checks plus three rejection fixtures passed. Restore/coastEnterAttack/combat unproven. Original harness full-lifetime/rawexits unproven; same-browser recovery and actual cleanup verified. Fresh Pirates 01a191e7-4eef-7743-9c30-aec821ee2464 (handle22450) prepares native restore/onward encounter; waits Deus FULLRELEASE and actual process gate.
 
-Another133MB restored by lossless closed-run log compression; observed free2.394GB. Two workers maximum, one browser/heavy runtime; prelaunch2.3GB and continuous>2GB. Full GL/D3D27 remains open. Laptop HeroesII/fonts protected; no public deployment. No owner action needed.
+Two fresh workers, one browser/heavy runtime; approximate deadlines13:22UTC. Observed free2.350GB, prelaunch2.3GB/continuous>2GB. Full GL/D3D27 and crash sweep remain open. Laptop HeroesII/fonts protected; no public deployment. No owner action needed.
