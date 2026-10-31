@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: ut2003-software-join-reserve-main-oct31 (01a192bb-08c4-7662-80a3-d39888d84b08; handle9145); diablo2-den-route-reserve-main-oct31 (01a192bb-24ac-7250-a8e2-87d43a8c4dd1; handle65414)
-  status: active (UT2003 software Antalus; Diablo II native Den from verified restore)
+  worker: ut2003-native-menu-play-main-oct31 (01a192c9-94ad-7273-83cf-b37866ca0f4e; handle99356); diablo2-den-route-reserve-main-oct31 (01a192bb-24ac-7250-a8e2-87d43a8c4dd1; handle65414)
+  status: active (UT2003 visible menu PLAY; Diablo II native Den from verified restore)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Reviewed23affb46a nativeDENMAPrestore08/BloodMoorcombat82 with isolation/defaultworkerWebGL throughout; Den/newcheckpoint absent after diskstop. cd0272077 no-launch correctly stopped57539072B below2600MBreserve. Archived closed reviewed worker transcripts losslessly with recovery recipes, recovered446MB/free2973MB. Fresh UTsoftwarejoin first, Diablo waits its NEWFULLRELEASE and actual wholeChrome/globalcrashpad/PIDstartgate. Both reserve>=2.8GB before launch; two workers onebrowser. Full27/FPS/Den open.
+  Next: Accepted950e4940e original SOFTWARE/defaultworker Antalus native console/FIRE join, movement/look/fire ammo150to148 health100, scoreboard00:24to00:33; coordinator inspected15/17/21/24 and reran24checksPASS. FULLRELEASE161730 allruntime0. Diablo sole browser161754 from verified native DENMAP; Den/newcheckpoint pending. Fresh menuPLAY worker cheap-prepares and waits NEWDiablo FULLRELEASE plus actual wholeChrome/globalcrashpad/PIDstartgate. Two workers onebrowser, reserve>=2.8GB and continuous>2GB/early2.1stop. Full27/FPS/combat open.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 

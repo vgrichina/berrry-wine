@@ -71,6 +71,18 @@ declined launch: actual predecessor cleanup/process gate passed, but free space
 was57,539,072 bytes below the2.6GB reserve. Its14 preparation checks pass;
 there is no new runtime or gameplay evidence. The next attempt follows disk
 recovery and uses a2.8GB initial reserve.
+Follow-up `950e4940e`, run `20261031T1612Z-ut2003-software-join-reserve`,
+completes the software gameplay arm on the same frozen identity. The coordinator
+inspected joined HUD15, forward17, firing21 (ammo150 to148, health100), and
+scoreboard24 elapsed00:33 (earlier00:24). Native console `open DM-Antalus`
+and FIRE join remain explicit; visible menu PLAY is unresolved. Actual software
+Device gpuFALSE completes301,598,102 samples; final queue25,202 completed of
+25,220 submitted, no queue error. All17 captures,63 balanced trusted events,
+107 served pins and24 focused checks pass. Disk minimum2,701,918,208 bytes;
+runtime exits0 and full process cleanup verified16:17:30. FPS/audio/hits/kills
+and match completion remain unqualified. A fresh worker investigates visible
+menu PLAY after the current Diablo browser releases, without repeating accepted
+console gameplay.
 
 Deus Ex documentation `940371775` verifies the default guestWorker browser
 Training route on actual SoftDrv: native approach/retreat, first door opened
