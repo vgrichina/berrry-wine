@@ -10,9 +10,10 @@ Registered ff0c51dde. Quake II engine: `sin.exe` imports only system DLLs;
 archive.org `swizzle_demu_Sin`, `Sin.exe` (35471872 bytes, SHA-1
 `81a61458…`): a WinZip self-extractor whose `data\` folder is a ready
 install (the setup.exe beside it is not needed). The P-Z collection item also
-has `SinDemo-OpenGL-SW.exe`; not used. `readme.htm`/`readme.doc` contain no
-licence or redistribution terms, only a 1998 contest, so it is a localOnly
-"no stated terms" fixture like forsaken-demo.
+has `SinDemo-OpenGL-SW.exe`; not used. The installed `readme.htm` and
+`quickguide.doc` contain gameplay instructions; the README also contains
+1998 contest rules. No software licence or redistribution permission was
+found in the installed documentation. Keep this fixture private/localOnly.
 
 ## Running
 
@@ -78,8 +79,102 @@ input was sent. No new screenshots or gameplay, hit, kill, objective, audio
 or FPS claim is made. The historical CLI route above remains route guidance,
 not browser evidence. No emulator failure or source repair boundary was reached.
 
-Next boundary: obtain the exact SHA-1-pinned original in a newly authorized
+Historical next boundary (superseded for the local pinned target below):
+obtain the exact SHA-1-pinned original in a newly authorized
 bounded acquisition, review its complete README/licence set, compare all
 installed members, then pass the current lifecycle/process gate before the
 native HARDCORPS → GAME → HQ/lift/helipad/flyover → settled rooftop route.
 Boat ID/state/expiry: N/A (local preflight only).
+
+## 2026-10-31 owner-pinned local browser target
+
+Run `20261031T1953Z-sin-pinned-browser` starts from owner input
+`24a30ec0f`. The owner's October 31 rule identifies the target by the
+actual installed game bytes, rather than an upstream package or compilation
+container. The historical HTTP 500 acquisition is not a blocker for this
+target. No download is required or attempted. These are **local pins**;
+independent comparison with upstream members remains unverified.
+
+The local README identifies this as the **pre-release SiN Demo**. Its complete
+text and the complete installed quick guide were reviewed before investigation.
+All **23 size/SHA-256 entries** in
+`20261031T1940Z-sin-native-browser/original-inputs.json` match at preparation:
+22 installed files plus the browser manifest. The executable is
+`installed/sin.exe`, **521,216 bytes**, SHA-256
+`b247ddbcf4081ed0b2e59533e2d4e17347815303b100048112254721c6afc162`;
+`.wine-assembly-browser.json` is **2,406 bytes**, SHA-256
+`499bea8a1fb51d4b5827c4aaf5c9bcce776707fbeb436a549de73847a74ebd1d`.
+All 21 manifest members also match their sizes. Fresh public `lib/apps.js`
+excludes `sin_demo` from `DESKTOP_APPS`; the local candidate registration and
+its exact arguments above remain intact. The shipped `base/default.cfg`
+confirms arrows for movement/turning, comma/period for strafing, Mouse1 for
+attack, Space for jump, C for crouch and U for use; its bindings take precedence
+over inconsistent control descriptions in the README prose.
+
+### Browser result: turning observed; requested rooftop actions unproven
+
+The single browser run lasted **19:55:32–20:00:55 UTC**. It waited for the
+current `blood2-pinned-build-browser-main-oct31` run's **NEWFULLRELEASE
+19:55:09**, then independently acquired `/tmp/wine-browser.lock` on FD9 and
+checked actual Chrome/global crashpad/profile processes before launch.
+Free disk was 3,782,889,472 bytes at admission and never fell below
+3,621,347,328 bytes during the monitored lifetime. The durable Python parent
+retained FD9 while waiting for the controller and cleanup monitor.
+
+Tested checkout: `0d991322565949fc51ddf036696e0c840c854e03`, with clean
+runtime source. The loaded/served module SHA-256 was
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+Chrome `151.0.7922.108` used `defaultViewport: null`, a native **1024×768
+content area**, default isolated guest Worker, normal WebGL (SwiftShader
+harness), and unchanged registered clock/audio paths. The guest retained its
+default 640×480 rendering surface. No console/map/state injection, INI/cvar
+edit, save load, clock change or registration change was used.
+
+Personally reviewed captures show HARDCORPS logon → circular GAME → NEW GAME
+→ Rookie, then the headquarters conversation, helipad/helicopter sequence and
+city scene. The menu itself displays **OS Rev: 0.93 Demo**. The next scene is
+a first-person, gun/turret-like view overlooking rooftops, with the HUD and
+scripted dialogue. This was not assumed to be settled on-foot rooftop control.
+Two finite Up-arrow checks (900 ms and 2,000 ms) did **not** establish walking.
+A **600 ms Right-arrow press visibly changed the view** toward the SinTEK
+billboard and nearby roof (`16-turn-check.png`). During the later forward
+check, the native **RESTART LEVEL** menu appeared, naming **Entering Air
+Assault on FCB** (`17-forward-check-held.png`, `18-terminal-menu.png`).
+The exact transition/death cause was not captured or established. No restart
+or second launch was attempted.
+
+Thus the requested settled rooftop **walk plus fire/jump is not demonstrated**.
+The narrower result is native menu navigation and visible first-person turning
+in the air-assault scene. No fire or jump was sent, and no hit, kill, objective,
+audio-listening, FPS or touch qualification is claimed. The CLI batch-12500
+route remains historical guidance. No emulator fatal or defined-use violation
+was identified, so there is no justified source/test repair boundary and no
+source patch, rebuild or repair-test claim.
+
+All **23 owner-pinned sizes and SHA-256 hashes**, all **21 manifest sizes**,
+**528 source files**, **866 compiler files**, **43 game/shared runtime inputs**
+and the module match before/after. All 186 served-file records matched pinned
+bytes and a final disk readback. All 188 observed HTTP responses carried
+COOP/COEP; 182 successful responses joined to file hashes. Six HTTP 404s were
+recorded for static-harness ancillary paths (build-info, auth, favicons,
+font bundle and the candidate icon), without a demonstrated gameplay link.
+All **17 native events** were trusted: **7 balanced key pairs**, one launch
+mouse pair and one mouse move. No guest Mouse1 attack occurred.
+
+Independent cleanup at **20:01:05 UTC** found all 21 recorded runtime
+PID/start identities absent, actual Chrome/global crashpad/profile processes
+empty, ports **40155/45035 closed**, profile removed, held inputs empty and
+the browser lock free. Runtime cleanup required no signals. The separate
+preparation watcher was PID/start checked, terminated and durably reaped;
+its parent and child were also absent. No foreign process was signalled.
+Boat ID/state/expiry: **N/A**, local correctness run; no deployment.
+
+Evidence: ignored run `20261031T1953Z-sin-pinned-browser`, including
+`pin-before.json`, `pin-after.json`, `reviewed-scenes.json`,
+`verification-summary.json`, `identity-before.json`, `identity-after.json`,
+`native-input.json`, `served.jsonl`, `actual-http-responses.jsonl` and
+`full-release-final.json`. Next boundary: in a separately authorized fresh
+native run, establish the air-assault/on-foot phase and complete a finite
+attack or jump plus clear translation before the restart transition; capture
+the transition itself if it recurs. This run does not support an emulator
+repair or an upstream-verification claim.
