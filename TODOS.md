@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: pirates-montserrat-town-entry-main-oct31; deusex-grounded-gap-cause-main-oct31
-  status: active (Pirates landing-party coast walking accepted; Deus grounded gap test running)
+  worker: pirates-montserrat-town-entry-main-oct31; deusex-pipe-far-gap-main-oct31
+  status: active (Pirates town entry running; Deus first gap accepted and pipe/far-gap followup preparing)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Current2026-10-31T11:50Z: accepted468ad518a native Montserrat landing party/coast walking; coordinator inspected25/30, focusedchecker rerunPASS and fullcleanup/publication reviewed. Town entry/combat unproven; disk floor stopped run, coordinator lossless archives restored263MB/free2.404GB. Fresh Pirates01a191cb-45ec-7513-968b-1c5387cc2f3a handle31763 deadline12:49:40UTC prepares actual town-entry attempt pending Deus fullrelease. Deus01a191bd-8873-74a2-8656-84b95b708bf4 handle8616 deadline12:34UTC running distinct grounded gap test after static package/BSP analysis; not yet accepted. Prior textured coast/cap16 and native count5 restore remain accepted. Two workers maximum/one runtime. Full GL/D3D27 open; laptop HeroesII/fonts protected; no public deployment.
+  Next: Current2026-10-31T12:05Z: accepted da0dadb05 first grounded running jump and stable far-grate landing; coordinator inspected26/28 and reran focused identity/input/landing/observernegative checks PASS. Native original cameras bNoAlarm=True; pipe/farthergap/onward/newsave unproven, count5 recovery unchanged. Fresh Deus 01a191d9-42ca-7032-8c72-c927dedf4c85 handle50525 deadline13:05UTC prepares next pipe/farthergap route while Pirates01a191cb-45ec-7513-968b-1c5387cc2f3a handle31763 deadline12:49:40UTC runs actual town-entry attempt. Browser serialized; fresh Deus waits Pirates FULLRELEASE and actual gate. Closed-run lossless logs saved another133MB/free2.394GB. Full GL/D3D27 open; laptop HeroesII/fonts protected; no public deployment.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1197,7 +1197,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   note: 2026-10-31T04:00Z bounded original Forsaken software route reached inspected Volcano briefing/loading scene at1129batches/60.030s; firing scheduled1180 was not reached, so no movement/combat acceptance. All876 original/runtime input hashes unchanged; retained module7f9da4e9 compiledsource unknown, run20261031T0400Z-forsaken-volcano. Fresh worker pursues actual browser gameplay past briefing. Daikatana route80b11f423 preserved without verified exit; Pirates8581ed6dd records effective-state boundary and generic page crashes without production cause/fix.
   status: active (UT2003 repair/UT2004 WebGL/Forsaken movement accepted; Pirates textured coast repaired/native landing party accepted; full27 both-backend coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: pirates-montserrat-town-entry-main-oct31; deusex-grounded-gap-cause-main-oct31 (two bounded workers, serialized runtimes)
+  worker: pirates-montserrat-town-entry-main-oct31; deusex-pipe-far-gap-main-oct31 (two bounded workers, serialized runtimes)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
@@ -1412,16 +1412,16 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Gameplay screenshot and FPS: Deus Ex demo
   id: GAMEPLAY-deus-ex-demo
-  status: active (grounded gap route diagnosis)
+  status: active (first gap verified; pipe and farther gap next)
 
   candidate: deus-ex-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: deusex-grounded-gap-cause-main-oct31 (01a191bd-8873-74a2-8656-84b95b708bf4; handle8616; deadline12:34UTC)
+  worker: deusex-pipe-far-gap-main-oct31 (01a191d9-42ca-7032-8c72-c927dedf4c85; handle50525; deadline13:05UTC)
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Accepted71a805ae1: native LoadGame count5 restores the two authentic route files and corridor/footing. Coordinator inspected23/26 and108/110; original Space/X bindings and released duck state established, but exact Space+Up1200 falls below grate. No stable gap landing, camera/alarm or onward progress; no emulator defect established. Focused checker rerun PASS292source131original105served19DLL110trusted45PNG/19PID cleanup. Fresh worker first diagnoses grounded launch/route geometry from existing evidence, then one distinct browser test only if warranted after Pirates full release. Count5 fallback retained; no Training/recharge replay. FPS and Training completion remain open.
+  Next: Accepted da0dadb05 original BSP156-unit gap plus grounded running launch, Physics2 trajectory and stationary far-grate Physics1 landing atY-500.57; personally inspected26/28, focused292source131original105served19DLL38trusted13PNG25PID cleanup/observernegative checks rerunPASS. No emulator defect; original cameras bNoAlarm=True. Fresh pipe/far-gap worker prepares originalX Duck pipe passage and farther178-unit gap toward dl_cratestack, waiting Pirates full runtime release. Count5 authentic2files retained; genuine new save only with actual freshLoad validation. No Training/recharge replay; FPS and Training completion open.
   Done: Reviewed gameplay screenshot and scene-qualified frame measurement with raw samples, counter proof and tested build identity; retain explicit failures.
   Evidence: docs/re-notes/deus-ex-demo.md; scratch/runs/20261031T0447Z-deusex-browser/; scratch/gameplay-coverage-20261003/tasks/GAMEPLAY-deus-ex-demo.json
   notes: Original Training gameplay and first-door traversal are verified on the default guestWorker software browser route. This does not qualify WebGL, audio, FPS, Liberty Island or completion. Historical missing-path reports are superseded for registered deus_ex_demo.
