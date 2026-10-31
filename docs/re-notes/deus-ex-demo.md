@@ -1088,3 +1088,79 @@ owned helper/watcher identities are absent, HTTP36805/CDP43479 closed, profile
 removed, held inputs empty, browser/lifetime exit0, and actual full flock
 release verified before explicit handoff at10:54:06. No foreign process was
 signalled. No Boat: ID/state/expiry N/A; no subagent, worker or successor.
+
+## 2026-10-31 1103Z — Route save count5 validated; native controls respond, gap still unresolved
+
+**The immutable route checkpoint now passes fresh native Load Game validation.
+Stable gap landing and camera detection/alarm/onward instruction remain
+unproven.** Evidence: `scratch/runs/20261031T1103Z-deusex-gap-jump/`.
+No production change or emulator defect finding resulted.
+
+Static prep preceded browser use. Original `system/user.ini` binds Space=Jump,
+X=Duck, Up=MoveForward, Shift=Walking and CapsLock=ToggleWalk, with
+`bAlwaysRun=True`. Jump aliases `Jump | Axis aUp Speed=+300.0`; Duck aliases
+`Button bDuck | Axis aUp Speed=-300.0`. The predecessor's seven Space-down
+events all occurred with X released. Its first142→145 fall used Up500ms
+without Space; a stuck browser Duck key does not explain the later attempts.
+Trusted browser events establish delivery to the page, not successful guest
+physics or landing. No applicable existing route-map parser was found in
+tools/lib; no map, INI or memory was changed.
+
+Only the predecessor's two authentic immutable `route-native-checkpoint/`
+files were mounted through ordinary `app.files`/`vfsPaths`. Their sizes and
+hashes remain exactly those recorded in the1034Z section. A fresh application
+listed **Save Count5**, pipe-corridor preview and play time00:53:38
+(`23-load-dialog.png`). Native Enter restored the corridor (`26`) matching
+the predecessor's270 view. Native LookDown and stationary captures inspected
+the near rim, grating and lower floor (`29`, `31`, `33`). This validates the
+existing export; no new save was written. The older count4 recharge save
+remains an unchanged validated fallback. No Training or recharge replay ran.
+
+Space alone120ms produced a brief upward viewpoint excursion (`35`→`36`)
+and returned after1000ms (`38`). On a backed-away platform position, X350ms
+lowered the viewpoint (`80`→`81`); native release plus1000ms returned the
+standing view (`83`). Space150ms again raised the view (`84`). These are
+visible native control responses; they do not establish jump height/range
+or rule out a gameplay/timing constraint.
+
+| Native comparison | Inspected result |
+| --- | --- |
+| Initial Space+Up450ms, stop and inspect; then1200ms from that changed position | No landing proved; longer attempt reaches below the grating (`45`, `47`). |
+| Count5 reload, back away, inspect grating, short approach, Space+Up850ms | Still on the near side after1500ms (`75`, `77`); no next-platform footing. |
+| Explicit Duck press/release, inspected edge, Space+Up120ms tap then Up900ms | Intermediate grating view (`92`) becomes an underside view after1800ms (`94`): actual fall. |
+| Exact count5 reload, uninterrupted Space+Up1200ms | After2000ms, grating overhead (`108`); LookDown confirms lower floor (`110`). |
+
+The concrete remaining dependency is a grounded launch position/trajectory
+that reaches the next raised grate and remains there after release and a
+stationary wait. The inspected inputs above did not achieve it. No camera
+detection, alarm receipt or next instruction was observed; green camera
+visibility proves none of these. No new checkpoint was created to preserve
+a failed landing. `inspected-proof.json`, `controls-analysis.json`, native
+input and command logs retain the comparisons and limits.
+
+The matched module remains
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`,
+292-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+Before/after292 sources,131 original/support files,105 served source URL/hash
+pairs and19 DLL mounts are checked. Original SoftDrv/default guestWorker,
+three workers, guest640×480/browser1024×768 were retained. No asset/INI/clock,
+save-byte or memory edits, cheats, input bypass, FPS/audio diversion or public
+deployment occurred; frozen evidence and protected laptop assets stayed
+untouched.
+
+Focused checks pass110 trusted events with empty held inputs, seven current
+Space presses with Duck released,45 PNGs, unchanged two-file save identity,
+and run-local evidence containment/completeness. Documentation diffcheck
+passes; no full build is needed for this documentation-only change.
+
+Pirates'11:08:52 explicit FULLRELEASE preceded the actual process gate and
+full-lifetime flock acquisition at11:09:53. Wrapper1960914, controller1960917
+and monitor1960916 each retained fd9; browser1960934 and both global crashpads
+1960950/1960952 were tracked by PID/start. Native commands stopped early;
+browser cleanup finished11:18:09 and monitor11:18:15. All19 tracked runtime/
+helper identities were absent, HTTP39795/CDP32987 closed, profile removed,
+held inputs empty and actual full flock release verified before11:18:40
+handoff. Later documentation-watcher cleanup is recorded separately. Disk
+stayed above2GB. No foreign kills, Boat (ID/state/expiry N/A), subagents,
+additional guest launch or successor.
