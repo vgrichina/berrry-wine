@@ -411,7 +411,7 @@ source. The repaired reproducer passes 32 color-only cycles. Focused sparse,
 cache replacement/OOM, lifetime, descriptor, instruction/branch, 2470 vertex
 pixel comparisons and viewport checks pass, as does the locked build.
 A final review corrected an allocation-failure guard after this native capture;
-its final build/identity and focused allocation-failure result are recorded below.
+its final build/identity and focused allocation-failure check remain pending.
 The captured native normal path always had separate output; the guard concerns
 only missing output storage. Native candidate and final build closures remain
 separately pinned, without substituting current runtime into either module.
@@ -427,8 +427,16 @@ profile/process match absent, no held keys and original 873 inputs unchanged.
 No foreign processes were touched. Browser/heavy checks held the browser lock
 for their entire lifetime. No Boat was allocated (ID/state/expiry N/A).
 
-At this evidence checkpoint the final allocation-failure guard is **uncommitted
-WIP**, pending its focused regression and locked build behind the other worker's
-runtime. The native-tested candidate, source closure, screenshots and pixel
-proof above are complete. No final-guard build or production publication is
-claimed by this checkpoint; its exact queue/dependency is retained on the board.
+At the bounded stop the repair remains **uncommitted WIP** in
+`src/09aa-handlers-d3dim.wat`, `src/09ab-handlers-d3dim-core.wat`,
+`test/test-d3dim-execute-vertices-sparse.js` and
+`test/test-d3dim-execute-instructions-sparse.js`. Final review changed only the
+allocation-failure guard after the tested native candidate; that final change
+needs its focused failure/retry regression and locked build. The other worker
+still owned the browser/heavy-CLI lane at the stop, so our queued check PIDs
+1687827/1687832 were canceled and verified absent. No source changes are
+committed, no final-guard build is claimed, and no successor is launched.
+The native-tested candidate, exact closure, screenshots and pixel proof above
+are complete; `normal-native-to-final-guard.json` checks the exact one-condition
+difference. Next required work is the final guard regression/build before any
+scoped source commit.
