@@ -9313,11 +9313,19 @@
       (then (call $win16_global_atom (i32.const 3)) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 229))
       (then (call $win16_GetTopWindow) (return (i32.const 1))))
-    ;; GetNextWindow is GetWindow with the same two arguments; USER kept both
-    ;; names and one implementation.
+    ;; GetNextWindow accepts only NEXT/PREV; GetWindow also accepts the other
+    ;; documented relationships. Both use the same handle/return adapter.
     (if (i32.or (i32.eq (local.get $ordinal) (i32.const 262))
                 (i32.eq (local.get $ordinal) (i32.const 230)))
-      (then (call $win16_GetWindow) (return (i32.const 1))))
+      (then
+        (if (i32.and (i32.eq (local.get $ordinal) (i32.const 230))
+              (i32.and (i32.ne (call $win16_arg16 (i32.const 0)) (i32.const 2))
+                       (i32.ne (call $win16_arg16 (i32.const 0)) (i32.const 3))))
+          (then
+            (i32.store (global.get $reg_base) (i32.const 0))
+            (call $win16_api_return (i32.const 4))
+            (return (i32.const 1))))
+        (call $win16_GetWindow) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 277))
       (then (call $win16_GetDlgCtrlID) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 111))
@@ -12865,8 +12873,20 @@
     (call $win16_api_return (i32.const 2)))
 
   (func $win16_GetWindow
-    (local $hwnd i32) (local $cmd i32)
-    (local.set $hwnd (call $win16_h32 (call $win16_arg16 (i32.const 1))))
+    (local $hwnd i32) (local $cmd i32) (local $h16 i32)
+    (local.set $h16 (call $win16_arg16 (i32.const 1)))
+    ;; USER.262 GetWindow and USER.230 GetNextWindow return NULL when an
+    ;; invalid HWND has no related window. Keep general handle conversion
+    ;; strict; reject only this API's unallocated narrow argument here.
+    (if (i32.and (i32.ne (local.get $h16) (i32.const 0xFFFF))
+          (i32.and (i32.ge_u (local.get $h16) (global.get $WIN16_HANDLE_BASE))
+            (i32.gt_u (i32.sub (local.get $h16) (global.get $WIN16_HANDLE_BASE))
+              (call $win16_handle_next_get))))
+      (then
+        (i32.store (global.get $reg_base) (i32.const 0))
+        (call $win16_api_return (i32.const 4))
+        (return)))
+    (local.set $hwnd (call $win16_h32 (local.get $h16)))
     (local.set $cmd (call $win16_arg16 (i32.const 0)))
     (call $win16_call32_begin (i32.const 2))
     (call $handle_GetWindow (local.get $hwnd) (local.get $cmd)
