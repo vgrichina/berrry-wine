@@ -913,7 +913,10 @@
       (f32.store offset=176 (local.get $wa) (f32.const 1)) ;; point size
       (i32.store offset=180 (local.get $wa) (i32.const 0x100000))
       (i32.store offset=184 (local.get $wa) (i32.const 0x00ffffff))
-      (i32.store offset=188 (local.get $wa) (i32.const 1))
+      ;; Match the sixteen stream bindings supported by declarations and draw
+      ;; gathering. A stale single-stream cap rejects valid packing layouts
+      ;; before CreateVertexDeclaration is ever called.
+      (i32.store offset=188 (local.get $wa) (i32.const 16)) ;; MaxStreams
       (i32.store offset=192 (local.get $wa) (i32.const 255))
       (i32.store offset=196 (local.get $wa) (i32.const 0xfffe0101))
       (i32.store offset=200 (local.get $wa) (i32.const 96))

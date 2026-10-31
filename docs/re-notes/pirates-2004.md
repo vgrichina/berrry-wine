@@ -1317,3 +1317,127 @@ disk remained above 2 GB. No browser/native replay or Boat allocation is part
 of this task. Unresponsive endpoints and unfinished initializer images retain
 their respective quarantines; reclaiming arbitrary guest-owned locks is outside
 this local correctness repair.
+
+## Native terrain factory rejection: stale stream cap (2026-10-31 11:00 UTC)
+
+Evidence and recovery: `scratch/runs/20261031T1100Z-pirates-terrain/`.
+**The original factory's first rejection is now identified:** its NSB shader
+packing requests four vertex streams, but the renderer copied a reported
+`MaxStreams` of one. Original `0x5d74c0` returns null before creating the
+vertex declaration. This is a capability mismatch with the existing generic
+sixteen-stream implementation. The source correction advertises sixteen;
+a fresh native replay of that correction remains outstanding, so white-coast
+visual acceptance is still **PIRATES-TERRAIN-REVIEW**.
+
+This was one functioning default guestWorker/WebGL run, not a title-only probe.
+The fresh canonical build and current runtime/compiler/support snapshot were
+frozen before launch. Its source includes `c6fa4878a` retirement and the later
+`f1a3e1333` documentation commit; native module SHA256 remains
+`d2c1df73d975daa4e7425152fb900274ebd9552c5a689249415084cfe8ac026b`
+because that intervening work did not change WAT. It was rebuilt here, not
+retained from an older module with a current host. Before/after checks cover
+296 source/compiler files, 40 support files and all 1,374 originals. All
+2,112 served responses and 106 source URLs match those frozen inputs.
+
+The read-only observer followed three calls on actual Worker slot 6 from
+factory entry `0x5bd720` to saved continuation `0x5be077`, validating
+`ESP = entry ESP + 16`. Each retired step remained one decoded block;
+registers, original data and guest clock were unchanged. All three requested
+implementation zero with report-failure one:
+
+| Requested shader | Mesh at factory entry | Factory result |
+| --- | --- | --- |
+| `TTerrain_10B_UC` | `0x09e92120` | null |
+| `TTerrain_8B_UC` | `0x09e93040` | null |
+| `TTerrain_7B_UC` | `0x09e91790` | null |
+
+Each complete same-call trace positively establishes:
+
+1. Renderer/name validation passes; cache result at `0x5bd76d` is null.
+2. Registered `NSBShaderLib`, vtable `0x6c9a58`, is enumerated. Its exact-name
+   lookup returns a nonnull binary shader at `0x5e7eba`.
+3. Implementation requirements `0x5e8a70` return **one** at `0x5e9ffc`.
+   Platform/version predicates pass; there is no failed requirement here.
+   Runtime construction proceeds through `0x5ea04e`.
+4. Packing conversion `0x5ec050 -> 0x5eede0` calls `0x5d74c0` with renderer
+   `0x01144c84`, three packing entries and **four streams**. The factory
+   loads renderer `+0x454`; at rejection block **`0x5d74d4`**, EDI is four
+   and EAX is one. Original `0x5d74d2` branches to allocation only when
+   unsigned requested streams are at most that limit.
+5. `0x5eee1b` and `0x5ea1f5` positively observe null. The original diagnostic
+   identifies failure to convert the packing definition to
+   `NiD3DShaderDeclaration`. NSB returns null, then
+   `NiD3DXEffectShaderLib` also returns null, enumeration ends, and the
+   original factory returns null to its saved caller.
+
+The cap transfer is explicit in original instructions:
+`0x5c09fb` loads renderer `+0x700` and `0x5c0a12` stores it at `+0x454`.
+The D3DCAPS9 destination starts at renderer `+0x644`, so `+0x700` is caps
+`+0xbc` / decimal 188 (`MaxStreams`). The native saved caps and subsequent
+read-only renderer snapshot both contain one. Shipped
+`src/09ad-handlers-d3d9.wat` still stored one at that offset, although its
+stream table, declaration validator and draw gathering already handle indices
+0–15. This identifies the source of this rejection without inferring shader
+compilation failure or missing original files.
+
+The production change only updates that generic cap to sixteen. The existing
+multi-stream test now queries actual device caps and verifies the last
+advertised stream, index 15, draws exactly the same pixels as the interleaved
+and stream-1 controls. Its unbound-stream rejection and index-16 rejection
+remain intact. The existing WebGL pipeline cap expectation is updated to
+sixteen; that browser test received syntax validation only in this task,
+which permits one native browser lifetime. No additional native run was made.
+
+Focused causal check `caps-causal.cjs` compiles the exact frozen old caps
+source through the canonical compiler: it reports one and rejects the actual
+four-stream packing predicate. Current source reports sixteen and passes.
+The multi-stream pixel regression, adapter/device query regression, callback
+ownership census and census mutation checks pass. Full
+`flock /tmp/wine-build.lock bash tools/build.sh` passes while the browser
+lifetime flock is also held. Fixed-source/module identity is retained in
+`fixed-build-identity.json`; this is separate from the pre-fix native inputs.
+No callback assertions, timeout, worker selection, assets or INI were changed.
+
+Native navigation followed Crew Signups, bartender, English captain, St. Kitts,
+Sail Away and cast-off into sailing. `18-coast-input.png` was personally
+inspected: ship/HUD near St. Kitts/Nevis, white coast, 600 gold, 41 crew and
+January 15. Numpad4 trusted down/up reached guest VK_LEFT; all 34 input events
+are trusted and keys/buttons are released. The later draw sample contains
+24 actual `0x5c43b7` draw boundaries, including 11 coastal records with
+populated separate maps, null shader-extra and `NiD3DDefaultShader` (examples
+1,392 and 4,784 triangles). **These later meshes were regenerated:** their
+addresses do not intersect the three initial factory meshes. This is a native
+coast/default-draw observation in the same execution, not a new same-mesh
+factory-to-draw correlation. Historical accepted correlations remain separate.
+`13-native-coast.png` is a town menu; `16-sailing.png` includes a tutorial
+popup. Neither is substituted for the inspected final sailing frame.
+
+Timing limitation: factory stepping and the inherited per-init host roundtrip
+change execution timing. Slot 6 records 2.683 seconds inside the run wrapper,
+including ordinary guest execution; this is an upper bound, not measured
+incremental observer overhead. The draw observer was installed twice because
+its first bounded window saw the town/menu interval and captured no qualifying
+coast records. Its second window auto-restored after 24 draws. A final duplicate
+stop logs a spurious `changed holder` warning in the temporary helper, which
+lacks an idempotent stop guard. The prior export proves it already stopped with
+no errors; records are unchanged, all final breakpoints are zero, and every
+observer is stopped. This diagnostic limitation is preserved and checked.
+
+Runtime was 11:01:25–11:06:32 UTC; normal cleanup completed 11:06:39, with no
+monitor emergency signals. All observed owned processes, controller/wrapper,
+monitor and watcher are absent; HTTP/CDP/control ports `33609/33287/42041`
+are closed and the profile is removed. Actual global Chrome/crashpad/heavy-CLI
+and profile gates are clear, and the full browser flock is available after
+serialized build/tests. Full lane release was posted at 11:08:52. No foreign
+process was signalled. Minimum sampled free disk was 2,068,365,312 bytes;
+only this run's downloaded Chrome component caches were removed to maintain
+the 2 GB floor. Browser cache was disabled without reconnecting or changing
+viewport. No Boat allocated: ID/state/expiry N/A.
+
+`verify.py` checks identities, all three causal traces, four deliberately
+rejected trace mutations, native input, later draw limitations, exact originals
+and cleanup. **Next dependency:** one separately authorized fresh matched
+native replay must determine whether the corrected cap lets the original
+terrain declaration/shader finish, and whether the coast textures render.
+This task establishes and repairs the first causal rejection; it does not
+claim that all later original declaration/program/pass paths now succeed.

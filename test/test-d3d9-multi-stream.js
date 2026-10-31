@@ -28,7 +28,7 @@ const { Bridge } = require('../lib/d3d9-host');
 
 const DEVICE_CALLS = ['CreateVertexDeclaration', 'SetVertexDeclaration', 'SetStreamSource',
   'GetStreamSource', 'DrawPrimitive', 'Present', 'SetRenderState', 'CreateVertexShader',
-  'CreatePixelShader', 'SetVertexShader', 'SetPixelShader'];
+  'CreatePixelShader', 'SetVertexShader', 'SetPixelShader', 'GetDeviceCaps'];
 
 // POSITION as FLOAT3 and COLOR as D3DCOLOR, each element naming its stream.
 // D3DVERTEXELEMENT9 is {u16 stream, u16 offset, u8 type, u8 method, u8 usage,
@@ -100,6 +100,10 @@ const declarationBytes = (colorStream, colorOffset, positionStream = 0) => {
   e.guest_write32(parameters + 52, 0x80000000);
   ok(e.create_device(parameters, out), 'CreateDevice');
   const device = e.guest_read32(out) >>> 0;
+  const caps = alloc(304);
+  ok(e.GetDeviceCaps(device, caps, 0, 0, 0), 'GetDeviceCaps');
+  const maxStreams = e.guest_read32(caps + 188) >>> 0;
+  assert.strictEqual(maxStreams, 16, 'MaxStreams covers the implemented stream table');
 
   const shader = (tokens, pixel) => {
     const guest = alloc(tokens.length * 4);
@@ -190,6 +194,21 @@ const declarationBytes = (colorStream, colorOffset, positionStream = 0) => {
   ok(e.SetStreamSource(device, 0, 0, 0, 0), 'unbind unused stream 0');
   ok(e.SetStreamSource(device, 1, interleaved, 0, 16), 'bind all attributes to stream 1');
   assert.strictEqual(render(), expected, 'stream 1 draws without stream 0 bound');
+
+  // Exercise the last advertised stream, with the same pixel comparison as
+  // the lower streams. Consumers may reject a packing layout before creating
+  // its declaration when GetDeviceCaps understates this bound.
+  const last = maxStreams - 1;
+  const lastDeclaration = declare(last, 12, last);
+  ok(lastDeclaration.result, 'CreateVertexDeclaration(last advertised stream)');
+  ok(e.SetVertexDeclaration(device, lastDeclaration.declaration, 0, 0, 0),
+    'SetVertexDeclaration(last advertised stream)');
+  ok(e.SetStreamSource(device, 1, 0, 0, 0), 'unbind stream 1 before last-stream draw');
+  ok(e.SetStreamSource(device, last, interleaved, 0, 16), 'bind last advertised stream');
+  assert.strictEqual(render(), expected, 'last advertised stream draws the same pixels');
+  ok(e.SetStreamSource(device, last, 0, 0, 0), 'unbind last advertised stream');
+  ok(e.SetVertexDeclaration(device, onlyOne.declaration, 0, 0, 0),
+    'restore the stream-1 declaration for the unbound-stream check');
 
   // A stream the declaration names and nothing fills must draw NOTHING -- not
   // whatever stream 1 held last, and not stream 0's bytes read at stream 1's
