@@ -178,3 +178,87 @@ native run, establish the air-assault/on-foot phase and complete a finite
 attack or jump plus clear translation before the restart transition; capture
 the transition itself if it recurs. This run does not support an emulator
 repair or an upstream-verification claim.
+
+## 2026-10-31 fresh Air Assault attack/aim control
+
+Run `20261031T2007Z-sin-air-assault` reviewed the preceding logs, captures
+and complete installed README/quick guide first. The logs did not explain
+the earlier restart. The guide says vehicle travel may be outside the
+player's control. Original `base/default.cfg` additionally binds **Ctrl to
+attack**, **Delete to look down**, Page Down to look up and arrows to turn.
+No forward-walking probe was repeated.
+
+The current Shogo worker posted NEWFULLRELEASE at 20:09:18, reporting cleanup
+at 20:08:29. An independent actual Chrome/global-crashpad/profile check then
+passed under inherited FD9. A **fresh full build** ran with
+`flock /tmp/wine-build.lock bash tools/build.sh`, retaining FD9 through
+durable Python `Popen.wait`; all build gates passed. This reconciles the
+runtime/font changes merged after the previous SiN run, rather than reusing
+its complete-source parity claim. Tested HEAD was
+`7c510cfe06582313faa2ce6ff2deccaf2a95f0ad`; current build inputs were unchanged
+through compilation. The rebuilt and served module remained **1,898,762
+bytes**, SHA-256
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+
+The sole browser lifetime was **20:10:30–20:17:09 UTC**: default isolated
+guest Worker, normal WebGL, unchanged registered audio/clock and arguments,
+`defaultViewport: null`, native 1024×768 content and default 640×480 guest
+surface. Four native Enter presses led from startup through logged-in GAME,
+NEW GAME and Rookie; HARDCORPS was not separately captured this time.
+Reviewed frames show HQ, lift, helipad, city and the first-person
+mounted-gun-like Air Assault view. This establishes no on-foot phase.
+
+**Native attack and aim responses are now demonstrated.** Two finite Ctrl
+holds (requested 2,000 ms and 1,600 ms, with intermediate captures) produced
+barrel/lighting animation and visible impact particles on the wall and roof
+(`16-original-attack-held-03.png`, `18-aimed-attack-held-03.png`). A 250 ms
+Delete/Right hold changed pitch and bearing toward rooftop figures
+(`17-original-aim.png`); a later 80 ms Delete/Left adjustment was balanced.
+The visible ammo counter stayed **0**; no ammo-consumption or infinite-ammo
+claim follows. No enemy wound, hit, kill or completed objective was confirmed.
+The gun/impact response is the firing evidence.
+
+Pilot subtitles report “They've nailed our aileron!”, “Our tail took a hit,
+sir!” and “Sir, we are going down!” while the view banks over the roof.
+Health reads **100, then 99** (the initially reported 93 was a visual
+misread, corrected using a magnified crop of the retained original frame).
+Native **RESTART LEVEL / Entering Air Assault on FCB** recurred without any
+forward input. All inputs were released before the later observations.
+The last captured flight frame, `21-transition-17.png`, is at
+**20:15:58.321**, still health 99; the first menu frame,
+`22-transition-01.png`, is at **20:16:16.566**. This **18.245-second capture
+gap** leaves the exact death/transition frame and cause unresolved.
+Read-only observations continued until the menu was reviewed; no menu item
+was activated and no restart/retry occurred. No emulator failure or justified
+source/test repair boundary was identified. No source patch was made.
+
+All **23 owner-pinned sizes/SHA-256 hashes**, including direct `sin.exe` and
+the browser manifest, and all **21 manifest member sizes** match before and
+after. Fresh public `DESKTOP_APPS` excludes SiN; it remains private/localOnly.
+No archive/container download, guest-state/config/cvar/save/clock/asset patch
+or registration change occurred. **528 source files, 867 compiler files,
+43 fixture/shared runtime inputs and the module** match before/after.
+All **186 served records** match pinned bytes and disk readback; all **188
+HTTP responses** carried isolation headers, with 182 successful hash joins
+and six ancillary 404s. All **23 native events** were trusted: **10 balanced
+key pairs**, one launch mouse pair and one mouse move. No forward, jump or
+guest mouse attack was sent. Audio listening and FPS remain unqualified.
+
+Independent cleanup at **20:17:20 UTC** found all **21 recorded runtime
+PID/start identities** absent, actual Chrome/global crashpad/profile empty,
+ports **46445/41171 closed**, profile removed, held inputs empty and FD9 lock
+free. The durable runtime parent reaped controller/monitor normally with no
+cleanup signals. Build and preparation-watcher identities were also absent.
+Some tool command/watcher sessions returned 143; the controller independently
+recorded completion of their observations and normal quit. This is a helper
+lifecycle limitation, not evidence of an emulator failure. Minimum monitored
+runtime free disk was **3,520,258,048 bytes**. No foreign process was signalled.
+Boat ID/state/expiry: **N/A**, local correctness; no deployment.
+
+Evidence in the ignored run includes `old-to-current-drift.json`,
+`prebuild-current-inputs.json`, `build.log`, `build-wait.json`,
+`reviewed-scenes.json`, `verification-summary.json`, before/after identity and
+fixture checks, trusted input/HTTP records and `full-release-final.json`.
+Next boundary is confirmed targeted enemy damage or native objective progress;
+if investigating restart specifically, close the recorded capture gap and
+identify its native transition before proposing an emulator repair.
