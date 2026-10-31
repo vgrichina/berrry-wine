@@ -1441,3 +1441,117 @@ native replay must determine whether the corrected cap lets the original
 terrain declaration/shader finish, and whether the coast textures render.
 This task establishes and repairs the first causal rejection; it does not
 claim that all later original declaration/program/pass paths now succeed.
+
+## Cap16 native terrain and textured coast accepted (2026-10-31 11:17 UTC)
+
+Evidence/recovery: `scratch/runs/20261031T1117Z-pirates-cap16/RECOVERY.md`.
+**The fixed native original terrain factory succeeds, and the coast now renders
+textured green/rocky land and beaches.** This is a fresh default guestWorker,
+WebGL, 1024×768 session using the cap16 module and current retirement code.
+No additional production change was needed. The native result advances beyond
+the earlier static cause/focused regression result.
+
+Reuse was conditional on exact closure, not merely the commit name: all 296
+current source/compiler files match the prior canonical full-build snapshot
+plus its exact committed repaired fragment. The compiler files and build log
+are pinned in `build-reuse-closure.json`. The newly frozen current source,
+40 support files and all 1,374 originals match before/after. Module SHA256 is
+`078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`;
+the served/loaded module matches. There is no retained old-module/current-host
+combination. The earlier cap16 full build and pixel regressions are reused,
+with exact source/compiler identity checked; no additional full build or
+heavy CLI ran alongside the browser.
+
+The read-only factory observer ran on Worker slot 6 and followed each saved
+continuation `0x5be077`, with return ESP exactly entry ESP + 16 and no step
+exceeding one decoded block. Its three bounded calls are:
+
+| Requested original shader | Entry mesh | Returned shader | Path |
+| --- | --- | --- | --- |
+| `TTerrain_8B_UC` | `0x09de1780` | `0x09de13a0` | NSB construction |
+| `TTerrain_9B_UC` | `0x09de34b0` | `0x09de4f70` | NSB construction |
+| `TTerrain_9B_UC` | `0x09de5cd0` | `0x09de4f70` | Factory cache hit |
+
+Both newly constructed calls find the exact original NSB name and pass
+requirements. Their packing requests still need four streams; actual native
+D3DCAPS9 `+0xbc` and renderer `+0x454` now contain **16**. Neither visits the
+old reject block `0x5d74d4`. Packing conversion returns declarations
+`0x09de2800` / `0x09de4720`, and NSB and the outer terrain factory return
+nonnull shaders. The third call positively reuses the second result through
+the factory cache. This run does not separately replay the prior run's
+`TTerrain_10B_UC` or `TTerrain_7B_UC` names.
+
+The later native draw observer records 24 actual `0x5c43b7` boundaries on
+Worker slot 0, all `NiBinaryShader`, with shader-extra equal to the selected
+shader and populated separate material maps. Triangle counts range from
+504 to 4,424. One selected shader is `0x09de4f70`, the same shader object
+returned above. **Entry meshes and later draw meshes differ**, and creation
+and drawing occur in different Workers. This proves shared shader identity
+and actual later material selection; it is not same-mesh or same-Worker
+factory-to-draw correlation.
+
+A separate bounded read-only bridge observer records 48 qualifying submitted
+commands in that sailing interval. Thirty-one have both original programmed
+shader stages, textures and successful issue result 1; recorded 512×512
+texture pixels include `[66,117,8,255]` and `[55,106,3,255]`, with nonwhite
+mip levels. These command records are not assigned mesh IDs from another
+Worker's registers. Personally inspected screenshots `16-town.png`,
+`23-trusted-turn.png`, `25-onward-sailing.png` and `28-onward-coast.png`
+show green terrain, rock, beaches and moving ships, rather than accepting
+camera labels alone. `16-town.png` is actually the initial sailing view;
+its filename is not evidence of a town menu. Screenshot `18-current-coast.png`
+is the actual Antigua town menu.
+
+Native input followed Crew Signups, bartender, English captain, the arrival
+town, Sail Away, Cast Off and tutorial dismissal. This unchanged run selected
+**Antigua**, rather than the earlier St. Kitts starting town; that route
+variation is preserved, not forced by editing assets/INI/clock. Trusted keypad
+steering then moved the ship onward, triggered the Montserrat landing-party
+prompt (`25-onward-sailing.png`), declined landing, and passed another sailing
+ship whose native speech names St. Kitts (`28-onward-coast.png`). That speech
+is not proof that the player has arrived at St. Kitts. No combat encounter or
+St. Kitts town arrival is inferred from those frames.
+
+The temporary draw-stop helper is repaired only in this NEW scratch run:
+repeated stop returns already-stopped without clearing another observer's
+breakpoint or reporting a changed holder. Actual repeated stops leave every
+observed breakpoint zero and every draw observer stopped with no errors.
+Factory instrumentation retains the original three-call/500,000-block cap;
+per-init read-only host roundtrips and decoded-block stepping change timing.
+Factory run-wrapper time includes normal guest execution and is not measured
+incremental overhead. The texture wrapper saw 8,815 command calls, retained
+only 48 qualifying records, and measured approximately 5 ms of its own
+snapshot work; it restored itself at its record cap. Remote observer request
+counts and complete timing are retained with the run's focused checks.
+No guest registers, shaders, callbacks, timeouts, worker selection, clock,
+original assets or protected Laptop/Heroes II/fonts were changed.
+
+Observer accounting: 49 total control requests, including 11 Worker-evaluation
+requests and eight page evaluations, plus 135 init-observer host roundtrips.
+Slot 6's factory run wrapper totals 3.295 seconds, including normal execution;
+other armed Workers also include their ordinary run time. The exact per-slot
+values are in `observer-timing.json`. No FPS or benchmark was collected.
+
+The sole native lifetime ran 11:19:14–11:26:34 UTC, with cleanup complete
+11:26:42. A preliminary background shell failed before creating any controller
+or browser; the succeeding durable execution session owns the sole native
+launch. Deadlines were reset immediately before that launch. Deus explicitly
+posted FULLRELEASE at 11:18:40, and actual global process/profile gates passed
+before launch. Wrapper, controller and monitor all held the browser-lock FD
+for their lifetimes. Sixteen observed PID/start identities, including both
+global crashpads, are absent; HTTP/CDP/control ports `33041/46033/42217` are
+closed, the profile is removed, and the full flock is available. No cleanup
+signals or foreign signals were needed. There are no owned watchers or held
+keys/buttons. All 52 native input events are trusted; the guest input trace
+receives both steering directions as VK_LEFT/VK_RIGHT down/up.
+
+Focused validation passes for 296 source/compiler files, 40 support files,
+1,374 originals, 2,129 served responses / 104 source URLs, both constructed
+factory results and the cache hit, five rejected evidence mutations, native
+material/texture draws, input, idempotent observer restoration and complete
+cleanup. `git diff --check` passes. Minimum sampled free disk is
+2,011,791,360 bytes, above 2 GB. Full lane release was posted at 11:27:14;
+no further native/heavy CLI work is planned. No Boat allocated: ID/state/expiry
+N/A. Remaining limits are the differing initial port and shader/mesh names,
+no St. Kitts arrival/combat acceptance, and no same-mesh factory-to-draw claim;
+they do not erase the observed fixed-native terrain/coast improvement.
