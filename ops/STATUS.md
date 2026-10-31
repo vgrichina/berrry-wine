@@ -1,7 +1,7 @@
-Current 2026-10-31T05:13Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T05:20Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Deus Ex default-worker browser Training is verified: readable world/HUD, native movement, first door opened and crossed. Coordinator inspected the screenshot and cleanup; notes940371775 on main. Known retained8459597 module/source snapshot, no current-HEAD or completion claim.
+UT2004 browser DM-Rankin and Deus Ex browser Training have reviewed native gameplay: movement/look/fire in UT; first door opened and crossed in Deus Ex. Both use retained8459597 with exact source, without current-HEAD, audio or completion claims.
 
-UT2004 browser DM-Rankin verified: native movement/look/fire, health100 ammo100→99→98; notes09eb0ecbe. Cropped headers/input offset traced to missing windowed-device state at presentation owner. Two workers: focused UT2004 origin repair and Pirates bounded crash/effective-state investigation. Browser runtimes serialize under wine-browser.lock. Heavy benchmarks use separate boats.
+Pirates a7725adaf verifies native sailing, persistent white coast and attached properties reaching effective renderer state. No crash reproduced or repair claimed. Two fresh workers pursue UT2004 window-origin repair and Pirates separate-map writer/consumer tracing. UT owns the browser; runtime tests serialize under the full-lifetime lock and process guard.
 
-Owner seven-topic triage landed four tested commits; three topics already present/superseded. CRT jumps await invocation ownership/dual-dispatch prerequisite. Full GL/D3D27 coverage and Forsaken world coverage remain open. Disk above2GB minimum; laptop fonts/HeroesII protected. No public deployment or owner input needed.
+Owner triage landed four tested commits; CRT jumps await the invocation-ownership/dual-dispatch prerequisite. Full GL/D3D27 and Forsaken world coverage remain open. Disk minimum2GB; laptop fonts/HeroesII protected. No public deployment or owner input needed.

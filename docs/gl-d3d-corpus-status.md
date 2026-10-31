@@ -1,16 +1,40 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-10-20
 
-## October 31: known-source UT2004 match and Forsaken GPU blocker
+## October 31: known-source browser gameplay and remaining rendering blockers
 
 UT2004 documentation `2342e9288` records original DM-Rankin software CLI
 play in `20261031T0427Z-ut2004-match`: native movement, look and firing,
 health100 and ammo100 to96 then94. The coordinator inspected the readable
 firing frame. The runtime completed 8,425 batches in636.949 seconds and
 exited zero; 998 original inputs and1,283 retained pins verified unchanged.
-This qualifies that software CLI route, with no enemy hit/kill or match
-completion claim. A default guestWorker browser follow-up is running;
-its outcome and browser/backend coverage remain unverified. See the
+The default guestWorker browser follow-up `09eb0ecbe` also verifies original
+DM-Rankin movement, look and firing on the actual software endpoint:
+health100, ammo100 to99 then98. The coordinator inspected the readable
+world/HUD frame. Run `20261031T0451Z-ut2004-browser` verifies 998 original
+inputs, 292 source files and 107 served responses. Cropped headers and
+input offset remain: the presentation owner loses the guest windowed-device
+HWND and its client origin24,44. A focused source repair is in progress;
+no repaired-browser result is claimed here. Enemy hits/kills, match
+completion and WebGL remain unverified. See the
 [UT2004 native route](re-notes/unreal-family-demos.md#ut2004-original-dm-rankin-movementfire-retest-2026-10-31).
+
+Deus Ex documentation `940371775` verifies the default guestWorker browser
+Training route on actual SoftDrv: native approach/retreat, first door opened
+with right mouse, then crossed into the red-floor room. The coordinator
+inspected that gameplay frame. Run `20261031T0447Z-deusex-browser` verifies
+131 original/support inputs, 292 source files and 105 served responses.
+Key pickup, the next locked door and Training completion remain unverified.
+See the [Deus Ex browser notes](re-notes/deus-ex-demo.md).
+
+Pirates documentation `a7725adaf` verifies native sailing near St. Kitts
+and Nevis in `20261031T0458Z-pirates-knownsource`; the coordinator inspected
+the ship/HUD and persistent white coast. Four matched mesh sequences retain
+attached properties into effective renderer state; ordinary map slots are
+empty while a separate array is populated. Downstream consumption remains
+unproved and is the next investigation. No crash reproduced or repair
+landed; 1,374 original inputs, 292 source files and 467 served responses
+verified. See the [Pirates boundary notes](re-notes/pirates-2004.md).
+
 
 Forsaken documentation `50bb30050` records a known-source WebGL frame
 investigation in `20261031T0427Z-forsaken-frame`. The coordinator inspected
@@ -25,7 +49,7 @@ counter test failed. This is a rendering blocker, despite zero measured
 GPU errors or fallbacks. See the
 [Forsaken investigation](re-notes/forsaken-demo.md#known-source-webgl-frame-investigation-2026-10-31).
 
-Both runs pin module `8459597c` to the retained ReVolt locked build's exact
+These runs pin module `8459597c` to the retained ReVolt locked build's exact
 292-file source snapshot, including then-concurrent font edits; observed
 HEAD is not substituted for compiled source. Own runtimes were cleaned.
 These results extend the per-app evidence without establishing software /
