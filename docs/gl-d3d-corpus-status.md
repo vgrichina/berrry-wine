@@ -114,9 +114,7 @@ are closed. Repair `df174b3cf` is now on remote main. The final allocation-
 failure guard passes injected OOM/retry, 32 color-only cycles, six focused tests
 and the full locked build; both old-source and defective-guard mutations reject.
 Final module `d2c1df73` pins 295 runtime sources and seven compiler files. Native
-screenshots belong to candidate `41f5c4c7`; the final guard has no fresh native
-run yet. A fresh worker pursues sustained movement/combat on the landed repair.
-Sustained gameplay, hardware GPU, FPS and completion remain unverified.
+candidate screenshots remain distinct. Fresh final-build run `20261031T0713Z-forsaken-repaired-gameplay`, commit `501f52cf1`, now verifies native Volcano room-to-corridor movement, look and repeated firing. The coordinator inspected four room/corridor/instruction captures; 873 originals, 295 sources, seven compiler inputs, 609 responses and 95 trusted events pass. All 59 observed owned PIDs are absent, ports closed and profile gone. Deaths/respawns and white pause frames are disclosed; outer wrapper143 is unexplained despite browser exit0 and verified cleanup. Enemy kills, hidden-door opening, uninterrupted play, hardware GPU, FPS and completion remain unverified.
 See the [Forsaken investigation](re-notes/forsaken-demo.md).
 
 The earlier gameplay runs pin module `8459597c` to the retained ReVolt locked build's exact
