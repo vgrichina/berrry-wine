@@ -1,4 +1,4 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-10-20
+# OpenGL / Direct3D corpus status, reconciled 2026-10-31
 
 ## October 31: known-source browser gameplay and remaining rendering blockers
 
@@ -67,7 +67,24 @@ completion and FPS remain unverified. Follow-up `3d04b4841`, run
 breaking an upper wooden supply crate with native input. The coordinator
 inspected pickup, intact/broken crate and Jaime lock-picking follow-up frames;
 102 trusted events/five interaction deltas and131 original/292 source/105 served
-pins pass. Runtime cleanup verified. Lock-picking remains unattempted.
+pins pass. Runtime cleanup verified. Lock-picking was not attempted in that run.
+Later accepted SoftDrv/default-worker runs progressed through the training
+exercises to the crate room. `208c41480` retains the preferred native count7
+checkpoint with inspected fresh-page Load/gameplay validation in
+`20261031T1220Z-deusex-crates`. Grounded-jump follow-up `b47dfcf2b`, run
+`20261031T1403Z-deusex-grounded`, establishes positive vertical velocity before
+forward input, but insufficient stationary range and tall-wood collision.
+`2fde12461`, run `20261031T1450Z-deusex-reposition`, creates a genuine native
+two-small-crate stack: the exported upper actor names the lower actor as Base.
+The coordinator inspected restored gameplay, the stack and the failed climb;
+450 balanced trusted events, 56 captures, frozen module/source/original pins
+and cleanup checks pass. Stack access remains unresolved; no stable96 landing
+or training exit was reached. Its diagnostic count8/time01:22:17 is unverified:
+the disk guard stopped runtime before fresh-page Load validation. Count7
+remains preferred. These runs retain module `8459597c`, 292 source files,
+131 original/support inputs, 105 canonical served responses and19 DLL mounts.
+They establish further native SoftDrv gameplay, without qualifying a matching
+WebGL renderer, FPS/audio or training completion.
 See the [Deus Ex browser notes](re-notes/deus-ex-demo.md).
 
 Pirates documentation `a7725adaf` verifies native sailing near St. Kitts
@@ -83,10 +100,30 @@ proves original terrain name selection and encoded NSB stage references.
 The original factory returns null for66 terrain requests; nine same-mesh
 correlations explain subsequent default-shader draws. The coordinator
 inspected `sailing.png` and reran the causal evidence check successfully.
-The rejection inside original factory lookup `5bd720` remains unresolved;
+At that diagnostic stage, rejection inside original factory lookup `5bd720` remained unresolved;
 cache/library lookup, requirements and creation must be distinguished.
-No crash reproduced or repair landed; 1,374 original inputs, 292 source files and 467 served responses
-verified. See the [Pirates boundary notes](re-notes/pirates-2004.md).
+Those diagnostic runs reproduced no crash and landed no repair; 1,374 original
+inputs, 292 source files and467 served responses verified.
+
+Subsequent production fixes `c6fa4878a` (bootstrap retirement) and `44d8b27fd`
+(D3D9 MaxStreams cap16) are on main. Later original default-worker WebGL
+runs reach textured coast, town/port, sailing and combat. The stream-cap fix
+is distinct from the earlier shader-factory diagnosis; these outcomes do not
+prove every factory-null event fixed. Accepted `70589baac`, run
+`20261031T1423Z-pirates-native-turn`, reaches the LovelyMary selector, actual
+hull contact and a fading native boarding-deck duel with50 Englishmen and40
+pirates. The coordinator inspected selector/contact/deck images; 108 balanced
+trusted events,57 captures and cleanup checks pass. No duel was played to an
+outcome, no capture was established and no new save was accepted. Final device
+error is unknown; one readonly VFS helper failed, so no all-helper-success or
+VFS-validation claim applies. Frozen module `078d81cb` retains296 source files,
+40 support/compiler inputs,1,374 originals,106 source URLs and3 auxiliary pins.
+Follow-up `18aa9d6a5`, run `20261031T1503Z-pirates-boarding-duel`, stalls at the
+native title on both page attempts. The coordinator inspected that failure;
+34 balanced DOM-trusted events do not prove guest consumption. No native Load,
+new combat or fencing occurred in that run. Earlier boarding evidence remains
+valid; title-to-Load recovery, duel outcome, software parity, FPS/audio and full
+corpus qualification remain open. See the [Pirates boundary notes](re-notes/pirates-2004.md).
 
 
 Forsaken documentation `50bb30050` records a known-source WebGL frame
