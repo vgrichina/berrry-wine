@@ -1,7 +1,7 @@
-Current 2026-10-31T21:35:01.753040+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T21:49:59.089934+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Nox now has reviewed native jump, landing and action animation, following verified movement. Enemy hits remain unverified. All inputs released and worker processes durably reaped.
+Icewind's unchanged original disc scan now passes and reaches the labelled native menu. Character creation stopped before its first click on a scratch canvas geometry error. A fresh worker tests the corrected helper, then targets native creation, Prologue DONE and unpaused tavern movement.
 
-A fresh Slave Zero worker traces the original destruction-command producer and object lifetime. Icewind's original installation is retained, but its disc-presentation attempt stopped in the scratch harness on optional HTTP 404 header checks before proven guest execution. A fresh worker first tests the corrected harness, then traces original optical calls after Slave Zero releases the runtime.
+Slave Zero captured the full first audio-lock fatal receipt. The destruction-command producer remains missing because routine traces exhausted capture limits. A fresh worker tests filtering before the cap, then waits for the current Icewind worker's runtime release. No production fix or gameplay claim from either closeout.
 
-Two-worker ceiling; browser, build and heavy CLI run sequentially. Owner screenshot request was answered on Telegram. FreeSpace awaits original WININIT semantics. Full GL/D3D coverage and crash sweep remain open. Targets use actual game-file hashes. No public deployment.
+Nox native movement, jump, landing and action animation remain accepted. Two-worker ceiling; browser/build/heavy CLI serialized. FreeSpace awaits original WININIT semantics. Full GL/D3D coverage and crash sweep remain open. Actual game-file hashes pin targets. No public deployment.
