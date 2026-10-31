@@ -1,7 +1,7 @@
-Current 2026-10-31T21:26:25.009609+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T21:35:01.753040+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Nox browser movement remains verified. The jump/action follow-up stopped during loading because its scratch header check rejected a data image. Six-case regression confirms a correction; a fresh worker now tests native jump/action with that harness. The prior worker durably reaped its processes.
+Nox now has reviewed native jump, landing and action animation, following verified movement. Enemy hits remain unverified. All inputs released and worker processes durably reaped.
 
-Icewind's original installer completed successfully, retaining 1079 original installed files and matching CD2 assets. Its browser launch reported No Disc Detected; gameplay remains unverified. A fresh worker investigates the original disc API contract while preserving the installed KEY, INI and assets. Heavy work waits for the current Nox worker to release the runtime.
+A fresh Slave Zero worker traces the original destruction-command producer and object lifetime. Icewind's original installation is retained, but its disc-presentation attempt stopped in the scratch harness on optional HTTP 404 header checks before proven guest execution. Its worker is publishing findings; the next attempt needs a focused harness correction first.
 
-Two workers, sequential browser/build/heavy CLI. Owner screenshot request answered on Telegram with verified Nox movement images. FreeSpace awaits original WININIT semantics. Full GL/D3D coverage and crash sweep remain open. Targets use actual game-file hashes. No public deployment.
+Two-worker ceiling; browser, build and heavy CLI run sequentially. Owner screenshot request was answered on Telegram. FreeSpace awaits original WININIT semantics. Full GL/D3D coverage and crash sweep remain open. Targets use actual game-file hashes. No public deployment.
