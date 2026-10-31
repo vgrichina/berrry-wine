@@ -50,8 +50,13 @@ empty while a separate array is populated. Follow-up `83ae79866` in
 `20261031T0520Z-pirates-maps` proves the original separate-map writer and
 encoded reader contract. Four matching writer/default-setup mesh sequences
 include two actual large-draw correlations; the coordinator inspected the
-native coast image. Which original shader/pass selection should consume
-those separate maps remains unproved and is the next investigation.
+native coast image. Selection follow-up `de5d26f5f` in `20261031T0535Z-pirates-selection`
+proves original terrain name selection and encoded NSB stage references.
+The original factory returns null for66 terrain requests; nine same-mesh
+correlations explain subsequent default-shader draws. The coordinator
+inspected `sailing.png` and reran the causal evidence check successfully.
+The rejection inside original factory lookup `5bd720` remains unresolved;
+cache/library lookup, requirements and creation must be distinguished.
 No crash reproduced or repair landed; 1,374 original inputs, 292 source files and 467 served responses
 verified. See the [Pirates boundary notes](re-notes/pirates-2004.md).
 
