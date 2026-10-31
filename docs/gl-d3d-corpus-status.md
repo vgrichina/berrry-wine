@@ -1,5 +1,27 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-10-20
 
+## October 31: Re-Volt attachment repair reaches native WebGL driving
+
+Repair `59a615fc5` fixes GetAttachedSurface matching for allocations created
+before DirectDraw 7: unused DDSCAPS2 extension words no longer reject an
+otherwise valid back buffer. DX7 allocation validation remains active.
+Run `20261031T0403Z-revolt-backbuffer` reproduces the original failure on
+locked build `44aa9976` and reaches the menu, starting grid and native
+Up/Right/Down driving on repaired build `8459597c`. The coordinator inspected
+the race frame: the car is off-road and overturned. Movement is verified;
+checkpoint, lap and race completion are not.
+
+Both builds retain exact source snapshots, including concurrent dirty font
+work; neither is described as a clean commit build. The default guest-worker
+route uses explicit WebGL at stable 1024×768, with all 444 original input
+files unchanged before and after. Locked builds and the focused native COM
+regression pass; the new regression also rejects the saved pre-fix source.
+Two older synthetic fixtures fail identically before and after, outside the
+repaired lookup. Own browsers, controllers, ports and profiles were cleaned;
+the after controller's exit 143 remains unexplained. No software gameplay or
+full-corpus parity is established. See [Re-Volt investigation](re-notes/re-volt-demo.md#known-source-attachment-repair-and-native-race-2026-10-31)
+and the run's retained recovery recipe for the next controlled-lap attempt.
+
 ## October 31: Tunnel, Globe and Wormhole startup crash sweep
 
 Run `20261031T0240Z-dx-more-startups` launched registered `dx_tunnel`,
