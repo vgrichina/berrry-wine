@@ -1018,3 +1018,73 @@ profile removed, browser/lifetime exit0, monitor ended and full flock release
 verified before explicit lane handoff. Focused checks pass266 trusted events,
 empty held inputs and106 PNGs. Free disk stayed above2GB. No Boat:
 ID/state/expiry N/A. No worker/subagent/successor was launched.
+
+## 2026-10-31 1034Z — Raised-route geometry, native recovery stairs, unresolved camera boundary
+
+**Camera detection/alarm and the next distinct instruction/area remain
+unproven.** Evidence: `scratch/runs/20261031T1034Z-deusex-camera-route/`.
+Only the accepted `f13fa567a` recharge checkpoint's two immutable, unedited
+files were mounted through ordinary `app.files`/`vfsPaths`. Native Load Game
+recognized count4 (`33-save-list.png`) and restored beside the bot (`36`).
+No Training replay or repeat recharge validation occurred.
+
+Short movements and inspected PageDown/F views established the grated ramp,
+upper bend, overhead pipe and separate raised platforms. The original
+`user.ini` also binds **X= Duck** and **Delete= LookUp**; both produced native
+view changes. X+Up passed the first pipe (`128`, `133`, `136`). The first
+concrete failure is the first inter-platform gap: `142-near-edge.png` shows
+the near platform and the next platform's supports; ordinary Up500ms (`143`),
+without a jump, leads to the lower-floor view (`145`). The subsequent jump
+does not establish a stable landing on the next platform; `152` explicitly
+shows its underside. This is a navigation failure, **not an established
+emulator geometry/input defect**.
+
+The lower floor has a native recovery stairway: `187-rungs-near.png` shows
+actual steps, `191` shows ascent and `197` shows the upper landing. A further
+side fall and stair recovery are retained. Later centered pipe/gap attempts
+(`246`–`270`) end with grating below the view and another pipe ahead, but do
+not establish which gap was crossed or an onward trigger. The camera remains
+green/visible; visibility alone is not camera interaction success. There is no
+alarm receipt, Training completion or healing claim. A colored HUD bar was
+initially mistaken for leg injury during live narration; injury is unproven.
+
+Native Save Game (`305`) then Enter (`306`) wrote changed bytes. Immutable
+`route-native-checkpoint/` exports contain:
+
+- `c:\save\save0001\saveinfo.dxs`: 34,576 bytes, SHA-256
+  `7f7aa22ff7bef06b85f08999fd85e1a5718a2fa11ce11d367917c8c63a5601fd`.
+- `c:\save\save0001\00_training.dxs`: 3,231,700 bytes, SHA-256
+  `c60cb54438623f7cdcebc68caf581d3833957d0271de36c3ee96f3917c9c13a4`.
+
+Menu navigation accidentally opened exit/new-game setup dialogs; they were
+backed out without starting a new world. A page reload mounted only the two
+new exported files in a fresh native application. Startup reached the title
+menu (`317`) before the fixed deadline. **Fresh native Load Game validation
+and the new save count are not established.** The exported route checkpoint
+is experimental; the predecessor's count4 remains the validated recovery
+source. `RECOVERY.md`, manifests, `inspected-proof.json` and `check.py` preserve
+these limits. No second browser attempt was made.
+
+Exact retained module remains
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`, with
+292-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+Before/after closure passes292 sources and131 original/support files;
+105 served source URL/hash pairs and19 DLL paths match the accepted closure.
+SoftDrv/default guestWorker/three workers, guest640×480/browser1024×768 remain
+unchanged. Focused checks pass288 trusted events, empty held inputs and96 PNGs.
+No production, assets/INI/clock, save-byte or memory edits, cheats, input bypass,
+FPS/audio diversion or public deployment occurred. Frozen evidence stayed
+read-only; disk remained above2GB.
+
+One detached wrapper/controller/monitor lifetime acquired the full browser
+flock at10:35:17UTC after the previous explicit release and a clear actual
+Chrome/crashpad process gate. All three fd9 holders have initial/final proofs.
+The18min command deadline ended at10:53:17; browser close finished10:53:20,
+monitor10:53:26, within the19min cleanup bound. Both global-config crashpad
+PID/start identities were recorded through own profile child references and
+matching launch identities. All20 unique runtime identities and3 remaining
+owned helper/watcher identities are absent, HTTP36805/CDP43479 closed, profile
+removed, held inputs empty, browser/lifetime exit0, and actual full flock
+release verified before explicit handoff at10:54:06. No foreign process was
+signalled. No Boat: ID/state/expiry N/A; no subagent, worker or successor.
