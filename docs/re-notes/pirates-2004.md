@@ -1613,3 +1613,78 @@ release was posted at 11:40:16. No Boat: ID/state/expiry N/A. Recovery keeps
 the frozen closure and complete ordinary-input route. Next requires restoring
 disk headroom before a separately authorized native attempt toward actual
 Montserrat town Enter/Attack or a nearby ship encounter.
+
+## Montserrat port and stable tavern; coast Enter/Attack still unproven (2026-10-31 11:49 UTC)
+
+Evidence/recovery: `scratch/runs/20261031T1149Z-pirates-town/RECOVERY.md`.
+**Actual Montserrat town interaction and a stable tavern interior are now
+inspected. The requested landing-party coast Enter/Attack route and combat
+remain unproven.** This attempt takes the ordinary sea entrance to the town;
+it must not be described as completing the earlier Hangman's Point walk.
+
+The untouched fresh game selected **Nevis**, rather than Antigua. Crew
+Signups, the English captain, Nevis's actual town menu (`23-nevis-port.png`),
+Sail Away and Cast Off were followed with trusted input. The native map
+(`32-southward-turn.png`, despite its filename) established Montserrat's
+location. Keypad steering and the inspected coastal approach led to the
+actual French Stronghold of Montserrat town menu (`41-montserrat-response.png`).
+Selecting Visit the Tavern and pressing Enter opened the rendered interior
+(`44-tavern-response.png`). A second capture `45-tavern-stable.png`, over
+11 seconds later, retains the interior, characters, fireplace and invitation
+to choose someone to talk to. Escape returns to the town menu (`46`). This
+is a new interactive scene, beyond destination speech or a town label.
+
+Subsequent attempts to approach beach after sailing away instead automatically
+entered the harbor again (`54`, `62`). No landing-party transition, ashore
+walking, coast Enter/Attack prompt, attack selection or combat was observed
+in this run. The first route dependency is the changed initial port, followed
+by harbor interception of these coastal approaches; no emulator defect is
+identified. The prior 11:34 landing-party result remains separate evidence.
+
+The ordinary native Load/Save tab (`69`) → Save Game → first Empty Slot (`70`)
+returns to sailing with **Game saved** (`71`). A read-only copy of the native
+VFS result is retained as `slot1.pirates_savegame`: 1,028,097 bytes, SHA256
+`af989794bb4bce19b583806d42b69ec83d8985e79fe4108ad1a1584b6aca1d60`.
+Its actual guest path is `c:\my documents\my games\c:\slot1.pirates_savegame`;
+the unusual embedded drive component is preserved. This is an offshore save
+after the town visit, not a save inside the tavern or an invented coast
+checkpoint. Native restore of the exported file is **untested**. No save bytes,
+assets, INI, clock or guest memory were edited.
+
+All 296 current source/compiler files and 40 support files matched the exact
+11:17 fixed closure before launch. The frozen, served and loaded module is
+SHA256 `078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`.
+All 1,374 original inputs match before/after. The default guestWorker,
+WebGL 1024×768 session has cache disabled, tiny disk caches, bounded console
+capture and no factory/draw/init instrumentation. The unchanged input-poll
+forwarder was the only runtime observer. Prelaunch free disk was
+2,363,781,120 bytes; the minimum controller sample was 2,210,430,976 bytes.
+This attempt did not stop on the disk floor. No new build or heavy CLI ran.
+
+**Harness lifecycle limitation:** initial wrapper/controller/monitor identities
+prove three distinct holders of the browser-lock FD. However, the launcher
+artifact says exit 0 at 11:53:40 while the browser/controller continued serving
+actions until 12:06:52. The execution session later returned **143**. Original
+wrapper/controller/monitor finalizers and raw browser/controller exit records
+are missing; their disappearance's cause is unestablished. Full-lifetime
+wrapper/monitor correctness is therefore **not accepted** from this run.
+The stale launcher artifact is retained, not represented as a clean exit.
+
+Recovery attached to the existing sole browser, retained all 126 trusted,
+balanced input events, restored the original input poll and called Browser.close.
+The recovery helper exited 0 and recorded closure at 12:07:26; this is not
+the unavailable raw Chrome exit code. All 15 recorded PID/start identities,
+including both global crashpads, are absent. HTTP/CDP/control ports
+38323/33491/40805 are closed, the profile is removed, held input is empty,
+the actual whole-browser gate is clear and the full flock is available.
+No cleanup signals, foreign signals or second browser were used. FULLRELEASE
+was posted at 12:07:47, with a correction to the initial board summary's
+incorrect signal/count wording. No Boat: ID/state/expiry N/A.
+
+Focused `verify.py` passes frozen/served identity (2,225 responses), originals,
+trusted balanced input, 72 captures, save hash and recovered cleanup; three
+negative controls reject a wrong module, untrusted input and a held key.
+It explicitly preserves the negative coast/combat result, untested restore,
+missing raw exits and unproven full-lifetime wrapper. The next useful work is
+an authorized native restore check and a northern landing route that avoids
+the harbor, with a durable wrapper/controller/monitor lifetime.
