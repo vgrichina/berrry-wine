@@ -2978,16 +2978,37 @@ Resource-aware Win98 emulator
       });
     }
 
+    function initAppSelector() {
+      const selectorApps = DEBUG_MODE
+        ? DEFAULT_APPS.concat(DEBUG_ONLY_APPS,
+            LOCAL_DESKTOP ? LOCAL_CANDIDATE_APPS : [])
+        : DEFAULT_APPS.concat(LOCAL_DESKTOP ? LOCAL_CANDIDATE_APPS : []);
+      const selectorAppSet = new Set(selectorApps.map(a => a[0]));
+      const sel = document.getElementById('app-select');
+      for (const opt of [...sel.querySelectorAll('option')]) {
+        if (!selectorAppSet.has(opt.value)) opt.remove();
+      }
+      for (const grp of [...sel.querySelectorAll('optgroup')]) {
+        if (!grp.querySelector('option')) grp.remove();
+      }
+      // Catalog entries need selectable options in normal, direct and debug
+      // modes, even when there is no hand-written option for the program.
+      const existingOptions = new Set([...sel.querySelectorAll('option')].map(o => o.value));
+      for (const [value, label] of selectorApps) {
+        if (existingOptions.has(value)) continue;
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = label;
+        sel.appendChild(option);
+        existingOptions.add(value);
+      }
+    }
+    initAppSelector();
+
     function initDesktop() {
       const desktopApps = LOCAL_DESKTOP
         ? DEFAULT_APPS.concat(LOCAL_CANDIDATE_APPS)
         : DEFAULT_APPS;
-      const selectorApps = DEBUG_MODE
-        ? DEFAULT_APPS.concat(DEBUG_ONLY_APPS,
-            LOCAL_DESKTOP ? LOCAL_CANDIDATE_APPS : [])
-        : desktopApps;
-      const desktopAppSet = new Set(desktopApps.map(a => a[0]));
-      const selectorAppSet = new Set(selectorApps.map(a => a[0]));
       // Pre-launch click forwarder: canvas sits over the icons even before
       // wireCanvasInput runs, so clicks would be swallowed. Forward any click
       // on the canvas through to the icon underneath until the real input
@@ -3013,12 +3034,6 @@ Resource-aware Win98 emulator
         if (iconEl) iconEl.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, clientX: t.clientX, clientY: t.clientY }));
       }, { passive: false });
       const sel = document.getElementById('app-select');
-      for (const opt of [...sel.querySelectorAll('option')]) {
-        if (!selectorAppSet.has(opt.value)) opt.remove();
-      }
-      for (const grp of [...sel.querySelectorAll('optgroup')]) {
-        if (!grp.querySelector('option')) grp.remove();
-      }
       const grid = document.getElementById('desktop-icons');
       for (const [value, label, glyph] of desktopApps) {
         const el = document.createElement('div');

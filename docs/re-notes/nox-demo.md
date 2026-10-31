@@ -234,3 +234,87 @@ that next attempt, not a tested result here. Then follow the original
 Network/Host/Bunker menus and collect trusted right-button before/held/released
 captures. `default.cfg` justifies left-button Action and Space/middle Jump if
 an additional action is reached. The older CLI qualification remains unchanged.
+
+## Candidate selector repair and bounded browser attempt (2026-10-31 20:42 UTC)
+
+Run `20261031T2039Z-nox-candidates` used the recovered local fixture without
+acquisition or preparation changes. All 125 original files (50,450,550 bytes)
+again matched the retained hashes and all shipped `FILESIZE.INI` paths/sizes.
+The browser manifest, original configuration and distribution size table were
+pinned alongside the game. This is a comparison against the retained local pin,
+not new independent upstream authentication.
+
+Cheap inspection found a generic launcher defect: `initDesktop()` removed
+disallowed static options but never created missing catalog options. A catalog
+entry could therefore have a desktop icon without a selectable launch value.
+Debug mode skipped that function entirely. The page now initializes the selector
+from the applicable public/candidate/debug catalogs independently of desktop
+construction, retaining existing options and adding missing ones without
+duplicates. No Nox-specific executable, guest state or runtime bypass was added.
+
+`test/test-desktop-selector-catalog.js` executes the real selector initializer
+against a small select model. The old page fails because a catalog app is
+missing; the repaired page passes public/private and normal/debug combinations,
+selection retention and repeated initialization. The existing
+`test/test-app-selector-options.js` now checks runtime population instead of
+requiring a separate handwritten option for every catalog entry, and retains
+catalog-disjointness checks. Both focused checks pass.
+
+The canonical `flock /tmp/wine-build.lock bash tools/build.sh` passed before
+launch. Tested HEAD was `8f72fa26491b444037e90c4f2d84eddbf26bf2b2`, a descendant
+of assigned `6ae0e926a61e7e6e0edb3d099c9a0ebaf16e91fc`, plus the selector patch
+preserved as `runtime-index.patch`. Module SHA256 remained
+`d39f362187ce89abda47fa53bca6bb6576badd8d21b78e44c6fbad973d1636d8`.
+The runtime source/compiler manifests and all original input pins matched
+before/after. `build-identity.json`'s legacy `dirty` field excludes `index.html`;
+the index patch and source-manifest hash record the actual tested page.
+
+Before heavy work, an independent actual gate verified all preceding Nox
+PID/start identities absent, ports 38289/33007 closed, profile gone, whole
+Chrome/global crashpad empty, and FreeSpace's terminal no-runtime state. The
+build and browser controller/monitor/watcher inherited FD9 on the browser lock.
+Free disk exceeded 3.3 GB throughout the browser allocation. No Boat was used
+(ID/state/expiry N/A).
+
+The single Chrome 151.0.7922.108 allocation ran from 20:42:13 to 20:43:10 UTC,
+with target/hard/cleanup deadlines 20:59:13/21:00:13/21:01:13. It used native
+1024×768 viewport geometry, default WebGL/Worker settings and ordinary private
+`/index.html?candidates&no-log`. No clock/audio/runtime overrides or external
+peers were used. Unrelated desktop executable-icon fallbacks were returned as
+404 by the private evidence server; Nox assets were served from their exact
+pins. External page requests were blocked.
+
+Before activation, the harness asserted the real `nox_demo` option exists,
+the selected value is `nox_demo`, and its registered EXE path is the original
+`test/binaries/candidates/nox-demo/game/nox.exe`. An HTTP 200 preflight returned
+1,593,344 bytes with original SHA256
+`496123ad275e5d626f31a845033c7ddb7d86fbbf3c2532d2e1f639f8bc77a781`.
+`selector-before-launch.json`, its screenshot and `registered-exe-served.json`
+preserve these successful prerequisites.
+
+**Nox still did not run.** After closing the page Read Me, the harness called
+Puppeteer's desktop-icon click with `clickCount: 2`. That emits one click with
+double-click metadata, rather than two distinct clicks. The actual trusted
+input record contains only one icon mousedown/up pair. The desktop handler
+requires two click callbacks less than 500 ms apart. The reviewed
+`failure-before-teardown.png` shows the Nox icon selected on the desktop,
+without a guest or launch window. The controller timed out after 45 seconds
+waiting for a running guest. This is another concrete harness activation
+failure, not an emulator startup result. Nox EXE reads for its icon and HTTP
+preflight do not establish guest execution. No browser Network/Host/Bunker,
+movement, combat, audio or FPS result exists, and there was no retry.
+
+The first failure image and page text were captured before teardown. The
+controller was durably reaped with exit 1; monitor/watcher were reaped with
+exit 0, with no signals. `full-release-final.json` at 20:43:34 independently
+verified all 19 recorded PID/start identities absent, ports 44345/44817 closed,
+profile gone, no held inputs, whole Chrome/global crashpad empty and lock free.
+`NEWFULLRELEASE` was announced for the waiting successor before publication.
+
+Next: use the registered direct URL `?candidates&app=nox_demo`, with the same
+preflight identity assertions, or issue two distinct balanced trusted clicks
+to the normal desktop icon. Do not use `clickCount: 2` as a substitute for this
+handler's two-click contract. A fresh authorized browser allocation must first
+establish actual Nox execution, then follow Network/Host/Bunker and capture
+room-relative before/held/released right-button movement. Original readme and
+bindings remain the only basis for any additional native action.
