@@ -1769,3 +1769,69 @@ successors. Only this game document and new scratch evidence were changed.
 The run evidence checker reports no outside-run, missing or invalid references
 for this run. Its global report still contains9 historical outside-run errors,
 13 missing references and103 invalid records; unrelated evidence was unchanged.
+
+### 2026-10-31 interrupted stack-access recovery: exact count8 restored; access still blocked
+
+The restore limitation in the preceding 14:50 investigation is now resolved by
+`scratch/runs/20261031T1514Z-deusex-stack-access/`, recovered in
+`scratch/runs/20261031T1521Z-deusex-stack-recovery/`. The coordinator transferred
+the absent worker's documentation and live runtime to this recovery worker.
+The original launcher reportedly returned143 without result/final; its cause
+is **UNKNOWN**. No missing original result or exit receipt was reconstructed.
+The existing browser/controller/supervisor were reused without a new browser,
+reload, controller, deadline extension or production change.
+
+**The 14:50 whole unedited diagnostic count8/time01:22:17 is accepted as a
+restorable raised-stack checkpoint. Count7/time01:09:32 remains preferred.**
+This does not promote the earlier13:01 count8 or establish stack-top access.
+The inherited fresh page mounted exactly the preceding two SHA256-pinned files.
+Inspected18-load-dialog shows count8/time01:22:17; ordinary Enter19 performed
+nativeLoad. Checked21-exact-count8-crosscheck-observer matches the decoded
+unique JCDentonMale0 at (7019.12061,−1725.66577,79.80000),yaw286431,
+Physics1,height43 and zero velocity.22 still shows LOADING and is insufficient
+alone;24 shows actual gameplay and27 shows the highlighted raised metal crate.
+The named saved exports independently retain small1.Base=small0 and the exact
+two crate positions documented above. The runtime observer reads only the
+original checked player fields, not live crate transforms. All save files and
+the preferred count7 remain immutable and hash-identical after shutdown.
+
+Recovery restarted the existing checked observer, centered the view with End,
+and made one bounded ordinary Space→X+Up attempt from the stable wood position.
+31-native-air-crouch-stack-trajectory records positive Vz300 and sampled center
+apex126.32271. **Airborne crouch clearance was not established:** height remained43
+through the sampled flight and return to Physics1; the native height16 change
+appears only afterward. Trusted key delivery does not prove when the guest
+consumed X. Horizontal displacement was only0.19 units. Inspected32 and its
+actor record settle at (7019.21045,−1725.49902,52.92253),Physics1,height16,
+zero velocity: feet36.92253 remain at the previous wooden-support level.
+The first failed access dependency is therefore an actual usable intermediate
+support or demonstrated airborne crouch clearance. No new stack footing,
+wood96 landing, exit, save or emulator defect is claimed. Gameplay stopped
+there; no previous crate work or exit-jump sequence was replayed.
+
+The original named-export/offset/unique-player/owning-worker return-boundary
+observer is byte-identical to the inspected14:50 observer-new-save.cjs.
+Its positive and five rejection fixtures pass. Recovery check.py verifies the
+exact8459597c8d module,292 source files,131 original files before/after,
+105 canonical served responses,19 DLL mounts, both immutable checkpoints,
+30 balanced trusted input events,12 images all1024×768, trajectory and cleanup.
+Original SoftDrv/default guestWorker/three guest workers remain unchanged.
+No arbitrary memory read/write, cheats, input bypass or save-byte edit occurred.
+
+Cooperative quit33 was submitted before the fixed15:31:55 runtime deadline;
+cleanup completed15:22:16 and the inherited supervisor retained actual
+controller/monitor/wrapper waits0/0/0, with browser exit0. The monitor used no
+signals. At release,19 tracked PID/start identities plus12 recorded request
+helpers were absent; both ports were closed, profile absent, held inputs empty,
+global Chrome/crashpad gate clear and full flock available. All450 active-profile
+samples show the original three inherited fd9 holders. Minimum sampled free
+disk2243272704B remained above2GB. FULLRELEASE was announced15:22:33 only after
+the audit, preserving both original deadlines. These runtime exits do not
+explain or replace the original worker's reported143.
+
+The recovery's focused-checks.json and takeover.json preserve inspected-image
+hashes, actual limits and original identity/deadlines; full-release-audit.json
+retains the lifecycle evidence. Boat ID/state/expiry are N/A. No further browser,
+heavy CLI/build, public deployment, laptop work, foreign signals, agents or
+successors were used. Next work would need a genuinely different supported
+access route; count7 remains the preferred fallback.
