@@ -988,11 +988,11 @@ commit output — do not assume your hunks landed.**
 
 - [ ] Diagnose Pirates stopping before the target rendering operation
   id: PIRATES-ROUTE-FOLLOWUP
-  status: active (native restore and cannonfire accepted; battle checkpoint/onward combat followup)
+  status: active (native restore, cannon damage, full reload and second fire accepted; onward combat outcome)
   created: 2026-10-02T04:00:31.545Z
   created-by: user-request via ops-dashboard
   candidate: pirates-2004
-  Next: original Pirates slot1 native restore, responsive sailing, LovelyMary sea battle and native FIRE smoke/projectiles/8to0loaded; hit/victory/capture unproven. Coordinator inspected23/24 and focused checks passed; new battle checkpoint restore untested. New durable supervisor retained all raw exits0 and20PID cleanup verified. Fresh Pirates 01a1920d-0ff0-7762-b9fe-f1bc7a4be1c9 handle45393 validates battle checkpoint/onward combat with firstbrowserpriority.
+  Next: Accepted719349915: exact automatic battle save ordinaryLoad restored Nevis port, not direct battle. Native SailAway/CastOff/AttackLovelyMary ->actual combat, enemy6guns50crew->4guns44crew, full reload0to8 and secondFIRE8to0 smoke/projectiles. Coordinator inspected11/18/26/28 and focused2226served/42trusted/28PNG/468live3FD/20PIDstart/rawall0 checks rerunPASS; no victory/capture claim. Original saves preserved. Fresh Pirates 01a19219-6078-7d61-97e3-fa76b35149ec handle84424 targets actual surrender/capture/boarding outcome; cheap prep waits live Deus01a1920d-0fed-74e0-bcc9-c66479c71bc8 handle42640 crate-exit FULLRELEASE plus actualprocessgate. Two workers/onebrowser. Deus deadline140140UTC; freshPirates deadline about1415UTC. Free2.351GB after five closed-log lossless gzip archives, saved123846408B with SHA/size roundtrip and atomic recovery manifests; no assets/saves/live inputs touched. Full27 and crashsweep open; laptopHeroesII/fonts protected; no publicdeploy.
   Done: Identify the route failure and either validate the actual game transfer/readback with reviewed images or record a precise blocking dependency. Link unresolved terrain defects separately; a zero-transfer run is not a rendering pass.
   Evidence: docs/re-notes/pirates-2004.md; scratch/runs/20261031T0215Z-pirates-small-slice/result.json; scratch/runs/20261031T0220Z-pirates-main-sailing/result.json; ops/handoffs/mig-pirates-stretch.md; ops/handoffs/mig-pirates-stretch-recipe.md
 
@@ -1124,13 +1124,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: deusex-crate-exit-main-oct31; pirates-battle-restore-onward-main-oct31
+  worker: deusex-crate-exit-main-oct31; pirates-combat-outcome-main-oct31
   status: active (both previous workers completed and reviewed; two fresh onward tasks)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Accepted208c41480: native Deus crate pickup/drop, stable small-on-medium and small-on-wood climbs; exit untraversed. Genuine count7/time010932 restored with decoded actor and stable layout. Coordinator inspected216; focused and five observer negative checks passed. Browser/controller exits0; wrapper raw exit unavailable, actual42PID cleanup verified. Accepted92b438875: original Pirates slot1 native restore, responsive sailing, LovelyMary sea battle and native FIRE smoke/projectiles/8to0loaded; hit/victory/capture unproven. Coordinator inspected23/24 and focused checks passed; new battle checkpoint restore untested. New durable supervisor retained all raw exits0 and20PID cleanup verified. Fresh Pirates 01a1920d-0ff0-7762-b9fe-f1bc7a4be1c9 handle45393 first browserpriority validates battle checkpoint/onward combat; fresh Deus 01a1920d-0fed-74e0-bcc9-c66479c71bc8 handle42640 prepares crate exit and waits Pirates FULLRELEASE plus actualprocessgate. Both60min from12:59 start, approximate deadline14:00UTC; two workers/onebrowser, free2.416GB; full27/crashsweep open, laptopHeroesII/fonts protected, no publicdeploy.
+  Next: Deus208c41480 actualcrateclimbs/genuinecount7 nativeLoad accepted; livecrate-exit task continues. Accepted719349915: exact automatic battle save ordinaryLoad restored Nevis port, not direct battle. Native SailAway/CastOff/AttackLovelyMary ->actual combat, enemy6guns50crew->4guns44crew, full reload0to8 and secondFIRE8to0 smoke/projectiles. Coordinator inspected11/18/26/28 and focused2226served/42trusted/28PNG/468live3FD/20PIDstart/rawall0 checks rerunPASS; no victory/capture claim. Original saves preserved. Fresh Pirates 01a19219-6078-7d61-97e3-fa76b35149ec handle84424 targets actual surrender/capture/boarding outcome; cheap prep waits live Deus01a1920d-0fed-74e0-bcc9-c66479c71bc8 handle42640 crate-exit FULLRELEASE plus actualprocessgate. Two workers/onebrowser. Deus deadline140140UTC; freshPirates deadline about1415UTC. Free2.351GB after five closed-log lossless gzip archives, saved123846408B with SHA/size roundtrip and atomic recovery manifests; no assets/saves/live inputs touched. Full27 and crashsweep open; laptopHeroesII/fonts protected; no publicdeploy.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
