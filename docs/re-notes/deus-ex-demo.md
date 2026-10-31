@@ -744,3 +744,70 @@ left2.07GiB free. Helpers, commands, recovery, identities and focused evidence
 checks are retained in the fresh run; prior evidence was read-only. No Boat
 allocated: ID/state/expiry N/A. Next work, if assigned, is the Medical Room
 NanoKey/cadet exercise. No successor was launched.
+
+## 2026-10-31: Medical Room attempt stopped before replay completion
+
+**Medical Room progression was not demonstrated.** The accepted multitool/
+cadet result above remains the furthest proved state. Fresh evidence is
+`scratch/runs/20261031T0817Z-deusex-medical/`, with a separate `retry/`.
+Both attempts launched original Training afresh; neither restored prior state.
+
+The first replay confirmed the Trainer Door NanoKey receipt, collected the
+crowbar, broke crates to expose a lockpick, and used the lockpick on the
+labelled5%/1pick door. Personally inspected `lock-door-five-percent.png`,
+`native-picking-progress.png` and `native-picked-result.png` show5%, then2%,
+then **Unlocked**, with slot2 emptied. Native LeftMouse input precedes the
+progress; the final transition completes while waiting. `datacube-contents.png`
+shows code **0012**, and `code-keypad-identified.png` labels the next target
+**Security Keypad, Bypass Str:20%, 2 tools**. No code digits, multitool pickup,
+cadet search or Medical Room action occurred in this fresh replay. Several
+intended-checkpoint filenames capture misses; the inspected labels and actual
+receipts, not filenames, determine these claims.
+
+The first precise failure was in the local harness: controller1782534 and
+lock holder1782532 disappeared after the last capture at08:32:29UTC, leaving
+own Chrome1782571 orphaned. The cause is unproved; no guest/runtime defect is
+inferred. Consequently this attempt does **not** qualify as a continuously
+locked browser lifetime. A recovery helper reacquired the lock, checked the
+exact own profile, captured the unchanged keypad, and closed only that browser
+at08:34:03UTC. A second fresh launch used a detached lock/controller lifetime
+from08:34:58UTC. It confirmed the NanoKey route and reached the crowbar/crate
+area, then stopped at08:43:36UTC to release the shared lane. Its final capture
+shows the crowbar equipped against the wall beside the crate area; the
+lockpick had not been collected. No Medical Room control dependency was
+isolated, because the fresh route never reached that exercise.
+
+Read-only examination of original `system/deusexcontext.u`, included in the
+131-file hash closure, identifies the cadet instruction at byte2908993:
+search the unconscious cadet for the Medical Room key, then pick up his body
+and place it on the medical table so an aide can revive him after the
+exercise. A separate line at byte2905684 acknowledges Private Winslow and
+directs the player onward. These are static original-text findings, not
+observed trigger order or fresh gameplay proof. `original-training-instructions.json`
+retains offsets and text. Body pickup, key use on the medical door, table
+placement, any medical-device interaction and traversal onward remain untested.
+
+Both attempts used retained runtime SHA-256
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`
+with exact292-file saved-source manifest
+`9dee97b3f74481ba14d6808ecce1d4b665099d8b03c58235e0b02812b234e379`.
+Before/after checks pass all131 original/support files and292 saved source
+files. Each105-response URL/hash closure matches the accepted predecessor;
+19-DLL mount lists match, with only those DLL URLs changed from the saved
+registry. Saved sources were served with their matched module, never current
+host sources. Original SoftDrv/default guestWorker/three workers,
+guest640×480 and browser1024×768 were retained. There were no source/build,
+asset/INI/state/clock changes, cheats or input bypasses, FPS/audio diversion,
+or public deployment. Focused checks pass326+118 trusted native input events,
+empty held-input sets and90+29 PNG signatures/dimensions. Historical runs
+were read-only; duplicate served bytes refer to verified predecessor copies.
+
+Own browser/controller/holder and tracked descendants are absent; both HTTP
+ports35169/45489 and CDP ports36395/39095 are closed. Profiles are removed,
+retry Chrome exited0, and cleanup left more than2GB free. The first profile's
+small post-close files were removed after another live-profile check.
+`focused-checks.json`, `inspected-proof.json`, recovery helpers and commands
+preserve the evidence and limitations. No Boat was allocated: ID/state/expiry
+N/A. No worker or successor was launched. The next dependency is a durable,
+continuously locked fresh replay reaching the already accepted cadet state,
+then native key/body/table interaction with personally inspected final proof.
