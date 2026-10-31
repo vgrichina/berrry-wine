@@ -1355,6 +1355,83 @@ allocation occurred (ID/state/expiry N/A). `RECOVERY.md`, `verification.json`,
 `focused-check.json` and saved cleanup receipts retain this completed
 execution; predecessor unexecuted join requests remain unexecuted.
 
+### Original visible menu PLAY reaches SOFTWARE gameplay (2026-10-31)
+
+`20261031T1628Z-ut2003-native-menu-play` closes the remaining ordinary
+menu-to-gameplay gap in one fresh bounded browser execution. This is separate
+from the completed console route in `950e4940e`; **no console was opened or
+command typed in this run**. No generic emulator defect was demonstrated and
+no production code changed.
+
+Cheap inspection first distinguished native routing, the shared DirectInput
+ring, guest execution and graphics completion. The frozen renderer's existing
+`onInputTrace` hook records routing without a wrapper; read-only worker
+inspection records registers, RPC counters and the ring at the base supplied
+by that frozen `RegionMap`. The guest's `di_mouse_event_take` advances its
+head. A drained edge proves emulator consumption, not acceptance by a
+particular Unreal widget. The historical no-Present loading interval above
+remains relevant: the menu picture alone cannot diagnose activation failure.
+
+Personally inspected captures show the original intro, main menu and
+**Instant Action | Select Map, DM-Antalus** (`10-map-page.png`). Native click
+`(350,538)` selects Instant Action; Enter opens it. After hover at visible
+PLAY `(637,663)`, native left down/up held **1,200 ms** is recorded as action
+13. Both edges route to game hwnd `0x10005`, with `dispatched=1` on down and
+matching DOWN on up. The DirectInput head/tail progresses **46/46 → 46/47 →
+47/47 → 47/48 → 48/48**, and the Windows input queue drains. PLAY's normal
+help text appears in `14-play-progress-12s.png`; that capture still retains
+the menu while guest EIP/RPC counters progress. The `.PAG <- .PAX` diagnostic
+at **16:33:46 UTC** precedes the next Enter (**16:33:50**). Enter (action 15)
+and another native click on the established PLAY tooltip (17, **16:34:18**)
+were also completed during this interval. These extra inputs are preserved;
+this run does not attribute joining to one particular press.
+
+By **16:34:39**, `18-play-loading-progress-20s.png` shows **"The match has
+begun!"**, joined weapon/crosshair HUD, **health 100 / ammo 150**. This is
+original menu gameplay, not an inference from queued commands or an unchanged
+menu frame. W **1,800 ms**, mouse motion to `(430,400)` in eight steps, and S
+**1,800 ms** complete; inspected frames 22/24/30 show changed views. A native
+left-button hold **2,300 ms** produces **ammo 148, health 100** in
+`24-fire-settled.png`. Native F1 shows **AVERAGE DeathMatch in Antalus**, six
+scoreboard rows including Player and bots, frag limit 25, and **remaining
+time 14:46 → 14:42** (`26-scoreboard-clock.png`,
+`27-scoreboard-clock-later.png`). No player hit, kill, audio, FPS, match
+completion or full-27 qualification is claimed. The observed continuation
+resolves the visible-menu failure report without a speculative source fix.
+
+Exact0542Z module SHA-256 remains
+`9b4e39a22c9c3abe4608e5f55e2db0eb5818da59cec04bc7b7406a0b8504d1b8`.
+All **295 frozen source / seven compiler / 881 original inputs / 107 actual
+served pins** and 107 predecessor served pins verify unchanged. The original
+`-d3d -window -nosound` registration, normal Software selector,
+`defaultViewport:null`, stable **1024×768**, default guestWorker and isolation
+are retained. Actual HTTP 200 and custom 404 responses have COOP `same-origin`
+and COEP `require-corp`, asserted before guest input. The real executor is a
+Software Device with **gpu=false**, native software exports and completed
+samples **137,600,200 → 192,718,184** between frames 18 and 30. Final queue
+**12,159 completed / 12,188 submitted** has error null; every sampled bridge
+lastError is empty. The 29 pending operations are not failed completions.
+There were no draw/input wrappers, forced menu enablement, guestworker disable,
+input bypass, current-host mixing, asset/INI/save/memory/clock edits or cheats.
+
+Launch **16:31:24 UTC** followed the required NEW Diablo2 den-route FULLRELEASE
+**16:31:03**, for sole runtime **16:17:54–16:30:23**, plus independent actual
+whole-Chrome/global-crashpad/profile PID/start scans and the lifetime FD9 gate.
+The 2.6 GB prelaunch reserve passed; minimum sampled disk was
+**2,677,112,832 bytes**. All **246 active profile samples** show wrapper,
+controller and monitor holding FD9. Explicit quit ended Chrome/controller at
+**16:36:08**, within target **16:48:24**, hard **16:49:24**, cleanup
+**16:50:24**. Durable Python `Popen.wait()` receipts record wrapper/controller/
+monitor zero; Chrome exits zero and the monitor sends no signals. Cleanup
+checks all owned PID/start identities and helpers absent, both ports closed,
+profile gone, inputs empty and full flock available. No watcher was launched.
+FULLRELEASE was posted **16:36:32**. **25 focused checks**, **59 trusted balanced
+native events**, **32 PNGs**, helper syntax and document diff checks pass.
+`RECOVERY.md`, `cheap-inspection.json`, `input-state.jsonl`, `focused-check.json`
+and saved cleanup preserve the exact route and its limits. No Boat was
+allocated (ID/state/expiry N/A), no build was needed for this docs-only change,
+and no further browser, heavy CLI, deployment, worker or successor was launched.
+
 ## UT2004 explicit CLI renderer startup check (2026-10-31)
 
 Run `20261031T0327Z-ut2004-startup` reached an inspected black game window
