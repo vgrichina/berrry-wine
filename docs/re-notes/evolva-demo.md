@@ -119,9 +119,87 @@ no monitor signals, all owned runtime/supervisor identities absent, both
 ports closed, profile removed, no held inputs, and full flock available.
 Disk remained above the 2.1 GB stop threshold. Boat ID/state/expiry: N/A.
 `focused-check.json` records the identity, HTTP, input, and cleanup checks.
-No production change or retry was made. The demonstrated issue is an ordinary
+No production change or retry was made in that run. The demonstrated issue was an ordinary
 browser startup failure at the ImageLoader load/registration dependency;
-the exact failing call and generic root cause remain unresolved. Next work
-is a bounded loader/COM investigation before retrying the original menu route.
+the exact failing call and generic root cause were then unresolved.
 Movement/look/fire, browser mission gameplay, touch, FPS, audio, multiplayer,
 and full-27 coverage remain unqualified.
+
+## 2026-10-31: worker DLL registry omission repaired; visible menu still blocked
+
+Run `scratch/runs/20261031T1707Z-evolva-imageloader-cause/` investigated current
+main `9534a8b16`, rather than editing or reusing the frozen UT0542 source.
+The unchanged diagnostic browser reproduced the dialog (`01-diagnostic-startup.png`,
+reviewed). Its trace proves that `LoadLibraryA` and `GetProcAddress` succeed,
+and the real `DllRegisterServer` executes and writes the MediaLoader class
+keys. It never reaches the second activation. Original EXE disassembly places
+that failure on the negative `DllRegisterServer` result branch after
+`0x6ef431`, rather than a missing file or export.
+
+ImageLoader's registration routine calls OLEAUT32 ordinal 161, `LoadTypeLib`,
+through IAT RVA `0x1f15c` at DLL RVA `0x143a4`, with a `.tlb` fallback at
+`0x1442f`. The built-in handler returns `TYPE_E_CANTLOADLIBRARY` (`0x80029c4a`).
+This inner HRESULT is a source/disassembly inference, not a captured return-value
+trace. The causal host discrepancy is independently reproduced: classic browser
+Workers neither imported `dll-registry.js` nor had its window-only export;
+`process-boot.js` also looked only at `window`. Their dynamic dependency walker
+therefore skipped the registered, ordinal-only OLEAUT32 dependency. Node's
+`require` path retained the registry, explaining the historical CLI difference.
+
+The generic repair imports the existing DLL registry before process boot in
+`lib/guest-worker.js` and exposes/reads it through `globalThis` in
+`lib/dll-registry.js` and `lib/process-boot.js`. No registry entries, guest files,
+COM results, launch arguments, interpreter handlers, or thread-manager code were
+changed. The two whole-file callback census seals were updated after reviewing
+this bootstrap-only delta; callback/context ownership assertions remain pending.
+`test/test-worker-dll-registry.js` runs the production browser bootstrap and
+dependency walker in a window-less realm, using synthetic PE imports. It fails
+on unchanged source because OLEAUT32 and its nested CRT dependency are skipped,
+then passes with the repair. It also checks existing-module skipping, system
+fallback, fatal missing vendor dependencies, and versioned Worker imports.
+
+The `repaired-browser/` subdirectory holds the single bounded original browser
+attempt after repair. It actually served the existing 598,288-byte OLEAUT32
+(SHA-256 `baeb2f7c1b8be56738d34e1d1ddf8e0eebd3a633215dc1575e14656be38b939d`),
+completed the native type-library registration, and reached the second
+MediaLoader `CoCreateInstance` at return address `0x6ef487`; the host reported
+`COM_RESOLVED_INPROC` (`2`), resolving the real `DllGetClassObject` for guest-side
+activation, rather than an activation HRESULT. Execution proceeds to menu asset
+loading. The ImageLoader startup dialog is cleared.
+
+Reviewed `01-repaired-startup.png`, `02-menu-wait.png`, and
+`03-native-canvas-focus.png` show a white game surface, not a visible menu.
+The legacy WebGL endpoint owns an actual 640×480 WebGL2 target, with context
+not lost, completed draws, texture uploads, fences/readbacks, and zero reported
+GPU errors/fallbacks. Menu texture files were served successfully. The balanced
+native focus click reached DirectInput and acquired pointer lock on `screen`,
+but the surface stayed white. No blind menu route, jungle transition, movement,
+look, or fire was attempted or qualified. Next investigation must distinguish
+GPU pixels, `D3DIMGpu.fence`/`_writeBack`, shared DIB/flip ownership, and browser
+presentation (`lib/d3dim-gpu.js`, `lib/d3d-render-worker.js`, then the presentation
+consumer). Draw counters alone do not establish correct visible rendering.
+
+The full `flock /tmp/wine-build.lock bash tools/build.sh` passed under lifetime
+FD9 `/tmp/wine-browser.lock`; eight focused loader/COM/bootstrap/cache checks
+passed. An earlier repaired build stopped at the census review gate before
+runtime; that failure is preserved in `repair/`. The tested current WAT module
+is SHA-256 `078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`
+(1,898,571 bytes), identical between the diagnostic and repaired JS runs.
+Their source manifests identify the exact changed JS bytes; the successful run
+verifies 295 source files, seven compiler files, the original 1,163 fixture
+pins, and the two existing system DLL pins before and after execution. All
+202 HTTP responses carried COOP/COEP; isolation, threads, default guest Worker,
+normal WebGL selection, and stable 1024×768/defaultViewport-null configuration
+were verified before guest input. All seven native events were trusted and
+mouse down/up were balanced. Original ImageLoader bytes retain the hash above.
+
+Both runtimes followed the new SlaveZero terminal no-runtime release and
+independent whole-Chrome/global-crashpad/profile PID/start gates. The repaired
+guest ran 17:19:09–17:20:34 UTC; explicit cleanup returned Chrome/controller/
+wrapper/monitor 0 without signals. The final PID/start scan found all owned
+runtime/supervisor identities absent, both ports closed, profile removed,
+held inputs empty, and lifetime flock available. Minimum monitored free disk
+was 2,613,260,288 bytes. Boat ID/state/expiry: N/A. No further browser/heavy CLI,
+public deployment, redistribution, guest overrides, or successor worker was
+launched. The app remains local-only and excluded from the public desktop;
+browser menu/jungle gameplay, movement/look/fire, audio, and touch remain open.
