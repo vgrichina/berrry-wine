@@ -36,6 +36,7 @@ const extraWat = String.raw`
 (async () => {
   const { exports: wat } = await bootRenderHarness({ extraWat });
   const desc = 0x410000;
+  wat.guest_write32(desc, 108);
   wat.test_dm_seed(0x51000000);
   const dd = wat.test_dm_ddraw() >>> 0;
   const mode = () => ({

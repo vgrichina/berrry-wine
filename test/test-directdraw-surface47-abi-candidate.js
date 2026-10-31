@@ -391,16 +391,16 @@ const tailCalls = !process.argv.includes('--compat');
   assert(api('DestroyWindow', hwnd), 'destroy flip control window');
 
   const unsupported = desc(C.texture | C.system | C.complex, C.cube | C.all);
-  // DDSD_CAPS validates the whole caps field. Garbage in unused fields must
-  // neither reject creation nor accidentally request a flip/cube allocation.
-  const unusedCaps = desc(POISON, POISON);
+  // Extended caps remain flag-gated; native DirectDraw reads caps1 even
+  // without DDSD_CAPS (dsurface:no_ddsd_caps_test).
+  const unusedCaps = desc(C.system | 0x40, POISON);
   write(unusedCaps + 4, 0x1006);
   write(unusedCaps + 112, POISON); write(unusedCaps + 116, POISON);
   const ignored = create(unusedCaps);
   const ignoredDescription = describe(ignored);
   assert.strictEqual(read(ignoredDescription + 12), 4);
   assert.strictEqual(read(ignoredDescription + 108), 0);
-  assert.notStrictEqual(read(ignoredDescription + 104), POISON);
+  assert.strictEqual(read(ignoredDescription + 104) & (C.system | 0x40), C.system | 0x40);
   write(unusedCaps + 4, 8); write(unusedCaps + 16, 16);
   ok(com(ignored, 39, unusedCaps, 0), 'SetSurfaceDesc ignores unused extended caps');
   write(unusedCaps + 4, 9); write(unusedCaps + 16, 20);

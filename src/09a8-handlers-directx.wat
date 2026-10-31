@@ -2686,9 +2686,11 @@
     ;; ddsCaps flags: DDSCAPS_PRIMARYSURFACE=0x200, DDSCAPS_BACKBUFFER=0x4,
     ;;               DDSCAPS_OFFSCREENPLAIN=0x40, DDSCAPS_SYSTEMMEMORY=0x800,
     ;;               DDSCAPS_FLIP=0x10, DDSCAPS_COMPLEX=0x8
-    ;; DDSD_CAPS validates the entire DDSCAPS/DDSCAPS2 field, including caps1.
-    (local.set $caps (if (result i32) (i32.and (local.get $ddsd_flags) (i32.const 1))
-      (then (i32.load offset=104 (local.get $ddsd_wa))) (else (i32.const 0))))
+    ;; Native DirectDraw reads caps1 even without DDSD_CAPS (Wine's
+    ;; dsurface:no_ddsd_caps_test). Extended caps remain flag-gated above.
+    ;; Ignoring caps1 here turns a legacy primary request into an offscreen
+    ;; allocation, losing display dimensions, palette and presentation role.
+    (local.set $caps (i32.load offset=104 (local.get $ddsd_wa)))
     (call $gs32 (local.get $arg2) (i32.const 0))
     (if (i32.and (local.get $caps) (i32.const 0x10)) ;; DDSCAPS_FLIP
       (then

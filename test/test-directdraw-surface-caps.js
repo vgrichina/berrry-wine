@@ -56,6 +56,46 @@ const extraWat = String.raw`
   const queryDesc = 0x410200;
 
   wat.test_dx_caps_seed(0x51000000, 0x52000000);
+  wat.guest_write32(queryDesc, 108);
+  wat.set_desktop_color_depth(8);
+  // Native ddraw reads caps1 even if DDSD_CAPS is absent. A legacy primary
+  // request must ignore unused dimensions and retain its indexed display role.
+  // Wine dsurface:no_ddsd_caps_test independently covers this native behavior.
+  for (const flags of [0, 1]) {
+    wat.guest_write32(createDesc, 108);
+    wat.guest_write32(createDesc + 4, flags);
+    wat.guest_write32(createDesc + 8, 3);
+    wat.guest_write32(createDesc + 12, 97);
+    wat.guest_write32(createDesc + 104, 0x200);
+    assert.strictEqual(wat.test_dx_caps_create(createDesc, primaryOut) >>> 0, 0);
+    const surface = wat.guest_read32(primaryOut) >>> 0;
+    assert.strictEqual(wat.test_dx_caps_desc(surface, queryDesc) >>> 0, 0);
+    assert(wat.guest_read32(queryDesc + 104) & 0x200,
+      `primary caps survive dwFlags=${flags}`);
+    assert.notStrictEqual(wat.guest_read32(queryDesc + 12), 97,
+      'primary dimensions come from the display, not unused width');
+    assert.strictEqual(wat.guest_read32(queryDesc + 84), 8);
+    assert.strictEqual(wat.guest_read32(queryDesc + 76), 0x60);
+    assert.strictEqual(wat.guest_read32(queryDesc + 16),
+      (wat.guest_read32(queryDesc + 12) + 3) & ~3,
+      'indexed primary pitch matches its display width');
+    assert.strictEqual(wat.test_dx_caps_release(surface) >>> 0, 0);
+  }
+  for (const flags of [6, 7]) {
+    wat.guest_write32(createDesc + 4, flags);
+    wat.guest_write32(createDesc + 8, 2);
+    wat.guest_write32(createDesc + 12, 5);
+    wat.guest_write32(createDesc + 104, 0x840);
+    assert.strictEqual(wat.test_dx_caps_create(createDesc, primaryOut) >>> 0, 0);
+    const surface = wat.guest_read32(primaryOut) >>> 0;
+    assert.strictEqual(wat.test_dx_caps_desc(surface, queryDesc) >>> 0, 0);
+    assert.strictEqual(wat.guest_read32(queryDesc + 104) & 0x840, 0x840,
+      `offscreen/system caps survive dwFlags=${flags}`);
+    assert.strictEqual(wat.guest_read32(queryDesc + 12), 5);
+    assert.strictEqual(wat.test_dx_caps_release(surface) >>> 0, 0);
+  }
+  for (let i = 0; i < 108; i += 4) wat.guest_write32(createDesc + i, 0);
+  wat.set_desktop_color_depth(32);
   wat.guest_write32(createDesc, 108);
   wat.guest_write32(createDesc + 4, 0x21); // DDSD_CAPS|BACKBUFFERCOUNT
   wat.guest_write32(createDesc + 20, 1);
@@ -128,8 +168,13 @@ const extraWat = String.raw`
   assert.notStrictEqual(aux, primary);
   assert.strictEqual(wat.test_dx_caps_get_attached(aux, attachedCaps, attachedOut), 0,
     'a registered auxiliary interface still resolves the same live surface');
-  assert.strictEqual(wat.guest_read32(attachedOut) >>> 0, attached);
-  assert.strictEqual(wat.test_dx_caps_release(attached), 1);
+  const auxiliaryChild = wat.guest_read32(attachedOut) >>> 0;
+  assert.strictEqual(wat.guest_read32(auxiliaryChild + 4), wat.guest_read32(attached + 4),
+    'the returned interface view names the same attached surface slot');
+  assert.strictEqual(wat.test_dx_caps_release(auxiliaryChild), 0,
+    'the auxiliary interface view releases its own caller reference');
+  assert.strictEqual(wat.test_dx_caps_refs(attached), 1,
+    'releasing the interface view leaves the original attachment alive');
 
   const savedSlot = wat.guest_read32(primary + 4);
   wat.guest_write32(primary + 4, 0xffffffff);
