@@ -21,8 +21,15 @@ bottom HUD during native movement/look/fire, health100 and ammo100 to98.
 Visible DeathMatch and PLAY clicks work at their displayed coordinates.
 The full build and focused real-instance/pixel/Reset/DirectDraw tests pass;
 the new regression rejects the saved old source. Enemy hits/kills, match
-completion and WebGL remain unverified. A fresh worker tests the missing
-actual WebGL native match arm. See the
+completion remain unverified. Documentation `f81b9a35f` closes the WebGL
+native match arm in `20261031T0629Z-ut2004-webgl`: visible menus reach
+DM-Rankin, W/S movement, mouse look and firing100 to98. The coordinator
+inspected initial and changed-view full world/HUD frames. Actual owning
+WebGL2 completed68,885 GL draws and20 LockRect calls;26 trusted inputs,
+998 originals,295 source files, seven compiler files and107 served pins
+pass. The fresh locked build passed. Render640x480 inside browser1024x768;
+ANGLE SwiftShader, no hardware-GPU claim. All19 owned PIDs, watcher and
+ports are cleaned. FPS/audio/kills/match completion remain open. See the
 [UT2004 native route](re-notes/unreal-family-demos.md#ut2004-original-dm-rankin-movementfire-retest-2026-10-31).
 
 UT2003 diagnosis `b2647538c` in `20261031T0531Z-ut2003-readback`

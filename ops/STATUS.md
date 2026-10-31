@@ -1,9 +1,9 @@
-Current 2026-10-31T06:27Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-10-31T06:48Z — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Deus Ex progressed beyond the NanoKey door: crowbar pickup/equip and crate breaking are reviewed (3d04b4841), with 102 trusted input events. Lock-picking and Training completion remain open. Guest resolution remains 640×480 within a 1024×768 browser.
+UT2004 now has reviewed native DM-Rankin gameplay on software and actual WebGL2. New f81b9a35f verifies visible menus, movement, look, firing100→98 and readable full world/HUD. Input/source/runtime checks and cleanup pass. Render640×480 within browser1024×768; FPS/audio/kills/completion remain open.
 
-Forsaken's complete-frame replay proves world vertices collapse before GPU submission; its worker traces the first vertex/cache mutation. No repair yet.
+Forsaken traced the first corruption: Unlock copies transformed vertices back into source positions before the next PROCESSVERTICES. Its worker tests a separate-output repair; acceptance awaits focused regressions, build and original gameplay retest.
 
-A fresh UT2004 worker verifies the missing WebGL native match arm after accepted software HUD/origin repair. UT2003's WebGL cube-LOD repair passes 8,880 pixel checks and the full build; native DM-Antalus movement/look/fire are reviewed.
+Deus Ex crowbar pickup/crate breaking remain accepted. A fresh worker advances native Training lock-picking and traversal, bounded through07:25UTC. UT2003 cube-LOD repair and WebGL gameplay remain accepted.
 
-Pirates factory rejection and full GL/D3D 27-app coverage remain open. Two workers, serialized runtime, disk above 2 GB. Laptop HeroesII/fonts protected. No public deployment or owner action needed.
+Pirates factory rejection and full GL/D3D27 coverage remain open. Two workers, serialized runtime, disk above2GB. Laptop HeroesII/fonts protected. No public deployment.
