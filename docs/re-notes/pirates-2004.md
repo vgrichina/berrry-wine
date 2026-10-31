@@ -2032,3 +2032,52 @@ was posted at 14:49:01. No Boat: ID/state/expiry N/A.
 Focused identity, served-pin, input, capture-hash, immutable-save and lifecycle
 checks pass. The single browser is used. Boarding entry is the tested result;
 duel play, capture and save recovery remain untested.
+
+### 2026-10-31 15:06 UTC — duel continuation blocked before native Load
+
+Run `scratch/runs/20261031T1503Z-pirates-boarding-duel/` preserves a failed
+continuation of the accepted 14:23 run. The previous result remains boarding
+entry only. No duel checkpoint had been exported, so this attempt mounted
+the unchanged 12:20 battle export at its original native path. It did not
+reach native Load, sailing, boarding, fencing, capture or any new save.
+
+Read-only extraction of the original `lang0.FPK` keymap and encyclopedia
+preceded launch. Duel controls are keypad 4 thrust, 5 parry, 7 chop, 1 slash,
+8 jump, 2 duck and 6 taunt. The encyclopedia describes a ram followed by a
+captain's duel, with victory required to capture the vessel. Prior trusted
+input timestamps and captures were inspected and an early intercept route
+prepared; none of those combat inputs was executed in this run.
+
+The first page renders the Pirates title but remains there after Enter,
+Escape, Space, clicks and held mouse input. A single ordinary page reload
+inside the same browser, followed by remounting the identical export and
+launching Pirates, reproduces the title stall after click, Enter and Escape.
+Personally inspected captures `12`, `16`, `17` and `18` show the unchanged
+title. Both device samples report seven submissions, seven completions and
+null queue error. DOM events are trusted and balanced; that alone does not
+prove guest consumption. No input-forwarder, draw/factory wrapper or guest
+memory diagnostic was installed. The fresh page's app picker resets to
+Notepad after launch; the actual launch log and rendered title show Pirates.
+The cause of the stall is unknown; this is a precise first dependency,
+not new gameplay or a fencing-input failure.
+
+The frozen WASM remains
+`078d81cba6ab755d6a05e5e234a259df9e867ecc8848899705a45739fab0e9a9`.
+Before/after checks cover 296 source/compiler files, 40 support files and
+1,374 originals; both immutable saves are unchanged. Default guestWorker,
+threads, WebGL and 1024×768 are retained. No save, asset, INI, clock or
+production file was changed; no build or heavy CLI ran. No new save is
+exported or called recoverable, and no VFS query was attempted here. The
+predecessor's failing read-only VFS helper remains a separate known limit.
+
+One browser launched after Deus Ex's 15:06:11 FULLRELEASE and a fresh
+whole-Chrome/global-crashpad/profile PID/start gate. It ran from
+15:06:37 to 15:11:26 UTC, ending early on this dependency. Durable waits
+record zero browser/controller/wrapper/monitor/request-daemon exits.
+The first cleanup audit raced final process exits and failed; the subsequent
+audit passes with all tracked runtime/helper PID/start identities absent,
+three ports closed, profile removed, empty held inputs and full flock
+available. No cleanup signals were needed. FULLRELEASE was posted at
+15:12:06 UTC. Boat ID/state/expiry are N/A. The next gameplay dependency is
+restoring ordinary title-to-Load navigation on these exact pins; the prepared
+fencing and early-intercept plan remains unexecuted.
