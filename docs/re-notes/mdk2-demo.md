@@ -1,9 +1,11 @@
 # MDK2 demo (BioWare/Interplay, 2000)
 
-**Status: registered (`mdk2_demo`), playable in the browser.** Projective
-vertices work since 9be0a0efb. Menu, New Game, the intro and the tutorial
-level all render and take input (Chromium, real WebGL), but the world is
-black after the intro until the FSCALE fix (see Black world). The "attract demo ignores
+**Status: registered (`mdk2_demo`); current native startup is blocked by GL
+symbol rejection (2026-11-01 diagnosis below).** Historical Chromium/WebGL
+runs rendered Menu, New Game, the intro and tutorial and took input;
+projective vertices work since 9be0a0efb, and FSCALE fixed the black world
+after the intro (see Black world). Those runs do not establish current
+browser compatibility. The "attract demo ignores
 input" puzzle was only the menu's idle timer (see Menu). The fetch
 needs a real `unshield` (IS6 cabs; `tools/is5-extract.js` refuses them).
 
@@ -39,8 +41,9 @@ group `english` (`data\local.zip`, the string tables). Installed to
 
 ## OpenGL init (what was fixed)
 
-`0x4526e0` suspends the worker thread (`SuspendThread([0x4b8810])`, the
-`_beginthread(0x451f30)` file-request worker), sets the video mode and
+`0x4532c0` suspends the worker thread at `0x453411`
+(`SuspendThread([0x4b8810])`, the `_beginthread(0x451f30)` file-request
+worker), calls video initialization (`0x4526e0` on the observed path), and
 resumes it at `0x4534a3`. If GL init fails, the error path loads strings
 through that **suspended** worker and both threads idle in `SleepEx` forever
 (main polls `[0x4b87d0]` at `0x4522b0`/`0x4522d0`) — no window, no message.
@@ -218,3 +221,82 @@ ID/state/expiry are N/A. Evidence includes `verification.json`,
 `input-consumption.json`, `scheduler-snapshots.json`, full before/after pins,
 reviewed PNGs and `runtime.log.gz`. No browser/GPU/audio/FPS or broad
 playability conclusion follows from this startup check.
+
+## 2026-11-01 pre-window cause: GL export rejection, no repair
+
+Run `scratch/runs/20261101-mdk2-prewindow-cause/` diagnoses the preceding
+blank-teal wait. One original ran with bounded API/guest-block tracing from
+startup, rather than repeating the play route. It reached the same no-HWND
+state by batch 10 and exited 0 on ordinary CLI quit after 78.087 seconds.
+The reviewed final PNG is blank teal; all five ordinary-input counters are
+zero. Jump, landing and lit play remain unverified.
+
+The first failed GL lookup is API call **49112**,
+`GetProcAddress(0x62563c, "glAccum") -> NULL`, returning to `0x457cd4`.
+Immediately before it, call 49111 successfully loaded
+`c:\windows\system\opengl32.dll` as `0x62563c`. The original instructions at
+`0x457cd4` test EAX, store the result at `[0x5c5784]`, and skip the
+`jne 0x457ce2` on NULL, setting EDI to 1 at `0x457cdd`. This individual
+branch follows from the observed return and original disassembly; it was
+outside the block-trace range. The loader continues collecting symbols:
+**212 distinct GL/WGL names return NULL**, including `glAccum` and the four
+historically repaired layer-plane entries. At `0x45a6c4`, nonzero EDI selects
+error 2 and unloads the libraries. The block trace directly observes EAX=2
+at `0x45290f` and entry to the error branch `0x45291c`.
+
+The rejection is in the current emulator, not a missing `api_table` row:
+`glAccum` is ID 4209. `GetProcAddress_pinned` in
+`src/09a0-handlers-base.wat` calls `$gl_dynamic_api_unsupported` before
+allocating a fallback thunk and returns NULL/ERROR_PROC_NOT_FOUND for it.
+`tools/gen_dispatch.js` generates that predicate from its implementation
+maps. Commit `1beaec304847b4abe22c05e15c9bde9d964eb2cc` added this fallback
+filter on 2026-10-30 to prevent SDL exposing unsupported GL procedures.
+The unmodified predicate, compiled in a scratch fixture, rejects all 212
+observed missing names. Of those, **208 dispatch to `gl_unimplemented`**;
+four have native layer-plane handlers but are excluded from the availability
+maps. Restoring only those four cannot clear the loader's failure latch.
+
+The suspended worker is the consequence that makes error reporting wait:
+call 48989 suspends handle `0xe1000` before GL loading. After loader error 2,
+`0x45292b` requests string ID `0x2be` through `0x42dea0`. The trace reaches
+the `mdk2.str` request, then `0x4522d0` -> `0x4515c0` ->
+`SleepEx(10, TRUE)` at `0x4515c7`. Read-only snapshots show request flag
+`[0x4b87cc]=1`, completion `[0x4b87d0]=0`, request pointer
+`[0x4b87d4]=0x5eab40` (name `mdk2`), and worker suspendCount=1.
+The worker's stack returns to `0x451f62`, inside the file worker loop;
+its CRT start is `0x481331`. That loop consumes the request and sets
+completion at `0x451f51`, but cannot run while suspended. No post-failure
+ResumeThread call occurs. The earlier ReBaseImage FALSE is ignored by the
+guest and does not prevent the successful GL library load.
+
+No source repair was made: removing the filter would expose 208
+unimplemented procedures, and supplying success stubs or changing guest
+control flow would not preserve their contracts. The precise unresolved
+cause is the mismatch between MDK2's mandatory complete GL export table and
+the emulator's dynamic availability policy/implementation surface. The
+startup path needs a contract-preserving resolution of that mismatch before
+another jump attempt; no forced resume, fake return or config change was used.
+
+Validation: the unchanged `test/test-wgl-proc-availability.js` fails its
+stale zero-image-base module-alias assertion at line 79, before testing the
+GetProcAddress fallback. A scratch copy adapts only that handle expectation,
+adds all 212 observed misses to the existing fallback checks, and omits its
+negative mutation runs. Its full-source API checks verify NULL, error 127,
+no thunk allocation, ESP+12, preserved registers/stack, and supported lookup
+controls; see `actual-test-exit.json`. This fixture is separate from the
+production original. Its initial misplaced-shebang setup failure is retained.
+
+The gate was 09:50:19 UTC after Outcast's fresh final/result and explicit
+release; actual revision `039f7f5a29dd21f5e65d59d175280c656733935d`, runtime
+deadline 10:20:19 UTC, overall 11:15 UTC. Accepted build inputs (4392) and
+recorded build reads (141) matched, reusing production WASM
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+The full installed tree, manifest and launcher-origin config retain the
+hashes recorded above. Before/after source and actual-runtime-read checks
+are in `verification.json`; no second original ran. The identity observer
+passed actual synchronous/asynchronous execution, whole shared 512 MB memory
+equality, clock identity and emitted late-10001 retention checks. As before,
+runtime asynchronous/promise/stream reads, unfinished/over-24-MiB descriptors
+and reads after the exit flush remain coverage gaps; a compiled Module
+instantiation has no separately emitted instance bytes. Minimum original-run
+free disk was 2234208256 bytes. Native local box ID/state/expiry: N/A.
