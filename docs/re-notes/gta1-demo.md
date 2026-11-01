@@ -1,5 +1,26 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Checkpoint-input repair entry prerequisite, 2026-11-01
+
+The checkpoint-input implementation assignment following
+`19ce5388af57045694e051b0cd2f723213f5531e` stopped at its first resource
+prerequisite. Initial `df -B1 /home` reported **1,985,933,312 bytes available**,
+below the assignment's unchanged **2,000,000,000-byte** floor. The task explicitly
+requires stopping at a failed prerequisite without an unchanged retry. No
+source edits, test process, build, fixture verification or original GTA run
+started. The native runner still lacks the supported checkpoint input path
+described below; language selection and player control remain unverified.
+
+Evidence is in `scratch/runs/20261101-gta1-checkpoint-input-repair/`:
+`df-initial.txt` and `prerequisite.json` retain the measurement and stop boundary.
+Only this blocker note changed. No game/driver children existed to abort, and
+no background disk guard was started after the failed synchronous entry check.
+No foreign files were deleted, no floor was lowered, and no RAM gate was used.
+Box ID/state/expiry and actual module identity are N/A because nothing ran.
+The next assignment needs disk headroom above the same floor before beginning
+the runner implementation, focused tests, mandatory build and eventual single
+bounded original run. There is no new screenshot or gameplay evidence.
+
 ## Language-selection input boundary, 2026-11-01
 
 The follow-up to `124d0bda1745b544faeafbb6f23f087fac23d6ae` stops at
