@@ -1478,3 +1478,71 @@ closed and two profiles removed, with over 1.5 GB free. Other sessions were
 preserved. No Boat or assigned test box was used (ID/state/expiry N/A);
 ownership is handed back. The bounded attempt stops with the original safe
 checkpoint retained and the combat objective unmet.
+
+## 2026-11-01: native indoor restore; door approach interrupted
+
+Run `scratch/runs/20261101-quake2-indoor-guard/` retained one native
+`quake2_demo` original, using the registered renderer/config and supported
+`--vfs-mount` for the eight unchanged indoor21 save files. Ordinary F9 at
+batches 100/101 restored the world; startup/menu frames alone were not treated
+as recovery. Inspected `starting-count.png` shows the saved indoor room and
+**21 HP**; `starting-count-stable.png` shows **kills 7/18, goals 0/1** after
+the F1 pair and eight further batches without input. Left turns and W movement
+then followed the slatted corridor toward its mechanical door. End centered
+the view at batches 1067/1068. The final W hold at 1075–1077 has before, held,
+released and settled captures; `door-approach-settled.png` at batch 1080 and
+the identical `final.png` show the closed door close ahead and **21 HP**.
+No live guard engagement, outgoing hit, eighth kill or onward room is visibly
+established. No attack or F6 input appears in the retained input trace.
+
+The blocker for this attempt is **worker/launcher interruption before the
+planned encounter**, not an established door or emulator defect. The bounded
+last worker events end after the door approach. Worker
+`01a1971b-bad6-77b1-942e-50435034f369`, launcher handle 2746, exited 143
+without launcher final/result artifacts; its signal sender/cause is not
+established here. The coordinator requested `finish.json` at
+**12:51:22Z**. `exit.json` records original PID 3661918 exiting **0 after
+318.559 seconds**, ending at batch 1080; `coordinator-interruption.json`
+records cleanup at 12:51:49Z. Original exit 0 does not establish gameplay
+success or a clean worker completion. A fresh evidence-only worker finished
+this note without resuming the old worker or starting another original.
+
+Focused artifact validation passes: all **61 PNGs** pass chunk CRC and IDAT
+decompression checks, the complete runtime gzip decodes, all **32 ordinary
+key edges (16 pairs)** are dequeued, routed and dispatched to hwnd `0x10001`,
+and all eight retained host save files still match their starting sizes and
+SHA-256 values. `save-mounts.json`, `checkpoint-before.json` and `recovery.txt`
+preserve the byte-exact recovery recipe. No fresh guest VFS export or final
+F1 count was retained, so post-run guest-save equality and a final kill-count
+readout are unavailable. The final known scheduled/pending/cross-thread/
+renderer queues are empty. Sampled physical/async movement keys are released;
+pressed latches are not held keys. W, D and End lack final per-key samples,
+although their up events were dispatched. Guest post queue, button state and
+SDL consumption remain unknown. The short settled captures are not a matched
+long no-input control for the final door approach.
+
+The accepted-build receipt matches **4,392 source pins and 141 prior observed
+reads** from accepted build `d86935e8274cd5d70a53bcc50c5d8bf5632d95c3`.
+Actual run baseline was main `f581e849f29be47c3d68da7cdf1c72a93ecde4df`.
+Recovery validation finds **4,444 source/module pins, 67 original/manifest
+inputs and original-tree membership unchanged**, with all **132 actual
+runtime reads** still matching. The runtime compiled module SHA-256 is
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Retained observer validation exercised actual sync/async compilation, whole
+512 MB shared-memory read-only behavior, clock identity and late event 10001
+retention. String-path file reads are observed; descriptor/direct OS reads
+are not comprehensively covered. Runtime compilation identifies module bytes,
+not compiler-source reads. This native software-bridge run does not establish
+browser/GPU, audio, FPS, networking or full-suite parity. No new runtime,
+build or gameplay tests were run during evidence-only completion; no tracked
+code, configuration or assets changed.
+
+The retained runtime minimum free disk was **2,068,029,440 bytes**. Coordinator
+cleanup and a fresh process check find the original/controller, gate waiter,
+disk guard and their known groups absent, with no matching own helpers or new
+`wa-child-*` temporary directories. Evidence remains in the existing scratch
+run. Native box ID/state/expiry are **N/A**; shutdown was delegated to the
+coordinator and ownership is handed back. The original checkpoint remains
+intact. Next gameplay work, if separately authorized, still needs visible
+proof of the stair-guard outcome or an onward room; this interrupted attempt
+does not resolve that objective.
