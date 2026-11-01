@@ -1,5 +1,114 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Gameplay pool selection: unrealized logical textures hit the bind guard (2026-11-01)
+
+Run `20261101-redline-pool-selection-cause` connects actual original gameplay
+DrawPrimitive callers to their selected logical textures. **The first concrete
+blocker is resource realization before pool admission:** all **366 retained
+positive-ID draw records**, covering **177 logical assets**, have a null source
+Texture2 pointer, signed resident index **-1**, pool group **-1**, and wanted
+flag **0**. Their resource-bank records have width, height, bit depth and format
+flags all **-1**, despite live surface pointers and bank status fields +0x50/
++0x52 both 1. No generic emulator defect is proven, so this change is evidence
+and explanation only; it makes no production/test repair or texture substitution.
+
+The original EXE was disassembled offline before running. Relevant guest paths:
+
+- The manager is `[0x5b6d54]`. Its logical table has 16-byte records: Texture2
+  pointer +0, signed resident +4, resource-bank ID +6, pool group +8, wanted
+  +0xa. Its cached bound pointer is +0x20c; +0x218 selects direct versus pool
+  mode. A pool object begins at `manager + 4 + group * 0x34`; its +0x2c array
+  holds Texture2 interfaces and +0x30 holds surfaces. These are distinct from
+  the logical source interface and the bank's surface pointer.
+- `0x52b1dd` registers a logical texture. Flag `[0x592b34]`, read by
+  `0x488e6a`, can defer immediate realization at `0x52b34e`.
+  `0x488e56 -> 0x52b0c5` later runs the bank load sweep `0x4178f4`, followed
+  by logical realization `0x52b0e9 -> 0x52b3f1`. Pool classification at
+  `0x52b5c7` requires matching square dimensions and a supported size/format;
+  failure returns -1 before source Texture2 QI. A successful source QI returns
+  at `0x52b55e`, distinct from pool creation's `0x52dadb`.
+- `0x52b814` marks wanted, but the same defer flag can skip its request call.
+  `0x52b8b8` converts resident -1 to **-2** only when pool group is nonnegative.
+  Frame flush `0x52babb` first checks pool mode and request count; it considers
+  only -2 entries, selects a reusable pool slot through `0x52bfb6`, then calls
+  **destination pool Texture2::Load(source logical Texture2)** at `0x52bc05`
+  (return `0x52bc08`). Success assigns the pool resident index at `0x52bc7e`.
+- Binding is `0x488e05 -> 0x52c392`. In pool mode, the signed resident test at
+  **`0x52c48a/0x52c48c`** sends negative indices to the clear path
+  `0x52c55e`. If cached texture +0x20c is already zero, **`0x52c568` exits
+  without an API call**. A valid resident resolves the pool Texture2 array,
+  compares the cache, and calls Device3::SetTexture at `0x52c504` only on a
+  change. Thus untextured draws can coexist with a completely absent
+  SetTexture dispatch, without any rejected binding HRESULT.
+
+The natural draw frames establish the consuming ID rather than guessing it
+from the last uploaded object. Actual world calls return to `0x457b21` and
+`0x457afb`: their preceding bind at `0x45789c` selects the signed word stored
+in caller EBP-0x40. The `0x4587a6` path instead selects the logical ID from
+`[caller EBP-0x160] + 32 * signed_word(caller EBP-4) + 0x280a0`.
+The first run exposed those real callers; the second observer used their
+independently checked disassembly and retained the first two draws per
+caller/game/selected ID. Four ID-zero draws are excluded from the positive-ID
+result above. All selected draws observe pool mode, cached pointer zero and
+request count zero. Combining these values with the straight-line bind code
+identifies the negative-resident/zero-cache guard; it is not an instruction
+breakpoint trace of each branch.
+
+For example, draw 9,687 returns to `0x457b21` and selects logical **444**,
+resource **723**, `skymorning.tga`. The bank points to surface wrapper
+`0x08223270`, DX slot **1102**, with 128×128/16-bit backing, while its logical
+texture pointer is null and resident/group are -1. Other observed selections
+include `invisible.tga` (132), `dish43.tga` (221), and `gun2-nm.tga` (363).
+Across retained draws the selected bank surfaces occupy **177 slots,
+668–1766**, with no overlap with the observed Unlock destinations. The 543
+successful Unlocks still target slots 338–658; their caller frames recover
+**280 TGA filenames**, including launcher/menu/loading assets. None matches
+these 177 selected gameplay asset names. Successful upload samples therefore
+do not establish successful upload of the textures selected by gameplay.
+This observer does not cover every Blt or later copy, and 16-byte surface-head
+samples do not establish the contents of a whole texture.
+
+The failure frontier is narrower now. The bank backend is installed from
+`[0x591c64]`; constructor `0x44c900` installs vtable `0x56fd40`, whose +0x1c
+entry is loader **`0x450729`**. Bank realization calls it at `0x4181d2`.
+A zero return makes `0x4181ec..0x41823a` write the exact -1 dimension/format
+sentinels observed at the draws. Loader `0x450729` creates the bank surface
+at `0x450db3`, then uploads through `0x453de3` (return `0x450e24`, or the
+mipmap branch). The upload routine obtains a surface description at
+`0x453ec0` before Lock. **Next observation:** follow one selected asset such
+as logical 444/resource 723 through this backend call, its actual destination
+surface, GetSurfaceDesc output and the first upload/loader failure return,
+then the classification at `0x52b5c7`. The current evidence does not identify
+which loader/upload API or guest guard first fails; changing that code now
+would be speculative. The two-invocation limit is exhausted.
+
+Both original invocations exit 0 in **71.465 / 70.234 seconds**, reach batch
+**30,700**, and produce the inspected original gameplay PNG SHA-256
+`ed66d12dab856c3c44ffd5e45cd088290612fe2aba75edb0b55bf275a9ecbd87`.
+Geometry and weapon silhouette remain visible with missing textures.
+The run preserves empty arguments, `C:\MAINDIR`, IFORCE2-only seeding,
+shipped settings/all 65 pins, batch size 100,000 after 29,100, and clock 200.
+No snapshot command, breakpoint, guest call, state write or production
+instrumentation was used. The bounded observer retains 895 / 1,257 records
+below its 1,800 cap, sees 93,142 draws each, and reports zero errors.
+
+Rune's required final artifacts and runtime/source/build release preceded
+all builds, runtime, and note edits. A **fresh locked build passed** because
+Rune changed the source input map. Both actually loaded modules are
+2,025,629 bytes, SHA-256
+`985ca2480931df88751db66dbee8527a6d9df9940949baafc6bc3a0b1a43e2dc`.
+All **4,388 source inputs**, **70 fixture files**, and **128 actual loaded
+reads per invocation** match their recorded identities. Original registration
+checks pass before/after. Offline tests cover the signed marker, actual
+preload/import/memory translation, real draw-frame ID mappings, source and
+destination identities, negative residency, bounded retention, and unchanged
+whole synthetic guest memory across hooks. The outer PTY uses 150 seconds /
+kill-after 5, inner limit 120, and finite child TERM 105 / KILL 110; both runs
+quit normally and all owned runtime processes/groups and the watcher are gone.
+Evidence, drivers, disassembly, identity maps and PNGs remain under
+`scratch/runs/20261101-redline-pool-selection-cause/`. Box ID/state/expiry and
+ownership handback: N/A; no box was used.
+
 ## Binding chain: texture views exist, binding calls absent (2026-11-01)
 
 Run `20261101-redline-binding-chain` advances the original route through
