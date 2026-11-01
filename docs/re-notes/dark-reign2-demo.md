@@ -642,3 +642,85 @@ Next bounded action: review this exact mipmapping capability rejection against
 the supported native renderer contract before authorizing any implementation or
 backend change. No played mission, current control response, FPS, audio or
 backend parity is qualified by this run. No test box was acquired.
+
+### Exact native mipmapping contract (2026-11-01)
+
+The rejection is an intentional capability boundary reflecting missing sampling
+implementation. It is not fixed by the accepted DD4/DD7 surface-identity repair
+`149286afd`, nor by the existing mip-chain allocation and upload code.
+
+For the pinned original above, the D3D7 enumeration callback starts at
+`0x00472860`. At `0x00472885` it loads its third argument, the 236-byte
+`D3DDEVICEDESC7`, into ESI. It passes that descriptor to `0x00471cd0`, which
+copies it to the candidate record at `this+0x54`. After checking
+`D3DDEVCAPS_DRAWPRIMTLVERTEX` and `D3DDEVCAPS_FLOATTLVERTEX`, the constructor
+executes `test byte [edx+0x60], 0x3c` at `0x00471d1a`. A zero result takes
+`0x00471d24` and sets the unsuitable-device flag in bit 0 of `this+0x154`.
+The callback checks this flag at `0x004728e1` and branches to its rejection
+diagnostics, skipping the accepted-device count increment at `0x00472a00`.
+
+The diagnostic repeats `test byte [esi+0x60], 0x3c` at `0x00472adc`.
+Nonzero jumps to `0x00472b0f`; zero logs source line `0x48c` (1164) and
+`"d3d : ! doesn't support mip mapping."` at `0x00472afd`. Offset `0x60`
+is exactly `D3DDEVICEDESC7.dpcTriCaps` (+60) plus
+`D3DPRIMCAPS.dwTextureFilterCaps` (+36). Mask `0x3c` accepts **any** of
+`MIPNEAREST` (0x04), `MIPLINEAR` (0x08), `LINEARMIPNEAREST` (0x10), or
+`LINEARMIPLINEAR` (0x20). It does not query `DDSCAPS_MIPMAP`,
+`dwTextureCaps`, or the DX7 stage-filter MIPF bits.
+
+Both HAL and RGB enumeration use `$d3dim_fill_device_desc7`; GetCaps7 shares
+that builder. `$fill_primcaps` supplies `0xc3`, then the D3D7 builder adds
+`MINFPOINT|MINFLINEAR|MAGFPOINT|MAGFLINEAR` (`0x03000300`). The resulting
+triangle filter mask is `0x030003c3`, whose intersection with `0x3c` is zero.
+HAL/RGB identity and device-cap differences do not change this filter field.
+
+The resource and sampling contracts differ:
+
+- `$dx_create_mip_chain` in `09a8-handlers-directx.wat` creates successively
+  halved surface levels, linked through `DxObject.misc0`, to 1x1 or the
+  declared count. GetAttachedSurface exposes those levels for Lock/upload.
+- `$d3dim_device7_load_chain` in `09aa-handlers-d3dim.wat` copies matching
+  levels up to the shorter chain, with a bounded walk. The rectangular Load
+  path prevalidates the chains and scales the copy rectangle per level.
+- `$d3dim_set_texture` stores one stage-zero surface slot. The native
+  `$d3dim_draw_tl_triangle_textured` selects MAGFILTER (16), MINFILTER (17),
+  then legacy TEXTUREMAG/MIN; only value 2 enables within-image bilinear
+  filtering. It does not read MIPFILTER (18) to select a level. The span
+  sampler loads width/height/pitch/DIB from that single entry and samples
+  that image; it has no automatic chain traversal or footprint-based LOD.
+- The GPU descriptor also exposes a single image and linear flag;
+  `lib/d3dim-gpu.js` lowers its sampler with `mip: 0`. This is source review,
+  not a GPU execution or parity claim. GL and D3D8/9 mip paths do not establish
+  the native D3D7 contract.
+
+A coherent generic implementation needs footprint-based level selection from
+screen-space texture gradients (including perspective), correct stage/legacy
+filter lowering, bounded chain handling and per-level sampling metadata.
+Tests must use visibly distinct levels and verify actual rendered pixels under
+minification and magnification before any corresponding capability is enabled.
+This spans drawing paths and is outside this bounded diagnostic task. No
+capability bit, renderer state, guest file, assertion or source was changed.
+Startup remains blocked; no current mission, gameplay, FPS or audio is qualified.
+
+Evidence: `scratch/runs/20261101-dark-reign2-mipmap-contract/`, including
+aligned guest disassembly, string references, reviewed source identities and
+contract findings. The preceding native-mission run supplies the original
+capture/log/module receipt; its solid teal frame and mipmapping fatal log were
+reviewed again. This task makes no new original-execution claim.
+
+The gate opened only after Redline's fresh final records and 06:16:10 UTC
+runtime/source/build release. No tests or note edits preceded that gate.
+Existing `test-legacy-texture-filter-caps.js` passed 90 descriptor fields,
+36 extracted sampling cases and six mutation negatives;
+`test-legacy-final-mip-bits.js` passed 90 fields, 36 sampling cases and ten
+mutation negatives. These execute extracted production WAT, not the full
+shipped module. `test-legacy-mip-support.js` completed its 36 backend cases
+but then failed an unrelated stale texture-operation assertion: expected
+`0x3ff`, actual `0x0f` at line 124. That test is unchanged; no assertion was
+weakened. No full-module regression or new mip implementation is claimed.
+
+All 4,389 predecessor source identities, all 29 pinned originals/configs,
+module `330b120d…` and region mirror matched before review. This documentation
+change needs no new build and runs no original or installed callback observer.
+No runtime PID/group, temporary runtime directory or test box was acquired;
+box ID/state/expiry are N/A.
