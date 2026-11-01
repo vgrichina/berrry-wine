@@ -1,7 +1,7 @@
-Current 2026-11-01T03:21:00.059099+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T03:26:58.444354+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Rune aaa464a3c reaches a reviewed SoftDrv title scene through ordinary Next → Next → Run. Physical Escape does not open the advertised menu; gameplay remains unproven. Next observation is Escape delivery and consumption with input tracing. Both original runs exit0, pins/build identity pass, and runtime is released.
+Child crash-loss fix66028ecbb is reviewed and published. Child state merges only after paired VFS/registry completion with a per-child token and matching digests. The original 203-file deletion regression now preserves all files; complete empty snapshots and nonzero guest exits remain valid. Mandatory locked build and five focused suites, including14 new cases, pass.
 
-Child-state worker01a1951b now owns sole source/build integration for missing-output crash data loss. Fresh Redline worker01a1951f-9dce-7242-9138-a85e37694d9f handle2192 prepares its corrected resource snapshot offline; guest runs and production edits wait for that repair’s final artifacts and board release. Deadline03:50UTC/fallback03:30UTC.
+Redline worker01a1951f handle2192 now has sole serial runtime for the frozen texture/resource snapshot, deadline03:50UTC/fallback03:30UTC. Fresh Rune worker01a19524-fecf-7132-b9f7-10b46df8bf95 handle44528 prepares Escape tracing offline; runtime/source edits wait for Redline final artifacts and board release, deadline03:57UTC/fallback03:37UTC.
 
-Redline already reached first-person CLI movement, turning and firing; incomplete texture/HUD cause remains unproven. Original game files stayed unchanged. Two-worker cap and serialized runtime/integration remain. Browser transfer SSH403, full GL/D3D27, held REP and authentic Crimsonland installation remain open. No public deployment.
+Rune reaches reviewed SoftDrv title through ordinary wizard but Escape menu response remains absent; gameplay unproven. Redline first-person movement/turning/firing reviewed, incomplete texture/HUD cause unproven. Original pins unchanged; two-worker cap and serialized runtime/integration remain. Browser SSH403 transfer, full GL/D3D27, held REP and authentic Crimsonland installation remain open. No public deployment.
