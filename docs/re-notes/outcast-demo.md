@@ -196,3 +196,80 @@ input, cleanup and evidence checks are retained. Own runtime3468605,
 driver3468595, watcher3469442, runtime group and new temporary paths are absent.
 Native local box ID/state/expiry: N/A. Evidence remains ignored and preserved.
 No browser, physical-device, GPU, audio, FPS or broad playability qualification.
+
+## Bounded visible-combat recovery, 2026-11-01
+
+`scratch/runs/20261101-outcast-visible-combat-recovery/` records a completed
+replacement for interrupted worker01a196e2. **No hostile encounter, opponent
+impact, damage or combat outcome was demonstrated.** Accepted `039f7f5a2`
+above remains draw/aim/ammo80→79/holster evidence only. Friendly `GRÜSSEN`,
+muzzle flash and ammo expenditure do not establish an opponent hit.
+
+The interrupted first original's retained
+`scratch/runs/20261101-outcast-visible-combat/` was inspected before choosing
+the one remaining original. Its `node-exit.json` records runtime3605184 exit0;
+launcher143 has unknown cause and missing launcher final/result, not a proven
+game failure. Its gzip is incomplete; the recovered readable prefix ends
+with Up consumed at8003 after a3000-batch step request at8000, without a
+completed step reply or after capture. Dock/map/turn-land before, held,
+released and no-input PNGs, plus inland/north look captures, remain intact.
+The map overlays and westward view of inland terraces supplied a concrete
+changed route: leave the dock backward, then test the visible inland passages.
+Recovery hashes match all4444 retained source pins,138 original/manifest pins
+and141 retained runtime reads; the missing interrupted worker after receipt
+and incomplete log remain explicit coverage gaps.
+
+Ownership began on actual main `e07cca055022b14e91993bfb26422b84aae3b7c4`
+after3605184/3605183/3587453/3608213 were confirmed absent and coordinator
+released ownership. Actual prelaunch source pin/main was
+`9988719815acce10fbd0aa163a12063a1c984c71`, superseding the dispatch baseline;
+that intervening coordinator documentation commit did not change build pins.
+Stock registered `outcast_demo`, direct `OC2.EXE game`, reused the accepted
+module `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`
+after4392 accepted source and141 read pins matched. Fresh actual compilation
+observed that same module. OC2 SHA256 remains
+`d5513a94c2aff8ed54598c60fbf28bdf5845848a5eef74ff326037ec1a54f8a1`.
+All135 original tree files, including configurations, plus three recovery
+manifests were unchanged before/after; all4444 current source/module pins
+and141 actual runtime reads also matched. No tracked code/configuration change.
+
+The second and final original used exactly eight named arrow holds:
+Down6000 (`landward`), Up6000 (`terrace01`), Up4000 (`gap02`), Up6000
+(`edge03`), Right4000 (`bypass04`), Up6000 (`passage05`), Left4000
+(`final-bypass06`), Up6000 (`final-passage07`). Each has full640x480 PNGs
+containing the400x300 game and HUD for before/held/released/noinput; releases
+settle100 batches followed by300 with no new input. These are within-run
+stationary comparisons, not another independent no-input original. Relative
+mouse turns and Tab map captures are preserved separately. No target was
+identified, so there is no new aim/fire/impact pair and no new shot claim.
+
+Down moved from the dock onto a narrow rocky ridge beside water. Inland
+forward travel met a mountain face; subsequent forward holds remained at it.
+The Right-arrow bypass visibly displaced Cutter into a passage, but the next
+forward hold met another mountain base. Left bypass opened onto grassland;
+the final forward hold ended in water directly below a steep bank, still
+without a visible opponent. **The first unresolved navigation obstacle is a
+route around the mountain faces and water banks to an identifiable hostile.**
+Map dots supplied no verified opponent identity or reproducible hostile
+bearing. This bounded result does not establish that enemies are unavailable
+in the demo, or identify a game/emulator defect. No further original was run.
+
+`input-consumption.json` preserves48 snapshots: final54100 counters record
+33 WM dequeues/routes/dispatches, known queues empty;150/150 DI mouse FIFO
+entries drained, zero pending. This establishes control delivery, not
+individual guest keyboard polls or successful navigation for every hold;
+guest postqueue/SDL consumption remain unknown. Read-only eval inspected
+emulator input state only, never synthesized game state.
+
+Fresh actual synchronous/asynchronous observer validation passed whole512MB
+memory equality, host/native clock identity and emitted late-event10001
+retention. Read coverage is synchronous file reads and complete closed bounded
+descriptors up to24MiB; asynchronous/promise/stream, incomplete/open/oversize
+descriptor reads are excluded. Exit flush does not guarantee finalflush
+completeness. Runtime compilation identity is not compiler-source-read proof.
+`node test/test-outcast-demo-recovery.js` passed135 originals; identity and
+bounded gzip checks passed. Fresh runtime3610577 exited0 after610.188seconds,
+within the15-minute gate limit; minimum runtime free space2268737536bytes,
+above2GB. Native local box ID/state/expiry: N/A; shutdown was delegated.
+No browser/GPU/audio/FPS/full-playthrough qualification is claimed. Recovery
+final/result, cleanup and publication records are retained in the run directory.
