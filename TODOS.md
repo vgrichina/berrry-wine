@@ -1124,7 +1124,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: Battlezone01a1964b-ff7a-7170-8781-11d0584406d2 handle85971 output scratch/usage-watch/battlezone-original-combat-control-nov01/ owns runtime/source/build since08:49:04UTC runtime deadline09:18:54UTC overall10:23UTC fallback09:03UTC. AoWII01a1964c-604a-74e0-ad44-60bf7b2ef11f handle47811 output scratch/usage-watch/aow2-current-original-control-nov01/ scratch-only WAIT Battlezone fresh final/result AND explicit runtime/source/build RELEASE overall10:25UTC fallback09:05UTC. Both actualLIVE08:50UTC.
+  worker: AoWII01a1964c-604a-74e0-ad44-60bf7b2ef11f handle47811 output scratch/usage-watch/aow2-current-original-control-nov01/ owns runtime/source/build since09:02:33UTC deadline09:32:33UTC overall10:25UTC fallback09:15UTC actualLIVE09:03. Fresh Rayman2 01a1965b-2e10-73b1-92da-1f4523d36d43 handle51093 output scratch/usage-watch/rayman2-original-movement-next-nov01/ scratch-only WAIT AoWII fresh final/result AND explicit runtime/source/build RELEASE; runtime30min from gate overall10:40UTC fallback09:17UTC actualLIVE09:05.
+  Current update 2026-11-01T09:05:52.618973+00:00: Battlezone9b70a7d5b reviewed pilot fire with fixed landmarks, vehicle entry and tank ammo83to66; actual WM consumed, one original exit0, owned PIDs absent and remoteMATCH. Vehicle camera drift and observer read limits disclosed. Rayman2 ordinary movement is next; GL transform/lighting descriptor fixtures prepared unlaunched. Cap2, serialized runtime.
   status: Populous922056d36 reviewed ordinary shaman movement with fixed landmarks and consumed input; one original exit0, five ownedPIDs independently absent. GL projective b05826e4a unchanged projective-vertex/texcoord4 assertions PASS, two originals exit0, seven PIDs absent; production bodies identical with custom-section difference disclosed. Battlezone now seeks firing/vehicle-command control beyond accepted driving; AoWII seeks current army movement and lower-panel captures. Homeworld fleet and DarkReign rig movement reviewed. Alice startup blocked; full27/GPU, FPS/audio remain open. Starlancer licence1772 pending. Cap2 serialized runtime; rolling pipeline active.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
@@ -1581,9 +1582,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] AoWII rendering overlap and gameplay measurement
   id: AOW2-RENDERING-COVERAGE-20261009
-  status: running (scratch-only runtime gate)
+  status: running (native runtime gate passed09:02:33UTC)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Fresh worker01a1964c-604a-74e0-ad44-60bf7b2ef11f handle47811 recovers retained captures or runs bounded ordinary army movement and lower-panel observation after Battlezone fresh final/result AND explicit runtime/source/build RELEASE. Overall10:25UTC fallback09:05UTC. Do not repeat accepted viewport-clipping9a438f1b9 or cooperative-vblank918f25772 repairs. Current visuals, logical gameplay FPS and audio remain unqualified pending evidence.
+  Next: Fresh worker01a1964c-604a-74e0-ad44-60bf7b2ef11f handle47811 recovers retained captures or runs bounded ordinary army movement and lower-panel observation. Runtime gate passed09:02:33UTC after Battlezone fresh final/result AND explicit RELEASE; runtime deadline09:32:33UTC overall10:25UTC fallback09:15UTC. Do not repeat accepted viewport-clipping9a438f1b9 or cooperative-vblank918f25772 repairs. Current visuals, logical gameplay FPS and audio remain unqualified pending evidence.
   Evidence: docs/re-notes/age-of-wonders2-demo.md; main9a438f1b9 and918f25772; test/test-d3dim-viewport-clip.js; test/test-cross-thread-send-vblank.js; scratch/runs/20261031T1420Z-aow2-task-refresh/verification.json. Historical runs20261009T0306Z-age-of-wonders2-gameplay and20261010T1145-aow2-viewport-clip-fix are referenced by the notes; the October9 run is absent locally, so no new screenshot review is claimed.
 
 - [ ] New-game lane: American McGee's Alice demo

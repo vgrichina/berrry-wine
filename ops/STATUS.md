@@ -1,7 +1,7 @@
-Current 2026-11-01T08:51:36.307141+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T09:05:52.618973+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Populous922056d36 now has reviewed ordinary shaman movement down the slope, consumed input and unchanged fixed landmarks. One original exited0; five owned processes independently absent. GL projective b05826e4a passed unchanged projective-vertex and texcoord4 assertions; two originals exited0, seven processes absent. Production function bodies match; the missing custom section is disclosed.
+Battlezone9b70a7d5b reviewed: stationary pilot impact with unchanged landmarks, vehicle boarding HUD transition, tank ammunition83to66 and consumed WM input. One original exited0; owned processes absent and remote main independently matched. Vehicle camera drift and runtime-read observer limits remain disclosed.
 
-Fresh Battlezone85971 owns runtime since08:49:04UTC, seeking firing or vehicle commands beyond accepted driving. Runtime deadline09:18:54UTC, overall10:23UTC, fallback09:03UTC. Fresh AoWII47811 prepares current army-control and lower-panel captures, waiting for Battlezone final/result and explicit release. Overall10:25UTC, fallback09:05UTC. Both handles live; two-worker cap, serialized runtime.
+AoWII47811 owns runtime since09:02:33UTC, seeking current army movement and lower-panel captures. Runtime deadline09:32:33UTC, overall10:25UTC, fallback09:15UTC; live09:03. Fresh Rayman2 worker01a1965b handle51093 seeks ordinary movement beyond historical world entry. Scratch-only until AoWII fresh final/result and explicit runtime/source/build release. Runtime30min from gate, overall10:40UTC, fallback09:17UTC; live09:05. Two-worker cap and serialized runtime.
 
-Homeworld fleet and Dark Reign rig movement remain reviewed. Alice startup blocked. Full27/GPU and logical FPS/audio remain open; Starlancer licence1772 pending. Last inbox empty08:48UTC. No browser/access retries, held-algorithm work or deployment.
+Populous movement and original GL projective assertions remain reviewed. GL transform/lighting descriptor task prepared unlaunched. Full27/GPU, logical FPS and audio remain open; Starlancer licence1772 pending. Inbox empty09:03UTC. No browser/access retries, held-algorithm work or deployment.
