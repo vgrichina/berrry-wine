@@ -1,5 +1,48 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Post-repair retry: coherent captures and consumed arrows, opening cutscene still blocks player proof (2026-11-01)
+
+Run `20261101-redline-primary-movement-retry` starts after fresh GL final/result
+and its **06:43:50 runtime/source/build release**. Startup disk admission passes
+above 2.3 GB. Gate-open current main includes primary-capture repair `e06fe9784`.
+The accepted Tachyon locked build is reused after all **4,390 source pins,
+70 fixture pins, 122 prior loaded-file hashes**, module `330b120d` and region
+mirror match. Both originals' actual loaded modules and file hashes match;
+original files, manifests and shipped configurations remain unchanged.
+
+There are **two post-repair local CLI invocations**, exiting 0 after **179.816 s**
+and **220.235 s**. The first driver's single 600-step loading request exceeds
+its 130-second response deadline, then actually completes at batch 30,700
+before the queued quit. Its final chooser selects coherent textured primary
+slot 4. This concrete driver pacing failure licenses the second invocation:
+twelve 50-step requests reach the same checkpoint within each reply deadline.
+No renderer, interpreter or guest-state change is made.
+
+The second run retains reviewed coherent `second/before.png` (30,700),
+`second/held.png` (30,746) and `second/released.png` (30,816). Up-arrow
+keydown is observed dispatched by 30,706 and keyup by 30,776; scheduled,
+pending, cross-thread and renderer queues are all empty at those consumption
+checkpoints and both later captures. Thus these are consumed balanced controls,
+not merely balanced requests. The held view looks upward into explosions;
+the released view shows a buggy and debris. Neither establishes a player
+response: the sequence lacks the first-person weapon/crosshair/HUD and remains
+the opening cutscene.
+
+The **exact first blocker is the prepared driver's omitted ordinary Space
+cutscene skip**. The original `Readme.rtf` explicitly lists “SKIP CUT SCENE”
+with Space Bar, and the earlier default-drain gameplay evidence records
+Space leading to the first-person view. This retry instead sends Up during
+the unskipped sequence. Camera changes cannot be attributed to player movement.
+Both permitted invocation slots are exhausted; no third original is run.
+**Post-repair ordinary player movement remains unqualified.** No emulator
+dependency, renderer defect, audio, FPS or broader gameplay result is inferred.
+
+Offline actual sync/async emitted callbacks, whole shared 512 MB memory and
+clock read-only checks, and bounded late-10,001 retention pass before originals.
+Actual identities, input traces, captures, gzip logs, limits and final/result
+remain in the ignored run directory. Own runtime PIDs/groups, watcher and
+temporary trees are absent; no box is owned (ID/state/expiry N/A).
+
 
 ## Post-repair ordinary movement: startup disk admission blocks the first run (2026-11-01)
 
