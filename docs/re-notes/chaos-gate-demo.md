@@ -242,3 +242,46 @@ The compact local evidence directory contains both run logs, inspector stacks
 and getter results, supervisor exit records and exact commands, the reviewed
 black diagnostic frame, and the explicitly inconclusive trace. The fixture
 remains unregistered; no unrelated dashboard candidate was assigned.
+
+## 2026-11-01: bounded local replacement check stops at missing fixtures
+
+Run `20261101-new-local-game-replacement` is **static preparation only**.
+Current `lib/apps.js` was loaded as registry data: its actual `DESKTOP_APPS`
+contains 46 entries, excluding Chaos Gate and Constructor. The complete list,
+registry SHA-256, observed main HEAD, input hashes and exact-path checks are in
+`scratch/runs/20261101-new-local-game-replacement/{public-list,static-check}.json`.
+Existing notes/TODOS exclude already qualified titles, including the stale
+TR3 reserve, Rune, Redline, Dredmor (both packages are one title), WinBoard,
+Croc 2 and THPS2. Owner-held lanes were not reopened.
+
+The two remaining specifically inspected titles cannot supply an immediate
+local gameplay assignment:
+
+| Title | Concrete first dependency |
+| --- | --- |
+| Chaos Gate | Documented `/home/user/chaos-fixture/game/WH40KDemo.exe` is absent here; `test/binaries/candidates/chaos-gate-demo` is also absent and no app is registered. The historical fixture was on `bx_gd476s95`, whose current availability is unknown. Recover an authentic complete tree before launch preparation. |
+| Constructor | All 28 files named by `test/toyvm-dos-corpus/files/constructor-demo.json` are absent under its declared `test/binaries/dos-games/constructor-demo` root, including `GAME.EXE`, DOS4GW and five distinct DATA.FIL resources. Expected total is 63,205,318 bytes; file-list SHA-256 is `999c95440cd4c9e5155931db7243f6a55fd1e03b66bd9c98839ff041bc41d79c`. Historical graphics detection also remains unqualified; see `constructor-demo.md`. |
+
+The historical Chaos Gate executable hash above and Constructor's recorded
+`d0ac2f05b9a813dc723f170f7418fbfd9af269abcbce8905062c3b63f27dc587`
+are **expected identities, not freshly verified executable hashes**. Neither
+missing executable can be hashed now. No Chaos Gate asset manifest was
+invented. These checks establish a bounded pool blocker at the documented
+paths, not absence everywhere on disk or exhaustion of every possible title.
+
+Next dependency is provision of one complete original fixture from an available
+owner-controlled copy, with executable and every required asset verified.
+For Chaos Gate, preserve SMACKW32/WinG/palette/data paths; the retained six-click
+command above is an exact historical pre-mission route, not a current passing
+launch recipe. Its last observed boundary was corrupted register/GDI state at
+mission loading, with no battlefield or ordinary unit control. Any later
+assignment must first reproduce that boundary on the files actually run,
+then use visible mission controls; it must not revive held concurrency/SEH
+work under a new title label. Relevant existing regressions are
+`test-wing-recommend-dib-format.js`, `test-wing-bitmap.js` and
+`test-mmio-write.js`; these were identified, not executed in this static task.
+
+Stopped after these two dependencies. No download, game, build, browser, Boat,
+source/test edit, fresh capture, FPS or deployment occurred. Sampled free disk
+was 2,186,375,168 bytes, above the requested 2 GB floor. Box ID/state/expiry
+and local runtime shutdown are N/A; coordinator lifecycle ownership is untouched.
