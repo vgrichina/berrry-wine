@@ -1777,3 +1777,128 @@ tokens and has not been rerun. No second original was used. Next recovery
 requires a valid coordinator release, then F9 and a consumed, visibly
 settled F1 count check before onward input. No browser/GPU, audio, FPS or
 full-suite claim is made.
+
+## 2026-11-01: eighth-kill save restored; two more guards and upper stairs
+
+Run `scratch/runs/20261101-quake2-eight-save-restoration/` verifies the
+new game-created eighth-kill checkpoint and advances across the guard room
+onto its raised right-side stair route. One native `quake2_demo` original
+used exactly the eight ordered `--vfs-mount` arguments from
+`20261101-quake2-eighth-kill-checkpoint/checkpoint-eight/mount-arguments.json`.
+A read-only export independently matched all eight actual mounted guest
+files to those pinned host bytes. The eight files and both original manifests
+remain unchanged. No seven-kill fight was repeated.
+
+Ordinary F9 at batches 100/101 loaded the saved doorway at **21 HP**. Its
+release was initially queued during loading; at 304 both edges were consumed.
+After 700 no-input batches the restored world was visible behind the startup
+menu. Escape closed that menu. The first consumed F1 pair at 838/839 left
+help hidden, including after another 230 no-input batches. Only then was a
+second F1 pair issued at 1072/1073. `restored-eight-count.png` at 1126 and
+`restored-eight-count-stable.png` at 1146 visibly show **8/18 kills, 21 HP,
+goals 0/1**. No movement or attack preceded this verified restoration.
+
+The player first offset behind the jamb. A one-batch D pair was not consumed
+until its release batch and supplied little movement; the three-batch offset
+visibly established cover. The door subsequently closed and a short ordinary
+W touch reopened it. A lower guard approached the doorway. Covered Enter
+bursts produced blood, but did not initially kill him. A backward retreat into
+the slatted corridor restored separation; a small relative-mouse adjustment
+and further burst produced the collapse. `ninth-kill-count-settled.png` at
+1649 confirms **9/18, 17 HP**. Ordinary F6 at 1671/1672 created the exported
+`checkpoint-nine/` save.
+
+The cleared threshold was crossed with short, observed controls. A diagonal
+left approach initially remained near the jamb; the subsequent lateral
+clearance and `inside-room-step-*` sequence visibly entered the room.
+The left-wall health pickup then raised health **17 → 42**
+(`health-pickup-approach-settled.png`, 1843). Another guard approached the
+alcove wall. Retreat/fire controls, a small aim correction, and a rightward
+escape supplied further hits and his collapse. F1 at 2017/2018 produced
+`second-guard-count-settled.png` at 2031: **10/18 kills, 30 HP, goals 0/1**.
+Initial live commentary misread the small health digits as 12/22/6; enlarged
+read-only screenshot crops in `analysis/health-crops.png` establish the
+correct **17/42/30** readings. The original full captures are retained.
+
+The player then passed to the right of the barrels. Several approaches
+reached the narrow side of the stair flight; their filenames alone do not
+prove ascent. Backoff, a walking lateral adjustment, and a final ordinary
+left/jump adjustment aligned the flight. `final-flight-step-settled.png`
+shows the raised corner; `upper-route-look-left-settled.png` at 2234 shows
+the steps meeting the raised floor and the onward passage along the right
+wall. `final-count-settled.png` at 2222 still shows **10/18, 30 HP**.
+The lower-room crossing and upper stair route are established; completing
+the base elevator objective or a level transition is not. Goals remain 0/1.
+
+Ordinary F6 at 2234/2235 saved this final position. After 40 additional
+batches, `checkpoint-onward/manifest.json` records eight read-only exports
+of actual guest save entries; `mount-arguments.json` supplies the supported
+recovery command arguments. `save-export-validation.json` verifies **all
+eight byte-equal to the clean-exit `--save-vfs` exports**. Each row below
+applies to both `c:\baseq2\save\current\` and `c:\baseq2\save\quick\`:
+
+| Guest filename | Export indexes: current / quick | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| `server.ssv` | 0 / 4 | 2464 | `28bdc0cd29a209df05d997057984eb5de81cebd483b6e8ebd7881027c90c955e` |
+| `game.ssv` | 1 / 5 | 5308 | `0a1efd61231a97bba92f62086e4f5e557eb9ce2f0be28b7047c0691a85565561` |
+| `demo1.sav` | 2 / 6 | 322145 | `19ac24b934d020dcd83076efc8cb5aced10518ced310ff1cc6659de33c91cfbe` |
+| `demo1.sv2` | 3 / 7 | 104448 | `6ad6c039d4efb8e81628badb5bfaeb8d50ff8e5974aad0b55d3eccaf0b3086c3` |
+
+This final save has not itself been F9-restored. For further play, mount its
+recorded exact bytes and verify the settled F1 count before continuing along
+the upper passage. The original eighth-kill checkpoint and the intermediate
+nine- and ten-kill exports remain available. No console, memory/save edits,
+new bindings or guest assets supplied progress.
+
+The valid gate opened **14:00:13Z**, after exact author/action parsing of
+`thief2-left-route-interaction DONE/PUSH RELEASE ... runtime/source/build`,
+both fresh launcher final/result files, launcher termination, and direct
+verification that the predecessor's owned PIDs/groups were absent. The
+predecessor's cleanup schema differed from Quake's; the scratch waiter was
+adapted before any validation or original execution. The old false-positive
+worker's WAIT predicate and startup were not accepted as restoration.
+Dispatch was `4942ab64b3dbb341e1dc7892277782b3b82c53ba`; repinned main was
+`8552125804a6994de385d7f00858e789fd59024f`.
+
+Accepted-module reuse matched **4,392 source pins and 141 prior observed
+reads**, module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Fresh before/after validation passed **4,444 source/module pins, 77 original,
+manifest and checkpoint inputs, original-tree membership, and 136 actual
+runtime reads**. The observer passed actual sync/async execution, whole
+512 MB shared-memory read-only comparison, unchanged clock identity, and
+emitted late-event-10001 retention before the original. String-path read
+observations do not comprehensively cover descriptor/direct OS IO; module
+identity does not prove compiler-source reads. No new build or tracked
+source/helper/test/configuration/backend change was made.
+
+Focused validation passes **259 PNGs** through CRC/IDAT checks, the complete
+runtime gzip, and **132 ordered keyboard edges / 66 balanced pairs**.
+Two relative-mouse events bring final scheduled/dequeued/routed/dispatched
+totals to **134**. Final batch 2280 has empty known input queues and released
+physical/async samples for every used key, including Shift, Space, A/D/W/S,
+Enter, turns, Escape, F1/F6/F9. Sampled mouse virtual keys are also released;
+the mouse-button mask, guest post queue and SDL consumption remain unknown.
+Before/held/released/settled captures and matched no-input controls are
+retained. The 1/1/20-batch neutral has zero changed pixels throughout the
+upper 640×270 scene; other matched 3/1/20 and 6/1/20 controls contain small
+scene changes (including the active door/enemy), so are not claimed stable.
+PNG IDAT recompression was verified lossless; equal captures share hardlinks.
+
+PID 3738515 exited **0 after 1380.730 seconds**, final batch 2280. The
+controller's outer deadline won just before the requested finish file; the
+enclosing tool shell reported 143, with its signal cause unknown. These
+limits do not erase the earlier reviewed gameplay/save evidence. The
+controller minimum free disk was **2,110,734,336 bytes**; the one-second
+auxiliary runtime guard minimum was **2,115,596,288 bytes**, above the
+2,000,000,000-byte floor. Subsample excursions cannot be ruled out and the
+auxiliary retains its latest sample/minimum, not a full history. No RAM gate
+or foreign cleanup was used. No second original was started.
+
+The run-local artifact check passes without missing files or containment/schema
+errors; the global checker reports ten unrelated containment errors, left
+untouched. The original, controller, gate waiter and runtime disk guard have
+exited. Cleanup and publication records accompany the final run result.
+Local native box ID/state/expiry are **N/A**; explicitly delegated local
+shutdown is complete and ownership is handed back. The task stops with the
+new checkpoint preserved; further objective progress is untested.
