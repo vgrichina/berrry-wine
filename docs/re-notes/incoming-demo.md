@@ -49,7 +49,66 @@ turrets. Candidate `incoming-demo`, app `incoming_demo`, local only.
 
 Evidence: `scratch/runs/20261011T1822Z-incoming-demo-w4/`.
 
+## Native hostile combat and onward phase (2026-11-01)
+
+Reviewed run `scratch/runs/20261101-incoming-native-phase-progress/` advances
+beyond the earlier friendly-radar shot. One original `incoming_demo` execution
+used the stock registration and `c:\incoming` working directory. Brief Enter
+holds across batches selected Start Game, Campaign Action, and the Kenya
+briefing; same-batch `keypress` taps did not select Start Game in this run.
+
+From score 0 and phase 1/10, ordinary arrow holds aimed toward red-bracketed
+alien fighters. Space primary fire and left Shift secondary fire produced
+visible weapon effects, hostile explosions, and score increases to 250, 500,
+and ultimately a retained 6,500. Damage is established by the score/explosion
+sequence, not inferred from tracers. The paired captures include
+`hostile-before-fire.png`, `primary-held8.png`, `secondary-held8.png`,
+`hostile-score250.png`, `hostile-score500.png`, and `hostile-score6500.png`.
+
+At batch 8265, `phase-complete.png` visibly says **PHASE COMPLETE** and shows
+the turret from an external camera. By batch 8565 the native camera has moved
+to a helicopter on its pad with **FOLLOW WAYPOINT VIA GREEN ARROW**; firing
+keys were released and `helicopter-waypoint.png` retains that new objective.
+This matches the original `africa_action.mdl` next `phasestart`, which switches
+the hero to `rez` and sets the waypoint. The numeric phase-2 HUD was not
+captured. This proves the onward native transition, not completion of the
+helicopter phase or the demo.
+
+`input-consumption.json` and the streamed `runtime.log.gz` retain actual
+WM_KEYDOWN/WM_KEYUP dequeue, routing, and DispatchMessageA consumption, plus
+successful native IDirectInputDevice_GetDeviceData calls. Read-only snapshots
+of the acquired DirectInput keyboard ring show sequence/head advancement and
+empty buffers without overflow: before firing sequence/head 24/24,
+primary held 27/27, secondary held 34/3, and released 36/5 (capacity 31).
+Corresponding WM dequeue/route/dispatch totals are 26/26/26, 29/29/29,
+36/36/36, and 38/38/38. These establish consumed controls; they do not trace
+every guest key-array read. SDL consumption and the guest postqueue remain
+unknown.
+
+The runtime gate pinned main `ca136b9678f8bb18f5e2e75fe5d70b7febf4b6df` after
+Dethkarz's fresh terminal evidence and explicit release. Accepted module
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4` was
+reused: all 4,392 accepted build-input pins and 141 prior observed-read pins
+matched. Before/after checks matched 4,444 current source/build pins and all
+335 original-tree/manifest files; full before/after original archives and
+original configs are retained in the run. The original EXE remains
+`4830a5d5091a6c4f528cd2aa3d7821873346b6e5a823ac4e71692d18d2f4402c`.
+The runtime observer recorded the matching module compilation bytes and 447
+actual file reads. It covers synchronous file reads and complete closed
+descriptor reads up to 24 MiB, not asynchronous/stream reads or incomplete,
+unclosed, or larger descriptors; it flushes at process exit. Runtime module
+compilation is not evidence of compiler source reads. Its actual sync/async
+execution, whole shared 512 MiB memory/clock read-only checks, and emitted late
+10001 retention check passed.
+
+The sole original ran 551.986 seconds and exited 0. Startup disk was
+2,201,100,288 bytes free; observed minimum was 2,151,043,072 bytes. No tracked
+source, tests, helpers, configuration, registration, or backend was changed.
+Own runtime/driver/group/watcher and temporary-file cleanup is recorded;
+native-local box ID/state/expiry are N/A. Audio, FPS, full playthrough, and
+broader renderer compatibility remain unclaimed.
+
 ## Not checked
 
-Audio output, DirectPlay, flying/driving phases beyond the first turret phase,
+Audio output, DirectPlay, completion of flying/driving phases after the turret,
 Threads vs cooperative mode differences, WebKit.
