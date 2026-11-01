@@ -236,3 +236,75 @@ audio, FPS or full-suite claim. Own runtime/helper PIDs were absent after
 shutdown, no new child temp directories remained. Native local box ID/state/
 expiry N/A; local own-process shutdown was explicitly delegated. Further work
 requires disk headroom and a fresh ordinary route; this run stops here.
+
+## Left-side roof edge, 2026-11-01
+
+Run `scratch/runs/20261101-thief2-left-route-interaction/` established **no door
+opening, loot acquisition or objective interaction**. One original reached
+Normal / The Unwelcome Guest. From the opening view, successive left turns
+looked past the torch/window wall to the other opening of the starting stone
+structure. The selected route followed the wooden platform toward the open
+edge facing a timber-framed building, beside a sloping stone support. This
+differs from the earlier torch-window approach and rightward stonework route.
+S walks, Up running, a Z strafe away from the support, and one intentional
+Up+Space forward-jump attempt changed the view but did not establish a crossing
+of that edge. A downward inspection showed the platform edge and building
+across it. The first blocker is **navigation beyond this platform/open edge**:
+no reachable highlighted door or identifiable loot was found. No right-mouse
+use, weapon or lockpick input was sent against unidentified geometry. Collision,
+an impassable gap and an emulator defect are not established. Further roof
+edges, streets and other jump trajectories remain untested; no second original.
+
+Original readme and both bindings were inspected again: S walks, Up runs,
+Z strafes left, Space jumps, V centers view, right mouse uses items, M maps,
+and F4/F5 select lockpicks. The readme requires approaching a highlighted door
+and holding right mouse, possibly alternating picks. Highlight alone is not an
+interaction result. Existing map captures were reviewed; neither supplies a
+usable position marker. This run navigated from its actual opening view.
+
+The gate passed at 13:47:18Z after fresh Quake II eight-save-onward launcher
+`final.txt`/`result.json`, its 13:47:11Z explicit release, and the coordinator's
+13:47:10Z genuine runtime/source/build release. The predecessor's earlier false
+gate was not consumed. Actual main was `ba0ba17ebf6d1baa1cab8a4c483e4cd5647857a3`,
+versus dispatch `2ec46b5d7b3d423bd8191684c66dbf24e2f7caca`; deadline 14:12:18Z.
+All 4,392 accepted source pins and 141 accepted runtime-read pins matched,
+allowing reuse of module SHA256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Actual compilation used those bytes. Before original launch the observer passed
+actual sync/async execution, whole shared 512 MB read-only comparison, native/
+host clock identity and emitted late-10001 retention. Its added frozen host-key/
+button observations passed a read-only parked-state check. The 4,444 source/
+module pins, 43 original/manifest/inventory pins, complete fixture tree and 142
+observed runtime reads remained unchanged. EXE SHA256 remained
+`5e5f831ba549081c35e592afaa540f336f76c828a996b4fcb74edef46beba942`.
+String-path sync/callback/promises readFile coverage is not exhaustive descriptor/
+OS I/O or compiler-source provenance.
+
+The CLI used software rendering, 100,000-block batches and the unchanged
+200 ms/batch guest clock. The first loadout capture at 2400 was black; actual
+loadout was reviewed at 3400 and world at 4500. Each keyboard action waited for
+its press dispatch, then its release dispatch and empty known queues before
+300 neutral batches; the deliberate forward-jump chord balanced both keys.
+All 28 keyboard edges / 14 pairs dequeued, routed and dispatched in order.
+Two relative mouse movements inspected height. Final known queues were empty,
+all seven used keys had physical/async held states false, and the host mouse
+button mask was zero. Their asyncPressed latches remained true: these record
+earlier presses, not held keys. Guest post/button queues and SDL consumption
+remain unknown. Trace retention is 1,000 observations; counters saturate at
+2^32−1. Before/held/released/settled captures are preserved. A 300-batch matched
+neutral retained identical sampled timber, edge, floor and HUD pixels; no
+whole-frame stationary or blocked-forward collision claim is made.
+
+PID 3725735 exited 0 after 450.302 seconds, final batch 11799. The enclosing
+execution-tool shell reported 143 despite the saved original exit 0 and normal
+driver completion; its cause is unknown. All 64 PNGs passed CRC/deflate checks,
+the full runtime gzip decoded, and focused identity/input/pixel checks passed.
+Owned captures were losslessly recompressed with equal decoded scanline hashes
+and exact-content hardlinks. Runtime controller minimum was 2,145,902,592 bytes;
+auxiliary minimum 2,145,906,688 bytes, both above 2,000,000,000. The auxiliary
+guard remained active through publication checks. It polled every 0.25 seconds,
+with controller checks on the output loop; no complete auxiliary sample history
+was retained, so sub-sample dips cannot be excluded. No RAM gate or foreign
+cleanup. Native local box ID/state/expiry N/A; own-process shutdown explicitly
+delegated. No tracked source/helper/test/config/backend/registration changes,
+build, browser, GPU, audio, FPS or full-suite claim.
