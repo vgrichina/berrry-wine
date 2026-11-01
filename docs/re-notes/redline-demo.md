@@ -1,5 +1,85 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Archive member: original bytes validated, selected execution still unobserved (2026-11-01)
+
+Run `20261101-redline-archive-member-cause` stops after **one original guest
+invocation**, with the exact observation gap preserved. No generic defect or
+repair is proven. The inspected original gameplay PNG still lacks textures,
+SHA-256 `ed66d12dab856c3c44ffd5e45cd088290612fe2aba75edb0b55bf275a9ecbd87`.
+Production and test files are unchanged by this worker.
+
+The original 71,788,765-byte `Redline.bgd` is parsed offline before runtime.
+Version 2 has **4,872 members**; its directory ends at **142,375**, and cumulative
+member lengths end exactly at EOF. Its SHA-256 is
+`840dc1421e88708bb64de686e6a996e2638c27693b25ecdb54237824c64808aa`.
+**`skymorning.tga` is absent. `skymorning.btf` is archive index 390**, length
+**22,540**, stamp **908,059,166**, offset **16,813,431**. Its extracted original
+bytes have SHA-256
+`4ef0740fb44f4d354d9bf6fbd34280e5a507bd3f3fd45609e944b7a9e13cd981`.
+Archive index 390 and resource-bank ID 723 are separate identities.
+
+Disassembly establishes lookup `0x4eeede` uses the last backslash for the
+basename, the last dot for the extension bucket, then case-insensitive name
+comparison in original bucket order. For these original ASCII names the compare
+is ASCII case-insensitive. It does not normalize forward slashes. The bucket
+list is geo/btf/tga/wav/anm/mot/skl/gld/ggr/other; a name without a dot fails.
+A separately implemented sequential parser and **9,747 lookup checks** verify
+all original member names, uppercase Windows paths and selected negative cases,
+plus an independent seek/read of member 390. Loader `0x4eec9b` uses the 20-byte
+record's length +4 and offset +0xc. Static backend code queries the requested
+TGA before considering its BTF alternative; a failed first lookup can reach a
+zero return without a member read. **This is static control flow, not evidence
+that resource 723 executed that lookup, alternative or return.**
+
+The materially different scratch observer wraps natural filesystem imports:
+open results, seek results, read results, close and selected filename-bearing
+file output. It tracks archive positions and retains only overlap with the
+selected member's physical byte range, comparing actual returned bytes with
+the original member. It can recover an archive frame with EBP zero only after
+validating archive self, index, length and offset; bank/backend recovery retains
+the existing parent/ID/metadata checks. Its selected quota is independent of
+unrelated calls. Offline tests verify late retention after 10,000 unrelated
+reads, lazy-997 retry positions, invalid-frame rejection, unchanged returns and
+whole shared-512-MB memory hashes. Actual preload/current-module bindings and
+the real filesystem imports/VFS with the complete original archive pass; the
+observed and unobserved VFS operations produce identical whole-memory hashes.
+No guest entry is invoked in these offline checks.
+
+The sole original invocation exits 0 in **56.614 seconds**. Natural import
+counts are 333 `fs_create_file_result`, 17 `fs_create_file`, 15,812
+`fs_read_file_result`, 623 `fs_seek_result`, 1,198 `fs_set_file_pointer`, 35
+`fs_write_file_result` and 345 `fs_close_handle`. There are **zero observer
+errors, zero drops and zero selected association records**. The final live
+archive table has 4,872 members and its index-390 name/length/stamp/offset
+exactly match the original parser. Resource 723 remains `skymorning.tga`,
+with the same observed sentinel metadata. These are live data identities;
+**they neither witness lookup execution nor establish backend absence or a
+successful selected read**. There is no second invocation: no new causal
+hypothesis or fix justifies repeating the missing association.
+
+**Exact missing observation:** the actual resource-723 TGA lookup result at
+`0x4eeede` / return `0x4eecc5`, including a miss before any natural host
+boundary; then the actual `0x4eec9b` member/read output if reached, associated
+with bank/backend return `0x4181d5` and its first zero/error guard. The prepared
+offline evidence does not fill that execution gap. No runtime/source diagnostic
+or speculative repair is added.
+
+Rune's final.txt/result.json and **04:49:27 runtime/source/build release**
+precede the fresh `flock /tmp/wine-build.lock bash tools/build.sh`, runtime and
+this note edit. All **4,389** recorded inputs are unchanged through the run.
+The actually loaded module is **2,025,634 bytes**, SHA-256
+`baef4e5a70f43b5d87fe086b4f5bd5b583c833e8bf07239ef05749f222035136`;
+all **130 actual loaded reads** match, as does the snapshotted region mirror.
+The prior module was used only for explicitly labeled offline preparation.
+Original registration/all 65 pins and all 70 fixture hashes pass before/after.
+Empty arguments, `C:\MAINDIR`, IFORCE2-only seeding, shipped settings, batch
+100,000 after 29,100 and clock 200 remain unchanged. No breakpoints, instruction
+counters, guest state writes or substitutions are used. Outer PTY150/kill-after5,
+inner120 and child TERM105/KILL110 guards are unused; all owned runtime PIDs
+and the outer group are absent. Evidence and the prepared observer are in
+`scratch/runs/20261101-redline-archive-member-cause/`.
+Box ID/state/expiry/handback: N/A; ownership none.
+
 ## Selected loader observation: container/member association still missing (2026-11-01)
 
 Run `20261101-redline-selected-loader-cause` **does not recover the selected
