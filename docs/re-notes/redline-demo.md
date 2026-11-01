@@ -1,5 +1,105 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+
+## Measured catch-up backlog (2026-11-01)
+
+Run `20261101-redline-catchup-runtime` establishes the immediate reason the
+ordinary CLI pump does not return during Stadium City selection: the main
+thread is completing updates inside a large fixed-step backlog. Traversals
+and callbacks return repeatedly; the accumulator decreases correctly. It has
+not drained by the final observation. This is a measured local CLI cause,
+not a mission-load fix or browser/WebGL qualification.
+
+The required current-main locked build passed before the focused fixture test
+and serialized runtime. Build-source HEAD was
+`bbfb46421afa71d0f3899f9dc3cd0ac2308183c8`, following `18dd486c0` and incoming
+`95b5a2440`. The actual compile inputs in both guest runs were the retained
+2,025,619-byte `tested-module.wasm`, SHA-256
+`168c61dae2861842948e5f9e29e4e18df93a6fab12c7d17f7dc85d75e34b7b55`.
+Its layout is `ccbc5bf6dfb9610e`, matching the current mirror (SHA-256
+`3926a7a2bda6727de2852155e9764b24b8909001d1e2c6ba62e0eb4cab708b11`).
+The mirror copy, full source maps and actual loaded-read manifests are retained.
+All 4,385 tracked source/test/tool/package input hashes were unchanged, as
+were all 123 observed file reads in each guest run. No old module, historical
+source overlay or identity bypass was used. Shared HEAD advanced through
+unrelated documentation during observation; it is not substituted for the
+recorded build-source identity.
+
+Read-only counters were armed at original pinned-EXE addresses `0x49e6db`
+(traversal entry), `0x49e8e8` (exit), `0x49e8d0` (callback return),
+`0x53ad0e` (update return), `0x53ad1f`, `0x53ad29` (catch-up exit),
+`0x53aa8a` (pump), `0x53aba3` (catch-up entry), and `0x53acff` (inner loop).
+Frozen-boundary read-only snapshots record time, accumulator, registers,
+stack, callback pointers, synchronization words and input queues. Counter
+instrumentation changes interpreter optimization/pacing, so these batch counts
+are diagnostic observations, not uninstrumented timing or browser throughput.
+
+| Batch | Time at `0x5b8740` | Accumulator at `0x5b8744` | Update returns | Traversal exits | Pump entries |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 24,000 | 4,248,003 | 15,537 | 804 | 803 | 958 |
+| 29,100 | 5,290,611 | 1,019,073 | 1,988 | 1,986 | 967 |
+| 35,100 | 5,290,611 | 965,613 | 3,608 | 3,606 | 967 |
+| 39,100 | 5,290,611 | 929,973 | 4,688 | 4,687 | 967 |
+| 47,100 | 5,290,611 | 858,660 | 6,849 | 6,847 | 967 |
+
+Across batches 29,100–47,100, 4,861 completed update returns subtract exactly
+160,413 = 4,861 × 33. Traversal entries and exits each increase by 4,861;
+callback-return count increases by 2,143,706. Catch-up entry remains 35,
+exit remains 24, the inner-loop drain-exit remains 5, and pump remains 967.
+Thus this interval is one progressing catch-up invocation, not one frozen
+600-entry traversal. At batch 47,100 the actual EIP is `0x49e872`, DX 436.
+The callback pointers sampled are `0x53aba3` and `0x52927a`.
+
+Between batches 24,000 and 29,100, one additional catch-up entry updates the
+stored time by 1,042,608 ms. Its effect reconciles exactly:
+15,537 + 1,042,608 − (1,184 × 33) = 1,019,073.
+The calculation uses 1,988 − 804 = 1,184 observed returns. The CLI's unchanged
+default is 200 ms per batch. A large elapsed-time addition paired with slower
+work completion explains the backlog on this route; no altered clock, budget,
+register, guest memory or configuration was tested. At the last snapshot,
+26,020 further 33-ms decrements would be needed if nothing else changes.
+Whether the full backlog drains and the next elapsed-time addition permits
+sustained pump progress remains unmeasured. No eventual mission load is claimed.
+
+The static mutex ambiguity is also resolved locally: guest `0x5b81b0` contains
+handle `0xe0002`. Its synchronization slot is type 3 (mutex), owner Win32
+thread ID 1, recursion 1 throughout the snapshots. Worker emulator tid 1
+(Win32 ID 2) remains at `0x4c2974`, waiting on that same handle; main continues
+executing. This documents a worker waiting for main's owned mutex, without
+establishing a circular deadlock. Main's nonzero diagnostic wait-handle field
+is stale while its active state/yield 0 and progressing counters are observed.
+
+The unchanged ordinary route opens DISPLAY at batch 11,000, accepts its
+original defaults, then Play, Start Up and held mouse/Enter New Game. The
+inspected batch-29,100 capture shows Stadium City mission selection. Enter
+down at 29,100 and up at 30,100 stay in the renderer queue through 47,100;
+observed dequeue/dispatch counts remain 6/5. The inspected final capture is
+byte-identical to mission selection. It is a menu, not gameplay.
+
+There were two actual guest runs, plus one Node preload-path failure before
+CLI/module/guest creation (exit 1, 0.056 s). Guest run 1 ended cleanly after
+batch 24,000 because the optional `input-state` diagnostic rejected a numeric
+request ID; its startup measurements and error receipt are preserved. Guest
+run 2 corrected the request ID to a string and completed the route above.
+Both used open PTY/control-stdin, outer `timeout --kill-after=5s 150s`, inner
+`--max-seconds=120` and ordinary `--spawn-processes` child guards inherited at
+120 s. Both ended by control `quit`, exit 0 (10.462 / 17.209 s including
+startup/control), without timeout, trap or signal. No guest requested a child.
+All recorded guest/outer PIDs are collected and absent. No box was acquired;
+box ID/state/expiry and lifecycle handback are N/A.
+
+`node test/test-redline-demo-registration.js --fixture` passed before/after,
+including full package, original archive and 65-file pins. The complete
+70-file host fixture hash maps match. Original EXE/IFORCE2-only seed, empty
+args, cwd and default DISPLAY route remain intact. Production and test files
+were not edited. Evidence contains commands, full control responses, inspected
+captures, build/test logs, module/source/mirror identities, quantitative
+`analysis.json`, and exit/cleanup receipts. Free disk stayed above 2 GB.
+No candidate-corpus ID exists; this remains investigation evidence, not a
+dashboard pass. Remaining work is eventual drain/pump-return and subsequent
+mission-load behavior under a separately scoped run; no further runtime was
+launched in this assignment.
+
 ## Mission callback localization (2026-11-01)
 
 Investigation `20261101-redline-mission-callback-cause` narrows the outstanding
