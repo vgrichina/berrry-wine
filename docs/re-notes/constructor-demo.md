@@ -888,3 +888,60 @@ or build are appropriate for this documentation-only change. Original runtime
 ownership was never acquired; local box/state/expiry N/A. Only this analysis
 watcher's shutdown is delegated and directly waited, with cleanup receipts
 retained. No menu/gameplay/FPS/audio/full27 conclusion is made.
+
+### 2026-11-01 default sequencer contract repair
+
+Run `20261101-constructor-sequencer-default-contract` repairs the demonstrated
+generic false positive in `tools/toyvm/dos.js`. The input source is the exact
+`d12f0d1e1` source, SHA256
+`eb60e2775196edd80113836830a36482ac50a1d425f3e505d09c4bac68b0f4bc`.
+No original game/configurator was executed, and its fixture was untouched.
+
+The existing model declares default `svga='none'` to be plain VGA.
+[IBM's September 1992 Video Subsystems technical reference](https://bitsavers.trailing-edge.com/pdf/ibm/pc/ps2/42G2193_PS2_Hardware_Interface_Technical_Reference_Video_Subsystems_Sep92.pdf),
+printed page 2-45, figures 2-25/2-26, defines sequencer address bits 2–0 and
+five data registers, indexes 00h–04h. Higher address bits are reserved, with
+unspecified readback. The register map does **not** specify data-port reads
+at absent indexes 5–7. Consequently zero here is an explicit deterministic
+ToyVM policy retaining the previous initial read value, **not** a hardware
+measurement or an IBM guarantee. No FFh bus-read assumption is made.
+
+The default now decodes three index bits, ignores data writes to absent
+indexes 5–7 and reads those indexes as zero. Thus EDh/EEh decode to absent
+05h/06h instead of writable backing slots 0Dh/0Eh. Defined register storage,
+map-mask updates, memory-mode transitions and word OUT splitting retain their
+existing behavior. The shared sixteen-byte storage and explicit selected
+Trident four-bit decoding, XOR-2 bank writes, version/bank readback and CRTC
+signature remain unchanged. This adds no chipset identity or memory claim.
+
+`test/test-toyvm-vbe.js --sequencer-only` exercises actual `Machine.portIn`/
+`portOut`, using the retained authentic save/clear/read/set/read/restore test
+with mask FFh. Before the source change both default ED/EE probes report
+clear=00h, set=FFh, writable=true, restored=00h; the regression exits1.
+Afterward both report clear=00h, set=00h, writable=false, restored=00h and
+all69 focused checks pass. Coverage includes omitted/default and explicit
+`none`, other absent indexes, defined register bit tests/restoration, index
+aliases, word OUT, actual planar/rechained pixel preservation, map-mask
+controls, absent default vendor signature and selected-model negatives.
+
+Full VBE passes102 checks, including its existing guest mode/banked-pixel
+checks. Existing DAC-default, retrace and Node-only browser-bundle tests pass;
+no browser was launched. The mandatory
+`flock /tmp/wine-build.lock bash tools/build.sh` passes, including generated
+bundle reproducibility. Both committed ToyVM bundles were regenerated normally.
+
+Evidence retains the old failure, new passes, exact commands/waits, policy
+reference, retained authentic trace/analysis, source pins and recovery recipe.
+The95 pinned ToyVM/support/generated/test files are unchanged during tests;
+the compiler observer records actual module bytes and synthetic COM hashes.
+VBE uses ToyVM module SHA256
+`03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`
+(343736 bytes); the repair is in host JS, so that module matches the earlier
+startup's module. The mandatory project build is a separate artifact.
+
+Only this generic contract is repaired. Supported SVGA detection, real
+memory/banking and the original configuration remain unverified; no playable
+Constructor claim follows. No E7 bit, model switch, VBE-version change,
+download, deployment or broad corpus run occurred. Disk remained above2GB;
+bounded task processes are waited/reaped and no foreign artifact is deleted.
+Local box ID/state/expiry: N/A; coordinator lifecycle is untouched.

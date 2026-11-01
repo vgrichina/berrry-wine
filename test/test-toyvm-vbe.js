@@ -28,12 +28,91 @@ const os = require('os');
 const path = require('path');
 
 const { runDos } = require('../tools/toyvm/run-dos');
-const { PSP_SEG } = require('../tools/toyvm/dos');
+const { Machine, PSP_SEG, VGA_BASE } = require('../tools/toyvm/dos');
 const fb = require('../tools/toyvm/framebuffer');
 const isa = require('../tools/toyvm/isa');
 
 const fail = [];
 const check = (ok, msg) => { if (!ok) fail.push(msg); console.log(`${ok ? 'PASS' : 'FAIL'}  ${msg}`); };
+
+// UVCONFIG's authentic 2A74:01CE masked test, reconstructed from retained
+// save/clear/read/set/read/restore I/O (run 20261101-constructor-original-startup).
+// Exercise the real Machine port path, including index decoding, rather than
+// assigning the backing register array or inferring a vendor from aliases.
+function sequencerChecks() {
+  const read = (m, index) => { m.portOut(0x3C4, index, 8); return m.portIn(0x3C5, 8); };
+  const write = (m, index, value) => { m.portOut(0x3C4, index, 8); m.portOut(0x3C5, value, 8); };
+  const probe = (m, index, mask) => {
+    const saved = read(m, index);
+    write(m, index, saved & ~mask);
+    const clear = read(m, index) & mask;
+    write(m, index, saved | mask);
+    const set = read(m, index) & mask;
+    write(m, index, saved);
+    const restored = read(m, index);
+    return { saved, clear, set, restored, writable: clear === 0 && set === mask };
+  };
+
+  for (const opts of [{}, { svga: 'none' }]) {
+    const label = opts.svga || 'default';
+    const m = new Machine(new Uint8Array(isa.VESA_FB + isa.VESA_FB_SIZE), opts);
+    const pair = [0xED, 0xEE].map(index => probe(m, index, 0xFF));
+    console.log(`${label} authentic ED/EE masked probes: ${JSON.stringify(pair)}`);
+    check(pair.every(p => !p.writable && p.saved === p.restored),
+      `${label}: unsupported ED/EE both reject the authentic full-byte test and restore`);
+
+    // IBM VGA defines indexes 00..04 and a three-bit address field. Reserved
+    // data indexes have no writable storage; zero is ToyVM's deterministic
+    // absent-register read policy, not a claimed physical bus voltage.
+    for (const index of [5, 6, 7, 0x0D, 0x0E, 0xA7, 0xC5, 0xED, 0xEE]) {
+      const before = Array.from(m.vga.seq.slice(0, 5));
+      const p = probe(m, index, 0xFF);
+      check(!p.writable && p.saved === 0 && p.clear === 0 && p.set === 0 && p.restored === 0,
+        `${label}: absent sequencer ${index.toString(16)} ignores writes and reads zero`);
+      check(JSON.stringify(before) === JSON.stringify(Array.from(m.vga.seq.slice(0, 5))),
+        `${label}: absent sequencer ${index.toString(16)} leaves defined registers intact`);
+    }
+    for (const [index, value, mask] of [[0, 3, 3], [1, 0x21, 0x3D], [2, 5, 15], [3, 0x15, 0x3F], [4, 0x0E, 0x0E]]) {
+      write(m, index, value);
+      const p = probe(m, index, mask);
+      check(p.writable && p.saved === value && p.restored === value,
+        `${label}: defined sequencer ${index} passes its bit test and restores ${value}`);
+      m.portOut(0x3C4, index | 0x88, 8);
+      check((m.portIn(0x3C4, 8) & 7) === index && m.portIn(0x3C5, 8) === value,
+        `${label}: three-bit index aliases to defined sequencer ${index}`);
+    }
+    // Word OUT must still split into the index in AL and data in AH.
+    m.vga.bpp = 8;
+    m.mem[VGA_BASE + 3] = 0x6B;
+    m.portOut(0x3C4, 0x0604, 16);
+    check(m.vga.planar && read(m, 4) === 6 && m.vga.unchainCount === 1
+      && m.mem[isa.VGA_PLANES + 3 * isa.VGA_PLANE_SIZE] === 0x6B,
+    `${label}: word OUT memory mode unchains and carries the picture into planes`);
+    m.portOut(0x3C4, 0x0502, 16);
+    check(read(m, 2) === 5 && m.mem[isa.VGA_CTL_MASK] === 5,
+      `${label}: word OUT map mask reaches the planar write controls`);
+    m.mem[isa.VGA_PLANES + 3 * isa.VGA_PLANE_SIZE] = 0x7C;
+    m.portOut(0x3C4, 0x0E04, 16);
+    check(!m.vga.planar && read(m, 4) === 0x0E && m.mem[VGA_BASE + 3] === 0x7C,
+      `${label}: restoring memory mode rechains the picture`);
+    m.portOut(0x3D4, 0x0C, 8); m.portOut(0x3D5, 0x55, 8);
+    m.portOut(0x3D4, 0x1F, 8);
+    check(m.portIn(0x3D5, 8) !== 0xBF, `${label}: no Trident CRTC signature`);
+  }
+
+  // The explicitly selected model keeps its existing four-bit index and bank
+  // protocol. These are compatibility checks, not authentic SVGA qualification.
+  const t = new Machine(new Uint8Array(isa.VESA_FB + isa.VESA_FB_SIZE), { svga: 'trident' });
+  write(t, 0x0D, 0x69);
+  check(read(t, 0xED) === 0x69 && t.portIn(0x3C4, 8) === 0x0D,
+    'selected Trident retains four-bit sequencer alias/read/write behavior');
+  write(t, 0x0E, 3);
+  check(t.svgaBank === 1 && read(t, 0x0E) === 0x81,
+    'selected Trident retains XOR-2 bank write and version/bank readback');
+  t.portOut(0x3D4, 0x0C, 8); t.portOut(0x3D5, 0x55, 8);
+  t.portOut(0x3D4, 0x1F, 8);
+  check(t.portIn(0x3D5, 8) === 0xBF, 'selected Trident retains its CRTC signature');
+}
 
 // Where the guest leaves its answers, in its own segment: one word per call at
 // 0x500 and up, and the BIOS blocks at 0x600. A .COM loads at 0x100 and this
@@ -272,4 +351,6 @@ async function main() {
   process.exit(fail.length ? 1 : 0);
 }
 
+sequencerChecks();
+if (process.argv.includes('--sequencer-only')) process.exit(fail.length ? 1 : 0);
 main().catch((e) => { console.error(e.stack || String(e)); process.exit(1); });

@@ -387,11 +387,10 @@ const VGA_DAC = vgaDacTable();
 
 function newVgaState() {
   const v = {
-    // Sixteen sequencer registers, not eight. A plain VGA has eight and the
-    // rest alias, but every SVGA of this era puts its own registers above
-    // them -- Trident's bank register is index 0x0E -- and masking the index
-    // to three bits does not "ignore" those writes, it lands them on a real
-    // register: 0x0E masked is 0x06, the memory-mode register.
+    // Storage also covers the selected Trident model's extended registers,
+    // including bank index 0x0E. Plain VGA has only indexes 0..4, with a
+    // three-bit address field; its absent slots must not become writable
+    // extensions just because this shared backing array is larger.
     seqIndex: 0, seq: new Uint8Array(16),
     gcIndex: 0, gc: new Uint8Array(16),
     crtcIndex: 0, crtc: new Uint8Array(32),
@@ -3071,7 +3070,13 @@ class Machine {
     if (port === 0x3C5 && this.svga === 'trident' && this.vga.seqIndex === 0x0E) {
       return 0x80 | (this.svgaBank & 0x0F);
     }
-    if (port === 0x3C5) return this.vga.seq[this.vga.seqIndex];
+    // IBM's VGA register map defines only 00h..04h (Video Subsystems,
+    // September 1992, pp. 2-45..2-50). It does not specify data readback for
+    // absent indexes 5..7. Keep ToyVM's initial zero as a deterministic
+    // absent-register policy, independent of writes, rather than advertise
+    // unsupported extensions to save/clear/set/restore detection probes.
+    if (port === 0x3C5) return this.svga === 'none' && this.vga.seqIndex > 4
+      ? 0 : this.vga.seq[this.vga.seqIndex];
     if (port === 0x3CF) return this.vga.gc[this.vga.gcIndex];
     // Trident: CRTC index 0x1F reads back CRTC 0x0C exclusive-ORed with 0xEA,
     // and that pair IS the detection every program of the era does -- write
@@ -3322,7 +3327,7 @@ class Machine {
     // the data in AH, and the recursion at the top of this function has
     // already split that into two 8-bit writes, so both spellings land here.
     switch (port) {
-      case 0x3C4: v.seqIndex = value & 0x0F; return;
+      case 0x3C4: v.seqIndex = value & (this.svga === 'none' ? 0x07 : 0x0F); return;
       case 0x3C5:
         // The Trident bank register. The value carries the bank exclusive-ORed
         // with 2, which is not a quirk worth hiding: a driver that writes 3
@@ -3374,6 +3379,7 @@ class Machine {
 
   vgaSeqWrite(index, value) {
     const v = this.vga;
+    if (this.svga === 'none' && index > 4) return;
     v.seq[index] = value;
     if (index === SEQ_MAP_MASK) {
       v.maskWrites++;
