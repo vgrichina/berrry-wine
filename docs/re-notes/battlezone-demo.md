@@ -838,6 +838,59 @@ group, watcher and new-temp absence is checked directly in `cleanup.json`.
 Native box ID/state/expiry are N/A; delegated own shutdown is complete.
 Only this note and ignored evidence changed. No FPS, audio or full-suite claim.
 
+## 2026-11-01: mission 2 defense attempt stopped by heartbeat read-order race
+
+Run `scratch/runs/20261101-battlezone-mission2-defense/` adds **no game
+progress** beyond the predecessor's deployed Recycler and purchased Turret.
+One original launched; the first real guard failure stopped it during startup,
+before the accepted route sent any game input. No retry ran.
+
+The exact `urban-chaos-allocator-probe-nov01` worker
+`01a19858-8ae8-77b0-92ac-ca7ae8890f24` author release, fresh launcher final/result
+and directly absent owned PIDs/groups opened the gate at **18:40:09 UTC**.
+Dispatch `39242f4b76421b468157ee51d7593037fcb527de` was repinned to main
+`f1f89cb096421bbcd8ed13d2fa19ae50346fd5e7`; the fixed deadline was **19:05:09**.
+Disk initially prevented launch. Coordinator-owned lossless cleanup subsequently
+met the unchanged 2,100,000,000-byte launch margin, with the 2,020,000,000-byte
+stop and 2,000,000,000-byte floor retained. Launch main was
+`f37832b9091a0b4774ad9296deebc7c752573e56`, with **2,101,334,016 bytes** free.
+
+At **18:49:54.288751 UTC**, immutable `guard-failure.json` records
+**future-monotonic-heartbeat**, age **−0.009168345 seconds**, with matching
+primary PID/start identity. The unchanged guard sampled its comparison clock
+at **1606203.522861289**, then read a concurrently published heartbeat stamped
+**1606203.532029634**. Its source samples the clock before reading the file;
+the retained values expose that read-order race. Later explicit-failure
+rejections and shutdown records remain separate from this initiating failure.
+The six-second stale limit was not exceeded. No guard correction or relaxed
+threshold was tried in this assignment.
+
+Original **4036505** has OS wait **0** after **87.513 seconds**, with the log
+ending at **258 batches** and an orderly SIGTERM shutdown. Driver OS wait is
+**−15** from owned supervisor cleanup. There are **zero game-input records**;
+the initial 280-batch step never acknowledged completion. No fresh PNG,
+mission 2 combat/objective evidence, native save or final frozen key sample
+exists. Previously reviewed standard PNGs and the original `Input.map` informed
+preparation only. This is a harness blocker, not evidence of a game crash.
+
+All **4,063 source/module pins**, **153 fixture paths/tree members**, and
+**128 observed runtime-read hashes** match. The actual compiled module remains
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Exact pins allowed reuse of the accepted locked build, focused tests and
+readonly observer validation; detached Node/Python exit-0, exit-7 and timeout
+controls passed in scratch. No production build, test or source changed.
+Primary/independent histories contain **2,300/2,297 samples**, minimum free
+disk **2,080,223,232 bytes**; finite samples do not establish unsampled history.
+Owned process/group, watcher and new-temp absence is checked directly.
+Native box ID/state/expiry are N/A; delegated own shutdown is complete.
+
+`RECOVERY.txt` preserves the exact route and blocker. Before a separately
+authorized original attempt, correct and test the heartbeat comparison's read
+ordering while retaining genuine future/stale, identity, failure-file and
+independent disk/deadline enforcement. Then advance the existing Turret through
+ordinary positioning/deployment to visible defense combat or additional orders.
+No FPS, audio or full-suite claim.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
