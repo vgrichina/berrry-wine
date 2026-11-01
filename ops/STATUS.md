@@ -1,7 +1,7 @@
-Current 2026-11-01T06:11:05.889123+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T06:22:47.104319+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Redline01a195b8 owns runtime to diagnose severe stripes after the published texture-upload repair. Rune cave gameplay and W movement are verified.
+Redline01a195c5-fae9 owns runtime for a same-frame render-target/presentation check. Sampled texture bytes match, but the inspected scene remains striped; movement remains unqualified. Rune cave gameplay and W movement are verified.
 
-Dark Reign2 exits before its menu because both devices fail its mipmapping capability check. I inspected the teal capture and verified source/original hashes. Fresh worker01a195bb checks that requirement against actual renderer support, offline until Redline releases runtime. Mission control remains unverified.
+Dark Reign2 lacks native mip-level sampling required by its startup check. Its lane is blocked without advertising unsupported capabilities. Tachyon01a195c5-ff11 prepares flight controls offline until Redline releases runtime, first checking for later accepted gameplay evidence.
 
-GL mipmap/texgen tests remain unrun. Starlancer awaits the owner’s licence decision, Telegram1772. Two workers, serialized runtime, disk floor2GB. Browser access, full27 and held algorithms remain open. No deployment.
+Starlancer awaits licence authority in Telegram1772. GL tests/full27 remain unqualified. Two workers, serialized runtime, disk floor2GB. Browser access and held algorithms remain excluded. No deployment.
