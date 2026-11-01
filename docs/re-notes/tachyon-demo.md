@@ -171,3 +171,49 @@ The prepared scratch route deliberately stops before repeating the prior
 throttle/turn/fire checks. The next prerequisite is sufficient launch disk
 headroom; ordinary Insert input and the current displayed instruction remain
 unverified by this attempt.
+
+## Native Insert and Luna approach, 2026-11-01
+
+One original invocation in `scratch/runs/20261101-tachyon-training-margin/`
+advanced the observed route beyond the earlier controls checkpoint. The reviewed
+baseline at batch 3450 displayed “HOLD DOWN THE INSERT KEY TO SLIDE”. Ordinary
+Insert (VK 45) was held at 3450–3480 and 3490–3590, with releases after each hold.
+Actual `DispatchMessageA` traces record down/up at 3451/3482 and 3490/3591;
+before/held/released input-state snapshots show empty scheduled, pending,
+cross-thread and renderer queues. The 3590 held and 3610 released captures display
+“Destination: Venus - Training Sector”, “Jumps: 2”, “Head to Luna”. This proves
+native input consumption and the displayed transition during the hold; it does
+not isolate slide physics or prove that Insert caused the timed objective change.
+
+The native `?` keychart was reviewed, then targeting and arrow inputs followed
+the Luna objective. Luna is visibly selected by batch 3738. A gate-opening
+animation appears at 3761/3781, but the cockpit at 3981 still says “Jumps: 2 / Head
+to Luna”, so that animation is not evidence of a completed jump. Later reviewed
+approach captures show Luna range decreasing from about 27.9 at 4080 to 22.1 at
+4257. The final controlled capture at 4277 shows range 22.51 and the same objective.
+Luna arrival and mission completion remain unverified. `review.json` names the
+reviewed pairs; raw commands, responses, dispatch traces and PNGs are retained.
+
+The Launch cursor had remained at (320,440). Neutral intervals continued to
+change heading; moving the native cursor to (320,240) at 4147 produced more
+stable paired views. This is a navigation confound, not a proven emulator defect.
+Three intermediate input-state snapshots still had renderer messages pending;
+later steps consumed them. Every requested keydown has a matching actual
+dispatched keyup, and the final observed queues are empty. Physical Insert/arrow
+key-state fields and the guest post queue were not independently sampled.
+
+The initial gate stayed scratch-only until Redline worker
+`01a195ed-24ef-7f61-a7ba-05ddac7b9401` had fresh final/result files and its
+07:14:16 UTC explicit runtime/source/build release. Gate-open main was
+`0f9825de5abb2ce9c06f78380662da975be6b072`. All 4,390 source inputs, 122 prior
+loaded inputs, the module and region mirror matched the accepted locked build;
+no rebuild was required. Actual loaded module SHA-256 was
+`330b120d64cfd4aebdd945c99a95022dbd97db7ee6962d7ec534c24da466011b`.
+Observer validation passed actual sync/async emitted callbacks, whole shared
+512 MB memory and guest-clock read-only checks, and bounded late-10,001 retention
+before runtime diagnostics. Source, actual loaded inputs and all 15 original/
+manifest identities were rechecked after exit. Existing recorded licence
+authority and registry configuration were retained; no new EULA or file/config
+changes were made. The original exited 0 after 415.898 seconds at batch 4277,
+within the 850/900-second inner/outer limits. No second invocation, runtime
+repair, remote box, browser or GPU was used. No audio, FPS or broader demo claims.
