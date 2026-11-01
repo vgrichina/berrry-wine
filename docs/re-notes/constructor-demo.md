@@ -945,3 +945,95 @@ Constructor claim follows. No E7 bit, model switch, VBE-version change,
 download, deployment or broad corpus run occurred. Disk remained above2GB;
 bounded task processes are waited/reaped and no foreign artifact is deleted.
 Local box ID/state/expiry: N/A; coordinator lifecycle is untouched.
+
+### 2026-11-01 original startup after the default sequencer repair
+
+Run `20261101-constructor-repaired-default-startup` executes the authentic
+default `GAME.EXE` once after repair `77a0cea88`. **UVCONFIG now exits0;
+the parent reports `Problem reading SETSND.CFG (0x0)` and exits1 at
+`0549:26EB`.** The inspected `startup.png` is an 80x25 text console with
+overlapping configurator output, the sound-configuration error and subsequent
+initialization/SFX messages. No menu, intro, ordinary input or gameplay was
+reached. This is changed-source startup progress, not validated SVGA support.
+
+The exact GTA recovery worker's author release `124d0bda1`, terminal launcher
+exit0/final and fresh direct absence checks for all seven reported helper PIDs
+preceded the runtime/source/build claim. Box ID/state/expiry are N/A; own
+helper/game shutdown was delegated. No source/build changes occurred here.
+
+Before and after the run, all28 authentic manifest files match sizes/SHA256
+(63205318bytes), and the directory's complete file set is exactly those28.
+The fresh actual public `DESKTOP_APPS` list contains46 entries and excludes
+Constructor. Source checkpoint `124d0bda1745b544faeafbb6f23f087fac23d6ae`
+has378 unchanged source/support/manifest pins; repaired `tools/toyvm/dos.js`
+SHA256 is `5fad1c4e4a64ca69e54c088884b1fe313a61a99300dd6b852095fc579ee0f9c4`.
+All95 accepted regression pins still match. The focused69/fullVBE102 checks,
+DAC/retrace/bundle checks and mandatory build from the repair run were reused,
+without rerunning synthetic suites or building.
+
+Native Node v24.18.1 runs the existing default ToyVM tailcall module. The
+identity-only compiler observer returns the original bytes, recording actual
+module SHA256
+`03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`
+(343736bytes) and WAT SHA256
+`29bdf4e754aa46d8e2f083b5bbb8e9fb9c9f2725c4b2503a25b11786234dfbc0`.
+The module matches the earlier run because the repair is host JS. This route
+does not load the project `build/wine-assembly.wasm`.
+
+The single command retains default hardware and original executable, with
+`--dispatches=200000000 --seconds=30`, supported interrupt/fault/entry tracing,
+`--trace-io=3c4,3c5 --report --text --png=.../startup.png`, and GNU timeout90s.
+No selected Trident/model, VBE bump, E7 fabrication, alternate executable or
+guest patch was used. Actual log size190150bytes is below the2000000-byte cap.
+
+The relevant comparison is the retained `20261101-constructor-original-startup`
+probe/exit evidence and its accepted static branch mapping. Previously ED/EE
+both passed writable-register tests, E7 read00h reconstructed256KiB, and
+UVCONFIG exited6. Here ED's save/clear/read/set/read/restore sequence at
+42.9877–42.9880M dispatches reads00h after both00h and FFh writes. There is
+no EE or E7 probe in the captured port trace, consistent with the mapped
+early rejection at the first failed Hualon test. No intermediate instruction
+trace is claimed. The new child executes the same `-gen -p.\settings\`
+command and returns0 via `INT21/AX=4C00` at `0EFE:0163`; parent `4D00`
+obtains0. Twelve VBE controller queries and two mode-info queries succeed;
+there is no4F02 mode-set or4F0A request. The configurator also attempts legacy
+BIOS modes, as retained in the log; those attempts do not establish correct
+geometry, banking or visible graphics.
+
+The runner reports creation of `settings/UVCONFIG.DAT` and `settings/univbe.drv`
+and the parent reads the generated driver. These remain in the in-memory
+overlay and were neither persisted into the fixture nor separately exported.
+The visible label says `InteGraphics IGA168x Internal Clock`; **this is a
+configurator label, not proof of an InteGraphics adapter or a valid driver**.
+The accepted branch mapping only explains rejection of the old Hualon path;
+it does not establish why a later detector accepts. The next graphics
+dependency is to map that new acceptance against genuine default register/
+BIOS contracts and validate its rejection or real implementation before
+accepting supported SVGA. No second original attempt was made.
+
+The first explicit parent configuration error is the genuinely absent
+`settings/setsnd.cfg`; the authentic manifest contains no such file.
+`SETSOUND.BAT` still invokes `MUSIC/SNDSETUP.EXE` from MUSIC and returns to
+the parent directory. Once graphics behavior is credible, that original
+ordinary setup workflow is the concrete sound-configuration dependency.
+No synthetic configuration, sound setup or audio bypass was attempted.
+Other unhandled-call and six aggregate decoder-giveup sites remain retained;
+their chronology/causal role in the final exit is not established here.
+
+The parent completes158.3M rounded dispatches and15.81 guest seconds, ending
+in mode3; these are not FPS/audio measurements. OS runner completion is0,
+distinct from guest parent exit1 and child exit0. The supervisor actually
+waits for timeout PID33912 (exit0,5.898180s total), which owns/reaps Node33913.
+Board watcher33911 is terminated and waited (exit-15); supervisor33637 and
+all runtime PIDs are directly absent afterward. Runtime disk minimum is
+2030686208bytes with the unchanged2020000000-byte stop threshold; a separate
+independent floor guard also covers preparation/publication above2GB.
+Own helper cleanup receipts are retained; foreign processes/artifacts and
+coordinator lifecycle are untouched.
+
+Evidence and recovery recipe are under the named run: `result.json`, actual
+screen/log, `boundary-excerpts.log`, source/fixture/module identities, accepted
+regression reuse, GTA release gate and separate OS-wait/cleanup receipts.
+Use retained evidence without relaunching. No download, browser, boat, EULA,
+deployment, registry/TODOS/STATUS edit, general SVGA, full27, FPS, audio or
+playability claim follows from this run.
