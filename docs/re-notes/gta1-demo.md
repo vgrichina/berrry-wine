@@ -1,5 +1,34 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Checkpoint-input repair second resource boundary, 2026-11-01
+
+The fresh assignment after `741117e0a117a752038b82c2488dcf1194232022`
+passed its entry disk check at **2,046,525,440 bytes available**, but its
+independent guard subsequently measured **1,990,922,240 bytes**, below the
+unchanged **2,000,000,000-byte** floor, during static read-only preparation.
+The guard latched a stop and the task stopped without an unchanged retry.
+Constructor still owned serialized source/build/runtime; its release had not
+arrived. No runner/shared-source edits, test, build, fixture verification or
+original GTA run started. Checkpoint input remains unimplemented, and there
+is no new language-selection or player-control evidence.
+
+Evidence is retained in
+`scratch/runs/20261101-gta1-checkpoint-input-repair-run2/`: `disk.jsonl`,
+`STOP`, `guard.py`, `guard-cleanup.json` and `verification.json`.
+The guard actively terminates registered task-driver process groups with
+TERM followed by KILL on a breach, rather than merely exiting. No registered
+driver or game children existed at this boundary, so that termination path
+was not exercised. Its board watcher was terminated and actually waited
+with status -15; the guard's actual tool wait was 0, and both PIDs were
+directly verified absent. Box ID/state/expiry and actual module identity
+are N/A. No foreign deletion, RAM gate or floor reduction occurred.
+
+Only this blocker note is published. A future assignment needs sustained
+headroom above its required floor and Constructor's exact release before
+implementing and testing the supported native checkpoint API, building, and
+attempting the single bounded default original run. No code commit or
+gameplay/full-corpus acceptance is claimed here.
+
 ## Checkpoint-input repair entry prerequisite, 2026-11-01
 
 The checkpoint-input implementation assignment following
