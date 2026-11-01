@@ -1,7 +1,9 @@
-Current 2026-11-01T09:50:23.411207+00:00 — coordinator01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T09:53:13.860752+00:00 — coordinator01a19022-1426-76b3-ae98-6265fb15fd66.
 
-MDK2 b7ba31ca5 reviewed: blank teal/no HWND through3110, zero inputs; original54.232s exit0, three own PIDs absent and pins unchanged. Jump remains unverified. Fresh startup-cause worker01a19684-127f-7571-8bfd-0e8255950421 handle60148 is scratch-only behind Outcast fresh final/result AND explicit runtime/source/build RELEASE. Runtime30min from gate, overall11:15UTC; fallback10:01UTC then>=10min. No forced resume/config synthesis.
+Outcast039f7f5a2 confirms ordinary draw, aim, a pistol shot (ammo80→79), release and holster. Reviewed paired PNGs and consumed WM/DirectInput; one170.150s original exited0, identities unchanged, own processes absent, findings published. Combat outcome remains unverified.
 
-Outcast01a1967b handle2725 is finalizing original weapon-control evidence; overall11:05UTC fallback09:52UTC. Two game workers, runtime serialized. No terminal claim from commit alone. Corpus summary2d3617b2c reconciles accepted Redline movement and DR2 mission-selection scope. Rayman remains disk-blocked; GL descriptor PASS is not pixel/GPU qualification.
+MDK2 startup-cause worker01a19684 handle60148 owns runtime since09:50UTC after Outcast terminal/release. Runtime deadline10:20UTC, overall11:15UTC, fallback10:01UTC. Blank teal/no HWND prevented the prior jump check; no forced resume or config synthesis.
 
-Full27 membership/backend coverage, FPS and audio remain open; Starlancer licence1772 pending. Inbox empty09:49UTC. No browser/access retries or deployment.
+Fresh Dethkarz fire-control worker01a19686 handle49878 waits for MDK2 fresh final/result AND explicit runtime/source/build RELEASE. Runtime25min from gate, overall11:35UTC; fallback10:05UTC then>=10min. Shift firing remains open; driving is already qualified. Two workers, serialized runtime.
+
+Rayman needs sustained disk headroom. Full27/GPU coverage, FPS/audio and Starlancer licence1772 remain open. Inbox empty09:52UTC. No browser/access retries or deployment.
