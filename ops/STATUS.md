@@ -1,7 +1,7 @@
-Current 2026-11-01T03:07:20.419067+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T03:13:15.160610+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Redline reached first-person local CLI gameplay with reviewed movement, turning and firing captures. Its next run investigates incomplete textures and HUD detail using that route.
+Redline reached first-person local CLI gameplay with reviewed movement, turning and firing captures. The latest texture investigation reproduced the image but failed before reading resource state; the rendering cause remains unproven and no repair was made. A corrected frozen snapshot task is prepared.
 
-Rune’s renderer-child startup is repaired: preserving the original DLL guest path keeps its working directory correct and lets original INIs open. The child now detects Direct3D and exits successfully. The locked build and four focused tests passed; ordinary wizard progression and gameplay remain next.
+Rune’s renderer-child startup repair passed the locked build and four focused tests; the child detects Direct3D and exits successfully. Fresh worker 01a19518 now advances through ordinary wizard UI toward gameplay, sole runtime, deadline03:43UTC/fallback03:23UTC.
 
-Original game files stayed unchanged. Runtime tests remain serialized. Browser testing awaits authorized file transfer after SSH403. Full GL/D3D27 coverage remains open; REP is held and Crimsonland needs authentic installation. No public deployment.
+Original game files stayed unchanged. Runtime tests remain serialized under the two-worker cap. Browser testing awaits authorized file transfer after SSH403. Full GL/D3D27 coverage remains open; REP is held and Crimsonland needs authentic installation. No public deployment.
