@@ -212,3 +212,62 @@ N/A. Owned runtime shutdown was explicitly delegated. Cleanup, publication and
 final/result records in the run directory document ownership handback. The
 concrete blocker is the worker's startup step timeout; any further attempt
 requires a separate assignment rather than continuing this stopped run.
+
+## 2026-11-01 small-step confrontation attempt: startup readiness bound
+
+Evidence: `scratch/runs/20261101-urban-chaos-small-step-confrontation/`.
+No new confrontation or interaction outcome. One original, zero gameplay inputs;
+historical movement is not counted again. Only scratch controllers changed.
+
+The exact `battlezone-target-hit-corrected DONE/PUSH RELEASE` author line at
+15:05:43 UTC, terminal launcher final/result (exitCode 0), and direct absence
+checks for eight predecessor PIDs and five groups passed the gate at 15:06:13.
+Actual main was `60500ae55fa28dc658402496afb6e36f88d4296f`, advanced from dispatch
+`c6fba571254a85245166115a08880cec00dc911d`; the gate deadline was 15:31:13 UTC.
+
+All 1,122 manifest paths matched, including explicitly reconstructed config.ini;
+Fallen.exe retained SHA256
+`8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`.
+Complete accepted build reuse matched 4,392 source pins and 141 recorded reads;
+no new build was required. Actual runtime WebAssembly.compile observed module
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Fresh offline observer validation passed actual sync/async execution, whole
+512 MB shared-memory read-only comparison, host/native clock identity and late
+event retention through 10,001. Before/after comparison passed 4,444 source
+identities, 1,124 fixture/manifest identities and 132 actual observed reads.
+Observation covers sync whole-file and fully covered bounded descriptor reads;
+async file APIs, compiler reads and guest-memory content identity are not covered.
+
+Native registered CLI retained software rendering, `--no-build --control-stdin
+--frozen --trace-input-dispatch`, batch-size 100000 and the accepted observer.
+The actual stdin protocol was read before launch. All 31 sequential step requests
+were exactly 25 batches, each with a 180-second controller bound; every reply
+arrived. The earlier step75/120-second request was not repeated. Final batch775
+advanced in 1,379.457 runtime seconds. All 32 PNGs have identical decoded pixels:
+the reviewed plain teal 640x480 startup surface. PNG CRC/deflate and full gzip
+validation passed. Thus the controller sizing fix permits continued stepping,
+but Setup Okay, title/map/briefing, HUD, controls and alley remain unreached.
+
+The first blocker is visible startup readiness not reached before the controller's
+shutdown reserve. The incremental loop stopped at 15:29:17; its 23-minute outer
+guard then requested ordinary quit, received acknowledgement, and requested
+orderly SIGTERM. Exit0 after 1,380.891 seconds was inside the 25-minute gate bound.
+No individual step timeout or crash occurred; batch progress does not establish
+a game freeze or its cause. The exit log reports one main-owned held critical
+section; its causal significance is unestablished. No second original or bypass.
+
+Final batch775 input counters are all zero, with known scheduled/pending/
+cross-thread/renderer queues empty. Explicit host per-key physical/async/pressed
+and mouse-button samples remain unknown; released state cannot be claimed.
+Guest post queues and SDL consumption are unknown. The bundled language file
+names combat actions without binding values; no binding was invented. Combat
+before/held/released/settled captures and matched gameplay neutral are unavailable
+because readiness failed. No audio, FPS, browser/GPU/touch or full-game claim.
+
+Controller minimum free disk was 2,041,864,192 bytes, above the required floor;
+the separate guard and publication samples are retained with finite sampling-gap
+limitations. No RAM gate or foreign cleanup. Local box ID/state/expiry are N/A;
+owned shutdown was explicitly delegated. Cleanup/publication/final/result records
+document absent owned processes, groups, watchers and new child temps, and handback.
+Further work requires a fresh assignment to investigate the startup-readiness
+blocker; this attempt stops without source or configuration changes.
