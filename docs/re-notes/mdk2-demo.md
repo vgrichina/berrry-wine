@@ -158,10 +158,63 @@ How it was found (tools worth reusing; boat-only hooks in
 ## Open
 
 - Jump: the binding is the game's own (Mouse B2) and the button is mapped;
-  not yet seen in lit play, because the reliable route now lands in the black
-  world.
+  not yet verified in lit play. The historical FSCALE fix reached the lit
+  room, but the bounded native check below stopped before window creation.
 - Playwright WebKit on Linux has no WebGL on a Worker's OffscreenCanvas
   (control: `getContext` returns null there, a main-thread canvas works), so
   the GL render worker cannot create a context and the game area stays gray.
   Real iOS Safari 17+ has worker WebGL; the WebKit touch pass used
   `?gl-renderer=software`.
+
+## 2026-11-01 bounded native jump check: startup blocker
+
+Run `scratch/runs/20261101-mdk2-lit-jump-control/` leaves jump/landing open.
+One unchanged original ran for 54.232 seconds with the registered `mdk2_demo`,
+default software renderer, cooperative scheduler, 100000-block batches,
+200 ms guest ticks, and frozen CLI control. Small steps reached batch 3110;
+reviewed captures at batches 10, 110, 1110 and 3110 remained blank teal.
+Snapshots at batches 610 and 2610 reported no windows and no main/focus HWND.
+Main EIP stayed at `0x4515cd` (the return after the indirect call at
+`0x4515c7`); the sole worker, handle `0xe1000`, start `0x481331`, remained
+active with suspend count 1. This is the first observed failure, before the
+title click or tutorial route. Its cause was not diagnosed; this run does
+not establish recurrence of the historical GL-init/FSCALE faults.
+
+No ordinary input was sent: scheduled, enqueued, dequeued, routed and
+dispatched counters were all zero at batch 3110. There is no lit-play,
+same-life before/held/released/landed series or consumed Mouse B2 receipt,
+and no jump, landing, movement or player-versus-camera claim. The original
+exited 0 after an ordinary CLI quit. No second original or repair was tried.
+
+Actual source baseline was `c0c991a95002574a602fa1dfeb50e0d980084b50`
+(dispatch baseline `0a33e2db441b3e7dfd987783b0e47229500420b7`). Fresh
+predecessor final/result and explicit runtime/source/build release were
+verified before the 09:40:14 UTC gate; its runtime deadline was 10:10:14 UTC,
+within the overall 10:34:34 UTC bound. The accepted build's 4392 input hashes
+and 141 recorded build reads matched, so it was reused. All 4444 pinned
+source/module files and all 28 installed-tree files plus the manifest
+were unchanged afterward. The original EXE is 761856 bytes, SHA-256
+`b3e0226e411abff17ddabb723e493e95579490cb49bfe3787b1eade1144e27c1`;
+manifest SHA-256 is
+`a0c90df1480e9e81c5734dca97a8e8b308c3709e87964433fe1f4df5875c6316`.
+The existing 88-byte `save/config.lua`, derived from the launcher capture
+documented above and already installed by the retained candidate recipe,
+remained SHA-256
+`87261f003683d21f366e28e3c37c89d85804e69daaa2348b17da15bfe8e902ba`.
+No config synthesis, download, installer or default changes occurred.
+
+The observed WebAssembly compile input matched the pinned production module
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+All 124 recorded synchronous file reads matched their final local hashes.
+The reused observer passed actual synchronous/asynchronous execution,
+whole shared 512 MB memory equality, clock identity, and emitted late-10001
+retention checks. These validation executions do not extend file-read
+coverage: asynchronous/promise/stream reads, incomplete/unclosed descriptors,
+descriptors over 24 MiB and reads after the exit flush remain gaps.
+Compilation reads are not game runtime reads; compiled-Module instantiation
+did not emit separate instance bytes. Logs are compressed and size guarded;
+minimum free disk during execution was 2249818112 bytes. Native local box
+ID/state/expiry are N/A. Evidence includes `verification.json`,
+`input-consumption.json`, `scheduler-snapshots.json`, full before/after pins,
+reviewed PNGs and `runtime.log.gz`. No browser/GPU/audio/FPS or broad
+playability conclusion follows from this startup check.
