@@ -181,3 +181,101 @@ Boat ID/state/expiry: N/A, local run. No agents, workers, successors or deploy.
 Next boundary: continue the original Easy docks route to a confirmed targeted
 hit or native objective interaction; qualify audio and FPS separately. No
 emulator failure or defined-use repair boundary was encountered in this run.
+
+## Native docks control and first route blocker, 2026-11-01
+
+Run: `scratch/runs/20261101-heretic2-native-objective-control/`. One native
+original, 415.917 seconds, exit 0; no second original. This run reached Easy
+docks but **did not establish an enemy hit or objective completion**. The first
+unresolved obstruction on the attempted route is the wooden crate immediately
+in front of the closed, carved double doors beneath the lit stone archway.
+This is a navigation result, not a demonstrated emulator defect or proof that
+every other route or target is inaccessible.
+
+### Ordinary route and paired evidence
+
+The book menu was visible at batch 100. Balanced Enter, Down, Enter selected
+Game → Easy (`game-menu.png`, `easy-selected.png`, `easy-intro.png`). The
+native intro advanced to loading without the previous browser Escape/resume
+sequence. Space down/up at batches 445/450 was queued during loading and
+dispatched at batch 673; it is not evidence of advancing a Raven-logo frame.
+`readiness-1030.png` shows playable docks facing the archway across the pier.
+The no-input interval through batch 1530 left Corvus at the starting dock;
+health fell from 100 to 98 without an attack input. Its cause remains unknown.
+
+Up moved Corvus off the pier to the large crate beside the archway
+(`approach-long-before/held/released/settled.png`). Right turns explored the
+adjacent waterside path, where forward holds did not produce continued
+progress, then returned to the arch. The approach triggered the original
+caption “Walk into low ledges to automatically climb onto them.”
+`enter-arch-held.png` retains this caption. This proximity caption is not
+claimed as a completed objective.
+
+Ordinary comma/period sidesteps and a short Left correction aligned Corvus
+with the crate inside the arch; these supplemented Up/Right, Ctrl, `a` and
+Space. No console, config, save, map or state injection was used.
+`crate-walk-before/held/released/settled.png` shows a forward running pose
+against the crate followed by standing on the same floor. The identified
+attack target was this wooden obstruction, **not an enemy**:
+`crate-attack-before/held/released/settled.png` shows the red projectile and a
+dark surface mark, but the crate remains intact and the doors stay closed.
+There is no outgoing damage, breakage, kill or objective claim from that shot.
+
+Jump/forward attempts likewise ended back on the floor. The final aligned
+attempt is retained as `aligned-climb-before.png`, `aligned-climb-forward.png`,
+`aligned-climb-held.png`, `aligned-climb-late.png`,
+`aligned-climb-released.png` and `aligned-climb-settled.png`: Corvus raises his
+arms and becomes airborne beside the crate, then returns to its near side.
+The earlier Space action trial (`door-action-before/held/released/settled.png`)
+did not open or remove the obstruction. `blocker-neutral-before.png` and
+`blocker-neutral-after.png` provide a matched 100-batch no-input interval;
+the crate, doors and arch remain in place. Camera movement during turns and
+jumps is visible and is not evidence of traversing the obstacle. No living
+enemy was identified before stopping. The next gameplay question is how to
+pass or bypass this first obstruction with ordinary controls.
+
+### Identity, validation and release
+
+Dispatch input was `dd82ceb03a91273408caf743e64f4a5e4bde06a5`. The gate passed
+at 12:34:18 UTC only after Rayman2 worker
+`01a19704-c68b-7920-9012-2f41436c746c` had fresh launcher `final.txt` and
+`result.json`, plus its 12:34:09 explicit runtime/source/build release.
+Actual main at the gate and source pin was
+`065d2c6838eb381a62d63f87b94d30d1d45aa40d`; the runtime deadline was 12:59:18.
+The registered arguments, stock files and
+`wallClock: '1998-09-01T12:00:00Z'` were preserved. The native CLI used the
+existing WAT software GL renderer (`--gl-renderer=software`), 640×480 captures,
+100,000-instruction batches, frozen stepping and ordinary input dispatch.
+No browser, GPU, Boat, acquisition, install or new EULA was involved; the
+previously reviewed personal-play licence was reused without guest-code
+inspection, modification, disassembly or reverse engineering.
+
+Before/after checks match all 1,825 independently compared original files
+(63,842,666 bytes), full tree membership, the browser manifest and all 1,824
+manifest sizes. All 4,444 source/module pins and 860 observed runtime file
+reads match. The accepted build's complete 4,392 input pins and 141 recorded
+build reads matched, allowing reuse without a fresh build. Actual runtime
+compilation received module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Runtime compilation identifies module bytes; it is not proof of compiler
+source reads. The observer covers string-path synchronous, callback and
+promise file reads, not every descriptor or direct OS I/O path.
+
+The observer validation actually executed synchronous and asynchronous Wasm
+instances, preserved all 536,870,912 shared-memory bytes and clock identities,
+and retained the last 64 events after 10,001 late events. All 104 PNGs passed
+chunk CRC and full IDAT decoding; the complete compressed runtime log decoded.
+All 56 ordinary key edges were dequeued, routed and dispatched; known input
+queues were empty at the final capture. Guest post-queue coverage is unknown.
+Identity checks, input records, landmark comparisons and reviewed captures are
+retained in `verification.json`, `input-consumption.json`,
+`pixel-landmarks.json`, `controls.ndjson` and `manual-controls.ndjson`.
+
+The live controller sampled disk continuously, minimum 2,155,077,632 bytes,
+above the 2,000,000,000-byte floor. Its owned Node runtime exited normally on
+the delegated shutdown request. The auxiliary pre-gate guard/watcher ended
+when their launcher session closed; controller monitoring covered runtime.
+Local box ID/state/expiry: N/A. No audio, FPS, browser/native parity or full
+suite claim is made. Only this note is tracked; evidence and control helpers
+remain in the ignored run directory. `cleanup.json` verifies owned runtime,
+helper and watcher PIDs/groups absent and no new temporary directories.
