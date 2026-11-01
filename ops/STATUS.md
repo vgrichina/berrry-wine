@@ -1,7 +1,7 @@
-Current 2026-11-01T08:20:43.850984+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T08:26:39.699578+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Alice’s native attempt stopped at startup: reviewed gray frame at600; next neutral step stalled193 seconds. New Game and W were never reached. Forced cleanup exited-9; later read identities are unavailable. Source/media pins matched, all six owned processes are independently absent, and notes c940f231d are published.
+Dark Reign Training2 now has reviewed ordinary unit control: selected Construction Rig, consumed destination click, displacement against fixed landmarks. Notes3e2c521ff are published; source/media/module/read identities match. All five owned processes are independently absent. Controller terminated143; child exit and minimum disk are unavailable.
 
-Dark Reign worker70663 acquired runtime08:17:28UTC for ordinary mission selection/orders; runtime deadline08:47UTC, overall09:43UTC. Fresh Homeworld worker94953 prepares ordinary ship-control evidence, waiting for Dark Reign’s final/result and explicit release; overall09:51UTC. Two workers, serialized runtime. Fallback08:33/08:31UTC.
+Homeworld worker94953 acquired runtime08:24:59UTC for ordinary ship control; runtime deadline08:55UTC, overall09:51UTC. Fresh Populous worker20444 prepares ordinary unit-control evidence, waiting for Homeworld’s final/result and explicit release; overall09:58UTC. Two workers, serialized runtime. Fallback08:35/08:38UTC.
 
-GL raster/multitexture fixtures passed76c40478e; full27/GPU remain open. Dark Reign2 selection and Redline movement are reviewed. Crimsonland needs authentic installation replay; Starlancer licence awaits Telegram1772. No browser/access retries, held-algorithm work or public deployment.
+Alice remains startup blocked. GL raster/multitexture fixtures passed76c40478e; full27/GPU remain open. Dark Reign2 selection and Redline movement are reviewed. Crimsonland needs authentic installation replay; Starlancer licence awaits Telegram1772. No browser/access retries, held-algorithm work or public deployment.
