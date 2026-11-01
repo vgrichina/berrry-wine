@@ -1124,9 +1124,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: Rayman2 01a1965b-2e10-73b1-92da-1f4523d36d43 handle51093 owns runtime/source/build since09:25:48UTC deadline09:55:48UTC overall10:40UTC fallback09:37UTC. Fresh GL descriptor worker01a1966e-14af-74f0-98a9-935368e29ad3 handle91322 output scratch/usage-watch/gl-descriptor-transform-lighting-next-nov01/ scratch-only WAIT Rayman2 fresh final/result AND explicit runtime/source/build RELEASE; runtime20min from gate overall10:55UTC fallback09:39UTC.
-  Current update 2026-11-01T09:26:28.025006+00:00: AoWIIebed72ce2 reviewed original army movement20/20to5/20 and clean lower-panel clipping; two originals exit0, owned PIDs independently absent remoteMATCH. Control-wait and observer read limits disclosed. Battlezone pilot fire/boarding/tank ammo and Populous/Homeworld/DarkReign movement remain accepted. Rayman2 now seeks movement beyond world entry; GL transform/lighting descriptor fixtures queued. Cap2 serialized runtime, full27/GPU FPS/audio remain open.
-  status: rolling pipeline active; current AoWII visual gap closed, Rayman2 original control running, GL descriptor contracts queued. Starlancer licence1772 pending.
+  worker: MDK2 01a1967a-8540-7ee0-abdc-cab54538e2ec output scratch/usage-watch/mdk2-lit-jump-control-next-nov01/; fresh worker launched09:39UTC behind GL fresh final/result and09:35 explicit runtime/source/build release. Runtime30min from gate, overall10:34UTC; fallback09:49UTC then>=10min. One production worker; cap2 ceiling.
+  Current update 2026-11-01T09:40:04.833555+00:00: Rayman2 48951da66 reviewed world-entry PNG, zero inputs, clean stop on disk floor; movement/jump/fire remain unverified. GL0a33e2db4 unchanged transform/lighting originals exit0 PASS within descriptor scope, no pixel/GPU/full27 claim; own PIDs absent and remote matched. MDK2 seeks ordinary lit-room jump/landing with paired PNGs and consumed-input evidence. Bounded streaming logs required after Rayman disk growth. AoWII/Battlezone and prior movement results retained.
+  status: rolling pipeline active; MDK2 jump running. Rayman requires sustained disk headroom before retry. Full27/GPU FPS/audio remain open; Starlancer licence1772 pending.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
