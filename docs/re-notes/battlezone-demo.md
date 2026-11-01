@@ -985,6 +985,114 @@ PIDs/groups absent**, no own helpers or new child temp directories. Native box
 ID/state/expiry are N/A; delegated own shutdown is complete. No further original
 ran. No FPS, audio or full-suite claim.
 
+## 2026-11-01: native mission 2 reload verified; Fighter identified before disk stop
+
+Run `scratch/runs/20261101-battlezone-native-save-defense/` **verifies ordinary
+native reload of the predecessor's `C:\m3` save**. Defense combat, a kill and
+the next objective remain unverified: the first genuine disk guard failure
+ended this run before the proposed next Turret command. No second original ran.
+Only this note is a tracked change; no production source, tests, fixtures,
+TODOS or STATUS files changed in this assignment.
+
+The copied game-written save is exactly **66,050 bytes**, SHA-256
+`e5506fc41132b395c3e7de455a070996d159890cf93b3e581f3343c93dd8d3da`.
+`native-m3.bin`, `save-mount.json` and `mounted-save-readonly.json` preserve
+the host copy, structured argv and the actual mounted VFS bytes/hash. The
+launch passes one argv element `--vfs-mount=HOSTPATH=c:\m3`, preserving the
+backslash. This is native saved-game data, **not a VM snapshot**; no guest
+edits, injected progress or memory-state restoration occurred.
+
+Initial Single Player → Load Saved Game is inert at both the label and button
+center. The same original therefore performs only a minimal initial mission
+launch, then Escape → **Load Game**, which opens the actual native Open dialog
+at **2008**. No earlier mission progress is replayed. Its `*.SAV` filter hides
+the extensionless file, so ordinary input enters the full **`c:\m3`** path at
+**2146–2176** and clicks Open at **2222/2247/2248/2268**. After loading, the
+neutral standard capture at **3168** shows **two Turrets** in Defense,
+scrap **30/30**, pilot **09/14**, ammo **83**, and the perimeter/protection
+objective. Ordinary Backspace overview and selection of Turret 2 produce
+**3352**: the selected Turret is deployed **68 m** away, with full displayed
+health and **Pack Up** available. These actual standard captures match the
+predecessor's inventory/perimeter progression; no pixel-identical or complete
+session restoration claim is made. See `reload-verification.json`.
+
+Ordinary centering, F/C pitch, keypad steering and Q approach eventually expose
+the base and an enemy. After the shipped **T** frontal-target command, standard
+**7580** explicitly names a red **Fighter**, with the world target at about
+**121 m**. Defense → Turret 2 at **7764** retains the identified Fighter at
+**107 m**; the selected Turret's HUD offers **Alt: No Action Fighter**, rather
+than an attack command. The final reviewed **8198** capture still identifies
+Fighter. This establishes enemy acquisition beyond the predecessor's anonymous
+radar/effects evidence. It does **not** establish Turret fire, damage, a kill or
+an objective change. The proposed Space Go To command was rejected before
+any input was sent because the original had already stopped.
+
+Exact `urban-chaos-repaired-encounter-nov01` author
+`01a1987f-b5d1-7301-8472-b2038489254e` release, fresh launcher/run final/result
+and direct owned process/group absence opened the gate at **19:38:52 UTC**,
+with a **20:03:51** runtime deadline. Published main was repinned to
+`c157668dc924a80c52a1fc28440a702eb8680cf9`. Actual compilation observes
+`7278c1018fa8208731a8e285f0bb2a5c35aa8e299592750ce3cedf6d354caef0`;
+the accepted allocator build/regression/five-focused-test evidence is reused
+with unchanged inputs. Original `bl_rel.exe` remains SHA-256
+`0554156663000fc1c0c0ad2275e460fa6fc9acda4abdd26c720b69019d04617a`.
+All **4,064 source/module pins**, **153 fixture paths/tree members**, and
+**271 observed runtime-read hashes** match before/after. The unchanged readonly
+observer's accepted sync/async whole-memory/clock checks are reused. All
+**312 PNGs** pass CRC and complete-deflate/scanline-length checks.
+
+The scratch guard retains read/parse-before-clock ordering and the six-second
+freshness policy. Deterministic old-race rejection/new-order acceptance,
+genuine future, healthy **3.5-second** delay, stale **6.15-second** delay,
+dead/replaced identity, explicit failure, immutable first failure and direct
+disk/deadline controls pass. Detached Node/Python exit-0, exit-7 and timeout
+controls pass. Before the original, scratch shutdown is corrected so primary
+signals only the runtime, once; independent falls back only if primary is dead;
+the driver survives to reap the original, and supervisor finally records its
+actual driver wait. A simultaneous-failure dummy test records original OS
+wait **−15**, driver OS wait **0** and supervisor OS wait **0**.
+
+Scratch command failures are retained, without replacing their initiating
+receipts: a pre-original root-lock probe spawned no child; an ad wrapper's
+120-second limit overlapped slow startup and expired during neutral observation
+before its click; a read-only inspection collided with an active command and
+spawned no child; an omitted center-mouse helper exited before input. Separate
+finite receipt directories and serial command completion then continued the
+same original. None is relabeled as an original retry or genuine guard failure.
+
+**First runtime blocker:** at **19:54:33.322536 UTC**, the driver's direct disk
+check measures **2,004,004,864 bytes**, below the unchanged **2,020,000,000-byte**
+stop threshold and above the **2,000,000,000-byte** floor at that observation.
+Launch free space was **2,147,147,776 bytes**; launch threshold remains
+**2,100,000,000 bytes**. The writer and duration of the transient drop are
+unknown. Primary/independent histories contain **3,580/3,576** finite samples,
+with minima **2,058,579,968/2,054,955,008 bytes**; these histories do not capture
+the lower initiating direct sample or establish unsampled history. No attempt
+continued after this first genuine failure, and no new native save was written.
+The verified `native-m3.bin` remains the useful recovery save.
+
+Original **4093317** has actual OS wait **−15**, elapsed **901.199 seconds**;
+driver **4093316** has actual OS wait **0**, and the detached supervisor OS
+wait is **0**. The observer's separate Node exit-hook value is **0**, not a
+substitute for the original's OS wait. The revised scratch shutdown retained
+both actual waits during the real failure. The last complete live sample is
+**8198**, not a post-stop final release sample: known scheduled/pending/
+cross-thread/renderer queues are empty and sampled used physical/async keys
+plus VK1 are released. **Tab/VK9 was not sampled**. The trace has **40 balanced
+key edges**, **35 dequeued** and **34 main-window DispatchMessage edges**;
+exact native Open text/pause omissions are retained in `verification.json`.
+Guest post queue, SDL consumption and mouse-button mask remain unknown.
+
+Closed own journals are gzip/SHA-roundtrip preserved, and byte-identical PNGs
+are hardlinked without changing any capture path/bytes; recovery order is in
+`closed-evidence-compression.json`. Direct cleanup finds all **97 recorded
+owned PIDs/groups absent**, no matching helpers or new child temp directories.
+Native box ID/state/expiry are **N/A**; delegated own shutdown is complete.
+`RECOVERY.txt` retains the exact ordinary reload route and stop. Next work
+requires separately authorized runtime with sustained disk headroom, then
+ordinary Turret positioning/defense against the now identified Fighter.
+No FPS, audio or full-suite claim.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
