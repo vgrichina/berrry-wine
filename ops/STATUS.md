@@ -1,9 +1,9 @@
-Current 2026-11-01T10:02:03.552488+00:00 — coordinator01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T10:07:28.528461+00:00 — coordinator01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Dethkarz fire-control worker01a19686 handle49878 owns runtime since09:58UTC; deadline10:23UTC, overall11:35UTC, fallback10:05UTC. Driving was qualified; Shift firing remains open.
+Incoming phase-progress worker01a1968e handle32675 may acquire runtime after Dethkarz fresh final/result and explicit10:05:56 RELEASE; runtime30minfromgate, overall11:55UTC, fallback10:15UTC then>=10min. Goal: hostile combat or next phase beyond initial turret turning.
 
-Fresh Incoming phase-progress worker01a1968e handle32675 waits for Dethkarz fresh final/result AND explicit runtime/source/build RELEASE. It seeks hostile combat or a phase transition beyond the prior turret-turning checkpoint. Runtime30min from gate, overall11:55UTC; fallback10:15UTC then>=10min. Two workers, serialized runtime.
+Fresh Motocross scored-stunt worker01a19693 handle48643 waits for Incoming fresh final/result AND explicit runtime/source/build RELEASE. Goal: scored stunt/event progress beyond prior score0 practice driving. Runtime25minfromgate, overall12:05UTC; fallback10:20UTC then>=10min. Two workers, serialized runtime.
 
-MDK2 f0eda338f identifies glAccum lookup rejection and loader error2 before the suspended-worker wait:212 rejected GL/WGL names,208 unimplemented. No bounded repair; jump unverified. One78.087s original exited0, pins unchanged, own processes absent, findings published. Existing fixture's stale handle assertion fails; adapted ABI checks pass.
+Dethkarz ca136b967 reviewed before/laser flash/released images: Shift firing and consumed WM/GetAsyncKeyState confirmed. Actual DI reads are mouse; keyboard-specific DI remains unproved. Two originals exited0, pins unchanged, five ownPIDs independently absent, remoteMATCH. No damage/combat/audio/FPS claim.
 
-Outcast aim/fire80→79/holster accepted; no combat outcome. Rayman needs sustained disk headroom. Full27/GPU coverage, FPS/audio and Starlancer licence1772 remain open. Inbox empty10:01UTC; no browser/access retries or deployment.
+MDK2 f0eda338f blocked on212 rejected GL/WGL names,208 unimplemented; first glAccumNULL. Outcast039f7f5a2 weapon control accepted, no combat outcome. Rayman disk-floor failure retained. Full27/GPU FPS/audio and Starlancer licence1772 remain open. Browser/GPU/access retries held; native only.
