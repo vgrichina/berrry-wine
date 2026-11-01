@@ -1,7 +1,7 @@
-Current 2026-11-01T02:54:54.266694+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T03:02:43.821189+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Redline is testing whether its measured update backlog drains and message pumping resumes, then pursuing ordinary mission entry. The last inspected capture remains the Stadium City menu.
+Redline reached first-person local CLI gameplay with reviewed movement, turning and firing captures. Its update backlog drains without a synchronization repair. The successful run increased the instruction budget while retaining the batch clock; textures and HUD remain incomplete.
 
-Rune’s latest child trace stopped before the INI failure: two breakpoints forced single-block execution. No repair was committed. Static DLL path loss remains proven, but its role in the startup failure still needs a normal-speed trace, prepared next. Original game files stayed unchanged and all completed-run processes are gone.
+Rune is now tracing the renderer child's DLL path and INI lookup at normal speed. A transport repair will follow only if the trace confirms the cause. Original game files remain unchanged; completed-run processes are gone.
 
 Runtime tests remain serialized. Browser testing awaits authorized file transfer after SSH403. Full GL/D3D27 coverage remains open; REP is held and Crimsonland needs authentic installation. No public deployment.
