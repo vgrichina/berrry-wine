@@ -1,7 +1,7 @@
-Current 2026-11-01T08:02:27.208988+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T08:08:42.301592+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Redline now has reviewed player movement: WORLD loading finishes, weapon and HUD appear, and ordinary Up moves forward in paired before/held/released captures. One bounded original exited cleanly; locked build, original hashes and input consumption passed. No combat, audio or FPS qualification.
+Dark Reign 2 now has reviewed mission gameplay and ordinary drag selection of five soldiers and a vehicle. Brackets, health bars and commands appear after consumed native input; one bounded original exited cleanly with matching module, source and original hashes. Unit movement remains untested. Redline forward movement was also reviewed and published.
 
-Dark Reign 2 worker33761 owns runtime to load a mission and test input, following the accepted native mip repair. Fresh GL worker1480 queues unchanged raster/multitexture fixtures behind its final/result and explicit release. Cap two, serialized runtime; fallback08:09/08:12UTC. DR2 runtime deadline08:28UTC; GL overall09:32UTC.
+GL worker1480 owns runtime for unchanged raster/multitexture fixtures. Fresh Alice worker93878 queues original New Game/Easy/W behind its final/result and explicit release. Alice media is locally recovered and pinned; its old missing-media task is corrected. Cap two, serialized runtime; fallback08:12/08:19UTC. GL runtime deadline08:37UTC, Alice overall09:39UTC.
 
-DR2 mission gameplay remains unverified; GPU/keyed mip unsupported and an unrelated legacy texture-operation assertion retained. GL lines/fog, mipmap and texgen accepted; full27/GPU open. Crimsonland needs authentic installation replay; Starlancer licence awaits Telegram1772. No browser access, held-algorithm work or deployment.
+GL lines/fog, mipmap and texgen accepted; full27/GPU open. DR2 GPU/keyed mip remains unsupported and an unrelated texture-operation assertion remains. Crimsonland needs authentic installation replay; Starlancer licence awaits Telegram1772. No browser access retries, held-algorithm work or public deployment.

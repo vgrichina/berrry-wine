@@ -1124,8 +1124,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: DarkReign2 01a19615-8d76-7902-973e-211aa0130a2b handle33761 output scratch/usage-watch/dark-reign2-native-mission-input-nov01/ owns runtime/source/build since07:58UTC runtime deadline08:28UTC overall09:19UTC fallback08:09UTC; GL01a19621-4660-7042-a3b4-a3aa542f7c6a handle1480 output scratch/usage-watch/gl-software-raster-multitexture-next-nov01/ scratch-only WAIT DR2 fresh final/result AND explicit runtime/source/build RELEASE deadline09:32UTC fallback08:12UTC.
-  status: Reviewed Redline0da33e84b actual weapon/HUD and forward movement before/held/released images, balanced consumed Up and empty queues; one original358.407s exit0, locked build/module/original pins PASS, three ownPIDs independently absent. No combat/audio/FPS qualification. DR2 native mip38pixels PASS and mission-selection reviewed; actual mission/input pending worker33761. GPU/keyed mip unsupported; unrelated legacy texture-op assertion retained. GL fresh unchanged raster/multitexture tests queued; full27/GPU open. Crimsonland installation replay prerequisite remains; Starlancer licence Telegram1772 pending. Cap2 serialized runtime.
+  worker: GL01a19621-4660-7042-a3b4-a3aa542f7c6a handle1480 output scratch/usage-watch/gl-software-raster-multitexture-next-nov01/ owns runtime/source/build since08:07:51UTC runtime deadline08:37UTC overall09:32UTC fallback08:12UTC; Alice 01a19626-dd0f-78a3-9cd2-d3f8c8d99b40 handle93878 output scratch/usage-watch/alice-original-native-gameplay-nov01/ scratch-only WAIT GL fresh final/result AND explicit runtime/source/build RELEASE overall09:39UTC fallback08:19UTC.
+  status: DarkReign2 d9aca1952 reviewed actual mission gameplay and ordinary drag selection of five soldiers and one vehicle, brackets/healthbars/Guard/Explore commands; one original327.256s exit0, consumed native down/move/up and empty queues, accepted matching build/module/original pins PASS, four ownPIDs independently absent. Unit movement untested. Redline movement qualified0da33e84b. Alice original15-file local pin available; fresh native NewGame/Easy/W worker queued. GL unchanged raster/multitexture fixtures running; full27/GPU open. GPU/keyed mip unsupported and unrelated legacy texture-op assertion retained. Crimsonland installation prerequisite and Starlancer licence Telegram1772 remain. Cap2 serialized runtime; rolling new-game pipeline remains active.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
@@ -1588,13 +1588,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
-  status: active (bounded original-media recovery; post-merge gameplay pending)
+  status: active (local original native gameplay queued; browser unverified)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: alice-original-recovery-main-oct31 (01a1941c-b70b-7560-a618-030dd2045bd4; handle44538)
-  candidate: test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe
-  Next: Serialization and generation-aware unload already merged (cfe411bdc/83947f6a6 and followups); do not redo staging/lifetime fix. Original archive/extracted media and scratch/alice-preflight-20261009 absent locally. Recover hash-pinned archive and2151 captures; then current-main ordinary New Game/Easy/W and browser input. Historical native gameplay usesa2dae641/main23614c85e+candidate.patch, not later held candidates. See docs/re-notes/alice-return-fire-reconciliation-20261018.md.
+  worker: alice-original-native-gameplay-nov01 (01a19626-dd0f-78a3-9cd2-d3f8c8d99b40; handle93878); scratch-only WAIT GL final/result and explicit runtime/source/build RELEASE
+  candidate: test/binaries/candidates/alice-demo/alice.exe
+  Next: Run recovered local15-file original demo through ordinary New Game/Easy, bounded neutral loading, then W down/up with reviewed before/held/released captures and actual input consumption. Full payload-manifest SHA68668d496dbabdb3b3803b8de12dda356796ba0ce26051ffb0a03df3a2022509. Loader/serialization/generation-aware unload fixes already integrated; no repeat repairs or media/access retries. Browser remains unverified; local CLI evidence will be scoped honestly.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
-  Evidence: scratch/alice-preflight-20261009/preflight.json; scratch/alice-preflight-20261009/import-audit.json; scratch/alice-preflight-20261009/transfer.json; docs/re-notes/alice-demo.md
+  Evidence: scratch/runs/20261031T2239Z-alice-original-recovery/; scratch/usage-watch/alice-original-native-gameplay-nov01.task.txt; docs/re-notes/alice-demo.md
 
 
 - [x] Sizeless virtual decommit corrupts neighboring allocation
