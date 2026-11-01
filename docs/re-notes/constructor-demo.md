@@ -651,3 +651,110 @@ Run-local acquisition headers/timings, all 28 verification rows, static source
 pins, pure contract logs and actual helper waits are retained under the run ID.
 No guest run, build, browser, boat, deployment, EULA, gameplay, FPS, audio or
 qualification claim. Box ID/state/expiry: N/A; coordinator lifecycle untouched.
+
+## Restored original default startup (2026-11-01)
+
+Run `20261101-constructor-original-startup` executes the restored original
+once on local native Node **v24.18.1**, after Urban's exact `058aed059` author
+release, terminal launcher exit0 and fresh direct absence checks for all40
+reported PIDs. The runtime/source/build claim was serialized; the other worker
+was restricted to synthetic inspector tests. No source, test, registry or build
+file was changed, and no project build was run.
+
+**Observed boundary: UVCONFIG returns6 with “No Graphics hardware detected by
+UniVBE! (0x0)”; GAME.EXE then exits1 at `0549:26EB`.** The CLI reports43.3M
+dispatches (rounded),113802 handbacks and4.32 guest seconds, ending in mode3.
+Its OS process exits0 because the runner completed normally; that is distinct
+from the guest's failure. `startup.png` was emitted and visually reviewed: the
+80x25 text console contains the graphics error followed by initialization/SFX
+messages. Text overlaps on the first two lines, as recorded in both PNG and
+console dump. There is no usable menu, intro or gameplay screen, and no inputs
+were supplied. No FPS or audio result follows from the runner's counters.
+
+Identity was pinned before guest execution and rechecked afterward:
+
+- Source checkpoint `f23123e6cf47d9eaae1d939690a0ac0e141f0ee3`;378 actual
+  source/support/manifest files match before and after. The existing default
+  ToyVM tailcall module is generated in memory by the ordinary runner; this
+  does not use `build/wine-assembly.wasm`.
+- A scratch-only `--require` observer wraps the existing `compileWat`, hashes
+  its original WAT and returned bytes, checks the source pins, and returns
+  those same bytes. Before execution, actual module SHA-256 is
+  `03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`
+  (343736bytes); emitted WAT SHA-256 is
+  `29bdf4e754aa46d8e2f083b5bbb8e9fb9c9f2725c4b2503a25b11786234dfbc0`.
+  `actual-module.json` also records loaded JS hashes and compile options.
+- All28 authentic files retain the manifest's exact sizes/SHA-256 values,
+  totaling63205318bytes, including GAME.EXE's pinned `d0ac2f05...dc587`.
+  The complete on-disk file set remains exactly those28 originals. Guest-created
+  `settings/hang.log` and `settings/SYSTEM.INI` stayed in the in-memory overlay;
+  no generated driver/configuration was persisted into the fixture.
+- Freshly requiring current `lib/apps.js` yields46 public `DESKTOP_APPS`, none
+  matching Constructor. Its source SHA-256 is recorded in `prerequisites.json`.
+  Runner/compiler imports and `pngjs` resolve without installation. An initial
+  inline prerequisite command had a syntax typo before imports; the corrected
+  check passed before this sole original launch.
+
+The actual command in `command.json` retains the documented default hardware,
+`timeout --signal=TERM --kill-after=5s 90s`, `--dispatches=200000000` and
+`--seconds=30`, adding only the identity observer and existing diagnostics:
+`--trace-int --trace-fault --trace-entry=40 --trace-entry-regs
+--trace-io=3c4,3c5 --report --text --png=.../startup.png`.
+No alternate EXE, `--svga`, VBE-version substitution or guest patch was used.
+
+The trace narrows the dependency beyond a generic VBE failure. All five
+controller queries `INT10/AX=4F00` and both mode-info queries (100h/101h)
+return AX=004Fh. There is no4F02 mode-set or4F0A request. The original EXECs
+`./UVCONFIG.EXE` (309382bytes) with `-gen -p.\settings\`; the child returns6
+via `INT21/AX=4C06` from `0EFE:0163`, resuming the parent at `0549:10B7`.
+The parent's4D00 call obtains6; its final4C01 is at `0549:26EB`.
+Missing-file diagnostics for settings/univbe.drv and settings/UVCONFIG.EXE
+therefore do not mean the packaged root UVCONFIG was absent or never ran.
+Other unhandled-call/decoder diagnostics remain in the log; none is established
+as the causal failure by this run.
+
+At41.6272–41.6278M dispatches the child probes sequencer indexesA7/C5 through
+port3C4 and reads/writes3C5 using helpers `2B5D:0001`/`2B5D:0028`. C5 readback
+follows writes0/FF; A7 receives87. Current unchanged source masks the index
+with0Fh, so these accesses address07/05 internally. This is an observed probe
+sequence plus a source-backed aliasing fact, **not proof of a chipset identity
+or of which conditional makes detection fail**. In particular it does not
+validate the historical optional Trident/InteGraphics selection.
+
+The first remaining dependency is a graphics hardware/register model that the
+original UniVBE detector can correctly recognize and then drive. The justified
+next diagnostic is to map the caller and conditional branches around this
+A7/C5 probe sequence in the original UVCONFIG code, correlating expected
+readbacks with the captured values. Use that decision to specify a focused
+extended-register/alias regression before implementing hardware behavior.
+Do not infer a vendor from successful readback or repair this by raising the
+advertised VBE version. This task makes no further original attempt.
+
+The matching recovery-run directory/path, EXEC-boundary and mouse contract
+evidence was reused: all10 recorded source/test hashes still match, with four
+small logs copied into this run and origin recorded in
+`static-evidence-reuse.json`. No broad corpus rerun occurred.
+`test/test-toyvm-vbe.js` was not run: the actual original already distinguishes
+successful VBE queries from later detection rejection, and that mode-rendering
+test cannot identify the failed chipset branch.
+
+The supervisor caps logs at8000000bytes and stops the original at free disk
+2020000000bytes. Actual output is147446bytes; minimum observed free disk was
+2108801024bytes, no guard fired, and disk remained above2GB. GNU timeout owned
+the Node child and reaped it; the Python supervisor actually waited for timeout
+PID4171289 (exit0, total4.739611s, final wait0.000111s). Its board watcher
+PID4171288 received TERM and was reaped with exit-15 (wait0.001469s).
+Node4171290, timeout, watcher and supervisor4171287 were directly absent after
+completion. Separate publication-watch termination/wait is retained in
+`publication-watch-oswait.json`. Shutdown of this task's own processes was
+explicitly delegated; no coordinator/foreign runtime was stopped.
+
+Recovery: keep the authentic fixture untouched and use the earlier verified
+archive recovery recipe only if it is actually missing, under new ownership
+and the stated disk guard. No download occurred here. To inspect this result,
+read `result.json`, `startup.log`, `startup.png`, identity manifests and wait/
+cleanup receipts under `scratch/runs/20261101-constructor-original-startup/`;
+regenerate no configuration and do not relaunch the original merely to view
+the evidence. `run.py` is the bounded execution recipe, not authorization for
+a second run. Local box ID/state/expiry: N/A. Browser, boat, EULA, deployment,
+sound setup and ordinary gameplay remain unperformed.
