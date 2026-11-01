@@ -1,5 +1,90 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: exact polling owner proven; Escape retained behind Galaxy lock
+
+**Guest thread 3 dequeues physical Escape in GetMessageA and forwards both
+edges intact to the viewport's owning thread 1. The remaining blocker is
+thread 1 waiting in Galaxy's EnterCriticalSection.** No new generic input
+ownership/delivery defect was proven, so this run makes no production repair.
+The original title still does not reach its menu or player-controlled gameplay.
+Evidence is under `scratch/runs/20261101-rune-polling-owner-repair/`.
+
+The initial gate remained closed during scratch-only preparation. Redline
+`01a19536` supplied both final artifacts and its **04:01:34 UTC** board
+runtime/source/build release before this run's **04:02:18 UTC** gate acceptance.
+Offline validation exercised the actual parked control/input parser and exact
+eval bindings, distinct instantiation identities, natural import returns,
+unavailable exports, and relocated console-memory reads. The scratch preload
+wraps each actual instantiation's imports separately and preserves their
+results; inspection uses scalar/queue getters and bounded memory reads. It
+does not invoke routing/readiness helpers, change focus, or count instructions.
+
+One original CLI invocation repeats `--app=rune_demo --spawn-processes`,
+empty parent arguments, **C:\System**, and ordinary **Software Rendering →
+Next → Next → Run**. The genuine renderer-detection child exits guest/host
+**0**. Wizard, title and input PNGs were inspected. Physical down at **174100**
+and up at **175100** both execute in actual polling instance **4**, Win32
+thread ID **3** (CLI scheduler tid **2**, handle **0xe1002**). Its start is
+**Galaxy.dll 0x11903a80**, original **0x1060ca80**. The actual WASM stack names
+functions **3600/3599/3598**, resolved against the unchanged build as
+`handle_GetMessageA_fetch` / `handle_GetMessageA_pump` / `handle_GetMessageA`.
+The retained import thunk has API-table ID **262**, GetMessageA; its original
+Galaxy call returns to **0x1060ca94**. This identifies the executing consumer
+directly, rather than matching queue counters.
+
+That poller's own focus and `main_hwnd` are both **0**. The host HWND callback
+therefore returns **0**, exactly as its fallback contract specifies. WAT then
+calls the foreground import naturally: it returns **0x10018**, whose shared
+window record names owner **thread 1**. `input_route_to_owner` forwards to that
+owner's queue before any poller-main fallback can deliver the key locally.
+Actual raw queue inspection on thread 1 shows:
+
+| Checkpoint | Retained HWND / message / wParam / lParam |
+| --- | --- |
+| 174101 and 175100 | `0x10018 / 0x100 / 27 / 0x00010001` |
+| 175101 through 183100 | preceding down, then `0x10018 / 0x101 / 27 / 0xc0010001` |
+
+Control, renderer, keyboard owner, foreground window and viewport all identify
+actual instance **1**, thread **1**, with focus/main **0x10018** and repaired
+dialog ancestry **0**. The consumer's GetMessage buffer does not receive the
+forwarded key. Both events remain intact in the correct owner's queue through
+**183100**, with no DispatchMessage. The callback's zero is therefore an
+intermediate routing result; the retained destination is **0x10018**.
+
+**First concrete blocker:** thread 1 stays at **0x17a068e0**, API-table ID
+**135**, EnterCriticalSection, with unchanged ESP **0x179ff684**. The captured
+frame names guest critical section **0x1196ba78**, Galaxy original
+**0x10674a78**, and return **0x11903efb**, original **0x1060cefb**. Static
+original DLL disassembly confirms that call. Exit diagnostics name the same
+section at its WASM backing address **0x0107da78**, owner **T3** (the CLI's
+zero-based label for Win32 **thread 4**), lock **0**, recursion **1**. Main
+reports **82,403** parks and **110** abandoned Enter continuations. The cause
+of the owner's missing release or continuation is unobserved. The next useful
+observation is that Galaxy section's acquisition/release and thread 4's
+continuation while main waits; this run changes no lock, REP or lifetime
+algorithm. No speculative repair or second original invocation was made.
+
+All **4,388** input hashes, the module and generated region mirror match the
+accepted locked build, so it was reused. Both actually loaded parent/child
+modules are **2,025,629 bytes**, SHA-256
+`985ca2480931df88751db66dbee8527a6d9df9940949baafc6bc3a0b1a43e2dc`.
+Parent/child loaded-read hashes and both complete original **142-file** trees,
+package, inventory, manifests and registry pins match before/after. The
+existing foreground-thread WAT routing regression passes, as do both scratch
+offline suites and the raw causal-evidence assertions. Direct execution of
+`test-input-consumption-state.js` exposes an existing fixture error:
+`mainSchedulerObserver` is absent from its VM bindings. No test file was edited.
+
+Normal batch budget/default **200 ms** clock, no breakpoints or instruction
+counters. Outer PTY **150s / kill-after 5**, inner **115s**, child **TERM 90 /
+KILL 95**; outer exits **0** naturally in **61.785s**, watchdogs unused. Child
+and parent logs/INIs are preserved. Own runtime PIDs/groups and child temporary
+tree are absent; disk stays above **2 GB**. Box ID/state/expiry and ownership:
+**N/A**. `polling-causal-result.json`, `causal-validation.json` and
+`verification.json` retain the bounded result. Inspected `escape-later.png`
+still shows the ordinary animated title and Escape prompt, with no main menu,
+movement or gameplay.
+
 ## 2026-11-01: exact Escape consumer repaired; thread delivery still unresolved
 
 **The first proven input defect is repaired: a recycled dialog header made
