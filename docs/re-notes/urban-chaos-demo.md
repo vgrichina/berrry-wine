@@ -713,3 +713,109 @@ Next: retain the rejected guard predicate's exact operand, monotonic age and
 heartbeat history before a separately assigned original continuation. The
 ordinary encounter/objective goal remains open; recovered original controls
 and the prior HUD-to-carpark route are ready for that continuation.
+
+## 2026-11-01 guard diagnostics: controlled checks pass; helper terminal143 stops encounter attempt
+
+Evidence: `scratch/runs/20261101-urban-chaos-guard-diagnostic-encounter/`.
+The encounter/objective goal remains **unachieved**. One original reached the
+loading screen at batch386; no gameplay movement or encounter input followed.
+The first new lifecycle blocker ended this attempt without a second original
+or replaying the interrupted request. Historical HUD/ArrowUp evidence above
+is not new encounter evidence.
+
+The predecessor Urban driver/supervisor and retained diagnosis were read.
+Its combined age/process/failure-file predicate still has an unknown historical
+failed operand. Separately, retained Battlezone evidence measured1.119649s
+heartbeat age before its primary advanced454→455; that does not identify the
+cause of either historical delay. Cheap no-game controls now separately retain
+healthy advancement, a healthy measured1.500946s pause, stale3.152561s age,
+dead process, replaced process-start identity, and explicit failure-file cases.
+Each control includes wall/monotonic timestamps and ages, process start ticks,
+failed operands and heartbeat history. Atomic scratch writes plus gzip
+encode/read/decode produced52 healthy I/O samples, maximum observed check
+interval0.930804s. `no-game-delay-analysis.json` corrects an overly broad
+`observedIoMaxEmitGap` label in the retained raw controls: that statistic includes
+the deliberately injected pauses and must not be called an I/O-only delay.
+
+Scratch freshness policy is now a bounded3-second monotonic tolerance, informed
+by those measured healthy delays; stale3.15s is still rejected. This is an
+engineering margin, not proof of the historical cause or a measured need for
+exactly3seconds. Detached primary supervision and a separate independent
+process retain direct disk/deadline enforcement, reciprocal heartbeat/process
+checks and process start identity checks. The driver independently checks
+original liveness, both heartbeats, disk, deadlines, request/log/capture bounds.
+The independent process detects primary absence and owned-process identity
+replacement; missing-original detection specifically remains the driver's
+poll, not a separately claimed independent missing-original predicate.
+Guard rejections retain operand details and bounded heartbeat histories.
+An exclusive-create initiating guard-failure file cannot be overwritten by
+later signal/cleanup records. No safeguards, production code or tests changed.
+
+Exact Battlezone `battlezone-fixed-capture-harvest DONE/PUSH RELEASE` at17:31:26,
+fresh launcher result0/final and direct absence of its listed owned PIDs/groups
+passed the gate at17:41:41.263 UTC. Dispatch input was`7d47a40e5`;
+actual main was`98c2a1d5e2aa1fef348a0697aed7de58c59fc1d7`.
+The25-minute gate deadline was18:06:41.263, within the19:15 overall bound.
+All4,445 accepted build inputs matched, permitting exact renderer locked-build
+and focused-check reuse. Fresh manifest, observer whole512MB read-only
+sync/async/clock/late10,001, renderer, thread-manager and real-WAT named-event
+checks passed. All1,122 manifest paths matched, including original Fallen.exe
+SHA256 `8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`;
+config.ini remains reconstructed installation state. Original controls were
+read: C action, Z punch, X kick, arrows movement/turn. No combat binding was
+sent or guessed.
+
+The registered native software original used `--no-build --control-stdin
+--frozen`, batch-size100000, requests at most25 and finite180-second bounds.
+Immediate startup free space was2,169,905,152 bytes, above2,150,000,000.
+Reviewed standard/native Setup, ordinary Okay, held Enter navigation, mission
+map182, briefing284/335 and loading360/386 were retained. Menu actions have
+before/held/released/settled and matched neutral captures. Five actual key
+edges match dequeue/route/DispatchMessageA; the third Enter key-up remains
+queued at386 and is not claimed consumed. Final sampled physical/async keys
+are false and mouse mask0; scheduled/pending/cross-thread queues are empty,
+renderer queue contains that one key-up, pressed latches remain set, and guest
+post/SDL consumption is unknown. Native Setup mouse evidence is host input
+and visible dismissal, not generic guest-dispatch proof.
+
+The briefing helper's tool session79606 returned143 after printing
+`NAVIGATED briefing`. Helper3968062 was subsequently absent. Its final PNG
+request was acknowledged in the original runtime log, but the helper did not
+record receipt. That request was not repeated; its helper receive time/latency
+is unknown. All other recorded request latencies are below180seconds,
+maximum2.246387s;27 step requests have maximum25. Sender/reason for the helper
+terminal status remain **UNKNOWN**. At discovery, original3966982 and both
+detached guards3966061/3966066 remained live; no guard rejection/failure file
+was present. This is not evidence of a game crash, a failed heartbeat check,
+or signal143 delivered to the original. `initiating-failure.json` preserves
+the helper event separately from orderly shutdown. No helper/request/original
+retry followed; only final read-only sampling and ordinary quit were performed.
+
+The original exited0 after170.797s, driver0, primary/independent normal with
+null reasons. Primary861 samples had minimum2,163,261,440 bytes free and maximum
+observed gap0.529202s; independent860 samples had minimum2,163,302,400 and
+maximum gap0.399494s. Direct disk stop remained2,020,000,000, before the required
+2,000,000,000 floor. These are finite sampled bounds, not continuous disk
+observation. Guard freshness worked during this short run; it is not qualified
+for a complete encounter flight. No unchanged1-second monitor was reused.
+
+Actual original compilation observed canonical module
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Before/after4,678 source/dependency and1,124 fixture identities match; all269
+observed runtime reads match fresh before/after pins. Coverage excludes
+unhooked async/direct-OS/compiler reads and guest-memory identities. All40
+PNGs pass CRC/complete-deflate; full runtime gzip passes. Selected useful
+images were visually inspected, not every PNG. No FPS/audio/full27,
+browser/GPU, deployment, guest patch or replacement claim.
+
+Own shutdown was explicitly delegated. Direct cleanup verified19 known PIDs
+and17 groups absent, no matching helpers/watchers and no new child temps.
+Native box ID/state/expiry are N/A; ownership is handed back. Recover the log
+with `gzip -dc scratch/runs/20261101-urban-chaos-guard-diagnostic-encounter/runtime.log.gz`.
+The directory retains executable scratch guard/control/observer scripts,
+accepted build hashes/logs, original-command and gate records, immutable
+initiating failure, final state and cleanup records; do not treat recovery
+recipes as permission to launch another original in this assignment.
+Next: separately diagnose the controller/tool terminal143 lifecycle before
+another assigned continuation toward an ordinary encounter. This assignment
+stops with that concrete blocker and the gameplay objective gap disclosed.
