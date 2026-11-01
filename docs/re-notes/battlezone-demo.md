@@ -130,6 +130,55 @@ were absent afterward; minimum free disk was 2,270,924,800 bytes. Box ID/state/
 expiry are N/A. No source, test, helper, backend, registration, or default was
 changed. The note and ignored run evidence are the only deliverables.
 
+## Target-hit / unit-command attempt: prerequisite stop (2026-11-01)
+
+Run `scratch/runs/20261101-battlezone-target-hit-command/` stopped before
+launching an original. It adds **no target-hit, visible unit damage, or unit
+command outcome** to the accepted entry/firing evidence above. Battlezone
+remains a local candidate (`LOCAL_CANDIDATE_APPS`), absent public
+`DESKTOP_APPS`; no registration changed.
+
+The valid gate opened at **14:32:52 UTC**, after the exact
+`quake2-eight-save-restoration DONE/PUSH RELEASE` messageboard action naming
+`runtime/source/build`, fresh terminal launcher `final.txt`/`result.json`,
+and direct predecessor PID/process-group cleanup checks. WAIT entries and
+quoted conditions were not accepted as releases. Dispatch main was
+`8552125804a6994de385d7f00858e789fd59024f`; actual main at the gate was
+`fbb83926ba331962cc85e2c44f1b623e778e262f`. No runtime, build, or test ran
+before this gate. The 25-minute gate deadline was 14:57:52 UTC.
+
+All **4,392 accepted build-input pins and 141 prior read pins matched**,
+including canonical module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+The actual before/after inventory contained 4,444 source pins and all 153
+fixture files, including the manifest and companions; hashes and fixture
+tree membership stayed unchanged. The EXE remained 3,732,992 bytes, SHA-256
+`0554156663000fc1c0c0ad2275e460fa6fc9acda4abdd26c720b69019d04617a`.
+These establish build eligibility and file identity, not an actual original
+module load or runtime-read observation in this attempt.
+
+**First blocker:** the scratch launcher invoked `offline.cjs` without setting
+`SWEEP_CASE_DIR`. The observer takes its output directory from that variable;
+`observe.cjs:44` called `path.join` with `undefined` in `save()`, producing
+`TypeError [ERR_INVALID_ARG_TYPE]` and Node exit 1 at 14:32:57 UTC. This was
+a worker harness prerequisite failure, not a Battlezone compatibility failure.
+The sync/async instance exercises preceded the throw, but the emitted
+late-10,001 check and final whole-512-MB readonly verification did not
+complete. The observer contract is **not passed** for this attempt.
+
+Per the first-failure stop condition, the harness was not repaired or rerun.
+There were **zero original launches, zero gameplay inputs, and no new game
+captures**, so no consumed-control, released-control, matched-neutral,
+target-health, hit, kill, or command-response claim is made. The bundled
+briefing's Recycler/Scavenger objective and `Input.map` were read in scratch
+preparation, but the prepared command route was never executed. Existing
+vehicle entry and firing/ammo decrement remain the earlier accepted results.
+Local native box ID/state/expiry are N/A. No tracked source, helper, test,
+configuration, backend, or registration changed. Evidence retains the gate,
+pin comparisons, exact exception, and cleanup/publication records. A future
+separately authorized attempt needs a complete observer validation before
+launching the original; this assignment stops at the prerequisite failure.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
