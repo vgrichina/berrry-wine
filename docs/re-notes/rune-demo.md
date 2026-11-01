@@ -1,5 +1,100 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: physical Escape down is consumed before guest delivery
+
+**The renderer loses the Escape press before Rune's message pump. The release
+reaches Rune, but no menu or gameplay follows.** The exact renderer early-return
+branch remains unobserved, so no production repair was made. This is the first
+concrete blocker, not evidence that Rune ignores a delivered keydown. Evidence
+is ignored under `scratch/runs/20261101-rune-escape-delivery/`.
+
+The initial gate was honored: scratch-only driver preparation until Redline
+`01a1951f` supplied final artifacts and the **03:31:33 UTC** board
+runtime/source/build release. Child-state integration `66028ecbb` had already
+completed and released. One original invocation then repeated the accepted
+`continuation/` route: `--app=rune_demo --spawn-processes`, empty parent args,
+original System cwd, unchanged 142-file trees and genuine requested renderer
+detection child. That child returns guest/host **0**; the unchanged completed
+transport merges **3 files, 0 deletions**. Selected **Software Rendering**,
+ordinary Next → Next → Run and original SoftDrv produce the title at **174100**.
+All actual PNGs were inspected; the title advertises Escape, but is not gameplay.
+
+`--trace-input-dispatch` was enabled from launch. Before the guest, offline
+validation exercised the actual parked control handler and input parser, and the
+exact `controlEval` parameter signature. It caught and corrected the scratch
+driver's numeric IDs: `input-state` requires a printable **string** ID. The
+expression's `mods` binding is an object, not a Map. These are scratch driver
+changes only. No `keypress:27` was sent.
+
+`escape-observations.json` retains seven coherent frozen states, with zero run
+credits, plus HWND/procedure and Escape-specific physical/async state:
+
+| Boundary | Batch | Scheduled / dequeued / dispatched totals | Escape physical / async | Renderer queue |
+| --- | ---: | --- | --- | ---: |
+| Before down | 174100 | 3 / 6 / 0 | false / false | 0 |
+| Down queued, before execution | 174100 | 3 / 6 / 0 | false / false | 0 |
+| First batch after down | 174101 | 4 / 6 / 0 | true / true | 0 |
+| After another 999 batches | 175100 | 4 / 6 / 0 | true / true | 0 |
+| Up queued, before execution | 175100 | 4 / 6 / 0 | true / true | 0 |
+| First batch after up | 175101 | 5 / 7 / 0 | false / false | 0 |
+| After another 999 batches | 176100 | 5 / 7 / 1 | false / false | 0 |
+
+The scheduled queue contains one action at each queued boundary and is empty
+after execution. All other observed queues remain empty. The six preexisting
+dequeues are the wizard's three mouse down/up pairs. Down at **174100** calls
+`renderer.handleKeyDown(27)` and publishes physical, async-held and async-pressed
+state, but produces **no host dequeue, no WM_KEYDOWN and no guest dispatch**.
+After 1000 batches there is still no pending press. This localizes the failure
+to renderer handling before the message pump; animation is not delivery evidence.
+
+Up at **175100** yields host dequeue **7**, `source=renderer`, initial HWND **0**,
+message **0x101**, wParam **27**, lParam **0xc0010001**. The dequeue-route hook
+reports caller focus/destination **0/0**; this intermediate observation is not
+the final guest destination. At **175298**, the actual MSG passed through
+TranslateMessage and DispatchMessageA has HWND **0x10018**. TranslateMessage
+returns **TRUE**; DispatchMessageA returns **0x10c8eea0**. Snapshot focus/main is
+**0x10018** throughout, with procedure **0x112531ef**, mapping to original
+Window `StaticWndProc` export **0x110011ef**. Deeper guest handling of that
+release was not traced. No press reached that procedure through DispatchMessage.
+
+Actual `title.png`, `after-down.png`, `after-up.png` and `final.png` retain the
+animated title and prompt with no menu. No movement/action was reached. Shipped
+User.ini and DefUser.ini bind `Escape=ShowMenu`; that command was only read,
+never injected. Renderer `_menuMode` is false in the retained states. The scratch
+expression used nonexistent `get_modal_dialog`/`get_menu_open_hwnd` exports,
+so its `modal:null`/`menu:null` mean **unavailable**, not closed. It also inspected
+the control instance, without proving it was the renderer's restored keyboard
+owner. Consequently menu, modal, dialog and edit early-return paths cannot be
+distinguished from this capture. Do not turn that missing observation into a
+speculative modal, focus or guest-binding fix.
+
+Next observation: record the actual renderer keyboard-owner instance and its
+read-only `menu_open_hwnd`, `modal_dialog_hwnd`, `dialogbox_hwnd`, window dialog
+flags, focus ancestry/procedure/class, and identify which `handleKeyDown`
+early-return branch consumes Escape. Avoid invoking side-effect routing helpers
+just to snapshot state. A second original invocation was not used here.
+
+Validation (`verification.json`): all **4,387 full build inputs** match the
+accepted Redline locked-build snapshot and remain unchanged afterward; module
+and region mirror match exactly, so no redundant build was run. Actual parent
+and child each load **2,025,619 bytes**, SHA-256
+`168c61dae2861842948e5f9e29e4e18df93a6fab12c7d17f7dc85d75e34b7b55`.
+All **263 parent / 117 child** loaded-read hashes match current files. Both
+complete 142-file trees, package, inventories/manifest and registry source pass
+before/after pins. No production/test code changed or focused regression was
+added; offline control/parser/binding checks pass.
+
+The open-PTY outer limit is **150 seconds / kill-after 5**, inner **115**, child
+watchdog **TERM 90 / KILL 95**. Natural exit **0** takes **83.125 seconds**, with
+no watchdog firing and normal batch budget/default **200 ms** clock unchanged.
+API tracing is paused until the Escape observation; no breakpoints or counters
+are used. Child stdout/stderr and INIs/logs are preserved before temporary
+cleanup; the parent VFS snapshot retains INIs and Detected.log, but Rune.log is
+zero bytes. All own runtime PIDs/groups and temporary trees are absent; watcher
+is terminated. Free disk remains above **2 GB**. Box ID/state/expiry and
+ownership: **N/A**. No browser, boats, other agents, downloads, guest/config/DLL
+mutation, held guest, deployment or unrelated repair was involved.
+
 ## 2026-11-01: original UI completes wizard; rendered title, Escape menu blocker
 
 **Ordinary Next → Next → Run reaches the animated Rune title scene. Gameplay
