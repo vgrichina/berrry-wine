@@ -1,5 +1,5 @@
-Current 2026-11-01T20:03:27.947547+00:00 — Battlezone’s native save reload and red Fighter capture are reviewed. Defense fire, kills and objective advancement remain unverified: a disk guard stopped the original. All102 recorded processes/groups are absent; note346788a42 is published.
+Current 2026-11-01T20:11:37.965908+00:00 — Battlezone remains short of its launch margin after recovering52MB. Fresh worker01a198bc-d1c0-78b1-aa36-944f463dc0ee checks closed worker logs for recoverable space, then attempts defense only after the disk and runtime gates pass. The native save is preserved; combat remains unverified.
 
-Urban Chaos now runs one ordinary encounter attempt with the repaired allocator and reviewed shutdown helpers, deadline20:25:34UTC. Fresh Battlezone worker01a198b5-4cc0-7c43-ba87-26418d430ee0 prepares statically, restoring sustained2.4GB disk headroom before engagement after Urban releases the runtime. Two workers; next fallback20:15UTC or completion/input/dependency.
+Urban Chaos reached the street HUD, then reported heap refusals and a180-second timeout. Its original stopped; the worker is publishing evidence before releasing runtime ownership. No encounter or allocator crash cause is established.
 
-The transient disk writer remains unknown; a passive observer expires20:29UTC. Historical full27/backend/FPS/audio coverage remains open. No public deployment.
+Two workers including Urban closeout; next fallback20:22UTC or completion/input. The passive disk observer expires20:29UTC. Full27/backend/FPS/audio coverage remains open. No public deployment.
