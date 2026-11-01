@@ -551,6 +551,86 @@ matching helpers are absent, with no new child temps. Native local box
 ID/state/expiry are N/A; own shutdown was explicitly delegated. Only this note
 and ignored evidence changed. No FPS, audio, browser/GPU or full-suite claim.
 
+## 2026-11-01: generic exclusive freshness repaired; native launch blocked
+
+Run: `scratch/runs/20261101-battlezone-renderer-dialog-freshness/`.
+The exact `urban-chaos-guard-gameplay` author release, fresh launcher
+final/result (exit 0), and direct owned-process/group cleanup passed at
+**17:14:58 UTC**. Input `6ca46f8ffced6b6e4331e8fa4efa33e4d91c6872`
+was repinned to main `f20e19b24651f2e37fe53b422378205328338270`.
+The gate deadline was **17:39:58 UTC**, inside the overall 18:00 UTC limit.
+Only scratch preparation preceded this gate; source edits, build and tests
+followed it. No original was launched in this run.
+
+The generic renderer now measures exclusive GDI backing freshness against
+the **last covering presentation (`coverSeq`)**, consistently with shared
+native children. A newer DirectDraw write through a window-bound clipper
+does not overwrite other visible window pixels. Comparing their backings
+with that write's `writeSeq` incorrectly drops the active native dialog.
+The correction applies to top-level and own-child backings in both the
+screen compositor and its post-processing source. Existing visibility,
+ancestor clipping and stack order remain authoritative. The last real
+covering sequence survives later clipped writes, so previously covered
+backings remain rejected until an actual newer GDI paint. There is no
+game-specific branch, modal exemption, unconditional overlay or replacement
+frame. The complete production delta changes three freshness predicates
+and comments; callback/context, worker publication holds, concurrency and
+SEH algorithms are unchanged.
+
+`test/test-renderer-dialog-freshness.js` exercises the actual renderer's
+lazy exclusive `repaint`, post-processing source and ordinary PNG encoding
+with already-painted fixture backings. The final test fails against the
+exact pre-change renderer: the newer clipped presentation replaces the
+expected dialog pixel with the underlying primary pixel. It passes against
+the correction, including real newer covering presentation, later clipped
+write without stale revival, newer native repaint, hidden dialog/child,
+modeless owned popup, and overlapping front-window order. An initial child
+fixture omitted the absolute screen-geometry exports; those were supplied
+before the final old-source negative and passing regression. These pixel
+checks establish compositor behavior, not fresh Battlezone gameplay.
+
+The mandatory `flock /tmp/wine-build.lock bash tools/build.sh` passed, as
+did the new regression and focused existing native-child-overlay, owned-popup
+clipping, debug scaling, GPU client-origin, worker repaint-boundary,
+lossless-PNG, frozen-control-CLI and callback-census tests, plus census
+negative controls. Only the declared `lib/renderer.js:host-file` census seal
+was refreshed after full-delta review; ownership and nonlocal holds remain
+pending. The observed regression actually read renderer SHA-256
+`a7c304c678a6a91622b693c8fb5416ace4c002245c3653b65fb18fdaf59d0924`;
+all **31 observed read pins** match afterward. All **4,063 scoped
+source/module pins and 153 fixture paths** are unchanged between the
+post-repair preflight snapshots. This includes original `bl_rel.exe`
+3,732,992 bytes / SHA-256
+`0554156663000fc1c0c0ad2275e460fa6fc9acda4abdd26c720b69019d04617a`
+and original `Input.map`. The local built module remains
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`;
+there is no newly loaded original-runtime module to attest. The scratch
+observer validation executes sync/async modules against whole readonly
+512-MB memory, retains event 10,001 and preserves clock identity; actual
+monotonic clock reads are bounded by the before/after readings.
+
+Prior driver/monitor status **143** was investigated using the retained
+termination record and launcher code. Original exit hook **0** does not
+establish a game crash; the historical signal sender/reason remains unknown.
+Urban's published diagnosis likewise leaves that cause unknown and records
+its detached finite supervisor's normal exit after 6,196 watchdog samples.
+This run prepared the same detached-session/finite-deadline approach with
+signal logging, heartbeat checks and owned shutdown. Its detached gate/disk
+watcher survived its short launcher; disk sampling remained above 2 GB.
+Finite sampling does not prove disk state between samples.
+
+**First native prerequisite failure, 17:17:48 UTC:** immediate launch
+headroom was **2,179,108,864 bytes**, below the required **2,200,000,000**.
+Original attempts stopped with **zero originals**, no retry and no foreign
+cleanup. The independently tested production repair is retained. Fresh
+standard capture matching the readable actual mission-complete dialog,
+ordinary Next Mission/Launch, onward gameplay and any harvesting remain
+**unverified with this correction**. Historical dialog/native and black
+standard PNGs were inspected as prior evidence only. There are no new game
+input, release, neutral-dispatch, FPS, audio or full-suite claims. Owned
+watchers/helpers were stopped and checked absent; native box ID/state/expiry
+are N/A, with delegated own shutdown and ownership handed back.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
