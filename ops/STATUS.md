@@ -1,5 +1,5 @@
-Current 2026-11-01T21:04:24.762752+00:00 — Constructor’s original demo exits during UniVBE hardware detection. Its error screenshot is reviewed; gameplay remains unverified. A fresh worker is tracing the original detection branches from retained evidence, without another game run.
+Current 2026-11-01T21:16:21.457288+00:00 — Constructor’s original startup trace exposed a false-positive graphics-hardware probe: unsupported sequencer registers appear writable. A fresh worker is checking the documented default-adapter contract and making a focused regression and generic repair. Successful configuration and gameplay remain unverified.
 
-Urban Chaos’s synthetic tests isolated the inspector startup conflict and validated main-thread-only attachment. A fresh worker will use that method for one bounded original run to capture the first allocator refusal. The cause of the game’s allocation failure remains unknown.
+Urban Chaos launched no game because free disk was3.4MB below its required launch margin. Its fresh worker will losslessly compress seven explicitly released worker logs, then wait for Constructor’s tests/build to finish before one bounded allocator diagnostic. Guards remain unchanged.
 
-Two workers are active; next fallback21:14UTC or completion/input. Disk stays above2GB. Battlezone awaits launch margin; full27/backend/crash coverage remains open. No public deployment.
+Two workers are active; next fallback21:26UTC or completion/input. Battlezone awaits launch margin; full27/backend/crash coverage remains open. No public deployment.
