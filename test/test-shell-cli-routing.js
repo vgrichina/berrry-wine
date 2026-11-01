@@ -11,7 +11,7 @@ const path = require('path');
 const vm = require('vm');
 const { EventEmitter } = require('events');
 const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host');
-const { saveVfsToHost, mergeVfsTreeBack } = require('../lib/vfs-export');
+const { saveVfsToHost, mergeCompletedChildState, saveCompletedChildState } = require('../lib/vfs-export');
 
 const sourcePath = process.env.CLI_SOURCE || path.join(__dirname, 'run.js');
 const source = fs.readFileSync(sourcePath, 'utf8');
@@ -57,8 +57,9 @@ function fixture({ spawn = true, appSpawn = false, capture = false, fail = false
       if (exportFail) throw new Error('injected snapshot write failure');
       return rows;
     },
-    mergeVfsTreeBack,
+    mergeCompletedChildState,
     startupShowArgs: n => [`--startup-show=${n}`],
+    childCodePageArgs: () => [],
     ThreadManager: { namedEventEnvironment: () => ({}) },
     appAsset: p => p, __filename: sourcePath,
     console: { log: s => logs.push(s) },
@@ -66,6 +67,7 @@ function fixture({ spawn = true, appSpawn = false, capture = false, fail = false
     require(name) {
       if (name === 'os') return { tmpdir: () => root };
       if (name === '../lib/storage') return storage;
+      if (name === 'crypto') return require('crypto');
       assert.strictEqual(name, 'child_process');
       return { fork(file, args, options) {
         if (fail) throw new Error('injected fork resource failure');
@@ -96,8 +98,10 @@ function finish(f) {
   assert(fs.existsSync(input), 'authentic exporter created child snapshot');
   assert.strictEqual(fs.readFileSync(arg(fork, 'exe'), 'utf8'), 'offline fixture, never executed');
   assert(f.context.ctx.hasLiveChildren(), 'accepted child stays live');
-  fs.cpSync(input, output, { recursive: true });
-  fs.writeFileSync(path.join(output, 'new.txt'), 'child output');
+  const childVfs = { files: new Map(f.vfs.files), dirs: new Set(f.vfs.dirs) };
+  childVfs.files.set('c:\\new.txt', { data: Buffer.from('child output') });
+  saveCompletedChildState(childVfs, { exportStore: () => ({}) }, output,
+    arg(fork, 'reg-export'), arg(fork, 'child-state-completion'), arg(fork, 'child-state-token'));
   fork.child.emit('message', { t: 'child-exit', code: 17 });
   assert.strictEqual(f.context.h.process_ctl(0, 0x4004, 0), 259,
     'exit code remains STILL_ACTIVE until state is merged');

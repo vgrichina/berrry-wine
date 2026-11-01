@@ -23,18 +23,19 @@ const {
 } = require('../lib/worker-imports');
 const { seedExeImage, win16FileCandidates, residentWin16Module } = require('../lib/vfs-seed');
 const { expandIncludePatterns, guestPathInTree } = require('../lib/vfs-host-files');
-const { saveVfsToHost, mergeVfsTreeBack } = require('../lib/vfs-export');
+const { saveVfsToHost, saveCompletedChildState, mergeCompletedChildState } = require('../lib/vfs-export');
 
 // A --spawn-processes child has ended: its C:\ and registry replace what it
 // was started with (see spawnVfsChild).
-function mergeChildState(vfs, storage, before, outDir, regOut) {
-  const { written, deleted } = mergeVfsTreeBack(vfs, before, outDir);
-  let keys = 0;
-  if (fs.existsSync(regOut)) {
-    storage.clearStore();
-    keys = storage.importStore(JSON.parse(fs.readFileSync(regOut, 'utf8')));
+function mergeChildState(vfs, storage, before, outDir, regOut, completion, token) {
+  const result = mergeCompletedChildState(vfs, storage, before, outDir, regOut, completion, token);
+  if (!result.merged) {
+    console.log(`[spawn] child state not merged: ${result.reason}`);
+    return result;
   }
+  const { written, deleted, keys } = result;
   console.log(`[spawn] child state merged: ${written} file(s) written, ${deleted} deleted, ${keys} registry/INI key(s)`);
+  return result;
 }
 const {
   decodeMfcCString,
@@ -518,6 +519,10 @@ const TRACE_SEH = hasFlag('trace-seh');   // --trace-seh: log SEH chain operatio
 // exist are invisible to the CLI without these.
 const REG_IMPORT = getArg('reg-import', '');
 const REG_EXPORT = getArg('reg-export', '');
+// Private per-launch completion handshake for spawnVfsChild, independent of
+// guest/host exit codes and the earlier child-exit IPC notification.
+const CHILD_STATE_COMPLETION = getArg('child-state-completion', '');
+const CHILD_STATE_TOKEN = getArg('child-state-token', '');
 // --import-saves=FILE / --export-saves=FILE: the same state as a *save bundle*
 // (lib/save-bundle.js) — the app's persistFiles matches plus the registry/INI
 // store, in one zip. --reg-export carries only the second half, so a game whose
@@ -4212,6 +4217,8 @@ async function main() {
       const outDir = path.join(tmp, 'out');
       const regIn = path.join(tmp, 'reg-in.json');
       const regOut = path.join(tmp, 'reg-out.json');
+      const completion = path.join(tmp, 'complete.json');
+      const token = require('crypto').randomBytes(32).toString('hex');
       const written = saveVfsToHost(vfs, inDir);
       const before = new Map(written.map(row => [String(row.guestPath).toLowerCase(), row.outputPath]));
       const exeRow = written.find(row => String(row.guestPath).toLowerCase() === guestExe);
@@ -4235,6 +4242,7 @@ async function main() {
         '--stuck-after=0', '--max-batches=1000000000', `--max-seconds=${MAX_SECONDS || 600}`,
         '--spawned-child', '--spawn-processes',
         `--save-vfs=${outDir}`, `--reg-import=${regIn}`, `--reg-export=${regOut}`,
+        `--child-state-completion=${completion}`, `--child-state-token=${token}`,
         ...(childDllSeeds.length ? [`--dll-seed=${childDllSeeds.join(',')}`] : []),
         ...childCodePageArgs(),
         ...PIPE_CHILD_ARGS,
@@ -4254,7 +4262,7 @@ async function main() {
       child.on('message', msg => { if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0; });
       child.on('exit', code => {
         try {
-          mergeChildState(vfs, storage, before, outDir, regOut);
+          mergeChildState(vfs, storage, before, outDir, regOut, completion, token);
         } catch (e) {
           console.log(`[spawn] merging ${path.win32.basename(guestExe)}'s files back failed: ${e.message}`);
         }
@@ -11730,7 +11738,7 @@ if (VERBOSE) {
   // --reg-export writes what the run left in the registry/INI store, which is
   // what a browser tab would have kept in localStorage. Feed it back with
   // --reg-import to make the next run a *second* launch.
-  if (REG_EXPORT) {
+  if (REG_EXPORT && !CHILD_STATE_COMPLETION) {
     const { exportStore } = require('../lib/storage');
     const snap = exportStore();
     fs.writeFileSync(REG_EXPORT, JSON.stringify(snap, null, 2));
@@ -12181,7 +12189,12 @@ if (VERBOSE) {
     for (const error of vfsOverlay.errors) console.log(`[overlay] ${error.message}`);
   }
 
-  if (SAVE_VFS && ctx.vfs) {
+  if (CHILD_STATE_COMPLETION) {
+    if (!SPAWNED_CHILD || !SAVE_VFS || !REG_EXPORT || !ctx.vfs || !CHILD_STATE_TOKEN)
+      throw new Error('incomplete child state export configuration');
+    saveCompletedChildState(ctx.vfs, require('../lib/storage'), SAVE_VFS, REG_EXPORT,
+      CHILD_STATE_COMPLETION, CHILD_STATE_TOKEN);
+  } else if (SAVE_VFS && ctx.vfs) {
     saveVfsToHost(ctx.vfs, SAVE_VFS, {
       suffix: SAVE_VFS_SUFFIX,
       prefix: SAVE_VFS_PREFIX,
