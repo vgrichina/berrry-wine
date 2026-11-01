@@ -1,7 +1,7 @@
-Current 2026-11-01T02:34:04.405963+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T02:41:18.846722+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Redline's original demo reached an inspected Stadium City mission selector through the local CLI. Ordinary input advanced New Game, but selecting the mission did not reach gameplay. The main thread stayed active while later input queued; the cause remains unknown. Original files are unchanged, and all three bounded runs exited cleanly. Next Redline work will trace callback return and event ownership.
+Rune's original renderer-test child now executes, but fails with MisingIni during startup before any renderer result. Both original INIs exist in its exported tree; the failed lookup remains unknown. Children required SIGKILL cleanup and all assigned processes are gone. No gameplay or detection log was observed. Next Rune work will diagnose child INI lookup and transport.
 
-Rune now owns the serialized runtime slot. A fresh worker will execute its original renderer-test child using the documented child-process option, then pursue ordinary wizard choices and player control if possible. CLI captures cannot establish browser or WebGL behavior.
+Redline now owns the serialized runtime slot, tracing the callback and message dispatch behind its Stadium City mission-selection stall. Its inspected capture shows a mission menu, not gameplay.
 
-Browser testing awaits authorized file transfer after SSH403; the owner was notified and the box is stopped. The constructor repair and affected build/tests pass. Full GL/D3D27 coverage and crash freedom remain open. REP stays held; Crimsonland needs authentic installed state. No public deployment.
+Both runs retained original game files. Rune tested the accepted earlier runtime; a CP950/Win16 commit arrived during publication and has not been exercised by these runs. Browser testing still awaits authorized file transfer after SSH403. Full GL/D3D27 coverage remains open; REP is held and Crimsonland needs authentic installation. No public deployment.
