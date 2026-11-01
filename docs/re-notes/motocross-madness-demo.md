@@ -317,3 +317,77 @@ Both game PIDs, drivers and process groups are absent; no watcher was created
 and no new `wa-child-*` temporary directory remains. Local box ID/state/expiry
 are N/A. A scored stunt still requires a controlled takeoff and clean landing;
 this result adds no full-playthrough, audio, FPS or full-corpus claim.
+
+### Fixed-cadence Practice jump: landing fails (2026-11-01)
+
+Run `scratch/runs/20261101-motocross-clean-landing/` made **one bounded
+straight-route attempt**, then stopped at the first failed gameplay condition:
+the descent did not produce a stable, clean landing. No second original or
+Heel Clicker attempt was made. GL worker `01a196b3` supplied fresh launcher
+final/result files and its 10:49:46 UTC explicit runtime/source/build release.
+The 10:52:34 UTC gate pinned actual main `61cb10e17` (assignment baseline
+`3fc209ff3`). The original exited 0 after **110.443 seconds**, within the
+20-minute gate cap. Sampled minimum available disk was **2,623,963,136 bytes**;
+the continuous guard used the requested 2,000,000,000-byte floor.
+
+The unchanged native CLI software renderer entered **Practice → T-rific →
+default rider**, with two default opponents. Tick cadence stayed **10 ms per
+batch throughout**. Startup/menu batches used 1,000 blocks; the existing
+`set-batch-size:100000` control at batch 34,100 selected the fixed loading and
+gameplay budget. At batch 36,100, Up was pressed through ordinary WM and DI
+controls. No steering, lean or stunt key was pressed during driving. Every
+50 batches thereafter produced a PNG. The route follows the initial heading
+down the shallow trough beside the tall right-hand quarry wall, over its
+sloping shoulder toward the flat-topped ridge beyond; the left basin and
+right wall remain reference landmarks. `route-plan.json` and
+`manual-controls.ndjson` retain the route and exact commands.
+
+The paired captures are deliberately evidence of an **unsuccessful landing**:
+
+| Phase | Capture / absolute batch | Observation |
+|---|---|---|
+| Approach | `route-0400.png` / 36,500 | Mounted rider approaches the right wall's shoulder. |
+| Takeoff candidate | `route-0450.png` / 36,550 | Rider remains mounted; rear wheel and projected shadow separate near the slope. |
+| Air candidate | `route-0550.png` / 36,650 | Bike is above the descending terrain beyond the shoulder; this is visual evidence, without a guest airborne/contact flag. |
+| Released descent | `route-0700.png` / 36,800 | Up and both lean keys were explicitly released at 36,750, before the following apparent contact. |
+| Contact and rebound | `route-0750.png`, `route-0800.png` / 36,850–36,900 | Rear wheel appears to meet the slope, followed by another rise; stable touchdown is not established. |
+| Failed landing | `route-1050.png`, `route-1250.png` / 37,150–37,350 | Bike rolls sideways, then rider and bike separate. |
+| Settled crash | `route-1400.png` / 37,500 | Rider and bike lie separately; player **A: 0**. |
+
+Player A remains zero throughout; TFFST's 5,000 points belong to an opponent.
+Camera movement alone is not treated as airborne success, and apparent contact
+at 36,850 is not accepted as a clean landing. The exact obstacle is the
+uncontrolled rebound/roll after this shoulder descent despite released
+throttle and neutral lean. Its physics/input/rendering cause is unproven.
+The requested prerequisite therefore remains unmet; repeatability and shipped
+airborne Z+W scoring were not tested.
+
+Consumption is retained in `runtime.log.gz` (241,846 compressed bytes): WM
+dequeue/route/dispatch counts advance **21/21/15 → 22/22/16 → 25/25/19**.
+Up release is actually dequeued at batch **36,753**, before apparent contact.
+Keyboard device `0x08221180` receives successful 256-byte `GetDeviceState`
+calls at return site `0x451132`, and successful `GetDeviceData` at
+`0x45119c`/`0x4511ec`. The keyboard sequence/head advances **3/3 → 4/4**;
+the final buffer is active, empty and without overflow. Final physical and
+asynchronous Up/A/S/W/Z states are false, with empty scheduled/renderer queues.
+These establish ordinary input consumption, not a successful stunt.
+
+The EXE/manifest identities remain the hashes recorded above. All **311
+original files plus manifest** and **4,444 source/build files** match
+before/after; full original/config archives were verified against every pin.
+Accepted build reuse matches all **4,392 input pins and 141 prior reads**.
+The actual runtime compile identifies `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`;
+all **285 actual file-read records** match retained files. Exact observer
+scripts and matching build inputs permit reuse of its whole-512-MB
+immutability, sync/async scratch-Wasm, native/host clock and late-10,001-event
+validation. Runtime read observation still excludes async filesystem reads,
+streams, mmap and loader-internal reads, and requires complete descriptor
+reads of at most 24 MiB. Compiler-input observation was reused, not repeated.
+
+The unchanged manifest fixture passes; input-state and input-clock fixtures
+still fail with missing `mainSchedulerObserver` and `hasFlag`, respectively.
+Failures remain in `test-results.json` and their logs. No tracked source,
+helper, test, config, registration or backend edit/rebuild occurred. Own
+runtime/driver/groups, publication watcher and new temporary directories were
+verified absent. Local box ID/state/expiry are N/A. This attempt adds no
+scored-stunt, clean-landing, GPU, FPS, audio or full-playthrough acceptance.
