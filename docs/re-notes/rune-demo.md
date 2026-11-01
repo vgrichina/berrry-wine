@@ -1,5 +1,75 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: single child INI runtime diagnostic stops before the error branch
+
+**Concrete blocker: the requested two-breakpoint diagnostic did not reach
+either INI error branch within its finite child watchdog.** The runtime cause
+remains unconfirmed. No DLL transport repair or regression test was made;
+`test/run.js` is unchanged. The static transport defect below remains established,
+but this run neither confirms nor contradicts its role in `MisingIni`.
+
+Evidence is ignored under `scratch/runs/20261101-rune-child-ini-runtime/`.
+Exactly **one** ordinary local parent CLI invocation ran, with `--app=rune_demo`,
+empty parent guest arguments, original EXE and System cwd, `--spawn-processes`,
+and child-only `--trace-fs`, the eight requested module/cwd/file/error API names,
+and `--break=core+0x1014cbf8,core+0x1014cd29`. There was no `--trace-to` limit.
+The actual child argv preserves the guest-requested
+`testrendev=D3DDrv.D3DRenderDevice log=Detected.log`. Original host DLL seeds
+are still forwarded while the child EXE is exported into
+`/tmp/wa-child-Bc3eSD/in/system/rune.exe`.
+
+`test/run.js` explicitly sets **BATCH_SIZE=1 when more than one breakpoint is
+requested**, because WASM has only one breakpoint slot. This is a concrete
+diagnostic constraint, not proof of the guest's reason for remaining before
+appInit. Child PID **3017970** completed DLL initialization, registered cwd
+`c:\system`, and last traced API **1005**, GetModuleFileNameA with **handle 0**,
+returning `C:\system\rune.exe` from `0x10c1a365`. Core loaded at
+`0x10ba9000` (original base `0x10100000`); that return maps to original
+`0x10171365`, the already identified package-name query. Neither a Core-handle
+module filename, SetCurrentDirectory call, failing INI operation, nor either
+requested breakpoint was observed. Consequently the EBP-relative filename
+buffers could not be inspected. There is no observed `MisingIni` in this run,
+no renderer-test exit/result, and no preserved `Detected.log`.
+
+The child watchdog sent TERM at **35 seconds**, then KILL at **40 seconds**;
+its exit was `(code=null, signal=SIGKILL)`. The parent quit through control
+stdin after cleanup and exited **0**, outer duration **41.859 seconds**.
+The open-PTY outer guard was `timeout --kill-after=5s 100s`, inner limit
+**60 seconds**; no outer timeout fired. Child stdout/stderr were retained
+as they arrived, and INI/log/registry files were synchronously copied before
+temporary-tree removal. The known, separate absent-output merge again reported
+0 written / 203 deleted in the disposable parent VFS; it was not repaired.
+All own parent/child/outer PIDs and the child temporary tree are absent after
+process-group cleanup. No second diagnostic or post-fix invocation ran.
+
+The actual inspected **640×480** `wizard.png` shows the first-run renderer
+wizard with only **Software Rendering** selected. It establishes neither
+successful renderer detection nor gameplay; no wizard Next or other player
+input was sent. `final.png` preserves the final parent image.
+
+Reused the Redline predecessor's current locked build after checking all
+**4,385 recorded inputs unchanged**. Both actual parent and child compiled
+**2,025,619 bytes**, SHA-256
+`168c61dae2861842948e5f9e29e4e18df93a6fab12c7d17f7dc85d75e34b7b55`,
+with matching retained region mirror. `preflight.json`, `source-inputs.json`,
+`loaded-modules-*.json` and `verification.json` preserve identities and results;
+all **262** retained parent read hashes match current files. The killed child
+has no exit-time source-read manifest. All **142 originals in each of the
+recovered and registered trees**, the installer, companion manifest and app
+registry passed before/after hash checks. Original Core remains
+`70394c5e0be98fad3bc4aa46109804ef179e624d1ef9f08a4bcee9e24801a6e6`;
+original Rune.exe remains
+`dd1588a902952414917b8cfc65996d46ec0323dc7d298c5a23d5b2ccf70f7add`.
+No guest bytes, configuration, registry, clock or registers were changed.
+
+Documentation-only outcome; no new build was needed and no code was committed.
+Read-only identity/cleanup verification and documentation diff checks passed.
+Free disk remained above **2 GB**. Box ID/state/expiry and lifecycle ownership
+are **N/A**. Next evidence needed is still the actual Core-handle/cwd/failed-INI
+chain; the two-breakpoint diagnostic's single-block constraint must be considered
+before separately authorizing another bounded observation. This assignment
+stops at the concrete diagnostic blocker.
+
 ## 2026-11-01: static child INI investigation — DLL identity loses System path
 
 **Proven transport defect: the renderer child registers original Core.dll as
