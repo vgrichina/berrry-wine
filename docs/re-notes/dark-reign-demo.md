@@ -58,3 +58,73 @@ keyboard is DirectInput `GetDeviceState`. Left click selects and orders.
 - T1 is MSS's DirectSound service thread (`CreateThread(0x97c2b0)`), which
   `SuspendThread`s main around its mixing pass.
 - Multiplayer (ANET2/WINET2) is untried.
+
+## Reviewed Training 2 selection and movement (2026-11-01)
+
+One local original CLI invocation established ordinary player control with the
+registered defaults and unchanged original files. Main menu was reviewed at
+batch 1300, Single Player at 1614, and Training 2's briefing over the mission at
+2334. The documented balanced Escape at 2700/2703 dismissed the briefing;
+`mission-before.png` at 2803 shows the map, buildings, units and HUD. The Menu
+sidebar remained open, including after another balanced Escape at 2803/2806.
+The neutral capture at 2906 has the same unit and landmark positions.
+
+The upper unit is a **Construction Rig**, initially around screen (242,80).
+With the host pointer last at (320,200), normal `mousemove:337:13` at 2906
+provided relative (+17,-187) motion. The reviewed hover at 2916 identified the
+rig. `mousedown:337:13` at 2916 and matching `mouseup` at 2920 selected it:
+`selected.png` at 2940 shows its selection box and the sidebar changing to
+Build with construction choices. Hover alone was not counted as selection.
+
+Normal `mousemove:405:73` at 2940 added relative (+68,+60) motion, putting the
+game cursor over nearby open ground around (309,129). In `order-before.png`
+at 2950 the selected rig is still at its original location. An ordinary left
+destination click, down at 2950 and up at 2954, caused visible displacement:
+`order-after-20.png` at 2974 shows the rig around (263,104), `after.png` at
+3054 shows arrival around (314,130), and `settled.png` at 3104 shows it staying
+there. Buildings, terrain details and the lower unit remain fixed. This is
+unit translation toward the clicked ground, rather than animation or camera
+scrolling. No further input followed the destination release.
+
+Actual DirectInput consumption is retained separately from MSG dispatch.
+Read-only snapshots of the generated `DI_MOUSE_INPUT_STATE` region show the
+buffered ring head/tail advancing 8→10 for hover motion, 10→11→12 for selection
+down/up, 12→14 for destination motion, and 14→15→16 for the destination click.
+Consumed ring slots retain the relative-axis events and type-1/type-2 button
+events; pending ring count is zero at each capture. The head advances in
+`di_mouse_event_take`, called by `IDirectInputDevice_GetDeviceData`. Bounded
+GetDeviceData/GetDeviceState API traces, successful HRESULTs, ordinary input
+dispatch logs and frozen host queue snapshots are also retained. Dispatch
+alone does not prove DirectInput consumption; its correlation remains
+unavailable. The separate unbuffered axis accumulators are not claimed empty.
+
+Actual main after the Alice final/result plus explicit runtime/source/build
+release gate was `c940f231dbccd0b0cdf4dd82c4570db38b3eb1a0`. The accepted locked
+build was reused after all 4,392 accepted inputs, 141 prior runtime reads,
+module and generated mirror matched. The actual instantiated production module
+was SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+All 4,444 current source pins, 257 original/manifest pins, 255 manifest entries
+and 228 actual runtime read identities passed post-run verification. This
+includes the original EXE, loaded DLLs, manifest and assets, not a compilation
+container. The reused observer passed actual synchronous/asynchronous emitted
+execution, whole shared 512 MB read-only and clock-identity checks, and bounded
+late-10,001 retention. No source, registration, guest or config edit was needed.
+
+Shutdown evidence has a limit: after the reviewed final capture, the controller
+session returned status 143 before writing its `finally` summary. The original
+child's exit code and the controller's minimum-free-disk summary are unavailable;
+the child's exit observer did persist its final 228-read identity manifest.
+Flushed log content was recovered losslessly from the unfinished gzip stream.
+Controller, original PID/group, both watchers and temporary paths were verified
+absent. Startup free space was 2,375,577,600 bytes; the active controller enforced
+the >2 GB floor. No second original was run. Local-only run: box ID/state/expiry
+are N/A.
+
+Evidence: `scratch/runs/20261101-dark-reign-original-mission-control/`, including
+the reviewed before/selected/intermediate/after PNGs, `review.json`, controls,
+DirectInput snapshots, `input-consumption.json`, actual module/read identities,
+unchanged source/original pins, observer validation, exit limitations and cleanup.
+This establishes Training 2 mission arrival, selection and destination movement;
+it does not establish mission completion, combat, audio, FPS, GPU or full-suite
+playability.
