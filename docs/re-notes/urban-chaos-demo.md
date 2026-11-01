@@ -1389,3 +1389,118 @@ Next: investigate the remaining real-game sparse-commit/allocation refusal and
 unreturned2036→2061 step before another separately authorized original. The
 synthetic allocator repair does not establish encounter success. No FPS, audio,
 full27, browser/GPU or broader gameplay qualification is claimed.
+
+## 2026-11-01 post-repair static finding: rewind eligibility is the missing discriminator
+
+Evidence: `scratch/runs/20261101-urban-chaos-postrepair-heap-cause/analysis.json`,
+reproducible with `python3 scratch/runs/20261101-urban-chaos-postrepair-heap-cause/analyze.py`.
+Static inspection only; no original, WASM execution, build, synthetic allocation
+test, browser or box operation. Eight relevant source/interface files match
+published `af500af41` byte-for-byte at analysis head `71671ee45`; their exact
+SHA256 values are retained. Allocator repair is `0f9dfbb45eff6ded35a15bcf3a316c700594d831`.
+The accepted selected module remains
+`7278c1018fa8208731a8e285f0bb2a5c35aa8e299592750ce3cedf6d354caef0`;
+the durable original's actual compile/consumed-byte observer records remain absent.
+
+**The narrow production-path conclusion is fresh sparse-arena commit refusal
+after current-arena reuse did not serve the request. The particular rewind
+rejection and underlying commit predicate are unknown.** In
+`src/10-helpers.wat:2644`, `$heap_sparse_alloc` tries `$heap_sparse_rewind` only
+on current sparse bump overflow. Its subsequent reason3 proves that it went on
+to obtain a guest reservation and that commit/reclaim logic still returned0.
+This is not the reason2 guest-VA-reservation failure, reason4 heap-arena-record
+registration failure, or reason5 bad-size path. Rewind might have had no current
+record; the log does not establish that a populated arena was examined.
+
+`$heap_sparse_rewind` (`src/10-helpers.wat:2573`) considers **one current arena**,
+not all zero-live arenas. Any live allocation in that arena rejects rewind
+before bin flushing, even if its other bytes are free. It also rejects cursor/
+record mismatch, insufficient arena size, a whole-block first header, invalid
+local links, missing local ownership of any carved header, extra interior links,
+or the65,536-list/1,000,000-search bounds. A peer-held free header can therefore
+prevent reuse without any live bytes. Retired carved arenas are still excluded
+from `$heap_arena_release_free` (`:2016`). These are exact production conditions,
+not measured explanations for this game's failure. One persistent allocation
+sharing the pack arena is a sufficient way to defeat the repair's empty-arena
+precondition; its occurrence here is unmeasured.
+
+The balanced102,000-pair regression established reuse with one map when temporary
+requests were freed before the next request. It did not establish that actual
+game arenas become empty, remain locally owned, or pass the proof bounds. The
+legacy VB path allocates the pack in `$d3dim_pack_fvf_vertices`
+(`src/09ab-handlers-d3dim-core.wat:1693`), then frees a successful pack after
+the draw (`:2194`). It has no private pack arena: other `$heap_alloc` users in
+the same instance can share its bump arena. A balanced pack/free call pair
+therefore does not imply an empty arena at the next bump miss.
+
+Offline full-gzip parsing confirms8,016 messages in4,008 reason3/reason1 pairs,
+first at **one-based line560** (the predecessor's559 is a zero-based index).
+First extent32,296 follows ACK2036; the sole pending request is
+`route-1793563516251341528`, step25 sent at20:05:16.251 UTC, with no terminal
+ACK receipt and the retained180s timeout. Small extents span296..44,264 bytes,
+all `32*N+8` (arithmetically9..1,383 vertices, not captured pack operands).
+All exceed `HEAP_BIN_MAX=256` and are below `HEAP_LARGE=0x7f000`: a fitting block
+hidden directly in a small bin cannot serve these requests. Bins can still
+affect ownership/adjacency. There are7,260 site lines at00494d9f/0048c76e,
+724 at00494d16/0048c76e and32 at00494d16/401ac090; only the first site's prior
+disassembly is used here. Do not attribute every refusal to one captured caller.
+Runtime gzip SHA256 is
+`8b158c5e316a05ccf26ac051f8fce59ac5efdf497967dea70db0920ebcba496d`.
+
+Absent actual state: map/reservation/hole/arena tables, allocated high-water and
+live-byte words, current sparse cursors, free-list headers, instance bin heads,
+lease state, and allocation ownership/history. Host input/scheduler samples do
+not contain these. Reason3 is emitted after failed-range release/possible
+rollback; it cannot identify which `$virtual_map_commit_locked` check failed
+(`src/10-helpers.wat:1197`): backing placement/split exhaustion, map slots,
+lease exclusion or page publication remain candidates. The288MiB capacity is
+not a measurement of occupied or live bytes. Disk did not stop the original;
+direct OS wait-9 precedes driver wait0. Neither refusal order nor that timeout
+proves OOM-to-stall causality.
+
+One next discriminator, on a separately assigned original: take **one bounded
+first-reason3 snapshot at the existing `heap_oom_trace` callback**, before its
+formatting. A source breakpoint through Node's existing inspector at
+`lib/host-imports.js:2034`, conditional on `reason===3`, permits read-only
+inspection without adding a hook or editing source. This is a proposed capture,
+not an executed/validated inspector procedure. Ordinary control-stdin `eval`
+(`test/run.js:7372`) runs between slices and cannot promise this boundary while
+a step is unreturned; `--trace-host=heap_oom_trace` logs arguments only.
+
+At that stop retain size/reason, wall/monotonic time, last ACK/pending request,
+allocating instance and WASM stack. Copy matched-region `VIRTUAL_MAP_STATE`,
+`VIRTUAL_MAP_TABLE`, `VIRTUAL_RESERVE_TABLE`, `VIRTUAL_HOLE_TABLE`, `HEAP_ARENAS`,
+`HEAP_SHARED`, PTEs and active Win16 lease ledger; read pure heap cursor getters
+and `heap_stat`. Obtain the current record by matching sparse end/high in the
+copied arena table. Read validated8-byte headers through a host translator
+using the copied PTEs; bound to65,536 headers/list nodes,16MiB output and5s
+capture work, mark truncation/invalid translations explicitly, and remove the
+breakpoint after the first hit. Keep guard/deadline/shutdown ownership intact;
+abort capture on its bounds rather than extending runtime guards. Require
+allocator writers quiescent, or label the copy non-atomic. Passive
+`d3d_render_free_list_diagnostic` (`src/09ai-d3d-render-lifetime.wat:44`) exposes
+this instance's head/reason but omits bins. Never use `get_free_list`,
+`heap_free_census`, retire, adopt or coalesce as read-only probes: they mutate.
+Read private bins from debugger state only if actually exposed; otherwise
+record them unavailable and leave unlisted headers' ownership unknown.
+
+Offline distinguish reserved VA (reservation intervals), occupied backing
+(union of published map backing intervals, including non-heap owners), arena
+live charged extents (`+12`, not user payload), and validated locally free
+extents (list/bin membership). Compare total/largest backing gaps with the
+1MiB commit and recursive64KiB floor; total free bytes alone cannot prove a
+fit. Within the current arena, compare live count, cursor/high/end, free
+header coverage and adjacent runs against need32,296 and the exact rewind
+proof/bounds. Intended hypothesis: live co-residency or incomplete local
+ownership prevents current rewind while retired carved backing remains held.
+High live occupancy supports capacity pressure; zero-live stranded adjacent
+space supports retention/fragmentation only where free ownership is validated.
+Ample fitting backing with metadata/lease/publication constraints unresolved
+requires the exact failing predicate next. Missing bin/peer ownership cannot be
+inferred from aggregate zero live bytes. No source repair or memory increase
+is justified by this analysis, and this capture plan proves no cause.
+
+Only the note is committed; the offline script/report remain in the run
+directory. Own board watcher was stopped and directly waited; no other helpers
+were launched. Local box ID/state/expiry and shutdown are N/A; Battlezone's
+runtime/source/build slot and coordinator-owned processes were untouched.
