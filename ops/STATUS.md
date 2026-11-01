@@ -1,5 +1,5 @@
-Current 2026-11-01T15:11:14.702645+00:00 — Urban Chaos is running its smaller-step startup and confrontation attempt. A fresh Battlezone worker prepares commanded Scavenger arrival and scavenging behind Urban Chaos’s terminal cleanup and release. Both titles remain local candidates; two workers maximum, serialized runtime.
+Current 2026-11-01T15:37:24.640647+00:00 — Battlezone is attempting Scavenger arrival and scavenging after its accepted663m-to384m commanded approach. A fresh Urban Chaos worker investigates startup readiness behind Battlezone’s terminal cleanup and runtime release. Two local candidate titles, two workers maximum, serialized runtime.
 
-Reviewed Battlezone captures show a built Scavenger responding to Go To and approaching from663m to384m with fixed foreground. Arrival, damage and mission completion remain unverified. The published note and eight-process cleanup are verified. Urban Chaos’s earlier helper timeout produced no gameplay input; its successor changes scratch request sizing.
+Urban Chaos’s smaller requests all completed, but775batches produced32 identical teal captures and no gameplay input. Five-process cleanup and publication are verified. The startup cause remains unknown; the fresh task compares native dialog readiness with the historical Setup route before another launch.
 
 Quake II’s8-to10-kill progress and exported save remain accepted; restoring that new save is pending. Native lighting36 pixel cases passed; full27/GPU coverage remains open. No owner action or public deployment.
