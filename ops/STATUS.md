@@ -1,7 +1,7 @@
-Current 2026-11-01T06:34:56.547740+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T06:41:28.123172+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Redline capture selection is repaired and published at e06fe9784. The same frozen frame shows a coherent textured primary surface; the old chooser selected a striped offscreen surface. Regression failed before, passed after, and the required build passed. Gameplay after the fix remains unverified. A fresh movement worker waits behind Tachyon's flight-control runtime task. Rune cave gameplay and W movement are verified.
+Tachyon training flight controls are reviewed and published at f1f9faf19: paired captures and dispatched input show throttle changes, turning, and laser fire/release. Mission completion, turning cessation timing, audio and FPS remain unverified. Rune cave gameplay and W movement are also verified.
 
-Dark Reign2 lacks the native mip-level sampling required by startup; its lane remains blocked without advertising unsupported capabilities. Starlancer awaits licence authority in Telegram1772. GL tests/full27 remain unqualified.
+Redline's capture chooser fix e06fe9784 produces coherent textured captures. Its movement follow-up reached the startup disk check: free2.29GB is below its2.3GB launch threshold, above the2GB floor. No post-fix gameplay claim yet. A fresh GL mipmap/texgen pixel-test worker waits for Redline runtime release; full27 coverage remains open.
 
-Two workers, serialized runtime, disk floor2GB. Browser access and held algorithms remain excluded. No deployment.
+Dark Reign2 lacks required native mip sampling. Starlancer awaits licence authority in Telegram1772. Two workers; serialized runtime. Browser access and held algorithms excluded. No deployment.
