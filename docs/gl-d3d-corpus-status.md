@@ -1858,3 +1858,35 @@ is inferred from the counts.
 [Machine-readable inventory](gfx-corpus-current-inventory-20261019.json) pins main `4b0c7d8b3` and the matching scanner hash. All 347 registry entries were considered against files available on this coordinator. Static names/imports/IIDs identify 201 graphics candidates, 135 with a family beyond DirectDraw; these are potential routes, not runtime coverage or gameplay passes. IID-only matches can be false positives.
 
 Thirteen entries lack one or more directly declared executable/DLL paths, and eleven also lack their local file manifests. The inventory records exact missing paths per app. A missing manifest prevents discovery of its companion modules, so an empty family set is not proof of no 3D use. Recovery is needed for those entries; it does not block validation of other available originals. This is the current registry snapshot, not a reconstruction of the missing September 22 historical 27-ID set. Software/WebGL runtime evidence and reviewed gameplay remain separate requirements.
+
+## Software GL presentation bounds assessment — 1 November 2026
+
+Source-only run `20261101-gl-presentation-source-assessment` examined the
+short-pitch/large-output concern in `lib/gl-render-worker.js` presentation.
+Its local check uses `bits + pitch * height`, while row copies read
+`width * 4` bytes. An arbitrarily changed descriptor could violate that
+relationship; this observation alone does not show a producer-reachable bug.
+
+The ordinary window producer validates drawable dimensions in 1..4096 in
+`lib/gl-software-producer.js`, unbinds a prior bitmap, then sets the validated
+default dimensions. The WAT default-size setter enforces the same range.
+The window target constructs its front with `d3d9_create_surface(w,h,32,1)`;
+that constructor allocates the aligned row pitch and backing together. For
+these dimensions, pitch is exactly `4*w`, at most 16384, and backing is at
+most 64 MiB. Allocation failure returns no surface. Bitmap binding clears
+the window front, and presentation skips a zero front.
+
+The remaining snapshot path was checked: `gl_sw_worker_draw` restores
+snapshot dimensions into raster-worker instance globals, but does not restore
+`gl_sw_front`. The production raster workers instantiate their own module;
+`lib/guest-rpc.js` supplies the front exported by the producing guest instance.
+The front-global write sites in the raster WAT either clear it or derive it
+from the constructor above. Thus the inspected worker snapshot path does not
+establish the proposed producer-front counterexample.
+
+No endpoint test, original game, browser or build ran for this assessment;
+no source fix is claimed. The queued repair hypothesis requires a reachable
+producer counterexample before dispatch. Arbitrary descriptor corruption,
+other surface users, runtime lifetime safety, backend parity and the historical
+27-app qualification remain unproven. `source-pins.json` records the eight
+inspected files and revision; this is a scoped source assessment only.
