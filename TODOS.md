@@ -1124,9 +1124,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: AoWII01a1964c-604a-74e0-ad44-60bf7b2ef11f handle47811 output scratch/usage-watch/aow2-current-original-control-nov01/ owns runtime/source/build since09:02:33UTC deadline09:32:33UTC overall10:25UTC fallback09:15UTC actualLIVE09:03. Fresh Rayman2 01a1965b-2e10-73b1-92da-1f4523d36d43 handle51093 output scratch/usage-watch/rayman2-original-movement-next-nov01/ scratch-only WAIT AoWII fresh final/result AND explicit runtime/source/build RELEASE; runtime30min from gate overall10:40UTC fallback09:17UTC actualLIVE09:05.
-  Current update 2026-11-01T09:05:52.618973+00:00: Battlezone9b70a7d5b reviewed pilot fire with fixed landmarks, vehicle entry and tank ammo83to66; actual WM consumed, one original exit0, owned PIDs absent and remoteMATCH. Vehicle camera drift and observer read limits disclosed. Rayman2 ordinary movement is next; GL transform/lighting descriptor fixtures prepared unlaunched. Cap2, serialized runtime.
-  status: Populous922056d36 reviewed ordinary shaman movement with fixed landmarks and consumed input; one original exit0, five ownedPIDs independently absent. GL projective b05826e4a unchanged projective-vertex/texcoord4 assertions PASS, two originals exit0, seven PIDs absent; production bodies identical with custom-section difference disclosed. Battlezone now seeks firing/vehicle-command control beyond accepted driving; AoWII seeks current army movement and lower-panel captures. Homeworld fleet and DarkReign rig movement reviewed. Alice startup blocked; full27/GPU, FPS/audio remain open. Starlancer licence1772 pending. Cap2 serialized runtime; rolling pipeline active.
+  worker: Rayman2 01a1965b-2e10-73b1-92da-1f4523d36d43 handle51093 owns runtime/source/build since09:25:48UTC deadline09:55:48UTC overall10:40UTC fallback09:37UTC. Fresh GL descriptor worker01a1966e-14af-74f0-98a9-935368e29ad3 handle91322 output scratch/usage-watch/gl-descriptor-transform-lighting-next-nov01/ scratch-only WAIT Rayman2 fresh final/result AND explicit runtime/source/build RELEASE; runtime20min from gate overall10:55UTC fallback09:39UTC.
+  Current update 2026-11-01T09:26:28.025006+00:00: AoWIIebed72ce2 reviewed original army movement20/20to5/20 and clean lower-panel clipping; two originals exit0, owned PIDs independently absent remoteMATCH. Control-wait and observer read limits disclosed. Battlezone pilot fire/boarding/tank ammo and Populous/Homeworld/DarkReign movement remain accepted. Rayman2 now seeks movement beyond world entry; GL transform/lighting descriptor fixtures queued. Cap2 serialized runtime, full27/GPU FPS/audio remain open.
+  status: rolling pipeline active; current AoWII visual gap closed, Rayman2 original control running, GL descriptor contracts queued. Starlancer licence1772 pending.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
@@ -1582,10 +1582,10 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] AoWII rendering overlap and gameplay measurement
   id: AOW2-RENDERING-COVERAGE-20261009
-  status: running (native runtime gate passed09:02:33UTC)
+  status: current native visual gap closed; gameplay FPS/audio remain open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Fresh worker01a1964c-604a-74e0-ad44-60bf7b2ef11f handle47811 recovers retained captures or runs bounded ordinary army movement and lower-panel observation. Runtime gate passed09:02:33UTC after Battlezone fresh final/result AND explicit RELEASE; runtime deadline09:32:33UTC overall10:25UTC fallback09:15UTC. Do not repeat accepted viewport-clipping9a438f1b9 or cooperative-vblank918f25772 repairs. Current visuals, logical gameplay FPS and audio remain unqualified pending evidence.
-  Evidence: docs/re-notes/age-of-wonders2-demo.md; main9a438f1b9 and918f25772; test/test-d3dim-viewport-clip.js; test/test-cross-thread-send-vblank.js; scratch/runs/20261031T1420Z-aow2-task-refresh/verification.json. Historical runs20261009T0306Z-age-of-wonders2-gameplay and20261010T1145-aow2-viewport-clip-fix are referenced by the notes; the October9 run is absent locally, so no new screenshot review is claimed.
+  Next: Preserve reviewed current army movement and lower-panel clipping evidence. Logical gameplay FPS and audio need separate evidence; no browser/GPU/general-playability claim. Do not repeat accepted viewport9a438f1b9 or vblank918f25772 repairs.
+  Evidence: mainebed72ce2055025648297c367d116a9aba8256f9; docs/re-notes/age-of-wonders2-demo.md; scratch/runs/20261101-aow2-current-original-control/. Two originals exit0; selected/settled/native-final PNGs reviewed20/20to5/20, fixed mountain patches and clean lower panel; five own PIDs independently absent, remote main MATCH. Control waiter timeouts and descriptor/stream read-hook limits retained.
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
