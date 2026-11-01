@@ -1141,3 +1141,88 @@ arbitrary retired carved arenas or fragments owned by another instance. Those
 still need an explicit cross-instance ownership/generation solution before
 releasing their guest ranges. This scope is deliberate: zero live bytes alone
 does not make surviving free-list pointers safe to invalidate.
+
+## 2026-11-01 repaired-allocator encounter attempt: disk stop at Setup
+
+Evidence: `scratch/runs/20261101-urban-chaos-repaired-encounter/`, with the
+actual original under `ready-runtime/`. **No new HUD, movement or encounter
+was reached.** The first real run failure was the disk guard at
+19:33:53.365540 UTC: free space sampled at2,003,222,528 bytes, below the
+unchanged2,020,000,000-byte stop threshold. Launch free space was
+2,152,325,120 bytes, above the2,100,000,000-byte requirement. Free space had
+rebounded to2,151,092,224 bytes at19:34:03. The responsible disk writer and
+duration of the transient are unmeasured; none of these finite samples was
+below2GB. No RAM gate, threshold relaxation, second original or replay followed.
+
+The exact Battlezone worker `01a19875-ed1d-7551-84ea-e74fb416adc1` author
+DONE/PUSH RELEASE, fresh launcher final/result0 and direct owned PID/group
+absence passed at19:32:26.191 UTC. Actual input main was
+`732f271c20da0df9561d73293576e17fa847f795`; the25-minute gate ended19:57:26,
+inside the20:19:28 outer deadline measured from this worker's launch. The
+coordinator reclaimed a SHA-verified duplicate before the gate to restore
+launch headroom. Runtime/source/build ownership was serialized; this worker
+made no production source, test, build, fixture, TODOS or STATUS changes.
+
+The corrected scratch guard reads/parses heartbeat before sampling its
+comparison clocks. Deterministic controls reproduce the old false future
+rejection and pass the corrected order while still rejecting genuine future,
+stale6.15s, dead/replaced processes and explicit failure records. Healthy3.5s
+delay, immutable first failure and direct disk/deadline controls pass. Detached
+Node and Python exit0/7/timeout controls retain durable terminal records.
+The exact accepted readonly observer was reused, including its whole512MiB,
+clock-identity and late10,001 retention validation.
+
+One preparation error occurred before any original: the prerequisite helper
+checked the independent guard before its first heartbeat existed. The guard
+correctly rejected the absent file and both preparation supervisors stopped.
+Root `guard-failure.json`, `initiating-failure.json` and terminal records remain
+unchanged. `preparation-race.json` records the error, hashes and direct cleanup.
+The scratch scheduling correction waits for `independent-ready` and two
+advancing healthy guards in a fresh `ready-runtime/` directory. It preserves
+every guard predicate and the original gate/deadline; no game was replayed.
+
+Fresh checks matched4,294 source/module/dependency pins and the1,122-file game
+manifest. Fallen.exe SHA256 remains
+`8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`;
+config.ini remains reconstructed installation state. The published allocator
+repair's exact locked build, regression and five focused tests were reused.
+Actual runtime compilation observed repaired WASM SHA256
+`7278c1018fa8208731a8e285f0bb2a5c35aa8e299592750ce3cedf6d354caef0`.
+After shutdown all4,294 pins,1,124 fixture/manifest pins and133 observed read
+hashes match. Observation covers main-context synchronous whole-file and
+complete bounded descriptor reads, excluding unhooked async/direct-OS reads
+and guest-memory identity.
+
+The sole original PID4084652 used the registered native software CLI,
+`--no-build --control-stdin --frozen --batch-size=100000`, with steps at most25
+and finite180s reply waits. Standard and native Setup PNGs at25 were visibly
+reviewed. Last acknowledged batch26 processed the ordinary `dlg-png` request;
+no mouse/key gameplay edge or Setup Okay was sent. The subsequent setup helper
+rejected stopped guards before sending its first request. All four actual PNGs
+pass CRC/complete-deflate checks; final.png has the same filtered raster as
+the reviewed standard Setup image. The full runtime gzip is complete. No heap
+refusal appears in this short startup log; it does not measure the game's
+allocator behavior during gameplay or historic OOM/guard causality. The reused
+observer has no first-refusal import sampler; no new production hook or
+bin-flushing diagnostic was introduced.
+
+Cleanup has a specific remaining evidence gap: the original Node exit hook
+records0, and the supervisor's actual OS wait records driver exit1, but there
+is **no durable original OS-wait receipt**. Primary and independent shutdown
+both sent SIGTERM; repeated driver signals interrupted its exception handling
+and finally block before it could publish that receipt. Its lost wait cannot
+be reconstructed from process absence or the Node hook. No fresh final key
+release/settled sample exists; no physical input was sent in this original.
+All recorded owned original/helper/watch PIDs and groups are directly absent,
+with no remaining helpers or new child temps. Own shutdown was delegated;
+native box ID/state/expiry are N/A.
+
+The concrete blocker is the transient disk stop before gameplay, accompanied
+by the shutdown receipt gap. A separately authorized attempt needs sustained
+disk headroom and a single-owner, idempotent shutdown path that waits the
+original and records its result despite repeated shutdown requests. Preserve
+these first failures; `RECOVERY.txt`, control terminal records, identity and
+capture validation permit offline recovery without another game launch.
+Historical HUD2011/neutral2137/ArrowUp2263 remains the latest movement evidence.
+The synthetic allocator repair is not demonstrated encounter success. No FPS,
+audio, full27, browser or GPU qualification is claimed.
