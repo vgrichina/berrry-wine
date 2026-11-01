@@ -73,6 +73,71 @@ async function main() {
     for (const reg of ['ax', 'bx', 'cx', 'dx', 'cs', 'ip', 'ds', 'sp']) {
       assert.strictEqual(noKeys.vm.get(reg), plain.vm.get(reg), reg);
     }
+    const orderedExe = path.join(dir, 'ordered.com');
+    // BIOS consumes each key, writes it to consecutive guest memory, and
+    // displays it. The second capture must contain only the first answer.
+    const loop = [0xB4, 1, 0xCD, 0x16, 0x74, 0xFA, 0xB4, 0, 0xCD, 0x16,
+      0x88, 0x04, 0x46, 0xFE, 0x06, 0, 2, 0xB4, 0x0E, 0xCD, 0x10];
+    fs.writeFileSync(orderedExe, Buffer.from([0xBE, 1, 2, ...loop, 0xEB, 256 - loop.length - 2]));
+    const images = [path.join(dir, 'first.png'), path.join(dir, 'second.png')];
+    const seen = [];
+    const ordered = await runDos({ ...opts, exe: orderedExe, checkpoints: [1000, 10000].map((at, i) => ({
+      at, png: images[i], pause: async (snapshot, signal) => {
+        assert.strictEqual(snapshot.index, i);
+        assert.strictEqual(snapshot.at, at);
+        assert.strictEqual(signal.aborted, false);
+        assert.strictEqual(snapshot.text.includes('a'), i === 1);
+        assert(!snapshot.text.includes('b'));
+        assert(fs.existsSync(images[i]));
+        seen.push(snapshot.dispatched);
+        await new Promise(resolve => setTimeout(resolve, 10));
+        return ['a', 'b'][i];
+      },
+    })) });
+    const orderedData = r => Array.from(r.vm.mem.subarray((r.vm.get('ds') << 4) + 0x200,
+      (r.vm.get('ds') << 4) + 0x203));
+    // parseKeys letters retain their requested ASCII case.
+    assert.deepStrictEqual(orderedData(ordered), [2, 97, 98]);
+    assert.strictEqual(ordered.checkpoints.length, 2);
+    assert.strictEqual(ordered.checkpoint, ordered.checkpoints[0]);
+    assert(seen[1] > seen[0]);
+    assert(ordered.dispatched >= opts.budget && ordered.dispatched < opts.budget + 16);
+    assert.strictEqual(ordered.machine.keys.length, 0);
+    assert.deepStrictEqual(ordered.machine.kbQueue, [0x1e, 0x9e, 0x30, 0xb0]);
+    assert(!fs.readFileSync(images[0]).equals(fs.readFileSync(images[1])));
+    const emptySequence = await runDos({ ...opts, checkpoints: [] });
+    const noSequenceInput = await runDos({ ...opts,
+      checkpoints: [1000, 10000].map(at => ({ at, pause: () => '' })) });
+    for (const r of [emptySequence, noSequenceInput]) {
+      assert.deepStrictEqual(data(r), data(plain));
+      assert.strictEqual(r.dispatched, plain.dispatched);
+      assert.strictEqual(r.handbacks, plain.handbacks);
+      for (const reg of ['ax', 'bx', 'cx', 'dx', 'cs', 'ip', 'ds', 'sp'])
+        assert.strictEqual(r.vm.get(reg), plain.vm.get(reg), reg);
+    }
+    const unreachable = () => { throw new Error('later pause must not run'); };
+    const sequenceStop = await runDos({ ...opts, checkpoints: [
+      { at: 1000, pause: () => '' }, { at: 2000, pause: () => null },
+      { at: 3000, pause: unreachable },
+    ] });
+    assert.strictEqual(sequenceStop.checkpoints.length, 2);
+    assert(sequenceStop.checkpoints[1].stopped);
+    const lateError = new Error('second callback failed');
+    await assert.rejects(runDos({ ...opts, checkpoints: [
+      { at: 0, pause: () => '' }, { at: 1000, pause: () => { throw lateError; } },
+      { at: 2000, pause: unreachable },
+    ] }), e => e === lateError);
+    for (const ats of [[1000, 1000], [2000, 1000], [-1], [opts.budget], [Infinity], [NaN]]) {
+      await assert.rejects(runDos({ ...opts,
+        checkpoints: ats.map(at => ({ at, pause: () => '' })) }), /checkpoint requires/);
+    }
+    await assert.rejects(runDos({ ...opts, checkpoints: Array(65).fill({ at: 0, pause() {} }) }), /at most 64/);
+    await assert.rejects(runDos({ ...opts, checkpoints: {}, }), /array/);
+    await assert.rejects(runDos({ ...opts, checkpoint: { at: 0, pause() {} }, checkpoints: [] }), /not both/);
+    // Two thresholds crossed by one guest handback still capture in order.
+    const crossed = await runDos({ ...opts, checkpoints: [1, 2].map(at => ({ at, pause: () => '' })) });
+    assert.strictEqual(crossed.checkpoints.length, 2);
+    assert.strictEqual(crossed.checkpoints[0].dispatched, crossed.checkpoints[1].dispatched);
     const stopped = await runDos({ ...opts, checkpoint: { at: 1000, pause: () => null } });
     assert(stopped.dispatched < opts.budget);
     assert.deepStrictEqual(data(stopped), [0, 0]);
@@ -85,6 +150,16 @@ async function main() {
     assert.strictEqual(timed.dispatched, 0);
     assert.strictEqual(timed.checkpoint.delivered, false);
     assert.strictEqual(signal.aborted, true);
+    let sequenceSignal;
+    const sequenceTimed = await runDos({ ...opts, seconds: 0.15, checkpoints: [
+      { at: 0, pause: () => new Promise(resolve => setTimeout(() => resolve(''), 40)) },
+      { at: 1000, pause: (_, s) => { sequenceSignal = s; return new Promise(() => {}); } },
+      { at: 2000, pause: unreachable },
+    ] });
+    assert(sequenceTimed.ranOutOfTime);
+    assert(sequenceSignal.aborted);
+    assert.strictEqual(sequenceTimed.checkpoints.length, 2);
+    assert(sequenceTimed.secs < 1);
     const graphics = path.join(dir, 'graphics.com');
     fs.writeFileSync(graphics, Buffer.from([
       0xB8, 0x02, 0x4F, 0xBB, 0x01, 0x01, 0xCD, 0x10, // VESA 101h
@@ -167,9 +242,82 @@ async function main() {
         } catch (e) { reject(e); }
       });
     });
+    // Parent deliberately keeps its pipe open after every answer. Natural
+    // exit must drain output and preserve unrelated pending work.
+    async function heldOpen(executable, answers, extra = [], nodeArgs = []) {
+      return new Promise((resolve, reject) => {
+        const child = spawn(process.execPath, [...nodeArgs, path.join(__dirname, '../tools/toyvm/run-dos.js'),
+          executable, '--dispatches=20000', '--seconds=1', '--report', '--text',
+          '--checkpoint=1000', ...(answers.length > 1 ? ['--checkpoint=10000'] : []), ...extra]);
+        let stdout = '', stderr = '', sent = 0;
+        child.stdout.on('data', b => {
+          stdout += b;
+          const prompts = (stdout.match(/EOF to stop/g) || []).length;
+          if (prompts > sent) {
+            assert.strictEqual(prompts, sent + 1);
+            const line = stdout.split('\n').filter(s => s.startsWith('checkpoint '))[sent];
+            const snapshot = JSON.parse(line.slice('checkpoint '.length).split('; enter')[0]);
+            assert.strictEqual(snapshot.index, sent);
+            if (snapshot.png) {
+              assert(fs.existsSync(snapshot.png));
+              assert.strictEqual(PNG.sync.read(fs.readFileSync(snapshot.png)).width, 640);
+              assert.strictEqual(snapshot.text.includes('a'), sent === 1);
+              assert(!snapshot.text.includes('b'));
+            }
+            const answer = answers[sent++];
+            if (answer === null) child.stdin.end();
+            else setTimeout(() => child.stdin.write(answer + '\n'), 20);
+          }
+        });
+        child.stderr.on('data', b => { stderr += b; });
+        const timer = setTimeout(() => child.kill('SIGKILL'), 10000);
+        child.once('error', reject);
+        child.once('close', (code, signal) => {
+          clearTimeout(timer);
+          try {
+            assert.strictEqual(signal, null, stdout + stderr);
+            assert.strictEqual(code, 0, stdout + stderr);
+            assert.strictEqual(sent, answers.length, stdout);
+            if (!answers.includes(null)) assert.strictEqual(child.stdin.writableEnded, false);
+            resolve(stdout);
+          } catch (error) { reject(error); }
+        });
+      });
+    }
+    assert((await heldOpen(cliExe, ['enter'])).includes('exited=true code=0'));
+    const marker = path.join(dir, 'pending-work.txt');
+    const preload = path.join(dir, 'pending-work.cjs');
+    fs.writeFileSync(preload, `process.stdin.once('data', () => setTimeout(() => require('fs').writeFileSync(${JSON.stringify(marker)}, 'drained'), 250));`);
+    await heldOpen(cliExe, ['enter'], [], ['--require', preload]);
+    assert.strictEqual(fs.readFileSync(marker, 'utf8'), 'drained');
+    // Exit only after the second real BIOS read.
+    const twoExe = path.join(dir, 'two.com');
+    const twoLoop = [...loop, 0x80, 0x3E, 0, 2, 2]; // cmp byte [0200],2
+    fs.writeFileSync(twoExe, Buffer.from([0xBE, 1, 2, ...twoLoop,
+      0x75, 256 - twoLoop.length - 2, 0xB8, 0, 0x4C, 0xCD, 0x21]));
+    const cliImages = [path.join(dir, 'cli-first.png'), path.join(dir, 'cli-second.png')];
+    const twoOutput = await heldOpen(twoExe, ['a', 'b'], cliImages.map(png => '--checkpoint-png=' + png));
+    assert(!fs.readFileSync(cliImages[0]).equals(fs.readFileSync(cliImages[1])));
+    assert(twoOutput.includes('|ab'), twoOutput);
+    assert(twoOutput.includes('exited=true code=0'), twoOutput);
+    const secondEof = await heldOpen(twoExe, ['a', null]);
+    assert(secondEof.includes('|a'), secondEof);
+    assert(!secondEof.includes('|ab'), secondEof);
+    assert(secondEof.includes('exited=false'), secondEof);
+    const fixedTwo = spawnSync(process.execPath, [path.join(__dirname, '../tools/toyvm/run-dos.js'),
+      twoExe, '--dispatches=20000', '--seconds=5', '--checkpoint=1000', '--checkpoint=10000',
+      '--checkpoint-keys=a', '--checkpoint-keys=b', '--text'], { encoding: 'utf8', timeout: 15000 });
+    assert.ifError(fixedTwo.error);
+    assert.strictEqual(fixedTwo.status, 0, fixedTwo.stderr);
+    assert(fixedTwo.stdout.includes('|ab'), fixedTwo.stdout);
+    const badCli = spawnSync(process.execPath, [path.join(__dirname, '../tools/toyvm/run-dos.js'),
+      twoExe, '--checkpoint=1000', '--checkpoint=10000', '--checkpoint-keys=a'],
+    { encoding: 'utf8', timeout: 15000 });
+    assert.strictEqual(badCli.status, 1);
+    assert(badCli.stderr.includes('once per --checkpoint'));
     await assert.rejects(runDos({ ...opts, seconds: 0,
       checkpoint: { at: 1, pause: () => 'enter' } }), /checkpoint requires/);
-    console.log('runner checkpoint: timing, text/VESA pixels, one tap, same-session bounds, no-input equivalence, stop, deadline, terminal, callback errors, CLI keys/EOF and defaults PASS');
+    console.log('runner successive checkpoints/held-open answered stdin: order, BIOS consumption, no premature taps, sequence bounds/EOF/deadline/errors PASS; legacy checkpoint: timing, text/VESA pixels, one tap, same-session bounds, no-input equivalence, stop, deadline, terminal, callback errors, CLI keys/EOF and defaults PASS');
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }

@@ -1,5 +1,69 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Successive native input primitive, 2026-11-01
+
+Run `20261101-toyvm-successive-checkpoint-input` extends the published one-shot
+primitive to an ordered sequence in one VM. This is synthetic COM validation;
+no GTA original was run and no gameplay progress is claimed here. The earlier
+16.83-second GTA report followed by a supervisor SIGTERM at 90 seconds was a
+host stdin lifetime defect, independently reproduced with a tiny BIOS reader
+whose parent kept stdin open after answering. Closing readline and pausing the
+stream alone left Node's pipe read referenced. The completed reader now pauses
+and unrefs stdin; each new prompt refs it again. The CLI exits naturally and
+allows unrelated pending timers/output to finish, without `process.exit`.
+
+Use `runDos({ exe, budget, seconds, checkpoints: [{ at, png, pause }, ...] })`.
+The array has at most 64 entries with strictly increasing finite nonnegative
+`at` dispatch thresholds below a finite `budget`. A nonempty schedule requires
+positive finite `seconds`. Each pause runs at the first live handback at or
+beyond its threshold; the PNG is written before the callback sees the frozen
+snapshot. Snapshot `index` and `at` identify the schedule entry. If a handback
+crosses several thresholds, captures/callbacks run in order at that handback
+before more guest work. Allow enough dispatches between checkpoints for the
+guest to consume the preceding tap and render its response.
+
+`pause(snapshot, signal)` returns a `parseKeys` string (for example `enter`),
+`''` to continue without input, or `null` to stop. Ordinary keys are queued once
+only after the answer and before continuation. Callback errors propagate; the
+abort signal is closed on every outcome. All pauses and guest execution share
+the original dispatch budget and wall deadline. A deadline stops pending input
+without delivery. Guest termination prevents later callbacks. The schedule is
+copied before execution so callbacks cannot extend or reorder it.
+
+The old `checkpoint: { at, png, pause }` option remains supported. Supply either
+option, never both. Result `checkpoints` lists reached pauses, including an
+unanswered/stopped pause; `checkpoint` remains the first reached pause or null.
+`runDosWithPre` applies the sequence only to the target executable.
+
+For native inspection, repeat flags in matching order:
+
+```sh
+node tools/toyvm/run-dos.js program.exe --dispatches=1b --seconds=60 \
+  --checkpoint=200m --checkpoint=400m \
+  --checkpoint-png=scratch/runs/your-run/first.png \
+  --checkpoint-png=scratch/runs/your-run/second.png --report
+```
+
+At each printed prompt, inspect its captured PNG and enter the next ordinary
+key string on one line. EOF stops the session. Send a line only after its
+prompt; extra lines sent together are not a queued input script. Optional
+`--checkpoint-keys=enter --checkpoint-keys=space` supplies fixed answers in
+schedule order; use an empty value for no input. PNG and fixed-answer flags
+must each be absent or repeated exactly once per checkpoint. Thresholds are
+absolute dispatch counts within this same session, not fresh budgets.
+
+Validation covers ordered BIOS consumption and make/break pairs, captures
+before each answer, no premature input, empty/no-input state equivalence,
+budget bounds, shared deadline, EOF at a later prompt, terminal/callback errors,
+one and two answered prompts with deliberately held-open stdin, and pending
+work draining on natural CLI exit. Both regenerated bundles execute the changed
+primitive and match every embedded source module. Exact unchanged GC source
+and VBE test hashes reuse the accepted 178-assertion, DAC/retrace and bundle-GC
+evidence recorded by `20261101-toyvm-gc-checkpoint-coherent-build`; that unrelated
+GC validation was not rerun. Focused tests and the mandatory locked build are
+recorded in this run's logs.
+
+
 ## Native checkpoint onward: English confirmation, 2026-11-01
 
 One default original `GTADOS/K.EXE` session used the published checkpoint

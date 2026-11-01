@@ -324,10 +324,11 @@ async function runDos(o) {
     // ANTARES.EXE sits on `mov ah,8; int 21h; cmp al,1Bh` and was offered
     // 466,766 characters that were not ESC before its budget ran out.
     keys = [], autoKeys = [],
-    // One pause at the first live handback >= at. Capture precedes pause;
+    // One pause, or up to 64 strictly ordered checkpoints, at live handbacks.
+    // Capture precedes pause;
     // pause(snapshot, signal) returns a parseKeys string, or null to stop.
     // Continuation shares the original dispatch and wall-clock limits.
-    checkpoint = null,
+    checkpoint = null, checkpoints = null,
     // Extra environment variables, `NAME=VALUE` each. Nothing is set here by
     // default on purpose: see installEnvironment in dos.js for why announcing
     // hardware nothing is standing behind is worse than staying quiet. This is
@@ -341,12 +342,22 @@ async function runDos(o) {
     // why the address is a machine setting and why it is not free to raise.
     pspSeg = null, loadSeg = null,
   } = o;
-  if (checkpoint && (!Number.isFinite(checkpoint.at) || checkpoint.at < 0
-      || !Number.isFinite(budget) || checkpoint.at >= budget
-      || !Number.isFinite(seconds) || seconds <= 0
-      || typeof checkpoint.pause !== 'function')) {
-    throw new Error('checkpoint requires 0 <= at < finite budget, seconds > 0 and pause callback');
+  if (checkpoint && checkpoints !== null) throw new Error('use checkpoint or checkpoints, not both');
+  if (checkpoints !== null && (!Array.isArray(checkpoints) || checkpoints.length > 64)) {
+    throw new Error('checkpoints must be an array of at most 64 pauses');
   }
+  // Copy the schedule: callbacks cannot add pauses or move later thresholds.
+  const inputCheckpoints = Array.from(checkpoints || (checkpoint ? [checkpoint] : []), c => ({ ...c }));
+  let previousAt = -1;
+  for (const c of inputCheckpoints) {
+    if (!Number.isFinite(c.at) || c.at < 0 || c.at <= previousAt
+        || !Number.isFinite(budget) || c.at >= budget
+        || !Number.isFinite(seconds) || seconds <= 0 || typeof c.pause !== 'function') {
+      throw new Error('checkpoint requires strictly increasing 0 <= at < finite budget, seconds > 0 and pause callback');
+    }
+    previousAt = c.at;
+  }
+
   // One shape for the entry window whichever way it arrived: a bare number
   // from an importer means "the first N handbacks", a { from, to } is a
   // window, and null is off.
@@ -829,22 +840,30 @@ async function runDos(o) {
   let ranOutOfTime = false;
   let steps = 0;
   let checkpointResult = null;
+  const checkpointResults = [];
 
   // The budget is a date on the schedule, so the run ends at the same guest
   // instant whatever handed back on the way there (dos-loop.js `endAt`).
   session.endAt = budget;
   while ((session.dispatched < budget || session.owesEnd(budget)) && !session.done) {
-    if (checkpoint && !checkpointResult && session.dispatched >= checkpoint.at) {
+    const nextCheckpoint = inputCheckpoints[checkpointResults.length];
+    if (stopAt && process.hrtime.bigint() >= stopAt) { ranOutOfTime = true; break; }
+    if (nextCheckpoint && session.dispatched >= nextCheckpoint.at) {
+      // Multiple thresholds crossed in one step are serviced in order at this
+      // same handback. No guest work or input happens before each capture.
+      const checkpoint = nextCheckpoint;
       const surface = screenSurface(machine);
       if (checkpoint.png) {
         if (surface.text) writeConsolePng(checkpoint.png, machine.con);
         else writePng(checkpoint.png, vm.mem, machine.palette, surface.geom);
       }
       checkpointResult = {
+        index: checkpointResults.length, at: checkpoint.at,
         dispatched: session.dispatched, handbacks: session.handbacks,
         text: conText(machine.con), surface, png: checkpoint.png || null,
         keys: null, delivered: false, stopped: false,
       };
+      checkpointResults.push(checkpointResult);
       const controller = new AbortController();
       let timer;
       let answer;
@@ -871,6 +890,7 @@ async function runDos(o) {
       checkpointResult.keys = parseKeys(answer);
       for (const k of checkpointResult.keys) machine.pushKey(k.ah, k.al);
       checkpointResult.delivered = true;
+      if (inputCheckpoints[checkpointResults.length]?.at <= session.dispatched) continue;
     }
     session.step();
     // Between slices, never inside one: installing swaps the wasm instance.
@@ -963,7 +983,8 @@ async function runDos(o) {
   const surface = screenSurface(machine);
   if (sliceLog) fs.writeFileSync(sliceLogFile, sliceLog.join('\n') + '\n');
   return {
-    checkpoint: checkpointResult,
+    checkpoint: checkpointResults[0] || null,
+    checkpoints: checkpointResults,
     bestScore, bestContent, bestSurface, bestText, saidText,
     variant, exe, vm, machine, jtab,
     audioChunks, audioRate,
@@ -1076,7 +1097,7 @@ async function runDosWithPre(o) {
     // dumpAt goes with the pictures rather than the machine: a dispatch count
     // asked about the program means the program, and the prerequisite would
     // otherwise reach it first and answer for it.
-    ...o, exe: pre, bestPng: null, shots: null, png: null, dumpAt: [], checkpoint: null,
+    ...o, exe: pre, bestPng: null, shots: null, png: null, dumpAt: [], checkpoint: null, checkpoints: null,
     // The full budget, not a token slice of it. A configurator is not a quick
     // hello: ANGEL's SETUP.EXE sweeps C000-F000 for a video BIOS signature and
     // needs ~810M dispatches to give up and exit(0). Capped at 20M it was still
@@ -1168,6 +1189,7 @@ function treeFoldRelax(spec) {
 // No listener survives the checkpoint deadline, EOF, or a supplied answer.
 function checkpointStdin(snapshot, signal) {
   console.log(`checkpoint ${JSON.stringify(snapshot)}; enter comma-separated keys, or EOF to stop`);
+  process.stdin.ref?.();
   const rl = require('readline').createInterface({ input: process.stdin });
   return new Promise(resolve => {
     let finished = false;
@@ -1176,14 +1198,38 @@ function checkpointStdin(snapshot, signal) {
       finished = true;
       signal.removeEventListener('abort', abort);
       rl.close();
+      // readline closes its listeners, but Node can retain a referenced pipe
+      // read even when paused. Release this completed reader; a later pause
+      // refs stdin again. Other pending work remains referenced normally.
+      process.stdin.pause();
+      process.stdin.unref?.();
       resolve(value);
     };
     const abort = () => finish(null);
     rl.once('line', line => finish(line));
     rl.once('close', () => finish(null));
     signal.addEventListener('abort', abort, { once: true });
-    if (signal.aborted) abort();
+    if (signal.aborted || process.stdin.readableEnded) abort();
   });
+}
+
+// Repeat each flag in schedule order. Preserve empty key answers and commas.
+function cliCheckpoints() {
+  const values = name => process.argv.slice(2)
+    .filter(a => a.startsWith(`--${name}=`)).map(a => a.slice(name.length + 3));
+  const ats = values('checkpoint'), pngs = values('checkpoint-png'), keys = values('checkpoint-keys');
+  for (const [name, list] of [['checkpoint-png', pngs], ['checkpoint-keys', keys]]) {
+    if (list.length && list.length !== ats.length) {
+      throw new Error(`--${name} must be omitted or supplied once per --checkpoint`);
+    }
+  }
+  return ats.map((at, index) => ({
+    at: count(at), png: pngs[index] || null,
+    pause: keys.length ? snapshot => {
+      console.log(`checkpoint ${JSON.stringify(snapshot)}`);
+      return keys[index];
+    } : checkpointStdin,
+  }));
 }
 
 async function main() {
@@ -1201,14 +1247,7 @@ async function main() {
   require('./compile').setPortSpin(!flag('no-port-spin'));
   const r = await (pre ? runDosWithPre : runDos)({
     exe,
-    checkpoint: arg('checkpoint') === undefined ? null : {
-      at: count(arg('checkpoint')),
-      png: arg('checkpoint-png', null),
-      pause: arg('checkpoint-keys') === undefined ? checkpointStdin : snapshot => {
-        console.log(`checkpoint ${JSON.stringify(snapshot)}`);
-        return arg('checkpoint-keys');
-      },
-    },
+    checkpoints: cliCheckpoints(),
     // `--pre=SETUP.EXE`, resolved next to the executable, with `--pre-keys=`
     // for a configurator that needs more than the auto-key rotation.
     pre, preKeys: parseKeys(arg('pre-keys', '')),
@@ -2133,4 +2172,4 @@ module.exports = {
   readFrame: require('./framebuffer').readFrame,
 };
 
-if (require.main === module) main().catch(e => { console.error(e.stack || String(e)); process.exit(1); });
+if (require.main === module) main().catch(e => { console.error(e.stack || String(e)); process.exitCode = 1; });
