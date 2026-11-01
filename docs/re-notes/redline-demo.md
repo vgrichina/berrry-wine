@@ -1,5 +1,85 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Backend failure retained: upload returns zero after successful surface creation (2026-11-01)
+
+Run `20261101-redline-backend-first-failure` makes **two original CLI
+invocations**. The second retains **two complete resource-723 sequences**,
+98 selected records, **zero observer errors and zero drops**. The first
+observed failing backend operation after the selected BTF load is the call to
+**upload/conversion routine `0x453de3` at `0x450e1f`**: its return at
+**`0x450e24` is EAX 0**, and the executed failure successor is **`0x450e28`**.
+No generic emulator defect is proven; no production or test repair is made.
+
+Both sequences establish the preceding successes and the resulting failure:
+
+- Metadata name `skymorning.tga`, live BTF lookup index **390**, query return
+  **AL 1 at `0x45084b`**, and executed successor **`0x450857`**. The upper
+  EAX bytes retain other values; only AL is this query's boolean result.
+- The actual alternative TGA query returns index -1 and **AL 0 at
+  `0x45088a`**. The live filename returns to `skymorning.btf`; selected BTF
+  load **`0x4508c9` is 1**, followed by `0x450956`.
+- Format helper **`0x450ff4`**, its actual branches and return are retained.
+  Return **`0x450c2b` is 9,749,320**, a nonzero format pointer, and executes
+  **`0x450c3f`**. This helper is not a backend exit.
+- **CreateSurface returns DD_OK (EAX 0) at `0x450db6`**, then executes
+  `0x450de0` and `0x450deb`. The two created surface pointers are
+  **136,458,864** and **136,463,448**. The requested descriptor is 128×128,
+  RGB565, 16 bits, size 124.
+- Upload returns zero at **`0x450e24`**, takes **`0x450e28`**, then
+  `0x450e44`, the **true epilogue `0x450fe4` with EAX 0**, bank return
+  **`0x4181d5` with EAX 0**, and **`0x4181d9`**.
+
+**Exact remaining observation limit:** the upload routine's internal calls and
+first failing guard are outside the retained `0x45084b–0x451118` window.
+Static original disassembly identifies GetSurfaceDesc return `0x453ec3`
+(HRESULT ignored by the guest), CreatePalette return `0x454009`, SetPalette
+return `0x454043`, Lock return `0x4540bc`, and Unlock return `0x4552fb`.
+Their actual selected HRESULTs and successors are **unobserved**. The retained
+descriptor after upload contains size 124 and otherwise zeros; this does not
+establish which API failed or authorize a descriptor/version repair. There is
+no third original invocation. Saved initial names remain context; `searchName`
+is the live filename, and returned query frames' reused locals are omitted.
+
+The first original exits 0 in **91.233 seconds**, but its scratch consumer
+records every archive scan block while selection is active: its 768-record
+quota fills before the backend, with **3,160 drops**. The second and final
+original tests the proven scratch retention correction, excluding archive
+internal scan blocks while retaining lookup results, query/backend/helper
+blocks and bank returns. It exits 0 in **68.479 seconds**. Both inspected
+PNGs still lack textures; the second PNG SHA-256 is
+`bbc8eee19ceb8a61e4242738da63be6f71719b221f5123b563454a382efd5941`.
+No texture or gameplay qualification is claimed.
+
+Before originals, actual async instantiation and synchronous
+`WebAssembly.Instance` pass the complete emitted synthetic helper call/return,
+failure guard, true epilogue and bank path with **`run(80)`**. The old observer
+fails the same helper-return regression. The corrected second filter also
+retains the complete path after **10,001 active archive-scan callbacks**.
+Actual emitted callbacks are individually checked against whole shared
+**512 MB** memory hashes and clock values; parked control/parser/eval,
+invalid-parent and late-retention checks pass. Synthetic fixtures do not
+execute original game bytes. The existing trace setter's global disabling of
+chaining and the micro-op tier is explicit; no breakpoints, instruction
+counters, forced stepping, budget-one execution or guest state writes occur.
+
+Rune's fresh final/result and **05:37:27 runtime/source/build release** precede
+original execution, registration tests and this note edit. All **4,389** source
+inputs and **70** fixture hashes match before/after. All **65 content pins**
+match in both original copies. The full fixture test's archival-inode
+independence assertion fails after coordinator hardlink deduplication (58 shared
+inodes); that failure is preserved, with no fixture or test edits.
+Registration-only tests pass. The accepted locked build is reused unchanged:
+module `baef4e5a70f43b5d87fe086b4f5bd5b583c833e8bf07239ef05749f222035136`,
+2,025,634 bytes, matching mirror, both actual module receipts and all
+**127 actual loaded reads per invocation**. An actual child receipt is
+**unavailable**; no child identity is inferred. Empty arguments,
+`C:\\MAINDIR`, IFORCE2-only seeding, original fixtures, 100,000 blocks after
+29,100 and clock 200 are unchanged. Startup free disk exceeds 2.3 GB for both
+originals and remains above 2 GB. Outer PTY150/kill-after5, inner115 and child
+TERM90/KILL95 guards are unused; owned runtime PIDs/groups/temp/watchers are
+absent. Evidence is under `scratch/runs/20261101-redline-backend-first-failure/`,
+with the final invocation under `second/`. Boxes: N/A; ownership none.
+
 ## Selected execution: BTF found and loaded, backend returns zero (2026-11-01)
 
 Run `20261101-redline-selected-lookup-execution` makes **two original CLI
