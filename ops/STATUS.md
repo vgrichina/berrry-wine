@@ -1,5 +1,7 @@
-Current 2026-11-01T19:41:19.047193+00:00 — Urban stopped at Setup25 on a real disk-headroom failure; no encounter occurred. All50 owned PIDs are absent, but repeated shutdown signals lost the original OS wait receipt. Commit c157668dc is reviewed on remote main. A fresh scratch-only worker is repairing shutdown with subprocess controls.
+Current 2026-11-01T19:54:26.016600+00:00 — Battlezone successfully reloaded its game-written native save in the same original process. The reviewed capture shows the deployed Turret at68m with full health. Identified defense combat and objective advancement remain unverified.
 
-Battlezone native-save-defense worker01a1989a-1271-7e22-92f3-f41add7e68b3 handle83260 owns runtime/source/build since19:38:52UTC (deadline20:03:51UTC); one original4093317 started19:39:52UTC after repeated-stop dummy control PASS. Urban shutdown-repair worker01a1989f-de2a-7930-8b5d-4b247a232f68 handle53501 runs tiny subprocess controls only. Two workers; fallback19:50UTC or completion/input/dependency.
+Urban’s scratch shutdown repair is reviewed: the old failure reproduces,15 lifecycle cases pass, and all319 owned PIDs are absent. This repairs the helper; it does not recover the historical missing wait receipt or establish an encounter.
 
-Battlezone native reload and identified defense combat remain unverified. Historical full27/backend/FPS/audio coverage remains open. No public deployment.
+Battlezone native-save-defense worker01a1989a-1271-7e22-92f3-f41add7e68b3 handle83260 owns runtime/source/build (deadline20:03:51UTC), same original4093317. Urban durable-encounter worker01a198ad-10a1-7960-b622-4a394f86645c handle3037 prepares statically until exact Battlezone author release and verified cleanup. Two workers; fallback20:04UTC or completion/input/dependency.
+
+Historical full27/backend/FPS/audio coverage remains open. No public deployment.
