@@ -1,5 +1,79 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## First internal failure: cross-instance DirectDraw4 identity repaired (2026-11-01)
+
+Run `20261101-redline-upload-internal-cause` uses **two original local CLI
+invocations**, preserving the original executable, assets and shipped INIs.
+The first retains two complete resource-723 sequences: **130 records, zero
+errors or drops**. The first failed API inside upload `0x453de3` is
+**GetSurfaceDesc returning `0x80070057` at `0x453ec3`**. The guest ignores this
+HRESULT. Its descriptor remains size 124 with all other words zero, skips
+the palette path, and calls Lock with another size-124 descriptor. **Lock
+returns `0x80070057` at `0x4540bc`**, takes the failing guard successor
+**`0x4540cb`**, then `0x4540e1 → 0x455348 → 0x455329 → 0x455342 →
+0x45534e`, returning zero to `0x450e24`. CreatePalette, SetPalette and
+Unlock are **not executed on this failing path**.
+
+This is a proven generic cross-instance identity defect. The live creator
+pointer **137568264**, vtable **9786836**, has DirectDraw4 extension API IDs
+**3084–3087** in slots 24–27. Its created surface **136458864**, vtable
+**6232524**, instead has the Surface2 extension IDs **1496–1498** in slots
+36–38. That interface expects the 108-byte descriptor. DirectDraw4/7 creator
+tables were built lazily and omitted from the shared vtable registry;
+`init_thread` restored Surface4/7 tables but lost DirectDraw4/7 creator
+identities. Consequently CreateSurface on another instance selected Surface2
+despite the caller using DirectDraw4 and DDSURFACEDESC2.
+
+The repair appends DirectDraw4/7 to the generated initialization and shared
+registry, growing its declared capacity from 80 to 82 entries and regenerating
+the region mirror. Existing registry offsets and region bases stay fixed.
+Descriptor size validation remains strict. The focused Surface3 test now also
+creates DirectDraw4/7 objects in one actual instance and surfaces in another:
+**before FAIL `2147942487 !== 0`; after PASS** for both versions, correct
+dimensions/format, and rejection of the old 108-byte descriptor. The locked
+build, memory-map test and registration test pass. An initial attempt using
+the existing worker-sync test stopped at its unrelated, stale region-adjacency
+assertion; that test was restored unchanged and its failure log retained.
+
+The second and final original tests this repair and retains **94 records,
+zero errors or drops**. Selected **GetSurfaceDesc `0x453ec3`, Lock `0x4540bc`
+and Unlock `0x4552fb` all return DD_OK**, the descriptor reports 128×128
+RGB565, upload returns **1 at `0x450e24`**, backend returns **1 at
+`0x4181d5`**, and executes success successor **`0x41824a`**. Palette APIs
+remain unexecuted on this RGB565 path. **Textured gameplay is not verified.**
+The intermediate capture still shows texture loading; the final inspected
+capture shows severe striped rendering corruption. The **115-second limit
+ends at batch 30556** before the planned W/mouse movement checks. Space down
+and up were submitted, but no gameplay response is qualified. No third
+invocation or additional rendering repair is attempted.
+
+Before original use, the selected observer passes actual synchronous and
+asynchronous instantiation, emitted synthetic upload/API-return/failing-guard
+and epilogue paths, whole shared **512 MB** memory/clock read-only checks,
+late **10,001** active archive callbacks, and parked control/parser/eval
+checks. Internal PCs retain their first occurrence per upload, bounding loop
+retention; archive internals are excluded. These are synthetic diagnostic
+checks, not execution of original bytes. Existing trace setters disable
+chaining and the micro-op tier in the observing instance.
+
+All **70 fixture hashes** and **65 content pins in both copies** remain
+unchanged. The full fixture test still **FAILS archival inode independence
+(58 shared inodes)** after coordinator deduplication; no fixture/test
+weakening occurs. The first original reuses the accepted module
+`baef4e5a70f43b5d87fe086b4f5bd5b583c833e8bf07239ef05749f222035136`.
+The mandatory locked rebuilt module for the second is
+`330b120d64cfd4aebdd945c99a95022dbd97db7ee6962d7ec534c24da466011b`
+(2,025,686 bytes). Actual module receipts match both retained modules;
+127/126 actual loaded reads are accounted for, with only the intentional
+region-mirror change when comparing the first run to repaired source.
+Separate child receipts are unavailable and are not inferred. Of 4,389
+source inputs, exactly the five claimed repair/test/generated files change.
+Both startups pass the 2.3 GB free-space assertion; the 2 GB runtime floor
+does not trip. Originals exit 0 in 61.488/115.893 seconds; only the second
+inner time limit fires. Owned runtime PIDs/groups/temp are absent. Boxes,
+state, expiry and handback: N/A, no ownership. Evidence, inspected captures,
+before/after tests and causal records are in the named run directory.
+
 ## Backend failure retained: upload returns zero after successful surface creation (2026-11-01)
 
 Run `20261101-redline-backend-first-failure` makes **two original CLI

@@ -535,6 +535,10 @@ comInterfaces.push({ prefix: 'IDirectSoundPropertySet', global: 'DX_VTBL_DSPROPE
 comInterfaces.push({ prefix: 'IDirectSoundBuffer8', global: 'DX_VTBL_DSBUF8', extends: 'IDirectSoundBuffer' });
 comInterfaces.push({ prefix: 'IDirectDrawSurface4', global: 'DX_VTBL_DDSURF4', extends: 'IDirectDrawSurface3' });
 comInterfaces.push({ prefix: 'IDirectDrawSurface7', global: 'DX_VTBL_DDSURF7', extends: 'IDirectDrawSurface4' });
+// These creator identities must survive init_thread too: a private lazy table
+// makes another instance misclassify DirectDraw4/7 as the old descriptor ABI.
+comInterfaces.push({ prefix: 'IDirectDraw4', global: 'DX_VTBL_DDRAW4', extends: 'IDirectDraw2' });
+comInterfaces.push({ prefix: 'IDirectDraw7', global: 'DX_VTBL_DDRAW7', extends: 'IDirectDraw4' });
 
 const ifaceInfo = new Map();
 for (const iface of comInterfaces) {

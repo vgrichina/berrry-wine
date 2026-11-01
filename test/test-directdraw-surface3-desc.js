@@ -9,6 +9,22 @@ const { compileSrcWasm } = require('./compile-src');
 
 const ROOT = path.join(__dirname, '..');
 const extraWat = String.raw`
+  (func (export "test_dx_ddraw") (param $version i32) (result i32)
+    (call $dx_create_com_obj (i32.const 1)
+      (if (result i32) (i32.eq (local.get $version) (i32.const 4))
+        (then (call $dx_get_ddraw4_vtbl))
+        (else (call $dx_get_ddraw7_vtbl)))))
+  (func (export "test_dx_create_surface") (param $dd i32) (param $desc i32) (param $out i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x30000))
+    (call $handle_IDirectDraw_CreateSurface (local.get $dd) (local.get $desc) (local.get $out)
+      (i32.const 0) (i32.const 0) (i32.const 0))
+    (i32.load (global.get $reg_base)))
+  (func (export "test_dx_get_desc") (param $surface i32) (param $desc i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x30000))
+    (call $handle_IDirectDrawSurface_GetSurfaceDesc (local.get $surface) (local.get $desc)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (i32.load (global.get $reg_base)))
+
   (func (export "test_surface3_create") (result i32)
     (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF2)))
   (func (export "test_surface3_query") (param $surface i32) (param $iid i32) (param $out i32) (result i32)
@@ -87,7 +103,35 @@ async function main() {
   assert.strictEqual(e.test_surface3_pixels(surface3) >>> 0, expectedWa,
     'SetSurfaceDesc should attach the caller-owned framebuffer');
 
-  console.log('PASS  DirectDraw Surface3 exposes slot 39 and attaches SDL pixel memory');
+  const { instance: second } = await WebAssembly.instantiate(wasm, imports);
+  const worker = second.exports;
+  worker.init_thread(2, e.get_image_base(), e.get_code_start(), e.get_code_end(),
+    e.get_thunk_base(), e.get_thunk_end(), e.get_num_thunks(), e.get_rsrc_rva());
+  // A DirectDraw4/7 object acquired in one instance must create a Surface4/7
+  // in another. Lazy tables used to be absent from the shared registry:
+  // CreateSurface succeeded but selected Surface2, rejecting DDSURFACEDESC2.
+  for (const version of [4, 7]) {
+    const dd = e.test_dx_ddraw(version) >>> 0;
+    const desc = e.guest_alloc(124) >>> 0, out = e.guest_alloc(4) >>> 0;
+    for (let i = 0; i < 124; i += 4) e.guest_write32(desc + i, 0);
+    for (const [offset, value] of [[0, 124], [4, 0x1007], [8, 8], [12, 16],
+      [72, 32], [76, 0x40], [84, 16], [88, 0xf800], [92, 0x7e0],
+      [96, 0x1f], [104, 0x1800]]) e.guest_write32(desc + offset, value);
+    assert.strictEqual(worker.test_dx_create_surface(dd, desc, out) >>> 0, 0,
+      `DirectDraw${version} creates a cross-instance surface`);
+    const surface = e.guest_read32(out) >>> 0;
+    assert(surface, 'CreateSurface publishes an object');
+    assert.strictEqual(worker.test_dx_get_desc(surface, desc) >>> 0, 0,
+      `DirectDraw${version} surface accepts DDSURFACEDESC2 across instances`);
+    assert.strictEqual(e.guest_read32(desc + 8), 8);
+    assert.strictEqual(e.guest_read32(desc + 12), 16);
+    assert.strictEqual(e.guest_read32(desc + 84), 16);
+    e.guest_write32(desc, 108);
+    assert.strictEqual(worker.test_dx_get_desc(surface, desc) >>> 0, 0x80070057,
+      'new interfaces still reject the old descriptor ABI');
+  }
+
+  console.log('PASS  Surface3 pixel memory; cross-instance DirectDraw4/7 surfaces preserve DDSURFACEDESC2');
 }
 
 main().catch(error => {
