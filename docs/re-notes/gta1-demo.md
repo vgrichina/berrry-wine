@@ -1,5 +1,67 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Generic native checkpoint implementation tested; bundle gate blocked, 2026-11-01
+
+The released runner/test WIP from `f2fd12a5f` is adopted and repaired in
+`scratch/runs/20261101-gta1-checkpoint-capture-fix/`. The earlier first-failure
+entry below is historical. Checkpoint captures now use the shared
+`screenSurface().text` and `.geom`, including the VESA framebuffer geometry.
+The stdin controller removes its abort listener on EOF as well as on answers.
+Constructor's four GC source/test/live-bundle WIP paths remain untouched and
+excluded from this change.
+
+**Publication is blocked.** The required
+`flock /tmp/wine-build.lock bash tools/build.sh` returned 1 at browser-bundle
+reproducibility. Both live bundles embed `run-dos.js`; after normalizing the
+bundler's shebang removal, that is the only embedded module that differs
+from the working sources. Each generated bundle needs the checkpoint runner
+update, but both paths were explicitly excluded by this assignment. No build
+gate was bypassed, no unchanged build was retried, and no checkpoint code was
+committed. The source/test WIP is retained with exact recovery copies.
+No new original GTA process was launched; the sole actual original outcome
+remains the earlier English language-selection screen documented below.
+
+Use `runDos({ exe, budget, seconds, checkpoint: { at, png, pause } })`.
+The optional checkpoint runs once at the first **live handback** at or beyond
+`at`; it does not split a guest block or run after a terminal handback.
+It writes the optional PNG before awaiting `pause(snapshot, signal)`.
+The snapshot includes dispatch/handback counts, console text, the shared
+surface description, PNG path and delivery state. Returning a `parseKeys`
+string delivers ordinary `pushKey` taps once; an empty string continues
+without keys; `null` stops before another guest step. Callback exceptions
+propagate. The signal aborts when the callback completes or its deadline
+expires, so an interactive controller can release its resources.
+The result's `checkpoint` is null if never reached; otherwise it records
+the keys and `delivered`/`stopped` state. A timeout leaves delivery false and
+sets `ranOutOfTime`. The original session, dispatch budget and wall deadline
+continue across the pause; no second guest or renewed budget is created.
+Require `0 <= at < budget`, finite budget and positive finite `seconds`.
+
+CLI example (use an appropriate checkpoint for the executable):
+
+```sh
+node tools/toyvm/run-dos.js program.exe --dispatches=200m --seconds=60 \
+  --checkpoint=100m --checkpoint-png=scratch/runs/your-run/before.png \
+  --png=scratch/runs/your-run/after.png
+```
+
+At the prompt, enter comma-separated named keys such as `enter`, or send EOF
+to stop. `--checkpoint-keys=enter` supplies a fixed answer without stdin;
+`--checkpoint-keys=` continues without keys. `runDosWithPre` applies the
+checkpoint to the target executable only, after the prerequisite.
+
+Focused real synthetic COM tests pass: capture exists before input, decoded
+text and VESA PNG content matches the shared renderer (including an explicit
+blue pixel at 640x480), exactly one Enter reaches guest memory and one
+make/break pair reaches the hardware queue, no-input guest state and dispatch
+counts match the control, and continuation retains the session bound.
+The changed-input fixture permits at most eight dispatches of final-block
+overshoot, justified by its straight-line block length, instead of comparing
+different guest paths for exact equality. Explicit stop, pause deadline,
+terminal-before-checkpoint, synchronous/asynchronous callback errors, invalid
+answers, CLI fixed/stdin keys, EOF and held-open stdin deadline all pass.
+`focused-final.log` and `build.log` retain actual check results.
+
 ## Checkpoint implementation first focused-test failure, 2026-11-01
 
 Source implementation was started after Constructor's explicit release, on
