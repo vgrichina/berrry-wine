@@ -10,7 +10,29 @@ software/WebGL parity or reconstruct the historical 27-app membership.
 | Redline | `0da33e84b`, run `20261101-redline-world-loading-headroom`: WORLD loading completes, firearm/HUD appears, and consumed ordinary Up moves the player toward the shutter/wall in paired before/held/released PNGs. One original exits 0 after 358.407 seconds; 70 original/configuration pins and 129 actual loaded-file hashes match. | Current WebGL comparison, combat outcome, FPS and audio. Loading/cinematic changes alone were excluded from movement proof. |
 | Dark Reign 2 | `d9aca1952`, run `20261101-dark-reign2-native-mission-input`: Demo Mission 1 terrain, soldiers, objective, command bar and minimap are visible; ordinary mouse selection is verified. One original exits 0 after 327.256 seconds; 29 original/manifest pins and 142 runtime-read hashes match. | Unit movement and mission completion; GPU mip support, backend parity, FPS and audio. Arrow dispatch and changed framing do not establish unit movement. |
 
-Both runs loaded module `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`
+The later native control runs add these bounded checkpoints:
+
+| Title | Accepted native evidence | Remaining gap |
+| --- | --- | --- |
+| Outcast | `039f7f5a2`, run `20261101-outcast-original-weapon-control`: ordinary weapon draw, aim, fire with ammo80→79, release and holster in reviewed PNGs, with consumed WM/DirectInput. One original exits0 after170.150 seconds. | No enemy hit, projectile trajectory, impact, damage, kill or combat outcome. The initial NPC interaction was excluded from firing proof. |
+| Dethkarz | `ca136b967`, run `20261101-dethkarz-native-fire-control`: reviewed before/Shift-held/released captures show a laser flash/bolt and weapon-bar response. Consumed WM down/up and actual `GetAsyncKeyState` returns0/8001/8000/0 establish the ordinary Shift path. Two originals exit0 after192.197 and80.305 seconds. | Exact DirectInput keyboard consumption is unproved: observed DirectInput reads request16-byte mouse state. No impact, damage, combat outcome, charged-shot mechanics, FPS or audio claim. |
+
+Both later runs also reuse module `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`,
+retain unchanged original/source identities and cleanup evidence, and add no
+current WebGL comparison. See [Outcast notes](re-notes/outcast-demo.md) and
+[Dethkarz notes](re-notes/dethkarz-demo.md).
+
+MDK2 remains before its first window. `f0eda338f`, run
+`20261101-mdk2-prewindow-cause`, traces the first rejected lookup to `glAccum`:
+212 requested GL/WGL names are rejected, including208 unimplemented procedures.
+The loader enters error2 and then waits for an error string from its suspended
+file worker. One78.087-second original exits0 with a reviewed blank teal image
+and zero ordinary inputs. This is a concrete export-implementation blocker,
+not jump or gameplay evidence. The existing lookup fixture fails a stale-handle
+assertion; scratch-adapted checks pass the actual rejection ABI. Neither proves
+gameplay. See [MDK2 notes](re-notes/mdk2-demo.md).
+
+The Redline and Dark Reign 2 runs loaded module `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`
 and retained before/after identities and process-cleanup evidence. See
 [Redline notes](re-notes/redline-demo.md) and
 [Dark Reign 2 notes](re-notes/dark-reign2-demo.md) for exact commands, controls,
