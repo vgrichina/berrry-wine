@@ -208,12 +208,12 @@ const UNIONS = {
       // that the site at each new line still does what its comment says (the
       // pre-branch pair, then the `type == 1` arm, then the else arm) and
       // renumber; do NOT delete the entry to make the gate pass.
-      '10f-gdi-dc.wat:946': 'GdiPenBrush',         // style, pre-branch
-      '10f-gdi-dc.wat:947': 'GdiPenBrush',         // flags, pre-branch
-      '10f-gdi-dc.wat:950': 'GdiPen',              // width, in the `type == 1` arm
-      '10f-gdi-dc.wat:951': 'GdiPen',              // color, in the `type == 1` arm
-      '10f-gdi-dc.wat:953': 'GdiBrush',            // color, in the `type == 2` arm
-      '10f-gdi-dc.wat:954': 'GdiBrush',            // hatch, in the `type == 2` arm
+      '10f-gdi-dc.wat:992': 'GdiPenBrush',         // style, pre-branch
+      '10f-gdi-dc.wat:993': 'GdiPenBrush',         // flags, pre-branch
+      '10f-gdi-dc.wat:996': 'GdiPen',              // width, in the `type == 1` arm
+      '10f-gdi-dc.wat:997': 'GdiPen',              // color, in the `type == 1` arm
+      '10f-gdi-dc.wat:999': 'GdiBrush',            // color, in the `type == 2` arm
+      '10f-gdi-dc.wat:1000': 'GdiBrush',           // hatch, in the `type == 2` arm
 
       // $gdi_brush_sample (10g:775) holds a brush record AND the record of the
       // bitmap named by brush.pattern_bitmap, in one frame, and reads +16 from

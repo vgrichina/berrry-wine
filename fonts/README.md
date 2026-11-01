@@ -318,6 +318,23 @@ Current UMing build: 13,074,352 bytes, 1-bit strikes at 11, 12, 13, 14, 15
 and 16 px (Firefly's Big5 bitmaps), outlines above that. PMingLiU uses the
 same (fixed-pitch) glyphs as MingLiU.
 
+A real MINGLIU.TTC (Windows Me CHT, 8,637,684 bytes) builds to 10,494,756
+bytes with strikes at 11, 12, 13, 15, 16 and 20 px — larger than the original.
+The original's two faces share `glyf`/`loca`/`EBDT`/`EBLC`/`hmtx` and differ
+only in `cmap`/`OS/2`/`head`/`name`, but each face is subset on its own here,
+so the glyph orders diverge and nothing is shared. Subsetting both faces with
+the union glyph set and retained glyph ids would restore the sharing; not done.
+
+Under page 950, with PMingLiU registered, the stock UI fonts resolve to these
+faces the way a Traditional Chinese Win98 draws its menus and captions:
+DEFAULT_GUI, ANSI_VAR, DEVICE_DEFAULT and the bold variant to PMingLiU at
+12 px, SYSTEM_FONT to MingLiU at 16 px, charset CHINESEBIG5
+(`$gdi_cp950_ui_stock_font`). A logical font that names a Western face with
+ANSI_CHARSET still renders through that face, so DBCS text in it draws as
+.notdef boxes: Win9x CJK's font association (the `FontAssoc` key's "Associated
+DefaultFonts", which supplies DBCS glyphs to ANSI-charset fonts) is not
+implemented. Paint's Attributes dialog shows it on four labels.
+
 **Precedence and gating.** `fonts/substitutions.json` `optional` lists the
 candidates in order: `fetched/mingliu.ttc` (yours), then
 `fetched/mingliu-uming.ttc`. `optionalFontMounts()` in

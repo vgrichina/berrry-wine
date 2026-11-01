@@ -3124,29 +3124,85 @@
   ;;   pass 2 — write into a freshly allocated heap blob, sized exactly
   ;; ============================================================
 
+  ;; UTF-16 labels under an ANSI page with conversion tables (CP950). The
+  ;; menu blob keeps canonical ANSI text, and Windows produces that text
+  ;; with the ANSI code page, so a Big5 build's 檔案(&F) must become the
+  ;; Big5 bytes, not the low byte of each code unit. Each label is encoded
+  ;; once into this grow-only scratch (WASM address; guest heap backed) and
+  ;; read back one byte per character, so every walker below sees an ANSI
+  ;; label exactly like an NE template's. $ml_xcode_cp is 0 — and nothing
+  ;; changes — for NE templates and for every page without tables.
+  (global $ml_xcode_cp  (mut i32) (i32.const 0))
+  (global $ml_xcode_buf (mut i32) (i32.const 0))  ;; guest ptr
+  (global $ml_xcode_cap (mut i32) (i32.const 0))
+  (global $ml_xcode_cur (mut i32) (i32.const 0))
+
+  ;; Arm (or disarm) label transcoding for the template of $size bytes
+  ;; whose bounds $ml_end and $ml_char_stride were just set. A template is
+  ;; walked at most twice (count, then write) and each pass's labels fit in
+  ;; the template's own bytes, so twice its size bounds the scratch.
+  (func $ml_xcode_begin (param $size i32)
+    (local $need i32)
+    (global.set $ml_xcode_cur (i32.const 0))
+    (global.set $ml_xcode_cp (i32.const 0))
+    (if (i32.ne (global.get $ml_char_stride) (i32.const 2)) (then (return)))
+    (if (i32.eqz (call $text_decode_code_page)) (then (return)))
+    (local.set $need (i32.add (i32.shl (local.get $size) (i32.const 1)) (i32.const 16)))
+    (if (i32.lt_u (global.get $ml_xcode_cap) (local.get $need))
+      (then
+        (if (global.get $ml_xcode_buf)
+          (then (call $heap_free (global.get $ml_xcode_buf))))
+        (global.set $ml_xcode_buf (call $heap_alloc (local.get $need)))
+        (global.set $ml_xcode_cap
+          (select (local.get $need) (i32.const 0) (i32.ne (global.get $ml_xcode_buf) (i32.const 0))))))
+    ;; No scratch: keep the historical copy rather than fail the menu.
+    (if (i32.eqz (global.get $ml_xcode_buf)) (then (return)))
+    (global.set $ml_xcode_cp (call $text_decode_code_page)))
+
   ;; Read the label starting at $ml_pos, one $ml_char_stride-wide character at
   ;; a time. Advances $ml_pos past the trailing NUL, writes the char count to
-  ;; $ml_label_chars, and returns the WASM addr of the first character.
+  ;; $ml_label_chars, and returns the WASM addr of the first character. With
+  ;; transcoding armed the returned label is the encoded ANSI copy and the
+  ;; count is in bytes.
   (func $ml_load_label (result i32)
-    (local $start i32) (local $chars i32) (local $ch i32)
+    (local $start i32) (local $chars i32) (local $ch i32) (local $dst i32)
     (local.set $start (global.get $ml_pos))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (global.get $ml_pos) (global.get $ml_end)))
-      (local.set $ch (call $ml_char_at (global.get $ml_pos) (i32.const 0)))
+      (local.set $ch
+        (if (result i32) (i32.eq (global.get $ml_char_stride) (i32.const 1))
+          (then (i32.load8_u (global.get $ml_pos)))
+          (else (i32.load16_u (global.get $ml_pos)))))
       (global.set $ml_pos (i32.add (global.get $ml_pos) (global.get $ml_char_stride)))
       (br_if $done (i32.eqz (local.get $ch)))
       (local.set $chars (i32.add (local.get $chars) (i32.const 1)))
       (br $scan)))
+    (if (global.get $ml_xcode_cp)
+      (then
+        (local.set $dst (i32.add (call $g2w (global.get $ml_xcode_buf))
+          (global.get $ml_xcode_cur)))
+        (local.set $chars (call $wide_wa_to_ansi_wa (local.get $start) (local.get $chars)
+          (local.get $dst)
+          (i32.sub (global.get $ml_xcode_cap) (global.get $ml_xcode_cur))))
+        (global.set $ml_xcode_cur (i32.add (global.get $ml_xcode_cur) (local.get $chars)))
+        (local.set $start (local.get $dst))))
     (global.set $ml_label_chars (local.get $chars))
     (local.get $start))
 
-  ;; Character $i of the label at $wa, in whichever width this template uses.
+  ;; Character $i of the label at $wa, in whichever width this template uses
+  ;; (one byte for a transcoded label).
   (func $ml_char_at (param $wa i32) (param $i i32) (result i32)
-    (local.set $wa (i32.add (local.get $wa)
-      (i32.mul (local.get $i) (global.get $ml_char_stride))))
-    (if (result i32) (i32.eq (global.get $ml_char_stride) (i32.const 1))
-      (then (i32.load8_u (local.get $wa)))
-      (else (i32.load16_u (local.get $wa)))))
+    (if (result i32) (i32.or (i32.eq (global.get $ml_char_stride) (i32.const 1))
+                             (i32.ne (global.get $ml_xcode_cp) (i32.const 0)))
+      (then (i32.load8_u (i32.add (local.get $wa) (local.get $i))))
+      (else (i32.load16_u (i32.add (local.get $wa) (i32.shl (local.get $i) (i32.const 1)))))))
+
+  ;; Address of character $i, under the same stride rule as $ml_char_at.
+  (func $ml_char_addr (param $wa i32) (param $i i32) (result i32)
+    (if (result i32) (i32.or (i32.eq (global.get $ml_char_stride) (i32.const 1))
+                             (i32.ne (global.get $ml_xcode_cp) (i32.const 0)))
+      (then (i32.add (local.get $wa) (local.get $i)))
+      (else (i32.add (local.get $wa) (i32.shl (local.get $i) (i32.const 1))))))
 
   ;; Recursively consume one level of items WITHOUT counting them.
   ;; Used to skip cascading sub-popups in pass 1 / pass 2.
@@ -3319,9 +3375,12 @@
     (if (local.get $sc_chars)
       (then
         (local.set $sc_off (global.get $ml_string_cur))
+        ;; The shortcut starts one character past the tab, in whatever stride
+        ;; the label is held in: a Win16 menu's ANSI bytes and a CP950
+        ;; transcoded label are one byte per unit, and a fixed UTF-16 stride
+        ;; drew FreeCell's F2/F3/F4 as fragments of the item text ("le", "Ga").
         (call $ml_copy_ascii
-          (i32.add (local.get $str_w) (i32.shl (i32.add (local.get $tab) (i32.const 1))
-                                                (i32.const 1)))
+          (call $ml_char_addr (local.get $str_w) (i32.add (local.get $tab) (i32.const 1)))
           (i32.add (global.get $ml_blob_w) (global.get $ml_string_cur))
           (local.get $sc_chars))
         (global.set $ml_string_cur (i32.add (global.get $ml_string_cur) (local.get $sc_chars)))))
@@ -3699,6 +3758,7 @@
     ;; --- Pass 1: count ---
     (global.set $ml_pos (local.get $items_w))
     (global.set $ml_end (i32.add (local.get $bytes_w) (local.get $size)))
+    (call $ml_xcode_begin (local.get $size))
     (global.set $ml_bar_count   (i32.const 0))
     (global.set $ml_struct_size (i32.const 4)) ;; bar_count header
     (global.set $ml_string_size (i32.const 0))
@@ -3861,6 +3921,7 @@
     (if (i32.ne (i32.load16_u (local.get $bytes_w)) (i32.const 0))
       (then (return (i32.const 0))))
     (global.set $ml_end (i32.add (local.get $bytes_w) (local.get $size)))
+    (call $ml_xcode_begin (local.get $size))
     (i32.add (local.get $bytes_w)
       (i32.add (i32.const 4)
         (i32.load16_u (i32.add (local.get $bytes_w) (i32.const 2))))))
