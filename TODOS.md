@@ -1124,8 +1124,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: Populous01a19637-6851-7332-a75f-552d02cd8846 handle20444 output scratch/usage-watch/populous-original-unit-control-nov01/ owns runtime/source/build since08:33:34UTC runtime deadline09:03:34UTC overall09:58UTC fallback08:48UTC; actualLIVE08:38UTC. GL projective01a19641-a4cc-73b0-b834-fbd5deb5bac0 handle80550 output scratch/usage-watch/gl-software-projective-next-nov01/ scratch-only WAIT Populous fresh final/result AND explicit runtime/source/build RELEASE overall10:08UTC fallback08:48UTC.
-  status: Homeworld f62e481bc reviewed ordinary seven-Scout selection and M/destination movement, paired captures/input/identity PASS, one original exit0; ambient drift disclosed. Five ownedPIDs independently absent, published remoteMATCH. DarkReign3e2c521ff rig displacement reviewed (controller143 childexit unknown). Populous unit-control active; fresh GL projective/texcoord4 original fixtures queued behind it. Alice startup blocked; GL raster/multitexture PASS; DR2 selection and Redline movement reviewed. Full27/GPU open; Crimsonland installation and Starlancer licence1772 pending. Cap2 serialized runtime; rolling pipeline active.
+  worker: Battlezone01a1964b-ff7a-7170-8781-11d0584406d2 handle85971 output scratch/usage-watch/battlezone-original-combat-control-nov01/ owns runtime/source/build since08:49:04UTC runtime deadline09:18:54UTC overall10:23UTC fallback09:03UTC. AoWII01a1964c-604a-74e0-ad44-60bf7b2ef11f handle47811 output scratch/usage-watch/aow2-current-original-control-nov01/ scratch-only WAIT Battlezone fresh final/result AND explicit runtime/source/build RELEASE overall10:25UTC fallback09:05UTC. Both actualLIVE08:50UTC.
+  status: Populous922056d36 reviewed ordinary shaman movement with fixed landmarks and consumed input; one original exit0, five ownedPIDs independently absent. GL projective b05826e4a unchanged projective-vertex/texcoord4 assertions PASS, two originals exit0, seven PIDs absent; production bodies identical with custom-section difference disclosed. Battlezone now seeks firing/vehicle-command control beyond accepted driving; AoWII seeks current army movement and lower-panel captures. Homeworld fleet and DarkReign rig movement reviewed. Alice startup blocked; full27/GPU, FPS/audio remain open. Starlancer licence1772 pending. Cap2 serialized runtime; rolling pipeline active.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
@@ -1581,9 +1581,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] AoWII rendering overlap and gameplay measurement
   id: AOW2-RENDERING-COVERAGE-20261009
-  status: ready
+  status: running (scratch-only runtime gate)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Recover retained AoWII captures or make a bounded original-game observation before qualifying current-main visuals; then measure logical gameplay FPS and audio separately on an allocated temporary box. Do not repeat the viewport-clipping repair9a438f1b9 or cooperative vblank continuation918f25772: both are ancestors of main and remain described in the app notes with focused regression coverage. Initial army movement and the repaired panel are historical observations; current-main visual parity/FPS/audio remain unqualified.
+  Next: Fresh worker01a1964c-604a-74e0-ad44-60bf7b2ef11f handle47811 recovers retained captures or runs bounded ordinary army movement and lower-panel observation after Battlezone fresh final/result AND explicit runtime/source/build RELEASE. Overall10:25UTC fallback09:05UTC. Do not repeat accepted viewport-clipping9a438f1b9 or cooperative-vblank918f25772 repairs. Current visuals, logical gameplay FPS and audio remain unqualified pending evidence.
   Evidence: docs/re-notes/age-of-wonders2-demo.md; main9a438f1b9 and918f25772; test/test-d3dim-viewport-clip.js; test/test-cross-thread-send-vblank.js; scratch/runs/20261031T1420Z-aow2-task-refresh/verification.json. Historical runs20261009T0306Z-age-of-wonders2-gameplay and20261010T1145-aow2-viewport-clip-fix are referenced by the notes; the October9 run is absent locally, so no new screenshot review is claimed.
 
 - [ ] New-game lane: American McGee's Alice demo
