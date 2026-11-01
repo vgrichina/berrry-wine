@@ -280,6 +280,91 @@ and new temporary paths are checked in the cleanup evidence. Native-local
 box ID/state/expiry are N/A. Waypoint arrival/completion, audio, FPS and full
 playthrough remain unclaimed.
 
+## Waypoint arrival attempt: navigation unresolved (2026-11-01)
+
+Run `scratch/runs/20261101-incoming-helicopter-waypoint-arrival/` does **not**
+establish waypoint arrival, a changed objective, or helicopter phase completion.
+One unchanged original replayed the accepted margin route and controls at
+batch size 100000 and the same 200 ms batch clock. The pad, warehouse, radar
+dish and cockpit flight endpoint were reproduced. This setup is already
+accepted by `4088515ae`; it is not new progress.
+
+The first unresolved obstacle was maintaining a verified waypoint approach
+from the green arrow. Consumed Left/Right and X inputs changed the view and
+marker, but the attempt did not establish a reliable forward bearing from
+the marker's different projected shapes. Initial Up flight brought the cooling
+towers close ahead; Q gained height and cleared them. Subsequent Up segments
+crossed ridges and pylons, while the marker remained visible and off-center
+or flattened. Those images establish motion, not decreasing waypoint distance.
+No runtime position, distance, or coordinate was measured or synthesized.
+The mission script's approach-triggered objective is context, not proof that
+its distance condition was reached. At the final batch **23796**, both
+`navigation-stop.png` and `final.png` still show **phase 2/10**, score 7000,
+and the green arrow, without an arrival or changed-objective message.
+This is a navigation limit of this attempt, not an identified game or emulator
+defect. No second original was launched without a concrete improved route.
+
+Paired full PNGs, input-state, DirectInput and snapshot files retain the actual
+controls. Useful comparisons are:
+
+| Input | Before | Held | Released | Later without input |
+|---|---|---|---|---|
+| Right, 120 batches; radar installation comes into view | `nav03-right-before.png` (10310) | `nav03-right-held120.png` (10430) | `nav03-right-released2.png` (10432) | `nav03-right-later40.png` (10472) |
+| Up, 600 batches; approach to cooling towers | `nav08-up-before.png` (11300) | `nav08-up-held600.png` (11900) | `nav08-up-released2.png` (11902) | `nav08-up-later40.png` (11942) |
+| Q, 220 batches; tower clearance | `nav09-q-before.png` (11942) | `nav09-q-held220.png` (12162) | `nav09-q-released2.png` (12164) | `nav09-q-later40.png` (12204) |
+| Up, 4000 batches; ridges and pylons, no objective change | `nav31-up-before.png` (18996) | `nav31-up-held4000.png` (22996) | `nav31-up-released2.png` (22998) | `nav31-up-later40.png` (23038) |
+| X, 400 batches; bank and later leveling | `nav35-x-before.png` (23254) | `nav35-x-held400.png` (23654) | `nav35-x-released2.png` (23656) | `nav35-x-later40.png` (23696) |
+
+The longer Up approaches also retain full captures every 250 batches, including
+all sixteen intervals of `nav31`. These reviewed intervals show no objective
+change; they do not rule out a message between captures. Filenames describe
+actual keys and batch counts, not inferred motion axes or zero velocity.
+There are no arrival PNGs because arrival was not observed.
+
+`consumed-controls-review.json` and compressed logs retain 18,662 traced
+GetDeviceData calls and 18,662 successful zero returns, with tracing enabled
+from batch 8767 through 23796. The Right pair advances WM dequeue/route/
+dispatch totals 66/67/68/68 and DirectInput sequence 64/65/66/66. The final
+long Up pair advances WM totals 122/123/124/124 and sequence 120/121/122/122.
+The final X release initially remains queued in the keyboard ring and WM
+dispatch; its later capture proves both have drained, ending at WM 132 and
+DirectInput sequence/head 130/6, active and empty without overflow. This does
+not trace every guest key-array read; SDL consumption and guest postqueue
+remain unknown. No weapons were held during navigation.
+
+The 11:21:28 UTC gate pinned actual main
+`6830abe76f8c15392579972587142d3ba7a4f2a9`, after Dethkarz worker
+`01a196ca-6ce1-7fc1-9963-2692d1f4c7cc` supplied fresh launcher terminal files
+and its 11:20:16 explicit runtime/source/build release. Accepted module
+`dd43e4a...09aaf4`, all 4,392 accepted input pins and 141 prior read pins
+matched. All 4,444 current source/build pins, 335 original-tree/manifest files,
+full before/after original archives and three configuration copies matched.
+The EXE and manifest SHA-256 remain respectively
+`4830a5d5091a6c4f528cd2aa3d7821873346b6e5a823ac4e71692d18d2f4402c` and
+`df0fafd26f474beacb39ccb67a2f6c380ecfac2fd4a6a57f0f34825fc4f6a4a4`.
+The actual compilation hash and all 447 observed file-read hashes match.
+Fresh retained-observer sync/async execution, whole shared 512 MiB read-only,
+clock identity and emitted late-10001 checks passed. Read coverage remains
+synchronous file reads and complete closed descriptor reads up to 24 MiB;
+async/stream, incomplete, unclosed and larger reads are excluded, with exit-only
+flush. Runtime compilation is not compiler source-read evidence.
+
+The original exited 0 after 1489.698 seconds, within the 30-minute gate window.
+Startup free disk was 2,451,689,472 bytes and the runtime minimum was
+2,317,357,056 bytes; the board/disk watcher through the post-run checks reached
+2,298,896,384 bytes, above the 2,000,000,000-byte floor. The driver
+tool session returned 143 for an unestablished reason, but its complete
+finally receipt, normal node exit and fully decodable gzip through final
+statistics/PNG are retained; this is not an incomplete-log reconstruction.
+Manifest and identity checks passed. Runtime/watcher groups, the driver PID,
+matching own script processes and temporary paths are absent. The driver's
+group ID was not recorded before exit; that coverage limit is retained in
+cleanup evidence. Native-local box ID/state/expiry are N/A. No tracked
+source, helper, test, configuration, registration or backend was changed.
+Waypoint arrival remains open; this single assignment stops at the documented
+navigation blocker without requalifying flight, combat, audio, FPS or a full
+playthrough.
+
 ## Not checked
 
 Audio output, DirectPlay, completion of flying/driving phases after the turret,
