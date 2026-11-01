@@ -108,6 +108,38 @@ Own runtime/driver/group/watcher and temporary-file cleanup is recorded;
 native-local box ID/state/expiry are N/A. Audio, FPS, full playthrough, and
 broader renderer compatibility remain unclaimed.
 
+## Helicopter control follow-up: launch blocked (2026-11-01)
+
+`scratch/runs/20261101-incoming-helicopter-waypoint-control/` records a
+pre-runtime disk blocker, not new helicopter progress. After Motocross worker
+`01a19693-acbd-7e02-98c0-8ebb78e4484c` supplied fresh terminal files and its
+10:24:06 UTC explicit runtime/source/build release, the actual 10:24:41 UTC
+gate pinned main `3cddaa00c6c68e724b99b3b009fd1d417b52c516`. Free disk was
+2,135,310,336 bytes: 64,689,664 bytes below this task's 2,200,000,000-byte
+startup requirement. No disposable scratch belonging to this assignment could
+close that gap; no foreign files were cleaned. Zero originals were launched.
+
+The retained route and three earlier helicopter images were reviewed. The
+pad, warehouse, and radar dish supply useful landmarks, but those images do
+not isolate ordinary control from the native camera transition. No new
+before/held/released/settled helicopter PNGs or consumed controls exist for
+this follow-up; flight and waypoint progress remain open.
+
+Identity-only checks matched the accepted module and all 4,392 accepted input
+pins plus 141 prior observed-read pins. Before/after checks matched 4,444
+current source/build pins and 335 original-tree/manifest files; full original
+archives and configuration copies are retained. The unchanged observer passed
+actual synchronous/asynchronous execution, whole shared 512 MiB read-only and
+clock checks, and emitted late-10001 retention. These are observer checks, not
+an original-game execution or compiler-read proof. Its synchronous-read,
+bounded closed-descriptor, asynchronous/stream, and exit-flush coverage limits
+above still apply; this follow-up has no game-runtime read coverage.
+
+The next prerequisite is at least 2.2 GB free at the actual launch gate, then
+a settled helicopter baseline and ordinary held/released controls with fixed
+landmarks or HUD evidence. Native-local box ID/state/expiry are N/A. No tracked
+source, helper, test, configuration, registration, or backend changed.
+
 ## Not checked
 
 Audio output, DirectPlay, completion of flying/driving phases after the turret,
