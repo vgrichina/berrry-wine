@@ -1,7 +1,7 @@
-Current 2026-11-01T06:41:28.123172+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T06:45:26.144370+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Tachyon training flight controls are reviewed and published at f1f9faf19: paired captures and dispatched input show throttle changes, turning, and laser fire/release. Mission completion, turning cessation timing, audio and FPS remain unverified. Rune cave gameplay and W movement are also verified.
+GL software mipmap selection passed8/8 and sphere-map texgen passed9/9 with unchanged actual WAT pixel assertions. Published ea9b18ae9 reviewed: source hashes match and own runtime processes are gone. Full27 and GPU coverage remain open.
 
-Redline's capture chooser fix e06fe9784 produces coherent textured captures. Its movement follow-up reached the startup disk check: free2.29GB is below its2.3GB launch threshold, above the2GB floor. No post-fix gameplay claim yet. A fresh GL mipmap/texgen pixel-test worker waits for Redline runtime release; full27 coverage remains open.
+Redline capture chooser e06fe9784 produces coherent textured captures; post-fix movement remains unverified. Its prior worker ran no originals because startup disk was below2.3GB. Lossless compression of finalized diagnostics recovered42.6MB; a fresh Redline movement worker passed startup at2.318GB and owns runtime. A fresh Tachyon worker prepares native Insert slide and onward training behind its release.
 
-Dark Reign2 lacks required native mip sampling. Starlancer awaits licence authority in Telegram1772. Two workers; serialized runtime. Browser access and held algorithms excluded. No deployment.
+Tachyon throttle/turn/fire and Rune cave/W controls are reviewed. Mission completion, audio and FPS remain unverified. DarkReign2 native mip sampling is missing. Starlancer licence authority awaits Telegram1772. Cap2, serialized runtime, no browser access or held-algorithm work. No deployment.
