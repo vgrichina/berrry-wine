@@ -24,8 +24,9 @@ The payload is an ignored local fixture. On `bx_yqnspudj`, acquisition and
 source-only scan artifacts are under
 `/home/user/constructor-preflight-20261013/`; the extracted tree is under
 `corpus/test/binaries/dos-games/constructor-demo`. Local metadata does not imply
-the payload has been copied onto the dashboard host. The coordinator's
-`test/binaries/dos-games/constructor-demo/GAME.EXE` is absent. The dashboard now
+the payload has been copied onto the dashboard host. At the initial preflight the
+coordinator's `test/binaries/dos-games/constructor-demo/GAME.EXE` was absent;
+see the 2026-11-01 recovery below for current local state. The dashboard now
 checks the local entry of blocked titles too, reporting this missing path
 separately from the retained compatibility blockers. That presence check is
 not a full payload hash verification.
@@ -496,3 +497,157 @@ default passive capture, two Trident captures, generated driver hashes and
 bytes, static branches, existing-model conformance test and reviewed
 console images. All22 independently checked PID/groups are absent.
 No additional emulator change is proposed from these experiments alone.
+
+## 2026-11-01 original fixture recovery and next executable dependency
+
+Run: `scratch/runs/20261101-constructor-original-fixture-recovery/`.
+Static/acquisition assignment only; Urban owns runtime/source/build. The fresh
+public `DESKTOP_APPS` export in `lib/apps.js` has 46 entries and no Constructor
+entry (full list, source hash and HEAD retained in `public-list.json`). This
+checks the current public picker definition, not a remote deployed website.
+
+The exact original URL above returned HTTP 200 after one Archive redirect in
+5.193630 seconds, with no retries. Actual downloaded bytes are **32,062,553**
+and SHA-256 **`5d764f6d2f536d6aae6fd18122bc9bf2be20e84f101cbcdeafb1bcbd20eeed18`**.
+Every ZIP member was checked before persistence: no absolute/traversing paths,
+backslashes, drive prefixes, symlinks or special files; the 28 regular names
+exactly equal the checked-in manifest. ZIP CRC, size and SHA-256 checks pass
+for every file, totaling **63,205,318 bytes**. Directory names/case are original;
+the five `DATA.FIL` resources and both `DOS4GW.EXE` paths remain separate.
+`GAME.EXE` matches `d0ac2f05b9a813dc723f170f7418fbfd9af269abcbce8905062c3b63f27dc587`;
+its MZ/LE identity and original sound-setup batch also match the earlier notes.
+No substituted executable, generated configuration or retail payload was used.
+
+The complete fixture is now persistent at
+`test/binaries/dos-games/constructor-demo/`, with all 28 local sizes/hashes
+rechecked after writing. Transfer waited for Urban's exact author
+`2026-11-01T20:42:58+00:00 RELEASE runtime/source/build` statement, terminal
+receipts and direct absence checks of its reported runtime PIDs. Free disk was
+about 2.18 GB before transfer and **2,113,626,112 bytes** immediately afterward,
+above the 2 GB floor. No thresholds or other owners' artifacts were changed.
+Only the verified payload persists; the downloaded archive's own tmpfs copy
+was removed after local verification. The two bounded release-watch helpers
+were explicitly interrupted and reaped (exit130; actual waits84.975262 and
+27.330045 seconds); the final watcher predicate/receipt accepts the explicit
+author RELEASE without waiting for its later note-publication DONE. An initial
+persist attempt failed before creating files because the `dos-games` parent
+was absent; creating the required parent corrected this acquisition-only issue.
+
+Current source review (hashes in `source-review.json`) changes the interpretation
+of the early dependency list:
+
+- `tools/toyvm/dos.js` `resolvePath`/`hostKey`/`hostPath` preserve relative
+  directories and reject host symlinks. The old flat-basename blocker is
+  historical. The existing pure-JS `test/test-toyvm-dos-paths.js` passes all
+  24 groups across Node and both shipped bundles, including distinct resources.
+  Reading all 28 restored files through the actual current `Machine` host API
+  reproduces every manifest hash; a root `DATA.FIL` lookup correctly misses.
+- The environment-MCB, contiguous PSP resize, EXEC overlay and held-allocation
+  fixes described above are present. `test/test-toyvm-exec-boundaries.js`
+  passes eight handler-contract groups without executing guest instructions.
+  Static LE/DOS4GW detection is an identity/dependency fact, not evidence that
+  DPMI absence is the next failure. The historical original reached UVCONFIG;
+  this assignment has made no current runtime attempt.
+- `tools/toyvm/live.js` `bindInput` forwards absolute mouse coordinates, buttons
+  and deltas to INT33 polling state, and `site.js` installs that binding. The
+  earlier focus-only observation is historical. Existing mouse-input and
+  chord-repair DOM/state regressions pass without guest/Wasm/browser execution.
+  Callbacks, custom ranges and actual Constructor controls remain unqualified.
+- **First remaining actionable compatibility boundary: credible UniVBE chipset
+  detection and hardware behavior.** Current `vesaCallImpl` still reports VBE
+  1.2, serves banked modes and omits 4F0A; `portOut` still masks sequencer
+  indexes to 0Fh, aliasing A7/C5 to 07/05. The optional Trident model still
+  consists of ROM identity, CRTC readback and bank selection, without the
+  extended register model described above. These source facts preserve the
+  relevance of the historical default "No Graphics hardware" exit and the
+  optional run's wrong InteGraphics identity. The exact cause of that wrong
+  selection is still unproven. Raising the VBE version or using the Trident
+  option alone is not a justified repair.
+
+Once the fixture is persistent and a future runtime assignment is authorized,
+the existing CLI can mount its directory from the executable's parent:
+
+```sh
+timeout --signal=TERM --kill-after=5s 90s node tools/toyvm/run-dos.js \
+  test/binaries/dos-games/constructor-demo/GAME.EXE \
+  --dispatches=200000000 --seconds=30
+```
+
+This is a proposed bounded **default-hardware startup diagnostic**, unexecuted
+here. It needs the ordinary ToyVM runner dependencies and serialized runtime
+ownership; it does not need a replacement EXE or a new registry entry. The
+existing focused graphics regression is `test/test-toyvm-vbe.js` (guest/native,
+**not run here**): it checks served/refused VBE modes and rendered banked pixels,
+but does not qualify UniVBE chip identification or extended sequencer banks.
+A future hardware correction also needs focused detection/extended-register
+coverage and the unchanged original startup. Only after credible graphics is
+the original `MUSIC/SNDSETUP.EXE` workflow the next sound-configuration
+dependency; `SETSND.CFG` is absent from this authentic manifest. No setup was run.
+
+`node tools/toyvm-dos-corpus.js --check --only=constructor-demo` passes: 28 files,
+60.3 MiB, generated metadata up to date. Its `extender,flat-fs-collision` labels
+remain the stored static assessment; the collision label contradicts current
+directory-aware source and the passing real-payload host API check. These labels
+were not rewritten in this note-only assignment and are not new runtime results.
+
+Recovery recipe from the repository root (only after the live runtime owner's
+exact release and with disk staying above 2,000,000,000 bytes). Check ownership
+first; preserve any existing destination. Keep the archive on tmpfs and persist
+only fully verified members; no compilation container is involved:
+
+```sh
+constructor_stage=$(mktemp -d /dev/shm/constructor-original.XXXXXX)
+curl --fail --location --max-redirs 5 --connect-timeout 15 --max-time 180 \
+  --max-filesize 33000000 --retry 0 \
+  --output "$constructor_stage/CONSTRUC.zip" \
+  https://archive.org/download/CONSTRUC/CONSTRUC.zip
+python3 - "$constructor_stage/CONSTRUC.zip" <<'PY'
+import hashlib, json, os, stat, sys, zipfile
+from pathlib import Path, PurePosixPath
+archive = Path(sys.argv[1])
+assert archive.stat().st_size == 32062553
+assert hashlib.sha256(archive.read_bytes()).hexdigest() == \
+    '5d764f6d2f536d6aae6fd18122bc9bf2be20e84f101cbcdeafb1bcbd20eeed18'
+pins = json.loads(Path('test/toyvm-dos-corpus/files/constructor-demo.json').read_text())['files']
+expected = {f['path']: f for f in pins}
+assert len(expected) == 28 and sum(f['size'] for f in pins) == 63205318
+dest = Path('test/binaries/dos-games/constructor-demo')
+assert not dest.exists() and not dest.is_symlink(), 'Preserve existing files'
+assert all(not p.is_symlink() for p in dest.parents)
+def free():
+    s = os.statvfs('.')
+    return s.f_bavail * s.f_frsize
+with zipfile.ZipFile(archive) as z:
+    for i in z.infolist():
+        p = PurePosixPath(i.filename)
+        assert not p.is_absolute() and '..' not in p.parts
+        assert not any(c in i.filename for c in ['\\', ':', '\0'])
+        assert stat.S_IFMT(i.external_attr >> 16) in (0, stat.S_IFREG, stat.S_IFDIR)
+    entries = [i for i in z.infolist() if not i.is_dir()]
+    assert len(entries) == 28 and {i.filename for i in entries} == set(expected)
+    for i in entries:
+        f = expected[i.filename]
+        data = z.read(i)  # checks CRC and complete decompression
+        assert len(data) == i.file_size == f['size']
+        assert hashlib.sha256(data).hexdigest() == f['sha256']
+    assert free() > 2000000000 + 63205318 + 16*1024*1024
+    dest.mkdir(parents=True)
+    for i in entries:
+        assert free() > 2000000000 + i.file_size + 1024*1024
+        out = dest / i.filename
+        out.parent.mkdir(parents=True, exist_ok=True)
+        with out.open('xb') as stream:
+            stream.write(z.read(i)); stream.flush(); os.fsync(stream.fileno())
+        assert hashlib.sha256(out.read_bytes()).hexdigest() == expected[i.filename]['sha256']
+assert free() > 2000000000
+print('Verified authentic 28-file closure, 63205318 bytes')
+PY
+# After successful verification only, remove this acquisition's own tmpfs copy.
+rm -- "$constructor_stage/CONSTRUC.zip"
+rmdir -- "$constructor_stage"
+```
+
+Run-local acquisition headers/timings, all 28 verification rows, static source
+pins, pure contract logs and actual helper waits are retained under the run ID.
+No guest run, build, browser, boat, deployment, EULA, gameplay, FPS, audio or
+qualification claim. Box ID/state/expiry: N/A; coordinator lifecycle untouched.
