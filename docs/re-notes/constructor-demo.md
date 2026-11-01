@@ -1291,3 +1291,78 @@ unproved. Build entry was2335780864bytes available and its minimum2335588352,
 above the active2020000000-byte stop and2000000000-byte floor, with no RAM gate.
 Box ID/state/expiry are N/A; runtime is released after publication for the next
 authorized original test.
+
+## Original default startup after GC repair, 2026-11-01
+
+Run `20261101-constructor-post-gc-startup` makes one original default launch
+after published GC repair `a416f0142`, on `37791d8f1` (the subsequently
+published checkpoint/stdin repair). **Graphics detection now rejects the
+default VGA: UVCONFIG exits1 and GAME.EXE exits1.** The inspected
+`startup.png` shows “No supported SuperVGA chip detected!” and
+“Error = No Graphics hardware detected by UniVBE! (0x0)”. This is the first
+changed-source original failure; no sound setup, menu, input or gameplay was
+reached. The earlier apparent InteGraphics acceptance and missing-SETSND.CFG
+boundary no longer occur.
+
+The checkpoint worker's launcher exit0, final/result, published author release
+and fresh direct absence of all19 reported helper PIDs preceded acquisition
+of native runtime ownership. No emulator source, test or build was edited or
+run here. Its accepted focused/keyboard/bundle/parity/build results are
+retained in `dependency.json`; the GC host source is byte-identical to
+`a416f0142` (SHA256
+`6b8d9420c7d6fd2653838d1720d3acfe16f499e059bee13d9e44dfc8cc00dd85`).
+
+All28 authentic files, totaling63205318bytes, match the retained manifest
+before and after execution, with exactly that file closure. GAME.EXE remains
+994161bytes, SHA256
+`d0ac2f05b9a813dc723f170f7418fbfd9af269abcbce8905062c3b63f27dc587`.
+The manifest itself matches the retained archive-verification record; that
+record pins the32062553-byte archive to
+`5d764f6d2f536d6aae6fd18122bc9bf2be20e84f101cbcdeafb1bcbd20eeed18`.
+The archive has been removed locally, so this is reuse of its recorded
+verification, not a fresh archive hash or download. All378 runtime/support/
+manifest source pins remain unchanged during execution. The identity-only
+compiler observer returns the original bytes and records actual module
+SHA256 `03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`
+(343736bytes), matching the retained module; the GC repair is host JS.
+
+The sole command uses the original GAME.EXE, default hardware, no command
+tail,200M dispatch/30 guest-second limits and an outer90-second timeout.
+Existing interrupt/fault/entry and3C4/3C5/3CE/3CF port diagnostics, text/report
+and PNG capture are enabled. No DEMO route, model/vendor/memory/E7 override,
+forced configuration or binary patch is used. The CLI reports2.86seconds,
+43.7M rounded dispatches and4.36 guest seconds; these are not gameplay or FPS
+measurements. The timeout/Node host completes normally (actually waited,
+code0), distinct from both guest failures: child `INT21/4C01` at `0EFE:0163`,
+parent `4D00` obtains1, and final `4C01` at `0549:26EB`.
+
+At43.2197–43.2199M dispatches, the captured GC31h save/clear/set/restore
+sequence reads00h, writes00h and reads00h, writes3Fh and reads0Fh, then
+restores00h. No GC32h probe follows. This observed port behavior matches
+the authentic detector's mapped early rejection predicate; no instruction
+pointer or descriptor capture is claimed. Five VBE controller and two
+mode-info queries succeed, but there is no4F02 mode set. The text console
+and final mode3 do not establish supported SVGA, capacity or banking.
+
+The concrete next work is a separately owned complete adapter contract that
+the original detector genuinely supports: derive its identity/register and
+capacity checks from authentic UVCONFIG code, implement real bank/window
+access and mode behavior, and verify bank-crossing pixels before another
+original startup. Detector acceptance alone cannot qualify an adapter.
+Default plain VGA rejection must remain truthful.
+
+The conditional sound follow-up was not triggered. Original SETSOUND.BAT and
+MUSIC/SETUP.INI contracts are retained in `sound-inputs.txt`; no SETSND.CFG
+was fabricated. **Correction to the older missing-test.wav note:** the
+retained archive manifest and current authentic closure contain
+`MUSIC/TEST.WAV` (67024bytes, SHA256
+`d972ec69430baa17b93b10bf13871ff913de41963257e004eea3249f5e506852`).
+Runtime sample availability and audio playback remain untested limitations;
+no asset was synthesized or setup/audio success claimed.
+
+Evidence, identity checks, command/wait receipts, boundary excerpts and
+recovery instructions are in the named scratch run. Original-command free
+disk minimum was2312757248bytes, above the active2020000000-byte abort and
+2000000000-byte floor; no RAM gate applies. Local box ID/state/expiry are N/A;
+no box lifecycle action occurred. Own helpers are actually waited and their
+direct absence checked before final release/publication handoff.
