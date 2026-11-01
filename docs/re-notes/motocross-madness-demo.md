@@ -203,3 +203,47 @@ was logged without an identified request, but did not prevent this checkpoint.
 The browser and both local servers were verified closed and its private profile
 removed. This adds a current short-driving observation, not full gameplay or
 software/WebGL parity acceptance.
+
+### Native scored-stunt attempt: launch disk blocker (2026-11-01)
+
+Run `scratch/runs/20261101-motocross-scored-stunt/` stopped before launching
+an original. After Incoming's fresh final/result and 10:20:11 UTC explicit
+runtime/source/build release, the identity gate at 10:21:30 pinned main
+`16f6dd8868f12a5818aab1af649bee8cfddf03f9`. The native launch preflight at
+10:22:00 measured **2,139,860,992 available bytes on /home**, below the
+required 2,200,000,000-byte startup minimum by **60,139,008 bytes**. It refused
+launch before process creation. The worker's earlier 10:07 startup measurement
+was 2,201,370,624 bytes; that earlier pass does not establish sufficient disk
+at native launch. The continuous 2 GB floor was still met. No foreign cleanup,
+retry, source repair, configuration edit or asset modification was attempted.
+
+Before/after SHA-256 inventories match for all 311 original-tree files plus
+the registration manifest `lib/apps.js`; the eight original CTL/INI/SCN/MCF
+configuration files are also retained byte-for-byte. `MCM.EXE` is 1,029,632
+bytes, SHA-256
+`f0370d1d526be46eaf6ea5f941f185a393a8432baec695e1529f8672a314a71b`;
+the manifest SHA-256 is
+`cb645b1043738ac611d34d11679dce01afc54bf4e7bb86eeb2e9162ef4e0d857`.
+All 4,444 inventoried source/build files match before/after. The accepted
+build's 4,392 source pins and 141 prior actual-read hashes match current files,
+including canonical module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+This is a build-reuse identity check, **not a native game execution observation**.
+The October 30 browser evidence remains attributable only to its older
+`d83e413f` module.
+
+The retained observer passed actual synchronous/asynchronous scratch-Wasm
+execution, whole shared 512 MB memory immutability, host/native clock identity,
+and emitted late-event retention after 10,001 events. Its coverage excludes
+async file reads, streams, mmap and loader-internal reads; descriptor hashing
+requires complete reads of files at most 24 MiB. No actual native game module
+or runtime file reads exist for this attempt. No WM/keyboard/DirectInput input
+was consumed, and there are no new gameplay PNGs, scored stunts or event
+progress. Shipped `HELP/HELP.HTM` documents airborne Z+W as Heel Clicker and
+X+W as Bar Hop; these controls were read, not exercised. The scratch watcher
+was terminated and no game PID/group or new temporary directory was created;
+local box ID/state/expiry are N/A. Evidence is in `launch-preflight.json`,
+`gate.json`, `verification.json`, `observer-validation.log`, and `cleanup.json`.
+The next prerequisite is restoring the native startup disk margin before a
+fresh bounded ordinary-control attempt; this result adds no playability,
+audio, FPS, GPU, full-event or full-corpus claim.
