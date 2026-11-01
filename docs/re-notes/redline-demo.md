@@ -1,5 +1,88 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Texture/HUD investigation: missing state observation (2026-11-01)
+
+Run `20261101-redline-gameplay-textures` reproduces the retained first-person
+Stadium City image, but **does not prove a texture/HUD defect's first cause**.
+No production or test repair was made. In particular, the flat-looking areas
+cannot yet be classified as missing texture data, failed sampling, or intended
+flat surfaces from the image alone.
+
+The single diagnostic invocation reuses the reviewed original route and input
+timings through Space-release at batch 30,700. The current and retained
+`run2/space-released.png` were both inspected; they are byte-identical,
+SHA-256 `462927bb36c33a890c4cee7cd3a68f9f238afe7990721e4fca2c64ba34eb3180`.
+The new capture shows the same first-person weapon, crosshair and incomplete
+HUD/detail. Space-down/up reached the focused `0x10017` window; the final
+input-state reports dequeue/dispatch 10/9 and an empty renderer queue.
+The diagnostic stops before the planned additional arrow inputs, so it adds
+no new movement/fire evidence beyond the retained run.
+
+A preload wraps only the existing `dx_trace` host import, retaining bounded
+unique observations for kind 16 (texture resolution), kind 23 (Texture::Load
+outcome), and kind 29 for TEXTUREHANDLE/TEXTUREMAPBLEND. It changes no guest
+bytes or state and adds no breakpoint or block counter. Exactly two unique
+records were observed through gameplay: `(16,0,0,0,0)` (slot zero, unresolved)
+and `(29,21,2,0,0)` (legacy TEXTUREMAPBLEND MODULATE). There is no observed
+Texture::Load outcome or nonzero texture-resolution record. This alone does
+**not** prove that later draws never bind a texture: inspection of
+`$d3dim_bound_texture_entry` in `src/09ab-handlers-d3dim-core.wat` shows that
+COLOROP=DISABLE returns before kind 16 is emitted. The effective stage state
+and resource contents remain necessary to interpret the trace.
+
+The intended read-only device/surface snapshot failed at control request 43
+with `require is not defined`, before reading the table. `controlEval` supplies
+`memory`, `g2w`, `exports`, `tickState` and `ctx` through a `new Function`, but
+not CommonJS `require`. Thus no resource-content snapshot exists in this run;
+the attempted expression is preserved as `resources.js`, with its failed
+response in `controls.json`. The driver requested ordinary quit after this
+host diagnostic error, and the guest exited 0. The second invocation was
+reserved for a justified post-fix run and was not spent on another diagnostic.
+
+The next concrete observation is one frozen, read-only snapshot at the same
+30,700 checkpoint: have the outer driver obtain DX_OBJECTS from the recorded
+region mirror and insert that value into an expression using only the exposed
+`memory`/`g2w` bindings; return JSON for the driver to save outside the evaluator.
+For every live type-20 device, read its state pointer at entry +16, bound slot
+at state +2824, stage-zero words at +2832, and legacy blend at +3936. For its
+resolved surface and live type-2 texture candidates, read dimensions, format,
+pitch, DIB pointer and raw pixel diversity/content. This distinguishes disabled
+sampling or a missing binding from absent/uniform resource pixels without
+calling a decoder that allocates guest scratch space. Until those values are
+observed, choosing a generic graphics/resource transport repair is unsupported.
+
+The original `--app=redline_demo`, empty guest args, `C:\MAINDIR` cwd,
+IFORCE2-only seed, 59-companion manifest and shipped DISPLAY choices remain
+unchanged. `set-batch-size:100000` at 29,100 is the retained **work-budget
+adjustment**; the batch clock remains 200 ms. No clock, settings, memory,
+register or DLL mutation was made. Audio, sustained playability and browser
+rendering remain unknown.
+
+Incoming Rune commit `af316dc21` changed `test/run.js` relative to the retained
+4,385-input map, so accepted-module reuse was not permitted. A fresh
+`flock /tmp/wine-build.lock bash tools/build.sh` passed on source HEAD
+`ca66f37d182179489d245d2eadf006c6cafc4a1a`. It produced the same
+2,025,619-byte module SHA-256
+`168c61dae2861842948e5f9e29e4e18df93a6fab12c7d17f7dc85d75e34b7b55`,
+confirmed by the actual WebAssembly compile observation. Layout remains
+`ccbc5bf6dfb9610e`; mirror SHA-256 is
+`3926a7a2bda6727de2852155e9764b24b8909001d1e2c6ba62e0eb4cab708b11`.
+All 4,385 current recorded inputs remain unchanged before/after; all 126 actual
+loaded reads match. The focused registration/fixture check passes before and
+after, including the full original 65-file pins; all 70 fixture-map entries
+remain identical.
+
+Exactly one local guest invocation ran on an open PTY, with outer
+`timeout --kill-after=5s 150s`, inner `--max-seconds=120`, and the existing
+finite child guard inherited through `--spawn-processes`. It requested no
+child and exited 0 in 55.604 seconds. Both recorded runtime PIDs are absent
+and their process group is empty; no guest temporary export was created.
+Free disk remains above 2 GB. No box was acquired: ID/state/expiry and
+lifecycle handback are N/A, with no ownership retained. Evidence, build/test
+logs, as-run scripts, module/read manifests, captures and verification are
+retained in the ignored run directory. This is an exact diagnostic blocker,
+not a renderer-cause claim or new menu/input qualification.
+
 ## Stadium City gameplay and controls reached (2026-11-01)
 
 Run `20261101-redline-default-drain-gameplay` advances the original demo through
