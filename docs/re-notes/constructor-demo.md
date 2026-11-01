@@ -1037,3 +1037,133 @@ regression reuse, GTA release gate and separate OS-wait/cleanup receipts.
 Use retained evidence without relaunching. No download, browser, boat, EULA,
 deployment, registry/TODOS/STATUS edit, general SVGA, full27, FPS, audio or
 playability claim follows from this run.
+
+### 2026-11-01 later InteGraphics detector: static acceptance contract
+
+Run `20261101-constructor-later-detector-contract`, input revision
+`3ce0c5dad7c16a8ee07052597931a3f0e3c269d2`, identifies another default
+register false positive. **The later acceptance is a chipset probe accepting
+ordinary VGA register aliases, not a demonstrated generic VBE fallback.**
+This is reconstruction from authentic bytes, current source and the retained
+repaired-startup trace; no guest or synthetic suite was executed here.
+
+All28 authentic files (63205318bytes) and exact directory closure match the
+manifest. UVCONFIG remains309382bytes, SHA256
+`3a37035f71c213d4dfff0b752415815584f49af1b156afc48f0255b2f993a815`;
+`tools/toyvm/dos.js` remains
+`5fad1c4e4a64ca69e54c088884b1fe313a61a99300dd6b852095fc579ee0f9c4`.
+The retained actual ToyVM module is343736bytes, SHA256
+`03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`.
+Its loaded source pins and all95 accepted regression pins still match; reuse
+the repair's69 focused/102 VBE checks, DAC/retrace/bundle checks and build.
+Those passes do not cover the newly identified reserved-bit contract.
+
+UVCONFIG file offsets remain `2A00h + 10h*original_segment + offset`;
+the retained child adds0EFEh to relocated segment operands. The detector
+is original `07EB:B282`, retained runtime `16E9:B282`. Dispatch atC56A
+compares the requested tag with24h, C575 callsB282, and C57D/C580 returns
+any result other than1 viaC5C4. Tag24h's authentic string-table entry is
+at file457CCh and points to file465E5h, `InteGraphics`.
+
+| Instruction boundaries in original segment07EB | Exact predicate or action |
+| --- | --- |
+| B2AC/B2B0 | A preselected24h skips probes; otherwise continue to B2B2. |
+| B2B2–B2C0; B2C3/B2C5 | Call indexed test `1B76:01CE` with port03CEh, index31h, mask003Fh; zero result rejects atB4D8. |
+| B2C9–B2D7; B2DA/B2DC | Same test, index32h and mask003Fh; zero rejects atB4D8. |
+| B2E3 | Store detected tag24h after both tests pass. |
+| B326/B32C/B32F; B35B/B361/B364; B390/B396/B399 | Try PCI vendor10EAh, devices1680h/1682h/1683h. All misses leave subtype unspecified; they do not undo the register acceptance. |
+| B3D3/B3D8; B3DA–B411 | If memory is unspecified, read index72h at03CEh and use low two bits:0/1/2 assign1024/2048/4096KiB;3 leaves it unchanged. |
+| B44F/B455 | Read index91h at03CEh into descriptor+3Eh. |
+| B4D3 / B4D8 | Return AX=2 on acceptance, AX=1 on rejection. |
+
+The shared test saves the byte, writes `saved & ~3Fh`, reads masked clear
+bits, writes `saved | 3Fh`, reads masked set bits, and restores the byte.
+At `1B76:0244/0248` clear bits must equal0; at024D/0250 set bits must
+equal003Fh. Current `dos.js:3340–3354` decodes `gcIndex=value&0Fh`
+and stores the entire data byte; `dos.js:3080` reads it unchanged.
+Thus31h/32h alias01h/02h and **both tests return1 for any saved byte**:
+clear&3Fh=0, set&3Fh=3Fh, original storage restored. Index72h also
+aliases02h, and91h aliases01h. These are graphics-controller index aliases,
+not sequencer ED/EE and not the sound-only ISA port alias in `isaAlias`.
+
+Observation limits matter: the retained command traces only03C4h/03C5h.
+It captures repaired ED reads00h/00h, then later three INT1Ah/B101h
+attempts with CX=10EAh, child exit0 and parent sound error. **It does not
+capture03CEh/03CFh reads, intermediate AX values, descriptor memory or
+the detector's instruction pointer.** The authentic three-device sequence,
+dispatcher, source-predicted tests and label make this the explained later
+acceptance path, but its branch-by-branch execution remains inferred.
+The three PCI attempts are consistent with all misses and an unspecified
+subtype. A72h read with low bits0 would fabricate a1024KiB descriptor from
+ordinary GC02h; that particular read value is inferred, not measured.
+The wrapper's512KiB gate atDCA4/DCAA would accept1024KiB. The actual child
+exit0 establishes completion without establishing its descriptor contents.
+
+The primary [IBM September1992 Video Subsystems reference](https://bitsavers.trailing-edge.com/pdf/ibm/pc/ps2/42G2193_PS2_Hardware_Interface_Technical_Reference_Video_Subsystems_Sep92.pdf),
+printed pages2-76/2-78/2-79, figures2-64/65/67/68, defines a four-bit
+graphics-controller index and registers00h–08h. GC01h (Enable Set/Reset)
+and GC02h (Color Compare) have four functional low bits; upper bits must
+be written zero and have undefined readback. Four-bit index aliasing alone
+therefore does not prove a defect. The unsupported capability is letting
+reserved bits4/5 act as independent writable extension state. IBM does
+not promise zero readback or a particular physical result for this probe.
+
+**Next implementable contract:** in the default plain-VGA graphics-controller
+data read/write policy, retain only the defined low nibble of GC01h/GC02h
+and explicitly choose deterministic zero for their reserved-bit readback.
+Zero is an emulator policy, not an IBM hardware measurement. Preserve
+four-bit index decoding, defined plane enable/color compare behavior and
+register restoration; do not globally discard GC bit masks or selected-model
+extensions. A focused future Machine-port regression should perform these
+authentic31h/32h save/clear/set/restore3Fh probes, require rejection while
+low-nibble tests succeed, and check defined planar write/read behavior.
+With that policy, set&3Fh can only reach0Fh, so B2C5 rejects this detector.
+This task writes no such source/test and claims no new emulator pass.
+
+Rejecting this false positive is the next repair, not sufficient SVGA for
+Constructor. `dos.js:835–841` explicitly makes default `none` plain VGA;
+there is no implemented InteGraphics model. Existing BIOS VBE1.2 controller
+responses (`dos.js:3988` onward) explain successful query calls, but this
+accepting detector tests ports and constructs a vendor descriptor without
+requiring a successful generic VBE mode set. Retained12 controller/two
+mode-info successes and absent4F02/4F0A cannot validate the generated driver.
+After truthful rejection, a genuinely supported adapter's detection, memory,
+bank/window and mode/pixel contracts remain a hardware prerequisite. No
+particular later detector result or new startup outcome is predicted here.
+
+Sound setup is statically ready for a later ordinary setup assignment once
+graphics is credible. Authentic `SETSOUND.BAT` is exactly `@cd music`,
+`@.\sndsetup.exe`, `@cd ..` (CRLF, no arguments).
+`MUSIC/SETUP.INI` contains `[PROGRAM]` and
+`ConfigFile = ..\settings\setsnd.cfg`, resolving from MUSIC to the parent's
+missing `settings/setsnd.cfg`. Authentic `MUSIC/SNDSETUP.EXE` is an LE DOS
+program with `setup.ini` at file22004h and `ConfigFile` at22A74h. Its bounded
+unrelocated object1 slice at relative15C0h selects PROGRAM;162Eh–1648h
+passes ConfigFile and destination6CD8h to the lookup routine. The save slice
+at2176h/2198h/21E1h reuses that destination as a path and includes distinct
+create/open/write-error branches. These are static file/object offsets,
+not observed runtime addresses or proof that saving succeeded. The INI also
+names digital/MIDI tests and supplied HMI support files; `test.wav` is not
+in the authentic28-file closure, so digital test-sample availability remains
+an explicit later setup limitation. No sound setup, fabricated SETSND.CFG,
+alternate hardware/executable or original rerun occurred.
+
+Evidence: `analysis.json` pins authentic inputs, actual retained module and
+accepted tests;13 instruction-byte checks, relocation checks, six bounded
+disassembly slices, source excerpts and line-numbered retained interrupt/port
+excerpts distinguish observed facts from inferred branches. `sound-inputs.txt`
+retains the authentic invocation/INI. Recovery is static: rerun only
+`analyze.py` against those unchanged files, never the original run recipe.
+No build/suite rerun was appropriate for this note-only change. Runtime/
+source/build ownership was never acquired; GTA's lane is untouched. Box ID,
+state and expiry are N/A; guest exit is N/A for this task (retained child0,
+parent1). **Resource failure:** the independent guard recorded1975025664bytes
+free, below the required2000000000-byte floor, after15 samples. Its watcher
+was terminated and actually waited (exit-15); the guard exited0 and both
+PIDs43755/43757 were directly absent. This violation was discovered during
+finalization, after the static analysis above had completed; the guard's early
+exit did not interrupt the analysis driver. No sustained-headroom success is
+claimed. Further analysis stopped on discovery, without retry, cleanup of
+foreign files or a runtime launch. The guard needs a live driver abort signal
+in a future assignment. Evidence/publication only follows; no RAM gate,
+browser/boat or gameplay/audio claim is involved.
