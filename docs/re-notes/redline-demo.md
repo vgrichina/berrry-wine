@@ -1,5 +1,43 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## WORLD-loading continuation corrected; startup disk admission blocks execution (2026-11-01)
+
+Run `20261101-redline-world-loading-movement` stays scratch-only until Tachyon
+worker `01a195ed-6cfd-76b0-b571-fa53af8f6310` publishes fresh final/result
+artifacts and its **07:24:55 runtime/source/build release**. Gate-open main is
+`2f3cb1700af52fc052b63666469a29d012f715a0`.
+
+The prior `review.json` and `second/drive.py` establish consumed Space at
+30,710/30,762 followed by WORLD loading at 30,812. Before any attempted run,
+the new scratch driver fixes that premature stopping point: after Space
+release it continues neutral requests of **50 steps**, with actual capture
+and visual review every **100 steps**, bounded by **2,000 steps or 240 seconds**.
+Only explicit weapon/HUD confirmation allows balanced Up down/held/up with
+consumption checks, empty observed queues and before/held/released captures.
+Python syntax, ordering and bound checks and observer JS syntax pass. The
+original Readme's Space/Up controls and recorded licence context are retained.
+
+The **first launch blocker is startup disk admission**: formal gate-open free
+space is **2,297,749,504 bytes**, **2,250,496 bytes below** the required
+2,300,000,000. Own preparation then totals only **22,435 bytes**; deleting it
+cannot recover the shortfall. Foreign artifacts are preserved and the 2 GB
+floor remains satisfied. **Zero originals, diagnostic validations or builds
+run.** The corrected loading continuation is prepared, not executed; current
+player view and ordinary movement remain unverified. No emulator blocker is
+demonstrated.
+
+All **4,390 source inputs, 122 accepted prior loaded-file hashes and 70
+original/manifest/configuration pins** match offline; module `330b120d` and
+the region mirror match. No accepted build is actually reused or module loaded.
+The existing sync/async emitted-callback, whole-512-MB/clock read-only and
+late-10,001 observer validator is retained but not run after admission fails.
+No source/configuration change, new EULA, upload/capture diagnosis, audio/FPS
+or broader-suite claim follows. Driver, gate, admission, identities and
+final/result remain in the ignored run directory. No runtime or box is
+acquired (ID/state/expiry N/A); the own messageboard watcher is stopped and
+checked absent. The next prerequisite is startup disk headroom for this
+corrected route.
+
 ## Ordinary Space consumed; later press reaches WORLD loading, player gate remains unresolved (2026-11-01)
 
 Run `20261101-redline-space-player-margin` verifies GL worker
