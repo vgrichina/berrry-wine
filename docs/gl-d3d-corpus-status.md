@@ -16,7 +16,6 @@ The later native control runs add these bounded checkpoints:
 | --- | --- | --- |
 | Outcast | `039f7f5a2`, run `20261101-outcast-original-weapon-control`: ordinary weapon draw, aim, fire with ammo80→79, release and holster in reviewed PNGs, with consumed WM/DirectInput. One original exits0 after170.150 seconds. | No enemy hit, projectile trajectory, impact, damage, kill or combat outcome. The initial NPC interaction was excluded from firing proof. |
 | Dethkarz | `ca136b967`, run `20261101-dethkarz-native-fire-control`: reviewed before/Shift-held/released captures show a laser flash/bolt and weapon-bar response. Consumed WM down/up and actual `GetAsyncKeyState` returns0/8001/8000/0 establish the ordinary Shift path. Two originals exit0 after192.197 and80.305 seconds. | Exact DirectInput keyboard consumption is unproved: observed DirectInput reads request16-byte mouse state. No impact, damage, combat outcome, charged-shot mechanics, FPS or audio claim. |
-
 | Incoming | `16f6dd886`, run `20261101-incoming-native-phase-progress`: reviewed hostile-fire captures show score0→250→500→6500, followed by PHASE COMPLETE and a helicopter FOLLOW WAYPOINT prompt. Consumed WM and acquired DirectInput keyboard events support the firing controls. One original exits0 after551.986 seconds. | Helicopter flight and waypoint progress remain open; the transition prompt alone does not prove movement. No full playthrough, WebGL comparison, FPS or audio claim. |
 
 These later runs also reuse module `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`,
@@ -45,6 +44,18 @@ The subsequent unchanged GL transform and lighting fixtures passed in
 3.356 seconds, both exit 0). This covers production descriptor assertions;
 it adds no game-pixel, GPU or full-corpus acceptance. See
 [the fixture note](re-notes/gl-descriptor-transform-lighting-20261101.md).
+
+The unchanged stencil/depth fixture also passes in `3fc209ff3`, run
+`20261101-gl-stencil-depth` (7.990 seconds, exit 0). Assertions cover masked and
+scissored clears, alpha/stencil/depth ordering, stencil comparisons and operations,
+allocation failure and resize, context/attribute/display-list state, and immutable
+queued draw snapshots. The expected allocation refusal and caught unsupported
+readback trap belong to the passing assertions. All 12,982 production function
+bodies match the accepted module; three fixture functions/exports and an omitted
+custom section mean the whole module is not byte-identical. This establishes
+bounded native software and manual queue-replay coverage, without proving real
+worker-thread execution, GPU parity, original-game pixels, general crash freedom
+or the full 27-app goal. See [the stencil/depth note](re-notes/gl-stencil-depth-20261101.md).
 
 
 ## October 31: known-source browser gameplay and remaining rendering blockers
