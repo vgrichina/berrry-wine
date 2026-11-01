@@ -1,7 +1,7 @@
-Current 2026-11-01T07:00:46.773504+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T07:05:47.947145+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Redline corrected its scratch driver to consume Space and require a player weapon/HUD view before movement. Disk admission prevented any launch, so player movement remains unverified. Lossless compression of reviewed terminal diagnostics recovered13.9MB, restoring startup margin; a fresh worker queues the corrected route behind GL runtime release.
+GL unchanged lines and ortho/fog fixtures passed actual WAT assertions in3.498s/3.588s; mipmap8/8 and texgen9/9 remain accepted. Full27/GPU remain open.
 
-Tachyon onward also stopped before launch; Insert slide and Luna progress remain unverified. Its earlier throttle/turn/fire and Rune cave/W controls are reviewed.
+Redline again stopped before launch,8.4MB below startup admission. Its corrected Space route and player weapon/HUD gate remain unexecuted. Lossless compression of89 reviewed terminal logs/controls recovered44.6MB; SHA roundtrip receipts and restore commands are preserved. Fresh Redline worker12104 owns runtime for the corrected route; fresh Tachyon9958 queues behind its explicit release for Insert slide and the next training objective. Two workers, serialized runtime.
 
-GL software mipmap8/8 and texgen9/9 passed unchanged WAT assertions; the current worker owns runtime for lines/fog checks. Full27 and GPU remain open. DarkReign2 native mip sampling is missing; Starlancer licence authority awaits Telegram1772. Two workers with serialized runtime. No browser access, held-algorithm work or deployment.
+Rune cave/W and Tachyon throttle/turn/fire are reviewed; Redline player movement and Tachyon Insert/Luna progress are unverified. DarkReign2 native mip sampling is missing. Starlancer licence authority awaits Telegram1772. No browser access, held-algorithm work or deployment.
