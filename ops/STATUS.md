@@ -1,7 +1,7 @@
-Current 2026-11-01T08:12:45.141710+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T08:20:43.850984+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Both unchanged GL raster and multitexture fixtures passed on actual WAT. All production function bodies matched the accepted build; fixture-specific exports and queue helper differences are documented. Results are published as76c40478e. This closes those two fixtures; full27 and GPU coverage remain open.
+Alice’s native attempt stopped at startup: reviewed gray frame at600; next neutral step stalled193 seconds. New Game and W were never reached. Forced cleanup exited-9; later read identities are unavailable. Source/media pins matched, all six owned processes are independently absent, and notes c940f231d are published.
 
-Alice worker93878 now owns runtime for original New Game/Easy/W gameplay. Fresh Dark Reign worker70663 prepares ordinary mission selection and destination orders, waiting for Alice’s final/result and explicit release. Two workers, serialized runtime. Alice runtime deadline08:40UTC, overall09:39UTC; Dark Reign overall09:43UTC. Fallback08:19/08:23UTC.
+Dark Reign worker70663 acquired runtime08:17:28UTC for ordinary mission selection/orders; runtime deadline08:47UTC, overall09:43UTC. Fresh Homeworld worker94953 prepares ordinary ship-control evidence, waiting for Dark Reign’s final/result and explicit release; overall09:51UTC. Two workers, serialized runtime. Fallback08:33/08:31UTC.
 
-Dark Reign2 mission selection and Redline forward movement were reviewed; Dark Reign2 unit movement remains untested. Crimsonland needs authentic installation replay; Starlancer licence awaits Telegram1772. No browser access retries, held-algorithm work or public deployment.
+GL raster/multitexture fixtures passed76c40478e; full27/GPU remain open. Dark Reign2 selection and Redline movement are reviewed. Crimsonland needs authentic installation replay; Starlancer licence awaits Telegram1772. No browser/access retries, held-algorithm work or public deployment.

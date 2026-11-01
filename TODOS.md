@@ -1124,8 +1124,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: Alice01a19626-dd0f-78a3-9cd2-d3f8c8d99b40 handle93878 output scratch/usage-watch/alice-original-native-gameplay-nov01/ owns runtime/source/build since08:10:23UTC runtime deadline08:40UTC overall09:39UTC fallback08:19UTC. DarkReign01a1962a-b3d1-7f52-a4a9-81ebc5e25a50 handle70663 output scratch/usage-watch/dark-reign-original-mission-control-nov01/ scratch-only WAIT Alice fresh final/result AND explicit runtime/source/build RELEASE overall09:43UTC fallback08:23UTC.
-  status: GL76c40478e reviewed unchanged raster/multitexture fixtures PASS exit0 with all12982 production function bodies unchanged; fixture module differences disclosed, source/read pins unchanged and ownPIDs independently absent; remote main MATCH. DarkReign2 mission selection reviewed d9aca1952, unit movement untested. Redline forward movement reviewed0da33e84b. Alice original native NewGame/Easy/W running; fresh original Dark Reign selection/order control task queued. Full27/GPU remains open. Crimsonland installation prerequisite and Starlancer licence Telegram1772 remain. Cap2 serialized runtime; rolling new-game pipeline remains active.
+  worker: DarkReign01a1962a-b3d1-7f52-a4a9-81ebc5e25a50 handle70663 output scratch/usage-watch/dark-reign-original-mission-control-nov01/ owns runtime/source/build since08:17:28UTC runtime deadline08:47UTC overall09:43UTC fallback08:33UTC. Homeworld01a19631-d985-7fe2-abb8-8a8b90d6d4cf handle94953 output scratch/usage-watch/homeworld-original-fleet-control-nov01/ scratch-only WAIT DarkReign fresh final/result AND explicit runtime/source/build RELEASE overall09:51UTC fallback08:31UTC.
+  status: Alice c940f231d reviewed startup stall: gray600, next neutral step pending193s, no NewGame/W; forced exit-9, later read identities unavailable. All six ownedPIDs independently absent, remote main MATCH. Fresh Homeworld ordinary ship-control task queued behind active DarkReign. GL76c40478e raster/multitexture PASS; DR2 mission selection d9aca1952 and Redline movement0da33e84b reviewed. Full27/GPU open; Crimsonland installation prerequisite and Starlancer licence1772 pending. Cap2 serialized runtime; rolling pipeline active.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
@@ -1588,11 +1588,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
-  status: active (local original native gameplay queued; browser unverified)
+  status: startup blocked (bounded native attempt; browser unverified)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: alice-original-native-gameplay-nov01 (01a19626-dd0f-78a3-9cd2-d3f8c8d99b40; handle93878); scratch-only WAIT GL final/result and explicit runtime/source/build RELEASE
+  worker: none; alice-original-native-gameplay-nov01 reviewed and stopped c940f231d
   candidate: test/binaries/candidates/alice-demo/alice.exe
-  Next: Run recovered local15-file original demo through ordinary New Game/Easy, bounded neutral loading, then W down/up with reviewed before/held/released captures and actual input consumption. Full payload-manifest SHA68668d496dbabdb3b3803b8de12dda356796ba0ce26051ffb0a03df3a2022509. Loader/serialization/generation-aware unload fixes already integrated; no repeat repairs or media/access retries. Browser remains unverified; local CLI evidence will be scoped honestly.
+  Next: Diagnose current native startup stall separately before another gameplay attempt. Run20261101-alice-original-native-gameplay completed neutral600 with reviewed gray640x480 frame; next600 remained pending192.850s, forced cleanup exit-9 after218.818s. NewGame/Easy/W never reached, zero input issued; actual module dd43e4a and4444source/15original pins unchanged,117 compilation-time reads MATCH but later flush unavailable. Root cause unknown; do not infer or reopen held loader/lifetime algorithms. All six ownedPIDs independently absent. Local15-file manifest68668d496dbabdb3b3803b8de12dda356796ba0ce26051ffb0a03df3a2022509; no media/access retries.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: scratch/runs/20261031T2239Z-alice-original-recovery/; scratch/usage-watch/alice-original-native-gameplay-nov01.task.txt; docs/re-notes/alice-demo.md
 
