@@ -368,8 +368,110 @@ and ignored scratch evidence are deliverables. A future investigation would
 need to explain the black dialog before accepting arrival or scavenging;
 this assignment stops at that blocker.
 
+## Black dialog identified; ordinary onward Scavenge order (2026-11-01)
+
+Run `scratch/runs/20261101-battlezone-black-dialog/` identifies the formerly
+black dialog as a **MISSION COMPLETED** screen and recovers its actual native
+presentation. Ordinary **Next Mission → Launch → Utility → Scavenger →
+Scavenge** subsequently reaches the second mission and issues its displayed
+Scavenge order. A disk-floor breach stops observation before a harvesting,
+scrap-gain, arrival, or escort outcome is established. No second original ran.
+
+Preparation read the original PE resources, imports, aligned disassembly,
+saved actual window inventory, and bundled `Input.map`. The changed hypothesis
+was **H1: the CLI main canvas omits the native dialog backing**, rather than
+the guest drawing a black dialog. Two templates initially matched the logged
+geometry: resource **130**, static control **1237**, `END MISSION`, and resource
+**131**, the same control/geometry labeled `BACK`. Both are 427×274 dialog
+units; control 86,7 70×14 becomes logged pixel geometry 129,11 105×21.
+Control ID or geometry alone therefore could not establish meaning.
+
+The exact `urban-chaos-bounded-wait` author release, fresh terminal launcher
+`final.txt`/`result.json` (exit 0), and directly verified predecessor cleanup
+opened the gate at **15:57:55 UTC**. Dispatch was
+`a1c43c412f2406bb58081ad4fa654b36b2973af3`; actual main was repinned to
+`4d9446b48ccc83286c5ed82ee61e14f2b3f303e0`, with deadline 16:22:55 UTC.
+All **4,392 accepted build inputs and 141 read pins matched**. Corrected
+`SWEEP_CASE_DIR` observer validation exercised actual sync/async execution,
+whole shared 512-MB readonly hashing, native/import clock identity, and emitted
+late-10,001 retention before the original. Offline records are separately named.
+Actual original compilation observed module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+All **4,444 source pins, 153 fixture files/tree members, and 156 observed
+runtime-read hashes** matched afterward. The EXE remains 3,732,992 bytes,
+SHA-256 `0554156663000fc1c0c0ad2275e460fa6fc9acda4abdd26c720b69019d04617a`.
+Read coverage remains synchronous string/URL and complete bounded descriptor
+reads, not all async/direct OS reads or compiler-source-read evidence.
+
+The unchanged original used `--app=battlezone_demo --no-build
+--batch-size=100000 --control-stdin --frozen`, reusing the predecessor's actual
+controller route. Construction and the 663→384→265→180 m approach are setup.
+At **10810**, readonly `dialog_get_proc_export(0x10018)` returns **0x5bd890**.
+The PE call at **0x5bd72e** invokes imported `DialogBoxParamA` with template
+**130** and that callback. Its initialization references custom label
+`NEXT MISSION` (original VA 0x626fc4) and `MISSION COMPLETED` (0x626fac),
+explaining why the template's static label alone is insufficient.
+
+`native-dialog-direct.png` reads the existing dialog `_backCanvas` without
+painting or guest writes. Existing `dlg-png` at the next batch produces
+`native-dialog-scheduled.png`: both visibly show **MISSION COMPLETED**, the
+debrief, and **NEXT MISSION**. Their decoded RGB bytes match exactly, with
+**261,547 nonblack pixels**; the corresponding main-canvas capture has **zero**.
+The matched neutral native captures also match exactly. This establishes the
+displayed mission result, without independently proving the first Scavenger's
+arrival, collection, or escort mechanics. The debrief describes Soviet forces,
+the loss of a Recycler at Eagle's Nest 1, and recall of combat units; it is not
+an inferred defeat message.
+
+The narrow capture reproducer is the actual game's `DialogBoxParamA(130,
+callback=0x5bd890)` reached by `accepted-route.json`, then frozen
+`{action:"png",path:...}` versus the existing `dlg-png:PATH` plus one step,
+or a direct readonly backing encode as in `inspect-dialog.py`. No repaint,
+callback patch, memory write, or fabricated dialog is needed. The available
+repair target is **`test/run.js` `controlPng` (around line 7388)**: it encodes
+`renderer.canvas` via `canvasToPng` without the `renderer.repaint()` used by
+the scheduled `png` handler around line 10141. `canvasToPng` only invokes the
+DirectDraw present hook. The capture discrepancy is proved; a generic repair
+and standalone API fixture were not implemented or tested here. No guest
+callback/JS/concurrency/SEH algorithm was altered.
+
+The Next Mission neutral bracket is **10811/10836/10837/10857**; ordinary
+mouse down/up at visible **90,15** produces **10857/10882/10883/10903** and
+the next briefing (native HWND 0x1001a, callback 0x5b4a10). After a matched
+25/1/20 neutral bracket, clicking visible **Launch at 550,15** produces
+**11249/11274/11275/11295**. Actual onward gameplay is reviewed at **12195**:
+scrap 08/30, pilot 10/13, Command Tower at 260 m. Utility **3** lists two
+Scavengers. Selecting **1** displays `3 Scavenge`; pressing **3** has bracket
+**12425/12450/12451/12471**, preceded by a matched 25/1/20 neutral bracket.
+The consumed order closes the command menu; scrap remains 08/30. This is
+an issued native Scavenge order, not evidence of completed collection.
+
+**First substantive blocker:** during the next requested 300-batch no-input
+wait, controller-sampled free disk fell to **1,978,392,576 bytes**, below the
+required 2,000,000,000-byte floor. The guard requested SIGTERM; the original
+handled it orderly and exited **0 after 594.73 seconds at batch 12744**,
+before that step replied. No retry, second original, foreign cleanup, bypass,
+or further gameplay followed. Own redundant evidence was losslessly compacted
+or removed with recovery commands; sampled free disk recovered above the floor.
+The continuous-disk requirement **failed**; later recovery does not erase it.
+The supervising gate session separately returned 143 after `HELPERS STOPPED`;
+that is not the original's exit status. No game crash/freeze is established.
+
+All **38 key edges / 19 pairs** match actual dequeue, route, and main-window
+DispatchMessage order. Mouse actions retain raw native-dialog consumption
+records. The last complete state sample is **12471**, after Scavenge release:
+known scheduled/pending/cross-thread/renderer queues empty, all used sampled
+physical/async keys and VK1 false. Pressed latches remain true for some keys;
+numeric mouse-button mask, guest post-queue and SDL consumption are unknown.
+This is not an at-shutdown state sample. **210 PNGs** pass CRC/deflate checks;
+the runtime gzip validates. Analysis uses stdlib PNG/zlib, without Pillow.
+Own PIDs/groups/watchers/child temps were checked absent; native local box
+ID/state/expiry are N/A and own shutdown was delegated. Only this note and
+ignored evidence changed; no source/helper/test/configuration/backend or
+registration changed. No FPS, audio, browser/GPU, or full-suite claim is made.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
-RTS construction/escort command flow beyond the bounded build and Go To
-approach above, WebKit.
+completed harvesting/scrap gain or escort mechanics beyond the build, Go To,
+displayed mission result and onward Scavenge order above, WebKit.
