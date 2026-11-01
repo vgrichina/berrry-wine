@@ -148,3 +148,67 @@ Fresh ZIP acquisition from https://archive.org/download/urbanchaos/urbanchaos.zi
 The exact config.ini shown above is written as documented reconstructed installation state. It is not original captured installer output. The1122-file reconstructed game tree matches the restored accepted fixture byte-for-byte, including that INI. Every other file also matches its original extracted source; EXE SHA256 remains8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229. The source archive retains readme.rtf outside game/.
 
 Recovery: `node tools/fetch-candidate-corpus.js --id=urban-chaos-demo`; pristine verification: `node test/test-urban-chaos-recovery.js`. test/candidate-corpus/urban-chaos-demo-files.json pins all1122 paths,sizes and SHA256 values and labels config.ini reconstructed. First draft failed explicitly on a wrong Fallen.ex_ source path; corrected recipe was rerun from fresh forced acquisition. Mutable files may differ after playing. Private-fixture restrictions remain; no binary, public deployment or fresh gameplay acceptance is part of this recipe change.
+
+## 2026-11-01 confrontation attempt: worker control timeout
+
+Evidence: `scratch/runs/20261101-urban-chaos-confrontation/`. No new combat or
+interaction success. One original launched; zero gameplay inputs. The accepted
+street/alley movement above remains historical evidence and is not counted again.
+
+Gate verified before tests/runtime: exact predecessor-authored
+`battlezone-target-hit-command DONE/PUSH RELEASE` at 14:37:30 UTC, fresh launcher
+`final.txt`/`result.json` with exitCode 0, and direct absence checks for all six
+owned PIDs and four process groups. Actual main at the 14:43:28 gate was
+`2f5a350f043ace3d7db5791f09b10e8ada2e5644`, advanced from dispatch
+`ad94d102f5b4a239e86d7b38970455dada45dabe`; gate deadline was 15:08:28 UTC.
+
+All 1,122 game files match the bundled file manifest, including the explicitly
+reconstructed config.ini. Original Fallen.exe SHA256 remains
+`8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`.
+The complete accepted build comparison matched all 4,392 source pins and 141
+recorded read pins from accepted build d86935e8274cd5d70a53bcc50c5d8bf5632d95c3,
+so no fresh build was needed. Actual runtime WebAssembly.compile observation
+recorded module SHA256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Before/after source inventory, original tree, manifest and observed file-read
+identity comparisons are retained separately. The observer records JavaScript
+file reads and module identity, not compiler reads, every lazy read API, or
+guest-memory contents. Offline validation passed actual sync/async execution,
+whole 512 MB shared-memory read-only comparison, host/native clock identity,
+and emitted late-event retention through event 10,001.
+
+Native frozen CLI used registered `urban_chaos_demo`, software rendering,
+`--no-build --wasm=build/wine-assembly.wasm --batch-size=100000
+--control-stdin --frozen --trace-input-dispatch`. Ping, step25, input-state and
+the batch25 PNG succeeded. Reviewed `readiness-25.png` is a plain teal 640x480
+startup surface. The next request, step75 toward batch100, received no reply
+within the worker helper's 120-second bound: this is the first prerequisite
+failure. The final log nevertheless records 98 batches in 173.990 seconds;
+this establishes progress, not a game freeze or emulator defect. No repair,
+bypass, retry or second original was attempted. An automatically following
+capture command queued a read-only host renderer key/button expression after
+the timeout; it also received no reply and did not access guest memory.
+
+Ordinary quit was requested, then SIGTERM requested orderly shutdown; the
+runner exited 0 after 176.9995 seconds. Reviewed `final.png` is identical to
+the readiness image. Setup Okay, title/map/briefing, playable HUD and alley
+were not reached. The actual bundled English text names Kick, Punch, Action
+and Controls, but supplies no binding values; the historical external
+readme.rtf is absent from this local candidate tree. No combat binding was
+invented or sent. The controls screen was not reached.
+
+The batch25 input sample has zero scheduled/enqueued/dequeued/routed/dispatched
+gameplay events and empty known queues. Per-key physical/async samples and mouse
+buttons were unknown at that startup boundary. Final released per-key/button
+samples, before/held/released/settled combat captures and a matched neutral
+control were not obtained; no action was attempted. Guest post queues and SDL
+consumption remain unknown. The existing ole32.dll real-file warning remains
+in the log; no ordinal trap was observed. This run qualifies neither audio,
+FPS, browser/GPU/touch nor the full game.
+
+Disk guards and controller sampled above 2,000,000,000 bytes free, with finite
+sampling gaps; no RAM gate or foreign cleanup. Local box ID/state/expiry are
+N/A. Owned runtime shutdown was explicitly delegated. Cleanup, publication and
+final/result records in the run directory document ownership handback. The
+concrete blocker is the worker's startup step timeout; any further attempt
+requires a separate assignment rather than continuing this stopped run.
