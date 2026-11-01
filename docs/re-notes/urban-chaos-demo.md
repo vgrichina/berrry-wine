@@ -1226,3 +1226,66 @@ capture validation permit offline recovery without another game launch.
 Historical HUD2011/neutral2137/ArrowUp2263 remains the latest movement evidence.
 The synthetic allocator repair is not demonstrated encounter success. No FPS,
 audio, full27, browser or GPU qualification is claimed.
+
+## 2026-11-01 scratch shutdown repair: repeated stops retain direct waits
+
+Evidence: `scratch/runs/20261101-urban-chaos-shutdown-repair/`. This repairs the
+demonstrated helper shutdown boundary using tiny native dummy processes only.
+No game, guest, WASM, build, browser, GPU, boat, download or original replay ran.
+Battlezone retained runtime/source/build ownership. The predecessor helpers,
+historical receipts and first disk failure remain byte-identical. **The original
+game's missing OS-wait status remains unknown; encounter success is unverified.**
+
+The scratch primary now holds an exclusive shutdown-owner lock. The independent
+guard preserves the immutable first failure and requests shutdown without sending
+signals. The primary requests driver shutdown once. Driver signal handlers latch
+requests without raising, including during `finally`. Cleanup avoids failed guard
+checks, sends an ordinary nonblocking quit, drains output without waiting for EOF,
+allows one second for cooperation and two for SIGTERM, then uses bounded SIGKILL
+and a direct wait. It fsyncs `original-wait.json`, `exit.json` and driver cleanup
+completion before exiting. The supervisor directly waits the driver and independent
+guard. Repeated requests cannot reset cleanup deadlines or interrupt these writes.
+
+The primary's driver budget is eight seconds. Only after the driver's actual wait
+may the primary take over orphan cleanup as a Linux subreaper. It records genuine
+`waitpid` status and bounds orphan TERM/KILL cleanup to three seconds. The deliberately
+stopped driver required primary escalation; its missing driver cleanup receipt is
+reported explicitly, and the adopted original has a genuine supervisor wait. An
+external SIGKILL between reaping and durable publication can still lose a receipt;
+the before-wait driver-death control does not establish recovery of that case.
+
+All **15 accepted lifecycle cases pass using the actual corrected helpers**. The
+old driver fixture retains the predecessor's exact raising handler and `finally`;
+repeated SIGTERM demonstrably kills it before its terminal receipt. The test owner
+directly waits that dummy original. Corrected cases cover natural exit0/7,
+simultaneous independent/primary shutdown plus30 repeated signals during cleanup,
+slow cooperation/TERM, ignored TERM requiring KILL, pipe pressure, an owned
+grandchild, driver death, stalled-driver escalation, supervisor shutdown, real
+deadline expiry, independent death, duplicate ownership and shutdown before launch.
+Normal original-wait and cleanup receipts precede the supervisor's driver-terminal
+receipt without primary escalation. The slowest accepted case took10.53 seconds.
+
+The exact predecessor guard, detached controller and control scripts were reused.
+Read-before-clock ordering, healthy3.5s/stale6.15s, true future, dead/replaced PID,
+explicit failure, immutable first failure and direct disk/deadline controls pass.
+Detached Python/Node exit0/7/timeout and initiating-client death pass; the accepted
+ledger directly waits all nine detached runners and three clients, with child
+waits retained by their runners. Rejected preparation ledger/import errors remain
+documented in `preparation-notes.json`; they are not accepted test results.
+
+A later preparation correctly rejected the copied2.1GB launch requirement at
+2,090,835,968 bytes before creating a dummy child. That rejection is retained.
+The real original launch requirement remains2,100,000,000 bytes. Explicit tiny
+fixtures use2,020,000,001 bytes and still run the unchanged direct guard stopping
+at or below2,020,000,000 before the2GB floor. No RAM gate was added. Finite sampled
+headroom is not proof of sustained disk safety or the historical writer's identity.
+
+Offline recovery: `python3 scratch/runs/20261101-urban-chaos-shutdown-repair/verify.py`.
+`RECOVERY.txt`, `helper-pins.json`, source diffs and SHA-pinned `helpers.tar.gz`
+preserve the scratch implementation and exact test commands. The final direct
+cleanup found all319 recorded owned PIDs and303 groups absent, with no own helpers
+remaining; accepted lifecycle children were waited/reaped. Native local box
+ID/state/expiry are N/A; delegated own helper shutdown is complete. Only this note
+is committed. Next is a separately authorized original with sustained disk
+headroom and a fresh gate integrating this boundary. Historical movement remains
+HUD2011/neutral2137/ArrowUp2263; no new FPS, audio or full27 claim is made.
