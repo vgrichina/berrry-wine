@@ -1124,9 +1124,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: Incoming waypoint01a196d5-afc1-72a3-9d74-b2e457302fa2 handle23734 output scratch/usage-watch/incoming-helicopter-waypoint-arrival-nov01/ owns serialized native runtime since11:21 deadline11:51 fallback11:40. Outcast combat01a196e2-9a35-7cd0-b6a8-d1cf1e37f92f handle63123 output scratch/usage-watch/outcast-visible-combat-next-nov01/ waits Incoming freshfinal/result AND explicit runtime/source/build RELEASE; runtime25minfromgate overall15:00UTC fallback11:45 then>=10min. Cap2 disk>2GB.
-  Current update 2026-11-01T11:34Z: Dethkarzfd1101ca4 two original runs show shots passing opponents, no hit/damage/outcome. Second driver143 cause unknown, incomplete gzip and missing minimum receipt disclosed. Two PNGs reviewed and four PIDs independently absent. Fresh Outcast successor targets hostile impact beyond accepted ammo80→79; Incoming waypoint still running, accepted flight alone is not arrival.
-  status: two-game pipeline active; Incoming waypoint arrival and Outcast combat outcome open. Dethkarz opponent damage unproved; GL/D3D full27/GPU FPS/audio remain open.
+  worker: Outcast combat01a196e2-9a35-7cd0-b6a8-d1cf1e37f92f handle63123 owns serialized native runtime since11:51 deadline12:16 fallback11:55. Fresh Dark Reign2 unit movement01a196f5-2235-7ff1-9298-c9ff490f47fa handle2372 output scratch/usage-watch/dark-reign2-unit-movement-next-nov01/ waits Outcast freshfinal/result AND explicit runtime/source/build RELEASE; runtime25minfromgate overall16:00UTC fallback12:05 then>=10min. Cap2 disk>2GB.
+  Current update 2026-11-01T11:54Z: Incomingc4e6e257a one1489.698s original exit0, phase2/10 score7000; four PNGs confirm tower/ridge traversal but no arrival/objective change. Navigation bearing remains unresolved. Driver143 cause unknown, complete runtime receipt retained, driver group unrecorded. Four PIDs independently absent; remote main verified. Fresh Dark Reign2 targets attributable selected-unit movement beyond accepted mission selection; Outcast targets hostile impact.
+  status: two-game pipeline active; Dark Reign2 movement and Outcast combat outcome open. Incoming arrival and Dethkarz damage unproved; GL/D3D full27/GPU FPS/audio remain open.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
