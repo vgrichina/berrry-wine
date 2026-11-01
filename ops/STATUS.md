@@ -1,7 +1,7 @@
-Current 2026-11-01T02:51:25.217144+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T02:54:54.266694+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Rune is tracing its renderer child’s missing-INI failure, then will repair DLL transport if the runtime confirms the identified mechanism. Static probes show Core.dll loses its System directory; original Core uses its DLL path to set the working directory.
+Redline is testing whether its measured update backlog drains and message pumping resumes, then pursuing ordinary mission entry. The last inspected capture remains the Stadium City menu.
 
-Redline’s current-build run proves that repeated updates drain a large time backlog while message pumping waits. The backlog had not emptied at the final sample. Its inspected capture remains the Stadium City menu, with no mission load or gameplay. Original files stayed unchanged and all assigned processes exited.
+Rune’s latest child trace stopped before the INI failure: two breakpoints forced single-block execution. No repair was committed. Static DLL path loss remains proven, but its role in the startup failure still needs a normal-speed trace, prepared next. Original game files stayed unchanged and all completed-run processes are gone.
 
 Runtime tests remain serialized. Browser testing awaits authorized file transfer after SSH403. Full GL/D3D27 coverage remains open; REP is held and Crimsonland needs authentic installation. No public deployment.
