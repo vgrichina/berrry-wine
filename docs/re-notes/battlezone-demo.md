@@ -276,6 +276,98 @@ are N/A; own shutdown was explicitly delegated. Only this note and ignored
 scratch evidence changed; no tracked source/helper/test/configuration/backend
 or registration changed.
 
+
+## Scavenger arrival attempt: black native dialog (2026-11-01)
+
+Run `scratch/runs/20261101-battlezone-scavenger-arrival/` extends the
+identified commanded Scavenger approach to **180 m**, then stops at a
+**black native-dialog transition**. It establishes neither destination arrival
+nor scavenging/escort progress. The already accepted construction and
+663 m → 384 m approach are setup, not new success. Battlezone remains a
+`LOCAL_CANDIDATE_APPS` entry, absent public `DESKTOP_APPS`; no registration
+changed.
+
+The gate opened at **15:32:43 UTC**, after the exact author
+`urban-chaos-small-step-confrontation` posted `DONE/PUSH RELEASE` naming
+`runtime/source/build`, both fresh terminal launcher files existed with exit
+0, and predecessor PID/group/child-temp cleanup was checked directly. No WAIT
+or generic release substring qualified. Dispatch main was
+`60500ae55fa28dc658402496afb6e36f88d4296f`; actual main was
+`88cf06d749e4eff628e660b331b8030651edc063`. The gate deadline was 15:57:43
+UTC, within the overall 17:15 UTC limit. Preparation before the gate was
+scratch-only, without runtime or tests.
+
+All **4,392 accepted build inputs and 141 prior read pins matched**, allowing
+`--no-build`. The corrected scratch wiring sets `SWEEP_CASE_DIR=__dirname`
+before requiring the observer. Its actual sync/async execution, whole shared
+512-MB readonly hash, native/import clock identity, and emitted late-10,001
+retention checks passed before launching the original. The actual runtime
+compile observed module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Before/after inventories matched **4,444 source pins and all 153 fixture files**,
+including manifest, companions, and fixture tree membership. The original
+EXE remained 3,732,992 bytes, SHA-256
+`0554156663000fc1c0c0ad2275e460fa6fc9acda4abdd26c720b69019d04617a`.
+All 153 observed runtime-read hashes matched. Read coverage is synchronous
+string/URL reads and complete bounded descriptor reads, not all asynchronous
+or direct OS reads; runtime identity is not compiler-source-read evidence.
+
+One unchanged original used the registered native cooperative CLI:
+`--app=battlezone_demo --no-build --batch-size=100000 --control-stdin --frozen`.
+Actual captures were reviewed through the ad/menu route, Stars and Stripes
+briefing, and mission. The live briefing orders vehicle entry, building a
+Scavenger, and escorting it while it gathers bio-metal. The bundled `Input.map`
+was read; no bindings were invented. Reusing the accepted route reproduced
+scrap 05/30 → 01/30 and a selectable Scavenger whose menu includes
+`3 Scavenge`. No Scavenge order was issued before the blocker.
+
+The near terrain point visibly offers **Space Go To** at batch 6408.
+The retained matched neutral bracket is **6408/6508/6509/6809**;
+`reticle-near-goto-before/held/released/settled.png` is
+**6809/6909/6910/7210**, with Space down at 6809 and up at 6909.
+There is no translation, steering, or mouse movement during these brackets
+or the later wait. The reused route reaches the identified **384 m** marker
+at batch 9910. New reviewed captures then show **265 m at 10210** and
+**180 m at 10510**, with the unit marker/radar moving in the same scene.
+These remain approach evidence, not arrival.
+
+**First visible-feedback blocker:** between batch 10510 and the next capture
+at **10810**, the runtime logs `CreateDialog` for **HWND 0x10018**, a
+427×274-dialog-unit template, with control **1237**. The capture becomes
+entirely black. A readonly renderer window inventory later shows that dialog
+visible, owned by BattleZone HWND 0x10001, with an empty title and 640×480
+surface. The retained bounded no-input capture sequence at
+10810/11110/11410/11710 stays black; a standard-library PNG/zlib decoder
+confirms zero nonblack RGB pixels in each. This does not reveal the dialog's
+message or establish whether it represents defeat, an objective result, or
+another game state. No arrival, harvesting, scrap gain, target hit/kill, or
+mission completion is claimed. Gameplay inputs stopped; there was no dialog
+bypass, repair, retry, or second original. The runtime remained responsive
+to inspection and quit, so black output is not labeled a crash or freeze.
+
+All **32 key edges / 16 balanced pairs** match actual dequeue and
+DispatchMessage order, and every key dequeue has a route record. Mouse/menu
+edges retain raw consumption evidence; native menu/dialog handling does not
+uniformly use main-window DispatchMessage. Final batch 11710 has empty known
+scheduled/pending/cross-thread/renderer queues. All used sampled physical and
+async keys, including left-button VK1, are false; some pressed latches remain
+true. The numeric renderer mouse-button mask, guest post-queue, and SDL
+consumption remain unknown. No guest game structures were inspected.
+Retained PNG CRC/deflate and full runtime gzip checks passed. Image analysis
+used Python's standard library only, without Pillow or dependency installation.
+
+The original exited **0 after 367.89 seconds**, with no recorded crash/trap.
+The supervising tool session separately reported status 143 after the gate log
+recorded `HELPERS STOPPED`; its cause is not established and is not relabeled
+as the original game exit. Controller-sampled minimum free disk was **2,036,707,328 bytes**, above the
+2,000,000,000-byte floor; guard and publication samples are retained. Finite
+sampling does not establish unsampled history. Own native runtime shutdown
+was explicitly delegated; box ID/state/expiry are N/A. No tracked source,
+helper, test, configuration, backend, or registration changed. Only this note
+and ignored scratch evidence are deliverables. A future investigation would
+need to explain the black dialog before accepting arrival or scavenging;
+this assignment stops at that blocker.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
