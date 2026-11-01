@@ -819,3 +819,98 @@ recipes as permission to launch another original in this assignment.
 Next: separately diagnose the controller/tool terminal143 lifecycle before
 another assigned continuation toward an ordinary encounter. This assignment
 stops with that concrete blocker and the gameplay objective gap disclosed.
+
+## 2026-11-01 detached commands: receipts survive; heap failure and stale heartbeat stop continuation
+
+Evidence: `scratch/runs/20261101-urban-chaos-detached-controller-encounter/`.
+The ordinary encounter/objective goal remains **unachieved**. One original
+completed step1936; the next25-batch request has no retained ACK and was not
+replayed. Useful actual PNGs show standard/native Setup, mission map, briefing,
+loading and changing cinematic scenes through1586. No new HUD capture,
+gameplay movement, combat or contextual interaction is verified. The accepted
+HUD2011/neutral2137/ArrowUp2263 evidence above remains historical.
+
+Scratch `detached.py` launches each named command in an owned detached session,
+records runner/child PID and start identity, uses explicit interpreter/argument
+vectors, serializes commands with a lock, and bounds each command. Terminal
+receipts use fsynced temporary files, atomic publication and directory fsync;
+exclusive atomic links preserve complete immutable first-failure records.
+Unique job directories reject command replay. Individual control requests also
+retain durable sent/ACK records and finite180-second waits, with steps at most25.
+The no-game harness killed its initiating clients with SIGTERM: the detached
+success command still completed, exit7 retained a terminal failure, and a finite
+timeout retained its first cause through a secondary cleanup write. All three
+passed; their owned processes subsequently disappeared. A detached Node dispatch
+control passed too. After Battlezone release, its Python-only `runpy` helper was
+consulted; this wrapper uses the correct explicit Node/Python interpreter.
+The predecessor's immutable failure is copied without alteration. Its historical
+status143 sender/reason remains UNKNOWN; identification was not a prerequisite.
+
+Exact `battlezone-guarded-capture-harvest` author DONE/PUSH RELEASE, fresh external
+launcher result0/final and direct owned PID/group absence passed the gate at
+17:54:20.945 UTC. Dispatch input was`c32bdc566`; actual main was
+`19f8b03404cbb6a79bdedf02c33f9e39255610dc`, deadline18:19:20.945 within20:00.
+All4,678 accepted source/dependency pins and compiled-module hashes matched,
+allowing locked-build/focused-test reuse. Fresh fixture verification passed all
+1,122 manifest paths and original Fallen.exe SHA256
+`8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`;
+config.ini remains reconstructed. Fresh observer sync/async execution,
+whole512MB read-only comparison, clock identity/bounds and late10,001 retention
+passed. No source, build, production-test or fixture edits were made.
+
+The single registered software original used `--no-build --control-stdin
+--frozen`, batch100000 and finite bounds. Immediate launch free space was
+2,155,229,184 bytes, above2,150,000,000. The detached menu and advance commands
+passed the predecessor's interrupted386 point with complete receipts. Eleven
+command terminal receipts exist: ten succeeded and the last retained exit1
+with its traceback. This demonstrates the new command receipt path on an actual
+failure, not complete runtime-lifecycle qualification.
+
+At18:01:26.521 the driver rejected primary heartbeat1449 at monotonic
+age3.012139s against the3-second tolerance. The primary PID/start identity still
+matched and its sampled state was S. The immutable `guard-failure.json` retains
+the exact operands and128 preceding observations. Later primary/independent
+rejections and the detached command's exit1 record are separate. The3-second
+monotonic/identity predicates were retained; scratch persistence additionally
+changed heartbeat/failure writes to fsynced atomic publication. That persistence
+change was not independently qualified under game load. Stored heartbeat
+timestamps do not measure publication completion; the cause of the stale
+published observation remains unknown. No guard relaxation or retry followed.
+
+The recovered runtime stream also contains133 guest heap allocation failures,
+beginning after the1936 ACK: sparse commit and bump/low/sparse exhaustion at
+EIP`0x00494d9f`, caller`0x0048c76e`. This is a concrete changed runtime blocker,
+not a host-RAM admission measurement. Exact OOM onset versus guard timing is
+unknown because those log lines lack wall timestamps. No guest crash/trap cause
+is established. The Node exit hook reports1; the original OS wait receipt and
+driver terminal receipt are missing. Supervisors entered owned SIGTERM cleanup;
+no ordinary original exit0 is claimed. The driver gzip footer is incomplete.
+Its original bytes are preserved; `runtime-recovered.log.gz` contains all207,005
+decodable bytes, with no claim that an unflushed tail was recovered.
+
+Of218 manual requests,217 have unique durable successful ACK receipts; the one
+unresolved step was not repeated. There are89 bounded step requests, maximum25;
+maximum recorded successful reply latency13.365361s. All six Enter edges match
+actual dequeue/route/DispatchMessageA records. No gameplay key was sent. Last
+sample1586 has physical/async keys false, mouse mask0 and empty known queues;
+there is no fresh post-failure released-state sample. Pressed latches and guest
+post/SDL consumption remain distinct/unknown. Before/held/released/settled and
+matched neutral menu captures exist; encounter phase captures do not.
+
+Before/after4,678 source and1,124 fixture identities match, as do300 observed
+runtime reads. Actual compilation observed canonical module
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+All42 actual PNGs pass CRC, complete deflate and raster-length checks; selected
+milestones were visually reviewed. Primary1,450 history samples had minimum
+2,108,903,424 bytes free; independent1,449 had minimum2,110,160,896. These are
+finite sampled bounds, not continuous disk/freshness coverage. Direct stop
+remained2,020,000,000 before the2,000,000,000 floor. No FPS/audio/full27 claim.
+
+Direct cleanup verifies40 recorded owned PIDs and38 groups absent, no matching
+helpers/watchers and no new child temps. Native box ID/state/expiry are N/A;
+explicitly delegated own shutdown is complete and ownership handed back.
+`RECOVERY.txt` preserves executable scratch recipes and the log limitations.
+Next requires a separately assigned investigation of the guest heap failure
+and heartbeat publication/cleanup-receipt gap before another encounter attempt.
+No second original, unchanged replay, source repair or broader qualification
+was performed in this assignment.
