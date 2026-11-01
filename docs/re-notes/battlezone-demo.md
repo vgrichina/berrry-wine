@@ -1135,6 +1135,57 @@ prerequisite is additional authorized recoverable disk savings sufficient to
 establish sustained 2.40 GB free space, followed by the exact Urban release gate.
 Only this note is tracked; no production/source/test/TODOS/STATUS edits.
 
+## 2026-11-01: closed worker logs recovered; launch margin still insufficient
+
+Run `scratch/runs/20261101-battlezone-closed-log-headroom/` stops at the
+disk prerequisite with **zero originals and zero drivers**. One bounded census
+of immediate `scratch/usage-watch/` output directories finds **1,685** with
+terminal `result.json` and `final.txt`, containing only **27,142,319 bytes** of
+remaining `events.jsonl`/`stderr.log` files in total. Even their entire size
+cannot close the launch gap. Current workers, this output, coordinator rollout,
+font/laptop logs and uncertain owners are excluded from compression.
+
+**51 logs** with explicit author release records and directly absent worker/
+launcher processes are losslessly compressed, reclaiming **16,752,561 logical
+bytes**. Exact board OWN records precede mutation. Streaming gzip staging uses
+tmpfs; each file has full original and compressed SHA-256, complete gzip
+roundtrip, durable destination and recovery recipe before original unlink.
+`compression-plan.json`, `compression-NNN.json` and `compression-result.json`
+retain the exact paths and recovery argv. A final independent read of all
+compressed bytes repeats both hashes and decompression checks. Protected
+final/result/notification hashes match; dedup, recovery data, current Urban and
+coordinator artifacts are untouched. No useful native save or Icewind data is
+compressed again, and no tmpfs staging remains.
+
+The final direct free-space check is **2,202,288,128 bytes**, still
+**197,711,872 bytes short** of the required **2,400,000,000-byte sustained
+margin**. This is the first blocker; no unchanged low-margin original is
+attempted. Stop **2,020,000,000** and floor **2,000,000,000** remain unchanged.
+The historical transient writer and duration remain unknown; no duplicate disk
+observer runs. The coordinator retains shutdown ownership of its observer.
+
+`pins.json` records published main
+`af500af4161fc1f36d591a9105fcb3f4eaa14453`, verified directly over strict
+known-host SSH, and the on-disk module, native executable and save hashes.
+The module remains `7278c1018fa8208731a8e285f0bb2a5c35aa8e299592750ce3cedf6d354caef0`;
+the executable and uncompressed **66,050-byte** native `C:\m3` save retain the
+full hashes recorded above. **Actual runtime consumption is N/A** in this
+static-only run. The predecessor's verified ordinary reload route and exact
+actual-input controls remain preserved; no packaging checks or game tests are
+repeated and no predecessor input/queue evidence is presented as a fresh run.
+
+Urban worker `01a198ad-10a1-7960-b622-4a394f86645c` posts exact author
+DONE/PUSH RELEASE at **20:12:17 UTC**; its terminal launcher final/result are
+observed. Runtime/source/build ownership is nevertheless **never claimed or
+consumed**, because the disk prerequisite fails first. Original/driver actual
+OS waits, final key/queue samples and native box ID/state/expiry are **N/A**.
+Direct process checks find no compressed worker/launcher matches; no owned
+runtime/helper remains. `RECOVERY.txt` preserves the stop and recovery recipe.
+Identified Turret combat, damage, kill and next objective remain unverified.
+Next requires additional authorized recoverable disk savings beyond this
+exhausted immediate-log scope, then sustained launch margin and a fresh runtime
+gate. Only this note is tracked; no source, test, TODOS or STATUS changes.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
