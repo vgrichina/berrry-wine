@@ -1424,3 +1424,74 @@ is unchanged. Evidence remains under `scratch/runs/`, outside git. No assets,
 configuration, binary patches, deployment or worker launch accompanied this
 repair. The mandatory locked build and final publication receipt are
 recorded in the run evidence.
+
+### 2026-11-01: old-mode SR0E/window research stopped at unresolved semantics
+
+Run `20261101-constructor-trident-old-window` starts from published
+`995c90daf`. **No hardware repair is claimed:** the references inspected do
+not justify a coherent old/new CPU bank/window contract. Source, tests and
+both bundles are unchanged by this task; no synthetic signature or chip
+identity was added. No GAME/UVCONFIG execution occurred. The GTA batch task's
+`4f8051361` final/result, terminal-wait evidence and exact author release were
+read, and all31 reported helper PIDs were directly absent before owning this
+note. No foreign WIP was adopted.
+
+The actual [SVGAlib TVGA8900 driver](https://sources.debian.org/src/svgalib/1%3A1.4.1-2/src/tvga8900.c/),
+`saveregs`/`setregs`, saves/restores independent old/new SR0E alongside SR0D.
+Its `setpage` explicitly selects new controls and writes the page XOR2;
+saved new SR0E readback is also XOR2 before restoration. The
+[Xorg bank driver](https://github.com/freedesktop-unofficial-mirror/xorg__driver__xf86-video-trident/blob/master/src/trident_bank.c)
+uses identical SR0E values for its read, write and combined bank setters.
+Neither supplies an old-mode CPU banking routine or a memory test across
+SR0B selection. These sources support register independence and the new
+register write/readback convention, but do not settle the old window.
+
+The unresolved behavior is concrete:
+
+- **Old bank base:** Ferraro section27.5.1/table27.5 describes old SR0E
+  bits2:1 as selecting256KiB banks with128KiB pages, while
+  [VGADOC3](https://bearstrong.net/tekst97/data/programmering/vgadoc3/trident/)
+  labels the same bits128KiB bank numbers. For old SR0E=02h, those
+  descriptions alone leave a128KiB versus256KiB backing offset unresolved
+  for the intended packed-pixel configuration. Planar addressing and old
+  SR0D bit4 paging enable must be accounted for.
+- **Selection versus mapping:** independent old/new registers do not alone
+  establish whether SR0B access immediately remaps CPU memory to the saved
+  SR0E value, or only changes register access until the next SR0E write.
+  The inspected hardware drivers do not access memory between these steps.
+- **Window decoding:** the interaction with GC06 memory-map selection and
+  disabled paging, including whether B0000h–BFFFFh is excluded or aliases
+  the lower window in new mode, has not been established for a selected
+  real chip. A larger host copy alone would not validate these boundaries.
+- **PAGE inversion:** Ferraro section27.5.2 prose distinguishes CPU read
+  and write bank values, while its displayed read/write listings both
+  XOR2. The1992 `trident.doc` also distinguishes operations; SVGAlib and
+  Xorg use one new bank setter for both. Register readback inversion must
+  not be mistaken for separate CPU read/write bank semantics.
+
+The [Trident TVGA8900D manufacturer datasheet](https://www.dosdays.co.uk/media/trident/Trident%20TVGA8900D%20Super%20VGA%20Controller.pdf)
+was retained and visually surveyed as a23-page scan, with page5 read at full
+size. It describes the bus/memory interface, but supplies no SR0D/SR0E
+programming definition that resolves these questions. Its capacity overview
+does not qualify ToyVM's installed memory. A later GUI9420 register-document
+URL was inaccessible (HTTP401). MAME was inspected as a secondary emulator
+only; importing its old-bank mask and new-window offset alias would not be
+hardware validation. Firsthand
+[CRT Terminator conformance results](https://oummg.com/manual/adapters.html)
+also report differing old/new banking on two8800CS boards; that evidence
+does not define a8900 contract.
+
+The next requirement is a manufacturer programming reference or reproducible
+real-chip memory trace resolving the bank stride, paging/decode prerequisites,
+SR0B transition effects and upper-window behavior for one explicit pixel
+configuration. Until then, boundary/persistence expectations would encode
+assumptions. Under this task's reference-blocker stop condition, no new
+old-fail/new-pass tests, bundle regeneration, VBE/DAC/retrace runs or locked
+build were performed. Earlier passing checks remain earlier evidence, not
+validation of a repaired old window. Identity, installed capacity, mode
+pixels and authentic UVCONFIG support remain unqualified; default VGA's
+last original rejection remains the applicable result.
+
+Retained sources, hashes, failed retrievals, static baseline pins and detailed
+questions are in the named scratch run. Box ID/state/expiry are N/A; no box
+lifecycle action or emulator runtime acquisition occurred.
