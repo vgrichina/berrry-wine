@@ -586,3 +586,59 @@ not a played mission; ordinary input and gameplay remain to validate.
 shell32.dll is still absent from the test checkout (logged warning).
 Evidence: scratch/runs/20261012T0045Z-dark-reign2-socket-attribute/.
 Built module SHA256: 9e835f75dfe5d2fcfb91f592641e945f91baadcd20f6751460777f4dba888cd6.
+
+### Accepted-main native mission check (2026-11-01)
+
+Current registration is `dark_reign2_demo`, corpus candidate `dark-reign2-demo`,
+with local root `test/binaries/candidates/dark-reign2-demo/extracted/Files`.
+The registry's CLI gameplay comment has historical support beyond the shell-only
+record above: commits `e7a031da3` and `fe71f8d83` report Demo Mission 1, box
+selection and left-button movement against a right-button cancellation control.
+Later commits also report browser/mixed-touch results. Those commits are outside
+this tested main's ancestry; their referenced October 12 run and PNG/log artifacts
+are absent locally. Their text is retained in this run as historical reports,
+not newly reviewed gameplay evidence. No later accepted local result was found.
+
+The named predecessor `20261101-redline-upload-internal-cause` had fresh final
+records and the 06:01:14 UTC runtime/source/build release before this launch.
+Tested main: `149286afdd9607776d8611d066164a72253f14e6`. All 4,389 accepted
+source inputs, the prior 126 actual-read identities, region-map mirror and
+module matched the predecessor's final repaired build; its locked build was
+reused. Actual loaded module SHA-256:
+`330b120d64cfd4aebdd945c99a95022dbd97db7ee6962d7ec534c24da466011b`.
+
+Pinned original `dr2.exe` SHA-256:
+`6aa93ded56537ff9ceb6f47d0bbe2de74b5b2b83c6932d61eb98e69d797756ed`.
+Local file-manifest SHA-256:
+`a01d2d77518bb1627077f474ee6ee99731df4dce404a2bb8be92a1b4b97d2e7a`.
+All 29 local original/manifest files were hashed before and after; all 27
+manifest entries exist with their declared sizes. Originals/configs are unchanged.
+No installer or new licence acceptance was performed.
+
+One ordinary local CLI invocation used `--app=dark_reign2_demo --no-build
+--wasm=build/wine-assembly.wasm --batch-size=100000 --control-stdin --frozen`,
+with quiet logging, VFS log export and a final PNG. Exact arguments are in
+`command.json`. After ping, a request to step 550 batches ended at batch 10:
+the guest exited with code `-536870910` (`0xe0000002`); the Node harness itself
+returned zero. This is a guest failure, not a successful 550-batch replay.
+
+**First concrete blocker:** `dr2.log`, `vid_enumdx:1164`, rejects both Direct3D
+HAL and RGB Emulation with "doesn't support mip mapping." It then reports no
+hardware D3D devices and raises "Can't start hardware accelerated DirectX 7.0."
+The reviewed `final.png` is a solid teal 640x480 frame, with no menu or mission.
+The missing-shell32/symbol warning is separate from that explicit device rejection.
+No menu input, mission transition, selection or movement was reached. No second
+invocation, capability inflation, generic repair or alternate backend was tried.
+
+Identity-only observation passed actual synchronous/asynchronous WASM execution,
+shared 512 MB whole-memory read-only comparison and bounded retention through
+10,001 late records before the original. All 124 actual-read identities and the
+actual compiled-module receipt match after execution. Runtime took 4.714 seconds;
+minimum sampled free disk was 2,306,859,008 bytes, above the required floor.
+Evidence: `scratch/runs/20261101-dark-reign2-native-mission/` (compressed runtime
+log, saved guest log, capture, command, identities and verification).
+
+Next bounded action: review this exact mipmapping capability rejection against
+the supported native renderer contract before authorizing any implementation or
+backend change. No played mission, current control response, FPS, audio or
+backend parity is qualified by this run. No test box was acquired.
