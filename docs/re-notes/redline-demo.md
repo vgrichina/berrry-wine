@@ -1,5 +1,99 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Binding chain: texture views exist, binding calls absent (2026-11-01)
+
+Run `20261101-redline-binding-chain` advances the original route through
+first-person batch **30,700** while observing existing API entry/exit imports
+at normal instruction speed. The concrete new blocker is upstream of the
+binding handlers: **no SetTexture, Texture/Texture2 GetHandle, Texture/Texture2
+Load, or SetRenderState(TEXTUREHANDLE=1) dispatch is observed from launch
+through this checkpoint**. Thus this run does not expose a rejected binding
+HRESULT to repair. The exact guest decision that omits the binding remains
+unobserved; no generic production/test repair is justified yet.
+
+The observer resolves the existing signed `0xC0DE0000|api_id` COM marker
+against the actual `src/api_table.json`, then pairs the existing name and exit
+hooks. It records selected call arguments, guest return address, HRESULT,
+output pointer/handle, wrapper vtable, DX slot, and surface DIB/dimensions/
+format with small head/middle/tail byte samples. All DirectDraw/Direct3D
+method counts remain uncapped. Detailed records have separate quotas of
+2,048 binding and 12,000 resource records, so menu blits cannot consume the
+binding quota. This requires no new runtime trace primitive, breakpoint,
+counter, guest allocation, or state/register write.
+
+The complete census includes **74,585 DrawPrimitive**, **18,557
+DrawIndexedPrimitive**, **10,771 SetRenderState**, **543 Lock**, **543 Unlock**,
+and **329 surface QueryInterface** calls. Of the render-state calls, exactly
+one selects state 21: TEXTUREMAPBLEND=2/MODULATE, HRESULT 0, return
+`0x4896e2`, on device slot **7**, state pointer **9,952,284**. The observed
+slot is zero before and after that call. No state-1 call is filtered out by
+change suppression: this observer inspects API arguments before the handler.
+
+Resource evidence distinguishes texture views from upload destinations:
+
+- **328** surface queries request IID_IDirect3DTexture2
+  `{93281502-8cf8-11d0-89ab-00a0c9054129}`. All return HRESULT 0 at guest
+  return address **`0x52dadb`**, yielding Texture2 views of surface slots
+  **10–337**. For slot 10, surface pointer **136,450,128** yields texture
+  pointer **137,568,280**, vtable **6,237,108**, over the same slot/DIB
+  **474,525,696**, a 128×128 RGB565 surface. Its sampled bytes are zero.
+- The **543** successful Unlock calls cover **280 distinct upload surfaces**,
+  slots **338–658** with gaps; none overlaps pool slots 10–337. **531**
+  Unlock observations have nonzero sampled bytes. For slot 338, return
+  addresses include **`0x4552fb`** and **`0x4534da`**; the actual destination
+  DIB is **5,891,764**, 64×64 RGB565, pitch 128, with head bytes
+  `00 00 00 00 04 21 08 42`. This ties real guest writes to a destination,
+  without assuming it was selected for a particular gameplay draw.
+
+The retained **12,001** detailed records contain no observer errors and no
+failed HRESULT. The resource quota drops **110,449** later detailed records,
+predominantly repeated render-target Blt calls; their method counts survive.
+Consequently this is not a complete per-blit source/destination history, and
+absence of a later copy into a pool surface is **not** established. The
+binding quota retains its sole relevant call and is not exhausted.
+
+Static disassembly of the unchanged original EXE confirms that the observed
+`0x52dadb` return follows the texture-pool QueryInterface. The successful path
+stores the Texture2 interface through the array at pool-object **+0x2c**;
+surface pointers come from its separate **+0x30** array. This is an identified
+resource relationship, not proof that the subsequent residency/bind branch
+ran. **Next exact observation:** follow the guest selection/transfer/bind
+path consuming one of these pool entries for an actual first-person draw,
+including its early-return condition and actual upload source/destination.
+Do not substitute another frozen state snapshot or force a resource/state.
+
+Offline tests exercised signed COM-marker decoding, entry/exit pairing,
+HRESULT/handle outputs, synthetic object storage, read-only hooks,
+separate quotas and uncapped counts. The actual preload was also exercised
+with mock instantiation, the real API table, recorded mirror, host-memory
+binding and `mem-utils` translation, without running a guest. One additional
+offline hash assertion initially included the test fixture's own stack
+rewrites; initializing identical arguments before hashing corrected that
+test. Earlier mock-process loaded-read manifests are retained separately;
+actual guest identity checks select only the recorded `test/run.js` PID.
+
+The initial gate remained closed until Rune `01a19524` supplied final.txt and
+result.json and released runtime/source/build at **03:38:20 UTC**. All
+**4,387** runtime input hashes still matched the accepted locked build from
+`20261101-redline-texture-snapshot`; its log/module/mirror were retained and
+reused. The actual compiled module is the same 2,025,619-byte SHA-256
+`168c61dae2861842948e5f9e29e4e18df93a6fab12c7d17f7dc85d75e34b7b55`.
+All **128 actual loaded reads**, all runtime inputs and all **70 fixture
+hashes** match after the run. Registration/full-original-65-pin tests pass
+before and after. No source/test path was claimed or edited.
+
+Exactly **one original guest invocation** ran, exited 0 in **58.761 seconds**,
+and requested no child. It used the open PTY, outer timeout 150 seconds /
+kill-after 5, inner 120 seconds and finite child TERM/KILL watchdog. Logs are
+preserved; outer/guest PIDs and their process group are gone. Launch remains
+`--app=redline_demo`, empty args, `C:\MAINDIR`, IFORCE2-only seed and shipped
+settings; the retained budget changes to 100,000 after 29,100 while the clock
+stays 200 ms/batch. The actual gameplay PNG was inspected: flat weapon/walls
+and sparse HUD persist. Its SHA-256 is
+`ed66d12dab856c3c44ffd5e45cd088290612fe2aba75edb0b55bf275a9ecbd87`,
+matching the preceding inspected checkpoint. No second guest was spent.
+Disk stays above 2 GB; box ID/state/expiry/handback are N/A, ownership none.
+
 ## Frozen texture snapshot: enabled stage, zero binding (2026-11-01)
 
 Run `20261101-redline-texture-snapshot` resolves the preceding evaluator
