@@ -724,8 +724,123 @@ Only this note and ignored evidence changed. The remaining task is the actual
 standard/native dialog comparison followed by visible mission 2 objective
 progress. No FPS, audio or full-suite claim.
 
+## 2026-11-01: standard mission-complete capture verified; mission 2 turret built
+
+Run `scratch/runs/20261101-battlezone-node-controller-gameplay/` verifies the
+repaired **ordinary standard PNG**, then advances mission 2 through resource
+gain, Recycler arrival/deployment and a completed defensive Turret build.
+One unchanged original ran; no production source or test changed.
+
+At frozen **batch 10810**, `dialog-standard.png` visibly reads **MISSION
+COMPLETED**, the debrief and **NEXT MISSION**. The contemporaneous real native
+dialog backing (`dialog-standard-native.png`, HWND 0x10018, callback
+**0x5bd890**, resource 130) has exactly the same decoded RGB bytes:
+**261,547 nonblack pixels**, SHA-256
+`ff54a979824a960bdbb1b52bdd83fec55cac7d79ee35e4f6a6501cdbbaa1587c`.
+This is the standard capture succeeding, with the backing used only for
+comparison. Whole **512-MB memory hash**, EIP, API count and batch are unchanged
+around the frozen comparison. No repaint message, memory patch or replacement
+frame was used. The first mission's individual collection/escort mechanism
+is still not independently established by its displayed result.
+
+Ordinary **Next Mission at 90,15**, then **Launch at 550,15**, reaches mission 2
+at **11894** with scrap **08/30**, pilot **10/13**, and the Command Tower at
+**260 m**. The live briefing explicitly orders fighting attackers and using
+the Recycler to build defensive turrets. Utility **3** lists two Scavengers;
+selecting **1** exposes **3 Scavenge**. The matched neutral bracket is
+**12078/12103/12104/12124**; the Scavenge input bracket is
+**12124/12149/12150/12170**. At **13970**, after 1,800 no-input batches, scrap
+still reads 08/30, but pilot capacity has risen to **10/15** and **5 Recycler**
+has become available. Its live menu confirms a Recycler with Go To Geyser.
+
+The selected Recycler's reticle explicitly offers **Space Go To Geyser**.
+The Space input bracket **14108/14133/14134/14154** follows the matched neutral
+**14062/14087/14088/14108**. During the ensuing no-input observation, the large
+Recycler moves into the foreground. Scrap is **08/30 at 15054**, then
+**14/30 at 15354** and remains 14/30 at 15954. Selecting Recycler again at
+**16046** identifies it at **29 m** with a construction menu and **0 Pack Up**,
+establishing arrival/deployment rather than only an issued movement order.
+This menu offers **4 Turret**, costing **05** scrap. Pressing **4** has matched
+neutral **16046/16071/16072/16092** and input
+**16092/16117/16118/16138**; scrap changes **14/30 → 09/30**. After another
+1,200 no-input batches, Defense becomes available and scrap rises to **12/30**.
+The reviewed Defense inventory and final standard PNG at **17430** list
+**1 Turret**. These establish a concrete mission objective change and resource
+gains beyond the predecessor's unchanged 08/30. The exact Scavenger delivery
+that caused each gain was not visually identified; do not equate the HUD
+increments alone with a proved harvesting mechanism or mission 2 victory.
+
+Scratch preparation fixed the predecessor's interpreter mistake with explicit
+Node/Python argv arrays. Cheap detached controls retained durable exit-0,
+exit-7 and timeout receipts before any original. The exact
+`urban-chaos-detached-controller-encounter` author release, fresh launcher
+final/result (exit 0), and direct cleanup opened the gate at **18:09:17 UTC**.
+Dispatch `19f8b03404cbb6a79bdedf02c33f9e39255610dc` was repinned to actual main
+`7699f3fb00184b5d46c2cd98ad03569c5017318d`; deadline **18:34:17 UTC**.
+All **4,063 accepted source/module pins** matched, allowing reuse of the
+renderer repair's locked build and focused regression/renderer/capture/census
+tests. Identical observer/validation bytes also allow reuse of the accepted
+sync/async whole-512-MB readonly, actual monotonic clock-bounds and late-10,001
+retention validation. No duplicate build, production test or offline observer
+execution ran. The fresh frozen comparison supplies separate whole-memory
+readonly evidence for the actual dialog capture.
+
+Urban's newer retained runtime failure exposed a **3.012139-second** stale
+published primary heartbeat with matching PID/start identity; its publication
+delay cause remains unknown. This concrete scratch dependency was resolved
+before the original: six-second bounded freshness and atomic heartbeat
+replacement without per-sample fsync passed healthy advancing I/O, measured
+**3.5-second healthy delay**, **6.15-second stale**, dead-process,
+replaced-identity and explicit-failure controls. Immutable first-failure and
+terminal receipts retain durable atomic-link/fsync behavior. The detached
+primary supervisor and independent direct disk/process/deadline enforcement
+remain separate sessions. No unchanged one-second or failing three-second
+policy was replayed, and no historical signal sender was inferred.
+
+The coordinator's direct same-task amendments at **18:11:51 / 18:16:44 UTC**
+replace the original 2,150,000,000-byte launch margin with **2,100,000,000**;
+the worker explicitly acknowledged this before launch at **18:17:07**.
+Short board-tail checks initially missed the earlier direct answer; the full
+coordination tail recovered it. The 2,020,000,000-byte early stop,
+2,000,000,000-byte floor and deadline stayed unchanged. Actual launch headroom
+was **2,135,273,472 bytes**. Controller-sampled minimum was
+**2,049,708,032 bytes**; independent minimum **2,049,712,128**, primary minimum
+**2,089,832,448**. Primary/independent histories retain **4,575/4,573 samples**
+with largest timestamp gaps **2.228/2.403 seconds**. Both guards stopped
+normally, without a failure. Finite samples do not establish unsampled disk
+history.
+
+The original and driver both have fresh OS wait receipts **0**, after
+**726.545 seconds** of original runtime, with normal quit before the gate
+deadline; the supervisor and independent guard also have normal terminal
+receipts. All **18 actual detached commands** have durable successful terminal
+receipts. All **48 key edges / 24 balanced pairs** match actual dequeue,
+route and main-window DispatchMessage order. Final **17430** has empty known
+scheduled/pending/cross-thread/renderer queues, used physical/async keys and
+VK1 released. Pressed latches may remain set; numeric mouse-button mask,
+guest post queue and SDL consumption are unknown.
+
+Before/after **4,063 source/module pins**, all **153 fixture paths/tree members**
+and **156 observed runtime-read hashes** match. Actual compilation observes
+module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`;
+the renderer read remains
+`a7c304c678a6a91622b693c8fb5416ace4c002245c3653b65fb18fdaf59d0924`.
+Original `bl_rel.exe` remains 3,732,992 bytes / SHA-256
+`0554156663000fc1c0c0ad2275e460fa6fc9acda4abdd26c720b69019d04617a`,
+with original `Input.map`. Read coverage is sync string/URL and complete
+bounded descriptor reads, not every async/direct OS read or compiler-source
+read evidence. **128 PNGs** pass CRC/complete-deflate checks and the complete
+runtime gzip validates. Selected game milestones were visually inspected.
+Closed own journals were losslessly compressed with byte hashes and recovery
+commands; `RECOVERY.txt` preserves the controller recipes. Owned process,
+group, watcher and new-temp absence is checked directly in `cleanup.json`.
+Native box ID/state/expiry are N/A; delegated own shutdown is complete.
+Only this note and ignored evidence changed. No FPS, audio or full-suite claim.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
-completed harvesting/scrap gain or escort mechanics beyond the build, Go To,
-displayed mission result and onward Scavenge order above, WebKit.
+individual Scavenger harvesting/delivery or escort mechanics beyond the
+resource gains, Recycler deployment and Turret build above, mission 2 victory,
+WebKit.
