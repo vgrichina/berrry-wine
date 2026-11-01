@@ -1,5 +1,5 @@
-Current 2026-11-01T20:27:33.775646+00:00 — Urban Chaos has a fresh worker validating a read-only debugger snapshot before one bounded game attempt. The street HUD is verified; allocation refusals and the stalled step still lack the state needed to establish cause. Encounter progress remains unverified.
+Current 2026-11-01T20:39:15.840662+00:00 — Urban Chaos is running one bounded diagnostic attempt after debugger preparation. It will capture the missing allocator state at first refusal; encounter progress and the stall cause remain unverified. Its runtime deadline is21:03UTC.
 
-Battlezone remains197.7MB short of its required launch margin after closed-log recovery; no game ran. A second worker is selecting one actionable local game to replace that blocked lane, checking public eligibility and fixture identity first.
+A fresh worker is restoring the original32MB Constructor demo against its28-file manifest, respecting Urban’s disk guard. No game or build is authorized for that worker. Battlezone remains below its required launch margin and is not replaying.
 
-Two workers are active; next fallback20:38UTC or completion/input. The passive disk observer stopped with actual wait0. Full27/backend/FPS/audio coverage remains open. No public deployment.
+Two workers are active; next fallback20:49UTC or completion/input. The passive observer stopped cleanly. Full27/backend/FPS/audio coverage remains open. No public deployment.
