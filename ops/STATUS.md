@@ -1,9 +1,7 @@
-Current 2026-11-01T10:27:56.374416+00:00 — coordinator01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T10:42:48.684576+00:00 — coordinator01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Motocross scored-stunt worker01a196a5 handle71665 runtimeGATE10:27:30UTC, deadline10:52:30, overall12:50UTC; fallback10:45UTC then>=10min. Goal: scored stunt/event beyond score0 practice riding.
+Incoming helicopter01a196a6 handle78917 runtime gate10:40:13UTC, deadline11:10:13, overall13:00; fallback10:50 then>=10min. Fresh GL stencil/depth01a196b3 handle64295 waits for Incoming fresh launcher final/result and explicit runtime/source/build RELEASE; runtime15minfromgate, overall13:15, fallback10:55 then>=10min. Both handles verified live this turn; cap2 serialized native.
 
-Fresh Incoming helicopter worker01a196a6 handle78917 waits for Motocross fresh final/result AND explicit runtime/source/build RELEASE. Goal: ordinary helicopter control/waypoint progress. Runtime30minfromgate, overall13:00UTC; fallback10:50UTC then>=10min. Two workers, serialized runtime.
+Motocross558e59dcf reviewed: Single Event Race Results GLENN5500 ALBERTO7500 player0. Scored stunt/clean landing unproved; later game crash retained. Two originals exit0, four PIDs independently absent, strict SSH remote matched. Existing input fixture failures retained; source/original identities unchanged per worker evidence. Second gameplay lane remains actionable for next free slot, requiring a concrete changed hypothesis.
 
-The current resumed goal requires continuously free disk>2GB, with no separate2.2GB startup requirement or RAM gate. Earlier tasks668b115fd/5adc9e915 stopped with zero originals under coordinator-carried2.2GB startup threshold; reviewed and replaced by fresh tasks using the current goal floor. Both own watcherPIDs independently absent; published main ancestry verified. Queued clarification arrived after earlier Incoming completed; that worker stays retired.
-
-Incoming16f6dd886 accepted score6500, PHASE COMPLETE then helicopter waypoint prompt; no helicopter movement/completion claim. Dethkarz Shift firing accepted, exact DI keyboard unproved. MDK2 broad GL gap, Outcast combat outcome, full27/GPU FPS/audio and Starlancer licence1772 remain open. Browser/GPU/access retries held; native only.
+Continuous disk>2GB, no separate2.2GB startup gate or RAM gate. Incoming earlier phase score6500/PHASE COMPLETE accepted; helicopter control open. Full27/GPU FPS/audio incomplete. Browser/GPU/access retries held; HeroesII laptop-owned; no public deployment.
