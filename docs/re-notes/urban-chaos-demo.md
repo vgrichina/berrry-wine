@@ -1626,3 +1626,98 @@ unchanged retry. Actual current-arena live co-residency/local ownership/bounds,
 fresh backing/metadata refusal and the precise commit predicate remain unknown.
 No encounter, FPS, audio or full27 claim is made. Only this note is committed;
 evidence, scripts, exact commands and recovery limits remain in the run directory.
+
+
+## 2026-11-01 inspector/authority coexistence: startup pause isolated synthetically
+
+Evidence: `scratch/runs/20261101-urban-inspector-worker-coexistence/`.
+**The synthetic preparation blocker is resolved; the game allocator discriminator
+is still unknown.** No original, guest runtime or production WASM was executed.
+Constructor owned the heavy runtime lane during these controls; this worker
+never claimed runtime/source/build ownership.
+Only this note is committed. The controls use Node24.18.1/libuv1.52.1 and the
+unchanged `lib/named-event-authority.js` API with its default3000ms deadline.
+
+The observed cause in the small reproducer is an inherited **Worker startup
+break**, rather than a slow event server or a broken event protocol. Ordinary
+Node completes authority construction and event operations. With
+`NODE_OPTIONS=--inspect-brk=127.0.0.1:0`, the same constructor times out around
+3000ms under both the existing historical inspector controller and a minimal
+Runtime-only controller. Enabling `NodeWorker` with
+`waitForDebuggerOnStart:false` alone does not cure it. The nested Worker
+protocol actually reports `Debugger.paused`, reason **Break on start**, at the
+start of the unchanged authority module. Sending the Worker
+`Runtime.runIfWaitingForDebugger` and resuming its startup pause makes authority
+construction and normal client operations pass, without extending the deadline.
+The client bridge independently exhibits the same startup break and needs its
+own resume under that launch mode.
+
+`brk-worker-state/protocol.ndjson` retains paused frames and direct Worker-scope
+reads: parent and both Workers have `process.execArgv=[]`, while their
+`NODE_OPTIONS` contains the exact inspect-brk option. `inspector.url()` is
+undefined in those Workers; that does not mean they are not paused through the
+parent's Worker inspector transport. The attachment event even says
+`waitingForDebugger:false` before the subsequent **Break on start** event.
+Thus neither execArgv alone nor that attachment field is a sufficient readiness
+check. Worker resumes change the outcome in this controlled test. This isolates
+a concrete mechanism matching the earlier batch0 failure; the historical
+original did not record its Worker debugger state, so this does not retroactively
+supply an original Worker trace or any allocator evidence.
+
+The preferred scratch strategy avoids Worker startup breaks entirely:
+`main-wait.cjs` opens an ephemeral loopback inspector and calls
+`inspector.waitForDebugger()` **only when `isMainThread` is true**. Launch the
+intended target with a per-process environment containing
+`NODE_OPTIONS=--require=/home/user/wine-assembly/scratch/runs/20261101-urban-inspector-worker-coexistence/main-wait.cjs`,
+`CASE_DIR=<owned evidence directory>` and `STALL_AUTH=0`; retain any separately
+required observation preloads and their exact hashes. Do not also pass
+`--inspect-brk` through options or argv. Clear this target-only NODE_OPTIONS
+from the inspector helper's environment. Arm the existing conditional source
+breakpoint, then acknowledge `Runtime.runIfWaitingForDebugger`; require actual
+source breakpoint resolution before issuing the diagnostic trigger. The preload
+is inherited, but Workers skip the main-thread wait and have no inherited
+inspect-brk launch option. It changes no Worker constructor, production module,
+allocator state or authority timeout. The `STALL_AUTH=1` branch is exclusively a
+synthetic negative-control injection before the authority module, never a
+future-original setting. The external parent bounds startup/attach and total
+synthetic work, and directly owns shutdown and OS waits.
+
+The final accepted suite is `final-validation.py`, with per-case results:
+
+| Control | Actual result |
+| --- | --- |
+| `final-normal` | Authority ready33.07ms; create/acquire/set/reset, finite registered wait/status/forget/close pass; ENOENT and EBADHANDLE preserved. |
+| Same process, tiny existing-source callback | Reason1 skipped; first reason3 paused at `lib/host-imports.js:2034`; synthetic memory/local/WASM caller snapshot9,377 bytes in90.55ms; breakpoint removal and resume acknowledged; later reason3 runs without another pause. Target/controller direct waits0/0. |
+| `final-watchdog` | Event API passes, then controller deliberately leaves the tiny callback paused. Independent Python parent triggers at about2s, sends own SIGTERM and directly waits target/controller-15/-15. Snapshot9,365 bytes; no dependence on paused Node timers. |
+| `final-stall` | Scratch preload truly stalls the authority Worker with Atomics.wait before module entry. Same strategy still reports ETIMEDOUT at3003.40ms; target direct wait1; controller explicitly stopped/direct wait-15. No snapshot or false pass. |
+| `final-dead-client` | After normal event operations, own authority Worker is explicitly terminated and awaited. Client reports ECONNECTION, becomes closed, and next call reports ECLOSED; tiny snapshot/removal/resume still pass; direct target/controller waits0/0. |
+
+`dummy.cjs` and `capture.js` are byte-for-byte copies of the prior tiny controls;
+no production compiled module is loaded. The controller is a scratch derivative
+of the previous `inspect.cjs`: error-path cleanup failures are recorded, and its
+successful stop no longer issues an unnecessary resume on an already running
+target. RPC and paused evaluation errors still fail the control. The exact
+historical controller is also run directly in `historical-exact-controller/` to
+reproduce the inspect-brk timeout, separately from this cleanup correction.
+The accepted reader retains its5s/16MiB capture bounds, checked actual snapshot
+contents, pure getter use, non-atomic-copy label and unknown bin ownership.
+The scratch event harness calls real API methods and asserts both successful
+results and expected protocol errors; none are converted into success.
+
+`pins-before.json` and `pins-after.json` match156 files: all selected lib JS,
+Node executable and then-current scratch inputs. Additional historical-control
+inputs and final script identities are retained separately. No production
+source/test/build edit or build occurred. Evidence remains below8MB; sampled
+/home free space remains above2,000,000,000 bytes. Every own target/controller
+is directly waited and subsequently checked absent; failed constructor namespace
+cleanup is checked for the deliberately stalled Workers. The board watcher has
+its own direct wait receipt. Box ID/state/expiry are N/A; no box was created,
+shutdown was explicitly delegated for these own synthetic helpers only, and no
+runtime ownership or held follow-up remains.
+
+Next is a separately authorized original using this bounded main-thread attach
+strategy and freshly verified source/fixture/module identity, with the existing
+independent guards unchanged. This assignment authorizes no original retry.
+The current-arena/ownership/backing/metadata discriminator and exact commit
+refusal predicate remain missing; synthetic success is not game, encounter,
+FPS, audio or allocator-cause proof.
