@@ -1,5 +1,41 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Space-to-player retry: disk admission blocks the corrected route (2026-11-01)
+
+Run `20261101-redline-space-player-retry` waits scratch-only for GL worker
+`01a195e7-9833-79c0-aee2-97349052b9f1`'s fresh final/result and **07:01:18
+runtime/source/build release**. Gate-open main is
+`1f8da1d7bd6801a8138725059eee0e124585c052`. Initial free space is
+2,305,662,976 bytes, but formal gate-open admission finds only
+**2,291,568,640 bytes**, **8,431,360 bytes below** the required 2,300,000,000.
+Own preparation totals just 33,383 bytes at that check; removing it cannot
+recover the shortfall. Foreign artifacts are preserved and the 2 GB floor
+remains satisfied. **Zero originals, diagnostic validations or builds run.**
+
+The original `Readme.rtf` controls and earlier default-drain Space-to-player
+driver and `space-released.png` are reviewed offline. The historical image
+contains the first-person weapon, crosshair and bottom HUD; it is not current
+player proof. The corrected scratch driver is reused from
+`20261101-redline-cutscene-skip-movement`: ordinary Space down/up at the
+30,300 checkpoint, bounded 50-step pacing, consumption and empty-queue checks,
+then a mandatory visual weapon/HUD review before Up. Subsequent movement
+requires consumed Up down/up and coherent paired before/held/released captures.
+Python compilation and JS syntax checks pass. This driver is prepared only;
+no identical cinematic-only route, upload diagnosis or guest-state change runs.
+
+All 70 original/manifest/configuration pins, 4,390 tracked source inputs and
+122 accepted prior loaded-file hashes match before/after. Module `330b120d`
+and the region mirror match, but no accepted build is reused and no actual
+module is loaded here. The existing actual sync/async emitted-callback,
+whole-512-MB/clock read-only and late-10,001 observer validator is retained
+but **not executed** because admission fails before diagnostics.
+**Current consumed Space, weapon/HUD view and player movement remain
+unverified.** No audio, FPS or full-suite claim follows. Admission, identities,
+corrected driver and final/result are retained in the ignored run directory.
+No runtime, staging tree or box is acquired (ID/state/expiry N/A); own watcher
+is stopped and checked absent. The first prerequisite remains startup disk
+headroom for the corrected route.
+
 ## Cutscene-skip movement driver corrected; startup disk blocks invocation (2026-11-01)
 
 Run `20261101-redline-cutscene-skip-movement` waits in scratch for Tachyon
