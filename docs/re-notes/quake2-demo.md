@@ -1729,3 +1729,51 @@ shutdown is complete and ownership is handed back. Cleanup, publication,
 fresh run final/result and evidence checks are retained in the run directory.
 No browser/GPU, audio, FPS, networking or full-suite claim is made. Work
 stops at the disk blocker with the new game-created checkpoint preserved.
+
+## 2026-11-01: eighth-kill recovery stopped after a false gate match
+
+Run `scratch/runs/20261101-quake2-eight-save-onward/` did **not verify
+the restored 8/18 count or advance through the guard room**. The first
+blocker was a worker gate-checking error: the substring predicate matched
+its own “WAIT coordinator … runtime/source/build RELEASE” board entry as
+though the coordinator had released the runtime. At 13:44:33Z the lighting
+`result.json` existed, but the required explicit coordinator release was
+absent. The apparent gate receipt is invalid and the append-only board
+contains a correction. This run does not satisfy the pre-runtime gate.
+
+The worker noticed the incorrect receipt and requested ordinary quit before
+any gameplay input. One original, PID 3721734, exited 0 after 19.646 seconds
+at startup batch 25. The reviewed capture is a blank gray startup frame;
+all scheduled/dequeued/routed/dispatched input counters are zero. No F9,
+F1, movement, attack or F6 was issued. Key samples at this startup stage are
+unknown, so this is not a final per-key release demonstration. There is no
+restored-world, kill-count, cover-movement, neutral-control or objective claim.
+
+All eight supplied checkpoint files and both checkpoint manifests retained
+their pinned sizes and SHA-256 values before/after. The startup command used
+exactly their supported `--vfs-mount` mappings. The game-created eighth-kill
+checkpoint remains preserved at the preceding run's `checkpoint-eight/`;
+startup shutdown exports are not promoted as a checkpoint.
+
+Before the error was noticed, the identity check recorded 4,444 source/module
+pins and matched the accepted build's 4,392 source pins and 141 observed
+reads, reusing module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+The observer check passed actual sync/async execution, whole-512 MB shared
+memory read-only checks, clock identity and emitted late-event-10001
+retention. These checks ran prematurely and do not cure the invalid gate.
+String-path reads do not comprehensively cover descriptor/direct OS reads;
+module identity does not prove compiler-source reads. No new build or
+tracked source/helper/test/configuration/backend change was made.
+
+The controller's minimum observed disk was 2,206,560,256 bytes; the separate
+one-second guard minimum was 2,207,477,760 bytes. Own original, controller,
+gate waiter, disk guard and board watcher PIDs and known groups are absent;
+no new `wa-child-*` temporary directory remains. Local native box
+ID/state/expiry are N/A; explicitly delegated own shutdown is complete and
+ownership is handed back. Fresh cleanup and gate-correction records are
+retained. The scratch gate predicate now requires exact coordinator/RELEASE
+tokens and has not been rerun. No second original was used. Next recovery
+requires a valid coordinator release, then F9 and a consumed, visibly
+settled F1 count check before onward input. No browser/GPU, audio, FPS or
+full-suite claim is made.
