@@ -1,5 +1,71 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Language-selection input boundary, 2026-11-01
+
+The follow-up to `124d0bda1745b544faeafbb6f23f087fac23d6ae` stops at
+the ordinary native runner's missing **post-menu keyboard staging** primitive.
+No original was launched in this follow-up. The retained 640x480 screenshot
+was visually inspected again: the pointer selects the English flag on
+**Choose Your Language**. English selection, input response and gameplay
+remain unverified. There is no after-input screenshot because no input was sent.
+
+Inspection of the unchanged `tools/toyvm/run-dos.js` establishes the boundary:
+
+- `keys`/`autoKeys` options are declared near line 326 and CLI parsing is near
+  lines 1399–1400. `Machine` copies `keys` and queues make/break scancodes in its
+  constructor (`tools/toyvm/dos.js`, lines 863 and 903). Thus `--keys=enter`
+  supplies a key before startup, with no after-menu timing guarantee.
+- The execution loop near line 827 supports scheduled mouse clicks and memory
+  dumps, but exposes no keyboard schedule, stdin control channel, pause/resume
+  control or caller-provided slice callback. Its `beforeSlice`/`afterSlice`
+  hooks near lines 671–675 are internal instrumentation. `runDos()` returns
+  the machine after the run, so that return value cannot stage a key during it.
+- `--auto-keys=enter` enables repeating automatic input. Its graphics reader
+  (`dos.js:1995`) samples every 4096 polls and answers after matching sampled
+  screen hashes. It is neither a one-shot command nor confirmation that this
+  particular menu is visible. Scheduled clicks do not establish keyboard
+  navigation support for GTA's language menu.
+
+The keyboard device already has `Machine.pushKey(scan, ascii)`,
+`keyDown()` and `keyUp()` (`dos.js:2484` onward). The precise next dependency
+is a supported native runner control path that invokes these between slices
+after a reviewed menu checkpoint, captures the resulting frame, and permits
+bounded continuation of that same session. For this menu the first intended
+ordinary action would be Enter on the selected English flag. No source change,
+prototype interception, alternate executable or automatic key rotation was
+used to work around this boundary. A separately authorized runner improvement
+or supported interactive environment is needed before the next original run.
+
+Evidence: `scratch/runs/20261101-gta1-language-selection/` retains
+`verification.json`, `identity-before.json`, `actual-files.json`,
+`runner-input-inspection.json`, `before-retained.png`, `baseline-startup.log`,
+`baseline-actual-module.json`, accepted test evidence and lifecycle records.
+The copied image/log/module record are explicitly from the previous startup,
+not a new execution. All **117 files / 17,078,619 bytes**, exact file-set closure
+and the retained archive SHA-256 match the current manifests. All 230 previous
+source/support/manifest pins match; current registry and candidate manifest
+identities are also pinned. Fresh evaluation of actual `DESKTOP_APPS` finds
+46 entries and no GTA; no candidate-corpus GTA1 entry is present (GTA2 is a
+different candidate). This remains
+an unqualified local original, with no redistribution grant or publication.
+
+The retained actual module remains
+`03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`;
+no module was compiled or executed here. The 95 accepted ToyVM regression
+source/test/support pins still match, so their existing VBE/DAC/retrace/bundle
+results are reused without rerunning tests or the build. The previous seven
+aggregate decoder give-up sites remain limitations: their ordering, execution
+significance and causal relationship to menu progress are unknown. They do
+not establish a crash or explain the language checkpoint.
+
+Runtime/source/build access was serialized and read-only, GTA first while
+Constructor remained static. An independent guard kept the unchanged
+2,000,000,000-byte `/home` floor, without a RAM gate or foreign deletion.
+Only own guard/watcher helpers required shutdown; actual waits and direct
+absence are recorded separately from guest exit (N/A: zero originals).
+Box ID/state/expiry are N/A. No new before/after runtime comparison, gameplay,
+FPS or audio claim is made. All ownership is released after publication.
+
 ## Exact recovery and first default startup, 2026-11-01
 
 The original default `GTADOS/K.EXE` route reaches a visible **Choose Your
