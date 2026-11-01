@@ -1504,3 +1504,125 @@ Only the note is committed; the offline script/report remain in the run
 directory. Own board watcher was stopped and directly waited; no other helpers
 were launched. Local box ID/state/expiry and shutdown are N/A; Battlezone's
 runtime/source/build slot and coordinator-owned processes were untouched.
+
+## 2026-11-01 first-refusal debugger: dummy capture passes; original fails at batch0
+
+Evidence: `scratch/runs/20261101-urban-chaos-first-refusal-debugger/`.
+**The allocator discriminator remains missing.** The single authorized original
+crashed at batch0 in `NamedEventAuthority` initialization, before the retained
+Setup/Enter route or any recorded first-reason3 breakpoint hit. No original was
+repeated. This is a concrete runtime blocker, not evidence about rewind
+eligibility, sparse backing pressure, or the cause of the earlier post-ACK2036
+stall.
+
+The existing-source inspector proposal was first exercised on a tiny scratch
+WASM module importing the unchanged `lib/host-imports.js` callback. Accepted
+controls are `prep-final/` and `prep-final-watchdog/`; `preparation-audit.json`
+distinguishes earlier scratch failures. A conditional breakpoint at line2034
+skipped reason1, paused on the first reason3, and retained actual paused callback
+arguments, a WASM caller/local42, a private global512, matched shared memory,
+an audited pure cursor getter and a validated24-byte synthetic arena header.
+The same bounded host-copy reader captured synthetic table/current-arena data.
+The accepted snapshot is9,381 bytes and took109.38ms; the limits were16MiB and5s.
+Breakpoint removal and resume were acknowledged, the later reason3 did not
+pause again, and both processes were directly waited with exit0. Startup
+`--inspect-brk`/pending-source-breakpoint resolution was also exercised. These
+are synthetic preparation controls, never game allocator evidence.
+
+The independent watchdog control deliberately left the dummy paused after its
+read-only snapshot. Its parent continued sampling independently of the paused
+Node event loop, stopped the dummy after about2s, and durably recorded direct
+OS waits. No allocator diagnostic, guest translator or mutating free-list/bin
+probe was called. The reader labels shared-memory copies non-atomic and missing
+bin ownership unknown. It caps header/list work at65,536 nodes and validates
+arena bounds, extents and copied-PTE translations before header reads.
+Private bin indices were not validated against the selected production module;
+the scratch reader does not infer ownership from absent links or zero live bytes.
+
+Two preparation corrections are preserved: the first scratch wrapper falsely
+reported pass after its error path exited0, while its terminal file actually
+reported a missing WASM caller. Node's paused frame URLs were empty; selecting
+the actual module scope fixed the matcher, and subsequent acceptance also
+checked terminal error and snapshot contents. A later scratch expression had
+a syntax error, corrected before the accepted controls and original. Neither
+failed attempt was accepted as preparation or represented as game evidence.
+
+At20:38:12.637 UTC, exact Urban worker01a198c0 and Battlezone worker01a198bc
+author releases, terminal launcher final/results, published cleanup evidence
+and direct process/path checks passed. Runtime/source/build were then claimed
+on main `e48dcc193797bff09035a5b05142e92383b07d88`. All4,294 accepted source/
+dependency paths and1,124 fixture/manifest paths matched before and after.
+The selected actual path is
+`/home/user/wine-assembly/build/wine-assembly.wasm`, SHA256
+`7278c1018fa8208731a8e285f0bb2a5c35aa8e299592750ce3cedf6d354caef0`.
+Original Fallen.exe and the reconstructed Config.ini retain the accepted
+fixture identities. Exact paths and file hashes are in the pin reports.
+No source, test or build changes were made and no build was run.
+
+The exact reviewed079959006 `drive.py`, `supervisor.py`, `independent.py`,
+`lifecycle.py`, `runner.py` and `detached.py` were reused byte-for-byte. Only
+the copied guard's absolute task deadline changed. Accepted build/regression/
+lifecycle receipts were reused on matching inputs, not rerun or claimed fresh.
+`NODE_OPTIONS=--inspect-brk=127.0.0.1:0` enabled the existing Node inspector
+without changing the driver or production code. The command remained ordinary
+registered `urban_chaos_demo --no-build --control-stdin --frozen`, software,
+batch-size100000, with the retained observer and control route. Both independent
+guards remained active; the runtime deadline stayed21:03:12.637 UTC, within
+the original25-minute and overall60-minute limits. It was never extended.
+
+The41-sample20-second headroom check had minimum2,182,795,264 bytes; original
+PID4156945 launched at20:38:35.957 with2,182,770,688 bytes free. Launch2100000000,
+stop2020000000 and floor2000000000 were unchanged, with no RAM gate. Primary/
+independent histories have289/290 samples, minima2,181,300,224/2,181,341,184
+and maximum gaps0.600/0.602s. The driver's observed minimum was2,177,409,024.
+No disk stop occurred; finite samples do not establish continuous disk safety.
+
+The source breakpoint resolved before the first control ACK. Ping acknowledged
+batch0 at20:38:37.948; the pending request was exactly
+`{"action":"step","n":1,"id":"2"}`, sent immediately afterward. No ACK2
+exists. The actual log reports:
+`CRASH at batch 0: Authority deadline exceeded; operation outcome unknown; client is unusable`.
+Its stack identifies `receive` and `new NamedEventAuthority` in
+`lib/named-event-authority.js`, through `cliEventEndpoint`, `openEvent` and
+`h.open_event`; guest EIP is004c0fc0. The constructor waits for its Node Worker
+with a3000ms bound. Inspector/Node Worker startup interaction is a candidate,
+not isolated causality. The tiny dummy had not validated named-event Worker
+coexistence. There is no recorded reason3 hit, allocator snapshot or heap OOM
+line. The controller never passed driver readiness: no Setup/Enter/gameplay
+input, route request or PNG was produced. No allocator state was reconstructed.
+
+The genuine batch0 failure is retained in `initiating-runtime-failure.json`.
+Own debugger PID4156953 was explicitly terminated/disconnected and directly
+waited-15, permitting the already-failed Node process to leave its debugger
+disconnect wait. There was no explicit remove-breakpoint command on the
+original; removal/resume were validated on the dummy only. The reviewed helper
+then durably recorded **original OS wait1** at20:39:32.677, before **driver OS
+wait0**, with no driver escalation. Independent/supervisor direct waits are0.
+The detached controller and its runner exited1 on shutdown before readiness;
+their actual waits remain distinct from the original failure. The parent's
+secondary “debugger terminal before reason3” error followed the deliberate
+disconnect and does not replace the initiating crash. No request was replayed.
+
+Unlike the previous SIGKILL attempt, the unchanged observer published its exit
+records: the actual `WebAssembly.compile` input hash matches the selected
+module, and122 observed main-context file reads match retained before/after
+pins. These are the observer's sync whole-file/complete bounded-descriptor
+observations, not an identity for every consumed game byte or guest memory.
+The Node exit hook is separate from the actual OS wait receipt.
+
+Direct cleanup found all40 recorded runtime/preparation PIDs and30 groups
+absent. One exact empty authority temp directory was removed with `rmdir`;
+`temp-cleanup.json` states that its ownership was inferred from the exclusive
+runtime, constructor timing and sole matching new empty directory, rather than
+directly instrumented. Foreign directories were untouched. Append-only board
+watchers are separately owned/waited; final cleanup and publication receipts
+retain those results. Native local box ID/state/expiry are N/A. Delegated own
+debugger/game shutdown is complete, runtime/source/build are author-released,
+and no runtime or follow-up task is held.
+
+Next prerequisite is synthetic inspector/named-event Worker coexistence
+preparation before any separately authorized original. This run authorizes no
+unchanged retry. Actual current-arena live co-residency/local ownership/bounds,
+fresh backing/metadata refusal and the precise commit predicate remain unknown.
+No encounter, FPS, audio or full27 claim is made. Only this note is committed;
+evidence, scripts, exact commands and recovery limits remain in the run directory.
