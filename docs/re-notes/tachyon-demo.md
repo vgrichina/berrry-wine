@@ -137,3 +137,37 @@ One rejected read-only `input-state` request included unsupported key arguments;
 the corrected request succeeded. The run quit through the CLI at batch 3581,
 outer exit 0 after 206.987 seconds, within the recorded 850/900-second inner/outer
 limits. No second original invocation, remote box, browser or GPU was used.
+
+## Training onward attempt, 2026-11-01
+
+`scratch/runs/20261101-tachyon-training-onward/` records an attempt to continue
+with ordinary Insert slide input and the next displayed objective toward Luna.
+It did not invoke the original: the first launch blocker was free disk below
+the task's required 2,300,000,000 bytes. At the first pre-launch recheck there
+were 2,299,285,504 bytes available (714,496 bytes short), then 2,299,256,832
+(743,168 short). The entire owned scratch directory was only about 269 KB;
+removing it could not recover admission. Foreign artifacts were preserved.
+No new captures, Insert consumption, slide response or Luna progress are claimed.
+
+The worker waited scratch-only for Redline worker
+`01a195da-2b40-7ff0-ad0b-c710dc6a5349`'s fresh final/result and its 06:54:25 UTC
+explicit runtime/source/build release. The gate opened at 06:55:12 UTC, with
+2,300,731,392 bytes free. Gate-open main was `574a35dc415c9788208798d900e57b8af345d89d`.
+All 4,390 source inputs, 122 prior actual loaded inputs, the module and region
+mirror matched the accepted Tachyon locked build, so no rebuild was needed.
+The canonical module SHA-256 remained
+`330b120d64cfd4aebdd945c99a95022dbd97db7ee6962d7ec534c24da466011b`;
+it was pinned directly, avoiding a duplicate module on the nearly full disk.
+Synthetic sync/async validation passed actual emitted `dx_trace` callbacks,
+whole shared 512 MB memory and guest-clock read-only checks, and bounded
+retention after 10,001 late events. These were observer checks, not game runs.
+
+All 15 original/manifest files were pinned and unchanged, including the actual
+`installed/tachyon/Tachyon.exe`; no compilation-container identity was used.
+The existing recorded local-use licence authority and established registry
+configuration were retained without a new EULA acceptance or config override.
+The full note, prior driver, keychart and prior controlled captures were read.
+The prepared scratch route deliberately stops before repeating the prior
+throttle/turn/fire checks. The next prerequisite is sufficient launch disk
+headroom; ordinary Insert input and the current displayed instruction remain
+unverified by this attempt.
