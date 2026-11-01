@@ -1124,8 +1124,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: Redline01a194fb-2abb-7a80-bbc7-eafd2ba257d6; output scratch/usage-watch/redline-mission-callback-cause-nov01/; handle53345; deadline03:11UTC fallback02:51UTC
-  status: Redline mission callback/dispatch cause investigation active, serial local CLI. Rune original renderer child executes but fails MisingIni in appInit; child INI lookup/transport diagnosis is next. No gameplay qualified for either lane.
+  worker: Redline01a194fb-2abb-7a80-bbc7-eafd2ba257d6 runtime handle53345 deadline03:11UTC fallback02:51UTC output scratch/usage-watch/redline-mission-callback-cause-nov01/; Rune01a194fc-d469-7081-9c6c-5c6f68bdb8fe static handle33049 deadline03:07UTC fallback02:52UTC output scratch/usage-watch/rune-child-ini-cause-nov01/
+  status: Redline mission callback/dispatch investigation active in serial local CLI; Rune childINI/transport causal investigation active static-only, no game runtime/build. Two workers cap2; no browser/boxes; neither lane gameplay-qualified.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z

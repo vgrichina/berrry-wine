@@ -1,6 +1,6 @@
 Current 2026-11-01T02:41:18.846722+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Rune's original renderer-test child now executes, but fails with MisingIni during startup before any renderer result. Both original INIs exist in its exported tree; the failed lookup remains unknown. Children required SIGKILL cleanup and all assigned processes are gone. No gameplay or detection log was observed. Next Rune work will diagnose child INI lookup and transport.
+Rune's original renderer-test child now executes, but fails with MisingIni during startup before any renderer result. Both original INIs exist in its exported tree; the failed lookup remains unknown. Children required SIGKILL cleanup and all assigned processes are gone. No gameplay or detection log was observed. A fresh second worker is diagnosing child INI lookup and transport from retained evidence and code, with no game runs or builds.
 
 Redline now owns the serialized runtime slot, tracing the callback and message dispatch behind its Stadium City mission-selection stall. Its inspected capture shows a mission menu, not gameplay.
 
