@@ -1,5 +1,61 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## WORLD loading completes; ordinary Up movement verified (2026-11-01)
+
+Run `20261101-redline-world-loading-headroom` stays scratch-only until
+DarkReign2 worker `01a19600-f86f-7d62-b1fa-199762ea8b4c` publishes fresh
+final/result artifacts and its **07:46:53 runtime/source/build release**.
+Gate-open main is `d86935e8274cd5d70a53bcc50c5d8bf5632d95c3`.
+Startup free space is **2,434,535,424 bytes**; the 2 GB floor never trips.
+
+Before launch, the corrected driver is read and reused from
+`20261101-redline-world-loading-movement/drive.py`. After consumed Space,
+it continues neutral **50-step requests**, with actual captures and visual
+review every **100 steps**, bounded by **2,000 steps or 240 seconds**.
+Only reviewed first-person weapon/HUD confirmation enables balanced Up.
+The original Readme's Space cutscene-skip and Up forward controls and the
+recorded licence context are retained; no configuration or EULA changes occur.
+
+The earlier accepted Redline build inputs differ after the predecessor's
+source changes, so the mandatory **locked build passes**. The copied and
+actually loaded module is SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Before the original, the retained observer passes actual emitted sync/async
+callbacks, whole shared **512 MB** memory and clock read-only checks, and
+late-**10,001** retention. Driver Python and observer JS syntax checks pass.
+
+**One original local CLI invocation exits 0 after 358.407 seconds.**
+Space down/up are observed consumed at **30,706 / 30,758**, with all four
+observed input queues empty. Released capture **30,808** shows LOADING WORLD.
+Neutral continuation reaches LOADING TEXTURES at **30,908**, an interior
+without HUD at **31,008**, then a first-person firearm, crosshair, bottom
+ammo/inventory HUD and right health meter at **31,108**. Thus **300 further
+neutral steps complete the player-view gate**; loading/cinematic changes
+alone are not counted as movement.
+
+Actual paired captures are `before.png` (**31,108**), `held.png` (**31,150**)
+and `released.png` (**31,194**). Ordinary Up down/up are observed consumed at
+**31,110 / 31,154**; scheduled, pending, cross-thread and renderer queues
+are empty at both consumption checkpoints and all paired captures.
+Before input, the shutter and room geometry lie ahead. While Up is held,
+the shutter/wall fills the view and the nearby left edge replaces the distant
+room, with weapon/crosshair/HUD retained. After release, that nearby wall
+geometry remains with small weapon/view settling. **This verifies ordinary
+forward player movement to the nearby obstacle**, without a distance, speed
+or physics claim. The captures are actual presented-canvas PNGs; the read-only
+presentation record names primary slot **4**, 640×480 RGB565, and final CLI
+capture explicitly selects that slot. No second original is needed or run.
+
+All **4,391 tracked source inputs**, region mirror and **70 original/manifest/
+configuration pins** remain unchanged; all **129 actual loaded-file hashes**
+and the loaded module match. Raw captures, consumed-input states, control
+replies, identities, exit, review, gzip logs, final/result and publication
+checks remain in the ignored run directory. Own driver/runtime PIDs and
+process group are verified absent; no watcher or temporary tree is created.
+No box is owned (ID/state/expiry N/A). No source repair, upload/capture
+re-diagnosis, guest forcing, audio/FPS or broader-suite claim is made.
+
+
 ## WORLD-loading continuation corrected; startup disk admission blocks execution (2026-11-01)
 
 Run `20261101-redline-world-loading-movement` stays scratch-only until Tachyon
