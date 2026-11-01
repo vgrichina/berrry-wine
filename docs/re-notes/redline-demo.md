@@ -1,5 +1,47 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Lookup trace preparation: direct query return identified; runtime disk gate closed (2026-11-01)
+
+Run `20261101-redline-lookup-branch-cause` makes **zero original guest
+invocations** and no emulator repair. The first causal execution gap remains
+resource 723's actual lookup/alternative/backend return. At precondition capture,
+free disk is
+**1,998,544,896 bytes**, below this task's strict **2,000,000,000-byte** runtime
+floor. Foreign artifacts are untouched; there are no owned expendable large
+artifacts to recover that space. No texture qualification is claimed.
+
+Offline original disassembly identifies an additional required return:
+existence query **`0x416f22` calls `0x4eeede` directly at `0x416f7f`, returning
+at `0x416f84`**. Observing only loader return `0x4eecc5` would miss this path.
+The backend tests the query result at `0x450855`, with successors `0x450857`
+and `0x4508a9`; its BTF-alternative query returns at `0x45088a`. The eventual
+bank return is `0x4181d5`, with zero successor `0x4181d9` and nonzero successor
+`0x41824a`. These are static addresses, not evidence of selected execution.
+
+The existing emitted module and **actual CLI trace formatter**, extracted
+unchanged from `test/run.js`, pass an offline synthetic x86 fixture with a
+real shared **512 MB** memory and actual `g2w`. One **`run(37)`** emits real
+register/flag/memory-dump lines with budgets **36, 35, 34...**, including the
+executed EAX value `0x12345679`. It does not force instruction single-step or
+host budget one. After **10,001** calls the formatter leaves the whole memory
+hash and clock unchanged; the trace setter also leaves linear memory unchanged.
+**Tracing globally disables chaining and the micro-op tier**, even with a
+narrow range; this execution-tier effect is explicit. This fixture executes
+synthetic bytes only, not original game code.
+
+All **4,389** accepted build inputs, **70** original fixture files, module
+`baef4e5a70f43b5d87fe086b4f5bd5b583c833e8bf07239ef05749f222035136`
+and region mirror match the preceding accepted run. Rune's final/result and
+**05:03:21 runtime/source/build release** precede the synthetic check and note
+edit. No build or production/test edit is made. The saved next-observation
+plan starts at batch **29,100**, range **`0x4eec9b–0x4eefee`**, and specifies
+selected-only staged narrow windows for the direct query, backend alternative
+and bank return. **The staged preload/driver is not implemented or qualified**;
+its actual bounded late-retention/read-only path must pass offline validation
+before an original invocation. Evidence, emitted trace and the address plan
+are in `scratch/runs/20261101-redline-lookup-branch-cause/`. Owned runtime
+PIDs/groups: none. Box ID/state/expiry/handback: N/A; ownership none.
+
 ## Archive member: original bytes validated, selected execution still unobserved (2026-11-01)
 
 Run `20261101-redline-archive-member-cause` stops after **one original guest
