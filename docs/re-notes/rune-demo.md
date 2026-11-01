@@ -1,5 +1,66 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: LoadMap completes; ordinary movement reaches rendered gameplay
+
+**The original demo reaches a rendered first-person cave scene and responds to
+ordinary W input.** Inspected `load-12.png` (batch **256700**) and `load-24.png`
+(**316700**) show the cave and HUD; `movement.png` (**323200**) shows a changed
+viewpoint. Evidence: `scratch/runs/20261101-rune-property-execution/`.
+One original invocation was sufficient; no second invocation, production/test
+change, generic repair or speculative fix was made.
+
+The working Software → Next → Next → Run / Escape / relative-pointer New Game
+→ Easy route was reused with empty parent arguments, **C:\System**, shipped
+INIs and the unchanged **200 ms** clock. Startup free disk was
+**2,350,264,320 bytes**, above the required **2,300,000,000**. Streaming gzip
+logs kept the disk guard from firing; free disk remained above the floor at
+every driver poll. Final free disk exceeded **2.34 GB**.
+
+The observer retained **26** changing live checkpoints, every **5,000 batches**,
+from **196700** through **321700**. The known LoadMap frame **0x179ff438**,
+returning to original Engine **0x10392e86**, remains present through **246700**.
+At **251700**, the retained chain instead contains Engine returns
+**0x103a1c17 / 0x103ea0e4 / 0x103cf94b / 0x103ab2ca / 0x103ade91 /
+0x10398b0b**; the earlier LoadMap frame is absent. The inspected **256700**
+capture establishes map completion. The function's exact return value was
+not hooked and is **unavailable**.
+
+**No live SerializeBin property/count/index/next-link frame was captured.**
+These finite checkpoints missed that function; checkpoints **226700–236700**
+also hit the observer's **40-frame** retention bound. Consequently this run
+does not qualify individual property links/counts or prove a serialization
+cycle. It does establish that this ordinary load finishes when given more
+time than the earlier **239200** endpoint. No failing guest invariant was found.
+
+W down at **321700**, **1,000** completed batches, W up at **322700**, and
+another **500** batches produced the inspected movement capture. Actual guest
+DispatchMessage observations retain down/up at **321718 / 322947**. Space
+down/up at **323200 / 323700**, with **500** completed batches after each edge,
+reached guest dispatch at **323406 / 323796** and the inspected **324200**
+`action.png`. A distinct jump response, combat, audio and general texture
+correctness are not qualified by these captures.
+
+All **4,389** accepted source inputs, **289** original pins and both original
+**142-file** trees match before/after. The accepted locked module and generated
+mirror match; both actual parent/child module receipts retain SHA-256
+**baef4e5a70f43b5d87fe086b4f5bd5b583c833e8bf07239ef05749f222035136**
+(**2,025,634 bytes**). All **264 / 118** actual parent/child loaded reads match.
+Offline actual sync/async instantiation, preload/parser/control/eval, shared
+**512 MB** whole-memory read-only checks, finite/cycle/invalid-frame fixtures,
+explicit unavailable exports and late **10,001** snapshots pass. The unchanged
+prior compressed **10,001-record** retention fixture was verified and reused.
+The scratch-only adaptation adds Engine return addresses and makes cleanup
+drain independent of the disk guard. No guest instrumentation or held
+algorithm change was used.
+
+The original exits **0** after **75.372 seconds**, child guest/host exits **0**.
+Outer **150s / kill-after 5**, inner **115s**, child **TERM 90 / KILL 95** guards
+were unused. Own PIDs/group, temporary tree and watcher are verified absent;
+logs, shipped/configured INIs and evidence remain retained. Boxes are N/A.
+Further property-specific work, if needed, would require closer sampling in
+the earlier **236700–241700** interval; it is not needed to establish this
+observed gameplay and movement result.
+
 ## 2026-11-01: property-loop observer prepared; startup disk guard stops original
 
 **No new property-loop or gameplay observation was obtained.** The single
