@@ -1,5 +1,65 @@
 # American McGee's Alice demo
 
+## Current-main native attempt: startup stalls before menu (2026-11-01)
+
+Run `scratch/runs/20261101-alice-original-native-gameplay/` stops at the first
+bounded runtime blocker: **initialization stalls before New Game**. The sole
+original launch used actual main `76c40478e9b9aed501aaeda34e20e7366d124aaf`,
+after GL worker `01a19621-4660-7042-a3b4-a3aa542f7c6a` published fresh final
+artifacts and explicitly released runtime/source/build at 08:09:50 UTC.
+Historical movement below remains separate evidence.
+
+The accepted locked build from `d86935e8274cd5d70a53bcc50c5d8bf5632d95c3`
+was reused after all 4,392 pinned inputs and 141 prior actual reads matched.
+The actual compiled module is 2,026,995 bytes, SHA256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`;
+the region mirror also matches. All 4,444 current source/support pins and all
+15 original files remain unchanged. The recovery's complete manifest still
+hashes to `68668d496dbabdb3b3803b8de12dda356796ba0ce26051ffb0a03df3a2022509`.
+The process-local entry uses `launch-plan.json` and existing local-manifest
+helpers, preserving all 14 companion paths, including `demo/` and
+`snddrivers/`. No shared registration, source, config or backend implementation
+was changed. The CLI uses the established `--gl-renderer=software` provider,
+cooperative threads, frozen control and 100,000-block batches.
+
+The first neutral 600-step request completed. Its reviewed 640×480 PNG is
+uniform gray: neither intro, menu nor gameplay. The frozen input snapshot at
+600 reports zero scheduled/enqueued/dequeued/routed/dispatched events. The
+next ordinary neutral 600-step request, sent at 08:10:37.802 UTC, never
+acknowledged completion during **192.85 seconds**. Later stdin ping remained
+queued behind that step, so a later capture/state was unavailable. Actual
+final batch and guest EIP are unknown; do not call this a batch-1200 capture.
+
+The retained log shows Miles DLL initialization and creation of cooperative
+thread `0xe1001`, entry `0x0203a520`. During its following DLL notifications,
+the last lines are `Calling DllMain at 0x20d1078` and successful EAX=1 return.
+Two OS observations show the Node main thread waiting in `ep_poll`, with about
+four seconds total CPU and no further guest output. These observations locate
+the stall window; they do **not** establish the underlying loader, callback,
+audio or scheduler defect. No integrated lifetime repair was repeated.
+
+SIGTERM at 08:13:50.622 UTC was acknowledged as an orderly-shutdown request,
+but initialization did not return. Bounded cleanup then killed the owned
+process group; guest exit is **-9**, elapsed 218.82 seconds, rather than a
+successful or guest-requested exit. The observer saved the actual module and
+117 compilation-time read identities, all still matching. **Later runtime
+reads were not flushed because SIGKILL cannot run its exit hook**; that is an
+explicit evidence gap. Its separate real sync/async execution, whole-512 MB
+read-only memory, clock-identity and emitted late-10,001 retention checks pass.
+
+No Enter or W input was issued because the menu/gameplay prerequisite was
+never visible. New Game → Easy, W consumption, held/released views and player
+control remain unverified on this build. There was no second original launch.
+The run retains command/control records, reviewed capture, identities,
+stall observations, signals/exits and cleanup. Free disk started at
+2,381,504,512 bytes and stayed above 2 GB. Own runtime/driver/control processes,
+groups and watcher were removed; no temporary runtime or box was acquired
+(box ID/state/expiry N/A). No browser, GPU, audio, FPS or full27 claim follows.
+
+Next prerequisite is a separately scoped diagnosis of this native startup
+stall with controls capable of observing an unfinished step. This task ends
+at that blocker without another original run or loader/lifetime changes.
+
 ## Fresh browser attempt: assigned-host access failed (2026-10-31)
 
 Run `scratch/runs/20261031T2245Z-alice-original-browser/` began on main
