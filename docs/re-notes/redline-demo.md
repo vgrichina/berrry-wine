@@ -1,5 +1,83 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Backend upload observation: selected failure still unobserved (2026-11-01)
+
+Run `20261101-redline-backend-upload-repair` verifies the live backend identity
+but **does not establish the first failing loader/API return for a selected
+gameplay asset**. No generic repair is proven; production and test files were
+left unchanged. The two original guest invocations are exhausted.
+
+Offline disassembly maps backend `0x450729`, bank call/return
+`0x4181d2/0x4181d5`, CreateSurface return `0x450db6`, upload returns
+`0x450e24` and `0x450ebe`, GetSurfaceDesc return `0x453ec3`, and the
+upload's four API error exits before its zero return. The existing API hooks
+were wrapped read-only to capture arguments, HRESULTs, descriptor outputs,
+natural frames, selected filename/metadata pointers, and cleanup return
+locals. Synthetic tests cover actual preload/import/table/memory bindings,
+relocated addresses, HRESULT pairing, whole-memory immutability and bounded
+retention. Required exports/imports exist in the accepted actual module.
+
+The first invocation retains **840 records**, with zero errors or drops:
+280 GetSurfaceDesc, 280 Lock and 280 Unlock calls, all successful. They return
+through the UI loader `0x453d09`, called from `0x417cfa`, and target UI
+surfaces. **None exposes a selected backend frame returning to `0x4181d5`.**
+This probe therefore supplies no HRESULT or output for the selected gameplay
+upload, and does not prove that backend `0x450729` was executed or skipped.
+
+The second invocation widens resource-call observation and directly reads the
+live bank/backend at exit. Bank `0x0881b230` has backend pointer
+`0x0094c124`, equal to the renderer global; its vtable is **`0x56fd40`**, with +0x1c method
+**`0x450729`**. Thus the active method identity agrees with the static map.
+Logical **444** still references resource **723**, `skymorning.tga`, with
+null Texture2 and signed resident/group **-1**. This run's bank metadata
+pointer is `0x01b6280c`; its surface is **`0x08224458`**, DX slot **1675**,
+128×128, 16-bit RGB565. Its width/height/bpp/format metadata remain **-1**,
+while bank status +0x50/+0x52 remain 1. The changed slot is an observed
+allocation identity; it is not a claim of a different selected asset.
+
+The second observer retains **5,000 records** and drops **56,136**, with zero
+observer errors. Uncapped method counts are 610 CreateSurface, one
+GetAttachedSurface, 58,830 IsLost, 329 QueryInterface, 280 GetSurfaceDesc,
+543 Lock and 543 Unlock. Repeated frame IsLost calls consume the general
+record quota before late resource details; the separately protected
+`skymorning.tga` quota retains zero records because no matching backend frame
+was recovered. No failed HRESULT is present in retained records. **This is
+not a complete later creation/upload history and cannot identify the selected
+surface's creation caller or exclude an unretained API failure.** Widening
+this probe did not resolve the required causal frontier.
+
+The checkpoint metadata is sufficient to explain rejection by classifier
+`0x52b5c7`: square -1 dimensions still fail its unsigned size-range guard at
+`0x52b602`, reaching the -1 return at `0x52b64c`. That is a static consequence
+of observed data, not an observed instruction trace or its upstream cause.
+Likewise, metadata writer `0x4181ec` is a possible loader-failure path, not a
+return witnessed for this asset. **Next exact observation:** recover the
+selected bank record's `0x4181d5` backend frame across natural file/container
+loader calls before CreateSurface, with retention isolated from frame
+IsLost calls; capture the first loader return/guest guard and actual API
+output before selecting any repair. The scratch continuation observer is
+prepared offline only; it has not run a third guest.
+
+Rune's final artifacts and 04:08:37 runtime/source/build release preceded
+runtime and this note edit. All **4,388** inputs, the module and region mirror
+match the accepted locked build in `20261101-redline-pool-selection-cause`;
+reuse is recorded. Both actually loaded modules are 2,025,629 bytes, SHA-256
+`985ca2480931df88751db66dbee8527a6d9df9940949baafc6bc3a0b1a43e2dc`.
+Original registration/all 65 pins, all 70 fixture hashes and all **128 actual
+loaded reads per invocation** match their recorded identities. The first
+observer version is archived with its exact loaded hash. Both runs exit 0 in
+**76.689 / 72.058 seconds**.
+Both gameplay PNGs were inspected: missing textures persist; the first weapon
+pose differs, while the second SHA-256 is the retained checkpoint
+`ed66d12dab856c3c44ffd5e45cd088290612fe2aba75edb0b55bf275a9ecbd87`.
+Empty arguments, `C:\MAINDIR`, IFORCE2-only seeding, shipped settings,
+100,000 batch size after 29,100 and clock 200 are unchanged. There are no
+breakpoints, instruction counters, guest calls or state writes. Outer PTY
+150-second/kill-after-5, inner 120-second and child TERM105/KILL110 guards
+remain finite; all owned processes/groups are gone. Disk stays above 2 GB.
+Evidence is under `scratch/runs/20261101-redline-backend-upload-repair/`.
+Box ID/state/expiry/handback: N/A; ownership none.
+
 ## Gameplay pool selection: unrealized logical textures hit the bind guard (2026-11-01)
 
 Run `20261101-redline-pool-selection-cause` connects actual original gameplay
