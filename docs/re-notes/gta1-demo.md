@@ -1,5 +1,55 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Checkpoint implementation first focused-test failure, 2026-11-01
+
+Source implementation was started after Constructor's explicit release, on
+main after `c515da25d`. The uncommitted WIP is in `tools/toyvm/run-dos.js`
+and `test/test-toyvm-runner-input.js`; the four Constructor GC source/test/
+generated-bundle WIP files were not edited or staged. No code is published
+by this attempt. Evidence: `scratch/runs/20261101-gta1-checkpoint-implementation/`.
+
+The proposed generic API is `runDos({ ..., checkpoint: { at, png, pause } })`.
+At the first live handback at or beyond `at`, it writes a capture and awaits
+`pause(snapshot, AbortSignal)`. A key string queues ordinary `pushKey` taps
+once; null stops; continuation retains the same session and original bounds.
+The proposed CLI is `--checkpoint=DISPATCHES --checkpoint-png=PATH` with
+stdin key-string/EOF control, or `--checkpoint-keys=KEYS`. A checkpoint
+requires a finite dispatch budget and positive finite `seconds`.
+These interfaces remain **unfinished and unqualified**.
+
+The first focused native synthetic COM test failed at line 47: the tapped run
+retired **20,002** dispatches and the no-input control **20,003**, against the
+test's exact-equality assertion. Earlier assertions passed: the callback ran
+once after its requested threshold, a PNG existed before input, guest memory
+recorded exactly one Enter (count 1, ASCII 13), the BIOS key queue was consumed,
+and the hardware queue contained one make/break pair `1C 9C`. A PNG signature
+check does not establish that the image depicts the correct surface.
+The changed keyboard branch can end at a different instruction boundary;
+the bound test needs an explicit permissible final-block overshoot rather
+than assuming different guest paths retire identical counts.
+
+Static review also identifies a capture bug requiring repair: `screenSurface`
+returns an object with `.text` and `.geom`, but this WIP compares the object
+to the string `'text'` and recomputes geometry. Use the shared surface result
+for both console and graphics capture before relying on screenshots.
+The remaining default-equivalence, explicit-stop and pause-deadline tests did
+not run. CLI/EOF, capture content, terminal-before-checkpoint and error paths
+still need validation. No unchanged retry was attempted under the assignment's
+first-failure rule. Mandatory locked build was not run; free space reached
+2.161 GB after the failed test, but that does not override the latched stop.
+
+There were zero original GTA1 launches, no fresh archive/executable pin check,
+no actual original module or paired input images, and no new language/menu/
+gameplay result. The exact 117-file archive and executable pins below remain
+prerequisites for a future original run. No browser, boat, download, registry,
+deployment or alternate executable was used. Box ID/state/expiry are N/A.
+The independent 2 GB disk monitor stayed above its floor; actual helper waits
+and WIP recovery pins are retained in the run directory. Next: repair the
+identified WIP issues, complete meaningful focused tests, pass the mandatory
+locked build with admitted headroom, then publish code before any authorized
+single original investigation. All paths and serialized ownership are released
+after this note is published.
+
 ## Checkpoint-input repair second resource boundary, 2026-11-01
 
 The fresh assignment after `741117e0a117a752038b82c2488dcf1194232022`
