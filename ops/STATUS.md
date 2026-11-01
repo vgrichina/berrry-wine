@@ -1,5 +1,5 @@
-Current 2026-11-01T20:15:37.266443+00:00 — Battlezone is recovering space from closed worker logs before one native-save defense attempt. The disk margin must pass first; combat remains unverified.
+Current 2026-11-01T20:27:33.775646+00:00 — Urban Chaos has a fresh worker validating a read-only debugger snapshot before one bounded game attempt. The street HUD is verified; allocation refusals and the stalled step still lack the state needed to establish cause. Encounter progress remains unverified.
 
-Urban Chaos reached the street HUD, then allocation refusals accompanied a180-second timeout. Its original and helpers are stopped, with durable OS waits verified. A fresh worker investigates the retained failure evidence before another game attempt; encounter progress and the allocation cause remain unproven.
+Battlezone remains197.7MB short of its required launch margin after closed-log recovery; no game ran. A second worker is selecting one actionable local game to replace that blocked lane, checking public eligibility and fixture identity first.
 
-Two workers are active. Next fallback20:26UTC or completion/input. The passive disk observer expires20:29UTC. The GL presentation source assessment found no reachable counterexample; full27/backend/FPS/audio coverage remains open. No public deployment.
+Two workers are active; next fallback20:38UTC or completion/input. The passive disk observer stopped with actual wait0. Full27/backend/FPS/audio coverage remains open. No public deployment.
