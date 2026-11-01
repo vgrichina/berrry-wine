@@ -1,5 +1,65 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+
+## Original batch handoff: child reached, task-gate boundary, 2026-11-01
+
+Evidence: `scratch/runs/20261101-gta1-original-batch-handoff/`. Implementation began after
+Constructor `995c90daf` terminal/final, exact author release and independent
+absence of its ten helpers. Only the five assigned paths changed.
+
+The native runner now accepts the authentic `GTA.BAT`: `cd gtados`, `k.exe`,
+`call dino.bat`, `cd ..`. The bounded interpreter supports `@echo off`, `REM`,
+`CD`, `CALL file.bat`, and explicit EXE/COM commands with literal arguments.
+Called batches are read from the current overlay when reached. Guest writes,
+working directory and sibling data remain visible under one mounted root.
+Commands share a finite dispatch budget and absolute wall deadline, including
+input and VM setup; checkpoint indices remain global. External commands use
+separate VM instances, as the existing prerequisite runner does; resident and
+hardware state do not carry over. Unsupported syntax fails with batch/line/text.
+No expansion, redirection or general shell emulation was added. K.EXE remains
+the default; no registry change, synthesized batch or executable bypass.
+
+One original session used 3-billion dispatches, an 85-second runner deadline
+and independent 90-second OS cap. Each live PNG was inspected before its
+individual Enter: 200,006,543 dispatches showed four flags/English selected;
+400,000,001 showed English / Press Any Key; 600,000,005 showed Startup / Run GTA
+selected / Keyboard. K.EXE exited 0, then its actual generated DINO.BAT ran.
+Before interpretation the observer retained **12 bytes**, `demo24.exe\r\n`,
+hex `64656d6f32342e6578650d0a`, SHA-256
+`5980340dfa79147f5be7b713d35804b6e25d8ecd1084d6ab22e51929a6dbf0cc`.
+The generated command selected DEMO24.EXE with no arguments in GTADOS; the
+child log confirms two opens of `C:\GTADOS\DEMO24.EXE`. Full overlay bytes,
+including the 32-byte `temp.ini`, are retained outside git.
+
+`exact-exec.json` records K.EXE's actual INT 21h requests: overlay-load
+`C:\GTADOS\dos4gw.exe` (AL=3), and `C:\COMMAND.COM` (AL=0) with the exact
+nine-byte tail ` del test` (no `/C`), returning AX=2 without transfer. This did
+not prevent K.EXE's normal exit or handoff. The batch's external launch is a
+runner action, not an invented guest EXEC.
+
+The first new observed stop is **`unsupported 386 task-gate transfer`**, in
+`paging-exec.js` exception delivery. K.EXE exit 0 is distinct from child
+`exited=false` and host actual wait **1**, naturally after **49.347195 seconds**.
+No deadline signal or unchanged original retry occurred. No final child PNG,
+report, exception vector, IDT descriptor or terminal CS:IP was retained: the
+exception propagated before CLI capture. Reviewed images establish launcher
+input only, **not gameplay**. Next: capture the failing paged-exception state
+and determine the required gate behavior; the error does not prove gate validity.
+
+Archive `76f1e1da5c898f755597b86357c4d77b7447cb483673a23d10d34f40cfe03ec9`,
+K.EXE `8fd02d556e06f3258a6ca516ccf675e7aafbf313bd3c575e12dd0f8e5c67d48f`,
+and all 117 files / 17,078,619 bytes match before/after with exact closure.
+Both actual compiled modules retained ordinary SHA-256
+`03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`.
+The original-tested runner is retained verbatim. Final index/deadline corrections
+were tested synthetically without another original. The real guest batch test
+fails on the saved old runner. The repair passes overlay/config/executable,
+sibling-data, arguments, CALL, budget/deadline and input checks. Existing input/keyboard
+regressions, both regenerated bundles/module parity and locked build pass.
+Success-test allowances cover PNG/VM setup; explicit deadline tests remain.
+Disk abort 2,020,000,000 bytes / floor 2 GB, no RAM gate. Box ID/state/expiry N/A;
+coordinator lifecycle unchanged. Commands, reviews, failures and recovery are retained.
+
 ## Successive original input: startup launch handoff boundary, 2026-11-01
 
 One authentic default `GTADOS/K.EXE` session used published

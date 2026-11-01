@@ -168,8 +168,18 @@ function writePng(file, mem, palette, video) {
   writeRgbaPng(file, rgbaFrame(mem, palette, video));
 }
 
+// Also works with the bundle's small path shim (resolve/join only).
+function mountedRelative(root, file) {
+  const prefix = path.resolve(root).replace(/\/+$/, '');
+  const full = path.resolve(file);
+  if (!prefix) return full.replace(/^\/+/, '');
+  if (!full.startsWith(prefix + '/')) throw new Error('file outside DOS mount');
+  return full.slice(prefix.length + 1);
+}
+
 // ---------------------------------------------------------------------------
 async function runDos(o) {
+  if (/\.bat$/i.test(o.exe)) return runDosBatch(o);
   const {
     variant = 'tailcall', exe, budget = 200e6, slice = 2e6, seconds = 0,
     // A number (the first N handbacks) or a { from, to } handback window.
@@ -336,6 +346,9 @@ async function runDos(o) {
     env = [],
     // Files an earlier run created, carried in. See the --pre option below.
     tempFiles = null,
+    // An explicit mount keeps sibling data directories visible across a
+    // launcher batch. The ordinary executable-only mount stays unchanged.
+    fileRoot = null, currentDirectory = '',
     // Where DOS puts this program, as paragraphs: the PSP, and the image
     // 0x10 paragraphs above it. Null takes whatever program-config.js has for
     // this executable and the machine's default otherwise -- see that file for
@@ -395,8 +408,13 @@ async function runDos(o) {
     ioPorts: traceIo && traceIo.length ? new Set(traceIo) : null,
     // A DOS program's data sits next to it, and that directory is the whole of
     // the filesystem it gets.
-    fileRoot: path.dirname(path.resolve(exe)),
+    fileRoot: fileRoot || path.dirname(path.resolve(exe)),
   });
+  if (fileRoot) {
+    const directory = machine.resolvePath('\\' + currentDirectory, true);
+    if (directory === null || !machine.isDirectory(directory)) throw new Error('invalid DOS working directory');
+    machine.currentDirectory = directory;
+  }
   // See the afterSlice hook: the dispatch count at every handback, when asked.
   const sliceLog = sliceLogFile ? [] : null;
   // What the card and the speaker played, as rendered chunks, when asked.
@@ -445,14 +463,19 @@ async function runDos(o) {
   machine.setTicks(0, { force: true });
   machine.syncVga();     // the VM's buffer, not the throwaway one from before
 
-  const info = loadExe(vm.mem, fs.readFileSync(exe),
+  const mountedExe = fileRoot ? mountedRelative(fileRoot, exe) : null;
+  const image = fileRoot
+    ? machine.readWholeFile('\\' + mountedExe.replace(/\//g, '\\'))
+    : fs.readFileSync(exe);
+  if (!image) throw new Error(`DOS executable not found: ${exe}`);
+  const info = loadExe(vm.mem, image,
     { loadSeg: machine.loadSeg, pspSeg: machine.pspSeg });
   // What the program was given is what is NOT free. A .COM has no header to
   // say, so the loader leaves this undefined and the machine keeps its "owns
   // everything" default.
   if (info.allocTop !== undefined) machine.allocTop = info.allocTop;
   machine.imageTop = info.minTop;
-  machine.installEnvironment(path.basename(exe), guestArgs);
+  machine.installEnvironment(mountedExe === null ? path.basename(exe) : mountedExe.replace(/\//g, '\\'), guestArgs);
   // After the environment and after allocTop: the chain names both.
   machine.installArena();
   // IF set, because that is what DOS hands a program. The flags global starts at
@@ -836,7 +859,8 @@ async function runDos(o) {
   // gets no row at all, which reads as "this program has no picture" rather
   // than "this program is slow". Stopping here instead keeps the best frame,
   // writes the PNG, and reports what it managed.
-  const stopAt = seconds ? process.hrtime.bigint() + BigInt(Math.round(seconds * 1e9)) : 0n;
+  // A batch passes its absolute deadline through compilation/setup as well.
+  const stopAt = o.batchStopAt || (seconds ? process.hrtime.bigint() + BigInt(Math.round(seconds * 1e9)) : 0n);
   let ranOutOfTime = false;
   let steps = 0;
   let checkpointResult = null;
@@ -1073,6 +1097,88 @@ async function runDos(o) {
     // that is what a cleared screen or an animation ending on blank looks like.
     text: { written: machine.con.written, cells: conCells(machine.con) },
   };
+}
+
+// Deliberately bounded launcher batches: no expansion, pipes, redirection,
+// conditions or interactive shell. Read each CALL from the live overlay only
+// when reached: a preceding guest may have just generated it.
+async function runDosBatch(o) {
+  if (o.pre) throw new Error('batch launcher does not support --pre');
+  const root = path.resolve(o.fileRoot || path.dirname(path.resolve(o.exe)));
+  const disk = new Machine(new Uint8Array(0), { fileRoot: root, tempFiles: o.tempFiles });
+  const budget = o.budget ?? 200e6, seconds = o.seconds ?? 0;
+  if (!Number.isFinite(budget) || budget <= 0 || !Number.isFinite(seconds) || seconds <= 0) {
+    throw new Error('batch launcher requires positive finite budget and seconds');
+  }
+  if (o.checkpoint && o.checkpoints !== undefined && o.checkpoints !== null) throw new Error('use checkpoint or checkpoints, not both');
+  const schedule = o.checkpoints ?? (o.checkpoint ? [o.checkpoint] : []);
+  if (!Array.isArray(schedule) || schedule.length > 64) throw new Error('invalid batch checkpoints');
+  let prev = -1;
+  const checkpoints = schedule.map((c, index) => {
+    if (!Number.isFinite(c.at) || c.at <= prev || c.at < 0 || c.at >= budget || typeof c.pause !== 'function') {
+      throw new Error('invalid batch checkpoint');
+    }
+    prev = c.at;
+    return { ...c, index };
+  });
+  const start = process.hrtime.bigint(), commands = [], runs = [], reached = [];
+  const batchStopAt = start + BigInt(Math.round(seconds * 1e9));
+  let dispatched = 0, last = null, count = 0, halted = false;
+  const remaining = () => seconds - Number(process.hrtime.bigint() - start) / 1e9;
+  const fail = (file, line, text) => { throw new Error(`unsupported launcher batch ${file}:${line}: ${text}`); };
+  const initial = disk.resolvePath('\\' + (o.currentDirectory || ''), true);
+  if (initial === null || !disk.isDirectory(initial)) throw new Error('invalid DOS working directory');
+  disk.currentDirectory = initial;
+  async function batch(name, depth = 0) {
+    if (depth > 8) throw new Error('launcher CALL depth exceeded');
+    const key = disk.fileKey(name), bytes = disk.readWholeFile(name);
+    if (!bytes) throw new Error(`launcher batch not found: ${name}`);
+    // Observer receives a copy before any line of this actual file executes.
+    if (o.onBatch) await o.onBatch({ name: key, bytes: Buffer.from(bytes), currentDirectory: disk.currentDirectory });
+    const lines = bytes.toString('latin1').split(/\r\n|\n|\r/);
+    for (let i = 0; i < lines.length && !halted; i++) {
+      if (++count > 256) throw new Error('launcher command limit exceeded');
+      const text = lines[i].trim().replace(/^@/, '');
+      if (!text || /^rem(?:\s|$)/i.test(text) || /^echo\s+off$/i.test(text)) continue;
+      if (/[\x00-\x1f%&|<>^!":]/.test(text)) fail(key, i + 1, text);
+      if (remaining() <= 0 || dispatched >= budget) { halted = true; break; }
+      const [, command, args = ''] = /^(\S+)(?:\s+(.*))?$/.exec(text);
+      commands.push({ batch: key, line: i + 1, command, args, currentDirectory: disk.currentDirectory });
+      if (/^cd$/i.test(command)) {
+        const dir = disk.resolvePath(args, true);
+        if (!args || dir === null || !disk.isDirectory(dir)) fail(key, i + 1, text);
+        disk.currentDirectory = dir;
+      } else if (/^call$/i.test(command)) {
+        if (!/^[^\s]+\.bat$/i.test(args)) fail(key, i + 1, text);
+        await batch(args, depth + 1);
+      } else {
+        if (!/\.(exe|com)$/i.test(command) || /\.(bat)$/i.test(command)) fail(key, i + 1, text);
+        const executable = disk.fileKey(command);
+        if (!executable || !disk.readWholeFile(command)) throw new Error(`launcher executable not found: ${command}`);
+        const offset = dispatched;
+        const pauses = checkpoints.filter(c => c.at >= offset).map(c => ({ ...c, at: c.at - offset,
+          pause: (s, signal) => c.pause(Object.freeze({ ...s, at: c.at, index: c.index, dispatched: s.dispatched + offset }), signal),
+        }));
+        last = await runDos({ ...o, exe: path.join(root, executable), guestArgs: args,
+          fileRoot: root, currentDirectory: disk.currentDirectory, tempFiles: disk.tempFiles,
+          checkpoint: null, checkpoints: pauses, budget: budget - offset, seconds: Math.max(0.001, remaining()), batchStopAt,
+        });
+        dispatched += last.dispatched;
+        reached.push(...last.checkpoints.map(s => ({ ...s, index: pauses[s.index].index,
+          dispatched: s.dispatched + offset, at: s.at + offset })));
+        runs.push({ executable, args, dispatched: last.dispatched, exited: last.machine.exited,
+          exitCode: last.machine.exitCode });
+        disk.currentDirectory = last.machine.currentDirectory;
+        halted = !last.machine.exited || last.ranOutOfTime || last.checkpoints.some(s => s.stopped);
+      }
+    }
+  }
+  const relative = mountedRelative(root, o.exe);
+  await batch('\\' + relative.replace(/\//g, '\\'));
+  if (!last) throw new Error('launcher batch ran no executable');
+  return { ...last, dispatched, checkpoints: reached, checkpoint: reached[0] || null,
+    ranOutOfTime: last.ranOutOfTime || remaining() <= 0,
+    batch: { commands, runs, completed: !halted, currentDirectory: disk.currentDirectory } };
 }
 
 // Run a prerequisite program first, then the real one, and let the second see
@@ -2077,6 +2183,7 @@ async function main() {
     console.log(`  faults: ${[...r.machine.faults]
       .map(([k, n]) => `${k}${n > 1 ? ` x${n}` : ''}`).join(', ')}`);
   }
+  if (r.batch) console.log(`  launcher-batch: ${JSON.stringify(r.batch)}`);
   console.log(`  exited=${r.machine.exited}${r.machine.exited ? ` code=${r.machine.exitCode}` : ''}`
     + `${r.machine.blockedOnKey ? '  waiting for a key' : ''}`
     + `${r.machine.stopHit ? '  stopped on text' : ''}`

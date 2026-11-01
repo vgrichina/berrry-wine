@@ -20,6 +20,8 @@ function checkPng(file, expected) {
 }
 
 async function main() {
+  await batchLauncher();
+  if (process.argv.includes('--batch-only')) return;
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'toyvm-checkpoint-'));
   try {
     const exe = path.join(dir, 'poll.com');
@@ -247,7 +249,9 @@ async function main() {
     async function heldOpen(executable, answers, extra = [], nodeArgs = []) {
       return new Promise((resolve, reject) => {
         const child = spawn(process.execPath, [...nodeArgs, path.join(__dirname, '../tools/toyvm/run-dos.js'),
-          executable, '--dispatches=20000', '--seconds=1', '--report', '--text',
+          // Two PNG encodes/decodes and parent event-loop scheduling need
+          // headroom; the separate unanswered-input test checks the deadline.
+          executable, '--dispatches=20000', '--seconds=5', '--report', '--text',
           '--checkpoint=1000', ...(answers.length > 1 ? ['--checkpoint=10000'] : []), ...extra]);
         let stdout = '', stderr = '', sent = 0;
         child.stdout.on('data', b => {
@@ -321,5 +325,80 @@ async function main() {
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
+}
+
+// Real guest creates the called batch, config AND executable. Its successor
+// must see all three overlay files, the PSP arguments and a sibling directory.
+async function batchLauncher() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'toyvm-batch-'));
+  try {
+    fs.mkdirSync(path.join(dir, 'GTADOS'));
+    fs.mkdirSync(path.join(dir, 'GTADATA'));
+    fs.writeFileSync(path.join(dir, 'GTADATA/marker'), 'S');
+    fs.writeFileSync(path.join(dir, 'GTA.BAT'), '@echo off\r\ncd gtados\r\nk.com\r\ncall dino.bat\r\ncd ..\r\n');
+    fs.writeFileSync(path.join(dir, 'GTADOS/dino.bat'), 'wrong.com\r\n');
+    const code = [], refs = [], data = [];
+    const emit = (...b) => code.push(...b);
+    const addr = bytes => { emit(0xBA, 0, 0); refs.push([code.length - 2, data.length]); data.push(Buffer.from(bytes)); };
+    const child = Buffer.from([
+      0xB8, 0x00, 0x3D, 0xBA, 0x2D, 0x01, 0xCD, 0x21, // open temp.ini
+      0x89, 0xC3, 0xB9, 1, 0, 0xBA, 0, 3, 0xB4, 0x3F, 0xCD, 0x21,
+      0xB8, 0x00, 0x3D, 0xBA, 0x36, 0x01, 0xCD, 0x21, // open sibling
+      0x89, 0xC3, 0xB9, 1, 0, 0xBA, 1, 3, 0xB4, 0x3F, 0xCD, 0x21,
+      0xB8, 7, 0x4C, 0xCD, 0x21,
+      ...Buffer.from('temp.ini\0..\\gtadata\\marker\0'),
+    ]);
+    assert.strictEqual(child.indexOf(Buffer.from('temp.ini')), 0x2D);
+    for (const [name, bytes] of [['dino.bat', 'player.com go\r\n'], ['temp.ini', 'C'], ['player.com', child]]) {
+      addr(name + '\0'); emit(0xB9, 0, 0, 0xB4, 0x3C, 0xCD, 0x21, 0x89, 0xC3);
+      addr(bytes); emit(0xB9, Buffer.byteLength(bytes) & 255, Buffer.byteLength(bytes) >> 8, 0xB4, 0x40, 0xCD, 0x21);
+      emit(0xB4, 0x3E, 0xCD, 0x21);
+    }
+    emit(0xB8, 0, 0x4C, 0xCD, 0x21);
+    const offsets = []; let end = 0x100 + code.length;
+    for (const b of data) { offsets.push(end); end += b.length; }
+    for (const [at, index] of refs) { code[at] = offsets[index] & 255; code[at + 1] = offsets[index] >> 8; }
+    fs.writeFileSync(path.join(dir, 'GTADOS/k.com'), Buffer.concat([Buffer.from(code), ...data]));
+    const opts = { exe: path.join(dir, 'GTA.BAT'), budget: 100000, seconds: 15 };
+    const batches = [];
+    const r = await runDos({ ...opts, onBatch: x => batches.push([x.name, x.bytes.toString()]) });
+    assert(r.batch && r.batch.completed, 'original batch route must execute, not load batch text as COM');
+    assert.deepStrictEqual(batches.map(x => x[0]), ['gta.bat', 'gtados/dino.bat']);
+    assert.strictEqual(batches[1][1], 'player.com go\r\n');
+    assert.deepStrictEqual(r.batch.runs.map(x => [x.executable, x.args, x.exitCode]),
+      [['gtados/k.com', '', 0], ['gtados/player.com', 'go', 7]]);
+    const psp = r.machine.pspSeg << 4;
+    assert.deepStrictEqual([...r.vm.mem.subarray(psp + 0x300, psp + 0x302)], [67, 83]);
+    assert.strictEqual(Buffer.from(r.vm.mem.subarray(psp + 0x81, psp + 0x85)).toString(), ' go\r');
+    assert.strictEqual(r.batch.currentDirectory, '');
+    assert.strictEqual(fs.readFileSync(path.join(dir, 'GTADOS/dino.bat'), 'utf8'), 'wrong.com\r\n');
+    assert(!fs.existsSync(path.join(dir, 'GTADOS/temp.ini')));
+    assert(r.dispatched < opts.budget);
+    const seen = [];
+    const sequenced = await runDos({ ...opts, checkpoints: [0, r.batch.runs[0].dispatched + 1].map((at, index) => ({
+      at, pause: s => { assert.strictEqual(s.index, index); assert.strictEqual(s.at, at); seen.push(s.dispatched); return ''; },
+    })) });
+    assert.strictEqual(seen.length, 2);
+    assert(seen[1] > r.batch.runs[0].dispatched);
+    assert.deepStrictEqual(Array.from(sequenced.checkpoints, s => s.index), [0, 1]);
+    assert.strictEqual(sequenced.dispatched, r.dispatched);
+    const timed = await runDos({ ...opts, seconds: 0.5, checkpoint: {
+      at: 0, pause: () => new Promise(() => {}),
+    } });
+    assert(timed.ranOutOfTime);
+    assert.strictEqual(timed.batch.runs.length, 1);
+    assert(!timed.batch.completed);
+    const expired = await runDos({ exe: path.join(dir, 'GTADOS/k.com'), budget: 1000, seconds: 5,
+      batchStopAt: process.hrtime.bigint() - 1n });
+    assert(expired.ranOutOfTime);
+    assert.strictEqual(expired.dispatched, 0, 'an inherited deadline must not restart after VM setup');
+    const stopped = await runDos({ ...opts, budget: 1 });
+    assert.strictEqual(stopped.batch.runs.length, 1);
+    assert.strictEqual(stopped.batch.completed, false);
+    fs.writeFileSync(path.join(dir, 'bad.bat'), 'echo off\r\ncopy a b > nul\r\n');
+    await assert.rejects(runDos({ ...opts, exe: path.join(dir, 'bad.bat') }), /unsupported launcher batch bad.bat:2: copy a b > nul/);
+    await assert.rejects(runDos({ ...opts, checkpoints: [{ at: 1, pause: () => '' }, { at: 1, pause: () => '' }] }), /invalid batch checkpoint/);
+    console.log('PASS real guest generated batch/executable/config, sibling mount, arguments, CALL return, bounds and fail-closed syntax');
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 }
 main().catch(e => { console.error(e); process.exitCode = 1; });
