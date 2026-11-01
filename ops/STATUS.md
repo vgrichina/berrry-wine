@@ -1,7 +1,7 @@
-Current 2026-11-01T02:21:57.101795+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T02:25:31.537956+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-The ThreadManager constructor fix is published as9ba1c215c. The mandatory build and unchanged scoped callback, scheduler and park-batch tests pass; the matching census review preserves pending callback ownership and all holds. Full GL/D3D27 gameplay, GPU behavior and overall crash freedom remain open. REP remains on automated-review hold.
+Rune's original demo reached an inspected graphics wizard through the local CLI. Its renderer-test launch was acknowledged without a child running, because child-process execution was disabled. Gameplay and D3D remain untested. Rune's next run will use the existing documented child-process option with finite watchdogs. Original files and INIs are unchanged.
 
-A fresh Rune worker is testing the pinned original demo through ordinary first-run/menu input using the existing local CLI route. Redline's original local CLI route is next, serialized. Captures will distinguish menus and intros from player-controlled gameplay; CLI results cannot establish browser or WebGL behavior.
+A fresh Redline worker now owns the serialized runtime slot, pursuing original DISPLAY selection, Play and ordinary gameplay input through the local CLI. CLI captures cannot establish browser or WebGL behavior. Browser testing still awaits authorized functioning file transfer after SCP received SSH403; the owner was notified via Telegram1768 and the box is stopped.
 
-Browser testing still awaits authorized functioning file transfer after Rune's first SCP received SSH403. Owner was notified via Telegram1768; the box is verified stopped. No runtime box is allocated or transfer workaround attempted. Crimsonland awaits faithful original installation or an authentic installed-state export. No public deployment.
+The ThreadManager constructor repair is published; the mandatory build and affected tests pass. Full GL/D3D27 coverage and overall crash freedom remain open. REP stays held; Crimsonland needs faithful original installation or authentic installed state. No public deployment.
