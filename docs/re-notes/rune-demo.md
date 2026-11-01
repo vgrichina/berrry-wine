@@ -1,5 +1,55 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: property-loop observer prepared; startup disk guard stops original
+
+**No new property-loop or gameplay observation was obtained.** The single
+original invocation stopped at the strict disk guard during initial startup,
+before the first requested 22,100-batch step returned. Evidence:
+`scratch/runs/20261101-rune-property-load-progress/`. No second invocation,
+production/test change, or generic repair was made.
+
+Original `Core!UStruct::SerializeBin` disassembly confirms the inner loop
+compares its array index against property **+0x34**, calls virtual **+0x78**
+using element size **+0x38** and offset **+0x48**, then increments the index.
+The outer loop follows property **+0x2c**. The concrete hypothesis prepared
+for this run was finite arrays and advancing property links, distinguishable
+from a repeated link or invalid count by bounded snapshots of live frames,
+struct/class pointers, property identities, counts, indices and next links.
+It remains untested on the original; the earlier single PC proves no cycle.
+
+The scratch observer intercepts both async instantiation and synchronous
+`WebAssembly.Instance`. Offline checks use the actual emitted module and
+shared **512 MB** memory, hash the whole memory before/after observations,
+and exercise synthetic finite links, a cycle negative control, invalid frame
+bounds, explicit unavailable exports and **10,001** successive snapshots.
+Actual CLI parser/control/eval and preload checks pass; a separate gzip
+round trip retains all **10,001** records. These are offline checks, not
+original property progression. Runtime driver/child logs stream to gzip.
+
+The Redline launcher final/result artifacts and **05:21:33 UTC**
+runtime/source/build release were accepted before runtime. All **4,389**
+accepted build inputs, module, generated mirror, **289** fixture pins and
+both original **142-file** trees match before/after. The accepted locked
+module remains `baef4e5a70f43b5d87fe086b4f5bd5b583c833e8bf07239ef05749f222035136`
+(**2,025,634 bytes**); the actual parent module and retained loaded reads match.
+The aborted child's module/read receipt is **unavailable**.
+
+Preflight free disk was **2,091,388,928 bytes**. After the guard fired,
+measured free disk was **1,952,841,728 bytes**; this crosses the required
+**2,000,000,000-byte** floor. The exact invocation's temporary child tree
+contained **137,952,001 logical bytes**. The driver's `finally` drain repeated
+the disk guard and exited before its normal cleanup receipt. Manual checks
+found both runtime PIDs already absent; the own temporary tree's INIs/logs
+were preserved compressed and that exact tree removed, restoring free disk
+above the floor. Outer PID/group and child PIDs are verified absent.
+
+The first resource blocker is insufficient startup staging headroom. The next
+guest observation remains the live serialization identities/counts/next links
+and return through LoadMap, after adequate staging headroom is available.
+No guest invariant, loader stall, LoadMap return, movement/action response,
+gameplay PNG or texture qualification is established by this attempt.
+Box ID/state/expiry and ownership are N/A.
+
 ## 2026-11-01: live travel URL and original LoadMap reads observed
 
 **The actual pending ClientTravel URL is `DEMOHel1?Difficulty=0`, and original
