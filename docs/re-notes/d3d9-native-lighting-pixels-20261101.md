@@ -1,0 +1,9 @@
+# Native D3D9 lighting pixels — 2026-11-01
+
+On main `2ec46b5d7b3d423bd8191684c66dbf24e2f7caca`, `timeout 120s node test/test-d3d9-lighting.js` exited 0 in 4.450 seconds: native directional/point/spot lighting PASS, 36 pixel cases and malformed descriptor/retirement checks. Evidence: `scratch/runs/20261101-d3d9-native-lighting-pixels/` (`result.json`, `input-pins.json`, `test.log.gz`). All 289 pinned source/lib and fixture inputs were unchanged before/after.
+
+The existing test compiles an actual WAT render harness and draws through the software Device into a 4×4 framebuffer. It compares presented pixel channels against expected values within one unit, checks temporary allocation retirement, and intercepts the native lighting binder to submit malformed descriptors. Rejected descriptors must preserve the original bundle. Unsupported/invalid snapshots must throw without retaining temporary allocation. The test destroys its Device afterward. No test assertions or implementation changed.
+
+This proves this fixture's native lighting/software-pixel and rejection behavior. It does not establish Windows API end-to-end behavior, compiler read tracing, whole-module byte identity, GPU parity, game performance/audio, historical 27-title coverage or broad crash freedom.
+
+Scheduling correction: the result was written at 13:44:32.288 UTC. Queued Quake II incorrectly matched its own WAIT wording as a coordinator release and started at 13:44:33.147 UTC, before the coordinator's actual 13:47:10 release. Thus the lighting test was already finished, but the game gate was invalid. The worker disclosed the error and quit without gameplay inputs; its run is not accepted as checkpoint restoration or onward progress. Future gate checks must match an actual coordinator RELEASE entry, not substring occurrences in WAIT text.
