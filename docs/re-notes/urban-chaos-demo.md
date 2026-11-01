@@ -450,3 +450,95 @@ Disk guards sampled above2,000,000,000 bytes free with finite sampling gaps;
 no RAM gate or foreign cleanup. Native box ID/state/expiry are N/A. Own shutdown
 was delegated; cleanup/publication/final records document absent owned
 processes, groups, watchers and new child temps and ownership handback.
+
+## 2026-11-01 ready-any repair: Setup, title and mission opening recovered
+
+Evidence: `scratch/runs/20261101-urban-chaos-ready-wait-repair/`.
+The generic mixed-event ready-any defect is repaired in `waitMultiple`.
+The complete handle set is validated before acquisition, including closed and
+tagged authority handles, local generations, thread aliases and process handles.
+Bounded byte reads support unaligned x86 handle arrays. Ordered zero-time
+acquisitions select the lowest ready index and consume only that object.
+Valid named events no longer reject a nonzero-timeout call before checking
+readiness. Named wait-all and nonzero-timeout multiple waits with no ready
+object still return WAIT_FAILED: cross-process blocking multiple waits are
+not implemented by this repair. Single-wait, scheduling, callback, concurrency,
+SEH and CRT nonlocal-jump algorithms are unchanged.
+
+The exact Battlezone black-dialog author DONE/PUSH RELEASE at 16:12:35 UTC,
+fresh launcher result0/final, and direct absence of eight owned PIDs/seven
+groups passed the gate at 16:12:43 UTC. Dispatch was `4d9446b48`; actual gate
+main was `6f4fa1d5ecb75f03aea8e0b354dbe7c051ca3c5f`; original deadline
+16:37:43 UTC. The first locked build failed the conservative whole-JS-file
+callback census SHA check. `first-build-failure.log` is retained. Following
+the documented inventory maintenance procedure, the complete producer delta
+was reviewed, and only the matching thread-manager seal SHA/reason changed.
+Ownership remains pending; no gate or held algorithm was bypassed. Locked
+builds after review and after the final unaligned-read adjustment both passed.
+
+Focused thread-manager, named-event authority/API/end-to-end, callback census
+and census rejection-control tests passed. Maintained end-to-end regressions
+invoke production WAT CreateEventA, SetEvent, WaitForMultipleObjects,
+WaitForSingleObject and CloseHandle with a real authority in another process.
+They exercise both ready indices, both-ready ordering, finite/INFINITE/zero
+timeouts, auto-reset consumption, manual-reset persistence, partial/final close,
+private creation tags, invalid later handles and unsupported no-ready/wait-all
+cases. Unit cases additionally cover recycled local handles, pending/exited/
+closed thread aliases, process validity, semaphore consumption and array bounds.
+These are API/state-consumer tests, not native-Windows conformance certification.
+The retained real-API reproducer now returns `[0,258,258,0,258]`: both INFINITE
+and timeout0 return index0 and consume the signal. Its pass now means repaired
+semantics, unlike the predecessor's diagnostic pass.
+
+One original used the registered frozen native software CLI, batch-size100000,
+bounded probes and sequential step requests of at most25 batches/180 seconds.
+It ran 440.539 seconds and exited0 after ordinary quit and delegated orderly
+SIGTERM. At batch25, native inventory and reviewed native backing show the
+ordinary graphics/audio Setup dialog. `main-waits-setup.json` retains the
+actual RSX wait on `[0x0e000041,0x0e000040]`, INFINITE: result0, first event
+state1 before/state0 after. Its worker subsequently exits. This directly
+connects ready-event consumption to recovery of the previously blocked Setup.
+
+After backing inspection, normal mouse-down/up on visible Okay at275,445
+dismissed Setup. Title is reviewed at205; held Enter reaches mission map307,
+briefing409 and the loading image511. Rendered opening scenes at711,911,1111
+and final1436 show rain, buildings, characters and objective captions.
+Playable HUD, player movement, combat and interaction success were not reached
+or claimed. No second original, alternate settings or game-specific workaround.
+
+Every navigation action has before/held/released/settled samples and a matched
+neutral interval. Three held Enter pairs have six actual matching dequeue,
+route and DispatchMessageA records. The native Setup mouse path records host
+actions, a visibly pressed button and dialog dismissal, but does not populate
+those generic guest dispatch counters; no equivalent mouse dispatch proof is
+claimed. Final1436 known queues are empty; sampled physical/async keys,
+including VK1/VK13, are false and numeric mouse mask is0. Their pressed latches
+remain true; guest post queues and SDL consumption are unknown.
+
+Further progression stopped when the auxiliary disk-guard process was found
+terminal143, cause undetermined. Its last record is 16:22:23 UTC; discovery
+was 16:25:18 UTC. The independent primary driver remained live, sampling disk
+and enforcing disk/time/log guards. Its minimum was2,257,408,000 bytes; the
+auxiliary guard's earlier minimum was2,037,649,408. This is a helper-lifecycle
+blocker, not a game crash or a claim of continuous filesystem coverage between
+samples. The active advance controller was stopped, then final released-state
+and scene samples were obtained before shutdown. No original retry followed.
+
+Actual observer prerequisites passed sync/async execution, whole512MB memory
+read-only comparison, clock identity and late10,001 retention. The bounded
+wait probe passed real-call result/whole-memory equivalence. Scratch observers
+now write only from the controlling main context to prevent Worker snapshot
+overwrites. Actual original compilation observed canonical module
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+All4,444 source identities,1,124 fixture/manifest identities and289 observed
+runtime reads match before/after. All1,122 manifest paths match, preserving
+original Fallen.exe SHA256 and the reconstructed-config distinction above.
+Read coverage excludes all-async/direct-OS/compiler-read and guest-memory
+identity claims. All43 PNGs pass CRC/complete-deflate checks; full runtime gzip
+passes. Primary milestone captures were visually reviewed. No FPS, audio,
+browser/GPU or full27 claim. Native box ID/state/expiry are N/A; own shutdown
+was delegated. Cleanup/publication records carry final ownership handback.
+
+Next: investigate the auxiliary guard's unexplained termination before a fresh
+bounded original continuation toward playable HUD and held movement. The API
+correction does not authorize broader retained-context or blocking-wait work.

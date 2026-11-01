@@ -63,6 +63,76 @@ assert.notStrictEqual(idHandle, idView.getUint32(threadIdWa, true),
   assert.strictEqual(events.resetEvent(event), 0, 'closed handle cannot be reset');
 }
 
+// Wait-any validates the whole set before its lowest-index acquisition.
+{
+  const waits = makeThreadManager();
+  const a = waits.createEvent(false, true), b = waits.createEvent(false, true);
+  const manual = waits.createEvent(true, true), closed = waits.createEvent(false, true);
+  waits.closeSyncHandle(closed);
+  const replacement = waits.createEvent(false, false);
+  assert.notStrictEqual(replacement, closed, 'a recycled slot has a fresh identity');
+  const ptr = 0x10000 - 8;
+  const view = new Uint32Array(waits.memory.buffer);
+  const many = (first, second, timeout = 0xFFFFFFFF) => {
+    view[ptr >>> 2] = first; view[(ptr >>> 2) + 1] = second;
+    return waits.waitMultiple(2, ptr, false, timeout);
+  };
+  for (const invalid of [0, 0x12345678, closed, a | 0x80000000]) {
+    assert.strictEqual(many(a, invalid), 0xFFFFFFFF);
+    assert.strictEqual(waits.waitSingle(a, 0), 0, 'invalid later handle leaves ready event unconsumed');
+    waits.setEvent(a);
+    assert.strictEqual(many(invalid, a), 0xFFFFFFFF);
+    assert.strictEqual(waits.waitSingle(a, 0), 0);
+    waits.setEvent(a);
+  }
+  assert.strictEqual(many(a, b), 0, 'both ready chooses lowest index');
+  assert.strictEqual(waits.waitSingle(a, 0), 258, 'chosen auto event consumed once');
+  assert.strictEqual(waits.waitSingle(b, 0), 0, 'higher ready event remains available');
+  waits.setEvent(b);
+  assert.strictEqual(many(a, b, 30), 1, 'finite ready wait chooses second');
+  assert.strictEqual(many(a, b, 0), 258);
+  assert.strictEqual(many(a, b), 65535, 'local no-ready wait retains scheduler sentinel');
+  assert.strictEqual(many(a, manual), 1);
+  assert.strictEqual(waits.waitSingle(manual, 0), 0, 'manual event remains signaled');
+  const thread = waits.createThread(0x6000, 0, 0);
+  const alias = waits.duplicateCurrentThread(2);
+  assert(alias, 'thread alias exists');
+  assert.strictEqual(many(a, alias, 0), 258, 'pending thread alias is valid but not ready');
+  waits.terminateThread(thread, 0);
+  assert.strictEqual(many(a, alias), 1, 'exited thread alias is ready');
+  waits.closeSyncHandle(alias);
+  waits.setEvent(a);
+  assert.strictEqual(many(a, alias), 0xFFFFFFFF, 'closed alias cannot hide behind ready event');
+  for (const [count, address] of [[0, ptr], [65, ptr], [2, ptr + 4], [2, ptr + 1], [2, -4]]) {
+    assert.strictEqual(waits.waitMultiple(count, address, false, 0), 0xFFFFFFFF);
+  }
+  assert.strictEqual(waits.waitSingle(a, 0), 0, 'bad wait array never consumes event');
+  const unaligned = new DataView(waits.memory.buffer);
+  unaligned.setUint32(ptr - 1, a, true); unaligned.setUint32(ptr + 3, manual, true);
+  assert.strictEqual(waits.waitMultiple(2, ptr - 1, false, -1), 1,
+    'x86 handle arrays may be unaligned; read the actual bytes');
+}
+{
+  const waits = makeThreadManager();
+  waits.mainInstance.exports.get_process_id = () => 77;
+  const event = waits.createEvent(false, true), ptr = 0x10000 - 8;
+  const view = new Uint32Array(waits.memory.buffer, ptr, 2);
+  view.set([event, 0xE2000 | 78]);
+  assert.strictEqual(waits.waitMultiple(2, ptr, false, -1), 0xFFFFFFFF, 'foreign process id is invalid');
+  assert.strictEqual(waits.waitSingle(event, 0), 0);
+  view.set([event, 0xE2000 | 77]);
+  assert.strictEqual(waits.waitMultiple(2, ptr, false, 0), 258, 'own live process is valid but unsignaled');
+  view.set([event, 0xE40001]);
+  waits.setEvent(event);
+  waits.processCtl = () => -1;
+  assert.strictEqual(waits.waitMultiple(2, ptr, false, -1), 0xFFFFFFFF, 'invalid child process prevalidated');
+  assert.strictEqual(waits.waitSingle(event, 0), 0);
+  const semaphore = waits.createSemaphore(1, 2);
+  view.set([event, semaphore]);
+  assert.strictEqual(waits.waitMultiple(2, ptr, false, -1), 1);
+  assert.strictEqual(waits.waitSingle(semaphore, 0), 258, 'only one semaphore unit consumed');
+}
+
 const tm = makeThreadManager();
 const handles = [];
 

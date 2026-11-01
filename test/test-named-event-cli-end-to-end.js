@@ -271,19 +271,114 @@ async function reservations() {
     assert.equal(tm._authorityWaits.size, 0);
     tm.setEvent(h); assert.equal(tm.waitSingleCooperative(h, 50), 0xffffffff);
     new Uint32Array(f.memory.buffer, 65536, 1)[0] = h;
-    assert.equal(tm.waitMultiple(1, 65536, false, 50), 0xffffffff);
-    assert.equal(tm.waitSingle(h, 0), 0);
+    assert.equal(tm.waitMultiple(1, 65536, false, 50), 0);
+    assert.equal(tm.waitSingle(h, 0), 258, 'ready multiple wait consumes the named signal');
     assert.equal(tm.waitSingle(h, 25), 65535); await delay(60);
     tm.setEvent(h); assert.equal(tm._resolveAuthorityWait(h, 25, 1), 258);
     assert.equal(tm.waitSingle(h, 0), 0, 'timeout leaves later signal unconsumed');
     console.log('PASS reservations, pulse, status, single completion, stale continuation, teardown, quotas');
   } finally { tm.closeNamedEventAuthority(); }
 }
+// Real production WAT API calls backed by the real authority. Unlike the
+// adapter tests above, subsequent API consumers are the signal-state oracle.
+async function readyAnyWat() {
+  const { bootRenderHarness } = require('./render-helper');
+  let tm, memory;
+  const extraWat = `
+    (func (export "ready_init") (global.set $image_base (i32.const 0)))
+    (func (export "ready_create") (param $name i32) (param $manual i32) (result i32)
+      (i32.store offset=16 (global.get $reg_base) (i32.const 0x300000))
+      (call $handle_CreateEventA (i32.const 0) (local.get $manual) (i32.const 0) (local.get $name) (i32.const 0) (i32.const 0))
+      (i32.load (global.get $reg_base)))
+    (func (export "ready_set") (param $h i32) (result i32)
+      (call $handle_SetEvent (local.get $h) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+      (i32.load (global.get $reg_base)))
+    (func (export "ready_single") (param $h i32) (result i32)
+      (i32.store offset=16 (global.get $reg_base) (i32.const 0x300000))
+      (call $handle_WaitForSingleObject (local.get $h) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+      (i32.load (global.get $reg_base)))
+    (func (export "ready_many") (param $p i32) (param $all i32) (param $timeout i32) (result i32)
+      (i32.store offset=16 (global.get $reg_base) (i32.const 0x300000))
+      (call $handle_WaitForMultipleObjects (i32.const 2) (local.get $p) (local.get $all) (local.get $timeout) (i32.const 0) (i32.const 0))
+      (i32.load (global.get $reg_base)))
+    (func (export "ready_close") (param $h i32) (result i32)
+      (call $handle_CloseHandle (local.get $h) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+      (i32.load (global.get $reg_base)))
+  `;
+  const h = await bootRenderHarness({ fonts: 'none', extraWat, extraHostOverrides: {
+    create_event: (manual, initial, wa) => {
+      let name = ''; const bytes = new Uint8Array(memory.buffer);
+      if (wa) for (let i = wa; bytes[i]; i++) name += String.fromCharCode(bytes[i]);
+      return tm.createEvent(manual, initial, name);
+    },
+    set_event: h => tm.setEvent(h),
+    fs_close_handle: h => tm.closeSyncHandle(h) ? 1 : 0,
+    wait_single: (...a) => tm.waitSingle(...a, 1),
+    wait_multiple: (...a) => tm.waitMultiple(...a, 1),
+  }});
+  memory = h.memory; const e = h.exports; e.ready_init();
+  tm = new ThreadManager(h.module, memory, h.instance, () => ({ host: {} }));
+  tm.enableNamedEventAuthority();
+  try {
+    const name = 0x2000, ptr = 0x3000;
+    Buffer.from(`ReadyAny-${process.pid}\0`).forEach((v, i) => e.guest_write8(name + i, v));
+    const local = e.ready_create(0, 0) >>> 0, named = e.ready_create(name, 0) >>> 0;
+    const duplicate = e.ready_create(name, 1) >>> 0;
+    assert.equal(duplicate, named, 'WAT strips the private existing-object tag');
+    const pair = (a, b, timeout = -1, all = 0) => {
+      e.guest_write32(ptr, a); e.guest_write32(ptr + 4, b);
+      return e.ready_many(ptr, all, timeout) >>> 0;
+    };
+    for (const timeout of [-1, 50, 0]) {
+      assert.equal(e.ready_set(local), 1);
+      assert.equal(pair(local, named, timeout), 0, 'ready unnamed event wins mixed wait');
+      assert.equal(e.ready_single(local), 258, 'mixed wait consumed auto signal');
+      assert.equal(e.ready_set(named), 1);
+      assert.equal(pair(local, named, timeout), 1, 'ready authority event can win');
+      assert.equal(e.ready_single(named), 258, 'authority consumed exactly once');
+      e.ready_set(local); e.ready_set(named);
+      assert.equal(pair(named, local, timeout), 0, 'lowest ready index wins in reversed order');
+      assert.equal(e.ready_single(named), 258);
+      assert.equal(e.ready_single(local), 0, 'higher ready signal remains unconsumed');
+    }
+    assert.equal(pair(local, named, 0), 258, 'no-ready zero poll times out');
+    for (const timeout of [-1, 50]) {
+      assert.equal(pair(local, named, timeout), 0xffffffff, 'no-ready remote multiwait remains unsupported');
+    }
+    e.ready_set(local); e.ready_set(named);
+    assert.equal(pair(local, named, -1, 1), 0xffffffff, 'remote wait-all remains unsupported');
+    assert.equal(e.ready_single(local), 0);
+    assert.equal(e.ready_single(named), 0, 'rejected wait-all consumes neither event');
+    for (const invalid of [0, 0x12345678, named | 0x80000000]) {
+      e.ready_set(local);
+      assert.equal(pair(local, invalid), 0xffffffff);
+      assert.equal(e.ready_single(local), 0, 'invalid later handle leaves signal available');
+      e.ready_set(named);
+      assert.equal(pair(named, invalid), 0xffffffff);
+      assert.equal(e.ready_single(named), 0, 'invalid later handle also preserves authority signal');
+    }
+    assert.equal(e.ready_close(named), 1, 'partial close retains existing reference');
+    e.ready_set(named); assert.equal(pair(local, named), 1);
+    assert.equal(e.ready_close(named), 1);
+    e.ready_set(local);
+    assert.equal(pair(local, named), 0xffffffff, 'closed authority handle invalidates entire wait');
+    assert.equal(e.ready_single(local), 0);
+    Buffer.from(`ReadyManual-${process.pid}\0`).forEach((v, i) => e.guest_write8(name + i, v));
+    const manual = e.ready_create(name, 1) >>> 0;
+    assert.notEqual(manual, named, 'recreated slot has a new handle');
+    e.ready_set(manual);
+    assert.equal(pair(local, manual), 1);
+    assert.equal(pair(local, manual), 1, 'manual authority event remains signaled');
+    assert.equal(tm._authorityWaits?.size || 0, 0, 'ready probes register no blocking continuation');
+    console.log('PASS production WAT mixed ready-any API: order, consumption, invalid/closed/tagged handles, manual reset, no-ready rejection');
+  } finally { tm.closeNamedEventAuthority(); }
+}
+
 async function main() {
   const child = cp.fork(__filename, ['--authority'], { stdio: ['ignore', 'inherit', 'inherit', 'ipc'] });
   const endpoint = await new Promise((resolve, reject) => { child.once('message', resolve); child.once('error', reject); });
   process.env.WINE_NAMED_EVENT_ENDPOINT = JSON.stringify(endpoint);
-  try { await timing(); if (!baseline) await reservations(); }
+  try { await timing(); if (!baseline) { await reservations(); await readyAnyWat(); } }
   finally { child.send('close'); await new Promise(resolve => child.once('exit', resolve)); }
   console.log('PASS qualified source-slice end-to-end acceptance; no full VM/game/Windows qualification');
 }
