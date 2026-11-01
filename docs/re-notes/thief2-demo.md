@@ -107,6 +107,58 @@ audio, performance, Safari, or physical-device qualification; retain the
 recorded run IDs, module hashes, limitations, and failed attempts above.
 
 
+## Native interaction attempt, 2026-11-01
+
+Run `scratch/runs/20261101-thief2-native-interaction/` did **not** establish
+opening a door, taking loot, or visible objective progress. One native original
+reached Normal / The Unwelcome Guest, then stopped at the first attempted-route
+navigation blocker: the nearby torch-side barred window above a raised stone
+sill. No reachable door or loot item was identified; no use/attack was attempted
+against the window. Other routes remain untested; no emulator-defect finding.
+No second original was launched.
+
+Original `readme.wri` and unchanged `DARK.BND` / `user.bnd` document right mouse
+as `+use_item`, left mouse as `+use_weapon`, S walking, Up running, M map, and
+F4/F5 lockpick selection. The readme says to approach a highlighted door and
+hold right mouse to pick its lock. Highlight alone would not establish opening.
+The reconstructed `DARKINST.CFG` and registered defaults were preserved.
+
+The coordinator explicitly overrode the interrupted Quake II launcher gate at
+12:53:34Z after original exit 0 and four absent PIDs. ACK at 12:54:36Z set the
+13:19:36Z runtime deadline. Actual gate/source main was
+`90aa4059d818f50185ae5724a945f3b3de34f77b`, rather than dispatch `f581e849f`.
+All 4,392 accepted source pins and 141 accepted read pins matched; reused module
+SHA256 `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`
+also matched actual runtime-compiled bytes. Before original use the observer
+passed actual sync/async execution, whole shared 512 MB read-only comparison,
+clock identity and emitted late-10001 retention. The run's 4,444 source/module
+pins, 41 fixture files plus registered manifest and recovery inventory, full
+fixture tree and 142 observed runtime reads remained unchanged. EXE SHA256
+matched `5e5f831ba549081c35e592afaa540f336f76c828a996b4fcb74edef46beba942`.
+Observer coverage is string-path readFileSync/readFile/promises.readFile,
+not exhaustive descriptor/OS I/O or compiler-source provenance.
+
+Native CLI used 100,000-block batches, registered-default 200 ms/batch guest
+clock, software rendering, frozen stdin control, a 1,300-second internal guard
+and longer 1,380-second outer allowance bounded by the gate deadline. Menu,
+Normal, objectives, loadout (batch 2400), and world/HUD (3500) were inspected.
+Browser milliseconds were not replayed as native batches. Captures sometimes
+preceded consumption/presentation: the map became visible at 4376 after its key
+at 4085. The initial five-batch turn release was still queued at 3535; another
+turn was issued before it drained, so early captures do not isolate those turns.
+Later controls used longer settling. All 20 keyboard edges / ten balanced pairs
+ultimately dequeued, routed and dispatched to HWND 0x10001. Final known queues
+were empty; guest post queue unknown. No interaction-button consumption claim.
+
+Before/held/released/settled captures document approach to the window. Neutral
+batches 5431–5631 retained identical sampled window, sill, floor and HUD pixels;
+torch/snow animation is not interaction progress. All 61 PNGs passed CRC/deflate
+checks, full compressed runtime log decoded, and focused identity/input/evidence
+checks passed. PID 3671463 exited 0 after 366.488 seconds at batch 5631 without
+external timeout. Runtime disk minimum was 2,038,202,368 bytes; no RAM gate.
+Native local box ID/state/expiry N/A; local shutdown explicitly delegated.
+No audio, FPS, GPU, browser or full-suite qualification is added.
+
 ## Automated recovery, 2026-10-14
 
 Fresh acquisition from https://archive.org/download/ThiefIiTheMetalAgeDemo/thief2.exe verified SHA1 e812b6d8a41c7755f87e1e17bf8e7ef11a57de5a (metadata size136880529). Extract with7-Zip23.01 and copy archive/thf2demo/ to game/, then write documented DARKINST.CFG: install_path,resname_base,load_path,script_module_path each C:\; movie_path C:\MOVIES; language english. This file is reconstructed installer state, not original installer output.
