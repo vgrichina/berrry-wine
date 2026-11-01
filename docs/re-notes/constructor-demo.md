@@ -1167,3 +1167,67 @@ claimed. Further analysis stopped on discovery, without retry, cleanup of
 foreign files or a runtime launch. The guard needs a live driver abort signal
 in a future assignment. Evidence/publication only follows; no RAM gate,
 browser/boat or gameplay/audio claim is involved.
+
+### 2026-11-01 GC defined-bit repair: tested WIP, build aborted
+
+Run `20261101-constructor-gc-defined-bits-repair`, assigned input
+`c2105cd0d10645199ec59dda8ece6d5a1dd1209b`, prepared the next default-VGA
+contract above. **The repair remains uncommitted WIP; the mandatory build did
+not finish.** Only this investigation note is published. WIP paths are
+`tools/toyvm/dos.js`, `test/test-toyvm-vbe.js`, and the two existing generated
+`docs/dos-corpus/live/toyvm{,-jit}-bundle.js` files.
+
+The proposed data-write policy stores `value & 0Fh` in GC01h/02h only when
+the selected model is plain VGA (`none`, including the default). Reads then
+return zero for reserved bits. This is deterministic emulator policy; IBM
+September1992 pages2-76/2-78/2-79 specify undefined reserved-bit readback,
+not guaranteed physical zero. Four-bit index decoding, other GC data policies
+and explicit Trident behavior remain unchanged. Both bundles were regenerated;
+the build's reproducibility check accepted them before the later abort.
+
+The real Machine-port regression performs the authentic GC31h/32h mask3Fh
+save/clear/read/set/read/restore sequence with initial low nibbles0/5/A/F.
+On the unchanged old source it exits1 with20 failed and54 passed assertions;
+with the repair it exits0 with74 passed assertions. Both default and explicit
+`none` return clear00h/set0Fh and restore the saved low nibble, rejecting the
+extension predicate while preserving low-nibble functionality. Word OUT,
+index aliases, other GC registers and the selected-model compatibility checks
+are included. This is synthetic port evidence, not an observed original
+UVCONFIG branch execution or a qualified SVGA model.
+
+The affected combined VBE suite passes178 assertions, including the existing
+69 sequencer and33 VBE assertions and two new guest-planar checks. A synthetic
+COM configures ports and executes real A000 planar memory reads/writes to
+check enable-set/reset planes, matching/nonmatching color comparison and
+restoration to CPU-data writes. Its SHA256 is
+`d760de7e6c38f2755bf18fdffa4cc054d61e25d667014fb6aa3abb1183222d5a`;
+the actual emitted module remains
+`03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`.
+An initial fixture omitted Color Don't Care and failed one assertion; the
+corrected fixture explicitly compares all four planes. Both logs are retained.
+No DAC/retrace/bundle execution suite or original was run in this assignment.
+
+**First blocking prerequisite:** `flock /tmp/wine-build.lock bash tools/build.sh`
+was actively terminated when free `/home` disk reached1988030464bytes,
+below the retained stricter2020000000-byte stop threshold and required2GB
+floor. The command supervisor sent TERM to build process group62297, actually
+waited for its driver (exit-15), and killed remaining group children. Direct
+inspection found no remaining group members. The persistent independent
+monitor also latched that same minimum and exited0, actually waited; no
+sustained-headroom success is claimed. Unlike the previous guard failure,
+this breach interrupted the active task driver. The build reached combined
+WAT generation, so it cannot be reported as a completed compile/build.
+Implementation and tests stopped without retry, floor reduction or foreign
+cleanup. The separately prepared injected-breach self-test was not executed.
+
+Evidence includes baseline hashes, actual test/module/fixture identities,
+old/new/fixed logs, guarded-command wait receipts and the latched abort.
+Restore sustained headroom and assign a fresh continuation before resuming;
+inspect the preserved WIP, run affected remaining checks and the mandatory
+locked build, and commit these code paths only after all required checks pass.
+The current passing synthetic checks do not establish playable Constructor.
+A genuinely supported adapter's truthful detection, memory capacity,
+bank/window access and mode/pixel behavior remain prerequisites before any
+separately assigned original or authentic sound-setup run. No hardware switch,
+fabricated memory/E7/vendor identity or setup bypass was introduced. Box ID,
+state and expiry are N/A; no test box or original game was started.
