@@ -1093,6 +1093,48 @@ requires separately authorized runtime with sustained disk headroom, then
 ordinary Turret positioning/defense against the now identified Fighter.
 No FPS, audio or full-suite claim.
 
+
+## 2026-11-01: safe headroom recovery remains below launch prerequisite
+
+Run `scratch/runs/20261101-battlezone-headroom-engagement/` stops during
+static preparation, with **zero original game launches**. Lossless compression
+of **31 released Icewind installed-data BIF files** reclaims **51,884,563
+logical bytes**. Direct free space after compression is **2,198,523,904 bytes**;
+the final check is **2,196,598,784 bytes**, **203,401,216 bytes below** the
+required **2,400,000,000-byte sustained launch margin**. That prerequisite was
+not established. The direct stop **2,020,000,000** and floor **2,000,000,000**
+remain unchanged. No low-margin original or duplicate disk observer ran.
+The predecessor's transient writer and duration remain unknown.
+
+Exact artifact ownership was appended before mutation. Each source has a full
+SHA-256 and size; gzip staging in tmpfs passes a complete decompression/hash
+roundtrip. The destination's compressed SHA, fsync and durable per-file recovery
+recipe precede original unlink. `compression-plan.json`, `compression-NN.json`
+and `compression-result.json` retain exact paths and recovery commands.
+The multiply linked `cd2/data/mvefile2.bif` is retained: the first preflight
+rejected its three links before mutation, then static compression skipped it.
+No useful native save, active log, current Urban/root observer artifact or
+coordinator compression receipt changed. Tmpfs staging is removed.
+
+`pins.json` records current main and on-disk module/native executable/save
+hashes; there are **no actual runtime-consumption pins** in this static-only run.
+The predecessor's uncompressed native `C:\m3` remains **66,050 bytes**, SHA-256
+`e5506fc41132b395c3e7de455a070996d159890cf93b3e581f3343c93dd8d3da`;
+the executable remains SHA-256
+`0554156663000fc1c0c0ad2275e460fa6fc9acda4abdd26c720b69019d04617a`.
+The previously verified ordinary reload route and exact controls are retained
+in the predecessor and referenced by this run's `RECOVERY.txt`.
+
+Urban worker `01a198ad-10a1-7960-b622-4a394f86645c` runtime/source/build
+ownership was never consumed or claimed. No original, driver, controller,
+observer or lifecycle changes ran; original/driver OS waits and final key/queue
+samples are **N/A**, rather than inferred from predecessor evidence. Native
+box ID/state/expiry are **N/A**; no own runtime remains. Identified Turret
+combat, damage, kill and next objective remain unverified. The next concrete
+prerequisite is additional authorized recoverable disk savings sufficient to
+establish sustained 2.40 GB free space, followed by the exact Urban release gate.
+Only this note is tracked; no production/source/test/TODOS/STATUS edits.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
