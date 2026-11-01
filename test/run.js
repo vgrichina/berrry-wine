@@ -4997,7 +4997,9 @@ async function main() {
     const {Encoder} = require('../lib/d3d-command-stream');
     const sigs = JSON.parse(fs.readFileSync(path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;
     ctx.d3dCommands = new Encoder({
-      memory, module: wasmModule, sigs,
+      memory, module: wasmModule, sigs, strictReady: true,
+      // An attached worker must finish startup before the first guest draw;
+      // otherwise startup timing can send that draw down the local fallback.
       // The Encoder speaks the Web Worker surface; adapt a worker_thread to it.
       workerFactory: () => {
         const worker = new Worker(path.join(ROOT, 'lib', 'd3d-render-worker.js'));

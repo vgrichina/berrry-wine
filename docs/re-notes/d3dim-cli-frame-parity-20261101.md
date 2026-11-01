@@ -1,6 +1,6 @@
 # Original SDK Flip3DTL CLI worker parity — 2026-11-01
 
-**FAIL: the real-thread regression remains open.** The single authorized run of
+**Repaired and validated in the follow-up below.** The initial run of
 `test/test-cli-d3d-worker-parity.js` exited 1 at line 52 because one draw fell
 back to the guest thread. Both CLI children exited 0 and produced identical,
 nonblank frames. Pixel equality alone does not satisfy this regression's
@@ -104,3 +104,96 @@ same counter, and this run did not trace the triggering branch. Establish its
 cause before changing readiness/queueing behavior. No failure investigation
 fixture, extra runtime diagnostic or workaround was executed here. The worker
 stops after publishing this documentation; the launcher notifies the coordinator.
+
+## Startup fallback repair — 2026-11-01
+
+Follow-up evidence: `scratch/runs/20261101-d3dim-worker-fallback-repair/`.
+Baseline `b91dc9ad7245986239da219971bfe9c8d430f0d8`; tested HEAD
+`3f7b25af244fe0d34265bd2c9cb7499d58662aaa` added only coordinator documentation.
+The only changed execution input is `test/run.js`, which now passes
+`strictReady: true` to its existing legacy Encoder. No command-stream code,
+worker implementation, original fixture or assertion changed. No new test was
+needed: `test/test-render-legacy-ready.js` already covers delayed startup,
+startup errors and fence errors with a real parked producer.
+
+The branch was traced **before editing**. The first two un-delayed probes
+(`before/` with the original hash observer, then `trace/` with a smaller
+observer) both exited 0 with 2,484 queued draws and zero fallbacks. This confirms
+that reproducing the historical count depends on scheduling; its original logs
+do not retrospectively identify its branch. Neither probe is represented as
+having reproduced that historical single increment.
+
+For a controlled causal probe, `delayed-before/observe.cjs` delays the actual
+render worker's `WebAssembly.instantiate` by 100 ms, leaving its module, imports,
+results and shared control stores unchanged. A setter observes real fallback
+counter increments and preserves their values. All 18 increments have a stack
+at `Encoder.enqueue`, `lib/d3d-command-stream.js:207:48`, called through
+`Encoder.call` and the real `gpu_gl_call` import. Each records `strictReady=false`,
+READY=0, ERROR=0, COMPLETED=0, SUBMITTED=0 and queued=0. Descriptor and acquisition
+checks occur after this return and cannot cause these increments. The child
+exited 0, later became ready, and reported 2,466 queued draws, 18 fallbacks and
+412 fences. These are actual results under an explicit startup delay, not an
+unmodified reproduction of the old count of one.
+
+The CLI had opted into the Encoder's opportunistic readiness behavior: any draw
+arriving before the worker finishes instantiating returns 0 and runs locally.
+The minimal integration repair enables the existing strict readiness contract,
+as already used by the guest-worker integration. The first readiness request
+waits on shared Atomics; the independent render thread continues instantiation
+and notifies READY. ERROR remains an exception and the existing 30-second
+readiness timeout remains active. Descriptor rejection, packet ownership,
+submission, asynchronous replay and completion fences retain their existing
+behavior. No fallback counter is filtered or reset.
+
+Validation, executed sequentially:
+
+| Check | Result |
+| --- | --- |
+| `timeout 15s node test/test-render-legacy-ready.js` | PASS; delayed READY, startup ERROR, fence ERROR, existing ownership checks |
+| `flock /tmp/wine-build.lock bash tools/build.sh` | PASS; build exit 0, canonical WASM unchanged |
+| Original `test/test-cli-d3d-worker-parity.js`, outer `timeout 270s`, evidence-only original observer | PASS; both serial children exit 0, each original timeout 120000 ms |
+| Same unchanged original fixture with worker instantiation delayed 100 ms | PASS; both serial children exit 0, original timeouts unchanged |
+
+Both successful fixture runs report **2,484 queued draws, zero fallbacks and
+415 fences**, and reach every original assertion, including nonblank exact PNG
+parity. Each compares 307,200 pixels at 640×480, with 85 colours, zero changed
+pixels and zero maximum channel delta. All four retained images have SHA256
+`1329698a5091fa3623456535571cfebaee699483bafffa15ecf79948b5d5f938`. The ordinary
+worker image was visually inspected: textured red/blue cube, yellow frame label
+and control text, matching the historical capture. Actual images and full child
+logs are retained separately in `after/` and `delayed-after/`.
+
+One evidence-preload setup attempt failed before fixture/child execution:
+appending the delay observer duplicated its `wt` declaration and Node rejected
+that preload with a SyntaxError. The failed observer and logs remain in
+`observer-setup-error/`. Removing the duplicate and checking syntax fixed the
+observer; no runtime source repair or guest crash investigation resulted. No
+native crash, unexpected WASM trap, signal or timeout occurred in execution.
+
+All five observed compilations (one traced baseline child and four validation
+children) and all observed worker-module sends use WASM SHA256
+`2be3cebaa1c08a8e12075de000bfb83fb8692841c1452d9e317203f5c2fce8cf`.
+Saved module bytes and per-process/thread manifests establish actual module and
+worker-source identity, with the structured-clone limitation described above.
+Across the hash-observed runs, 91 loaded sources were recorded and verified
+unchanged; the only tracked loaded-source difference from the requested
+baseline is `test/run.js`, now SHA256
+`69f1d0193b0fddd31660a95271afba4e52a71bf09eb73e29e93c1e6d277f30bf`.
+The 4,462-input inventory differs from the prior inventory only in that file
+and remained unchanged through validation. The original fixture remains SHA256
+`1ee9c9ca7fdb216f967239c711e8ce33fcea2d8daadf076d9839c2566af106f8`;
+the command stream and worker retain the hashes in the initial identity table.
+
+The historical single fallback's stack was not captured and cannot be recovered
+from its old summary. The controlled probe establishes the startup branch and
+the before/after repair, rather than claiming forensic certainty about an
+unrecorded event. This validates the bounded native SDK regression, including
+startup delay and existing error handling; it makes no browser/GPU, heavy-load,
+other-game or general crash-freedom claim. Free disk stayed above 2 GB. Box
+ID/state/expiry and lifecycle are N/A; no box ownership was assigned. No further
+assignment or successor was launched.
+
+The evidence checker reports no outside-run or missing artifacts for this new
+bundle. Its global nonzero exit reflects other existing bundles; this bundle's
+null candidate ID deliberately leaves it dashboard-ineligible, as with the
+initial SDK run.
