@@ -634,3 +634,82 @@ absent. Native box ID/state/expiry are N/A; own shutdown was explicitly delegate
 and ownership handed back. Remaining diagnostic gap: historical SIGTERM sender
 and reason cannot be recovered from these records. The scoped HUD/movement goal
 has no remaining gameplay gap; no broader source repair is authorized here.
+
+## 2026-11-01 native encounter attempt: guard-check failure before gameplay
+
+Evidence: `scratch/runs/20261101-urban-chaos-native-encounter/`.
+No encounter or objective interaction was reached. The first guard failure
+stopped the single original at batch26 before any gameplay input; no retry.
+Historical HUD/movement evidence above remains historical.
+
+Exact `battlezone-renderer-dialog-freshness DONE/PUSH RELEASE` at17:23:38,
+fresh launcher final/result0 and independent absence of its21 listed PIDs/
+20 groups passed the gate at17:23:46.034 UTC. Dispatch input was
+`f20e19b24651f2e37fe53b422378205328338270`; actual main was
+`ebd313fd0b3415fe1dc0c6e7154317f855dbbfea`, including renderer fix
+`feb4934388f06da990a750d0073fd38776fa0c41`. Gate deadline was17:48:46.034,
+inside the18:15 overall bound. The renderer worker's passing locked build
+and relevant checks were reused after exact comparison of its4,063 pins and
+the prior Urban run's pins (4,445 unique accepted inputs, zero differences).
+Fresh renderer freshness, thread-manager and real-WAT named-event end-to-end
+checks also passed. No production source, test, build or fixture edit.
+
+All1,122 manifest paths matched; Fallen.exe SHA256 remains
+`8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`.
+Config.ini remains explicitly reconstructed installation state. Original
+readme.rtf was recovered read-only from the retained recovery ZIP into this
+run, without a download or rewriting archived evidence. Its controls tables
+specify arrows for movement/turning, C for action, Z punch, X kick and Space
+jump. It describes talking to a person with action and arresting a prone
+suspect. The vehicle hint conflicts with the table (Enter versus C); no
+vehicle input was selected. Bundled config and English instructions were
+also read. No combat/action binding was guessed or sent.
+
+The prior guard controller and diagnosis were read, and its proven detached
+supervisor/independent heartbeat-thread mechanism was reused. Advancing
+before-launch heartbeat samples and the final during-original heartbeat are
+retained. Original startup free space was2,182,414,336 bytes, above the
+2,150,000,000-byte immediate-launch minimum. Registered native software CLI
+used `--no-build --control-stdin --frozen`, batch-size100000, step requests
+1/24/1 and180-second finite request bounds. All recorded requests were
+acknowledged, maximum latency0.627 seconds. Reviewed Setup at25 is readable
+in the standard640x480 capture and the332x470 native dialog backing; final
+capture shows the same ordinary graphics/audio Setup. Okay was never pressed.
+
+The driver then raised `RuntimeError('primary guard lost')` in its combined
+heartbeat-age>1second / missing-supervisor / guard-failure-file check. The
+failing operand and age were not retained. The supervisor has no signal or
+failure file and ended normally with reason null after823 samples, minimum
+free2,180,182,016 bytes. Its last heartbeat was17:25:14.888; driver terminal
+was17:25:15.139 and supervisor terminal17:25:15.156. This does not establish
+supervisor death, a game crash or the cause of the rejected check. It differs
+from the prior foreground launchers' unexplained143. The driver requested
+ordinary failure-quit (acknowledged); original exit0 after20.163 seconds,
+then driver0 and normal supervisor completion. The Setup-neutral helper
+subsequently rejected the now-stopped guard before sending its first request.
+No unchanged retry, second original, guard bypass or source repair followed.
+
+Fresh observer validation passed actual sync/async execution, whole512MB
+read-only comparison, unchanged host/native clocks bounded456..457ms, and
+late-event10,001 retention. Actual original compile observed canonical module
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+All4,678 source/dependency pins and1,124 fixture/manifest pins matched after;
+all133 actual observed read hashes matched fresh before and after pins.
+Coverage excludes unhooked async/direct-OS/compiler reads and guest-memory
+identity. All four PNGs passed CRC/complete-deflate; full runtime gzip passed.
+Recover the log with `gzip -dc runtime.log.gz` inside the run directory.
+
+The batch25 state has zero gameplay counters and empty known queues. Sampled
+physical/async/pressed keys and mouse mask were unknown; final released-state
+sampling was not obtained because shutdown had already completed. No held keys
+were injected. Before/held/released/settled gameplay and matched neutral captures
+are unavailable. No HUD, movement, combat, objective, FPS, audio, browser/GPU
+or full27 claim. Disk evidence has finite sampling gaps; continuous coverage
+is not claimed. Local native box ID/state/expiry are N/A; delegated own shutdown
+completed. Cleanup records verify known own PIDs/groups/watchers/helpers and
+new child temps absent, with ownership handed back.
+
+Next: retain the rejected guard predicate's exact operand, monotonic age and
+heartbeat history before a separately assigned original continuation. The
+ordinary encounter/objective goal remains open; recovered original controls
+and the prior HUD-to-carpark route are ready for that continuation.
