@@ -1,6 +1,33 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
 
+## Post-repair ordinary movement: startup disk admission blocks the first run (2026-11-01)
+
+Run `20261101-redline-primary-movement` waits in scratch until Tachyon's fresh
+`final.txt` / `result.json` and **06:39:00 runtime/source/build release** are
+present. Gate-open main is `f1f9faf195273a8a14cbd7e0300af76fca3cd607`, containing
+published primary-capture repair `e06fe9784`. No tests, builds, originals or
+note edits occur before that release.
+
+The **first launch blocker is disk admission**: gate-open available space is
+**2,290,413,568 bytes**, below the required **2,300,000,000 bytes** by
+**9,586,432 bytes**. Initial available space was also below that requirement
+(2,299,797,504 bytes). No original invocation, build or diagnostic test is
+started, and no accepted-build reuse or actual-loaded-input claim is made.
+Only a consumption-aware driver and read-only callback validator are prepared
+in scratch. Other agents' artifacts are preserved; this run's small preparation
+files cannot recover the missing space. Original executable/manifest/config
+pins and the gate-open source/module/mirror identities are retained.
+
+The prior checkpoint is reviewed: W-down was dispatched, but W-up and mouse
+input remained queued. Its coherent primary screenshot does not establish
+completed ordinary movement. **Post-repair movement remains unverified**;
+before/held/released captures require a run admitted above the startup minimum
+with actual input consumption. No new screenshots, guest changes, EULA,
+renderer repair, runtime process, temporary staging tree or box are introduced
+(ID/state/expiry N/A). Gate, disk evidence and final/result remain in the named
+ignored run directory; runtime/source/build and owned paths are released.
+
 ## Same-frame canonical pixels prove a final CLI capture-selection defect (2026-11-01)
 
 Run `20261101-redline-canonical-presentation` makes **two original local CLI
