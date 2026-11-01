@@ -861,3 +861,70 @@ free disk was 2,417,684,480 bytes and minimum sampled free disk was
 Owned runtime/driver/observer/watcher PIDs and the runtime process group are
 absent; no new runtime temporary directory or test box remains (box ID,
 state and expiry N/A). Native rendering only; GPU mip support remains absent.
+
+### Ordinary selected-unit movement order (2026-11-01)
+
+One further original Demo Mission 1 run demonstrates **selected-unit movement
+following an ordinary movement order**. It reproduces the accepted menu,
+loading, HUD and six-unit selection setup, then keeps the camera controls
+released throughout the comparison. The bundled `readme.rtf` documents
+Shift-M as Move. Shift and M down reach DispatchMessageA at batch 1901;
+both releases reach it at 1906. With the game's cursor visibly on open tiled
+terrain near screen (200,260), ordinary left-button down/up at canvas
+(192,332) dispatch at 1911/1921. The canvas/game-cursor offset is confirmed
+visually, not inferred from coordinates alone. All observed scheduled,
+pending, cross-thread and renderer queues are empty after consumption;
+guest post-queue and button-state coverage remain unknown.
+
+The matched **no-order interval** is 1801–1901, with captures at offsets
+0/10/15/40/100. The selected five soldiers and vehicle remain in their
+original arrangement near the center. The order comparison preserves before
+(1901), command-ready (1911), held (1921), released (1926), settled released
+(1951), and interval-end (2011) PNGs. Its click interval uses the same
+0/10/15/40/100 checkpoints. Held/released frames still show the original
+positions; by 1951 the selected group is visibly displaced left over the
+ground tiles, and by 2011 the vehicle and several soldiers have moved farther.
+For example, the selected vehicle moves from approximately (352,288) to
+(278,239), then (180,225). This is translation of the rendered unit and its
+selection marks, not merely the appearance of selection brackets.
+
+The overhead pipe, pillar, crates, right-hand ridge and unselected foreground
+soldier preserve their screen locations. A bounded ±3-pixel registration of
+pillar/ridge/crate patches finds its best match at (0,0) for the neutral end,
+settled movement and movement end; mean absolute byte differences are
+0.123/0.204/0.252, versus at least 3.74 for the next-best translation. Small
+lighting/animation differences remain, so the images are not byte-identical.
+The stationary neutral interval, consumed command/click, subsequent selected
+group displacement and fixed world landmarks distinguish the response from
+camera motion, selection effects and the prior uncommanded behavior. This
+qualifies attributable movement, without asserting exact path length or
+arrival of all six units. Later released captures at 2071/2171 retain the
+view; 2171 also displays “Guardian has been destroyed.” No hostile impact,
+combat outcome, mission completion, audio, FPS, GPU parity or full-suite
+qualification is inferred from that message.
+
+Evidence: `scratch/runs/20261101-dark-reign2-unit-movement/`. The original
+Outcast launcher's interruption required the coordinator's explicit gate
+rebind to recovery worker `01a196f6-9bc8`. Its fresh launcher final/result and
+12:07:46 UTC runtime/source/build release opened the gate at 12:08:22.
+Actual gate/prelaunch baseline was main
+`84358006a197266af7bb1f17ebf80de605d5d736`. All 4,392 accepted build inputs and
+141 predecessor reads matched, allowing reuse of the accepted complete build.
+The actual loaded module remains
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+All 4,444 current source/build/test identities, 29 original/manifest pins,
+the complete 28-file extracted tree, 27 manifest entries and recovery manifest
+match after the run; all 142 observed runtime reads match their files.
+
+The exact observer passed actual synchronous/asynchronous execution, whole
+shared 512 MiB memory comparison, native/host clock identity and emitted
+late-10,001 retention validation. Coverage is synchronous readFileSync and
+complete closed descriptor reads up to 24 MiB; asynchronous, streaming,
+incomplete/open and oversized descriptor reads are not covered. Records flush
+at normal exit; runtime WebAssembly compilation identity is not evidence of
+compiler-source reads. Twenty PNGs pass chunk CRC and full IDAT/row decoding.
+The sole original exited zero at batch 2171 after 216.184 seconds; sampled
+runtime free disk stayed above 2,240,622,592 bytes. No second original, tracked
+source/helper/test/config/registration/backend edit, synthetic state or test
+box was used. Owned processes/groups and new runtime temporary directories
+are checked in the run cleanup record; local box ID/state/expiry are N/A.
