@@ -1,5 +1,94 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Mission callback localization (2026-11-01)
+
+Investigation `20261101-redline-mission-callback-cause` narrows the outstanding
+work to the game's fixed-step catch-up path, but **does not establish the first
+causal blocker**. It inspected the published `1dd8b642` run's actual Stadium
+City capture, saved stack, input-state records and original pinned EXE using
+existing disassembly/xref tools. No new guest invocation was made; there is no
+new gameplay, browser or WebGL evidence. Production, tests and disk fixture
+files were not edited.
+
+The saved batch-52,200 EBP chain is coherent across five frames. Starting at
+`0x074ffca8`, the return addresses are `0x43e726`, `0x529290`, `0x53ad0e`,
+`0x53ab4d`, `0x5398c1`; saved EBP advances through `0x074ffcd0`,
+`0x074ffce0`, `0x074ffcf0`, `0x074ffd18`, then outside the captured stack at
+`0x074fff6c`. Original disassembly resolves the innermost calls as:
+
+- `0x43e721` calls the UI traversal `0x49e6db`, returning at `0x43e726`.
+- `0x52928b` calls that input/UI update `0x43e712`, returning at `0x529290`.
+- `0x53ad08` calls the function pointer at `0x5b6d4c`, returning at
+  `0x53ad0e`. This stack establishes the active callback path through
+  `0x52927a`; the pointer itself was not sampled.
+- `0x53ab47` calls the pointer at `0x5b6d48`, returning at `0x53ab4d`.
+  The saved inner frame is in `0x53aba3`, the fixed-step catch-up function.
+
+That catch-up function reads `WINMM!timeGetTime` at `0x53accf`, adds the
+elapsed difference from `0x5b8740` to accumulator `0x5b8744`, and saves the
+new time. While the signed accumulator is at least 33, `0x53acff` calls the
+update callback, then `0x53ad0e..0x53ad1d` subtracts 33 and loops. This inner
+loop contains no message pump. Only after it drains can the function return
+through `0x53ab4d`, then `0x53ab8c` jump back to `0x53aa7d` and the ordinary
+`PeekMessageA` loop at `0x53aa8a`. This is a concrete pump-return dependency,
+not proof of excessive accumulated time or scheduler starvation.
+
+The UI traversal is bounded by a signed 16-bit index below 600, with an
+additional early exit when its remaining-live-entry count reaches zero.
+Batch 42,200's EIP `0x49e8d0` is exactly the return site of the indirect
+virtual call at `0x49e8cd`: at least that UI callback returned. Batch 52,200
+has EIP `0x49e872` and DX 418 at the index-increment block. Neither sample
+records the index at both times, the entry count, callback target, traversal
+entry/exit counts or accumulator. Therefore neither a single traversal stuck
+forever nor repeated completed traversals is demonstrated. The last dispatched
+message being Enter-up does not establish an outstanding DispatchMessage call;
+the captured call chain instead places execution in the pump's update path.
+
+Message ownership is localized to the existing renderer queue: both saved
+input-state records retain six later events, main is active with no wait,
+and the focus/routed window is `0x10017`. This explains where delivery awaits
+the pump, without proving why the pump has not returned. The worker's
+`0x4c2974` wrapper calls `WaitForSingleObject`; its paired constructor calls
+`CreateMutexA` and its release calls `ReleaseMutex`, **not SetEvent**. The
+static global mutex object at `0x5b81b0` participates in a separate update
+path at `0x53ad7d`, which acquires, calls the same update pointer, and releases.
+The saved worker wait handle `0xe0002` cannot be mapped to that object or an
+owner from these records: neither object contents nor the worker stack nor
+ThreadManager mutex ownership was captured. No mutex deadlock is established.
+
+The precise remaining runtime question is whether `0x5b8744` decreases across
+completed `0x53ad0e` returns and reaches below 33 before another elapsed-time
+addition, and whether `0x49e6db`/its callbacks return during that interval.
+Existing `--count` diagnostics on the traversal entry, return block
+`0x49e8e8`, callback-return block `0x49e8d0`, catch-up loop/exit and pump entry,
+paired with read-only accumulator/index/stack/mutex-owner observations, would
+distinguish those cases. The predecessor evidence cannot supply these missing
+values; no speculative runtime fix was made.
+
+Fresh execution stopped at a concrete identity prerequisite. Inspection began
+on main `1810077ac3b4c26d5cdc723407dd8612f0082d77`, after Rune had released its
+runtime. Incoming `95b5a2440` changed three previously loaded host sources:
+`test/run.js`, `lib/apps.js`, and `lib/region-map.generated.js`. The retained
+validated module still hashes to `2be3cebaa1c08a8e12075de000bfb83fb8692841c1452d9e317203f5c2fce8cf`
+and carries layout `3a03507bae8914c0`; the current JS mirror carries
+`ccbc5bf6dfb9610e`. The CLI's existing pre-instantiation guard refuses that
+pair. Thus exact unchanged validated-build reuse is unavailable in this shared
+checkout. No launch was spent on the known mismatch; no bypass, historical
+source overlay, rebuild or guest mutation was performed. A matching validated
+source/module/mirror set is required before collecting the missing runtime
+observations. This host identity prerequisite is separate from the still
+unproven guest cause.
+
+Evidence includes original-EXE disassembly/IAT names, reconstructed stack,
+saved queue/thread samples, current/prior source and module identities,
+registration output and command/exit receipts. The inspected screenshot is a
+byte-preserved predecessor capture, explicitly labeled as reused. The focused
+`node test/test-redline-demo-registration.js --fixture` check passed; all 70
+host fixture files match the predecessor's after-map. Documentation diff check
+passed. No guest/child was created, no authentic VFS state was changed, and
+no box was acquired (ID/state/expiry N/A). Disk remained above 2 GB. This is
+an investigation-only record with no candidate-corpus ID or dashboard pass.
+
 ## Original local CLI progress (2026-11-01)
 
 Run `20261101-redline-original-cli-progress` reached the original launcher,
