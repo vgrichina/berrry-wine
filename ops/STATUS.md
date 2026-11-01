@@ -1,7 +1,7 @@
-Current 2026-11-01T02:25:31.537956+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T02:34:04.405963+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Rune's original demo reached an inspected graphics wizard through the local CLI. Its renderer-test launch was acknowledged without a child running, because child-process execution was disabled. Gameplay and D3D remain untested. Rune's next run will use the existing documented child-process option with finite watchdogs. Original files and INIs are unchanged.
+Redline's original demo reached an inspected Stadium City mission selector through the local CLI. Ordinary input advanced New Game, but selecting the mission did not reach gameplay. The main thread stayed active while later input queued; the cause remains unknown. Original files are unchanged, and all three bounded runs exited cleanly. Next Redline work will trace callback return and event ownership.
 
-A fresh Redline worker now owns the serialized runtime slot, pursuing original DISPLAY selection, Play and ordinary gameplay input through the local CLI. CLI captures cannot establish browser or WebGL behavior. Browser testing still awaits authorized functioning file transfer after SCP received SSH403; the owner was notified via Telegram1768 and the box is stopped.
+Rune now owns the serialized runtime slot. A fresh worker will execute its original renderer-test child using the documented child-process option, then pursue ordinary wizard choices and player control if possible. CLI captures cannot establish browser or WebGL behavior.
 
-The ThreadManager constructor repair is published; the mandatory build and affected tests pass. Full GL/D3D27 coverage and overall crash freedom remain open. REP stays held; Crimsonland needs faithful original installation or authentic installed state. No public deployment.
+Browser testing awaits authorized file transfer after SSH403; the owner was notified and the box is stopped. The constructor repair and affected build/tests pass. Full GL/D3D27 coverage and crash freedom remain open. REP stays held; Crimsonland needs authentic installed state. No public deployment.
