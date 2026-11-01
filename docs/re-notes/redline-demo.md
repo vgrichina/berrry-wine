@@ -1,6 +1,67 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
 
+## Same-frame canonical pixels prove a final CLI capture-selection defect (2026-11-01)
+
+Run `20261101-redline-canonical-presentation` makes **two original local CLI
+invocations**, reusing accepted module `330b120d64cfd4aebdd945c99a95022dbd97db7ee6962d7ec534c24da466011b`
+after all 4,389 source pins, 70 fixture pins, the region mirror and prior
+actual-load receipt match. Both originals' actual module/read receipts are
+retained. Original binaries, manifests and shipped configurations remain
+unchanged. Startup admission passes above 2,300,000,000 bytes; the 2 GB floor
+never trips. No browser/GPU, installation, new EULA or remote runtime is used.
+
+The new observer retains the **latest eight presentation events**, and copies
+canonical shared-memory source bytes **inside the actual GdiSurface.rgbaRect
+conversion**, together with the returned RGBA bytes and its geometry/format/
+pitch/orientation/masks. Each second-run controlled capture gets a separate
+frozen checkpoint bundle. Offline actual sync/async emitted Unlock callbacks,
+whole shared 512 MB memory/clock read-only checks, late 10,001 retention and
+an actual library-conversion read-only check pass. No trace setter or guest
+state mutation is introduced. This does not repeat texture-upload sampling.
+
+The first original exits 0 after 26.478 seconds / 30,327 batches. Its controlled
+capture remains a loading image, while final `--png` instead selects slot 379
+and shows title artwork. That concrete surface-selection discrepancy licenses
+the second original's new hypothesis: the severe final-image stripes may be
+a diagnostic capture artifact. The second exits 0 after 170.552 seconds /
+**30,709 batches**. At that final frozen batch, controlled `blocker.png` shows
+a coherent textured scene. Its last emitted presentation names **primary slot
+4**, entry **131805312**, bits **473268224**, format **1 (RGB565)**, width
+**640**, height **480**, pitch **1280**, flags **1**. The conversion consumes
+exactly **614,400 bytes**, top-down, masks **F800/07E0/001F**. Raw SHA-256 is
+`405c43afbdc5fe65a4e485ce862bd322c515faed178803e10afb68fc9d25c533`.
+
+An independent mask/stride/orientation decoder matches the actual host RGBA
+conversion **byte for byte**. The composed controlled PNG differs by at most
+**two levels per channel**, and visually retains the same coherent geometry
+and textures. **Without any intervening guest step**, quit/final capture at
+that same batch selects **slot 6** and produces the severe yellow/magenta
+striped image. Both captures, raw/converted bytes, last presentation parameters,
+command replies and `same-frame-proof.json` are preserved. The corruption in
+this paired evidence is therefore in **final CLI capture surface selection**,
+not the observed native primary drawing or its RGB565 conversion. Slot 6's
+raw bytes/resource identity were not captured; calling it a depth buffer would
+be an inference, not a measured identity.
+
+The generic cause is the final chooser's rule allowing a more colorful,
+same-sized offscreen surface to replace a populated primary. The minimal repair
+removes that override in `test/run.js`; empty-primary/back-buffer/offscreen
+fallbacks remain. `test/test-dx-capture-primary.js` executes the actual chooser:
+**before FAIL selecting slot 6 instead of primary 4; after PASS**, including
+fallback cases. The mandatory locked build, test-tier regression, live
+DirectDraw presenter regression, JS syntax and diff checks pass. The rebuilt
+WASM hash remains unchanged. No renderer/interpreter behavior is changed.
+
+Balanced Space/W down/up and relative mouse requests are submitted in the
+second original, but its final state still has W-up/mouse messages queued.
+No completed movement/gameplay/audio/FPS claim follows from these captures.
+Both originals precede the JS capture repair; the **two-invocation cap forbids
+an after-repair original run**, so post-fix original movement remains
+unverified. Own runtime PIDs/groups and temporary trees are absent; no box was
+acquired (ID/state/expiry N/A). The raw evidence remains ignored in the named
+run; only the note and generic chooser/regression are committed.
+
 ## Striped frame: intact uploaded and bound texels, exact draw/presentation cause unproven (2026-11-01)
 
 Run `20261101-redline-striped-render-cause` makes **one original local CLI

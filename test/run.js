@@ -12445,22 +12445,9 @@ if (VERBOSE) {
       return bestOffscreen ? bestOffscreen.surface : null;
     }
 
-    // An offscreen surface may only stand in for a primary that has content
-    // when it is the same size — that is a back buffer the app composes into
-    // and then presents, so it is the frame a moment early. A differently
-    // sized offscreen is a texture, and a texture atlas routinely carries more
-    // colours than the frame drawn with it: every Organic Art screensaver
-    // captured its leaf/marble sheet under the old colour-diversity rule and
-    // read as "renders a texture, never a scene" when the primary in fact held
-    // the rendered geometry. The browser presents the primary; so does this.
-    if (bestOffscreen &&
-        bestOffscreen.surface.w === bestPrimary.surface.w &&
-        bestOffscreen.surface.h === bestPrimary.surface.h &&
-        bestOffscreen.score.colors >= 16 &&
-        bestOffscreen.score.colors >= Math.max(bestPrimary.score.colors + 8, bestPrimary.score.colors * 4)) {
-      return bestOffscreen.surface;
-    }
-
+    // Matching dimensions and greater color diversity do not make an
+    // offscreen surface the displayed frame: a depth buffer can satisfy both.
+    // Keep a populated primary authoritative, as the live presenter does.
     return bestPrimary.surface;
   };
 
