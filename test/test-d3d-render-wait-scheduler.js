@@ -21,7 +21,10 @@ function manager(onRenderWait,main=machine()) {
   const tm=new ThreadManager({},new WebAssembly.Memory({initial:1,maximum:1,shared:true}),
     {exports:main.ex},()=>({host:{}}),{onRenderWait});tm._log=()=>{};return tm;
 }
-const thread=(tid,m)=>({tid,state:'active',sleepCount:0,sleepUntil:0,waitPolls:0,instance:{exports:m.ex}});
+// These are already-running guests. Fresh threads spend their first scheduler
+// turn completing DLL_THREAD_ATTACH, even when the DLL notification list is empty.
+const thread=(tid,m)=>({tid,state:'active',_dllAttachNotified:true,
+  sleepCount:0,sleepUntil:0,waitPolls:0,instance:{exports:m.ex}});
 (async()=>{
   const gate=deferred(),tokens=[],tm=manager(t=>{tokens.push(t);return gate.promise;});
   const parked=machine(16,-4),peer=machine();
@@ -29,6 +32,7 @@ const thread=(tid,m)=>({tid,state:'active',sleepCount:0,sleepUntil:0,waitPolls:0
   tm.runSlice(100);await tick();tm.runSlice(100);
   assert.deepStrictEqual(tokens,[-4]);assert.strictEqual(parked.state.runs,0);
   assert.strictEqual(parked.state.clears,0);assert.strictEqual(peer.state.runs,2,'parked renderer does not stall peers');
+  assert.strictEqual(tm.threads.get(1).state,'active');assert.strictEqual(tm.threads.get(2).state,'active');
   gate.resolve();await tick();tm.runSlice(100);
   assert.strictEqual(parked.state.clears,1);assert.strictEqual(parked.state.runs,1);
   const rejected=deferred();tm._onRenderWait=()=>rejected.promise;
@@ -46,11 +50,21 @@ const thread=(tid,m)=>({tid,state:'active',sleepCount:0,sleepUntil:0,waitPolls:0
 
   const nestedGate=deferred(),ntm=manager(()=>nestedGate.promise);let pumped=0,nestedClears=0;
   ntm._pumpWorkersForThreadSend=async()=>{pumped++;};
-  const link={callExport:async()=>{nestedClears++;}},state={};
-  assert.strictEqual(await ntm.resolveThreadSendYield(link,{yield:16,renderToken:-8},state,new Set()),'pending');
+  // Callback completion belongs to the registered receiving link and exact
+  // frame/epoch; generic clear_yield is fenced while that frame is retained.
+  const frame={frameToken:3,waitEpoch:1};
+  const link={callExport:async()=>assert.fail('callback must use scoped completion'),
+    scopedThreadSendYield:async(token,finish=false)=>{
+      assert.deepStrictEqual(token,frame);
+      if(finish)nestedClears++;
+      return {ready:true,completed:finish};
+    }},state={};
+  ntm.threads.set(1,{tid:1,state:'active',link});
+  const nestedYield={yield:16,renderToken:-8,...frame};
+  assert.strictEqual(await ntm.resolveThreadSendYield(link,nestedYield,state,new Set([link])),'pending');
   assert.strictEqual(pumped,1);assert.strictEqual(nestedClears,0);
   nestedGate.resolve();await tick();
-  assert.strictEqual(await ntm.resolveThreadSendYield(link,{yield:16,renderToken:-8},state,new Set()),'resume');
+  assert.strictEqual(await ntm.resolveThreadSendYield(link,nestedYield,state,new Set([link])),'resume');
   assert.strictEqual(nestedClears,1);
 
   // A synchronous cooperative SendMessage must retain its interrupted frame,
