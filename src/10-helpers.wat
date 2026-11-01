@@ -2564,11 +2564,88 @@
     (i32.atomic.store offset=8 (local.get $record) (i32.add (local.get $base) (local.get $chunk)))
     (local.get $base))
 
+  ;; Rewind only our current empty sparse bump arena, and only when every
+  ;; carved header belongs to our private lists. Zero live bytes alone is NOT
+  ;; ownership: a peer may have freed one of our blocks onto its own list.
+  ;; Releasing/re-registering a carved range would leave such a peer's links
+  ;; resolving against new allocations. Keep the map/record and reject missing
+  ;; ownership instead. This runs only on a bump miss, not on every free.
+  (func $heap_sparse_rewind (param $need i32)
+    (local $rec i32) (local $base i32) (local $high i32) (local $end i32)
+    (local $cur i32) (local $header i32) (local $size i32)
+    (local $entries i32) (local $headers i32) (local $steps i32)
+    (local.set $rec (global.get $heap_sparse_record))
+    (if (i32.eqz (local.get $rec)) (then (return)))
+    (local.set $base (i32.atomic.load (local.get $rec)))
+    (local.set $high (global.get $heap_sparse_ptr))
+    (local.set $end (global.get $heap_sparse_end))
+    (if (i32.or (i32.lt_u (local.get $base) (call $virtual_alloc_min))
+      (i32.or (i32.le_u (local.get $high) (local.get $base))
+        (i32.gt_u (local.get $high) (local.get $end)))) (then (return)))
+    (if (i32.or
+      (i32.ne (i32.atomic.load offset=8 (local.get $rec)) (local.get $high))
+      (i32.ne (i32.load offset=4 (local.get $rec)) (local.get $end))) (then (return)))
+    (if (i32.or (i32.ne (i32.atomic.load offset=12 (local.get $rec)) (i32.const 0))
+      (i32.gt_u (local.get $need) (i32.sub (local.get $end) (local.get $base)))) (then (return)))
+    ;; Whole-block arenas use the existing atomic large-block claim/release
+    ;; path. A carved first header cannot satisfy that release predicate while
+    ;; this instance proves its private ownership below.
+    (if (i32.eq (i32.load (call $g2w (local.get $base)))
+      (i32.sub (local.get $end) (local.get $base))) (then (return)))
+    (call $heap_bins_flush)
+    ;; Preflight the entire chain, including its termination, before purge.
+    ;; Count this arena's entries so no extra interior link survives the proof.
+    (local.set $cur (global.get $free_list))
+    (block $listed (loop $list
+      (br_if $listed (i32.eqz (local.get $cur)))
+      (local.set $steps (i32.add (local.get $steps) (i32.const 1)))
+      (if (i32.gt_u (local.get $steps) (i32.const 65536)) (then (return)))
+      (if (i32.eqz (call $heap_arena_find (local.get $cur))) (then (return)))
+      (local.set $size (i32.load (call $g2w (local.get $cur))))
+      (if (call $heap_block_bad (local.get $cur) (local.get $size)) (then (return)))
+      (if (i32.and (i32.ge_u (local.get $cur) (local.get $base))
+        (i32.lt_u (local.get $cur) (local.get $high)))
+        (then (local.set $entries (i32.add (local.get $entries) (i32.const 1)))))
+      (local.set $cur (i32.load offset=4 (call $g2w (local.get $cur))))
+      (br $list)))
+    ;; Walk actual allocation boundaries, not just the sum of free sizes.
+    ;; Every header must be found on this instance's validated chain. Bound
+    ;; the combined search; a costly/incomplete proof simply keeps the arena.
+    (local.set $header (local.get $base))
+    (block $covered (loop $blocks
+      (br_if $covered (i32.eq (local.get $header) (local.get $high)))
+      (if (i32.gt_u (local.get $header) (local.get $high)) (then (return)))
+      (local.set $size (i32.load (call $g2w (local.get $header))))
+      (if (call $heap_block_bad (local.get $header) (local.get $size)) (then (return)))
+      (local.set $cur (global.get $free_list))
+      (block $found (loop $find
+        (if (i32.eqz (local.get $cur)) (then (return)))
+        (local.set $steps (i32.add (local.get $steps) (i32.const 1)))
+        (if (i32.gt_u (local.get $steps) (i32.const 1000000)) (then (return)))
+        (br_if $found (i32.eq (local.get $cur) (local.get $header)))
+        (if (i32.eqz (call $heap_arena_find (local.get $cur))) (then (return)))
+        (local.set $cur (i32.load offset=4 (call $g2w (local.get $cur))))
+        (br $find)))
+      (local.set $headers (i32.add (local.get $headers) (i32.const 1)))
+      (local.set $header (i32.add (local.get $header) (local.get $size)))
+      (br $blocks)))
+    (if (i32.ne (local.get $headers) (local.get $entries)) (then (return)))
+    ;; No peer owns a link and no allocation is live. Remove our links before
+    ;; erasing headers; keep fresh-bump zero semantics across non-affine maps.
+    (call $heap_free_list_purge (local.get $base) (local.get $end))
+    (call $guest_memset (local.get $base) (i32.const 0)
+      (i32.sub (local.get $high) (local.get $base)))
+    (i32.atomic.store offset=8 (local.get $rec) (local.get $base))
+    (global.set $heap_sparse_ptr (local.get $base)))
+
   ;; HeapAlloc starts in the low direct guest window for compatibility, then
   ;; spills to sparse high guest chunks when that window reaches emulator-private
   ;; memory. This keeps Windows heap pointers valid without moving code caches.
   (func $heap_sparse_alloc (param $need i32) (result i32)
     (local $chunk i32) (local $new_top i32) (local $ptr i32) (local $record i32)
+    (if (i32.gt_u (i32.add (global.get $heap_sparse_ptr) (local.get $need))
+          (global.get $heap_sparse_end))
+      (then (call $heap_sparse_rewind (local.get $need))))
     (if (i32.or
           (i32.eqz (global.get $heap_sparse_ptr))
           (i32.gt_u

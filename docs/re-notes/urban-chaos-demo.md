@@ -1081,3 +1081,63 @@ Recovery is offline:
 `pins.json`, snapshots, `measurement.json`, `runtime-result.json` and
 `verification.json` preserve the evidence. No further runtime is needed to
 reanalyze it. Own local helpers were stopped; native box ID/state/expiry N/A.
+
+## 2026-11-01 generic allocator repair: reuse a provably local empty sparse arena
+
+Evidence: `scratch/runs/20261101-urban-chaos-empty-arena-repair/`. This is an
+allocator regression repair; **Urban Chaos's actual first-refusal cause and
+gameplay failure cause remain unmeasured**. No game was replayed. Runtime work
+started only after exact Battlezone worker `01a19867-ff52-75a3-8cf4-57531732e92d`
+released runtime/source/build, its launcher result/final arrived, and all22
+recorded PIDs/groups were directly absent. Measurement input main was
+`02b44b8944e97cd518c7349119037eb43bedccb5`; all136 probe source/module/interface
+pins matched before editing.
+
+Simply broadening `$heap_arena_release_free` is unsafe. Arena records/maps are
+shared, but bins and free lists are instance-private. Another instance may own
+freed carved headers even when the shared live-byte count is0. Releasing and
+reserving that guest range again can make its surviving links validate against
+new live allocations. The existing whole-block release guard prevents this
+aliasing and remains in force.
+
+The repair instead rewinds **only this instance's current sparse bump arena**
+on an exhausted bump request. It requires the exact current base/high/end
+record, zero live bytes, a fitting arena, and a carved first header. It flushes
+this instance's bins, validates the complete local free list, then walks actual
+carved header boundaries and proves every header is on that list. Matching
+header/list-entry counts reject extra interior entries. The proof is bounded
+to65,536 list entries and1,000,000 combined search steps; failure retains the
+existing allocation path. Success purges local links before clearing the old
+prefix through page-aware guest memset and rewinding cursor/high. The arena's
+mapping, reservation and record base stay intact. New bump allocations retain
+zero-filled semantics. No memory increase, global coalescing, CRT, callback,
+guard, concurrency or SEH change is involved.
+
+`test/test-heap-empty-arena-reuse.js` calls the actual production WASM public
+allocation/free exports in fixed512MiB memory. The original pinned module
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`
+again failed at ascending iteration15,051/request35,840 after17,051 completed
+pairs, with288 maps and reason3/1MiB followed by reason1/35,848. The repaired
+module
+`7278c1018fa8208731a8e285f0bb2a5c35aa8e299592750ce3cedf6d354caef0`
+completed2,000 constant plus100,000 ascending pairs with **one1MiB backing
+map and no OOM events**, then20,000 varying-size pairs across bins, page sizes
+and the large-allocation threshold. Live peer/large allocation contents were
+checked byte-for-byte, and reused allocations were zeroed. Separate ownership
+cases prove a locally owned binned header permits rewind with identical map
+records; a live header or peer-owned binned header prevents it. Subsequent
+small allocations and peer reuse preserve the new live allocation. Surviving
+arena headers, map translations and passive free-list diagnostics validate.
+
+The mandatory locked `tools/build.sh` passed. Existing arena-tail reuse
+(11 cases), cross-instance release, randomized bins, large-free map pressure
+and large-block arena tests all passed on the repaired source; tail reuse also
+used the production module directly. The new regression took28.45s; the old
+exact reproduction took2.25s including its supervisor. Logs, module/source pins
+and command results are retained in the evidence directory.
+
+This prevents the demonstrated balanced-pack accumulation; it does not reclaim
+arbitrary retired carved arenas or fragments owned by another instance. Those
+still need an explicit cross-instance ownership/generation solution before
+releasing their guest ranges. This scope is deliberate: zero live bytes alone
+does not make surviving free-list pointers safe to invalidate.
