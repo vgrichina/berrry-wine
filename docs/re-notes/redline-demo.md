@@ -1,5 +1,129 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Original local CLI progress (2026-11-01)
+
+Run `20261101-redline-original-cli-progress` reached the original launcher,
+DISPLAY dialog, Beyond Games splash, Start Up menu and mission selection.
+The inspected mission-selection capture highlights **Stadium City**. Opening
+that mission did not succeed within the bounded run: later ordinary Enter and
+mouse input remained queued while the main guest kept executing. There is no
+player-controlled gameplay evidence. This is local CLI compatibility evidence,
+not browser, WebGL, authentic Windows installation or hardware qualification.
+The older runtime-transfer restriction below concerns the remote lane; this
+assignment explicitly authorized the existing local fixture.
+The launcher visibly titles itself `Redline Demo - v0.90 1/19/99`; that observed
+label is separate from the PE timestamp and the readme's January 28 date.
+
+Tested shared main `d4b5757889c59a4bb17c9a3b47c9759fb62ace60`, a documentation
+advance from requested `36592af3b884b95d2f14dc5474c5c541a1640e95`.
+No source, test, helper, app registration or fixture edits were made.
+`node test/test-redline-demo-registration.js --fixture` passed before and after:
+the original package, all 65 original members and 60 game files retain their
+pins, including EXE SHA-256
+`fd00f9a29713474862b7c9b16533893cdf96794c687d6ab76c525f4119d2ae1e`.
+The host tree's full 70-file map (65 originals plus existing metadata/manifest)
+also matches before/after. Launch cwd remains `c:\MAINDIR`, guest args empty,
+and the sole app-local DLL seed remains original `IFORCE2.DLL`.
+
+No loose CFG was supplied. The game itself generated `c:\maindir\redline.cfg`
+in its ephemeral VFS through the ordinary route. A read-only snapshot is
+retained as `guest-generated-redline.cfg`, 2,500 bytes, SHA-256
+`aa7d4bd36cfef68c47737d26d613bc023f5125f3872ccd75c7a9ac5d4b1a60c5`.
+It records `displaydevice 'display'`, `screenwidth 640`, `screenheight 480`,
+`screenbbp 16`; it was neither edited nor fed into subsequent runs. No renderer,
+DirectX, registry, dependency or installed-state override was used.
+
+All three runs used an open PTY and this exact command, replacing `N` with
+`1`, `2` or `3` and inserting the diagnostic flags listed below:
+
+```sh
+timeout --kill-after=5s 150s node \
+  --require ./scratch/runs/20261101-redline-original-cli-progress/observe.cjs \
+  test/run.js --app=redline_demo --no-build --wasm=build/wine-assembly.wasm \
+  --quiet-api --quiet-blocks --no-close --max-seconds=120 --spawn-processes \
+  --control-stdin --frozen \
+  --png=scratch/runs/20261101-redline-original-cli-progress/runN-final.png \
+  --tee=scratch/runs/20261101-redline-original-cli-progress/runN.log
+```
+
+Read `docs/cli-run.md`, the control implementation and both child launch paths
+before launch. `--spawn-processes` enables actual ordinary child execution;
+both child paths inherit `--max-seconds=120`, and the parent collects/kills its
+children on exit. No child process was requested or spawned in these runs;
+Play creates the game window in the same emulator. The outer 150-second process
+group watchdog bounds even frozen think time (the inner guard pauses while
+frozen). Each run ended through control `quit`, exit 0, with no trap, signal or
+watchdog expiration. There were never overlapping guest trees; no guests remain.
+
+The command channel accepts `{"action":"step","n":11000}` and
+`{"cmd":"click:130:337"}`. Common ordinary route: step to batch 11,000,
+click DISPLAY at (130,337), step 2,000, click Done at (127,331), step 1,000,
+click Play at (132,281). The DISPLAY screenshot shows the original selected
+Primary Display Driver (display) and 640x480x16; no selection was changed.
+
+- Run 1: captured splash at 19,000 and Start Up at 24,000. A click on New Game
+  at 29,000, Enter held for 50 batches, a mouse press held for 100 batches,
+  and relative motion (0,-18) followed by a 1,000-batch press did not advance
+  the displayed menu through 50,250. Exit after 72.616 seconds of run-loop time,
+  191,656 API calls. This established an input symptom, not a deadlock cause.
+- Run 2 was a focused diagnostic, adding `--trace-input --trace-input-dispatch`
+  and `--trace-api=PeekMessageA,GetMessageA,DispatchMessageA,GetAsyncKeyState,GetCursorPos,IDirectInputDevice_GetDeviceState,IDirectInputDevice_GetDeviceData,WaitForSingleObject,SetEvent,ResetEvent --trace-api-paused`.
+  At menu batch 24,000, move and press at (330,148), plus Enter down, step 100,
+  then release mouse/Enter and step 5,000. API tracing was enabled only during
+  that 100-batch hold. Both DirectInput device reads returned S_OK, and a
+  read-only buffer observation found mouse button byte 0x80. At batch 25,525,
+  six queued events drained and five entered DispatchMessageA. The inspected
+  capture at 29,100 shows mission selection. Thus an unconditional input-polling
+  failure is disproven; the simultaneous mouse/Enter sequence does not isolate
+  which action selected New Game. Exit 28.410 seconds, 179,303 API calls.
+- Run 3 added only `--trace-input-dispatch`, repeated that successful held-input
+  route and visually reconfirmed mission selection at 29,100. Enter down at
+  29,100, up at 30,100, then 5,000 batches did not open Stadium City. Next,
+  move to (95,120), relative motion (-240,0) over ten batches, step 100, press
+  at (95,120) for 2,000 batches, release and step 5,000, then another 10,000.
+  Through 52,200, the mission-selection PNG remained byte-identical and six
+  later events stayed queued: Enter down/up, motion, hit-test and button down/up.
+  The earlier six dequeues/five dispatches never increased. Exit 49.443 seconds,
+  192,774 API calls. Stopped here; no fourth invocation or source repair.
+
+First demonstrated remaining route blocker: **Stadium City selection does not
+progress in this bounded execution**. Read-only snapshots at 42,200 and 52,200
+place main EIP at `0x49e8d0` and `0x49e872`; the latter is a 16-bit-index loop
+over 600 UI entries, with indirect callbacks at `0x49e8cd`. The stack still
+contains 5,132,611, matching the last observed guest tick after the earlier
+input dispatch; the exact outstanding callback has not been identified. Thread 1 is
+active at `0x4c2974`, yield 1, wait handle `0xe0002`; no held-critical-section
+failure was printed. These observations do not prove an infinite loop,
+scheduler starvation, missing DLL causality or a renderer defect. Startup also
+warns that system `ole32.dll`/`shell32.dll` real-PE files are absent; do not
+replace them or treat those warnings alone as the demonstrated cause.
+The next causal assignment is to trace the mission-selection callback/dispatch
+return and its 600-entry traversal, including loop progress and thread/event
+ownership, using the preserved ordinary route and unchanged fixture.
+
+All three actual WebAssembly.compile inputs were 2,025,029 bytes, SHA-256
+`2be3cebaa1c08a8e12075de000bfb83fb8692841c1452d9e317203f5c2fce8cf`;
+the exact bytes are retained as `tested-module.wasm`. Accepted locked build
+`20261101-thread-manager-options-land` (40.431 seconds, PASS, accepted commit
+`9ba1c215c1766b39da747f386e0820f7399f6c93`) was reused. All 1,153 preceding
+Rune source inputs plus both package files match before/after; all 66 tracked
+actually read sources match that accepted build commit. The observer records
+123 distinct reads including installed dependencies/media, unchanged afterward.
+Selected SHA-256 identities: `test/run.js`
+`69f1d0193b0fddd31660a95271afba4e52a71bf09eb73e29e93c1e6d277f30bf`,
+`lib/apps.js`
+`f95d5d6c37062a8c38accebed9ac6ae7d6d9589e8c482b5100bfc2a9f23b30c8`.
+
+Ignored evidence directory: `scratch/runs/20261101-redline-original-cli-progress/`.
+`commands.json`, `ordinary-inputs.json`, logs, snapshots, loaded-source/module
+hashes, before/after fixture maps, disassembly and PNGs preserve the route.
+Actually inspected launcher, DISPLAY, splash, Start Up, run 2/3 mission
+selection and final blocker captures. Redline has no candidate-corpus ID, so
+the investigation record has `candidateId: null` and is not a dashboard pass.
+Documentation diff check and fixture checks passed. Disk stayed above 2 GB;
+box ID/state/expiry/shutdown N/A, no box ownership acquired. No browser,
+download, transfer workaround or public deployment was performed.
+
 ## Local candidate registration (2026-11-01)
 
 The recovered original is registered as local-only experimental `redline_demo`.
