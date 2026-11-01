@@ -1,5 +1,48 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Native checkpoint onward: English confirmation, 2026-11-01
+
+One default original `GTADOS/K.EXE` session used the published checkpoint
+primitive from `a416f0142fb251e464ddc8ffa8ffb348c44479a8`, after its
+launcher exit0/final, author release, published ancestry and actual helper
+absence were verified. Evidence:
+`scratch/runs/20261101-gta1-native-checkpoint-onward/`.
+Fresh archive SHA-256 `76f1e1da5c898f755597b86357c4d77b7447cb483673a23d10d34f40cfe03ec9`,
+K.EXE SHA-256 `8fd02d556e06f3258a6ca516ccf675e7aafbf313bd3c575e12dd0f8e5c67d48f`
+and all 117 files / 17,078,619 bytes matched the manifest with exact closure.
+Fixture and pinned source bytes remained unchanged afterward.
+
+The retained language-menu evidence set `--checkpoint=200000000`. The live
+handback was **200,006,546 dispatches / 56,211 handbacks**. `before.png`
+was captured and visually inspected before input: Choose Your Language,
+texture and BMG/DMA logos were visible, but the retained image's flags and
+pointer were absent. Only then was `enter` supplied once through supported
+checkpoint stdin. `after.png` visibly reads **English / Press Any Key**.
+This establishes a menu response, not gameplay or player control.
+
+The same session reached its original **1,000,000,000-dispatch** bound,
+213,525 handbacks and 99.86 reported guest seconds. Guest `exited=false`,
+CS:IP `0080:0070`; the report says budget spent. The next concrete boundary
+is another input-waiting menu after the supported one-shot checkpoint has
+been consumed. No second key, original retry or alternative executable was
+used. Eight aggregate decoder give-up sites do not establish occurrence
+order or cause of this boundary; no causal decoder claim is made.
+
+The identity observer returned ordinary compiled bytes unchanged: actual
+module SHA-256 `03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`,
+343,736 bytes, with loaded JS pins recorded in `actual-module.json`.
+No source edits or project build were performed. An independent process
+guard enforced stop 2,020,000,000 bytes / floor 2 GB without a RAM gate.
+The CLI printed its final report after 16.83 seconds but remained alive with
+stdin open. The independent supervisor enforced its 90-second OS deadline;
+actual host wait was **-15 (SIGTERM)**, collected at 90.112 seconds including
+poll/termination overhead, with direct process absence verified. This host
+termination is separate from the guest's earlier budget stop and non-exit.
+`runtime-wait.json`, paired captures and review records are retained.
+No boxes were assigned (ID/state/expiry N/A). Next: separately authorize
+a supported further live input opportunity; do not infer gameplay from this
+English confirmation. All ownership is released after note publication.
+
 ## Combined GC/checkpoint implementation, 2026-11-01
 
 Run `20261101-toyvm-gc-checkpoint-coherent-build` resolves the generated-bundle
