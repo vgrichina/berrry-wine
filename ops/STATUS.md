@@ -1,7 +1,7 @@
-Current 2026-11-01T08:08:42.301592+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T08:12:45.141710+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Dark Reign 2 now has reviewed mission gameplay and ordinary drag selection of five soldiers and a vehicle. Brackets, health bars and commands appear after consumed native input; one bounded original exited cleanly with matching module, source and original hashes. Unit movement remains untested. Redline forward movement was also reviewed and published.
+Both unchanged GL raster and multitexture fixtures passed on actual WAT. All production function bodies matched the accepted build; fixture-specific exports and queue helper differences are documented. Results are published as76c40478e. This closes those two fixtures; full27 and GPU coverage remain open.
 
-GL worker1480 owns runtime for unchanged raster/multitexture fixtures. Fresh Alice worker93878 queues original New Game/Easy/W behind its final/result and explicit release. Alice media is locally recovered and pinned; its old missing-media task is corrected. Cap two, serialized runtime; fallback08:12/08:19UTC. GL runtime deadline08:37UTC, Alice overall09:39UTC.
+Alice worker93878 now owns runtime for original New Game/Easy/W gameplay. Fresh Dark Reign worker70663 prepares ordinary mission selection and destination orders, waiting for Alice’s final/result and explicit release. Two workers, serialized runtime. Alice runtime deadline08:40UTC, overall09:39UTC; Dark Reign overall09:43UTC. Fallback08:19/08:23UTC.
 
-GL lines/fog, mipmap and texgen accepted; full27/GPU open. DR2 GPU/keyed mip remains unsupported and an unrelated texture-operation assertion remains. Crimsonland needs authentic installation replay; Starlancer licence awaits Telegram1772. No browser access retries, held-algorithm work or public deployment.
+Dark Reign2 mission selection and Redline forward movement were reviewed; Dark Reign2 unit movement remains untested. Crimsonland needs authentic installation replay; Starlancer licence awaits Telegram1772. No browser access retries, held-algorithm work or public deployment.
