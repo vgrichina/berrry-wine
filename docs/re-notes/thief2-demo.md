@@ -164,3 +164,75 @@ No audio, FPS, GPU, browser or full-suite qualification is added.
 Fresh acquisition from https://archive.org/download/ThiefIiTheMetalAgeDemo/thief2.exe verified SHA1 e812b6d8a41c7755f87e1e17bf8e7ef11a57de5a (metadata size136880529). Extract with7-Zip23.01 and copy archive/thf2demo/ to game/, then write documented DARKINST.CFG: install_path,resname_base,load_path,script_module_path each C:\; movie_path C:\MOVIES; language english. This file is reconstructed installer state, not original installer output.
 
 Run `node tools/fetch-candidate-corpus.js --id=thief2-demo`, then `node test/test-thief2-recovery.js` on the pristine recovery. The41-file inventory test/candidate-corpus/thief2-demo-files.json pins paths,sizes,SHA256 and labels DARKINST.CFG reconstructed. All other files matched extracted source bytes; thf2demo.exe matches its prior recorded hash. Comparison with restored fixture differed at: none. Runtime-written settings may differ after playing; no new gameplay or audio/FPS qualification is claimed. Existing private-fixture restrictions unchanged; no public deployment.
+
+## Rightward rooftop route and disk stop, 2026-11-01
+
+Run `scratch/runs/20261101-thief2-reachable-door-route/` established **no door
+opening or loot acquisition**. One original reached Normal / The Unwelcome
+Guest. The predecessor's `map-drained` and `map-closed` PNGs both show the world,
+not a usable map. This run actually displayed both map pages at batches 3812
+and 4312, then closed the map. Neither captured page supplied a usable current
+position marker. From the opening arch, rightward turns inspected a different
+approach from the predecessor's torch-side barred window. A short S walk
+approached the stone wall/parapet beside the arch; no highlighted reachable
+door or identified loot appeared. The first visible obstacle on this attempted
+route was this stonework. Collision or impossibility of passing it was **not
+established**: the disk guard ended exploration. The leftward rooftop route,
+other roof edges, jumps and further streets remain explicitly untested. No
+window was treated as a door and no emulator defect is inferred.
+
+The concrete stopping blocker was disk space. The original controller detected
+1,999,806,464 available bytes, below the required 2,000,000,000-byte floor,
+and gracefully quit: PID 3695951 exited 0 after 272.932 seconds, final batch
+5873. Therefore the continuous disk-floor requirement **failed**; this is not
+an accepted interaction result. Later closeout samples were lower still. No
+foreign cleanup or second original was attempted. The auxiliary disk guard
+ended before runtime completion (its last retained sample was 13:21:40Z);
+the runtime controller continued sampling while reading output and caught the
+floor. Do not describe that coverage as uninterrupted independent monitoring.
+
+Gate passed at 13:18:25Z only after Quake II worker 01a19730's fresh launcher
+`final.txt`/`result.json` and explicit runtime/source/build RELEASE. Actual main
+was `8f2f8a802db44745a1ac00fe3c65e25965eb587f`, versus dispatch `e6814d7b9`;
+the 25-minute deadline was 13:43:25Z. All 4,392 accepted source pins and 141
+accepted read pins matched, allowing reuse of module SHA256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Actual runtime compilation matched it. Before launch the observer passed actual
+sync/async execution, whole shared 512 MB read-only comparison, host/native
+clock identity and emitted late-10001 retention. All 4,444 source/module pins,
+43 original/manifest/inventory pins, full fixture tree and 142 observed runtime
+reads remained unchanged. Original EXE SHA256 remained
+`5e5f831ba549081c35e592afaa540f336f76c828a996b4fcb74edef46beba942`.
+Read coverage is string-path sync/callback/promises readFile, not exhaustive
+OS/descriptor I/O or compiler-source provenance.
+
+Original readme and bindings were read again: S walks, Up runs, right mouse
+uses items, left mouse uses weapons, M maps, F4/F5 select lockpicks. No use,
+weapon or lockpick input was sent. Ten keyboard edges/five balanced pairs
+(M, three Right turns, S) dequeued/routed/dispatched. Before/held/released/
+settled captures were preserved. Each subsequent action waited for the prior
+release dispatch and empty known queues; presentation received additional
+neutral batches. Even so, map presentation lagged consumed input. After the S
+walk, 200 neutral batches retained identical sampled wall, parapet and floor
+pixels; HUD pixels differed, so no whole-frame stationary claim. This is a
+neutral comparison, not a blocked-forward collision test or interaction.
+
+Final scheduled/pending/cross-thread/renderer queues were empty, with S key-up
+last dispatched. Used-key edge balances ended released, but final physical/
+async states for M/Right/S and mouse-button mask were not captured before the
+disk-triggered exit. Modifier/Space observations were false. Guest post queue,
+button queue and SDL consumption remain unknown; trace retention is 1,000
+observations and counters saturate at 2^32−1. Do not infer missing states from
+balanced edges alone.
+
+All 34 PNGs passed CRC/deflate checks and the full runtime gzip decoded.
+To preserve evidence while reducing only owned storage, screenshots were
+losslessly recompressed: decompressed PNG scanline bytes were compared equal,
+with original and resulting hashes in `capture-compression.json`. Exact-content
+hardlinks are recorded separately; no foreign file was modified or removed.
+Identity/input/pixel checks passed; the disk criterion failed. No tracked
+source/helper/test/config/backend/registration edits, build, browser, GPU,
+audio, FPS or full-suite claim. Own runtime/helper PIDs were absent after
+shutdown, no new child temp directories remained. Native local box ID/state/
+expiry N/A; local own-process shutdown was explicitly delegated. Further work
+requires disk headroom and a fresh ordinary route; this run stops here.
