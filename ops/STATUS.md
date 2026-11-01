@@ -1,7 +1,7 @@
-Current 2026-11-01T05:33:52.311817+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T05:49:46.559146+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Rune01a19599-3dd2 handle71983 owns runtime, deadline06:03UTC, observing property-loading progress through LoadMap. Its predecessor stopped during startup for insufficient disk headroom. Coordinator recovered266MB losslessly; the new run requires2.3GB free before startup and maintains the2GB floor.
+Rune now qualifies for cave gameplay and ordinary W movement, reviewed at c18c7d742. Jump, combat and audio remain unqualified.
 
-Redline01a19599-4927 handle70512 prepares offline behind Rune. Selected texture BTF loading succeeds, then the backend returns failure. The next trace follows the actual failing operation; textures remain missing.
+Redline01a195a6 handle11905 owns runtime until06:18UTC, tracing the internal failure in upload453de3 after successful surface creation. Textures remain missing. Starlancer01a195a7 handle48661 prepares offline, then pursues original flight after Redline releases runtime/source/build; unresolved licence requirements stop the route.
 
-Reviewed captures, source/original identities and cleanup. Neither game qualifies yet. Two-worker cap and serialized runtime/builds remain. Browser SSH403, full GL/D3D27, held REP and authentic Crimsonland installation remain open. No deployment.
+Two-worker cap and serialized runtime/builds remain. Startup requires2.3GB free; floor2GB. Browser access, GL/D3D27 and held algorithms remain open. No deployment.
