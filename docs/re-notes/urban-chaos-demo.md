@@ -1289,3 +1289,103 @@ ID/state/expiry are N/A; delegated own helper shutdown is complete. Only this no
 is committed. Next is a separately authorized original with sustained disk
 headroom and a fresh gate integrating this boundary. Historical movement remains
 HUD2011/neutral2137/ArrowUp2263; no new FPS, audio or full27 claim is made.
+
+## 2026-11-01 durable encounter attempt: HUD reached, heap refusal blocks the next step
+
+Evidence: `scratch/runs/20261101-urban-chaos-durable-encounter/`. **The ordinary
+encounter goal remains unachieved.** One original reached the street HUD at2011
+and acknowledged2036. During the next25-batch step, heap refusal recurred and
+no reply arrived within180 seconds. No ArrowUp or other gameplay key was sent;
+there is no movement, guard response, encounter or objective-progress claim.
+No request or original was replayed after this failure.
+
+The coordinator reviewed published scratch shutdown repair079959006 and its15
+accepted lifecycle cases before dispatch. This worker reused the exact tested
+`drive.py`, `supervisor.py`, `independent.py`, `lifecycle.py`, `runner.py` and
+`detached.py`; only the copied guard's task absolute outer deadline changed.
+Accepted lifecycle, guard and detached-controller controls were pinned/reused,
+not rerun or presented as fresh gameplay proof. Guard/disk predicates and the
+immutable initiating failure were preserved. No production/source/test edits.
+
+Exact Battlezone worker01a1989a author DONE/PUSH RELEASE, fresh launcher/run
+final/result and directly absent owned processes/groups passed the gate at
+20:00:34.870 UTC on published main346788a42a40e77361c53fa0d2db45f59051eab7.
+The25-minute deadline was20:25:34.870; the75-minute task limit stayed absolute.
+All4,294 accepted source/dependency pins matched. The accepted allocator's
+locked build, production/source regressions and five focused checks were
+reused on exact unchanged inputs. The selected module's before/after SHA256 is
+`7278c1018fa8208731a8e285f0bb2a5c35aa8e299592750ce3cedf6d354caef0`.
+All1,122 manifest paths match, with original Fallen.exe SHA256
+`8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`;
+Config.ini remains explicitly reconstructed. All1,124 fixture/manifest files
+and source pins still match after shutdown.
+
+A41-sample direct20-second headroom check passed, minimum2,158,387,200 bytes.
+Original PID4117224 launched with2,158,342,144 bytes free, using the ordinary
+registered native software CLI, `--no-build --control-stdin --frozen`,
+batch-size100000, and step requests at most25 with180-second reply bounds.
+Launch2100000000, stop2020000000 and floor2000000000 were unchanged; no RAM gate.
+The primary/independent histories contain1,812/1,810 samples, maximum gaps
+0.636/0.599 seconds, with respective minima2,137,595,904/2,092,912,640 bytes.
+The driver's observed minimum was2,135,396,352. There was no disk stop here.
+These are finite samples, not continuous safety or an identification of the
+historical transient writer. The coordinator owns its separate passive disk
+observer; this worker neither changed nor stopped it.
+
+Actual standard/native Setup25, ordinary Okay dismissal, title205, map307,
+briefing409, opening711/1111/1711 and HUD2011 were visually reviewed. Standard
+before/held/released/settled captures exist for Setup and three Enter phases.
+At2011 D'arci stands on the street with radar/health, fist icon and3:58 timer.
+The neutral interval has its actual before PNG and one successful25-batch
+step to2036; its later phase captures and subsequent ArrowUp route were never
+reached. All44 actual PNGs pass CRC/complete-deflate checks. No synthetic image,
+state/progress injection, new production hook or bin-flushing probe was used.
+
+The log contains8,016 heap OOM messages. The immutable first passive observation
+retains the first1,048,576-byte sparse-commit refusal, then32,296 bytes refused
+by bump/low-reserve/sparse allocation, EIP00494d9f and caller0048c76e. It follows
+ACK2036; no subsequent ACK exists. The pending request was sent at20:05:16.251
+UTC and its180-second wait expired around20:08:16. There is no per-line wall
+clock or first-refusal import sampler, so exact onset and OOM-to-stall causality
+remain unproven. The earlier zero-refusal observation through2011 was finite;
+it does not establish allocator exhaustion was fixed in real gameplay.
+
+`initiating-failure.json` first records the detached neutral helper's exit1;
+its output preserves the exact timed-out step. The driver then published the
+secondary guard failure and entered the reviewed shutdown path. Ordinary quit
+and SIGTERM could not stop the unresponsive original; SIGKILL was required.
+**Direct original OS wait records-9**, durable after3.074 seconds of cleanup,
+before driver cleanup completion and the supervisor's **driver OS wait0**.
+Independent and supervisor direct waits also record0. The primary did not
+escalate the driver. Node exit hooks are not used as OS-wait evidence. This
+actual failure path retains the waits missing from predecessorc157668dc.
+
+SIGKILL prevented the unchanged observer's exit-only `loaded.json`, compile-event
+record and Node exit hook from being published. **Actual consumed-byte and
+compiled-byte observer identity are unavailable**, not inferred from previous
+runs. The direct frozen inventory/startup log names Fallen, binkw32, mss32 and
+seven Miles modules; `actual-file-pins.json` maps those ten loaded module names
+and bases to unchanged before/after file hashes. That narrower evidence does
+not enumerate every on-demand game-data read or hash in-memory consumed bytes.
+The selected WASM path and disk hash match; a fresh actual compilation observer
+hash is not claimed.
+
+The audit retains234 requests,233 successful replies and the one missing reply.
+No final neutral release/settled sample could be obtained after the timeout.
+The last complete input sample is2011: known queues empty, sampled physical and
+async keys released, numeric mouse mask0. Only three balanced Enter pairs and
+Setup mouse input were sent; no held movement key existed. That sample does not
+prove final2036 guest post-queue or SDL state. No final image was fabricated.
+
+Direct cleanup found all31 then-recorded owned PIDs and30 groups absent, no own
+helpers and no new child temp directories; publication processes are checked
+again in final `cleanup.json`. Original/helper shutdown was delegated and is
+complete. Native local box ID/state/expiry are N/A. `verification.json` passes
+scoped evidence checks while explicitly recording the unsuccessful gameplay
+goal and observer/final-release gaps. `RECOVERY.txt`, exact helper pins, complete
+runtime gzip, request receipts and PNGs support offline inspection.
+
+Next: investigate the remaining real-game sparse-commit/allocation refusal and
+unreturned2036→2061 step before another separately authorized original. The
+synthetic allocator repair does not establish encounter success. No FPS, audio,
+full27, browser/GPU or broader gameplay qualification is claimed.
