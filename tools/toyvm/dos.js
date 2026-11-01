@@ -3339,7 +3339,12 @@ class Machine {
         this.vgaSeqWrite(v.seqIndex, value); return;
       case 0x3CE: v.gcIndex = value & 0x0F; return;
       case 0x3CF:
-        v.gc[v.gcIndex] = value;
+        // IBM VGA GC01 (Enable Set/Reset) and GC02 (Color Compare) define
+        // only bits 0..3. Choose zero for reserved-bit readback by discarding
+        // their writes; IBM specifies undefined reads, not a zero guarantee.
+        // Keep selected-model extensions and four-bit index aliases intact.
+        v.gc[v.gcIndex] = this.svga === 'none' && (v.gcIndex === 1 || v.gcIndex === 2)
+          ? value & 0x0F : value;
         // Miscellaneous and Mode between them say whether A000 is a picture and
         // how deep it is, so a mode set done entirely in registers is picked up
         // here rather than only at INT 10h AH=00.

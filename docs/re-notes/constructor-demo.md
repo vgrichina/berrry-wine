@@ -1268,3 +1268,26 @@ committing code. Reserved-bit zero readback remains deterministic emulator
 policy, not an IBM physical guarantee. Supported SVGA detection, capacity,
 banking, mode pixels and Constructor gameplay remain unproved. No original,
 browser, box, download or deployment was started; box ID/state/expiry are N/A.
+
+## Combined GC/checkpoint implementation outcome, 2026-11-01
+
+Run `20261101-toyvm-gc-checkpoint-coherent-build` adopts the six released
+source/test/bundle paths together and resolves the runner dependency above.
+Both bundles are regenerated from the repaired GC and checkpoint runner;
+all embedded modules match source after shebang normalization. Each passes
+74 GC assertions, real HI COM execution, once-only checkpoint keyboard input,
+no-input equivalence, session bounds, stop, deadline and terminal checks.
+Exact source/test hashes retain the accepted 178-pass source VBE result,
+DAC/retrace PASS and native checkpoint/keyboard PASS from the preceding runs.
+`flock /tmp/wine-build.lock bash tools/build.sh` now passes in full, including
+bundle reproducibility. Evidence and recovery instructions are in this run.
+
+GC01/02 store only their defined low nibble for default/none SVGA; reserved-bit
+zero readback is emulator policy. IBM reserved reads are undefined, so this
+does not establish physical zero readback. Selected Trident behavior and other
+GC registers retain their existing policy. No original was executed here;
+supported SVGA detection/capacity/banking/mode pixels and gameplay remain
+unproved. Build entry was2335780864bytes available and its minimum2335588352,
+above the active2020000000-byte stop and2000000000-byte floor, with no RAM gate.
+Box ID/state/expiry are N/A; runtime is released after publication for the next
+authorized original test.

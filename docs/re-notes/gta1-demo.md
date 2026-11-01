@@ -1,5 +1,22 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Combined GC/checkpoint implementation, 2026-11-01
+
+Run `20261101-toyvm-gc-checkpoint-coherent-build` resolves the generated-bundle
+dependency below by adopting both repaired sources/tests and regenerating both
+live bundles together. Every embedded module now matches current source after
+the bundler's shebang normalization. Both bundles pass real COM execution,
+once-only checkpoint Enter in guest memory, no-input state equivalence,
+session bounds, stop, deadline and terminal checks, plus 74 GC assertions each.
+The unchanged native checkpoint/capture/CLI and keyboard PASS evidence from
+`20261101-gta1-checkpoint-capture-fix` is reused with exact source/test hashes.
+The mandatory `flock /tmp/wine-build.lock bash tools/build.sh` passes in full.
+
+This supersedes the publication blocker below. No original GTA was run here
+and no gameplay result is claimed. After implementation publication and author
+release, the next GTA worker may test the original using this checkpoint API.
+No boxes were assigned (ID/state/expiry N/A); no shutdown action was taken.
+
 ## Generic native checkpoint implementation tested; bundle gate blocked, 2026-11-01
 
 The released runner/test WIP from `f2fd12a5f` is adopted and repaired in
