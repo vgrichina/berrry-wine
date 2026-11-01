@@ -1,9 +1,9 @@
-Current 2026-11-01T09:53:13.860752+00:00 — coordinator01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T10:02:03.552488+00:00 — coordinator01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Outcast039f7f5a2 confirms ordinary draw, aim, a pistol shot (ammo80→79), release and holster. Reviewed paired PNGs and consumed WM/DirectInput; one170.150s original exited0, identities unchanged, own processes absent, findings published. Combat outcome remains unverified.
+Dethkarz fire-control worker01a19686 handle49878 owns runtime since09:58UTC; deadline10:23UTC, overall11:35UTC, fallback10:05UTC. Driving was qualified; Shift firing remains open.
 
-MDK2 startup-cause worker01a19684 handle60148 owns runtime since09:50UTC after Outcast terminal/release. Runtime deadline10:20UTC, overall11:15UTC, fallback10:01UTC. Blank teal/no HWND prevented the prior jump check; no forced resume or config synthesis.
+Fresh Incoming phase-progress worker01a1968e handle32675 waits for Dethkarz fresh final/result AND explicit runtime/source/build RELEASE. It seeks hostile combat or a phase transition beyond the prior turret-turning checkpoint. Runtime30min from gate, overall11:55UTC; fallback10:15UTC then>=10min. Two workers, serialized runtime.
 
-Fresh Dethkarz fire-control worker01a19686 handle49878 waits for MDK2 fresh final/result AND explicit runtime/source/build RELEASE. Runtime25min from gate, overall11:35UTC; fallback10:05UTC then>=10min. Shift firing remains open; driving is already qualified. Two workers, serialized runtime.
+MDK2 f0eda338f identifies glAccum lookup rejection and loader error2 before the suspended-worker wait:212 rejected GL/WGL names,208 unimplemented. No bounded repair; jump unverified. One78.087s original exited0, pins unchanged, own processes absent, findings published. Existing fixture's stale handle assertion fails; adapted ABI checks pass.
 
-Rayman needs sustained disk headroom. Full27/GPU coverage, FPS/audio and Starlancer licence1772 remain open. Inbox empty09:52UTC. No browser/access retries or deployment.
+Outcast aim/fire80→79/holster accepted; no combat outcome. Rayman needs sustained disk headroom. Full27/GPU coverage, FPS/audio and Starlancer licence1772 remain open. Inbox empty10:01UTC; no browser/access retries or deployment.
