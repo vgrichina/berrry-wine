@@ -1,5 +1,61 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Successive original input: startup launch handoff boundary, 2026-11-01
+
+One authentic default `GTADOS/K.EXE` session used published
+`37791d8f1f0a3072bbce209796f65923ae3810ce` after its terminal/final,
+author release and helper absence were checked. Evidence:
+`scratch/runs/20261101-gta1-successive-native-input/`.
+Exact archive SHA-256 `76f1e1da5c898f755597b86357c4d77b7447cb483673a23d10d34f40cfe03ec9`,
+K.EXE SHA-256 `8fd02d556e06f3258a6ca516ccf675e7aafbf313bd3c575e12dd0f8e5c67d48f`
+and all 117 files / 17,078,619 bytes matched before and after, with exact closure.
+All 230 source/support pins stayed unchanged. No assets, binaries or sources
+were changed; no build or original retry was performed.
+
+Each live PNG was inspected before writing its individual stdin answer. All
+checkpoints shared one VM, 3-billion-dispatch budget, 85-second runner deadline
+and independent 90-second OS deadline; thresholds were spaced 200 million
+dispatches apart:
+
+| Capture | Actual dispatches | Reviewed screen | Answer |
+| --- | ---: | --- | --- |
+| `checkpoint-00.png` | 200,006,546 | Language backdrop/logos; flags not yet visible in this live frame | Empty line, allow animation |
+| `checkpoint-01.png` | 400,000,001 | British flag and pointer, Choose Your Language | Enter |
+| `checkpoint-02.png` | 600,014,708 | English / Press Any Key | Enter |
+| `checkpoint-03.png` | 800,000,004 | Grand Theft Auto Startup; Run GTA selected; Control: Keyboard | Enter |
+| `after.png` | Final | DOS/4GW / Startup V2.40 text | No further input |
+
+This establishes successive ordinary menu responses, **not gameplay**.
+After Enter on Run GTA, K.EXE returned `exited=true code=0` at
+`0549:26EB`, approximately 822.6 million dispatches / 199,168 handbacks.
+Later scheduled checkpoints were never reached. Host actual wait was **0**,
+with elapsed supervisor time **26.707862 seconds**; no deadline termination
+was needed. The CLI reports 25.19 seconds and 82.15 guest seconds; these are
+separate clocks, not the OS runtime. No walking/driving/player-control claim.
+
+The concrete new boundary is the startup launch handoff: the run created
+`temp.ini` and `dino.bat` in the guest overlay and returned without gameplay.
+The original root `GTA.BAT` runs `k.exe` then `call dino.bat`; running K.EXE
+alone does not execute that subsequent original batch command. The report also
+lists missing `C:\COMMAND.COM` and no gameplay child EXEC. Static DOS runtime
+inspection shows only limited `COMMAND.COM /C executable` resolution, with no
+general batch interpreter. The exact generated batch contents and EXEC request
+were not captured, so neither the missing shell nor aggregate decoder give-ups
+are established as the cause. Next: inspect the generated overlay and exact
+handoff, then support the original batch route faithfully, retaining K.EXE as
+the default entry rather than substituting DEMO24.EXE.
+
+Actual ordinary compiled module: SHA-256
+`03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`,
+343,736 bytes; the observer returned bytes unchanged and recorded loaded JS
+identities in `actual-module.json`. Paired captures, timed reviews/answers,
+full report, identities and actual waits are retained. The active guard kept
+abort 2,020,000,000 bytes / floor 2 GB, with no RAM gate. Minimum free space was
+2,306,699,264 bytes. Supervisor actual tool wait 0, guard wait 0 and watcher wait -15;
+all four PIDs are directly absent and no own helpers remain. No box was assigned
+(ID/state/expiry N/A); lifecycle ownership remains with the coordinator.
+Note/runtime ownership is released after publication; this assignment stops.
+
 ## Successive native input primitive, 2026-11-01
 
 Run `20261101-toyvm-successive-checkpoint-input` extends the published one-shot
@@ -79,8 +135,9 @@ Fixture and pinned source bytes remained unchanged afterward.
 The retained language-menu evidence set `--checkpoint=200000000`. The live
 handback was **200,006,546 dispatches / 56,211 handbacks**. `before.png`
 was captured and visually inspected before input: Choose Your Language,
-texture and BMG/DMA logos were visible, but the retained image's flags and
-pointer were absent. Only then was `enter` supplied once through supported
+texture, BMG/DMA logos, all four flags and the English pointer were visible.
+The earlier note incorrectly said the flags/pointer were absent; inspection of
+the actual retained PNG confirms they are present. Only then was `enter` supplied once through supported
 checkpoint stdin. `after.png` visibly reads **English / Press Any Key**.
 This establishes a menu response, not gameplay or player control.
 
