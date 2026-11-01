@@ -489,6 +489,12 @@
         (call $io_apc_push (local.get $id))
         (call $io_apc_push (local.get $thunk))
         (global.set $eip (local.get $cb))
+        ;; $steps only unwinds the interpreter stack; run() refills it while
+        ;; its block budget remains. Hand control to the scheduler before
+        ;; entering this callback, so a just-completed callback cannot
+        ;; immediately reacquire a section ahead of a parked application
+        ;; thread. The callback frame and consumed timer phase stay intact.
+        (global.set $yield_flag (i32.const 1))
         (return)))
     ;; Nothing due: Sleep until the next deadline, re-entering here. With no
     ;; timer at all the thread idles in 50ms sleeps, as winmm's does.

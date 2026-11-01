@@ -1,5 +1,105 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: generic timer callback handoff repaired; original main menu opens
+
+**The dedicated multimedia-timer thread cleared the interpreter quantum but
+did not return to its host scheduler before starting another due callback.**
+The narrow repair sets `$yield_flag` after staging the callback's existing
+frame and EIP. Original Rune now opens its main menu after physical Escape.
+Gameplay remains unproven. Evidence:
+`scratch/runs/20261101-rune-timer-handoff-repair/`, with the sole post-fix
+original invocation in `postfix/`.
+
+The initial gate was honored: only scratch preparation preceded Redline
+`01a19556`'s final artifacts and **04:36:06 UTC** runtime/source/build release.
+The gate was accepted at **04:36:45**. Offline checks exercised the actual
+parked control/parser/eval bindings, distinct instances, natural clock/API
+return values, relocated reads and the actual preload/module with an unchanged
+whole-512-MB memory hash. `get_sleep_yielded()` consumes its flag, so it was
+excluded from observation; sleep state comes from the scheduler's existing
+natural return record. No readiness, timer-delivery or routing helper was
+called merely to inspect state.
+
+The baseline's exact causal sequence, cooperative turn **608062**, is:
+
+1. Galaxy releases its section; `lock/recursion/owner` becomes **-1/0/0**.
+2. Natural `host.get_ticks` at verified thunk metadata **CACA003B** returns
+   **35,217,202 ms**. The timer's last tick is **35,210,784**, interval **20**,
+   so it was due at **35,210,804**, **6,398 ms** before this observation.
+   `$steps=0`, `$block_budget=704`, host-yield flag and yield reason both **0**.
+3. The next callback acquires the section in that same turn with budget **702**.
+   The separate block budget lets `run()` refill `$steps` and continue.
+4. The real cooperative run returns only on budget exhaustion: halt **1**,
+   **1,000 blocks**, owner **4**, no sleep yield. Main is still at
+   **0x17a068e0**, reason **9**. Its normal retry becomes eligible only after
+   the section is already held again.
+
+`test/test-mm-timer-handoff.js` compiles the full canonical source and runs
+actual x86 callbacks, API thunks, CACA003B and `run()`, with a genuinely
+contending main instance and the real `ThreadManager.checkMainYield` admission.
+A callback uses ordinary Sleep(0) while holding the section, then advances the
+fixture clock by one period, releases and returns. **Before repair**, a second
+callback acquires before host return: owner **2**, callback count **2**, main
+count **0**; the free-section assertion fails. **After repair**, host return
+has owner **0**, callback count **1**, and the first admitted main retry acquires
+as owner **1**, increments main count once and consumes its original stdcall
+frame exactly once. The successor then parks on main and resumes normally
+after main releases. No timer or run logic is replaced by the regression.
+
+The production change adds only the due-callback host-yield flag, preserving
+timer phase consumption, callback arguments, pinned loop ESP, identity checks
+and both EIP targets. The first mandatory build stopped on that function's
+changed source seal. Reviewing the exact census entry confirmed unchanged
+`writes`, `boundaryCalls`, `exports`, `targets` and `ownershipWrites`; only its
+SHA was refreshed. Ownership remains **pending**, nonlocal APIs remain
+disabled, and no lifetime, REP, restart or nonlocal-jump algorithm changed.
+The subsequent mandatory **flock build passes**, as do the new regression,
+existing timer-thread and callback tests, **55 ownership cases with a detected
+negative control**, and census mutation tests. The existing input-consumption
+VM fixture was not edited or reported as passing; its previously documented
+missing `mainSchedulerObserver` binding remains outside this repair.
+
+Post-fix natural observations confirm the actual handoff. For example, turn
+**612043** reaches CACA003B with clock **35,416,203**, last tick **35,414,984**,
+interval **20**, `$steps=0`, budget **826** and a free section. It returns with
+halt **3** after **175 blocks**, still free, and `runSlice` returns before the
+next timer acquisition in turn **612044**. This is a host scheduling opportunity;
+the CLI's additional worker rounds can still precede its normal main-retry
+admission. The repair does not promise immediate main execution after every
+callback or change that admission algorithm.
+
+Both original invocations used empty parent arguments, **C:\System**, unchanged
+shipped INIs, both original **142-file** trees, **Software Rendering → Next →
+Next → Run**, physical Escape down/up and the ordinary **200 ms** clock.
+Baseline `after-up.png` still shows the title; inspected
+`postfix/after-up.png` shows the actual **New Game / Load Game / Save Game /
+Multiplayer / Options / Exit** menu. An ordinary click at **101,117** followed
+by **1,000 batches** did not establish a level transition; the inspected final
+PNG still shows the main menu. At that last parked observation main is runnable
+at **0x1187e500**, not its former section-wait thunk. No subsequent generic API
+failure is proven. The next observation is ordinary New Game activation through
+its guest menu handler to an actual map-load command; no gameplay, movement or
+successful New Game activation is claimed. A late request for another 10,000
+batches was not executed after the driver's deadline and is not test evidence.
+
+Baseline build reuse matched all **4,388** recorded inputs, generated mirror
+and both actually loaded parent/child modules, **2,025,629 bytes**, SHA-256
+`985ca2480931df88751db66dbee8527a6d9df9940949baafc6bc3a0b1a43e2dc`.
+Changed inputs required the fresh locked build: both post-fix actually loaded
+modules are **2,025,634 bytes**, SHA-256
+`baef4e5a70f43b5d87fe086b4f5bd5b583c833e8bf07239ef05749f222035136`.
+Before/after source, loaded-read and original-pin checks pass separately for
+each invocation; the new untracked regression's hash is additionally pinned
+in `repair-code-inputs.json`. No Rune clock/config/audio substitution, guest
+write, forced release, breakpoint or instruction counter was used.
+
+Both invocations exit **0**, naturally in **65.263s / 85.076s**, with renderer
+children exiting guest/host **0**. Outer **150s / kill-after 5**, inner **115s**,
+child **TERM 90 / KILL 95** guards were unused. Logs (baseline parent/PTY logs
+losslessly gzip-compressed), child INIs and identities are retained. Own runtime
+PIDs/groups, child temporary trees and watcher are absent; disk remains above
+**2 GB**. Box ID/state/expiry and ownership are **N/A**.
+
 ## 2026-11-01: Galaxy owner releases correctly; immediate timer reacquisition starves main
 
 **The Galaxy section is not orphaned: its multimedia-timer owner repeatedly
