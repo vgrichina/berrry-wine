@@ -1,5 +1,5 @@
-Current 2026-11-01T11:08Z — Incoming helicopter control/waypoint investigation owns the serialized native runtime. Fresh Dethkarz combat worker waits for its terminal result and explicit release, targeting opponent hit/damage beyond accepted Shift firing. Incoming fallback11:10UTC; Dethkarz11:20, then at least10min apart.
+Current 2026-11-01T11:20Z — Dethkarz combat worker owns serialized native runtime, aiming at opponent hit/damage beyond accepted Shift firing. Fresh Incoming waypoint worker 01a196d5-afc1-72a3-9d74-b2e457302fa2 waits for its terminal result and explicit release. Fallback checks11:20/11:30UTC, then at least10min apart.
 
-Motocross fixed-cadence Practice attempt ended in rebound/roll and separated rider/bike, player score0. Paired captures reviewed; clean landing and scored stunt remain unproved. Worker committed86bf6a3a and released its processes. GL stencil/depth native pass is linked in the corpus page15513370e; GPU parity, full27 membership and broad crash freedom remain open.
+Incoming4088515ae now proves ordinary helicopter flight in phase2/10: reviewed captures show radar-dish flyover, banking and hill approach with consumed WM/DI controls. Waypoint arrival and objective/phase completion remain unproved. One472.113s original exited0, minimum runtime disk2.558GB, identities unchanged, four owned PIDs independently absent. Motocross clean landing and scored stunt remain open.
 
-Continuous disk>2GB; recovered redundant Icewind ZIP retains recovery recipe and unchanged originals. Native only, HeroesII laptop-owned, no public deployment.
+GL stencil/depth native coverage is recorded; GPU parity, full27 membership and broad crash freedom remain open. Continuous disk>2GB; native only, HeroesII laptop-owned, no public deployment.
