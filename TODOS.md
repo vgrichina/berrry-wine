@@ -1124,9 +1124,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: Dethkarz combat01a196ca-6ce1-7fc1-9963-2692d1f4c7cc handle38736 output scratch/usage-watch/dethkarz-visible-combat-next-nov01/ runtime25min gate11:09 overall14:00UTC fallback11:20 then>=10min. Incoming waypoint01a196d5-afc1-72a3-9d74-b2e457302fa2 handle23734 output scratch/usage-watch/incoming-helicopter-waypoint-arrival-nov01/ waits Dethkarz freshfinal/result AND explicit runtime/source/build RELEASE; runtime30minfromgate overall14:30UTC fallback11:30 then>=10min. Cap2 serialized native disk>2GB.
-  Current update 2026-11-01T11:20Z: Incoming4088515ae one472.113s original exit0 phase2/10 ordinary helicopter flight verified from four reviewed PNGs with radar-dish flyover, bank, hill approach and consumed controls; waypoint arrival/objectivechange unproved. FourPIDs absent; unchanged originals/source observer/manifest PASS. Fresh waypoint-arrival successor launched behind Dethkarz. Motocross cleanlanding remains open after failed rebound/roll attempt.
-  status: two-game pipeline active; Incoming flight accepted, waypoint arrival and Dethkarz combat outcome open; GL/D3D full27/GPU FPS/audio remain open.
+  worker: Incoming waypoint01a196d5-afc1-72a3-9d74-b2e457302fa2 handle23734 output scratch/usage-watch/incoming-helicopter-waypoint-arrival-nov01/ owns serialized native runtime since11:21 deadline11:51 fallback11:40. Outcast combat01a196e2-9a35-7cd0-b6a8-d1cf1e37f92f handle63123 output scratch/usage-watch/outcast-visible-combat-next-nov01/ waits Incoming freshfinal/result AND explicit runtime/source/build RELEASE; runtime25minfromgate overall15:00UTC fallback11:45 then>=10min. Cap2 disk>2GB.
+  Current update 2026-11-01T11:34Z: Dethkarzfd1101ca4 two original runs show shots passing opponents, no hit/damage/outcome. Second driver143 cause unknown, incomplete gzip and missing minimum receipt disclosed. Two PNGs reviewed and four PIDs independently absent. Fresh Outcast successor targets hostile impact beyond accepted ammo80→79; Incoming waypoint still running, accepted flight alone is not arrival.
+  status: two-game pipeline active; Incoming waypoint arrival and Outcast combat outcome open. Dethkarz opponent damage unproved; GL/D3D full27/GPU FPS/audio remain open.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
