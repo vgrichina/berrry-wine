@@ -674,6 +674,56 @@ are N/A. Recovery is by reading the retained scratch scripts and JSON records;
 the runtime maximum remains one, but this assignment permits no new attempt.
 Only this note and ignored evidence changed. No FPS, audio or full-suite claim.
 
+## 2026-11-01: guarded capture stopped at observer launcher prerequisite
+
+Run `scratch/runs/20261101-battlezone-guarded-capture-harvest/` launched
+**zero originals**. The repaired standard mission-complete capture and mission 2
+arrival, harvesting or another objective change remain **unverified**.
+
+Scratch preparation recovered the accepted startup/mission route, original
+`Input.map`, native/standard comparison and ordinary onward Scavenge controls.
+The exact `urban-chaos-guard-diagnostic-encounter` author release, fresh launcher
+final/result (exit 0), and direct cleanup passed at **17:49:57 UTC**. Dispatch
+`7d47a40e5f518743ea7db2a5d4b6fb596084f1b5` was repinned to actual main
+`c32bdc566aca2652f1d54a85b7173818b1105777`; the runtime deadline was
+**18:14:57 UTC**, within the overall 19:45 UTC limit. All **4,063 accepted
+source/module pins** matched again at the gate, allowing reuse of the renderer
+worker's locked build and focused tests. No fresh build or regression ran.
+
+After the gate, the tested Urban scratch guard implementation was adopted.
+Its retained healthy, delayed, stale, dead-process, replaced-identity and
+explicit-failure-file controls passed. Three-second monotonic freshness and
+process start-tick identity checks retain direct independent disk/process/deadline
+enforcement. First guard failure uses exclusive file creation, separate from
+later rejection and shutdown records. The prior one-second guard was not reused.
+Detached primary and independent guards advanced without a guard failure.
+
+**First prerequisite failure, 17:50:18 UTC:** this worker mistakenly passed
+Node's `offline.cjs` observer validation to the detached **Python `runpy`**
+helper. Python rejected its first JavaScript line with `SyntaxError`; the
+observer never executed. `helper-observer-terminal.json` retains the full error,
+and `firstfailure.json` preserves the initiating failure separately from shutdown.
+The first-failure rule stopped attempts: no retry, original, gameplay input,
+loaded-module observation, fresh observer success or final game-release sample.
+This is a worker launcher error, not a renderer regression, guard failure or
+game crash. The prepared capture comparison was never executed.
+
+Both guards stopped normally on the explicit owned stop request, after
+**131 primary / 130 independent samples**. Each recorded a minimum of
+**2,158,096,384 bytes** free, above the 2,000,000,000-byte floor. Finite samples
+do not prove unsampled disk history. No original launch-headroom success is
+claimed. Static file hashes do not establish loaded runtime identity or observed
+runtime reads. Owned process/group absence and temporary-file checks are retained
+in `cleanup.json`; local native box ID/state/expiry are N/A and own shutdown was
+explicitly delegated.
+
+Recovery instructions preserve the failed scripts and require using Node for
+the `.cjs` observer in a separately authorized attempt, with a cheap detached
+launcher check before any original. No corrected launcher was replayed here.
+Only this note and ignored evidence changed. The remaining task is the actual
+standard/native dialog comparison followed by visible mission 2 objective
+progress. No FPS, audio or full-suite claim.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
