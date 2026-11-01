@@ -1632,3 +1632,100 @@ cleanup and publication checks are retained. Native local box ID/state/expiry
 are **N/A**. Explicitly delegated shutdown is complete and ownership is handed
 back. The requested eighth-kill objective is complete; no second original or
 further gameplay is needed for this assignment.
+
+## 2026-11-01: eighth-kill F6 exported; disk floor stops further recovery
+
+Run `scratch/runs/20261101-quake2-eighth-kill-checkpoint/` reproduced the
+covered encounter with one native `quake2_demo` original. Supported
+`--vfs-mount` mounted the unchanged eight-file checkpoint from
+`20261031T0213Z-quake2-door/retry/`; ordinary F9 restored **21 HP, 7/18**
+(`starting-count-stable.png`, batch 989). The previous controller's ordinary
+turns/movement were replayed through the mechanical door. The three-batch
+no-input door control retained identical pixels throughout the upper
+640×270 scene, while the matched approach advanced to the door. A further
+touch and 20-batch wait opened it normally. There was no exposed forward
+peek after the touch at batch 1121.
+
+Covered Enter bursts and the previous small aim corrections reproduced the
+guard's blood/collapse (`pointblank-burst-*`, batches 1242–1253).
+`verified-count-wait.png` at 1290 shows **8/18, 21 HP, goals 0/1**.
+Ordinary **F6 at 1290/1291** then produced visible **Quick Saving...** while
+the same eight-kill overlay remained visible (`checkpoint-f6-settled.png`,
+1294). After 40 more batches, a read-only export copied actual
+`ctx.vfs.files` entry bytes to `checkpoint-eight/save-0.bin` through
+`save-7.bin`. This is a game-created save, with no edited save bytes, memory,
+bindings, assets or console commands.
+
+`checkpoint-eight/manifest.json` records all eight actual guest-to-host
+mappings. Each row below applies to both guest directories
+`c:\baseq2\save\current\` and `c:\baseq2\save\quick\`:
+
+| Guest filename | Export indexes: current / quick | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| `server.ssv` | 0 / 4 | 2464 | `33717c18914725eb1a5155f2ac14635084bf7530cea888b51a8f7f79dacda0d8` |
+| `game.ssv` | 1 / 5 | 5308 | `156d97736cef1ea136107a9d2c13c2dc4a5a8a3d494b114ffdb2c972b3903985` |
+| `demo1.sav` | 2 / 6 | 323095 | `83cb6c6ef993f8f0ba35caad600a6731b63d9f2703dc625d108cc51731a597d0` |
+| `demo1.sv2` | 3 / 7 | 104448 | `6ad6c039d4efb8e81628badb5bfaeb8d50ff8e5974aad0b55d3eccaf0b3086c3` |
+
+All eight differ from the original seven-kill saves. On clean runtime exit,
+supported `--save-vfs` exported the guest save tree again;
+`save-export-validation.json` verifies **all eight files byte-for-byte equal
+to the earlier actual guest-byte exports**, not merely to host copies.
+`mounted-guest-validation.json` independently compares the pre-F6 guest
+response bytes against all eight unchanged original host files. Two initial
+read-only observation attempts encountered a JavaScript quoting error and
+an incomplete streamed JSON record; the complete retained runtime response
+was parsed offline for the latter comparison. Neither supplied guest state.
+
+Ordinary F9 at batches 1334/1335 returned to the doorway world at 21 HP.
+However, the attempted post-load F1 pairs, including a later attempt after
+600 no-input batches, did **not** yield a visible statistics overlay in the
+retained frames. Thus this run establishes the F6 save and exact exported
+guest bytes, but **does not independently verify 8/18 after F9**. Those
+world frames are not evidence of a stable no-input statistics control.
+The label `onward-cover-neutral-*` denotes an ordinary End centering pair,
+not a no-input control. No onward movement or room traversal was attempted
+after recovery, and no additional kill or level transition is claimed.
+
+The first terminating blocker was **free disk below 2,000,000,000 bytes**.
+The controller detected 1,999,884,288 bytes and requested ordinary runtime
+quit; the auxiliary guard subsequently recorded 1,998,979,072 bytes. PID
+3705696 exited **0 after 245.421 seconds**, final batch 2385. The continuous
+floor requirement therefore failed; it is not presented as a compliant
+runtime. No second original or runtime restart was attempted. Next, after
+disk capacity is restored, mount the eight new files using their recorded
+guest mappings, allow F9 to settle, verify the visible kill count, then use
+short consumed controls to advance from doorway cover.
+
+Thief II worker `01a1973e-91a3-7693-9c72-46cc90af1d5f` fresh launcher
+final/result and explicit runtime/source/build release opened the gate at
+**13:28:37Z**. Dispatch was `8f2f8a802db44745a1ac00fe3c65e25965eb587f`;
+the repinned main was `787aaad95b6c3bcd435e4d2186956e1c8a6d57e5`.
+All **4,392 accepted source pins and 141 prior observed reads** matched,
+allowing reuse of module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Fresh before/after checks passed **4,444 source/module pins, 67 original
+and manifest inputs, original-tree membership and 132 actual runtime
+reads**. Before original execution, the observer passed actual sync/async
+module execution, whole-512 MB shared-memory read-only checks, clock
+identity and emitted late-event-10001 retention. String-path observations
+do not comprehensively cover descriptors/direct OS reads, and runtime
+module identity does not prove compiler-source reads. No tracked runtime,
+helper, test, configuration or backend changed; no new build was required.
+
+Focused checks pass **80 PNGs** through CRC/IDAT decoding, the complete
+runtime gzip, and **82 key edges / 41 balanced pairs**, all dequeued and
+dispatched in order to hwnd `0x10001`. Three relative-mouse events bring
+final scheduled/dequeued/routed/dispatched totals to **85**. Final known
+queues are empty and sampled physical/async keys, including F6/F9, are
+released; pressed latches are distinct. Guest post queue, buttons and SDL
+consumption remain unknown. Identical screenshots share hardlinks without
+byte changes; a control-log segment is retained losslessly as gzip.
+
+Own original/controller, gate monitor, guards and publication watcher are
+absent, with no own process groups or new `wa-child-*` temps remaining.
+Local native box ID/state/expiry are **N/A**; explicitly delegated own
+shutdown is complete and ownership is handed back. Cleanup, publication,
+fresh run final/result and evidence checks are retained in the run directory.
+No browser/GPU, audio, FPS, networking or full-suite claim is made. Work
+stops at the disk blocker with the new game-created checkpoint preserved.
