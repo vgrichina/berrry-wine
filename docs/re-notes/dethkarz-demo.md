@@ -186,6 +186,108 @@ box ID/state/expiry N/A. No impact, damage, combat outcome, charged-shot
 mechanics, FPS, audio, browser/GPU, or broader playability qualification is
 claimed.
 
+## Bounded visible-combat attempt (2026-11-01)
+
+Evidence: `scratch/runs/20261101-dethkarz-visible-combat/` (including
+`run2/`). **No visible opponent impact, damage or combat outcome was
+established in two original-game runs.** This is a failed combat attempt,
+not another firing-only acceptance. The first gameplay obstacle was retaining
+an opponent in the car's firing line while accelerating and steering: reviewed
+bolts passed beside the moving targets. A later unexplained driver termination
+ended the final run before the next approach could execute.
+
+- Reused the retained native Direct3D Arcade/Hyperon Alpha/Pulse Laser route.
+  The retained `drive.py` template still named Outcast and 100000 blocks;
+  the completed predecessor's **actual** `run2/node-exit.json` names
+  `dethkarz_demo`, 200000 blocks and the paused exact-name API filters. Those
+  actual launch arguments were used here, with ordinary WM/state key edges.
+  No tracked helper, source, test, configuration, registration or backend
+  changed. No guest state or weapon/ammo values were written.
+- First original: acceleration began at batch 3250 after GO. The
+  `aim1-before.png` / `aim1-held10.png` / `aim1-released20.png` /
+  `aim1-settled60.png` sequence (3250/3260/3280/3320) showed acceleration
+  but no identifiable impact. The later `aim2-*` sequence
+  (3500/3510/3530/3570) showed a near-car flash, then a bolt farther down the
+  road, and no target reaction. Speed reached 247 km/h at 3870. Ordinary
+  right steering at the first bend failed to retain the racing line: at
+  `bend-held70.png` (4450) the player car pitched upward against the barrier,
+  and `bend-settled40.png` (4490) shows it below the track. That movement is
+  not opponent damage. Up was released, then the run exited normally.
+- The second and final original tested a concrete change: fire earlier at
+  3350, before the opponents spread, with a small left aim correction.
+  The pair is `run2/early-before3350.png`, `early-held-3370.png`,
+  `early-released3372.png`, and `early-after-3430.png`. Intermediate captures
+  every 5–10 batches show the projectile separate from the opponent: at
+  3412 the bolt is approximately x362 and the target x341 near y197.
+  The flash at the player is a muzzle effect; it is not target impact.
+- After a small right counter-correction, the second shot is paired in
+  `run2/corrected-before3450.png`, `corrected-held-3470.png`,
+  `corrected-released3472.png`, and `corrected-after-3530.png`. The bolt
+  travels to the left of the nearest opponent; at 3502 it is approximately
+  x301/y205 while that car is x382/y206. Intermediate captures through 3512
+  show no target explosion or damage indication. Position remains 20/20;
+  the player's energy bar remains full, and no opponent-specific damage
+  HUD was identified. Up remains held during these settled fire captures:
+  racing, camera lag and changing perspective continue. Whole-frame changes
+  therefore do not establish hits.
+- The final successful capture, `run2/pursuit3810.png`, shows ordinary driving
+  at 233 km/h. The next requested step to 4010 failed because
+  `/proc/3565454/fd/0` no longer existed. The driver tool session returned
+  **143**; both driver and runtime were absent. The Node exit observer wrote
+  code 0 and flushed loaded-file/module evidence, but the driver's `finally`
+  did not produce `exit.json`. Its gzip has no footer or exit tail; the
+  original is preserved alongside a complete gzip of its recoverable prefix
+  and `log-recovery.json`. The signal's sender/cause is unproved; no disk or
+  runtime guard error receipt exists. No third original was launched.
+
+Consumption and identity checks: both runs record actual Shift
+`GetAsyncKeyState(0x10)` calls returning to `0x4a819d`, with values
+0 / 0x8001 / 0x8000 / 0 across press/hold/release, plus consumed Shift
+WM edges and released key-state snapshots. Actual DirectInput state reads
+remain **16-byte mouse reads** (15 in the first traced windows, 43 in the
+second); these do not establish DirectInput keyboard-specific Shift
+consumption. `input-consumption.json` retains the actual calls and WM
+snapshots. Known queues empty at the captured releases; guest post queue,
+button count and exact event correlation remain unknown.
+
+Gate: Incoming `01a196bc-fc1d-7863-8087-8a0327166bb6` fresh launcher
+`final.txt`/`result.json` and its explicit 11:08:26 UTC runtime/source/build
+release preceded the 11:09:08 UTC gate. Requested baseline was `86bf6a3a`;
+**actual main at gate was `09e52ce62b9f55eba6d7b3a182cb2c6bc9a115c2`**.
+The 25-minute deadline was 11:34:08 UTC; runtime ended before it. Local native
+box ID/state/expiry N/A; own process shutdown was delegated.
+
+All 4444 source/build identity entries and all 15 original files/manifest
+match before/after. Full before/after original archives were member-hash
+verified, including the original force profiles; no external control config
+was introduced. EXE SHA-256 remains
+`2a18a5cff1807b457a6e043e0c4e18368c66a598819927bc6f54ba5e18b8de41`;
+manifest remains
+`94b221e38cf7022177ebc514628186462d8fe15baa4e16a091c6d9225f3d248d`.
+Accepted canonical `dd43e4a` was reused only after all 4392 accepted inputs
+and 141 retained actual build reads matched. Each runtime retained 128 actual
+file-read identities matching local bytes, including EXE, manifest, GOB and
+Direct3D DLL. Discovery also reads the Glide DLL; the selected renderer is
+stock Microsoft Direct3D, not the Glide detail path. Actual runtime module
+compilation matched the canonical hash; compilation does not prove compiler
+source reads.
+
+The exact retained observers passed real synchronous/asynchronous WASM
+execution, whole 512 MB memory hashes unchanged, clock identities unchanged,
+and late event 10001 retention. Coverage remains synchronous whole-file reads
+and completed closed descriptor reads up to 24 MiB; async/stream/mmap and
+loader-internal reads are gaps, with exit-only flushing. Manifest check and
+scratch evidence verification passed. No rebuild was performed for this
+documentation-only result. First original: 198.679 s, exit 0, minimum free
+disk 2,512,642,048 bytes. Second startup was 2,512,535,552 bytes; a later
+sample was 2,487,459,840 bytes. Both drivers sampled the >2,000,000,000-byte
+guard while alive, but the second's minimum receipt was lost with its driver;
+no stronger continuous minimum is claimed. No separate startup/RAM gate or
+foreign cleanup was used. Own runtime/driver PIDs and groups
+3561681/3561680/3565454/3565451 are absent; no watcher was created and no new
+`wa-child-*` temporary files remain. Combat stays open; no FPS, audio,
+full-playthrough or broader qualification is claimed. Single assignment stops.
+
 ## Open
 
 - Glide path: `grTexDetailControl` and the detail combine factor.
