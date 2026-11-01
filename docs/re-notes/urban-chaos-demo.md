@@ -344,3 +344,109 @@ owned shutdown was delegated. Cleanup and publication records document absent
 owned processes/groups/watchers/temps and ownership handback. Next work needs
 a fresh assignment with bounded diagnostic logging before native-window
 inspection; this stopped attempt makes no production fix or new acceptance.
+
+## 2026-11-01 bounded RSX diagnosis: mixed named-event wait fails
+
+Evidence: `scratch/runs/20261101-urban-chaos-bounded-wait/`.
+The pre-Setup completion wait now has a precise generic API failure:
+`ThreadManager.waitMultiple` rejects an infinite wait containing a valid
+named-authority event before checking an already signaled unnamed event.
+The original RSX worker receives `0xffffffff` (`WAIT_FAILED`) repeatedly,
+leaves the stop event unconsumed, and does not signal completion. No production
+repair was attempted. One original, zero gameplay inputs, no second original;
+Setup/title/gameplay remain unreached and historical movement is not recounted.
+
+The exact coordinator `D3D9-COM-GAP DONE RELEASE runtime/source/build` author
+line at 15:51:39 UTC, its terminal result (exitCode0), and direct absence of
+the owned COM test process passed the gate at 15:52:36 UTC. Actual gate main
+was `73e88746fc8672d921c6bf274937ba904db702ef`, advanced from dispatch
+`a1c43c412f2406bb58081ad4fa654b36b2973af3`; deadline was 16:17:36 UTC.
+
+Hypothesis H2 disabled selected API/host tracing and retained only first64,
+last64, selected-tail128 and at most256 counter keys around real event/wait
+calls. Wrappers invoke the original method once and return its exact result;
+they sample synchronization state without writing it. Offline comparison
+exercised actual event/wait methods, identical results and whole512MB memory
+with/without wrappers, plus late10,001 calls and retention caps. The separate
+identity observer passed actual sync/async execution, whole512MB read-only
+comparison, clock identity and late10,001 retention with correct SWEEP_CASE_DIR.
+No heap increase, unbounded trace retention or tracked helper changes.
+
+Native registered CLI used `--app=urban_chaos_demo --no-build --control-stdin
+--frozen`, software rendering and batch-size100000. Step1 and step24 both
+replied within180 seconds; no request exceeded25 batches. Native WAT window
+inventory, renderer inventory and dialog globals at batch1 and batch25 all
+show only the invisible zero-size Mucky Foot Shell window, no active dialog
+or dialog backing surface. Reviewed PNGs are plain teal640x480. No blind
+Setup input was sent. Native inventory resolves the omitted-dialog hypothesis
+at these sampled boundaries, without claiming every intermediate state.
+
+At batch25, read-only evaluation retrieved the original main-module probe
+directly as `main-waits-batch25.json`. Its64-record tail contains63 actual
+worker `waitMultiple(2, 0x08048bc8, false, INFINITE, 4)` returns of `0xffffffff`,
+followed by main's completion-event poll returning258. The two handles are
+`0x0e000041` and `0x0e000040`. Before and after every retained multiple wait,
+the first is an auto-reset event with state1; the second is a valid issued
+named-authority event (sync type4). Thus the ready event is not consumed.
+Main is waiting indefinitely on unsignaled `0x0e000042`, EIP `0x023e9943`.
+The sampled original object maps offsets0x88/0x8c/0x94 to those three handles.
+Original aligned RSX code tests the wait result at preferred0x2500b0f9:
+return0 takes the completion SetEvent path, return1 handles the other event,
+and other returns loop. This links the actual failed returns and missing
+consumption to the saved completion wait; it does not establish every possible
+later startup prerequisite.
+
+Exact implementation: `lib/thread-manager.js:2034` checks all handles for
+issued named events and returns `0xffffffff` when timeout is nonzero, before
+the wait-any readiness/consumption loop at2100. CLI `test/run.js:4806` routes
+this call there. `src/09a0b-handlers-base-late.wat:1949` stores that result in
+guest EAX; only internal0xffff yields. The next bounded repair should address
+this generic mixed-event wait contract under the existing holds, then rerun
+this reproducer and the original. No callback, concurrency, SEH or scheduler
+algorithm was changed in this assignment.
+
+Minimal real-API reproducer: `flock /tmp/wine-build.lock timeout 120s node
+scratch/runs/20261101-urban-chaos-bounded-wait/reproduce.cjs`. It compiles a
+separate test module using production CreateEventA/SetEvent/
+WaitForMultipleObjects/WaitForSingleObject handlers and the real named-event
+authority. It creates an unnamed auto-reset event and an unsignaled named
+event, signals the first, then waits-any on both. INFINITE returns0xffffffff;
+a subsequent single poll returns0 then258, proving the failed wait did not
+consume the signal. After a fresh SetEvent, the matched timeout0 control
+returns0 and the following single poll returns258, proving consumption.
+`reproducer-result.json` records this reproduced defect; terminal exit0 means
+the diagnostic assertions passed, not that the API is repaired. Test fixture
+writes are confined to its separate module memory; original game memory was
+observed without writes.
+
+The probe saw4,393,377 total calls with bounded storage. Its256 counter keys
+filled before RSX;4,391,874 overflow events are not an exact RSX failure count.
+The selected tail also retains repeated failures, not unique transitions.
+Inherited Node Worker preload contexts can overwrite timer snapshot files;
+the explicit main-context retrieval above is the authoritative original
+sample. Main's exit observer saved actual compile/read records separately
+from renamed offline records. The original exited0 after93.770 seconds by
+ordinary quit followed by delegated orderly SIGTERM; no heap OOM occurred in
+this bounded launch. This does not isolate the predecessor's heap-allocation
+cause. The first substantive API failure stopped further stepping and inputs.
+
+All1,122 manifest paths matched, including reconstructed config.ini; Fallen.exe
+retained SHA256 `8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`.
+Complete accepted build reuse matched4,392 source pins and141 recorded reads.
+Actual original WebAssembly.compile observed module
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Before/after4,444 source identities,1,124 fixture/manifest identities and132
+actual runtime read identities match. Read coverage includes sync whole-file
+and fully covered bounded descriptors, not compiler reads, all async OS reads
+or guest-memory contents. The reproducer's separately compiled test module
+is not the original runtime module.
+
+Final batch25 input counters are zero and known queues empty. Host physical,
+async and pressed-key/button states remain unknown; consumed gameplay controls,
+sampled releases, before/held/released/settled and matched gameplay-neutral
+evidence are unavailable because no action was attempted. Guest post queues
+and SDL consumption remain unknown. No audio, FPS, browser/GPU or full27 claim.
+Disk guards sampled above2,000,000,000 bytes free with finite sampling gaps;
+no RAM gate or foreign cleanup. Native box ID/state/expiry are N/A. Own shutdown
+was delegated; cleanup/publication/final records document absent owned
+processes, groups, watchers and new child temps and ownership handback.
