@@ -17,10 +17,12 @@ The later native control runs add these bounded checkpoints:
 | Outcast | `039f7f5a2`, run `20261101-outcast-original-weapon-control`: ordinary weapon draw, aim, fire with ammo80→79, release and holster in reviewed PNGs, with consumed WM/DirectInput. One original exits0 after170.150 seconds. | No enemy hit, projectile trajectory, impact, damage, kill or combat outcome. The initial NPC interaction was excluded from firing proof. |
 | Dethkarz | `ca136b967`, run `20261101-dethkarz-native-fire-control`: reviewed before/Shift-held/released captures show a laser flash/bolt and weapon-bar response. Consumed WM down/up and actual `GetAsyncKeyState` returns0/8001/8000/0 establish the ordinary Shift path. Two originals exit0 after192.197 and80.305 seconds. | Exact DirectInput keyboard consumption is unproved: observed DirectInput reads request16-byte mouse state. No impact, damage, combat outcome, charged-shot mechanics, FPS or audio claim. |
 
-Both later runs also reuse module `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`,
+| Incoming | `16f6dd886`, run `20261101-incoming-native-phase-progress`: reviewed hostile-fire captures show score0→250→500→6500, followed by PHASE COMPLETE and a helicopter FOLLOW WAYPOINT prompt. Consumed WM and acquired DirectInput keyboard events support the firing controls. One original exits0 after551.986 seconds. | Helicopter flight and waypoint progress remain open; the transition prompt alone does not prove movement. No full playthrough, WebGL comparison, FPS or audio claim. |
+
+These later runs also reuse module `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`,
 retain unchanged original/source identities and cleanup evidence, and add no
 current WebGL comparison. See [Outcast notes](re-notes/outcast-demo.md) and
-[Dethkarz notes](re-notes/dethkarz-demo.md).
+[Dethkarz notes](re-notes/dethkarz-demo.md), and [Incoming notes](re-notes/incoming-demo.md).
 
 MDK2 remains before its first window. `f0eda338f`, run
 `20261101-mdk2-prewindow-cause`, traces the first rejected lookup to `glAccum`:
