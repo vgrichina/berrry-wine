@@ -1,5 +1,105 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Frozen texture snapshot: enabled stage, zero binding (2026-11-01)
+
+Run `20261101-redline-texture-snapshot` resolves the preceding evaluator
+failure and establishes the first concrete **checkpoint rendering blocker**:
+the live device has no bound texture while texture modulation is enabled.
+Why the binding remains zero is still unobserved; no production/test repair
+is justified by this result, and the HUD's specific drawing path is not yet
+identified.
+
+At frozen batch **30,700**, the sole type-20 device is DX slot **7**. Its
+state guest pointer is **9,952,284**, translated by exposed `g2w` to WASM
+**5,831,708**. State +2824 contains texture slot **0**, which
+`$d3dim_texture_entry_from_slot` explicitly rejects. Both render state
+TEXTUREHANDLE (state +256+4) and the resolved texture entry are zero.
+The eight stored stage-zero words are `[0,4,2,0,2,2,1,0]`: COLOROP
+(type 1, state +2832+4) is **4 / MODULATE**. Legacy TEXTUREMAPBLEND
+(+3936 and render state 21) is **2 / MODULATE**, also yielding effective
+COLOROP **4** through `$d3dim_tss_load`. Thus the disabled-COLOROP ambiguity
+does not apply to this frozen device state. The source's bound-texture helper
+reaches slot resolution and returns zero, so this state cannot sample any
+surface. A snapshot alone does not establish the state of every prior draw.
+
+The same snapshot reads all **1,630 live type-2 surfaces**, including their
+dimensions, bpp, pitch, DIB address, flags, key, stored/effective format,
+full-span byte/pixel statistics and raw head/middle/tail samples. Every DIB
+span is in bounds. **1,346** surfaces contain only zero pixels, **282** have
+multiple raw pixel values, and **2** are uniform nonzero. Formats are 1,433
+RGB565, 196 ARGB4444 and one ARGB8888. These counts do not identify an intended
+draw resource; neither an all-missing-data explanation nor correct uploads
+for the missing walls/weapon/HUD follows from them.
+
+Representative directly read resources (DIB addresses are WASM addresses):
+
+| DX slot | Dimensions | Format | Pitch | DIB | Nonzero pixels | Distinct raw pixels |
+| ---: | --- | --- | ---: | ---: | ---: | ---: |
+| 10 | 128×128 | RGB565 | 256 | 474525696 | 0 / 16384 | 1 |
+| 338 | 64×64 | RGB565 | 128 | 5891764 | 1894 / 4096 | 39 |
+| 339 | 128×128 | RGB565 | 256 | 6074140 | 5859 / 16384 | 62 |
+| 341 | 16×16 | RGB565 | 32 | 5982644 | 256 / 256 | 45 |
+| 383 | 144×14 | RGB565 | 288 | 8876340 | 2016 / 2016 | 17 |
+
+For example, slot 338's first bytes include `00 00 00 00 04 21 08 42`;
+slot 341 includes raw values `1,44537,31794,48698`; slot 10's entire
+32,768-byte span is zero. Full samples and capped distinct-value sets remain
+in `resources-30700.json`. No decoder, exported resource helper, guest-scratch
+allocation or state mutation was used. The existing bounded trace again
+contains only `(16,0,0,0,0)` and `(29,21,2,0,0)`; it adds no texture-load or
+nonzero-binding observation.
+
+The outer Python driver loads **the recorded matching region mirror**, then
+injects numeric DX_OBJECTS/DX_SURF_FMT bases into the read-only expression.
+The evaluator uses only `memory`, `g2w` and `tickState`; it returns JSON for
+the driver to save. Source-derived offsets, resolution rules and legacy
+COLOROP override are retained in `offset-source-evidence.json`. Before guest
+execution, synthetic-memory tests exercised the evaluator's `new Function`
+bindings without `require`, relocated numeric bases, raw pixel reads, zero
+binding, disabled stage and legacy override; whole-memory hashes confirmed
+no writes. An outer-driver absolute-path mistake then failed **before CLI or
+guest creation**. Its log was preserved, the path was corrected, and the
+actual outer preflight/mirror lookup was validated before the sole guest run.
+
+The original route and launch remain unchanged: `--app=redline_demo`, empty
+arguments, `C:\MAINDIR`, IFORCE2-only seed and shipped DISPLAY choices.
+At 29,100 the retained `set-batch-size:100000` changes the main instruction
+budget to **100×** the default; the clock stays **200 ms/batch**. No
+breakpoint/counter slowdown or additional player movement was introduced.
+Space dequeue/dispatch reaches 10/9 with an empty renderer queue at 30,700.
+The actual new PNG was inspected: first-person geometry, flat weapon/walls
+and sparse HUD remain visible. Its SHA-256 is
+`ed66d12dab856c3c44ffd5e45cd088290612fe2aba75edb0b55bf275a9ecbd87`;
+it differs from the retained image, including the weapon pose, so this run
+claims route/checkpoint reproduction rather than byte-identical output.
+
+The initial dependency gate was honored: scratch-only offline work preceded
+child-state worker `66028ecbb`'s final artifacts and 03:26:06 source/build
+release; Rune's runtime had released at 03:18:19. Changed inputs required a
+fresh mandatory locked build on `66028ecbb2aa48a3339e5cd4a6acbea60a09cd83`.
+It passed and produced the same 2,025,619-byte module SHA-256
+`168c61dae2861842948e5f9e29e4e18df93a6fab12c7d17f7dc85d75e34b7b55`,
+matching the actual compile. The mirror SHA-256 remains
+`3926a7a2bda6727de2852155e9764b24b8909001d1e2c6ba62e0eb4cab708b11`.
+All **4,387** tracked source/test/tool/package inputs, all **70** fixture
+hashes and all **126** actual loaded reads match before/after. The focused
+registration/fixture test, including all original **65** pins, passes twice.
+
+Exactly **one guest invocation** ran on an open PTY with outer 150-second
+timeout / kill-after 5, inner 120-second limit and inherited finite child
+guard; the host preload additionally records child streams before a
+105-second TERM / 110-second KILL watchdog. No child was requested. Ordinary
+quit exits 0 after **67.812 seconds**; recorded outer/guest PIDs are absent
+and their process group is empty. Logs were retained before cleanup, disk
+remains above 2 GB, and no box was acquired (ID/state/expiry/handback N/A).
+No second guest was spent and no production/test path was claimed or edited.
+
+**Next exact observation:** a normal-speed bounded binding call/HRESULT chain
+through `SetTexture` and legacy TEXTUREHANDLE/GetHandle, tied to the device
+and an actual intended surface/upload destination. This must explain the
+zero binding before a repair or a resource/HUD-specific cause is selected.
+Audio, sustained playability and browser rendering remain unmeasured.
+
 ## Texture/HUD investigation: missing state observation (2026-11-01)
 
 Run `20261101-redline-gameplay-textures` reproduces the retained first-person
