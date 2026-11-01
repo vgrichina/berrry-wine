@@ -804,3 +804,60 @@ and the 27-entry fixture manifest matched. Both startup processes/groups have
 exited; no watcher, temporary runtime directory or test box remains owned.
 The final run's minimum free disk was 2,436,890,624 bytes. Runtime/source/build
 ownership is released with the final evidence and publication record.
+
+### Native mission gameplay and ordinary selection (2026-11-01)
+
+One bounded local CLI run now reaches **Demo Mission 1 gameplay** and responds
+to ordinary mouse selection. The reviewed batch-1677 capture shows terrain,
+soldiers, the objective “Eliminate Rumblers and Sky Sweeper tower,” 10,000
+resources, command bar and minimap. This follows actual mission loading and
+the opening cinematic; neither of those earlier stages is counted as gameplay.
+The guest log independently records
+`PreOpenMission: [missions\demo][Demo Mission 1]`, then SimInit and Sim.
+
+The mission-selection menu was confirmed at batch 550. The first absolute
+mouse move established the native DirectInput reference point without moving
+the game's own cursor, so the first balanced click opened the difficulty list.
+A normal relative mouse movement of (-8,+72) visibly placed the cursor on
+Load Mission. The next ordinary button down/up was dispatched at batches
+717/727 and started loading. Normal difficulty stayed selected. Reviewed
+neutral checkpoints show Generating Environment (877), Populating World
+(977), a black transition (1077), the cockpit/base cinematic (1177–1577),
+then the mission HUD (1677). No guest state, configuration or backend was forced.
+
+Right-arrow down/up reached DispatchMessageA at 1677/1718; the captures at
+1677/1717/1757 show changed camera framing. Since the intro may still have
+been settling, this run does **not** isolate camera causality. Instead, an
+ordinary mouse drag supplies explicit mission input proof. Its native
+down/move/up dispatches occurred at 1759/1761/1766. The before (1757), held
+(1766), released (1771), and settled released (1796) captures show the drag
+rectangle followed by selection brackets and health bars on five soldiers
+and one vehicle, plus Guard/Explore commands. All observed scheduled, pending,
+cross-thread and renderer queues were empty after consumption. The final PNG
+was also reviewed and preserves that selected-unit view. No unit movement,
+mission completion, audio, FPS, GPU parity or full-suite claim is made.
+
+The initial scratch-only gate opened after Redline worker `01a19602-3826`
+produced fresh final/result records and its 07:57:36 UTC explicit
+runtime/source/build release. Actual current-main baseline was
+`0da33e84b1cd2f26cd49d89e29e36cb4943e5185`. All 4,392 accepted inputs,
+141 predecessor runtime reads, module and region mirror matched the accepted
+`d86935e82` build, so that complete build was reused. The actual loaded
+2,026,995-byte module was
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Post-run verification matched 142 actual runtime reads, every source/build
+identity, all 29 pinned original/manifest files and all 27 fixture entries.
+The read-only observer passed actual synchronous/asynchronous execution,
+whole shared 512 MiB memory comparison, clock identity and emitted late-10,001
+retention validation before the original ran. No source or test was changed.
+
+Evidence: `scratch/runs/20261101-dark-reign2-native-mission-input/`, including
+the exact command, normal control stream and supplemental ordinary stdin
+controls, reviewed captures, input-consumption records, saved guest log,
+identities and verification. The single CLI process exited zero after requested
+quit at batch 1796 and 327.256 seconds; no second original was needed. Startup
+free disk was 2,417,684,480 bytes and minimum sampled free disk was
+2,347,634,688 bytes.
+Owned runtime/driver/observer/watcher PIDs and the runtime process group are
+absent; no new runtime temporary directory or test box remains (box ID,
+state and expiry N/A). Native rendering only; GPU mip support remains absent.
