@@ -1,5 +1,89 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Selected loader observation: container/member association still missing (2026-11-01)
+
+Run `20261101-redline-selected-loader-cause` **does not recover the selected
+loader's first failing API or guest guard**. No generic repair is proven;
+production and test files are unchanged. Both permitted original guest
+invocations are exhausted, and both inspected gameplay PNGs retain the missing
+textures, SHA-256
+`ed66d12dab856c3c44ffd5e45cd088290612fe2aba75edb0b55bf275a9ecbd87`.
+
+The previously prepared continuation now has an explicit offline PASS, rather
+than an empty log. Its revised scratch observer separates selected calls,
+CreateSurface, file calls, other backend calls and general calls. Method
+counts remain uncapped; repetitive frame IsLost calls cannot consume those
+quotas. Offline tests saturate every unrelated quota and retain late selected
+ReadFile and CreateSurface entries. They also retain an entry without inventing
+a return value when its exit hook is missing. Tests exercise the actual preload,
+real API table, region mirror and address translator, and instantiate the actual
+module with a real shared 512 MB WebAssembly.Memory without invoking a guest
+entry point. Whole-memory hashes remain unchanged across observer calls.
+
+The first invocation exits 0 in **64.826 seconds**, retaining **4,834 entries**
+with zero observer errors. Its file quota fills at 4,096, principally early
+container reads; 13,009 further file entries are dropped. CreateSurface has a
+separate quota: **all 610 hook entries and their exits are retained**. Their
+actual return sites are `0x453a3e` (328), `0x453cb2` (280), `0x451924` (one)
+and `0x44da13` (one). No retained record recovers `0x4181d5`. In particular,
+the sampled CRT ReadFile calls return at `0x55e9cc` with **EBP zero**, so a
+longer linked EBP walk cannot recover their caller chain.
+
+The second observer adds bounded, read-only recovery from the active stack for
+that frame-pointer omission. A candidate must contain return `0x4181d5`, a
+parent returning to the statically verified bank callers `0x417a0f` or
+`0x418026`, the correct bank local at parent EBP-0x108, and matching resource
+ID/metadata arguments. Offline tests recover a synthetic selected frame with
+EBP zero and reject an invalid bank parent, with all memory unchanged. Repeated
+ReadFile, SetFilePointer and CloseHandle calls instead retain the first eight
+and rolling last eight records per API/caller; selected records are protected.
+
+This invocation exits 0 in **62.155 seconds**, retaining **1,102 entries**,
+again with zero observer errors. Its separate file quota retains 364 entries,
+including **all 333 CreateFileA entries**, and all 610 CreateSurface entries
+again have retained exits and the same caller distribution. Uncapped counts
+include **15,812 ReadFile**, **623 SetFilePointer** and **58,830 IsLost** calls.
+The rolling file samples are bounded, not a complete read history. The only
+observed open/search names are `redline.bgd`, `Redline - Log.txt`,
+`redline.exe`, `redline.cfg` and `*.rdm`; **none associates a read with
+resource 723 / `skymorning.tga`**. Neither linked-frame nor validated stack
+recovery yields a selected backend record. General records still drop 1,568
+entries at their own quota; they do not consume file or CreateSurface capacity.
+
+The live checkpoint still has backend vtable **`0x56fd40`**, +0x1c method
+**`0x450729`**, and logical **444** / resource **723**, with null Texture2,
+signed resident/group -1 and bank dimension/format sentinels -1. Surface
+`0x08224458` is DX slot 1675, with 128x128/16-bit backing. **These observations
+do not establish execution or absence of the selected backend, successful
+selected file/API operations, or the source of its sentinel metadata.**
+
+The exact remaining gap is the selected **container member -> active loader
+frame -> first failing return/guard** association before CreateSurface.
+Offline disassembly identifies archive lookup `0x4eeede` (return `0x4eecc5`)
+and archive loader `0x4eec9b`: its 20-byte member record supplies length at +4
+and file offset at +0xc before seek/read. The required next observation is
+resource 723's actual member index, length, offset and read output, tied to
+the bank/backend call returning at `0x4181d5`, then its first zero/error branch.
+The current natural API samples do not supply that association; no HRESULT or
+file result here is attributed to the selected upload.
+
+Rune's final.txt/result.json and **04:28:15 runtime/source/build release**
+preceded runtime and this note edit. All **4,388** recorded source inputs,
+the module and region mirror match the accepted locked build; reuse is
+recorded, with no code change requiring a new build. Both actually loaded
+modules are 2,025,629 bytes, SHA-256
+`985ca2480931df88751db66dbee8527a6d9df9940949baafc6bc3a0b1a43e2dc`.
+All **128 actual loaded reads per invocation** match their current or archived
+observer identities. Original registration/all 65 pins and all 70 fixture
+hashes pass before/after. Empty arguments, `C:\MAINDIR`, IFORCE2-only seeding,
+shipped settings, batch size 100,000 after 29,100 and clock 200 are unchanged.
+No instruction counters, breakpoints, guest calls, state writes or texture
+substitutions were used. Outer PTY 150-second/kill-after-5, inner 120-second
+and child TERM105/KILL110 guards remain finite and unused; owned runtime
+processes/groups are gone. Evidence is under
+`scratch/runs/20261101-redline-selected-loader-cause/`.
+Box ID/state/expiry/handback: N/A; ownership none.
+
 ## Backend upload observation: selected failure still unobserved (2026-11-01)
 
 Run `20261101-redline-backend-upload-repair` verifies the live backend identity
