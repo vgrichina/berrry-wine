@@ -2,8 +2,9 @@
 
 Original local package, separate from the already-qualified Age of Wonders I
 beta demo. October 8 scoped registry, run-result and re-note search found no
-earlier qualification for this second title. This investigation establishes
-main-menu rendering only; player-controlled gameplay remains unqualified.
+earlier qualification for this second title. The initial investigation reached
+the main menu; later sections record accepted gameplay repairs and the
+November 1 current-main army-control and lower-panel visual check.
 
 ## Original media and preparation
 
@@ -364,3 +365,74 @@ ships it as parallel base64 parts in about 2 minutes.
   0x10002 at 800x600 while the png is scaled.
 - **`?no-threads` in the browser** does not reach the menu within 70 s.
 - **Browser `--trace-api` in Threads mode** used to log all-zero arguments; fixed in 6d4dfdaa1 (the Worker sends its call-time stack words).
+
+## Current-main ordinary CLI visual evidence (2026-11-01)
+
+Run `scratch/runs/20261101-aow2-current-original-control/` closes the scoped
+**AOW2-RENDERING-COVERAGE-20261009** current-main gap for ordinary army control
+and lower-panel terrain clipping. Actual tested main was
+`9b70a7d5bf70bb5e395f51e023d9f7862af9d6d2`. Battlezone's fresh terminal files
+and explicit runtime/source/build release preceded all runtime/build/source
+access. No historical movement, viewport or vblank repair was reimplemented.
+
+The original registered `age_of_wonders2_demo` ran locally with `--no-build
+--control-stdin --frozen`, default registration/backend/cooperative scheduling,
+100,000-block batches, and no screen override. The accepted build was reused:
+all 4,392 accepted input pins and 141 prior observed reads matched; actual
+compiled module SHA-256 was
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+All 4,444 source/module pins and the full 1,063-file original extracted tree
+plus its manifest (1,064 pins) matched before/after. The EXE retains the
+5,748,736-byte / `a10590e5…af8f89f7` identity above; no compilation archive was
+used as a substitute for companion-tree identity.
+
+Two originals, both exit 0, are retained. The first completed batch 2,000,
+then an overlarge 5,000-step request outlasted the local control waiter.
+An orderly SIGTERM after 197 seconds pending ended it at actual batch 3,292
+with an **800×600 menu capture**. Thus this was a control-wait limitation,
+not an established game startup fault. The second used smaller requests and
+completed Scenario → Single → Start → dismiss Julia → select army → click
+destination twice. No duplicate game inputs were sent after a waiter timeout.
+The later 500-step loading request also outlasted its waiter but completed at
+batch 4,036 with Julia visible; the queued capture recovered normally.
+One control shell later ended 143 while waiting for ten steps. The isolated
+runtime survived; its completion receipt was retained in the raw log, and the
+capture was recovered without repeating the destination input.
+
+Control PNGs are the actual **640×480 composited canvas**, scaled from the
+800×600 menu / 1024×768 setup and world. Screenshot-based canvas inputs were
+Scenario `(456,277)`, Single `(233,62)`, Start `(560,436)`, Julia `(324,296)`,
+army `(322,215)`, and destination `(395,243)` twice. Actual routed message
+coordinates confirm Start `(896,697)`, army `(515,344)`, destination `(632,388)`.
+Fourteen scheduled button events were dispatched through `DispatchMessageA`;
+the final trace has 21 dequeues/routes and empty scheduled/pending/cross-thread/
+renderer queues. Unknown button/post-queue counters are not evidence of
+emptiness. No custom window or guest-memory probes were used.
+
+Reviewed `run2/before.png` (4,048), `selected.png` (4,060),
+`destination-plotted.png` (4,072), `after-second-click.png` (4,084),
+`arrived.png` (4,104), and `settled.png` (4,124) show the party selected at the
+tower, a plotted path, then the party displaced to the right. The selected
+party movement display falls **20/20 → 5/20**; the final unscaled 1024×768
+`run2/final.png` confirms 5/20. The party marker moves approximately
+`(332,183) → (420,208)` in the composited captures, relative to the fixed tower.
+From plotted-before-move through after/arrived/settled, two left mountain
+patches (2,800 and 3,150 pixels) are pixel-identical. Earlier illumination
+changes and newly revealed shroud are visible, so whole-scene equality is not
+claimed. Both lower border patches (4,025 / 3,197 pixels) and the left label
+area (4,375 pixels) remain exact across all six captures. Direct review shows
+the terrain ending above the panel, with no terrain paint across its controls;
+this is evidence for this scene, not every map or rendering path.
+
+The read-only identity observer passed actual synchronous/asynchronous WASM
+execution, whole 512 MB memory equality, native/import clock identity, and
+emitted late-10,001 retention checks. Exit-flushed observed path reads numbered
+553 / 572 (431 / 450 original-tree reads), all freshly matching their bytes.
+Hooks cover successful string-path `readFileSync`, callback `readFile`, and
+promise `readFile` calls; descriptor/stream/internal-loader reads outside those
+hooks remain unobserved. The first run lasted 222.920 seconds, the second
+808.974; minimum observed free space was 2,245,582,848 bytes. Own runtime,
+driver, groups, control waiters and temporary child directories were checked
+absent. No box was allocated (ID/state/expiry N/A). Evidence includes commands,
+compressed raw logs, input receipts, images, pins, review, cleanup and checks.
+No browser, GPU, FPS, audio, full27 or broader playability qualification follows.
