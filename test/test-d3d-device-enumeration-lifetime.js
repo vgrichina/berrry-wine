@@ -74,7 +74,7 @@ const extraWat=String.raw`
         const guid=e.guest_read32(sp+4), hw=e.guest_read32(sp+16), hel=e.guest_read32(sp+20);
         assert.strictEqual(e.guest_read32(hw),252);assert.strictEqual(e.guest_read32(hel),252);
         for(const desc of [hw,hel]) for(const offset of [76,132]) assert.strictEqual(e.guest_read32(desc+offset)&0x20,0,'legacy enumeration must not require square textures');
-        for(const desc of [hw,hel]) for(const offset of [80,136]) assert.strictEqual(e.guest_read32(desc+offset),0xFF,'legacy filter caps unchanged');
+        for(const desc of [hw,hel]) for(const offset of [80,136]) assert.strictEqual(e.guest_read32(desc+offset),0xC3,'legacy callback filter caps without legacy mip filters');
         assert.strictEqual(e.guest_read32(guid)>>>0,{ramp:0xf2086b20,rgb:0xa4665c60,hal:0x84e63de0}[item.name]);
         assert.strictEqual(e.guest_read32(hw+8),item.name==='hal'?2:0);
         assert.strictEqual(e.guest_read32(hel+8),item.name==='hal'?0:item.name==='ramp'?1:2);

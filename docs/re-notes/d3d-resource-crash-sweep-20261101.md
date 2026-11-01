@@ -1,6 +1,6 @@
 # D3D resource crash sweep, 2026-11-01
 
-All six requested native Node/Wasm tests ran sequentially: five passed and
+The original six requested native Node/Wasm tests ran sequentially: five passed and
 device enumeration failed a stale capability assertion. No native trap,
 process signal, timeout or production crash was observed. No source repair
 or test edit was made.
@@ -78,3 +78,63 @@ Next: separately scoped reconciliation of the enumeration test's stale
 capability expectation, followed by its remaining coverage. No gameplay,
 full27 or all-app crash-free conclusion is supported. This worker stops after
 publishing this single task.
+
+## Enumeration assertion reconciliation
+
+Follow-up run: `20261101-d3d-enumeration-assertion`. The one-line legacy
+callback assertion now requires exactly `0xC3` instead of `0xFF`, with a
+message identifying the excluded legacy mip filters. No lifetime, ABI,
+ordering, cancellation, canary or allocation assertion was removed or weakened.
+All 16 nested version pairs, 96 balanced cycles and 32 real-x86 nested
+COM/continuation cases now complete (exit 0, 5.246 seconds).
+
+This correction follows the existing contract rather than changing production:
+commit `7fec2dd33634f7ce76950cdecec8870ea29508d3` deliberately changed
+`$fill_primcaps` from `0xF3` to `0xC3`, excluding legacy mip bits
+`0x04..0x20`. That commit updated this harness's D3D7 and real-x86
+expectations but left line 77 at `0xFF`. Current source, the later real-x86
+assertion and both extracted filter regressions require legacy `0xC3`.
+The unchanged harness first reproduced the exact line-77 failure
+(`195 !== 255`, exit 1); the corrected harness then passed in full.
+
+Validation has a separate, pre-existing blocker: the unmodified
+`test-legacy-texture-filter-caps.js` fails at line 121 and
+`test-legacy-final-mip-bits.js` at line 126, both reporting
+`texture ops unchanged`, actual `0xF`, expected `0x3FF`. Their legacy filter
+and preceding descriptor checks pass, but their later checks and mutation
+negatives do not complete. The final-mip test also prints its 36 backend
+state cases before failing. Neither regression is claimed as passing.
+Production explicitly advertises `0xF` at descriptor offset 180; history
+`f42083c61a18d56fd739d3cd702c4d67d36784b7` documents the accepted
+DISABLE/SELECTARG1/SELECTARG2/MODULATE mask. The unchanged newer
+`test-legacy-texture-operation-caps.js --negative-controls` passes its
+9 pairs, 144 argument combinations and 15 rejecting controls. No production
+contract bug was established. Repairing the older regressions is outside
+this task's file ownership; their stale operation-mask checks remain open.
+
+Mandatory `flock /tmp/wine-build.lock bash tools/build.sh` passed in
+48.565 seconds, wrapped in `timeout 120s`. All native test commands also
+used 120-second timeouts. The five previously accepted resource tests were
+not rerun. No REP tests or diagnostics or other held-topic work ran.
+
+Baseline was `4e67faf1ea2e6d435c7fae93c51eba549ae0bf79`; initial HEAD
+matched it, and subsequent tests ran at
+`62693ec240f9b8842e2be796da0b09b3f34de5b5`, whose only intervening
+changes were `TODOS.md` and `ops/STATUS.md`. The 1,169-file input inventory
+matches baseline/prior evidence before correction; afterward only the owned
+enumeration test changes, including byte-identical primary/compatibility
+builds. Exact per-file SHA-256, loaded module identities, commands, exits,
+logs, source/history excerpts and the minimal patch are retained in the
+ignored run directory. Before/after enumeration captures are identical:
+2,025,153 bytes, SHA-256
+`001c726c332311bf570ebf9fff67e04608c407d7ff3f80c5c3f9aba5e0611617`.
+The rebuilt primary module remains 2,025,029 bytes, SHA-256
+`2be3cebaa1c08a8e12075de000bfb83fb8692841c1452d9e317203f5c2fce8cf`.
+
+Linux x64 / Node 24.18.1; no WINE_* or NODE_OPTIONS overrides. Disk remained
+above 2 GB. No source/compiler/census, foreign WIP or TODO/STATUS edits,
+browser/heavy runtime, download, access retry, deployment, agents or boxes.
+Box ID/state/expiry and lifecycle are N/A. Coverage is limited to the named
+harnesses, with the two caps-regression failures explicitly unresolved.
+Next: separately scoped correction of those regressions' stale operation
+mask assertions; no broader compatibility claim follows from this run.
