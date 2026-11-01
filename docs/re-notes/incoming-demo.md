@@ -135,10 +135,67 @@ an original-game execution or compiler-read proof. Its synchronous-read,
 bounded closed-descriptor, asynchronous/stream, and exit-flush coverage limits
 above still apply; this follow-up has no game-runtime read coverage.
 
-The next prerequisite is at least 2.2 GB free at the actual launch gate, then
-a settled helicopter baseline and ordinary held/released controls with fixed
-landmarks or HUD evidence. Native-local box ID/state/expiry are N/A. No tracked
+That 2.2 GB startup requirement was superseded by later owner resource
+instructions; it is not a current launch prerequisite. A settled helicopter
+baseline and ordinary held/released controls with fixed landmarks or HUD
+evidence remain needed. Native-local box ID/state/expiry are N/A. No tracked
 source, helper, test, configuration, registration, or backend changed.
+
+## Helicopter owner-floor retry: runtime disk stop (2026-11-01)
+
+`scratch/runs/20261101-incoming-helicopter-owner-floor/` launched one original,
+using the retained phase-progress input route, stock `incoming_demo`, and
+`c:\incoming`. The 10:40:13 UTC gate pinned main
+`558e59dcf36b92471184154015cb46ac7b563950` after Motocross worker
+`01a196a5-dfb9-7eb1-8a0e-ebdaf7f8800f` supplied fresh worker terminal files and
+its 10:39:21 explicit runtime/source/build release. The initial assignment
+specified the owner AGENTS 1.5 GB floor. Before this gate, the coordinator's
+10:29:05 board entry and updated task reported a newer resumed owner goal of
+**more than 2,000,000,000 bytes continuously**, with no separate 2.2 GB startup
+gate; this worker acknowledged that update at 10:30:04. Gate free disk was
+2,045,960,192 bytes and original startup free disk was 2,040,881,152 bytes.
+
+The first blocker occurred during execution: the guard sampled
+**1,983,717,376 bytes free**, 16,282,624 below that newer continuous floor,
+and requested orderly shutdown. The original exited 0 after 123.205 seconds,
+at batch 4151. `final.png` was reviewed and still shows turret phase 1/10.
+This is an actual runtime disk stop, not the earlier 2.2 GB startup refusal;
+the original 1.5 GB floor remained satisfied. Free space subsequently
+recovered, but the transient drop's cause was not established. No foreign
+files were cleaned, and no second original was launched without a concrete
+changed hypothesis resolving that floor within this assignment's files.
+
+There are **no new helicopter before/held/released/settled images or consumed
+helicopter controls**. The prior helicopter images were reviewed against the
+pad, warehouse, radar dish, crates, and barrels; their camera-transition
+ambiguity remains unresolved. The unchanged mission script's phase-2
+`camera_task` waits for the hero's distance from `replen1` to exceed 500 before
+`cam_mode cockpit`, supporting a future departure comparison but not proving
+motion in this run. `input-consumption.json` retains 42 WM dequeues, routes,
+and DispatchMessageA consumptions plus successful GetDeviceData calls from
+the replayed turret route only. Turret combat is not requalified here;
+helicopter flight, waypoint progress, and completion remain open.
+
+The accepted `dd43e4a...09aaf4` module was reused with all 4,392 accepted
+build-input pins and 141 prior observed-read pins matching. Before/after
+checks matched all 4,444 current source/build pins and 335 original-tree and
+manifest files; full original archives and three configuration copies were
+verified. EXE and manifest SHA-256 remain respectively
+`4830a5d5091a6c4f528cd2aa3d7821873346b6e5a823ac4e71692d18d2f4402c` and
+`df0fafd26f474beacb39ccb67a2f6c380ecfac2fd4a6a57f0f34825fc4f6a4a4`.
+The observer recorded the matching runtime compilation bytes and 447 matching
+actual file reads. Whole shared 512 MiB read-only, actual synchronous and
+asynchronous execution, clock identity, and emitted late-10001 observer checks
+passed. Read coverage remains limited to synchronous file reads and complete
+closed descriptor reads up to 24 MiB; asynchronous/stream, incomplete,
+unclosed, and larger descriptor reads are not covered. Observation flushes at
+exit, and runtime compilation is not compiler source-read evidence.
+
+Runtime/driver/replay process groups, the board watcher, and temporary paths
+are checked in the run's cleanup evidence. Native-local box ID/state/expiry
+are N/A. No tracked source, helper, test, configuration, registration, or
+backend was changed. The bounded result is the measured disk-floor stop;
+full playthrough, audio, FPS, and broader compatibility remain unclaimed.
 
 ## Not checked
 
