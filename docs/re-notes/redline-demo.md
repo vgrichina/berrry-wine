@@ -1,5 +1,71 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+
+## Striped frame: intact uploaded and bound texels, exact draw/presentation cause unproven (2026-11-01)
+
+Run `20261101-redline-striped-render-cause` makes **one original local CLI
+invocation** after Dark Reign 2's fresh final/result and **06:09:05
+runtime/source/build release**. It reuses accepted repaired module
+`330b120d64cfd4aebdd945c99a95022dbd97db7ee6962d7ec534c24da466011b`.
+All **4,389 source inputs, 70 fixture hashes, region mirror and predecessor
+actual loaded identities match**; the current invocation's actual module and
+loaded reads also match. No source, test, build, fixture or configuration
+change is made. The prior archival-inode-independence failure is preserved.
+
+This observation uses **existing host `dx_trace` callbacks**, rather than
+another guest API/registry census or the predecessor's EIP-window observer.
+It reads bounded surface geometry, format, pitch and full pixel bytes at
+128×128 Lock/Unlock, Texture::Load, texture binding and first presentation.
+It does not call a trace setter, change guest state or request GPU rendering.
+Actual synchronous/asynchronous instantiation and **emitted Unlock callbacks**
+pass whole shared **512 MB** memory and clock read-only checks. Repeating
+10,001 late callbacks retains one occurrence per kind/slot without drops.
+
+The original produces **193 and 498 retained records** in its two cooperative
+instances, with zero observer errors or drops. **68 non-null sampled texture
+bindings** each match their captured Texture::Load destination **and source**
+SHA-256. Of those, **32** additionally match the captured source Unlock bytes;
+other sizes were outside the selected 128×128 Lock/Unlock filter. Inspected
+RGB565, pitch-256 samples show a coherent loading logo, icon atlas, brick,
+stone and cloud/sky texture. The sky at destination slot **21**, loaded from
+slot **1102**, is intact; these slots do not independently establish the
+current guest resource ID/name. The previous run's resource-723 identity is
+context, not a new identity observation. Samples support intact upload and
+consumption for these textures; success return values alone are not used as
+pixel evidence.
+
+The inspected original mission selector shows Stadium City selected. The final
+**640×480** capture still shows severe yellow/magenta striped corruption with
+recognizable figures and geometry. **No exact generic rendering cause is
+proven and no repair is attempted.** The first presentation snapshot is an
+earlier loading frame, so canonical render-target pixels at the corrupted
+frame are unavailable. Correctly bound texels narrow the sampled paths toward
+draw/format/presentation, but do not distinguish those stages or qualify all
+textures. Original source-buffer bytes before guest conversion were not
+captured.
+
+The inner **115-second limit** ends at **30,459 batches / 115.594 seconds**
+before the planned movement checks. Space down was queued during loading;
+its matching up and the W/mouse sequence were not completed. Movement,
+gameplay, audio and performance remain unqualified. The shell returns **143**;
+the driver's finalizer/exit receipt is unavailable, although the CLI writes
+its final capture and statistics. The PTY gzip lacks its final trailer; the
+exact recoverable output prefix is losslessly retained with its original
+compressed hash and explicit recovery receipt. No normal outer-exit claim
+is inferred.
+
+Startup's **2.3 GB assertion passes**. The read-loop 2 GB floor does not trip;
+a measured minimum is unavailable. After preserving raw samples and cleaning
+only own recoverable PNG previews, compressing own logs/metadata and
+SHA-checking a hardlink to the accepted finalized module, free space remains
+about **2.29 GB**, below the required second-start threshold. **No second
+original is launched.** The next useful observation is canonical target bytes
+and host presentation parameters from the same corrupted frame, once startup
+headroom is available. Runtime PIDs/groups and watcher are checked absent;
+no OS child staging tree or box is acquired. Box ID/state/expiry: N/A.
+Raw pixel snapshots, `pixel-chain.json`, read-only checks, identities,
+inspected captures and honest exit limits are retained in the named run.
+
 ## First internal failure: cross-instance DirectDraw4 identity repaired (2026-11-01)
 
 Run `20261101-redline-upload-internal-cause` uses **two original local CLI
