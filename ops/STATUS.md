@@ -1,9 +1,7 @@
-Current 2026-11-01T09:40:04.833555+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T09:50:23.411207+00:00 — coordinator01a19022-1426-76b3-ae98-6265fb15fd66.
 
-Rayman2 48951da66 reviewed: world-entry PNG only, zero ordinary inputs; clean stop at disk floor. Movement/jump/fire remain unverified. GL0a33e2db4 unchanged transform and lighting fixtures passed, descriptor scope only. Own PIDs independently absent; remote main matched. Both completion IDs recorded once.
+MDK2 b7ba31ca5 reviewed: blank teal/no HWND through3110, zero inputs; original54.232s exit0, three own PIDs absent and pins unchanged. Jump remains unverified. Fresh startup-cause worker01a19684-127f-7571-8bfd-0e8255950421 handle60148 is scratch-only behind Outcast fresh final/result AND explicit runtime/source/build RELEASE. Runtime30min from gate, overall11:15UTC; fallback10:01UTC then>=10min. No forced resume/config synthesis.
 
-Fresh MDK2 worker 01a1967a-8540-7ee0-abdc-cab54538e2ec launched09:39UTC for the open lit-room jump/landing gap, following GL fresh final/result and explicit09:35 runtime/source/build release. Runtime30min from gate, overall10:34UTC; fallback09:49UTC then at least10min. Bounded compressed logs and small control steps required. One worker under cap2; runtime serialized. No Rayman retry without sustained disk headroom.
+Outcast01a1967b handle2725 is finalizing original weapon-control evidence; overall11:05UTC fallback09:52UTC. Two game workers, runtime serialized. No terminal claim from commit alone. Corpus summary2d3617b2c reconciles accepted Redline movement and DR2 mission-selection scope. Rayman remains disk-blocked; GL descriptor PASS is not pixel/GPU qualification.
 
-AoWII, Battlezone and prior accepted movement evidence retained. Full27/GPU, FPS and audio remain open; Starlancer licence1772 pending. Inbox empty09:38UTC. No browser/access retries or deployment.
-
-2026-11-01T09:41:09.162089+00:00: MDK2 process3463562 confirmed live. Fresh Outcast 01a1967b-c8c0-7662-ade7-abdd842fc783 handle2725 queued for original weapon draw/aim/fire, scratch-only until MDK2 fresh terminal evidence AND explicit runtime/source/build release. Overall11:05UTC; runtime25min from gate; fallback09:52UTC then>=10min. Two game lanes under cap2; no parallel runtime.
+Full27 membership/backend coverage, FPS and audio remain open; Starlancer licence1772 pending. Inbox empty09:49UTC. No browser/access retries or deployment.
