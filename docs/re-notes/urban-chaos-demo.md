@@ -1721,3 +1721,44 @@ independent guards unchanged. This assignment authorizes no original retry.
 The current-arena/ownership/backing/metadata discriminator and exact commit
 refusal predicate remain missing; synthetic success is not game, encounter,
 FPS, audio or allocator-cause proof.
+
+## 2026-11-01 main-thread first-refusal assignment: launch headroom fails
+
+Evidence: `scratch/runs/20261101-urban-main-thread-first-refusal/`.
+**No original was launched; the allocator discriminator remains unknown.**
+The required sustained launch check stopped at its first sample, at
+21:05:19.887 UTC: `/home` had **2,096,635,904 bytes** available, which is
+**3,364,096 bytes below** the unchanged 2,100,000,000-byte launch threshold.
+The intended 41-sample/20-second check therefore did not pass. The
+2,020,000,000-byte stop and 2,000,000,000-byte floor were retained; no RAM gate
+was used. No disk recovery, lowered guard, or repeated admission attempt was
+performed after this prerequisite failed.
+
+The earlier prerequisites passed: exact Constructor `bf77b2c885` author RELEASE,
+the coordinator's terminal/direct-cleanup verification, fresh absence checks
+for its recorded runtime PIDs, and ancestry of both Constructor and `f3bb8e295`
+on main. Constructor's successor is static only. Runtime/source/build were
+never claimed by this worker. All 4,294 source/dependency paths and 1,124
+fixture/manifest paths matched before and after. The selected, unexecuted
+module remains `/home/user/wine-assembly/build/wine-assembly.wasm`, SHA256
+`7278c1018fa8208731a8e285f0bb2a5c35aa8e299592750ce3cedf6d354caef0`.
+There is no actual compile-input or consumed-game-byte observation in this run.
+
+The exact reviewed `079959006` lifecycle helpers, observation preload, bounded
+reader and `f3bb8e295` main-thread preload/control receipts were pinned for
+reuse. Unchanged synthetic controls were not repeated. Scratch helper copies
+are preparation inputs, not evidence that the attachment or game ran. No
+debugger, driver, supervisor, independent runtime guards, Setup/Enter input,
+encounter input, breakpoint trigger, or snapshot was started. Consequently
+breakpoint resolution, run-if-waiting acknowledgement and removal/resume are
+unexecuted here. Current-arena ownership, live co-residency and bounds versus
+fresh backing or metadata refusal remain unknown; no predicate is inferred.
+
+The headroom sampler PID4185307 was directly waited with exit2 and checked
+absent. The append-only board watcher has its separate terminal wait receipt.
+No game/debugger cleanup ordering was exercised because neither existed.
+Local native box ID/state/expiry are N/A; no foreign process was stopped.
+Only this note is committed; no source/test/build changes or build occurred.
+`RECOVERY.txt`, pins and the exact failed sample remain in the run directory.
+Next requires sustained launch headroom and a fresh assignment; this stopped
+run holds no runtime or follow-up and supplies no gameplay/FPS/audio/full27 proof.
