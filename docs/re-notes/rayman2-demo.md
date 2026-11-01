@@ -38,9 +38,10 @@ loads `dll\<GLI_DllFile>vr.dll`. With no ini it loads `dll\vr.dll` and stops on
    hit DebugBreak, ending the game thread. The scratch is now a heap block per
    instance (`$wnd_scratch`).
 
-After both, the CLI (`--app=rayman2_demo`) reaches 3D gameplay: Rayman in the
-grass with the demo logo by batch ~8000. The game thread is heavy (about
-80 batches/s).
+After both, the historical CLI (`--app=rayman2_demo`) reached Rayman in the
+grass with the demo logo around batch 8000 under its earlier command. That
+estimate and its historical throughput are not readiness measurements for
+the commands below; observe the opening sequence before sending movement.
 
 ## Controls (Readme.txt) and touch layout
 
@@ -99,3 +100,67 @@ Native local box ID/state/expiry are N/A. No audio, FPS, backend parity,
 broad playability or full27 claim follows from this capture. A future
 movement attempt requires restored disk headroom; this assignment stopped
 without repairing or cleaning foreign work.
+
+## 2026-11-01 native resume: ordinary movement and A jump reviewed
+
+Run `scratch/runs/20261101-rayman2-native-movement-resume/` passed the
+DarkReign2 worker's fresh launcher final/result plus explicit
+runtime/source/build release gate at 12:15:51 UTC. Actual source baseline
+was main `dd82ceb03a91273408caf743e64f4a5e4bde06a5`, rather than dispatch
+main `84358006a197266af7bb1f17ebf80de605d5d736`. One original ran for
+678.118 seconds and exited 0 at batch 121; no second original was needed.
+
+With the registered defaults, `--batch-size=100000 --frozen
+--control-stdin --trace-input-dispatch`, the observed readiness captures
+were batch 25 (loading), 50 and 75 (letterboxed opening camera sequence),
+then 95 (grassy player view with HUD, no letterboxing). Steps were only
+25, 25, 25 and 20 batches, with image review between them. No player input
+was sent during these steps; there was no blind 8000-batch advance.
+
+The matched no-input interval has before/held/released/settled PNGs at
+95/101/102/105, using the same 6+1+3 batch spacing as the movement trial.
+The upper-left gray ridge, uphill dark ground patch, and pale grass/soil
+patches around Rayman's feet remain fixed; small idle-pose differences
+are not displacement. Right down was scheduled, dequeued, routed and
+dispatched to `Rayman II` HWND `0x10001` at batch 105. The held image at
+111 shows the running pose and a changed viewpoint beside the rock wall;
+Right up was consumed at 111, with released/settled images at 112/115.
+Rayman returns to an idle stance at the changed terrain position. The
+camera turns and continues settling after release, so screen-coordinate
+motion alone is not the movement evidence: the running-to-idle response,
+changed player/ground relationship, persistent rock-wall location and
+stationary matched no-input interval together support ordinary movement.
+No world-coordinate distance or camera-independent speed was measured.
+
+A down at 115 and up at 116 were also fully dequeued, routed and
+dispatched. `jump-before/held/released/settled.png` captures are at
+115/116/117/121. At 117 the feet are visibly elevated above the separate
+ground shadow; at 121 Rayman has landed back in the standing pose beside
+the same wall. This is a reviewed jump/landing, not merely a text skip.
+The four key edges are retained in `input-consumption.json`; frozen
+input-state records show the known scheduled/renderer/cross-thread queues
+empty after consumption. Guest post-queue state remains unknown, and the
+Right/A pressed-edge latch remains set after physical/async release;
+that latch is not a held key. No Space/fire trial was made.
+
+All 4,392 accepted input hashes and 141 accepted read hashes matched before
+reusing module `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`;
+actual runtime compilation observed those module bytes. All 4,444 pinned
+source/build inputs, 155 observed runtime reads, and all 193 original
+tree/manifest identities and installed-tree membership matched afterward.
+The EXE remains 1,399,808 bytes with SHA-256
+`8b1d1a4312add1a027900216d52f660b8b45d2166642ec51cc4d6a7171ad3cb3`;
+manifest SHA-256 remains
+`78fa8c79b10e90ec1281ab250bfdec44289afcd9680bdcb6a826d23a48f12ca1`.
+Original INIs/media, registered defaults and guest state were not edited.
+
+The observer passed fresh actual sync/async execution, whole-512-MB
+read-only hashing, native/host clock identity and emitted late-10001
+retention checks. Its string-path readFileSync/readFile/promises.readFile
+coverage excludes comprehensive descriptor/direct OS IO; runtime module
+compilation is not compiler-source read proof. All 17 PNGs passed chunk
+CRC and image-data decompression checks, and the compressed runtime log
+decoded completely. The live controller's sampled disk minimum was
+2,226,053,120 bytes, above the required 2,000,000,000; no disk stop occurred.
+Native box ID/state/expiry are N/A, and delegated runtime shutdown completed.
+No audio, FPS, backend parity, broad playability or full27 claim follows.
