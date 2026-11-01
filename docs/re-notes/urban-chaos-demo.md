@@ -271,3 +271,76 @@ owned shutdown was explicitly delegated. Cleanup/publication/final/result record
 document absent owned processes, groups, watchers and new child temps, and handback.
 Further work requires a fresh assignment to investigate the startup-readiness
 blocker; this attempt stops without source or configuration changes.
+
+## 2026-11-01 startup diagnosis: RSX wait localized; trace host abort
+
+Evidence: `scratch/runs/20261101-urban-chaos-startup-readiness/`.
+The saved startup state localizes the pre-Setup wait to the Miles RSX provider;
+the underlying reason it does not finish remains unproven. A fresh targeted
+trace aborted in Node with JavaScript heap exhaustion before the first step25
+reply. This is the first substantive failure of this attempt. One original,
+zero gameplay inputs, no retry, no Setup/title/HUD or new gameplay acceptance.
+
+The exact `battlezone-scavenger-arrival DONE/PUSH RELEASE` at 15:42:03 UTC,
+fresh terminal launcher final/result (exitCode 0), and direct absence checks
+for its six PIDs and five groups passed the gate at 15:42:09. Actual main was
+`a5981a6108e86462ba3379f9decf7e84dfa8e82d`; runtime deadline 16:07:09 UTC.
+All 1,122 manifest paths matched, including explicitly reconstructed config.ini;
+Fallen.exe retained SHA256
+`8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`.
+This is reconstructed installation state, not a completed upstream installation.
+
+Named hypothesis H1 was recorded before launch: distinguish an omitted native
+dialog from a pre-dialog audio-provider wait. CLI `controlPng` copies only
+`renderer.canvas`; scheduled `dlg-png` instead copies a visible dialog's
+`_backCanvas`. Therefore teal captures alone cannot establish absent Setup.
+The predecessor's actual batch25 through batch775 input-state records keep
+main waiting indefinitely on handle `0x0e000042`, EIP `0x023e9943`, with an
+RSX worker repeatedly near `0x023ea0f9`. Its log records only the zero-size
+Mucky Foot Shell window, audio-provider loading and an rsxtool.exe ShellExecute.
+
+Original MSSRSX.M3D SHA256 is
+`8639a7812e87738040f487693baca9778689130e8fc9882de91bae2154edc827`.
+Recorded DllMain `0x02400f7c` minus PE entry RVA `0x21f7c` gives runtime base
+`0x023df000`, preferred base `0x25000000`. Saved main/worker EIPs translate
+to `0x2500a943`/`0x2500b0f9`. Aligned disassembly and original PE imports
+identify the cleanup path: EnterCriticalSection, signal the object's event at
+offset `0x88`, then WaitForSingleObject(INFINITE) on its completion event at
+offset `0x94`. The worker loops over WaitForMultipleObjects on two events.
+This identifies a wait chain; it does not prove why its signal is not completed,
+that rsxtool.exe is the missing prerequisite, or an emulator deadlock.
+
+Fresh native CLI retained `--app=urban_chaos_demo --no-build --control-stdin
+--frozen`, software rendering and batch-size 100000, adding selected window,
+load/event/wait API tracing and register_dialog_frame tracing. Ping at batch0
+succeeded. The only step request was 25 batches with a 180-second reply bound.
+The retained log contains 13,351 RSX worker WaitForMultipleObjects entries,
+the zero-size shell creation, rsxtool.exe request and SetEvent(`0x0e000041`)
+at return `0x023e9943`. Node then reports “Allocation failed - JavaScript heap
+out of memory” and exits by SIGABRT (-6), after 45.524 seconds. Trace overhead
+may contribute; it was not isolated, so no trace-allocation root cause is claimed.
+No window inventory, dialog backing capture, final PNG or final input-state
+sample completed. Capture omission remains unresolved; no blind Setup click,
+licence input, guessed binding or memory write was attempted.
+
+Complete build reuse matched 4,392 accepted source pins and 141 recorded reads;
+no new build was needed. Canonical module before/after was
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Fresh offline observer validation, with explicit SWEEP_CASE_DIR, passed actual
+sync/async execution, whole 512 MB shared-memory read-only comparison, clock
+identity and emitted late-event retention through 10,001. The original's abort
+prevented its exit observer from saving actual reads and compile events: those
+runtime identities are unavailable. Offline records are explicitly renamed;
+they are not original-runtime observations. Before/after inventories match
+4,444 source identities and 1,124 fixture/manifest identities. These checks
+do not establish compiler reads, all async file reads or guest-memory identity.
+
+The original died before input sampling; released per-key/button state and
+consumed releases are unavailable. No action was sent; combat controls and
+before/held/released/settled or matched gameplay-neutral evidence were not
+reached. Disk samples stayed above 2,000,000,000 bytes, with finite sampling
+gaps; no RAM gate or foreign cleanup. Native box ID/state/expiry are N/A;
+owned shutdown was delegated. Cleanup and publication records document absent
+owned processes/groups/watchers/temps and ownership handback. Next work needs
+a fresh assignment with bounded diagnostic logging before native-window
+inspection; this stopped attempt makes no production fix or new acceptance.
