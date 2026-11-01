@@ -1,7 +1,7 @@
-Current 2026-11-01T01:05:09.322550+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T01:08:04.379444+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-The Direct3D resource sweep now passes all six tests after a history-backed assertion correction: enumeration completed16nested pairs,96cycles and32real-x86 cases. Commit168c9a636 includes passing build and operation-caps checks. Two older filter regressions stop on stale operation-mask assertions; worker01a194a3 verifies their contract, corrects them if justified and completes focused coverage. Earlier crash sweeps passed twelve tests. The REP restart failure remains on automated-review hold; no further REP execution is assigned. Full GL/D3D27 and all-app crash coverage remain open.
+All six Direct3D resource tests pass, including enumeration’s16nested pairs,96cycles and32real-x86 cases. Published ed429467d also corrects two outdated texture-operation expectations; both full filter regressions,31negative controls and the locked build pass. Earlier crash sweeps passed twelve tests. Worker01a194a5-fce2-7023-8a92-ff6a3903bed4 now checks six reset/stateblock/complex-surface-release regressions sequentially. These focused tests do not establish full GL/D3D27 gameplay or all-app crash freedom. REP remains on automated-review hold; no further execution is assigned.
 
-Rune and Redline original local-only registrations have pinned files and passing build/focused checks. Browser gameplay awaits authorized functioning file transfer after Rune’s first SCP received SSH403. Owner was notified via Telegram1768; the box is verified stopped. No runtime box is allocated.
+Rune and Redline have pinned original local-only registrations and passing build/focused checks. Browser gameplay awaits authorized functioning file transfer after Rune’s first SCP received SSH403. Owner was notified via Telegram1768; the box is verified stopped. No runtime box is allocated. After transfer is resolved, run their browser gameplay serially.
 
-Crimsonland remains parked pending faithful original installation or an authentic installed-state export. After transfer is resolved, run Rune then Redline browser gameplay serially. No public deployment.
+Crimsonland awaits faithful original installation or an authentic installed-state export. No public deployment.
