@@ -631,6 +631,49 @@ input, release, neutral-dispatch, FPS, audio or full-suite claims. Owned
 watchers/helpers were stopped and checked absent; native box ID/state/expiry
 are N/A, with delegated own shutdown and ownership handed back.
 
+## 2026-11-01: independent heartbeat stops fixed-capture preparation
+
+Run `scratch/runs/20261101-battlezone-fixed-capture-harvest/` launched
+**zero originals**. Fresh standard mission-complete capture and mission 2
+arrival, harvesting or another objective change remain unverified.
+
+Only scratch controller/route preparation ran while waiting for the exact
+`urban-chaos-native-encounter` release. The accepted startup/mission route,
+original `Input.map`, prior black/native dialog evidence, renderer repair
+notes and Urban detached supervisor were read. A detached primary supervisor
+and a separate detached heartbeat/disk enforcer were started. At
+**17:28:28 UTC**, independent sample **465** observed primary counter **454**
+at **1.119649 seconds** old, exceeding its one-second freshness limit.
+The enforcer stopped the owned supervisor with SIGTERM. The supervisor
+subsequently wrote counter **455** and recorded that signal; the cause of the
+heartbeat delay is unknown. This is a preparation guard failure, with no
+game process or game crash. The first-failure rule stopped all attempts;
+there was no retry, original, build, regression execution or observer execution.
+
+The supervisor signal handler overwrote the initiating `guard-failure.json`.
+The initiating traceback survives in `independent-exit.json`, and the exact
+sample/timestamps survive in `independent-guard.json`; the stop record explains
+this overwrite. Primary sampling recorded a minimum of **2,178,494,464 bytes**
+free; independent sampling recorded **2,178,514,944 bytes**. Both exceed the
+2,000,000,000-byte floor. Finite sampling, including the observed stale interval,
+does not establish unsampled disk history. No launch-headroom success is
+claimed because no launch was attempted.
+
+After the failure, the exact Urban author release, fresh launcher final/result
+(exit 0), and direct **21 PID / 19 group** absence checks allowed documentation
+and publication only. Dispatch main `ebd313fd0` was repinned to actual main
+`2bc06c8a987c8b924e7b9c34447435089bbda2c0`; no runtime gate was opened.
+Static post-failure read pins retain the original EXE, original map, renderer,
+regression, CLI and built-module hashes. These are local file reads, not fresh
+runtime/module/read-observer evidence. Previously accepted renderer/build
+results were consulted without duplicating acceptance tests.
+
+Both owned PIDs and groups are absent, matching helpers and new child temps
+are absent, and delegated shutdown is complete. Local native box ID/state/expiry
+are N/A. Recovery is by reading the retained scratch scripts and JSON records;
+the runtime maximum remains one, but this assignment permits no new attempt.
+Only this note and ignored evidence changed. No FPS, audio or full-suite claim.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
