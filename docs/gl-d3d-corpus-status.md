@@ -1,4 +1,27 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-10-31
+# OpenGL / Direct3D corpus status, reconciled 2026-11-01
+
+## November 1: accepted native progress and remaining backend gaps
+
+These results reuse already reviewed original-game evidence. They do not establish
+software/WebGL parity or reconstruct the historical 27-app membership.
+
+| Title | Accepted native evidence | Remaining gap |
+| --- | --- | --- |
+| Redline | `0da33e84b`, run `20261101-redline-world-loading-headroom`: WORLD loading completes, firearm/HUD appears, and consumed ordinary Up moves the player toward the shutter/wall in paired before/held/released PNGs. One original exits 0 after 358.407 seconds; 70 original/configuration pins and 129 actual loaded-file hashes match. | Current WebGL comparison, combat outcome, FPS and audio. Loading/cinematic changes alone were excluded from movement proof. |
+| Dark Reign 2 | `d9aca1952`, run `20261101-dark-reign2-native-mission-input`: Demo Mission 1 terrain, soldiers, objective, command bar and minimap are visible; ordinary mouse selection is verified. One original exits 0 after 327.256 seconds; 29 original/manifest pins and 142 runtime-read hashes match. | Unit movement and mission completion; GPU mip support, backend parity, FPS and audio. Arrow dispatch and changed framing do not establish unit movement. |
+
+Both runs loaded module `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`
+and retained before/after identities and process-cleanup evidence. See
+[Redline notes](re-notes/redline-demo.md) and
+[Dark Reign 2 notes](re-notes/dark-reign2-demo.md) for exact commands, controls,
+observer limits and screenshot interpretation.
+
+The subsequent unchanged GL transform and lighting fixtures passed in
+`0a33e2db4`, run `20261101-gl-descriptor-transform-lighting` (3.246 and
+3.356 seconds, both exit 0). This covers production descriptor assertions;
+it adds no game-pixel, GPU or full-corpus acceptance. See
+[the fixture note](re-notes/gl-descriptor-transform-lighting-20261101.md).
+
 
 ## October 31: known-source browser gameplay and remaining rendering blockers
 
