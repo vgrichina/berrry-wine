@@ -1,5 +1,78 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: ordinary New Game and difficulty selection reach Loading
+
+**Original Rune now reaches its Loading screen through ordinary menu input.**
+The difficulty submenu and Loading PNG were inspected. Playable gameplay,
+movement, and action response remain unverified. Evidence:
+`scratch/runs/20261101-rune-newgame-map-progress/`, with the second invocation
+in `pointer/`. No production or test code changed.
+
+The Redline `01a19569` gate was accepted at **04:54:41 UTC**, after both final
+artifacts and its **04:54:15** runtime/source/build release. The accepted locked
+build was reused only after all **4,389** inputs, module and generated mirror
+matched. Both actually loaded parent/child modules in each invocation match
+SHA-256 `baef4e5a70f43b5d87fe086b4f5bd5b583c833e8bf07239ef05749f222035136`
+(**2,025,634 bytes**). Source, actual loaded-read identities and both original
+**142-file** trees match before/after. Parked control/parser/eval and the actual
+preload/module were validated offline; the real shared **512 MB** memory hash
+was unchanged. The bounded second observer preserves natural API results and
+records only mouse-related API boundaries; no timer/lock census was repeated.
+
+The first invocation tested actual mouse motion to **100,117**, separate down
+and up with **1,000 batches** between them, then **10,000 completed batches**
+after release. It stayed at the main menu. Its absolute target lies inside the
+visible button, but Rune's captured cursor remained at the upper-left. Twenty
+small relative steps also failed to place it over the button. This was a
+pointer-placement failure, not evidence that the New Game handler was broken.
+
+The second invocation followed that observation. One ordinary relative motion
+of **100,117** moved the visible guest cursor to approximately **50,64**.
+Natural original WinDrv observations retain:
+
+- `GetClientRect` returns **0,0,648,488** to runtime **0x1174b4b8**, original
+  **0x1110b4b8**, viewport **0x1a407080**. Its viewport dimensions are 640x480,
+  flags at +0x180 are **9**, and the saved capture coordinate at +0x1c4 is 222.
+- Dispatched WM_MOUSEMOVE has client coordinates **401,338**. The original
+  captured-motion branch computes deltas from the client rectangle center,
+  **324,244**, before calling the engine's mouse-delta method.
+- Natural `ClientToScreen`, returning to **0x1174b731 / 0x1110b731**, produces
+  **344,264**; `SetCursorPos` requests that recentering point and returns to
+  **0x1174b73f / 0x1110b73f**. No cursor or guest state was written by diagnostics.
+
+Another relative **100,90** placed the cursor over New Game. Physical down/up
+at the recentering point, separated by **500 batches**, followed by **10,000
+completed batches**, opened the inspected **Easy / Medium / Hard** submenu.
+Relative **460,-100** then placed the visible cursor over **Easy** (the capture
+was named `medium-hover.png`, but its actual red highlight is Easy). Physical
+down/up separated by **100 batches**, followed by **30,000 completed batches**,
+reached the inspected `pointer/final.png` **Loading** screen at batch **221700**.
+
+Original `RMenu.u` embeds the menu source, retained with byte offsets and its
+hash in this run. `RuneButton.Click` calls `Notify(DE_Click)`; `NewButton`
+creates/shows/slides `RuneMenuNewTop`. Easy calls `StartPressed(0)`, which builds
+`DEMOHel1?Difficulty=0` when `GameInfo.default.DemoBuild != 0`, closes UWindow,
+then calls `ClientTravel(URL, TRAVEL_Absolute, false)`. This is the original
+handler's expected target, not an observed runtime URL or successful map read.
+
+**Remaining observation:** actual ClientTravel URL through LoadMap progress or
+its first failing guard. The Loading image alone does not establish a stall,
+a generic defect, or gameplay. No main-thread stop EIP was retained after those
+30,000 batches. The driver reached its finite deadline; the queued map capture,
+W movement and Space action requests **never executed**. Both permitted original
+invocations are exhausted, so no retry or speculative repair followed.
+
+Both runs used empty parent arguments, **C:\System**, unchanged shipped INIs,
+ordinary Software Rendering → Next → Next → Run, physical Escape, and clock
+**200 ms**. They exited **0** in **79.306 / 84.595 seconds**; child guest/host
+exits are **0**. Outer **150s / kill-after 5**, inner **115s**, and child
+**TERM 90 / KILL 95** guards were unused. The first driver additionally records
+a harmless post-quit `guest exited 0` response race. All own runtime PIDs,
+process groups and child temporary trees are absent. Logs and INIs are retained;
+large JSON/log files use lossless gzip. Final output briefly left **1,999,912,960
+bytes** free after runtime stopped; compression of this run's own artifacts
+restored the required **2,000,000,000-byte** floor. Box ID/state/expiry are N/A.
+
 ## 2026-11-01: generic timer callback handoff repaired; original main menu opens
 
 **The dedicated multimedia-timer thread cleared the interpreter quantum but
