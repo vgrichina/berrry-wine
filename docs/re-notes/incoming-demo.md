@@ -197,6 +197,89 @@ are N/A. No tracked source, helper, test, configuration, registration, or
 backend was changed. The bounded result is the measured disk-floor stop;
 full playthrough, audio, FPS, and broader compatibility remain unclaimed.
 
+## Ordinary helicopter flight with paired controls (2026-11-01)
+
+Reviewed run `scratch/runs/20261101-incoming-helicopter-margin/` demonstrates
+ordinary helicopter departure and flight in phase **2/10**. One unchanged
+original used stock `incoming_demo`, `c:\incoming`, the retained phase-progress
+route, batch size 100000 and its unchanged 200 ms control clock. Turret combat
+was replayed only to reach the helicopter; it is not requalified here.
+
+The 10:57:08 UTC gate pinned actual main
+`86bf6a3a0c539c6992e2cab6b08a0d57befe0ea0`, after Motocross worker
+`01a196bc-cfb9-78d2-8eaa-4fd57a8ebfd1` supplied fresh launcher final/result
+files and its 10:56:53 explicit runtime/source/build release. The coordinator's
+authenticated redundant Icewind ZIP reclamation supplied the changed disk
+margin; this worker performed no foreign cleanup. Gate free disk was
+2,588,110,848 bytes, startup 2,583,040,000, and the runtime guard minimum
+2,558,226,432, continuously sampled against the 2,000,000,000-byte floor.
+There was no separate 2.2 GB startup or RAM gate. The earlier 123-second run
+remains a disk stop with no helicopter progress.
+
+The retained paired PNGs separate player flight from the automatic camera:
+
+| Control comparison | Before | Held | Released | Later, without input |
+|---|---|---|---|---|
+| Up arrow, 8 batches | `helicopter-neutral100.png` (8867) | `helicopter-up-held8.png` (8875) | `helicopter-up-released2.png` (8877) | `helicopter-up-settled40.png` (8917) |
+| Q, 40 batches | `helicopter-up-settled40.png` (8917) | `helicopter-q-held40.png` (8957) | `helicopter-q-released2.png` (8959) | `helicopter-q-settled80.png` (9039) |
+| Q, 60 batches | `helicopter-q-settled80.png` (9039) | `helicopter-forward-held60.png` (9099) | `helicopter-forward-released2.png` (9101) | `helicopter-forward-settled40.png` (9141) |
+| Up arrow, 200 batches | `helicopter-rotate-left-settled40.png` (9350) | `helicopter-flight-held200.png` (9550) | `helicopter-flight-released2.png` (9552) | `helicopter-flight-settled100.png` (9652) |
+| Z, 120 batches | `helicopter-flight-settled100.png` (9652) | `helicopter-heading-held120.png` (9772) | `helicopter-heading-released2.png` (9774) | `helicopter-heading-settled100.png` (9874) |
+| Up arrow, 100 batches | `helicopter-heading-settled100.png` (9874) | `helicopter-flight-confirm-held100.png` (9974) | `helicopter-flight-confirm-released2.png` (9976) | `helicopter-flight-confirm-settled100.png` (10076) |
+
+Arrival at batch 8767 and the 100-batch neutral comparison retain the helicopter
+over the pad against the warehouse, radar dish, crates and barrels. The short
+Up/Q sequence shifts the helicopter relative to that pad before the cockpit
+switch. At 9039 the HUD visibly reads phase 2/10 with the green waypoint arrow.
+Subsequent cockpit comparisons show the radar building/dish moving below the
+view, then the large dish passing close beneath the helicopter and out of
+view while the hills enlarge ahead. Z produces a visible bank that levels
+after release. These later cockpit sequences establish ordinary controlled
+flight beyond the camera transition. The shipped chart calls Q forward and
+Z rotate left; the Q captures visibly gain height, so filenames containing
+`forward` identify the chart's Q input rather than a measured horizontal axis.
+“Settled” names mean the stated no-input interval, not proven zero velocity.
+
+`consumed-controls-review.json`, input-state/DI snapshots and compressed runtime
+logs retain actual consumption. From neutral to the first Up hold/release,
+WM dequeue/route/dispatch totals advance 46 to 47 to 48, and DirectInput
+sequence/head advance 44/13 to 45/14 to 46/15. Final Up before/held/released/
+later totals are 60/61/62/62 and sequence/head 58/27, 59/28, 60/29, 60/29.
+All retained keyboard rings are active, empty and without overflow. Some
+two-batch releases precede WM dispatch; their later snapshots retain dispatch
+completion. API tracing was explicitly enabled only at batch 9652 and records
+544 GetDeviceData calls with 544 successful zero returns during the later
+Z/Up sequences. Earlier sequences have WM and ring evidence, not that API
+trace. This does not trace every guest key-array read; SDL consumption and
+the guest postqueue remain unknown.
+
+The green arrow remains visible, but no waypoint arrival, changed objective,
+or helicopter phase completion was captured. The script's distance-gated
+cockpit switch corroborates departure only; no numeric position or distance
+was measured. Score 7000 belongs to the replayed route and is not claimed as
+new helicopter combat. No weapon was held during these flight comparisons.
+
+Accepted module `dd43e4a...09aaf4` was reused with all 4,392 accepted build-input
+and 141 prior observed-read pins matching. All 4,444 current source/build pins
+and 335 original-tree/manifest files matched before/after; both full original
+archives and three config copies were verified. EXE and manifest SHA-256 remain
+`4830a5d5091a6c4f528cd2aa3d7821873346b6e5a823ac4e71692d18d2f4402c` and
+`df0fafd26f474beacb39ccb67a2f6c380ecfac2fd4a6a57f0f34825fc4f6a4a4`.
+The actual runtime compilation hash matches the accepted module, and all 447
+observed file-read hashes match. The retained observer passed actual sync/async
+execution, whole shared 512 MiB read-only, native/import clock identity and
+emitted late-10001 retention checks. Coverage remains synchronous file reads
+and complete closed-descriptor reads up to 24 MiB, excluding async/stream,
+incomplete, unclosed and larger descriptor reads; observations flush at exit.
+Runtime compilation is not compiler source-read evidence.
+
+The original exited 0 after 472.113 seconds; no second original was needed.
+The manifest check passed. No tracked source/helper/test/config/registration/
+backend edits were made. Own runtime, driver, replay process groups, watcher
+and new temporary paths are checked in the cleanup evidence. Native-local
+box ID/state/expiry are N/A. Waypoint arrival/completion, audio, FPS and full
+playthrough remain unclaimed.
+
 ## Not checked
 
 Audio output, DirectPlay, completion of flying/driving phases after the turret,
