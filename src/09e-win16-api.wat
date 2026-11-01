@@ -11116,10 +11116,22 @@
         ;; for the same DC on every trip, which is a handle table that fills up
         ;; while an app sits in its message loop doing nothing — Pipe Dream did
         ;; it in seven batches.
-        (if (i32.and (i32.ge_u (local.get $wparam) (global.get $WIN16_HANDLE_BASE))
-                     (i32.lt_u (local.get $wparam)
-                       (i32.add (global.get $WIN16_HANDLE_BASE)
-                                (global.get $WIN16_HANDLE_MAX))))
+        ;; That guard is for the DC messages only. An HMENU on this side can
+        ;; itself be a small number — a window created with a menu resource
+        ;; reports the resource ID (FreeCell's 400 = 0x190) as its menu, and
+        ;; $menu_init_popup posts WM_INITMENU with exactly that — which falls in
+        ;; the narrow range and was handed to the task raw, so the trip back
+        ;; through $win16_h32 trapped on an index the table never allocated
+        ;; (opening any FreeCell menu, English or Traditional Chinese). The
+        ;; menu messages always come from this side, and $win16_h16 maps a
+        ;; given handle to the same narrow one every time.
+        (if (i32.and
+              (i32.or (i32.eq (local.get $message) (i32.const 0x0014))
+                      (i32.eq (local.get $message) (i32.const 0x0027)))
+              (i32.and (i32.ge_u (local.get $wparam) (global.get $WIN16_HANDLE_BASE))
+                       (i32.lt_u (local.get $wparam)
+                         (i32.add (global.get $WIN16_HANDLE_BASE)
+                                  (global.get $WIN16_HANDLE_MAX)))))
           (then (return (local.get $wparam))))
         (return (call $win16_h16 (local.get $wparam)))))
     (local.get $wparam))

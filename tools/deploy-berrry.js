@@ -242,6 +242,10 @@ const NEVER_PUBLISH_PREFIXES = [
   'binaries/candidates/morrowind/',
   'test/binaries/candidates/myth-the-fallen-lords/',
   'binaries/candidates/myth-the-fallen-lords/',
+  // Windows Me Traditional Chinese OS accessories (the *_cht registry ids),
+  // extracted locally from a WinWorld ISO for CP950 testing.
+  'test/binaries/winme-cht/',
+  'binaries/winme-cht/',
   'downloads/',
 ];
 const neverPublish = p => {

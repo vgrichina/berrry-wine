@@ -3548,7 +3548,11 @@
     (local.set $dc (call $gdi_dc_state_entry (local.get $hdc) (i32.const 0)))
     (if (i32.eqz (local.get $dc)) (then (return (i32.const 0))))
     (local.set $font (load.field.memarg GdiDcState font (local.get $dc)))
-    (if (i32.eqz (call $gdi_object_record (local.get $font))) (then (return (i32.const 0))))
+    ;; A stock font has no object record; only the CP950 UI stock faces are
+    ;; TrueType ($gdi_cp950_ui_stock_font), so they alone get past here.
+    (if (i32.eqz (i32.or (i32.ne (call $gdi_object_record (local.get $font)) (i32.const 0))
+          (call $gdi_cp950_ui_stock_font (local.get $font))))
+      (then (return (i32.const 0))))
     (local.set $face (call $tt_face_for_logfont (call $gdi_font_face (local.get $font))
       (call $gdi_font_weight (local.get $font)) (call $gdi_font_italic (local.get $font))))
     (if (i32.lt_s (local.get $face) (i32.const 0)) (then (return (i32.const 0))))

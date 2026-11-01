@@ -4326,6 +4326,33 @@
     (call $gs8 (i32.add (local.get $dst) (local.get $n)) (i32.const 0))
     (local.get $n))
 
+  ;; Encode $chars UTF-16 units at linear $src into the process ANSI page at
+  ;; linear $dst, at most $cap bytes, no terminator; a two-byte character is
+  ;; never split to fit. Returns bytes written. This is how a Win32 module's
+  ;; UTF-16 resources (RT_STRING, RT_DIALOG, RT_MENU labels) reach an ANSI
+  ;; caller: Windows converts them with the ANSI code page, so a Big5 build's
+  ;; string table arrives as Big5 bytes. Without conversion tables the
+  ;; encoder's identity path keeps the historical low-byte copy exactly.
+  (func $wide_wa_to_ansi_wa (param $src i32) (param $chars i32) (param $dst i32)
+        (param $cap i32) (result i32)
+    (local $cp i32) (local $j i32) (local $n i32) (local $enc i32) (local $elen i32)
+    (local.set $cp (call $resolve_code_page (i32.const 0)))
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $j) (local.get $chars)))
+      (local.set $enc (call $ansi_char_encode (local.get $cp)
+        (i32.load16_u (i32.add (local.get $src) (i32.shl (local.get $j) (i32.const 1))))
+        (i32.const 0x3F) (i32.const 1)))
+      (local.set $elen (i32.shr_u (i32.and (local.get $enc) (i32.const 0xFF0000)) (i32.const 16)))
+      (br_if $d (i32.gt_u (i32.add (local.get $n) (local.get $elen)) (local.get $cap)))
+      (i32.store8 (i32.add (local.get $dst) (local.get $n)) (local.get $enc))
+      (if (i32.eq (local.get $elen) (i32.const 2))
+        (then (i32.store8 (i32.add (local.get $dst) (i32.add (local.get $n) (i32.const 1)))
+          (i32.shr_u (local.get $enc) (i32.const 8)))))
+      (local.set $n (i32.add (local.get $n) (local.get $elen)))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br $l)))
+    (local.get $n))
+
   ;; Convert wide string at guest src to ANSI at guest dst, max bytes. Returns length.
   (func $wide_to_ansi (param $src i32) (param $dst i32) (param $max i32) (result i32)
     (call $wide_to_ansi_cp (i32.const 0) (local.get $src) (local.get $dst) (local.get $max)))
@@ -8574,7 +8601,7 @@
   (func $string_load_a (param $id i32) (param $buf_wa i32) (param $buf_len i32) (result i32)
     (local $bundle_id i32) (local $idx i32) (local $data_entry i32)
     (local $rva i32) (local $wa i32) (local $i i32) (local $entry_len i32)
-    (local $copy i32) (local $j i32) (local $ch i32)
+    (local $copy i32)
     (if (i32.le_s (local.get $buf_len) (i32.const 0)) (then (return (i32.const 0))))
     (local.set $bundle_id (i32.add (i32.shr_u (local.get $id) (i32.const 4)) (i32.const 1)))
     (local.set $idx (i32.and (local.get $id) (i32.const 0xF)))
@@ -8593,20 +8620,12 @@
     (local.set $entry_len (i32.load16_u (local.get $wa)))
     (local.set $wa (i32.add (local.get $wa) (i32.const 2)))
     (if (i32.eqz (local.get $entry_len)) (then (return (i32.const 0))))
-    ;; Clamp to buf_len-1 to leave room for NUL
-    (local.set $copy (local.get $entry_len))
-    (if (i32.ge_u (local.get $copy) (local.get $buf_len))
-      (then (local.set $copy (i32.sub (local.get $buf_len) (i32.const 1)))))
-    ;; Convert UTF-16 → ASCII (low byte) into destination
-    (local.set $j (i32.const 0))
-    (block $done (loop $copy_loop
-      (br_if $done (i32.ge_u (local.get $j) (local.get $copy)))
-      (local.set $ch (i32.load16_u (i32.add (local.get $wa)
-        (i32.shl (local.get $j) (i32.const 1)))))
-      (i32.store8 (i32.add (local.get $buf_wa) (local.get $j))
-        (i32.and (local.get $ch) (i32.const 0xFF)))
-      (local.set $j (i32.add (local.get $j) (i32.const 1)))
-      (br $copy_loop)))
+    ;; Encode into the process ANSI page, leaving room for the NUL: buf_len
+    ;; counts TCHARs, which for an A caller are bytes, so a DBCS string is
+    ;; bounded in bytes and never split mid-character. The return value is
+    ;; the byte count, as LoadStringA reports it.
+    (local.set $copy (call $wide_wa_to_ansi_wa (local.get $wa) (local.get $entry_len)
+      (local.get $buf_wa) (i32.sub (local.get $buf_len) (i32.const 1))))
     (i32.store8 (i32.add (local.get $buf_wa) (local.get $copy)) (i32.const 0))
     (local.get $copy))
 
@@ -8686,17 +8705,15 @@
       (br $m_loop)))
     (local.set $wa (i32.add (local.get $wa) (i32.const 2))) ;; skip null
     (global.set $dlg_text_wa (local.get $wa))
-    ;; Allocate guest buffer and convert to ASCII
-    (local.set $buf (call $heap_alloc (i32.add (local.get $len) (i32.const 1)))) (local.set $buf_wa (call $g2w (local.get $buf)))
-    (local.set $j (i32.const 0))
-    (block $c_done (loop $c_loop
-      (br_if $c_done (i32.ge_u (local.get $j) (local.get $len)))
-      (i32.store8 (i32.add (local.get $buf_wa) (local.get $j))
-        (i32.and (i32.load16_u (i32.add (local.get $start)
-          (i32.mul (local.get $j) (i32.const 2)))) (i32.const 0xFF)))
-      (local.set $j (i32.add (local.get $j) (i32.const 1)))
-      (br $c_loop)))
-    (i32.store8 (i32.add (local.get $buf_wa) (local.get $len)) (i32.const 0))
+    ;; Allocate a guest buffer and encode into the process ANSI page. A page
+    ;; with conversion tables may need two bytes per unit; every other page
+    ;; keeps the historical one-byte-per-unit buffer and low-byte copy.
+    (local.set $j (select (i32.shl (local.get $len) (i32.const 1)) (local.get $len)
+      (i32.ne (call $text_decode_code_page) (i32.const 0))))
+    (local.set $buf (call $heap_alloc (i32.add (local.get $j) (i32.const 1)))) (local.set $buf_wa (call $g2w (local.get $buf)))
+    (local.set $j (call $wide_wa_to_ansi_wa (local.get $start) (local.get $len)
+      (local.get $buf_wa) (local.get $j)))
+    (i32.store8 (i32.add (local.get $buf_wa) (local.get $j)) (i32.const 0))
     (global.set $dlg_text_ptr (local.get $buf)))
 
   ;; ---- WND_DLG_RECORDS accessors ----

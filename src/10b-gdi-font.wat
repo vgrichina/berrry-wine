@@ -65,6 +65,9 @@
   (data (region.addr $GDI_BITMAP_FONT_STATIC 0x144) "Western\00")
   (data (region.addr $GDI_BITMAP_FONT_STATIC 0x150) "FONT\00")
   (data (region.addr $GDI_BITMAP_FONT_STATIC 0x158) "Comic Sans MS\00")
+  ;; The Traditional Chinese UI faces ($gdi_cp950_ui_stock_font).
+  (data (region.addr $GDI_BITMAP_FONT_STATIC 0x168) "PMingLiU\00")
+  (data (region.addr $GDI_BITMAP_FONT_STATIC 0x174) "MingLiU\00")
 
   (func $gdi_bitmap_font_record (param $index i32) (result i32)
     (i32.add (global.get $GDI_BITMAP_FONT_TABLE)
@@ -1367,6 +1370,17 @@
                 (if (local.get $substitute)
                   (then (return (local.get $substitute))))))
             (return (local.get $strike))))))
+    ;; CP950 UI stock fonts are the PMingLiU / MingLiU faces; see
+    ;; $gdi_cp950_ui_stock_font. Their embedded 1-bit strikes are what a
+    ;; Traditional Chinese Win98 menu is drawn from at 12 px.
+    (if (call $gdi_cp950_ui_stock_font (local.get $handle))
+      (then
+        (local.set $substitute (call $tt_strike_ensure
+          (call $gdi_font_face (local.get $handle))
+          (call $gdi_font_strike_height_for_dc (local.get $hdc) (local.get $handle))
+          (call $gdi_font_weight (local.get $handle))
+          (i32.const 0)))
+        (if (local.get $substitute) (then (return (local.get $substitute))))))
     (if (i32.eq (local.get $handle) (i32.const 0x3001A))
       (then
         (drop (call $gdi_bitmap_font_ensure_terminal))

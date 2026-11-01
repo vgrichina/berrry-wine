@@ -636,7 +636,7 @@
     (owner "10b-gdi-font.wat:$GDI_BITMAP_FONT_IO"))
   (region.declare $GDI_BITMAP_FONT_DESC (size 0x00000050) (align 0x00000010)
     (owner "10b-gdi-font.wat:$GDI_BITMAP_FONT_DESC"))
-  (region.declare $GDI_BITMAP_FONT_STATIC (size 0x00000170) (align 0x00000010)
+  (region.declare $GDI_BITMAP_FONT_STATIC (size 0x00000180) (align 0x00000010)
     (owner "10b-gdi-font.wat:$gdi_bitmap_font_face_matches"))
   (region.declare $GDI_BITMAP_FONT_LRU (size 0x000000C0) (align 0x00000100)
     (owner "10b-gdi-font.wat:$GDI_BITMAP_FONT_LRU"))

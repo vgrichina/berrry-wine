@@ -2137,6 +2137,10 @@ async function main() {
         scheduledInput.push({ batch, action: 'toolbar-click', cmd: parseInt(parts[2]), label: parts[3] || '' });
       } else if (kind === 'menu-dump') {
         scheduledInput.push({ batch, action: 'menu-dump', label: parts[2] || '' });
+      } else if (kind === 'menu-shortcuts') {
+        // B:menu-shortcuts[:label] — the open dropdown's label and shortcut
+        // column (the text after '\t'), raw bytes as hex plus latin1.
+        scheduledInput.push({ batch, action: 'menu-shortcuts', label: parts[2] || '' });
       } else if (kind === 'dlg-paint') {
         scheduledInput.push({ batch, action: 'dlg-paint' });
       } else if (kind === 'dlg-png') {
@@ -9160,6 +9164,22 @@ async function main() {
           ? `${parentUpdLt & 0xffff},${parentUpdLt >> 16},${parentUpdRb & 0xffff},${parentUpdRb >> 16}`
           : 'none';
         logs.push(`[input] dump-children${ev.label ? ':' + ev.label : ''}: parent=0x${parent.toString(16)} nc=0x${parentNc.toString(16)} dirty=${parentDirty} upd=${parentUpd} ${children.length ? children.join(' | ') : '(none)'}`);
+      } else if (ev.action === 'menu-shortcuts') {
+        const we = instance.exports;
+        const label = ev.label ? ':' + ev.label : '';
+        const hwnd = we.menu_open_hwnd ? (we.menu_open_hwnd() >>> 0) : 0;
+        const top = we.menu_open_top ? (we.menu_open_top() | 0) : -1;
+        const count = hwnd && we.menu_child_count ? (we.menu_child_count(hwnd, top) | 0) : 0;
+        const bytesAt = (ptr, len) => (ptr && len > 0
+          ? Buffer.from(new Uint8Array(memory.buffer, ptr, len)) : Buffer.alloc(0));
+        if (!count) logs.push(`[input] menu-shortcuts${label}: (no open dropdown) at batch ${batch}`);
+        for (let i = 0; i < count; i++) {
+          const lab = bytesAt(we.menu_child_label_ptr(hwnd, top, i) >>> 0,
+            we.menu_child_label_len(hwnd, top, i) | 0);
+          const sc = we.menu_child_shortcut_ptr ? bytesAt(we.menu_child_shortcut_ptr(hwnd, top, i) >>> 0,
+            we.menu_child_shortcut_len(hwnd, top, i) | 0) : Buffer.alloc(0);
+          logs.push(`[input] menu-shortcuts${label} #${i} label=${lab.toString('hex')} sc=${JSON.stringify(sc.toString('latin1'))} at batch ${batch}`);
+        }
       } else if (ev.action === 'menu-dump') {
         const we = instance.exports;
         const hwnd = we.menu_open_hwnd ? (we.menu_open_hwnd() >>> 0) : 0;

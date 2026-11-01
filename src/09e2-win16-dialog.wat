@@ -44,14 +44,26 @@
 
   ;; Widen a NUL-terminated ANSI string at `src` (a linear address in the staged
   ;; image) into a UTF-16 one, terminator included, and answer where the source
-  ;; ended.
+  ;; ended. The bytes are text in the process ANSI page, so they decode
+  ;; through it — a CP950 caption is Big5 pairs, and widening byte by byte
+  ;; (Latin-1) drew a Traditional Chinese Minesweeper's dialogs as mojibake.
+  ;; Pages without tables keep the old one-byte-per-unit identity. A pair
+  ;; only ever shrinks, so $win16_dlg_to32's destination sizing still holds.
   (func $win16_dlg_emit_sz (param $src i32) (result i32)
-    (local $c i32)
+    (local $c i32) (local $cp i32) (local $d i32)
+    (local.set $cp (call $resolve_code_page (i32.const 0)))
     (block $done (loop $copy
       (local.set $c (i32.load8_u (local.get $src)))
-      (call $win16_dlg_emit16 (local.get $c))
-      (local.set $src (i32.add (local.get $src) (i32.const 1)))
-      (br_if $done (i32.eqz (local.get $c)))
+      (if (i32.eqz (local.get $c))
+        (then
+          (call $win16_dlg_emit16 (i32.const 0))
+          (local.set $src (i32.add (local.get $src) (i32.const 1)))
+          (br $done)))
+      (local.set $d (call $ansi_char_decode_wa (local.get $cp) (local.get $src)
+                      (i32.const 0x7FFFFFFF)))
+      (call $win16_dlg_emit16 (i32.and (local.get $d) (i32.const 0xFFFF)))
+      (local.set $src (i32.add (local.get $src)
+        (i32.and (i32.shr_u (local.get $d) (i32.const 16)) (i32.const 0xFF))))
       (br $copy)))
     (local.get $src))
 

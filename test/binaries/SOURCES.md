@@ -638,3 +638,39 @@ Community-uploaded Windows Steam2 depot 98811 revision 8, dated 2011-12-27 by th
 ## Dungeons of Dredmor archived Steam release (separate local variant)
 
 Public-game depot98801 revision17 restored from [Archive.org Steam2 torrent](https://archive.org/download/steam2-dump/steam2.torrent), torrent SHA-256 d2ec7dc41b15995ec36d16a35e15bccd4694f7d50e5c0cfa4ef997fc17943fd8. Exact SHA-matched head blob catalog date2012-08-29.18blobs+16DATs verified;6270files/252942500bytes extracted. Original Windows EXE SHA-256 50260373b54d6451683b2f175c9e3ae7f773ea9f0814baaf48e7f42e953ce1fc. Separate candidate dungeons-of-dredmor-release and app dungeons_of_dredmor_release; beta98811 unchanged. Proprietary release, not demo or public deployment. [Full provenance](../../docs/re-notes/dungeons-of-dredmor-release.md).
+
+## Windows Me Traditional Chinese accessories (`winme-cht/`, local only)
+
+Microsoft OS files, gitignored, never published (`tools/deploy-berrry.js`
+`NEVER_PUBLISH_PREFIXES`); the apps are `LOCAL_CANDIDATE_APPS` with
+`ansiCodePage: 950` (`notepad_cht`, `calc_cht`, `mspaint_cht`, `winmine_cht`,
+`freecell_cht`, `sol_cht`). Fetched 2026-10-31 from WinWorld's
+[Windows Me page](https://winworldpc.com/product/windows-me), entry
+"Microsoft Windows Me (4.90.3000) [Trad. Chinese]".
+
+- Archive: `Microsoft Windows ME (4.90.3000) [Trad. Chinese].7z`, 191,896,253
+  bytes, SHA-256 `c616a9e362eabc5ffcd23e8dace08f2229bf1eea13e7dac9bf9a0461e1639382`
+  (its SHA-512 matches the one WinWorld lists).
+- Inside: `Windows ME traditional chinese.iso`, 201,478,144 bytes, SHA-256
+  `132f8bc2f2d4401c044105357e45de9e7e54ea52935d484ab1efe27791689359`, SHA-1
+  `aa617c42159a4cdda46669d5a901211833ef1836`.
+- Extracted statically (nothing from the image was executed) from
+  `win9x/BASE2.CAB` with `7z e BASE2.CAB <names>`; `cabextract` stops early
+  on that set ("merged cabinets with differing Set IDs").
+
+| File | Format | SHA-256 |
+|---|---|---|
+| `notepad.exe` | PE | `40aadfabb9029dc3259710f126ab7ac3a14b483db58e01a297d429cdb3e28a72` |
+| `calc.exe` | PE (MSVCRT) | `dc7a60079ab47fd94c545635f7e12ad96fcdbec0acb4f4b928f6c83cb8c255a3` |
+| `mspaint.exe` | PE (MFC42, MSVCRT) | `1f59d336f6c33ded2f68a5c01fb54c4e3cb9037352ea320bc11178ac477c48db` |
+| `winmine.exe` | NE | `d589dc540a0b4294266e66026d3a86f29b51429a06ae3bc73066bc823b7aaa5f` |
+| `freecell.exe` | NE | `09345b34ba711dec1c3c21331c00972b5d3988b933ef7195c401c0fee2b097c5` |
+| `sol.exe` | NE | `c3d2d798c75bc22f633782f715f8e225e05e547c172ccc7ac3e91dd49d2ec97e` |
+| `cards.dll` | NE | `07ed76ebed79520a92e2a2ad5dfdbb230929322e75ef85b053ff54d5a8be6a02` |
+| `freecell.hlp` | WinHelp | `a7fde538156a39631da2b6d4f027c470f5d2f10595189813574a51eb04530f0b` |
+| `freecell.chm` / `mspaint.chm` / `winmine.chm` | HTML Help | `5fbce859…59cb` / `4111b78e…c635` / `7746ea78…3fe3` |
+
+The same CAB holds `mingliu.ttc` (8,637,684 bytes, SHA-256
+`a3345ee1dd9335555ea3a32311cba5a1c1912a7ca378623f2cb1e82cf2349d94`), which is
+what `node tools/fetch-fonts.js --mingliu <path>` takes; the font itself is
+never committed or copied here.

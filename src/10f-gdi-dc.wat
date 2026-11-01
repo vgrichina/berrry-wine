@@ -653,12 +653,51 @@
         (local.get $hdc) (i32.const 88) (local.get $handle) (i32.const 0x3001D)))))
     (i32.const -1))
 
+  ;; Traditional Chinese system UI faces. A Traditional Chinese Windows 98
+  ;; draws its menus, captions, message boxes and DEFAULT_GUI_FONT in
+  ;; PMingLiU (新細明體) at 12 px and its System font as a 16 px DBCS face,
+  ;; both CHINESEBIG5_CHARSET; MS Sans Serif has no Big5 glyph at all, so
+  ;; keeping the Western stock faces under CP950 turns every Chinese menu
+  ;; and caption into default characters. So in a launch whose ANSI page is
+  ;; CP950 and whose font directory really holds a PMingLiU face (the
+  ;; optional C:\WINDOWS\FONTS\MINGLIU.TTC, tools/fetch-fonts.js), the
+  ;; variable stock UI fonts and SYSTEM_FONT answer as those faces. Without
+  ;; the face, or under any other page, nothing changes. The probe is
+  ;; cached per instance: 0 = not yet asked, 1 = present, 2 = absent.
+  (global $gdi_cp950_ui_face_state (mut i32) (i32.const 0))
+  (func $gdi_cp950_ui_fonts (result i32)
+    (if (i32.ne (call $text_decode_code_page) (i32.const 950))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (global.get $gdi_cp950_ui_face_state))
+      (then
+        (call $tt_scan_font_dir)
+        (global.set $gdi_cp950_ui_face_state
+          (select (i32.const 1) (i32.const 2)
+            (i32.ne (call $tt_reg_path
+              (region.addr $GDI_BITMAP_FONT_STATIC 0x168) (i32.const 400) (i32.const 0))
+              (i32.const 0))))))
+    (i32.eq (global.get $gdi_cp950_ui_face_state) (i32.const 1)))
+
+  ;; ANSI_VAR_FONT, SYSTEM_FONT, DEVICE_DEFAULT_FONT, DEFAULT_GUI_FONT and
+  ;; the private bold caption font, when $gdi_cp950_ui_fonts holds.
+  (func $gdi_cp950_ui_stock_font (param $handle i32) (result i32)
+    (if (i32.eqz (i32.or
+          (i32.and (i32.ge_u (local.get $handle) (i32.const 0x3001C))
+            (i32.le_u (local.get $handle) (i32.const 0x3001E)))
+          (i32.or (i32.eq (local.get $handle) (i32.const 0x30021))
+            (i32.eq (local.get $handle) (i32.const 0x30022)))))
+      (then (return (i32.const 0))))
+    (call $gdi_cp950_ui_fonts))
+
   (func $gdi_font_height (param $handle i32) (result i32)
     (local $p i32)
     (local.set $p (call $gdi_object_record (local.get $handle)))
     (if (i32.and (i32.ne (local.get $p) (i32.const 0))
           (i32.eq (load.field.memarg GdiObject type (local.get $p)) (i32.const 4)))
       (then (return (load.field.memarg GdiFont height (local.get $p)))))
+    (if (call $gdi_cp950_ui_stock_font (local.get $handle))
+      (then (return (select (i32.const -16) (i32.const -12)
+        (i32.eq (local.get $handle) (i32.const 0x3001D))))))
     ;; OEM_FIXED_FONT is the native 8x12 Terminal stock object.
     (if (i32.eq (local.get $handle) (i32.const 0x3001A))
       (then (return (i32.const 12))))
@@ -722,6 +761,8 @@
           (then
             (local.set $font (cast ptr<GdiFont> (local.get $object)))
             (return (load.field GdiFont charset (local.get $font)))))))
+    (if (call $gdi_cp950_ui_stock_font (local.get $handle))
+      (then (return (i32.const 136)))) ;; CHINESEBIG5_CHARSET
     (if (i32.eq (call $gdi_object_type (local.get $handle)) (i32.const 4))
       (then (return (select (i32.const 255) (i32.const 0)
         (i32.eq (local.get $handle) (i32.const 0x3001A))))))
@@ -825,6 +866,11 @@
         (local.set $face_guest (load.field.memarg GdiFont face (local.get $record)))
         (if (local.get $face_guest)
           (then (return (call $g2w (local.get $face_guest)))))))
+    (if (call $gdi_cp950_ui_stock_font (local.get $handle))
+      (then (return (select
+        (region.addr $GDI_BITMAP_FONT_STATIC 0x174)    ;; MingLiU (System)
+        (region.addr $GDI_BITMAP_FONT_STATIC 0x168)    ;; PMingLiU
+        (i32.eq (local.get $handle) (i32.const 0x3001D))))))
     (if (i32.eq (local.get $handle) (i32.const 0x3001A))
       (then (return (region.addr $GDI_BITMAP_FONT_STATIC 0x110)))) ;; Terminal
     (if (i32.eq (local.get $handle) (i32.const 0x3001B))
