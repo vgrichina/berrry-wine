@@ -1,5 +1,78 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: live travel URL and original LoadMap reads observed
+
+**The actual pending ClientTravel URL is `DEMOHel1?Difficulty=0`, and original
+LoadMap opens and reads `..\Maps\DEMOHel1.run`.** Gameplay remains unverified;
+both inspected movement/action captures still show Loading. Evidence:
+`scratch/runs/20261101-rune-loadmap-gameplay/`, second invocation in `extended/`.
+No production/test changes or generic repair were made.
+
+The working route was reused directly: ordinary Software Rendering → Next →
+Next → Run, physical Escape, relative **100,117**, then **100,90**, physical
+down/up at **344,264** separated by **500 batches**, actual New Game submenu,
+relative **460,-100** to Easy, then physical edges separated by **100 batches**.
+Both runs used empty parent arguments, **C:\System**, shipped INIs and the
+unchanged **200 ms** clock. No failed absolute-click attempt or timer census
+was repeated. Both original 142-file trees match before/after.
+
+The first invocation retained short **3,000-batch** loading checkpoints.
+Natural reads increased from **559** to **5,838**, including **1,784** map reads,
+with differing main EIPs. Successful map open returns handle **0x70000329**;
+`GetFileSize` returns **1,685,904**, and the first `ReadFile` returns **1** with
+**1,024 bytes** read. Texture/sound packages also open and read successfully.
+These are observed file operations, not inferred from the Loading image.
+The second invocation followed the concrete hypothesis that loading was still
+progressing and needed a longer finite window; no third original was run.
+
+During second-run natural map-file opens, a bounded read-only EBP walk retains
+the active call chain. Engine loads at **0x10e61000**, original **0x10300000**:
+
+- Original exported `LoadMap` **0x103033dc** jumps to **0x10393ce0**.
+  Its live frame is **0x179ff438**, returning to runtime **0x10ef3e86** /
+  original **0x10392e86**. The preceding Browse instruction calls virtual
+  slot **+0x94** with its FURL argument. That FURL is at **0x179ff91c**,
+  with map string **DEMOHel1** at **+0x1c**.
+- The same live frame retains viewport **0x1a407080** and its pending-travel
+  FString at **0x1a407118** (**+0x98**), pointer **0x108d8d00**, count/capacity
+  **22/22**, containing **`DEMOHel1?Difficulty=0`**. Original
+  `SetClientTravel` export **0x1030408e** jumps to **0x103982d0**;
+  its original code stores the supplied wide URL in player **+0x98**.
+  This is a live runtime string associated with the active LoadMap chain,
+  rather than the earlier embedded-script expectation alone.
+
+Second-run loading completes **45,000 requested batches**, followed by
+actually completed **W down / 1,000 / W up / 500** and
+**Space down / 500 / Space up / 500**, ending at batch **239200**.
+Natural reads reach **7,673** by batch **224700**, then remain unchanged through
+the final snapshot while main EIPs continue to differ. The final main is
+runtime **0x10bcff88**, original **0x10126f88**, in
+`Core!UStruct::SerializeBin` (implementation starts **0x10126f10**), at
+`cmp esi,[ecx+0x34]` in its property-array loop. ESI is **1**, ECX
+**0x105cacd0**, EBP **0x179fe1f0**, yield reason **0**, quit **false**.
+The next exact observation is this serialization's property/count/next links
+and return through LoadMap to the first gameplay frame. No loop invariant,
+failing guard, stall, movement response or texture qualification is established.
+
+Actual control/parser/eval, preload, relocated reads, natural API return values,
+late **10,001-call** retention, valid/invalid frame bounds and unchanged whole
+shared **512 MB** memory were checked offline. Unavailable exports remain
+explicitly unavailable; no consuming getters, breakpoints, counters, forced
+state, budget-one stepping, clock changes or guest substitutions were used.
+All **4,389** accepted build inputs, generated mirror and actual loaded reads
+match before/after. The reused locked module is
+**baef4e5a70f43b5d87fe086b4f5bd5b583c833e8bf07239ef05749f222035136**,
+**2,025,634 bytes**, and all four actual parent/child module loads match it.
+
+The originals exit **0** in **54.154 / 85.621 seconds**, with child guest/host
+exits **0**. Outer **150s / kill-after 5**, inner **115s**, child **TERM 90 /
+KILL 95** guards were unused; all own runtime PIDs/groups and temporary trees
+are gone. Second-run uncompressed diagnostic output briefly reduced observed
+free disk to **1,974,587,392 bytes** after runtime ended. Immediate lossless
+compression of this run's own logs restored **>2,000,000,000 bytes**; this
+resource-bound deviation is retained explicitly. No further guest was run.
+Box ID/state/expiry and ownership are N/A.
+
 ## 2026-11-01: ordinary New Game and difficulty selection reach Loading
 
 **Original Rune now reaches its Loading screen through ordinary menu input.**
