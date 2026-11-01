@@ -1294,3 +1294,7 @@ Window: batches 6000-6600, walking in the tavern. Measured with
 - Loops declined for `call-indirect` have bodies of 1.3-1.4%.
 
 Nothing call-shaped is worth a mechanism here.
+
+### Redundant installer ZIP reclaimed (2026-11-01)
+
+The coordinator removed the 645,596,503-byte retained ZIP after freshly verifying its SHA-256 `992b3d9054ff089f40dba40debd0fe902117c1a21f80d7e34678ae3313c9ff80` and comparing all 56 file members byte-for-byte by SHA-256 against the unchanged retained `20261031T2058Z-icewind-install/original-source/` extraction. Installed files and original extraction remain available. Recovery uses `scratch/runs/20261031T2045Z-icewind-recovery/recover-package.py` and [the standalone source ZIP](https://archive.org/download/icewind_dale_eng_demo/icewind_dale_eng_demo.zip), with the pinned hash above. Evidence: `scratch/runs/20261101-coordinator-reviewed-compression/icewind-zip-reclaimed.json`. Free disk rose to 2,674,139,136 bytes; no game execution or new gameplay claim.
