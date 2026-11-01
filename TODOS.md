@@ -1124,8 +1124,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: Rune01a19582-6113-78c2-a5a1-757400547662 handle87409 sole runtime/integration output scratch/usage-watch/rune-loadmap-gameplay-nov01/ deadline05:39UTC fallback05:19UTC; Redline01a19582-6ba6-7dc0-91e1-97a352bf2537 handle20620 output scratch/usage-watch/redline-selected-lookup-execution-nov01/ deadline05:39UTC fallback05:19UTC scratch-only until Rune final/result and runtime/source/build release
-  status: Rune4c6a2d613 NewGame->Easy->Loading inspected; actual URL/map progress and executed movement/action remain unverified. Redline2f3e40338 offline emitted trace PASS, no original invocation due disk; direct-query return416f84 added to next trace plan. Coordinator recovered138854400B preserving finalized evidence paths/hashes, free2135920640B; fresh selected-trace preparation behind Rune. Cap2 serialized integration.
+  worker: Redline01a19582-6ba6-7dc0-91e1-97a352bf2537 handle20620 sole runtime/integration gate05:16:13 output scratch/usage-watch/redline-selected-lookup-execution-nov01/ deadline05:39UTC fallback05:29UTC; Rune01a1958c-f74c-7971-8997-44c2a197bec1 handle30401 output scratch/usage-watch/rune-property-load-progress-nov01/ deadline05:50UTC fallback05:30UTC scratch-only until Redline final/result and runtime/source/build release
+  status: Reviewed Runecea834ff3 actual liveURL DEMOHel1?Difficulty=0 Browse/LoadMap and successfuloriginalmapreads; W/Space executed but PNGstillLoading. No causal failure/stall/gameplay proven. Fresh Rune traces CoreUStructSerializeBin property/count/next-link progression. Redline selectedtrace offline actualstaged PASS, first original diskstop/async hook gap corrected for secondlast invocation. Cap2 serializedintegration; disk recovered via immutable evidence dedup and own logcompression.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
