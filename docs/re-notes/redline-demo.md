@@ -1,5 +1,78 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Local candidate registration (2026-11-01)
+
+The recovered original is registered as local-only experimental `redline_demo`.
+Use the ordinary local `index.html?candidates&app=redline_demo` selector route.
+This is static launch preparation; no browser, installer, game or gameplay was
+executed. Public eligibility is unchanged. The earlier recovery report below
+describes the media-only stage before registration.
+
+Canonical ignored fixture: `test/binaries/candidates/redline-demo/`.
+`original/MAINDIR/` contains all 60 unchanged original run files, including
+both readmes, Mplayer support, I-Force files and the whole data container.
+The other five extracted support files remain under `original/` with their
+exact extraction-relative paths; installer TEMP/GROUP_PATH labels are not
+mounted as invented installed Windows locations. All 65 candidate files are
+independent byte copies, with no shared inodes or links to archival originals.
+There are no generated settings or modified guest files.
+
+The entry launches `original/MAINDIR/Redline.exe` as
+`c:\MAINDIR\Redline.exe`, with cwd `c:\MAINDIR` and empty arguments, preserving
+the original shortcut's relationship. The ordinary schema1
+`.wine-assembly-browser.json` lists exactly the other 59 MAINDIR members with
+explicit `c:\MAINDIR\...` paths and exact whole-file sizes. It retains the
+three auxiliary EXEs as companions. It uses the current manifest validation
+contract without an integrity bypass or a claim that its optional single-EXE
+integrity format can describe this multi-EXE tree. Separate full-file checking
+pins the package and all 65 extracted files against the table below.
+
+Static import-table and printable dynamic module-name inspection of both
+Redline.exe and IFORCE2.DLL found `IFORCE2` as the only game app-local seed.
+It imports KERNEL32/ole32; printable module names also include user32/kernel32.
+Redline's names otherwise match its system imports listed below. Therefore
+the entry seeds only the original `IFORCE2.DLL`, using the host's existing
+basename DLL policy. Mplayer's Url.dll/Rnaph.dll and installer DxDlg.dll are
+preserved support files, not injected startup dependencies. Static inspection
+cannot establish every dynamically constructed runtime dependency.
+
+The native original DISPLAY selection / Play first-run flow remains intact.
+No renderer, default selection, registry overlay, CFG, DirectX version
+override or dependency injection was added. Whether original installation
+side effects are necessary remains unknown; static extraction and a source
+readme do not constitute installation or runtime evidence. DirectX 6 / 3D
+prerequisites, rendered output, input, audio and gameplay remain unqualified.
+Runtime access stays blocked pending authorized functioning transfer. Boat
+ID/state/expiry: N/A; no box or runtime lifecycle ownership was acquired.
+
+The original package is deliberately referenced, not duplicated:
+`scratch/runs/20261031T2348Z-redline-original-recovery/RLSPDEMO.EXE`, with the
+48,229,213-byte SHA-256 pin below. `.host/package-reference.json` records this
+predecessor reference; `.host/inventory.json` and `inventory.sha256` retain
+whole-file recovery pins. The predecessor's actual handoff is `RECOVERY.md`
+(`RECOVERY.txt` does not exist). Its extraction/package/source files remain
+unchanged. To recheck recovery and the actual registered fixture from repo
+root, run:
+
+```sh
+node test/test-redline-demo-registration.js --fixture
+```
+
+The explicit fixture mode fails if media is missing. It verifies the package,
+all candidate and archival whole-file hashes, exact 65-file set and 60-file
+run tree, independent inodes, the canonical inventory digest, exact registry
+entry and manifest, actual CLI resolver, browser-relative URLs/VFS paths,
+ordinary loading policy (8 eager / 51 lazy; synchronous reads: 59 eager),
+and checked-out local selector / public exclusion expressions. Without
+`--fixture`, the test checks registry and selector behavior without requiring
+ignored media. Evidence, static PE/string inspection, gate logs and recovery
+instructions: `scratch/runs/20261101T0002Z-redline-local-registration/`.
+The mandatory `flock /tmp/wine-build.lock bash tools/build.sh` passed, as did
+the focused fixture check, file-policy / candidate-manifest tests, census
+mutation tests and Rune registration regression. The reviewed census change
+updates only the apps host-file SHA; all boundary/ownership fields remain
+unchanged. `/home` remained above 2 GB free (over 2.56 GB at final build).
+
 Static media recovery only, 2026-10-31. No installer, game, browser or runtime
 was executed; no box was allocated or accessed. Gameplay compatibility remains
 unknown. The recovery base is main `81f5df0c8966ef74e23bb0961cf8cc1e746d0efe`,
