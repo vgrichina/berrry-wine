@@ -138,3 +138,57 @@ Box ID/state/expiry and lifecycle are N/A. Coverage is limited to the named
 harnesses, with the two caps-regression failures explicitly unresolved.
 Next: separately scoped correction of those regressions' stale operation
 mask assertions; no broader compatibility claim follows from this run.
+
+## Filter and final-mip assertion reconciliation
+
+Run `20261101-legacy-filter-assertions` resolves the two older regression
+failures above. Each test changes only its D3D7 descriptor offset-180
+expectation and message: `0x3FF` becomes exactly `0xF`, identifying
+DISABLE/SELECTARG1/SELECTARG2/MODULATE. All filter, backend, guard, ABI and
+mutation assertions remain intact. No production change was needed.
+
+History `f42083c61a18d56fd739d3cd702c4d67d36784b7` deliberately added
+DISABLE to the previous `0xE` mask. The current 236-byte D3D7 descriptor
+stores `0xF` at offset 180, followed by the two 16-bit stage/texture limits
+at 184/186; this field is separate from the line/triangle filter caps at
+40/96. The production combiner terminates stage zero on DISABLE and handles
+SELECTARG1/SELECTARG2/MODULATE; the newer regression checks those operations,
+unsupported-operation fallback, argument handling and GPU lowering. This
+contract and the prior recorded failures justify the correction.
+
+All three native tests ran sequentially with `timeout 120s node --require
+<run>/capture-module.cjs test/<name>.js`; only the operation test takes
+`--negative-controls`. The older tests execute their negative controls
+unconditionally (their optional positional argument is a DirectX source path).
+
+| Test | Result | Completed coverage |
+| --- | --- | --- |
+| `test-legacy-texture-filter-caps.js` | PASS | 90 descriptor fields, 36 software/GPU filter cases, point/bilinear footprints, all 6 mutation negatives |
+| `test-legacy-final-mip-bits.js` | PASS | 90 descriptor fields, 36 backend cases, real WAT pixel fetch/decode on two bound images, all 10 mutation negatives |
+| `test-legacy-texture-operation-caps.js --negative-controls` | PASS | 9 operation pairs, 6 unsupported-operation fallbacks, 144 argument combinations, all 15 rejecting controls |
+
+Mandatory `timeout 120s flock /tmp/wine-build.lock bash tools/build.sh`
+passed in 44.589 seconds; focused tests took 0.278, 0.292 and 0.639 seconds,
+respectively. Own-path diffcheck passed. The primary build remains byte
+identical: 2,025,029 bytes, SHA-256
+`2be3cebaa1c08a8e12075de000bfb83fb8692841c1452d9e317203f5c2fce8cf`.
+
+Baseline `168c9a6369253f7627bb5d6f105888020ed0fd6a` and tested HEAD
+`91c02f1c36059b06a866879f6a3b81a12254fd33` differ only in `TODOS.md` and
+`ops/STATUS.md`. Before correction, all 1,169 inventory files match the prior
+run's final inventory and relevant tracked inputs match baseline. Ignored
+evidence retains exact commands, outcomes, environment, before/after input
+hashes, loaded module identities, captured Wasm bytes and SHA-256, source and
+history excerpts, and the patch. The capture hook delegates module creation
+unchanged and records mutation modules as well as the passing fixtures.
+After validation, only the two owned tests differ across the input inventory;
+all 10 loaded repository modules match baseline except those two corrections.
+
+Coverage remains extracted production source with fixture memory and GPU
+descriptor/lowering checks, without a graphics context or full guest runtime.
+Enumeration wiring is checked statically here; accepted lifetime/enumeration
+tests were not rerun. No additional production issue was observed. No REP
+tests or diagnostics, held-topic work, foreign WIP edits, compiler/census
+changes, browser/heavy runtime, boats, downloads, access retries, agents,
+successors or deployment. Disk stayed above 2 GB. Box ID/state/expiry and
+lifecycle are N/A, with no runtime ownership to hand back.

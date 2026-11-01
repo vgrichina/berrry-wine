@@ -118,7 +118,7 @@ function contract(source) {
     });
     assert.equal(get(64), 0); assert.equal(get(80), 4108);
     caps(p, [40, 96]);
-    assert.equal(get(p + 180), 0x3ff, 'texture ops unchanged');
+    assert.equal(get(p + 180), 0xf, 'texture ops: DISABLE/SELECTARG1/SELECTARG2/MODULATE');
     guarded(p, 236, () => e.d3dim_fill_device_desc7(p));
     caps(p, [40, 96]);
   }
