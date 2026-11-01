@@ -508,7 +508,11 @@ or claimed. No second original, alternate settings or game-specific workaround.
 
 Every navigation action has before/held/released/settled samples and a matched
 neutral interval. Three held Enter pairs have six actual matching dequeue,
-route and DispatchMessageA records. The native Setup mouse path records host
+route and DispatchMessageA records. The briefing release scheduled at485 is
+still pending in samples486/511 during loading; actual dequeue/route/dispatch
+occurs at658, and sample711 confirms its consumption. The first evidence-check
+assertion incorrectly required immediate consumption; its failure and corrected
+trace-based check are retained. No input was replayed. The native Setup mouse path records host
 actions, a visibly pressed button and dialog dismissal, but does not populate
 those generic guest dispatch counters; no equivalent mouse dispatch proof is
 claimed. Final1436 known queues are empty; sampled physical/async keys,
