@@ -1,5 +1,142 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: documented renderer child executes, then fails in appInit
+
+**The actual renderer-test child now executes; its first observed functional
+failure is `MisingIni` during `appInit`, before a renderer result.** This
+supersedes the launch-option blocker in the previous observation. Shared main
+`c076f8f2547d52555925c571b72b32455764c1f7` retains the accepted
+`9ba1c215c1766b39da747f386e0820f7399f6c93` runtime unchanged. No production,
+test, DLL, original configuration, registry or media changes were made.
+
+The ordinary parent remains `--app=rune_demo`, original `c:\System\Rune.exe`,
+cwd `c:\System`, empty guest arguments. Adding documented `--spawn-processes`
+produced real child host PIDs **2998445** and **2999914** (guest transport PID
+`4004`), each with the guest-requested command exactly:
+
+```text
+"C:\System\Rune.exe" testrendev=D3DDrv.D3DRenderDevice log=Detected.log
+```
+
+The first child's actual stdout reports its PE load, exact extra command line,
+original seeded DLLs and imported parent registry, followed by:
+
+```text
+[C++ throw] .H  obj 0x179fd4d8 at EIP 0x10a69d54
+[C++ throw] rethrow (obj 0x00000000)
+[MessageBox] "Critical Error At Startup": "MisingIni
+
+History: appInit" type=0x2010
+```
+
+`Core.int` translates `MisingIni` as “Missing .ini file: %s”; the child reports
+the untranslated key and no filename. Its temporary input tree **does contain**
+`system/rune.ini` and `system/user.ini`, both matching the shipped originals.
+Thus missing original media is not demonstrated. The precise failing lookup
+and whether DLL path/localization handling causes it remain **unproven**.
+The transport seeds DLLs from the parent's original host paths while the child
+EXE lives in its exported temporary tree; source excerpts retain that difference
+and the `capturedGuestPath`/`besideExeGuestPath` rules for later diagnosis.
+Do not treat this inference as a proven DLL-path cause or inject replacements.
+
+A single focused diagnostic invocation added child-only `--trace-fs --trace-ini
+--trace-api=GetModuleFileNameA,GetModuleFileNameW --trace-to=20`. Its observed
+`GetModuleFileNameA(0)` calls return **`C:\system\rune.exe`**, then it throws
+at the same startup location. The bounded trace did not identify the missing
+lookup; later console output is suppressed beyond batch 20 and buffered
+filesystem observations were not recovered on forced termination. No further
+run was attempted. Across the assignment there were **three parent CLI
+invocations total**: the first exited 1 in Node's preload resolver before
+`test/run.js` loaded because the observer path had an erroneous `./` prefix
+before an absolute path. Correcting that host harness error justified the first
+guest run; the observed startup exception justified the final diagnostic.
+
+Both guest runs reached the same parent wizard at batch **22100**, with
+**18234 APIs**. The inspected 640×480 PNG shows only **Software Rendering**,
+selected by the wizard, and Next/Cancel. `run3-wizard.png` and both final PNGs
+are byte-identical to the inspected `run2-wizard.png`. This is neither a D3D
+capability result nor software gameplay. No Next, menu/start, intro or ordinary
+player input was attempted after the concrete child startup failure. No
+successful renderer test or merged `Detected.log` was observed. No such log
+was exported/preserved; the killed child's final in-memory VFS is unavailable.
+CLI results establish no browser/WebGL behavior.
+
+Lifecycle was inspected before execution. `spawnVfsChild` inherits the parent's
+`--max-seconds`, relays stdout/stderr, merges the output tree on child exit,
+removes the temporary tree and sends termination on parent exit. `getArg` uses
+the **first** occurrence: the first run's appended `--max-seconds=90` did not
+override its inherited **120 seconds**. Its outer guard was
+`timeout --kill-after=5s 150s`; the diagnostic inherited **45 seconds**, with
+outer **75 seconds** and an additional host child watchdog sending TERM at
+35 seconds and KILL five seconds later. All are within the assigned ceilings.
+Open PTYs kept control stdin alive. Frozen waits pause the CLI's internal
+deadline, so the serial outer process-group guard remained necessary.
+
+Neither child delivered a guest exit code or returned normally. First-run
+SIGTERM after the startup failure was ineffective; explicit SIGKILL ended
+child 2998445 after **105.8 seconds**. Diagnostic child 2999914 likewise ignored
+the watchdog TERM and exited by **SIGKILL** at **40.0 seconds**. Both child
+exit records are `(code=null, signal=SIGKILL)`. Parent exits are **0** after
+control `quit`; reported parent durations are **58.040s** and **51.174s**.
+The first parent's report precedes its eventual process exit while waiting
+for its live child. These are cleanup outcomes, not guest success. Neither
+outer deadline fired. After each parent, the harness sent TERM then KILL to
+its process group; all assigned parent/child/group PIDs and both temporary
+child trees are absent. No held guest remains.
+
+A further transport limitation is observed: after each forced child exit,
+its output directory was absent, yet merge reported **0 written / 203 deleted /
+0 registry keys**. Those deletions affect only the disposable parent's VFS;
+they are cleanup fallout, not authentic guest-created state or lost original
+disk files. No continuation was attempted from that VFS. Read-only evidence
+hooks retained temporary input INIs/logs before removal. The parent exported
+one empty `rune.log` before first-child termination; no usable guest log or
+runtime save resulted. No host fixture writeback was used.
+
+Evidence: ignored `scratch/runs/20261101-rune-renderer-child-cli/`, including
+exact command arrays, process argv/lifecycle NDJSON, separate child stdout and
+stderr, parent logs and exit statuses, copied runtime-state INIs/logs,
+module/source hashes, snapshots and preservation checks. Parent controls were
+`step 22100`, PNG/snapshot and `quit`; no guest command override was supplied.
+The evidence observer records reads, compile-byte hashes, child outputs/exits
+and copies logs/INIs before temporary-tree removal; it does not change guest
+bytes or imports. Only the diagnostic adds the bounded child cleanup timer.
+
+Identity and original-disk preservation:
+
+* Full fixture checks passed before/after: **142 originals / 128542865 bytes**,
+  exact original package, all EXEs, single links and companion manifest.
+  Registration checks also passed before/after.
+* All four actual compilations (two parents, two children) consumed **2025029
+  bytes**, SHA-256
+  `2be3cebaa1c08a8e12075de000bfb83fb8692841c1452d9e317203f5c2fce8cf`.
+  The matching module bytes are retained as `tested-module.wasm`.
+* Rune.exe remains SHA-256
+  `dd1588a902952414917b8cfc65996d46ec0323dc7d298c5a23d5b2ccf70f7add`;
+  manifest remains
+  `ed536fbc320e683319cfb824a7c901dfebf4633a578be5890b09eb549e0baf48`;
+  Rune.ini remains
+  `716bcfbbcc268f92b5e4a4da778680b1e1759751cf876e2ab4687da58d8ea3da`;
+  User.ini remains
+  `55d2f8f3f265e1c9a6ba4571fc0ac0457f50ec16ef4b1c3f753217e580b7ac6d`.
+* Accepted locked build PASS **40.431s** from
+  `20261101-thread-manager-options-land` is reused: all **1153** recorded
+  source/tool/host/CLI input hashes are unchanged, tracked runtime diff against
+  `9ba1c215c` is empty, and **95** distinct tracked actual parent reads match
+  that commit. Killed children cannot provide exit-time read manifests; each
+  actual child compile hash is preserved separately. Source input hashes and
+  installed PNG/guest-media parent read identities are retained.
+
+This documentation-only result uses diff checking and the unchanged accepted
+build, with no unrelated test reruns. Observed free disk stayed above **2 GB**
+(about 2.186 GB during child snapshot and 2.322 GB after cleanup). Local CLI
+only: box ID/state/expiry/shutdown and lifecycle ownership **N/A**. No browser,
+boat, benchmark, download, access/transfer retry, injected dependency/config,
+agent/successor, held/REP guest, foreign WIP edit or deployment occurred.
+Next technical work is to identify the child startup INI lookup and repair the
+transport if warranted, then repeat the authentic renderer test before claiming
+D3D support or pursuing ordinary wizard/menu/gameplay. This worker stops here.
+
 ## 2026-11-01: original local CLI reaches first-run renderer wizard
 
 **First proven route blocker: the wizard's D3D renderer-test process is
