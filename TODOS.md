@@ -1124,8 +1124,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  worker: Rune01a19575-36f0-76d3-b516-f01567c9b635 handle79251 sole runtime/integration gate04:54:41 output scratch/usage-watch/rune-newgame-map-progress-nov01/ deadline05:24UTC fallback05:14UTC; fresh Redline01a1957d-5e47-73b1-aa5e-5c63eaccd8c8 handle75484 output scratch/usage-watch/redline-lookup-branch-cause-nov01/ deadline05:33UTC fallback05:13UTC scratch-only until Rune final and runtime/source/build release
-  status: Rune12493534 menu verified, ordinary NewGame/map progression in progress. Redlineb2a6364 original archive lookup validated offline but execution absent; fresh task validates narrow existing guest-only tracing rather than repeat API census. Cap2 serialized integration.
+  worker: Rune01a19582-6113-78c2-a5a1-757400547662 handle87409 sole runtime/integration output scratch/usage-watch/rune-loadmap-gameplay-nov01/ deadline05:39UTC fallback05:19UTC; Redline01a19582-6ba6-7dc0-91e1-97a352bf2537 handle20620 output scratch/usage-watch/redline-selected-lookup-execution-nov01/ deadline05:39UTC fallback05:19UTC scratch-only until Rune final/result and runtime/source/build release
+  status: Rune4c6a2d613 NewGame->Easy->Loading inspected; actual URL/map progress and executed movement/action remain unverified. Redline2f3e40338 offline emitted trace PASS, no original invocation due disk; direct-query return416f84 added to next trace plan. Coordinator recovered138854400B preserving finalized evidence paths/hashes, free2135920640B; fresh selected-trace preparation behind Rune. Cap2 serialized integration.
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   accepted: 2026-10-04T02:11:10.446Z
