@@ -1,5 +1,78 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: original UI completes wizard; rendered title, Escape menu blocker
+
+**Ordinary Next → Next → Run reaches the animated Rune title scene. Gameplay
+is not reached: Escape down/up does not open the advertised main menu.**
+Evidence is ignored in `scratch/runs/20261101-rune-wizard-gameplay/`, with the
+second and final original invocation under `continuation/`. No production or
+regression source was changed; there is no speculative repair.
+
+Ran only after Redline `01a19512` released. Both serial open-PTY invocations use
+`--app=rune_demo --spawn-processes`, empty parent arguments, original System
+cwd and all 142 original files. The unchanged guest-requested
+`testrendev=D3DDrv.D3DRenderDevice log=Detected.log` child finishes with guest
+IPC and host exit **0** in each. This remains presence detection, separate from
+the subsequent parent rendering result.
+
+The inspected wizard at batch **22100** offers **Software Rendering** selected
+under certified compatible devices. Ordinary coordinate clicks **222,418**
+advance to the displayed low-detail defaults (23100), first-time **Run!** page
+(24100), then startup. No renderer selector was fabricated, and no INI, registry,
+configuration, DLL, register or guest memory was edited. The parent later loads
+original **SoftDrv.dll**, with DllMain **0x1188a8cc** returning 1; this matches
+the UI's software selection. The read-only VFS snapshot during loading still
+contains the shipped `GameRenderDevice=D3DDrv.D3DRenderDevice` and
+`WindowedRenderDevice=SoftDrv.SoftwareRenderDevice`; do not infer a persisted
+fullscreen-renderer change from the wizard selection. Actual observed parent
+rendering is the SoftDrv route, not qualified D3D rendering.
+
+First invocation deliberately quits after the **34100** startup-logo capture,
+without an error. That was too early to establish a blocker. The second repeats
+the same original UI choices, retains the splash at **44100 / 74100**, then
+reaches the rendered title at **174100** with normal batch size and default
+**200 ms** clock unchanged. Actual inspected `continuation/startup-later.png`
+shows the textured Rune logo/platform and **Press “ESC” for Main Menu**.
+This is an intro/title scene, not player-controlled gameplay.
+
+A `keypress:27` at 174100 has no menu effect at 175100; source inspection shows
+that action calls `handleKeyPress` (character input), so it is not evidence of
+physical Escape delivery. Then ordinary **keydown:27 at 175100**, 1000 batches,
+**keyup:27 at 176100**, and 1000 more batches leave the scene at **177100**.
+Inspected `continuation/escape-menu.png` shows a changed animated logo but still
+the same prompt, with no menu. Both snapshots have focus/main HWND **0x10018**,
+EIP **0x17a068e0**, quit false. Thus animation progresses, while the requested
+menu response is absent; the underlying delivery/consumption cause is unknown.
+No movement/action or gameplay claim is made.
+
+Stopped at this concrete UI-response blocker. A final read-only `input-state`
+request fails explicitly with **input-state needs --trace-input-dispatch**;
+the driver catches it and quits cleanly. The queued subsequent eval did not
+execute. Earlier successful VFS evals preserve INIs and Detected.log under
+`continuation/parent-vfs-{14,18}/`; Rune.log is zero bytes there, so a buffered
+parent log is not claimed recovered. Child stdout/stderr and INIs/logs were
+preserved before temporary cleanup. Next bounded observation: repeat this exact
+route with **--trace-input-dispatch**, capture consumption state immediately
+before/after one physical Escape down/up, and identify its destination and
+guest consumption. Do not substitute a console/menu command or renderer edit.
+
+Read-only validation passes (`verification.json`): all **4,385 full build inputs
+unchanged** against the accepted af316dc21 post-build snapshot; reused module
+**2,025,619 bytes**, SHA-256
+`168c61dae2861842948e5f9e29e4e18df93a6fab12c7d17f7dc85d75e34b7b55`.
+All four actual parent/child module hashes match. Current loaded reads match
+**262 parent / 117 child** in run one and **263 / 117** in run two. Both original
+142-file trees, installer, registered manifest and registry source pass
+before/after pins; recovered inventory and manifest hashes match their published
+pins too. Accepted locked-build/focused-test evidence is reused without rerun.
+
+Outer limits are **150 seconds / kill-after 5**, inner **115 seconds**, inherited
+child watchdog **TERM 90 / KILL 95 seconds**. Natural parent exits **0** after
+**34.192 / 95.630 seconds**; watchdogs do not fire. All own runtime PIDs/groups
+and child temporary trees are absent; free disk remains above **2 GB**. Box
+ID/state/expiry and lifecycle ownership: **N/A**. No browser, boats, downloads,
+agents, deployment, foreign work or unrelated runtime changes were involved.
+
 ## 2026-11-01: live DLL identity cause confirmed; child transport repaired
 
 **The DLL guest-identity defect caused the original renderer child's startup
