@@ -1,5 +1,9 @@
 # Reset, state retention and complex surface crash sweep, 2026-11-01
 
+Follow-up: the fixture-only repair below completes all 81 typed-stateblock
+cases, including four proven allocation failures. The original sweep findings
+and module identities remain recorded here as historical evidence.
+
 Five of six requested native fixtures passed; typed stateblocks stopped at an
 ordinary assertion because its allocation-failure injection is bypassed by the
 current render compiler isolation. No native crash, uncaught Wasm trap, signal
@@ -109,3 +113,85 @@ deployment occurred. Box ID/state/expiry and lifecycle ownership: N/A; no
 box was assigned or accessed. These findings do not establish gameplay,
 full-suite coverage or absence of crashes across applications. The worker
 stops after this single assignment.
+
+## Typed allocation-injection repair, 2026-11-01
+
+Run `scratch/runs/20261101-d3d-typed-stateblock-injection/` repairs only
+`test/test-d3d9-typed-stateblocks.js`. It follows the explicit transformed
+`compileSrcWasm` pattern in `test-d3d9-shader-retention-oom.js` and the existing
+`bootRenderHarness({prebuiltModule})` interface. It removes the ineffective
+shared-export monkeypatch, compiles the resource transform and appended test
+exports together, constructs a `WebAssembly.Module`, and supplies that module
+explicitly. It rejects canonical render-artifact prepare/consume environment
+modes before compiling, so a transformed fixture cannot masquerade as an
+ordinary artifact. Production, helper, compiler and artifact identity/isolation
+checks are unchanged.
+
+The original resource-wide allocation/free replacement remains fixture-only.
+The transform now asserts exactly one resource fragment and one export
+fragment, with seven allocation and four free call sites. Counters reset for
+each fault and prove the actual allocation sequence:
+
+| Selected failure | Allocation attempts | Rejected calls | Rejected size | HRESULT |
+| --- | ---: | ---: | ---: | --- |
+| 0: block | 1 | 1 | 25892 | `8007000e` |
+| 1: first light copy | 2 | 1 | 120 | `8007000e` |
+| 2: second light copy | 3 | 1 | 120 | `8007000e` |
+| 3: third light copy | 4 | 1 | 120 | `8007000e` |
+
+Every original membership, refcount, output-clear, allocation-reclamation,
+device-state rollback, successful retry, invalid type/output, recording and
+final cleanup assertion is preserved. The full fixture prints
+`PASS typed CreateStateBlock 81 cases`. No production defect was exposed.
+
+The explicit `--without-allocation-injection` negative control compiles the
+same source closure and test exports without changing any resource allocation
+or free calls. It reaches the same first OOM expectation after the membership
+cases, reports zero wrapper attempts/failures and HRESULT 0, then exits 1 at
+`injected CreateStateBlock must return E_OUTOFMEMORY`. The evidence runner
+requires that exact assertion, successful creation and zero injection calls;
+an arbitrary nonzero exit does not count as a successful control.
+
+Commands ran sequentially, each under `timeout 120s`: `node
+test/test-d3d9-typed-stateblocks.js`, the same command with
+`--without-allocation-injection`, `node test/test-d3d9-shader-retention-oom.js`,
+`node test/test-render-artifact-protocol.js`, then
+`flock /tmp/wine-build.lock bash tools/build.sh`. The ignored `run.py` records
+exact argument arrays, expected exits, durations and tested HEAD in
+`outcomes.json`. Its evidence-only preload forwards original module bytes and
+transform results unchanged, capturing both original/transformed WAT and
+instantiated module identities. The protocol test covers canonical artifact
+identity, sealed compiler isolation and the prebuilt-module overload; its tiny
+compiler/host doubles are not native-renderer coverage. None of the five
+accepted independent sweep fixtures was rerun.
+
+| Validation | Exit / seconds | Result |
+| --- | --- | --- |
+| Full typed fixture | 0 / 3.309 | All 81 cases pass; four observed OOM fail points. |
+| No-injection control | 1 / 3.330 | Expected rejection of the OOM assertion, actual HRESULT 0. |
+| Retained-shader OOM fixture | 0 / 3.491 | Rollback, reference balance, temporary reclamation and retry pass. |
+| Render artifact protocol | 0 / 0.219 | 34 protocol checks and 10 executable cache controls pass. |
+| Mandatory locked build | 0 / 46.479 | All build gates pass; primary Wasm hash unchanged. |
+
+Both typed modules are 2,028,209 bytes. Injected SHA-256:
+`e3aa7342454d2b5cbc82fe80236cdecda0f402d3eeb5651c51f03de7182b43f4`;
+no-injection SHA-256:
+`8e92dc5caa5de4d2f63437b4f1be164b9fcca9e8b91403d243bd11decf449b27`.
+Both use the identical appended export fragment. Exact source/module/transform
+hashes and bytes are retained in ignored evidence, not Git. Baseline
+`e846dc234f6686b7f2d90617ab0e07fe92582b9d` matches all 4,462 tracked source,
+compiler, test, host, font and package inputs before the correction. Tested
+HEAD `18507c0efac6a147b56dfb94d77ae39f8ba1cd4a` advances only `TODOS.md`
+and `ops/STATUS.md`, as allowed after the source-identity check. Node/V8,
+default engine tiering, software backend, fonts disabled and 512 MiB shared
+memory are as in the original sweep. No native crash, trap, signal, timeout,
+box use or lifecycle action occurred; box ID/state/expiry are N/A.
+
+Post-run inventory changes only the owned typed test among those 4,462 inputs.
+All 67 loaded repository/dependency modules match recorded execution bytes;
+44 unchanged tracked loaded modules also match the baseline, alongside the
+owned changed test and 22 installed dependencies. The primary build remains
+SHA-256 `2be3cebaa1c08a8e12075de000bfb83fb8692841c1452d9e317203f5c2fce8cf`.
+Free disk after validation is 2,457,694,208 bytes, above the 2 GB assignment
+floor. No production/helper/compiler/census/held-work or foreign-WIP edits
+were made. Next action is coordinator review of this single completed repair.
