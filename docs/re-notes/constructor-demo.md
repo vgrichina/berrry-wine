@@ -1231,3 +1231,40 @@ bank/window access and mode/pixel behavior remain prerequisites before any
 separately assigned original or authentic sound-setup run. No hardware switch,
 fabricated memory/E7/vendor identity or setup bypass was introduced. Box ID,
 state and expiry are N/A; no test box or original game was started.
+
+### 2026-11-01 GC final validation: checks pass, runner dependency blocks publication
+
+Run `20261101-constructor-gc-final-validation` resumed after the GTA checkpoint
+worker's final result, author release and direct absence of its nine reported
+processes. All four GC source/test/bundle SHA256 pins still matched the
+preserved repair. The accepted source-suite result remains178 passing
+assertions; that unchanged suite was not repeated.
+
+The remaining DAC-default and retrace suites both exit0. Each preserved bundle
+also passes the74 GC port assertions through its own bundled Machine, and
+executes the existing synthetic COM bundle test to print `HI` and exit. Both
+embed byte-identical repaired `dos.js`. These are Node-hosted bundle execution
+checks, not a browser or original-game run. The injected disk-guard self-test
+actively terminated its driver and child, actually waited and verified their
+absence. Real validation commands stayed above2338738176bytes available;
+the unchanged stop threshold is2020000000bytes and floor2000000000bytes.
+
+**Concrete unresolved dependency:** GTA left its tested checkpoint repair in
+uncommitted `tools/toyvm/run-dos.js` and `test/test-toyvm-runner-input.js`.
+Comparing every embedded module in each preserved bundle against current
+source finds exactly one mismatch: `tools/toyvm/run-dos.js`. The preceding GTA
+mandatory locked build failed at that reproducibility gate (retained in
+`scratch/runs/20261101-gta1-checkpoint-capture-fix/build.log`). No unchanged
+build retry was made here. Regeneration would incorporate that foreign runner
+repair; publishing those bundle changes without its source would leave main
+inconsistent. This task explicitly excludes the runner/test WIP, so the four
+GC code/test/bundle paths remain unchanged and uncommitted. Only this note is
+published; the mandatory build still has no passing result.
+
+The next continuation must reconcile ownership/publication of the runner and
+generated bundles, then pass `flock /tmp/wine-build.lock bash tools/build.sh`
+with at least2150000000bytes entry headroom and the active disk guard before
+committing code. Reserved-bit zero readback remains deterministic emulator
+policy, not an IBM physical guarantee. Supported SVGA detection, capacity,
+banking, mode pixels and Constructor gameplay remain unproved. No original,
+browser, box, download or deployment was started; box ID/state/expiry are N/A.
