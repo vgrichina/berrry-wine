@@ -1546,3 +1546,89 @@ coordinator and ownership is handed back. The original checkpoint remains
 intact. Next gameplay work, if separately authorized, still needs visible
 proof of the stair-guard outcome or an onward room; this interrupted attempt
 does not resolve that objective.
+
+## 2026-11-01: native doorway cover yields the eighth kill
+
+Run `scratch/runs/20261101-quake2-native-door-encounter/` completes the
+guard objective with **8/18 kills and 21 HP**. Supported `--vfs-mount`
+mounted the eight unchanged indoor21 files from
+`20261031T0213Z-quake2-door/retry/`; ordinary F9 at batches 100/101
+restored the checkpoint. Startup/menu images were not accepted as recovery.
+`starting-count-stable.png` confirms the indoor world, **7/18 kills,
+goals 0/1 and 21 HP** at batch 989.
+
+Short observed turns, W movement and a D offset followed the left slatted
+corridor and cleared its corner pillar. End centered the view. A three-batch
+W approach and one-batch touch reached the mechanical door. The subsequent
+20-batch no-input interval shows it **open**, with the barrel/stair room and
+an upright guard at the right jamb (`door-opening-wait-settled.png`, batch
+1144). The closed approach frame was therefore not an obstruction. No further
+forward input was issued after that touch. The player remained at the doorway
+while the guard approached, avoiding the earlier exposed forward firing peek.
+
+Enter bursts and small ordinary keyboard/relative-mouse aim corrections
+initially produced sparks near the jamb; those frames alone do not prove hits.
+`close-guard-burst-settled.png` at batch 1208 clearly shows blood from the
+identified guard. The final eight-batch burst has before/held/released/settled
+captures (`pointblank-burst-*`, batches 1242/1250/1251/1253), showing heavy
+blood and backward collapse; `pointblank-settle-settled.png` continues the
+collapse. `verified-count-wait.png` at batch 1290 and `final-count.png` at
+1344 both read **8/18**, with **21 HP** and goals **0/1**. This establishes
+one guard defeated, without establishing a level transition or another room
+beyond this encounter.
+
+Matched no-input sequences are retained alongside the action sequences,
+including three-batch `door-neutral-*` versus the three-batch approach and
+eight-batch `final-neutral-*` versus the final burst. In the door control,
+the complete upper scene rectangle `(0,0)–(640,270)` is pixel-identical
+before/held/settled; weapon motion changes the full frame. The final neutral
+sequence includes delayed F1 closing and is not a stationary full-frame
+control. Other settle frames also show delayed aim/menu effects or enemy
+animation. Browser milliseconds were not converted into native batches, and
+scheduled input times are not asserted as guest effect times.
+
+Focused validation passes all **196 PNGs** through chunk CRC/IDAT decoding,
+the complete runtime gzip, and **74 key edges / 37 balanced pairs**, dequeued
+and dispatched in order to hwnd `0x10001`. Three relative-mouse inputs bring
+the final scheduled/dequeued/routed/dispatched totals to **77**. Final known
+scheduled, pending, cross-thread and renderer queues are empty. All sampled
+physical/async keys, explicitly including **W, D, End and Enter**, are
+released; pressed latches are not held keys. Guest post queue, button state
+and SDL consumption remain unknown. No console, save-byte, binding, asset or
+guest-memory edits supplied progress.
+
+Supported `--save-vfs` exported all eight guest save files on exit.
+`focused-validation.json` verifies each exported file and each original host
+file against the retained size/SHA-256: **all eight match exactly**. No F6
+checkpoint was made, so recovery remains the original **21 HP / seven-kill**
+save; the eighth kill is evidenced in this run, not persisted as a new save.
+`save-mounts.json`, the controller scripts and exported `guest-vfs/` retain
+the recovery recipe. Identical PNGs within this run share hardlinks to save
+disk without changing their bytes; no external artifacts were removed.
+
+The Thief II fresh launcher final/result and explicit runtime/source/build
+release opened the gate at **13:04:29Z**, actual main
+`e6814d7b96263fdd354c1eae8fafa4da99e3e427` (dispatch was `90aa4059d`).
+All **4,392 accepted source pins and 141 prior observed reads** matched,
+allowing accepted module reuse. Fresh before/after validation finds **4,444
+source/module pins, 67 original/manifest inputs, original-tree membership
+and 132 actual runtime reads unchanged**. Actual compiled module SHA-256 is
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Before original use, the observer passed actual sync/async compilation and
+execution, whole-512 MB shared-memory read-only checks, native/host clock
+identity and emitted late-event-10001 retention. Its string-path file-read
+coverage does not comprehensively cover descriptors/direct OS reads;
+runtime compilation identifies module bytes, not compiler-source reads.
+This native software-bridge result does not qualify browser/GPU, audio, FPS,
+networking or full-suite parity. No tracked runtime/helper/test/configuration
+or backend changed, so no new build was needed.
+
+One original, PID 3681491, exited **0 after 499.982 seconds**, ending at
+batch 1344, within the 25-minute gate window. Runtime and auxiliary disk
+guards retained a minimum of **2,017,398,784 bytes free**, above the required
+2,000,000,000-byte floor. Own runtime/controller, gate monitor, guards and
+watchers are absent with no remaining own groups or new `wa-child-*` temps;
+cleanup and publication checks are retained. Native local box ID/state/expiry
+are **N/A**. Explicitly delegated shutdown is complete and ownership is handed
+back. The requested eighth-kill objective is complete; no second original or
+further gameplay is needed for this assignment.
