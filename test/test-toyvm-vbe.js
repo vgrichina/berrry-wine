@@ -159,6 +159,54 @@ function sequencerChecks() {
   check(t.portIn(0x3D5, 8) === 0xBF, 'selected Trident retains its CRTC signature');
 }
 
+// Ferraro, Programmer's Guide (3rd ed.), section 27.5.1, figs. 27.6/27.8:
+// SR0B writes select old controls, reads select new controls; SR0D has two
+// independent definitions. This exercises that access contract only, not a
+// supported chip identity, clocks, old-mode window or complete SVGA adapter.
+function tridentRegisterChecks(MachineClass = Machine, label = 'source') {
+  const make = opts => new MachineClass(new Uint8Array(isa.VESA_FB + isa.VESA_FB_SIZE), opts);
+  const write = (m, i, x) => { m.portOut(0x3C4, i, 8); m.portOut(0x3C5, x, 8); };
+  const read = (m, i) => { m.portOut(0x3C4, i, 8); return m.portIn(0x3C5, 8); };
+  for (const opts of [{}, { svga: 'none' }]) {
+    const m = make(opts);
+    write(m, 0x0B, 0); write(m, 0x0D, 0x17); read(m, 0x0B);
+    check(read(m, 0x0D) === 0 && m.svgaBank === 0,
+      `${label}: default/nonselected VGA rejects extended control storage`);
+  }
+  const m = make({ svga: 'trident' });
+  write(m, 0x0D, 5);                    // existing initial new-control access
+  m.portOut(0x3C4, 0x0B, 8);            // indexing alone must not switch
+  check(read(m, 0x0D) === 5, `${label}: indexing SR0B leaves new control intact`);
+  write(m, 0x0B, 0);                    // byte writes force old controls
+  write(m, 0x0D, 0x17);
+  check(read(m, 0x0D) === 0x17, `${label}: old control retains its written state`);
+  read(m, 0x0B);                        // actual version DATA read selects new
+  check(read(m, 0x0D) === 5, `${label}: SR0B read recovers independent new SR0D`);
+  write(m, 0x0D, 2);
+  read(m, 0x0B);                        // selects new, does not toggle old
+  check(read(m, 0x0D) === 2, `${label}: repeated SR0B reads keep new controls`);
+  write(m, 0x0B, 0xFF);                 // value is not an unlock password
+  check(read(m, 0x0D) === 0x17, `${label}: any SR0B data write recovers old SR0D`);
+  const id = read(m, 0x0B);
+  check(id === 0, `${label}: writes cannot invent a chip identity (still unimplemented)`);
+  check(read(m, 0x0D) === 2, `${label}: new writes leave old SR0D intact`);
+
+  // An SR0D access-bank change must not page or erase the existing 64K window.
+  write(m, 0x0E, 2); m.mem[VGA_BASE] = 0x39; m.mem[VGA_BASE + 0xFFFF] = 0x93;
+  write(m, 0x0E, 3); m.mem[VGA_BASE] = 0x4A; m.mem[VGA_BASE + 0xFFFF] = 0xA4;
+  write(m, 0x0B, 0); write(m, 0x0D, 0x10); read(m, 0x0B);
+  check(m.svgaBank === 1 && m.mem[VGA_BASE] === 0x4A && m.mem[VGA_BASE + 0xFFFF] === 0xA4,
+    `${label}: control-bank selection preserves current window endpoints`);
+  write(m, 0x0E, 2);
+  check(m.mem[VGA_BASE] === 0x39 && m.mem[VGA_BASE + 0xFFFF] === 0x93,
+    `${label}: bank zero persists independently across control selection`);
+  write(m, 0x0E, 3);
+  check(m.mem[VGA_BASE] === 0x4A && m.mem[VGA_BASE + 0xFFFF] === 0xA4,
+    `${label}: bank one persists independently across control selection`);
+  const other = make({ svga: 'trident' });
+  check(read(other, 0x0D) === 0, `${label}: control storage is per machine`);
+}
+
 // Where the guest leaves its answers, in its own segment: one word per call at
 // 0x500 and up, and the BIOS blocks at 0x600. A .COM loads at 0x100 and this
 // one is under 0x100 bytes long, so both are free memory.
@@ -430,10 +478,23 @@ async function main() {
   process.exit(fail.length ? 1 : 0);
 }
 
+if (process.argv.includes('--trident-only')) {
+  tridentRegisterChecks();
+  if (process.argv.includes('--bundles')) {
+    for (const file of ['toyvm-bundle.js', 'toyvm-jit-bundle.js']) {
+      const holder = {};
+      new Function('self', 'atob', fs.readFileSync(path.join(__dirname, '../docs/dos-corpus/live', file), 'utf8'))(
+        holder, x => Buffer.from(x, 'base64').toString('binary'));
+      tridentRegisterChecks(holder.ToyVM.require('tools/toyvm/dos.js').Machine, file);
+    }
+  }
+  process.exit(fail.length ? 1 : 0);
+}
 if (process.argv.includes('--gc-only')) {
   graphicsControllerChecks();
   process.exit(fail.length ? 1 : 0);
 }
+tridentRegisterChecks();
 sequencerChecks();
 if (process.argv.includes('--sequencer-only')) process.exit(fail.length ? 1 : 0);
 graphicsControllerChecks();

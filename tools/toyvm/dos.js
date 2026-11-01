@@ -392,6 +392,11 @@ function newVgaState() {
     // three-bit address field; its absent slots must not become writable
     // extensions just because this shared backing array is larger.
     seqIndex: 0, seq: new Uint8Array(16),
+    // Ferraro, Programmer's Guide (3rd ed.), section 27.5.1, fig. 27.6:
+    // SR0B data writes select old controls, reads select new controls.
+    // Only SR0D's independent storage is modeled here. SR0E's old-mode
+    // banking/window and an actual chip-version value remain unimplemented.
+    tridentNewControl: true, tridentOldControl2: 0,
     gcIndex: 0, gc: new Uint8Array(16),
     crtcIndex: 0, crtc: new Uint8Array(32),
     // Whether the program has ASKED for the vertical-retrace interrupt. Kept as
@@ -3063,6 +3068,16 @@ class Machine {
     // Read-back of the register files. Code that tweaks one bit of the memory
     // mode does IN/OR/OUT, so returning 0xFF here would set every other bit
     // as a side effect -- including chain-4, which would undo a mode X set.
+    if (port === 0x3C5 && this.svga === 'trident') {
+      const v = this.vga;
+      if (v.seqIndex === 0x0B) {
+        v.tridentNewControl = true;
+        // No chip ID is supplied by this partial model. Zero is an absent
+        // identity policy, not a TVGA8900 hardware version or qualification.
+        return 0;
+      }
+      if (v.seqIndex === 0x0D && !v.tridentNewControl) return v.tridentOldControl2;
+    }
     // Trident: sequencer index 0x0E is the bank register, and the value read
     // back out of it is what SETUP.EXE classifies the chip version on --
     // 0x80..0xFE is a TVGA8900, which is what we present. The low nibble is
@@ -3329,6 +3344,16 @@ class Machine {
     switch (port) {
       case 0x3C4: v.seqIndex = value & (this.svga === 'none' ? 0x07 : 0x0F); return;
       case 0x3C5:
+        if (this.svga === 'trident') {
+          if (v.seqIndex === 0x0B) {
+            v.tridentNewControl = false;  // version data is read-only
+            return;
+          }
+          if (v.seqIndex === 0x0D && !v.tridentNewControl) {
+            v.tridentOldControl2 = value;
+            return;
+          }
+        }
         // The Trident bank register. The value carries the bank exclusive-ORed
         // with 2, which is not a quirk worth hiding: a driver that writes 3
         // means bank 1, and reading the register back has to agree.

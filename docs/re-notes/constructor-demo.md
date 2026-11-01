@@ -1366,3 +1366,61 @@ disk minimum was2312757248bytes, above the active2020000000-byte abort and
 2000000000-byte floor; no RAM gate applies. Local box ID/state/expiry are N/A;
 no box lifecycle action occurred. Own helpers are actually waited and their
 direct absence checked before final release/publication handoff.
+
+
+### 2026-11-01: bounded optional Trident SR0B/SR0D access repair
+
+Run `20261101-constructor-trident-register-contract` follows the released
+GTA input task `52165cda8`. This is a synthetic port-contract repair, with
+**zero original GAME/UVCONFIG executions and no gameplay claim**. It does
+not establish why the earlier optional Trident run selected InteGraphics.
+Default and explicitly nonselected VGA still reject extended sequencer
+storage; merely selecting `svga=trident` is not supported-adapter evidence.
+
+The missing contract is independent old/new SR0D control storage: writing
+sequencer **data** SR0B selects old controls; reading its data selects new
+controls. Selecting index 0B alone has no effect, and repeated reads select
+new controls rather than toggling. The original register descriptions are
+Richard Ferraro, *Programmer's Guide to the EGA, VGA, and Super VGA Cards*,
+3rd edition, section 27.5.1, pp. 1366–1368, figures 27.6/27.8 and listings
+27.3/27.4 ([text reference](https://dokumen.pub/programmers-guide-to-the-ega-vga-and-super-vga-cards-3rd-edition-3nbsped-0201624907-9780201624908.html)).
+The hardware-driver primary source also explicitly enters new mode by
+reading SR0B: Linux `drivers/video/fbdev/tridentfb.c`, `enable_mmio` and
+`disable_mmio` ([upstream driver](https://raw.githubusercontent.com/torvalds/linux/master/drivers/video/fbdev/tridentfb.c)).
+These are a programming reference and an actual hardware driver, not a
+newly obtained manufacturer datasheet or an inferred UVCONFIG trace.
+
+The optional model now stores old SR0D separately from its existing new
+SR0D and applies SR0B's access side effects. SR0B data writes cannot invent
+a version; reads return zero as an absent-identity policy, **not a qualified
+TVGA8900 version**. The test uses valid old/new control-bit values and
+checks data access versus index selection, repeated selection, independent
+machine state, unchanged default/nonselected negatives, and persistence at
+both endpoints of existing video banks 0 and 1. Against the saved old source,
+the exact final focused test fails three assertions: two independent SR0D
+readbacks and prevention of writable chip identity. The repaired source and
+both regenerated bundles pass all 13 checks each. Full VBE/sequencer/GC,
+default DAC and retrace regressions pass. Both bundles match every embedded
+source module (44 interpreter, 43 JIT) and each executes the existing real
+COM test to print HI. Commands, old-fail/new-pass logs, bundle parity and
+actual wait receipts are retained in the named scratch run.
+
+This deliberately does **not** qualify a supported Trident adapter. Only
+SR0D's independent storage is repaired, not its clock/mode effects or the
+full old/new sequencer register bank. SR0B's real chip version is absent;
+the pre-existing TVGA8900 ROM string, synthetic SR0E high-bit readback and
+CRTC1F XOR signature are not identity/capacity validation. SR0E still uses
+the existing 64 KiB XOR-2 bank implementation even after old selection;
+real old-mode 128 KiB windows/control behavior are missing. The generic
+1 MiB backing has not been tied to a real chip's installed memory, CRTC
+capacity programming or wraparound. Four-bit sequencer-index aliases and
+extended timing, clocks, DAC and mode-pixel behavior remain unqualified.
+A complete advertised identity/capacity/banking/mode-pixel contract remains
+necessary before any original retry. The truthful default VGA rejection
+from `cf7ba641a` remains the last original Constructor result.
+
+No box was allocated (ID/state/expiry N/A); coordinator lifecycle ownership
+is unchanged. Evidence remains under `scratch/runs/`, outside git. No assets,
+configuration, binary patches, deployment or worker launch accompanied this
+repair. The mandatory locked build and final publication receipt are
+recorded in the run evidence.
