@@ -1,5 +1,124 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Stadium City gameplay and controls reached (2026-11-01)
+
+Run `20261101-redline-default-drain-gameplay` advances the original demo through
+Stadium City selection, world loading and its opening cutscene to **first-person
+gameplay with visible control responses**. Inspected 640×480 PNGs show the
+weapon, crosshair, HUD strip, changed camera position after Up, changed viewing
+direction after Right, and a firing effect while the left mouse button is held.
+The rendering remains visibly incomplete: surfaces, characters, weapon and HUD
+contain flat/untextured areas and missing detail. This is local CLI gameplay
+evidence, not correct rendering, sustained playability or browser qualification.
+
+Both serial runs remove **all nine block counters**, retaining only frozen
+read-only snapshots of accumulator/time, CPU/stack and synchronization state,
+plus existing input delivery observations. No breakpoint, clock override,
+guest register/memory write, settings change or additional DLL was used.
+Counters in the preceding investigation affected optimization/pacing; its batch
+numbers must not be substituted for this run's observations.
+
+### Default-budget drain and pump return
+
+Run 1 retains the shipped CLI defaults: 1,000 blocks per batch and 200 ms per
+batch. It follows DISPLAY unchanged → Play → Start Up → New Game → Stadium
+City, then queues Enter-down at 29,100 and Enter-up at 30,100.
+
+| Batch | Stored time `0x5b8740` | Accumulator `0x5b8744` | Input dequeued/dispatched | Inspected output |
+| ---: | ---: | ---: | ---: | --- |
+| 29,100 | 5,132,611 | 864,603 | 6 / 5 | Stadium City selection |
+| 115,100 | 5,132,611 | 33,960 | 6 / 5 | Same selection |
+| 125,100 | 23,822,601 | 0 | 8 / 7 | LOADING WORLD |
+| 135,100 | 23,822,601 | 0 | 8 / 7 | LOADING WORLD |
+| 155,100 | 29,210,203 | 687,506 | 8 / 7 | Opening 3D cutscene |
+| 275,100 | 29,210,203 | 542,372 | 8 / 7 | Same cutscene frame |
+
+The first fixed-time interval subtracts 830,643 = 25,171 × 33, averaging
+9.65864 accumulator ms per batch. Between 115,100 and 125,100 the backlog
+drains, the stored time advances, the two queued Enter events are delivered,
+and mission loading begins. This establishes eventual catch-up completion and
+pump return; no mutex or traversal repair was necessary. The final cutscene
+frame alone is **not** counted as gameplay.
+
+The second fixed-time interval drains only 145,134 over 120,000 batches,
+averaging 1.20945 ms per batch. At the last observation, 16,436 more 33-ms
+decrements remain. Extrapolating that interval requires about 448,445 additional
+default batches / 124.5 seconds, before any subsequent elapsed-time addition.
+The wall estimate uses the 33.321-second difference between the two capture
+mtimes, including checkpoint overhead; it is not a throughput guarantee.
+Run 1 already took 64.210 seconds. Continuing that same budget cannot fit the
+120-second inner bound at the measured average, which justifies the next run's
+documented instruction-budget adjustment.
+
+### Final bounded run: budget adjustment and player input
+
+Run 2 repeats the ordinary route at defaults through batch 29,100, then uses
+the existing control command `set-batch-size:100000`: **100× the default main
+block budget**, without changing the 200-ms batch clock. This changes work
+per synthetic time interval, not guest configuration. It is not a claim of
+100× wall-clock speed or a measurement against the preceding instrumented run.
+The worker slice policy and all other launch options remain unchanged.
+
+Enter-down is queued at 29,100 and Enter-up at 29,110. At 30,100 the accumulator
+is zero, stored time is 6,000,001 and dequeue/dispatch is 8/7; the inspected
+capture is LOADING WORLD. Batch 30,300 shows the opening cutscene. The original
+Readme's controls explicitly document Space to skip cutscenes, Up for forward,
+Right for turning and left mouse for fire. The retained `readme-text.txt` is
+only a text extraction; the original file remains unchanged.
+
+| Ordinary input | Held interval | Inspected capture after work |
+| --- | --- | --- |
+| Space | 30,300–30,500; release then 200 batches | `run2/space-released.png`, 30,700: first-person weapon/crosshair/HUD |
+| Up (VK 38) | 30,700–30,730 | `run2/forward-held.png`: camera advances into the arena |
+| Right (VK 39) | 30,730–30,760 | `run2/right-held.png`: view turns toward the blue-lit interior |
+| Released arrows | through 30,790 | `run2/controls-released.png`: weapon, nearby vehicle, changed view |
+| Left mouse | 30,790–30,810; release then 10 batches | `run2/fire-held.png`: firing effect; `fire-released.png`: effect clears |
+
+The input dispatch trace records these keyboard and mouse messages reaching
+Redline's focused `0x10017` window. Dequeue/dispatch advances from 8/7 before
+Space to 17/15 at 30,820; the renderer input queue is empty at every captured
+checkpoint. Accumulator samples during player controls stay between 527 and
+1,102, with advancing stored time. Thus these captures include delivered
+controls and subsequent rendered changes, rather than merely queued events.
+No claim is made about audio, missions beyond this opening area, or a complete
+texture/HUD implementation. The next useful investigation is the incomplete
+texture/HUD rendering on this now-reachable gameplay route.
+
+### Identity, bounds and preservation
+
+The accepted locked-build module from `20261101-redline-catchup-runtime` was
+reused because all **4,385** recorded source/test/tool/package input hashes
+still match, before and after both runs. Its build-source commit remains
+`bbfb46421afa71d0f3899f9dc3cd0ac2308183c8`; observation HEAD is
+`cb0ac400b3af8a6ef3d838c7abdb3354791ad4c1`, with unchanged runtime inputs.
+The accepted build log is copied into this run. Both actual WebAssembly compile
+observations match retained `tested-module.wasm`, 2,025,619 bytes, SHA-256
+`168c61dae2861842948e5f9e29e4e18df93a6fab12c7d17f7dc85d75e34b7b55`.
+Layout remains `ccbc5bf6dfb9610e`; the retained mirror SHA-256 remains
+`3926a7a2bda6727de2852155e9764b24b8909001d1e2c6ba62e0eb4cab708b11`.
+All 127 actual loaded-read hashes per run match the files after testing.
+
+The launch remains `--app=redline_demo`, empty guest arguments,
+`C:\MAINDIR` cwd, original EXE and IFORCE2-only seed, original 59-companion
+manifest and shipped DISPLAY defaults. Full registration/fixture tests pass
+before and after; all 70 host fixture hashes, including the full original
+65-file extraction and package/archive pins, are unchanged. No production,
+test or foreign WIP files were edited.
+
+Exactly two local CLI guest invocations ran, each on an open PTY with
+outer `timeout --kill-after=5s 150s`, inner `--max-seconds=120`, finite inherited
+child guard and process-group cleanup. They finish by control `quit`, exit 0,
+in 64.210 / 93.133 seconds, without timeout, trap or signal. No child was
+requested. Both Python drivers, both outer processes and both Node guests
+are absent; both process groups are empty. Disk remains above 2 GB. No box
+was acquired: ID, state, expiry and lifecycle handback are N/A.
+
+Commands, PTY/control logs, original-control text, actual inspected captures,
+`analysis.json`, full source/fixture maps, loaded module/read manifests and
+cleanup verification are retained in the ignored run directory. There is no
+candidate-corpus ID, so the reviewed result remains investigation evidence
+and is not attached to an unrelated dashboard candidate.
+
 
 ## Measured catch-up backlog (2026-11-01)
 
