@@ -470,6 +470,87 @@ ID/state/expiry are N/A and own shutdown was delegated. Only this note and
 ignored evidence changed; no source/helper/test/configuration/backend or
 registration changed. No FPS, audio, browser/GPU, or full-suite claim is made.
 
+## 2026-11-01: extra repaint disproved; onward Scavenge observation interrupted
+
+Run: `scratch/runs/20261101-battlezone-dialog-capture-harvest/`.
+The exact `urban-chaos-ready-wait-repair` release, fresh launcher terminal
+files, and direct cleanup passed at **16:35:46 UTC**. Input main
+`6f4fa1d5ecb75f03aea8e0b354dbe7c051ca3c5f` was repinned to
+`a17c5a7c85aae38a97653b801da68de6147048df`; the runtime deadline was
+17:00:46 UTC. Scratch preparation preceded the gate; build, tests and the
+single original followed it. The mandatory locked build, existing
+`test/test-control-stdin-frozen-cli.js`, and observer validation passed.
+No production capture correction or new regression test was committed:
+the proposed extra repaint does not repair the real capture path.
+
+At frozen **10810**, the actual native dialog again shows **MISSION COMPLETED**
+(resource 130, control 1237, callback **0x5bd890**). Both control PNG and an
+explicit `renderer.repaint()` followed by control PNG remain completely black.
+Scheduled `png` at the following batch is also black. All three corresponding
+native backing captures have identical RGB hashes and **261,547 nonblack
+pixels**, matching the predecessor. Whole **512-MB memory hash**, EIP, API
+count, and batch are unchanged around the frozen control capture and explicit
+repaint. The scheduled pair separately requires one guest batch; it is not
+presented as a frozen comparison.
+
+The earlier suggestion that `controlPng` merely lacks the scheduled handler's
+repaint is incomplete: **`canvasToPng` → `presentForRead` → `dxPresentHook`
+already calls `renderer.repaint()`**. The actual visible dialog's GDI write
+sequence is **18584**, while the main DirectDraw layer's write sequence is
+**18585**, with **coverSeq 0**. Publication is not held. The exclusive compositor
+in `lib/renderer.js` gates window backings against the newest present sequence;
+this rejects the dialog backing at this checkpoint. No bounded
+`test/run.js`-only correction was established; changing renderer freshness
+rules is outside the assigned file ownership. No renderer rule, callback,
+guest memory, concurrency or SEH
+algorithm was changed; no replacement frame or game-specific fallback was added.
+Existing native backing capture remains the readable evidence route.
+
+Ordinary **Next Mission at 90,15** reaches the reviewed briefing at **10903**;
+ordinary **Launch at 550,15** reaches onward gameplay at **11895**, with scrap
+**08/30**. The live Utility menu lists two Scavengers; selecting **1** shows
+**3 Scavenge**. The Scavenge action bracket is
+**12125/12150/12151/12171**, preceded by the matched 25/1/20 neutral interval.
+The actual key release is dequeued, routed and dispatched at **12153**. Reviewed
+no-input checkpoints **12471** and **12771** (300 and 600 batches after settling)
+still show **08/30**. This establishes the issued order and bounded observation,
+not collection, scrap gain, or escort mechanics.
+
+**First changed blocker:** the driver and disk monitor terminated unexpectedly;
+their tool sessions returned **143**, while the original's exit hook recorded
+**code 0**. At discovery around **16:46:22 UTC**, the original and both helpers
+were absent. Shutdown cause is **unestablished**, and no game crash/freeze is
+inferred. The driver did not write its normal `exit.json`. No second original
+or further input followed. The surviving owned board watcher was explicitly
+stopped. Last complete input-state evidence is **12771**, not a shutdown sample:
+known scheduled/pending/cross-thread/renderer queues are empty; used physical
+and async keys, including VK1, are false. Pressed latches remain true for some
+keys; numeric mouse mask, guest post queue and SDL consumption remain unknown.
+
+The original launched with **2,237,816,832 bytes** free. All recorded disk
+samples exceed 2 GB; the recorded minimum is **2,181,066,752 bytes**. Monitoring
+ended unexpectedly too, so continuity across that final gap is not established.
+The truncated original gzip is retained unchanged; `log-recovery.json` gives a
+lossless recovery recipe and hash for the exact retained prefix. The separately
+named recovered-prefix gzip validates; missing shutdown output is not invented.
+Terminal journals were losslessly compressed with recovery recipes.
+
+All **4,062 scoped source/module pins, 153 fixture files and manifest members,
+and 156 observed runtime-read hashes** match afterward. This source scope is
+tracked/untracked JS/CJS/MJS/JSON/WAT/WATX/shell/Python/WASM files under
+`src/lib/tools/test`, plus host/package/module pins; it is not the predecessor's
+4,444-entry scope. The actual compilation again observes module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Observer validation executes sync/async modules against whole 512-MB readonly
+memory, preserves clock identity, and retains late event 10,001. Runtime read
+coverage is synchronous string/URL and complete bounded descriptor reads, not
+all asynchronous/direct OS or compiler-source reads. All **38 key edges / 19
+pairs** match dequeue/route/dispatch order; **81 PNGs** pass CRC/deflate checks
+(four are explicitly historical references). Known owned PIDs/groups and
+matching helpers are absent, with no new child temps. Native local box
+ID/state/expiry are N/A; own shutdown was explicitly delegated. Only this note
+and ignored evidence changed. No FPS, audio, browser/GPU or full-suite claim.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
