@@ -1,5 +1,109 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: original local CLI reaches first-run renderer wizard
+
+**First proven route blocker: the wizard's D3D renderer-test process is
+acknowledged without execution.** Tested shared main
+`9ba1c215c1766b39da747f386e0820f7399f6c93`, local Node CLI only, using the
+existing `--app=rune_demo` registration. At batch 22100 the original graphics
+wizard is visible. Its inspected 640×480 capture shows the Rune banner,
+“Your computer supports the following 3D video devices”, only **Software
+Rendering** in the list, the certified-compatible filter selected, and Next
+and Cancel. This is the first-run wizard, not an installer, menu, intro or
+player-controlled gameplay. No browser ran and no ordinary key/click input was
+sent: execution stopped before Next rather than accepting an untested fallback.
+
+The guest requested exactly:
+
+```text
+[ShellExecute] hwnd=0x0 op="open" file="C:\System\Rune.exe" params="testrendev=D3DDrv.D3DRenderDevice log=Detected.log"
+```
+
+The tested `test/run.js:4053` wrapper delegates to the base host and starts
+the requested process only when `--spawn-processes` or the registered
+`spawnProcesses` option is enabled. Neither is enabled in this assigned
+route. `lib/host-imports.js:2226` logs the request and returns 33; it does
+not run a local executable. No child launch appears in the complete log.
+Thus this run **did not test the original D3D renderer**. The missing renderer
+test is proven from the actual launch plus the loaded source; whether it alone
+explains the software-only device list is not established. Do not interpret the
+list as a genuine D3D hardware/capability failure or change the renderer to
+advance. A fresh bounded assignment must address ordinary renderer-test child
+execution and its lifecycle before qualifying the original selection. No
+production repair or launch-policy edit was made here, and no third run was
+attempted after finding this blocker.
+
+Evidence is ignored under
+`scratch/runs/20261101-rune-original-cli-progress/`. Exact launch command for
+the inspected attempt (with an open PTY for stdin):
+
+```sh
+timeout --kill-after=5s 150s node --require ./scratch/runs/20261101-rune-original-cli-progress/observe.cjs test/run.js --app=rune_demo --no-build --wasm=build/wine-assembly.wasm --quiet-api --quiet-blocks --no-close --max-seconds=120 --control-stdin --frozen --png=scratch/runs/20261101-rune-original-cli-progress/run2-final.png --tee=scratch/runs/20261101-rune-original-cli-progress/run2.log
+```
+
+`observe.cjs` only records file-read and actual `WebAssembly.compile` byte
+hashes; it does not modify guest state, imports, configuration or module bytes.
+NDJSON control used `step` with `n=100`, capture/snapshot, `step` with `n=2000`,
+capture/snapshot, then `step` with `n=20000`, capture/snapshot and `quit`.
+The full transcript is in `run2.log`. Inspected captures:
+`run2-b100.png` (blank teal desktop; no windows), `run2-wizard.png` and
+`run2-final.png` (same wizard pixels). `run2-b2100.png` is byte-identical to
+the inspected blank capture. The coherent final snapshot has focus `0x1000f`,
+visible wizard `0x10003`, EIP `0x17a00d38`, quit false before host quit.
+Run 2 exited 0 after 22100 batches / 18234 APIs / 27.767 seconds reported
+by the CLI. Exit 0 proves neither gameplay nor a successful renderer test.
+
+There were **two CLI invocations total**, serialized. Run 1 used the identical
+command with `run1` output names but the tool closed stdin; after DLL
+initialization it exited 0 while frozen, before main-loop batches, without a
+PNG. This was a control-channel setup failure, preserved in `run1.log`, not
+a guest compatibility result. The observed EOF justified correcting only the
+stdin lifetime for run 2. Existing CLI internal child limits were inspected;
+no child was launched, no held guest remains, and neither outer deadline fired.
+The run also reports one auxiliary thread reaching EIP zero (previous
+`0x10901a29`, stack retained) before the wizard. Its cause is unproven; the
+main thread continued to create the wizard. Missing host `shell32.dll` and
+`ole32.dll` warnings are retained, not treated as proven dependency failures
+or permission to inject DLLs. No native crash/trap was observed.
+
+Identity and preservation checks:
+
+* `node test/binaries/candidates/rune-demo/.host/check-fixture.js` passed
+  before and after: exact 142 originals / 128542865 bytes, package pin,
+  four EXEs, single links, 141 companion manifest and all original hashes.
+* `node test/test-rune-demo-registration.js --fixture` passed the exact
+  registration/launch plan and actual CLI manifest resolver. Original
+  `c:\System\Rune.exe`, cwd `c:\System`, empty args were preserved.
+* Actual compiled module: 2025029 bytes, SHA-256
+  `2be3cebaa1c08a8e12075de000bfb83fb8692841c1452d9e317203f5c2fce8cf`.
+  `loaded-modules.json` records the bytes passed to compilation, rather than
+  merely hashing a current build file. Rune.exe SHA-256 remains
+  `dd1588a902952414917b8cfc65996d46ec0323dc7d298c5a23d5b2ccf70f7add`;
+  manifest remains `ed536fbc320e683319cfb824a7c901dfebf4633a578be5890b09eb549e0baf48`.
+* Shipped Rune.ini SHA-256 remains
+  `716bcfbbcc268f92b5e4a4da778680b1e1759751cf876e2ab4687da58d8ea3da`;
+  User.ini remains
+  `55d2f8f3f265e1c9a6ba4571fc0ac0457f50ec16ef4b1c3f753217e580b7ac6d`.
+  No configuration/registry/prerequisite injection, renderer/audio override,
+  fixture change, dependency download or integrity bypass was used.
+* Accepted locked build PASS (40.431s) from
+  `20261101-thread-manager-options-land` was reused at its exact published
+  source commit above. Tracked code diff was empty; all 1153 recorded
+  source/tool/host/CLI input hashes remained unchanged. `loaded-reads.json`
+  retains 152 actual read identities; all 94 tracked reads match the tested
+  commit, and all reads still match after execution. Installed PNG support,
+  existing comctl32.dll and guest-media hashes are recorded separately.
+  No build or unrelated tests were rerun for this documentation-only change.
+
+`commands.json`, fixture-before/after JSON, registration log, source-input
+manifest, actual loaded-read/module hashes, launch-path excerpts and
+`verification.json` preserve the bounded diagnostics. No corpus candidate ID
+exists; result metadata explicitly uses null and is dashboard-ineligible.
+Free disk remained above 2 GB (final verification about 2.35 GB). Box
+allocation/state/expiry/shutdown and ownership are **N/A** for this local CLI
+assignment. No browser, boats, transfer/access retry, benchmark, agent,
+successor, public deployment or foreign WIP edit was performed.
+
 ## 2026-10-31: assigned browser attempt stopped at transfer authorization
 
 **First blocker: runtime-bundle upload was denied before browser or guest
