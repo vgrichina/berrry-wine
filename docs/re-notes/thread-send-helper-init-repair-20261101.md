@@ -1,10 +1,55 @@
 # Thread-send constructor initialization repair — 2026-11-01
 
-The constructor setup failure is reproduced and causally repaired in the shared
-working tree. The original scoped-yields suite now passes unchanged for Worker
-and local endpoints. **The code repair is not committed:** the mandatory build
-stopped at a distinct callback ownership census gate failure. No census edits,
-assertion changes or further runtime repairs were attempted.
+The constructor setup failure is repaired by moving the existing options
+normalization before its first read. The matching callback census entry has
+been reviewed and updated; the mandatory locked build and all four focused
+checks pass. The original test/helper files and all assertions are unchanged.
+
+## Landing validation and lifetime review
+
+Landing run: `scratch/runs/20261101-thread-manager-options-land/` (ignored).
+The released WIP came from documentation commit
+`8e86339291d61abde911019ebd0bca4cd06c0650`; validation started at
+`19c4681a8a01a5ef55c9e5fb06d0340514c541ea` on shared `main`.
+
+The complete production delta is the relocation of `opts = opts || {}` from
+below `_quietTM` to the constructor's first statement. Supplied options and
+callback identities remain intact. No callback entry, saved context,
+continuation, readiness, cancellation, retirement, unwind or restoration path
+changes. Missing/null options now reach the existing initialization defaults.
+
+Only `lib/thread-manager.js:host-file` in
+`tools/callback-ownership-census.json` changes: its SHA-256 advances from
+`2f866f9524ba605b74a157eb4830bd0a4534ad87bc5f5c2d8689755dd273cca5` to
+`e23fd03ca018e1b1d86b67b82a2ac689508473678663a1e25c24d1a4048b8856`,
+and its reason gains this lifetime review. The original reason is preserved
+as a prefix. All other entries, fields and holds are unchanged; ownership
+remains `pending`. Bootstrap timeout/error retirement and general nonlocal
+ownership remain unresolved. No global regeneration or gate bypass occurred.
+
+| Landing check | Result | Seconds |
+| --- | --- | --- |
+| `flock /tmp/wine-build.lock bash tools/build.sh` | PASS | 40.431 |
+| Original `test/test-thread-send-scoped-yields.js` | PASS, Worker and local | 0.439 |
+| Original `test/test-d3d-render-wait-scheduler.js` | PASS | 0.034 |
+| Original `test/test-d3d-render-park-batches.js` | PASS, fixed 1 wait/0 skipped; legacy 39 skipped | 0.929 |
+| Optional-options probe | PASS, omitted/undefined/null/empty and explicit identities | 0.031 |
+
+Focused checks ran sequentially with `timeout --kill-after=5s 120s node ...`.
+Child limits were inspected: park-batches runs two CLI children sequentially,
+each with `--max-seconds=45`, a 90-second SIGTERM deadline, finally cleanup,
+and exit-zero assertions. The timeout bounds the process group. Scoped-yields
+uses sequential Worker endpoints closed in finally; the scheduler is mocked.
+The retirement helper is imported for `context` only; its guarded main and
+`prerequisites` were never executed.
+
+The accepted native continuation PASS (4.751 seconds) is reused from
+`20261101-d3d-render-wait-crash-sweep`: all 63 recorded dependencies still
+match. No unrelated native rerun or expanded inventory was needed.
+`census-review.json`, `reviewed.patch`, `unchanged-tests-helper.json`,
+`native-evidence-reuse.json`, `limits-review.txt`, build/test logs and exit
+records retain the review and validation evidence. Box ID/state/expiry and
+lifecycle: N/A; no boxes were assigned or touched.
 
 ## Optional-options contract and minimal repair
 
@@ -27,7 +72,7 @@ Neither the helper nor `test/test-thread-send-scoped-yields.js` is edited.
 All callback ownership, readiness, retirement, stale-epoch and outer-frame
 assertions remain intact.
 
-## Before/after evidence and stopping point
+## Historical before/after evidence and first handoff
 
 Evidence root: `scratch/runs/20261101-thread-send-helper-init-repair/` (ignored).
 
@@ -62,8 +107,8 @@ changed producer lib/thread-manager.js:host-file (sha256); review its lifetime
 ```
 
 This is a distinct build acceptance failure, not a scoped-yields assertion
-failure. Updating the callback ownership census is explicitly outside this
-assignment. The first-failure stop rule was applied immediately; scheduler and
+failure. Updating the callback ownership census was explicitly outside that
+first assignment. The first-failure stop rule was applied immediately; scheduler and
 park checks were not refreshed after this failure. Their previously accepted
 results are historical evidence only because this repair changes their
 `ThreadManager` dependency. The accepted native continuation PASS (4.751 s,
@@ -73,11 +118,9 @@ in the accepted scheduler-repair evidence still match, recorded in
 
 Logs and terminal results are retained as `before.*`, `after.*`,
 `options-contract.*`, `build.*` and `result.json` in the evidence root.
-There is no passing-build or published-code claim. The one-line relocation in
-`lib/thread-manager.js` remains uncommitted WIP for the coordinator to recover.
+At that first handoff there was no passing-build or published-code claim;
+the one-line relocation remained uncommitted WIP for the coordinator to recover.
 
-Next: separately authorize the census lifetime review/update, or decide how to
-handle the preserved WIP; then obtain a passing locked build and refresh the
-affected focused checks before committing code. No further work is launched
-by this worker. Disk remained above 2 GB. Box ID/state/expiry and lifecycle:
-N/A; no boxes were assigned or touched.
+The subsequent landing assignment authorized the specific census review and
+completed the build and focused checks recorded above. Disk remained above
+2 GB. No retirement repair or broader ownership completion is claimed.
