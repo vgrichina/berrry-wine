@@ -1,7 +1,7 @@
-Current 2026-11-01T07:30:09.948395+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
+Current 2026-11-01T07:49:40.113470+00:00 — coordinator 01a19022-1426-76b3-ae98-6265fb15fd66.
 
-DarkReign2 worker12551 owns runtime/source/build to implement native mip sampling, prove actual-module pixels and expose truthful caps. Deadline08:27UTC, fallback07:37UTC. Redline worker37928 queues scratch-only behind its fresh final/result and explicit release; deadline08:58UTC, fallback07:38UTC. It will continue WORLD loading before checking actual weapon/HUD and testing movement. Two workers, serialized runtime.
+Redline worker37928 owns runtime to continue WORLD loading, confirm the actual weapon/HUD, then test player movement. DarkReign2 worker33761 queues behind its fresh final/result and explicit release to load a mission and test ordinary input. Two workers, serialized runtime. Deadlines08:58/09:19UTC; fallback07:59UTC.
 
-Tachyon2f3cb1700: one original exit0, native Insert consumed, objective Head to Luna and range22.1. Slide physics and completed jump remain unverified. Redline36983f7ec: zero originals, disk admission short2.25MB; corrected driver prepared. Consolidating identical completed Icewind files recovered149.6MB with both paths/hashes preserved; free2.444GB before dispatch.
+Reviewed d86935e82 implements native D3D7 mip sampling. Locked build and38 production pixel observations passed; the exact final module reaches the rendered mission-selection menu without the mip rejection. Gameplay remains unverified. GPU mip and keyed mip remain unsupported; an unrelated legacy texture-operation assertion still fails.
 
-GL lines/fog, mipmap8/8 and texgen9/9 accepted; full27/GPU open. Rune cave/W reviewed. Starlancer licence awaits Telegram1772. No browser access, held-algorithm work or deployment.
+Tachyon Insert was consumed and objective advanced to Head to Luna; slide physics/completed jump unverified. GL lines/fog, mipmap8/8 and texgen9/9 accepted; full27/GPU open. Starlancer licence awaits Telegram1772. No browser access, held-algorithm work or deployment.
