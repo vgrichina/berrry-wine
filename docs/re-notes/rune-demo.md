@@ -1,5 +1,105 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: Galaxy owner releases correctly; immediate timer reacquisition starves main
+
+**The Galaxy section is not orphaned: its multimedia-timer owner repeatedly
+releases it and reacquires it in the same cooperative scheduler turn while
+main remains parked.** No failed generic API contract or safe repair is yet
+proven. The title still does not reach the menu or ordinary gameplay.
+Evidence: `scratch/runs/20261101-rune-galaxy-lock-owner/`, with the second and
+final original invocation in `targeted/`.
+
+The initial gate stayed closed during scratch-only preparation. Both Redline
+`01a19546` final artifacts and its **04:19:16 UTC** runtime/source/build release
+were present at **04:19:34**; acceptance was recorded at **04:19:41**. No guest,
+build, production/test or note edits preceded release. Offline checks exercised
+the actual parked-control/parser/eval bindings and the actual scratch preload;
+mock instantiations verified distinct identities, natural import returns,
+relocated reads, unavailable getters and an unchanged whole-memory hash.
+
+Two original invocations used `--app=rune_demo --spawn-processes`, empty parent
+arguments, **C:\System**, unchanged shipped INIs and both original 142-file
+trees. Both followed **Software Rendering → Next → Next → Run**, then physical
+Escape down/up at **174100/175100**. No queue census was repeated. The observer
+wrapped natural per-instance API entry/exit imports; it did not call routing,
+timer-delivery or readiness helpers to inspect state. There were no breakpoints,
+instruction counters, guest writes, forced releases or state patches.
+
+The actual owner is **instance 5, Win32 thread 4**, CLI **T3**, handle
+**0xe1003**: the runtime's multimedia-timer thread. Its live timer has interval
+**20 ms**, callback **0x119095b0**, Galaxy original **0x106125b0**. The callback
+acquires guest section **0x1196ba78**, original **0x10674a78**, returning to
+**0x119095cf / original 0x106125cf**. Natural API exit changes
+`lock/recursion/owner` from **-1/0/0** to **0/1/4**, with ESP advancing eight
+bytes. It calls the mixer, then LeaveCriticalSection returns to
+**0x1190999c / original 0x1061299c**, restoring **-1/0/0**, again advancing ESP
+eight bytes. Original DLL disassembly confirms both call sites and the
+callback's `ret 0x14`.
+
+The owner continues executing: sampled EIPs include **0x1190a56f**,
+**0x1190a8b9**, **0x1190a57a** and **0x1190d219**, with changing mixer locals.
+The previous **0x11909d70 / original 0x10612d70** is the mixer's voice-loop
+entry, not evidence of a permanently stuck instruction. At **176100**, the
+owner has **5,101 Enter attempts**, **eight parks** and **5,092 Leaves**: after
+subtracting the unsuccessful attempts, exactly one acquired section remains
+held. There is no missing release in this observed accounting.
+
+**Exact remaining blocker:** the retained late API sequence in cooperative
+`runSlice` turn **608062** is Unlock → LeaveCriticalSection →
+EnterCriticalSection → GetCurrentPosition. Leave publishes **-1/0/0**; the next
+Enter publishes **0/1/4** in that same turn. Main's EIP is **0x17a068e0** at
+both exits, still on its original EnterCriticalSection frame returning to
+**0x11903efb / original 0x1060cefb**. Equivalent retained late sequences appear
+at turns **600110** and **604070**. Main therefore misses these release windows
+while the timer immediately starts another callback. This is recurring
+contention/starvation, rather than an owner that never releases. The targeted
+exit reports **75,403 main parks**, no stealing/barging/non-owner release, and
+the same section backing **0x0107da78**, owner T3, lock 0, recursion 1.
+
+Original DirectSound outputs are now observed, without substituting an audio
+backend or disabling Galaxy. `IDirectSoundBuffer_GetCurrentPosition`, returning
+to **0x119095e9 / original 0x106125e9**, returns HRESULT **0**; examples are
+play/write **35280/35940**, **0/660**, and late **26456/27116** in the 44,100-byte
+ring. The write lead is **660 bytes**. Retained Lock calls return HRESULT **0**
+and lengths matching the requested bytes, including a split **26460 + 8820 =
+35280**. Unlock also returns **0**. These samples do not establish a failed
+DirectSound contract.
+
+The first observer's **5,000-record** global quota exhausted; it cannot support
+later absence claims. The targeted observer instead retains the first twelve
+calls per original caller plus a rolling 48 completed calls per instance,
+alongside uncapped per-caller counts. Its scheduler-turn wrapper preserves
+the actual `runSlice` call/result and never runs the guest independently.
+`causal-validation.json` asserts actual owner accounting, same-turn free/claim
+states with main parked, and original cursor/Lock outputs. The next necessary
+observation is the exact **CACA003B timer callback completion/due-entry → run
+return → main retry** boundary. Source inspection shows `mm_timer_thread_step`
+sets the instruction quantum `$steps` to zero but its due-callback branch does
+not set a host-yield flag; `run` uses a separate block budget. Whether a generic
+callback-turn/handoff invariant is violated remains unproven. No REP, restart,
+nonlocal-jump or lifetime algorithm was changed, and no alternate retry was made.
+
+All **4,388** input hashes, module and generated region mirror match the
+accepted locked build, which was reused without another build. All four actual
+parent/child loaded modules are **2,025,629 bytes**, SHA-256
+`985ca2480931df88751db66dbee8527a6d9df9940949baafc6bc3a0b1a43e2dc`.
+Each invocation's **264 parent / 118 child** loaded-read hashes and both complete
+original trees/package/inventory/manifests/registry pins match before/after.
+An earlier offline preload probe loaded an intermediate scratch observer;
+its expected scratch-only hash change is distinguished from the four unchanged
+actual runtime loaded-read manifests. No production/test changes were made.
+The existing input-consumption VM fixture still lacks `mainSchedulerObserver`;
+this run does not claim it passes.
+
+Both outer PTYs exit **0**, naturally in **70.251s / 65.164s**; renderer-detection
+children exit guest/host **0**. Outer **150s / kill-after 5**, inner **115s**,
+child **TERM 90 / KILL 95** guards remain unused. Normal clock **200 ms** and
+batch budget are unchanged. Wizard/title/input PNGs were inspected; both
+after-up images still show the animated Rune title and Escape prompt, with no
+menu, movement or gameplay claim. Logs and child INIs are preserved. Own runtime
+PIDs/groups and child temporary trees are absent; free disk remains above
+**2 GB**. Box ID/state/expiry and ownership are **N/A**.
+
 ## 2026-11-01: exact polling owner proven; Escape retained behind Galaxy lock
 
 **Guest thread 3 dequeues physical Escape in GetMessageA and forwards both
