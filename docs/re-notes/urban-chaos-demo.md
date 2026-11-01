@@ -914,3 +914,98 @@ Next requires a separately assigned investigation of the guest heap failure
 and heartbeat publication/cleanup-receipt gap before another encounter attempt.
 No second original, unchanged replay, source repair or broader qualification
 was performed in this assignment.
+
+## 2026-11-01 offline heap diagnosis: vertex-pack refusal; capacity versus fragmentation still unmeasured
+
+Evidence: `scratch/runs/20261101-urban-chaos-heap-cause/` (`analysis.json`,
+`failure-events.json`, three disassemblies and `RECOVERY.txt`). Static analysis
+only: no original, runtime, build or tests ran, and no production files changed.
+Dispatch input was `7699f3fb00184b5d46c2cd98ad03569c5017318d`; actual main
+repinned to `424b9e1b1813da28543fe19c5770016227f34b3c`.
+Original Fallen.exe SHA256 is
+`8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`.
+Ten relevant allocator/dispatch/layout/host source hashes match both retained
+runs and this analysis tree; both runs loaded canonical WASM
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+
+**The failing operation is runtime vertex packing, not an oversized game malloc.**
+At `0x00494d60`, Fallen builds a triangle fan's WORD indices at `0x00ee4438`.
+The loop exits at `0x00494d9f` (`pop ebp`); `0x00494dbf` calls vtable slot35
+(`+0x8c`) with primitive4/TRIANGLELIST, VB=`[ecx+0x80]`, generated indices/count
+and flags`0x1c`: `IDirect3DDevice3::DrawIndexedPrimitiveVB`. The EBP-chain return
+`0x0048c76e` follows `call 0x00487020` at `0x0048c769`; it is an outer frame,
+not the allocating function. The interpreter's `$th_call_ind` dispatches a thunk
+before updating EIP to the return address, so the logged EIP can be this block's
+entry rather than the actual COM call instruction. There is no malloc at that EIP.
+
+The handler calls `$d3dim_vb_draw_indexed_primitive`, clamps the VB capacity and
+packs only through the highest referenced index. `$d3dim_pack_fvf_vertices`
+requests `count * 32` bytes. The66 complete small failures report aligned
+allocator extents25,960..44,072 bytes, all `32*N+8`, consistent with811..1,377
+vertices; the first32,296-byte extent corresponds to a32,288-byte/1,009-vertex
+pack on this path. These are inferred pack operands from code and logged
+extents, not captured VB/index measurements. Successful packs are freed after
+the draw. Failed packs skip the draw and still return S_OK: visible HUD and
+movement do not prove all geometry drew or all allocations succeeded.
+
+The67 separate1,048,576-byte messages are `$heap_sparse_alloc`'s minimum new
+arena commit, not67 independent1MiB game allocations. After a free-list miss
+and low-arena refusal, it reserves guest address space, then
+`$virtual_map_commit` returns0; reason3 is emitted after its reclaim/retry path.
+Reason1 subsequently reports the original aligned small extent. The recovered
+stream ends on an extra reason3 with no following small failure/site retained.
+It establishes **new arena commit refusal**, not which commit check failed.
+The nominal sparse backing window is288MiB inside the fixed512MiB memory;
+there is no extension at that size. Actual live committed bytes, map count
+(limit8,192), largest gaps, arena live-byte counts and free lists were not saved.
+Reason3 can also cover metadata/lease/page-publication refusal. It does not
+uniquely mean the288MiB pool was fully occupied.
+
+Fragmentation is a specific candidate: ordinary heap free prepends blocks,
+allocation splits them, and this path does not coalesce adjacent free blocks.
+Reclaim deliberately releases only whole-block sparse arenas, so carved arenas
+can retain backing even when their live-byte count is0. The render coalescer
+exists but is called by the D3D9 software backend, not this legacy VB pack path.
+That mechanism is present in the pinned code; its occurrence/byte cost in this
+game is **unmeasured**. The pack's balanced success/free path does not establish
+a leak, and no allocation history identifies the owner of the retained backing.
+Expected live capacity, fragmentation, another owner's leak and a commit
+bookkeeping failure therefore remain distinguishable hypotheses. No bad-size
+reason5 or absent VB implementation explains the observed refusal.
+
+**Correction to interpreting the successful HUD route:** its retained
+`20261101-urban-chaos-guard-gameplay/runtime.log.gz` contains20,432 OOM lines
+(10,216 reason3/reason1 pairs), first after ACK2061, including19,468 site lines
+at the same EIP/caller. It subsequently reached2263 and ordinary exit0 with the
+documented HUD/movement evidence. Its lack of a terminal runtime failure must
+not be read as absence of heap failures. The detached run first logs OOM after
+ACK1936; differing batch onset is not a controlled memory comparison. Among
+shared before pins only renderer.js and the callback-census JSON differ; the
+allocator/WASM identity is unchanged. Neither log supplies OOM wall timestamps.
+No OOM-to-guard causality, guest crash or host RAM failure is established.
+
+The smallest next discriminator is a **single first-refusal allocator snapshot**,
+before another encounter flight: retain wall/monotonic time, batch, instance,
+size/reason and WASM stack at the existing `heap_oom_trace` import; copy the
+bounded map/reservation/heap-arena tables using the matched generated region
+map, plus pure heap cursor/stat getters and the passive
+`d3d_render_free_list_diagnostic` fields. Read free headers through a host-side
+translator; calculate live backing union/free gaps, per-arena live bytes,
+free-byte total/largest fit and validated adjacent free extents offline. Capture
+the active Win16 lease ledger only if its arena is nonzero. Do not call
+`get_free_list` or `heap_free_census` as passive probes: both flush bins.
+Reason3 alone needs a branch-specific commit refusal code if these data leave
+more than one failing predicate possible. Capture before expensive formatting,
+publish once, bound output, and retain the original guard predicates.
+
+First use a bounded no-game pack/free sequence varying811..1,377 vertices on
+the pinned allocator: a refusal with low live bytes and enough adjacent free
+space identifies fragmentation without spending another original attempt.
+If live backing instead approaches capacity, collect allocation/free ownership
+before choosing a memory-size experiment; if maps are full or publication/lease
+checks fail with space available, target that exact runtime behavior. No memory
+increase, coalescer mutation or guard change is justified by the present logs
+alone. This assignment stops at that precise missing measurement. Recovery is
+offline via `python3 scratch/runs/20261101-urban-chaos-heap-cause/analyze.py`;
+the predecessor's truncated original gzip and completed recovered gzip remain
+untouched. Native box ID/state/expiry N/A; no boxes were created or altered.
