@@ -1,5 +1,91 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: live DLL identity cause confirmed; child transport repaired
+
+**The DLL guest-identity defect caused the original renderer child's startup
+failure. The repaired ordinary child completes Direct3D detection and exits 0.**
+Evidence is retained under ignored
+`scratch/runs/20261101-rune-child-path-repair/`, with the sole post-fix run in
+`postfix/`. This supersedes the unconfirmed causal status in the older entries.
+
+Exactly two ordinary original parent CLI invocations ran, after Redline released
+the sole runtime slot: `--app=rune_demo --spawn-processes`, empty parent guest
+arguments, original System cwd and all original files. Both children retain the
+guest-requested `testrendev=D3DDrv.D3DRenderDevice log=Detected.log`. Child-only
+file/module/cwd tracing uses normal batching, with **no breakpoints, counters,
+trace-to window or guest clock override**. No guest memory, registers, INIs,
+registry or DLL bytes were edited. Parent control only steps to the existing
+wizard, captures its PNG and quits; no wizard Next or player input was sent.
+
+Before repair, child **3030091** starts at `c:\system`, then:
+
+* API 1653 queries Core handle **0x10ba9000**, returning **`C:\Core.dll`**
+  (11 characters), distinct from the earlier handle-zero EXE queries.
+* API 1691 successfully changes cwd to **`C:\`**.
+* APIs 1703 and 1707 open **`rune.ini`** and then **`Default.ini`**, both
+  returning **INVALID_HANDLE_VALUE**. API 1709 GetLastError returns **2**.
+* The child displays **`MisingIni / History: appInit`**. The observed failed
+  Default.ini fallback identifies the first original error branch; DefUser.ini
+  is not reached. No slower breakpoint diagnostic was repeated.
+
+`test/run.js` now maps each original host DLL seed through the parent's existing
+`capturedGuestPath` or `besideExeGuestPath` identity, and selects the export row
+whose **complete guest path** matches, case-insensitively. That exact exported
+host file seeds the child. No basename search is used. Missing identity, missing
+export/file, or collision export retains the original seed. EXE transport stays
+on its existing export row. The separate absent-output merge defect is untouched.
+
+After the locked build, child **3031988** receives all four seeds from its
+exported `in/system/` directory. The same Core handle query returns
+**`C:\system\core.dll`** (18 characters); SetCurrentDirectory succeeds at
+**`C:\system\`**. Original `rune.ini` and `User.ini` open successfully with
+sizes **14,181** and **6,264** bytes. There is no MisingIni. Actual retained
+`postfix/child-state-3031980/out/system/detected.log` is **2,587 bytes**, SHA-256
+`2d929ce388b01bbd84672b3890a929ebccf6cf2eee8e0b8efc760f836037639b`.
+It records the unchanged renderer-test command, System base directory, native
+D3DDrv binding, Direct3D presence **DD_OK**, **Successfully detected
+D3DDrv.D3DRenderDevice**, orderly shutdown and closed log. Both the guest IPC
+exit code and host child exit code are **0**, without watchdog intervention.
+The child also exports a zero-byte Detected.ini; no replacement was supplied.
+
+Both actual **640×480 wizard.png** images were inspected: the original first-run
+wizard still displays only **Software Rendering** at the captured parent step.
+That image is not evidence of a refreshed parent renderer list, completed wizard,
+menu or gameplay. The proven result here is repaired child startup and successful
+original D3D renderer presence detection. Further ordinary wizard/gameplay
+progress remains unobserved; this assignment performs no third invocation.
+
+Validation: `flock /tmp/wine-build.lock bash tools/build.sh` passed, followed by
+`node test/test-cli-child-dll-identity.js`, `node test/test-vfs-export.js`,
+`node test/test-vfs-host-files.js` and `node test/test-process-boot-yields.js`.
+The new regression exercises the actual CLI helpers with a real exported VFS:
+nested DLL path with a second same-basename DLL, exact guest-path preservation,
+missing exact export/unknown identity/collision fallback, app-local DLL identity
+and ordinary EXE path. No guest runtime is launched by those focused tests.
+
+Before the first run all **4,385** predecessor build inputs matched unchanged;
+its current build was reused. After the JS transport edit the mandatory build
+passed. Actual parent and child modules in both runs remain **2,025,619 bytes**,
+SHA-256 `168c61dae2861842948e5f9e29e4e18df93a6fab12c7d17f7dc85d75e34b7b55`,
+with retained matching region mirrors. Source-input snapshots show test/run.js
+as the sole changed existing input; retained read manifests verify **262** parent
+reads before repair, and **262 parent / 117 child** reads afterward. The killed
+first child's exit-time read manifest is unavailable. All **142 originals in
+each recovered and registered tree**, package, companion manifest and registry
+source hashes passed before and after; no host original was changed by the
+child's disposable VFS writes.
+
+Both invocations use open PTYs, outer **140 seconds / kill-after 5**, inner
+**115 seconds**, and child **TERM at 75 / KILL at 80 seconds** watchdogs. The
+pre-fix error dialog required that cleanup (outer **81.513 seconds**, parent 0,
+child SIGKILL); the post-fix run completed in **1.733 seconds**, parent and child
+0. Child stdout/stderr and INIs/logs were retained before temporary-tree removal.
+The first failed child never exported its buffered Detected.log; it is not
+claimed retained. All own parent/child/outer PIDs and temporary trees are absent.
+Full checks are in `verification.json`; free disk remained above **2 GB**.
+Box ID/state/expiry and lifecycle ownership: **N/A**. No browser, boats, agents,
+download, deployment, held guest or unrelated defect work was performed.
+
 ## 2026-11-01: single child INI runtime diagnostic stops before the error branch
 
 **Concrete blocker: the requested two-breakpoint diagnostic did not reach

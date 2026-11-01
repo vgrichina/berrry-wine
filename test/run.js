@@ -1300,6 +1300,16 @@ const besideExeGuestPath = (hostPath, name) => {
   if (path.resolve(path.dirname(hostPath)) !== path.resolve(path.dirname(EXE_PATH))) return null;
   return path.win32.join(path.win32.dirname(EXE_GUEST_PATH), name);
 };
+// Seed the child from the exact exported guest identity already assigned by
+// the parent's loader. A same-named DLL elsewhere in the VFS is not a match.
+const childDllSeedPath = (hostPath, written) => {
+  const guestPath = capturedGuestPath(hostPath) ||
+    besideExeGuestPath(hostPath, path.basename(hostPath));
+  if (!guestPath) return hostPath;
+  const row = written.find(row => !row.collision &&
+    String(row.guestPath).toLowerCase() === guestPath.toLowerCase());
+  return row && fs.existsSync(row.outputPath) ? row.outputPath : hostPath;
+};
 // A --media-exe launch (tools/run-media.js) is a guest path too, and reports
 // its directory the way host.js does for imported media: NFS II's InstallShield
 // finds _SETUP.DLL beside D:\SETUP\ENGLISH\SETUP.EXE, not in D:\.
@@ -4216,7 +4226,8 @@ async function main() {
       // Rollcage's setup relaunches its own exe as the front end, which then
       // imports QMIXER.DLL from beside it and crashed on the unresolved import.
       const childDllSeeds = [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED]
-        .map(appAsset).filter(p => fs.existsSync(p));
+        .map(appAsset).filter(p => fs.existsSync(p))
+        .map(p => childDllSeedPath(p, written));
       const args = [
         `--exe=${exeRow.outputPath}`, `--vfs-tree=${inDir}`, `--exe-guest-path=${guestExe}`,
         `--cwd=${cwd}`, `--args=${parsed.params.trim()}`,
