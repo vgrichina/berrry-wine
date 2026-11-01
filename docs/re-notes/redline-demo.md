@@ -1,5 +1,51 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Cutscene-skip movement driver corrected; startup disk blocks invocation (2026-11-01)
+
+Run `20261101-redline-cutscene-skip-movement` waits in scratch for Tachyon
+worker `01a195da-a4c3-7011-a03b-432f2f69a78e`'s fresh final/result and
+**06:57:50 runtime/source/build release**. Gate-open current main is
+`bd8f046fb9926ca3d391265edcf7dc0b10bf9c94`. Tachyon's runtime and build are
+untouched. No original, diagnostic test or build is invoked in this run.
+
+The original `Readme.rtf` explicitly documents **Space Bar to skip the cut
+scene**, Up to move forward and Right to turn. The earlier
+`20261101-redline-default-drain-gameplay/run2` route and its actual
+`space-released.png` are reviewed offline: Space at 30,300, held through
+30,500, then released with work through 30,700 reaches the first-person
+weapon, crosshair and bottom HUD. This is historical evidence, not a new
+player-view observation.
+
+The prepared scratch `drive.py` now follows that ordinary Space route with
+bounded **50-step** requests, verifies consumed Space down/up and empty
+observed input queues, then captures the released view. A separate visual
+review gate requires actual weapon/HUD confirmation before any Up input.
+Only after that gate can it collect consumed Up down/up and paired
+before/held/released captures. The driver passes Python syntax compilation;
+the prepared observer passes JS syntax checking. Neither driver nor observer
+validation is executed against a module here. No upload/capture diagnosis,
+renderer change or guest-state forcing is attempted.
+
+The **first launch blocker is startup disk admission**: the first gate-open
+reading is **2,296,217,600 bytes** free versus the required
+**2,300,000,000 bytes**. The formal admission records **2,295,566,336 bytes**,
+a **4,433,664-byte shortfall**; all own evidence then totals only 277,688
+bytes. Removing it cannot satisfy admission. Foreign artifacts are preserved.
+The 2 GB floor remains satisfied. Thus **Space consumption, current player
+view and post-repair ordinary player movement remain unverified**.
+
+All 70 original/manifest/configuration pins match before and after. All 4,390
+tracked source inputs and 122 accepted prior loaded-file hashes match; module
+`330b120d` and the region mirror also match. These are offline identity
+checks: no accepted build is reused or module loaded by this run. The required
+actual sync/async emitted-callback, whole-512-MB/clock read-only and late-10,001
+observer validator is prepared but not run; no original diagnostics proceed
+without it. No new EULA, configuration change, audio/FPS or broader gameplay
+claim follows. Gate, identities, corrected driver, admission and final/result
+remain in the ignored run directory. Own watcher/temp/PIDs are checked absent;
+no box is owned (ID/state/expiry N/A). The next prerequisite is startup disk
+headroom for the prepared Space-to-player route.
+
 ## Post-repair retry: coherent captures and consumed arrows, opening cutscene still blocks player proof (2026-11-01)
 
 Run `20261101-redline-primary-movement-retry` starts after fresh GL final/result
