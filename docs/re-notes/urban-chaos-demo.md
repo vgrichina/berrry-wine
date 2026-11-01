@@ -1762,3 +1762,52 @@ Only this note is committed; no source/test/build changes or build occurred.
 `RECOVERY.txt`, pins and the exact failed sample remain in the run directory.
 Next requires sustained launch headroom and a fresh assignment; this stopped
 run holds no runtime or follow-up and supplies no gameplay/FPS/audio/full27 proof.
+
+## 2026-11-01 released-log recovery: authorized scope still insufficient
+
+Evidence: `scratch/runs/20261101-urban-released-log-headroom-diagnostic/`.
+**Recovery completed losslessly, but no original was launched.** The seven
+explicitly authorized, completed worker `events.jsonl` files totaled 3,851,546
+bytes. Their gzip replacements total 1,084,440 bytes, recovering 2,767,106
+logical bytes. At recovery completion `/home` had **2,096,902,144 bytes**
+available: **3,097,856 bytes short** of the unchanged 2,100,000,000-byte launch
+requirement. This is the first blocker. The sustained launch check was not
+started; stop2,020,000,000/floor2,000,000,000 and no RAM gate remain unchanged.
+No additional recovery scope, original, or launch retry was attempted.
+
+Only `events.jsonl` in these `scratch/usage-watch/` output directories changed:
+`urban-main-thread-first-refusal-nov01`,
+`constructor-uvconfig-probe-branches-nov01`,
+`urban-inspector-worker-coexistence-nov01`,
+`constructor-original-startup-nov01`,
+`constructor-original-fixture-recovery-nov01`,
+`new-local-game-replacement-nov01`, and
+`urban-chaos-first-refusal-debugger-nov01`. Each was claimed individually after
+reviewing its author release, terminal exit0 result and final. Size, inode,
+mtime and full SHA were stable across a one-second interval. Compression was
+staged in tmpfs. The durable destination gzip and its full decompressed SHA
+were verified, and a recovery receipt fsynced, before unlinking each original.
+Final verification repeated all seven archive SHA/full round-trip checks and
+confirmed preserved result/final/notification hashes. The receipts contain
+exact paths, full hashes and restore commands; recipes, pins, fixtures, saves,
+active logs and coordinator logs were untouched.
+
+Constructor's sequencer-contract successor owned runtime/source/build first;
+this worker stopped on insufficient recovery without awaiting or claiming its
+release. There was no Urban runtime/source/build claim or production edit.
+Post-release source/module/fixture verification was therefore unexecuted;
+this run does not assert unchanged source while Constructor edits ToyVM.
+The historical selected module identity remains a requirement, not a freshly
+tested compile identity here. Reviewed lifecycle helpers and main-thread
+inspector controls were not rerun or exercised. No debugger, game, guard,
+route input, breakpoint acknowledgement or allocator snapshot exists for this
+run. Current-arena ownership, live co-residency and bounds versus backing or
+metadata refusal remain unknown.
+
+Only the append-only board watcher required shutdown; its actual wait and
+direct absence are recorded separately. There was no original OS wait or
+debugger removal/resume sequence to exercise. Native box ID/state/expiry are
+N/A; Constructor and coordinator lifecycle ownership remain untouched.
+Only this note is committed. The assignment stops without held work; next
+requires separately restored sustained headroom and a fresh assignment.
+No gameplay, FPS, audio, full27 or allocator-causality claim follows.
