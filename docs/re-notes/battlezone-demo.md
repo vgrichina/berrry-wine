@@ -179,7 +179,105 @@ pin comparisons, exact exception, and cleanup/publication records. A future
 separately authorized attempt needs a complete observer validation before
 launching the original; this assignment stops at the prerequisite failure.
 
+## Corrected observer and reticle unit outcome (2026-11-01)
+
+Run `scratch/runs/20261101-battlezone-target-hit-corrected/` adds an
+**ordinary reticle command with an observable Scavenger approach**. It does
+not add target damage, a kill, destination arrival, or mission completion.
+The earlier vehicle-entry and firing/ammo results are not counted again.
+Battlezone remains in `LOCAL_CANDIDATE_APPS`, absent public `DESKTOP_APPS`.
+
+The exact `urban-chaos-confrontation DONE/PUSH RELEASE` action naming
+`runtime/source/build`, fresh terminal launcher final/result, and directly
+checked predecessor PID/group cleanup opened the gate at **14:49:06 UTC**.
+Dispatch was `ad94d102f5b4a239e86d7b38970455dada45dabe`; actual main was
+`c6fba571254a85245166115a08880cec00dc911d`. The gate deadline was 15:14:06
+UTC. Before that gate, preparation stayed in scratch without tests or runtime.
+
+The authorized scratch correction sets `SWEEP_CASE_DIR=__dirname` before
+`offline.cjs` requires the observer. Its actual synchronous/asynchronous
+execution, whole shared 512-MB readonly hash, native/import clock identity,
+and emitted late-10,001 retention checks all passed before game launch.
+All 4,392 accepted build inputs and 141 prior read pins matched, permitting
+`--no-build`. Actual runtime compilation observed module SHA-256
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+Before/after inventories matched all 4,444 source pins and 153 original files,
+including manifest, companions, and tree membership. The EXE remained
+3,732,992 bytes, SHA-256
+`0554156663000fc1c0c0ad2275e460fa6fc9acda4abdd26c720b69019d04617a`.
+All 153 observed runtime-read hashes matched. Observation covers synchronous
+string/URL reads and complete bounded descriptor reads, not every possible
+asynchronous/direct OS read or compilation-time source read.
+
+One original used the registered native cooperative CLI with
+`--app=battlezone_demo --no-build --batch-size=100000 --control-stdin --frozen`.
+The first 280-batch request returned after 147 seconds, within its 180-second
+deadline; this was slow startup, not a timeout or established freeze. Reviewed
+captures then followed ad 280/305, Single Player 326/351, Stars and Stripes
+372/397, Launch 418/443, and visible mission at 1364. The actual briefing
+orders the player to have the Recycler build a Scavenger; `Input.map` supplies
+numbered menus and Space as the reticle command.
+
+**Build outcome:** 5 opened the Recycler menu at 1410/1435. It offered
+`1 Scavenger` for four scrap. Pressing 1 at 1502/1527 changed scrap **05/30
+to 01/30** and enabled the Utility menu. Utility 3 then listed `1 Scavenger`;
+selecting it opened its Follow Me / Go To Nav / Scavenge / Pick Me Up menu.
+This supports a built, selectable unit, beyond an unchanged menu selection.
+
+**Reticle outcome:** the first Space command at 1846/1871 displayed Follow
+Light Tank and closed the menu, but the unit was already moving during the
+neutral interval; that interval alone is inconclusive. Subsequent ordinary
+relative mouse input established a terrain reticle. With the Scavenger
+selected, `terrain-command-ready.png` (4764) explicitly offers **Space Go To**.
+A matched 100/1/300-batch neutral bracket precedes Space down at 5165 and up
+at 5265. The menu closes, and a yellow vehicle crosses the reticle area in
+`reticle-goto-settled.png` (5566); that sprite alone is not the final identity
+or arrival evidence.
+
+A second, nearer terrain point is visible as a green ground highlight in
+`near-goto-ready.png` (6408), again with **Space Go To** and the selected
+Scavenger. The matched neutral bracket is 6408/6508/6509/6809; the command
+bracket is `reticle-near-goto-before/held/released/settled.png` at
+**6809/6909/6910/7210**. Space down/up were consumed, with no steering,
+translation, or mouse movement during either bracket or the later approach.
+Later fixed-view captures identify **Scavenger** with a world marker and a
+decreasing range: `near-arrival1800.png` (9010) shows **663 m** and
+`near-arrival2700.png` (9910) shows **384 m**. Its marker and radar position
+also change while the foreground/base view remains visually fixed. Together
+with the native Go To affordance and consumed command, this is an observable
+commanded-unit approach, not camera drift, projectiles, or menu closure alone.
+Arrival and the later escort/harvesting objective were not established.
+Early live range readings in tens of metres were incorrect; the retained
+captures support hundreds of metres and are authoritative.
+
+All 32 key edges (16 balanced pairs) match the actual dequeue and
+DispatchMessage order, with each key dequeue routed. Mouse/menu edges also
+have raw consumption records; native dialog processing is not uniformly a
+main-window DispatchMessage path. Final scheduled/pending/cross-thread/
+renderer queues are empty; all used sampled physical/async keys, including
+left-button VK1, are false. The numeric renderer mouse-button mask was
+sampled **unknown**, not zero; pressed latches remain true for some used keys.
+Guest post-queue and SDL consumption are unknown. No guest game structures
+were inspected. All 122 retained PNGs passed CRC/deflate checks, and the full
+runtime gzip validated.
+
+An optional quantitative pixel comparison failed because Python Pillow was
+absent (`ModuleNotFoundError: No module named PIL`). It was not installed,
+repaired, or retried; gameplay stopped and no quantitative scene-difference
+claim is made. The retained matched neutral and command captures were visually
+reviewed. This analysis dependency is not a Battlezone crash or defect.
+
+The original exited 0 after 719.25 seconds at batch 9910, without a crash/trap.
+Minimum controller-sampled free disk was 2,046,517,248 bytes; the auxiliary
+guard remained active through publication. Finite sampling cannot establish
+unsampled disk history. Own runtime/helpers/watchers/groups and new child
+temps were checked absent after shutdown. Local native box ID/state/expiry
+are N/A; own shutdown was explicitly delegated. Only this note and ignored
+scratch evidence changed; no tracked source/helper/test/configuration/backend
+or registration changed.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
-RTS construction/escort command flow beyond the attempts above, WebKit.
+RTS construction/escort command flow beyond the bounded build and Go To
+approach above, WebKit.
