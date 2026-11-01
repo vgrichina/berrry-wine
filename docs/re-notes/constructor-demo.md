@@ -758,3 +758,133 @@ regenerate no configuration and do not relaunch the original merely to view
 the evidence. `run.py` is the bounded execution recipe, not authorization for
 a second run. Local box ID/state/expiry: N/A. Browser, boat, EULA, deployment,
 sound setup and ordinary gameplay remain unperformed.
+
+### 2026-11-01 authentic UVCONFIG probe branches (static only)
+
+Run `20261101-constructor-uvconfig-probe-branches` maps the retained original
+startup to a concrete generic sequencer false-positive contract and the
+subsequent exit6 memory gate. A7/C5 rejection alone is not the exit6 cause.
+No original or emulator was executed, and no source, tests or build changed.
+The I/O is observed; intermediate registers and branches below are reconstructed
+from those observations and pinned executable bytes, not an instruction/stack
+capture. Detector names are the executable's labels, not identified hardware.
+
+Inputs: unchanged authentic28-file closure (63205318bytes), manifest
+`test/toyvm-dos-corpus/files/constructor-demo.json`, and its309382-byte
+`UVCONFIG.EXE`, SHA256
+`3a37035f71c213d4dfff0b752415815584f49af1b156afc48f0255b2f993a815`.
+The retained input is `20261101-constructor-original-startup/startup.log`
+(147446bytes), with that run's identity/module provenance unchanged. Read-only
+source input `tools/toyvm/dos.js` hashes to
+`eb60e2775196edd80113836830a36482ac50a1d425f3e505d09c4bac68b0f4bc`.
+`analysis.json` pins these inputs, the manifest's28 files, the ten matching
+reused contract source/test files, recovery pin record, Python interpreter and
+GNU objdump. No unchanged contract was rerun. `analyze.py` uses only Python
+stdlib byte/trace assertions and `/usr/bin/objdump -D -b binary -m i8086 -M intel`
+on entry-aligned slices; it never imports the emulator or executes guest code.
+
+The MZ header is2A00h bytes with2403 relocations. For original segment S and
+offset O, file offset is `2A00h + 10h*S + O`. This child's load segment is0EFEh;
+add that to original segment operands. This gives the caller chain:
+
+| Function | Original segment:offset | Retained runtime segment:offset |
+| --- | --- | --- |
+| main's detector call | 36BE:0872 | 45BC:0872 |
+| initialization/detector wrapper | 07EB:DAAA | 16E9:DAAA |
+| dispatcher called at DC90 | 07EB:BFFF | 16E9:BFFF |
+| A7/C5 detector, called at C068 | 07EB:5B28 | 16E9:5B28 |
+| indexed read / write / masked test | 1B76:0000 / 0032 / 01CE | 2A74:0000 / 0032 / 01CE |
+| raw input / output entry | 1C5F:0001 / 0028 | 2B5D:0001 / 0028 |
+
+Raw IN is actually at0009 and OUT at0031; the trace's `near` positions name
+their entries. Far segment operands are relocation-checked in the executable.
+Before detector dispatch,149F checks INT10h AX=1A00h VGA presence, including
+AL=1Ah and display-type checks. The retained original reaches the probes; its
+VBE query success does not establish a vendor-specific register implementation.
+
+The shared masked test at2A74:01CE saves the register, writes
+`saved & ~mask`, reads `clear & mask`, writes `saved | mask`, reads `set & mask`,
+then restores the saved byte. At0244/0248 it rejects nonzero clear bits; at
+024D/0250 it rejects set bits unequal to the mask. It returns AX=1 only when
+both checks pass, otherwise0. Both C5 calls use mask00FFh. The retained30 I/O
+rows at41.6272–41.6278M give:
+
+| A7 state | Saved C5 | Write/read clear | Write/read set | Restored C5 | Test AX |
+| --- | --- | --- | --- | --- | --- |
+| 00h | 00h | 00h / 00h | FFh / FFh | 00h | 1 |
+| 87h | 00h | 00h / 00h | FFh / FFh | 00h | 1 |
+
+Detector5B28 is tag0Dh, whose string table says **Macronix** (pointer table
+file45770h, string46533h). It saves A7, writes00h, tests C5 at5B95, writes87h,
+then tests C5 at5BBA. Three PCI searches can accept independently: vendor10D9h
+with devices0066h,8888h,8625h; each AX != FFFFh jumps to5C65. The three retained
+INT1Ah AX=B101h/CX=10D9h attempts and later A7 restoration are consistent with
+all misses. PCI helper2B3B:0112 checks mechanisms1/2 then BIOS presence; an
+absent PCI service is not itself a generic hardware defect.
+
+Without that override, `analysis.json` records the computed file offsets and asserts
+`83 7e fa 00 0f 85 74 02 83 7e f8 00 0f 84 6c 02` at07EB:5C55.
+These decode to `CMP [bp-6],0; JNE 5ED1; CMP [bp-8],0; JE 5ED1`.
+Thus the required pair is **0,1**, not1,1. The captured pair takes5C59 to5ED1,
+restores A7=00h, and returns AX=1 at5EE2 (continue searching). The dispatcher
+compares AX with1 atC070. A preselected tag0Dh can skip this test, but this
+trace contains both probes. No vendor identity follows from register aliasing.
+
+The later26 I/O rows at42.9872–42.9877M match a different detector:
+16E9:76E8, dispatched atC45F for tag17h. The executable labels17h **Hualon**
+(table file45798h, string4659Bh). At7718/772F it tests EDh and EEh with00FFh;
+772B/7742 jump to failure782D if either test returns0. Both captured tests
+save00h, read00h after clearing and FFh after setting, restore00h, hence pass.
+7749 stores tag17h. With memory unspecified,77B0 reads E7h; observed00h makes
+`TEST AL,10h` at77B8 / `JE 77C7` take the256KiB assignment
+`ES:[BX+4]=0100h` at77CA. A set bit would assign0200h at77BF.
+The remaining calls0FFE/04C5 update mode/capability tables; the detector
+returns AX=2 at7828. The dispatcher comparison atC467 therefore returns that
+result viaC5C4 rather than trying later detectors.
+
+Wrapper DC99 tests AX=2. DCA4 then compares memory `[+4]` with0200h
+(512KiB); DCAA `JGE DCB2` is not taken for0100h. **DCAC sets AX=6** and
+DCAF returns viaDE5F. In main,087A decrements the status and the six-word
+switch at0BA0 maps status6 to089C (status1 instead maps088B, the distinct
+no-supported-chip error). The status6 path reaches0981 `PUSH 6`,0983 far call
+0000:505B, C-runtime cleanup5001, then0000:015A. At015C–0161, AH=4Ch and
+AL=argument6 reach INT21h. This matches the retained child exit6 and
+`0EFE:0163 AX=4C06`, then parent resumption0549:10B7. The parent's final
+“No Graphics hardware” text alone did not distinguish this false detection
+and memory gate from the child's no-supported-chip path.
+
+The first demonstrated wrong **generic emulation contract** is unrestricted
+sequencer writability exposing unsupported extension probes as successful.
+In the pinned source, the default model is `svga='none'`;3C4 uses
+`seqIndex=value&0Fh`,3C5 reads the16-byte array, and `vgaSeqWrite` unconditionally
+stores the byte. Thus ED/EE become freely writable0D/0E, while E7 becomes07.
+The observed A7/C5 aliases07/05 by themselves did not prove causation or
+Macronix hardware. The later ED/EE probe and explicit memory gate identify
+the concrete false-positive route. Making C5 obey an invented A7 unlock in
+the default model would select another detector rather than establish a fix.
+
+Proposed minimal next change: a pure-JS default-Machine contract regression
+that performs the executable's save/clear/read/set/read/restore00FFh test
+through3C4/3C5 for EDh and EEh. It must not report both as implemented writable
+extensions with `svga='none'`; current code gives1,1 and fails that assertion.
+The focused fix should make this test pass while preserving defined VGA
+sequencer behavior (especially map mask and memory mode), register restoration,
+and existing explicitly selected model contracts. Implementation belongs in
+the model-specific index-decode/read/write policy in `tools/toyvm/dos.js`, with
+normal generated copies afterward. Determine the unimplemented-register read
+value and legitimate alias policy from the intended default adapter contract;
+do not replace the16-byte array with256 writable registers or assume FFh reads
+without that evidence. This task proposes the regression; no new-pass emulator
+result is claimed. Further valid supported-SVGA detection, at least512KiB,
+and its real memory/banking behavior remain prerequisites for successful
+configuration. Neither a VBE version bump, E7 bit fabrication, speculative
+Trident identity nor hardware/executable substitution follows from this map.
+
+Evidence:15 focused `.bin`/`.disasm` pairs,14 pinned instruction-byte checks,
+switch/label/relocation checks, line-numbered retained trace excerpts and
+`analysis.json` in the named run. All28 fixture hashes and exact file closure,
+all ten reused contract pins, and note whitespace checks pass. No broad tests
+or build are appropriate for this documentation-only change. Original runtime
+ownership was never acquired; local box/state/expiry N/A. Only this analysis
+watcher's shutdown is delegated and directly waited, with cleanup receipts
+retained. No menu/gameplay/FPS/audio/full27 conclusion is made.
