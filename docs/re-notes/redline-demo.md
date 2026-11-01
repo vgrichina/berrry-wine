@@ -1,5 +1,75 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Selected execution: BTF found and loaded, backend returns zero (2026-11-01)
+
+Run `20261101-redline-selected-lookup-execution` makes **two original CLI
+invocations**. The second captures **two matching resource-723 sequences** on
+the actual cooperative guest thread, with zero observer errors or drops:
+
+- The bank ID is **723**, its metadata name is **`skymorning.tga`**, and the
+  actual selected lookup entry requests **`..\GameData\textures\skymorning.btf`**.
+  Lookup `0x4eefeb` and direct-query return **`0x416f84`** both return **390**.
+- The same query frame then returns **`0xffffffff` at `0x416f84`** while the
+  live backend filename is **`skymorning.tga`**. Its boolean local at
+  `0x416fc6` is zero, and the actual alternative-query return **`0x45088a`**
+  has low byte zero. This is an executed TGA miss, rather than an inference
+  from the offline archive listing.
+- The filename returns to **`skymorning.btf`**. File-loader return
+  **`0x4508c9` is 1**, followed by **`0x450956`**. The backend subsequently
+  returns **EAX 0 at `0x4181d5`**, and the bank executes **`0x4181d9`**.
+
+**The first failing operation inside the backend remains unobserved; no generic
+repair is proven or made.** The scratch observer mistakenly treats helper entry
+**`0x450ff4`** (called at `0x450c26`) as an exit and switches to the bank window
+too early. The actual backend epilogue is `0x450fe4`. Also, the successful
+query's `0x416f8d` block falls through its epilogue without a separately emitted
+`0x416fc6` block: the initial BTF boolean, `0x45084b`, and `0x450855` successor
+are not retained. The subsequent TGA alternative miss is retained. Saved
+`name` fields describe the initial selected lookup; **`searchName` is the live
+filename**. Query locals after that frame returns are reused stack bytes and
+must not be interpreted as current query output. Both original invocations are
+used; there is no third invocation or speculative repair.
+
+The inspected second-run original PNG still lacks textures, SHA-256
+`bbc8eee19ceb8a61e4242738da63be6f71719b221f5123b563454a382efd5941`.
+The completed second invocation exits 0 in **69.451 seconds**. This observation
+does not qualify textures or gameplay.
+
+The first invocation stops on the disk guard: the async-only scratch preload
+misses cooperative **`new WebAssembly.Instance`**, allowing unbounded ordinary
+T1 trace output. Free disk briefly reaches **1,997,225,984 bytes**; immediate
+lossless compression of owned logs restores it above 2 GB. Its driver repeats
+the disk exception during cleanup, so no first-run `exit.json` is produced;
+all owned runtime PIDs and groups are subsequently verified absent. The second
+and final invocation tests the concrete diagnostic binding correction: intercept
+both synchronous and asynchronous constructors before import capture, preserve
+separate bounded per-instance records, and save selected records durably.
+This is a scratch diagnostic correction, not an emulator repair.
+
+Before either original, scratch checks exercise the actual preload, emitted
+module, shared **512 MB** memory, actual parked control/parser/eval paths,
+late **10,001** callbacks, invalid-parent rejection and whole-memory/clock
+read-only behavior. Synthetic **`run(37)`** exercises actual callback-driven
+window transitions. The second preload additionally tests the actual synchronous
+constructor and emitted callbacks. These fixtures do not execute original game
+bytes, and their coverage did not detect the two window limitations above.
+Tracing explicitly disables chaining and the micro-op tier globally; no
+breakpoint, counter, forced stepping or budget-one execution is used.
+
+Rune's fresh final/result and **05:15:43 runtime/source/build release** precede
+runtime and note edits; only scratch preparation occurs before that gate.
+All **4,389** accepted source inputs, **70** original fixture files, registration
+and **65 pins** match before/after. The accepted locked build is reused:
+module `baef4e5a70f43b5d87fe086b4f5bd5b583c833e8bf07239ef05749f222035136`,
+**2,025,634 bytes**, with matching mirror and actual loaded-read identities.
+Empty arguments, `C:\MAINDIR`, IFORCE2-only seeding, shipped fixtures,
+100,000-block budget after batch 29,100 and clock 200 are preserved.
+Outer PTY150/kill-after5, inner115 and child TERM90/KILL95 bound execution.
+Evidence, raw selected records, exact limitations and inspected capture are in
+`scratch/runs/20261101-redline-selected-lookup-execution/` (second invocation
+under `second/`). All owned runtime PIDs/groups are absent. Box ID/state/expiry/
+handback: N/A; ownership none. Production and test files are unchanged.
+
 ## Lookup trace preparation: direct query return identified; runtime disk gate closed (2026-11-01)
 
 Run `20261101-redline-lookup-branch-cause` makes **zero original guest
