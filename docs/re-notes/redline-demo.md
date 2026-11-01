@@ -1,5 +1,58 @@
 # Redline (Accolade / Beyond Games, 1999): original single-player demo recovery
 
+## Ordinary Space consumed; later press reaches WORLD loading, player gate remains unresolved (2026-11-01)
+
+Run `20261101-redline-space-player-margin` verifies GL worker
+`01a195e7` and Redline worker `01a195e8` fresh final/result files and their
+**07:01:18 / 07:03:17 runtime/source/build releases** before taking sole
+runtime ownership. Current-main baseline is `7c16acb929fa08a7b3e6119982d9b221e6798a60`.
+Startup free space is **2,332,233,728 bytes**; the second start has
+**2,326,667,264 bytes**, both above 2.3 GB. The 2 GB read-loop floor never trips.
+
+The original Readme and historical Space-to-player driver/image are reviewed
+offline. The corrected scratch driver is reused with ordinary Space down/up,
+consumption checks, bounded 50-step loading requests, and a mandatory actual
+weapon/HUD review before Up. Two local original CLI invocations exit **0**
+after **182.088 s** and **216.688 s**. No Up or other movement input is sent.
+
+In the first invocation the pre-Space capture at **30,300** still shows
+loading. Space down is observed consumed at **30,302**, up at **30,504**;
+all observed scheduled/pending/cross-thread/renderer queues are empty. Held
+**30,502** and released **30,704** captures show coherent textured cinematic
+scenes without a first-person weapon or HUD. The visual gate correctly rejects
+movement. Consumed Space during loading does not establish a cutscene skip.
+
+That concrete timing mismatch licenses the second and final invocation:
+advance twelve 50-step chunks to a visually confirmed cinematic at **30,700**,
+then send a fresh ordinary Space press. To bound this later checkpoint, this
+driver uses **50 held and 50 released steps**, rather than the first driver's
+200 each. Space down is observed consumed at **30,710**, up at **30,762**,
+with all four observed queues empty. The held **30,760** and released
+**30,812** captures now show **LOADING WORLD**. This is a visible transition
+after the later press; it is not yet an actual player weapon/HUD view.
+
+The **precise first blocker is the scratch driver's fixed player-view gate
+ending during WORLD loading**: it provides no further bounded loading stage
+before the visual approval check. Review rejects that check, the driver quits,
+and both invocation slots are exhausted. No third original runs. There is
+**no demonstrated emulator blocker**, no current player-view qualification,
+and no paired before/held/released player-movement evidence. A future route
+needs bounded neutral loading continuation after Space before its visual gate;
+this run does not establish whether or when that continuation reaches player mode.
+
+The accepted locked build is reused with all **4,390 source inputs, 122 prior
+loaded-file hashes**, module `330b120d` and region mirror matching. Actual
+loaded modules/files in both invocations match; all **70 original/manifest/
+configuration pins** and source hashes remain unchanged. Before originals,
+actual sync/async emitted-callback tests pass whole shared **512 MB** memory
+and clock read-only checks and late-10,001 retention. No upload/capture
+diagnosis, source/renderer change, guest-state forcing, new EULA, audio/FPS
+or broader-suite claim is made. Raw captures, controls, identities, exits,
+gzip logs, review and final/result remain in the ignored run directory.
+Own six runtime/driver PIDs and both process groups are verified absent;
+no watcher, staging tree or box is owned (ID/state/expiry N/A).
+
+
 ## Space-to-player retry: disk admission blocks the corrected route (2026-11-01)
 
 Run `20261101-redline-space-player-retry` waits scratch-only for GL worker
