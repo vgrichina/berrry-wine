@@ -891,6 +891,100 @@ independent disk/deadline enforcement. Then advance the existing Turret through
 ordinary positioning/deployment to visible defense combat or additional orders.
 No FPS, audio or full-suite claim.
 
+## 2026-11-01: scratch heartbeat ordering repaired; second Turret placed and native saves retained
+
+Run `scratch/runs/20261101-battlezone-heartbeat-order-mission2/` fixes the
+demonstrated **scratch guard** race and advances one original through a second
+Turret's perimeter placement. **Identified defense combat, a kill, mission 2
+completion and a changed objective remain unverified.** No production source,
+test, fixture, TODOS or STATUS file changed in this assignment.
+
+`guard.py` now reads and parses the heartbeat before sampling fresh comparison
+clocks. `race-regression.py` deterministically publishes a heartbeat between the
+old clock sample and read: old ordering rejects age **−0.010 seconds**, corrected
+ordering accepts age **0**. A genuinely future timestamp still rejects. The
+unchanged six-second policy passes the accepted healthy **3.5-second** control
+and rejects **6.15-second** staleness, dead/replaced PID identity and an explicit
+failure file. Immutable first-failure and direct disk/deadline negatives pass.
+The independent guard and supervisor bytes are unchanged; they retain direct
+disk, deadline and process checks. Accepted detached Node/Python dispatch
+exit-0, exit-7 and timeout evidence is reused with exact unchanged helper inputs.
+
+Exact `urban-chaos-empty-arena-repair-nov01` author worker
+`01a1986d-057c-7040-9e19-4255fef2e7e3` released runtime/source/build; fresh
+launcher final/result, run final/result and directly absent recorded owned
+processes/groups opened the gate at **19:02:26 UTC**, deadline **19:27:26**.
+Input `02b44b8944e97cd518c7349119037eb43bedccb5` was repinned to published main
+`0f9dfbb45eff6ded35a15bcf3a316c700594d831`. The consumed production WASM is
+`7278c1018fa8208731a8e285f0bb2a5c35aa8e299592750ce3cedf6d354caef0`.
+Its allocator-only source/module delta is covered by that author's final locked
+build, repaired production/source regressions and five focused allocator tests;
+other accepted renderer/controller/observer inputs match. This run does not
+require the obsolete `dd43e4a` module. Original `bl_rel.exe` remains SHA-256
+`0554156663000fc1c0c0ad2275e460fa6fc9acda4abdd26c720b69019d04617a`.
+
+The first replay wrapper encountered a scratch command-lock collision: the
+long-lived detached supervisor held the same lock. It failed **before spawning
+a replay child**. Its initiating failure and terminal receipt remain intact.
+Finite route commands then used a separate receipt/lock directory with the
+unchanged detached helper. The same original continued; no retry or guard
+failure occurred. The accepted route reached **10810**, where the ordinary
+standard mission-complete PNG again exactly matches native dialog RGB and the
+frozen whole-memory/EIP/API/batch comparison passes. Next Mission, Launch,
+Scavenge, Recycler deployment and the first Turret build follow the proven route.
+
+At **17522**, the selected first Turret is **30 m** away with Pack Up available.
+Its reticle offers **Defend Storage Crates**; ordinary Space is bracketed at
+**17568/17593/17594/17614**, with matched neutral and actual standard captures.
+Later views show hull loss, earlier red radar contacts and streak/impact-like
+effects. These do **not** identify an attacking unit or prove a Turret kill.
+Forward-only/released-key observations also shift the view substantially;
+physical/async release alone does not establish guest SDL control consumption.
+Target acquisition and a clear view of actual defense combat remain the next
+specific gameplay blocker, rather than heartbeat freshness.
+
+The second ordinary Turret purchase at **26560/26585/26586/26606** consumes
+scrap **30/30 → 25/30**. Defense inventory at **27898** lists **two Turrets**.
+The shipped **O** objective display at **27990** explicitly calls for a defensive
+perimeter around the base and protection of the Command Tower and Solar Arrays;
+it is the current objective, not a newly completed one. The ordinary Backspace
+overview and pointer expose **Space: Go To** on nearby terrain. The second
+Turret receives that command at **28312/28337/28338/28358**. After no-input
+observation, its selected standard capture at **32784** shows it **68 m** from
+the player at the commanded point, with full displayed health and Pack Up
+available. This establishes useful ordinary perimeter placement beyond the
+predecessor's first build, without injected state or progress.
+
+Ordinary Escape → Save Game → native Save As produces **`C:\m2` (81,024 bytes)**
+and, after the perimeter placement, **`C:\m3` (66,050 bytes)**. The latter's
+SHA-256 is `e5506fc41132b395c3e7de455a070996d159890cf93b3e581f3343c93dd8d3da`.
+`native-save-latest.json` maps copied game-written VFS bytes to both guest paths;
+`RECOVERY.txt` gives the exact-file mount and ordinary Load Game proposal.
+The dialog did not append `.SAV`. **Reload is untested**; these are native saves,
+not VM snapshots. Only bytes were copied out; no guest/VFS mutation or reload ran.
+
+Original **4052619** and driver **4052618** both have OS wait **0**, original
+runtime **1,383.154 seconds**. Supervisors also terminate normally. Final
+**33222** has empty known scheduled/pending/cross-thread/renderer queues and
+all used sampled physical/async keys plus VK1 released. There are **100 balanced
+key edges/50 pairs**, **96 dequeued** and **90 main-window DispatchMessage edges**;
+the exact native Save As text/pause-release omissions are retained, with remaining
+edges matched in order. Mouse-button mask, guest post queue and SDL consumption
+remain unknown. No blanket all-key-dispatch claim is made.
+
+Before/after **4,064 source/module pins**, **153 fixture paths/tree members** and
+**269 observed runtime-read hashes** match; actual compilation observes the
+released module above. All **500 PNGs** pass CRC/complete-deflate validation.
+Primary/independent histories contain **5,526/5,524 samples**, sampled minima
+**2,024,783,872/2,024,787,968 bytes**, with no guard failure. Launch free space
+was **2,114,555,904 bytes**; launch 2.100 GB, stop 2.020 GB and floor 2.000 GB
+are unchanged. Finite samples do not establish unsampled history. Closed own
+journals were losslessly compressed with SHA roundtrips; same-byte PNG hardlinks
+retain every pathname and byte. Direct cleanup finds all **110 recorded owned
+PIDs/groups absent**, no own helpers or new child temp directories. Native box
+ID/state/expiry are N/A; delegated own shutdown is complete. No further original
+ran. No FPS, audio or full-suite claim.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
