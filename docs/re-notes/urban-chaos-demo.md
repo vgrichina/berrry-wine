@@ -546,3 +546,91 @@ was delegated. Cleanup/publication records carry final ownership handback.
 Next: investigate the auxiliary guard's unexplained termination before a fresh
 bounded original continuation toward playable HUD and held movement. The API
 correction does not authorize broader retained-context or blocking-wait work.
+
+
+## 2026-11-01 guard lifecycle investigation and current-main HUD/movement
+
+Evidence: `scratch/runs/20261101-urban-chaos-guard-gameplay/`.
+The prior auxiliary guard's signal sender and reason remain **UNKNOWN**.
+Retained raw worker events establish that its tool-owned launcher shell ended
+143 at16:22:24.467 UTC,779.120 seconds after startup. The primary driver's
+launcher shell ended143 at16:22:24.459, just8ms earlier. Its Python child
+survived with PPID1 and the original remained live. The guard's last heartbeat
+was16:22:23.486, free2,261,217,280 bytes; neither its disk-stop path nor a
+normal guard-stop explains shell status143. This supports a correlated external
+launcher/session lifecycle hypothesis, but no retained siginfo/audit record
+identifies the sender or reason. It does not establish a game crash.
+`guard-diagnosis.json` preserves the exact terminal events and limits.
+
+Scratch-only prevention replaces the foreground tool-owned auxiliary guard with
+a primary supervisor detached into its own session by a short, successful
+launcher. An independent quarter-second watchdog writes atomic heartbeats and
+enforces disk headroom and the absolute deadline; signal/exception records and
+owned child shutdown are explicit. The primary driver independently checks
+heartbeat freshness, process presence, disk, deadline, log bounds and original
+exit. Requests require a live guard and have finite180-second timeouts.
+`guard-live-proof.json` records advancing heartbeat counters/process identity
+before original launch. This supervisor remained live through the entire new
+attempt and ended normally:6,196 samples over its complete lifecycle, including
+the gate wait, minimum2,145,710,080 bytes free.
+These are sampled bounds with finite gaps, not continuous filesystem observation.
+
+The exact battlezone-dialog-capture-harvest author DONE/PUSH RELEASE at16:53:27,
+fresh launcher result0/final, and direct owned-process/group absence passed the
+gate at16:53:41.915. Dispatch input was`a17c5a7c85aae38a97653b801da68de6147048df`;
+actual main was`6ca46f8ffced6b6e4331e8fa4efa33e4d91c6872`; deadline17:18:41.915.
+All4,444 scoped source pins matched the accepted ready-any repair's final state,
+so its exact locked build and seven focused checks were reused, with local
+copies/hashes retained. No production source, build, test or fixture edits.
+Fresh manifest verification passed all1,122 paths, original Fallen.exe SHA256
+`8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`, and the
+reconstructed-config distinction. Fresh observer validation passed actual
+sync/async execution, whole512MB read-only comparison, unchanged clocks within
+a180-second bound (560ms observed), and late10,001 retention. SWEEP_CASE_DIR
+pointed to this run; only the controlling main context wrote observations.
+
+One original used the registered native software CLI, frozen batch-size100000,
+step requests at most25, and no build. Immediate startup free space was
+2,203,303,936 bytes. It exited0 after826.358 seconds, with no runtime/guard
+failure or second original. Native Setup backing was inspected at25; ordinary
+Okay, title205, map307, briefing409 and loading511 were reviewed. Opening711,
+1111 and1711 show changing cinematic scenes. HUD appears naturally at2011:
+D'arci on the street, radar/health, fist icon and3:58 timer. No extra cinematic
+skip input was needed.
+
+**Current-main ordinary movement is demonstrated.** Matched neutral samples
+at2011/2111/2112/2137 leave D'arci in the same starting street position.
+ArrowUp samples at2137/2237/2238/2263 show movement from the street into the
+passage toward the car park, then release and settlement at the new location.
+Each interval uses100 held/neutral batches,1 release-phase batch and25 settling
+batches, with individual requests capped25. All eight neutral/movement phase
+captures were inspected. VK38 is physically/asynchronously false before, true
+held, false released/settled. Actual dequeue/route/DispatchMessageA edges match:
+keydown2140, keyup2237. Three Enter pairs also match actual consumers; the
+briefing keyup is deferred until658 rather than claimed consumed at486/511.
+Final2263 known scheduled/pending/cross-thread/renderer queues are empty, sampled
+physical/async keys false and mouse mask0. Pressed latches remain set; guest
+post queues and SDL sampling remain unknown. The104 step replies are all
+present, maximum25; all recorded request latencies are within180 seconds
+(max74.611s). Native Setup mouse evidence is ordinary host input/dialog dismissal,
+not equivalent generic guest-dispatch proof.
+
+Actual runtime compilation observed canonical module
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+All4,444 source and1,124 fixture/manifest pins match after runtime. All304
+observed read hashes match after-run files:256 also match fresh before pins;
+48 font/PNG dependency reads lack fresh current-run before hashes and instead
+match retained accepted prior observations. That narrower coverage is explicit
+in`identity-comparison.json` and`accepted-prior-loaded.json`; no fresh
+before/after claim is made for those48. Observation excludes unhooked async,
+direct-OS and compiler reads and guest-memory identity. All52 PNGs pass CRC and
+complete-deflate validation; the full runtime gzip passes. Selected milestones
+and every neutral/movement phase were visually reviewed, not every remaining
+PNG. No FPS, audio, full27, browser/GPU or combat qualification.
+
+Own original/driver/supervisor completed, watchers were explicitly stopped,
+and cleanup records verify listed own PIDs/groups/helpers and new child temps
+absent. Native box ID/state/expiry are N/A; own shutdown was explicitly delegated
+and ownership handed back. Remaining diagnostic gap: historical SIGTERM sender
+and reason cannot be recovered from these records. The scoped HUD/movement goal
+has no remaining gameplay gap; no broader source repair is authorized here.
