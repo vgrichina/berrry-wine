@@ -2,7 +2,8 @@
 'use strict';
 
 // Final legacy mip bits: LINEARMIPNEAREST (0x10), LINEARMIPLINEAR (0x20).
-// Extracted production source only; no fullVM, guest or GPU rendering.
+// GPU single-image contract only; no fullVM, guest or GPU rendering.
+// Native sampling/caps are covered by test-d3dim-native-mip.js through the full production module.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -48,6 +49,7 @@ function build(source) {
   const result = compile(`
     (memory 1) (export "memory" (memory 0))
     (global $reg_base i32 (i32.const 64))
+    (global $d3dim_gpu_on i32 (i32.const 1))
     (func $g2w (param $p i32) (result i32) (local.get $p))
     (func $gl32 (param $p i32) (result i32) (i32.load (local.get $p)))
     (func $gs32 (param $p i32) (param $v i32) (i32.store (local.get $p) (local.get $v)))
@@ -130,7 +132,8 @@ function contract(source) {
   return { e, checks };
 }
 
-// Run verbatim filter-selection statements from the two production paths.
+// Run verbatim GPU filter selection and level-zero pixel sampling.
+// The native draw now has independent footprint/LOD semantics in the full-module test.
 // Only the surrounding state storage and unrelated fog dependency are fixtures.
 // Pixel fetch, format decode, addressing, and filtering are production WAT.
 function between(source, first, last) {
@@ -141,12 +144,6 @@ function between(source, first, last) {
   return source.slice(start, end);
 }
 function backendContract(source, gpuSource) {
-  const draw = extract(source, 'd3dim_draw_tl_triangle_textured');
-  const start = '(local.set $filter (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 16)))';
-  const software = between(draw, start, '\n    ;; The white texel');
-  // The final two closes belong to the enclosing production if/then.
-  assert(software.trimEnd().endsWith('))))))'));
-  const sw = software.trimEnd().slice(0, -2);
   const descriptor = between(extract(source.replace('(func (export "d3dim_gpu_describe")',
     '(func $d3dim_gpu_describe'), 'd3dim_gpu_describe'), ';; Filter: stage MAGFILTER,',
     '    (i32.store offset=108');
@@ -160,9 +157,10 @@ function backendContract(source, gpuSource) {
     (func $d3dim_tss_load (param $s i32) (param $stage i32) (param $type i32) (result i32)
       (i32.load (i32.add (local.get $s) (i32.mul (local.get $type) (i32.const 4)))))
     (func $d3dim_vertex_fog_on (param i32) (result i32) (i32.const 0))
-    (func (export "software") (param $state i32) (result i32)
-      (local $filter i32) (local $shade i32) (local $fog i32) (local $this i32) (local $linear i32)
-      ${sw} (local.get $linear))
+    (func (export "singleImage") (param $state i32) (result i32)
+      (local $filter i32) (local $out i32)
+      (local.set $out (i32.const 4096))
+      ${descriptor} (i32.load offset=104 (local.get $out)))
     (func (export "descriptor") (param $state i32) (param $out i32)
       (local $filter i32) ${descriptor})
     ${pieces}
@@ -188,8 +186,8 @@ function backendContract(source, gpuSource) {
       for (const mip of [0, 1, 2]) {
         new Uint8Array(e.memory.buffer).fill(0);
         put(1024 + slot, filter); put(1024 + 18 * 4, mip);
-        const linear = e.software(1024);
-        assert.equal(linear, filter === 2 ? 1 : 0, 'software filter selection');
+        const linear = e.singleImage(1024);
+        assert.equal(linear, filter === 2 ? 1 : 0, 'single-image filter selection');
         e.descriptor(1024, 4096);
         assert.equal(view.getUint32(4200, true), linear, 'GPU descriptor filter selection');
         const sampler = lower({ linear, addressU: 1, addressV: 3 });
@@ -245,7 +243,7 @@ assert.throws(() => backendContract(core, gpu.replace('mip: 0', 'mip: 1')),
 const selection = '(i32.eq (local.get $filter) (i32.const 2))';
 for (const value of [5, 6]) assert.throws(() => backendContract(core.replaceAll(selection,
   `(i32.or ${selection} (i32.eq (local.get $filter) (i32.const ${value})))`), gpu),
-  /software filter selection|GPU descriptor filter selection/);
+  /single-image filter selection|GPU descriptor filter selection/);
 const pixelLoad = '(i32.load (i32.add (local.get $ptr) (i32.shl (local.get $tx) (i32.const 2))))';
 assert(core.includes(pixelLoad));
 assert.throws(() => backendContract(core.replace(pixelLoad, '(i32.const 0)'), gpu),

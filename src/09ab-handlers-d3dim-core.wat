@@ -39,6 +39,7 @@
   ;;   +3928  legacy clip normalization enabled        (i32, 4)
   ;;   +3932  immutable legacy creation version (0=other) (i32, 4)
   ;;   +3936  active legacy TEXTUREMAPBLEND mode (2/4, or 0 for TSS) (4)
+  ;;   +3940  stage-zero MIPFILTER explicitly set (i32, including NONE)
   ;;   +3968  render Worker producer descriptor scratch (32)
   ;;   +4000  D3DCLIPSTATUS round-trip storage          (24)
   ;;   +4024  texture-transform block guest ptr        (i32, 4)  ($d3dim_tex_block)
@@ -389,6 +390,7 @@
   ;; Coefficients and private GL matrix storage are persistent scratch; the
   ;; enable flags below guard their use and each draw supplies fresh values.
   (func (export "d3d_render_reset_transients")
+    (global.set $d3dim_mip_on (i32.const 0))
     (global.set $rast_fog_on (i32.const 0))
     (global.set $rast_t1_on (i32.const 0))
     (global.set $d3dim_state_override (i32.const 0)))
@@ -833,6 +835,7 @@
   (data (region.addr $D3DIM_AUX 0x20) "D3DIM:DrawPrimitive vtx/prim\00")
   (global $D3DIM_UNIMPL_EXEC_OP i32 (region.addr $D3DIM_AUX 0x00000000))
   (global $D3DIM_UNIMPL_DRAW    i32 (region.addr $D3DIM_AUX 0x00000020))
+  (data (region.addr $D3DIM_AUX 0x40) "D3DIM:keyed mip filtering\00")
   ;; One i32 guest pointer per DX_OBJECTS slot ($DX_MAX), keyed by slot. Each
   ;; cached execute buffer block is [buf_guest, buf_size, D3DSTATUS (24
   ;; bytes), original bytes...]. D3DRM reads the status extents back through
@@ -3693,6 +3696,8 @@
     (local.set $addr (call $d3dim_tss_addr (local.get $state) (local.get $stage) (local.get $type)))
     (if (local.get $addr) (then
       (call $gs32 (local.get $addr) (local.get $val))
+      (if (i32.and (i32.eqz (local.get $stage)) (i32.eq (local.get $type) (i32.const 18)))
+        (then (call $gs32 (i32.add (local.get $state) (i32.const 3940)) (i32.const 1))))
       (if (i32.and (i32.eqz (local.get $stage))
             (i32.and (i32.ge_u (local.get $type) (i32.const 1))
                      (i32.le_u (local.get $type) (i32.const 6)))) (then
@@ -5446,6 +5451,135 @@
       (local.get $u) (local.get $v) (local.get $au) (local.get $av)
       (local.get $key)) (i32.const 0)))
 
+  ;; Only a live, correctly halved texture attachment is a mip successor.
+  ;; Strictly decreasing dimensions prohibit cycles; 16 levels cover the
+  ;; packed 16-bit surface dimensions. Truncated/malformed chains clamp at
+  ;; their last valid level. Never walk flip/depth attachments as mip levels.
+  (func $d3dim_mip_next (param $e i32) (result i32)
+    (local $obj i32) (local $n i32) (local $w i32) (local $h i32)
+    (local $bpp i32) (local $bytes i32) (local $dib i32)
+    (if (i32.eqz (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $e))) (i32.const 0x400000)))
+      (then (return (i32.const 0))))
+    (local.set $w (i32.load16_u offset=12 (local.get $e)))
+    (local.set $h (i32.load16_u offset=14 (local.get $e)))
+    (if (i32.and (i32.eq (local.get $w) (i32.const 1)) (i32.eq (local.get $h) (i32.const 1)))
+      (then (return (i32.const 0))))
+    (local.set $obj (load.field DxObject misc0 (local.get $e)))
+    (if (i32.eqz (local.get $obj)) (then (return (i32.const 0))))
+    ;; The link is emulator-owned guest COM storage, not a surface slot.
+    (local.set $n (call $ddraw_surface_entry_checked (local.get $obj)))
+    (if (i32.eqz (local.get $n))
+      (then (return (i32.const 0))))
+    (if (i32.or
+      (i32.ne (i32.load16_u offset=12 (local.get $n))
+        (select (i32.shr_u (local.get $w) (i32.const 1)) (i32.const 1) (i32.gt_u (local.get $w) (i32.const 1))))
+      (i32.ne (i32.load16_u offset=14 (local.get $n))
+        (select (i32.shr_u (local.get $h) (i32.const 1)) (i32.const 1) (i32.gt_u (local.get $h) (i32.const 1)))))
+      (then (return (i32.const 0))))
+    (local.set $bpp (i32.load16_u offset=16 (local.get $n)))
+    (if (i32.eqz (i32.or (i32.eq (local.get $bpp) (i32.const 8))
+          (i32.or (i32.eq (local.get $bpp) (i32.const 16)) (i32.eq (local.get $bpp) (i32.const 32)))))
+      (then (return (i32.const 0))))
+    (local.set $dib (i32.load offset=20 (local.get $n)))
+    (local.set $bytes (i32.mul (i32.load16_u offset=18 (local.get $n)) (i32.load16_u offset=14 (local.get $n))))
+    (if (i32.or (i32.ge_u (local.get $dib) (i32.shl (memory.size) (i32.const 16)))
+          (i32.gt_u (local.get $bytes) (i32.sub (i32.shl (memory.size) (i32.const 16)) (local.get $dib))))
+      (then (return (i32.const 0))))
+    (if (i32.or (i32.eqz (i32.load offset=20 (local.get $n)))
+      (i32.lt_u (i32.load16_u offset=18 (local.get $n))
+        (i32.mul (i32.load16_u offset=12 (local.get $n))
+          (i32.shr_u (i32.load16_u offset=16 (local.get $n)) (i32.const 3)))))
+      (then (return (i32.const 0))))
+    (local.get $n))
+
+  (func $d3dim_mip_sample_level
+    (param $e i32) (param $u f32) (param $v f32)
+    (param $au i32) (param $av i32) (param $linear i32) (result i32)
+    (call $d3dim_texture_sample_prepared
+      (i32.load16_u offset=12 (local.get $e)) (i32.load16_u offset=14 (local.get $e))
+      (i32.load16_u offset=16 (local.get $e)) (i32.load16_u offset=18 (local.get $e))
+      (i32.load offset=20 (local.get $e)) (call $dx_surf_fmt_get (local.get $e))
+      (call $dx_surf_pal_get (local.get $e)) (call $dx_surf_pal_alpha (local.get $e))
+      (local.get $u) (local.get $v) (local.get $au) (local.get $av) (local.get $linear)))
+
+  (func $d3dim_mip_sample
+    (param $e i32) (param $x i32) (param $y i32)
+    (param $au i32) (param $av i32) (param $sample_u f32) (param $sample_v f32) (result i32)
+    (local $u f32) (local $v f32) (local $q f32) (local $fx f32) (local $fy f32)
+    (local $dxu f32) (local $dxv f32) (local $dyu f32) (local $dyv f32)
+    (local $rho2 f32) (local $lod f32) (local $frac f32)
+    (local $linear i32) (local $level i32) (local $i i32) (local $n i32) (local $c i32)
+    (global.set $d3dim_mip_effective_linear (global.get $d3dim_mip_mag))
+    (local.set $fx (f32.convert_i32_s (local.get $x)))
+    (local.set $fy (f32.convert_i32_s (local.get $y)))
+    (local.set $u (f32.add (global.get $d3dim_mip_uc) (f32.add (f32.mul (global.get $d3dim_mip_ua) (local.get $fx)) (f32.mul (global.get $d3dim_mip_ub) (local.get $fy)))))
+    (local.set $v (f32.add (global.get $d3dim_mip_vc) (f32.add (f32.mul (global.get $d3dim_mip_va) (local.get $fx)) (f32.mul (global.get $d3dim_mip_vb) (local.get $fy)))))
+    (local.set $q (f32.add (global.get $d3dim_mip_qc) (f32.add (f32.mul (global.get $d3dim_mip_qa) (local.get $fx)) (f32.mul (global.get $d3dim_mip_qb) (local.get $fy)))))
+    ;; Invalid/singular projective coordinates take level zero, matching the
+    ;; existing bounded coordinate policy; they must never trap in log/trunc.
+    (if (i32.eqz (f32.gt (f32.abs (local.get $q)) (f32.const 0.000000000001)))
+      (then (return (call $d3dim_mip_sample_level (local.get $e) (f32.const 0) (f32.const 0)
+        (local.get $au) (local.get $av) (global.get $d3dim_mip_mag)))))
+    (local.set $u (f32.div (local.get $u) (local.get $q)))
+    (local.set $v (f32.div (local.get $v) (local.get $q)))
+    (local.set $dxu (f32.mul (f32.div (f32.sub (global.get $d3dim_mip_ua) (f32.mul (local.get $u) (global.get $d3dim_mip_qa))) (local.get $q)) (f32.convert_i32_u (i32.load16_u offset=12 (local.get $e)))))
+    (local.set $dxv (f32.mul (f32.div (f32.sub (global.get $d3dim_mip_va) (f32.mul (local.get $v) (global.get $d3dim_mip_qa))) (local.get $q)) (f32.convert_i32_u (i32.load16_u offset=14 (local.get $e)))))
+    (local.set $dyu (f32.mul (f32.div (f32.sub (global.get $d3dim_mip_ub) (f32.mul (local.get $u) (global.get $d3dim_mip_qb))) (local.get $q)) (f32.convert_i32_u (i32.load16_u offset=12 (local.get $e)))))
+    (local.set $dyv (f32.mul (f32.div (f32.sub (global.get $d3dim_mip_vb) (f32.mul (local.get $v) (global.get $d3dim_mip_qb))) (local.get $q)) (f32.convert_i32_u (i32.load16_u offset=14 (local.get $e)))))
+    (local.set $rho2 (f32.max
+      (f32.add (f32.mul (local.get $dxu) (local.get $dxu)) (f32.mul (local.get $dxv) (local.get $dxv)))
+      (f32.add (f32.mul (local.get $dyu) (local.get $dyu)) (f32.mul (local.get $dyv) (local.get $dyv)))))
+    (local.set $linear (global.get $d3dim_mip_mag))
+    (if (f32.gt (local.get $rho2) (f32.const 1)) (then
+      (local.set $linear (global.get $d3dim_mip_min))
+      (if (global.get $d3dim_mip_mip) (then
+        ;; Reuse the production shader sampler's bounded log2 approximation.
+        (local.set $lod (f32.min (f32.const 15) (f32.mul (f32.const 0.5)
+          (f32x4.extract_lane 0 (call $d3d_shader_vm_log2 (f32x4.splat (local.get $rho2)))))))
+        (if (i32.eq (global.get $d3dim_mip_mip) (i32.const 1))
+          (then (local.set $level (i32.trunc_sat_f32_u (f32.add (local.get $lod) (f32.const 0.5)))))
+          (else
+            (local.set $level (i32.trunc_sat_f32_u (local.get $lod)))
+            (local.set $frac (f32.sub (local.get $lod) (f32.floor (local.get $lod))))))))))
+    (block $last (loop $walk
+      (br_if $last (i32.ge_u (local.get $i) (local.get $level)))
+      (local.set $n (call $d3dim_mip_next (local.get $e)))
+      (br_if $last (i32.eqz (local.get $n)))
+      (local.set $e (local.get $n))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $walk)))
+    (global.set $d3dim_mip_effective_linear (local.get $linear))
+    ;; Retain the established edge/span lookup interpolation, including its
+    ;; level-zero rounding. Derivatives come from unrounded triangle planes.
+    (local.set $c (call $d3dim_mip_sample_level (local.get $e) (local.get $sample_u) (local.get $sample_v)
+      (local.get $au) (local.get $av) (local.get $linear)))
+    (if (i32.and (f32.gt (local.get $frac) (f32.const 0)) (i32.eq (local.get $i) (local.get $level)))
+      (then
+        (local.set $n (call $d3dim_mip_next (local.get $e)))
+        (if (local.get $n) (then
+          (local.set $c (call $d3dim_color_lerp (local.get $c)
+            (call $d3dim_mip_sample_level (local.get $n) (local.get $sample_u) (local.get $sample_v)
+              (local.get $au) (local.get $av) (local.get $linear)) (local.get $frac)))))))
+    (local.get $c))
+
+  ;; Native D3D triangle sampler state. Never enabled by GL/Glide or GPU
+  ;; descriptors. Planes carry U=u*rhw, V=v*rhw, Q=rhw; quotient-rule
+  ;; derivatives are evaluated at each fragment, before address wrapping.
+  (global $d3dim_mip_on (mut i32) (i32.const 0))
+  (global $d3dim_mip_min (mut i32) (i32.const 0))
+  (global $d3dim_mip_mag (mut i32) (i32.const 0))
+  (global $d3dim_mip_mip (mut i32) (i32.const 0))
+  (global $d3dim_mip_effective_linear (mut i32) (i32.const 0))
+  (global $d3dim_mip_ua (mut f32) (f32.const 0))
+  (global $d3dim_mip_ub (mut f32) (f32.const 0))
+  (global $d3dim_mip_uc (mut f32) (f32.const 0))
+  (global $d3dim_mip_va (mut f32) (f32.const 0))
+  (global $d3dim_mip_vb (mut f32) (f32.const 0))
+  (global $d3dim_mip_vc (mut f32) (f32.const 0))
+  (global $d3dim_mip_qa (mut f32) (f32.const 0))
+  (global $d3dim_mip_qb (mut f32) (f32.const 0))
+  (global $d3dim_mip_qc (mut f32) (f32.const 0))
+
   (func $viewport_draw_textured_span
     (param $rt_entry i32) (param $tex_entry i32)
     (param $blend i32) (param $src_blend i32) (param $dst_blend i32)
@@ -5524,6 +5658,9 @@
         (i32.ne
           (i32.and (i32.load offset=28 (local.get $tex_entry)) (i32.const 0x100))
           (i32.const 0))))
+    (if (i32.and (local.get $key_active)
+          (i32.and (global.get $d3dim_mip_on) (i32.ne (global.get $d3dim_mip_mip) (i32.const 0))))
+      (then (call $crash_unimplemented (region.addr $D3DIM_AUX 0x40))))
     (if (local.get $key_active) (then
       (local.set $key_rgb (call $d3dim_decode_surface_pixel
         (local.get $tex_entry) (i32.load offset=24 (local.get $tex_entry)) (local.get $tbpp)))))
@@ -5634,6 +5771,21 @@
       (local.set $diffuse (if (result i32) (i32.eq (local.get $c0) (local.get $c1))
         (then (local.get $c0))
         (else (call $d3dim_color_lerp (local.get $c0) (local.get $c1) (local.get $t)))))
+      (if (global.get $d3dim_mip_on)
+        (then
+          (local.set $sample (call $d3dim_mip_sample (local.get $tex_entry)
+            (local.get $x) (local.get $y) (local.get $address_u) (local.get $address_v)
+            (local.get $tu) (local.get $tv)))
+          (local.set $linear (global.get $d3dim_mip_effective_linear))
+          ;; No-mip keyed sampling retains the raw-index and tap replacement
+          ;; rules below, with the footprint-selected within-image filter.
+          (if (local.get $key_blend) (then
+            (local.set $sample (call $d3dim_texture_sample_keyed
+              (local.get $tw) (local.get $th) (local.get $tbpp) (local.get $tpitch)
+              (local.get $tdib) (local.get $tfmt) (local.get $tpal) (local.get $tpal_alpha)
+              (local.get $tu) (local.get $tv) (local.get $address_u) (local.get $address_v)
+              (local.get $linear) (i32.const 1) (local.get $sample_key))))))
+        (else
       (if (local.get $fast16)
         (then
           ;; Non-finite coordinates select texel zero, as in the general path.
@@ -5730,6 +5882,7 @@
             (local.get $tu) (local.get $tv)
             (local.get $address_u) (local.get $address_v) (local.get $linear)
             (global.get $gl_sw_r_border)))))))
+))
       (local.set $draw (i32.const 1))
       ;; D3DRENDERSTATE_COLORKEYENABLE discards a matching texture sample.
       ;; It must happen before depth testing/writes: transparent HUD texels
@@ -6332,6 +6485,20 @@
     (local.set $v1 (f32.mul (local.get $v1) (local.get $q1)))
     (local.set $u2 (f32.mul (local.get $u2) (local.get $q2)))
     (local.set $v2 (f32.mul (local.get $v2) (local.get $q2)))
+    (if (global.get $d3dim_mip_on) (then
+      (call $rast_plane (local.get $x0) (local.get $y0) (local.get $u0) (local.get $x1) (local.get $y1) (local.get $u1) (local.get $x2) (local.get $y2) (local.get $u2))
+      (global.set $d3dim_mip_ua (global.get $rast_pa))
+      (global.set $d3dim_mip_ub (global.get $rast_pb))
+      (global.set $d3dim_mip_uc (global.get $rast_pc))
+      (call $rast_plane (local.get $x0) (local.get $y0) (local.get $v0) (local.get $x1) (local.get $y1) (local.get $v1) (local.get $x2) (local.get $y2) (local.get $v2))
+      (global.set $d3dim_mip_va (global.get $rast_pa))
+      (global.set $d3dim_mip_vb (global.get $rast_pb))
+      (global.set $d3dim_mip_vc (global.get $rast_pc))
+      (call $rast_plane (local.get $x0) (local.get $y0) (local.get $q0) (local.get $x1) (local.get $y1) (local.get $q1) (local.get $x2) (local.get $y2) (local.get $q2))
+      (global.set $d3dim_mip_qa (global.get $rast_pa))
+      (global.set $d3dim_mip_qb (global.get $rast_pb))
+      (global.set $d3dim_mip_qc (global.get $rast_pc))
+    ))
     ;; Sort by y, carrying all attributes with the screen-space vertices.
     (if (i32.gt_s (local.get $y0) (local.get $y1)) (then
       (local.set $tx (local.get $x0)) (local.set $ty (local.get $y0))
@@ -7245,6 +7412,32 @@
       (f32.load (i32.add (local.get $v2) (i32.const 8)))
       (i32.load (i32.add (local.get $v0) (i32.const 16)))))
 
+  ;; Stage MIN/MAG/MIP values take precedence over their legacy sources.
+  ;; Legacy 3/4 use point texels, 5/6 bilinear; 3/5 select nearest mip,
+  ;; 4/6 blend adjacent mips. NONE stays at level zero under minification.
+  (func $d3dim_mip_filters (param $state i32)
+    (local $min i32) (local $mag i32) (local $mip i32) (local $legacy i32)
+    (local.set $min (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 17)))
+    (local.set $mag (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 16)))
+    (local.set $mip (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 18)))
+    (local.set $legacy (call $gl32 (i32.add (local.get $state) (i32.const 328))))
+    (if (i32.eqz (local.get $min)) (then
+      (local.set $min (select (i32.const 2) (i32.const 1)
+        (i32.or (i32.eq (local.get $legacy) (i32.const 2))
+          (i32.or (i32.eq (local.get $legacy) (i32.const 5)) (i32.eq (local.get $legacy) (i32.const 6))))))
+      (if (i32.and (i32.eqz (local.get $mip))
+            (i32.eqz (call $gl32 (i32.add (local.get $state) (i32.const 3940))))) (then
+        (if (i32.and (i32.ge_u (local.get $legacy) (i32.const 3)) (i32.le_u (local.get $legacy) (i32.const 6)))
+          (then (local.set $mip (select (i32.const 1) (i32.const 2)
+            (i32.ne (i32.and (local.get $legacy) (i32.const 1)) (i32.const 0))))))))))
+    (if (i32.eqz (local.get $mag)) (then
+      (local.set $mag (call $gl32 (i32.add (local.get $state) (i32.const 324))))))
+    (global.set $d3dim_mip_min (i32.eq (local.get $min) (i32.const 2)))
+    (global.set $d3dim_mip_mag (i32.eq (local.get $mag) (i32.const 2)))
+    (global.set $d3dim_mip_mip (local.get $mip))
+    (global.set $d3dim_mip_on (i32.or (i32.ne (local.get $mip) (i32.const 0))
+      (i32.ne (global.get $d3dim_mip_min) (global.get $d3dim_mip_mag)))))
+
   (func $d3dim_draw_tl_triangle_textured
     (param $this i32) (param $rt i32) (param $tex i32) (param $use_z i32)
     (param $v0 i32) (param $v1 i32) (param $v2 i32)
@@ -7258,6 +7451,7 @@
     (local $wrap i32)
     (local $u0 f32) (local $u1 f32) (local $u2 f32)
     (local $t0 f32) (local $t1 f32) (local $t2 f32)
+    (global.set $d3dim_mip_on (i32.const 0))
     (if (i32.eqz (local.get $tex)) (then
       (call $d3dim_draw_tl_triangle
         (local.get $this) (local.get $rt) (local.get $use_z)
@@ -7306,28 +7500,21 @@
       (local.set $alphaop (call $d3dim_stage_operation (local.get $state) (i32.const 4)))
       (local.set $address_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 13)))
       (local.set $address_v (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 14)))
-      (local.set $filter (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 16)))
-      (if (i32.eqz (local.get $filter))
-        (then (local.set $filter (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 17)))))
-      ;; DX1 execute buffers predate texture-stage state. Their filtering
-      ;; controls are D3DRENDERSTATE_TEXTUREMAG/MIN (17/18), which is exactly
-      ;; what the retained-mode Render menu emits.
-      (if (i32.eqz (local.get $filter))
-        (then (local.set $filter (call $gl32 (i32.add (local.get $state) (i32.const 324))))))
-      (if (i32.eqz (local.get $filter))
-        (then (local.set $filter (call $gl32 (i32.add (local.get $state) (i32.const 328))))))
+      (call $d3dim_mip_filters (local.get $state))
+      (local.set $linear (global.get $d3dim_mip_mag))
       (local.set $shade (call $gl32 (i32.add (local.get $state) (i32.const 292))))
       ;; Vertex fog: FOGENABLE=28 (offset 368) with FOGTABLEMODE=35 (396)
       ;; NONE. A TL vertex carries its own factor in the specular alpha.
       (local.set $fog (call $d3dim_vertex_fog_on (local.get $this)))
-      (if (i32.eq (local.get $filter) (i32.const 2)) (then (local.set $linear (i32.const 1))))))
+      ))
     ;; The white texel stands in for "no texture": the face is its diffuse
     ;; colour and alpha, whatever stage 0 says about a texture it does not have.
     (if (i32.eq (local.get $tex) (global.get $gl_sw_white)) (then
       (local.set $colorop (i32.const 4))
       (local.set $alphaop (i32.const 4))
       (local.set $color_key_enable (i32.const 0))
-      (local.set $linear (i32.const 0))))
+      (local.set $linear (i32.const 0))
+      (global.set $d3dim_mip_on (i32.const 0))))
     (if (i32.eqz (local.get $address_u)) (then (local.set $address_u (i32.const 1))))
     (if (i32.eqz (local.get $address_v)) (then (local.set $address_v (i32.const 1))))
     (if (i32.eqz (local.get $src_blend)) (then (local.set $src_blend (i32.const 2))))
@@ -7392,6 +7579,7 @@
       (local.get $c2)
       (f32.load (i32.add (local.get $v2) (i32.const 8)))
       (local.get $zbuf) (local.get $zfunc) (local.get $zwrite))
+    (global.set $d3dim_mip_on (i32.const 0))
     (global.set $rast_fog_on (i32.const 0)))
 
   ;; D3D texture wrapping for stage 0: bit 0 = U, bit 1 = V. DX5 and earlier
@@ -8419,12 +8607,18 @@
     ;; DX7 texture-stage filters have distinct MINF/MAGF bits. The legacy
     ;; 0xFF filter mask alone advertises none of them. Both the software sampler
     ;; and GPU fixed-function descriptor implement point/linear; do not claim
-    ;; anisotropic or mip-stage support. Leave legacy D3D1/2/3 caps unchanged.
+    ;; anisotropic support. Native triangle mip caps are added separately.
+    ;; Leave legacy D3D1/2/3 and single-image line caps unchanged.
     ;; MINFPOINT | MINFLINEAR | MAGFPOINT | MAGFLINEAR = 0x03000300.
     (i32.store offset=40 (local.get $wa)
       (i32.or (i32.load offset=40 (local.get $wa)) (i32.const 0x03000300)))
     (i32.store offset=96 (local.get $wa)
       (i32.or (i32.load offset=96 (local.get $wa)) (i32.const 0x03000300)))
+    ;; Only native triangle drawing implements implicit mip LOD. GPU keeps
+    ;; its single-image contract; line caps and legacy descriptors stay bounded.
+    (if (i32.eqz (global.get $d3dim_gpu_on)) (then
+      (i32.store offset=96 (local.get $wa)
+        (i32.or (i32.load offset=96 (local.get $wa)) (i32.const 0x0003003C)))))
     (i32.store (i32.add (local.get $wa) (i32.const 116)) (i32.const 0xD00))  ;; DeviceRenderBitDepth
     (i32.store (i32.add (local.get $wa) (i32.const 120)) (i32.const 0x500))  ;; DeviceZBufferBitDepth
     (i32.store (i32.add (local.get $wa) (i32.const 124)) (i32.const 1))      ;; dwMinTextureWidth

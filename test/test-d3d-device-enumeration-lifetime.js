@@ -86,7 +86,7 @@ const extraWat=String.raw`
         if(item.name==='hal')assert.strictEqual(e.guest_read32(caps),0x8aea1);
         assert.strictEqual(e.guest_read32(caps)&0x401,0x401,'D3D7 float TL DrawPrimitive capability');
         for(const offset of [36,92]) assert.strictEqual(e.guest_read32(caps+offset)&0x20,0,'D3D7 enumeration must not require square textures');
-        for(const offset of [40,96]) assert.strictEqual(e.guest_read32(caps+offset),0x030003C3,'D3D7 callback point/linear stage filter caps without MIPNEAREST/MIPLINEAR');
+        for(const offset of [40,96]) assert.strictEqual(e.guest_read32(caps+offset),offset===96?0x030303FF:0x030003C3,'D3D7 native triangle mip filters; lines retain single-image caps');
       }
       e.resume(sp,version,cycle%2?0:1);
     }
@@ -154,7 +154,7 @@ const extraWat=String.raw`
     assert.strictEqual(e.guest_read32(outerCtx),outerCount,label+' outer callbacks');
     assert.strictEqual(e.guest_read32(innerCtx),outerCount*(cancel?1:count(inner)),label+' inner callbacks');
     assert.strictEqual(e.guest_read32(outerCtx+4),e.guest_read32(outerCtx+8),label+' nested stack');
-    for(const offset of [12,16]) assert.strictEqual(e.guest_read32(outerCtx+offset),outer===7?0x030003C3:0xC3,label+' actual x86 callback filter caps without MIPNEAREST/MIPLINEAR');
+    for(const offset of [12,16]) assert.strictEqual(e.guest_read32(outerCtx+offset),outer===7?(offset===16?0x030303FF:0x030003C3):0xC3,label+' actual x86 callback native triangle mip caps; legacy/lines unchanged');
     assert.strictEqual(e.live(),guestBaseline,label+' allocation balance');
   }
   console.log('PASS 32 real x86 nested enumeration cases through COM and continuation thunks');

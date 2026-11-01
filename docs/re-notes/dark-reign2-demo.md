@@ -724,3 +724,83 @@ module `330b120d…` and region mirror matched before review. This documentation
 change needs no new build and runs no original or installed callback observer.
 No runtime PID/group, temporary runtime directory or test box was acquired;
 box ID/state/expiry are N/A.
+
+### Native mip sampling implementation (2026-11-01)
+
+The generic native D3D triangle path now selects and blends mip levels from the
+screen-space texture footprint. `d3dim_draw_tl_triangle_textured` lowers stage
+MIN/MAG/MIP and legacy TEXTUREMIN/MAG separately. The rasterizer builds planes
+for U=u*rhw, V=v*rhw and Q=rhw, then evaluates quotient-rule derivatives at each
+fragment. Its isotropic footprint is the larger of the two texel-space gradient
+lengths; LOD is log2 of that footprint. Lookup coordinates retain the existing
+perspective-correct edge/span interpolation, including level-zero rounding.
+No guest state, fixture configuration or backend selection is forced.
+
+Legacy filters 3/5 choose the nearest mip, 4/6 blend adjacent mips, and 5/6 use
+bilinear filtering within each image. Stage MIPFILTER selects NONE/POINT/LINEAR
+independently of MINFILTER and MAGFILTER. An explicitly set NONE overrides a
+legacy mip request, including when MINFILTER itself is unset. Magnification
+uses MAGFILTER; minification uses MINFILTER even with mip selection disabled.
+
+Mip successors must be live owned surface wrappers with successively halved
+width/height, valid storage and a sufficient pitch. Traversal is bounded to
+16 levels, stops at 1x1, and clamps to the last valid available image on a
+truncated, missing or malformed chain. Each sampled level supplies its own
+size, pitch, pixel format and palette metadata. Existing allocation and Device7
+Load implementations are unchanged. Keyed mip filtering retains an explicit
+named unsupported error; cross-level color-key coverage is not implemented.
+Ordinary level-zero keying remains on its existing path. Endpoint reset clears
+the new draw-scoped sampler guard even after an unsupported draw aborts.
+
+Only the native **D3D7 triangle** filter descriptor gains the four legacy mip
+bits plus MIPFPOINT/MIPFLINEAR: `0x030303ff`. HAL/RGB enumeration and GetCaps7
+share that builder. With the GPU renderer selected, its triangle mask stays
+`0x030003c3`, consistent with the unchanged single-image `mip: 0` descriptor.
+Line and older device descriptors remain conservative. No GPU execution or
+parity is claimed.
+
+`flock /tmp/wine-build.lock bash tools/build.sh` passed. The new
+`test/test-d3dim-native-mip.js` compiles the complete production closure with
+boundary adapters, without substituting the draw or sampling implementation.
+It passed 38 distinguishable pixel observations: magnification/minification,
+nearest and blended levels, spatially varying perspective gradients, vertical
+footprints, all four legacy mip filters, stage precedence, declared/partial/
+malformed chains, invalid wrappers, per-level padded RGB565 storage, and native
+versus GPU descriptor bounds. Complete checker-image comparisons preserve
+level-zero point/bilinear pixels. Unsupported keyed mip requests and endpoint
+cleanup have explicit negative assertions. `pixels.json` and the reviewed
+`pixels.png` contact sheet preserve the rendered evidence.
+
+Existing indexed-texture rendering, Device7 Load and software GL mip tests
+passed. Device enumeration passed 16 nested version pairs, 96 allocation-balanced
+cycles and 32 actual x86 callback cases; only the two assertions for the new
+native triangle mask were updated. The extracted legacy tests now explicitly
+cover the GPU single-image boundary; point/linear assertions and mutation
+negatives remain. Filter-caps and final-mip-bits tests passed. The MIPLINEAR test
+passed its 36 GPU sampling cases, then retained the pre-existing unrelated
+texture-operation assertion failure (`0x3ff` expected, `0x0f` actual). That
+assertion was not weakened.
+
+The predecessor's fresh final/result and explicit runtime/source/build release
+opened the initial gate; the implementation baseline was main `36983f7ec`.
+Two bounded local CLI startups used the pinned originals without game input.
+The second followed a proven endpoint-reset defect (a failing transient-state
+assertion before the fix) and loaded the final 2,026,995-byte production module,
+SHA-256 `dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+It exited normally after 550 batches in 17.800 seconds. The reviewed 640x480
+capture shows the rendered mission-selection menu with Demo Mission 1, Normal
+difficulty and Load Mission. The guest log accepts Direct3D HAL and reports
+mipmap/mipfilter support; the exact mipmapping rejection is absent. No later
+fatal startup rejection appeared within this bound. No mission was launched;
+this establishes startup progress, without gameplay, audio, FPS or full-suite
+qualification.
+
+Evidence is in `scratch/runs/20261101-dark-reign2-native-mip-implementation/`.
+The validated read-only observer exercised actual synchronous/asynchronous
+module execution, preserved the entire shared 512 MiB memory and clock
+identities, and bounded late-event retention. The actual loaded module, 141
+runtime source reads, 4,392 source/build/test identities, all 29 pinned originals
+and the 27-entry fixture manifest matched. Both startup processes/groups have
+exited; no watcher, temporary runtime directory or test box remains owned.
+The final run's minimum free disk was 2,436,890,624 bytes. Runtime/source/build
+ownership is released with the final evidence and publication record.
