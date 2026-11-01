@@ -1,5 +1,141 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: static child INI investigation — DLL identity loses System path
+
+**Proven transport defect: the renderer child registers original Core.dll as
+`C:\Core.dll`, whereas its parent registers it as `C:\System\Core.dll`.**
+Original Core's startup derives its base directory from **its own DLL handle**,
+then changes the file manager's directory. The correct EXE filename and inherited
+cwd therefore do not exclude a later wrong-directory lookup. This provides a
+concrete mechanism for the observed `MisingIni`, but the preserved runtime trace
+does **not** identify the first failing operation or which error branch fired.
+No startup repair is claimed validated; stop here pending the focused diagnostic
+below. No game/child/browser runtime, build or production/test edit was performed.
+
+Analysis evidence is in ignored
+`scratch/runs/20261101-rune-child-ini-cause/`; input runtime evidence remains
+untouched in `20261101-rune-renderer-child-cli`. Source identity was recorded at
+main `bbfb46421afa71d0f3899f9dc3cd0ac2308183c8`, which contains incoming
+`95b5a2440`. The previous actual module
+`2be3cebaa1c08a8e12075de000bfb83fb8692841c1452d9e317203f5c2fce8cf`
+(2,025,029 bytes) belongs to the earlier accepted `9ba1c215c` runtime;
+it was **not** rebuilt or tested against current main. `identities.json` proves
+the relevant path-helper/spawn snippets are byte-identical to `9ba1c215c`, as are
+the complete examined VFS, DLL-loader, process-boot and GetModuleFileName source
+files. Whole `test/run.js` differs through unrelated menu-shortcut diagnostics.
+
+### Export, cwd and DLL identity
+
+The retained argv for child **2999914** names EXE
+`/tmp/wa-child-YQmIub/in/system/rune.exe`, VFS tree
+`/tmp/wa-child-YQmIub/in`, guest EXE `c:\system\rune.exe` and cwd
+`c:\System\`. Its DLL seeds instead point to the registered original
+`test/binaries/candidates/rune-demo/game/System/{MSVCRT,Core,Engine,Window}.dll`.
+`test/run.js`'s `spawnVfsChild` exports the VFS and propagates cwd correctly,
+but forwards those host seed paths unchanged. `capturedGuestPath` only accepts
+host paths inside the exported tree; `besideExeGuestPath` only accepts DLLs in
+the host EXE's directory. Both reject each original seed in this child.
+`lib/dll-loader.js`'s `loadDllsOwned` then uses `dll.path || C:\<dll.name>`;
+the loaded-module GetModuleFileName handler returns that recorded path.
+
+`node scratch/runs/20261101-rune-child-ini-cause/probe.cjs` **PASS** evaluates
+the actual CLI helper definitions in a JS VM, using the retained argv without
+starting the CLI or an emulator. All four parent System paths become root paths
+in the child. Supplying the corresponding **exported** host paths to the same
+helpers produces `C:\system\<name>.dll`. This last result validates path
+mapping only: the removed full temporary DLL tree was not recreated or executed.
+
+The retained input contains seven System files per invocation: six INIs and an
+empty Rune.log. It is a selected preservation, **not** a complete retained
+203-file snapshot. Rune.ini and Default.ini both hash to
+`716bcfbbcc268f92b5e4a4da778680b1e1759751cf876e2ab4687da58d8ea3da`;
+User.ini and DefUser.ini both hash to
+`55d2f8f3f265e1c9a6ba4571fc0ac0457f50ec16ef4b1c3f753217e580b7ac6d`.
+The pure-JS VFS probe opens all four relative names successfully at the actual
+passed cwd and fails all four at `C:\`. This rules out case spelling and the
+initial cwd argument as sufficient explanations for their absence; it does not
+observe the live child's later cwd. No replacement INI was generated.
+
+### Original binary lookup chain
+
+Original **System/Core.dll**, 790,528 bytes, SHA-256
+`70394c5e0be98fad3bc4aa46109804ef179e624d1ef9f08a4bcee9e24801a6e6`,
+preferred base `0x10100000`, was disassembled read-only with objdump. Export
+name ordinals were read from the PE itself; `appInit` is export index 1360,
+VA `0x10102b21`, jumping to `0x1014c950`. Addresses below are original VAs,
+not the child's relocated addresses.
+
+* Core CRT entry `0x1017285f` calls `0x101013d9` → `0x101064c0`, which stores
+  its hModule argument at `0x101e3c30`. The loader supplies Core's load address
+  as hModule, not zero.
+* `appBaseDir`, `0x101021c6` → `0x10170f70`, queries that stored handle through
+  GetModuleFileNameA/W (IAT `0x102ab3b0` / `0x102ab3dc`), caches its directory
+  at `0x102a9c80`, and strips the filename. `appPackage` separately queries
+  **handle zero** at `0x1017135f` / `0x10171394`. The retained trace's return
+  `0x10c1a365` maps to original `0x10171365`, so it proves the package/EXE
+  query, **not** the base-directory/DLL query.
+* appInit calls appBaseDir at `0x1014ca7d`, then calls file-manager vtable
+  slot `+0x2c` at `0x1014ca8b`. Original Rune.exe passes its file manager
+  `0x1094ed54` to appInit at `0x10908d01`; its vtable `0x109264ec` has slot
+  `+0x2c` → `0x109011f4` → `0x10908580`, calling SetCurrentDirectoryA/W at
+  `0x10908616` / `0x109085ba`. Thus a root Core path can override inherited
+  System cwd before INI lookup.
+* appInit uses `INI=` or `%s.ini`, checks file-manager slot `+8` at
+  `0x1014cbb8`, and, on a negative result with the required flag set, tries
+  **Default.ini** via appLoadFileToString at `0x1014cbec`. A zero return takes
+  the first `MisingIni` branch at `0x1014cbf8`.
+* It then uses `USERINI=` or **User.ini** and, on the corresponding negative
+  check, tries **DefUser.ini** at `0x1014cd1d`. A zero return takes the other
+  `MisingIni` branch at `0x1014cd29`. Both use the same untranslated error
+  key. The reported key alone cannot distinguish these branches, or establish
+  why the prior check/read failed. Missing Core.int localization is consistent
+  with a wrong directory but is not separately established by the trace.
+
+`Core.focused.disasm.txt`, `Rune.focused.disasm.txt`, `appInit.disasm.txt`,
+`baseDir-package.disasm.txt`, `pe-symbols.json` and `iat-and-strings.json` retain
+the chain, string encodings and addresses. Read-only pin checks passed for all
+**142 originals in both recovered and registered trees**, plus the original
+90,741,739-byte installer and current companion manifest. No original bytes,
+registry or configuration were changed.
+
+### Smallest next step and separate merge defect
+
+One next authorized runtime diagnostic should repeat the ordinary parent/child
+route with child-only `--trace-fs` and
+`--trace-api=GetModuleFileNameA,GetModuleFileNameW,SetCurrentDirectoryA,SetCurrentDirectoryW,CreateFileA,CreateFileW,GetFileSize,GetLastError`,
+**without `--trace-to=20`**, and
+`--break=core+0x1014cbf8,core+0x1014cd29`. Keep the existing outer process
+deadline and preserve child output synchronously before cleanup. Record the
+hit address, module-path return, SetCurrentDirectory result, actual failed
+filename/open/read result, and appInit's UTF-16 filename buffers at
+`EBP-0x424` / `EBP-0x224`. This single run can distinguish Default.ini from
+DefUser.ini failure and confirm or reject the root-directory mechanism before
+any repair. The previous window hides later console lines, and the killed
+child never reached exit-time export; repeating that window would lose the
+needed evidence again.
+
+The smallest supported **repair candidate**, if that trace confirms the chain,
+is to preserve each parent's DLL guest identity when seeding the child: resolve
+the existing guest DLL path to its corresponding exported host file and seed
+that file. Do not infer a guest path from basename alone or change guest INIs.
+The probe establishes this mapping correction, not successful appInit/D3D.
+
+Separately, `spawnVfsChild` unconditionally calls `mergeChildState` on exit,
+including SIGKILL. `mergeVfsTreeBack` treats an absent output root as an empty
+map, then deletes every `before` entry. The pure-JS probe with an in-memory fake
+VFS and **203** entries reproduces exactly **0 written / 203 deleted**, without
+deleting any host or live guest files. Child output is saved only in the CLI's
+normal final export section, which SIGKILL never reaches. A future lifecycle
+repair must distinguish a completed snapshot from absent/incomplete output
+before applying deletion semantics. This occurs after startup failure and
+cannot explain the earlier `MisingIni`; no original disk data was deleted.
+
+Documentation and scratch evidence only; focused JS/pin checks and doc diff
+check passed. No build was needed or reused as evidence for current main.
+Free disk remained above **2 GB**. Box ID/state/expiry and lifecycle ownership
+are **N/A**; no runtime was acquired. This assignment stops at the identified
+evidence limit.
+
 ## 2026-11-01: documented renderer child executes, then fails in appInit
 
 **The actual renderer-test child now executes; its first observed functional
