@@ -1,5 +1,95 @@
 # Rune (Human Head, 2000) Windows demo
 
+## 2026-11-01: exact Escape consumer repaired; thread delivery still unresolved
+
+**The first proven input defect is repaired: a recycled dialog header made
+Rune's ordinary viewport consume Escape as IDCANCEL. The title still does not
+reach its menu or player-controlled gameplay.** Evidence and the two bounded
+original invocations are under
+`scratch/runs/20261101-rune-escape-consumer-repair/` (`postfix/` is the second).
+
+The initial gate was honored: only scratch offline preparation until Redline
+`01a1952a` supplied `final.txt`/`result.json` and the **03:42:52 UTC** board
+runtime/source/build release. No worker, foreign WIP or held runtime was used.
+Offline checks exercised the actual parked control/parser, printable string
+IDs, exact eval bindings, distinct control/renderer mock identities, and the
+observer's preservation of normal Escape queue payloads.
+
+The diagnostic preload wraps only naturally occurring renderer helper calls;
+it records original results and returns them unchanged. Inspection calls only
+the actual read-only scalar/ancestry exports. It never calls modal, menu, edit
+or dialog routing helpers just to inspect state. At title batch **174100**,
+control, renderer, restored keyboard owner, foreground window and all renderer
+windows prove to be the **same actual instance**. `mainWasm` is absent.
+Actual `menu_open_hwnd`, `modal_dialog_hwnd`, `dialogbox_hwnd` and
+`get_findreplace_dlg` all return **0**, and renderer menu mode is false.
+
+The exact consuming branch is `lib/renderer-input.js:3628–3631`, the dialog
+traversal `if (dlg && we.dialog_handle_key(...))` return. Focus/main are
+**0x10018**, an ordinary viewport with custom WNDPROC **0x112531ef** and native
+control class **0**. Nevertheless `dialog_ancestor(0x10018)` returns **0x10018**;
+`dialog_get_proc_export(0x10018)` is **0**, so the guest-modeless-dialog guard
+does not reject it. The helper-call sequence ends after the second zero modal
+lookup, before native-text/edit routing or queue insertion. WAT's Escape
+handler sends `WM_COMMAND(IDCANCEL)` and returns 1. Down leaves the queue empty
+and dequeue count **6**; up later dispatches `WM_KEYUP` to Rune, as before.
+
+Cause: `WND_DLG_RECORDS` is parallel to window-table slots and its nonzero
+control count determines dialog ancestry. Slot retirement/reuse reset the
+separate procedure/font state but omitted this 32-byte template header. The
+ordinary viewport inherited a destroyed wizard dialog's header. The repair
+clears that header in the existing `dialog_state_reset_slot`, which is called
+on both removal and fresh slot initialization. No renderer exception or guest
+state forcing was added.
+
+`test/test-dialog-record-reuse.js` loads a real one-STATIC DLGTEMPLATE, verifies
+live-dialog Escape consumption, removes the dialog/control, and proves the
+ordinary replacement takes the same slot. Before the repair it fails with
+**131088 != 0**, “ordinary replacement is not a dialog.” Afterward all 32 header
+bytes are zero, ancestry is zero, and physical Escape down/up queue normally.
+Existing `test-isdialogmessage-enter`, `test-end-dialog-lifecycle` and
+`test-wat-window-tables` also pass, including real shared-table OS-thread tests.
+Mandatory **`flock /tmp/wine-build.lock bash tools/build.sh` passes**.
+
+The second original invocation repeats selected **Software Rendering** and
+ordinary **Next → Next → Run**, with empty arguments, **C:\System**, original
+142-file trees and unchanged shipped INIs. Actual wizard and title/input PNGs
+were inspected. At **174100**, the repaired viewport has ancestry **0**.
+Natural routing now reaches native-text/edit checks (both decline), inserts
+one key event, and down at **174101** produces dequeue **7**, message **0x100**,
+wParam **27**, lParam **0x10001**. Up produces dequeue **8**, message **0x101**,
+lParam **0xc0010001**. This repairs the proven renderer loss.
+
+**Remaining dependency:** no guest DispatchMessage is observed for either
+event through **176100**. One later ordinary physical pair, down at **181100**
+and up at **182100**, reaches dequeue **10** by **183100**, still without a
+dispatch or menu. Each dequeue's routing callback receives polling focus **0**
+and returns destination **0**, while the control/renderer instance retains
+focus/main **0x10018**. CLI auxiliary-thread imports share `h.check_input`
+(`test/run.js:5290–5294`), and its HWND callback uses the polling instance's
+focus (`4647–4652`). The next required observation is the actual polling
+thread identity, that thread's main-HWND fallback, and whether it retains or
+drops the dequeued event. The exact consuming thread is not established here;
+do not infer that Rune rejected a delivered WM_KEYDOWN. No further speculative
+input repair or third invocation was made. Inspected `postfix/escape-later.png`
+and `postfix/final.png` show the animated textured title and Escape prompt,
+with no ordinary main menu, movement or gameplay.
+
+Identity checks: diagnostic reuses the accepted locked build only after all
+**4,387** input hashes/module/mirror match. The repaired run uses a fresh locked
+build with **4,388** inputs; the only input changes are the reset source and
+new regression. Actual parent/child modules each match their respective
+snapshot: before **2,025,619 bytes**, SHA-256 `168c61dae2861842948e5f9e29e4e18df93a6fab12c7d17f7dc85d75e34b7b55`;
+after **2,025,629 bytes**, SHA-256 `985ca2480931df88751db66dbee8527a6d9df9940949baafc6bc3a0b1a43e2dc`.
+Both runs' **263 parent / 117 child** loaded-read hashes, both complete original
+142-file trees and package/inventory/manifest/registry pins pass. Normal batch
+budget/default **200 ms** clock, no breakpoints or instruction counters.
+Outer PTY **150s / kill-after 5**, inner **115s**, child **TERM 90 / KILL 95**;
+both exit **0** naturally (**26.542s / 89.072s**), watchdogs unused. Child
+logs/INIs and parent VFS INIs/logs are preserved; all own runtime PIDs/groups
+and temporary trees are absent. Disk stays above **2 GB**. Box ID/state/expiry
+and ownership: **N/A**. See `verification.json` for the complete bounded record.
+
 ## 2026-11-01: physical Escape down is consumed before guest delivery
 
 **The renderer loses the Escape press before Rune's message pump. The release

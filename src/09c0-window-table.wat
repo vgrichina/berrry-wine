@@ -696,6 +696,10 @@
     (i32.store offset=4 (local.get $p) (i32.const 0))
     (i32.store offset=8 (local.get $p) (i32.const 0))
     (i32.store offset=12 (local.get $p) (i32.const 0))
+    ;; Template headers are also keyed by this slot. A stale control count
+    ;; makes dialog_ancestor treat an ordinary replacement window as a
+    ;; dialog, consuming Escape as IDCANCEL before its message loop sees it.
+    (call $zero_memory (call $dlg_record_addr (local.get $slot)) (i32.const 32))
     (call $dialog_font_reset_slot (local.get $slot)))
 
   ;; A DS_SETFONT dialog owns the font the dialog manager created for it, and
