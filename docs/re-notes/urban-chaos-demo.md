@@ -1009,3 +1009,75 @@ alone. This assignment stops at that precise missing measurement. Recovery is
 offline via `python3 scratch/runs/20261101-urban-chaos-heap-cause/analyze.py`;
 the predecessor's truncated original gzip and completed recovered gzip remain
 untouched. Native box ID/state/expiry N/A; no boxes were created or altered.
+
+## 2026-11-01 no-game allocator probe: balanced pack sizes reproduce fragmentation-driven retention
+
+Evidence: `scratch/runs/20261101-urban-chaos-allocator-probe/`. Dispatch main
+was `a34f3648016a508b5fd268297ff84e7c00a5fe8e`; actual measurement main was
+`39242f4b76421b468157ee51d7593037fcb527de`. After Battlezone's explicit release,
+fresh launcher result/final and direct absence checks for its55 PIDs/groups,
+136 source/module/interface hashes matched the accepted build. The unchanged
+canonical WASM SHA256 was
+`dd43e4a6624d2449d7133b731d687c32530f7fcf0041a69ba71a09f78c09aaf4`.
+One Node24.18.1 instance used fixed512MiB memory, public `init_thread`,
+`heap_init`, `guest_alloc` and `guest_free`; no PE, vertex payload, rendering,
+game replay, source edits or build. Host imports were stubs except the OOM
+capture. Heap initialization used the matched generated GUEST_HEAP_BASE.
+
+**Balanced varying pack sizes alone reproduce a refusal.** The exact sequence
+was2,000 `alloc(32*1009)/free` pairs, then ascending
+`alloc(32*(811+(i%567)))/free` pairs, with at most one live request and each
+success freed immediately. The constant control retained one low arena and no
+sparse backing. Ascending iteration15,051 (zero-based) refused1,120 vertices:
+35,840 requested bytes, aligned need35,848. It emitted reason3/1MiB followed
+by reason1/35,848 bytes. There were17,051 completed balanced pairs in total;
+measurement elapsed5.15s, supervisor exited0/reaped its child in5.27s. Limits
+were100,000 ascending pairs,540s internally/570s externally, and a direct disk
+stop at2,020,000,000 bytes; minimum observed free disk was2,094,579,712 bytes.
+
+| First-refusal measurement | Bytes/count |
+|---|---:|
+| Sparse backing union / capacity | 301,989,888 / 301,989,888 |
+| Free backing / largest backing gap | 0 / 0 |
+| User live requested bytes / summed arena live bytes | 0 / 0 |
+| Free carved headers, including off-list blocks | 15,320 / 305,107,584 bytes |
+| Largest free header / required extent | 35,816 / 35,848 |
+| Largest adjacent free run within one arena | 1,048,576 |
+| Maps / limit; arenas / limit | 288 / 8,192; 291 / 1,024 |
+
+All288 sparse arenas retained their backing. Of these,287 were retired,
+zero-live and carved:300,941,312 bytes could not satisfy the whole-block
+reclaim predicate because the first header did not span its arena. The active
+sparse arena also had zero live bytes. Three low arenas brought retained arena
+space to305,135,616 bytes;28,032 bytes remained unused tails. The validated
+ordinary list held15,216 blocks/305,092,608 bytes;14,976 header bytes were
+off-list. Their free status follows from this balanced sequence and zero arena
+live counts, and is not an inference to apply to an arbitrary game snapshot.
+
+The first OOM import copied bounded map/reservation/hole/arena/shared/Win16
+tables, cursors, counters and headers once, before formatting. Passive
+`d3d_render_free_list_diagnostic` reported valid; no bin-flushing getter,
+retirement, coalescer or allocator mutation was used for measurement. Offline
+walks validated all headers, adjacency and table hashes. First-import and final
+tables, headers, list, cursors and counters were identical. The Win16 arena was0;
+map/reservation/arena limits were not full. Fully occupied backing leaves no
+fit for even the recursive64KiB commit floor. The matched source therefore
+explains the arena commit refusal through backing no-fit/split exhaustion;
+the exact internal branch was inferred, not instrumented. The measured
+underlying mechanism is fragmented, empty carved arenas retaining backing.
+
+**This establishes a sufficient allocator-only mechanism, not the game's
+actual first-refusal cause or OOM-to-guard causality.** The successful HUD route
+also emitted heap OOMs. The remaining game-only discriminator is the same
+passive first-refusal snapshot on the allocating instance, with size/reason,
+wall/monotonic time, batch and allocation ownership/bin information if live
+counts are nonzero. A branch-specific refusal code is needed only if that
+snapshot leaves multiple predicates possible. No memory increase, coalescer
+change or guard rewrite is justified by this probe alone.
+
+Recovery is offline:
+`python3 scratch/runs/20261101-urban-chaos-allocator-probe/analyze.py`.
+`RECOVERY.txt` records the exact sequence, bounds and module recovery recipe;
+`pins.json`, snapshots, `measurement.json`, `runtime-result.json` and
+`verification.json` preserve the evidence. No further runtime is needed to
+reanalyze it. Own local helpers were stopped; native box ID/state/expiry N/A.
