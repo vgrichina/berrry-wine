@@ -494,3 +494,64 @@ is retained in this run's gate records. A successor needs enough stable reserve
 for those transient writes, then refreshed original/compiler/API/module pins
 and local/public exclusion before one bounded causal observation. No unchanged
 visual attempt was repeated, and foreign/laptop WIP was preserved.
+
+## 2026-11-02: compiled observer validated; original blocked in DLL initialization
+
+Run `scratch/runs/20261102-braveheart-causal-observer-resume/` validates the
+observer against actual compiled handlers, then records one new original
+startup failure. Actual Braveheart GDI cache-update returns and window-message
+order remain **unobserved**. The established first mismatch remains the earlier
+640×480 producer16/pitch1280 versus surface32/pitch2560 observation.
+
+After the Oni CLI dependency task's actual terminal zero, result/final, exact
+AUTHOR RELEASE and scoped-helper absence, the worker refreshed 145 original
+files (207704346 bytes), 396 runtime inputs and 1005 compiler inputs. The
+snapshot was main `3fb0103a832464ceabcc8fed243499644d229cb5`; all 10182 streamed
+members passed remote SHA verification. An initial stream stopped on concurrent
+`TODOS.md` drift; that unrelated coordinator-owned status file was excluded
+before restarting the transfer. No runtime or fixture substitution occurred.
+The locked full build passed, producing the same 2076989-byte module SHA
+`17e683cb60cd7d067753b1c988b5f6c5faa7066898aee82e87e6e6b9e9914496`
+as the earlier geometry repair. The shared local module was only hashed and
+was not selected or replaced. The API table remained unchanged.
+
+The generated-PE test runs real GetDC/GetDeviceCaps, class registration,
+CreateWindowExA, ShowWindow, MoveWindow and SendMessageA. Immediate BITSPIXEL32
+and PLANES1 returns reach independent guest stores. Its wndproc independently
+records every received message; all ten entries exactly match the observer's
+sequence: `81,1,1c,6,7,3,5,46,47,8001` (hex). This includes synchronous
+MoveWindow callbacks before handler exit and SendMessage's redirected callback
+after handler exit, followed by the caller's actual EAX42. All 29 observer
+records survive, with zero dropped records or unpaired exits. These are compiled
+generated-fixture results, not original-game GDI values. The collector aborts
+on saturation or observation errors; API-boundary cache samples still do not
+identify an exact x86 store instruction.
+
+The single registered bhsoft/default-WebGL/threads/real-clock native attempt
+then failed at `2026-11-02T22:41:19.071Z`. Worker slot 0 reported stage
+`loadDlls`, sequence 21, `DLL initializer did not return: module=0x102e000`.
+The initial isolation/worker/configuration gate passed, but the worker retired
+before the controller's first observer snapshot, which contains no workers.
+No menu, GDI returns, cache transition, complete original message order or
+producer mismatch was captured. The canvas personally reviewed is the launch
+failure report, not gameplay. No native inputs or unchanged retry followed.
+The page also reports unavailable `stdole2.tlb` and missing `ole32.dll`; neither
+warning establishes the initializer's cause. The module name, initializer
+outcome/cause and original observer counters were not retained before worker
+retirement, so this is not a diagnosed runtime or observer defect.
+
+The next task should preserve the failing initializer's identity, outcome/cause
+and observer state before worker teardown, without repairing shared runtime or
+repeating the visual route. Compiled callback validation now has evidence;
+complete original startup/causal coverage still does not.
+
+All 47 selected remote evidence files (2037416 bytes) passed remote/local SHA
+comparison and an independent reread before own-boat shutdown; four PNGs passed
+chunk CRC checks. Controller exited 1, Chrome exited 0, and server/profile,
+scoped helpers and transfer chunks/archive were absent. The operation wrapper's
+zero exit is not a successful browser result. Own boat `bx_dp74u33t`, original
+expiry `2026-11-02T23:06:52.933Z` recorded before use, was verified STOPPED at
+`2026-11-02T22:44:00.637Z`, error null. Guarded operations stayed above
+2000000000 bytes; the minimum was 2028453888 bytes during transfer. Recovery,
+compiled events, startup error, exact inputs and lifecycle ordering are retained
+in this run. No shared runtime repair or public deployment occurred.
