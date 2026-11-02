@@ -1421,7 +1421,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Next: Complete scoped original controlled flight plus normal registered ToyVM dashboard launch. Root verified245 flight and21 startup artifact hashes, reviewed startup image, and passed29 ops/launcher plus22 generator cases. Eleven originals remain gitignored; no private route required. No public deployment or current live8098 claim; FPS/audio/combat/mission completion remain unqualified.
   Done: Faithful registered launch, ordinary player-controlled gameplay, reviewed screenshot with source/run identity and scoped tested changes on main; audio/FPS claims require separate evidence.
 
-- [ ] Quake II WebGL ordinary world movement validation
+- [x] Quake II WebGL ordinary world movement validation
   id: GLD3D-QUAKE2-TRAVERSAL-20261007
   status: done
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
@@ -1815,19 +1815,19 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=true: ordinary Yes observed in scratch/runs/20261019-army-men-authorized-child/acceptance.json; Setup Complete separately verified in 20261019-army-men-authorized-install-buffer. Authorization receipt remains unchanged.
 
 
-- [ ] Retain Worker ownership until retirement and termination complete
+- [x] Retain Worker ownership until retirement and termination complete
   id: IW-RETIREMENT-SLOT-OWNERSHIP-20261015
   status: done (merged main3fdb29373; combined native conformance passed)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   Next: Combined canonical04ede fullbuild passed; retry237863 all8 native arms passed including exact negative receiver control/restored result. Independent16:18:59.497 source/dependency/donor preservation and idle verified. Root production diff vs tested6c221 is empty; merged/pushed main3fdb29373. Original Invisible War gameplay and pointer-message marshalling remain separate unproved work.
 
-- [ ] Resolve independent cross-process send deadlocks
+- [x] Resolve independent cross-process send deadlocks
   id: IW-INDEPENDENT-SEND-ADMISSION-20261015
   status: done (merged main3fdb29373; combined native conformance passed)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   Next: Combined canonical04ede fullbuild passed; retry237863 all8 native arms passed including exact negative receiver control/restored result. Independent16:18:59.497 source/dependency/donor preservation and idle verified. Root production diff vs tested6c221 is empty; merged/pushed main3fdb29373. Original Invisible War gameplay and pointer-message marshalling remain separate unproved work.
 
-- [ ] Implement OEM character to keyboard scan mapping for Outlaws
+- [x] Implement OEM character to keyboard scan mapping for Outlaws
   id: OUTLAWS-OEMKEYSCAN-20261015
   status: done
   owner: /root/outlaws_oemkeyscan_native
