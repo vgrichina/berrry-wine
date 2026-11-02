@@ -235,7 +235,7 @@ function combined(h) {
     assert.deepStrictEqual(Array.from(a.slice(3,7)),rgba,'production color setter feeds production vertex route');
   }
   const n=e.count();e.mode(-1);e.invokeVertex(cases[0][0]);assert.strictEqual(e.count(),n);
-  for(const name of ['glColor3s','glGetBooleanv']) {
+  for(const name of ['glNormal3b','glGetBooleanv']) {
     const row=api.find(a=>a.name===name);assert.strictEqual(row.handler,'gl_unimplemented');
     assert.throws(()=>e.other(row.id),WebAssembly.RuntimeError,name+' stays fail-fast');
   }

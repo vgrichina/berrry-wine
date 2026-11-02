@@ -269,7 +269,7 @@ for(const esp of [0xffffffec,0xfffffffc,0xffffffff]) {
   assert.strictEqual(h.v.getUint32(272,true),esp,'wrapping scalar stack rejected');
 }
 for(const p of [0xfffffff1,0xffffffff])assert.throws(()=>h.e.invoke(p),WebAssembly.RuntimeError,'vector wrap rejected');
-for(const name of ['glColor3s','glGetBooleanv']) {
+for(const name of ['glNormal3b','glGetBooleanv']) {
   const row=api.find(a=>a.name===name);assert.strictEqual(row.handler,'gl_unimplemented');
   assert.strictEqual(h.e.available(row.id),0);assert.throws(()=>h.e.other(row.id),WebAssembly.RuntimeError);
 }

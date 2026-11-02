@@ -3918,10 +3918,30 @@
     (if (i32.eq (local.get $id) (i32.const 4213)) (then (return (i32.const 1)))) ;; glCallLists
     (if (i32.eq (local.get $id) (i32.const 4215)) (then (return (i32.const 1)))) ;; glClearDepth
     (if (i32.eq (local.get $id) (i32.const 4217)) (then (return (i32.const 1)))) ;; glClearStencil
+    (if (i32.eq (local.get $id) (i32.const 4219)) (then (return (i32.const 1)))) ;; glColor3b
+    (if (i32.eq (local.get $id) (i32.const 4220)) (then (return (i32.const 1)))) ;; glColor3bv
     (if (i32.eq (local.get $id) (i32.const 4221)) (then (return (i32.const 1)))) ;; glColor3d
     (if (i32.eq (local.get $id) (i32.const 4222)) (then (return (i32.const 1)))) ;; glColor3dv
+    (if (i32.eq (local.get $id) (i32.const 4223)) (then (return (i32.const 1)))) ;; glColor3i
+    (if (i32.eq (local.get $id) (i32.const 4224)) (then (return (i32.const 1)))) ;; glColor3iv
+    (if (i32.eq (local.get $id) (i32.const 4225)) (then (return (i32.const 1)))) ;; glColor3s
+    (if (i32.eq (local.get $id) (i32.const 4226)) (then (return (i32.const 1)))) ;; glColor3sv
     (if (i32.eq (local.get $id) (i32.const 4227)) (then (return (i32.const 1)))) ;; glColor3ub
+    (if (i32.eq (local.get $id) (i32.const 4228)) (then (return (i32.const 1)))) ;; glColor3ui
+    (if (i32.eq (local.get $id) (i32.const 4229)) (then (return (i32.const 1)))) ;; glColor3uiv
+    (if (i32.eq (local.get $id) (i32.const 4230)) (then (return (i32.const 1)))) ;; glColor3us
+    (if (i32.eq (local.get $id) (i32.const 4231)) (then (return (i32.const 1)))) ;; glColor3usv
+    (if (i32.eq (local.get $id) (i32.const 4232)) (then (return (i32.const 1)))) ;; glColor4b
+    (if (i32.eq (local.get $id) (i32.const 4233)) (then (return (i32.const 1)))) ;; glColor4bv
     (if (i32.eq (local.get $id) (i32.const 4235)) (then (return (i32.const 1)))) ;; glColor4dv
+    (if (i32.eq (local.get $id) (i32.const 4236)) (then (return (i32.const 1)))) ;; glColor4i
+    (if (i32.eq (local.get $id) (i32.const 4237)) (then (return (i32.const 1)))) ;; glColor4iv
+    (if (i32.eq (local.get $id) (i32.const 4238)) (then (return (i32.const 1)))) ;; glColor4s
+    (if (i32.eq (local.get $id) (i32.const 4239)) (then (return (i32.const 1)))) ;; glColor4sv
+    (if (i32.eq (local.get $id) (i32.const 4240)) (then (return (i32.const 1)))) ;; glColor4ui
+    (if (i32.eq (local.get $id) (i32.const 4241)) (then (return (i32.const 1)))) ;; glColor4uiv
+    (if (i32.eq (local.get $id) (i32.const 4242)) (then (return (i32.const 1)))) ;; glColor4us
+    (if (i32.eq (local.get $id) (i32.const 4243)) (then (return (i32.const 1)))) ;; glColor4usv
     (if (i32.eq (local.get $id) (i32.const 4244)) (then (return (i32.const 1)))) ;; glColorMask
     (if (i32.eq (local.get $id) (i32.const 4252)) (then (return (i32.const 1)))) ;; glDeleteLists
     (if (i32.eq (local.get $id) (i32.const 4257)) (then (return (i32.const 1)))) ;; glEndList
@@ -3970,27 +3990,7 @@
     (if (i32.eq (local.get $id) (i32.const 4214)) (then (return (i32.const 1)))) ;; glClearAccum
     (if (i32.eq (local.get $id) (i32.const 4216)) (then (return (i32.const 1)))) ;; glClearIndex
     (if (i32.eq (local.get $id) (i32.const 4218)) (then (return (i32.const 1)))) ;; glClipPlane
-    (if (i32.eq (local.get $id) (i32.const 4219)) (then (return (i32.const 1)))) ;; glColor3b
-    (if (i32.eq (local.get $id) (i32.const 4220)) (then (return (i32.const 1)))) ;; glColor3bv
-    (if (i32.eq (local.get $id) (i32.const 4223)) (then (return (i32.const 1)))) ;; glColor3i
-    (if (i32.eq (local.get $id) (i32.const 4224)) (then (return (i32.const 1)))) ;; glColor3iv
-    (if (i32.eq (local.get $id) (i32.const 4225)) (then (return (i32.const 1)))) ;; glColor3s
-    (if (i32.eq (local.get $id) (i32.const 4226)) (then (return (i32.const 1)))) ;; glColor3sv
-    (if (i32.eq (local.get $id) (i32.const 4228)) (then (return (i32.const 1)))) ;; glColor3ui
-    (if (i32.eq (local.get $id) (i32.const 4229)) (then (return (i32.const 1)))) ;; glColor3uiv
-    (if (i32.eq (local.get $id) (i32.const 4230)) (then (return (i32.const 1)))) ;; glColor3us
-    (if (i32.eq (local.get $id) (i32.const 4231)) (then (return (i32.const 1)))) ;; glColor3usv
-    (if (i32.eq (local.get $id) (i32.const 4232)) (then (return (i32.const 1)))) ;; glColor4b
-    (if (i32.eq (local.get $id) (i32.const 4233)) (then (return (i32.const 1)))) ;; glColor4bv
     (if (i32.eq (local.get $id) (i32.const 4234)) (then (return (i32.const 1)))) ;; glColor4d
-    (if (i32.eq (local.get $id) (i32.const 4236)) (then (return (i32.const 1)))) ;; glColor4i
-    (if (i32.eq (local.get $id) (i32.const 4237)) (then (return (i32.const 1)))) ;; glColor4iv
-    (if (i32.eq (local.get $id) (i32.const 4238)) (then (return (i32.const 1)))) ;; glColor4s
-    (if (i32.eq (local.get $id) (i32.const 4239)) (then (return (i32.const 1)))) ;; glColor4sv
-    (if (i32.eq (local.get $id) (i32.const 4240)) (then (return (i32.const 1)))) ;; glColor4ui
-    (if (i32.eq (local.get $id) (i32.const 4241)) (then (return (i32.const 1)))) ;; glColor4uiv
-    (if (i32.eq (local.get $id) (i32.const 4242)) (then (return (i32.const 1)))) ;; glColor4us
-    (if (i32.eq (local.get $id) (i32.const 4243)) (then (return (i32.const 1)))) ;; glColor4usv
     (if (i32.eq (local.get $id) (i32.const 4245)) (then (return (i32.const 1)))) ;; glColorSubTableEXT
     (if (i32.eq (local.get $id) (i32.const 4246)) (then (return (i32.const 1)))) ;; glColorTableEXT
     (if (i32.eq (local.get $id) (i32.const 4247)) (then (return (i32.const 1)))) ;; glCopyPixels
@@ -21412,10 +21412,10 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4219: glColor3b
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 3) (i32.const 8) (i32.const 1) (i32.const 0) (local.get $arg0))
       (return)
     ) ;; 4220: glColor3bv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 3) (i32.const 8) (i32.const 1) (i32.const 1) (local.get $arg0))
       (return)
     ) ;; 4221: glColor3d
       (call $handle_glColor3d (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -21424,37 +21424,37 @@
       (call $handle_glColor3dv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4223: glColor3i
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 3) (i32.const 32) (i32.const 1) (i32.const 0) (local.get $arg0))
       (return)
     ) ;; 4224: glColor3iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 3) (i32.const 32) (i32.const 1) (i32.const 1) (local.get $arg0))
       (return)
     ) ;; 4225: glColor3s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 3) (i32.const 16) (i32.const 1) (i32.const 0) (local.get $arg0))
       (return)
     ) ;; 4226: glColor3sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 3) (i32.const 16) (i32.const 1) (i32.const 1) (local.get $arg0))
       (return)
     ) ;; 4227: glColor3ub
       (call $handle_gpu_api (i32.const 111) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4228: glColor3ui
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 3) (i32.const 32) (i32.const 0) (i32.const 0) (local.get $arg0))
       (return)
     ) ;; 4229: glColor3uiv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 3) (i32.const 32) (i32.const 0) (i32.const 1) (local.get $arg0))
       (return)
     ) ;; 4230: glColor3us
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 3) (i32.const 16) (i32.const 0) (i32.const 0) (local.get $arg0))
       (return)
     ) ;; 4231: glColor3usv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 3) (i32.const 16) (i32.const 0) (i32.const 1) (local.get $arg0))
       (return)
     ) ;; 4232: glColor4b
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 4) (i32.const 8) (i32.const 1) (i32.const 0) (local.get $arg0))
       (return)
     ) ;; 4233: glColor4bv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 4) (i32.const 8) (i32.const 1) (i32.const 1) (local.get $arg0))
       (return)
     ) ;; 4234: glColor4d
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -21463,28 +21463,28 @@
       (call $handle_glColor4dv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4236: glColor4i
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 4) (i32.const 32) (i32.const 1) (i32.const 0) (local.get $arg0))
       (return)
     ) ;; 4237: glColor4iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 4) (i32.const 32) (i32.const 1) (i32.const 1) (local.get $arg0))
       (return)
     ) ;; 4238: glColor4s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 4) (i32.const 16) (i32.const 1) (i32.const 0) (local.get $arg0))
       (return)
     ) ;; 4239: glColor4sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 4) (i32.const 16) (i32.const 1) (i32.const 1) (local.get $arg0))
       (return)
     ) ;; 4240: glColor4ui
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 4) (i32.const 32) (i32.const 0) (i32.const 0) (local.get $arg0))
       (return)
     ) ;; 4241: glColor4uiv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 4) (i32.const 32) (i32.const 0) (i32.const 1) (local.get $arg0))
       (return)
     ) ;; 4242: glColor4us
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 4) (i32.const 16) (i32.const 0) (i32.const 0) (local.get $arg0))
       (return)
     ) ;; 4243: glColor4usv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor_integer (i32.const 4) (i32.const 16) (i32.const 0) (i32.const 1) (local.get $arg0))
       (return)
     ) ;; 4244: glColorMask
       (call $handle_gpu_api (i32.const 140) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

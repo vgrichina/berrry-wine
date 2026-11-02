@@ -2,15 +2,11 @@
 'use strict';
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-// Original 2026-11-01 MDK2 misses, excluding the four native layer-plane APIs.
+// Original MDK2 misses, excluding four layer-plane and twenty integer-color APIs.
 // Keep this observed set independent of the generator's availability predicate.
 const unsupportedMdk2 = `
   glAccum glAreTexturesResident glClearAccum glClearIndex glClipPlane
-  glColor3b glColor3bv glColor3i glColor3iv glColor3s
-  glColor3sv glColor3ui glColor3uiv glColor3us glColor3usv
-  glColor4b glColor4bv glColor4d glColor4i glColor4iv
-  glColor4s glColor4sv glColor4ui glColor4uiv glColor4us
-  glColor4usv glCopyPixels glCopyTexImage1D glCopyTexImage2D glCopyTexSubImage1D
+  glColor4d glCopyPixels glCopyTexImage1D glCopyTexImage2D glCopyTexSubImage1D
   glCopyTexSubImage2D glDrawPixels glEdgeFlag glEdgeFlagPointer glEdgeFlagv
   glEvalCoord1d glEvalCoord1dv glEvalCoord1f glEvalCoord1fv glEvalCoord2d
   glEvalCoord2dv glEvalCoord2f glEvalCoord2fv glEvalMesh1 glEvalMesh2
@@ -58,6 +54,9 @@ async function main() {
         (i32.sub (global.get $THUNK_BASE) (global.get $GUEST_BASE))))
       (call $update_thunk_end))
     (func (export "lookup_regs") (result i32) (global.get $reg_base))
+    ;; Native color/list/software tests supply a context identity without a
+    ;; browser drawable. Every color call still uses its resolved real thunk.
+    (func (export "lookup_color_context") (call $gl_state_context_changed (i32.const 1)))
     (func (export "lookup_thunks") (result i32) (i32.atomic.load (global.get $THUNK_NEXT_SHARED)))
     (func (export "lookup_error") (result i32) (global.get $last_error))
     (func (export "lookup_module_kind") (param $module i32) (result i32)
@@ -160,7 +159,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 208, 'retain all originally unsupported MDK2 names');
+  assert.strictEqual(unsupportedMdk2.length, 188, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);
@@ -209,6 +208,7 @@ async function main() {
       }
     }
   }
+  require('./gl-integer-color-cases').exerciseIntegerColors({e,memory,regs,stack,toWasm,staticLookup,lookup,hdc});
   if (!mutation) {
     const { spawnSync } = require('child_process');
     for (const variant of ['missing','all','cleanup']) {

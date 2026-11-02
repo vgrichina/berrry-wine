@@ -1,7 +1,8 @@
 # MDK2 demo (BioWare/Interplay, 2000)
 
 **Status: registered (`mdk2_demo`); current native startup is blocked by GL
-symbol rejection (2026-11-01 diagnosis below).** Historical Chromium/WebGL
+symbol rejection (188 observed names remain unsupported after the 2026-11-02
+integer-color repair below).** Historical Chromium/WebGL
 runs rendered Menu, New Game, the intro and tutorial and took input;
 projective vertices work since 9be0a0efb, and FSCALE fixed the black world
 after the intro (see Black world). Those runs do not establish current
@@ -366,3 +367,51 @@ convert signed byte components to the specified floating current-color values
 queries and display-list behavior before advertising it. That would remove
 one more real miss, while the complete mandatory export table would remain
 the startup prerequisite.
+
+### 2026-11-02: integer current-color family
+
+Implemented twenty more original misses: `glColor{3,4}{b,s,i,us,ui}` and
+their vector forms. Existing unsigned-byte colors already use the float-color
+path. The new handlers convert declared-width scalar DWORD slots or packed
+vectors into that same path, with RGB alpha 1 and RGBA alpha converted like
+the other components. Signed normalization uses `(2*c+1)/(2^n-1)`;
+unsigned normalization uses `c/(2^n-1)`. Float current color retains negative
+components, while raster colors clamp at their existing consumption point.
+These rules, raster snapshots, query conversion and list timing follow the
+[OpenGL 1.1 specification](https://registry.khronos.org/OpenGL/specs/gl/glspec11.pdf),
+sections 2.7, 2.12, 2.13 (table 2.6), 4.3.2 (table 4.7), 5.4 and 6.1.
+
+Current-color float/integer queries now read the native current values;
+queries execute immediately while compiling lists. Lists snapshot converted
+components, so later changes to vector memory cannot change replay. Source
+reads use guest-address translation, including fragmented pages and exact
+element widths; temporary encoded storage is invocation-owned and freed.
+The generator advertises only these implemented shapes and routes them to
+the real handler; no GPU opcode or export-table ABI changed.
+
+Evidence: `scratch/runs/20261102-mdk2-integer-color-family/`. The actual
+resolved-handler suite exercises both lookup routes, signed extrema,
+interior values and zero, unsigned extrema, scalar/vector equivalence,
+RGB/RGBA alpha, float/integer queries, compile/execute and replay, raster
+snapshots, software point colors, exact stdcall cleanup and GPR/stack
+preservation. Its explicit native context-identity seam needs no browser
+drawable. The saved old dispatcher fails specifically at `glColor3b` lookup;
+the implemented dispatcher passes. A separate native extraction test checks
+fragmented guest pointers, no RGB alpha overread, allocation lifetime and
+conversion/stride/alpha mutation negatives. Relevant native encoder,
+software raster, frame-state, display-list, bitmap, double-color,
+texture-coordinate, rectangle and WGL layer-plane regressions pass, as do
+generated freshness and handler stack checks.
+The mandatory `flock /tmp/wine-build.lock bash tools/build.sh` also passes.
+
+**188 of the original 212 names remain unsupported:** exactly four WGL
+layer-plane repairs and these twenty colors have been removed from the
+explicit miss set. Every remaining name still returns NULL through both
+lookup routes, with static error 127, no thunk allocation and preserved ABI;
+the missing/all/cleanup mutation controls still fail as expected. The first
+remaining miss is `glAccum`: its next genuine prerequisite is accumulation
+buffer storage and operations, including `glClearAccum` and `GL_ACCUM_BUFFER_BIT`
+clear semantics, before lookup availability can change. No original replay,
+startup or gameplay qualification was attempted; the mandatory export latch
+still blocks startup. Box ID/state/expiry: N/A; lifecycle remains
+coordinator-owned.

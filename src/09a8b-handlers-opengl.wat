@@ -332,6 +332,71 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
+  ;; OpenGL 1.1 table 2.6: signed color uses (2*c+1)/(2^bits-1),
+  ;; unsigned color uses c/(2^bits-1). In particular signed zero is not 0.
+  ;; Widen before arithmetic so the GLint numerator cannot overflow, then
+  ;; demote once at the existing canonical float-color boundary.
+  (func $gl_color_integer_component (param $p i32) (param $bits i32) (param $signed i32) (result f32)
+    (local $c i32) (local $shift i32) (local $den f64) (local $value f64)
+    (local.set $c (if (result i32) (i32.eq (local.get $bits) (i32.const 8))
+      (then (call $gl8 (local.get $p)))
+      (else (if (result i32) (i32.eq (local.get $bits) (i32.const 16))
+        (then (call $gl16 (local.get $p))) (else (call $gl32 (local.get $p)))))))
+    (local.set $den (f64.convert_i64_u
+      (i64.sub (i64.shl (i64.const 1) (i64.extend_i32_u (local.get $bits))) (i64.const 1))))
+    (if (local.get $signed)
+      (then
+        (local.set $shift (i32.sub (i32.const 32) (local.get $bits)))
+        (local.set $c (i32.shr_s (i32.shl (local.get $c) (local.get $shift)) (local.get $shift)))
+        (local.set $value (f64.add (f64.mul (f64.convert_i32_s (local.get $c)) (f64.const 2)) (f64.const 1))))
+      (else (local.set $value (f64.convert_i32_u (local.get $c)))))
+    (f32.demote_f64 (f64.div (local.get $value) (local.get $den))))
+
+  ;; The generator supplies only the twenty implemented integer-color shapes.
+  ;; Scalar byte/short arguments occupy DWORD slots but use their low bits;
+  ;; vectors contain exactly three/four tightly packed elements. Snapshot all
+  ;; values before encoding so display lists own values, never guest pointers.
+  (func $handle_glColor_integer (param $components i32) (param $bits i32)
+      (param $signed i32) (param $vector i32) (param $arg0 i32)
+    (local $esp i32) (local $p i32) (local $stride i32) (local $last i32)
+    (local $guest i32) (local $stack i32)
+    (local $r f32) (local $g f32) (local $b f32) (local $a f32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $stride (select (i32.shr_u (local.get $bits) (i32.const 3)) (i32.const 4) (local.get $vector)))
+    (if (local.get $vector)
+      (then (local.set $p (local.get $arg0)))
+      (else
+        (if (i32.gt_u (local.get $esp) (i32.const 0xfffffffb)) (then (unreachable)))
+        (local.set $p (i32.add (local.get $esp) (i32.const 4)))))
+    ;; At most 16 source bytes, crossing at most two guest pages. Validate
+    ;; wrap and both mappings before gl8/16/32 could read a null sentinel.
+    ;; A scalar's last argument still reads only its declared element width.
+    (local.set $last (i32.sub
+      (i32.add (i32.mul (i32.sub (local.get $components) (i32.const 1)) (local.get $stride))
+        (i32.shr_u (local.get $bits) (i32.const 3))) (i32.const 1)))
+    (if (i32.gt_u (local.get $p) (i32.sub (i32.const -1) (local.get $last))) (then (unreachable)))
+    (if (i32.eq (call $g2w (local.get $p)) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (if (i32.eq (call $g2w (i32.add (local.get $p) (local.get $last))) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (local.set $r (call $gl_color_integer_component (local.get $p) (local.get $bits) (local.get $signed)))
+    (local.set $g (call $gl_color_integer_component (i32.add (local.get $p) (local.get $stride)) (local.get $bits) (local.get $signed)))
+    (local.set $b (call $gl_color_integer_component (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 2))) (local.get $bits) (local.get $signed)))
+    (local.set $a (f32.const 1))
+    (if (i32.eq (local.get $components) (i32.const 4))
+      (then (local.set $a (call $gl_color_integer_component (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 3))) (local.get $bits) (local.get $signed)))))
+    (local.set $guest (call $gl_alloc_affine (i32.const 20)))
+    (if (i32.eqz (local.get $guest)) (then (unreachable)))
+    (local.set $stack (call $g2w (local.get $guest)))
+    (i32.store (local.get $stack) (i32.const 0))
+    (f32.store offset=4 (local.get $stack) (local.get $r))
+    (f32.store offset=8 (local.get $stack) (local.get $g))
+    (f32.store offset=12 (local.get $stack) (local.get $b))
+    (f32.store offset=16 (local.get $stack) (local.get $a))
+    (drop (call $gl_wat_encode_call (i32.const 25) (local.get $stack) (i32.const 0)))
+    (call $heap_free (local.get $guest))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp)
+      (select (i32.const 8) (i32.shl (i32.add (local.get $components) (i32.const 1)) (i32.const 2)) (local.get $vector)))))
+
   ;; glColor3dv(const GLdouble *v): exactly three doubles, implicit alpha 1.
   (func $handle_glColor3dv (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (call $gl_color_dv (local.get $arg0) (i32.const 3))

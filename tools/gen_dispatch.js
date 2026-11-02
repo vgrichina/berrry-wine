@@ -311,6 +311,20 @@ const gpuApis = new Map([
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 
+// Native integer current colors lower to the existing scalar float-color
+// command. Each shape specifies its actual x86 slot/vector element widths;
+// adding availability here also installs the semantic native dispatch below.
+const integerColorApis = new Map();
+for (const components of [3, 4]) {
+  for (const [suffix, bits, signed] of [['b', 8, 1], ['s', 16, 1],
+    ['i', 32, 1], ['us', 16, 0], ['ui', 32, 0]]) {
+    for (const vector of [0, 1]) {
+      integerColorApis.set(`glColor${components}${suffix}${vector ? 'v' : ''}`,
+        [components, bits, signed, vector]);
+    }
+  }
+}
+
 // Dynamic WGL lookup must not expose fail-fast aliases merely because their
 // names exist in the global import table. Derive availability from the same
 // implementation map that dispatch uses. GLU helpers are a separate library.
@@ -323,7 +337,7 @@ const nativeWglApis = new Set([
   'wglDescribeLayerPlane', 'wglGetLayerPaletteEntries',
   'wglSetLayerPaletteEntries', 'wglRealizeLayerPalette',
 ]);
-const nativeGlApis = new Set(['glMultMatrixd', 'glTexCoord2d', 'glTexCoord2dv', 'glTexCoord2i', 'glColor3d', 'glColor3dv', 'glColor4dv', 'glVertex2d', 'glVertex2dv', 'glVertex3d']);
+const nativeGlApis = new Set(['glMultMatrixd', 'glTexCoord2d', 'glTexCoord2dv', 'glTexCoord2i', 'glColor3d', 'glColor3dv', 'glColor4dv', 'glVertex2d', 'glVertex2dv', 'glVertex3d', ...integerColorApis.keys()]);
 for (const [id, api] of apiTable.entries()) {
   if ((gpuApis.has(api.name) || nativeWglApis.has(api.name) || nativeGlApis.has(api.name)) && /^(?:gl[A-Z]|wgl[A-Z])/.test(api.name)) {
     out.push(`    (if (i32.eq (local.get $id) (i32.const ${id})) (then (return (i32.const 1)))) ;; ${api.name}`);
@@ -344,6 +358,10 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  const integerColor = integerColorApis.get(api.name);
+  if (integerColor) {
+    return `      (call $handle_glColor_integer ${integerColor.map(n => `(i32.const ${n})`).join(' ')} (local.get $arg0))`;
+  }
   const gpuOpcode = gpuApiOrder.indexOf(api.name);
   if (gpuOpcode >= 0) {
     return `      (call $handle_gpu_api (i32.const ${gpuOpcode}) (i32.const ${gpuApis.get(api.name)}) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))`;

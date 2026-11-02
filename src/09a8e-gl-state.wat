@@ -364,9 +364,44 @@
     (call $gl_state_set_tex4 (local.get $unit) (local.get $tmp)))
   (global $gl_state_vec4 (mut i32) (i32.const 0))
 
+  ;; CURRENT_COLOR comes from the same native values that build vertices.
+  ;; Get commands execute immediately during list compilation; queries must
+  ;; neither clamp signed components nor consult stale host renderer state.
+  (func $gl_current_color_query (param $op i32) (param $stack i32) (result i32)
+    (local $p i32) (local $i i32) (local $ctx i32) (local $value f32)
+    (if (i32.eqz (i32.or (i32.eq (local.get $op) (i32.const 13))
+        (i32.eq (local.get $op) (i32.const 103)))) (then (return (i32.const 0))))
+    (if (i32.ne (i32.load offset=4 (local.get $stack)) (i32.const 0x0B00)) (then (return (i32.const 0))))
+    (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (then
+      (local.set $ctx (call $gl_list_context))
+      (if (local.get $ctx) (then (call $gl_list_error (local.get $ctx) (i32.const 0x502))))
+      (return (i32.const 1))))
+    (local.set $p (i32.load offset=8 (local.get $stack)))
+    (if (i32.gt_u (local.get $p) (i32.const 0xfffffff0)) (then (unreachable)))
+    (if (i32.eq (call $g2w (local.get $p)) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (if (i32.eq (call $g2w (i32.add (local.get $p) (i32.const 15))) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (loop $values
+      (local.set $value (if (result f32) (i32.eqz (local.get $i))
+        (then (global.get $gl_color_r))
+        (else (if (result f32) (i32.eq (local.get $i) (i32.const 1))
+          (then (global.get $gl_color_g))
+          (else (if (result f32) (i32.eq (local.get $i) (i32.const 2))
+            (then (global.get $gl_color_b)) (else (global.get $gl_color_a))))))))
+      (call $gs32 (i32.add (local.get $p) (i32.shl (local.get $i) (i32.const 2)))
+        (if (result i32) (i32.eq (local.get $op) (i32.const 13))
+          (then (i32.reinterpret_f32 (local.get $value)))
+          ;; OpenGL 1.1 table 4.7 reverses signed component normalization.
+          (else (i32.trunc_sat_f64_s (f64.nearest (f64.mul (f64.const 0.5)
+            (f64.sub (f64.mul (f64.promote_f32 (local.get $value)) (f64.const 4294967295)) (f64.const 1))))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $values (i32.lt_u (local.get $i) (i32.const 4))))
+    (i32.const 1))
+
   (func $gl_state_intercept (param $op i32) (param $stack i32) (result i32)
     (local $a i32) (local $unit i32) (local $i i32) (local $count i32) (local $p i32) (local $b i32)
     (local $w i32) (local $z f32)
+    (if (call $gl_current_color_query (local.get $op) (local.get $stack))
+      (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 23)) (then
       (global.set $gl_color_r (f32.load offset=4 (local.get $stack))) (global.set $gl_color_g (f32.load offset=8 (local.get $stack)))
       (global.set $gl_color_b (f32.load offset=12 (local.get $stack))) (global.set $gl_color_a (f32.const 1)) (return (i32.const 1))))
