@@ -286,7 +286,7 @@ function step(vm, budget = 1000) {
   e.pg_clear(); e.pg_reset_vector(); e.pg_checkpoint();
   try {
     const d = decodeOne(p => {
-      if (e.mget_pm_task_segments() && !e.get_vm86() &&
+      if (e.mget_pm_task_segments() &&
           (!e.mget_pm_cs_valid() || ((p - (e.get_csb() >>> 0)) >>> 0) > (e.mget_pm_cs_limit() >>> 0)))
         throw new DeliveryFault(13, 0);
       return e.pg_read(p, 1, user);

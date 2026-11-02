@@ -28,8 +28,8 @@ function helpers(isa) {
   // Never consult a subsequently modified descriptor table during outer RETF.
   const dataCache = [[1, 'cs'], ...dataSegments].map(([index, name]) => `
   (if (i32.eq (local.get $i) (i32.const ${index})) (then
-    (global.set $pm_${name}_valid (i32.const 0))
     (if (i32.eqz (call $pm_active)) (then (return)))
+    (global.set $pm_${name}_valid (i32.const 0))
     (local.set $d (call $pm_desc (local.get $selector)))
     (if (i32.eqz (local.get $d)) (then (return)))
     (local.set $d (i32.sub (local.get $d) (i32.const 1)))
@@ -62,6 +62,27 @@ function helpers(isa) {
   (global.set $left (global.get $steps))
   (global.set $halt (i32.const 1))
   (i32.const 1))
+
+
+;; PE/PG writes do not load segment registers (Intel SDM 9.9). In real
+;; mode a data/stack load replaces its paragraph base while retaining the
+;; hidden limit and attributes, including SS.B independently of CS.D.
+;; VM86 loads instead establish the fixed 64K, D/B=0, DPL3 caches.
+(func $pm_paragraph_cache (param $i i32)
+  ${isa.SEG.map((name, index) => `
+  (if (i32.eq (local.get $i) (i32.const ${index})) (then
+    ${name !== 'cs' ? `(if (i32.eqz (global.get $pm_${name}_valid)) (then
+      (global.set $pm_${name}_limit (i32.const 65535))
+      (global.set $pm_${name}_access (i32.const 147))
+      ${name === 'ss' ? '(global.set $spm (i32.const 65535))' : `(global.set $pm_${name}_mask (i32.const 65535))`}))` : ''}
+    (global.set $pm_${name}_valid (i32.const 1))
+    ${name === 'cs' ? `(global.set $pm_cs_limit (i32.const 65535))
+    (global.set $pm_cs_access (select (i32.const 251) (i32.const 155) (global.get $vm86)))` : ''}
+    (if (global.get $vm86) (then
+      (global.set $pm_${name}_limit (i32.const 65535))
+      (global.set $pm_${name}_access (i32.const ${name === 'cs' ? 251 : 243}))
+      ${name === 'ss' ? '(global.set $spm (i32.const 65535))' : name === 'cs' ? '(global.set $d32 (i32.const 0))' : `(global.set $pm_${name}_mask (i32.const 65535))`}))))`).join('')}
+)
 
 (func $pm_active (result i32)
   (i32.and (i32.and (global.get $cr0) (i32.const 1))
@@ -174,8 +195,8 @@ function helpers(isa) {
 ;; SS access/limit are captured on load. A later descriptor-table write must
 ;; not retroactively change the loaded segment's limits or access rights.
 (func $pm_cache_ss (param $selector i32) (local $d i32)
-  (global.set $pm_ss_valid (i32.const 0))
   (if (i32.eqz (call $pm_active)) (then (return)))
+  (global.set $pm_ss_valid (i32.const 0))
   (local.set $d (call $pm_desc (local.get $selector)))
   (if (i32.eqz (local.get $d)) (then (return)))
   (local.set $d (i32.sub (local.get $d) (i32.const 1)))

@@ -907,11 +907,149 @@ async function taskSwitchFaults(variant) {
     incomingAddressSpacePageFaultRepair: true });
 }
 
+// Execute the retained transition after a real task gate and backlink return.
+// No cache is patched by the harness: descriptors and instructions establish it.
+async function segmentCacheTransitions(variant) {
+  const returned = async (nullFs = false) => {
+    const f = await taskSwitchFixture(variant);
+    f.vm.mem[0x40100] = 0xcf;
+    assert(f.vm.stepOne());
+    if (nullFs) f.put(0x1b058, 0);
+    assert(f.vm.stepOne());
+    assert.equal(f.e.mget_tr(), 0x28);
+    return f;
+  };
+  const sequence = (f, bytes) => {
+    f.vm.mem.set(bytes, f.vm.get('gip'));
+    const end = f.vm.get('gip') + bytes.length;
+    for (let n = 0; f.vm.get('gip') !== end && n < 100; n++) {
+      assert(f.vm.stepOne()); assert.equal(f.e.mget_tr(), 0x28, 'no unexpected task fault');
+    }
+    assert.equal(f.vm.get('gip'), end);
+  };
+  const off = [...mov(0, 0x11), 0x0f, 0x22, 0xc0, ...mov(0, 0x10), 0x0f, 0x22, 0xc0];
+  const on = [...mov(0, 0x80000011), 0x0f, 0x22, 0xc0];
+  {
+    const f = await returned(), { vm, e, v } = f;
+    const cache = name => ['valid', 'limit', 'access'].map(n => e[`mget_pm_${name}_${n}`]() >>> 0);
+    const names = ['es', 'ss', 'ds', 'fs', 'gs'];
+    const before = Object.fromEntries(names.map(n => [n, cache(n)]));
+    // Deliberately change the table: neither CR0 nor real MOV may reread it.
+    f.put(0x19010, 0); f.put(0x19014, 0);
+    sequence(f, off);
+    for (const name of names) assert.deepEqual(cache(name), before[name]);
+    sequence(f, [...mov(0, 0x110), 0x8e, 0xc0, 0x8e, 0xd0, 0x8e, 0xd8, 0x8e, 0xe0, 0x8e, 0xe8]);
+    for (const name of names) {
+      assert.deepEqual(cache(name), before[name], name + ' retains hidden attributes');
+      assert.equal(e[`get_${name}b`]() >>> 0, 0x1100);
+    }
+    assert.equal(e.mget_spm() >>> 0, 0xffffffff);
+    sequence(f, [...mov(4, 0x104), ...mov(1, 0x12345678), ...on, 0x51]);
+    assert.equal(vm.raw('sp') >>> 0, 0x100);
+    assert.equal(v.getUint32(0x1200, true), 0x12345678, 'retained MOV SS / PE+PG / PUSH repro');
+    // All four data registers and a readable CS are still authoritative.
+    for (const prefix of [0x26, 0x3e, 0x64, 0x65]) {
+      sequence(f, [prefix, 0xa1, ...u32(0x100)]);
+      assert.equal(vm.raw('ax') >>> 0, 0x12345678);
+    }
+    observations.push({ variant, realSegmentReentry: true, caches: before, pushed: v.getUint32(0x1200, true) });
+  }
+  // SS.B must be independent of CS.D, including a real-mode SS load.
+  for (const wide of [false, true]) {
+    const f = await returned(), { vm, e, v } = f;
+    f.descriptor(0x48, 0, 0xffff, 0x92, wide);
+    sequence(f, [...mov(0, 0x48), 0x8e, 0xd0]);
+    assert.equal(e.get_d32(), 1);
+    sequence(f, [...off, ...mov(0, 0x110), 0x8e, 0xd0]);
+    assert.equal(e.mget_spm() >>> 0, wide ? 0xffffffff : 0xffff);
+    sequence(f, [...mov(4, wide ? 0x104 : 0x10002), ...on, 0x66, 0x51]);
+    assert.equal(vm.raw('sp') >>> 0, wide ? 0x102 : 0);
+    assert.equal(v.getUint16(wide ? 0x1202 : 0x1100, true), vm.get('cx'));
+  }
+  // Real reloads cannot launder a restricted cache before protected reentry.
+  for (const [name, access, limit, bytes, vector] of [
+    ['SS limit', 0x92, 0xff, [0x51], 12],
+    ['SS expand down', 0x96, 0x1ff, [0x51], 12],
+    ['DS read only', 0x90, 0xffff, store(0x100, 0xdeadbeef), 13],
+    ['DS limit', 0x92, 0xff, [0xa1, ...u32(0x100)], 13],
+  ]) {
+    const f = await returned(), { vm, e, v } = f;
+    const stack = name.startsWith('SS');
+    f.descriptor(0x48, 0, limit, access, true);
+    sequence(f, [...mov(0, 0x48), 0x8e, stack ? 0xd0 : 0xd8, ...off,
+      ...mov(0, 0x110), 0x8e, stack ? 0xd0 : 0xd8, ...mov(4, 0x104), ...on]);
+    const ip = vm.get('gip'), original = vm.mem.slice(0x1200, 0x1204);
+    vm.mem.set(bytes, ip); assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x58, name); assert.equal(vm.get('intno'), vector, name);
+    assert.equal(v.getUint32(0x1b020, true), ip, name + ' restarts instruction');
+    assert.deepEqual(vm.mem.slice(0x1200, 0x1204), original);
+  }
+  // A protected null data selector stays unusable; PE/PG alone do not load it.
+  {
+    const f = await returned(), { vm, e } = f;
+    sequence(f, [...mov(0, 0), 0x8e, 0xe0, ...off, ...on]);
+    assert.equal(e.mget_pm_fs_valid(), 0);
+    vm.mem.set([0x64, 0xa1, ...u32(0x100)], vm.get('gip')); assert(vm.stepOne());
+    assert.equal(vm.get('intno'), 13); assert.equal(e.mget_tr(), 0x58);
+  }
+  // An explicit real-mode load makes a formerly null data register usable;
+  // a mode-bit change alone (above) must not do so.
+  {
+    const f = await returned(true), { vm, e, v } = f;
+    assert.equal(e.mget_pm_fs_valid(), 0);
+    assert.equal(e.mget_pm_fs_limit(), 0);
+    sequence(f, [...mov(0, 0), 0x8e, 0xe0, ...off, ...mov(0, 0x110), 0x8e, 0xe0, ...on]);
+    v.setUint32(0x1200, 0xabcdef01, true);
+    sequence(f, [0x64, 0xa1, ...u32(0x100)]);
+    assert.equal(vm.raw('ax') >>> 0, 0xabcdef01);
+    assert.equal(e.mget_pm_fs_limit(), 0xffff);
+    assert.equal(e.mget_pm_fs_access(), 0x93);
+  }
+  // Real far JMP loads a paragraph CS, retains D, and restores its 64K limit.
+  {
+    const f = await returned(), { vm, e } = f;
+    sequence(f, off);
+    vm.mem.set([0xea, ...u32(0x200), 0x00, 0x30], vm.get('gip'));
+    assert(vm.stepOne()); assert.equal(vm.get('cs'), 0x3000);
+    assert.equal(e.get_csb() >>> 0, 0x30000); assert.equal(e.get_d32(), 1);
+    assert.equal(e.mget_pm_cs_limit(), 0xffff); assert.equal(e.mget_pm_cs_valid(), 1);
+    vm.mem.set([...on, 0x90], 0x30200); sequence(f, [...on, 0x90]);
+  }
+  // Actual IRETD enters VM86 with six fresh caches, not unreal attributes.
+  for (const tooLarge of [false, true]) {
+    const f = await returned(), { vm, e } = f;
+    const frame = [0x100, 0x4000, 0x23002, 0x12348000, 0x2000, 0x3000, 0x3000, 0, 0];
+    sequence(f, [...frame].reverse().flatMap(n => [0x68, ...u32(n)]));
+    vm.mem[vm.get('gip')] = 0xcf; assert(vm.stepOne());
+    assert.equal(e.get_vm86(), 1); assert.equal(e.get_d32(), 0);
+    assert.equal(e.mget_spm(), 0xffff);
+    for (const name of isa.SEG) {
+      assert.equal(e[`mget_pm_${name}_valid`](), 1);
+      assert.equal(e[`mget_pm_${name}_limit`](), 0xffff);
+      assert.equal(e[`mget_pm_${name}_access`](), name === 'cs' ? 0xfb : 0xf3);
+      assert.equal(e[`get_${name}b`]() >>> 0, vm.get(name) << 4);
+    }
+    if (tooLarge) {
+      vm.mem.set([0x67, 0xa1, ...u32(0x10000)], 0x40100);
+      assert(vm.stepOne()); assert.equal(e.mget_tr(), 0x58);
+      assert.equal(vm.get('intno'), 13, 'VM86 A32 cannot escape 64K');
+    } else {
+      vm.mem.set([0x50, 0x58, 0xb8, 0, 0, 0x8e, 0xe0, 0x64, 0xa1, 0x10, 0], 0x40100);
+      for (let n = 0; n < 5; n++) assert(vm.stepOne());
+      assert.equal(e.get_vm86(), 1); assert.equal(e.mget_tr(), 0x28);
+      assert.equal(vm.raw('sp') >>> 0, 0x8000);
+      assert.equal(e.mget_pm_fs_valid(), 1, 'VM86 selector zero is a usable paragraph');
+    }
+  }
+  observations.push({ variant, segmentCacheNegativeCases: 5, independentStackWidths: 2, realFarJump: true, vm86CacheResetAndLimit: true });
+}
+
 async function taskSwitchSuite() {
   for (const variant of ['tailcall', 'switch', 'calls', 'repl_tailcall']) {
     await taskSwitchInstructions(variant); await taskSwitchFaults(variant);
     await taskSwitchNegatives(variant); await taskSwitchErrorWord(variant);
     await taskCacheFaults(variant); await taskSwitchedFpu(variant);
+    await segmentCacheTransitions(variant);
     await taskSwitchCom(variant);
   }
   for (const tier of [{ uopOnly: true }, { uop: true }, { treeFold: true }]) await taskSwitchCom('tailcall', tier);
@@ -1181,6 +1319,12 @@ async function taskRegisterSuite() {
 }
 
 (async () => {
+  if (process.argv.includes('--segment-cache-only')) {
+    for (const variant of ['tailcall', 'switch', 'calls', 'repl_tailcall']) await segmentCacheTransitions(variant);
+    if (evidence) fs.writeFileSync(path.join(evidence, 'segment-cache.json'), JSON.stringify(observations, null, 2));
+    console.log('PASS real segment cache transitions, unreal attributes, independent SS.B and protected negatives');
+    return;
+  }
   if (process.argv.includes('--task-switch-only')) {
     await taskSwitchSuite();
     if (evidence) fs.writeFileSync(path.join(evidence, 'task-switch.json'), JSON.stringify(observations, null, 2));

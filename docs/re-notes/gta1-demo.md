@@ -1,5 +1,90 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+
+## Coherent segment-cache transitions; bounded original remains at startup, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-segment-cache-transitions/`. Code input
+`0bc353ddaf7d4e4384d0bd05aa88a2341c477000`, followed by MDK2 documentation
+`b92ab6980` and coordinator documentation `7a2a58a10`. Shared source/build/test/
+runtime was claimed after MDK2 accumulation terminal/result/final, exact AUTHOR
+RELEASE and independent absence checks for all 47 reported helpers. No MDK2/GL
+or foreign WIP was edited.
+
+All six ordinary segment caches now start with usable real-compatible metadata.
+Explicit real data/stack paragraph loads retain usable hidden limits, access
+rights and size attributes while replacing the base. They neither consult the
+GDT nor invalidate a cache because PE is clear. A formerly unusable cache gets
+real-compatible metadata on an explicit real load; changing PE/PG alone leaves
+it unusable. Real CS transfers establish paragraph base, 64K limit and code
+rights while preserving the cached default-size contract. SS.B remains
+independent of CS.D: a real MOV SS no longer derives stack width from CS.
+VM86 loads instead establish fixed 64K, 16-bit, DPL3 caches for all six segments,
+including paragraph zero. VM86 no longer bypasses the existing task-installed
+paged segment/fetch checks. CR0 mode changes continue to preserve cached state;
+protected null and restricted caches cannot be laundered by a mode-bit change.
+
+Architecture references: Intel [80386 PRM 10.3](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s10_03.htm),
+[14.5](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s14_05.htm),
+[15.1](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s15_01.htm),
+[15.3](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s15_03.htm) and
+[Intel SDM volume 3A](https://www.intel.com/content/dam/support/us/en/documents/processors/pentium4/sb/25366821.pdf)
+3.4.3, 9.9 and 15.1–15.2. `design.txt` records the cache-model choices and scope.
+This repairs load/transition state; it does **not** implement the emulator's
+complete nonpaged protection contract or replace permissive direct protected
+MOV validation. The real/unreal negative tests load restricted descriptors,
+execute real-mode transitions and reloads, then exercise authoritative faults
+on paged reentry. They are not full nonpaged-real exception-delivery tests.
+
+The exact retained instruction sequence, after a real task gate and backlink
+IRET, fails on saved old source at PUSH with TR=0058/#SS. It passes with the
+repair, retains TR=0028, writes the expected dword and leaves ESP=0100.
+Four dispatch variants execute all data-segment loads/reads, two independent
+SS widths, real far CS reload, descriptor-table mutation after load, limited/
+read-only/expand-down/null negatives, formerly-null real reload and actual
+VM86 IRETD entry, stack/load behavior and an A32 offset beyond 64K. Fault cases
+check saved restart EIP and no partial write. Full paging (including task-switch
+commit/fault repair and uopOnly/uop/treeFold), foundation's 192 protection
+combinations, read-only diagnostic/capture negatives, runner input, 36 actual
+call-gate/RETF cases, timer and 11 CPU-detection cases pass. Both regenerated
+live bundles execute the COM/task/cache/diagnostic tests and match all 45/44
+embedded modules. Mandatory `flock /tmp/wine-build.lock bash tools/build.sh`
+passes on the exact final code. An initial added-helper parenthesis error was
+caught before runtime and corrected; its failed check remains in evidence.
+
+Exactly **one changed-source authentic GTA.BAT → K.EXE → actual generated
+DINO.BAT → DEMO24.EXE run** followed those checks. Each of three Enter inputs
+followed visual review of its fresh language/confirmation/startup-menu PNG.
+Archive/K/manifest identities and exact 117-file, 17,078,619-byte closure match
+before/after. All 96 source/test/bundle pins match; both actual compiler results
+are 346,132 bytes, SHA-256
+`7bfe7f97ff11b0bd1e91134828563dc5c0c96aab182f2d1e24b7cec01ca1cdf0`.
+Read-only observers retain loaded module hashes, task/TSS/page-walk state and
+segment state without changing guest results.
+
+The OS child finished naturally with **wait 0 after 85.1326 seconds**, below the
+independent 90-second cap; no host/disk/log termination occurred. The shared
+85-second runner budget expired: K exited 0 after 622,692,735 dispatches;
+DEMO24 remained unexited after 19,085,948 dispatches, final `0080:0DF2`.
+There were 28 completed interrupt-task-gate/backlink-IRET pairs, including the
+previous #PF at `0080:3EBF`, CR2 `10184EA1`, and later page faults. There was
+no fatal #SS/#DF shutdown in this bounded run. The exact earlier `0070:42C5`
+PUSH was not observed, so its causal identity remains **unproven**. The segment
+context-change capture reached its 256-event cap before the task gates; full
+task events and the final 32 paged instruction states are retained separately.
+No fault JSON/PNG was produced because no fatal exception occurred.
+
+The final `after.png` was visually inspected: DOS/4GW copyright text only,
+**no gameplay**. SHA-256:
+`95331a6e4b3bf33bac6b10a39dddb4e9d680a8b986d2263cbc83d27d5a758758`.
+Next work is static analysis of the retained later startup/task/page-fault and
+polling state before a separately authorized bounded continuation. The wall
+clock boundary is observed; the cause of remaining startup work is not proved.
+No unchanged retry or second original was attempted. Own helpers are actually
+waited and independently checked absent before exact author release. Evidence
+retains disk minima with unchanged 2,020,000,000-byte abort threshold, above the
+2 GB floor; no RAM gate. Box ID/state/expiry N/A; coordinator shutdown ownership
+is unchanged. This single assignment stops after publication and release.
+
 ## Commit-aware 386 task gate and backlink return; later cache blocker, 2026-11-02
 
 Evidence: `scratch/runs/20261102-gta1-commit-aware-task-switch/`. Input

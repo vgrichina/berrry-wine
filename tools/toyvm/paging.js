@@ -181,7 +181,7 @@ ${saved.map(([x,t]) => `(global $pg_save_${x} (mut ${t}) (${t}.const 0))`).join(
 (func $pg_segment (param $s i32) (param $off i32) (param $n i32) (param $write i32)
   (local $valid i32) (local $limit i32) (local $access i32) (local $mask i32)
   (local $bad i32) (local $end i64)
-  (if (i32.or (i32.eqz (global.get $pm_task_segments)) (global.get $vm86)) (then (return)))
+  (if (i32.eqz (global.get $pm_task_segments)) (then (return)))
   ${isa.SEG.map((s, i) => `(if (i32.eq (local.get $s) (i32.const ${i})) (then
     (local.set $valid (global.get $pm_${s}_valid))
     (local.set $limit (global.get $pm_${s}_limit))
