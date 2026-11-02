@@ -217,3 +217,42 @@ authority and registry configuration were retained; no new EULA or file/config
 changes were made. The original exited 0 after 415.898 seconds at batch 4277,
 within the 850/900-second inner/outer limits. No second invocation, runtime
 repair, remote box, browser or GPU was used. No audio, FPS or broader demo claims.
+
+## Luna arrival attempt blocked before launch, 2026-11-02
+
+`scratch/runs/20261102-tachyon-luna-arrival-next/` preserves this attempt's
+preparation and measured launch blocker. No original session or boat was
+started, and no new arrival, completed jump or objective progress is claimed.
+The accepted Insert transition and range 22.1/22.51 with “Jumps: 2 / Head to
+Luna” remain the previous checkpoint; gate animation alone remains insufficient.
+
+The worker stayed scratch-only until fresh GL query worker35014 and Nox item
+worker76354 each had actual terminal exit 0, `turn.completed`, result/final,
+exact AUTHOR RELEASE and scoped helper cleanup. Their releases were
+13:31:13 and 14:03:02 UTC; named Nox helper PIDs and both local helper scopes
+were independently checked absent. After both gates cleared, the first launch
+check at 14:03:58 UTC measured **2,376,925,184 bytes** free on `/home`, below
+the task's requirement of strictly more than 2,400,000,000 bytes by
+23,074,817 bytes. The owned scratch directory used only 962,560 allocated
+bytes, so removing it could not restore the margin. The worker stopped at
+this first concrete causal blocker, preserving foreign evidence and the
+owner's 2 GB floor. `admission.json` and `gate.json` record these checks.
+
+All 15 original/manifest identities matched the accepted pins (92,143,006
+bytes). The shipped readme and both prior native keychart pages were reviewed:
+Enter selects a target, T cycles targets, arrows turn, Backspace sets full
+throttle, 0 sets zero throttle and Tab activates afterburners. No separate
+jump key was shown. Prepared, unexecuted controls center the native cursor at
+(320,240) after Launch and retain before/held/released/settled captures plus
+matched neutral intervals and input-state observations. They are preparation,
+not input-consumption or flight evidence.
+
+A preliminary comparison matched all 7,228 inputs of the newly accepted GL
+build, whose retrieved module SHA-256 is
+`d6e20ba99816b54b75d2423983ab7c80a0bf9bb1776b570a46d244f881b3291d`.
+It was not loaded or reused here; the older Nov01 module was not assumed
+current. No build, runtime tests, guest/configuration changes, downloads or
+subworkers ran. A future authorized attempt needs restored launch headroom,
+fresh dispatch and module/input checks, then one finite-TTL boat recorded
+before use. The gameplay requirement remains a visibly completed Luna
+arrival/jump or changed objective under ordinary controls.
