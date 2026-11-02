@@ -209,3 +209,41 @@ visible in landscape, with controls in side gutters. This is Chromium touch
 emulation, not Safari or physical-phone validation. Action/Jump, touch-only
 menu/aiming, audio and FPS remain unverified. Core registered compatibility
 can move to ops review; keep these follow-ups separate from launch/gameplay.
+
+## Console follow-up blocked before launch (2026-11-02)
+
+Run `20261102-oni-training-console-next` waited live at41-second intervals
+for Crusaders64278, then GL69793: actual terminal exit0, result/final files,
+exact AUTHOR RELEASE, and named/scoped helper absence were verified before
+admission. GL69793 released an incomplete disk-blocked task without retained
+production changes; it did not supply a new implementation or build.
+
+All34 local fixture files still match the coordinator's recorded SHA256s,
+including original Win98 Oni.exe `d1579b3a...7a12d`. This remains the documented
+community repack, not a pristine installer. All3936 inputs of the accepted
+stipple build match; module SHA256 is
+`307168f9e0475fd3c10f87cbc5d98f05006c6d4494d2f564381a9a0ebe289fe6`.
+No new build or code test ran. A fresh read of local/public lib/apps.js found
+Oni absent from both DESKTOP_APPS lists (46/44 entries respectively).
+
+Owned boat `bx_7c7w98zr` had finite TTL3600 and original expiry
+`2026-11-02T19:53:26.756Z` recorded before use. During immutable transfer
+preparation, the local disk guard observed1956048896 free bytes, below the
+required2000000000, and terminated the owned transfer group with SIGTERM
+(terminal143; group absent). No archive completed, fixture transfer, guest
+launch, gameplay input, or screenshot occurred. This is a resource blocker,
+not an observed emulator defect or new training progress. The console-use
+objective therefore remains unverified; the earlier movement result is not
+counted again.
+
+The remote cleanup query returned no owned runtime directory, transfer
+directory, or scoped helpers. Its JSON was retrieved in command output before
+the stop request. The file-retrieval helper then rejected the latched transfer
+abort flag, but a following shell command still requested boat stop. The
+remote-file SHA comparison did **not** complete before that request; preserve
+this closeout limitation rather than claiming verified retrieval. Local
+cleanup evidence and its hash, guard/terminal logs, identity manifests, and
+actual lifecycle receipts are preserved in the run. Do not resume this boat
+or retry the unchanged transfer. Restore safe disk headroom and use a bounded
+streaming transfer for a fresh ordinary registered-browser console attempt;
+capture and review native before/held/released/settled input then.
