@@ -222,3 +222,99 @@ public deployment occurred.
 Next: a separately dispatched changed-module browser observation can determine
 whether this generic repair makes the battlefield readable. A harness pass
 is not gameplay acceptance; the private lane still needs that observation.
+
+## Repaired-module native observation — 2026-11-02
+
+Run: `scratch/runs/20261102-braveheart-restored-format-gameplay/`. The
+restored-format repair is active, but this bounded original run still reaches
+an unreadable post-loading image. Readable battlefield gameplay, Take the
+Field, unit selection and ordinary commands remain unverified. The remaining
+presentation cause is not localized; no further repair or original replay was
+attempted.
+
+Admission followed GL22106, then Oni71461 actual terminal results, final files,
+exact AUTHOR RELEASEs and named/scoped helper absence. Their 291 and 168 final
+artifact hashes were independently checked. The predecessor repair's 272
+final hashes and published commit were also checked. Scratch-only gate polling
+remained live at 41-second intervals before admission.
+
+The browser used immutable source from published repair commit
+`ab3596819df988f9eea258604f66a0104eea7d36`, paired with its tested
+2071475-byte module SHA-256
+`6fbd12aef206e346c0bde3688fc8b2ee94d410810613f2291410f388cbf9bda8`.
+All 396 runtime-source and 1005 compiler/source records matched the
+predecessor identities with the published repair applied. The current
+checkout's 3936 accepted-baseline inputs were separately rehashed: the repair
+and subsequent GL changes are explicitly recorded in
+`accepted-inputs-current-refresh.json.gz`. Those later GL changes were not
+mixed into this observation. The shared build was left unchanged. No new
+production code or build was needed for this documentation-only task.
+
+All 145 installed original files matched before and after use. The registered
+`bhsoft.exe`, six real DLLs, default WebGL host renderer, real clock and guest
+threads were retained. API-table SHA-256 remained
+`8319e5f866cf102879f4debfff34a421924a8a71d87cacf8d56c5a66afaaead5`.
+Local and public DESKTOP_APPS refreshes both excluded `braveheart_demo`
+(46 local / 44 public entries). Source was streamed directly from immutable
+Git objects and fixtures from their installed paths; no local archive or
+fixture copy was created. All 4015 streamed members matched exact hashes on
+the own boat before launch.
+
+Reviewed route: visible movie → balanced Escape → Game Features → Back →
+main menu → Raid Town → Stephen Feherty mission brief → Conduct Raid. One
+Back press initially missed because canvas coordinates omitted the 34-pixel
+page header; its before/held/released/settled captures and trusted events are
+retained. The corrected native page-coordinate press reached the menu. Menu
+entry is historical capability, not new gameplay progress.
+
+`06-conduct-raid-before`, `-held`, `-released`, `-settled` preserve the entry
+sequence. At settled entry, mode-active was zero, guest depth was 32, and the
+new offscreen descriptor was 640×480, 32-bit, pitch 2560, RGB masks
+`00ff0000/0000ff00/000000ff`; the primary surface was also 32-bit. Thus the
+old restored-depth disagreement was absent in this observed allocation.
+
+Eighteen seconds of neutral waiting then produced the first concrete blocker:
+a noisy magenta strip across the top with the lower area black
+(`07-loading-neutral`). No gameplay input followed. After another six seconds
+of neutral settling, personally reviewed `08-final-neutral-blocker` still had
+that unreadable presentation. The final retained descriptor and both surface
+records were 1024×768, 32-bit, pitch 4096, with the same RGB masks. The literal
+guest dimensions/stride/depth tuple was `[1024,768,3072,32]`; this observation
+alone does not diagnose the remaining encoding or presentation defect. The
+older second guest descriptor still described its existing 800×600 RGB565
+surface; the repair intentionally preserves existing surface formats.
+
+Read-only simulation samples changed from zero during loading to 6 and 8;
+the final delta ring was `[158,150,141,141,157,140,116,126]`. Shared dirty
+samples changed from 11321 to 11799 to 12579, with differing offscreen row
+hashes. Frame-end/pump counters stayed 934/931. The final shared lock count
+was 1. These are retained observations, not evidence of readable completed
+battlefield frames, displayed FPS, a browser stall or sustained convergence.
+The preserved scalar completion-counter limitation still applies.
+
+Four mouse pairs and one Escape pair produced 14 trusted native events.
+Actual holds were 574/809/848/947 ms for the mouse and 559 ms for Escape,
+including capture overhead. Each pair has reviewed before/held/released/
+settled page captures. Final input had an empty queue, no active event, zero
+mouse buttons, and Escape false in both physical and async key state.
+Controller and Chrome exited 0; server/profile and named/scoped remote
+helpers were absent.
+
+All 120 evidence files (11574746 bytes) passed remote/local SHA comparison and
+an independent local reread; all 49 PNGs passed chunk CRC checks. This
+verification completed before the explicitly delegated shutdown of own boat
+`bx_qcyyf29j`. Its original expiry `2026-11-02T21:03:15.325Z` was recorded
+before use; STOPPED was confirmed at `2026-11-02T20:11:28.467Z`.
+`shutdown-admission.json`, `retrieval-verification.json`,
+`retrieved/remote-helper-cleanup.json` and `boat-state.json` preserve ordering.
+The guarded transfer minimum was 2043191296 bytes and retrieval minimum
+2020298752 bytes, both above the required 2000000000-byte owner disk floor.
+A separate shared-disk excursion during the earlier scratch-only wait is
+retained in `preparation-disk-limit.json`; whole-task floor compliance is not
+claimed.
+
+Recovery and exact member identities are in this run's `RECOVERY.md`, compressed
+input manifests and retrieved evidence. Git recovers the published runtime
+source, but not ignored fixture/module bytes. The next bounded task should
+localize the remaining unreadable presentation from these descriptors, rows
+and pixels before another original run. No public promotion is warranted.
