@@ -53,7 +53,9 @@ fonts and records the unchanged compiled bytes. The locked full build passed.
 The first guarded execution phase hit the disk floor at 1,996,500,992 bytes and
 terminated its own native test (exit -15); it is not accepted as a passing test.
 Evidence retains that breach and its cause is unknown. Execution resumed only
-after free space recovered above the floor, with a new continuous guard. The
+after free space recovered above the floor and a second watcher was started.
+That watcher was absent at final audit without a terminal minimum record;
+continuous floor coverage of the recovered phase cannot be certified. The
 initial full build and availability test stopped for omitted font assets, not
 semantic failures; their original errors remain in the run. No game fixture,
 download, deployment or original-game replay was used.
