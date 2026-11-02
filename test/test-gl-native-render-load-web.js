@@ -275,7 +275,13 @@ async function browserScenario(backend) {
     // shared process memory just like the native producer's synchronous calls.
     const deleteGuest=e.guest_alloc(40)>>>0,deleteAt=e.guest_to_wasm(deleteGuest)>>>0;
     new Uint8Array(memory.buffer,deleteAt,40).set(new Uint8Array(deletion));
-    equal(await safe(bridge.replay(GLCommandStream.memoryBatch(memory,deleteAt,40),2)),1,'cross-owner actual context deletion');
+    equal(await safe(bridge.replay(GLCommandStream.memoryBatch(memory,deleteAt,40),2)),0,'cannot delete another owner current context');
+    const release=new ArrayBuffer(44),rv=new DataView(release);
+    rv.setUint32(0,44,true);rv.setUint32(4,OpenGLCompat.CALL_INDEX.wglMakeCurrent,true);rv.setUint32(12,12,true);
+    const releaseGuest=e.guest_alloc(44)>>>0,releaseAt=e.guest_to_wasm(releaseGuest)>>>0;
+    new Uint8Array(memory.buffer,releaseAt,44).set(new Uint8Array(release));
+    equal(await safe(bridge.replay(GLCommandStream.memoryBatch(memory,releaseAt,44),0)),1,'owner releases context before deletion');
+    equal(await safe(bridge.replay(GLCommandStream.memoryBatch(memory,deleteAt,40),2)),1,'cross-owner released context deletion');
     assert([...bridge.activeWindows.values()].every(x=>!x),'context retirement invalidates every active owner');
     producer.postMessage({t:'retired'});
     equal((await safe(done)).value,0,'SwapBuffers reports real failure after context retirement');

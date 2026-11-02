@@ -73,7 +73,7 @@
   ;; past the cap latches the error and leaves the stack alone. The JS mirror
   ;; has no cap and would keep pushing; nothing in the corpus nests that deep.
 
-  (global $gl_mtx_contexts (mut i32) (i32.const 0))
+  ;; Matrix identity is process-wide, while current selection is per thread.
 
   ;; Write a column-major identity at a 64-byte matrix slot.
   (func $gl_mtx_identity_at (param $p i32)
@@ -149,12 +149,14 @@
   ;; same reason: a linked list matches JS Map identity with no slot ceiling.
   ;; Unlike that table these are never recycled, because a matrix stack has no
   ;; meaningful "default" to restore a reused block to.
+  ;; Header +4 is the process object-context registry, +8 its reentrant call
+  ;; mutex; +12/+16 hold saved attribute and matrix registries. Keep these outside the monotonic matrix slots starting at +0x40.
   (global $GL_MTX_BLOCKS i32 (region.addr $GL_MTX_BLOCKS 0))
   (global $GL_MTX_BLOCKS_SIZE i32 (region.size $GL_MTX_BLOCKS))
 
   (func $gl_mtx_slot (param $context i32) (param $create i32) (result i32)
     (local $p i32) (local $guest i32) (local $block i32) (local $s i32)
-    (local.set $p (global.get $gl_mtx_contexts))
+    (local.set $p (i32.atomic.load (region.addr $GL_MTX_BLOCKS 16)))
     (block $scan_done
       (loop $scan
         (br_if $scan_done (i32.eqz (local.get $p)))
@@ -202,9 +204,9 @@
       (br_if $init (i32.lt_u (local.get $s) (i32.const 4))))
     (call $gl_mtx_init_lighting (local.get $block))
     (i32.store (local.get $p) (local.get $context))
-    (i32.store offset=4 (local.get $p) (global.get $gl_mtx_contexts))
+    (i32.store offset=4 (local.get $p) (i32.atomic.load (region.addr $GL_MTX_BLOCKS 16)))
     (i32.store offset=8 (local.get $p) (local.get $block))
-    (global.set $gl_mtx_contexts (local.get $p))
+    (i32.atomic.store (region.addr $GL_MTX_BLOCKS 16) (local.get $p))
     (local.get $block))
 
   ;; The block for whichever context is current. $gl_current_context is the

@@ -663,9 +663,64 @@
         (i64.shl (i64.extend_i32_u (local.get $len)) (i64.const 32)))
       (i64.shl (i64.extend_i32_u (local.get $borrow)) (i64.const 63))))
 
+  (func $gl_object_enter
+    (call $gl_sw_private_state)
+    (if (i32.eqz (global.get $gl_object_lock_depth)) (then
+      (loop $claim
+        (br_if $claim (i32.ne (i32.atomic.rmw.cmpxchg (region.addr $GL_MTX_BLOCKS 8)
+          (i32.const 0) (i32.const 1)) (i32.const 0))))))
+    (global.set $gl_object_lock_depth (i32.add (global.get $gl_object_lock_depth) (i32.const 1))))
+  (func $gl_object_leave
+    (global.set $gl_object_lock_depth (i32.sub (global.get $gl_object_lock_depth) (i32.const 1)))
+    (if (i32.eqz (global.get $gl_object_lock_depth))
+      (then (i32.atomic.store (region.addr $GL_MTX_BLOCKS 8) (i32.const 0)))))
+  ;; Another producer can use an object immediately after this call returns,
+  ;; including before the producer which created it joins a sharing group.
+  ;; Publish named-object mutations before releasing the process call lock.
+  (func $gl_object_publish (param $op i32) (param $stack i32) (result i32)
+    (local $target i32) (local $mutation i32)
+    (if (i32.eqz (global.get $gl_current_context)) (then (return (i32.const 0))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 43)) (i32.eq (local.get $op) (i32.const 77)))
+      (then (return (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 42))
+      (then (return (i32.ne (i32.load offset=8 (local.get $stack)) (i32.const 0)))))
+    (if (i32.eq (local.get $op) (i32.const 45)) (then (local.set $mutation (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 47)) (then (local.set $mutation (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 46)) (then (local.set $mutation (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 96)) (then (local.set $mutation (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 112)) (then (local.set $mutation (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 61)) (then (local.set $mutation (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 149)) (then (local.set $mutation (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 150)) (then (local.set $mutation (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 158)) (then (local.set $mutation (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 159)) (then (local.set $mutation (i32.const 1))))
+    (if (i32.eqz (local.get $mutation)) (then (return (i32.const 0))))
+    (local.set $target (i32.load offset=4 (local.get $stack)))
+    (if (i32.gt_u (i32.sub (local.get $target) (i32.const 0xde0)) (i32.const 1))
+      (then (return (i32.const 0))))
+    (i32.ne (i32.load offset=4 (i32.load
+      (call $gl_texture_binding (call $gl_texture_block) (local.get $target)))) (i32.const 0)))
   (func $gl_wat_encode_call (param $op i32) (param $stack i32) (param $aux i32) (result i32)
+    (local $result i32)
+    (call $gl_object_enter)
+    (local.set $result (call $gl_wat_encode_call_locked (local.get $op) (local.get $stack) (local.get $aux)))
+    (if (call $gl_object_publish (local.get $op) (local.get $stack))
+      (then (drop (call $gl_wat_stream_flush))))
+    (call $gl_object_leave)
+    (local.get $result))
+
+  (func $gl_wat_encode_call_locked (param $op i32) (param $stack i32) (param $aux i32) (result i32)
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
     (local $error i32)
+    (if (i32.and (i32.eq (local.get $op) (i32.const 49))
+        (i32.eqz (call $gl_share_context_find (i32.load offset=4 (local.get $stack))))) (then
+      (global.set $last_error (i32.const 6)) (return (i32.const 0))))
+    (if (i32.eq (local.get $op) (i32.const 178)) (then
+      ;; WGL reports Win32 errors without consuming or changing GL errors.
+      (local.set $error (call $gl_share_validate (i32.load offset=4 (local.get $stack))
+        (i32.load offset=8 (local.get $stack))))
+      (if (local.get $error) (then
+        (global.set $last_error (local.get $error)) (return (i32.const 0))))))
     (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0)) (i32.eq (local.get $op) (i32.const 113))) (then
       (call $gl_texture_query (i32.const 0) (i32.const 0)
         (i32.load offset=4 (local.get $stack)) (i32.load offset=8 (local.get $stack))
@@ -762,8 +817,11 @@
     (call $gl_mtx_observe (local.get $op) (local.get $stack))
     ;; glClear/glClearColor for the WAT software target; inert when it is off.
     (call $gl_sw_observe (local.get $op) (local.get $stack))
-    (if (i32.or (i32.eq (local.get $op) (i32.const 77)) (i32.eq (local.get $op) (i32.const 42)))
-      (then (call $gl_texture_sync_sampling)))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 77)) (i32.or (i32.eq (local.get $op) (i32.const 42)) (i32.eq (local.get $op) (i32.const 43))))
+      (then
+        (call $gl_texture_sync_sampling)
+        (if (global.get $gl_current_context) (then
+          (call $gl_texture_collect (i32.load offset=968 (call $gl_list_context)))))))
     ;; Native allocation failure must not leave the replay frontend claiming
     ;; a color was installed. The record carries the same GL error instead.
     (if (i32.and (i32.eq (local.get $op) (i32.const 112))
@@ -838,6 +896,21 @@
     (if (i32.or (i32.ne (local.get $borrow) (i32.const 0))
         (call $gl_is_barrier (local.get $op)))
       (then (local.set $result (call $gl_wat_stream_flush))))
+    (if (local.get $result) (then
+      (if (i32.eq (local.get $op) (i32.const 48))
+        (then (drop (call $gl_list_context_key (local.get $result)))))
+      (if (i32.eq (local.get $op) (i32.const 178))
+        (then (call $gl_share_install (i32.load offset=4 (local.get $stack)) (i32.load offset=8 (local.get $stack)))))))
+    (if (i32.and (i32.eq (local.get $op) (i32.const 178)) (i32.eqz (local.get $result)))
+      (then (global.set $last_error (i32.const 87))))
+    (if (i32.and (i32.eqz (local.get $result)) (i32.eq (local.get $op) (i32.const 49)))
+      (then (global.set $last_error (i32.const 170))))
+    (if (i32.and (i32.eqz (local.get $result)) (i32.eq (local.get $op) (i32.const 51))) (then
+      (call $gl_state_context_changed (i32.const 0))
+      (call $gl_sw_bind_drawable (i32.const 0))
+      (global.set $gl_current_dc (i32.const 0))
+      (global.set $last_error (select (i32.const 170) (i32.const 6)
+        (call $gl_share_context_find (i32.load offset=8 (local.get $stack)))))))
     (if (i32.and (i32.eq (local.get $op) (i32.const 51)) (i32.ne (local.get $result) (i32.const 0)))
       (then
         (call $gl_state_context_changed (i32.load offset=8 (local.get $stack)))
@@ -855,6 +928,7 @@
     (local.get $result))
 
   (func $gl_wat_encoder_reset
+    (call $gl_object_enter)
     (global.set $gl_material_prelit (i32.const 0))
     (global.set $gl_material_lit_floats (i32.const 0))
     (call $gl_list_reset)
@@ -865,4 +939,5 @@
     (global.set $gl_immediate_mode (i32.const -1))
     (call $gl_state_reset)
     (global.set $gl_current_context (i32.const 0))
-    (global.set $gl_current_dc (i32.const 0)))
+    (global.set $gl_current_dc (i32.const 0))
+    (call $gl_object_leave))

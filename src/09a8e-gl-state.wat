@@ -4,7 +4,7 @@
 
   ;; Linked context nodes are { key, next, state }. Both nodes and state live
   ;; for the process lifetime, matching JS Map identity without a slot ceiling.
-  (global $gl_state_contexts (mut i32) (i32.const 0))
+  ;; Saved attributes follow a context when it moves between producers.
   (global $gl_state_free_contexts (mut i32) (i32.const 0))
   (global $gl_state_attrib_head (mut i32) (i32.const 0))
   (global $gl_state_attrib_depth (mut i32) (i32.const 0))
@@ -12,7 +12,7 @@
 
   (func $gl_state_slot (param $context i32) (param $create i32) (result i32)
     (local $p i32) (local $guest i32) (local $state i32)
-    (local.set $p (global.get $gl_state_contexts))
+    (local.set $p (i32.atomic.load (region.addr $GL_MTX_BLOCKS 12)))
     (block $scan_done
       (loop $scan
         (br_if $scan_done (i32.eqz (local.get $p)))
@@ -27,7 +27,7 @@
         (global.set $gl_state_free_contexts (i32.load offset=4 (local.get $p)))
         (local.set $state (i32.load offset=8 (local.get $p))))
       (else
-        (local.set $guest (call $heap_alloc (i32.const 12)))
+        (local.set $guest (call $heap_alloc (i32.const 16)))
         (if (i32.eqz (local.get $guest)) (then (unreachable)))
         (local.set $p (call $g2w (local.get $guest)))
         (local.set $guest (call $heap_alloc (i32.const 176)))
@@ -36,13 +36,15 @@
         (local.set $state (call $g2w (local.get $guest)))))
     (memory.fill (local.get $state) (i32.const 0) (i32.const 176))
     (i32.store (local.get $p) (local.get $context))
-    (i32.store offset=4 (local.get $p) (global.get $gl_state_contexts))
+    (i32.store offset=12 (local.get $p) (global.get $current_thread_id))
+    (i32.store offset=4 (local.get $p) (i32.atomic.load (region.addr $GL_MTX_BLOCKS 12)))
     (i32.store offset=8 (local.get $p) (local.get $state))
-    (global.set $gl_state_contexts (local.get $p))
+    (i32.atomic.store (region.addr $GL_MTX_BLOCKS 12) (local.get $p))
     (local.get $state))
 
   (func $gl_state_save (param $context i32)
     (local $p i32)
+    (if (i32.eqz (local.get $context)) (then (return)))
     (local.set $p (call $gl_state_slot (local.get $context) (i32.const 1)))
     (if (i32.eqz (local.get $p)) (then (return)))
     (f32.store offset=4 (local.get $p) (global.get $gl_color_r))
@@ -310,7 +312,8 @@
     ;; 0x8078
     (if (i32.eq (local.get $p) (i32.const 0x8078)) (then (return (f64.convert_i32_u (i32.ne (i32.and (global.get $gl_client_bits) (select (i32.const 16) (i32.const 8) (global.get $gl_client_tex_unit))) (i32.const 0))))))
     ;; 0x8069
-    (if (i32.eq (local.get $p) (i32.const 0x8069)) (then (return (f64.convert_i32_u (if (result i32) (global.get $gl_sw_active_unit) (then (global.get $gl_sw_other_bound)) (else (i32.load offset=40 (global.get $gl_sw_st))))))))
+    (if (i32.eq (local.get $p) (i32.const 0x8069)) (then (return (f64.convert_i32_u
+      (i32.load offset=4 (i32.load (call $gl_texture_binding (call $gl_texture_block) (i32.const 0xde1))))))))
     ;; 0x0c10
     (if (i32.eq (local.get $p) (i32.const 0xc10)) (then (return (if (result f64) (i32.lt_s (i32.load offset=56 (global.get $gl_sw_st)) (i32.const 0)) (then (if (result f64) (i32.eq (local.get $i) (i32.const 3)) (then (f64.convert_i32_u (global.get $gl_sw_default_h))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 2)) (then (f64.convert_i32_u (global.get $gl_sw_default_w))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 1)) (then (f64.const 0)) (else (f64.const 0)))))))) (else (f64.convert_i32_s (i32.load (i32.add (global.get $gl_sw_st) (i32.add (i32.const 48) (i32.shl (local.get $i) (i32.const 2)))))))))))
     ;; 0x0b11
@@ -386,17 +389,7 @@
     (unreachable))
 
   (func $gl_query_list_index (param $ctx i32) (result i32)
-    (local $b i32) (local $slot i32) (local $index i32)
-    (local.set $slot (i32.load offset=12 (local.get $ctx)))
-    (if (i32.eqz (local.get $slot)) (then (return (i32.const 0))))
-    (local.set $b (i32.load offset=8 (local.get $ctx)))
-    (block $done (loop $scan
-      (br_if $done (i32.eqz (local.get $b)))
-      (local.set $index (i32.sub (local.get $slot) (i32.add (local.get $b) (i32.const 12))))
-      (if (i32.lt_u (local.get $index) (i32.shl (i32.load offset=8 (local.get $b)) (i32.const 2)))
-        (then (return (i32.add (i32.load offset=4 (local.get $b)) (i32.shr_u (local.get $index) (i32.const 2))))))
-      (local.set $b (i32.load (local.get $b))) (br $scan)))
-    (unreachable))
+    (i32.load offset=12 (local.get $ctx)))
 
   (func $gl_query_blend_enum (param $v i32) (result i32)
     (if (i32.le_u (local.get $v) (i32.const 2)) (then (return (i32.sub (local.get $v) (i32.const 1)))))
@@ -584,7 +577,7 @@
       (then
         (call $gl_state_context_changed (i32.const 0))
         (global.set $gl_current_dc (i32.const 0))))
-    (local.set $node (global.get $gl_state_contexts))
+    (local.set $node (i32.atomic.load (region.addr $GL_MTX_BLOCKS 12)))
     (block $done
       (loop $find
         (br_if $done (i32.eqz (local.get $node)))
@@ -592,7 +585,7 @@
         (if (i32.eq (i32.load (local.get $node)) (local.get $context)) (then
           (if (local.get $prev)
             (then (i32.store offset=4 (local.get $prev) (local.get $next)))
-            (else (global.set $gl_state_contexts (local.get $next))))
+            (else (i32.atomic.store (region.addr $GL_MTX_BLOCKS 12) (local.get $next))))
           (local.set $state (i32.load offset=8 (local.get $node)))
           (call $gl_state_free_attribs (i32.load offset=136 (local.get $state)))
           (memory.fill (local.get $state) (i32.const 0) (i32.const 176))
@@ -1074,21 +1067,16 @@
     (i32.const 0))
 
   (func $gl_state_reset
-    (local $node i32) (local $next i32) (local $state i32)
+    (local $node i32) (local $next i32)
     (call $gl_state_save (global.get $gl_current_context))
     (call $gl_state_defaults)
-    (local.set $node (global.get $gl_state_contexts))
-    (loop $free
-      (if (i32.eqz (local.get $node)) (then
-        (global.set $gl_state_contexts (i32.const 0)) (return)))
+    (local.set $node (i32.atomic.load (region.addr $GL_MTX_BLOCKS 12)))
+    (block $done (loop $free
+      (br_if $done (i32.eqz (local.get $node)))
       (local.set $next (i32.load offset=4 (local.get $node)))
-      (local.set $state (i32.load offset=8 (local.get $node)))
-      (call $gl_state_free_attribs (i32.load offset=136 (local.get $state)))
-      (memory.fill (local.get $state) (i32.const 0) (i32.const 176))
-      (i32.store offset=4 (local.get $node) (global.get $gl_state_free_contexts))
-      (global.set $gl_state_free_contexts (local.get $node))
-      (local.set $node (local.get $next))
-      (br $free)))
+      (if (i32.eq (i32.load offset=12 (local.get $node)) (global.get $current_thread_id))
+        (then (call $gl_state_context_deleted (i32.load (local.get $node)))))
+      (local.set $node (local.get $next)) (br $free))))
 
   ;; OpenGL 1.1 signed normals use the endpoint-linear signed conversion,
   ;; shared with signed current colors. Decode in binary64 and demote only

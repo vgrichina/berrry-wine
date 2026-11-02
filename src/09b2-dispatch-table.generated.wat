@@ -4110,6 +4110,7 @@
     (if (i32.eq (local.get $id) (i32.const 4465)) (then (return (i32.const 1)))) ;; glVertex4sv
     (if (i32.eq (local.get $id) (i32.const 4466)) (then (return (i32.const 1)))) ;; wglGetCurrentContext
     (if (i32.eq (local.get $id) (i32.const 4467)) (then (return (i32.const 1)))) ;; wglGetCurrentDC
+    (if (i32.eq (local.get $id) (i32.const 4468)) (then (return (i32.const 1)))) ;; wglShareLists
     (if (i32.eq (local.get $id) (i32.const 4535)) (then (return (i32.const 1)))) ;; wglDescribeLayerPlane
     (if (i32.eq (local.get $id) (i32.const 4536)) (then (return (i32.const 1)))) ;; wglGetLayerPaletteEntries
     (if (i32.eq (local.get $id) (i32.const 4537)) (then (return (i32.const 1)))) ;; wglSetLayerPaletteEntries
@@ -4179,7 +4180,6 @@
     (if (i32.eq (local.get $id) (i32.const 4400)) (then (return (i32.const 1)))) ;; glRenderMode
     (if (i32.eq (local.get $id) (i32.const 4402)) (then (return (i32.const 1)))) ;; glSelectBuffer
     (if (i32.eq (local.get $id) (i32.const 4446)) (then (return (i32.const 1)))) ;; glUnlockArraysEXT
-    (if (i32.eq (local.get $id) (i32.const 4468)) (then (return (i32.const 1)))) ;; wglShareLists
     (if (i32.eq (local.get $id) (i32.const 4469)) (then (return (i32.const 1)))) ;; wglCopyContext
     (if (i32.eq (local.get $id) (i32.const 4470)) (then (return (i32.const 1)))) ;; wglCreateLayerContext
     (if (i32.eq (local.get $id) (i32.const 4471)) (then (return (i32.const 1)))) ;; wglSwapIntervalEXT
@@ -16093,169 +16093,279 @@
       (call $handle__strnicmp (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 2886: glAlphaFunc
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 0) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2887: glBlendFunc
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 1) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2888: glClear
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 2) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2889: glClearColor
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 3) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2890: glCullFace
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 4) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2891: glDepthFunc
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 5) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2892: glDepthMask
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 6) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2893: glDepthRange
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 7) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2894: glDisable
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 8) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2895: glDrawBuffer
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 9) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2896: glEnable
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 10) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2897: glFinish
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 11) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2898: glGetError
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 12) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2899: glGetFloatv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 13) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2900: glGetString
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 14) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2901: glPointSize
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 15) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2902: glPolygonMode
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 16) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2903: glReadPixels
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 17) (i32.const 7) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2904: glScissor
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 18) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2905: glShadeModel
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 19) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2906: glViewport
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 20) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2907: glBegin
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 21) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2908: glEnd
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 22) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2909: glColor3f
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 23) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2910: glColor3fv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 24) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2911: glColor4f
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 25) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2912: glColor4fv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 26) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2913: glColor4ubv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 27) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2914: glTexCoord2f
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 28) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2915: glVertex2f
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 29) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2916: glVertex3f
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 30) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2917: glVertex3fv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 31) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2918: glFrustum
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 32) (i32.const 12) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2919: glLoadIdentity
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 33) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2920: glLoadMatrixf
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 34) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2921: glMatrixMode
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 35) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2922: glOrtho
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 36) (i32.const 12) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2923: glPopMatrix
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 37) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2924: glPushMatrix
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 38) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2925: glRotatef
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 39) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2926: glScalef
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 40) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2927: glTranslatef
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 41) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2928: glBindTexture
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 42) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2929: glDeleteTextures
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 43) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2930: glTexEnvf
+      (call $gl_object_enter)
       (call $handle_gl_texture_set (i32.const 1) (i32.const 0) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 2931: glTexImage2D
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 45) (i32.const 9))
+      (call $gl_object_leave)
       (return)
     ) ;; 2932: glTexParameterf
+      (call $gl_object_enter)
       (call $handle_gl_texture_set (i32.const 0) (i32.const 0) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 2933: glTexSubImage2D
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 47) (i32.const 9))
+      (call $gl_object_leave)
       (return)
     ) ;; 2934: wglCreateContext
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 48) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2935: wglDeleteContext
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 49) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2936: wglGetProcAddress
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 50) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2937: wglMakeCurrent
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 51) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2938: wglChoosePixelFormat
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 52) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2939: wglDescribePixelFormat
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 53) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2940: wglSetPixelFormat
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 54) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2941: GetSystemDirectoryW
       (call $handle_GetSystemDirectoryW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -16270,7 +16380,9 @@
       (call $handle_CharLowerW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 2945: wglSwapBuffers
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 55) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 2946: FreeConsole
       (call $handle_FreeConsole (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -16597,16 +16709,22 @@
       (call $handle_IDirectSound3DListener_CommitDeferredSettings (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 3054: glColor4ub
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 56) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3055: IsCharAlphaNumericA
       (call $handle_IsCharAlphaNumericA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 3056: glPolygonOffset
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 57) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3057: glColor3ubv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 58) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3058: CharToOemA
       (call $handle_CharToOemA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -17422,73 +17540,119 @@
       (call $handle_CopyAcceleratorTableA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 3241: glNormal3f
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 63) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3242: glNormal3fv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 64) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3243: glIsEnabled
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 65) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3244: glColorMaterial
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 66) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3245: glLightfv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 67) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3246: glMaterialfv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 68) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3247: glLightModelfv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 69) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3248: glLightModeli
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 70) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3249: glMaterialf
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 71) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3250: glLightf
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 72) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3251: glPixelStorei
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 73) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3252: glGenTextures
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 74) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3253: glHint
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 75) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3254: glPushAttrib
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 76) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3255: glPopAttrib
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 77) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3256: glFogfv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 78) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3257: glFogf
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 79) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3258: glFogi
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 80) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3259: glFrontFace
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 81) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3260: glTexEnvi
+      (call $gl_object_enter)
       (call $handle_gl_texture_set (i32.const 1) (i32.const 1) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 3261: glTexGeni
+      (call $gl_object_enter)
       (call $handle_glTexGen_legacy (i32.const 83))
+      (call $gl_object_leave)
       (return)
     ) ;; 3262: glTexGenf
+      (call $gl_object_enter)
       (call $handle_glTexGen_legacy (i32.const 84))
+      (call $gl_object_leave)
       (return)
     ) ;; 3263: glTexGenfv
+      (call $gl_object_enter)
       (call $handle_glTexGen_legacy (i32.const 85))
+      (call $gl_object_leave)
       (return)
     ) ;; 3264: GetClipCursor
       (call $handle_GetClipCursor (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -18175,40 +18339,64 @@
       (call $handle_IDirectPlayLobby3_WaitForConnectionSettings (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 3404: glEnableClientState
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 86) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3405: glArrayElement
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 87) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3406: glVertexPointer
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 88) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3407: glNormalPointer
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 89) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3408: glRotated
+      (call $gl_object_enter)
       (call $handle_glRotated (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3409: glVertex2fv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 91) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3410: glMateriali
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 92) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3411: glFlush
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 93) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3412: glLineWidth
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 94) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3413: glTexCoord2fv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 95) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3414: glTexParameteri
+      (call $gl_object_enter)
       (call $handle_gl_texture_set (i32.const 0) (i32.const 1) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 3415: glVertex2i
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 97) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3416: gluBuild1DMipmaps
       (call $handle_gpu_api (i32.const 98) (i32.const 6) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -18226,7 +18414,9 @@
       (call $handle_ChangeDisplaySettingsExA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 3421: wglSwapLayerBuffers
+      (call $gl_object_enter)
       (call $handle_wglSwapLayerBuffers (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3422: CreateIoCompletionPort
       (call $handle_CreateIoCompletionPort (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -18238,22 +18428,34 @@
       (call $handle_GetQueuedCompletionStatus (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 3425: glDisableClientState
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 99) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3426: glTexCoordPointer
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 100) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3427: glColorPointer
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 101) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3428: glDrawElements
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 102) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3429: glGetIntegerv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 103) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3430: glReadBuffer
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 104) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3431: ImmGetOpenStatus
       (call $handle_ImmGetOpenStatus (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -18274,13 +18476,19 @@
       (call $handle_ImmGetCandidateListA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 3437: glActiveTextureARB
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 105) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3438: glClientActiveTextureARB
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 106) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3439: glMultiTexCoord2fARB
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 107) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 3440: Direct3DCreate8
       (call $handle_Direct3DCreate8 (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -21268,7 +21476,9 @@
       (call $handle_WSACancelBlockingCall (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4171: glDrawArrays
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 108) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4172: GetDiskFreeSpaceExW
       (call $handle_GetDiskFreeSpaceExW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -21382,433 +21592,719 @@
       (call $handle_grDrawTriangle (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4209: glAccum
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 143) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4210: glAreTexturesResident
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4211: glBitmap
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 131) (i32.const 7) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4212: glCallList
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 127) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4213: glCallLists
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 133) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4214: glClearAccum
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 144) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4215: glClearDepth
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 110) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4216: glClearIndex
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4217: glClearStencil
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 139) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4218: glClipPlane
+      (call $gl_object_enter)
       (call $handle_gl_clip (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4219: glColor3b
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 3) (i32.const 8) (i32.const 1) (i32.const 0) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4220: glColor3bv
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 3) (i32.const 8) (i32.const 1) (i32.const 1) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4221: glColor3d
+      (call $gl_object_enter)
       (call $handle_glColor3d (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4222: glColor3dv
+      (call $gl_object_enter)
       (call $handle_glColor3dv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4223: glColor3i
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 3) (i32.const 32) (i32.const 1) (i32.const 0) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4224: glColor3iv
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 3) (i32.const 32) (i32.const 1) (i32.const 1) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4225: glColor3s
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 3) (i32.const 16) (i32.const 1) (i32.const 0) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4226: glColor3sv
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 3) (i32.const 16) (i32.const 1) (i32.const 1) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4227: glColor3ub
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 111) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4228: glColor3ui
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 3) (i32.const 32) (i32.const 0) (i32.const 0) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4229: glColor3uiv
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 3) (i32.const 32) (i32.const 0) (i32.const 1) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4230: glColor3us
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 3) (i32.const 16) (i32.const 0) (i32.const 0) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4231: glColor3usv
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 3) (i32.const 16) (i32.const 0) (i32.const 1) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4232: glColor4b
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 4) (i32.const 8) (i32.const 1) (i32.const 0) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4233: glColor4bv
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 4) (i32.const 8) (i32.const 1) (i32.const 1) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4234: glColor4d
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4235: glColor4dv
+      (call $gl_object_enter)
       (call $handle_glColor4dv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4236: glColor4i
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 4) (i32.const 32) (i32.const 1) (i32.const 0) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4237: glColor4iv
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 4) (i32.const 32) (i32.const 1) (i32.const 1) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4238: glColor4s
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 4) (i32.const 16) (i32.const 1) (i32.const 0) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4239: glColor4sv
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 4) (i32.const 16) (i32.const 1) (i32.const 1) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4240: glColor4ui
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 4) (i32.const 32) (i32.const 0) (i32.const 0) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4241: glColor4uiv
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 4) (i32.const 32) (i32.const 0) (i32.const 1) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4242: glColor4us
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 4) (i32.const 16) (i32.const 0) (i32.const 0) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4243: glColor4usv
+      (call $gl_object_enter)
       (call $handle_glColor_integer (i32.const 4) (i32.const 16) (i32.const 0) (i32.const 1) (local.get $arg0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4244: glColorMask
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 140) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4245: glColorSubTableEXT
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4246: glColorTableEXT
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4247: glCopyPixels
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 170) (i32.const 5))
+      (call $gl_object_leave)
       (return)
     ) ;; 4248: glCopyTexImage1D
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 151) (i32.const 7))
+      (call $gl_object_leave)
       (return)
     ) ;; 4249: glCopyTexImage2D
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 152) (i32.const 8))
+      (call $gl_object_leave)
       (return)
     ) ;; 4250: glCopyTexSubImage1D
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 153) (i32.const 6))
+      (call $gl_object_leave)
       (return)
     ) ;; 4251: glCopyTexSubImage2D
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 154) (i32.const 8))
+      (call $gl_object_leave)
       (return)
     ) ;; 4252: glDeleteLists
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 128) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4253: glDrawPixels
+      (call $gl_object_enter)
       (call $handle_gl_draw_pixels)
+      (call $gl_object_leave)
       (return)
     ) ;; 4254: glEdgeFlag
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4255: glEdgeFlagPointer
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4256: glEdgeFlagv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4257: glEndList
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 126) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4258: glEvalCoord1d
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4259: glEvalCoord1dv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4260: glEvalCoord1f
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4261: glEvalCoord1fv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4262: glEvalCoord2d
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4263: glEvalCoord2dv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4264: glEvalCoord2f
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4265: glEvalCoord2fv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4266: glEvalMesh1
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4267: glEvalMesh2
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4268: glEvalPoint1
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4269: glEvalPoint2
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4270: glFeedbackBuffer
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4271: glFogiv
+      (call $gl_object_enter)
       (call $handle_gl_lmf_integer (i32.const 0) (i32.const 1) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4272: glGenLists
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 124) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4273: glGetBooleanv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 161) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4274: glGetClipPlane
+      (call $gl_object_enter)
       (call $handle_gl_clip (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4275: glGetColorTableEXT
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4276: glGetColorTableParameterfvEXT
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4277: glGetColorTableParameterivEXT
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4278: glGetDoublev
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 145) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4279: glGetLightfv
+      (call $gl_object_enter)
       (call $handle_gl_lighting_query (i32.const 0) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4280: glGetLightiv
+      (call $gl_object_enter)
       (call $handle_gl_lighting_query (i32.const 0) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4281: glGetMapdv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4282: glGetMapfv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4283: glGetMapiv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4284: glGetMaterialfv
+      (call $gl_object_enter)
       (call $handle_gl_lighting_query (i32.const 1) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4285: glGetMaterialiv
+      (call $gl_object_enter)
       (call $handle_gl_lighting_query (i32.const 1) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4286: glGetPixelMapfv
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 166) (i32.const 2))
+      (call $gl_object_leave)
       (return)
     ) ;; 4287: glGetPixelMapuiv
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 167) (i32.const 2))
+      (call $gl_object_leave)
       (return)
     ) ;; 4288: glGetPixelMapusv
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 168) (i32.const 2))
+      (call $gl_object_leave)
       (return)
     ) ;; 4289: glGetPointerv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 162) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4290: glGetPolygonStipple
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 176) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4291: glGetTexEnvfv
+      (call $gl_object_enter)
       (call $handle_gl_texture_query (i32.const 1) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4292: glGetTexEnviv
+      (call $gl_object_enter)
       (call $handle_gl_texture_query (i32.const 1) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4293: glGetTexGendv
+      (call $gl_object_enter)
       (call $handle_glGetTexGen_typed (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4294: glGetTexGenfv
+      (call $gl_object_enter)
       (call $handle_glGetTexGen_typed (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4295: glGetTexGeniv
+      (call $gl_object_enter)
       (call $handle_glGetTexGen_typed (i32.const 2))
+      (call $gl_object_leave)
       (return)
     ) ;; 4296: glGetTexImage
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 155) (i32.const 5))
+      (call $gl_object_leave)
       (return)
     ) ;; 4297: glGetTexLevelParameterfv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 115) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4298: glGetTexLevelParameteriv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 114) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4299: glGetTexParameterfv
+      (call $gl_object_enter)
       (call $handle_gl_texture_query (i32.const 0) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4300: glGetTexParameteriv
+      (call $gl_object_enter)
       (call $handle_gl_texture_query (i32.const 0) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4301: glIndexd
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4302: glIndexdv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4303: glIndexf
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4304: glIndexfv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4305: glIndexi
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4306: glIndexiv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4307: glIndexMask
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4308: glIndexPointer
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4309: glIndexs
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4310: glIndexsv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4311: glIndexub
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4312: glIndexubv
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4313: glInitNames
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4314: glInterleavedArrays
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 177) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4315: glIsList
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 129) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4316: glIsTexture
+      (call $gl_object_enter)
       (call $handle_gl_texture_is)
+      (call $gl_object_leave)
       (return)
     ) ;; 4317: glLighti
+      (call $gl_object_enter)
       (call $handle_gl_lmf_integer (i32.const 2) (i32.const 0) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4318: glLightiv
+      (call $gl_object_enter)
       (call $handle_gl_lmf_integer (i32.const 2) (i32.const 1) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4319: glLightModelf
+      (call $gl_object_enter)
       (call $handle_gl_lmf_integer (i32.const 1) (i32.const 0) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4320: glLightModeliv
+      (call $gl_object_enter)
       (call $handle_gl_lmf_integer (i32.const 1) (i32.const 1) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4321: glLineStipple
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 174) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4322: glListBase
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 132) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4323: glLoadMatrixd
+      (call $gl_object_enter)
       (call $handle_glLoadMatrixd (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4324: glLoadName
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4325: glLockArraysEXT
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4326: glLogicOp
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4327: glMap1d
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4328: glMap1f
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4329: glMap2d
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4330: glMap2f
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4331: glMapGrid1d
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4332: glMapGrid1f
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4333: glMapGrid2d
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4334: glMapGrid2f
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4335: glMaterialiv
+      (call $gl_object_enter)
       (call $handle_gl_lmf_integer (i32.const 3) (i32.const 1) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4336: glMultiTexCoord1fARB
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4337: glMultiTexCoord1fvARB
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4338: glMultiTexCoord2fvARB
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 117) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4339: glMultiTexCoord3fARB
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4340: glMultiTexCoord3fvARB
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4341: glMultiTexCoord4fARB
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 122) (i32.const 5) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4342: glMultiTexCoord4fvARB
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 123) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4343: glMultMatrixd
+      (call $gl_object_enter)
       (call $handle_glMultMatrixd (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4344: glMultMatrixf
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 109) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4345: glNewList
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 125) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4346: glNormal3b
+      (call $gl_object_enter)
       (call $handle_glNormal_typed (i32.const 8) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4347: glNormal3bv
+      (call $gl_object_enter)
       (call $handle_glNormal_typed (i32.const 8) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4348: glNormal3d
+      (call $gl_object_enter)
       (call $handle_glNormal_typed (i32.const 64) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4349: glNormal3dv
+      (call $gl_object_enter)
       (call $handle_glNormal_typed (i32.const 64) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4350: glNormal3i
+      (call $gl_object_enter)
       (call $handle_glNormal_typed (i32.const 32) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4351: glNormal3iv
+      (call $gl_object_enter)
       (call $handle_glNormal_typed (i32.const 32) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; fallback
     (call $handle_fallback (local.get $name_ptr) (i32.add (local.get $api_id) (i32.const 4096)))
@@ -22069,364 +22565,604 @@
     (block $api_0
       (br_table $api_0 $api_1 $api_2 $api_3 $api_4 $api_5 $api_6 $api_7 $api_8 $api_9 $api_10 $api_11 $api_12 $api_13 $api_14 $api_15 $api_16 $api_17 $api_18 $api_19 $api_20 $api_21 $api_22 $api_23 $api_24 $api_25 $api_26 $api_27 $api_28 $api_29 $api_30 $api_31 $api_32 $api_33 $api_34 $api_35 $api_36 $api_37 $api_38 $api_39 $api_40 $api_41 $api_42 $api_43 $api_44 $api_45 $api_46 $api_47 $api_48 $api_49 $api_50 $api_51 $api_52 $api_53 $api_54 $api_55 $api_56 $api_57 $api_58 $api_59 $api_60 $api_61 $api_62 $api_63 $api_64 $api_65 $api_66 $api_67 $api_68 $api_69 $api_70 $api_71 $api_72 $api_73 $api_74 $api_75 $api_76 $api_77 $api_78 $api_79 $api_80 $api_81 $api_82 $api_83 $api_84 $api_85 $api_86 $api_87 $api_88 $api_89 $api_90 $api_91 $api_92 $api_93 $api_94 $api_95 $api_96 $api_97 $api_98 $api_99 $api_100 $api_101 $api_102 $api_103 $api_104 $api_105 $api_106 $api_107 $api_108 $api_109 $api_110 $api_111 $api_112 $api_113 $api_114 $api_115 $api_116 $api_117 $api_118 $api_119 $api_120 $api_121 $api_122 $api_123 $api_124 $api_125 $api_126 $api_127 $api_128 $api_129 $api_130 $api_131 $api_132 $api_133 $api_134 $api_135 $api_136 $api_137 $api_138 $api_139 $api_140 $api_141 $api_142 $api_143 $api_144 $api_145 $api_146 $api_147 $api_148 $api_149 $api_150 $api_151 $api_152 $api_153 $api_154 $api_155 $api_156 $api_157 $api_158 $api_159 $api_160 $api_161 $api_162 $api_163 $api_164 $api_165 $api_166 $api_167 $api_168 $api_169 $api_170 $api_171 $api_172 $api_173 $api_174 $api_175 $api_176 $api_177 $api_178 $api_179 $api_180 $api_181 $api_182 $api_183 $api_184 $api_185 $api_186 $api_187 $api_188 $api_189 $api_190 $api_191 $api_192 $api_193 $api_194 $api_195 $api_196 $api_197 $api_198 $api_199 $api_200 $api_201 $api_202 $api_203 $api_204 $api_205 $api_206 $api_207 $api_208 $api_209 $api_210 $api_211 $api_212 $api_213 $api_214 $api_215 $api_216 $api_217 $api_218 $api_219 $api_220 $api_221 $api_222 $api_223 $api_224 $api_225 $api_226 $api_227 $api_228 $api_229 $api_230 $api_231 $api_232 $api_233 $api_234 $api_235 $api_236 $api_237 $api_238 $api_239 $api_240 $api_241 $api_242 $api_243 $api_244 $api_245 $api_246 $api_247 $api_248 $api_249 $fallback (local.get $api_id))
     ) ;; 4352: glNormal3s
+      (call $gl_object_enter)
       (call $handle_glNormal_typed (i32.const 16) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4353: glNormal3sv
+      (call $gl_object_enter)
       (call $handle_glNormal_typed (i32.const 16) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4354: glPassThrough
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4355: glPixelMapfv
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 163) (i32.const 3))
+      (call $gl_object_leave)
       (return)
     ) ;; 4356: glPixelMapuiv
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 164) (i32.const 3))
+      (call $gl_object_leave)
       (return)
     ) ;; 4357: glPixelMapusv
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 165) (i32.const 3))
+      (call $gl_object_leave)
       (return)
     ) ;; 4358: glPixelStoref
+      (call $gl_object_enter)
       (call $handle_gl_pixel_storef)
+      (call $gl_object_leave)
       (return)
     ) ;; 4359: glPixelTransferf
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 156) (i32.const 2))
+      (call $gl_object_leave)
       (return)
     ) ;; 4360: glPixelTransferi
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 157) (i32.const 2))
+      (call $gl_object_leave)
       (return)
     ) ;; 4361: glPixelZoom
+      (call $gl_object_enter)
       (call $handle_gl_texture_command (i32.const 171) (i32.const 2))
+      (call $gl_object_leave)
       (return)
     ) ;; 4362: glPolygonStipple
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 175) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4363: glPopClientAttrib
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 135) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4364: glPopName
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4365: glPrioritizeTextures
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4366: glPushClientAttrib
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 134) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4367: glPushName
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4368: glRasterPos2d
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5130) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4369: glRasterPos2dv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5130) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4370: glRasterPos2f
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 130) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4371: glRasterPos2fv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5126) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4372: glRasterPos2i
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5124) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4373: glRasterPos2iv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5124) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4374: glRasterPos2s
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5122) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4375: glRasterPos2sv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5122) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4376: glRasterPos3d
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5130) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4377: glRasterPos3dv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5130) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4378: glRasterPos3f
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5126) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4379: glRasterPos3fv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5126) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4380: glRasterPos3i
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5124) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4381: glRasterPos3iv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5124) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4382: glRasterPos3s
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5122) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4383: glRasterPos3sv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5122) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4384: glRasterPos4d
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5130) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4385: glRasterPos4dv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5130) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4386: glRasterPos4f
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5126) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4387: glRasterPos4fv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5126) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4388: glRasterPos4i
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5124) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4389: glRasterPos4iv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5124) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4390: glRasterPos4s
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5122) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4391: glRasterPos4sv
+      (call $gl_object_enter)
       (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5122) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4392: glRectd
+      (call $gl_object_enter)
       (call $handle_glRectd (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4393: glRectdv
+      (call $gl_object_enter)
       (call $handle_glRectdv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4394: glRectf
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 142) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4395: glRectfv
+      (call $gl_object_enter)
       (call $handle_glRectfv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4396: glRecti
+      (call $gl_object_enter)
       (call $handle_glRecti (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4397: glRectiv
+      (call $gl_object_enter)
       (call $handle_glRectiv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4398: glRects
+      (call $gl_object_enter)
       (call $handle_glRects (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4399: glRectsv
+      (call $gl_object_enter)
       (call $handle_glRectsv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4400: glRenderMode
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4401: glScaled
+      (call $gl_object_enter)
       (call $handle_glScaled (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4402: glSelectBuffer
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4403: glStencilFunc
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 137) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4404: glStencilMask
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 136) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4405: glStencilOp
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 138) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4406: glTexCoord1d
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5130) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4407: glTexCoord1dv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5130) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4408: glTexCoord1f
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5126) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4409: glTexCoord1fv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5126) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4410: glTexCoord1i
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5124) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4411: glTexCoord1iv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5124) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4412: glTexCoord1s
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5122) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4413: glTexCoord1sv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5122) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4414: glTexCoord2d
+      (call $gl_object_enter)
       (call $handle_glTexCoord2d (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4415: glTexCoord2dv
+      (call $gl_object_enter)
       (call $handle_glTexCoord2dv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4416: glTexCoord2i
+      (call $gl_object_enter)
       (call $handle_glTexCoord2i (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4417: glTexCoord2iv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 2) (i32.const 5124) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4418: glTexCoord2s
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 2) (i32.const 5122) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4419: glTexCoord2sv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 2) (i32.const 5122) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4420: glTexCoord3d
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5130) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4421: glTexCoord3dv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5130) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4422: glTexCoord3f
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5126) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4423: glTexCoord3fv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5126) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4424: glTexCoord3i
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5124) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4425: glTexCoord3iv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5124) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4426: glTexCoord3s
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5122) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4427: glTexCoord3sv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5122) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4428: glTexCoord4d
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5130) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4429: glTexCoord4dv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5130) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4430: glTexCoord4f
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 120) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4431: glTexCoord4fv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 121) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4432: glTexCoord4i
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5124) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4433: glTexCoord4iv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5124) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4434: glTexCoord4s
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5122) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4435: glTexCoord4sv
+      (call $gl_object_enter)
       (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5122) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4436: glTexEnvfv
+      (call $gl_object_enter)
       (call $handle_gl_texture_set (i32.const 1) (i32.const 0) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4437: glTexEnviv
+      (call $gl_object_enter)
       (call $handle_gl_texture_set (i32.const 1) (i32.const 1) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4438: glTexGend
+      (call $gl_object_enter)
       (call $handle_glTexGen_typed (i32.const 0) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4439: glTexGendv
+      (call $gl_object_enter)
       (call $handle_glTexGen_typed (i32.const 0) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4440: glTexGeniv
+      (call $gl_object_enter)
       (call $handle_glTexGen_typed (i32.const 1) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4441: glTexImage1D
+      (call $gl_object_enter)
       (call $handle_gl_tex1d_upload (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4442: glTexParameterfv
+      (call $gl_object_enter)
       (call $handle_gl_texture_set (i32.const 0) (i32.const 0) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4443: glTexParameteriv
+      (call $gl_object_enter)
       (call $handle_gl_texture_set (i32.const 0) (i32.const 1) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4444: glTexSubImage1D
+      (call $gl_object_enter)
       (call $handle_gl_tex1d_upload (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4445: glTranslated
+      (call $gl_object_enter)
       (call $handle_glTranslated (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4446: glUnlockArraysEXT
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4447: glVertex2d
+      (call $gl_object_enter)
       (call $handle_glVertex2d (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4448: glVertex2dv
+      (call $gl_object_enter)
       (call $handle_glVertex2dv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4449: glVertex2iv
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 2) (i32.const 5124) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4450: glVertex2s
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 2) (i32.const 5122) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4451: glVertex2sv
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 2) (i32.const 5122) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4452: glVertex3d
+      (call $gl_object_enter)
       (call $handle_glVertex3d (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4453: glVertex3dv
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 3) (i32.const 5130) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4454: glVertex3i
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 3) (i32.const 5124) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4455: glVertex3iv
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 3) (i32.const 5124) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4456: glVertex3s
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 3) (i32.const 5122) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4457: glVertex3sv
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 3) (i32.const 5122) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4458: glVertex4d
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 4) (i32.const 5130) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4459: glVertex4dv
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 4) (i32.const 5130) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4460: glVertex4f
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 118) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4461: glVertex4fv
+      (call $gl_object_enter)
       (call $handle_gpu_api (i32.const 119) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4462: glVertex4i
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 4) (i32.const 5124) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4463: glVertex4iv
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 4) (i32.const 5124) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4464: glVertex4s
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 4) (i32.const 5122) (i32.const 0))
+      (call $gl_object_leave)
       (return)
     ) ;; 4465: glVertex4sv
+      (call $gl_object_enter)
       (call $handle_glVertex_typed (i32.const 4) (i32.const 5122) (i32.const 1))
+      (call $gl_object_leave)
       (return)
     ) ;; 4466: wglGetCurrentContext
+      (call $gl_object_enter)
       (call $handle_wglGetCurrentContext (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4467: wglGetCurrentDC
+      (call $gl_object_enter)
       (call $handle_wglGetCurrentDC (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4468: wglShareLists
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_enter)
+      (call $handle_gpu_api (i32.const 178) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4469: wglCopyContext
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4470: wglCreateLayerContext
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4471: wglSwapIntervalEXT
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4472: wcschr
       (call $handle_wcschr (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -22618,22 +23354,34 @@
       (call $handle_ReBaseImage (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4535: wglDescribeLayerPlane
+      (call $gl_object_enter)
       (call $handle_wglDescribeLayerPlane (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4536: wglGetLayerPaletteEntries
+      (call $gl_object_enter)
       (call $handle_wgl_layer_palette_entries (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4537: wglSetLayerPaletteEntries
+      (call $gl_object_enter)
       (call $handle_wgl_layer_palette_entries (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4538: wglRealizeLayerPalette
+      (call $gl_object_enter)
       (call $handle_wglRealizeLayerPalette (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4539: wglUseFontBitmapsA
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4540: wglUseFontOutlinesA
+      (call $gl_object_enter)
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $gl_object_leave)
       (return)
     ) ;; 4541: WSAConnect
       (call $handle_WSAConnect (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

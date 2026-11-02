@@ -1,9 +1,10 @@
   ;; Display-list storage is native: compilation must precede ALL WAT state
   ;; observers, and replay must enter that same encoder, including software GL.
-  ;; A context owns {next,key,blocks,compiling-slot,head,tail,mode,depth,error,begin}.
+  ;; A context owns {next,key,blocks,compiling-name,head,tail,mode,depth,error,begin}.
   ;; Blocks hold {next,first,count,slots[count]}; slot 0=deleted, 1=reserved,
   ;; 2=defined empty, otherwise the first command. Commands own stack bytes.
-  (global $gl_list_contexts (mut i32) (i32.const 0))
+  ;; Registry and call lock are process-wide, including guest-thread instances.
+  (global $gl_object_lock_depth (mut i32) (i32.const 0))
   (global $gl_list_result (mut i32) (i32.const 0))
 
   (func $gl_list_alloc (param $bytes i32) (result i32)
@@ -14,26 +15,81 @@
     (memory.fill (local.get $p) (i32.const 0) (local.get $bytes))
     (local.get $p))
 
-  (func $gl_list_context (result i32)
+  ;; Object namespace: references, lists, named textures, retired textures,
+  ;; established-sharing flag. Context state and default objects stay private.
+  (func $gl_list_context_key (param $key i32) (result i32)
     (local $p i32)
-    (if (i32.eqz (global.get $gl_current_context)) (then (return (i32.const 0))))
-    (local.set $p (global.get $gl_list_contexts))
+    (local $group i32)
+    (if (i32.eqz (local.get $key)) (then (return (i32.const 0))))
+    (local.set $p (i32.atomic.load (region.addr $GL_MTX_BLOCKS 4)))
     (block $done (loop $scan
       (br_if $done (i32.eqz (local.get $p)))
-      (if (i32.eq (i32.load offset=4 (local.get $p)) (global.get $gl_current_context))
+      (if (i32.eq (i32.load offset=4 (local.get $p)) (local.get $key))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 968)))
+    (local.set $p (call $gl_list_alloc (i32.const 976)))
     (if (i32.eqz (local.get $p)) (then (unreachable)))
-    (i32.store (local.get $p) (global.get $gl_list_contexts))
-    (i32.store offset=4 (local.get $p) (global.get $gl_current_context))
+    (local.set $group (call $gl_list_alloc (i32.const 20)))
+    (if (i32.eqz (local.get $group)) (then (unreachable)))
+    (i32.store (local.get $group) (i32.const 1))
+    (i32.store offset=968 (local.get $p) (local.get $group))
+    (i32.store offset=972 (local.get $p) (global.get $current_thread_id))
+    (i32.store (local.get $p) (i32.atomic.load (region.addr $GL_MTX_BLOCKS 4)))
+    (i32.store offset=4 (local.get $p) (local.get $key))
     (call $gl_bitmap_context_init (local.get $p))
     (call $gl_stencil_init (i32.add (local.get $p) (i32.const 192)))
     (i32.store offset=228 (local.get $p) (i32.const 15))
     (i32.store offset=232 (local.get $p) (i32.const 0x405))
     (i32.store offset=236 (local.get $p) (i32.const 0x405))
-    (global.set $gl_list_contexts (local.get $p))
+    (i32.atomic.store (region.addr $GL_MTX_BLOCKS 4) (local.get $p))
     (local.get $p))
+
+  (func $gl_list_context (result i32)
+    (call $gl_list_context_key (global.get $gl_current_context)))
+
+  (func $gl_share_context_find (param $key i32) (result i32)
+    (local $p i32)
+    (local.set $p (i32.atomic.load (region.addr $GL_MTX_BLOCKS 4)))
+    (block $done (loop $scan
+      (br_if $done (i32.eqz (local.get $p)))
+      (if (i32.eq (i32.load offset=4 (local.get $p)) (local.get $key)) (then (return (local.get $p))))
+      (local.set $p (i32.load (local.get $p))) (br $scan))) (i32.const 0))
+
+  (func $gl_share_validate (param $source i32) (param $target i32) (result i32)
+    (local $a i32) (local $b i32)
+    (local.set $a (call $gl_share_context_find (local.get $source)))
+    (local.set $b (call $gl_share_context_find (local.get $target)))
+    (if (i32.or (i32.eqz (local.get $a)) (i32.eqz (local.get $b))) (then (return (i32.const 6))))
+    (local.set $a (i32.load offset=968 (local.get $a)))
+    (local.set $b (i32.load offset=968 (local.get $b)))
+    (if (i32.eq (local.get $a) (local.get $b)) (then (return (i32.const 0))))
+    (if (i32.or (i32.ne (i32.load offset=4 (local.get $b)) (i32.const 0))
+        (i32.or (i32.ne (i32.load offset=8 (local.get $b)) (i32.const 0))
+          (i32.ne (i32.load offset=16 (local.get $b)) (i32.const 0))))
+      (then (return (i32.const 87))))
+    (i32.const 0))
+
+  (func $gl_share_install (param $source i32) (param $target i32)
+    (local $a i32) (local $b i32) (local $ctx i32) (local $texture i32) (local $tail i32)
+    (local.set $a (i32.load offset=968 (call $gl_share_context_find (local.get $source))))
+    (local.set $ctx (call $gl_share_context_find (local.get $target)))
+    (local.set $b (i32.load offset=968 (local.get $ctx)))
+    (if (i32.eq (local.get $a) (local.get $b)) (then (return)))
+    (i32.store offset=968 (local.get $ctx) (local.get $a))
+    ;; Deleted generations can still be retained by destination attrib frames.
+    ;; Transfer their ownership without installing their reusable names.
+    (local.set $tail (i32.load offset=12 (local.get $b)))
+    (if (local.get $tail) (then
+      (block $last (loop $next
+        (br_if $last (i32.eqz (i32.load (local.get $tail))))
+        (local.set $tail (i32.load (local.get $tail))) (br $next)))
+      (i32.store (local.get $tail) (i32.load offset=12 (local.get $a)))
+      (i32.store offset=12 (local.get $a) (i32.load offset=12 (local.get $b)))))
+    (local.set $texture (i32.load offset=760 (local.get $ctx)))
+    (if (local.get $texture) (then (i32.store offset=308 (local.get $texture) (local.get $a))))
+    (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (i32.const 1)))
+    (i32.store offset=16 (local.get $a) (i32.const 1))
+    (call $heap_free (call $w2g (local.get $b))))
 
   (func $gl_list_error (param $ctx i32) (param $error i32)
     (if (i32.eqz (i32.load offset=32 (local.get $ctx)))
@@ -41,7 +97,7 @@
 
   (func $gl_list_slot (param $ctx i32) (param $name i32) (result i32)
     (local $b i32) (local $index i32)
-    (local.set $b (i32.load offset=8 (local.get $ctx)))
+    (local.set $b (i32.load offset=4 (i32.load offset=968 (local.get $ctx))))
     (block $done (loop $scan
       (br_if $done (i32.eqz (local.get $b)))
       (local.set $index (i32.sub (local.get $name) (i32.load offset=4 (local.get $b))))
@@ -60,10 +116,10 @@
       (i32.add (i32.const 12) (i32.shl (local.get $count) (i32.const 2)))))
     (if (i32.eqz (local.get $b))
       (then (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 0))))
-    (i32.store (local.get $b) (i32.load offset=8 (local.get $ctx)))
+    (i32.store (local.get $b) (i32.load offset=4 (i32.load offset=968 (local.get $ctx))))
     (i32.store offset=4 (local.get $b) (local.get $first))
     (i32.store offset=8 (local.get $b) (local.get $count))
-    (i32.store offset=8 (local.get $ctx) (local.get $b))
+    (i32.store offset=4 (i32.load offset=968 (local.get $ctx)) (local.get $b))
     (loop $fill
       (i32.store (i32.add (i32.add (local.get $b) (i32.const 12))
         (i32.shl (local.get $i) (i32.const 2))) (i32.const 1))
@@ -216,7 +272,7 @@
       (block $found (loop $retry
         (local.set $end (i64.add (i64.extend_i32_u (local.get $first)) (i64.extend_i32_u (local.get $id))))
         (if (i64.gt_u (local.get $end) (i64.const 0x100000000)) (then (return (i32.const 1))))
-        (local.set $b (i32.load offset=8 (local.get $ctx)))
+        (local.set $b (i32.load offset=4 (i32.load offset=968 (local.get $ctx))))
         (block $scan_done (loop $scan
           (br_if $scan_done (i32.eqz (local.get $b)))
           (local.set $i (i32.const 0))
@@ -252,15 +308,21 @@
       (if (i32.eqz (local.get $slot)) (then (return (i32.const 1))))
       (if (i32.eqz (i32.load (local.get $slot)))
         (then (i32.store (local.get $slot) (i32.const 1))))
-      (i32.store offset=12 (local.get $ctx) (local.get $slot))
+      (i32.store offset=12 (local.get $ctx) (local.get $id))
       (i32.store offset=16 (local.get $ctx) (i32.const 2))
       (i32.store offset=20 (local.get $ctx) (i32.const 0))
       (i32.store offset=24 (local.get $ctx) (local.get $n)) (return (i32.const 1))))
     ;; 126 EndList.
     (if (i32.eq (local.get $op) (i32.const 126)) (then
-      (local.set $slot (i32.load offset=12 (local.get $ctx)))
-      (if (i32.eqz (local.get $slot)) (then
+      (local.set $id (i32.load offset=12 (local.get $ctx)))
+      (if (i32.eqz (local.get $id)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+      ;; A sharing context may delete/re-reserve the name during compilation.
+      ;; Publish the completed definition atomically into its current slot.
+      (local.set $slot (call $gl_list_slot (local.get $ctx) (local.get $id)))
+      (if (i32.eqz (local.get $slot)) (then
+        (local.set $slot (call $gl_list_block (local.get $ctx) (local.get $id) (i32.const 1)))))
+      (if (i32.eqz (local.get $slot)) (then (return (i32.const 1))))
       (call $gl_list_free_commands (i32.load (local.get $slot)))
       (i32.store (local.get $slot) (i32.load offset=16 (local.get $ctx)))
       (i32.store offset=12 (local.get $ctx) (i32.const 0)) (return (i32.const 1))))
@@ -274,7 +336,7 @@
       (local.set $n (i32.load offset=8 (local.get $stack)))
       (if (i32.lt_s (local.get $n) (i32.const 0)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x501)) (return (i32.const 1))))
-      (local.set $b (i32.load offset=8 (local.get $ctx)))
+      (local.set $b (i32.load offset=4 (i32.load offset=968 (local.get $ctx))))
       (block $deleted (loop $blocks
         (br_if $deleted (i32.eqz (local.get $b)))
         (local.set $next (i32.load (local.get $b)))
@@ -287,14 +349,13 @@
               (i32.lt_u (i32.sub (local.get $first) (local.get $id)) (local.get $n))) (then
             (call $gl_list_free_commands (i32.load (local.get $slot)))
             (i32.store (local.get $slot) (i32.const 0))))
-          (if (i32.or (i32.ne (i32.load (local.get $slot)) (i32.const 0))
-              (i32.eq (local.get $slot) (i32.load offset=12 (local.get $ctx))))
+          (if (i32.ne (i32.load (local.get $slot)) (i32.const 0))
             (then (local.set $used (i32.const 1))))
           (local.set $i (i32.add (local.get $i) (i32.const 1)))
           (br_if $entries (i32.lt_u (local.get $i) (i32.load offset=8 (local.get $b)))))
         (if (i32.eqz (local.get $used)) (then
           (if (local.get $prev) (then (i32.store (local.get $prev) (local.get $next)))
-            (else (i32.store offset=8 (local.get $ctx) (local.get $next))))
+            (else (i32.store offset=4 (i32.load offset=968 (local.get $ctx)) (local.get $next))))
           (call $heap_free (call $w2g (local.get $b))))
           (else (local.set $prev (local.get $b))))
         (local.set $b (local.get $next)) (br $blocks)))
@@ -402,15 +463,16 @@
     (local $ctx i32) (local $prev i32) (local $b i32) (local $next i32) (local $i i32)
     ;; Queued line continuations lease the context's phase cell.
     (call $d3dim_worker_fence)
-    (local.set $ctx (global.get $gl_list_contexts))
+    (local.set $ctx (i32.atomic.load (region.addr $GL_MTX_BLOCKS 4)))
     (block $done (loop $scan
       (br_if $done (i32.eqz (local.get $ctx)))
       (if (i32.eq (i32.load offset=4 (local.get $ctx)) (local.get $key)) (then
         (if (local.get $prev) (then (i32.store (local.get $prev) (i32.load (local.get $ctx))))
-          (else (global.set $gl_list_contexts (i32.load (local.get $ctx)))))
+          (else (i32.atomic.store (region.addr $GL_MTX_BLOCKS 4) (i32.load (local.get $ctx)))))
         (if (i32.load offset=12 (local.get $ctx))
           (then (call $gl_list_free_commands (i32.load offset=16 (local.get $ctx)))))
-        (local.set $b (i32.load offset=8 (local.get $ctx)))
+        (if (i32.eq (i32.load (i32.load offset=968 (local.get $ctx))) (i32.const 1)) (then
+        (local.set $b (i32.load offset=4 (i32.load offset=968 (local.get $ctx))))
         (block $freed (loop $blocks
           (br_if $freed (i32.eqz (local.get $b)))
           (local.set $next (i32.load (local.get $b)))
@@ -421,7 +483,7 @@
             (local.set $i (i32.add (local.get $i) (i32.const 1)))
             (br_if $slots (i32.lt_u (local.get $i) (i32.load offset=8 (local.get $b)))))
           (call $heap_free (call $w2g (local.get $b)))
-          (local.set $b (local.get $next)) (br $blocks)))
+          (local.set $b (local.get $next)) (br $blocks)))))
         (local.set $b (i32.load offset=104 (local.get $ctx)))
         (block $attributes_done (loop $attributes
           (br_if $attributes_done (i32.eqz (local.get $b)))
@@ -432,15 +494,25 @@
         (if (i32.load offset=240 (local.get $ctx)) (then
           (call $heap_free (call $w2g (i32.load offset=240 (local.get $ctx))))))
         (call $gl_texture_free (local.get $ctx))
+        (local.set $b (i32.load offset=968 (local.get $ctx)))
+        (i32.store (local.get $b) (i32.sub (i32.load (local.get $b)) (i32.const 1)))
+        (if (i32.eqz (i32.load (local.get $b))) (then
+          (call $gl_texture_group_free (local.get $b))
+          (call $heap_free (call $w2g (local.get $b))))
+          (else (call $gl_texture_collect (local.get $b))))
         (call $heap_free (call $w2g (local.get $ctx))) (return)))
       (local.set $prev (local.get $ctx))
       (local.set $ctx (i32.load (local.get $ctx))) (br $scan))))
 
   (func $gl_list_reset
+    (local $p i32) (local $next i32)
+    (local.set $p (i32.atomic.load (region.addr $GL_MTX_BLOCKS 4)))
     (block $done (loop $free
-      (br_if $done (i32.eqz (global.get $gl_list_contexts)))
-      (call $gl_list_context_deleted (i32.load offset=4 (global.get $gl_list_contexts)))
-      (br $free))))
+      (br_if $done (i32.eqz (local.get $p)))
+      (local.set $next (i32.load (local.get $p)))
+      (if (i32.eq (i32.load offset=972 (local.get $p)) (global.get $current_thread_id))
+        (then (call $gl_list_context_deleted (i32.load offset=4 (local.get $p)))))
+      (local.set $p (local.get $next)) (br $free))))
 
   (func $gl_list_scalar_command (param $op i32) (result i32)
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 169)) (i32.const 2)) (then (return (i32.const 1))))

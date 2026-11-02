@@ -26,7 +26,7 @@ const unsupportedMdk2 = `
   glRenderMode glSelectBuffer
 
   wglCopyContext wglCreateLayerContext
-  wglShareLists wglUseFontBitmapsA wglUseFontOutlinesA
+  wglUseFontBitmapsA wglUseFontOutlinesA
 `.trim().split(/\s+/);
 
 const rasterPixelApis = ['glDrawPixels','glCopyPixels','glPixelZoom','glPixelStoref'];
@@ -124,7 +124,7 @@ async function main() {
     'GetTickCount', 'gluPerspective', 'glNotARealFunction', 'glactivetextureARB']) {
     assert.strictEqual(lookup(name), 0, `${name} must not be advertised`);
   }
-  for (const name of ['glInterleavedArrays', ...stippleApis, ...rasterPixelApis, ...pixelMapApis, 'glCopyTexImage1D','glCopyTexImage2D','glCopyTexSubImage1D','glCopyTexSubImage2D','glGetTexImage','glPixelTransferf','glPixelTransferi', 'glTexImage1D', 'glTexSubImage1D', 'glTexParameteriv', 'glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, 'glClipPlane', 'glGetClipPlane', 'glTexEnvfv', 'glTexEnviv', 'glGetTexEnvfv', 'glGetTexEnviv', 'glGetTexParameteriv', ...integerLightMaterialFogApis, ...rasterPositionApis, 'glActiveTextureARB', 'glClientActiveTextureARB',
+  for (const name of ['wglShareLists', 'glInterleavedArrays', ...stippleApis, ...rasterPixelApis, ...pixelMapApis, 'glCopyTexImage1D','glCopyTexImage2D','glCopyTexSubImage1D','glCopyTexSubImage2D','glGetTexImage','glPixelTransferf','glPixelTransferi', 'glTexImage1D', 'glTexSubImage1D', 'glTexParameteriv', 'glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, 'glClipPlane', 'glGetClipPlane', 'glTexEnvfv', 'glTexEnviv', 'glGetTexEnvfv', 'glGetTexEnviv', 'glGetTexParameteriv', ...integerLightMaterialFogApis, ...rasterPositionApis, 'glActiveTextureARB', 'glClientActiveTextureARB',
     'glMultiTexCoord2fARB', 'glTexParameterfv', 'glGetTexParameterfv',
     'glVertex2iv', 'glVertex2s', 'glVertex2sv',
     'glVertex3dv', 'glVertex3i', 'glVertex3iv', 'glVertex3s', 'glVertex3sv',
@@ -163,7 +163,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 56, 'retain every still unsupported MDK2 name');
+  assert.strictEqual(unsupportedMdk2.length, 55, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);
@@ -172,7 +172,7 @@ async function main() {
     assert.strictEqual(e.lookup_error(),127,'ERROR_PROC_NOT_FOUND');
     assert.strictEqual(e.lookup_thunks(),before,'rejection allocates no thunk');
   }
-  for (const name of ['glInterleavedArrays', ...stippleApis, ...rasterPixelApis, ...pixelMapApis, 'glGetBooleanv', 'glGetPointerv', 'glTexImage1D', 'glTexSubImage1D', 'glTexParameteriv', 'glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, 'glClipPlane', 'glGetClipPlane', 'glTexEnvfv', 'glTexEnviv', 'glGetTexEnvfv', 'glGetTexEnviv', 'glGetTexParameteriv', ...integerLightMaterialFogApis, ...rasterPositionApis, 'glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv',
+  for (const name of ['wglShareLists', 'glInterleavedArrays', ...stippleApis, ...rasterPixelApis, ...pixelMapApis, 'glGetBooleanv', 'glGetPointerv', 'glTexImage1D', 'glTexSubImage1D', 'glTexParameteriv', 'glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, 'glClipPlane', 'glGetClipPlane', 'glTexEnvfv', 'glTexEnviv', 'glGetTexEnvfv', 'glGetTexEnviv', 'glGetTexParameteriv', ...integerLightMaterialFogApis, ...rasterPositionApis, 'glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv',
     'glTexCoord1d', 'glTexCoord1dv', 'glTexCoord1f', 'glTexCoord1fv', 'glTexCoord1i',
     'glTexCoord1iv', 'glTexCoord1s', 'glTexCoord1sv', 'glTexCoord2iv', 'glTexCoord2s',
     'glTexCoord2sv', 'glTexCoord3d', 'glTexCoord3dv', 'glTexCoord3f', 'glTexCoord3fv',

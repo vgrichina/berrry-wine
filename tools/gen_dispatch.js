@@ -331,6 +331,7 @@ const gpuApis = new Map([
   ['glDrawPixels',5], ['glCopyPixels',5], ['glPixelZoom',2], ['_glRasterSize',0], ['_glReadRasterPixels',6],
   ['glLineStipple',2], ['glPolygonStipple',1], ['glGetPolygonStipple',1],
   ['glInterleavedArrays',3],
+  ['wglShareLists',2],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 
@@ -592,7 +593,10 @@ for (let base = 0, page = 0; base < N; base += PAGE_SIZE, page++) {
     const id = base + slot;
     const api = apiTable[id];
     out.push(`    ) ;; ${id}: ${api.name}`);
+    const objectCall = /^(?:gl[A-Z]|wgl[A-Z])/.test(api.name);
+    if (objectCall) out.push('      (call $gl_object_enter)');
     out.push(handlerCall(api));
+    if (objectCall) out.push('      (call $gl_object_leave)');
     out.push('      (return)');
   }
   out.push('    ) ;; fallback');

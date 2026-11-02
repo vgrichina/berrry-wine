@@ -70,6 +70,19 @@
   (global $GL_SW_MIPS i32 (region.addr $GL_SW_MIPS 0))
   (global $GL_SW_MIPS_SIZE i32 (region.size $GL_SW_MIPS))
 
+  ;; Guest producers also have independent current state over shared memory.
+  ;; The fixed regions are initial templates, not a process-wide current
+  ;; context. Render workers already install their own snapshot storage.
+  (func $gl_sw_private_state
+    (local $state i32) (local $scratch i32)
+    (if (i32.ne (global.get $gl_sw_st) (global.get $GL_SW_STATE)) (then (return)))
+    (local.set $state (call $gl_list_alloc (global.get $GL_SW_STATE_SIZE)))
+    (local.set $scratch (call $gl_list_alloc (global.get $GL_SW_SCRATCH_SIZE)))
+    (if (i32.or (i32.eqz (local.get $state)) (i32.eqz (local.get $scratch))) (then (unreachable)))
+    (memory.copy (local.get $state) (global.get $gl_sw_st) (global.get $GL_SW_STATE_SIZE))
+    (global.set $gl_sw_st (local.get $state))
+    (global.set $gl_sw_scratch (local.get $scratch)))
+
   ;; Off unless a host asks for it: with a JS GL backend present, both paths
   ;; drawing at once is two pictures, not one.
   (global $gl_sw_enabled (mut i32) (i32.const 0))
@@ -393,6 +406,18 @@
     (if (i32.ge_u (local.get $name) (i32.const 4096)) (then (return (i32.const 0))))
     (i32.add (global.get $GL_SW_TEXTURES) (i32.mul (local.get $name) (i32.const 8))))
 
+  ;; Object identity, not the reusable integer name, selects each binding.
+  (func $gl_sw_bound_slot (param $unit i32) (result i32)
+    (local $object i32)
+    (if (i32.and (global.get $gl_sw_in_worker) (global.get $gl_2d_draw_slots)) (then
+      (return (i32.add (global.get $gl_2d_draw_slots) (i32.mul (local.get $unit) (i32.const 360))))))
+    (if (global.get $gl_current_context) (then
+      (local.set $object (i32.load (i32.add (call $gl_texture_block)
+        (i32.add (i32.const 20) (i32.shl (local.get $unit) (i32.const 3))))))
+      (return (call $gl_texture_slot2d (local.get $object) (i32.const 1)))))
+    (call $gl_sw_tex_slot (select (global.get $gl_sw_other_bound)
+      (i32.load offset=40 (global.get $gl_sw_st)) (local.get $unit))))
+
   ;; Keep the queried floating-point color, not its raster quantization.
   ;; Allocate only when an application sets a border. Defaults need no heap.
   (global $gl_sw_border_colors (mut i32) (i32.const 0))
@@ -616,7 +641,7 @@
                  (i32.ne (local.get $value) (i32.const 0x2901)))
         (i32.and (i32.ne (local.get $value) (i32.const 0x812F))
                  (i32.ne (local.get $value) (i32.const 0x8370)))) (then (return)))))
-    (local.set $slot (call $gl_sw_tex_slot (i32.load offset=40 (global.get $gl_sw_st))))
+    (local.set $slot (call $gl_sw_bound_slot (i32.load offset=4 (call $gl_mtx_block))))
     (if (i32.eqz (local.get $slot)) (then (return)))
     (local.set $flags (call $gl_sw_tex_flags (local.get $slot)))
     (if (i32.eq (local.get $pname) (i32.const 0x2800))
@@ -787,7 +812,7 @@
     (local $slot i32) (local $obj i32) (local $entry i32) (local $opaque i32)
     (local $at i32) (local $record i32)
     (if (i32.gt_u (local.get $level) (i32.const 12)) (then (return)))
-    (local.set $slot (call $gl_sw_tex_slot (i32.load offset=40 (global.get $gl_sw_st))))
+    (local.set $slot (call $gl_sw_bound_slot (i32.load offset=4 (call $gl_mtx_block))))
     (if (i32.eqz (local.get $slot)) (then (return)))
     (drop (call $gl_sw_tex_flags (local.get $slot)))
     (local.set $at (local.get $slot))
@@ -838,7 +863,7 @@
       (param $pixels i32)
     (local $slot i32) (local $obj i32)
     (if (i32.gt_u (local.get $level) (i32.const 12)) (then (return)))
-    (local.set $slot (call $gl_sw_tex_slot (i32.load offset=40 (global.get $gl_sw_st))))
+    (local.set $slot (call $gl_sw_bound_slot (i32.load offset=4 (call $gl_mtx_block))))
     (if (i32.eqz (local.get $slot)) (then (return)))
     (local.set $obj (i32.load (select (call $gl_sw_mip_at (local.get $slot) (local.get $level))
       (local.get $slot) (local.get $level))))
@@ -1793,7 +1818,7 @@
       (if (i32.eq (local.get $bit) (i32.const 16))
         (then (global.set $gl_sw_border_set_failed (i32.eqz
           (call $gl_sw_border_set
-            (call $gl_sw_tex_slot (i32.load offset=40 (local.get $s)))
+            (call $gl_sw_bound_slot (i32.load offset=4 (call $gl_mtx_block)))
             (global.get $gl_sw_scratch)))))
         (else (call $gl_sw_tex_param (i32.load offset=8 (local.get $stack))
           (i32.trunc_sat_f32_s (f32.floor (f32.add
@@ -2647,7 +2672,7 @@
     (local.set $flags (i32.const 9))
     (if (i32.and (local.get $caps) (i32.const 1))
       (then
-        (local.set $slot (call $gl_sw_tex_slot (i32.load offset=40 (local.get $s))))
+        (local.set $slot (call $gl_sw_bound_slot (i32.const 0)))
         (if (local.get $slot)
           (then (if (i32.load (local.get $slot))
             (then
@@ -2770,7 +2795,7 @@
       (global.set $rast_t1_linear (i32.const 0)) (global.set $rast_t1_border (i32.const 0))
       (global.set $rast_t1_op (i32.const 0x10001)) (return (i32.const 1))))
     (if (i32.eqz (i32.and (local.get $caps) (i32.const 0x80000))) (then (return (i32.const 0))))
-    (local.set $slot (call $gl_sw_tex_slot (global.get $gl_sw_other_bound)))
+    (local.set $slot (call $gl_sw_bound_slot (i32.const 1)))
     (if (i32.eqz (local.get $slot)) (then (return (i32.const 0))))
     (if (i32.eqz (i32.load (local.get $slot))) (then (return (i32.const 0))))
     (global.set $rast_t1_entry (call $dx_from_this (i32.load (local.get $slot))))
@@ -2898,7 +2923,7 @@
     (local $level i32) (local $want i32) (local $obj i32)
     (if (i32.eq (global.get $gl_sw_r_tex) (global.get $gl_sw_white)) (then (return)))
     (local.set $s (global.get $gl_sw_st))
-    (local.set $slot (call $gl_sw_tex_slot (i32.load offset=40 (local.get $s))))
+    (local.set $slot (call $gl_sw_bound_slot (i32.const 0)))
     (if (i32.eqz (local.get $slot)) (then (return)))
     (local.set $flags (global.get $gl_sw_r_flags))
     (local.set $entry (global.get $gl_sw_r_tex))
@@ -3630,12 +3655,12 @@
     (i32.store offset=1012 (local.get $snap) (global.get $gl_sw_wk_view))
     (i32.store offset=1016 (local.get $snap) (global.get $gl_sw_wk_zview))
     (i32.store offset=1020 (local.get $snap) (global.get $gl_sw_other_bound))
-    (local.set $g (call $gl_sw_tex_slot (i32.load offset=40 (global.get $gl_sw_st))))
+    (local.set $g (call $gl_sw_bound_slot (i32.const 0)))
     (i32.store offset=1024 (local.get $snap)
       (if (result i32) (local.get $g) (then (call $gl_sw_tex_flags (local.get $g))) (else (i32.const 0))))
     (i32.store offset=1032 (local.get $snap)
       (call $gl_sw_border_color (local.get $g) (i32.load offset=1024 (local.get $snap))))
-    (local.set $g (call $gl_sw_tex_slot (global.get $gl_sw_other_bound)))
+    (local.set $g (call $gl_sw_bound_slot (i32.const 1)))
     (i32.store offset=1028 (local.get $snap)
       (if (result i32) (local.get $g) (then (call $gl_sw_tex_flags (local.get $g))) (else (i32.const 0))))
     (i32.store offset=1036 (local.get $snap)
