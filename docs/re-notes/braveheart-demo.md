@@ -138,3 +138,87 @@ existing installed files; Git alone does not recover them. A future task
 should localize the unreadable presentation from these observations before
 another original run. Browser battlefield interaction and convergence remain
 unverified. No public registry change is warranted.
+
+## Restored display format repair — 2026-11-02
+
+Run: `scratch/runs/20261102-braveheart-presentation-cause-next/`. This
+localizes and repairs a generic format disagreement observed during the menu
+to battle transition. It does **not** establish that the unreadable battlefield
+is repaired, nor verify unit commands, frame completion or convergence.
+
+The saved baseline image and mission brief were reviewed first. Its trace lacks
+surface descriptors and Unlock counts, so neither a pitch defect nor absent
+completion follows from its 623/620 counters. Guest disassembly identified the
+retained offscreen pointer setup at `0x48d6fc..0x48d734`, presentation selector
+`[0xda3108]`, and descriptors at `0xda49fc` / `0xda4a68`. A primary Lock
+followed by an offscreen Lock clears the emulator's scalar
+`present_lock_whole`; that is a static counter limitation, not a diagnosis of
+the baseline battlefield.
+
+After GL69793 and Oni96725 terminal results, final files, exact AUTHOR RELEASEs
+and scoped helper absence, one bounded read-only native diagnostic used the
+registered original, default WebGL renderer, real clock and threads. Source
+snapshot `3f8e6102c613c6fcc07fc58fc5661e40605faa1a` matched all 3936 accepted
+inputs and all 145 fixtures. The browser used the baseline module
+`307168f9e0475fd3c10f87cbc5d98f05006c6d4494d2f564381a9a0ebe289fe6`.
+No guest writes, patches, injected state, forced renderer or clock changes were
+used. This diagnostic added surface descriptors, per-row byte hashes, current
+mode and shared dirty/lock samples to the original route.
+
+The reviewed menu/mission surfaces were 800×600 RGB565, pitch 1600. During
+Conduct Raid, mode-active became zero, the guest's depth variable
+`[0xda4b44]` became 32, and the selected presentation function became
+`0x4fe980` (Flip). Its newly retained offscreen pointer instead referred to a
+640×480 RGB565 surface with pitch 1280 and masks `f800/07e0/001f`.
+`presentation-state.jsonl` retains the literal descriptors and surface table.
+The guest's windowed initialization at `0x4fe1cc..0x4fe203` obtains depth
+from GetDeviceCaps(BITSPIXEL) × GetDeviceCaps(PLANES). The emulator's GDI
+current-depth query correctly returns the restored 32-bit desktop, while
+DirectDraw's default allocation used the remembered 16-bit request. The
+16-bit descriptor's pitch is internally consistent: this is a demonstrated
+current-format disagreement, not a pitch diagnosis from a screenshot.
+
+The controller closed during asset loading, before the noisy battlefield was
+re-observed. Its neutral captures were black with zero simulation steps, so
+this run supplies no new evidence about battlefield completion or a stall.
+The original was not replayed after the repair.
+
+The repair makes GetDisplayMode's pixel format/pitch and default CreateSurface
+formats use the existing current-display depth helper, also used by GDI.
+Remembered explicit mode values remain intact for repeat-mode notification
+suppression; existing surface formats and explicit offscreen formats remain
+intact. Display dimensions, presentation selection, renderer, clock, route,
+original files and `api_table.json` were not changed.
+
+`test/test-directdraw-restored-display-format.js` emits literal expected/actual
+descriptors for six transitions (8/16/32-bit selected modes, restored 8/32-bit
+desktops), including two shared-memory instances, odd-width row alignment,
+primary/offscreen Locks, explicit and existing formats, and repeat-mode
+notifications. The exact final test failed 12 format checks on old source
+(exit 1) and passed on repaired source (exit 0). Four existing regressions
+also passed: GetDisplayMode depth, palette format, GDI 16-bit layout and
+shared fullscreen state. `flock /tmp/wine-build.lock bash tools/build.sh`
+passed on the own boat. Fixed module: 2071475 bytes, SHA-256
+`6fbd12aef206e346c0bde3688fc8b2ee94d410810613f2291410f388cbf9bda8`.
+The first build attempt lacked two generated ToyVM bundles; regeneration
+matched their local hashes before the successful full build. The boat had no
+Git HEAD for the append-only API-table comparison; the local HEAD-aware API
+gate separately passed, and the unchanged table hash was checked on the boat.
+Preliminary test/transfer mistakes are retained in the run, including an
+invalid "new" trial that actually ran old source after a transfer argument
+limit. Only the SHA-verified final old/new trials support the repair result.
+
+The original browser evidence comprises 86 retrieved and SHA-verified files
+and 27 CRC-checked PNGs. The final build/test evidence comprises 51 further
+verified members, including the fixed module. Recovery inputs and manifests
+remain in this ignored run directory. Own boat `bx_ujxkt2u2` had original
+expiry `2026-11-02T19:30:40.054Z`, recorded before use; cleanup and final state
+are recorded in `cleanup.json` and `box-final.json`. Evidence verification
+preceded the explicitly delegated shutdown. The transfer/runtime/retrieval
+guard enforced owner `/home` free >2000000000 bytes; its minimum was 2030542848 bytes
+(`local-disk-final.json`). No foreign fixture cleanup, downloads, workers or
+public deployment occurred.
+
+Next: a separately dispatched changed-module browser observation can determine
+whether this generic repair makes the battlefield readable. A harness pass
+is not gameplay acceptance; the private lane still needs that observation.

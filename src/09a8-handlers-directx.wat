@@ -2709,6 +2709,11 @@
             (return)))
         ;; The root has the front role; only its immediate child has BACKBUFFER.
         (local.set $caps (i32.or (i32.and (local.get $caps) (i32.const -5)) (i32.const 0x20)))))
+    ;; Default formats describe the current display, as GetDeviceCaps does.
+    ;; RestoreDisplayMode leaves the last explicit request in DX_PROCESS_STATE
+    ;; for repeat-mode notification suppression; it is not the desktop depth.
+    ;; Existing surfaces retain their own format, and explicit DDSD_PIXELFORMAT
+    ;; still wins for an offscreen allocation.
     ;; Determine surface dimensions
     (if (i32.and (local.get $caps) (i32.const 0x200)) ;; PRIMARY
       (then
@@ -2724,7 +2729,7 @@
           (then
             (local.set $w (call $screen_metric_w))
             (local.set $h (call $screen_metric_h))))
-        (local.set $bpp (call $dx_display_bpp_get))
+        (local.set $bpp (call $gdi_display_bpp))
         (local.set $flags (i32.const 1))) ;; flag=primary
       (else
         ;; Use dimensions from DDSURFACEDESC if provided
@@ -2737,10 +2742,10 @@
           (then
             (local.set $bpp (i32.load (i32.add (local.get $ddsd_wa) (i32.const 84)))))
           (else
-            (local.set $bpp (call $dx_display_bpp_get))))
+            (local.set $bpp (call $gdi_display_bpp))))
         ;; Fallback: textures built from our (stub) EnumTextureFormats have ddpf
         ;; populated with zeros, so dwRGBBitCount=0. Use display bpp.
-        (if (i32.eqz (local.get $bpp)) (then (local.set $bpp (call $dx_display_bpp_get))))
+        (if (i32.eqz (local.get $bpp)) (then (local.set $bpp (call $gdi_display_bpp))))
         (local.set $flags (i32.const 4)))) ;; flag=offscreen
     (local.set $fmt (call $dx_surf_fmt_default (local.get $bpp)))
     (if (i32.and (local.get $ddsd_flags) (i32.const 0x1000))
@@ -4053,18 +4058,20 @@
     (i32.store (i32.add (local.get $wa) (i32.const 4)) (i32.const 0x1006))
     (i32.store (i32.add (local.get $wa) (i32.const 8)) (call $dx_display_h_get))
     (i32.store (i32.add (local.get $wa) (i32.const 12)) (call $dx_display_w_get))
-    ;; Pitch and pixel format follow the mode's depth. This used to report a
+    ;; Pitch and pixel format follow the current display's depth, including
+    ;; the restored desktop rather than the retained last explicit request.
+    ;; This used to report a
     ;; 16bpp 5-6-5 mode with a width*2 pitch whatever SetDisplayMode chose;
     ;; Disciples sizes its 640x480x8 back buffer from these fields.
     (i32.store (i32.add (local.get $wa) (i32.const 16))
       (i32.and
         (i32.add
           (i32.mul (call $dx_display_w_get)
-            (i32.shr_u (i32.add (call $dx_display_bpp_get) (i32.const 7)) (i32.const 3)))
+            (i32.shr_u (i32.add (call $gdi_display_bpp) (i32.const 7)) (i32.const 3)))
           (i32.const 3))
         (i32.const 0xFFFFFFFC)))
     (call $dx_fill_pixel_format (i32.add (local.get $wa) (i32.const 72))
-      (call $dx_display_bpp_get))
+      (call $gdi_display_bpp))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
