@@ -1,5 +1,87 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Headroom resumption: validated observer, authentic startup reaches tick 36, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-headroom-original-resume/`, including
+retrieved `remote/` evidence. **Exactly one authentic original attempt ran.**
+It stopped at the shared 120-second wall deadline before an observed calibration
+function return. The inspected final PNG shows DOS/4GW copyright text only;
+there is no player scene, gameplay, walking/driving, FPS or audio evidence.
+
+Signed-accumulation then matrix-headroom terminal exit0/turn.completed,
+result/final and exact AUTHOR RELEASE were consumed; all eight reported helpers
+were independently absent. Matrix cleanup reclaimed zero bytes. Fresh local
+free space was about 2.04 GB, below this assignment's 2.4 GB execution admission,
+so no local tests/build/game ran. The explicitly authorized sandbox fallback
+used temporary box **bx_tm2x67p8**, expiry **2026-11-02T05:19:00.950Z**.
+Its initial free space was 57,349,754,880 bytes. SSH/SCP were rejected by the
+API key; permitted command-API transfer verified all **11,054** snapshot files.
+Snapshot source main is `d9ee9b1957262944a1673295770a590a07ea5755`; later local
+main includes unrelated documentation. No local repo copy/branch/worktree,
+download, worker, browser, source/GL/guest-byte/clock change or optimization
+was used. The sandbox skill supplied the lifecycle workflow.
+
+The predecessor's interrupted validation is now complete. Actual retained-ring
+installation plus the current task-wrapper composition passes its lost-callback
+negative and successful composition, with all RAM/global parity. Ordinary
+IRETD, stack-page-fault/task delivery, mapped instruction, read-only absent-page/
+device negatives, ring overwrite and DOS accounting pass. Interrupt word-register
+and successive native checkpoint/batch/held-open-stdin regressions pass.
+Whole/rollover/same-second observed/unobserved pairs match all **44,302,336 RAM
+bytes by hash and all 59 exported globals**. Whole calibration finishes at tick
+37, 20,350,037 dispatches and count 241,463; rollover stores seven polls and the
+same-second negative preserves its sentinel. The independent compressed-stream
+audit decodes all **484,487 whole**, seven rollover and 243 negative complete
+58-byte restore / 12-byte IRETD records. No full-RAM output is repeatedly dumped.
+The exact source archive passes `flock /tmp/wine-build.lock bash tools/build.sh`;
+Git-history-only checks use their logged standard source-archive fallback.
+Node is v24.22.1 versus the predecessor's v24.18.1. All 95 runtime/support pins
+match the tested snapshot; ToyVM source pins match the predecessor unchanged.
+
+The route was **GTA.BAT → K.EXE → actual generated DINO.BAT → DEMO24.EXE**.
+Each of three Enter taps followed inspection of its freshly retrieved PNG:
+English flag selected, English / Press Any Key, then Startup / Run GTA selected
+with Keyboard control. The batch contains exactly `demo24.exe\r\n`, SHA-256
+`5980340dfa79147f5be7b713d35804b6e25d8ecd1084d6ab22e51929a6dbf0cc`.
+Both actual compiler results are the accepted 346,132-byte ToyVM module
+`7bfe7f97ff11b0bd1e91134828563dc5c0c96aab182f2d1e24b7cec01ca1cdf0`.
+Default 550,000 dispatches/tick, tickScale1 and irqScheduletrue are recorded for
+both sessions. No later input was sent and there was no second original attempt.
+
+The OS child was actually waited with **exit0 after 120.272640 seconds**, inside
+the independent 130-second cap. No host deadline signal, disk or log termination
+occurred. K exited0 after 622,692,735 dispatches, 1,132 ticks / 62.184815 guest
+seconds and 64.604825 session wall seconds, including checkpoint reviews.
+DEMO24 remained unexited after **20,313,713 dispatches**, 9,941,584 handbacks,
+**36 ticks / 2.028616 guest seconds**, and **54.800403 session wall seconds**.
+Final CS:IP is `0070:4335` inside the DOS bridge, not a captured fatal exception.
+Its default exitCode0 is not a guest exit. Session setup and compiler time belong
+to the shared outer budget. These instrumented timings are not throughput/FPS
+qualification. Original-run free space stayed at least 57,068,957,696 bytes.
+
+All 28 fault-entry callbacks now retain absent-PTE CR2 walks; all 56 legacy
+task-gate/backlink events remain. All 28 trampoline IRETD pairs match their
+complete frames and expected stack advance. The ring retains 36 complete sparse
+DOS-bridge restore/IRETD pairs; 17 directly capture high return EIP **1019667F**,
+five `1019666F`, and one `10196665`. Earlier bridge samples belong to other
+startup callers. Every retained restore tail matches its IRETD12 and completed
+return. Actual CS slots can contain a nonzero high word; the loaded selector is
+their low16. Stack advancement uses each pair's actual stack-width mask; an
+initial offline audit's blanket 16-bit assumption was corrected, without another
+guest run. At the latest calibration sample (tick36 / dispatch19,800,613), the
+full return is `02E0:1019667F`, saved ESI=8,395, saved EBX=1, EDX=353 and ECX=0:
+BL and DH are both 1, consistent with the original seconds-comparison wait.
+The calibration RET/stored result was **not observed**. Tick37 fixture behavior
+does not fill that missing original evidence or prove the final bridge is stuck.
+
+The unchanged archive and full 117-file / 17,078,619-byte media closure match
+before/after. All recorded remote helpers/groups are absent with actual waits;
+96 retrieved evidence files match their hashes. This task explicitly owned the
+temporary box shutdown: stop operation completed and state **stopped** at
+**2026-11-02T04:34:33.615Z**, after retrieval. Coordinator-owned boxes were untouched.
+Next work is static review of this retained pre-return state before any separately
+authorized original continuation; this assignment stops at its one-attempt limit.
+
 ## Post-calibration original assignment: disk abort before launch, 2026-11-02
 
 Evidence: `scratch/runs/20261102-gta1-original-post-calibration/`.
