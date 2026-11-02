@@ -1689,3 +1689,76 @@ authorized or launched by this task; original startup count here is zero.
 The next prerequisite is complete persistent native DOS session/device state
 with explicit runner boundary capture, before a separately authorized
 initialized entry/replay experiment.
+
+## Persistent cooperative DOS-machine checkpoint (2026-11-02)
+
+The accepted native primitive in `c3850962b9` passed its actual native tests;
+its result explicitly excluded host devices and continuation state. The
+host layer now provides `createMachineRunner(options)` and
+`resumeMachineRunner(archive)` from `tools/toyvm/run-dos.js`. A runner owns a
+Machine, DosSession and native VM, and `step()` returns at the actual
+DosSession handback. After a successful step, `capture()` returns a checksummed
+binary V8 archive; `restore(archive)` rewinds that same runner. Fresh recovery
+reconstructs the runner from the captured fixture/options recipe, builds the
+exact module and restores before any guest step.
+
+The archive holds native RAM/globals/table plus the complete connected host
+data graph: VGA/console/palette, keyboard/held keys, timers/PIC/PIT, sound/DMA/
+OPL/GUS, memory managers, open files and shared file records, queued events,
+DosSession scheduling/progress and CodeCache programs/maps/repair plans and
+arena metadata. Typed views into VM memory are rebound to the destination
+buffer. Shared objects and cycles stay shared, including program indices,
+file records and OPL operator references. Machine, DosSession, CodeCache and
+runner-state roots are restored in place. The imported port functions keep
+their original Machine reference; console methods are reconstructed by
+explicit named binding. Arbitrary callback closures are rejected.
+
+Module bytes, emitted WAT, actual ToyVM JavaScript sources, optional Terminal
+font and the complete fixture/name/arguments/options/file bytes are hashed.
+Restore validates archive integrity, identity, the host graph, supported
+configuration, native ABI/globals/table and destination root descriptors
+before the first write. A changed source file after module load also rejects.
+This is a trusted local archive format, not a hostile deserialization boundary
+or a cross-V8-version interchange format.
+
+```js
+const fs = require('node:fs');
+const { createMachineRunner, resumeMachineRunner } = require('./tools/toyvm/run-dos');
+const runner = await createMachineRunner({
+  image: fs.readFileSync('fixture.com'), name: 'FIXTURE.COM', budget: 1000000,
+  files: [['DATA.BIN', fs.readFileSync('data.bin')]],
+  sessionOptions: { intFast: false },
+});
+runner.step(); // or repeatedly step to the desired genuine paused handback
+fs.writeFileSync('checkpoint.bin', runner.capture());
+// Later, in a fresh process with exactly the same ToyVM sources and font:
+const recovered = await resumeMachineRunner(fs.readFileSync('checkpoint.bin'));
+recovered.step();
+```
+
+The supported runner is cooperative and uses explicit dispatch budgets/input
+schedules. It does not import the legacy `runDos()` tracing, capture scoring,
+wall deadlines, async tiers, audio sinks or instrumentation closures. Only the
+canonical tailcall/exportAll 386 module is supported. It accepts captured
+flat DOS file names/bytes and guest-created files; host filesystem mounts,
+subdirectory mounts, live JIT/tree/uop installers and arbitrary hooks are
+rejected. Existing legacy `runDos()` sessions cannot be retroactively saved
+with this API. A separately authorized GTA startup must use a supported
+runner/fixture and may require directory-image support first; this prerequisite
+has launched no original GTA and changes no clock or optimization semantics.
+
+Validation and persistent recovery evidence:
+`scratch/runs/20261102-gta1-dos-machine-checkpoint/` (see `RECOVERY.md`).
+The deterministic COM fixture pauses at the genuine INT 21h/AH=3Fh stub with
+a live IRET frame, open file at offset 1, queued keys, a CLI-held timer and
+partial DAC/PIT writes. Literal oracles require file bytes `BC`, key `1E61`,
+RGB `11,22,33`, PIT reload `1234`, video byte `7`, self-modified result `2222`,
+`CHECKPOINT OK` output and DOS exit `42`. Same-runner destructive rollback,
+fresh-runner restore and a fresh Node-process recovery all finish at 216
+dispatches/79 handbacks with matching complete state. Captures on both sides
+of the DOS service pass. Fourteen corrupt/incompatible archive cases reject
+atomically; unsupported callbacks, mounts, installers and a frozen destination
+also reject. The native-only snapshot control instead exits with `0`, failing
+the independent exit oracle. Native checkpoint and runner-input regressions
+and the locked full build pass. Both generated DOS browser bundles were
+regenerated after the build correctly rejected stale copies.

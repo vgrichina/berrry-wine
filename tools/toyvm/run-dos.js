@@ -2291,6 +2291,10 @@ async function main() {
 // The frame readers moved to ./framebuffer.js and are re-exported here, since
 // several tools import them from this module by name.
 module.exports = {
+  // Persistent DOS checkpoints use a cooperative runner with explicit state.
+  // Load Node-only archive/source-identity support only when requested.
+  createMachineRunner: options => require('./checkpoint').createMachineRunner(options),
+  resumeMachineRunner: bytes => require('./checkpoint').resumeMachineRunner(bytes),
   runDos, runDosWithPre, writePng, writeConsolePng, nonBlack, frameHash, conText,
   screenSurface, conCells,
   readFrame: require('./framebuffer').readFrame,
