@@ -1,5 +1,88 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Static startup reconstruction after segment repair; no demonstrated next defect, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-startup-after-task-return/`. This is
+**static analysis, with zero guest launches and no emulator changes**. The
+five requested retained artifacts from `20261102-gta1-segment-cache-transitions`
+were analyzed before claiming shared access. The note/build claim followed
+MDK2 drawable commit `181f4295f`, terminal exit 0, final/exact AUTHOR RELEASE,
+and independent absence checks for all 92 recorded helpers.
+
+`analyze.py` checks actual original bytes against the retained states;
+`static-analysis.json` records input hashes and every task pair. The embedded
+MZ at file `038D64` names LE header `03B80C`; its page-data start is `0AB964`.
+The actual LE page map and internal fixups reproduce all twelve captured
+single-page, nonempty 32-bit instruction windows using code/data object bases
+`10083000`/`101AB000`. Another 87 segment-code anchors match, with the first
+handler's relocated `PUSH 0090` → `PUSH 3DA8` recorded explicitly. Targeted
+disassembly preserves original operands separately from relocated runtime bytes.
+Fourteen empty fetch windows and one partial, cross-page fetch remain explicit
+capture limitations; static file bytes do not prove an instruction executed.
+
+At the first fault, `0080:3EBF` is `CMP byte ES:[BX+DI],AL`:
+`ES.base=10184EA0`, BX=1 and DI=0 account exactly for CR2=`10184EA1`.
+The enclosing original function compares a finite byte-signature table. Its
+target is the application's Watcom runtime entry page. An independent walk
+of that first fault's target page was not retained, so its complete original
+PTE state is still unproven.
+
+All 28 outgoing TSS saves agree with captured GPRs, CS/EIP, ESP, EFLAGS and
+CR3. Original handler bytes explain the rewritten TSS: copy 104 bytes, clear
+TF/IF/RF with `FFFEFCFF`, put CR2 in saved EBX, substitute
+`SS:ESP=0280:0FFC` and `CS:EIP=3D98:809F`, restore busy descriptor types,
+then execute NT IRET at `809B`. Each retained rewrite and completed return
+agrees. The handler task's next saved EIP, `809C`, contains a jump back to
+`7F6E`; its repeated entry is expected guest control flow. The `809F`
+trampoline's static success path calls `61AA`, restores the interrupted
+context, and prepares IRETD at `8190`. That final IRETD was not captured
+individually for every pair.
+
+The faults cover **28 distinct CR2 pages at 26 instruction sites**, with 21
+zero and seven two error words. Two observations establish local progress:
+
+- At `02E0:101850FF`, REP STOSD advances EDI from `101C12F0` to `101C2000`
+  while ECX falls from `400` to `BC`: exactly `344` dwords / `D10` bytes.
+- At `02E0:101A4145`, an absent code PTE first prevents fetch. The next fault
+  there has a present code PTE and complete relocated instruction bytes;
+  the instruction now faults on its data write at `101B67B0`.
+
+The final 32-instruction window enters `0080:0DE5`, calls `B1AA`, traverses
+its zero-argument counter branch, restores its frame and returns at `B210`.
+Final AX=`43BC`, DX=`00A8` agree. Final `0080:0DF2` is `ADD SP,2` after that
+return, not evidence of a stuck polling loop. The next static call is
+`0088:0BE4`; final stack arguments and subsequent execution were not retained,
+so assigning a specific requested DOS service or blaming its implementation
+would be speculation.
+
+The retained 85-second limit is shared across K, checkpoint pauses and
+DEMO24; DEMO24's report records only 52.89 seconds, 19,085,948 dispatches and
+8,927,401 handbacks. Paged execution deliberately decodes one reached
+instruction per host step. These facts permit a budget/cost hypothesis; they
+do not prove the remaining barrier is speed. The retained final PNG was
+visually inspected again: DOS/4GW text only. Startup completion, gameplay and
+the exact earlier `0070:42C5` PUSH causal identity remain unproven.
+
+**No coherent architectural defect is demonstrated.** No ToyVM/test/bundle
+edit or unchanged original retry was made. Fresh checks match the archive,
+DEMO24, exact 117-file / 17,078,619-byte closure and all 96 accepted ToyVM
+source/test/bundle pins. Prior full ToyVM regressions and executed bundle
+parity are retained results on those unchanged pins, not newly run suites.
+The static assertions and mandatory locked project build pass for this
+note-only publication; this does not qualify a new GTA execution.
+
+Next experiment requires a separate assignment explicitly permitting a
+diagnostic-only authentic route with the same finite budgets and PNG review
+before input. Capture per-executable wall/guest time, sparse CS:EIP progress
+samples, bounded stack arguments at `0080:0DE5/0DF2`, target CR2 walks, and
+before/after state around the trampoline's actual `3D98:8190` IRETD. Use a
+fixed ring written at boundaries, independent of the exhausted segment-change
+cap. Distinguish advancing startup, guest waiting and misexecution before
+proposing a source fix or larger budget. This plan does not authorize another
+run in the completed assignment. Helpers are actually waited and checked
+absent before author release; disk abort remains 2,020,000,000 bytes with no
+RAM gate. Box ID/state/expiry N/A; coordinator lifecycle ownership unchanged.
+
 
 ## Coherent segment-cache transitions; bounded original remains at startup, 2026-11-02
 
