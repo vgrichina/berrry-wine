@@ -3961,6 +3961,9 @@
     (if (i32.eq (local.get $id) (i32.const 4280)) (then (return (i32.const 1)))) ;; glGetLightiv
     (if (i32.eq (local.get $id) (i32.const 4284)) (then (return (i32.const 1)))) ;; glGetMaterialfv
     (if (i32.eq (local.get $id) (i32.const 4285)) (then (return (i32.const 1)))) ;; glGetMaterialiv
+    (if (i32.eq (local.get $id) (i32.const 4286)) (then (return (i32.const 1)))) ;; glGetPixelMapfv
+    (if (i32.eq (local.get $id) (i32.const 4287)) (then (return (i32.const 1)))) ;; glGetPixelMapuiv
+    (if (i32.eq (local.get $id) (i32.const 4288)) (then (return (i32.const 1)))) ;; glGetPixelMapusv
     (if (i32.eq (local.get $id) (i32.const 4289)) (then (return (i32.const 1)))) ;; glGetPointerv
     (if (i32.eq (local.get $id) (i32.const 4291)) (then (return (i32.const 1)))) ;; glGetTexEnvfv
     (if (i32.eq (local.get $id) (i32.const 4292)) (then (return (i32.const 1)))) ;; glGetTexEnviv
@@ -3995,6 +3998,9 @@
     (if (i32.eq (local.get $id) (i32.const 4351)) (then (return (i32.const 1)))) ;; glNormal3iv
     (if (i32.eq (local.get $id) (i32.const 4352)) (then (return (i32.const 1)))) ;; glNormal3s
     (if (i32.eq (local.get $id) (i32.const 4353)) (then (return (i32.const 1)))) ;; glNormal3sv
+    (if (i32.eq (local.get $id) (i32.const 4355)) (then (return (i32.const 1)))) ;; glPixelMapfv
+    (if (i32.eq (local.get $id) (i32.const 4356)) (then (return (i32.const 1)))) ;; glPixelMapuiv
+    (if (i32.eq (local.get $id) (i32.const 4357)) (then (return (i32.const 1)))) ;; glPixelMapusv
     (if (i32.eq (local.get $id) (i32.const 4359)) (then (return (i32.const 1)))) ;; glPixelTransferf
     (if (i32.eq (local.get $id) (i32.const 4360)) (then (return (i32.const 1)))) ;; glPixelTransferi
     (if (i32.eq (local.get $id) (i32.const 4363)) (then (return (i32.const 1)))) ;; glPopClientAttrib
@@ -4132,9 +4138,6 @@
     (if (i32.eq (local.get $id) (i32.const 4281)) (then (return (i32.const 1)))) ;; glGetMapdv
     (if (i32.eq (local.get $id) (i32.const 4282)) (then (return (i32.const 1)))) ;; glGetMapfv
     (if (i32.eq (local.get $id) (i32.const 4283)) (then (return (i32.const 1)))) ;; glGetMapiv
-    (if (i32.eq (local.get $id) (i32.const 4286)) (then (return (i32.const 1)))) ;; glGetPixelMapfv
-    (if (i32.eq (local.get $id) (i32.const 4287)) (then (return (i32.const 1)))) ;; glGetPixelMapuiv
-    (if (i32.eq (local.get $id) (i32.const 4288)) (then (return (i32.const 1)))) ;; glGetPixelMapusv
     (if (i32.eq (local.get $id) (i32.const 4290)) (then (return (i32.const 1)))) ;; glGetPolygonStipple
     (if (i32.eq (local.get $id) (i32.const 4301)) (then (return (i32.const 1)))) ;; glIndexd
     (if (i32.eq (local.get $id) (i32.const 4302)) (then (return (i32.const 1)))) ;; glIndexdv
@@ -4167,9 +4170,6 @@
     (if (i32.eq (local.get $id) (i32.const 4339)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fARB
     (if (i32.eq (local.get $id) (i32.const 4340)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fvARB
     (if (i32.eq (local.get $id) (i32.const 4354)) (then (return (i32.const 1)))) ;; glPassThrough
-    (if (i32.eq (local.get $id) (i32.const 4355)) (then (return (i32.const 1)))) ;; glPixelMapfv
-    (if (i32.eq (local.get $id) (i32.const 4356)) (then (return (i32.const 1)))) ;; glPixelMapuiv
-    (if (i32.eq (local.get $id) (i32.const 4357)) (then (return (i32.const 1)))) ;; glPixelMapusv
     (if (i32.eq (local.get $id) (i32.const 4358)) (then (return (i32.const 1)))) ;; glPixelStoref
     (if (i32.eq (local.get $id) (i32.const 4361)) (then (return (i32.const 1)))) ;; glPixelZoom
     (if (i32.eq (local.get $id) (i32.const 4362)) (then (return (i32.const 1)))) ;; glPolygonStipple
@@ -21613,13 +21613,13 @@
       (call $handle_gl_lighting_query (i32.const 1) (i32.const 1))
       (return)
     ) ;; 4286: glGetPixelMapfv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_texture_command (i32.const 166) (i32.const 2))
       (return)
     ) ;; 4287: glGetPixelMapuiv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_texture_command (i32.const 167) (i32.const 2))
       (return)
     ) ;; 4288: glGetPixelMapusv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_texture_command (i32.const 168) (i32.const 2))
       (return)
     ) ;; 4289: glGetPointerv
       (call $handle_gpu_api (i32.const 162) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -22078,13 +22078,13 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4355: glPixelMapfv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_texture_command (i32.const 163) (i32.const 3))
       (return)
     ) ;; 4356: glPixelMapuiv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_texture_command (i32.const 164) (i32.const 3))
       (return)
     ) ;; 4357: glPixelMapusv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_texture_command (i32.const 165) (i32.const 3))
       (return)
     ) ;; 4358: glPixelStoref
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

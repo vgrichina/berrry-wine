@@ -36618,24 +36618,21 @@
     "name": "glGetPixelMapfv",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 121990212,
-    "handler": "gl_unimplemented"
+    "hash": 121990212
   },
   {
     "id": 4287,
     "name": "glGetPixelMapuiv",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 2053668292,
-    "handler": "gl_unimplemented"
+    "hash": 2053668292
   },
   {
     "id": 4288,
     "name": "glGetPixelMapusv",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 2049431150,
-    "handler": "gl_unimplemented"
+    "hash": 2049431150
   },
   {
     "id": 4289,
@@ -37156,24 +37153,21 @@
     "name": "glPixelMapfv",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 49403264,
-    "handler": "gl_unimplemented"
+    "hash": 49403264
   },
   {
     "id": 4356,
     "name": "glPixelMapuiv",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1860601096,
-    "handler": "gl_unimplemented"
+    "hash": 1860601096
   },
   {
     "id": 4357,
     "name": "glPixelMapusv",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1587922050,
-    "handler": "gl_unimplemented"
+    "hash": 1587922050
   },
   {
     "id": 4358,

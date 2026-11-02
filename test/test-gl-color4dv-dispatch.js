@@ -55,7 +55,7 @@ const seams=new Map([
 ]);
 // Full-source 1D pixel fixtures cover allocation/reclamation. Trap those
 // unrelated endpoints in this isolated current-state/list ABI fixture.
-const excluded=new Set(['$gl_texture_get_image','$gl_2d_upload','$gl_texture_copy_validate','$gl_texture_copy_execute','$gl_2d_store','$gl_texture_storage_free','$gl_texture_image_level','$gl_1d_store','$gl_1d_free','$gl_emit_record','$gl_pointer_length',
+const excluded=new Set(['$gl_pixel_map_validate','$gl_pixel_map_set','$gl_pixel_map_get','$gl_texture_get_image','$gl_2d_upload','$gl_texture_copy_validate','$gl_texture_copy_execute','$gl_2d_store','$gl_texture_storage_free','$gl_texture_image_level','$gl_1d_store','$gl_1d_free','$gl_emit_record','$gl_pointer_length',
   '$gl_wat_stream_flush','$gl_state_set_context','$gl_state_context_deleted','$gl_state_context_changed','$gs32','$gs64','$gs8','$gs16','$gl_copy_from_guest']);
 const selected=new Map(), traps=new Map();
 function visit(n) {
@@ -280,7 +280,7 @@ for(const p of [0xffffffe9,0xffffffff])assert.throws(()=>rgb.e.invoke(p),WebAsse
 // Stable command ABI: canonicalization adds no new opcode or argument layout.
 const compat=require('../lib/gl-compat');const stream=require('../lib/gl-command-stream');
 assert.strictEqual(compat.CALL_INDEX.glColor4f,25);assert.strictEqual(compat.CALL_INDEX.glColor4fv,26);
-assert.strictEqual(compat.CALL_INDEX.gluScaleImage,141);assert.strictEqual(compat.CALLS.length,163);
+assert.strictEqual(compat.CALL_INDEX.gluScaleImage,141);assert.strictEqual(compat.CALLS.length,169);
 assert.strictEqual(compat.CALL_INDEX.glAccum,143);assert.strictEqual(compat.CALL_INDEX.glClearAccum,144);
 assert.strictEqual(stream.ARG_WORDS[25],4);
 console.log(JSON.stringify({PASS:true,cases:8,vertexCases:8,rgbImplicitAlpha:true,rgbNoFourthRead:true,rgbFailurePreservesColor:true,combinedColorVertex:true,vertexRouteMutationRejected:true,mutations:['r','g','b','a','stride','opcode','rgb-alpha','rgb-stride','cleanup','rgb-route'],displayListReplay:true,packedCommandReplay:true,fixtureSHA:hash(fs.readFileSync(__filename)),
