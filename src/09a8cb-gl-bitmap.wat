@@ -821,3 +821,35 @@
           (i32.and (f64.eq (local.get $v) (f64.const 9218)) (i32.lt_u (local.get $coord) (i32.const 2))))) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1))))))
     (i32.const 0))
+
+(func $gl_pixels_stencil_draw (param $start i32) (param $count i32)
+ (local $rt i32) (local $view i32) (local $dx i32) (local $dy i32)
+ (local $w i32) (local $h i32) (local $mask i32) (local $i i32) (local $v i32)
+ (local $x i32) (local $y i32) (local $p i32)
+ (if (i32.eqz (call $gl_sw_target)) (then (return)))
+ (call $d3dim_worker_fence)
+ (if (i32.eqz (call $gl_stencil_ensure)) (then (return)))
+ (local.set $rt (global.get $gl_sw_rt)) (local.set $view (local.get $rt))
+ (if (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 32)) (then
+   (local.set $view (call $gl_sw_scissor_view))
+   (if (i32.eqz (local.get $view)) (then (return)))
+   (if (i32.ne (local.get $view) (local.get $rt)) (then
+     (local.set $dx (global.get $gl_sw_sc_x)) (local.set $dy (global.get $gl_sw_sc_y))))))
+ (local.set $w (load.field DxObject width (local.get $view)))
+ (local.set $h (load.field DxObject height (local.get $view)))
+ (local.set $mask (i32.and (i32.load offset=16 (call $gl_stencil_state)) (i32.const 255)))
+ (block $done (loop $pixels
+   (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+   (local.set $v (i32.add (i32.add (local.get $start) (i32.const 32)) (i32.mul (local.get $i) (i32.const 76))))
+   (local.set $x (i32.trunc_sat_f32_s (f32.load (local.get $v))))
+   (local.set $y (i32.trunc_sat_f32_s (f32.load offset=4 (local.get $v))))
+   (if (global.get $gl_sw_flip_y) (then
+     (local.set $y (i32.sub (i32.sub (load.field DxObject height (local.get $rt)) (i32.const 1)) (local.get $y)))))
+   (if (i32.and (i32.lt_u (i32.sub (local.get $x) (local.get $dx)) (local.get $w))
+       (i32.lt_u (i32.sub (local.get $y) (local.get $dy)) (local.get $h))) (then
+     (local.set $p (i32.add (global.get $gl_stencil_pixels)
+       (i32.add (i32.mul (local.get $y) (global.get $gl_stencil_pitch)) (local.get $x))))
+     (i32.store8 (local.get $p) (i32.or
+       (i32.and (i32.load8_u (local.get $p)) (i32.xor (local.get $mask) (i32.const 255)))
+       (i32.and (i32.trunc_sat_f32_u (f32.load offset=12 (local.get $v))) (local.get $mask))))))
+   (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $pixels))))

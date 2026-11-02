@@ -328,6 +328,7 @@ const gpuApis = new Map([
   ['glGetBooleanv', 2], ['glGetPointerv', 2],
   ['glPixelMapfv',3], ['glPixelMapuiv',3], ['glPixelMapusv',3],
   ['glGetPixelMapfv',2], ['glGetPixelMapuiv',2], ['glGetPixelMapusv',2],
+  ['glDrawPixels',5], ['glCopyPixels',5], ['glPixelZoom',2], ['_glRasterSize',0], ['_glReadRasterPixels',6],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 
@@ -430,6 +431,7 @@ const nativeTextureQueryApis = new Map([
   ['glGetTexParameterfv',[0,0]], ['glGetTexParameteriv',[0,1]],
 ]);
 const nativeGlApis = new Set([
+  'glPixelStoref',
   'glGetClipPlane',
   ...nativeTextureSetApis.keys(), ...nativeTextureQueryApis.keys(),
   'glRectd', 'glRectdv', 'glRectfv', 'glRecti', 'glRectiv', 'glRects', 'glRectsv',
@@ -466,6 +468,9 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if(api.name==='glDrawPixels')return '      (call $handle_gl_draw_pixels)';
+  if(api.name==='glPixelStoref')return '      (call $handle_gl_pixel_storef)';
+  if(api.name==='glCopyPixels'||api.name==='glPixelZoom')return `      (call $handle_gl_texture_command (i32.const ${gpuApiOrder.indexOf(api.name)}) (i32.const ${gpuApis.get(api.name)}))`;
   if (['glTexImage2D','glTexSubImage2D','glCopyTexImage1D','glCopyTexImage2D','glCopyTexSubImage1D','glCopyTexSubImage2D','glGetTexImage','glPixelTransferf','glPixelTransferi','glPixelMapfv','glPixelMapuiv','glPixelMapusv','glGetPixelMapfv','glGetPixelMapuiv','glGetPixelMapusv'] .includes(api.name)) return `      (call $handle_gl_texture_command (i32.const ${gpuApiOrder.indexOf(api.name)}) (i32.const ${gpuApis.get(api.name)}))`;
   if(api.name==='glTexImage1D'||api.name==='glTexSubImage1D') return `      (call $handle_gl_tex1d_upload (i32.const ${api.name==='glTexSubImage1D'?1:0}))`;
   if(api.name==='glClipPlane'||api.name==='glGetClipPlane') return `      (call $handle_gl_clip (i32.const ${api.name==='glGetClipPlane'?1:0}))`;

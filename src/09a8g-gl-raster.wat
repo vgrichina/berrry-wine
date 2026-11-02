@@ -1221,7 +1221,7 @@
         (load.field DxObject pitch (global.get $gl_sw_second)))
         (i32.shl (i32.add (local.get $x) (global.get $gl_sw_r_dx)) (i32.const 2)))))
     (local.set $old (i32.load (local.get $p)))
-    (if (local.get $blend) (then (local.set $color (call $d3dim_blend_rgb
+    (if (local.get $blend) (then (local.set $color (call $gl_sw_blend_rgba
       (local.get $color) (local.get $old) (local.get $src) (local.get $dst)))))
     (i32.store (local.get $p) (call $gl_color_merge (local.get $old) (local.get $color) (global.get $rast_color_mask))))
 
@@ -2712,6 +2712,7 @@
     (local.set $caps (i32.load (local.get $s)))
     (local.set $qa (f32.load offset=12 (local.get $pa)))
     (local.set $qb (f32.load offset=12 (local.get $pb)))
+    (global.set $gl_sw_rgba_span (i32.const 1))
     (call $viewport_draw_textured_span
       (global.get $gl_sw_r_rt) (global.get $gl_sw_r_tex)
       (i32.ne (i32.and (local.get $caps) (i32.const 2)) (i32.const 0))
@@ -2732,7 +2733,8 @@
       (local.get $qb) (i32.load offset=24 (local.get $pb)) (f32.load offset=8 (local.get $pb))
       (global.get $gl_sw_r_zbuf)
       (i32.load offset=20 (local.get $s))
-      (i32.load offset=24 (local.get $s))))
+      (i32.load offset=24 (local.get $s)))
+    (global.set $gl_sw_rgba_span (i32.const 0)))
 
   ;; One clip-space triangle, already in front of the near plane: project,
   ;; cull, pick the texture and rasterize with GL's state.
@@ -3333,6 +3335,10 @@
   (func $gl_sw_consume_selected (param $start i32) (param $vertices i32)
     (local $mode i32) (local $step i32)
     (if (i32.eqz (global.get $gl_sw_enabled)) (then (return)))
+    (if (i32.eq (i32.and (i32.load offset=8 (local.get $start)) (i32.const 0xFFFDFFFF)) (i32.const 0x50000)) (then
+      (if (i32.eqz (call $gl_stencil_ensure)) (then (return)))
+      (if (call $gl_sw_worker_try (local.get $start) (local.get $vertices)) (then (return)))
+      (call $gl_pixels_stencil_draw (local.get $start) (local.get $vertices)) (return)))
     (call $gl_1d_capture)
     (call $gl_2d_capture)
     (call $gl_texture_capture)
@@ -3722,7 +3728,9 @@
       (i32.add (local.get $snap) (i32.const 1096)) (i32.const 384))
     (if (i32.eq (local.get $mode) (i32.const 0x10000))
       (then (call $gl_bitmap_sw_draw (local.get $rec) (local.get $n)))
-      (else (call $gl_sw_draw (local.get $rec) (local.get $n) (local.get $step))))
+      (else (if (i32.eq (local.get $mode) (i32.const 0x50000))
+        (then (call $gl_pixels_stencil_draw (local.get $rec) (local.get $n)))
+        (else (call $gl_sw_draw (local.get $rec) (local.get $n) (local.get $step))))))
     (global.set $gl_sw_second (i32.const 0))
     (i32.const 1))
 
@@ -4168,3 +4176,36 @@
     (if (i32.or (i32.eq (local.get $mode) (i32.const 0x2900)) (i32.eq (local.get $mode) (i32.const 0x812d))) (then (return (local.get $x))))
     (call $d3dim_address_texel (local.get $x) (local.get $n)
       (select (i32.const 3) (select (i32.const 2) (i32.const 1) (i32.eq (local.get $mode) (i32.const 0x8370))) (i32.eq (local.get $mode) (i32.const 0x812f)))))
+
+;; GL framebuffer blending includes alpha. Keep the legacy D3D RGB helper
+;; unchanged, including its use by texture-environment combination.
+(global $gl_sw_rgba_span (mut i32) (i32.const 0))
+(func $gl_sw_blend_factor (param $factor i32) (param $sc i32) (param $dc i32)
+ (param $sa i32) (param $da i32) (param $alpha i32) (result i32)
+ (if (i32.eq (local.get $factor) (i32.const 1)) (then (return (i32.const 0))))
+ (if (i32.eq (local.get $factor) (i32.const 3)) (then (return (local.get $sc))))
+ (if (i32.eq (local.get $factor) (i32.const 4)) (then (return (i32.sub (i32.const 255) (local.get $sc)))))
+ (if (i32.eq (local.get $factor) (i32.const 5)) (then (return (local.get $sa))))
+ (if (i32.eq (local.get $factor) (i32.const 6)) (then (return (i32.sub (i32.const 255) (local.get $sa)))))
+ (if (i32.eq (local.get $factor) (i32.const 7)) (then (return (local.get $da))))
+ (if (i32.eq (local.get $factor) (i32.const 8)) (then (return (i32.sub (i32.const 255) (local.get $da)))))
+ (if (i32.eq (local.get $factor) (i32.const 9)) (then (return (local.get $dc))))
+ (if (i32.eq (local.get $factor) (i32.const 10)) (then (return (i32.sub (i32.const 255) (local.get $dc)))))
+ (if (i32.eq (local.get $factor) (i32.const 11)) (then
+   (return (if (result i32) (local.get $alpha) (then (i32.const 255))
+     (else (select (local.get $sa) (i32.sub (i32.const 255) (local.get $da))
+       (i32.lt_u (local.get $sa) (i32.sub (i32.const 255) (local.get $da)))))))))
+ (i32.const 255))
+(func $gl_sw_blend_rgba (param $src i32) (param $dst i32) (param $sf i32) (param $df i32) (result i32)
+ (local $i i32) (local $sc i32) (local $dc i32) (local $sa i32) (local $da i32) (local $n i32) (local $out i32)
+ (local.set $sa (i32.shr_u (local.get $src) (i32.const 24)))
+ (local.set $da (i32.shr_u (local.get $dst) (i32.const 24)))
+ (loop $channels
+  (local.set $sc (i32.and (i32.shr_u (local.get $src) (local.get $i)) (i32.const 255)))
+  (local.set $dc (i32.and (i32.shr_u (local.get $dst) (local.get $i)) (i32.const 255)))
+  (local.set $n (i32.div_u (i32.add (i32.const 127) (i32.add
+   (i32.mul (local.get $sc) (call $gl_sw_blend_factor (local.get $sf) (local.get $sc) (local.get $dc) (local.get $sa) (local.get $da) (i32.eq (local.get $i) (i32.const 24))))
+   (i32.mul (local.get $dc) (call $gl_sw_blend_factor (local.get $df) (local.get $sc) (local.get $dc) (local.get $sa) (local.get $da) (i32.eq (local.get $i) (i32.const 24)))))) (i32.const 255)))
+  (local.set $out (i32.or (local.get $out) (i32.shl (select (i32.const 255) (local.get $n) (i32.gt_u (local.get $n) (i32.const 255))) (local.get $i))))
+  (local.set $i (i32.add (local.get $i) (i32.const 8))) (br_if $channels (i32.lt_u (local.get $i) (i32.const 32))))
+ (local.get $out))

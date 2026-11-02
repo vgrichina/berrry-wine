@@ -6028,8 +6028,9 @@
                     (i32.shl (i32.shl (i32.and (i32.shr_u (local.get $px16) (i32.const 11)) (i32.const 31)) (i32.const 3)) (i32.const 16))
                     (i32.shl (i32.shl (i32.and (i32.shr_u (local.get $px16) (i32.const 5)) (i32.const 63)) (i32.const 2)) (i32.const 8)))
                   (i32.shl (i32.and (local.get $px16) (i32.const 31)) (i32.const 3))))))))
-          (local.set $color (call $d3dim_blend_rgb
-            (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))))
+          (local.set $color (if (result i32) (global.get $gl_sw_rgba_span)
+            (then (call $gl_sw_blend_rgba (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))
+            (else (call $d3dim_blend_rgb (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))))))
         ;; D3DANTIALIAS_SORTDEPENDENT smooths polygon boundaries against the
         ;; colour already in the render target. Interior pixels keep the hot
         ;; opaque path; only the two scanline edge samples need a destination

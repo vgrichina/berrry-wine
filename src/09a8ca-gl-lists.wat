@@ -142,10 +142,12 @@
         (i32.and (i32.ge_u (local.get $op) (i32.const 124))
           (i32.le_u (local.get $op) (i32.const 140)))))))
     (if (i32.eq (local.get $op) (i32.const 160)) (then (return (i32.const 0))))
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 172)) (i32.const 1)) (then (return (i32.const 0))))
     (local.set $texture (i32.or
       (i32.le_u (i32.sub (local.get $op) (i32.const 163)) (i32.const 2)) (i32.or
       (i32.le_u (i32.sub (local.get $op) (i32.const 149)) (i32.const 1))
       (i32.le_u (i32.sub (local.get $op) (i32.const 158)) (i32.const 1)))))
+    (if (i32.eq (local.get $op) (i32.const 169)) (then (local.set $texture (i32.const 1))))
     (if (local.get $texture) (then
       (local.set $length (i32.and (i32.wrap_i64 (i64.shr_u (call $gl_pointer_length (local.get $op) (local.get $stack)) (i64.const 32))) (i32.const 0x7fffffff)))))
     (if (call $gl_clip_validate (local.get $ctx) (local.get $op) (local.get $stack))
@@ -368,6 +370,7 @@
           (local.set $n (if (result i32) (i32.ge_u (local.get $op) (i32.const 163)) (then (i32.const 12))
             (else (if (result i32) (i32.ge_u (local.get $op) (i32.const 158)) (then (i32.const 36))
               (else (select (i32.const 32) (i32.const 28) (i32.eq (local.get $op) (i32.const 149))))))))
+          (if (i32.eq (local.get $op) (i32.const 169)) (then (local.set $n (i32.const 20))))
           (call $gl_copy_from_guest (i32.add (local.get $p) (i32.const 88))
             (i32.load (i32.add (local.get $stack) (local.get $n))) (local.get $length))
           (i32.store (i32.add (i32.add (local.get $p) (i32.const 8)) (local.get $n))
@@ -432,6 +435,7 @@
       (br $free))))
 
   (func $gl_list_scalar_command (param $op i32) (result i32)
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 169)) (i32.const 2)) (then (return (i32.const 1))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 163)) (i32.const 2)) (then (return (i32.const 1))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 151)) (i32.const 8)) (then (return (i32.const 1))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 149)) (i32.const 1)) (then (return (i32.const 1))))

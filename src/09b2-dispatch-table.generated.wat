@@ -3946,11 +3946,13 @@
     (if (i32.eq (local.get $id) (i32.const 4242)) (then (return (i32.const 1)))) ;; glColor4us
     (if (i32.eq (local.get $id) (i32.const 4243)) (then (return (i32.const 1)))) ;; glColor4usv
     (if (i32.eq (local.get $id) (i32.const 4244)) (then (return (i32.const 1)))) ;; glColorMask
+    (if (i32.eq (local.get $id) (i32.const 4247)) (then (return (i32.const 1)))) ;; glCopyPixels
     (if (i32.eq (local.get $id) (i32.const 4248)) (then (return (i32.const 1)))) ;; glCopyTexImage1D
     (if (i32.eq (local.get $id) (i32.const 4249)) (then (return (i32.const 1)))) ;; glCopyTexImage2D
     (if (i32.eq (local.get $id) (i32.const 4250)) (then (return (i32.const 1)))) ;; glCopyTexSubImage1D
     (if (i32.eq (local.get $id) (i32.const 4251)) (then (return (i32.const 1)))) ;; glCopyTexSubImage2D
     (if (i32.eq (local.get $id) (i32.const 4252)) (then (return (i32.const 1)))) ;; glDeleteLists
+    (if (i32.eq (local.get $id) (i32.const 4253)) (then (return (i32.const 1)))) ;; glDrawPixels
     (if (i32.eq (local.get $id) (i32.const 4257)) (then (return (i32.const 1)))) ;; glEndList
     (if (i32.eq (local.get $id) (i32.const 4271)) (then (return (i32.const 1)))) ;; glFogiv
     (if (i32.eq (local.get $id) (i32.const 4272)) (then (return (i32.const 1)))) ;; glGenLists
@@ -4001,8 +4003,10 @@
     (if (i32.eq (local.get $id) (i32.const 4355)) (then (return (i32.const 1)))) ;; glPixelMapfv
     (if (i32.eq (local.get $id) (i32.const 4356)) (then (return (i32.const 1)))) ;; glPixelMapuiv
     (if (i32.eq (local.get $id) (i32.const 4357)) (then (return (i32.const 1)))) ;; glPixelMapusv
+    (if (i32.eq (local.get $id) (i32.const 4358)) (then (return (i32.const 1)))) ;; glPixelStoref
     (if (i32.eq (local.get $id) (i32.const 4359)) (then (return (i32.const 1)))) ;; glPixelTransferf
     (if (i32.eq (local.get $id) (i32.const 4360)) (then (return (i32.const 1)))) ;; glPixelTransferi
+    (if (i32.eq (local.get $id) (i32.const 4361)) (then (return (i32.const 1)))) ;; glPixelZoom
     (if (i32.eq (local.get $id) (i32.const 4363)) (then (return (i32.const 1)))) ;; glPopClientAttrib
     (if (i32.eq (local.get $id) (i32.const 4366)) (then (return (i32.const 1)))) ;; glPushClientAttrib
     (if (i32.eq (local.get $id) (i32.const 4368)) (then (return (i32.const 1)))) ;; glRasterPos2d
@@ -4114,8 +4118,6 @@
     (if (i32.eq (local.get $id) (i32.const 4234)) (then (return (i32.const 1)))) ;; glColor4d
     (if (i32.eq (local.get $id) (i32.const 4245)) (then (return (i32.const 1)))) ;; glColorSubTableEXT
     (if (i32.eq (local.get $id) (i32.const 4246)) (then (return (i32.const 1)))) ;; glColorTableEXT
-    (if (i32.eq (local.get $id) (i32.const 4247)) (then (return (i32.const 1)))) ;; glCopyPixels
-    (if (i32.eq (local.get $id) (i32.const 4253)) (then (return (i32.const 1)))) ;; glDrawPixels
     (if (i32.eq (local.get $id) (i32.const 4254)) (then (return (i32.const 1)))) ;; glEdgeFlag
     (if (i32.eq (local.get $id) (i32.const 4255)) (then (return (i32.const 1)))) ;; glEdgeFlagPointer
     (if (i32.eq (local.get $id) (i32.const 4256)) (then (return (i32.const 1)))) ;; glEdgeFlagv
@@ -4170,8 +4172,6 @@
     (if (i32.eq (local.get $id) (i32.const 4339)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fARB
     (if (i32.eq (local.get $id) (i32.const 4340)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fvARB
     (if (i32.eq (local.get $id) (i32.const 4354)) (then (return (i32.const 1)))) ;; glPassThrough
-    (if (i32.eq (local.get $id) (i32.const 4358)) (then (return (i32.const 1)))) ;; glPixelStoref
-    (if (i32.eq (local.get $id) (i32.const 4361)) (then (return (i32.const 1)))) ;; glPixelZoom
     (if (i32.eq (local.get $id) (i32.const 4362)) (then (return (i32.const 1)))) ;; glPolygonStipple
     (if (i32.eq (local.get $id) (i32.const 4364)) (then (return (i32.const 1)))) ;; glPopName
     (if (i32.eq (local.get $id) (i32.const 4365)) (then (return (i32.const 1)))) ;; glPrioritizeTextures
@@ -21496,7 +21496,7 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4247: glCopyPixels
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_texture_command (i32.const 170) (i32.const 5))
       (return)
     ) ;; 4248: glCopyTexImage1D
       (call $handle_gl_texture_command (i32.const 151) (i32.const 7))
@@ -21514,7 +21514,7 @@
       (call $handle_gpu_api (i32.const 128) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4253: glDrawPixels
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_draw_pixels)
       (return)
     ) ;; 4254: glEdgeFlag
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -22087,7 +22087,7 @@
       (call $handle_gl_texture_command (i32.const 165) (i32.const 3))
       (return)
     ) ;; 4358: glPixelStoref
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_pixel_storef)
       (return)
     ) ;; 4359: glPixelTransferf
       (call $handle_gl_texture_command (i32.const 156) (i32.const 2))
@@ -22096,7 +22096,7 @@
       (call $handle_gl_texture_command (i32.const 157) (i32.const 2))
       (return)
     ) ;; 4361: glPixelZoom
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_texture_command (i32.const 171) (i32.const 2))
       (return)
     ) ;; 4362: glPolygonStipple
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
