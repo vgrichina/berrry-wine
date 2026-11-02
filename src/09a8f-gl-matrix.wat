@@ -388,7 +388,7 @@
   ;; lib/gl-compat.js:724-725 returns silently on the same condition, and the
   ;; error word is diagnostic only, so the two behave identically.
   (func $gl_mtx_pop_attrib
-    (local $b i32) (local $d i32) (local $f i32)
+    (local $b i32) (local $d i32) (local $f i32) (local $normal i32)
     (local.set $b (call $gl_mtx_block))
     (local.set $d (i32.load offset=9032 (local.get $b)))
     (if (i32.eqz (local.get $d))
@@ -402,8 +402,14 @@
       (i32.add (local.get $f) (i32.const 8)) (i32.const 16))
     (memory.copy (i32.add (local.get $b) (i32.const 8880))
       (i32.add (local.get $f) (i32.const 24)) (i32.const 80))
+    (local.set $normal (i32.and (i32.load offset=9036 (local.get $b)) (i32.const 0x400000)))
     (if (i32.and (i32.load (local.get $f)) (i32.const 0x2040))
       (then (i32.store offset=9036 (local.get $b) (i32.load offset=104 (local.get $f)))))
+    ;; NORMALIZE belongs to TRANSFORM_BIT and ENABLE_BIT, not LIGHTING_BIT.
+    (if (i32.and (i32.load (local.get $f)) (i32.const 0x3000)) (then
+      (local.set $normal (i32.and (i32.load offset=104 (local.get $f)) (i32.const 0x400000)))))
+    (i32.store offset=9036 (local.get $b) (i32.or
+      (i32.and (i32.load offset=9036 (local.get $b)) (i32.const -4194305)) (local.get $normal)))
     (i32.store offset=9032 (local.get $b) (local.get $d)))
 
   ;; The generated factors below are built in the staging slot as f32, which is
@@ -829,7 +835,7 @@
     (if (i32.or (i32.eq (local.get $op) (i32.const 8))
                 (i32.eq (local.get $op) (i32.const 10))) (then
       (local.set $bit (i32.and (call $gl_sw_cap_bit (i32.load offset=4 (local.get $stack)))
-        (i32.const 0x1FF80)))
+        (i32.const 0x41FF80)))
       (if (local.get $bit) (then
         (local.set $b (call $gl_mtx_block))
         (i32.store offset=9036 (local.get $b) (select

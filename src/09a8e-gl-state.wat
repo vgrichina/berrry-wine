@@ -868,7 +868,7 @@
         (f32.load offset=8 (local.get $p)) (f32.load offset=12 (local.get $p)))
       (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 76)) (then
-      (local.set $a (call $heap_alloc (i32.const 68)))
+      (local.set $a (call $heap_alloc (i32.const 72)))
       (if (i32.eqz (local.get $a)) (then (unreachable)))
       (local.set $p (call $g2w (local.get $a)))
         (i32.store (local.get $p) (global.get $gl_state_attrib_head))
@@ -880,6 +880,7 @@
         (f32.store offset=44 (local.get $p) (global.get $gl_normal_z)) (i32.store offset=48 (local.get $p) (global.get $gl_shade_model))
         (f32.store offset=52 (local.get $p) (global.get $gl_tex_r)) (f32.store offset=56 (local.get $p) (global.get $gl_tex_q))
         (f32.store offset=60 (local.get $p) (global.get $gl_tex1_r)) (f32.store offset=64 (local.get $p) (global.get $gl_tex1_q))
+        (i32.store offset=68 (local.get $p) (i32.load offset=4 (local.get $stack)))
         (global.set $gl_state_attrib_head (local.get $p))
         (global.set $gl_state_attrib_depth (i32.add (global.get $gl_state_attrib_depth) (i32.const 1)))
       (return (i32.const 0))))
@@ -892,8 +893,13 @@
         (global.set $gl_color_b (f32.load offset=12 (local.get $p))) (global.set $gl_color_a (f32.load offset=16 (local.get $p)))
         (global.set $gl_tex_s (f32.load offset=20 (local.get $p))) (global.set $gl_tex_t (f32.load offset=24 (local.get $p)))
         (global.set $gl_tex1_s (f32.load offset=28 (local.get $p))) (global.set $gl_tex1_t (f32.load offset=32 (local.get $p)))
-        (global.set $gl_normal_x (f32.load offset=36 (local.get $p))) (global.set $gl_normal_y (f32.load offset=40 (local.get $p)))
-        (global.set $gl_normal_z (f32.load offset=44 (local.get $p))) (global.set $gl_shade_model (i32.load offset=48 (local.get $p)))
+        ;; The current normal belongs only to GL_CURRENT_BIT. Other masks
+        ;; must preserve normal changes made after the corresponding push.
+        (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 1)) (then
+          (global.set $gl_normal_x (f32.load offset=36 (local.get $p)))
+          (global.set $gl_normal_y (f32.load offset=40 (local.get $p)))
+          (global.set $gl_normal_z (f32.load offset=44 (local.get $p)))))
+        (global.set $gl_shade_model (i32.load offset=48 (local.get $p)))
         (global.set $gl_tex_r (f32.load offset=52 (local.get $p))) (global.set $gl_tex_q (f32.load offset=56 (local.get $p)))
         (global.set $gl_tex1_r (f32.load offset=60 (local.get $p))) (global.set $gl_tex1_q (f32.load offset=64 (local.get $p)))
         (call $heap_free (call $w2g (local.get $p)))))
@@ -1010,3 +1016,55 @@
       (global.set $gl_state_free_contexts (local.get $node))
       (local.set $node (local.get $next))
       (br $free)))
+
+  ;; OpenGL 1.1 signed normals use the endpoint-linear signed conversion,
+  ;; shared with signed current colors. Decode in binary64 and demote only
+  ;; at the authoritative float current-normal boundary. No length rescaling.
+  (func $gl_normal_typed_component (param $p i32) (param $bits i32) (result f32)
+    (if (result f32) (i32.eq (local.get $bits) (i32.const 64))
+      (then (f32.demote_f64 (f64.reinterpret_i64 (call $gl64 (local.get $p)))))
+      (else (call $gl_color_integer_component (local.get $p) (local.get $bits) (i32.const 1)))))
+
+  ;; All eight typed entrypoints snapshot to opcode63 BEFORE list interception.
+  ;; DWORD scalar slots and tightly packed vectors have different strides;
+  ;; binary64 scalar slots occupy two DWORDs. Read guest addresses separately
+  ;; so neither a vector nor an argument may assume adjacent backing pages.
+  (func $handle_glNormal_typed (param $bits i32) (param $vector i32)
+    (local $esp i32) (local $p i32) (local $stride i32) (local $last i32)
+    (local $guest i32) (local $stack i32)
+    (local $x f32) (local $y f32) (local $z f32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (if (i32.gt_u (local.get $esp) (i32.const 0xfffffffb)) (then (unreachable)))
+    (local.set $p (i32.add (local.get $esp) (i32.const 4)))
+    (if (local.get $vector) (then
+      ;; The pointer slot can itself cross sparse pages. Reject a missing
+      ;; slot before interpreting sentinel bytes as a guest vector address.
+      (if (i32.gt_u (local.get $p) (i32.const 0xfffffffc)) (then (unreachable)))
+      (if (i32.eq (call $g2w (local.get $p)) (global.get $NULL_SENTINEL)) (then (unreachable)))
+      (if (i32.eq (call $g2w (i32.add (local.get $p) (i32.const 3))) (global.get $NULL_SENTINEL)) (then (unreachable)))
+      (local.set $p (call $gl32 (local.get $p)))))
+    (local.set $stride (select (i32.shr_u (local.get $bits) (i32.const 3))
+      (i32.const 4) (i32.or (local.get $vector) (i32.eq (local.get $bits) (i32.const 64)))))
+    (local.set $last (i32.sub (i32.add (i32.mul (local.get $stride) (i32.const 2))
+      (i32.shr_u (local.get $bits) (i32.const 3))) (i32.const 1)))
+    ;; At most 24 bytes: validating both endpoint pages covers every byte.
+    ;; Validate before any current-state, list, heap or register mutation.
+    (if (i32.gt_u (local.get $p) (i32.sub (i32.const -1) (local.get $last))) (then (unreachable)))
+    (if (i32.eq (call $g2w (local.get $p)) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (if (i32.eq (call $g2w (i32.add (local.get $p) (local.get $last))) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (local.set $x (call $gl_normal_typed_component (local.get $p) (local.get $bits)))
+    (local.set $y (call $gl_normal_typed_component (i32.add (local.get $p) (local.get $stride)) (local.get $bits)))
+    (local.set $z (call $gl_normal_typed_component (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 2))) (local.get $bits)))
+    (local.set $guest (call $gl_alloc_affine (i32.const 16)))
+    (if (i32.eqz (local.get $guest)) (then (unreachable)))
+    (local.set $stack (call $g2w (local.get $guest)))
+    (i32.store (local.get $stack) (i32.const 0))
+    (f32.store offset=4 (local.get $stack) (local.get $x))
+    (f32.store offset=8 (local.get $stack) (local.get $y))
+    (f32.store offset=12 (local.get $stack) (local.get $z))
+    (drop (call $gl_wat_encode_call (i32.const 63) (local.get $stack) (i32.const 0)))
+    (call $heap_free (local.get $guest))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp)
+      (select (i32.const 8) (select (i32.const 28) (i32.const 16)
+        (i32.eq (local.get $bits) (i32.const 64))) (local.get $vector)))))

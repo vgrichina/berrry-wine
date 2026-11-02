@@ -37098,64 +37098,56 @@
     "name": "glNormal3b",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1813816296,
-    "handler": "gl_unimplemented"
+    "hash": 1813816296
   },
   {
     "id": 4347,
     "name": "glNormal3bv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 3474297274,
-    "handler": "gl_unimplemented"
+    "hash": 3474297274
   },
   {
     "id": 4348,
     "name": "glNormal3d",
     "nargs": 6,
     "convention": "stdcall",
-    "hash": 1914482010,
-    "handler": "gl_unimplemented"
+    "hash": 1914482010
   },
   {
     "id": 4349,
     "name": "glNormal3dv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 3475283012,
-    "handler": "gl_unimplemented"
+    "hash": 3475283012
   },
   {
     "id": 4350,
     "name": "glNormal3i",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1729928201,
-    "handler": "gl_unimplemented"
+    "hash": 1729928201
   },
   {
     "id": 4351,
     "name": "glNormal3iv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 3507117037,
-    "handler": "gl_unimplemented"
+    "hash": 3507117037
   },
   {
     "id": 4352,
     "name": "glNormal3s",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1562152011,
-    "handler": "gl_unimplemented"
+    "hash": 1562152011
   },
   {
     "id": 4353,
     "name": "glNormal3sv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 3505439751,
-    "handler": "gl_unimplemented"
+    "hash": 3505439751
   },
   {
     "id": 4354,

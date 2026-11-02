@@ -2,7 +2,7 @@
 'use strict';
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-// Original MDK2 misses, excluding four layer-plane, twenty integer-color, seven rectangle and three double matrix APIs.
+// Remaining observed MDK2 misses; implemented families are checked separately below.
 // Keep this observed set independent of the generator's availability predicate.
 const unsupportedMdk2 = `
   glAreTexturesResident glClearIndex glClipPlane
@@ -21,8 +21,7 @@ const unsupportedMdk2 = `
   glLightModelf glLightModeliv glLighti glLightiv glLineStipple
   glLoadName glLogicOp glMap1d glMap1f
   glMap2d glMap2f glMapGrid1d glMapGrid1f glMapGrid2d
-  glMapGrid2f glMaterialiv glNormal3b glNormal3bv glNormal3d
-  glNormal3dv glNormal3i glNormal3iv glNormal3s glNormal3sv
+  glMapGrid2f glMaterialiv
   glPassThrough glPixelMapfv glPixelMapuiv glPixelMapusv glPixelStoref
   glPixelTransferf glPixelTransferi glPixelZoom glPolygonStipple glPopName
   glPrioritizeTextures glPushName glRasterPos2d glRasterPos2dv glRasterPos2fv
@@ -132,7 +131,7 @@ async function main() {
     'glMultiTexCoord2fARB', 'glTexParameterfv', 'glGetTexParameterfv',
     'glTexCoord2d', 'glTexCoord2dv',
     'glColor3dv', 'glColor4dv', 'glRectf', 'glRectd', 'glRectdv', 'glAccum', 'glClearAccum',
-    'glRectfv', 'glRecti', 'glRectiv', 'glRects', 'glRectsv', 'glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled',
+    'glNormal3b', 'glNormal3bv', 'glNormal3d', 'glNormal3dv', 'glNormal3i', 'glNormal3iv', 'glNormal3s', 'glNormal3sv', 'glRectfv', 'glRecti', 'glRectiv', 'glRects', 'glRectsv', 'glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled',
     'wglSwapLayerBuffers', 'wglGetCurrentContext', 'wglGetCurrentDC']) {
     const thunk = lookup(name);
     assert.notStrictEqual(thunk, 0, `${name} remains available`);
@@ -159,7 +158,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 175, 'retain every still unsupported MDK2 name');
+  assert.strictEqual(unsupportedMdk2.length, 167, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);
@@ -168,7 +167,7 @@ async function main() {
     assert.strictEqual(e.lookup_error(),127,'ERROR_PROC_NOT_FOUND');
     assert.strictEqual(e.lookup_thunks(),before,'rejection allocates no thunk');
   }
-  for (const name of ['glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','wglGetProcAddress']) {
+  for (const name of ['glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv','wglGetProcAddress']) {
     const thunk=staticLookup(name);
     assert(thunk,`${name} remains available through SDL fallback`);
     assert.strictEqual(v.getUint32(toWasm(thunk)+4,true),table.findIndex(a=>a.name===name));

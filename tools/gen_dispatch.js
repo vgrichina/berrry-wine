@@ -327,6 +327,13 @@ for (const components of [3, 4]) {
   }
 }
 
+// Genuine typed current normals lower to the native scalar normal command.
+const typedNormalApis = new Map();
+for (const [suffix, bits] of [['b', 8], ['s', 16], ['i', 32], ['d', 64]]) {
+  for (const vector of [0, 1])
+    typedNormalApis.set(`glNormal3${suffix}${vector ? 'v' : ''}`, [bits, vector]);
+}
+
 // Dynamic WGL lookup must not expose fail-fast aliases merely because their
 // names exist in the global import table. Derive availability from the same
 // implementation map that dispatch uses. GLU helpers are a separate library.
@@ -345,6 +352,7 @@ const nativeGlApis = new Set([
   'glMultMatrixd', 'glTexCoord2d', 'glTexCoord2dv', 'glTexCoord2i',
   'glColor3d', 'glColor3dv', 'glColor4dv', 'glVertex2d', 'glVertex2dv', 'glVertex3d',
   ...integerColorApis.keys(),
+  ...typedNormalApis.keys(),
 ]);
 for (const [id, api] of apiTable.entries()) {
   if ((gpuApis.has(api.name) || nativeWglApis.has(api.name) || nativeGlApis.has(api.name)) && /^(?:gl[A-Z]|wgl[A-Z])/.test(api.name)) {
@@ -366,6 +374,10 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  const typedNormal = typedNormalApis.get(api.name);
+  if (typedNormal) {
+    return `      (call $handle_glNormal_typed ${typedNormal.map(n => `(i32.const ${n})`).join(' ')})`;
+  }
   const integerColor = integerColorApis.get(api.name);
   if (integerColor) {
     return `      (call $handle_glColor_integer ${integerColor.map(n => `(i32.const ${n})`).join(' ')} (local.get $arg0))`;

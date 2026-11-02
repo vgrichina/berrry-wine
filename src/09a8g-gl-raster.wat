@@ -198,7 +198,7 @@
   ;;       32 SCISSOR_TEST, 64 FOG, 128 LIGHTING, 0xFF00 LIGHT0..7,
   ;;       0x10000 COLOR_MATERIAL, 0x20000/0x40000 TEXTURE_GEN_S/_T,
   ;;       0x80000 TEXTURE_2D on unit 1, 0x100000 unit 1's env is REPLACE
-  ;;       0x200000 LIGHT_MODEL_TWO_SIDE
+  ;;       0x200000 LIGHT_MODEL_TWO_SIDE, 0x400000 NORMALIZE
   ;;       (kept here so glPushAttrib saves them with the rest)
   ;;   +4  source blend (D3DBLEND)        +8  destination blend (D3DBLEND)
   ;;   +12 alpha func (D3DCMP)            +16 alpha reference, 0..255
@@ -245,6 +245,7 @@
     (if (i32.lt_u (i32.sub (local.get $cap) (i32.const 0x4000)) (i32.const 8))
       (then (return (i32.shl (i32.const 256) (i32.sub (local.get $cap) (i32.const 0x4000))))))
     (if (i32.eq (local.get $cap) (i32.const 0x0B57)) (then (return (i32.const 0x10000))))
+    (if (i32.eq (local.get $cap) (i32.const 0x0BA1)) (then (return (i32.const 0x400000))))
     ;; GL_TEXTURE_GEN_S / _T, bits 17 and 18.
     (if (i32.eq (local.get $cap) (i32.const 0x0C60)) (then (return (i32.const 0x20000))))
     (if (i32.eq (local.get $cap) (i32.const 0x0C61)) (then (return (i32.const 0x40000))))
@@ -321,7 +322,10 @@
         (call $gl_sw_attrib_sizes (global.get $gl_sw_attrib_depth))))))
     ;; GL_ENABLE_BIT: every enable this file tracks.
     (if (i32.and (local.get $mask) (i32.const 0x2000))
-      (then (call $gl_sw_restore_caps (local.get $saved) (i32.const 0xFFFFF))))
+      (then (call $gl_sw_restore_caps (local.get $saved) (i32.const 0x4FFFFF))))
+    ;; GL_TRANSFORM_BIT owns GL_NORMALIZE; it is also an enable.
+    (if (i32.and (local.get $mask) (i32.const 0x1000))
+      (then (call $gl_sw_restore_caps (local.get $saved) (i32.const 0x400000))))
     ;; GL_LIGHTING_BIT: the lighting, light and colour-material enables. The
     ;; light parameters themselves are the matrix mirror's (09a8f).
     (if (i32.and (local.get $mask) (i32.const 0x40))
@@ -1857,7 +1861,7 @@
   ;; Not modelled: spot cutoffs and distance attenuation (every positional
   ;; light is unattenuated), a local viewer, distinct back-face materials,
   ;; and glColorMaterial's mode -- COLOR_MATERIAL always tracks AMBIENT_AND_DIFFUSE,
-  ;; GL's default. Normals are always renormalized.
+  ;; GL's default. GL_NORMALIZE controls post-transform normalization.
   (global $gl_sw_lit (mut i32) (i32.const 0))
   (global $gl_sw_light_block (mut i32) (i32.const 0))
   (global $gl_sw_reverse_normal (mut i32) (i32.const 0))
@@ -1866,9 +1870,10 @@
     (f32.load (i32.add (local.get $m)
       (i32.shl (i32.add (i32.shl (local.get $c) (i32.const 2)) (local.get $r)) (i32.const 2)))))
 
-  ;; The normal matrix: the cofactor matrix of the modelview's upper 3x3,
-  ;; which is its inverse-transpose times the determinant. Normals are
-  ;; renormalized after, so only the determinant's sign matters.
+  ;; The normal matrix is the inverse-transpose of the modelview's upper
+  ;; 3x3. Keep the reciprocal determinant: without GL_NORMALIZE the transformed
+  ;; length contributes to diffuse lighting. Singular transforms use 1 here;
+  ;; GL leaves the normal transformation undefined for those matrices.
   (func $gl_sw_light_setup (param $b i32)
     (local $m i32) (local $n i32) (local $det f32)
     (global.set $gl_sw_light_block (local.get $b))
@@ -1907,7 +1912,8 @@
       (f32.mul (call $gl_sw_m3 (local.get $m) (i32.const 0) (i32.const 1)) (f32.load offset=4 (local.get $n))))
       (f32.mul (call $gl_sw_m3 (local.get $m) (i32.const 0) (i32.const 2)) (f32.load offset=8 (local.get $n)))))
     (f32.store offset=36 (local.get $n)
-      (select (f32.const -1) (f32.const 1) (f32.lt (local.get $det) (f32.const 0)))))
+      (if (result f32) (f32.ne (local.get $det) (f32.const 0))
+        (then (f32.div (f32.const 1) (local.get $det))) (else (f32.const 1)))))
 
   ;; Normalize the three f32 at $v in place; a zero vector is left alone.
   (func $gl_sw_normalize3 (param $v i32)
@@ -1953,7 +1959,8 @@
                      (f32.load offset=44 (local.get $v))))))
       (local.set $k (i32.add (local.get $k) (i32.const 1)))
       (br_if $rows (i32.lt_u (local.get $k) (i32.const 3))))
-    (call $gl_sw_normalize3 (local.get $t))
+    (if (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 0x400000))
+      (then (call $gl_sw_normalize3 (local.get $t))))
     (if (global.get $gl_sw_reverse_normal) (then
       (f32.store (local.get $t) (f32.neg (f32.load (local.get $t))))
       (f32.store offset=4 (local.get $t) (f32.neg (f32.load offset=4 (local.get $t))))
