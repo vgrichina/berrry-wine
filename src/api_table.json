@@ -36327,32 +36327,28 @@
     "name": "glCopyTexImage1D",
     "nargs": 7,
     "convention": "stdcall",
-    "hash": 1015384472,
-    "handler": "gl_unimplemented"
+    "hash": 1015384472
   },
   {
     "id": 4249,
     "name": "glCopyTexImage2D",
     "nargs": 8,
     "convention": "stdcall",
-    "hash": 781042259,
-    "handler": "gl_unimplemented"
+    "hash": 781042259
   },
   {
     "id": 4250,
     "name": "glCopyTexSubImage1D",
     "nargs": 6,
     "convention": "stdcall",
-    "hash": 1979036634,
-    "handler": "gl_unimplemented"
+    "hash": 1979036634
   },
   {
     "id": 4251,
     "name": "glCopyTexSubImage2D",
     "nargs": 8,
     "convention": "stdcall",
-    "hash": 1207119065,
-    "handler": "gl_unimplemented"
+    "hash": 1207119065
   },
   {
     "id": 4252,
@@ -36703,8 +36699,7 @@
     "name": "glGetTexImage",
     "nargs": 5,
     "convention": "stdcall",
-    "hash": 1965967156,
-    "handler": "gl_unimplemented"
+    "hash": 1965967156
   },
   {
     "id": 4297,
@@ -37195,16 +37190,14 @@
     "name": "glPixelTransferf",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 1894232325,
-    "handler": "gl_unimplemented"
+    "hash": 1894232325
   },
   {
     "id": 4360,
     "name": "glPixelTransferi",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 1911009944,
-    "handler": "gl_unimplemented"
+    "hash": 1911009944
   },
   {
     "id": 4361,

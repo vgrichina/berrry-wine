@@ -6,15 +6,15 @@ const { bootRenderHarness } = require('./render-helper');
 // Keep this observed set independent of the generator's availability predicate.
 const unsupportedMdk2 = `
   glAreTexturesResident glClearIndex
-  glColor4d glCopyPixels glCopyTexImage1D glCopyTexImage2D glCopyTexSubImage1D
-  glCopyTexSubImage2D glDrawPixels glEdgeFlag glEdgeFlagPointer glEdgeFlagv
+  glColor4d glCopyPixels
+   glDrawPixels glEdgeFlag glEdgeFlagPointer glEdgeFlagv
   glEvalCoord1d glEvalCoord1dv glEvalCoord1f glEvalCoord1fv glEvalCoord2d
   glEvalCoord2dv glEvalCoord2f glEvalCoord2fv glEvalMesh1 glEvalMesh2
   glEvalPoint1 glEvalPoint2 glFeedbackBuffer  glGetBooleanv
    glGetMapdv
   glGetMapfv glGetMapiv glGetPixelMapfv
   glGetPixelMapuiv glGetPixelMapusv glGetPointerv glGetPolygonStipple
-   glGetTexImage
+
    glIndexMask glIndexPointer glIndexd glIndexdv
   glIndexf glIndexfv glIndexi glIndexiv glIndexs
   glIndexsv glIndexub glIndexubv glInitNames glInterleavedArrays
@@ -23,7 +23,7 @@ const unsupportedMdk2 = `
   glMap2d glMap2f glMapGrid1d glMapGrid1f glMapGrid2d
   glMapGrid2f
   glPassThrough glPixelMapfv glPixelMapuiv glPixelMapusv glPixelStoref
-  glPixelTransferf glPixelTransferi glPixelZoom glPolygonStipple glPopName
+    glPixelZoom glPolygonStipple glPopName
   glPrioritizeTextures glPushName
   glRenderMode glSelectBuffer
 
@@ -121,7 +121,7 @@ async function main() {
     'GetTickCount', 'gluPerspective', 'glNotARealFunction', 'glactivetextureARB']) {
     assert.strictEqual(lookup(name), 0, `${name} must not be advertised`);
   }
-  for (const name of ['glTexImage1D', 'glTexSubImage1D', 'glTexParameteriv', 'glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, 'glClipPlane', 'glGetClipPlane', 'glTexEnvfv', 'glTexEnviv', 'glGetTexEnvfv', 'glGetTexEnviv', 'glGetTexParameteriv', ...integerLightMaterialFogApis, ...rasterPositionApis, 'glActiveTextureARB', 'glClientActiveTextureARB',
+  for (const name of ['glCopyTexImage1D','glCopyTexImage2D','glCopyTexSubImage1D','glCopyTexSubImage2D','glGetTexImage','glPixelTransferf','glPixelTransferi', 'glTexImage1D', 'glTexSubImage1D', 'glTexParameteriv', 'glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, 'glClipPlane', 'glGetClipPlane', 'glTexEnvfv', 'glTexEnviv', 'glGetTexEnvfv', 'glGetTexEnviv', 'glGetTexParameteriv', ...integerLightMaterialFogApis, ...rasterPositionApis, 'glActiveTextureARB', 'glClientActiveTextureARB',
     'glMultiTexCoord2fARB', 'glTexParameterfv', 'glGetTexParameterfv',
     'glVertex2iv', 'glVertex2s', 'glVertex2sv',
     'glVertex3dv', 'glVertex3i', 'glVertex3iv', 'glVertex3s', 'glVertex3sv',
@@ -160,7 +160,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 79, 'retain every still unsupported MDK2 name');
+  assert.strictEqual(unsupportedMdk2.length, 72, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);

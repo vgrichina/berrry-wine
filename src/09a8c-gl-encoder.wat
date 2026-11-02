@@ -569,15 +569,22 @@
 
   (func $gl_pointer_length (param $op i32) (param $stack i32) (result i64)
     (local $arg i32) (local $len i32) (local $borrow i32) (local $p i32)
+    (local $wide i64)
     (if (i32.eq (local.get $op) (i32.const 148)) (then
       (return (i64.or (i64.extend_i32_u (i32.load offset=8 (local.get $stack)))
         (i64.shl (i64.const 32) (i64.const 32))))))
-    (local $wide i64)
     (local.set $arg (i32.const -1))
     (if (i32.or (i32.eq (local.get $op) (i32.const 149)) (i32.eq (local.get $op) (i32.const 150))) (then
       (local.set $arg (select (i32.const 7) (i32.const 6) (i32.eq (local.get $op) (i32.const 149))))
-      (local.set $len (i32.shl (i32.load offset=16 (local.get $stack)) (i32.const 2)))))
+      (local.set $len (i32.shl (i32.load offset=16 (local.get $stack))
+        (select (i32.const 4) (i32.const 2) (i32.eq
+          (i32.load (i32.add (local.get $stack) (select (i32.const 28) (i32.const 24) (i32.eq (local.get $op) (i32.const 149))))) (i32.const 0x1406)))))))
 
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 158)) (i32.const 1)) (then
+      (local.set $arg (i32.const 8))
+      (local.set $len (i32.shl (i32.mul
+        (i32.load (i32.add (local.get $stack) (select (i32.const 20) (i32.const 16) (i32.eq (local.get $op) (i32.const 159)))))
+        (i32.load (i32.add (local.get $stack) (select (i32.const 24) (i32.const 20) (i32.eq (local.get $op) (i32.const 159)))))) (i32.const 4)))))
     (if (i32.eq (local.get $op) (i32.const 147)) (then
       (local.set $arg (i32.const 2))
       (if (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0x2300)) (then
@@ -646,6 +653,7 @@
 
   (func $gl_wat_encode_call (param $op i32) (param $stack i32) (param $aux i32) (result i32)
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
+    (local $error i32)
     (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0)) (i32.eq (local.get $op) (i32.const 113))) (then
       (call $gl_texture_query (i32.const 0) (i32.const 0)
         (i32.load offset=4 (local.get $stack)) (i32.load offset=8 (local.get $stack))
@@ -655,6 +663,25 @@
     (if (call $gl_clip_query (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
     (if (call $gl_1d_query (local.get $op) (local.get $stack)) (then (return (global.get $gl_list_result))))
+    (if (i32.eq (local.get $op) (i32.const 155)) (then
+      (call $gl_texture_get_image (i32.load offset=4 (local.get $stack)) (i32.load offset=8 (local.get $stack))
+        (i32.load offset=12 (local.get $stack)) (i32.load offset=16 (local.get $stack)) (i32.load offset=20 (local.get $stack)))
+      (return (i32.const 0))))
+    (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
+        (i32.or (i32.eq (local.get $op) (i32.const 45)) (i32.eq (local.get $op) (i32.const 47)))) (then
+      (call $gl_2d_upload (i32.eq (local.get $op) (i32.const 47)) (local.get $stack)) (return (i32.const 0))))
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 151)) (i32.const 3)) (then
+      (if (i32.eqz (global.get $gl_current_context)) (then (return (i32.const 0))))
+      (local.set $error (call $gl_texture_copy_validate (local.get $op) (local.get $stack)))
+      (if (local.get $error) (then (call $gl_list_error (call $gl_list_context) (local.get $error)) (return (i32.const 0))))))
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 156)) (i32.const 1)) (then
+      (if (i32.eqz (global.get $gl_current_context)) (then (return (i32.const 0))))
+      (local.set $error (select (i32.const 0) (i32.const 0x500) (call $gl_transfer_valid (i32.load offset=4 (local.get $stack)))))
+      (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (i32.load offset=36 (call $gl_list_context)))
+        (then (local.set $error (i32.const 0x502))))
+      (if (local.get $error) (then (call $gl_list_error (call $gl_list_context) (local.get $error)) (return (i32.const 0))))))
+    (if (i32.and (i32.eq (local.get $op) (i32.const 158)) (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0x8064))) (then
+      (drop (call $gl_2d_store (i32.const 0) (local.get $stack))) (return (i32.const 0))))
     ;; Proxy definitions are immediate even during display-list compilation.
     (if (i32.and (i32.eq (local.get $op) (i32.const 149)) (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0x8063))) (then
       (drop (call $gl_1d_store (i32.const 0) (local.get $stack))) (return (i32.const 0))))
@@ -662,6 +689,12 @@
       (then (return (global.get $gl_list_result))))
     (if (i32.or (i32.eq (local.get $op) (i32.const 149)) (i32.eq (local.get $op) (i32.const 150))) (then
       (if (i32.eqz (call $gl_1d_store (i32.eq (local.get $op) (i32.const 150)) (local.get $stack))) (then (return (i32.const 0))))))
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 151)) (i32.const 3)) (then
+      (call $gl_texture_copy_execute (local.get $op) (local.get $stack)) (return (i32.const 0))))
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 156)) (i32.const 1)) (then
+      (call $gl_transfer_observe (local.get $stack) (i32.eq (local.get $op) (i32.const 157)))))
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 158)) (i32.const 1)) (then
+      (if (i32.eqz (call $gl_2d_store (i32.eq (local.get $op) (i32.const 159)) (local.get $stack))) (then (return (i32.const 0))))))
     (if (call $gl_query_validate_setter (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
     (if (call $gl_color_selection_intercept (local.get $op) (local.get $stack))

@@ -314,6 +314,17 @@ const gpuApis = new Map([
   ['glTexEnvfv', 3],
   ['glClipPlane', 2],
   ['glTexImage1D', 8], ['glTexSubImage1D', 7],
+  ['glCopyTexImage1D', 7],
+  ['glCopyTexImage2D', 8],
+  ['glCopyTexSubImage1D', 6],
+  ['glCopyTexSubImage2D', 8],
+  ['glGetTexImage', 5],
+  ['glPixelTransferf', 2],
+  ['glPixelTransferi', 2],
+  ['_glTexImage2D', 9],
+  ['_glTexSubImage2D', 9],
+  ['_glReadTexturePixels', 5],
+
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 
@@ -452,6 +463,7 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if (['glTexImage2D','glTexSubImage2D','glCopyTexImage1D','glCopyTexImage2D','glCopyTexSubImage1D','glCopyTexSubImage2D','glGetTexImage','glPixelTransferf','glPixelTransferi'] .includes(api.name)) return `      (call $handle_gl_texture_command (i32.const ${gpuApiOrder.indexOf(api.name)}) (i32.const ${gpuApis.get(api.name)}))`;
   if(api.name==='glTexImage1D'||api.name==='glTexSubImage1D') return `      (call $handle_gl_tex1d_upload (i32.const ${api.name==='glTexSubImage1D'?1:0}))`;
   if(api.name==='glClipPlane'||api.name==='glGetClipPlane') return `      (call $handle_gl_clip (i32.const ${api.name==='glGetClipPlane'?1:0}))`;
   const textureSet=nativeTextureSetApis.get(api.name),textureQuery=nativeTextureQueryApis.get(api.name);

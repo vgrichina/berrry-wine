@@ -20,7 +20,7 @@ const { FixedFunctionGL, OpenGLHostBridge, CALL_INDEX: O } = require('../lib/gl-
           current = words.getUint32(8, true);
           if (!frontends.has(current)) {
             const frontend = new FixedFunctionGL({gl:{}, createProgram:()=>({}),
-              createBuffer:()=>({}), createTexture:()=>({}), bindTexture(){}, setCapability(){}});
+              createBuffer:()=>({}), createTexture:()=>({}), bindTexture(){}, setTextureParameter(){}, setCapability(){}});
             frontend.texImage = function(level,internal,w,h,border,format,type,pixels) {
               uploads.push({alignment:this.unpackAlignment, pixels:Array.from(pixels)});
             };
@@ -34,7 +34,7 @@ const { FixedFunctionGL, OpenGLHostBridge, CALL_INDEX: O } = require('../lib/gl-
         if (code === Stream.PACKED_DRAW_OPCODE) {
           draws.push(Array.from(new Float32Array(capture.buffer, capture.pointerOffset, capture.pointerLength / 4)));
         } else if ([O.glPixelStorei, O.glPushClientAttrib, O.glPopClientAttrib,
-          O.glPushAttrib, O.glPopAttrib, O.glTexImage2D].includes(code)) {
+          O.glPushAttrib, O.glPopAttrib, O.glTexImage2D, O._glTexImage2D].includes(code)) {
           bridge.call(code, 0, aux, capture);
         }
         return 0;
@@ -111,9 +111,12 @@ const { FixedFunctionGL, OpenGLHostBridge, CALL_INDEX: O } = require('../lib/gl-
   pop(); flush();
   assert.deepStrictEqual(pnames.map(p=>query(p)),saved,'pixel mask restores all supported bitmap unpack modes');
   assert.strictEqual(frontends.get(1).unpackAlignment,8,'host texture unpack state follows native pop');
+  new Uint8Array(memory.buffer,wa(ptr)+137,6).set([11,23,37,41,53,67]);
+  new Uint8Array(memory.buffer,wa(ptr)+201,6).set([71,83,97,101,113,127]);
   call('glTexImage2D',[0xDE1,0,3,2,2,0,0x1907,0x1401,ptr]); flush();
   assert.strictEqual(uploads.at(-1).alignment,8);
-  assert.strictEqual(uploads.at(-1).pixels.length,14,'restored unpack stride reaches the actual upload payload');
+  assert.strictEqual(uploads.at(-1).pixels.length,16,'native unpack capture reaches the canonical RGBA upload payload');
+  assert.deepStrictEqual(uploads.at(-1).pixels,[11,23,37,255,41,53,67,255,71,83,97,255,101,113,127,255],'restored row length and skips select actual source bytes');
   assert.strictEqual(query(0x84E1),0x84C0,'pixel mask leaves array state changed');
   call('glPushAttrib',[0xffffffff]); pixel(0xCF5,2); call('glPopAttrib'); flush();
   assert.strictEqual(query(0xCF5),2,'server attrib pop does not restore native client unpack state');

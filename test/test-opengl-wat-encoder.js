@@ -485,6 +485,17 @@ async function main() {
       'query output is visible before its barrier returns');
   });
 
+  parity('generic: canonical 2D float snapshots and raw read barrier', (gl,mem)=>{
+    const pointer=DATA+0x1000,pixels=new Float32Array(mem.buffer,translateGuest(pointer),32);
+    for(let i=0;i<pixels.length;i++)pixels[i]=(i-4)/8;
+    gl.call(158,[0x0DE1,0,0x1908,2,2,0,0x1908,0x1406,pointer]);
+    pixels.fill(.75);
+    gl.call(159,[0x0DE1,0,1,0,1,2,0x1908,0x1406,pointer]);
+    pixels.fill(.25);
+    gl.call(160,[2,3,2,1,DATA+0x2000]);
+    gl.call(11);
+  });
+
   parity('generic: small texture snapshots survive mutation and remain ordered', (gl,mem)=>{
     const pixels=new Uint8Array(mem.buffer,translateGuest(DATA+0x1000),65536);
     for(const [w,h,format] of [[16,16,0x1908],[128,128,0x80E1],[3,1,0x1908]]){

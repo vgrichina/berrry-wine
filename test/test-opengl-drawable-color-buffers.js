@@ -202,7 +202,7 @@ const extraWat=`
  call('glDrawBuffer',[0x405]);call('glReadBuffer',[0x404]);clear([1,0,0,1]);
  call('glPushAttrib',[0x4000]);call('glDrawBuffer',[0]);call('glReadBuffer',[0x405]);clear([0,1,0,1]);call('glPopAttrib');
  call('glGetIntegerv',[0xc01,output]);assert.strictEqual(dv.getUint32(outWa,true),0x405);
- call('glGetIntegerv',[0xc02,output]);assert.strictEqual(dv.getUint32(outWa,true),0x404);
+ call('glGetIntegerv',[0xc02,output]);assert.strictEqual(dv.getUint32(outWa,true),0x405,'ReadBuffer belongs to GL_PIXEL_MODE_BIT');
  call('glClear',[0x4000]);assert.deepStrictEqual(read(0x405).slice(0,4),[255,0,0,255],'pop restores clear value');
  call('glNewList',[77,0x1300]);call('glDrawBuffer',[0x404]);call('glClearColor',[f(0),f(1),f(0),f(1)]);call('glClear',[0x4000]);call('glEndList');
  assert.deepStrictEqual(read(0x405).slice(0,4),[255,0,0,255],'compile does not execute');

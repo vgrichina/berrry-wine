@@ -144,9 +144,10 @@ const Stream = require('../lib/gl-command-stream');
   assert.strictEqual(isList(203), 1);
   identity();
   begin(202);
-  // Matrix pointers now have genuine value capture; images remain unsupported.
-  assert.throws(() => call('glTexImage2D', [0x0DE1, 0, 0x1908, 1, 1, 0, 0x1908, 0x1401, guest]), WebAssembly.RuntimeError,
-    'unsupported pointer commands trap at capture, not after mutating state');
+  // Image commands now capture client input during compilation. Compilation
+  // changes neither the transform nor the bound object's actual level.
+  call('glTexImage2D', [0x0DE1, 0, 0x1908, 1, 1, 0, 0x1908, 0x1401, guest]);
+  assert.strictEqual(call('glGetError'), 0);
   assert.strictEqual(x(), 0);
   e.gl_wat_encoder_reset();
   current(1);
