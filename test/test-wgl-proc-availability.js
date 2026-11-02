@@ -31,10 +31,8 @@ const unsupportedMdk2 = `
   glRasterPos4fv glRasterPos4i glRasterPos4iv glRasterPos4s glRasterPos4sv
   glRenderMode glSelectBuffer
   glTexEnvfv glTexEnviv glTexGend glTexGendv glTexGeniv
-  glTexImage1D glTexParameteriv glTexSubImage1D glVertex2iv
-  glVertex2s glVertex2sv glVertex3dv glVertex3i glVertex3iv
-  glVertex3s glVertex3sv glVertex4d glVertex4dv glVertex4i
-  glVertex4iv glVertex4s glVertex4sv wglCopyContext wglCreateLayerContext
+  glTexImage1D glTexParameteriv glTexSubImage1D
+  wglCopyContext wglCreateLayerContext
   wglShareLists wglUseFontBitmapsA wglUseFontOutlinesA
 `.trim().split(/\s+/);
 
@@ -124,6 +122,9 @@ async function main() {
   }
   for (const name of ['glActiveTextureARB', 'glClientActiveTextureARB',
     'glMultiTexCoord2fARB', 'glTexParameterfv', 'glGetTexParameterfv',
+    'glVertex2iv', 'glVertex2s', 'glVertex2sv',
+    'glVertex3dv', 'glVertex3i', 'glVertex3iv', 'glVertex3s', 'glVertex3sv',
+    'glVertex4d', 'glVertex4dv', 'glVertex4i', 'glVertex4iv', 'glVertex4s', 'glVertex4sv',
     'glTexCoord2d', 'glTexCoord2dv',
     'glColor3dv', 'glColor4dv', 'glRectf', 'glRectd', 'glRectdv', 'glAccum', 'glClearAccum',
     'glNormal3b', 'glNormal3bv', 'glNormal3d', 'glNormal3dv', 'glNormal3i', 'glNormal3iv', 'glNormal3s', 'glNormal3sv',
@@ -158,7 +159,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 142, 'retain every still unsupported MDK2 name');
+  assert.strictEqual(unsupportedMdk2.length, 128, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);

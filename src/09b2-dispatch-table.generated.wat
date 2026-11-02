@@ -4019,9 +4019,23 @@
     (if (i32.eq (local.get $id) (i32.const 4445)) (then (return (i32.const 1)))) ;; glTranslated
     (if (i32.eq (local.get $id) (i32.const 4447)) (then (return (i32.const 1)))) ;; glVertex2d
     (if (i32.eq (local.get $id) (i32.const 4448)) (then (return (i32.const 1)))) ;; glVertex2dv
+    (if (i32.eq (local.get $id) (i32.const 4449)) (then (return (i32.const 1)))) ;; glVertex2iv
+    (if (i32.eq (local.get $id) (i32.const 4450)) (then (return (i32.const 1)))) ;; glVertex2s
+    (if (i32.eq (local.get $id) (i32.const 4451)) (then (return (i32.const 1)))) ;; glVertex2sv
     (if (i32.eq (local.get $id) (i32.const 4452)) (then (return (i32.const 1)))) ;; glVertex3d
+    (if (i32.eq (local.get $id) (i32.const 4453)) (then (return (i32.const 1)))) ;; glVertex3dv
+    (if (i32.eq (local.get $id) (i32.const 4454)) (then (return (i32.const 1)))) ;; glVertex3i
+    (if (i32.eq (local.get $id) (i32.const 4455)) (then (return (i32.const 1)))) ;; glVertex3iv
+    (if (i32.eq (local.get $id) (i32.const 4456)) (then (return (i32.const 1)))) ;; glVertex3s
+    (if (i32.eq (local.get $id) (i32.const 4457)) (then (return (i32.const 1)))) ;; glVertex3sv
+    (if (i32.eq (local.get $id) (i32.const 4458)) (then (return (i32.const 1)))) ;; glVertex4d
+    (if (i32.eq (local.get $id) (i32.const 4459)) (then (return (i32.const 1)))) ;; glVertex4dv
     (if (i32.eq (local.get $id) (i32.const 4460)) (then (return (i32.const 1)))) ;; glVertex4f
     (if (i32.eq (local.get $id) (i32.const 4461)) (then (return (i32.const 1)))) ;; glVertex4fv
+    (if (i32.eq (local.get $id) (i32.const 4462)) (then (return (i32.const 1)))) ;; glVertex4i
+    (if (i32.eq (local.get $id) (i32.const 4463)) (then (return (i32.const 1)))) ;; glVertex4iv
+    (if (i32.eq (local.get $id) (i32.const 4464)) (then (return (i32.const 1)))) ;; glVertex4s
+    (if (i32.eq (local.get $id) (i32.const 4465)) (then (return (i32.const 1)))) ;; glVertex4sv
     (if (i32.eq (local.get $id) (i32.const 4466)) (then (return (i32.const 1)))) ;; wglGetCurrentContext
     (if (i32.eq (local.get $id) (i32.const 4467)) (then (return (i32.const 1)))) ;; wglGetCurrentDC
     (if (i32.eq (local.get $id) (i32.const 4535)) (then (return (i32.const 1)))) ;; wglDescribeLayerPlane
@@ -4165,20 +4179,6 @@
     (if (i32.eq (local.get $id) (i32.const 4443)) (then (return (i32.const 1)))) ;; glTexParameteriv
     (if (i32.eq (local.get $id) (i32.const 4444)) (then (return (i32.const 1)))) ;; glTexSubImage1D
     (if (i32.eq (local.get $id) (i32.const 4446)) (then (return (i32.const 1)))) ;; glUnlockArraysEXT
-    (if (i32.eq (local.get $id) (i32.const 4449)) (then (return (i32.const 1)))) ;; glVertex2iv
-    (if (i32.eq (local.get $id) (i32.const 4450)) (then (return (i32.const 1)))) ;; glVertex2s
-    (if (i32.eq (local.get $id) (i32.const 4451)) (then (return (i32.const 1)))) ;; glVertex2sv
-    (if (i32.eq (local.get $id) (i32.const 4453)) (then (return (i32.const 1)))) ;; glVertex3dv
-    (if (i32.eq (local.get $id) (i32.const 4454)) (then (return (i32.const 1)))) ;; glVertex3i
-    (if (i32.eq (local.get $id) (i32.const 4455)) (then (return (i32.const 1)))) ;; glVertex3iv
-    (if (i32.eq (local.get $id) (i32.const 4456)) (then (return (i32.const 1)))) ;; glVertex3s
-    (if (i32.eq (local.get $id) (i32.const 4457)) (then (return (i32.const 1)))) ;; glVertex3sv
-    (if (i32.eq (local.get $id) (i32.const 4458)) (then (return (i32.const 1)))) ;; glVertex4d
-    (if (i32.eq (local.get $id) (i32.const 4459)) (then (return (i32.const 1)))) ;; glVertex4dv
-    (if (i32.eq (local.get $id) (i32.const 4462)) (then (return (i32.const 1)))) ;; glVertex4i
-    (if (i32.eq (local.get $id) (i32.const 4463)) (then (return (i32.const 1)))) ;; glVertex4iv
-    (if (i32.eq (local.get $id) (i32.const 4464)) (then (return (i32.const 1)))) ;; glVertex4s
-    (if (i32.eq (local.get $id) (i32.const 4465)) (then (return (i32.const 1)))) ;; glVertex4sv
     (if (i32.eq (local.get $id) (i32.const 4468)) (then (return (i32.const 1)))) ;; wglShareLists
     (if (i32.eq (local.get $id) (i32.const 4469)) (then (return (i32.const 1)))) ;; wglCopyContext
     (if (i32.eq (local.get $id) (i32.const 4470)) (then (return (i32.const 1)))) ;; wglCreateLayerContext
@@ -22360,37 +22360,37 @@
       (call $handle_glVertex2dv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4449: glVertex2iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 2) (i32.const 5124) (i32.const 1))
       (return)
     ) ;; 4450: glVertex2s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 2) (i32.const 5122) (i32.const 0))
       (return)
     ) ;; 4451: glVertex2sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 2) (i32.const 5122) (i32.const 1))
       (return)
     ) ;; 4452: glVertex3d
       (call $handle_glVertex3d (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4453: glVertex3dv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 3) (i32.const 5130) (i32.const 1))
       (return)
     ) ;; 4454: glVertex3i
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 3) (i32.const 5124) (i32.const 0))
       (return)
     ) ;; 4455: glVertex3iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 3) (i32.const 5124) (i32.const 1))
       (return)
     ) ;; 4456: glVertex3s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 3) (i32.const 5122) (i32.const 0))
       (return)
     ) ;; 4457: glVertex3sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 3) (i32.const 5122) (i32.const 1))
       (return)
     ) ;; 4458: glVertex4d
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 4) (i32.const 5130) (i32.const 0))
       (return)
     ) ;; 4459: glVertex4dv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 4) (i32.const 5130) (i32.const 1))
       (return)
     ) ;; 4460: glVertex4f
       (call $handle_gpu_api (i32.const 118) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -22399,16 +22399,16 @@
       (call $handle_gpu_api (i32.const 119) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4462: glVertex4i
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 4) (i32.const 5124) (i32.const 0))
       (return)
     ) ;; 4463: glVertex4iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 4) (i32.const 5124) (i32.const 1))
       (return)
     ) ;; 4464: glVertex4s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 4) (i32.const 5122) (i32.const 0))
       (return)
     ) ;; 4465: glVertex4sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glVertex_typed (i32.const 4) (i32.const 5122) (i32.const 1))
       (return)
     ) ;; 4466: wglGetCurrentContext
       (call $handle_wglGetCurrentContext (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
