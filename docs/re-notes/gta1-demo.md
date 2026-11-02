@@ -1645,3 +1645,47 @@ The fixture was not modified by guest overlay writes. Box ID/state/expiry are
 N/A, with no browser, boat, EULA or deployment work. All assigned paths and
 runtime ownership are released after publication. No further original is
 authorized by this completed single-startup assignment.
+
+## Native ToyVM checkpoint prerequisite (2026-11-02)
+
+`tools/toyvm/checkpoint.js` provides synchronous `snapshot(vm)` and
+`restore(vm, checkpoint)` for a stopped native VM built with
+`makeVm('tailcall', { exportAll: true })`. Supply both the emitted WAT and
+bytes when creating a fresh instance. Restore requires identical module and
+WAT SHA-256, complete native global ABI, full memory length and table length.
+The caller must own the VM at a host boundary with no active WebAssembly call.
+The schema accepts trusted data records; it is not a deserialization security
+boundary for executable getters/proxies. Binary V8 serialization is one
+local evidence format, not a portable or trusted persistence format.
+
+The primitive copies all linear memory (including raw segment selectors,
+hidden descriptor caches, register file, decoded arena and paging maps),
+every numeric native global (including lazy flags, IRQ boundary and x87
+state), and every handler-table slot. Function names resolve to the
+destination instance's own exports. It does not materialize flags, reload
+selectors or clear decoded state. `exportAll` also includes same-line
+global declarations, previously missing three REP decline counters.
+Invalid identity, shape, type and handler records are validated and staged
+before any destination writes.
+
+`node test/test-toyvm-native-checkpoint.js` runs real LGDT, MOV CR0, far
+transfer, DS/SS loads, FLD/FLDZ/FCHS, overflowing ADD, STI, JO and memory store. A held IRQ and real STI
+arm the IF-enable boundary before capture.
+The GDT changes after DS is loaded: correct replay must retain its old
+hidden base and take the overflow branch. Literal expected operands, RAM
+locations, selectors, bases and x87 values supplement complete-state parity.
+The test covers same/fresh exact-module instances, full destructive rollback,
+non-default/null table slots, sparse and late invalid inputs, and separate
+lazy-flag/cache corruptions. `--old-snapshot=irq`, `cache`, `x87` and
+`program` expose distinct failures of the profiling snapshot/seed path.
+Evidence: `scratch/runs/20261102-gta1-native-checkpoint-implementation/`.
+
+This is **not a complete persistent DosSession/device checkpoint**. Host
+devices, scheduler, filesystem/session state, CodeCache JavaScript metadata
+and mutable lexical state in imported callbacks/runner hooks require explicit
+capture APIs and a supported exact entry boundary. The native state primitive
+does not capture those objects. No original GTA startup or gameplay run is
+authorized or launched by this task; original startup count here is zero.
+The next prerequisite is complete persistent native DOS session/device state
+with explicit runner boundary capture, before a separately authorized
+initialized entry/replay experiment.

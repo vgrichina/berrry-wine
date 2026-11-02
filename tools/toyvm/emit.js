@@ -6906,7 +6906,9 @@ function useBuild(opts = {}) {
 // region is picked. Nothing about the handlers changes; the exports are names.
 function exportAll(wat) {
   const out = ['(export "h" (table $h))'];
-  for (const m of wat.matchAll(/^\(global \$([\w.]+) /gm)) out.push(`(export "g$${m[1]}" (global $${m[1]}))`);
+  // Declarations can share a line (the REP decline counters do).
+  const code = wat.replace(/;;[^\n]*/g, '');
+  for (const m of code.matchAll(/\(global \$([\w.]+) /g)) out.push(`(export "g$${m[1]}" (global $${m[1]}))`);
   for (const m of wat.matchAll(/^\(func \$([\w.]+)[ \n]/gm)) out.push(`(export "f$${m[1]}" (func $${m[1]}))`);
   for (const m of wat.matchAll(/^\(import "[^"]+" "[^"]+" \(func \$([\w.]+) /gm)) {
     out.push(`(export "f$${m[1]}" (func $${m[1]}))`);
