@@ -7,12 +7,29 @@ Direct and queued routes now cover selected front/back reads and writes,
 independent destination blending, NONE with depth/stencil updates, drawable
 rebinding and lifecycle. All 25 focused runs, four affected reruns and the final
 locked build pass in `20261102-mdk2-drawable-color-buffers`. The follow-up
-`df747405e` verifies those cases again and records the remaining WebGL boundary:
+`df747405e` verifies those cases again and records the then-remaining WebGL boundary:
 FRONT read/draw and BOTH draw return error 1282; cross-drawable rebinding fails.
 That probe uses the actual consumer dispatcher with a recorder, without GPU
-pixel evidence. WebGL drawable attachments remain a prerequisite for accumulation.
-All **188** remaining requested names, including `glAccum` and `glClearAccum`,
-still return NULL/error 127 without thunk allocation. No original MDK2 replay,
+pixel evidence. Published `71fb8fb279` subsequently repairs that boundary with
+per-drawable FRONT/BACK attachments and lifecycle handling. Its run
+`20261102-mdk2-webgl-drawable-attachments` passes 167 pixel assertions each in
+WebGL1 and WebGL2, 13 endpoint checks and 21 actual browser Worker checks on
+ANGLE Intel UHD Graphics 620 / Mesa 23.2.1.
+
+Published `47d4a08225` also repairs rejected-setter state restoration across
+presentation: blending, scissor and viewport now survive the next same-context
+draw. Run `20261102-mdk2-accumulation-implementation` passes 321 checks each in
+WebGL1 and WebGL2, 13 endpoint checks, 26 actual browser Worker checks, 32 focused
+runs and the locked build. That browser reports ANGLE SwiftShader; it does not
+establish hardware GPU qualification.
+
+Published `b50eb7b0bf` adds seven rectangle aliases with direct/queued native
+pixel and ABI checks in `20261102-gl-rectangle-family`. The remaining unsupported
+set is now **181** names, independently checked through both lookup routes;
+these include `glAccum` and `glClearAccum`, which still return NULL/error 127
+without thunk allocation. Signed per-drawable accumulation remains outstanding.
+See [the rectangle evidence](re-notes/gl-rectangle-family-20261102.md).
+No original MDK2 replay,
 first window or gameplay has been qualified. See [MDK2 notes](re-notes/mdk2-demo.md).
 
 Dark Reign 2's later `dd82ceb03`, run `20261101-dark-reign2-unit-movement`,
@@ -50,7 +67,7 @@ MDK2 remains before its first window. The historical `f0eda338f`, run
 `20261101-mdk2-prewindow-cause`, traces the first rejected lookup to `glAccum`:
 212 requested GL/WGL names were rejected at that point, including 208
 unimplemented procedures; the November 2 update above records the current
-188-name remainder.
+181-name remainder after the drawable, presentation and rectangle changes.
 The loader enters error2 and then waits for an error string from its suspended
 file worker. One78.087-second original exits0 with a reviewed blank teal image
 and zero ordinary inputs. This is a concrete export-implementation blocker,
