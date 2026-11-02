@@ -480,3 +480,35 @@ recovery instructions are retained in the fresh run. Before a fresh faithful
 trace, address the observed roughly56.35MB catalog temporary allocation or
 provide headroom that survives it, then refresh main, fixture/module/source
 pins and exclusion checks. This task makes no host-cache change.
+
+## Prepared trace reached a CLI provisioning failure (2026-11-02)
+
+Run `20261102-oni-reserved-premodal-trace` refreshed all34 original fixture
+hashes, current source/compiler/API/module pins and local/public desktop
+exclusions (46/44 entries). All18 predecessor evidence hashes passed.
+The exact retained production module `46c90ae6...a7667a` was read directly
+from the coordinator's verified gzip recovery, paired with its matching
+`e318fe1c5016e393a1467c86f02e1932cdf67503` source/host/region map/compiler and
+CLI helpers, without a local archive or fixture copy. All4671 streamed member
+hashes passed remotely; all4670 pinned inputs remained unchanged afterward.
+
+The single prepared CLI command used12-second guest/40-second controller
+bounds and the predicted loader-failure breakpoint `0x40acca`. It exited1
+after0.238 seconds, before guest execution, because the CLI eagerly reads
+`test/binaries/tlbs/stdole2.tlb` while mounting system data. That file was
+absent from the prepared stream. This differs from the earlier browser's
+optional boot warning: here the uncaught `ENOENT` stops harness setup. The
+earlier `pngjs` warning also reports unavailable renderer support, but is
+not the fatal exception. No debugger prompt, original API/result, branch,
+modal, input or gameplay was observed. `glAreTexturesResident` remains a
+conditional static prediction. No guest retry or runtime repair followed.
+
+The guarded workflow completed with minimum sampled free space2020954112B,
+above2000000000B. Seven small remote evidence files were retrieved and
+SHA-verified locally; scoped guest/trace/transfer helpers, chunks and remote
+archive are absent. Boat `bx_z8fqvy2y`, original expiry
+`2026-11-02T22:55:38.215Z` recorded before use, remains running (Boat state
+`idle`), with the extracted tree retained. Shutdown belongs to the coordinator;
+none was requested. Next provision and hash-pin the CLI system-data dependencies
+separately from the unchanged original fixture before a fresh trace. This
+failure establishes a harness prerequisite, not Oni's startup capability cause.
