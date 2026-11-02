@@ -572,3 +572,59 @@ unchanged and scoped remote helpers were absent. Local guard minimum was
 verification are retained with the trace. Next implement genuine missing GL
 semantics with appropriate controls; exposing dummy pointers would merely
 pass the table predicate. Training-console progress remains unverified.
+
+
+## Genuine texture residency query (2026-11-02)
+
+Run `20261102-oni-texture-residency-contract` implements the previously observed
+missing `glAreTexturesResident` export through its real native handler and both
+resolver paths. This compatibility implementation has no separate texture
+working set: native software images, frontend image levels and software/WebGL
+texture resources retain backing until deletion. Valid incomplete objects and
+objects with zero priority are resident too. This policy is expressly allowed
+by [OpenGL 1.1 section 3.8.4](https://registry.khronos.org/OpenGL/specs/gl/glspec11.pdf).
+It agrees with the existing `GL_TEXTURE_RESIDENT` bound-object query; it does
+not infer physical GPU residency from WebGL, which exposes no such query.
+
+Every requested name is checked against the live shared native object
+namespace under its lock. Zero/default names, unused names, generated-only
+reservations and deleted names return false with `GL_INVALID_VALUE`.
+Negative counts generate that error before array access; zero count succeeds
+without accessing either pointer. Executed Begin/End generates
+`GL_INVALID_OPERATION`. Queries execute immediately during display-list
+compilation and are not replayed. All-valid queries return canonical boolean
+one and leave every byte of `residences` untouched, as required by the
+[Khronos reference page](https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl2.1/glAreTexturesResident.xml).
+Invalid-name output is indeterminate in the spec; this implementation also
+leaves it untouched. There is no artificial mixed-residency state or eviction
+mechanism: per-name validation still rejects mixed valid/invalid lists.
+
+Resolved-thunk controls check literal returns/errors, stdcall cleanup,
+registers, stack bytes, unaligned output canaries, both texture dimensions,
+priority, sharing/isolation, deletion/reuse and retained deleted bindings.
+Native and actual queued software each pass 27 recorded query cases and eight
+literal image/draw checks; the queue requires zero fallbacks. Actual WebGL 1
+and 2 replay all eight retained-image cases each, including old generations
+remaining red while reused names draw green. The unchanged pre-change native
+source/dispatcher fails at the real missing-export assertion. Seven mutations
+(constant true/false, skipped name checks, skipped Begin checks, wrong negative-
+count error, byte output and widened output) fail at their intended assertions.
+
+The original Oni trace remains the last guest result: API532 returned NULL
+at return4089d8 and the planned branch breakpoint was missed. No original
+Oni/browser gameplay retry is part of this implementation. The independently
+recomputed static table now has 52 unavailable mandatory exports out of 345,
+down from 53; its next unavailable name is `glClearIndex`, a static finding
+only. One implemented export does not establish full startup readiness or new
+training-console progress.
+
+Focused availability (including its three negative controls), texture-state,
+shared-object, actual queue, one-dimensional texture, frame-state and texture
+copy/readback regressions pass. The locked `tools/build.sh` build passes on
+fresh finite-TTL boat `bx_n9c9g3rs` (original expiry
+2026-11-02T23:42:19.022Z). Evidence is retained in
+`scratch/runs/20261102-oni-texture-residency-contract/`.
+An additional fixed-function JavaScript test fails its existing redundant-
+uniform assertion (55 calls versus 53 expected). Its test and backend sources
+are byte-identical to the pre-change commit; it does not load this native
+handler. That separate regression remains unresolved by this change.

@@ -434,6 +434,7 @@ const nativeTextureQueryApis = new Map([
   ['glGetTexParameterfv',[0,0]], ['glGetTexParameteriv',[0,1]],
 ]);
 const nativeGlApis = new Set([
+  'glAreTexturesResident',
   'glPixelStoref',
   'glGetClipPlane',
   ...nativeTextureSetApis.keys(), ...nativeTextureQueryApis.keys(),
@@ -471,6 +472,7 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if(api.name==='glAreTexturesResident') return '      (call $handle_gl_textures_resident)';
   if(api.name==='glDrawPixels')return '      (call $handle_gl_draw_pixels)';
   if(api.name==='glPixelStoref')return '      (call $handle_gl_pixel_storef)';
   if(api.name==='glCopyPixels'||api.name==='glPixelZoom')return `      (call $handle_gl_texture_command (i32.const ${gpuApiOrder.indexOf(api.name)}) (i32.const ${gpuApis.get(api.name)}))`;

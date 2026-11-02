@@ -3914,6 +3914,7 @@
     (if (i32.eq (local.get $id) (i32.const 3439)) (then (return (i32.const 1)))) ;; glMultiTexCoord2fARB
     (if (i32.eq (local.get $id) (i32.const 4171)) (then (return (i32.const 1)))) ;; glDrawArrays
     (if (i32.eq (local.get $id) (i32.const 4209)) (then (return (i32.const 1)))) ;; glAccum
+    (if (i32.eq (local.get $id) (i32.const 4210)) (then (return (i32.const 1)))) ;; glAreTexturesResident
     (if (i32.eq (local.get $id) (i32.const 4211)) (then (return (i32.const 1)))) ;; glBitmap
     (if (i32.eq (local.get $id) (i32.const 4212)) (then (return (i32.const 1)))) ;; glCallList
     (if (i32.eq (local.get $id) (i32.const 4213)) (then (return (i32.const 1)))) ;; glCallLists
@@ -4118,7 +4119,6 @@
     (i32.const 0))
 
   (func $gl_dynamic_api_unsupported (param $id i32) (result i32)
-    (if (i32.eq (local.get $id) (i32.const 4210)) (then (return (i32.const 1)))) ;; glAreTexturesResident
     (if (i32.eq (local.get $id) (i32.const 4216)) (then (return (i32.const 1)))) ;; glClearIndex
     (if (i32.eq (local.get $id) (i32.const 4234)) (then (return (i32.const 1)))) ;; glColor4d
     (if (i32.eq (local.get $id) (i32.const 4245)) (then (return (i32.const 1)))) ;; glColorSubTableEXT
@@ -21598,7 +21598,7 @@
       (return)
     ) ;; 4210: glAreTexturesResident
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_textures_resident)
       (call $gl_object_leave)
       (return)
     ) ;; 4211: glBitmap

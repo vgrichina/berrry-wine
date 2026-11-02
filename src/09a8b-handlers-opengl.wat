@@ -1692,6 +1692,52 @@
       (br_if $channels (i32.lt_u (local.get $i) (i32.const 4))))
     (local.get $out))
 
+  ;; GL1.1 3.8.4 permits implementations without a separate texture working
+  ;; set. Our native images and software/WebGL objects retain their backing
+  ;; until deletion, with no eviction policy (also GL_TEXTURE_RESIDENT above
+  ;; and FixedFunctionFrontend.getTexParameter). Incomplete objects are still
+  ;; resident. Validate EVERY name against the live shared namespace: reserved
+  ;; GenTextures names, zero/default objects and retired generations are not
+  ;; named texture objects. A successful all-resident query MUST NOT write
+  ;; residences, even one GLboolean byte. Invalid-name output is indeterminate;
+  ;; we leave it untouched as well. No backend call or output-pointer access
+  ;; is needed. Queries execute immediately, never becoming display-list data.
+  (func $gl_textures_resident (param $n i32) (param $names i32) (result i32)
+    (local $ctx i32) (local $b i32) (local $i i32) (local $name i32)
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
+    (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x502))
+      (return (i32.const 0))))
+    (if (i32.lt_s (local.get $n) (i32.const 0)) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x501))
+      (return (i32.const 0))))
+    (if (i32.eqz (local.get $n)) (then (return (i32.const 1))))
+    ;; An overflowing GLuint array cannot be a valid 32-bit guest span.
+    (if (i32.gt_u (local.get $n) (i32.const 0x3fffffff)) (then (unreachable)))
+    (call $gl_1d_span (local.get $names) (i32.shl (local.get $n) (i32.const 2)))
+    (local.set $b (call $gl_texture_block))
+    (loop $names
+      (local.set $name (call $gl32 (i32.add (local.get $names) (i32.shl (local.get $i) (i32.const 2)))))
+      (if (i32.eqz (call $gl_texture_find (local.get $b) (local.get $name))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x501))
+        (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $names (i32.lt_u (local.get $i) (local.get $n))))
+    (i32.const 1))
+
+  (func $handle_gl_textures_resident
+    (local $esp i32) (local $value i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (call $gl_texcoord_check (local.get $esp) (i32.const 16))
+    (call $gl_object_enter)
+    (local.set $value (call $gl_textures_resident
+      (call $gl32 (i32.add (local.get $esp) (i32.const 4)))
+      (call $gl32 (i32.add (local.get $esp) (i32.const 8)))))
+    (call $gl_object_leave)
+    (i32.store (global.get $reg_base) (local.get $value))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 16))))
+
   (func $handle_gl_texture_is
     (local $esp i32) (local $value i32) (local $ctx i32)
     (local.set $esp (i32.load offset=16 (global.get $reg_base)))
