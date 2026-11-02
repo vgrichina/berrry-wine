@@ -152,6 +152,10 @@ async function dosCom(variant, tier = {}) {
 async function fixture(variant) {
   const vm = await makeVm(variant);
   const e = vm.exports, v = new DataView(vm.mem.buffer);
+  // The decoder level alone does not configure the VM's FLAGS mask. An
+  // 8086's reserved high bits include the bit which becomes 386 EFLAGS.NT.
+  // These synthetic protected-mode fixtures require an actual 386 CPU mask.
+  e.set_cpu(386);
   const put = (p, n) => v.setUint32(p, n >>> 0, true);
   const descriptor = (p, access) => { put(p, 0xffff); put(p + 4, 0x00cf0000 | access << 8); };
   descriptor(0x19008, 0x9a); descriptor(0x19010, 0x92);
@@ -520,7 +524,223 @@ async function failureCapture() {
   assert(image.readUInt32BE(16) > 0 && image.readUInt32BE(20) > 0);
   observations.push({ captureBeforeThrow: true, guestFailurePreserved: true });
 }
+
+// Task-switch prerequisites only. LTR initializes TR without a task switch;
+// NT IRET must refuse to impersonate an ordinary stack return until the full
+// task-switch commit/fault protocol is implemented.
+async function initialTaskFlags(variant, cpu, runLive = true) {
+  // Real PUSHF observes DOS entry before the guest changes any flag. The
+  // browser's LiveRun initialization is exercised in Node, with its animation
+  // callback replaced by bounded ordinary DosSession steps (no rendering).
+  const com = Buffer.from([0x9c, 0x58, 0xa3, 0, 3, 0xb8, 0, 0x4c, 0xcd, 0x21]);
+  const dir = evidence || fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'toyvm-entry-flags-'));
+  try {
+    const exe = path.join(dir, `flags-${variant}-${cpu}.COM`); fs.writeFileSync(exe, com);
+    const r = await runDos({ exe, variant, cpu, budget: 1000, seconds: 3,
+      pspSeg: 0x1000, loadSeg: 0x1000, sound: false, autoKey: false, log() {} });
+    assert.equal(r.machine.exited, true); assert.equal(r.machine.exitCode, 0);
+    const expected = cpu >= 386 ? 0x202 : 0xf202;
+    assert.equal(new DataView(r.vm.mem.buffer).getUint16(0x10300, true), expected, 'native initial FLAGS follows CPU model');
+    // The separate JIT worker bundle intentionally does not embed LiveRun.
+    if (!runLive) { observations.push({ variant, cpu, nativeEntryFlags: expected }); return; }
+    const { LiveRun } = require('../tools/toyvm/live');
+    const live = new LiveRun({ exe: 'FLAGS.COM', files: { 'FLAGS.COM': com }, variant, cpu,
+      pspSeg: 0x1000, loadSeg: 0x1000, sound: false });
+    live.tick = function() {
+      assert.equal(this.vm.exports.pg_flags() & 0xffff, expected, 'LiveRun initial FLAGS follows CPU model');
+      for (let i = 0; i < 100 && !this.machine.exited; i++) this.session.step();
+      this.running = false;
+    };
+    await live.start();
+    assert.equal(live.machine.exited, true); assert.equal(live.machine.exitCode, 0);
+    assert.equal(new DataView(live.vm.mem.buffer).getUint16(0x10300, true), expected, 'LiveRun executes actual PUSHF');
+    observations.push({ variant, cpu, nativeAndLiveEntryFlags: expected });
+  } finally { if (!evidence) fs.rmSync(dir, { recursive: true, force: true }); }
+}
+
+async function taskRegisterCom(variant, tier = {}) {
+  const com = Buffer.alloc(0x800);
+  com.set([0xfa, 0x0f, 0x01, 0x16, 0x80, 1, 0x66, ...mov(0, 0x11),
+    0x0f, 0x22, 0xc0, 0xea, 0, 2, 8, 0]);
+  com.writeUInt16LE(0x1f, 0x80); com.writeUInt32LE(0x10800, 0x82);
+  com.set([0xb8, 0x10, 0, 0x8e, 0xd8, 0x8e, 0xc0, 0x8e, 0xd0,
+    0xbc, 0, 0xff, 0x9c, 0x58, 0xa3, 4, 3, // original FLAGS
+    0xb8, 0x18, 0, 0x0f, 0, 0xd8, // LTR AX
+    0x0f, 0, 0xcb, 0x89, 0x1e, 0, 3, // STR BX; store
+    0xa0, 0x1d, 8, 0xa2, 2, 3, // actual TSS access byte
+    0x9c, 0x58, 0xa3, 6, 3, // FLAGS after LTR
+    0x0f, 0x20, 0xc0, 0x66, 0xa3, 8, 3,
+    0x66, ...mov(0, 0x10), 0x0f, 0x22, 0xc0, 0xea, 0, 4, 0, 0x10], 0x100);
+  com.set([0xb8, 0, 0x10, 0x8e, 0xd8, 0x8e, 0xc0, 0x8e, 0xd0,
+    0xb8, 0, 0x4c, 0xcd, 0x21], 0x300);
+  // Code and data are real-compatible 16-bit segments at base10000.
+  for (const [off, lo, hi] of [[0x708, 0x0000ffff, 0x00009a01],
+    [0x710, 0x0000ffff, 0x00009201], [0x718, 0x00000067, 0x00008917]]) {
+    com.writeUInt32LE(lo, off); com.writeUInt32LE(hi, off + 4);
+  }
+  const dir = evidence || fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'toyvm-ltr-'));
+  try {
+    const exe = path.join(dir, `ltr-${variant}-${Object.keys(tier).join('') || 'base'}.COM`);
+    fs.writeFileSync(exe, com);
+    const r = await runDos({ exe, variant, ...tier, budget: 10000, seconds: 3,
+      pspSeg: 0x1000, loadSeg: 0x1000, sound: false, autoKey: false, log() {} });
+    assert.equal(r.machine.exited, true, 'LTR COM reaches its intended DOS exit');
+    assert.equal(r.machine.exitCode, 0); assert.equal(r.ranOutOfTime, false);
+    assert.equal(r.vm.get('gip'), 0x40e);
+    const v = new DataView(r.vm.mem.buffer), e = r.vm.exports;
+    assert.equal(v.getUint16(0x10300, true), 0x18, 'STR returns LTR selector');
+    assert.equal(r.vm.mem[0x10302], 0x8b, 'real LTR marks the descriptor busy');
+    assert.equal(v.getUint16(0x10304, true), 2, '386 starts with NT clear and CLI clears IF');
+    assert.equal(v.getUint16(0x10304, true), v.getUint16(0x10306, true), 'LTR preserves FLAGS');
+    assert.equal(v.getUint32(0x10308, true), 0x11, 'LTR does not set CR0.TS');
+    assert.equal(e.mget_tr(), 0x18); assert.equal(e.mget_pm_tr_base(), 0x170000);
+    assert.equal(e.mget_pm_tr_limit(), 103); assert.equal(e.mget_pm_tr_access(), 0x8b);
+    assert.equal(e.mget_pm_tr_valid(), 1);
+    assert(r.vm.mem.subarray(0x170000, 0x170068).every(x => x === 0), 'LTR does not save/load TSS state');
+    observations.push({ variant, tier, ltrActualCom: true, busy: 0x8b, cr0: 0x11 });
+  } finally { if (!evidence) fs.rmSync(dir, { recursive: true, force: true }); }
+}
+
+async function taskRegisterChecks(variant) {
+  const f = await fixture(variant), { vm, e, put, v, start } = f;
+  const { STOP } = require('../tools/toyvm/pm-transfer');
+  const cache = () => ['tr', 'pm_tr_valid', 'pm_tr_base', 'pm_tr_limit', 'pm_tr_access']
+    .map(n => e[`mget_${n}`]() >>> 0);
+  const reset = () => {
+    e.mset_cr0(0x80000011); e.mset_vm86(0); e.mset_gdtb(0x19000); e.mset_gdtl(0x2f);
+    e.mset_idtb(0x1c000); e.mset_idtl(0x7ff); e.mset_pm_xfer_stop(0);
+    for (let i = 0; i < 1024; i++) put(0x21000 + i * 4, (i * 4096) | 7);
+    put(0x22000, 0x30007);
+    put(0x19008, 0xffff); put(0x1900c, 0x00cf9a00);
+    put(0x19010, 0xffff); put(0x19014, 0x00cf9200);
+    put(0x19028, 0xb0000067); put(0x1902c, 0x00008901);
+    for (const vec of [6, 11, 13, 14]) {
+      put(0x1c000 + vec * 8, 0x00086000); put(0x1c004 + vec * 8, 0x00008e00);
+    }
+    vm.setAll({ cs: 8, ds: 16, es: 16, ss: 16, sp: 0x80000, ip: start, flags: 2, ax: 0x28 });
+    e.mset_tr(0x30); e.mset_pm_tr_base(0x1b000); e.mset_pm_tr_limit(103);
+    e.mset_pm_tr_access(0x8b); e.mset_pm_tr_valid(1);
+    put(0x1b004, 0x90000); put(0x1b008, 16);
+    e.mset_cr2(0xdeadbeef); e.pg_clear(); e.pg_set_error(0);
+    vm.mem.set([0x0f, 0, 0xd8], start); // actual LTR AX
+  };
+  let cases = 0;
+  for (const spec of [
+    { name: '386', access: 0x89, limit: 103, selector: 0x28 },
+    { name: 'RPL/DPL ignored', access: 0xe9, limit: 103, selector: 0x2b },
+    { name: '286', access: 0x81, limit: 43, selector: 0x28 },
+    { name: 'short TSS accepted by LTR, not task switch', access: 0x89, limit: 0, selector: 0x28 },
+    { name: 'memory operand', access: 0x89, limit: 103, selector: 0x28, memory: true },
+    { name: 'operand size ignored', access: 0x89, limit: 103, selector: 0x28, prefix: true },
+  ]) {
+    reset(); vm.set('ax', spec.selector);
+    put(0x19028, 0xb0000000 | spec.limit); vm.mem[0x1902d] = spec.access;
+    // The TSS itself is deliberately not mapped. LTR must not read it.
+    put(0x2106c, 0);
+    if (spec.memory) {
+      v.setUint16(0x30000, spec.selector, true);
+      vm.mem.set([0x0f, 0, 0x1d, ...u32(0x10000000)], start);
+    }
+    if (spec.prefix) vm.mem.set([0x66, 0x0f, 0, 0xd8], start);
+    assert(vm.stepOne());
+    assert.equal(vm.get('gip'), start + (spec.memory ? 7 : spec.prefix ? 4 : 3), spec.name);
+    assert.deepEqual(cache(), [spec.selector, 1, 0x1b000, spec.limit, spec.access | 2]);
+    assert.equal(vm.mem[0x1902d], spec.access | 2);
+    assert.equal(e.get_cr0() >>> 0, 0x80000011); assert.equal(e.get_cr3(), 0x20000);
+    assert.equal(e.pg_flags(), 2); assert.equal(vm.get('sp'), 0x80000);
+    // Hidden cache must survive later descriptor changes.
+    put(0x19028, 0); put(0x1902c, 0);
+    assert.deepEqual(cache(), [spec.selector, 1, 0x1b000, spec.limit, spec.access | 2]);
+    cases++;
+  }
+  const negatives = [
+    ...[0, 1, 2, 3, 4, 0x2c, 0x30].map(selector => ({ name: `selector-${selector}`, selector, vector: 13, error: selector & 0xfffc })),
+    ...[0x8b, 0x83, 0x92, 0x82, 0x0b].map(access => ({ name: `type-${access}`, access, vector: 13, error: 0x28 })),
+    ...[0x09, 0x01].map(access => ({ name: `not-present-${access}`, access, vector: 11, error: 0x28 })),
+    { name: 'GDT page', vector: 14, error: 0, address: 0x1a028, setup() {
+      e.mset_gdtl(0x102f); vm.set('ax', 0x1028); put(0x21068, 0);
+    } },
+    { name: 'descriptor crosses page', vector: 14, error: 0, address: 0x1a000, setup() {
+      e.mset_gdtb(0x19fd4); put(0x19fdc, 0xffff); put(0x19fe0, 0x00cf9a00);
+      put(0x19ffc, 0xb0000067); put(0x21068, 0);
+    } },
+    { name: 'memory operand page', vector: 14, error: 0, address: 0x10000000, setup() {
+      vm.mem.set([0x0f, 0, 0x1d, ...u32(0x10000000)], start); put(0x22000, 0);
+    } },
+    { name: 'privilege before memory page', vector: 13, error: 0, setup() {
+      vm.set('cs', 0x1b); vm.set('ss', 0x23);
+      vm.mem.set([0x0f, 0, 0x1d, ...u32(0x10000000)], start); put(0x22000, 0);
+    } },
+    { name: 'V86 #UD before memory page', vector: 6, faultIp: 0x200, setup() {
+      e.mset_vm86(1); vm.set('cs', 0x1000); vm.set('gip', 0x200);
+      vm.mem.set([0x67, 0x0f, 0, 0x1d, ...u32(0x10000000)], 0x10200); put(0x22000, 0);
+    } },
+  ];
+  for (const spec of negatives) {
+    reset(); if (spec.selector !== undefined) vm.set('ax', spec.selector);
+    if (spec.access !== undefined) vm.mem[0x1902d] = spec.access;
+    if (spec.setup) spec.setup();
+    const before = cache(), access = vm.mem[0x1902d], tss = vm.mem.slice(0x1b000, 0x1b068);
+    assert(vm.stepOne(), spec.name);
+    assert.equal(vm.get('gip'), 0x6000, spec.name + ' delivers fault');
+    assert.equal(vm.get('intno'), spec.vector, spec.name);
+    if (spec.error !== undefined) assert.equal(v.getUint32(vm.get('sp'), true), spec.error, spec.name + ' exact error');
+    assert.equal(v.getUint32(vm.get('sp') + (spec.error !== undefined ? 4 : 0), true), spec.faultIp || start, spec.name + ' saved faulting EIP');
+    assert.deepEqual(cache(), before, spec.name + ' preserves previous TR/cache');
+    assert.equal(vm.mem[0x1902d], access, spec.name + ' does not set busy');
+    assert.deepEqual(vm.mem.slice(0x1b000, 0x1b068), tss, spec.name + ' does not save task');
+    assert.equal(e.get_cr2() >>> 0, spec.address || 0xdeadbeef, spec.name + ' CR2');
+    cases++;
+  }
+  // A real nested-task IRET must not read a stack frame, even if that frame
+  // happens to be valid. Both operand sizes stop and preserve task/stack state.
+  for (const paged of [false, true]) for (const wide of [false, true]) {
+    reset(); if (!paged) e.mset_cr0(0x11);
+    e.pg_set_flags(0x4002);
+    vm.mem.set(wide ? [0xcf] : [0x66, 0xcf], start);
+    put(0x80000, start + 0x100); put(0x80004, 8); put(0x80008, 2);
+    const before = cache(), frame = vm.mem.slice(0x7fff0, 0x80020);
+    if (paged) assert.throws(() => vm.stepOne(), /unsupported 386 nested-task IRET/);
+    else { assert(vm.stepOne()); assert.equal(e.mget_pm_xfer_stop(), STOP.unsupportedSystem); }
+    assert.equal(vm.get('gip'), start); assert.equal(vm.get('sp'), 0x80000);
+    assert.equal(e.pg_flags(), 0x4002); assert.deepEqual(cache(), before);
+    assert.deepEqual(vm.mem.slice(0x7fff0, 0x80020), frame);
+    cases++;
+  }
+  // Nonpaged invalid LTR retains its explicit unsupported-stop contract. Do
+  // not start reflecting a guessed architectural exception through the IVT.
+  for (const mode of ['real', 'v86', 'ring3', 'busy', 'absent', 'null']) {
+    reset(); e.mset_cr0(mode === 'real' ? 0x10 : 0x11);
+    if (mode === 'v86') e.mset_vm86(1);
+    if (mode === 'ring3') vm.set('cs', 0x1b);
+    if (mode === 'busy') vm.mem[0x1902d] = 0x8b;
+    if (mode === 'absent') vm.mem[0x1902d] = 9;
+    if (mode === 'null') vm.set('ax', 0);
+    const before = cache(); assert(vm.stepOne());
+    assert.equal(e.mget_pm_xfer_stop(), mode === 'ring3' ? STOP.privilege :
+      ['real', 'v86'].includes(mode) ? STOP.unsupportedSystem :
+      mode === 'busy' ? STOP.type : mode === 'absent' ? STOP.notPresent : STOP.descriptor, mode);
+    assert.deepEqual(cache(), before); assert.equal(vm.get('sp'), 0x80000);
+    cases++;
+  }
+  observations.push({ variant, ltrAndNestedReturnCases: cases, fullTaskSwitch: false });
+}
+
+async function taskRegisterSuite() {
+  for (const variant of ['tailcall', 'switch', 'calls', 'repl_tailcall']) {
+    for (const cpu of [86, 186, 386]) await initialTaskFlags(variant, cpu);
+    await taskRegisterCom(variant); await taskRegisterChecks(variant);
+  }
+  for (const tier of [{ uopOnly: true }, { uop: true }, { treeFold: true }]) await taskRegisterCom('tailcall', tier);
+  if (evidence) fs.writeFileSync(path.join(evidence, 'task-register.json'), JSON.stringify(observations, null, 2));
+}
+
 (async () => {
+  if (!process.argv.includes('--exception-diagnostics-only')) await taskRegisterSuite();
+  if (process.argv.includes('--task-register-only')) {
+    console.log('PASS actual LTR busy/cache/negatives and explicit NT IRET stops; full task switch remains unsupported');
+    return;
+  }
   await exceptionDiagnostics();
   await failureCapture();
   if (process.argv.includes('--exception-diagnostics-only')) {

@@ -1561,6 +1561,8 @@ function genExtras() {
   (if (call $pg_on) (then
     (global.set $pg_vector (i32.const -2)) (global.set $pg_return (i32.const 2))
     (global.set $halt (i32.const 1)) (return)))
+  (if (i32.and (call $pm_active) (i32.ne (i32.and (global.get $flags) (i32.const 0x4000)) (i32.const 0)))
+    (then (drop (call $pm_stop (i32.const ${pmTransfer.STOP.unsupportedSystem}) (global.get $tr))) (return)))
   (global.set $gip (call $pop16))
   (call $sset (i32.const 1) (call $pop16))
   (call $flags_put (i32.or
@@ -1598,6 +1600,8 @@ function genExtras() {
   (if (call $pg_on) (then
     (global.set $pg_vector (i32.const -2)) (global.set $pg_return (i32.const 4))
     (global.set $halt (i32.const 1)) (return)))
+  (if (i32.and (call $pm_active) (i32.ne (i32.and (global.get $flags) (i32.const 0x4000)) (i32.const 0)))
+    (then (drop (call $pm_stop (i32.const ${pmTransfer.STOP.unsupportedSystem}) (global.get $tr))) (return)))
   (local.set $t0 (call $pop32))
   (local.set $t1 (call $pop32))
   (local.set $t2 (call $pop32))
@@ -2945,28 +2949,28 @@ function gen386() {
              (select (i32.const 12) (i32.const 0) ${GRAN}))
     (select (i32.const 0xFFF) (i32.const 0) ${GRAN}))`;
 
-  // Group 6. LLDT is the only one that changes anything: it names a GDT
-  // descriptor whose base is where the LDT lives, and a selector with the
-  // table-indicator bit set is resolved through that instead. LTR and the
-  // VERR/VERW pair are accepted and inert -- there is no task switching here,
-  // and every descriptor this machine builds is readable and writable, so the
-  // access checks can only ever succeed.
+  // Group 6. LLDT supplies the local descriptor table; LTR validates an
+  // available TSS and marks it busy without switching tasks. VERR/VERW retain
+  // their existing permissive contract. Privilege checks precede LTR's memory
+  // operand read, so an inaccessible operand cannot hide #GP(0) / #UD.
   for (const [nm, body] of [
     ['sldt', '(call $rset16 %R% (global.get $ldt))'],
     ['str', '(call $rset16 %R% (global.get $tr))'],
     ['lldt', '(global.set $ldt %V%) (global.set $ldtb (call $gdtbase (global.get $ldt))) (call $pm_cache_ldt (global.get $ldt))'],
-    ['ltr', '(global.set $tr %V%) (call $pm_cache_tr (global.get $tr))'],
+    ['ltr', '(if (call $pm_ltr %V%) (then (return)))'],
     ['verr', `(call $flags_put (i32.or (call $flags_word) (i32.const ${1 << F.ZF})))`],
     ['verw', `(call $flags_put (i32.or (call $flags_word) (i32.const ${1 << F.ZF})))`],
   ]) {
     const store = nm === 'sldt' || nm === 'str';
     h(`${nm}_r`, 1, `
   ${ops(1)}
+  ${nm === 'ltr' ? '(if (call $pm_ltr_priv) (then (return)))' : ''}
   ${body.replace(/%R%/g, '(local.get $t0)')
     .replace(/%V%/g, '(call $rget16 (local.get $t0))')}
 `);
     h(`${nm}_m`, 2, `
   ${ops(2)}
+  ${nm === 'ltr' ? '(if (call $pm_ltr_priv) (then (return)))' : ''}
   ${EA_SETUP_PRE}
   ${store
     ? `(call $wr16 (local.get $t5) (local.get $t4) (global.get $${nm === 'str' ? 'tr' : 'ldt'}))`
@@ -6339,7 +6343,8 @@ ${[...Array(8).keys()].map(i => `(global $st${i} (mut f64) (f64.const 0))`).join
 ;; and a flat one keeps the whole of ESP.
 (global $spm (mut i32) (i32.const 0xFFFF))
 ;; LDT selector and the linear base it resolved to, plus the task register.
-;; Nothing switches tasks, so $tr is storage that STR can read back.
+;; LTR loads the hidden TSS cache and marks its descriptor busy. Task switching
+;; remains unsupported; STR reads this selector without touching the cache.
 (global $ldt (mut i32) (i32.const 0))
 (global $ldtb (mut i32) (i32.const 0))
 (global $tr (mut i32) (i32.const 0))

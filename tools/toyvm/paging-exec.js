@@ -163,6 +163,10 @@ function iret(vm, width) {
   const v86 = !!get('vm86'), oldLevel = v86 ? 3 : vm.get('cs') & 3, mask = get('spm');
   const oldFlags = e.pg_flags() >>> 0;
   if (v86 && (oldFlags >>> 12 & 3) !== 3) throw new DeliveryFault(13, 0);
+  // NT selects a TSS backlink return, never the ordinary stack frame below.
+  // Until the full task-switch commit/fault protocol exists, stop before any
+  // stack read or state change rather than pretending a stack IRET succeeded.
+  if (!v86 && (oldFlags & 0x4000)) throw Error('unsupported 386 nested-task IRET');
   const sp = vm.raw('sp') >>> 0, base = get('ssb');
   const oldStack = { base, wide: mask === 0xffffffff,
     limit: v86 ? 0xffff : get('pm_ss_limit'), access: v86 ? 0x92 : get('pm_ss_access') };

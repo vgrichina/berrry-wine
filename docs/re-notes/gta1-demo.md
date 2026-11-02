@@ -1,5 +1,98 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Tested task-register prerequisite; full switch still required, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-386-task-switch/`. Input paging repair
+`3aa3341292467482795f23da0c0a052ec186470f` and diagnostic
+`09fc2dacdf2b1095f00e08ddbf8612d2192a915c`. Serialized source/build/runtime
+was claimed after the previous author release. This assignment implements a
+**prerequisite, not interrupt task switching**. There were **zero GTA launches**,
+no new gameplay capture and no fault bypass. The retained diagnostic PNG was
+visually inspected again: DOS/4GW copyright text only. Actual incoming/outgoing
+GTA TSS contents and their address-space walks remain uncaptured.
+
+Two concrete initialization defects were found while checking the switch's
+starting state:
+
+- Guest LTR previously only assigned TR and cached its descriptor. It left the
+  descriptor available (`89h`), consistent with the retained outgoing TR state.
+  LTR now validates selector/GDT bounds, available system TSS type and presence,
+  writes the busy bit and publishes the hidden TR cache after that write. Both
+  286 and 386 available TSS types work; busy, wrong-type, local, null, out-of-table
+  and absent selections fail without replacing the prior TR. Descriptor type
+  precedes presence, and instruction privilege/mode checks precede a memory
+  operand read. Paged faults use the existing architectural delivery path;
+  nonpaged rejections retain explicit protected-transfer stops. General operand
+  segment-limit enforcement remains the existing memory-access contract.
+- Native `runDos` and `LiveRun` both initialized FLAGS with the 8086 reserved
+  `F002h` mask even after configuring a 386. This set 386 NT as well as IOPL
+  and reserved bit 15. They now use the configured CPU's reserved-bit mask with
+  IF set: actual PUSHF observes `0202h` on a 386, while 8086/186 retain `F202h`.
+  This correction does not prove that the original GTA #PF was caused by NT.
+
+Intel's primary [80386 LTR specification](https://www.scs.stanford.edu/05au-cs240c/lab/i386/LTR.htm)
+requires the busy update without a task switch. The new tests also protect the
+distinction between initialization and switching: LTR neither reads/writes the
+TSS nor changes CR3, flags or CR0.TS. An unmapped TSS and even a zero limit may
+be loaded by LTR; the minimum TSS limit is a **task-switch** check. Descriptor
+DPL and selector RPL do not restrict CPL0 LTR.
+
+Protected NT IRET previously followed an ordinary stack return. It now stops
+explicitly before consuming a frame: a paged unsupported-nested-task error,
+or the existing nonpaged `unsupportedSystem` stop. Both 16- and 32-bit operands
+preserve EIP, ESP, flags, TR/cache and stack bytes. Ordinary and VM86 returns
+keep their existing paths. This preserves an honest unsupported boundary;
+it does not implement the backlink return required by
+[Intel's IRET specification](https://www.scs.stanford.edu/05au-cs240c/lab/i386/IRET.htm).
+
+The precise remaining implementation dependency is the task-switch **commit and
+fault context protocol**, plus incoming task validation/loading. The retained
+synthetic `commit-probe.json` executes real paging accessors with two page
+directories: linear `10000000h` reads `11112222h` through CR3 `20000h` and
+`33334444h` through CR3 `23000h`. After staging a new TR/CR3/EIP and an outgoing
+save, a forced page fault restores the old TR/CR3/EIP and undoes that save under
+the existing instruction checkpoint. Establishing an explicit new checkpoint
+preserves the incoming state and save instead. This is a **primitive probe**,
+not a task-switch instruction test or original-game page walk.
+
+As required by [Intel 80386 PRM §7.5](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s07_05.htm)
+and [§9.8.14.1](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s09_08.htm), a future
+switch must distinguish outgoing-context validation/save failures from incoming
+TSS/segment-load failures. Both `step` and `exception` currently assume one
+restart context. Adding register assignments to `deliver` alone would let the
+generic rollback restore the wrong task, or let exception escalation retain the
+outgoing return IP. A complete change must define the commit boundary, perform
+the outgoing save and busy/backlink/NT/TS bookkeeping, load/validate incoming
+CR3, LDTR and all segment caches, deliver the error word in the new task, and
+implement the reverse nested IRET with tests of faults on both sides. The
+task-gate entry remains explicitly unsupported. No partial switch was shipped.
+
+Validation: saved old source fails actual LTR's busy assertion (`89h` versus
+`8Bh`) and the entry PUSHF assertion (`F202h` versus `0202h`); corrected source
+passes seven LTR COM executions across four dispatch variants and uopOnly,
+uop and treeFold. Four variants each pass 35 focused initialization/negative/
+nested-return cases, plus native and LiveRun entry PUSHF on three CPU models.
+Synthetic paging fixtures now explicitly configure the VM's 386 flag mask,
+in addition to the decoder level; all prior paging-copy assertions remain.
+Full paging, foundation, diagnostic failure capture/negatives, runner input,
+CALL gates/RETF, protected timer-vector and CPU detection pass. Both regenerated
+live bundles execute the LTR, paging and entry-flag programs, pass negatives,
+and match all 44/43 embedded source modules; the browser-shaped Node smoke test
+passes. LiveRun initialization is also executed from the main bundle; it is
+intentionally absent from the separate JIT worker bundle. Mandatory locked full
+build passes. No browser session was used.
+
+The evidence retains initial failed fixture/guard checks and their corrections,
+old/new source comparisons, command waits, disk samples and the exact remaining
+dependency. The new COM fixture restores real-mode SS before DOS exit; the
+initial stop guard's boolean-mask error was caught and repaired. Monitored
+commands enforce abort at 2,020,000,000 free bytes, above the unchanged 2 GB
+floor, with no RAM gate. Helpers are actually waited and checked absent at
+handoff. Box ID/state/expiry N/A; coordinator shutdown ownership is unchanged.
+Next: implement and validate the full commit-aware switch before any new
+authentic GTA run. All assigned source/build/runtime ownership is released
+after publication; this single assignment stops here.
+
 
 ## Paged COM regression repaired: fixture return path, 2026-11-02
 

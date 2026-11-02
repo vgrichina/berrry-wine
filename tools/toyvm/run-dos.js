@@ -487,7 +487,8 @@ async function runDos(o) {
   // handlers set, all with IF still clear, then reports "failed to load MSE"
   // for a card it had already reset and identified.
   vm.setAll({ cs: info.cs, ip: info.ip, ss: info.ss, sp: info.sp, ds: info.ds, es: info.es,
-    flags: isa.FLAGS_RESERVED | (1 << isa.F.IF) });
+    // Use this CPU's reserved bits: the 8086 F002 mask would set 386 NT.
+    flags: vm.exports.mget_f_res() | (1 << isa.F.IF) });
   // The stack must hold a return address: a .COM-style `ret` exit lands on the
   // PSP's INT 20h. An EXE that ends with INT 21h/4C never touches it.
   vm.set('sp', (info.sp - 2) & 0xFFFF);
