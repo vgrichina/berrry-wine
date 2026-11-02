@@ -1880,3 +1880,74 @@ receipts, exact-source closure, diagnostic attempts, full test evidence and the
 fresh verifier are in that run's `RECOVERY.md` and `remote-evidence/`. Restore
 with Node v24.22.1 and the recorded exact ToyVM source/dependency recipe; do not
 replay boot or change clocks to recover this progress.
+
+## Saved tick36 continuation: repeated stack-fault entry, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-calibration-return-trace-recover/`.
+No emulator source, guest bytes, clock or dispatch policy changed. Query13619's
+actual terminal0/result/final/exact release and cleanup were consumed first;
+failed55739's static scripts/descriptors were preserved read-only.
+
+Static original bytes define the decisive boundaries: DOS-time returns at
+`10196665/1019666F/1019667F`, terminating `INC ESI; CMP BL,DH; JE` before
+`MOV [104786B8],ESI` at `10196684`, and near RET at `1019668E`. The RET oracle
+is the full saved stack dword, same CS and ESP+4; the fixture's 241,463 polls
+are not an authentic count oracle. Both retained clock formulas predict
+DX=`0203`/DH=2 at tick 37, nominal child dispatch 20,350,000, which is 36,287
+billed dispatches beyond this entry. Full 58-byte bridge frames and 12-byte
+IRETD frames were prepared for observation without inferring high EIP from
+low words.
+
+Before advancement, independent uninstrumented fresh native/host/child/batch
+parity passed. The observer left **all RAM and all 249 native globals** unchanged
+and preserved complete checkpoint parity. It reads backed RAM and exported
+state around ordinary `runner.step`; it installs no hooks and calls neither
+paging read/probe nor the flags materializer. Literal split-page/device/missing-
+page/A20 controls passed. Two scratch preflight diagnostics are retained: an
+incorrect test expectation about 24-bit address aliasing, then an accessor-name
+mismatch. Both preceded any guest step; correction touched scratch only.
+Focused native/full-host/batch same/fresh/fresh-process, input, files/rename/temp,
+terminal/earlier-command tests and the locked build passed (root 24599, actual 0).
+
+Exactly **one continuation, zero boots**, used the demonstrated 60-second guest
+cutoff plus 60-second finalization reserve. Atomic observations preceded capture;
+runtime 68.0951 seconds, OS 68.1665 seconds actual 0/group absent. The complete new
+checkpoint passed independent uninstrumented fresh-process full-state parity.
+
+The trace distinguishes handbacks from forward progress: **2,229,173** successful
+`ran` steps, all starting and ending at **0070:4335**, all with zero billed
+dispatches and post-step vector12; SP changed on every step. Sampled SP changes
+are the 16-byte exception-frame decrement modulo 65,536. IRQ count stayed 109,
+host interrupt-service count 622, child dispatch 20,313,713, cumulative 643,006,442,
+and ticks 36. No calibration-site, DOS-time service, restore58, IRETD12, result
+change or RET event was observed. Result `104786B8` stayed 0. The actual frame
+remains DOS/4GW text only; there is no player scene, movement input or gameplay.
+
+Saved instruction bytes at the IDT12 target decode as `PUSH CX; MOV CX,104C;
+CALL 52D8; POP CX; far JMP 0088:0030`. The cached SS is already invalid at entry
+(`pm_ss_valid=0`, SS=`CC20`, cached base=`CC200`, mask=`FFFF`); each observed
+step re-enters the same stack-fault target without reaching the call. This is
+an observed repeated exception-entry loop, not progress toward the tick 37
+calibration boundary. **The remaining control-flow question is which preceding
+protected-mode segment/task transfer first invalidated SS, and whether that
+transition followed the original DOS/4GW path correctly.** This checkpoint
+already starts after that transition; post-step metadata cannot identify its
+first cause. No repair or further waiting follows from this evidence.
+
+New diagnostic-state archive: this run's
+`remote-evidence/continuation/complete.checkpoint.gz`, compressed SHA-256
+`15963ec4f5534e735223cbe32d187b29ba21d949791d1f4a4979ab0a631174f0`,
+decoded SHA-256
+`e6a94373d3b2794a0c917e6460d8fe31d75679b5f12360b1dacd38e588b55b82`.
+The advanced entry `b0316de8` and original archives remain intact; all 93 recovery
+source hashes remain exact. `RECOVERY.md` records no-step restoration and the
+bounded trace. Do not reboot, repeat menus, extend runtime or change clocks to
+escape this saved loop. Any first-transition investigation needs separate
+bounded authorization and earlier evidence, with an independent regression
+before a demonstrated source repair.
+
+All 91 remote evidence members and compressed/decoded archive hashes were
+retrieved and verified before delegated shutdown. Boat `bx_stcqex2q` is STOPPED
+at `2026-11-02T09:13:22.478Z` (original expiry `10:01:41.939Z`); all five roots
+and child groups and all own local helpers are absent. `/home` remains above
+2 GB free. This publication changes documentation only.
