@@ -1,5 +1,92 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Original calibration instruction fixture: clock contract passes, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-calibration-clock-fixture/`; durable test:
+`node --expose-gc test/test-toyvm-gta1-calibration-clock.js`.
+**This is a fixture, not an original game run or gameplay evidence.** No ToyVM,
+guest media, generated bundle, clock rate, or optimization changed. MDK WebGL
+`71fb8fb279` then readpixels `6e0fdcd3d` terminal/result/final and exact AUTHOR
+RELEASE were consumed before claiming tests/build/runtime; all 461 recorded
+helpers were independently absent. Earlier work was static research only.
+
+The embedded MZ at `38D64` names LE `3B80C`. Its page map (index 275) derives
+file offset 1,830,849 for the authentic **50 bytes at `1019665D..1019668E`**.
+The preceding byte is RET, not the function entry. The one internal fixup at
+`10196686` targets object 2 + `002CD6B8`, giving the actual result address
+`104786B8`. `static-original.json` retains source/relocated hex and the unchanged
+DEMO24 SHA-256. The test embeds these relocated bytes and needs no game media.
+
+The [Microsoft MS-DOS Encyclopedia, Function 2Ch](https://www.pcjs.org/documents/books/mspl13/msdos/encyclopedia/section5/)
+specifies binary hours/minutes/seconds/hundredths, with hardware-dependent
+hundredths accuracy. The original code waits for DH to change once, then counts
+queries through the next change, including the terminating query. Equality
+comparison also permits seconds 59→0. ToyVM currently computes AH=2Ch from
+`ticks * 55 ms`; its separately reported PIT guest seconds use
+`65536 / 1193182`. The fixture checks these actual representations separately.
+
+The representative setup executes paged 32-bit code at the original high EIP,
+a high linear SS base with SS.B=1, an actual 32-bit INT 21h gate into a 16-bit
+handler, a nested PUSHF/far CALL into the existing host DOS service, and the
+**original 14-byte `0088:06FD..070A` restore/IRETD tail**. The intervening bridge
+scaffolding is synthetic; this does not execute the whole original DOS/4GW
+bridge or its setup. IF is initially clear; this isolates the software-interrupt
+clock contract from timer IRQ handlers. A separate real task-gate/page-fault
+fixture exercises fault delivery and NT backlink return.
+
+At unchanged defaults (550,000 dispatches/tick, tickScale 1, scheduled clock),
+both whole-function arms start at tick 0 and finish at **tick 37**, with exactly
+**20,350,037 dispatches**, **241,463 stored polls**, and preserved EBX/ECX/EDX/ESI.
+The return pops the full high EIP and restores the expected stack. The first
+seconds transition occurs at tick 19; the counted interval ends at tick 37.
+These are 2.03224354 reported PIT guest seconds, versus DOS time 00:00:02.03.
+This demonstrates finite calibration under the current clock, not a stall or
+an architectural defect. Fixture wall times are not original-game throughput.
+
+The observed whole arm retains **all 484,487 complete interrupt returns** as
+92-byte records: dispatch/tick/return metadata, full 58-byte restore frame,
+6-byte nested DOS frame, and 12-byte IRETD frame. Every call is checked during
+execution and independently decoded from the compressed stream afterward.
+In particular, the restore frame contains full EIP at +46, CS at +50 and EFLAGS
+at +54; the prior original's 48-byte capture could not contain that full EIP.
+The original `1019667F` high-word inference therefore remains an inference;
+the fixture does not retroactively fill missing original evidence.
+
+An explicitly initialized checkpoint crosses seconds 59→0 at tick 1091 in
+300 normally billed dispatches, stores 7 polls, and restores its registers.
+A 10,000-dispatch same-second negative leaves the result sentinel unchanged;
+its last call is explicitly recorded as in flight. Both cases retain clock
+defaults. All three observed/unobserved pairs match SHA-256 over all
+44,302,336 VM memory bytes and all 59 exported `mget_` globals. Missing-page and
+device snapshots also preserve that state.
+
+The retained prior `ring.cjs` was tested in the **actual installation order**:
+save the legacy task target, install ring, then assign the task wrapper. Calling
+the pre-ring saved target reproduces **zero ring fault callbacks**, while both
+legacy task events and two IRETD attempts still execute. Capturing the current
+wrapped target instead retains the fault-entry callback, absent CR2 page walk,
+and both task events; after the fault handler maps the page, IRETD completes.
+All RAM/globals match unobserved execution in both configurations. The missing
+old callback is thus caused by wrapper replacement, without a ToyVM change.
+
+Focused fixture, retained-ring composition, interrupt word-register regression,
+independent frame audit and mandatory locked build pass. An initial build gate
+caught a synthetic task-code address coinciding with the main emulator's pinned
+region base; the fixture uses a different guest address and was revalidated.
+Initial static entry/tail-bound mistakes and evidence naming corrections are
+retained separately; they are not guest failures. No emulator fix is warranted.
+
+Next bounded gameplay action requires a **separate original-run authorization**:
+one authentic GTA.BAT→K→actual DINO→DEMO24 attempt at unchanged clock defaults,
+with a proposed 120-second shared budget/130-second OS cap, complete restore
+frames and correctly composed task observations. Record per-executable ticks
+and stop at the first post-calibration/menu checkpoint or cap. Reaching tick 37
+is a measured checkpoint, not a promise derived from fixture speed. Inspect the
+fresh image before any menu input; if a player scene appears, perform one brief
+walking/driving input with before/after captures. This task ran no original,
+browser, download, workers or deployment. Box ID/state/expiry N/A; coordinator
+lifecycle unchanged.
+
 ## One bounded diagnostic: paging advances, then DOS-second calibration wait, 2026-11-02
 
 Evidence: `scratch/runs/20261102-gta1-bounded-startup-diagnostic/`. Exactly
