@@ -36567,16 +36567,14 @@
     "name": "glGetLightfv",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 394865258,
-    "handler": "gl_unimplemented"
+    "hash": 394865258
   },
   {
     "id": 4280,
     "name": "glGetLightiv",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 159831497,
-    "handler": "gl_unimplemented"
+    "hash": 159831497
   },
   {
     "id": 4281,
@@ -36607,16 +36605,14 @@
     "name": "glGetMaterialfv",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 4003991015,
-    "handler": "gl_unimplemented"
+    "hash": 4003991015
   },
   {
     "id": 4285,
     "name": "glGetMaterialiv",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 3701449420,
-    "handler": "gl_unimplemented"
+    "hash": 3701449420
   },
   {
     "id": 4286,

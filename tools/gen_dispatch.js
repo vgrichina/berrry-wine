@@ -335,6 +335,11 @@ const integerLightMaterialFogApis = new Map([
   ['glLightiv', [2, 1, 1]], ['glMaterialiv', [3, 1, 1]],
 ]);
 
+// Synchronous indexed queries read current context state without list recording.
+const lightingQueryApis = new Map([
+  ['glGetLightfv', [0, 0]], ['glGetLightiv', [0, 1]],
+  ['glGetMaterialfv', [1, 0]], ['glGetMaterialiv', [1, 1]],
+]);
 // Genuine typed current normals lower to the native scalar normal command.
 const typedNormalApis = new Map();
 for (const [suffix, bits] of [['b', 8], ['s', 16], ['i', 32], ['d', 64]]) {
@@ -400,6 +405,7 @@ const nativeGlApis = new Set([
   ...typedRasterPosApis.keys(),
   ...typedVertexApis.keys(),
   ...typedNormalApis.keys(),
+  ...lightingQueryApis.keys(),
   ...integerLightMaterialFogApis.keys(),
 ]);
 for (const [id, api] of apiTable.entries()) {
@@ -436,6 +442,8 @@ function handlerCall(api) {
   }
   const integerLMF = integerLightMaterialFogApis.get(api.name);
   if (integerLMF) return `      (call $handle_gl_lmf_integer ${integerLMF.map(n => `(i32.const ${n})`).join(' ')})`;
+  const lightingQuery = lightingQueryApis.get(api.name);
+  if (lightingQuery) return `      (call $handle_gl_lighting_query ${lightingQuery.map(n => `(i32.const ${n})`).join(' ')})`;
   const typedNormal = typedNormalApis.get(api.name);
   if (typedNormal) {
     return `      (call $handle_glNormal_typed ${typedNormal.map(n => `(i32.const ${n})`).join(' ')})`;

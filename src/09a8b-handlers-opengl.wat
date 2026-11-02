@@ -933,3 +933,75 @@
     (i32.store (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base)
       (i32.add (local.get $esp) (i32.shl (i32.add (local.get $words) (i32.const 1)) (i32.const 2)))))
+
+  ;; GL1.1 6: indexed lighting queries execute now, including GL_COMPILE.
+  ;; Both variants have three DWORD arguments; no stream/list opcode exists.
+  (func $handle_gl_lighting_query (param $material i32) (param $integer i32)
+    (local $esp i32) (local $target i32) (local $name i32) (local $out i32)
+    (local $family i32) (local $n i32) (local $ctx i32) (local $error i32)
+    (local $b i32) (local $src i32) (local $i i32) (local $v f64)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (call $gl_texcoord_check (local.get $esp) (i32.const 16))
+    (local.set $target (call $gl32 (i32.add (local.get $esp) (i32.const 4))))
+    (local.set $name (call $gl32 (i32.add (local.get $esp) (i32.const 8))))
+    (local.set $out (call $gl32 (i32.add (local.get $esp) (i32.const 12))))
+    (local.set $family (select (i32.const 3) (i32.const 2) (local.get $material)))
+    (local.set $n (call $gl_lmf_count (local.get $family) (local.get $name)))
+    (if (local.get $material) (then
+      ;; AMBIENT_AND_DIFFUSE is a setter convenience, never a query pname.
+      (if (i32.or (i32.eq (local.get $name) (i32.const 0x1602))
+          (i32.eqz (i32.or (i32.eq (local.get $target) (i32.const 0x404))
+            (i32.eq (local.get $target) (i32.const 0x405)))))
+        (then (local.set $error (i32.const 0x500)))))
+      (else (if (i32.ge_u (i32.sub (local.get $target) (i32.const 0x4000)) (i32.const 8))
+        (then (local.set $error (i32.const 0x500))))))
+    (if (i32.eqz (local.get $n)) (then (local.set $error (i32.const 0x500))))
+    (local.set $ctx (call $gl_list_context))
+    ;; Only an executed Begin forbids queries. Compilation's shadow Begin
+    ;; does not change execution state for an immediately executed Get.
+    (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+      (then (local.set $error (i32.const 0x502))))
+    (if (i32.eqz (local.get $error)) (then
+      ;; Validate the whole output before lazy state allocation or any write.
+      ;; At most16 bytes; checked stores handle nonadjacent sparse backing.
+      (call $gl_texcoord_check (local.get $out) (i32.shl (local.get $n) (i32.const 2)))
+      (local.set $b (call $gl_mtx_block))
+      (if (local.get $material) (then
+        (local.set $src (i32.add (local.get $b) (select (i32.const 11088) (i32.const 8880)
+          (i32.eq (local.get $target) (i32.const 0x405)))))
+        (if (i32.le_u (i32.sub (local.get $name) (i32.const 0x1200)) (i32.const 2))
+          (then (local.set $src (i32.add (local.get $src)
+            (i32.shl (i32.sub (local.get $name) (i32.const 0x1200)) (i32.const 4)))))
+          (else (local.set $src (i32.add (local.get $src)
+            (select (i32.const 48) (select (i32.const 64) (i32.const 68)
+              (i32.eq (local.get $name) (i32.const 0x1601)))
+              (i32.eq (local.get $name) (i32.const 0x1600))))))))
+        (else
+          (if (i32.le_u (local.get $name) (i32.const 0x1203)) (then
+            (local.set $src (call $gl_mtx_light_slot (local.get $b)
+              (i32.sub (local.get $target) (i32.const 0x4000))))
+            (if (i32.ne (local.get $name) (i32.const 0x1203)) (then
+              (local.set $src (i32.add (local.get $src)
+                (i32.shl (i32.add (i32.sub (local.get $name) (i32.const 0x1200)) (i32.const 1)) (i32.const 4)))))))
+            (else
+              (local.set $src (call $gl_lmf_extra (local.get $b)
+                (i32.sub (local.get $target) (i32.const 0x4000))))
+              (if (i32.ne (local.get $name) (i32.const 0x1204)) (then
+                (local.set $src (i32.add (local.get $src)
+                  (i32.shl (i32.sub (local.get $name) (i32.const 0x1202)) (i32.const 2))))))))))
+      (loop $values
+        (local.set $v (f64.promote_f32 (f32.load
+          (i32.add (local.get $src) (i32.shl (local.get $i) (i32.const 2))))))
+        (call $gs32 (i32.add (local.get $out) (i32.shl (local.get $i) (i32.const 2)))
+          (if (result i32) (local.get $integer) (then
+            (if (call $gl_lmf_color (local.get $family) (local.get $name)) (then
+              (local.set $v (f64.mul (f64.const 0.5)
+                (f64.sub (f64.mul (local.get $v) (f64.const 4294967295)) (f64.const 1))))))
+            (i32.trunc_sat_f64_s (f64.nearest (local.get $v))))
+            (else (i32.reinterpret_f32 (f32.demote_f64 (local.get $v))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $values (i32.lt_u (local.get $i) (local.get $n))))))
+    (if (i32.and (i32.ne (local.get $error) (i32.const 0)) (i32.ne (local.get $ctx) (i32.const 0)))
+      (then (call $gl_list_error (local.get $ctx) (local.get $error))))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 16))))

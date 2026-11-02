@@ -3950,6 +3950,10 @@
     (if (i32.eq (local.get $id) (i32.const 4271)) (then (return (i32.const 1)))) ;; glFogiv
     (if (i32.eq (local.get $id) (i32.const 4272)) (then (return (i32.const 1)))) ;; glGenLists
     (if (i32.eq (local.get $id) (i32.const 4278)) (then (return (i32.const 1)))) ;; glGetDoublev
+    (if (i32.eq (local.get $id) (i32.const 4279)) (then (return (i32.const 1)))) ;; glGetLightfv
+    (if (i32.eq (local.get $id) (i32.const 4280)) (then (return (i32.const 1)))) ;; glGetLightiv
+    (if (i32.eq (local.get $id) (i32.const 4284)) (then (return (i32.const 1)))) ;; glGetMaterialfv
+    (if (i32.eq (local.get $id) (i32.const 4285)) (then (return (i32.const 1)))) ;; glGetMaterialiv
     (if (i32.eq (local.get $id) (i32.const 4297)) (then (return (i32.const 1)))) ;; glGetTexLevelParameterfv
     (if (i32.eq (local.get $id) (i32.const 4298)) (then (return (i32.const 1)))) ;; glGetTexLevelParameteriv
     (if (i32.eq (local.get $id) (i32.const 4299)) (then (return (i32.const 1)))) ;; glGetTexParameterfv
@@ -4107,13 +4111,9 @@
     (if (i32.eq (local.get $id) (i32.const 4275)) (then (return (i32.const 1)))) ;; glGetColorTableEXT
     (if (i32.eq (local.get $id) (i32.const 4276)) (then (return (i32.const 1)))) ;; glGetColorTableParameterfvEXT
     (if (i32.eq (local.get $id) (i32.const 4277)) (then (return (i32.const 1)))) ;; glGetColorTableParameterivEXT
-    (if (i32.eq (local.get $id) (i32.const 4279)) (then (return (i32.const 1)))) ;; glGetLightfv
-    (if (i32.eq (local.get $id) (i32.const 4280)) (then (return (i32.const 1)))) ;; glGetLightiv
     (if (i32.eq (local.get $id) (i32.const 4281)) (then (return (i32.const 1)))) ;; glGetMapdv
     (if (i32.eq (local.get $id) (i32.const 4282)) (then (return (i32.const 1)))) ;; glGetMapfv
     (if (i32.eq (local.get $id) (i32.const 4283)) (then (return (i32.const 1)))) ;; glGetMapiv
-    (if (i32.eq (local.get $id) (i32.const 4284)) (then (return (i32.const 1)))) ;; glGetMaterialfv
-    (if (i32.eq (local.get $id) (i32.const 4285)) (then (return (i32.const 1)))) ;; glGetMaterialiv
     (if (i32.eq (local.get $id) (i32.const 4286)) (then (return (i32.const 1)))) ;; glGetPixelMapfv
     (if (i32.eq (local.get $id) (i32.const 4287)) (then (return (i32.const 1)))) ;; glGetPixelMapuiv
     (if (i32.eq (local.get $id) (i32.const 4288)) (then (return (i32.const 1)))) ;; glGetPixelMapusv
@@ -21592,10 +21592,10 @@
       (call $handle_gpu_api (i32.const 145) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4279: glGetLightfv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_lighting_query (i32.const 0) (i32.const 0))
       (return)
     ) ;; 4280: glGetLightiv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_lighting_query (i32.const 0) (i32.const 1))
       (return)
     ) ;; 4281: glGetMapdv
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -21607,10 +21607,10 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4284: glGetMaterialfv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_lighting_query (i32.const 1) (i32.const 0))
       (return)
     ) ;; 4285: glGetMaterialiv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_lighting_query (i32.const 1) (i32.const 1))
       (return)
     ) ;; 4286: glGetPixelMapfv
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
