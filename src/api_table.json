@@ -36919,7 +36919,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 2672760829,
-    "handler": "gl_unimplemented"
+    "handler": "glLoadMatrixd"
   },
   {
     "id": 4324,
@@ -37532,7 +37532,7 @@
     "nargs": 6,
     "convention": "stdcall",
     "hash": 1174487656,
-    "handler": "gl_unimplemented"
+    "handler": "glScaled"
   },
   {
     "id": 4402,
@@ -37880,7 +37880,7 @@
     "nargs": 6,
     "convention": "stdcall",
     "hash": 4030969880,
-    "handler": "gl_unimplemented"
+    "handler": "glTranslated"
   },
   {
     "id": 4446,

@@ -340,6 +340,67 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
+  ;; Snapshot sixteen column-major doubles at the canonical f32 boundary.
+  (func $handle_glLoadMatrixd (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $guest i32) (local $stack i32) (local $i i32)
+    (if (i32.gt_u (local.get $arg0) (i32.const 0xffffff80)) (then (unreachable)))
+    (if (i32.eq (call $g2w (local.get $arg0)) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (if (i32.eq (call $g2w (i32.add (local.get $arg0) (i32.const 127))) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    ;; Eight stack bytes and 64 pointed bytes in one invocation-owned affine
+    ;; allocation. Do not retain the caller's pointer after returning.
+    (local.set $guest (call $gl_alloc_affine (i32.const 72)))
+    (if (i32.eqz (local.get $guest)) (then (unreachable)))
+    (local.set $stack (call $g2w (local.get $guest)))
+    (i32.store (local.get $stack) (i32.const 0))
+    (i32.store offset=4 (local.get $stack) (i32.add (local.get $guest) (i32.const 8)))
+    (loop $copy
+      (f32.store (i32.add (local.get $stack) (i32.add (i32.const 8) (i32.shl (local.get $i) (i32.const 2))))
+        (f32.demote_f64 (f64.reinterpret_i64 (call $gl64
+          (i32.add (local.get $arg0) (i32.shl (local.get $i) (i32.const 3)))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $copy (i32.lt_u (local.get $i) (i32.const 16))))
+    (drop (call $gl_wat_encode_call (i32.const 34) (local.get $stack) (i32.const 0)))
+    (call $heap_free (local.get $guest))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  ;; Scalar doubles occupy six DWORDs, not three dispatcher i32 arguments.
+  ;; Read all values before allocation/encoding, including across sparse pages.
+  (func $gl_double_transform (param $p i32) (param $op i32)
+    (local $x f32) (local $y f32) (local $z f32)
+    (local $guest i32) (local $stack i32)
+    (if (i32.gt_u (local.get $p) (i32.const 0xffffffe8)) (then (unreachable)))
+    (if (i32.eq (call $g2w (local.get $p)) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (if (i32.eq (call $g2w (i32.add (local.get $p) (i32.const 23))) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (local.set $x (f32.demote_f64 (f64.reinterpret_i64 (call $gl64 (local.get $p)))))
+    (local.set $y (f32.demote_f64 (f64.reinterpret_i64 (call $gl64 (i32.add (local.get $p) (i32.const 8))))))
+    (local.set $z (f32.demote_f64 (f64.reinterpret_i64 (call $gl64 (i32.add (local.get $p) (i32.const 16))))))
+    (local.set $guest (call $gl_alloc_affine (i32.const 16)))
+    (if (i32.eqz (local.get $guest)) (then (unreachable)))
+    (local.set $stack (call $g2w (local.get $guest)))
+    (i32.store (local.get $stack) (i32.const 0))
+    (f32.store offset=4 (local.get $stack) (local.get $x))
+    (f32.store offset=8 (local.get $stack) (local.get $y))
+    (f32.store offset=12 (local.get $stack) (local.get $z))
+    (drop (call $gl_wat_encode_call (local.get $op) (local.get $stack) (i32.const 0)))
+    (call $heap_free (local.get $guest)))
+
+  (func $handle_glTranslated (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (if (i32.gt_u (local.get $esp) (i32.const 0xffffffe3)) (then (unreachable)))
+    (call $gl_double_transform (i32.add (local.get $esp) (i32.const 4)) (i32.const 41))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
+
+  (func $handle_glScaled (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (if (i32.gt_u (local.get $esp) (i32.const 0xffffffe3)) (then (unreachable)))
+    (call $gl_double_transform (i32.add (local.get $esp) (i32.const 4)) (i32.const 40))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
+
   ;; glMultMatrixd: snapshot sixteen guest doubles in column-major order at
   ;; the existing float-matrix encoder boundary. Opcode 109 owns matrix mode,
   ;; postmultiplication, Begin validation, stream copies and list value capture.

@@ -339,6 +339,7 @@ const nativeWglApis = new Set([
 ]);
 const nativeGlApis = new Set([
   'glRectd', 'glRectdv', 'glRectfv', 'glRecti', 'glRectiv', 'glRects', 'glRectsv',
+  'glLoadMatrixd', 'glTranslated', 'glScaled',
   'glMultMatrixd', 'glTexCoord2d', 'glTexCoord2dv', 'glTexCoord2i',
   'glColor3d', 'glColor3dv', 'glColor4dv', 'glVertex2d', 'glVertex2dv', 'glVertex3d',
   ...integerColorApis.keys(),
