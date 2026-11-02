@@ -1938,6 +1938,9 @@
   ;; normal +36) as four f32 at $dst. Scratch at +0x430: eye normal, eye
   ;; position, light vector, half vector, 16 bytes each.
   (func $gl_sw_light_vertex (param $v i32) (param $dst i32)
+    (call $gl_sw_light_evaluate (local.get $v) (local.get $dst) (i32.const 0)))
+
+  (func $gl_sw_light_evaluate (param $v i32) (param $dst i32) (param $normal_ready i32)
     (local $b i32) (local $nm i32) (local $t i32) (local $mask i32) (local $i i32)
     (local $light i32) (local $amb i32) (local $dif i32) (local $spec i32) (local $c i32)
     (local $ndl f32) (local $ndh f32) (local $sp f32) (local $w f32) (local $k i32)
@@ -1947,6 +1950,9 @@
     (local.set $t (i32.add (global.get $gl_sw_scratch) (i32.const 0x430)))
     ;; Eye normal.
     (local.set $k (i32.const 0))
+    (if (local.get $normal_ready)
+      (then (memory.copy (local.get $t) (i32.add (local.get $v) (i32.const 36)) (i32.const 12)))
+      (else
     (loop $rows
       (f32.store (i32.add (local.get $t) (i32.shl (local.get $k) (i32.const 2)))
         (f32.mul (f32.load offset=36 (local.get $nm))
@@ -1958,7 +1964,8 @@
             (f32.mul (f32.load offset=8 (i32.add (local.get $nm) (i32.mul (local.get $k) (i32.const 12))))
                      (f32.load offset=44 (local.get $v))))))
       (local.set $k (i32.add (local.get $k) (i32.const 1)))
-      (br_if $rows (i32.lt_u (local.get $k) (i32.const 3))))
+      (br_if $rows (i32.lt_u (local.get $k) (i32.const 3))))))
+
     (if (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 0x400000))
       (then (call $gl_sw_normalize3 (local.get $t))))
     (if (global.get $gl_sw_reverse_normal) (then
@@ -2062,10 +2069,16 @@
   ;; s,t = r.xy / (2 sqrt(rx^2 + ry^2 + (rz+1)^2)) + 0.5. The texture matrix
   ;; still applies after. Scratch +0x600: eye normal, eye position, a vec4.
   (func $gl_sw_sphere_map (param $v i32) (param $clip i32)
+    (call $gl_sw_sphere_evaluate (local.get $v) (local.get $clip) (i32.const 0)))
+
+  (func $gl_sw_sphere_evaluate (param $v i32) (param $clip i32) (param $normal_ready i32)
     (local $nm i32) (local $t i32) (local $k i32) (local $d f32)
     (local $rx f32) (local $ry f32) (local $rz f32) (local $m f32)
     (local.set $nm (i32.add (global.get $gl_sw_scratch) (i32.const 0x400)))
     (local.set $t (i32.add (global.get $gl_sw_scratch) (i32.const 0x600)))
+    (if (local.get $normal_ready)
+      (then (memory.copy (local.get $t) (i32.add (local.get $v) (i32.const 36)) (i32.const 12)))
+      (else
     (loop $rows
       (f32.store (i32.add (local.get $t) (i32.shl (local.get $k) (i32.const 2)))
         (f32.mul (f32.load offset=36 (local.get $nm))
@@ -2077,7 +2090,8 @@
             (f32.mul (f32.load offset=8 (i32.add (local.get $nm) (i32.mul (local.get $k) (i32.const 12))))
                      (f32.load offset=44 (local.get $v))))))
       (local.set $k (i32.add (local.get $k) (i32.const 1)))
-      (br_if $rows (i32.lt_u (local.get $k) (i32.const 3))))
+      (br_if $rows (i32.lt_u (local.get $k) (i32.const 3))))))
+
     (call $gl_sw_normalize3 (local.get $t))
     (call $gl_mtx_set4 (i32.add (local.get $t) (i32.const 32))
       (f32.load (local.get $v)) (f32.load offset=4 (local.get $v))
@@ -3230,6 +3244,10 @@
     ;; single points, 1 separate lines, 4 separate triangles.
     (local.set $mode (i32.and (i32.load offset=8 (local.get $start)) (i32.const 0xFFFDFFFF)))
     (if (i32.eq (local.get $mode) (i32.const 0x10000)) (then
+      ;; Bitmap records already contain captured raster attributes. Queue the
+      ;; record with draw-time fragment state, without primitive transformation.
+      (if (i32.eqz (call $gl_stencil_prepare)) (then (return)))
+      (if (call $gl_sw_worker_try (local.get $start) (local.get $vertices)) (then (return)))
       (call $gl_bitmap_sw_draw (local.get $start) (local.get $vertices)) (return)))
     (local.set $step (if (result i32) (i32.eqz (local.get $mode))
       (then (i32.const 1))
@@ -3582,7 +3600,9 @@
     (global.set $gl_stencil_height (i32.load offset=1084 (local.get $snap)))
     (global.set $gl_color_mask_worker (i32.load offset=1088 (local.get $snap)))
     (global.set $gl_sw_second (i32.load offset=1092 (local.get $snap)))
-    (call $gl_sw_draw (local.get $rec) (local.get $n) (local.get $step))
+    (if (i32.eq (local.get $mode) (i32.const 0x10000))
+      (then (call $gl_bitmap_sw_draw (local.get $rec) (local.get $n)))
+      (else (call $gl_sw_draw (local.get $rec) (local.get $n) (local.get $step))))
     (global.set $gl_sw_second (i32.const 0))
     (i32.const 1))
 

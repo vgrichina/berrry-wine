@@ -801,3 +801,44 @@
     (call $heap_free (local.get $guest))
     (i32.store (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (local.get $cleanup))))
+
+  ;; RasterPos aliases snapshot signed numeric coordinates (not normalized),
+  ;; with z=0 and w=1 defaults. Opcode146 owns raster/list execution.
+  (func $handle_glRasterPos_typed (param $components i32) (param $kind i32) (param $vector i32)
+    (local $esp i32) (local $p i32) (local $stride i32) (local $cleanup i32)
+    (local $guest i32) (local $stack i32)
+    (local $s f32) (local $t f32) (local $r f32) (local $q f32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $stride (if (result i32) (i32.eq (local.get $kind) (i32.const 0x140a))
+      (then (i32.const 8)) (else (i32.const 4))))
+    (local.set $cleanup (if (result i32) (local.get $vector)
+      (then (i32.const 8)) (else (i32.add (i32.const 4) (i32.mul (local.get $components) (local.get $stride))))))
+    (if (i32.gt_u (local.get $esp) (i32.sub (i32.const -1) (local.get $cleanup))) (then (unreachable)))
+    (call $gl_texcoord_check (local.get $esp) (local.get $cleanup))
+    (local.set $p (i32.add (local.get $esp) (i32.const 4)))
+    (if (local.get $vector) (then
+      ;; Pointer slots may themselves straddle non-affine guest pages.
+      (local.set $p (call $gl32 (local.get $p)))
+      (if (i32.eq (local.get $kind) (i32.const 0x1402)) (then (local.set $stride (i32.const 2))))
+      (call $gl_texcoord_check (local.get $p) (i32.mul (local.get $components) (local.get $stride)))))
+    ;; Load every component before allocation, list capture or current state.
+    (local.set $s (call $gl_rect_component (local.get $p) (local.get $kind)))
+    (if (i32.ge_u (local.get $components) (i32.const 2)) (then
+      (local.set $t (call $gl_rect_component (i32.add (local.get $p) (local.get $stride)) (local.get $kind)))))
+    (if (i32.ge_u (local.get $components) (i32.const 3)) (then
+      (local.set $r (call $gl_rect_component (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 2))) (local.get $kind)))))
+    (local.set $q (f32.const 1))
+    (if (i32.eq (local.get $components) (i32.const 4)) (then
+      (local.set $q (call $gl_rect_component (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 3))) (local.get $kind)))))
+    (local.set $guest (call $gl_alloc_affine (i32.const 20)))
+    (if (i32.eqz (local.get $guest)) (then (unreachable)))
+    (local.set $stack (call $g2w (local.get $guest)))
+    (i32.store (local.get $stack) (i32.const 0))
+    (f32.store offset=4 (local.get $stack) (local.get $s))
+    (f32.store offset=8 (local.get $stack) (local.get $t))
+    (f32.store offset=12 (local.get $stack) (local.get $r))
+    (f32.store offset=16 (local.get $stack) (local.get $q))
+    (drop (call $gl_wat_encode_call (i32.const 146) (local.get $stack) (i32.const 0)))
+    (call $heap_free (local.get $guest))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (local.get $cleanup))))

@@ -71,7 +71,8 @@ storage.fill(0);
 storage[0] = 0x11; storage[1] = 0x22; storage[2] = 0x33; storage[3] = 0xff;
 const seeds = [];
 const seeded = {
-  handle: 2, hwnd: 0, win: null, surfaceId: SURFACE_ID, needsSeed: true,
+  handle: 2, hwnd: 0, win: null, surfaceId: SURFACE_ID,
+  frontend: { drawBuffer: 0x404 }, needsSeed: true,
   layer: { canvas: front, backend: null, writeSeq: 0, kind: 'gpu' },
   backend: {
     canvas: { width: 8, height: 8 },

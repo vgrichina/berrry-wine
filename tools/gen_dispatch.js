@@ -310,6 +310,7 @@ const gpuApis = new Map([
   ['glRectf', 4],
   ['glAccum', 2], ['glClearAccum', 4],
   ['glGetDoublev', 2],
+  ['glRasterPos4f', 4],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 
@@ -363,6 +364,13 @@ for (const [n, suffixes] of [
   }
 }
 
+const typedRasterPosApis = new Map();
+for (const n of [2, 3, 4]) for (const suffix of ['d','dv','f','fv','i','iv','s','sv']) {
+  if (n === 2 && suffix === 'f') continue; // preserve existing scalar 2f
+  typedRasterPosApis.set(`glRasterPos${n}${suffix}`,
+    [n, {d:0x140a,f:0x1406,i:0x1404,s:0x1402}[suffix[0]], Number(suffix.endsWith('v'))]);
+}
+
 // Dynamic WGL lookup must not expose fail-fast aliases merely because their
 // names exist in the global import table. Derive availability from the same
 // implementation map that dispatch uses. GLU helpers are a separate library.
@@ -382,6 +390,7 @@ const nativeGlApis = new Set([
   'glColor3d', 'glColor3dv', 'glColor4dv', 'glVertex2d', 'glVertex2dv', 'glVertex3d',
   ...integerColorApis.keys(),
   ...typedTexCoordApis.keys(),
+  ...typedRasterPosApis.keys(),
   ...typedVertexApis.keys(),
   ...typedNormalApis.keys(),
 ]);
@@ -405,6 +414,10 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  const typedRasterPos = typedRasterPosApis.get(api.name);
+  if (typedRasterPos) {
+    return `      (call $handle_glRasterPos_typed ${typedRasterPos.map(n => `(i32.const ${n})`).join(' ')})`;
+  }
   const typedVertex = typedVertexApis.get(api.name);
   if (typedVertex) {
     return `      (call $handle_glVertex_typed ${typedVertex.map(n => `(i32.const ${n})`).join(' ')})`;

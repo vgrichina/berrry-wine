@@ -37267,7 +37267,7 @@
     "nargs": 4,
     "convention": "stdcall",
     "hash": 3735310609,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4369,
@@ -37275,7 +37275,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 3819709733,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4370,
@@ -37290,7 +37290,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 4087754279,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4372,
@@ -37298,7 +37298,7 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 3651422514,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4373,
@@ -37306,7 +37306,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 3785315852,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4374,
@@ -37314,7 +37314,7 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 4020530132,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4375,
@@ -37322,7 +37322,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 3788861446,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4376,
@@ -37330,7 +37330,7 @@
     "nargs": 6,
     "convention": "stdcall",
     "hash": 4171381608,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4377,
@@ -37338,7 +37338,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 2237861946,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4378,
@@ -37346,7 +37346,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 4204936846,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4379,
@@ -37354,7 +37354,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 2238259304,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4380,
@@ -37362,7 +37362,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 4121048751,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4381,
@@ -37370,7 +37370,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 2270975899,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4382,
@@ -37378,7 +37378,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 4020383037,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4383,
@@ -37386,7 +37386,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 2269990161,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4384,
@@ -37394,7 +37394,7 @@
     "nargs": 8,
     "convention": "stdcall",
     "hash": 3667905943,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4385,
@@ -37402,7 +37402,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 177281331,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4386,
@@ -37410,7 +37410,7 @@
     "nargs": 4,
     "convention": "stdcall",
     "hash": 3701461181,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4387,
@@ -37418,7 +37418,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 446017425,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4388,
@@ -37426,7 +37426,7 @@
     "nargs": 4,
     "convention": "stdcall",
     "hash": 3449796896,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4389,
@@ -37434,7 +37434,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 141607522,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4390,
@@ -37442,7 +37442,7 @@
     "nargs": 4,
     "convention": "stdcall",
     "hash": 3886014990,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4391,
@@ -37450,7 +37450,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 414286568,
-    "handler": "gl_unimplemented"
+    "handler": "glRasterPos_typed"
   },
   {
     "id": 4392,

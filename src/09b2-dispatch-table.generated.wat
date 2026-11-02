@@ -3972,7 +3972,30 @@
     (if (i32.eq (local.get $id) (i32.const 4353)) (then (return (i32.const 1)))) ;; glNormal3sv
     (if (i32.eq (local.get $id) (i32.const 4363)) (then (return (i32.const 1)))) ;; glPopClientAttrib
     (if (i32.eq (local.get $id) (i32.const 4366)) (then (return (i32.const 1)))) ;; glPushClientAttrib
+    (if (i32.eq (local.get $id) (i32.const 4368)) (then (return (i32.const 1)))) ;; glRasterPos2d
+    (if (i32.eq (local.get $id) (i32.const 4369)) (then (return (i32.const 1)))) ;; glRasterPos2dv
     (if (i32.eq (local.get $id) (i32.const 4370)) (then (return (i32.const 1)))) ;; glRasterPos2f
+    (if (i32.eq (local.get $id) (i32.const 4371)) (then (return (i32.const 1)))) ;; glRasterPos2fv
+    (if (i32.eq (local.get $id) (i32.const 4372)) (then (return (i32.const 1)))) ;; glRasterPos2i
+    (if (i32.eq (local.get $id) (i32.const 4373)) (then (return (i32.const 1)))) ;; glRasterPos2iv
+    (if (i32.eq (local.get $id) (i32.const 4374)) (then (return (i32.const 1)))) ;; glRasterPos2s
+    (if (i32.eq (local.get $id) (i32.const 4375)) (then (return (i32.const 1)))) ;; glRasterPos2sv
+    (if (i32.eq (local.get $id) (i32.const 4376)) (then (return (i32.const 1)))) ;; glRasterPos3d
+    (if (i32.eq (local.get $id) (i32.const 4377)) (then (return (i32.const 1)))) ;; glRasterPos3dv
+    (if (i32.eq (local.get $id) (i32.const 4378)) (then (return (i32.const 1)))) ;; glRasterPos3f
+    (if (i32.eq (local.get $id) (i32.const 4379)) (then (return (i32.const 1)))) ;; glRasterPos3fv
+    (if (i32.eq (local.get $id) (i32.const 4380)) (then (return (i32.const 1)))) ;; glRasterPos3i
+    (if (i32.eq (local.get $id) (i32.const 4381)) (then (return (i32.const 1)))) ;; glRasterPos3iv
+    (if (i32.eq (local.get $id) (i32.const 4382)) (then (return (i32.const 1)))) ;; glRasterPos3s
+    (if (i32.eq (local.get $id) (i32.const 4383)) (then (return (i32.const 1)))) ;; glRasterPos3sv
+    (if (i32.eq (local.get $id) (i32.const 4384)) (then (return (i32.const 1)))) ;; glRasterPos4d
+    (if (i32.eq (local.get $id) (i32.const 4385)) (then (return (i32.const 1)))) ;; glRasterPos4dv
+    (if (i32.eq (local.get $id) (i32.const 4386)) (then (return (i32.const 1)))) ;; glRasterPos4f
+    (if (i32.eq (local.get $id) (i32.const 4387)) (then (return (i32.const 1)))) ;; glRasterPos4fv
+    (if (i32.eq (local.get $id) (i32.const 4388)) (then (return (i32.const 1)))) ;; glRasterPos4i
+    (if (i32.eq (local.get $id) (i32.const 4389)) (then (return (i32.const 1)))) ;; glRasterPos4iv
+    (if (i32.eq (local.get $id) (i32.const 4390)) (then (return (i32.const 1)))) ;; glRasterPos4s
+    (if (i32.eq (local.get $id) (i32.const 4391)) (then (return (i32.const 1)))) ;; glRasterPos4sv
     (if (i32.eq (local.get $id) (i32.const 4392)) (then (return (i32.const 1)))) ;; glRectd
     (if (i32.eq (local.get $id) (i32.const 4393)) (then (return (i32.const 1)))) ;; glRectdv
     (if (i32.eq (local.get $id) (i32.const 4394)) (then (return (i32.const 1)))) ;; glRectf
@@ -4145,29 +4168,6 @@
     (if (i32.eq (local.get $id) (i32.const 4364)) (then (return (i32.const 1)))) ;; glPopName
     (if (i32.eq (local.get $id) (i32.const 4365)) (then (return (i32.const 1)))) ;; glPrioritizeTextures
     (if (i32.eq (local.get $id) (i32.const 4367)) (then (return (i32.const 1)))) ;; glPushName
-    (if (i32.eq (local.get $id) (i32.const 4368)) (then (return (i32.const 1)))) ;; glRasterPos2d
-    (if (i32.eq (local.get $id) (i32.const 4369)) (then (return (i32.const 1)))) ;; glRasterPos2dv
-    (if (i32.eq (local.get $id) (i32.const 4371)) (then (return (i32.const 1)))) ;; glRasterPos2fv
-    (if (i32.eq (local.get $id) (i32.const 4372)) (then (return (i32.const 1)))) ;; glRasterPos2i
-    (if (i32.eq (local.get $id) (i32.const 4373)) (then (return (i32.const 1)))) ;; glRasterPos2iv
-    (if (i32.eq (local.get $id) (i32.const 4374)) (then (return (i32.const 1)))) ;; glRasterPos2s
-    (if (i32.eq (local.get $id) (i32.const 4375)) (then (return (i32.const 1)))) ;; glRasterPos2sv
-    (if (i32.eq (local.get $id) (i32.const 4376)) (then (return (i32.const 1)))) ;; glRasterPos3d
-    (if (i32.eq (local.get $id) (i32.const 4377)) (then (return (i32.const 1)))) ;; glRasterPos3dv
-    (if (i32.eq (local.get $id) (i32.const 4378)) (then (return (i32.const 1)))) ;; glRasterPos3f
-    (if (i32.eq (local.get $id) (i32.const 4379)) (then (return (i32.const 1)))) ;; glRasterPos3fv
-    (if (i32.eq (local.get $id) (i32.const 4380)) (then (return (i32.const 1)))) ;; glRasterPos3i
-    (if (i32.eq (local.get $id) (i32.const 4381)) (then (return (i32.const 1)))) ;; glRasterPos3iv
-    (if (i32.eq (local.get $id) (i32.const 4382)) (then (return (i32.const 1)))) ;; glRasterPos3s
-    (if (i32.eq (local.get $id) (i32.const 4383)) (then (return (i32.const 1)))) ;; glRasterPos3sv
-    (if (i32.eq (local.get $id) (i32.const 4384)) (then (return (i32.const 1)))) ;; glRasterPos4d
-    (if (i32.eq (local.get $id) (i32.const 4385)) (then (return (i32.const 1)))) ;; glRasterPos4dv
-    (if (i32.eq (local.get $id) (i32.const 4386)) (then (return (i32.const 1)))) ;; glRasterPos4f
-    (if (i32.eq (local.get $id) (i32.const 4387)) (then (return (i32.const 1)))) ;; glRasterPos4fv
-    (if (i32.eq (local.get $id) (i32.const 4388)) (then (return (i32.const 1)))) ;; glRasterPos4i
-    (if (i32.eq (local.get $id) (i32.const 4389)) (then (return (i32.const 1)))) ;; glRasterPos4iv
-    (if (i32.eq (local.get $id) (i32.const 4390)) (then (return (i32.const 1)))) ;; glRasterPos4s
-    (if (i32.eq (local.get $id) (i32.const 4391)) (then (return (i32.const 1)))) ;; glRasterPos4sv
     (if (i32.eq (local.get $id) (i32.const 4400)) (then (return (i32.const 1)))) ;; glRenderMode
     (if (i32.eq (local.get $id) (i32.const 4402)) (then (return (i32.const 1)))) ;; glSelectBuffer
     (if (i32.eq (local.get $id) (i32.const 4436)) (then (return (i32.const 1)))) ;; glTexEnvfv
@@ -22117,76 +22117,76 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4368: glRasterPos2d
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5130) (i32.const 0))
       (return)
     ) ;; 4369: glRasterPos2dv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5130) (i32.const 1))
       (return)
     ) ;; 4370: glRasterPos2f
       (call $handle_gpu_api (i32.const 130) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4371: glRasterPos2fv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5126) (i32.const 1))
       (return)
     ) ;; 4372: glRasterPos2i
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5124) (i32.const 0))
       (return)
     ) ;; 4373: glRasterPos2iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5124) (i32.const 1))
       (return)
     ) ;; 4374: glRasterPos2s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5122) (i32.const 0))
       (return)
     ) ;; 4375: glRasterPos2sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 2) (i32.const 5122) (i32.const 1))
       (return)
     ) ;; 4376: glRasterPos3d
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5130) (i32.const 0))
       (return)
     ) ;; 4377: glRasterPos3dv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5130) (i32.const 1))
       (return)
     ) ;; 4378: glRasterPos3f
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5126) (i32.const 0))
       (return)
     ) ;; 4379: glRasterPos3fv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5126) (i32.const 1))
       (return)
     ) ;; 4380: glRasterPos3i
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5124) (i32.const 0))
       (return)
     ) ;; 4381: glRasterPos3iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5124) (i32.const 1))
       (return)
     ) ;; 4382: glRasterPos3s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5122) (i32.const 0))
       (return)
     ) ;; 4383: glRasterPos3sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 3) (i32.const 5122) (i32.const 1))
       (return)
     ) ;; 4384: glRasterPos4d
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5130) (i32.const 0))
       (return)
     ) ;; 4385: glRasterPos4dv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5130) (i32.const 1))
       (return)
     ) ;; 4386: glRasterPos4f
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5126) (i32.const 0))
       (return)
     ) ;; 4387: glRasterPos4fv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5126) (i32.const 1))
       (return)
     ) ;; 4388: glRasterPos4i
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5124) (i32.const 0))
       (return)
     ) ;; 4389: glRasterPos4iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5124) (i32.const 1))
       (return)
     ) ;; 4390: glRasterPos4s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5122) (i32.const 0))
       (return)
     ) ;; 4391: glRasterPos4sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRasterPos_typed (i32.const 4) (i32.const 5122) (i32.const 1))
       (return)
     ) ;; 4392: glRectd
       (call $handle_glRectd (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

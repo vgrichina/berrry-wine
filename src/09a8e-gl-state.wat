@@ -87,6 +87,9 @@
     (f32.store offset=160 (local.get $p) (global.get $gl_tex1_q)))
 
   (func $gl_native_query_count (param $p i32) (result i32)
+    (if (i32.eq (local.get $p) (i32.const 0xb06)) (then (return (i32.const 4))))
+    (if (i32.or (i32.eq (local.get $p) (i32.const 0xb05))
+        (i32.eq (local.get $p) (i32.const 0xb09))) (then (return (i32.const 1))))
     (if (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $p) (i32.const 0xba0)) (i32.eq (local.get $p) (i32.const 0x84e0))) (i32.eq (local.get $p) (i32.const 0x84e1))) (i32.eq (local.get $p) (i32.const 0xba3))) (i32.eq (local.get $p) (i32.const 0xba4))) (i32.eq (local.get $p) (i32.const 0xba5))) (i32.eq (local.get $p) (i32.const 0xd31))) (i32.eq (local.get $p) (i32.const 0x84e2))) (i32.eq (local.get $p) (i32.const 0xd36))) (i32.eq (local.get $p) (i32.const 0xd38))) (i32.eq (local.get $p) (i32.const 0xd39))) (i32.eq (local.get $p) (i32.const 0xd35))) (i32.eq (local.get $p) (i32.const 0xd3b))) (i32.eq (local.get $p) (i32.const 0xb31))) (i32.eq (local.get $p) (i32.const 0xbb0))) (i32.eq (local.get $p) (i32.const 0xbb1))) (i32.eq (local.get $p) (i32.const 0xb54))) (i32.eq (local.get $p) (i32.const 0xb30))) (i32.eq (local.get $p) (i32.const 0xb33))) (i32.eq (local.get $p) (i32.const 0xb65))) (i32.eq (local.get $p) (i32.const 0xb62))) (i32.eq (local.get $p) (i32.const 0xb63))) (i32.eq (local.get $p) (i32.const 0xb64))) (i32.eq (local.get $p) (i32.const 0xb08))) (i32.eq (local.get $p) (i32.const 0xb32))) (i32.eq (local.get $p) (i32.const 0xcf5))) (i32.eq (local.get $p) (i32.const 0xcf2))) (i32.eq (local.get $p) (i32.const 0xcf3))) (i32.eq (local.get $p) (i32.const 0xcf4))) (i32.eq (local.get $p) (i32.const 0xcf1))) (i32.eq (local.get $p) (i32.const 0xb90))) (i32.eq (local.get $p) (i32.const 0xb91))) (i32.eq (local.get $p) (i32.const 0xb92))) (i32.eq (local.get $p) (i32.const 0xb93))) (i32.eq (local.get $p) (i32.const 0xb94))) (i32.eq (local.get $p) (i32.const 0xb95))) (i32.eq (local.get $p) (i32.const 0xb96))) (i32.eq (local.get $p) (i32.const 0xb97))) (i32.eq (local.get $p) (i32.const 0xb98))) (i32.eq (local.get $p) (i32.const 0xd57))) (i32.eq (local.get $p) (i32.const 0xd58))) (i32.eq (local.get $p) (i32.const 0xd59))) (i32.eq (local.get $p) (i32.const 0xd5a))) (i32.eq (local.get $p) (i32.const 0xd5b))) (i32.eq (local.get $p) (i32.const 0x807a))) (i32.eq (local.get $p) (i32.const 0x8081))) (i32.eq (local.get $p) (i32.const 0x807b))) (i32.eq (local.get $p) (i32.const 0x807c))) (i32.eq (local.get $p) (i32.const 0x807e))) (i32.eq (local.get $p) (i32.const 0x807f))) (i32.eq (local.get $p) (i32.const 0x8082))) (i32.eq (local.get $p) (i32.const 0x8083))) (i32.eq (local.get $p) (i32.const 0x8088))) (i32.eq (local.get $p) (i32.const 0x8089))) (i32.eq (local.get $p) (i32.const 0x808a))) (i32.eq (local.get $p) (i32.const 0x8074))) (i32.eq (local.get $p) (i32.const 0x8075))) (i32.eq (local.get $p) (i32.const 0x8076))) (i32.eq (local.get $p) (i32.const 0x8078))) (then (return (i32.const 1))))
     (if (i32.eq (local.get $p) (i32.const 0xb70)) (then (return (i32.const 2))))
     (if (i32.eq (local.get $p) (i32.const 0xb02)) (then (return (i32.const 3))))
@@ -99,6 +102,14 @@
     (i32.const 0))
 
   (func $gl_native_query_value (param $p i32) (param $i i32) (result f64)
+    (if (i32.eq (local.get $p) (i32.const 0xb06)) (then
+      (return (f64.promote_f32 (f32.load (i32.add (call $gl_list_context)
+        (i32.add (i32.const 272) (i32.add
+          (i32.shl (i32.load offset=4 (call $gl_mtx_block)) (i32.const 4))
+          (i32.shl (local.get $i) (i32.const 2))))))))))
+    (if (i32.eq (local.get $p) (i32.const 0xb05)) (then (return (f64.const 1))))
+    (if (i32.eq (local.get $p) (i32.const 0xb09)) (then
+      (return (f64.promote_f32 (f32.load offset=264 (call $gl_list_context))))))
     ;; 0x0ba6 column-major matrix
     (if (i32.eq (local.get $p) (i32.const 0xba6)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_mtx_stack_top (call $gl_mtx_block) (i32.const 0)) (i32.add (i32.const 0) (i32.shl (local.get $i) (i32.const 2)))))))))
     ;; 0x0ba7 column-major matrix

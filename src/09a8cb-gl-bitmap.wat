@@ -10,7 +10,13 @@
     (f32.store offset=68 (local.get $ctx) (f32.const 1))
     (f32.store offset=72 (local.get $ctx) (f32.const 1))
     (i32.store offset=80 (local.get $ctx) (i32.const 4))
-    (f32.store offset=164 (local.get $ctx) (f32.const 1)))
+    (f32.store offset=164 (local.get $ctx) (f32.const 1))
+    ;; +264 distance, +268 index, +272/+288 texture vec4s, +304 private
+    ;; evaluator input, +380 S/T texgen modes. All are owned by this context.
+    (f32.store offset=268 (local.get $ctx) (f32.const 1))
+    (f32.store offset=284 (local.get $ctx) (f32.const 1))
+    (f32.store offset=300 (local.get $ctx) (f32.const 1))
+    (call $gl_raster_texgen_init (local.get $ctx)))
 
   (func $gl_bitmap_count (param $ctx i32) (param $stack i32) (result i32)
     (local $w i32) (local $h i32) (local $n i64)
@@ -57,19 +63,19 @@
       (local.set $y (i32.add (local.get $y) (i32.const 1)))
       (br_if $rows (i32.lt_u (local.get $y) (local.get $h)))))
 
-  (func $gl_bitmap_raster_pos (param $ctx i32) (param $stack i32)
+  (func $gl_bitmap_raster_pos (param $ctx i32) (param $stack i32) (param $four i32)
     (local $b i32) (local $v i32) (local $eye i32) (local $clip i32) (local $vp i32)
     (local $w f32) (local $i i32) (local $n f32) (local $far f32)
-    ;; Lighting at RasterPos requires a lit raster colour, not current colour.
-    (if (i32.and (i32.load offset=108 (local.get $ctx)) (i32.const 8))
-      (then (call $gl_bitmap_unsupported_raster_state)))
+    (local $caps i32) (local $saved i32) (local $reverse i32) (local $light i32) (local $vertex i32)
     (local.set $b (call $gl_mtx_block))
     (if (call $gl_mtx_export_untrusted) (then (call $gl_bitmap_unsupported_raster_state)))
     (local.set $v (i32.add (local.get $ctx) (i32.const 112)))
     (local.set $eye (i32.add (local.get $ctx) (i32.const 128)))
     (local.set $clip (i32.add (local.get $ctx) (i32.const 144)))
     (call $gl_mtx_set4 (local.get $v) (f32.load offset=4 (local.get $stack))
-      (f32.load offset=8 (local.get $stack)) (f32.const 0) (f32.const 1))
+      (f32.load offset=8 (local.get $stack))
+      (if (result f32) (local.get $four) (then (f32.load offset=12 (local.get $stack))) (else (f32.const 0)))
+      (if (result f32) (local.get $four) (then (f32.load offset=16 (local.get $stack))) (else (f32.const 1))))
     (call $gl_mtx_transform4 (local.get $eye) (call $gl_mtx_stack_top (local.get $b) (i32.const 0)) (local.get $v))
     (call $gl_mtx_transform4 (local.get $clip) (call $gl_mtx_stack_top (local.get $b) (i32.const 1)) (local.get $eye))
     (i32.store offset=40 (local.get $ctx) (i32.const 0))
@@ -80,9 +86,29 @@
           (local.get $w))) (then (return)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $clip_axes (i32.lt_u (local.get $i) (i32.const 3))))
+    ;; A private record feeds the existing lighting evaluator; it never enters
+    ;; the immediate vertex buffer, stream or primitive assembly.
+    (local.set $vertex (i32.add (local.get $ctx) (i32.const 304)))
+    (memory.fill (local.get $vertex) (i32.const 0) (i32.const 76))
+    (memory.copy (local.get $vertex) (local.get $v) (i32.const 12))
+    (f32.store offset=56 (local.get $vertex) (f32.load offset=12 (local.get $v)))
+    (f32.store offset=12 (local.get $vertex) (global.get $gl_color_r))
+    (f32.store offset=16 (local.get $vertex) (global.get $gl_color_g))
+    (f32.store offset=20 (local.get $vertex) (global.get $gl_color_b))
+    (f32.store offset=24 (local.get $vertex) (global.get $gl_color_a))
+    (f32.store offset=36 (local.get $vertex) (global.get $gl_normal_x))
+    (f32.store offset=40 (local.get $vertex) (global.get $gl_normal_y))
+    (f32.store offset=44 (local.get $vertex) (global.get $gl_normal_z))
+    ;; Raster normals use the full inverse-transpose modelview. A separate
+    ;; evaluator record preserves object coordinates for linear texgen.
+    (memory.copy (i32.add (local.get $ctx) (i32.const 680)) (local.get $vertex) (i32.const 76))
+    (call $gl_mtx_set4 (local.get $v) (global.get $gl_normal_x) (global.get $gl_normal_y)
+      (global.get $gl_normal_z) (f32.const 0))
+    (call $gl_raster_eye_plane (local.get $b) (i32.add (local.get $ctx) (i32.const 716)) (call $w2g (local.get $v)))
     (local.set $vp (call $gl_mtx_export_viewport_ptr))
     (if (i32.eqz (i32.load offset=168 (local.get $ctx))) (then
-      (local.set $vp (i32.add (local.get $ctx) (i32.const 176)))
+      (local.set $vp (i32.add (local.get $ctx) (i32.const 112)))
+      (memory.fill (local.get $vp) (i32.const 0) (i32.const 16))
       (i32.store offset=8 (local.get $vp) (global.get $gl_sw_default_w))
       (i32.store offset=12 (local.get $vp) (global.get $gl_sw_default_h))))
     (f32.store offset=44 (local.get $ctx) (f32.add (f32.convert_i32_s (i32.load (local.get $vp)))
@@ -97,10 +123,47 @@
       (f32.mul (f32.mul (f32.add (f32.div (f32.load offset=8 (local.get $clip)) (local.get $w)) (f32.const 1))
         (f32.const 0.5)) (f32.sub (local.get $far) (local.get $n)))))
     (f32.store offset=56 (local.get $ctx) (local.get $w))
-    (f32.store offset=60 (local.get $ctx) (f32.min (f32.const 1) (f32.max (f32.const 0) (global.get $gl_color_r))))
-    (f32.store offset=64 (local.get $ctx) (f32.min (f32.const 1) (f32.max (f32.const 0) (global.get $gl_color_g))))
-    (f32.store offset=68 (local.get $ctx) (f32.min (f32.const 1) (f32.max (f32.const 0) (global.get $gl_color_b))))
-    (f32.store offset=72 (local.get $ctx) (f32.min (f32.const 1) (f32.max (f32.const 0) (global.get $gl_color_a))))
+    (local.set $caps (i32.load offset=9036 (local.get $b)))
+    (if (i32.and (local.get $caps) (i32.const 128)) (then
+      ;; The evaluator reads software cap bits; use the authoritative native
+      ;; context mirror even when the selected backend is WebGL.
+      (local.set $saved (i32.load (global.get $gl_sw_st)))
+      (local.set $reverse (global.get $gl_sw_reverse_normal))
+      (local.set $light (global.get $gl_sw_light_block))
+      (i32.store (global.get $gl_sw_st) (local.get $caps))
+      (global.set $gl_sw_reverse_normal (i32.const 0))
+      (call $gl_sw_light_setup (local.get $b))
+      (call $gl_sw_light_evaluate (i32.add (local.get $ctx) (i32.const 680))
+        (i32.add (local.get $ctx) (i32.const 60)) (i32.const 1))
+      (i32.store (global.get $gl_sw_st) (local.get $saved))
+      (global.set $gl_sw_reverse_normal (local.get $reverse))
+      (global.set $gl_sw_light_block (local.get $light)))
+      (else (memory.copy (i32.add (local.get $ctx) (i32.const 60))
+        (i32.add (local.get $vertex) (i32.const 12)) (i32.const 16))))
+    (local.set $i (i32.const 0))
+    (loop $clamp_color
+      (f32.store (i32.add (i32.add (local.get $ctx) (i32.const 60)) (local.get $i))
+        (f32.min (f32.const 1) (f32.max (f32.const 0)
+          (f32.load (i32.add (i32.add (local.get $ctx) (i32.const 60)) (local.get $i))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 4)))
+      (br_if $clamp_color (i32.lt_u (local.get $i) (i32.const 16))))
+    ;; Associated texture coordinates are captured after the texture matrix,
+    ;; retaining r and q. Later current coordinates and matrices cannot alter them.
+    (call $gl_mtx_set4 (local.get $v) (global.get $gl_tex_s) (global.get $gl_tex_t)
+      (global.get $gl_tex_r) (global.get $gl_tex_q))
+    (call $gl_raster_texgen (local.get $ctx) (i32.const 0) (local.get $v)
+      (local.get $vertex) (local.get $eye) (local.get $b))
+    (call $gl_mtx_transform4 (i32.add (local.get $ctx) (i32.const 272))
+      (call $gl_mtx_stack_top (local.get $b) (i32.const 2)) (local.get $v))
+    (call $gl_mtx_set4 (local.get $v) (global.get $gl_tex1_s) (global.get $gl_tex1_t)
+      (global.get $gl_tex1_r) (global.get $gl_tex1_q))
+    (call $gl_raster_texgen (local.get $ctx) (i32.const 1) (local.get $v)
+      (local.get $vertex) (local.get $eye) (local.get $b))
+    (call $gl_mtx_transform4 (i32.add (local.get $ctx) (i32.const 288))
+      (call $gl_mtx_stack_top (local.get $b) (i32.const 3)) (local.get $v))
+    ;; Euclidean distance in eye space, after dehomogenization.
+    (call $gl_sw_dehomogenize (local.get $eye))
+    (f32.store offset=264 (local.get $ctx) (f32.sqrt (call $gl_sw_dot3 (local.get $eye) (local.get $eye))))
     (i32.store offset=40 (local.get $ctx) (i32.const 1)))
 
   (func $gl_bitmap_draw (param $ctx i32) (param $stack i32) (param $bits i32)
@@ -109,11 +172,6 @@
     (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (then
       (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return)))
     (if (i32.eqz (i32.load offset=40 (local.get $ctx))) (then (return)))
-    ;; Textured and fogged bitmap fragments need the captured raster texture
-    ;; coordinates/distance. Refuse those paths rather than render flat text.
-    (if (i32.and (i32.ne (local.get $bits) (i32.const 0))
-        (i32.ne (i32.and (i32.load offset=108 (local.get $ctx)) (i32.const 7)) (i32.const 0)))
-      (then (call $gl_bitmap_unsupported_raster_state)))
     (local.set $w (i32.load offset=4 (local.get $stack)))
     (local.set $h (i32.load offset=8 (local.get $stack)))
     (local.set $ox (f32.floor (f32.sub (f32.load offset=44 (local.get $ctx)) (f32.load offset=12 (local.get $stack)))))
@@ -138,6 +196,12 @@
             (f32.store offset=4 (local.get $v) (f32.add (local.get $oy) (f32.convert_i32_u (local.get $y))))
             (f32.store offset=8 (local.get $v) (f32.load offset=52 (local.get $ctx)))
             (memory.copy (i32.add (local.get $v) (i32.const 12)) (i32.add (local.get $ctx) (i32.const 60)) (i32.const 16))
+            ;; Homogeneous raster coordinates, already generated/transformed.
+            (memory.copy (i32.add (local.get $v) (i32.const 28)) (i32.add (local.get $ctx) (i32.const 272)) (i32.const 8))
+            (memory.copy (i32.add (local.get $v) (i32.const 48)) (i32.add (local.get $ctx) (i32.const 288)) (i32.const 8))
+            (memory.copy (i32.add (local.get $v) (i32.const 60)) (i32.add (local.get $ctx) (i32.const 280)) (i32.const 8))
+            (memory.copy (i32.add (local.get $v) (i32.const 68)) (i32.add (local.get $ctx) (i32.const 296)) (i32.const 8))
+            (f32.store offset=36 (local.get $v) (f32.load offset=264 (local.get $ctx)))
             (local.set $count (i32.add (local.get $count) (i32.const 1)))))
           (local.set $bits (i32.add (local.get $bits) (i32.const 1)))
           (local.set $x (i32.add (local.get $x) (i32.const 1)))
@@ -273,9 +337,26 @@
         (local.set $y (i32.sub (i32.sub (load.field DxObject height (global.get $gl_sw_rt)) (i32.const 1)) (local.get $y)))))
       (local.set $y (i32.sub (local.get $y) (global.get $gl_sw_r_dy)))
       (f32.store offset=8 (local.get $p) (f32.load offset=8 (local.get $v)))
+      ;; One bitmap sample has constant S/Q and T/Q; no interpolation or
+      ;; second texture-matrix application is appropriate here.
+      (f32.store offset=16 (local.get $p) (f32.div (f32.load offset=28 (local.get $v)) (f32.load offset=64 (local.get $v))))
+      (f32.store offset=20 (local.get $p) (f32.div (f32.load offset=32 (local.get $v)) (f32.load offset=64 (local.get $v))))
+      (if (call $gl_sw_t1_bind) (then
+        (global.set $rast_t1_on (i32.const 1))
+        (global.set $rast_t1_qa (f32.const 0)) (global.set $rast_t1_qb (f32.const 0)) (global.set $rast_t1_qc (f32.const 1))
+        (global.set $rast_t1_ua (f32.const 0)) (global.set $rast_t1_ub (f32.const 0))
+        (global.set $rast_t1_uc (f32.div (f32.load offset=48 (local.get $v)) (f32.load offset=72 (local.get $v))))
+        (global.set $rast_t1_va (f32.const 0)) (global.set $rast_t1_vb (f32.const 0))
+        (global.set $rast_t1_vc (f32.div (f32.load offset=52 (local.get $v)) (f32.load offset=72 (local.get $v))))))
+      (if (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 64)) (then
+        (global.set $rast_fog_on (i32.const 1))
+        (global.set $rast_fog_a (f32.const 0)) (global.set $rast_fog_b (f32.const 0))
+        (global.set $rast_fog_c (call $gl_sw_fog_factor (f32.load offset=36 (local.get $v))))
+        (global.set $rast_fog_color (global.get $gl_sw_fog_color))))
       (i32.store offset=24 (local.get $p) (call $gl_sw_color (local.get $v)))
       (call $gl_sw_span (local.get $y) (local.get $x) (local.get $p) (i32.add (local.get $x) (i32.const 1)) (local.get $p))
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $pixels)))
+    (call $gl_sw_prim_done)
     (global.set $rast_stencil_state (i32.const 0))
     (global.set $rast_color_mask (i32.const -1)))
 
@@ -287,6 +368,7 @@
     (if (call $gl_accum_intercept (local.get $op) (local.get $stack)) (then (return (i32.const 1))))
     (local.set $a (i32.load offset=4 (local.get $stack)))
     (local.set $v (i32.load offset=8 (local.get $stack)))
+    (call $gl_raster_texgen_state (local.get $ctx) (local.get $op) (local.get $stack))
     (if (i32.eq (local.get $op) (i32.const 20))
       (then (i32.store offset=168 (local.get $ctx) (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 7)) (then
@@ -406,7 +488,9 @@
           (then (i32.reinterpret_f32 (f32.convert_i32_s (local.get $n)))) (else (local.get $n))))
         (return (i32.const 1))))))
     (if (i32.eq (local.get $op) (i32.const 130)) (then
-      (call $gl_bitmap_raster_pos (local.get $ctx) (local.get $stack)) (return (i32.const 1))))
+      (call $gl_bitmap_raster_pos (local.get $ctx) (local.get $stack) (i32.const 0)) (return (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 146)) (then
+      (call $gl_bitmap_raster_pos (local.get $ctx) (local.get $stack) (i32.const 1)) (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 131)) (then
       (local.set $n (call $gl_bitmap_count (local.get $ctx) (local.get $stack)))
       (if (i32.lt_s (local.get $n) (i32.const 0)) (then (return (i32.const 1))))
@@ -425,7 +509,7 @@
     (if (i32.eq (local.get $op) (i32.const 76)) (then
       (if (i32.ge_u (i32.load offset=172 (local.get $ctx)) (i32.const 16)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x503)) (return (i32.const 1))))
-      (local.set $p (call $gl_list_alloc (i32.const 124)))
+      (local.set $p (call $gl_list_alloc (i32.const 460)))
       (if (i32.eqz (local.get $p)) (then (unreachable)))
       (i32.store (local.get $p) (i32.load offset=104 (local.get $ctx)))
       (i32.store offset=4 (local.get $p) (local.get $a))
@@ -438,6 +522,10 @@
       (i32.store offset=100 (local.get $p) (i32.load offset=236 (local.get $ctx)))
       (i32.store offset=104 (local.get $p) (global.get $gl_sw_clear_color))
       (memory.copy (i32.add (local.get $p) (i32.const 108)) (i32.add (local.get $ctx) (i32.const 248)) (i32.const 16))
+      (memory.copy (i32.add (local.get $p) (i32.const 124))
+        (i32.add (local.get $ctx) (i32.const 264)) (i32.const 40))
+      (memory.copy (i32.add (local.get $p) (i32.const 164))
+        (i32.add (local.get $ctx) (i32.const 384)) (i32.const 296))
       (i32.store offset=104 (local.get $ctx) (local.get $p))
       (i32.store offset=172 (local.get $ctx) (i32.add (i32.load offset=172 (local.get $ctx)) (i32.const 1)))))
     (if (i32.eq (local.get $op) (i32.const 77)) (then
@@ -460,7 +548,15 @@
       (if (i32.and (local.get $mask) (i32.const 0x2000))
         (then (i32.store offset=192 (local.get $ctx) (i32.load offset=56 (local.get $p)))))
       (if (i32.and (local.get $mask) (i32.const 1))
-        (then (memory.copy (i32.add (local.get $ctx) (i32.const 40)) (i32.add (local.get $p) (i32.const 16)) (i32.const 40))))
+        (then (memory.copy (i32.add (local.get $ctx) (i32.const 40)) (i32.add (local.get $p) (i32.const 16)) (i32.const 40))
+          (memory.copy (i32.add (local.get $ctx) (i32.const 264))
+            (i32.add (local.get $p) (i32.const 124)) (i32.const 40))))
+      (if (i32.and (local.get $mask) (i32.const 0x40000)) (then
+        (memory.copy (i32.add (local.get $ctx) (i32.const 384))
+          (i32.add (local.get $p) (i32.const 164)) (i32.const 296))))
+      (if (i32.and (local.get $mask) (i32.const 0x2000)) (then
+        (i32.store offset=384 (local.get $ctx) (i32.load offset=164 (local.get $p)))
+        (i32.store offset=532 (local.get $ctx) (i32.load offset=312 (local.get $p)))))
       (local.set $b (i32.const 0))
       (if (i32.and (local.get $mask) (i32.const 0x2000)) (then (local.set $b (i32.const 15))))
       (if (i32.and (local.get $mask) (i32.const 0x40000)) (then (local.set $b (i32.or (local.get $b) (i32.const 3)))))
@@ -496,3 +592,173 @@
           (br_if $query (i32.lt_u (local.get $j) (local.get $n))))
         (return (i32.const 1))))))
     (i32.const 0))
+
+  ;; Per-context, per-unit texgen: enables, four modes, object and eye planes.
+  (func $gl_raster_texgen_init (param $ctx i32)
+    (local $u i32) (local $i i32) (local $p i32)
+    (loop $units
+      (local.set $p (i32.add (local.get $ctx) (i32.add (i32.const 384) (i32.mul (local.get $u) (i32.const 148)))))
+      (local.set $i (i32.const 0))
+      (loop $coords
+        (i32.store (i32.add (local.get $p) (i32.add (i32.const 4) (i32.shl (local.get $i) (i32.const 2)))) (i32.const 0x2400))
+        ;; Default S=x, T=y; R and Q planes are zero.
+        (if (i32.lt_u (local.get $i) (i32.const 2)) (then
+          (f32.store (i32.add (local.get $p) (i32.add (i32.const 20) (i32.mul (local.get $i) (i32.const 20)))) (f32.const 1))
+          (f32.store (i32.add (local.get $p) (i32.add (i32.const 84) (i32.mul (local.get $i) (i32.const 20)))) (f32.const 1))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $coords (i32.lt_u (local.get $i) (i32.const 4))))
+      (local.set $u (i32.add (local.get $u) (i32.const 1)))
+      (br_if $units (i32.lt_u (local.get $u) (i32.const 2)))))
+
+  ;; Solve modelview^T * result = supplied plane using pivoted f64
+  ;; elimination. This handles non-affine matrices as well as translations.
+  ;; Singular matrices leave the plane undefined, as the GL specification does.
+  (func $gl_raster_eye_plane (param $b i32) (param $dst i32) (param $p i32)
+    (local $a i32) (local $m i32) (local $row i32) (local $col i32)
+    (local $k i32) (local $pivot i32) (local $i i32) (local $j i32)
+    (local $ar i32) (local $ak i32) (local $v f64) (local $n f64) (local $t f64)
+    (local.set $a (call $gl_list_alloc (i32.const 160)))
+    (if (i32.eqz (local.get $a)) (then
+      (call $gl_list_error (call $gl_list_context) (i32.const 0x505)) (return)))
+    (local.set $m (call $gl_mtx_stack_top (local.get $b) (i32.const 0)))
+    (loop $rows
+      (local.set $col (i32.const 0))
+      (local.set $ar (i32.add (local.get $a) (i32.mul (local.get $row) (i32.const 40))))
+      (loop $cols
+        (f64.store (i32.add (local.get $ar) (i32.shl (local.get $col) (i32.const 3)))
+          (f64.promote_f32 (f32.load (i32.add (local.get $m)
+            (i32.shl (i32.add (i32.shl (local.get $row) (i32.const 2)) (local.get $col)) (i32.const 2))))))
+        (local.set $col (i32.add (local.get $col) (i32.const 1)))
+        (br_if $cols (i32.lt_u (local.get $col) (i32.const 4))))
+      (f64.store offset=32 (local.get $ar) (f64.promote_f32
+        (f32.reinterpret_i32 (call $gl32 (i32.add (local.get $p) (i32.shl (local.get $row) (i32.const 2)))))))
+      (local.set $row (i32.add (local.get $row) (i32.const 1)))
+      (br_if $rows (i32.lt_u (local.get $row) (i32.const 4))))
+    (block $singular
+      (loop $eliminate
+        (local.set $pivot (local.get $k)) (local.set $i (local.get $k)) (local.set $n (f64.const 0))
+        (loop $find
+          (local.set $v (f64.abs (f64.load (i32.add (local.get $a)
+            (i32.add (i32.mul (local.get $i) (i32.const 40)) (i32.shl (local.get $k) (i32.const 3)))))))
+          (if (f64.gt (local.get $v) (local.get $n)) (then (local.set $pivot (local.get $i)) (local.set $n (local.get $v))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $find (i32.lt_u (local.get $i) (i32.const 4))))
+        (br_if $singular (f64.eq (local.get $n) (f64.const 0)))
+        (local.set $ak (i32.add (local.get $a) (i32.mul (local.get $k) (i32.const 40))))
+        (local.set $ar (i32.add (local.get $a) (i32.mul (local.get $pivot) (i32.const 40))))
+        (local.set $j (i32.const 0))
+        (loop $swap
+          (local.set $t (f64.load (i32.add (local.get $ak) (local.get $j))))
+          (f64.store (i32.add (local.get $ak) (local.get $j)) (f64.load (i32.add (local.get $ar) (local.get $j))))
+          (f64.store (i32.add (local.get $ar) (local.get $j)) (local.get $t))
+          (local.set $j (i32.add (local.get $j) (i32.const 8)))
+          (br_if $swap (i32.lt_u (local.get $j) (i32.const 40))))
+        (local.set $n (f64.load (i32.add (local.get $ak) (i32.shl (local.get $k) (i32.const 3)))))
+        (local.set $j (i32.const 0))
+        (loop $normalize
+          (f64.store (i32.add (local.get $ak) (local.get $j))
+            (f64.div (f64.load (i32.add (local.get $ak) (local.get $j))) (local.get $n)))
+          (local.set $j (i32.add (local.get $j) (i32.const 8)))
+          (br_if $normalize (i32.lt_u (local.get $j) (i32.const 40))))
+        (local.set $i (i32.const 0))
+        (loop $reduce
+          (if (i32.ne (local.get $i) (local.get $k)) (then
+            (local.set $ar (i32.add (local.get $a) (i32.mul (local.get $i) (i32.const 40))))
+            (local.set $v (f64.load (i32.add (local.get $ar) (i32.shl (local.get $k) (i32.const 3)))))
+            (local.set $j (i32.const 0))
+            (loop $subtract
+              (f64.store (i32.add (local.get $ar) (local.get $j))
+                (f64.sub (f64.load (i32.add (local.get $ar) (local.get $j)))
+                  (f64.mul (local.get $v) (f64.load (i32.add (local.get $ak) (local.get $j))))))
+              (local.set $j (i32.add (local.get $j) (i32.const 8)))
+              (br_if $subtract (i32.lt_u (local.get $j) (i32.const 40))))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $reduce (i32.lt_u (local.get $i) (i32.const 4))))
+        (local.set $k (i32.add (local.get $k) (i32.const 1)))
+        (br_if $eliminate (i32.lt_u (local.get $k) (i32.const 4))))
+      (local.set $i (i32.const 0))
+      (loop $result
+        (f32.store (i32.add (local.get $dst) (i32.shl (local.get $i) (i32.const 2)))
+          (f32.demote_f64 (f64.load (i32.add (local.get $a)
+            (i32.add (i32.mul (local.get $i) (i32.const 40)) (i32.const 32))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $result (i32.lt_u (local.get $i) (i32.const 4)))))
+    (call $heap_free (call $w2g (local.get $a))))
+
+  (func $gl_raster_texgen (param $ctx i32) (param $unit i32) (param $v i32)
+      (param $vertex i32) (param $eye i32) (param $b i32)
+    (local $p i32) (local $i i32) (local $mode i32) (local $plane i32)
+    (local $light i32) (local $k i32) (local $sum f32) (local $point i32)
+    (local.set $p (i32.add (local.get $ctx) (i32.add (i32.const 384) (i32.mul (local.get $unit) (i32.const 148)))))
+    (loop $coords
+      (if (i32.and (i32.load (local.get $p)) (i32.shl (i32.const 1) (local.get $i))) (then
+        (local.set $mode (i32.load (i32.add (local.get $p) (i32.add (i32.const 4) (i32.shl (local.get $i) (i32.const 2))))))
+        (if (i32.eq (local.get $mode) (i32.const 0x2402)) (then
+          (local.set $light (global.get $gl_sw_light_block))
+          (call $gl_sw_light_setup (local.get $b))
+          ;; Use global evaluator scratch, leaving input and eye position intact.
+          (call $gl_sw_sphere_evaluate (i32.add (local.get $ctx) (i32.const 680))
+            (i32.add (global.get $gl_sw_scratch) (i32.const 0x700)) (i32.const 1))
+          (global.set $gl_sw_light_block (local.get $light))
+          (f32.store (i32.add (local.get $v) (i32.shl (local.get $i) (i32.const 2)))
+            (f32.load (i32.add (global.get $gl_sw_scratch) (i32.add (i32.const 0x710) (i32.shl (local.get $i) (i32.const 2)))))))
+        (else
+          (local.set $point (select (local.get $eye) (local.get $vertex) (i32.eq (local.get $mode) (i32.const 0x2400))))
+          (local.set $plane (i32.add (local.get $p) (i32.add
+            (select (i32.const 84) (i32.const 20) (i32.eq (local.get $mode) (i32.const 0x2400)))
+            (i32.shl (local.get $i) (i32.const 4)))))
+          (local.set $sum (f32.const 0)) (local.set $k (i32.const 0))
+          (loop $dot
+            (local.set $sum (f32.add (local.get $sum)
+              (f32.mul (f32.load (i32.add (local.get $plane) (i32.shl (local.get $k) (i32.const 2))))
+                (if (result f32) (i32.and (i32.eq (local.get $mode) (i32.const 0x2401)) (i32.eq (local.get $k) (i32.const 3)))
+                  (then (f32.load offset=56 (local.get $vertex)))
+                  (else (f32.load (i32.add (local.get $point) (i32.shl (local.get $k) (i32.const 2)))))))))
+            (local.set $k (i32.add (local.get $k) (i32.const 1)))
+            (br_if $dot (i32.lt_u (local.get $k) (i32.const 4))))
+          (f32.store (i32.add (local.get $v) (i32.shl (local.get $i) (i32.const 2))) (local.get $sum))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $coords (i32.lt_u (local.get $i) (i32.const 4)))))
+
+  (func $gl_raster_texgen_state (param $ctx i32) (param $op i32) (param $stack i32)
+    (local $coord i32) (local $pname i32) (local $p i32) (local $mode i32) (local $src i32) (local $i i32)
+    (if (i32.eqz (i32.or
+        (i32.or (i32.eq (local.get $op) (i32.const 8)) (i32.eq (local.get $op) (i32.const 10)))
+        (i32.lt_u (i32.sub (local.get $op) (i32.const 83)) (i32.const 3)))) (then (return)))
+    (local.set $coord (i32.load offset=4 (local.get $stack)))
+    (local.set $p (i32.add (local.get $ctx) (i32.add (i32.const 384)
+      (i32.mul (i32.load offset=4 (call $gl_mtx_block)) (i32.const 148)))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 8)) (i32.eq (local.get $op) (i32.const 10))) (then
+      (local.set $coord (i32.sub (local.get $coord) (i32.const 0xc60)))
+      (if (i32.lt_u (local.get $coord) (i32.const 4)) (then
+        (local.set $mode (i32.shl (i32.const 1) (local.get $coord)))
+        (i32.store (local.get $p) (if (result i32) (i32.eq (local.get $op) (i32.const 10))
+          (then (i32.or (i32.load (local.get $p)) (local.get $mode)))
+          (else (i32.and (i32.load (local.get $p)) (i32.xor (local.get $mode) (i32.const -1)))))))) (return)))
+    (local.set $pname (i32.load offset=8 (local.get $stack)))
+    (local.set $coord (i32.sub (local.get $coord) (i32.const 0x2000)))
+    (if (i32.ge_u (local.get $coord) (i32.const 4)) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return)))
+    (if (i32.eq (local.get $pname) (i32.const 0x2500)) (then
+      (if (i32.eq (local.get $op) (i32.const 85)) (then
+        (call $gl_texcoord_check (i32.load offset=12 (local.get $stack)) (i32.const 4))))
+      (local.set $mode (if (result i32) (i32.eq (local.get $op) (i32.const 83))
+        (then (i32.load offset=12 (local.get $stack)))
+        (else (i32.trunc_sat_f32_s (if (result f32) (i32.eq (local.get $op) (i32.const 84))
+          (then (f32.load offset=12 (local.get $stack)))
+          (else (f32.reinterpret_i32 (call $gl32 (i32.load offset=12 (local.get $stack))))))))))
+      (if (i32.or (i32.gt_u (i32.sub (local.get $mode) (i32.const 0x2400)) (i32.const 2))
+          (i32.and (i32.eq (local.get $mode) (i32.const 0x2402)) (i32.ge_u (local.get $coord) (i32.const 2)))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return)))
+      (i32.store (i32.add (local.get $p) (i32.add (i32.const 4) (i32.shl (local.get $coord) (i32.const 2)))) (local.get $mode)) (return)))
+    (if (i32.or (i32.ne (local.get $op) (i32.const 85))
+        (i32.gt_u (i32.sub (local.get $pname) (i32.const 0x2501)) (i32.const 1))) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return)))
+    (local.set $src (i32.load offset=12 (local.get $stack)))
+    (call $gl_texcoord_check (local.get $src) (i32.const 16))
+    (local.set $p (i32.add (local.get $p) (i32.add
+      (select (i32.const 84) (i32.const 20) (i32.eq (local.get $pname) (i32.const 0x2502)))
+      (i32.shl (local.get $coord) (i32.const 4)))))
+    (if (i32.eq (local.get $pname) (i32.const 0x2502))
+      (then (call $gl_raster_eye_plane (call $gl_mtx_block) (local.get $p) (local.get $src)))
+      (else (call $gl_copy_from_guest (local.get $p) (local.get $src) (i32.const 16)))))
