@@ -320,7 +320,7 @@ assert.strictEqual(lifecycleWin._gpuFrameLayer, null,
   assert.strictEqual(b.parameters.length, count, 'invalid filter cannot touch hardware');
   assert.deepStrictEqual(f.getTexParameter(GL.TEXTURE_MAG_FILTER), [GL.LINEAR]);
   f.lastError = 0;
-  assert.strictEqual(f.texBorderColor([0, 0, 0, 0], 0xDE0), false);
+  assert.strictEqual(f.texBorderColor([0, 0, 0, 0], 0xDE2), false);
   assert.strictEqual(f.lastError, GL.INVALID_ENUM);
   assert.deepStrictEqual(Array.from(f.getTexParameter(GL.TEXTURE_BORDER_COLOR)), [0, 0.25, 1, 0.5]);
   f.lastError = 0;
@@ -347,7 +347,7 @@ assert.strictEqual(lifecycleWin._gpuFrameLayer, null,
   call('glTexParameterfv',GL.TEXTURE_2D,GL.TEXTURE_PRIORITY,256);
   call('glGetTexParameterfv',GL.TEXTURE_2D,GL.TEXTURE_PRIORITY,320);
   assert.strictEqual(dv.getFloat32(320,true),0.375);
-  call('glTexParameterfv',0xDE0,GL.TEXTURE_BORDER_COLOR,0xFFFFFFF0);
+  call('glTexParameterfv',0xDE2,GL.TEXTURE_BORDER_COLOR,0xFFFFFFF0);
   assert.strictEqual(call('glGetError'),GL.INVALID_ENUM);
   assert.strictEqual(call('glGetError'),0,'frontend error is cleared when consumed');
   dv.setUint32(320,0xDEADBEEF,true);

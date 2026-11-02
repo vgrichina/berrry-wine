@@ -279,8 +279,10 @@ const Stream = require('../lib/gl-command-stream');
   assert.strictEqual(unlit.mode, 0);
   assert.deepStrictEqual(unlit.v.slice(3,7), [.25,.5,.75,.5], 'unlit material leaves current colour intact');
   call('glBegin', [0]);
-  assert.throws(() => call('glBindTexture', [0x0DE1, 1]), WebAssembly.RuntimeError,
-    'unrelated state changes still encounter the immediate-mode guard');
+  const beforeRejectedBinding=e.gl_wat_stream_used();
+  call('glBindTexture', [0x0DE1, 1]);
+  assert.strictEqual(e.gl_wat_stream_used(),beforeRejectedBinding,'illegal binding emits no command');
   call('glEnd');
+  assert.strictEqual(call('glGetError'),0x502,'in-Begin texture binding reports INVALID_OPERATION');
   console.log('OpenGL native display-list allocation/record/replay/delete/error tests PASS');
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -557,7 +557,7 @@
   ;; reach the host for GL error reporting but carry no pointed payload.
   (func $gl_tex_parameter_bytes (param $stack i32) (result i32)
     (local $pname i32)
-    (if (i32.ne (i32.load offset=4 (local.get $stack)) (i32.const 0x0DE1))
+    (if (i32.gt_u (i32.sub (i32.load offset=4 (local.get $stack)) (i32.const 0x0DE0)) (i32.const 1))
       (then (return (i32.const 0))))
     (local.set $pname (i32.load offset=8 (local.get $stack)))
     (if (i32.eq (local.get $pname) (i32.const 0x1004)) (then (return (i32.const 16))))
@@ -571,6 +571,11 @@
     (local $arg i32) (local $len i32) (local $borrow i32) (local $p i32)
     (local $wide i64)
     (local.set $arg (i32.const -1))
+    (if (i32.eq (local.get $op) (i32.const 147)) (then
+      (local.set $arg (i32.const 2))
+      (if (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0x2300)) (then
+        (local.set $len (i32.shl (call $gl_texture_count (i32.const 1)
+          (i32.load offset=8 (local.get $stack)) (i32.const 0)) (i32.const 2)))))))
     (if (i32.eq (local.get $op) (i32.const 112)) (then
       (local.set $arg (i32.const 2))
       (local.set $len (call $gl_tex_parameter_bytes (local.get $stack)))))
@@ -634,6 +639,10 @@
 
   (func $gl_wat_encode_call (param $op i32) (param $stack i32) (param $aux i32) (result i32)
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
+    (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0)) (i32.eq (local.get $op) (i32.const 113))) (then
+      (call $gl_texture_query (i32.const 0) (i32.const 0)
+        (i32.load offset=4 (local.get $stack)) (i32.load offset=8 (local.get $stack))
+        (i32.load offset=12 (local.get $stack))) (return (i32.const 0))))
     (if (call $gl_native_query (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
@@ -665,9 +674,13 @@
       (call $gl_material_light_pending)
       (global.set $gl_material_prelit (i32.ne
         (i32.and (i32.load offset=9036 (call $gl_mtx_block)) (i32.const 128)) (i32.const 0)))))
+    (call $gl_texture_observe (local.get $op) (local.get $stack))
+    (if (i32.eq (local.get $op) (i32.const 43)) (then (call $gl_texture_delete (local.get $stack))))
     (call $gl_mtx_observe (local.get $op) (local.get $stack))
     ;; glClear/glClearColor for the WAT software target; inert when it is off.
     (call $gl_sw_observe (local.get $op) (local.get $stack))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 77)) (i32.eq (local.get $op) (i32.const 42)))
+      (then (call $gl_texture_sync_sampling)))
     ;; Native allocation failure must not leave the replay frontend claiming
     ;; a color was installed. The record carries the same GL error instead.
     (if (i32.and (i32.eq (local.get $op) (i32.const 112))

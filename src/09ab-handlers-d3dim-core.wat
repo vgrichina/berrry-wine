@@ -5122,6 +5122,9 @@
     (result i32)
     (local $mod i32) (local $rgb i32) (local $alpha i32) (local $arg1 i32) (local $arg2 i32)
     (local $texture_alpha i32)
+    (if (i32.eq (i32.and (local.get $colorop) (i32.const 0xfffffffe)) (i32.const 0x10000))
+      (then (return (call $gl_texture_combine (local.get $tex) (local.get $diffuse)
+        (i32.and (local.get $colorop) (i32.const 1))))))
     (local.set $texture_alpha (i32.shr_u (local.get $tex) (i32.const 24)))
     ;; Stage-zero CURRENT is incoming diffuse RGBA. Disable precedes operand
     ;; selection and disables alpha too, regardless of ALPHAOP/argument bits.

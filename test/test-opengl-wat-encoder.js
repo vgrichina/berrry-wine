@@ -291,7 +291,14 @@ async function main() {
     view.setFloat32(wa,0x2900,true);
     gl.call(112,[0x0DE1,0x2802,DATA]);
     view.setFloat32(wa,0,true);
-    gl.call(112,[0x0DE0,0x1004,0xFFFFFFF0]);
+    gl.call(112,[0x0DE0,0x1004,DATA]);
+    gl.call(147,[0x2300,0x2201,DATA]);
+    new Float32Array(mem.buffer,translateGuest(DATA),4).set([0x1e01,9,8,7]);
+    gl.call(147,[0x2300,0x2200,DATA]);
+    new Float32Array(mem.buffer,translateGuest(DATA),4).fill(0.75);
+    gl.call(147,[0x2300,0xDEADBEEF,0xFFFFFFF0]);
+    gl.call(147,[0x0DE1,0x2201,0xFFFFFFF0]);
+    gl.call(112,[0x0DE2,0x1004,0xFFFFFFF0]);
     gl.call(112,[0x0DE1,0xDEADBEEF,0xFFFFFFF0]);
     view.setFloat32(out,-1,true);
     gl.call(113,[0x0DE1,0x1004,DATA+64]);

@@ -24955,7 +24955,8 @@
     "name": "glTexEnvf",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 2102864360
+    "hash": 2102864360,
+    "handler": "gl_texture_set"
   },
   {
     "id": 2931,
@@ -24969,7 +24970,8 @@
     "name": "glTexParameterf",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1005284364
+    "hash": 1005284364,
+    "handler": "gl_texture_set"
   },
   {
     "id": 2933,
@@ -27630,7 +27632,8 @@
     "name": "glTexEnvi",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 2086086741
+    "hash": 2086086741,
+    "handler": "gl_texture_set"
   },
   {
     "id": 3261,
@@ -29002,7 +29005,8 @@
     "name": "glTexParameteri",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1122727697
+    "hash": 1122727697,
+    "handler": "gl_texture_set"
   },
   {
     "id": 3415,
@@ -36660,7 +36664,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 1574874430,
-    "handler": "gl_unimplemented"
+    "handler": "gl_texture_query"
   },
   {
     "id": 4292,
@@ -36668,7 +36672,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 1341223765,
-    "handler": "gl_unimplemented"
+    "handler": "gl_texture_query"
   },
   {
     "id": 4293,
@@ -36723,7 +36727,8 @@
     "name": "glGetTexParameterfv",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 3347005802
+    "hash": 3347005802,
+    "handler": "gl_texture_query"
   },
   {
     "id": 4300,
@@ -36731,7 +36736,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3111972041,
-    "handler": "gl_unimplemented"
+    "handler": "gl_texture_query"
   },
   {
     "id": 4301,
@@ -36858,7 +36863,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 3124442213,
-    "handler": "gl_unimplemented"
+    "handler": "gl_texture_is"
   },
   {
     "id": 4317,
@@ -37770,7 +37775,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3996550074,
-    "handler": "gl_unimplemented"
+    "handler": "gl_texture_set"
   },
   {
     "id": 4437,
@@ -37778,7 +37783,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3761516313,
-    "handler": "gl_unimplemented"
+    "handler": "gl_texture_set"
   },
   {
     "id": 4438,
@@ -37817,7 +37822,8 @@
     "name": "glTexParameterfv",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 3449537550
+    "hash": 3449537550,
+    "handler": "gl_texture_set"
   },
   {
     "id": 4443,

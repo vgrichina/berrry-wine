@@ -13,9 +13,9 @@ const unsupportedMdk2 = `
   glEvalPoint1 glEvalPoint2 glFeedbackBuffer  glGetBooleanv
   glGetClipPlane glGetMapdv
   glGetMapfv glGetMapiv glGetPixelMapfv
-  glGetPixelMapuiv glGetPixelMapusv glGetPointerv glGetPolygonStipple glGetTexEnvfv
-  glGetTexEnviv glGetTexImage
-  glGetTexParameteriv glIndexMask glIndexPointer glIndexd glIndexdv
+  glGetPixelMapuiv glGetPixelMapusv glGetPointerv glGetPolygonStipple
+   glGetTexImage
+   glIndexMask glIndexPointer glIndexd glIndexdv
   glIndexf glIndexfv glIndexi glIndexiv glIndexs
   glIndexsv glIndexub glIndexubv glInitNames glInterleavedArrays
   glLineStipple
@@ -26,7 +26,7 @@ const unsupportedMdk2 = `
   glPixelTransferf glPixelTransferi glPixelZoom glPolygonStipple glPopName
   glPrioritizeTextures glPushName
   glRenderMode glSelectBuffer
-  glTexEnvfv glTexEnviv
+
   glTexImage1D glTexParameteriv glTexSubImage1D
   wglCopyContext wglCreateLayerContext
   wglShareLists wglUseFontBitmapsA wglUseFontOutlinesA
@@ -122,7 +122,7 @@ async function main() {
     'GetTickCount', 'gluPerspective', 'glNotARealFunction', 'glactivetextureARB']) {
     assert.strictEqual(lookup(name), 0, `${name} must not be advertised`);
   }
-  for (const name of ['glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, ...integerLightMaterialFogApis, ...rasterPositionApis, 'glActiveTextureARB', 'glClientActiveTextureARB',
+  for (const name of ['glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, 'glTexEnvfv', 'glTexEnviv', 'glGetTexEnvfv', 'glGetTexEnviv', 'glGetTexParameteriv', ...integerLightMaterialFogApis, ...rasterPositionApis, 'glActiveTextureARB', 'glClientActiveTextureARB',
     'glMultiTexCoord2fARB', 'glTexParameterfv', 'glGetTexParameterfv',
     'glVertex2iv', 'glVertex2s', 'glVertex2sv',
     'glVertex3dv', 'glVertex3i', 'glVertex3iv', 'glVertex3s', 'glVertex3sv',
@@ -161,7 +161,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 89, 'retain every still unsupported MDK2 name');
+  assert.strictEqual(unsupportedMdk2.length, 84, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);
@@ -170,7 +170,7 @@ async function main() {
     assert.strictEqual(e.lookup_error(),127,'ERROR_PROC_NOT_FOUND');
     assert.strictEqual(e.lookup_thunks(),before,'rejection allocates no thunk');
   }
-  for (const name of ['glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, ...integerLightMaterialFogApis, ...rasterPositionApis, 'glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv',
+  for (const name of ['glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, 'glTexEnvfv', 'glTexEnviv', 'glGetTexEnvfv', 'glGetTexEnviv', 'glGetTexParameteriv', ...integerLightMaterialFogApis, ...rasterPositionApis, 'glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv',
     'glTexCoord1d', 'glTexCoord1dv', 'glTexCoord1f', 'glTexCoord1fv', 'glTexCoord1i',
     'glTexCoord1iv', 'glTexCoord1s', 'glTexCoord1sv', 'glTexCoord2iv', 'glTexCoord2s',
     'glTexCoord2sv', 'glTexCoord3d', 'glTexCoord3dv', 'glTexCoord3f', 'glTexCoord3fv',

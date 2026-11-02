@@ -311,6 +311,7 @@ const gpuApis = new Map([
   ['glAccum', 2], ['glClearAccum', 4],
   ['glGetDoublev', 2],
   ['glRasterPos4f', 4],
+  ['glTexEnvfv', 3],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 
@@ -402,7 +403,17 @@ const nativeWglApis = new Set([
   'wglDescribeLayerPlane', 'wglGetLayerPaletteEntries',
   'wglSetLayerPaletteEntries', 'wglRealizeLayerPalette',
 ]);
+const nativeTextureSetApis = new Map([
+  ['glTexEnvf',[1,0,0]], ['glTexEnvi',[1,1,0]],
+  ['glTexEnvfv',[1,0,1]], ['glTexEnviv',[1,1,1]],
+  ['glTexParameterf',[0,0,0]], ['glTexParameteri',[0,1,0]], ['glTexParameterfv',[0,0,1]],
+]);
+const nativeTextureQueryApis = new Map([
+  ['glGetTexEnvfv',[1,0]], ['glGetTexEnviv',[1,1]],
+  ['glGetTexParameterfv',[0,0]], ['glGetTexParameteriv',[0,1]],
+]);
 const nativeGlApis = new Set([
+  ...nativeTextureSetApis.keys(), ...nativeTextureQueryApis.keys(),
   'glRectd', 'glRectdv', 'glRectfv', 'glRecti', 'glRectiv', 'glRects', 'glRectsv',
   'glLoadMatrixd', 'glTranslated', 'glScaled',
   'glMultMatrixd', 'glTexCoord2d', 'glTexCoord2dv', 'glTexCoord2i',
@@ -437,6 +448,10 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  const textureSet=nativeTextureSetApis.get(api.name),textureQuery=nativeTextureQueryApis.get(api.name);
+  if(textureSet) return `      (call $handle_gl_texture_set ${textureSet.map(n=>`(i32.const ${n})`).join(' ')})`;
+  if(textureQuery) return `      (call $handle_gl_texture_query ${textureQuery.map(n=>`(i32.const ${n})`).join(' ')})`;
+  if(api.name==='glIsTexture') return '      (call $handle_gl_texture_is)';
   const legacyTexgen = ['glTexGeni', 'glTexGenf', 'glTexGenfv'].indexOf(api.name);
   if (legacyTexgen >= 0) {
     return `      (call $handle_glTexGen_legacy (i32.const ${83 + legacyTexgen}))`;

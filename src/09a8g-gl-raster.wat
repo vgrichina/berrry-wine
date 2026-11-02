@@ -1584,7 +1584,7 @@
             (return)))
         ;; Texture uploads and parameters go to the name this unit has bound.
         (if (i32.or (i32.or (i32.eq (local.get $op) (i32.const 45)) (i32.eq (local.get $op) (i32.const 47)))
-                    (i32.or (i32.or (i32.eq (local.get $op) (i32.const 46)) (i32.eq (local.get $op) (i32.const 96)))
+                    (i32.or (i32.or (i32.eq (local.get $op) (i32.const 46)) (i32.or (i32.eq (local.get $op) (i32.const 96)) (i32.eq (local.get $op) (i32.const 112))))
                             (i32.eq (local.get $op) (i32.const 61))))
           (then
             (local.set $bit (i32.load offset=40 (local.get $s)))
@@ -1709,6 +1709,7 @@
     ;; 112 glTexParameterfv: read the guest span bytewise so a vector crossing
     ;; sparse pages is not mistaken for one contiguous Wasm allocation.
     (if (i32.eq (local.get $op) (i32.const 112)) (then
+      (if (i32.ne (i32.load offset=4 (local.get $stack)) (i32.const 0xde1)) (then (return)))
       (local.set $bit (call $gl_tex_parameter_bytes (local.get $stack)))
       (if (i32.eqz (local.get $bit)) (then (return)))
       (call $gl_copy_from_guest (global.get $gl_sw_scratch)
@@ -2631,6 +2632,9 @@
   ;; The texture env as D3DTOP. An untextured draw modulates white by the
   ;; vertex colour whatever the env says; REPLACE on white would erase it.
   (func $gl_sw_r_env (result i32)
+    (if (i32.and (i32.ne (global.get $gl_texture_draw) (i32.const 0))
+        (i32.ne (global.get $gl_sw_r_tex) (global.get $gl_sw_white)))
+      (then (return (i32.const 0x10000))))
     (select (i32.const 4) (i32.load offset=36 (global.get $gl_sw_st))
       (i32.eq (global.get $gl_sw_r_tex) (global.get $gl_sw_white))))
 
@@ -2691,8 +2695,10 @@
     (global.set $rast_t1_addr_v (call $gl_sw_flags_address (local.get $flags) (i32.const 4)))
     (global.set $rast_t1_border (call $gl_sw_draw_border (local.get $slot) (i32.const 1) (local.get $flags)))
     (global.set $rast_t1_linear (i32.and (local.get $flags) (i32.const 1)))
-    (global.set $rast_t1_op (select (i32.const 2) (i32.const 4)
-      (i32.ne (i32.and (local.get $caps) (i32.const 0x100000)) (i32.const 0))))
+    (global.set $rast_t1_op (if (result i32) (global.get $gl_texture_draw)
+      (then (i32.const 0x10001))
+      (else (select (i32.const 2) (i32.const 4)
+        (i32.ne (i32.and (local.get $caps) (i32.const 0x100000)) (i32.const 0))))))
     (i32.const 1))
 
   ;; Unit 1 along the line from screen record 0 to 1 (clip records $a, $b),
@@ -3251,6 +3257,7 @@
   (func $gl_sw_consume_selected (param $start i32) (param $vertices i32)
     (local $mode i32) (local $step i32)
     (if (i32.eqz (global.get $gl_sw_enabled)) (then (return)))
+    (call $gl_texture_capture)
     ;; The encoder has already expanded strips, loops and fans: mode 0 is
     ;; single points, 1 separate lines, 4 separate triangles.
     (local.set $mode (i32.and (i32.load offset=8 (local.get $start)) (i32.const 0xFFFDFFFF)))
@@ -3461,7 +3468,7 @@
     (if (global.get $gl_sw_in_worker) (then (return (i32.const 0))))
     (if (i32.eq (global.get $gl_sw_worker_ok) (i32.const 2)) (then (return (i32.const 0))))
     (if (i32.eqz (global.get $gl_sw_snap)) (then
-      (local.set $g (call $gl_alloc_affine (i32.const 1496)))
+      (local.set $g (call $gl_alloc_affine (i32.const 1544)))
       (if (i32.eqz (local.get $g)) (then
         (global.set $gl_sw_worker_ok (i32.const 2))
         (return (i32.const 0))))
@@ -3524,10 +3531,13 @@
     (i32.store offset=1092 (local.get $snap) (global.get $gl_sw_second))
     (memory.copy (i32.add (local.get $snap) (i32.const 1096))
       (i32.add (local.get $b) (i32.const 10832)) (i32.const 384))
+    (if (global.get $gl_texture_draw)
+      (then (memory.copy (i32.add (local.get $snap) (i32.const 1480)) (global.get $gl_texture_draw) (i32.const 48)))
+      (else (memory.fill (i32.add (local.get $snap) (i32.const 1480)) (i32.const 0) (i32.const 48))))
     ;; 0x20005's descriptor: snapshot, its length, packed record, its length.
-    (local.set $d (i32.add (local.get $snap) (i32.const 1480)))
+    (local.set $d (i32.add (local.get $snap) (i32.const 1528)))
     (i32.store offset=0 (local.get $d) (local.get $snap))
-    (i32.store offset=4 (local.get $d) (i32.const 1480))
+    (i32.store offset=4 (local.get $d) (i32.const 1528))
     (i32.store offset=8 (local.get $d) (local.get $start))
     (i32.store offset=12 (local.get $d)
       (i32.add (i32.mul (local.get $vertices) (i32.const 76)) (i32.const 32)))
@@ -3613,6 +3623,8 @@
     (global.set $gl_stencil_height (i32.load offset=1084 (local.get $snap)))
     (global.set $gl_color_mask_worker (i32.load offset=1088 (local.get $snap)))
     (global.set $gl_sw_second (i32.load offset=1092 (local.get $snap)))
+    (global.set $gl_texture_draw (select (i32.add (local.get $snap) (i32.const 1480)) (i32.const 0)
+      (i32.ne (i32.load offset=1480 (local.get $snap)) (i32.const 0))))
     (memory.copy (i32.add (local.get $blk) (i32.const 10832))
       (i32.add (local.get $snap) (i32.const 1096)) (i32.const 384))
     (if (i32.eq (local.get $mode) (i32.const 0x10000))

@@ -511,6 +511,7 @@
       (global.set $gl_tex1_q (f32.load offset=160 (local.get $p)))))
     (global.set $gl_current_context (local.get $context))
     (call $gl_sw_context_load)
+    (if (local.get $context) (then (call $gl_texture_sync_sampling)))
   )
 
   (func $gl_state_free_attribs (param $head i32)

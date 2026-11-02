@@ -181,8 +181,14 @@ const stats = {
   function pointerSpec(opcode, view, stackWa) {
     let arg = -1, length = 0, borrow = false;
     switch (opcode | 0) {
-      case 112: { // glTexParameterfv: invalid enums must not read params
-        if (u32At(view, stackWa, 0) !== 0x0DE1) break;
+      case 147: {
+      if (u32At(view,stackWa,0)!==0x2300) break;
+      const count=u32At(view,stackWa,1)===0x2201?4:u32At(view,stackWa,1)===0x2200?1:0;
+      if(count) {arg=2;length=count*4;}
+      break;
+    }
+    case 112: { // glTexParameterfv: invalid enums must not read params
+        if (! [0x0DE0,0x0DE1].includes(u32At(view, stackWa, 0))) break;
         const pname=u32At(view, stackWa, 1);
         if (pname===0x1004) {arg=2;length=16;}
         else if ([0x2800,0x2801,0x2802,0x2803,0x8066].includes(pname)) {arg=2;length=4;}
