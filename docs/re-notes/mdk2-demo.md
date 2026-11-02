@@ -1,8 +1,8 @@
 # MDK2 demo (BioWare/Interplay, 2000)
 
 **Status: registered (`mdk2_demo`); current native startup is blocked by GL
-symbol rejection (188 observed names remain unsupported after the 2026-11-02
-integer-color repair below).** Historical Chromium/WebGL
+symbol rejection (176 observed names remain unsupported after the 2026-11-02
+signed accumulation repair, ab45b7d43, below).** Historical Chromium/WebGL
 runs rendered Menu, New Game, the intro and tutorial and took input;
 projective vertices work since 9be0a0efb, and FSCALE fixed the black world
 after the intro (see Black world). Those runs do not establish current
