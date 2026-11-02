@@ -81,7 +81,7 @@ const extraWat = String.raw`
     check(label + '/GDI', b.format_test_caps(), desktop);
     b.guest_write32(query, 108); b.format_test_display(query);
     const display = format(b);
-    check(label + '/GetDisplayMode', display, { bpp: desktop, pitch: 800 * desktop / 8, masks: expectedMasks(desktop) });
+    check(label + '/GetDisplayMode', display, { bpp: desktop, pitch: 1024 * desktop / 8, masks: expectedMasks(desktop) });
     for (const primary of [false, true]) {
       const surface = create(b, primary);
       b.guest_write32(query, 108); b.format_test_lock(surface, query);

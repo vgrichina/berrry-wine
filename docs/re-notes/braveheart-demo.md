@@ -318,3 +318,145 @@ input manifests and retrieved evidence. Git recovers the published runtime
 source, but not ignored fixture/module bytes. The next bounded task should
 localize the remaining unreadable presentation from these descriptors, rows
 and pixels before another original run. No public promotion is warranted.
+
+## 2026-11-02: current-mode geometry repaired; producer contract localized
+
+Run `scratch/runs/20261102-braveheart-restored-pixels-cause/` adds a bounded
+startup/Conduct Raid diagnostic to the preceding restored-format observation.
+It does **not** establish a readable battlefield or unit selection/command.
+The single subsequent changed-source native observation remains a magenta
+strip over black. Braveheart remains excluded from DESKTOP_APPS.
+
+Ordered GL64778 then Oni93804 gates were independently checked at live 41-second
+intervals: actual terminals zero, result/final, exact AUTHOR RELEASE, matching
+209/70-file final manifests and absent named/scoped helpers. Only fresh scratch
+was owned until both released. Main refreshed to
+`2317cfdec69bfe4e19b8ba34bbc016dcab80b1a0`; foreign/laptop WIP and the untracked
+`test/test-directdraw-current-display-size.js` were preserved.
+
+The new diagnostic resolves these previously missing facts:
+
+- At startup sequence 18, inactive GetDisplayMode succeeds with 640×480,
+  32-bit RGB masks `00ff0000/0000ff00/000000ff`, pitch 2560. The actual host
+  desktop is 1024×768 (`get_screen_size = 50332672`), and the subsequent normal
+  primary uses that size. This is the earliest observed incorrect runtime
+  display-query contract. It is not proof of the cause of the magenta field.
+- Enumeration supplies the real 640×480×16 mode at index 2. The guest reserves
+  index 0 for its windowed entry. The movie sets 640×480×16 successfully at
+  sequence 76. Between recorded calls 87 and 88, index 0 changes from
+  `[640,480,32,...]` to `[640,480,16,...]`. The original `4fe1cc` path reads
+  GetDeviceCaps(BITSPIXEL)×PLANES into this entry; those GDI call returns were
+  **not captured** by this observer. That attribution is static, not a claimed
+  actual GDI return trace. The depth mutation itself is captured.
+- At Conduct Raid sequence 149600, mode index becomes **0** before
+  RestoreDisplayMode. The guest then requests DDSCL_NORMAL (8), creates a
+  primary and a 640×480 offscreen surface (flags 7, caps `0x2840`, no explicit
+  pixel format), and never selects a new 16-bit exclusive mode in this
+  transition. Restored 32-bit allocation is consistent with accepted ab359.
+- Lock at sequence 149611 returns HRESULT zero and descriptor
+  `[size=108, flags=0x100f, height=480, width=640, pitch=2560,
+  lpSurface=2129461252, RGBBits=32, masks=ff0000/ff00/ff]`.
+  Unlock at 149612 succeeds. Immediately afterward the guest retains that
+  pointer at `0x984eb8`; its producer context at `0x984ebc` has width 640,
+  height 480, **pitch 1280, bytes/pixel 2, extent 614400**, with successive row
+  pointers differing by 1280. Thus the first observed producer/surface
+  disagreement already exists at 640×480, before the later resize. It is
+  not an inference from the magenta color or the integer 3072.
+- A later normal-primary creation invokes host MoveWindow without a new guest
+  resize request. Subsequent initialization produces 1024×768×32, pitch 4096,
+  retained guest pointer 2102525956 mapping to WASM 197783556. The producer
+  rebuilds its base/rows with that new pointer but keeps 640×480, pitch 1280
+  and 2-byte pixels. At the recorded settled checkpoint its pointer equals
+  the current offscreen backing, rather than the released old backing.
+  These snapshots do not guarantee safe use of every unlocked pointer.
+- The offscreen row bytes include
+  `e3 28 c3 18 03 19 c3 18 c2 18 43 29 e3 28 03 19` at row 0, with nonzero
+  counts/hashes in the exact traces. The primary's sampled rows are zero.
+  The selected guest presenter is `4fe980`; its Flip call on the normal
+  primary returns **`0x88760246` (DDERR_NOTFLIPPABLE)**. No flip chain was
+  requested. Converting these bytes, changing the desktop to 16-bit or
+  pretending that Flip succeeded would substitute a contract the guest did
+  not request. None was done.
+
+The tuple at `0xda4b38`, finally `[1024,768,3072,32]`, is width, height,
+**height×bytes/pixel**, depth. Original `4fe2de..4fe2e9` proves that 3072 is not
+row pitch. Actual row pitch comes from the descriptor and producer context.
+The observer reads direct/DIB/sparse mappings in JavaScript, without invoking
+translation exports that can mutate guest fault/lazy-fence state. It forwards
+all original imports and API results, bounds its event collection to 256
+records, and resets only its own records before Conduct Raid. Entry/exit
+stacks, descriptors, mode entries, pointers, rows and HRESULTs are preserved;
+EnumDisplayModes' dispatch exit is explicitly marked a deferred continuation,
+not misreported as its final API return.
+
+The runtime repair is narrowly the demonstrated current-display query error.
+GetDisplayMode now uses the same active/restored screen dimensions as GDI
+screen metrics and computes its DWORD-aligned pitch from that width. It retains
+the remembered SetDisplayMode request, existing surface formats and current
+depth/masks. This follows the documented
+[GetDisplayMode current-mode contract](https://learn.microsoft.com/en-us/windows/win32/api/ddraw/nf-ddraw-idirectdraw7-getdisplaymode).
+It does **not** claim to repair the independently observed 16-bit producer
+selection or normal-primary resize behavior.
+
+`test/test-directdraw-current-mode-geometry.js` runs the real compiled handlers
+in two instances sharing process memory. Unchanged source fails ten inactive
+queries; all three active-mode semantic controls pass. Changed source passes
+all thirteen initial/active/restored/resized cases, including 8/16/32-bit
+selection, restored 8/32-bit desktops, odd-width DWORD rows, descriptor bounds,
+invalid input without host calls, unchanged remembered requests and active
+modes ignoring a host resize. The restored-format regression's obsolete
+800-wide pitch expectation now matches its actual 1024-wide host desktop.
+Seven focused regressions pass: restored display format, GetDisplayMode depth,
+windowed primary size, primary mode change, palette format, Surface3 descriptor
+and Surface4/7 ABI. The Surface3 first run lacked its existing calc.exe test
+fixture; that failure is retained, then the exact 94208-byte fixture was streamed
+and both ABI tests passed. Locked full `flock /tmp/wine-build.lock bash
+tools/build.sh` passes on the own boat, compiling module 2076989 bytes, SHA-256
+`17e683cb60cd7d067753b1c988b5f6c5faa7066898aee82e87e6e6b9e9914496`.
+The API table remains 4602 entries, SHA-256
+`8319e5f866cf102879f4debfff34a421924a8a71d87cacf8d56c5a66afaaead5`.
+
+Exactly one changed-source original registered bhsoft/default-WebGL/threads/
+real-clock native observation followed that build. It used the unchanged 145
+installed files (207704346 bytes), bhsoft.exe SHA-256
+`70ae3feedc1f977ca8b8ed32560ebdaa381a25b6261f2cbc77396c887e2a8955`.
+Native Escape → Game Features → Back → Raid Town → Stephen Feherty mission
+brief → Conduct Raid was captured before/held/released/settled. The corrected
+initial GetDisplayMode now reports 1024×768×32, pitch 4096. The neutral field
+capture at 21:47:00Z remains unreadable; no gameplay inputs followed. Its
+producer/surface disagreement and NOTFLIPPABLE returns remain captured.
+Three mouse pairs and one Escape pair were trusted native events; final queue
+was empty, no active event, mouse buttons zero and Escape false in physical
+and async state. No FPS, audio, completed battlefield, unit command, stall or
+convergence claim is made.
+
+The next causal question is why the original chooses its stale 16-bit windowed
+entry before restoration and retains the fullscreen presenter on that path.
+Capture the exact GDI return/cache-write and relevant window-message order
+before any further repair; the current bounded observer did not record those
+GDI returns. A native Windows reference may be needed to distinguish an
+application limitation on a 32-bit desktop from another runtime ordering error.
+Do not replay an unchanged original merely to rediscover the magenta strip.
+
+Own boat `bx_mx6rktxr`, original expiry `2026-11-02T23:29:25.950Z`, was recorded
+before use. Source/fixture transfers were direct hashed streams with no local
+archives/copies. The initial locked build omitted two existing browser-bundle
+inputs; its failure was retained, both exact inputs streamed, and baseline
+and changed locked builds passed. All 200 retained remote evidence files
+passed SHA comparison and independent reread before the explicitly delegated
+own-boat shutdown; 46 retained PNGs passed chunk CRCs. All native canvas
+before/held/released/settled captures are retained. A first retrieval was
+intentionally stopped at its actual 143 result after inventory showed that
+retrieving every redundant page PNG would consume the floor reserve. The
+selected manifest records 30 omitted page PNGs; retained canvas captures and
+all causal/input/build/identity evidence were verified. Identical immutable
+files within this own run were hardlinked only after byte/SHA equality,
+preserving every retained path. No disk-floor latch occurred.
+
+Both controllers and Chrome exited zero; eight named helper references and
+all scoped helpers were absent before shutdown, both profiles removed, and
+transfer chunks/archive absent. Own boat STOPPED was verified at
+`2026-11-02T21:50:54.272Z`, error null, after retrieval verification. Exact
+inputs, hashes, bounded hooks, failed/pass logs, selected evidence manifest,
+shutdown ordering and recovery recipe are in this run's `RECOVERY.md` and
+result artifacts. No public deployment or guest/renderer/clock patch occurred.

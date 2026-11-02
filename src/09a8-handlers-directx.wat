@@ -4047,17 +4047,22 @@
 
   ;; GetDisplayMode(this, lpDDSD) — return current display mode
   (func $handle_IDirectDraw_GetDisplayMode (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32)
+    (local $wa i32) (local $w i32) (local $h i32)
     (if (i32.eqz (call $dx_surface_desc_valid (local.get $arg0) (local.get $arg1))) (then
       (i32.store (global.get $reg_base) (i32.const 0x80070057))
       (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
       (return)))
+    ;; Like GDI screen metrics and a windowed primary, this query describes
+    ;; the active display, not the remembered last SetDisplayMode request.
+    ;; RestoreDisplayMode retains that request for repeated-mode suppression.
+    (local.set $w (call $screen_metric_w))
+    (local.set $h (call $screen_metric_h))
     (local.set $wa (call $g2w (local.get $arg1)))
     (call $zero_memory (local.get $wa) (call $dx_native_desc_size (local.get $arg0)))
     (i32.store (local.get $wa) (call $dx_native_desc_size (local.get $arg0)))
     (i32.store (i32.add (local.get $wa) (i32.const 4)) (i32.const 0x1006))
-    (i32.store (i32.add (local.get $wa) (i32.const 8)) (call $dx_display_h_get))
-    (i32.store (i32.add (local.get $wa) (i32.const 12)) (call $dx_display_w_get))
+    (i32.store (i32.add (local.get $wa) (i32.const 8)) (local.get $h))
+    (i32.store (i32.add (local.get $wa) (i32.const 12)) (local.get $w))
     ;; Pitch and pixel format follow the current display's depth, including
     ;; the restored desktop rather than the retained last explicit request.
     ;; This used to report a
@@ -4066,7 +4071,7 @@
     (i32.store (i32.add (local.get $wa) (i32.const 16))
       (i32.and
         (i32.add
-          (i32.mul (call $dx_display_w_get)
+          (i32.mul (local.get $w)
             (i32.shr_u (i32.add (call $gdi_display_bpp) (i32.const 7)) (i32.const 3)))
           (i32.const 3))
         (i32.const 0xFFFFFFFC)))
