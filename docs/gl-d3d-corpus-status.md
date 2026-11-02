@@ -49,7 +49,7 @@ Published `4631ff857` subsequently repairs the already-resolved `glRotated`;
 its double argument and matrix semantics do not change the missing-export count.
 See [rotation evidence](re-notes/gl-rotated-native-20261102.md).
 
-Eleven subsequently accepted families reduce the unsupported set to **72**
+Thirteen subsequently accepted families reduce the unsupported set to **64**
 mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
 
 | Accepted implementation | Newly implemented exports | Evidence |
@@ -65,6 +65,8 @@ mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
 | `cda0ebd87` user clip planes | 2 | [Six eye-space planes, primitive clipping and WebGL pixels](re-notes/gl-user-clip-planes-20261102.md) |
 | `451708e35` one-dimensional textures | 3 | [Storage, sampling, integer vector parameters and rendered pixels](re-notes/gl-one-dimensional-textures-20261102.md) |
 | `a8b85a569` texture copy/readback and pixel transfer | 7 | [Framebuffer and texture storage, transfer, packing, lists and WebGL pixels](re-notes/gl-texture-copy-readback-20261102.md) |
+| `57cf33689` boolean and pointer queries | 2 | [Byte-sized boolean conversion, saved array pointers and resolved ABI checks](re-notes/gl-boolean-pointer-query-20261102.md) |
+| `3a49ef5e2` pixel maps | 6 | [Per-context tables, numeric conversions, mapped transfers and literal pixels](re-notes/gl-pixel-map-20261102.md) |
 
 Each family passed its focused semantic and regression checks, rejecting controls,
 and locked build; the coordinator verified retained evidence hashes and committed
@@ -85,8 +87,17 @@ Texture copy/readback and pixel transfer passed 29 positive regression/build ent
 367 checks and 360 literal oracles per direct/queued route, 35 WebGL checks per
 backend, and nine intended negative controls. The coordinator verified 45 evidence
 hashes, 24 tested committed blobs, accepted builds and 13 handoff hashes; the
-temporary boat stopped after retrieval. Boolean/pointer queries remain in progress
-and are excluded from the accepted count. Integer lighting passed 301 checks per direct/queued
+temporary boat stopped after retrieval. Boolean/pointer queries subsequently passed 272 literal checks per direct/queued
+route, saved-source and 16 compiled semantic rejecting controls, focused regressions
+and two locked builds. The coordinator verified retained evidence hashes and
+helper absence before accepting `57cf33689`; its temporary boat stopped after
+retrieval. Pixel maps subsequently passed 935 checks per direct/queued route,
+13 semantic and two saved-source rejecting controls, 20 focused commands and
+three locked builds. The coordinator verified 162 final and 96 retrieved evidence
+hashes plus 7,230 accepted source pins; its temporary boat stopped and guard
+was absent. These eight genuine exports reduce 72 to 64 mandatory misses.
+The current raster-pixels worker targets four further exports; those remain
+excluded until implemented and verified. Integer lighting passed 301 checks per direct/queued
 route, two saved-source and fourteen semantic rejecting controls, 36 regressions,
 two generated checks and the locked build (57 commands). The coordinator matched
 all 116 retained evidence hashes and 13 committed blobs. The four indexed queries
