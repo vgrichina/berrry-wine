@@ -460,3 +460,37 @@ transfer chunks/archive absent. Own boat STOPPED was verified at
 inputs, hashes, bounded hooks, failed/pass logs, selected evidence manifest,
 shutdown ordering and recovery recipe are in this run's `RECOVERY.md` and
 result artifacts. No public deployment or guest/renderer/clock patch occurred.
+
+## 2026-11-02: causal observer preparation; runtime dependency remains
+
+Run `scratch/runs/20261102-braveheart-causal-return-trace/` audits the released
+`20261102-braveheart-windowed-producer-contract` observer draft. No original,
+browser, compiled handler, boat or transfer ran. Actual GDI cache-update
+returns and window-message order remain **unobserved**; the first established
+mismatch remains the earlier 640×480 producer16/pitch1280 versus surface32/
+pitch2560, before the later resize. No repair or readable battlefield is claimed.
+
+The audit found concrete observation limits: the draft retains only twelve
+message records per call site; repeated names can exhaust its name inventory;
+and dispatch-handler exit can precede a redirected guest callback's completion.
+ShowWindow and positioning callbacks can enter a wndproc without a guest
+DispatchMessage/SendMessage API call, so logging those APIs alone cannot prove
+complete message order. These gaps do not establish why the older trace missed
+GetDeviceCaps.
+
+A fresh scratch draft records distinct names, invocation IDs, raw exit stacks,
+explicit handler-boundary labels and dropped-record counts, with a 1 MiB payload
+cap. Eight synthetic scenarios pass, including supplied BITSPIXEL/PLANES values,
+COM-name recovery, deferred enumeration labeling, memory-read immutability and
+saturation. These are observer tests, not actual guest/API observations. The
+draft still needs compiled-handler/callback validation, a proven wndproc-entry
+observation boundary and protection against losing critical events at the cap.
+See `OBSERVER-PREPARATION.md`, `static-inputs.json` and `observer-test.json`.
+
+The serialized Oni successor's fresh disk observation again breached 2 GB
+before transfer and identified temporary plugin-catalog writes; this is a new
+dependency, not a replay of an old guard latch. Its terminal/release verification
+is retained in this run's gate records. A successor needs enough stable reserve
+for those transient writes, then refreshed original/compiler/API/module pins
+and local/public exclusion before one bounded causal observation. No unchanged
+visual attempt was repeated, and foreign/laptop WIP was preserved.
