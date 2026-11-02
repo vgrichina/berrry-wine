@@ -258,7 +258,7 @@ const extraWat=`
  }
  const aliases=rects.map(r=>r.name);
  for(const name of aliases){assert(call('wglGetProcAddress',[str(name)]),'WGL real alias '+name);}
- const rejected=['glRect','glRectx','glrecti','glTexParameteriv','wglShareLists'];
+ const rejected=['glRect','glRectx','glrecti','wglShareLists'];
  for(const name of rejected){const before=e.probe_thunks();dv.setUint32(regs+16,stack,true);
   assert.strictEqual(e.probe_lookup(module,str(name)),0,'static rejects '+name);
   // Known unavailable APIs set ERROR_PROC_NOT_FOUND; unknown names only promise NULL.

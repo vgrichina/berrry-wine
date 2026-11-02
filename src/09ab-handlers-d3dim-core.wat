@@ -5884,7 +5884,7 @@
             (local.get $tdib) (local.get $tfmt) (local.get $tpal) (local.get $tpal_alpha)
             (local.get $tu) (local.get $tv)
             (local.get $address_u) (local.get $address_v) (local.get $linear)
-            (global.get $gl_sw_r_border)))))))
+            (global.get $gl_sw_r_border) (local.get $x) (local.get $y)))))))
 ))
       (local.set $draw (i32.const 1))
       ;; D3DRENDERSTATE_COLORKEYENABLE discards a matching texture sample.

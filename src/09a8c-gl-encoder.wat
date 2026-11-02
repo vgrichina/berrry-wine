@@ -574,6 +574,10 @@
         (i64.shl (i64.const 32) (i64.const 32))))))
     (local $wide i64)
     (local.set $arg (i32.const -1))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 149)) (i32.eq (local.get $op) (i32.const 150))) (then
+      (local.set $arg (select (i32.const 7) (i32.const 6) (i32.eq (local.get $op) (i32.const 149))))
+      (local.set $len (i32.shl (i32.load offset=16 (local.get $stack)) (i32.const 2)))))
+
     (if (i32.eq (local.get $op) (i32.const 147)) (then
       (local.set $arg (i32.const 2))
       (if (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0x2300)) (then
@@ -650,8 +654,14 @@
       (then (return (i32.const 0))))
     (if (call $gl_clip_query (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
+    (if (call $gl_1d_query (local.get $op) (local.get $stack)) (then (return (global.get $gl_list_result))))
+    ;; Proxy definitions are immediate even during display-list compilation.
+    (if (i32.and (i32.eq (local.get $op) (i32.const 149)) (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0x8063))) (then
+      (drop (call $gl_1d_store (i32.const 0) (local.get $stack))) (return (i32.const 0))))
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 149)) (i32.eq (local.get $op) (i32.const 150))) (then
+      (if (i32.eqz (call $gl_1d_store (i32.eq (local.get $op) (i32.const 150)) (local.get $stack))) (then (return (i32.const 0))))))
     (if (call $gl_query_validate_setter (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
     (if (call $gl_color_selection_intercept (local.get $op) (local.get $stack))

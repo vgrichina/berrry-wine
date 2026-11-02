@@ -313,6 +313,7 @@ const gpuApis = new Map([
   ['glRasterPos4f', 4],
   ['glTexEnvfv', 3],
   ['glClipPlane', 2],
+  ['glTexImage1D', 8], ['glTexSubImage1D', 7],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 
@@ -405,6 +406,7 @@ const nativeWglApis = new Set([
   'wglSetLayerPaletteEntries', 'wglRealizeLayerPalette',
 ]);
 const nativeTextureSetApis = new Map([
+  ['glTexParameteriv', [0,1,1]],
   ['glTexEnvf',[1,0,0]], ['glTexEnvi',[1,1,0]],
   ['glTexEnvfv',[1,0,1]], ['glTexEnviv',[1,1,1]],
   ['glTexParameterf',[0,0,0]], ['glTexParameteri',[0,1,0]], ['glTexParameterfv',[0,0,1]],
@@ -450,6 +452,7 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if(api.name==='glTexImage1D'||api.name==='glTexSubImage1D') return `      (call $handle_gl_tex1d_upload (i32.const ${api.name==='glTexSubImage1D'?1:0}))`;
   if(api.name==='glClipPlane'||api.name==='glGetClipPlane') return `      (call $handle_gl_clip (i32.const ${api.name==='glGetClipPlane'?1:0}))`;
   const textureSet=nativeTextureSetApis.get(api.name),textureQuery=nativeTextureQueryApis.get(api.name);
   if(textureSet) return `      (call $handle_gl_texture_set ${textureSet.map(n=>`(i32.const ${n})`).join(' ')})`;

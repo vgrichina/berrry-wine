@@ -389,6 +389,8 @@
         (if (result i32) (i32.eq (local.get $op) (i32.const 10))
           (then (i32.or (i32.load offset=108 (local.get $ctx)) (local.get $mask)))
           (else (i32.and (i32.load offset=108 (local.get $ctx)) (i32.xor (local.get $mask) (i32.const -1))))))))
+    (if (i32.and (i32.eq (local.get $op) (i32.const 73)) (i32.eq (local.get $a) (i32.const 0xcf0))) (then
+      (i32.store offset=196 (call $gl_texture_block) (i32.ne (local.get $v) (i32.const 0)))))
     (if (i32.eq (local.get $op) (i32.const 73)) (then
       (if (i32.eq (local.get $a) (i32.const 0x0CF5)) (then
         (if (i32.or (i32.or (i32.eq (local.get $v) (i32.const 1)) (i32.eq (local.get $v) (i32.const 2)))
@@ -412,13 +414,14 @@
     (if (i32.eq (local.get $op) (i32.const 134)) (then
       (if (i32.ge_u (i32.load offset=180 (local.get $ctx)) (i32.const 16)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x503)) (return (i32.const 1))))
-      (local.set $p (call $gl_list_alloc (i32.const 116)))
+      (local.set $p (call $gl_list_alloc (i32.const 120)))
       (if (i32.eqz (local.get $p)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 1))))
       (i32.store (local.get $p) (i32.load offset=176 (local.get $ctx)))
       (i32.store offset=4 (local.get $p) (local.get $a))
       (memory.copy (i32.add (local.get $p) (i32.const 8))
         (i32.add (local.get $ctx) (i32.const 80)) (i32.const 20))
+      (i32.store offset=116 (local.get $p) (i32.load offset=196 (call $gl_texture_block)))
       (i32.store offset=28 (local.get $p) (global.get $gl_client_bits))
       (i32.store offset=32 (local.get $p) (global.get $gl_client_tex_unit))
       (i32.store offset=36 (local.get $p) (global.get $gl_state_pointer_bits))
@@ -449,6 +452,7 @@
         (call $gl_list_error (local.get $ctx) (i32.const 0x504)) (return (i32.const 1))))
       (local.set $mask (i32.load offset=4 (local.get $p)))
       (if (i32.and (local.get $mask) (i32.const 1)) (then
+        (i32.store offset=196 (call $gl_texture_block) (i32.load offset=116 (local.get $p)))
         (memory.copy (i32.add (local.get $ctx) (i32.const 80))
           (i32.add (local.get $p) (i32.const 8)) (i32.const 20))
         (i32.store offset=44 (global.get $gl_sw_st) (i32.load offset=8 (local.get $p)))))

@@ -194,6 +194,8 @@ const stats = {
         else if ([0x2800,0x2801,0x2802,0x2803,0x8066].includes(pname)) {arg=2;length=4;}
         break;
       }
+      case 149: arg=7;length=u32At(view,stackWa,3)*4;break;
+      case 150: arg=6;length=u32At(view,stackWa,3)*4;break;
       case 148: arg = 1; length = 32; break; // glClipPlane
       case 34: arg = 0; length = 64; break; // glLoadMatrixf
       case 109: arg = 0; length = 64; break; // glMultMatrixf

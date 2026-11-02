@@ -1,0 +1,15 @@
+# GL1.1 one-dimensional textures — 2026-11-02
+
+`glTexImage1D`, `glTexSubImage1D`, and `glTexParameteriv` now execute through dynamically resolved guest stdcall handlers. Availability removes exactly these three MDK2 misses, from 82 to 79. Original MDK2 replay remains deferred while mandatory exports are unsupported.
+
+The contract comes from the [primary OpenGL 1.1 specification](https://registry.khronos.org/OpenGL/specs/gl/glspec11.pdf), particularly component conversion, texture images/filtering/objects, display lists, and state queries (sections 2.1, 3.6, 3.8, 5.4, 6.1).
+
+Native texture objects retain separate 1D and 2D bindings and enables for each context and texture unit. Named objects keep their original target. Twelve real 1D mip levels retain dimensions, supplied end borders, requested internal format, and owned ARGB8 surfaces. Each present component uses an implementation-selected eight-bit resolution. Incomplete textures disable their target; enabled 2D takes precedence over 1D. Sampling uses S/Q, fragment-center coordinates, S derivatives, all core min/mag filters, GL_CLAMP and GL_REPEAT. Previously accepted clamp-to-edge and mirrored-repeat values also render correctly.
+
+Uploads validate metadata before accessing inputs. Bytewise conversion handles all core external color formats and component types, aligned rows, row length, skipped rows/pixels, and component byte swapping. Color-index/bitmap inputs use the initial one-entry zero index-to-RGBA maps; PixelMap and PixelTransfer remain unsupported, so no nondefault transfer state is implied. Null image data allocates storage. Proxy definitions access no pixels, execute immediately during list compilation, and report unsupported dimensions through zero proxy dimensions/component sizes.
+
+Subimages validate defined levels and border-inclusive bounds before mutation. Integer border vectors use signed normalized conversion; enum and priority parameters use numerical conversion. Scalar pnames consume one element and border color consumes four. Lists own converted upload and vector snapshots. Texture/enable and client pixel-store attribute restoration includes the new state. Queued draws own sampler descriptors and fence image mutation/reclamation.
+
+WebGL 1/2 use distinct logical 1D state and a private power-of-two backing image with explicit shader sampling, logical completeness, and end-border handling. This backing never changes guest 2D bindings, dimensions, or enables.
+
+Validation and recovery evidence: `scratch/runs/20261102-gl-one-dimensional-textures/`. Focused tests exercise resolved calls, literal full-frame texels, format/type conversion, mip/filter/wrap, isolation, list/attribute restoration, sparse pages, invalid inputs, and direct versus independent queued execution. Saved old sources and compiled semantic mutations must fail the intended assertions. The worker also runs texture/raster/list/query/encoder/availability regressions, generated checks, and the locked build before publication.

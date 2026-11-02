@@ -291,7 +291,7 @@ const extraWat=`
  // Full projective primitive lists preserve Begin/End and typed values.
  call('glEnable',[0xde1]);call('glColor4f',[1,1,1,1].map(f));
  for(const mode of [0x1300,0x1301]){const id=call('glGenLists',[1]);call('glNewList',[id,mode]);quad('glVertex4dv');call('glEndList');write(vec,Buffer.alloc(80,0x57));call('glClear',[0x4000]);call('glCallList',[id]);pixels(Array(8).fill('RRRRRRBB'),'literal projective list '+mode);}
- for(const name of ['glGetBooleanv','glTexParameteriv']){assert.strictEqual(call('wglGetProcAddress',[str(name)]),0);assert.strictEqual(resolve(name),0);}
+ for(const name of ['glGetBooleanv']){assert.strictEqual(call('wglGetProcAddress',[str(name)]),0);assert.strictEqual(resolve(name),0);}
  assert.strictEqual(call('glGetError'),0);if(encoder){encoder.fence();assert(encoder.snapshot().glQueued>0,'actual queue used');}
  call('wglDeleteContext',[context]);
  const result={passed:true,route:queued?'queued':'direct',checks,missingImplemented:names.length,mutation:mutation||null,observations};

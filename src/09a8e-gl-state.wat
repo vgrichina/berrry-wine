@@ -87,6 +87,8 @@
     (f32.store offset=160 (local.get $p) (global.get $gl_tex1_q)))
 
   (func $gl_native_query_count (param $p i32) (result i32)
+    (if (i32.or (i32.eq (local.get $p) (i32.const 0xde0))
+      (i32.or (i32.eq (local.get $p) (i32.const 0x8068)) (i32.eq (local.get $p) (i32.const 0xcf0)))) (then (return (i32.const 1))))
     (if (i32.or (i32.eq (local.get $p) (i32.const 0xd32))
         (i32.lt_u (i32.sub (local.get $p) (i32.const 0x3000)) (i32.const 6)))
       (then (return (i32.const 1))))
@@ -106,6 +108,12 @@
     (i32.const 0))
 
   (func $gl_native_query_value (param $p i32) (param $i i32) (result f64)
+    (if (i32.eq (local.get $p) (i32.const 0xde0)) (then (return (f64.convert_i32_u
+      (i32.and (i32.const 1) (i32.shr_u (i32.load offset=192 (call $gl_texture_block)) (i32.load offset=4 (call $gl_mtx_block))))))))
+    (if (i32.eq (local.get $p) (i32.const 0x8068)) (then (return (f64.convert_i32_u
+      (i32.load offset=4 (i32.load (call $gl_texture_binding (call $gl_texture_block) (i32.const 0xde0))))))))
+    (if (i32.eq (local.get $p) (i32.const 0xcf0)) (then (return (f64.convert_i32_u
+      (i32.load offset=196 (call $gl_texture_block))))))
     (if (i32.eq (local.get $p) (i32.const 0xd32)) (then (return (f64.const 6))))
     (if (i32.lt_u (i32.sub (local.get $p) (i32.const 0x3000)) (i32.const 6))
       (then (return (f64.convert_i32_u (call $gl_clip_enabled (i32.sub (local.get $p) (i32.const 0x3000)))))))

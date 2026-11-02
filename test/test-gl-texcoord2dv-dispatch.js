@@ -56,7 +56,9 @@ const seams=new Map([
   ...['$gl_stencil_intercept','$gl_color_mask_intercept','$gl_bitmap_intercept',
     '$gl_stencil_validate'].map(n=>[n,'(param i32 i32'+(n==='$gl_stencil_validate'?' i32':'')+') (result i32) (i32.const 0)'])
 ]);
-const excluded=new Set(['$gl_emit_record','$gl_pointer_length',
+// Full-source 1D pixel fixtures cover allocation/reclamation. Trap those
+// unrelated endpoints in this isolated current-state/list ABI fixture.
+const excluded=new Set(['$gl_1d_store','$gl_1d_free','$gl_emit_record','$gl_pointer_length',
   '$gl_wat_stream_flush','$gl_state_set_context','$gl_state_context_deleted','$gl_state_context_changed','$gs32','$gs64','$gs8','$gs16','$gl_copy_from_guest']);
 const selected=new Map(), traps=new Map();
 function visit(n) {
@@ -275,14 +277,14 @@ for(const esp of [0xffffffec,0xfffffffc,0xffffffff]) {
   assert.strictEqual(h.v.getUint32(272,true),esp,'wrapping scalar stack rejected');
 }
 for(const p of [0xfffffff1,0xffffffff])assert.throws(()=>h.e.invoke(p),WebAssembly.RuntimeError,'vector wrap rejected');
-for(const name of ['glTexParameteriv','glGetBooleanv']) {
+for(const name of ['glGetBooleanv']) {
   const row=api.find(a=>a.name===name);assert.strictEqual(row.handler,'gl_unimplemented');
   assert.strictEqual(h.e.available(row.id),0);assert.throws(()=>h.e.other(row.id),WebAssembly.RuntimeError);
 }
 assert.strictEqual(api[scalarId].nargs,4);assert.strictEqual(api[scalarId].convention,'stdcall');
 const compat=require('../lib/gl-compat'),stream=require('../lib/gl-command-stream');
 assert.strictEqual(compat.CALL_INDEX.glTexCoord2f,28);assert.strictEqual(stream.ARG_WORDS[28],2);
-assert.strictEqual(compat.CALLS.length,149);
+assert.strictEqual(compat.CALLS.length,151);
 assert.strictEqual(compat.CALL_INDEX.glAccum,143);assert.strictEqual(compat.CALL_INDEX.glClearAccum,144);
 console.log(JSON.stringify({PASS:true,cases:36,scalarAndVector:true,nonAffineStack:true,displayLists:true,
   mutations:['cleanup','source','stride','opcode','route'],failureStatePreserved:true,

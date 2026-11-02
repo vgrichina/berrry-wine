@@ -142,6 +142,13 @@
           (i32.le_u (local.get $op) (i32.const 140)))))))
     (if (call $gl_clip_validate (local.get $ctx) (local.get $op) (local.get $stack))
       (then (return (i32.const 1))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 149)) (i32.eq (local.get $op) (i32.const 150))) (then
+      (local.set $n (call $gl_1d_validate (local.get $ctx) (i32.eq (local.get $op) (i32.const 150)) (local.get $stack)))
+      (if (local.get $n) (then (call $gl_list_error (local.get $ctx) (local.get $n)) (return (i32.const 1))))))
+    (if (i32.and (i32.or (i32.eq (local.get $op) (i32.const 8)) (i32.eq (local.get $op) (i32.const 10)))
+      (i32.and (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0xde0))
+        (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (i32.load offset=36 (local.get $ctx))))) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
     (if (call $gl_texture_validate (local.get $ctx) (local.get $op) (local.get $stack))
       (then (return (i32.const 1))))
     (if (call $gl_color_buffer_validate (local.get $ctx) (local.get $op) (local.get $stack))
@@ -305,7 +312,9 @@
         (if (i32.eq (local.get $op) (i32.const 85)) (then
           (call $gl_texcoord_check (i32.load offset=12 (local.get $stack))
             (select (i32.const 4) (i32.const 16) (i32.eq (i32.load offset=8 (local.get $stack)) (i32.const 0x2500))))))
-        (local.set $p (call $gl_list_alloc (i32.const 88)))
+        (local.set $p (call $gl_list_alloc (i32.add (i32.const 88)
+          (if (result i32) (i32.or (i32.eq (local.get $op) (i32.const 149)) (i32.eq (local.get $op) (i32.const 150)))
+            (then (i32.shl (i32.load offset=16 (local.get $stack)) (i32.const 2))) (else (i32.const 0))))))
         (if (i32.eqz (local.get $p)) (then
           (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 1))))
         (i32.store offset=4 (local.get $p) (local.get $op))
@@ -348,6 +357,13 @@
           (call $gl_copy_from_guest (i32.add (local.get $p) (i32.const 24))
             (i32.load offset=8 (local.get $stack)) (i32.const 32))
           (i32.store offset=16 (local.get $p) (call $w2g (i32.add (local.get $p) (i32.const 24))))))
+        (if (i32.or (i32.eq (local.get $op) (i32.const 149)) (i32.eq (local.get $op) (i32.const 150))) (then
+          (local.set $n (select (i32.const 32) (i32.const 28) (i32.eq (local.get $op) (i32.const 149))))
+          (call $gl_copy_from_guest (i32.add (local.get $p) (i32.const 88))
+            (i32.load (i32.add (local.get $stack) (local.get $n)))
+            (i32.shl (i32.load offset=16 (local.get $stack)) (i32.const 2)))
+          (i32.store (i32.add (i32.add (local.get $p) (i32.const 8)) (local.get $n))
+            (call $w2g (i32.add (local.get $p) (i32.const 88))))))
         (local.set $b (i32.load offset=20 (local.get $ctx)))
         (if (local.get $b) (then (i32.store (local.get $b) (local.get $p)))
           (else (i32.store offset=16 (local.get $ctx) (local.get $p))))
@@ -408,6 +424,7 @@
       (br $free))))
 
   (func $gl_list_scalar_command (param $op i32) (result i32)
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 149)) (i32.const 1)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 148)) (then (return (i32.const 1))))
     (if (i32.or (i32.eq (local.get $op) (i32.const 146))
       (i32.and (i32.ge_u (local.get $op) (i32.const 83)) (i32.le_u (local.get $op) (i32.const 85))))

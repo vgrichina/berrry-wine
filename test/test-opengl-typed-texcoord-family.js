@@ -282,7 +282,7 @@ const extraWat=`
  for(const name of ['glTexCoord2iv','glTexCoord2s','glTexCoord2sv']){typed('glTexCoord4dv',[0,0,0,7]);quad(name,[0,0],[1,0]);pixels('RRRRBBBB','literal 2D dimensional defaults '+name);}
  for(const mode of [0x1300,0x1301]){const id=call('glGenLists',[1]);call('glNewList',[id,mode]);quad('glTexCoord4dv',[0,0,0,1],[3,0,0,3]);call('glEndList');write(vec,Buffer.alloc(80,0x57));
   call('glClear',[0x4000]);call('glCallList',[id]);pixels('RRBBBBBB','literal list projective '+mode);}
- for(const name of ['glGetBooleanv','glTexParameteriv','glGetMapiv']){assert.strictEqual(call('wglGetProcAddress',[str(name)]),0,'unsupported control '+name);assert.strictEqual(resolve(name),0,'static unsupported control '+name);checks++;}
+ for(const name of ['glGetBooleanv','glGetMapiv']){assert.strictEqual(call('wglGetProcAddress',[str(name)]),0,'unsupported control '+name);assert.strictEqual(resolve(name),0,'static unsupported control '+name);checks++;}
  assert.strictEqual(call('glGetError'),0);if(encoder){encoder.fence();assert(encoder.snapshot().glQueued>0,'actual queue used');}
  call('wglDeleteContext',[context2]);call('wglDeleteContext',[fresh]);
  const result={passed:true,route:queued?'queued':'direct',checks,missingImplemented:names.length,mutation:mutation||null,observations};

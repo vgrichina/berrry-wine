@@ -53,7 +53,9 @@ const seams=new Map([
   ...['$gl_stencil_intercept','$gl_color_mask_intercept','$gl_bitmap_intercept',
     '$gl_stencil_validate'].map(n=>[n,'(param i32 i32'+(n==='$gl_stencil_validate'?' i32':'')+') (result i32) (i32.const 0)'])
 ]);
-const excluded=new Set(['$gl_emit_record','$gl_pointer_length',
+// Full-source 1D pixel fixtures cover allocation/reclamation. Trap those
+// unrelated endpoints in this isolated current-state/list ABI fixture.
+const excluded=new Set(['$gl_1d_store','$gl_1d_free','$gl_emit_record','$gl_pointer_length',
   '$gl_wat_stream_flush','$gl_state_set_context','$gl_state_context_deleted','$gl_state_context_changed','$gs32','$gs64','$gs8','$gs16','$gl_copy_from_guest']);
 const selected=new Map(), traps=new Map();
 function visit(n) {
@@ -241,7 +243,7 @@ function combined(h) {
     assert.deepStrictEqual(Array.from(a.slice(3,7)),rgba,'production color setter feeds production vertex route');
   }
   const n=e.count();e.mode(-1);e.invokeVertex(cases[0][0]);assert.strictEqual(e.count(),n);
-  for(const name of ['glTexParameteriv','glGetBooleanv']) {
+  for(const name of ['glGetBooleanv']) {
     const row=api.find(a=>a.name===name);assert.strictEqual(row.handler,'gl_unimplemented');
     assert.throws(()=>e.other(row.id),WebAssembly.RuntimeError,name+' stays fail-fast');
   }
@@ -278,7 +280,7 @@ for(const p of [0xffffffe9,0xffffffff])assert.throws(()=>rgb.e.invoke(p),WebAsse
 // Stable command ABI: canonicalization adds no new opcode or argument layout.
 const compat=require('../lib/gl-compat');const stream=require('../lib/gl-command-stream');
 assert.strictEqual(compat.CALL_INDEX.glColor4f,25);assert.strictEqual(compat.CALL_INDEX.glColor4fv,26);
-assert.strictEqual(compat.CALL_INDEX.gluScaleImage,141);assert.strictEqual(compat.CALLS.length,149);
+assert.strictEqual(compat.CALL_INDEX.gluScaleImage,141);assert.strictEqual(compat.CALLS.length,151);
 assert.strictEqual(compat.CALL_INDEX.glAccum,143);assert.strictEqual(compat.CALL_INDEX.glClearAccum,144);
 assert.strictEqual(stream.ARG_WORDS[25],4);
 console.log(JSON.stringify({PASS:true,cases:8,vertexCases:8,rgbImplicitAlpha:true,rgbNoFourthRead:true,rgbFailurePreservesColor:true,combinedColorVertex:true,vertexRouteMutationRejected:true,mutations:['r','g','b','a','stride','opcode','rgb-alpha','rgb-stride','cleanup','rgb-route'],displayListReplay:true,packedCommandReplay:true,fixtureSHA:hash(fs.readFileSync(__filename)),

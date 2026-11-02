@@ -1132,7 +1132,7 @@
   ;; listctx+760 owns this block; no host lookup can create a named object.
   ;; block: objects, attrib frames, reserved8, bindings[unit*2+dimension],
   ;; environments[2] {mode,color4}, padding8, default objects[2] (56 each).
-  ;; object: next,name,target,min,mag,wrapS,wrapT,border4,priority,baseformat,pad.
+  ;; object: next,name,target,min,mag,wrapS,wrapT,border4,priority,baseformat,1d-levels.
   (func $gl_texture_object_init (param $p i32) (param $target i32)
     (i32.store offset=8 (local.get $p) (local.get $target))
     (i32.store offset=12 (local.get $p) (i32.const 0x2702))
@@ -1148,7 +1148,7 @@
     (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
     (local.set $p (i32.load offset=760 (local.get $ctx)))
     (if (i32.eqz (local.get $p)) (then
-      (local.set $p (call $gl_list_alloc (i32.const 192)))
+      (local.set $p (call $gl_list_alloc (i32.const 204)))
       (if (i32.eqz (local.get $p)) (then (unreachable)))
       (call $gl_texture_object_init (i32.add (local.get $p) (i32.const 80)) (i32.const 0xde0))
       (call $gl_texture_object_init (i32.add (local.get $p) (i32.const 136)) (i32.const 0xde1))
@@ -1261,10 +1261,11 @@
     (local $p i32) (local $i i32) (local $obj i32)
     (if (i32.eq (local.get $op) (i32.const 76)) (then
       (if (i32.ge_u (i32.load offset=9032 (call $gl_mtx_block)) (i32.const 16)) (then (return)))
-      (local.set $p (call $gl_list_alloc (i32.const 224)))
+      (local.set $p (call $gl_list_alloc (i32.const 228)))
       (if (i32.eqz (local.get $p)) (then (unreachable)))
       (i32.store (local.get $p) (i32.load offset=4 (local.get $b)))
       (i32.store offset=4 (local.get $p) (local.get $mask))
+      (i32.store offset=224 (local.get $p) (i32.load offset=192 (local.get $b)))
       (memory.copy (i32.add (local.get $p) (i32.const 8)) (i32.add (local.get $b) (i32.const 16)) (i32.const 56))
       (loop $save
         (local.set $obj (i32.load (i32.add (local.get $b) (i32.add (i32.const 16) (i32.shl (local.get $i) (i32.const 2))))))
@@ -1283,6 +1284,8 @@
           (i32.add (local.get $p) (i32.add (i32.const 64) (i32.mul (local.get $i) (i32.const 40)))) (i32.const 36))
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br_if $restore (i32.lt_u (local.get $i) (i32.const 4))))))
+    (if (i32.and (i32.load offset=4 (local.get $p)) (i32.const 0x42000)) (then
+      (i32.store offset=192 (local.get $b) (i32.load offset=224 (local.get $p)))))
     (i32.store offset=4 (local.get $b) (i32.load (local.get $p)))
     (call $heap_free (call $w2g (local.get $p))))
 
@@ -1291,6 +1294,14 @@
     (local $name i32) (local $env i32) (local $src i32) (local $n i32)
     (local $i i32) (local $v f32) (local $raw i32)
     (if (i32.eqz (global.get $gl_current_context)) (then (return)))
+    (if (i32.and (i32.or (i32.eq (local.get $op) (i32.const 8)) (i32.eq (local.get $op) (i32.const 10)))
+        (i32.eq (i32.load offset=4 (local.get $s)) (i32.const 0xde0))) (then
+      (local.set $b (call $gl_texture_block))
+      (local.set $raw (i32.shl (i32.const 1) (i32.load offset=4 (call $gl_mtx_block))))
+      (i32.store offset=192 (local.get $b) (select
+        (i32.or (i32.load offset=192 (local.get $b)) (local.get $raw))
+        (i32.and (i32.load offset=192 (local.get $b)) (i32.xor (local.get $raw) (i32.const -1)))
+        (i32.eq (local.get $op) (i32.const 10)))) (return)))
     (if (i32.eqz (i32.or (i32.or (i32.eq (local.get $op) (i32.const 76)) (i32.eq (local.get $op) (i32.const 77)))
         (i32.or (i32.or (i32.eq (local.get $op) (i32.const 42)) (i32.eq (local.get $op) (i32.const 45)))
           (i32.or (i32.or (i32.eq (local.get $op) (i32.const 44)) (i32.eq (local.get $op) (i32.const 82)))
@@ -1468,6 +1479,7 @@
             (br_if $units (i32.lt_u (local.get $j) (i32.const 4))))
           ;; An attribute frame may still reference the object. Retire until
           ;; context destruction, never recycle it as a newly bound name.
+          (call $gl_1d_free (local.get $p))
           (i32.store (local.get $p) (i32.load offset=8 (local.get $b)))
           (i32.store offset=8 (local.get $b) (local.get $p)) (br $done)))
         (local.set $prev (local.get $p)) (local.set $p (local.get $next)) (br $scan)))
@@ -1483,10 +1495,13 @@
       (block $done (loop $free
         (br_if $done (i32.eqz (local.get $p)))
         (local.set $next (i32.load (local.get $p)))
+        (if (i32.ne (local.get $i) (i32.const 1)) (then (call $gl_1d_free (local.get $p))))
         (call $heap_free (call $w2g (local.get $p)))
         (local.set $p (local.get $next)) (br $free)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $heads (i32.lt_u (local.get $i) (i32.const 3))))
+    (call $gl_1d_free (i32.add (local.get $b) (i32.const 80)))
+    (if (i32.load offset=200 (local.get $b)) (then (call $heap_free (call $w2g (i32.load offset=200 (local.get $b))))))
     (call $heap_free (call $w2g (local.get $b))))
 
   ;; Rebuild raster sampling state from restored bound-object values. The
@@ -1528,6 +1543,10 @@
     (memory.copy (local.get $p) (i32.add (local.get $b) (i32.const 32)) (i32.const 40))
     (i32.store offset=40 (local.get $p) (i32.load offset=48 (i32.load offset=20 (local.get $b))))
     (i32.store offset=44 (local.get $p) (i32.load offset=48 (i32.load offset=28 (local.get $b))))
+    (if (call $gl_1d_selected (i32.const 0)) (then (i32.store offset=40 (local.get $p)
+      (i32.load offset=24 (i32.add (global.get $gl_1d_draw) (i32.const 0))))))
+    (if (call $gl_1d_selected (i32.const 1)) (then (i32.store offset=44 (local.get $p)
+      (i32.load offset=24 (i32.add (global.get $gl_1d_draw) (i32.const 56))))))
     (global.set $gl_texture_draw (local.get $p)))
 
   ;; Base formats of all GL1.1 sized/unsized internal formats (table3.8).
@@ -1652,3 +1671,633 @@
       (then (call $gl_list_error (local.get $ctx) (local.get $error))))
     (i32.store (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 12))))
+
+  ;; Draft only. 149/150 are assigned after predecessor release.
+  ;; Call adapter scratch: canonical transport uses RGBA/UNSIGNED_BYTE,
+  ;; tightly packed and independent of later unpack-state changes.
+  (func $handle_gl_tex1d_upload (param $sub i32)
+    (local $esp i32) (local $words i32) (local $frame i32) (local $s i32)
+    (local $ctx i32) (local $i i32) (local $error i32) (local $w i32)
+    (local $format i32) (local $type i32) (local $src i32) (local $n i32)
+    (local $align i32) (local $row i32) (local $bytes i32) (local $bit i32)
+    (local $guest i32) (local $out i32) (local $px i32) (local $swap i32)
+    (local $offset i64) (local $pitch i64) (local $start i64)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $words (select (i32.const 7) (i32.const 8) (local.get $sub)))
+    (call $gl_texcoord_check (local.get $esp) (i32.shl (i32.add (local.get $words) (i32.const 1)) (i32.const 2)))
+    ;; The guest frame may straddle non-affine pages, so first gather it.
+    (local.set $frame (call $gl_alloc_affine (i32.const 36)))
+    (if (i32.eqz (local.get $frame)) (then (unreachable)))
+    (local.set $s (call $g2w (local.get $frame)))
+    (loop $args
+      (i32.store (i32.add (local.get $s) (i32.shl (local.get $i) (i32.const 2)))
+        (call $gl32 (i32.add (local.get $esp) (i32.shl (local.get $i) (i32.const 2)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $args (i32.le_u (local.get $i) (local.get $words))))
+    (local.set $ctx (call $gl_list_context))
+    (if (local.get $ctx) (then
+      (local.set $error (call $gl_1d_validate (local.get $ctx) (local.get $sub) (local.get $s)))
+      (if (local.get $error) (then (call $gl_list_error (local.get $ctx) (local.get $error))))
+      (if (i32.eqz (local.get $error)) (then
+        (local.set $w (i32.load offset=16 (local.get $s)))
+        ;; A proxy never reads data, even for a huge otherwise legal image.
+        (if (i32.eq (i32.load offset=4 (local.get $s)) (i32.const 0x8063))
+          (then (drop (call $gl_wat_encode_call (i32.const 149) (local.get $s) (i32.const 0))))
+          (else
+            (local.set $format (i32.load (i32.add (local.get $s) (select (i32.const 20) (i32.const 24) (local.get $sub)))))
+            (local.set $type (i32.load (i32.add (local.get $s) (select (i32.const 24) (i32.const 28) (local.get $sub)))))
+            (local.set $src (i32.load (i32.add (local.get $s) (i32.shl (local.get $words) (i32.const 2)))))
+            (local.set $n (i32.mul (call $gl_1d_components (local.get $format)) (call $gl_1d_type_bytes (local.get $type))))
+            (local.set $row (i32.load offset=84 (local.get $ctx)))
+            (if (i32.eqz (local.get $row)) (then (local.set $row (local.get $w))))
+            (local.set $align (i32.load offset=80 (local.get $ctx)))
+            (local.set $pitch (if (result i64) (i32.eq (local.get $type) (i32.const 0x1a00))
+              (then (i64.shr_u (i64.add (i64.extend_i32_u (local.get $row)) (i64.const 7)) (i64.const 3)))
+              (else (i64.mul (i64.extend_i32_u (local.get $row)) (i64.extend_i32_u (local.get $n))))))
+            (local.set $pitch (i64.and (i64.add (local.get $pitch) (i64.sub (i64.extend_i32_u (local.get $align)) (i64.const 1)))
+              (i64.sub (i64.const 0) (i64.extend_i32_u (local.get $align)))))
+            ;; Bound before multiplying: the legal pixel-store integers can
+            ;; otherwise overflow even a 64-bit intermediate. A zero skipped
+            ;; row count consumes no pitch, and null data consumes no memory.
+            (if (i32.and (i32.and (i32.ne (local.get $src) (i32.const 0)) (i32.ne (local.get $w) (i32.const 0)))
+                (i32.and (i64.gt_u (local.get $pitch) (i64.const 4294967295))
+                  (i32.ne (i32.load offset=88 (local.get $ctx)) (i32.const 0)))) (then (unreachable)))
+            (local.set $offset (i64.mul (local.get $pitch) (i64.extend_i32_u (i32.load offset=88 (local.get $ctx)))))
+            (if (i32.eq (local.get $type) (i32.const 0x1a00))
+              (then
+                (local.set $bit (i32.and (i32.load offset=92 (local.get $ctx)) (i32.const 7)))
+                (local.set $offset (i64.add (local.get $offset) (i64.extend_i32_u (i32.shr_u (i32.load offset=92 (local.get $ctx)) (i32.const 3)))))
+                (local.set $bytes (i32.shr_u (i32.add (i32.add (local.get $w) (local.get $bit)) (i32.const 7)) (i32.const 3))))
+              (else
+                (local.set $offset (i64.add (local.get $offset) (i64.mul
+                  (i64.extend_i32_u (i32.load offset=92 (local.get $ctx))) (i64.extend_i32_u (local.get $n)))))
+                (local.set $bytes (i32.mul (local.get $w) (local.get $n)))))
+            (local.set $start (i64.add (i64.extend_i32_u (local.get $src)) (local.get $offset)))
+            (if (i32.and (i32.ne (local.get $src) (i32.const 0)) (i32.ne (local.get $w) (i32.const 0))) (then
+              (if (i64.gt_u (i64.add (local.get $start) (i64.extend_i32_u (local.get $bytes))) (i64.const 4294967296)) (then (unreachable)))
+              (call $gl_1d_span (i32.wrap_i64 (local.get $start)) (local.get $bytes))))
+            (local.set $guest (call $gl_alloc_affine (i32.add (i32.const 36) (i32.shl (local.get $w) (i32.const 2)))))
+            (if (i32.eqz (local.get $guest)) (then (unreachable)))
+            (local.set $out (call $g2w (local.get $guest)))
+            (memory.copy (local.get $out) (local.get $s) (i32.const 36))
+            (i32.store (i32.add (local.get $out) (select (i32.const 20) (i32.const 24) (local.get $sub))) (i32.const 0x1908))
+            (i32.store (i32.add (local.get $out) (select (i32.const 24) (i32.const 28) (local.get $sub))) (i32.const 0x1401))
+            (i32.store (i32.add (local.get $out) (i32.shl (local.get $words) (i32.const 2))) (i32.add (local.get $guest) (i32.const 36)))
+            (local.set $swap (i32.load offset=196 (call $gl_texture_block)))
+            (local.set $i (i32.const 0))
+            (block $done (loop $pixels
+              (br_if $done (i32.ge_u (local.get $i) (local.get $w)))
+              (local.set $px (i32.const 0))
+              (if (local.get $src) (then (local.set $px (call $gl_1d_external
+                (i32.add (i32.wrap_i64 (local.get $start)) (i32.mul (local.get $i) (local.get $n)))
+                (local.get $format) (local.get $type) (local.get $swap)))))
+              (i32.store8 (i32.add (local.get $out) (i32.add (i32.const 36) (i32.shl (local.get $i) (i32.const 2)))) (i32.shr_u (local.get $px) (i32.const 16)))
+              (i32.store8 (i32.add (local.get $out) (i32.add (i32.const 37) (i32.shl (local.get $i) (i32.const 2)))) (i32.shr_u (local.get $px) (i32.const 8)))
+              (i32.store8 (i32.add (local.get $out) (i32.add (i32.const 38) (i32.shl (local.get $i) (i32.const 2)))) (local.get $px))
+              (i32.store8 (i32.add (local.get $out) (i32.add (i32.const 39) (i32.shl (local.get $i) (i32.const 2)))) (i32.shr_u (local.get $px) (i32.const 24)))
+              (local.set $i (i32.add (local.get $i) (i32.const 1)))
+              (br $pixels)))
+            (drop (call $gl_wat_encode_call (select (i32.const 150) (i32.const 149) (local.get $sub)) (local.get $out) (i32.const 0)))
+            (call $heap_free (local.get $guest))))))))
+    (call $heap_free (local.get $frame))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.shl (i32.add (local.get $words) (i32.const 1)) (i32.const 2)))))
+  ;; 1D arrays are owned by the canonical texture object (+52). Each of the
+  ;; twelve levels is {surface,width,border,internal,defined}, twenty bytes.
+  (func $gl_1d_levels (param $object i32) (param $create i32) (result i32)
+    (local $p i32)
+    (local.set $p (i32.load offset=52 (local.get $object)))
+    (if (i32.and (i32.eqz (local.get $p)) (local.get $create)) (then
+      (local.set $p (call $gl_list_alloc (i32.const 240)))
+      (i32.store offset=52 (local.get $object) (local.get $p))))
+    (local.get $p))
+
+  (func $gl_1d_level (param $target i32) (param $level i32) (param $create i32) (result i32)
+    (local $b i32) (local $p i32)
+    (local.set $b (call $gl_texture_block))
+    (if (i32.eq (local.get $target) (i32.const 0x8063)) (then
+      (local.set $p (i32.load offset=200 (local.get $b)))
+      (if (i32.and (i32.eqz (local.get $p)) (local.get $create)) (then
+        (local.set $p (call $gl_list_alloc (i32.const 240)))
+        (i32.store offset=200 (local.get $b) (local.get $p)))))
+      (else (local.set $p (call $gl_1d_levels
+        (i32.load (call $gl_texture_binding (local.get $b) (i32.const 0xde0))) (local.get $create)))))
+    (if (i32.eqz (local.get $p)) (then (return (i32.const 0))))
+    (i32.add (local.get $p) (i32.mul (local.get $level) (i32.const 20))))
+
+  (func $gl_1d_free (param $object i32)
+    (local $p i32) (local $i i32) (local $obj i32)
+    (local.set $p (i32.load offset=52 (local.get $object)))
+    (if (i32.eqz (local.get $p)) (then (return)))
+    (call $d3dim_worker_fence)
+    (loop $levels
+      (local.set $obj (i32.load (i32.add (local.get $p) (i32.mul (local.get $i) (i32.const 20)))))
+      (if (local.get $obj) (then (drop (call $dx_surface_release (local.get $obj)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $levels (i32.lt_u (local.get $i) (i32.const 12))))
+    (call $heap_free (call $w2g (local.get $p)))
+    (i32.store offset=52 (local.get $object) (i32.const 0)))
+
+  (func $gl_1d_internal_valid (param $f i32) (result i32)
+    (i32.or (i32.le_u (i32.sub (local.get $f) (i32.const 1)) (i32.const 3))
+      (i32.or (i32.eq (local.get $f) (i32.const 0x2a10))
+        (i32.or (i32.le_u (i32.sub (local.get $f) (i32.const 0x1906)) (i32.const 4))
+          (i32.and (i32.le_u (i32.sub (local.get $f) (i32.const 0x803b)) (i32.const 32))
+            (i32.ne (local.get $f) (i32.const 0x804e)))))))
+
+  (func $gl_1d_components (param $format i32) (result i32)
+    (if (i32.eq (local.get $format) (i32.const 0x1900)) (then (return (i32.const 1))))
+    (if (i32.le_u (i32.sub (local.get $format) (i32.const 0x1903)) (i32.const 3)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $format) (i32.const 0x1909)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $format) (i32.const 0x190a)) (then (return (i32.const 2))))
+    (if (i32.eq (local.get $format) (i32.const 0x1907)) (then (return (i32.const 3))))
+    (if (i32.eq (local.get $format) (i32.const 0x1908)) (then (return (i32.const 4))))
+    (i32.const 0))
+
+  ;; A normalized upload component set, expanded before internal selection.
+  (func $gl_1d_external (param $p i32) (param $format i32) (param $type i32)
+      (param $swap i32) (result i32)
+    (local $r i32) (local $g i32) (local $b i32) (local $a i32) (local $n i32)
+    ;; The GL1.1 initial I_TO_RGBA maps contain one zero entry each. PixelMap
+    ;; and PixelTransfer are not exposed by this implementation.
+    (if (i32.eq (local.get $format) (i32.const 0x1900)) (then (return (i32.const 0))))
+    (local.set $a (i32.const 255))
+    (local.set $n (call $gl_1d_type_bytes (local.get $type)))
+    (local.set $r (call $gl_sw_u8 (call $gl_1d_component (local.get $p) (local.get $type) (local.get $swap))))
+    (if (i32.eq (local.get $format) (i32.const 0x1904)) (then
+      (local.set $g (local.get $r)) (local.set $r (i32.const 0))))
+    (if (i32.eq (local.get $format) (i32.const 0x1905)) (then
+      (local.set $b (local.get $r)) (local.set $r (i32.const 0))))
+    (if (i32.eq (local.get $format) (i32.const 0x1906)) (then
+      (local.set $a (local.get $r)) (local.set $r (i32.const 0))))
+    (if (i32.ge_u (local.get $format) (i32.const 0x1909)) (then
+      (local.set $g (local.get $r)) (local.set $b (local.get $r))
+      (if (i32.eq (local.get $format) (i32.const 0x190a)) (then
+        (local.set $a (call $gl_sw_u8 (call $gl_1d_component
+          (i32.add (local.get $p) (local.get $n)) (local.get $type) (local.get $swap))))))))
+    (if (i32.or (i32.eq (local.get $format) (i32.const 0x1907))
+        (i32.eq (local.get $format) (i32.const 0x1908))) (then
+      (local.set $g (call $gl_sw_u8 (call $gl_1d_component
+        (i32.add (local.get $p) (local.get $n)) (local.get $type) (local.get $swap))))
+      (local.set $b (call $gl_sw_u8 (call $gl_1d_component
+        (i32.add (local.get $p) (i32.shl (local.get $n) (i32.const 1))) (local.get $type) (local.get $swap))))
+      (if (i32.eq (local.get $format) (i32.const 0x1908)) (then
+        (local.set $a (call $gl_sw_u8 (call $gl_1d_component
+          (i32.add (local.get $p) (i32.mul (local.get $n) (i32.const 3))) (local.get $type) (local.get $swap))))))))
+    (i32.or (i32.or (i32.shl (local.get $a) (i32.const 24)) (i32.shl (local.get $r) (i32.const 16)))
+      (i32.or (i32.shl (local.get $g) (i32.const 8)) (local.get $b))))
+
+  ;; Unlike the <=32-byte vector helper, texture spans may contain an
+  ;; unmapped interior page. Check every page and the exact final byte.
+  (func $gl_1d_span (param $p i32) (param $n i32)
+    (local $at i32) (local $end i32)
+    (if (i32.eqz (local.get $n)) (then (return)))
+    (if (i32.gt_u (local.get $p) (i32.sub (i32.const -1) (i32.sub (local.get $n) (i32.const 1))))
+      (then (unreachable)))
+    (local.set $at (local.get $p))
+    (local.set $end (i32.add (local.get $p) (i32.sub (local.get $n) (i32.const 1))))
+    (loop $pages
+      (if (i32.eq (call $g2w (local.get $at)) (global.get $NULL_SENTINEL)) (then (unreachable)))
+      (local.set $at (i32.add (i32.and (local.get $at) (i32.const -4096)) (i32.const 4096)))
+      (br_if $pages (i32.and (i32.ne (local.get $at) (i32.const 0)) (i32.le_u (local.get $at) (local.get $end)))))
+    (if (i32.eq (call $g2w (local.get $end)) (global.get $NULL_SENTINEL)) (then (unreachable))))
+
+  (func $gl_1d_type_bytes (param $type i32) (result i32)
+    (if (i32.le_u (i32.sub (local.get $type) (i32.const 0x1400)) (i32.const 1)) (then (return (i32.const 1))))
+    (if (i32.le_u (i32.sub (local.get $type) (i32.const 0x1402)) (i32.const 1)) (then (return (i32.const 2))))
+    (if (i32.le_u (i32.sub (local.get $type) (i32.const 0x1404)) (i32.const 2)) (then (return (i32.const 4))))
+    (i32.const 0))
+
+  ;; Read a component bytewise; no affine guest-page assumption. Swapping is
+  ;; within each component, including floating-point components.
+  (func $gl_1d_component (param $p i32) (param $type i32) (param $swap i32) (result f32)
+    (local $n i32) (local $i i32) (local $v i32) (local $at i32) (local $f f64)
+    (local.set $n (call $gl_1d_type_bytes (local.get $type)))
+    (loop $bytes
+      (local.set $at (select (i32.sub (i32.sub (local.get $n) (i32.const 1)) (local.get $i))
+        (local.get $i) (local.get $swap)))
+      (local.set $v (i32.or (local.get $v) (i32.shl
+        (i32.load8_u (call $g2w (i32.add (local.get $p) (local.get $at))))
+        (i32.shl (local.get $i) (i32.const 3)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $bytes (i32.lt_u (local.get $i) (local.get $n))))
+    (if (i32.eq (local.get $type) (i32.const 0x1406)) (then (return (f32.reinterpret_i32 (local.get $v)))))
+    (if (i32.eqz (i32.and (local.get $type) (i32.const 1))) (then
+      (if (i32.eq (local.get $n) (i32.const 1)) (then (local.set $v (i32.extend8_s (local.get $v)))))
+      (if (i32.eq (local.get $n) (i32.const 2)) (then (local.set $v (i32.extend16_s (local.get $v)))))
+      (local.set $f (f64.div (f64.add (f64.mul (f64.convert_i32_s (local.get $v)) (f64.const 2)) (f64.const 1))
+        (f64.sub (f64.convert_i64_u (i64.shl (i64.const 1) (i64.extend_i32_u (i32.shl (local.get $n) (i32.const 3))))) (f64.const 1)))))
+      (else (local.set $f (f64.div (f64.convert_i32_u (local.get $v))
+        (f64.sub (f64.convert_i64_u (i64.shl (i64.const 1) (i64.extend_i32_u (i32.shl (local.get $n) (i32.const 3))))) (f64.const 1))))))
+    (f32.demote_f64 (local.get $f)))
+
+  ;; Internal components are selected after external expansion, GL1.1 table3.7.
+  (func $gl_1d_select (param $px i32) (param $internal i32) (result i32)
+    (local $base i32) (local $r i32)
+    (local.set $base (call $gl_texture_base (local.get $internal)))
+    (local.set $r (i32.and (i32.shr_u (local.get $px) (i32.const 16)) (i32.const 255)))
+    (if (i32.eq (local.get $base) (i32.const 3)) (then (return (i32.or (local.get $px) (i32.const 0xff000000)))))
+    (if (i32.eq (local.get $base) (i32.const 4)) (then (return (local.get $px))))
+    (if (i32.eq (local.get $base) (i32.const 5)) (then (return (i32.and (local.get $px) (i32.const 0xff000000)))))
+    (i32.or (i32.mul (local.get $r) (i32.const 0x10101))
+      (if (result i32) (i32.eq (local.get $base) (i32.const 1)) (then (i32.const 0xff000000))
+        (else (if (result i32) (i32.eq (local.get $base) (i32.const 2))
+          (then (i32.and (local.get $px) (i32.const 0xff000000)))
+          (else (i32.shl (local.get $r) (i32.const 24))))))))
+
+  ;; Metadata validation runs before list capture and again during playback.
+  ;; Source format/type checks precede any client pointer access in the adapter.
+  (func $gl_1d_validate (param $ctx i32) (param $sub i32) (param $s i32) (result i32)
+    (local $target i32) (local $level i32) (local $w i32) (local $b i32)
+    (local $x i32) (local $p i32) (local $format i32) (local $type i32) (local $error i32)
+    (local.set $target (i32.load offset=4 (local.get $s)))
+    (local.set $level (i32.load offset=8 (local.get $s)))
+    (local.set $w (i32.load offset=16 (local.get $s)))
+    (local.set $format (i32.load offset=24 (local.get $s)))
+    (local.set $type (i32.load offset=28 (local.get $s)))
+    (if (local.get $sub) (then
+      (local.set $format (i32.load offset=20 (local.get $s)))
+      (local.set $type (i32.load offset=24 (local.get $s)))))
+    (if (i32.and (i32.ne (local.get $target) (i32.const 0xde0))
+        (i32.or (local.get $sub) (i32.ne (local.get $target) (i32.const 0x8063))))
+      (then (local.set $error (i32.const 0x500))))
+    (if (i32.or (i32.eqz (call $gl_1d_components (local.get $format)))
+        (i32.and (i32.eqz (call $gl_1d_type_bytes (local.get $type))) (i32.ne (local.get $type) (i32.const 0x1a00))))
+      (then (local.set $error (i32.const 0x500))))
+    (if (i32.and (i32.eq (local.get $type) (i32.const 0x1a00)) (i32.ne (local.get $format) (i32.const 0x1900)))
+      (then (local.set $error (i32.const 0x500))))
+    (if (i32.or (i32.gt_u (local.get $level) (i32.const 11))
+        (i32.or (i32.lt_s (local.get $w) (i32.const 0))
+          (i32.and (i32.ne (local.get $sub) (i32.const 0)) (i32.gt_u (local.get $w) (i32.const 2050)))))
+      (then (local.set $error (i32.const 0x501))))
+    (if (i32.eqz (local.get $sub)) (then
+      (local.set $b (i32.load offset=20 (local.get $s)))
+      (local.set $x (i32.sub (local.get $w) (i32.shl (local.get $b) (i32.const 1))))
+      (if (i32.or (i32.eqz (call $gl_1d_internal_valid (i32.load offset=12 (local.get $s))))
+          (i32.or (i32.gt_u (local.get $b) (i32.const 1))
+            (i32.and (i32.ne (local.get $w) (i32.const 0))
+              (i32.or (i32.le_s (local.get $x) (i32.const 0))
+                (i32.ne (i32.and (local.get $x) (i32.sub (local.get $x) (i32.const 1))) (i32.const 0))))))
+        (then (local.set $error (i32.const 0x501))))
+      (if (i32.and (i32.ne (local.get $w) (i32.const 0))
+          (i32.and (i32.eq (local.get $target) (i32.const 0xde0))
+            (i32.gt_u (local.get $x) (i32.shr_u (i32.const 2048) (local.get $level)))))
+        (then (local.set $error (i32.const 0x501))))))
+    (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+        (i32.and (i32.ne (local.get $target) (i32.const 0x8063)) (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0))))
+      (then (local.set $error (i32.const 0x502))))
+    (if (local.get $error) (then (return (local.get $error))))
+    ;; The bound image can be defined by an earlier command in this very list.
+    (if (i32.and (local.get $sub) (i32.eqz (i32.load offset=12 (local.get $ctx)))) (then
+      (local.set $p (call $gl_1d_level (local.get $target) (local.get $level) (i32.const 0)))
+      (if (i32.eqz (local.get $p)) (then (return (i32.const 0x502))))
+      (if (i32.eqz (i32.load offset=16 (local.get $p))) (then (return (i32.const 0x502))))
+      (local.set $b (i32.load offset=8 (local.get $p)))
+      (local.set $x (i32.load offset=12 (local.get $s)))
+      (if (i32.or (i32.lt_s (local.get $x) (i32.sub (i32.const 0) (local.get $b)))
+          (i64.gt_s (i64.add (i64.extend_i32_s (local.get $x)) (i64.extend_i32_u (local.get $w)))
+            (i64.extend_i32_s (i32.sub (i32.load offset=4 (local.get $p)) (local.get $b)))))
+        (then (return (i32.const 0x501))))))
+    (i32.const 0))
+
+  ;; Immediate queries must precede list interception in the encoder.
+  (func $gl_1d_query (param $op i32) (param $s i32) (result i32)
+    (local $ctx i32) (local $target i32) (local $level i32) (local $name i32)
+    (local $out i32) (local $value i32) (local $error i32)
+    (if (i32.eqz (i32.or (i32.eq (local.get $op) (i32.const 65))
+      (i32.or (i32.eq (local.get $op) (i32.const 114)) (i32.eq (local.get $op) (i32.const 115))))) (then (return (i32.const 0))))
+    (local.set $target (i32.load offset=4 (local.get $s)))
+    (if (i32.eq (local.get $op) (i32.const 65)) (then
+      (if (i32.ne (local.get $target) (i32.const 0xde0)) (then (return (i32.const 0)))))
+      (else
+        (if (i32.eqz (i32.or (i32.eq (local.get $op) (i32.const 114)) (i32.eq (local.get $op) (i32.const 115))))
+          (then (return (i32.const 0))))
+        (if (i32.eqz (i32.or (i32.eq (local.get $target) (i32.const 0xde0)) (i32.eq (local.get $target) (i32.const 0x8063))))
+          (then (return (i32.const 0))))))
+    (local.set $ctx (call $gl_list_context))
+    (global.set $gl_list_result (i32.const 0))
+    (if (i32.eqz (local.get $ctx)) (then (return (i32.const 1))))
+    (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 65)) (then
+      (global.set $gl_list_result (i32.and (i32.const 1) (i32.shr_u
+        (i32.load offset=192 (call $gl_texture_block)) (i32.load offset=4 (call $gl_mtx_block)))))
+      (return (i32.const 1))))
+    (local.set $level (i32.load offset=8 (local.get $s)))
+    (local.set $name (i32.load offset=12 (local.get $s)))
+    (local.set $out (i32.load offset=16 (local.get $s)))
+    (if (i32.gt_u (local.get $level) (i32.const 11)) (then (local.set $error (i32.const 0x501))))
+    (if (i32.eqz (i32.or (i32.or (i32.eq (local.get $name) (i32.const 0x1000))
+          (i32.eq (local.get $name) (i32.const 0x1001)))
+        (i32.or (i32.or (i32.eq (local.get $name) (i32.const 0x1003)) (i32.eq (local.get $name) (i32.const 0x1005)))
+          (i32.le_u (i32.sub (local.get $name) (i32.const 0x805c)) (i32.const 5)))))
+      (then (local.set $error (i32.const 0x500))))
+    (if (local.get $error) (then
+      (call $gl_list_error (local.get $ctx) (local.get $error)) (return (i32.const 1))))
+    (call $gl_texcoord_check (local.get $out) (i32.const 4))
+    (local.set $value (call $gl_1d_level_value
+      (call $gl_1d_level (local.get $target) (local.get $level) (i32.const 0)) (local.get $name)))
+    (if (i32.eq (local.get $op) (i32.const 114))
+      (then (call $gs32 (local.get $out) (local.get $value)))
+      (else (call $gs32 (local.get $out) (i32.reinterpret_f32 (f32.convert_i32_s (local.get $value))))))
+    (i32.const 1))
+
+  ;; Native storage executes only after list interception.
+  ;; Canonical pixels are RGBA8; conversion to the image's base format occurs
+  ;; here, independently for each mip level (and on every subimage write).
+  (func $gl_1d_store (param $sub i32) (param $s i32) (result i32)
+    (local $ctx i32) (local $p i32) (local $old i32) (local $obj i32)
+    (local $entry i32) (local $w i32) (local $b i32) (local $x i32)
+    (local $internal i32) (local $i i32) (local $src i32) (local $dst i32)
+    (local $r i32) (local $g i32) (local $blue i32) (local $a i32) (local $error i32)
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
+    (local.set $error (call $gl_1d_validate (local.get $ctx) (local.get $sub) (local.get $s)))
+    (if (local.get $error) (then (call $gl_list_error (local.get $ctx) (local.get $error)) (return (i32.const 0))))
+    (local.set $w (i32.load offset=16 (local.get $s)))
+    (if (i32.eq (i32.load offset=4 (local.get $s)) (i32.const 0x8063)) (then
+      (local.set $p (call $gl_1d_level (i32.const 0x8063) (i32.load offset=8 (local.get $s)) (i32.const 1)))
+      (if (i32.eqz (local.get $p)) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 0))))
+      (memory.fill (local.get $p) (i32.const 0) (i32.const 20))
+      (i32.store offset=16 (local.get $p) (i32.const 2))
+      (local.set $b (i32.load offset=20 (local.get $s)))
+      (if (i32.or (i32.eqz (local.get $w)) (i32.le_u (i32.sub (local.get $w) (i32.shl (local.get $b) (i32.const 1)))
+          (i32.shr_u (i32.const 2048) (i32.load offset=8 (local.get $s))))) (then
+        (i32.store offset=4 (local.get $p) (local.get $w))
+        (i32.store offset=8 (local.get $p) (local.get $b))
+        (i32.store offset=12 (local.get $p) (i32.load offset=12 (local.get $s)))
+        (i32.store offset=16 (local.get $p) (i32.const 1))))
+      ;; Proxy commands are immediate and have no host upload.
+      (return (i32.const 0))))
+    (local.set $p (call $gl_1d_level (i32.const 0xde0) (i32.load offset=8 (local.get $s)) (i32.const 1)))
+    (if (i32.eqz (local.get $p)) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 0))))
+    (if (local.get $sub) (then
+      (if (i32.eqz (i32.load offset=16 (local.get $p))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 0))))
+      (local.set $b (i32.load offset=8 (local.get $p)))
+      (local.set $x (i32.load offset=12 (local.get $s)))
+      (if (i32.or (i32.lt_s (local.get $x) (i32.sub (i32.const 0) (local.get $b)))
+          (i64.gt_s (i64.add (i64.extend_i32_s (local.get $x)) (i64.extend_i32_u (local.get $w)))
+            (i64.extend_i32_s (i32.sub (i32.load offset=4 (local.get $p)) (local.get $b))))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x501)) (return (i32.const 0))))
+      (local.set $obj (i32.load (local.get $p)))
+      (local.set $internal (i32.load offset=12 (local.get $p)))
+      (local.set $src (i32.load offset=28 (local.get $s)))
+      (local.set $x (i32.add (local.get $x) (local.get $b))))
+      (else
+        (local.set $b (i32.load offset=20 (local.get $s)))
+        (local.set $internal (i32.load offset=12 (local.get $s)))
+        (local.set $src (i32.load offset=32 (local.get $s)))
+        (if (local.get $w) (then
+          (local.set $obj (call $d3d9_create_surface (local.get $w) (i32.const 1) (i32.const 32) (i32.const 4)))
+          (if (i32.eqz (local.get $obj)) (then
+            (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 0))))))))
+    ;; All validation and allocation precede mutation, including queued use.
+    (call $d3dim_worker_fence)
+    (if (i32.eqz (local.get $sub)) (then
+      (call $gl_sw_tex_release (local.get $p))
+      (i32.store (local.get $p) (local.get $obj))
+      (i32.store offset=4 (local.get $p) (local.get $w))
+      (i32.store offset=8 (local.get $p) (local.get $b))
+      (i32.store offset=12 (local.get $p) (local.get $internal))
+      (i32.store offset=16 (local.get $p) (i32.const 1))))
+    (if (i32.eqz (local.get $w)) (then (return (i32.const 1))))
+    (local.set $entry (call $dx_from_this (local.get $obj)))
+    (call $dx_surf_fmt_set (local.get $entry) (i32.const 5))
+    (local.set $dst (i32.add (load.field DxObject misc1 (local.get $entry)) (i32.shl (local.get $x) (i32.const 2))))
+    (loop $pixels
+      (local.set $r (i32.load8_u (call $g2w (local.get $src))))
+      (local.set $g (i32.load8_u (call $g2w (i32.add (local.get $src) (i32.const 1)))))
+      (local.set $blue (i32.load8_u (call $g2w (i32.add (local.get $src) (i32.const 2)))))
+      (local.set $a (i32.load8_u (call $g2w (i32.add (local.get $src) (i32.const 3)))))
+      (i32.store (i32.add (local.get $dst) (i32.shl (local.get $i) (i32.const 2)))
+        (call $gl_1d_select (i32.or (i32.or (i32.shl (local.get $a) (i32.const 24)) (i32.shl (local.get $r) (i32.const 16)))
+          (i32.or (i32.shl (local.get $g) (i32.const 8)) (local.get $blue))) (local.get $internal)))
+      (local.set $src (i32.add (local.get $src) (i32.const 4)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $pixels (i32.lt_u (local.get $i) (local.get $w))))
+    (i32.const 1))
+
+  ;; A level query returns a scalar. Invalid target/level/pname must be
+  ;; rejected before validating the caller's output pointer.
+  (func $gl_1d_level_value (param $p i32) (param $pname i32) (result i32)
+    (local $internal i32) (local $base i32)
+    (if (i32.eqz (local.get $p)) (then (return (select (i32.const 1) (i32.const 0)
+      (i32.eq (local.get $pname) (i32.const 0x1003))))))
+    (if (i32.eq (i32.load offset=16 (local.get $p)) (i32.const 2)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load offset=16 (local.get $p))) (then (return (select (i32.const 1) (i32.const 0)
+      (i32.eq (local.get $pname) (i32.const 0x1003))))))
+    (if (i32.eq (local.get $pname) (i32.const 0x1000)) (then (return (i32.load offset=4 (local.get $p)))))
+    (if (i32.eq (local.get $pname) (i32.const 0x1001)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $pname) (i32.const 0x1005)) (then (return (i32.load offset=8 (local.get $p)))))
+    (local.set $internal (i32.load offset=12 (local.get $p)))
+    (if (i32.eq (local.get $pname) (i32.const 0x1003)) (then (return (local.get $internal))))
+    (local.set $base (call $gl_texture_base (local.get $internal)))
+    ;; Canonical storage chooses eight bits for every present component.
+    (if (i32.le_u (i32.sub (local.get $pname) (i32.const 0x805c)) (i32.const 2))
+      (then (return (select (i32.const 8) (i32.const 0) (i32.or (i32.eq (local.get $base) (i32.const 3)) (i32.eq (local.get $base) (i32.const 4)))))))
+    (if (i32.eq (local.get $pname) (i32.const 0x805f))
+      (then (return (select (i32.const 8) (i32.const 0) (i32.or (i32.eq (local.get $base) (i32.const 2))
+        (i32.or (i32.eq (local.get $base) (i32.const 4)) (i32.eq (local.get $base) (i32.const 5))))))))
+    (if (i32.eq (local.get $pname) (i32.const 0x8060))
+      (then (return (select (i32.const 8) (i32.const 0) (i32.le_u (i32.sub (local.get $base) (i32.const 1)) (i32.const 1))))))
+    (select (i32.const 8) (i32.const 0) (i32.eq (local.get $base) (i32.const 6))))
+
+  ;; Per-draw sampler descriptor, two units *56B.
+  (global $gl_1d_draw_storage (mut i32) (i32.const 0))
+  (global $gl_1d_draw (mut i32) (i32.const 0))
+
+  (func $gl_1d_capture
+    (local $b i32) (local $object i32) (local $d i32) (local $unit i32)
+    (local $last i32) (local $px i32) (local $i i32) (local $levels i32)
+    (global.set $gl_1d_draw (i32.const 0))
+    (if (i32.eqz (global.get $gl_current_context)) (then (return)))
+    (if (i32.eqz (global.get $gl_1d_draw_storage)) (then
+      (global.set $gl_1d_draw_storage (call $gl_list_alloc (i32.const 112)))))
+    (if (i32.eqz (global.get $gl_1d_draw_storage)) (then (unreachable)))
+    (global.set $gl_1d_draw (global.get $gl_1d_draw_storage))
+    (local.set $b (call $gl_texture_block))
+    (loop $units
+      (local.set $d (i32.add (global.get $gl_1d_draw) (i32.mul (local.get $unit) (i32.const 56))))
+      (memory.fill (local.get $d) (i32.const 0) (i32.const 56))
+      (local.set $object (i32.load (i32.add (local.get $b) (i32.add (i32.const 16) (i32.shl (local.get $unit) (i32.const 3))))))
+      (local.set $levels (i32.load offset=52 (local.get $object)))
+      (local.set $last (call $gl_1d_complete (local.get $object)))
+      (i32.store (local.get $d) (local.get $levels))
+      (memory.copy (i32.add (local.get $d) (i32.const 4)) (i32.add (local.get $object) (i32.const 12)) (i32.const 12))
+      (local.set $px (i32.const 0)) (local.set $i (i32.const 0))
+      (loop $color
+        (local.set $px (i32.or (local.get $px) (i32.shl
+          (call $gl_sw_u8 (f32.load (i32.add (local.get $object) (i32.add (i32.const 28) (i32.shl (local.get $i) (i32.const 2))))))
+          (select (i32.const 24) (i32.sub (i32.const 16) (i32.shl (local.get $i) (i32.const 3))) (i32.eq (local.get $i) (i32.const 3))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $color (i32.lt_u (local.get $i) (i32.const 4))))
+      (if (local.get $levels) (then
+        (local.set $px (call $gl_1d_select (local.get $px) (i32.load offset=12 (local.get $levels))))
+        (i32.store offset=24 (local.get $d) (i32.load offset=12 (local.get $levels)))))
+      (i32.store offset=16 (local.get $d) (local.get $px))
+      (i32.store offset=20 (local.get $d) (local.get $last))
+      (i32.store offset=28 (local.get $d) (i32.and (i32.ge_s (local.get $last) (i32.const 0))
+        (i32.ne (i32.and (i32.load offset=192 (local.get $b)) (i32.shl (i32.const 1) (local.get $unit))) (i32.const 0))))
+      (local.set $unit (i32.add (local.get $unit) (i32.const 1)))
+      (br_if $units (i32.lt_u (local.get $unit) (i32.const 2)))))
+
+  (func $gl_1d_selected (param $unit i32) (result i32)
+    (if (i32.eqz (global.get $gl_1d_draw)) (then (return (i32.const 0))))
+    (if (i32.and (i32.load (global.get $gl_sw_st)) (select (i32.const 0x80000) (i32.const 1) (local.get $unit)))
+      (then (return (i32.const 0))))
+    (i32.load offset=28 (i32.add (global.get $gl_1d_draw) (i32.mul (local.get $unit) (i32.const 56)))))
+
+  ;; Return the required final level, or -1 for an incomplete image chain.
+  (func $gl_1d_complete (param $object i32) (result i32)
+    (local $levels i32) (local $p i32) (local $n i32) (local $border i32)
+    (local $internal i32) (local $level i32) (local $filter i32)
+    (local.set $levels (i32.load offset=52 (local.get $object)))
+    (if (i32.eqz (local.get $levels)) (then (return (i32.const -1))))
+    (local.set $border (i32.load offset=8 (local.get $levels)))
+    (local.set $internal (i32.load offset=12 (local.get $levels)))
+    (local.set $n (i32.sub (i32.load offset=4 (local.get $levels)) (i32.shl (local.get $border) (i32.const 1))))
+    (if (i32.or (i32.eqz (i32.load (local.get $levels))) (i32.le_s (local.get $n) (i32.const 0)))
+      (then (return (i32.const -1))))
+    (local.set $filter (i32.load offset=12 (local.get $object)))
+    (if (i32.or (i32.eq (local.get $filter) (i32.const 0x2600)) (i32.eq (local.get $filter) (i32.const 0x2601)))
+      (then (return (i32.const 0))))
+    (block $done (loop $chain
+      (br_if $done (i32.eq (local.get $n) (i32.const 1)))
+      (local.set $n (i32.shr_u (local.get $n) (i32.const 1)))
+      (local.set $level (i32.add (local.get $level) (i32.const 1)))
+      (local.set $p (i32.add (local.get $levels) (i32.mul (local.get $level) (i32.const 20))))
+      (if (i32.or (i32.eqz (i32.load (local.get $p)))
+          (i32.or (i32.ne (i32.load offset=4 (local.get $p)) (i32.add (local.get $n) (i32.shl (local.get $border) (i32.const 1))))
+            (i32.or (i32.ne (i32.load offset=8 (local.get $p)) (local.get $border))
+              (i32.ne (i32.load offset=12 (local.get $p)) (local.get $internal)))))
+        (then (return (i32.const -1))))
+      (br $chain)))
+    (local.get $level))
+
+  (func $gl_1d_tap (param $d i32) (param $level i32) (param $x i32) (result i32)
+    (local $p i32) (local $n i32) (local $b i32) (local $e i32)
+    (local.set $p (i32.add (i32.load (local.get $d)) (i32.mul (local.get $level) (i32.const 20))))
+    (local.set $b (i32.load offset=8 (local.get $p)))
+    (local.set $n (i32.sub (i32.load offset=4 (local.get $p)) (i32.shl (local.get $b) (i32.const 1))))
+    (if (i32.eq (i32.load offset=12 (local.get $d)) (i32.const 0x2901)) (then
+      ;; The interior is a power of two, so this also wraps negative taps.
+      (local.set $x (i32.and (local.get $x) (i32.sub (local.get $n) (i32.const 1))))))
+    (if (i32.eq (i32.load offset=12 (local.get $d)) (i32.const 0x812f)) (then
+      (local.set $x (select (i32.const 0) (select (i32.sub (local.get $n) (i32.const 1)) (local.get $x) (i32.ge_s (local.get $x) (local.get $n))) (i32.lt_s (local.get $x) (i32.const 0))))))
+    (if (i32.eq (i32.load offset=12 (local.get $d)) (i32.const 0x8370)) (then
+      (local.set $x (i32.and (local.get $x) (i32.sub (i32.shl (local.get $n) (i32.const 1)) (i32.const 1))))
+      (if (i32.ge_u (local.get $x) (local.get $n)) (then
+        (local.set $x (i32.sub (i32.sub (i32.shl (local.get $n) (i32.const 1)) (i32.const 1)) (local.get $x)))))))
+    (if (i32.or (i32.lt_s (local.get $x) (i32.sub (i32.const 0) (local.get $b)))
+        (i32.ge_s (local.get $x) (i32.add (local.get $n) (local.get $b))))
+      (then (return (i32.load offset=16 (local.get $d)))))
+    (local.set $e (call $dx_from_this (i32.load (local.get $p))))
+    (i32.load (i32.add (load.field DxObject misc1 (local.get $e))
+      (i32.shl (i32.add (local.get $x) (local.get $b)) (i32.const 2)))))
+
+  (func $gl_1d_level_sample (param $d i32) (param $level i32) (param $s f32) (param $linear i32) (result i32)
+    (local $p i32) (local $n i32) (local $x i32) (local $f f32)
+    (local.set $p (i32.add (i32.load (local.get $d)) (i32.mul (local.get $level) (i32.const 20))))
+    (local.set $n (i32.sub (i32.load offset=4 (local.get $p)) (i32.shl (i32.load offset=8 (local.get $p)) (i32.const 1))))
+    (if (f32.ne (f32.mul (local.get $s) (f32.const 0)) (f32.const 0)) (then (local.set $s (f32.const 0))))
+    (if (i32.eq (i32.load offset=12 (local.get $d)) (i32.const 0x8370)) (then
+      (local.set $s (f32.sub (local.get $s) (f32.mul (f32.const 2) (f32.floor (f32.mul (local.get $s) (f32.const 0.5))))))
+      (if (f32.gt (local.get $s) (f32.const 1)) (then (local.set $s (f32.sub (f32.const 2) (local.get $s)))))))
+    (if (i32.eq (i32.load offset=12 (local.get $d)) (i32.const 0x2901))
+      (then (local.set $s (f32.sub (local.get $s) (f32.floor (local.get $s)))))
+      (else (local.set $s (f32.max (f32.const 0) (f32.min (f32.const 1) (local.get $s))))))
+    (local.set $f (f32.mul (local.get $s) (f32.convert_i32_u (local.get $n))))
+    (if (i32.eqz (local.get $linear)) (then
+      (local.set $x (i32.trunc_sat_f32_u (f32.floor (local.get $f))))
+      (if (i32.ge_u (local.get $x) (local.get $n)) (then (local.set $x (i32.sub (local.get $n) (i32.const 1)))))
+      (return (call $gl_1d_tap (local.get $d) (local.get $level) (local.get $x)))))
+    (local.set $f (f32.sub (local.get $f) (f32.const 0.5)))
+    (local.set $x (i32.trunc_sat_f32_s (f32.floor (local.get $f))))
+    (call $d3dim_color_lerp
+      (call $gl_1d_tap (local.get $d) (local.get $level) (local.get $x))
+      (call $gl_1d_tap (local.get $d) (local.get $level) (i32.add (local.get $x) (i32.const 1)))
+      (f32.sub (local.get $f) (f32.floor (local.get $f)))))
+
+  ;; Derivatives of S/Q, not T, choose mip/filter independently per fragment.
+  (func $gl_1d_sample (param $unit i32) (param $x i32) (param $y i32) (param $s f32) (result i32)
+    (local $d i32) (local $filter i32) (local $linear i32) (local $level i32)
+    (local $last i32) (local $c i32) (local $n f32) (local $q f32) (local $u f32)
+    (local $fx f32) (local $fy f32) (local $dx f32) (local $dy f32) (local $rho f32)
+    (local $lod f32) (local $threshold f32) (local $frac f32)
+    (local.set $d (i32.add (global.get $gl_1d_draw) (i32.mul (local.get $unit) (i32.const 56))))
+    (local.set $filter (i32.load offset=4 (local.get $d)))
+    (local.set $linear (i32.eq (i32.load offset=8 (local.get $d)) (i32.const 0x2601)))
+    (local.set $last (i32.load offset=20 (local.get $d)))
+    (local.set $n (f32.convert_i32_u (i32.sub (i32.load offset=4 (i32.load (local.get $d)))
+      (i32.shl (i32.load offset=8 (i32.load (local.get $d))) (i32.const 1)))))
+    (local.set $fx (f32.add (f32.convert_i32_s (local.get $x)) (f32.const 0.5)))
+    (local.set $fy (f32.add (f32.convert_i32_s (local.get $y)) (f32.const 0.5)))
+    (local.set $q (f32.add (f32.load offset=52 (local.get $d))
+      (f32.add (f32.mul (f32.load offset=44 (local.get $d)) (local.get $fx)) (f32.mul (f32.load offset=48 (local.get $d)) (local.get $fy)))))
+    (if (f32.gt (f32.abs (local.get $q)) (f32.const 0.000000000001)) (then
+      (local.set $u (f32.div (f32.add (f32.load offset=40 (local.get $d))
+        (f32.add (f32.mul (f32.load offset=32 (local.get $d)) (local.get $fx)) (f32.mul (f32.load offset=36 (local.get $d)) (local.get $fy)))) (local.get $q)))
+      (local.set $s (local.get $u))
+      (local.set $dx (f32.mul (local.get $n) (f32.div (f32.sub (f32.load offset=32 (local.get $d))
+        (f32.mul (local.get $u) (f32.load offset=44 (local.get $d)))) (local.get $q))))
+      (local.set $dy (f32.mul (local.get $n) (f32.div (f32.sub (f32.load offset=36 (local.get $d))
+        (f32.mul (local.get $u) (f32.load offset=48 (local.get $d)))) (local.get $q))))
+      (local.set $rho (f32.max (f32.abs (local.get $dx)) (f32.abs (local.get $dy))))))
+    (local.set $lod (f32x4.extract_lane 0 (call $d3d_shader_vm_log2 (f32x4.splat (local.get $rho)))))
+    ;; GL1.1 c=1/2 only for linear magnification paired with nearest within
+    ;; a mip level; all other filter combinations use c=0.
+    (if (i32.and (local.get $linear) (i32.or (i32.eq (local.get $filter) (i32.const 0x2700))
+        (i32.eq (local.get $filter) (i32.const 0x2702)))) (then (local.set $threshold (f32.const 0.5))))
+    (if (f32.gt (local.get $lod) (local.get $threshold)) (then
+      (local.set $linear (i32.or (i32.eq (local.get $filter) (i32.const 0x2601))
+        (i32.or (i32.eq (local.get $filter) (i32.const 0x2701)) (i32.eq (local.get $filter) (i32.const 0x2703)))))
+      (if (i32.ge_u (local.get $filter) (i32.const 0x2700)) (then
+        (local.set $lod (f32.max (f32.const 0) (f32.min (f32.convert_i32_u (local.get $last)) (local.get $lod))))
+        (if (i32.lt_u (local.get $filter) (i32.const 0x2702))
+          (then (local.set $level (i32.trunc_sat_f32_u
+            (f32.sub (f32.ceil (f32.add (local.get $lod) (f32.const 0.5))) (f32.const 1)))))
+          (else (local.set $level (i32.trunc_sat_f32_u (local.get $lod)))
+            (local.set $frac (f32.sub (local.get $lod) (f32.floor (local.get $lod))))))))))
+    (local.set $c (call $gl_1d_level_sample (local.get $d) (local.get $level) (local.get $s) (local.get $linear)))
+    (if (f32.gt (local.get $frac) (f32.const 0)) (then
+      (local.set $c (call $d3dim_color_lerp (local.get $c)
+        (call $gl_1d_level_sample (local.get $d) (i32.add (local.get $level) (i32.const 1)) (local.get $s) (local.get $linear)) (local.get $frac)))))
+    (local.get $c))
+
+  ;; Called after projection/scissor shifting, before raster spans execute.
+  (func $gl_1d_planes (param $n i32) (param $a i32) (param $b i32) (param $c i32)
+    (local $unit i32) (local $kind i32) (local $offset i32) (local $out i32)
+    (local $s0 i32) (local $s1 i32) (local $s2 i32)
+    (local $v0 f32) (local $v1 f32) (local $v2 f32)
+    (local.set $s0 (call $gl_sw_screen_at (i32.const 0)))
+    (local.set $s1 (call $gl_sw_screen_at (i32.const 1)))
+    (local.set $s2 (call $gl_sw_screen_at (i32.const 2)))
+    (if (i32.lt_u (local.get $n) (i32.const 2)) (then (local.set $b (local.get $a)) (local.set $s1 (local.get $s0))))
+    (loop $units
+      (if (call $gl_1d_selected (local.get $unit)) (then
+        (local.set $kind (i32.const 0))
+        (loop $planes
+          (local.set $offset (if (result i32) (local.get $kind)
+            (then (select (i32.const 52) (i32.const 48) (local.get $unit)))
+            (else (select (i32.const 40) (i32.const 16) (local.get $unit)))))
+          (local.set $out (i32.add (global.get $gl_1d_draw)
+            (i32.add (i32.mul (local.get $unit) (i32.const 56)) (i32.add (i32.const 32) (i32.mul (local.get $kind) (i32.const 12))))))
+          (local.set $v0 (f32.mul (f32.load (i32.add (local.get $a) (local.get $offset))) (f32.load offset=12 (local.get $s0))))
+          (local.set $v1 (f32.mul (f32.load (i32.add (local.get $b) (local.get $offset))) (f32.load offset=12 (local.get $s1))))
+          (if (i32.eq (local.get $n) (i32.const 3)) (then
+            (local.set $v2 (f32.mul (f32.load (i32.add (local.get $c) (local.get $offset))) (f32.load offset=12 (local.get $s2))))
+            (call $rast_plane
+              (i32.load (local.get $s0)) (i32.load offset=4 (local.get $s0)) (local.get $v0)
+              (i32.load (local.get $s1)) (i32.load offset=4 (local.get $s1)) (local.get $v1)
+              (i32.load (local.get $s2)) (i32.load offset=4 (local.get $s2)) (local.get $v2)))
+            (else (call $gl_sw_line_plane (local.get $s0) (local.get $s1) (local.get $v0) (local.get $v1))))
+          (f32.store (local.get $out) (global.get $rast_pa))
+          (f32.store offset=4 (local.get $out) (global.get $rast_pb))
+          (f32.store offset=8 (local.get $out) (global.get $rast_pc))
+          (local.set $kind (i32.add (local.get $kind) (i32.const 1)))
+          (br_if $planes (i32.lt_u (local.get $kind) (i32.const 2))))))
+      (local.set $unit (i32.add (local.get $unit) (i32.const 1)))
+      (br_if $units (i32.lt_u (local.get $unit) (i32.const 2)))))

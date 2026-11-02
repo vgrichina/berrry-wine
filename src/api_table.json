@@ -37815,7 +37815,7 @@
     "nargs": 8,
     "convention": "stdcall",
     "hash": 3454809797,
-    "handler": "gl_unimplemented"
+    "handler": "gl_texture1d"
   },
   {
     "id": 4442,
@@ -37831,7 +37831,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3215783717,
-    "handler": "gl_unimplemented"
+    "handler": "gl_texture_set"
   },
   {
     "id": 4444,
@@ -37839,7 +37839,7 @@
     "nargs": 7,
     "convention": "stdcall",
     "hash": 218817537,
-    "handler": "gl_unimplemented"
+    "handler": "gl_texture1d"
   },
   {
     "id": 4445,
