@@ -49,7 +49,7 @@ Published `4631ff857` subsequently repairs the already-resolved `glRotated`;
 its double argument and matrix semantics do not change the missing-export count.
 See [rotation evidence](re-notes/gl-rotated-native-20261102.md).
 
-Four subsequently accepted families reduce the unsupported set to **105**
+Five subsequently accepted families reduce the unsupported set to **99**
 mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
 
 | Accepted implementation | Newly implemented exports | Evidence |
@@ -59,10 +59,15 @@ mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
 | `7170d9afa` typed vertices | 14 | [Numeric adapters, homogeneous coordinates and direct/queued validation](re-notes/gl-typed-vertex-family-20261102.md) |
 | `80ebba348` raster positions | 23 | [Clipping, raster lighting/texgen, bitmap pixels and WebGL1/2 validation](re-notes/gl-raster-position-family-20261102.md) |
 
+| `8480aed7f` integer fog/light/material | 6 | [Pname conversions, lighting, lists and direct/queued validation](re-notes/gl-integer-light-material-fog-20261102.md) |
+
 Each family passed its focused semantic and regression checks, rejecting controls,
 and locked build; the coordinator verified retained evidence hashes and committed
-blobs. The integer fog/light/material and light/material query families remain
-in progress and are excluded from the accepted count.
+blobs. The light/material query and texgen families remain in progress and are excluded
+from the accepted count. Integer lighting passed 301 checks per direct/queued
+route, two saved-source and fourteen semantic rejecting controls, 36 regressions,
+two generated checks and the locked build (57 commands). The coordinator matched
+all 116 retained evidence hashes and 13 committed blobs.
 See [query evidence](re-notes/gl-getdoublev-native-state-20261102.md).
 See [the rectangle evidence](re-notes/gl-rectangle-family-20261102.md).
 No original MDK2 replay,
