@@ -635,8 +635,12 @@
 
   (func $gl_wat_encode_call (param $op i32) (param $stack i32) (param $aux i32) (result i32)
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
+    (if (call $gl_native_query (local.get $op) (local.get $stack))
+      (then (return (i32.const 0))))
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
+    (if (call $gl_query_validate_setter (local.get $op) (local.get $stack))
+      (then (return (i32.const 0))))
     (if (call $gl_color_selection_intercept (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
     (if (call $gl_stencil_intercept (local.get $op) (local.get $stack))

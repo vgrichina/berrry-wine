@@ -258,10 +258,12 @@ const extraWat=`
  }
  const aliases=rects.map(r=>r.name);
  for(const name of aliases){assert(call('wglGetProcAddress',[str(name)]),'WGL real alias '+name);}
- const rejected=['glAccum','glClearAccum','glRect','glRectx','glrecti','glTexParameteriv','wglShareLists'];
+ const rejected=['glRect','glRectx','glrecti','glTexParameteriv','wglShareLists'];
  for(const name of rejected){const before=e.probe_thunks();dv.setUint32(regs+16,stack,true);
   assert.strictEqual(e.probe_lookup(module,str(name)),0,'static rejects '+name);
-  assert.strictEqual(e.probe_error(),127);assert.strictEqual(e.probe_thunks(),before,'no thunk allocated');
+  // Known unavailable APIs set ERROR_PROC_NOT_FOUND; unknown names only promise NULL.
+  if(table.some(a=>a.name===name))assert.strictEqual(e.probe_error(),127,name);
+  assert.strictEqual(e.probe_thunks(),before,'no thunk allocated');
   assert.strictEqual(call('wglGetProcAddress',[str(name)]),0,'WGL rejects '+name);}
  if(encoder){encoder.fence();assert(encoder.snapshot().glQueued>=1,'actual queued raster execution');}
  error(0,'final');assert.strictEqual(call('wglDeleteContext',[context]),1);

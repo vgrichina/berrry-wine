@@ -309,6 +309,7 @@ const gpuApis = new Map([
   ['gluScaleImage', 9],
   ['glRectf', 4],
   ['glAccum', 2], ['glClearAccum', 4],
+  ['glGetDoublev', 2],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 

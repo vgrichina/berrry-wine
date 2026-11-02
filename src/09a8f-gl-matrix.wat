@@ -866,9 +866,9 @@
     (if (i32.eq (local.get $op) (i32.const 7))
       (then
         (f32.store offset=9024 (local.get $b)
-          (f32.demote_f64 (f64.load offset=4 (local.get $stack))))
+          (f32.demote_f64 (f64.min (f64.const 1) (f64.max (f64.const 0) (f64.load offset=4 (local.get $stack))))))
         (f32.store offset=9028 (local.get $b)
-          (f32.demote_f64 (f64.load offset=12 (local.get $stack))))
+          (f32.demote_f64 (f64.min (f64.const 1) (f64.max (f64.const 0) (f64.load offset=12 (local.get $stack))))))
         (return)))
 
     ;; 35 glMatrixMode, 33 glLoadIdentity, 38 glPushMatrix, 37 glPopMatrix

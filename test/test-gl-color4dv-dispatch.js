@@ -42,6 +42,8 @@ const roots=['$dispatch_api_table',page,vertexPage,'$wgl_api_available','$handle
 // No matrix/raster/backend work is needed for a color or list setter. These
 // observers are inert fixture endpoints. All other excluded paths trap.
 const seams=new Map([
+  // General state queries have a separate full-source resolved-ABI fixture.
+  ['$gl_native_query','(param i32 i32) (result i32) (i32.const 0)'],
   ['$gl_sw_consume','(param i32 i32)'],['$gl_mtx_observe','(param i32 i32)'],['$gl_sw_observe','(param i32 i32)'],
   ['$gl_bitmap_context_init','(param i32)'],['$gl_stencil_init','(param i32)'],
   // Drawable selection is covered by the full-source pixel fixtures. These
@@ -276,7 +278,7 @@ for(const p of [0xffffffe9,0xffffffff])assert.throws(()=>rgb.e.invoke(p),WebAsse
 // Stable command ABI: canonicalization adds no new opcode or argument layout.
 const compat=require('../lib/gl-compat');const stream=require('../lib/gl-command-stream');
 assert.strictEqual(compat.CALL_INDEX.glColor4f,25);assert.strictEqual(compat.CALL_INDEX.glColor4fv,26);
-assert.strictEqual(compat.CALL_INDEX.gluScaleImage,141);assert.strictEqual(compat.CALLS.length,145);
+assert.strictEqual(compat.CALL_INDEX.gluScaleImage,141);assert.strictEqual(compat.CALLS.length,146);
 assert.strictEqual(compat.CALL_INDEX.glAccum,143);assert.strictEqual(compat.CALL_INDEX.glClearAccum,144);
 assert.strictEqual(stream.ARG_WORDS[25],4);
 console.log(JSON.stringify({PASS:true,cases:8,vertexCases:8,rgbImplicitAlpha:true,rgbNoFourthRead:true,rgbFailurePreservesColor:true,combinedColorVertex:true,vertexRouteMutationRejected:true,mutations:['r','g','b','a','stride','opcode','rgb-alpha','rgb-stride','cleanup','rgb-route'],displayListReplay:true,packedCommandReplay:true,fixtureSHA:hash(fs.readFileSync(__filename)),

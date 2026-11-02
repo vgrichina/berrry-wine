@@ -36559,8 +36559,7 @@
     "name": "glGetDoublev",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 3539617267,
-    "handler": "gl_unimplemented"
+    "hash": 3539617267
   },
   {
     "id": 4279,

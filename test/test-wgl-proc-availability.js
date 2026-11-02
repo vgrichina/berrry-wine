@@ -11,7 +11,7 @@ const unsupportedMdk2 = `
   glEvalCoord1d glEvalCoord1dv glEvalCoord1f glEvalCoord1fv glEvalCoord2d
   glEvalCoord2dv glEvalCoord2f glEvalCoord2fv glEvalMesh1 glEvalMesh2
   glEvalPoint1 glEvalPoint2 glFeedbackBuffer glFogiv glGetBooleanv
-  glGetClipPlane glGetDoublev glGetLightfv glGetLightiv glGetMapdv
+  glGetClipPlane glGetLightfv glGetLightiv glGetMapdv
   glGetMapfv glGetMapiv glGetMaterialfv glGetMaterialiv glGetPixelMapfv
   glGetPixelMapuiv glGetPixelMapusv glGetPointerv glGetPolygonStipple glGetTexEnvfv
   glGetTexEnviv glGetTexGendv glGetTexGenfv glGetTexGeniv glGetTexImage
@@ -159,7 +159,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 176, 'retain every still unsupported MDK2 name');
+  assert.strictEqual(unsupportedMdk2.length, 175, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);

@@ -283,7 +283,7 @@ if(!process.env.GL_DOUBLE_MATRIX_BASELINE)checkSparseDoubles();
   assert.throws(()=>e.probe_invoke(thunk),WebAssembly.RuntimeError);assert.strictEqual(dv.getUint32(regs+16,true),stack);assert.strictEqual(dv.getUint32(regs,true),0xdeadbeef);matrix(I,'bad pointer atomic');
  }
  for(const name of ['glLoadMatrixd','glTranslated','glScaled'])assert(call('wglGetProcAddress',[str(name)]),'WGL resolved '+name);
- for(const name of ['glMap1d','glGetDoublev','wglShareLists']){
+ for(const name of ['glMap1d','wglShareLists']){
   const before=e.probe_thunks();dv.setUint32(regs+16,stack,true);assert.strictEqual(e.probe_lookup(module,str(name)),0,'unsupported '+name);assert.strictEqual(e.probe_error(),127);assert.strictEqual(e.probe_thunks(),before);
  }
  assert.strictEqual(call('glGetError'),0);if(encoder){encoder.fence();assert(encoder.snapshot().glQueued>=1,'actual queued raster');}

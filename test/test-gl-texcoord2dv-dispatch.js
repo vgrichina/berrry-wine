@@ -45,6 +45,8 @@ const roots=['$dispatch_api_table',page,'$wgl_api_available','$handle_glTexCoord
 // No matrix/raster/backend work is needed for a texture or list setter. These
 // observers are inert fixture endpoints. All other excluded paths trap.
 const seams=new Map([
+  // General state queries have a separate full-source resolved-ABI fixture.
+  ['$gl_native_query','(param i32 i32) (result i32) (i32.const 0)'],
   ['$gl_sw_consume','(param i32 i32)'],['$gl_mtx_observe','(param i32 i32)'],['$gl_sw_observe','(param i32 i32)'],
   ['$gl_bitmap_context_init','(param i32)'],['$gl_stencil_init','(param i32)'],
   // Drawable selection is covered by the full-source pixel fixtures. These
@@ -280,7 +282,7 @@ for(const name of ['glNormal3b','glGetBooleanv']) {
 assert.strictEqual(api[scalarId].nargs,4);assert.strictEqual(api[scalarId].convention,'stdcall');
 const compat=require('../lib/gl-compat'),stream=require('../lib/gl-command-stream');
 assert.strictEqual(compat.CALL_INDEX.glTexCoord2f,28);assert.strictEqual(stream.ARG_WORDS[28],2);
-assert.strictEqual(compat.CALLS.length,145);
+assert.strictEqual(compat.CALLS.length,146);
 assert.strictEqual(compat.CALL_INDEX.glAccum,143);assert.strictEqual(compat.CALL_INDEX.glClearAccum,144);
 console.log(JSON.stringify({PASS:true,cases:36,scalarAndVector:true,nonAffineStack:true,displayLists:true,
   mutations:['cleanup','source','stride','opcode','route'],failureStatePreserved:true,

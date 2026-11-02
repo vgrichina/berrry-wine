@@ -86,6 +86,342 @@
     (f32.store offset=156 (local.get $p) (global.get $gl_tex1_r))
     (f32.store offset=160 (local.get $p) (global.get $gl_tex1_q)))
 
+  (func $gl_native_query_count (param $p i32) (result i32)
+    (if (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $p) (i32.const 0xba0)) (i32.eq (local.get $p) (i32.const 0x84e0))) (i32.eq (local.get $p) (i32.const 0x84e1))) (i32.eq (local.get $p) (i32.const 0xba3))) (i32.eq (local.get $p) (i32.const 0xba4))) (i32.eq (local.get $p) (i32.const 0xba5))) (i32.eq (local.get $p) (i32.const 0xd31))) (i32.eq (local.get $p) (i32.const 0x84e2))) (i32.eq (local.get $p) (i32.const 0xd36))) (i32.eq (local.get $p) (i32.const 0xd38))) (i32.eq (local.get $p) (i32.const 0xd39))) (i32.eq (local.get $p) (i32.const 0xd35))) (i32.eq (local.get $p) (i32.const 0xd3b))) (i32.eq (local.get $p) (i32.const 0xb31))) (i32.eq (local.get $p) (i32.const 0xbb0))) (i32.eq (local.get $p) (i32.const 0xbb1))) (i32.eq (local.get $p) (i32.const 0xb54))) (i32.eq (local.get $p) (i32.const 0xb30))) (i32.eq (local.get $p) (i32.const 0xb33))) (i32.eq (local.get $p) (i32.const 0xb65))) (i32.eq (local.get $p) (i32.const 0xb62))) (i32.eq (local.get $p) (i32.const 0xb63))) (i32.eq (local.get $p) (i32.const 0xb64))) (i32.eq (local.get $p) (i32.const 0xb08))) (i32.eq (local.get $p) (i32.const 0xb32))) (i32.eq (local.get $p) (i32.const 0xcf5))) (i32.eq (local.get $p) (i32.const 0xcf2))) (i32.eq (local.get $p) (i32.const 0xcf3))) (i32.eq (local.get $p) (i32.const 0xcf4))) (i32.eq (local.get $p) (i32.const 0xcf1))) (i32.eq (local.get $p) (i32.const 0xb90))) (i32.eq (local.get $p) (i32.const 0xb91))) (i32.eq (local.get $p) (i32.const 0xb92))) (i32.eq (local.get $p) (i32.const 0xb93))) (i32.eq (local.get $p) (i32.const 0xb94))) (i32.eq (local.get $p) (i32.const 0xb95))) (i32.eq (local.get $p) (i32.const 0xb96))) (i32.eq (local.get $p) (i32.const 0xb97))) (i32.eq (local.get $p) (i32.const 0xb98))) (i32.eq (local.get $p) (i32.const 0xd57))) (i32.eq (local.get $p) (i32.const 0xd58))) (i32.eq (local.get $p) (i32.const 0xd59))) (i32.eq (local.get $p) (i32.const 0xd5a))) (i32.eq (local.get $p) (i32.const 0xd5b))) (i32.eq (local.get $p) (i32.const 0x807a))) (i32.eq (local.get $p) (i32.const 0x8081))) (i32.eq (local.get $p) (i32.const 0x807b))) (i32.eq (local.get $p) (i32.const 0x807c))) (i32.eq (local.get $p) (i32.const 0x807e))) (i32.eq (local.get $p) (i32.const 0x807f))) (i32.eq (local.get $p) (i32.const 0x8082))) (i32.eq (local.get $p) (i32.const 0x8083))) (i32.eq (local.get $p) (i32.const 0x8088))) (i32.eq (local.get $p) (i32.const 0x8089))) (i32.eq (local.get $p) (i32.const 0x808a))) (i32.eq (local.get $p) (i32.const 0x8074))) (i32.eq (local.get $p) (i32.const 0x8075))) (i32.eq (local.get $p) (i32.const 0x8076))) (i32.eq (local.get $p) (i32.const 0x8078))) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $p) (i32.const 0xb70)) (then (return (i32.const 2))))
+    (if (i32.eq (local.get $p) (i32.const 0xb02)) (then (return (i32.const 3))))
+    (if (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $p) (i32.const 0xb00)) (i32.eq (local.get $p) (i32.const 0xb03))) (i32.eq (local.get $p) (i32.const 0xb66))) (i32.eq (local.get $p) (i32.const 0xb53))) (i32.eq (local.get $p) (i32.const 0xba2))) (i32.eq (local.get $p) (i32.const 0xb07))) (i32.eq (local.get $p) (i32.const 0xb04))) (i32.eq (local.get $p) (i32.const 0xc23))) (i32.eq (local.get $p) (i32.const 0xb80))) (then (return (i32.const 4))))
+    (if (i32.or (i32.or (i32.eq (local.get $p) (i32.const 0xba6)) (i32.eq (local.get $p) (i32.const 0xba7))) (i32.eq (local.get $p) (i32.const 0xba8))) (then (return (i32.const 16))))
+    (if (global.get $gl_sw_enabled) (then
+    (if (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $p) (i32.const 0xc01)) (i32.eq (local.get $p) (i32.const 0xc02))) (i32.eq (local.get $p) (i32.const 0x8069))) (i32.eq (local.get $p) (i32.const 0xb11))) (i32.eq (local.get $p) (i32.const 0xb21))) (i32.eq (local.get $p) (i32.const 0xb45))) (i32.eq (local.get $p) (i32.const 0xb46))) (i32.eq (local.get $p) (i32.const 0xbe1))) (i32.eq (local.get $p) (i32.const 0xbe0))) (i32.eq (local.get $p) (i32.const 0xbc1))) (i32.eq (local.get $p) (i32.const 0xb74))) (i32.eq (local.get $p) (i32.const 0xb72))) (i32.eq (local.get $p) (i32.const 0xbe2))) (i32.eq (local.get $p) (i32.const 0xbc0))) (i32.eq (local.get $p) (i32.const 0xb71))) (i32.eq (local.get $p) (i32.const 0xb44))) (i32.eq (local.get $p) (i32.const 0xc11))) (i32.eq (local.get $p) (i32.const 0xb60))) (i32.eq (local.get $p) (i32.const 0xb50))) (i32.eq (local.get $p) (i32.const 0xb57))) (i32.eq (local.get $p) (i32.const 0x4000))) (i32.eq (local.get $p) (i32.const 0x4001))) (i32.eq (local.get $p) (i32.const 0x4002))) (i32.eq (local.get $p) (i32.const 0x4003))) (i32.eq (local.get $p) (i32.const 0x4004))) (i32.eq (local.get $p) (i32.const 0x4005))) (i32.eq (local.get $p) (i32.const 0x4006))) (i32.eq (local.get $p) (i32.const 0x4007))) (i32.eq (local.get $p) (i32.const 0xde1))) (i32.eq (local.get $p) (i32.const 0xd52))) (i32.eq (local.get $p) (i32.const 0xd53))) (i32.eq (local.get $p) (i32.const 0xd54))) (i32.eq (local.get $p) (i32.const 0xd55))) (i32.eq (local.get $p) (i32.const 0xd56))) (i32.eq (local.get $p) (i32.const 0xc31))) (i32.eq (local.get $p) (i32.const 0xc33))) (i32.eq (local.get $p) (i32.const 0xc00))) (i32.eq (local.get $p) (i32.const 0xc32))) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $p) (i32.const 0xc10)) (then (return (i32.const 4))))
+    ))
+    (i32.const 0))
+
+  (func $gl_native_query_value (param $p i32) (param $i i32) (result f64)
+    ;; 0x0ba6 column-major matrix
+    (if (i32.eq (local.get $p) (i32.const 0xba6)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_mtx_stack_top (call $gl_mtx_block) (i32.const 0)) (i32.add (i32.const 0) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0ba7 column-major matrix
+    (if (i32.eq (local.get $p) (i32.const 0xba7)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_mtx_stack_top (call $gl_mtx_block) (i32.const 1)) (i32.add (i32.const 0) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0ba8 column-major matrix
+    (if (i32.eq (local.get $p) (i32.const 0xba8)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_mtx_stack_top (call $gl_mtx_block) (i32.add (i32.const 2) (i32.load offset=4 (call $gl_mtx_block)))) (i32.add (i32.const 0) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0ba0
+    (if (i32.eq (local.get $p) (i32.const 0xba0)) (then (return (f64.convert_i32_u (i32.load offset=0 (call $gl_mtx_block))))))
+    ;; 0x84e0
+    (if (i32.eq (local.get $p) (i32.const 0x84e0)) (then (return (f64.convert_i32_u (i32.add (i32.const 0x84c0) (i32.load offset=4 (call $gl_mtx_block)))))))
+    ;; 0x84e1
+    (if (i32.eq (local.get $p) (i32.const 0x84e1)) (then (return (f64.convert_i32_u (i32.add (i32.const 0x84c0) (global.get $gl_client_tex_unit))))))
+    ;; 0x0ba3
+    (if (i32.eq (local.get $p) (i32.const 0xba3)) (then (return (f64.convert_i32_u (i32.add (i32.const 1) (i32.load (call $gl_mtx_depth_addr (call $gl_mtx_block) (i32.const 0))))))))
+    ;; 0x0ba4
+    (if (i32.eq (local.get $p) (i32.const 0xba4)) (then (return (f64.convert_i32_u (i32.add (i32.const 1) (i32.load (call $gl_mtx_depth_addr (call $gl_mtx_block) (i32.const 1))))))))
+    ;; 0x0ba5
+    (if (i32.eq (local.get $p) (i32.const 0xba5)) (then (return (f64.convert_i32_u (i32.add (i32.const 1) (i32.load (call $gl_mtx_depth_addr (call $gl_mtx_block) (i32.add (i32.const 2) (i32.load offset=4 (call $gl_mtx_block))))))))))
+    ;; 0x0d31
+    (if (i32.eq (local.get $p) (i32.const 0xd31)) (then (return (f64.const 8))))
+    ;; 0x84e2
+    (if (i32.eq (local.get $p) (i32.const 0x84e2)) (then (return (f64.const 2))))
+    ;; 0x0d36
+    (if (i32.eq (local.get $p) (i32.const 0xd36)) (then (return (f64.const 32))))
+    ;; 0x0d38
+    (if (i32.eq (local.get $p) (i32.const 0xd38)) (then (return (f64.const 32))))
+    ;; 0x0d39
+    (if (i32.eq (local.get $p) (i32.const 0xd39)) (then (return (f64.const 32))))
+    ;; 0x0d35
+    (if (i32.eq (local.get $p) (i32.const 0xd35)) (then (return (f64.const 16))))
+    ;; 0x0d3b
+    (if (i32.eq (local.get $p) (i32.const 0xd3b)) (then (return (f64.const 16))))
+    ;; 0x0b31
+    (if (i32.eq (local.get $p) (i32.const 0xb31)) (then (return (f64.const 64))))
+    ;; 0x0bb0
+    (if (i32.eq (local.get $p) (i32.const 0xbb0)) (then (return (f64.convert_i32_u (i32.load offset=172 (call $gl_list_context))))))
+    ;; 0x0bb1
+    (if (i32.eq (local.get $p) (i32.const 0xbb1)) (then (return (f64.convert_i32_u (i32.load offset=180 (call $gl_list_context))))))
+    ;; 0x0b00
+    (if (i32.eq (local.get $p) (i32.const 0xb00)) (then (return (if (result f64) (i32.eq (local.get $i) (i32.const 3)) (then (f64.promote_f32 (global.get $gl_color_a))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 2)) (then (f64.promote_f32 (global.get $gl_color_b))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 1)) (then (f64.promote_f32 (global.get $gl_color_g))) (else (f64.promote_f32 (global.get $gl_color_r)))))))))))
+    ;; 0x0b02
+    (if (i32.eq (local.get $p) (i32.const 0xb02)) (then (return (if (result f64) (i32.eq (local.get $i) (i32.const 2)) (then (f64.promote_f32 (global.get $gl_normal_z))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 1)) (then (f64.promote_f32 (global.get $gl_normal_y))) (else (f64.promote_f32 (global.get $gl_normal_x)))))))))
+    ;; 0x0b03
+    (if (i32.eq (local.get $p) (i32.const 0xb03)) (then (return (if (result f64) (i32.eq (local.get $i) (i32.const 3)) (then (if (result f64) (i32.load offset=4 (call $gl_mtx_block)) (then (f64.promote_f32 (global.get $gl_tex1_q))) (else (f64.promote_f32 (global.get $gl_tex_q))))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 2)) (then (if (result f64) (i32.load offset=4 (call $gl_mtx_block)) (then (f64.promote_f32 (global.get $gl_tex1_r))) (else (f64.promote_f32 (global.get $gl_tex_r))))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 1)) (then (if (result f64) (i32.load offset=4 (call $gl_mtx_block)) (then (f64.promote_f32 (global.get $gl_tex1_t))) (else (f64.promote_f32 (global.get $gl_tex_t))))) (else (if (result f64) (i32.load offset=4 (call $gl_mtx_block)) (then (f64.promote_f32 (global.get $gl_tex1_s))) (else (f64.promote_f32 (global.get $gl_tex_s)))))))))))))
+    ;; 0x0b54
+    (if (i32.eq (local.get $p) (i32.const 0xb54)) (then (return (f64.convert_i32_u (global.get $gl_shade_model)))))
+    ;; 0x0b30
+    (if (i32.eq (local.get $p) (i32.const 0xb30)) (then (return (f64.convert_i32_u (if (result i32) (i32.load offset=12 (call $gl_list_context)) (then (i32.load offset=24 (call $gl_list_context))) (else (i32.const 0)))))))
+    ;; 0x0b33
+    (if (i32.eq (local.get $p) (i32.const 0xb33)) (then (return (f64.convert_i32_u (call $gl_query_list_index (call $gl_list_context))))))
+    ;; 0x0b65
+    (if (i32.eq (local.get $p) (i32.const 0xb65)) (then (return (f64.convert_i32_u (i32.load (i32.add (call $gl_mtx_block) (i32.add (i32.const 8960) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0b62
+    (if (i32.eq (local.get $p) (i32.const 0xb62)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_mtx_block) (i32.add (i32.const 8964) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0b63
+    (if (i32.eq (local.get $p) (i32.const 0xb63)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_mtx_block) (i32.add (i32.const 8968) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0b64
+    (if (i32.eq (local.get $p) (i32.const 0xb64)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_mtx_block) (i32.add (i32.const 8972) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0b66
+    (if (i32.eq (local.get $p) (i32.const 0xb66)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_mtx_block) (i32.add (i32.const 8976) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0b53
+    (if (i32.eq (local.get $p) (i32.const 0xb53)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_mtx_block) (i32.add (i32.const 8352) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0ba2
+    (if (i32.eq (local.get $p) (i32.const 0xba2)) (then (return (if (result f64) (i32.load offset=168 (call $gl_list_context)) (then (f64.convert_i32_s (i32.load (i32.add (call $gl_mtx_block) (i32.add (i32.const 9008) (i32.shl (local.get $i) (i32.const 2))))))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 3)) (then (f64.convert_i32_u (global.get $gl_sw_default_h))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 2)) (then (f64.convert_i32_u (global.get $gl_sw_default_w))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 1)) (then (f64.const 0)) (else (f64.const 0))))))))))))
+    ;; 0x0b70
+    (if (i32.eq (local.get $p) (i32.const 0xb70)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_mtx_block) (i32.add (i32.const 9024) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0b07
+    (if (i32.eq (local.get $p) (i32.const 0xb07)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_list_context) (i32.add (i32.const 44) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0b04
+    (if (i32.eq (local.get $p) (i32.const 0xb04)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_list_context) (i32.add (i32.const 60) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0b08
+    (if (i32.eq (local.get $p) (i32.const 0xb08)) (then (return (f64.convert_i32_u (i32.load (i32.add (call $gl_list_context) (i32.add (i32.const 40) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0b32
+    (if (i32.eq (local.get $p) (i32.const 0xb32)) (then (return (f64.convert_i32_u (i32.load (i32.add (call $gl_list_context) (i32.add (i32.const 100) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0cf5
+    (if (i32.eq (local.get $p) (i32.const 0xcf5)) (then (return (f64.convert_i32_u (i32.load (i32.add (call $gl_list_context) (i32.add (i32.const 80) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0cf2
+    (if (i32.eq (local.get $p) (i32.const 0xcf2)) (then (return (f64.convert_i32_u (i32.load (i32.add (call $gl_list_context) (i32.add (i32.const 84) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0cf3
+    (if (i32.eq (local.get $p) (i32.const 0xcf3)) (then (return (f64.convert_i32_u (i32.load (i32.add (call $gl_list_context) (i32.add (i32.const 88) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0cf4
+    (if (i32.eq (local.get $p) (i32.const 0xcf4)) (then (return (f64.convert_i32_u (i32.load (i32.add (call $gl_list_context) (i32.add (i32.const 92) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0cf1
+    (if (i32.eq (local.get $p) (i32.const 0xcf1)) (then (return (f64.convert_i32_u (i32.load (i32.add (call $gl_list_context) (i32.add (i32.const 96) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0c23
+    (if (i32.eq (local.get $p) (i32.const 0xc23)) (then (return (f64.convert_i32_u (i32.and (i32.shr_u (i32.load offset=228 (call $gl_list_context)) (local.get $i)) (i32.const 1))))))
+    ;; 0x0b90
+    (if (i32.eq (local.get $p) (i32.const 0xb90)) (then (return (f64.convert_i32_u (i32.load offset=192 (call $gl_list_context))))))
+    ;; 0x0b91
+    (if (i32.eq (local.get $p) (i32.const 0xb91)) (then (return (f64.convert_i32_u (i32.load offset=224 (call $gl_list_context))))))
+    ;; 0x0b92
+    (if (i32.eq (local.get $p) (i32.const 0xb92)) (then (return (f64.convert_i32_u (i32.load offset=196 (call $gl_list_context))))))
+    ;; 0x0b93
+    (if (i32.eq (local.get $p) (i32.const 0xb93)) (then (return (f64.convert_i32_u (i32.load offset=204 (call $gl_list_context))))))
+    ;; 0x0b94
+    (if (i32.eq (local.get $p) (i32.const 0xb94)) (then (return (f64.convert_i32_u (i32.load offset=212 (call $gl_list_context))))))
+    ;; 0x0b95
+    (if (i32.eq (local.get $p) (i32.const 0xb95)) (then (return (f64.convert_i32_u (i32.load offset=216 (call $gl_list_context))))))
+    ;; 0x0b96
+    (if (i32.eq (local.get $p) (i32.const 0xb96)) (then (return (f64.convert_i32_u (i32.load offset=220 (call $gl_list_context))))))
+    ;; 0x0b97
+    (if (i32.eq (local.get $p) (i32.const 0xb97)) (then (return (f64.convert_i32_u (i32.load offset=200 (call $gl_list_context))))))
+    ;; 0x0b98
+    (if (i32.eq (local.get $p) (i32.const 0xb98)) (then (return (f64.convert_i32_u (i32.load offset=208 (call $gl_list_context))))))
+    ;; 0x0d57
+    (if (i32.eq (local.get $p) (i32.const 0xd57)) (then (return (f64.const 8))))
+    ;; 0x0b80
+    (if (i32.eq (local.get $p) (i32.const 0xb80)) (then (return (f64.promote_f32 (f32.load (i32.add (call $gl_list_context) (i32.add (i32.const 248) (i32.shl (local.get $i) (i32.const 2)))))))))
+    ;; 0x0d58
+    (if (i32.eq (local.get $p) (i32.const 0xd58)) (then (return (f64.const 32))))
+    ;; 0x0d59
+    (if (i32.eq (local.get $p) (i32.const 0xd59)) (then (return (f64.const 32))))
+    ;; 0x0d5a
+    (if (i32.eq (local.get $p) (i32.const 0xd5a)) (then (return (f64.const 32))))
+    ;; 0x0d5b
+    (if (i32.eq (local.get $p) (i32.const 0xd5b)) (then (return (f64.const 32))))
+    ;; 0x0c01
+    (if (i32.eq (local.get $p) (i32.const 0xc01)) (then (return (f64.convert_i32_u (i32.load offset=232 (call $gl_list_context))))))
+    ;; 0x0c02
+    (if (i32.eq (local.get $p) (i32.const 0xc02)) (then (return (f64.convert_i32_u (i32.load offset=236 (call $gl_list_context))))))
+    ;; 0x807a
+    (if (i32.eq (local.get $p) (i32.const 0x807a)) (then (return (f64.convert_i32_u (global.get $gl_vp_size)))))
+    ;; 0x8081
+    (if (i32.eq (local.get $p) (i32.const 0x8081)) (then (return (f64.convert_i32_u (global.get $gl_cp_size)))))
+    ;; 0x807b
+    (if (i32.eq (local.get $p) (i32.const 0x807b)) (then (return (f64.convert_i32_u (global.get $gl_vp_type)))))
+    ;; 0x807c
+    (if (i32.eq (local.get $p) (i32.const 0x807c)) (then (return (f64.convert_i32_u (global.get $gl_vp_stride)))))
+    ;; 0x807e
+    (if (i32.eq (local.get $p) (i32.const 0x807e)) (then (return (f64.convert_i32_u (global.get $gl_np_type)))))
+    ;; 0x807f
+    (if (i32.eq (local.get $p) (i32.const 0x807f)) (then (return (f64.convert_i32_u (global.get $gl_np_stride)))))
+    ;; 0x8082
+    (if (i32.eq (local.get $p) (i32.const 0x8082)) (then (return (f64.convert_i32_u (global.get $gl_cp_type)))))
+    ;; 0x8083
+    (if (i32.eq (local.get $p) (i32.const 0x8083)) (then (return (f64.convert_i32_u (global.get $gl_cp_stride)))))
+    ;; 0x8088
+    (if (i32.eq (local.get $p) (i32.const 0x8088)) (then (return (if (result f64) (global.get $gl_client_tex_unit) (then (f64.convert_i32_u (global.get $gl_tp1_size))) (else (f64.convert_i32_u (global.get $gl_tp0_size)))))))
+    ;; 0x8089
+    (if (i32.eq (local.get $p) (i32.const 0x8089)) (then (return (if (result f64) (global.get $gl_client_tex_unit) (then (f64.convert_i32_u (global.get $gl_tp1_type))) (else (f64.convert_i32_u (global.get $gl_tp0_type)))))))
+    ;; 0x808a
+    (if (i32.eq (local.get $p) (i32.const 0x808a)) (then (return (if (result f64) (global.get $gl_client_tex_unit) (then (f64.convert_i32_u (global.get $gl_tp1_stride))) (else (f64.convert_i32_u (global.get $gl_tp0_stride)))))))
+    ;; 0x8074
+    (if (i32.eq (local.get $p) (i32.const 0x8074)) (then (return (f64.convert_i32_u (i32.ne (i32.and (global.get $gl_client_bits) (i32.const 1)) (i32.const 0))))))
+    ;; 0x8075
+    (if (i32.eq (local.get $p) (i32.const 0x8075)) (then (return (f64.convert_i32_u (i32.ne (i32.and (global.get $gl_client_bits) (i32.const 2)) (i32.const 0))))))
+    ;; 0x8076
+    (if (i32.eq (local.get $p) (i32.const 0x8076)) (then (return (f64.convert_i32_u (i32.ne (i32.and (global.get $gl_client_bits) (i32.const 4)) (i32.const 0))))))
+    ;; 0x8078
+    (if (i32.eq (local.get $p) (i32.const 0x8078)) (then (return (f64.convert_i32_u (i32.ne (i32.and (global.get $gl_client_bits) (select (i32.const 16) (i32.const 8) (global.get $gl_client_tex_unit))) (i32.const 0))))))
+    ;; 0x8069
+    (if (i32.eq (local.get $p) (i32.const 0x8069)) (then (return (f64.convert_i32_u (if (result i32) (global.get $gl_sw_active_unit) (then (global.get $gl_sw_other_bound)) (else (i32.load offset=40 (global.get $gl_sw_st))))))))
+    ;; 0x0c10
+    (if (i32.eq (local.get $p) (i32.const 0xc10)) (then (return (if (result f64) (i32.lt_s (i32.load offset=56 (global.get $gl_sw_st)) (i32.const 0)) (then (if (result f64) (i32.eq (local.get $i) (i32.const 3)) (then (f64.convert_i32_u (global.get $gl_sw_default_h))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 2)) (then (f64.convert_i32_u (global.get $gl_sw_default_w))) (else (if (result f64) (i32.eq (local.get $i) (i32.const 1)) (then (f64.const 0)) (else (f64.const 0)))))))) (else (f64.convert_i32_s (i32.load (i32.add (global.get $gl_sw_st) (i32.add (i32.const 48) (i32.shl (local.get $i) (i32.const 2)))))))))))
+    ;; 0x0b11
+    (if (i32.eq (local.get $p) (i32.const 0xb11)) (then (return (f64.promote_f32 (global.get $gl_sw_point_size)))))
+    ;; 0x0b21
+    (if (i32.eq (local.get $p) (i32.const 0xb21)) (then (return (f64.promote_f32 (global.get $gl_sw_line_width)))))
+    ;; 0x0b45
+    (if (i32.eq (local.get $p) (i32.const 0xb45)) (then (return (f64.convert_i32_u (i32.load offset=28 (global.get $gl_sw_st))))))
+    ;; 0x0b46
+    (if (i32.eq (local.get $p) (i32.const 0xb46)) (then (return (f64.convert_i32_u (select (i32.const 0x901) (i32.const 0x900) (i32.load offset=32 (global.get $gl_sw_st)))))))
+    ;; 0x0be1
+    (if (i32.eq (local.get $p) (i32.const 0xbe1)) (then (return (f64.convert_i32_u (call $gl_query_blend_enum (i32.load offset=4 (global.get $gl_sw_st)))))))
+    ;; 0x0be0
+    (if (i32.eq (local.get $p) (i32.const 0xbe0)) (then (return (f64.convert_i32_u (call $gl_query_blend_enum (i32.load offset=8 (global.get $gl_sw_st)))))))
+    ;; 0x0bc1
+    (if (i32.eq (local.get $p) (i32.const 0xbc1)) (then (return (f64.convert_i32_u (i32.add (i32.const 0x1ff) (i32.load offset=12 (global.get $gl_sw_st)))))))
+    ;; 0x0b74
+    (if (i32.eq (local.get $p) (i32.const 0xb74)) (then (return (f64.convert_i32_u (i32.add (i32.const 0x1ff) (i32.load offset=20 (global.get $gl_sw_st)))))))
+    ;; 0x0b72
+    (if (i32.eq (local.get $p) (i32.const 0xb72)) (then (return (f64.convert_i32_u (i32.load offset=24 (global.get $gl_sw_st))))))
+    ;; 0x0be2
+    (if (i32.eq (local.get $p) (i32.const 0xbe2)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 2)) (i32.const 0))))))
+    ;; 0x0bc0
+    (if (i32.eq (local.get $p) (i32.const 0xbc0)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 4)) (i32.const 0))))))
+    ;; 0x0b71
+    (if (i32.eq (local.get $p) (i32.const 0xb71)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 8)) (i32.const 0))))))
+    ;; 0x0b44
+    (if (i32.eq (local.get $p) (i32.const 0xb44)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 16)) (i32.const 0))))))
+    ;; 0x0c11
+    (if (i32.eq (local.get $p) (i32.const 0xc11)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 32)) (i32.const 0))))))
+    ;; 0x0b60
+    (if (i32.eq (local.get $p) (i32.const 0xb60)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 64)) (i32.const 0))))))
+    ;; 0x0b50
+    (if (i32.eq (local.get $p) (i32.const 0xb50)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 128)) (i32.const 0))))))
+    ;; 0x0b57
+    (if (i32.eq (local.get $p) (i32.const 0xb57)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 65536)) (i32.const 0))))))
+    ;; 0x4000
+    (if (i32.eq (local.get $p) (i32.const 0x4000)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 256)) (i32.const 0))))))
+    ;; 0x4001
+    (if (i32.eq (local.get $p) (i32.const 0x4001)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 512)) (i32.const 0))))))
+    ;; 0x4002
+    (if (i32.eq (local.get $p) (i32.const 0x4002)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 1024)) (i32.const 0))))))
+    ;; 0x4003
+    (if (i32.eq (local.get $p) (i32.const 0x4003)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 2048)) (i32.const 0))))))
+    ;; 0x4004
+    (if (i32.eq (local.get $p) (i32.const 0x4004)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 4096)) (i32.const 0))))))
+    ;; 0x4005
+    (if (i32.eq (local.get $p) (i32.const 0x4005)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 8192)) (i32.const 0))))))
+    ;; 0x4006
+    (if (i32.eq (local.get $p) (i32.const 0x4006)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 16384)) (i32.const 0))))))
+    ;; 0x4007
+    (if (i32.eq (local.get $p) (i32.const 0x4007)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (i32.const 32768)) (i32.const 0))))))
+    ;; 0x0de1
+    (if (i32.eq (local.get $p) (i32.const 0xde1)) (then (return (f64.convert_i32_u (i32.ne (i32.and (i32.load offset=0 (global.get $gl_sw_st)) (select (i32.const 0x80000) (i32.const 1) (global.get $gl_sw_active_unit))) (i32.const 0))))))
+    ;; 0x0d52
+    (if (i32.eq (local.get $p) (i32.const 0xd52)) (then (return (f64.convert_i32_u (select (i32.const 5) (i32.const 8) (i32.eq (if (result i32) (global.get $gl_sw_bitmap) (then (call $gdi_bitmap_bpp (global.get $gl_sw_bitmap))) (else (i32.const 32))) (i32.const 16)))))))
+    ;; 0x0d53
+    (if (i32.eq (local.get $p) (i32.const 0xd53)) (then (return (f64.convert_i32_u (select (i32.const 5) (i32.const 8) (i32.eq (if (result i32) (global.get $gl_sw_bitmap) (then (call $gdi_bitmap_bpp (global.get $gl_sw_bitmap))) (else (i32.const 32))) (i32.const 16)))))))
+    ;; 0x0d54
+    (if (i32.eq (local.get $p) (i32.const 0xd54)) (then (return (f64.convert_i32_u (select (i32.const 5) (i32.const 8) (i32.eq (if (result i32) (global.get $gl_sw_bitmap) (then (call $gdi_bitmap_bpp (global.get $gl_sw_bitmap))) (else (i32.const 32))) (i32.const 16)))))))
+    ;; 0x0d55
+    (if (i32.eq (local.get $p) (i32.const 0xd55)) (then (return (f64.convert_i32_u (select (i32.const 8) (i32.const 0) (i32.eq (if (result i32) (global.get $gl_sw_bitmap) (then (call $gdi_bitmap_bpp (global.get $gl_sw_bitmap))) (else (i32.const 32))) (i32.const 32)))))))
+    ;; 0x0d56
+    (if (i32.eq (local.get $p) (i32.const 0xd56)) (then (return (f64.const 16))))
+    ;; 0x0c31
+    (if (i32.eq (local.get $p) (i32.const 0xc31)) (then (return (f64.const 1))))
+    ;; 0x0c33
+    (if (i32.eq (local.get $p) (i32.const 0xc33)) (then (return (f64.const 0))))
+    ;; 0x0c00
+    (if (i32.eq (local.get $p) (i32.const 0xc00)) (then (return (f64.const 0))))
+    ;; 0x0c32
+    (if (i32.eq (local.get $p) (i32.const 0xc32)) (then (return (f64.convert_i32_u (i32.eqz (global.get $gl_sw_bitmap))))))
+    (unreachable))
+
+  (func $gl_query_list_index (param $ctx i32) (result i32)
+    (local $b i32) (local $slot i32) (local $index i32)
+    (local.set $slot (i32.load offset=12 (local.get $ctx)))
+    (if (i32.eqz (local.get $slot)) (then (return (i32.const 0))))
+    (local.set $b (i32.load offset=8 (local.get $ctx)))
+    (block $done (loop $scan
+      (br_if $done (i32.eqz (local.get $b)))
+      (local.set $index (i32.sub (local.get $slot) (i32.add (local.get $b) (i32.const 12))))
+      (if (i32.lt_u (local.get $index) (i32.shl (i32.load offset=8 (local.get $b)) (i32.const 2)))
+        (then (return (i32.add (i32.load offset=4 (local.get $b)) (i32.shr_u (local.get $index) (i32.const 2))))))
+      (local.set $b (i32.load (local.get $b))) (br $scan)))
+    (unreachable))
+
+  (func $gl_query_blend_enum (param $v i32) (result i32)
+    (if (i32.le_u (local.get $v) (i32.const 2)) (then (return (i32.sub (local.get $v) (i32.const 1)))))
+    (i32.add (local.get $v) (i32.const 0x2fd)))
+
+  (func $gl_query_normalized (param $p i32) (result i32) (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $p) (i32.const 0xb00)) (i32.eq (local.get $p) (i32.const 0xb02))) (i32.eq (local.get $p) (i32.const 0xb04))) (i32.eq (local.get $p) (i32.const 0xb70))) (i32.eq (local.get $p) (i32.const 0xb80))) (i32.eq (local.get $p) (i32.const 0xb66))) (i32.eq (local.get $p) (i32.const 0xb53))))
+
+  (func $gl_query_unsigned (param $p i32) (result i32) (i32.or (i32.or (i32.or (i32.eq (local.get $p) (i32.const 0xb93)) (i32.eq (local.get $p) (i32.const 0xb98))) (i32.eq (local.get $p) (i32.const 0xb32))) (i32.eq (local.get $p) (i32.const 0x8069))))
+
+  ;; One conversion/writer for native queries. No guest temporary and no
+  ;; f32 intermediate on the double or integer->double path.
+  (func $gl_native_query (param $op i32) (param $stack i32) (result i32)
+    (local $p i32) (local $n i32) (local $out i32) (local $width i32)
+    (local $bytes i32) (local $i i32) (local $v f64) (local $ctx i32)
+    (if (i32.eqz (i32.or (i32.eq (local.get $op) (i32.const 145))
+        (i32.or (i32.eq (local.get $op) (i32.const 13)) (i32.eq (local.get $op) (i32.const 103)))))
+      (then (return (i32.const 0))))
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
+    ;; A recorded Begin during GL_COMPILE has not executed. Get executes now.
+    (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+    (local.set $p (i32.load offset=4 (local.get $stack)))
+    (local.set $n (call $gl_native_query_count (local.get $p)))
+    (if (i32.eqz (local.get $n)) (then (return (i32.const 0))))
+    (local.set $out (i32.load offset=8 (local.get $stack)))
+    (local.set $width (select (i32.const 8) (i32.const 4) (i32.eq (local.get $op) (i32.const 145))))
+    (local.set $bytes (i32.mul (local.get $n) (local.get $width)))
+    (if (i32.gt_u (local.get $out) (i32.sub (i32.const -1) (i32.sub (local.get $bytes) (i32.const 1))))
+      (then (unreachable)))
+    ;; At most128 bytes; validate before any component write, including pages
+    ;; within a sparse, unaligned output span.
+    (loop $validate
+      (if (i32.eq (call $g2w (i32.add (local.get $out) (local.get $i))) (global.get $NULL_SENTINEL))
+        (then (unreachable)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $validate (i32.lt_u (local.get $i) (local.get $bytes))))
+    (local.set $i (i32.const 0))
+    (loop $values
+      (local.set $v (call $gl_native_query_value (local.get $p) (local.get $i)))
+      (if (i32.eq (local.get $op) (i32.const 145))
+        (then (call $gs64 (i32.add (local.get $out) (i32.mul (local.get $i) (local.get $width)))
+          (i64.reinterpret_f64 (local.get $v))))
+        (else (if (i32.eq (local.get $op) (i32.const 13))
+          (then (call $gs32 (i32.add (local.get $out) (i32.shl (local.get $i) (i32.const 2)))
+            (i32.reinterpret_f32 (f32.demote_f64 (local.get $v)))))
+          (else
+            ;; GL1.1 chapter6/table4.7 special signed component normalization.
+            (if (call $gl_query_normalized (local.get $p)) (then
+              (local.set $v (f64.mul (f64.const 0.5)
+                (f64.sub (f64.mul (local.get $v) (f64.const 4294967295)) (f64.const 1))))))
+            (call $gs32 (i32.add (local.get $out) (i32.shl (local.get $i) (i32.const 2)))
+              (if (result i32) (call $gl_query_unsigned (local.get $p))
+                (then (i32.trunc_sat_f64_u (f64.nearest (local.get $v))))
+                (else (i32.trunc_sat_f64_s (f64.nearest (local.get $v))))))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $values (i32.lt_u (local.get $i) (local.get $n))))
+    (i32.const 1))
+  ;; Reject setters before any native observer can corrupt queried state.
+  (func $gl_query_validate_setter (param $op i32) (param $stack i32) (result i32)
+    (local $ctx i32) (local $v i32) (local $error i32)
+    (if (i32.eqz (i32.or
+        (i32.or (i32.or (i32.eq (local.get $op) (i32.const 7)) (i32.eq (local.get $op) (i32.const 18)))
+                (i32.or (i32.eq (local.get $op) (i32.const 20)) (i32.eq (local.get $op) (i32.const 35))))
+        (i32.or (i32.eq (local.get $op) (i32.const 105)) (i32.eq (local.get $op) (i32.const 106)))))
+      (then (return (i32.const 0))))
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
+    (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+        (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0)))
+      (then (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+    (local.set $v (i32.load offset=4 (local.get $stack)))
+    (if (i32.and (i32.eq (local.get $op) (i32.const 35))
+        (i32.gt_u (i32.sub (local.get $v) (i32.const 0x1700)) (i32.const 2)))
+      (then (local.set $error (i32.const 0x500))))
+    (if (i32.and (i32.or (i32.eq (local.get $op) (i32.const 105)) (i32.eq (local.get $op) (i32.const 106)))
+        (i32.gt_u (i32.sub (local.get $v) (i32.const 0x84c0)) (i32.const 1)))
+      (then (local.set $error (i32.const 0x500))))
+    (if (i32.and (i32.or (i32.eq (local.get $op) (i32.const 18)) (i32.eq (local.get $op) (i32.const 20)))
+        (i32.or (i32.lt_s (i32.load offset=12 (local.get $stack)) (i32.const 0))
+                (i32.lt_s (i32.load offset=16 (local.get $stack)) (i32.const 0))))
+      (then (local.set $error (i32.const 0x501))))
+    (if (local.get $error) (then (call $gl_list_error (local.get $ctx) (local.get $error)) (return (i32.const 1))))
+    (i32.const 0))
+
   (func $gl_state_defaults
     (global.set $gl_color_r (f32.const 1)) (global.set $gl_color_g (f32.const 1))
     (global.set $gl_color_b (f32.const 1)) (global.set $gl_color_a (f32.const 1))
@@ -96,9 +432,17 @@
     (global.set $gl_normal_x (f32.const 0)) (global.set $gl_normal_y (f32.const 0))
     (global.set $gl_normal_z (f32.const 1)) (global.set $gl_shade_model (i32.const 0x1D01))
     (global.set $gl_client_bits (i32.const 0)) (global.set $gl_client_tex_unit (i32.const 0))
-    (global.set $gl_vp_size (i32.const 0)) (global.set $gl_np_type (i32.const 0))
-    (global.set $gl_cp_size (i32.const 0)) (global.set $gl_tp0_size (i32.const 0))
-    (global.set $gl_tp1_size (i32.const 0))
+    (global.set $gl_vp_size (i32.const 4)) (global.set $gl_np_type (i32.const 0x1406))
+    (global.set $gl_cp_size (i32.const 4)) (global.set $gl_tp0_size (i32.const 4))
+    (global.set $gl_tp1_size (i32.const 4))
+    (global.set $gl_vp_type (i32.const 0x1406)) (global.set $gl_cp_type (i32.const 0x1406))
+    (global.set $gl_tp0_type (i32.const 0x1406)) (global.set $gl_tp1_type (i32.const 0x1406))
+    (global.set $gl_vp_stride (i32.const 0)) (global.set $gl_np_stride (i32.const 0))
+    (global.set $gl_cp_stride (i32.const 0)) (global.set $gl_tp0_stride (i32.const 0))
+    (global.set $gl_tp1_stride (i32.const 0))
+    (global.set $gl_vp_guest (i32.const 0)) (global.set $gl_np_guest (i32.const 0))
+    (global.set $gl_cp_guest (i32.const 0)) (global.set $gl_tp0_guest (i32.const 0))
+    (global.set $gl_tp1_guest (i32.const 0))
     (global.set $gl_state_attrib_head (i32.const 0))
     (global.set $gl_state_attrib_depth (i32.const 0))
     (global.set $gl_state_pointer_bits (i32.const 0)))

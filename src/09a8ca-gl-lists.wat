@@ -372,6 +372,7 @@
     (i32.const 0))
 
   (func $gl_list_immediate_command (param $op i32) (result i32)
+    (if (i32.eq (local.get $op) (i32.const 145)) (then (return (i32.const 1))))
     ;; GLU image conversion is a CPU operation, never display-list content.
     (if (i32.eq (local.get $op) (i32.const 141)) (then (return (i32.const 1))))
     ;; Client stacks execute immediately even inside GL_COMPILE.
