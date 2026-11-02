@@ -1808,3 +1808,75 @@ to no source fix or replay. The usable retained handoff is the initialized
 DEMO24 entry checkpoint, preserving all preceding menu/batch progress.
 Next work must validate bounded capture and observation persistence with
 non-original deterministic tests before any separately authorized continuation.
+
+## Bounded finalization and advanced persistent handoff, 2026-11-02
+
+The deadline diagnostic first read the retained driver and supervisor. The
+120-second check occurred **before** each guest step; module/WAT and PNG writes
+then preceded checkpoint capture, gzip, write, disk verification, media checks
+and final JSON. The prior PNG was durable at 123.154943 seconds and the outer
+kill occurred at 130.382087 seconds. There was no reserved finalization interval
+or capture-stage receipt. Those facts do not identify a guest fault, calibration
+return or checkpoint defect, and the lost final state cannot be reconstructed.
+
+Before authentic restoration, a deterministic real generated-CALL/nested DOS
+EXEC fixture exercised pending read/open-file offset, DTA/FindFirst, file tree,
+arguments, devices and connected session state. Its additional 117 deterministic
+files match the pinned media's file sizes and total 17,078,619 bytes. Complete
+capture and independent **uninstrumented** fresh-process restoration passed the
+literal child-exit 42, parent-exit 7, file, DAC and pixel oracles. SIGKILL after
+writing/fsyncing half an actual temporary archive preserved the previous archive
+and durable observation; an independent fresh restore still passed those oracles.
+
+A fresh exact-source runner then restored the retained DEMO24 entry **without a
+guest step**. Timing-only in-memory capture instrumentation kept canonical disk
+sources and the native module unchanged; uninstrumented fresh-process capture
+verified complete native/host/child/batch parity. Independent leaf phases on the
+own test boat measured:
+
+| Phase | Entry, seconds | After continuation, seconds |
+| --- | ---: | ---: |
+| Native snapshot | 0.0124 | 0.0143 |
+| Connected DOS/device/session/cache graph | 1.7190 | 2.0166 |
+| Child serialization | 0.0191 | 0.0884 |
+| Child envelope/hash | 0.0532 | 0.1188 |
+| Batch serialization | 0.0277 | 0.0307 |
+| Batch envelope/hash | 0.0784 | 0.1507 |
+| Gzip | 1.3242 | 1.3278 |
+| Atomic write/fsync/rename | 0.1087 | 0.1252 |
+| Disk read/gunzip/equality verification | 0.2138 | 0.2578 |
+
+Total capture, including validation and stage-receipt overhead, was 2.5244
+seconds at entry and 3.0903 after continuation. Independent fresh verification
+at entry took 2.8716 seconds. These measurements establish the tested contract;
+they do not establish which phase consumed the predecessor's unobserved tail.
+No emulator source repair or guest execution optimization was justified or made.
+
+After focused checkpoint/native/full-host/input/files/rename/temp, earlier-command
+and terminal restoration tests and the locked build passed, exactly **one actual
+continuation, zero boots**, restored the original entry. A 60-second guest cutoff
+reserved another 60 seconds for finalization under the unchanged 120-second
+runtime/130-second OS caps. Observations were atomically persisted during the
+run and before capture. Finalization, independent uninstrumented fresh-process
+restoration and complete-state parity finished at 69.598 seconds; the supervisor
+returned actual 0 at 69.924 seconds, with its child group absent.
+
+The advanced handoff retains DEMO24 child dispatch **20,313,713**, cumulative
+643,006,442, tick **36**, CS:IP **0070:4335**. Defaults remain 550,000 dispatches
+per tick, tickScale 1, irqSchedule true, with the pinned GTA.BAT -> K.EXE ->
+generated DINO.BAT -> DEMO24.EXE history intact. Calibration was observed but
+neither result change nor return was observed. The inspected final frame is
+DOS/4GW text; no player scene, native movement or gameplay is claimed. Post-
+handback fault fields are preserved observations, not a first-fault-entry claim.
+
+Use the **advanced** archive for later separately authorized continuation:
+`scratch/runs/20261102-gta1-checkpoint-deadline-diagnostic/remote-evidence/continuation/complete.checkpoint.gz`.
+Compressed SHA-256:
+`b0316de8010e5d259e76a9a6078a12dfbcd73d4dffc8919c126d62cd0d2a7c0b`;
+decoded SHA-256:
+`634b21af85a824572fc12168f05292f534831c890f6ff4d649989ac2f7aae4fe`.
+The original entry and earlier archive remain intact. Recovery, atomic stage
+receipts, exact-source closure, diagnostic attempts, full test evidence and the
+fresh verifier are in that run's `RECOVERY.md` and `remote-evidence/`. Restore
+with Node v24.22.1 and the recorded exact ToyVM source/dependency recipe; do not
+replay boot or change clocks to recover this progress.
