@@ -256,3 +256,98 @@ subworkers ran. A future authorized attempt needs restored launch headroom,
 fresh dispatch and module/input checks, then one finite-TTL boat recorded
 before use. The gameplay requirement remains a visibly completed Luna
 arrival/jump or changed objective under ordinary controls.
+
+
+## Recovered Luna approach, 2026-11-02
+
+One original session in `scratch/runs/20261102-tachyon-luna-arrival-recovered/`
+reached a new reviewed **Luna range 4.58**, but did **not** establish arrival,
+a completed jump or a new objective. The last controlled capture at batch 6092
+still reads “Destination: Venus - Training Sector”, “Jumps: 2”, “Head to Luna”.
+The requested arrival goal remains incomplete. This attempt ended at the
+controller's 1,260-second outer deadline; the original then exited 0 after quit,
+at 1,261.187 seconds. No concrete game/runtime defect was established, and the
+timeout must not be presented as a game blocker or justification for a repair.
+There was no second invocation or replay after exit.
+
+Both prescribed gates cleared before shared edits, tests, boat or runtime:
+GL pixel-map worker6843 and Die by the Sword worker39566 each had launcher
+exit 0, `turn.completed`, result/final files, exact AUTHOR RELEASE and
+independently absent named/scoped helpers. The latter had stopped before its
+original launch because its own mutable transfer input changed. Tachyon's fresh
+boat was `bx_wur5nmgf`, finite TTL 3,600 seconds, with original expiry
+`2026-11-02T15:31:27.538Z` recorded before use. Local launch free space was
+2,500,419,584 bytes; the guard's recorded minimum through retrieval was
+2,418,479,104 bytes, above the owner's 2 GB floor.
+
+All 15 original/manifest identities (92,143,006 bytes) matched before launch,
+on the boat and after exit. The established registered `tachyon_demo` arguments
+and configuration mapping were retained. The accepted GL module was reused as
+SHA-256 `bdbe80167ac6970208664c1bb3241b667eabb4f7e25c6e18fbcdaedb8255cb5c`.
+Of its 7,230 recorded source-file identities, 7,229 were byte-identical; the sole
+difference was the predecessor's newly published Die by the Sword findings note.
+Every compiler/runtime input matched. Transfer verified 4,873 fixed file hashes;
+post-run checks matched those inputs and all 124 observed actual file reads.
+The observer's initial synthetic check lacked the existing local `calc.exe`
+fixture; copying and hash-checking that fixture corrected the preparation before
+Tachyon started. Sync/async actual emitted-callback, whole shared 512 MB memory,
+guest-clock read-only and bounded retention checks then passed on the boat.
+No game, emulator, configuration or guest-memory patch was made.
+
+The shipped readme and both accepted native keychart pages were reviewed. The
+first Launch release and immediate cursor-centering shared a dispatch batch and
+left the game in the ship bay. A separate ordinary Launch hold/release, followed
+by settled release before centering, opened the training briefing; its next
+neutral interval reached the cockpit. This establishes successful input pacing,
+not a general mouse defect. The previous Insert checkpoint was traversed, not
+counted as the result. Bracket `]` visibly selected Luna, then Heliopause; `[`
+returned to Luna. T, a native-character T sequence, X and Enter did not visibly
+select Luna in their tested views. X changed the weapon display and is not
+qualified here as a targeting control.
+
+Centered-cursor neutral intervals at zero throttle showed a stable view and
+Luna range near 37.1. Ordinary arrow holds changed the view; before/neutral/held/
+released/settled captures preserve the differing responses. Short fixed-batch
+holds did not give uniform fine corrections. In one consumption-paced left tap,
+the keydown was dispatched only after three stepped batches (5647), followed by
+keyup at 5648. These observations do not isolate a clock, input or physics bug.
+Small cursor offsets were tested with matched centered intervals, then restored
+to (320,240); they did not establish useful fine steering. The earlier cursor
+confound is therefore not promoted to a proven navigation cause.
+
+Full throttle and short arrow corrections produced the following reviewed
+approach, with Luna selected and the objective unchanged throughout:
+
+| Capture | Batch | Visible Luna range |
+|---|---:|---:|
+| `approach-right-trim-settled.png` | 5634 | 34.08 |
+| `consumed-left-settled.png` | 5658 | 32.48 |
+| `luna-approach-neutral200.png` | 5898 | 17.34 |
+| `near-luna-forward100.png` | 6015 | 8.84 |
+| `final-luna-forward60.png` | 6092 | 4.58 |
+
+The last control snapshot has empty scheduled, pending, cross-thread and renderer
+queues, and all sampled movement keys have physical/async down state false.
+Pressed-since-query latches remain set for some released keys; they are not held
+key evidence. Guest post-queue and SDL consumption remain unknown. All 27 actual
+key down/up pairs and six mouse down/up pairs balance in the dispatch trace.
+A later requested 40-batch step found the original stdin already absent, so it
+executed no further game input. The exit PNG omits the objective overlay and is
+not substituted for the final controlled objective capture. No gate animation
+is counted as arrival. No audio, frame-rate, mission-completion or broader demo
+claim is made.
+
+All 139 PNGs passed CRC/deflate/dimension checks. The 25,628,677-byte archive
+SHA-256 `91f3ce07187cf8d7ef09b0f7782e441920d27bee3578bdda59a40c32598cc6e2`
+and all 310 evidence-file identities were verified locally before delegated
+shutdown. The boat was confirmed STOPPED at `2026-11-02T14:58:36.936Z`; remote
+runtime/controller and scoped helpers were absent beforehand, and local helpers
+are absent at closeout. The local guard's shell reported SIGTERM/143 without a
+final-file write; its last sample follows game exit and retrieval, and the
+signal source is unestablished. `cleanup.json` preserves this limitation.
+`result.json`, `final.txt` and `RECOVERY.md` retain the exact outcome and recovery
+instructions. A future authorized attempt should retain the successful Launch
+release boundary, select Luna with brackets early and spend the bounded session
+on its final approach; it must independently establish arrival/objective change.
+Do not resume this worker, automatically replay its scripts or repair generic
+code without separately establishing a cause and bounding that implementation.
