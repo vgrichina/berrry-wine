@@ -1,5 +1,87 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## One bounded diagnostic: paging advances, then DOS-second calibration wait, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-bounded-startup-diagnostic/`. Exactly
+**one diagnostic original**, unchanged ToyVM/guest bytes; no emulator fix or
+optimization. Input source is the 96 accepted pins from `beb78a56`; current
+main also includes later documentation. Drawable `181f4295`, GTA startup
+`beb78a56` and accumulation `df747405` terminal/result/final and exact AUTHOR
+RELEASE were checked before taking runtime FIRST; all 134 recorded helpers
+were independently absent. No GL files were edited.
+
+The ignored `ring.cjs` adds host-only bounded observations: 128 sparse progress
+records, 64 stack records, 64 actual IRETD pairs, per-executable wall/guest
+accounting, and ordinary-RAM CR2 walks. It reads no guest paging APIs and writes
+no guest state. Before GTA, real-instruction fixtures compare all guest RAM
+and every exported `mget_` global against unobserved execution for ordinary
+IRETD, an IRETD stack page fault/task delivery, and a mapped task instruction.
+Snapshot absent-page/device negatives, ring overwrite and actual DOS COM
+session accounting pass. Initial fixture address/cache-setup mistakes were
+corrected and their failed logs retained. The final observer and locked project
+build pass before the original; no shipping source/test/bundle changed.
+
+Actual route: GTA.BAT → K.EXE → its actual generated DINO.BAT (`demo24.exe`)
+→ DEMO24.EXE. Each of the three Enter inputs followed visual inspection of
+its fresh language/confirmation/Run GTA PNG. The child was actually waited:
+exit **0 after 85.22195 seconds**, inside the independent 90-second cap;
+no host/disk/log termination. The shared 85-second budget includes review
+pauses. K's session used 56.07456 wall seconds / 62.18482 guest seconds and
+622,692,735 dispatches, exiting 0. DEMO24 used 28.38276 wall seconds /
+**1.193689 guest seconds**, 11,953,102 dispatches / 5,359,678 handbacks,
+ending at `0088:06F5` on wall-clock expiry. Session wall time starts after
+module creation; compiler/module preparation is included in the outer budget.
+These are diagnostic timings, not an uninstrumented throughput comparison.
+
+All **28 actual `3D98:8190` IRETDs** have captured `66 CF` instruction bytes,
+complete 12-byte return frames and before/after states. Every completed return
+matches its frame's CS/EIP/EFLAGS, original interrupted CS/EIP, unchanged SS
+and expected SP+12. Each CR2 target walk is present before and after IRETD;
+28 distinct pages and 26 fault sites are serviced. The independent legacy
+observer retains all 56 task-gate/backlink-return events. **Limitation:** its
+later wrapper assignment superseded the ring's task-entry wrapper, leaving
+that separate fault ring empty. Thus independent CR2 target walks *at fault
+entry* are missing; successful standalone fixtures did not test this wrapper
+composition. Error words and task states remain, but they cannot substitute
+for those missing walks. No second original was used to repair this capture.
+
+The stack observer counts 9,428 visits to `0080:0DE5/0DF2`; first and sparse
+later samples retain return IP `0F2B` and argument words `0008,7D98,00A8`.
+The `0088:0BE4` original bytes are a callback-chain dispatcher, so `0008`
+is not by itself a DOS AH service number. Twenty-one unique original-byte
+anchors establish its file bias `02C854`. Sparse samples traverse 79 distinct
+DEMO24 CS:EIP sites, including completed callback/interrupt bridges, after
+paging progresses into application code.
+
+The final `0088:06F5` bridge restore frame provides stronger evidence:
+interrupt `21h`, saved EAX=`00002C01`, ECX=0, EDX=`0000010F`, EBX=1 and
+ESI=`544` (1,348). DOS AH=2Ch returns time; 21 recorded ticks × 55 ms =
+1,155 ms, exactly seconds=1 / hundredths=15. The captured low 16 bits of the
+return EIP are `667F`. Of the original LE code-object candidates with that
+low word, only `1019667F` follows `INT 21h`; its original sequence is
+`MOV AH,2C; INT 21h; INC ESI; CMP BL,DH; JE` back to the query. The preceding
+loop first waits for the seconds value to change, then counts polls through
+another second and stores the count. **The high return-EIP word was outside
+the 48-byte capture: `1019667F` is a unique static inference, not a fully
+captured address.** Saved BL=DH=1 and ESI=1,348 agree with that calibration
+wait. This distinguishes observed initial page-loading progress from the
+later guest time wait; it demonstrates no architectural transfer fault.
+
+The current clock reaches DOS second 2 at tick 37, corresponding to
+20,350,000 dispatches with these defaults; this run ended at tick 21.
+Next demonstrated action is a real-instruction fixture of this original
+calibration loop and DOS-time/dispatch-clock contract through the seconds
+transition, including observer-wrapper composition and complete interrupt
+frames. Do that before proposing any emulator change or separately authorized
+original experiment; neither larger budgets nor clock acceleration are
+qualified here. The reviewed final PNG is DOS/4GW text only: no startup
+completion or gameplay claim. The exact 117-file / 17,078,619-byte closure,
+archive and all 96 accepted pins match before/after; both actual module hashes
+remain the accepted `7bfe7f97…ca1cdf0`. Helpers are actually waited and checked
+absent before release. Disk abort remains 2,020,000,000 bytes, no RAM gate.
+Box ID/state/expiry N/A; coordinator lifecycle unchanged.
+
+
 ## Static startup reconstruction after segment repair; no demonstrated next defect, 2026-11-02
 
 Evidence: `scratch/runs/20261102-gta1-startup-after-task-return/`. This is
