@@ -512,3 +512,63 @@ archive are absent. Boat `bx_z8fqvy2y`, original expiry
 none was requested. Next provision and hash-pin the CLI system-data dependencies
 separately from the unchanged original fixture before a fresh trace. This
 failure establishes a harness prerequisite, not Oni's startup capability cause.
+
+## CLI boot provisioned; first mandatory NULL observed (2026-11-02)
+
+Run `20261102-oni-cli-boot-dependencies-trace` reused assigned boat
+`bx_z8fqvy2y` without extending its original22:55:38.215Z expiry or repeating
+fixture transfer. The actual CLI loader's eager system-data/font inventory
+found exactly one missing file: `test/binaries/tlbs/stdole2.tlb`. Its existing
+local15088-byte content, SHA256
+`db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895`,
+was streamed and remotely verified. All26 other eager boot files already
+matched. No broader DLL/binaries tree or optional `pngjs` was transferred;
+the latter supplies screen/capture/pointer support, which this trace did not
+request. Its warning remained nonfatal and original guest execution began.
+
+All34 original fixture identities were refreshed. All1436 current pins
+matched the predecessor and remained unchanged; all4669 retained baseline
+inputs checked before/after execution matched source
+`e318fe1c5016e393a1467c86f02e1932cdf67503`, matching host/region map/API/CLI,
+and unchanged module `46c90ae6...a7667a`. The baseline count excludes the
+predecessor's observer. No new module or current host was substituted.
+
+One original invocation used12-second guest/40-second controller limits and
+100000 batches. It exited0 after7.165 controller seconds (guest loop4.485s).
+The observed sequence is:
+
+- API525 `GetModuleHandleA("opengl32.dll")` returned `0x00adc8fc`.
+- API526 `GetDC(0x00010001)` returned `0x00310002`.
+- API528 `ChoosePixelFormat(0x00310002,0x074ffd38)` returned1 at guest return
+  address `0x408940`.
+- API530/531 `GetProcAddress` returned nonzero pointers for `glAccum` and
+  `glAlphaFunc` respectively.
+- API532 `GetProcAddress(0x00adc8fc,"glAreTexturesResident")` returned **NULL**,
+  guest return address `0x4089d8`. This mandatory lookup is now **observed**,
+  rather than only a static prediction.
+
+The loader continued resolving the remaining names, then API878
+`MessageBoxA` supplied the previously reported OpenGL modal text. No traced
+context-creation, make-current, selected-format description or GL-string call
+occurred before that modal. This establishes the first missing mandatory
+export in the actual original loader, before a context query; it does not
+measure browser GPU support. Other earlier optional NULL lookups, including
+`SetThreadExecutionState` and VTune functions, are present in the log and
+were passed before this loader ran.
+
+The planned `0x40acca` breakpoint did **not** fire: no debugger prompt,
+register/table dump, or debugger command was produced. Therefore the exact
+NULL-scan branch remains statically mapped, not instruction-traced. The
+observer's original “stop before modal” intent was not achieved; the bounded
+run logged the modal and ended at the batch limit without input or dismissal.
+Do not describe this as a captured branch/register proof or successful startup.
+No second invocation, browser replay, renderer/clock substitution, guest patch,
+API repair or gameplay probe followed.
+
+Four remote evidence files were retrieved, SHA-verified and independently
+reread before the explicitly delegated shutdown. Baseline inputs remained
+unchanged and scoped remote helpers were absent. Local guard minimum was
+2070081536 bytes, above2000000000. Lifecycle receipts and final stopped-state
+verification are retained with the trace. Next implement genuine missing GL
+semantics with appropriate controls; exposing dummy pointers would merely
+pass the table predicate. Training-console progress remains unverified.
