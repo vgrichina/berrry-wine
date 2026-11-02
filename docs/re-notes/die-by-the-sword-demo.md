@@ -74,3 +74,52 @@ The handler rejected size != 20, rl3dfx gives up after ten failed locks
   probes for optional files such as the separate VOICEDMO voice pack. Not
   investigated.
 - Audio, FPS, browser, Tutorial/Arena not evaluated.
+
+## Native browser investigation (2026-11-02): transfer blocked before launch
+
+Run `scratch/runs/20261102-die-by-sword-native-browser/` stopped at its first
+concrete blocker, before starting Chrome, the local server, or the original.
+Browser gameplay therefore remains **unevaluated**: there are no new movement,
+sword-action, or gameplay screenshots. No unchanged replay was made.
+
+Both ordered predecessor gates (Tachyon11018, then pixel-map6843) had actual
+terminal completion, result/final records, exact AUTHOR RELEASE and absent
+helpers before this task took the lane. All 7,230 accepted input hashes matched
+pixel-map commit `3a49ef5e2e933c2f6db22c28d24915d25f3a1028`. Its module SHA256
+`bdbe80167ac6970208664c1bb3241b667eabb4f7e25c6e18fbcdaedb8255cb5c`
+was copied and verified, but **not executed**. The shipped readme and this note
+were read first. Registry review confirmed `die_by_the_sword_demo` is absent
+from public `DESKTOP_APPS` and present in `LOCAL_CANDIDATE_APPS`; its existing
+fixture, 28-companion manifest and arguments were left unchanged.
+
+At `2026-11-02T14:25:36.145Z`, remote transfer-verification command
+`cmd_gdlakq6gvyuo` and the local transfer process exited 1. The worker had
+mistakenly included its actively updated `local-disk.json` in the transfer
+manifest: the guard rewrote that file between hashing and archiving. Retrieved
+audit evidence verifies 3,931 of 3,932 transferred files match, with exactly
+that one mismatch. All transferred source/original files and the module match.
+The expected guard-file SHA256 is
+`4f8a95872624343111c6813118b697a80a8ec6794e902e7ebeeaf8a95132cf1a`;
+the transferred SHA256 is
+`0e8427d92c48b914dae8a8c0ba964d5099de47c7385fa6354d75442b759382f4`.
+This is a harness preparation failure, not a demonstrated guest failure.
+
+The single fresh boat was `bx_42utwzw9`, TTL 3,600 seconds, original expiry
+`2026-11-02T15:24:51.655Z`, recorded before use. Launch admission measured
+2,509,291,520 free bytes, above the required 2.4 GB margin. Evidence was
+retrieved and SHA256/size verified before the explicitly delegated shutdown;
+STOPPED was confirmed at `2026-11-02T14:26:58.670Z`, with remote Chrome,
+crashpad and scoped helpers absent, and both local helpers absent. Minimum
+observed local free disk was 2,505,461,760 bytes. The final lifecycle and helper
+checks are in `cleanup.json`. No downloads,
+compilation container, guest patches, injected state, renderer override,
+subworkers or public deployment were used.
+
+Recovery: retain `first-blocker.json`, `transfer.log`, `preparation-pins.json`,
+`accepted-inputs.json`, `runtime-inputs.json.gz`, the retrieved transfer audit,
+`retrieval-verification.json`, `cleanup.json`, `result.json`, `final.txt` and
+`RECOVERY.txt`. A future authorized attempt must exclude mutable guard/output
+files from its immutable transfer inputs, refresh gates/hashes/disk admission,
+and use a fresh finite-TTL boat. Follow the real hardware dialog and Quest menu
+route, then review matched before/held-W/released/settled character movement.
+Menu selection and idle animation still do not establish gameplay.
