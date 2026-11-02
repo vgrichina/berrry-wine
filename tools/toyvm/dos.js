@@ -1300,7 +1300,7 @@ class Machine {
 
   isDirectory(key) {
     // An unmounted machine still has an empty virtual C: root for temp files.
-    if (key === '') return true;
+    if (key === '' || this.virtualDirectories?.has(key)) return true;
     const at = this.hostKey(key);
     if (!at) return false;
     try { return fs.statSync(at).isDirectory(); } catch { return false; }
@@ -1325,6 +1325,11 @@ class Machine {
       if (!key.startsWith(prefix) || key.slice(prefix.length).includes('/')) continue;
       const name = key.slice(prefix.length);
       out.push({ name: name.toUpperCase(), size: rec.len, attributes: rec.attributes ?? 0x20 }); seen.add(name);
+    }
+    for (const key of this.virtualDirectories || []) {
+      if (!key || !key.startsWith(prefix) || key.slice(prefix.length).includes('/')) continue;
+      const name = key.slice(prefix.length);
+      if (!seen.has(name)) { out.push({ name: name.toUpperCase(), size: 0, attributes: 0x10 }); seen.add(name); }
     }
     const host = this.hostKey(directory);
     let names = [];

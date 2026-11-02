@@ -352,7 +352,7 @@ async function createMachineRunner(options) {
   const { DosSession } = require('./dos-loop');
   const { makeVm, buildModule } = require('./vm');
   const isa = require('./isa');
-  const allowed = ['image', 'name', 'args', 'machineOptions', 'sessionOptions', 'inputs', 'budget', 'files'];
+  const allowed = ['image', 'name', 'args', 'machineOptions', 'sessionOptions', 'inputs', 'budget', 'files', 'directories', 'currentDirectory'];
   if (!options || Object.keys(options).some(k => !allowed.includes(k)) || !(options.image instanceof Uint8Array)) throw Error('unsupported checkpoint runner options');
   // A detached, data-only recipe is both the fixture identity and fresh-process
   // recovery input. Reject arbitrary functions/host objects before instantiation.
@@ -365,7 +365,8 @@ async function createMachineRunner(options) {
   plain(options);
   const recipe = v8.deserialize(v8.serialize({ image: Uint8Array.from(options.image), name: options.name || 'PROGRAM.COM',
     args: options.args || '', machineOptions: options.machineOptions || {}, sessionOptions: options.sessionOptions || {},
-    inputs: options.inputs || [], files: options.files || [], budget: options.budget ?? 1000000 }));
+    inputs: options.inputs || [], files: options.files || [], directories: options.directories || [],
+    currentDirectory: options.currentDirectory || '', budget: options.budget ?? 1000000 }));
   const bools = ['noCache', 'smcFlush', 'wasmDecode', 'fuse', 'deadFlags', 'crossFlags', 'traceBlocks',
     'spinLoops', 'regSpec', 'volatileCode', 'pitClock', 'latticeClock', 'irqSchedule', 'intFast', 'edgeLookup', 'smcCensus'];
   const counts = ['slice', 'irqEvery', 'dispatchesPerTick', 'tickScale', 'stuckLimit', 'stuckWork'];
@@ -401,11 +402,21 @@ async function createMachineRunner(options) {
       recipe.inputs.some((e, i) => !e || !Number.isSafeInteger(e.at) || e.at < 0 ||
         (i && e.at < recipe.inputs[i - 1].at) || !Number.isInteger(e.ah) || e.ah < 0 || e.ah > 255 ||
         !Number.isInteger(e.al) || e.al < 0 || e.al > 255 || Object.keys(e).some(k => !['at', 'ah', 'al'].includes(k)))) throw Error('unsupported checkpoint runner configuration');
+  const validPath = s => typeof s === 'string' && /^[A-Za-z0-9_$~!#%&'()@^`{}-]+(?:\.[A-Za-z0-9_$~!#%&'()@^`{}-]+)?(?:\/[A-Za-z0-9_$~!#%&'()@^`{}-]+(?:\.[A-Za-z0-9_$~!#%&'()@^`{}-]+)?)*$/.test(s);
   if (!Array.isArray(recipe.files) || recipe.files.some(e => !Array.isArray(e) || e.length !== 2 ||
-      typeof e[0] !== 'string' || !/^[A-Za-z0-9_$~!#%&'()@^`{}-]+(?:\.[A-Za-z0-9_$~!#%&'()@^`{}-]+)?$/.test(e[0]) ||
+      typeof e[0] !== 'string' || !validPath(e[0]) ||
       !(e[1] instanceof Uint8Array)) || new Set(recipe.files.map(e => e[0].toLowerCase())).size !== recipe.files.length) {
-    throw Error('checkpoint files must be unique flat DOS names and captured bytes');
+    throw Error('checkpoint files must be unique DOS paths and captured bytes');
   }
+  const dirs = new Set(['']);
+  if (!Array.isArray(recipe.directories) || recipe.directories.some(d => !validPath(d))) throw Error('invalid checkpoint directories');
+  for (const name of [...recipe.directories, ...recipe.files.map(([n]) => n)]) {
+    const parts = name.toLowerCase().split('/');
+    if (!recipe.directories.includes(name)) parts.pop();
+    while (parts.length) { dirs.add(parts.join('/')); parts.pop(); }
+  }
+  if (recipe.files.some(([n]) => dirs.has(n.toLowerCase())) || typeof recipe.currentDirectory !== 'string' ||
+      !dirs.has(recipe.currentDirectory.toLowerCase())) throw Error('checkpoint directory/file collision or missing cwd');
   if (sourceKey() !== loadedSourceKey) throw Error('checkpoint sources changed since load');
   require('./decode').setCpuLevel(386);
   // Building also initializes the compiler's handler tables for this exact
@@ -415,8 +426,10 @@ async function createMachineRunner(options) {
   const vm = await makeVm('tailcall', { ...module,
     portIn: (p, w) => machine.portIn(p, w), portOut: (p, v, w) => machine.portOut(p, v, w) });
   vm.exports.set_cpu(386); machine.setMemory(vm.mem, vm.exports);
+  machine.virtualDirectories = dirs;
+  machine.currentDirectory = recipe.currentDirectory.toLowerCase();
   machine.syncVga(); // Match runDos power-on setup before the first guest slice.
-  for (const [name, bytes] of recipe.files) machine.tempFiles.set(machine.fileKey(name),
+  for (const [name, bytes] of recipe.files) machine.tempFiles.set(machine.fileKey('\\' + name),
     { data: Uint8Array.from(bytes), len: bytes.length });
   const info = loadExe(vm.mem, Buffer.from(recipe.image), { loadSeg: machine.loadSeg, pspSeg: machine.pspSeg });
   if (info.allocTop !== undefined) machine.allocTop = info.allocTop;
@@ -453,7 +466,7 @@ async function createMachineRunner(options) {
       'dispatchesPerTick', 'tickScale', 'pitClock', 'stuckLimit', 'stuckWork']],
     [session.cache, ['noCache', 'smcFlush', 'watch', 'fuse', 'deadFlags', 'crossFlags', 'traceBlocks',
       'spinLoops', 'regSpec', 'volatileCode', 'regionCodeBits']],
-    [machine, ['svga', 'sound', 'pspSeg', 'loadSeg', 'forceChained', 'dspVersion', 'extraEnv']],
+    [machine, ['svga', 'sound', 'pspSeg', 'loadSeg', 'forceChained', 'dspVersion', 'extraEnv', 'virtualDirectories']],
   ];
   const meta = { machine, session, cache: session.cache, exports: vm.exports, wat: vm.wat, module: sha256(vm.bytes),
     recipe, state, active: false, failed: false, consoleMethods,

@@ -2295,6 +2295,8 @@ module.exports = {
   // Load Node-only archive/source-identity support only when requested.
   createMachineRunner: options => require('./checkpoint').createMachineRunner(options),
   resumeMachineRunner: bytes => require('./checkpoint').resumeMachineRunner(bytes),
+  createBatchMachineRunner: options => require('./batch-checkpoint').createBatchMachineRunner(options),
+  resumeBatchMachineRunner: bytes => require('./batch-checkpoint').resumeBatchMachineRunner(bytes),
   runDos, runDosWithPre, writePng, writeConsolePng, nonBlack, frameHash, conText,
   screenSurface, conCells,
   readFrame: require('./framebuffer').readFrame,

@@ -1762,3 +1762,49 @@ also reject. The native-only snapshot control instead exits with `0`, failing
 the independent exit oracle. Native checkpoint and runner-input regressions
 and the locked full build pass. Both generated DOS browser bundles were
 regenerated after the build correctly rejected stale copies.
+
+
+## Authentic persistent batch integration and deadline boundary, 2026-11-02
+
+`createBatchMachineRunner()` / `resumeBatchMachineRunner()` now execute captured
+real batch files with explicit CALL frames, external-command continuation and
+a nested DOS file tree. They use the canonical native factory and actual DOS
+services, including nested INT 21h EXEC. Each external command retains its
+connected VM, Machine, DosSession and CodeCache roots on same-runner rollback;
+imports keep their Machine binding. Fresh restore reconstructs those bindings.
+Child schema/source/fixture/options, launch budget and completed-state totals
+and files are checked before live mutation. This extends the earlier flat-file
+factory; its synthetic test alone never established authentic GTA coverage.
+
+The focused test uses DOS writes to generate a called batch and pauses during
+a nested child's real DOS read with its EXEC parent live. Independent oracles
+require bytes `OK`, DOS child exit 42, persisted `*`, argument `go`, RGB
+11/22/33 and video byte 7. Same/fresh/fresh-process, completed-batch and earlier
+command rollback pass, including connected-root identity. Fifteen malformed,
+source, fixture and schema cases reject atomically; wrong file bytes fail the
+exit-42 oracle. Native/full-machine/input and DOS file/rename/temp regressions,
+regenerated browser bundles and the locked build pass. Evidence and recovery:
+`scratch/runs/20261102-gta1-authentic-batch-integration/`.
+
+Exactly one authentic boot followed **GTA.BAT -> K.EXE -> actual generated
+DINO.BAT -> DEMO24.EXE**. Three Enter taps followed fresh inspected menu
+captures. K exited 0 after 622,692,729 dispatches; the generated batch is exactly
+`demo24.exe\r\n`, SHA-256
+`5980340dfa79147f5be7b713d35804b6e25d8ecd1084d6ab22e51929a6dbf0cc`.
+A complete persistent DEMO24 checkpoint at its first initialized handback
+(19 child dispatches, F000:0121) survives fresh-process restore, with full
+native/host graph and batch-state parity. The subsequent bounded continuation
+also restored it successfully. Defaults remain 550,000 dispatches/tick,
+tickScale 1 and irqSchedule true; no guest/source/clock optimization was made.
+
+**The next unmet contract is final persistence within the outer deadline.**
+The continuation wrote a fresh DOS/4GW frame and module/WAT artifacts but
+did not finish its final checkpoint/result before the 130-second supervisor
+killed it (actual wait -9). No final archive or final JSON exists. Its pending
+clock/calibration/fault-observation rings were not persisted. Consequently no
+final guest tick, calibration result store/RET, first-fault entry or gameplay
+progress is claimed. The timeout establishes no causal guest defect and led
+to no source fix or replay. The usable retained handoff is the initialized
+DEMO24 entry checkpoint, preserving all preceding menu/batch progress.
+Next work must validate bounded capture and observation persistence with
+non-original deterministic tests before any separately authorized continuation.
