@@ -73,13 +73,14 @@ The handler rejected size != 20, rl3dfx gives up after ten failed locks
 - About 310 caught C++ `file_error` throws per run (EIP 0x516460), probably
   probes for optional files such as the separate VOICEDMO voice pack. Not
   investigated.
-- Audio, FPS, browser, Tutorial/Arena not evaluated.
+- Audio, FPS and Arena remain unevaluated. Native-browser movement was later
+  evaluated below; the brief accidental Tutorial visit is not a Tutorial test.
 
 ## Native browser investigation (2026-11-02): transfer blocked before launch
 
 Run `scratch/runs/20261102-die-by-sword-native-browser/` stopped at its first
 concrete blocker, before starting Chrome, the local server, or the original.
-Browser gameplay therefore remains **unevaluated**: there are no new movement,
+For that attempt, browser gameplay remained **unevaluated**: there were no new movement,
 sword-action, or gameplay screenshots. No unchanged replay was made.
 
 Both ordered predecessor gates (Tachyon11018, then pixel-map6843) had actual
@@ -123,3 +124,99 @@ files from its immutable transfer inputs, refresh gates/hashes/disk admission,
 and use a fresh finite-TTL boat. Follow the real hardware dialog and Quest menu
 route, then review matched before/held-W/released/settled character movement.
 Menu selection and idle animation still do not establish gameplay.
+
+
+## Native browser recovery (2026-11-02): Quest movement demonstrated
+
+Run `scratch/runs/20261102-die-by-sword-immutable-transfer/` corrected the
+preparation failure within the gameplay task. The previous failure evidence is
+retained as `prior-first-blocker.json`, `prior-transfer.log` and
+`prior-failure-identity.json`. No original/browser had launched in that attempt.
+This run launched the original once, with no replay, patches, injected guest
+state, forced renderer, downloads or public deployment.
+
+After ordered Tachyon58338 and GL65341 terminal/result/final/exact AUTHOR
+RELEASE and helper-absence gates, all 7,233 accepted GL input hashes matched
+commit `93793279ec4ddbddf4ad1154f35e7c1553e99bc5`. A locked local build exited
+0; its coherent 2,069,384-byte module SHA256 is
+`6d9563ff4a1c089c9d0ac4153748411990dc3c92f3a50e2509bbe9ffaaca30a7`.
+`build-identity.json`, `snapshot-inputs.json` and `original-inputs.json` pin
+source, compiler inputs and original/support files. The original executable
+SHA256 is `88a7b9c6ecb98130f8207ac19c984fca57a844d0a62719aabd363e1a3759e85c`;
+the unchanged 28-companion manifest SHA256 is
+`ffd1b2b2d5348e599ca8657aa3c89baa89fe6338f58eb8a78f4d34a7f684a7d0`.
+Registry inspection again confirmed the existing fixture is in
+`LOCAL_CANDIDATE_APPS` and absent from `DESKTOP_APPS`.
+
+The transfer names immutable runtime assets, the module, fixture/support
+files, controller files and frozen input manifests explicitly. It excludes
+mutable disk guards, commands, output/control JSON and logs. Each member hash
+was calculated from the exact byte buffer added to the archive. The remote
+verified archive identity, exact member set and member bytes before extraction,
+then every extracted file: all 2,914 matched. Archive SHA256 is
+`862aff488361d851d612418711542196d7800b6399d03618abcd03a79c21636b`.
+See `immutable-inputs.json`, `transfer.py` and `transfer.json`. A rejected
+`boat exec --detach --timeout` preparation command was corrected before any
+original launch; `preparation-launch-argument-error.json` retains it.
+
+Installed native Chrome ran headfully on the existing display. The shipped
+controls were read first. Balanced native mouse input selected the visible
+software option in the ordinary hardware dialog and pressed OK; the host
+renderer setting was not changed. An initial menu Down/Enter entered Tutorial,
+which was visibly recognized and exited through Escape, Quit and Enter. The
+reviewed second route selected **Quest** (white highlight), then **Knight**
+difficulty through the normal menus. This Quest starts in a rocky chamber;
+the older headless note's hut and inferred menu selection should not be used
+to identify this browser route.
+
+The movement proof is a paired full-page/visible-canvas sequence under
+`retrieved/`. Every listed pair was opened and visually reviewed:
+
+| Phase | Full-page capture | Matching canvas capture |
+|---|---|---|
+| Before | `25-quest-before-W.png` | `25-quest-before-W-canvas.png` |
+| W held | `26-quest-W-held.png` | `26-quest-W-held-canvas.png` |
+| Released | `26-quest-W-released.png` | `26-quest-W-released-canvas.png` |
+| Settled 2.5 seconds | `26-quest-W-settled.png` | `26-quest-W-settled-canvas.png` |
+
+One trusted native W keydown requested a 3,000 ms hold and was balanced by
+keyup after 3,378 ms including capture overhead. All 32 recorded native input
+events were trusted and balanced.
+The character strides forward; the close diagonal rock wall recedes, the
+chamber opens up and a fire becomes visible to the character's right. After
+release, the character stands while that changed floor/wall/fire arrangement
+persists through the settled capture. This is visible displacement, beyond
+idle sword animation. The released input snapshot contains W's WM_KEYUP
+(`msg=257`, `wParam=87`); the settled queue is drained. Controller cleanup
+records no held keys. `movement-review.json`, `capture-pairs.jsonl`, native
+input records and per-capture state JSON preserve the evidence.
+
+The result is limited to this short ordinary movement interval. A later
+no-input observation (`27-neutral-after-W.png`) was black; the next
+(`28-post-movement-observation.png`) showed the game's “Behind The Rockslide”
+/ “Restart Game” screen. The cause of that transition is not established.
+There was no observed runtime trap, and no restart or further gameplay input
+was attempted. Sword action, sustained stability and level completion are
+not demonstrated. The transfer also omitted the runtime asset
+`src/api_table.json`: its fetch returned 404 and the browser used an empty
+ordinal lookup table. That did not block this exercised route, but ordinal
+import coverage is not established; future explicit transfers should include
+that immutable runtime asset. Existing ole32 fallback and caught `file_error`
+probe messages remain visible in the console evidence.
+
+The controller and native Chrome exited 0; the local server closed and the
+profile and remote browser/crashpad helpers were absent. No guest ExitProcess
+code was observed: the controller closed Chrome while the game screen was
+active. The single finite-TTL boat was `bx_3rfjgrcy`, original expiry
+`2026-11-02T16:53:09.171Z` (recorded before use). The dispatcher's explicit
+15:50:25 amendment replaced its original 2.4 GB admission condition with the
+owner's >2 GB floor; the exact instruction is retained in
+`disk-threshold-amendment.json`. Launch free disk was 2,354,966,528 bytes.
+
+Recovery and closeout: retain `RECOVERY.txt`, `result.json`, `final.txt`,
+`retrieved-manifest.json`, `retrieval-verification.json`, `cleanup.json`, the
+paired captures and immutable manifests. All 200 retrieved evidence files were
+archive/member-hash verified before the task-delegated shutdown. STOPPED was confirmed at 2026-11-02T16:07:40.269Z;
+remote and local scoped helpers were absent. Minimum observed local free disk
+was 2,293,895,168 bytes. Final lifecycle details are in `cleanup.json`. No
+unchanged replay is needed to establish the demonstrated movement.
