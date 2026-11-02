@@ -1,5 +1,124 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Retained pre-return cause: finite seconds wait, fixture coverage gap, 2026-11-02
+
+Static evidence: `scratch/runs/20261102-gta1-pre-return-state-cause/`
+(`analyze.py`, `arithmetic-audit.json`, bounded original/relocated disassembly).
+Inputs are published `84e604d851a75b0f217cfdb5669c752b7d2bd307`'s
+`20261102-gta1-headroom-original-resume/{RECOVERY.txt,result.json,verification.json,
+original-frame-audit.json,remote/ring.json,remote/fixture-results.json}` and
+the retained original executable. **No new guest execution occurred.**
+The evidence establishes incomplete calibration; it demonstrates no causal
+interrupt, count, or clock defect that justifies a source change.
+
+The original's SHA-256 remains `2f1cedfb95254b2f1a8913f1aeac7a915966cb42c70c9c96b14b8861fbf78c9f`.
+LE page-map index 275 contains `00 01 14 00` (data page 276); embedded-MZ
+base `38D64` + data-page offset `72C00` + `275*1000` gives file page
+`1BE964`. Offset `65D` gives file **1,830,849**. Its 50 function bytes
+match the existing fixture exactly after the one recorded result relocation
+at `10196686` (object 2 + `2CD6B8` → `104786B8`). Relevant instructions:
+
+| Address | Original bytes | Meaning in the captured 32-bit code segment |
+|---|---|---|
+| `10196665` | `31 C0 88 F0 89 C3` | Zero full EAX, copy DH into AL, copy full EAX to EBX |
+| `1019666F` | `31 C0 88 F0 39 C3 74 F4` | Compare full EBX with zero-extended seconds; repeat at `1019666B` while equal |
+| `10196677` | `31 F6 88 C3` | Zero full ESI, retain the changed seconds in BL |
+| `1019667B` | `B4 2C CD 21` | Ask DOS for time; return to `1019667F` |
+| `1019667F` | `46 38 F3 74 F7` | Increment full ESI, compare BL with DH, repeat at `1019667B` while equal |
+| `10196684` | `89 35 B8 D6 2C 00` | Store full ESI; relocated operand is `B8 86 47 10` |
+| `1019668A` | `5E 5A 59 5B C3` | Restore ESI/EDX/ECX/EBX, then near RET |
+
+There is no division, multiply, 16-bit count truncation, or threshold on ESI
+in this function. DL hundredths do not enter either comparison. Seconds
+59→0 also break equality. The retained caller return `10196C0F` agrees with
+the original indirect `FF D0` at `10196C0D`; it does not prove that callback
+returned. Static caller operands are unrelocated in the disassembly artifact.
+
+All 23 retained application-return samples restore the complete captured
+GPRs and EIP. The authentic `0088:06FD` tail is
+`1F 07 0F A1 0F A9 66 61 66 83 C4 06 66 CF`: segment pops, POPAD,
+ADD ESP,6, IRETD. At tick 36, restore-frame offsets `+12/+24/+28/+32/+36`
+hold ESI=`000020CB`, EBX=`00000001`, EDX=`00000161`, ECX=`00000000`,
+EAX=`00002C01`. Offsets `+46/+50/+54` hold EIP=`1019667F`,
+CS slot=`000102E0`, EFLAGS=`00000246`. After IRETD, CS=`02E0`,
+EIP=`1019667F`, ESP=`1047B6D0`, SS=`02E8`, D32=1 and
+stack mask=`FFFFFFFF`; restore ESP was `1047B696`, exactly 58 bytes earlier.
+Thus the live bridge's temporary ESI is not the calibration count, and the
+CS-slot high word is not part of the loaded selector.
+
+An independent count identity holds for **all 17** retained second-phase
+samples: saved ESI = tail-hit number − **3,371** − 1. Hit 3,371 is the
+tick-19 first-phase return with EBX=0, DH=1; the following instructions
+clear ESI and set BL=1. At tick 20, `3865−3371−1=493`; at tick 36,
+`11767−3371−1=8395`. These samples are before `INC ESI`, so the latter
+would become 8,396 before comparing equal seconds. Full-width count and
+restoration agree with the instruction sequence. The fixture's 241,463
+polls are its own bridge's count, not an expected original count: its last
+saved ESI is 241,462, then the terminating increment stores 241,463.
+
+**The first demonstrated fixture/original coverage mismatch is in time's
+hundredths, not the loop arithmetic.** At the first application return
+(tick 14), actual EDX=`0000004C` means second 0, hundredths 76. The host
+`tools/toyvm/dos.js` AH=2Ch formula `ticks*55` would give `004D` at tick 14;
+no integer tick in 0..37 produces `004C`. At tick 36, actual `0161` means
+1.97 seconds, while that host formula gives `0162` (1.98). The successful
+fixture actually observes this host path and preserves its seeded upper
+EDX=`3456`; original upper EDX is zero. Those different inputs are not
+evidence of lost high halves.
+
+Independent integer PIT conversion, `floor(tick*65536*100/1193182)`, gives
+76 centiseconds at tick 14 and 197 at tick 36, matching those original
+values. Every counted original sample matches this conversion at its labeled
+tick or the preceding tick. A restore sample is later than its time query;
+the retained observer stamps only restore time, while `dos-loop.js` advances
+the clock at scheduled handbacks. This numerical agreement does **not**
+identify the original service's implementation or prove a conversion defect.
+The retained original reports only 498 host INT21 services against 12,227
+bridge-tail visits; bridge visits cannot be equated with host AH=2Ch calls.
+The fixture uses representative bridge scaffolding, not the original complete
+DOS/4GW service path, so its host-service assertions cannot fill this gap.
+
+Both conversions still give DH=1 at tick 36 and DH=2 at tick 37. The
+independent expected low words are:
+
+| Query tick | Host `ticks*55` DX | PIT-derived DX |
+|---|---|---|
+| 18 | `0063` (0.99) | `0062` (0.98) |
+| 19 | `0104` (1.04) | `0104` (1.04) |
+| 36 | `0162` (1.98) | `0161` (1.97) |
+| 37 | `0203` (2.03) | `0203` (2.03) |
+
+The original ended at dispatch **20,313,713**, **36,287** before the nominal
+tick-37 boundary `37*550000=20,350,000`. Its last observed calibration pair
+was earlier, at 19,800,613; final `0070:4335` is an interior bridge snapshot,
+not a frozen DH or a failed IRETD. Neither an original result store nor RET
+was captured. There is no valid wall-time or original poll-count prediction
+from the representative fixture, and no acceleration fix follows.
+
+**Next concrete correctness task:** a separately authorized, bounded
+non-original instruction fixture should isolate the authentic DOS/4GW
+time-service/bridge path and compare it with the existing representative
+fixture at the 18→19 and 36→37 boundaries. Record full INT21 entry GPRs,
+service-time tick/PIT phase and actual service route, returned ECX/EDX,
+complete restore58/IRETD12, then `INC/CMP/JE`, result store `104786B8`
+and RET. At tick 37 expect ECX low16=0, EDX low16=`0203`, stored result
+= pre-increment ESI+1, preserved caller GPRs and the full caller return EIP.
+Use unchanged default dispatch/clock semantics and at most **1,200,000 billed
+dispatches per boundary arm**; initialized boundary states must be labeled
+fixture setup. The decisive
+missing observation is a query serviced at/after tick 37 returning DH=2,
+followed by that value surviving the authentic bridge and breaking equality.
+If it returns DH=1, locate the first divergence at service/restore/comparison
+before editing source. This requires runtime ownership and validation in a new
+task; it is not authorization to replay the original here. Only after that
+coverage is resolved should an owner authorize another bounded original run.
+
+This task owns no source/tests/build/runtime resources and changed no code.
+Only foreground static tools and a board watcher ran; their actual waits and
+watcher cleanup are retained. No new box was assigned: predecessor box
+`bx_tm2x67p8` remains recorded stopped, expiry `2026-11-02T05:19:00.950Z`;
+coordinator lifecycle was untouched. Local free disk remained above 2 GB.
+
 ## Headroom resumption: validated observer, authentic startup reaches tick 36, 2026-11-02
 
 Evidence: `scratch/runs/20261102-gta1-headroom-original-resume/`, including
