@@ -26,7 +26,7 @@ function helpers(isa) {
   const dataSegments = [[0, 'es'], [3, 'ds'], [4, 'fs'], [5, 'gs']];
   // Intel SDM RET pseudocode uses DPL in the hidden segment-register cache.
   // Never consult a subsequently modified descriptor table during outer RETF.
-  const dataCache = dataSegments.map(([index, name]) => `
+  const dataCache = [[1, 'cs'], ...dataSegments].map(([index, name]) => `
   (if (i32.eq (local.get $i) (i32.const ${index})) (then
     (global.set $pm_${name}_valid (i32.const 0))
     (if (i32.eqz (call $pm_active)) (then (return)))
@@ -36,8 +36,11 @@ function helpers(isa) {
     (if (i32.ne (call $pm_base (local.get $d)) (call $sbase (local.get $i))) (then (return)))
     (local.set $a (i32.load8_u offset=5 (local.get $d)))
     (if (i32.ne (i32.and (local.get $a) (i32.const 144)) (i32.const 144)) (then (return)))
-    (if (i32.and (i32.ne (i32.and (local.get $a) (i32.const 8)) (i32.const 0))
+    ${name === 'cs' ? '(if (i32.eqz (i32.and (local.get $a) (i32.const 8))) (then (return)))' : `(if (i32.and (i32.ne (i32.and (local.get $a) (i32.const 8)) (i32.const 0))
       (i32.eqz (i32.and (local.get $a) (i32.const 2)))) (then (return)))
+    `}
+    (global.set $pm_${name}_limit (call $pm_limit (local.get $d)))
+    ${name === 'cs' ? '' : `(global.set $pm_${name}_mask (call $pm_mask (local.get $d)))`}
     (global.set $pm_${name}_access (local.get $a))
     (global.set $pm_${name}_valid (i32.const 1))))`).join('');
   const clearData = dataSegments.map(([index, name]) => `
@@ -262,7 +265,10 @@ function helpers(isa) {
   (i32.store (i32.add (i32.const ${isa.REGFILE_SEL}) (i32.shl (local.get $index) (i32.const 2))) (local.get $selector))
   (i32.store (i32.add (i32.const ${isa.REGFILE_SEGB}) (i32.shl (local.get $index) (i32.const 2))) (call $pm_base (local.get $d)))
   (if (i32.eq (local.get $index) (i32.const 1))
-    (then (global.set $d32 (i32.and (i32.shr_u (i32.load8_u offset=6 (local.get $d)) (i32.const 6)) (i32.const 1)))))
+    (then (global.set $d32 (i32.and (i32.shr_u (i32.load8_u offset=6 (local.get $d)) (i32.const 6)) (i32.const 1)))
+      (global.set $pm_cs_limit (call $pm_limit (local.get $d)))
+      (global.set $pm_cs_access (i32.or (i32.load8_u offset=5 (local.get $d)) (i32.const 1)))
+      (global.set $pm_cs_valid (i32.const 1))))
   (if (i32.eq (local.get $index) (i32.const 2))
     (then
       (global.set $spm (call $pm_mask (local.get $d)))

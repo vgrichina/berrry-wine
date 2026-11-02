@@ -882,8 +882,9 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
       // INVD and WBINVD (486). There are no caches here to invalidate or write
       // back, so both are exactly a no-op -- but they are not a no-op to the
       // decoder, and refusing them stopped COLORS.EXE inside its own setup.
-      // CLTS clears the task-switched bit of a CR0 that nothing here reads.
-      if (op2 === 0x08 || op2 === 0x09 || op2 === 0x06) { words.push(H.nop); break; }
+      // CLTS must really clear TS after a hardware task switch.
+      if (op2 === 0x06) { words.push(H.clts); break; }
+      if (op2 === 0x08 || op2 === 0x09) { words.push(H.nop); break; }
       // CMPXCHG (486). Same shape as XADD below, and like it the memory form
       // is a read-modify-write, so writesMem has to be set or a program that
       // spins on one against its own code would not see the block invalidated.
@@ -977,7 +978,7 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
     // The memory forms are a 6-way arithmetic group plus load/store, indexed by
     // the ModRM reg field; the register forms are a flat table off the second
     // byte. WAIT (0x9B) in front of any of them is the "wait for the
-    // coprocessor" pairing and means nothing here, so it decodes as NOP above.
+    // coprocessor" pairing; paged execution checks CR0.MP/TS before WAIT.
     case 0xD8: case 0xD9: case 0xDA: case 0xDB:
     case 0xDC: case 0xDD: case 0xDE: case 0xDF: {
       const esc = op & 7;
@@ -1169,7 +1170,7 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
   // this one); see IFEN in compile.js. Not endsBlock: the block ends one
   // instruction later.
   return { words, nextIp: wip(start + n), length: n, fixups, endsBlock, writesMem, bulkWrite, operands,
-    sti: op === 0xFB, ssLoad };
+    sti: op === 0xFB, ssLoad, x87: op >= 0xD8 && op <= 0xDF, wait: op === 0x9B };
 }
 
 // How many instruction bytes each operand kind is read from, and the word

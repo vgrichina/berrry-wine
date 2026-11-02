@@ -175,6 +175,38 @@ ${saved.map(([x,t]) => `(global $pg_save_${x} (mut ${t}) (${t}.const 0))`).join(
 (func (export "pg_authorize") (param $v i32) (global.set $pg_authorized (local.get $v)))
 (func (export "pg_reset_vector") (global.set $pg_vector (i32.const -1)))
 (func (export "pg_clear") (global.set $pg_pending (i32.const 0)))
+;; Task-installed caches are authoritative, including null data selectors.
+;; Optimized/base-only accessors cannot enter paging; reached interpreter
+;; memory operations retain a segment index and check before translation.
+(func $pg_segment (param $s i32) (param $off i32) (param $n i32) (param $write i32)
+  (local $valid i32) (local $limit i32) (local $access i32) (local $mask i32)
+  (local $bad i32) (local $end i64)
+  (if (i32.or (i32.eqz (global.get $pm_task_segments)) (global.get $vm86)) (then (return)))
+  ${isa.SEG.map((s, i) => `(if (i32.eq (local.get $s) (i32.const ${i})) (then
+    (local.set $valid (global.get $pm_${s}_valid))
+    (local.set $limit (global.get $pm_${s}_limit))
+    (local.set $access (global.get $pm_${s}_access))
+    (local.set $mask ${s === 'ss' ? '(global.get $spm)' : s === 'cs' ? '(i32.const -1)' : `(global.get $pm_${s}_mask)`})))`).join('\n  ')}
+  (local.set $bad (i32.eqz (local.get $valid)))
+  (if (local.get $write)
+    (then (local.set $bad (i32.or (local.get $bad)
+      (i32.ne (i32.and (local.get $access) (i32.const 26)) (i32.const 18)))))
+    (else (if (i32.and (i32.ne (i32.and (local.get $access) (i32.const 8)) (i32.const 0))
+      (i32.eqz (i32.and (local.get $access) (i32.const 2)))) (then (local.set $bad (i32.const 1))))))
+  (local.set $end (i64.sub (i64.add (i64.extend_i32_u (local.get $off)) (i64.extend_i32_u (local.get $n))) (i64.const 1)))
+  (if (i32.and (i32.eqz (i32.and (local.get $access) (i32.const 8)))
+      (i32.ne (i32.and (local.get $access) (i32.const 4)) (i32.const 0)))
+    (then (local.set $bad (i32.or (local.get $bad)
+      (i32.or (i32.le_u (local.get $off) (local.get $limit))
+        (i64.gt_u (local.get $end) (i64.extend_i32_u (local.get $mask)))))))
+    (else (local.set $bad (i32.or (local.get $bad)
+      (i64.gt_u (local.get $end) (i64.extend_i32_u (local.get $limit)))))))
+  (if (local.get $bad) (then
+    (call $pg_rollback)
+    (global.set $pg_pending (i32.const 4))
+    (global.set $pg_vector (select (i32.const 12) (i32.const 13) (i32.eq (local.get $s) (i32.const 2))))
+    (global.set $errc (i32.const 0))
+    (unreachable))))
 (func $pg_read (export "pg_read") (param $linear i32) (param $n i32) (param $user i32) (result i32)
   (local $i i32) (local $v i32) (local $p i32)
   (loop $byte

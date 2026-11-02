@@ -114,6 +114,7 @@ function wideAccessors(b, p, a, setL) {
     s += `
 (func $rd${w}${b} ${p} (param $off i32) (result i32)
   (local $l i32)
+  ${b === '' ? `(if (call $pg_on) (then (call $pg_segment (local.get $seg) (local.get $off) (i32.const ${n}) (i32.const 0))))` : ''}
   (if (call $pg_on) (then (return (call $pg_read
     (i32.add ${b ? '(local.get $base)' : '(call $sbase (local.get $seg))'} (local.get $off))
     (i32.const ${n}) (call $pg_user)))))
@@ -127,6 +128,7 @@ function wideAccessors(b, p, a, setL) {
 
 (func $wr${w}${b} ${p} (param $off i32) (param $v i32)
   (local $l i32)
+  ${b === '' ? `(if (call $pg_on) (then (call $pg_segment (local.get $seg) (local.get $off) (i32.const ${n}) (i32.const 1))))` : ''}
   (if (call $pg_on) (then (call $pg_write
     (i32.add ${b ? '(local.get $base)' : '(call $sbase (local.get $seg))'} (local.get $off))
     (i32.const ${n}) (local.get $v) (call $pg_user)) (return)))
@@ -154,6 +156,7 @@ function memAccessors() {
     s += `
 (func $rd8${b} ${p} (param $off i32) (result i32)
   (local $l i32)
+  ${b === '' ? '(if (call $pg_on) (then (call $pg_segment (local.get $seg) (local.get $off) (i32.const 1) (i32.const 0))))' : ''}
   ${b === 'phys' ? '' : `(if (call $pg_on) (then (return (call $pg_read
     (i32.add ${b ? '(local.get $base)' : '(call $sbase (local.get $seg))'} (local.get $off))
     (i32.const 1) (call $pg_user)))))`}
@@ -165,6 +168,7 @@ function memAccessors() {
 
 (func $wr8${b} ${p} (param $off i32) (param $v i32)
   (local $l i32)
+  ${b === '' ? '(if (call $pg_on) (then (call $pg_segment (local.get $seg) (local.get $off) (i32.const 1) (i32.const 1))))' : ''}
   ${b === 'phys' ? '' : `(if (call $pg_on) (then (call $pg_write
     (i32.add ${b ? '(local.get $base)' : '(call $sbase (local.get $seg))'} (local.get $off))
     (i32.const 1) (local.get $v) (call $pg_user)) (return)))`}
@@ -2924,6 +2928,12 @@ function gen386() {
 `);
   // CR2 and CR3 are architectural registers even while PG is clear. Keeping
   // them is a prerequisite for paging, not an implementation of translation.
+  h('clts', 0, `
+  (if (i32.and (global.get $cr0) (i32.const 1)) (then
+    (if (i32.or (global.get $vm86) (i32.and (call $sget (i32.const 1)) (i32.const 3)))
+      (then (drop (call $pm_stop (i32.const ${pmTransfer.STOP.unsupportedSystem}) (i32.const 0))) (return)))))
+  (global.set $cr0 (i32.and (global.get $cr0) (i32.const -9)))
+`);
   h('mov_r_cr', 1, `
   ${ops(1)}
   (local.set $t1 (i32.and (i32.shr_u (local.get $t0) (i32.const 4)) (i32.const 7)))
@@ -5519,6 +5529,12 @@ ${memAccessors()}
     (global.set $left (global.get $steps)) (return)))
   (global.set $intno (local.get $vec))
   (local.set $g (call $idtgate (local.get $vec)))
+  ;; Nonpaged protected delivery has no checked restart boundary. Refuse a
+  ;; task gate before any stack write instead of treating its reserved offset
+  ;; as an ordinary interrupt-handler address.
+  (if (local.get $g) (then
+    (if (i32.eq (i32.and (i32.load8_u offset=4 (local.get $g)) (i32.const 31)) (i32.const 5))
+      (then (drop (call $pm_stop (i32.const ${pmTransfer.STOP.unsupportedSystem}) (global.get $tr))) (return)))))
   ;; A trap taken while the CPU is in virtual-8086 mode is not the same
   ;; sequence at all, and it is the ONLY way off that mode -- there is no
   ;; instruction that clears VM. Handled whole, before the size branch below,
@@ -6343,8 +6359,8 @@ ${[...Array(8).keys()].map(i => `(global $st${i} (mut f64) (f64.const 0))`).join
 ;; and a flat one keeps the whole of ESP.
 (global $spm (mut i32) (i32.const 0xFFFF))
 ;; LDT selector and the linear base it resolved to, plus the task register.
-;; LTR loads the hidden TSS cache and marks its descriptor busy. Task switching
-;; remains unsupported; STR reads this selector without touching the cache.
+;; LTR loads the hidden TSS cache and marks its descriptor busy. Paged task
+;; gates and NT returns are handled at the checked host transfer boundary.
 (global $ldt (mut i32) (i32.const 0))
 (global $ldtb (mut i32) (i32.const 0))
 (global $tr (mut i32) (i32.const 0))
@@ -6352,12 +6368,21 @@ ${[...Array(8).keys()].map(i => `(global $st${i} (mut f64) (f64.const 0))`).join
 ;; general instruction protection remains separate; no exception is fabricated.
 (global $pm_es_valid (mut i32) (i32.const 0))
 (global $pm_es_access (mut i32) (i32.const 0))
+(global $pm_es_limit (mut i32) (i32.const 0))
+(global $pm_task_segments (mut i32) (i32.const 0))
+${['es', 'ds', 'fs', 'gs'].map(s => `(global $pm_${s}_mask (mut i32) (i32.const 65535))`).join('\n')}
+(global $pm_cs_valid (mut i32) (i32.const 0))
+(global $pm_cs_access (mut i32) (i32.const 0))
+(global $pm_cs_limit (mut i32) (i32.const 0))
 (global $pm_ds_valid (mut i32) (i32.const 0))
 (global $pm_ds_access (mut i32) (i32.const 0))
+(global $pm_ds_limit (mut i32) (i32.const 0))
 (global $pm_fs_valid (mut i32) (i32.const 0))
 (global $pm_fs_access (mut i32) (i32.const 0))
+(global $pm_fs_limit (mut i32) (i32.const 0))
 (global $pm_gs_valid (mut i32) (i32.const 0))
 (global $pm_gs_access (mut i32) (i32.const 0))
+(global $pm_gs_limit (mut i32) (i32.const 0))
 (global $pm_ss_valid (mut i32) (i32.const 0))
 (global $pm_ss_limit (mut i32) (i32.const 0))
 (global $pm_ss_access (mut i32) (i32.const 0))
@@ -6396,8 +6421,10 @@ const MACHINE_STATE = ['f_res', 'f_def', 'shmask', 'linmask', 'cr0', 'cr2', 'cr3
   // Hidden bases are lowered into REGFILE_SEGB, not separate WASM globals.
   // Replay of selectors cannot reconstruct a cache after descriptor mutation.
   'esb', 'csb', 'ssb', 'dsb', 'fsb', 'gsb',
-  'pm_es_valid', 'pm_es_access', 'pm_ds_valid', 'pm_ds_access',
-  'pm_fs_valid', 'pm_fs_access', 'pm_gs_valid', 'pm_gs_access',
+  'pm_es_valid', 'pm_es_access', 'pm_es_limit', 'pm_ds_valid', 'pm_ds_access', 'pm_ds_limit',
+  'pm_fs_valid', 'pm_fs_access', 'pm_fs_limit', 'pm_gs_valid', 'pm_gs_access', 'pm_gs_limit',
+  'pm_cs_valid', 'pm_cs_access', 'pm_cs_limit',
+  'pm_task_segments', 'pm_es_mask', 'pm_ds_mask', 'pm_fs_mask', 'pm_gs_mask',
   'pm_ss_valid', 'pm_ss_limit', 'pm_ss_access',
   'pm_tr_valid', 'pm_tr_base', 'pm_tr_limit', 'pm_tr_access',
   'pm_ldt_valid', 'pm_ldt_limit', 'pm_ldt_access',

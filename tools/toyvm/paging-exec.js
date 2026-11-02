@@ -15,11 +15,12 @@ function access(vm) {
   const e = vm.exports;
   const get = n => e[`mget_${n}`]() >>> 0;
   const read = (p, n = 4, user = 0) => e.pg_read(p >>> 0, n, user) >>> 0;
-  const desc = selector => {
+  const desc = (selector, vector = 13) => {
     const ldt = selector & 4;
     const index = selector & 0xfff8;
     const limit = get(ldt ? 'pm_ldt_limit' : 'gdtl');
-    if ((!ldt && !index) || index + 7 > limit) throw new DeliveryFault(13, selector & 0xfffc);
+    if ((!ldt && !index) || (ldt && !get('pm_ldt_valid')) || index + 7 > limit)
+      throw new DeliveryFault(vector, selector & 0xfffc);
     const p = (get(ldt ? 'ldtb' : 'gdtb') + index) >>> 0;
     const lo = read(p), hi = read(p + 4);
     let limitValue = (lo & 0xffff) | ((hi >>> 16 & 15) << 16);
@@ -44,10 +45,12 @@ function access(vm) {
 // Diagnostics never invoke pg_read/pg_probe: those can set CR2, roll back the
 // guest, mark page tables accessed, or read a device. Only ordinary backed RAM
 // is inspected here; unavailable/device bytes are reported explicitly.
-function exceptionState(vm, vector, error, ip, software, external) {
+function exceptionState(vm, vector, error, ip, software, external, taskSelector) {
   const e = vm.exports, get = n => e[`mget_${n}`]() >>> 0;
   const state = { vector, error: error >>> 0, returnIp: ip >>> 0, software, external,
     cs: vm.get('cs'), ip: vm.get('gip'), ss: vm.get('ss'), sp: vm.raw('sp') >>> 0 };
+  state.flags = e.pg_flags() >>> 0;
+  state.registers = Object.fromEntries(isa.REG16.map(r => [r, vm.raw(r) >>> 0]));
   for (const n of ['cr0', 'cr2', 'cr3', 'idtb', 'idtl', 'gdtb', 'gdtl',
     'tr', 'pm_tr_valid', 'pm_tr_base', 'pm_tr_limit', 'pm_tr_access',
     'ldtb', 'pm_ldt_limit', 'vm86', 'linmask']) state[n] = get(n);
@@ -59,15 +62,20 @@ function exceptionState(vm, vector, error, ip, software, external) {
   };
   const word = p => (byte(p) | byte(p + 1) << 8 | byte(p + 2) << 16 | byte(p + 3) << 24) >>> 0;
   const inspect = (linear, count) => {
-    const out = { linear: linear >>> 0, physical: [], bytes: [] };
+    const out = { linear: linear >>> 0, physical: [], bytes: [], walks: [] };
     try {
       for (let i = 0; i < count; i++) {
         const l = (linear + i) >>> 0;
         let p = l & state.linmask;
         if (state.cr0 & 0x80000000) {
-          const de = word((state.cr3 & 0xfffff000) + ((l >>> 22) * 4));
+          const pdeAddress = ((state.cr3 & 0xfffff000) + ((l >>> 22) * 4)) >>> 0;
+          const de = word(pdeAddress);
+          const walk = { page: l >>> 12, pdeAddress, pde: de };
+          if (!out.walks.some(w => w.page === walk.page)) out.walks.push(walk);
           if (!(de & 1)) throw Error('PDE not present');
-          const te = word((de & 0xfffff000) + ((l >>> 10) & 0xffc));
+          const pteAddress = ((de & 0xfffff000) + ((l >>> 10) & 0xffc)) >>> 0;
+          const te = word(pteAddress);
+          Object.assign(walk, { pteAddress, pte: te });
           if (!(te & 1)) throw Error('PTE not present');
           p = ((te & 0xfffff000) | (l & 0xfff)) >>> 0;
         }
@@ -89,12 +97,23 @@ function exceptionState(vm, vector, error, ip, software, external) {
     state.gate.dpl = b[5] >>> 5 & 3;
     state.target = descriptor(b[2] | b[3] << 8);
   }
+  if (taskSelector !== undefined) state.target = descriptor(taskSelector);
   state.task = descriptor(state.tr);
+  if (state.pm_tr_valid) state.currentTss = inspect(state.pm_tr_base, Math.min(state.pm_tr_limit + 1, 104));
+  if (state.target?.bytes.length === 8) {
+    const b = state.target.bytes;
+    if ([9, 11].includes(b[5] & 31)) {
+      const base = (b[2] | b[3] << 8 | b[4] << 16 | b[7] << 24) >>> 0;
+      let limit = (b[0] | b[1] << 8 | (b[6] & 15) << 16) >>> 0;
+      if (b[6] & 128) limit = limit * 4096 + 4095;
+      state.targetTss = inspect(base, Math.min(limit + 1, 104));
+    }
+  }
   state.instruction = inspect((get('csb') + state.ip) >>> 0, 16);
   return state;
 }
 
-function deliver(vm, vector, error, ip, software = false, external = false) {
+function deliver(vm, vector, error, ip, software = false, external = false, context = {}) {
   const a = access(vm), { e, get, read, desc, present, stack } = a;
   const idtError = vector * 8 + 2;
   if (vector * 8 + 7 > get('idtl')) throw new DeliveryFault(13, idtError);
@@ -103,10 +122,16 @@ function deliver(vm, vector, error, ip, software = false, external = false) {
   const type = hi >>> 8 & 31, gateLevel = hi >>> 13 & 3;
   const oldCs = vm.get('cs'), oldSs = vm.get('ss'), oldSp = vm.raw('sp') >>> 0;
   const v86 = !!get('vm86'), oldLevel = v86 ? 3 : oldCs & 3;
+  if (![5, 6, 7, 14, 15].includes(type)) throw new DeliveryFault(13, idtError);
   if (software && oldLevel > gateLevel) throw new DeliveryFault(13, idtError);
-  if (type === 5) throw Error('unsupported 386 task-gate transfer');
-  if (![6, 7, 14, 15].includes(type)) throw new DeliveryFault(13, idtError);
   if (!(hi & 0x8000)) throw new DeliveryFault(11, idtError);
+  if (type === 5) {
+    if (!software && !external && faultVectors.has(vector)) e.pg_set_flags(e.pg_flags() | 0x10000);
+    require('./task-switch').switchTask(vm, lo >>> 16, ip, false, context,
+      !software && !external && errorVectors.has(vector) ? error : undefined);
+    vm.set('intno', vector);
+    return;
+  }
   const width = type & 8 ? 4 : 2;
   if (v86 && width !== 4) throw new DeliveryFault(13, idtError);
   const selector = lo >>> 16;
@@ -158,15 +183,17 @@ function deliver(vm, vector, error, ip, software = false, external = false) {
   vm.set('gip', target); vm.set('intno', vector); vm.set('rtop', 0);
 }
 
-function iret(vm, width) {
+function iret(vm, width, context = {}, nextIp = vm.get('gip')) {
   const { e, get, read, desc, present, stack } = access(vm);
   const v86 = !!get('vm86'), oldLevel = v86 ? 3 : vm.get('cs') & 3, mask = get('spm');
   const oldFlags = e.pg_flags() >>> 0;
   if (v86 && (oldFlags >>> 12 & 3) !== 3) throw new DeliveryFault(13, 0);
-  // NT selects a TSS backlink return, never the ordinary stack frame below.
-  // Until the full task-switch commit/fault protocol exists, stop before any
-  // stack read or state change rather than pretending a stack IRET succeeded.
-  if (!v86 && (oldFlags & 0x4000)) throw Error('unsupported 386 nested-task IRET');
+  // NT selects a TSS backlink return regardless of IRET's operand width.
+  if (!v86 && (oldFlags & 0x4000)) {
+    if (!get('pm_tr_valid') || get('pm_tr_limit') < 1) throw new DeliveryFault(10, get('tr') & 0xfffc);
+    require('./task-switch').switchTask(vm, read(get('pm_tr_base'), 2), nextIp, true, context);
+    return;
+  }
   const sp = vm.raw('sp') >>> 0, base = get('ssb');
   const oldStack = { base, wide: mask === 0xffffffff,
     limit: v86 ? 0xffff : get('pm_ss_limit'), access: v86 ? 0x92 : get('pm_ss_access') };
@@ -222,19 +249,22 @@ function exception(vm, vector, error, ip, software = false, faultIp = ip, extern
   const fatal = err => { err.pagingException = { chain }; return err; };
   for (let attempt = 0; attempt < 3; attempt++) {
     chain.push(exceptionState(vm, vector, error, ip, software, external));
+    const context = { committed: false, ip };
     e.pg_clear(); e.pg_checkpoint();
-    try { deliver(vm, vector, error, ip, software, external); e.pg_set_error(0); e.pg_clear(); e.pg_checkpoint(); return; }
+    try { deliver(vm, vector, error, ip, software, external, context); e.pg_set_error(0); e.pg_clear(); e.pg_checkpoint(); return; }
     catch (err) {
       const pending = e.pg_pending();
       chain[chain.length - 1].failure = { message: err.message, pending,
         cr2: e.mget_cr2() >>> 0, error: e.pg_error() >>> 0,
-        vector: err instanceof DeliveryFault ? err.vector : null };
+        vector: err instanceof DeliveryFault ? err.vector : null,
+        committed: context.committed, task: e.mget_tr() >>> 0, faultIp: context.ip };
       if (!pending && !(err instanceof DeliveryFault)) throw fatal(err);
       if (pending === 3) { e.pg_clear(); throw fatal(Error(`unbacked physical paging bus at ${(e.pg_bus_address() >>> 0).toString(16)}`)); }
-      const next = pending ? 14 : err.vector;
+      const next = pending ? (pending === 4 ? e.pg_vector() : 14) : err.vector;
       const nextError = pending ? e.pg_error() : err.error | (external ? 1 : 0);
       if (!pending) e.pg_rollback();
-      if (software) ip = faultIp;
+      if (context.committed) ip = faultIp = context.ip;
+      else if (software) ip = faultIp;
       if (!software && !external && vector === 8) { e.pg_clear(); throw fatal(Error('386 shutdown: fault delivering #DF')); }
       const contributory = n => [0, 10, 11, 12, 13].includes(n);
       if (!software && !external && ((vector === 14 && (next === 14 || contributory(next))) || (contributory(vector) && contributory(next)))) {
@@ -248,28 +278,36 @@ function exception(vm, vector, error, ip, software = false, faultIp = ip, extern
 
 function step(vm, budget = 1000) {
   const e = vm.exports, ip = vm.get('gip'), cs = vm.get('cs');
+  const context = { committed: false, ip };
   const user = e.get_vm86() || (cs & 3) === 3 ? 1 : 0;
   e.set_steps(budget);
   e.set_intfast(0);
   e.set_rtop(0); e.set_edgelook(0);
   e.pg_clear(); e.pg_reset_vector(); e.pg_checkpoint();
   try {
-    const d = decodeOne(p => e.pg_read(p, 1, user), cs, ip,
+    const d = decodeOne(p => {
+      if (e.mget_pm_task_segments() && !e.get_vm86() &&
+          (!e.mget_pm_cs_valid() || ((p - (e.get_csb() >>> 0)) >>> 0) > (e.mget_pm_cs_limit() >>> 0)))
+        throw new DeliveryFault(13, 0);
+      return e.pg_read(p, 1, user);
+    }, cs, ip,
       e.get_csb() >>> 0, -1, !!e.get_d32(), null, !e.get_vm86());
     if (!d) return false;
-    if ((d.words[0] === H.mov_cr_r || d.words[0] === H.mov_r_cr) &&
+    if ((d.words[0] === H.mov_cr_r || d.words[0] === H.mov_r_cr || d.words[0] === H.clts) &&
         (e.get_vm86() || (cs & 3))) throw new DeliveryFault(13, 0);
     if (d.words[0] === H.mov_cr_r && !(d.words[1] & 0x70)) {
       const value = vm.raw(isa.REG16[d.words[1] & 7]);
       if ((value >>> 31) && !(value & 1)) throw new DeliveryFault(13, 0);
     }
+    const cr0 = e.get_cr0();
+    if ((d.x87 && (cr0 & 12)) || (d.wait && (cr0 & 10) === 10)) throw new DeliveryFault(7, 0);
     const words = d.endsBlock ? d.words : [...d.words, H.end, d.nextIp];
     const entry = isa.THREAD_BASE + isa.THREAD_SIZE - 4096;
     new Int32Array(vm.mem.buffer, entry, words.length).set(words);
     e.pg_authorize(1);
     try { e.run(entry, budget); } finally { e.pg_authorize(0); }
     const vec = e.pg_vector();
-    if (vec === -2) iret(vm, e.pg_return());
+    if (vec === -2) iret(vm, e.pg_return(), context, d.nextIp);
     else if (vec >= 0) exception(vm, vec, e.pg_error(), e.pg_return(),
       d.words[0] === H.int_imm || d.words[0] === H.into, ip);
     if (vec === -1 && d.words[0] !== H.popf && d.words[0] !== H.popf32 && (vm.raw('flags') & 0x10000)) {
@@ -281,11 +319,11 @@ function step(vm, budget = 1000) {
     const pending = e.pg_pending();
     if (!pending && !(err instanceof DeliveryFault)) throw err;
     if (pending === 3) { e.pg_clear(); throw Error(`unbacked physical paging bus at ${(e.pg_bus_address() >>> 0).toString(16)}`); }
-    const vector = pending ? 14 : err.vector, error = pending ? e.pg_error() : err.error;
+    const vector = pending ? (pending === 4 ? e.pg_vector() : 14) : err.vector, error = pending ? e.pg_error() : err.error;
     if (!pending) e.pg_rollback();
-    exception(vm, vector, error, ip);
+    exception(vm, vector, error, context.committed ? context.ip : ip);
     return true;
   }
 }
 
-module.exports = { step, exception, iret, DeliveryFault, exceptionState };
+module.exports = { step, exception, iret, DeliveryFault, exceptionState, access };

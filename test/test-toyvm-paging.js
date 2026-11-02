@@ -150,6 +150,9 @@ async function dosCom(variant, tier = {}) {
 }
 
 async function fixture(variant) {
+  // Each fixture owns a large imported WebAssembly.Memory. Reclaim completed
+  // fixtures when the caller explicitly enables collection for this suite.
+  global.gc?.();
   const vm = await makeVm(variant);
   const e = vm.exports, v = new DataView(vm.mem.buffer);
   // The decoder level alone does not configure the VM's FLAGS mask. An
@@ -437,7 +440,7 @@ async function exceptionDiagnostics() {
   put(0x1a040, 0x00280000); put(0x1a044, 0x00008500); // #DF task gate
   put(0x19028, 0x90000067); put(0x1902c, 0x00008901);
   e.mset_cr2(0xdeadbeef); e.pg_set_error(0x55);
-  // #PF -> invalid gate #GP -> #DF -> unsupported task gate. Preserve the
+  // #PF -> invalid gate #GP -> #DF -> invalid task register. Preserve the
   // original #PF address/error and every intermediate descriptor, even though
   // the caller receives an Error rather than a normal VM report.
   put(0x1a070, 0); put(0x1a074, 0);
@@ -450,7 +453,7 @@ async function exceptionDiagnostics() {
   assert.deepEqual(state.target.bytes, [0x67, 0, 0, 0x90, 1, 0x89, 0, 0]);
   let failure;
   try { exception(vm, 14, 6, start); } catch (err) { failure = err; }
-  assert.match(failure.message, /unsupported 386 task-gate/);
+  assert.match(failure.message, /386 shutdown: fault delivering #DF/);
   const chain = failure.pagingException.chain;
   assert.deepEqual(chain.map(x => x.vector), [14, 8]);
   assert.equal(chain[0].error, 6); assert.equal(chain[0].failure.vector, 13);
@@ -476,7 +479,7 @@ async function exceptionDiagnostics() {
   assert.equal(exceptionState(vm, 8, 0, start, false, false).target.inBounds, false);
   e.mset_gdtl(0x2f);
   // Software INT privilege failure must reach #GP instead of the task-gate
-  // unsupported stop; it saves the faulting IP and IDT selector error code.
+  // target validation; it saves the faulting IP and IDT selector error code.
   put(0x1a180, 0x00280000); put(0x1a184, 0x00008500);
   put(0x1a068, 0x00086000); put(0x1a06c, 0x00008e00);
   vm.set('cs', 0x1b); vm.set('ss', 0x23); vm.set('sp', 0x80000);
@@ -513,9 +516,9 @@ async function failureCapture() {
   const lines = [];
   await assert.rejects(runDos({ exe, pspSeg: 0x1000, loadSeg: 0x1000, budget: 10000,
     seconds: 5, sound: false, traceFault: true, faultJson: json, faultPng: png,
-    log: line => lines.push(line) }), /unsupported 386 task-gate transfer/);
+    log: line => lines.push(line) }), /386 shutdown: fault delivering #DF/);
   const state = JSON.parse(fs.readFileSync(json));
-  assert.equal(state.chain.length, 1); assert.equal(state.chain[0].vector, 14);
+  assert.equal(state.chain.length, 2); assert.equal(state.chain[0].vector, 14);
   assert.equal(state.chain[0].cr2, 0x10000000); assert.equal(state.chain[0].error, 0);
   assert.equal(state.chain[0].target.selector, 0x28);
   assert(lines.some(line => line.startsWith('paged exception failure: ')));
@@ -526,8 +529,7 @@ async function failureCapture() {
 }
 
 // Task-switch prerequisites only. LTR initializes TR without a task switch;
-// NT IRET must refuse to impersonate an ordinary stack return until the full
-// task-switch commit/fault protocol is implemented.
+// Nonpaged NT IRET keeps its explicit stop; paged task returns are tested below.
 async function initialTaskFlags(variant, cpu, runLive = true) {
   // Real PUSHF observes DOS entry before the guest changes any flag. The
   // browser's LiveRun initialization is exercised in Node, with its animation
@@ -694,14 +696,13 @@ async function taskRegisterChecks(variant) {
   }
   // A real nested-task IRET must not read a stack frame, even if that frame
   // happens to be valid. Both operand sizes stop and preserve task/stack state.
-  for (const paged of [false, true]) for (const wide of [false, true]) {
+  for (const paged of [false]) for (const wide of [false, true]) {
     reset(); if (!paged) e.mset_cr0(0x11);
     e.pg_set_flags(0x4002);
     vm.mem.set(wide ? [0xcf] : [0x66, 0xcf], start);
     put(0x80000, start + 0x100); put(0x80004, 8); put(0x80008, 2);
     const before = cache(), frame = vm.mem.slice(0x7fff0, 0x80020);
-    if (paged) assert.throws(() => vm.stepOne(), /unsupported 386 nested-task IRET/);
-    else { assert(vm.stepOne()); assert.equal(e.mget_pm_xfer_stop(), STOP.unsupportedSystem); }
+    assert(vm.stepOne()); assert.equal(e.mget_pm_xfer_stop(), STOP.unsupportedSystem);
     assert.equal(vm.get('gip'), start); assert.equal(vm.get('sp'), 0x80000);
     assert.equal(e.pg_flags(), 0x4002); assert.deepEqual(cache(), before);
     assert.deepEqual(vm.mem.slice(0x7fff0, 0x80020), frame);
@@ -723,7 +724,451 @@ async function taskRegisterChecks(variant) {
     assert.deepEqual(cache(), before); assert.equal(vm.get('sp'), 0x80000);
     cases++;
   }
-  observations.push({ variant, ltrAndNestedReturnCases: cases, fullTaskSwitch: false });
+  observations.push({ variant, ltrAndNonpagedReturnCases: cases, ltrOnly: true });
+}
+
+// Real INT/LTR/IRET instructions with independent CR3 mappings. Host fixture
+// construction is supplemented by an actual boot-to-DOS-exit COM below.
+async function taskSwitchFixture(variant) {
+  const f = await fixture(variant), { vm, e, v, put, start } = f;
+  const descriptor = (selector, base, limit, access, wide = false) => {
+    const p = 0x19000 + selector;
+    put(p, (limit & 0xffff) | (base & 0xffff) << 16);
+    put(p + 4, (base & 0xff000000) | (base >>> 16 & 255) | access << 8 |
+      (limit & 0xf0000) | (wide ? 0x400000 : 0));
+  };
+  const gate = (vec, selector, access = 0x85) => {
+    put(0x1a000 + vec * 8, selector << 16); put(0x1a004 + vec * 8, access << 8);
+  };
+  e.mset_gdtl(0x5f);
+  descriptor(0x28, 0x1b000, 103, 0x89);
+  descriptor(0x30, 0x1c000, 103, 0xe9); // TSS DPL is ignored by interrupt
+  descriptor(0x38, 0x40000, 0xffff, 0x9a, true);
+  descriptor(0x40, 0x60000, 0xffff, 0x92, true);
+  descriptor(0x48, 0x80000, 0xffff, 0x92);
+  descriptor(0x50, 0x1e000, 0x17, 0x82);
+  descriptor(0x58, 0x1d000, 103, 0x89);
+  put(0x1e008, 0xffff); put(0x1e00c, 0x00cf9200);
+  put(0x23000, 0x24007); put(0x23100, 0x25007);
+  for (let i = 0; i < 1024; i++) put(0x24000 + i * 4, i * 4096 | 7);
+  put(0x25000, 0x50007);
+  put(0x30000, 0x11112222); put(0x50000, 0x33334444);
+  const tss = (base, ip, cs, ss, sp, ds = 16, ldt = 0, cr3 = 0x23000) => {
+    put(base + 28, cr3); put(base + 32, ip); put(base + 36, 0x10202);
+    isa.REG16.forEach((_, i) => put(base + 40 + i * 4, i === 4 ? sp : (i + 1) * 0x11111111));
+    [0x48, cs, ss, ds, 0, 16].forEach((s, i) => put(base + 72 + i * 4, s));
+    put(base + 96, ldt); put(base + 100, 0);
+  };
+  tss(0x1c000, 0x100, 0x38, 0x40, 0x2000, 0xc, 0x50);
+  tss(0x1d000, 0x6200, 8, 16, 0x90000);
+  put(0x1d048, 16); // fault task must not share the tested ES descriptor
+  // The original task's CR3 and LDTR are static fields; a switch must not
+  // overwrite them even if software deliberately changed the live registers.
+  put(0x1b01c, 0x20000); put(0x1b060, 0);
+  gate(0x30, 0x30);
+  for (const vector of [8, 10, 11, 12, 13, 14]) gate(vector, 0x58);
+  vm.set('fs', 16); vm.set('gs', 16);
+  vm.mem.set([0x66, 0xb8, 0x28, 0, 0x0f, 0, 0xd8, ...mov(0, 0x87654321), 0xcd, 0x30, 0x90], start);
+  vm.set('gip', start);
+  for (let i = 0; i < 3; i++) assert(vm.stepOne());
+  assert.equal(e.mget_tr(), 0x28); assert.equal(vm.mem[0x1902d], 0x8b);
+  const intIp = vm.get('gip');
+  vm.mem.set([0xa1, ...u32(0x10000000), 0xa3, ...u32(0x71000), 0xcf], 0x40100);
+  vm.mem.set([0x83, 0xc4, 4, 0xcf], 0x6200);
+  return { ...f, descriptor, gate, tss, intIp };
+}
+
+async function taskSwitchInstructions(variant) {
+  const { vm, e, v, put, intIp } = await taskSwitchFixture(variant);
+  const oldRegs = isa.REG16.map(r => vm.raw(r) >>> 0), oldFlags = e.pg_flags();
+  const oldStack = vm.mem.slice(0x7ffe0, 0x80020);
+  assert(vm.stepOne());
+  assert.equal(e.mget_tr(), 0x30); assert.equal(e.mget_cr3(), 0x23000);
+  assert.equal(e.mget_cr0() >>> 0, 0x80000019);
+  assert.equal(vm.get('gip'), 0x100); assert.equal(e.pg_flags() & 0x14200, 0x14200);
+  assert.equal(v.getUint16(0x1c000, true), 0x28);
+  assert.equal(vm.mem[0x1902d], 0x8b); assert.equal(vm.mem[0x19035], 0xeb);
+  assert.equal(v.getUint32(0x1b020, true), intIp + 2);
+  assert.equal(v.getUint32(0x1b024, true), oldFlags);
+  assert.equal(v.getUint32(0x1b01c, true), 0x20000);
+  assert.equal(v.getUint32(0x1b060, true), 0);
+  oldRegs.forEach((n, i) => assert.equal(v.getUint32(0x1b028 + i * 4, true), n));
+  assert.deepEqual(vm.mem.slice(0x7ffe0, 0x80020), oldStack, 'task gate makes no outgoing stack frame');
+  assert.equal(e.mget_ldt(), 0x50); assert.equal(e.mget_ldtb(), 0x1e000);
+  for (const [s, base, limit, access] of [['cs', 0x40000, 0xffff, 0x9b],
+    ['ss', 0x60000, 0xffff, 0x93], ['es', 0x80000, 0xffff, 0x93],
+    ['ds', 0, 0xffffffff, 0x93], ['gs', 0, 0xffffffff, 0x93]]) {
+    assert.equal(e[`mget_${s}b`]() >>> 0, base, s + ' base');
+    assert.equal(e[`mget_pm_${s}_limit`]() >>> 0, limit, s + ' limit');
+    assert.equal(e[`mget_pm_${s}_access`](), access, s + ' access');
+    assert.equal(e[`mget_pm_${s}_valid`](), 1, s + ' valid');
+  }
+  assert.equal(e.mget_pm_fs_valid(), 0, 'null FS is unusable');
+  assert.equal(e.mget_fsb(), 0); assert.equal(e.mget_d32(), 1);
+  assert(vm.stepOne()); assert(vm.stepOne()); assert(vm.stepOne());
+  assert.equal(v.getUint32(0x71000, true), 0x33334444, 'actual incoming MOV uses its CR3');
+  assert.equal(e.mget_tr(), 0x28); assert.equal(e.mget_cr3(), 0x20000);
+  assert.equal(vm.get('gip'), intIp + 2); assert.equal(vm.get('cs'), 8);
+  oldRegs.forEach((n, i) => assert.equal(vm.raw(isa.REG16[i]) >>> 0, n));
+  assert.equal(e.pg_flags(), oldFlags);
+  assert.equal(vm.mem[0x19035], 0xe9, 'NT IRET releases outgoing busy');
+  assert.equal(v.getUint32(0x1c020, true), 0x10b, 'resumption follows IRET');
+  assert.equal(v.getUint32(0x1c024, true) & 0x4000, 0, 'NT cleared in suspended task');
+  vm.mem.set([0xa1, ...u32(0x10000000)], intIp + 2);
+  assert(vm.stepOne()); assert.equal(vm.raw('ax') >>> 0, 0x11112222, 'reverse CR3 uses old mapping');
+  observations.push({ variant, actualInterruptTaskGateAndNestedIret: true, twoCr3Mappings: true });
+}
+
+async function taskSwitchFaults(variant) {
+  // A page fault saving the old TSS restarts the actual INT. The guest handler
+  // repairs the page, then IRET returns to INT, which must not see target busy.
+  {
+    const { vm, e, v, put, intIp, descriptor } = await taskSwitchFixture(variant);
+    put(0x1a070, 0x00086200); put(0x1a074, 0x00008e00);
+    vm.mem.copyWithin(0x1f000, 0x1c000, 0x1c068);
+    descriptor(0x30, 0x1f000, 103, 0xe9);
+    descriptor(0x28, 0x1bfb0, 103, 0x89);
+    vm.mem.fill(0xa5, 0x1bfb0, 0x1c018);
+    // Reload relocated outgoing TSS using real LTR, before making its second
+    // page absent. Several writes precede the first failing selector save.
+    vm.mem.set([0x66, 0xb8, 0x28, 0, 0x0f, 0, 0xd8, 0xcd, 0x30], intIp);
+    assert(vm.stepOne()); assert(vm.stepOne());
+    const restartIp = vm.get('gip'), bytes = vm.mem.slice(0x1bfb0, 0x1c018);
+    put(0x21070, 0);
+    assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x28); assert.equal(e.mget_cr2(), 0x1c000);
+    assert.equal(v.getUint32(vm.get('sp') + 4, true), restartIp);
+    assert.deepEqual(vm.mem.slice(0x1bfb0, 0x1c018), bytes, 'partial outgoing save is fully undone');
+    assert.equal(vm.mem[0x19035], 0xe9, 'no incoming busy bit on partial save fault');
+  }
+  {
+    const { vm, e, v, put, intIp, descriptor } = await taskSwitchFixture(variant);
+    put(0x1a070, 0x00086200); put(0x1a074, 0x00008e00);
+    descriptor(0x30, 0x1cff0, 103, 0xe9);
+    put(0x21074, 0); // second page of the new TSS
+    assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x28); assert.equal(e.mget_cr3(), 0x20000);
+    assert.equal(e.mget_cr2(), 0x1d00c);
+    assert.equal(v.getUint32(vm.get('sp') + 4, true), intIp);
+    assert.equal(vm.mem[0x19035], 0xe9, 'split incoming TSS fault is restartable');
+  }
+  {
+    const { vm, e, v, put, intIp } = await taskSwitchFixture(variant);
+    // Keep #PF on an ordinary gate to inspect the precommit frame directly.
+    put(0x1a070, 0x00086200); put(0x1a074, 0x00008e00);
+    put(0x2106c, 0); // outgoing TSS page
+    const target = vm.mem.slice(0x1c000, 0x1c068);
+    assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x28); assert.equal(e.mget_cr3(), 0x20000);
+    assert.equal(e.mget_cr2(), 0x1b020);
+    assert.equal(v.getUint32(vm.get('sp') + 4, true), intIp);
+    assert.equal(vm.mem[0x19035], 0xe9); assert.deepEqual(vm.mem.slice(0x1c000, 0x1c068), target);
+    vm.mem.set([...store(0x2106c, 0x1b007), 0x83, 0xc4, 4, 0xcf], 0x6200);
+    for (let i = 0; i < 4; i++) assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x30); assert.equal(vm.get('gip'), 0x100);
+  }
+  // Invalid incoming DS is detected after commit; #TS runs as a third task.
+  // Its real guest instructions repair the saved new task and nested IRET
+  // must reload/revalidate that task at its first instruction, then return A.
+  {
+    const { vm, e, v, put, intIp } = await taskSwitchFixture(variant);
+    put(0x1c054, 0x60); // outside GDT and incoming LDT
+    assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x58); assert.equal(v.getUint16(0x1d000, true), 0x30);
+    assert.equal(v.getUint32(vm.get('sp'), true), 0x60, 'incoming selector error');
+    assert.equal(v.getUint32(0x1c020, true), 0x100, 'fault belongs to incoming first EIP');
+    assert.equal(v.getUint32(0x1b020, true), intIp + 2, 'outgoing save survives incoming fault');
+    assert.equal(vm.mem[0x19035], 0xeb, 'incoming task remains busy while fault handler nested');
+    vm.mem.set([...store(0x1c054, 0xc), 0x83, 0xc4, 4, 0xcf], 0x6200);
+    for (let i = 0; i < 3; i++) assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x30); assert.equal(vm.get('gip'), 0x100);
+    for (let i = 0; i < 3; i++) assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x28); assert.equal(vm.get('gip'), intIp + 2);
+  }
+  // LDT page is absent only in the new address space. #PF's task sees the
+  // incoming CR3 and EIP and repairs it with a real store before backlink IRET.
+  {
+    const { vm, e, v, put, intIp } = await taskSwitchFixture(variant);
+    // LDT linear10002000 maps to physical1e000 through incoming PTE[2].
+    put(0x19050, 0x20000017); put(0x19054, 0x10008200);
+    put(0x25008, 0);
+    assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x58); assert.equal(e.mget_cr3(), 0x23000);
+    assert.equal(e.mget_cr2() >>> 0, 0x10002008);
+    assert.equal(v.getUint32(0x1c020, true), 0x100);
+    assert.equal(v.getUint32(0x1b020, true), intIp + 2);
+    vm.mem.set([...store(0x25008, 0x1e007), 0x83, 0xc4, 4, 0xcf], 0x6200);
+    for (let i = 0; i < 3; i++) assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x30); assert.equal(e.mget_ldtb() >>> 0, 0x10002000);
+    for (let i = 0; i < 3; i++) assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x28);
+  }
+  observations.push({ variant, outgoingSaveRestart: true, incomingSegmentFaultRepair: true,
+    incomingAddressSpacePageFaultRepair: true });
+}
+
+async function taskSwitchSuite() {
+  for (const variant of ['tailcall', 'switch', 'calls', 'repl_tailcall']) {
+    await taskSwitchInstructions(variant); await taskSwitchFaults(variant);
+    await taskSwitchNegatives(variant); await taskSwitchErrorWord(variant);
+    await taskCacheFaults(variant); await taskSwitchedFpu(variant);
+    await taskSwitchCom(variant);
+  }
+  for (const tier of [{ uopOnly: true }, { uop: true }, { treeFold: true }]) await taskSwitchCom('tailcall', tier);
+}
+
+async function taskSwitchedFpu(variant) {
+  // Real incoming ESC faults at its first instruction. A same-task #NM
+  // handler executes privileged CLTS and IRET; retry then really loads/stores
+  // the x87 value without a second fault or an advanced saved EIP.
+  const f = await taskSwitchFixture(variant), { vm, e, v, put } = f;
+  put(0x1a038, 0x00086300); put(0x1a03c, 0x00008e00);
+  vm.mem.set([0x0f, 6, 0xcf], 0x6300);
+  vm.mem.set([0xd9, 0xe8, 0xd9, 0x1d, ...u32(0x71020), 0xcf], 0x40100);
+  put(0x1c024, 0xfffc0001); // reserved bits must not enter architectural EFLAGS
+  assert(vm.stepOne()); assert(e.get_cr0() & 8);
+  assert.equal(e.pg_flags() >>> 0, 0x4003, 'incoming 386 reserved FLAGS bits normalized');
+  assert(vm.stepOne()); assert.equal(vm.get('gip'), 0x6300);
+  assert.equal(e.mget_tr(), 0x30); assert.equal(e.get_cr3(), 0x23000);
+  assert.equal(v.getUint32(0x61ff4, true), 0x100);
+  assert(vm.stepOne()); assert.equal(e.get_cr0() & 8, 0, 'guest CLTS clears TS');
+  assert(vm.stepOne()); assert.equal(vm.get('gip'), 0x100);
+  assert(vm.stepOne()); assert(vm.stepOne());
+  assert.equal(v.getFloat32(0x71020, true), 1);
+  assert(vm.stepOne()); assert.equal(e.mget_tr(), 0x28);
+  assert(e.get_cr0() & 8, 'reverse task return sets TS again');
+  for (const [name, cr0, code, fault] of [
+    ['ESC TS without MP', 8, [0xd9, 0xe8], true],
+    ['ESC EM', 4, [0xd9, 0xe8], true],
+    ['WAIT MP+TS', 10, [0x9b], true],
+    ['WAIT TS without MP', 8, [0x9b], false],
+    ['WAIT EM without TS', 6, [0x9b], false],
+  ]) {
+    const g = await taskSwitchFixture(variant);
+    g.put(0x1a038, 0x00086300); g.put(0x1a03c, 0x00008e00);
+    g.vm.mem.set(code, 0x40100); assert(g.vm.stepOne());
+    g.e.mset_cr0((g.e.get_cr0() & ~14) | cr0);
+    assert(g.vm.stepOne());
+    assert.equal(g.vm.get('gip'), fault ? 0x6300 : 0x100 + code.length, name);
+    assert.equal(g.e.mget_tr(), 0x30, name + ' remains incoming task');
+  }
+  const user = await taskSwitchFixture(variant);
+  user.descriptor(0x38, 0x40000, 0xffff, 0xfa, true);
+  user.descriptor(0x40, 0x60000, 0xffff, 0xf2, true);
+  user.descriptor(0x48, 0x80000, 0xffff, 0xf2);
+  user.put(0x1e00c, 0x00cff200);
+  for (const [offset, selector] of [[72, 0x4b], [76, 0x3b], [80, 0x43], [84, 0xf], [92, 0x23]])
+    user.put(0x1c000 + offset, selector);
+  user.vm.mem.set([0x0f, 6], 0x40100);
+  assert(user.vm.stepOne()); assert.equal(user.vm.get('cs'), 0x3b);
+  assert(user.vm.stepOne()); assert.equal(user.e.mget_tr(), 0x58);
+  assert.equal(user.vm.get('intno'), 13, 'CPL3 CLTS faults');
+  assert.equal(user.v.getUint32(0x1c020, true), 0x100, 'CLTS fault restarts at incoming EIP');
+  assert.equal(user.v.getUint32(0x8fffc, true), 0, 'CLTS #GP error is zero');
+
+}
+
+async function taskCacheFaults(variant) {
+  for (const [name, prepare, code, vector] of [
+    ['null FS', () => {}, [0x64, 0xa1, ...u32(0x10000000)], 13],
+    ['DS limit', f => { f.put(0x1e008, 0xff); f.put(0x1e00c, 0x00409200); }, [0xa1, ...u32(0x10000000)], 13],
+    ['read-only DS', f => { f.vm.mem[0x1e00d] = 0x90; }, store(0x10, 0xdeadbeef), 13],
+    ['SS limit', f => { f.v.setUint16(0x19040, 0xfff, true); }, [0x50], 12],
+    ['expand-down SS', f => { f.vm.mem[0x19045] = 0x96; f.v.setUint16(0x19040, 0x1fff, true); }, [0x50], 12],
+  ]) {
+    const f = await taskSwitchFixture(variant); prepare(f);
+    f.vm.mem.set(code, 0x40100); assert(f.vm.stepOne());
+    assert.equal(f.e.mget_tr(), 0x30);
+    const oldStack = f.vm.mem.slice(0x61ff0, 0x62000);
+    assert(f.vm.stepOne());
+    assert.equal(f.e.mget_tr(), 0x58, name); assert.equal(f.vm.get('intno'), vector, name);
+    assert.equal(f.v.getUint32(0x1c020, true), 0x100, name + ' restarts incoming instruction');
+    assert.deepEqual(f.vm.mem.slice(0x61ff0, 0x62000), oldStack, name + ' leaves no partial write');
+  }
+  // Fault in the incoming image of a backlink IRET must use A's first EIP,
+  // not the IRET instruction in B. Repair through the nested fault task.
+  const f = await taskSwitchFixture(variant), { vm, e, v, put, intIp } = f;
+  vm.mem[0x40100] = 0xcf; assert(vm.stepOne());
+  put(0x1b054, 0x60); assert(vm.stepOne());
+  assert.equal(e.mget_tr(), 0x58); assert.equal(v.getUint16(0x1d000, true), 0x28);
+  assert.equal(v.getUint32(0x1b020, true), intIp + 2);
+  assert.equal(v.getUint32(0x1c020, true), 0x101);
+  assert.equal(vm.mem[0x19035], 0xe9, 'outgoing IRET busy clear survives incoming fault');
+  vm.mem.set([...store(0x1b054, 16), 0x83, 0xc4, 4, 0xcf], 0x6200);
+  for (let i = 0; i < 3; i++) assert(vm.stepOne());
+  assert.equal(e.mget_tr(), 0x28); assert.equal(vm.get('gip'), intIp + 2);
+  observations.push({ variant, incomingCacheAccessFaults: 5, postCommitIretFaultRepair: true });
+}
+
+async function taskSwitchCom(variant, tier = {}) {
+  const com = Buffer.alloc(0xb000);
+  const put = (p, n) => com.writeUInt32LE(n >>> 0, p - 0x10100);
+  com.set([0xfa, 0x0f, 1, 0x16, 0xe0, 1, 0x0f, 1, 0x1e, 0xe6, 1,
+    0x66, ...mov(0, guestPageDirectory), 0x0f, 0x22, 0xd8,
+    0x66, ...mov(0, 0x80000011), 0x0f, 0x22, 0xc0, 0xea, 0, 2, 8, 0]);
+  com.writeUInt16LE(0x3f, 0xe0); put(0x101e2, 0x18000);
+  com.writeUInt16LE(0x7ff, 0xe6); put(0x101e8, 0x17000);
+  com.writeUInt16LE(0x3ff, 0xec); put(0x101ee, 0);
+  put(0x18008, 0xffff); put(0x1800c, 0x00cf9a01);
+  put(0x18010, 0xffff); put(0x18014, 0x00cf9200);
+  put(0x18028, 0x90000067); put(0x1802c, 0x00008901);
+  put(0x18020, 0xa0000067); put(0x18024, 0x00008901);
+  put(0x18030, 0xffff); put(0x18034, 0x00009a01);
+  put(0x18038, 0xffff); put(0x1803c, 0x00009201);
+  put(0x17180, 0x00200000); put(0x17184, 0x00008500);
+  put(guestPageDirectory, 0x13007); put(0x12100, 0x14007);
+  put(0x16000, 0x15007); put(0x16100, 0x1b007);
+  for (let i = 0; i < 1024; i++) { put(0x13000 + i * 4, i * 4096 | 7); put(0x15000 + i * 4, i * 4096 | 7); }
+  put(0x14000, 0x30007); put(0x1b000, 0x50007);
+  put(0x1901c, guestPageDirectory); put(0x1a01c, 0x16000);
+  put(0x1a020, 0x400); put(0x1a024, 0x202);
+  isa.REG16.forEach((_, i) => put(0x1a028 + i * 4, i === 4 ? 0x80000 : (i + 1) * 0x11111111));
+  [16, 8, 16, 16, 0, 16].forEach((s, i) => put(0x1a048 + i * 4, s));
+  const main = [0x66, 0xb8, 16, 0, 0x8e, 0xd8, 0x8e, 0xc0, 0x8e, 0xd0,
+    0x8e, 0xe0, 0x8e, 0xe8, ...mov(4, 0x90000),
+    0x66, 0xb8, 0x28, 0, 0x0f, 0, 0xd8, ...mov(0, 0x87654321),
+    ...store(0x30000, 0x11112222), ...store(0x50000, 0x33334444), 0xcd, 0x30];
+  const returnIp = 0x200 + main.length;
+  main.push(0xa3, ...u32(0x71004), 0xa1, ...u32(0x10000000), 0xa3, ...u32(0x71008),
+    0x9c, 0x58, 0xa3, ...u32(0x7100c), 0x0f, 0x20, 0xd8, 0xa3, ...u32(0x71010),
+    ...mov(0, 0x11), 0x0f, 0x22, 0xc0, ...mov(0, 0), 0x0f, 0x22, 0xd8,
+    0xea, ...u32(0xa00), 0x30, 0);
+  com.set(main, 0x100);
+  const incoming = [0xa1, ...u32(0x10000000), 0xa3, ...u32(0x71000),
+    0x66, 0x0f, 0, 0xc8, 0x66, 0xa3, ...u32(0x71018),
+    0x9c, 0x58, 0xa3, ...u32(0x7101c), 0x89, 0x25, ...u32(0x71020), 0xcf];
+  com.set(incoming, 0x300);
+  com.set([0xb8, 0x38, 0, 0x8e, 0xd8, 0x8e, 0xc0, 0x8e, 0xd0,
+    0x8e, 0xe0, 0x8e, 0xe8, 0x66, ...mov(4, 0xfffe),
+    0x66, ...mov(0, 0x10), 0x0f, 0x22, 0xc0, 0xea, 0, 8, 0, 0x10], 0x900);
+  com.set([0xb8, 0, 0x10, 0x8e, 0xd8, 0x8e, 0xc0, 0x8e, 0xd0,
+    0x8e, 0xe0, 0x8e, 0xe8, 0x0f, 1, 0x1e, 0xec, 1,
+    0xb8, 0, 0x4c, 0xcd, 0x21], 0x700);
+  const dir = evidence || fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'toyvm-task-com-'));
+  const exe = path.join(dir, `tasks-${variant}-${Object.keys(tier).join('') || 'interpreter'}.COM`);
+  fs.writeFileSync(exe, com);
+  const r = await runDos({ exe, variant, ...tier, pspSeg: 0x1000, loadSeg: 0x1000,
+    budget: 10000, seconds: 3, sound: false, log() {} });
+  assert.equal(r.machine.exited, true, 'task-switch COM returns through intended DOS exit');
+  assert.equal(r.machine.exitCode, 0); assert.equal(r.ranOutOfTime, false);
+  const v = new DataView(r.vm.mem.buffer), rd = p => v.getUint32(p, true);
+  assert.equal(rd(0x71000), 0x33334444); assert.equal(rd(0x71004), 0x87654321);
+  assert.equal(rd(0x71008), 0x11112222); assert.equal(rd(0x7100c) & 0x4000, 0);
+  assert.equal(rd(0x71010), guestPageDirectory); assert.equal(v.getUint16(0x71018, true), 0x20);
+  assert.equal(rd(0x7101c) & 0x4000, 0x4000); assert.equal(rd(0x71020), 0x80000);
+  assert.equal(rd(0x19020), returnIp); assert.equal(rd(0x1a020), 0x400 + incoming.length);
+  assert.equal(v.getUint16(0x1a000, true), 0x28); assert.equal(rd(0x1a024) & 0x4000, 0);
+  assert.equal(r.vm.mem[0x1802d], 0x8b); assert.equal(r.vm.mem[0x18025], 0x89);
+  assert.equal(r.vm.get('cs'), 0x1000); assert.equal(r.vm.get('gip'), 0x817);
+  assert.equal(r.vm.exports.get_d32(), 0); assert.equal(r.vm.exports.get_cr0(), 0x10);
+  observations.push({ variant, tier, actualTaskSwitchCom: true, dispatched: r.dispatched, exitCode: 0 });
+}
+
+async function taskSwitchNegatives(variant) {
+  const beforeCommit = [
+    ['null', f => f.gate(0x30, 0), 13, 0],
+    ['local', f => f.gate(0x30, 0x34), 13, 0x34],
+    ['bounds', f => f.gate(0x30, 0x60), 13, 0x60],
+    ['wrong type before presence', f => { f.vm.mem[0x19035] = 0x12; }, 13, 0x30],
+    ['busy before presence', f => { f.vm.mem[0x19035] = 0x6b; }, 13, 0x30],
+    ['busy', f => { f.vm.mem[0x19035] = 0xeb; }, 13, 0x30],
+    ['not present before short', f => { f.vm.mem[0x19035] = 0x69; f.v.setUint16(0x19030, 0, true); }, 11, 0x30],
+    ['short before TSS read', f => { f.v.setUint16(0x19030, 102, true); f.put(0x21070, 0); }, 10, 0x30],
+    ['gate absent', f => f.gate(0x30, 0x60, 5), 11, 0x182],
+    ['gate wrong type before presence', f => f.gate(0x30, 0x60, 1), 13, 0x182],
+  ];
+  const afterCommit = [
+    ['LDT local', f => f.put(0x1c060, 0x54), 10, 0x54],
+    ['LDT outside', f => f.put(0x1c060, 0x60), 10, 0x60],
+    ['LDT absent', f => { f.vm.mem[0x19055] = 2; }, 10, 0x50],
+    ['LDT type', f => { f.vm.mem[0x19055] = 0x92; }, 10, 0x50],
+    ['CS null', f => f.put(0x1c04c, 0), 10, 0],
+    ['CS type', f => f.put(0x1c04c, 16), 10, 16],
+    ['CS privilege', f => f.put(0x1c04c, 0x3b), 10, 0x38],
+    ['CS absent', f => { f.vm.mem[0x1903d] = 0x1a; }, 11, 0x38],
+    ['CS short', f => f.v.setUint16(0x19038, 0xff, true), 13, 0],
+    ['SS null', f => f.put(0x1c050, 0), 10, 0],
+    ['SS type', f => f.put(0x1c050, 8), 10, 8],
+    ['SS privilege', f => f.put(0x1c050, 0x43), 10, 0x40],
+    ['SS absent', f => { f.vm.mem[0x19045] = 0x12; }, 12, 0x40],
+    ['DS bounds', f => f.put(0x1c054, 0x60), 10, 0x60],
+    ['DS type', f => f.put(0x1c054, 0x30), 10, 0x30],
+    ['DS execute only', f => { f.vm.mem[0x1903d] = 0x98; f.put(0x1c054, 0x38); }, 10, 0x38],
+    ['DS privilege', f => f.put(0x1c054, 0xf), 10, 0xc],
+    ['DS absent', f => { f.vm.mem[0x1e00d] = 0x12; }, 11, 0xc],
+    ['ES absent', f => { f.vm.mem[0x1904d] = 0x12; }, 11, 0x48],
+    ['FS bounds', f => f.put(0x1c058, 0x60), 10, 0x60],
+    ['GS bounds', f => f.put(0x1c05c, 0x60), 10, 0x60],
+  ];
+  for (const committed of [false, true]) for (const [name, mutate, vector, error] of committed ? afterCommit : beforeCommit) {
+    const f = await taskSwitchFixture(variant), { vm, e, v, intIp } = f;
+    mutate(f);
+    const backlink = v.getUint16(0x1c000, true);
+    try { assert(vm.stepOne()); }
+    catch (err) { console.error({ name, committed, diagnostic: err.pagingException }); throw err; }
+    assert.equal(e.mget_tr(), 0x58, name + ' invokes fault task');
+    assert.equal(vm.get('intno'), vector, name + ' vector');
+    assert.equal(v.getUint32(vm.get('sp'), true), error, name + ' error');
+    assert.equal(v.getUint16(0x1d000, true), committed ? 0x30 : 0x28, name + ' fault context');
+    assert.equal(v.getUint32(0x1b020, true), committed ? intIp + 2 : intIp, name + ' old saved EIP');
+    if (committed) assert.equal(v.getUint32(0x1c020, true), 0x100, name + ' incoming saved EIP');
+    else assert.equal(v.getUint16(0x1c000, true), backlink, name + ' no target backlink mutation');
+  }
+  // Both IRET sizes select the backlink, never an ordinary valid-looking frame.
+  for (const wide of [false, true]) {
+    const { vm, e, v, intIp } = await taskSwitchFixture(variant);
+    vm.mem.set(wide ? [0xcf] : [0x66, 0xcf], 0x40100);
+    assert(vm.stepOne()); assert(vm.stepOne());
+    assert.equal(e.mget_tr(), 0x28); assert.equal(vm.get('gip'), intIp + 2);
+    assert.equal(v.getUint32(0x1c020, true), wide ? 0x101 : 0x102);
+  }
+  for (const [name, backlink, access, vector, error] of [
+    ['null', 0, 0x8b, 10, 0], ['local', 0x2c, 0x8b, 10, 0x2c],
+    ['not busy', 0x28, 0x89, 10, 0x28], ['absent', 0x28, 0xb, 11, 0x28],
+  ]) {
+    const { vm, e, v, put } = await taskSwitchFixture(variant);
+    vm.mem[0x40100] = 0xcf; assert(vm.stepOne());
+    put(0x1c000, backlink); vm.mem[0x1902d] = access;
+    const stackBytes = vm.mem.slice(0x61ff0, 0x62020);
+    assert(vm.stepOne()); assert.equal(vm.get('intno'), vector, name);
+    assert.equal(v.getUint16(0x1d000, true), 0x30, 'IRET rejected before changing task');
+    assert.equal(v.getUint32(vm.get('sp'), true), error, name);
+    assert.deepEqual(vm.mem.slice(0x61ff0, 0x62020), stackBytes, 'no ordinary IRET frame read/pop');
+  }
+  observations.push({ variant, taskSwitchNegativeCases: beforeCommit.length + afterCommit.length + 6 });
+}
+
+async function taskSwitchErrorWord(variant) {
+  const { vm, e, v, put, gate, intIp } = await taskSwitchFixture(variant);
+  gate(14, 0x30);
+  vm.mem.set([0xa1, ...u32(0x11000000)], intIp);
+  // Actual missing-page read enters B, pushes exactly one dword in B's stack,
+  // and returns to retry the faulting MOV after B's real instruction repairs it.
+  vm.mem.set([...store(0x20110, 0x22007), 0x83, 0xc4, 4, 0xcf], 0x40100);
+  assert(vm.stepOne());
+  assert.equal(e.mget_tr(), 0x30); assert.equal(vm.get('sp'), 0x1ffc);
+  assert.equal(v.getUint32(0x61ffc, true), 0);
+  assert.equal(v.getUint32(0x1b020, true), intIp);
+  for (let i = 0; i < 3; i++) assert(vm.stepOne());
+  assert.equal(e.mget_tr(), 0x28); assert.equal(vm.get('gip'), intIp);
+  assert(vm.stepOne()); assert.equal(vm.raw('ax') >>> 0, 0x11112222);
+  // A software INT with the same vector does not deliver an exception word.
+  vm.mem.set([0xcd, 14], vm.get('gip')); assert(vm.stepOne());
+  assert.equal(e.mget_tr(), 0x30); assert.equal(vm.get('sp'), 0x2000);
+
+  const f = await taskSwitchFixture(variant);
+  f.gate(14, 0x30); f.vm.mem.set([0xa1, ...u32(0x11000000)], f.intIp);
+  f.put(0x24184, 0); // incoming error-word stack page61 not present
+  f.put(0x61ffc, 0xfeedface);
+  assert(f.vm.stepOne());
+  assert.equal(f.e.mget_tr(), 0x58); assert.equal(f.vm.get('intno'), 8, '#PF during #PF delivery becomes #DF');
+  assert.equal(f.e.mget_cr2(), 0x61ffc);
+  assert.equal(f.v.getUint16(0x1d000, true), 0x30, 'error-word failure is in incoming task');
+  assert.equal(f.v.getUint32(0x1c038, true), 0x2000, 'no partial push');
+  assert.equal(f.v.getUint32(0x61ffc, true), 0xfeedface);
+  assert.equal(f.v.getUint32(0x1c020, true), 0x100);
+  observations.push({ variant, actualPageFaultTaskErrorWordAndRetry: true, softwareIntNoErrorWord: true,
+    incomingErrorWordFault: true });
 }
 
 async function taskRegisterSuite() {
@@ -736,9 +1181,15 @@ async function taskRegisterSuite() {
 }
 
 (async () => {
+  if (process.argv.includes('--task-switch-only')) {
+    await taskSwitchSuite();
+    if (evidence) fs.writeFileSync(path.join(evidence, 'task-switch.json'), JSON.stringify(observations, null, 2));
+    console.log('PASS task switch commit, two CR3 mappings, real INT/LTR/nested IRET and guest fault repair');
+    return;
+  }
   if (!process.argv.includes('--exception-diagnostics-only')) await taskRegisterSuite();
   if (process.argv.includes('--task-register-only')) {
-    console.log('PASS actual LTR busy/cache/negatives and explicit NT IRET stops; full task switch remains unsupported');
+    console.log('PASS actual LTR busy/cache/negatives and explicit nonpaged NT IRET stops');
     return;
   }
   await exceptionDiagnostics();
@@ -747,6 +1198,7 @@ async function taskRegisterSuite() {
     console.log('PASS retained chain/read-only state/invalid and absent descriptors/software privilege/error state/real COM failure JSON+PNG');
     return;
   }
+  await taskSwitchSuite();
   for (const variant of ['tailcall', 'switch', 'calls', 'repl_tailcall']) await run(variant);
   for (const variant of ['tailcall', 'switch', 'calls', 'repl_tailcall']) await systemReads(variant);
   for (const variant of ['tailcall', 'switch', 'calls', 'repl_tailcall']) await v86Restart(variant);

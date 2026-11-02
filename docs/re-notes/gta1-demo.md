@@ -1,5 +1,109 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Commit-aware 386 task gate and backlink return; later cache blocker, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-commit-aware-task-switch/`. Input
+`eb21f6b73c2762b00533d5e94d49f6694264fa8f`; shared source/build/test/runtime
+was claimed only after MDK2 integer-color author release, terminal result/final
+and independent absence checks for all 68 helpers. No MDK2/GL files were edited.
+
+Paged execution now implements **386 IDT interrupt/exception task gates and
+protected NT IRET**. This is a complete transfer for these routes, including
+outgoing dynamic TSS save, incoming TR/CR3/LDTR/GPR/EFLAGS and all six hidden
+segment caches, descriptor accessed/busy writes, backlink, NT, CR0.TS and
+32-bit exception error-word delivery. NT IRET uses the backlink regardless of
+operand width, releases the outgoing busy bit and clears its saved NT. Static
+TSS CR3/LDTR fields are preserved on save. CLTS now clears TS; paged x87/WAIT
+access observes #NM rather than silently executing through task-switched state.
+Incoming 386 EFLAGS reserved bits are normalized. Direct far CALL/JMP task
+switches, 286 task switches and nonpaged task switches remain explicitly
+unsupported. This is not a claim that every 386 task-switch route is implemented.
+
+The architectural boundary is explicit: target checks, complete TSS-image
+staging and outgoing writes are restartable in the old context. Publication
+of incoming registers/TR/CR3 establishes a new checkpoint. Subsequent LDTR,
+segment, accessed-bit, instruction-limit and error-stack faults belong to the
+incoming EIP and cannot undo the outgoing save, busy/backlink or CR3 transition.
+Each completed cache load is preserved before the next faultable reference;
+unloaded caches do not inherit outgoing metadata. Normal paged data/stack
+accesses and instruction fetch enforce these authoritative caches after a task
+switch. Fault repair uses a real nested task and IRET to reload the interrupted
+TSS; it never resumes a partially executed host transfer. Diagnostic reads retain
+actual TSS bytes and PDE/PTE walks without changing guest paging state.
+
+Design follows primary Intel [80386 PRM 7.1](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s07_01.htm),
+[7.5](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s07_05.htm),
+[7.6](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s07_06.htm),
+[7.7](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s07_07.htm),
+[9.8](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s09_08.htm),
+[CLTS](https://www.scs.stanford.edu/05au-cs240c/lab/i386/CLTS.htm)
+and Intel SDM volume 3A 7.3–7.5. The retained design records differences between
+the old PRM summary table and its detailed exception descriptions; incoming
+invalid segments use #TS, with #NP/#SS for the relevant absence checks.
+
+Validation executes real LTR/INT/IRET, two independently mapped CR3 spaces and
+both directions of return. Saved old paging-exec rejects the boot-to-DOS-exit
+COM at the task gate; new code exits normally and reads the distinct mappings.
+Four dispatch variants cover outgoing save rollback (including a split-page
+partial write), incoming split-TSS page failure, incoming-address-space page
+fault and segment-fault repair, committed IRET faults, descriptor/gate/busy/
+presence/limit/privilege negatives, incoming cached-segment access faults and
+error-word success/failure. Software INT does not invent an error word. Both
+IRET operand widths and uopOnly/uop/treeFold execute real transfer COMs. Guest
+#NM → CLTS → IRET retries the actual incoming x87 instruction; WAIT/EM/MP/TS
+and CPL3 CLTS negatives are included. Full paging/foundation/diagnostic/input/
+call-gate/timer/CPU-detection regressions and mandatory locked build pass. Both
+regenerated live bundles actually execute the suite and match their 45/44
+embedded modules. No browser was used.
+
+Exactly **one authentic GTA.BAT → K.EXE → generated DINO.BAT → DEMO24.EXE run**
+was made, after the initial complete checks/build passed. Original archive,
+K.EXE and all 117 files (17,078,619 bytes) match before/after. Each of the three
+Enter inputs followed visual inspection of its new checkpoint PNG. The shared
+3-billion-dispatch/85-second budget and independent 90-second host cap were
+retained. The child exited naturally with status 1; actual wait was 48.038 seconds,
+with no host deadline, disk or log termination. The final fault PNG was visually
+inspected: DOS/4GW copyright text only, **no gameplay**.
+
+Actual task evidence (`task-events.json`) now proves the diagnosed gate was
+crossed: #PF at `0080:3EBF`, CR2 `10184EA1`, TR `0208`, TSS `158000`, switched
+to TR `0218`, TSS `159000`, `3D98:7F6E`, SS `0280`, ESP `0FF8` after its
+zero error word. Backlink is `0208`; outgoing state is saved and incoming
+NT/TS are set. The guest handler consumed the error and rewrote the old TSS,
+including return CS/EIP `3D98:809F` and SS/ESP `0280:0FFC`. Its real NT IRET
+at `3D98:809B` completed, returning TR `0208`, clearing NT and releasing
+`0218` busy. The host did not skip the original fault or manufacture this
+redirect. Both tasks used CR3 `160000`; two-address-space coverage comes from
+the instruction regressions, not an invented GTA CR3 change. Original #PF
+causation remains **unproven**.
+
+The later stop is #SS(0) at `0070:42C5` (PUSH), SS `0110`, SP `0104`, CR0
+`80000011`. Its #SS and #DF IDT entries are invalid type zero, ending in
+386 shutdown. A separate real-instruction probe (`transition-blocker.json`)
+reproduces the architectural dependency after a successful task return:
+disable PG/PE, load SS in real mode, re-enable PE/PG without reloading SS,
+then PUSH. Existing `pm_cache_ss` invalidates the hidden cache during the
+real-mode load; reentry leaves it invalid, so the new authoritative access
+check raises #SS. That cache-transition defect is tested; its precise causal
+identity with the authentic late #SS has not been independently captured.
+**Next work is coherent real/protected segment-cache transitions**, followed
+by a separately authorized authentic run. No second run was attempted here.
+The authentic source pins and loaded module hashes are retained; afterward a
+small incoming-EFLAGS reserved-bit correction was validated by the full suite,
+both bundles and locked build, without replaying GTA.
+
+One initial full-suite process hit the 2,020,000,000-byte abort threshold at
+2,014,588,928 free bytes, above the unchanged 2 GB floor. It was terminated,
+actually waited and checked absent. Space recovered after exit; explicit GC
+between completed VM fixtures allowed the same assertions and disk guard to
+pass. No RAM gate was used. Initial fixture/census failures and their repairs
+remain in evidence. One final runner-input repeat expired its existing 150 ms
+sequence deadline before the second callback; an unchanged repeat passed, and
+both logs are retained. Source/build/test/runtime helpers are actually waited and
+checked absent before author release. Box ID/state/expiry N/A; lifecycle and
+shutdown remain coordinator-owned. This assignment stops at the new tested
+cache-transition dependency.
+
 ## Tested task-register prerequisite; full switch still required, 2026-11-02
 
 Evidence: `scratch/runs/20261102-gta1-386-task-switch/`. Input paging repair
