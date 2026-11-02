@@ -318,6 +318,7 @@ function workerOwnedCommandReplay(){
   scalarBatch(owned,32,'glClear',[0x4000]);
   scalarBatch(memory.buffer,32,'glClear',[0x0100]);
   class FakeGL{
+    destroy(){this.contexts.clear();}
     constructor(){this.contexts=new Map();this.currentByOwner=new Map();}
     replay(input,owner){return Stream.replay(input,(opcode,aux,capture)=>{
       observed={owner,opcode,value:new DataView(capture.buffer).getUint32(capture.stackOffset+4,true)};return 17;
@@ -334,6 +335,7 @@ function workerOwnedCommandReplay(){
 function workerCapturedGeometry(){
   const observed=[];
   class FakeGL{
+    destroy(){this.contexts.clear();}
     constructor(options){this.options=options;this.contexts=new Map();this.currentByOwner=new Map();}
     replay(){
       const e=this.options.exports();
@@ -377,7 +379,7 @@ async function hostProtocol(){
   await tick();assert(!settled,'caller retains command and query memory until request completion');
   assert.strictEqual(commands[0].memoryOffset,128);assert.strictEqual(commands[0].bytes,32);assert.strictEqual(commands[0].owner,3);
   assert.strictEqual(commands[0].softwareFront,512,'front descriptor belongs to the producing guest');
-  assert.deepStrictEqual(commands[0].windows,[windows[8]]);
+  assert.deepStrictEqual(commands[0].windows,[{...windows[8],generation:1}]);
   assert.strictEqual(commands[0].surfaces[0].id,5);assert.strictEqual(commands[0].surfaces[0].pixels[15],15);
   const image={closed:false,close(){this.closed=true;}};
   events.message({data:{t:'frame',frame:{hwnd:8,width:2,height:2,bitmap:image}}});
@@ -418,6 +420,7 @@ function bitmapWorkerCoherence(){
   // publish followed by a seed in one batch must read the just-written bytes.
   let observed;
   class FakeGL{
+    destroy(){this.contexts.clear();}
     constructor(options){this.options=options;this.contexts=new Map();}
     replay(){const s=this.options.getGdiSurface(5).surface;
       s.writeRgbaRect(1,0,1,1,new Uint8ClampedArray([10,20,30,40]));observed=s.rgbaRect(0,0,2,1);return 9;}

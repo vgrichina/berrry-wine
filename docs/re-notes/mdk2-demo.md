@@ -580,3 +580,37 @@ and primary-specification design. All **188** remaining names, including
 `glAccum` and `glClearAccum`, stay rejected. No original MDK2 replay or
 startup/gameplay qualification follows. Box ID/state/expiry: N/A;
 coordinator-owned lifecycle is unchanged.
+
+### 2026-11-02: real WebGL drawable prerequisite repaired
+
+The WebGL consumer now owns FRONT/BACK color textures and a shared depth/stencil
+attachment per drawable. Contexts share one execution device while retaining
+separate frontend resources, raster state and error queues. FRONT_AND_BACK uses
+multiple render targets: fragment tests update depth/stencil once, and blending
+reads each color destination independently. NONE suppresses color writes without
+suppressing depth/stencil. Read selection is independent of draw selection.
+Window snapshots retain separate presentation canvases; SwapBuffers exchanges
+front/back images. Rebinding, sharing a drawable between contexts, deleting a
+context, resize, destroyed/reused windows and single-buffer bitmap targets have
+explicit attachment lifetimes. Worker snapshots carry window generations.
+WebGL1 requires WEBGL_draw_buffers; unavailable attachments fail context creation
+rather than silently substituting one color buffer.
+
+Fresh pixel evidence in
+`scratch/runs/20261102-mdk2-webgl-drawable-attachments/` includes the old published
+consumer failing FRONT selection with error 1282, then the repaired consumer
+passing 167 assertions for each of WebGL1 and WebGL2 on ANGLE Intel UHD Graphics
+620 / Mesa 23.2.1. Thirteen worker-endpoint checks and 21 checks in an actual
+browser Worker exercise the production command consumer. The browser runs used
+one temporary private Boat, serially, without forcing a software renderer.
+Coverage includes selected clears/readback, different blend destinations,
+single depth/stencil updates, NONE, scissor/masks, bitmap and border shaders,
+context/drawable sharing and lifecycle, allocation rollback and invalid modes.
+The software direct/queued drawable suite, focused GL/WGL/stream regressions,
+188-name rejection checks and mandatory locked build are recorded in that run.
+
+This repairs the demonstrated drawable prerequisite; accumulation storage and
+operations remain unimplemented. All **188** unsupported exports, including
+`glAccum` and `glClearAccum`, remain rejected. No original MDK2 replay or
+startup/gameplay qualification was attempted. Next work is the bounded signed
+per-drawable accumulation implementation after the serialized worker gates.
