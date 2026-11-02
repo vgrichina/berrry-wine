@@ -1,5 +1,87 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Authentic time service identified; initialized bridge fixture prerequisite, 2026-11-02
+
+The follow-up to `511a76fc39347a96a19cc82226e578a2251b9190` identifies
+the authentic DOS/4GW time conversion in **already retained original progress**.
+The requested full bridge boundary fixture remains **unimplemented and
+unexecuted**: its initialized callback/descriptor closure is missing from the
+retained evidence. No original replay, guest fixture, test/build, clock change,
+source correction, optimization or sandbox operation occurred in this task.
+The calibration coverage gap is still open; no causal emulator defect is
+established, and 241,463 remains only the old representative fixture's count.
+
+Static evidence is in
+`scratch/runs/20261102-gta1-authentic-clock-bridge-fixture/`:
+`static-audit.py`, `static-verification.json`, `STATIC.md`, six bounded
+unrelocated code windows/disassemblies, and terminal/lifecycle records.
+The executable SHA remains
+`2f1cedfb95254b2f1a8913f1aeac7a915966cb42c70c9c96b14b8861fbf78c9f`.
+Exact 16-byte retained instruction matches establish file-to-code offsets
+`0070 → file+9B10`, `0080 → file+1F674`, `0088 → file+2C854`;
+these are file offsets, not guest memory mappings. There are 16, 49 and 53
+exact progress-sample matches respectively. Other samples can contain runtime
+patches and are not asserted to match the on-disk bytes.
+
+At retained dispatch **10,933,327**, `0070:0D01` has low DI=`005A`.
+Its addr16 CS-override jump reads slot `2D` at `CS:06CE`; the embedded word
+is **1441**. `INC AH` at `0CF0` makes this the AH=2Ch slot.
+The `1441` handler checks kernel data `DS:15` bit 0 and `DS:34 == 15h`;
+its fast branch reads the BIOS tick words at `0040:006C/006E` and performs
+integer MUL/DIV arithmetic with constants **3323, 60500 and 605**. This
+branch does not call the host AH=2Ch formula or read PIT counter ports.
+The other branch falls back through `0D06`, so initialized flags matter.
+
+For ticks below 8,192, the high tick word and `SHR 13` correction are zero.
+Independent integer arithmetic is `q,r = divmod(tick*3323,60500)`:
+seconds are `q`, hundredths `r//605` in the bounded domain here. This gives
+DX=`004C/0062/0104/0161/0203` at ticks **14/18/19/36/37**.
+All 23 retained application times agree at their stamped or preceding tick.
+This identifies a specific conversion; it does not equate its general
+rounding with the earlier rational PIT model.
+
+Retained live `0070:145D`, `1481` and `1490` samples match the executable
+instruction bytes exactly. At dispatch **20,105,140**, `1481` has full
+EAX=`00000001`, ECX=`0000EC54` (60,500), EDX=`0000E6F8` (59,128):
+`36*3323 = 1*60500 + 59128`, then `59128//605 = 97`.
+Thus the retained service itself explains `DX=0161`; the old host55 fixture's
+`0162` does not demonstrate an emulator time defect. This sample is still
+before the nominal tick-37 boundary and proves no DH=2 return or calibration RET.
+
+The precise missing prerequisite is an authenticated initialized bridge state:
+
+- `A8:906` callback-table selector and its type/target records. Authentic
+  `0088:0BE4` dispatches through them. Retained samples identify outgoing
+  `0080:0E34` and nested `0088:08D4`, but do not capture the table memory or
+  descriptor caches. Calling the conversion directly would skip that marshalling.
+- `A8:7E4` vector classification, the saved vector-21 target/type at
+  `A8:924+21h*8`, `A8:1224/1228` context allocator, `A8:7E2` stack selector,
+  and their descriptor/page-map closure. Restore58 contains none of these tables.
+- Kernel `DS:15/34` guards and linked `DS:996/99E/F52` frame/nesting state,
+  plus the `0040` BIOS-data alias. Zero-filled guesses could choose host
+  fallback or an invented callback route.
+
+`STATIC.md` retains the prepared 18→19 and 36→37 fixture contract, unchanged
+550,000 dispatches/tick, tickScale=1, irqSchedule=true, and the 1,200,000 billed
+dispatch cap **per arm**. It specifies full service/restore58/IRETD12 register
+and BIOS/PIT observation, DH2, INC/CMP/JE, result `104786B8`, RET, independent
+count identities and negative controls. Static host55/divisor/stale-second
+discriminators pass; **runtime negative controls and observer parity have not
+run**. No substitute ToyVM test was added.
+
+**Next correctness action toward original gameplay:** reconstruct and
+authenticate the initialized DOS/4GW callback/descriptor closure from its
+embedded initialization, or obtain a separately authorized checkpoint containing
+it; then execute the bounded authentic fixture with parity and negative controls.
+Another original run is not the next action authorized by this task.
+Both execution prerequisites are not yet satisfied at this static closeout:
+matrix handle 6415 published `69fa4b52c1573344e2aee5f7fdff41f21822a4c8`
+and released its resources; accumulation handle 68617 owns shared execution.
+Its terminal result, exact release and helper cleanup remain pending. Shared
+source/tests/build/runtime ownership was never acquired. Only this note and
+ignored static evidence changed; foreign WIP is preserved, local disk remained
+above 2 GB, and no box was created or resumed.
+
 ## Retained pre-return cause: finite seconds wait, fixture coverage gap, 2026-11-02
 
 Static evidence: `scratch/runs/20261102-gta1-pre-return-state-cause/`
