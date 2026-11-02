@@ -647,3 +647,62 @@ Accumulation remains unimplemented; all 188 unsupported names, including
 needs signed drawable-owned storage, context-owned clear state, all five
 operations and complete native/software/WebGL acceptance before availability.
 No original MDK2 replay or startup/gameplay claim follows.
+
+### 2026-11-02: genuine signed drawable accumulation implemented
+
+`glAccum` and `glClearAccum` now resolve through both WGL and the ordinary DLL
+lookup route. The append-only command ABI adds opcodes 143/144 with two/four
+32-bit stack words. Accumulation is a lazily allocated Float32 RGBA image owned
+by each drawable, shared by contexts targeting that drawable. Intermediate
+negative and extended values survive LOAD, ACCUM, MULT and ADD; RETURN alone
+clamps to the destination range. Native 16-bit sources normalize their actual
+RGB565/X1555/A1555/A4444 component fields, including implicit opaque alpha.
+
+The clear value is clamped context state, queried by the supported Floatv and
+Integerv paths and saved by ACCUM_BUFFER_BIT attributes. PFD and accumulation
+bit queries report 32 bits per component, 128 total. Accumulation clear ignores
+color masks and draw-buffer NONE. Every operation obeys scissor; LOAD/ACCUM
+read the selected source, and RETURN honors selected FRONT/BACK/BOTH/NONE and
+all RGBA masks. RETURN updates color storage directly, bypassing fragment
+tests and blending; LOAD reads source storage without pixel pack/transfer.
+Window resize/destruction, drawable deletion/reuse, DIB deletion, context
+switch/deletion and full reset preserve or retire the appropriate storage.
+
+Display lists capture scalars, defer execution-time errors in COMPILE mode,
+and execute once in COMPILE_AND_EXECUTE mode. Native software arithmetic fences
+pending raster work; its queued consumer mirrors state without repeating the
+arithmetic. The WebGL consumer flushes preceding draws and performs signed
+operations against actual persistent color attachments, preserving native
+pixel-store/PBO/read/draw-framebuffer bindings. Canonical bitmap seeding now
+works with draw-buffer NONE: it temporarily selects the bitmap's FRONT
+attachment and restores the guest's selection. Native bitmap deletion retires
+the borrowed GL descriptor and accumulation image before freeing DIB bytes.
+
+The independent dyadic oracle is: blue LOAD(.5), red ACCUM(.25), MULT(-.5),
+ADD(.25) gives `[.125,.25,0,-.125]`; RETURN(2) gives RGBA `[64,128,0,0]`.
+Resolved full-WAT direct and queued software tests pass, with 261 retained
+signed/pixel observations per route, all 16 masks across four draw selections,
+scissored operations, real draw-before-LOAD ordering, native format widths,
+clear/query/attribute/list/error/ABI checks, and window/DIB lifecycle tests.
+Actual WebGL1/WebGL2 pixels pass 584/588 checks; an actual browser Worker passes
+525. The old native source rejects the accumulation export; the old WebGL
+consumer fails the pixel oracle. Three native and two WebGL semantic mutations
+also fail. These are consumer pixel checks, not a hardware GPU qualification.
+
+All 27 native/software/worker/list/color/drawable/WGL/dispatch/GDI regression
+runs pass, as do the existing WebGL drawable suite (321 checks per WebGL
+version, 13 endpoint and 26 browser Worker checks), the union-gate negative
+regression, generated API/dispatch/ABI freshness and the mandatory locked
+`tools/build.sh`. Heavy checks used an exact hashed snapshot in a temporary
+sandbox; edits and commits stayed in the shared main checkout. Failed
+iterations are retained: a point fixture's column, missing bitmap fixture
+metadata, the genuine NONE seeding defect, stale opcode-count assertions and
+source-line union attributions.
+
+Evidence, exact input hashes, native pixel observations, actual WebGL results,
+old-source/mutation logs, build output and cleanup are retained in
+`scratch/runs/20261102-mdk2-accum-implementation-remote/`. Availability remained
+rejected until native and WebGL internal acceptance passed. The current
+mandatory-export rejection set contains **176** names, including still
+unsupported query forms. No original MDK2 replay or startup/gameplay claim was
+made; those remaining mandatory exports must be implemented before replay.

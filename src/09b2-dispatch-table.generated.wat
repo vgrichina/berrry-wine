@@ -3913,9 +3913,11 @@
     (if (i32.eq (local.get $id) (i32.const 3438)) (then (return (i32.const 1)))) ;; glClientActiveTextureARB
     (if (i32.eq (local.get $id) (i32.const 3439)) (then (return (i32.const 1)))) ;; glMultiTexCoord2fARB
     (if (i32.eq (local.get $id) (i32.const 4171)) (then (return (i32.const 1)))) ;; glDrawArrays
+    (if (i32.eq (local.get $id) (i32.const 4209)) (then (return (i32.const 1)))) ;; glAccum
     (if (i32.eq (local.get $id) (i32.const 4211)) (then (return (i32.const 1)))) ;; glBitmap
     (if (i32.eq (local.get $id) (i32.const 4212)) (then (return (i32.const 1)))) ;; glCallList
     (if (i32.eq (local.get $id) (i32.const 4213)) (then (return (i32.const 1)))) ;; glCallLists
+    (if (i32.eq (local.get $id) (i32.const 4214)) (then (return (i32.const 1)))) ;; glClearAccum
     (if (i32.eq (local.get $id) (i32.const 4215)) (then (return (i32.const 1)))) ;; glClearDepth
     (if (i32.eq (local.get $id) (i32.const 4217)) (then (return (i32.const 1)))) ;; glClearStencil
     (if (i32.eq (local.get $id) (i32.const 4219)) (then (return (i32.const 1)))) ;; glColor3b
@@ -3995,9 +3997,7 @@
     (i32.const 0))
 
   (func $gl_dynamic_api_unsupported (param $id i32) (result i32)
-    (if (i32.eq (local.get $id) (i32.const 4209)) (then (return (i32.const 1)))) ;; glAccum
     (if (i32.eq (local.get $id) (i32.const 4210)) (then (return (i32.const 1)))) ;; glAreTexturesResident
-    (if (i32.eq (local.get $id) (i32.const 4214)) (then (return (i32.const 1)))) ;; glClearAccum
     (if (i32.eq (local.get $id) (i32.const 4216)) (then (return (i32.const 1)))) ;; glClearIndex
     (if (i32.eq (local.get $id) (i32.const 4218)) (then (return (i32.const 1)))) ;; glClipPlane
     (if (i32.eq (local.get $id) (i32.const 4234)) (then (return (i32.const 1)))) ;; glColor4d
@@ -21382,7 +21382,7 @@
       (call $handle_grDrawTriangle (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4209: glAccum
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 143) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4210: glAreTexturesResident
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -21397,7 +21397,7 @@
       (call $handle_gpu_api (i32.const 133) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4214: glClearAccum
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 144) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4215: glClearDepth
       (call $handle_gpu_api (i32.const 110) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

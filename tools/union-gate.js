@@ -184,17 +184,17 @@ const UNIONS = {
     bySite: {
       // $gdi_object_delete_full (10e:2576) — the union's own dispatch. Each arm
       // is guarded by an explicit `+4 == N` and frees a different +24.
-      '10e-gdi-metafile.wat:2763': 'GdiBitmap',    // bits,        under `type == 3`
-      '10e-gdi-metafile.wat:2764': 'GdiBitmap',    // flags,       under `type == 3`
-      '10e-gdi-metafile.wat:2765': 'GdiBitmap',    // self_handle, under `type == 3`
-      '10e-gdi-metafile.wat:2769': 'GdiPalette',   // storage,     under `type == 5`
-      '10e-gdi-metafile.wat:2770': 'GdiPalette',   // flags,       under `type == 5`
-      '10e-gdi-metafile.wat:2772': 'GdiFont',      // face,        under `type == 4`
-      '10e-gdi-metafile.wat:2776': 'GdiMetafile',  // bits,        under `type == 6|7`
-      '10e-gdi-metafile.wat:2777': 'GdiMetafile',  // flags,       under `type == 6|7`
-      '10e-gdi-metafile.wat:2779': 'GdiBrush',     // style,       under `type == 2`
-      '10e-gdi-metafile.wat:2780': 'GdiBrush',     // style,       under `type == 2`
-      '10e-gdi-metafile.wat:2781': 'GdiBrush',     // pattern_bitmap, style is 3|6
+      '10e-gdi-metafile.wat:2766': 'GdiBitmap',    // bits,        under `type == 3`
+      '10e-gdi-metafile.wat:2767': 'GdiBitmap',    // flags,       under `type == 3`
+      '10e-gdi-metafile.wat:2768': 'GdiBitmap',    // self_handle, under `type == 3`
+      '10e-gdi-metafile.wat:2772': 'GdiPalette',   // storage,     under `type == 5`
+      '10e-gdi-metafile.wat:2773': 'GdiPalette',   // flags,       under `type == 5`
+      '10e-gdi-metafile.wat:2775': 'GdiFont',      // face,        under `type == 4`
+      '10e-gdi-metafile.wat:2779': 'GdiMetafile',  // bits,        under `type == 6|7`
+      '10e-gdi-metafile.wat:2780': 'GdiMetafile',  // flags,       under `type == 6|7`
+      '10e-gdi-metafile.wat:2782': 'GdiBrush',     // style,       under `type == 2`
+      '10e-gdi-metafile.wat:2783': 'GdiBrush',     // style,       under `type == 2`
+      '10e-gdi-metafile.wat:2784': 'GdiBrush',     // pattern_bitmap, style is 3|6
 
       // $gdi_object_write_pen_brush (10f:877) — style and flags are read BEFORE
       // the pen/brush branch, which is precisely why the GdiPenBrush view
@@ -208,12 +208,12 @@ const UNIONS = {
       // that the site at each new line still does what its comment says (the
       // pre-branch pair, then the `type == 1` arm, then the else arm) and
       // renumber; do NOT delete the entry to make the gate pass.
-      '10f-gdi-dc.wat:992': 'GdiPenBrush',         // style, pre-branch
-      '10f-gdi-dc.wat:993': 'GdiPenBrush',         // flags, pre-branch
-      '10f-gdi-dc.wat:996': 'GdiPen',              // width, in the `type == 1` arm
-      '10f-gdi-dc.wat:997': 'GdiPen',              // color, in the `type == 1` arm
-      '10f-gdi-dc.wat:999': 'GdiBrush',            // color, in the `type == 2` arm
-      '10f-gdi-dc.wat:1000': 'GdiBrush',           // hatch, in the `type == 2` arm
+      '10f-gdi-dc.wat:1003': 'GdiPenBrush',         // style, pre-branch
+      '10f-gdi-dc.wat:1004': 'GdiPenBrush',         // flags, pre-branch
+      '10f-gdi-dc.wat:1007': 'GdiPen',              // width, in the `type == 1` arm
+      '10f-gdi-dc.wat:1008': 'GdiPen',              // color, in the `type == 1` arm
+      '10f-gdi-dc.wat:1010': 'GdiBrush',            // color, in the `type == 2` arm
+      '10f-gdi-dc.wat:1011': 'GdiBrush',           // hatch, in the `type == 2` arm
 
       // $gdi_brush_sample (10g:775) holds a brush record AND the record of the
       // bitmap named by brush.pattern_bitmap, in one frame, and reads +16 from

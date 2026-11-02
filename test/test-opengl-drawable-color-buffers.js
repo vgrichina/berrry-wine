@@ -94,8 +94,7 @@ const extraWat=`
  const observations=[];
  function expect(label,actual,expected){assert.strictEqual(call('glGetError'),0,'valid operation: '+label);let passed=true;try{assert.deepStrictEqual(actual,expected);}catch{passed=false;}
   observations.push({label,actual,expected,passed});console.log(JSON.stringify(observations.at(-1)));}
- for(const name of ['glAccum','glClearAccum']){const before=e.probe_thunks();assert.strictEqual(resolve(name),0);
-   assert.strictEqual(e.probe_error(),127);assert.strictEqual(e.probe_thunks(),before);}
+ for(const name of ['glAccum','glClearAccum'])assert(resolve(name),'implemented signed accumulation resolves: '+name);
  const dc=e.probe_dc(42)>>>0;assert(dc);const context=call('wglCreateContext',[dc]);assert(context);
  assert.strictEqual(call('wglMakeCurrent',[dc,context]),1);
  call('glViewport',[0,0,4,4]);call('glClearColor',[f(1),f(0),f(0),f(1)]);call('glClear',[0x4000]);

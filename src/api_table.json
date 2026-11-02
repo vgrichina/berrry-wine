@@ -36020,8 +36020,7 @@
     "name": "glAccum",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 4053872309,
-    "handler": "gl_unimplemented"
+    "hash": 4053872309
   },
   {
     "id": 4210,
@@ -36057,8 +36056,7 @@
     "name": "glClearAccum",
     "nargs": 4,
     "convention": "stdcall",
-    "hash": 3378134478,
-    "handler": "gl_unimplemented"
+    "hash": 3378134478
   },
   {
     "id": 4215,

@@ -398,6 +398,17 @@
         (i32.store8 offset=15 (local.get $dst) (i32.const 0))
         (i32.store8 offset=16 (local.get $dst) (i32.const 8))
         (i32.store8 offset=17 (local.get $dst) (i32.const 24))))
+    ;; Signed float components are allocated lazily per drawable.
+    (if (i32.ge_u (local.get $copy) (i32.const 19))
+      (then (i32.store8 offset=18 (local.get $dst) (i32.const 128))))
+    (if (i32.ge_u (local.get $copy) (i32.const 20))
+      (then (i32.store8 offset=19 (local.get $dst) (i32.const 32))))
+    (if (i32.ge_u (local.get $copy) (i32.const 21))
+      (then (i32.store8 offset=20 (local.get $dst) (i32.const 32))))
+    (if (i32.ge_u (local.get $copy) (i32.const 22))
+      (then (i32.store8 offset=21 (local.get $dst) (i32.const 32))))
+    (if (i32.ge_u (local.get $copy) (i32.const 23))
+      (then (i32.store8 offset=22 (local.get $dst) (i32.const 32))))
     (if (i32.ge_u (local.get $copy) (i32.const 25))
       (then
         (i32.store8 offset=23 (local.get $dst) (i32.const 24))

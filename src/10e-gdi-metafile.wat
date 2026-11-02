@@ -2760,6 +2760,9 @@
     (local.set $type (load.field.memarg GdiObject type (local.get $p)))
     (if (i32.eq (local.get $type) (i32.const 3))
       (then
+        ;; The GL descriptor borrows these DIB bytes. Retire its attachments
+        ;; and fence queued readers before returning the bitmap storage.
+        (call $gl_sw_delete_drawable (i32.or (local.get $handle) (i32.const 0x80000000)))
         (local.set $bits (load.field.memarg GdiBitmap bits (local.get $p)))
         (local.set $flags (load.field.memarg GdiBitmap flags (local.get $p)))
         (local.set $surface (load.field.memarg GdiBitmap self_handle (local.get $p)))

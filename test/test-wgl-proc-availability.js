@@ -5,7 +5,7 @@ const { bootRenderHarness } = require('./render-helper');
 // Original MDK2 misses, excluding four layer-plane, twenty integer-color, seven rectangle and three double matrix APIs.
 // Keep this observed set independent of the generator's availability predicate.
 const unsupportedMdk2 = `
-  glAccum glAreTexturesResident glClearAccum glClearIndex glClipPlane
+  glAreTexturesResident glClearIndex glClipPlane
   glColor4d glCopyPixels glCopyTexImage1D glCopyTexImage2D glCopyTexSubImage1D
   glCopyTexSubImage2D glDrawPixels glEdgeFlag glEdgeFlagPointer glEdgeFlagv
   glEvalCoord1d glEvalCoord1dv glEvalCoord1f glEvalCoord1fv glEvalCoord2d
@@ -131,7 +131,7 @@ async function main() {
   for (const name of ['glActiveTextureARB', 'glClientActiveTextureARB',
     'glMultiTexCoord2fARB', 'glTexParameterfv', 'glGetTexParameterfv',
     'glTexCoord2d', 'glTexCoord2dv',
-    'glColor3dv', 'glColor4dv', 'glRectf', 'glRectd', 'glRectdv',
+    'glColor3dv', 'glColor4dv', 'glRectf', 'glRectd', 'glRectdv', 'glAccum', 'glClearAccum',
     'glRectfv', 'glRecti', 'glRectiv', 'glRects', 'glRectsv', 'glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled',
     'wglSwapLayerBuffers', 'wglGetCurrentContext', 'wglGetCurrentDC']) {
     const thunk = lookup(name);
@@ -159,7 +159,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 178, 'retain every still unsupported MDK2 name');
+  assert.strictEqual(unsupportedMdk2.length, 176, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);
@@ -168,7 +168,7 @@ async function main() {
     assert.strictEqual(e.lookup_error(),127,'ERROR_PROC_NOT_FOUND');
     assert.strictEqual(e.lookup_thunks(),before,'rejection allocates no thunk');
   }
-  for (const name of ['glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','wglGetProcAddress']) {
+  for (const name of ['glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','wglGetProcAddress']) {
     const thunk=staticLookup(name);
     assert(thunk,`${name} remains available through SDL fallback`);
     assert.strictEqual(v.getUint32(toWasm(thunk)+4,true),table.findIndex(a=>a.name===name));

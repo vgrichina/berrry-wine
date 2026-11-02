@@ -23,7 +23,7 @@
       (if (i32.eq (i32.load offset=4 (local.get $p)) (global.get $gl_current_context))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 248)))
+    (local.set $p (call $gl_list_alloc (i32.const 264)))
     (if (i32.eqz (local.get $p)) (then (unreachable)))
     (i32.store (local.get $p) (global.get $gl_list_contexts))
     (i32.store offset=4 (local.get $p) (global.get $gl_current_context))
@@ -157,7 +157,8 @@
     (local.set $id (i32.load offset=4 (local.get $stack)))
     (if (call $gl_stencil_validate (local.get $ctx) (local.get $op) (local.get $stack))
       (then (return (i32.const 1))))
-    (if (i32.and (i32.ge_u (local.get $op) (i32.const 124))
+    (if (i32.and (i32.and (i32.ge_u (local.get $op) (i32.const 124))
+          (i32.lt_u (local.get $op) (i32.const 143)))
         (i32.and (i32.ne (local.get $op) (i32.const 127)) (i32.ne (local.get $op) (i32.const 133)))) (then
       (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
           (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0))) (then
@@ -361,6 +362,7 @@
       (br $free))))
 
   (func $gl_list_scalar_command (param $op i32) (result i32)
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 143)) (i32.const 1)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 142)) (then (return (i32.const 1))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 136)) (i32.const 4))
       (then (return (i32.const 1))))
