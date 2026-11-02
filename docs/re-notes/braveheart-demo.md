@@ -555,3 +555,67 @@ expiry `2026-11-02T23:06:52.933Z` recorded before use, was verified STOPPED at
 2000000000 bytes; the minimum was 2028453888 bytes during transfer. Recovery,
 compiled events, startup error, exact inputs and lifecycle ordering are retained
 in this run. No shared runtime repair or public deployment occurred.
+
+
+### Initializer-boundary capture preparation stopped by disk guard (2026-11-02)
+
+Run: `scratch/runs/20261102-braveheart-initializer-failure-capture/`.
+The original DLL identity and initializer cause remain **unobserved**. This run
+made zero build, generated-control, browser or original-game invocations. Its
+new blocker is a retained disk-floor breach during source/fixture transfer,
+before a remote checkout existed.
+
+Static inspection found an existing evidence-loss boundary: `loadDllsOwned`
+already logs each DLL name, mapped base, DllMain address and original base;
+`dllMainSteps` logs entry/result/halt and retains an outcome including faults.
+`finishDllInitialization` attaches that outcome and its fault as the error cause.
+However, the worker's `loadDlls` handler supplies a no-op logger, and its command
+catch sends only `error.message`. Those paths explain why the predecessor's
+module `0x102e000` report lacks the available loader identity/outcome. They do
+not establish the DLL's identity or diagnose its original initializer failure.
+
+Scratch-only capture code was prepared to forward the real loader call while
+retaining module/initializer boundaries, live registers, exception/outcome
+chains and bounded observer records/counters before the worker error. Generated
+compiled success, false-return, bad-stdcall, NULL-jump, real trap and deliberate
+observer-failure controls, plus callback and browser-transport controls, were
+prepared but **not executed**. This diagnostic is unvalidated and must not be
+used for an original invocation until those controls actually pass. No shared
+runtime source or API behavior was changed.
+
+The GL boundary task and then Oni residency task had actual terminal zero,
+result/final, exact AUTHOR RELEASE and absent scoped helpers before transfer.
+Their 208 and 197 final member hashes, and the predecessor's 108, were reread
+successfully. The pinned snapshot was main
+`3785da2fafee25f8de748277051ab7e59646ad76`: 396 runtime and 1005 compiler inputs
+matched Git, and 145 local original fixtures (207704346 bytes) were hashed.
+API-table SHA was
+`8319e5f866cf102879f4debfff34a421924a8a71d87cacf8d56c5a66afaaead5`.
+The existing shared WASM was identified but neither selected nor replaced;
+there is no newly compiled module or completed remote 145-file verification.
+
+At `2026-11-02T23:25:29.179Z`, the foreground transfer guard observed
+1991254016 free bytes on `/home`, below the required 2000000000-byte floor,
+and killed its own transfer process group (exit -15). The guard latched,
+blocking subsequent heavy phases. Free space recovered to about 2.045 GB,
+but the roughly 55 MB transient loss was unexplained and exceeded the available
+headroom. Repeating under that headroom would not preserve the required floor.
+No foreign files were cleaned. Source and fixture bytes were streamed directly
+to the boat; no local archive or fixture copy was created. A separate 7.218-second
+monitor rotation gap during earlier read-only preparation is also retained.
+The 250 ms passive watcher missed the short breach; the 100 ms operation guard
+retained it. Continuous floor compliance is **not claimed**.
+
+Own finite-TTL boat `bx_amntdhxb`, original expiry
+`2026-11-02T23:54:13.677Z`, was recorded before use. Its 610 partial chunks
+(48800000 bytes) had not been extracted. Chunk identities and absent helpers
+were retrieved, SHA-compared and independently reread before cleanup. Cleanup
+metadata was likewise retrieved and reread before the explicitly delegated
+shutdown. The boat was verified STOPPED at `2026-11-02T23:29:04.071Z`, error
+null, with its own chunks/archive and scoped remote helpers absent.
+
+Next: obtain stable additional coordinator-owned disk headroom, make a fresh
+guarded transfer, compile the pinned source and validate the diagnostic with
+actual generated controls. Only then admit at most one changed-diagnostic
+original startup. No original GDI mismatch, initializer cause, observer-fault
+classification or gameplay progress was established here.
