@@ -49,7 +49,7 @@ Published `4631ff857` subsequently repairs the already-resolved `glRotated`;
 its double argument and matrix semantics do not change the missing-export count.
 See [rotation evidence](re-notes/gl-rotated-native-20261102.md).
 
-Six subsequently accepted families reduce the unsupported set to **95**
+Nine subsequently accepted families reduce the unsupported set to **82**
 mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
 
 | Accepted implementation | Newly implemented exports | Evidence |
@@ -58,15 +58,26 @@ mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
 | `9f56285e2` typed texture coordinates | 25 | [Numeric adapters, dimensional defaults and display lists](re-notes/gl-typed-texcoord-family-20261102.md) |
 | `7170d9afa` typed vertices | 14 | [Numeric adapters, homogeneous coordinates and direct/queued validation](re-notes/gl-typed-vertex-family-20261102.md) |
 | `80ebba348` raster positions | 23 | [Clipping, raster lighting/texgen, bitmap pixels and WebGL1/2 validation](re-notes/gl-raster-position-family-20261102.md) |
-
 | `8480aed7f` integer fog/light/material | 6 | [Pname conversions, lighting, lists and direct/queued validation](re-notes/gl-integer-light-material-fog-20261102.md) |
-
 | `bb2cef8fe` indexed light/material queries | 4 | [Stored-state conversion, ABI, lists and direct/queued validation](re-notes/gl-light-material-query-20261102.md) |
+| `0cd72e8bb` texgen setters and queries | 6 | [Double transforms, numeric conversions and direct/queued validation](re-notes/gl-texgen-numeric-query-20261102.md) |
+| `342d0433b` texture environment and parameter queries | 5 | [Context, unit and bound-object state with rendered pixels](re-notes/gl-texture-state-query-20261102.md) |
+| `cda0ebd87` user clip planes | 2 | [Six eye-space planes, primitive clipping and WebGL pixels](re-notes/gl-user-clip-planes-20261102.md) |
 
 Each family passed its focused semantic and regression checks, rejecting controls,
 and locked build; the coordinator verified retained evidence hashes and committed
-blobs. The texgen and texture-state families remain in progress and are excluded
-from the accepted count. Integer lighting passed 301 checks per direct/queued
+blobs. Texgen passed 672 literal checks and 560 matching observations per
+direct/queued route, two saved-source and 15 semantic rejecting controls. Texture
+state passed 437 literal checks and 367 matching observations per route, two
+saved-source and 12 semantic rejecting controls, and WebGL1/2 pixel checks.
+User clipping passed 154 literal checks and 98 matching observations per route,
+40 WebGL1/2 pixel checks, two saved-source and nine semantic rejecting controls.
+Their final suites passed 62, 63 and 62 commands respectively, including focused
+regressions, generated checks and the locked build. The coordinator verified
+71/79/77 remote evidence hashes and 11/22/23 tested committed blobs respectively;
+evidence was retrieved before each temporary boat stopped. Genuine 1D texture
+storage and framebuffer-copy/texture-readback work remain in progress and are
+excluded from the accepted count. Integer lighting passed 301 checks per direct/queued
 route, two saved-source and fourteen semantic rejecting controls, 36 regressions,
 two generated checks and the locked build (57 commands). The coordinator matched
 all 116 retained evidence hashes and 13 committed blobs. The four indexed queries
@@ -114,7 +125,7 @@ MDK2 remains before its first window. The historical `f0eda338f`, run
 `20261101-mdk2-prewindow-cause`, traces the first rejected lookup to `glAccum`:
 212 requested GL/WGL names were rejected at that point, including 208
 unimplemented procedures; the November 2 update above records the current
-178-name remainder after the drawable, presentation, rectangle and double matrix changes.
+82-name remainder after the accepted implementations listed above.
 The loader enters error2 and then waits for an error string from its suspended
 file worker. One78.087-second original exits0 with a reviewed blank teal image
 and zero ordinary inputs. This is a concrete export-implementation blocker,
