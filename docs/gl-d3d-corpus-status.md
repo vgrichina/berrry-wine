@@ -44,9 +44,25 @@ temporary boat was stopped. Published `a6a1248b9` then implements native
 queued visibility. Run `20261102-gl-getdoublev-implementation-resume` passes 157
 ABI checks per direct/queued route, 30 regression variants, 14 rejecting controls
 and the locked build. Its evidence archive hash was independently verified and
-its temporary boat stopped. The remaining unsupported set is **175** mandatory
-names. Rotation correctness and eight missing typed normal exports are next;
-`glRotated` already resolves, so its repair does not reduce this count.
+its temporary boat stopped. That result left 175 mandatory names unsupported.
+Published `4631ff857` subsequently repairs the already-resolved `glRotated`;
+its double argument and matrix semantics do not change the missing-export count.
+See [rotation evidence](re-notes/gl-rotated-native-20261102.md).
+
+Four subsequently accepted families reduce the unsupported set to **105**
+mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
+
+| Accepted implementation | Newly implemented exports | Evidence |
+| --- | ---: | --- |
+| `9bafbc319` typed normals | 8 | [Normal conversions, lighting and direct/queued validation](re-notes/gl-typed-normal-family-20261102.md) |
+| `9f56285e2` typed texture coordinates | 25 | [Numeric adapters, dimensional defaults and display lists](re-notes/gl-typed-texcoord-family-20261102.md) |
+| `7170d9afa` typed vertices | 14 | [Numeric adapters, homogeneous coordinates and direct/queued validation](re-notes/gl-typed-vertex-family-20261102.md) |
+| `80ebba348` raster positions | 23 | [Clipping, raster lighting/texgen, bitmap pixels and WebGL1/2 validation](re-notes/gl-raster-position-family-20261102.md) |
+
+Each family passed its focused semantic and regression checks, rejecting controls,
+and locked build; the coordinator verified retained evidence hashes and committed
+blobs. The integer fog/light/material and light/material query families remain
+in progress and are excluded from the accepted count.
 See [query evidence](re-notes/gl-getdoublev-native-state-20261102.md).
 See [the rectangle evidence](re-notes/gl-rectangle-family-20261102.md).
 No original MDK2 replay,
