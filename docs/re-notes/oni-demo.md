@@ -410,3 +410,40 @@ module load, DC/format result and mandatory table's first NULL, with matching
 source/module pins. Only demonstrated missing semantics justify a runtime
 repair and its negative controls/build/browser observation. No startup,
 gameplay, console-use or training-objective success is claimed here.
+
+## Fresh pre-modal trace blocked during admission (2026-11-02)
+
+Run `20261102-oni-pre-modal-api-trace` preserved the predecessor's aborted
+transfer and independently verified all70 retained final-manifest hashes.
+`glAreTexturesResident` remains a conditional static prediction, **not an
+observed API/result**. The prepared bounded read-only trace was not executed.
+
+During the ordered scratch-only wait, a continuous local observer recorded
+1995182080 free bytes at `2026-11-02T21:54:04.611382Z`, below the required
+2000000000; its final minimum was1961189376 bytes. This worker had no transfer,
+boat, build, runtime test, guest or browser process. Execution admission was
+latched off; no retry followed the later recovery in free space. These are
+ambient filesystem observations, not an emulator failure or attribution of
+the predecessor's transient writes. Read-only host log-volume and allocation
+observations did not establish the write cause. A prepared filesystem-write
+restriction wrapper remains unexecuted and unvalidated; it supplies no safety
+or acceptance evidence.
+
+Brave99598 then GL43988 were consumed in order: actual terminal exits0, four
+result/final files each, exact AUTHOR RELEASE entries, named/scoped helper
+absence, and all364/48 final-manifest hashes independently passed. GL43988
+also released a disk-aborted task without a runtime implementation. Main was
+refreshed only after both releases. Fresh identity and local/public desktop
+exclusion records remain in this run; no old module was paired with newer
+host/region-map files or run. No source repair, semantic controls, code tests,
+full build, original invocation, browser input or screenshot occurred. This
+is a documentation-only blocker update, not new training progress.
+
+No boat was created or foreign boat touched. Own polling, disk and board
+helpers exited and were checked absent. `RECOVERY.md`, `guard-latched.json`,
+`disk-observations.jsonl`, exact pins, gate verifications and result/final
+metadata retain the failure. The dependency is stable host disk/write behavior
+above2GB before a fresh finite-TTL, exact-hash-streamed, matching-module
+pre-modal trace. Confirm the actual first branch/API result before a faithful
+generic repair and one justified changed-source original browser observation;
+the training-console objective remains unverified.
