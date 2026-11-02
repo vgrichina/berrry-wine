@@ -524,3 +524,59 @@ allocation through both lookup routes. Accumulation storage, operations and
 their acceptance tests remain the next implementation task. No original MDK2
 replay, startup or gameplay claim follows. Box ID/state/expiry: N/A;
 coordinator-owned lifecycle is unchanged.
+
+### 2026-11-02: accumulation successor verifies software, blocked on WebGL drawables
+
+No accumulation implementation or lookup availability was added. After the
+drawable worker's `181f4295fe1dfe09403109ff970e277ec5073b10` and the GTA worker's
+`beb78a56224916b276d012a53543c9df5bd87c90` terminal/result/final releases, all
+101 recorded predecessor helper PIDs were independently absent. Fresh runs of
+`test/test-opengl-drawable-color-buffers.js`, both direct and `--worker`, pass
+on that published source. The six earlier failures are resolved on software:
+BACK reads red, FRONT clears green while preserving blue BACK, NONE preserves
+BACK, FRONT reads green, and rebinding selects drawable 123. The worker route
+also passes its queued native raster and separate-instance consumer assertions.
+
+A new probe calls the actual `OpenGLHostBridge.call` consumer dispatcher with
+a recording backend and an existing non-software context. BACK/NONE draw and
+BACK read succeed as controls. FRONT draw, FRONT_AND_BACK draw and FRONT read
+each return `GL_INVALID_OPERATION` (1282), preserve the previous selector and
+never reach a backend selection method. A same-context make-current from
+drawable 42 to 123 returns zero and retains 42; rebinding to 42 succeeds.
+These are frontend rejection observations, **not GPU pixel evidence**. The
+local optional native WebGL dependencies are unavailable, and this assignment
+does not authorize browser execution or installing dependencies.
+
+This is a remaining architectural prerequisite for backend-complete
+accumulation. The [OpenGL 1.1 specification](https://registry.khronos.org/OpenGL/specs/gl/glspec11.pdf),
+sections 4.2.4 and 4.3.2, requires LOAD/ACCUM to use the selected read image and
+RETURN to update the selected draw images. `lib/gl-compat.js` still rejects
+those WebGL selections and cross-drawable rebinding before any accumulation
+arithmetic could run. Its GPU resources belong to each context, whereas the
+new drawable-owned attachments exist in the native software renderer. The CLI
+still defaults to WebGL (`test/run.js`), so qualifying software alone would
+leave an actual consumer backend incomplete.
+
+The exact next action is to connect the GL WebGL consumer to drawable-owned
+front/back color attachments and presentation snapshots, with context state
+kept separate from image ownership. Define storage sharing across frontend
+contexts, binding, resize and deletion; generic GPU color-resource helpers
+alone do not establish that GL contract. Pass selected FRONT/BACK/both/NONE
+pixel tests and same-context/two-drawable plus two-context/one-drawable tests
+on a real GPU route before accumulation availability. Then implement signed
+per-drawable accumulation storage and all five operations, clear, queries,
+scissor/masks, list timing, errors and ABI acceptance on every supported route.
+
+The native encoder/worker, software raster/producer, shared render worker,
+frame-state, display-list, integer-color and WGL availability/layer-plane
+regressions pass, along with generated dispatch freshness and the mandatory
+`flock /tmp/wine-build.lock bash tools/build.sh`. Availability testing still
+checks the original remaining miss set through both lookup routes, including
+error 127, no thunk allocation and ABI preservation.
+
+Evidence: `scratch/runs/20261102-mdk2-accum-after-drawables/`, including fresh
+software logs, `webgl-boundary-observations.json`, the exact input/module hashes
+and primary-specification design. All **188** remaining names, including
+`glAccum` and `glClearAccum`, stay rejected. No original MDK2 replay or
+startup/gameplay qualification follows. Box ID/state/expiry: N/A;
+coordinator-owned lifecycle is unchanged.
