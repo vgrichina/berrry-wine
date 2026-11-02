@@ -24,10 +24,18 @@ runs and the locked build. That browser reports ANGLE SwiftShader; it does not
 establish hardware GPU qualification.
 
 Published `b50eb7b0bf` adds seven rectangle aliases with direct/queued native
-pixel and ABI checks in `20261102-gl-rectangle-family`. The remaining unsupported
-set is now **181** names, independently checked through both lookup routes;
-these include `glAccum` and `glClearAccum`, which still return NULL/error 127
-without thunk allocation. Signed per-drawable accumulation remains outstanding.
+pixel and ABI checks in `20261102-gl-rectangle-family`. Published `69fa4b52c`
+then implements `glLoadMatrixd`, `glTranslated` and `glScaled`, including double
+argument decoding, selected-stack postmultiplication, display-list snapshots
+and Begin error atomicity. Run `20261102-gl-double-matrix-implementation`
+passes 60 checks each through actual resolved direct and queued routes, meaningful
+negative controls, eight focused regressions and the locked build on an exact
+7,186-input snapshot. Evidence was retrieved and hash-checked before its temporary
+boat was stopped. See [matrix evidence](re-notes/gl-double-matrix-transforms-20261102.md).
+The remaining unsupported set is **178** mandatory names at that published
+revision, including `glAccum` and `glClearAccum`, which still return NULL/error
+127 without thunk allocation. Signed per-drawable accumulation is being
+implemented and remains unqualified pending its tests and publication.
 See [the rectangle evidence](re-notes/gl-rectangle-family-20261102.md).
 No original MDK2 replay,
 first window or gameplay has been qualified. See [MDK2 notes](re-notes/mdk2-demo.md).
@@ -67,7 +75,7 @@ MDK2 remains before its first window. The historical `f0eda338f`, run
 `20261101-mdk2-prewindow-cause`, traces the first rejected lookup to `glAccum`:
 212 requested GL/WGL names were rejected at that point, including 208
 unimplemented procedures; the November 2 update above records the current
-181-name remainder after the drawable, presentation and rectangle changes.
+178-name remainder after the drawable, presentation, rectangle and double matrix changes.
 The loader enters error2 and then waits for an error string from its suspended
 file worker. One78.087-second original exits0 with a reviewed blank teal image
 and zero ordinary inputs. This is a concrete export-implementation blocker,
