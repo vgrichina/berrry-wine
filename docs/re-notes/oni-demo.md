@@ -247,3 +247,54 @@ actual lifecycle receipts are preserved in the run. Do not resume this boat
 or retry the unchanged transfer. Restore safe disk headroom and use a bounded
 streaming transfer for a fresh ordinary registered-browser console attempt;
 capture and review native before/held/released/settled input then.
+
+## Streamed console attempt: startup blocker (2026-11-02)
+
+Run `20261102-oni-streamed-training-console` waited live at41-second intervals
+for Braveheart25443, then GL22106. Both actual terminal exits0, result/final
+files, exact AUTHOR RELEASE entries, and scoped helper absence were verified
+before execution. All3995 accepted GL build inputs matched current files.
+The actual browser response used the production module
+`46c90ae60c2d47d0451e5b972c88ce8d0444500e7e734fd0683ca3ca18a7667a`
+(2073181 bytes), streamed directly from GL22106's verified retained artifact;
+the older shared build file was not replaced. All396 source,1005 compiler,
+34 fixture files, immutable api_table, and selected module matched before and
+after. The fixture remains the community repack with original Win98 executable,
+not a pristine installer. Fresh local/public DESKTOP lists still exclude Oni.
+
+No local source archive or fixture duplicate was made. The initial SSH pipe
+was denied by this key's ssh permission (403), before source delivery. A bounded
+exec stream delivered3904 members; extraction initially rejected absolute own
+controller member names. Canonicalizing only the exact own checkout prefix
+on that existing remote stream, without retransferring fixtures, passed exact
+member-set and SHA checks. No guest ran before verification. These transport
+limitations and corrections are preserved in the run. The minimum sampled
+free space across owned guarded transfer operations was2009903104 bytes,
+above the required2000000000; no own guard latched.
+
+One ordinary registered `oni_demo` invocation, Chrome151.0.7922.108, default
+WebGL, threads, real clock and1024x768 viewport, immediately displayed:
+"There is no hardware-accelerated OpenGL present on your system; Oni will now
+exit." It did not reach the intro, training, or console. This is the observed
+first startup blocker, not proof of missing physical GPU support or a proven
+emulator regression; the underlying capability/guest-check cause is unknown.
+The harness also logged unavailable stdole2.tlb, without establishing causality.
+No renderer/clock override, guest changes, save injection, download, or second
+original invocation was used. Historical movement is not new progress.
+
+Personally reviewed full-page/canvas before, held, released, settled and final
+neutral captures show the modal, its ordinary OK dismissal, and return to the
+Wine-Assembly desktop. One trusted mouse down/up pair held546ms; final held
+set and input queue are empty, buttons0. These are blocker-acknowledgment
+captures, not gameplay or console completion. All17 retrieved PNG CRCs pass.
+
+All73 retrieved files (2875185 bytes) were SHA-verified against remote records
+and reread locally before the explicitly delegated shutdown request. Controller
+and browser exited0; remote named/scoped helpers, profile, transfer chunks and
+remote archive were absent. Boat `bx_puqrw5me`, original expiry
+`2026-11-02T20:51:05.417Z` recorded before use, is verified STOPPED at
+`2026-11-02T19:57:34.082Z`. Source/compiler/fixture identities, actual served
+module, input records, review, cleanup and lifecycle evidence remain in the run.
+No runtime repair or new build was made. Next investigate this startup OpenGL
+capability branch before another separately authorized console attempt; the
+training-console objective remains unverified.
