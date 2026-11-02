@@ -1,4 +1,27 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-11-01
+# OpenGL / Direct3D corpus status, reconciled 2026-11-02
+
+## November 2: MDK2 prerequisites and accepted unit movement
+
+Published `181f4295fe` repairs MDK2's six retained software drawable cases.
+Direct and queued routes now cover selected front/back reads and writes,
+independent destination blending, NONE with depth/stencil updates, drawable
+rebinding and lifecycle. All 25 focused runs, four affected reruns and the final
+locked build pass in `20261102-mdk2-drawable-color-buffers`. The follow-up
+`df747405e` verifies those cases again and records the remaining WebGL boundary:
+FRONT read/draw and BOTH draw return error 1282; cross-drawable rebinding fails.
+That probe uses the actual consumer dispatcher with a recorder, without GPU
+pixel evidence. WebGL drawable attachments remain a prerequisite for accumulation.
+All **188** remaining requested names, including `glAccum` and `glClearAccum`,
+still return NULL/error 127 without thunk allocation. No original MDK2 replay,
+first window or gameplay has been qualified. See [MDK2 notes](re-notes/mdk2-demo.md).
+
+Dark Reign 2's later `dd82ceb03`, run `20261101-dark-reign2-unit-movement`,
+qualifies selected-unit movement after consumed ordinary Shift-M and a ground
+click. A matched neutral interval and stationary world landmarks distinguish
+unit translation from camera movement. Exact arrival of all six units, combat,
+mission completion and backend parity remain open. This reuses accepted evidence;
+no new original run or current-main pixel comparison was performed for this update.
+See [the movement evidence](re-notes/dark-reign2-demo.md#ordinary-selected-unit-movement-order-2026-11-01).
 
 ## November 1: accepted native progress and remaining backend gaps
 
@@ -8,7 +31,7 @@ software/WebGL parity or reconstruct the historical 27-app membership.
 | Title | Accepted native evidence | Remaining gap |
 | --- | --- | --- |
 | Redline | `0da33e84b`, run `20261101-redline-world-loading-headroom`: WORLD loading completes, firearm/HUD appears, and consumed ordinary Up moves the player toward the shutter/wall in paired before/held/released PNGs. One original exits 0 after 358.407 seconds; 70 original/configuration pins and 129 actual loaded-file hashes match. | Current WebGL comparison, combat outcome, FPS and audio. Loading/cinematic changes alone were excluded from movement proof. |
-| Dark Reign 2 | `d9aca1952`, run `20261101-dark-reign2-native-mission-input`: Demo Mission 1 terrain, soldiers, objective, command bar and minimap are visible; ordinary mouse selection is verified. One original exits 0 after 327.256 seconds; 29 original/manifest pins and 142 runtime-read hashes match. | Unit movement and mission completion; GPU mip support, backend parity, FPS and audio. Arrow dispatch and changed framing do not establish unit movement. |
+| Dark Reign 2 | `d9aca1952`, run `20261101-dark-reign2-native-mission-input`: Demo Mission 1 terrain, soldiers, objective, command bar and minimap are visible; ordinary mouse selection is verified. One original exits 0 after 327.256 seconds; 29 original/manifest pins and 142 runtime-read hashes match. | Later `dd82ceb03` verifies selected-unit movement after an ordinary order (see November 2 reconciliation above). Mission completion, GPU mip support, backend parity, FPS and audio remain open. Arrow dispatch and changed framing alone were excluded from movement evidence. |
 
 The later native control runs add these bounded checkpoints:
 
@@ -23,9 +46,11 @@ retain unchanged original/source identities and cleanup evidence, and add no
 current WebGL comparison. See [Outcast notes](re-notes/outcast-demo.md) and
 [Dethkarz notes](re-notes/dethkarz-demo.md), and [Incoming notes](re-notes/incoming-demo.md).
 
-MDK2 remains before its first window. `f0eda338f`, run
+MDK2 remains before its first window. The historical `f0eda338f`, run
 `20261101-mdk2-prewindow-cause`, traces the first rejected lookup to `glAccum`:
-212 requested GL/WGL names are rejected, including208 unimplemented procedures.
+212 requested GL/WGL names were rejected at that point, including 208
+unimplemented procedures; the November 2 update above records the current
+188-name remainder.
 The loader enters error2 and then waits for an error string from its suspended
 file worker. One78.087-second original exits0 with a reviewed blank teal image
 and zero ordinary inputs. This is a concrete export-implementation blocker,
