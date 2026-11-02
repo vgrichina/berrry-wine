@@ -1,5 +1,60 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
+## Post-calibration original assignment: disk abort before launch, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-original-post-calibration/`.
+**Zero original executables ran.** The authorized single original attempt did
+not start: the required disk guard aborted prerequisite validation below
+2,020,000,000 free bytes. There is no new startup, calibration-return, menu,
+player-control, FPS or audio evidence. The accepted `3b3ae84c` calibration
+fixture remains a fixture, not original gameplay.
+
+MDK presentation `47d4a082` then rectangle `b50eb7b0` terminal/result/final
+and exact AUTHOR RELEASE were consumed before claiming this note, scratch
+directory and serialized execution. All 364 recorded predecessor helpers were
+independently absent. Earlier activity was static only. The original archive
+hash and full 117-file / 17,078,619-byte media closure matched existing pins.
+All 95 other accepted source/support pins matched; the main Wine wasm changed
+through the published GL work, and is not the module loaded by ToyVM. All 96
+pins against the newly recorded input still match after the interrupted work.
+
+Scratch copies extend the retained ring's stack capture to 58 bytes and compose
+the legacy task wrapper with the current installed ring wrapper. The actual
+task-gate/NT-return composition fixture passes with its fault callback retained
+and all RAM/exported-global parity. Ordinary IRETD, stack-page-fault/task
+delivery, mapped instruction, read-only snapshot negatives, ring overwrite,
+and actual DOS COM accounting fixtures pass. These are synthetic fixtures.
+
+The unobserved authentic-instruction calibration arm finished at tick 37,
+20,350,037 dispatches and count 241,463, with unchanged default clock and the
+accepted ToyVM module `7bfe7f97ff11b0bd1e91134828563dc5c0c96aab182f2d1e24b7cec01ca1cdf0`.
+The observed arm and a locked project build then ran concurrently. Their disk
+guards recorded minima of **1,997,266,944** and **1,997,656,064** bytes,
+respectively, and terminated both process groups with SIGTERM. Both direct
+children were actually waited with status -15. The build was interrupted
+during its early gates; it did not report a source/compiler defect or pass.
+Observed whole-loop parity, complete-frame audit, rollover and same-second
+validation did **not** finish. Partial compressed frames are retained as
+incomplete evidence and must not be described as accepted validation.
+
+Free disk recovered after termination, but the abort was latched in `STOP`;
+there was no retry, original launch or foreign-artifact cleanup. No
+`ORIGINAL-STARTED` marker exists. The prepared 120-second shared-wall /
+130-second OS-cap original driver was never invoked. No per-original ticks,
+calibration result, causal guest fault/wait or fresh image exists for this task.
+No ordinary menu/player input was sent. No ToyVM source, guest byte, clock,
+optimization, GL source or generated bundle changed in this assignment.
+
+Next action requires resource headroom and renewed serialized ownership:
+finish validation of the prepared observer and all complete 58-byte restore /
+12-byte IRETD frames before any original. The original result remains unknown;
+the single-attempt assignment stopped at its explicit resource boundary.
+Actual waits, direct PID/group absence and strict-SSH docs-only publication are
+retained. A transient build descendant zombie was absent on the later direct
+check. Own board watchers are actually stopped and waited before final release.
+Box ID/state/expiry N/A; coordinator lifecycle unchanged. No browser, download,
+alternate executable, worker or public deployment occurred.
+
 ## Original calibration instruction fixture: clock contract passes, 2026-11-02
 
 Evidence: `scratch/runs/20261102-gta1-calibration-clock-fixture/`; durable test:
