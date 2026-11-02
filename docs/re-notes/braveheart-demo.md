@@ -55,9 +55,86 @@ Measured with `--input`/ctl `dump-mem:0xc5aef4:4`: 180,176 steps per frame at
 100k batches, still diverging slowly); dropping to 1 ms/batch (ctl POST
 `{"action":"tick","ms":1}`) converges to under 200 within ~30k batches. So
 run the battle at `--tick-ms-per-batch=1` (or 5 to reach it faster, then 1).
-In a browser real time is the clock and one step costs far under 16 ms, so
-the window should converge there; that has not been checked in a browser.
+The browser uses real time. Convergence was a hypothesis here, not an
+observation; the 2026-11-02 browser run below does not establish convergence.
 
 Route (CLI): `--tick-ms-per-batch=5`, Esc every 40k batches x6 -> Mission
 Brief by ~160k; Take the Field; battle frames from ~390k.
 Evidence: `scratch/runs/20261006T1640Z-braveheart_demo-gameplay`.
+
+
+## Native browser observation — 2026-11-02
+
+Run: `scratch/runs/20261102-braveheart-native-browser/`. This is an honest
+first-blocker result, not accepted battlefield gameplay. One original ran in
+headful Chrome 151.0.7922.108 with the default host renderer (`webgl`), real
+clock, guest worker and threads. No guest patches, injected state, renderer
+selection, clock changes, download or public promotion were used.
+
+The prelaunch registry check found `braveheart_demo` in APPS and
+LOCAL_CANDIDATE_APPS, absent from DESKTOP_APPS. The registered `bhsoft.exe`
+and six real movie/audio DLLs were retained. All 145 installed files
+(207704346 bytes) matched the coordinator's locally observed hashes; those
+hashes are not upstream provenance. All 143 browser-manifest entries matched
+actual file sizes. Exact per-file identities are in `original-inputs.json`;
+`bhsoft.exe` SHA-256 is
+`70ae3feedc1f977ca8b8ed32560ebdaa381a25b6261f2cbc77396c887e2a8955`
+and browser-manifest SHA-256 is
+`2b4fd55edf1b74adb3a102893b12e052283130cbb22aeaca5d048b23dd40b77f`.
+
+After the ordered predecessor releases, source snapshot
+`345270459395baf28e88d68ace9c3d311f1f4e70` matched all 3936 accepted inputs
+of `20261102-gl-stipple-implementation-recover` and its locked full build
+(exit 0). Tested module: 2071475 bytes, SHA-256
+`307168f9e0475fd3c10f87cbc5d98f05006c6d4494d2f564381a9a0ebe289fe6`.
+No production code changed for this investigation. `snapshot-inputs.json`,
+`accepted-build-inputs.json` and `build-identity.json` pin runtime/compiler
+inputs. The immutable transfer included `src/api_table.json`; all 3010
+members were verified before and after extraction. Archive SHA-256:
+`4ec58adf4645baf981a176e4b68b3ac9908cef2bb8627cfa2714b72ae209e85a`.
+
+Actions were chosen after viewing each screen: interlaced Eidos movie →
+balanced native Escape → Game Features → visible Back → main menu → visible
+Raid Town → Stephen Feherty mission brief → visible Conduct Raid → lazy asset
+loading. The shipped readme names renderer executables but supplies no
+battlefield control instructions. The older CLI Take the Field route above
+was not imposed on the browser's different visible screens. Native event
+records contain 11 trusted events and four balanced press/release pairs;
+actual holds were 4451, 2368, 1443 and 4312 ms, including capture overhead.
+`04-raid-town-settled` provides the before image for Conduct Raid;
+`05-conduct-raid-held`, `-released`, `-settled` preserve its input sequence.
+
+The first blocker was persistent unreadable software presentation: a noisy
+green/brown strip across the upper canvas with the lower area black, seen
+through `07-loading-progress`, both `08-neutral-render-check` captures and
+`09-final-neutral-blocker`. The latter was personally reviewed after
+retrieval. Its cause is unlocalized. No readable Take the Field button,
+unit selection or ordinary battlefield command was reached. Inputs stopped
+at that blocker; no unchanged original was replayed.
+
+Read-only simulation samples were 10, 14, 13, 21, 39, then 12 steps, with
+changing delta rings, guest registers, work statistics and real tick values.
+The final ring was `[168,172,144,377,170,152,151,212]`; final guest tick
+261836, host stepTicks 28615. The recorded frame-end/pump counters remained
+623/620 across the malformed presentation samples. These counters do not
+establish displayed FPS, completed game frames, a browser stall or sustained
+simulation convergence. Preserve `retrieved/input-state.jsonl` rather than
+substituting the historical fixed-clock CLI spiral for this observation.
+
+The controller and Chrome exited 0 with input released, server closed and
+profile removed. All 111 evidence files were retrieved and SHA-verified
+before the explicitly delegated shutdown of own boat `bx_d5ebwy9z`
+(original expiry `2026-11-02T19:12:47.558Z`); `box-final.json` records its
+final state. Forty-five PNGs passed chunk CRC verification. The guarded
+boat/transfer/run phase kept owner /home free above 2000000000 bytes
+(minimum 2034028544). During the earlier scratch-only
+predecessor wait, unrelated staging reduced observed free disk below that
+floor; `preparation-disk-limit.json` preserves this limitation. Continuous
+whole-task floor compliance is therefore not claimed.
+
+Recovery: use this run's `RECOVERY.txt`, manifests and retrieved captures.
+Local ignored fixture/module bytes require the pinned local archive or
+existing installed files; Git alone does not recover them. A future task
+should localize the unreadable presentation from these observations before
+another original run. Browser battlefield interaction and convergence remain
+unverified. No public registry change is warranted.
