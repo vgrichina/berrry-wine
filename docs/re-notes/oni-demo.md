@@ -447,3 +447,36 @@ above2GB before a fresh finite-TTL, exact-hash-streamed, matching-module
 pre-modal trace. Confirm the actual first branch/API result before a faithful
 generic repair and one justified changed-source original browser observation;
 the training-console objective remains unverified.
+
+## Host disk transient attributed; API trace deferred (2026-11-02)
+
+Run `20261102-oni-disk-writer-and-api-trace` performed bounded read-only
+same-user `/proc` I/O and open-file allocation sampling after the predecessor
+and the scoped terminal-log recovery released. Recovery had reclaimed
+19,791,872 physical bytes. Initial free space was2,025,984,000 bytes; this
+was a fresh measurement, independent of historical floor breaches.
+
+At22:14:46Z the two-second observer recorded1,968,259,072 free bytes,
+following2,024,771,584. In that interval `codex` PID1836136 recorded
+56,344,576 write bytes. The original interval's temporary file was too short
+lived for that sampling rate, so its exact path is unknown. Faster sampling
+then directly caught another occurrence at22:15:08Z: `codex` PID1837492
+held fd37 to `/home/user/.codex/cache/remote_plugin_catalog/.tmprpeqos`.
+Its physical allocation grew9,748,480 ->33,169,408 ->56,348,672 bytes
+(size56,340,716), alongside matching process write deltas. Free space fell
+2,019,127,296 ->1,995,005,952 ->1,969,623,040 bytes. The catalog
+`d0f1d17ff0560956.json` was subsequently observed with the same size and
+allocation, and free space recovered above2GB. This identifies an actual
+catalog temporary writer; it does not retrospectively prove every prior
+transient had the same cause. No catalog, DB, WAL, session or log contents
+were read or changed, and no foreign process was killed.
+
+Stable disk headroom and bounded ambient writes were not established. No
+boat, transfer, fixture duplicate, original guest, build, browser or API trace
+was started; no unchanged transfer retry occurred. `glAreTexturesResident`
+remains a conditional static prediction, not an actual API/result. No shared
+runtime repair or new training-console progress is claimed. Evidence and
+recovery instructions are retained in the fresh run. Before a fresh faithful
+trace, address the observed roughly56.35MB catalog temporary allocation or
+provide headroom that survives it, then refresh main, fixture/module/source
+pins and exclusion checks. This task makes no host-cache change.
