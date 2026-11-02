@@ -32,10 +32,15 @@ passes 60 checks each through actual resolved direct and queued routes, meaningf
 negative controls, eight focused regressions and the locked build on an exact
 7,186-input snapshot. Evidence was retrieved and hash-checked before its temporary
 boat was stopped. See [matrix evidence](re-notes/gl-double-matrix-transforms-20261102.md).
-The remaining unsupported set is **178** mandatory names at that published
-revision, including `glAccum` and `glClearAccum`, which still return NULL/error
-127 without thunk allocation. Signed per-drawable accumulation is being
-implemented and remains unqualified pending its tests and publication.
+Published `ab45b7d43` subsequently implements signed per-drawable accumulation,
+including `glAccum` and `glClearAccum`. Run
+`20261102-mdk2-accum-implementation-remote` passes 261 native observations each
+through resolved direct and queued routes, 584/588 actual WebGL1/WebGL2 checks,
+525 browser Worker checks, meaningful old-source and semantic negatives,
+27 focused regressions, the union gate and the locked build. All 7,202 snapshot
+inputs and 21 tested committed blobs match; evidence was retrieved before its
+temporary boat was stopped. The remaining unsupported set is **176** mandatory
+names. Native double state queries and double rotation are the next prerequisites.
 See [the rectangle evidence](re-notes/gl-rectangle-family-20261102.md).
 No original MDK2 replay,
 first window or gameplay has been qualified. See [MDK2 notes](re-notes/mdk2-demo.md).
