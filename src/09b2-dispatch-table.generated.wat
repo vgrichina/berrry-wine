@@ -3920,6 +3920,7 @@
     (if (i32.eq (local.get $id) (i32.const 4214)) (then (return (i32.const 1)))) ;; glClearAccum
     (if (i32.eq (local.get $id) (i32.const 4215)) (then (return (i32.const 1)))) ;; glClearDepth
     (if (i32.eq (local.get $id) (i32.const 4217)) (then (return (i32.const 1)))) ;; glClearStencil
+    (if (i32.eq (local.get $id) (i32.const 4218)) (then (return (i32.const 1)))) ;; glClipPlane
     (if (i32.eq (local.get $id) (i32.const 4219)) (then (return (i32.const 1)))) ;; glColor3b
     (if (i32.eq (local.get $id) (i32.const 4220)) (then (return (i32.const 1)))) ;; glColor3bv
     (if (i32.eq (local.get $id) (i32.const 4221)) (then (return (i32.const 1)))) ;; glColor3d
@@ -3949,6 +3950,7 @@
     (if (i32.eq (local.get $id) (i32.const 4257)) (then (return (i32.const 1)))) ;; glEndList
     (if (i32.eq (local.get $id) (i32.const 4271)) (then (return (i32.const 1)))) ;; glFogiv
     (if (i32.eq (local.get $id) (i32.const 4272)) (then (return (i32.const 1)))) ;; glGenLists
+    (if (i32.eq (local.get $id) (i32.const 4274)) (then (return (i32.const 1)))) ;; glGetClipPlane
     (if (i32.eq (local.get $id) (i32.const 4278)) (then (return (i32.const 1)))) ;; glGetDoublev
     (if (i32.eq (local.get $id) (i32.const 4279)) (then (return (i32.const 1)))) ;; glGetLightfv
     (if (i32.eq (local.get $id) (i32.const 4280)) (then (return (i32.const 1)))) ;; glGetLightiv
@@ -4091,7 +4093,6 @@
   (func $gl_dynamic_api_unsupported (param $id i32) (result i32)
     (if (i32.eq (local.get $id) (i32.const 4210)) (then (return (i32.const 1)))) ;; glAreTexturesResident
     (if (i32.eq (local.get $id) (i32.const 4216)) (then (return (i32.const 1)))) ;; glClearIndex
-    (if (i32.eq (local.get $id) (i32.const 4218)) (then (return (i32.const 1)))) ;; glClipPlane
     (if (i32.eq (local.get $id) (i32.const 4234)) (then (return (i32.const 1)))) ;; glColor4d
     (if (i32.eq (local.get $id) (i32.const 4245)) (then (return (i32.const 1)))) ;; glColorSubTableEXT
     (if (i32.eq (local.get $id) (i32.const 4246)) (then (return (i32.const 1)))) ;; glColorTableEXT
@@ -4118,7 +4119,6 @@
     (if (i32.eq (local.get $id) (i32.const 4269)) (then (return (i32.const 1)))) ;; glEvalPoint2
     (if (i32.eq (local.get $id) (i32.const 4270)) (then (return (i32.const 1)))) ;; glFeedbackBuffer
     (if (i32.eq (local.get $id) (i32.const 4273)) (then (return (i32.const 1)))) ;; glGetBooleanv
-    (if (i32.eq (local.get $id) (i32.const 4274)) (then (return (i32.const 1)))) ;; glGetClipPlane
     (if (i32.eq (local.get $id) (i32.const 4275)) (then (return (i32.const 1)))) ;; glGetColorTableEXT
     (if (i32.eq (local.get $id) (i32.const 4276)) (then (return (i32.const 1)))) ;; glGetColorTableParameterfvEXT
     (if (i32.eq (local.get $id) (i32.const 4277)) (then (return (i32.const 1)))) ;; glGetColorTableParameterivEXT
@@ -21409,7 +21409,7 @@
       (call $handle_gpu_api (i32.const 139) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4218: glClipPlane
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_clip (i32.const 0))
       (return)
     ) ;; 4219: glColor3b
       (call $handle_glColor_integer (i32.const 3) (i32.const 8) (i32.const 1) (i32.const 0) (local.get $arg0))
@@ -21577,7 +21577,7 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4274: glGetClipPlane
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_clip (i32.const 1))
       (return)
     ) ;; 4275: glGetColorTableEXT
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

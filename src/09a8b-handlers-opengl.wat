@@ -1612,3 +1612,43 @@
           (call $gl32 (i32.add (local.get $esp) (i32.const 4)))) (i32.const 0)))))))
     (i32.store (global.get $reg_base) (local.get $value))
     (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 8))))
+
+  ;; glClipPlane and glGetClipPlane share the exact two-word stdcall ABI.
+  ;; Validate the complete guest frame/span before changing registers/state.
+  (func $handle_gl_clip (param $get i32)
+    (local $esp i32) (local $plane i32) (local $ptr i32) (local $ctx i32)
+    (local $error i32) (local $g i32) (local $s i32) (local $i i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (call $gl_texcoord_check (local.get $esp) (i32.const 12))
+    (local.set $plane (call $gl32 (i32.add (local.get $esp) (i32.const 4))))
+    (local.set $ptr (call $gl32 (i32.add (local.get $esp) (i32.const 8))))
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.ge_u (i32.sub (local.get $plane) (i32.const 0x3000)) (i32.const 6))
+      (then (local.set $error (i32.const 0x500))))
+    (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+      (then (local.set $error (i32.const 0x502))))
+    (if (i32.and (i32.eqz (local.get $get)) (i32.ne (local.get $ctx) (i32.const 0))) (then
+      (if (i32.load offset=36 (local.get $ctx)) (then (local.set $error (i32.const 0x502))))))
+    (if (i32.and (i32.eqz (local.get $error)) (i32.ne (local.get $ctx) (i32.const 0))) (then
+      (call $gl_texcoord_check (local.get $ptr) (i32.const 32))
+      (if (local.get $get) (then
+        (local.set $s (i32.add (call $gl_clip_state)
+          (i32.shl (i32.sub (local.get $plane) (i32.const 0x3000)) (i32.const 5))))
+        (loop $output
+          (call $gs64 (i32.add (local.get $ptr) (local.get $i)) (i64.load (i32.add (local.get $s) (local.get $i))))
+          (local.set $i (i32.add (local.get $i) (i32.const 8)))
+          (br_if $output (i32.lt_u (local.get $i) (i32.const 32)))))
+        (else
+          (local.set $g (call $gl_alloc_affine (i32.const 48)))
+          (if (i32.eqz (local.get $g)) (then (unreachable)))
+          (local.set $s (call $g2w (local.get $g)))
+          (memory.fill (local.get $s) (i32.const 0) (i32.const 16))
+          (i32.store offset=4 (local.get $s) (local.get $plane))
+          (i32.store offset=8 (local.get $s) (i32.add (local.get $g) (i32.const 16)))
+          (call $gl_copy_from_guest (i32.add (local.get $s) (i32.const 16)) (local.get $ptr) (i32.const 32))
+          (drop (call $gl_wat_encode_call (i32.const 148) (local.get $s) (i32.const 0)))
+          (call $heap_free (local.get $g))))))
+    (if (i32.and (i32.ne (local.get $error) (i32.const 0)) (i32.ne (local.get $ctx) (i32.const 0)))
+      (then (call $gl_list_error (local.get $ctx) (local.get $error))))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 12))))

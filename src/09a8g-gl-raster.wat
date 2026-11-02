@@ -838,22 +838,35 @@
       (br $lp))))
 
   ;; ---- small helpers ------------------------------------------------------
-  ;; Scratch: +0 the MVP, +64 one object-space vec4, +128 three screen
-  ;; records, +256 three clip records, +512 an eight-vertex clipping buffer,
-  ;; +1088 a nine-vertex buffer, +0x7C0 the default viewport. Even-numbered
-  ;; passes produce at most eight vertices, ending below the persistent
-  ;; normal matrix at +0x400. Other lighting/texgen temporaries overlap the
-  ;; second buffer and are finished before clipping. All fit inside 0x800.
-  ;; Clip record, 60 bytes: +0 x, +4 y, +8 z, +12 w, +16 u, +20 v, then
+  ;; Scratch: +0 MVP, +64 object vec4, +96 eye vec4, +128 screen records,
+  ;; +256 three clip records, +0x400 persistent normal matrix, +0x7C0
+  ;; default viewport, +0x800/+0xE00 polygon buffers. All fit in 0x1400.
+  ;; Clip record: +0 x, +4 y, +8 z, +12 w, +16 u, +20 v, then
   ;; r, g, b, a at +24..+36, unit 1's u, v at +40, +44, q0/q1 at +48/+52
   ;; and the eye-space fog distance at +56 -- all f32, so clipping lerps
-  ;; fifteen floats alike.
+  ;; the original fifteen floats and six user distances alike.
+  ;; Clip records are 84 bytes: original 60 plus six user distances.
+  ;; Polygon buffers at +0x800/+0xE00 hold fifteen records each, disjoint
+  ;; from the normal matrix (+0x400) throughout a multi-primitive draw.
+  (global $gl_sw_user_mask (mut i32) (i32.const 0))
+  (func $gl_sw_user_distances (param $clip i32) (param $object i32)
+    (local $i i32) (local $eye i32)
+    (local.set $eye (i32.add (global.get $gl_sw_scratch) (i32.const 96)))
+    (if (global.get $gl_sw_user_mask) (then
+      (call $gl_mtx_transform4 (local.get $eye) (global.get $gl_sw_mv) (local.get $object))))
+    (loop $distances
+      (f32.store (i32.add (local.get $clip) (i32.add (i32.const 60) (i32.shl (local.get $i) (i32.const 2))))
+        (if (result f32) (i32.and (global.get $gl_sw_user_mask) (i32.shl (i32.const 1) (local.get $i)))
+          (then (f32.demote_f64 (call $gl_clip_distance (local.get $i) (local.get $eye))))
+          (else (f32.const 1))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $distances (i32.lt_u (local.get $i) (i32.const 6)))))
   (func $gl_sw_clip_at (param $k i32) (result i32)
     (i32.add (global.get $gl_sw_scratch)
-      (i32.add (i32.const 256) (i32.mul (local.get $k) (i32.const 60)))))
+      (i32.add (i32.const 256) (i32.mul (local.get $k) (i32.const 84)))))
   (func $gl_sw_poly_at (param $k i32) (result i32)
     (i32.add (global.get $gl_sw_scratch)
-      (i32.add (i32.const 512) (i32.mul (local.get $k) (i32.const 60)))))
+      (i32.add (i32.const 0x800) (i32.mul (local.get $k) (i32.const 84)))))
   ;; Signed distance to GL's near clip plane, z >= -w.
   (func $gl_sw_near_d (param $c i32) (result f32)
     (f32.add (f32.load offset=8 (local.get $c)) (f32.load offset=12 (local.get $c))))
@@ -861,6 +874,9 @@
   ;; Side clipping must precede the bounded screen-coordinate conversion:
   ;; saturating a far-offscreen vertex moves its geometry without moving UVs.
   (func $gl_sw_plane_d (param $c i32) (param $plane i32) (result f32)
+    (if (i32.ge_u (local.get $plane) (i32.const 6)) (then
+      (return (f32.load (i32.add (local.get $c)
+        (i32.add (i32.const 60) (i32.shl (i32.sub (local.get $plane) (i32.const 6)) (i32.const 2))))))))
     (if (i32.eqz (local.get $plane)) (then (return (call $gl_sw_near_d (local.get $c)))))
     (if (i32.eq (local.get $plane) (i32.const 1)) (then (return
       (f32.sub (f32.load offset=12 (local.get $c)) (f32.load offset=8 (local.get $c))))))
@@ -883,7 +899,7 @@
           (f32.mul (f32.sub (f32.load (i32.add (local.get $b) (local.get $i))) (local.get $x))
                    (local.get $t))))
       (local.set $i (i32.add (local.get $i) (i32.const 4)))
-      (br_if $lp (i32.lt_u (local.get $i) (i32.const 60)))))
+      (br_if $lp (i32.lt_u (local.get $i) (i32.const 84)))))
   ;; Per-vertex screen record, 32 bytes: +0 x, +4 y (i32), +8 z, +12 rhw,
   ;; +16 u, +20 v (f32), +24 colour (0xAARRGGBB).
   (func $gl_sw_screen_at (param $k i32) (result i32)
@@ -2217,6 +2233,7 @@
       (f32.load offset=56 (local.get $src)))
     (local.set $clip (call $gl_sw_clip_at (local.get $k)))
     (call $gl_mtx_transform4 (local.get $clip) (local.get $mvp) (local.get $tmp))
+    (call $gl_sw_user_distances (local.get $clip) (local.get $tmp))
     (f32.store offset=56 (local.get $clip) (call $gl_sw_eye_distance (local.get $tmp)))
     (f32.store offset=16 (local.get $clip) (f32.load offset=28 (local.get $src)))
     (f32.store offset=20 (local.get $clip) (f32.load offset=32 (local.get $src)))
@@ -2317,7 +2334,7 @@
           (i32.add (call $gl_sw_clip_at (i32.const 2)) (i32.const 24)) (i32.const 16))
         (call $memcpy (i32.add (call $gl_sw_clip_at (i32.const 1)) (i32.const 24))
           (i32.add (call $gl_sw_clip_at (i32.const 2)) (i32.const 24)) (i32.const 16))))
-    (if (i32.and (i32.eqz (local.get $side_out))
+    (if (i32.and (i32.eqz (i32.or (local.get $side_out) (global.get $gl_sw_user_mask)))
           (i32.and (i32.eq (local.get $inside) (i32.const 7))
                    (i32.eq (local.get $far_in) (i32.const 7))))
       (then
@@ -2328,14 +2345,14 @@
       (then
         (global.set $gl_sw_clipped (i32.add (global.get $gl_sw_clipped) (i32.const 1)))
         (return)))
-    ;; Six Sutherland-Hodgman passes preserve winding and all attributes.
-    ;; A triangle clipped by six planes has at most nine vertices.
+    ;; Up to twelve Sutherland-Hodgman passes preserve winding and attributes.
+    ;; A triangle clipped by twelve planes has at most fifteen vertices.
     (local.set $poly (call $gl_sw_clip_at (i32.const 0)))
     (local.set $n (i32.const 3))
     (local.set $plane (i32.const 0))
     (loop $planes
       (local.set $dst (i32.add (global.get $gl_sw_scratch)
-        (select (i32.const 1088) (i32.const 512) (i32.and (local.get $plane) (i32.const 1)))))
+        (select (i32.const 0xE00) (i32.const 0x800) (i32.and (local.get $plane) (i32.const 1)))))
       (local.set $n (call $gl_sw_clip_pass (local.get $poly) (local.get $n)
         (local.get $dst) (local.get $plane)))
       (if (i32.lt_u (local.get $n) (i32.const 3)) (then
@@ -2343,13 +2360,14 @@
         (return)))
       (local.set $poly (local.get $dst))
       (local.set $plane (i32.add (local.get $plane) (i32.const 1)))
-      (br_if $planes (i32.lt_u (local.get $plane) (i32.const 6))))
+      (br_if $planes (i32.lt_u (local.get $plane)
+        (select (i32.const 12) (i32.const 6) (global.get $gl_sw_user_mask)))))
     (local.set $k (i32.const 1))
     (block $done (loop $fan
       (br_if $done (i32.ge_s (i32.add (local.get $k) (i32.const 1)) (local.get $n)))
       (call $gl_sw_emit (local.get $vp) (local.get $poly)
-        (i32.add (local.get $poly) (i32.mul (local.get $k) (i32.const 60)))
-        (i32.add (local.get $poly) (i32.mul (i32.add (local.get $k) (i32.const 1)) (i32.const 60))))
+        (i32.add (local.get $poly) (i32.mul (local.get $k) (i32.const 84)))
+        (i32.add (local.get $poly) (i32.mul (i32.add (local.get $k) (i32.const 1)) (i32.const 84))))
       (local.set $k (i32.add (local.get $k) (i32.const 1)))
       (br $fan))))
 
@@ -2361,21 +2379,21 @@
     (local $k i32) (local $m i32) (local $a i32) (local $b i32)
     (local $da f32) (local $db f32)
     (loop $edge
-      (local.set $a (i32.add (local.get $src) (i32.mul (local.get $k) (i32.const 60))))
+      (local.set $a (i32.add (local.get $src) (i32.mul (local.get $k) (i32.const 84))))
       (local.set $b (i32.add (local.get $src) (i32.mul
         (select (i32.const 0) (i32.add (local.get $k) (i32.const 1))
           (i32.eq (i32.add (local.get $k) (i32.const 1)) (local.get $n)))
-        (i32.const 60))))
+        (i32.const 84))))
       (local.set $da (call $gl_sw_plane_d (local.get $a) (local.get $far)))
       (local.set $db (call $gl_sw_plane_d (local.get $b) (local.get $far)))
       (if (f32.ge (local.get $da) (f32.const 0))
         (then
-          (call $memcpy (i32.add (local.get $dst) (i32.mul (local.get $m) (i32.const 60)))
-            (local.get $a) (i32.const 60))
+          (call $memcpy (i32.add (local.get $dst) (i32.mul (local.get $m) (i32.const 84)))
+            (local.get $a) (i32.const 84))
           (local.set $m (i32.add (local.get $m) (i32.const 1)))))
       (if (i32.ne (f32.ge (local.get $da) (f32.const 0)) (f32.ge (local.get $db) (f32.const 0)))
         (then
-          (call $gl_sw_lerp_into (i32.add (local.get $dst) (i32.mul (local.get $m) (i32.const 60)))
+          (call $gl_sw_lerp_into (i32.add (local.get $dst) (i32.mul (local.get $m) (i32.const 84)))
             (local.get $a) (local.get $b)
             (f32.div (local.get $da) (f32.sub (local.get $da) (local.get $db))))
           (local.set $m (i32.add (local.get $m) (i32.const 1)))))
@@ -3086,7 +3104,9 @@
             (f32.div (local.get $db) (f32.sub (local.get $db) (local.get $da))))
           (local.set $b (call $gl_sw_poly_at (i32.const 1)))))
       (local.set $far (i32.add (local.get $far) (i32.const 1)))
-      (br_if $plane (i32.lt_u (local.get $far) (i32.const 2))))
+      ;; Retain historical near/far clipping; then visit six user planes.
+      (if (i32.eq (local.get $far) (i32.const 2)) (then (local.set $far (i32.const 6))))
+      (br_if $plane (i32.lt_u (local.get $far) (i32.const 12))))
     (if (i32.eqz (i32.and
           (call $gl_sw_emit_vertex (local.get $a) (local.get $vp) (i32.const 0))
           (call $gl_sw_emit_vertex (local.get $b) (local.get $vp) (i32.const 1))))
@@ -3193,11 +3213,17 @@
   ;; One point: a square of glPointSize pixels centred on the vertex, every
   ;; pixel taking the vertex's colour, depth and texture coordinate.
   (func $gl_sw_point (param $mvp i32) (param $vp i32) (param $v0 i32)
-    (local $r i32) (local $x i32) (local $y i32) (local $size i32) (local $off i32) (local $j i32)
+    (local $r i32) (local $x i32) (local $y i32) (local $size i32) (local $off i32) (local $j i32) (local $plane i32)
     (if (i32.ne (call $gl_sw_xform_vertex (local.get $mvp) (local.get $v0) (i32.const 0)) (i32.const 3))
       (then
         (global.set $gl_sw_clipped (i32.add (global.get $gl_sw_clipped) (i32.const 1)))
         (return)))
+    (loop $user_planes
+      (if (f32.lt (call $gl_sw_plane_d (call $gl_sw_clip_at (i32.const 0))
+          (i32.add (local.get $plane) (i32.const 6))) (f32.const 0)) (then
+        (global.set $gl_sw_clipped (i32.add (global.get $gl_sw_clipped) (i32.const 1))) (return)))
+      (local.set $plane (i32.add (local.get $plane) (i32.const 1)))
+      (br_if $user_planes (i32.lt_u (local.get $plane) (i32.const 6))))
     (if (i32.eqz (call $gl_sw_emit_vertex (call $gl_sw_clip_at (i32.const 0)) (local.get $vp) (i32.const 0)))
       (then
         (global.set $gl_sw_clipped (i32.add (global.get $gl_sw_clipped) (i32.const 1)))
@@ -3309,6 +3335,8 @@
       (call $gl_mtx_stack_top (local.get $b) (i32.const 1))
       (call $gl_mtx_stack_top (local.get $b) (i32.const 0)))
     (global.set $gl_sw_mv (call $gl_mtx_stack_top (local.get $b) (i32.const 0)))
+    (global.set $gl_sw_user_mask (if (result i32) (call $gl_clip_state)
+      (then (i32.load offset=192 (call $gl_clip_state))) (else (i32.const 0))))
     (global.set $gl_sw_lit (i32.and
       (i32.eqz (i32.and (i32.load offset=8 (local.get $start)) (i32.const 0x20000)))
       (i32.ne (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 128)) (i32.const 0))))
@@ -3468,7 +3496,7 @@
     (if (global.get $gl_sw_in_worker) (then (return (i32.const 0))))
     (if (i32.eq (global.get $gl_sw_worker_ok) (i32.const 2)) (then (return (i32.const 0))))
     (if (i32.eqz (global.get $gl_sw_snap)) (then
-      (local.set $g (call $gl_alloc_affine (i32.const 1544)))
+      (local.set $g (call $gl_alloc_affine (i32.const 1744)))
       (if (i32.eqz (local.get $g)) (then
         (global.set $gl_sw_worker_ok (i32.const 2))
         (return (i32.const 0))))
@@ -3534,10 +3562,13 @@
     (if (global.get $gl_texture_draw)
       (then (memory.copy (i32.add (local.get $snap) (i32.const 1480)) (global.get $gl_texture_draw) (i32.const 48)))
       (else (memory.fill (i32.add (local.get $snap) (i32.const 1480)) (i32.const 0) (i32.const 48))))
+    (memory.fill (i32.add (local.get $snap) (i32.const 1528)) (i32.const 0) (i32.const 200))
+    (if (call $gl_clip_state) (then
+      (memory.copy (i32.add (local.get $snap) (i32.const 1528)) (call $gl_clip_state) (i32.const 200))))
     ;; 0x20005's descriptor: snapshot, its length, packed record, its length.
-    (local.set $d (i32.add (local.get $snap) (i32.const 1528)))
+    (local.set $d (i32.add (local.get $snap) (i32.const 1728)))
     (i32.store offset=0 (local.get $d) (local.get $snap))
-    (i32.store offset=4 (local.get $d) (i32.const 1528))
+    (i32.store offset=4 (local.get $d) (i32.const 1728))
     (i32.store offset=8 (local.get $d) (local.get $start))
     (i32.store offset=12 (local.get $d)
       (i32.add (i32.mul (local.get $vertices) (i32.const 76)) (i32.const 32)))
@@ -3561,7 +3592,7 @@
   (func (export "gl_sw_worker_draw") (param $snap i32) (param $rec i32) (result i32)
     (local $blk i32) (local $g i32) (local $mode i32) (local $step i32) (local $n i32)
     (if (i32.eqz (global.get $gl_sw_wk_block)) (then
-      (local.set $g (call $gl_alloc_affine (i32.const 0x800)))
+      (local.set $g (call $gl_alloc_affine (i32.const 0x1400)))
       (if (i32.eqz (local.get $g)) (then (return (i32.const 0))))
       (global.set $gl_sw_scratch (call $g2w (local.get $g)))
       (local.set $g (call $gl_alloc_affine (i32.const 0x700)))
@@ -3577,6 +3608,7 @@
       (global.set $gl_sw_in_worker (i32.const 1))
       (global.set $gl_sw_enabled (i32.const 1))))
     (local.set $blk (global.get $gl_sw_wk_block))
+    (global.set $gl_clip_override (i32.add (local.get $snap) (i32.const 1528)))
     (memory.copy (global.get $gl_sw_st) (local.get $snap) (i32.const 64))
     (memory.copy (call $gl_mtx_base (local.get $blk) (i32.const 0))
       (i32.add (local.get $snap) (i32.const 64)) (i32.const 64))

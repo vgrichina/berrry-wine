@@ -282,7 +282,7 @@ for(const name of ['glTexParameteriv','glGetBooleanv']) {
 assert.strictEqual(api[scalarId].nargs,4);assert.strictEqual(api[scalarId].convention,'stdcall');
 const compat=require('../lib/gl-compat'),stream=require('../lib/gl-command-stream');
 assert.strictEqual(compat.CALL_INDEX.glTexCoord2f,28);assert.strictEqual(stream.ARG_WORDS[28],2);
-assert.strictEqual(compat.CALLS.length,148);
+assert.strictEqual(compat.CALLS.length,149);
 assert.strictEqual(compat.CALL_INDEX.glAccum,143);assert.strictEqual(compat.CALL_INDEX.glClearAccum,144);
 console.log(JSON.stringify({PASS:true,cases:36,scalarAndVector:true,nonAffineStack:true,displayLists:true,
   mutations:['cleanup','source','stride','opcode','route'],failureStatePreserved:true,

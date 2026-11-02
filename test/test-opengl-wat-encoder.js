@@ -283,6 +283,12 @@ async function main() {
   const primitiveNames = ['points', 'lines', 'line-loop', 'line-strip', 'triangles',
     'triangle-strip', 'triangle-fan', 'quads', 'quad-strip', 'polygon'];
   const primitiveCounts = [3, 4, 4, 4, 6, 5, 5, 8, 6, 5];
+  parity('generic: clip plane owns four binary64 coefficients', (gl,mem)=>{
+    const view=new DataView(mem.buffer),wa=translateGuest(DATA);
+    [1.0000000000000002,-16777217,0.125,-0.75].forEach((v,i)=>view.setFloat64(wa+8*i,v,true));
+    gl.call(148,[0x3005,DATA]);
+    new Uint8Array(mem.buffer,wa,32).fill(0x5a);
+  });
   parity('generic: texture vector copies survive mutation and query is a barrier', (gl,mem)=>{
     const view=new DataView(mem.buffer),wa=translateGuest(DATA),out=translateGuest(DATA+64);
     [0.25,0.5,0.75,1].forEach((v,i)=>view.setFloat32(wa+i*4,v,true));

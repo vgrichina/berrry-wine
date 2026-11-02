@@ -569,6 +569,9 @@
 
   (func $gl_pointer_length (param $op i32) (param $stack i32) (result i64)
     (local $arg i32) (local $len i32) (local $borrow i32) (local $p i32)
+    (if (i32.eq (local.get $op) (i32.const 148)) (then
+      (return (i64.or (i64.extend_i32_u (i32.load offset=8 (local.get $stack)))
+        (i64.shl (i64.const 32) (i64.const 32))))))
     (local $wide i64)
     (local.set $arg (i32.const -1))
     (if (i32.eq (local.get $op) (i32.const 147)) (then
@@ -645,6 +648,8 @@
         (i32.load offset=12 (local.get $stack))) (return (i32.const 0))))
     (if (call $gl_native_query (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
+    (if (call $gl_clip_query (local.get $op) (local.get $stack))
+      (then (return (global.get $gl_list_result))))
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
     (if (call $gl_query_validate_setter (local.get $op) (local.get $stack))
@@ -674,6 +679,7 @@
       (call $gl_material_light_pending)
       (global.set $gl_material_prelit (i32.ne
         (i32.and (i32.load offset=9036 (call $gl_mtx_block)) (i32.const 128)) (i32.const 0)))))
+    (call $gl_clip_observe (local.get $op) (local.get $stack))
     (call $gl_texture_observe (local.get $op) (local.get $stack))
     (if (i32.eq (local.get $op) (i32.const 43)) (then (call $gl_texture_delete (local.get $stack))))
     (call $gl_mtx_observe (local.get $op) (local.get $stack))

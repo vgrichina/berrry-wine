@@ -36091,7 +36091,7 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 2518167642,
-    "handler": "gl_unimplemented"
+    "handler": "gl_clip"
   },
   {
     "id": 4219,
@@ -36533,7 +36533,7 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 3484929470,
-    "handler": "gl_unimplemented"
+    "handler": "gl_clip"
   },
   {
     "id": 4275,

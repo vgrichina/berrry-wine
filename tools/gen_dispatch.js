@@ -312,6 +312,7 @@ const gpuApis = new Map([
   ['glGetDoublev', 2],
   ['glRasterPos4f', 4],
   ['glTexEnvfv', 3],
+  ['glClipPlane', 2],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 
@@ -413,6 +414,7 @@ const nativeTextureQueryApis = new Map([
   ['glGetTexParameterfv',[0,0]], ['glGetTexParameteriv',[0,1]],
 ]);
 const nativeGlApis = new Set([
+  'glGetClipPlane',
   ...nativeTextureSetApis.keys(), ...nativeTextureQueryApis.keys(),
   'glRectd', 'glRectdv', 'glRectfv', 'glRecti', 'glRectiv', 'glRects', 'glRectsv',
   'glLoadMatrixd', 'glTranslated', 'glScaled',
@@ -448,6 +450,7 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if(api.name==='glClipPlane'||api.name==='glGetClipPlane') return `      (call $handle_gl_clip (i32.const ${api.name==='glGetClipPlane'?1:0}))`;
   const textureSet=nativeTextureSetApis.get(api.name),textureQuery=nativeTextureQueryApis.get(api.name);
   if(textureSet) return `      (call $handle_gl_texture_set ${textureSet.map(n=>`(i32.const ${n})`).join(' ')})`;
   if(textureQuery) return `      (call $handle_gl_texture_query ${textureQuery.map(n=>`(i32.const ${n})`).join(' ')})`;

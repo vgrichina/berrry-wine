@@ -86,6 +86,12 @@
           (local.get $w))) (then (return)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $clip_axes (i32.lt_u (local.get $i) (i32.const 3))))
+    (local.set $i (i32.const 0))
+    (loop $user_planes
+      (if (call $gl_clip_enabled (local.get $i)) (then
+        (if (f64.lt (call $gl_clip_distance (local.get $i) (local.get $eye)) (f64.const 0)) (then (return)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $user_planes (i32.lt_u (local.get $i) (i32.const 6))))
     ;; A private record feeds the existing lighting evaluator; it never enters
     ;; the immediate vertex buffer, stream or primitive assembly.
     (local.set $vertex (i32.add (local.get $ctx) (i32.const 304)))
@@ -509,7 +515,7 @@
     (if (i32.eq (local.get $op) (i32.const 76)) (then
       (if (i32.ge_u (i32.load offset=172 (local.get $ctx)) (i32.const 16)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x503)) (return (i32.const 1))))
-      (local.set $p (call $gl_list_alloc (i32.const 460)))
+      (local.set $p (call $gl_list_alloc (i32.const 664)))
       (if (i32.eqz (local.get $p)) (then (unreachable)))
       (i32.store (local.get $p) (i32.load offset=104 (local.get $ctx)))
       (i32.store offset=4 (local.get $p) (local.get $a))
@@ -526,6 +532,8 @@
         (i32.add (local.get $ctx) (i32.const 264)) (i32.const 40))
       (memory.copy (i32.add (local.get $p) (i32.const 164))
         (i32.add (local.get $ctx) (i32.const 384)) (i32.const 296))
+      (memory.copy (i32.add (local.get $p) (i32.const 464))
+        (call $gl_clip_state) (i32.const 200))
       (i32.store offset=104 (local.get $ctx) (local.get $p))
       (i32.store offset=172 (local.get $ctx) (i32.add (i32.load offset=172 (local.get $ctx)) (i32.const 1)))))
     (if (i32.eq (local.get $op) (i32.const 77)) (then
@@ -533,6 +541,10 @@
       (if (i32.eqz (local.get $p)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x504)) (return (i32.const 1))))
       (local.set $mask (i32.load offset=4 (local.get $p)))
+      (if (i32.and (local.get $mask) (i32.const 0x1000)) (then
+        (memory.copy (call $gl_clip_state) (i32.add (local.get $p) (i32.const 464)) (i32.const 192))))
+      (if (i32.and (local.get $mask) (i32.const 0x3000)) (then
+        (i32.store offset=192 (call $gl_clip_state) (i32.load offset=656 (local.get $p)))))
       (if (i32.and (local.get $mask) (i32.const 0x200)) (then
         (memory.copy (i32.add (local.get $ctx) (i32.const 248)) (i32.add (local.get $p) (i32.const 108)) (i32.const 16))))
       (if (i32.and (local.get $mask) (i32.const 0x4000))
