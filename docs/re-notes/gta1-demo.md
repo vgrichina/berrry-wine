@@ -109,9 +109,17 @@ sources. The original-tested source is retained through its loaded-module pins;
 the final bus-error diagnostic attachment was checked synthetically without
 another original.
 
-The independent disk guard enforces abort 2,020,000,000 bytes / floor 2 GB,
-without a RAM gate. Helpers are waited and cleaned after publication; box
-ID/state/expiry N/A, coordinator lifecycle unchanged. No browser, boat, binary
+The independent disk guard used abort 2,020,000,000 bytes / floor 2 GB,
+without a RAM gate, and its retained samples cover the complete original run.
+Cleanup found that guard 173425 had terminated with actual tool wait 143 before
+final validation/publication; its last sample was 2,288,599,040 bytes available.
+Later guarded-command wrappers checked the floor at entry, but continuous
+abort coverage after the last sample is not established. No breach is recorded;
+cleanup measured 2,264,391,680 bytes available. The orphaned board watcher 173426
+was explicitly terminated and independently absent; its actual wait is unknown
+because its parent was gone. All tracked test/build/publication commands were
+actually waited. Guard, watcher and original are absent; no own helpers remain.
+Box ID/state/expiry N/A, coordinator lifecycle unchanged. No browser, boat, binary
 download, registry change, deployment, workers, MDK2/GL edits or foreign WIP
 adoption occurred. Evidence, commands, actual waits and recovery are retained
 outside git; all assigned paths and serialized runtime are released at completion.
