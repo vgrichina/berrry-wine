@@ -325,6 +325,7 @@ const gpuApis = new Map([
   ['_glTexSubImage2D', 9],
   ['_glReadTexturePixels', 5],
 
+  ['glGetBooleanv', 2], ['glGetPointerv', 2],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 

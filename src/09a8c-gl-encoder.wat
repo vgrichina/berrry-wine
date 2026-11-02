@@ -658,6 +658,8 @@
       (call $gl_texture_query (i32.const 0) (i32.const 0)
         (i32.load offset=4 (local.get $stack)) (i32.load offset=8 (local.get $stack))
         (i32.load offset=12 (local.get $stack))) (return (i32.const 0))))
+    (if (call $gl_pointer_query (local.get $op) (local.get $stack))
+      (then (return (i32.const 0))))
     (if (call $gl_native_query (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
     (if (call $gl_clip_query (local.get $op) (local.get $stack))

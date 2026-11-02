@@ -10,10 +10,10 @@ const unsupportedMdk2 = `
    glDrawPixels glEdgeFlag glEdgeFlagPointer glEdgeFlagv
   glEvalCoord1d glEvalCoord1dv glEvalCoord1f glEvalCoord1fv glEvalCoord2d
   glEvalCoord2dv glEvalCoord2f glEvalCoord2fv glEvalMesh1 glEvalMesh2
-  glEvalPoint1 glEvalPoint2 glFeedbackBuffer  glGetBooleanv
+  glEvalPoint1 glEvalPoint2 glFeedbackBuffer
    glGetMapdv
   glGetMapfv glGetMapiv glGetPixelMapfv
-  glGetPixelMapuiv glGetPixelMapusv glGetPointerv glGetPolygonStipple
+  glGetPixelMapuiv glGetPixelMapusv glGetPolygonStipple
 
    glIndexMask glIndexPointer glIndexd glIndexdv
   glIndexf glIndexfv glIndexi glIndexiv glIndexs
@@ -160,7 +160,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 72, 'retain every still unsupported MDK2 name');
+  assert.strictEqual(unsupportedMdk2.length, 70, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);
@@ -169,7 +169,7 @@ async function main() {
     assert.strictEqual(e.lookup_error(),127,'ERROR_PROC_NOT_FOUND');
     assert.strictEqual(e.lookup_thunks(),before,'rejection allocates no thunk');
   }
-  for (const name of ['glTexImage1D', 'glTexSubImage1D', 'glTexParameteriv', 'glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, 'glClipPlane', 'glGetClipPlane', 'glTexEnvfv', 'glTexEnviv', 'glGetTexEnvfv', 'glGetTexEnviv', 'glGetTexParameteriv', ...integerLightMaterialFogApis, ...rasterPositionApis, 'glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv',
+  for (const name of ['glGetBooleanv', 'glGetPointerv', 'glTexImage1D', 'glTexSubImage1D', 'glTexParameteriv', 'glGetLightfv', 'glGetLightiv', 'glGetMaterialfv', 'glGetMaterialiv', ...texgenNumericQueryApis, 'glClipPlane', 'glGetClipPlane', 'glTexEnvfv', 'glTexEnviv', 'glGetTexEnvfv', 'glGetTexEnviv', 'glGetTexParameteriv', ...integerLightMaterialFogApis, ...rasterPositionApis, 'glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv',
     'glTexCoord1d', 'glTexCoord1dv', 'glTexCoord1f', 'glTexCoord1fv', 'glTexCoord1i',
     'glTexCoord1iv', 'glTexCoord1s', 'glTexCoord1sv', 'glTexCoord2iv', 'glTexCoord2s',
     'glTexCoord2sv', 'glTexCoord3d', 'glTexCoord3dv', 'glTexCoord3f', 'glTexCoord3fv',

@@ -392,8 +392,9 @@
   (func $gl_native_query (param $op i32) (param $stack i32) (result i32)
     (local $p i32) (local $n i32) (local $out i32) (local $width i32)
     (local $bytes i32) (local $i i32) (local $v f64) (local $ctx i32)
-    (if (i32.eqz (i32.or (i32.eq (local.get $op) (i32.const 145))
-        (i32.or (i32.eq (local.get $op) (i32.const 13)) (i32.eq (local.get $op) (i32.const 103)))))
+    (if (i32.eqz (i32.or (i32.eq (local.get $op) (i32.const 161))
+      (i32.or (i32.eq (local.get $op) (i32.const 145))
+        (i32.or (i32.eq (local.get $op) (i32.const 13)) (i32.eq (local.get $op) (i32.const 103))))))
       (then (return (i32.const 0))))
     (local.set $ctx (call $gl_list_context))
     (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
@@ -404,7 +405,9 @@
     (local.set $n (call $gl_native_query_count (local.get $p)))
     (if (i32.eqz (local.get $n)) (then (return (i32.const 0))))
     (local.set $out (i32.load offset=8 (local.get $stack)))
-    (local.set $width (select (i32.const 8) (i32.const 4) (i32.eq (local.get $op) (i32.const 145))))
+    (local.set $width (select (i32.const 1)
+      (select (i32.const 8) (i32.const 4) (i32.eq (local.get $op) (i32.const 145)))
+      (i32.eq (local.get $op) (i32.const 161))))
     (local.set $bytes (i32.mul (local.get $n) (local.get $width)))
     (if (i32.gt_u (local.get $out) (i32.sub (i32.const -1) (i32.sub (local.get $bytes) (i32.const 1))))
       (then (unreachable)))
@@ -418,7 +421,12 @@
     (local.set $i (i32.const 0))
     (loop $values
       (local.set $v (call $gl_native_query_value (local.get $p) (local.get $i)))
-      (if (i32.eq (local.get $op) (i32.const 145))
+      ;; GLboolean is one byte; signed zeros are false, all other
+      ;; native numeric values (including preserved NaN) are true.
+      (if (i32.eq (local.get $op) (i32.const 161))
+        (then (call $gs8 (i32.add (local.get $out) (local.get $i))
+          (f64.ne (local.get $v) (f64.const 0))))
+        (else (if (i32.eq (local.get $op) (i32.const 145))
         (then (call $gs64 (i32.add (local.get $out) (i32.mul (local.get $i) (local.get $width)))
           (i64.reinterpret_f64 (local.get $v))))
         (else (if (i32.eq (local.get $op) (i32.const 13))
@@ -432,7 +440,7 @@
             (call $gs32 (i32.add (local.get $out) (i32.shl (local.get $i) (i32.const 2)))
               (if (result i32) (call $gl_query_unsigned (local.get $p))
                 (then (i32.trunc_sat_f64_u (f64.nearest (local.get $v))))
-                (else (i32.trunc_sat_f64_s (f64.nearest (local.get $v))))))))))
+                (else (i32.trunc_sat_f64_s (f64.nearest (local.get $v))))))))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $values (i32.lt_u (local.get $i) (local.get $n))))
     (i32.const 1))
@@ -1270,3 +1278,34 @@
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br_if $result (i32.lt_u (local.get $i) (i32.const 4)))))
     (call $heap_free (call $w2g (local.get $a))))
+
+  ;; Query the saved x86 address itself. Never translate/dereference a client
+  ;; pointer merely to report it, and do not confuse NULL with an unset array.
+  (func $gl_pointer_query (param $op i32) (param $stack i32) (result i32)
+    (local $ctx i32) (local $p i32) (local $value i32) (local $out i32) (local $i i32)
+    (if (i32.ne (local.get $op) (i32.const 162)) (then (return (i32.const 0))))
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (return (i32.const 1))))
+    (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+    (local.set $p (i32.load offset=4 (local.get $stack)))
+    (block $selected
+      (if (i32.eq (local.get $p) (i32.const 0x808e)) (then
+        (local.set $value (global.get $gl_vp_guest)) (br $selected)))
+      (if (i32.eq (local.get $p) (i32.const 0x808f)) (then
+        (local.set $value (global.get $gl_np_guest)) (br $selected)))
+      (if (i32.eq (local.get $p) (i32.const 0x8090)) (then
+        (local.set $value (global.get $gl_cp_guest)) (br $selected)))
+      (if (i32.eq (local.get $p) (i32.const 0x8092)) (then
+        (local.set $value (select (global.get $gl_tp1_guest) (global.get $gl_tp0_guest)
+          (global.get $gl_client_tex_unit))) (br $selected)))
+      ;; Selection/feedback and index/edge arrays have no supported state.
+      (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1)))
+    (local.set $out (i32.load offset=8 (local.get $stack)))
+    (if (i32.gt_u (local.get $out) (i32.const 0xfffffffc)) (then (unreachable)))
+    (loop $validate_pointer_output
+      (if (i32.eq (call $g2w (i32.add (local.get $out) (local.get $i))) (global.get $NULL_SENTINEL)) (then (unreachable)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $validate_pointer_output (i32.lt_u (local.get $i) (i32.const 4))))
+    (call $gs32 (local.get $out) (local.get $value))
+    (i32.const 1))

@@ -36520,8 +36520,7 @@
     "name": "glGetBooleanv",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 603315500,
-    "handler": "gl_unimplemented"
+    "hash": 603315500
   },
   {
     "id": 4274,
@@ -36643,8 +36642,7 @@
     "name": "glGetPointerv",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 2774712999,
-    "handler": "gl_unimplemented"
+    "hash": 2774712999
   },
   {
     "id": 4290,
