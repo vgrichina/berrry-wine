@@ -637,6 +637,8 @@
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
+    (if (call $gl_color_selection_intercept (local.get $op) (local.get $stack))
+      (then (return (i32.const 0))))
     (if (call $gl_stencil_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
     (if (call $gl_color_mask_intercept (local.get $op) (local.get $stack))
@@ -720,6 +722,8 @@
     (if (i32.and (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
         (i32.eqz (i32.or (i32.eq (local.get $op) (i32.const 68))
                         (i32.or (i32.eq (local.get $op) (i32.const 71)) (i32.eq (local.get $op) (i32.const 92)))))) (then (unreachable)))
+    (if (i32.and (global.get $gl_sw_enabled) (i32.eq (local.get $op) (i32.const 17)))
+      (then (local.set $aux (call $gl_sw_read_surface))))
     (local.set $spec (call $gl_pointer_length (local.get $op) (local.get $stack)))
     (local.set $ptr (i32.wrap_i64 (local.get $spec)))
     (local.set $len (i32.and
@@ -738,6 +742,8 @@
     (if (i32.and (i32.eq (local.get $op) (i32.const 51)) (i32.ne (local.get $result) (i32.const 0)))
       (then
         (call $gl_state_context_changed (i32.load offset=8 (local.get $stack)))
+        (call $gl_sw_bind_drawable
+          (select (local.get $aux) (i32.const 0) (i32.load offset=8 (local.get $stack))))
         ;; wglMakeCurrent(hdc, NULL) releases the context and its DC alike.
         (global.set $gl_current_dc
           (if (result i32) (i32.load offset=8 (local.get $stack))
@@ -745,8 +751,8 @@
             (else (i32.const 0))))))
     (if (i32.and (i32.eq (local.get $op) (i32.const 49)) (i32.ne (local.get $result) (i32.const 0)))
       (then
-        (call $gl_list_context_deleted (i32.load offset=4 (local.get $stack)))
-        (call $gl_state_context_deleted (i32.load offset=4 (local.get $stack)))))
+        (call $gl_state_context_deleted (i32.load offset=4 (local.get $stack)))
+        (call $gl_list_context_deleted (i32.load offset=4 (local.get $stack)))))
     (local.get $result))
 
   (func $gl_wat_encoder_reset

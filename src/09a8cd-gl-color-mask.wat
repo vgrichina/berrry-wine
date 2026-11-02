@@ -12,6 +12,7 @@
 
   (func $gl_color_mask_bits (param $rt i32) (result i32)
     (local $m i32) (local $bits i32)
+    (if (global.get $gl_sw_color_off) (then (return (i32.const 0))))
     (local.set $m (call $gl_color_mask))
     (local.set $bits (i32.or
       (i32.or (select (i32.const 0x00ff0000) (i32.const 0) (i32.and (local.get $m) (i32.const 1)))
@@ -78,5 +79,52 @@
             (then (i32.reinterpret_f32 (f32.convert_i32_u (local.get $v)))) (else (local.get $v))))
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br_if $values (i32.lt_u (local.get $i) (i32.const 4))))
+      (return (i32.const 1))))
+    (i32.const 0))
+
+  ;; Validate before display-list capture, without changing selected state.
+  (func $gl_color_buffer_validate (param $ctx i32) (param $op i32) (param $stack i32) (result i32)
+    (local $mode i32) (local $read i32) (local $selector i32) (local $error i32)
+    (local.set $selector (i32.or (i32.eq (local.get $op) (i32.const 9)) (i32.eq (local.get $op) (i32.const 104))))
+    (if (i32.and
+      (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0)))
+      (i32.or (local.get $selector)
+        (i32.or (i32.or (i32.eq (local.get $op) (i32.const 17)) (i32.eq (local.get $op) (i32.const 2)))
+          (i32.or (i32.eq (local.get $op) (i32.const 3)) (i32.eq (local.get $op) (i32.const 18)))))) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+    (if (i32.eqz (local.get $selector)) (then (return (i32.const 0))))
+    (local.set $mode (i32.load offset=4 (local.get $stack)))
+    (local.set $read (i32.eq (local.get $op) (i32.const 104)))
+    (if (i32.eqz (i32.or
+      (i32.and (i32.eqz (local.get $read)) (i32.eqz (local.get $mode)))
+      (i32.and (i32.ge_u (local.get $mode) (i32.const 0x400))
+        (i32.and (i32.le_u (local.get $mode) (i32.const 0x40c))
+          (i32.eqz (i32.and (local.get $read) (i32.eq (local.get $mode) (i32.const 0x408))))))))
+      (then (local.set $error (i32.const 0x500)))
+      (else (if (i32.or
+        (i32.or (i32.eq (local.get $mode) (i32.const 0x401)) (i32.eq (local.get $mode) (i32.const 0x403)))
+        (i32.or (i32.eq (local.get $mode) (i32.const 0x407)) (i32.ge_u (local.get $mode) (i32.const 0x409))))
+        (then (local.set $error (i32.const 0x502))))))
+    (if (local.get $error) (then (call $gl_list_error (local.get $ctx) (local.get $error)) (return (i32.const 1))))
+    (i32.const 0))
+
+  (func $gl_color_selection_intercept (param $op i32) (param $stack i32) (result i32)
+    (local $ctx i32) (local $mode i32) (local $read i32)
+    (if (i32.eqz (global.get $gl_sw_enabled)) (then (return (i32.const 0))))
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 9)) (i32.eq (local.get $op) (i32.const 104))) (then
+      (local.set $read (i32.eq (local.get $op) (i32.const 104)))
+      (local.set $mode (i32.load offset=4 (local.get $stack)))
+      (i32.store (i32.add (local.get $ctx) (i32.add (i32.const 232) (i32.shl (local.get $read) (i32.const 2)))) (local.get $mode))))
+    (if (i32.and
+      (i32.or (i32.eq (local.get $op) (i32.const 13)) (i32.eq (local.get $op) (i32.const 103)))
+      (i32.or (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0xc01))
+              (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0xc02)))) (then
+      (local.set $mode (call $gl_color_selection
+        (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0xc02))))
+      (call $gs32 (i32.load offset=8 (local.get $stack))
+        (if (result i32) (i32.eq (local.get $op) (i32.const 13))
+          (then (i32.reinterpret_f32 (f32.convert_i32_u (local.get $mode)))) (else (local.get $mode))))
       (return (i32.const 1))))
     (i32.const 0))

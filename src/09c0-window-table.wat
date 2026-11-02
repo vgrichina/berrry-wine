@@ -439,6 +439,7 @@
           ;; A top-level window owns its canonical software-GDI presentation.
           ;; Child removal is a no-op because child DCs resolve to that owner.
           (call $gdi_window_surface_release (local.get $hwnd))
+          (call $gl_sw_delete_drawable (local.get $hwnd))
           ;; Free control state if any
           (local.set $state (load.field.memarg WndRecord state_ptr (local.get $ptr)))
           (if (local.get $state) (then (call $heap_free (local.get $state))))

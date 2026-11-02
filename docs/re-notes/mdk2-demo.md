@@ -473,3 +473,54 @@ integer-color and WGL negative suites, generated freshness and mandatory locked
 build were rerun for this blocker report; their results are retained in the
 run directory. No original MDK2 replay, startup or gameplay claim follows.
 Box ID/state/expiry: N/A; lifecycle remains coordinator-owned.
+
+### 2026-11-02: drawable-owned software color buffers
+
+The six prerequisite failures retained in
+`scratch/runs/20261102-mdk2-accumulation-buffer/prerequisite-probe.js` now pass.
+Window drawables own distinct native front, back, depth and stencil attachments;
+contexts retain selectors and rendering state separately. Rebinding a context
+selects the destination drawable and returning restores its existing pixels.
+Context deletion preserves drawable storage; window deletion fences pending
+rendering and releases that window's attachments. Native client resizing rebuilds
+the selected drawable's buffers without resizing another drawable.
+
+Native clears, raster draws and bitmap draws honor FRONT/BACK aliases,
+FRONT_AND_BACK and draw NONE. Both color destinations blend against their own
+pixels after one depth/stencil decision. NONE suppresses color writes while
+preserving depth/stencil operations and the queried color mask. Display-list
+capture, validation, replay and color attribute restoration use these selectors.
+Queued raster work snapshots the selected attachments and mask before later
+state changes.
+
+Software readback consumes the producer's selected surface under a synchronous
+lease, including when the consumer is a separate Wasm instance. It converts
+color components and scalar formats, observes row alignment/length/skips and
+byte swapping, and translates guest output addresses bytewise. The old proxy
+readback no-op no longer substitutes zero pixels for the native surface.
+
+`test/test-opengl-drawable-color-buffers.js` resolves and invokes actual Win32 GL
+thunks, checks ABI preservation, and compares independently expected pixels on
+both drawables and after returning to them. Its direct and `--worker` modes cover
+front/back clears and draws, independent RGB destination blending, NONE with
+depth/stencil updates, masks/scissor, packed BGR/BGRA/RGBA/scalar readback,
+context state/deletion, real window resize/deletion, invalid calls and lists.
+The worker mode uses a real native renderer worker and a software consumer with
+independent mutable globals. Evidence and the 25 focused regression results are
+in `scratch/runs/20261102-mdk2-drawable-color-buffers/`. All 25 focused runs and
+four affected reruns passed, followed by the mandatory locked build, including
+generated freshness and source-analysis gates. The build recovery command is
+`flock /tmp/wine-build.lock bash tools/build.sh`.
+
+WebGL retains its BACK read and BACK/NONE draw contract. Unsupported front/both
+selection returns an error; rebinding that backend to a different drawable
+fails while retaining the prior binding. It does not pretend to own additional
+attachments. This task supplies native/software pixel evidence, no GPU pixel
+qualification and no complete OpenGL 1.1 rasterizer qualification.
+
+No accumulation availability was added. All 188 remaining original names,
+including `glAccum` and `glClearAccum`, still return NULL/error 127 without thunk
+allocation through both lookup routes. Accumulation storage, operations and
+their acceptance tests remain the next implementation task. No original MDK2
+replay, startup or gameplay claim follows. Box ID/state/expiry: N/A;
+coordinator-owned lifecycle is unchanged.

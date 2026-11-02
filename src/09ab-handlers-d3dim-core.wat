@@ -6008,6 +6008,8 @@
         (if (global.get $rast_fog_on)
           (then (local.set $color (call $rast_apply_fog
             (local.get $color) (local.get $x) (local.get $y)))))
+        (call $gl_sw_second_pixel (local.get $x) (local.get $y) (local.get $color)
+          (local.get $blend) (local.get $src_blend) (local.get $dst_blend))
         (if (local.get $blend) (then
           (local.set $ptr (i32.add (local.get $row_wa)
             (i32.mul (local.get $x) (i32.div_u (local.get $bpp) (i32.const 8)))))

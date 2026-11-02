@@ -105,6 +105,7 @@
 
   (func $gl_state_context_changed (param $context i32)
     (local $p i32)
+    (call $gl_sw_context_save)
     (call $gl_state_save (global.get $gl_current_context))
     (call $gl_state_defaults)
     (local.set $p (call $gl_state_slot (local.get $context) (i32.const 0)))
@@ -150,6 +151,7 @@
       (global.set $gl_tex1_r (f32.load offset=156 (local.get $p)))
       (global.set $gl_tex1_q (f32.load offset=160 (local.get $p)))))
     (global.set $gl_current_context (local.get $context))
+    (call $gl_sw_context_load)
   )
 
   (func $gl_state_free_attribs (param $head i32)

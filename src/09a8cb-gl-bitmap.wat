@@ -424,7 +424,7 @@
     (if (i32.eq (local.get $op) (i32.const 76)) (then
       (if (i32.ge_u (i32.load offset=172 (local.get $ctx)) (i32.const 16)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x503)) (return (i32.const 1))))
-      (local.set $p (call $gl_list_alloc (i32.const 96)))
+      (local.set $p (call $gl_list_alloc (i32.const 108)))
       (if (i32.eqz (local.get $p)) (then (unreachable)))
       (i32.store (local.get $p) (i32.load offset=104 (local.get $ctx)))
       (i32.store offset=4 (local.get $p) (local.get $a))
@@ -433,6 +433,9 @@
       (memory.copy (i32.add (local.get $p) (i32.const 16)) (i32.add (local.get $ctx) (i32.const 40)) (i32.const 40))
       (memory.copy (i32.add (local.get $p) (i32.const 56)) (i32.add (local.get $ctx) (i32.const 192)) (i32.const 36))
       (i32.store offset=92 (local.get $p) (i32.load offset=228 (local.get $ctx)))
+      (i32.store offset=96 (local.get $p) (i32.load offset=232 (local.get $ctx)))
+      (i32.store offset=100 (local.get $p) (i32.load offset=236 (local.get $ctx)))
+      (i32.store offset=104 (local.get $p) (global.get $gl_sw_clear_color))
       (i32.store offset=104 (local.get $ctx) (local.get $p))
       (i32.store offset=172 (local.get $ctx) (i32.add (i32.load offset=172 (local.get $ctx)) (i32.const 1)))))
     (if (i32.eq (local.get $op) (i32.const 77)) (then
@@ -441,7 +444,11 @@
         (call $gl_list_error (local.get $ctx) (i32.const 0x504)) (return (i32.const 1))))
       (local.set $mask (i32.load offset=4 (local.get $p)))
       (if (i32.and (local.get $mask) (i32.const 0x4000))
-        (then (i32.store offset=228 (local.get $ctx) (i32.load offset=92 (local.get $p)))))
+        (then
+          (i32.store offset=228 (local.get $ctx) (i32.load offset=92 (local.get $p)))
+          (i32.store offset=232 (local.get $ctx) (i32.load offset=96 (local.get $p)))
+          (i32.store offset=236 (local.get $ctx) (i32.load offset=100 (local.get $p)))
+          (global.set $gl_sw_clear_color (i32.load offset=104 (local.get $p)))))
       (if (i32.and (local.get $mask) (i32.const 0x20000))
         (then (i32.store offset=100 (local.get $ctx) (i32.load offset=8 (local.get $p)))))
       (if (i32.and (local.get $mask) (i32.const 0x400)) (then

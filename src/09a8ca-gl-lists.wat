@@ -23,13 +23,15 @@
       (if (i32.eq (i32.load offset=4 (local.get $p)) (global.get $gl_current_context))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 232)))
+    (local.set $p (call $gl_list_alloc (i32.const 248)))
     (if (i32.eqz (local.get $p)) (then (unreachable)))
     (i32.store (local.get $p) (global.get $gl_list_contexts))
     (i32.store offset=4 (local.get $p) (global.get $gl_current_context))
     (call $gl_bitmap_context_init (local.get $p))
     (call $gl_stencil_init (i32.add (local.get $p) (i32.const 192)))
     (i32.store offset=228 (local.get $p) (i32.const 15))
+    (i32.store offset=232 (local.get $p) (i32.const 0x405))
+    (i32.store offset=236 (local.get $p) (i32.const 0x405))
     (global.set $gl_list_contexts (local.get $p))
     (local.get $p))
 
@@ -137,6 +139,8 @@
     (if (i32.eqz (local.get $ctx))
       (then (return (i32.and (i32.ge_u (local.get $op) (i32.const 124))
         (i32.le_u (local.get $op) (i32.const 140))))))
+    (if (call $gl_color_buffer_validate (local.get $ctx) (local.get $op) (local.get $stack))
+      (then (return (i32.const 1))))
     ;; Rect and matrix multiplication are illegal between Begin/End, including
     ;; while compiling a list.
     ;; Replay keeps it atomic so the caller's vertices and Begin survive.
@@ -340,6 +344,8 @@
           (call $heap_free (call $w2g (local.get $b)))
           (local.set $b (local.get $next)) (br $attributes)))
         (call $gl_state_free_attribs (i32.load offset=176 (local.get $ctx)))
+        (if (i32.load offset=240 (local.get $ctx)) (then
+          (call $heap_free (call $w2g (i32.load offset=240 (local.get $ctx))))))
         (call $heap_free (call $w2g (local.get $ctx))) (return)))
       (local.set $prev (local.get $ctx))
       (local.set $ctx (i32.load (local.get $ctx))) (br $scan))))
