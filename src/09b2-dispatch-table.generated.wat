@@ -3978,6 +3978,7 @@
     (if (i32.eq (local.get $id) (i32.const 4298)) (then (return (i32.const 1)))) ;; glGetTexLevelParameteriv
     (if (i32.eq (local.get $id) (i32.const 4299)) (then (return (i32.const 1)))) ;; glGetTexParameterfv
     (if (i32.eq (local.get $id) (i32.const 4300)) (then (return (i32.const 1)))) ;; glGetTexParameteriv
+    (if (i32.eq (local.get $id) (i32.const 4314)) (then (return (i32.const 1)))) ;; glInterleavedArrays
     (if (i32.eq (local.get $id) (i32.const 4315)) (then (return (i32.const 1)))) ;; glIsList
     (if (i32.eq (local.get $id) (i32.const 4316)) (then (return (i32.const 1)))) ;; glIsTexture
     (if (i32.eq (local.get $id) (i32.const 4317)) (then (return (i32.const 1)))) ;; glLighti
@@ -4156,7 +4157,6 @@
     (if (i32.eq (local.get $id) (i32.const 4311)) (then (return (i32.const 1)))) ;; glIndexub
     (if (i32.eq (local.get $id) (i32.const 4312)) (then (return (i32.const 1)))) ;; glIndexubv
     (if (i32.eq (local.get $id) (i32.const 4313)) (then (return (i32.const 1)))) ;; glInitNames
-    (if (i32.eq (local.get $id) (i32.const 4314)) (then (return (i32.const 1)))) ;; glInterleavedArrays
     (if (i32.eq (local.get $id) (i32.const 4324)) (then (return (i32.const 1)))) ;; glLoadName
     (if (i32.eq (local.get $id) (i32.const 4325)) (then (return (i32.const 1)))) ;; glLockArraysEXT
     (if (i32.eq (local.get $id) (i32.const 4326)) (then (return (i32.const 1)))) ;; glLogicOp
@@ -21697,7 +21697,7 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4314: glInterleavedArrays
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 177) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4315: glIsList
       (call $handle_gpu_api (i32.const 129) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

@@ -299,6 +299,8 @@
           (else (local.set $prev (local.get $b))))
         (local.set $b (local.get $next)) (br $blocks)))
       (return (i32.const 1))))
+    (if (call $gl_list_array_capture (local.get $ctx) (local.get $op) (local.get $stack))
+      (then (return (i32.const 1))))
     ;; Only commands with explicit value capture compile. Matrix34/109 owns its
     ;; 64-byte pointed float payload in the same 88-byte list node.
     (if (i32.and (i32.ne (i32.load offset=12 (local.get $ctx)) (i32.const 0))
@@ -459,6 +461,8 @@
     (i32.const 0))
 
   (func $gl_list_immediate_command (param $op i32) (result i32)
+    ;; Client setup executes at compile time and is never list content.
+    (if (i32.eq (local.get $op) (i32.const 177)) (then (return (i32.const 1))))
     (if (i32.or (i32.eq (local.get $op) (i32.const 161))
                 (i32.eq (local.get $op) (i32.const 162))) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 145)) (then (return (i32.const 1))))
@@ -539,3 +543,95 @@
     (call $gl_copy_from_guest (local.get $p) (local.get $guest)
       (i32.shl (call $gl_lmf_count (local.get $family) (local.get $name)) (i32.const 2)))
     (local.get $p))
+
+  ;; Expand client array elements into owned scalar list commands. Positions
+  ;; stay in object space; matrices, lighting and disabled current attributes
+  ;; are evaluated at replay. The reusable stack is copied by scalar capture.
+  (func $gl_list_array_values (param $guest i32) (param $size i32) (param $type i32)
+      (param $stride i32) (param $index i32) (param $normalize i32)
+      (param $stack i32) (param $start i32)
+    (local $p i32) (local $bytes i32) (local $i i32)
+    (local.set $p (call $gl_array_addr (local.get $guest) (local.get $size)
+      (local.get $type) (local.get $stride) (local.get $index)))
+    (local.set $bytes (call $gl_array_type_bytes (local.get $type)))
+    (memory.fill (i32.add (local.get $stack) (local.get $start)) (i32.const 0) (i32.const 16))
+    (f32.store (i32.add (local.get $stack) (i32.add (local.get $start) (i32.const 12))) (f32.const 1))
+    (block $done (loop $values
+      (br_if $done (i32.ge_u (local.get $i) (local.get $size)))
+      (f32.store (i32.add (local.get $stack) (i32.add (local.get $start) (i32.shl (local.get $i) (i32.const 2))))
+        (call $gl_array_read (i32.add (local.get $p) (i32.mul (local.get $i) (local.get $bytes)))
+          (local.get $type) (local.get $normalize)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $values))))
+
+  (func $gl_list_array_element (param $index i32) (param $stack i32)
+    (local $bits i32)
+    (local.set $bits (i32.and (global.get $gl_client_bits) (global.get $gl_state_pointer_bits)))
+    (if (i32.and (local.get $bits) (i32.const 2)) (then
+      (call $gl_list_array_values (global.get $gl_np_guest) (i32.const 3) (global.get $gl_np_type)
+        (global.get $gl_np_stride) (local.get $index) (i32.const 1) (local.get $stack) (i32.const 4))
+      (drop (call $gl_wat_encode_call (i32.const 63) (local.get $stack) (i32.const 0)))))
+    (if (i32.and (local.get $bits) (i32.const 4)) (then
+      (call $gl_list_array_values (global.get $gl_cp_guest) (global.get $gl_cp_size) (global.get $gl_cp_type)
+        (global.get $gl_cp_stride) (local.get $index) (i32.const 1) (local.get $stack) (i32.const 4))
+      (drop (call $gl_wat_encode_call (i32.const 25) (local.get $stack) (i32.const 0)))))
+    (if (i32.and (local.get $bits) (i32.const 8)) (then
+      (call $gl_list_array_values (global.get $gl_tp0_guest) (global.get $gl_tp0_size) (global.get $gl_tp0_type)
+        (global.get $gl_tp0_stride) (local.get $index) (i32.const 0) (local.get $stack) (i32.const 8))
+      (i32.store offset=4 (local.get $stack) (i32.const 0x84c0))
+      (drop (call $gl_wat_encode_call (i32.const 122) (local.get $stack) (i32.const 0)))))
+    (if (i32.and (local.get $bits) (i32.const 16)) (then
+      (call $gl_list_array_values (global.get $gl_tp1_guest) (global.get $gl_tp1_size) (global.get $gl_tp1_type)
+        (global.get $gl_tp1_stride) (local.get $index) (i32.const 0) (local.get $stack) (i32.const 8))
+      (i32.store offset=4 (local.get $stack) (i32.const 0x84c1))
+      (drop (call $gl_wat_encode_call (i32.const 122) (local.get $stack) (i32.const 0)))))
+    (if (i32.and (local.get $bits) (i32.const 1)) (then
+      (call $gl_list_array_values (global.get $gl_vp_guest) (global.get $gl_vp_size) (global.get $gl_vp_type)
+        (global.get $gl_vp_stride) (local.get $index) (i32.const 0) (local.get $stack) (i32.const 4))
+      (drop (call $gl_wat_encode_call (i32.const 118) (local.get $stack) (i32.const 0))))))
+
+  (func $gl_list_array_capture (param $ctx i32) (param $op i32) (param $stack i32) (result i32)
+    (local $tmp i32) (local $count i32) (local $first i32) (local $mode i32)
+    (local $type i32) (local $indices i32) (local $index i32) (local $i i32)
+    (if (i32.eqz (i32.or (i32.eq (local.get $op) (i32.const 87))
+      (i32.or (i32.eq (local.get $op) (i32.const 102)) (i32.eq (local.get $op) (i32.const 108))))) (then (return (i32.const 0))))
+    (if (i32.or (i32.eqz (i32.load offset=12 (local.get $ctx)))
+        (i32.ne (i32.load offset=28 (local.get $ctx)) (i32.const 0))) (then (return (i32.const 0))))
+    (if (i32.ne (local.get $op) (i32.const 87)) (then
+      (if (i32.load offset=36 (local.get $ctx)) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+      (local.set $mode (i32.load offset=4 (local.get $stack)))
+      (if (i32.gt_u (local.get $mode) (i32.const 9)) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1))))
+      (local.set $count (i32.load offset=8 (local.get $stack)))
+      (if (i32.eq (local.get $op) (i32.const 108)) (then
+        (local.set $first (local.get $count)) (local.set $count (i32.load offset=12 (local.get $stack)))))
+      (if (i32.lt_s (local.get $count) (i32.const 0)) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x501)) (return (i32.const 1))))
+      (if (i32.eq (local.get $op) (i32.const 102)) (then
+        (local.set $type (i32.load offset=12 (local.get $stack)))
+        (local.set $indices (i32.load offset=16 (local.get $stack)))
+        (if (i32.eqz (i32.or (i32.eq (local.get $type) (i32.const 0x1401))
+          (i32.or (i32.eq (local.get $type) (i32.const 0x1403)) (i32.eq (local.get $type) (i32.const 0x1405))))) (then
+          (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1))))))))
+    (local.set $tmp (call $gl_list_alloc (i32.const 80)))
+    (if (i32.eqz (local.get $tmp)) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 87))
+      (then (call $gl_list_array_element (i32.load offset=4 (local.get $stack)) (local.get $tmp)))
+      (else
+        (i32.store offset=4 (local.get $tmp) (local.get $mode))
+        (drop (call $gl_wat_encode_call (i32.const 21) (local.get $tmp) (i32.const 0)))
+        (block $done (loop $elements
+          (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+          (local.set $index (i32.add (local.get $first) (local.get $i)))
+          (if (i32.eq (local.get $op) (i32.const 102)) (then
+            (local.set $index (if (result i32) (i32.eq (local.get $type) (i32.const 0x1401))
+              (then (call $gl8 (i32.add (local.get $indices) (local.get $i))))
+              (else (if (result i32) (i32.eq (local.get $type) (i32.const 0x1403))
+                (then (call $gl16 (i32.add (local.get $indices) (i32.shl (local.get $i) (i32.const 1)))))
+                (else (call $gl32 (i32.add (local.get $indices) (i32.shl (local.get $i) (i32.const 2)))))))))))
+          (call $gl_list_array_element (local.get $index) (local.get $tmp))
+          (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $elements)))
+        (drop (call $gl_wat_encode_call (i32.const 22) (local.get $tmp) (i32.const 0)))))
+    (call $heap_free (call $w2g (local.get $tmp)))
+    (i32.const 1))

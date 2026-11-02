@@ -680,6 +680,8 @@
         (i32.mul (i32.load offset=8 (local.get $stack)) (select (i32.const 2) (i32.const 4) (i32.eq (local.get $op) (i32.const 165)))))))
     (if (call $gl_pointer_query (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
+    (if (call $gl_client_enable_query (local.get $op) (local.get $stack))
+      (then (return (global.get $gl_list_result))))
     (if (call $gl_native_query (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
     (if (call $gl_clip_query (local.get $op) (local.get $stack))

@@ -1,0 +1,342 @@
+{
+  "scope": "Independent hand-derived GL1.1 layout expectations; not an execution result or implementation-derived test.",
+  "source": "https://github.com/KhronosGroup/OpenGL-Refpages/blob/main/gl2.1/glInterleavedArrays.xml",
+  "layouts": [
+    {
+      "format": "GL_V2F",
+      "packedStrideBytes": 8,
+      "arrays": [
+        {
+          "semantic": "vertex",
+          "components": 2,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_V3F",
+      "packedStrideBytes": 12,
+      "arrays": [
+        {
+          "semantic": "vertex",
+          "components": 3,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_C4UB_V2F",
+      "packedStrideBytes": 12,
+      "arrays": [
+        {
+          "semantic": "color",
+          "components": 4,
+          "offsetBytes": 0,
+          "type": "UNSIGNED_BYTE"
+        },
+        {
+          "semantic": "vertex",
+          "components": 2,
+          "offsetBytes": 4,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_C4UB_V3F",
+      "packedStrideBytes": 16,
+      "arrays": [
+        {
+          "semantic": "color",
+          "components": 4,
+          "offsetBytes": 0,
+          "type": "UNSIGNED_BYTE"
+        },
+        {
+          "semantic": "vertex",
+          "components": 3,
+          "offsetBytes": 4,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_C3F_V3F",
+      "packedStrideBytes": 24,
+      "arrays": [
+        {
+          "semantic": "color",
+          "components": 3,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "vertex",
+          "components": 3,
+          "offsetBytes": 12,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_N3F_V3F",
+      "packedStrideBytes": 24,
+      "arrays": [
+        {
+          "semantic": "normal",
+          "components": 3,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "vertex",
+          "components": 3,
+          "offsetBytes": 12,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_C4F_N3F_V3F",
+      "packedStrideBytes": 40,
+      "arrays": [
+        {
+          "semantic": "color",
+          "components": 4,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "normal",
+          "components": 3,
+          "offsetBytes": 16,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "vertex",
+          "components": 3,
+          "offsetBytes": 28,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_T2F_V3F",
+      "packedStrideBytes": 20,
+      "arrays": [
+        {
+          "semantic": "texture",
+          "components": 2,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "vertex",
+          "components": 3,
+          "offsetBytes": 8,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_T4F_V4F",
+      "packedStrideBytes": 32,
+      "arrays": [
+        {
+          "semantic": "texture",
+          "components": 4,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "vertex",
+          "components": 4,
+          "offsetBytes": 16,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_T2F_C4UB_V3F",
+      "packedStrideBytes": 24,
+      "arrays": [
+        {
+          "semantic": "texture",
+          "components": 2,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "color",
+          "components": 4,
+          "offsetBytes": 8,
+          "type": "UNSIGNED_BYTE"
+        },
+        {
+          "semantic": "vertex",
+          "components": 3,
+          "offsetBytes": 12,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_T2F_C3F_V3F",
+      "packedStrideBytes": 32,
+      "arrays": [
+        {
+          "semantic": "texture",
+          "components": 2,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "color",
+          "components": 3,
+          "offsetBytes": 8,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "vertex",
+          "components": 3,
+          "offsetBytes": 20,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_T2F_N3F_V3F",
+      "packedStrideBytes": 32,
+      "arrays": [
+        {
+          "semantic": "texture",
+          "components": 2,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "normal",
+          "components": 3,
+          "offsetBytes": 8,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "vertex",
+          "components": 3,
+          "offsetBytes": 20,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_T2F_C4F_N3F_V3F",
+      "packedStrideBytes": 48,
+      "arrays": [
+        {
+          "semantic": "texture",
+          "components": 2,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "color",
+          "components": 4,
+          "offsetBytes": 8,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "normal",
+          "components": 3,
+          "offsetBytes": 24,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "vertex",
+          "components": 3,
+          "offsetBytes": 36,
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+      "format": "GL_T4F_C4F_N3F_V4F",
+      "packedStrideBytes": 60,
+      "arrays": [
+        {
+          "semantic": "texture",
+          "components": 4,
+          "offsetBytes": 0,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "color",
+          "components": 4,
+          "offsetBytes": 16,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "normal",
+          "components": 3,
+          "offsetBytes": 32,
+          "type": "FLOAT"
+        },
+        {
+          "semantic": "vertex",
+          "components": 4,
+          "offsetBytes": 44,
+          "type": "FLOAT"
+        }
+      ]
+    }
+  ],
+  "acceptanceCases": [
+    "All14 formats: packed stride0 and explicit padded stride; nonzero base pointer and nonzero draw first/index offsets.",
+    "Color unsigned bytes normalize correctly; three-component color gets implicit alpha1; vertex and texture defaults obey GL rules.",
+    "Display-list compilation performs setup immediately; replay must not restore captured client pointers.",
+    "Client attribute push/pop saves array state; server attribute push/pop does not.",
+    "Only client-active texture array changes; other units preserve pointers/enables.",
+    "Invalid format and negative stride preserve prior state and report errors.",
+    "Confirm required absent-component enable/disable and untouched pointer semantics against full primary specification before implementation.",
+    "Use independent position/color/normal/texture pixel oracles, not layout-table self-comparison alone."
+  ],
+  "negativeControls": [
+    {
+      "name": "stride",
+      "assertion": "vertex",
+      "mutation": {
+        "file": "09a8e-gl-state.wat",
+        "from": "(local.set $vs (i32.const 2)) (local.set $packed (i32.const 8))",
+        "to": "(local.set $vs (i32.const 2)) (local.set $packed (i32.const 12))"
+      }
+    },
+    {
+      "name": "owned-list-color",
+      "assertion": "component3",
+      "mutation": {
+        "file": "09a8ca-gl-lists.wat",
+        "from": "(i32.const 4)) (then\n      (call $gl_list_array_values (global.get $gl_cp_guest)",
+        "to": "(i32.const 0)) (then\n      (call $gl_list_array_values (global.get $gl_cp_guest)"
+      }
+    },
+    {
+      "name": "normal-pixels",
+      "assertion": "\"scenario\":\"normal\"",
+      "mutation": {
+        "file": "gl-compat.js",
+        "from": "vec3 normal = NORMAL_MATRIX(uModelView) * aNormal;",
+        "to": "vec3 normal = vec3(0.0, 0.0, 1.0);"
+      }
+    },
+    {
+      "name": "projective-pixels",
+      "assertion": "\"scenario\":\"texture\"",
+      "mutation": {
+        "file": "gl-compat.js",
+        "from": "vTexCoord = (uTextureMatrix * vec4(texCoord, aTexCoordRQ.xy)).xyw;",
+        "to": "vTexCoord = vec3((uTextureMatrix * vec4(texCoord, aTexCoordRQ.xy)).xy, 1.0);"
+      }
+    }
+  ]
+}

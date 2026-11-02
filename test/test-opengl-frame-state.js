@@ -31,6 +31,7 @@ class Backend {
   setCapability(capability, enabled) { this.capabilities.push([capability, enabled]); }
   setDepthMask(value) { this.depthMasks.push(!!value); }
   setBlendFunc(src, dst) { this.blends.push([src, dst]); }
+  uploadTexture2D(texture, image) { this.definedLevel = { texture, image }; }
   updateTexture2D(texture, image) { this.updates.push({ texture, image }); }
   present() { this.presents++; }
   deleteTexture() {}
@@ -77,6 +78,15 @@ call('glDepthMask', [1]);
 
 frontend.bindTexture(1024);
 const lightmapTexture = backend.boundTexture;
+// Subimage updates require an existing level; define the real lightmap first.
+frontend.texImage(0, GL.RGBA, 16, 16, 0, GL.RGBA, GL.UNSIGNED_BYTE,
+  new Uint8Array(16 * 16 * 4));
+assert.strictEqual(backend.definedLevel.texture, lightmapTexture);
+call('glTexSubImage2D', [GL.TEXTURE_2D, 1, 0, 0, 4, 3,
+  GL.RGBA, GL.UNSIGNED_BYTE, pixelsGa]);
+assert.strictEqual(call('glGetError', []), 0x0501,
+  'an undefined texture level still rejects the update');
+assert.strictEqual(backend.updates.length, 0);
 call('glTexSubImage2D', [GL.TEXTURE_2D, 0, 7, 11, 4, 3,
   GL.RGBA, GL.UNSIGNED_BYTE, pixelsGa]);
 
