@@ -1,13 +1,14 @@
 # MDK2 demo (BioWare/Interplay, 2000)
 
 **Status: registered (`mdk2_demo`); current native startup is blocked by GL
-symbol rejection (99 observed names remain unsupported after the 2026-11-02
-normal, texture-coordinate, vertex, raster-position and integer lighting implementations, 9bafbc319, 9f56285e2 and
-7170d9afa, 80ebba348 and 8480aed7f; see [normal evidence](gl-typed-normal-family-20261102.md),
+symbol rejection (95 observed names remain unsupported after the 2026-11-02
+normal, texture-coordinate, vertex, raster-position, integer lighting and light/material query implementations, 9bafbc319, 9f56285e2 and
+7170d9afa, 80ebba348, 8480aed7f and bb2cef8fe; see [normal evidence](gl-typed-normal-family-20261102.md),
 [texture-coordinate evidence](gl-typed-texcoord-family-20261102.md) and
 [vertex evidence](gl-typed-vertex-family-20261102.md) and
 [raster evidence](gl-raster-position-family-20261102.md) and
-[integer lighting evidence](gl-integer-light-material-fog-20261102.md)).** Historical Chromium/WebGL
+[integer lighting evidence](gl-integer-light-material-fog-20261102.md) and
+[query evidence](gl-light-material-query-20261102.md)).** Historical Chromium/WebGL
 runs rendered Menu, New Game, the intro and tutorial and took input;
 projective vertices work since 9be0a0efb, and FSCALE fixed the black world
 after the intro (see Black world). Those runs do not establish current

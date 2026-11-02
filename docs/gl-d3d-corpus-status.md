@@ -49,7 +49,7 @@ Published `4631ff857` subsequently repairs the already-resolved `glRotated`;
 its double argument and matrix semantics do not change the missing-export count.
 See [rotation evidence](re-notes/gl-rotated-native-20261102.md).
 
-Five subsequently accepted families reduce the unsupported set to **99**
+Six subsequently accepted families reduce the unsupported set to **95**
 mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
 
 | Accepted implementation | Newly implemented exports | Evidence |
@@ -61,13 +61,19 @@ mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
 
 | `8480aed7f` integer fog/light/material | 6 | [Pname conversions, lighting, lists and direct/queued validation](re-notes/gl-integer-light-material-fog-20261102.md) |
 
+| `bb2cef8fe` indexed light/material queries | 4 | [Stored-state conversion, ABI, lists and direct/queued validation](re-notes/gl-light-material-query-20261102.md) |
+
 Each family passed its focused semantic and regression checks, rejecting controls,
 and locked build; the coordinator verified retained evidence hashes and committed
-blobs. The light/material query and texgen families remain in progress and are excluded
+blobs. The texgen and texture-state families remain in progress and are excluded
 from the accepted count. Integer lighting passed 301 checks per direct/queued
 route, two saved-source and fourteen semantic rejecting controls, 36 regressions,
 two generated checks and the locked build (57 commands). The coordinator matched
-all 116 retained evidence hashes and 13 committed blobs.
+all 116 retained evidence hashes and 13 committed blobs. The four indexed queries
+passed 461 checks per direct/queued route with 373 matching observations,
+two saved-source and 13 semantic rejecting controls, 38 regressions, two
+generated checks and the locked build (58 commands). All 77 retained evidence
+hashes and eight committed blobs were independently matched.
 See [query evidence](re-notes/gl-getdoublev-native-state-20261102.md).
 See [the rectangle evidence](re-notes/gl-rectangle-family-20261102.md).
 No original MDK2 replay,
