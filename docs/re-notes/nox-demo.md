@@ -589,3 +589,76 @@ scratch driver is now browser-tested through native Jump/landing and Action.
 No emulator fix or further runtime is required for this assignment. Any future
 combat claim needs an actually observed target and damage in a separately
 assigned task; this worker stops after publishing this outcome.
+
+## Native item pickup and inventory/HUD change (2026-11-02)
+
+Run `20261102-nox-native-item-interaction` demonstrates an original Bunker
+**Potion of Restore Health pickup**, beyond the accepted movement, Jump and
+empty Action animation. One uninterrupted browser session ran from
+13:44:43 to 13:52:06 UTC. No emulator or registration change, fixture download,
+guest-state injection, peers or additional browser session was used. Nox
+remains a private local candidate, absent from the public `DESKTOP_APPS`.
+
+All 125 retained original game files (50,450,550 bytes) matched their saved
+SHA256 manifest, with no extra/missing game files. All shipped `FILESIZE.INI`
+destination paths and sizes also matched. Original `nox.exe` remains SHA256
+`496123ad275e5d626f31a845033c7ddb7d86fbbf3c2532d2e1f639f8bc77a781`.
+These checks pin the retained target; they add no upstream authentication.
+Original `default.cfg` specifies `MousePickup = Left`, `I`/`Q = ToggleInventory`,
+right mouse `MoveForward`, left mouse `Action`, and Space `Jump`. The native
+Conjurer panel also visibly says that Conjurers equip bows and staves.
+
+Actual Rayman2 fresh and GL boolean/pointer-query terminal results, final
+artifacts, exact author releases and helper cleanup preceded execution.
+All 7,228 accepted GL inputs matched before reuse of its tested module from
+main `57cf336895b6c551068ba3c23bea86624ecd5dd0`. The outdated `d39f` build was
+not used. Both the preflight module response and the browser's
+`/build/wine-assembly.wasm?v=dev` response matched SHA256
+`d6e20ba99816b54b75d2423983ab7c80a0bf9bb1776b570a46d244f881b3291d`.
+The finite remote materialization verified 4,037 files; all 529 browser-source,
+871 tool and 152 retained original/support checks matched again after runtime.
+There was no new build because the accepted prerequisites matched.
+
+The private route was `?candidates&app=nox_demo&no-log` → Multiplay → Network
+→ Host Game → flag placement → Conjurer → default Jack → Chat Area. After
+dismissing its explanation, two separate balanced Home presses left the native
+Game panel open with Bunker selected; Go loaded the arena. This run spawned in
+a different room from the October 31 corridor, beside blue crystal structures
+and a visible red floor potion. Navigation followed the actual scene.
+
+Reviewed paired evidence, relative to this run:
+
+| Input / observation | Before | After | Visible effect |
+|---|---|---|---|
+| Inventory via `I` | `retrieved/34-inventory-before.png` | `retrieved/48-inventory-after.png` | Three clothing icons and an empty fourth top-row slot become four icons, including a red potion in that slot. |
+| Right-button approach, corrected hover, then left pickup | `retrieved/44-potion-hover.png` | `retrieved/46-pickup-after.png` | Native hover explicitly reads `PICK UP` / `Potion of Restore Health`; the floor potion disappears and the lower-right HUD gains a red potion with count 1. |
+
+The first left press (`41-pickup`) was mis-aimed below the potion and produced
+no pickup; it is not counted as success. Ordinary mouse movement corrected
+the aim until the native pickup label appeared. The successful left press
+(`45-pickup-confirmed-target`) lasted 359 ms in the trusted DOM record,
+including its held screenshot. Renderer button masks were 0 before, 1 during,
+and 0 after. All 176 retained DOM events were trusted; 17 key/button pairs were
+balanced with no held input remaining. Pickup, floor removal, inventory and
+HUD change are observed; potion use/healing, weapon equipment, crystal effects,
+combat, enemy damage, kills and objectives remain untested. An empty view is
+not evidence of missing enemies or a combat defect. No audio, FPS, full-game
+or full-corpus claim is made.
+
+Chrome `151.0.7922.108` used native 1024×768 geometry, isolated guest Workers,
+WebGL and ordinary defaults on fresh boat `bx_7xjujn97`, TTL 3600 seconds,
+original expiry `2026-11-02T14:41:28.729Z` recorded before use. Local launch
+free space exceeded 2.4 GB; the one-second guard's minimum was 2,373,750,784
+bytes, above its 2.02 GB stop floor. Cheap local and remote guard/controller
+checks passed before Chrome. One preflight Python quoting error occurred
+before any test/browser execution, was recorded, and its corrected rerun passed.
+
+Controller and Chrome exited 0; supervisor/controller/Chrome PIDs
+11311/11312/11324 were absent, both ports closed, profile absent and all
+Chrome/crashpad processes absent before harvest. All 27 PNGs passed integrity
+checks. The 7,910,474-byte evidence archive, SHA256
+`67f8967cdd6addc61e327618a7d59a3178a15f184bf0d60a68056bab0e8a39c6`,
+and all 118 manifest-listed files were independently retrieved/hash-verified
+before explicitly delegated shutdown. Boat state was confirmed **STOPPED** at
+`2026-11-02T13:55:08.193Z`. `result.json`, `final.txt`, `RECOVERY.txt`, paired
+captures, input records and cleanup receipts preserve the result and recovery.
