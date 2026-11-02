@@ -337,7 +337,12 @@ const nativeWglApis = new Set([
   'wglDescribeLayerPlane', 'wglGetLayerPaletteEntries',
   'wglSetLayerPaletteEntries', 'wglRealizeLayerPalette',
 ]);
-const nativeGlApis = new Set(['glMultMatrixd', 'glTexCoord2d', 'glTexCoord2dv', 'glTexCoord2i', 'glColor3d', 'glColor3dv', 'glColor4dv', 'glVertex2d', 'glVertex2dv', 'glVertex3d', ...integerColorApis.keys()]);
+const nativeGlApis = new Set([
+  'glRectd', 'glRectdv', 'glRectfv', 'glRecti', 'glRectiv', 'glRects', 'glRectsv',
+  'glMultMatrixd', 'glTexCoord2d', 'glTexCoord2dv', 'glTexCoord2i',
+  'glColor3d', 'glColor3dv', 'glColor4dv', 'glVertex2d', 'glVertex2dv', 'glVertex3d',
+  ...integerColorApis.keys(),
+]);
 for (const [id, api] of apiTable.entries()) {
   if ((gpuApis.has(api.name) || nativeWglApis.has(api.name) || nativeGlApis.has(api.name)) && /^(?:gl[A-Z]|wgl[A-Z])/.test(api.name)) {
     out.push(`    (if (i32.eq (local.get $id) (i32.const ${id})) (then (return (i32.const 1)))) ;; ${api.name}`);

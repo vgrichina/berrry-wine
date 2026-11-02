@@ -44,6 +44,10 @@ const roots=['$dispatch_api_table',page,vertexPage,'$wgl_api_available','$handle
 const seams=new Map([
   ['$gl_sw_consume','(param i32 i32)'],['$gl_mtx_observe','(param i32 i32)'],['$gl_sw_observe','(param i32 i32)'],
   ['$gl_bitmap_context_init','(param i32)'],['$gl_stencil_init','(param i32)'],
+  // Drawable selection is covered by the full-source pixel fixtures. These
+  // isolated color/rectangle tests exercise no draw/read-buffer commands.
+  ['$gl_color_buffer_validate','(param i32 i32 i32) (result i32) (i32.const 0)'],
+  ['$gl_color_selection_intercept','(param i32 i32) (result i32) (i32.const 0)'],
   ...['$gl_stencil_intercept','$gl_color_mask_intercept','$gl_bitmap_intercept',
     '$gl_stencil_validate'].map(n=>[n,'(param i32 i32'+(n==='$gl_stencil_validate'?' i32':'')+') (result i32) (i32.const 0)'])
 ]);
@@ -60,7 +64,7 @@ function visit(n) {
   assert(s,'missing production signature '+n);
   if(excluded.has(n)||n.startsWith('$handle_')&&!roots.includes(n)||
       n.startsWith('$dispatch_api_table_page_')&&!roots.includes(n)) {
-    const signature=s.slice(n.length+6).match(/^(\s*\((?:param|result)[^)]*\))*/)[0];
+    const signature=s.slice(n.length+6).replace(/^\s*\(export "[^"]*"\)/, '').match(/^(\s*\((?:param|result)[^)]*\))*/)[0];
     traps.set(n,`(func ${n} ${signature} (unreachable))`);return;
   }
   selected.set(n,s);

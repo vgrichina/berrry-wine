@@ -3961,7 +3961,14 @@
     (if (i32.eq (local.get $id) (i32.const 4363)) (then (return (i32.const 1)))) ;; glPopClientAttrib
     (if (i32.eq (local.get $id) (i32.const 4366)) (then (return (i32.const 1)))) ;; glPushClientAttrib
     (if (i32.eq (local.get $id) (i32.const 4370)) (then (return (i32.const 1)))) ;; glRasterPos2f
+    (if (i32.eq (local.get $id) (i32.const 4392)) (then (return (i32.const 1)))) ;; glRectd
+    (if (i32.eq (local.get $id) (i32.const 4393)) (then (return (i32.const 1)))) ;; glRectdv
     (if (i32.eq (local.get $id) (i32.const 4394)) (then (return (i32.const 1)))) ;; glRectf
+    (if (i32.eq (local.get $id) (i32.const 4395)) (then (return (i32.const 1)))) ;; glRectfv
+    (if (i32.eq (local.get $id) (i32.const 4396)) (then (return (i32.const 1)))) ;; glRecti
+    (if (i32.eq (local.get $id) (i32.const 4397)) (then (return (i32.const 1)))) ;; glRectiv
+    (if (i32.eq (local.get $id) (i32.const 4398)) (then (return (i32.const 1)))) ;; glRects
+    (if (i32.eq (local.get $id) (i32.const 4399)) (then (return (i32.const 1)))) ;; glRectsv
     (if (i32.eq (local.get $id) (i32.const 4403)) (then (return (i32.const 1)))) ;; glStencilFunc
     (if (i32.eq (local.get $id) (i32.const 4404)) (then (return (i32.const 1)))) ;; glStencilMask
     (if (i32.eq (local.get $id) (i32.const 4405)) (then (return (i32.const 1)))) ;; glStencilOp
@@ -4120,13 +4127,6 @@
     (if (i32.eq (local.get $id) (i32.const 4389)) (then (return (i32.const 1)))) ;; glRasterPos4iv
     (if (i32.eq (local.get $id) (i32.const 4390)) (then (return (i32.const 1)))) ;; glRasterPos4s
     (if (i32.eq (local.get $id) (i32.const 4391)) (then (return (i32.const 1)))) ;; glRasterPos4sv
-    (if (i32.eq (local.get $id) (i32.const 4392)) (then (return (i32.const 1)))) ;; glRectd
-    (if (i32.eq (local.get $id) (i32.const 4393)) (then (return (i32.const 1)))) ;; glRectdv
-    (if (i32.eq (local.get $id) (i32.const 4395)) (then (return (i32.const 1)))) ;; glRectfv
-    (if (i32.eq (local.get $id) (i32.const 4396)) (then (return (i32.const 1)))) ;; glRecti
-    (if (i32.eq (local.get $id) (i32.const 4397)) (then (return (i32.const 1)))) ;; glRectiv
-    (if (i32.eq (local.get $id) (i32.const 4398)) (then (return (i32.const 1)))) ;; glRects
-    (if (i32.eq (local.get $id) (i32.const 4399)) (then (return (i32.const 1)))) ;; glRectsv
     (if (i32.eq (local.get $id) (i32.const 4400)) (then (return (i32.const 1)))) ;; glRenderMode
     (if (i32.eq (local.get $id) (i32.const 4401)) (then (return (i32.const 1)))) ;; glScaled
     (if (i32.eq (local.get $id) (i32.const 4402)) (then (return (i32.const 1)))) ;; glSelectBuffer
@@ -22189,28 +22189,28 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4392: glRectd
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRectd (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4393: glRectdv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRectdv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4394: glRectf
       (call $handle_gpu_api (i32.const 142) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4395: glRectfv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRectfv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4396: glRecti
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRecti (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4397: glRectiv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRectiv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4398: glRects
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRects (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4399: glRectsv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRectsv (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4400: glRenderMode
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

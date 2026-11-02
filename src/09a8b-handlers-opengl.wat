@@ -253,6 +253,93 @@
     (call $gl_append_vertex (local.get $x1) (local.get $y2) (f32.const 0))
     (drop (call $gl_finish_immediate)))
 
+  ;; Rectangle aliases snapshot coordinates at the existing packed-f32 boundary.
+  ;; Vertex coordinates use signed numeric conversion, never color normalization.
+  ;; Validate each element before page-aware loads (including split doubles).
+  (func $gl_rect_component (param $p i32) (param $kind i32) (result f32)
+    (local $last i32)
+    (local.set $last (if (result i32) (i32.eq (local.get $kind) (i32.const 0x140a))
+      (then (i32.const 7)) (else (if (result i32) (i32.eq (local.get $kind) (i32.const 0x1402))
+        (then (i32.const 1)) (else (i32.const 3))))))
+    (if (i32.gt_u (local.get $p) (i32.sub (i32.const -1) (local.get $last))) (then (unreachable)))
+    (if (i32.eq (call $g2w (local.get $p)) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (if (i32.eq (call $g2w (i32.add (local.get $p) (local.get $last))) (global.get $NULL_SENTINEL)) (then (unreachable)))
+    (if (i32.eq (local.get $kind) (i32.const 0x140a)) (then
+      (return (f32.demote_f64 (f64.reinterpret_i64 (call $gl64 (local.get $p)))))))
+    (if (i32.eq (local.get $kind) (i32.const 0x1406)) (then
+      (return (f32.reinterpret_i32 (call $gl32 (local.get $p))))))
+    (if (i32.eq (local.get $kind) (i32.const 0x1402)) (then
+      (return (f32.convert_i32_s
+        (i32.shr_s (i32.shl (call $gl16 (local.get $p)) (i32.const 16)) (i32.const 16))))))
+    (f32.convert_i32_s (call $gl32 (local.get $p))))
+
+  ;; Each pair has a declared stride: DWORD scalar slots, tightly packed
+  ;; vectors, or eight-byte doubles. Load both pairs before allocating/encoding.
+  ;; Opcode142 owns list value capture and atomic Begin/replay validation.
+  (func $gl_rect_values (param $p1 i32) (param $p2 i32) (param $stride i32) (param $kind i32)
+    (local $x1 f32) (local $y1 f32) (local $x2 f32) (local $y2 f32)
+    (local $guest i32) (local $stack i32)
+    (if (i32.gt_u (local.get $p1) (i32.sub (i32.const -1) (local.get $stride))) (then (unreachable)))
+    (if (i32.gt_u (local.get $p2) (i32.sub (i32.const -1) (local.get $stride))) (then (unreachable)))
+    (local.set $x1 (call $gl_rect_component (local.get $p1) (local.get $kind)))
+    (local.set $y1 (call $gl_rect_component (i32.add (local.get $p1) (local.get $stride)) (local.get $kind)))
+    (local.set $x2 (call $gl_rect_component (local.get $p2) (local.get $kind)))
+    (local.set $y2 (call $gl_rect_component (i32.add (local.get $p2) (local.get $stride)) (local.get $kind)))
+    (local.set $guest (call $gl_alloc_affine (i32.const 20)))
+    (if (i32.eqz (local.get $guest)) (then (unreachable)))
+    (local.set $stack (call $g2w (local.get $guest)))
+    (i32.store (local.get $stack) (i32.const 0))
+    (f32.store offset=4 (local.get $stack) (local.get $x1))
+    (f32.store offset=8 (local.get $stack) (local.get $y1))
+    (f32.store offset=12 (local.get $stack) (local.get $x2))
+    (f32.store offset=16 (local.get $stack) (local.get $y2))
+    (drop (call $gl_wat_encode_call (i32.const 142) (local.get $stack) (i32.const 0)))
+    (call $heap_free (local.get $guest)))
+
+  (func $handle_glRectd (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (if (i32.gt_u (local.get $esp) (i32.const 0xffffffdb)) (then (unreachable)))
+    (call $gl_rect_values (i32.add (local.get $esp) (i32.const 4)) (i32.add (local.get $esp) (i32.const 20)) (i32.const 8) (i32.const 0x140a))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))))
+
+  (func $handle_glRectdv (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $gl_rect_values (local.get $arg0) (local.get $arg1) (i32.const 8) (i32.const 0x140a))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  (func $handle_glRectfv (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $gl_rect_values (local.get $arg0) (local.get $arg1) (i32.const 4) (i32.const 0x1406))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  (func $handle_glRecti (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (if (i32.gt_u (local.get $esp) (i32.const 0xffffffeb)) (then (unreachable)))
+    (call $gl_rect_values (i32.add (local.get $esp) (i32.const 4)) (i32.add (local.get $esp) (i32.const 12)) (i32.const 4) (i32.const 0x1404))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
+  (func $handle_glRectiv (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $gl_rect_values (local.get $arg0) (local.get $arg1) (i32.const 4) (i32.const 0x1404))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  (func $handle_glRects (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (if (i32.gt_u (local.get $esp) (i32.const 0xffffffeb)) (then (unreachable)))
+    (call $gl_rect_values (i32.add (local.get $esp) (i32.const 4)) (i32.add (local.get $esp) (i32.const 12)) (i32.const 4) (i32.const 0x1402))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
+  (func $handle_glRectsv (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $gl_rect_values (local.get $arg0) (local.get $arg1) (i32.const 2) (i32.const 0x1402))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
   ;; glMultMatrixd: snapshot sixteen guest doubles in column-major order at
   ;; the existing float-matrix encoder boundary. Opcode 109 owns matrix mode,
   ;; postmultiplication, Begin validation, stream copies and list value capture.

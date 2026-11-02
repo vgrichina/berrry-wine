@@ -37467,16 +37467,14 @@
     "name": "glRectd",
     "nargs": 8,
     "convention": "stdcall",
-    "hash": 2059700056,
-    "handler": "gl_unimplemented"
+    "hash": 2059700056
   },
   {
     "id": 4393,
     "name": "glRectdv",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 1902169450,
-    "handler": "gl_unimplemented"
+    "hash": 1902169450
   },
   {
     "id": 4394,
@@ -37490,40 +37488,35 @@
     "name": "glRectfv",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 1902463640,
-    "handler": "gl_unimplemented"
+    "hash": 1902463640
   },
   {
     "id": 4396,
     "name": "glRecti",
     "nargs": 4,
     "convention": "stdcall",
-    "hash": 2009367199,
-    "handler": "gl_unimplemented"
+    "hash": 2009367199
   },
   {
     "id": 4397,
     "name": "glRectiv",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 1935283403,
-    "handler": "gl_unimplemented"
+    "hash": 1935283403
   },
   {
     "id": 4398,
     "name": "glRects",
     "nargs": 4,
     "convention": "stdcall",
-    "hash": 2445585293,
-    "handler": "gl_unimplemented"
+    "hash": 2445585293
   },
   {
     "id": 4399,
     "name": "glRectsv",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 1939520545,
-    "handler": "gl_unimplemented"
+    "hash": 1939520545
   },
   {
     "id": 4400,
