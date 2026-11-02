@@ -329,6 +329,7 @@ const gpuApis = new Map([
   ['glPixelMapfv',3], ['glPixelMapuiv',3], ['glPixelMapusv',3],
   ['glGetPixelMapfv',2], ['glGetPixelMapuiv',2], ['glGetPixelMapusv',2],
   ['glDrawPixels',5], ['glCopyPixels',5], ['glPixelZoom',2], ['_glRasterSize',0], ['_glReadRasterPixels',6],
+  ['glLineStipple',2], ['glPolygonStipple',1], ['glGetPolygonStipple',1],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 

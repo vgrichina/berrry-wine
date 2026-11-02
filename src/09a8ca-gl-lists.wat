@@ -90,6 +90,9 @@
     (local.set $p (i32.load (local.get $slot)))
     (block $done (loop $play
       (br_if $done (i32.le_u (local.get $p) (i32.const 2)))
+      (if (i32.eq (i32.load offset=4 (local.get $p)) (i32.const 175))
+        (then (call $gl_stipple_install (i32.add (local.get $p) (i32.const 88)) (i32.add (local.get $p) (i32.const 8))))
+        (else
       (if (i32.eq (i32.load offset=4 (local.get $p)) (i32.const 131))
         (then (call $gl_bitmap_draw (local.get $ctx) (i32.add (local.get $p) (i32.const 8))
           (select (i32.add (local.get $p) (i32.const 88)) (i32.const 0) (i32.ne (i32.load offset=84 (local.get $p)) (i32.const 0)))))
@@ -97,6 +100,7 @@
           (then (call $gl_calllists_play (local.get $ctx) (i32.add (local.get $p) (i32.const 88)) (i32.load offset=12 (local.get $p))))
           (else (drop (call $gl_wat_encode_call (i32.load offset=4 (local.get $p))
             (i32.add (local.get $p) (i32.const 8)) (i32.const 0)))))))
+      ))
       (local.set $p (i32.load (local.get $p))) (br $play)))
     (i32.store offset=28 (local.get $ctx) (i32.sub (i32.load offset=28 (local.get $ctx)) (i32.const 1))))
 
@@ -394,6 +398,8 @@
 
   (func $gl_list_context_deleted (param $key i32)
     (local $ctx i32) (local $prev i32) (local $b i32) (local $next i32) (local $i i32)
+    ;; Queued line continuations lease the context's phase cell.
+    (call $d3dim_worker_fence)
     (local.set $ctx (global.get $gl_list_contexts))
     (block $done (loop $scan
       (br_if $done (i32.eqz (local.get $ctx)))

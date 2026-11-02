@@ -435,6 +435,9 @@
           (i32.add (i32.const 32) (i32.mul (local.get $first_chunk) (i32.const 76))))
         (i32.const 0x00200000)) (then (drop (call $gl_wat_stream_flush))))
     (local.set $start (call $gl_packed_begin (local.get $out_mode)))
+    ;; Keep strip/loop connectivity after lowering to independent pairs.
+    (if (i32.or (i32.eq (local.get $mode) (i32.const 2)) (i32.eq (local.get $mode) (i32.const 3)))
+      (then (i32.store offset=8 (local.get $start) (i32.or (i32.load offset=8 (local.get $start)) (i32.const 0x1000000)))))
 
     ;; Emit one vertex, reopening the current record when NEED vertices would
     ;; overflow it. Every caller passes a complete primitive's size as NEED.
@@ -537,6 +540,8 @@
           (call $gl_packed_finish (local.get $start) (local.get $n))
           (drop (call $gl_wat_stream_flush))
           (local.set $start (call $gl_packed_begin (local.get $out_mode)))
+          (if (i32.or (i32.eq (local.get $mode) (i32.const 2)) (i32.eq (local.get $mode) (i32.const 3)))
+            (then (i32.store offset=8 (local.get $start) (i32.or (i32.load offset=8 (local.get $start)) (i32.const 0x3000000)))))
           (local.set $n (i32.const 0))))
         (call $gl_copy_vertex (i32.add (local.get $start)
           (i32.add (i32.const 32) (i32.mul (local.get $n) (i32.const 76)))) (local.get $a) (local.get $prov))
@@ -706,6 +711,8 @@
       (if (i32.eqz (global.get $gl_current_context)) (then (return (i32.const 0))))
       (local.set $error (call $gl_pixels_validate (local.get $op) (local.get $stack)))
       (if (local.get $error) (then (call $gl_list_error (call $gl_list_context) (local.get $error)) (return (i32.const 0))))))
+    (if (call $gl_stipple_intercept (local.get $op) (local.get $stack))
+      (then (return (global.get $gl_list_result))))
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 169)) (i32.const 2)) (then

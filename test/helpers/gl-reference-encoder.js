@@ -173,7 +173,8 @@ const stats = {
         const end = (i + 1) % count;
         offset = appendLine(out, offset, vertices, i, end, flat, end);
       }
-      mode = GL.LINES;
+      // Preserve connectivity when lowering strips/loops to independent pairs.
+      mode = GL.LINES | 0x1000000;
     }
     return { mode, vertices: offset === out.length ? out : out.subarray(0, offset) };
   }
@@ -530,7 +531,8 @@ const stats = {
     }
 
     _capturePacked(mode, vertices) {
-      const groupVertices = mode === GL.TRIANGLES ? 3 : mode === GL.LINES ? 2 : 1;
+      const primitive = mode & 0xff;
+      const groupVertices = primitive === GL.TRIANGLES ? 3 : primitive === GL.LINES ? 2 : 1;
       const maxFloats = Math.floor((this.capacity - HEADER_BYTES) / 4 / VERTEX_FLOATS)
         * VERTEX_FLOATS;
       const chunkFloats = Math.floor(maxFloats / (groupVertices * VERTEX_FLOATS))
@@ -546,7 +548,8 @@ const stats = {
         const pointerOffset = start + HEADER_BYTES;
         this.view.setUint32(start, recordBytes, true);
         this.view.setUint32(start + 4, PACKED_DRAW_OPCODE, true);
-        this.view.setUint32(start + 8, mode >>> 0, true);
+        const continuation = base && (mode & 0x1000000) ? 0x2000000 : 0;
+        this.view.setUint32(start + 8, (mode | continuation) >>> 0, true);
         this.view.setUint32(start + 12, 0, true);
         this.view.setUint32(start + 16, 0, true);
         this.view.setUint32(start + 20, length * 4, true);

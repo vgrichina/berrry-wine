@@ -5946,6 +5946,10 @@
                 (i32.and (local.get $alpha_test) (i32.const 0xFF))
                 (i32.and (i32.shr_u (local.get $alpha_test) (i32.const 8)) (i32.const 0xFF))))
             (then (local.set $draw (i32.const 0))))))
+      ;; Stipple removes raster fragments before ANY stencil or depth effect.
+      (if (global.get $rast_gl_stipple) (then
+        (if (i32.eqz (call $gl_stipple_pass (local.get $x) (local.get $y)))
+          (then (local.set $draw (i32.const 0))))))
       (local.set $stencil_pass (i32.const 0))
       (if (i32.and (local.get $draw) (i32.ne (global.get $rast_stencil_state) (i32.const 0))) (then
         (local.set $draw (call $gl_stencil_test (local.get $x) (local.get $y)))

@@ -71,8 +71,8 @@ expectFlatColors(0x0003, 4, [2, 2, 3, 3, 4, 4],
   'line strips use each segment endpoint under GL_FLAT');
 const flatLoop = expectFlatColors(0x0002, 4, [2, 2, 3, 3, 4, 4, 1, 1],
   'the closing line-loop segment is shaded by vertex one');
-assert.strictEqual(flatLoop.mode, 0x0001,
-  'line loops lower to independent WebGL lines');
+assert.strictEqual(flatLoop.mode, 0x1000001,
+  'line loops lower to WebGL line pairs retaining connected stipple phase');
 
 const submit = batch => {
   submissions.push({ bytes: batch.bytes, commands: batch.commands });

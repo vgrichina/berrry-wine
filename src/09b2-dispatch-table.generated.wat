@@ -3967,6 +3967,7 @@
     (if (i32.eq (local.get $id) (i32.const 4287)) (then (return (i32.const 1)))) ;; glGetPixelMapuiv
     (if (i32.eq (local.get $id) (i32.const 4288)) (then (return (i32.const 1)))) ;; glGetPixelMapusv
     (if (i32.eq (local.get $id) (i32.const 4289)) (then (return (i32.const 1)))) ;; glGetPointerv
+    (if (i32.eq (local.get $id) (i32.const 4290)) (then (return (i32.const 1)))) ;; glGetPolygonStipple
     (if (i32.eq (local.get $id) (i32.const 4291)) (then (return (i32.const 1)))) ;; glGetTexEnvfv
     (if (i32.eq (local.get $id) (i32.const 4292)) (then (return (i32.const 1)))) ;; glGetTexEnviv
     (if (i32.eq (local.get $id) (i32.const 4293)) (then (return (i32.const 1)))) ;; glGetTexGendv
@@ -3983,6 +3984,7 @@
     (if (i32.eq (local.get $id) (i32.const 4318)) (then (return (i32.const 1)))) ;; glLightiv
     (if (i32.eq (local.get $id) (i32.const 4319)) (then (return (i32.const 1)))) ;; glLightModelf
     (if (i32.eq (local.get $id) (i32.const 4320)) (then (return (i32.const 1)))) ;; glLightModeliv
+    (if (i32.eq (local.get $id) (i32.const 4321)) (then (return (i32.const 1)))) ;; glLineStipple
     (if (i32.eq (local.get $id) (i32.const 4322)) (then (return (i32.const 1)))) ;; glListBase
     (if (i32.eq (local.get $id) (i32.const 4323)) (then (return (i32.const 1)))) ;; glLoadMatrixd
     (if (i32.eq (local.get $id) (i32.const 4335)) (then (return (i32.const 1)))) ;; glMaterialiv
@@ -4007,6 +4009,7 @@
     (if (i32.eq (local.get $id) (i32.const 4359)) (then (return (i32.const 1)))) ;; glPixelTransferf
     (if (i32.eq (local.get $id) (i32.const 4360)) (then (return (i32.const 1)))) ;; glPixelTransferi
     (if (i32.eq (local.get $id) (i32.const 4361)) (then (return (i32.const 1)))) ;; glPixelZoom
+    (if (i32.eq (local.get $id) (i32.const 4362)) (then (return (i32.const 1)))) ;; glPolygonStipple
     (if (i32.eq (local.get $id) (i32.const 4363)) (then (return (i32.const 1)))) ;; glPopClientAttrib
     (if (i32.eq (local.get $id) (i32.const 4366)) (then (return (i32.const 1)))) ;; glPushClientAttrib
     (if (i32.eq (local.get $id) (i32.const 4368)) (then (return (i32.const 1)))) ;; glRasterPos2d
@@ -4140,7 +4143,6 @@
     (if (i32.eq (local.get $id) (i32.const 4281)) (then (return (i32.const 1)))) ;; glGetMapdv
     (if (i32.eq (local.get $id) (i32.const 4282)) (then (return (i32.const 1)))) ;; glGetMapfv
     (if (i32.eq (local.get $id) (i32.const 4283)) (then (return (i32.const 1)))) ;; glGetMapiv
-    (if (i32.eq (local.get $id) (i32.const 4290)) (then (return (i32.const 1)))) ;; glGetPolygonStipple
     (if (i32.eq (local.get $id) (i32.const 4301)) (then (return (i32.const 1)))) ;; glIndexd
     (if (i32.eq (local.get $id) (i32.const 4302)) (then (return (i32.const 1)))) ;; glIndexdv
     (if (i32.eq (local.get $id) (i32.const 4303)) (then (return (i32.const 1)))) ;; glIndexf
@@ -4155,7 +4157,6 @@
     (if (i32.eq (local.get $id) (i32.const 4312)) (then (return (i32.const 1)))) ;; glIndexubv
     (if (i32.eq (local.get $id) (i32.const 4313)) (then (return (i32.const 1)))) ;; glInitNames
     (if (i32.eq (local.get $id) (i32.const 4314)) (then (return (i32.const 1)))) ;; glInterleavedArrays
-    (if (i32.eq (local.get $id) (i32.const 4321)) (then (return (i32.const 1)))) ;; glLineStipple
     (if (i32.eq (local.get $id) (i32.const 4324)) (then (return (i32.const 1)))) ;; glLoadName
     (if (i32.eq (local.get $id) (i32.const 4325)) (then (return (i32.const 1)))) ;; glLockArraysEXT
     (if (i32.eq (local.get $id) (i32.const 4326)) (then (return (i32.const 1)))) ;; glLogicOp
@@ -4172,7 +4173,6 @@
     (if (i32.eq (local.get $id) (i32.const 4339)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fARB
     (if (i32.eq (local.get $id) (i32.const 4340)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fvARB
     (if (i32.eq (local.get $id) (i32.const 4354)) (then (return (i32.const 1)))) ;; glPassThrough
-    (if (i32.eq (local.get $id) (i32.const 4362)) (then (return (i32.const 1)))) ;; glPolygonStipple
     (if (i32.eq (local.get $id) (i32.const 4364)) (then (return (i32.const 1)))) ;; glPopName
     (if (i32.eq (local.get $id) (i32.const 4365)) (then (return (i32.const 1)))) ;; glPrioritizeTextures
     (if (i32.eq (local.get $id) (i32.const 4367)) (then (return (i32.const 1)))) ;; glPushName
@@ -21625,7 +21625,7 @@
       (call $handle_gpu_api (i32.const 162) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4290: glGetPolygonStipple
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 176) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4291: glGetTexEnvfv
       (call $handle_gl_texture_query (i32.const 1) (i32.const 0))
@@ -21718,7 +21718,7 @@
       (call $handle_gl_lmf_integer (i32.const 1) (i32.const 1) (i32.const 1))
       (return)
     ) ;; 4321: glLineStipple
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 174) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4322: glListBase
       (call $handle_gpu_api (i32.const 132) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -22099,7 +22099,7 @@
       (call $handle_gl_texture_command (i32.const 171) (i32.const 2))
       (return)
     ) ;; 4362: glPolygonStipple
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 175) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4363: glPopClientAttrib
       (call $handle_gpu_api (i32.const 135) (i32.const 0) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
