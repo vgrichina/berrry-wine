@@ -41,6 +41,59 @@ function access(vm) {
   return { e, get, read, desc, present, stack };
 }
 
+// Diagnostics never invoke pg_read/pg_probe: those can set CR2, roll back the
+// guest, mark page tables accessed, or read a device. Only ordinary backed RAM
+// is inspected here; unavailable/device bytes are reported explicitly.
+function exceptionState(vm, vector, error, ip, software, external) {
+  const e = vm.exports, get = n => e[`mget_${n}`]() >>> 0;
+  const state = { vector, error: error >>> 0, returnIp: ip >>> 0, software, external,
+    cs: vm.get('cs'), ip: vm.get('gip'), ss: vm.get('ss'), sp: vm.raw('sp') >>> 0 };
+  for (const n of ['cr0', 'cr2', 'cr3', 'idtb', 'idtl', 'gdtb', 'gdtl',
+    'tr', 'pm_tr_valid', 'pm_tr_base', 'pm_tr_limit', 'pm_tr_access',
+    'ldtb', 'pm_ldt_limit', 'vm86', 'linmask']) state[n] = get(n);
+  const bus = p => state.linmask === 0xfffff ? (p & 0xffefffff) >>> 0 : p >>> 0;
+  const byte = p => {
+    p = bus(p);
+    if (p >= isa.GUEST_RAM_SIZE || (p >= 0xa0000 && p < 0xc0000)) throw Error('not ordinary RAM');
+    return vm.mem[p];
+  };
+  const word = p => (byte(p) | byte(p + 1) << 8 | byte(p + 2) << 16 | byte(p + 3) << 24) >>> 0;
+  const inspect = (linear, count) => {
+    const out = { linear: linear >>> 0, physical: [], bytes: [] };
+    try {
+      for (let i = 0; i < count; i++) {
+        const l = (linear + i) >>> 0;
+        let p = l & state.linmask;
+        if (state.cr0 & 0x80000000) {
+          const de = word((state.cr3 & 0xfffff000) + ((l >>> 22) * 4));
+          if (!(de & 1)) throw Error('PDE not present');
+          const te = word((de & 0xfffff000) + ((l >>> 10) & 0xffc));
+          if (!(te & 1)) throw Error('PTE not present');
+          p = ((te & 0xfffff000) | (l & 0xfff)) >>> 0;
+        }
+        out.physical.push(bus(p)); out.bytes.push(byte(p));
+      }
+    } catch (err) { out.unavailable = err.message; }
+    return out;
+  };
+  const descriptor = selector => {
+    const ldt = selector & 4, offset = selector & 0xfff8;
+    return { selector, inBounds: offset + 7 <= state[ldt ? 'pm_ldt_limit' : 'gdtl'],
+      ...inspect((state[ldt ? 'ldtb' : 'gdtb'] + offset) >>> 0, 8) };
+  };
+  state.gate = inspect((state.idtb + vector * 8) >>> 0, 8);
+  state.gate.inBounds = vector * 8 + 7 <= state.idtl;
+  if (state.gate.bytes.length === 8) {
+    const b = state.gate.bytes;
+    state.gate.type = b[5] & 31; state.gate.present = !!(b[5] & 128);
+    state.gate.dpl = b[5] >>> 5 & 3;
+    state.target = descriptor(b[2] | b[3] << 8);
+  }
+  state.task = descriptor(state.tr);
+  state.instruction = inspect((get('csb') + state.ip) >>> 0, 16);
+  return state;
+}
+
 function deliver(vm, vector, error, ip, software = false, external = false) {
   const a = access(vm), { e, get, read, desc, present, stack } = a;
   const idtError = vector * 8 + 2;
@@ -161,19 +214,24 @@ function iret(vm, width) {
 }
 
 function exception(vm, vector, error, ip, software = false, faultIp = ip, external = false) {
-  const e = vm.exports;
+  const e = vm.exports, chain = [];
+  const fatal = err => { err.pagingException = { chain }; return err; };
   for (let attempt = 0; attempt < 3; attempt++) {
+    chain.push(exceptionState(vm, vector, error, ip, software, external));
     e.pg_clear(); e.pg_checkpoint();
     try { deliver(vm, vector, error, ip, software, external); e.pg_set_error(0); e.pg_clear(); e.pg_checkpoint(); return; }
     catch (err) {
       const pending = e.pg_pending();
-      if (!pending && !(err instanceof DeliveryFault)) throw err;
-      if (pending === 3) { e.pg_clear(); throw Error(`unbacked physical paging bus at ${(e.pg_bus_address() >>> 0).toString(16)}`); }
+      chain[chain.length - 1].failure = { message: err.message, pending,
+        cr2: e.mget_cr2() >>> 0, error: e.pg_error() >>> 0,
+        vector: err instanceof DeliveryFault ? err.vector : null };
+      if (!pending && !(err instanceof DeliveryFault)) throw fatal(err);
+      if (pending === 3) { e.pg_clear(); throw fatal(Error(`unbacked physical paging bus at ${(e.pg_bus_address() >>> 0).toString(16)}`)); }
       const next = pending ? 14 : err.vector;
       const nextError = pending ? e.pg_error() : err.error | (external ? 1 : 0);
       if (!pending) e.pg_rollback();
       if (software) ip = faultIp;
-      if (!software && !external && vector === 8) { e.pg_clear(); throw Error('386 shutdown: fault delivering #DF'); }
+      if (!software && !external && vector === 8) { e.pg_clear(); throw fatal(Error('386 shutdown: fault delivering #DF')); }
       const contributory = n => [0, 10, 11, 12, 13].includes(n);
       if (!software && !external && ((vector === 14 && (next === 14 || contributory(next))) || (contributory(vector) && contributory(next)))) {
         vector = 8; error = 0;
@@ -181,7 +239,7 @@ function exception(vm, vector, error, ip, software = false, faultIp = ip, extern
       software = false; external = false;
     }
   }
-  throw Error('386 exception delivery did not terminate');
+  throw fatal(Error('386 exception delivery did not terminate'));
 }
 
 function step(vm, budget = 1000) {
@@ -226,4 +284,4 @@ function step(vm, budget = 1000) {
   }
 }
 
-module.exports = { step, exception, iret, DeliveryFault };
+module.exports = { step, exception, iret, DeliveryFault, exceptionState };

@@ -1,6 +1,121 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
 
+## DEMO24 first paged exception: retained state, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-task-gate-state/`. This follows published
+`4f805136102a54c2cd09aa0b24fb651a46b49438` and its author release. The retained
+reported helper PIDs were independently absent before source/runtime work.
+
+The new diagnostic API attaches `pagingException.chain` to fatal exception-delivery
+errors. Each attempted vector retains its input error/return IP, software/external
+origin, CS:IP/SS:ESP, CR0/CR2/CR3, IDTR/GDTR, cached TR, raw gate/target/current-task
+descriptors and instruction bytes, followed by the delivery failure. Inspection
+walks ordinary backed RAM without calling architectural paging accessors: no
+CR2/error changes, A/D writes, rollback, or device reads. Missing/device-backed
+bytes are explicitly unavailable; captured descriptor bytes are not a validity
+verdict. Native `--fault-json=PATH --fault-png=PATH` writes failure evidence before
+rethrowing; `--trace-fault` also prints the structured chain. A PNG from this path
+is the failure surface, not a successful runner report.
+
+**One** changed-diagnostic original session ran authentic `GTA.BAT -> K.EXE ->
+actual generated DINO.BAT -> DEMO24.EXE`, with the unchanged 3-billion dispatch
+budget, shared 85-second runner deadline and independent 90-second OS cap.
+The three live captures showed flags/English selected, English/Press Any Key,
+and Startup/Run GTA selected/Keyboard; each received one Enter. K.EXE exited 0.
+Generated DINO retained exactly `demo24.exe\r\n`, 12 bytes, SHA-256
+`5980340dfa79147f5be7b713d35804b6e25d8ecd1084d6ab22e51929a6dbf0cc`.
+DEMO24 was opened twice by its ordinary loader. No bypass or original retry.
+
+`fault.json` establishes **one delivery attempt**, not a nested #GP/#DF chain:
+
+| State | Actual value (hex) |
+| --- | --- |
+| Vector / error / origin | #PF 0E / 00000000 / processor fault, neither software nor external |
+| CS:EIP / SS:ESP | 0080:00003EBF / 00C0:00001F38 |
+| CR0 / CR2 / CR3 | 80000011 / **10184EA1** / 00160000 |
+| IDTR base / limit | 000011C0 / 07FF |
+| GDTR base / limit | 00110010 / 3FFF |
+| TR selector / cached base / limit / access | 0208 / 00158000 / 006F / 89; cache valid |
+| IDT[14] linear = physical | 00001230 |
+| IDT[14] raw bytes | `6D 43 18 02 00 85 00 00` |
+| Selected descriptor, GDT[0218], linear = physical | 00110228 |
+| Target descriptor raw bytes | `6F 00 00 90 15 89 00 00` |
+| Current TR descriptor, linear = physical | 00110218 |
+| Current TR descriptor raw bytes | `6F 00 00 80 15 89 00 00` |
+| Faulting instruction linear = physical | 0013CAFF |
+| Instruction bytes | `26 38 01 74 07 C7 46 FA 00 00 EB 02 46 46 8B 5E` |
+
+Error 0 reports a supervisor read of a non-present page. The IDT entry lies
+inside the IDTR limit and is a present system task gate (type 5), DPL 0. Its
+selector 0218 chooses the GDT, is non-null and in bounds. The target descriptor
+is a present available 386 TSS (access 89), base 00159000, byte limit 006F,
+which exceeds the 103-byte minimum. The outgoing descriptor is also recorded as
+available (89), matching the current cached access; this is evidence to audit,
+not a claim of correct busy-state bookkeeping. The incoming TSS contents,
+segment state and complete task-switch validity were **not** captured/validated.
+The unsupported error alone was insufficient; the retained bytes now establish
+which structural checks pass and which checks remain unknown.
+
+Intel's [80386 PRM §7.5](https://www.read.seas.harvard.edu/~kohler/class/aosref/i386/s07_05.htm)
+and [§9.6.2](https://www.read.seas.harvard.edu/~kohler/class/aosref/i386/s09_06.htm)
+require a task switch for this exception-gate mechanism, with outgoing-state
+save, incoming TR/CR3/register/segment loading, busy/backlink/NT/TS handling,
+exception error push and nested-task IRET. Failures before and after committing
+the new task have different contexts. A correct implementation must validate
+those states, including current-task busy bookkeeping and paging faults during
+switching. This exceeds a bounded gate-validation repair. **No task-switch
+hardware, partial success, fault suppression or replacement handler was added.**
+The next gameplay prerequisite is that complete architectural contract, plus
+validation of the actual incoming TSS and source page-walk state; this run does
+not prove the initial #PF itself is an emulator bug.
+
+The fatal PNG was inspected: DOS/4GW Professional Protected Mode Run-time 2.00
+copyright text only. No gameplay, walking/driving, player control, audio or FPS
+claim. Child `exited=false`; its default `exitCode=0` is not a guest exit.
+Host actual wait **1**, naturally after **63.157190 seconds**, with no deadline
+signal. `runtime-wait.json`, `fault.json`, `fault.png`, reviews/answers, overlay,
+exact EXEC requests and both actual module identities are retained. Both modules
+remain ordinary SHA-256 `03495d5463de5ee69a82104a0d37d35e7ce9d2662c26f5d06278312c159e080b`.
+Archive, K.EXE and all 117 fixture files / 17,078,619 bytes match before/after
+with exact closure and unchanged manifest; no fixture/configuration was altered.
+
+Focused diagnostics pass with a real faulting COM, JSON and PNG before throw,
+#PF delivery failure escalating directly to #DF, absent/unreadable/device-backed
+descriptors, invalid target bounds, software privilege rejection, saved fault IP,
+IDT error word, and unchanged CR2/error/memory on inspection. The same real COM
+capture fails on saved pre-change runner/paging source because failure JSON is
+absent. Both regenerated bundles pass actual faulting-COM execution, diagnostic
+and privilege checks, and exact parity for all 44/43 embedded source modules.
+Paging-foundation passes all three dispatch variants and 192 protection cases.
+
+**Regression limitation:** the full `test/test-toyvm-paging.js` run fails its
+existing DOS COM copy assertion at physical 000500B0: actual C3112233, expected
+76543210. Saved pre-change paging code reproduces the exact failure, including
+in an isolated COM run; a probe also observes 76543211 at 00071008 versus expected
+76543210. This failure is retained, not relabeled as a pass or repaired by
+weakening assertions. The preceding four-variant scalar/fetch, system-read,
+VM86 restart, physical-bus and trace-entry tests ran through before that failure.
+This is a separate unresolved paging regression relevant before future gameplay
+qualification. No full paging-suite pass is claimed.
+
+
+The complete native checkpoint/batch input regression, 36 actual CALL-gate/RETF
+cases and protected timer-vector regression also pass. The mandatory
+`flock /tmp/wine-build.lock bash tools/build.sh` passes in full. These results
+qualify the diagnostic change, not task switching or the failing COM copy test.
+No hardware behavior was changed. Both live bundles are regenerated from these
+sources. The original-tested source is retained through its loaded-module pins;
+the final bus-error diagnostic attachment was checked synthetically without
+another original.
+
+The independent disk guard enforces abort 2,020,000,000 bytes / floor 2 GB,
+without a RAM gate. Helpers are waited and cleaned after publication; box
+ID/state/expiry N/A, coordinator lifecycle unchanged. No browser, boat, binary
+download, registry change, deployment, workers, MDK2/GL edits or foreign WIP
+adoption occurred. Evidence, commands, actual waits and recovery are retained
+outside git; all assigned paths and serialized runtime are released at completion.
+
 ## Original batch handoff: child reached, task-gate boundary, 2026-11-01
 
 Evidence: `scratch/runs/20261101-gta1-original-batch-handoff/`. Implementation began after

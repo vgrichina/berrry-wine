@@ -916,7 +916,21 @@ async function runDos(o) {
       checkpointResult.delivered = true;
       if (inputCheckpoints[checkpointResults.length]?.at <= session.dispatched) continue;
     }
-    session.step();
+    try { session.step(); }
+    catch (err) {
+      if (err.pagingException) {
+        if (traceFault) log(`paged exception failure: ${JSON.stringify(err.pagingException)}`);
+        // Retain evidence before propagating the original failure. No resume,
+        // successful report, or guest exit is implied by these diagnostics.
+        if (o.faultJson) fs.writeFileSync(o.faultJson, JSON.stringify(err.pagingException, null, 2));
+        if (o.faultPng) {
+          const surface = screenSurface(machine);
+          if (surface.text) writeConsolePng(o.faultPng, machine.con);
+          else writePng(o.faultPng, vm.mem, machine.palette, surface.geom);
+        }
+      }
+      throw err;
+    }
     // Between slices, never inside one: installing swaps the wasm instance.
     // Headless, the pipeline is simply awaited -- a one-second pause between
     // two slices costs a batch run nothing, and the page (which cannot afford
@@ -1516,6 +1530,8 @@ async function main() {
     // --trace-irq: one line per host-injected interrupt. See the hook.
     traceIrq: flag('trace-irq'),
     traceFault: flag('trace-fault'),
+    // Failure evidence is written before the exception reaches main's catch.
+    faultJson: arg('fault-json'), faultPng: arg('fault-png'),
     traceV86: flag('trace-v86'),
     traceEntry: flag('trace-entry') ? { from: 0, to: 40 } : parseTraceEntry(arg('trace-entry')),
     traceEntryRegs: flag('trace-entry-regs'),

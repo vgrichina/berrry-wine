@@ -99,7 +99,7 @@ async function dosCom(variant, tier = {}) {
     for (let i = 0; i < 4096; i += 4) {
       if ((p === 0x30000 && i === 4092) || (p === 0x50000 && i === 0) ||
           (p === 0x60000 && (i === 0 || i === 4092))) continue;
-      assert.equal(v.getUint32(p + i, true), 0x76543210);
+      assert.equal(v.getUint32(p + i, true), 0x76543210, `copy ${variant}/${JSON.stringify(tier)} at ${(p+i).toString(16)}`);
     }
   }
   assert.equal(v.getUint32(0x71000, true), 0x12345678);
@@ -398,7 +398,106 @@ async function physicalBus(variant) {
   assert.equal(v.getUint32(isa.VGA_CTL_WRITES, true), 0, 'fault rollback restores the VGA transaction');
   observations.push({ variant, scalarSelfMapping: true, physicalVgaBus: true, vgaTransactionRestart: true });
 }
+async function exceptionDiagnostics() {
+  const { vm, e, put, start } = await fixture('tailcall');
+  const { exception, exceptionState } = require('../tools/toyvm/paging-exec');
+  put(0x1a040, 0x00280000); put(0x1a044, 0x00008500); // #DF task gate
+  put(0x19028, 0x90000067); put(0x1902c, 0x00008901);
+  e.mset_cr2(0xdeadbeef); e.pg_set_error(0x55);
+  // #PF -> invalid gate #GP -> #DF -> unsupported task gate. Preserve the
+  // original #PF address/error and every intermediate descriptor, even though
+  // the caller receives an Error rather than a normal VM report.
+  put(0x1a070, 0); put(0x1a074, 0);
+  const before = vm.mem.slice(0, isa.GUEST_RAM_SIZE);
+  const state = exceptionState(vm, 8, 0, start, false, false);
+  assert.deepEqual(vm.mem.slice(0, isa.GUEST_RAM_SIZE), before, 'inspection does not set page-table A/D or touch device latches');
+  assert.equal(e.get_cr2() >>> 0, 0xdeadbeef); assert.equal(e.pg_error(), 0x55);
+  assert.equal(state.gate.type, 5); assert.equal(state.gate.present, true);
+  assert.equal(state.target.selector, 0x28);
+  assert.deepEqual(state.target.bytes, [0x67, 0, 0, 0x90, 1, 0x89, 0, 0]);
+  let failure;
+  try { exception(vm, 14, 6, start); } catch (err) { failure = err; }
+  assert.match(failure.message, /unsupported 386 task-gate/);
+  const chain = failure.pagingException.chain;
+  assert.deepEqual(chain.map(x => x.vector), [14, 8]);
+  assert.equal(chain[0].error, 6); assert.equal(chain[0].failure.vector, 13);
+  assert.equal(chain[0].cr2, 0xdeadbeef); assert.equal(chain[1].error, 0);
+  assert.equal(chain[1].gate.type, 5); assert.equal(chain[1].returnIp, start);
+  assert.equal(vm.get('gip'), start); assert.equal(vm.get('cs'), 8);
+  // Diagnostics must describe bad/unreadable descriptors without causing a
+  // second architectural fault, resetting error state, or fabricating bytes.
+  put(0x21068, 0); // unmap IDT page
+  e.pg_set_error(7); e.mset_cr2(0x12345678);
+  const unreadable = exceptionState(vm, 8, 0, start, false, false);
+  assert.equal(unreadable.gate.unavailable, 'PTE not present');
+  assert.deepEqual(unreadable.gate.bytes, []);
+  assert.equal(e.get_cr2() >>> 0, 0x12345678); assert.equal(e.pg_error(), 7);
+  put(0x21068, 0xa0007);
+  assert.equal(exceptionState(vm, 8, 0, start, false, false).gate.unavailable, 'not ordinary RAM');
+  // A not-present gate is described as such, without claiming a switch was
+  // valid. Snapshotting out-of-bounds targets likewise does not validate them.
+  put(0x21068, 0x1a007); put(0x1a044, 0x00000500);
+  const absent = exceptionState(vm, 8, 0, start, false, false);
+  assert.equal(absent.gate.present, false);
+  e.mset_gdtl(7);
+  assert.equal(exceptionState(vm, 8, 0, start, false, false).target.inBounds, false);
+  e.mset_gdtl(0x2f);
+  // Software INT privilege failure must reach #GP instead of the task-gate
+  // unsupported stop; it saves the faulting IP and IDT selector error code.
+  put(0x1a180, 0x00280000); put(0x1a184, 0x00008500);
+  put(0x1a068, 0x00086000); put(0x1a06c, 0x00008e00);
+  vm.set('cs', 0x1b); vm.set('ss', 0x23); vm.set('sp', 0x80000);
+  e.mset_pm_tr_valid(1); e.mset_pm_tr_base(0x1b000);
+  e.mset_pm_tr_limit(103); e.mset_pm_tr_access(0x89);
+  put(0x1b004, 0x90000); put(0x1b008, 16);
+  exception(vm, 0x30, 0, start + 2, true, start);
+  assert.equal(vm.get('cs'), 8); assert.equal(vm.get('gip'), 0x6000);
+  assert.equal(new DataView(vm.mem.buffer).getUint32(vm.get('sp'), true), 0x182);
+  assert.equal(new DataView(vm.mem.buffer).getUint32(vm.get('sp') + 4, true), start);
+  assert.equal(e.pg_pending(), 0); assert.equal(e.pg_error(), 0);
+  observations.push({ retainedNestedExceptionChain: true, readOnlyDiagnostics: true,
+    absentGateAndInvalidTarget: true, softwarePrivilegeNegative: true });
+}
+async function failureCapture() {
+  const com = Buffer.alloc(0x9000);
+  const put = (p, n) => com.writeUInt32LE(n >>> 0, p - 0x10100);
+  com.set([0xfa, 0x0f, 0x01, 0x16, 0xe0, 1, 0x0f, 0x01, 0x1e, 0xe6, 1,
+    0x66, ...mov(0, guestPageDirectory), 0x0f, 0x22, 0xd8,
+    0x66, ...mov(0, 0x80000011), 0x0f, 0x22, 0xc0, 0xea, 0, 2, 8, 0]);
+  com.writeUInt16LE(0x2f, 0xe0); com.writeUInt32LE(0x18000, 0xe2);
+  com.writeUInt16LE(0x7ff, 0xe6); com.writeUInt32LE(0x17000, 0xe8);
+  put(0x18008, 0xffff); put(0x1800c, 0x00cf9a01);
+  put(0x18010, 0xffff); put(0x18014, 0x00cf9200);
+  put(0x18028, 0x90000067); put(0x1802c, 0x00008901);
+  put(0x17070, 0x00280000); put(0x17074, 0x00008500);
+  put(guestPageDirectory, 0x13007);
+  for (let i = 0; i < 1024; i++) put(0x13000 + i * 4, i * 4096 | 7);
+  com.set([0x66, 0xb8, 16, 0, 0x8e, 0xd8, 0x8e, 0xc0, 0x8e, 0xd0,
+    ...mov(4, 0x90000), 0xa1, ...u32(0x10000000)], 0x100);
+  const dir = evidence || fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'toyvm-exception-capture-'));
+  const exe = path.join(dir, 'fault.COM'), json = path.join(dir, 'failure.json'), png = path.join(dir, 'failure.png');
+  fs.writeFileSync(exe, com); fs.rmSync(json, { force: true }); fs.rmSync(png, { force: true });
+  const lines = [];
+  await assert.rejects(runDos({ exe, pspSeg: 0x1000, loadSeg: 0x1000, budget: 10000,
+    seconds: 5, sound: false, traceFault: true, faultJson: json, faultPng: png,
+    log: line => lines.push(line) }), /unsupported 386 task-gate transfer/);
+  const state = JSON.parse(fs.readFileSync(json));
+  assert.equal(state.chain.length, 1); assert.equal(state.chain[0].vector, 14);
+  assert.equal(state.chain[0].cr2, 0x10000000); assert.equal(state.chain[0].error, 0);
+  assert.equal(state.chain[0].target.selector, 0x28);
+  assert(lines.some(line => line.startsWith('paged exception failure: ')));
+  const image = fs.readFileSync(png);
+  assert.equal(image.subarray(1, 4).toString(), 'PNG');
+  assert(image.readUInt32BE(16) > 0 && image.readUInt32BE(20) > 0);
+  observations.push({ captureBeforeThrow: true, guestFailurePreserved: true });
+}
 (async () => {
+  await exceptionDiagnostics();
+  await failureCapture();
+  if (process.argv.includes('--exception-diagnostics-only')) {
+    console.log('PASS retained chain/read-only state/invalid and absent descriptors/software privilege/error state/real COM failure JSON+PNG');
+    return;
+  }
   for (const variant of ['tailcall', 'switch', 'calls', 'repl_tailcall']) await run(variant);
   for (const variant of ['tailcall', 'switch', 'calls', 'repl_tailcall']) await systemReads(variant);
   for (const variant of ['tailcall', 'switch', 'calls', 'repl_tailcall']) await v86Restart(variant);
