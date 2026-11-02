@@ -891,8 +891,13 @@
         (global.set $gl_state_attrib_head (i32.load (local.get $p)))
         (global.set $gl_color_r (f32.load offset=4 (local.get $p))) (global.set $gl_color_g (f32.load offset=8 (local.get $p)))
         (global.set $gl_color_b (f32.load offset=12 (local.get $p))) (global.set $gl_color_a (f32.load offset=16 (local.get $p)))
-        (global.set $gl_tex_s (f32.load offset=20 (local.get $p))) (global.set $gl_tex_t (f32.load offset=24 (local.get $p)))
-        (global.set $gl_tex1_s (f32.load offset=28 (local.get $p))) (global.set $gl_tex1_t (f32.load offset=32 (local.get $p)))
+        ;; Current texture coordinates on both units belong to GL_CURRENT_BIT,
+        ;; including r/q. Unrelated attribute masks leave changed values live.
+        (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 1)) (then
+          (global.set $gl_tex_s (f32.load offset=20 (local.get $p))) (global.set $gl_tex_t (f32.load offset=24 (local.get $p)))
+          (global.set $gl_tex1_s (f32.load offset=28 (local.get $p))) (global.set $gl_tex1_t (f32.load offset=32 (local.get $p)))
+          (global.set $gl_tex_r (f32.load offset=52 (local.get $p))) (global.set $gl_tex_q (f32.load offset=56 (local.get $p)))
+          (global.set $gl_tex1_r (f32.load offset=60 (local.get $p))) (global.set $gl_tex1_q (f32.load offset=64 (local.get $p)))))
         ;; The current normal belongs only to GL_CURRENT_BIT. Other masks
         ;; must preserve normal changes made after the corresponding push.
         (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 1)) (then
@@ -900,8 +905,6 @@
           (global.set $gl_normal_y (f32.load offset=40 (local.get $p)))
           (global.set $gl_normal_z (f32.load offset=44 (local.get $p)))))
         (global.set $gl_shade_model (i32.load offset=48 (local.get $p)))
-        (global.set $gl_tex_r (f32.load offset=52 (local.get $p))) (global.set $gl_tex_q (f32.load offset=56 (local.get $p)))
-        (global.set $gl_tex1_r (f32.load offset=60 (local.get $p))) (global.set $gl_tex1_q (f32.load offset=64 (local.get $p)))
         (call $heap_free (call $w2g (local.get $p)))))
       (return (i32.const 0))))
     (if (i32.or (i32.eq (local.get $op) (i32.const 86)) (i32.eq (local.get $op) (i32.const 99))) (then
@@ -956,6 +959,8 @@
       ;; DrawElements updates array-derived attributes while assembling the
       ;; draw, then restores the caller's current attributes on return.
       (drop (call $gl_state_intercept (i32.const 76) (local.get $stack)))
+      ;; Internal save/restore covers current attributes regardless of mode.
+      (i32.store offset=68 (global.get $gl_state_attrib_head) (i32.const 1))
       (global.set $gl_immediate_mode (i32.load offset=4 (local.get $stack)))
       (global.set $gl_immediate_floats (i32.const 0))
       ;; $p stays a guest address and each index is translated on its own:
@@ -990,6 +995,8 @@
             (i32.eqz (call $gl_array_type_bytes (global.get $gl_vp_type)))))
         (then (return (i32.const 1))))
       (drop (call $gl_state_intercept (i32.const 76) (local.get $stack)))
+      ;; Internal save/restore covers current attributes regardless of mode.
+      (i32.store offset=68 (global.get $gl_state_attrib_head) (i32.const 1))
       (global.set $gl_immediate_mode (i32.load offset=4 (local.get $stack)))
       (global.set $gl_immediate_floats (i32.const 0))
       (loop $elements (if (i32.lt_u (local.get $i) (local.get $count)) (then

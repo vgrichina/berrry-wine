@@ -334,6 +334,22 @@ for (const [suffix, bits] of [['b', 8], ['s', 16], ['i', 32], ['d', 64]]) {
     typedNormalApis.set(`glNormal3${suffix}${vector ? 'v' : ''}`, [bits, vector]);
 }
 
+// Missing GL1.1 texture-coordinate families share a checked native adapter.
+// Explicit selection leaves the established 2f/2fv/2i/2d/2dv and 4f/4fv
+// command paths and the stable command-stream opcode numbering intact.
+const typedTexCoordApis = new Map();
+for (const [n, suffixes] of [
+  [1, ['d', 'dv', 'f', 'fv', 'i', 'iv', 's', 'sv']],
+  [2, ['iv', 's', 'sv']],
+  [3, ['d', 'dv', 'f', 'fv', 'i', 'iv', 's', 'sv']],
+  [4, ['d', 'dv', 'i', 'iv', 's', 'sv']],
+]) {
+  for (const suffix of suffixes) {
+    const kind = {d: 0x140a, f: 0x1406, i: 0x1404, s: 0x1402}[suffix[0]];
+    typedTexCoordApis.set(`glTexCoord${n}${suffix}`, [n, kind, Number(suffix.endsWith('v'))]);
+  }
+}
+
 // Dynamic WGL lookup must not expose fail-fast aliases merely because their
 // names exist in the global import table. Derive availability from the same
 // implementation map that dispatch uses. GLU helpers are a separate library.
@@ -352,6 +368,7 @@ const nativeGlApis = new Set([
   'glMultMatrixd', 'glTexCoord2d', 'glTexCoord2dv', 'glTexCoord2i',
   'glColor3d', 'glColor3dv', 'glColor4dv', 'glVertex2d', 'glVertex2dv', 'glVertex3d',
   ...integerColorApis.keys(),
+  ...typedTexCoordApis.keys(),
   ...typedNormalApis.keys(),
 ]);
 for (const [id, api] of apiTable.entries()) {
@@ -374,6 +391,10 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  const typedTexCoord = typedTexCoordApis.get(api.name);
+  if (typedTexCoord) {
+    return `      (call $handle_glTexCoord_typed ${typedTexCoord.map(n => `(i32.const ${n})`).join(' ')})`;
+  }
   const typedNormal = typedNormalApis.get(api.name);
   if (typedNormal) {
     return `      (call $handle_glNormal_typed ${typedNormal.map(n => `(i32.const ${n})`).join(' ')})`;

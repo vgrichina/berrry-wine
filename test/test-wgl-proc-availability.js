@@ -30,11 +30,6 @@ const unsupportedMdk2 = `
   glRasterPos3s glRasterPos3sv glRasterPos4d glRasterPos4dv glRasterPos4f
   glRasterPos4fv glRasterPos4i glRasterPos4iv glRasterPos4s glRasterPos4sv
   glRenderMode glSelectBuffer
-  glTexCoord1d glTexCoord1dv glTexCoord1f glTexCoord1fv glTexCoord1i
-  glTexCoord1iv glTexCoord1s glTexCoord1sv glTexCoord2iv glTexCoord2s
-  glTexCoord2sv glTexCoord3d glTexCoord3dv glTexCoord3f glTexCoord3fv
-  glTexCoord3i glTexCoord3iv glTexCoord3s glTexCoord3sv glTexCoord4d
-  glTexCoord4dv glTexCoord4i glTexCoord4iv glTexCoord4s glTexCoord4sv
   glTexEnvfv glTexEnviv glTexGend glTexGendv glTexGeniv
   glTexImage1D glTexParameteriv glTexSubImage1D glVertex2iv
   glVertex2s glVertex2sv glVertex3dv glVertex3i glVertex3iv
@@ -131,7 +126,12 @@ async function main() {
     'glMultiTexCoord2fARB', 'glTexParameterfv', 'glGetTexParameterfv',
     'glTexCoord2d', 'glTexCoord2dv',
     'glColor3dv', 'glColor4dv', 'glRectf', 'glRectd', 'glRectdv', 'glAccum', 'glClearAccum',
-    'glNormal3b', 'glNormal3bv', 'glNormal3d', 'glNormal3dv', 'glNormal3i', 'glNormal3iv', 'glNormal3s', 'glNormal3sv', 'glRectfv', 'glRecti', 'glRectiv', 'glRects', 'glRectsv', 'glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled',
+    'glNormal3b', 'glNormal3bv', 'glNormal3d', 'glNormal3dv', 'glNormal3i', 'glNormal3iv', 'glNormal3s', 'glNormal3sv',
+    'glTexCoord1d', 'glTexCoord1dv', 'glTexCoord1f', 'glTexCoord1fv', 'glTexCoord1i',
+    'glTexCoord1iv', 'glTexCoord1s', 'glTexCoord1sv', 'glTexCoord2iv', 'glTexCoord2s',
+    'glTexCoord2sv', 'glTexCoord3d', 'glTexCoord3dv', 'glTexCoord3f', 'glTexCoord3fv',
+    'glTexCoord3i', 'glTexCoord3iv', 'glTexCoord3s', 'glTexCoord3sv', 'glTexCoord4d',
+    'glTexCoord4dv', 'glTexCoord4i', 'glTexCoord4iv', 'glTexCoord4s', 'glTexCoord4sv', 'glRectfv', 'glRecti', 'glRectiv', 'glRects', 'glRectsv', 'glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled',
     'wglSwapLayerBuffers', 'wglGetCurrentContext', 'wglGetCurrentDC']) {
     const thunk = lookup(name);
     assert.notStrictEqual(thunk, 0, `${name} remains available`);
@@ -158,7 +158,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 167, 'retain every still unsupported MDK2 name');
+  assert.strictEqual(unsupportedMdk2.length, 142, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);
@@ -167,7 +167,12 @@ async function main() {
     assert.strictEqual(e.lookup_error(),127,'ERROR_PROC_NOT_FOUND');
     assert.strictEqual(e.lookup_thunks(),before,'rejection allocates no thunk');
   }
-  for (const name of ['glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv','wglGetProcAddress']) {
+  for (const name of ['glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv',
+    'glTexCoord1d', 'glTexCoord1dv', 'glTexCoord1f', 'glTexCoord1fv', 'glTexCoord1i',
+    'glTexCoord1iv', 'glTexCoord1s', 'glTexCoord1sv', 'glTexCoord2iv', 'glTexCoord2s',
+    'glTexCoord2sv', 'glTexCoord3d', 'glTexCoord3dv', 'glTexCoord3f', 'glTexCoord3fv',
+    'glTexCoord3i', 'glTexCoord3iv', 'glTexCoord3s', 'glTexCoord3sv', 'glTexCoord4d',
+    'glTexCoord4dv', 'glTexCoord4i', 'glTexCoord4iv', 'glTexCoord4s', 'glTexCoord4sv','wglGetProcAddress']) {
     const thunk=staticLookup(name);
     assert(thunk,`${name} remains available through SDL fallback`);
     assert.strictEqual(v.getUint32(toWasm(thunk)+4,true),table.findIndex(a=>a.name===name));

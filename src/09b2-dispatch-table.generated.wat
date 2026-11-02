@@ -3985,11 +3985,36 @@
     (if (i32.eq (local.get $id) (i32.const 4403)) (then (return (i32.const 1)))) ;; glStencilFunc
     (if (i32.eq (local.get $id) (i32.const 4404)) (then (return (i32.const 1)))) ;; glStencilMask
     (if (i32.eq (local.get $id) (i32.const 4405)) (then (return (i32.const 1)))) ;; glStencilOp
+    (if (i32.eq (local.get $id) (i32.const 4406)) (then (return (i32.const 1)))) ;; glTexCoord1d
+    (if (i32.eq (local.get $id) (i32.const 4407)) (then (return (i32.const 1)))) ;; glTexCoord1dv
+    (if (i32.eq (local.get $id) (i32.const 4408)) (then (return (i32.const 1)))) ;; glTexCoord1f
+    (if (i32.eq (local.get $id) (i32.const 4409)) (then (return (i32.const 1)))) ;; glTexCoord1fv
+    (if (i32.eq (local.get $id) (i32.const 4410)) (then (return (i32.const 1)))) ;; glTexCoord1i
+    (if (i32.eq (local.get $id) (i32.const 4411)) (then (return (i32.const 1)))) ;; glTexCoord1iv
+    (if (i32.eq (local.get $id) (i32.const 4412)) (then (return (i32.const 1)))) ;; glTexCoord1s
+    (if (i32.eq (local.get $id) (i32.const 4413)) (then (return (i32.const 1)))) ;; glTexCoord1sv
     (if (i32.eq (local.get $id) (i32.const 4414)) (then (return (i32.const 1)))) ;; glTexCoord2d
     (if (i32.eq (local.get $id) (i32.const 4415)) (then (return (i32.const 1)))) ;; glTexCoord2dv
     (if (i32.eq (local.get $id) (i32.const 4416)) (then (return (i32.const 1)))) ;; glTexCoord2i
+    (if (i32.eq (local.get $id) (i32.const 4417)) (then (return (i32.const 1)))) ;; glTexCoord2iv
+    (if (i32.eq (local.get $id) (i32.const 4418)) (then (return (i32.const 1)))) ;; glTexCoord2s
+    (if (i32.eq (local.get $id) (i32.const 4419)) (then (return (i32.const 1)))) ;; glTexCoord2sv
+    (if (i32.eq (local.get $id) (i32.const 4420)) (then (return (i32.const 1)))) ;; glTexCoord3d
+    (if (i32.eq (local.get $id) (i32.const 4421)) (then (return (i32.const 1)))) ;; glTexCoord3dv
+    (if (i32.eq (local.get $id) (i32.const 4422)) (then (return (i32.const 1)))) ;; glTexCoord3f
+    (if (i32.eq (local.get $id) (i32.const 4423)) (then (return (i32.const 1)))) ;; glTexCoord3fv
+    (if (i32.eq (local.get $id) (i32.const 4424)) (then (return (i32.const 1)))) ;; glTexCoord3i
+    (if (i32.eq (local.get $id) (i32.const 4425)) (then (return (i32.const 1)))) ;; glTexCoord3iv
+    (if (i32.eq (local.get $id) (i32.const 4426)) (then (return (i32.const 1)))) ;; glTexCoord3s
+    (if (i32.eq (local.get $id) (i32.const 4427)) (then (return (i32.const 1)))) ;; glTexCoord3sv
+    (if (i32.eq (local.get $id) (i32.const 4428)) (then (return (i32.const 1)))) ;; glTexCoord4d
+    (if (i32.eq (local.get $id) (i32.const 4429)) (then (return (i32.const 1)))) ;; glTexCoord4dv
     (if (i32.eq (local.get $id) (i32.const 4430)) (then (return (i32.const 1)))) ;; glTexCoord4f
     (if (i32.eq (local.get $id) (i32.const 4431)) (then (return (i32.const 1)))) ;; glTexCoord4fv
+    (if (i32.eq (local.get $id) (i32.const 4432)) (then (return (i32.const 1)))) ;; glTexCoord4i
+    (if (i32.eq (local.get $id) (i32.const 4433)) (then (return (i32.const 1)))) ;; glTexCoord4iv
+    (if (i32.eq (local.get $id) (i32.const 4434)) (then (return (i32.const 1)))) ;; glTexCoord4s
+    (if (i32.eq (local.get $id) (i32.const 4435)) (then (return (i32.const 1)))) ;; glTexCoord4sv
     (if (i32.eq (local.get $id) (i32.const 4442)) (then (return (i32.const 1)))) ;; glTexParameterfv
     (if (i32.eq (local.get $id) (i32.const 4445)) (then (return (i32.const 1)))) ;; glTranslated
     (if (i32.eq (local.get $id) (i32.const 4447)) (then (return (i32.const 1)))) ;; glVertex2d
@@ -4131,31 +4156,6 @@
     (if (i32.eq (local.get $id) (i32.const 4391)) (then (return (i32.const 1)))) ;; glRasterPos4sv
     (if (i32.eq (local.get $id) (i32.const 4400)) (then (return (i32.const 1)))) ;; glRenderMode
     (if (i32.eq (local.get $id) (i32.const 4402)) (then (return (i32.const 1)))) ;; glSelectBuffer
-    (if (i32.eq (local.get $id) (i32.const 4406)) (then (return (i32.const 1)))) ;; glTexCoord1d
-    (if (i32.eq (local.get $id) (i32.const 4407)) (then (return (i32.const 1)))) ;; glTexCoord1dv
-    (if (i32.eq (local.get $id) (i32.const 4408)) (then (return (i32.const 1)))) ;; glTexCoord1f
-    (if (i32.eq (local.get $id) (i32.const 4409)) (then (return (i32.const 1)))) ;; glTexCoord1fv
-    (if (i32.eq (local.get $id) (i32.const 4410)) (then (return (i32.const 1)))) ;; glTexCoord1i
-    (if (i32.eq (local.get $id) (i32.const 4411)) (then (return (i32.const 1)))) ;; glTexCoord1iv
-    (if (i32.eq (local.get $id) (i32.const 4412)) (then (return (i32.const 1)))) ;; glTexCoord1s
-    (if (i32.eq (local.get $id) (i32.const 4413)) (then (return (i32.const 1)))) ;; glTexCoord1sv
-    (if (i32.eq (local.get $id) (i32.const 4417)) (then (return (i32.const 1)))) ;; glTexCoord2iv
-    (if (i32.eq (local.get $id) (i32.const 4418)) (then (return (i32.const 1)))) ;; glTexCoord2s
-    (if (i32.eq (local.get $id) (i32.const 4419)) (then (return (i32.const 1)))) ;; glTexCoord2sv
-    (if (i32.eq (local.get $id) (i32.const 4420)) (then (return (i32.const 1)))) ;; glTexCoord3d
-    (if (i32.eq (local.get $id) (i32.const 4421)) (then (return (i32.const 1)))) ;; glTexCoord3dv
-    (if (i32.eq (local.get $id) (i32.const 4422)) (then (return (i32.const 1)))) ;; glTexCoord3f
-    (if (i32.eq (local.get $id) (i32.const 4423)) (then (return (i32.const 1)))) ;; glTexCoord3fv
-    (if (i32.eq (local.get $id) (i32.const 4424)) (then (return (i32.const 1)))) ;; glTexCoord3i
-    (if (i32.eq (local.get $id) (i32.const 4425)) (then (return (i32.const 1)))) ;; glTexCoord3iv
-    (if (i32.eq (local.get $id) (i32.const 4426)) (then (return (i32.const 1)))) ;; glTexCoord3s
-    (if (i32.eq (local.get $id) (i32.const 4427)) (then (return (i32.const 1)))) ;; glTexCoord3sv
-    (if (i32.eq (local.get $id) (i32.const 4428)) (then (return (i32.const 1)))) ;; glTexCoord4d
-    (if (i32.eq (local.get $id) (i32.const 4429)) (then (return (i32.const 1)))) ;; glTexCoord4dv
-    (if (i32.eq (local.get $id) (i32.const 4432)) (then (return (i32.const 1)))) ;; glTexCoord4i
-    (if (i32.eq (local.get $id) (i32.const 4433)) (then (return (i32.const 1)))) ;; glTexCoord4iv
-    (if (i32.eq (local.get $id) (i32.const 4434)) (then (return (i32.const 1)))) ;; glTexCoord4s
-    (if (i32.eq (local.get $id) (i32.const 4435)) (then (return (i32.const 1)))) ;; glTexCoord4sv
     (if (i32.eq (local.get $id) (i32.const 4436)) (then (return (i32.const 1)))) ;; glTexEnvfv
     (if (i32.eq (local.get $id) (i32.const 4437)) (then (return (i32.const 1)))) ;; glTexEnviv
     (if (i32.eq (local.get $id) (i32.const 4438)) (then (return (i32.const 1)))) ;; glTexGend
@@ -22231,28 +22231,28 @@
       (call $handle_gpu_api (i32.const 138) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4406: glTexCoord1d
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5130) (i32.const 0))
       (return)
     ) ;; 4407: glTexCoord1dv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5130) (i32.const 1))
       (return)
     ) ;; 4408: glTexCoord1f
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5126) (i32.const 0))
       (return)
     ) ;; 4409: glTexCoord1fv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5126) (i32.const 1))
       (return)
     ) ;; 4410: glTexCoord1i
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5124) (i32.const 0))
       (return)
     ) ;; 4411: glTexCoord1iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5124) (i32.const 1))
       (return)
     ) ;; 4412: glTexCoord1s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5122) (i32.const 0))
       (return)
     ) ;; 4413: glTexCoord1sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 1) (i32.const 5122) (i32.const 1))
       (return)
     ) ;; 4414: glTexCoord2d
       (call $handle_glTexCoord2d (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -22264,43 +22264,43 @@
       (call $handle_glTexCoord2i (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4417: glTexCoord2iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 2) (i32.const 5124) (i32.const 1))
       (return)
     ) ;; 4418: glTexCoord2s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 2) (i32.const 5122) (i32.const 0))
       (return)
     ) ;; 4419: glTexCoord2sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 2) (i32.const 5122) (i32.const 1))
       (return)
     ) ;; 4420: glTexCoord3d
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5130) (i32.const 0))
       (return)
     ) ;; 4421: glTexCoord3dv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5130) (i32.const 1))
       (return)
     ) ;; 4422: glTexCoord3f
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5126) (i32.const 0))
       (return)
     ) ;; 4423: glTexCoord3fv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5126) (i32.const 1))
       (return)
     ) ;; 4424: glTexCoord3i
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5124) (i32.const 0))
       (return)
     ) ;; 4425: glTexCoord3iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5124) (i32.const 1))
       (return)
     ) ;; 4426: glTexCoord3s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5122) (i32.const 0))
       (return)
     ) ;; 4427: glTexCoord3sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 3) (i32.const 5122) (i32.const 1))
       (return)
     ) ;; 4428: glTexCoord4d
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5130) (i32.const 0))
       (return)
     ) ;; 4429: glTexCoord4dv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5130) (i32.const 1))
       (return)
     ) ;; 4430: glTexCoord4f
       (call $handle_gpu_api (i32.const 120) (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -22309,16 +22309,16 @@
       (call $handle_gpu_api (i32.const 121) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4432: glTexCoord4i
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5124) (i32.const 0))
       (return)
     ) ;; 4433: glTexCoord4iv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5124) (i32.const 1))
       (return)
     ) ;; 4434: glTexCoord4s
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5122) (i32.const 0))
       (return)
     ) ;; 4435: glTexCoord4sv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexCoord_typed (i32.const 4) (i32.const 5122) (i32.const 1))
       (return)
     ) ;; 4436: glTexEnvfv
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

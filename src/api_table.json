@@ -37558,64 +37558,56 @@
     "name": "glTexCoord1d",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 1163476005,
-    "handler": "gl_unimplemented"
+    "hash": 1163476005
   },
   {
     "id": 4407,
     "name": "glTexCoord1dv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 2121922217,
-    "handler": "gl_unimplemented"
+    "hash": 2121922217
   },
   {
     "id": 4408,
     "name": "glTexCoord1f",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 1129920767,
-    "handler": "gl_unimplemented"
+    "hash": 1129920767
   },
   {
     "id": 4409,
     "name": "glTexCoord1fv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 2389966763,
-    "handler": "gl_unimplemented"
+    "hash": 2389966763
   },
   {
     "id": 4410,
     "name": "glTexCoord1i",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 1213808862,
-    "handler": "gl_unimplemented"
+    "hash": 1213808862
   },
   {
     "id": 4411,
     "name": "glTexCoord1iv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 2357250168,
-    "handler": "gl_unimplemented"
+    "hash": 2357250168
   },
   {
     "id": 4412,
     "name": "glTexCoord1s",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 1314474576,
-    "handler": "gl_unimplemented"
+    "hash": 1314474576
   },
   {
     "id": 4413,
     "name": "glTexCoord1sv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 2089794002,
-    "handler": "gl_unimplemented"
+    "hash": 2089794002
   },
   {
     "id": 4414,
@@ -37646,104 +37638,91 @@
     "name": "glTexCoord2iv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 4218176641,
-    "handler": "gl_unimplemented"
+    "hash": 4218176641
   },
   {
     "id": 4418,
     "name": "glTexCoord2s",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 1448842623,
-    "handler": "gl_unimplemented"
+    "hash": 1448842623
   },
   {
     "id": 4419,
     "name": "glTexCoord2sv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 4213939499,
-    "handler": "gl_unimplemented"
+    "hash": 4213939499
   },
   {
     "id": 4420,
     "name": "glTexCoord3d",
     "nargs": 6,
     "convention": "stdcall",
-    "hash": 1365101623,
-    "handler": "gl_unimplemented"
+    "hash": 1365101623
   },
   {
     "id": 4421,
     "name": "glTexCoord3dv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 1470663251,
-    "handler": "gl_unimplemented"
+    "hash": 1470663251
   },
   {
     "id": 4422,
     "name": "glTexCoord3f",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1398656861,
-    "handler": "gl_unimplemented"
+    "hash": 1398656861
   },
   {
     "id": 4423,
     "name": "glTexCoord3fv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 1739399345,
-    "handler": "gl_unimplemented"
+    "hash": 1739399345
   },
   {
     "id": 4424,
     "name": "glTexCoord3i",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1146992576,
-    "handler": "gl_unimplemented"
+    "hash": 1146992576
   },
   {
     "id": 4425,
     "name": "glTexCoord3iv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 1434989442,
-    "handler": "gl_unimplemented"
+    "hash": 1434989442
   },
   {
     "id": 4426,
     "name": "glTexCoord3s",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1583210670,
-    "handler": "gl_unimplemented"
+    "hash": 1583210670
   },
   {
     "id": 4427,
     "name": "glTexCoord3sv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 1707668488,
-    "handler": "gl_unimplemented"
+    "hash": 1707668488
   },
   {
     "id": 4428,
     "name": "glTexCoord4d",
     "nargs": 8,
     "convention": "stdcall",
-    "hash": 1868577288,
-    "handler": "gl_unimplemented"
+    "hash": 1868577288
   },
   {
     "id": 4429,
     "name": "glTexCoord4dv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 3531347034,
-    "handler": "gl_unimplemented"
+    "hash": 3531347034
   },
   {
     "id": 4430,
@@ -37766,32 +37745,28 @@
     "name": "glTexCoord4i",
     "nargs": 4,
     "convention": "stdcall",
-    "hash": 1818244431,
-    "handler": "gl_unimplemented"
+    "hash": 1818244431
   },
   {
     "id": 4433,
     "name": "glTexCoord4iv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 3564357819,
-    "handler": "gl_unimplemented"
+    "hash": 3564357819
   },
   {
     "id": 4434,
     "name": "glTexCoord4s",
     "nargs": 4,
     "convention": "stdcall",
-    "hash": 1717578717,
-    "handler": "gl_unimplemented"
+    "hash": 1717578717
   },
   {
     "id": 4435,
     "name": "glTexCoord4sv",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 3563372081,
-    "handler": "gl_unimplemented"
+    "hash": 3563372081
   },
   {
     "id": 4436,
