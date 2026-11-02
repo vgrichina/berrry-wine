@@ -39,8 +39,15 @@ through resolved direct and queued routes, 584/588 actual WebGL1/WebGL2 checks,
 525 browser Worker checks, meaningful old-source and semantic negatives,
 27 focused regressions, the union gate and the locked build. All 7,202 snapshot
 inputs and 21 tested committed blobs match; evidence was retrieved before its
-temporary boat was stopped. The remaining unsupported set is **176** mandatory
-names. Native double state queries and double rotation are the next prerequisites.
+temporary boat was stopped. Published `a6a1248b9` then implements native
+`glGetDoublev` with binary64 output, authoritative state conversion and synchronous
+queued visibility. Run `20261102-gl-getdoublev-implementation-resume` passes 157
+ABI checks per direct/queued route, 30 regression variants, 14 rejecting controls
+and the locked build. Its evidence archive hash was independently verified and
+its temporary boat stopped. The remaining unsupported set is **175** mandatory
+names. Rotation correctness and eight missing typed normal exports are next;
+`glRotated` already resolves, so its repair does not reduce this count.
+See [query evidence](re-notes/gl-getdoublev-native-state-20261102.md).
 See [the rectangle evidence](re-notes/gl-rectangle-family-20261102.md).
 No original MDK2 replay,
 first window or gameplay has been qualified. See [MDK2 notes](re-notes/mdk2-demo.md).
