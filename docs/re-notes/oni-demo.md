@@ -298,3 +298,115 @@ module, input records, review, cleanup and lifecycle evidence remain in the run.
 No runtime repair or new build was made. Next investigate this startup OpenGL
 capability branch before another separately authorized console attempt; the
 training-console objective remains unverified.
+
+## Startup branch map; diagnostic aborted before execution (2026-11-02)
+
+Run `20261102-oni-opengl-startup-capability` consumed Braveheart56012 then
+GL64778 after live41-second polling: actual terminal exits0, four result/final
+files, exact AUTHOR RELEASE entries, and scoped helper absence. All247 and209
+retained final-manifest hashes respectively matched. Main was refreshed after
+both releases. No runtime source was changed or rebuilt in this investigation.
+
+Static disassembly of the original community-repack Oni.exe
+`d1579b3a205bdb7771ac32ebf3af61f927d352fe2e3e35128207e84a2937a12d`
+identifies an early route to the reported modal. At `0x404e31`, startup calls
+`0x40bc90`; `test bl,bl` followed by `JE 0x404f43` takes the modal when that
+probe returns AL=0. The probe calls `0x408640`, checks its AL, and then requires
+every pointer in the GL export table to be nonzero until the `0xffffffff`
+sentinel at table+`0x564`. The loader has its own NULL scan at `0x40ac91`.
+This is a concrete executable branch map, **not an observed execution trace**.
+The modal also has a later registration-error route through `0x404f3e`, so its
+text alone does not establish which route the predecessor took.
+
+The table contains345 mandatory entries followed by two optional 3DFX gamma
+lookups beyond the sentinel. Its first entries are `glAccum`, `glAlphaFunc`,
+then `glAreTexturesResident`. The latter name is passed to imported
+`GetProcAddress` at `0x4089d6`; the result is stored at table+8 at `0x4089e3`.
+The exact predecessor source maps that API to ID4210 and explicitly rejects it
+in `$gl_dynamic_api_unsupported`; `$handle_GetProcAddress_pinned` returns NULL
+with ERROR_PROC_NOT_FOUND127 for that gate. Thus, **if this loader path is
+reached**, the first predicted unavailable mandatory pointer is
+`GetProcAddress(opengl32, "glAreTexturesResident")`. Neither this return nor
+the preceding API results were observed in this run.
+
+The old source statically gates54 mandatory entries. Released GL64778 commit
+`1e48691f4a4d6fd6dd6a25b6bbf4d779062a547d` implements shared objects and removes
+`wglShareLists` from that set; the refreshed source still gates53, starting
+with the same residency query. Remaining families include evaluators/maps,
+feedback/selection/name stacks, color-index and edge-flag operations, texture
+priority, and WGL copy/layer contexts. Implementing only residency or returning
+dummy export thunks would not satisfy the mandatory table or supply those
+semantics. No demonstrated generic runtime contract error justified a repair.
+
+Keep these distinct when diagnosing the next bounded trace:
+
+- The loader calls `ChoosePixelFormat` at `0x40893a`, checks AX at `0x408940`,
+  then tests the original request's flags at `0x408945` onward. Its request
+  contains `dwFlags=0x25`; this is not a returned acceleration capability.
+  [ChoosePixelFormat](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-choosepixelformat)
+  accepts a const request and returns a closest-match index; selected-format
+  properties require `DescribePixelFormat`. No such describe call occurs in
+  this loader path. The actual chosen index remains unobserved here.
+- Resolving function addresses precedes using `wglCreateContext`,
+  `wglMakeCurrent`, or `glGetString` through this table. Consequently this
+  early rejection route can occur before a context or extension query.
+  [GetProcAddress](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress)
+  failure is a symbol-resolution result, not a browser GPU measurement.
+- The predecessor recorded Chrome151/default WebGL but no unmasked browser
+  renderer identity. Other boats' ANGLE/SwiftShader records are not evidence
+  for that invocation. The modal does not prove physical GPU absence.
+- `stdole2.tlb` is an optional system-boot library in `lib/process-boot.js`;
+  the identified table predicate does not consult it, and original imports
+  provide no OLE dependency for this check. The warning supplies no causal
+  evidence for this modal. No executed OLE/API trace was obtained.
+
+Historical successful source `09277c7c2` lacks the unsupported-lookup gate
+introduced in `1beaec304847b4abe22c05e15c9bde9d964eb2cc`. That difference is
+useful for forming a hypothesis, but the historical module/browser/fixture
+combination is not a matched regression control. Exposing an unimplemented
+fail-fast thunk is not implementation evidence. In particular,
+[glAreTexturesResident](https://learn.microsoft.com/en-us/windows/win32/opengl/glaretexturesresident)
+has object-validation, error, return-value and output-buffer semantics; a
+constant capability answer is not a justified repair.
+
+The planned diagnostic paired production module
+`46c90ae60c2d47d0451e5b972c88ce8d0444500e7e734fd0683ca3ca18a7667a`
+(2073181 bytes) with exact predecessor source commit
+`e318fe1c5016e393a1467c86f02e1932cdf67503`,396 runtime source files,1005 compiler
+files, api_table SHA256
+`8319e5f866cf102879f4debfff34a421924a8a71d87cacf8d56c5a66afaaead5`, and all34
+original fixture pins. Changed baseline files and matching CLI helpers were
+streamed from verified Git objects without modifying the checkout. The newer
+released GL production module `a99910fa56a94123b10ab00ffc67b82d500af5c92efe02d0c6265b71b8ec524e`
+was recorded separately and was not substituted for this baseline. Current
+source/compiler/fixture/API/shared-module pins remained unchanged. Fresh
+local/public desktop lists still exclude Oni (46/44 entries).
+
+Owned boat `bx_u9am7dzm`, TTL1800, original expiry
+`2026-11-02T21:44:40.418Z`, was recorded before use. During streaming the local
+guard sampled **1959919616 free bytes**, below2000000000, at
+`2026-11-02T21:16:39Z`; it latched the abort, terminated the owned workflow
+group (terminal143), and placed a remote abort marker. Remote extraction had
+completed4671 verified members before the abort, but the native trace had not
+started. No original guest invocation, browser launch, input, or new capture
+occurred. There was no transfer or guest retry after the breach.
+
+Once free space recovered above the floor, guarded metadata recovery recorded
+no scoped remote helpers or trace file and removed only this boat's transfer
+chunks/archive. The first recovery check incorrectly expected no extracted
+tree and failed before cleanup; inspecting the retained member inventory
+resolved that transport assumption without running the guest. Both retained
+remote metadata files were SHA-verified and independently reread locally
+**before** the explicitly delegated stop request. The boat is verified
+STOPPED at `2026-11-02T21:18:19.110Z`, error null. Exact pins, disassembly,
+prediction inventory, abort/lifecycle evidence and recovery recipe remain in
+the run; no local archive or fixture copy was created.
+
+The concrete execution blocker is the disk-floor abort. First API/result
+confirmation remains outstanding; do not label the static prediction an
+executed cause or replay the unchanged browser modal. After stable disk
+headroom is available, a fresh bounded pre-modal trace should record the
+module load, DC/format result and mandatory table's first NULL, with matching
+source/module pins. Only demonstrated missing semantics justify a runtime
+repair and its negative controls/build/browser observation. No startup,
+gameplay, console-use or training-objective success is claimed here.
