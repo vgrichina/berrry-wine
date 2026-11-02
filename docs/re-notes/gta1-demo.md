@@ -2007,3 +2007,76 @@ All 75 evidence members and both checkpoint hashes were independently verified
 locally before delegated box `bx_h74rb4w6` shutdown; STOPPED at
 `2026-11-02T10:02:28.337Z` (original expiry `10:49:57.721Z`). All four remote
 roots/groups are absent. This publication changes documentation only.
+
+## Advanced valid-stack interval: actual exception observation, 2026-11-02
+
+**SS remains valid at child dispatch 16,342,016; the first invalidating
+publication is still unlocated.** Run `20261102-gta1-valid-stack-interval`
+continued exactly once from the preceding complete `ffecce96` checkpoint at
+child 8,640,320. It stopped at the 60-second cutoff without observing validity
+loss or an actual segment/stack exception. The remaining checkpoint interval is
+**16,342,016–20,313,713**, a difference of 3,971,697 child dispatches. No known
+invalid-loop checkpoint, boot or menu route was replayed. The original 93-source
+closure, executable, full native/host/DOS/child/batch state, authentic
+GTA.BAT → K → generated DINO.BAT → DEMO24 route and default
+550000/tick1/IRQtrue scheduler were preserved.
+
+Scratch diagnostics now record actual `exception`, delivery, IRET and task-switch
+entry/return/throw boundaries and the two paging exception catches. Two canonical
+JavaScript modules are compiled in memory with read-only callbacks; disk sources
+and the native module remain exact. Records pair old/new SS hidden caches with
+raw descriptors, TSS/backlink and IDT gates, instruction/stack bytes, arguments,
+thrown objects and native pending state. They do not infer delivered exceptions
+from post-step vector metadata alone. Nonpaged native slices can still contain
+multiple instructions; no exact triggering instruction is claimed without one.
+The new valid checkpoint bounds the next search; it does not prove every
+intermediate hidden publication inside a native slice was valid.
+
+Before stepping, an uninstrumented fresh process proved full checkpoint parity.
+Observer reads and callback paths preserved every RAM byte, all **249** native
+globals and the complete checkpoint graph. Separate plain/instrumented processes
+also ended with identical native states and full nested DOS/batch graphs across
+retained literal segment/task/exception and exit/file/pixel fixtures. Controls
+exercised 46 delivery attempts, eight delivery throws, seven task-switch throws,
+one IRET throw and 20 exception catches, including actual #PF attempts. Thus the
+new exception paths were exercised independently of the authentic run.
+
+The authentic continuation observed **3,851,998** runner steps, 13,994 SS-cache
+changes and 129 mode changes, with no TR change. Actual successful deliveries
+were vector `1C` **43** times and vector `21` **6,911** times; 20,776 IRETs
+returned. There were no observed thrown/caught exceptions or actual vectors
+10/11/12/13/14 during this continuation. Dedicated first-relevant and
+first-validity-loss records remain null; neither a first-fault record nor a CPU
+defect is invented from that absence. Observation covers runner boundaries and
+the instrumented JavaScript boundaries, with the native-slice limitation above.
+
+The saved state is `0088:06DE`, child **16,342,016**, cumulative **639,034,745**,
+tick **29**, IRQ **88**, host services **601**, TR=`0208`, CR0=`80000011`,
+CR3=`160000`. SS=`00A8`, base=`145E20`, valid=1, limit=`88BF`, access=`92`,
+mask=`FFFF`; live descriptor bytes remain `bf88205e14920000`. Next instruction
+bytes begin `66b90e00000067f366a5`. Final pixels remain DOS/4GW text, with no
+player scene or movement response. No emulator repair is demonstrated or made.
+
+Complete checkpoint:
+`scratch/runs/20261102-gta1-valid-stack-interval/remote-evidence/continuation/complete.checkpoint.gz`,
+packed SHA-256
+`474d79ff5d1e95b59b8ed241b1afed2a739ac39a5db033f85560d3bfb41f0ebd`,
+decoded SHA-256
+`3025889af65de6e13a21f165edd8bdb013155cb68a6ba937a1911733c9d74df9`
+(50,127,563 packed / 137,531,909 decoded bytes). Independent uninstrumented
+fresh-process full-state parity passed before finalization ended at **68.604 s**;
+OS wait **68.725 s**, actual 0/group absent, within the 130-second ceiling.
+All focused paging/segment/task/exception, native/full-host/batch same/fresh-process,
+input/files/rename/temp checks and the locked build passed. Run `RECOVERY.md`
+retains the exact source pins, observer controls and recovery instructions.
+The single continuation allowance is consumed; further stepping requires new
+bounded authorization from this advanced valid checkpoint.
+
+All **98** remote evidence members and compressed/decoded checkpoint hashes were
+retrieved and independently verified locally before delegated shutdown of own
+boat `bx_d4y2wjpr`. It is **STOPPED** at `2026-11-02T11:24:30.765Z` (original
+expiry `12:08:20.092Z`). All four remote roots/groups are absent. Temporary local
+disk pressure blocked launches before stepping; the coordinator reclaimed
+released artifacts, and retrieval left more than 2 GB free. This publication
+changes documentation only; the improved observer and complete recovery graph
+remain in the ignored run directory.
