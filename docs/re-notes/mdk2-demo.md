@@ -300,3 +300,69 @@ runtime asynchronous/promise/stream reads, unfinished/over-24-MiB descriptors
 and reads after the exit flush remain coverage gaps; a compiled Module
 instantiation has no separately emitted instance bytes. Minimum original-run
 free disk was 2234208256 bytes. Native local box ID/state/expiry: N/A.
+
+## 2026-11-02 four native layer-plane lookup repairs (startup unqualified)
+
+Run `scratch/runs/20261102-mdk2-layer-plane-lookup/` repairs availability of
+`wglDescribeLayerPlane`, `wglGetLayerPaletteEntries`,
+`wglSetLayerPaletteEntries` and `wglRealizeLayerPalette`. All four already
+dispatch to native handlers; the generator's native WGL set omitted them.
+Adding exactly these names repairs both static `GetProcAddress` fallback
+and the existing WGL compatibility lookup path. No handler, API-table row,
+renderer, guest code or unsupported-function policy changed.
+
+Microsoft documents [DescribeLayerPlane](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-wgldescribelayerplane)
+and [RealizeLayerPalette](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-wglrealizelayerpalette)
+as BOOL operations with FALSE on failure;
+[GetLayerPaletteEntries](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-wglgetlayerpaletteentries)
+and [SetLayerPaletteEntries](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-wglsetlayerpaletteentries)
+operate on color-index layer palettes, with plane counts supplied by the
+pixel format's bReserved. Our descriptor has no such planes. The existing
+handlers therefore return FALSE/zero entries and leave output untouched;
+errors 87 (nonexistent plane) and 6 (invalid DC) are existing emulator
+choices, not claimed mandatory Windows error codes. Microsoft's
+[wglGetProcAddress](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-wglgetprocaddress)
+contract concerns extensions and current contexts. Advertising these core
+names there retains this emulator's existing compatibility policy; it does
+not establish Windows extension/context parity.
+
+The canonical `test/test-wgl-proc-availability.js` now checks the supported
+native OpenGL module identity and MZ header, including repeat/case-insensitive
+loading, instead of asserting that LoadLibrary returns the zero EXE base.
+Its independent, explicit list retains all 208 unsupported original misses.
+Each still returns NULL through both routes; static fallback reports error
+127, allocates no thunk, consumes ESP+12 and preserves other GPRs and stack
+bytes. Supported controls and missing/all/cleanup mutation negatives remain.
+For each repaired entry, both lookup routes produce the correct API identity
+and the test executes the actual resolved thunk through `win32_dispatch`:
+32 calls cover overlay, underlay, main-plane and invalid-DC failures, exact
+stdcall cleanup, GPR/stack identity and untouched output. The no-PE harness
+initializes thunk address translation as the PE loader does.
+
+The unchanged canonical test first failed at its stale module assertion.
+The repaired test with the old generated dispatcher fails specifically at
+the hidden `wglDescribeLayerPlane` lookup; the new dispatcher passes,
+including all three mutation negatives. The final fixture was also replayed
+against the saved old dispatcher and fails at that same lookup. An earlier
+fixture execution lacked loader thunk initialization and trapped before
+handler dispatch; that setup failure is retained in `lookup-final.log`.
+Focused `test/test-wgl-layer-planes.js`, generated dispatch freshness and
+the mandatory locked full build passed. No focused handler changes were
+needed because the canonical test exercises both palette aliases.
+
+`original-missing-symbols.txt` is an exact copy of the preceding investigation's
+212-name list; its hash and extracted names are retained beside the logs.
+**208 still dispatch to unimplemented GL handlers, including the first
+`glAccum` miss. These four repairs cannot clear MDK2's loader failure latch.**
+No original was rerun and no startup, window, input, jump or gameplay claim
+follows. Browser/boat/assets/download/config/registry/deployment work was
+outside this task. Box ID/state/expiry: N/A; lifecycle remains coordinator-owned.
+
+A small next genuine implementation candidate from the retained miss list is
+[`glColor3b`](https://learn.microsoft.com/en-us/windows/win32/opengl/glcolor3b):
+convert signed byte components to the specified floating current-color values
+(signed endpoints -1/+1; zero is not mapped precisely to zero), set alpha to
+1, and feed the existing color path. Validate signed boundaries, current-color
+queries and display-list behavior before advertising it. That would remove
+one more real miss, while the complete mandatory export table would remain
+the startup prerequisite.

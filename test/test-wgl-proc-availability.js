@@ -2,12 +2,77 @@
 'use strict';
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
+// Original 2026-11-01 MDK2 misses, excluding the four native layer-plane APIs.
+// Keep this observed set independent of the generator's availability predicate.
+const unsupportedMdk2 = `
+  glAccum glAreTexturesResident glClearAccum glClearIndex glClipPlane
+  glColor3b glColor3bv glColor3i glColor3iv glColor3s
+  glColor3sv glColor3ui glColor3uiv glColor3us glColor3usv
+  glColor4b glColor4bv glColor4d glColor4i glColor4iv
+  glColor4s glColor4sv glColor4ui glColor4uiv glColor4us
+  glColor4usv glCopyPixels glCopyTexImage1D glCopyTexImage2D glCopyTexSubImage1D
+  glCopyTexSubImage2D glDrawPixels glEdgeFlag glEdgeFlagPointer glEdgeFlagv
+  glEvalCoord1d glEvalCoord1dv glEvalCoord1f glEvalCoord1fv glEvalCoord2d
+  glEvalCoord2dv glEvalCoord2f glEvalCoord2fv glEvalMesh1 glEvalMesh2
+  glEvalPoint1 glEvalPoint2 glFeedbackBuffer glFogiv glGetBooleanv
+  glGetClipPlane glGetDoublev glGetLightfv glGetLightiv glGetMapdv
+  glGetMapfv glGetMapiv glGetMaterialfv glGetMaterialiv glGetPixelMapfv
+  glGetPixelMapuiv glGetPixelMapusv glGetPointerv glGetPolygonStipple glGetTexEnvfv
+  glGetTexEnviv glGetTexGendv glGetTexGenfv glGetTexGeniv glGetTexImage
+  glGetTexParameteriv glIndexMask glIndexPointer glIndexd glIndexdv
+  glIndexf glIndexfv glIndexi glIndexiv glIndexs
+  glIndexsv glIndexub glIndexubv glInitNames glInterleavedArrays
+  glLightModelf glLightModeliv glLighti glLightiv glLineStipple
+  glLoadMatrixd glLoadName glLogicOp glMap1d glMap1f
+  glMap2d glMap2f glMapGrid1d glMapGrid1f glMapGrid2d
+  glMapGrid2f glMaterialiv glNormal3b glNormal3bv glNormal3d
+  glNormal3dv glNormal3i glNormal3iv glNormal3s glNormal3sv
+  glPassThrough glPixelMapfv glPixelMapuiv glPixelMapusv glPixelStoref
+  glPixelTransferf glPixelTransferi glPixelZoom glPolygonStipple glPopName
+  glPrioritizeTextures glPushName glRasterPos2d glRasterPos2dv glRasterPos2fv
+  glRasterPos2i glRasterPos2iv glRasterPos2s glRasterPos2sv glRasterPos3d
+  glRasterPos3dv glRasterPos3f glRasterPos3fv glRasterPos3i glRasterPos3iv
+  glRasterPos3s glRasterPos3sv glRasterPos4d glRasterPos4dv glRasterPos4f
+  glRasterPos4fv glRasterPos4i glRasterPos4iv glRasterPos4s glRasterPos4sv
+  glRectd glRectdv glRectfv glRecti glRectiv
+  glRects glRectsv glRenderMode glScaled glSelectBuffer
+  glTexCoord1d glTexCoord1dv glTexCoord1f glTexCoord1fv glTexCoord1i
+  glTexCoord1iv glTexCoord1s glTexCoord1sv glTexCoord2iv glTexCoord2s
+  glTexCoord2sv glTexCoord3d glTexCoord3dv glTexCoord3f glTexCoord3fv
+  glTexCoord3i glTexCoord3iv glTexCoord3s glTexCoord3sv glTexCoord4d
+  glTexCoord4dv glTexCoord4i glTexCoord4iv glTexCoord4s glTexCoord4sv
+  glTexEnvfv glTexEnviv glTexGend glTexGendv glTexGeniv
+  glTexImage1D glTexParameteriv glTexSubImage1D glTranslated glVertex2iv
+  glVertex2s glVertex2sv glVertex3dv glVertex3i glVertex3iv
+  glVertex3s glVertex3sv glVertex4d glVertex4dv glVertex4i
+  glVertex4iv glVertex4s glVertex4sv wglCopyContext wglCreateLayerContext
+  wglShareLists wglUseFontBitmapsA wglUseFontOutlinesA
+`.trim().split(/\s+/);
 
 async function main() {
   const extraWat = `
+    ;; No PE is loaded by this harness. Initialize the thunk guest translation
+    ;; exactly as the loader does before executing dynamically resolved calls.
+    (func (export "lookup_init")
+      (global.set $thunk_guest_base (i32.add (global.get $image_base)
+        (i32.sub (global.get $THUNK_BASE) (global.get $GUEST_BASE))))
+      (call $update_thunk_end))
     (func (export "lookup_regs") (result i32) (global.get $reg_base))
     (func (export "lookup_thunks") (result i32) (i32.atomic.load (global.get $THUNK_NEXT_SHARED)))
     (func (export "lookup_error") (result i32) (global.get $last_error))
+    (func (export "lookup_module_kind") (param $module i32) (result i32)
+      (call $static_sys_dll_from_handle (local.get $module)))
+    (func (export "lookup_name_kind") (param $name i32) (result i32)
+      (call $guest_name_is_static_system_dll (local.get $name)))
+    (func (export "lookup_dc") (result i32)
+      (call $handle_GetDC (i32.const 0) (i32.const 0) (i32.const 0)
+        (i32.const 0) (i32.const 0) (i32.const 0))
+      (i32.load (global.get $reg_base)))
+    (func (export "lookup_invoke") (param $thunk i32) (result i32)
+      (global.set $last_error (i32.const 0))
+      (call $win32_dispatch (i32.div_u
+        (i32.sub (local.get $thunk) (global.get $thunk_guest_base)) (i32.const 8)))
+      (i32.load (global.get $reg_base)))
     (func (export "lookup_library") (param $name i32) (result i32)
       (local $esp i32)
       (local.set $esp (i32.load offset=16 (global.get $reg_base)))
@@ -50,6 +115,7 @@ async function main() {
     assert(changed); prebuiltModule = new WebAssembly.Module(bytes);
   }
   const { exports: e, memory } = await bootRenderHarness(prebuiltModule ? { prebuiltModule } : { extraWat });
+  e.lookup_init();
   const toWasm = p => p - e.get_image_base() + e.get_guest_base();
   const table = require('../src/api_table.json');
   function string(name) {
@@ -76,7 +142,12 @@ async function main() {
   }
   assert.strictEqual(e.lookup_gl_test(0), 0);
   const module = e.lookup_library(string('opengl32.dll')) >>> 0;
-  assert.strictEqual(module,e.get_image_base() >>> 0,'legacy OpenGL library alias (zero-base harness)');
+  assert(module, 'OpenGL has a native module identity');
+  const kind = e.lookup_name_kind(string('opengl32.dll'));
+  assert(kind, 'OpenGL is a supported static system module');
+  assert.strictEqual(e.lookup_module_kind(module), kind, 'LoadLibrary returns the OpenGL identity');
+  assert.strictEqual(e.lookup_library(string('OPENGL32')), module, 'stable case-insensitive module identity');
+  assert.strictEqual(new DataView(memory.buffer).getUint16(toWasm(module), true), 0x5a4d, 'native module MZ header');
   const v = new DataView(memory.buffer), regs = e.lookup_regs(), stack = e.guest_alloc(128);
   function staticLookup(name) {
     const p = string(name);
@@ -89,8 +160,11 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  for (const name of ['glLockArraysEXT','glUnlockArraysEXT','glTexParameteriv','wglSwapIntervalEXT']) {
+  assert.strictEqual(unsupportedMdk2.length, 208, 'retain all originally unsupported MDK2 names');
+  for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
+    assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);
+    assert.strictEqual(e.lookup_thunks(),before,'WGL rejection allocates no thunk');
     assert.strictEqual(staticLookup(name),0,`${name}: SDL fallback must also reject unsupported GL`);
     assert.strictEqual(e.lookup_error(),127,'ERROR_PROC_NOT_FOUND');
     assert.strictEqual(e.lookup_thunks(),before,'rejection allocates no thunk');
@@ -102,6 +176,39 @@ async function main() {
   }
   assert(staticLookup('GetTickCount'),'non-GL compatibility lookup preserved');
   assert.strictEqual(staticLookup('glNotARealFunction'),0);
+  // Resolve and execute the returned thunks through the real Win32 dispatcher,
+  // including both palette aliases. A nonzero pointer alone is insufficient.
+  const output = e.guest_alloc(64);
+  v.setUint32(regs+16, stack, true);
+  const hdc = e.lookup_dc() >>> 0;
+  assert(hdc, 'screen DC exists');
+  for (const name of ['wglDescribeLayerPlane', 'wglGetLayerPaletteEntries',
+    'wglSetLayerPaletteEntries', 'wglRealizeLayerPalette']) {
+    const id = table.findIndex(a => a.name === name);
+    for (const resolve of [staticLookup, lookup]) {
+      const thunk = resolve(name);
+      assert(thunk, `${name}: native layer-plane handler remains available`);
+      assert.strictEqual(v.getUint32(toWasm(thunk)+4,true),id,`${name}: resolved API identity`);
+      for (const [dc, plane, error] of [[hdc,1,87], [hdc,-1,87], [hdc,0,87], [0x1234,1,6]]) {
+        const args = name === 'wglDescribeLayerPlane' ? [dc,1,plane,32,output]
+          : name === 'wglRealizeLayerPalette' ? [dc,plane,1] : [dc,plane,0,16,output];
+        for (let i=0;i<8;i++) v.setUint32(regs+i*4,0x55660000+i,true);
+        v.setUint32(regs+16,stack,true);
+        new Uint8Array(memory.buffer,toWasm(stack),128).fill(0xa5);
+        v.setUint32(toWasm(stack),0x12345678,true);
+        args.forEach((arg,i) => v.setUint32(toWasm(stack)+4+i*4,arg,true));
+        const before = new Uint8Array(memory.buffer,toWasm(stack),128).slice();
+        new Uint8Array(memory.buffer,toWasm(output),64).fill(0xcc);
+        assert.strictEqual(e.lookup_invoke(thunk),0,`${name}: no layer or invalid DC fails`);
+        assert.strictEqual(e.lookup_error(),error,`${name}: existing native failure error`);
+        assert.strictEqual(v.getUint32(regs+16,true),stack+4*(args.length+1),`${name}: stdcall cleanup`);
+        for (let i=1;i<8;i++) if(i!==4)
+          assert.strictEqual(v.getUint32(regs+i*4,true),0x55660000+i,`${name}: GPR preserved`);
+        assert.deepStrictEqual(new Uint8Array(memory.buffer,toWasm(stack),128),before,`${name}: stack bytes preserved`);
+        assert(new Uint8Array(memory.buffer,toWasm(output),64).every(x=>x===0xcc),`${name}: no output on failure`);
+      }
+    }
+  }
   if (!mutation) {
     const { spawnSync } = require('child_process');
     for (const variant of ['missing','all','cleanup']) {

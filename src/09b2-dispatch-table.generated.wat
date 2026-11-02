@@ -3958,6 +3958,10 @@
     (if (i32.eq (local.get $id) (i32.const 4461)) (then (return (i32.const 1)))) ;; glVertex4fv
     (if (i32.eq (local.get $id) (i32.const 4466)) (then (return (i32.const 1)))) ;; wglGetCurrentContext
     (if (i32.eq (local.get $id) (i32.const 4467)) (then (return (i32.const 1)))) ;; wglGetCurrentDC
+    (if (i32.eq (local.get $id) (i32.const 4535)) (then (return (i32.const 1)))) ;; wglDescribeLayerPlane
+    (if (i32.eq (local.get $id) (i32.const 4536)) (then (return (i32.const 1)))) ;; wglGetLayerPaletteEntries
+    (if (i32.eq (local.get $id) (i32.const 4537)) (then (return (i32.const 1)))) ;; wglSetLayerPaletteEntries
+    (if (i32.eq (local.get $id) (i32.const 4538)) (then (return (i32.const 1)))) ;; wglRealizeLayerPalette
     (i32.const 0))
 
   (func $gl_dynamic_api_unsupported (param $id i32) (result i32)
@@ -4179,10 +4183,6 @@
     (if (i32.eq (local.get $id) (i32.const 4469)) (then (return (i32.const 1)))) ;; wglCopyContext
     (if (i32.eq (local.get $id) (i32.const 4470)) (then (return (i32.const 1)))) ;; wglCreateLayerContext
     (if (i32.eq (local.get $id) (i32.const 4471)) (then (return (i32.const 1)))) ;; wglSwapIntervalEXT
-    (if (i32.eq (local.get $id) (i32.const 4535)) (then (return (i32.const 1)))) ;; wglDescribeLayerPlane
-    (if (i32.eq (local.get $id) (i32.const 4536)) (then (return (i32.const 1)))) ;; wglGetLayerPaletteEntries
-    (if (i32.eq (local.get $id) (i32.const 4537)) (then (return (i32.const 1)))) ;; wglSetLayerPaletteEntries
-    (if (i32.eq (local.get $id) (i32.const 4538)) (then (return (i32.const 1)))) ;; wglRealizeLayerPalette
     (if (i32.eq (local.get $id) (i32.const 4539)) (then (return (i32.const 1)))) ;; wglUseFontBitmapsA
     (if (i32.eq (local.get $id) (i32.const 4540)) (then (return (i32.const 1)))) ;; wglUseFontOutlinesA
     (i32.const 0))

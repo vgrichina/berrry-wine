@@ -316,7 +316,13 @@ const gpuApiOrder = [...gpuApis.keys()];
 // implementation map that dispatch uses. GLU helpers are a separate library.
 out.push('  (func $wgl_api_available (param $id i32) (result i32)');
 // These WGL implementations dispatch to native handlers rather than GPU opcodes.
-const nativeWglApis = new Set(['wglSwapLayerBuffers', 'wglGetCurrentContext', 'wglGetCurrentDC']);
+const nativeWglApis = new Set([
+  'wglSwapLayerBuffers', 'wglGetCurrentContext', 'wglGetCurrentDC',
+  // The pixel format has no layer planes; these native handlers truthfully
+  // report that failure rather than dispatching to gl_unimplemented.
+  'wglDescribeLayerPlane', 'wglGetLayerPaletteEntries',
+  'wglSetLayerPaletteEntries', 'wglRealizeLayerPalette',
+]);
 const nativeGlApis = new Set(['glMultMatrixd', 'glTexCoord2d', 'glTexCoord2dv', 'glTexCoord2i', 'glColor3d', 'glColor3dv', 'glColor4dv', 'glVertex2d', 'glVertex2dv', 'glVertex3d']);
 for (const [id, api] of apiTable.entries()) {
   if ((gpuApis.has(api.name) || nativeWglApis.has(api.name) || nativeGlApis.has(api.name)) && /^(?:gl[A-Z]|wgl[A-Z])/.test(api.name)) {
