@@ -1524,12 +1524,14 @@
       (then (if (i32.eq (global.get $gl_sw_worker_ok) (i32.const 2))
         (then (global.set $gl_sw_worker_ok (i32.const 0))))))
     ;; GL_LIGHT_MODEL_TWO_SIDE is a lighting parameter, not an enable cap.
-    (if (i32.eq (local.get $op) (i32.const 70)) (then
+    (if (i32.or (i32.eq (local.get $op) (i32.const 70)) (i32.eq (local.get $op) (i32.const 69))) (then
       (if (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0x0B52)) (then
         (i32.store (local.get $s) (select
           (i32.or (i32.load (local.get $s)) (i32.const 0x200000))
           (i32.and (i32.load (local.get $s)) (i32.const 0xFFDFFFFF))
-          (i32.ne (i32.load offset=8 (local.get $stack)) (i32.const 0))))))
+          (if (result i32) (i32.eq (local.get $op) (i32.const 70))
+            (then (i32.ne (i32.load offset=8 (local.get $stack)) (i32.const 0)))
+            (else (f32.ne (f32.reinterpret_i32 (call $gl32 (i32.load offset=8 (local.get $stack)))) (f32.const 0))))))))
       (return)))
     ;; 105 glActiveTextureARB(GL_TEXTURE0_ARB + unit)
     (if (i32.eq (local.get $op) (i32.const 105))
@@ -1858,9 +1860,7 @@
   ;; model ambient. Warcraft III lights its terrain and sky with emission and
   ;; ambient; without this every lit surface came out glColor white.
   ;;
-  ;; Not modelled: spot cutoffs and distance attenuation (every positional
-  ;; light is unattenuated), a local viewer, distinct back-face materials,
-  ;; and glColorMaterial's mode -- COLOR_MATERIAL always tracks AMBIENT_AND_DIFFUSE,
+  ;; COLOR_MATERIAL currently tracks AMBIENT_AND_DIFFUSE,
   ;; GL's default. GL_NORMALIZE controls post-transform normalization.
   (global $gl_sw_lit (mut i32) (i32.const 0))
   (global $gl_sw_light_block (mut i32) (i32.const 0))
@@ -1944,7 +1944,7 @@
     (local $b i32) (local $nm i32) (local $t i32) (local $mask i32) (local $i i32)
     (local $light i32) (local $amb i32) (local $dif i32) (local $spec i32) (local $c i32)
     (local $ndl f32) (local $ndh f32) (local $sp f32) (local $w f32) (local $k i32)
-    (local $has_spec i32)
+    (local $has_spec i32) (local $mat i32) (local $factor f32)
     (local.set $b (global.get $gl_sw_light_block))
     (local.set $nm (i32.add (global.get $gl_sw_scratch) (i32.const 0x400)))
     (local.set $t (i32.add (global.get $gl_sw_scratch) (i32.const 0x430)))
@@ -1973,13 +1973,14 @@
       (f32.store offset=4 (local.get $t) (f32.neg (f32.load offset=4 (local.get $t))))
       (f32.store offset=8 (local.get $t) (f32.neg (f32.load offset=8 (local.get $t))))))
     ;; Material ambient and diffuse: the vertex colour under COLOR_MATERIAL.
-    (local.set $amb (i32.add (local.get $b) (i32.const 8880)))
-    (local.set $dif (i32.add (local.get $b) (i32.const 8896)))
+    (local.set $mat (i32.add (local.get $b) (select (i32.const 11088) (i32.const 8880) (global.get $gl_sw_reverse_normal))))
+    (local.set $amb (local.get $mat))
+    (local.set $dif (i32.add (local.get $mat) (i32.const 16)))
     (if (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 0x10000))
       (then
         (local.set $amb (i32.add (local.get $v) (i32.const 12)))
         (local.set $dif (local.get $amb))))
-    (local.set $spec (i32.add (local.get $b) (i32.const 8912)))
+    (local.set $spec (i32.add (local.get $mat) (i32.const 32)))
     (local.set $has_spec (i32.or (i32.or
       (f32.ne (f32.load (local.get $spec)) (f32.const 0))
       (f32.ne (f32.load offset=4 (local.get $spec)) (f32.const 0)))
@@ -1998,7 +1999,7 @@
     (loop $init
       (local.set $c (i32.shl (local.get $k) (i32.const 2)))
       (f32.store (i32.add (local.get $dst) (local.get $c))
-        (f32.add (f32.load offset=8928 (i32.add (local.get $b) (local.get $c)))
+        (f32.add (f32.load offset=48 (i32.add (local.get $mat) (local.get $c)))
           (f32.mul (f32.load (i32.add (local.get $amb) (local.get $c)))
                    (f32.load offset=8352 (i32.add (local.get $b) (local.get $c))))))
       (local.set $k (i32.add (local.get $k) (i32.const 1)))
@@ -2025,6 +2026,7 @@
               (f32.sub (f32.div (f32.load offset=8 (local.get $light)) (local.get $w))
                        (f32.load offset=24 (local.get $t)))
               (f32.const 0))))
+          (local.set $factor (call $gl_lmf_light_factor (local.get $b) (local.get $i) (i32.add (local.get $t) (i32.const 32)) (local.get $w)))
           (call $gl_sw_normalize3 (i32.add (local.get $t) (i32.const 32)))
           (local.set $ndl (f32.max (f32.const 0)
             (call $gl_sw_dot3 (local.get $t) (i32.add (local.get $t) (i32.const 32)))))
@@ -2035,18 +2037,27 @@
               (call $gl_mtx_set4 (i32.add (local.get $t) (i32.const 48))
                 (f32.load offset=32 (local.get $t)) (f32.load offset=36 (local.get $t))
                 (f32.add (f32.load offset=40 (local.get $t)) (f32.const 1)) (f32.const 0))
+              (if (i32.load offset=11192 (local.get $b)) (then
+                (call $gl_mtx_set4 (i32.add (local.get $t) (i32.const 80))
+                  (f32.neg (f32.load offset=16 (local.get $t))) (f32.neg (f32.load offset=20 (local.get $t)))
+                  (f32.neg (f32.load offset=24 (local.get $t))) (f32.const 0))
+                (call $gl_sw_normalize3 (i32.add (local.get $t) (i32.const 80)))
+                (call $gl_mtx_set4 (i32.add (local.get $t) (i32.const 48))
+                  (f32.add (f32.load offset=32 (local.get $t)) (f32.load offset=80 (local.get $t)))
+                  (f32.add (f32.load offset=36 (local.get $t)) (f32.load offset=84 (local.get $t)))
+                  (f32.add (f32.load offset=40 (local.get $t)) (f32.load offset=88 (local.get $t))) (f32.const 0))))
               (call $gl_sw_normalize3 (i32.add (local.get $t) (i32.const 48)))
               (local.set $ndh (f32.max (f32.const 0)
                 (call $gl_sw_dot3 (local.get $t) (i32.add (local.get $t) (i32.const 48)))))
               (local.set $sp (f32.demote_f64 (call $host_math_pow
                 (f64.promote_f32 (local.get $ndh))
-                (f64.promote_f32 (f32.load offset=8944 (local.get $b))))))))
+                (f64.promote_f32 (f32.load offset=64 (local.get $mat))))))))
           (local.set $k (i32.const 0))
           (loop $ch
             (local.set $c (i32.shl (local.get $k) (i32.const 2)))
             (f32.store (i32.add (local.get $dst) (local.get $c))
               (f32.add (f32.load (i32.add (local.get $dst) (local.get $c)))
-                (f32.add (f32.add
+                (f32.mul (local.get $factor) (f32.add (f32.add
                   (f32.mul (f32.load (i32.add (local.get $amb) (local.get $c)))
                            (f32.load offset=16 (i32.add (local.get $light) (local.get $c))))
                   (f32.mul (local.get $ndl)
@@ -2054,7 +2065,7 @@
                              (f32.load offset=32 (i32.add (local.get $light) (local.get $c))))))
                   (f32.mul (local.get $sp)
                     (f32.mul (f32.load (i32.add (local.get $spec) (local.get $c)))
-                             (f32.load offset=48 (i32.add (local.get $light) (local.get $c))))))))
+                             (f32.load offset=48 (i32.add (local.get $light) (local.get $c)))))))))
             (local.set $k (i32.add (local.get $k) (i32.const 1)))
             (br_if $ch (i32.lt_u (local.get $k) (i32.const 3))))))
       (local.set $mask (i32.shr_u (local.get $mask) (i32.const 1)))
@@ -3450,7 +3461,7 @@
     (if (global.get $gl_sw_in_worker) (then (return (i32.const 0))))
     (if (i32.eq (global.get $gl_sw_worker_ok) (i32.const 2)) (then (return (i32.const 0))))
     (if (i32.eqz (global.get $gl_sw_snap)) (then
-      (local.set $g (call $gl_alloc_affine (i32.const 1112)))
+      (local.set $g (call $gl_alloc_affine (i32.const 1496)))
       (if (i32.eqz (local.get $g)) (then
         (global.set $gl_sw_worker_ok (i32.const 2))
         (return (i32.const 0))))
@@ -3511,10 +3522,12 @@
     (i32.store offset=1084 (local.get $snap) (global.get $gl_stencil_height))
     (i32.store offset=1088 (local.get $snap) (select (i32.const 0) (call $gl_color_mask) (global.get $gl_sw_color_off)))
     (i32.store offset=1092 (local.get $snap) (global.get $gl_sw_second))
+    (memory.copy (i32.add (local.get $snap) (i32.const 1096))
+      (i32.add (local.get $b) (i32.const 10832)) (i32.const 384))
     ;; 0x20005's descriptor: snapshot, its length, packed record, its length.
-    (local.set $d (i32.add (local.get $snap) (i32.const 1096)))
+    (local.set $d (i32.add (local.get $snap) (i32.const 1480)))
     (i32.store offset=0 (local.get $d) (local.get $snap))
-    (i32.store offset=4 (local.get $d) (i32.const 1096))
+    (i32.store offset=4 (local.get $d) (i32.const 1480))
     (i32.store offset=8 (local.get $d) (local.get $start))
     (i32.store offset=12 (local.get $d)
       (i32.add (i32.mul (local.get $vertices) (i32.const 76)) (i32.const 32)))
@@ -3544,11 +3557,11 @@
       (local.set $g (call $gl_alloc_affine (i32.const 0x700)))
       (if (i32.eqz (local.get $g)) (then (return (i32.const 0))))
       (global.set $gl_sw_st (call $g2w (local.get $g)))
-      (local.set $g (call $gl_alloc_affine (i32.const 10832)))
+      (local.set $g (call $gl_alloc_affine (i32.const 11216)))
       (if (i32.eqz (local.get $g)) (then (return (i32.const 0))))
       (local.set $blk (call $g2w (local.get $g)))
       ;; Every stack is one deep, so each top is its stack's first entry.
-      (memory.fill (local.get $blk) (i32.const 0) (i32.const 10832))
+      (memory.fill (local.get $blk) (i32.const 0) (i32.const 11216))
       (global.set $gl_sw_wk_block (local.get $blk))
       (global.set $gl_mtx_block_override (local.get $blk))
       (global.set $gl_sw_in_worker (i32.const 1))
@@ -3600,6 +3613,8 @@
     (global.set $gl_stencil_height (i32.load offset=1084 (local.get $snap)))
     (global.set $gl_color_mask_worker (i32.load offset=1088 (local.get $snap)))
     (global.set $gl_sw_second (i32.load offset=1092 (local.get $snap)))
+    (memory.copy (i32.add (local.get $blk) (i32.const 10832))
+      (i32.add (local.get $snap) (i32.const 1096)) (i32.const 384))
     (if (i32.eq (local.get $mode) (i32.const 0x10000))
       (then (call $gl_bitmap_sw_draw (local.get $rec) (local.get $n)))
       (else (call $gl_sw_draw (local.get $rec) (local.get $n) (local.get $step))))
@@ -3952,3 +3967,27 @@
     (local.set $i (i32.add (local.get $i) (i32.const 1)))
     (br_if $query (i32.lt_u (local.get $i) (local.get $n))))
   (i32.const 1))
+
+  ;; GL1.1 attenuation and spotlight factor. $direction still contains the
+  ;; unnormalized eye-space vector toward the light, so its length is distance.
+  (func $gl_lmf_light_factor (param $b i32) (param $index i32) (param $direction i32) (param $w f32) (result f32)
+    (local $p i32) (local $distance f32) (local $len f32) (local $dot f32) (local $factor f32)
+    (local.set $p (call $gl_lmf_extra (local.get $b) (local.get $index)))
+    (local.set $distance (f32.sqrt (call $gl_sw_dot3 (local.get $direction) (local.get $direction))))
+    (local.set $factor (f32.const 1))
+    (if (f32.ne (local.get $w) (f32.const 0)) (then
+      (local.set $factor (f32.div (f32.const 1) (f32.add (f32.load offset=20 (local.get $p))
+        (f32.add (f32.mul (f32.load offset=24 (local.get $p)) (local.get $distance))
+          (f32.mul (f32.load offset=28 (local.get $p)) (f32.mul (local.get $distance) (local.get $distance)))))))))
+    (if (f32.ne (f32.load offset=16 (local.get $p)) (f32.const 180)) (then
+      (local.set $len (f32.mul (local.get $distance) (f32.sqrt (call $gl_sw_dot3 (local.get $p) (local.get $p)))))
+      (local.set $dot (if (result f32) (f32.gt (local.get $len) (f32.const 0))
+        (then (f32.div (f32.neg (call $gl_sw_dot3 (local.get $p) (local.get $direction))) (local.get $len))) (else (f32.const 0))))
+      (if (f32.lt (local.get $dot) (if (result f32) (f32.eq (f32.load offset=16 (local.get $p)) (f32.const 90))
+          (then (f32.const 0)) (else (f32.demote_f64 (call $host_math_cos
+            (f64.mul (f64.promote_f32 (f32.load offset=16 (local.get $p))) (f64.const 0.017453292519943295)))))))
+        (then (return (f32.const 0))))
+      (local.set $factor (f32.mul (local.get $factor) (f32.demote_f64 (call $host_math_pow
+        (f64.promote_f32 (f32.max (f32.const 0) (local.get $dot)))
+        (f64.promote_f32 (f32.load offset=12 (local.get $p)))))))))
+    (local.get $factor))

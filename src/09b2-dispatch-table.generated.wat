@@ -3947,6 +3947,7 @@
     (if (i32.eq (local.get $id) (i32.const 4244)) (then (return (i32.const 1)))) ;; glColorMask
     (if (i32.eq (local.get $id) (i32.const 4252)) (then (return (i32.const 1)))) ;; glDeleteLists
     (if (i32.eq (local.get $id) (i32.const 4257)) (then (return (i32.const 1)))) ;; glEndList
+    (if (i32.eq (local.get $id) (i32.const 4271)) (then (return (i32.const 1)))) ;; glFogiv
     (if (i32.eq (local.get $id) (i32.const 4272)) (then (return (i32.const 1)))) ;; glGenLists
     (if (i32.eq (local.get $id) (i32.const 4278)) (then (return (i32.const 1)))) ;; glGetDoublev
     (if (i32.eq (local.get $id) (i32.const 4297)) (then (return (i32.const 1)))) ;; glGetTexLevelParameterfv
@@ -3954,8 +3955,13 @@
     (if (i32.eq (local.get $id) (i32.const 4299)) (then (return (i32.const 1)))) ;; glGetTexParameterfv
     (if (i32.eq (local.get $id) (i32.const 4315)) (then (return (i32.const 1)))) ;; glIsList
     (if (i32.eq (local.get $id) (i32.const 4316)) (then (return (i32.const 1)))) ;; glIsTexture
+    (if (i32.eq (local.get $id) (i32.const 4317)) (then (return (i32.const 1)))) ;; glLighti
+    (if (i32.eq (local.get $id) (i32.const 4318)) (then (return (i32.const 1)))) ;; glLightiv
+    (if (i32.eq (local.get $id) (i32.const 4319)) (then (return (i32.const 1)))) ;; glLightModelf
+    (if (i32.eq (local.get $id) (i32.const 4320)) (then (return (i32.const 1)))) ;; glLightModeliv
     (if (i32.eq (local.get $id) (i32.const 4322)) (then (return (i32.const 1)))) ;; glListBase
     (if (i32.eq (local.get $id) (i32.const 4323)) (then (return (i32.const 1)))) ;; glLoadMatrixd
+    (if (i32.eq (local.get $id) (i32.const 4335)) (then (return (i32.const 1)))) ;; glMaterialiv
     (if (i32.eq (local.get $id) (i32.const 4338)) (then (return (i32.const 1)))) ;; glMultiTexCoord2fvARB
     (if (i32.eq (local.get $id) (i32.const 4341)) (then (return (i32.const 1)))) ;; glMultiTexCoord4fARB
     (if (i32.eq (local.get $id) (i32.const 4342)) (then (return (i32.const 1)))) ;; glMultiTexCoord4fvARB
@@ -4096,7 +4102,6 @@
     (if (i32.eq (local.get $id) (i32.const 4268)) (then (return (i32.const 1)))) ;; glEvalPoint1
     (if (i32.eq (local.get $id) (i32.const 4269)) (then (return (i32.const 1)))) ;; glEvalPoint2
     (if (i32.eq (local.get $id) (i32.const 4270)) (then (return (i32.const 1)))) ;; glFeedbackBuffer
-    (if (i32.eq (local.get $id) (i32.const 4271)) (then (return (i32.const 1)))) ;; glFogiv
     (if (i32.eq (local.get $id) (i32.const 4273)) (then (return (i32.const 1)))) ;; glGetBooleanv
     (if (i32.eq (local.get $id) (i32.const 4274)) (then (return (i32.const 1)))) ;; glGetClipPlane
     (if (i32.eq (local.get $id) (i32.const 4275)) (then (return (i32.const 1)))) ;; glGetColorTableEXT
@@ -4135,10 +4140,6 @@
     (if (i32.eq (local.get $id) (i32.const 4312)) (then (return (i32.const 1)))) ;; glIndexubv
     (if (i32.eq (local.get $id) (i32.const 4313)) (then (return (i32.const 1)))) ;; glInitNames
     (if (i32.eq (local.get $id) (i32.const 4314)) (then (return (i32.const 1)))) ;; glInterleavedArrays
-    (if (i32.eq (local.get $id) (i32.const 4317)) (then (return (i32.const 1)))) ;; glLighti
-    (if (i32.eq (local.get $id) (i32.const 4318)) (then (return (i32.const 1)))) ;; glLightiv
-    (if (i32.eq (local.get $id) (i32.const 4319)) (then (return (i32.const 1)))) ;; glLightModelf
-    (if (i32.eq (local.get $id) (i32.const 4320)) (then (return (i32.const 1)))) ;; glLightModeliv
     (if (i32.eq (local.get $id) (i32.const 4321)) (then (return (i32.const 1)))) ;; glLineStipple
     (if (i32.eq (local.get $id) (i32.const 4324)) (then (return (i32.const 1)))) ;; glLoadName
     (if (i32.eq (local.get $id) (i32.const 4325)) (then (return (i32.const 1)))) ;; glLockArraysEXT
@@ -4151,7 +4152,6 @@
     (if (i32.eq (local.get $id) (i32.const 4332)) (then (return (i32.const 1)))) ;; glMapGrid1f
     (if (i32.eq (local.get $id) (i32.const 4333)) (then (return (i32.const 1)))) ;; glMapGrid2d
     (if (i32.eq (local.get $id) (i32.const 4334)) (then (return (i32.const 1)))) ;; glMapGrid2f
-    (if (i32.eq (local.get $id) (i32.const 4335)) (then (return (i32.const 1)))) ;; glMaterialiv
     (if (i32.eq (local.get $id) (i32.const 4336)) (then (return (i32.const 1)))) ;; glMultiTexCoord1fARB
     (if (i32.eq (local.get $id) (i32.const 4337)) (then (return (i32.const 1)))) ;; glMultiTexCoord1fvARB
     (if (i32.eq (local.get $id) (i32.const 4339)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fARB
@@ -21568,7 +21568,7 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4271: glFogiv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_lmf_integer (i32.const 0) (i32.const 1) (i32.const 1))
       (return)
     ) ;; 4272: glGenLists
       (call $handle_gpu_api (i32.const 124) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -21706,16 +21706,16 @@
       (call $handle_gpu_api (i32.const 116) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4317: glLighti
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_lmf_integer (i32.const 2) (i32.const 0) (i32.const 1))
       (return)
     ) ;; 4318: glLightiv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_lmf_integer (i32.const 2) (i32.const 1) (i32.const 1))
       (return)
     ) ;; 4319: glLightModelf
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_lmf_integer (i32.const 1) (i32.const 0) (i32.const 0))
       (return)
     ) ;; 4320: glLightModeliv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_lmf_integer (i32.const 1) (i32.const 1) (i32.const 1))
       (return)
     ) ;; 4321: glLineStipple
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -21760,7 +21760,7 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4335: glMaterialiv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_lmf_integer (i32.const 3) (i32.const 1) (i32.const 1))
       (return)
     ) ;; 4336: glMultiTexCoord1fARB
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

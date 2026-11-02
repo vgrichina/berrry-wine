@@ -842,3 +842,94 @@
     (call $heap_free (local.get $guest))
     (i32.store (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (local.get $cleanup))))
+
+  ;; Integer lighting/fog adapters. GL1.1 tables 2.6 and 2.8 distinguish
+  ;; signed normalized colors from numeric positions, directions and reals.
+  ;; Families: 0 fog, 1 light model, 2 light source, 3 material.
+  (func $gl_lmf_count (param $family i32) (param $name i32) (result i32)
+    (if (i32.eqz (local.get $family)) (then
+      (if (i32.eq (local.get $name) (i32.const 0xb66)) (then (return (i32.const 4))))
+      (if (i32.le_u (i32.sub (local.get $name) (i32.const 0xb61)) (i32.const 4)) (then (return (i32.const 1))))))
+    (if (i32.eq (local.get $family) (i32.const 1)) (then
+      (if (i32.eq (local.get $name) (i32.const 0xb53)) (then (return (i32.const 4))))
+      (if (i32.le_u (i32.sub (local.get $name) (i32.const 0xb51)) (i32.const 1)) (then (return (i32.const 1))))))
+    (if (i32.eq (local.get $family) (i32.const 2)) (then
+      (if (i32.le_u (i32.sub (local.get $name) (i32.const 0x1200)) (i32.const 3)) (then (return (i32.const 4))))
+      (if (i32.eq (local.get $name) (i32.const 0x1204)) (then (return (i32.const 3))))
+      (if (i32.le_u (i32.sub (local.get $name) (i32.const 0x1205)) (i32.const 4)) (then (return (i32.const 1))))))
+    (if (i32.eq (local.get $family) (i32.const 3)) (then
+      (if (i32.or (i32.le_u (i32.sub (local.get $name) (i32.const 0x1200)) (i32.const 2))
+          (i32.or (i32.eq (local.get $name) (i32.const 0x1600)) (i32.eq (local.get $name) (i32.const 0x1602)))) (then (return (i32.const 4))))
+      (if (i32.eq (local.get $name) (i32.const 0x1601)) (then (return (i32.const 1))))
+      (if (i32.eq (local.get $name) (i32.const 0x1603)) (then (return (i32.const 3))))))
+    (i32.const 0))
+
+  (func $gl_lmf_color (param $family i32) (param $name i32) (result i32)
+    (if (i32.eqz (local.get $family)) (then (return (i32.eq (local.get $name) (i32.const 0xb66)))))
+    (if (i32.eq (local.get $family) (i32.const 1)) (then (return (i32.eq (local.get $name) (i32.const 0xb53)))))
+    (if (i32.eq (local.get $family) (i32.const 2)) (then
+      (return (i32.le_u (i32.sub (local.get $name) (i32.const 0x1200)) (i32.const 2)))))
+    (i32.eq (call $gl_lmf_count (local.get $family) (local.get $name)) (i32.const 4)))
+
+  (func $handle_gl_lmf_integer (param $family i32) (param $vector i32) (param $integer i32)
+    (local $esp i32) (local $words i32) (local $name i32) (local $first i32)
+    (local $n i32) (local $src i32) (local $i i32) (local $raw i32)
+    (local $guest i32) (local $stack i32) (local $payload i32) (local $op i32)
+    (local $ctx i32) (local $error i32) (local $v f32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $words (select (i32.const 3) (i32.const 2) (i32.ge_u (local.get $family) (i32.const 2))))
+    (call $gl_texcoord_check (local.get $esp) (i32.shl (i32.add (local.get $words) (i32.const 1)) (i32.const 2)))
+    (local.set $first (call $gl32 (i32.add (local.get $esp) (i32.const 4))))
+    (local.set $name (if (result i32) (i32.ge_u (local.get $family) (i32.const 2))
+      (then (call $gl32 (i32.add (local.get $esp) (i32.const 8)))) (else (local.get $first))))
+    (local.set $n (call $gl_lmf_count (local.get $family) (local.get $name)))
+    (local.set $ctx (call $gl_list_context))
+    ;; Invalid enums never dereference an irrelevant vector. Material is legal
+    ;; inside Begin/End; the other three parameter families are not.
+    (if (i32.eqz (local.get $n)) (then (local.set $error (i32.const 0x500))))
+    (if (i32.and (i32.eqz (local.get $vector)) (i32.ne (local.get $n) (i32.const 1)))
+      (then (local.set $error (i32.const 0x500))))
+    (if (i32.and (i32.eq (local.get $family) (i32.const 2))
+        (i32.ge_u (i32.sub (local.get $first) (i32.const 0x4000)) (i32.const 8)))
+      (then (local.set $error (i32.const 0x500))))
+    (if (i32.and (i32.eq (local.get $family) (i32.const 3))
+        (i32.eqz (i32.or (i32.or (i32.eq (local.get $first) (i32.const 0x404)) (i32.eq (local.get $first) (i32.const 0x405)))
+          (i32.eq (local.get $first) (i32.const 0x408))))) (then (local.set $error (i32.const 0x500))))
+    (if (i32.and (i32.ne (local.get $family) (i32.const 3)) (i32.ne (local.get $ctx) (i32.const 0))) (then
+      (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0)))
+        (then (local.set $error (i32.const 0x502))))))
+    (if (i32.eqz (local.get $error)) (then
+      (local.set $src (i32.add (local.get $esp) (i32.shl (local.get $words) (i32.const 2))))
+      (if (local.get $vector) (then (local.set $src (call $gl32 (local.get $src)))))
+      (call $gl_texcoord_check (local.get $src) (i32.shl (local.get $n) (i32.const 2)))
+      ;; Both argument and vector spans are validated before the first effect.
+      (local.set $guest (call $gl_alloc_affine (i32.const 32)))
+      (if (i32.eqz (local.get $guest)) (then (unreachable)))
+      (local.set $stack (call $g2w (local.get $guest)))
+      (memory.fill (local.get $stack) (i32.const 0) (i32.const 32))
+      (local.set $payload (i32.add (local.get $stack) (i32.const 16)))
+      (loop $convert
+        (local.set $raw (call $gl32 (i32.add (local.get $src) (i32.shl (local.get $i) (i32.const 2)))))
+        (local.set $v (if (result f32) (local.get $integer)
+          (then (if (result f32) (call $gl_lmf_color (local.get $family) (local.get $name))
+            (then (f32.demote_f64 (f64.div (f64.add (f64.mul (f64.convert_i32_s (local.get $raw)) (f64.const 2)) (f64.const 1)) (f64.const 4294967295))))
+            (else (f32.convert_i32_s (local.get $raw)))))
+          (else (f32.reinterpret_i32 (local.get $raw)))))
+        (f32.store (i32.add (local.get $payload) (i32.shl (local.get $i) (i32.const 2))) (local.get $v))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $convert (i32.lt_u (local.get $i) (local.get $n))))
+      (i32.store offset=4 (local.get $stack) (local.get $first))
+      (if (i32.ge_u (local.get $family) (i32.const 2)) (then
+        (i32.store offset=8 (local.get $stack) (local.get $name))
+        (i32.store offset=12 (local.get $stack) (i32.add (local.get $guest) (i32.const 16))))
+        (else (i32.store offset=8 (local.get $stack) (i32.add (local.get $guest) (i32.const 16)))))
+      (local.set $op (if (result i32) (i32.eqz (local.get $family)) (then (i32.const 78))
+        (else (if (result i32) (i32.eq (local.get $family) (i32.const 1)) (then (i32.const 69))
+          (else (select (i32.const 67) (i32.const 68) (i32.eq (local.get $family) (i32.const 2))))))))
+      (drop (call $gl_wat_encode_call (local.get $op) (local.get $stack) (i32.const 0)))
+      (call $heap_free (local.get $guest))))
+    (if (i32.and (i32.ne (local.get $error) (i32.const 0)) (i32.ne (local.get $ctx) (i32.const 0)))
+      (then (call $gl_list_error (local.get $ctx) (local.get $error))))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base)
+      (i32.add (local.get $esp) (i32.shl (i32.add (local.get $words) (i32.const 1)) (i32.const 2)))))

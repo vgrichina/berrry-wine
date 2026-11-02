@@ -228,11 +228,11 @@ const stats = {
         break;
       }
       case 67: // glLightfv(light, pname, params)
-        arg = 2; length = 16; break;
+        arg = 2; length = u32At(view,stackWa,1) <= 0x1203 ? 16 : u32At(view,stackWa,1) === 0x1204 ? 12 : 4; break;
       case 68: // glMaterialfv(face, pname, params)
-        arg = 2; length = u32At(view, stackWa, 1) === 0x1601 ? 4 : 16; break;
+        arg = 2; length = u32At(view, stackWa, 1) === 0x1601 ? 4 : u32At(view,stackWa,1) === 0x1603 ? 12 : 16; break;
       case 69: // glLightModelfv(pname, params)
-        arg = 1; length = 16; break;
+        arg = 1; length = u32At(view,stackWa,0) === 0xb53 ? 16 : 4; break;
       case 78: // glFogfv(pname, params)
         arg = 1; length = u32At(view, stackWa, 0) === 0x0B66 ? 16 : 4; break;
       case 83: // glTexGenfv(coord, pname, params)

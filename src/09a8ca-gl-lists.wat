@@ -119,7 +119,7 @@
       (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1))))
     (if (i32.eq (local.get $name) (i32.const 0x1601)) (then
       (local.set $v (if (result f32) (i32.eq (local.get $op) (i32.const 68))
-        (then (f32.load (call $g2w (i32.load offset=12 (local.get $stack)))))
+        (then (f32.reinterpret_i32 (call $gl32 (i32.load offset=12 (local.get $stack)))))
         (else (if (result f32) (i32.eq (local.get $op) (i32.const 92))
           (then (f32.convert_i32_s (i32.load offset=12 (local.get $stack))))
           (else (f32.load offset=12 (local.get $stack)))))))
@@ -159,6 +159,8 @@
           (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0)))) (then
       (call $gl_list_error (local.get $ctx) (i32.const 0x502))
       (return (i32.const 1))))
+    (if (call $gl_lmf_validate (local.get $ctx) (local.get $op) (local.get $stack))
+      (then (return (i32.const 1))))
     (if (call $gl_material_validate (local.get $ctx) (local.get $op) (local.get $stack))
       (then (return (i32.const 1))))
     (local.set $id (i32.load offset=4 (local.get $stack)))
@@ -286,10 +288,11 @@
         (if (i32.eqz (i32.load offset=36 (local.get $ctx))) (then
           (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
         (i32.store offset=36 (local.get $ctx) (i32.const 0))))
-      (if (i32.or (call $gl_list_scalar_command (local.get $op))
+      (if (i32.or (i32.or (i32.or (i32.eq (local.get $op) (i32.const 67)) (i32.eq (local.get $op) (i32.const 69))) (i32.eq (local.get $op) (i32.const 78)))
+        (i32.or (call $gl_list_scalar_command (local.get $op))
           (i32.or (i32.or (i32.eq (local.get $op) (i32.const 109))
                           (i32.eq (local.get $op) (i32.const 34)))
-                  (i32.eq (local.get $op) (i32.const 68)))) (then
+                  (i32.eq (local.get $op) (i32.const 68))))) (then
         (if (i32.eq (local.get $op) (i32.const 85)) (then
           (call $gl_texcoord_check (i32.load offset=12 (local.get $stack))
             (select (i32.const 4) (i32.const 16) (i32.eq (i32.load offset=8 (local.get $stack)) (i32.const 0x2500))))))
@@ -313,6 +316,14 @@
                 (i32.eq (i32.load offset=8 (local.get $stack)) (i32.const 0x1603)))
               (i32.eq (i32.load offset=8 (local.get $stack)) (i32.const 0x1601))))
           (i32.store offset=20 (local.get $p) (call $w2g (i32.add (local.get $p) (i32.const 24))))))
+        (if (i32.or (i32.or (i32.eq (local.get $op) (i32.const 67)) (i32.eq (local.get $op) (i32.const 69))) (i32.eq (local.get $op) (i32.const 78))) (then
+          (local.set $n (select (i32.const 12) (i32.const 8) (i32.eq (local.get $op) (i32.const 67))))
+          (call $gl_copy_from_guest (i32.add (local.get $p) (i32.const 24))
+            (i32.load (i32.add (local.get $stack) (local.get $n)))
+            (i32.shl (call $gl_lmf_count (call $gl_lmf_family (local.get $op))
+              (i32.load (i32.add (local.get $stack) (i32.sub (local.get $n) (i32.const 4))))) (i32.const 2)))
+          (i32.store (i32.add (i32.add (local.get $p) (i32.const 8)) (local.get $n))
+            (call $w2g (i32.add (local.get $p) (i32.const 24))))))
         (if (i32.eq (local.get $op) (i32.const 85)) (then
           (call $gl_copy_from_guest (i32.add (local.get $p) (i32.const 24))
             (i32.load offset=12 (local.get $stack))
@@ -400,3 +411,71 @@
       (br_table $no $no $no $no $no $no $no $no $no $no $no $yes $yes $yes $yes $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $yes $yes $yes $yes $yes $yes $yes $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $yes $yes $no $no $no $no $no $no $no $no $no $no $no $yes $no $yes $yes $no $no $no $yes $no $no $no $no $no $yes $yes $yes $no $yes $no $no $yes $no $no $no $no $no $no $yes $yes $yes $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no (local.get $op)))
       (return (i32.const 1)))
     (i32.const 0))
+
+  ;; Shared validation for the established float commands and lowered integer
+  ;; commands, before display-list capture, pending-vertex lighting or state.
+  (func $gl_lmf_family (param $op i32) (result i32)
+    (if (i32.or (i32.eq (local.get $op) (i32.const 78))
+        (i32.or (i32.eq (local.get $op) (i32.const 79)) (i32.eq (local.get $op) (i32.const 80)))) (then (return (i32.const 0))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 69)) (i32.eq (local.get $op) (i32.const 70))) (then (return (i32.const 1))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 67)) (i32.eq (local.get $op) (i32.const 72))) (then (return (i32.const 2))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 68))
+        (i32.or (i32.eq (local.get $op) (i32.const 71)) (i32.eq (local.get $op) (i32.const 92)))) (then (return (i32.const 3))))
+    (i32.const -1))
+
+  (func $gl_lmf_validate (param $ctx i32) (param $op i32) (param $stack i32) (result i32)
+    (local $family i32) (local $first i32) (local $name i32) (local $count i32)
+    (local $vector i32) (local $p i32) (local $v f32) (local $raw i32) (local $error i32)
+    (local.set $family (call $gl_lmf_family (local.get $op)))
+    (if (i32.eq (local.get $family) (i32.const -1)) (then (return (i32.const 0))))
+    (if (i32.and (i32.ne (local.get $family) (i32.const 3))
+        (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0))))
+      (then (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+    (local.set $first (i32.load offset=4 (local.get $stack)))
+    (local.set $name (if (result i32) (i32.ge_u (local.get $family) (i32.const 2))
+      (then (i32.load offset=8 (local.get $stack))) (else (local.get $first))))
+    (local.set $count (call $gl_lmf_count (local.get $family) (local.get $name)))
+    (local.set $vector (i32.or (i32.or (i32.eq (local.get $op) (i32.const 67)) (i32.eq (local.get $op) (i32.const 68)))
+      (i32.or (i32.eq (local.get $op) (i32.const 69)) (i32.eq (local.get $op) (i32.const 78)))))
+    (if (i32.or (i32.eqz (local.get $count))
+        (i32.and (i32.eqz (local.get $vector)) (i32.ne (local.get $count) (i32.const 1))))
+      (then (local.set $error (i32.const 0x500))))
+    (if (i32.and (i32.eq (local.get $family) (i32.const 2))
+        (i32.ge_u (i32.sub (local.get $first) (i32.const 0x4000)) (i32.const 8))) (then (local.set $error (i32.const 0x500))))
+    (if (i32.and (i32.eq (local.get $family) (i32.const 3))
+        (i32.eqz (i32.or (i32.or (i32.eq (local.get $first) (i32.const 0x404)) (i32.eq (local.get $first) (i32.const 0x405)))
+          (i32.eq (local.get $first) (i32.const 0x408))))) (then (local.set $error (i32.const 0x500))))
+    (if (local.get $error) (then (call $gl_list_error (local.get $ctx) (local.get $error)) (return (i32.const 1))))
+    (local.set $p (i32.add (local.get $stack) (select (i32.const 12) (i32.const 8) (i32.ge_u (local.get $family) (i32.const 2)))))
+    (local.set $raw (i32.load (local.get $p)))
+    (if (local.get $vector) (then
+      (call $gl_texcoord_check (local.get $raw) (i32.shl (local.get $count) (i32.const 2)))
+      (local.set $raw (call $gl32 (local.get $raw)))))
+    (local.set $v (if (result f32) (i32.or (i32.eq (local.get $op) (i32.const 70))
+        (i32.or (i32.eq (local.get $op) (i32.const 80)) (i32.eq (local.get $op) (i32.const 92))))
+      (then (f32.convert_i32_s (local.get $raw))) (else (f32.reinterpret_i32 (local.get $raw)))))
+    (if (i32.or
+        (i32.and (i32.eq (local.get $family) (i32.const 0)) (i32.eq (local.get $name) (i32.const 0xb62)))
+        (i32.and (i32.eq (local.get $family) (i32.const 2)) (i32.ge_u (local.get $name) (i32.const 0x1207)))) (then
+      (if (f32.lt (local.get $v) (f32.const 0)) (then (local.set $error (i32.const 0x501))))))
+    (if (i32.or
+        (i32.and (i32.eq (local.get $family) (i32.const 3)) (i32.eq (local.get $name) (i32.const 0x1601)))
+        (i32.and (i32.eq (local.get $family) (i32.const 2)) (i32.eq (local.get $name) (i32.const 0x1205)))) (then
+      (if (i32.or (f32.lt (local.get $v) (f32.const 0)) (f32.gt (local.get $v) (f32.const 128))) (then (local.set $error (i32.const 0x501))))))
+    (if (i32.and (i32.eq (local.get $family) (i32.const 2)) (i32.eq (local.get $name) (i32.const 0x1206))) (then
+      (if (i32.and (f32.ne (local.get $v) (f32.const 180))
+          (i32.or (f32.lt (local.get $v) (f32.const 0)) (f32.gt (local.get $v) (f32.const 90)))) (then (local.set $error (i32.const 0x501))))))
+    (if (i32.and (i32.eqz (local.get $family)) (i32.eq (local.get $name) (i32.const 0xb65))) (then
+      (if (i32.eqz (i32.or (i32.or (f32.eq (local.get $v) (f32.const 0x800)) (f32.eq (local.get $v) (f32.const 0x801)))
+          (f32.eq (local.get $v) (f32.const 0x2601)))) (then (local.set $error (i32.const 0x500))))))
+    (if (local.get $error) (then (call $gl_list_error (local.get $ctx) (local.get $error)) (return (i32.const 1))))
+    (i32.const 0))
+
+  ;; Gather the exact pname arity, including nonaffine guest-page boundaries.
+  (func $gl_lmf_values (param $family i32) (param $name i32) (param $guest i32) (result i32)
+    (local $p i32)
+    (local.set $p (i32.add (call $gl_mtx_block) (i32.const 8992)))
+    (memory.fill (local.get $p) (i32.const 0) (i32.const 16))
+    (call $gl_copy_from_guest (local.get $p) (local.get $guest)
+      (i32.shl (call $gl_lmf_count (local.get $family) (local.get $name)) (i32.const 2)))
+    (local.get $p))

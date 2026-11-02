@@ -10,7 +10,7 @@ const unsupportedMdk2 = `
   glCopyTexSubImage2D glDrawPixels glEdgeFlag glEdgeFlagPointer glEdgeFlagv
   glEvalCoord1d glEvalCoord1dv glEvalCoord1f glEvalCoord1fv glEvalCoord2d
   glEvalCoord2dv glEvalCoord2f glEvalCoord2fv glEvalMesh1 glEvalMesh2
-  glEvalPoint1 glEvalPoint2 glFeedbackBuffer glFogiv glGetBooleanv
+  glEvalPoint1 glEvalPoint2 glFeedbackBuffer  glGetBooleanv
   glGetClipPlane glGetLightfv glGetLightiv glGetMapdv
   glGetMapfv glGetMapiv glGetMaterialfv glGetMaterialiv glGetPixelMapfv
   glGetPixelMapuiv glGetPixelMapusv glGetPointerv glGetPolygonStipple glGetTexEnvfv
@@ -18,10 +18,10 @@ const unsupportedMdk2 = `
   glGetTexParameteriv glIndexMask glIndexPointer glIndexd glIndexdv
   glIndexf glIndexfv glIndexi glIndexiv glIndexs
   glIndexsv glIndexub glIndexubv glInitNames glInterleavedArrays
-  glLightModelf glLightModeliv glLighti glLightiv glLineStipple
+  glLineStipple
   glLoadName glLogicOp glMap1d glMap1f
   glMap2d glMap2f glMapGrid1d glMapGrid1f glMapGrid2d
-  glMapGrid2f glMaterialiv
+  glMapGrid2f
   glPassThrough glPixelMapfv glPixelMapuiv glPixelMapusv glPixelStoref
   glPixelTransferf glPixelTransferi glPixelZoom glPolygonStipple glPopName
   glPrioritizeTextures glPushName
@@ -31,6 +31,8 @@ const unsupportedMdk2 = `
   wglCopyContext wglCreateLayerContext
   wglShareLists wglUseFontBitmapsA wglUseFontOutlinesA
 `.trim().split(/\s+/);
+
+const integerLightMaterialFogApis = ["glFogiv", "glLightModelf", "glLightModeliv", "glLighti", "glLightiv", "glMaterialiv"];
 
 const rasterPositionApis = `glRasterPos2d glRasterPos2dv glRasterPos2f glRasterPos2fv glRasterPos2i glRasterPos2iv glRasterPos2s glRasterPos2sv glRasterPos3d glRasterPos3dv glRasterPos3f glRasterPos3fv glRasterPos3i glRasterPos3iv glRasterPos3s glRasterPos3sv glRasterPos4d glRasterPos4dv glRasterPos4f glRasterPos4fv glRasterPos4i glRasterPos4iv glRasterPos4s glRasterPos4sv`.split(/\s+/);
 
@@ -118,7 +120,7 @@ async function main() {
     'GetTickCount', 'gluPerspective', 'glNotARealFunction', 'glactivetextureARB']) {
     assert.strictEqual(lookup(name), 0, `${name} must not be advertised`);
   }
-  for (const name of [...rasterPositionApis, 'glActiveTextureARB', 'glClientActiveTextureARB',
+  for (const name of [...integerLightMaterialFogApis, ...rasterPositionApis, 'glActiveTextureARB', 'glClientActiveTextureARB',
     'glMultiTexCoord2fARB', 'glTexParameterfv', 'glGetTexParameterfv',
     'glVertex2iv', 'glVertex2s', 'glVertex2sv',
     'glVertex3dv', 'glVertex3i', 'glVertex3iv', 'glVertex3s', 'glVertex3sv',
@@ -157,7 +159,7 @@ async function main() {
     assert(new Uint8Array(memory.buffer,toWasm(stack),128).every(x=>x===0xa5),'guest stack preserved');
     return result;
   }
-  assert.strictEqual(unsupportedMdk2.length, 105, 'retain every still unsupported MDK2 name');
+  assert.strictEqual(unsupportedMdk2.length, 99, 'retain every still unsupported MDK2 name');
   for (const name of [...unsupportedMdk2, 'glLockArraysEXT','glUnlockArraysEXT','wglSwapIntervalEXT']) {
     const before=e.lookup_thunks();
     assert.strictEqual(lookup(name),0,`${name}: WGL must reject unsupported GL`);
@@ -166,7 +168,7 @@ async function main() {
     assert.strictEqual(e.lookup_error(),127,'ERROR_PROC_NOT_FOUND');
     assert.strictEqual(e.lookup_thunks(),before,'rejection allocates no thunk');
   }
-  for (const name of [...rasterPositionApis, 'glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv',
+  for (const name of [...integerLightMaterialFogApis, ...rasterPositionApis, 'glDrawElements','glDrawArrays','glMultMatrixd', 'glLoadMatrixd', 'glTranslated', 'glScaled','glAccum','glClearAccum','glNormal3b','glNormal3bv','glNormal3d','glNormal3dv','glNormal3i','glNormal3iv','glNormal3s','glNormal3sv',
     'glTexCoord1d', 'glTexCoord1dv', 'glTexCoord1f', 'glTexCoord1fv', 'glTexCoord1i',
     'glTexCoord1iv', 'glTexCoord1s', 'glTexCoord1sv', 'glTexCoord2iv', 'glTexCoord2s',
     'glTexCoord2sv', 'glTexCoord3d', 'glTexCoord3dv', 'glTexCoord3f', 'glTexCoord3fv',

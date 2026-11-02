@@ -328,6 +328,13 @@ for (const components of [3, 4]) {
   }
 }
 
+// Integer fog/light/material spellings lower to existing validated float commands.
+const integerLightMaterialFogApis = new Map([
+  ['glFogiv', [0, 1, 1]], ['glLightModelf', [1, 0, 0]],
+  ['glLightModeliv', [1, 1, 1]], ['glLighti', [2, 0, 1]],
+  ['glLightiv', [2, 1, 1]], ['glMaterialiv', [3, 1, 1]],
+]);
+
 // Genuine typed current normals lower to the native scalar normal command.
 const typedNormalApis = new Map();
 for (const [suffix, bits] of [['b', 8], ['s', 16], ['i', 32], ['d', 64]]) {
@@ -393,6 +400,7 @@ const nativeGlApis = new Set([
   ...typedRasterPosApis.keys(),
   ...typedVertexApis.keys(),
   ...typedNormalApis.keys(),
+  ...integerLightMaterialFogApis.keys(),
 ]);
 for (const [id, api] of apiTable.entries()) {
   if ((gpuApis.has(api.name) || nativeWglApis.has(api.name) || nativeGlApis.has(api.name)) && /^(?:gl[A-Z]|wgl[A-Z])/.test(api.name)) {
@@ -426,6 +434,8 @@ function handlerCall(api) {
   if (typedTexCoord) {
     return `      (call $handle_glTexCoord_typed ${typedTexCoord.map(n => `(i32.const ${n})`).join(' ')})`;
   }
+  const integerLMF = integerLightMaterialFogApis.get(api.name);
+  if (integerLMF) return `      (call $handle_gl_lmf_integer ${integerLMF.map(n => `(i32.const ${n})`).join(' ')})`;
   const typedNormal = typedNormalApis.get(api.name);
   if (typedNormal) {
     return `      (call $handle_glNormal_typed ${typedNormal.map(n => `(i32.const ${n})`).join(' ')})`;
