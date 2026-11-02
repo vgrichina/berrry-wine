@@ -415,3 +415,61 @@ clear semantics, before lookup availability can change. No original replay,
 startup or gameplay qualification was attempted; the mandatory export latch
 still blocks startup. Box ID/state/expiry: N/A; lifecycle remains
 coordinator-owned.
+
+
+### 2026-11-02: accumulation blocked by drawable color-buffer architecture
+
+No accumulation export was enabled. All **188 remaining names** stay rejected,
+including `glAccum` and `glClearAccum`; the existing pixel format reports zero
+accumulation bits. This investigation produced a concrete prerequisite blocker,
+not an accumulation implementation or a startup result.
+
+The [OpenGL 1.1 specification](https://registry.khronos.org/OpenGL/specs/gl/glspec11.pdf),
+sections 4.2.2–4.2.4, 4.3.2 and 5.4, requires LOAD/ACCUM to consume the selected
+read color buffer and RETURN to write selected draw buffers. Accumulation
+storage belongs to the drawable. Correct signed storage, scissored operations,
+clear values and list timing cannot repair an incorrect source or destination.
+
+Evidence: `scratch/runs/20261102-mdk2-accumulation-buffer/`. The retained
+`prerequisite-probe.js` uses actual GetProcAddress thunks, native win32_dispatch,
+WAT encoding and synchronous software raster, then the real software consumer.
+Its small synthetic window DCs use canonical DC ownership fields and a 4×4
+renderer fixture; no original executable is involved. Exact stdcall cleanup,
+GPR/stack preservation, native red/blue clears and a red BACK-to-FRONT swap
+pass as positive controls; every failing probe also verifies GL_NO_ERROR.
+Six independently specified pixel/identity checks
+fail on main `0bc353ddaf7d4e4384d0bd05aa88a2341c477000`:
+
+- Reading BACK after a verified red clear returns RGBA `[0,0,0,0]`, expected
+  `[255,0,0,255]`.
+- Clearing FRONT green leaves FRONT red and overwrites the blue BACK buffer.
+- Clearing with draw buffer NONE overwrites BACK yellow.
+- Reading FRONT returns zeros, expected green from the requested FRONT clear.
+- Rebinding the same context to the second DC succeeds but the consumer keeps
+  drawable 42 instead of 123.
+
+The FRONT clear contributes two separate pixel assertions. The report retains
+all six failures and expected values, plus the earlier corrected fixture runs.
+`lib/gl-compat.js` implements software backend methods through a proxy whose
+unimplemented `readPixels` is a no-op; `_readPixels` consequently copies its
+zero-filled temporary buffer. `glReadBuffer` updates query state only and
+`glDrawBuffer` is ignored. Native `src/09a8g-gl-raster.wat` targets the same
+BACK image for clears, irrespective of these selectors. Its render/front targets
+are process globals, while the consumer creates a backend per context and
+ignores the drawable supplied when making an existing context current. The
+WebGL backend also lacks a logical FRONT/BACK selection contract. A local
+native WebGL construction probe reports WebGL unavailable; it supplies no GPU
+pixel qualification.
+
+The exact next action is to establish drawable-owned color attachments and
+front/back read/draw selection across native software and consumer backends,
+implement real software readback, and make context rebinding select that
+drawable. Turn the retained six failing assertions into passing regressions
+before adding per-drawable signed accumulation storage, resize/deletion rules,
+all five operations, clear/scissor/mask/error/list semantics and availability.
+Do not advertise accumulation on a backend until that route has pixel evidence.
+The existing native encoder, software raster, frame-state, display-list,
+integer-color and WGL negative suites, generated freshness and mandatory locked
+build were rerun for this blocker report; their results are retained in the
+run directory. No original MDK2 replay, startup or gameplay claim follows.
+Box ID/state/expiry: N/A; lifecycle remains coordinator-owned.
