@@ -36676,7 +36676,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3376895889,
-    "handler": "gl_unimplemented"
+    "handler": "glGetTexGen_typed"
   },
   {
     "id": 4294,
@@ -36684,7 +36684,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3108159795,
-    "handler": "gl_unimplemented"
+    "handler": "glGetTexGen_typed"
   },
   {
     "id": 4295,
@@ -36692,7 +36692,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3072780176,
-    "handler": "gl_unimplemented"
+    "handler": "glGetTexGen_typed"
   },
   {
     "id": 4296,
@@ -37786,7 +37786,7 @@
     "nargs": 4,
     "convention": "stdcall",
     "hash": 2128753545,
-    "handler": "gl_unimplemented"
+    "handler": "glTexGen_typed"
   },
   {
     "id": 4439,
@@ -37794,7 +37794,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3172457069,
-    "handler": "gl_unimplemented"
+    "handler": "glTexGen_typed"
   },
   {
     "id": 4440,
@@ -37802,7 +37802,7 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3140623044,
-    "handler": "gl_unimplemented"
+    "handler": "glTexGen_typed"
   },
   {
     "id": 4441,

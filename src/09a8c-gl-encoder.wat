@@ -587,7 +587,7 @@
       (local.set $arg (select (i32.const 2) (i32.const 1) (i32.le_u (local.get $op) (i32.const 68))))
       (local.set $len (i32.shl (call $gl_lmf_count (call $gl_lmf_family (local.get $op))
         (i32.load (i32.add (local.get $stack) (i32.shl (local.get $arg) (i32.const 2))))) (i32.const 2)))))
-    (if (i32.eq (local.get $op) (i32.const 83)) (then (local.set $arg (i32.const 2))
+    (if (i32.eq (local.get $op) (i32.const 85)) (then (local.set $arg (i32.const 2))
       (local.set $len (select (i32.const 4) (i32.const 16) (i32.eq (i32.load offset=8 (local.get $stack)) (i32.const 0x2500))))))
     ;; Texture uploads default to borrowed, synchronous consumption.
     (if (i32.eq (local.get $op) (i32.const 45)) (then (local.set $arg (i32.const 8))

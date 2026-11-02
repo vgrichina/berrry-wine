@@ -340,6 +340,13 @@ const lightingQueryApis = new Map([
   ['glGetLightfv', [0, 0]], ['glGetLightiv', [0, 1]],
   ['glGetMaterialfv', [1, 0]], ['glGetMaterialiv', [1, 1]],
 ]);
+// Texgen adapters share canonical native per-context/unit state.
+const texgenSetApis = new Map([
+  ['glTexGend', [0, 0]], ['glTexGendv', [0, 1]], ['glTexGeniv', [1, 1]],
+]);
+const texgenQueryApis = new Map([
+  ['glGetTexGendv', 0], ['glGetTexGenfv', 1], ['glGetTexGeniv', 2],
+]);
 // Genuine typed current normals lower to the native scalar normal command.
 const typedNormalApis = new Map();
 for (const [suffix, bits] of [['b', 8], ['s', 16], ['i', 32], ['d', 64]]) {
@@ -406,6 +413,8 @@ const nativeGlApis = new Set([
   ...typedVertexApis.keys(),
   ...typedNormalApis.keys(),
   ...lightingQueryApis.keys(),
+  ...texgenSetApis.keys(),
+  ...texgenQueryApis.keys(),
   ...integerLightMaterialFogApis.keys(),
 ]);
 for (const [id, api] of apiTable.entries()) {
@@ -428,6 +437,17 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  const legacyTexgen = ['glTexGeni', 'glTexGenf', 'glTexGenfv'].indexOf(api.name);
+  if (legacyTexgen >= 0) {
+    return `      (call $handle_glTexGen_legacy (i32.const ${83 + legacyTexgen}))`;
+  }
+  const texgenSet = texgenSetApis.get(api.name);
+  if (texgenSet) {
+    return `      (call $handle_glTexGen_typed ${texgenSet.map(n => `(i32.const ${n})`).join(' ')})`;
+  }
+  if (texgenQueryApis.has(api.name)) {
+    return `      (call $handle_glGetTexGen_typed (i32.const ${texgenQueryApis.get(api.name)}))`;
+  }
   const typedRasterPos = typedRasterPosApis.get(api.name);
   if (typedRasterPos) {
     return `      (call $handle_glRasterPos_typed ${typedRasterPos.map(n => `(i32.const ${n})`).join(' ')})`;

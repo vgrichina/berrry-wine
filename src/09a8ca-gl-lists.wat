@@ -159,6 +159,10 @@
           (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0)))) (then
       (call $gl_list_error (local.get $ctx) (i32.const 0x502))
       (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $op) (i32.const 83))
+        (i32.le_u (local.get $op) (i32.const 85))) (then
+      (if (call $gl_texgen_validate (local.get $ctx) (local.get $op) (local.get $stack))
+        (then (return (i32.const 1))))))
     (if (call $gl_lmf_validate (local.get $ctx) (local.get $op) (local.get $stack))
       (then (return (i32.const 1))))
     (if (call $gl_material_validate (local.get $ctx) (local.get $op) (local.get $stack))

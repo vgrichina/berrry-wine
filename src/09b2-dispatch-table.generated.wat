@@ -3954,6 +3954,9 @@
     (if (i32.eq (local.get $id) (i32.const 4280)) (then (return (i32.const 1)))) ;; glGetLightiv
     (if (i32.eq (local.get $id) (i32.const 4284)) (then (return (i32.const 1)))) ;; glGetMaterialfv
     (if (i32.eq (local.get $id) (i32.const 4285)) (then (return (i32.const 1)))) ;; glGetMaterialiv
+    (if (i32.eq (local.get $id) (i32.const 4293)) (then (return (i32.const 1)))) ;; glGetTexGendv
+    (if (i32.eq (local.get $id) (i32.const 4294)) (then (return (i32.const 1)))) ;; glGetTexGenfv
+    (if (i32.eq (local.get $id) (i32.const 4295)) (then (return (i32.const 1)))) ;; glGetTexGeniv
     (if (i32.eq (local.get $id) (i32.const 4297)) (then (return (i32.const 1)))) ;; glGetTexLevelParameterfv
     (if (i32.eq (local.get $id) (i32.const 4298)) (then (return (i32.const 1)))) ;; glGetTexLevelParameteriv
     (if (i32.eq (local.get $id) (i32.const 4299)) (then (return (i32.const 1)))) ;; glGetTexParameterfv
@@ -4048,6 +4051,9 @@
     (if (i32.eq (local.get $id) (i32.const 4433)) (then (return (i32.const 1)))) ;; glTexCoord4iv
     (if (i32.eq (local.get $id) (i32.const 4434)) (then (return (i32.const 1)))) ;; glTexCoord4s
     (if (i32.eq (local.get $id) (i32.const 4435)) (then (return (i32.const 1)))) ;; glTexCoord4sv
+    (if (i32.eq (local.get $id) (i32.const 4438)) (then (return (i32.const 1)))) ;; glTexGend
+    (if (i32.eq (local.get $id) (i32.const 4439)) (then (return (i32.const 1)))) ;; glTexGendv
+    (if (i32.eq (local.get $id) (i32.const 4440)) (then (return (i32.const 1)))) ;; glTexGeniv
     (if (i32.eq (local.get $id) (i32.const 4442)) (then (return (i32.const 1)))) ;; glTexParameterfv
     (if (i32.eq (local.get $id) (i32.const 4445)) (then (return (i32.const 1)))) ;; glTranslated
     (if (i32.eq (local.get $id) (i32.const 4447)) (then (return (i32.const 1)))) ;; glVertex2d
@@ -4121,9 +4127,6 @@
     (if (i32.eq (local.get $id) (i32.const 4290)) (then (return (i32.const 1)))) ;; glGetPolygonStipple
     (if (i32.eq (local.get $id) (i32.const 4291)) (then (return (i32.const 1)))) ;; glGetTexEnvfv
     (if (i32.eq (local.get $id) (i32.const 4292)) (then (return (i32.const 1)))) ;; glGetTexEnviv
-    (if (i32.eq (local.get $id) (i32.const 4293)) (then (return (i32.const 1)))) ;; glGetTexGendv
-    (if (i32.eq (local.get $id) (i32.const 4294)) (then (return (i32.const 1)))) ;; glGetTexGenfv
-    (if (i32.eq (local.get $id) (i32.const 4295)) (then (return (i32.const 1)))) ;; glGetTexGeniv
     (if (i32.eq (local.get $id) (i32.const 4296)) (then (return (i32.const 1)))) ;; glGetTexImage
     (if (i32.eq (local.get $id) (i32.const 4300)) (then (return (i32.const 1)))) ;; glGetTexParameteriv
     (if (i32.eq (local.get $id) (i32.const 4301)) (then (return (i32.const 1)))) ;; glIndexd
@@ -4172,9 +4175,6 @@
     (if (i32.eq (local.get $id) (i32.const 4402)) (then (return (i32.const 1)))) ;; glSelectBuffer
     (if (i32.eq (local.get $id) (i32.const 4436)) (then (return (i32.const 1)))) ;; glTexEnvfv
     (if (i32.eq (local.get $id) (i32.const 4437)) (then (return (i32.const 1)))) ;; glTexEnviv
-    (if (i32.eq (local.get $id) (i32.const 4438)) (then (return (i32.const 1)))) ;; glTexGend
-    (if (i32.eq (local.get $id) (i32.const 4439)) (then (return (i32.const 1)))) ;; glTexGendv
-    (if (i32.eq (local.get $id) (i32.const 4440)) (then (return (i32.const 1)))) ;; glTexGeniv
     (if (i32.eq (local.get $id) (i32.const 4441)) (then (return (i32.const 1)))) ;; glTexImage1D
     (if (i32.eq (local.get $id) (i32.const 4443)) (then (return (i32.const 1)))) ;; glTexParameteriv
     (if (i32.eq (local.get $id) (i32.const 4444)) (then (return (i32.const 1)))) ;; glTexSubImage1D
@@ -17482,13 +17482,13 @@
       (call $handle_gpu_api (i32.const 82) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 3261: glTexGeni
-      (call $handle_gpu_api (i32.const 83) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexGen_legacy (i32.const 83))
       (return)
     ) ;; 3262: glTexGenf
-      (call $handle_gpu_api (i32.const 84) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexGen_legacy (i32.const 84))
       (return)
     ) ;; 3263: glTexGenfv
-      (call $handle_gpu_api (i32.const 85) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexGen_legacy (i32.const 85))
       (return)
     ) ;; 3264: GetClipCursor
       (call $handle_GetClipCursor (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -21634,13 +21634,13 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4293: glGetTexGendv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glGetTexGen_typed (i32.const 0))
       (return)
     ) ;; 4294: glGetTexGenfv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glGetTexGen_typed (i32.const 1))
       (return)
     ) ;; 4295: glGetTexGeniv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glGetTexGen_typed (i32.const 2))
       (return)
     ) ;; 4296: glGetTexImage
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -22327,13 +22327,13 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4438: glTexGend
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexGen_typed (i32.const 0) (i32.const 0))
       (return)
     ) ;; 4439: glTexGendv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexGen_typed (i32.const 0) (i32.const 1))
       (return)
     ) ;; 4440: glTexGeniv
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glTexGen_typed (i32.const 1) (i32.const 1))
       (return)
     ) ;; 4441: glTexImage1D
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

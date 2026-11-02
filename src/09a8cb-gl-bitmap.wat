@@ -762,3 +762,31 @@
     (if (i32.eq (local.get $pname) (i32.const 0x2502))
       (then (call $gl_raster_eye_plane (call $gl_mtx_block) (local.get $p) (local.get $src)))
       (else (call $gl_copy_from_guest (local.get $p) (local.get $src) (i32.const 16)))))
+
+  ;; Validate all texgen variants before list capture or any observer. An enum
+  ;; rejection must not dereference an irrelevant plane pointer or record data.
+  (func $gl_texgen_validate (param $ctx i32) (param $op i32) (param $stack i32) (result i32)
+    (local $coord i32) (local $name i32) (local $n i32) (local $raw i32) (local $v f64)
+    (if (i32.ge_u (i32.sub (local.get $op) (i32.const 83)) (i32.const 3))
+      (then (return (i32.const 0))))
+    (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+        (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0))) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+    (local.set $coord (i32.sub (i32.load offset=4 (local.get $stack)) (i32.const 0x2000)))
+    (local.set $name (i32.load offset=8 (local.get $stack)))
+    (local.set $n (call $gl_texgen_count (local.get $name)))
+    (if (i32.or (i32.ge_u (local.get $coord) (i32.const 4))
+        (i32.or (i32.eqz (local.get $n)) (i32.and (i32.ne (local.get $op) (i32.const 85)) (i32.ne (local.get $n) (i32.const 1))))) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1))))
+    (local.set $raw (i32.load offset=12 (local.get $stack)))
+    (if (i32.eq (local.get $op) (i32.const 85)) (then
+      (call $gl_texcoord_check (local.get $raw) (i32.shl (local.get $n) (i32.const 2)))
+      (local.set $raw (call $gl32 (local.get $raw)))))
+    (if (i32.eq (local.get $n) (i32.const 1)) (then
+      (local.set $v (if (result f64) (i32.eq (local.get $op) (i32.const 83))
+        (then (f64.convert_i32_s (local.get $raw)))
+        (else (f64.promote_f32 (f32.reinterpret_i32 (local.get $raw))))))
+      (if (i32.eqz (i32.or (i32.or (f64.eq (local.get $v) (f64.const 9216)) (f64.eq (local.get $v) (f64.const 9217)))
+          (i32.and (f64.eq (local.get $v) (f64.const 9218)) (i32.lt_u (local.get $coord) (i32.const 2))))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1))))))
+    (i32.const 0))

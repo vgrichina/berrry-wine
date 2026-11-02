@@ -235,7 +235,7 @@ const stats = {
         arg = 1; length = u32At(view,stackWa,0) === 0xb53 ? 16 : 4; break;
       case 78: // glFogfv(pname, params)
         arg = 1; length = u32At(view, stackWa, 0) === 0x0B66 ? 16 : 4; break;
-      case 83: // glTexGenfv(coord, pname, params)
+      case 85: // glTexGenfv(coord, pname, params)
         arg = 2; length = u32At(view, stackWa, 1) === 0x2500 ? 4 : 16; break;
       case 98: { // gluBuild1DMipmaps(target, internal, width, format, type, data)
         arg = 5;
