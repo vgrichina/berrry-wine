@@ -1951,3 +1951,59 @@ retrieved and verified before delegated shutdown. Boat `bx_stcqex2q` is STOPPED
 at `2026-11-02T09:13:22.478Z` (original expiry `10:01:41.939Z`); all five roots
 and child groups and all own local helpers are absent. `/home` remains above
 2 GB free. This publication changes documentation only.
+
+## First-invalid-SS investigation: bounded valid-state checkpoint, 2026-11-02
+
+**The first invalidating transfer remains unlocated; no emulator repair is
+demonstrated.** Run `20261102-gta1-first-invalid-stack-transfer` statically
+audited the retained observations and exact segment/task/exception sources,
+then used one authorized continuation from the original authentic DEMO24 entry
+(`b0dcbd0d`, child dispatch 19). Neither invalid-SS checkpoint was resumed.
+Original archives, executable, batch route and default 550000/tick1/IRQtrue
+scheduler remained unchanged. No boot or menu replay occurred.
+
+Independent no-step full native/host/child/batch parity passed. Raw observation
+preserved every RAM byte, all 249 native globals and the complete checkpoint
+graph. One scratch-only missing `u32` export was corrected before any guest
+step. Full paging/segment/task/exception, native/full-host/batch same/fresh-process,
+input/files/rename/temp tests and the locked build passed (actual 0, 127.375 s).
+
+The **single 60-second observation stopped at its cutoff**, without observing
+SS validity loss or post-step vector 10/11/12/13. It executed 3,703,625 runner
+steps, observing 57 TR changes, 4,979 SS-cache changes and 1,129 mode changes.
+Final state is `0080:B1CA`, child dispatch **8,640,320**, cumulative 631,333,049,
+tick 15, IRQ 45, host services 558; SS=`00A8`, base=`145E20`, valid=1,
+limit=`88BF`, access=`92`, mask=`FFFF`. The live SS descriptor bytes are
+`bf88205e14920000`. Observation is at ordinary runner boundaries: paged steps
+reach one instruction; nonpaged slices can contain multiple instructions.
+Host-thrown/delivered exceptions need not publish a post-step vector, so the
+zero vector counter is **not proof of an exception-free interval**. Bounded
+before/after instructions, descriptors, hidden caches, TSS/gates and stack bytes
+are retained; there is no invented first-fault or first-transfer record.
+
+Intel's [MOV SS rules](https://pdos.csail.mit.edu/6.828/2018/readings/i386/MOV.htm)
+require rejection before publishing a bad ordinary SS load. In contrast,
+[task switching](https://pdos.csail.mit.edu/6.828/2018/readings/i386/s07_05.htm)
+can commit the incoming task before segment validation fails. With the retained
+late GDT limit `3FFF`, selector `CC20` is out of bounds: an ordinary load requires
+`#GP(CC20)`, incoming task validation `#TS(CC20)` (plus EXT when applicable).
+The historical table at the actual load is still unknown. The permissive
+`sset`/`pm_cache_ss` path is a candidate, not a demonstrated GTA1 cause.
+
+The exact remaining cause is the SS reload/task-cache publication between this
+proven-valid checkpoint and child 20,313,713's invalid `CC20` state. Earlier
+retained `0088:0932`/SS=`00A8` at child 20,236,090 records a selector, not hidden
+validity. No extension or second continuation was performed. Final pixels are
+DOS/4GW text only, with no player scene or native movement response.
+
+The new complete checkpoint is this run's
+`remote-evidence/continuation/complete.checkpoint.gz`, packed SHA-256
+`ffecce96774562b1616c8557e69c47cea85cb7588565e0928b7005b39ca86d9d`, decoded
+`e09593792461838513897ca1d3af3ba10ae8ca30d6a903fc7122cce37723b903`.
+It passed independent fresh-process full-state parity. Finalization completed
+at 71.722 s; OS wait 71.807 s, actual 0/group absent, within the 130 s ceiling.
+Recovery instructions and source pins are in this run's `RECOVERY.md`.
+All 75 evidence members and both checkpoint hashes were independently verified
+locally before delegated box `bx_h74rb4w6` shutdown; STOPPED at
+`2026-11-02T10:02:28.337Z` (original expiry `10:49:57.721Z`). All four remote
+roots/groups are absent. This publication changes documentation only.
