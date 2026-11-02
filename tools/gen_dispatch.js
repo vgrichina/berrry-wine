@@ -370,6 +370,11 @@ function handlerCall(api) {
   if (integerColor) {
     return `      (call $handle_glColor_integer ${integerColor.map(n => `(i32.const ${n})`).join(' ')} (local.get $arg0))`;
   }
+  // Keep opcode 90 stable, but snapshot its four doubles through guest-page
+  // translation instead of assuming the caller's stack is affine.
+  if (api.name === 'glRotated' && api.handler === 'glRotated') {
+    return `      (call $handle_glRotated (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))`;
+  }
   const gpuOpcode = gpuApiOrder.indexOf(api.name);
   if (gpuOpcode >= 0) {
     return `      (call $handle_gpu_api (i32.const ${gpuOpcode}) (i32.const ${gpuApis.get(api.name)}) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))`;

@@ -430,17 +430,24 @@
     (call $gl_mtx_apply (local.get $b) (local.get $m)))
 
   (func $gl_mtx_rotate (param $angle f64) (param $x f64) (param $y f64) (param $z f64)
-    (local $b i32) (local $m i32) (local $len f64)
+    (local $b i32) (local $m i32) (local $len f64) (local $max f64)
     (local $c f64) (local $s f64) (local $t f64) (local $r f64)
     (local.set $b (call $gl_mtx_block))
     (local.set $m (call $gl_mtx_staging (local.get $b)))
+    ;; Scale before squaring: every finite nonzero GLdouble axis normalizes,
+    ;; even when its raw squared length would overflow or underflow.
+    (local.set $max (f64.max (f64.abs (local.get $x))
+      (f64.max (f64.abs (local.get $y)) (f64.abs (local.get $z)))))
+    ;; OpenGL 1.1 leaves zero-axis normalization undefined. Our deterministic
+    ;; choice preserves the selected matrix; Begin validation runs first.
+    (if (f64.eq (local.get $max) (f64.const 0)) (then (return)))
+    (local.set $x (f64.div (local.get $x) (local.get $max)))
+    (local.set $y (f64.div (local.get $y) (local.get $max)))
+    (local.set $z (f64.div (local.get $z) (local.get $max)))
     (local.set $len (f64.sqrt (f64.add
       (f64.mul (local.get $x) (local.get $x))
       (f64.add (f64.mul (local.get $y) (local.get $y))
         (f64.mul (local.get $z) (local.get $z))))))
-    ;; `|| 1` in the JS: a zero-length axis leaves the components alone.
-    (if (f64.eq (local.get $len) (f64.const 0))
-      (then (local.set $len (f64.const 1))))
     (local.set $x (f64.div (local.get $x) (local.get $len)))
     (local.set $y (f64.div (local.get $y) (local.get $len)))
     (local.set $z (f64.div (local.get $z) (local.get $len)))

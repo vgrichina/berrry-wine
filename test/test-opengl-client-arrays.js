@@ -34,7 +34,7 @@ assert.deepStrictEqual([
 
 const required = new Map([
   ['glEnableClientState', 1], ['glArrayElement', 1], ['glVertexPointer', 4],
-  ['glNormalPointer', 3], ['glRotated', 4], ['glVertex2fv', 1], ['glMateriali', 3],
+  ['glNormalPointer', 3], ['glRotated', 8], ['glVertex2fv', 1], ['glMateriali', 3],
   ['glFlush', 0], ['glLineWidth', 1], ['glTexCoord2fv', 1],
   ['glTexParameteri', 3], ['glVertex2i', 2], ['gluBuild1DMipmaps', 6],
 ]);

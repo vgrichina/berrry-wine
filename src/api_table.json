@@ -28957,9 +28957,10 @@
   {
     "id": 3408,
     "name": "glRotated",
-    "nargs": 4,
+    "nargs": 8,
     "convention": "stdcall",
-    "hash": 1526951195
+    "hash": 1526951195,
+    "handler": "glRotated"
   },
   {
     "id": 3409,

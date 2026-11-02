@@ -145,9 +145,11 @@
     ;; while compiling a list.
     ;; Replay keeps it atomic so the caller's vertices and Begin survive.
     (if (i32.and (i32.or
+        (i32.or (i32.eq (local.get $op) (i32.const 39)) (i32.eq (local.get $op) (i32.const 90)))
+        (i32.or
         (i32.or (i32.eq (local.get $op) (i32.const 142)) (i32.eq (local.get $op) (i32.const 109)))
         (i32.or (i32.eq (local.get $op) (i32.const 34))
-          (i32.or (i32.eq (local.get $op) (i32.const 40)) (i32.eq (local.get $op) (i32.const 41)))))
+          (i32.or (i32.eq (local.get $op) (i32.const 40)) (i32.eq (local.get $op) (i32.const 41))))))
         (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
           (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0)))) (then
       (call $gl_list_error (local.get $ctx) (i32.const 0x502))
