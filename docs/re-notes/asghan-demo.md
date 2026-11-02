@@ -74,3 +74,60 @@ node test/run.js --exe=test/binaries/win98-games-a-d/Asghan-demo-SW-D3D-Glide.ex
   --max-batches=400000 --input=700:mousedown:241:270,720:mouseup:241:270 \
   --save-vfs=OUT --save-vfs-prefix='c:\'
 ```
+
+## Private browser movement verified (2026-11-02)
+
+Run `20261102-asghan-native-browser` closes the browser-input gap for the
+registered `asghan_demo` installed software build. One original invocation used
+the private loopback route `index.html?candidates&app=asghan_demo&no-log`, native
+headful Chrome 151.0.7922.108, 1024×768 viewport, cross-origin isolation and
+guest workers. The host renderer stayed at its default `webgl`; the guest ran
+the registered `_start.exe` software renderer. No renderer override, guest
+patch, injected game state or CLI replay was used.
+
+The shipped readme says Up runs forward. After reviewing the title, a balanced
+Enter press opened the visible NEW GAME menu; a second balanced Enter started
+the level. The opening castle camera view was not counted as gameplay. A
+neutral capture then showed Asghan standing on the wooden pier.
+
+Reviewed full-page captures (paired canvas captures are also preserved):
+
+| Phase | File in the run directory | Observation |
+| --- | --- | --- |
+| Before | `05-movement-before.png` | Standing on the wooden pier; no keys held. |
+| Held | `06-movement-up-held.png` | Running on the adjacent ground near the rock wall; pier and camera view displaced. |
+| Released | `06-movement-up-released.png` | New location retained as the run animation ends. |
+| Settled | `06-movement-up-settled.png` | Standing at the new location after release. |
+| Later neutral | `07-movement-neutral-confirm.png` | Same ground/wall location retained without further input. |
+
+All six native key events were trusted and balanced: two Enter pairs and one
+Up pair. Up was requested for 1,500 ms and actually held for 1,965 ms including
+capture overhead. A forwarding observer recorded the real renderer input
+consumption: VK38 `WM_KEYDOWN` then `WM_KEYUP`; the held sample had physical
+and async state true, and the settled sample had both false with an empty
+queue. The immediate released sample still had the key-up queued; consumption
+was recorded 9 ms after native release. This is actual browser player movement,
+not a title/menu capture or a claim inferred from input dispatch alone. Combat,
+audio, level completion and sustained play were not evaluated.
+
+Identity: `_start.exe` SHA-256
+`29069cc0d8e81ebb601fe70fac62a29c637eec4371946fc3bd4c64c60f275ca5`;
+browser manifest
+`af9b9c136595e3b8496cd6c07b368b1912f8699238814873f32d989627540957`;
+wasm `6d9563ff4a1c089c9d0ac4153748411990dc3c92f3a50e2509bbe9ffaaca30a7`
+(2,069,384 bytes), from the coherent locked build after GL commit `93793279e`.
+All 120 installed files (30,448,512 bytes) matched the earlier **local observed**
+readiness hashes; this is not an upstream comparison. The historical SFX path
+mentioned above is absent locally. The immutable transfer verified all 2,985
+members before and after extraction and explicitly included the runtime lookup
+asset `src/api_table.json`. Source/compiler, served-byte, original-file and
+module hashes are retained in the run. The optional system-data lookup
+`test/binaries/tlbs/stdole2.tlb` returned 404 in this transfer; level loading
+and movement still worked. No claim is made for applications needing that
+omitted system-data asset.
+
+The controller and Chrome exited 0, the static server closed, the temporary
+browser profile was removed, and no keys remained held. Guest natural exit
+is unknown: the controller closed the browser after the neutral confirmation.
+Evidence retrieval, delegated own-boat shutdown and publication records are
+in the run's `result.json`, `final.txt`, and `RECOVERY.md`.
