@@ -164,3 +164,66 @@ decoded completely. The live controller's sampled disk minimum was
 2,226,053,120 bytes, above the required 2,000,000,000; no disk stop occurred.
 Native box ID/state/expiry are N/A, and delegated runtime shutdown completed.
 No audio, FPS, backend parity, broad playability or full27 claim follows.
+
+## 2026-11-02 fresh native run: firing and pirate attack contact reviewed
+
+Run `scratch/runs/20261102-rayman2-native-encounter-fresh/` consumed the
+Battlezone existing-defense handoff's actual terminal/result/final, exact
+AUTHOR RELEASE and helper cleanup before execution. One original ran on fresh
+finite-TTL boat `bx_7rm9fd4k` (original expiry 13:59:03.766 UTC), using the
+registered defaults and the existing frozen stdin controller. It exited 0 at
+batch 126 after 542.835 seconds. No shared controller or emulator code changed.
+
+Readiness captures at 10/25/40/55/65/75/85 were reviewed between small steps:
+gray window, loading, opening camera sequence, then the grassy player view
+with HUD. Batch 85 briefly shows 0/50 lums and 0/2 cages. A final neutral
+10-batch step reached 95 before player input. The local shell for that step
+ended 143 after the successful step reply; the live original remained at 95,
+and a fresh read-only capture confirmed it. No original was restarted.
+
+Space down/up at 95/96 gives a throwing pose at 97, then a separate bright
+projectile above Rayman with a sparkling trail at 99 (`fire-settled.png`;
+the filename does not mean the projectile had settled). At 101 Rayman is
+idle again and only fading sparkles remain. This is ordinary firing beyond
+the earlier movement/jump result; animation alone is not the evidence.
+
+Up down/up at 101/107, with released capture at 109, brings the ship and a
+pirate on its right balcony into the playable view. Ctrl down at 109 and
+Space down at 110 are followed by a four-batch step. At 114 a small bright
+player shot crosses the ship's foreground and a large flaming object emerges
+near the pirate. Both keys are released at 114. The flaming object moves
+away from the balcony at 116; at 119 flames and smoke surround Rayman.
+At 122 and 126 he has a translucent recovery appearance and the yellow
+health bar remains shorter. At fixed image row y=65, the yellow/red boundary
+is x=152 before the attack and x=146 in both later captures (yellow pixels
+end at 151 and 145 respectively). This supports player attack contact and
+health loss, not a hit inferred solely from a pose. It measures pixels,
+not guest health points. The cause of the encounter trigger was not isolated.
+
+All eight key edges were scheduled, dequeued, routed and dispatched to
+`Rayman II` HWND `0x10001`. At 126 the known scheduled, pending, renderer
+and cross-thread queues are empty; physical/async Up, Ctrl and Space are
+released. Their pressed-edge latches remain set, which is not a held key.
+Guest post-queue and SDL consumption remain unknown. No A/Right replay,
+memory/progress edit, menu rebinding or compatibility workaround was used.
+
+The unchanged accepted COPY module was reused only after all 4,375 tested
+prerequisites matched. Its actual runtime compilation hash is
+`68cccb08e53a59d84c0ec566ea0fa5056d5e30aab40ef9d89b55c4e6d3a2ae69`;
+the materialized source baseline was main `8905ffb3bbb748b060212187304fbcbcb0c1cfaf`.
+All 5,045 transferred inputs, 155 observed runtime reads, and 193 original
+fixture/manifest identities plus installed-tree membership matched afterward.
+The EXE and manifest retain the hashes pinned above. Observer sync/async
+execution, whole-512-MB read-only hashing, clock identity and late retention
+checks passed. Its string-path read coverage does not cover every descriptor
+or direct OS read. All 22 PNGs passed CRC/decompression checks.
+
+The evidence archive SHA-256 is
+`efe06cd35ec860f86e4be8699249b09e04c741def792531183f7ac6bcf067579`;
+it and all 79 contained file hashes were verified locally before delegated
+shutdown. The boat is confirmed STOPPED at 13:12:29.669 UTC; own runtime and
+helper PIDs are absent. Local launch free space exceeded 2.4 GB; the guard's
+sampled minimum through retrieval was 2,389,708,800 bytes, above the 2.02 GB
+stop floor. Initial insufficient headroom was resolved by coordinator cleanup
+before launch. No enemy damage/kill, collectible, opened passage or objective
+completion is proved. No audio, FPS, full-game or full27 claim follows.
