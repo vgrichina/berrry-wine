@@ -26,8 +26,9 @@ async function dosCom(variant, tier = {}) {
     0x66, ...mov(0, 0x80000011), 0x0f, 0x22, 0xc0,
     0xea, 0, 2, 8, 0];
   com.set(boot, 0);
-  com.writeUInt16LE(0x2f, 0xe0); com.writeUInt32LE(0x18000, 0xe2);
+  com.writeUInt16LE(0x3f, 0xe0); com.writeUInt32LE(0x18000, 0xe2);
   com.writeUInt16LE(0x7ff, 0xe6); com.writeUInt32LE(0x17000, 0xe8);
+  com.writeUInt16LE(0x3ff, 0xec); com.writeUInt32LE(0, 0xee);
   put(0x17070, 0x00080400); put(0x17074, 0x00008e00);
   put(0x17180, 0x00080700); put(0x17184, 0x0000ee00);
   // 32-bit CS at base10000; flat writable DS/ES/SS.
@@ -36,6 +37,9 @@ async function dosCom(variant, tier = {}) {
   put(0x18018, 0x0000ffff); put(0x1801c, 0x00cffa01);
   put(0x18020, 0x0000ffff); put(0x18024, 0x00cff200);
   put(0x18028, 0x90000067); put(0x1802c, 0x00008901);
+  // Real-mode return descriptors: 16-bit, byte granular, 64K, base10000.
+  put(0x18030, 0x0000ffff); put(0x18034, 0x00009a01);
+  put(0x18038, 0x0000ffff); put(0x1803c, 0x00009201);
   put(0x19004, 0x90000); put(0x19008, 0x10);
   put(guestPageDirectory, 0x13007); put(guestPageDirectory + 0x100, 0x14007);
   for (let i = 0; i < 1024; i++) put(0x13000 + i * 4, (i * 4096) | 7);
@@ -65,14 +69,25 @@ async function dosCom(variant, tier = {}) {
     ...store(0x17020, 0x00080650), ...store(0x17024, 0x00008e00),
     ...mov(0, 0x7fffffff), 0x83, 0xc0, 1, 0xce,
     0x89, 0x25, ...u32(0x71030),
-    ...mov(0, 0x11), 0x0f, 0x22, 0xc0, ...mov(0, 0x10), 0x0f, 0x22, 0xc0,
-    0xea, ...u32(0x800), 0, 0x10];
+    ...mov(0, 0x11), 0x0f, 0x22, 0xc0,
+    ...mov(0, 0), 0x0f, 0x22, 0xd8,
+    0xea, ...u32(0xa00), 0x30, 0];
   const call = main.indexOf(0xe8);
   main.splice(call + 1, 4, ...u32(0x500 - (0x200 + call + 5)));
   const crossCall = main.indexOf(0xe8, call + 5);
   main.splice(crossCall + 1, 4, ...u32(0x0fff0ffe - (0x200 + crossCall + 5)));
   com.set(main, 0x100); com.set(finish, 0x600);
-  com.set([0xb8, 0, 0x4c, 0xcd, 0x21], 0x700);
+  // Clearing PE and a real-mode far jump do not clear cached CS.D. First
+  // enter the 16-bit protected segment, restore real-compatible data/stack
+  // caches, then clear PE and jump to the ordinary 16-bit DOS exit. Otherwise
+  // B8 00 4C CD 21 is MOV EAX,21CD4C00 and execution wanders through RAM,
+  // eventually changing copy data and even finding an accidental DOS exit.
+  com.set([0xb8, 0x38, 0, 0x8e, 0xd8, 0x8e, 0xc0, 0x8e, 0xd0,
+    0x8e, 0xe0, 0x8e, 0xe8, 0x66, ...mov(4, 0xfffe),
+    0x66, ...mov(0, 0x10), 0x0f, 0x22, 0xc0, 0xea, 0, 8, 0, 0x10], 0x900);
+  com.set([0xb8, 0, 0x10, 0x8e, 0xd8, 0x8e, 0xc0, 0x8e, 0xd0,
+    0x8e, 0xe0, 0x8e, 0xe8, 0x0f, 0x01, 0x1e, 0xec, 1,
+    0xb8, 0, 0x4c, 0xcd, 0x21], 0x700);
   com.set([0x60, 0x0f, 0x20, 0xd0, 0xa3, ...u32(0x71010),
     0x8b, 0x44, 0x24, 0x20, 0xa3, ...u32(0x71014),
     0x89, 0x0d, ...u32(0x71018), 0x89, 0x35, ...u32(0x7101c),
@@ -94,7 +109,14 @@ async function dosCom(variant, tier = {}) {
   assert.equal(r.machine.exited, true, 'actual COM returns through normal DOS exit');
   assert.equal(r.machine.exitCode, 0);
   assert.equal(r.ranOutOfTime, false);
+  assert.equal(r.vm.exports.get_d32(), 0, 'DOS exit executes with 16-bit CS defaults');
+  assert.equal(r.vm.exports.get_cr0() >>> 0, 0x10);
+  assert.equal(r.vm.exports.get_cr3() >>> 0, 0);
+  assert.equal(r.vm.get('cs'), 0x1000, 'exit stays on the intended real-mode path');
+  assert.equal(r.vm.get('gip'), 0x817, 'exit immediately follows the intended INT21');
   const v = new DataView(r.vm.mem.buffer);
+  // REP copied linear10000000..10003fff through PTEs to these four pages.
+  // Keep every untouched dword checked; assert each deliberate overwrite below.
   for (const p of [0x30000, 0x50000, 0x60000, 0x70000]) {
     for (let i = 0; i < 4096; i += 4) {
       if ((p === 0x30000 && i === 4092) || (p === 0x50000 && i === 0) ||
@@ -102,6 +124,13 @@ async function dosCom(variant, tier = {}) {
       assert.equal(v.getUint32(p + i, true), 0x76543210, `copy ${variant}/${JSON.stringify(tier)} at ${(p+i).toString(16)}`);
     }
   }
+  for (let i = 0; i < 16384; i += 4) {
+    assert.equal(v.getUint32(0x40000 + i, true), 0x76543210, 'REP source remains intact');
+  }
+  assert.equal(v.getUint32(0x30ffc, true), 0x56783210, 'scalar store spans mapped pages');
+  assert.equal(v.getUint32(0x50000, true), 0xc3112233, 'cross-page MOV immediate tail and RET');
+  assert.equal(v.getUint32(0x60ffc, true), 0x44b89090, 'cross-page NOP/NOP/MOV prefix');
+  assert.equal(v.getUint32(0x10501, true), 0x01020304, 'physical alias patches called MOV immediate');
   assert.equal(v.getUint32(0x71000, true), 0x12345678);
   assert.equal(v.getUint32(0x71004, true), 0x12345678);
   assert.equal(v.getUint32(0x71008, true), 0x76543210);

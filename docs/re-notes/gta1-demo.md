@@ -1,6 +1,85 @@
 # Grand Theft Auto: original 24-bit DOS demo
 
 
+## Paged COM regression repaired: fixture return path, 2026-11-02
+
+Evidence: `scratch/runs/20261102-gta1-paging-com-regression/`. Input diagnostic
+code `09fc2dacdf2b1095f00e08ddbf8612d2192a915c` / final
+`63db955841b17f46cf8da77e3215a24a05191a42`. Work began after MDK2
+`dd93bf341a7a40c8d8ef2676c92696b025b5bd59` terminal result/final and exact
+00:07:11 author RELEASE; all eleven reported helper PIDs were independently
+absent. Only the paging test and this note changed.
+
+The failure was an invalid **test fixture return to DOS**, not a wrong copy
+expectation or an observed paging-store error. The COM loader copies bytes to
+physical 10100 without relocation. Retained actual COM disassembly and the
+instruction-boundary memory trace establish:
+
+- REP MOVSD copies 16 KiB from linear 40000 through 10000000..10003FFF to
+  physical pages 30000, 50000, 60000 and 70000. Physical 500B0 initially has
+  the correct 76543210.
+- The scalar store at CS:EIP 0008:023B writes 12345678 across linear
+  10000FFE: physical 30FFE..30FFF receive 78 56 and 50000..50001 receive
+  34 12. The guest repair handler reinstalls PTE 14004 = 50007.
+- After CR3 = 16000, PTE 15000 = 60007 makes the load at 0008:0290 read
+  physical 60000. The following store at 0295 records **76543210** at 71008.
+- PTE 15008 = 10007 maps the alias store at linear 10002501 to physical
+  10501, patching the called MOV immediate to 01020304. Later guest stores
+  at 02BD and 02C7 write 44B89090 at physical 60FFC and C3112233 at
+  physical **50000**, respectively. With CS.base = 10000, call offset
+  0FFF0FFE fetches linear 10000FFE through physical 60FFE/50000 and returns
+  EAX = 11223344. Physical **500B0 is not the intended patch address**.
+
+The old fixture then cleared PG and PE while retaining the 32-bit CS cache,
+far-jumped to 1000:0800, and supplied `B8 00 4C CD 21`, intended as
+`MOV AX,4C00; INT21`. With CS.D still set these bytes instead form
+`MOV EAX,21CD4C00`. It ran through unrelated bytes, including an unhandled
+INT0/IRET path and CS 0046, before finding an accidental DOS exit. The retained
+trace places **both** extra writes after paging is off: 71008 changes from
+76543210 to 76543211, then 500B0 changes from 76543210 to C3112233. Thus the
+old `exited=true/code=0` was insufficient to establish the intended exit path.
+`old-trace-events.json`, `old-final-memory.bin`, `old-watch-sites.json` and
+`baseline.log` retain that behavior; corrected trace/memory are separate.
+
+The repair follows the real-mode transition sequence in Intel's
+[80386 PRM §14.5](https://www.scs.stanford.edu/05au-cs240c/lab/i386/s14_05.htm):
+leave paging from identity-mapped code, clear CR3, enter a 16-bit protected
+code segment and load real-compatible 64K data/stack descriptors before clearing
+PE and far-jumping to the 16-bit DOS exit. Restore the real IVT and segment
+registers. The test now requires CS.D = 0, CR0 = 10, CR3 = 0 and the exact
+1000:0817 return IP immediately following its intended INT21. No emulator
+behavior or browser bundle was changed.
+
+All original copy assertions, including 500B0 and 71008, remain unchanged.
+Additional assertions protect all 4096 source dwords and every previously
+unchecked intentional overwrite: 30FFC = 56783210, 50000 = C3112233,
+60FFC = 44B89090, 10501 = 01020304, plus the existing 60000 = 98765432
+user-write result. This repairs execution rather than excusing corrupt bytes.
+The original complete suite fails before the change; the corrected suite
+passes all four dispatch variants and the uopOnly/uop/treeFold options, with
+8440 dispatches per paged COM. Paging itself still uses its existing checked
+instruction path; these options do not imply new paged tier support.
+
+Paging foundation (three dispatch variants / 192 protection cases), retained
+exception diagnostic negatives and real failing-COM JSON/PNG capture, complete
+runner input regression, 36 CALL-gate/RETF cases and protected timer-vector
+regression all pass. Both unchanged live bundles execute the corrected COM and
+pass diagnostic negatives, with exact parity for all 44/43 embedded modules;
+the browser-shaped bundle smoke test also passes. Mandatory
+`flock /tmp/wine-build.lock bash tools/build.sh` passes. Per-command disk
+monitoring enforces abort 2,020,000,000 bytes / floor 2 GB without a RAM gate;
+actual waits and cleanup are retained in the evidence directory.
+
+No original GTA replay, task-switch implementation, fault suppression or
+partial-success claim. This fixture failure does **not** establish a cause for
+GTA's original #PF at 0080:3EBF / CR2 10184EA1. The next task-switch prerequisite
+remains the complete architectural contract described below, including actual
+incoming-TSS and page-walk validation, outgoing busy bookkeeping, precise
+pre/post-commit faults, backlink/NT/TS, error push and nested-task IRET.
+Box ID/state/expiry N/A; shutdown remains coordinator-owned. No helpers remain
+at handoff; all assigned paths and serialized source/build/test/runtime are
+released after publication.
+
 ## DEMO24 first paged exception: retained state, 2026-11-02
 
 Evidence: `scratch/runs/20261102-gta1-task-gate-state/`. This follows published
