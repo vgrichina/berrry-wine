@@ -614,3 +614,36 @@ operations remain unimplemented. All **188** unsupported exports, including
 `glAccum` and `glClearAccum`, remain rejected. No original MDK2 replay or
 startup/gameplay qualification was attempted. Next work is the bounded signed
 per-drawable accumulation implementation after the serialized worker gates.
+
+### 2026-11-02: invalid-setter presentation prerequisite reproduced and repaired
+
+The coordinator's state-cache concern is now a demonstrated pixel defect.
+An invalid context-facade setter cleared the entire device state cache while
+retaining the valid context snapshot. Presentation then disabled blending and
+scissor and changed the viewport, but could restore only the emptied cache.
+The next draw in that same context skipped activation and used those temporary
+presentation settings. The repair rebuilds the device snapshot immediately
+after a rejected setter, using the retained valid context state without
+consuming the GL error.
+
+The published old backend fails the new drawable regression: half-alpha green
+over blue produces `[0,255,0,128]` both inside and outside a one-pixel scissor,
+instead of blended `[0,128,128,191]` inside and unchanged `[0,0,255,255]` outside.
+An actual browser Worker also fails after `gpuPresent` on the old backend.
+The repaired backend passes 321 checks each in WebGL1 and WebGL2, 13 endpoint
+checks and 26 actual browser Worker checks. Seven rejected setters exercise
+both front-buffer publication and buffer swapping, retained viewport/caps,
+and ordinary same-context draw pixels. The browser reports ANGLE SwiftShader;
+these are actual WebGL consumer pixels, with no hardware GPU qualification.
+All 32 focused native/software/worker/display-list/color/drawable/WGL runs
+pass, including direct/queued scalar readback and unsupported-export checks.
+Generated dispatch freshness and the mandatory locked build also pass.
+
+Evidence is retained in
+`scratch/runs/20261102-mdk2-accumulation-implementation/`. This assignment's
+outcome is the newly demonstrated presentation prerequisite and its repair.
+Accumulation remains unimplemented; all 188 unsupported names, including
+`glAccum` and `glClearAccum`, remain rejected. The next implementation still
+needs signed drawable-owned storage, context-owned clear state, all five
+operations and complete native/software/WebGL acceptance before availability.
+No original MDK2 replay or startup/gameplay claim follows.

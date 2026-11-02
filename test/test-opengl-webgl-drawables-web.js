@@ -29,6 +29,33 @@ function runDrawableTests() {
     try {
       const a=bridge.createContext(42);check(!!a,true,'create');check(bridge.makeCurrent(a,42),1,'bind');
       call('glViewport',[0,0,8,8]);
+      // Invalid setters must preserve authoritative context state across both
+      // presentation paths, even when the execution-device cache was cleared.
+      for(const [setter,args,expectedError] of [
+        ['glBlendFunc',[0xdead,0],0x500],['glViewport',[0,0,-1,8],0x501],
+        ['glScissor',[0,0,-1,8],0x501],['glDepthFunc',[0xdead],0x500],
+        ['glCullFace',[0xdead],0x500],['glFrontFace',[0xdead],0x500],['glLineWidth',[f(0)],0x501],
+      ]) for(const swap of [false,true]) {
+        clear(0x408,[0,0,1,1]);select(0x405);
+        call('glViewport',[1,1,4,4]);call('glBlendFunc',[0x302,0x303]);call('glEnable',[0xbe2]);
+        call('glScissor',[2,2,1,1]);call('glEnable',[0xc11]);
+        call(setter,args);check(error(),expectedError,'invalid '+setter);
+        if(swap)bridge.present();else bridge.flushFrontBuffer();
+        const v=new Float32Array(6*19);
+        [[-1,-1],[1,-1],[1,1],[-1,-1],[1,1],[-1,1]].forEach(([x,y],i)=>{
+          v.set([x,y,0,0,1,0,.5],i*19);v[i*19+14]=1;
+        });
+        const context=bridge._current();context.frontend.enqueuePacked(4,v);context.frontend.flushPendingDraw();
+        // Read both pixels before asserting: the old failure is actual color
+        // loss, not merely a cache/capability introspection discrepancy.
+        const inside=pixel(0x405),outside=pixel(0x405,3,2);
+        check(inside,[0,128,128,191],setter+' present inside '+swap+' pixels '+JSON.stringify({inside,outside}),1);
+        check(outside,[0,0,255,255],setter+' present scissor '+swap);
+        check(Array.from(context.backend.gl.getParameter(0xba2)),[1,1,4,4],setter+' viewport');
+        check(context.backend.gl.isEnabled(0xbe2),true,setter+' blend retained');
+        check(context.backend.gl.isEnabled(0xc11),true,setter+' scissor retained');
+        call('glDisable',[0xbe2]);call('glDisable',[0xc11]);call('glViewport',[0,0,8,8]);
+      }
       clear(0x405,[0,0,1,1]);clear(0x404,[1,0,0,1]);
       check(pixel(0x404),[255,0,0,255],'FRONT read');check(pixel(0x405),[0,0,255,255],'BACK read');
       clear(0,[0,1,0,1]);check(pixel(0x405),[0,0,255,255],'NONE preserves back');check(pixel(0x404),[255,0,0,255],'NONE preserves front');
@@ -162,9 +189,21 @@ async function runDrawableWorkerTests(source) {
   const equal=(actual,expected,label,tolerance=0)=>{if(Array.isArray(expected)?!(Array.isArray(actual)&&actual.length===expected.length&&actual.every((x,i)=>Math.abs(x-expected[i])<=tolerance)):actual!==expected)throw Error(label+': '+JSON.stringify(actual));checks++;};
   const f=x=>{const b=new DataView(new ArrayBuffer(4));b.setFloat32(0,x,true);return b.getUint32(0,true);};
   const clear=async(mode,color)=>{await call('glDrawBuffer',[mode]);await call('glClearColor',color.map(f));await call('glClear',[0x4000]);};
-  const read=async mode=>{await call('glReadBuffer',[mode]);const r=await call('glReadPixels',[2,2,1,1,0x1908,0x1401,512]);equal((await call('glGetError')).value,0,'worker GL error');return r.pixel;};
+  const read=async(mode,x=2,y=2)=>{await call('glReadBuffer',[mode]);const r=await call('glReadPixels',[x,y,1,1,0x1908,0x1401,512]);equal((await call('glGetError')).value,0,'worker GL error');return r.pixel;};
   try {
     const a=(await call('wglCreateContext',[1],42)).value;equal(!!a,true,'create');equal((await call('wglMakeCurrent',[1,a],42)).value,1,'bind');await call('glViewport',[0,0,8,8]);
+    await clear(0x408,[0,0,1,1]);await call('glDrawBuffer',[0x405]);
+    await call('glEnable',[0xbe2]);await call('glBlendFunc',[0x302,0x303]);
+    await call('glEnable',[0xc11]);await call('glScissor',[2,2,1,1]);
+    await call('glBlendFunc',[0xdead,0]);equal((await call('glGetError')).value,0x500,'worker rejected blend setter');
+    await call('gpuPresent');
+    const retained=new Float32Array(2*19);
+    for(let i=0;i<2;i++){retained.set([-.375+i*.25,-.375,0,0,1,0,.5],i*19);retained[i*19+14]=1;}
+    await call(null,[],0,Array.from(retained));
+    const inside=await read(0x405),outside=await read(0x405,3,2);
+    equal(inside,[0,128,128,191],'worker invalid setter/present blend',1);
+    equal(outside,[0,0,255,255],'worker invalid setter/present scissor');
+    await call('glDisable',[0xbe2]);await call('glDisable',[0xc11]);
     await clear(0x404,[1,0,0,1]);await clear(0x405,[0,0,1,1]);equal(await read(0x404),[255,0,0,255],'front');equal(await read(0x405),[0,0,255,255],'back');
     await call('glDrawBuffer',[0x408]);await call('glEnable',[0xbe2]);await call('glBlendFunc',[0x302,0x303]);
     const point=Array(19).fill(0);point.splice(0,7,-.375,-.375,0,0,1,0,.5);point[14]=1;
