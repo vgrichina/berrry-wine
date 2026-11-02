@@ -49,7 +49,7 @@ Published `4631ff857` subsequently repairs the already-resolved `glRotated`;
 its double argument and matrix semantics do not change the missing-export count.
 See [rotation evidence](re-notes/gl-rotated-native-20261102.md).
 
-Thirteen subsequently accepted families reduce the unsupported set to **64**
+Fourteen subsequently accepted families reduce the unsupported set to **60**
 mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
 
 | Accepted implementation | Newly implemented exports | Evidence |
@@ -67,6 +67,7 @@ mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
 | `a8b85a569` texture copy/readback and pixel transfer | 7 | [Framebuffer and texture storage, transfer, packing, lists and WebGL pixels](re-notes/gl-texture-copy-readback-20261102.md) |
 | `57cf33689` boolean and pointer queries | 2 | [Byte-sized boolean conversion, saved array pointers and resolved ABI checks](re-notes/gl-boolean-pointer-query-20261102.md) |
 | `3a49ef5e2` pixel maps | 6 | [Per-context tables, numeric conversions, mapped transfers and literal pixels](re-notes/gl-pixel-map-20261102.md) |
+| `93793279e` raster pixels | 4 | [Draw/copy pixels, zoom, pixel-store conversion and WebGL depth equality](re-notes/gl-raster-pixels-20261102.md) |
 
 Each family passed its focused semantic and regression checks, rejecting controls,
 and locked build; the coordinator verified retained evidence hashes and committed
@@ -96,8 +97,13 @@ retrieval. Pixel maps subsequently passed 935 checks per direct/queued route,
 three locked builds. The coordinator verified 162 final and 96 retrieved evidence
 hashes plus 7,230 accepted source pins; its temporary boat stopped and guard
 was absent. These eight genuine exports reduce 72 to 64 mandatory misses.
-The current raster-pixels worker targets four further exports; those remain
-excluded until implemented and verified. Integer lighting passed 301 checks per direct/queued
+Raster pixels `93793279e` subsequently passed 92 literal checks per direct/queued
+route, WebGL1/2 including depth-copy EQUAL, ten compiled semantic controls,
+saved-source rejection, 17 regressions and the locked build (32 final steps).
+The coordinator matched all 264 retrieved evidence hashes and 7,233 tested
+source inputs; helpers were absent and the temporary boat stopped after retrieval.
+These four genuine exports reduce 64 to 60 mandatory misses. Fresh real-worker
+integration is queued after the two game lanes; no original MDK2 run is claimed. Integer lighting passed 301 checks per direct/queued
 route, two saved-source and fourteen semantic rejecting controls, 36 regressions,
 two generated checks and the locked build (57 commands). The coordinator matched
 all 116 retained evidence hashes and 13 committed blobs. The four indexed queries
