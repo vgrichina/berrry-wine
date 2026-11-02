@@ -1186,6 +1186,95 @@ Next requires additional authorized recoverable disk savings beyond this
 exhausted immediate-log scope, then sustained launch margin and a fresh runtime
 gate. Only this note is tracked; no source, test, TODOS or STATUS changes.
 
+## 2026-11-02: inherited defense engagement closed; firing verified, outcome unproved
+
+Runs `scratch/runs/20261102-battlezone-native-defense-resume/` and
+`scratch/runs/20261102-battlezone-existing-defense-handoff/` preserve **one
+original engagement**. After the predecessor worker unexpectedly terminated
+143, its existing driver **10498** and original **10502** were recovered live
+at batch **10043**. The successor launched no original and preserved the old
+worker events read-only. A pre-game bootstrap had exited 1 for a missing generic
+`stdole2.tlb`; the retained correction supplies the hash-verified local file
+before the actual original starts, rather than replaying a game.
+
+The tested source snapshot is **`a8b85a5696143fc821d4de2cc018d2661e85ec1f`**.
+The actual compile observer records WASM SHA-256
+`68cccb08e53a59d84c0ec566ea0fa5056d5e30aab40ef9d89b55c4e6d3a2ae69`,
+reusing COPY's accepted locked build and tests; no fresh build or source change
+was needed. The predecessor verifies **4,375 accepted source inputs** before
+materialization. All **4,696 materialized runtime files** match again after the
+run, as do **154 observed file reads**. All **153 original fixture file pins**
+match locally and in the runtime manifest. The observed original executable is
+`bl_rel.exe`, SHA-256
+`0554156663000fc1c0c0ad2275e460fa6fc9acda4abdd26c720b69019d04617a`.
+The retained native save is **66,050 bytes**, SHA-256
+`e5506fc41132b395c3e7de455a070996d159890cf93b3e581f3343c93dd8d3da`.
+`identity.json`, `runtime-inputs.json.gz`, `runtime.json`, `loaded.json` and
+`observer-events.json` preserve exact identities and argv. Execution uses Node
+**24.22.1**, `test/run.js --app=battlezone_demo --no-build --batch-size=100000
+--control-stdin --frozen --no-close --quiet-api --quiet-blocks
+--trace-input-dispatch --max-seconds=1800 --max-batches=100000`, the pinned
+`--wasm` and exact-file native-save mount. This is the headless CLI route.
+
+Ordinary Single Player → mission launch → Escape → Load Game → native Open
+dialog loads `c:\m3`; batch **2458**, `native-reloaded.png`, shows the two
+Turrets, scrap **30/30**, pilot **09/14**, ammo **83**, and the perimeter/base
+protection objective. Steering, pitch, approach and frontal targeting use
+ordinary keypad, F/C, Q and T inputs recorded in `controls.ndjson` and
+`remote-controls.ndjson`. `identify-grey-tank-after.png` visibly identifies a
+red **Tank at 57 m**. This run's acquired hostile is a Tank; the earlier
+Fighter observation belongs to the prior run.
+
+Ordinary keypad-0/VK96 fire sequences at **8070–8191**, **8191–8462**,
+**8484–8905** and **8930–9351** consume ammo **83 → 48 → 29**. Reviewed
+`player-fire-before.png`, `aimed-defense-fire-held.png` and
+`aimed-defense-fire-after.png` show the selected hostile, a player cannon
+plume/tracer during held fire, and retained ammo **48** after release.
+**Player firing and weapon consumption are verified. Tank damage, a hit, a kill,
+Turret fire and defense completion are not established.**
+
+The predecessor's Space command at **9397–9443** and neutral **9743/10043**
+observations are retained without upgrading them to confirmed Turret placement.
+The successor first observes **10043/10343**, then explicitly opens Defense
+and selects Turret 2 with two ordinary **2** presses. At **10435**, reviewed
+`handoff-select-turret2-after.png` shows the selected Turret **39 m** away and
+**Space: Go To**. Space at **10435–10481** is followed by small neutral steps
+to **10781/11081**. These prove command input and subsequent observations,
+not arrival or an attack. Ordinary **O** at **11081–11127** displays the same
+instructions: build Turrets, establish a defensive perimeter, and defend the
+Command Tower and Solar Arrays. The Tank remains visible; **no changed objective
+or mission result is proved**. No injected state, progress patch or new save
+was used. The verified imported `native-m3.bin` is retained for recovery.
+
+At final batch **11127**, known scheduled/pending/cross-thread/renderer queues
+are empty; guest post queue, mouse-button mask and SDL consumption remain
+unknown. The default sampled key set covers only VK16/17/18/32, all physically
+and asynchronously released, with VK32's pressed latch still true. It does not
+prove every used key released. The ordinary controller quit yields original
+OS wait **0**, runtime **1,122.510 seconds**, no driver failure reason, and
+directly absent driver/original PIDs. A separate driver OS wait is unavailable.
+
+All **498 archived file hashes** match after retrieval, and **248 PNGs** pass
+CRC and complete-deflate checks. `evidence.tar.gz` is **37,353,996 bytes**,
+SHA-256 `1270449562b60a70cc39972bad4c77865761f1d9e1e0ee0d056dae2c9b3ef5af`;
+its extracted files and manifest are in the successor's `retrieved/` directory.
+Only named captures above were visually reviewed; integrity is not gameplay
+acceptance. The inherited host disk guard **1090046** exits normally after its
+finish marker, with sampled local minimum **2,474,991,616 bytes**. The remote
+driver records minimum **58,190,594,048 bytes**; no disk-stop receipt occurs.
+These are finite observations, not an unsampled-space guarantee.
+
+After retrieval and verification, explicitly delegated shutdown of known boat
+**`bx_kb6pdbx2`** is confirmed **STOPPED at 2026-11-02T12:50:56.118Z**;
+its original expiry was **2026-11-02T13:28:54.998Z**. Remote recorded bootstrap,
+driver and original PIDs are absent, and the scoped helper scan is empty.
+Host guard and own board watcher cleanup are recorded in `cleanup.json`.
+`result.json`, `final.txt` and `RECOVERY.txt` preserve the limited outcome and
+handoff. Only this note changes in git. No second original, compatibility edit,
+downloaded fixture, audio/FPS/full-game or wider-corpus claim follows from this
+run. Further combat work requires a separate assignment; this engagement ends
+with verified firing and an unproved defense outcome.
+
 ## Not checked
 
 Ad screen visibility (black headless), audio, the AVIs, multiplayer, the
