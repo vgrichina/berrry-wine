@@ -1,9 +1,9 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-03
 
-## November 3: published prerequisites; 16 observed MDK2 names remain
+## November 3: published prerequisites; three observed MDK2 names remain
 
 The current `unsupportedMdk2` list in `test/test-wgl-proc-availability.js`
-contains **16** names. This is a static inventory check, not a fresh runtime
+contains **3** names. This is a static inventory check, not a fresh runtime
 test. The 51-name checkpoint below predates `wglCopyContext` and the three
 edge-flag exports; all four now have accepted implementations.
 
@@ -34,9 +34,16 @@ WebGL1/2 and twenty-one regressions pass; a hit-suppression mutation is rejected
 Coordinator verified181 local artifact hashes and86 recovered payload hashes,
 including BOTH canonical and compatibility modules, plus actual STOPPED state
 and completed verified snapshot. Original MDK2 gameplay remains unverified.
-Fresh `mdk2-color-index-family-nov03` prepares the remaining thirteen color-index
-APIs statically until Alice explicitly releases heavy runtime. Layer/font APIs
-remain separate; static inventory reduction does not establish gameplay.
+Color-index is published in `c96b1b241`: thirteen APIs implement genuine typed
+state, arrays, queries, lists and context semantics. Locked build, native,
+actual queued Worker, WebGL1/2 and twenty-four regressions pass; a lost-index
+mutation fails as expected. Coordinator verified167 local and102 recovered
+payload hashes, both modules, actual STOPPED state and verified snapshot, and
+inspected restored WebGL pixels. [Evidence](re-notes/gl-color-index-family-20261103.md).
+Only `wglCreateLayerContext`, `wglUseFontBitmapsA` and `wglUseFontOutlinesA`
+remain in the mandatory list. Fresh WGL worker60530 prepares statically until
+Alice recovery26123 explicitly releases runtime. Original MDK2 gameplay remains
+unverified; API-family acceptance does not establish gameplay.
 
 ### Recovered original corpus table; exact 27-ID membership still unresolved
 
