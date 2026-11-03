@@ -15,11 +15,16 @@ const start = source.indexOf('  // Startup dilation wraps the batch clock');
 const end = source.indexOf('  // Every OTHER import table', start);
 assert(start >= 0 && end > start, 'production initialization markers');
 const initialization = source.slice(start, end);
+// The initialization also checks the independent scheduler-observer flag.
+// Use the production parser with no CLI flags, leaving that observer disabled.
+const flagParser = source.match(/^const hasFlag = .*;$/m)?.[0];
+assert(flagParser, 'production flag parser');
 
 function fixture(code, { enabled = true, real = false, startup = true } = {}) {
   const batchClock = createBatchClock(200);
   let now = 500, probes = 0;
   const c = vm.createContext({
+    args: [],
     batchClock, tickState: batchClock.state, createStartupClock,
     STARTUP_CLOCK_CFG: startup
       ? { factor: 0.01, maxMs: 30000, endOn: 'firstPresent:directdraw' } : null,
@@ -33,7 +38,7 @@ function fixture(code, { enabled = true, real = false, startup = true } = {}) {
     Date: { now: () => now }, DX_LOCK_PAUSE: {}, VBLANK: {},
     ctx: { sharedAudio: {} }, h: {}, logs: [], console: { log() {} },
   });
-  vm.runInContext(code, c);
+  vm.runInContext(flagParser + '\n' + code, c);
   const api = vm.runInContext('({guestClock, startupClock, inputConsumptionTrace})', c);
   return { ...api, h: c.h, ctx: c.ctx, logs: c.logs, batchClock,
     setNow: n => { now = n; }, probes: () => probes };
