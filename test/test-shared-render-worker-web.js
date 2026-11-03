@@ -141,7 +141,8 @@ const {startStaticServer,closeServer}=require('./static-server');
         }
         const created=await glBatch([{name:'wglCreateContext',aux:1}]);
         if(!created.value)throw new Error('real worker WGL creation failed');
-        await glBatch([{name:'wglMakeCurrent',args:[1,created.value]},
+        // Native WGL records carry the resolved drawable in aux, apart from HDC.
+        await glBatch([{name:'wglMakeCurrent',aux:1,args:[1,created.value]},
           {name:'glViewport',args:[0,0,16,16]},
           {name:'glClearColor',args:[float(1),0,0,float(1)]},
           {name:'glClear',args:[0x4000]},{name:'gpuPresent'}]);
@@ -239,7 +240,7 @@ const {startStaticServer,closeServer}=require('./static-server');
         frontView.setUint16(front+16,32,true);frontView.setUint16(front+18,12,true); // padded rows
         frontView.setUint32(front+20,bits,true);
         raw.set([3,5,7,0,11,13,17,0,99,99,99,99,19,23,29,0,31,37,41,0,88,88,88,88]);
-        await glBatch([{name:'wglMakeCurrent',args:[1,swContext.value]},{name:'gpuPresent'}],glSoftware,{softwareFront:front});
+        await glBatch([{name:'wglMakeCurrent',aux:1,args:[1,swContext.value]},{name:'gpuPresent'}],glSoftware,{softwareFront:front});
         if(softwareFrames.length!==1)throw new Error('software GL did not publish its guest front');
         const expectedSoftware=[7,5,3,255,17,13,11,255,29,23,19,255,41,37,31,255];
         same([softwareFrames[0].width,softwareFrames[0].height],[2,2],'guest front dimensions');

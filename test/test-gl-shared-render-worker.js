@@ -358,6 +358,32 @@ function workerCapturedGeometry(){
     'a later batch without captured dimensions returns to authoritative live exports');
   adapter.destroy();
 }
+function workerSoftwareResponseClone(){
+  const memory={buffer:new SharedArrayBuffer(1024)};
+  const adapter=require('../lib/gl-render-worker').create({instance:{exports:{}},memory,
+    backend:'software',sendFrame(){}});
+  const execute=(name,aux,args=[])=>{
+    const input=scalarBatch(memory.buffer,0,name,args);
+    new DataView(memory.buffer).setUint32(8,aux,true);
+    return adapter.execute({memoryOffset:0,bytes:input.bytes,owner:0,
+      windows:[{hwnd:1,w:16,h:16,clientRect:{w:16,h:16}}]});
+  };
+  try{
+    const created=execute('wglCreateContext',1,[1]);
+    assert(created.value,'real software consumer context created');
+    structuredClone(created);
+    const bound=execute('wglMakeCurrent',1,[1,created.value]);
+    assert.strictEqual(bound.value,1,'software consumer bound to its window');
+    assert.doesNotThrow(()=>structuredClone(bound),
+      'software current response must cross Worker postMessage');
+    assert.strictEqual(bound.webglVersion,undefined,'software response has no WebGL version');
+    assert.deepStrictEqual(bound.activeWindows,[[0,1]]);
+    assert.deepStrictEqual(bound.producerConfig,[1,16,16,0]);
+    const released=execute('wglMakeCurrent',0,[0,0]);
+    assert.strictEqual(released.value,1);structuredClone(released);
+    assert.deepStrictEqual(released.producerConfig,[0,0,0,0]);
+  }finally{adapter.destroy();}
+}
 async function hostProtocol(){
   const memory=new SharedArrayBuffer(4096),commands=[],copies=[],draws=[],events={},gate=deferred();
   const windows={8:{hwnd:8,w:2,h:2,clientRect:{left:0,top:0,right:2,bottom:2}}};
@@ -479,7 +505,7 @@ const watchdog=setTimeout(()=>{console.error('GL shared render worker protocol t
   await queuedCopiedVectors();await queuedMalformedVectors();
   await queuedSmallTextureUploads();
   await sharedPacketRotation();
-  workerOwnedCommandReplay();workerCapturedGeometry();
+  workerOwnedCommandReplay();workerCapturedGeometry();workerSoftwareResponseClone();
   await legacyProxy();legacyWorkerCleanup();legacyUnavailableFallback();
   console.log('GL shared render worker protocol PASS');})().catch(error=>{console.error(error);process.exitCode=1;})
   .finally(()=>clearTimeout(watchdog));
