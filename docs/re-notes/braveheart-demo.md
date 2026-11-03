@@ -619,3 +619,51 @@ guarded transfer, compile the pinned source and validate the diagnostic with
 actual generated controls. Only then admit at most one changed-diagnostic
 original startup. No original GDI mismatch, initializer cause, observer-fault
 classification or gameplay progress was established here.
+
+### Recovered-headroom follow-up stopped before transfer (2026-11-03)
+
+Run: `scratch/runs/20261102-braveheart-recovered-headroom-initializer/`.
+The original initializer identity and cause remain **unobserved**. No source or
+fixture transfer, build, generated DLL control, browser or original startup ran.
+The prepared initializer/callback/browser diagnostics remain **unvalidated**;
+no runtime repair or gameplay result follows from this run.
+
+After the ordered GL and replacement Oni terminal results, final files, exact
+author releases and absent scoped helpers, their 587 and 478 final artifact
+hashes matched. The predecessor's 73 also matched. Fresh pins cover 396 runtime
+and 1005 compiler inputs at `024c732b07dd7a44c1822f5ad3eb9c4c94e12c77`, plus
+all 145 local original files (207704346 bytes). The shared WASM was identified
+only; no newly compiled module was produced or selected. The worker still
+supplies the loader's no-op logger and forwards only the shallow error message.
+
+Four small process controls passed: normal completion, supervisor death,
+supervisor stall, and child-watchdog death. The negative cases stopped only their
+synthetic commands. These validate monitor termination behavior, **not** DLL
+initializers or browser capture. A foreground supervisor with a separate child
+watchdog then owned the actual preparation phase, persisting periodic heartbeats,
+minima and a retained abort latch.
+
+The proposed single SSH stdin stream failed its small preflight with HTTP 403,
+`api_key_action_forbidden` / `This API key cannot perform ssh.` No fixture bytes
+were sent. A signed-HTTP-upload alternative was prepared but never executed.
+At `2026-11-03T00:57:46.656994Z`, the foreground guard latched a disk-floor breach
+and terminated its own runner (exit -15). Its minimum was 1999269888 bytes; the
+independent child recorded 1985236992 bytes, both below 2000000000. Maximum
+sampling gaps were 0.949 and 0.246 seconds. The transient's cause is unproven.
+Recovered headroom did not establish stability; neither this latch nor the prior
+1991254016-byte breach was cleared or retried. Earlier passive preparation gaps
+are retained separately; whole-task continuous floor compliance is not claimed.
+
+A separate bounded recovery-only supervisor retrieved and independently
+SHA-verified metadata proving the own boat had no checkout, transfer files or
+scoped helpers. This preceded the explicitly delegated shutdown of
+`bx_59uhh53n`, confirmed STOPPED/error null at `2026-11-03T01:00:20.124Z`.
+Its original expiry `2026-11-03T01:55:23.978Z` was recorded before first use.
+`RECOVERY.md`, the abort records and the recovered metadata preserve the restart
+boundary. The raw creation-output filename collision is also retained; the
+parsed creation-ready record and original expiry were fsynced before use.
+
+Next: stable additional headroom and a validated permitted transfer route, then
+a fresh pinned build and actual initializer/callback/browser controls before
+admitting any original startup. No foreign files, active catalogs or caches were
+cleaned. Git alone does not recover the ignored original fixture.
