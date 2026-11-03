@@ -1977,10 +1977,10 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Legacy texture cube API conformance
   id: D3D-LEGACY-TEXTURE-CAPS-AUDIT-20261013
-  worker: none (legacy-texture-rest-oct20 finished; source-only candidate retained)
-  status: ready (noncube integration and cube fullVM pending)
+  worker: none (BORDER/cube corrections and native fixture are merged)
+  status: partial (capability corrections merged; pinned public COM evidence accepted; rendering audit remains)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Finished noncube worker retained BORDER correction0a63482c363082c95e825b34161f42134831a3a4 on its historical task branch with source-only validation; main integration/runtime evidence remains pending. f856627 clears unsupported CUBEMAP only, source115checks+4mutations PASS, off main pending exact-source normalbuild/public COM and rejection tests. Surface4/7 ABI is already merged. No independent-face storage or backend/gameplay qualification claimed.
+  Next: Do not reintegrate historical branch patches: current main includes cube122109793, BORDER93addaa3c and fixture-bootstrap682d0c824; common producer masks are texture0xF7DF/address0xF7. Retained actual public COM fixture passes47calls/45descriptors on pinned modulebc5412c1 (docs/re-notes/legacy-caps-early-exit-20261020.md), with current offline1053negative controls PASS. Continue remaining advertised software/GPU behavior audit and actual cube-surface rejection/rendering coverage where evidence is missing. Historical native pass does not prove current runtime or independent-face storage/backend/gameplay. Surface4/7 ABI already merged. Reconciliation evidence: scratch/runs/20261103-legacy-caps-main-reconcile/.
   Done: Correct advertised API and software/GPU behavior with versioned contract and tests.
 
 - [ ] Authorized original installer acceptance
