@@ -29,10 +29,10 @@ function claimAudioSession(type = 'playback') {
 if (typeof window !== 'undefined') window.claimAudioSession = claimAudioSession;
 
 // ShellExecute receives lpFile and lpParameters separately, while WinExec's
-// one string starts with the executable token. Keep the latter's whitespace
-// rules scoped to WinExec so an unquoted ShellExecute path containing spaces
-// retains the compatibility behavior existing applications depend on.
-function parseShellLaunchCommand(rawFile, explicitParams, operation) {
+// one string contains an image name followed by arguments. WinExec delegates
+// to CreateProcess: unquoted whitespace boundaries are tried in order until an
+// image exists. ShellExecute's separately supplied lpFile keeps its own rules.
+function parseShellLaunchCommand(rawFile, explicitParams, operation, vfs) {
   const source = String(rawFile || '');
   const isWinExec = /^winexec$/i.test(String(operation || ''));
   const s = source.trim();
@@ -52,6 +52,23 @@ function parseShellLaunchCommand(rawFile, explicitParams, operation) {
       const token = /^(\S+)(?:\s+([\s\S]*))?$/.exec(s);
       file = token ? token[1] : '';
       parsedParams = token && token[2] || '';
+      if (vfs && vfs.files && typeof vfs._resolvePath === 'function') {
+        // Period MSDN CreateProcess contract (also used by WinExec):
+        // C:\Program Files\Sub Dir\Tool tries Program.exe before the longer
+        // image names. An absent first candidate does not end the search.
+        // Probe only file identities, without reading/starting any candidate;
+        // the normal loader owns invalid-image and other execution failures.
+        for (const boundary of s.matchAll(/\s+|$/g)) {
+          const candidate = s.slice(0, boundary.index);
+          if (!candidate) continue;
+          const resolved = resolveShellLaunchPath(candidate, vfs, true);
+          const entry = vfs.files.get(vfs._resolvePath(resolved));
+          if (!entry || (entry.attrs & 0x10)) continue;
+          file = candidate;
+          parsedParams = s.slice(boundary.index).trimStart();
+          break;
+        }
+      }
     }
   } else {
     const quoted = /^"([^"]+)"(?:\s+(.*))?$/.exec(s);
@@ -2496,8 +2513,9 @@ class WineAssembly {
       WineAssembly._threadSnapshotSystemIncomplete = true;
       const rawFile = fileWa ? self.readString(fileWa) : '';
       const op = opWa ? self.readString(opWa) : 'open';
+      const vfs = self._helpCtx && self._helpCtx.vfs;
       const parsedCommand = parseShellLaunchCommand(
-        rawFile, paramsWa ? self.readString(paramsWa) : '', op);
+        rawFile, paramsWa ? self.readString(paramsWa) : '', op, vfs);
       const file = parsedCommand.file;
       const params = parsedCommand.params;
       const dir = dirWa ? self.readString(dirWa) : '';
@@ -2511,7 +2529,6 @@ class WineAssembly {
         // filesystem (a CD launcher handing off to the game its installer
         // just wrote); that beats the registered-app basename heuristic,
         // which could resolve "diablo.exe" to a different registered build.
-        const vfs = self._helpCtx && self._helpCtx.vfs;
         const launchFile = resolveShellLaunchPath(file, vfs, parsedCommand.isWinExec);
         const absolute = /^[a-z]:\\/i.test(launchFile);
         const launchDir = parsedCommand.isWinExec && vfs &&

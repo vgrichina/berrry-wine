@@ -139,10 +139,38 @@ try {
     }
     const missing = fixture();
     assert.strictEqual(missing.launch('c:\\absent.exe'), 2);
-    assert.strictEqual(missing.launch(missing.exe), 2,
-      'WinExec unquoted spaces delimit argv[0], unlike ShellExecute lpFile');
     assert.strictEqual(missing.launch('"unterminated'), 2);
     assert.strictEqual(missing.forks.length, 0);
+    // Literal expectations from period MSDN's ordered ambiguous-image example.
+    // None of these fixture bytes is executed: only the OS fork is mocked.
+    const image = 'c:\\program files\\sub dir\\program name.exe';
+    const cases = [
+      { command: image, expected: image, args: '' },
+      { command: image + ' /flag "two words"', expected: image, args: '/flag "two words"' },
+      { command: image, prefix: 'c:\\program.exe', expected: 'c:\\program.exe', args: 'files\\sub dir\\program name.exe' },
+      { command: image, prefix: 'c:\\program files\\sub.exe', expected: 'c:\\program files\\sub.exe', args: 'dir\\program name.exe' },
+      { command: '"' + image + '" /flag', prefix: 'c:\\program.exe', expected: image, args: '/flag' },
+      { command: '"c:\\program" files\\sub dir\\program name.exe', expected: null },
+      { command: 'c:\\missing folder\\absent.exe /flag', expected: null },
+      { command: image, directory: 'c:\\program.exe', expected: image, args: '' },
+      { command: 'relative folder\\child.exe /s', target: 'c:\\work\\relative folder\\child.exe', expected: 'c:\\work\\relative folder\\child.exe', args: '/s' },
+    ];
+    for (const row of cases) {
+      const f = fixture();
+      f.vfs.files.set(row.target || image, { data: Buffer.from('offline fixture, never executed') });
+      if (row.prefix) f.vfs.files.set(row.prefix, { data: Buffer.from('offline fixture, never executed') });
+      if (row.directory) f.vfs.dirs.add(row.directory);
+      assert.strictEqual(f.launch(row.command), row.expected ? 33 : 2, row.command);
+      assert.strictEqual(f.forks.length, row.expected ? 1 : 0, row.command);
+      if (row.expected) {
+        assert.strictEqual(arg(f.forks[0], 'exe-guest-path'), row.expected);
+        assert.strictEqual(arg(f.forks[0], 'args'), row.args);
+        finish(f);
+      }
+    }
+    const unquoted = fixture();
+    assert.strictEqual(unquoted.launch(unquoted.exe), 33, 'unquoted full image after absent earlier candidate');
+    finish(unquoted);
     const failed = fixture({ fail: true });
     assert.strictEqual(failed.launch(`"${failed.exe}"`), 0, 'fork failure cannot return shell success');
     assert.deepStrictEqual(tempDirs(), [], 'synchronous fork failure cleans exported snapshot');

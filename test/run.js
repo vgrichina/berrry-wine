@@ -4080,10 +4080,10 @@ async function main() {
     if (!CAPTURE_LAUNCH && ctx.vfs &&
         (SPAWN_PROCESSES_FLAG || (APP_ENTRY && APP_ENTRY.spawnProcesses)) &&
         /^(?:winexec|open)?$/i.test(operation)) {
-      const parsed = parseShellLaunchCommand(file, params, operation);
+      const parsed = parseShellLaunchCommand(file, params, operation, ctx.vfs);
       const executable = resolveShellLaunchPath(parsed.file.trim(), ctx.vfs, parsed.isWinExec);
       if (!executable) return 2; // ERROR_FILE_NOT_FOUND
-      // Keep ShellExecute's separate arguments and WinExec's tokenization;
+      // Keep ShellExecute's separate arguments and WinExec's selected image;
       // the transport accepts a quoted command line, not a shell expression.
       const command = `"${executable}"${parsed.params ? ' ' + parsed.params : ''}`;
       try {
@@ -4100,7 +4100,7 @@ async function main() {
     // about whether the closing quote follows argv[0] or the final argument.
     // Use the browser's parser so capture/replay sees exactly what a live
     // ShellExecute handoff sees.
-    const parsedCommand = parseShellLaunchCommand(file, params, operation);
+    const parsedCommand = parseShellLaunchCommand(file, params, operation, ctx.vfs);
     const executable = resolveShellLaunchPath(
       parsedCommand.file.trim(), ctx.vfs, parsedCommand.isWinExec);
     const inlineArgs = parsedCommand.params.trim();

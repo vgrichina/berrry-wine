@@ -216,6 +216,47 @@ function makeShell(opts = {}) {
   console.log('ok: obsolete DirectX setup is already satisfied');
 }
 
+// WinExec uses CreateProcess's ordered unquoted candidates at the browser
+// callback too. Fixtures never load a PE; only the final boot is substituted.
+{
+  const vm = require('vm');
+  const { VirtualFS } = require('../lib/filesystem');
+  const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host');
+  const source = fs.readFileSync(path.join(__dirname, '..', 'host.js'), 'utf8');
+  const start = source.indexOf('    h.shell_execute =');
+  const end = source.indexOf('    // The guest asked for the machine to go down', start);
+  assert(start >= 0 && end > start);
+  const image = 'C:\\Program Files\\Sub Dir\\program.exe';
+  function launch(command, files, operation = 'WinExec') {
+    const vfs = new VirtualFS();
+    for (const file of files) vfs.files.set(vfs._resolvePath(file), { data: new Uint8Array(1) });
+    const calls = [];
+    const strings = [null, operation, command];
+    const parent = { _helpCtx: { vfs }, readString: p => strings[p], logToUI() {} };
+    const h = {};
+    vm.runInNewContext(source.slice(start, end), {
+      h, self: parent, WineAssembly: {}, parseShellLaunchCommand, resolveShellLaunchPath,
+      console: { log() {} }, window: { wineShell: {
+        launchVfsExe(file, caller, dir, params) {
+          calls.push({ file, params });
+          return vfs.files.has(vfs._resolvePath(file));
+        }, launchExe() { return false; },
+      } },
+    });
+    return { status: h.shell_execute(0, 1, 2, 0, 0, 5), calls };
+  }
+  const full = launch(image + ' /flag', [image]);
+  assert.strictEqual(full.status, 33);
+  assert.deepStrictEqual(full.calls, [{ file: image, params: '/flag' }]);
+  const prefix = launch(image + ' /flag', [image, 'C:\\Program.exe']);
+  assert.strictEqual(prefix.status, 33);
+  assert.deepStrictEqual(prefix.calls, [{ file: 'C:\\Program.exe', params: 'Files\\Sub Dir\\program.exe /flag' }]);
+  assert.strictEqual(launch('"C:\\Program" Files\\Sub Dir\\program.exe', [image]).status, 2);
+  assert.strictEqual(launch(image, []).status, 2);
+  assert.deepStrictEqual(launch(image, [image], 'open').calls, [{ file: image, params: '' }]);
+  console.log('ok: browser WinExec candidate order, quoted and absent controls, separate ShellExecute lpFile');
+}
+
 // Exercise the production browser process_spawn callback with the real shell
 // skip policy and loopback transport. Only guest attachment/boot is substituted.
 {
