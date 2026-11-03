@@ -1,9 +1,9 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-03
 
-## November 3: published prerequisites; 47 observed MDK2 names remain
+## November 3: published prerequisites; 24 observed MDK2 names remain
 
 The current `unsupportedMdk2` list in `test/test-wgl-proc-availability.js`
-contains **47** names. This is a static inventory check, not a fresh runtime
+contains **24** names. This is a static inventory check, not a fresh runtime
 test. The 51-name checkpoint below predates `wglCopyContext` and the three
 edge-flag exports; all four now have accepted implementations.
 
@@ -19,18 +19,16 @@ These accepted results close the earlier context-copy and shared-texture
 prerequisites. They do not establish original MDK2 gameplay, complete visual
 correctness or backend parity for the historical 27 applications.
 
-The next implementation candidate is the **23-export evaluator family**:
-eight `glEvalCoord*`, two `glEvalMesh*`, two `glEvalPoint*`, three `glGetMap*`,
-four `glMap1*/glMap2*` and four `glMapGrid*` exports. Each is present in the
-remaining lookup inventory and routes to `handle_gl_unimplemented` in
-`src/09b2-dispatch-table.generated.wat`; this is a verified implementation gap.
-Its acceptance needs evaluated curves/surfaces and mesh pixels through native,
-Worker and WebGL routes, alongside map/query state, numeric ABI, display-list,
-context-copy and error behavior. Reducing the missing-name count alone would
-not close it. Fresh worker `mdk2-gl-evaluator-family-nov03` is implementing
-this family, with static preparation acknowledged on November 3 at 19:28Z.
-Heavy tests wait for Alice's explicit runtime release. No evaluator acceptance
-or original MDK2 gameplay result is claimed yet.
+The 23-export evaluator family is published in `4ec8732ba`: real curves,
+surfaces, mesh topology, automatic normals, map/query state, lists and context
+state pass native, queued Worker and WebGL1/2 tests plus eighteen regressions.
+A zero-evaluation mutation is rejected. [Evidence and limits](re-notes/gl-evaluator-family-20261103.md).
+Coordinator verified all 135 local artifact hashes and actual STOPPED state with
+a completed verified snapshot. The compatibility binary was omitted from local
+recovery; its hash/log and exact-source rebuild recipe remain retained.
+Original MDK2 gameplay remains unverified. Fresh `mdk2-selection-feedback-nov03`
+implements selection/feedback primitives and buffer semantics next, starting
+with static preparation until Alice releases heavy runtime.
 
 ### Recovered original corpus table; exact 27-ID membership still unresolved
 
