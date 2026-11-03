@@ -1,5 +1,56 @@
 # American McGee's Alice demo
 
+## Original browser attempt: cooperative DLL admission blocks startup (2026-11-03)
+
+Run `scratch/runs/20261103-alice-original-browser-gameplay/` makes one original
+browser attempt on main `7ad347a3531d9b7627a03fd5e465afbb509689f8`, after exact
+GL5777 release 06:40:25 UTC then Jedi10321 release 06:55:25 UTC. All 4,158
+released source inputs match before and after; all 355 staged runtime inputs
+and all 15 original files match full SHA256. The actual browser HTTP module
+is 2,081,604 bytes, SHA256
+`75379b0954be582cbeb9df8b40477c5e0b67292fa8833577ebcc7a8e798aaa80`.
+The released locked build and keyboard-message regression pass. No production
+code, original bytes or configuration changed; local HTTP launch metadata
+preserves the ordinary executable and all 14 companion mappings.
+
+Chrome 151.0.7922.108 / Puppeteer 25.7.0 uses a 1200×900 viewport, cross-origin isolation,
+software GL and cooperative guest threads. The actual startup budget remains
+100,000; no trace address, breakpoint or forced-one diagnostic was armed.
+The reviewed first capture shows the original Alice Console. Neutral steps
+reach a gray game surface at step 1600 / main slice 1045. The next request for
+600 steps advances only 49, then the existing progress watchdog times out at
+**actual step 1649 / main slice 1093**, EIP `0x0274aced`, yield 5. The filename
+`startup-2200.png` is a requested label, not a completed-step receipt.
+
+Two read-only snapshots 26.741 seconds apart retain main owner 1 at that EIP,
+callback gate owner 2 / depth 1, and active runnable thread handle `0xe1001`,
+owner 2, EIP `0x0273a520`, with an unfinished DLL attach operation. Main's
+return maps into the unchanged Miles `mss32.dll` immediately after its original
+FreeLibrary call. Current `host.js` awaits `handleLoadLibrary()` before its
+cooperative scheduling phase; that method omits `onDllCallbackGateWait`.
+`process-boot.js` waits for the real callback gate before servicing the yield.
+The CLI already supplies the scheduler's existing owner-advance callback.
+Live gate/thread observations and this source path establish the browser
+counterpart of the cooperative admission cycle; no JS async stack was sampled,
+gate released, guest memory changed or callback skipped by the observer.
+
+No menu became visible, so no New Game/Easy, movement/look or fire input was
+sent. Browser gameplay and any visible attack effect remain **unverified**;
+the earlier native result below remains separate. There is no browser GPU,
+audio or FPS qualification. The attempt ends at this measured blocker, with
+no runtime repair or second original launch. Next: a faithful browser
+old-fail/new-pass scheduling regression and general owner-advance repair,
+focused lifecycle tests and locked build before another original attempt.
+
+All 416 retrieved members, including current source/module, all originals,
+captures/logs and recovery, independently match full SHA256. Archive 92,172,697
+bytes SHA256 `a212a085812ee255778b5fe09e730a218eb9f080009788fd58177c2c23955be1`.
+Chrome and driver exit 0 without errors establish host cleanup, not guest exit.
+Scoped helpers and port 42173 were absent before explicitly delegated normal
+shutdown. Own boat `bx_2kbjhk2y`, original expiry 07:36:17.184 UTC, is STOPPED;
+stop `stop_9cbb6e2e727a4b2a` completed 07:08:39.277 UTC, error null, forced
+false, normal snapshots/metadata retained. No running boat remains assigned.
+
 ## Native New Game activation and controlled gameplay verified (2026-11-03)
 
 Run `scratch/runs/20261103-alice-single-trace-native-activation/` completes the
