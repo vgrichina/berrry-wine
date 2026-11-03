@@ -1837,11 +1837,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: original MDK2 demo gameplay and GL prerequisites
   id: NEW-GAME-MDK2-DEMO-20261103
-  status: active (color-index published; three WGL layer/font prerequisites next)
+  status: partial (three WGL layer/font prerequisites published; original attract renders, controlled gameplay open)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: fresh60530/thread01a1a36d-0442-7183-92f5-55e7e9db7fa8; scratch/usage-watch/mdk2-wgl-layer-font-family-nov03; STATIC until Alice recovery releases runtime
-  Next: Genuine wglCreateLayerContext, wglUseFontBitmapsA and wglUseFontOutlinesA with actual selected-font glyph semantics, public ABI/native/queued Worker/WebGL controls, then original pinned demo if prerequisites complete. Inputc96b1b241; cap TWO and serialized runtime.
-  Evidence: color-index c96b1b241 genuine13API typedstate/arrays/query/list/context semantics; lockedfullbuild/native/actualqueuedWorker/WebGL1+2 and24regressions PASS, lost-index mutation rejected. Coordinator167local/102recovered payloadSHA PASS, BOTHmodules retained; actualSTOPPED/completedverifiedsnapshot and pixels checked. Three mandatory WGL names remain; original gameplay UNVERIFIED. docs/re-notes/gl-color-index-family-20261103.md. Earlier selection/evaluator accepted with recorded limits.
+  worker: none; WGL worker completed20fed4877/856be2942, own runtime normally stopped; fresh ordinary-menu task queued under owner8GB disk cleanup hold
+  Next: Fresh ordinary logo/menu interaction before idle attract, New Game/difficulty selection and observed player-controlled movement/action. Prepared scratch/usage-watch/mdk2-ordinary-menu-control-nov03.task.txt; no launch until owner8GB cleanup completes, cap TWO and runtime serialized with Alice. No predecessor resume.
+  Evidence: color-index c96b1b241 genuine13API typedstate/arrays/query/list/context semantics; lockedfullbuild/native/actualqueuedWorker/WebGL1+2 and24regressions PASS, lost-index mutation rejected. Coordinator167local/102recovered payloadSHA PASS, BOTHmodules retained; actualSTOPPED/completedverifiedsnapshot and pixels checked. WGL20fed4877/856be2942 now implements all three with selected glyph semantics, native/actualqueuedWorker/WebGL1+2 and discriminating ink/rollback negatives; locked builds and34regressions PASS. Original actualcanonicalcffca869 context1/current1 rendered inspected640x480 explicitDemo attract,29media unchanged; original gameplay UNVERIFIED. All356 local recovery hashes verified, BOTH modules retained; completed snapshot and normal STOPPED bx_erf7ybua22:57:04Z. docs/re-notes/mdk2-wgl-layer-font-family-20261103.md. Earlier selection/evaluator accepted with recorded limits.
   Done: Original pinned demo reaches ordinary player-controlled gameplay with reviewed screenshots and exact source/run identity; full corpus backend coverage remains separate.
 
 
