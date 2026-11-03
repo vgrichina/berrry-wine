@@ -1643,3 +1643,129 @@ last table slot. Viewport ownership, D3D7 lighting, fog and queued Worker pixel
 parity pass. The prior scheduling commit's two stale callback-census hashes
 were reconciled after reviewing closure lifetimes; ownership remains pending.
 Changes remain uncommitted; dev server 52671 serves the candidate.
+
+## Cursor ownership and fresh-launch menu investigation (2026-11-01)
+
+The light-bound changes above are committed as `0e36a8d0d` (not pushed).
+Cursor follow-up is still uncommitted. In a real Worker menu, the owning guest
+thread reports ShowCursor count 1 while the page-shadow instance reports 0.
+The older qualification based on page count/CSS alone did not establish the
+guest cursor state. Cursor handle and signed count now live in shared,
+per-guest-thread slots (IDs 1..16, with slot 0 reserved). Browser visibility
+reads the hit window's owning thread, and thread retirement resets that slot.
+Cross-instance NULL cursor, hide/show, thread isolation and reuse tests pass;
+renderer cursor tests pass 21/21. Native and compatibility builds pass, layout
+`624d2388f3d5dc0b`; actual browser-loaded module SHA-256 is
+`7625ed243bbcb54a7c5ac7c3bfe7d5004eb4c5829c0ce680bf81778d9c92875b`.
+
+Evidence in `20261031-uplink-ui-before`, `20261031-uplink-ui-cursor`,
+`20261031-uplink-ui-bitmap` and `20261031-uplink-ui-dib` remains diagnostic.
+The first run includes the normal intro; later runs use `-nosierra -console`
+only to shorten investigation, not as a shipping default. Native cursor
+screencapture attempts caught Terminal, so they are not cursor verification.
+Page screenshots omit the OS pointer. The custom CUR decoded to 32x32 with
+104 opaque pixels in the initial run, but visible native cursor verification
+and gameplay/menu transitions are still open.
+
+Fresh launch also lacks the textured background in the canonical menu GDI
+surface, before exclusive composition. The original splash.bmp in pak0.pak
+is a valid 640x480 4-bpp image with 11 palette entries and visible texture.
+Configuration and Video labels animate on black; Video Modes also shows
+untranslated IDS_VIDMODE_* checkbox labels. This is not yet resolved, and
+these runs do not qualify repeated renderer switching. Intro positioning
+remains offset: its 320x240 movie centers on the virtual desktop while the
+black backing window remains 640x480. No pre-intro mode change was observed.
+The independent GetDisplayMode desktop-metrics regression passes, but does
+not resolve that intro positioning. Safari remains intentionally untested.
+
+`20261031-uplink-ui-coop` narrows the startup issue: cooperative mode also
+starts with a black menu. New Game -> Easy reaches the introduction with a
+legible HUD; Escape then restores the textured pause background. The signed
+cursor count changes 1 -> -1 -> 1 and CSS changes custom CUR -> none -> custom
+CUR. This verifies the cooperative visibility transition, not native pointer
+pixels or the corresponding Worker gameplay transition. Background decoding
+therefore works after engine initialization; do not classify the startup
+failure as a general 4-bpp decoder failure or a Worker-only race.
+
+## Initial-show ordering and presentation queries (2026-11-02)
+
+The fresh-launch black background is now fixed in the isolated release
+worktree. A nested child creation returned through CACA0001 while the main
+WM_CREATE was still outstanding and consumed the main implicit-show latch.
+Only the main invocation may now consume it. Its initial WM_SHOWWINDOW runs
+before activation, on an owned guest-stack continuation so resource-loading
+yields cannot abandon the callback. The saved HWND survives nested creation;
+destroying that HWND returns NULL and releases the frame. The regression
+checks ordering, nested child latch preservation, nested main replacement and
+destruction cleanup. ShowWindowAsync and failed creation regressions pass.
+
+Evidence `20261101-uplink-main-show` reviews a fresh Worker menu with a complete
+textured background, then Configuration, Video and Video Modes. The two earlier
+diagnostic variants, `20261101-uplink-show-fixed` and
+`20261101-uplink-show-ordered`, still fail startup and are published as such.
+Video Modes temporarily displays template checkbox labels while its driver
+information dialog is open; after dismissal initialization finishes and those
+controls disappear on the OpenGL page. The run uses `-nosierra -console` only
+for diagnosis. Loaded WASM is
+`a9b1c2b749ce023d7b01d97e7514911f439be2c00e625b1ded4f792aae52569f`,
+layout `624d2388f3d5dc0b`; native and compatibility builds pass. Native pointer
+captures still do not establish the cursor over the game canvas and are not
+published as cursor proof. Intro geometry and repeated renderer switching
+still need qualification; Safari remains excluded.
+
+D3D presentation was calling getExtension and getParameter for the renderer
+name on every frame. This identity is now cached per WebGL context with a
+WeakMap. Missing contexts are retried and replacement contexts get their own
+query. The real adapter test checks 100 presents produce one query and a
+replacement produces another. Shared-render and OpenGL worker protocol tests
+pass. The prior D3D profile spent 232 ms / 30.14 s (0.77%) in getParameter;
+this is a small optimization, not a claim of a material FPS gain. Remaining
+large guest costs are interpreted execution and response waits; no further
+allocation hotspot comparable to the previously fixed ProcessVertices buffer
+allocation was established.
+
+Startup/cursor/display changes are committed as `de71e7c07`; presentation
+query caching and moving the unused argument view/closure off the GPU path
+are committed as `33704ddf5`. Neither commit is pushed. The allocation cleanup
+also passes the shared-render adapter test, but was added after the benchmark
+page loaded and is excluded from its timing claim.
+
+`20261102-uplink-d3d-query-cache` reviews headed Chrome Worker gameplay at the
+same 640x480 stationary staircase save, textured pause menu, then resumed
+gameplay, with no page errors. After settling, two unprofiled 60-second samples
+are 10.05/10.32 presents/s. The separate 30-second profile has zero
+getParameter samples. Guest execution remains dominated by uop dispatch
+(9.47%), response waits (6.03%), branch-end handling (5.29%) and x87 islands
+(4.05%); render-worker readPixels is 2.46% and writeback 1.43%. The render
+worker is idle 79.84% of its sampled interval. This does not measure GPU
+execution or establish that more batching would improve throughput.
+
+The much older 21.74 presents/s average is not reproduced today:
+`20261102-uplink-baseline-recheck` replays its saved `df83d2d...` WASM and
+region map with renderer-input/D3D adapter from `0e36a8d0d`, through a separate
+local proxy without replacing dev-server artifacts. That unprofiled 60-second
+sample is 4.77 presents/s, with the same textured save reviewed. Sequential
+runs under variable load are insufficient to attribute the candidate's higher
+rate to the query cache or to estimate a regression against the older day.
+The narrow demonstrated optimization is removal of repeated context queries.
+
+`20261102-uplink-normal-intro` verifies the normal launch, without
+`-nosierra`, reaches the corrected menu. A native macOS screenshot with the
+pointer explicitly placed over the game canvas now shows the white menu
+cursor; the owning Worker reports display count 1, with no pointer lock or
+hidden-cursor CSS. This closes the earlier native-pointer verification gap.
+The intro geometry issue persists: its backdrop is 578x431 during this run,
+while the 320x240 movie is explicitly positioned at desktop-centered
+(370,248). The later menu becomes 640x480. This is still a failed intro
+qualification, not a fully qualified release; the launch arguments were not
+changed to suppress it.
+
+The same normal-launch run then reaches textured default OpenGL gameplay
+with a legible HUD at 320x240, and returns to the textured pause menu. The
+owning Worker cursor count/CSS changes 1/visible -> -1/none -> 1/custom CUR.
+Native cursor pixels were reviewed at 16:44; a later capture overwrote that
+artifact with unrelated foreground content, so native screenshots are omitted
+from the published bundle rather than presenting the replacement as proof.
+Gameplay/pause screenshots and shared-state readbacks are retained. Repeated
+renderer switching was not requalified in this pass. Automated test browsers
+are closed; local dev server 52671 still serves the committed fixes.
