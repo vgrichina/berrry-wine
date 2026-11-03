@@ -1,5 +1,5 @@
-Current 2026-11-03T01:41:13.705523+00:00 — Fresh workers are testing KERNEL32’s missing DeviceIoControl export, diagnosing Alice’s stalled startup step, and recovering space from released Oni text evidence. Source changes and runtime tests run in that order; disk remains below the owner’s 2 GB runtime floor.
+Current 2026-11-03T01:45:04.244691+00:00 — Workers are repairing KERNEL32’s missing DeviceIoControl export, diagnosing Alice’s stalled startup, and preparing the unfinished GL integer-color precision repair. Source changes and runtime tests run in that order.
 
-Zuma already has a DeviceIoControl handler, but its explicit KERNEL32 export is absent. This is a concrete repair candidate; the DLL initializer’s cause remains unproven. Lords II cannot launch: 178 original files are missing. Its recovery notes are published. The completed GL log recovery saved at least 5.53 MB, with all 48 decoded hashes verified.
+Released Oni evidence recovery passed review: all 11 final artifact hashes and 10 decoded file hashes match, with at least 1.03 MB net saved. The latest disk sample is 2.017 GB free, just above the owner’s 2 GB floor; runtime workers must check their own available space.
 
-No new gameplay acceptance or owner decision is reported. Two eligible new-title lanes remain unestablished; historical Alice and Zuma gameplay does not fill that requirement.
+Zuma’s DLL initializer cause remains unproven. Lords II is missing 178 original files. No new gameplay acceptance or owner decision is reported. Two eligible new-title lanes remain unestablished; historical Alice and Zuma gameplay does not fill that requirement.
