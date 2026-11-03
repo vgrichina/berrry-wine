@@ -1,3 +1,10 @@
+- [ ] Owner-requested corpus addition: Stronghold Crusader original demo
+  id: TG150-STRONGHOLD-CRUSADER-20261103
+  status: queued for next free production slot; game visually identified, original package acquisition and registration pending
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Next: Fresh scratch/usage-watch/stronghold-crusader-original-next.task.txt; acquire original demo, pin actual executable/per-file SHA256, register installed paths and attempt ordinary unit order/building placement. Two existing production workers remain live; no third launch, heavy runtimes serialized. Cached ModDB mirror410 is a stale URL, not a game/runtime blocker.
+  Evidence: docs/re-notes/stronghold-crusader-demo.md; scratch/runs/20261103-telegram150-game-identification/ (post metadata and viewed thumbnail). No executable, registration or gameplay claim yet.
+
 # TODOS
 
 - [x] Measure Hype logical gameplay FPS in browser
