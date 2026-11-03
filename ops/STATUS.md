@@ -1,4 +1,4 @@
-Current 2026-11-03T13:51Z — Two workers: Alice is establishing supported plank footing before attempting the thermal crossing. Jedi is repairing the controller reference check in retained helpers before another campaign. Owner cap remains two.
+Current 2026-11-03T13:51Z — Two workers: Alice has a fresh supported-plank attempt after its predecessor stopped at a Boat API timeout before gameplay. Read-only inventory recovered and returned no active Alice allocation. Jedi is repairing the controller reference check in retained helpers before another campaign. Owner cap remains two.
 
 Alice335b0d1ef stopped before jumping; footing was unproven. Jedi723e390a4 reached sector267 alive with100 health, shield and ammo, then its controller rejected the next move before keydown because it compared an older capture. Both results were reviewed, evidence hashes verified and boats stopped normally with snapshots. Neither result proves the remaining combat objective.
 
