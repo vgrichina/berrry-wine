@@ -183,3 +183,90 @@ routing, source rebinding or saved-block copy was added. `wglCopyContext`
 remains unavailable, as checked by the public availability regression and its
 three rejecting mutations. Mask-selected copy semantics and validation remain
 future work. This result makes no gameplay or historical27 claim.
+
+## Mask-copy source-state prerequisite (2026-11-03)
+
+The next investigation accepted published publication prerequisite `a08985c2b`
+without repeating its audit. Evidence is in
+`scratch/runs/20261103-gl-mask-selected-copy/`. Exact ordered AUTHOR RELEASEs
+were Jedi startup readiness at 06:55:25.926114 UTC, then Alice original browser
+gameplay at 07:13:36 UTC. Before those gates, work was confined to scratch:
+`DESIGN.md` defines field whitelists and ownership for the mask groups,
+`expected-success.cjs` prepares independent selected/unselected-value probes,
+and `failure-cases.json` enumerates mask, handle, compatibility and destination
+ownership cases. These are preparation, not passing copy coverage.
+
+The fresh source seal is `0f8bef997f29ce931dbf66648fdc09286426c374`.
+The sealed canonical module is 2,081,604 bytes, SHA256
+`75379b0954be582cbeb9df8b40477c5e0b67292fa8833577ebcc7a8e798aaa80`.
+A new faithful expected-success fixture, `state-fidelity.cjs`, fails before any
+copy is attempted: required source server values are not represented.
+
+| Legal source operation | Independent expected result | Actual result |
+| --- | --- | --- |
+| `glColorMaterial(GL_FRONT, GL_SPECULAR)` | Queries return `GL_FRONT` / `GL_SPECULAR` | Both output words retain sentinel `0xdeadbeef` |
+| Front `GL_LINE`, back `GL_POINT` polygon modes | Two queried modes are `0x1b01`, `0x1b00` | Both output words retain the sentinel |
+| Draw a blue triangle with both faces in `GL_LINE` over black | Interior pixel stays black | Native interior is blue, `0xff0000ff` |
+| Replay the actual native command captures through production WebGL1 and WebGL2 bridges | Interior stays black | Both read `[0,0,255,255]`, GL error zero |
+
+These expectations follow the documented
+[polygon-mode](https://learn.microsoft.com/en-us/windows/win32/opengl/glpolygonmode)
+and [color-material](https://learn.microsoft.com/en-us/windows/win32/opengl/glcolormaterial)
+contracts. The missing values belong to `GL_POLYGON_BIT` and `GL_LIGHTING_BIT`.
+The production frontend currently ignores both setters; the native state/query
+and polygon rasterization paths also lack these semantics. The independent
+pixel oracle distinguishes this from a getter-only omission. The fixture also
+records an untouched hint-query output, but hints may be ignored; that observation
+is not used as the prerequisite's decisive failure.
+
+Two actual native WebAssembly producers share process memory. Producer 1 keeps
+its source current; producer 2 initializes and unbinds an independent destination.
+The source completed-command prefix is empty before the foreign observation,
+with no source rebind or query used to publish it. The same source-state
+assertions fail directly and with an actual deliberately delayed render Worker
+using production command transport. The Worker reports one replayed native
+triangle, zero fallbacks, and an immutable 2,996-byte leased snapshot, SHA256
+`72a77ca7f68c49ffc5c8ced3270f6892d21f459709280e2edf035693b9e98b8f`,
+across later source color and line-width mutations. The WebGL checks replay the
+captured native draw bytes through the actual version-1 and version-2 backends;
+both PNGs and readbacks are retained.
+
+This is a new source-state prerequisite, not a failure of the published
+cross-producer publication repair. Faithful copying cannot transfer polygon
+modes or color-material selectors that the source never retained. The next
+implementation must represent, validate, query and consume those server values
+across native/software/WebGL and immutable Worker snapshots before completing
+mask-selected copy. It must then execute the prepared mask and failure cases,
+including subsequent destination/source isolation, client state, stacks,
+resource identities and drawable-storage preservation. No whole-block copy,
+partial-mask success, public routing, production repair or copy implementation
+was added in this investigation. All-mask, combined/zero/invalid-mask,
+invalid/deleted/incompatible-context and destination-current copy behavior
+remain unqualified. There is no historical27 or gameplay result.
+
+The locked full build passes and reproduces the sealed canonical module.
+Twelve focused invocations pass: frame state, mock WebGL drawables, native
+sharing directly and with an actual Worker, server/client attribute stacks,
+native double-state queries directly and with an actual Worker, texture-state
+queries, public procedure availability, shared render Worker, and browser
+drawables. The existing `test/test-wgl-shared-objects-web.js` fails: its
+separate-native-producer shared-texture mutation expects cyan but reads green
+in WebGL1. This separate unchanged-source regression is preserved in full;
+the focused set is not all green. No public-copy acceptance is claimed.
+The first build attempt stopped because staging omitted two browser bundles;
+generating them from the sealed inputs reproduced both local full hashes, then
+the complete locked build passed. All 5,868 sealed non-scratch members still
+matched after testing.
+
+The retrieved archive is 2,028,957 bytes, SHA256
+`5cb38968c9a46040afac66c5d24a8f2ce5daaa13d6c7a8721ff3fe45b01d5b0c`.
+All 55 manifest members were verified by full SHA256 after retrieval; the
+manifest hash is
+`c99ad47da3853ebf71de3ea81d17030da026a7ecef717a7e8e6ef0a67e3bcd7f`.
+The run retains fixtures, captured commands, native/Worker results, WebGL
+readbacks and PNGs, modules, logs, seals, `RECOVERY.md` and lifecycle receipts.
+Own boat `bx_35jx7b27`, original expiry 07:55:01.799 UTC, was recorded before
+use and normally stopped only after verified retrieval and recovery instructions,
+under the original task's explicit delegation. Stop `stop_1987e91b91cdc56d`
+completed at 07:28:37.304 UTC, error null, forced false; final state is STOPPED
+with a verified retained snapshot. Scoped test/browser/build helpers were absent.
