@@ -7431,8 +7431,54 @@ async function main() {
     fs.writeFileSync(filename, buf);
     return { batch: tickState.batch | 0, frozen: controlFrozen, path: filename, bytes: buf.length };
   };
+  const nativeFault = require('../lib/native-fault-latch').createNativeFaultLatch({
+    meta: () => ({ batch: tickState.batch | 0, credits: controlRunCredits,
+      previousRan: controlPreviousBatchRan }),
+    threads: () => [...threadManager.threads].map(([handle, t]) => ({ handle, schedulerSlot: t.tid, nativeThreadId: t.instance?.exports.get_current_thread_id() >>> 0,
+      state: t.state, eip: t.instance?.exports.get_eip() >>> 0 })),
+    read: (e, address, length) => {
+      const bytes = new Uint8Array(memory.buffer), out = Buffer.alloc(length);
+      for (let i = 0; i < length; i++) {
+        const wa = e.guest_to_wasm(address + i) >>> 0;
+        if (wa < 0x1000 || wa >= bytes.length) throw new Error('unreadable fault capture span');
+        out[i] = bytes[wa];
+      }
+      return out;
+    },
+    releaseInput: () => {
+      const state = { renderer, inputQueue, inputEvent, scheduledInput, crossThreadMsgs };
+      const result = require('../lib/cli-fault-input').releaseFaultInput(state);
+      inputEvent = state.inputEvent;
+      return result;
+    },
+    persist: require('../lib/native-fault-latch').persistNativeFault,
+  });
+  threadManager.nativeFaultLatch = nativeFault;
+  const terminateNativeFault = cmd => {
+    const result = nativeFault.terminate(cmd);
+    stopped = true;
+    process.exitCode = 1;
+    // A failed run consumed no completed batch credit. Its caller sees failure.
+    if (controlStepWaiter) {
+      const waiter = controlStepWaiter;
+      controlStepWaiter = null;
+      waiter.reject(nativeFault.error());
+    }
+    wakeControlLoop();
+    return result;
+  };
   const handleControlCommand = (cmdIn) => {
     const cmd = typeof cmdIn === 'string' ? { cmd: cmdIn } : (cmdIn || {});
+    if (cmd.action === 'fault-status') return nativeFault.status();
+    if (cmd.action === 'fault-arm') {
+      if (!controlFrozen || workerThreadHost || threadManager.workerBackend)
+        throw new Error('fault retention requires frozen cooperative control');
+      return nativeFault.arm(cmd);
+    }
+    if (cmd.action === 'fault-inspect') return nativeFault.inspect(cmd);
+    if (cmd.action === 'fault-terminate') return terminateNativeFault(cmd);
+    if (nativeFault.isHeld() && !['ping', 'snapshot'].includes(cmd.action))
+      throw new Error('native fault retained; read-only inspection or fault-terminate required');
     const native = String(cmd.cmd || '').trim();
     let match;
     if (!cmd.action && /^(pause|resume)$/.test(native)) {
@@ -10619,8 +10665,15 @@ async function main() {
         threadManager.checkMainYield();
       }
       if (!mainExecutionSuspended('ordinary')) {
+        try {
         if (mainSchedulerObserver) mainSchedulerObserver.run('ordinary', () => instance.exports.run(BATCH_SIZE));
         else instance.exports.run(BATCH_SIZE);
+        } catch (error) {
+          if (!nativeFault.capture(error, instance.exports,
+            { schedulerSlot: 0, main: true }, 'ordinary')) throw error;
+        }
+        await nativeFault.wait();
+        if (stopped) break;
       }
       else if (instance.exports.get_yield_reason() === 16) renderParkStats.skippedBatches++;
     } catch (e) {
@@ -11092,8 +11145,15 @@ async function main() {
           // Main keeps running WHILE they do — the CLI's version of host.js
           // awaiting the main slice and the thread slices together.
           try {
+            try {
             if (mainSchedulerObserver) mainSchedulerObserver.run('worker-interleaved', () => instance.exports.run(BATCH_SIZE));
             else instance.exports.run(BATCH_SIZE);
+            } catch (error) {
+              if (!nativeFault.capture(error, instance.exports,
+                { schedulerSlot: 0, main: true }, 'worker-interleaved')) throw error;
+            }
+            await nativeFault.wait();
+            if (stopped) break;
           } catch (e) { /* reported below */ }
         }
         ran = await workerSlices;
@@ -11132,6 +11192,8 @@ async function main() {
       const workerStartMs = TRACE_BATCH_TIMING ? Date.now() : 0;
       for (let s = 0; s < slices; s++) {
         const sliceStats = threadManager.runSlice(BATCH_SIZE);
+        await nativeFault.wait();
+        if (stopped) break;
         if (sliceStats && sliceStats.steps) workerStepsTotal += sliceStats.steps;
         // Re-run main between live worker slices so producer/consumer pairs
         // progress together. Once the last worker exits, return to the outer
@@ -11140,14 +11202,22 @@ async function main() {
         if (s < slices - 1 && !stopped && threadManager.hasActiveThreads() &&
             !mainExecutionSuspended('cooperative-interleaved')) {
           try {
+            try {
             if (mainSchedulerObserver) mainSchedulerObserver.run('cooperative-interleaved', () => instance.exports.run(BATCH_SIZE));
             else instance.exports.run(BATCH_SIZE);
+            } catch (error) {
+              if (!nativeFault.capture(error, instance.exports,
+                { schedulerSlot: 0, main: true }, 'cooperative-interleaved')) throw error;
+            }
+            await nativeFault.wait();
+            if (stopped) break;
           } catch (e) { break; }
         }
       }
       if (TRACE_BATCH_TIMING) {
         console.log(`[batch-timing] batch=${batch} worker=${Date.now() - workerStartMs}ms slices=${slices}`);
       }
+      if (nativeFault.isHeld()) break;
       // Same story for a worker that called LoadLibraryA: the WAT handler has
       // parked it on yield 5 and only the host can finish the load, which is
       // asynchronous. Serve it here, then hand the loader's cursors back to

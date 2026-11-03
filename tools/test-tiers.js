@@ -28,6 +28,7 @@ const E2E_PATTERNS = Object.freeze([
 // the cost of useful broad conventions without evicting unit coverage from
 // `run-all.sh quick`.
 const UNIT_EXCEPTIONS = Object.freeze([
+  'test-cli-fault-lifecycle.js',
   'test-control-variant-gate.js',
   'test-pinball-web-lifecycle.js',
   'test-retina-scale2x-web.js',
