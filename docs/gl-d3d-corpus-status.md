@@ -1,6 +1,6 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-03
 
-## November 3: observed MDK2 prerequisite families implemented; gameplay open
+## November 3: MDK2 prerequisites and bounded software gameplay verified
 
 The current `unsupportedMdk2` list in `test/test-wgl-proc-availability.js`
 is **empty**. Its separate `fontWglApis` list checks the three implemented
@@ -48,9 +48,7 @@ covers native, actual queued Worker, WebGL1/2, rejecting controls, locked
 builds and 34 scoped regressions. Coordinator review checked all 356 recovered
 files, both modules and the completed snapshot followed by normal STOP.
 The original run reached an inspected 640×480 Demo attract scene; this does
-not establish player control. A fresh ordinary menu/control task is running.
-Original MDK2 gameplay and per-title software/WebGL evidence for the full
-historical corpus remain unverified.
+not establish player control. The subsequent original New Game → Medium route is verified in `081a33477`: ordinary Up/Down movement and reversible Space sniper mode, with reviewed captures and 314 sequential control requests (maximum 64 batches). [Run evidence and limitations](re-notes/mdk2-ordinary-menu-control-20261103.md). Coordinator checked all 204 final local hashes, including both modules and 106 recovered payload files. This is explicit software CLI gameplay; original browser control, shooting/jumping and per-title software/WebGL evidence for the full historical corpus remain open.
 
 ### Recovered original corpus table; exact 27-ID membership still unresolved
 
