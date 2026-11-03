@@ -1,6 +1,25 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-03
 
-## November 3: published prerequisites; 51 mandatory names remain
+## November 3: published prerequisites; 47 observed MDK2 names remain
+
+The current `unsupportedMdk2` list in `test/test-wgl-proc-availability.js`
+contains **47** names. This is a static inventory check, not a fresh runtime
+test. The 51-name checkpoint below predates `wglCopyContext` and the three
+edge-flag exports; all four now have accepted implementations.
+
+| Subsequent published change | Accepted evidence and limits |
+| --- | --- |
+| `8028df6ba` complete `wglCopyContext` transaction | [All twenty server mask bits, atomic failures, direct and delayed Worker ABI checks, WebGL1/2 pixels](re-notes/gl-copy-context-20261103.md) |
+| `d2ef199a9` shared texture publication | [Original cyan-pixel failure repaired in WebGL1/2 through direct and Worker routes](re-notes/gl-shared-texture-visibility-20261103.md) |
+| `7baae9487` raw Worker drawable fixture and response cloning | [Production drawable contract and software response clone repair](re-notes/gl-raw-worker-drawable-20261103.md) |
+| `36f205f11` three edge-flag exports | [Outgoing boundary flags, intact polygon edges, native/Worker/WebGL1/2 pixels](re-notes/gl-edge-flag-20261103.md) |
+| `b3e5c1f90` boundary polygon two-sided lighting | [Collinear-leading-vertex orientation repair and cyclic-start controls](re-notes/gl-boundary-two-sided-lighting-20261103.md) |
+
+These accepted results close the earlier context-copy and shared-texture
+prerequisites. They do not establish original MDK2 gameplay, complete visual
+correctness or backend parity for the historical 27 applications.
+
+### Earlier November 3 checkpoint: 51 unsupported names
 
 The published lookup test at `c1f211fdc` records **51** unsupported mandatory
 MDK2 names. The earlier 60-name checkpoint below is historical. These subsequent
@@ -34,7 +53,8 @@ records and 15 intended rejecting controls. The native shared queue records
 336 submissions with zero fallback. The temporary boat is verified stopped.
 Run `20261103-gl-full-logic-operations` and coordinator review
 `20261103-coordinator-gl-logic-review` retain the source/module identities and
-checks. Context copying is the next bounded prerequisite.
+checks. Context copying was the next bounded prerequisite at this checkpoint;
+its subsequent implementation is recorded above.
 
 These results do not qualify an original MDK2 replay, its first window or
 its gameplay, establish backend parity for the historical 27 applications,
