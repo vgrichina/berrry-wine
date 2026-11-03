@@ -27,6 +27,9 @@ const files=['src/09b2-dispatch-table.generated.wat','src/09a8b-handlers-opengl.
   'src/09a8c-gl-encoder.wat','src/09a8d-gl-abi.generated.wat',
   'src/09a8e-gl-state.wat','src/09a8ca-gl-lists.wat','src/03-registers.wat'];
 const sources=files.map(read), funcs=new Map(), globals=new Map();
+// Shared-context bookkeeping also reads process globals declared in the header.
+const header=read('src/01-header.wat');
+for(const m of header.matchAll(/\(global (\$\w+) /g))globals.set(m[1],form(header,m.index));
 for(const s of sources) {
   for(const m of s.matchAll(/\(func (\$[\w?]+)/g))funcs.set(m[1],form(s,m.index));
   for(const m of s.matchAll(/\(global (\$\w+) /g))globals.set(m[1],form(s,m.index));
@@ -46,11 +49,13 @@ const seams=new Map([
   ['$gl_native_query','(param i32 i32) (result i32) (i32.const 0)'],
   ['$gl_sw_consume','(param i32 i32)'],['$gl_mtx_observe','(param i32 i32)'],['$gl_sw_observe','(param i32 i32)'],
   ['$gl_bitmap_context_init','(param i32)'],['$gl_stencil_init','(param i32)'],
+  ['$gl_sw_private_state',''],
+  ['$d3dim_worker_fence','(unreachable)'],
   // Drawable selection is covered by the full-source pixel fixtures. These
   // isolated color/rectangle tests exercise no draw/read-buffer commands.
   ['$gl_color_buffer_validate','(param i32 i32 i32) (result i32) (i32.const 0)'],
   ['$gl_color_selection_intercept','(param i32 i32) (result i32) (i32.const 0)'],
-  ...['$gl_stencil_intercept','$gl_color_mask_intercept','$gl_bitmap_intercept',
+  ...['$gl_stencil_intercept','$gl_color_mask_intercept','$gl_bitmap_intercept','$gl_stipple_intercept',
     '$gl_stencil_validate'].map(n=>[n,'(param i32 i32'+(n==='$gl_stencil_validate'?' i32':'')+') (result i32) (i32.const 0)'])
 ]);
 // Full-source 1D pixel fixtures cover allocation/reclamation. Trap those
@@ -75,7 +80,7 @@ function visit(n) {
   for(const m of s.matchAll(/\(call (\$\w+)/g)){try {visit(m[1]);} catch(e) {throw Error(e.message+' <- '+n);}};
 }
 // Supply exact signatures for external paths referenced by selected functions.
-for(const p of ['src/09a8cb-gl-bitmap.wat','src/09a8cc-gl-stencil.wat','src/09a8cd-gl-color-mask.wat','src/09a8f-gl-matrix.wat','src/09a8g-gl-raster.wat']) {
+for(const p of ['src/09a8cb-gl-bitmap.wat','src/09a8cc-gl-stencil.wat','src/09a8cc-gl-stipple.wat','src/09a8cd-gl-color-mask.wat','src/09a8f-gl-matrix.wat','src/09a8g-gl-raster.wat']) {
   const s=read(p);
   for(const m of s.matchAll(/\(func (\$\w+)/g)) {
     if(!funcs.has(m[1])) {funcs.set(m[1],form(s,m.index));excluded.add(m[1]);}
@@ -108,7 +113,8 @@ function boot(mutation='',failAlloc=false,failPage=-1,colorId=id) {
   const needed=new Set([...parts.join('\n').matchAll(/\(global\.(?:get|set) (\$\w+)/g)].map(m=>m[1]));
   const definedGlobals=new Map([...globals].filter(([n])=>needed.has(n)));
   for(const n of ['$reg_base','$image_base','$GUEST_BASE','$NULL_SENTINEL','$fault_sync_epoch'])definedGlobals.delete(n);
-  const src=`(memory 64) (export "memory" (memory 0))
+  const src=`(memory 64 64 shared) (export "memory" (memory 0))
+    (region.declare-fixed $GL_MTX_BLOCKS (base 0x003fd000) (size 0x1000) (align 0x1000))
     (region.declare-fixed $GL_SW_SCRATCH (base 0x003ff000) (size 0x800) (align 0x1000))
     (region.declare-fixed $GL_SW_STATE (base 0x003fe000) (size 0x800) (align 0x1000))
     (import "fixture" "g2w" (func $g2w (param i32) (result i32)))
@@ -280,7 +286,8 @@ for(const p of [0xffffffe9,0xffffffff])assert.throws(()=>rgb.e.invoke(p),WebAsse
 // Stable command ABI: canonicalization adds no new opcode or argument layout.
 const compat=require('../lib/gl-compat');const stream=require('../lib/gl-command-stream');
 assert.strictEqual(compat.CALL_INDEX.glColor4f,25);assert.strictEqual(compat.CALL_INDEX.glColor4fv,26);
-assert.strictEqual(compat.CALL_INDEX.gluScaleImage,141);assert.strictEqual(compat.CALLS.length,174);
+assert.strictEqual(compat.CALL_INDEX.gluScaleImage,141);assert.strictEqual(compat.CALLS.length,180);
+assert.strictEqual(stream.ARG_WORDS.length,180);
 assert.strictEqual(compat.CALL_INDEX.glAccum,143);assert.strictEqual(compat.CALL_INDEX.glClearAccum,144);
 assert.strictEqual(stream.ARG_WORDS[25],4);
 console.log(JSON.stringify({PASS:true,cases:8,vertexCases:8,rgbImplicitAlpha:true,rgbNoFourthRead:true,rgbFailurePreservesColor:true,combinedColorVertex:true,vertexRouteMutationRejected:true,mutations:['r','g','b','a','stride','opcode','rgb-alpha','rgb-stride','cleanup','rgb-route'],displayListReplay:true,packedCommandReplay:true,fixtureSHA:hash(fs.readFileSync(__filename)),

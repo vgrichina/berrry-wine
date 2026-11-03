@@ -680,6 +680,8 @@
   (func $gl_object_publish (param $op i32) (param $stack i32) (result i32)
     (local $target i32) (local $mutation i32)
     (if (i32.eqz (global.get $gl_current_context)) (then (return (i32.const 0))))
+    (if (i32.eq (local.get $op) (i32.const 179))
+      (then (return (i32.ne (i32.load offset=4 (local.get $stack)) (i32.const 0)))))
     (if (i32.or (i32.eq (local.get $op) (i32.const 43)) (i32.eq (local.get $op) (i32.const 77)))
       (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 42))

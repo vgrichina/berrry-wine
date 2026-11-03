@@ -332,6 +332,7 @@ const gpuApis = new Map([
   ['glLineStipple',2], ['glPolygonStipple',1], ['glGetPolygonStipple',1],
   ['glInterleavedArrays',3],
   ['wglShareLists',2],
+  ['_glPrioritizeTexture',2],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 
@@ -434,7 +435,7 @@ const nativeTextureQueryApis = new Map([
   ['glGetTexParameterfv',[0,0]], ['glGetTexParameteriv',[0,1]],
 ]);
 const nativeGlApis = new Set([
-  'glAreTexturesResident',
+  'glAreTexturesResident', 'glPrioritizeTextures', 'glColor4d',
   'glPixelStoref',
   'glGetClipPlane',
   ...nativeTextureSetApis.keys(), ...nativeTextureQueryApis.keys(),
@@ -472,6 +473,7 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if(api.name==='glPrioritizeTextures') return '      (call $handle_gl_prioritize_textures)';
   if(api.name==='glAreTexturesResident') return '      (call $handle_gl_textures_resident)';
   if(api.name==='glDrawPixels')return '      (call $handle_gl_draw_pixels)';
   if(api.name==='glPixelStoref')return '      (call $handle_gl_pixel_storef)';
@@ -517,6 +519,9 @@ function handlerCall(api) {
   const integerColor = integerColorApis.get(api.name);
   if (integerColor) {
     return `      (call $handle_glColor_integer ${integerColor.map(n => `(i32.const ${n})`).join(' ')} (local.get $arg0))`;
+  }
+  if (api.name === 'glColor4d') {
+    return `      (call $handle_glColor4d (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))`;
   }
   // Keep opcode 90 stable, but snapshot its four doubles through guest-page
   // translation instead of assuming the caller's stack is affine.

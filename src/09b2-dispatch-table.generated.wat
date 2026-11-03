@@ -3937,6 +3937,7 @@
     (if (i32.eq (local.get $id) (i32.const 4231)) (then (return (i32.const 1)))) ;; glColor3usv
     (if (i32.eq (local.get $id) (i32.const 4232)) (then (return (i32.const 1)))) ;; glColor4b
     (if (i32.eq (local.get $id) (i32.const 4233)) (then (return (i32.const 1)))) ;; glColor4bv
+    (if (i32.eq (local.get $id) (i32.const 4234)) (then (return (i32.const 1)))) ;; glColor4d
     (if (i32.eq (local.get $id) (i32.const 4235)) (then (return (i32.const 1)))) ;; glColor4dv
     (if (i32.eq (local.get $id) (i32.const 4236)) (then (return (i32.const 1)))) ;; glColor4i
     (if (i32.eq (local.get $id) (i32.const 4237)) (then (return (i32.const 1)))) ;; glColor4iv
@@ -4013,6 +4014,7 @@
     (if (i32.eq (local.get $id) (i32.const 4361)) (then (return (i32.const 1)))) ;; glPixelZoom
     (if (i32.eq (local.get $id) (i32.const 4362)) (then (return (i32.const 1)))) ;; glPolygonStipple
     (if (i32.eq (local.get $id) (i32.const 4363)) (then (return (i32.const 1)))) ;; glPopClientAttrib
+    (if (i32.eq (local.get $id) (i32.const 4365)) (then (return (i32.const 1)))) ;; glPrioritizeTextures
     (if (i32.eq (local.get $id) (i32.const 4366)) (then (return (i32.const 1)))) ;; glPushClientAttrib
     (if (i32.eq (local.get $id) (i32.const 4368)) (then (return (i32.const 1)))) ;; glRasterPos2d
     (if (i32.eq (local.get $id) (i32.const 4369)) (then (return (i32.const 1)))) ;; glRasterPos2dv
@@ -4120,7 +4122,6 @@
 
   (func $gl_dynamic_api_unsupported (param $id i32) (result i32)
     (if (i32.eq (local.get $id) (i32.const 4216)) (then (return (i32.const 1)))) ;; glClearIndex
-    (if (i32.eq (local.get $id) (i32.const 4234)) (then (return (i32.const 1)))) ;; glColor4d
     (if (i32.eq (local.get $id) (i32.const 4245)) (then (return (i32.const 1)))) ;; glColorSubTableEXT
     (if (i32.eq (local.get $id) (i32.const 4246)) (then (return (i32.const 1)))) ;; glColorTableEXT
     (if (i32.eq (local.get $id) (i32.const 4254)) (then (return (i32.const 1)))) ;; glEdgeFlag
@@ -4175,7 +4176,6 @@
     (if (i32.eq (local.get $id) (i32.const 4340)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fvARB
     (if (i32.eq (local.get $id) (i32.const 4354)) (then (return (i32.const 1)))) ;; glPassThrough
     (if (i32.eq (local.get $id) (i32.const 4364)) (then (return (i32.const 1)))) ;; glPopName
-    (if (i32.eq (local.get $id) (i32.const 4365)) (then (return (i32.const 1)))) ;; glPrioritizeTextures
     (if (i32.eq (local.get $id) (i32.const 4367)) (then (return (i32.const 1)))) ;; glPushName
     (if (i32.eq (local.get $id) (i32.const 4400)) (then (return (i32.const 1)))) ;; glRenderMode
     (if (i32.eq (local.get $id) (i32.const 4402)) (then (return (i32.const 1)))) ;; glSelectBuffer
@@ -21718,7 +21718,7 @@
       (return)
     ) ;; 4234: glColor4d
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glColor4d (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (call $gl_object_leave)
       (return)
     ) ;; 4235: glColor4dv
@@ -22631,7 +22631,7 @@
       (return)
     ) ;; 4365: glPrioritizeTextures
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_prioritize_textures)
       (call $gl_object_leave)
       (return)
     ) ;; 4366: glPushClientAttrib

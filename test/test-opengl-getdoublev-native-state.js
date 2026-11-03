@@ -232,7 +232,7 @@ const extraWat=`
  q(0xc22,[.125,.25,.5,.75]);call('glEnd');call('glEndList');
  new Uint8Array(memory.buffer,ow,256).fill(0xb6);call('glCallList',[list]);
  assert(new Uint8Array(memory.buffer,ow,256).every(b=>b===0xb6),'query never recorded output pointer');
- for(const n of ['glMap1d','wglShareLists'])assert.strictEqual(call('wglGetProcAddress',[str(n)]),0);
+ for(const n of ['glMap1d','glClearIndex'])assert.strictEqual(call('wglGetProcAddress',[str(n)]),0);
  assert.strictEqual(call('glGetError'),0);
  // A real queued draw ensures the worker route is exercised, and host query
  // replay must consume the preceding setters synchronously.

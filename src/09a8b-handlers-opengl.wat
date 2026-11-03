@@ -565,6 +565,16 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
 
+  ;; Four physical GLdouble arguments occupy eight x86 words, not four.
+  ;; The vector path snapshots and demotes once at the canonical color boundary.
+  (func $handle_glColor4d (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (if (i32.gt_u (local.get $esp) (i32.const 0xffffffdb)) (then (unreachable)))
+    (call $gl_color_dv (i32.add (local.get $esp) (i32.const 4)) (i32.const 4))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))))
+
   ;; Double-vector colors. Snapshot all guest components before
   ;; entering the encoder. Canonical scalar opcode 25 owns current color,
   ;; GL_COMPILE/COMPILE_AND_EXECUTE capture and replay, and packed vertices.
@@ -1221,6 +1231,14 @@
   (func $gl_texture_validate (param $ctx i32) (param $op i32) (param $s i32) (result i32)
     (local $env i32) (local $vector i32) (local $target i32) (local $name i32)
     (local $n i32) (local $src i32) (local $v i32) (local $error i32) (local $p i32)
+    ;; Private by-name priority records are listable even for unused names.
+    ;; Resolve existence only at execution, but reject Begin at capture/replay.
+    (if (i32.eq (local.get $op) (i32.const 179)) (then
+      (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+          (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x502))
+        (return (i32.const 1))))
+      (return (i32.const 0))))
     (local.set $env (i32.or (i32.eq (local.get $op) (i32.const 44))
       (i32.or (i32.eq (local.get $op) (i32.const 82)) (i32.eq (local.get $op) (i32.const 147)))))
     (if (i32.eqz (i32.or (local.get $env) (i32.or (i32.eq (local.get $op) (i32.const 42))
@@ -1308,6 +1326,12 @@
     (local $name i32) (local $env i32) (local $src i32) (local $n i32)
     (local $i i32) (local $v f32) (local $raw i32)
     (if (i32.eqz (global.get $gl_current_context)) (then (return)))
+    (if (i32.eq (local.get $op) (i32.const 179)) (then
+      ;; The live namespace excludes zero, reservations and retired bindings.
+      (local.set $obj (call $gl_texture_find (call $gl_texture_block) (i32.load offset=4 (local.get $s))))
+      (if (local.get $obj) (then
+        (f32.store offset=44 (local.get $obj) (call $gl_texture_clamp (f32.load offset=8 (local.get $s))))))
+      (return)))
     (if (i32.and (i32.or (i32.eq (local.get $op) (i32.const 8)) (i32.eq (local.get $op) (i32.const 10)))
         (i32.eq (i32.load offset=4 (local.get $s)) (i32.const 0xde0))) (then
       (local.set $b (call $gl_texture_block))
@@ -1691,6 +1715,54 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $channels (i32.lt_u (local.get $i) (i32.const 4))))
     (local.get $out))
+
+  ;; GL1.1 3.8.4: snapshot both complete arrays before changing any object.
+  ;; Each private scalar command captures name/value by value in display lists;
+  ;; names are resolved at execution, independently of bindings and active unit.
+  (func $handle_gl_prioritize_textures
+    (local $esp i32) (local $ctx i32) (local $n i32) (local $names i32) (local $values i32)
+    (local $guest i32) (local $s i32) (local $i i32) (local $pair i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (call $gl_texcoord_check (local.get $esp) (i32.const 16))
+    (call $gl_object_enter)
+    (local.set $ctx (call $gl_list_context))
+    (block $done
+      (br_if $done (i32.eqz (local.get $ctx)))
+      (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+          (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (br $done)))
+      (local.set $n (call $gl32 (i32.add (local.get $esp) (i32.const 4))))
+      (if (i32.lt_s (local.get $n) (i32.const 0)) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x501)) (br $done)))
+      (if (i32.gt_u (local.get $n) (i32.const 0x1ffffffe)) (then (unreachable)))
+      (local.set $names (call $gl32 (i32.add (local.get $esp) (i32.const 8))))
+      (local.set $values (call $gl32 (i32.add (local.get $esp) (i32.const 12))))
+      (call $gl_1d_span (local.get $names) (i32.shl (local.get $n) (i32.const 2)))
+      (call $gl_1d_span (local.get $values) (i32.shl (local.get $n) (i32.const 2)))
+      (local.set $guest (call $gl_alloc_affine (i32.add (i32.const 12) (i32.shl (local.get $n) (i32.const 3)))))
+      (if (i32.eqz (local.get $guest)) (then (unreachable)))
+      (local.set $s (call $g2w (local.get $guest)))
+      (memory.fill (local.get $s) (i32.const 0) (i32.const 12))
+      (if (local.get $n) (then
+        (loop $snapshot
+          (local.set $pair (i32.add (local.get $s) (i32.add (i32.const 12) (i32.shl (local.get $i) (i32.const 3)))))
+          (i32.store (local.get $pair) (call $gl32 (i32.add (local.get $names) (i32.shl (local.get $i) (i32.const 2)))))
+          (i32.store offset=4 (local.get $pair) (call $gl32 (i32.add (local.get $values) (i32.shl (local.get $i) (i32.const 2)))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $snapshot (i32.lt_u (local.get $i) (local.get $n))))))
+      ;; Zero count still records a no-op: replay inside Begin must error.
+      (local.set $i (i32.const 0))
+      (loop $apply
+        (if (local.get $n) (then
+          (memory.copy (i32.add (local.get $s) (i32.const 4))
+            (i32.add (local.get $s) (i32.add (i32.const 12) (i32.shl (local.get $i) (i32.const 3)))) (i32.const 8))))
+        (drop (call $gl_wat_encode_call (i32.const 179) (local.get $s) (i32.const 0)))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $apply (i32.lt_u (local.get $i) (local.get $n))))
+      (call $heap_free (local.get $guest)))
+    (call $gl_object_leave)
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 16))))
 
   ;; GL1.1 3.8.4 permits implementations without a separate texture working
   ;; set. Our native images and software/WebGL objects retain their backing

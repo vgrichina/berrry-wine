@@ -628,3 +628,61 @@ An additional fixed-function JavaScript test fails its existing redundant-
 uniform assertion (55 calls versus 53 expected). Its test and backend sources
 are byte-identical to the pre-change commit; it does not load this native
 handler. That separate regression remains unresolved by this change.
+
+## Native scalar doubles and texture priorities (2026-11-03)
+
+`glColor4d` and `glPrioritizeTextures` now resolve to native handlers. The
+scalar color handler reads all eight physical argument words through guest
+page translation and consumes 36 stack bytes including the return address.
+It demotes each double once into the existing float color path, retaining
+unclamped current color, alpha, context isolation, legal Begin/End updates and
+both display-list compilation modes. Clamping remains at rasterization.
+
+The priority handler validates Begin/End and negative counts before reading
+arrays, snapshots both complete arrays, clamps priorities to [0,1], and changes
+only live named texture objects. Zero, unused and generated-only names are
+ignored. A private by-name stream record updates the actual frontend object
+without changing bindings; native and frontend state share their existing
+namespace and lifetime rules. Lists own name/value snapshots and resolve names
+at execution, including names created or reused after compilation. An empty
+call records a no-op so replay within Begin still reports INVALID_OPERATION.
+The lifetime-backed, no-separate-working-set residency policy is unchanged:
+priority zero does not evict a live object or create mixed residency.
+These contracts follow the [OpenGL 1.1 specification](https://registry.khronos.org/OpenGL/specs/gl/glspec11.pdf)
+and Khronos reference sources for [color](https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl2.1/glColor.xml)
+and [texture priorities](https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl2.1/glPrioritizeTextures.xml).
+
+The resolved native ABI and actual queued software each pass 88 literal typed
+query checks and 11 literal draw/image controls, with stack/register/output
+canaries and non-affine page crossings. The queued path submits 12 real jobs
+with zero fallbacks. Actual WebGL 1 and 2 each pass all 11 pixel controls and
+28 frontend priority observations. Both unchanged old exports fail at their
+missing-export assertions. Eleven native semantic mutations and two frontend
+mutations fail at their intended assertions; an earlier mutation that merely
+made a list opcode unsupported trapped and is retained as a diagnostic,
+without counting as semantic acceptance.
+
+The static mandatory inventory is now **50 unavailable out of 345**, down
+from 52; `glClearIndex` remains the first static miss. This is an inventory,
+not 50 observed guest failures. The original Oni result remains API532
+`glAreTexturesResident` returning NULL at guest return4089d8. No original Oni
+or browser gameplay replay was performed while mandatory gaps remain.
+Evidence is in `scratch/runs/20261103-oni-mandatory-color-priority-recover/`.
+
+Focused typed color/normal/vertex/coordinate, texture state, shared-object,
+state-query, command-stream, frame-state, 1D texture, copy/readback, actual
+queue, WebGL sharing and availability regressions pass. Three availability
+mutations fail at their intended assertions. The isolated double-color fixture
+now includes released shared-context globals/atomic storage and stipple
+signatures; the general query fixture uses `glClearIndex` for its negative
+export control because `wglShareLists` was already implemented.
+The locked `flock /tmp/wine-build.lock bash tools/build.sh` passes on own
+finite-TTL boat `bx_ryejamc2`, original expiry2026-11-03T01:20:40.462Z.
+
+Two separate pre-existing failures remain explicit. The encoder's context
+parity section expects eight submissions but receives seven; the same mismatch
+reproduces with all five changed native fragments restored in memory to
+`94d26f406` and individually SHA-verified. Its primitive, state and array
+sections pass. The optional fixed-function JavaScript test still reports 55
+uniform calls versus 53 expected. Neither failure is counted as a pass or
+claimed repaired by this implementation.
