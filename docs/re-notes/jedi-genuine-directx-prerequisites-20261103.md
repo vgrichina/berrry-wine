@@ -108,3 +108,13 @@ exact AUTHOR RELEASE for each. `check-lane.py` records those observations.
 The prepared finite-TTL boat procedure allocates no boat while that gate is
 closed. Current source/module identity must be resealed after both releases;
 the predecessor's `24880b0e…c4741` module is historical evidence only.
+
+The bounded static assignment ends with both predecessor gates still closed.
+No boat was allocated, no source/build/heavy test or guest ran, and no ordinary
+Play session was repeated. `source-module-identity.json` records the actually
+audited JavaScript hashes, with tested WASM explicitly null. Final recovery
+instructions, checks and the release-gate observation are retained in
+`RECOVERY.md`, `final.md`, `result.json` and `ordered-gate.json` in this run.
+The next runtime owner can use the verified two-file mount plan after the exact
+releases and a fresh seal, without another redistributable search or installer
+replay. No new guest blocker, driver implementation or gameplay is asserted.
