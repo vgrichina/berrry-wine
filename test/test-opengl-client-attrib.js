@@ -31,7 +31,7 @@ const { FixedFunctionGL, OpenGLHostBridge, CALL_INDEX: O } = require('../lib/gl-
           return 1;
         }
         if (code === O.wglDeleteContext) { frontends.delete(words.getUint32(4, true)); return 1; }
-        if (code === Stream.PACKED_DRAW_OPCODE) {
+        if (code === Stream.PACKED_DRAW_OPCODE || code === Stream.EXACT_DRAW_OPCODE) {
           draws.push(Array.from(new Float32Array(capture.buffer, capture.pointerOffset, capture.pointerLength / 4)));
         } else if ([O.glPixelStorei, O.glPushClientAttrib, O.glPopClientAttrib,
           O.glPushAttrib, O.glPopAttrib, O.glTexImage2D, O._glTexImage2D].includes(code)) {

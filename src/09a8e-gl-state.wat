@@ -59,7 +59,9 @@
     (i32.atomic.store (region.addr $GL_MTX_BLOCKS 12) (local.get $p))
     (local.get $state))
 
-  (func $gl_state_save (param $context i32)
+  ;; Completed server values only. Client arrays and attribute stack ownership
+  ;; remain on the context-switch path; exact color source words are values.
+  (func $gl_state_publish (param $context i32)
     (local $p i32)
     (if (i32.eqz (local.get $context)) (then (return)))
     (local.set $p (call $gl_state_slot (local.get $context) (i32.const 1)))
@@ -77,6 +79,17 @@
     (f32.store offset=40 (local.get $p) (global.get $gl_tex1_s))
     (f32.store offset=44 (local.get $p) (global.get $gl_tex1_t))
     (i32.store offset=48 (local.get $p) (global.get $gl_shade_model))
+    (f32.store offset=148 (local.get $p) (global.get $gl_tex_r))
+    (f32.store offset=152 (local.get $p) (global.get $gl_tex_q))
+    (f32.store offset=156 (local.get $p) (global.get $gl_tex1_r))
+    (f32.store offset=160 (local.get $p) (global.get $gl_tex1_q)))
+
+  ;; Context switches additionally transfer client and stack ownership.
+  (func $gl_state_save (param $context i32)
+    (local $p i32)
+    (if (i32.eqz (local.get $context)) (then (return)))
+    (call $gl_state_publish (local.get $context))
+    (local.set $p (call $gl_state_slot (local.get $context) (i32.const 0)))
     (i32.store offset=52 (local.get $p) (global.get $gl_client_bits))
     (i32.store offset=56 (local.get $p) (global.get $gl_client_tex_unit))
     (i32.store offset=60 (local.get $p) (global.get $gl_vp_size))
@@ -100,11 +113,7 @@
     (i32.store offset=132 (local.get $p) (global.get $gl_tp1_guest))
     (i32.store offset=136 (local.get $p) (global.get $gl_state_attrib_head))
     (i32.store offset=140 (local.get $p) (global.get $gl_state_attrib_depth))
-    (i32.store offset=144 (local.get $p) (global.get $gl_state_pointer_bits))
-    (f32.store offset=148 (local.get $p) (global.get $gl_tex_r))
-    (f32.store offset=152 (local.get $p) (global.get $gl_tex_q))
-    (f32.store offset=156 (local.get $p) (global.get $gl_tex1_r))
-    (f32.store offset=160 (local.get $p) (global.get $gl_tex1_q)))
+    (i32.store offset=144 (local.get $p) (global.get $gl_state_pointer_bits)))
 
   (func $gl_native_query_count (param $p i32) (result i32)
     (if (i32.or (i32.le_u (i32.sub (local.get $p) (i32.const 0xbf0)) (i32.const 2))

@@ -1,6 +1,7 @@
 # wglCopyContext: native publication prerequisite
 
-`wglCopyContext` remains unsupported. This investigation did not implement or
+`wglCopyContext` remains unsupported. The completed publication repair is recorded
+in the final section below; the initial investigation did not implement or
 advertise it. The first measured dependency is publication of a current source
 context's producer-private state and pending server commands. Copying existing
 saved context blocks, replaying the destination's attribute stack, or sharing
@@ -72,7 +73,7 @@ The existing native attribute-stack test explicitly preserves matching
 incompleteness. These controls diagnose prerequisites; they do not qualify any
 new export.
 
-## Next bounded repair
+## Repair plan from the initial investigation
 
 First make server state observable at completed GL-call boundaries across native
 producers. Under the existing process GL lock, publish current attributes and
@@ -96,7 +97,7 @@ reject unsupported masks explicitly. Real WebGL1/2, actual render Workers,
 native pixels, wrong-mask and aliasing controls are still required before
 advertising `wglCopyContext`.
 
-This is a prerequisite investigation, not an implementation acceptance or a
+The initial investigation was a prerequisite investigation, not a copy API acceptance or a
 gameplay result. No MDK2 replay, historical27 claim, public deployment, new
 production routing, or source repair was performed.
 
@@ -123,3 +124,62 @@ recorded before use with shutdown delegated to this worker by the original
 task. It is verified STOPPED. Stop `stop_1b6524cb0aa9b2f6` completed at
 `2026-11-03T05:38:50.092Z`, error null; scoped Node/browser helpers were absent
 before stop. No box was retained or resumed.
+
+
+## Completed server-publication prerequisite (2026-11-03)
+
+Evidence: `scratch/runs/20261103-gl-publication-fixture-repair/`. Runtime and
+production edits started after exact `jedi-authentic-launch-path-nov03` AUTHOR
+RELEASE at 05:55:27 UTC, then `alice-single-trace-native-activation-nov03` at
+06:14:46 UTC. The fresh shipped baseline matched the canonical hash above.
+
+`gl_wat_encode_call` now publishes completed outer-call server values and drains
+that producer's ordered command prefix before releasing the process GL lock.
+Nested display-list replay publishes at outer completion; calls inside
+`glBegin` publish at `glEnd`. The CURRENT and raster publishers write selected
+values only. Client descriptors, UNPACK, saved attribute frames, resource and
+namespace identities, and leased draw snapshots retain their existing owners.
+Context-switch save/load still transfers the complete context-owned state.
+
+The raster layout also needed one precise correction: the old 2,316-byte save
+from live offset 1,792 to saved offset 1,844 placed the logic-op word at saved
+4,156, which is the consumer-owned stipple phase. The context allocation grows
+from 4,160 to 4,164 bytes; saved logic op now occupies 4,160. Save/load copies
+2,312 bytes and transfers logic op separately, leaving phase 4,156 untouched.
+The immutable draw-snapshot format is unchanged.
+
+`test/test-gl-producer-state-publication.js` uses two actual native instances
+over shared process memory. The unchanged expected-success assertions fail on
+the old canonical module before a source query, and pass on the new module:
+producer 1 keeps its current source while producer 2 sees blue CURRENT, line
+width 7, diffuse `[0.25,0.5,0.75,1]`, and no pending source prefix. Independent
+later changes, resource/client/stack identity checks, list compile/replay,
+`glBegin` completion, native blue pixels, and a deliberately delayed actual
+Worker draw verify ordering and isolation. Stale-state and reordered-prefix
+controls fail the same assertions. The Worker uses the production command
+encoder and actual render Worker, with zero fallbacks; its leased draw bytes
+remain identical across later source mutations.
+
+Actual WebGL1 and WebGL2 replay of both native captures produces the expected
+blue pixel and ordered diffuse value. Focused frame, drawable (including actual
+browser Worker), sharing (direct/actual Worker), attribute, stipple
+(direct/Worker/fallback/WebGL), Worker transport, shared render-Worker and
+public procedure-availability regressions pass. The client-attribute collector
+was corrected to include the already supported EXACT_DRAW record alongside
+PACKED_DRAW; its assertions pass against both old and new modules. The resize
+mock now uses the real existing color-mask method while retaining its pixel-mask
+and resize assertions. The browser
+replay fixture converts typed arrays to arrays before value comparison.
+
+The locked full build passes. Canonical output is 2,081,471 bytes, SHA256
+`a6d0a4a80413d637ccacf6029bfb7058dcd39a8c819bfe2bed33101b2ba33b47`;
+compatibility output is 2,084,044 bytes, SHA256
+`73499240ea54a8b65536b8b1aaf171dec8d98e17c45f73c1d62512e08c253a34`.
+Source seals, complete logs, retrieved modules, full-SHA manifests, rejecting
+controls, lifecycle receipts and recovery recipes are retained in the run.
+
+This completes the measured publication prerequisite only. No copy success
+routing, source rebinding or saved-block copy was added. `wglCopyContext`
+remains unavailable, as checked by the public availability regression and its
+three rejecting mutations. Mask-selected copy semantics and validation remain
+future work. This result makes no gameplay or historical27 claim.

@@ -778,40 +778,20 @@
     (global.set $gl_object_lock_depth (i32.sub (global.get $gl_object_lock_depth) (i32.const 1)))
     (if (i32.eqz (global.get $gl_object_lock_depth))
       (then (i32.atomic.store (region.addr $GL_MTX_BLOCKS 8) (i32.const 0)))))
-  ;; Another producer can use an object immediately after this call returns,
-  ;; including before the producer which created it joins a sharing group.
-  ;; Publish named-object mutations before releasing the process call lock.
-  (func $gl_object_publish (param $op i32) (param $stack i32) (result i32)
-    (local $target i32) (local $mutation i32)
-    (if (i32.eqz (global.get $gl_current_context)) (then (return (i32.const 0))))
-    (if (i32.eq (local.get $op) (i32.const 179))
-      (then (return (i32.ne (i32.load offset=4 (local.get $stack)) (i32.const 0)))))
-    (if (i32.or (i32.eq (local.get $op) (i32.const 43)) (i32.eq (local.get $op) (i32.const 77)))
-      (then (return (i32.const 1))))
-    (if (i32.eq (local.get $op) (i32.const 42))
-      (then (return (i32.ne (i32.load offset=8 (local.get $stack)) (i32.const 0)))))
-    (if (i32.eq (local.get $op) (i32.const 45)) (then (local.set $mutation (i32.const 1))))
-    (if (i32.eq (local.get $op) (i32.const 47)) (then (local.set $mutation (i32.const 1))))
-    (if (i32.eq (local.get $op) (i32.const 46)) (then (local.set $mutation (i32.const 1))))
-    (if (i32.eq (local.get $op) (i32.const 96)) (then (local.set $mutation (i32.const 1))))
-    (if (i32.eq (local.get $op) (i32.const 112)) (then (local.set $mutation (i32.const 1))))
-    (if (i32.eq (local.get $op) (i32.const 61)) (then (local.set $mutation (i32.const 1))))
-    (if (i32.eq (local.get $op) (i32.const 149)) (then (local.set $mutation (i32.const 1))))
-    (if (i32.eq (local.get $op) (i32.const 150)) (then (local.set $mutation (i32.const 1))))
-    (if (i32.eq (local.get $op) (i32.const 158)) (then (local.set $mutation (i32.const 1))))
-    (if (i32.eq (local.get $op) (i32.const 159)) (then (local.set $mutation (i32.const 1))))
-    (if (i32.eqz (local.get $mutation)) (then (return (i32.const 0))))
-    (local.set $target (i32.load offset=4 (local.get $stack)))
-    (if (i32.gt_u (i32.sub (local.get $target) (i32.const 0xde0)) (i32.const 1))
-      (then (return (i32.const 0))))
-    (i32.ne (i32.load offset=4 (i32.load
-      (call $gl_texture_binding (call $gl_texture_block) (local.get $target)))) (i32.const 0)))
+  ;; Publish completed outer server calls while still holding the process lock.
+  ;; A later producer cannot drain this instance's private stream: admit its
+  ;; completed prefix now, before the next producer acquires the lock. Nested
+  ;; list replay and incomplete primitives publish at their outer completion.
   (func $gl_wat_encode_call (param $op i32) (param $stack i32) (param $aux i32) (result i32)
     (local $result i32)
     (call $gl_object_enter)
     (local.set $result (call $gl_wat_encode_call_locked (local.get $op) (local.get $stack) (local.get $aux)))
-    (if (call $gl_object_publish (local.get $op) (local.get $stack))
-      (then (drop (call $gl_wat_stream_flush))))
+    (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
+        (i32.and (i32.eq (global.get $gl_object_lock_depth) (i32.const 1))
+          (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0)))) (then
+      (call $gl_state_publish (global.get $gl_current_context))
+      (call $gl_sw_context_publish)
+      (drop (call $gl_wat_stream_flush))))
     (call $gl_object_leave)
     (local.get $result))
 

@@ -1266,19 +1266,36 @@
 
   ;; Context state is independent from drawable storage, including clear and
   ;; scissor state and the native attribute stack.
-  (func $gl_sw_context_save
+  ;; Current raster values only, never client UNPACK or attribute stack frames.
+  ;; +4156 belongs to the consumer phase. Saved logic op has its own +4160 word.
+  (func $gl_sw_context_publish
     (local $ctx i32) (local $p i32)
     (if (i32.eqz (global.get $gl_current_context)) (then (return)))
     (local.set $ctx (call $gl_list_context))
     (if (i32.eqz (local.get $ctx)) (then (return)))
     (local.set $p (i32.load offset=240 (local.get $ctx)))
     (if (i32.eqz (local.get $p)) (then
-      (local.set $p (call $gl_list_alloc (i32.const 4160)))
+      (local.set $p (call $gl_list_alloc (i32.const 4164)))
       (if (i32.eqz (local.get $p)) (then (unreachable)))
       (i32.store offset=240 (local.get $ctx) (local.get $p))))
-    (memory.copy (local.get $p) (global.get $gl_sw_st) (i32.const 1792))
+    (i32.store offset=0 (local.get $p) (i32.load offset=0 (global.get $gl_sw_st)))
+    (i32.store offset=4 (local.get $p) (i32.load offset=4 (global.get $gl_sw_st)))
+    (i32.store offset=8 (local.get $p) (i32.load offset=8 (global.get $gl_sw_st)))
+    (i32.store offset=12 (local.get $p) (i32.load offset=12 (global.get $gl_sw_st)))
+    (i32.store offset=16 (local.get $p) (i32.load offset=16 (global.get $gl_sw_st)))
+    (i32.store offset=20 (local.get $p) (i32.load offset=20 (global.get $gl_sw_st)))
+    (i32.store offset=24 (local.get $p) (i32.load offset=24 (global.get $gl_sw_st)))
+    (i32.store offset=28 (local.get $p) (i32.load offset=28 (global.get $gl_sw_st)))
+    (i32.store offset=32 (local.get $p) (i32.load offset=32 (global.get $gl_sw_st)))
+    (i32.store offset=36 (local.get $p) (i32.load offset=36 (global.get $gl_sw_st)))
+    (i32.store offset=40 (local.get $p) (i32.load offset=40 (global.get $gl_sw_st)))
+    (i32.store offset=48 (local.get $p) (i32.load offset=48 (global.get $gl_sw_st)))
+    (i32.store offset=52 (local.get $p) (i32.load offset=52 (global.get $gl_sw_st)))
+    (i32.store offset=56 (local.get $p) (i32.load offset=56 (global.get $gl_sw_st)))
+    (i32.store offset=60 (local.get $p) (i32.load offset=60 (global.get $gl_sw_st)))
     (memory.copy (i32.add (local.get $p) (i32.const 1844))
-      (i32.add (global.get $gl_sw_st) (i32.const 1792)) (i32.const 2316))
+      (i32.add (global.get $gl_sw_st) (i32.const 1792)) (i32.const 136))
+    (i32.store offset=4160 (local.get $p) (i32.load offset=4104 (global.get $gl_sw_st)))
     (i32.store offset=1792 (local.get $p) (global.get $gl_sw_clear_color))
     (i32.store offset=1796 (local.get $p) (global.get $gl_sw_clear_depth_value))
     (i32.store offset=1800 (local.get $p) (global.get $gl_sw_active_unit))
@@ -1286,12 +1303,23 @@
     (f32.store offset=1808 (local.get $p) (global.get $gl_sw_point_size))
     (f32.store offset=1812 (local.get $p) (global.get $gl_sw_line_width))
     (i32.store offset=1816 (local.get $p) (global.get $gl_sw_texgen_modes))
-    (i32.store offset=1820 (local.get $p) (global.get $gl_sw_attrib_depth))
     (i32.store offset=1824 (local.get $p) (global.get $gl_sw_fog_mode))
     (f32.store offset=1828 (local.get $p) (global.get $gl_sw_fog_density))
     (f32.store offset=1832 (local.get $p) (global.get $gl_sw_fog_start))
     (f32.store offset=1836 (local.get $p) (global.get $gl_sw_fog_end))
     (i32.store offset=1840 (local.get $p) (global.get $gl_sw_fog_color)))
+
+  (func $gl_sw_context_save
+    (local $ctx i32) (local $p i32)
+    (if (i32.eqz (global.get $gl_current_context)) (then (return)))
+    (call $gl_sw_context_publish)
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (return)))
+    (local.set $p (i32.load offset=240 (local.get $ctx)))
+    (memory.copy (local.get $p) (global.get $gl_sw_st) (i32.const 1792))
+    (memory.copy (i32.add (local.get $p) (i32.const 1844))
+      (i32.add (global.get $gl_sw_st) (i32.const 1792)) (i32.const 2312))
+    (i32.store offset=1820 (local.get $p) (global.get $gl_sw_attrib_depth)))
 
   (func $gl_sw_context_load
     (local $ctx i32) (local $p i32)
@@ -1316,7 +1344,8 @@
     (if (i32.eqz (local.get $p)) (then (return)))
     (memory.copy (global.get $gl_sw_st) (local.get $p) (i32.const 1792))
     (memory.copy (i32.add (global.get $gl_sw_st) (i32.const 1792))
-      (i32.add (local.get $p) (i32.const 1844)) (i32.const 2316))
+      (i32.add (local.get $p) (i32.const 1844)) (i32.const 2312))
+    (i32.store offset=4104 (global.get $gl_sw_st) (i32.load offset=4160 (local.get $p)))
     (global.set $gl_sw_clear_color (i32.load offset=1792 (local.get $p)))
     (global.set $gl_sw_clear_depth_value (i32.load offset=1796 (local.get $p)))
     (global.set $gl_sw_active_unit (i32.load offset=1800 (local.get $p)))

@@ -20,7 +20,7 @@
 // colour and depth attachments and doing that mid-frame throws away whatever the
 // guest had already drawn.
 const assert = require('assert');
-const { OpenGLHostBridge, CALL_INDEX } = require('../lib/gl-compat');
+const { OpenGLHostBridge, FixedFunctionGL, CALL_INDEX } = require('../lib/gl-compat');
 
 let passed = 0;
 const check = (name, fn) => { fn(); passed++; console.log(`PASS  ${name}`); };
@@ -59,7 +59,7 @@ function makeBridge(backend, win) {
   });
   const context = {
     handle: 1, hwnd: 0x10001, win, backend,
-    frontend: { flushPendingDraw() {}, applyStencil() {}, enabled: new Set(), colorMask: [true,false,true,false] },
+    frontend: { backend, applyColorMask: FixedFunctionGL.prototype.applyColorMask, flushPendingDraw() {}, applyStencil() {}, enabled: new Set(), colorMask: [true,false,true,false] },
     layer: { canvas: backend.getPresentationSurface(), backend, writeSeq: 0 },
   };
   bridge.contexts.set(1, context);
