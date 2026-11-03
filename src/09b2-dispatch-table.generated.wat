@@ -3920,6 +3920,7 @@
     (if (i32.eq (local.get $id) (i32.const 4213)) (then (return (i32.const 1)))) ;; glCallLists
     (if (i32.eq (local.get $id) (i32.const 4214)) (then (return (i32.const 1)))) ;; glClearAccum
     (if (i32.eq (local.get $id) (i32.const 4215)) (then (return (i32.const 1)))) ;; glClearDepth
+    (if (i32.eq (local.get $id) (i32.const 4216)) (then (return (i32.const 1)))) ;; glClearIndex
     (if (i32.eq (local.get $id) (i32.const 4217)) (then (return (i32.const 1)))) ;; glClearStencil
     (if (i32.eq (local.get $id) (i32.const 4218)) (then (return (i32.const 1)))) ;; glClipPlane
     (if (i32.eq (local.get $id) (i32.const 4219)) (then (return (i32.const 1)))) ;; glColor3b
@@ -3999,6 +4000,18 @@
     (if (i32.eq (local.get $id) (i32.const 4298)) (then (return (i32.const 1)))) ;; glGetTexLevelParameteriv
     (if (i32.eq (local.get $id) (i32.const 4299)) (then (return (i32.const 1)))) ;; glGetTexParameterfv
     (if (i32.eq (local.get $id) (i32.const 4300)) (then (return (i32.const 1)))) ;; glGetTexParameteriv
+    (if (i32.eq (local.get $id) (i32.const 4301)) (then (return (i32.const 1)))) ;; glIndexd
+    (if (i32.eq (local.get $id) (i32.const 4302)) (then (return (i32.const 1)))) ;; glIndexdv
+    (if (i32.eq (local.get $id) (i32.const 4303)) (then (return (i32.const 1)))) ;; glIndexf
+    (if (i32.eq (local.get $id) (i32.const 4304)) (then (return (i32.const 1)))) ;; glIndexfv
+    (if (i32.eq (local.get $id) (i32.const 4305)) (then (return (i32.const 1)))) ;; glIndexi
+    (if (i32.eq (local.get $id) (i32.const 4306)) (then (return (i32.const 1)))) ;; glIndexiv
+    (if (i32.eq (local.get $id) (i32.const 4307)) (then (return (i32.const 1)))) ;; glIndexMask
+    (if (i32.eq (local.get $id) (i32.const 4308)) (then (return (i32.const 1)))) ;; glIndexPointer
+    (if (i32.eq (local.get $id) (i32.const 4309)) (then (return (i32.const 1)))) ;; glIndexs
+    (if (i32.eq (local.get $id) (i32.const 4310)) (then (return (i32.const 1)))) ;; glIndexsv
+    (if (i32.eq (local.get $id) (i32.const 4311)) (then (return (i32.const 1)))) ;; glIndexub
+    (if (i32.eq (local.get $id) (i32.const 4312)) (then (return (i32.const 1)))) ;; glIndexubv
     (if (i32.eq (local.get $id) (i32.const 4313)) (then (return (i32.const 1)))) ;; glInitNames
     (if (i32.eq (local.get $id) (i32.const 4314)) (then (return (i32.const 1)))) ;; glInterleavedArrays
     (if (i32.eq (local.get $id) (i32.const 4315)) (then (return (i32.const 1)))) ;; glIsList
@@ -4157,24 +4170,11 @@
     (i32.const 0))
 
   (func $gl_dynamic_api_unsupported (param $id i32) (result i32)
-    (if (i32.eq (local.get $id) (i32.const 4216)) (then (return (i32.const 1)))) ;; glClearIndex
     (if (i32.eq (local.get $id) (i32.const 4245)) (then (return (i32.const 1)))) ;; glColorSubTableEXT
     (if (i32.eq (local.get $id) (i32.const 4246)) (then (return (i32.const 1)))) ;; glColorTableEXT
     (if (i32.eq (local.get $id) (i32.const 4275)) (then (return (i32.const 1)))) ;; glGetColorTableEXT
     (if (i32.eq (local.get $id) (i32.const 4276)) (then (return (i32.const 1)))) ;; glGetColorTableParameterfvEXT
     (if (i32.eq (local.get $id) (i32.const 4277)) (then (return (i32.const 1)))) ;; glGetColorTableParameterivEXT
-    (if (i32.eq (local.get $id) (i32.const 4301)) (then (return (i32.const 1)))) ;; glIndexd
-    (if (i32.eq (local.get $id) (i32.const 4302)) (then (return (i32.const 1)))) ;; glIndexdv
-    (if (i32.eq (local.get $id) (i32.const 4303)) (then (return (i32.const 1)))) ;; glIndexf
-    (if (i32.eq (local.get $id) (i32.const 4304)) (then (return (i32.const 1)))) ;; glIndexfv
-    (if (i32.eq (local.get $id) (i32.const 4305)) (then (return (i32.const 1)))) ;; glIndexi
-    (if (i32.eq (local.get $id) (i32.const 4306)) (then (return (i32.const 1)))) ;; glIndexiv
-    (if (i32.eq (local.get $id) (i32.const 4307)) (then (return (i32.const 1)))) ;; glIndexMask
-    (if (i32.eq (local.get $id) (i32.const 4308)) (then (return (i32.const 1)))) ;; glIndexPointer
-    (if (i32.eq (local.get $id) (i32.const 4309)) (then (return (i32.const 1)))) ;; glIndexs
-    (if (i32.eq (local.get $id) (i32.const 4310)) (then (return (i32.const 1)))) ;; glIndexsv
-    (if (i32.eq (local.get $id) (i32.const 4311)) (then (return (i32.const 1)))) ;; glIndexub
-    (if (i32.eq (local.get $id) (i32.const 4312)) (then (return (i32.const 1)))) ;; glIndexubv
     (if (i32.eq (local.get $id) (i32.const 4325)) (then (return (i32.const 1)))) ;; glLockArraysEXT
     (if (i32.eq (local.get $id) (i32.const 4336)) (then (return (i32.const 1)))) ;; glMultiTexCoord1fARB
     (if (i32.eq (local.get $id) (i32.const 4337)) (then (return (i32.const 1)))) ;; glMultiTexCoord1fvARB
@@ -21628,7 +21628,7 @@
       (return)
     ) ;; 4216: glClearIndex
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 65585) (i32.const 0) (i32.const 0) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4217: glClearStencil
@@ -22053,62 +22053,62 @@
       (return)
     ) ;; 4301: glIndexd
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 0x10030) (i32.const 5130) (i32.const 0) (i32.const 2))
       (call $gl_object_leave)
       (return)
     ) ;; 4302: glIndexdv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 0x10030) (i32.const 5130) (i32.const 1) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4303: glIndexf
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 0x10030) (i32.const 5126) (i32.const 0) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4304: glIndexfv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 0x10030) (i32.const 5126) (i32.const 1) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4305: glIndexi
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 0x10030) (i32.const 5124) (i32.const 0) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4306: glIndexiv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 0x10030) (i32.const 5124) (i32.const 1) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4307: glIndexMask
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 65586) (i32.const 0) (i32.const 0) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4308: glIndexPointer
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 65587) (i32.const 0) (i32.const 0) (i32.const 3))
       (call $gl_object_leave)
       (return)
     ) ;; 4309: glIndexs
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 0x10030) (i32.const 5122) (i32.const 0) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4310: glIndexsv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 0x10030) (i32.const 5122) (i32.const 1) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4311: glIndexub
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 0x10030) (i32.const 5121) (i32.const 0) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4312: glIndexubv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_index (i32.const 0x10030) (i32.const 5121) (i32.const 1) (i32.const 1))
       (call $gl_object_leave)
       (return)
     ) ;; 4313: glInitNames

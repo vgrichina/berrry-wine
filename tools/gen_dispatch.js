@@ -437,6 +437,8 @@ const nativeTextureQueryApis = new Map([
   ['glGetTexParameterfv',[0,0]], ['glGetTexParameteriv',[0,1]],
 ]);
 const nativeGlApis = new Set([
+  'glClearIndex', 'glIndexMask', 'glIndexPointer', 'glIndexd', 'glIndexdv',
+  'glIndexf', 'glIndexfv', 'glIndexi', 'glIndexiv', 'glIndexs', 'glIndexsv', 'glIndexub', 'glIndexubv',
   'glFeedbackBuffer', 'glSelectBuffer', 'glRenderMode', 'glPassThrough',
   'glInitNames', 'glLoadName', 'glPushName', 'glPopName',
   'glMap1d', 'glMapGrid1d', 'glEvalCoord1d', 'glEvalCoord1dv', 'glMap1f', 'glMapGrid1f', 'glEvalCoord1f', 'glEvalCoord1fv', 'glMap2d', 'glMapGrid2d', 'glEvalCoord2d', 'glEvalCoord2dv', 'glMap2f', 'glMapGrid2f', 'glEvalCoord2f', 'glEvalCoord2fv', 'glEvalPoint1', 'glEvalMesh1', 'glEvalPoint2', 'glEvalMesh2', 'glGetMapdv', 'glGetMapfv', 'glGetMapiv',
@@ -478,6 +480,15 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if (/^glIndex(?:d|f|i|s|ub)v?$/.test(api.name)) {
+    const kind=api.name.slice(7).replace(/v$/, ''), vector=api.name.endsWith('v');
+    const type={d:0x140a,f:0x1406,i:0x1404,s:0x1402,ub:0x1401}[kind];
+    return `      (call $handle_gl_index (i32.const 0x10030) (i32.const ${type}) (i32.const ${+vector}) (i32.const ${kind==='d'&&!vector?2:1}))`;
+  }
+  if (['glClearIndex','glIndexMask','glIndexPointer'].includes(api.name)) {
+    const op={glClearIndex:0x10031,glIndexMask:0x10032,glIndexPointer:0x10033}[api.name];
+    return `      (call $handle_gl_index (i32.const ${op}) (i32.const 0) (i32.const 0) (i32.const ${api.name==='glIndexPointer'?3:1}))`;
+  }
   if (/^gl(?:FeedbackBuffer|SelectBuffer|RenderMode|PassThrough|InitNames|LoadName|PushName|PopName)$/.test(api.name)) return `      (call $handle_${api.name}_sf)`;
   if (/^gl(?:Map[12][df]|MapGrid[12][df]|EvalCoord[12][df]v?|EvalPoint[12]|EvalMesh[12]|GetMap[dfi]v)$/.test(api.name)) return `      (call $handle_${api.name}_eval)`;
   if(api.name==='glEdgeFlagv') return '      (call $handle_gl_edge_vector)';

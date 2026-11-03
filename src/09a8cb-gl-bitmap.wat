@@ -178,6 +178,8 @@
     ;; Euclidean distance in eye space, after dehomogenization.
     (call $gl_sw_dehomogenize (local.get $eye))
     (f32.store offset=264 (local.get $ctx) (f32.sqrt (call $gl_sw_dot3 (local.get $eye) (local.get $eye))))
+    ;; RGBA drawables still retain the independent current raster index.
+    (f32.store offset=268 (local.get $ctx) (f32.load offset=1044 (local.get $ctx)))
     (i32.store offset=40 (local.get $ctx) (i32.const 1))
     (if (i32.eq (call $gl_sf_mode) (i32.const 0x1c02)) (then
       (call $gl_sf_hit (f64.promote_f32 (f32.load offset=52 (local.get $ctx)))))))
@@ -453,7 +455,7 @@
     (if (i32.eq (local.get $op) (i32.const 134)) (then
       (if (i32.ge_u (i32.load offset=180 (local.get $ctx)) (i32.const 16)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x503)) (return (i32.const 1))))
-      (local.set $p (call $gl_list_alloc (i32.const 152)))
+      (local.set $p (call $gl_list_alloc (i32.const 164)))
       (if (i32.eqz (local.get $p)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 1))))
       (i32.store (local.get $p) (i32.load offset=176 (local.get $ctx)))
@@ -465,6 +467,8 @@
       (i32.store offset=28 (local.get $p) (global.get $gl_client_bits))
       (i32.store offset=144 (local.get $p) (global.get $gl_ep_stride))
       (i32.store offset=148 (local.get $p) (global.get $gl_ep_guest))
+      (memory.copy (i32.add (local.get $p) (i32.const 152))
+        (i32.add (local.get $ctx) (i32.const 1056)) (i32.const 12))
       (i32.store offset=32 (local.get $p) (global.get $gl_client_tex_unit))
       (i32.store offset=36 (local.get $p) (global.get $gl_state_pointer_bits))
       (i32.store offset=40 (local.get $p) (global.get $gl_vp_size))
@@ -500,6 +504,8 @@
           (i32.add (local.get $p) (i32.const 8)) (i32.const 20))
         (i32.store offset=44 (global.get $gl_sw_st) (i32.load offset=8 (local.get $p)))))
       (if (i32.and (local.get $mask) (i32.const 2)) (then
+        (memory.copy (i32.add (local.get $ctx) (i32.const 1056))
+          (i32.add (local.get $p) (i32.const 152)) (i32.const 12))
         (global.set $gl_ep_stride (i32.load offset=144 (local.get $p)))
         (global.set $gl_ep_guest (i32.load offset=148 (local.get $p)))
         (global.set $gl_client_bits (i32.load offset=28 (local.get $p)))

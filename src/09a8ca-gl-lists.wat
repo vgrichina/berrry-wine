@@ -27,7 +27,7 @@
       (if (i32.eq (i32.load offset=4 (local.get $p)) (local.get $key))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 1044))) ;; evaluator and selection/feedback state tail
+    (local.set $p (call $gl_list_alloc (i32.const 1068))) ;; index state follows selection/feedback
     (if (i32.eqz (local.get $p)) (then (unreachable)))
     (local.set $group (call $gl_list_alloc (i32.const 20)))
     (if (i32.eqz (local.get $group)) (then (unreachable)))
@@ -38,6 +38,9 @@
     (i32.store offset=4 (local.get $p) (local.get $key))
     (call $gl_hint_defaults (local.get $p))
     (call $gl_bitmap_context_init (local.get $p))
+    (f32.store offset=1044 (local.get $p) (f32.const 1))
+    (i32.store offset=1052 (local.get $p) (i32.const -1))
+    (i32.store offset=1056 (local.get $p) (i32.const 0x1406))
     (call $gl_stencil_init (i32.add (local.get $p) (i32.const 192)))
     (i32.store offset=228 (local.get $p) (i32.const 15))
     (i32.store offset=232 (local.get $p) (i32.const 0x405))
@@ -203,6 +206,9 @@
         (i32.and (i32.ge_u (local.get $op) (i32.const 124))
           (i32.le_u (local.get $op) (i32.const 140)))))))
     (if (i32.eq (local.get $op) (i32.const 160)) (then (return (i32.const 0))))
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10031)) (i32.const 1)) (then
+      (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (i32.load offset=36 (local.get $ctx))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))))
     (if (i32.eq (local.get $op) (i32.const 183)) (then
       (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (i32.load offset=36 (local.get $ctx))) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
@@ -540,6 +546,7 @@
       (local.set $p (local.get $next)) (br $free))))
 
   (func $gl_list_scalar_command (param $op i32) (result i32)
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10030)) (i32.const 2)) (then (return (i32.const 1))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10023)) (i32.const 4)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 181)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 180)) (then (return (i32.const 1))))
@@ -668,6 +675,9 @@
 
   (func $gl_list_array_element (param $index i32) (param $stack i32)
     (local $bits i32)
+    (if (i32.and (global.get $gl_client_bits) (i32.const 32)) (then
+      (f32.store offset=4 (local.get $stack) (call $gl_index_array_value (local.get $index)))
+      (drop (call $gl_wat_encode_call (i32.const 0x10030) (local.get $stack) (i32.const 0)))))
     (local.set $bits (i32.and (global.get $gl_client_bits) (global.get $gl_state_pointer_bits)))
     (if (i32.and (global.get $gl_client_bits) (i32.const 64)) (then
       (i32.store offset=4 (local.get $stack) (call $gl_edge_array_value (local.get $index)))

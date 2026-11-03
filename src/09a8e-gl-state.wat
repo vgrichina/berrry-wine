@@ -15,6 +15,88 @@
     (i32.store offset=16 (local.get $stack) (call $gl_source_load (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 2))) (local.get $bits)))
     (i32.store offset=20 (local.get $stack) (if (result i32) (i32.eq (global.get $gl_cp_size) (i32.const 4)) (then (call $gl_source_load (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 3))) (local.get $bits))) (else (i32.const 0))))
     (i32.const 1))
+  ;; GL1.1 color-index state is independent of RGBA. All supported drawables
+  ;; are RGBA, so these producer values never become RGBA color commands.
+  ;; Context tail: +1044 current, +1048 clear, +1052 write mask,
+  ;; +1056 array type, +1060 stride, +1064 original guest pointer.
+  ;; Current indices use the implementation's native single precision, just
+  ;; like the other current attributes; integer inputs are NOT normalized.
+  (func $gl_index_query_offset (param $p i32) (result i32)
+    (if (i32.eq (local.get $p) (i32.const 0xb01)) (then (return (i32.const 1044))))
+    (if (i32.eq (local.get $p) (i32.const 0xc20)) (then (return (i32.const 1048))))
+    (if (i32.eq (local.get $p) (i32.const 0xc21)) (then (return (i32.const 1052))))
+    (if (i32.eq (local.get $p) (i32.const 0x8085)) (then (return (i32.const 1056))))
+    (if (i32.eq (local.get $p) (i32.const 0x8086)) (then (return (i32.const 1060))))
+    ;; No color-index bitplanes in an RGBA drawable.
+    (if (i32.eq (local.get $p) (i32.const 0xd51)) (then (return (i32.const -1))))
+    (i32.const 0))
+  (func $gl_index_query_value (param $p i32) (result f64)
+    (local $offset i32) (local $address i32)
+    (local.set $offset (call $gl_index_query_offset (local.get $p)))
+    (if (i32.eq (local.get $offset) (i32.const -1)) (then (return (f64.const 0))))
+    (local.set $address (i32.add (call $gl_list_context) (local.get $offset)))
+    (if (i32.le_u (local.get $offset) (i32.const 1048))
+      (then (return (f64.promote_f32 (f32.load (local.get $address))))))
+    (f64.convert_i32_u (i32.load (local.get $address))))
+  (func $gl_index_array_value (param $index i32) (result f32)
+    (local $ctx i32) (local $p i32) (local $type i32)
+    (local.set $ctx (call $gl_list_context))
+    (local.set $type (i32.load offset=1056 (local.get $ctx)))
+    (local.set $p (call $gl_array_addr (i32.load offset=1064 (local.get $ctx))
+      (i32.const 1) (local.get $type) (i32.load offset=1060 (local.get $ctx)) (local.get $index)))
+    (call $gl_texcoord_check (local.get $p) (call $gl_array_type_bytes (local.get $type)))
+    (call $gl_index_read (local.get $p) (local.get $type)))
+  ;; Bytewise guest readers preserve unaligned/nonaffine page boundaries.
+  (func $gl_index_read (param $p i32) (param $type i32) (result f32)
+    (if (i32.eq (local.get $type) (i32.const 0x1401)) (then (return (f32.convert_i32_u (call $gl8 (local.get $p))))))
+    (if (i32.eq (local.get $type) (i32.const 0x1402)) (then
+      (return (f32.convert_i32_s (i32.shr_s (i32.shl (call $gl16 (local.get $p)) (i32.const 16)) (i32.const 16))))))
+    (if (i32.eq (local.get $type) (i32.const 0x1404)) (then (return (f32.convert_i32_s (call $gl32 (local.get $p))))))
+    (if (i32.eq (local.get $type) (i32.const 0x1406)) (then (return (f32.reinterpret_i32 (call $gl32 (local.get $p))))))
+    (f32.demote_f64 (f64.reinterpret_i64 (call $gl64 (local.get $p)))))
+  (func $gl_index_command (param $op i32) (param $stack i32) (result i32)
+    (local $ctx i32) (local $type i32)
+    (if (i32.gt_u (i32.sub (local.get $op) (i32.const 0x10030)) (i32.const 3)) (then (return (i32.const 0))))
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 0x10033)) (then
+      (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (i32.load offset=36 (local.get $ctx))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+      (local.set $type (i32.load offset=4 (local.get $stack)))
+      (if (i32.eqz (i32.or (i32.eq (local.get $type) (i32.const 0x1401))
+        (i32.or (i32.eq (local.get $type) (i32.const 0x1402)) (i32.or (i32.eq (local.get $type) (i32.const 0x1404))
+          (i32.or (i32.eq (local.get $type) (i32.const 0x1406)) (i32.eq (local.get $type) (i32.const 0x140a))))))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1))))
+      (if (i32.lt_s (i32.load offset=8 (local.get $stack)) (i32.const 0)) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x501)) (return (i32.const 1))))
+      ;; Pointer specification does not read client memory.
+      (memory.copy (i32.add (local.get $ctx) (i32.const 1056)) (i32.add (local.get $stack) (i32.const 4)) (i32.const 12))
+      (return (i32.const 1))))
+    (i32.store (i32.add (local.get $ctx) (i32.add (i32.const 1044)
+      (i32.shl (i32.sub (local.get $op) (i32.const 0x10030)) (i32.const 2)))) (i32.load offset=4 (local.get $stack)))
+    (i32.const 1))
+  ;; Every spelling enters through the real resolved stdcall thunk. Convert
+  ;; scalar/vector guest values before list capture so lists own their value.
+  (func $handle_gl_index (param $op i32) (param $type i32) (param $vector i32) (param $words i32)
+    (local $esp i32) (local $p i32) (local $tmp i32) (local $v f32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (call $gl_texcoord_check (i32.add (local.get $esp) (i32.const 4)) (i32.shl (local.get $words) (i32.const 2)))
+    (if (local.get $type) (then
+      (local.set $p (i32.add (local.get $esp) (i32.const 4)))
+      (if (local.get $vector) (then (local.set $p (call $gl32 (local.get $p)))))
+      (call $gl_texcoord_check (local.get $p) (call $gl_array_type_bytes (local.get $type)))
+      (local.set $v (call $gl_index_read (local.get $p) (local.get $type)))))
+    (local.set $tmp (call $gl_list_alloc (i32.const 16)))
+    (if (i32.eqz (local.get $tmp)) (then (unreachable)))
+    (if (local.get $type) (then (f32.store offset=4 (local.get $tmp) (local.get $v)))
+    (else (call $gl_copy_from_guest (i32.add (local.get $tmp) (i32.const 4))
+      (i32.add (local.get $esp) (i32.const 4)) (i32.shl (local.get $words) (i32.const 2)))))
+    (drop (call $gl_wat_encode_call (local.get $op) (local.get $tmp) (i32.const 0)))
+    (call $heap_free (call $w2g (local.get $tmp)))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp)
+      (i32.shl (i32.add (local.get $words) (i32.const 1)) (i32.const 2)))))
+
   ;; OpenGL current attributes and client-array frontend. Kept separate from
   ;; record transport so the byte-stream encoder remains mechanically small.
   ;; $gl_state_intercept returns 1 when the call was fully consumed here.
@@ -159,6 +241,7 @@
     (i32.store offset=172 (local.get $p) (global.get $gl_ep_guest)))
 
   (func $gl_native_query_count (param $p i32) (result i32)
+    (if (call $gl_index_query_offset (local.get $p)) (then (return (i32.const 1))))
     (if (i32.or (i32.eq (local.get $p) (i32.const 0xb43)) (i32.eq (local.get $p) (i32.const 0x808c))) (then (return (i32.const 1))))
     (if (i32.or (i32.eq (local.get $p) (i32.const 0x8038)) (i32.eq (local.get $p) (i32.const 0x2a00))) (then (return (i32.const 1))))
     (if (call $gl_hint_target (local.get $p)) (then (return (i32.const 1))))
@@ -196,6 +279,8 @@
     (i32.const 0))
 
   (func $gl_native_query_value (param $p i32) (param $i i32) (result f64)
+    (if (call $gl_index_query_offset (local.get $p)) (then
+      (return (call $gl_index_query_value (local.get $p)))))
     (if (i32.eq (local.get $p) (i32.const 0xb43)) (then (return (f64.convert_i32_u (global.get $gl_edge_flag)))))
     (if (i32.eq (local.get $p) (i32.const 0x808c)) (then (return (f64.convert_i32_u (global.get $gl_ep_stride)))))
     (if (i32.eq (local.get $p) (i32.const 0x8038)) (then (return (f64.promote_f32 (f32.load offset=4124 (global.get $gl_sw_st))))))
@@ -255,7 +340,7 @@
         (i32.add (i32.const 272) (i32.add
           (i32.shl (i32.load offset=4 (call $gl_mtx_block)) (i32.const 4))
           (i32.shl (local.get $i) (i32.const 2))))))))))
-    (if (i32.eq (local.get $p) (i32.const 0xb05)) (then (return (f64.const 1))))
+    (if (i32.eq (local.get $p) (i32.const 0xb05)) (then (return (f64.promote_f32 (f32.load offset=268 (call $gl_list_context))))))
     (if (i32.eq (local.get $p) (i32.const 0xb09)) (then
       (return (f64.promote_f32 (f32.load offset=264 (call $gl_list_context))))))
     ;; 0x0ba6 column-major matrix
@@ -547,7 +632,7 @@
               (local.set $v (f64.mul (f64.const 0.5)
                 (f64.sub (f64.mul (local.get $v) (f64.const 4294967295)) (f64.const 1))))))
             (call $gs32 (i32.add (local.get $out) (i32.shl (local.get $i) (i32.const 2)))
-              (if (result i32) (call $gl_query_unsigned (local.get $p))
+              (if (result i32) (i32.or (call $gl_query_unsigned (local.get $p)) (i32.eq (local.get $p) (i32.const 0xc21)))
                 (then (i32.trunc_sat_f64_u (f64.nearest (local.get $v))))
                 (else (i32.trunc_sat_f64_s (f64.nearest (local.get $v))))))))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
@@ -775,6 +860,8 @@
 
   (func $gl_state_array_element (param $index i32)
     (local $source_guest i32) (local $source_stack i32) (local $p i32) (local $b i32) (local $x f32) (local $y f32) (local $z f32)
+    (if (i32.and (global.get $gl_client_bits) (i32.const 32)) (then
+      (f32.store offset=1044 (call $gl_list_context) (call $gl_index_array_value (local.get $index)))))
     (if (i32.and (global.get $gl_client_bits) (i32.const 64)) (then
       (global.set $gl_edge_flag (call $gl_edge_array_value (local.get $index)))))
     (if (i32.and (i32.ne (i32.and (global.get $gl_client_bits) (i32.const 2)) (i32.const 0))
@@ -1048,11 +1135,13 @@
         (f32.load offset=8 (local.get $p)) (f32.load offset=12 (local.get $p)))
       (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 76)) (then
-      (local.set $a (call $heap_alloc (i32.const 116)))
+      (local.set $a (call $heap_alloc (i32.const 128)))
       (if (i32.eqz (local.get $a)) (then (unreachable)))
       (local.set $p (call $g2w (local.get $a)))
         (i32.store (local.get $p) (global.get $gl_state_attrib_head))
         (i32.store offset=112 (local.get $p) (global.get $gl_edge_flag))
+        (memory.copy (i32.add (local.get $p) (i32.const 116))
+          (i32.add (call $gl_list_context) (i32.const 1044)) (i32.const 12))
         (f32.store offset=4 (local.get $p) (global.get $gl_color_r)) (f32.store offset=8 (local.get $p) (global.get $gl_color_g))
         (f32.store offset=12 (local.get $p) (global.get $gl_color_b)) (f32.store offset=16 (local.get $p) (global.get $gl_color_a))
         (f32.store offset=20 (local.get $p) (global.get $gl_tex_s)) (f32.store offset=24 (local.get $p) (global.get $gl_tex_t))
@@ -1073,6 +1162,11 @@
         (global.set $gl_state_attrib_depth (i32.sub (global.get $gl_state_attrib_depth) (i32.const 1)))
         (local.set $p (global.get $gl_state_attrib_head))
         (global.set $gl_state_attrib_head (i32.load (local.get $p)))
+        (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 1)) (then
+          (i32.store offset=1044 (call $gl_list_context) (i32.load offset=116 (local.get $p)))))
+        (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 0x4000)) (then
+          (memory.copy (i32.add (call $gl_list_context) (i32.const 1048))
+            (i32.add (local.get $p) (i32.const 120)) (i32.const 8))))
         (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 0x8000)) (then
           (memory.copy (i32.add (call $gl_list_context) (i32.const 1008))
             (i32.add (local.get $p) (i32.const 92)) (i32.const 20))))
@@ -1434,7 +1528,8 @@
           (global.get $gl_client_tex_unit))) (br $selected)))
       (if (i32.eq (local.get $p) (i32.const 0x8093)) (then
         (local.set $value (global.get $gl_ep_guest)) (br $selected)))
-      ;; Selection/feedback and index arrays have no supported state.
+      (if (i32.eq (local.get $p) (i32.const 0x8091)) (then
+        (local.set $value (i32.load offset=1064 (local.get $ctx))) (br $selected)))
       (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1)))
     (local.set $out (i32.load offset=8 (local.get $stack)))
     (if (i32.gt_u (local.get $out) (i32.const 0xfffffffc)) (then (unreachable)))

@@ -5,6 +5,7 @@
   (global $gl_source_a (mut i32) (i32.const 0))
   ;; Private typed color command; public opcode numbering is unchanged.
   (func $gl_source_arg_words (param $op i32) (result i32)
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10030)) (i32.const 2)) (then (return (i32.const 1))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10023)) (i32.const 4)) (then
       (return (select (i32.const 0) (i32.const 1)
         (i32.or (i32.eq (local.get $op) (i32.const 0x10024)) (i32.eq (local.get $op) (i32.const 0x10027)))))))
@@ -912,6 +913,9 @@
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
     (local $error i32)
     (local $source_guest i32) (local $source_stack i32) (local $source_p i32) (local $source_last i32)
+    ;; Client array definitions execute immediately, including GL_COMPILE.
+    (if (i32.eq (local.get $op) (i32.const 0x10033)) (then
+      (drop (call $gl_index_command (local.get $op) (local.get $stack))) (return (i32.const 0))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10020)) (i32.const 7)) (then
       (return (call $gl_sf_command (local.get $op) (local.get $stack)))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10010)) (i32.const 4)) (then
@@ -1008,6 +1012,7 @@
       (then (return (global.get $gl_list_result))))
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
+    (if (call $gl_index_command (local.get $op) (local.get $stack)) (then (return (i32.const 0))))
     (if (i32.and (i32.eq (local.get $op) (i32.const 2))
         (i32.ne (call $gl_sf_mode) (i32.const 0x1c00))) (then
       (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
@@ -1201,6 +1206,11 @@
     (param $src_ctx i32) (param $dst_ctx i32)
     (param $src_raster i32) (param $dst_raster i32)
     (param $src_texture i32) (param $dst_texture i32)
+    (if (i32.and (local.get $mask) (i32.const 1)) (then
+      (i32.store offset=1044 (local.get $dst_ctx) (i32.load offset=1044 (local.get $src_ctx)))))
+    (if (i32.and (local.get $mask) (i32.const 0x4000)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 1048))
+        (i32.add (local.get $src_ctx) (i32.const 1048)) (i32.const 8))))
     (if (i32.and (local.get $mask) (i32.const 8)) (then
       (memory.copy (i32.add (local.get $dst_raster) (i32.const 4180)) (i32.add (local.get $src_raster) (i32.const 4180)) (i32.const 8))))
     (if (i32.and (local.get $mask) (i32.const 0x2008)) (then
