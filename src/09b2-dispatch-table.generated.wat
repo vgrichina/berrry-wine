@@ -3955,6 +3955,9 @@
     (if (i32.eq (local.get $id) (i32.const 4251)) (then (return (i32.const 1)))) ;; glCopyTexSubImage2D
     (if (i32.eq (local.get $id) (i32.const 4252)) (then (return (i32.const 1)))) ;; glDeleteLists
     (if (i32.eq (local.get $id) (i32.const 4253)) (then (return (i32.const 1)))) ;; glDrawPixels
+    (if (i32.eq (local.get $id) (i32.const 4254)) (then (return (i32.const 1)))) ;; glEdgeFlag
+    (if (i32.eq (local.get $id) (i32.const 4255)) (then (return (i32.const 1)))) ;; glEdgeFlagPointer
+    (if (i32.eq (local.get $id) (i32.const 4256)) (then (return (i32.const 1)))) ;; glEdgeFlagv
     (if (i32.eq (local.get $id) (i32.const 4257)) (then (return (i32.const 1)))) ;; glEndList
     (if (i32.eq (local.get $id) (i32.const 4271)) (then (return (i32.const 1)))) ;; glFogiv
     (if (i32.eq (local.get $id) (i32.const 4272)) (then (return (i32.const 1)))) ;; glGenLists
@@ -4126,9 +4129,6 @@
     (if (i32.eq (local.get $id) (i32.const 4216)) (then (return (i32.const 1)))) ;; glClearIndex
     (if (i32.eq (local.get $id) (i32.const 4245)) (then (return (i32.const 1)))) ;; glColorSubTableEXT
     (if (i32.eq (local.get $id) (i32.const 4246)) (then (return (i32.const 1)))) ;; glColorTableEXT
-    (if (i32.eq (local.get $id) (i32.const 4254)) (then (return (i32.const 1)))) ;; glEdgeFlag
-    (if (i32.eq (local.get $id) (i32.const 4255)) (then (return (i32.const 1)))) ;; glEdgeFlagPointer
-    (if (i32.eq (local.get $id) (i32.const 4256)) (then (return (i32.const 1)))) ;; glEdgeFlagv
     (if (i32.eq (local.get $id) (i32.const 4258)) (then (return (i32.const 1)))) ;; glEvalCoord1d
     (if (i32.eq (local.get $id) (i32.const 4259)) (then (return (i32.const 1)))) ;; glEvalCoord1dv
     (if (i32.eq (local.get $id) (i32.const 4260)) (then (return (i32.const 1)))) ;; glEvalCoord1f
@@ -21818,17 +21818,17 @@
       (return)
     ) ;; 4254: glEdgeFlag
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 181) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (call $gl_object_leave)
       (return)
     ) ;; 4255: glEdgeFlagPointer
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 183) (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (call $gl_object_leave)
       (return)
     ) ;; 4256: glEdgeFlagv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gl_edge_vector)
       (call $gl_object_leave)
       (return)
     ) ;; 4257: glEndList

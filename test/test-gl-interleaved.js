@@ -37,8 +37,10 @@ async function run(){
  const h=await bootRenderHarness({fonts:'none',...(prebuiltModule?{prebuiltModule}:{extraWat}),width:64,height:64,extraHostOverrides:{gpu_gl_call(op,at,bytes){
   if(op===Stream.WAT_STREAM_FLUSH_OPCODE){
    const batch=Stream.memoryBatch(memory,at,bytes);
-   Stream.replay(batch,(op,aux,c)=>{if(op===Stream.PACKED_DRAW_OPCODE){
-    const vertices=Array.from(new Float32Array(c.buffer,c.pointerOffset,c.pointerLength/4));
+   Stream.replay(batch,(op,aux,c)=>{if(op===Stream.PACKED_DRAW_OPCODE||op===Stream.EXACT_DRAW_OPCODE){
+    const packed=new Float32Array(c.buffer,c.pointerOffset,c.pointerLength/4);
+    const stride=op===Stream.EXACT_DRAW_OPCODE?Stream.EXACT_VERTEX_FLOATS:Stream.VERTEX_FLOATS;
+    const vertices=Array.from({length:packed.length/stride},(_,i)=>Array.from(packed.subarray(i*stride,i*stride+Stream.VERTEX_FLOATS))).flat();
     const record=new Uint8Array(32+c.pointerLength),v=new DataView(record.buffer);
     const start=c.stackOffset-32;record.set(new Uint8Array(c.buffer,start,32));
     v.setUint32(0,record.length,true);v.setUint32(24,32,true);

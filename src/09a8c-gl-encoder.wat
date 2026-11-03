@@ -48,6 +48,7 @@
     (f32.store offset=108 (local.get $p) (f32.convert_i32_u (global.get $gl_source_tag))))
   (global $gl_immediate_has_source (mut i32) (i32.const 0))
   (func $gl_source_packed_stride (param $p i32) (result i32)
+    (if (i32.eq (i32.load offset=4 (local.get $p)) (i32.const 0x10009)) (then (return (i32.const 116))))
     (select (i32.const 112) (i32.const 76) (i32.eq (i32.load offset=4 (local.get $p)) (i32.const 0x10002))))
   (func $gl_source_packed_begin (param $mode i32) (param $exact i32) (result i32)
     (local $p i32)
@@ -353,6 +354,10 @@
     (f32.store offset=68 (local.get $p) (global.get $gl_tex1_r))
     (f32.store offset=72 (local.get $p) (global.get $gl_tex1_q))
     (call $gl_source_vertex (local.get $p))
+    ;; Private immediate storage shares the exact-color tag word. The edge bit
+    ;; is stripped by gl_copy_vertex before any ordinary transport record.
+    (f32.store offset=108 (local.get $p) (f32.convert_i32_u (i32.or
+      (global.get $gl_source_tag) (i32.shl (global.get $gl_edge_flag) (i32.const 10)))))
     (global.set $gl_immediate_has_source (i32.or (global.get $gl_immediate_has_source) (global.get $gl_source_tag)))
     (global.set $gl_immediate_floats (i32.add (global.get $gl_immediate_floats) (i32.const 28))))
 
@@ -379,7 +384,8 @@
             (f32.load (i32.add (i32.add (global.get $gl_sw_scratch) (i32.const 0x500)) (local.get $k))))))
         (local.set $k (i32.add (local.get $k) (i32.const 4)))
         (br_if $channels (i32.lt_u (local.get $k) (i32.const 16))))
-      (f32.store offset=108 (local.get $v) (f32.const 0))
+      (f32.store offset=108 (local.get $v) (f32.convert_i32_u
+        (i32.and (i32.trunc_f32_u (f32.load offset=108 (local.get $v))) (i32.const 1024))))
       (global.set $gl_material_lit_floats (i32.add (global.get $gl_material_lit_floats) (i32.const 28)))
       (br $vertices)))
     (i32.store (global.get $gl_sw_st) (local.get $saved)))
@@ -400,7 +406,10 @@
       (i32.store (i32.add (local.get $dst) (i32.shl (local.get $i) (i32.const 2)))
         (i32.load (local.get $from)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br_if $words (i32.lt_u (local.get $i) (select (i32.const 28) (i32.const 19) (local.get $exact))))))
+      (br_if $words (i32.lt_u (local.get $i) (select (i32.const 28) (i32.const 19) (local.get $exact)))))
+    (if (local.get $exact) (then
+      (f32.store offset=108 (local.get $dst) (f32.convert_i32_u
+        (i32.and (i32.trunc_f32_u (f32.load offset=108 (local.get $dst))) (i32.const 1023)))))))
 
   (func $gl_pixel_components (param $format i32) (result i32)
     (if (result i32) (i32.or (i32.eq (local.get $format) (i32.const 0x1906))
@@ -499,6 +508,8 @@
     (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
     (local.set $boundary (i32.or (i32.ne (i32.load offset=4108 (global.get $gl_sw_st)) (i32.const 0x1b02))
       (i32.ne (i32.load offset=4112 (global.get $gl_sw_st)) (i32.const 0x1b02))))
+    (if (i32.and (local.get $boundary) (i32.le_u (i32.sub (local.get $mode) (i32.const 4)) (i32.const 5))) (then
+      (call $gl_edge_finish (local.get $count) (local.get $mode)) (return (i32.const 1))))
     (local.set $flat (i32.eq (global.get $gl_shade_model) (i32.const 0x1D00)))
     (local.set $out_mode (local.get $mode))
     (if (i32.or (i32.or (i32.eq (local.get $mode) (i32.const 5))
@@ -694,6 +705,61 @@
         (br $emit)))
     (call $gl_packed_finish (local.get $start) (local.get $n))
     (i32.const 1))
+
+  ;; Preserve complete logical polygons through clipping. Ordinary filled
+  ;; geometry keeps its established compact ABI; boundary draws own an edge
+  ;; byte-as-float after the exact-color vertex, and never carry guest pointers.
+  (func $gl_edge_finish (param $count i32) (param $mode i32)
+    (local $i i32) (local $k i32) (local $n i32) (local $index i32)
+    (local $prov i32) (local $start i32) (local $dst i32) (local $edge i32)
+    (block $done (loop $polygons
+      (local.set $n (select (i32.const 4) (i32.const 3)
+        (i32.or (i32.eq (local.get $mode) (i32.const 7)) (i32.eq (local.get $mode) (i32.const 8)))))
+      (if (i32.eq (local.get $mode) (i32.const 9)) (then (local.set $n (local.get $count))))
+      (if (i32.or (i32.eq (local.get $mode) (i32.const 6)) (i32.eq (local.get $mode) (i32.const 5))) (then
+        (br_if $done (i32.ge_u (i32.add (local.get $i) (i32.const 2)) (local.get $count))))
+        (else (br_if $done (i32.gt_u (i32.add (local.get $i) (local.get $n)) (local.get $count)))))
+      (br_if $done (i32.lt_u (local.get $n) (i32.const 3)))
+      ;; The transport owns at most 2MiB. Refuse an oversized polygon rather
+      ;; than split its connectivity or publish only a prefix.
+      (if (i32.gt_u (local.get $n) (i32.const 18078)) (then
+        (call $gl_list_error (call $gl_list_context) (i32.const 0x505)) (br $done)))
+      (if (i32.gt_u (i32.add (global.get $gl_stream_used_bytes)
+          (i32.add (i32.const 32) (i32.mul (local.get $n) (i32.const 116)))) (i32.const 0x200000))
+        (then (drop (call $gl_wat_stream_flush))))
+      (local.set $start (call $gl_packed_begin (i32.const 9)))
+      (i32.store offset=4 (local.get $start) (i32.const 0x10009))
+      (local.set $prov (i32.const -1))
+      (if (i32.eq (global.get $gl_shade_model) (i32.const 0x1d00)) (then
+        (local.set $prov (i32.add (local.get $i) (i32.sub (local.get $n) (i32.const 1))))
+        (if (i32.eq (local.get $mode) (i32.const 9)) (then (local.set $prov (i32.const 0))))
+        (if (i32.eq (local.get $mode) (i32.const 6)) (then (local.set $prov (i32.add (local.get $i) (i32.const 2)))))))
+      (local.set $k (i32.const 0))
+      (loop $vertices
+        (local.set $index (i32.add (local.get $i) (local.get $k)))
+        (if (i32.eq (local.get $mode) (i32.const 6)) (then
+          (local.set $index (select (i32.const 0) (i32.add (local.get $i) (local.get $k)) (i32.eqz (local.get $k))))))
+        (if (i32.and (i32.eq (local.get $mode) (i32.const 5)) (i32.ne (i32.and (local.get $i) (i32.const 1)) (i32.const 0))) (then
+          (if (i32.lt_u (local.get $k) (i32.const 2)) (then
+            (local.set $index (i32.add (local.get $i) (i32.sub (i32.const 1) (local.get $k))))))))
+        (if (i32.and (i32.eq (local.get $mode) (i32.const 8)) (i32.ge_u (local.get $k) (i32.const 2))) (then
+          (local.set $index (i32.add (local.get $i) (i32.sub (i32.const 5) (local.get $k))))))
+        (local.set $dst (i32.add (local.get $start) (i32.add (i32.const 32) (i32.mul (local.get $k) (i32.const 116)))))
+        (call $gl_copy_vertex (local.get $dst) (local.get $index) (local.get $prov) (i32.const 1))
+        (local.set $edge (i32.const 1))
+        (if (i32.or (i32.eq (local.get $mode) (i32.const 4))
+            (i32.or (i32.eq (local.get $mode) (i32.const 7)) (i32.eq (local.get $mode) (i32.const 9)))) (then
+          (local.set $edge (i32.and (i32.shr_u (i32.trunc_f32_u (f32.load offset=108
+            (i32.add (global.get $gl_immediate_wa) (i32.mul (local.get $index) (i32.const 112))))) (i32.const 10)) (i32.const 1)))))
+        (f32.store offset=112 (local.get $dst) (f32.convert_i32_u (local.get $edge)))
+        (local.set $k (i32.add (local.get $k) (i32.const 1)))
+        (br_if $vertices (i32.lt_u (local.get $k) (local.get $n))))
+      (call $gl_packed_finish (local.get $start) (local.get $n))
+      (if (i32.eq (local.get $mode) (i32.const 9)) (then (br $done)))
+      (local.set $i (i32.add (local.get $i) (select (i32.const 1)
+        (select (i32.const 2) (local.get $n) (i32.eq (local.get $mode) (i32.const 8)))
+        (i32.or (i32.eq (local.get $mode) (i32.const 5)) (i32.eq (local.get $mode) (i32.const 6))))))
+      (br $polygons))))
 
   ;; Validate enums before touching a vector pointer. Invalid enum calls still
   ;; reach the host for GL error reporting but carry no pointed payload.
@@ -1118,6 +1184,8 @@
     (if (i32.and (local.get $mask) (i32.const 1)) (then
       (memory.copy (i32.add (local.get $dst_state) (i32.const 4))
         (i32.add (local.get $src_state) (i32.const 4)) (i32.const 44))))
+    (if (i32.and (local.get $mask) (i32.const 1)) (then
+      (i32.store offset=164 (local.get $dst_state) (i32.load offset=164 (local.get $src_state)))))
     ;; current projective texture coordinates
     (if (i32.and (local.get $mask) (i32.const 1)) (then
       (memory.copy (i32.add (local.get $dst_state) (i32.const 148))
@@ -1329,6 +1397,7 @@
     (f32.store offset=36 (local.get $p) (f32.const 1))
     (f32.store offset=152 (local.get $p) (f32.const 1))
     (f32.store offset=160 (local.get $p) (f32.const 1))
+    (i32.store offset=164 (local.get $p) (i32.const 1))
     (i32.store offset=48 (local.get $p) (i32.const 7425))
     (i32.store offset=60 (local.get $p) (i32.const 4))
     (i32.store offset=64 (local.get $p) (i32.const 5126))

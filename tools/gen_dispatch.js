@@ -334,6 +334,7 @@ const gpuApis = new Map([
   ['wglShareLists',2],
   ['_glPrioritizeTexture',2],
   ['glLogicOp',1], // Append-only transport opcode 180; stored-width semantics tested.
+  ['glEdgeFlag',1], ['glEdgeFlagv',1], ['glEdgeFlagPointer',2],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 
@@ -474,6 +475,7 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if(api.name==='glEdgeFlagv') return '      (call $handle_gl_edge_vector)';
   if(api.name==='wglCopyContext') return '      (call $handle_wglCopyContext (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))';
   if(api.name==='glPrioritizeTextures') return '      (call $handle_gl_prioritize_textures)';
   if(api.name==='glAreTexturesResident') return '      (call $handle_gl_textures_resident)';

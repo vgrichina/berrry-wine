@@ -26,6 +26,35 @@
   (global $gl_state_attrib_head (mut i32) (i32.const 0))
   (global $gl_state_attrib_depth (mut i32) (i32.const 0))
   (global $gl_state_pointer_bits (mut i32) (i32.const 0))
+  (global $gl_edge_flag (mut i32) (i32.const 1))
+  (global $gl_ep_stride (mut i32) (i32.const 0))
+  (global $gl_ep_guest (mut i32) (i32.const 0))
+
+  (func $gl_edge_array_value (param $index i32) (result i32)
+    (local $p i32)
+    (local.set $p (call $gl_array_addr (global.get $gl_ep_guest) (i32.const 1)
+      (i32.const 0x1401) (global.get $gl_ep_stride) (local.get $index)))
+    (call $gl_texcoord_check (local.get $p) (i32.const 1))
+    (i32.ne (call $gl8 (local.get $p)) (i32.const 0)))
+
+  ;; Snapshot the pointed byte before list capture; the pointer never enters
+  ;; display-list storage. Scalar GLboolean uses its low eight bits as well.
+  (func $handle_gl_edge_vector
+    (local $esp i32) (local $guest i32) (local $stack i32) (local $p i32) (local $v i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (call $gl_texcoord_check (i32.add (local.get $esp) (i32.const 4)) (i32.const 4))
+    (local.set $p (call $gl32 (i32.add (local.get $esp) (i32.const 4))))
+    (call $gl_texcoord_check (local.get $p) (i32.const 1))
+    (local.set $v (call $gl8 (local.get $p)))
+    (local.set $guest (call $gl_alloc_affine (i32.const 8)))
+    (if (i32.eqz (local.get $guest)) (then (unreachable)))
+    (local.set $stack (call $g2w (local.get $guest)))
+    (i32.store (local.get $stack) (i32.const 0))
+    (i32.store offset=4 (local.get $stack) (local.get $v))
+    (drop (call $gl_wat_encode_call (i32.const 181) (local.get $stack) (i32.const 0)))
+    (call $heap_free (local.get $guest))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 8))))
 
   (func $gl_state_slot (param $context i32) (param $create i32) (result i32)
     (local $p i32) (local $guest i32) (local $state i32)
@@ -91,7 +120,8 @@
     (f32.store offset=148 (local.get $p) (global.get $gl_tex_r))
     (f32.store offset=152 (local.get $p) (global.get $gl_tex_q))
     (f32.store offset=156 (local.get $p) (global.get $gl_tex1_r))
-    (f32.store offset=160 (local.get $p) (global.get $gl_tex1_q)))
+    (f32.store offset=160 (local.get $p) (global.get $gl_tex1_q))
+    (i32.store offset=164 (local.get $p) (global.get $gl_edge_flag)))
 
   ;; Context switches additionally transfer client and stack ownership.
   (func $gl_state_save (param $context i32)
@@ -124,9 +154,12 @@
     (i32.store offset=132 (local.get $p) (global.get $gl_tp1_guest))
     (i32.store offset=136 (local.get $p) (global.get $gl_state_attrib_head))
     (i32.store offset=140 (local.get $p) (global.get $gl_state_attrib_depth))
-    (i32.store offset=144 (local.get $p) (global.get $gl_state_pointer_bits)))
+    (i32.store offset=144 (local.get $p) (global.get $gl_state_pointer_bits))
+    (i32.store offset=168 (local.get $p) (global.get $gl_ep_stride))
+    (i32.store offset=172 (local.get $p) (global.get $gl_ep_guest)))
 
   (func $gl_native_query_count (param $p i32) (result i32)
+    (if (i32.or (i32.eq (local.get $p) (i32.const 0xb43)) (i32.eq (local.get $p) (i32.const 0x808c))) (then (return (i32.const 1))))
     (if (i32.or (i32.eq (local.get $p) (i32.const 0x8038)) (i32.eq (local.get $p) (i32.const 0x2a00))) (then (return (i32.const 1))))
     (if (call $gl_hint_target (local.get $p)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $p) (i32.const 0xb40)) (then (return (i32.const 2))))
@@ -163,6 +196,8 @@
     (i32.const 0))
 
   (func $gl_native_query_value (param $p i32) (param $i i32) (result f64)
+    (if (i32.eq (local.get $p) (i32.const 0xb43)) (then (return (f64.convert_i32_u (global.get $gl_edge_flag)))))
+    (if (i32.eq (local.get $p) (i32.const 0x808c)) (then (return (f64.convert_i32_u (global.get $gl_ep_stride)))))
     (if (i32.eq (local.get $p) (i32.const 0x8038)) (then (return (f64.promote_f32 (f32.load offset=4124 (global.get $gl_sw_st))))))
     (if (i32.eq (local.get $p) (i32.const 0x2a00)) (then (return (f64.promote_f32 (f32.load offset=4128 (global.get $gl_sw_st))))))
     (if (call $gl_hint_target (local.get $p)) (then
@@ -546,6 +581,8 @@
     (i32.const 0))
 
   (func $gl_state_defaults
+    (global.set $gl_edge_flag (i32.const 1))
+    (global.set $gl_ep_stride (i32.const 0)) (global.set $gl_ep_guest (i32.const 0))
     (global.set $gl_source_tag (i32.const 0))
     (global.set $gl_color_r (f32.const 1)) (global.set $gl_color_g (f32.const 1))
     (global.set $gl_color_b (f32.const 1)) (global.set $gl_color_a (f32.const 1))
@@ -618,7 +655,10 @@
       (global.set $gl_tex_r (f32.load offset=148 (local.get $p)))
       (global.set $gl_tex_q (f32.load offset=152 (local.get $p)))
       (global.set $gl_tex1_r (f32.load offset=156 (local.get $p)))
-      (global.set $gl_tex1_q (f32.load offset=160 (local.get $p)))))
+      (global.set $gl_tex1_q (f32.load offset=160 (local.get $p)))
+      (global.set $gl_edge_flag (i32.load offset=164 (local.get $p)))
+      (global.set $gl_ep_stride (i32.load offset=168 (local.get $p)))
+      (global.set $gl_ep_guest (i32.load offset=172 (local.get $p)))))
     (global.set $gl_current_context (local.get $context))
     (call $gl_sw_context_load)
     (if (local.get $context) (then (call $gl_texture_sync_sampling)))
@@ -735,6 +775,8 @@
 
   (func $gl_state_array_element (param $index i32)
     (local $source_guest i32) (local $source_stack i32) (local $p i32) (local $b i32) (local $x f32) (local $y f32) (local $z f32)
+    (if (i32.and (global.get $gl_client_bits) (i32.const 64)) (then
+      (global.set $gl_edge_flag (call $gl_edge_array_value (local.get $index)))))
     (if (i32.and (i32.ne (i32.and (global.get $gl_client_bits) (i32.const 2)) (i32.const 0))
         (i32.and (i32.ne (i32.and (global.get $gl_state_pointer_bits) (i32.const 2)) (i32.const 0))
           (i32.ne (call $gl_array_type_bytes (global.get $gl_np_type)) (i32.const 0)))) (then
@@ -880,6 +922,12 @@
   (func $gl_state_intercept (param $op i32) (param $stack i32) (result i32)
     (local $a i32) (local $unit i32) (local $i i32) (local $count i32) (local $p i32) (local $b i32)
     (local $w i32) (local $z f32)
+    (if (i32.eq (local.get $op) (i32.const 181)) (then
+      (global.set $gl_edge_flag (i32.ne (i32.and (i32.load offset=4 (local.get $stack)) (i32.const 255)) (i32.const 0))) (return (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 183)) (then
+      (global.set $gl_ep_stride (i32.load offset=4 (local.get $stack)))
+      (global.set $gl_ep_guest (i32.load offset=8 (local.get $stack)))
+      (global.set $gl_state_pointer_bits (i32.or (global.get $gl_state_pointer_bits) (i32.const 64))) (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 0x10003)) (then
       (call $gl_source_install (i32.load offset=4 (local.get $stack)) (i32.load offset=8 (local.get $stack)) (i32.load offset=12 (local.get $stack)) (i32.load offset=16 (local.get $stack)) (i32.load offset=20 (local.get $stack)))
       (call $gl_period_color) (return (i32.const 1))))
@@ -1000,10 +1048,11 @@
         (f32.load offset=8 (local.get $p)) (f32.load offset=12 (local.get $p)))
       (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 76)) (then
-      (local.set $a (call $heap_alloc (i32.const 112)))
+      (local.set $a (call $heap_alloc (i32.const 116)))
       (if (i32.eqz (local.get $a)) (then (unreachable)))
       (local.set $p (call $g2w (local.get $a)))
         (i32.store (local.get $p) (global.get $gl_state_attrib_head))
+        (i32.store offset=112 (local.get $p) (global.get $gl_edge_flag))
         (f32.store offset=4 (local.get $p) (global.get $gl_color_r)) (f32.store offset=8 (local.get $p) (global.get $gl_color_g))
         (f32.store offset=12 (local.get $p) (global.get $gl_color_b)) (f32.store offset=16 (local.get $p) (global.get $gl_color_a))
         (f32.store offset=20 (local.get $p) (global.get $gl_tex_s)) (f32.store offset=24 (local.get $p) (global.get $gl_tex_t))
@@ -1029,6 +1078,7 @@
             (i32.add (local.get $p) (i32.const 92)) (i32.const 20))))
         (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 1)) (then
           (call $gl_source_restore (i32.add (local.get $p) (i32.const 72)))
+          (global.set $gl_edge_flag (i32.load offset=112 (local.get $p)))
         (global.set $gl_color_r (f32.load offset=4 (local.get $p))) (global.set $gl_color_g (f32.load offset=8 (local.get $p)))
         (global.set $gl_color_b (f32.load offset=12 (local.get $p))) (global.set $gl_color_a (f32.load offset=16 (local.get $p)))
         ))
@@ -1382,7 +1432,9 @@
       (if (i32.eq (local.get $p) (i32.const 0x8092)) (then
         (local.set $value (select (global.get $gl_tp1_guest) (global.get $gl_tp0_guest)
           (global.get $gl_client_tex_unit))) (br $selected)))
-      ;; Selection/feedback and index/edge arrays have no supported state.
+      (if (i32.eq (local.get $p) (i32.const 0x8093)) (then
+        (local.set $value (global.get $gl_ep_guest)) (br $selected)))
+      ;; Selection/feedback and index arrays have no supported state.
       (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1)))
     (local.set $out (i32.load offset=8 (local.get $stack)))
     (if (i32.gt_u (local.get $out) (i32.const 0xfffffffc)) (then (unreachable)))
