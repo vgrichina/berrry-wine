@@ -1,5 +1,37 @@
 # Zuma Deluxe: current ordinary launch
 
+## QueueUserAPC export repaired; initializer still fails, 2026-11-03
+
+Added the missing named KERNEL32 `QueueUserAPC` export at ordinal 595,
+targeting existing API 4164 and its real three-argument stdcall handler.
+All 471 previous export records and ordinals are unchanged; APC semantics
+were not modified. The retained old PE image fails explicit named lookup with
+NULL/error 127. The repaired regression resolves name and ordinal, rejects a
+wrong-case name, and executes the actual PE E9 trampoline and API dispatch
+through the x86 interpreter. It passes three-argument stack cleanup, bad-handle
+and null-routine errors, pseudo-handle, target-thread isolation, alertable-only
+delivery, parked sleep/wait wake, FIFO and thread-exit drop controls.
+The one-instance test preserves the parked target's private sleep state/stack
+and clears the sender's inherited yield before executing its real thunk.
+Generator freshness, generator regression and the locked full build pass.
+An additional existing loader fixture fails on `loadlib_builtin_only` with both
+the retained old manifest/image and the repaired image; that fixture failure
+is separate from the passing full-interpreter export/APC regression.
+
+The single changed-source ordinary browser startup served default module
+`cffc3180dca3b97e8341c3376d3252e841681bc964db81680fb652e8df685a8d`
+(2,077,883 bytes). It no longer logs missing QueueUserAPC, but still reports
+`DLL initializer did not return: module=0x989000`. The reviewed capture shows
+the desktop Read Me window, with no Zuma menu or gameplay. No player input was
+delivered. This verifies the export repair; it does not identify the initializer's
+underlying cause or qualify current gameplay. Next: diagnose that initializer
+and its real caller/continuation separately before another ordinary startup.
+
+Evidence: `scratch/runs/20261103-zuma-queueuserapc-recover/`. Source, fixture and
+updated-test transfers were independently size/SHA-256 checked on receipt;
+all 602 successful served responses (570 unique files), capture review and
+independently checked retrievals are retained there. No guest/API behavior was substituted in the ordinary run.
+
 ## DeviceIoControl export repaired; next startup blocker, 2026-11-03
 
 Added the missing named KERNEL32 `DeviceIoControl` export at ordinal 594,

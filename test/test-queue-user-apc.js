@@ -15,9 +15,20 @@ const extraWat=`
   (func $qa_frame (param $n i32)
     (i32.store offset=16 (global.get $reg_base) (i32.const 0x07000000))
     (call $gs32 (i32.const 0x07000000) (local.get $n)))
+  (global $qa_entry (mut i32) (i32.const 0))
+  (func (export "qa_kernel") (result i32) (call $kernel32_ensure_locked))
+  (func (export "qa_lookup") (param $kernel i32) (param $name i32) (result i32)
+    (call $qa_frame (i32.const 0))
+    (global.set $last_error (i32.const 0))
+    (call $handle_GetProcAddress (local.get $kernel) (local.get $name) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (i32.load (global.get $reg_base)))
+  (func (export "qa_set_entry") (param $entry i32) (global.set $qa_entry (local.get $entry)))
   (func (export "qa_queue") (param $pfn i32) (param $h i32) (param $data i32) (result i32)
     (call $qa_frame (i32.const 0))
-    (call $handle_QueueUserAPC (local.get $pfn) (local.get $h) (local.get $data) (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $gs32 (i32.const 0x07000004) (local.get $pfn))
+    (call $gs32 (i32.const 0x07000008) (local.get $h))
+    (call $gs32 (i32.const 0x0700000c) (local.get $data))
+    (global.set $eip (global.get $qa_entry))
     (i32.load offset=0 (global.get $reg_base)))
   (func (export "qa_last_error") (result i32) (global.get $last_error))
   ;; SleepEx(ms, alertable) called from guest code at $ret: the frame is
@@ -43,6 +54,16 @@ const extraWat=`
   (func (export "qa_new_api_call")
     (global.set $apc_alert_sleep (i32.const 0))
     (global.set $wait_alertable (i32.const 0)))
+  ;; The test multiplexes two threads in one instance. Preserve the target's
+  ;; instance-private sleep mark while the sender executes its real API thunk.
+  (func (export "qa_save_sleep") (param $p i32)
+    (call $gs32 (local.get $p) (global.get $apc_alert_sleep))
+    (call $gs32 (i32.add (local.get $p) (i32.const 4)) (global.get $apc_alert_ret))
+    (call $gs32 (i32.add (local.get $p) (i32.const 8)) (global.get $apc_alert_esp)))
+  (func (export "qa_restore_sleep") (param $p i32)
+    (global.set $apc_alert_sleep (call $gl32 (local.get $p)))
+    (global.set $apc_alert_ret (call $gl32 (i32.add (local.get $p) (i32.const 4))))
+    (global.set $apc_alert_esp (call $gl32 (i32.add (local.get $p) (i32.const 8)))))
   (func (export "qa_exit_thread") (call $apc_drop_shared_current))
 `;
 const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
@@ -73,15 +94,40 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
   const runToHalt=()=>{for(let i=0;i<20&&e.get_eip();i++)e.run(1000);};
   const asThread=tid=>e.set_current_thread_id(tid);
 
+  const api=require('../src/api_table.json').find(a=>a.name==='QueueUserAPC');
+  assert.strictEqual(api.id,4164);assert.strictEqual(api.nargs,3);assert.strictEqual(api.convention,'stdcall');
+  const putA=s=>{const p=alloc(s.length+1);for(let i=0;i<=s.length;i++)e.guest_write8(p+i,s.charCodeAt(i)||0);return p;};
+  const kernel=e.qa_kernel()>>>0;
+  assert(kernel,'synthetic KERNEL32 PE mapped');
+  assert.strictEqual(e.guest_read8(kernel)|(e.guest_read8(kernel+1)<<8),0x5a4d);
+  assert.strictEqual(read(kernel+read(kernel+0x3c)),0x4550);
+  const name=putA('QueueUserAPC'),entry=e.qa_lookup(kernel,name)>>>0;
+  assert(entry,`explicit KERNEL32 GetProcAddress(QueueUserAPC) must resolve; error=${e.qa_last_error()}`);
+  assert.strictEqual(e.get_esp()>>>0,0x0700000c,'GetProcAddress pops two args');
+  assert.strictEqual(e.guest_read8(entry),0xe9,'actual PE E9 trampoline');
+  const target=(entry+5+read(entry+1))>>>0;
+  assert.strictEqual(read(target+4),4164,'trampoline dispatches existing handler');
+  assert.strictEqual(e.qa_lookup(kernel,595)>>>0,entry,'explicit ordinal lookup');
+  assert.strictEqual(e.qa_lookup(kernel,putA('queueuserapc')),0,'case-sensitive export');
+  assert.strictEqual(e.qa_last_error(),127);
+  e.qa_set_entry(entry);
+  const queue=(pfn,h,data)=>{
+    // The sender is runnable; a multiplexed target wait must not park it.
+    e.clear_yield();e.qa_queue(pfn,h,data);runToHalt();
+    assert.strictEqual(e.get_eip(),0,'actual trampoline returns');
+    assert.strictEqual(e.get_esp()>>>0,0x07000010,'three-argument stdcall cleanup');
+    return e.get_eax()>>>0;
+  };
+  console.log('PASS explicit KERNEL32 PE name/ordinal595/case-sensitive lookup; E9 entry maps API4164/stdcall3');
   // Invalid handle / null routine.
   reset();asThread(1);
-  assert.strictEqual(e.qa_queue(apc,0x1234,7),0);assert.strictEqual(e.qa_last_error(),6);
-  assert.strictEqual(e.qa_queue(0,-2,7),0);assert.strictEqual(e.qa_last_error(),87);
+  assert.strictEqual(queue(apc,0x1234,7),0);assert.strictEqual(e.qa_last_error(),6);
+  assert.strictEqual(queue(0,-2,7),0);assert.strictEqual(e.qa_last_error(),87);
   assert.strictEqual(e.get_esp()>>>0,0x07000010,'QueueUserAPC pops three arguments');
 
   // Current-thread pseudo-handle: no host round trip, delivered in an
   // alertable SleepEx(0) on the same thread.
-  assert.strictEqual(e.qa_queue(apc,-2,0x11),1);
+  assert.strictEqual(queue(apc,-2,0x11),1);
   assert.deepStrictEqual(alerts,[],'no alert for the caller itself');
   e.qa_sleep(0,0,retcode);runToHalt();
   assert.strictEqual(read(seen),0,'non-alertable sleep never runs an APC');
@@ -93,8 +139,8 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
 
   // Cross-thread: main (1) queues two APCs to thread 3 by handle.
   reset();targets=new Map([[0xe1002,3]]);
-  assert.strictEqual(e.qa_queue(apc,0xe1002,0x31),1);
-  assert.strictEqual(e.qa_queue(apc,0xe1002,0x32),1);
+  assert.strictEqual(queue(apc,0xe1002,0x31),1);
+  assert.strictEqual(queue(apc,0xe1002,0x32),1);
   assert.deepStrictEqual(alerts,[3,3]);
   e.qa_sleep(0,1,retcode);runToHalt();
   assert.strictEqual(read(seen),0,"main's alertable wait must not run thread 3's APC");
@@ -112,11 +158,17 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
   e.qa_sleep(1000,1,retcode);
   assert.strictEqual(e.apc_alertable_sleeping(),1,'parked alertable sleep is visible to thread_alert');
   assert.strictEqual(e.get_eip()>>>0,retcode);
+  const parkedSleep=alloc(12);
+  e.qa_save_sleep(parkedSleep);
+  const parkedStack=new Uint8Array(memory.buffer,e.guest_to_wasm(0x07000000),32).slice();
   asThread(1);alerts.length=0;
-  assert.strictEqual(e.qa_queue(apc,0xe1002,0x41),1);
+  assert.strictEqual(queue(apc,0xe1002,0x41),1);
   assert.deepStrictEqual(alerts,[3]);
-  // qa_queue reset ESP for its own frame; put the parked thread's state back.
-  asThread(3);e.set_esp(0x0700000c);e.set_eip(retcode);
+  // Real worker instances have private sleep globals and separate stacks.
+  // This one-instance harness must restore both after running the sender.
+  asThread(3);e.qa_restore_sleep(parkedSleep);
+  new Uint8Array(memory.buffer,e.guest_to_wasm(0x07000000),32).set(parkedStack);
+  e.set_esp(0x0700000c);e.set_eip(retcode);
   runToHalt();
   assert.deepStrictEqual([read(seen),read(seen+4)],[1,0x41],'APC runs on resumption');
   assert.strictEqual(read(after),0xc0,'the parked sleep now returns WAIT_IO_COMPLETION');
@@ -135,7 +187,7 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
   reset();e.qa_wait(1,retcode);
   assert.strictEqual(e.get_yield_reason(),1);assert.strictEqual(e.get_wait_stack_bytes(),16);
   assert.strictEqual(e.apc_wake_wait(),0,'nothing queued: stays parked');
-  asThread(1);assert.strictEqual(e.qa_queue(apc,0xe1002,0x51),1);
+  asThread(1);assert.strictEqual(queue(apc,0xe1002,0x51),1);
   asThread(1);assert.strictEqual(e.apc_wake_wait(),0,"another thread's queue does not wake main");
   // Restore thread 3's parked frame (qa_queue used the same scratch stack).
   e.qa_wait(1,retcode);
@@ -148,7 +200,7 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
   assert.strictEqual(e.get_esp()>>>0,0x07000014,'WaitForSingleObjectEx frame popped');
   // Non-alertable parked wait is never woken by an APC.
   reset();e.qa_wait(0,retcode);
-  asThread(1);e.qa_queue(apc,0xe1002,0x61);asThread(3);e.qa_wait(0,retcode);
+  asThread(1);queue(apc,0xe1002,0x61);asThread(3);e.qa_wait(0,retcode);
   assert.strictEqual(e.apc_wake_wait(),0);
   e.clear_yield();
 
