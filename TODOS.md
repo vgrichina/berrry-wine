@@ -1693,13 +1693,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
-  status: active (four native fault-control cases pass; tested code integration underway)
+  status: active (fault retention published; original ground/gameplay capture resumed)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: fresh handle37446; scratch/usage-watch/alice-land-native-fault-retention-nov03
+  worker: fresh handle96082; scratch/usage-watch/alice-authentic-ground-gameplay-nov03
   candidate: test/binaries/candidates/alice-demo/alice.exe
-  Next: Integrate and publish the eight-file fault-retention candidate. Note0799643ef: locked full build, six focused suites, actual main/cooperative armed UD2 and unchanged unarmed cases PASS. Scheduler slot/native thread identity and bounded partial stack fixed; durable termination preserves first Error and releases input. Full recovered SHA and normal stopped snapshot verified. pngjs was pinned after allocation but before successful tests; retain workflow caveat without discarding functional evidence. Runtime serialized behind Jedi. Original opening gameplay remains accepted; no new thermal/knife proof.
+  Next: Fresh original NewGame/Easy run with landed0c2bc2da5 fault retention and accepted relocation/polling adapters; collect coherent engine-selected movement-phase Player/state samples and allocation continuity, supported/airborne comparisons, then ordinary wind/plank/knife progress. Integrated locked build and six suites PASS; matching four actual native fault cases retained, full recovery SHA and normal stopped snapshot verified. Runtime waits Jedi explicit release. Original opening gameplay remains accepted; thermal/knife progress unverified.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
-  Evidence: docs/re-notes/alice-cooperative-fault-owner-repair-20261103.md; scratch/runs/20261103-alice-cooperative-fault-owner-repair/; docs/re-notes/alice-demo.md
+  Evidence: docs/re-notes/alice-native-fault-retention-integration-20261103.md; scratch/runs/20261103-alice-land-native-fault-retention/; docs/re-notes/alice-tested-poll-authentic-capture-20261103.md
 
 
 - [x] Sizeless virtual decommit corrupts neighboring allocation
