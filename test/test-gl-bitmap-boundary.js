@@ -65,6 +65,8 @@ async function transport() {
       async request(message) {
         const item = message.surfaces[0];
         assert.strictEqual(item.bpp, bpp, 'transport carries semantic format');
+        assert.deepStrictEqual(item.colorMasks,bpp===16?[0x7c00,0x03e0,0x001f]:undefined,
+          'transport retains stored channel masks independently of byte width');
         assert.deepStrictEqual(Array.from(item.pixels), bpp === 32 ? [40, 56, 72, 60] : [82, 49, 58, 255]);
         return { value: 0, surfaces: [{ id: 5, x: 0, y: 0, width: 1, height: 1,
           pixels: new Uint8Array([0, 255, 0, 17]) }], windows: [], activeWindows: [], contexts: 0 };
