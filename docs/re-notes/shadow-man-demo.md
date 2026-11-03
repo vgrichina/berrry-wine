@@ -1,5 +1,9 @@
 # Shadow Man original demo — InstallShield bootstrap
 
+Current result, 2026-11-03: [ordinary defaults, menu and player-controlled
+gameplay](shadow-man-config-runtime-20261103.md) were captured on the exact
+current module. The historical installer investigation below remains preserved.
+
 Historical source last updated, 2026-10-22. Runtime and implementation claims below describe that dated source; see current app notes and source for subsequent changes.
 
 Offline investigation2026-10-22, lane NEW-GAME-SHADOW-MAN-DEMO-20261013. Full sealed analysis, original identities, bounded recovery and next capture contract: Error112 report (historical artifact: `../../scratch/runs/20261022-shadow-man-error112-cause/REPORT.md`).
