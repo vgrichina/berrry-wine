@@ -1,5 +1,65 @@
 # American McGee's Alice demo
 
+
+## CLI cooperative loader deadlock repaired (2026-11-03)
+
+Run `scratch/runs/20261103-alice-gate-scheduling-repair/` repairs the measured
+main-await/cooperative-owner cycle below. A contended CLI loader admission now
+lets the existing cooperative DLL attach owner advance through the actual
+ThreadManager scheduler. Main remains parked until ordinary atomic gate
+admission succeeds. Gate release, real module references, generation pins,
+attach/detach serialization and callback errors retain their existing owners.
+No callback is skipped and no guest clock or frozen credit is manufactured.
+
+The production CLI regression was measured **before** the repair. A real PE
+EXE loads a real DLL and creates a cooperative thread; its THREAD_ATTACH
+callback holds owner 2 across multiple quanta while main calls FreeLibrary.
+The old CLI cannot finish the step and is killed by the 20-second failure
+guard. Byte-identical EXE/DLL fixtures complete in 0.204 seconds after repair;
+the guard never releases a gate. Real callback thread ID 2, same-owner nested
+LoadLibrary/FreeLibrary, completed attach before detach, and thread ExitThread
+77 are asserted. Separate ordinary scheduling and faulted-owner controls pass;
+the latter retains the unfinished image's real quarantine pin. Rejection,
+retired requester, uncontended and recursive admission controls also pass.
+
+Validation passed on the worker's finite-TTL boat:
+
+- `test/test-cli-cooperative-dll-gate.js`, default, `--ordinary`, `--fault-owner`;
+- `test/test-cooperative-dll-owner.js` and `test/test-dll-callback-serialization.js`;
+- `test/test-dll-lifecycle-races.js` and `test/test-dll-terminal-lifecycle.js`;
+- `flock /tmp/wine-build.lock bash tools/build.sh`.
+
+The three changed ownership-census producer hashes were resealed after an
+explicit lifetime review; broader invocation ownership remains pending. The
+full build generated the canonical 2,079,536-byte module, SHA256
+`24880b0ebdf170b2443d977074bc80f12b3959647dee69114cb09965a70c4741`,
+byte-identical to the ordered GL/Shadow/Jedi predecessor module. The actual
+original run's compile and instantiate observations match those bytes.
+`final-source-inputs.json.gz` records 4,167 source/test/support identities;
+local and remote hashes match before and after runtime. All 15 pinned Alice
+originals also match before and after use.
+
+ONE original execution passed batch 1091, completed the attach continuation,
+and reached the fully painted 640×480 main menu, reviewed at batch 1486.
+All 22 observed loader promises resolved; later observations retain a free
+gate and no attach continuation. Ordinary click at batch 1589 and Enter
+character (`keypress:13`, WM_CHAR) at batch 1693 were queued after visual
+review. Reviewed subsequent frames still show the main menu. A direct HTTP
+`action:click` was rejected without injection before the supported `cmd`
+form was used. No New Game transition or gameplay is established. The same
+run ended at its supervisor bound, 1,734 batches / 130.437 seconds, with clean
+exit 0; there was no second original launch or unchanged retry.
+
+The remaining bounded action is to verify ordinary keydown/keyup menu
+activation and capture the first resulting New Game state. The present
+WM_CHAR/click observations do not establish a new engine fault. Independent
+HTTP snapshots remained responsive; a long step request's HTTP client timeout
+was not a loader deadlock. The reviewed menu and post-input PNGs, complete
+logs, old/new fixtures, canonical module, build output, source seals and
+independently verified 97-member retrieval are under the run's `retrieved/`.
+Runtime helpers and port 8123 were absent before the explicitly delegated
+shutdown of `bx_fq4urv68` (original expiry 04:05:21.682Z).
+
 ## Current-main unfinished-step diagnosis (2026-11-03)
 
 Run `scratch/runs/20261103-alice-unfinished-step-diagnosis/` identifies the

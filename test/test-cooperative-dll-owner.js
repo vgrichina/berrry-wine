@@ -13,6 +13,33 @@ function makeThreadManager() {
 // after runSlice has cleared its owner. A pending callback gate deliberately
 // leaves time for another caller; no global owner may leak across that await.
 (async () => {
+  await (async function checkAdmission(loader) {
+  const memory = new WebAssembly.Memory({ initial: 1, maximum: 1, shared: true });
+  const e = owner => ({ memory, get_dll_callback_lock: () => 64, get_dll_callback_owner: () => owner });
+  const gate = new Int32Array(memory.buffer, 64, 2);
+  const caller = e(1), foreign = e(2);
+  const held = loader.tryDllCallbackGate(foreign);
+  const rejection = new Error('owner scheduler rejected');
+  await assert.rejects(loader.acquireDllCallbackGate(caller, async owner => {
+    assert.equal(owner, 2);
+    throw rejection;
+  }), error => error === rejection);
+  assert.deepEqual(Array.from(gate), [2, 1], 'admission rejection cannot release another owner');
+  const retired = e(3), bound = loader.bindDllCallbackOwner(retired, {});
+  await assert.rejects(loader.acquireDllCallbackGate(retired, async owner => {
+    assert.equal(owner, 2); bound.cancel(); return true;
+  }), /endpoint retired/);
+  assert.deepEqual(Array.from(gate), [2, 1], 'retired requester cannot alter held gate');
+  assert.equal(bound.receipt().dllCallbacksRetired, true);
+  held.release();
+  const unexpected = () => { throw new Error('uncontended/reentrant admission scheduled a guest'); };
+  const outer = await loader.acquireDllCallbackGate(caller, unexpected);
+  const inner = await loader.acquireDllCallbackGate(caller, unexpected);
+  assert.deepEqual(Array.from(gate), [1, 2], 'same-owner gate recursion remains real');
+  inner.release(); outer.release();
+  assert.deepEqual(Array.from(gate), [0, 0]);
+  console.log('PASS DLL admission rejection, requester retirement, uncontended and same-owner reentry');
+  })(require('../lib/dll-loader'));
   const { serviceDllUnloadAsync } = require('../lib/dll-loader');
   const manager = makeThreadManager();
   manager._runningThreadHandle = 0;

@@ -7279,6 +7279,16 @@ async function main() {
     }
   };
   let deadlineMs = MAX_SECONDS ? Date.now() + MAX_SECONDS * 1000 : 0;
+  const onDllCallbackGateWait = WORKER_THREADS ? undefined : async owner => {
+    if (stopped || (deadlineMs && Date.now() >= deadlineMs))
+      throw new Error('CLI stopped while waiting for DLL callback admission');
+    const stats = threadManager.runDllCallbackOwnerSlice(owner, BATCH_SIZE);
+    if (stats && stats.steps) workerStepsTotal += stats.steps;
+    // Give pending host I/O and independent control requests their usual turn.
+    // No guest clock or frozen step credit is manufactured for admission.
+    await new Promise(resolve => setImmediate(resolve));
+    return !!(stats && stats.threadsRun);
+  };
   // --control: live agent command channel (docs/design-agent-control.md).
   // Commands arrive over HTTP between batches. Input entries go through the
   // same parseInputEntries the --input schedule uses and drain through the
@@ -10818,6 +10828,7 @@ async function main() {
     // is ours.
     if (instance.exports.get_yield_reason() === 3) {
       await handleComDllYield({
+        onDllCallbackGateWait,
         exports: instance.exports,
         memoryBuffer: memory.buffer,
         exeBytes: new Uint8Array(exeBytes),
@@ -10978,6 +10989,7 @@ async function main() {
           `esp=${hex(instance.exports.get_esp())} syncDepth=${instance.exports.get_sync_msg_depth ? instance.exports.get_sync_msg_depth() : 0}`);
       }
       await handleLoadLibraryYield({
+        onDllCallbackGateWait,
         exports: instance.exports,
         memoryBuffer: memory.buffer,
         resourceHost: ctx,
@@ -11117,6 +11129,7 @@ async function main() {
           console.log(`[yield] T${thread.tid} reason=5 (load_library) eip=${hex(e.get_eip())} esp=${hex(e.get_esp())}`);
         }
         await handleLoadLibraryYield({
+          onDllCallbackGateWait,
           exports: e,
           memoryBuffer: memory.buffer,
           resourceHost: ctx,
@@ -11136,6 +11149,7 @@ async function main() {
           console.log(`[yield] T${thread.tid} reason=3 (com_load_dll) eip=${hex(e.get_eip())} esp=${hex(e.get_esp())}`);
         }
         await handleComDllYield({
+          onDllCallbackGateWait,
           exports: e,
           memoryBuffer: memory.buffer,
           exeBytes: new Uint8Array(exeBytes),
