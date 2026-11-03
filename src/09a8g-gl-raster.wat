@@ -1,3 +1,17 @@
+  (func $gl_source_unlimb (param $p i32) (result i32)
+    (i32.or (i32.trunc_f32_u (f32.load (local.get $p)))
+      (i32.shl (i32.trunc_f32_u (f32.load offset=4 (local.get $p))) (i32.const 16))))
+  (func $gl_source_clip (param $dst i32) (param $src i32)
+    (i32.store offset=84 (local.get $dst) (i32.const 0))
+    (if (i32.and (i32.eq (global.get $gl_sw_vertex_stride) (i32.const 112))
+        (i32.eqz (global.get $gl_sw_lit))) (then
+      (i32.store offset=84 (local.get $dst) (i32.trunc_f32_u (f32.load offset=108 (local.get $src))))
+      (i32.store offset=88 (local.get $dst) (call $gl_source_unlimb (i32.add (local.get $src) (i32.const 76))))
+      (i32.store offset=92 (local.get $dst) (call $gl_source_unlimb (i32.add (local.get $src) (i32.const 84))))
+      (i32.store offset=96 (local.get $dst) (call $gl_source_unlimb (i32.add (local.get $src) (i32.const 92))))
+      (i32.store offset=100 (local.get $dst) (call $gl_source_unlimb (i32.add (local.get $src) (i32.const 100))))
+    )))
+  (global $gl_sw_vertex_stride (mut i32) (i32.const 76))
   ;; =========================================================================
   ;; GL software rasterization -- lower WAT-native GL draws onto the D3DIM
   ;; rasterizer, with no JS anywhere in the path.
@@ -909,13 +923,15 @@
   ;; ---- small helpers ------------------------------------------------------
   ;; Scratch: +0 MVP, +64 object vec4, +96 eye vec4, +128 screen records,
   ;; +256 three clip records, +0x400 persistent normal matrix, +0x7C0
-  ;; default viewport, +0x800/+0xE00 polygon buffers. All fit in 0x1400.
+  ;; default viewport, +0x800/+0x1000 polygon buffers. All fit in 0x1800.
   ;; Clip record: +0 x, +4 y, +8 z, +12 w, +16 u, +20 v, then
   ;; r, g, b, a at +24..+36, unit 1's u, v at +40, +44, q0/q1 at +48/+52
   ;; and the eye-space fog distance at +56 -- all f32, so clipping lerps
   ;; the original fifteen floats and six user distances alike.
-  ;; Clip records are 84 bytes: original 60 plus six user distances.
-  ;; Polygon buffers at +0x800/+0xE00 hold fifteen records each, disjoint
+  ;; Clip records are 104 bytes: 84 interpolated bytes followed by the raw
+  ;; source tag and four integer words. Lerp retires the tag instead of
+  ;; interpolating provenance.
+  ;; Polygon buffers at +0x800/+0x1000 hold fifteen records each, disjoint
   ;; from the normal matrix (+0x400) throughout a multi-primitive draw.
   (global $gl_sw_user_mask (mut i32) (i32.const 0))
   (func $gl_sw_user_distances (param $clip i32) (param $object i32)
@@ -932,10 +948,10 @@
       (br_if $distances (i32.lt_u (local.get $i) (i32.const 6)))))
   (func $gl_sw_clip_at (param $k i32) (result i32)
     (i32.add (global.get $gl_sw_scratch)
-      (i32.add (i32.const 256) (i32.mul (local.get $k) (i32.const 84)))))
+      (i32.add (i32.const 256) (i32.mul (local.get $k) (i32.const 104)))))
   (func $gl_sw_poly_at (param $k i32) (result i32)
     (i32.add (global.get $gl_sw_scratch)
-      (i32.add (i32.const 0x800) (i32.mul (local.get $k) (i32.const 84)))))
+      (i32.add (i32.const 0x800) (i32.mul (local.get $k) (i32.const 104)))))
   ;; Signed distance to GL's near clip plane, z >= -w.
   (func $gl_sw_near_d (param $c i32) (result f32)
     (f32.add (f32.load offset=8 (local.get $c)) (f32.load offset=12 (local.get $c))))
@@ -968,7 +984,8 @@
           (f32.mul (f32.sub (f32.load (i32.add (local.get $b) (local.get $i))) (local.get $x))
                    (local.get $t))))
       (local.set $i (i32.add (local.get $i) (i32.const 4)))
-      (br_if $lp (i32.lt_u (local.get $i) (i32.const 84)))))
+      (br_if $lp (i32.lt_u (local.get $i) (i32.const 84))))
+    (i32.store offset=84 (local.get $dst) (i32.const 0)))
   ;; Per-vertex screen record, 32 bytes: +0 x, +4 y (i32), +8 z, +12 rhw,
   ;; +16 u, +20 v (f32), +24 colour (0xAARRGGBB).
   (func $gl_sw_screen_at (param $k i32) (result i32)
@@ -2342,6 +2359,7 @@
       (then (call $gl_sw_light_vertex (local.get $src) (i32.add (local.get $clip) (i32.const 24))))
       (else (call $memcpy (i32.add (local.get $clip) (i32.const 24))
         (i32.add (local.get $src) (i32.const 12)) (i32.const 16))))
+    (call $gl_source_clip (local.get $clip) (local.get $src))
     (if (f32.ge (call $gl_sw_near_d (local.get $clip)) (f32.const 0))
       (then (local.set $bits (i32.const 1))))
     (if (f32.ge (call $gl_sw_plane_d (local.get $clip) (i32.const 1)) (f32.const 0))
@@ -2362,7 +2380,7 @@
       (f32.mul (f32.load offset=12 (local.get $a)) (f32.sub
         (f32.mul (f32.load (local.get $b)) (f32.load offset=4 (local.get $c)))
         (f32.mul (f32.load offset=4 (local.get $b)) (f32.load (local.get $c)))))))
-  ;; One triangle: three 76-byte GL vertices starting at $v0. Transformed to
+  ;; One triangle: three packed GL vertices at the draw's selected stride. Transformed to
   ;; clip space, clipped against all six planes, and fanned out to $gl_sw_emit.
   ;; Without the clip, a triangle with a vertex behind the eye had to be
   ;; dropped whole (dividing by a negative w mirrors it about the origin), and
@@ -2375,7 +2393,7 @@
     (local.set $k (i32.const 0))
     (loop $lp
       (local.set $bits (call $gl_sw_xform_vertex (local.get $mvp)
-        (i32.add (local.get $v0) (i32.mul (local.get $k) (i32.const 76))) (local.get $k)))
+        (i32.add (local.get $v0) (i32.mul (local.get $k) (global.get $gl_sw_vertex_stride))) (local.get $k)))
       (if (i32.and (local.get $bits) (i32.const 1))
         (then (local.set $inside (i32.or (local.get $inside)
           (i32.shl (i32.const 1) (local.get $k))))))
@@ -2402,7 +2420,7 @@
         (local.set $k (i32.const 0))
         (loop $back_lighting
           (call $gl_sw_light_vertex
-            (i32.add (local.get $v0) (i32.mul (local.get $k) (i32.const 76)))
+            (i32.add (local.get $v0) (i32.mul (local.get $k) (global.get $gl_sw_vertex_stride)))
             (i32.add (call $gl_sw_clip_at (local.get $k)) (i32.const 24)))
           (local.set $k (i32.add (local.get $k) (i32.const 1)))
           (br_if $back_lighting (i32.lt_u (local.get $k) (i32.const 3))))
@@ -2411,8 +2429,12 @@
     ;; triangle is the LAST one -- decided before clipping invents vertices.
     (if (i32.eq (global.get $gl_shade_model) (i32.const 0x1D00))
       (then
+        (call $memcpy (i32.add (call $gl_sw_clip_at (i32.const 0)) (i32.const 84))
+          (i32.add (call $gl_sw_clip_at (i32.const 2)) (i32.const 84)) (i32.const 20))
         (call $memcpy (i32.add (call $gl_sw_clip_at (i32.const 0)) (i32.const 24))
           (i32.add (call $gl_sw_clip_at (i32.const 2)) (i32.const 24)) (i32.const 16))
+        (call $memcpy (i32.add (call $gl_sw_clip_at (i32.const 1)) (i32.const 84))
+          (i32.add (call $gl_sw_clip_at (i32.const 2)) (i32.const 84)) (i32.const 20))
         (call $memcpy (i32.add (call $gl_sw_clip_at (i32.const 1)) (i32.const 24))
           (i32.add (call $gl_sw_clip_at (i32.const 2)) (i32.const 24)) (i32.const 16))))
     (if (i32.and (i32.eqz (i32.or (local.get $side_out) (global.get $gl_sw_user_mask)))
@@ -2433,7 +2455,7 @@
     (local.set $plane (i32.const 0))
     (loop $planes
       (local.set $dst (i32.add (global.get $gl_sw_scratch)
-        (select (i32.const 0xE00) (i32.const 0x800) (i32.and (local.get $plane) (i32.const 1)))))
+        (select (i32.const 0x1000) (i32.const 0x800) (i32.and (local.get $plane) (i32.const 1)))))
       (local.set $n (call $gl_sw_clip_pass (local.get $poly) (local.get $n)
         (local.get $dst) (local.get $plane)))
       (if (i32.lt_u (local.get $n) (i32.const 3)) (then
@@ -2447,8 +2469,8 @@
     (block $done (loop $fan
       (br_if $done (i32.ge_s (i32.add (local.get $k) (i32.const 1)) (local.get $n)))
       (call $gl_sw_emit (local.get $vp) (local.get $poly)
-        (i32.add (local.get $poly) (i32.mul (local.get $k) (i32.const 84)))
-        (i32.add (local.get $poly) (i32.mul (i32.add (local.get $k) (i32.const 1)) (i32.const 84))))
+        (i32.add (local.get $poly) (i32.mul (local.get $k) (i32.const 104)))
+        (i32.add (local.get $poly) (i32.mul (i32.add (local.get $k) (i32.const 1)) (i32.const 104))))
       (local.set $k (i32.add (local.get $k) (i32.const 1)))
       (br $fan))))
 
@@ -2460,21 +2482,21 @@
     (local $k i32) (local $m i32) (local $a i32) (local $b i32)
     (local $da f32) (local $db f32)
     (loop $edge
-      (local.set $a (i32.add (local.get $src) (i32.mul (local.get $k) (i32.const 84))))
+      (local.set $a (i32.add (local.get $src) (i32.mul (local.get $k) (i32.const 104))))
       (local.set $b (i32.add (local.get $src) (i32.mul
         (select (i32.const 0) (i32.add (local.get $k) (i32.const 1))
           (i32.eq (i32.add (local.get $k) (i32.const 1)) (local.get $n)))
-        (i32.const 84))))
+        (i32.const 104))))
       (local.set $da (call $gl_sw_plane_d (local.get $a) (local.get $far)))
       (local.set $db (call $gl_sw_plane_d (local.get $b) (local.get $far)))
       (if (f32.ge (local.get $da) (f32.const 0))
         (then
-          (call $memcpy (i32.add (local.get $dst) (i32.mul (local.get $m) (i32.const 84)))
-            (local.get $a) (i32.const 84))
+          (call $memcpy (i32.add (local.get $dst) (i32.mul (local.get $m) (i32.const 104)))
+            (local.get $a) (i32.const 104))
           (local.set $m (i32.add (local.get $m) (i32.const 1)))))
       (if (i32.ne (f32.ge (local.get $da) (f32.const 0)) (f32.ge (local.get $db) (f32.const 0)))
         (then
-          (call $gl_sw_lerp_into (i32.add (local.get $dst) (i32.mul (local.get $m) (i32.const 84)))
+          (call $gl_sw_lerp_into (i32.add (local.get $dst) (i32.mul (local.get $m) (i32.const 104)))
             (local.get $a) (local.get $b)
             (f32.div (local.get $da) (f32.sub (local.get $da) (local.get $db))))
           (local.set $m (i32.add (local.get $m) (i32.const 1)))))
@@ -2636,7 +2658,9 @@
     ;; $gl_sw_color reads r,g,b,a at +12..+24 of a GL vertex; the clip
     ;; record keeps them twelve bytes further on.
     (i32.store offset=24 (local.get $out)
-      (call $gl_sw_color (i32.add (local.get $c) (i32.const 12))))
+      (if (result i32) (i32.load offset=84 (local.get $c))
+        (then (call $gl_source_pack (i32.add (local.get $c) (i32.const 84))))
+        (else (call $gl_sw_color (i32.add (local.get $c) (i32.const 12))))))
     ;; Fog distance: the eye-space |z| the clip record carries (+56). Clip w
     ;; is the same number only under a perspective projection.
     (if (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 64))
@@ -3176,10 +3200,12 @@
     (local $xmajor i32) (local $col i32)
     (drop (call $gl_sw_xform_vertex (local.get $mvp) (local.get $v0) (i32.const 0)))
     (drop (call $gl_sw_xform_vertex (local.get $mvp)
-      (i32.add (local.get $v0) (i32.const 76)) (i32.const 1)))
+      (i32.add (local.get $v0) (global.get $gl_sw_vertex_stride)) (i32.const 1)))
     ;; GL_FLAT: a line's provoking vertex is its second.
     (if (i32.eq (global.get $gl_shade_model) (i32.const 0x1D00))
-      (then (call $memcpy (i32.add (call $gl_sw_clip_at (i32.const 0)) (i32.const 24))
+      (then (call $memcpy (i32.add (call $gl_sw_clip_at (i32.const 0)) (i32.const 84))
+        (i32.add (call $gl_sw_clip_at (i32.const 1)) (i32.const 84)) (i32.const 20))
+        (call $memcpy (i32.add (call $gl_sw_clip_at (i32.const 0)) (i32.const 24))
         (i32.add (call $gl_sw_clip_at (i32.const 1)) (i32.const 24)) (i32.const 16))))
     (local.set $a (call $gl_sw_clip_at (i32.const 0)))
     (local.set $b (call $gl_sw_clip_at (i32.const 1)))
@@ -3477,11 +3503,12 @@
       (then (global.set $gl_line_phase (i32.const 0)))
       (else (if (local.get $phase_cell)
         (then (global.set $gl_line_phase (i32.load (local.get $phase_cell)))))))
+    (global.set $gl_sw_vertex_stride (call $gl_source_packed_stride (local.get $start)))
     (local.set $base (i32.add (local.get $start) (i32.const 32)))
     (local.set $i (i32.const 0))
     (block $done (loop $lp
       (br_if $done (i32.gt_u (i32.add (local.get $i) (local.get $step)) (local.get $vertices)))
-      (local.set $v (i32.add (local.get $base) (i32.mul (local.get $i) (i32.const 76))))
+      (local.set $v (i32.add (local.get $base) (i32.mul (local.get $i) (global.get $gl_sw_vertex_stride))))
       (if (i32.eq (local.get $step) (i32.const 3))
         (then (call $gl_sw_triangle (local.get $mvp) (local.get $vp) (local.get $v)))
         (else (if (i32.eq (local.get $step) (i32.const 2))
@@ -3501,7 +3528,7 @@
   ;; With a D3D render Worker attached (--d3d-worker, and Threads mode in the
   ;; browser) a draw is queued there instead of rasterized here, exactly as
   ;; D3DIM's are: the guest runs on while the Worker draws. The record is a
-  ;; 1096-byte snapshot of everything $gl_sw_draw reads that the guest may
+  ;; 2700-byte snapshot of everything $gl_sw_draw reads that the guest may
   ;; change before the Worker gets to it, then the packed draw record itself:
   ;;   +0    state block (+0..+63 of $gl_sw_st)
   ;;   +64   top of each matrix stack, 0..3, 64 bytes each
@@ -3698,7 +3725,7 @@
     (i32.store offset=4 (local.get $d) (i32.const 2700))
     (i32.store offset=8 (local.get $d) (local.get $start))
     (i32.store offset=12 (local.get $d)
-      (i32.add (i32.mul (local.get $vertices) (i32.const 76)) (i32.const 32)))
+      (i32.add (i32.mul (local.get $vertices) (call $gl_source_packed_stride (local.get $start))) (i32.const 32)))
     (if (i32.eqz (call $host_gpu_gl_call (i32.const 0x20005) (local.get $d) (i32.const 0)))
       (then
         (global.set $gl_sw_worker_ok (i32.const 2))
@@ -3781,7 +3808,7 @@
     (local.set $step (select (i32.const 1)
       (select (i32.const 2) (i32.const 3) (i32.eq (local.get $mode) (i32.const 1)))
       (i32.eqz (local.get $mode))))
-    (local.set $n (i32.div_u (i32.load offset=20 (local.get $rec)) (i32.const 76)))
+    (local.set $n (i32.div_u (i32.load offset=20 (local.get $rec)) (call $gl_source_packed_stride (local.get $rec))))
     (global.set $gl_stencil_worker_state (i32.add (local.get $snap) (i32.const 1040)))
     (global.set $gl_stencil_pixels (i32.load offset=1076 (local.get $snap)))
     (global.set $gl_stencil_pitch (i32.load offset=1080 (local.get $snap)))

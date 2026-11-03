@@ -1,3 +1,20 @@
+  (func $gl_source_array (param $index i32) (param $stack i32) (result i32)
+    (local $p i32) (local $bits i32) (local $stride i32) (local $tag i32)
+    (if (i32.gt_u (i32.sub (global.get $gl_cp_type) (i32.const 0x1400)) (i32.const 5))
+      (then (return (i32.const 0))))
+    (local.set $stride (call $gl_array_type_bytes (global.get $gl_cp_type)))
+    (local.set $bits (i32.shl (local.get $stride) (i32.const 3)))
+    (local.set $tag (i32.or (local.get $bits) (i32.or
+      (select (i32.const 256) (i32.const 0) (i32.eqz (i32.and (global.get $gl_cp_type) (i32.const 1))))
+      (select (i32.const 512) (i32.const 0) (i32.eq (global.get $gl_cp_size) (i32.const 3))))))
+    (local.set $p (call $gl_array_addr (global.get $gl_cp_guest) (global.get $gl_cp_size)
+      (global.get $gl_cp_type) (global.get $gl_cp_stride) (local.get $index)))
+    (i32.store offset=4 (local.get $stack) (local.get $tag))
+    (i32.store offset=8 (local.get $stack) (call $gl_source_load (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 0))) (local.get $bits)))
+    (i32.store offset=12 (local.get $stack) (call $gl_source_load (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 1))) (local.get $bits)))
+    (i32.store offset=16 (local.get $stack) (call $gl_source_load (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 2))) (local.get $bits)))
+    (i32.store offset=20 (local.get $stack) (if (result i32) (i32.eq (global.get $gl_cp_size) (i32.const 4)) (then (call $gl_source_load (i32.add (local.get $p) (i32.mul (local.get $stride) (i32.const 3))) (local.get $bits))) (else (i32.const 0))))
+    (i32.const 1))
   ;; OpenGL current attributes and client-array frontend. Kept separate from
   ;; record transport so the byte-stream encoder remains mechanically small.
   ;; $gl_state_intercept returns 1 when the call was fully consumed here.
@@ -30,11 +47,11 @@
         (local.set $guest (call $heap_alloc (i32.const 16)))
         (if (i32.eqz (local.get $guest)) (then (unreachable)))
         (local.set $p (call $g2w (local.get $guest)))
-        (local.set $guest (call $heap_alloc (i32.const 176)))
+        (local.set $guest (call $heap_alloc (i32.const 196)))
         (if (i32.eqz (local.get $guest)) (then
           (call $heap_free (call $w2g (local.get $p))) (unreachable)))
         (local.set $state (call $g2w (local.get $guest)))))
-    (memory.fill (local.get $state) (i32.const 0) (i32.const 176))
+    (memory.fill (local.get $state) (i32.const 0) (i32.const 196))
     (i32.store (local.get $p) (local.get $context))
     (i32.store offset=12 (local.get $p) (global.get $current_thread_id))
     (i32.store offset=4 (local.get $p) (i32.atomic.load (region.addr $GL_MTX_BLOCKS 12)))
@@ -47,6 +64,7 @@
     (if (i32.eqz (local.get $context)) (then (return)))
     (local.set $p (call $gl_state_slot (local.get $context) (i32.const 1)))
     (if (i32.eqz (local.get $p)) (then (return)))
+    (call $gl_source_save (i32.add (local.get $p) (i32.const 176)))
     (f32.store offset=4 (local.get $p) (global.get $gl_color_r))
     (f32.store offset=8 (local.get $p) (global.get $gl_color_g))
     (f32.store offset=12 (local.get $p) (global.get $gl_color_b))
@@ -484,6 +502,7 @@
     (i32.const 0))
 
   (func $gl_state_defaults
+    (global.set $gl_source_tag (i32.const 0))
     (global.set $gl_color_r (f32.const 1)) (global.set $gl_color_g (f32.const 1))
     (global.set $gl_color_b (f32.const 1)) (global.set $gl_color_a (f32.const 1))
     (global.set $gl_tex_s (f32.const 0)) (global.set $gl_tex_t (f32.const 0))
@@ -515,6 +534,7 @@
     (call $gl_state_defaults)
     (local.set $p (call $gl_state_slot (local.get $context) (i32.const 0)))
     (if (local.get $p) (then
+      (call $gl_source_restore (i32.add (local.get $p) (i32.const 176)))
       (global.set $gl_color_r (f32.load offset=4 (local.get $p)))
       (global.set $gl_color_g (f32.load offset=8 (local.get $p)))
       (global.set $gl_color_b (f32.load offset=12 (local.get $p)))
@@ -588,7 +608,7 @@
             (else (i32.atomic.store (region.addr $GL_MTX_BLOCKS 12) (local.get $next))))
           (local.set $state (i32.load offset=8 (local.get $node)))
           (call $gl_state_free_attribs (i32.load offset=136 (local.get $state)))
-          (memory.fill (local.get $state) (i32.const 0) (i32.const 176))
+          (memory.fill (local.get $state) (i32.const 0) (i32.const 196))
           (i32.store offset=4 (local.get $node) (global.get $gl_state_free_contexts))
           (global.set $gl_state_free_contexts (local.get $node))
           (br $done)))
@@ -670,7 +690,7 @@
     (i32.add (local.get $guest) (i32.mul (local.get $index) (local.get $stride))))
 
   (func $gl_state_array_element (param $index i32)
-    (local $p i32) (local $b i32) (local $x f32) (local $y f32) (local $z f32)
+    (local $source_guest i32) (local $source_stack i32) (local $p i32) (local $b i32) (local $x f32) (local $y f32) (local $z f32)
     (if (i32.and (i32.ne (i32.and (global.get $gl_client_bits) (i32.const 2)) (i32.const 0))
         (i32.and (i32.ne (i32.and (global.get $gl_state_pointer_bits) (i32.const 2)) (i32.const 0))
           (i32.ne (call $gl_array_type_bytes (global.get $gl_np_type)) (i32.const 0)))) (then
@@ -686,15 +706,23 @@
       (local.set $p (call $gl_array_addr (global.get $gl_cp_guest) (global.get $gl_cp_size)
         (global.get $gl_cp_type) (global.get $gl_cp_stride) (local.get $index)))
       (local.set $b (call $gl_array_type_bytes (global.get $gl_cp_type)))
-      (if (i32.gt_u (global.get $gl_cp_size) (i32.const 0)) (then
-        (global.set $gl_color_r (call $gl_array_read (local.get $p) (global.get $gl_cp_type) (i32.const 1)))))
-      (if (i32.gt_u (global.get $gl_cp_size) (i32.const 1)) (then
-        (global.set $gl_color_g (call $gl_array_read (i32.add (local.get $p) (local.get $b)) (global.get $gl_cp_type) (i32.const 1)))))
-      (if (i32.gt_u (global.get $gl_cp_size) (i32.const 2)) (then
-        (global.set $gl_color_b (call $gl_array_read (i32.add (local.get $p) (i32.mul (local.get $b) (i32.const 2))) (global.get $gl_cp_type) (i32.const 1)))))
-      (if (i32.gt_u (global.get $gl_cp_size) (i32.const 3))
-        (then (global.set $gl_color_a (call $gl_array_read (i32.add (local.get $p) (i32.mul (local.get $b) (i32.const 3))) (global.get $gl_cp_type) (i32.const 1))))
-        (else (global.set $gl_color_a (f32.const 1))))))
+      (local.set $source_guest (call $gl_alloc_affine (i32.const 24)))
+      (if (i32.eqz (local.get $source_guest)) (then (unreachable)))
+      (local.set $source_stack (call $g2w (local.get $source_guest)))
+      (if (call $gl_source_array (local.get $index) (local.get $source_stack))
+        (then (drop (call $gl_state_intercept (i32.const 0x10003) (local.get $source_stack))))
+        (else
+          (global.set $gl_source_tag (i32.const 0))
+          (if (i32.gt_u (global.get $gl_cp_size) (i32.const 0)) (then
+            (global.set $gl_color_r (call $gl_array_read (local.get $p) (global.get $gl_cp_type) (i32.const 1)))))
+          (if (i32.gt_u (global.get $gl_cp_size) (i32.const 1)) (then
+            (global.set $gl_color_g (call $gl_array_read (i32.add (local.get $p) (local.get $b)) (global.get $gl_cp_type) (i32.const 1)))))
+          (if (i32.gt_u (global.get $gl_cp_size) (i32.const 2)) (then
+            (global.set $gl_color_b (call $gl_array_read (i32.add (local.get $p) (i32.mul (local.get $b) (i32.const 2))) (global.get $gl_cp_type) (i32.const 1)))))
+          (if (i32.gt_u (global.get $gl_cp_size) (i32.const 3))
+            (then (global.set $gl_color_a (call $gl_array_read (i32.add (local.get $p) (i32.mul (local.get $b) (i32.const 3))) (global.get $gl_cp_type) (i32.const 1))))
+            (else (global.set $gl_color_a (f32.const 1))))))
+      (call $heap_free (local.get $source_guest))))
     (if (i32.and (i32.ne (i32.and (global.get $gl_client_bits) (i32.const 8)) (i32.const 0))
         (i32.and (i32.ne (i32.and (global.get $gl_state_pointer_bits) (i32.const 8)) (i32.const 0))
           (i32.ne (call $gl_array_type_bytes (global.get $gl_tp0_type)) (i32.const 0)))) (then
@@ -808,14 +836,19 @@
   (func $gl_state_intercept (param $op i32) (param $stack i32) (result i32)
     (local $a i32) (local $unit i32) (local $i i32) (local $count i32) (local $p i32) (local $b i32)
     (local $w i32) (local $z f32)
+    (if (i32.eq (local.get $op) (i32.const 0x10003)) (then
+      (call $gl_source_install (i32.load offset=4 (local.get $stack)) (i32.load offset=8 (local.get $stack)) (i32.load offset=12 (local.get $stack)) (i32.load offset=16 (local.get $stack)) (i32.load offset=20 (local.get $stack)))
+      (return (i32.const 1))))
     (if (call $gl_interleaved_intercept (local.get $op) (local.get $stack))
       (then (return (i32.const 1))))
     (if (call $gl_current_color_query (local.get $op) (local.get $stack))
       (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 23)) (then
+      (global.set $gl_source_tag (i32.const 0))
       (global.set $gl_color_r (f32.load offset=4 (local.get $stack))) (global.set $gl_color_g (f32.load offset=8 (local.get $stack)))
       (global.set $gl_color_b (f32.load offset=12 (local.get $stack))) (global.set $gl_color_a (f32.const 1)) (return (i32.const 1))))
     (if (i32.or (i32.eq (local.get $op) (i32.const 24)) (i32.eq (local.get $op) (i32.const 26))) (then
+      (global.set $gl_source_tag (i32.const 0))
       (local.set $p (call $g2w (i32.load offset=4 (local.get $stack))))
       (global.set $gl_color_r (f32.load (local.get $p))) (global.set $gl_color_g (f32.load offset=4 (local.get $p)))
       (global.set $gl_color_b (f32.load offset=8 (local.get $p)))
@@ -824,31 +857,22 @@
         (else (global.set $gl_color_a (f32.const 1))))
       (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 25)) (then
+      (global.set $gl_source_tag (i32.const 0))
       (global.set $gl_color_r (f32.load offset=4 (local.get $stack))) (global.set $gl_color_g (f32.load offset=8 (local.get $stack)))
       (global.set $gl_color_b (f32.load offset=12 (local.get $stack))) (global.set $gl_color_a (f32.load offset=16 (local.get $stack))) (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 27)) (then
-      (local.set $p (call $g2w (i32.load offset=4 (local.get $stack))))
-      (global.set $gl_color_r (f32.div (f32.convert_i32_u (i32.load8_u (local.get $p))) (f32.const 255)))
-      (global.set $gl_color_g (f32.div (f32.convert_i32_u (i32.load8_u offset=1 (local.get $p))) (f32.const 255)))
-      (global.set $gl_color_b (f32.div (f32.convert_i32_u (i32.load8_u offset=2 (local.get $p))) (f32.const 255)))
-      (global.set $gl_color_a (f32.div (f32.convert_i32_u (i32.load8_u offset=3 (local.get $p))) (f32.const 255))) (return (i32.const 1))))
+      (call $gl_source_install (i32.const 8) (call $gl8 (i32.add (i32.load offset=4 (local.get $stack)) (i32.const 0))) (call $gl8 (i32.add (i32.load offset=4 (local.get $stack)) (i32.const 1))) (call $gl8 (i32.add (i32.load offset=4 (local.get $stack)) (i32.const 2))) (call $gl8 (i32.add (i32.load offset=4 (local.get $stack)) (i32.const 3))))
+      (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 56)) (then
-      (global.set $gl_color_r (f32.div (f32.convert_i32_u (i32.and (i32.load offset=4 (local.get $stack)) (i32.const 255))) (f32.const 255)))
-      (global.set $gl_color_g (f32.div (f32.convert_i32_u (i32.and (i32.load offset=8 (local.get $stack)) (i32.const 255))) (f32.const 255)))
-      (global.set $gl_color_b (f32.div (f32.convert_i32_u (i32.and (i32.load offset=12 (local.get $stack)) (i32.const 255))) (f32.const 255)))
-      (global.set $gl_color_a (f32.div (f32.convert_i32_u (i32.and (i32.load offset=16 (local.get $stack)) (i32.const 255))) (f32.const 255))) (return (i32.const 1))))
+      (call $gl_source_install (i32.const 8) (i32.and (i32.load offset=4 (local.get $stack)) (i32.const 255)) (i32.and (i32.load offset=8 (local.get $stack)) (i32.const 255)) (i32.and (i32.load offset=12 (local.get $stack)) (i32.const 255)) (i32.and (i32.load offset=16 (local.get $stack)) (i32.const 255)))
+      (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 58)) (then
-      (local.set $p (call $g2w (i32.load offset=4 (local.get $stack))))
-      (global.set $gl_color_r (f32.div (f32.convert_i32_u (i32.load8_u (local.get $p))) (f32.const 255)))
-      (global.set $gl_color_g (f32.div (f32.convert_i32_u (i32.load8_u offset=1 (local.get $p))) (f32.const 255)))
-      (global.set $gl_color_b (f32.div (f32.convert_i32_u (i32.load8_u offset=2 (local.get $p))) (f32.const 255)))
-      (global.set $gl_color_a (f32.const 1)) (return (i32.const 1))))
+      (call $gl_source_install (i32.const 520) (call $gl8 (i32.add (i32.load offset=4 (local.get $stack)) (i32.const 0))) (call $gl8 (i32.add (i32.load offset=4 (local.get $stack)) (i32.const 1))) (call $gl8 (i32.add (i32.load offset=4 (local.get $stack)) (i32.const 2))) (i32.const 0))
+      (return (i32.const 1))))
     ;; 111 glColor3ub(r, g, b): GLubyte arguments widened to stack words.
     (if (i32.eq (local.get $op) (i32.const 111)) (then
-      (global.set $gl_color_r (f32.div (f32.convert_i32_u (i32.and (i32.load offset=4 (local.get $stack)) (i32.const 255))) (f32.const 255)))
-      (global.set $gl_color_g (f32.div (f32.convert_i32_u (i32.and (i32.load offset=8 (local.get $stack)) (i32.const 255))) (f32.const 255)))
-      (global.set $gl_color_b (f32.div (f32.convert_i32_u (i32.and (i32.load offset=12 (local.get $stack)) (i32.const 255))) (f32.const 255)))
-      (global.set $gl_color_a (f32.const 1)) (return (i32.const 1))))
+      (call $gl_source_install (i32.const 520) (i32.and (i32.load offset=4 (local.get $stack)) (i32.const 255)) (i32.and (i32.load offset=8 (local.get $stack)) (i32.const 255)) (i32.and (i32.load offset=12 (local.get $stack)) (i32.const 255)) (i32.const 0))
+      (return (i32.const 1))))
     ;; Two-component texture coordinates leave r = 0 and q = 1, as GL defines.
     (if (i32.eq (local.get $op) (i32.const 28)) (then
       (global.set $gl_tex_s (f32.load offset=4 (local.get $stack))) (global.set $gl_tex_t (f32.load offset=8 (local.get $stack)))
@@ -932,7 +956,7 @@
         (f32.load offset=8 (local.get $p)) (f32.load offset=12 (local.get $p)))
       (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 76)) (then
-      (local.set $a (call $heap_alloc (i32.const 72)))
+      (local.set $a (call $heap_alloc (i32.const 92)))
       (if (i32.eqz (local.get $a)) (then (unreachable)))
       (local.set $p (call $g2w (local.get $a)))
         (i32.store (local.get $p) (global.get $gl_state_attrib_head))
@@ -944,6 +968,7 @@
         (f32.store offset=44 (local.get $p) (global.get $gl_normal_z)) (i32.store offset=48 (local.get $p) (global.get $gl_shade_model))
         (f32.store offset=52 (local.get $p) (global.get $gl_tex_r)) (f32.store offset=56 (local.get $p) (global.get $gl_tex_q))
         (f32.store offset=60 (local.get $p) (global.get $gl_tex1_r)) (f32.store offset=64 (local.get $p) (global.get $gl_tex1_q))
+        (call $gl_source_save (i32.add (local.get $p) (i32.const 72)))
         (i32.store offset=68 (local.get $p) (i32.load offset=4 (local.get $stack)))
         (global.set $gl_state_attrib_head (local.get $p))
         (global.set $gl_state_attrib_depth (i32.add (global.get $gl_state_attrib_depth) (i32.const 1)))
@@ -953,8 +978,11 @@
         (global.set $gl_state_attrib_depth (i32.sub (global.get $gl_state_attrib_depth) (i32.const 1)))
         (local.set $p (global.get $gl_state_attrib_head))
         (global.set $gl_state_attrib_head (i32.load (local.get $p)))
+        (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 1)) (then
+          (call $gl_source_restore (i32.add (local.get $p) (i32.const 72)))
         (global.set $gl_color_r (f32.load offset=4 (local.get $p))) (global.set $gl_color_g (f32.load offset=8 (local.get $p)))
         (global.set $gl_color_b (f32.load offset=12 (local.get $p))) (global.set $gl_color_a (f32.load offset=16 (local.get $p)))
+        ))
         ;; Current texture coordinates on both units belong to GL_CURRENT_BIT,
         ;; including r/q. Unrelated attribute masks leave changed values live.
         (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 1)) (then
@@ -1022,6 +1050,7 @@
       (i32.store offset=68 (global.get $gl_state_attrib_head) (i32.const 1))
       (global.set $gl_immediate_mode (i32.load offset=4 (local.get $stack)))
       (global.set $gl_immediate_floats (i32.const 0))
+      (global.set $gl_immediate_has_source (i32.const 0))
       ;; $p stays a guest address and each index is translated on its own:
       ;; the index array may run past the end of a guest page (see
       ;; $gl_array_read).
@@ -1058,6 +1087,7 @@
       (i32.store offset=68 (global.get $gl_state_attrib_head) (i32.const 1))
       (global.set $gl_immediate_mode (i32.load offset=4 (local.get $stack)))
       (global.set $gl_immediate_floats (i32.const 0))
+      (global.set $gl_immediate_has_source (i32.const 0))
       (loop $elements (if (i32.lt_u (local.get $i) (local.get $count)) (then
         (call $gl_state_array_element (i32.add (local.get $a) (local.get $i)))
         (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $elements))))

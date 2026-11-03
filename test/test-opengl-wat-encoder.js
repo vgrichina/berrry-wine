@@ -72,6 +72,7 @@ function writeArgs(memory, args, stackWa = STACK) {
 
 function jsRunner(memory, capacity, submissions, guestToWasm) {
   const encoder = new Stream.Encoder({
+    exactColors: true,
     getMemory: () => memory.buffer,
     guestToWasm,
     shared: false,

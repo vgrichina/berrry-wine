@@ -17,14 +17,15 @@ function form(s,name) {
   throw Error('unterminated '+name);
 }
 const handler=fs.readFileSync('src/09a8b-handlers-opengl.wat','utf8');
+const encoder=fs.readFileSync('src/09a8c-gl-encoder.wat','utf8');
 const registers=fs.readFileSync('src/03-registers.wat','utf8');
 function boot(mutation='') {
-  let body=form(handler,'$gl_color_integer_component')+'\n'+form(handler,'$handle_glColor_integer');
+  let body=form(handler,'$gl_source_load')+'\n'+form(encoder,'$gl_source_query')+'\n'+form(handler,'$handle_glColor_integer');
   if(mutation) {
     const before=body;
     if(mutation==='bias')body=body.replace('(f64.const 1))))','(f64.const 0))))');
     if(mutation==='sign')body=body.replace('(i32.shr_s (i32.shl','(i32.shr_u (i32.shl');
-    if(mutation==='alpha')body=body.replace('(local.set $a (f32.const 1))','(local.set $a (f32.const 0))');
+    if(mutation==='alpha')body=body.replace('(i32.const 0x200)','(i32.const 0)');
     if(mutation==='stride')body=body.replace('(i32.const 3)) (local.get $bits)','(i32.const 2)) (local.get $bits)');
     assert.notStrictEqual(body,before,'mutation anchor '+mutation);
   }
@@ -39,19 +40,22 @@ function boot(mutation='') {
     (defmacro (g2w-fast $p) (call $g2w $p))
     ${['$gl8','$gl16','$gl32'].map(n=>form(registers,n)).join('\n')}
     ${body}
-    (export "invoke" (func $handle_glColor_integer))`;
+    (export "invoke" (func $handle_glColor_integer))
+    (export "query" (func $gl_source_query))`;
   let allocations=0,frees=0,failAlloc=false,missing=-1,captured=null,calls=0;
   const t=p=>(p>>>12)===missing?240:p>=0x50000000?
     0x8000+(((p-0x50000000)>>>12)*0x2000)+(p&4095):p-0x400000+4096;
-  let v;
+  let v,rawExpected=[];
   const e=new WebAssembly.Instance(new WebAssembly.Module(compile(wat,new Map(),{mode:'production'}).wasmBinary),{fixture:{
-    translate:t,allocate:n=>{assert.strictEqual(n,20);allocations++;return failAlloc?0:0x420000;},
+    translate:t,allocate:n=>{assert.strictEqual(n,24);allocations++;return failAlloc?0:0x420000;},
     free:p=>{assert.strictEqual(p,0x420000);frees++;},
-    encode:(op,p,aux)=>{assert.strictEqual(op,25);assert.strictEqual(aux,0);calls++;captured=Array.from({length:4},(_,i)=>v.getFloat32(p+4+4*i,true));return 0;}
+    encode:(op,p,aux)=>{assert.strictEqual(op,0x10003);assert.strictEqual(aux,0);calls++;const tag=v.getUint32(p+4,true),bits=tag&255;
+      captured=Array.from({length:4},(_,i)=>i===3&&(tag&512)?1:e.query(v.getUint32(p+8+4*i,true),bits,tag&256));
+      for(let i=0;i<4;i++)assert.strictEqual(v.getUint32(p+8+4*i,true) >>> 0, rawExpected[i] >>> 0,'raw source captured before lowering');return 0;}
   }}).exports;
   v=new DataView(e.memory.buffer);
   return {e,v,t,missing:p=>{missing=p;},fail:()=>{failAlloc=true;},
-    state:()=>({allocations,frees,calls,captured})};
+    raw:values=>{rawExpected=values;},state:()=>({allocations,frees,calls,captured})};
 }
 function acceptance(h) {
   const {e,v,t}=h;
@@ -65,6 +69,7 @@ function acceptance(h) {
     values.slice(0,s.n).forEach((x,i)=>s.bits===8?bytes.writeUInt8(x&255,i*stride):s.bits===16?bytes.writeUInt16LE(x&65535,i*stride):bytes.writeUInt32LE(x>>>0,i*stride));
     for(let i=0;i<bytes.length;i++)v.setUint8(t(src+i),bytes[i]);
     const stack=Buffer.from(new Uint8Array(e.memory.buffer,t(esp),64));
+    h.raw(values.map((x,i)=>i>=s.n?0:s.bits===32?x>>>0:x&((2**s.bits)-1)));
     e.invoke(s.n,s.bits,+s.signed,+s.vector,src);
     const expected=values.map(x=>Math.fround((s.signed?2*x+1:x)/(2**s.bits-1)));
     if(s.n===3)expected[3]=1;

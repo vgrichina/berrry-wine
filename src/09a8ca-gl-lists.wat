@@ -395,7 +395,7 @@
           (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 1))))
         (i32.store offset=4 (local.get $p) (local.get $op))
         (memory.copy (i32.add (local.get $p) (i32.const 8)) (local.get $stack)
-          (i32.shl (i32.add (call $gl_arg_words (local.get $op)) (i32.const 1)) (i32.const 2)))
+          (i32.shl (i32.add (call $gl_source_arg_words (local.get $op)) (i32.const 1)) (i32.const 2)))
         (if (i32.or (i32.eq (local.get $op) (i32.const 109))
                     (i32.eq (local.get $op) (i32.const 34))) (then
           (call $gl_copy_from_guest (i32.add (local.get $p) (i32.const 16))
@@ -515,6 +515,7 @@
       (local.set $p (local.get $next)) (br $free))))
 
   (func $gl_list_scalar_command (param $op i32) (result i32)
+    (if (i32.eq (local.get $op) (i32.const 0x10003)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 179)) (then (return (i32.const 1))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 169)) (i32.const 2)) (then (return (i32.const 1))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 163)) (i32.const 2)) (then (return (i32.const 1))))
@@ -644,9 +645,12 @@
         (global.get $gl_np_stride) (local.get $index) (i32.const 1) (local.get $stack) (i32.const 4))
       (drop (call $gl_wat_encode_call (i32.const 63) (local.get $stack) (i32.const 0)))))
     (if (i32.and (local.get $bits) (i32.const 4)) (then
+      (if (call $gl_source_array (local.get $index) (local.get $stack))
+        (then (drop (call $gl_wat_encode_call (i32.const 0x10003) (local.get $stack) (i32.const 0))))
+        (else
       (call $gl_list_array_values (global.get $gl_cp_guest) (global.get $gl_cp_size) (global.get $gl_cp_type)
         (global.get $gl_cp_stride) (local.get $index) (i32.const 1) (local.get $stack) (i32.const 4))
-      (drop (call $gl_wat_encode_call (i32.const 25) (local.get $stack) (i32.const 0)))))
+      (drop (call $gl_wat_encode_call (i32.const 25) (local.get $stack) (i32.const 0)))        ))))
     (if (i32.and (local.get $bits) (i32.const 8)) (then
       (call $gl_list_array_values (global.get $gl_tp0_guest) (global.get $gl_tp0_size) (global.get $gl_tp0_type)
         (global.get $gl_tp0_stride) (local.get $index) (i32.const 0) (local.get $stack) (i32.const 8))
