@@ -1989,11 +1989,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Legacy texture cube API conformance
   id: D3D-LEGACY-TEXTURE-CAPS-AUDIT-20261013
-  worker: none (BORDER/cube corrections and native fixture are merged)
+  worker: codex:01a1a3b9-84c8-75a2-a6e3-35ee9e91cc00 (fresh rendered-boundary task; launcher14799)
   status: partial (capability corrections merged; pinned public COM evidence accepted; rendering audit remains)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Next: Do not reintegrate historical branch patches: current main includes cube122109793, BORDER93addaa3c and fixture-bootstrap682d0c824; common producer masks are texture0xF7DF/address0xF7. Retained actual public COM fixture passes47calls/45descriptors on pinned modulebc5412c1 (docs/re-notes/legacy-caps-early-exit-20261020.md), with current offline1053negative controls PASS. Existing Surface4/7 COM regression asserts failed cube creation, null output and intact guards; docs/legacy-surface47-abi-20261019.txt records both-dispatch historical candidate passes (a74ccff4/c0192423). That historical raw evidence is not currently located. Continue the advertised software/GPU behavior audit and current-runtime cube rejection/backend rendering coverage; do not create a duplicate source-only rejection test. Historical native pass does not prove current runtime or independent-face storage/backend/gameplay. Surface4/7 ABI already merged. Reconciliation evidence: scratch/runs/20261103-legacy-caps-main-reconcile/.
-  Queued: scratch/usage-watch/legacy-caps-rendered-boundary-next.task.txt specifies a public-COM point/bilinear and wrap/clamp pixel regression through software and real WebGL, with a discriminating negative control. Unlaunched; Alice and MDK2 retain both production slots. Recheck exact source pin and ownership at dispatch.
+  Running: scratch/usage-watch/legacy-caps-rendered-boundary-next.task.txt, output scratch/usage-watch/legacy-caps-rendered-boundary-nov03, source f8de08500d1efc49ed1c9fbcbee4d563fe7e141d. Prepare public-COM point/bilinear and wrap/clamp pixel regression through software and real WebGL with discriminating negative controls. Heavy execution and runtime allocation wait for explicit MDK2 runtime release. Next fallback23:34Z or completion/input sooner.
   Done: Correct advertised API and software/GPU behavior with versioned contract and tests.
 
 - [ ] Authorized original installer acceptance
