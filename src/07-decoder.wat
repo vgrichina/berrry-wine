@@ -2854,7 +2854,7 @@
           (else (call $thread_spill_enter))))))
 
   (func $decode_block (param $start_eip i32) (result i32)
-    (local $tstart i32)
+    (local $admit_modrm i32) (local $tstart i32)
     (local $op i32)
     (local $done i32) (local $icount i32)
     (local $prefix_rep i32)    ;; 0=none, 1=REP/REPE, 2=REPNE
@@ -3105,6 +3105,24 @@
       (if (global.get $rep_store_step) (then
         (if (i32.or (global.get $code16) (local.get $prefix_67)) (then (unreachable)))
         (block $supported
+          ;; Audited dword register-immediate ADD/OR/AND/SUB/XOR/CMP only.
+          ;; These existing handlers touch the register file and lazy flags,
+          ;; never guest memory. Keep ADC/SBB, byte/word forms and ALL prefixes
+          ;; outside this admission; a Group1 opcode alone proves nothing
+          ;; about its ModRM destination. Peek without advancing the decoder.
+          (if (i32.or (i32.eq (local.get $op) (i32.const 0x81))
+                      (i32.eq (local.get $op) (i32.const 0x83)))
+            (then
+              (if (i32.ne (global.get $d_pc)
+                          (i32.add (local.get $insn_start) (i32.const 1)))
+                (then (unreachable)))
+              (local.set $admit_modrm (call $gl8 (global.get $d_pc)))
+              (if (i32.ne (i32.and (local.get $admit_modrm) (i32.const 0xC0)) (i32.const 0xC0))
+                (then (unreachable)))
+              (if (i32.or (i32.eq (i32.and (local.get $admit_modrm) (i32.const 0x38)) (i32.const 0x10))
+                          (i32.eq (i32.and (local.get $admit_modrm) (i32.const 0x38)) (i32.const 0x18)))
+                (then (unreachable)))
+              (br $supported)))
           (br_if $supported (i32.and (i32.ge_u (local.get $op) (i32.const 64)) (i32.le_u (local.get $op) (i32.const 95))))
           (br_if $supported (i32.and (i32.ge_u (local.get $op) (i32.const 136)) (i32.le_u (local.get $op) (i32.const 139))))
           (br_if $supported (i32.and (i32.ge_u (local.get $op) (i32.const 176)) (i32.le_u (local.get $op) (i32.const 191))))
