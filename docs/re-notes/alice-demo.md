@@ -1,5 +1,54 @@
 # American McGee's Alice demo
 
+## Native wind approach reached; underwater blocker before knife (2026-11-03)
+
+Run `scratch/runs/20261103-alice-wind-knife-native/` used one original native
+CLI process, ordinary New Game / Easy and the complete natural opening.
+It reached the first village gnome sequence, returned control, approached
+the visible steam and made one ordinary W+Space jump. The reviewed capture
+at **30698** is inside the steam below the ledge; the following neutral
+capture at **30938** shows Alice underwater beneath the crossing. This is
+the concrete navigation blocker. A wind lift or far-side landing was not
+established. **Knife acquisition, held weapon, melee animation, projectile
+and target damage are all unverified.** No attack or retry was sent.
+
+Before launch, read-only original BSP/scripts and predecessor captures
+established the route: south from the starting cave, west through the timber
+passage rather than into the mushroom alcove, then south at the first gnome.
+The authentic `trigger_accelerate` is model4, origin `(-5088,5076,-112)`,
+world bounds `[-5192,-4984] × [5020,5132] × [-320,96]`, `speed -1`,
+`spawnflags 8`; the adjacent steam emitters identify the crossing. Beyond
+the south landing, the route turns east through the second dialogue trigger
+toward the knife altar at `(-3978,4326,-168)` and its natural `knife_cat`
+cinematic. These static facts establish availability and a route, not pickup
+or successful traversal. BSP SHA256 is
+`4d2435f126831467d52f23722823b5486b6e9ce2f9149bd2f5e06cca94457855`.
+The retained collision slices exclude mesh and mover collision.
+
+Native captures show HUD at24828, cave exit at26468, cleared timber jamb
+at27378, natural gnome sequence at27708/28908, HUD returned at30108 and
+steam alignment at30418. Every steering decision followed personal capture
+review. The earlier menu response-envelope error was repaired in the same
+process before any game input. Unchanged menu captures were original asset
+loading, resolved by the subsequent Easy menu. Native keyboard/focus delivery
+and movement worked; no engine attack or acceleration defect is established.
+Shared cleanup twice archived active local control helpers; they were restored
+from its recovery archives without restarting the guest. This interruption
+and the startup/loading time consumed much of the finite attempt.
+
+The sole process exited normally on ordinary stop after **1779.734 seconds**,
+under the immutable1800s/outer1860s limits, with **210 control commands
+including quit**. No browser, address tracing, shortcut, fabricated save or
+guest/config/registry/media edit was used. Source was committed main
+`a136f176803cacad9246a39194b405f87f66ebe2`; locked build and focused keyboard,
+frozen native control and DirectInput mouse tests passed. The actual compiled
+and instantiated module was2088037 bytes, SHA256
+`7c22e2715377fd09a71887a62211ccd3cc0e8c96e56cbc65ca792e8c35213726`.
+Original15/exact14 mappings, final runtime audit, fullSHA archive and recovery
+are retained in the run directory. No further campaign is authorized here;
+the next work is to resolve the basin position against the authentic wind
+trigger before another separately authorized attempt.
+
 ## First village dialogue reached; weapon and attack still unverified (2026-11-03)
 
 Run `scratch/runs/20261103-alice-first-visible-attack/` ends with a concrete
