@@ -58,6 +58,25 @@ const extraWat = String.raw`
     (i32.store (global.get $THUNK_BASE) (i32.const 0xCACA0001))
     (call $win32_dispatch (i32.const 0))
     (global.get $active_hwnd))
+  (func (export "test_guest_show_setup")
+    (global.set $main_hwnd (i32.const 0x10010))
+    (call $wnd_table_set (global.get $main_hwnd) (i32.const 0x401234))
+    (global.set $createwnd_implicit_show (i32.const 1)))
+  (func (export "test_child_creation_return") (param $stack i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (local.get $stack))
+    (call $gs32 (local.get $stack) (i32.const 0x405678))
+    (call $gs32 (i32.add (local.get $stack) (i32.const 4)) (i32.const 0x10011))
+    (call $win32_dispatch (i32.const 0))
+    (global.get $createwnd_implicit_show))
+  (func (export "test_stack_word") (param $offset i32) (result i32)
+    (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (local.get $offset))))
+  (func (export "test_guest_show_return") (param $destroy i32)
+    ;; Simulate ret 16 from WM_SHOWWINDOW, including nested creation changing
+    ;; main_hwnd. The outer continuation must retain its own target.
+    (global.set $main_hwnd (i32.const 0x10020))
+    (if (local.get $destroy) (then (call $wnd_table_remove (i32.const 0x10010))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+    (call $win32_dispatch (i32.const 0)))
 `;
 
 (async () => {
@@ -84,8 +103,30 @@ const extraWat = String.raw`
     'the WM_CREATE continuation makes the visible dialog active');
   assert.deepStrictEqual(activated, [main],
     'the implicit-show chain publishes the activation to the desktop foreground');
+  e.set_post_queue_count(0);
+  e.test_finish_implicit_show(0x074ff000);
+  assert.strictEqual(e.post_queue_depth(), 0,
+    'returning through the creation continuation again does not repeat the show');
   assert.strictEqual(e.test_created_owned_dialog_not_promoted(), 1,
     'owned dialogs do not replace the application main window');
+
+  e.test_guest_show_setup();
+  assert.strictEqual(e.test_child_creation_return(0x074fe000),1,
+    'nested child return must leave its parent implicit show pending');
+  assert.strictEqual(e.get_eip(),0x405678,'child returns normally without activation');
+  e.test_finish_implicit_show(0x074ff000);
+  assert.deepStrictEqual([4,8,12,16].map(e.test_stack_word),[0x10010,0x18,1,0],
+    'initial show runs before activation, on a resumable guest frame');
+  assert.strictEqual(e.get_esp()>>>0,0x074ff000-24);
+  e.test_guest_show_return(0);
+  assert.deepStrictEqual([4,8,12,16].map(e.test_stack_word),[0x10010,0x1c,1,0],
+    'activation follows show and retains its target across nested creation');
+  e.test_guest_show_setup();
+  e.test_finish_implicit_show(0x074ff000);
+  e.test_guest_show_return(1);
+  assert.strictEqual(e.get_eax(),0,'destruction during show fails creation');
+  assert.strictEqual(e.get_eip(),0x405678);
+  assert.strictEqual(e.get_esp()>>>0,0x074ff008,'destroyed callback releases its frame');
 
   console.log('PASS  created top-level app dialog promotes and arms activation');
 })().catch(error => {

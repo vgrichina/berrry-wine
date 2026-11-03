@@ -799,3 +799,11 @@ The software RGB565 candidate changes IDirect3D9::CheckDeviceFormatConversion
 from unconditional success to rejecting conversions involving format23, which
 StretchRect does not implement. The existing BGRA8 behavior is unchanged.
 This removes one straight-line handler from the inventory:243 to242.
+
+## Shared cursor state (2026-10-31)
+
+GetCursor now calls the per-thread shared cursor-state helper instead of
+reading a WASM-instance-local global. This removes one straight-line handler
+from the inventory, 241 to 240. ShowCursor already contained conditional
+behavior and was outside this inventory; its shared-memory mutation is tested
+across two instances alongside thread isolation and reuse.

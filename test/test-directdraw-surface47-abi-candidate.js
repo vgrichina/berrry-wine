@@ -20,7 +20,9 @@ const trace = [];
 const tailCalls = !process.argv.includes('--compat');
 
 (async () => {
-  const { exports: e, memory } = await bootRenderHarness({ fonts: 'none', tailCalls });
+  const { exports: e, memory } = await bootRenderHarness({
+    fonts: 'none', tailCalls, width: 997, height: 731,
+  });
   const pe = fs.readFileSync(path.join(__dirname, 'binaries/calc.exe'));
   new Uint8Array(memory.buffer).set(pe, e.get_staging());
   assert(e.load_pe(pe.length), 'PE initializes normal API and continuation thunks');
@@ -205,6 +207,10 @@ const tailCalls = !process.argv.includes('--compat');
   const dd4 = read(out.p);
   directDrawVersions.set(read(dd4), 4);
   const initialMode = displayMode(dd, 124);
+  assert.strictEqual(initialMode.width, 997, 'unmodified display reports desktop width');
+  assert.strictEqual(initialMode.height, 731, 'unmodified display reports desktop height');
+  assert.strictEqual(initialMode.width, api('GetSystemMetrics', 0), 'DirectDraw and USER agree on width');
+  assert.strictEqual(initialMode.height, api('GetSystemMetrics', 1), 'DirectDraw and USER agree on height');
   assert.deepStrictEqual(displayMode(dd4, 124), initialMode, 'DD4 and DD7 report the same mode');
   ok(com(dd4, 6, desc(C.texture | C.system), out.p, 0), 'DirectDraw4 CreateSurface');
   const made4 = read(out.p); caps(made4); describe(made4);

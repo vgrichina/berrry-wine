@@ -180,6 +180,19 @@ const offWindow = renderer('crosshair', 1);
 offWindow.handleMouseMove(500, 500);
 check('leaving every window restores the desktop arrow', offWindow.canvas.style.cursor, 'default');
 
+const workerCursor = renderer('default', 1);
+workerCursor.wasm.exports.get_cursor = () => 0x67f00;
+workerCursor.wasm.exports.get_cursor_display_count = () => 0;
+workerCursor.wasm.exports.get_window_thread = () => 1;
+let threadCount = -1, threadCursor = 0x67f00;
+workerCursor.wasm.exports.get_thread_cursor_display_count = tid => tid === 1 ? threadCount : 0;
+workerCursor.wasm.exports.get_thread_cursor = tid => tid === 1 ? threadCursor : 0x67f00;
+check('Worker count overrides host shadow default', workerCursor.wantsHiddenMouse(100,100), true);
+threadCount = 0;
+check('Worker menu cursor becomes visible', workerCursor.wantsHiddenMouse(100,100), false);
+threadCursor = 0;
+check('Worker NULL cursor hides independently', workerCursor.wantsHiddenMouse(100,100), true);
+
 const passed = checks.filter(Boolean).length;
 console.log(`\n${passed}/${checks.length} checks passed`);
 process.exit(passed === checks.length ? 0 : 1);

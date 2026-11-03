@@ -4050,24 +4050,29 @@
 
   ;; GetDisplayMode(this, lpDDSD) — return current display mode
   (func $handle_IDirectDraw_GetDisplayMode (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32)
+    (local $wa i32) (local $w i32) (local $h i32)
     (if (i32.eqz (call $dx_surface_desc_valid (local.get $arg0) (local.get $arg1))) (then
       (i32.store (global.get $reg_base) (i32.const 0x80070057))
       (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
       (return)))
     (local.set $wa (call $g2w (local.get $arg1)))
+    ;; Before SetDisplayMode, the current mode is the actual desktop, not
+    ;; the fallback primary-surface size. Keep this query consistent with
+    ;; GetSystemMetrics, including when no exclusive mode has been selected.
+    (local.set $w (call $screen_metric_w))
+    (local.set $h (call $screen_metric_h))
     (call $zero_memory (local.get $wa) (call $dx_native_desc_size (local.get $arg0)))
     (i32.store (local.get $wa) (call $dx_native_desc_size (local.get $arg0)))
     (i32.store (i32.add (local.get $wa) (i32.const 4)) (i32.const 0x1006))
-    (i32.store (i32.add (local.get $wa) (i32.const 8)) (call $dx_display_h_get))
-    (i32.store (i32.add (local.get $wa) (i32.const 12)) (call $dx_display_w_get))
+    (i32.store (i32.add (local.get $wa) (i32.const 8)) (local.get $h))
+    (i32.store (i32.add (local.get $wa) (i32.const 12)) (local.get $w))
     ;; Pitch and pixel format follow the mode's depth. This used to report a
     ;; 16bpp 5-6-5 mode with a width*2 pitch whatever SetDisplayMode chose;
     ;; Disciples sizes its 640x480x8 back buffer from these fields.
     (i32.store (i32.add (local.get $wa) (i32.const 16))
       (i32.and
         (i32.add
-          (i32.mul (call $dx_display_w_get)
+          (i32.mul (local.get $w)
             (i32.shr_u (i32.add (call $dx_display_bpp_get) (i32.const 7)) (i32.const 3)))
           (i32.const 3))
         (i32.const 0xFFFFFFFC)))

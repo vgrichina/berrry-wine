@@ -3032,8 +3032,8 @@
   (global $hook_dispatch_depth (mut i32) (i32.const 0))
   (global $hook_retired_head (mut i32) (i32.const 0))
   (global $capture_hwnd (mut i32) (i32.const 0))      ;; hwnd that has mouse capture (SetCapture/ReleaseCapture)
-  (global $cursor_count (mut i32) (i32.const 0))      ;; ShowCursor display count (>=0 = visible)
-  (global $current_cursor (mut i32) (i32.const 0x67F00)) ;; HCURSOR last set by SetCursor (default IDC_ARROW)
+  (global $CURSOR_THREAD_STATE i32 (region.addr $CURSOR_THREAD_STATE 0))
+  (global $CURSOR_THREAD_STATE_SIZE i32 (i32.const 0x110))
   (global $caret_hwnd (mut i32) (i32.const 0))        ;; USER caret owner hwnd
   (global $caret_x (mut i32) (i32.const 0))           ;; USER caret client x
   (global $caret_y (mut i32) (i32.const 0))           ;; USER caret client y

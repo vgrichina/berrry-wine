@@ -371,9 +371,9 @@
     {
       "file": "lib/renderer-input.js",
       "name": "host-file",
-      "sha256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78",
+      "sha256": "15791bc262ca6dae93fd9073e5296ee3efc59148a5eb48d65738c94932ae43d9",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Dialog-tree review 20261021: same-instance candidates compare their WS_CHILD top-level surfaces before area preference; cross-instance z-order and existing delivery paths remain. No new retained callback or context restoration. Production routing and modal input regressions passed. Modifier review 20261027: side owners retire when the physical map changes; queued boolean side snapshots preserve event order and consumed press bits. Existing keyboard-owner restoration precedes updates; Worker/modal/native routing, exceptions and guest context paths unchanged. Retained invocation ownership remains pending.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Dialog-tree review 20261021: same-instance candidates compare their WS_CHILD top-level surfaces before area preference; cross-instance z-order and existing delivery paths remain. No new retained callback or context restoration. Production routing and modal input regressions passed. Modifier review 20261027: side owners retire when the physical map changes; queued boolean side snapshots preserve event order and consumed press bits. Existing keyboard-owner restoration precedes updates; Worker/modal/native routing, exceptions and guest context paths unchanged. Retained invocation ownership remains pending. Review 20261031: wantsHiddenMouse reads the hit window owning thread cursor state from shared memory instead of host-shadow defaults. Synchronous read-only exports, no callback retention or guest entry added; ownership pending.",
       "ownership": "pending"
     },
     {
@@ -4750,7 +4750,7 @@
     {
       "file": "src/09b-dispatch.wat",
       "name": "$win32_dispatch_inner",
-      "writes": 63,
+      "writes": 65,
       "boundaryCalls": [
         "$crt_callback_continue",
         "$crt_callback_continue",
@@ -4797,6 +4797,22 @@
             [
               "i32.const",
               "4"
+            ]
+          ]
+        ],
+        [
+          "local.get",
+          "$arg0"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
             ]
           ]
         ],
@@ -5219,9 +5235,9 @@
           ]
         ]
       ],
-      "sha256": "688a963a41cd45edacbc853bd901f7934067b12df6ce0b34b74b29e7a7e38611",
+      "sha256": "b4d18a35fc2ad53d4911104402d8b6aadb0ce0e2c2771cd31e664aee9955b24e",
       "kind": "mixed-dispatch",
-      "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending.",
+      "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending. Implicit-show correction 2026-11-01: guest-stack CSHW marker retains target/caller across yielding WM_SHOWWINDOW; activation follows completion, destruction returns NULL. Ordering, nested-main replacement and frame cleanup regression passes. Broader ownership remains pending. Nested child returns leave the main implicit-show latch pending.",
       "ownership": "pending"
     },
     {

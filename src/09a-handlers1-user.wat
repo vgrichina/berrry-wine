@@ -1249,12 +1249,36 @@
       (i32.const 2) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
+  ;; Per-input-thread cursor state lives in shared memory so the browser's
+  ;; host-shadow instance can read the owning Worker's visibility decision.
+  ;; +0 handle-initialized, +4 handle (NULL is valid), +8 signed display count.
+  (func $cursor_thread_addr (param $tid i32) (result i32)
+    ;; Guest thread IDs are 1..16; slot zero is the unowned/desktop fallback.
+    (if (i32.gt_u (local.get $tid) (global.get $REGFILE_THREADS))
+      (then (unreachable)))
+    (i32.add (global.get $CURSOR_THREAD_STATE) (i32.shl (local.get $tid) (i32.const 4))))
+  (func $cursor_thread_handle (param $tid i32) (result i32)
+    (local $p i32)
+    (local.set $p (call $cursor_thread_addr (local.get $tid)))
+    (if (result i32) (i32.atomic.load (local.get $p))
+      (then (i32.atomic.load offset=4 (local.get $p)))
+      (else (i32.const 0x67F00))))
+  (func $cursor_thread_count (param $tid i32) (result i32)
+    (i32.atomic.load offset=8 (call $cursor_thread_addr (local.get $tid))))
+  (func $cursor_thread_reset (param $tid i32)
+    (local $p i32)
+    (local.set $p (call $cursor_thread_addr (local.get $tid)))
+    (i32.atomic.store (local.get $p) (i32.const 0))
+    (i32.atomic.store offset=8 (local.get $p) (i32.const 0)))
+
   ;; Helper: apply a new cursor and return the previous handle. Shared by
   ;; $handle_SetCursor and DefWindowProc's WM_SETCURSOR path.
   (func $set_cursor_internal (param $hcur i32) (result i32)
-    (local $prev i32)
-    (local.set $prev (global.get $current_cursor))
-    (global.set $current_cursor (local.get $hcur))
+    (local $prev i32) (local $p i32)
+    (local.set $p (call $cursor_thread_addr (global.get $current_thread_id)))
+    (local.set $prev (call $cursor_thread_handle (global.get $current_thread_id)))
+    (i32.atomic.store offset=4 (local.get $p) (local.get $hcur))
+    (i32.atomic.store (local.get $p) (i32.const 1))
     ;; A cursor the guest built from bitmaps carries its own pixels; anything
     ;; else is an IDC_* or a PE resource the host resolves from the handle.
     (if (i32.eqz (call $cursor_push (local.get $hcur)))
@@ -1270,7 +1294,7 @@
   ;; GetCursor() — return the cursor most recently installed by SetCursor.
   ;; SDL queries this while bringing its DirectDraw window to the foreground.
   (func $handle_GetCursor (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (global.get $current_cursor))
+    (i32.store offset=0 (global.get $reg_base) (call $cursor_thread_handle (global.get $current_thread_id)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
