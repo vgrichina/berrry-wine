@@ -1697,7 +1697,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   worker: fresh handle5093/thread01a1a2c5-a3f1-7e32-9940-24c0d814c5af; scratch/usage-watch/alice-host-receipt-ground-route-nov03
   candidate: test/binaries/candidates/alice-demo/alice.exe
-  Next: Integrate tested host-only module receipt277f9a32c plus same-PID/listener readiness, audit planned diagnostic scope before launch, then original NewGame/Easy natural opening, repaired world1022 capture, complete lifecycle/stack anchors, continuity, supported/airborne samples and ordinary wind/plank/knife route. Latest readiness/menu PASS; own unsupported wasmBytes eval caused ordinary shutdown before menu selection. Host replacement seven controls local/sameboat PASS; full6007SHA and actual stopped verified snapshot reviewed. Fresh Alice static until Jedi89375 runtime release; repair/retest bounded harness failures within same allocation when practical. Ground/route remain unqualified, cap TWO serialized runtime.
+  Next: Integrate tested host-only module receipt277f9a32c plus same-PID/listener readiness, audit planned diagnostic scope before launch, then original NewGame/Easy natural opening, repaired world1022 capture, complete lifecycle/stack anchors, continuity, supported/airborne samples and ordinary wind/plank/knife route. Latest readiness/menu PASS; own unsupported wasmBytes eval caused ordinary shutdown before menu selection. Host replacement seven controls local/sameboat PASS; full6007SHA and actual stopped verified snapshot reviewed. Alice now owns bx_974w85x2 expiry20:09:42.170Z after explicit Jedi release19:09:12Z; repair/retest bounded harness failures within same allocation when practical. Ground/route remain unqualified, cap TWO serialized runtime.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: main11462d25b5729d0ab481b57292654e3a2c624091; docs/re-notes/alice-authentic-ground-gameplay-20261103.md; scratch/runs/20261103-alice-authentic-ground-gameplay/. Root reviewed cave PNG, full6132payload SHA PASS, actual normal STOPPED bx_tahsef2b18:26:20.951Z/snapshot verified. No ground continuity, airborne, route or knife claim.
 
@@ -1824,12 +1824,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Jedi Knight Dark Forces II original demo
   id: NEW-GAME-JEDI-KNIGHT-DEMO-20261015
-  blocker: Original notepad now passes PUSH/MOV/SUB/PUSH_ESI; CALL [4063e0] at4010d3 remains outside protected admission and rejects CPU/flags/vitals unchanged. Controller/allwriter/gameplay remains unqualified.
-  worker: fresh handle89375/thread01a1a2c2-22cc-74e2-a785-35b7558801b5; scratch/usage-watch/jedi-memory-call-protected-safety-nov03
-  status: active (memory CALL target/stack/service safety; static preparation while Alice owns runtime)
+  blocker: Original memory CALL now commits its frame and stops safely before actual GetCommandLineA. Protected service continuity and complete first-loss/script fixture remain unqualified; no controller/allwriter/gameplay claim.
+  worker: fresh handle91088/thread01a1a2d4-0696-7fe3-87f1-66e70e2e4f82; scratch/usage-watch/jedi-protected-service-continuity-nov03
+  status: active (protected service continuity prerequisite; static while Alice owns runtime)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Audit and repair original indirect CALL target read, return-stack write and service transition before protected admission; actual canonical/original-byte regression, cold/cached exclusion and full-memory retry/restart tests. Preserve other writer/service/compiler safeguards, then follow actual next frontier toward Jedi attribution. Heavy runtime waits Alice explicit release. Published4b3e23bde register ALU: locked build/ten suites,1344model/parity and70exclusion controls PASS. Full SHA and actual stopped verified snapshot reviewed; no controller/gameplay claim.
-  Evidence: docs/re-notes/jedi-register-alu-protected-decode-20261103.md; scratch/runs/20261103-jedi-register-alu-protected-decode/; docs/re-notes/jedi-status-20261021.md
+  Next: Audit and repair actual service boundary toward complete native pending-handler/arbitrary-writer/first-loss fixture; preserve pre-effect rejection, exact restart, ordinary behavior and unaudited-service exclusion. No silent disarm or fabricated guest handler. Runtime waits Alice explicit release. Published440403b4c: two locked builds/eleven suites and58CALL controls PASS; full84payload SHA and actual stopped verified snapshot reviewed. Diagnostic after explicit unarmed service restart reaches excluded CMP AL,22; this does not prove protected service continuity.
+  Evidence: docs/re-notes/jedi-memory-call-protected-safety-20261103.md; scratch/runs/20261103-jedi-memory-call-protected-safety/; docs/re-notes/jedi-status-20261021.md
   Done: Registered original launch, ordinary player-controlled gameplay and reviewed screenshot with exact source/run identity.
   Authorization: docs/license-acceptance-authorization-20261018.json; accepted installation evidence docs/reviews/jedi-installation-evidence-integration-20261021/README.md.
 
