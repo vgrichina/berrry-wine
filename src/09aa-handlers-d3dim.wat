@@ -1281,14 +1281,41 @@
   ;; by 4, so Deus Ex's D3DDrv restored a garbage EBX after its SetTexture.
   (func $handle_IDirect3DDevice7_Load (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $hr i32)
-    (if (i32.or (i32.ne (local.get $arg2) (i32.const 0))
-                (i32.ne (local.get $arg4) (i32.const 0)))
-      (then
-        (local.set $hr (call $d3dim_device7_load_rect
-          (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4))))
-      (else (call $d3dim_device7_load_chain (local.get $arg1) (local.get $arg3))))
+    ;; NULL geometry means origin zero / the entire source rectangle, exactly
+    ;; as in the non-NULL form. Both forms need the same HRESULT and preflight;
+    ;; Texture::Load's void helper may decline without reporting an error.
+    (local.set $hr (call $d3dim_device7_load_rect
+      (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
     (i32.store offset=0 (global.get $reg_base) (local.get $hr))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
+
+  ;; Check every wrapper, including unused source tails, before any fence,
+  ;; palette/key propagation or pixel write. A nonzero invalid link must not
+  ;; be confused with a legitimate NULL terminator. The bound rejects cycles.
+  (func $d3dim_device7_load_validate_chain (param $this i32) (result i32)
+    (local $entry i32) (local $level i32) (local $bpp i32)
+    (if (i32.eqz (local.get $this)) (then (return (i32.const 0x80070057))))
+    (loop $next
+      (local.set $entry (call $ddraw_surface_entry_checked (local.get $this)))
+      (if (i32.or (i32.eqz (local.get $entry)) (i32.gt_u (local.get $level) (i32.const 20)))
+        (then (return (i32.const 0x80070057))))
+      (local.set $bpp (load.field DxObject bpp (local.get $entry)))
+      (if (i32.eqz (i32.or
+            (i32.or (i32.eq (local.get $bpp) (i32.const 8)) (i32.eq (local.get $bpp) (i32.const 16)))
+            (i32.or (i32.eq (local.get $bpp) (i32.const 24)) (i32.eq (local.get $bpp) (i32.const 32)))))
+        (then (return (i32.const 0x80004001))))
+      (if (i32.or (i32.eqz (load.field DxObject width (local.get $entry)))
+                  (i32.eqz (load.field DxObject height (local.get $entry))))
+        (then (return (i32.const 0x80070057))))
+      (if (i32.or (i32.eqz (load.field DxObject misc1 (local.get $entry)))
+                  (i32.lt_u (load.field DxObject pitch (local.get $entry))
+                    (i32.mul (load.field DxObject width (local.get $entry))
+                      (i32.shr_u (local.get $bpp) (i32.const 3)))))
+        (then (return (i32.const 0x80070057))))
+      (local.set $this (load.field DxObject misc0 (local.get $entry)))
+      (local.set $level (i32.add (local.get $level) (i32.const 1)))
+      (br_if $next (local.get $this)))
+    (i32.const 0))
 
   ;; Rectangular uploads use coordinates at source level zero. Match each
   ;; destination level to the source, halve origins and round far edges up.
@@ -1302,7 +1329,11 @@
     (local $xx i32) (local $yy i32) (local $dbpp i32) (local $sbpp i32)
     (local $dbits i32) (local $sbits i32) (local $dp i32) (local $sp i32)
     (local $same i32) (local $bytes i32)
-    (local $key i32) (local $dst_pal i32) (local $src_pal i32)
+    (local $key i32) (local $dst_pal i32) (local $src_pal i32) (local $hr i32)
+    (local.set $hr (call $d3dim_device7_load_validate_chain (local.get $dst_this)))
+    (if (local.get $hr) (then (return (local.get $hr))))
+    (local.set $hr (call $d3dim_device7_load_validate_chain (local.get $src_this)))
+    (if (local.get $hr) (then (return (local.get $hr))))
     (loop $passes
       (local.set $dst (call $ddraw_surface_entry_checked (local.get $dst_this)))
       (local.set $src (call $ddraw_surface_entry_checked (local.get $src_this)))
@@ -1365,7 +1396,9 @@
                   (local.set $key (load.field DxObject misc2 (local.get $src)))
                   (if (i32.eqz (local.get $same))
                     (then (local.set $key (call $d3dim_encode_surface_pixel (local.get $dst)
-                      (call $d3dim_decode_surface_pixel (local.get $src) (local.get $key) (local.get $sbpp))
+                      (if (result i32) (i32.eq (local.get $sbpp) (i32.const 8))
+                        (then (call $d3dim_surface_index_rgb (local.get $src) (local.get $key)))
+                        (else (call $d3dim_decode_surface_pixel (local.get $src) (local.get $key) (local.get $sbpp))))
                       (local.get $dbpp)))))
                   (store.field DxObject misc2 (local.get $dst) (local.get $key))
                   (store.field DxObject flags (local.get $dst)
@@ -1407,21 +1440,6 @@
       (local.set $pass (i32.add (local.get $pass) (i32.const 1)))
       (br_if $passes (i32.lt_u (local.get $pass) (i32.const 2))))
     (i32.const 0))
-
-  ;; Copy every level of a source mip chain into the destination's matching
-  ;; level, converting format per level as Texture::Load does. A level's next
-  ;; level is its misc0 (see $dx_create_mip_chain); the walk ends with the
-  ;; shorter chain.
-  (func $d3dim_device7_load_chain (param $dst_this i32) (param $src_this i32)
-    (local $level i32)
-    (block $done (loop $next
-      (br_if $done (i32.or (i32.eqz (local.get $dst_this)) (i32.eqz (local.get $src_this))))
-      (br_if $done (i32.gt_u (local.get $level) (i32.const 20)))
-      (call $d3dim_texture_load (local.get $dst_this) (local.get $src_this))
-      (local.set $dst_this (load.field DxObject misc0 (call $dx_from_this (local.get $dst_this))))
-      (local.set $src_this (load.field DxObject misc0 (call $dx_from_this (local.get $src_this))))
-      (local.set $level (i32.add (local.get $level) (i32.const 1)))
-      (br $next))))
 
   ;; IDirect3DDevice7_LightEnable — 3 args (incl. this)
   (func $handle_IDirect3DDevice7_LightEnable (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

@@ -36,6 +36,8 @@ const extraWat = String.raw`
     (local.get $data))
   (func (export "test_d7l_key") (param $surface i32) (result i32)
     (load.field DxObject misc2 (call $dx_from_this (local.get $surface))))
+  (func (export "test_d7l_set_key") (param $surface i32) (param $key i32)
+    (store.field DxObject misc2 (call $dx_from_this (local.get $surface)) (local.get $key)))
   (func (export "test_d7l_rect") (param $dst i32) (param $point i32) (param $src i32) (param $rect i32) (result i32)
     (call $handle_IDirect3DDevice7_Load (i32.const 0) (local.get $dst) (local.get $point)
       (local.get $src) (local.get $rect) (i32.const 0))
@@ -56,6 +58,16 @@ const extraWat = String.raw`
     (i32.load offset=20 (call $dx_from_this (local.get $surface))))
   (func (export "test_d7l_next") (param $surface i32) (result i32)
     (load.field DxObject misc0 (call $dx_from_this (local.get $surface))))
+  (func (export "test_d7l_link") (param $surface i32) (param $next i32)
+    (store.field DxObject misc0 (call $dx_from_this (local.get $surface)) (local.get $next)))
+  (func (export "test_d7l_bpp") (param $surface i32) (param $bpp i32)
+    (store.field DxObject bpp (call $dx_from_this (local.get $surface)) (local.get $bpp)))
+  (func (export "test_d7l_wrong") (result i32)
+    (call $dx_create_com_obj (i32.const 1) (global.get $DX_VTBL_DDRAW)))
+  (func (export "test_d7l_release") (param $surface i32) (result i32)
+    (call $handle_IDirectDrawSurface_Release (local.get $surface)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (i32.load (global.get $reg_base)))
   (func (export "test_d7l_set_esp") (param $v i32)
     (i32.store offset=16 (global.get $reg_base) (local.get $v)))
   (func (export "test_d7l_get_esp") (result i32)
@@ -66,18 +78,18 @@ const extraWat = String.raw`
       (i32.const 0)))
 `;
 
-function makeMipTexture(wat, desc, out, size) {
+function makeMipTexture(wat, desc, out, size, bpp = 16) {
   for (let i = 0; i < 128; i += 4) wat.guest_write32(desc + i, 0);
   wat.guest_write32(desc, 108);
   wat.guest_write32(desc + 4, 0x1007); // CAPS|HEIGHT|WIDTH|PIXELFORMAT
   wat.guest_write32(desc + 8, size);
   wat.guest_write32(desc + 12, size);
   wat.guest_write32(desc + 72, 32);
-  wat.guest_write32(desc + 76, 0x40);  // DDPF_RGB
-  wat.guest_write32(desc + 84, 16);
-  wat.guest_write32(desc + 88, 0xf800);
-  wat.guest_write32(desc + 92, 0x07e0);
-  wat.guest_write32(desc + 96, 0x001f);
+  wat.guest_write32(desc + 76, bpp === 8 ? 0x60 : 0x40); // RGB | optional PALETTEINDEXED8
+  wat.guest_write32(desc + 84, bpp);
+  wat.guest_write32(desc + 88, bpp === 8 ? 0 : 0xf800);
+  wat.guest_write32(desc + 92, bpp === 8 ? 0 : 0x07e0);
+  wat.guest_write32(desc + 96, bpp === 8 ? 0 : 0x001f);
   wat.guest_write32(desc + 104, 0x401008); // TEXTURE|MIPMAP|COMPLEX
   assert.strictEqual(wat.test_d7l_create_surface(desc, out) >>> 0, 0);
   return wat.guest_read32(out) >>> 0;
@@ -175,6 +187,91 @@ const levels = (wat, top) => {
   assert.strictEqual(wat.test_d7l_rect(small, point, src, rect) >>> 0, 0);
   for (let i = 0; i < 4; i++)
     assert.strictEqual(mem.getUint16((wat.test_d7l_dib(small) >>> 0) + i * 2, true), 0x2222);
+
+  // Exercise the public handler, including its HRESULT and 28-byte epilogue,
+  // for both nullable-geometry forms. Bad later links must not look like a
+  // legitimate end of chain, even in a source tail the destination won't use.
+  const wrong = wat.test_d7l_wrong() >>> 0;
+  const released = makeMipTexture(wat, desc, out + 12, 1);
+  assert.strictEqual(wat.test_d7l_release(released), 0);
+  const snapshot = () => dstLevels.map((d, level) => ({
+    pixels: Buffer.from(new Uint8Array(memory.buffer, wat.test_d7l_dib(d) >>> 0,
+      ((sizes[level] * 2 + 3) & ~3) * sizes[level])),
+    key: wat.test_d7l_key(d) >>> 0,
+    palette: level ? null : Array.from({ length: 256 }, (_, i) =>
+      wat.guest_read32(destPalette + i * 4) >>> 0),
+  }));
+  const invoke = (d, s, p, expected, label) => {
+    wat.test_d7l_set_esp(STACK);
+    wat.guest_write32(STACK + 28, 0xdeadbeef);
+    assert.strictEqual(wat.test_d7l_rect(d, p, s, 0) >>> 0, expected, label);
+    assert.strictEqual(wat.test_d7l_get_esp() >>> 0, STACK + 28, `${label}: ABI`);
+    assert.strictEqual(wat.guest_read32(STACK + 28) >>> 0, 0xdeadbeef);
+  };
+  const reject = (d, s, p, expected, label) => {
+    const before = snapshot();
+    invoke(d, s, p, expected, label);
+    assert.deepStrictEqual(snapshot(), before, `${label}: no pixels/palette/key changed`);
+  };
+  // Make metadata propagation observable if a rejected call starts copying.
+  wat.test_d7l_set_key(src, 0x5678);
+  wat.guest_write32(sourcePalette, 0xabcdef);
+  for (const p of [0, point]) {
+    for (const bad of [0, wrong, released, src + 1]) {
+      reject(bad, src, p, 0x80070057, `invalid destination ${bad}, point=${p}`);
+      reject(dst, bad, p, 0x80070057, `invalid source ${bad}, point=${p}`);
+    }
+    for (const [chain, next] of [[srcLevels, srcLevels[2]], [dstLevels, dstLevels[2]]]) {
+      for (const bad of [wrong, released, chain[0]]) {
+        wat.test_d7l_link(chain[1], bad);
+        reject(dst, src, p, 0x80070057, `bad later link ${bad}, point=${p}`);
+        wat.test_d7l_link(chain[1], next);
+      }
+    }
+    // A malformed unused source tail still makes the complete chain invalid.
+    wat.test_d7l_link(srcLevels[2], wrong);
+    reject(dst, src, p, 0x80070057, 'invalid source tail');
+    wat.test_d7l_link(srcLevels[2], 0);
+    wat.test_d7l_bpp(dstLevels[2], 4);
+    reject(dst, src, p, 0x80004001, 'unsupported later format');
+    wat.test_d7l_bpp(dstLevels[2], 16);
+    wat.test_d7l_link(srcLevels[1], 0);
+    reject(dst, src, p, 0x80070057, 'source misses required destination level');
+    wat.test_d7l_link(srcLevels[1], srcLevels[2]);
+  }
+  // Full nullable geometry must keep copying all mip pixels and metadata.
+  wat.test_d7l_set_key(src, 0x1234);
+  wat.guest_write32(sourcePalette, 0);
+  clear();
+  invoke(dst, src, 0, 0, 'valid complete full copy after rejections');
+  dstLevels.forEach((d, level) => {
+    const dib = wat.test_d7l_dib(d) >>> 0, n = sizes[level], pitch = (n * 2 + 3) & ~3;
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++)
+      assert.strictEqual(mem.getUint16(dib + y * pitch + x * 2, true), 0x1111 * (level + 1));
+  });
+  assert.strictEqual(wat.test_d7l_key(dst) >>> 0, 0x1234);
+  for (let i = 0; i < 256; i++)
+    assert.strictEqual(wat.guest_read32(destPalette + i * 4) >>> 0, i * 0x010101);
+  // Preserve Texture::Load's indexed-palette expansion for both pixels and
+  // the packed color key when the full form shares the rectangular path.
+  const indexed = makeMipTexture(wat, desc, out + 16, 4, 8);
+  const converted = makeMipTexture(wat, desc, out + 20, 4);
+  levels(wat, indexed).forEach((s, level) => {
+    const indexedPalette = wat.test_d7l_metadata(s, 0x432000 + level * 0x1000, 5) >>> 0;
+    wat.guest_write32(indexedPalette + 5 * 4, 0x000000ff); // PALETTEENTRY red
+    const n = sizes[level], pitch = (n + 3) & ~3;
+    new Uint8Array(memory.buffer, wat.test_d7l_dib(s) >>> 0, pitch * n).fill(5);
+  });
+  for (const p of [0, point]) {
+    invoke(converted, indexed, p, 0, 'indexed conversion');
+    assert.strictEqual(wat.test_d7l_key(converted) >>> 0, 0xf800);
+    levels(wat, converted).forEach((s, level) => {
+      const n = sizes[level], pitch = (n * 2 + 3) & ~3;
+      const dib = wat.test_d7l_dib(s) >>> 0;
+      for (let y = 0; y < n; y++) for (let x = 0; x < n; x++)
+        assert.strictEqual(mem.getUint16(dib + y * pitch + x * 2, true), 0xf800);
+    });
+  }
   console.log('PASS IDirect3DDevice7::Load: stdcall, mip chains, rectangles and invalid bounds');
 })().catch(error => {
   console.error(error);
