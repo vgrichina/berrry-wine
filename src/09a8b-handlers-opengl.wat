@@ -681,6 +681,15 @@
       (i32.load offset=16 (global.get $reg_base)) (global.get $eip) (i32.load offset=20 (global.get $reg_base)))
     (unreachable))
 
+  ;; Complete server-attribute transaction. Arguments are already checked
+  ;; guest DWORDs from the dispatcher; no source bind or query is permitted.
+  (func $handle_wglCopyContext (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $gl_object_enter)
+    (i32.store (global.get $reg_base)
+      (call $gl_copy_context (local.get $arg0) (local.get $arg1) (local.get $arg2)))
+    (call $gl_object_leave)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
+
   ;; wglGetCurrentContext() / wglGetCurrentDC(): this thread's current HGLRC
   ;; and the HDC it was made current on (both NULL when none is current).
   ;; Per guest thread, as in Windows, because each thread instance owns its
@@ -1156,8 +1165,10 @@
     (i32.store offset=48 (local.get $p) (i32.const 1)))
 
   (func $gl_texture_block (result i32)
-    (local $ctx i32) (local $p i32)
-    (local.set $ctx (call $gl_list_context))
+    (call $gl_texture_block_for (call $gl_list_context)))
+
+  (func $gl_texture_block_for (param $ctx i32) (result i32)
+    (local $p i32)
     (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
     (local.set $p (i32.load offset=760 (local.get $ctx)))
     (if (i32.eqz (local.get $p)) (then

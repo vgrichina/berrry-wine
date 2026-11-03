@@ -5,6 +5,8 @@
   (global $gl_source_a (mut i32) (i32.const 0))
   ;; Private typed color command; public opcode numbering is unchanged.
   (func $gl_source_arg_words (param $op i32) (result i32)
+    (if (i32.eq (local.get $op) (i32.const 0x10006)) (then (return (i32.const 4))))
+    (if (i32.eq (local.get $op) (i32.const 0x10007)) (then (return (i32.const 0))))
     (if (result i32) (i32.eq (local.get $op) (i32.const 0x10004))
       (then (i32.const 4)) (else
     (if (result i32) (i32.eq (local.get $op) (i32.const 0x10003))
@@ -812,7 +814,8 @@
   ;; Publish completed outer server calls while still holding the process lock.
   ;; A later producer cannot drain this instance's private stream: admit its
   ;; completed prefix now, before the next producer acquires the lock. Nested
-  ;; list replay and incomplete primitives publish at their outer completion.
+  ;; replay publishes at outer completion. Begin/End geometry stays private,
+  ;; but legal current/material setters inside Begin are completed server state.
   (func $gl_wat_encode_call (param $op i32) (param $stack i32) (param $aux i32) (result i32)
     (local $result i32)
     (call $gl_object_enter)
@@ -820,10 +823,10 @@
     (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
         (i32.eq (local.get $op) (i32.const 77))) (then (call $gl_period_color)))
     (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
-        (i32.and (i32.eq (global.get $gl_object_lock_depth) (i32.const 1))
-          (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0)))) (then
+        (i32.eq (global.get $gl_object_lock_depth) (i32.const 1))) (then
       (call $gl_state_publish (global.get $gl_current_context))
-      (call $gl_sw_context_publish)
+      (if (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0))
+        (then (call $gl_sw_context_publish)))
       (drop (call $gl_wat_stream_flush))))
     (call $gl_object_leave)
     (local.get $result))
@@ -832,6 +835,10 @@
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
     (local $error i32)
     (local $source_guest i32) (local $source_stack i32) (local $source_p i32) (local $source_last i32)
+    ;; Private transaction entry. Never bind or query the foreign source.
+    (if (i32.eq (local.get $op) (i32.const 0x10005)) (then
+      (return (call $gl_copy_context (i32.load offset=4 (local.get $stack))
+        (i32.load offset=8 (local.get $stack)) (i32.load offset=12 (local.get $stack))))))
     ;; Canonicalize byte vectors before list capture. The pointed bytes must
     ;; belong to the list, just like the wider integer vector entrypoints.
     (if (i32.or (i32.eq (local.get $op) (i32.const 27)) (i32.eq (local.get $op) (i32.const 58))) (then
@@ -1089,3 +1096,415 @@
     (global.set $gl_current_context (i32.const 0))
     (global.set $gl_current_dc (i32.const 0))
     (call $gl_object_leave))
+
+
+  ;; Copy only server value fields. Every pointer, client descriptor, resource,
+  ;; error and stack frame stays owned by its original destination context.
+  (func $gl_copy_values (param $mask i32)
+    (param $src_state i32) (param $dst_state i32)
+    (param $src_matrix i32) (param $dst_matrix i32)
+    (param $src_ctx i32) (param $dst_ctx i32)
+    (param $src_raster i32) (param $dst_raster i32)
+    (param $src_texture i32) (param $dst_texture i32)
+    (if (i32.and (local.get $mask) (i32.const 8)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 4180)) (i32.add (local.get $src_raster) (i32.const 4180)) (i32.const 8))))
+    (if (i32.and (local.get $mask) (i32.const 0x2008)) (then
+      (i32.store offset=4188 (local.get $dst_raster) (i32.load offset=4188 (local.get $src_raster)))))
+    ;; current RGBA/normal/first two texture coordinates
+    (if (i32.and (local.get $mask) (i32.const 1)) (then
+      (memory.copy (i32.add (local.get $dst_state) (i32.const 4))
+        (i32.add (local.get $src_state) (i32.const 4)) (i32.const 44))))
+    ;; current projective texture coordinates
+    (if (i32.and (local.get $mask) (i32.const 1)) (then
+      (memory.copy (i32.add (local.get $dst_state) (i32.const 148))
+        (i32.add (local.get $src_state) (i32.const 148)) (i32.const 16))))
+    ;; exact typed current color
+    (if (i32.and (local.get $mask) (i32.const 1)) (then
+      (memory.copy (i32.add (local.get $dst_state) (i32.const 176))
+        (i32.add (local.get $src_state) (i32.const 176)) (i32.const 20))))
+    ;; raster validity/position/color/initial coordinates
+    (if (i32.and (local.get $mask) (i32.const 1)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 40))
+        (i32.add (local.get $src_ctx) (i32.const 40)) (i32.const 40))))
+    ;; raster distance/index/two projective coordinates
+    (if (i32.and (local.get $mask) (i32.const 1)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 264))
+        (i32.add (local.get $src_ctx) (i32.const 264)) (i32.const 40))))
+    ;; packed raster color, validity and exact typed tail
+    (if (i32.and (local.get $mask) (i32.const 1)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 976))
+        (i32.add (local.get $src_ctx) (i32.const 976)) (i32.const 32))))
+    ;; point size
+    (if (i32.and (local.get $mask) (i32.const 2)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 1808))
+        (i32.add (local.get $src_raster) (i32.const 1808)) (i32.const 4))))
+    ;; line width
+    (if (i32.and (local.get $mask) (i32.const 4)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 1812))
+        (i32.add (local.get $src_raster) (i32.const 1812)) (i32.const 4))))
+    ;; line stipple factor/pattern
+    (if (i32.and (local.get $mask) (i32.const 4)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 1844))
+        (i32.add (local.get $src_raster) (i32.const 1844)) (i32.const 8))))
+    ;; cull face/front face
+    (if (i32.and (local.get $mask) (i32.const 8)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 28))
+        (i32.add (local.get $src_raster) (i32.const 28)) (i32.const 8))))
+    ;; front/back polygon modes
+    (if (i32.and (local.get $mask) (i32.const 8)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 4164))
+        (i32.add (local.get $src_raster) (i32.const 4164)) (i32.const 8))))
+    ;; polygon stipple bytes
+    (if (i32.and (local.get $mask) (i32.const 16)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 1852))
+        (i32.add (local.get $src_raster) (i32.const 1852)) (i32.const 128))))
+    ;; read buffer
+    (if (i32.and (local.get $mask) (i32.const 32)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 236))
+        (i32.add (local.get $src_ctx) (i32.const 236)) (i32.const 4))))
+    ;; pixel transfer values
+    (if (i32.and (local.get $mask) (i32.const 32)) (then
+      (memory.copy (i32.add (local.get $dst_texture) (i32.const 204))
+        (i32.add (local.get $src_texture) (i32.const 204)) (i32.const 64))))
+    ;; pixel zoom
+    (if (i32.and (local.get $mask) (i32.const 32)) (then
+      (memory.copy (i32.add (local.get $dst_texture) (i32.const 300))
+        (i32.add (local.get $src_texture) (i32.const 300)) (i32.const 8))))
+    ;; shade model
+    (if (i32.and (local.get $mask) (i32.const 64)) (then
+      (memory.copy (i32.add (local.get $dst_state) (i32.const 48))
+        (i32.add (local.get $src_state) (i32.const 48)) (i32.const 4))))
+    ;; ambient/lights/front material
+    (if (i32.and (local.get $mask) (i32.const 64)) (then
+      (memory.copy (i32.add (local.get $dst_matrix) (i32.const 8352))
+        (i32.add (local.get $src_matrix) (i32.const 8352)) (i32.const 608))))
+    ;; light extras/back material
+    (if (i32.and (local.get $mask) (i32.const 64)) (then
+      (memory.copy (i32.add (local.get $dst_matrix) (i32.const 10832))
+        (i32.add (local.get $src_matrix) (i32.const 10832)) (i32.const 336))))
+    ;; local viewer/two side
+    (if (i32.and (local.get $mask) (i32.const 64)) (then
+      (memory.copy (i32.add (local.get $dst_matrix) (i32.const 11192))
+        (i32.add (local.get $src_matrix) (i32.const 11192)) (i32.const 8))))
+    ;; color material face/parameter
+    (if (i32.and (local.get $mask) (i32.const 64)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 4172))
+        (i32.add (local.get $src_raster) (i32.const 4172)) (i32.const 8))))
+    ;; fog mode/density/start/end/color
+    (if (i32.and (local.get $mask) (i32.const 128)) (then
+      (memory.copy (i32.add (local.get $dst_matrix) (i32.const 8960))
+        (i32.add (local.get $src_matrix) (i32.const 8960)) (i32.const 32))))
+    ;; fog index
+    (if (i32.and (local.get $mask) (i32.const 128)) (then
+      (memory.copy (i32.add (local.get $dst_matrix) (i32.const 11200))
+        (i32.add (local.get $src_matrix) (i32.const 11200)) (i32.const 4))))
+    ;; software fog values
+    (if (i32.and (local.get $mask) (i32.const 128)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 1824))
+        (i32.add (local.get $src_raster) (i32.const 1824)) (i32.const 20))))
+    ;; depth function/write mask
+    (if (i32.and (local.get $mask) (i32.const 256)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 20))
+        (i32.add (local.get $src_raster) (i32.const 20)) (i32.const 8))))
+    ;; clear depth
+    (if (i32.and (local.get $mask) (i32.const 256)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 1796))
+        (i32.add (local.get $src_raster) (i32.const 1796)) (i32.const 4))))
+    ;; clear accumulation values
+    (if (i32.and (local.get $mask) (i32.const 512)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 248))
+        (i32.add (local.get $src_ctx) (i32.const 248)) (i32.const 16))))
+    ;; stencil values except overlapping enable
+    (if (i32.and (local.get $mask) (i32.const 1024)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 196))
+        (i32.add (local.get $src_ctx) (i32.const 196)) (i32.const 32))))
+    ;; viewport/depth range
+    (if (i32.and (local.get $mask) (i32.const 2048)) (then
+      (memory.copy (i32.add (local.get $dst_matrix) (i32.const 9008))
+        (i32.add (local.get $src_matrix) (i32.const 9008)) (i32.const 24))))
+    ;; raster depth range/viewport-valid
+    (if (i32.and (local.get $mask) (i32.const 2048)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 160))
+        (i32.add (local.get $src_ctx) (i32.const 160)) (i32.const 12))))
+    ;; matrix mode only
+    (if (i32.and (local.get $mask) (i32.const 4096)) (then
+      (memory.copy (i32.add (local.get $dst_matrix) (i32.const 0))
+        (i32.add (local.get $src_matrix) (i32.const 0)) (i32.const 4))))
+    ;; eye-space clip equations
+    (if (i32.and (local.get $mask) (i32.const 4096)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 768))
+        (i32.add (local.get $src_ctx) (i32.const 768)) (i32.const 192))))
+    ;; blend/alpha function/reference
+    (if (i32.and (local.get $mask) (i32.const 16384)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 4))
+        (i32.add (local.get $src_raster) (i32.const 4)) (i32.const 16))))
+    ;; clear color
+    (if (i32.and (local.get $mask) (i32.const 16384)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 1792))
+        (i32.add (local.get $src_raster) (i32.const 1792)) (i32.const 4))))
+    ;; logic operation
+    (if (i32.and (local.get $mask) (i32.const 16384)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 4160))
+        (i32.add (local.get $src_raster) (i32.const 4160)) (i32.const 4))))
+    ;; color mask/draw buffer
+    (if (i32.and (local.get $mask) (i32.const 16384)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 228))
+        (i32.add (local.get $src_ctx) (i32.const 228)) (i32.const 8))))
+    ;; five exact hint values
+    (if (i32.and (local.get $mask) (i32.const 32768)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 1008))
+        (i32.add (local.get $src_ctx) (i32.const 1008)) (i32.const 20))))
+    ;; list base only
+    (if (i32.and (local.get $mask) (i32.const 131072)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 100))
+        (i32.add (local.get $src_ctx) (i32.const 100)) (i32.const 4))))
+    ;; active texture selector
+    (if (i32.and (local.get $mask) (i32.const 262144)) (then
+      (memory.copy (i32.add (local.get $dst_matrix) (i32.const 4))
+        (i32.add (local.get $src_matrix) (i32.const 4)) (i32.const 4))))
+    ;; per-unit texgen values
+    (if (i32.and (local.get $mask) (i32.const 262144)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 384))
+        (i32.add (local.get $src_ctx) (i32.const 384)) (i32.const 296))))
+    ;; per-unit texture environment values
+    (if (i32.and (local.get $mask) (i32.const 262144)) (then
+      (memory.copy (i32.add (local.get $dst_texture) (i32.const 32))
+        (i32.add (local.get $src_texture) (i32.const 32)) (i32.const 40))))
+    ;; software texture environment
+    (if (i32.and (local.get $mask) (i32.const 262144)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 36))
+        (i32.add (local.get $src_raster) (i32.const 36)) (i32.const 4))))
+    ;; software active selector
+    (if (i32.and (local.get $mask) (i32.const 262144)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 1800))
+        (i32.add (local.get $src_raster) (i32.const 1800)) (i32.const 4))))
+    ;; software texgen modes
+    (if (i32.and (local.get $mask) (i32.const 262144)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 1816))
+        (i32.add (local.get $src_raster) (i32.const 1816)) (i32.const 4))))
+    ;; scissor box
+    (if (i32.and (local.get $mask) (i32.const 524288)) (then
+      (memory.copy (i32.add (local.get $dst_raster) (i32.const 48))
+        (i32.add (local.get $src_raster) (i32.const 48)) (i32.const 16))))
+    ;; stencil enable
+    (if (i32.and (local.get $mask) (i32.const 9216)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 192))
+        (i32.add (local.get $src_ctx) (i32.const 192)) (i32.const 4))))
+    ;; clip enables
+    (if (i32.and (local.get $mask) (i32.const 12288)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 960))
+        (i32.add (local.get $src_ctx) (i32.const 960)) (i32.const 4))))
+    ;; unit0 texgen enables
+    (if (i32.and (local.get $mask) (i32.const 270336)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 384))
+        (i32.add (local.get $src_ctx) (i32.const 384)) (i32.const 4))))
+    ;; unit1 texgen enables
+    (if (i32.and (local.get $mask) (i32.const 270336)) (then
+      (memory.copy (i32.add (local.get $dst_ctx) (i32.const 532))
+        (i32.add (local.get $src_ctx) (i32.const 532)) (i32.const 4))))
+    ;; 1D enables
+    (if (i32.and (local.get $mask) (i32.const 270336)) (then
+      (memory.copy (i32.add (local.get $dst_texture) (i32.const 192))
+        (i32.add (local.get $src_texture) (i32.const 192)) (i32.const 4))))
+  )
+  (func $gl_copy_bits (param $a i32) (param $b i32) (param $bits i32)
+    (i32.store (local.get $b) (i32.or
+      (i32.and (i32.load (local.get $b)) (i32.xor (local.get $bits) (i32.const -1)))
+      (i32.and (i32.load (local.get $a)) (local.get $bits)))))
+
+  ;; Initialize never-bound contexts by key, without changing producer globals.
+  (func $gl_copy_state (param $key i32) (result i32)
+    (local $p i32)
+    (local.set $p (call $gl_state_slot (local.get $key) (i32.const 0)))
+    (if (local.get $p) (then (return (local.get $p))))
+    (local.set $p (call $gl_state_slot (local.get $key) (i32.const 1)))
+    (f32.store offset=4 (local.get $p) (f32.const 1))
+    (f32.store offset=8 (local.get $p) (f32.const 1))
+    (f32.store offset=12 (local.get $p) (f32.const 1))
+    (f32.store offset=16 (local.get $p) (f32.const 1))
+    (f32.store offset=36 (local.get $p) (f32.const 1))
+    (f32.store offset=152 (local.get $p) (f32.const 1))
+    (f32.store offset=160 (local.get $p) (f32.const 1))
+    (i32.store offset=48 (local.get $p) (i32.const 7425))
+    (i32.store offset=60 (local.get $p) (i32.const 4))
+    (i32.store offset=64 (local.get $p) (i32.const 5126))
+    (i32.store offset=76 (local.get $p) (i32.const 5126))
+    (i32.store offset=88 (local.get $p) (i32.const 4))
+    (i32.store offset=92 (local.get $p) (i32.const 5126))
+    (i32.store offset=104 (local.get $p) (i32.const 4))
+    (i32.store offset=108 (local.get $p) (i32.const 5126))
+    (i32.store offset=120 (local.get $p) (i32.const 4))
+    (i32.store offset=124 (local.get $p) (i32.const 5126))
+    (local.get $p))
+  (func $gl_copy_raster (param $ctx i32) (result i32)
+    (local $p i32)
+    (local.set $p (i32.load offset=240 (local.get $ctx)))
+    (if (local.get $p) (then (return (local.get $p))))
+    (local.set $p (call $gl_list_alloc (i32.const 4192)))
+    (if (i32.eqz (local.get $p)) (then (unreachable)))
+    (i32.store offset=0 (local.get $p) (i32.const 134217728))
+    (i32.store offset=4 (local.get $p) (i32.const 2))
+    (i32.store offset=8 (local.get $p) (i32.const 1))
+    (i32.store offset=12 (local.get $p) (i32.const 8))
+    (i32.store offset=20 (local.get $p) (i32.const 2))
+    (i32.store offset=24 (local.get $p) (i32.const 1))
+    (i32.store offset=28 (local.get $p) (i32.const 1029))
+    (i32.store offset=32 (local.get $p) (i32.const 1))
+    (i32.store offset=36 (local.get $p) (i32.const 4))
+    (i32.store offset=44 (local.get $p) (i32.const 4))
+    (i32.store offset=56 (local.get $p) (i32.const -1))
+    (i32.store offset=60 (local.get $p) (i32.const -1))
+    (i32.store offset=1796 (local.get $p) (i32.const 65535))
+    (i32.store offset=1816 (local.get $p) (i32.const 603988992))
+    (i32.store offset=1824 (local.get $p) (i32.const 2048))
+    (i32.store offset=1844 (local.get $p) (i32.const 1))
+    (i32.store offset=1848 (local.get $p) (i32.const 65535))
+    (i32.store offset=4160 (local.get $p) (i32.const 5379))
+    (i32.store offset=4164 (local.get $p) (i32.const 6914))
+    (i32.store offset=4168 (local.get $p) (i32.const 6914))
+    (i32.store offset=4172 (local.get $p) (i32.const 1032))
+    (i32.store offset=4176 (local.get $p) (i32.const 5634))
+    (f32.store offset=1808 (local.get $p) (f32.const 1))
+    (f32.store offset=1812 (local.get $p) (f32.const 1))
+    (f32.store offset=1828 (local.get $p) (f32.const 1))
+    (f32.store offset=1836 (local.get $p) (f32.const 1))
+    (memory.fill (i32.add (local.get $p) (i32.const 1852)) (i32.const 255) (i32.const 128))
+    (i32.store offset=240 (local.get $ctx) (local.get $p))
+    (local.get $p))
+
+  ;; Abort owns every unlinked texture node; success transfers that chain.
+  (func $gl_copy_plan_free (param $plan i32) (param $abort i32)
+    (local $p i32) (local $next i32)
+    (if (local.get $abort) (then
+      (local.set $p (i32.load offset=32 (local.get $plan)))
+      (block $done (loop $nodes
+        (br_if $done (i32.eqz (local.get $p)))
+        (local.set $next (i32.load (local.get $p)))
+        (call $heap_free (call $w2g (local.get $p)))
+        (local.set $p (local.get $next)) (br $nodes)))))
+    (call $heap_free (call $w2g (local.get $plan))))
+
+  (func $gl_copy_context (param $source i32) (param $target i32) (param $mask i32) (result i32)
+    (local $a i32) (local $b i32) (local $as i32) (local $bs i32)
+    (local $am i32) (local $bm i32) (local $ar i32) (local $br i32)
+    (local $at i32) (local $bt i32) (local $plan i32) (local $stack i32)
+    (local $i i32) (local $j i32) (local $obj i32) (local $dst i32)
+    (local $name i32) (local $bits i32) (local $flags i32) (local $error i32)
+    (local.set $a (call $gl_share_context_find (local.get $source)))
+    (local.set $b (call $gl_share_context_find (local.get $target)))
+    (if (i32.or (i32.eqz (local.get $a)) (i32.eqz (local.get $b))) (then
+      (global.set $last_error (i32.const 6)) (return (i32.const 0))))
+    (if (i32.and (local.get $mask) (i32.const 0xfff00000)) (then
+      (global.set $last_error (i32.const 87)) (return (i32.const 0))))
+    ;; The host checks live identities, implementation/format, and EVERY owner.
+    ;; Phase zero is validation only, before allocations or destination writes.
+    (local.set $stack (call $gl_list_alloc (i32.const 32)))
+    (if (i32.eqz (local.get $stack)) (then (global.set $last_error (i32.const 8)) (return (i32.const 0))))
+    (i32.store offset=4 (local.get $stack) (local.get $source))
+    (i32.store offset=8 (local.get $stack) (local.get $target))
+    (i32.store offset=12 (local.get $stack) (local.get $mask))
+    (drop (call $gl_emit_record (i32.const 0x10006) (local.get $stack) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+    (local.set $error (call $gl_wat_stream_flush))
+    (if (local.get $error) (then
+      (call $heap_free (call $w2g (local.get $stack)))
+      (global.set $last_error (local.get $error)) (return (i32.const 0))))
+    (if (i32.eqz (local.get $mask)) (then
+      (call $heap_free (call $w2g (local.get $stack))) (return (i32.const 1))))
+    (local.set $as (call $gl_copy_state (local.get $source)))
+    (if (i32.load offset=196 (local.get $as))
+      (then (local.set $as (i32.add (local.get $as) (i32.const 196)))))
+    (local.set $bs (call $gl_copy_state (local.get $target)))
+    (local.set $am (call $gl_mtx_slot (local.get $source) (i32.const 1)))
+    (local.set $bm (call $gl_mtx_slot (local.get $target) (i32.const 1)))
+    (local.set $ar (call $gl_copy_raster (local.get $a)))
+    (local.set $br (call $gl_copy_raster (local.get $b)))
+    (local.set $at (call $gl_texture_block_for (local.get $a)))
+    (local.set $bt (call $gl_texture_block_for (local.get $b)))
+    ;; Plan contains four resolved destination bindings and staged new objects.
+    ;; No source object pointer is installed in a destination namespace.
+    (local.set $plan (call $gl_list_alloc (i32.const 36)))
+    (if (i32.eqz (local.get $plan)) (then
+      (call $heap_free (call $w2g (local.get $stack)))
+      (global.set $last_error (i32.const 8)) (return (i32.const 0))))
+    (if (i32.and (local.get $mask) (i32.const 0x40000)) (then
+      (block $prepared (loop $prepare
+        (local.set $obj (i32.load (i32.add (local.get $at) (i32.add (i32.const 16) (i32.shl (local.get $i) (i32.const 2))))))
+        (local.set $name (i32.load offset=4 (local.get $obj)))
+        (local.set $dst (if (result i32) (local.get $name)
+          (then (call $gl_texture_find (local.get $bt) (local.get $name)))
+          (else (i32.add (local.get $bt) (select (i32.const 136) (i32.const 80) (i32.and (local.get $i) (i32.const 1)))))))
+        ;; Repeated names resolve to the same prepared destination object.
+        (local.set $j (i32.const 0))
+        (block $seen (loop $previous
+          (br_if $seen (i32.ge_u (local.get $j) (local.get $i)))
+          (if (i32.eq (local.get $obj) (i32.load (i32.add (local.get $plan) (i32.add (i32.const 16) (i32.shl (local.get $j) (i32.const 2))))))
+            (then (local.set $dst (i32.load (i32.add (local.get $plan) (i32.shl (local.get $j) (i32.const 2))))) (br $seen)))
+          (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $previous)))
+        (if (local.get $dst) (then
+          (if (i32.ne (i32.load offset=8 (local.get $obj)) (i32.load offset=8 (local.get $dst)))
+            (then (local.set $error (i32.const 87)))))
+          (else
+            (local.set $dst (call $gl_list_alloc (i32.const 56)))
+            (if (i32.eqz (local.get $dst)) (then (local.set $error (i32.const 8)) (br $prepared)))
+            (i32.store (local.get $dst) (i32.load offset=32 (local.get $plan)))
+            (i32.store offset=32 (local.get $plan) (local.get $dst))
+            (call $gl_texture_object_init (local.get $dst) (i32.load offset=8 (local.get $obj)))
+            (i32.store offset=4 (local.get $dst) (local.get $name))))
+        (i32.store (i32.add (local.get $plan) (i32.shl (local.get $i) (i32.const 2))) (local.get $dst))
+        (i32.store (i32.add (local.get $plan) (i32.add (i32.const 16) (i32.shl (local.get $i) (i32.const 2)))) (local.get $obj))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $prepare (i32.lt_u (local.get $i) (i32.const 4)))))))
+    (if (local.get $error) (then
+      (call $gl_copy_plan_free (local.get $plan) (i32.const 1)) (call $heap_free (call $w2g (local.get $stack)))
+      (global.set $last_error (local.get $error)) (return (i32.const 0))))
+    ;; Prepare host values including canonical CURRENT that packing absorbed.
+    (i32.store offset=16 (local.get $stack) (call $w2g (i32.add (local.get $as) (i32.const 4))))
+    (drop (call $gl_emit_record (i32.const 0x10006) (local.get $stack) (i32.const 1)
+      (call $w2g (i32.add (local.get $as) (i32.const 4))) (i32.const 16) (i32.const 0)))
+    (local.set $error (call $gl_wat_stream_flush))
+    (if (local.get $error) (then
+      (call $gl_copy_plan_free (local.get $plan) (i32.const 1)) (call $heap_free (call $w2g (local.get $stack)))
+      (global.set $last_error (local.get $error)) (return (i32.const 0))))
+    ;; Commit: all validation/allocation is complete. No bind/query/device call.
+    (local.set $dst (i32.load offset=32 (local.get $plan)))
+    (if (local.get $dst) (then
+      (local.set $obj (local.get $dst))
+      (block $tail (loop $next
+        (br_if $tail (i32.eqz (i32.load (local.get $obj))))
+        (local.set $obj (i32.load (local.get $obj))) (br $next)))
+      (i32.store (local.get $obj) (i32.load offset=8 (i32.load offset=308 (local.get $bt))))
+      (i32.store offset=8 (i32.load offset=308 (local.get $bt)) (local.get $dst))))
+
+    (call $gl_copy_values (local.get $mask) (local.get $as) (local.get $bs)
+      (local.get $am) (local.get $bm) (local.get $a) (local.get $b)
+      (local.get $ar) (local.get $br) (local.get $at) (local.get $bt))
+    (if (i32.and (local.get $mask) (i32.const 270336)) (then (call $gl_copy_bits (i32.add (local.get $a) (i32.const 108)) (i32.add (local.get $b) (i32.const 108)) (i32.const 3))))
+    (if (i32.and (local.get $mask) (i32.const 8320)) (then (call $gl_copy_bits (i32.add (local.get $a) (i32.const 108)) (i32.add (local.get $b) (i32.const 108)) (i32.const 4))))
+    (if (i32.and (local.get $mask) (i32.const 8256)) (then (call $gl_copy_bits (i32.add (local.get $a) (i32.const 108)) (i32.add (local.get $b) (i32.const 108)) (i32.const 8))))
+    (if (i32.and (local.get $mask) (i32.const 270336)) (then (call $gl_copy_bits (local.get $ar) (local.get $br) (i32.const 1966081))))
+    (if (i32.and (local.get $mask) (i32.const 24576)) (then (call $gl_copy_bits (local.get $ar) (local.get $br) (i32.const 234881030))))
+    (if (i32.and (local.get $mask) (i32.const 8448)) (then (call $gl_copy_bits (local.get $ar) (local.get $br) (i32.const 8))))
+    (if (i32.and (local.get $mask) (i32.const 8200)) (then (call $gl_copy_bits (local.get $ar) (local.get $br) (i32.const 16))))
+    (if (i32.and (local.get $mask) (i32.const 532480)) (then (call $gl_copy_bits (local.get $ar) (local.get $br) (i32.const 32))))
+    (if (i32.and (local.get $mask) (i32.const 8320)) (then (call $gl_copy_bits (local.get $ar) (local.get $br) (i32.const 64))))
+    (if (i32.and (local.get $mask) (i32.const 8256)) (then (call $gl_copy_bits (local.get $ar) (local.get $br) (i32.const 130944))))
+    (if (i32.and (local.get $mask) (i32.const 12288)) (then (call $gl_copy_bits (local.get $ar) (local.get $br) (i32.const 4194304))))
+    (if (i32.and (local.get $mask) (i32.const 8196)) (then (call $gl_copy_bits (local.get $ar) (local.get $br) (i32.const 8388608))))
+    (if (i32.and (local.get $mask) (i32.const 8200)) (then (call $gl_copy_bits (local.get $ar) (local.get $br) (i32.const 16777216))))
+    (if (i32.and (local.get $mask) (i32.const 8256)) (then (call $gl_copy_bits (i32.add (local.get $am) (i32.const 9036)) (i32.add (local.get $bm) (i32.const 9036)) (i32.const 130944))))
+    (if (i32.and (local.get $mask) (i32.const 8320)) (then (call $gl_copy_bits (i32.add (local.get $am) (i32.const 9036)) (i32.add (local.get $bm) (i32.const 9036)) (i32.const 64))))
+    (if (i32.and (local.get $mask) (i32.const 12288)) (then (call $gl_copy_bits (i32.add (local.get $am) (i32.const 9036)) (i32.add (local.get $bm) (i32.const 9036)) (i32.const 4194304))))
+    (if (i32.and (local.get $mask) (i32.const 0x40000)) (then
+      (local.set $i (i32.const 0))
+      (loop $install
+        (local.set $dst (i32.load (i32.add (local.get $plan) (i32.shl (local.get $i) (i32.const 2)))))
+        (local.set $obj (i32.load (i32.add (local.get $plan) (i32.add (i32.const 16) (i32.shl (local.get $i) (i32.const 2))))))
+        (memory.copy (i32.add (local.get $dst) (i32.const 12)) (i32.add (local.get $obj) (i32.const 12)) (i32.const 36))
+        (i32.store (i32.add (local.get $bt) (i32.add (i32.const 16) (i32.shl (local.get $i) (i32.const 2)))) (local.get $dst))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $install (i32.lt_u (local.get $i) (i32.const 4))))))
+    (drop (call $gl_emit_record (i32.const 0x10007) (local.get $stack) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+    (drop (call $gl_wat_stream_flush))
+    (call $gl_copy_plan_free (local.get $plan) (i32.const 0))
+    (call $heap_free (call $w2g (local.get $stack)))
+    (i32.const 1))

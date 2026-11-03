@@ -1,11 +1,9 @@
-# wglCopyContext: native publication prerequisite
+# wglCopyContext: complete native mask transaction
 
-`wglCopyContext` remains unsupported. The completed publication repair is recorded
-in the final section below; the initial investigation did not implement or
-advertise it. The first measured dependency is publication of a current source
-context's producer-private state and pending server commands. Copying existing
-saved context blocks, replaying the destination's attribute stack, or sharing
-object namespaces would not satisfy the contract.
+`wglCopyContext` now implements the selected/all-server-attribute transaction
+through the native process lock and production consumers. The final section
+records its qualification. Earlier sections retain the dated prerequisite
+investigations and their then-unsupported public status.
 
 Evidence is in `scratch/runs/20261103-gl-copy-context/`, including exact ordered
 AUTHOR RELEASE lines, source/module seals, the native diagnostic, retrieved
@@ -346,3 +344,65 @@ availability still rejects copy and its three deliberately broken controls.
 The run retains fresh baseline old-fail logs, tested sources, exact modules,
 native captures, full delayed lease bytes, browser PNGs, full-SHA manifests and
 recovery/lifecycle records.
+
+
+## Complete native transaction (2026-11-03)
+
+Evidence and recovery: `scratch/runs/20261103-gl-copy-context-ready/`.
+The retained preparation candidate was revalidated against sealed current-main
+source, then completed. Public lookup stayed unavailable during private native
+and real WebGL qualification; both WGL and static OpenGL lookup now resolve the
+actual native handler, with the ordinary three-argument stdcall ABI.
+
+The implementation selects explicit server values for all twenty GL1.1 mask
+bits and their enable overlaps. Zero and `GL_ALL_ATTRIB_BITS` are covered.
+It validates both live context identities, implementation/device family,
+destination ownership on every producer, mask bits and texture target conflicts
+before commit. Invalid handles return error6, current destinations error170,
+and unsupported masks error87 without changing destination value blocks.
+Prepare stages native texture nodes and frontend maps; an injected second
+allocation failure frees the first staged object, clears the plan, leaves the
+namespace/bindings unchanged and permits a clean retry.
+
+A source on another native producer remains current while the caller and
+destination are unbound. No source bind, query or caller-induced source flush
+repairs publication. Completed legal setters inside `glBegin` use a separate
+value snapshot for copy reads; the existing committed primitive snapshot stays
+unchanged until `glEnd`. The unchanged publication regression and the new
+foreign-copy-inside-Begin test both pass. Client descriptors, pack/unpack,
+client/server attribute frames, all matrix contents and stacks, GL errors,
+resource/image/list identities, distinct drawables and current bindings stay
+owned by their original contexts. Same texture names resolve in the destination
+namespace; images are retained and only selected bindings/samplers change.
+Deferred backend activation and sampler application occur on ordinary use.
+
+The locked build passes. Canonical output is 2,088,037 bytes, SHA256
+`7c22e2715377fd09a71887a62211ccd3cc0e8c96e56cbc65ca792e8c35213726`;
+compatibility output is 2,090,610 bytes, SHA256
+`94bf1e6eb547feda51bfdb79d3a6576b138919ae5779bb6746fe948b8a45eafe`.
+The resolved-ABI diagnostic module is 2,088,204 bytes, SHA256
+`f0cd4d89ced13770fec17a2de3d62c4353d836d50fdd39dca4569600368d4474`.
+Direct and actual delayed Worker transactions pass 1,416 and 1,419 checks each,
+on canonical and public-thunk paths. Worker consumption renders five triangles
+with zero fallbacks; the full delayed 3,024-byte payload remains immutable,
+SHA256 `10a7740e827c0758301325036db4c3398238c03ea87a5f69f77f52e5eb70827a`.
+
+Real WebGL1 and WebGL2 consume all four native captures and independently check
+blue/green/black copy pixels, destination red texture ownership, copied depth
+write and polygon slope bias, and green copied material while the foreign
+source primitive remains unfinished. The first units-only depth probe exposed
+native16-bit versus WebGL24-bit depth precision; its failed literal blue-pixel
+expectation and captures remain retained. The final common threshold uses slope
+bias, keeping the same literal blue/green expectations; the units term is
+[implementation dependent](https://wikis.khronos.org/opengl/GLAPI/glPolygonOffset).
+Selected-mask queries still require the exact factor2/units4096 values.
+
+All nineteen focused non-browser regressions pass. Hint170/171 and polygon/
+material native direct/Worker and real WebGL1/2 tests pass without changing
+literal expectations. Both original faithful state fixtures remain unchanged
+and pass, including their original browser fixture. Four focused browser
+regressions pass. The existing shared-texture WebGL1 assertion still fails:
+expected cyan `[0,255,255,255]`, actual green `[0,255,0,255]`. Its assertion and
+exact diagnostic module are retained; it is not counted as a pass. This change
+does not repair that separate shared-texture visibility defect or claim
+historical27, gameplay, MDK2 playability or public deployment.

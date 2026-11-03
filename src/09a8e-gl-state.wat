@@ -47,11 +47,11 @@
         (local.set $guest (call $heap_alloc (i32.const 16)))
         (if (i32.eqz (local.get $guest)) (then (unreachable)))
         (local.set $p (call $g2w (local.get $guest)))
-        (local.set $guest (call $heap_alloc (i32.const 196)))
+        (local.set $guest (call $heap_alloc (i32.const 392)))
         (if (i32.eqz (local.get $guest)) (then
           (call $heap_free (call $w2g (local.get $p))) (unreachable)))
         (local.set $state (call $g2w (local.get $guest)))))
-    (memory.fill (local.get $state) (i32.const 0) (i32.const 196))
+    (memory.fill (local.get $state) (i32.const 0) (i32.const 392))
     (i32.store (local.get $p) (local.get $context))
     (i32.store offset=12 (local.get $p) (global.get $current_thread_id))
     (i32.store offset=4 (local.get $p) (i32.atomic.load (region.addr $GL_MTX_BLOCKS 12)))
@@ -59,13 +59,22 @@
     (i32.atomic.store (region.addr $GL_MTX_BLOCKS 12) (local.get $p))
     (local.get $state))
 
-  ;; Completed server values only. Client arrays and attribute stack ownership
-  ;; remain on the context-switch path; exact color source words are values.
+  ;; Keep the committed primitive snapshot intact through Begin/End. A second
+  ;; value-only half publishes legal completed setters for foreign copy reads;
+  ;; +196 is its active flag, never a client or resource pointer.
   (func $gl_state_publish (param $context i32)
     (local $p i32)
     (if (i32.eqz (local.get $context)) (then (return)))
     (local.set $p (call $gl_state_slot (local.get $context) (i32.const 1)))
     (if (i32.eqz (local.get $p)) (then (return)))
+    (i32.store offset=196 (local.get $p) (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)))
+    (if (i32.load offset=196 (local.get $p))
+      (then (local.set $p (i32.add (local.get $p) (i32.const 196)))))
+    (call $gl_state_publish_to (local.get $p)))
+
+  ;; All fields below are server values; geometry/client arrays/stack identity
+  ;; are written only by their existing context-switch or immutable draw paths.
+  (func $gl_state_publish_to (param $p i32)
     (call $gl_source_save (i32.add (local.get $p) (i32.const 176)))
     (f32.store offset=4 (local.get $p) (global.get $gl_color_r))
     (f32.store offset=8 (local.get $p) (global.get $gl_color_g))
@@ -90,6 +99,8 @@
     (if (i32.eqz (local.get $context)) (then (return)))
     (call $gl_state_publish (local.get $context))
     (local.set $p (call $gl_state_slot (local.get $context) (i32.const 0)))
+    (call $gl_state_publish_to (local.get $p))
+    (i32.store offset=196 (local.get $p) (i32.const 0))
     (i32.store offset=52 (local.get $p) (global.get $gl_client_bits))
     (i32.store offset=56 (local.get $p) (global.get $gl_client_tex_unit))
     (i32.store offset=60 (local.get $p) (global.get $gl_vp_size))
@@ -116,6 +127,7 @@
     (i32.store offset=144 (local.get $p) (global.get $gl_state_pointer_bits)))
 
   (func $gl_native_query_count (param $p i32) (result i32)
+    (if (i32.or (i32.eq (local.get $p) (i32.const 0x8038)) (i32.eq (local.get $p) (i32.const 0x2a00))) (then (return (i32.const 1))))
     (if (call $gl_hint_target (local.get $p)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $p) (i32.const 0xb40)) (then (return (i32.const 2))))
     (if (i32.le_u (i32.sub (local.get $p) (i32.const 0xb55)) (i32.const 2)) (then (return (i32.const 1))))
@@ -151,6 +163,8 @@
     (i32.const 0))
 
   (func $gl_native_query_value (param $p i32) (param $i i32) (result f64)
+    (if (i32.eq (local.get $p) (i32.const 0x8038)) (then (return (f64.promote_f32 (f32.load offset=4124 (global.get $gl_sw_st))))))
+    (if (i32.eq (local.get $p) (i32.const 0x2a00)) (then (return (f64.promote_f32 (f32.load offset=4128 (global.get $gl_sw_st))))))
     (if (call $gl_hint_target (local.get $p)) (then
       (return (f64.convert_i32_u (i32.load (call $gl_hint_ptr (call $gl_list_context) (local.get $p)))))))
     (if (i32.eq (local.get $p) (i32.const 0xb40)) (then
@@ -638,7 +652,7 @@
             (else (i32.atomic.store (region.addr $GL_MTX_BLOCKS 12) (local.get $next))))
           (local.set $state (i32.load offset=8 (local.get $node)))
           (call $gl_state_free_attribs (i32.load offset=136 (local.get $state)))
-          (memory.fill (local.get $state) (i32.const 0) (i32.const 196))
+          (memory.fill (local.get $state) (i32.const 0) (i32.const 392))
           (i32.store offset=4 (local.get $node) (global.get $gl_state_free_contexts))
           (global.set $gl_state_free_contexts (local.get $node))
           (br $done)))

@@ -298,6 +298,8 @@
   ;;   +40 bound TEXTURE_2D name          +44 unpack alignment
   ;;   +48 scissor box x, +52 y (GL, bottom-up), +56 w, +60 h; w < 0 means
   ;;       never set, which GL defines as the whole drawable
+  (global $gl_copy_polygon_offset_active (mut i32) (i32.const 0))
+  (global $gl_copy_polygon_bias (mut f32) (f32.const 0))
   (func $gl_sw_state_defaults
     (local $s i32)
     (local.set $s (global.get $gl_sw_st))
@@ -320,6 +322,7 @@
     (i32.store offset=60 (local.get $s) (i32.const -1))
     (call $gl_stipple_defaults)
     (call $gl_period_defaults)
+    (memory.fill (i32.add (global.get $gl_sw_st) (i32.const 4124)) (i32.const 0) (i32.const 12))
     (global.set $gl_sw_point_size (f32.const 1))
     (global.set $gl_sw_line_width (f32.const 1))
     (global.set $gl_sw_texgen_modes (i32.const 0x24002400))
@@ -376,6 +379,13 @@
     (call $memcpy (i32.add (local.get $frame) (i32.const 4)) (global.get $gl_sw_st) (i32.const 64))
     (i32.store offset=68 (local.get $frame) (i32.load offset=4104 (global.get $gl_sw_st)))
     (call $gl_period_push (local.get $frame))
+    (i32.store offset=92 (local.get $frame) (i32.const 0))
+    (if (i32.and (local.get $mask) (i32.const 0x2008)) (then
+      (i32.store offset=92 (local.get $frame) (call $gl_list_alloc (i32.const 12)))
+      (if (i32.eqz (i32.load offset=92 (local.get $frame))) (then (unreachable)))
+      (memory.copy (i32.load offset=92 (local.get $frame))
+        (i32.add (global.get $gl_sw_st) (i32.const 4124)) (i32.const 12))))
+
     ;; Point size and line width sit outside the 64-byte block, at +1600.
     (local.set $frame (call $gl_sw_attrib_sizes (global.get $gl_sw_attrib_depth)))
     (f32.store (local.get $frame) (global.get $gl_sw_point_size))
@@ -417,6 +427,15 @@
     (local.set $s (global.get $gl_sw_st))
     (call $gl_stipple_pop (local.get $mask) (local.get $saved))
     (call $gl_period_pop (local.get $frame) (local.get $mask))
+    (if (i32.load offset=92 (local.get $frame)) (then
+      (if (i32.and (local.get $mask) (i32.const 8)) (then
+        (memory.copy (i32.add (global.get $gl_sw_st) (i32.const 4124))
+          (i32.load offset=92 (local.get $frame)) (i32.const 8))))
+      (if (i32.and (local.get $mask) (i32.const 0x2008)) (then
+        (i32.store offset=4132 (global.get $gl_sw_st) (i32.load offset=8 (i32.load offset=92 (local.get $frame))))))
+      (call $heap_free (call $w2g (i32.load offset=92 (local.get $frame))))
+      (i32.store offset=92 (local.get $frame) (i32.const 0))))
+
     ;; GL_POINT_BIT, GL_LINE_BIT.
     (if (i32.and (local.get $mask) (i32.const 0x2))
       (then (global.set $gl_sw_point_size (f32.load
@@ -1278,7 +1297,7 @@
     (if (i32.eqz (local.get $ctx)) (then (return)))
     (local.set $p (i32.load offset=240 (local.get $ctx)))
     (if (i32.eqz (local.get $p)) (then
-      (local.set $p (call $gl_list_alloc (i32.const 4180)))
+      (local.set $p (call $gl_list_alloc (i32.const 4192)))
       (if (i32.eqz (local.get $p)) (then (unreachable)))
       (i32.store offset=240 (local.get $ctx) (local.get $p))))
     (i32.store offset=0 (local.get $p) (i32.load offset=0 (global.get $gl_sw_st)))
@@ -1301,6 +1320,8 @@
     (i32.store offset=4160 (local.get $p) (i32.load offset=4104 (global.get $gl_sw_st)))
     (memory.copy (i32.add (local.get $p) (i32.const 4164))
       (i32.add (global.get $gl_sw_st) (i32.const 4108)) (i32.const 16))
+    (memory.copy (i32.add (local.get $p) (i32.const 4180))
+      (i32.add (global.get $gl_sw_st) (i32.const 4124)) (i32.const 12))
     (i32.store offset=1792 (local.get $p) (global.get $gl_sw_clear_color))
     (i32.store offset=1796 (local.get $p) (global.get $gl_sw_clear_depth_value))
     (i32.store offset=1800 (local.get $p) (global.get $gl_sw_active_unit))
@@ -1353,6 +1374,8 @@
     (i32.store offset=4104 (global.get $gl_sw_st) (i32.load offset=4160 (local.get $p)))
     (memory.copy (i32.add (global.get $gl_sw_st) (i32.const 4108))
       (i32.add (local.get $p) (i32.const 4164)) (i32.const 16))
+    (memory.copy (i32.add (global.get $gl_sw_st) (i32.const 4124))
+      (i32.add (local.get $p) (i32.const 4180)) (i32.const 12))
     (global.set $gl_sw_clear_color (i32.load offset=1792 (local.get $p)))
     (global.set $gl_sw_clear_depth_value (i32.load offset=1796 (local.get $p)))
     (global.set $gl_sw_active_unit (i32.load offset=1800 (local.get $p)))
@@ -2790,6 +2813,9 @@
     (if (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 64))
       (then (f32.store offset=28 (local.get $out)
         (call $gl_sw_fog_factor (f32.load offset=56 (local.get $c))))))
+    (if (global.get $gl_copy_polygon_offset_active) (then
+      (f32.store offset=8 (local.get $out) (f32.min (f32.const 1) (f32.max (f32.const 0)
+        (f32.add (f32.load offset=8 (local.get $out)) (global.get $gl_copy_polygon_bias)))))))
     (i32.const 1))
 
   ;; ---- the raster state every primitive shares ---------------------------
@@ -3671,7 +3697,7 @@
   ;; With a D3D render Worker attached (--d3d-worker, and Threads mode in the
   ;; browser) a draw is queued there instead of rasterized here, exactly as
   ;; D3DIM's are: the guest runs on while the Worker draws. The record is a
-  ;; 2720-byte snapshot of everything $gl_sw_draw reads that the guest may
+  ;; 2732-byte snapshot of everything $gl_sw_draw reads that the guest may
   ;; change before the Worker gets to it, then the packed draw record itself:
   ;;   +0    state block (+0..+63 of $gl_sw_st)
   ;;   +64   top of each matrix stack, 0..3, 64 bytes each
@@ -3784,7 +3810,7 @@
     (if (global.get $gl_sw_in_worker) (then (return (i32.const 0))))
     (if (i32.eq (global.get $gl_sw_worker_ok) (i32.const 2)) (then (return (i32.const 0))))
     (if (i32.eqz (global.get $gl_sw_snap)) (then
-      (local.set $g (call $gl_alloc_affine (i32.const 2736)))
+      (local.set $g (call $gl_alloc_affine (i32.const 2748)))
       (if (i32.eqz (local.get $g)) (then
         (global.set $gl_sw_worker_ok (i32.const 2))
         (return (i32.const 0))))
@@ -3866,9 +3892,11 @@
     (i32.store offset=2700 (local.get $snap) (i32.load offset=4104 (global.get $gl_sw_st)))
     (memory.copy (i32.add (local.get $snap) (i32.const 2704))
       (i32.add (global.get $gl_sw_st) (i32.const 4108)) (i32.const 16))
-    (local.set $d (i32.add (local.get $snap) (i32.const 2720)))
+    (memory.copy (i32.add (local.get $snap) (i32.const 2720))
+      (i32.add (global.get $gl_sw_st) (i32.const 4124)) (i32.const 12))
+    (local.set $d (i32.add (local.get $snap) (i32.const 2732)))
     (i32.store offset=0 (local.get $d) (local.get $snap))
-    (i32.store offset=4 (local.get $d) (i32.const 2720))
+    (i32.store offset=4 (local.get $d) (i32.const 2732))
     (i32.store offset=8 (local.get $d) (local.get $start))
     (i32.store offset=12 (local.get $d)
       (i32.add (i32.mul (local.get $vertices) (call $gl_source_packed_stride (local.get $start))) (i32.const 32)))
@@ -3915,6 +3943,8 @@
     (memory.copy (global.get $gl_sw_st) (local.get $snap) (i32.const 64))
     (memory.copy (i32.add (global.get $gl_sw_st) (i32.const 1792))
       (i32.add (local.get $snap) (i32.const 2560)) (i32.const 136))
+    (memory.copy (i32.add (global.get $gl_sw_st) (i32.const 4124))
+      (i32.add (local.get $snap) (i32.const 2720)) (i32.const 12))
     (global.set $gl_line_phase_target (i32.load offset=2696 (local.get $snap)))
     (i32.store offset=4104 (global.get $gl_sw_st) (i32.load offset=2700 (local.get $snap)))
     (memory.copy (i32.add (global.get $gl_sw_st) (i32.const 4108))
@@ -4470,6 +4500,15 @@
       (global.set $gl_sw_culled (i32.add (global.get $gl_sw_culled) (i32.const 1))) (return)))
     (local.set $mode (i32.load (i32.add (global.get $gl_sw_st)
       (select (i32.const 4108) (i32.const 4112) (local.get $front)))))
+    (global.set $gl_copy_polygon_offset_active (i32.const 0))
+    (if (i32.and (i32.load offset=4132 (global.get $gl_sw_st))
+        (select (i32.const 1) (select (i32.const 2) (i32.const 4)
+          (i32.eq (local.get $mode) (i32.const 0x1b01))) (i32.eq (local.get $mode) (i32.const 0x1b02)))) (then
+      (drop (call $gl_sw_emit_vertex (local.get $poly) (local.get $vp) (i32.const 0)))
+      (drop (call $gl_sw_emit_vertex (i32.add (local.get $poly) (i32.const 108)) (local.get $vp) (i32.const 1)))
+      (drop (call $gl_sw_emit_vertex (i32.add (local.get $poly) (i32.const 216)) (local.get $vp) (i32.const 2)))
+      (call $gl_copy_offset_plane)
+      (global.set $gl_copy_polygon_offset_active (i32.const 1))))
     (if (i32.ne (local.get $mode) (i32.const 0x1b02)) (then
       ;; gl_sw_draw resets or resumes the context-owned counter per record.
       (loop $boundary
@@ -4483,6 +4522,7 @@
             (else (call $gl_period_line_clipped (local.get $vp) (local.get $a) (local.get $b))))))
         (local.set $k (i32.add (local.get $k) (i32.const 1)))
         (br_if $boundary (i32.lt_u (local.get $k) (local.get $n))))
+      (global.set $gl_copy_polygon_offset_active (i32.const 0))
       (return)))
     (local.set $k (i32.const 1))
     (block $done (loop $fan
@@ -4490,7 +4530,8 @@
       (call $gl_sw_emit (local.get $vp) (local.get $poly)
         (i32.add (local.get $poly) (i32.mul (local.get $k) (i32.const 108)))
         (i32.add (local.get $poly) (i32.mul (i32.add (local.get $k) (i32.const 1)) (i32.const 108))))
-      (local.set $k (i32.add (local.get $k) (i32.const 1))) (br $fan))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1))) (br $fan)))
+    (global.set $gl_copy_polygon_offset_active (i32.const 0)))
 
   ;; Period GL state extension in the spare tail of GL_SW_STATE. Attribute
   ;; frames use their previously unused +72..+87. No client or phase pointers.
@@ -4567,6 +4608,18 @@
       (then (call $gl_period_track)))
     (local.set $face (i32.load offset=4 (local.get $stack)))
     (local.set $value (i32.load offset=8 (local.get $stack)))
+    (if (i32.eq (local.get $op) (i32.const 57)) (then
+      (memory.copy (i32.add (global.get $gl_sw_st) (i32.const 4124))
+        (i32.add (local.get $stack) (i32.const 4)) (i32.const 8))))
+    (if (i32.and (i32.or (i32.eq (local.get $op) (i32.const 8)) (i32.eq (local.get $op) (i32.const 10)))
+        (i32.or (i32.eq (local.get $face) (i32.const 0x8037))
+          (i32.or (i32.eq (local.get $face) (i32.const 0x2a01)) (i32.eq (local.get $face) (i32.const 0x2a02))))) (then
+      (local.set $value (select (i32.const 1) (select (i32.const 2) (i32.const 4)
+        (i32.eq (local.get $face) (i32.const 0x2a02))) (i32.eq (local.get $face) (i32.const 0x8037))))
+      (i32.store offset=4132 (global.get $gl_sw_st) (select
+        (i32.or (i32.load offset=4132 (global.get $gl_sw_st)) (local.get $value))
+        (i32.and (i32.load offset=4132 (global.get $gl_sw_st)) (i32.xor (local.get $value) (i32.const -1)))
+        (i32.eq (local.get $op) (i32.const 10))))))
     (if (i32.and (i32.or (i32.eq (local.get $op) (i32.const 8)) (i32.eq (local.get $op) (i32.const 10)))
         (i32.eq (local.get $face) (i32.const 0xb57))) (then
       (i32.store (global.get $gl_sw_st) (i32.or
@@ -4624,4 +4677,19 @@
         (i32.add (i32.const 64) (i32.mul (local.get $i) (i32.const 96)))))
       (local.set $p (i32.load offset=88 (local.get $frame)))
       (if (local.get $p) (then (call $heap_free (call $w2g (local.get $p)))))
+      (local.set $p (i32.load offset=92 (local.get $frame)))
+      (if (local.get $p) (then (call $heap_free (call $w2g (local.get $p)))))
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $frames))))
+
+  (func $gl_copy_offset_plane
+    (local $a i32) (local $b i32) (local $c i32)
+    (local.set $a (call $gl_sw_screen_at (i32.const 0)))
+    (local.set $b (call $gl_sw_screen_at (i32.const 1)))
+    (local.set $c (call $gl_sw_screen_at (i32.const 2)))
+    (call $rast_plane (i32.load (local.get $a)) (i32.load offset=4 (local.get $a)) (f32.load offset=8 (local.get $a))
+      (i32.load (local.get $b)) (i32.load offset=4 (local.get $b)) (f32.load offset=8 (local.get $b))
+      (i32.load (local.get $c)) (i32.load offset=4 (local.get $c)) (f32.load offset=8 (local.get $c)))
+    (global.set $gl_copy_polygon_bias (f32.add
+      (f32.mul (f32.load offset=4124 (global.get $gl_sw_st))
+        (f32.max (f32.abs (global.get $rast_pa)) (f32.abs (global.get $rast_pb))))
+      (f32.div (f32.load offset=4128 (global.get $gl_sw_st)) (f32.const 65535)))))

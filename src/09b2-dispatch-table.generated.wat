@@ -4115,6 +4115,7 @@
     (if (i32.eq (local.get $id) (i32.const 4466)) (then (return (i32.const 1)))) ;; wglGetCurrentContext
     (if (i32.eq (local.get $id) (i32.const 4467)) (then (return (i32.const 1)))) ;; wglGetCurrentDC
     (if (i32.eq (local.get $id) (i32.const 4468)) (then (return (i32.const 1)))) ;; wglShareLists
+    (if (i32.eq (local.get $id) (i32.const 4469)) (then (return (i32.const 1)))) ;; wglCopyContext
     (if (i32.eq (local.get $id) (i32.const 4535)) (then (return (i32.const 1)))) ;; wglDescribeLayerPlane
     (if (i32.eq (local.get $id) (i32.const 4536)) (then (return (i32.const 1)))) ;; wglGetLayerPaletteEntries
     (if (i32.eq (local.get $id) (i32.const 4537)) (then (return (i32.const 1)))) ;; wglSetLayerPaletteEntries
@@ -4180,7 +4181,6 @@
     (if (i32.eq (local.get $id) (i32.const 4400)) (then (return (i32.const 1)))) ;; glRenderMode
     (if (i32.eq (local.get $id) (i32.const 4402)) (then (return (i32.const 1)))) ;; glSelectBuffer
     (if (i32.eq (local.get $id) (i32.const 4446)) (then (return (i32.const 1)))) ;; glUnlockArraysEXT
-    (if (i32.eq (local.get $id) (i32.const 4469)) (then (return (i32.const 1)))) ;; wglCopyContext
     (if (i32.eq (local.get $id) (i32.const 4470)) (then (return (i32.const 1)))) ;; wglCreateLayerContext
     (if (i32.eq (local.get $id) (i32.const 4471)) (then (return (i32.const 1)))) ;; wglSwapIntervalEXT
     (if (i32.eq (local.get $id) (i32.const 4539)) (then (return (i32.const 1)))) ;; wglUseFontBitmapsA
@@ -23151,7 +23151,7 @@
       (return)
     ) ;; 4469: wglCopyContext
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_wglCopyContext (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (call $gl_object_leave)
       (return)
     ) ;; 4470: wglCreateLayerContext

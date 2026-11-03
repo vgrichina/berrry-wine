@@ -419,7 +419,7 @@ for (const n of [2, 3, 4]) for (const suffix of ['d','dv','f','fv','i','iv','s',
 out.push('  (func $wgl_api_available (param $id i32) (result i32)');
 // These WGL implementations dispatch to native handlers rather than GPU opcodes.
 const nativeWglApis = new Set([
-  'wglSwapLayerBuffers', 'wglGetCurrentContext', 'wglGetCurrentDC',
+  'wglSwapLayerBuffers', 'wglGetCurrentContext', 'wglGetCurrentDC', 'wglCopyContext',
   // The pixel format has no layer planes; these native handlers truthfully
   // report that failure rather than dispatching to gl_unimplemented.
   'wglDescribeLayerPlane', 'wglGetLayerPaletteEntries',
@@ -474,6 +474,7 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if(api.name==='wglCopyContext') return '      (call $handle_wglCopyContext (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))';
   if(api.name==='glPrioritizeTextures') return '      (call $handle_gl_prioritize_textures)';
   if(api.name==='glAreTexturesResident') return '      (call $handle_gl_textures_resident)';
   if(api.name==='glDrawPixels')return '      (call $handle_gl_draw_pixels)';
