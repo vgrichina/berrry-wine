@@ -1942,8 +1942,13 @@ size until the next swap, so `resizeContext` now swaps once after resizing.
 2. **Heavy D3D8/D3D9 titles**: Pirates (PIRATES-* rows), BW2
    (GAMEPLAY-black_white_2_demo), Morrowind software (heavy route needs user
    sign-off).
-3. **Wrong pictures**: scr_fallingl black leaves on both arms
-   (SCR-FALLINGL-BLACK-LEAVES-20261010), ptct untextured.
+3. **Remaining visual validation:** Falling Leaves' opaque-shadow defect was
+   corrected by the October 10 material-alpha repair documented in
+   [the screensaver notes](re-notes/plus98-dx-screensavers.md). The October 30
+   software scene observation is retained above; paired corrected WebGL
+   shadow-alpha validation is still missing. Do not reopen black leaves as an
+   established current defect without reproducing it. PTCT texture correctness
+   also remains unverified.
 4. **Fault**: Winamp MilkDrop (existing TODOS row).
 
 ## Current-main refresh, 11 October 2026 (GFX-CORPUS-MATRIX-20261011)
