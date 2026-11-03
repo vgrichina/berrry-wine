@@ -76,6 +76,7 @@ async function bootRenderHarness({
   extraHostOverrides = {}, extraWat = '', width = 640, height = 480,
   fonts = 'all', memory: suppliedMemory = null, tailCalls = true,
   prebuiltModule = null,
+  beforeInstantiate = null,
 } = {}) {
   // Explicit commands can run the real test entrypoint to capture its unchanged
   // extraWat. Preparation exits before host dependencies, memory or assertions.
@@ -123,6 +124,7 @@ async function bootRenderHarness({
   base.host.wait_multiple = () => 0;
   base.host.com_create_instance = () => 0x80004002;
   Object.assign(base.host, extraHostOverrides);
+  if (beforeInstantiate) await beforeInstantiate(ctx, base.host);
   const result = await WebAssembly.instantiate(wasmBytes, base);
   const instance = prebuiltModule ? result : result.instance;
   const module = prebuiltModule || result.module;

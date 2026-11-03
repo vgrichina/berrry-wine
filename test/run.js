@@ -2810,7 +2810,7 @@ async function main() {
     // the fetch. That is what decides which ranges a lazy mount must preload.
     ioTraceTag: () => `b=${traceGateBatch} mainDepth=${
       instance.exports.get_sync_msg_depth ? instance.exports.get_sync_msg_depth() | 0 : 0}`,
-    onExit: (code) => { stopped = true; },
+    onExit: (code) => { ctx.processDesktop?.retire(); stopped = true; },
     trace: traceCategories,
     traceHost: traceHostNames,
     hostCensus: HOST_CENSUS,
@@ -3002,6 +3002,11 @@ async function main() {
     } catch (_) { return null; }
   };
   const h = base.host;
+  const { ProcessDesktop } = require('../lib/process-desktop');
+  const processDesktop = new ProcessDesktop();
+  ctx.processDesktop = processDesktop;
+  ctx.processId = processDesktop.processId;
+  onFailure(() => processDesktop.close());
   // --latency-stats: how long an injected event takes to reach pixels. The
   // blit is the moment GDI hands a dirty rect to the presentation surface,
   // so wrap that import and close out whatever input is still outstanding.
@@ -4042,6 +4047,7 @@ async function main() {
 
   // --- Override exit to also log ---
   h.exit = code => {
+    processDesktop.retire();
     hostExitRequested = true;
     logs.push('[Exit] code=' + code); stopped = true;
     // A child process_spawn started: its parent's GetExitCodeProcess and
@@ -4147,6 +4153,7 @@ async function main() {
   const processCtl = (op, pid, arg) => {
     if (op === 9 || op === 10 || op === 12) return winexecReadiness.control(op, pid, arg);
     if (op === 11) {
+      processDesktop.publish();
       if (!startupNotified) {
         startupNotified = true;
         if (process.send && process.connected) process.send({ t: 'process-input-ready' }, () => {});
@@ -4264,7 +4271,7 @@ async function main() {
         ...(PIPE_CHILD_ARGS.length ? [`--pipe-child-args=${PIPE_CHILD_ARGS.join(' ')}`] : []),
       ];
       const { fork } = require('child_process');
-      const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });
+      const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: processDesktop.environment(ThreadManager.namedEventEnvironment()) });
       const pid = nextChildPid();
       relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
       pipeChildren.push(child);
@@ -4341,7 +4348,7 @@ async function main() {
       ...startupShowArgs(showCmd),
     ];
     const { fork } = require('child_process');
-    const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });
+    const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: processDesktop.environment(ThreadManager.namedEventEnvironment()) });
     const tag = `[child ${ipText} ${hostExe}]`;
     for (const stream of [child.stdout, child.stderr]) {
       let pending = '';
@@ -4931,6 +4938,7 @@ async function main() {
     }
   }
 
+  processDesktop.attach(ctx, h);
   const imports = { host: h };
 
   // A CORRUPT PINNED ARTIFACT MUST NOT READ AS A PASS. The rejection from
@@ -4993,6 +5001,7 @@ async function main() {
   // MORROWIND_NAME_IMPORT_END
   const instance = await WebAssembly.instantiate(wasmModule, imports);
   ctx.exports = instance.exports;
+  instance.exports.set_hwnd_base(processDesktop.hwndBase);
   // Quiet runs silence the per-call API log from the first instruction, DLL
   // initialization included. Applied only after DllMain ran, the early calls
   // were logged (and so counted twice, by h.log and by $api_calls) and a
@@ -5446,6 +5455,7 @@ async function main() {
     }
     wh.exit = () => {};
     wh.has_dll_file = h.has_dll_file;
+    processDesktop.attach(workerCtx, wh);
     const workerImports = { host: wh };
     workerImports.__setInstance = value => { workerInstance = value; };
     return workerImports;
@@ -5620,6 +5630,7 @@ async function main() {
   else if (Number.isFinite(SPIN_PARK_K)) inheritWasm('set_spin_park_k', SPIN_PARK_K);
 
   threadManager = new ThreadManager(wasmModule, memory, instance, makeWorkerImports, {
+    hwndBase: () => processDesktop.hwndBase,
     threadSnapshotSystemComplete: () => !threadSnapshotSystemIncomplete,
     workerBackend: guestThreadHost,
     serialSlices: THREADS_SERIAL,
@@ -7691,6 +7702,7 @@ async function main() {
   let diagnosticActionSequence = 0;
   const executionStartedAt = performance.now();
   for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {
+    processDesktop.poll();
     traceGateBatch = batch;
     if (deadlineMs && Date.now() >= deadlineMs) {
       traceGateBatch = -1; // why the run stopped is not per-batch trace output
@@ -12821,6 +12833,12 @@ if (VERBOSE) {
   if (workerThreadHost) workerThreadHost.stop();
   if (closeD3DRender) await closeD3DRender();
   threadManager?.closeNamedEventAuthority();
+  processDesktop.retire();
+  // The launcher guest can exit while real child hosts still use its desktop.
+  // Keep the authority until those OS processes close their transports.
+  await Promise.all(pipeChildren.filter(c => c.exitCode === null && c.signalCode === null)
+    .map(c => new Promise(resolve => c.once('exit', resolve))));
+  await processDesktop.close();
   // A --vlan-wire run is a forked child, and an open IPC channel keeps node
   // alive after everything else has finished: the run printed its Stats, hit
   // --max-seconds, and then sat resident forever with its 512 MiB guest until

@@ -4022,6 +4022,19 @@
             (i32.store offset=0 (global.get $reg_base) (i32.const 1))
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
             (return)))))
+    ;; A failed desktop route must not become a message to this process's
+    ;; own queue. NULL is PostThreadMessage-to-current; broadcast was handled
+    ;; above and retains its existing local delivery path.
+    (if (i32.and
+          (i32.lt_s (call $wnd_table_find (local.get $arg0)) (i32.const 0))
+          (i32.and (i32.ne (local.get $arg0) (i32.const 0))
+            (i32.and (i32.ne (local.get $arg0) (i32.const 0xFFFF))
+                     (i32.ne (local.get $arg0) (i32.const -1)))))
+      (then
+        (global.set $last_error (i32.const 1400)) ;; ERROR_INVALID_WINDOW_HANDLE
+        (i32.store (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
     (local.set $target_tid (call $wnd_get_thread (local.get $arg0)))
     (if (i32.and (i32.ne (local.get $target_tid) (i32.const 0))
                  (i32.ne (local.get $target_tid) (global.get $current_thread_id)))

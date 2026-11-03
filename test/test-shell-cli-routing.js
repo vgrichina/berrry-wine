@@ -10,6 +10,7 @@ const os = require('os');
 const path = require('path');
 const vm = require('vm');
 const { EventEmitter } = require('events');
+const { ProcessDesktop } = require('../lib/process-desktop');
 const { parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness } = require('../host');
 const { saveVfsToHost, mergeCompletedChildState, saveCompletedChildState } = require('../lib/vfs-export');
 
@@ -61,6 +62,8 @@ function fixture({ spawn = true, appSpawn = false, capture = false, fail = false
     startupShowArgs: n => [`--startup-show=${n}`],
     childCodePageArgs: () => [],
     ThreadManager: { namedEventEnvironment: () => ({}) },
+    processDesktop: { endpoint: { path: 'offline-desktop-fixture', token: 'offline-token' },
+      environment: ProcessDesktop.prototype.environment, publish() {} },
     appAsset: p => p, __filename: sourcePath,
     console: { log: s => logs.push(s) },
     process: { on: (event, fn) => hooks.push([event, fn]) },
@@ -98,6 +101,8 @@ const arg = (f, key) => f.args.find(a => a.startsWith(`--${key}=`)).slice(key.le
 const tempDirs = () => fs.readdirSync(root);
 function finish(f) {
   const fork = f.forks[0];
+  assert.deepStrictEqual(JSON.parse(fork.options.env.WINE_PROCESS_DESKTOP),
+    f.context.processDesktop.endpoint, 'real desktop environment travels with the OS child');
   const input = arg(fork, 'vfs-tree'), output = arg(fork, 'save-vfs');
   assert(fs.existsSync(input), 'authentic exporter created child snapshot');
   assert.strictEqual(fs.readFileSync(arg(fork, 'exe'), 'utf8'), 'offline fixture, never executed');
