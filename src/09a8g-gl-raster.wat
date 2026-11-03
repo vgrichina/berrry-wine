@@ -4509,8 +4509,10 @@
       (br_if $transform (i32.lt_u (local.get $k) (local.get $n))))
     (if (i32.and (global.get $gl_sw_lit)
         (i32.ne (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 0x200000)) (i32.const 0))) (then
-      (if (i32.ne (f32.gt (call $gl_sw_face_area (local.get $a)
-          (i32.add (local.get $a) (i32.const 108)) (i32.add (local.get $a) (i32.const 216))) (f32.const 0))
+      ;; Convex polygons may start with collinear vertices. Use the same
+      ;; nondegenerate fan orientation as culling; homogeneous area also
+      ;; preserves the visible orientation across the eye plane.
+      (if (i32.ne (f32.gt (call $gl_edge_face_area (local.get $a) (local.get $n)) (f32.const 0))
           (i32.load offset=32 (global.get $gl_sw_st))) (then
         (global.set $gl_sw_reverse_normal (i32.const 1)) (local.set $k (i32.const 0))
         (loop $back

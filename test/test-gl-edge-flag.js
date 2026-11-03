@@ -26,7 +26,7 @@ const extraWat=`
  (i32.load (global.get $reg_base)))`;
 (async()=>{
  const queued=process.argv.includes('--worker');let encoder=null,manager=null,bridge=null,render=null,producer=null,memory;
- let prebuiltModule=null;const batches=[],cases={};
+ let prebuiltModule=null;const batches=[],cases={},lightingChecks=[],lightingFailures=[];
  const recordModule=bytes=>{
   const sha256=require('crypto').createHash('sha256').update(bytes).digest('hex');
   console.log('EDGE_MODULE_SHA256',sha256,'bytes',bytes.length);
@@ -88,9 +88,9 @@ const extraWat=`
 
  const clear=()=>call('glClear',[0x4500]);
  const draw=(mode,pts,flags)=>{call('glBegin',[mode]);pts.forEach((p,i)=>{if(flags)call('glEdgeFlag',[flags[i%flags.length]]);call(p.length===3?'glVertex3f':'glVertex2f',p,true);});call('glEnd');};
- const pixel=(x,y)=>{if(encoder)encoder.fence();const entry=e.gl_sw_entry()>>>0,pitch=dv.getUint16(entry+18,true),height=dv.getUint16(entry+14,true),dib=dv.getUint32(entry+20,true);return dv.getUint32(dib+(height-1-y)*pitch+4*x,true)&0xffffff;};
- const region=(x,y,r=1)=>{let count=0;for(let a=x-r;a<=x+r;a++)for(let b=y-r;b<=y+r;b++)if(a>=0&&a<64&&b>=0&&b<64&&pixel(a,b))count++;return count;};
- const take=name=>{e.gl_wat_stream_flush();cases[name]=batches.splice(0);
+ const pixel=(x,y)=>{const entry=e.gl_sw_entry()>>>0,pitch=dv.getUint16(entry+18,true),height=dv.getUint16(entry+14,true),dib=dv.getUint32(entry+20,true);return dv.getUint32(dib+(height-1-y)*pitch+4*x,true)&0xffffff;};
+ const region=(x,y,r=1)=>{if(encoder)encoder.fence();let count=0;for(let a=x-r;a<=x+r;a++)for(let b=y-r;b<=y+r;b++)if(a>=0&&a<64&&b>=0&&b<64&&pixel(a,b))count++;return count;};
+ const take=name=>{e.gl_wat_stream_flush();if(encoder)encoder.fence();cases[name]=batches.splice(0);
   if(process.env.GL_EDGE_PIXELS&&name!=='setup'){
    const {PNG}=require('pngjs'),png=new PNG({width:64,height:64});
    for(let y=0;y<64;y++)for(let x=0;x<64;x++){const v=pixel(x,63-y),i=(y*64+x)*4;png.data.set([(v>>>16)&255,(v>>>8)&255,v&255,255],i);}
@@ -165,6 +165,76 @@ const extraWat=`
  clear();draw(1,[[8,8],[24,8]],[0]);assert(region(16,8)>0);take('independentLines');
  clear();draw(0,[[16,16]],[0]);assert(region(16,16)>0);take('independentPoints');
  call('glPolygonMode',[0x408,0x1b02]);clear();draw(7,square,[0]);assert(region(16,16)>0);take('fillFalse');
+ // Two independent oracles: distinct face emissions select the material;
+ // diffuse light and an asymmetric normal also detect a missing normal flip.
+ // All setters and vertices below go through the original opengl32 thunks.
+ const vec=values=>{values.forEach((v,i)=>dv.setFloat32(wa(input)+4*i,v,true));return input;};
+ const material=(face,p,values)=>call('glMaterialfv',[face,p,vec(values)]);
+ call('glLightModelfv',[0xb53,vec([0,0,0,1])]);
+ for(const p of [0x1200,0x1201,0x1202,0x1600])material(0x408,p,[0,0,0,1]);
+ material(0x404,0x1600,[64/255,0,0,1]);material(0x405,0x1600,[0,0,128/255,1]);
+ call('glLightfv',[0x4000,0x1200,vec([0,0,0,1])]);
+ call('glLightfv',[0x4000,0x1201,vec([1,1,1,1])]);
+ call('glLightfv',[0x4000,0x1202,vec([0,0,0,1])]);
+ call('glNormal3f',[.6,0,.8],true);call('glLightModeli',[0xb52,1]);call('glEnable',[0xb50]);
+ call('glPointSize',[3],true);call('glShadeModel',[0x1d01]);
+ // z=x/8-2 puts the near clip at x=8 in the same plane. The first
+ // three vertices remain collinear, and the clipped polygon has visible area.
+ const fixtures=[
+  ['ortho',[[8,8,0],[16,8,0],[24,8,0],[24,24,0],[8,24,0]],false],
+  ['near',[[0,8,-2],[12,8,-.5],[24,8,1],[24,24,1],[0,24,-2]],false],
+  // Frustum near=1 far=10, plane z=-x-1. The first vertex has W=-1,
+  // the second W=0. Near clipping leaves x>=0: projected area is CCW.
+  // A negative/zero-W divide of the original polygon is not an oracle.
+  ['eye',[[-2,-.5,1],[-1,-.5,0],[2,-.5,-3],[2,.5,-3],[-2,.5,1]],true]
+ ];
+ const lightingMeta=[];
+ for(const [fixture,vertices,perspective] of fixtures){
+  call('glMatrixMode',[0x1701]);call('glLoadIdentity');
+  if(perspective){
+   // Load the frustum matrix explicitly; the scalar helper uses 32-bit slots.
+   const matrix=e.guest_alloc(64)>>>0;
+   new Float32Array(memory.buffer,wa(matrix),16).set([1,0,0,0,0,1,0,0,0,0,-11/9,-1,0,0,-20/9,0]);
+   call('glLoadMatrixf',[matrix]);
+  }else{
+   const matrix=e.guest_alloc(64)>>>0;
+   new Float32Array(memory.buffer,wa(matrix),16).set([1/32,0,0,0,0,1/32,0,0,0,0,-1,0,-1,-1,0,1]);
+   call('glLoadMatrixf',[matrix]);
+  }
+  call('glMatrixMode',[0x1700]);
+  for(const mode of [0x1b01,0x1b00])for(const winding of [1,-1])for(const frontCCW of [true,false])for(const light of [0,1,-1]){
+   const front=(winding===1)===frontCCW;
+   call('glFrontFace',[frontCCW?0x901:0x900]);call('glPolygonMode',[0x408,mode]);
+   material(0x404,0x1201,[0,.5,0,1]);material(0x405,0x1201,[0,.25,0,1]);
+   call(light?'glEnable':'glDisable',[0x4000]);
+   if(light)call('glLightfv',[0x4000,0x1203,vec([0,0,light,0])]);
+   const expected=front?[64,light===1?102:0,0]:[0,light===-1?51:0,128];
+   // Reverse while retaining a collinear leading triple, then rotate by two.
+   const base=winding===1?vertices:[vertices[2],vertices[1],vertices[0],vertices[4],vertices[3]];
+   let reference=null;
+   for(const rotate of [0,2]){
+    const pts=base.slice(rotate).concat(base.slice(0,rotate));
+    const name=`lighting_${fixture}_${mode}_${winding}_${frontCCW}_${light}_${rotate}`;
+    clear();draw(9,pts,[1]);call('glFinish');if(encoder)encoder.fence();
+    const colors=new Map(),mask=new Uint8Array(64*64);
+    for(let y=0;y<64;y++)for(let x=0;x<64;x++){
+     const rgb=pixel(x,y);if(rgb){colors.set(rgb,(colors.get(rgb)||0)+1);mask[y*64+x]=1;}
+    }
+    const actual=Array.from(colors,([rgb,count])=>({rgb:[rgb>>>16,(rgb>>>8)&255,rgb&255],count}));
+    const ok=actual.length>0&&actual.every(c=>c.rgb.every((v,i)=>Math.abs(v-expected[i])<=1));
+    const coverage=actual.reduce((n,c)=>n+c.count,0);
+    // Raster endpoints can round differently after clipping; a cyclic rotation
+    // must still preserve visible coverage to within a few boundary fragments.
+    const pixelDifferences=reference===null?0:mask.reduce((n,v,i)=>n+(v!==reference[i]),0);
+    const same=pixelDifferences<=8;
+    if(!ok||!same)lightingFailures.push({name,expected,actual,pixelDifferences});
+    reference=mask;lightingChecks.push({name,expected,actual,coverage,pixelDifferences,ok,same});
+    lightingMeta.push({name,expected});take(name);
+   }
+  }
+ }
+ cases.__lighting=lightingMeta;
+ call('glDisable',[0xb50]);call('glDisable',[0x4000]);call('glFrontFace',[0x901]);
  const context2=call('wglCreateContext',[dc]);call('glEdgeFlag',[0]);call('wglMakeCurrent',[dc,context2]);assert.strictEqual(query(0xb43),1,'new context default');
  call('glEdgeFlagPointer',[0,input]);call('wglMakeCurrent',[dc,context]);assert.strictEqual(query(0xb43),0);assert.strictEqual(query(0x808c),7,'context pointer restore');
  assert.strictEqual(call('wglCopyContext',[context,context2,1]),1);call('wglMakeCurrent',[dc,context2]);assert.strictEqual(query(0xb43),0,'copy CURRENT edge state');
@@ -174,7 +244,9 @@ const extraWat=`
  assert.strictEqual(call('glGetError'),0,'no ignored errors');
  if(process.env.GL_EDGE_CAPTURE)fs.writeFileSync(process.env.GL_EDGE_CAPTURE,JSON.stringify(cases));
  if(encoder){assert(encoder.snapshot().glQueued>0,'actual Worker queue used');assert.strictEqual(encoder.snapshot().fallbacks,0,'no silent native fallback');}
- console.log(JSON.stringify({pass:true,queued,transport:encoder?.snapshot(),cases:Object.keys(cases),resolved:resolved.size}));
+ console.log(JSON.stringify({pass:lightingFailures.length===0,queued,transport:encoder?.snapshot(),cases:Object.keys(cases),resolved:resolved.size,lightingChecks,lightingFailures}));
+ assert.strictEqual(lightingChecks.length,144,'complete two-sided fixture matrix');
+ assert.deepStrictEqual(lightingFailures,[],'two-sided boundary lighting and cyclic equivalence');
  }finally{encoder?.stop();if(manager)await manager.stop();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
 

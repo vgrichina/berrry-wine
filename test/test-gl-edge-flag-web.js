@@ -107,7 +107,23 @@ async function launchBrowser() {
    values.independentLines=sample('independentLines',[[16,8]]);
    values.independentPoints=sample('independentPoints',[[16,16]]);
    values.fillFalse=sample('fillFalse',[[16,16]]);
-   out.push({version:b.version,apiVersion,values,error:g.getError()});b.destroy();
+   const lighting=[];let referenceMask=null;
+   for(const {name,expected} of native.__lighting||[]){
+    replay(name);const colors=new Map(),rgba=new Uint8Array(64*64*4);
+    b.readPixels(0,0,64,64,g.RGBA,g.UNSIGNED_BYTE,rgba);
+    for(let i=0;i<rgba.length;i+=4){
+     const rgb=(rgba[i]<<16)|(rgba[i+1]<<8)|rgba[i+2];
+     if(rgb)colors.set(rgb,(colors.get(rgb)||0)+1);
+    }
+    const mask=Uint8Array.from({length:64*64},(_,i)=>Number(rgba[i*4]!==0||rgba[i*4+1]!==0||rgba[i*4+2]!==0));
+    const actual=Array.from(colors,([rgb,count])=>({rgb:[rgb>>>16,(rgb>>>8)&255,rgb&255],count}));
+    const ok=actual.length>0&&actual.every(c=>c.rgb.every((v,i)=>Math.abs(v-expected[i])<=1));
+    const coverage=actual.reduce((n,c)=>n+c.count,0);
+    const pixelDifferences=name.endsWith('_2')?mask.reduce((n,v,i)=>n+(v!==referenceMask[i]),0):0;
+    const same=pixelDifferences<=8;referenceMask=mask;
+    lighting.push({name,expected,actual,coverage,pixelDifferences,ok,same});
+   }
+   out.push({version:b.version,apiVersion,values,lighting,error:g.getError()});b.destroy();
   }
   return out;
  },native);
@@ -119,8 +135,11 @@ async function launchBrowser() {
   packedArrays:[true,false,true,false],arrayListSnapshot:[true,false,true,false],listVectorFalse:[false],strip:[true],fan:[true],quadStrip:[true],
   independentLines:[true],independentPoints:[true],fillFalse:[true]
  };
- for(const r of results){assert.strictEqual(r.version,r.apiVersion,'actual WebGL API');assert.deepStrictEqual(r.values,expected);assert.strictEqual(r.error,0);}
- console.log(JSON.stringify({passed:true,results}));
+ console.log(JSON.stringify({passed:results.every(r=>r.version===r.apiVersion&&r.error===0&&
+  JSON.stringify(r.values)===JSON.stringify(expected)&&r.lighting.length===144&&r.lighting.every(c=>c.ok&&c.same)),results}));
+ for(const r of results){assert.strictEqual(r.version,r.apiVersion,'actual WebGL API');assert.deepStrictEqual(r.values,expected);assert.strictEqual(r.error,0);
+  assert.strictEqual(r.lighting.length,144,'complete two-sided fixture matrix');
+  assert.deepStrictEqual(r.lighting.filter(c=>!c.ok||!c.same),[],'WebGL two-sided boundary lighting and cyclic equivalence');}
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
 
