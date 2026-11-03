@@ -30,6 +30,12 @@ access controls take precedence. Public deployment needs its existing authorizat
   resource allocation, dependencies, completion notification, and stop condition.
   Runtime tasks must also name the box, expiry, and shutdown owner before launch.
 
+## Evidence storage
+
+- Owner directive 2026-11-03: Git is the source archive. Record the exact commit SHA and a binary Git diff for relevant uncommitted changes, including owned new files. Do not snapshot source trees into run archives.
+- Never tar `scratch/`, `docs/`, or `test/binaries/` into evidence. Stage only small run-specific inputs; reference existing game media by path and SHA-256 instead of copying it. Preserve unique logs, captures and tested modules.
+- Released source archives may be removed only after proving their contents recoverable from a recorded main commit plus recorded diff and preserved non-Git inputs. Leave a replacement note with commit, diff path, original SHA-256 and size; keep any archive that cannot be proved reproducible.
+
 ## Wait for outcomes
 
 The worker launcher writes `result.json` and `final.txt`, then queues completion

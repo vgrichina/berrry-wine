@@ -104,6 +104,10 @@ build, route, and environment; keep unknown values explicit. Inspect evidence
 before marking it reviewed, and do not equate a screenshot with playability.
 Reference run IDs in task/investigation notes and your messageboard update.
 
+### Evidence storage
+
+Git is the source archive. Record the exact commit SHA and `git diff --binary` for relevant uncommitted changes; include owned new files as patches. Do not snapshot source trees into run archives. Never tar `scratch/`, `docs/`, or `test/binaries/` into evidence. Stage only small run-specific inputs, and reference game media by existing path and SHA-256 instead of copying it. Preserve unique run logs, captures and tested modules. Remove released source archives only after proving recovery from a recorded main commit plus recorded diff and retained non-Git inputs; leave a replacement note with commit, diff path, original SHA-256 and size. Keep anything whose recovery cannot be proved.
+
 ### Optimization variants: native disassembly required
 
 For every new interpreter/JIT optimization variant, including stacked variants,
