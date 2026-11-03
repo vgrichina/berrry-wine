@@ -1693,13 +1693,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
-  status: active (fault retention published; original ground/gameplay capture resumed)
+  status: active (original cave verified; repaired reserved-world capture needs native validation)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: fresh handle96082; scratch/usage-watch/alice-authentic-ground-gameplay-nov03
+  worker: fresh handle13865/thread01a1a2b3-037d-73a2-b33f-4be6a5d282f2; scratch/usage-watch/alice-reserved-world-ground-route-nov03
   candidate: test/binaries/candidates/alice-demo/alice.exe
-  Next: Fresh original NewGame/Easy run with landed0c2bc2da5 fault retention and accepted relocation/polling adapters; collect coherent engine-selected movement-phase Player/state samples and allocation continuity, supported/airborne comparisons, then ordinary wind/plank/knife progress. Integrated locked build and six suites PASS; matching four actual native fault cases retained, full recovery SHA and normal stopped snapshot verified. Runtime waits Jedi explicit release. Original opening gameplay remains accepted; thermal/knife progress unverified.
+  Next: Validate repaired capture against original NewGame/Easy on exact11462d25b; collect complete lifecycle/stack anchors, allocation continuity, two neutral supported samples and ordinary airborne comparison, then wind/plank/knife route progress. Prior native cave and coherent held state PASS; first capture rejected reserved world1022/live208/cap1024. Authentic replay and offline repair controls PASS; repaired full capture natively UNEXECUTED, usableForFooting=false. Jedi runtime release18:30:57 observed; heavy runtime serialized, cap TWO.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
-  Evidence: docs/re-notes/alice-native-fault-retention-integration-20261103.md; scratch/runs/20261103-alice-land-native-fault-retention/; docs/re-notes/alice-tested-poll-authentic-capture-20261103.md
+  Evidence: main11462d25b5729d0ab481b57292654e3a2c624091; docs/re-notes/alice-authentic-ground-gameplay-20261103.md; scratch/runs/20261103-alice-authentic-ground-gameplay/. Root reviewed cave PNG, full6132payload SHA PASS, actual normal STOPPED bx_tahsef2b18:26:20.951Z/snapshot verified. No ground continuity, airborne, route or knife claim.
 
 
 - [x] Sizeless virtual decommit corrupts neighboring allocation
