@@ -1124,6 +1124,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
+  Current update 2026-11-03T03:38:17.517026+00:00 — Jedi89418 terminal0/publishedc5b6e44b7, root113 manifest hashes MATCH and original warning PNG reviewed: missing genuine DSOUND.VXD; DDHELP.EXE not reached, no gameplay. Boat STOPPED before expiry. Fresh98237/thread01a19f7b-d912-7151-95da-eeea318ae421 establishes authentic DirectX provisioning; static now. THREE assignments Alice35407 THEN GL64819 THEN Jedi98237 source/heavy order. Alice and Jedi prerequisites retain two prospective title lanes.
   Current update 2026-11-03T03:32:16.695575+00:00 — Shadow38979 terminal0 publisheddebc24bfc; root161 artifact hashes MATCH, real50B defaults saved/reopened and enabledPlay original menu-to-gameplay/Up+Right movement captures reviewed. CLI short demonstration accepted; browser/audio/FPS/save-load/normal exit and corpus registration remain unqualified. Boat STOPPED/errornull/helpers absent. Fresh GL64819/thread01a19f76-5bc3-7b72-b8e6-a4eec3ad63f9 launched full16 logic semantics; static until Jedi89418 THEN Alice35407 actual terminals/exact releases. Jedi runtime gate opened03:31UTC within original03:35UTC expiry; Alice is second prospective title lane.
   Current update 2026-11-03T03:20:10.226704+00:00 — Jedi36383 terminal1/model capacity before guest, no final; reviewed once/deduplicated. Fresh Jedi89418/thread01a19f67-24f1-7011-9b1d-00c0fd831a46 reclaims verified28-original installed tree and static predicate evidence on bx_bkn8mbm5 with unchanged03:35UTC expiry/shutdown delegation. THREE actual live handles Shadow38979 THEN Jedi89418 THEN Alice35407; Alice static real cooperative DLL-owner fixture preparation. Shadow snapshot transfer interrupted by actual disk-floor violation, no guest consumed; lossless reviewed-transcript recovery restored free2.100GB and pending-only continuation queued. GL full16 native/WebGL logic-operation task prepared for next available slot, not dispatched; historical27 still open.
   Current update 2026-11-03T03:11:12.567668+00:00 — GL76045 terminal0 published bd1a15a25; root101 retrieved artifacts/4129 source seals all SHA MATCH; native actualWorker1366 zeroFallback, WebGL1/2/browserWorker/mutations/focused and final lockedbuild PASS. Two encoder context/hardening failures reproduce baseline; glLogicOp remains unsupported, historical27 still open. Ownboat STOPPED/errornull/helpers absent. Fresh Alice35407/thread01a19f63-267f-7e22-a0b0-9d8ec0c4aa45 targets real cooperative DLL gate scheduling repair and original startup after regression; static-only now. THREE assignments Shadow38979, Jedi36383, Alice35407; heavy/source order Shadow THEN Jedi THEN Alice. Canonical module24880b0e/source-seal3051e43d handed to both games.
@@ -1668,7 +1669,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
-  status: active (static real cooperative DLL-owner regression preparation; source/runtime follows Shadow then fresh Jedi89418)
+  status: active (source ownership acquired after Jedi release; measuring real CLI cooperative DLL-owner regression before repair)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   worker: 35407/thread01a19f63-267f-7e22-a0b0-9d8ec0c4aa45; scratch/usage-watch/alice-gate-scheduling-repair-nov03
   candidate: test/binaries/candidates/alice-demo/alice.exe
@@ -1799,11 +1800,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Jedi Knight Dark Forces II original demo
   id: NEW-GAME-JEDI-KNIGHT-DEMO-20261015
-  blocker: Ordinary launcher Play trace pending Shadow terminal/release; four-file DirectX predicate identified. Verified28 installed originals retained on bx_bkn8mbm5, unchanged expiry03:35UTC.
-  worker: fresh89418/thread01a19f67-24f1-7011-9b1d-00c0fd831a46; scratch/usage-watch/jedi-directx-runtime-recover-nov03
-  status: active (verified live03:27UTC; static recovery ready, sole runtime waits Shadow)
+  blocker: Ordinary Play proved DSOUND.VXD absent; DDHELP.EXE remains unqueried. Requires genuine supported DirectX provisioning; prior boat stopped before expiry.
+  worker: fresh98237/thread01a19f7b-d912-7151-95da-eeea318ae421; scratch/usage-watch/jedi-genuine-directx-prerequisites-nov03
+  status: active (authentic DirectX prerequisite recovery; static now, runtime after Alice then GL)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Use assigned ordinary installed Jedi.exe Play once after Shadow38979 terminal/exact release; trace DDRAW.DLL/DSOUND.DLL/DSOUND.VXD/DDHELP.EXE predicate. Retrieve evidence and stop boat within original TTL; no prerequisite spoofing or direct-engine bypass.
+  Next: Recover genuine DSOUND.VXD/DDHELP.EXE and establish a supported provisioning route with original hashes. After Alice then GL release, one ordinary launcher attempt if ready; stop at first new cause. No fabricated markers or bypass. Reviewed c5b6e44b7, scratch/runs/20261103-coordinator-jedi-review/review.json.
   Evidence: scratch/runs/20261103-jedi-source-recheck/stream-sha256.json: 2026-11-03T02:18:34Z full21,195,858B SHA2568aae38165e08b68bb63cfd21b8c28ed1d4d8f1bb400a0162588d5b86acdc827e MATCH streamed without local retention. docs/re-notes/jedi-status-20261021.md confirms accepted original installation and ordinary licence acceptance; prior TODOS acceptance/runtime403 text was stale. No current engine launch/gameplay established.
   Done: Registered original launch, ordinary player-controlled gameplay and reviewed screenshot with exact source/run identity.
   Authorization: docs/license-acceptance-authorization-20261018.json; accepted installation evidence docs/reviews/jedi-installation-evidence-integration-20261021/README.md.
