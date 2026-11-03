@@ -1,10 +1,10 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-03
 
-## November 3: published prerequisites; 52 mandatory names remain
+## November 3: published prerequisites; 51 mandatory names remain
 
-The published lookup test at `2abf9776d` records **52** unsupported mandatory
+The published lookup test at `c1f211fdc` records **51** unsupported mandatory
 MDK2 names. The earlier 60-name checkpoint below is historical. These subsequent
-commits account for the eight-name reduction:
+commits account for the nine-name reduction:
 
 | Published change | Newly implemented exports | Retained evidence |
 | --- | ---: | --- |
@@ -13,6 +13,7 @@ commits account for the eight-name reduction:
 | `1e48691f4` shared object namespaces | 1 | [Shared context objects and lifetime](re-notes/gl-shared-context-objects-20261102.md) |
 | `3785da2fa` texture residency | 1 | [Oni prerequisite evidence](re-notes/oni-demo.md) |
 | `024c732b0` double color and texture priority | 2 | [Oni prerequisite evidence](re-notes/oni-demo.md) |
+| `c1f211fdc` all sixteen logic operations | 1 | [Stored-width native, WebGL and Worker validation](re-notes/gl-full-logic-operations-20261103.md) |
 
 Published `bd1a15a25` then preserves exact integer color-source words before
 float32 conversion through current state, arrays, display lists and provoking
@@ -25,8 +26,15 @@ bodies. The coordinator previously verified the retained evidence hashes and
 4,129 source pins before accepting this repair; the temporary boat stopped.
 This repairs the information-loss prerequisite identified in the
 [logic-operation investigation](re-notes/gl-logic-op-semantics-20261102.md).
-It does not implement `glLogicOp`, which remains rejected in the published lookup
-test. The ongoing full logic-operation implementation is not accepted evidence.
+Published `c1f211fdc` completes `glLogicOp` with all sixteen operations on
+native RGB555/RGB565/RGBA8 and actual WebGL1/2, including browser Workers.
+The coordinator verified 450 retained artifact hashes and 4,108 current source
+pins, 32 passing production invocations including the locked build, 520 WebGL
+records and 15 intended rejecting controls. The native shared queue records
+336 submissions with zero fallback. The temporary boat is verified stopped.
+Run `20261103-gl-full-logic-operations` and coordinator review
+`20261103-coordinator-gl-logic-review` retain the source/module identities and
+checks. Context copying is the next bounded prerequisite.
 
 These results do not qualify an original MDK2 replay, its first window or
 its gameplay, establish backend parity for the historical 27 applications,
