@@ -1667,11 +1667,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
-  status: startup blocked (bounded native attempt; browser unverified)
+  status: active (static real cooperative DLL-owner regression preparation; source/runtime follows Shadow then fresh Jedi89418)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none; alice-original-native-gameplay-nov01 reviewed and stopped c940f231d
+  worker: 35407/thread01a19f63-267f-7e22-a0b0-9d8ec0c4aa45; scratch/usage-watch/alice-gate-scheduling-repair-nov03
   candidate: test/binaries/candidates/alice-demo/alice.exe
-  Next: Diagnose current native startup stall separately before another gameplay attempt. Run20261101-alice-original-native-gameplay completed neutral600 with reviewed gray640x480 frame; next600 remained pending192.850s, forced cleanup exit-9 after218.818s. NewGame/Easy/W never reached, zero input issued; actual module dd43e4a and4444source/15original pins unchanged,117 compilation-time reads MATCH but later flush unavailable. Root cause unknown; do not infer or reopen held loader/lifetime algorithms. All six ownedPIDs independently absent. Local15-file manifest68668d496dbabdb3b3803b8de12dda356796ba0ce26051ffb0a03df3a2022509; no media/access retries.
+  Next: Reproduce measured CLI main FreeLibrary callback-gate wait with actual guest cooperative owner across scheduler turns, then repair scheduler progress without weakening DLL ownership/serialization. Run regression and locked build before own publish, then one original NewGame attempt. Prior1284082a0 startup evidence identifies unscheduled owner2 depth1; gray frame does not qualify.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: scratch/runs/20261031T2239Z-alice-original-recovery/; scratch/usage-watch/alice-original-native-gameplay-nov01.task.txt; docs/re-notes/alice-demo.md
 
@@ -1798,11 +1798,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Jedi Knight Dark Forces II original demo
   id: NEW-GAME-JEDI-KNIGHT-DEMO-20261015
-  blocker: Runtime DirectX 5 launcher predicate remains unknown; original acquisition is now reachable and fully hash-matched, not yet retained/restored on a current boat.
-  worker: fresh Jedi36383/thread01a19f3f-b3c3-7083-b0c2-bc602a5e3710; scratch/usage-watch/jedi-original-directx-recovery-nov03
-  status: active (static recovery preparation; heavy work follows GL then Shadow Man)
+  blocker: Ordinary launcher Play trace pending Shadow terminal/release; four-file DirectX predicate identified. Verified28 installed originals retained on bx_bkn8mbm5, unchanged expiry03:35UTC.
+  worker: fresh89418/thread01a19f67-24f1-7011-9b1d-00c0fd831a46; scratch/usage-watch/jedi-directx-runtime-recover-nov03
+  status: active (verified live03:27UTC; static recovery ready, sole runtime waits Shadow)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Execute scratch/usage-watch/jedi-original-directx-recovery-nov03.task.txt. Prepare recovery while GL and Shadow Man run; heavy order GL then Shadow then Jedi. Restore accepted361 mappings/28 installed originals, inspect original DirectX predicate, use ordinary installed launcher route and stop at first measured blocker or capture gameplay/input.
+  Next: Use assigned ordinary installed Jedi.exe Play once after Shadow38979 terminal/exact release; trace DDRAW.DLL/DSOUND.DLL/DSOUND.VXD/DDHELP.EXE predicate. Retrieve evidence and stop boat within original TTL; no prerequisite spoofing or direct-engine bypass.
   Evidence: scratch/runs/20261103-jedi-source-recheck/stream-sha256.json: 2026-11-03T02:18:34Z full21,195,858B SHA2568aae38165e08b68bb63cfd21b8c28ed1d4d8f1bb400a0162588d5b86acdc827e MATCH streamed without local retention. docs/re-notes/jedi-status-20261021.md confirms accepted original installation and ordinary licence acceptance; prior TODOS acceptance/runtime403 text was stale. No current engine launch/gameplay established.
   Done: Registered original launch, ordinary player-controlled gameplay and reviewed screenshot with exact source/run identity.
   Authorization: docs/license-acceptance-authorization-20261018.json; accepted installation evidence docs/reviews/jedi-installation-evidence-integration-20261021/README.md.
@@ -1999,13 +1999,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Shadow Man original demo: installed launcher/configuration response accepted
   id: NEW-GAME-SHADOW-MAN-DEMO-20261013
-  blocker: Spielen remains disabled; Configuration OK/settings persistence and the ABANDONED synchronous callback are unqualified. No gameplay evidence; obsolete original-media/resume403 hold superseded.
-  worker: none (offline acceptance complete; coordinator assigns any future runtime test)
-  status: partial (original licence/install verified; launcher and one Configuration response accepted; gameplay pending)
+  blocker: Current screenshots show changed character position after ordinary input; worker must distinguish control response from intro and finish Configuration persistence/source/lifecycle evidence. Historical disabled Spielen is not current-state evidence.
+  worker: 38979/thread01a19f4e-8119-73a2-99d5-60f09bf0fcd4; scratch/usage-watch/shadow-man-config-recover-nov03
+  status: active (original game now renders textured third-person 3D; input qualification pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Proposal only, no execution authorization: inspect original Configuration, press ordinary OK with existing defaults, trace callback completion and verify actual saved settings/reopen persistence; then inspect Spielen enablement and launch the original installed game only if enabled and separately authorized within the assigned bound. Stop on first precise blocker; never force-enable or spoof prerequisites.
+  Next: Finish already authorized bounded Configuration-to-game session on bx_mftds6qs, expiry03:41UTC. Coordinator viewed game-after-space.png and gameplay-after-movement.png in run20261103-shadow-man-config-recover at03:27UTC; verify causal player movement before gameplay acceptance, retrieve hashes and stop boat.
   Accepted: acceptedInGuest=true observed2026-10-22T20:01:25.326828Z (ordinary Ja, batch1191279, destination screen follows); installer ExitProcess(0), all1959 original payload hashes match. Historical authorization JSON remains unchanged. On2026-10-23 one original launcher session/one ordinary Konfiguration1024 action opened Configuration HWND0x10006; both genuine PNGs independently reviewed. Canonical SHA256ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553; source/main58e90870.
-  Limits: Spielen disabled; no settings accepted/saved, gameplay, normal configuration/game guest exit, Windows/browser/audio/FPS qualification. ABANDONED wndproc after64rounds/yield15 remains a limitation; parent OSexit-9 is not a guest exit. bx_vufrds5w snapshot-STOPPED2026-10-23T01:26:26.642Z; coordinator owns lifecycle.
+  Historical limits (2026-10-23): Spielen disabled; no settings accepted/saved, gameplay, normal configuration/game guest exit, Windows/browser/audio/FPS qualification. ABANDONED wndproc after64rounds/yield15 remains a limitation; parent OSexit-9 is not a guest exit. bx_vufrds5w snapshot-STOPPED2026-10-23T01:26:26.642Z; coordinator owns lifecycle.
   Evidence: docs/re-notes/shadow-man-launcher-evidence-accepted-20261023.md; scratch/runs/20261023-shadow-man-launcher-evidence-status-integrate/REPORT.md. Candidate340803e35428c88f1946e52112e322b1733fb346; restorationd6c7a71cad22bc37ebc73e586c92fd5497901689; original installba485e8a27ad8a0cc25a14d40427e8cbfd38eec3.
   Done: Original launch, ordinary player-controlled gameplay and reviewed screenshot with source/input/build identity, or exact remaining blocker.
   Authorization: docs/license-acceptance-authorization-20261018.json (historical authorization receipt; actual acceptance is separately observed above).
