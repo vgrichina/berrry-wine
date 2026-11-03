@@ -1556,21 +1556,21 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Evidence: tools/toyvm/dos.js pushKey; tools/toyvm/live.js key; ops/toyvm-live/live.js canvas keydown; tools/toyvm/site.js generated canvas handler; native Comanche roster response with held input.
   Done: Meaningful key press/release and focus-loss tests plus reviewed browser held-input game response; scoped source/bundles/site changes pushed to main.
 
-- [ ] Gameplay screenshot and FPS: Arcanum: Of Steamworks & Magick Obscura Demo
+- [x] Gameplay screenshot and FPS: Arcanum: Of Steamworks & Magick Obscura Demo
   id: GAMEPLAY-arcanum-demo
-  status: ready
+  status: done
 
   candidate: arcanum-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none (coverage worker exited0; gameplay both backends and WebGL measurement reviewed)
+  worker: none (software measurement accepted on main ab0f4ec508; stale backlog reconciled 2026-11-03)
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Remaining software scene-qualified FPS only. Root reviewed ordinary crash-site movement on software/WebGL and336 contained hashes. WebGL434 visible compositor submissions/20.127145s=21.562919/s verified from raw samples; physical scanout/unique pixels not claimed. Initial software observer missed OffscreenCanvas; raw zero rejected, not 0FPS. Corrected observer contracts pass; use them for a future bounded software measurement without repeating already-qualified screenshots. Run20261008T1431Z-arcanum-gameplay-qualified, reference7e4/moduled8d4096; no engine fix.
+  Next: Complete for the tested historical builds. Ordinary crash-site movement on software/WebGL was reviewed with336 contained hashes. Accepted software follow-up ab0f4ec508 measured691 visible compositor submissions/25.40109s=27.203557/s on sourcec26252c4a/modulef644bbb2; retained raw-sample validation and archiveSHA rechecked2026-11-03. Earlier WebGL434 submissions/20.127145s=21.562919/s used a different build/interval, so these are not a backend performance comparison. Logical gameFPS, physical scanout, unique pixel frames, current-main runtime, audio and Windows parity remain unqualified. Initial DOM-only software zero remains rejected; corrected OffscreenCanvas measurement supersedes that gap. See docs/re-notes/arcanum-demo.md and run20261022-arcanum-software-frame-measure; no new runtime needed.
   Done: Reviewed gameplay screenshot and scene-qualified frame measurement with raw samples, counter proof and tested build identity; retain explicit failures.
   Evidence: scratch/gameplay-coverage-20261003/tasks/GAMEPLAY-arcanum-demo.json
-  notes: Migration missing-file blocker cleared against current registered route: arcanum_demo. Historical missing-path report is superseded for this route; gameplay remains unverified.
+  notes: Registered route arcanum_demo; historical missing-file and software-observer blockers are superseded by accepted gameplay and corrected measurement evidence. Runtime bx_4sszn2zj snapshot-stopped2026-10-22T03:20:19.397Z, stop_7eb1565f41c1e5e9 completed.
 
 - [x] Gameplay screenshot and FPS: Black & White 2 Demo
   id: GAMEPLAY-black_white_2_demo
