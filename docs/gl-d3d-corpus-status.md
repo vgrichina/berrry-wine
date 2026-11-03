@@ -1,4 +1,37 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-11-02
+# OpenGL / Direct3D corpus status, reconciled 2026-11-03
+
+## November 3: published prerequisites; 52 mandatory names remain
+
+The published lookup test at `2abf9776d` records **52** unsupported mandatory
+MDK2 names. The earlier 60-name checkpoint below is historical. These subsequent
+commits account for the eight-name reduction:
+
+| Published change | Newly implemented exports | Retained evidence |
+| --- | ---: | --- |
+| `345270459` line and polygon stipple | 3 | `test/test-gl-stipple.js`, `test/test-gl-stipple-web.js` |
+| `e318fe1c5` interleaved arrays | 1 | [All GL 1.1 layouts and direct/queued/WebGL validation](re-notes/gl-interleaved-arrays-20261102.md) |
+| `1e48691f4` shared object namespaces | 1 | [Shared context objects and lifetime](re-notes/gl-shared-context-objects-20261102.md) |
+| `3785da2fa` texture residency | 1 | [Oni prerequisite evidence](re-notes/oni-demo.md) |
+| `024c732b0` double color and texture priority | 2 | [Oni prerequisite evidence](re-notes/oni-demo.md) |
+
+Published `bd1a15a25` then preserves exact integer color-source words before
+float32 conversion through current state, arrays, display lists and provoking
+vertices. Computed colors retire that provenance. Run
+`20261103-gl-exact-integer-source-recover` passed resolved native direct and
+actual queued zero-fallback controls, real WebGL1/2 and browser Worker pixels,
+information-loss rejecting controls, focused regressions and the locked build.
+The two context/hardening oracle failures were reproduced with pre-change GL
+bodies. The coordinator previously verified the retained evidence hashes and
+4,129 source pins before accepting this repair; the temporary boat stopped.
+This repairs the information-loss prerequisite identified in the
+[logic-operation investigation](re-notes/gl-logic-op-semantics-20261102.md).
+It does not implement `glLogicOp`, which remains rejected in the published lookup
+test. The ongoing full logic-operation implementation is not accepted evidence.
+
+These results do not qualify an original MDK2 replay, its first window or
+its gameplay, establish backend parity for the historical 27 applications,
+or reconstruct that historical membership. The next acceptance remains actual
+runtime and pixel evidence at the scope of each requirement.
 
 ## November 2: MDK2 prerequisites and accepted unit movement
 
@@ -49,8 +82,8 @@ Published `4631ff857` subsequently repairs the already-resolved `glRotated`;
 its double argument and matrix semantics do not change the missing-export count.
 See [rotation evidence](re-notes/gl-rotated-native-20261102.md).
 
-Fourteen subsequently accepted families reduce the unsupported set to **60**
-mandatory names, as recorded in `test/test-wgl-proc-availability.js`:
+At this November 2 checkpoint, fourteen subsequently accepted families reduced
+the unsupported set to **60** mandatory names in the lookup test:
 
 | Accepted implementation | Newly implemented exports | Evidence |
 | --- | ---: | --- |
