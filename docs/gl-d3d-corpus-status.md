@@ -19,6 +19,17 @@ These accepted results close the earlier context-copy and shared-texture
 prerequisites. They do not establish original MDK2 gameplay, complete visual
 correctness or backend parity for the historical 27 applications.
 
+The next implementation candidate is the **23-export evaluator family**:
+eight `glEvalCoord*`, two `glEvalMesh*`, two `glEvalPoint*`, three `glGetMap*`,
+four `glMap1*/glMap2*` and four `glMapGrid*` exports. Each is present in the
+remaining lookup inventory and routes to `handle_gl_unimplemented` in
+`src/09b2-dispatch-table.generated.wat`; this is a verified implementation gap.
+Its acceptance needs evaluated curves/surfaces and mesh pixels through native,
+Worker and WebGL routes, alongside map/query state, numeric ABI, display-list,
+context-copy and error behavior. Reducing the missing-name count alone would
+not close it. This work is queued behind the two active game prerequisites;
+no evaluator implementation or runtime result is claimed here.
+
 ### Earlier November 3 checkpoint: 51 unsupported names
 
 The published lookup test at `c1f211fdc` records **51** unsupported mandatory
