@@ -1,5 +1,34 @@
 # Zuma Deluxe: current ordinary launch
 
+## DeviceIoControl export repaired; next startup blocker, 2026-11-03
+
+Added the missing named KERNEL32 `DeviceIoControl` export at ordinal 594,
+targeting existing API 3634 and its real handler. All 470 previous manifest
+records, including their ordinals, are unchanged. The executable negative
+control substitutes the retained old generated PE image in the compiler VFS:
+explicit `GetProcAddress` fails with NULL/error 127. The repaired image resolves
+both name and ordinal, and the regression executes its actual x86 E9 entry and
+dispatch thunk through the interpreter. Unsupported controls still return
+errors 1/6/50/87 with unchanged buffers/counts and eight-argument stdcall cleanup;
+the existing supported QUARTZ allocation/alias/free regression also passes.
+The locked full build passes on the owned remote test box.
+
+One changed-source ordinary browser startup served default module
+`2514961a7051ba000c6bd107447480ca38443046ed4d0c0bf9644345cccc4d15`
+(2,077,794 bytes). It reports missing `QueueUserAPC (KERNEL32.dll)`, then
+`DLL initializer did not return: module=0x989000`; it no longer reports missing
+DeviceIoControl. The reviewed capture shows the desktop Read Me window, with
+no menu or gameplay. No player input was delivered. This establishes the
+export repair, not the initializer's underlying cause. Next: separately inspect
+the explicit QueueUserAPC export and packed caller; no further source or startup
+attempt is part of this repair.
+
+Evidence: `scratch/runs/20261103-kernel32-deviceiocontrol-export-recover/`.
+Source and asset transfers were independently size/SHA-256 checked on receipt;
+retrieved runtime/test evidence was independently checked against remote hashes.
+Actual served file identities are retained in `requests.json`; Zuma.exe and
+BASS retain the hashes in the preceding startup evidence below.
+
 ## Current-source browser startup failure, 2026-11-03
 
 One ordinary `index.html?app=zuma_deluxe` launch on a fresh boat failed before

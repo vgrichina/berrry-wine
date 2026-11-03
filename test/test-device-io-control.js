@@ -22,6 +22,19 @@ const ERROR_INVALID_PARAMETER = 87;
 const SENTINEL = 0xa5a5a5a5;
 
 const extraWat = String.raw`
+  (global $test_device_io_entry (mut i32) (i32.const 0))
+  (func (export "test_device_io_kernel") (result i32)
+    ;; The harness has no loaded PE. Set up the loader's thunk translation.
+    (global.set $thunk_guest_base (i32.add (global.get $image_base)
+      (i32.sub (global.get $THUNK_BASE) (global.get $GUEST_BASE))))
+    (call $kernel32_ensure_locked))
+  (func (export "test_device_io_lookup") (param $kernel i32) (param $name i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x00300000))
+    (global.set $last_error (i32.const 0))
+    (call $handle_GetProcAddress (local.get $kernel) (local.get $name)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (global.set $test_device_io_entry (i32.load (global.get $reg_base)))
+    (global.get $test_device_io_entry))
   (func (export "test_device_io_control")
       (param $handle i32) (param $code i32)
       (param $in i32) (param $in_size i32)
@@ -29,14 +42,17 @@ const extraWat = String.raw`
       (param $bytes i32) (param $overlapped i32) (result i32)
     (i32.store offset=16 (global.get $reg_base) (i32.const 0x00300000))
     (global.set $last_error (i32.const 0x5a5aa55a))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0x12345678))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0))
+    (call $gs32 (i32.const 0x00300004) (local.get $handle))
+    (call $gs32 (i32.const 0x00300008) (local.get $code))
+    (call $gs32 (i32.const 0x0030000c) (local.get $in))
+    (call $gs32 (i32.const 0x00300010) (local.get $in_size))
+    (call $gs32 (i32.const 0x00300014) (local.get $out))
     (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)) (local.get $out_size))
     (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)) (local.get $bytes))
     (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32)) (local.get $overlapped))
-    (call $handle_DeviceIoControl
-      (local.get $handle) (local.get $code)
-      (local.get $in) (local.get $in_size) (local.get $out)
-      (i32.const 0))
+    ;; Execute the actual PE E9 trampoline and dispatch thunk in the interpreter.
+    (global.set $eip (global.get $test_device_io_entry))
     (i32.load offset=0 (global.get $reg_base)))
 
   (func (export "test_device_io_last_error") (result i32)
@@ -78,6 +94,29 @@ function kernelDeviceIoImports(exe) {
   assert.strictEqual(api.convention, 'stdcall');
   assert.strictEqual(e.test_device_io_api_id(), api.id,
     'runtime import hashing resolves DeviceIoControl to its registered id');
+  const putA = text => {
+    const p = e.guest_alloc(text.length + 1) >>> 0;
+    for (let i = 0; i <= text.length; i++) e.guest_write8(p + i, text.charCodeAt(i) || 0);
+    return p;
+  };
+  const kernel = e.test_device_io_kernel() >>> 0;
+  assert(kernel, 'real synthetic KERNEL32 PE image is mapped');
+  assert.strictEqual(e.guest_read8(kernel) | (e.guest_read8(kernel + 1) << 8),
+    0x5a4d, 'KERNEL32 has a DOS header');
+  const pe = kernel + e.guest_read32(kernel + 0x3c);
+  assert.strictEqual(e.guest_read32(pe), 0x4550, 'KERNEL32 has a PE header');
+  const entry = e.test_device_io_lookup(kernel, putA('DeviceIoControl')) >>> 0;
+  assert.strictEqual(e.get_esp() >>> 0, STACK + 12, 'GetProcAddress pops two arguments');
+  assert(entry, `explicit KERNEL32 GetProcAddress(DeviceIoControl) must resolve; error=${e.test_device_io_last_error()}`);
+  assert.strictEqual(e.guest_read8(entry), 0xe9, 'resolved entry is a native E9 trampoline');
+  const target = (entry + 5 + e.guest_read32(entry + 1)) >>> 0;
+  assert.strictEqual(e.guest_read32(target + 4), api.id, 'trampoline targets existing real API id');
+  assert.strictEqual(e.test_device_io_lookup(kernel, 594) >>> 0, entry,
+    'new ordinal and named lookup resolve the same PE entry');
+  assert.strictEqual(e.test_device_io_lookup(kernel, putA('deviceiocontrol')), 0,
+    'explicit export names remain case sensitive');
+  assert.strictEqual(e.test_device_io_last_error(), 127);
+  assert.strictEqual(e.test_device_io_lookup(kernel, putA('DeviceIoControl')) >>> 0, entry);
   hostCtx.vfs.files.set('c:\\device-io.bin', {
     data: Uint8Array.of(1, 2, 3, 4), attrs: 0x80,
   });
@@ -105,7 +144,10 @@ function kernelDeviceIoImports(exe) {
   };
   const invoke = (label, expectedError, args) => {
     fillSentinels();
-    assert.strictEqual(e.test_device_io_control(...args), 0, `${label}: returns FALSE`);
+    e.test_device_io_control(...args);
+    for (let i = 0; i < 10 && e.get_eip(); i++) e.run(100);
+    assert.strictEqual(e.get_eip(), 0, `${label}: thunk returns to caller`);
+    assert.strictEqual(e.get_eax(), 0, `${label}: returns FALSE`);
     assert.strictEqual(e.test_device_io_last_error(), expectedError,
       `${label}: publishes the documented error`);
     assertAtomic(label);

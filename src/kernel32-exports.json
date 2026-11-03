@@ -15,6 +15,7 @@
     { "name": "LockFile", "api": "LockFile", "ordinal": 591 },
     { "name": "UnlockFile", "api": "UnlockFile", "ordinal": 592 },
     { "name": "SetLocalTime", "api": "SetLocalTime", "ordinal": 593 },
+    { "name": "DeviceIoControl", "api": "DeviceIoControl", "ordinal": 594 },
     {
       "name": "_hread",
       "api": "_hread",
