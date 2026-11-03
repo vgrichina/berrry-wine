@@ -1,5 +1,64 @@
 # American McGee's Alice demo
 
+## Native New Game activation and controlled gameplay verified (2026-11-03)
+
+Run `scratch/runs/20261103-alice-single-trace-native-activation/` completes the
+corrected native route on main `47b47bc6b80b8c8d320b4a363d4f678eede62f87`.
+GL3658's exact release at 05:40:57 preceded Jedi52541's at 05:55:27; both were
+verified before runtime work. All 4,156 released source/support identities
+match before and after use. All 4,352 staged inputs match remotely, including
+all 15 pinned originals. Actual compile and instantiate observations match
+the 2,081,417-byte canonical module SHA256
+`36a80f073b3bc4f59bb66d8c292684085c111be42cf999523723ff0cfab64788`.
+No production source, original bytes, configuration or menu commands changed.
+
+The source-only parser control ran again against the fresh staged CLI before
+guest execution: **only `--trace-at=0x429c10` preserves the requested 100,000
+blocks**. The predecessor's two-address command was not executed. One original
+session reached the genuine main menu at batch 1500, personally reviewed with
+New Game highlighted. Ordinary `keydown:13`, step 20, `keyup:13`, step 20
+opened the difficulty menu, reviewed at 1540. Actual DispatchMessageA receipts
+target hwnd `0x10007`: WM_KEYDOWN/UP, wParam 13, scan `0x1c`, lParams
+`0x001c0001` / `0xc01c0001`. Consumer `0x00429c10` records `[esp+4]=13`,
+`[esp+8]=1/0`, return `0x00439592`, at batches 1500/1520. This is the key
+route, distinct from WM_CHAR consumer `0x0042a130`; no character was injected.
+
+A second ordinary Enter down/up selected Easy. Reviewed captures show loading
+at 1580, the original scripted opening at 2580, another loading screen at
+actual batch 3064, and the level with Alice and HUD at 3796. Neutral steps
+completed at 4180. W down at 4180, 40 steps, W up at 4220, and 10 steps produced
+reviewed gameplay captures at 4220/4230: Alice advanced from the stone passage
+to a wooden landing/wall. Real W down/up dispatches carry scan `0x11`.
+Page Up down at 4230, 12 steps, release at 4242 and four steps changed the
+camera to look up, reviewed at 4246. Ordinary mouse down/up at 4246/4258 reached
+the original window as WM_LBUTTONDOWN/UP; consumer key `0xb2` release was
+observed. Fire captures at 4258/4262 do **not** establish a shot, damage or an
+attack animation, so fire effectiveness remains unverified.
+
+The session quit normally at batch 4262, exit 0 after 595.771 seconds. Long
+HTTP step requests sometimes timed out while their credits continued; separate
+snapshots established actual completion/progress. They were not startup or
+loader faults. The remote filename `intro-3180.png` was a requested checkpoint
+label, but its PNG receipt says batch 3064; the local reviewed copy is correctly
+named `level-loading-3064.png`. No new runtime defect was established or fixed.
+
+All 81 retrieved members independently match full SHA256; archive 5,324,114
+bytes SHA256 `94cee1d0fed65767f69feb767c0f3862bf2dc478bda9c37990ce1622a9c099ce`.
+Scoped helpers and port 8123 were absent before explicitly delegated normal
+shutdown. Own boat `bx_xnrz3em6`, original expiry `06:26:05.797Z`, is STOPPED;
+stop `stop_5e3febc4998fdb87` completed at `06:10:35.490Z`, error null,
+forced false, snapshot/lifecycle metadata retained. Keyboard-message regression,
+static pinned Enter mapping, fresh parser budget checks and notes diff checks
+pass. The released Jedi locked build was verified; Alice changed no code and
+did not repeat that build. Native software rendering/cooperative threads only;
+browser/GPU, audio, FPS and sustained combat are not qualified by this run.
+
+The requested native menu activation and player-controlled gameplay screenshot
+goal is met. A later task may test fire effectiveness from a suitable ordinary
+gameplay position; do not resume this stopped box or repeat the old startup
+diagnoses. Recovery, exact release lines, input log, reviewed frames, actual
+module, source/original seals and completed lifecycle receipt are in the run.
+
 ## Native menu input traced; activation capture incomplete (2026-11-03)
 
 Run `scratch/runs/20261103-alice-menu-native-key-activation/` establishes the
