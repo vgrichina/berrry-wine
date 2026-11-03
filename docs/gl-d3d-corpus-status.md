@@ -1945,10 +1945,13 @@ size until the next swap, so `resizeContext` now swaps once after resizing.
 3. **Remaining visual validation:** Falling Leaves' opaque-shadow defect was
    corrected by the October 10 material-alpha repair documented in
    [the screensaver notes](re-notes/plus98-dx-screensavers.md). The October 30
-   software scene observation is retained above; paired corrected WebGL
-   shadow-alpha validation is still missing. Do not reopen black leaves as an
-   established current defect without reproducing it. PTCT texture correctness
-   also remains unverified.
+   software scene observation is retained above. The November 3
+   [paired software/browser WebGL evidence](re-notes/falling-leaves-paired-shadow-alpha-20261103.md)
+   validates original alpha127 and source-alpha blending on both routes
+   (a4f232a32; run20261103-falling-leaves-paired-shadow-alpha).
+   Native reference parity and visible edge/texture artifacts remain unqualified;
+   this is not complete visual correctness or historical27 completion.
+   PTCT texture correctness also remains unverified.
 4. **Fault**: Winamp MilkDrop (existing TODOS row).
 
 ## Current-main refresh, 11 October 2026 (GFX-CORPUS-MATRIX-20261011)
