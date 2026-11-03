@@ -1590,7 +1590,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Gameplay screenshot and FPS: Deus Ex demo
   id: GAMEPLAY-deus-ex-demo
-  status: paused (owner intentional pause; crate landing dependency, exit and FPS open)
+  status: active (crate landing dependency; exit and FPS open)
 
   candidate: deus-ex-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
@@ -1979,9 +1979,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [~] Legacy texture cube API conformance
   id: D3D-LEGACY-TEXTURE-CAPS-AUDIT-20261013
   worker: none (legacy-texture-rest-oct20 finished; source-only candidate retained)
-  status: paused (owner intentional pause; noncube integration and cube fullVM pending)
+  status: ready (noncube integration and cube fullVM pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Resume only after pause is lifted. Finished noncube worker retained BORDER correction0a63482c363082c95e825b34161f42134831a3a4 on its historical task branch with source-only validation; main integration/runtime evidence remains pending. f856627 clears unsupported CUBEMAP only, source115checks+4mutations PASS, off main pending exact-source normalbuild/public COM and rejection tests. Surface4/7 ABI is already merged. No independent-face storage or backend/gameplay qualification claimed.
+  Next: Finished noncube worker retained BORDER correction0a63482c363082c95e825b34161f42134831a3a4 on its historical task branch with source-only validation; main integration/runtime evidence remains pending. f856627 clears unsupported CUBEMAP only, source115checks+4mutations PASS, off main pending exact-source normalbuild/public COM and rejection tests. Surface4/7 ABI is already merged. No independent-face storage or backend/gameplay qualification claimed.
   Done: Correct advertised API and software/GPU behavior with versioned contract and tests.
 
 - [ ] Authorized original installer acceptance
