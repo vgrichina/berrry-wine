@@ -1825,11 +1825,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [~] New-game lane: Jedi Knight Dark Forces II original demo
   id: NEW-GAME-JEDI-KNIGHT-DEMO-20261015
   blocker: Direct helper/Win32 dispatch reject armed writes, but generated native API wrapper spills arguments through gs32 before guard and can alias protected guest memory. All-writer protection and original script attribution remain unqualified.
-  worker: thread01a1a26c-a5a4-7382-8019-c890c2e05b72/handle65379; scratch/usage-watch/jedi-watch-writer-boundary-repair-nov03
-  status: active (write-watch prerequisite stopped at generated ABI spill before guard; recovery underway)
+  worker: fresh handle85130; scratch/usage-watch/jedi-export-writer-entry-repair-nov03
+  status: active (fresh pre-ABI export writer repair; Alice owns first runtime slot)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Collect terminal writer-boundary result and retained candidate, then repair the first shared writer boundary without narrowing protection or bypassing original guest behavior. Ordinary REP fault restart cases now reported passing; do not call those original campaign acceptance.
-  Evidence: docs/re-notes/jedi-rep-first-store-repair-20261103.md; scratch/runs/20261103-jedi-watch-writer-boundary-repair/; docs/re-notes/jedi-status-20261021.md
+  Next: Repair unsupported entry guard before generated ABI spills and establish actual export/writer coverage, then production controller qualification. Predecessor c4db43b81 passes selected REP restart/direct helper/production dispatch; wrapper stack alias still alters shield80/health90 before trap. 184 local checksum entries/ancestry/normal stopped snapshot verified. No original campaign acceptance.
+  Evidence: docs/re-notes/jedi-watch-writer-boundary-repair-20261103.md; scratch/runs/20261103-jedi-watch-writer-boundary-repair/; docs/re-notes/jedi-status-20261021.md
   Done: Registered original launch, ordinary player-controlled gameplay and reviewed screenshot with exact source/run identity.
   Authorization: docs/license-acceptance-authorization-20261018.json; accepted installation evidence docs/reviews/jedi-installation-evidence-integration-20261021/README.md.
 
