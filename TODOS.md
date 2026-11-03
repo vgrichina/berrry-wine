@@ -1824,12 +1824,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Jedi Knight Dark Forces II original demo
   id: NEW-GAME-JEDI-KNIGHT-DEMO-20261015
-  blocker: Direct helper/Win32 dispatch reject armed writes, but generated native API wrapper spills arguments through gs32 before guard and can alias protected guest memory. All-writer protection and original script attribution remain unqualified.
-  worker: fresh handle57553; scratch/usage-watch/jedi-run-entry-apc-repair-nov03
-  status: active (export writer boundary passes; queued APC pre-effect guard repair underway)
+  blocker: Retained production guard candidate passes service-entry regressions but canonical scalar PUSH commits ESP before an unmapped-stack fault. Compiler adapter also rejects existing standalone closures; production code remains uncommitted.
+  worker: fresh handle40945; scratch/usage-watch/jedi-scalar-preflight-compiler-contract-nov03
+  status: active (compiler compatibility and scalar fault preflight; static preparation while Alice owns runtime)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Repair run(0) queued APC stack writes before budget/decoder guard on existing bx_h69pvr7n (expiry18:52:34.954Z), recovering interrupted predecessor evidence first. Export ABI wrapper and 1632 default-denied exports pass, preserving globals/GPR/stack/vitals/full memory; REP/bulk/scalar/fault restart/overlap pass. First remaining APC argument/return-address writes mutate watched vitals before guest execution. Predecessor exited1 due model capacity with no final/publication; source restored and candidate retained. No controller/allwriter/live damage qualification.
-  Evidence: docs/re-notes/jedi-watch-writer-boundary-repair-20261103.md; scratch/runs/20261103-jedi-watch-writer-boundary-repair/; docs/re-notes/jedi-status-20261021.md
+  Next: Fix canonical-versus-standalone compileClosure contract without a runtime bypass, then original notepad PUSH EBP pre-effect stack validation/restart. Preserve retained ABI/export, REP and asynchronous-service protections; test and publish coherent ready code. Prior locked full build and nine actual service-entry cases pass, complete recovery SHA and stopped snapshot verified; note605b84efb. No controller/allwriter/live damage qualification. Fresh finite-TTL boat only after Alice explicit runtime release, delegated normal STOP after recovery.
+  Evidence: docs/re-notes/jedi-run-entry-apc-repair-20261103.md; scratch/runs/20261103-jedi-run-entry-apc-repair/; docs/re-notes/jedi-status-20261021.md
   Done: Registered original launch, ordinary player-controlled gameplay and reviewed screenshot with exact source/run identity.
   Authorization: docs/license-acceptance-authorization-20261018.json; accepted installation evidence docs/reviews/jedi-installation-evidence-integration-20261021/README.md.
 
