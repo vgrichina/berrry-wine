@@ -68,6 +68,8 @@ const E2E_EXCEPTIONS = Object.freeze([
   'test-heroes3-demo-launch.js',
   'test-icewind-dale-demo.js',
   'test-les-flat.js',
+  // Assigned audit fixture name; full-module public COM and browser pixels.
+  'test-legacy-texture-rendered-contract.js',
   'test-listbox-ownerdraw.js',
   'test-local-candidates-playability.js',
   'test-mplay32-dual-mode.js',
