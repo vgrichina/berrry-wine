@@ -80,6 +80,7 @@
 (include "09a7i-video-mciwnd.wat")
 (include "09a8-handlers-directx.wat")
 (include "09a8b-handlers-opengl.wat")
+(include "09a8bf-wgl-font.wat")
 (include "09a8c-gl-encoder.wat")
   (include "09a8ca-gl-lists.wat")
   (include "09a8cb-gl-bitmap.wat")

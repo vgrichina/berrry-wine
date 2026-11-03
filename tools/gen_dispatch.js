@@ -420,6 +420,7 @@ for (const n of [2, 3, 4]) for (const suffix of ['d','dv','f','fv','i','iv','s',
 out.push('  (func $wgl_api_available (param $id i32) (result i32)');
 // These WGL implementations dispatch to native handlers rather than GPU opcodes.
 const nativeWglApis = new Set([
+  'wglCreateLayerContext', 'wglUseFontBitmapsA', 'wglUseFontOutlinesA',
   'wglSwapLayerBuffers', 'wglGetCurrentContext', 'wglGetCurrentDC', 'wglCopyContext',
   // The pixel format has no layer planes; these native handlers truthfully
   // report that failure rather than dispatching to gl_unimplemented.
@@ -480,6 +481,7 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if (['wglCreateLayerContext','wglUseFontBitmapsA','wglUseFontOutlinesA'].includes(api.name)) return `      (call $handle_${api.name} (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))`;
   if (/^glIndex(?:d|f|i|s|ub)v?$/.test(api.name)) {
     const kind=api.name.slice(7).replace(/v$/, ''), vector=api.name.endsWith('v');
     const type={d:0x140a,f:0x1406,i:0x1404,s:0x1402,ub:0x1401}[kind];

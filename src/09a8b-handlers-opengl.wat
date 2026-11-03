@@ -1,3 +1,203 @@
+  ;; Plane zero is the ordinary drawable. No overlay/underlay storage exists.
+  (func $handle_wglCreateLayerContext
+      (param $arg0 i32) (param $arg1 i32) (param $arg2 i32)
+      (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (i32.eqz (call $gdi_dc_state_entry (local.get $arg0) (i32.const 0)))
+      (then (global.set $last_error (i32.const 6))))
+    (if (i32.or (i32.eqz (call $gdi_dc_state_entry (local.get $arg0) (i32.const 0)))
+        (i32.ne (local.get $arg1) (i32.const 0)))
+      (then
+        (if (call $gdi_dc_state_entry (local.get $arg0) (i32.const 0))
+          (then (global.set $last_error (i32.const 87))))
+        (i32.store (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    ;; Opcode 48 reads only hdc, and owns the normal context lifecycle.
+    (call $handle_gpu_api (i32.const 48) (i32.const 2)
+      (local.get $arg0) (i32.const 0) (i32.const 0)
+      (i32.const 0) (i32.const 0) (local.get $name_ptr)))
+
+  ;; GDI's monochrome output is top-down and DWORD aligned. List storage is
+  ;; already normalized (one byte per bit, bottom-up); no GL unpack state is
+  ;; consulted or changed. This is the same representation glBitmap captures.
+  (func $wgl_font_bitmap (param $hdc i32) (param $code i32) (param $metrics i32)
+        (param $size i32) (param $out i32) (result i32)
+    (local $r i32)
+    (local.set $r (call $tt_gdi_glyph_outline_a (local.get $hdc) (local.get $code)
+      (i32.const 1) (local.get $metrics) (local.get $size) (local.get $out) (i32.const 0)))
+    (if (i32.eq (local.get $r) (i32.const -2)) (then
+      (local.set $r (call $gdi_bitmap_glyph_outline_a (local.get $hdc) (local.get $code)
+        (i32.const 1) (local.get $metrics) (local.get $size) (local.get $out) (i32.const 0)))))
+    (local.get $r))
+
+  (func $wgl_font_glyph_defined (param $hdc i32) (param $strike i32) (param $code i32) (result i32)
+    (local $face i32)
+    ;; An ANSI code outside the selected font is an empty list, never the
+    ;; font mapper's default character. The current ANSI mapper is CP1252.
+    (if (i32.gt_u (local.get $code) (i32.const 255)) (then (return (i32.const 0))))
+    (if (i32.eq (i32.load (local.get $strike)) (i32.const 2)) (then
+      (local.set $face (i32.sub (i32.and (call $tt_gdi_index_face (local.get $hdc))
+        (i32.const 65535)) (i32.const 1)))
+      (if (i32.lt_s (local.get $face) (i32.const 0)) (then (return (i32.const 0))))
+      (return (i32.ne (call $tt_ansi_glyph_index (call $tt_face_data (local.get $face))
+        (call $tt_face_size (local.get $face)) (local.get $code)) (i32.const 0)))))
+    (i32.and (i32.ge_u (local.get $code) (i32.load offset=36 (local.get $strike)))
+      (i32.le_u (local.get $code) (i32.load offset=40 (local.get $strike)))))
+
+  ;; Builds one private command, without executing it or changing compilation.
+  ;; Zero is failure; 2 is the defined empty list used for absent glyphs.
+  (func $wgl_font_bitmap_command (param $hdc i32) (param $code i32)
+        (param $strike i32) (param $metrics i32) (result i32)
+    (local $bytes i32) (local $buffer i32) (local $cmd i32)
+    (local $w i32) (local $h i32) (local $stride i32) (local $x i32) (local $y i32)
+    (if (i32.eqz (call $wgl_font_glyph_defined (local.get $hdc) (local.get $strike) (local.get $code)))
+      (then (return (i32.const 2))))
+    (local.set $bytes (call $wgl_font_bitmap (local.get $hdc) (local.get $code)
+      (local.get $metrics) (i32.const 0) (i32.const 0)))
+    (if (i32.lt_s (local.get $bytes) (i32.const 0))
+      (then (global.set $last_error (i32.const 13)) (return (i32.const 0))))
+    (local.set $w (i32.load (local.get $metrics)))
+    (local.set $h (i32.load offset=4 (local.get $metrics)))
+    ;; The GDI providers bound these dimensions. Check again before size math.
+    (if (i32.or (i32.gt_u (local.get $w) (i32.const 4096))
+        (i32.gt_u (local.get $h) (i32.const 4096)))
+      (then (global.set $last_error (i32.const 13)) (return (i32.const 0))))
+    (if (local.get $bytes) (then
+      (local.set $buffer (call $gl_list_alloc (local.get $bytes)))
+      (if (i32.eqz (local.get $buffer))
+        (then (global.set $last_error (i32.const 8)) (return (i32.const 0))))
+      (if (i32.ne (call $wgl_font_bitmap (local.get $hdc) (local.get $code)
+          (local.get $metrics) (local.get $bytes) (local.get $buffer)) (local.get $bytes))
+        (then (call $heap_free (call $w2g (local.get $buffer)))
+          (global.set $last_error (i32.const 13)) (return (i32.const 0))))))
+    (local.set $cmd (call $gl_list_alloc
+      (i32.add (i32.const 88) (i32.mul (local.get $w) (local.get $h)))))
+    (if (local.get $cmd) (then
+      (i32.store offset=4 (local.get $cmd) (i32.const 131))
+      (i32.store offset=12 (local.get $cmd) (local.get $w))
+      (i32.store offset=16 (local.get $cmd) (local.get $h))
+      ;; GL subtracts xorig/yorig from the lower-left raster position;
+      ;; GDI's origin locates the upper-left ink corner from the baseline.
+      (f32.store offset=20 (local.get $cmd)
+        (f32.neg (f32.convert_i32_s (i32.load offset=8 (local.get $metrics)))))
+      (f32.store offset=24 (local.get $cmd)
+        (f32.convert_i32_s (i32.sub (local.get $h) (i32.load offset=12 (local.get $metrics)))))
+      (f32.store offset=28 (local.get $cmd)
+        (f32.convert_i32_s (i32.load16_s offset=16 (local.get $metrics))))
+      (f32.store offset=32 (local.get $cmd)
+        (f32.convert_i32_s (i32.load16_s offset=18 (local.get $metrics))))
+      (i32.store offset=84 (local.get $cmd) (i32.mul (local.get $w) (local.get $h)))
+      (local.set $stride (i32.shr_u (i32.and (i32.add (local.get $w) (i32.const 31))
+        (i32.const -32)) (i32.const 3)))
+      (block $done (loop $rows
+        (br_if $done (i32.ge_u (local.get $y) (local.get $h)))
+        (local.set $x (i32.const 0))
+        (block $row_done (loop $bits
+          (br_if $row_done (i32.ge_u (local.get $x) (local.get $w)))
+          (i32.store8 (i32.add (local.get $cmd) (i32.add (i32.const 88)
+              (i32.add (i32.mul (local.get $y) (local.get $w)) (local.get $x))))
+            (i32.and (i32.shr_u (i32.load8_u (i32.add (local.get $buffer)
+                (i32.add (i32.mul (i32.sub (i32.sub (local.get $h) (i32.const 1))
+                    (local.get $y)) (local.get $stride))
+                  (i32.shr_u (local.get $x) (i32.const 3)))))
+              (i32.sub (i32.const 7) (i32.and (local.get $x) (i32.const 7)))) (i32.const 1)))
+          (local.set $x (i32.add (local.get $x) (i32.const 1))) (br $bits)))
+        (local.set $y (i32.add (local.get $y) (i32.const 1))) (br $rows)))
+      ) (else (global.set $last_error (i32.const 8))))
+    (if (local.get $buffer) (then (call $heap_free (call $w2g (local.get $buffer)))))
+    (local.get $cmd))
+
+  ;; A tagged slot owns a private one-name block, not yet in the namespace.
+  ;; WGL failure must neither reserve names nor introduce a GL error.
+  (func $wgl_font_slot (param $ctx i32) (param $name i32) (result i32)
+    (local $slot i32) (local $block i32)
+    (local.set $slot (call $gl_list_slot (local.get $ctx) (local.get $name)))
+    (if (local.get $slot) (then (return (local.get $slot))))
+    (local.set $block (call $gl_list_alloc (i32.const 16)))
+    (if (i32.eqz (local.get $block)) (then (return (i32.const 0))))
+    (i32.store offset=4 (local.get $block) (local.get $name))
+    (i32.store offset=8 (local.get $block) (i32.const 1))
+    (i32.store offset=12 (local.get $block) (i32.const 1))
+    (i32.or (i32.add (local.get $block) (i32.const 12)) (i32.const 1)))
+
+  (func $wgl_font_finish (param $ctx i32) (param $tag i32) (param $head i32) (param $ok i32)
+    (local $slot i32) (local $block i32) (local $group i32)
+    (local.set $slot (i32.and (local.get $tag) (i32.const -2)))
+    (if (local.get $ok) (then
+      (if (i32.and (local.get $tag) (i32.const 1)) (then
+        (local.set $block (i32.sub (local.get $slot) (i32.const 12)))
+        (local.set $group (i32.load offset=968 (local.get $ctx)))
+        (i32.store (local.get $block) (i32.load offset=4 (local.get $group)))
+        (i32.store offset=4 (local.get $group) (local.get $block))))
+      (call $gl_list_free_commands (i32.load (local.get $slot)))
+      (i32.store (local.get $slot) (select (local.get $head) (i32.const 2) (local.get $head))))
+      (else
+        (call $gl_list_free_commands (local.get $head))
+        (if (i32.and (local.get $tag) (i32.const 1)) (then
+          (call $heap_free (call $w2g (i32.sub (local.get $slot) (i32.const 12)))))))))
+
+  (func $handle_wglUseFontBitmapsA
+      (param $arg0 i32) (param $arg1 i32) (param $arg2 i32)
+      (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $gl_object_enter)
+    (call $handle_wglUseFontBitmapsA_locked (local.get $arg0) (local.get $arg1)
+      (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (call $gl_object_leave))
+
+  (func $handle_wglUseFontBitmapsA_locked
+      (param $arg0 i32) (param $arg1 i32) (param $arg2 i32)
+      (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $ctx i32) (local $strike i32) (local $staged i32) (local $entry i32)
+    (local $slot i32) (local $cmd i32) (local $i i32) (local $ok i32)
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+    (if (i32.eqz (call $gdi_dc_state_entry (local.get $arg0) (i32.const 0)))
+      (then (global.set $last_error (i32.const 6)) (return)))
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (global.set $last_error (i32.const 6)) (return)))
+    (if (i32.or (i32.ne (i32.load offset=12 (local.get $ctx)) (i32.const 0))
+        (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)))
+      (then (global.set $last_error (i32.const 87)) (return)))
+    (if (i32.or (i32.eqz (local.get $arg3))
+        (i32.or (i64.gt_u (i64.add (i64.extend_i32_u (local.get $arg1))
+            (i64.extend_i32_u (local.get $arg2))) (i64.const 4294967296))
+          (i64.gt_u (i64.add (i64.extend_i32_u (local.get $arg3))
+            (i64.extend_i32_u (local.get $arg2))) (i64.const 4294967296))))
+      (then (global.set $last_error (i32.const 87)) (return)))
+    (if (i32.eqz (local.get $arg2))
+      (then (i32.store (global.get $reg_base) (i32.const 1)) (return)))
+    (if (i32.gt_u (local.get $arg2) (i32.const 0x03ffffff))
+      (then (global.set $last_error (i32.const 8)) (return)))
+    (local.set $strike (call $gdi_bitmap_font_selected (local.get $arg0)))
+    (if (i32.eqz (local.get $strike)) (then (global.set $last_error (i32.const 13)) (return)))
+    ;; {slot, command, GLYPHMETRICS, padding}, all candidates before publishing.
+    (local.set $staged (call $gl_list_alloc (i32.mul (local.get $arg2) (i32.const 32))))
+    (if (i32.eqz (local.get $staged)) (then (global.set $last_error (i32.const 8)) (return)))
+    (block $failed (loop $prepare
+      (local.set $entry (i32.add (local.get $staged) (i32.mul (local.get $i) (i32.const 32))))
+      (local.set $slot (call $wgl_font_slot (local.get $ctx) (i32.add (local.get $arg3) (local.get $i))))
+      (if (i32.eqz (local.get $slot))
+        (then (global.set $last_error (i32.const 8)) (br $failed)))
+      (i32.store (local.get $entry) (local.get $slot))
+      (local.set $cmd (call $wgl_font_bitmap_command (local.get $arg0)
+        (i32.add (local.get $arg1) (local.get $i)) (local.get $strike)
+        (i32.add (local.get $entry) (i32.const 8))))
+      (i32.store offset=4 (local.get $entry) (local.get $cmd))
+      (br_if $failed (i32.eqz (local.get $cmd)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $prepare (i32.lt_u (local.get $i) (local.get $arg2)))
+      (local.set $ok (i32.const 1))))
+    (local.set $i (i32.const 0))
+    (loop $publish_or_discard
+      (local.set $entry (i32.add (local.get $staged) (i32.mul (local.get $i) (i32.const 32))))
+      (call $wgl_font_finish (local.get $ctx) (i32.load (local.get $entry))
+        (i32.load offset=4 (local.get $entry)) (local.get $ok))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $publish_or_discard (i32.lt_u (local.get $i) (local.get $arg2))))
+    (call $heap_free (call $w2g (local.get $staged)))
+    (i32.store (global.get $reg_base) (local.get $ok)))
+
   (func $gl_source_load (param $p i32) (param $bits i32) (result i32)
     (if (result i32) (i32.eq (local.get $bits) (i32.const 8))
       (then (call $gl8 (local.get $p)))
