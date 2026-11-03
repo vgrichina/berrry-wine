@@ -58,6 +58,23 @@ WebGL arm, so its menu/loading rows and older WebGL citations do not establish
 current gameplay or parity. This recovers a concrete provenance source without
 claiming that the historical membership question is solved.
 
+The seven abbreviated screen-saver entries do map unambiguously to current
+registrations in `lib/apps.js`:
+
+| Historical entry | Current registry ID | Executable |
+| --- | --- | --- |
+| `scr_architec` | `scr_architec` | `ARCHITEC.SCR` |
+| `fallingl` | `scr_fallingl` | `FALLINGL.SCR` |
+| `geometry` | `scr_geometry` | `GEOMETRY.SCR` |
+| `jazz` | `scr_jazz` | `JAZZ.SCR` |
+| `oasaver` | `scr_oasaver` | `OASAVER.SCR` |
+| `rockroll` | `scr_rockroll` | `ROCKROLL.SCR` |
+| `scifi` | `scr_scifi` | `SCIFI.SCR` |
+
+This static mapping retains all seven historical candidates. Their paired
+October 30 browser observations are recorded below; mapping an alias adds no
+runtime coverage. The intended exact 27-ID membership remains unresolved.
+
 ### Earlier November 3 checkpoint: 51 unsupported names
 
 The published lookup test at `c1f211fdc` records **51** unsupported mandatory
