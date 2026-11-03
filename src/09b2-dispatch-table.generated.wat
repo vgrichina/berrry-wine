@@ -3959,6 +3959,18 @@
     (if (i32.eq (local.get $id) (i32.const 4255)) (then (return (i32.const 1)))) ;; glEdgeFlagPointer
     (if (i32.eq (local.get $id) (i32.const 4256)) (then (return (i32.const 1)))) ;; glEdgeFlagv
     (if (i32.eq (local.get $id) (i32.const 4257)) (then (return (i32.const 1)))) ;; glEndList
+    (if (i32.eq (local.get $id) (i32.const 4258)) (then (return (i32.const 1)))) ;; glEvalCoord1d
+    (if (i32.eq (local.get $id) (i32.const 4259)) (then (return (i32.const 1)))) ;; glEvalCoord1dv
+    (if (i32.eq (local.get $id) (i32.const 4260)) (then (return (i32.const 1)))) ;; glEvalCoord1f
+    (if (i32.eq (local.get $id) (i32.const 4261)) (then (return (i32.const 1)))) ;; glEvalCoord1fv
+    (if (i32.eq (local.get $id) (i32.const 4262)) (then (return (i32.const 1)))) ;; glEvalCoord2d
+    (if (i32.eq (local.get $id) (i32.const 4263)) (then (return (i32.const 1)))) ;; glEvalCoord2dv
+    (if (i32.eq (local.get $id) (i32.const 4264)) (then (return (i32.const 1)))) ;; glEvalCoord2f
+    (if (i32.eq (local.get $id) (i32.const 4265)) (then (return (i32.const 1)))) ;; glEvalCoord2fv
+    (if (i32.eq (local.get $id) (i32.const 4266)) (then (return (i32.const 1)))) ;; glEvalMesh1
+    (if (i32.eq (local.get $id) (i32.const 4267)) (then (return (i32.const 1)))) ;; glEvalMesh2
+    (if (i32.eq (local.get $id) (i32.const 4268)) (then (return (i32.const 1)))) ;; glEvalPoint1
+    (if (i32.eq (local.get $id) (i32.const 4269)) (then (return (i32.const 1)))) ;; glEvalPoint2
     (if (i32.eq (local.get $id) (i32.const 4271)) (then (return (i32.const 1)))) ;; glFogiv
     (if (i32.eq (local.get $id) (i32.const 4272)) (then (return (i32.const 1)))) ;; glGenLists
     (if (i32.eq (local.get $id) (i32.const 4273)) (then (return (i32.const 1)))) ;; glGetBooleanv
@@ -3966,6 +3978,9 @@
     (if (i32.eq (local.get $id) (i32.const 4278)) (then (return (i32.const 1)))) ;; glGetDoublev
     (if (i32.eq (local.get $id) (i32.const 4279)) (then (return (i32.const 1)))) ;; glGetLightfv
     (if (i32.eq (local.get $id) (i32.const 4280)) (then (return (i32.const 1)))) ;; glGetLightiv
+    (if (i32.eq (local.get $id) (i32.const 4281)) (then (return (i32.const 1)))) ;; glGetMapdv
+    (if (i32.eq (local.get $id) (i32.const 4282)) (then (return (i32.const 1)))) ;; glGetMapfv
+    (if (i32.eq (local.get $id) (i32.const 4283)) (then (return (i32.const 1)))) ;; glGetMapiv
     (if (i32.eq (local.get $id) (i32.const 4284)) (then (return (i32.const 1)))) ;; glGetMaterialfv
     (if (i32.eq (local.get $id) (i32.const 4285)) (then (return (i32.const 1)))) ;; glGetMaterialiv
     (if (i32.eq (local.get $id) (i32.const 4286)) (then (return (i32.const 1)))) ;; glGetPixelMapfv
@@ -3994,6 +4009,14 @@
     (if (i32.eq (local.get $id) (i32.const 4322)) (then (return (i32.const 1)))) ;; glListBase
     (if (i32.eq (local.get $id) (i32.const 4323)) (then (return (i32.const 1)))) ;; glLoadMatrixd
     (if (i32.eq (local.get $id) (i32.const 4326)) (then (return (i32.const 1)))) ;; glLogicOp
+    (if (i32.eq (local.get $id) (i32.const 4327)) (then (return (i32.const 1)))) ;; glMap1d
+    (if (i32.eq (local.get $id) (i32.const 4328)) (then (return (i32.const 1)))) ;; glMap1f
+    (if (i32.eq (local.get $id) (i32.const 4329)) (then (return (i32.const 1)))) ;; glMap2d
+    (if (i32.eq (local.get $id) (i32.const 4330)) (then (return (i32.const 1)))) ;; glMap2f
+    (if (i32.eq (local.get $id) (i32.const 4331)) (then (return (i32.const 1)))) ;; glMapGrid1d
+    (if (i32.eq (local.get $id) (i32.const 4332)) (then (return (i32.const 1)))) ;; glMapGrid1f
+    (if (i32.eq (local.get $id) (i32.const 4333)) (then (return (i32.const 1)))) ;; glMapGrid2d
+    (if (i32.eq (local.get $id) (i32.const 4334)) (then (return (i32.const 1)))) ;; glMapGrid2f
     (if (i32.eq (local.get $id) (i32.const 4335)) (then (return (i32.const 1)))) ;; glMaterialiv
     (if (i32.eq (local.get $id) (i32.const 4338)) (then (return (i32.const 1)))) ;; glMultiTexCoord2fvARB
     (if (i32.eq (local.get $id) (i32.const 4341)) (then (return (i32.const 1)))) ;; glMultiTexCoord4fARB
@@ -4129,25 +4152,10 @@
     (if (i32.eq (local.get $id) (i32.const 4216)) (then (return (i32.const 1)))) ;; glClearIndex
     (if (i32.eq (local.get $id) (i32.const 4245)) (then (return (i32.const 1)))) ;; glColorSubTableEXT
     (if (i32.eq (local.get $id) (i32.const 4246)) (then (return (i32.const 1)))) ;; glColorTableEXT
-    (if (i32.eq (local.get $id) (i32.const 4258)) (then (return (i32.const 1)))) ;; glEvalCoord1d
-    (if (i32.eq (local.get $id) (i32.const 4259)) (then (return (i32.const 1)))) ;; glEvalCoord1dv
-    (if (i32.eq (local.get $id) (i32.const 4260)) (then (return (i32.const 1)))) ;; glEvalCoord1f
-    (if (i32.eq (local.get $id) (i32.const 4261)) (then (return (i32.const 1)))) ;; glEvalCoord1fv
-    (if (i32.eq (local.get $id) (i32.const 4262)) (then (return (i32.const 1)))) ;; glEvalCoord2d
-    (if (i32.eq (local.get $id) (i32.const 4263)) (then (return (i32.const 1)))) ;; glEvalCoord2dv
-    (if (i32.eq (local.get $id) (i32.const 4264)) (then (return (i32.const 1)))) ;; glEvalCoord2f
-    (if (i32.eq (local.get $id) (i32.const 4265)) (then (return (i32.const 1)))) ;; glEvalCoord2fv
-    (if (i32.eq (local.get $id) (i32.const 4266)) (then (return (i32.const 1)))) ;; glEvalMesh1
-    (if (i32.eq (local.get $id) (i32.const 4267)) (then (return (i32.const 1)))) ;; glEvalMesh2
-    (if (i32.eq (local.get $id) (i32.const 4268)) (then (return (i32.const 1)))) ;; glEvalPoint1
-    (if (i32.eq (local.get $id) (i32.const 4269)) (then (return (i32.const 1)))) ;; glEvalPoint2
     (if (i32.eq (local.get $id) (i32.const 4270)) (then (return (i32.const 1)))) ;; glFeedbackBuffer
     (if (i32.eq (local.get $id) (i32.const 4275)) (then (return (i32.const 1)))) ;; glGetColorTableEXT
     (if (i32.eq (local.get $id) (i32.const 4276)) (then (return (i32.const 1)))) ;; glGetColorTableParameterfvEXT
     (if (i32.eq (local.get $id) (i32.const 4277)) (then (return (i32.const 1)))) ;; glGetColorTableParameterivEXT
-    (if (i32.eq (local.get $id) (i32.const 4281)) (then (return (i32.const 1)))) ;; glGetMapdv
-    (if (i32.eq (local.get $id) (i32.const 4282)) (then (return (i32.const 1)))) ;; glGetMapfv
-    (if (i32.eq (local.get $id) (i32.const 4283)) (then (return (i32.const 1)))) ;; glGetMapiv
     (if (i32.eq (local.get $id) (i32.const 4301)) (then (return (i32.const 1)))) ;; glIndexd
     (if (i32.eq (local.get $id) (i32.const 4302)) (then (return (i32.const 1)))) ;; glIndexdv
     (if (i32.eq (local.get $id) (i32.const 4303)) (then (return (i32.const 1)))) ;; glIndexf
@@ -4163,14 +4171,6 @@
     (if (i32.eq (local.get $id) (i32.const 4313)) (then (return (i32.const 1)))) ;; glInitNames
     (if (i32.eq (local.get $id) (i32.const 4324)) (then (return (i32.const 1)))) ;; glLoadName
     (if (i32.eq (local.get $id) (i32.const 4325)) (then (return (i32.const 1)))) ;; glLockArraysEXT
-    (if (i32.eq (local.get $id) (i32.const 4327)) (then (return (i32.const 1)))) ;; glMap1d
-    (if (i32.eq (local.get $id) (i32.const 4328)) (then (return (i32.const 1)))) ;; glMap1f
-    (if (i32.eq (local.get $id) (i32.const 4329)) (then (return (i32.const 1)))) ;; glMap2d
-    (if (i32.eq (local.get $id) (i32.const 4330)) (then (return (i32.const 1)))) ;; glMap2f
-    (if (i32.eq (local.get $id) (i32.const 4331)) (then (return (i32.const 1)))) ;; glMapGrid1d
-    (if (i32.eq (local.get $id) (i32.const 4332)) (then (return (i32.const 1)))) ;; glMapGrid1f
-    (if (i32.eq (local.get $id) (i32.const 4333)) (then (return (i32.const 1)))) ;; glMapGrid2d
-    (if (i32.eq (local.get $id) (i32.const 4334)) (then (return (i32.const 1)))) ;; glMapGrid2f
     (if (i32.eq (local.get $id) (i32.const 4336)) (then (return (i32.const 1)))) ;; glMultiTexCoord1fARB
     (if (i32.eq (local.get $id) (i32.const 4337)) (then (return (i32.const 1)))) ;; glMultiTexCoord1fvARB
     (if (i32.eq (local.get $id) (i32.const 4339)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fARB
@@ -21838,62 +21838,62 @@
       (return)
     ) ;; 4258: glEvalCoord1d
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalCoord1d_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4259: glEvalCoord1dv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalCoord1dv_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4260: glEvalCoord1f
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalCoord1f_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4261: glEvalCoord1fv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalCoord1fv_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4262: glEvalCoord2d
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalCoord2d_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4263: glEvalCoord2dv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalCoord2dv_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4264: glEvalCoord2f
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalCoord2f_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4265: glEvalCoord2fv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalCoord2fv_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4266: glEvalMesh1
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalMesh1_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4267: glEvalMesh2
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalMesh2_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4268: glEvalPoint1
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalPoint1_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4269: glEvalPoint2
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glEvalPoint2_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4270: glFeedbackBuffer
@@ -21953,17 +21953,17 @@
       (return)
     ) ;; 4281: glGetMapdv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glGetMapdv_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4282: glGetMapfv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glGetMapfv_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4283: glGetMapiv
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glGetMapiv_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4284: glGetMaterialfv
@@ -22183,42 +22183,42 @@
       (return)
     ) ;; 4327: glMap1d
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glMap1d_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4328: glMap1f
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glMap1f_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4329: glMap2d
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glMap2d_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4330: glMap2f
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glMap2f_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4331: glMapGrid1d
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glMapGrid1d_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4332: glMapGrid1f
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glMapGrid1f_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4333: glMapGrid2d
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glMapGrid2d_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4334: glMapGrid2f
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glMapGrid2f_eval)
       (call $gl_object_leave)
       (return)
     ) ;; 4335: glMaterialiv

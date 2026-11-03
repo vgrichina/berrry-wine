@@ -27,7 +27,7 @@
       (if (i32.eq (i32.load offset=4 (local.get $p)) (local.get $key))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 1028))) ;; exact-color tail and five hint values
+    (local.set $p (call $gl_list_alloc (i32.const 1040))) ;; evaluator state and attribute ownership tail
     (if (i32.eqz (local.get $p)) (then (unreachable)))
     (local.set $group (call $gl_list_alloc (i32.const 20)))
     (if (i32.eqz (local.get $group)) (then (unreachable)))
@@ -511,6 +511,7 @@
           (local.set $next (i32.load (local.get $b)))
           (call $heap_free (call $w2g (local.get $b)))
           (local.set $b (local.get $next)) (br $attributes)))
+        (call $gl_eval_free (local.get $ctx))
         (call $gl_state_free_attribs (i32.load offset=176 (local.get $ctx)))
         (if (i32.load offset=240 (local.get $ctx)) (then
           (call $gl_period_free_context (i32.load offset=240 (local.get $ctx)))

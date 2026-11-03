@@ -437,6 +437,7 @@ const nativeTextureQueryApis = new Map([
   ['glGetTexParameterfv',[0,0]], ['glGetTexParameteriv',[0,1]],
 ]);
 const nativeGlApis = new Set([
+  'glMap1d', 'glMapGrid1d', 'glEvalCoord1d', 'glEvalCoord1dv', 'glMap1f', 'glMapGrid1f', 'glEvalCoord1f', 'glEvalCoord1fv', 'glMap2d', 'glMapGrid2d', 'glEvalCoord2d', 'glEvalCoord2dv', 'glMap2f', 'glMapGrid2f', 'glEvalCoord2f', 'glEvalCoord2fv', 'glEvalPoint1', 'glEvalMesh1', 'glEvalPoint2', 'glEvalMesh2', 'glGetMapdv', 'glGetMapfv', 'glGetMapiv',
   'glAreTexturesResident', 'glPrioritizeTextures', 'glColor4d',
   'glPixelStoref',
   'glGetClipPlane',
@@ -475,6 +476,7 @@ for (const [id, api] of apiTable.entries()) {
 out.push('    (i32.const 0))', '');
 
 function handlerCall(api) {
+  if (/^gl(?:Map[12][df]|MapGrid[12][df]|EvalCoord[12][df]v?|EvalPoint[12]|EvalMesh[12]|GetMap[dfi]v)$/.test(api.name)) return `      (call $handle_${api.name}_eval)`;
   if(api.name==='glEdgeFlagv') return '      (call $handle_gl_edge_vector)';
   if(api.name==='wglCopyContext') return '      (call $handle_wglCopyContext (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))';
   if(api.name==='glPrioritizeTextures') return '      (call $handle_gl_prioritize_textures)';

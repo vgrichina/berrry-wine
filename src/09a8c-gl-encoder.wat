@@ -905,6 +905,8 @@
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
     (local $error i32)
     (local $source_guest i32) (local $source_stack i32) (local $source_p i32) (local $source_last i32)
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10010)) (i32.const 4)) (then
+      (call $gl_eval_execute (local.get $op) (local.get $stack)) (return (i32.const 0))))
     ;; Private transaction entry. Never bind or query the foreign source.
     (if (i32.eq (local.get $op) (i32.const 0x10005)) (then
       (return (call $gl_copy_context (i32.load offset=4 (local.get $stack))
@@ -954,6 +956,8 @@
         (call $gl_pixel_map_get (local.get $op) (local.get $stack)) (return (i32.const 0))))
       (call $gl_1d_span (i32.load offset=12 (local.get $stack))
         (i32.mul (i32.load offset=8 (local.get $stack)) (select (i32.const 2) (i32.const 4) (i32.eq (local.get $op) (i32.const 165)))))))
+    (if (call $gl_eval_query (local.get $op) (local.get $stack))
+      (then (return (global.get $gl_list_result))))
     (if (call $gl_pointer_query (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
     (if (call $gl_client_enable_query (local.get $op) (local.get $stack))
@@ -993,6 +997,8 @@
       (then (return (global.get $gl_list_result))))
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
+    (if (call $gl_eval_enable (local.get $op) (local.get $stack)) (then (return (i32.const 0))))
+    (call $gl_eval_attrib (local.get $op) (local.get $stack))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 169)) (i32.const 2)) (then
       (call $gl_pixels_execute (local.get $op) (local.get $stack)) (return (i32.const 0))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 163)) (i32.const 2)) (then
@@ -1493,6 +1499,8 @@
     (local.set $br (call $gl_copy_raster (local.get $b)))
     (local.set $at (call $gl_texture_block_for (local.get $a)))
     (local.set $bt (call $gl_texture_block_for (local.get $b)))
+    (if (i32.and (local.get $mask) (i32.or (i32.const 0x10000) (i32.const 0x2000))) (then
+      (drop (call $gl_eval_state (local.get $a))) (drop (call $gl_eval_state (local.get $b)))))
     ;; Plan contains four resolved destination bindings and staged new objects.
     ;; No source object pointer is installed in a destination namespace.
     (local.set $plan (call $gl_list_alloc (i32.const 36)))
@@ -1539,6 +1547,7 @@
       (call $gl_copy_plan_free (local.get $plan) (i32.const 1)) (call $heap_free (call $w2g (local.get $stack)))
       (global.set $last_error (local.get $error)) (return (i32.const 0))))
     ;; Commit: all validation/allocation is complete. No bind/query/device call.
+    (call $gl_eval_copy (local.get $a) (local.get $b) (local.get $mask))
     (local.set $dst (i32.load offset=32 (local.get $plan)))
     (if (local.get $dst) (then
       (local.set $obj (local.get $dst))
