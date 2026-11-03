@@ -103,6 +103,57 @@ function parseShellLaunchCommand(rawFile, explicitParams, operation, vfs) {
   };
 }
 
+// Host-private tickets never escape WinExec's suspended stdcall frame.
+function createWinExecReadiness({ now = () => performance.now(), timeoutMs = 10000, onEvent = () => {} } = {}) {
+  const tickets = new Map(), frames = new Map(), callers = new Map();
+  let serial = 0;
+  function poll(frame) {
+    const wait = frames.get(frame >>> 0);
+    if (!wait) return -1;
+    if (!wait.process.ready && !wait.process.exited && now() - wait.started < timeoutMs) return 0;
+    frames.delete(frame >>> 0);
+    onEvent({ event: 'complete', frame: frame >>> 0, reason: wait.process.ready ? 'GetMessage' : wait.process.exited ? 'exit' : 'timeout', elapsedMs: now() - wait.started });
+    return 33;
+  }
+  return {
+    issue(process) {
+      // Reuse only after a ticket has been consumed, never a live identity.
+      let ticket, attempts = 0;
+      do {
+        if (++attempts > 65536) throw new Error('WinExec startup tickets exhausted');
+        ticket = 0x57450000 + (++serial & 0xffff);
+      } while (tickets.has(ticket));
+      tickets.set(ticket, { process, started: now() });
+      onEvent({ event: 'accepted', ticket, timeoutMs });
+      return ticket;
+    },
+    control(op, frame, ticket) {
+      if (op === 9) {
+        const wait = frames.get(frame >>> 0);
+        if (wait && wait.threadId !== (ticket >>> 0)) frames.delete(frame >>> 0);
+        if (!frames.has(frame >>> 0)) callers.set(frame >>> 0, ticket >>> 0);
+        return poll(frame);
+      }
+      if (op === 12) { callers.delete(frame >>> 0); return 1; }
+      if (op !== 10) return -1;
+      const threadId = callers.get(frame >>> 0);
+      callers.delete(frame >>> 0);
+      const wait = tickets.get(ticket >>> 0);
+      if (!wait) return ticket; // legacy/custom host success code
+      tickets.delete(ticket >>> 0);
+      wait.threadId = threadId ?? 0;
+      frames.set(frame >>> 0, wait);
+      onEvent({ event: 'waiting', frame: frame >>> 0, ticket: ticket >>> 0 });
+      return poll(frame);
+    },
+    retire(threadId) {
+      for (const [frame, wait] of frames) if (wait.threadId === (threadId >>> 0)) frames.delete(frame);
+      for (const [frame, owner] of callers) if (owner === (threadId >>> 0)) callers.delete(frame);
+    },
+  };
+}
+
+
 function resolveShellLaunchPath(file, vfs, isWinExec) {
   if (!isWinExec || !file) return file;
   // WinExec accepts an executable stem; only the final path component
@@ -1730,6 +1781,7 @@ class WineAssembly {
   // Per-app thread-exit fixups (Winamp's visualizer bookkeeping) live in
   // lib/app-profiles.js, so the CLI harness runs the same ones.
   _onThreadExit(info) {
+    if (this._winexecReadiness) this._winexecReadiness.retire((info.tid | 0) + 1);
     const profiles = (typeof window !== 'undefined' && window.appProfiles) || null;
     if (!profiles || !this.instance || !this.memory) return;
     profiles.onThreadExit(
@@ -2469,7 +2521,14 @@ class WineAssembly {
     };
     // E4: ops 0/1/2 query/terminate/validity. E4 and E6: 4..8
     // query/terminate/access/close/wait. Status never encodes validity or exit.
+    const winexecReadiness = self._winexecReadiness = createWinExecReadiness();
     h.process_ctl = (op, pid, arg) => {
+      if (op === 9 || op === 10 || op === 12) return winexecReadiness.control(op, pid, arg);
+      if (op === 11) {
+        self._winexecInputReady = true;
+        if (self._winexecStartup) self._winexecStartup.ready = true;
+        return 1;
+      }
       if (op === 3) return self._duplicateProcessHandle(pid);
       if (op >= 4 && op <= 8) {
         const entry = self._processHandleEntry(pid);
@@ -2521,7 +2580,17 @@ class WineAssembly {
       const dir = dirWa ? self.readString(dirWa) : '';
       // Preserve the show request through queueing. hidden suppresses launch
       // progress UI; guest startup/window-state handling remains separate.
-      const launchOpts = { hidden: nShow === 0, showCmd: nShow };
+      const startup = { ready: false, exited: false };
+      const launchOpts = { hidden: nShow === 0, showCmd: nShow,
+        ...(parsedCommand.isWinExec ? {
+          beforeRun: child => {
+            child._winexecStartup = startup;
+            startup.ready = !!child._winexecInputReady;
+          },
+          onExit: () => { startup.exited = true; },
+        } : {}),
+      };
+      const accepted = () => parsedCommand.isWinExec ? winexecReadiness.issue(startup) : 33;
       console.log(`[ShellExecute] hwnd=0x${hwnd.toString(16)} op="${op}" file="${file}" params="${params}"`);
       const shell = window.wineShell;
       if (shell && file) {
@@ -2535,7 +2604,7 @@ class WineAssembly {
           typeof vfs.getCurrentDirectory === 'function' ? vfs.getCurrentDirectory() : dir;
         if (absolute && shell.launchVfsExe && shell.launchVfsExe(launchFile, self, launchDir, params, launchOpts)) {
           self.logToUI(`[ShellExecute] launching ${launchFile} from the caller's filesystem`);
-          return 33;
+          return accepted();
         }
         // A relative name the caller's own filesystem has is that file too:
         // Win98's CreateProcess looks in the current directory before any
@@ -2544,11 +2613,11 @@ class WineAssembly {
         // resolved to an unrelated registered app (Moorhuhn 3 Puzzle).
         if (!absolute && shell.launchVfsExe && shell.launchVfsExe(launchFile, self, launchDir, params, launchOpts)) {
           self.logToUI(`[ShellExecute] launching ${launchFile} from the caller's current directory`);
-          return 33;
+          return accepted();
         }
         if (/\.(exe|scr)$/i.test(file) && shell.launchExe(file, launchOpts)) {
           self.logToUI(`[ShellExecute] launching ${file}`);
-          return 33;
+          return accepted();
         }
         // A path that resolved nowhere is a failure the guest can react to
         // (SE_ERR_FNF). Bare names keep the lenient success return — several
@@ -7451,5 +7520,5 @@ class WineAssembly {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { parseShellLaunchCommand, resolveShellLaunchPath };
+  module.exports = { parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness };
 }

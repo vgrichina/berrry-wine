@@ -10,7 +10,7 @@ const os = require('os');
 const path = require('path');
 const vm = require('vm');
 const { EventEmitter } = require('events');
-const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host');
+const { parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness } = require('../host');
 const { saveVfsToHost, mergeCompletedChildState, saveCompletedChildState } = require('../lib/vfs-export');
 
 const sourcePath = process.env.CLI_SOURCE || path.join(__dirname, 'run.js');
@@ -51,7 +51,7 @@ function fixture({ spawn = true, appSpawn = false, capture = false, fail = false
     EXE_GUEST_PATH: 'c:\\parent.exe', ASSET_ENTRY: null, DLL_SEED: [],
     PIPE_CHILD_ARGS: [], WASM_PATH: 'unused.wasm', MAX_SECONDS: 1,
     threadSnapshotSystemIncomplete: false,
-    path, fs, parseShellLaunchCommand, resolveShellLaunchPath,
+    path, fs, parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness,
     saveVfsToHost: (...args) => {
       const rows = saveVfsToHost(...args);
       if (exportFail) throw new Error('injected snapshot write failure');
@@ -86,7 +86,11 @@ function fixture({ spawn = true, appSpawn = false, capture = false, fail = false
   return { exe, cwd, vfs, forks, hooks, context,
     baseCalls: () => baseCalls,
     launch(file, params = '', dir = '', show = 5, op = 'WinExec') {
-      return h.shell_execute(0, put(op), put(file), put(params), put(dir), show);
+      const result = h.shell_execute(0, put(op), put(file), put(params), put(dir), show);
+      if ((result >>> 16) !== 0x5745) return result;
+      assert.strictEqual(h.process_ctl(10, 0x7404000, result), 0, 'WinExec ticket parks before GetMessage');
+      forks.at(-1).child.emit('message', { t: 'process-input-ready' });
+      return h.process_ctl(9, 0x7404000, 0);
     },
   };
 }

@@ -2017,6 +2017,9 @@
   ;; with that message's, and every source here attaches 0.
   (func $handle_GetMessageA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $sp i32) (local $ret i32)
+    ;; WinExec readiness is entry to GetMessage, even if its queue is empty.
+    ;; Host process ownership crosses cooperative instances and real Workers.
+    (drop (call $host_process_ctl (i32.const 11) (i32.const 0) (i32.const 0)))
     (local.set $sp (i32.load offset=16 (global.get $reg_base)))
     (local.set $ret (call $gl32 (local.get $sp)))
     (call $handle_GetMessageA_pump (local.get $arg0) (local.get $arg1) (local.get $arg2)

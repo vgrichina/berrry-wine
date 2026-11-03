@@ -53,7 +53,7 @@ const { createBatchClock } = require('../lib/batch-clock');
 const { createGuestClockSource } = require('../lib/guest-clock');
 const { createInputConsumptionTrace } = require('./input-consumption-trace');
 const { createStartupClock } = require('../lib/startup-clock');
-const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host.js');
+const { parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness } = require('../host.js');
 // Fixed memory-map addresses, from the map declared in src/00-regions.wat.
 const RegionMap = require('../lib/region-map.generated.js');
 let PNG;
@@ -4068,6 +4068,10 @@ async function main() {
   };
 
   let capturedLaunch = null;
+  const winexecReadiness = createWinExecReadiness({
+    onEvent: event => console.log('[winexec-startup] ' + JSON.stringify(event)),
+  });
+  let startupNotified = false;
   const baseShellExecute = h.shell_execute;
   h.shell_execute = (hwnd, opWa, fileWa, paramsWa, dirWa, nShow) => {
     threadSnapshotSystemIncomplete = true;
@@ -4088,7 +4092,8 @@ async function main() {
       const command = `"${executable}"${parsed.params ? ' ' + parsed.params : ''}`;
       try {
         // A transport PID is private to process_ctl, not a ShellExecute handle.
-        return spawnVfsChild(command, directory, false, nShow) ? 33 : 2;
+        const pid = spawnVfsChild(command, directory, false, nShow);
+        return pid ? (parsed.isWinExec ? winexecReadiness.issue(pipeChildByPid.get(pid)) : 33) : 2;
       } catch (e) {
         logs.push(`[spawn] ShellExecute "${file}" failed: ${e.message}`);
         return 0; // launch resources/transport unavailable; never fake success
@@ -4140,6 +4145,14 @@ async function main() {
   // Browser aliases require a target-owned table; CLI IPC is unsupported.
   // E4 validity and lifetime are independent of every possible DWORD exit code.
   const processCtl = (op, pid, arg) => {
+    if (op === 9 || op === 10 || op === 12) return winexecReadiness.control(op, pid, arg);
+    if (op === 11) {
+      if (!startupNotified) {
+        startupNotified = true;
+        if (process.send && process.connected) process.send({ t: 'process-input-ready' }, () => {});
+      }
+      return 1;
+    }
     if (op === 3) return -50;
     const kind = (pid >>> 0) & 0xFFFF0000;
     if (op >= 4 && op <= 8 && kind !== 0x00E40000) return op === 8 ? -1 : -6;
@@ -4255,11 +4268,14 @@ async function main() {
       const pid = nextChildPid();
       relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
       pipeChildren.push(child);
-      const rec = { child, exited: false, exitCode: 259 };
+      const rec = { child, ready: false, exited: false, exitCode: 259 };
       livePipeChildren.add(rec);
       pipeChildByPid.set(pid, rec);
       let guestCode = null;
-      child.on('message', msg => { if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0; });
+      child.on('message', msg => {
+        if (msg && msg.t === 'process-input-ready') rec.ready = true;
+        if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0;
+      });
       child.on('exit', code => {
         try {
           mergeChildState(vfs, storage, before, outDir, regOut, completion, token);
@@ -5642,9 +5658,11 @@ async function main() {
     // The per-app thread-exit fixups the browser host has always run — Winamp's
     // visualizer bookkeeping — now run headless too, so a browser-only symptom
     // is reproducible from the CLI.
-    onThreadExit: (info) => profileThreadExit(
-      path.basename(EXE_PATH), info, instance.exports, memory.buffer,
-      { log: (m) => console.log(m) }),
+    onThreadExit: (info) => {
+      winexecReadiness.retire((info.tid | 0) + 1);
+      profileThreadExit(path.basename(EXE_PATH), info, instance.exports, memory.buffer,
+        { log: (m) => console.log(m) });
+    },
   });
   // Waits on a child process's handle (src/09d7-pipes.wat) ask the host
   // that started it.

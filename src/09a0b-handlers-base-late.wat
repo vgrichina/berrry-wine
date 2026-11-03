@@ -1070,13 +1070,39 @@
   ;; WinExec(lpCmdLine, uCmdShow) — legacy launcher. Pinball's Options →
   ;; Select Table and Win9x installers expect a real child-launch attempt.
   ;; Mark this call so the browser host applies WinExec parsing/error rules.
+  ;; Host-private continuation: 9 polls the calling stack frame, 10 binds
+  ;; its accepted launch ticket. Unsupported hosts keep their direct result.
+  ;; No command comparison, guest argument rewrite, or second fork on retry.
   (func $handle_WinExec (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $host_shell_execute
-      (i32.const 0) (local.get $name_ptr)
-      (if (result i32) (local.get $arg0) (then (call $g2w (local.get $arg0))) (else (i32.const 0)))
-      (i32.const 0) (i32.const 0) (local.get $arg1)))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-  )
+    (local $sp i32) (local $result i32) (local $status i32) (local $park i32)
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $result (call $host_process_ctl (i32.const 9) (local.get $sp) (global.get $current_thread_id)))
+    (local.set $park (i32.eqz (local.get $result)))
+    (if (i32.lt_s (local.get $result) (i32.const 0))
+      (then
+        (local.set $result (call $host_shell_execute
+          (i32.const 0) (local.get $name_ptr)
+          (if (result i32) (local.get $arg0) (then (call $g2w (local.get $arg0))) (else (i32.const 0)))
+          (i32.const 0) (i32.const 0) (local.get $arg1)))
+        (if (i32.gt_u (local.get $result) (i32.const 31))
+          (then
+            (local.set $status (call $host_process_ctl (i32.const 10) (local.get $sp) (local.get $result)))
+            (if (i32.ge_s (local.get $status) (i32.const 0))
+              (then
+                (local.set $result (local.get $status))
+                (local.set $park (i32.eqz (local.get $status)))))))))
+    (if (local.get $park)
+      (then
+        (global.set $eip (global.get $current_thunk_eip))
+        (global.set $handler_set_eip (i32.const 1))
+        (global.set $yield_reason (i32.const 9))
+        (global.set $yield_flag (i32.const 1))
+        (global.set $steps (i32.const 0))
+        (return)))
+    (drop (call $host_process_ctl (i32.const 12) (local.get $sp) (i32.const 0)))
+    (global.set $handler_set_eip (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; LoadModule(lpModuleName, lpParameterBlock) -> an instance handle above 31,
   ;; or a DOS error code below it. WinExec's older twin, kept in KERNEL32 for

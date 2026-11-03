@@ -221,7 +221,7 @@ function makeShell(opts = {}) {
 {
   const vm = require('vm');
   const { VirtualFS } = require('../lib/filesystem');
-  const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host');
+  const { parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness } = require('../host');
   const source = fs.readFileSync(path.join(__dirname, '..', 'host.js'), 'utf8');
   const start = source.indexOf('    h.shell_execute =');
   const end = source.indexOf('    // The guest asked for the machine to go down', start);
@@ -233,17 +233,24 @@ function makeShell(opts = {}) {
     const calls = [];
     const strings = [null, operation, command];
     const parent = { _helpCtx: { vfs }, readString: p => strings[p], logToUI() {} };
-    const h = {};
+    const h = {}, winexecReadiness = createWinExecReadiness();
     vm.runInNewContext(source.slice(start, end), {
-      h, self: parent, WineAssembly: {}, parseShellLaunchCommand, resolveShellLaunchPath,
+      h, self: parent, WineAssembly: {}, parseShellLaunchCommand, resolveShellLaunchPath, winexecReadiness,
       console: { log() {} }, window: { wineShell: {
-        launchVfsExe(file, caller, dir, params) {
+        launchVfsExe(file, caller, dir, params, opts) {
           calls.push({ file, params });
-          return vfs.files.has(vfs._resolvePath(file));
+          const exists = vfs.files.has(vfs._resolvePath(file));
+          if (exists && opts.beforeRun) {
+            const child = {}; opts.beforeRun(child);
+            child._winexecStartup.ready = true;
+          }
+          return exists;
         }, launchExe() { return false; },
       } },
     });
-    return { status: h.shell_execute(0, 1, 2, 0, 0, 5), calls };
+    let status = h.shell_execute(0, 1, 2, 0, 0, 5);
+    if ((status >>> 16) === 0x5745) status = winexecReadiness.control(10, 123, status);
+    return { status, calls };
   }
   const full = launch(image + ' /flag', [image]);
   assert.strictEqual(full.status, 33);
@@ -262,7 +269,7 @@ function makeShell(opts = {}) {
 {
   const vm = require('vm');
   const VlanWire = require('../lib/vlan-wire');
-  const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host');
+  const { parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness } = require('../host');
   const hostSource = fs.readFileSync(path.join(__dirname, '..', 'host.js'), 'utf8');
   const start = hostSource.indexOf('    h.process_spawn =');
   const end = hostSource.indexOf('    // E4:', start);
