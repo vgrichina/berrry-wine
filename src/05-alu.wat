@@ -640,10 +640,45 @@
     (call $cs_push (local.get $op))
     (global.set $eip (local.get $target))
     (return_call $branch_end))
+  ;; CALL operands must not trigger a lazy DIB readback or enter a missing
+  ;; mapping's fault/SEH path. Check all bytes, including wrap/page crossings,
+  ;; before loading the target or changing the return stack.
+  (func $memory_call_preflight (param $addr i32)
+    (local $i i32)
+    (call $scalar_store_preflight (local.get $addr) (i32.const 4))
+    (loop $bytes
+      (if (i32.lt_u
+            (i32.sub (i32.add (local.get $addr) (local.get $i)) (global.get $DIB_GUEST_BASE))
+            (global.get $DIB_GUEST_CAPACITY)) (then (unreachable)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $bytes (i32.lt_u (local.get $i) (i32.const 4)))))
   (func $th_call_ind (param $op i32)
-    (local $mem_addr i32) (local $target i32)
+    (local $mem_addr i32) (local $target i32) (local $stack i32)
     (local.set $mem_addr (call $read_addr))
+    (if (global.get $rep_store_step) (then
+      (local.set $stack (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+      (call $memory_call_preflight (local.get $mem_addr))
+      (call $memory_call_preflight (local.get $stack))))
     (local.set $target (call $gl32 (local.get $mem_addr)))
+    (if (global.get $rep_store_step) (then
+      ;; NULL exits, direct native-wndproc markers, unmapped code and DIB
+      ;; readback entries are not audited instruction targets. Reject them
+      ;; before the CALL store rather than entering a service on the next run.
+      (if (i32.or (i32.eqz (local.get $target))
+                  (i32.ge_u (local.get $target) (i32.const 0xFFFE0000)))
+        (then (unreachable)))
+      (call $memory_call_preflight (local.get $target))
+      ;; An x86 CALL and its API service are distinct observation boundaries.
+      ;; Never inline dispatch after this instruction's sole guest store.
+      ;; The next protected run refuses thunk entry before any run effects;
+      ;; disarming resumes the ordinary dispatcher with this exact frame.
+      (call $gs32 (local.get $stack) (local.get $op))
+      (i32.store offset=16 (global.get $reg_base) (local.get $stack))
+      (if (i32.eqz (thunk-contains (local.get $target)))
+        (then (call $cs_push (local.get $op))))
+      (global.set $eip (local.get $target))
+      (global.set $block_budget (i32.const 0))
+      (return)))
     ;; Check thunk zone (guest-space bounds)
     (if (thunk-contains (local.get $target))
       (then

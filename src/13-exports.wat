@@ -172,6 +172,10 @@
     ;; An alertable-sleep mark is conservatively unsupported even when no APC
     ;; is currently visible; a producer may enqueue one concurrently.
     (if (global.get $rep_store_step) (then
+      ;; A stepped CALL may have just committed its architectural frame and
+      ;; stopped at an import. Service execution remains unsupported; reject
+      ;; before diagnostics, budgets, callbacks or any memory can change.
+      (if (thunk-contains (global.get $eip)) (then (unreachable)))
       (if (i32.or
             (i32.eq (global.get $eip) (global.get $WIN16_TASK_ENTRY))
             (i32.or (global.get $apc_alert_sleep)

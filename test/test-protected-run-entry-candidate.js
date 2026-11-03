@@ -103,6 +103,8 @@ async function main() {
     assert.throws(() => e.run(0), WebAssembly.RuntimeError, name);
     const after = snap();
     assert.deepEqual(after, before, name + ': reject before all globals, CPU, flags, queue, stack or vital effects');
+    assert.throws(() => e.run(100), WebAssembly.RuntimeError, name + ' retry');
+    assert.deepEqual(snap(), before, name + ': retry preserves all globals and full memory');
     // The same queued production service is still available after disarming.
     e.set_rep_store_step(0);
     if (ordinary) ordinary();
@@ -139,6 +141,7 @@ async function main() {
     e.run(0); assert.equal(globalValue('$anim_live_count'), 0);
   });
   check('Win16 task bootstrap service', () => e.set_eip(e.fixture_boot_pc()));
+  check('actual original PE import thunk service', () => e.set_eip(e.guest_read32(0x4063e0) >>> 0));
   check('aborted active audio callback cleanup', () => {
     assert.equal(e.fire_wave_out_callback_bound(1, overlapped, pc, 0), 1);
     // An aborted callback is another real run service path: run's halt tail

@@ -3105,6 +3105,17 @@
       (if (global.get $rep_store_step) (then
         (if (i32.or (global.get $code16) (local.get $prefix_67)) (then (unreachable)))
         (block $supported
+          ;; Audited absolute near dword CALL only: FF 15 disp32. Reject all
+          ;; prefixes, register/base/SIB forms and neighbouring Group5 ops.
+          ;; th_call_ind validates both spans before effects and exposes the
+          ;; architectural transfer before any service entry.
+          (if (i32.eq (local.get $op) (i32.const 0xFF)) (then
+            (if (i32.ne (global.get $d_pc)
+                        (i32.add (local.get $insn_start) (i32.const 1)))
+              (then (unreachable)))
+            (if (i32.ne (call $gl8 (global.get $d_pc)) (i32.const 0x15))
+              (then (unreachable)))
+            (br $supported)))
           ;; Audited dword register-immediate ADD/OR/AND/SUB/XOR/CMP only.
           ;; These existing handlers touch the register file and lazy flags,
           ;; never guest memory. Keep ADC/SBB, byte/word forms and ALL prefixes

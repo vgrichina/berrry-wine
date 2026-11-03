@@ -495,10 +495,14 @@
     {
       "file": "src/05-alu.wat",
       "name": "$th_call_ind",
-      "writes": 2,
+      "writes": 3,
       "boundaryCalls": [],
       "exports": [],
       "targets": [
+        [
+          "local.get",
+          "$target"
+        ],
         [
           "local.get",
           "$op"
@@ -508,9 +512,9 @@
           "$target"
         ]
       ],
-      "sha256": "acea908fa2f3257e27bc5a09c96f6506692fa31bc912b3a0cd6a8087b2d3f354",
+      "sha256": "592b4575f0d00a35f23c7736ab010963b1d5e0fa86f48ff2985bf458dc68114c",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Memory CALL protected review 2026-11-03: absolute FF15 admission only; preflight every target/return-slot byte, exclude DIB readback, then commit one architectural CALL and stop before target execution. Thunk calls preserve their ordinary shadow-stack exclusion and resume the existing dispatcher only after disarm. No new guest handler, callback invocation, retained identity or context restoration. Ordinary inline dispatch unchanged; callback ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -7789,7 +7793,7 @@
           ]
         ]
       ],
-      "sha256": "fd131324f06a6cd728789d7186c087f89f22c6cfc2d3c30424c44640f51b9bdb",
+      "sha256": "78d531195dc5d33c144942b9bc8479a446cef2573b6d48e97d349eb09ad75565",
       "kind": "host-entry",
       "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth. Shadow Man exact-candidate source review 2026-10-28: Reentrant host entry retains existing budget/API-depth save/restore and thunk auto-pop target. Clears kind/thunk-entry at fresh run and each nonzero loop boundary; brackets explicit thunk dispatch with entry flag; zero branch checks record before null_diag_event increments count and notifies synchronous host observer (return traps). Nested run or deferred unload invalidates attribution; diagnostic globals are not a retained per-invocation stack. No new EIP target/ownership retain; source inventory only, reentry/runtime and original writer remain unqualified. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.",
       "ownership": "pending"
