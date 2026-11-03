@@ -4764,6 +4764,7 @@ class WineAssembly {
 
   async handleComDllLoad() {
     await ProcessBoot.handleComDllYield({
+      onDllCallbackGateWait: owner => this._advanceDllCallbackOwner(owner),
       exports: this.instance.exports,
       memoryBuffer: this.memory.buffer,
       exeBytes: this._exeBytes || null,
@@ -4975,8 +4976,24 @@ class WineAssembly {
     if (set) set.call(main, count | 0);
   }
 
+  // Admission can precede the regular cooperative thread phase. Let the real
+  // callback owner finish through the scheduler while the requesting instance
+  // remains parked; the callback gate still owns admission and release.
+  async _advanceDllCallbackOwner(owner) {
+    if (!this.running) throw new Error('Browser stopped while waiting for DLL callback admission');
+    const manager = this.threadManager;
+    if (!manager || manager.backend !== 'cooperative') return false;
+    const stats = manager.runDllCallbackOwnerSlice(owner, this.stepsPerSlice);
+    // Service pending host I/O and browser input without advancing guest time
+    // or consuming another frozen main-step credit.
+    await new Promise(resolve => setTimeout(resolve, 0));
+    if (!this.running) throw new Error('Browser stopped while waiting for DLL callback admission');
+    return !!(stats && stats.threadsRun);
+  }
+
   async handleLoadLibrary() {
     await ProcessBoot.handleLoadLibraryYield({
+      onDllCallbackGateWait: owner => this._advanceDllCallbackOwner(owner),
       exports: this.instance.exports,
       memoryBuffer: this.memory.buffer,
       resourceHost: this,
@@ -5003,6 +5020,7 @@ class WineAssembly {
       const exports = manager.cooperativeCallbackExports(thread);
       manager.adoptMainGlobals(exports);
       await ProcessBoot.handleLoadLibraryYield({
+        onDllCallbackGateWait: owner => this._advanceDllCallbackOwner(owner),
         exports,
         memoryBuffer: this.memory.buffer,
         resourceHost: this,
@@ -5023,6 +5041,7 @@ class WineAssembly {
       const exports = manager.cooperativeCallbackExports(thread);
       manager.adoptMainGlobals(exports);
       await ProcessBoot.handleComDllYield({
+        onDllCallbackGateWait: owner => this._advanceDllCallbackOwner(owner),
         exports,
         memoryBuffer: this.memory.buffer,
         exeBytes: this._exeBytes || null,

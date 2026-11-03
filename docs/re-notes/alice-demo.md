@@ -1,5 +1,41 @@
 # American McGee's Alice demo
 
+## Browser cooperative DLL admission repaired (2026-11-03)
+
+Run `scratch/runs/20261103-alice-browser-admission-repair/` reproduces the
+browser admission cycle through the actual browser host methods, shared loader
+and cooperative scheduler with interpreted PE fixtures. The finalized fixture
+fails with the released old host: main owner 1 remains at yield 5 while owner 2
+holds the real callback gate across an unfinished THREAD_ATTACH. No timer
+releases that gate. The same fixture and sealed module pass after forwarding
+the existing owner-advance hook at all four browser main/thread LoadLibrary/COM
+service sites. The owner advances through 54 scheduler calls, completes its
+nested load/unload and attach before process detach, and runs its thread body.
+
+Admission still uses the real atomic callback gate; the scheduler advances only
+its current unfinished attach owner. True waits retain the parked caller and
+ordinary host wait, failures preserve quarantine pins, and real Workers remain
+excluded. The host yields a browser turn without manufacturing guest time or
+frozen main-step credits and rejects stopped hosts. ProcessBoot, callback gate
+semantics, guest originals/configuration and the scheduler are unchanged.
+
+Ordinary, real sleeping-owner, faulted-owner, nested attach, forwarding,
+retirement/stop/error and Worker exclusion controls pass, alongside existing
+serialization, loader lifecycle/race/import/rollback/terminal, keyboard and CLI
+gate regressions. The locked build passes. Existing
+`test-dll-worker-message-lifecycle.js` separately fails its nested COM assertion
+with `0x80040154` rather than `0x80004002`, identically against the sealed
+released module; it does not load host.js. That baseline failure is retained,
+not counted as a passing check or repaired by this browser change.
+
+Exact GL mask-copy release 07:30:08.066535 UTC precedes Jedi desktop recover
+release 07:53:24.696619 UTC before this task's source/build/runtime work.
+The fixture module is SHA256
+`98203cd6549c75030d5d25118a61f7ca42449a05de0a2cf64e232bc82e6b0e7f`.
+The regression establishes admission progress, not original browser gameplay.
+A fresh sealed ordinary original browser attempt follows publication; its
+menu, movement, look and visible fire-effect results remain pending here.
+
 ## Original browser attempt: cooperative DLL admission blocks startup (2026-11-03)
 
 Run `scratch/runs/20261103-alice-original-browser-gameplay/` makes one original
