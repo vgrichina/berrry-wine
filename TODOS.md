@@ -1693,13 +1693,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
-  status: active (native New Game/Easy and controlled gameplay reviewed648b877e5; browser gameplay next)
+  status: active (main native fault termination passes; cooperative owner identity and partial stack repair pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: fresh25283/thread01a1a00c-5e47-7380-bcf6-ca3478dbeb42; scratch/usage-watch/alice-original-browser-gameplay-nov03
+  worker: fresh handle67111/thread01a1a27b-3a1b-7580-b4f4-9184aefd3f15; scratch/usage-watch/alice-cooperative-fault-owner-repair-nov03
   candidate: test/binaries/candidates/alice-demo/alice.exe
-  Next: Verify ordinary browser New Game/Easy and movement/look, plus visible fire effect if reachable, after GL5777 THEN Jedi10321 releases. Native movement/look accepted648b877e5 with root207 fullSHA matches and personally reviewed screenshots in scratch/runs/20261103-coordinator-alice-gameplay-review/review.json; original15 pins preserved, boat STOPPED. Browser/audio/FPS/fire effectiveness remain unverified.
+  Next: Repair actual cooperative owner scheduler slot1 versus native thread2 and bounded stack capture near ESP7efffff8, then qualify cooperative/unarmed failures. Predecessor a441d1912 mainUD2 durable persistence/input release/exit1 PASS, candidate unlanded; 5997 local SHA checks and stopped snapshot verified. Runtime waits Jedi release. Original opening gameplay remains accepted; no new route/thermal/knife proof.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
-  Evidence: scratch/runs/20261031T2239Z-alice-original-recovery/; scratch/usage-watch/alice-original-native-gameplay-nov01.task.txt; docs/re-notes/alice-demo.md
+  Evidence: docs/re-notes/alice-fault-termination-repair-20261103.md; scratch/runs/20261103-alice-fault-termination-repair/; docs/re-notes/alice-demo.md
 
 
 - [x] Sizeless virtual decommit corrupts neighboring allocation
@@ -1824,12 +1824,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Jedi Knight Dark Forces II original demo
   id: NEW-GAME-JEDI-KNIGHT-DEMO-20261015
-  blocker: Ordinary Play previously stopped at missing genuine DSOUND.VXD; authentic DSOUND.VXD/DDHELP.EXE now recovered and supported VFS mounts tested, actual original Play with those files pending.
-  worker: fresh92624/thread01a19f8c-eeb8-7170-ba3f-9b5425ce347f; scratch/usage-watch/jedi-provisioned-original-play-nov03
-  status: active (static provisioning publishedf3a549c15; actual runtime after GL64819 then before Alice82263)
+  blocker: Direct helper/Win32 dispatch reject armed writes, but generated native API wrapper spills arguments through gs32 before guard and can alias protected guest memory. All-writer protection and original script attribution remain unqualified.
+  worker: thread01a1a26c-a5a4-7382-8019-c890c2e05b72/handle65379; scratch/usage-watch/jedi-watch-writer-boundary-repair-nov03
+  status: active (write-watch prerequisite stopped at generated ABI spill before guard; recovery underway)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: After GL terminal/exact release, reseal latest source/module and run one ordinary installed launcher Play with the two genuine system-file mounts, preserve28 original/registry pins, capture first new state/ordinary gameplay if reached. Stop at first new cause; no fabricated markers or bypass. Root41 artifact hashes MATCH in scratch/runs/20261103-coordinator-jedi-provisioning-review/review.json; file provisioning does not qualify complete DirectX installation/native VxD execution.
-  Evidence: scratch/runs/20261103-jedi-source-recheck/stream-sha256.json: 2026-11-03T02:18:34Z full21,195,858B SHA2568aae38165e08b68bb63cfd21b8c28ed1d4d8f1bb400a0162588d5b86acdc827e MATCH streamed without local retention. docs/re-notes/jedi-status-20261021.md confirms accepted original installation and ordinary licence acceptance; prior TODOS acceptance/runtime403 text was stale. No current engine launch/gameplay established.
+  Next: Collect terminal writer-boundary result and retained candidate, then repair the first shared writer boundary without narrowing protection or bypassing original guest behavior. Ordinary REP fault restart cases now reported passing; do not call those original campaign acceptance.
+  Evidence: docs/re-notes/jedi-rep-first-store-repair-20261103.md; scratch/runs/20261103-jedi-watch-writer-boundary-repair/; docs/re-notes/jedi-status-20261021.md
   Done: Registered original launch, ordinary player-controlled gameplay and reviewed screenshot with exact source/run identity.
   Authorization: docs/license-acceptance-authorization-20261018.json; accepted installation evidence docs/reviews/jedi-installation-evidence-integration-20261021/README.md.
 
