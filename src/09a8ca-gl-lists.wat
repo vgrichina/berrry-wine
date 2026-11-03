@@ -202,6 +202,8 @@
         (i32.and (i32.ge_u (local.get $op) (i32.const 124))
           (i32.le_u (local.get $op) (i32.const 140)))))))
     (if (i32.eq (local.get $op) (i32.const 160)) (then (return (i32.const 0))))
+    (if (call $gl_period_validate (local.get $ctx) (local.get $op) (local.get $stack))
+      (then (return (i32.const 1))))
     ;; Validate before capture: rejected setters never enter a list or alter
     ;; the producer's fragment state, including COMPILE_AND_EXECUTE.
     (if (i32.or (i32.eq (local.get $op) (i32.const 180))
@@ -503,6 +505,7 @@
           (local.set $b (local.get $next)) (br $attributes)))
         (call $gl_state_free_attribs (i32.load offset=176 (local.get $ctx)))
         (if (i32.load offset=240 (local.get $ctx)) (then
+          (call $gl_period_free_context (i32.load offset=240 (local.get $ctx)))
           (call $heap_free (call $w2g (i32.load offset=240 (local.get $ctx))))))
         (call $gl_texture_free (local.get $ctx))
         (local.set $b (i32.load offset=968 (local.get $ctx)))

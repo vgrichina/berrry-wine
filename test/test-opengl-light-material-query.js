@@ -254,6 +254,16 @@ const extraWat=`
  // Exercise the actual queued drawing route around native synchronous queries.
  call('glClearColor',[0,0,0,f(1)]);call('glClear',[0x4000]);call('glBegin',[4]);for(const v of [[-.5,-.5],[.5,-.5],[0,.5]])call('glVertex2f',v.map(f));call('glEnd');call('glFinish');
  if(queued){encoder.fence();assert(encoder.snapshot().glQueued>0,'real queue used');}
+ // Public material getters are native stdcall handlers, independent of the
+ // private renderer command indices. Track selected faces and retain values.
+ call('glDisable',[0xb57]);set(true,0x408,0x1600,[0,0,0,1]);
+ call('glColorMaterial',[0x404,0x1600]);call('glColor4f',[0,0,f(1),f(1)]);call('glEnable',[0xb57]);
+ both(true,0x404,0x1600,[0,0,1,1],[0,0,2147483647,2147483647],'tracked front public getter');
+ both(true,0x405,0x1600,[0,0,0,1],[0,0,0,2147483647],'independent back public getter');
+ call('glColorMaterial',[0x405,0x1600]);call('glColor4ub',[0,255,0,255]);
+ both(true,0x405,0x1600,[0,1,0,1],[0,2147483647,0,2147483647],'tracked back public getter');
+ call('glDisable',[0xb57]);call('glColor4f',[f(1),0,0,f(1)]);
+ both(true,0x405,0x1600,[0,1,0,1],[0,2147483647,0,2147483647],'disabled retained public getter');
  assert.strictEqual(call('glGetError'),0);
  const result={passed:true,route:queued?'queued':'direct',exports:names,checks,observations};
  if(process.env.GL_LIGHT_MATERIAL_QUERY_EVIDENCE)fs.writeFileSync(process.env.GL_LIGHT_MATERIAL_QUERY_EVIDENCE,JSON.stringify(result,null,2));console.log(JSON.stringify(result));

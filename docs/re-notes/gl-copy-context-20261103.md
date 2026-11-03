@@ -270,3 +270,34 @@ use and normally stopped only after verified retrieval and recovery instructions
 under the original task's explicit delegation. Stop `stop_1987e91b91cdc56d`
 completed at 07:28:37.304 UTC, error null, forced false; final state is STOPPED
 with a verified retained snapshot. Scoped test/browser/build helpers were absent.
+
+
+## Period polygon and color-material prerequisites (2026-11-03)
+
+The implementation following findings-only `c4bc527b0` now represents independent
+front/back POINT, LINE and FILL polygon modes and the color-material face,
+parameter and enable state in native context state. Native typed queries and
+public material getters observe the retained values. Invalid enums and illegal
+Begin/list operations preserve state; list execution and masked server attrib
+restore use the same state. Lighting restores both materials, light parameters
+and model selectors without restoring unrelated client, texture or fog state.
+
+Polygon facing and culling precede mode selection. Native and WebGL rendering
+lower points and clipped outside boundaries without quad/fan diagonals; split
+logical polygons preserve line-stipple phase. Color material changes the selected
+ambient, diffuse, specular, emission or ambient-and-diffuse fields for the selected
+faces, including per-vertex lighting and retained values after disable. Immutable
+render Worker snapshots carry the extra state; the stream publishes value-only
+color updates that vertex packing previously absorbed.
+
+Evidence is under `scratch/runs/20261103-gl-polygon-color-material-repair/`;
+`RECOVERY.md` records exact seals, commands and lifecycle. The new independent
+fixture covers the legal face/mode/parameter matrices, unchanged-state errors,
+front/back winding, culling, clipped wireframe/points, lighting, masked attribs,
+context publication and actual delayed immutable Worker leases. Browser fixtures
+replay those native command captures on real WebGL1 and WebGL2. The predecessor
+faithful expectations remain unchanged. Public `wglCopyContext` is still
+unsupported: complete mask transactions and copy-specific failure/isolation
+qualification remain separate work. These fixtures establish no copy success,
+historical27 or gameplay result. The existing shared-object WebGL cyan-versus-green
+failure remains visible and its assertion is unchanged.

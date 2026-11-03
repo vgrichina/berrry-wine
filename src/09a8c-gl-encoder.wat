@@ -5,8 +5,10 @@
   (global $gl_source_a (mut i32) (i32.const 0))
   ;; Private typed color command; public opcode numbering is unchanged.
   (func $gl_source_arg_words (param $op i32) (result i32)
+    (if (result i32) (i32.eq (local.get $op) (i32.const 0x10004))
+      (then (i32.const 4)) (else
     (if (result i32) (i32.eq (local.get $op) (i32.const 0x10003))
-      (then (i32.const 5)) (else (call $gl_arg_words (local.get $op)))))
+      (then (i32.const 5)) (else (call $gl_arg_words (local.get $op)))))))
   (func $gl_source_save (param $p i32)
     (i32.store offset=0 (local.get $p) (global.get $gl_source_tag))
     (i32.store offset=4 (local.get $p) (global.get $gl_source_r))
@@ -482,6 +484,7 @@
     (local $i i32) (local $start i32) (local $n i32) (local $need i32) (local $q i32)
     (local $flat i32) (local $prov i32) (local $a i32) (local $b i32) (local $c i32)
     (local $out_count i32) (local $group i32) (local $max_chunk i32) (local $first_chunk i32)
+    (local $boundary i32) (local $edges i32)
     (if (global.get $gl_material_prelit) (then (call $gl_material_light_pending)))
     (local.set $exact (global.get $gl_immediate_has_source))
     (global.set $gl_immediate_has_source (i32.const 0))
@@ -492,6 +495,8 @@
     (global.set $gl_immediate_floats (i32.const 0))
     (global.set $gl_immediate_has_source (i32.const 0))
     (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
+    (local.set $boundary (i32.or (i32.ne (i32.load offset=4108 (global.get $gl_sw_st)) (i32.const 0x1b02))
+      (i32.ne (i32.load offset=4112 (global.get $gl_sw_st)) (i32.const 0x1b02))))
     (local.set $flat (i32.eq (global.get $gl_shade_model) (i32.const 0x1D00)))
     (local.set $out_mode (local.get $mode))
     (if (i32.or (i32.or (i32.eq (local.get $mode) (i32.const 5))
@@ -638,6 +643,11 @@
               (local.set $q (i32.const 0)))
             (else (local.set $q (i32.const 1))))))
 
+        (if (i32.and (local.get $boundary) (i32.eq (local.get $need) (i32.const 3))) (then
+          (if (local.get $n) (then
+            (call $gl_packed_finish (local.get $start) (local.get $n))
+            (local.set $start (call $gl_source_packed_begin (local.get $out_mode) (local.get $exact)))
+            (local.set $n (i32.const 0))))))
         (if (i32.gt_u (i32.add (i32.add (global.get $gl_stream_used_bytes) (i32.const 32))
               (i32.mul (i32.add (local.get $n) (local.get $need)) (local.get $stride)))
             (i32.const 0x00200000)) (then
@@ -647,6 +657,27 @@
           (if (i32.or (i32.eq (local.get $mode) (i32.const 2)) (i32.eq (local.get $mode) (i32.const 3)))
             (then (i32.store offset=8 (local.get $start) (i32.or (i32.load offset=8 (local.get $start)) (i32.const 0x3000000)))))
           (local.set $n (i32.const 0))))
+        (if (i32.and (local.get $boundary) (i32.eq (local.get $need) (i32.const 3))) (then
+          (local.set $edges (i32.const 7))
+          (if (i32.eq (local.get $mode) (i32.const 7)) (then
+            (local.set $edges (select (i32.const 3) (i32.const 6)
+              (i32.eq (local.get $b) (i32.add (local.get $a) (i32.const 1)))))))
+          (if (i32.eq (local.get $mode) (i32.const 8)) (then
+            (local.set $edges (select (i32.const 3) (i32.const 6)
+              (i32.eq (local.get $b) (i32.add (local.get $a) (i32.const 1)))))))
+          (if (i32.eq (local.get $mode) (i32.const 9)) (then
+            (local.set $edges (i32.or (i32.const 2) (i32.or
+              (i32.eq (local.get $b) (i32.const 1))
+              (i32.shl (i32.eq (i32.add (local.get $c) (i32.const 1)) (local.get $count)) (i32.const 2)))))))
+          ;; A split logical polygon shares its stipple counter across records.
+          (if (i32.or
+              (i32.and (i32.or (i32.eq (local.get $mode) (i32.const 7))
+                (i32.eq (local.get $mode) (i32.const 8))) (i32.eq (local.get $edges) (i32.const 6)))
+              (i32.and (i32.eq (local.get $mode) (i32.const 9)) (i32.gt_u (local.get $b) (i32.const 1)))) (then
+            (i32.store offset=8 (local.get $start) (i32.or (i32.load offset=8 (local.get $start)) (i32.const 0x2000000)))))
+          (i32.store offset=8 (local.get $start) (i32.or (i32.load offset=8 (local.get $start))
+            (i32.or (i32.shl (i32.const 1) (i32.const 27)) (i32.shl (local.get $edges) (i32.const 28)))))))
+
         (call $gl_copy_vertex (i32.add (local.get $start)
           (i32.add (i32.const 32) (i32.mul (local.get $n) (local.get $stride)))) (local.get $a) (local.get $prov) (local.get $exact))
         (local.set $n (i32.add (local.get $n) (i32.const 1)))
@@ -786,6 +817,8 @@
     (local $result i32)
     (call $gl_object_enter)
     (local.set $result (call $gl_wat_encode_call_locked (local.get $op) (local.get $stack) (local.get $aux)))
+    (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
+        (i32.eq (local.get $op) (i32.const 77))) (then (call $gl_period_color)))
     (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
         (i32.and (i32.eq (global.get $gl_object_lock_depth) (i32.const 1))
           (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0)))) (then
@@ -928,6 +961,7 @@
     (call $gl_mtx_observe (local.get $op) (local.get $stack))
     ;; glClear/glClearColor for the WAT software target; inert when it is off.
     (call $gl_sw_observe (local.get $op) (local.get $stack))
+    (call $gl_period_observe (local.get $op) (local.get $stack))
     (if (i32.or (i32.eq (local.get $op) (i32.const 77)) (i32.or (i32.eq (local.get $op) (i32.const 42)) (i32.eq (local.get $op) (i32.const 43))))
       (then
         (call $gl_texture_sync_sampling)

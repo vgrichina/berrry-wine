@@ -47,21 +47,10 @@
   ;; An attribute frame is: mask, active texture unit, light model ambient
   ;; (4 f32), material (the whole 80 bytes at +8880, shininess included).
   ;;
-  ;; THAT SET IS SMALLER THAN REAL GL'S, DELIBERATELY. glPushAttrib with
-  ;; GL_LIGHTING_BIT saves the light parameters too, and this saves neither
-  ;; those nor fog nor the viewport -- because lib/gl-compat.js:709-720 does not
-  ;; save them either, and the whole point of this fragment is that the two
-  ;; agree element-for-element. Saving more here would make the WAT descriptor
-  ;; and the WebGL picture disagree after a pop, which is a worse failure than
-  ;; the one being mirrored: it appears only in scenes that push attributes, and
-  ;; only as lighting that is subtly wrong in one backend. The gap is real and
-  ;; belongs on both sides at once, not on one.
-  ;;
-  ;; The mask is recorded but not consulted on restore, again because the JS
-  ;; does not consult it: it saves one set and restores that set whatever was
-  ;; asked for. Kept in the frame because it is the first thing a future
-  ;; mask-honest restore needs, and because a frame that does not carry it
-  ;; cannot be checked against the call that made it.
+  ;; The raster attribute frame owns a sidecar for the complete lighting
+  ;; group, including both materials, all lights and model selectors. Restore
+  ;; the inline material/ambient fields only for GL_LIGHTING_BIT and active
+  ;; texture selection only for GL_TEXTURE_BIT. Client state is separate.
   ;;
   ;; Viewport and depth range are here rather than with the rest of the GL
   ;; state in 09a8e because DFX1 wants them (+68..+88) and this is the block
@@ -400,11 +389,14 @@
         (return)))
     (local.set $d (i32.sub (local.get $d) (i32.const 1)))
     (local.set $f (call $gl_mtx_attrib_frame (local.get $b) (local.get $d)))
-    (i32.store offset=4 (local.get $b) (i32.load offset=4 (local.get $f)))
+    (if (i32.and (i32.load (local.get $f)) (i32.const 0x40000)) (then
+      (i32.store offset=4 (local.get $b) (i32.load offset=4 (local.get $f)))))
+    (if (i32.and (i32.load (local.get $f)) (i32.const 64)) (then
     (memory.copy (i32.add (local.get $b) (i32.const 8352))
       (i32.add (local.get $f) (i32.const 8)) (i32.const 16))
     (memory.copy (i32.add (local.get $b) (i32.const 8880))
       (i32.add (local.get $f) (i32.const 24)) (i32.const 80))
+))
     (local.set $normal (i32.and (i32.load offset=9036 (local.get $b)) (i32.const 0x400000)))
     (if (i32.and (i32.load (local.get $f)) (i32.const 0x2040))
       (then (i32.store offset=9036 (local.get $b) (i32.load offset=104 (local.get $f)))))
