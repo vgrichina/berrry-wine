@@ -32,9 +32,48 @@ Exact GL mask-copy release 07:30:08.066535 UTC precedes Jedi desktop recover
 release 07:53:24.696619 UTC before this task's source/build/runtime work.
 The fixture module is SHA256
 `98203cd6549c75030d5d25118a61f7ca42449a05de0a2cf64e232bc82e6b0e7f`.
-The regression establishes admission progress, not original browser gameplay.
-A fresh sealed ordinary original browser attempt follows publication; its
-menu, movement, look and visible fire-effect results remain pending here.
+Repair `e29de578e8a4d23c8877a21118589958a2b5780c` is published on main.
+
+One fresh original browser attempt follows that publication. All 4,110 sealed
+source/support inputs match after execution; all 363 staged runtime files and
+15 originals match full SHA256. The actual browser HTTP module is 2,081,665
+bytes and matches the hash above. Original executable and all 14 companion
+mappings are preserved. Chrome 151 / Puppeteer 25.7 uses cooperative threads,
+software GL, frozen 16 ms steps and an actual 100,000 budget, without trace
+addresses, forced-one execution, guest/configuration edits or menu shortcuts.
+
+The previous actual-step-1649 admission stall is passed naturally. Reviewed
+copyright appears at 2200; the genuine main menu has New Game highlighted at
+**actual 3807**, despite filename `startup-request4200.png`. Its 1000-step
+controller command exceeded the CDP 45-second timeout while remaining credits
+continued; this is retained as a controller error, not a guest watchdog fault.
+Ordinary Enter down/20 steps/up/20 steps opens the reviewed Easy menu at 4240.
+A second Enter sequence selects Easy: 4280 still shows the menu, while neutral
+steps show original Pandemonium loading at 4480. Trusted browser key events
+and visible menu changes establish activation; no guest consumer trace ran.
+
+Neutral steps render the original scripted opening, then Dementia loading at
+12880–14480, a portal transition at 14880/15280, and Alice/Cat dialogue at
+15680/16080. The immutable 1200-second browser deadline closes the session at
+**actual 16080 / main slice 15157**, EIP `0x033b870d`, yield 0, frozen guest
+257.28 seconds. The last reviewed frame still has scripted dialogue and no
+player HUD. No W, look or attack input was sent. Browser movement/look/fire
+effects remain **unverified**. The limiting condition is the finite attempt
+ending before the original opening finished; no new guest fault, admission
+stall or loading hang was established. Next: allow enough bounded ordinary
+opening time, review the player view, then test movement/look/visible attack.
+
+All 600 archived members independently match full SHA256, including current
+source/module, all originals, captures/logs and recovery. Archive 108,833,576
+bytes SHA256 `48e24e19444c7614dff027144d41cb1c0dbb391de237a68fa558d83fcf78c1d7`.
+A corrected recovery copy was separately retrieved and verified before stop;
+the original receipt always records the correct final EIP. Chrome and driver
+exit 0 establish host cleanup, not guest exit; cleanup retains the exact CDP
+timeout. Scoped helpers and port 36767 were absent before delegated normal
+shutdown. Own boat `bx_a7vt39d3`, original expiry `08:37:56.578Z`, is STOPPED;
+`stop_1421d68bcb9bed95` completed at `08:22:38.383Z`, error null, forced false,
+snapshots and metadata retained. No predecessor boat was touched. Browser GPU,
+audio, FPS and combat remain unqualified.
 
 ## Original browser attempt: cooperative DLL admission blocks startup (2026-11-03)
 
