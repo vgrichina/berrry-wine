@@ -1,5 +1,66 @@
 # American McGee's Alice demo
 
+## Original opening reaches player movement and horizontal look (2026-11-03)
+
+Run `scratch/runs/20261103-alice-opening-player-controls/` makes one ordinary
+New Game / Easy browser attempt after the published admission repair. Actual
+screenshots were reviewed before choosing menu inputs. New Game is visible at
+actual 3600, Easy at 3840, Pandemonium loading at 4280, Rabbit dialogue at
+10280, Dementia loading at 12680 and Alice/Cat dialogue at 15480. At **actual
+17080 / main slice 16325**, dialogue has ended: Alice and the player HUD are
+visible at a timbered tunnel entrance. The original opening finishes naturally.
+
+Separate before/after captures establish **movement and horizontal turning**:
+`dialogue-request17080.png` shows the entrance; a W hold advances Alice/camera
+inside the tunnel in `movement-after-request17580.png`. The initial short W
+trial at 17160 was inconclusive. With W released, a separate ArrowRight hold
+rotates the view toward a long lamp-lit corridor in `look-after-request17800.png`.
+This verifies keyboard horizontal turning; vertical and mouse look remain
+unqualified. These filenames agree with the recorded actual-step observations.
+
+**Visible attack remains unverified.** The idle baseline at 17840 precedes two
+ordinary primary-mouse-button down/up trials. Guest WM_LBUTTONDOWN/UP messages
+establish dispatch, but reviewed captures at 17960, 18060, 18280, 18480 and
+18500 show no clear weapon pose, projectile or impact change. Weapon possession,
+equipping/pickup and the attack consumer path were not isolated. These results
+do not establish a general host defect or a loading hang. The next concrete
+step is ordinary weapon-readiness verification, followed by a focused guest or
+native input fixture if primary-button consumption remains uncertain.
+
+The immutable 1800-second deadline runs 09:18:50.524–09:48:50.524 UTC; the
+1860-second outer bound is respected. Final state is **actual 18500 / main
+slice 17351**, frozen guest 296000 ms, yield 0. Commands never exceed 400
+steps; no command or page error occurred. Shared disk dropped below the 2 GB
+floor after capture 17080, delaying new control commands until coordinator
+cleanup. The guest stayed frozen during that pause; neither deadline nor
+attempt count was extended. Chrome and driver exit 0 establish host cleanup,
+not guest exit. No second launch, guest/config/movie edit or intro bypass ran.
+
+Exact GL polygon-color-material release 08:47:21.733769 UTC precedes the
+coordinator-authorized Jedi continuation release 09:04:56 UTC before staging,
+build or runtime. Source commit `0b11aed63eab5847dfcc25fb9b74a968fe4138a8`
+seals 5844 source/support inputs, unchanged after execution; 5862 runtime pins,
+all 15 originals and the exact 14 companion mappings match. A fresh boat-side
+locked build and `test/test-keyboard-message-lparam.js` pass. The HTTP-loaded
+module is 2083613 bytes, SHA256
+`215edf1a09894f4b4d4e9d0e89dce47cf66a42597d084ec218772ec46364a293`.
+Chrome 151 / Puppeteer 25.7 uses software GL, cooperative threads, an actual
+100000 budget and frozen 16 ms steps, without address traces. Production
+source is unchanged; no repair is justified by this attack observation alone.
+
+All **6200** own archived members independently match full SHA256. Own archive
+60097233 bytes has SHA256
+`1f1bfa72d12a2d288a21f9a627142855e4a95c2e19e772f4d2383a8b959c8524`.
+Inherited originals were streamed directly to the boat, without duplicating
+the 108833576-byte archive locally; all 17 inherited original/support members
+were reverified against dependency archive `48e24e19444c7614dff027144d41cb1c0dbb391de237a68fa558d83fcf78c1d7`
+from the admission-repair run below. Corrected recovery was separately retrieved
+and hash-verified before delegated normal shutdown. Scoped runtime/build helpers
+and the own HTTP port were absent. Own boat `bx_7vanbwq9` is **STOPPED**;
+original expiry `2026-11-03T10:36:04.981Z`, shutdown owner this worker.
+`stop_2b4dfebd16dbffc2` completed at `09:52:20.273Z`, error null, forced false;
+snapshots and metadata are retained. No predecessor boat was touched.
+
 ## Browser cooperative DLL admission repaired (2026-11-03)
 
 Run `scratch/runs/20261103-alice-browser-admission-repair/` reproduces the
