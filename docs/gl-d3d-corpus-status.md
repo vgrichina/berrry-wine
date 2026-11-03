@@ -27,8 +27,30 @@ remaining lookup inventory and routes to `handle_gl_unimplemented` in
 Its acceptance needs evaluated curves/surfaces and mesh pixels through native,
 Worker and WebGL routes, alongside map/query state, numeric ABI, display-list,
 context-copy and error behavior. Reducing the missing-name count alone would
-not close it. This work is queued behind the two active game prerequisites;
-no evaluator implementation or runtime result is claimed here.
+not close it. Fresh worker `mdk2-gl-evaluator-family-nov03` is implementing
+this family, with static preparation acknowledged on November 3 at 19:28Z.
+Heavy tests wait for Alice's explicit runtime release. No evaluator acceptance
+or original MDK2 gameplay result is claimed yet.
+
+### Recovered original corpus table; exact 27-ID membership still unresolved
+
+The original version of this file is retained at commit `d5b3b56cb`
+(October 6, task `GLD3D-CORPUS-27-20261006`). It describes the goal as every
+OpenGL and Direct3D registry app working on both software and WebGL. Its
+"Apps that really use OpenGL or Direct3D" table contains **26 grouped rows
+and 37 named entries** after splitting slash/comma groups. These include
+seven screen savers with abbreviated names, SDK examples, a server variant,
+and the heavy titles; the table is not an unambiguous 27-ID manifest.
+
+Reproduce the source with
+`git show d5b3b56cb:docs/gl-d3d-corpus-status.md`. Preserve its entries as
+historical candidates when reconciling coverage; do not select 27 by dropping
+grouped examples or heavy titles. Alias-to-registry mapping, the exact intended
+27-ID set, and current evidence for both backends remain open. The original
+software sweep explicitly capped runs at 120 seconds and did not run its
+WebGL arm, so its menu/loading rows and older WebGL citations do not establish
+current gameplay or parity. This recovers a concrete provenance source without
+claiming that the historical membership question is solved.
 
 ### Earlier November 3 checkpoint: 51 unsupported names
 
