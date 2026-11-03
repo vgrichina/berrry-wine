@@ -116,6 +116,7 @@
     (i32.store offset=144 (local.get $p) (global.get $gl_state_pointer_bits)))
 
   (func $gl_native_query_count (param $p i32) (result i32)
+    (if (call $gl_hint_target (local.get $p)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $p) (i32.const 0xb40)) (then (return (i32.const 2))))
     (if (i32.le_u (i32.sub (local.get $p) (i32.const 0xb55)) (i32.const 2)) (then (return (i32.const 1))))
     (if (i32.or (i32.le_u (i32.sub (local.get $p) (i32.const 0xbf0)) (i32.const 2))
@@ -150,6 +151,8 @@
     (i32.const 0))
 
   (func $gl_native_query_value (param $p i32) (param $i i32) (result f64)
+    (if (call $gl_hint_target (local.get $p)) (then
+      (return (f64.convert_i32_u (i32.load (call $gl_hint_ptr (call $gl_list_context) (local.get $p)))))))
     (if (i32.eq (local.get $p) (i32.const 0xb40)) (then
       (return (f64.convert_i32_u (i32.load (i32.add (global.get $gl_sw_st)
         (i32.add (i32.const 4108) (i32.shl (local.get $i) (i32.const 2)))))))))
@@ -983,7 +986,7 @@
         (f32.load offset=8 (local.get $p)) (f32.load offset=12 (local.get $p)))
       (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 76)) (then
-      (local.set $a (call $heap_alloc (i32.const 92)))
+      (local.set $a (call $heap_alloc (i32.const 112)))
       (if (i32.eqz (local.get $a)) (then (unreachable)))
       (local.set $p (call $g2w (local.get $a)))
         (i32.store (local.get $p) (global.get $gl_state_attrib_head))
@@ -996,6 +999,8 @@
         (f32.store offset=52 (local.get $p) (global.get $gl_tex_r)) (f32.store offset=56 (local.get $p) (global.get $gl_tex_q))
         (f32.store offset=60 (local.get $p) (global.get $gl_tex1_r)) (f32.store offset=64 (local.get $p) (global.get $gl_tex1_q))
         (call $gl_source_save (i32.add (local.get $p) (i32.const 72)))
+        (memory.copy (i32.add (local.get $p) (i32.const 92))
+          (i32.add (call $gl_list_context) (i32.const 1008)) (i32.const 20))
         (i32.store offset=68 (local.get $p) (i32.load offset=4 (local.get $stack)))
         (global.set $gl_state_attrib_head (local.get $p))
         (global.set $gl_state_attrib_depth (i32.add (global.get $gl_state_attrib_depth) (i32.const 1)))
@@ -1005,6 +1010,9 @@
         (global.set $gl_state_attrib_depth (i32.sub (global.get $gl_state_attrib_depth) (i32.const 1)))
         (local.set $p (global.get $gl_state_attrib_head))
         (global.set $gl_state_attrib_head (i32.load (local.get $p)))
+        (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 0x8000)) (then
+          (memory.copy (i32.add (call $gl_list_context) (i32.const 1008))
+            (i32.add (local.get $p) (i32.const 92)) (i32.const 20))))
         (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 1)) (then
           (call $gl_source_restore (i32.add (local.get $p) (i32.const 72)))
         (global.set $gl_color_r (f32.load offset=4 (local.get $p))) (global.set $gl_color_g (f32.load offset=8 (local.get $p)))
@@ -1484,3 +1492,33 @@
           (global.set $gl_tp0_stride (local.get $stride)) (global.set $gl_tp0_guest (local.get $base))))))
     (global.set $gl_client_bits (local.get $bits))
     (i32.const 1))
+
+  ;; Hints are context-owned server values. The process GL lock protects the
+  ;; shared five-word tail; a foreign producer never needs to rebind or query
+  ;; the source to observe a completed hint. Raster quality remains advisory.
+  (func $gl_hint_target (param $target i32) (result i32)
+    (i32.le_u (i32.sub (local.get $target) (i32.const 0xc50)) (i32.const 4)))
+  (func $gl_hint_ptr (param $ctx i32) (param $target i32) (result i32)
+    (i32.add (local.get $ctx) (i32.add (i32.const 1008)
+      (i32.shl (i32.sub (local.get $target) (i32.const 0xc50)) (i32.const 2)))))
+  (func $gl_hint_defaults (param $ctx i32)
+    (local $i i32)
+    (loop $hints
+      (i32.store (i32.add (local.get $ctx) (i32.add (i32.const 1008)
+        (i32.shl (local.get $i) (i32.const 2)))) (i32.const 0x1100))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $hints (i32.lt_u (local.get $i) (i32.const 5)))))
+  (func $gl_hint_validate (param $ctx i32) (param $op i32) (param $stack i32) (result i32)
+    (if (i32.ne (local.get $op) (i32.const 75)) (then (return (i32.const 0))))
+    (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+        (i32.load offset=36 (local.get $ctx))) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+    (if (i32.or (i32.eqz (call $gl_hint_target (i32.load offset=4 (local.get $stack))))
+        (i32.gt_u (i32.sub (i32.load offset=8 (local.get $stack)) (i32.const 0x1100)) (i32.const 2))) (then
+      (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1))))
+    (i32.const 0))
+  (func $gl_hint_observe (param $op i32) (param $stack i32)
+    (if (i32.and (i32.eq (local.get $op) (i32.const 75))
+        (i32.ne (global.get $gl_current_context) (i32.const 0))) (then
+      (i32.store (call $gl_hint_ptr (call $gl_list_context) (i32.load offset=4 (local.get $stack)))
+        (i32.load offset=8 (local.get $stack))))))

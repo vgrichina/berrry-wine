@@ -27,7 +27,7 @@
       (if (i32.eq (i32.load offset=4 (local.get $p)) (local.get $key))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 1008))) ;; raster exact-color tail
+    (local.set $p (call $gl_list_alloc (i32.const 1028))) ;; exact-color tail and five hint values
     (if (i32.eqz (local.get $p)) (then (unreachable)))
     (local.set $group (call $gl_list_alloc (i32.const 20)))
     (if (i32.eqz (local.get $group)) (then (unreachable)))
@@ -36,6 +36,7 @@
     (i32.store offset=972 (local.get $p) (global.get $current_thread_id))
     (i32.store (local.get $p) (i32.atomic.load (region.addr $GL_MTX_BLOCKS 4)))
     (i32.store offset=4 (local.get $p) (local.get $key))
+    (call $gl_hint_defaults (local.get $p))
     (call $gl_bitmap_context_init (local.get $p))
     (call $gl_stencil_init (i32.add (local.get $p) (i32.const 192)))
     (i32.store offset=228 (local.get $p) (i32.const 15))
@@ -202,6 +203,8 @@
         (i32.and (i32.ge_u (local.get $op) (i32.const 124))
           (i32.le_u (local.get $op) (i32.const 140)))))))
     (if (i32.eq (local.get $op) (i32.const 160)) (then (return (i32.const 0))))
+    (if (call $gl_hint_validate (local.get $ctx) (local.get $op) (local.get $stack))
+      (then (return (i32.const 1))))
     (if (call $gl_period_validate (local.get $ctx) (local.get $op) (local.get $stack))
       (then (return (i32.const 1))))
     ;; Validate before capture: rejected setters never enter a list or alter

@@ -301,3 +301,48 @@ unsupported: complete mask transactions and copy-specific failure/isolation
 qualification remain separate work. These fixtures establish no copy success,
 historical27 or gameplay result. The existing shared-object WebGL cyan-versus-green
 failure remains visible and its assertion is unchanged.
+
+## Hint server-state prerequisite (2026-11-03)
+
+The next fresh baseline reproduced the published polygon/color-material module
+exactly: 2,083,613 bytes, SHA256
+`215edf1a09894f4b4d4e9d0e89dce47cf66a42597d084ec218772ec46364a293`.
+The unchanged faithful fixture then failed only its independently expected
+`GL_PERSPECTIVE_CORRECTION_HINT = GL_NICEST` query: the output retained
+`0xdeadbeef`. Although rendering-quality hints are advisory, their selected
+server values must still be retained, queried and restored by `GL_HINT_BIT`.
+
+Five context-owned native hint values now default to `GL_DONT_CARE`. Legal
+setters, all four typed getters, display-list execution and masked/nested server
+attrib restoration retain those values. Invalid enums and Begin/End calls are
+rejected before list capture. The production frontend implements the same
+values and mask semantics. Existing command transport carries the setters;
+no raster-quality switch, copy routing or unrelated operation stub was added.
+The shared value-only context tail is observable by a different producer while
+the source remains current, without querying, flushing or rebinding the source.
+
+Evidence is under `scratch/runs/20261103-gl-copy-context-transaction/`.
+`test/test-gl-hint-state.js` passes 170 direct and 171 actual Worker checks,
+including exact getter widths, errors, lists, client/server masks, independent
+contexts, retirement, native pixels and a deliberately delayed immutable
+3,012-byte Worker lease. Actual WebGL1 and WebGL2 replay both native captures
+and verify public hint queries and blue pixels. This completes a source-state
+prerequisite only. Complete mask selection, atomic copy failure and copy-specific
+resource/client/matrix/stack/drawable isolation remain unimplemented and
+unqualified; public `wglCopyContext` remains unsupported. No gameplay or
+historical27 result is claimed.
+
+The locked full build passes. Canonical output is 2,083,916 bytes, SHA256
+`446294d1ad655acc46eb5fc3684b91580b800961c75b4343b0b60993c353646a`;
+compatibility output is 2,086,489 bytes, SHA256
+`0a0e9af47bac2433bf259118235d3622e62cec183c0218e382cf363aa8b7a898`.
+The unchanged predecessor faithful fixture now passes directly, with an actual
+Worker, and through its original WebGL1/2 fixture. Polygon/color-material
+direct/Worker native and real WebGL regressions pass. Of 23 focused invocations,
+22 pass; the existing shared-texture WebGL1 case still reads green
+`[0,255,0,255]` where it independently expects cyan `[0,255,255,255]`.
+Its assertion and both predecessor fixture hashes remain unchanged. Procedure
+availability still rejects copy and its three deliberately broken controls.
+The run retains fresh baseline old-fail logs, tested sources, exact modules,
+native captures, full delayed lease bytes, browser PNGs, full-SHA manifests and
+recovery/lifecycle records.

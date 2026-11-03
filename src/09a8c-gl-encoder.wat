@@ -962,6 +962,7 @@
     ;; glClear/glClearColor for the WAT software target; inert when it is off.
     (call $gl_sw_observe (local.get $op) (local.get $stack))
     (call $gl_period_observe (local.get $op) (local.get $stack))
+    (call $gl_hint_observe (local.get $op) (local.get $stack))
     (if (i32.or (i32.eq (local.get $op) (i32.const 77)) (i32.or (i32.eq (local.get $op) (i32.const 42)) (i32.eq (local.get $op) (i32.const 43))))
       (then
         (call $gl_texture_sync_sampling)
