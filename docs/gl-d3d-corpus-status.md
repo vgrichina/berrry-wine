@@ -1,11 +1,12 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-03
 
-## November 3: published prerequisites; three observed MDK2 names remain
+## November 3: observed MDK2 prerequisite families implemented; gameplay open
 
 The current `unsupportedMdk2` list in `test/test-wgl-proc-availability.js`
-contains **3** names. This is a static inventory check, not a fresh runtime
-test. The 51-name checkpoint below predates `wglCopyContext` and the three
-edge-flag exports; all four now have accepted implementations.
+is **empty**. Its separate `fontWglApis` list checks the three implemented
+layer/font exports. This is a static inventory observation, not a fresh runtime
+test or proof that an original game will encounter no further unsupported API.
+The historical checkpoints below retain their original scope.
 
 | Subsequent published change | Accepted evidence and limits |
 | --- | --- |
@@ -40,10 +41,16 @@ actual queued Worker, WebGL1/2 and twenty-four regressions pass; a lost-index
 mutation fails as expected. Coordinator verified167 local and102 recovered
 payload hashes, both modules, actual STOPPED state and verified snapshot, and
 inspected restored WebGL pixels. [Evidence](re-notes/gl-color-index-family-20261103.md).
-Only `wglCreateLayerContext`, `wglUseFontBitmapsA` and `wglUseFontOutlinesA`
-remain in the mandatory list. Fresh WGL worker60530 prepares statically until
-Alice recovery26123 explicitly releases runtime. Original MDK2 gameplay remains
-unverified; API-family acceptance does not establish gameplay.
+The final three observed prerequisites, `wglCreateLayerContext`,
+`wglUseFontBitmapsA` and `wglUseFontOutlinesA`, are published in `20fed4877`
+and `856be2942`. [Retained semantic and original-run evidence](re-notes/mdk2-wgl-layer-font-family-20261103.md)
+covers native, actual queued Worker, WebGL1/2, rejecting controls, locked
+builds and 34 scoped regressions. Coordinator review checked all 356 recovered
+files, both modules and the completed snapshot followed by normal STOP.
+The original run reached an inspected 640×480 Demo attract scene; this does
+not establish player control. A fresh ordinary menu/control task is running.
+Original MDK2 gameplay and per-title software/WebGL evidence for the full
+historical corpus remain unverified.
 
 ### Recovered original corpus table; exact 27-ID membership still unresolved
 
