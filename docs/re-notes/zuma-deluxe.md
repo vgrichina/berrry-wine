@@ -1,5 +1,39 @@
 # Zuma Deluxe: current ordinary launch
 
+## Current-source browser startup failure, 2026-11-03
+
+One ordinary `index.html?app=zuma_deluxe` launch on a fresh boat failed before
+the menu. The guest log reports `Unable to load function: DeviceIoControl
+(KERNEL32.dll)`, then `DLL initializer did not return: module=0x989000`; the
+worker loop stops and the page returns to the desktop. The inspected capture
+shows the desktop Read Me window, **not Zuma gameplay**. No player input was
+sent because the menu prerequisite never appeared. This is an observed startup
+blocker, not a diagnosis of the initializer's underlying cause or an API fix.
+
+Evidence: `scratch/runs/20261103-local-ready-gameplay/`. All 1,734 transferred
+current-source/runtime/fixture members matched SHA-256. The genuine vendored
+compiler produced the default module on the boat, and the HTTP response log
+records that same 2,077,689-byte module as actually served:
+`74bae3d235a336bb52e63c42bac1b2210d3ae6473ab5245a69c882b3c9cf2fb4`.
+The guest main Worker instantiated 2,259 exports. Actual served Zuma.exe is
+1,290,240 bytes, SHA-256
+`60bf0df7695914e4f8238b5c99f665b8484d3c0dea9378389f95244c9712446c`;
+BASS DLL is 102,196 bytes, SHA-256
+`f2f2a653fd360751c71c9f89f74d4d9bb5356eb5471bf9e572794dd565dfb693`.
+Served-byte hashes do not establish execution of every companion asset.
+The compiler's terminal exit status was not retained; both canonical output
+completion messages and the served module identity were retained. No production
+source, guest, API behavior or input path was modified.
+
+Zuma remains a local candidate, absent from `DESKTOP_APPS`. Historical Adventure
+input evidence below does not qualify this current runtime. Next: trace the
+real dynamic kernel32 lookup/export contract for DeviceIoControl and the
+initializer failure before another original launch; do not return fake success.
+The bounded Alice fallback review found an existing current-main startup stall
+requiring a separate diagnostic, so no unchanged fallback launch was attempted.
+
+## Historical gameplay evidence
+
 Historical source last updated, 2026-10-12. Runtime and implementation claims below describe that dated source; see current app notes and source for subsequent changes.
 
 Registry `zuma_deluxe`, corpus `reflexive-zuma-deluxe`. Existing source/binary investigation is `scratch/zuma-startup-exit-20261003`; historical QueueUserAPC and nested Worker DLL initialization fixes are separate completed tasks, not gameplay proof.
