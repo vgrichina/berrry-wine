@@ -1824,12 +1824,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Jedi Knight Dark Forces II original demo
   id: NEW-GAME-JEDI-KNIGHT-DEMO-20261015
-  blocker: Original notepad SUB ESP,0x44 at4010cf is outside protected decode admission; rejected before CPU/flags/vitals effects. Controller/allwriter/gameplay remains unqualified.
-  worker: fresh handle89277/thread01a1a2b4-4cc5-7842-96c4-440321a633e9; scratch/usage-watch/jedi-register-alu-protected-decode-nov03
-  status: active (bounded register ALU protected decode; static preparation while Alice owns runtime)
+  blocker: Original notepad now passes PUSH/MOV/SUB/PUSH_ESI; CALL [4063e0] at4010d3 remains outside protected admission and rejects CPU/flags/vitals unchanged. Controller/allwriter/gameplay remains unqualified.
+  worker: fresh handle89375/thread01a1a2c2-22cc-74e2-a785-35b7558801b5; scratch/usage-watch/jedi-memory-call-protected-safety-nov03
+  status: active (memory CALL target/stack/service safety; static preparation while Alice owns runtime)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Narrow original register SUB admission with exact lazy flags/ESP semantics and excluded-form rejection, canonical original-byte regression, preserve existing writer/service/compiler protections, then follow unchanged original to first next failure. Heavy build/native waits Alice explicit runtime release; one fresh finiteTTL boat with delegated normal STOP after full recovery. Published5a5b9a4b compiler compatibility/PUSH preflight: two locked builds/13 focused PASS; full recovery SHA and normal stopped snapshot verified. No universal writer/controller/live damage claim.
-  Evidence: docs/re-notes/jedi-scalar-preflight-compiler-contract-20261103.md; scratch/runs/20261103-jedi-scalar-preflight-compiler-contract/; docs/re-notes/jedi-status-20261021.md
+  Next: Audit and repair original indirect CALL target read, return-stack write and service transition before protected admission; actual canonical/original-byte regression, cold/cached exclusion and full-memory retry/restart tests. Preserve other writer/service/compiler safeguards, then follow actual next frontier toward Jedi attribution. Heavy runtime waits Alice explicit release. Published4b3e23bde register ALU: locked build/ten suites,1344model/parity and70exclusion controls PASS. Full SHA and actual stopped verified snapshot reviewed; no controller/gameplay claim.
+  Evidence: docs/re-notes/jedi-register-alu-protected-decode-20261103.md; scratch/runs/20261103-jedi-register-alu-protected-decode/; docs/re-notes/jedi-status-20261021.md
   Done: Registered original launch, ordinary player-controlled gameplay and reviewed screenshot with exact source/run identity.
   Authorization: docs/license-acceptance-authorization-20261018.json; accepted installation evidence docs/reviews/jedi-installation-evidence-integration-20261021/README.md.
 
