@@ -29,9 +29,9 @@ async function run(){
   }
   return file==='13-exports.wat'?source+extraWat:source;
  }
- const queued=process.argv.includes('--worker');let owner=0;let encoder=null,manager=null,bridge=null,render=null,producer=null,memory;
- const captures=[],cases=[],events=[]; let prebuiltModule=null;
- const recordModule=bytes=>{const sha=require('crypto').createHash('sha256').update(bytes).digest('hex');console.log('NATIVE_MODULE_SHA256',sha,'bytes',bytes.length);if(process.env.GL_SHARED_OBJECTS_MODULE_OUT)fs.writeFileSync(process.env.GL_SHARED_OBJECTS_MODULE_OUT,bytes);};
+ const queued=process.argv.includes('--worker');let owner=0;let encoder=null,manager=null,bridge=null,render=null,producer=null,memory,delay=false;
+ const captures=[],cases=[],events=[],delayed=[],leases=[],mutations=[]; let prebuiltModule=null,moduleIdentity;
+ const recordModule=bytes=>{const sha=require('crypto').createHash('sha256').update(bytes).digest('hex');moduleIdentity={sha256:sha,bytes:bytes.length};console.log('NATIVE_MODULE_SHA256',sha,'bytes',bytes.length);if(process.env.GL_SHARED_OBJECTS_MODULE_OUT)fs.writeFileSync(process.env.GL_SHARED_OBJECTS_MODULE_OUT,bytes);};
  if(process.env.GL_SHARED_OBJECTS_MUTATION){
   const mutation=JSON.parse(fs.readFileSync(process.env.GL_SHARED_OBJECTS_MUTATION));let applied=false;
   const bytes=req('test/compile-src').compileSrcWasm((file,source)=>{
@@ -73,7 +73,10 @@ async function run(){
   await manager.ready;const port=manager.createEndpoint({api:'legacy',backend:'software'});await port.ready;
   // Use the production encoder's supported capacity option and require
   // every queued record to render without falling back to the direct path.
-  encoder=new Encoder({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,getImageBase:()=>e.get_image_base()>>>0,guestToWasm:wa,workerFactory:()=>port,capacity:0x400000,explicitFence:true,strictReady:true});assert(encoder.ready());
+  const transport={postMessage(msg){if(delay&&msg.t==='batch')delayed.push(msg);else port.postMessage(msg);},
+   set onmessage(fn){port.onmessage=fn;},set onerror(fn){port.onerror=fn;},terminate(){return port.terminate();}};
+  encoder=new Encoder({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,getImageBase:()=>e.get_image_base()>>>0,guestToWasm:wa,workerFactory:()=>transport,capacity:0x400000,explicitFence:true,strictReady:true});assert(encoder.ready());
+  encoder.releaseHeld=()=>{delay=false;for(const msg of delayed.splice(0))port.postMessage(msg);};
  }
  try {
  e.shared_init();const regs=e.shared_regs(),stackGuest=e.guest_alloc(256)>>>0,stack=wa(stackGuest),input=e.guest_alloc(1024)>>>0,output=e.guest_alloc(1024)>>>0;
@@ -105,9 +108,9 @@ async function run(){
  function doubles(name,args){
   const words=[];for(const v of args){const buf=new ArrayBuffer(8),d=new DataView(buf);d.setFloat64(0,v,true);words.push(d.getUint32(0,true),d.getUint32(4,true));}return regularCall(name,words);
  }
- function draw(name,rgb){
+ function draw(name,rgb,beforeFinish){
   call('glClear',[0x4000]);call('glBegin',[7]);
-  for(const [x,y,s,t] of [[8,8,0,0],[56,8,1,0],[56,56,1,1],[8,56,0,1]]){call('glTexCoord2f',[s,t],true);call('glVertex2f',[x,y],true);}call('glEnd');call('glFinish');if(encoder)encoder.fence();
+  for(const [x,y,s,t] of [[8,8,0,0],[56,8,1,0],[56,56,1,1],[8,56,0,1]]){call('glTexCoord2f',[s,t],true);call('glVertex2f',[x,y],true);}call('glEnd');if(beforeFinish)beforeFinish();call('glFinish');if(encoder)encoder.fence();
   const entry=e.gl_sw_entry()>>>0,pitch=dv.getUint16(entry+18,true),height=dv.getUint16(entry+14,true),dib=dv.getUint32(entry+20,true);
   assert.strictEqual(dv.getUint32(dib+(height-1-32)*pitch+32*4,true)&0xffffff,rgb,name);
   events.push({owner,check:{name,pixel:[(rgb>>>16)&255,(rgb>>>8)&255,rgb&255,255]}});cases.push(name);
@@ -184,17 +187,46 @@ async function run(){
  call('glViewport',[0,0,64,64]);call('glMatrixMode',[0x1701]);call('glLoadIdentity');doubles('glOrtho',[0,64,0,64,-1,1]);call('glMatrixMode',[0x1700]);call('glLoadIdentity');call('glClearColor',[0,0,0,1],true);
  call('glCallList',[lp]);draw('separate native producer shared list red',0xff0000);
  call('glBindTexture',[0xde1,tp]);call('glEnable',[0xde1]);call('glTexEnvi',[0x2300,0x2200,0x1e01]);draw('separate native producer shared image green',0x00ff00);
- e=mainExports;owner=0;current(p);new Uint8Array(memory.buffer,ptr,4).set([0,255,255,255]);call('glTexSubImage2D',[0xde1,0,0,0,1,1,0x1908,0x1401,input]);
+ e=mainExports;owner=0;current(p);new Uint8Array(memory.buffer,ptr,4).set([0,255,255,255]);
+ const mutationStart=events.length;
+ call('glTexSubImage2D',[0xde1,0,0,0,1,1,0x1908,0x1401,input]);
+ // Observe the completed prefix without another source call. Native shared
+ // pixels alone cannot detect an upload left in this producer's private stream.
+ for(const event of events.slice(mutationStart))if(event.batch){
+  const bytes=Uint8Array.from(event.batch);
+  Stream.replay(Stream.memoryBatch(bytes.buffer,0,bytes.length),(op,aux,c)=>{
+   if(op===O._glTexSubImage2D)mutations.push({owner:event.owner,opcode:op,
+    pixels:Array.from(new Float32Array(c.buffer,c.pointerOffset,c.pointerLength/4))});return 0;
+  });
+ }
+ assert.deepStrictEqual(mutations,[{owner:0,opcode:O._glTexSubImage2D,pixels:[0,1,1,1]}],
+  'completed cross-producer mutation publishes immutable cyan upload before consumer draw');
  e=other;owner=2;draw('separate native producer shared mutation cyan',0x00ffff);
+ if(encoder){
+  // Delay an actual render-Worker batch only after the original visibility
+  // check. Later source calls and overwritten staging bytes cannot alter it.
+  call('glClear',[0x4000]);delay=true;
+  draw('delayed Worker retains shared cyan image',0x00ffff,()=>{
+   encoder._submit();assert.strictEqual(delayed.length,1,'one actual held Worker batch');
+   const item=encoder.buffers.find(item=>item.seq===delayed[0].seq);assert(item);
+   const before=Buffer.from(item.bytes.subarray(0,item.used));
+   new Uint8Array(memory.buffer,ptr,16).fill(0xa5);
+   e=mainExports;owner=0;call('glColor4f',[1,0,1,1],true);call('glLineWidth',[3],true);
+   assert.deepStrictEqual(Buffer.from(item.bytes.subarray(0,item.used)),before,'later source calls preserve full native Worker lease');
+   leases.push({payload:Array.from(before),bytes:before.length,sha256:require('crypto').createHash('sha256').update(before).digest('hex'),immutable:true});
+   e=other;owner=2;encoder.releaseHeld();
+  });
+ }
  assert.strictEqual(call('wglDeleteContext',[p]),0,'another thread current context cannot be destroyed');assert.strictEqual(e.shared_last_error(),170);assert.strictEqual(call('glIsTexture',[tp]),1);
  assert.strictEqual(call('wglMakeCurrent',[dc,p]),0,'cannot make another thread context current');assert.strictEqual(e.shared_last_error(),170);assert.strictEqual(call('wglGetCurrentContext'),0,'failed make-current releases caller');current(q);
  e=mainExports;owner=0;assert.strictEqual(call('wglMakeCurrent',[0,0]),1);e=other;owner=2;assert.strictEqual(call('wglDeleteContext',[p]),1);draw('producer source destroyed image cyan',0x00ffff);
  assert.strictEqual(call('glIsList',[lp]),1);assert.strictEqual(call('wglMakeCurrent',[0,0]),1);e=mainExports;owner=0;current(q);draw('migrated context keeps image and projection cyan',0x00ffff);call('wglDeleteContext',[q]);call('wglDeleteContext',[isolated]);assert.strictEqual(error(),0);e=mainExports;owner=0;
  if(encoder){assert(encoder.snapshot().glQueued>0,'production GL queue used');assert.strictEqual(encoder.snapshot().fallbacks,0,'no direct fallback');}
- if(process.env.GL_SHARED_OBJECTS_OUT)fs.writeFileSync(process.env.GL_SHARED_OBJECTS_OUT,JSON.stringify({queued,cases,events}));
+ const result={queued,cases,events,module:moduleIdentity,mutations,leases,worker:encoder?.snapshot()||null};
+ if(process.env.GL_SHARED_OBJECTS_OUT)fs.writeFileSync(process.env.GL_SHARED_OBJECTS_OUT,JSON.stringify(result));
  console.log('PASS shared objects',JSON.stringify({queued,cases:cases.length}));
- return {queued,cases,events};
- } finally {encoder?.stop();if(manager)await manager.stop();if(render)render.destroy();else if(bridge)bridge.destroy();}
+ return result;
+ } finally {encoder?.releaseHeld();encoder?.stop();if(manager)await manager.stop();if(render)render.destroy();else if(bridge)bridge.destroy();}
 }
 if(require.main===module)run().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={run};

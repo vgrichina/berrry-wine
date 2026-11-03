@@ -808,6 +808,16 @@
           (i32.const 0) (i32.const 1)) (i32.const 0))))))
     (global.set $gl_object_lock_depth (i32.add (global.get $gl_object_lock_depth) (i32.const 1))))
   (func $gl_object_leave
+    ;; Native argument gather/texture conversion and list replay can hold an
+    ;; outer lock around nested encoder calls. Publish at the actual outer
+    ;; completion, before another producer can observe the shared objects.
+    ;; Begin/End geometry stays private; only completed server values publish.
+    (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
+        (i32.eq (global.get $gl_object_lock_depth) (i32.const 1))) (then
+      (call $gl_state_publish (global.get $gl_current_context))
+      (if (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0))
+        (then (call $gl_sw_context_publish)))
+      (drop (call $gl_wat_stream_flush))))
     (global.set $gl_object_lock_depth (i32.sub (global.get $gl_object_lock_depth) (i32.const 1)))
     (if (i32.eqz (global.get $gl_object_lock_depth))
       (then (i32.atomic.store (region.addr $GL_MTX_BLOCKS 8) (i32.const 0)))))
@@ -822,12 +832,6 @@
     (local.set $result (call $gl_wat_encode_call_locked (local.get $op) (local.get $stack) (local.get $aux)))
     (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
         (i32.eq (local.get $op) (i32.const 77))) (then (call $gl_period_color)))
-    (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
-        (i32.eq (global.get $gl_object_lock_depth) (i32.const 1))) (then
-      (call $gl_state_publish (global.get $gl_current_context))
-      (if (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0))
-        (then (call $gl_sw_context_publish)))
-      (drop (call $gl_wat_stream_flush))))
     (call $gl_object_leave)
     (local.get $result))
 

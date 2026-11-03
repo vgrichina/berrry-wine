@@ -62,7 +62,7 @@ async function launchBrowser() {
 
 async function verify(page,native){
  for(const file of ['region-map.generated','mem-utils','gpu-backend','gl-command-stream','gl-compat'])await page.addScriptTag({path:path.resolve('lib/'+file+'.js')});
- const result=await page.evaluate(native=>{
+ const result=await page.evaluate(({native,capture})=>{
   const rows=[],drivers=[];
   for(const apiVersion of [1,2]){
    const memory=new ArrayBuffer(64*1024*1024),base=RegionMap.REGIONS.GUEST_BASE.base;
@@ -79,17 +79,33 @@ async function verify(page,native){
       context.frontend.flushPendingDraw();
       const pixel=Array.from(backend.readPixels(32,32,1,1,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(4)));
       const err=backend.getError();if(err)throw Error('driver error '+err+' '+event.check.name);
-      rows.push({apiVersion,name:event.check.name,pixel,expected:event.check.pixel});
+      const row={apiVersion,name:event.check.name,pixel,expected:event.check.pixel};
+      if(capture&&/separate native producer shared (image|mutation)|delayed Worker|producer source destroyed|migrated context/.test(row.name)){
+       row.pixels=Array.from(backend.readPixels(0,0,64,64,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(64*64*4)));
+       row.texturePixels=Array.from(context.frontend._textureState().levels.get(0)?.pixels||[]);
+      }
+      rows.push(row);
      }
     }
    }finally{bridge.destroy();}
   }
   return {rows,drivers};
- },native);
+ },{native,capture:!!process.env.GL_SHARED_OBJECTS_WEB_OUT});
+ result.nativeModule=native.module;
+ if(process.env.GL_SHARED_OBJECTS_WEB_OUT){
+  const out=process.env.GL_SHARED_OBJECTS_WEB_OUT,{PNG}=require('pngjs');
+  for(const row of result.rows)if(row.pixels){
+   const png=new PNG({width:64,height:64});
+   for(let y=0;y<64;y++)png.data.set(row.pixels.slice(y*64*4,(y+1)*64*4),(63-y)*64*4);
+   row.capture=path.basename(out)+`-webgl${row.apiVersion}-`+row.name.replace(/[^a-z0-9]+/gi,'-')+'.png';
+   fs.writeFileSync(path.join(path.dirname(out),row.capture),PNG.sync.write(png));delete row.pixels;
+  }
+  // Preserve actual failures and captures before evaluating the pixel oracle.
+  fs.writeFileSync(out,JSON.stringify(result,null,2)+'\n');
+ }
  for(const row of result.rows)assert.deepStrictEqual(row.pixel,row.expected,JSON.stringify(row));
  assert.deepStrictEqual(result.drivers.map(d=>d.actual),[1,2]);
  assert.strictEqual(result.rows.length,2*native.cases.length);
  console.log(JSON.stringify({pass:true,...result}));
- if(process.env.GL_SHARED_OBJECTS_WEB_OUT)fs.writeFileSync(process.env.GL_SHARED_OBJECTS_WEB_OUT,JSON.stringify(result));
 }
 (async()=>{const native=await require('./test-wgl-shared-objects').run();const browser=await launchBrowser();try{await verify(await browser.newPage(),native);if(mutation)assert(mutationApplied);}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
