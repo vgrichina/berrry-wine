@@ -1568,6 +1568,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   accepted: 2026-10-03T08:42:45.967Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   Next: Complete for the tested historical builds. Ordinary crash-site movement on software/WebGL was reviewed with336 contained hashes. Accepted software follow-up ab0f4ec508 measured691 visible compositor submissions/25.40109s=27.203557/s on sourcec26252c4a/modulef644bbb2; retained raw-sample validation and archiveSHA rechecked2026-11-03. Earlier WebGL434 submissions/20.127145s=21.562919/s used a different build/interval, so these are not a backend performance comparison. Logical gameFPS, physical scanout, unique pixel frames, current-main runtime, audio and Windows parity remain unqualified. Initial DOM-only software zero remains rejected; corrected OffscreenCanvas measurement supersedes that gap. See docs/re-notes/arcanum-demo.md and run20261022-arcanum-software-frame-measure; no new runtime needed.
+  Queued: scratch/usage-watch/deusex-supported-stack-next.task.txt prepares a different geometry-supported native access route from accepted count7 or the 14:50 count8; no launch/allocation until a production slot and serialized runtime release. Preserve first failed airborne crouch evidence and all original checkpoint identities.
   Done: Reviewed gameplay screenshot and scene-qualified frame measurement with raw samples, counter proof and tested build identity; retain explicit failures.
   Evidence: scratch/gameplay-coverage-20261003/tasks/GAMEPLAY-arcanum-demo.json
   notes: Registered route arcanum_demo; historical missing-file and software-observer blockers are superseded by accepted gameplay and corrected measurement evidence. Runtime bx_4sszn2zj snapshot-stopped2026-10-22T03:20:19.397Z, stop_7eb1565f41c1e5e9 completed.
@@ -1584,6 +1585,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Queued: scratch/usage-watch/deusex-supported-stack-next.task.txt prepares a different geometry-supported native access route from accepted count7 or the 14:50 count8; no launch/allocation until a production slot and serialized runtime release. Preserve first failed airborne crouch evidence and all original checkpoint identities.
   Done: Reviewed gameplay screenshot and scene-qualified frame measurement with raw samples, counter proof and tested build identity; retain explicit failures.
   Evidence: scratch/runs/20261023T1030Z-black_white_2_demo-claudea7d5-goldscroll/result.json; scratch/runs/20261023T0422Z-black_white_2_demo-claude739-camera/result.json (earlier: scratch/gameplay-coverage-20261003/tasks/GAMEPLAY-black_white_2_demo.json)
   notes: Migration missing-file blocker cleared against current registered route: black_white_2_demo. Reviewed post-intro gameplay and FPS recorded 2026-10-23; Gold Scroll consumed and Field-tutorial pan reached 2026-10-23 (run 20261023T1030Z); full free play is still unverified.
@@ -1600,6 +1602,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   accepted: 2026-10-03T08:42:45.967Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   Next: cc4aa4124 exact1450Z count8/time012217 restore accepted by native menu18/actor21/gameplay24 and immutable crosscheck; count7 preferred. Aircrouch Vz300 retained height43 through sampled flight and crouched16 only after return. No intermediate support/96landing/exit/newsave or defect. Reclaim with a supported native stack-access approach after current lanes.
+  Queued: scratch/usage-watch/deusex-supported-stack-next.task.txt prepares a different geometry-supported native access route from accepted count7 or the 14:50 count8; no launch/allocation until a production slot and serialized runtime release. Preserve first failed airborne crouch evidence and all original checkpoint identities.
   Done: Reviewed gameplay screenshot and scene-qualified frame measurement with raw samples, counter proof and tested build identity; retain explicit failures.
   Evidence: docs/re-notes/deus-ex-demo.md; scratch/runs/20261031T0447Z-deusex-browser/; scratch/gameplay-coverage-20261003/tasks/GAMEPLAY-deus-ex-demo.json
   notes: Original Training gameplay and first-door traversal are verified on the default guestWorker software browser route. This does not qualify WebGL, audio, FPS, Liberty Island or completion. Historical missing-path reports are superseded for registered deus_ex_demo.
