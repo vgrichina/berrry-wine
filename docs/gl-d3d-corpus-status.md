@@ -1,9 +1,9 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-03
 
-## November 3: published prerequisites; 24 observed MDK2 names remain
+## November 3: published prerequisites; 16 observed MDK2 names remain
 
 The current `unsupportedMdk2` list in `test/test-wgl-proc-availability.js`
-contains **24** names. This is a static inventory check, not a fresh runtime
+contains **16** names. This is a static inventory check, not a fresh runtime
 test. The 51-name checkpoint below predates `wglCopyContext` and the three
 edge-flag exports; all four now have accepted implementations.
 
@@ -26,9 +26,17 @@ A zero-evaluation mutation is rejected. [Evidence and limits](re-notes/gl-evalua
 Coordinator verified all 135 local artifact hashes and actual STOPPED state with
 a completed verified snapshot. The compatibility binary was omitted from local
 recovery; its hash/log and exact-source rebuild recipe remain retained.
-Original MDK2 gameplay remains unverified. Fresh `mdk2-selection-feedback-nov03`
-implements selection/feedback primitives and buffer semantics next, starting
-with static preparation until Alice releases heavy runtime.
+Selection/feedback is published in `91da9cb835`: all eight APIs use real
+primitive clipping, depth/name hit records, feedback tokens, overflow/error and
+render restoration semantics. Locked build, native, actual queued Worker,
+WebGL1/2 and twenty-one regressions pass; a hit-suppression mutation is rejected.
+[Evidence and limits](re-notes/gl-selection-feedback-20261103.md).
+Coordinator verified181 local artifact hashes and86 recovered payload hashes,
+including BOTH canonical and compatibility modules, plus actual STOPPED state
+and completed verified snapshot. Original MDK2 gameplay remains unverified.
+Fresh `mdk2-color-index-family-nov03` prepares the remaining thirteen color-index
+APIs statically until Alice explicitly releases heavy runtime. Layer/font APIs
+remain separate; static inventory reduction does not establish gameplay.
 
 ### Recovered original corpus table; exact 27-ID membership still unresolved
 
