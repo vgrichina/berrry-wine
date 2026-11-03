@@ -1,5 +1,5 @@
-Current 2026-11-03T01:36:44.896192+00:00 — Fresh workers are locating Lords II’s retained original payload, recovering space from released GL text evidence, and diagnosing Zuma’s missing DeviceIoControl export. Lords II is gameplay-unqualified; Zuma has historical gameplay and does not count as a new title. A second eligible new title remains unestablished.
+Current 2026-11-03T01:41:13.705523+00:00 — Fresh workers are testing KERNEL32’s missing DeviceIoControl export, diagnosing Alice’s stalled startup step, and recovering space from released Oni text evidence. Source changes and runtime tests run in that order; disk remains below the owner’s 2 GB runtime floor.
 
-Zuma’s current browser attempt stopped at the missing export and DLL initializer failure; its evidence is verified and test box stopped. Lords II never launched because disk remained below the owner’s 2 GB floor. Icewind recovery saved nothing: the cabinet copies already share storage. Runtime work waits for usable headroom; file searches continue read-only.
+Zuma already has a DeviceIoControl handler, but its explicit KERNEL32 export is absent. This is a concrete repair candidate; the DLL initializer’s cause remains unproven. Lords II cannot launch: 178 original files are missing. Its recovery notes are published. The completed GL log recovery saved at least 5.53 MB, with all 48 decoded hashes verified.
 
-No new gameplay acceptance or owner decision is reported. GL integer precision and FreeSpace’s authentic boot semantics remain unresolved.
+No new gameplay acceptance or owner decision is reported. Two eligible new-title lanes remain unestablished; historical Alice and Zuma gameplay does not fill that requirement.
