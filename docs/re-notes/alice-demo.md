@@ -1,5 +1,77 @@
 # American McGee's Alice demo
 
+## First village dialogue reached; weapon and attack still unverified (2026-11-03)
+
+Run `scratch/runs/20261103-alice-first-visible-attack/` ends with a concrete
+attempt limit: the immutable 1800-second browser deadline expired during the
+first village gnome's **“Ride the wind”** dialogue, before the knife pickup.
+**This is not a combat success.** Weapon acquisition, a usable held knife,
+attack animation/projectile and target damage remain unverified. No attack
+was dispatched in this run; no emulator attack defect is established.
+
+The predecessor's six reviewed captures and all 6200 archived members were
+independently verified before play. They support its movement/turn findings,
+not weapon ownership. No authentic retained save existed, so this run used
+ordinary New Game / Easy and the complete natural opening. Own HUD appears
+at actual17080. Reviewed W/turn/strafe captures show traversal of the timber
+bends, a purple-mushroom stone alcove at20600, return through its doorway and
+new letterboxed village machinery at23085. The final capture
+`gnome-23485.png` shows the gnome and dialogue at **actual23485 / main22418**.
+Repeated wall contact was diagnosed as route alignment; shorter turns and
+right strafes cleared the jambs. The alcove required returning to the wooden
+passage. These navigation delays consumed the remaining attempt time.
+
+Read-only original assets establish the ordinary knife route and controls:
+`default.cfg` binds W/S/A/D, arrow turning, Space jump, Enter use, 1 knife,
+Mouse1 primary (`+attackright`), Mouse2 alternate (`+attackleft`). The real
+`d_gvillage` knife pickup uses `altar_knife.tik` and `knife_cat`; the script
+attaches the knife during its natural cinematic. The knife model defines
+primary melee and alternate thrown `prj_knife.tik`. Static pickup metadata
+proves availability in the level, not current ownership. The next needed
+step is the ordinary ride-the-wind route to that altar, natural pickup/dialogue,
+then reviewed before/after held-weapon and attack-effect captures. This task
+consumed its only attempt and authorizes no additional launch.
+
+The first harness failure was auxiliary CDP response-body capture: six eager
+HTTP bodies were unavailable at bootstrap, halting the original controller at
+step0. Diagnosis preserved that failure and verified the six original bytes
+in resident VFS; lazy providers were excluded after an expected VfsPendingError
+from the first read-only audit. A bounded Puppeteer connection continued the
+**same page/browser**, without reload or guest changes; the original supervisor
+retained its deadline. A later inspector-cache eviction makes seven auxiliary
+body errors total. The actual HTTP module fullSHA matches; complete HTTP body
+identity for every lazy asset is not claimed. A terminal transport receipt
+failure was reconciled against completed screenshots/logs without replay.
+Controller v2 briefly used800x600; v3 restored1200x900 before gameplay steering.
+
+Source commit `bf14932174801bc0187c45f0735d85dd34c14e3d` seals5850 committed
+source/support files, excluding foreign working changes. All5868 runtime pins,
+15 originals and exact14 companion mappings match after execution. Fresh
+boat-side `flock /tmp/wine-build.lock bash tools/build.sh` and
+`test/test-keyboard-message-lparam.js` pass. HTTP module2084058 bytes SHA256
+`fa326d595b106a9e2f8242ef66c67d0ee5530462d587e7e76867640f800ebfc8` matches.
+Chrome151/Puppeteer25.7 uses software GL, cooperative threads, actual100000,
+frozen16ms, commands<=400 and no address-trace flags. Production code and
+original guest/config/registry/assets were not modified. Exact ordered GL
+copy-context-transaction then Jedi-first-combat-encounter AUTHOR RELEASE gates
+preceded production claim, staging, build, boat and runtime.
+
+The unchanged deadline was10:56:03.504–11:26:03.504 UTC; Chrome closed at
+11:26:03.585 (1800.081 seconds), exit0, driver exit0 at11:26:13.646. All6061
+own archive members and17 inherited original/support members match fullSHA.
+Own archive67947951 bytes SHA256
+`814228379d16b2e5ba5c578d395a0f354dc69e5fe6467c19c4a6d55cdb2bc002`.
+Recovery reuses the already-retained original dependency archive SHA256
+`48e24e19444c7614dff027144d41cb1c0dbb391de237a68fa558d83fcf78c1d7`.
+Source/originals streamed directly to the own boat; no local staging archive
+was duplicated. `RECOVERY.md`, exact pins, controller failures and screenshots
+were retrieved and independently verified before delegated normal shutdown.
+Own boat `bx_rf4y3hp4`, original expiry `2026-11-03T12:16:33.483Z`, shutdown
+owner `alice-first-visible-attack`, is **STOPPED** with snapshot retained.
+Stop `stop_8c78df1a484f5eee` completed11:45:09.894Z, error:null, forced:false;
+scoped remote helpers and own HTTP port were absent before stopping. No predecessor boat was operated. No public deployment.
+
+
 ## Original opening reaches player movement and horizontal look (2026-11-03)
 
 Run `scratch/runs/20261103-alice-opening-player-controls/` makes one ordinary
