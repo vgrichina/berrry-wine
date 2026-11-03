@@ -146,6 +146,14 @@
       (global.set $gl_sw_light_block (local.get $light)))
       (else (memory.copy (i32.add (local.get $ctx) (i32.const 60))
         (i32.add (local.get $vertex) (i32.const 12)) (i32.const 16))))
+    ;; Preserve the admitted integer color before its normalized f32 value
+    ;; loses a boundary bit. Queryable raster color remains the GL float value.
+    (i32.store offset=980 (local.get $ctx)
+      (i32.and (i32.eqz (i32.and (local.get $caps) (i32.const 128)))
+        (i32.ne (global.get $gl_source_tag) (i32.const 0))))
+    (if (i32.load offset=980 (local.get $ctx)) (then
+      (call $gl_source_save (i32.add (local.get $ctx) (i32.const 984)))
+      (i32.store offset=976 (local.get $ctx) (call $gl_source_pack (i32.add (local.get $ctx) (i32.const 984))))))
     (local.set $i (i32.const 0))
     (loop $clamp_color
       (f32.store (i32.add (i32.add (local.get $ctx) (i32.const 60)) (local.get $i))
@@ -202,6 +210,15 @@
             (f32.store offset=4 (local.get $v) (f32.add (local.get $oy) (f32.convert_i32_u (local.get $y))))
             (f32.store offset=8 (local.get $v) (f32.load offset=52 (local.get $ctx)))
             (memory.copy (i32.add (local.get $v) (i32.const 12)) (i32.add (local.get $ctx) (i32.const 60)) (i32.const 16))
+            (if (i32.load offset=980 (local.get $ctx)) (then
+              (f32.store offset=12 (local.get $v) (f32.div (f32.convert_i32_u
+                (i32.and (i32.shr_u (i32.load offset=976 (local.get $ctx)) (i32.const 16)) (i32.const 255))) (f32.const 255)))
+              (f32.store offset=16 (local.get $v) (f32.div (f32.convert_i32_u
+                (i32.and (i32.shr_u (i32.load offset=976 (local.get $ctx)) (i32.const 8)) (i32.const 255))) (f32.const 255)))
+              (f32.store offset=20 (local.get $v) (f32.div (f32.convert_i32_u
+                (i32.and (i32.load offset=976 (local.get $ctx)) (i32.const 255))) (f32.const 255)))
+              (f32.store offset=24 (local.get $v) (f32.div (f32.convert_i32_u
+                (i32.shr_u (i32.load offset=976 (local.get $ctx)) (i32.const 24))) (f32.const 255)))))
             ;; Homogeneous raster coordinates, already generated/transformed.
             (memory.copy (i32.add (local.get $v) (i32.const 28)) (i32.add (local.get $ctx) (i32.const 272)) (i32.const 8))
             (memory.copy (i32.add (local.get $v) (i32.const 48)) (i32.add (local.get $ctx) (i32.const 288)) (i32.const 8))
@@ -319,6 +336,7 @@
     (call $d3dim_worker_fence)
     (if (i32.eqz (call $gl_sw_raster_state)) (then (return)))
     (if (i32.eqz (call $gl_stencil_prepare)) (then (return)))
+    (call $gl_logic_begin)
     (global.set $rast_stencil_state (call $gl_stencil_state))
     (global.set $rast_color_mask (call $gl_color_mask_bits (global.get $gl_sw_rt)))
     (if (global.get $rast_stencil_state) (then
@@ -364,7 +382,9 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $pixels)))
     (call $gl_sw_prim_done)
     (global.set $rast_stencil_state (i32.const 0))
-    (global.set $rast_color_mask (i32.const -1)))
+    (global.set $rast_color_mask (i32.const -1))
+    (global.set $rast_gl_logic (i32.const 0))
+    (global.set $rast_gl_dither (i32.const 0)))
 
   (func $gl_bitmap_intercept (param $op i32) (param $stack i32) (result i32)
     (local $ctx i32) (local $a i32) (local $v i32) (local $p i32) (local $n i32) (local $bits i32)
@@ -533,7 +553,7 @@
     (if (i32.eq (local.get $op) (i32.const 76)) (then
       (if (i32.ge_u (i32.load offset=172 (local.get $ctx)) (i32.const 16)) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x503)) (return (i32.const 1))))
-      (local.set $p (call $gl_list_alloc (i32.const 664)))
+      (local.set $p (call $gl_list_alloc (i32.const 672)))
       (if (i32.eqz (local.get $p)) (then (unreachable)))
       (i32.store (local.get $p) (i32.load offset=104 (local.get $ctx)))
       (i32.store offset=4 (local.get $p) (local.get $a))
@@ -552,6 +572,7 @@
         (i32.add (local.get $ctx) (i32.const 384)) (i32.const 296))
       (memory.copy (i32.add (local.get $p) (i32.const 464))
         (call $gl_clip_state) (i32.const 200))
+      (memory.copy (i32.add (local.get $p) (i32.const 664)) (i32.add (local.get $ctx) (i32.const 976)) (i32.const 8))
       (i32.store offset=104 (local.get $ctx) (local.get $p))
       (i32.store offset=172 (local.get $ctx) (i32.add (i32.load offset=172 (local.get $ctx)) (i32.const 1)))))
     (if (i32.eq (local.get $op) (i32.const 77)) (then
@@ -579,7 +600,8 @@
       (if (i32.and (local.get $mask) (i32.const 0x2000))
         (then (i32.store offset=192 (local.get $ctx) (i32.load offset=56 (local.get $p)))))
       (if (i32.and (local.get $mask) (i32.const 1))
-        (then (memory.copy (i32.add (local.get $ctx) (i32.const 40)) (i32.add (local.get $p) (i32.const 16)) (i32.const 40))
+        (then (memory.copy (i32.add (local.get $ctx) (i32.const 976)) (i32.add (local.get $p) (i32.const 664)) (i32.const 8))
+          (memory.copy (i32.add (local.get $ctx) (i32.const 40)) (i32.add (local.get $p) (i32.const 16)) (i32.const 40))
           (memory.copy (i32.add (local.get $ctx) (i32.const 264))
             (i32.add (local.get $p) (i32.const 124)) (i32.const 40))))
       (if (i32.and (local.get $mask) (i32.const 0x40000)) (then

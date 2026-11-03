@@ -6059,10 +6059,15 @@
                 (local.get $dst) (local.get $color) (f32.const 0.5)))))))
         (if (i32.eq (local.get $bpp) (i32.const 32)) (then
           (local.set $ptr (i32.add (local.get $row_wa) (i32.mul (local.get $x) (i32.const 4))))
+          (if (global.get $rast_gl_logic) (then
+            (local.set $color (call $gl_logic_word (local.get $color) (i32.load (local.get $ptr))))))
           (if (i32.ne (global.get $rast_color_mask) (i32.const -1))
             (then (local.set $color (call $gl_color_merge (i32.load (local.get $ptr)) (local.get $color) (global.get $rast_color_mask)))))
           (i32.store (local.get $ptr) (local.get $color))))
         (if (i32.eq (local.get $bpp) (i32.const 16)) (then
+          (if (global.get $rast_gl_dither) (then
+            (local.set $color (call $gl_logic_dither_source (local.get $color)
+              (local.get $x) (local.get $y) (local.get $rt555)))))
           (if (local.get $rt555)
             ;; X1R5G5B5 target -- a BI_RGB 16bpp DIB, which is what an
             ;; OpenGL bitmap context renders into (SimGolf). Packing 565 into
@@ -6082,9 +6087,11 @@
                 (i32.shl (i32.and (i32.shr_u (local.get $color) (i32.const 10)) (i32.const 0x3F)) (i32.const 5)))
                 (i32.and (i32.shr_u (local.get $color) (i32.const 3)) (i32.const 0x1F))))))))
           (local.set $ptr (i32.add (local.get $row_wa) (i32.mul (local.get $x) (i32.const 2))))
+          (if (global.get $rast_gl_logic) (then
+            (local.set $px16 (call $gl_logic_word (local.get $px16) (i32.load16_u (local.get $ptr))))))
           (if (i32.ne (global.get $rast_color_mask) (i32.const -1))
             (then (local.set $px16 (call $gl_color_merge (i32.load16_u (local.get $ptr))
-              (call $d3dim_encode_surface_pixel (local.get $rt_entry) (local.get $color) (i32.const 16))
+              (local.get $px16)
               (global.get $rast_color_mask)))))
           (i32.store16 (local.get $ptr) (local.get $px16))))
         (if (i32.eq (local.get $bpp) (i32.const 8)) (then

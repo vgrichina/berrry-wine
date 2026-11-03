@@ -333,6 +333,7 @@ const gpuApis = new Map([
   ['glInterleavedArrays',3],
   ['wglShareLists',2],
   ['_glPrioritizeTexture',2],
+  ['glLogicOp',1], // Append-only transport opcode 180; stored-width semantics tested.
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 

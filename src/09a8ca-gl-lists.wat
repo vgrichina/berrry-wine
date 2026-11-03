@@ -27,7 +27,7 @@
       (if (i32.eq (i32.load offset=4 (local.get $p)) (local.get $key))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 976)))
+    (local.set $p (call $gl_list_alloc (i32.const 1008))) ;; raster exact-color tail
     (if (i32.eqz (local.get $p)) (then (unreachable)))
     (local.set $group (call $gl_list_alloc (i32.const 20)))
     (if (i32.eqz (local.get $group)) (then (unreachable)))
@@ -202,6 +202,17 @@
         (i32.and (i32.ge_u (local.get $op) (i32.const 124))
           (i32.le_u (local.get $op) (i32.const 140)))))))
     (if (i32.eq (local.get $op) (i32.const 160)) (then (return (i32.const 0))))
+    ;; Validate before capture: rejected setters never enter a list or alter
+    ;; the producer's fragment state, including COMPILE_AND_EXECUTE.
+    (if (i32.or (i32.eq (local.get $op) (i32.const 180))
+        (i32.and (i32.or (i32.eq (local.get $op) (i32.const 8)) (i32.eq (local.get $op) (i32.const 10)))
+          (i32.or (i32.le_u (i32.sub (i32.load offset=4 (local.get $stack)) (i32.const 0xbf1)) (i32.const 1))
+            (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0xbd0))))) (then
+      (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (i32.load offset=36 (local.get $ctx))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
+      (if (i32.and (i32.eq (local.get $op) (i32.const 180))
+          (i32.gt_u (i32.sub (i32.load offset=4 (local.get $stack)) (i32.const 0x1500)) (i32.const 15))) (then
+        (call $gl_list_error (local.get $ctx) (i32.const 0x500)) (return (i32.const 1))))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 172)) (i32.const 1)) (then (return (i32.const 0))))
     (local.set $texture (i32.or
       (i32.le_u (i32.sub (local.get $op) (i32.const 163)) (i32.const 2)) (i32.or
@@ -515,6 +526,7 @@
       (local.set $p (local.get $next)) (br $free))))
 
   (func $gl_list_scalar_command (param $op i32) (result i32)
+    (if (i32.eq (local.get $op) (i32.const 180)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 0x10003)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 179)) (then (return (i32.const 1))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 169)) (i32.const 2)) (then (return (i32.const 1))))

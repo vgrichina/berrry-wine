@@ -113,9 +113,9 @@ function runDrawableTests() {
       // Replace the window object with the same numeric handle: stale pixels
       // must not survive the destroyed window's identity.
       windows[42]={hwnd:42,w:8,h:8,clientRect:{w:8,h:8}};check(bridge.makeCurrent(c,42),1,'reused HWND');check(pixel(0x404),[0,0,0,0],'reused HWND new storage');
-      check(bridge.makeCurrent(c,999),0,'invalid drawable');check(bridge._current().hwnd,42,'failed bind preserves target');
+      check(bridge.makeCurrent(c,999),0,'invalid drawable');check(bridge._current(),undefined,'failed bind detaches per wglMakeCurrent');check(bridge.makeCurrent(c,42),1,'rebind retained drawable');
       windows[999]={hwnd:999,w:50000,h:50000,clientRect:{w:50000,h:50000}};
-      check(bridge.makeCurrent(c,999),0,'allocation failure bind');check(bridge._current().hwnd,42,'allocation failure preserves target');
+      check(bridge.makeCurrent(c,999),0,'allocation failure bind');check(bridge._current(),undefined,'allocation failure detaches per wglMakeCurrent');check(bridge.makeCurrent(c,42),1,'rebind after allocation failure');
       check(bridge.makeCurrent(9999,123),0,'invalid context');check(bridge.makeCurrent(0),1,'unbind');check(bridge._current(),undefined,'no current context');check(bridge.makeCurrent(c,42),1,'rebind after unbind');
       // Bitmap drawables have one front image and import canonical GDI pixels
       // before a masked/scissored clear as well as before geometry.

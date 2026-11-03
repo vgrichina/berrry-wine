@@ -3990,6 +3990,7 @@
     (if (i32.eq (local.get $id) (i32.const 4321)) (then (return (i32.const 1)))) ;; glLineStipple
     (if (i32.eq (local.get $id) (i32.const 4322)) (then (return (i32.const 1)))) ;; glListBase
     (if (i32.eq (local.get $id) (i32.const 4323)) (then (return (i32.const 1)))) ;; glLoadMatrixd
+    (if (i32.eq (local.get $id) (i32.const 4326)) (then (return (i32.const 1)))) ;; glLogicOp
     (if (i32.eq (local.get $id) (i32.const 4335)) (then (return (i32.const 1)))) ;; glMaterialiv
     (if (i32.eq (local.get $id) (i32.const 4338)) (then (return (i32.const 1)))) ;; glMultiTexCoord2fvARB
     (if (i32.eq (local.get $id) (i32.const 4341)) (then (return (i32.const 1)))) ;; glMultiTexCoord4fARB
@@ -4161,7 +4162,6 @@
     (if (i32.eq (local.get $id) (i32.const 4313)) (then (return (i32.const 1)))) ;; glInitNames
     (if (i32.eq (local.get $id) (i32.const 4324)) (then (return (i32.const 1)))) ;; glLoadName
     (if (i32.eq (local.get $id) (i32.const 4325)) (then (return (i32.const 1)))) ;; glLockArraysEXT
-    (if (i32.eq (local.get $id) (i32.const 4326)) (then (return (i32.const 1)))) ;; glLogicOp
     (if (i32.eq (local.get $id) (i32.const 4327)) (then (return (i32.const 1)))) ;; glMap1d
     (if (i32.eq (local.get $id) (i32.const 4328)) (then (return (i32.const 1)))) ;; glMap1f
     (if (i32.eq (local.get $id) (i32.const 4329)) (then (return (i32.const 1)))) ;; glMap2d
@@ -22178,7 +22178,7 @@
       (return)
     ) ;; 4326: glLogicOp
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 180) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (call $gl_object_leave)
       (return)
     ) ;; 4327: glMap1d

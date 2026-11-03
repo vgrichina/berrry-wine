@@ -221,8 +221,11 @@ const extraWat=`
  assert.deepStrictEqual(read(0x404).slice(0,4),[255,255,0,255]);assert.deepStrictEqual(read(0x405).slice(0,4),[255,255,0,255]);
  assert.strictEqual(call('wglMakeCurrent',[dc,context]),1);
  assert.deepStrictEqual(read(0x405).slice(0,4),[255,0,0,255],'resizing second drawable preserves first');
- assert.strictEqual(call('wglMakeCurrent',[0,context]),0,'failed bind preserves previous drawable');
- assert.deepStrictEqual(read(0x405).slice(0,4),[255,0,0,255]);
+ // https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-wglmakecurrent
+ assert.strictEqual(call('wglMakeCurrent',[0,context]),0);
+ assert.strictEqual(call('wglGetCurrentContext'),0,'failed bind detaches the current context');
+ assert.strictEqual(call('wglMakeCurrent',[dc,context]),1);
+ assert.deepStrictEqual(read(0x405).slice(0,4),[255,0,0,255],'failed bind preserves drawable storage');
  const window=call('CreateWindowExA',[0,str('STATIC'),str('GL ownership'),0,0,0,4,4,0,0,0,0]);assert(window);
  renderer.windows[window]=h.renderer.windows[window]||{hwnd:window,w:4,h:4,clientRect:{w:4,h:4}};
  const windowDc=e.probe_dc(window)>>>0;

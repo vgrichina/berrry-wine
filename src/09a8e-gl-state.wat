@@ -107,6 +107,8 @@
     (f32.store offset=160 (local.get $p) (global.get $gl_tex1_q)))
 
   (func $gl_native_query_count (param $p i32) (result i32)
+    (if (i32.or (i32.le_u (i32.sub (local.get $p) (i32.const 0xbf0)) (i32.const 2))
+        (i32.eq (local.get $p) (i32.const 0xbd0))) (then (return (i32.const 1))))
     (if (call $gl_client_cap_bit (local.get $p)) (then (return (i32.const 1))))
     (if (i32.or (i32.le_u (i32.sub (local.get $p) (i32.const 0xb24)) (i32.const 2))
         (i32.eq (local.get $p) (i32.const 0xb42))) (then (return (i32.const 1))))
@@ -137,6 +139,12 @@
     (i32.const 0))
 
   (func $gl_native_query_value (param $p i32) (param $i i32) (result f64)
+    (if (i32.eq (local.get $p) (i32.const 0xbf0))
+      (then (return (f64.convert_i32_u (i32.load offset=4104 (global.get $gl_sw_st))))))
+    (if (i32.or (i32.le_u (i32.sub (local.get $p) (i32.const 0xbf1)) (i32.const 1))
+        (i32.eq (local.get $p) (i32.const 0xbd0))) (then
+      (return (f64.convert_i32_u (i32.ne (i32.and (i32.load (global.get $gl_sw_st))
+        (call $gl_sw_cap_bit (local.get $p))) (i32.const 0))))))
     (if (call $gl_client_cap_bit (local.get $p)) (then
       (return (f64.convert_i32_u (i32.ne (i32.and (global.get $gl_client_bits)
         (call $gl_client_cap_bit (local.get $p))) (i32.const 0))))))
@@ -389,7 +397,7 @@
     ;; 0x0d52
     (if (i32.eq (local.get $p) (i32.const 0xd52)) (then (return (f64.convert_i32_u (select (i32.const 5) (i32.const 8) (i32.eq (if (result i32) (global.get $gl_sw_bitmap) (then (call $gdi_bitmap_bpp (global.get $gl_sw_bitmap))) (else (i32.const 32))) (i32.const 16)))))))
     ;; 0x0d53
-    (if (i32.eq (local.get $p) (i32.const 0xd53)) (then (return (f64.convert_i32_u (select (i32.const 5) (i32.const 8) (i32.eq (if (result i32) (global.get $gl_sw_bitmap) (then (call $gdi_bitmap_bpp (global.get $gl_sw_bitmap))) (else (i32.const 32))) (i32.const 16)))))))
+    (if (i32.eq (local.get $p) (i32.const 0xd53)) (then (return (f64.convert_i32_u (select (select (i32.const 6) (i32.const 5) (i32.eq (call $dx_surf_fmt_get (global.get $gl_sw_rt)) (i32.const 1))) (i32.const 8) (i32.eq (if (result i32) (global.get $gl_sw_bitmap) (then (call $gdi_bitmap_bpp (global.get $gl_sw_bitmap))) (else (i32.const 32))) (i32.const 16)))))))
     ;; 0x0d54
     (if (i32.eq (local.get $p) (i32.const 0xd54)) (then (return (f64.convert_i32_u (select (i32.const 5) (i32.const 8) (i32.eq (if (result i32) (global.get $gl_sw_bitmap) (then (call $gdi_bitmap_bpp (global.get $gl_sw_bitmap))) (else (i32.const 32))) (i32.const 16)))))))
     ;; 0x0d55

@@ -82,7 +82,7 @@ const extraWat=`
  const f=x=>{dv.setFloat32(stackWa+252,x,true);return dv.getUint32(stackWa+252,true);};
 
  const output=e.guest_alloc(128)>>>0,outWa=wa(output),observations=[];
- assert.strictEqual(resolve('glLogicOp'),0,'logic operations remain unavailable');
+ assert(resolve('glLogicOp'),'stored-width logic operations are available after full native/WebGL acceptance');
  for(const bpp of [16,32])for(const topDown of [false,true]){
   const width=3,height=2,stride=bpp===16?8:12;
   const bmi=e.guest_alloc(40)>>>0,bitsOut=e.guest_alloc(4)>>>0;

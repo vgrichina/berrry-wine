@@ -75,6 +75,7 @@ for(const version of [1,2]) {
   assert.strictEqual(images[2][7],0x8034,'resize retains low-bit allocation');
   assert.strictEqual(backend._drawables.size,1);
   backend.releaseDrawable(1);assert.strictEqual(backend._targetBytes,0);
+  reported=[8,8,8,8];
   backend.createDrawable(2,2,2,true);
   assert.strictEqual(images[3][7],0x1401,'ordinary RGBA8 allocation is unchanged');
 }

@@ -1,0 +1,14 @@
+{
+  "status": "static preparation; no runtime acceptance",
+  "operations": ["CLEAR","AND","AND_REVERSE","COPY","AND_INVERTED","NOOP","XOR","OR","NOR","EQUIV","INVERT","OR_REVERSE","COPY_INVERTED","OR_INVERTED","NAND","SET"],
+  "five": {"source":9,"destination":19,"expected":[0,1,8,9,18,19,26,27,4,5,12,13,22,23,30,31]},
+  "six": {"source":21,"destination":38,"expected":[0,4,17,21,34,38,51,55,8,12,25,29,42,46,59,63]},
+  "eight": {"source":53,"destination":166,"expected":[0,36,17,53,130,166,147,183,72,108,89,125,202,238,219,255]},
+  "exactSourceXor": {
+    "five": {"raw":[134217727,134217728],"destination":19,"expected":[19,18]},
+    "six": {"raw":[67108863,67108864],"destination":38,"expected":[38,39]},
+    "eight": {"raw":[2147483647,2147483648],"destination":166,"expected":[217,38]}
+  },
+  "overlapInvert": {"five":[19,12,19,12],"six":[38,25,38,25],"eight":[166,89,166,89]},
+  "frontBackXor": {"source":53,"front":166,"back":60,"expectedFront":147,"expectedBack":9}
+}
