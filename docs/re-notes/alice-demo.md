@@ -1,5 +1,71 @@
 # American McGee's Alice demo
 
+## Current-main unfinished-step diagnosis (2026-11-03)
+
+Run `scratch/runs/20261103-alice-unfinished-step-diagnosis/` identifies the
+first initialization blocker: **the CLI awaits a loader gate held by a
+cooperative thread that this same await prevents it from scheduling**.
+This is a measured host scheduling cycle; no engine repair was applied.
+Historical movement and the November 1 observations below remain separate.
+
+The sole guest execution used main `8020361e3b2c784f325f8e9bc456e401f7ac456e`
+source, after the DeviceIoControl recovery's actual terminal and exact release.
+The locked full build passed; the actual module is 2,077,794 bytes, SHA256
+`2514961a7051ba000c6bd107447480ca38443046ed4d0c0bf9644345cccc4d15`.
+All 15 retained originals match the recovery manifest before and after use.
+The requested November 1 `RECOVERY.md` is absent at
+`scratch/runs/20261101-alice-original-native-gameplay/RECOVERY.md`; its retained
+final/log/verification evidence and the recovery manifest were available.
+
+Static tracing found that stdin commands are serialized behind a pending step,
+but independent requests to the existing HTTP control server remain usable.
+A task-scoped preload observes exported loader promises, atomic gate words and
+cooperative scheduling without guest execution, clock calls or gate writes.
+Its control holds the real production gate: a pending step and serialized ping
+remain blocked while independent HTTP snapshot/ping succeed, with whole-memory
+SHA unchanged. Releasing the fixture's gate completes both queued operations.
+Promise identity, rejection propagation and bounded recent-history controls
+pass, as do `test-cooperative-dll-owner.js`,
+`test-dll-callback-serialization.js` and
+`flock /tmp/wine-build.lock bash tools/build.sh`. Diagnostic code and evidence
+remain in the ignored run directory; production behavior is unchanged.
+
+The first 600 neutral steps completed with a reviewed gray 640×480 image.
+The next 600-step request stops at **batch 1091**, with 109 credits remaining.
+Independent HTTP observations 73.858 seconds apart show the same two pending
+awaits, gate owner/depth and four cooperative slices:
+
+- Main owner 1 is at `test/run.js:10980` →
+  `handleLoadLibraryYield` → `lib/process-boot.js:924` →
+  `acquireDllCallbackGate`, waiting for gate owner 2, depth 1.
+- Cooperative T1, handle `0xe1001`, has an unfinished DLL attach continuation
+  holding owner 2. Its next `runSlice` lies after the main await in the CLI loop.
+- Main return EIP is `0x0264aced`. Parsing the unchanged original `mss32.dll`
+  import table and disassembly maps this to preferred address `0x21111ced`,
+  immediately after `call *0x2113e08c` at `0x21111ce7`, the imported
+  `KERNEL32!FreeLibrary`. This is an unload gate wait, not a guessed audio fault.
+
+The unfinished-step PNG is also gray. No menu or gameplay was reachable, so
+no ordinary guest input was sent. HTTP quit and SIGTERM cannot complete the
+pending host await; bounded cleanup killed the owned process group (exit -9).
+All runtime helpers are absent. Retrieved evidence was independently hashed;
+4,290 transferred runtime source/test identities and the module still match.
+
+One earlier CLI bootstrap failed before any Wasm compilation because the
+transfer omitted the common `stdole2.tlb` asset. Its separate bootstrap records
+are retained. The required 27 unchanged repository assets were then streamed,
+SHA verified, and a synthetic CLI preflight passed before the sole original
+guest execution. No game/config changes, unchanged guest retry or integrated
+loader lifetime fixes were used. Local free space exceeded 2 GB before heavy
+work; a later dip was recorded and subsequent work only retrieved evidence.
+
+The next repair should let the CLI schedule the existing cooperative attach
+continuation while the main loader request is gated, with a real held-gate
+old-fail/new-pass control before another original attempt. The current result
+establishes the first blocker, not current gameplay or an implemented repair.
+The finite-TTL box `bx_4rk22xvp` is handed back running, helpers absent, with
+original expiry `2026-11-03T02:23:19.621Z`; the coordinator owns shutdown.
+
 ## Current-main native attempt: startup stalls before menu (2026-11-01)
 
 Run `scratch/runs/20261101-alice-original-native-gameplay/` stops at the first
