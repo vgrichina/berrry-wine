@@ -1,5 +1,59 @@
 # American McGee's Alice demo
 
+## Native menu input traced; activation capture incomplete (2026-11-03)
+
+Run `scratch/runs/20261103-alice-menu-native-key-activation/` establishes the
+original input path without changing any guest bytes. `lib/input.js` does not
+exist; the host implementation is `lib/renderer-input.js`. The CLI's ordinary
+`keydown:13` / `keyup:13` dispatch supplies WM_KEYDOWN / WM_KEYUP with Enter
+scan code 0x1c: lParams `0x001c0001` / `0xc01c0001`. The existing keyboard
+message regression passes.
+
+In the pinned original EXE, WndProc `0x004731c0` passes the message lParam to
+MapKey `0x00473790`, which extracts the scan code and indexes the table at
+`0x00520c84`. Enter maps to internal key 13; a zero scan code maps to zero.
+The WndProc queues type-1 key/down events through `0x0046c1e0`; event loop
+`0x00439520` calls key consumer `0x00429c10`. WM_CHAR instead queues type 2,
+consumed by `0x0042a130`. UI key/character wrappers `0x0040c530` / `0x0040c550`
+reach distinct focused-widget methods. The original PK3 menu assets put New
+Game and Easy first. These are static findings, not activation receipts.
+
+After GL64819 and fresh Jedi92624 both actually exited zero and posted exact
+AUTHOR RELEASE, all 4,156 current source/support hashes matched Jedi's fresh
+post-GL build seal. Tested checkout identity was
+`cab910b9e62a648c5d8c9590c04ddca4e6411a8b`; actual compile/instantiate receipts
+match the 2,081,417-byte canonical module SHA256
+`36a80f073b3bc4f59bb66d8c292684085c111be42cf999523723ff0cfab64788`.
+All 4,350 staged inputs and all 15 original Alice hashes match after runtime.
+No production source, guest configuration or original payload was edited.
+
+**The activation session was invalidated by its diagnostic setup.** Two
+`--trace-at` addresses (`0x429c10,0x40c530`) make the existing CLI parser force
+`BATCH_SIZE=1`, despite `--batch-size=100000`, even before delayed trace arming.
+The worker overlooked that override. A source-only control reproduces budget
+1 for two addresses and 100,000 for one. At batches 1500 and 2100, the session
+still showed startup EIP `0x004ee9c3`, no window/focus, and a personally reviewed
+solid teal 640×480 frame. This does **not** establish an engine regression or
+repeat the repaired loader-gate diagnosis. No activation key was sent; no
+keydown/keyup receipt, New Game state or gameplay was obtained. A preceding
+host preload failure from omitted staging support is preserved separately;
+its module compile/instantiate arrays are empty and Alice did not execute.
+
+The one actual original execution ended cleanly with exit 0 after 83.135
+seconds. All 38 retrieved evidence members were independently SHA-verified
+before delegated shutdown. Own boat `bx_29ktbjtw`, original finite expiry
+05:51:23.723Z, is verified STOPPED with completed stop/error null at
+05:24:54.088Z; scoped helpers and port 8123 were absent before stop.
+
+Next bounded action: retain ordinary 100,000-block startup and use only
+`--trace-at=0x429c10` for consumer key/down receipts. Personally review the
+menu, then send ordinary Enter keydown/keyup and capture the first New Game
+state before further input. Ordinary movement/look/fire and all activation
+claims remain pending. Do not resume the stopped boat or repeat the old gate
+diagnosis. The ancillary source-sliced clock-domain test still lacks `hasFlag`
+in its VM fixture; the task-local in-memory dependency correction passes its
+clock checks and five mutation controls, but no repository test was changed.
+
 
 ## CLI cooperative loader deadlock repaired (2026-11-03)
 
