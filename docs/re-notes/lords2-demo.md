@@ -148,6 +148,42 @@ state or bypass setup based solely on loose FILES availability.
 
 ## Recovery and next ordinary route
 
+### Local retention audit — 2026-11-03
+
+No complete local launch input was found in the bounded referenced-path audit
+`scratch/runs/20261103-lords2-retained-payload-locate/`. All 493 retained files,
+eight evidence archives (every regular member), and gzip streams in the October
+15 run were hashed against the 181-file original inventory. Only original
+`SIERRA.INF`, `LANGUAGE.INF` and `Gametips.wri` survive there as byte-matching
+payload members. The exact remaining 178 files (14,355,558 bytes), sizes and
+SHA256 are in that run's `missing-original-files.json`. Both `SETUP.EXE` and
+`FILES/LORDS2.EXE` are missing; recovered `_setup.exe`, `setupl.dll` and
+`setup32-evidence.exe` are installer diagnostics, not substitutes. Saved VFS
+paths in all retained launch records are absent locally, as are the historical
+intake/staging roots and canonical candidate directory. The seven retained
+gzip recovery recipes verify, but restore logs rather than game media.
+
+Recovery requires the pinned `lorddemo.zip` (identity above), or the complete
+181-file original tree. The recorded source is the Archive.org download above;
+the historical remote tree below is another recorded source, with current
+availability unverified. No download or remote inspection occurred. For a
+future authorized recovery, run `node tools/acquire-lords2-demo.js NEW_ABSOLUTE_DIR`
+then `node tools/inspect-lords2-demo.js SAME_DIR`; these statically extract
+`lorddemo.zip` → `payload/lorddemo.exe` → `installer/L2DEMO.EXE` → `original/`.
+Check all 181 hashes against `test/candidate-corpus/lords2-demo-files.json`,
+then `node tools/prepare-lords2-demo.js SAME_DIR/original` stages the canonical
+fixture and generates its 180-support-file browser manifest. These commands
+were read, not executed during this audit; the acquisition helper has its own
+disk prerequisite. The resulting private selector route is `lords2_demo_setup`,
+original `SETUP.EXE`, not a direct installed-game route. Existing historical
+controllers pin old modules and must not be passed a current module.
+
+Current `lib/apps.js` still lists this title only in `LOCAL_CANDIDATE_APPS`,
+absent from `DESKTOP_APPS`; it remains gameplay-unqualified and eligible for
+future candidate investigation once media is recovered. No present usable
+launch route, installed registry/tree, current runtime result or gameplay is
+claimed. The held GetWindow/GetNextWindow follow-up remains untouched.
+
 Remote-only source fixture is `/home/user/lords2-original-20261015` on
 `bx_9ef2wdsw`. Local payload was not restored; local free space was 2.25GB.
 `tools/acquire-lords2-demo.js` verifies the pinned outer archive; then
