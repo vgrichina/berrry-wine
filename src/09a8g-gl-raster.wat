@@ -2509,6 +2509,7 @@
       (else (call $memcpy (i32.add (local.get $clip) (i32.const 24))
         (i32.add (local.get $src) (i32.const 12)) (i32.const 16))))
     (call $gl_source_clip (local.get $clip) (local.get $src))
+    (if (global.get $gl_sf_active) (then (call $gl_sf_attributes (local.get $src) (local.get $clip))))
     (if (f32.ge (call $gl_sw_near_d (local.get $clip)) (f32.const 0))
       (then (local.set $bits (i32.const 1))))
     (if (f32.ge (call $gl_sw_plane_d (local.get $clip) (i32.const 1)) (f32.const 0))
@@ -3381,7 +3382,8 @@
           (local.set $b (call $gl_sw_poly_at (i32.const 1)))))
       (local.set $far (i32.add (local.get $far) (i32.const 1)))
       ;; Retain historical near/far clipping; then visit six user planes.
-      (if (i32.eq (local.get $far) (i32.const 2)) (then (local.set $far (i32.const 6))))
+      (if (i32.and (i32.eq (local.get $far) (i32.const 2)) (i32.eqz (global.get $gl_sf_active)))
+        (then (local.set $far (i32.const 6))))
       (br_if $plane (i32.lt_u (local.get $far) (i32.const 12))))
     (call $gl_period_line_clipped (local.get $vp) (local.get $a) (local.get $b)))
   (func $gl_period_line_clipped (param $vp i32) (param $a i32) (param $b i32)
@@ -3391,6 +3393,8 @@
     (local $i i32) (local $hi i32) (local $minor i32) (local $row i32) (local $run i32)
     (local $j i32) (local $c0 i32) (local $c1 i32) (local $p i32) (local $q i32)
     (local $xmajor i32) (local $col i32)
+    (if (global.get $gl_sf_active) (then
+      (call $gl_sf_line (local.get $vp) (local.get $a) (local.get $b)) (return)))
     (if (i32.eqz (i32.and
           (call $gl_sw_emit_vertex (local.get $a) (local.get $vp) (i32.const 0))
           (call $gl_sw_emit_vertex (local.get $b) (local.get $vp) (i32.const 1))))
@@ -3515,6 +3519,7 @@
     (call $gl_period_point_clipped (local.get $vp) (call $gl_sw_clip_at (i32.const 0))))
   (func $gl_period_point_clipped (param $vp i32) (param $a i32)
     (local $r i32) (local $x i32) (local $y i32) (local $size i32) (local $off i32) (local $j i32) (local $plane i32)
+    (if (global.get $gl_sf_active) (then (call $gl_sf_point (local.get $vp) (local.get $a)) (return)))
     (if (i32.eqz (call $gl_sw_emit_vertex (local.get $a) (local.get $vp) (i32.const 0)))
       (then
         (global.set $gl_sw_clipped (i32.add (global.get $gl_sw_clipped) (i32.const 1)))
@@ -3656,8 +3661,11 @@
       (then (global.set $gl_sw_texmtx1 (i32.const 0))))
     (local.set $vp (call $gl_mtx_export_viewport_ptr))
     ;; No glViewport yet: GL's default is the whole drawable.
-    (if (i32.or (i32.le_s (i32.load offset=8 (local.get $vp)) (i32.const 0))
-                (i32.le_s (i32.load offset=12 (local.get $vp)) (i32.const 0)))
+    (if (i32.and
+          (i32.or (i32.le_s (i32.load offset=8 (local.get $vp)) (i32.const 0))
+                  (i32.le_s (i32.load offset=12 (local.get $vp)) (i32.const 0)))
+          (i32.or (i32.eqz (global.get $gl_sf_active))
+            (i32.eqz (i32.load offset=168 (call $gl_list_context)))))
       (then
         (local.set $vp (i32.add (global.get $gl_sw_scratch) (i32.const 0x7C0)))
         (i32.store (local.get $vp) (i32.const 0))
@@ -4560,6 +4568,8 @@
       (global.set $gl_sw_culled (i32.add (global.get $gl_sw_culled) (i32.const 1))) (return)))
     (local.set $mode (i32.load (i32.add (global.get $gl_sw_st)
       (select (i32.const 4108) (i32.const 4112) (local.get $front)))))
+    (if (global.get $gl_sf_active) (then
+      (call $gl_sf_polygon (local.get $vp) (local.get $poly) (local.get $n) (local.get $mode)) (return)))
     (global.set $gl_copy_polygon_offset_active (i32.const 0))
     (if (i32.and (i32.load offset=4132 (global.get $gl_sw_st))
         (select (i32.const 1) (select (i32.const 2) (i32.const 4)

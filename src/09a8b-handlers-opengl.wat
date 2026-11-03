@@ -3601,6 +3601,9 @@
  (if (i32.eq (local.get $op) (i32.const 171)) (then
    (memory.copy (i32.add (call $gl_texture_block) (i32.const 300)) (i32.add (local.get $s) (i32.const 4)) (i32.const 8))
    (return)))
+ (if (i32.ne (call $gl_sf_mode) (i32.const 0x1c00)) (then
+   (call $gl_sf_raster (local.get $ctx) (select (f32.const 1797) (f32.const 1798)
+     (i32.eq (local.get $op) (i32.const 169)))) (return)))
  (if (global.get $gl_sw_enabled)
    (then (local.set $rt (call $gl_sw_target))
      (if (i32.eqz (local.get $rt)) (then (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return)))

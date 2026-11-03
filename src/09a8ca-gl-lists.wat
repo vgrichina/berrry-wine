@@ -27,7 +27,7 @@
       (if (i32.eq (i32.load offset=4 (local.get $p)) (local.get $key))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 1040))) ;; evaluator state and attribute ownership tail
+    (local.set $p (call $gl_list_alloc (i32.const 1044))) ;; evaluator and selection/feedback state tail
     (if (i32.eqz (local.get $p)) (then (unreachable)))
     (local.set $group (call $gl_list_alloc (i32.const 20)))
     (if (i32.eqz (local.get $group)) (then (unreachable)))
@@ -512,6 +512,8 @@
           (call $heap_free (call $w2g (local.get $b)))
           (local.set $b (local.get $next)) (br $attributes)))
         (call $gl_eval_free (local.get $ctx))
+        (if (i32.load offset=1040 (local.get $ctx)) (then
+          (call $heap_free (call $w2g (i32.load offset=1040 (local.get $ctx))))))
         (call $gl_state_free_attribs (i32.load offset=176 (local.get $ctx)))
         (if (i32.load offset=240 (local.get $ctx)) (then
           (call $gl_period_free_context (i32.load offset=240 (local.get $ctx)))
@@ -538,6 +540,7 @@
       (local.set $p (local.get $next)) (br $free))))
 
   (func $gl_list_scalar_command (param $op i32) (result i32)
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10023)) (i32.const 4)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 181)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 180)) (then (return (i32.const 1))))
     (if (i32.eq (local.get $op) (i32.const 0x10003)) (then (return (i32.const 1))))

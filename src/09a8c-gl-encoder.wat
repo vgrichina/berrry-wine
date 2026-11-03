@@ -5,6 +5,9 @@
   (global $gl_source_a (mut i32) (i32.const 0))
   ;; Private typed color command; public opcode numbering is unchanged.
   (func $gl_source_arg_words (param $op i32) (result i32)
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10023)) (i32.const 4)) (then
+      (return (select (i32.const 0) (i32.const 1)
+        (i32.or (i32.eq (local.get $op) (i32.const 0x10024)) (i32.eq (local.get $op) (i32.const 0x10027)))))))
     (if (i32.eq (local.get $op) (i32.const 0x10006)) (then (return (i32.const 4))))
     (if (i32.eq (local.get $op) (i32.const 0x10007)) (then (return (i32.const 0))))
     (if (result i32) (i32.eq (local.get $op) (i32.const 0x10004))
@@ -478,6 +481,9 @@
     (local.set $bytes (i32.mul (local.get $vertices) (call $gl_source_packed_stride (local.get $start))))
     (i32.store (local.get $start) (i32.add (local.get $bytes) (i32.const 32)))
     (i32.store offset=20 (local.get $start) (local.get $bytes))
+    ;; Selection/feedback consume the same complete primitive records, on the
+    ;; calling producer, before any draw can reach either rendering backend.
+    (if (call $gl_sf_consume (local.get $start) (local.get $vertices)) (then (return)))
     (global.set $gl_stream_used_bytes (i32.add (global.get $gl_stream_used_bytes)
       (i32.add (local.get $bytes) (i32.const 32))))
     (global.set $gl_stream_command_count (i32.add (global.get $gl_stream_command_count) (i32.const 1)))
@@ -506,8 +512,9 @@
     (global.set $gl_immediate_floats (i32.const 0))
     (global.set $gl_immediate_has_source (i32.const 0))
     (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
-    (local.set $boundary (i32.or (i32.ne (i32.load offset=4108 (global.get $gl_sw_st)) (i32.const 0x1b02))
-      (i32.ne (i32.load offset=4112 (global.get $gl_sw_st)) (i32.const 0x1b02))))
+    (local.set $boundary (i32.or (i32.ne (call $gl_sf_mode) (i32.const 0x1c00))
+      (i32.or (i32.ne (i32.load offset=4108 (global.get $gl_sw_st)) (i32.const 0x1b02))
+        (i32.ne (i32.load offset=4112 (global.get $gl_sw_st)) (i32.const 0x1b02)))))
     (if (i32.and (local.get $boundary) (i32.le_u (i32.sub (local.get $mode) (i32.const 4)) (i32.const 5))) (then
       (call $gl_edge_finish (local.get $count) (local.get $mode)) (return (i32.const 1))))
     (local.set $flat (i32.eq (global.get $gl_shade_model) (i32.const 0x1D00)))
@@ -905,6 +912,8 @@
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
     (local $error i32)
     (local $source_guest i32) (local $source_stack i32) (local $source_p i32) (local $source_last i32)
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10020)) (i32.const 7)) (then
+      (return (call $gl_sf_command (local.get $op) (local.get $stack)))))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 0x10010)) (i32.const 4)) (then
       (call $gl_eval_execute (local.get $op) (local.get $stack)) (return (i32.const 0))))
     ;; Private transaction entry. Never bind or query the foreign source.
@@ -956,6 +965,8 @@
         (call $gl_pixel_map_get (local.get $op) (local.get $stack)) (return (i32.const 0))))
       (call $gl_1d_span (i32.load offset=12 (local.get $stack))
         (i32.mul (i32.load offset=8 (local.get $stack)) (select (i32.const 2) (i32.const 4) (i32.eq (local.get $op) (i32.const 165)))))))
+    (if (call $gl_sf_query (local.get $op) (local.get $stack))
+      (then (return (i32.const 0))))
     (if (call $gl_eval_query (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
     (if (call $gl_pointer_query (local.get $op) (local.get $stack))
@@ -997,6 +1008,13 @@
       (then (return (global.get $gl_list_result))))
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
+    (if (i32.and (i32.eq (local.get $op) (i32.const 2))
+        (i32.ne (call $gl_sf_mode) (i32.const 0x1c00))) (then
+      (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+        (then (call $gl_list_error (call $gl_list_context) (i32.const 0x502)))
+        (else (if (i32.and (i32.load offset=4 (local.get $stack)) (i32.const 0xffffb8ff))
+          (then (call $gl_list_error (call $gl_list_context) (i32.const 0x501))))))
+      (return (i32.const 0))))
     (if (call $gl_eval_enable (local.get $op) (local.get $stack)) (then (return (i32.const 0))))
     (call $gl_eval_attrib (local.get $op) (local.get $stack))
     (if (i32.le_u (i32.sub (local.get $op) (i32.const 169)) (i32.const 2)) (then
@@ -1043,6 +1061,7 @@
     (if (i32.eq (local.get $op) (i32.const 43)) (then (call $gl_texture_delete (local.get $stack))))
     (call $gl_mtx_observe (local.get $op) (local.get $stack))
     ;; glClear/glClearColor for the WAT software target; inert when it is off.
+    (call $gl_sf_observe (local.get $op) (local.get $stack))
     (call $gl_sw_observe (local.get $op) (local.get $stack))
     (call $gl_period_observe (local.get $op) (local.get $stack))
     (call $gl_hint_observe (local.get $op) (local.get $stack))

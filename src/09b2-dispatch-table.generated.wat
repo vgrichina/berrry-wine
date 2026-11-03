@@ -3971,6 +3971,7 @@
     (if (i32.eq (local.get $id) (i32.const 4267)) (then (return (i32.const 1)))) ;; glEvalMesh2
     (if (i32.eq (local.get $id) (i32.const 4268)) (then (return (i32.const 1)))) ;; glEvalPoint1
     (if (i32.eq (local.get $id) (i32.const 4269)) (then (return (i32.const 1)))) ;; glEvalPoint2
+    (if (i32.eq (local.get $id) (i32.const 4270)) (then (return (i32.const 1)))) ;; glFeedbackBuffer
     (if (i32.eq (local.get $id) (i32.const 4271)) (then (return (i32.const 1)))) ;; glFogiv
     (if (i32.eq (local.get $id) (i32.const 4272)) (then (return (i32.const 1)))) ;; glGenLists
     (if (i32.eq (local.get $id) (i32.const 4273)) (then (return (i32.const 1)))) ;; glGetBooleanv
@@ -3998,6 +3999,7 @@
     (if (i32.eq (local.get $id) (i32.const 4298)) (then (return (i32.const 1)))) ;; glGetTexLevelParameteriv
     (if (i32.eq (local.get $id) (i32.const 4299)) (then (return (i32.const 1)))) ;; glGetTexParameterfv
     (if (i32.eq (local.get $id) (i32.const 4300)) (then (return (i32.const 1)))) ;; glGetTexParameteriv
+    (if (i32.eq (local.get $id) (i32.const 4313)) (then (return (i32.const 1)))) ;; glInitNames
     (if (i32.eq (local.get $id) (i32.const 4314)) (then (return (i32.const 1)))) ;; glInterleavedArrays
     (if (i32.eq (local.get $id) (i32.const 4315)) (then (return (i32.const 1)))) ;; glIsList
     (if (i32.eq (local.get $id) (i32.const 4316)) (then (return (i32.const 1)))) ;; glIsTexture
@@ -4008,6 +4010,7 @@
     (if (i32.eq (local.get $id) (i32.const 4321)) (then (return (i32.const 1)))) ;; glLineStipple
     (if (i32.eq (local.get $id) (i32.const 4322)) (then (return (i32.const 1)))) ;; glListBase
     (if (i32.eq (local.get $id) (i32.const 4323)) (then (return (i32.const 1)))) ;; glLoadMatrixd
+    (if (i32.eq (local.get $id) (i32.const 4324)) (then (return (i32.const 1)))) ;; glLoadName
     (if (i32.eq (local.get $id) (i32.const 4326)) (then (return (i32.const 1)))) ;; glLogicOp
     (if (i32.eq (local.get $id) (i32.const 4327)) (then (return (i32.const 1)))) ;; glMap1d
     (if (i32.eq (local.get $id) (i32.const 4328)) (then (return (i32.const 1)))) ;; glMap1f
@@ -4032,6 +4035,7 @@
     (if (i32.eq (local.get $id) (i32.const 4351)) (then (return (i32.const 1)))) ;; glNormal3iv
     (if (i32.eq (local.get $id) (i32.const 4352)) (then (return (i32.const 1)))) ;; glNormal3s
     (if (i32.eq (local.get $id) (i32.const 4353)) (then (return (i32.const 1)))) ;; glNormal3sv
+    (if (i32.eq (local.get $id) (i32.const 4354)) (then (return (i32.const 1)))) ;; glPassThrough
     (if (i32.eq (local.get $id) (i32.const 4355)) (then (return (i32.const 1)))) ;; glPixelMapfv
     (if (i32.eq (local.get $id) (i32.const 4356)) (then (return (i32.const 1)))) ;; glPixelMapuiv
     (if (i32.eq (local.get $id) (i32.const 4357)) (then (return (i32.const 1)))) ;; glPixelMapusv
@@ -4041,8 +4045,10 @@
     (if (i32.eq (local.get $id) (i32.const 4361)) (then (return (i32.const 1)))) ;; glPixelZoom
     (if (i32.eq (local.get $id) (i32.const 4362)) (then (return (i32.const 1)))) ;; glPolygonStipple
     (if (i32.eq (local.get $id) (i32.const 4363)) (then (return (i32.const 1)))) ;; glPopClientAttrib
+    (if (i32.eq (local.get $id) (i32.const 4364)) (then (return (i32.const 1)))) ;; glPopName
     (if (i32.eq (local.get $id) (i32.const 4365)) (then (return (i32.const 1)))) ;; glPrioritizeTextures
     (if (i32.eq (local.get $id) (i32.const 4366)) (then (return (i32.const 1)))) ;; glPushClientAttrib
+    (if (i32.eq (local.get $id) (i32.const 4367)) (then (return (i32.const 1)))) ;; glPushName
     (if (i32.eq (local.get $id) (i32.const 4368)) (then (return (i32.const 1)))) ;; glRasterPos2d
     (if (i32.eq (local.get $id) (i32.const 4369)) (then (return (i32.const 1)))) ;; glRasterPos2dv
     (if (i32.eq (local.get $id) (i32.const 4370)) (then (return (i32.const 1)))) ;; glRasterPos2f
@@ -4075,7 +4081,9 @@
     (if (i32.eq (local.get $id) (i32.const 4397)) (then (return (i32.const 1)))) ;; glRectiv
     (if (i32.eq (local.get $id) (i32.const 4398)) (then (return (i32.const 1)))) ;; glRects
     (if (i32.eq (local.get $id) (i32.const 4399)) (then (return (i32.const 1)))) ;; glRectsv
+    (if (i32.eq (local.get $id) (i32.const 4400)) (then (return (i32.const 1)))) ;; glRenderMode
     (if (i32.eq (local.get $id) (i32.const 4401)) (then (return (i32.const 1)))) ;; glScaled
+    (if (i32.eq (local.get $id) (i32.const 4402)) (then (return (i32.const 1)))) ;; glSelectBuffer
     (if (i32.eq (local.get $id) (i32.const 4403)) (then (return (i32.const 1)))) ;; glStencilFunc
     (if (i32.eq (local.get $id) (i32.const 4404)) (then (return (i32.const 1)))) ;; glStencilMask
     (if (i32.eq (local.get $id) (i32.const 4405)) (then (return (i32.const 1)))) ;; glStencilOp
@@ -4152,7 +4160,6 @@
     (if (i32.eq (local.get $id) (i32.const 4216)) (then (return (i32.const 1)))) ;; glClearIndex
     (if (i32.eq (local.get $id) (i32.const 4245)) (then (return (i32.const 1)))) ;; glColorSubTableEXT
     (if (i32.eq (local.get $id) (i32.const 4246)) (then (return (i32.const 1)))) ;; glColorTableEXT
-    (if (i32.eq (local.get $id) (i32.const 4270)) (then (return (i32.const 1)))) ;; glFeedbackBuffer
     (if (i32.eq (local.get $id) (i32.const 4275)) (then (return (i32.const 1)))) ;; glGetColorTableEXT
     (if (i32.eq (local.get $id) (i32.const 4276)) (then (return (i32.const 1)))) ;; glGetColorTableParameterfvEXT
     (if (i32.eq (local.get $id) (i32.const 4277)) (then (return (i32.const 1)))) ;; glGetColorTableParameterivEXT
@@ -4168,18 +4175,11 @@
     (if (i32.eq (local.get $id) (i32.const 4310)) (then (return (i32.const 1)))) ;; glIndexsv
     (if (i32.eq (local.get $id) (i32.const 4311)) (then (return (i32.const 1)))) ;; glIndexub
     (if (i32.eq (local.get $id) (i32.const 4312)) (then (return (i32.const 1)))) ;; glIndexubv
-    (if (i32.eq (local.get $id) (i32.const 4313)) (then (return (i32.const 1)))) ;; glInitNames
-    (if (i32.eq (local.get $id) (i32.const 4324)) (then (return (i32.const 1)))) ;; glLoadName
     (if (i32.eq (local.get $id) (i32.const 4325)) (then (return (i32.const 1)))) ;; glLockArraysEXT
     (if (i32.eq (local.get $id) (i32.const 4336)) (then (return (i32.const 1)))) ;; glMultiTexCoord1fARB
     (if (i32.eq (local.get $id) (i32.const 4337)) (then (return (i32.const 1)))) ;; glMultiTexCoord1fvARB
     (if (i32.eq (local.get $id) (i32.const 4339)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fARB
     (if (i32.eq (local.get $id) (i32.const 4340)) (then (return (i32.const 1)))) ;; glMultiTexCoord3fvARB
-    (if (i32.eq (local.get $id) (i32.const 4354)) (then (return (i32.const 1)))) ;; glPassThrough
-    (if (i32.eq (local.get $id) (i32.const 4364)) (then (return (i32.const 1)))) ;; glPopName
-    (if (i32.eq (local.get $id) (i32.const 4367)) (then (return (i32.const 1)))) ;; glPushName
-    (if (i32.eq (local.get $id) (i32.const 4400)) (then (return (i32.const 1)))) ;; glRenderMode
-    (if (i32.eq (local.get $id) (i32.const 4402)) (then (return (i32.const 1)))) ;; glSelectBuffer
     (if (i32.eq (local.get $id) (i32.const 4446)) (then (return (i32.const 1)))) ;; glUnlockArraysEXT
     (if (i32.eq (local.get $id) (i32.const 4470)) (then (return (i32.const 1)))) ;; wglCreateLayerContext
     (if (i32.eq (local.get $id) (i32.const 4471)) (then (return (i32.const 1)))) ;; wglSwapIntervalEXT
@@ -21898,7 +21898,7 @@
       (return)
     ) ;; 4270: glFeedbackBuffer
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glFeedbackBuffer_sf)
       (call $gl_object_leave)
       (return)
     ) ;; 4271: glFogiv
@@ -22113,7 +22113,7 @@
       (return)
     ) ;; 4313: glInitNames
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glInitNames_sf)
       (call $gl_object_leave)
       (return)
     ) ;; 4314: glInterleavedArrays
@@ -22168,7 +22168,7 @@
       (return)
     ) ;; 4324: glLoadName
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glLoadName_sf)
       (call $gl_object_leave)
       (return)
     ) ;; 4325: glLockArraysEXT
@@ -22576,7 +22576,7 @@
       (return)
     ) ;; 4354: glPassThrough
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glPassThrough_sf)
       (call $gl_object_leave)
       (return)
     ) ;; 4355: glPixelMapfv
@@ -22626,7 +22626,7 @@
       (return)
     ) ;; 4364: glPopName
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glPopName_sf)
       (call $gl_object_leave)
       (return)
     ) ;; 4365: glPrioritizeTextures
@@ -22641,7 +22641,7 @@
       (return)
     ) ;; 4367: glPushName
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glPushName_sf)
       (call $gl_object_leave)
       (return)
     ) ;; 4368: glRasterPos2d
@@ -22806,7 +22806,7 @@
       (return)
     ) ;; 4400: glRenderMode
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glRenderMode_sf)
       (call $gl_object_leave)
       (return)
     ) ;; 4401: glScaled
@@ -22816,7 +22816,7 @@
       (return)
     ) ;; 4402: glSelectBuffer
       (call $gl_object_enter)
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_glSelectBuffer_sf)
       (call $gl_object_leave)
       (return)
     ) ;; 4403: glStencilFunc

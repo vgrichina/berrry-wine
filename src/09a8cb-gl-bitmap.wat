@@ -178,7 +178,9 @@
     ;; Euclidean distance in eye space, after dehomogenization.
     (call $gl_sw_dehomogenize (local.get $eye))
     (f32.store offset=264 (local.get $ctx) (f32.sqrt (call $gl_sw_dot3 (local.get $eye) (local.get $eye))))
-    (i32.store offset=40 (local.get $ctx) (i32.const 1)))
+    (i32.store offset=40 (local.get $ctx) (i32.const 1))
+    (if (i32.eq (call $gl_sf_mode) (i32.const 0x1c02)) (then
+      (call $gl_sf_hit (f64.promote_f32 (f32.load offset=52 (local.get $ctx)))))))
 
   (func $gl_bitmap_draw (param $ctx i32) (param $stack i32) (param $bits i32)
     (local $w i32) (local $h i32) (local $x i32) (local $y i32) (local $start i32)
@@ -187,6 +189,11 @@
       (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return)))
     (if (i32.eqz (i32.load offset=40 (local.get $ctx))) (then (return)))
     (local.set $w (i32.load offset=4 (local.get $stack)))
+    (if (i32.ne (call $gl_sf_mode) (i32.const 0x1c00)) (then
+      (call $gl_sf_raster (local.get $ctx) (f32.const 1796))
+      (f32.store offset=44 (local.get $ctx) (f32.add (f32.load offset=44 (local.get $ctx)) (f32.load offset=20 (local.get $stack))))
+      (f32.store offset=48 (local.get $ctx) (f32.add (f32.load offset=48 (local.get $ctx)) (f32.load offset=24 (local.get $stack))))
+      (return)))
     (local.set $h (i32.load offset=8 (local.get $stack)))
     (local.set $ox (f32.floor (f32.sub (f32.load offset=44 (local.get $ctx)) (f32.load offset=12 (local.get $stack)))))
     (local.set $oy (f32.floor (f32.sub (f32.load offset=48 (local.get $ctx)) (f32.load offset=16 (local.get $stack)))))
@@ -754,8 +761,9 @@
           (local.set $light (global.get $gl_sw_light_block))
           (call $gl_sw_light_setup (local.get $b))
           ;; Use global evaluator scratch, leaving input and eye position intact.
-          (call $gl_sw_sphere_evaluate (i32.add (local.get $ctx) (i32.const 680))
-            (i32.add (global.get $gl_sw_scratch) (i32.const 0x700)) (i32.const 1))
+          (call $gl_sw_sphere_evaluate
+            (select (local.get $vertex) (i32.add (local.get $ctx) (i32.const 680)) (global.get $gl_sf_active))
+            (i32.add (global.get $gl_sw_scratch) (i32.const 0x700)) (i32.eqz (global.get $gl_sf_active)))
           (global.set $gl_sw_light_block (local.get $light))
           (f32.store (i32.add (local.get $v) (i32.shl (local.get $i) (i32.const 2)))
             (f32.load (i32.add (global.get $gl_sw_scratch) (i32.add (i32.const 0x710) (i32.shl (local.get $i) (i32.const 2)))))))

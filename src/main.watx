@@ -87,6 +87,7 @@
   (include "09a8cc-gl-stipple.wat")
   (include "09a8cd-gl-color-mask.wat")
   (include "09a8cd-gl-evaluators.wat")
+  (include "09a8ce-gl-selection.wat")
 (include "09a8d-gl-abi.generated.wat")
 (include "09a8e-gl-state.wat")
 (include "09a8f-gl-matrix.wat")
