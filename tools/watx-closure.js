@@ -66,6 +66,8 @@ function watxSourceClosure() {
 // whole purpose is to move the memory map and see what breaks, and it reaches
 // the region allocator and nothing else. Absent, it is not passed at all.
 function compileClosure(closure, { tailCalls, regionShake, nameSection, frontendReuse } = {}) {
+  const { isRuntimeClosure, protectClosure } = require('./protected-writer-entries.js');
+  if (isRuntimeClosure(closure)) closure = protectClosure(closure);
   const { compile } = require(path.join(__dirname, 'watx.js'));
   const options = {
     mode: 'production',

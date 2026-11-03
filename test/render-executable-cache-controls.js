@@ -17,10 +17,11 @@ module.exports = async function executableCacheControls({ inputRoot, loaderRoot 
   function pass(label) { checks++; console.log(`PASS executable ${label}`); }
   try {
     for (const file of ['test/render-helper.js', 'test/render-artifact.js', 'test/compile-src.js',
-      'tools/watx-closure.js', 'tools/watx.js', 'lib/wat-manifest.js'])
+      'tools/watx-closure.js', 'tools/protected-writer-entries.js', 'tools/watx.js', 'lib/wat-manifest.js'])
       put(file, fs.readFileSync(path.join(file === 'tools/watx.js' && loaderRoot ? loaderRoot : root, file)));
     put('src/main.watx', '(module (include "13-exports.wat"))');
-    put('src/13-exports.wat', 'BASE');
+    const armedGlobal = '(global $rep_store_step (mut i32) (i32.const 0))\n';
+    put('src/13-exports.wat', armedGlobal + 'BASE');
     put('tools/watx-src/compiler-parser.js', 'function watxSourceTextFromBytes(b){return b.toString("utf8")}');
     put('tools/watx-src/compiler-stages.js', '// tiny stage');
     put('tools/watx-src/compiler-codegen.js', '// tiny codegen');
@@ -29,7 +30,9 @@ module.exports = async function executableCacheControls({ inputRoot, loaderRoot 
         if(source!=='(module (include "13-exports.wat"))')throw Error('entry mismatch');
         const base=vfs.get('13-exports.wat');
         if(base!==vfs.get('src/13-exports.wat')||base!==vfs.get('./13-exports.wat'))throw Error('alias mismatch');
-        if(base!=='BASE\\nEXTRA\\n'&&base!=='BASE CHANGED\\nEXTRA\\n')throw Error('extraWat mismatch');
+        const prefix=${JSON.stringify(armedGlobal)};
+        const suffix='\\nEXTRA\\n\\n;; Protected external entry wrappers; internal calls retain their targets.\\n\\n';
+        if(base!==prefix+'BASE'+suffix&&base!==prefix+'BASE CHANGED'+suffix)throw Error('extraWat mismatch');
         if(options.mode!=='production'||!options.standardWat||options.runtimeBuiltins!==false||
            !options.strictDeclarations||typeof options.tailCalls!=='boolean')throw Error('canonical options mismatch');
         return {success:true,wasmBinary:Uint8Array.from([0,97,115,109,1,0,0,${marker}+(base.includes('CHANGED')?10:0)+(options.tailCalls?0:20)])};
@@ -73,9 +76,9 @@ module.exports = async function executableCacheControls({ inputRoot, loaderRoot 
     put('tools/watx.js', loader + '\nconst prior=module.exports.compile;module.exports.compile=(...a)=>{const r=prior(...a);r.wasmBinary[7]+=3;return r};');
     await expectMarker(5);
     pass('changed actual loader executes new wrapper marker 5');
-    put('src/13-exports.wat', 'BASE CHANGED');
+    put('src/13-exports.wat', armedGlobal + 'BASE CHANGED');
     await expectMarker(15);
-    put('src/13-exports.wat', 'BASE');
+    put('src/13-exports.wat', armedGlobal + 'BASE');
     await expectMarker(5);
     assert.equal((await boot({ ...opts, tailCalls: false })).exports.marker, 25);
     pass('changed source and tailCalls compile exact new VFS/options');
@@ -91,7 +94,7 @@ module.exports = async function executableCacheControls({ inputRoot, loaderRoot 
     assert.equal(heldCompile.compileSrcWasm(transform)[7], 1);
     pass('changed compile-src and closure execute new code; prepare/consume marker 17 matches');
 
-    for (const file of ['test/compile-src.js', 'tools/watx-closure.js', 'tools/watx.js', 'tools/watx-src/compiler.js']) {
+    for (const file of ['test/compile-src.js', 'tools/watx-closure.js', 'tools/protected-writer-entries.js', 'tools/watx.js', 'tools/watx-src/compiler.js']) {
       const good = get(file), before = hostCalls;
       put(file, 'throw Error("changed executable sentinel")');
       await assert.rejects(async () => boot(opts), /changed executable sentinel/);

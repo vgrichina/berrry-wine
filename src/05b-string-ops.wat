@@ -20,6 +20,9 @@
   ;; The byte fallback also preserves memmove overlap semantics.
   (func $guest_memmove (param $dst i32) (param $src i32) (param $size i32)
     (local $i i32) (local $chunk i32) (local $remaining i32)
+    ;; This bulk API has no architectural REP continuation. Refuse it before
+    ;; any notification/store in the opt-in REP debugger mode.
+    (if (global.get $rep_store_step) (then (unreachable)))
     (if (i32.eqz (local.get $size)) (then (return)))
     ;; One destination notification covers both linear and chunked copies.
     (call $invalidate_code_write (local.get $dst) (local.get $size))
@@ -90,6 +93,7 @@
 
   (func $guest_memset (param $dst i32) (param $value i32) (param $size i32)
     (local $i i32) (local $chunk i32)
+    (if (global.get $rep_store_step) (then (unreachable)))
     (if (i32.eqz (local.get $size)) (then (return)))
     (call $invalidate_code_write (local.get $dst) (local.get $size))
     (if (call $string_guest_range_contiguous (local.get $dst) (local.get $size))
@@ -180,6 +184,8 @@
   (func $rep_movs_mem (param $edi i32) (param $esi i32) (param $n i32) (param $w i32)
     (local $bytes i32) (local $dst i32) (local $src i32) (local $step i32)
     (local $i i32) (local $d i32) (local $s i32)
+    ;; Direct optimized-tier callers have no per-element continuation here.
+    (if (global.get $rep_store_step) (then (unreachable)))
     (local.set $bytes (i32.mul (local.get $n) (local.get $w)))
     (local.set $dst (local.get $edi))
     (local.set $src (local.get $esi))
@@ -247,6 +253,7 @@
   (func $rep_stos_mem (param $edi i32) (param $n i32) (param $w i32) (param $v i64)
     (local $bytes i32) (local $dst i32) (local $step i32) (local $i i32) (local $d i32)
     (local $b i32) (local $wa i32) (local $k i32) (local $c i32) (local $mask i64)
+    (if (global.get $rep_store_step) (then (unreachable)))
     (local.set $bytes (i32.mul (local.get $n) (local.get $w)))
     (local.set $dst (local.get $edi))
     (local.set $step (local.get $w))
@@ -298,6 +305,105 @@
           (local.set $i (i32.add (local.get $i) (i32.const 1)))
           (br $fill))))))
 
+  ;; Asynchronous SEH must abandon this decoded stream BEFORE the failed
+  ;; element. The op carries the prefix PC rather than the enclosing block PC.
+  ;; Publish progress after each complete element, never after a partial store.
+  ;; Return 1 after a fault redirect; callers must not dispatch the terminator.
+  (func $rep_fault_checked (param $w i32) (param $movs i32) (param $pc i32) (result i32)
+    (local $s i32) (local $d i32) (local $i i32) (local $a i32)
+    (local $v i32) (local $step i32) (local $write i32)
+    (local.set $step (select (i32.sub (i32.const 0) (local.get $w))
+                            (local.get $w) (global.get $df)))
+    (block $done (loop $elements
+      (br_if $done (i32.eqz (i32.load offset=4 (global.get $reg_base))))
+      (local.set $s (i32.load offset=24 (global.get $reg_base)))
+      (local.set $d (i32.load offset=28 (global.get $reg_base)))
+      ;; Source is checked first, as on x86 MOVS. Check the WHOLE element
+      ;; before a destination store, including unaligned page straddles.
+      (local.set $write (i32.eqz (local.get $movs)))
+      (block $mapped (loop $operands
+        (local.set $i (i32.const 0))
+        (loop $bytes
+          (local.set $a (i32.add (select (local.get $d) (local.get $s) (local.get $write)) (local.get $i)))
+          (if (i32.eqz (call $guest_addr_mapped (local.get $a))) (then
+            (global.set $eip (local.get $pc))
+            (global.set $fault_address (local.get $a))
+            (global.set $rep_fault_write (local.get $write))
+            (call $raise_exception (i32.const 0xC0000005))
+            (global.set $rep_fault_write (i32.const 0))
+            (return (i32.const 1))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $bytes (i32.lt_u (local.get $i) (local.get $w))))
+        (br_if $mapped (local.get $write))
+        (local.set $write (i32.const 1))
+        (br $operands)))
+      (local.set $v (i32.load (global.get $reg_base)))
+      (if (local.get $movs) (then
+        (local.set $v (if (result i32) (i32.eq (local.get $w) (i32.const 1))
+          (then (call $gl8 (local.get $s)))
+          (else (if (result i32) (i32.eq (local.get $w) (i32.const 2))
+            (then (call $gl16 (local.get $s))) (else (call $gl32 (local.get $s)))))))))
+      (if (i32.eq (local.get $w) (i32.const 1))
+        (then (call $gs8 (local.get $d) (local.get $v)))
+        (else (if (i32.eq (local.get $w) (i32.const 2))
+          (then (call $gs16 (local.get $d) (local.get $v)))
+          (else (call $gs32 (local.get $d) (local.get $v))))))
+      (if (local.get $movs) (then
+        (i32.store offset=24 (global.get $reg_base) (i32.add (local.get $s) (local.get $step)))))
+      (i32.store offset=28 (global.get $reg_base) (i32.add (local.get $d) (local.get $step)))
+      (i32.store offset=4 (global.get $reg_base)
+        (i32.sub (i32.load offset=4 (global.get $reg_base)) (i32.const 1)))
+      (br $elements)))
+    (i32.const 0))
+
+  ;; Return 1 with a partially completed REP, 0 when its terminator may run.
+  ;; This path deliberately avoids bulk memory helpers. Each element is one
+  ;; x86 store, including an unaligned element overlapping a watched field.
+  ;; All bytes must already be mapped: synchronous SEH/reentrant callbacks
+  ;; cannot be safely interrupted by this primitive and are rejected BEFORE
+  ;; the element. The ordinary, unarmed fault behavior is unchanged.
+  (func $rep_store_step_do (param $w i32) (param $movs i32) (result i32)
+    (local $n i32) (local $s i32) (local $d i32) (local $v i32)
+    (local $i i32) (local $step i32)
+    (if (global.get $code16) (then (unreachable)))
+    (local.set $n (i32.load offset=4 (global.get $reg_base)))
+    (if (i32.eqz (local.get $n)) (then (return (i32.const 0))))
+    (local.set $s (i32.load offset=24 (global.get $reg_base)))
+    (local.set $d (i32.load offset=28 (global.get $reg_base)))
+    (block $checked (loop $check
+      (br_if $checked (i32.ge_u (local.get $i) (local.get $w)))
+      (if (i32.eqz (call $guest_addr_mapped (i32.add (local.get $d) (local.get $i))))
+        (then (unreachable)))
+      (if (local.get $movs) (then
+        (if (i32.eqz (call $guest_addr_mapped (i32.add (local.get $s) (local.get $i))))
+          (then (unreachable)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $check)))
+    (local.set $v (i32.load (global.get $reg_base)))
+    (if (local.get $movs) (then
+      (local.set $v
+        (if (result i32) (i32.eq (local.get $w) (i32.const 1))
+          (then (call $gl8 (local.get $s)))
+          (else (if (result i32) (i32.eq (local.get $w) (i32.const 2))
+            (then (call $gl16 (local.get $s)))
+            (else (call $gl32 (local.get $s)))))))))
+    (if (i32.eq (local.get $w) (i32.const 1))
+      (then (call $gs8 (local.get $d) (local.get $v)))
+      (else (if (i32.eq (local.get $w) (i32.const 2))
+        (then (call $gs16 (local.get $d) (local.get $v)))
+        (else (call $gs32 (local.get $d) (local.get $v))))))
+    (local.set $step (select (i32.sub (i32.const 0) (local.get $w))
+                            (local.get $w) (global.get $df)))
+    (if (local.get $movs) (then
+      (i32.store offset=24 (global.get $reg_base) (i32.add (local.get $s) (local.get $step)))))
+    (i32.store offset=28 (global.get $reg_base) (i32.add (local.get $d) (local.get $step)))
+    (local.set $n (i32.sub (local.get $n) (i32.const 1)))
+    (i32.store offset=4 (global.get $reg_base) (local.get $n))
+    ;; Force a host observation even if the watched word did not change.
+    ;; Only the final element runs the ordinary fallthrough terminator.
+    (global.set $block_budget (i32.const 0))
+    (i32.ne (local.get $n) (i32.const 0)))
+
   ;; The register half, on the globals: ESI/EDI move by the whole extent in
   ;; the DF direction and ECX ends at zero; a zero count touches nothing.
   (func $rep_movs_do (param $w i32)
@@ -330,16 +436,36 @@
   (func $rep_stosb_do (call $rep_stos_do (i32.const 1)))
   (func $rep_stosd_do (call $rep_stos_do (i32.const 4)))
   (func $th_rep_movsb (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (call $rep_movsb_do)
+     (local $nx_fn i32) (local $nx_op i32)
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+      (then (if (call $rep_fault_checked (i32.const 1) (i32.const 1) (local.get $op)) (then (return))) (dispatch-next)))
+    (if (global.get $rep_store_step)
+      (then (if (call $rep_store_step_do (i32.const 1) (i32.const 1)) (then (return))))
+      (else (call $rep_movsb_do)))
     (dispatch-next))
   (func $th_rep_movsd (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (call $rep_movsd_do)
+     (local $nx_fn i32) (local $nx_op i32)
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+      (then (if (call $rep_fault_checked (i32.const 4) (i32.const 1) (local.get $op)) (then (return))) (dispatch-next)))
+    (if (global.get $rep_store_step)
+      (then (if (call $rep_store_step_do (i32.const 4) (i32.const 1)) (then (return))))
+      (else (call $rep_movsd_do)))
     (dispatch-next))
   (func $th_rep_stosb (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (call $rep_stosb_do)
+     (local $nx_fn i32) (local $nx_op i32)
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+      (then (if (call $rep_fault_checked (i32.const 1) (i32.const 0) (local.get $op)) (then (return))) (dispatch-next)))
+    (if (global.get $rep_store_step)
+      (then (if (call $rep_store_step_do (i32.const 1) (i32.const 0)) (then (return))))
+      (else (call $rep_stosb_do)))
     (dispatch-next))
   (func $th_rep_stosd (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (call $rep_stosd_do)
+     (local $nx_fn i32) (local $nx_op i32)
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+      (then (if (call $rep_fault_checked (i32.const 4) (i32.const 0) (local.get $op)) (then (return))) (dispatch-next)))
+    (if (global.get $rep_store_step)
+      (then (if (call $rep_store_step_do (i32.const 4) (i32.const 0)) (then (return))))
+      (else (call $rep_stosd_do)))
     (dispatch-next))
   (func $th_cmpsb (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $a i32) (local $b i32)

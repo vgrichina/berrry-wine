@@ -35,7 +35,7 @@ let source = names.map(form).join('\n').replaceAll('(region.addr $WIN16_PROCESS_
 const globals = { WIN16_ARENA: 0x100000, WIN16_SEG_MAX: 943, DLL_LOAD_LOCK: 512,
   image_base: 0x400000, GUEST_BASE: RegionMap.BASE.GUEST_BASE, NULL_SENTINEL: 0xf0,
   DIB_GUEST_BASE: 0x50000000, DIB_GUEST_CAPACITY: 0x10000, DIB_BACKING_BASE: 0x80000,
-  host_shadow: 0, uwc_on: 0 };
+  host_shadow: 0, lock_identity: 0, uwc_on: 0 };
 source = `
 (import "host" "memory" (memory 1024 1024 shared))
 (import "host" "current_thread_id" (global $current_thread_id i32))

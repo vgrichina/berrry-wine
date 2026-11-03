@@ -64,7 +64,8 @@ function snapshot({ extraWat = '', tailCalls = true } = {}) {
   // Merely hashing bytes must never load watx.js (which evaluates the compiler).
   const files = [
     'test/render-helper.js', 'test/render-artifact.js', 'test/compile-src.js',
-    'tools/watx-closure.js', 'tools/watx.js', 'lib/wat-manifest.js',
+    'tools/watx-closure.js', 'tools/protected-writer-entries.js',
+    'tools/watx.js', 'lib/wat-manifest.js',
   ];
   for (const f of fs.readdirSync(path.join(ROOT, 'src')).sort()) {
     if (/\.(wat|watx)$/.test(f)) files.push(`src/${f}`);

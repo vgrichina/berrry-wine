@@ -23,7 +23,7 @@ const originalLoad = Module._load, originalWasm = global.WebAssembly;
 const originalEnv = { ...process.env };
 let compilerDenied = false, deniedImports = 0, instantiations = 0;
 try {
-  for (const file of ['test/render-helper.js', 'test/render-artifact.js', 'test/compile-src.js', 'lib/wat-manifest.js']) copy(file);
+  for (const file of ['test/render-helper.js', 'test/render-artifact.js', 'test/compile-src.js', 'lib/wat-manifest.js', 'tools/protected-writer-entries.js']) copy(file);
   put('src/main.watx', '(include "13-exports.wat")\n');
   put('src/13-exports.wat', ';; fixture exports\n');
   put('tools/watx.js', 'throw new Error("full compiler must never load in protocol tests");');
@@ -97,7 +97,7 @@ process.on('beforeExit',()=>{throw Error('prepare failed to exit before test bod
   }
   ok('changed extraWat rejects', () => assert.throws(() => protocol.consumeArtifact(artifact, { ...options, extraWat: options.extraWat + ' ' }), /provenance/));
   ok('changed tailCalls rejects', () => assert.throws(() => protocol.consumeArtifact(artifact, { ...options, tailCalls: false }), /provenance/));
-  for (const file of ['src/13-exports.wat', 'src/main.watx', 'tools/watx-src/compiler.js', 'tools/watx.js', 'tools/watx-closure.js', 'test/compile-src.js', 'test/render-helper.js']) {
+  for (const file of ['src/13-exports.wat', 'src/main.watx', 'tools/watx-src/compiler.js', 'tools/watx.js', 'tools/watx-closure.js', 'tools/protected-writer-entries.js', 'test/compile-src.js', 'test/render-helper.js']) {
     const good = fs.readFileSync(path.join(temp, file));
     reject(`changed ${file} rejects without cached identity`, () => put(file, Buffer.concat([good, Buffer.from('\n;;change')])), () => put(file, good), /provenance/);
   }

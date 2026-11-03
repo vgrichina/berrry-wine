@@ -513,8 +513,24 @@
     (dispatch-next))
 
   ;; --- Stack ---
+  ;; Protected execution cannot enter g2w's sentinel, trap or reentrant SEH
+  ;; path after changing architectural state. Validate every byte first,
+  ;; including unaligned page boundaries and 32-bit address wrap. A rejected
+  ;; instruction retains EIP/ESP and can be retried after the mapping is fixed.
+  ;; The unarmed fault personality remains the ordinary memory helper's job.
+  (func $scalar_store_preflight (param $addr i32) (param $width i32)
+    (local $i i32)
+    (loop $bytes
+        (if (i32.eqz (call $guest_addr_mapped (i32.add (local.get $addr) (local.get $i))))
+          (then (unreachable)))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $bytes (i32.lt_u (local.get $i) (local.get $width)))))
+
   (func $th_push_r (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $v i32)
+    (if (global.get $rep_store_step) (then
+      (call $scalar_store_preflight
+        (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)) (i32.const 4))))
     (local.set $v (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2)))))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $v))
@@ -3460,7 +3476,13 @@
     (dispatch-next))
   ;; REP MOVSW
   (func $th_rep_movsw (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (block $d (loop $l
+     (local $nx_fn i32) (local $nx_op i32)
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+      (then (if (call $rep_fault_checked (i32.const 2) (i32.const 1) (local.get $op)) (then (return))) (dispatch-next)))
+    (if (global.get $rep_store_step) (then
+      (if (call $rep_store_step_do (i32.const 2) (i32.const 1)) (then (return)))
+      (dispatch-next)))
+    (block $d (loop $l
       (br_if $d (i32.eqz (i32.load offset=4 (global.get $reg_base))))
       (call $gs16 (i32.load offset=28 (global.get $reg_base)) (call $gl16 (i32.load offset=24 (global.get $reg_base))))
       (if (global.get $df)
@@ -3472,7 +3494,13 @@
       (br $l))) (dispatch-next))
   ;; REP STOSW
   (func $th_rep_stosw (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (block $d (loop $l
+     (local $nx_fn i32) (local $nx_op i32)
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+      (then (if (call $rep_fault_checked (i32.const 2) (i32.const 0) (local.get $op)) (then (return))) (dispatch-next)))
+    (if (global.get $rep_store_step) (then
+      (if (call $rep_store_step_do (i32.const 2) (i32.const 0)) (then (return)))
+      (dispatch-next)))
+    (block $d (loop $l
       (br_if $d (i32.eqz (i32.load offset=4 (global.get $reg_base))))
       (call $gs16 (i32.load offset=28 (global.get $reg_base)) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
       (if (global.get $df)

@@ -4691,9 +4691,9 @@
           "$return_eip"
         ]
       ],
-      "sha256": "a158a87a4d7e940449c8f2eca5d36ec789367247571da88ef3ddf09b011a373b",
+      "sha256": "dca31f448d34926aeda148c16ddd972174c72503289e0623b938397cfd26dee8",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Shadow Man exact-candidate source review 2026-10-28: Dispatcher retains existing resource-pin save/restore and callback-continuation redirects. Only added operation clears diagnostic kind before deferred DLL unload can redirect after inner handler. No new owner or EIP target; existing callback/continuation lifetimes remain pending. Ownership remains pending.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Shadow Man exact-candidate source review 2026-10-28: Dispatcher retains existing resource-pin save/restore and callback-continuation redirects. Only added operation clears diagnostic kind before deferred DLL unload can redirect after inner handler. No new owner or EIP target; existing callback/continuation lifetimes remain pending. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -7583,9 +7583,9 @@
           "$handler"
         ]
       ],
-      "sha256": "dc2a70948c66b445b47ed13a92219584de4179947eca12dad5474bcc87f41bd0",
+      "sha256": "0b89ebb1a19eeb8d8f8ab4987530d6171637d0f86c022a927335e6e2dab40954",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -7789,9 +7789,9 @@
           ]
         ]
       ],
-      "sha256": "a42e9ad55b65ae1b134d022679b1373bc6487ebdec660873917481800dbc7a9d",
+      "sha256": "fd131324f06a6cd728789d7186c087f89f22c6cfc2d3c30424c44640f51b9bdb",
       "kind": "host-entry",
-      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth. Shadow Man exact-candidate source review 2026-10-28: Reentrant host entry retains existing budget/API-depth save/restore and thunk auto-pop target. Clears kind/thunk-entry at fresh run and each nonzero loop boundary; brackets explicit thunk dispatch with entry flag; zero branch checks record before null_diag_event increments count and notifies synchronous host observer (return traps). Nested run or deferred unload invalidates attribution; diagnostic globals are not a retained per-invocation stack. No new EIP target/ownership retain; source inventory only, reentry/runtime and original writer remain unqualified. Ownership remains pending.",
+      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth. Shadow Man exact-candidate source review 2026-10-28: Reentrant host entry retains existing budget/API-depth save/restore and thunk auto-pop target. Clears kind/thunk-entry at fresh run and each nonzero loop boundary; brackets explicit thunk dispatch with entry flag; zero branch checks record before null_diag_event increments count and notifies synchronous host observer (return traps). Nested run or deferred unload invalidates attribution; diagnostic globals are not a retained per-invocation stack. No new EIP target/ownership retain; source inventory only, reentry/runtime and original writer remain unqualified. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -9256,6 +9256,23 @@
       "sha256": "b257282bb5a36180a31abd1bf442d4fc3e8395a143add7a31f8f3487c254f09a",
       "kind": "continuation",
       "reason": "WinExec startup readiness 20261103: parks only the current API thunk with the original ESP while its one accepted child reaches GetMessage, exits, or reaches a finite deadline. Host-private frame is owned by the calling thread and retired on existing thread-exit notification before stack reuse. Retry neither restores a retained guest callback nor launches again. Actual-handler old-fail/new-pass and independent invocation/retirement controls retained in scratch/runs/20261103-jedi-startup-readiness; broader invocation ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/05b-string-ops.wat",
+      "name": "$rep_fault_checked",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "local.get",
+          "$pc"
+        ]
+      ],
+      "sha256": "668741f368132e11c6d4b5ef572155b9c1abc051d925045ff38f29b0a46753a4",
+      "kind": "guest-control",
+      "reason": "Candidate REP mode3 preflight: reads mappings, commits architectural progress only after complete element; on absent byte sets prefix EIP/address/intent, raises existing asynchronous exception and returns immediately. No new nested context or retained guest continuation; invocation ownership remains pending.",
       "ownership": "pending"
     }
   ]

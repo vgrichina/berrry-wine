@@ -226,6 +226,9 @@
   ;; The guest address a CPU fault touched, for the access-violation record's
   ;; ExceptionInformation[1]. Set by whoever raises 0xC0000005.
   (global $fault_address (mut i32) (i32.const 0))
+  ;; Precise REP preflight supplies read/write intent for its access violation.
+  ;; Other legacy fault producers retain their existing read classification.
+  (global $rep_fault_write (mut i32) (i32.const 0))
   (global $seh_raw_thunk (mut i32) (i32.const 0))
 
   ;; Does $seh_rec carry an MSVC __except_handler3 extended record? Its +8 is
@@ -259,6 +262,7 @@
     (if (i32.eq (local.get $code) (i32.const 0xC0000005))
       (then
         (call $gs32 (i32.add (local.get $rec) (i32.const 16)) (i32.const 2))
+        (call $gs32 (i32.add (local.get $rec) (i32.const 20)) (global.get $rep_fault_write))
         (call $gs32 (i32.add (local.get $rec) (i32.const 24)) (global.get $fault_address))))
     ;; CONTEXT (x86): CONTEXT_FULL, segments, integer registers, control.
     (call $gs32 (local.get $ctx) (i32.const 0x10007))

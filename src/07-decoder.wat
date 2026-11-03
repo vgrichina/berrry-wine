@@ -2,6 +2,33 @@
   ;; x86 DECODER — Full i486 with ModR/M + SIB
   ;; ============================================================
 
+  ;; Opt-in debugger mode: publish one x86 instruction per decoded block.
+  ;; This is instruction stepping, not a universal write barrier. The optional
+  ;; REP element mode below subdivides MOVS/STOS only; API and host writers
+  ;; still require an exclusive controller that rejects unsupported entries.
+  (global $instruction_watch (mut i32) (i32.const 0))
+  (global $rep_store_step (mut i32) (i32.const 0))
+  (func $set_instruction_watchpoint (export "set_instruction_watchpoint") (param $addr i32)
+    (global.set $rep_store_step (i32.const 0))
+    (global.set $instruction_watch (i32.ne (local.get $addr) (i32.const 0)))
+    (global.set $watch_addr (local.get $addr))
+    (global.set $watch_size (i32.const 4))
+    (global.set $watch_val
+      (if (result i32) (local.get $addr)
+        (then (call $watch_load (local.get $addr))) (else (i32.const 0))))
+    (call $dbg_recompute)
+    ;; Cached fused blocks cannot survive a change of observation granularity.
+    (call $clear_cache))
+
+  ;; Exclusive debugger primitive: a run returns after at most one committed
+  ;; REP MOVS/STOS element, even with a larger block grant. ECX/ESI/EDI are
+  ;; architectural progress; EIP stays at the REP prefix until ECX reaches 0.
+  ;; No predicate is built in: the controller observes every element and must
+  ;; revoke entry on its first loss/error. Zero disarms both stepping modes.
+  (func (export "set_rep_store_step") (param $addr i32)
+    (call $set_instruction_watchpoint (local.get $addr))
+    (global.set $rep_store_step (i32.ne (local.get $addr) (i32.const 0))))
+
   ;; Decode ModR/M + optional SIB + displacement.
   ;; Returns the effective address as a guest virtual address.
   ;; Advances $d_pc (decoder PC, guest addr).
@@ -1277,6 +1304,7 @@
   ;; the program leaves there and the threaded path resumes, so a block that
   ;; ran on over it would be retired by the landing's own publish.
   (func $fuse_stop (param $p i32) (result i32)
+    (if (global.get $instruction_watch) (then (return (i32.const 1))))
     (i32.or (i32.or (call $page_probe (local.get $p))
                     (i32.eq (local.get $p) (global.get $logical_frame_addr)))
             (call $uop_cut_probe (local.get $p))))
@@ -2856,7 +2884,7 @@
     (local.set $done (i32.const 0))
 
     (if (i32.and
-          (global.get $stack_packet_enabled)
+          (i32.and (global.get $stack_packet_enabled) (i32.eqz (global.get $instruction_watch)))
           (i32.eq (local.get $start_eip) (global.get $stack_packet_addr)))
       (then
         ;; Which variant of the packet handler to emit is decided by whoever
@@ -2871,7 +2899,8 @@
     ;; A statically linked MSVC _ftol body becomes the native conversion and
     ;; the body's own RET ($ftol_body_at, 10-helpers.wat). The block covers all
     ;; 39 bytes, so a write to any of them invalidates it like any other block.
-    (if (i32.and (i32.eqz (global.get $code16)) (call $ftol_body_at (local.get $start_eip)))
+    (if (i32.and (i32.eqz (global.get $instruction_watch))
+          (i32.and (i32.eqz (global.get $code16)) (call $ftol_body_at (local.get $start_eip))))
       (then
         (call $te (i32.const 500) (i32.const 0))
         (call $te (i32.const 41) (i32.const 0))
@@ -2948,7 +2977,8 @@
     ;; The micro-op tier (07d): a head with an installed program gets the
     ;; enter op in front of its ordinary threaded code, which stays the
     ;; fallback for everything the program cannot vouch for.
-    (if (i32.and (global.get $uop_enabled) (i32.eqz (local.get $done)))
+    (if (i32.and (i32.eqz (global.get $instruction_watch))
+          (i32.and (global.get $uop_enabled) (i32.eqz (local.get $done))))
       (then
         (local.set $uop_pc (call $uop_map_get (local.get $start_eip)))
         (if (local.get $uop_pc) (then (call $te (i32.const 470) (local.get $uop_pc))))))
@@ -2970,8 +3000,9 @@
       ;; at its head -- try it at a block start, before the ladder fold below
       ;; gets to the ladder that sits inside it. Declining costs one scan and
       ;; leaves that fold to do its (smaller) job.
-      (if (i32.and (i32.eqz (local.get $icount))
-                   (i32.eqz (global.get $code16)))
+      (if (i32.and (i32.eqz (global.get $instruction_watch))
+            (i32.and (i32.eqz (local.get $icount))
+                     (i32.eqz (global.get $code16))))
         (then
           (if (call $try_emit_aoe_span_prefix (local.get $start_eip))
             (then
@@ -3067,6 +3098,29 @@
       (global.set $d_seg (local.get $prefix_seg))
       (global.set $d_addr16 (local.get $prefix_67))
 
+      ;; Explicit protected instruction set. Every admitted instruction has
+      ;; at most one guest store, except MOVS/STOS, which use the element
+      ;; continuation. Do not infer this property from sampling block exits.
+      ;; Unsupported instructions reject during decode before execution.
+      (if (global.get $rep_store_step) (then
+        (if (i32.or (global.get $code16) (local.get $prefix_67)) (then (unreachable)))
+        (block $supported
+          (br_if $supported (i32.and (i32.ge_u (local.get $op) (i32.const 64)) (i32.le_u (local.get $op) (i32.const 95))))
+          (br_if $supported (i32.and (i32.ge_u (local.get $op) (i32.const 136)) (i32.le_u (local.get $op) (i32.const 139))))
+          (br_if $supported (i32.and (i32.ge_u (local.get $op) (i32.const 176)) (i32.le_u (local.get $op) (i32.const 191))))
+          (br_if $supported (i32.and (i32.ge_u (local.get $op) (i32.const 160)) (i32.le_u (local.get $op) (i32.const 165))))
+          (br_if $supported (i32.and (i32.ge_u (local.get $op) (i32.const 156)) (i32.le_u (local.get $op) (i32.const 157))))
+          (br_if $supported (i32.and (i32.ge_u (local.get $op) (i32.const 198)) (i32.le_u (local.get $op) (i32.const 199))))
+          (br_if $supported (i32.and (i32.ge_u (local.get $op) (i32.const 232)) (i32.le_u (local.get $op) (i32.const 233))))
+          (br_if $supported (i32.eq (local.get $op) (i32.const 170)))
+          (br_if $supported (i32.eq (local.get $op) (i32.const 171)))
+          (br_if $supported (i32.eq (local.get $op) (i32.const 104)))
+          (br_if $supported (i32.eq (local.get $op) (i32.const 106)))
+          (br_if $supported (i32.eq (local.get $op) (i32.const 144)))
+          (br_if $supported (i32.eq (local.get $op) (i32.const 195)))
+          (br_if $supported (i32.eq (local.get $op) (i32.const 235)))
+          (unreachable))))
+
       ;; 0x67 (address-size override) changes how an instruction forms its
       ;; effective address, so every opcode has to opt in deliberately —
       ;; decoding 16-bit addressing as 32-bit ModRM/SIB silently corrupts EAs.
@@ -3107,7 +3161,8 @@
       ;; Recognize it at any instruction boundary in an enclosing decoded block.  The byte-proof matcher owns
       ;; the loop's fall-through and back edge on success.
       (if (i32.and
-            (i32.eq (local.get $op) (i32.const 0x0F))
+            (i32.and (i32.eqz (global.get $instruction_watch))
+                     (i32.eq (local.get $op) (i32.const 0x0F)))
             (i32.and
               (i32.eqz (local.get $prefix_rep))
               (i32.and
@@ -4291,18 +4346,18 @@
                 (select (i32.const 0) (i32.const 0x10000) (local.get $prefix_67))))))
           (br $decode)))
       (if (i32.eq (local.get $op) (i32.const 0xA4)) ;; MOVSB
-        (then (if (local.get $prefix_rep) (then (call $te (i32.const 82) (i32.const 0))) (else (call $te (i32.const 86) (i32.const 0)))) (br $decode)))
+        (then (if (local.get $prefix_rep) (then (call $te (i32.const 82) (local.get $insn_start))) (else (call $te (i32.const 86) (i32.const 0)))) (br $decode)))
       (if (i32.eq (local.get $op) (i32.const 0xA5)) ;; MOVSD / MOVSW
         (then (if (local.get $prefix_66)
-          (then (if (local.get $prefix_rep) (then (call $te (i32.const 186) (i32.const 0))) (else (call $te (i32.const 183) (i32.const 0)))))
-          (else (if (local.get $prefix_rep) (then (call $te (i32.const 83) (i32.const 0))) (else (call $te (i32.const 87) (i32.const 0))))))
+          (then (if (local.get $prefix_rep) (then (call $te (i32.const 186) (local.get $insn_start))) (else (call $te (i32.const 183) (i32.const 0)))))
+          (else (if (local.get $prefix_rep) (then (call $te (i32.const 83) (local.get $insn_start))) (else (call $te (i32.const 87) (i32.const 0))))))
           (br $decode)))
       (if (i32.eq (local.get $op) (i32.const 0xAA)) ;; STOSB
-        (then (if (local.get $prefix_rep) (then (call $te (i32.const 84) (i32.const 0))) (else (call $te (i32.const 88) (i32.const 0)))) (br $decode)))
+        (then (if (local.get $prefix_rep) (then (call $te (i32.const 84) (local.get $insn_start))) (else (call $te (i32.const 88) (i32.const 0)))) (br $decode)))
       (if (i32.eq (local.get $op) (i32.const 0xAB)) ;; STOSD / STOSW
         (then (if (local.get $prefix_66)
-          (then (if (local.get $prefix_rep) (then (call $te (i32.const 187) (i32.const 0))) (else (call $te (i32.const 184) (i32.const 0)))))
-          (else (if (local.get $prefix_rep) (then (call $te (i32.const 85) (i32.const 0))) (else (call $te (i32.const 89) (i32.const 0))))))
+          (then (if (local.get $prefix_rep) (then (call $te (i32.const 187) (local.get $insn_start))) (else (call $te (i32.const 184) (i32.const 0)))))
+          (else (if (local.get $prefix_rep) (then (call $te (i32.const 85) (local.get $insn_start))) (else (call $te (i32.const 89) (i32.const 0))))))
           (br $decode)))
       (if (i32.eq (local.get $op) (i32.const 0xAC)) ;; LODSB
         (then (call $te (i32.const 90) (i32.const 0)) (br $decode)))
@@ -5480,6 +5535,9 @@
     ;; here costs a classify pass on a block that was going to be decoded
     ;; anyway, and nothing at all when no run is in progress.
     ;; See src/07c-block-exec.wat and docs/block-executor-design.md section 14.
+    (if (global.get $instruction_watch)
+      (then (return (call $publish_block (local.get $start_eip)
+                        (local.get $tstart) (global.get $d_pc)))))
     (call $bx_region_collect (local.get $start_eip))
     ;; Loop-idiom matcher runs on the ops just emitted, before the block is
     ;; published. See src/07b-loop-match.wat.

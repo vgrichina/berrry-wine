@@ -4588,6 +4588,9 @@
   (func $wide_char_to_multi_byte (param $cp i32) (param $flags i32) (param $src i32) (param $src_len i32) (param $dst i32) (param $dst_len i32) (param $def_ptr i32) (param $used_ptr i32) (result i32)
     (local $i i32) (local $n i32) (local $enc i32) (local $elen i32) (local $def i32) (local $used i32) (local $ch i32)
     (local $def_len i32) (local $defb i32)
+    ;; Direct native entry shares the same unsupported-API rule as dispatch.
+    ;; This must precede even codepage resolution/last-error or used-default.
+    (if (global.get $rep_store_step) (then (unreachable)))
     (local.set $cp (call $resolve_code_page (local.get $cp)))
     (if (i32.eqz (call $cp_converts_in_launch (local.get $cp)))
       (then (return (call $wide_char_to_multi_byte_legacy

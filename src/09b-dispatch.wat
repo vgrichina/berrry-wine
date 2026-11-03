@@ -101,6 +101,9 @@
     (local $resource_pins i64) (local $return_eip i32) (local $entry_eip i32)
     (local $resource_pin i32) (local $resource_base i32) (local $resource_rva i32)
     (local $resource_size i32) (local $resource_stride i32)
+    ;; REP debugger mode has no resumable API continuation. Reject the entry
+    ;; before hooks, resource pins, callbacks, argument cleanup or guest writes.
+    (if (global.get $rep_store_step) (then (unreachable)))
     ;; Reject an unauthenticated CACA000A return before resource scope, thunk
     ;; hooks, diagnostics or wait bookkeeping can mutate the interrupted state.
     (if (i32.eq (i32.load (call $thunk_metadata_addr (local.get $thunk_idx))) (i32.const 0xCACA000A))

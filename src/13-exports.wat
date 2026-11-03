@@ -164,6 +164,24 @@
     (local $prev_eip i32) (local $prev_esp i32)
     (local $saved_budget i32) (local $saved_start i32) (local $shared_cache_generation i32)
     (local $saved_api_depth i32)
+    ;; These entry services have no per-store architectural continuation.
+    ;; Refuse their whole entry state in REP debugger mode, before attribution,
+    ;; budgets, queue import/pop, stack writes, host calls or callback setup.
+    ;; In particular do not import the shared APC queue during preflight:
+    ;; that would change the state that a rejected entry must preserve.
+    ;; An alertable-sleep mark is conservatively unsupported even when no APC
+    ;; is currently visible; a producer may enqueue one concurrently.
+    (if (global.get $rep_store_step) (then
+      (if (i32.or
+            (i32.eq (global.get $eip) (global.get $WIN16_TASK_ENTRY))
+            (i32.or (global.get $apc_alert_sleep)
+              (i32.or
+                (i32.or (i32.ne (global.get $wave_callback_saved) (i32.const 0))
+                        (i32.ne (global.get $mm_timer_in_cb) (i32.const 0)))
+                (i32.and (i32.ne (global.get $anim_live_count) (i32.const 0))
+                  (i32.and (i32.eq (global.get $current_thread_id) (i32.const 1))
+                           (i32.eqz (global.get $anim_in_service)))))))
+        (then (unreachable)))))
     ;; A fresh run may have host-supplied EIP; never inherit attribution.
     (global.set $null_transfer_kind (i32.const 0))
     (global.set $null_transfer_thunk_entry (i32.const 0))
