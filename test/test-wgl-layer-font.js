@@ -332,5 +332,3 @@ function shapeChecks(glyph,scale=48,dx=8,dy=8){const checks=[];
  console.log('PASS WGL real layer0, FNT bitmap pixels/origins/advances, sfnt outline metrics/area/holes/composites/deviation/extrusion/normals/pixels, public resolved stdcall/canaries, rejection, list replacement/sharing/lifetime; '+(queued?'Worker':'direct'));
  }finally{encoder?.stop();if(manager)await manager.stop();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
-
-
