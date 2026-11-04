@@ -217,7 +217,7 @@ function staleUploadControl(){
   };
 }
 
-async function createServer(getWasm,getNegative=()=>null){
+async function createServer(getWasm,getNegative=()=>null,onInjection=()=>{}){
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
     'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
   return require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
@@ -226,8 +226,10 @@ async function createServer(getWasm,getNegative=()=>null){
     res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
     const pathname=new URL(req.url,'http://localhost').pathname;
     if(pathname==='/lib/d3dim-gpu.js'&&getNegative()==='stale-child-upload'){
+      const body=fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8')+'\n;('+staleUploadControl.toString()+')();';
+      onInjection({url:req.url,sha256:sha(body),bytes:Buffer.byteLength(body)});
       res.writeHead(200,{'Content-Type':'application/javascript','Cache-Control':'no-store'});
-      res.end(fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8')+'\n;('+staleUploadControl.toString()+')();');return true;
+      res.end(body);return true;
     }
     if(req.url==='/legacy-render.wasm'){res.writeHead(200,{'Content-Type':'application/wasm'});res.end(getWasm());return true;}
     if(req.url!=='/legacy-render-fixture')return false;
@@ -247,7 +249,9 @@ async function isolationControls(server,bytes){
 }
 
 async function serverControls(){
-  const bytes=Buffer.from([0,97,115,109,1,0,0,0]),server=await createServer(()=>bytes,()=> 'stale-child-upload');
+  const injectedRows=[],bytes=Buffer.from([0,97,115,109,1,0,0,0]);
+  let negative='stale-child-upload';
+  const server=await createServer(()=>bytes,()=>negative,row=>injectedRows.push(row));
   try{
     await isolationControls(server,bytes);
     // RenderWorker imports the GPU script with its production version query.
@@ -257,7 +261,14 @@ async function serverControls(){
       const injected=await response.text();
       assert.equal(injected,fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8')+'\n;('+staleUploadControl.toString()+')();');
       new vm.Script(injected);
+      assert.deepEqual(injectedRows.at(-1),{url:route,sha256:sha(injected),bytes:Buffer.byteLength(injected)});
     }
+    negative=null;
+    for(const route of ['/lib/d3dim-gpu.js','/lib/d3dim-gpu.js?v=legacy-texture-public-com']){
+      const response=await fetch('http://127.0.0.1:'+server.address().port+route);
+      assert.equal(await response.text(),fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8'));
+    }
+    assert.equal(injectedRows.length,2,'ordinary requests never inject');
   }finally{await require('./static-server').closeServer(server);}
 }
 
@@ -300,7 +311,8 @@ async function runtime(){
       evidence.results.push({module:name,bootstrap:result});save();
     }
     if(process.argv.includes('--bootstrap')){evidence.status='BOOTSTRAP PASS; rendered paths unexecuted';return;}
-    server=await createServer(()=>wasm,()=>activeNegative);
+    evidence.injections=[];
+    server=await createServer(()=>wasm,()=>activeNegative,row=>evidence.injections.push(row));
     evidence.httpIsolation=[];
     for(const module of evidence.modules){
       wasm=fs.readFileSync(path.join(moduleDir,module.name));
@@ -314,35 +326,46 @@ async function runtime(){
     evidence.browser=await browser.version();evidence.browserPid=browser.process().pid;
     const cdp=await browser.target().createCDPSession();evidence.systemInfo=await cdp.send('SystemInfo.getInfo');await cdp.detach();
     const fixture=Function('return ('+fixtureSource()+')')();
+    const open=async()=>{page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/legacy-render-fixture');};
+    const runNegative=async(module,mode,webglVersion,negative)=>{
+      const cfg={...config(),webglVersion},injectionStart=evidence.injections.length;
+      activeNegative=negative;
+      await open();let failure;
+      try{await page.evaluate(fixture,mode,cfg,oracle.toString(),negative);}catch(error){failure=String(error);}
+      const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
+      const injections=evidence.injections.slice(injectionStart);
+      evidence.negativeControls.push({module:module.name,mode,webglVersion,negative,failure,partial,injections});save();
+      assert(failure?.includes('PIXEL ORACLE'),'negative must fail actual pixels: '+failure);
+      assert(partial.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0));
+      assert(partial.observations.some(o=>o.actual.some((c,i)=>Math.abs(c-o.expected[i])>cfg.tolerance)));
+      if(negative==='stale-child-upload'){
+        assert(injections.some(r=>r.url===(mode==='worker'?'/lib/d3dim-gpu.js?v=legacy-texture-public-com':'/lib/d3dim-gpu.js')),
+          'exact executor script served with injection');
+        assert(partial.update?.persisted,'negative must execute public child writes');
+        const before=partial.observations.find(o=>o.label==='child before overwrite');
+        const after=partial.observations.find(o=>o.label==='child after overwrite');
+        assert(before&&after);assert.deepEqual(after.actual,before.actual,'old generation actually sampled');
+        assert.deepEqual(after.expected,cfg.update.color,'independent new authored color');
+      }
+      if(mode==='worker')assert(partial.observations.some(o=>o.workerStats?.drawCalls>0));
+      else assert(partial.observations.some(o=>o.webglRGBA&&o.glError===0));
+      await page.close();page=null;console.log('PASS rendered negative '+negative+' '+module.name+' '+mode+' WebGL'+webglVersion);
+    };
+    // Exercise the repaired versioned Worker route before any positive cell.
+    wasm=fs.readFileSync(path.join(moduleDir,evidence.modules[0].name));
+    await runNegative(evidence.modules[0],'worker',1,'stale-child-upload');
     for(const module of evidence.modules){
       wasm=fs.readFileSync(path.join(moduleDir,module.name));
       for(const mode of ['worker','webgl'])for(const webglVersion of [1,2]){
         const cfg={...config(),webglVersion};
-        const open=async()=>{page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/legacy-render-fixture');};
         activeNegative=null;await open();const result=await page.evaluate(fixture,mode,cfg,oracle.toString());
         assert.equal(result.status,'PASS');assert.equal(result.observations.length,mode==='worker'?25:19);
         evidence.results.push({module:module.name,webglVersion,...result});save();
         await page.screenshot({path:path.join(dir,module.name+'-'+mode+'-'+webglVersion+'.png')});await page.close();page=null;
         console.log('PASS '+module.name+' '+mode+' WebGL'+webglVersion+' observations '+result.observations.length);
         for(const negative of ['level-zero-only','stale-mip-filter','stale-child-upload']){
-          activeNegative=negative;
-          await open();let failure;
-          try{await page.evaluate(fixture,mode,cfg,oracle.toString(),negative);}catch(error){failure=String(error);}
-          const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
-          evidence.negativeControls.push({module:module.name,mode,webglVersion,negative,failure,partial});save();
-          assert(failure?.includes('PIXEL ORACLE'),'negative must fail actual pixels: '+failure);
-          assert(partial.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0));
-          assert(partial.observations.some(o=>o.actual.some((c,i)=>Math.abs(c-o.expected[i])>cfg.tolerance)));
-          if(negative==='stale-child-upload'){
-            assert(partial.update?.persisted,'negative must execute public child writes');
-            const before=partial.observations.find(o=>o.label==='child before overwrite');
-            const after=partial.observations.find(o=>o.label==='child after overwrite');
-            assert(before&&after);assert.deepEqual(after.actual,before.actual,'old generation actually sampled');
-            assert.deepEqual(after.expected,cfg.update.color,'independent new authored color');
-          }
-          if(mode==='worker')assert(partial.observations.some(o=>o.workerStats?.drawCalls>0));
-          else assert(partial.observations.some(o=>o.webglRGBA&&o.glError===0));
-          await page.close();page=null;console.log('PASS rendered negative '+negative+' '+mode+' WebGL'+webglVersion);
+          if(module===evidence.modules[0]&&mode==='worker'&&webglVersion===1&&negative==='stale-child-upload')continue;
+          await runNegative(module,mode,webglVersion,negative);
         }
       }
     }
