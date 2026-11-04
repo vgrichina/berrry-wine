@@ -436,7 +436,7 @@ function sealedSidecars() {
 
 // Explicit protocol fixtures around the actual composed command functions.
 // Sidecars are sealed original readbacks; fake CDP replies are not runtime proof.
-for(const mode of ['success','ambiguous','wrong-module','wrong-thread','wrong-target','replacement','missing-history','failure','terminal','deadline','unfrozen','ownership-rejected']) {
+for(const mode of ['success','post-quantum-scene','ambiguous','wrong-module','wrong-thread','wrong-target','replacement','missing-history','failure','terminal','deadline','unfrozen','ownership-rejected']) {
   test('actual composed construction command / attachment '+mode,async()=>{
     const {api}=actualDriver();review(api);
     const approval=JSON.parse(fs.readFileSync(path.join(api.OUT,'inspection-approval.json')));
@@ -469,10 +469,16 @@ for(const mode of ['success','ambiguous','wrong-module','wrong-thread','wrong-ta
       return {input:{inputQueue:[],activeInput:null,mouseButtonsMask:0},binding:{audit:[sent]},frozen:main.frozen};
     }});
     if(mode==='terminal')await api.traceDriver.finish('fixture-terminal');
-    if(mode==='success'){
+    if(mode==='success'||mode==='post-quantum-scene'){
       await api.command({action:'step',n:16},1);assert.equal(starts,1);assert.equal(finishes,1);assert.equal(steps,1);
       assert(fs.existsSync(path.join(api.OUT,'bounded-trace-correlation.json')));
-      await api.traceDriver.begin({action:'step',n:16},2,api.inspectionGuard.pending);assert.equal(starts,1,'trace never restarts');
+      write(api.OUT,'reply-1.json',{i:1,ok:true});
+      if(mode==='post-quantum-scene')write(api.OUT,'inspection-approval.json',{...approval,screen:'post-medium-pending'});
+      let secondError;
+      try{await api.command({action:'step',n:16},2);}catch(error){secondError=error;}
+      write(EVIDENCE,'continuation-producer'+(mode==='success'?'':'-scene-change')+'.json',{fixtureOnly:true,starts,finishes,steps,error:secondError?.message||null});
+      assert.match(secondError?.message||'unobserved continuation admitted',/native construction history ended/);
+      assert.equal(starts,1,'trace never restarts');assert.equal(steps,1,'no unobserved second quantum');
     }else{
       await assert.rejects(api.command({action:'step',n:16},1));
       await assert.rejects(api.command({action:'step',n:16},2),/first failure|terminal/);

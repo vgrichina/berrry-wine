@@ -453,10 +453,13 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
   async function begin(c, i, pending) {
     const acceptedAt = Date.now();
     if (terminal) throw Error('trace driver terminal');
+    // The sole bounded quantum permanently finishes its owning observer.
+    // Later reviewed chunks cannot inherit native history from that terminal
+    // observer. Reject before WineFrozen.step, including after a scene change.
+    if (consumed) throw Error('native construction history ended; no unobserved continuation');
     const approval = read('inspection-approval.json');
     if (approval.screen !== 'post-medium-construction') return;
     // Only the original reviewed, input-free construction quantum qualifies.
-    if (consumed) return;
     assert.equal(c.n, 16, 'trace construction quantum must be 16');
     assert.equal(approval.originalScene, 'level-destruction-construction');
     assert.equal(approval.selection, 'none'); assert.equal(approval.constructionBlackVisible, true);

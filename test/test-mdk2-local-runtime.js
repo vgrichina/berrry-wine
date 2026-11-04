@@ -62,6 +62,56 @@ test('launch-failure normal cleanup rejects stale identity, foreign endpoints, a
  await assert.rejects(local.closeUnreturnedLaunch(make({child:{pid:process.pid,exitCode:null,signalCode:'SIGKILL'}}),{deadline:Date.now()+1000,connect:never}),/already exited/);
  assert(!logs.some(e=>e.kind==='launch-failure-cleanup-normal'));
 });
+test('actual caller recovers installed rejected-launch producer immediately and preserves first fault',async()=>{
+ const r=createRequire(require.resolve('puppeteer')),core=r.resolve('puppeteer-core');
+ const {BrowserLauncher}=await import(path.join(path.dirname(core),'node/BrowserLauncher.js'));
+ const dir=fs.mkdtempSync(path.join(local.BASE,'mdk2-actual-caller-test-'));
+ const tap=local.traceOwnedLifecycle(dir,process.execPath);let owned,launches=0,connections=0;
+ class Launcher extends BrowserLauncher {
+  async computeLaunchArguments(){return {executablePath:process.execPath,userDataDir:path.join(dir,'chrome-profile'),isTempUserDataDir:false,
+   args:['-e',"setTimeout(()=>process.stderr.write('DevTools listening on ws://127.0.0.1:12345/devtools/browser/abcd\\n'),150);process.stdin.once('data',()=>process.exit(0));setInterval(()=>{},1000)",'--','--user-data-dir='+path.join(dir,'chrome-profile')]};}
+  async cleanUserDataDir(){}
+  async createCdpSocketConnection(process,options){owned=process;return super.createCdpSocketConnection(process,options);}
+ }
+ const launcher=new Launcher({},'chrome');
+ try {
+  const api={launch:options=>{launches++;return launcher.launch(options);},connect:async options=>{
+   connections++;assert.equal(options.browserWSEndpoint,'ws://127.0.0.1:12345/devtools/browser/abcd');
+   const browser=new (require('node:events').EventEmitter)();browser.pages=async()=>[];
+   browser.close=async()=>{owned.nodeProcess.stdin.write('quit\n');await owned.hasClosed();browser.emit('disconnected');};
+   browser.disconnect=()=>{};return browser;
+  }};
+  await assert.rejects(local.launchOwned(api,tap,{timeout:20,handleSIGINT:false,handleSIGTERM:false,handleSIGHUP:false}),/Timed out/);
+  assert.equal(launches,1);assert.equal(connections,1);assert.equal(owned.nodeProcess.exitCode,0);assert.equal(owned.nodeProcess.signalCode,null);
+  const rows=fs.readFileSync(tap.file,'utf8').trim().split('\n').map(JSON.parse);
+  assert(rows.some(e=>e.kind==='launch-failure-cleanup-normal'));assert(!rows.some(e=>['process.kill','child.kill','caller-cleanup-failure'].includes(e.kind)));
+ }finally{
+  if(owned&&owned.nodeProcess.exitCode===null&&owned.nodeProcess.signalCode===null)owned.nodeProcess.stdin.write('quit\n');
+  if(owned)await owned.hasClosed();tap.restore();fs.rmSync(dir,{recursive:true,force:true});
+ }
+});
+test('actual launch caller observes normal own closure independently of historical require filename',async()=>{
+ const dir=fs.mkdtempSync(path.join(local.BASE,'mdk2-caller-closure-test-'));
+ const tap=local.traceOwnedLifecycle(dir,process.execPath),EventEmitter=require('node:events');
+ const child=cp.spawn(process.execPath,['-e',"process.stdin.once('data',()=>process.exit(0));console.log('ready');setInterval(()=>{},1000)",'--','--user-data-dir='+path.join(dir,'chrome-profile')],{stdio:['pipe','pipe','pipe']});
+ const exit=new Promise((resolve,reject)=>{child.once('exit',(code,signal)=>resolve({code,signal}));child.once('error',reject);});
+ const page=new EventEmitter(),browser=new EventEmitter();let launches=0,closes=0;
+ browser.process=()=>child;browser.newPage=async()=>page;
+ browser.close=async()=>{closes++;page.emit('framedetached');page.emit('close');child.stdin.write('quit\n');await exit;browser.emit('disconnected');};
+ try {
+  await new Promise((resolve,reject)=>{child.stdout.once('data',resolve);child.once('error',reject);});
+  await assert.rejects(local.launchOwned({launch:async()=>({process:()=>({pid:child.pid})}),connect:async()=>{throw Error('foreign browser never connects');}},tap,{}),/observed owned child/);
+  const returned=await local.launchOwned({launch:async()=>{launches++;return browser;},connect:async()=>{throw Error('no recovery on normal launch');}},tap,{});
+  assert.equal(returned,browser);tap.watchBrowser(browser);tap.watchBrowser(browser);
+  const actualPage=await returned.newPage();assert.equal(actualPage,page);tap.watchPage(page);tap.watchPage(page);
+  await returned.close();assert.deepEqual(await exit,{code:0,signal:null});assert.equal(launches,1);assert.equal(closes,1);
+  const rows=fs.readFileSync(tap.file,'utf8').trim().split('\n').map(JSON.parse);
+  for(const kind of ['spawn','browser.close-called','browser.close-resolved','frame-detached','page-close','browser-disconnected','exit'])assert.equal(rows.filter(r=>r.kind===kind).length,1,kind);
+  assert(!rows.some(r=>['process.kill','child.kill','launch-failure-cleanup-begin'].includes(r.kind)));
+ }finally{
+  if(child.exitCode===null&&child.signalCode===null)child.stdin.write('quit\n');await exit;tap.restore();fs.rmSync(dir,{recursive:true,force:true});
+ }
+});
 test('installed Puppeteer close path distinguishes orderly own child from CDP-failure SIGKILL fallback',async()=>{
  const r=createRequire(require.resolve('puppeteer'));
  const core=r.resolve('puppeteer-core'),browsers=createRequire(core).resolve('@puppeteer/browsers');
@@ -123,7 +173,7 @@ test('installed Puppeteer close path distinguishes orderly own child from CDP-fa
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);
- assert.equal(r.assignment,'20261104-mdk2-startup-timing-onward');
+ assert.equal(r.assignment,'20261104-mdk2-repaired-launch-original');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -147,8 +197,8 @@ test('original useful-window minimum and absolute launch cutoff cannot be extend
  assert.throws(()=>local.createRelease(run,local.HARD_CLOSE-900000),/720\+180/);
 });
 test('renewed dated assignment retains exact absolute close and recovery bounds',()=>{
- assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T20:00:00Z'));
- assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T20:03:00Z'));
+ assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T22:00:00Z'));
+ assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T22:03:00Z'));
  const r=release();r.recoverBy=new Date(local.HARD_RECOVER+1).toISOString();
  assert.throws(()=>local.validate(r,run,now),/cleanup reserve/);
  const late=local.createRelease(run,local.HARD_CLOSE-900001);
@@ -187,6 +237,7 @@ test('actual composed source retains original guards under explicit local identi
    .replace("executablePath:'/opt/google/chrome/chrome'","executablePath:'/usr/bin/google-chrome'")
    .replace('protocolTimeout:40000,timeout:30000','protocolTimeout:60000,timeout:30000')
    .replace(`await require(${tool}).within(()=>command(c,i),40000,()=>{halted=true;void close('local 40 second command deadline');});`,'await command(c,i);')
+   .replace(`browser=await require(${tool}).launchOwned(puppeteer,require(${tool}).lifecycleForRun(RUN),`,'browser=await puppeteer.launch(')
    .replace(`  await require(${tool}).within(async()=>{\n  browser=await puppeteer.launch(`,'  browser=await puppeteer.launch(')
    .replace("  if(closing){await browser.close();throw Error('local bootstrap closed');}\n  page=await browser.newPage();",'  page=await browser.newPage();')
    .replace('  if(closing)throw Error(\'local bootstrap closed\');\n  await page.click(\'button[onclick="launchApp()"]\');','  await page.click(\'button[onclick="launchApp()"]\');')

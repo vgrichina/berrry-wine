@@ -9,10 +9,10 @@ const crypto = require('node:crypto');
 const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
-// Explicit one-attempt renewal by the startup-timing assignment, not guest progress.
-const HARD_CLOSE = Date.parse('2026-11-04T20:00:00Z');
-const HARD_RECOVER = Date.parse('2026-11-04T20:03:00Z');
-const ASSIGNMENT = '20261104-mdk2-startup-timing-onward';
+// Explicit one-attempt renewal after the repaired diagnostic, not guest progress.
+const HARD_CLOSE = Date.parse('2026-11-04T22:00:00Z');
+const HARD_RECOVER = Date.parse('2026-11-04T22:03:00Z');
+const ASSIGNMENT = '20261104-mdk2-repaired-launch-original';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -70,6 +70,7 @@ function translate(source) {
   source = once(source, 'protocolTimeout:60000,timeout:30000', 'protocolTimeout:40000,timeout:30000');
   source = once(source, 'await command(c,i);', `await require(${JSON.stringify(__filename)}).within(()=>command(c,i),40000,()=>{halted=true;void close('local 40 second command deadline');});`);
   source = once(source, '  browser=await puppeteer.launch(', `  await require(${JSON.stringify(__filename)}).within(async()=>{\n  browser=await puppeteer.launch(`);
+  source = once(source, 'browser=await puppeteer.launch(', `browser=await require(${JSON.stringify(__filename)}).launchOwned(puppeteer,require(${JSON.stringify(__filename)}).lifecycleForRun(RUN),`);
   // Late launch completion still hands its browser to normal closure, and
   // cannot issue the registered Launch input after a bootstrap deadline.
   source = once(source, '  page=await browser.newPage();', "  if(closing){await browser.close();throw Error('local bootstrap closed');}\n  page=await browser.newPage();");
@@ -90,7 +91,7 @@ const lifecycleTaps=new Map();
 function traceOwnedLifecycle(run, executablePath = '/opt/google/chrome/chrome') {
   assert.equal(fs.realpathSync(run),run,'canonical lifecycle run required');
   assert.equal(path.dirname(run),BASE,'direct lifecycle run required');
-  const file=path.join(run,'chrome-lifecycle.jsonl'),children=new Map(),removers=[];
+  const file=path.join(run,'chrome-lifecycle.jsonl'),children=new Map(),removers=[],browsers=new WeakSet(),pages=new WeakSet();
   fs.writeFileSync(file,'',{flag:'wx'});
   const record=(kind,data={})=>fs.appendFileSync(file,JSON.stringify({at:new Date().toISOString(),monotonicNs:process.hrtime.bigint().toString(),kind,...data})+'\n');
   record('observer-installed',{owner:identity(),executablePath,profile:path.join(run,'chrome-profile')});
@@ -124,12 +125,21 @@ function traceOwnedLifecycle(run, executablePath = '/opt/google/chrome/chrome') 
     watchBrowser(browser){
       const child=browser.process();
       assert(child&&children.get(child.pid)?.child===child,'lifecycle browser must be an observed owned child');
+      if(browsers.has(browser))return;browsers.add(browser);
       const close=browser.close;
       browser.close=async function(...args){record('browser.close-called',{stack:new Error('close caller').stack});try{const result=await Reflect.apply(close,this,args);record('browser.close-resolved');return result;}catch(error){record('browser.close-rejected',{error:String(error)});throw error;}};
       removers.push(()=>{browser.close=close;});
+      // Composed historical callers have their retained filename, so a
+      // run-directory require proxy alone cannot observe their new pages.
+      const newPage=browser.newPage;
+      if(typeof newPage==='function'){
+        browser.newPage=async function(...args){const page=await Reflect.apply(newPage,this,args);tap.watchPage(page);return page;};
+        removers.push(()=>{browser.newPage=newPage;});
+      }
       listen(browser,'disconnected',()=>record('browser-disconnected'));
     },
     watchPage(page){
+      if(pages.has(page))return;pages.add(page);
       listen(page,'close',()=>record('page-close'));
       listen(page,'error',error=>record('page-error',{error:String(error)}));
       listen(page,'framedetached',()=>record('frame-detached'));
@@ -180,6 +190,22 @@ async function closeUnreturnedLaunch(tap,{deadline,connect}) {
     }finally{browser.disconnect();}
   }catch(error){tap.record('launch-failure-cleanup-rejected',{error:String(error)});throw error;}
 }
+// The actual caller must recover immediately: the installed launcher's catch
+// starts a five-second fallback before its launch promise rejects. Preserve the
+// original rejection even when normal cleanup succeeds; never retry launch.
+async function launchOwned(puppeteer,tap,options) {
+  let browser;
+  try { browser=await puppeteer.launch(options); }
+  catch(error) {
+    try { await closeUnreturnedLaunch(tap,{deadline:Date.now()+60000,connect:options=>puppeteer.connect(options)}); }
+    catch(cleanupError) { tap.record('caller-cleanup-failure',{error:String(cleanupError),launchError:String(error)}); }
+    throw error;
+  }
+  // Bind directly at the actual caller, regardless of its Module filename.
+  // Duplicate observation by the immutable diagnostic preload is idempotent.
+  tap.watchBrowser(browser);
+  return browser;
+}
 let installed = false;
 const transportSource = String.raw`# Local transport only; imported as runtime_io by the original operator chain.
 from pathlib import Path
@@ -191,7 +217,7 @@ def allocation():
  assert v['authorization']=='RUNTIME RELEASE MDK2 TARGET ONWARD'
  assert v['localAuthorization']=='EXPLICIT LOCAL FINITE ORIGINAL ATTEMPT'
  assert v['runtimeKind']=='local-process-v1' and v['boxId'] is None and v['expiry'] is None
- assert v['assignment']=='20261104-mdk2-startup-timing-onward' and v['runDirectory']==str(E)
+ assert v['assignment']=='20261104-mdk2-repaired-launch-original' and v['runDirectory']==str(E)
  assert v['shutdownOwner']=='coordinator'
  assert len(v['nonce'])==64 and all(c in '0123456789abcdef' for c in v['nonce'])
  for field,name in [('driverSHA256','mdk2-construction-driver-integration.cjs'),('localSHA256','mdk2-local-runtime.cjs')]:
@@ -276,4 +302,4 @@ function install(run) {
   installed = true;
   return {release, restore() {finite.browserDeadline=originalDeadline;main.sourceForRun=originalSource;}};
 }
-module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,install,prepareTransport,transportSource,controlSource,siteSource};
+module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,launchOwned,install,prepareTransport,transportSource,controlSource,siteSource};
