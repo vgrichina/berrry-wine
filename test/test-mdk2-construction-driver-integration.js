@@ -271,7 +271,7 @@ test('concrete composed route checks offline with finite one-shot trace', () => 
   const report = integration.inspect();
   assert.equal(report.observerRepairSHA256,integration.sha(fs.readFileSync(path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs'))));
   assert.equal(report.status, 'offline-composition-checked');
-  assert.deepEqual(report.limits, {traceMs:10000,boundaries:100000,records:512,constructionSlices:16,restart:false});
+  assert.deepEqual(report.limits, {traceMs:10000,boundaries:100000,records:512,constructionSlices:[16,32,64],restart:false});
   assert.equal(integration.assertRunnable().composedSHA256, report.composedSHA256);
 });
 
@@ -356,6 +356,27 @@ async function nativeOne(row, mode = 'success') {
 }
 
 for(const row of integration.pinnedRuntime().pins.moduleFiles) {
+  test('actual queued first fault stops before original POP ESI on '+row.path,async()=>{
+    const old=await nativeOne(row,'missing-history-old-binding'),fixed=await nativeOne(row,'missing-history-stop');
+    write(EVIDENCE,path.basename(row.path)+'.first-fault-native-stop.json',{fixtureOnly:true,old:old.value,fixed:fixed.value});
+    assert.match(old.value.rejected,/first rejected boundary returned/);
+    assert.match(fixed.value.rejected,/finalizer history missing/);
+    assert.equal(old.value.faultState.esp,0x74ff008);assert.equal(fixed.value.faultState.esp,0x74ff000);
+    assert.equal(fixed.value.faultState.eip,0x44f515);assert.equal(old.value.faultState.eip,0x1800000);
+    // The rejected paths end at different decoded PCs; retain both complete
+    // hashes, and compare guest bytes rather than demand decoder-cache parity.
+    assert.match(fixed.value.memoryHash,/^[a-f0-9]{64}$/);assert.equal(fixed.value.guestHash,old.value.guestHash);
+    for(const name of ['ebp','eax','ebx','ecx','edx','edi','flag_op','flag_a','flag_b','flag_res','flag_sign_shift'])
+      assert.equal(fixed.value.faultState[name],old.value.faultState[name],name);
+    assert.deepEqual(fixed.value.commands,old.value.commands);assert.equal(fixed.value.commands.length,1);
+  });
+  test('unchanged real observer rejects sealed original Medium review interval on '+row.path,async()=>{
+    const r=await nativeOne(row,'continuity-historical-review-early');
+    assert.match(r.value.report.fatal,/trace continuation deadline|native construction history ended/);
+    assert.equal(r.value.checkpoints,1);assert(r.value.report.traceEnd-r.value.traceStartedAt>=10000);
+    assert(r.value.report.traceEnd-r.value.traceStartedAt<=10010);
+    write(EVIDENCE,path.basename(row.path)+'.historical-review-deadline.json',{fixtureOnly:true,...r.value});
+  });
   test('genuine queued demand entry precedes finalizer across retained checkpoints: '+row.path, async()=>{
     const observed=await nativeOne(row,'continuity-early'),control=await nativeOne(row,'control-early');
     assert(observed.value.pass,JSON.stringify(observed.value));
@@ -435,7 +456,7 @@ for(const row of integration.pinnedRuntime().pins.moduleFiles) {
   });
 }
 for(const row of integration.pinnedRuntime().pins.moduleFiles)
-for(const mode of ['continuity-deadline','continuity-registers','continuity-paused-boundary','continuity-boundary-overflow','wrong-module','wrong-endpoint','wrong-thread','wrong-instance','foreign-module-object','missing-history','import-failure','terminal','deadline','active-deadline','late']) {
+for(const mode of ['continuity-deadline','continuity-registers','continuity-paused-boundary','continuity-boundary-overflow','continuity-record-overflow','wrong-module','wrong-endpoint','wrong-thread','wrong-instance','foreign-module-object','missing-history','import-failure','terminal','deadline','active-deadline','late']) {
   test('real composed Worker lifecycle rejects '+mode+' '+row.path, async()=>{
     const result=await nativeOne(row,mode);
     assert(result.value.rejected,JSON.stringify(result.value));
@@ -443,6 +464,9 @@ for(const mode of ['continuity-deadline','continuity-registers','continuity-paus
     if(mode==='continuity-deadline'){
       assert.equal(result.value.checkpoints,1,'expiry occurs inside the retained review pause');
       assert.equal(result.value.report.observer.status,'deadline');
+    }
+    if(mode==='continuity-record-overflow'){
+      assert.equal(result.value.report.observer.status,'record-limit');assert.equal(result.value.report.observer.records.length,512);
     }
   });
 }
@@ -505,8 +529,9 @@ for(const mode of ['early','early-old','medium-unobserved','success','post-quant
     }
     const {api}=actualDriver(candidate);review(api);
     const approval=JSON.parse(fs.readFileSync(path.join(api.OUT,'inspection-approval.json')));
-    Object.assign(approval,{screen:'post-medium-construction',originalScene:'level-destruction-construction',selection:'none',constructionBlackVisible:true});
-    if(mode==='medium-unobserved')Object.assign(approval,{screen:'difficulty',mediumHighlighted:true,difficultyDialogVisible:true});
+    Object.assign(approval,{screen:'post-medium-construction',originalScene:'level-destruction-construction',selection:'none',constructionBlackVisible:true,
+      transitioning:true,loadingVisible:false,comicPanelsVisible:false,tutorialVisible:false,unsupportedSceneVisible:false});
+    if(mode==='medium-unobserved')Object.assign(approval,{screen:'difficulty',selection:'Medium',transitioning:false,mediumHighlighted:true,difficultyDialogVisible:true});
     write(api.OUT,'inspection-approval.json',approval);write(api.OUT,'native-selector-ledger.json',{newgame:true,medium:true});
     const {main,file}=sealedSidecars();main.frozen.steps=3344;file.frozen.steps=3344;
     if(mode.startsWith('early')){main.request=0;main.rawRequestWords=null;}
@@ -518,7 +543,7 @@ for(const mode of ['early','early-old','medium-unobserved','success','post-quant
     const session={send:async(name,args)=>{
       calls.push(args.expression);
       const r={targetId:mode==='wrong-target'?'foreign':'fixture',workerURL:url,binding:{...sent},thread:mode==='wrong-thread'?2:1,
-        fatal:null,traced:false,observer:null};
+        fatal:null,traced:starts>0,terminal:false,traceEnd:Date.now()+10000,observer:starts>0?{status:'running',blocks:10,records:[]}:null};
       if(mode==='wrong-module')r.binding.sha256='f'.repeat(64);
       if(args.expression.includes('invoke("start"')){starts++;r.traced=true;
         if(mode==='replacement')api.sessions.set('fixture',{session:{},info:{url}});}
@@ -538,7 +563,10 @@ for(const mode of ['early','early-old','medium-unobserved','success','post-quant
       return {input:{inputQueue:[],activeInput:null,mouseButtonsMask:0},binding:{audit:[sent]},frozen:main.frozen};
     }});
     if(mode==='terminal')await api.traceDriver.finish('fixture-terminal');
-    if(mode.startsWith('early')||mode==='medium-unobserved'){
+    if(mode==='medium-unobserved'){
+      await assert.rejects(api.command({action:'step',n:16},1),/Medium trusted input receipt missing/);
+      assert.equal(steps,0);assert.equal(starts,0);
+    }else if(mode.startsWith('early')){
       await api.command({action:'step',n:16},1);
       assert.equal(steps,1);assert.equal(starts,mode==='early'?1:0);
       assert.equal(checkpoints,mode==='early'?1:0);
@@ -546,6 +574,7 @@ for(const mode of ['early','early-old','medium-unobserved','success','post-quant
       await api.traceDriver.finish('fixture-terminal');
     }else if(['success','post-quantum-scene','changed-frozen','changed-owner','old-terminal','old-skip'].includes(mode)){
       await api.command({action:'step',n:16},1);assert.equal(starts,1);assert.equal(checkpoints,mode.startsWith('old-')?0:1);assert.equal(finishes,mode.startsWith('old-')?1:0);assert.equal(steps,1);
+      if(mode==='success')assert.throws(()=>api.traceDriver.noteInput({action:'keydown',key:'Escape',reviewRef:approval.capture},2),/observation scene does not authorize/);
       assert(fs.existsSync(path.join(api.OUT,'bounded-trace-correlation.json')));
       write(api.OUT,'reply-1.json',{i:1,ok:true});
       if(mode==='post-quantum-scene')write(api.OUT,'inspection-approval.json',{...approval,screen:'post-medium-pending'});
@@ -560,7 +589,7 @@ for(const mode of ['early','early-old','medium-unobserved','success','post-quant
       }else if(mode==='old-skip'){
         assert.equal(secondError,undefined);assert.equal(steps,2);assert.equal(checkpoints,0);assert.equal(resumes,0);assert.equal(finishes,1);
       }else{
-        assert.match(secondError?.message||'unobserved continuation admitted',/native construction history ended|changed construction scene|changed frozen state|replacement construction owner|foreign main endpoint/);
+        assert.match(secondError?.message||'unobserved continuation admitted',/native construction history ended|changed construction scene|changed frozen state|replacement construction owner|lost\/replacement owning Worker|foreign main endpoint|Expected values/);
         assert.equal(steps,1,'no unobserved second quantum');
       }
       assert.equal(starts,1,'trace never restarts');
@@ -587,6 +616,215 @@ test('run-local controller composition retains actual operator/author and measur
     if(name.endsWith('.py')){const result=cp.spawnSync('python3',['-c','import ast,sys;ast.parse(sys.stdin.read())'],{input:source,encoding:'utf8'});assert.equal(result.status,0,result.stderr);}
   }
 });
+
+// Execute the actual selector and continuation controllers through the actual
+// composed command/ACK/inspection path. Transport/native states below are
+// explicit protocol fixtures; the separate both-module queue tests execute x86.
+async function mediumProducer(candidate=integration, negative=null) {
+  const {api}=actualDriver(candidate), prior=path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene');
+  const readJSON=name=>JSON.parse(fs.readFileSync(path.join(api.OUT,name)));
+  const {main,file}=sealedSidecars();
+  const original=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(path.join(integration.RUNS,
+    '20261104-mdk2-measured-escape-original/recovered/browser/native-selector-79.json.gz')))).state.main;
+  const m=structuredClone(original);m.frozen.steps=3344;
+  const sync=()=>{main.frozen=structuredClone(m.frozen);file.frozen=structuredClone(m.frozen);};sync();
+  const sent={kind:'sent',sha256:integration.pinnedRuntime().pins.moduleFiles[0].sha256,compilation:0,
+    bytes:2143540,workerURL:'http://offline/lib/guest-worker.js',slot:0,endpointIdentity:1};
+  let starts=0,resumes=0,checkpoints=0,held=false,pressed=0,released=0,traceEnd=null;
+  const quanta=[];
+  const session={send:async(_,args)=>{
+    const r={targetId:'fixture',workerURL:sent.workerURL,binding:sent,thread:1,fatal:null,traced:true,paused:false,
+      terminal:false,traceEnd,observer:{status:'running',blocks:10,records:[]}};
+    if(args.expression.includes('invoke("start"')){starts++;traceEnd=Date.now()+10000;}
+    if(args.expression.includes('invoke("resume"')){resumes++;if(Date.now()>=traceEnd)r.fatal='trace continuation deadline';}
+    if(args.expression.includes('invoke("checkpoint"')){checkpoints++;r.paused=true;}
+    return {result:{value:JSON.stringify(r)}};
+  }};
+  api.sessions.set('fixture',{session,info:{url:sent.workerURL}});
+  api.deadlineForTest(Date.now()+900000);
+  api.pageForTest({keyboard:Object.fromEntries(['down','up'].map(method=>[method,async key=>{
+    held=method==='down';m.observation.inputs.push({type:held?'keydown':'keyup',key,trusted:negative!=='untrusted',target:'screen'});
+    m.inputQueue=[{type:'key',hwnd:0,wParam:13,msg:held?0x100:0x101,lParam:held?0:0xc0000000}];
+  }])),screenshot:async()=>Buffer.from('explicit offline fixture, no original pixels'),evaluate:async(fn,n)=>{
+    if(fn.name==='frozenOwnership')return {frozen:structuredClone(m.frozen),owners:[
+      {handle:null,slot:0,endpointIdentity:1,values:{get_current_thread_id:1,get_eip:main.values.get_eip}},
+      {handle:921600,slot:1,endpointIdentity:2,values:{get_current_thread_id:2,get_eip:file.values.get_eip}}]};
+    if(fn.name==='mainState')return structuredClone(main);
+    if(fn.name==='ownerState')return structuredClone(file);
+    if(fn.name==='rawPixels')return {base64:Buffer.from('fixture').toString('base64'),steps:m.frozen.steps};
+    if(fn.toString().includes('WineFrozen.setTickMs'))return {tickMs:n};
+    if(fn.toString().includes('WineFrozen.step(n)')){
+      quanta.push(n);m.frozen.steps+=n;m.inputQueue=[];sync();
+      if(held){pressed++;m.nativeSelection.command.raw=m.nativeSelection.command.previous=pressed>=2?1:0;}
+      else if(pressed){released++;m.nativeSelection.command.raw=m.nativeSelection.command.previous=0;
+        if(released>=2){m.nativeSelection.freeze={tag:-1,value:1};m.nativeSelection.showmenu={tag:-1,value:0};}}
+      return {requested:n,ran:n,timedOut:false};
+    }
+    if(fn.toString().includes('binding: __mdk2BoundTrace')){
+      const input={inputQueue:structuredClone(m.inputQueue),activeInput:m.activeInput,mouseButtonsMask:0};
+      if(negative==='extra-queue')input.inputQueue.push({type:'key',wParam:32});
+      if(negative==='foreign-active')input.activeInput={type:'key',wParam:32};
+      const observation=structuredClone(m.observation);
+      if(negative==='changed-history')observation.inputs[0].trusted=false;
+      return {input,observation,binding:{audit:[sent]},frozen:m.frozen};
+    }
+    return structuredClone(m);
+  }});
+  write(api.OUT,'identity.json',{commit:integration.SOURCE,deadline:new Date(Date.now()+900000).toISOString()});
+  write(api.OUT,'selector.json',{app:'mdk2_demo',renderer:'webgl',isolated:true});
+  write(api.OUT,'native-selector-ledger.json',{startedAt:Date.now(),steps:0,commands:0,commandLimit:113,open:true,newgame:true,medium:false});
+  const {Spool}=require(path.join(prior,'native-menu.cjs'));
+  let spool;
+  spool=new Spool(api.OUT,{pause:async()=>{
+    const i=spool.next-1,c=readJSON('commands/'+i+'.json');
+    await api.command(c,i);write(api.OUT,'reply-'+i+'.json',{i,ok:true});
+  }});
+  async function approve(name,classification) {
+    await spool.send({action:'shot',name});
+    const p=readJSON('inspection-state.json');
+    return require(path.join(prior,'inspection-guard.cjs')).approve(api.OUT,{capture:name,sha256:p.sha256,steps:p.steps,
+      personallyInspected:true,inspector:'offline protocol fixture only',...classification});
+  }
+  const r=await approve('fixture-difficulty',{screen:'difficulty',selection:'Medium',transitioning:false,difficultyDialogVisible:true,mediumHighlighted:true});
+  let failure=null;
+  try {
+    await require(path.join(integration.RUNS,'20261104-mdk2-measured-escape-original/native-menu.cjs')).select(api.OUT,r,'medium',{spool,maxCommands:113});
+    assert.deepEqual(quanta,[16,16,32,16],'actual repeated press and release polls');
+    if(negative==='review-expired')traceEnd=Date.now()-1;
+    const common={selection:'none',transitioning:true,loadingVisible:false,comicPanelsVisible:false,tutorialVisible:false,unsupportedSceneVisible:false};
+    const fade=await approve('fixture-fade',{...common,screen:'medium-transition',visualTransition:'medium-fade',mediumFadeVisible:true,
+      difficultyDialogVisible:false,newGameLabelVisible:false,legalOverlayVisible:false});
+    await require(path.join(integration.RUNS,'20261104-mdk2-measured-escape-original/native-menu.cjs')).select(api.OUT,fade,'observe',{spool,maxCommands:113});
+    // Actual pending -> absent Level -> published Level -> eight loading chunks.
+    m.nativeSelection=structuredClone(original.nativeSelection);
+    Object.assign(m.nativeSelection,{freeze:{tag:-1,value:1},showmenu:{tag:-1,value:0}});
+    let review=await approve('fixture-pending',{...common,screen:'post-medium-pending',originalScene:'unproved',playableReadiness:false,visualTransition:'medium-fade',constructionBlackVisible:false});
+    require(path.join(prior,'phase-gate.cjs')).gate(api.OUT,review,'pending-control','observe-pending');
+    await require(path.join(prior,'pending-control.cjs')).control(api.OUT,review,'observe-pending',{spool});
+    const loading=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(path.join(integration.RUNS,
+      '20261104-mdk2-measured-escape-original/recovered/browser/comic-control-112.json.gz')))).state.main.nativeSelection;
+    m.nativeSelection=structuredClone(loading);m.nativeSelection.scene.lifecycle='absent';m.nativeSelection.scene.levelTag=-6;m.nativeSelection.level=null;
+    review=await approve('fixture-absent',{...common,screen:'post-medium-construction',originalScene:'level-destruction-construction',constructionBlackVisible:true});
+    require(path.join(prior,'phase-gate.cjs')).gate(api.OUT,review,'construction-control','observe-construction');
+    await require(path.join(prior,'construction-control.cjs')).control(api.OUT,review,'observe-construction',{spool});
+    m.nativeSelection=structuredClone(loading);
+    // Explicit native-state fixture for the controller's other actual branch.
+    m.nativeSelection.level=0x610000;m.nativeSelection.file={tag:-2,value:'l1'};
+    Object.assign(m.nativeSelection.scene,{lifecycle:'table',levelTag:-3,loadscreen:{tag:-2,value:'loadscreen1'},doscenegraph:{tag:-1,value:1}});
+    review=await approve('fixture-published',{...common,screen:'post-medium-construction',originalScene:'level-destruction-construction',constructionBlackVisible:true});
+    require(path.join(prior,'phase-gate.cjs')).gate(api.OUT,review,'construction-control','observe-construction');
+    await require(path.join(prior,'construction-control.cjs')).control(api.OUT,review,'observe-construction',{spool});
+    review=await approve('fixture-loading',{...common,screen:'comic-loading',originalScene:'level1-initial-loading',transitioning:false,loadingVisible:true});
+    require(path.join(prior,'phase-gate.cjs')).gate(api.OUT,review,'comic-control','observe-loading');
+    await require(path.join(prior,'comic-control.cjs')).control(api.OUT,review,'observe-loading',{spool});
+  } catch(error){failure=error;}
+  await api.traceDriver.finish('fixture-terminal');
+  return {starts,resumes,checkpoints,quanta,failure};
+}
+test('actual selector and all loading producers retain one trace over 16/32/64 and eight-chunk branch',async()=>{
+  const r=await mediumProducer();assert.equal(r.failure,null,r.failure?.stack);
+  assert.equal(r.starts,1);assert.equal(r.checkpoints,r.quanta.length);assert.equal(r.resumes,r.quanta.length-1);
+  assert.deepEqual(r.quanta,[16,16,32,16,16,16,16,64,...Array(8).fill(64)]);
+  write(EVIDENCE,'whole-producer-protocol.json',{fixtureOnly:true,...r});
+});
+test('whole producer path rejects untrusted Medium before execution',async()=>{
+  const r=await mediumProducer(integration,'untrusted');assert(r.failure);assert.equal(r.quanta.length,0);assert.equal(r.starts,0);
+});
+for(const mode of ['extra-queue','foreign-active','changed-history'])test('whole producer rejects '+mode+' before first execution',async()=>{
+  const r=await mediumProducer(integration,mode);assert(r.failure);assert.equal(r.starts,0);assert.deepEqual(r.quanta,[]);
+});
+test('whole producer review pause cannot renew its original wall deadline',async()=>{
+  const r=await mediumProducer(integration,'review-expired');assert.match(r.failure?.message||'',/continuous trace stopped/);
+  assert.deepEqual(r.quanta,[16,16,32,16]);assert.equal(r.starts,1);
+});
+test('input producer old gap and actual 64-slice contract fail before repaired whole producer passes',async()=>{
+  const filename=require.resolve('../tools/mdk2-construction-driver-integration.cjs'),old=new Module(filename,module);
+  old.filename=filename;old.paths=module.paths;
+  old._compile(integration.gitFile('86dc176a3b25a1eda252d1f4b83a1e30a8bb417b','tools/mdk2-construction-driver-integration.cjs').toString(),filename);
+  const r=await mediumProducer(old.exports);
+  assert.match(r.failure?.message||'',/trace construction quantum must be 16/);
+  assert.equal(r.starts,1);assert.equal(r.checkpoints,1);
+  assert.deepEqual(r.quanta,[16,16,32,16,16,16,16]);
+  write(EVIDENCE,'whole-producer-old-failure.json',{fixtureOnly:true,...r,failure:r.failure.message});
+});
+test('actual Python operator -> author -> next routes every dependent review, including cancel input preflight',()=>{
+  const dir=fs.mkdtempSync(path.join(EVIDENCE,'python-path-')),sources=integration.controllerSources(dir);
+  const code=String.raw`
+import sys,json,types,pathlib,hashlib
+v=json.load(sys.stdin);E=pathlib.Path(v['dir']);sources=v['sources'];(E/'recovered/browser').mkdir(parents=True,exist_ok=True)
+io=types.ModuleType('runtime_io');io.E=E;io.ROOT=v['root'];io.remote=lambda *a:dict(stdout=json.dumps(dict(capture='fixture')))
+sys.modules['runtime_io']=io
+import subprocess
+traffic=[]
+def execute(name,args):
+ old=sys.argv;sys.argv=[str(E/name),*args]
+ try:exec(compile(sources[name],str(E/name),'exec'),dict(__name__='__main__',__file__=str(E/name)))
+ finally:sys.argv=old
+def run(args,**kw):
+ name=pathlib.Path(args[1]).name;traffic.append(args)
+ if name in ('author.py','next.py'):execute(name,args[2:])
+ return types.SimpleNamespace(returncode=0)
+subprocess.run=run
+out={}
+for mode in ('open','opening','newgame','medium','fade','pending','construction','loading','cancel','post','cinematic'):
+ png=b'explicit offline Python routing fixture';h=hashlib.sha256(png).hexdigest()
+ (E/'recovered/browser/fixture.png').write_bytes(png)
+ (E/'recovered/browser/fixture.json').write_text(json.dumps({'sha256':h,'state':{'main':{'frozen':{'steps':1}}}}))
+ review=dict(capture='fixture',sha256=h,steps=1,personallyInspected=True,inspector='offline fixture',screen='fixture',selection='none',reviewMode=mode)
+ p=E/'personal.json';p.write_text(json.dumps(review));traffic.clear()
+ execute('operator.py',[mode,'fixture',str(p)])
+ out[mode]=list(traffic)
+print('RESULT '+json.dumps(out))
+`;
+  const result=cp.spawnSync('python3',['-c',code],{input:JSON.stringify({dir,sources,root:integration.ROOT}),encoding:'utf8'});
+  assert.equal(result.status,0,result.stderr);
+  const routes=JSON.parse(result.stdout.split('\n').find(s=>s.startsWith('RESULT ')).slice(7));
+  const expected={medium:['native-menu','medium'],fade:['pending-control','observe-pending'],pending:['pending-control','observe-pending'],
+    construction:['construction-control','observe-construction'],loading:['comic-control','observe-loading'],cancel:['comic-control','skip-comic'],
+    post:['comic-control','observe-post-cancel'],cinematic:['comic-control','observe-post-cancel']};
+  for(const [mode,pair]of Object.entries(expected)){
+    const command=routes[mode].find(a=>a[2]==='review');assert.deepEqual(command.slice(-2),pair,mode);
+    assert(routes[mode].some(a=>path.basename(a[1])==='author.py'));
+    assert(routes[mode].some(a=>path.basename(a[1])==='next.py'));
+  }
+  assert(routes.cancel.some(a=>a[0]==='node'&&a[1].endsWith('/preflight-input-review.cjs')&&a.at(-1)==='cancel'));
+  assert(fs.existsSync(path.join(dir,'input-review-fixture.json')));
+  const oldSources={...sources};
+  for(const name of ['operator.py','author.py'])oldSources[name]=fs.readFileSync(path.join(integration.RUNS,'20261104-mdk2-measured-escape-original',name),'utf8');
+  const old=cp.spawnSync('python3',['-c',code],{input:JSON.stringify({dir,sources:oldSources,root:integration.ROOT}),encoding:'utf8'});
+  assert.equal(old.status,1);assert.match(old.stderr,/AssertionError/);
+  assert(!old.stdout.includes('RESULT '));
+  write(EVIDENCE,'whole-python-review-routing.json',{fixtureOnly:true,routes});
+});
+test('sealed actual Medium producer timing exceeds ten-second wall budget before first pending continuation',()=>{
+  const base=path.join(integration.RUNS,'20261104-mdk2-measured-escape-original');
+  const retained=name=>{const p=path.join(base,name);return fs.existsSync(p)?fs.readFileSync(p):require('node:zlib').gunzipSync(fs.readFileSync(p+'.gz'));};
+  const seal=JSON.parse(retained('seal.json')),inventoryBytes=retained('remote-recovery-inventory.json');
+  assert.equal(integration.sha(inventoryBytes),seal.files.find(r=>r.path==='remote-recovery-inventory.json').sha256);
+  const bytes=retained('recovered/browser/commands.jsonl'),pin=JSON.parse(inventoryBytes).find(r=>r.path==='browser/commands.jsonl');
+  assert.equal(integration.sha(bytes),pin.sha256);assert.equal(bytes.length,pin.bytes);
+  const rows=bytes.toString().trim().split('\n').map(JSON.parse),first=rows.find(r=>r.i===91),next=rows.find(r=>r.i===98);
+  assert.deepEqual([first.action,first.n,next.action,next.n],['step',16,'step',16]);
+  const elapsed=Date.parse(next.at)-Date.parse(first.at);assert.equal(elapsed,20007);assert(elapsed>10000);
+  write(EVIDENCE,'sealed-original-review-wall.json',{sourcePath:path.join(base,'recovered/browser/commands.jsonl.gz'),
+    sha256:integration.sha(bytes),first,next,elapsed,limit:10000,claim:'Historical interval, not a fresh gameplay observation'});
+});
+for(const mode of ['expired-review','command-fault'])test('actual composed polling loop normally closes on '+mode,async()=>{
+  const {api,source}=actualDriver(),events=[];
+  const lo=source.indexOf('  while(!closing&&Date.now()<deadline){'),hi=source.indexOf("  if(!closing)await close('fifteen minute browser bound');",lo);
+  assert(lo>0&&hi>lo);
+  write(api.OUT,'commands/0.json',{action:'step',n:16});
+  const context=vm.createContext({closing:false,deadline:Date.now()+60000,number:0,OUT:api.OUT,halted:false,fs,path,Date,
+    traceDriver:{health:async()=>{events.push('health');if(mode==='expired-review')throw Error('fixture observer deadline');},finish:async()=>events.push('finish')},
+    log:(name,value)=>events.push({name,value}),save:(name,value)=>events.push({name,value}),
+    close:async reason=>{events.push({closed:reason});context.closing=true;},pause:async()=>{throw Error('unexpected idle');},
+    command:async()=>{events.push('command');throw Error('fixture native first fault');}});
+  await vm.runInContext('(async()=>{'+source.slice(lo,hi)+'})()',context);
+  assert.equal(context.halted,true);assert.equal(context.closing,true);
+  assert.equal(events.filter(e=>e?.closed).length,1);
+  if(mode==='expired-review')assert(!events.includes('command'));
+  else {assert(events.includes('finish'));assert(events.some(e=>e.name==='reply-0.json'&&e.value.ok===false));}
+});
 } else {
   nativeChild().catch(error=>parentPort.postMessage({t:'fixtureFailure',error:error.stack}));
 }
@@ -601,6 +839,12 @@ async function nativeChild() {
   let preload=workerData.mode.startsWith('control')
     ? fs.readFileSync(path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene/observe-browser.js'),'utf8')
     : integration.preloadSource({targetId:workerData.targetId,workerURL:workerData.url});
+  if(['mid-poll-old','missing-history-old-binding'].includes(workerData.mode)){
+    // The old failed observer also uses its actual historical fault-containment
+    // adapter. The new adapter aborts the faulting slice immediately.
+    const source=integration.gitFile('86dc176a3b25a1eda252d1f4b83a1e30a8bb417b','tools/mdk2-construction-driver-integration.cjs').toString();
+    preload=preload.replace(integration.installBinding.toString(),source.slice(source.indexOf('function installBinding(options)'),source.indexOf('\nfunction preloadSource')).trim());
+  }
   if(workerData.mode==='mid-poll-old')preload=preload.replace(
     fs.readFileSync(path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs'),'utf8'),
     integration.gitFile(integration.OBSERVER,'tools/mdk2-lua-construction-observer.cjs').toString());
@@ -643,6 +887,7 @@ async function nativeChild() {
   assert.equal(H(fixtureBytes(current)),H(fixtureBytes(baseline)),'accepted qualification fixture changed');
   let fixtureSource=baseline.slice(baseline.indexOf('async function fixture(access){'),baseline.indexOf('  // Diagnostic failures'));
   let checkpoints=0;
+  let traceStartedAt=null;
   if(workerData.mode.endsWith('-early')){
     // Execute the original PUSH/CALL before completion fragments. Only fixture
     // setup repositions between fragments; the observer's load history is never
@@ -665,6 +910,11 @@ async function nativeChild() {
       const paused=bound.invoke('checkpoint',{commandEnd:end,absoluteEnd:end});
       assert(paused.paused && !paused.terminal,JSON.stringify(paused));
       checkpoints++;
+      if(workerData.mode==='continuity-historical-review-early'){
+        // Reproduce the sealed actual command interval with an explicit test
+        // clock. The production observer keeps its original 10000ms deadline.
+        const clock=Date.now;Date.now=()=>clock()+20007;
+      }
       if(workerData.mode==='continuity-deadline')await new Promise(resolve=>setTimeout(resolve,350));
       if(workerData.mode==='continuity-registers')e.set_eax((e.get_eax()+1)>>>0);
       if(workerData.mode==='continuity-paused-boundary')captured.host.log_block(e.get_eip(),e.get_esp());
@@ -673,6 +923,10 @@ async function nativeChild() {
       assert.deepEqual(state(),before);
       return value;
     };
+  workerData.port.on('message'`);
+  if(workerData.mode.startsWith('missing-history-'))fixtureSource=fixtureSource.replace(
+    'const slice=()=>new Promise','const rawSlice=()=>new Promise').replace(
+    "  workerData.port.on('message'", `  const slice=async()=>{await rawSlice();throw Error('first rejected boundary returned to native producer');};
   workerData.port.on('message'`);
   if(!workerData.mode.startsWith('control'))fixtureSource=fixtureSource.replace('e.set_trace_esp(1,0x400000,0x480000);', `
     if(workerData.mode.startsWith('mid-poll')){
@@ -686,13 +940,21 @@ async function nativeChild() {
     if(workerData.mode==='wrong-thread')e.set_current_thread_id(2);
     if(workerData.mode==='wrong-instance')await WebAssembly.instantiate(captured.module,{host:{}});
     if(workerData.mode==='foreign-module-object')await WebAssembly.instantiate(await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0])),{host:{}});
-    const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode==='active-deadline'?20:workerData.mode==='continuity-deadline'?300:9000);
-    if(workerData.mode!=='late-early')bound.invoke('start',{commandEnd:end,absoluteEnd:end});
+    const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode==='continuity-historical-review-early'?20000:workerData.mode==='active-deadline'?20:workerData.mode==='continuity-deadline'?300:9000);
+    if(workerData.mode!=='late-early'){traceStartedAt=Date.now();bound.invoke('start',{commandEnd:end,absoluteEnd:end});}
     if(workerData.mode==='continuity-boundary-overflow'){
       e.set_eip(caller);
       for(let k=0;k<100001 && bound.report().traced;k++)captured.host.log_block(caller,e.get_esp());
       assert.equal(bound.report().observer.status,'boundary-limit');
       throw Error('boundary overflow preserved');
+    }
+    if(workerData.mode==='continuity-record-overflow'){
+      e.set_eip(caller);captured.host.log_block(caller,e.get_esp());
+      for(let k=0;k<513;k++){
+        bound.invoke('checkpoint',{commandEnd:end,absoluteEnd:end});
+        bound.invoke('resume',{commandEnd:end,absoluteEnd:end});
+      }
+      throw Error('record overflow unexpectedly continued');
     }
     if(workerData.mode==='mid-poll-stale-stack')u(stack+8,0x401800);
     if(workerData.mode==='mid-poll-foreign-request')u(0x4b87d4,entry+32);
@@ -715,7 +977,7 @@ async function nativeChild() {
     parentPort.postMessage({pass:!report.fatal,rejected:report.fatal||undefined,report,segments,memoryHash:H(b),guestHash:H(b.subarray(guestRegion.base,guestRegion.end)),state:state(),workerSource:{path:'lib/guest-worker.js',sha256:H(source)}});return;
   }
   e.set_esp(stack);u(stack,caller);u(stack+4,entry);`);
-  fixtureSource=fixtureSource.replace("e.set_eip(start);let steps=0;", "if(workerData.mode==='missing-history')start=CUTS.finalizeType10;e.set_eip(start);let steps=0;");
+  fixtureSource=fixtureSource.replace("e.set_eip(start);let steps=0;", "if(workerData.mode.startsWith('missing-history'))start=CUTS.finalizeType10;e.set_eip(start);let steps=0;");
   const trapStart=baseline.indexOf('  // Original undefined instruction trap parity');
   const trapEnd=baseline.indexOf('  parentPort.postMessage({pass:true,segments,before,trap:',trapStart);
   fixtureSource+="if(workerData.mode.startsWith('control'))e.set_trace_esp(0,0,0);\n";
@@ -726,7 +988,14 @@ async function nativeChild() {
     get report(){return bound.report().observer},sample(){},finish(){return bound.invoke('finish',{reason:'fixture-end'}).observer}
   }})).catch(error=>{
     const report=bound?.invoke('finish',{reason:'fixture-failure'});
-    if(workerData.mode!=='success')parentPort.postMessage({rejected:String(error),report,checkpoints});
+    if(workerData.mode!=='success'){
+      const ex=captured?.e;
+      const faultState=ex?Object.fromEntries(['eip','esp','ebp','eax','ebx','ecx','edx','esi','edi','flag_op','flag_a','flag_b','flag_res','flag_sign_shift'].map(n=>[n,ex['get_'+n]()>>>0])):null;
+      const region=require('../lib/region-map.generated.js').REGIONS.GUEST_BASE;
+      parentPort.postMessage({rejected:String(error),report,checkpoints,traceStartedAt,faultState,
+        memoryHash:workerData.mode.startsWith('missing-history-')?H(new Uint8Array(captured.memory.buffer)):null,
+        guestHash:workerData.mode.startsWith('missing-history-')?H(new Uint8Array(captured.memory.buffer,region.base,region.end-region.base)):null});
+    }
     else parentPort.postMessage({t:'fixtureFailure',error:error.stack,report});
   }));
 }

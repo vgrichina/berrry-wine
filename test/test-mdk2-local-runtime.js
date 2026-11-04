@@ -173,7 +173,7 @@ test('installed Puppeteer close path distinguishes orderly own child from CDP-fa
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);
- assert.equal(r.assignment,'20261104-mdk2-repaired-launch-original');
+ assert.equal(r.assignment,'20261104-mdk2-medium-through-loading');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -197,8 +197,8 @@ test('original useful-window minimum and absolute launch cutoff cannot be extend
  assert.throws(()=>local.createRelease(run,local.HARD_CLOSE-900000),/720\+180/);
 });
 test('renewed dated assignment retains exact absolute close and recovery bounds',()=>{
- assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T22:00:00Z'));
- assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T22:03:00Z'));
+ assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T23:15:00Z'));
+ assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T23:18:00Z'));
  const r=release();r.recoverBy=new Date(local.HARD_RECOVER+1).toISOString();
  assert.throws(()=>local.validate(r,run,now),/cleanup reserve/);
  const late=local.createRelease(run,local.HARD_CLOSE-900001);

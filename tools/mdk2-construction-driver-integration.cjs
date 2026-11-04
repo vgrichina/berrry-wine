@@ -261,8 +261,11 @@ function installBinding(options) {
     const original = imports.host.log_block;
     const host = {log_block: original};
     imports.host.log_block = function(...values) {
-      if (!traced) return Reflect.apply(original, this, values);
-      if (paused) { fatal ||= 'native boundary delivered during frozen review'; stop('unobserved-execution'); }
+      if (!traced) {
+        if (started && terminal) throw Error(fatal || 'native execution after terminal trace');
+        return Reflect.apply(original, this, values);
+      }
+      if (paused) { fatal ||= 'native boundary delivered during frozen review'; stop('unobserved-execution'); throw Error(fatal); }
       let result;
       try { result = Reflect.apply(host.log_block, this, values); }
       catch (error) { fatal ||= String(error); stop('original-import-failure'); throw error; }
@@ -270,9 +273,12 @@ function installBinding(options) {
         const status = observer.report.status;
         if (observer.report.error) fatal ||= observer.report.error;
         stop(status);
+        throw Error(fatal || status);
       }
-      if (traced && (observer.report.blocks >= 100000 || observer.report.records.length >= 512))
-        stop(observer.report.blocks >= 100000 ? 'boundary-limit' : 'record-limit');
+      if (traced && (observer.report.blocks >= 100000 || observer.report.records.length >= 512)) {
+        const reason = observer.report.blocks >= 100000 ? 'boundary-limit' : 'record-limit';
+        stop(reason); throw Error(reason);
+      }
       return result;
     };
     entry.host = host;
@@ -447,7 +453,41 @@ function correlateSnapshots(before, after, trace) {
 
 function createTraceDriver({sessions, page, save, deadline, OUT}) {
   let owner = null, active = false, consumed = false, terminal = false, before = null, previous = null, commandEnd, quantum = 0;
+  let requested = null, inputReceipt = null;
   const read = name => JSON.parse(fs.readFileSync(path.join(OUT, name)));
+  function scene(approval) {
+    const base = path.join(RUNS, '20261104-mdk2-fresh-pending-scene');
+    if (approval.screen === 'difficulty') return require(path.join(base, 'native-menu.cjs')).ready(approval, 'medium');
+    if (approval.screen === 'medium-transition') return require(path.join(base, 'native-menu.cjs')).ready(approval, 'observe');
+    if (approval.screen === 'post-medium-pending') return require(path.join(base, 'pending-control.cjs')).scene(approval, 'observe-pending');
+    if (approval.screen === 'post-medium-construction') return require(path.join(base, 'construction-control.cjs')).scene(approval, 'observe-construction');
+    if (approval.screen === 'comic-loading') return require(path.join(base, 'comic-control.cjs')).scene(approval, 'observe-loading');
+    if (approval.screen === 'opening-comic') return require(path.join(base, 'comic-control.cjs')).scene(approval, 'skip-comic');
+    if (approval.screen === 'postcancel-cinematic') return require(path.join(base, 'comic-control.cjs')).scene(approval, 'observe-post-cancel');
+    throw Error('changed construction scene; retained history cannot be skipped');
+  }
+  // Called by the actual driver only after its native readiness, inspection and
+  // trusted keyboard dispatch, and after it saves the original input readback.
+  function noteInput(c, i) {
+    const approval = read('inspection-approval.json');
+    if (!consumed && approval.screen !== 'difficulty') return;
+    scene(approval);
+    assert(['difficulty','opening-comic'].includes(approval.screen), 'observation scene does not authorize traced keyboard input');
+    assert.equal(c.reviewRef, approval.capture, 'foreign input review');
+    assert.equal(c.key, approval.screen === 'difficulty' ? 'Enter' : 'Escape', 'foreign traced key');
+    const receipt = read('input-' + i + '.json').main;
+    const events = receipt.observation.inputs, edge = events.at(-1);
+    assert.deepEqual([edge?.type, edge?.key, edge?.trusted, edge?.target], [c.action, c.key, true, 'screen'], 'untrusted traced input');
+    const {balanced} = require(path.join(RUNS, '20261104-mdk2-fresh-pending-scene/native-menu.cjs'));
+    if (inputReceipt) {
+      assert.deepEqual(events.slice(0, -1), inputReceipt.observation.inputs, 'traced input history changed');
+    } else {
+      assert.equal(c.action, 'keydown', 'missing Medium press');
+      balanced(events.slice(0, -1));
+    }
+    balanced(c.action === 'keydown' ? [...events, {...edge, type:'keyup'}] : events);
+    inputReceipt = receipt;
+  }
   async function rpc(action, row) {
     assert(owner && sessions.get(owner.id) === owner.entry && owner.entry.session === owner.session && owner.entry.info.url === owner.url, 'lost/replacement owning Worker');
     const response = await owner.session.send('Runtime.evaluate', {expression: `JSON.stringify(globalThis.__mdk2BoundTrace.invoke(${JSON.stringify(action)},${JSON.stringify(row || {})}))`, returnByValue: true});
@@ -480,20 +520,31 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     const acceptedAt = Date.now();
     if (terminal) throw Error('trace driver terminal');
     const approval = read('inspection-approval.json');
-    if (consumed && approval.screen !== 'post-medium-construction')
-      throw Error('changed construction scene; retained history cannot be skipped');
-    if (approval.screen !== 'post-medium-construction') return;
-    // Only the original reviewed, input-free construction quantum qualifies.
-    assert.equal(c.n, 16, 'trace construction quantum must be 16');
-    assert.equal(approval.originalScene, 'level-destruction-construction');
-    assert.equal(approval.selection, 'none'); assert.equal(approval.constructionBlackVisible, true);
+    if (!consumed && !['difficulty','post-medium-construction'].includes(approval.screen)) return;
+    scene(approval);
+    // Execution credit is exactly the unchanged producer's command. The main
+    // observer still counts every boundary within the same 100000/512 limits.
+    assert([16,32,64].includes(c.n), 'unsupported traced quantum');
+    if (approval.screen === 'difficulty') assert(inputReceipt, 'Medium trusted input receipt missing');
     assert.equal(approval.capture, pending.capture); assert.equal(approval.sha256, pending.sha256);
     const menu = read('native-selector-ledger.json'); assert(menu.newgame && menu.medium, 'independent NewGame/Medium prerequisite');
     const state = await page().evaluate(() => ({input: __mdk2InputSnapshot(sharedRenderer), observation: __mdk2Observe,
       binding: __mdk2BoundTrace.report(), frozen: WineFrozen.status()}));
     assert(!state.binding.fatal, 'page binding failure');
-    assert.deepEqual(state.input.inputQueue, []); assert.equal(state.input.activeInput, null); assert.equal(state.input.mouseButtonsMask, 0);
-    assert.equal(state.frozen.steps, pending.steps);
+    assert.equal(state.input.mouseButtonsMask, 0);
+    if (inputReceipt) {
+      assert.deepEqual(state.observation.inputs, inputReceipt.observation.inputs, 'input outside traced producer');
+      // An acknowledged key edge can still be queued before its first guest
+      // poll. Only an exact suffix of that actual readback may remain pending.
+      const queue = inputReceipt.inputQueue;
+      assert(Array.isArray(queue) && Array.isArray(state.input.inputQueue), 'input queue observation missing');
+      assert(state.input.inputQueue.length <= queue.length, 'extra traced input');
+      assert.deepEqual(state.input.inputQueue, queue.slice(queue.length - state.input.inputQueue.length), 'changed traced input queue');
+      assert(state.input.activeInput === null || [inputReceipt.activeInput,...queue].some(e => e && JSON.stringify(e) === JSON.stringify(state.input.activeInput)), 'foreign active input');
+    } else {
+      assert.deepEqual(state.input.inputQueue, []); assert.equal(state.input.activeInput, null);
+    }
+    assert.equal(state.frozen.steps, previous ? previous.barrier.frozen.steps : pending.steps);
     const sent = state.binding.audit.filter(r => r.kind === 'sent'); assert.equal(sent.length, 1, 'ambiguous owning Module send');
     const reports = [];
     for (const [id, entry] of sessions) {
@@ -524,7 +575,7 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
         return ledger.startedAt + 540000;
       });
     commandEnd = Math.min(acceptedAt + 60000, deadline() - 180000, ...aggregateEnds);
-    consumed = true; active = true;
+    consumed = true; active = true; requested = c.n;
     const report = await rpc(previous ? 'resume' : 'start', {command: i, commandEnd, absoluteEnd: deadline() - 180000});
     save('bounded-trace-start-' + quantum + '.json', {command: i, before, report, commandEnd});
     save('bounded-trace-start.json', {command: i, before, report, commandEnd});
@@ -536,7 +587,7 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     const report = await rpc('checkpoint', {commandEnd, absoluteEnd: deadline() - 180000});
     save('bounded-trace-end-' + quantum + '.json', {report, result});
     save('bounded-trace-end.json', {report, result});
-    assert(result.ran === 16 && !result.timedOut && Date.now() < commandEnd, 'original construction command failed/deadline');
+    assert(result.ran === requested && !result.timedOut && Date.now() < commandEnd, 'original construction command failed/deadline');
     const after = await capture();
     const correlation = correlateSnapshots(before, after, report);
     save('bounded-trace-correlation-' + quantum + '.json', {before, after, correlation});
@@ -547,6 +598,16 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     assert(report.observer?.blocks > 0, 'mandatory native history missing');
     assert(report.paused && report.traced && !report.terminal && report.observer.status === 'running', 'history did not checkpoint');
     previous = after; quantum++;
+  }
+  async function health() {
+    if (!consumed) return;
+    assert(!terminal, 'trace driver terminal');
+    const report = await rpc('report');
+    if (report.fatal || report.terminal || !report.traced || report.observer?.status !== 'running' ||
+      !Number.isFinite(report.traceEnd) || Date.now() >= report.traceEnd) {
+      save('bounded-trace-first-fault.json', report);
+      throw Error('continuous trace stopped: ' + (report.fatal || report.observer?.status || 'missing live observer'));
+    }
   }
   async function finish(reason) {
     if (terminal) return;
@@ -559,7 +620,7 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
       } catch (error) { save('bounded-trace-lost.json', {reason, error: String(error), history: 'unknown'}); }
     }
   }
-  return {begin, end, finish};
+  return {begin, end, finish, noteInput, health};
 }
 
 function compose(run) {
@@ -583,7 +644,15 @@ function compose(run) {
     "let result;try{await traceDriver.begin(c,i,inspectionGuard.pending);result=await page.evaluate(n=>WineFrozen.step(n),c.n);await traceDriver.end(result);save('step-'+i+'.json',result);}catch(e){halted=true;await traceDriver.finish('command-failure');throw e;}");
   source = replaceOnce(source, 'if(closing)return;closing=true;clearTimeout(timer);',
     "if(closing)return;closing=true;clearTimeout(timer);await traceDriver.finish('terminal-cleanup');");
+  source = replaceOnce(source, "save('input-'+i+'.json',await state());return;\n  }\n  if(['mousemove'",
+    "save('input-'+i+'.json',await state());traceDriver.noteInput(c,i);return;\n  }\n  if(['mousemove'");
   source = replaceOnce(source, "halted=true;save('reply-'+i+'.json'", "halted=true;await traceDriver.finish('first-command-failure');save('reply-'+i+'.json'");
+  source = replaceOnce(source, "while(!closing&&Date.now()<deadline){",
+    "while(!closing&&Date.now()<deadline){\n    try{await traceDriver.health();}catch(e){halted=true;log('first-failures.jsonl',{phase:'continuous trace',error:String(e)});await close('continuous trace first fault');break;}");
+  source = replaceOnce(source, "  inspectionGuard.authorize(c,i);",
+    "  inspectionGuard.authorize(c,i);\n  if(!['quit','keyup','mouseup'].includes(c.action))await traceDriver.health();");
+  source = replaceOnce(source, "log('first-failures.jsonl',{phase:'command',i,error:String(e)});}",
+    "log('first-failures.jsonl',{phase:'command',i,error:String(e)});await close('first command failure');}");
   source = replaceOnce(source, "catch(e=>{halted=true;log('first-failures.jsonl',{phase:'worker preload'", "catch(e=>{halted=true;traceDriver.finish('preload-failure');log('first-failures.jsonl',{phase:'worker preload'");
   return {file: path.join(RUNS, DRIVER), source};
 }
@@ -599,7 +668,7 @@ function inspect() {
   return {status: 'offline-composition-checked', source: SOURCE, observer: OBSERVER, observerRepairSHA256:OBSERVER_REPAIR_SHA256, closure, pinsSHA256,
     composedSHA256: sha(composed.source), preloadSHA256: sha(preloadSource()), moduleReferences,
     continuity: {checkpoint: true, restart: false, deadlineReset: false, reviewClock: 'wall time; original deadline remains fixed'},
-    limits: {traceMs: 10000, boundaries: 100000, records: 512, constructionSlices: 16, restart: false},
+    limits: {traceMs: 10000, boundaries: 100000, records: 512, constructionSlices: [16,32,64], restart: false},
     runtime: 'Not executed. Fresh release and original pinned served bytes required; coordinator owns allocation/shutdown.'};
 }
 function retainedModule(row) {
@@ -634,6 +703,13 @@ function controllerSources(runDirectory) {
   const base = path.join(RUNS, '20261104-mdk2-measured-escape-original');
   const sources = {};
   for (const name of ['author.py','operator.py','next.py','control.py','runtime_io.py']) sources[name] = fs.readFileSync(path.join(base, name), 'utf8');
+  // next.py already routes these original continuations, but the author and
+  // operator stopped at construction. Carry every real route through both
+  // review entry points; cancel keeps its existing input-review preflight.
+  const oldModes = "('open','opening','newgame','medium','fade','pending','construction')";
+  const modes = "('open','opening','newgame','medium','fade','pending','construction','loading','cancel','post','cinematic')";
+  for (const name of ['author.py','operator.py']) sources[name] = replaceOnce(sources[name], oldModes, modes);
+  sources['author.py'] = replaceOnce(sources['author.py'], "mode in ('newgame','medium')", "mode in ('newgame','medium','cancel')");
   // Keep the author -> operator -> next -> control path and personal review
   // validators. Only the obsolete allocation identity is replaced by the fresh
   // release's exact run-directory/assignment binding.

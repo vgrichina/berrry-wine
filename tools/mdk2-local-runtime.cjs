@@ -10,9 +10,9 @@ const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
 // Explicit one-attempt renewal after the repaired diagnostic, not guest progress.
-const HARD_CLOSE = Date.parse('2026-11-04T22:00:00Z');
-const HARD_RECOVER = Date.parse('2026-11-04T22:03:00Z');
-const ASSIGNMENT = '20261104-mdk2-repaired-launch-original';
+const HARD_CLOSE = Date.parse('2026-11-04T23:15:00Z');
+const HARD_RECOVER = Date.parse('2026-11-04T23:18:00Z');
+const ASSIGNMENT = '20261104-mdk2-medium-through-loading';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -217,7 +217,7 @@ def allocation():
  assert v['authorization']=='RUNTIME RELEASE MDK2 TARGET ONWARD'
  assert v['localAuthorization']=='EXPLICIT LOCAL FINITE ORIGINAL ATTEMPT'
  assert v['runtimeKind']=='local-process-v1' and v['boxId'] is None and v['expiry'] is None
- assert v['assignment']=='20261104-mdk2-repaired-launch-original' and v['runDirectory']==str(E)
+ assert v['assignment']=='20261104-mdk2-medium-through-loading' and v['runDirectory']==str(E)
  assert v['shutdownOwner']=='coordinator'
  assert len(v['nonce'])==64 and all(c in '0123456789abcdef' for c in v['nonce'])
  for field,name in [('driverSHA256','mdk2-construction-driver-integration.cjs'),('localSHA256','mdk2-local-runtime.cjs')]:
