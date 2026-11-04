@@ -1,0 +1,145 @@
+'use strict';
+
+// Explicit local contract for the immutable accepted MDK2 entry. No box identity.
+const fs = require('node:fs');
+const path = require('node:path');
+const os = require('node:os');
+const cp = require('node:child_process');
+const assert = require('node:assert/strict');
+const ROOT = path.resolve(__dirname, '..');
+const BASE = path.join(ROOT, 'scratch/runs');
+const HARD_CLOSE = Date.parse('2026-11-04T17:55:00Z');
+const HARD_RECOVER = Date.parse('2026-11-04T17:58:00Z');
+const ASSIGNMENT = '20261104-mdk2-bounded-trace-driver-repair';
+function identity(pid = process.pid) {
+  const stat = fs.readFileSync('/proc/' + pid + '/stat', 'utf8');
+  return {hostname:os.hostname(), bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),
+    pid, startTicks:stat.slice(stat.lastIndexOf(')') + 2).split(' ')[19], root:fs.realpathSync(ROOT)};
+}
+function validate(release, run, now = Date.now(), actual = identity()) {
+  assert.equal(fs.realpathSync(run), run, 'canonical fresh run required');
+  assert.equal(path.dirname(run), BASE, 'direct run required');
+  assert.equal(release.runDirectory, run, 'exact fresh run binding');
+  assert.equal(release.authorization, 'RUNTIME RELEASE MDK2 TARGET ONWARD');
+  assert.equal(release.localAuthorization, 'EXPLICIT LOCAL FINITE ORIGINAL ATTEMPT');
+  assert.equal(release.assignment, ASSIGNMENT);
+  assert.equal(release.shutdownOwner, 'coordinator');
+  assert.equal(release.runtimeKind, 'local-process-v1');
+  assert.equal(release.boxId, null, 'no fabricated box identity');
+  assert.equal(release.expiry, null, 'local process has no allocation expiry');
+  assert.deepEqual(release.localIdentity, actual, 'real host/process identity required');
+  const issued = Date.parse(release.issuedAt), close = Date.parse(release.closeBy), recover = Date.parse(release.recoverBy);
+  assert([now,issued,close,recover].every(Number.isFinite), 'finite local deadlines');
+  assert(issued <= now && now - issued < 360000, 'fresh local release');
+  assert(close <= issued + 360000 && close <= HARD_CLOSE, '360 second absolute browser cap');
+  assert(close > now + 180000, 'original three-minute useful/recovery window required');
+  assert(recover >= close + 180000 && recover <= HARD_RECOVER, 'original cleanup reserve required');
+  return Math.min(now + 900000, close);
+}
+function createRelease(run, now = Date.now()) {
+  assert(now + 360000 + 180000 < HARD_CLOSE, 'launch requires 360+180 seconds before Chrome cutoff');
+  assert(!fs.existsSync(path.join(run,'browser')), 'one original launch only');
+  return {authorization:'RUNTIME RELEASE MDK2 TARGET ONWARD', localAuthorization:'EXPLICIT LOCAL FINITE ORIGINAL ATTEMPT',
+    assignment:ASSIGNMENT, shutdownOwner:'coordinator', runtimeKind:'local-process-v1', boxId:null, expiry:null,
+    runDirectory:run, localIdentity:identity(), issuedAt:new Date(now).toISOString(),
+    closeBy:new Date(now + 360000).toISOString(), recoverBy:new Date(now + 540000).toISOString()};
+}
+function once(source, from, to) {
+  assert.equal(source.split(from).length, 2, 'local contract anchor changed: ' + from);
+  return source.replace(from, to);
+}
+function translate(source) {
+  // Only the obsolete box-TTL guard changes. All review/input/deadline code stays.
+  const guard = "if(release.authorization!=='RUNTIME RELEASE MDK2 TARGET ONWARD'||release.shutdownOwner!=='coordinator'||!release.boxId||Date.parse(release.expiry)<Date.now()+600000)throw Error('fresh authorized finite TTL required');";
+  source = once(source, guard, `require(${JSON.stringify(__filename)}).validate(release,RUN);`);
+  return once(source, "executablePath:'/usr/bin/google-chrome'", "executablePath:'/opt/google/chrome/chrome'");
+}
+let installed = false;
+const transportSource = String.raw`# Local transport only; imported as runtime_io by the original operator chain.
+from pathlib import Path
+import json,subprocess,hashlib,os,socket,time
+E=Path(__file__).resolve().parent
+ROOT='/home/user/wine-assembly'
+def allocation():
+ v=json.loads((E/'runtime-release.json').read_text())
+ assert v['authorization']=='RUNTIME RELEASE MDK2 TARGET ONWARD'
+ assert v['localAuthorization']=='EXPLICIT LOCAL FINITE ORIGINAL ATTEMPT'
+ assert v['runtimeKind']=='local-process-v1' and v['boxId'] is None and v['expiry'] is None
+ assert v['assignment']=='20261104-mdk2-bounded-trace-driver-repair' and v['runDirectory']==str(E)
+ assert v['shutdownOwner']=='coordinator'
+ i=v['localIdentity'];assert i['root']==str(Path(ROOT).resolve()) and i['hostname']==socket.gethostname()
+ assert i['bootId']==Path('/proc/sys/kernel/random/boot_id').read_text().strip()
+ stat=Path('/proc/'+str(i['pid'])+'/stat').read_text()
+ assert stat[stat.rindex(')')+2:].split()[19]==i['startTicks'],'original local process gone/replaced'
+ return i
+def local(file):
+ p=Path(file);assert p.is_absolute() and p.resolve()==p and p.is_relative_to(E),'owned run path required'
+ return p
+def remote(code,timeout=60,detach=False):
+ allocation();assert not detach and 0<timeout<=90,'bounded synchronous local control only'
+ assert not any(x in code for x in ('boat ','ssh ','curl ','wget ')),'local transport only'
+ p=subprocess.run(code,shell=True,cwd=ROOT,capture_output=True,text=True,timeout=timeout,executable='/bin/bash')
+ r=dict(stdout=p.stdout,stderr=p.stderr,exitCode=p.returncode,stdoutTruncated=False,stderrTruncated=False)
+ with (E/'local-commands.jsonl').open('a') as f:f.write(json.dumps(dict(code=code,result=r))+'\n')
+ assert p.returncode==0,r
+ return r
+def upload(data,dest):
+ allocation();p=local(dest);assert p.parent==E and p.name.startswith('review-') and p.suffix=='.json'
+ assert len(data)<65536;p.write_bytes(data)
+def download(src,dest):
+ allocation();p=local(src);q=local(dest)
+ assert p.parent==E/'browser' and q.parent==E/'recovered/browser' and p.name==q.name
+ assert p.is_file() and p.stat().st_size<16777216
+ b=p.read_bytes();q.parent.mkdir(parents=True,exist_ok=True);q.write_bytes(b)
+ return dict(path=str(p),bytes=len(b),sha256=hashlib.sha256(b).hexdigest())
+`;
+const controlSource = String.raw`# Preserve author -> operator -> next -> control; replace only box transport.
+import sys
+# The generated original operator.py must never shadow Python's stdlib operator.
+sys.path.pop(0)
+import importlib.util,runpy
+from pathlib import Path
+E=Path(__file__).resolve().parent
+s=importlib.util.spec_from_file_location('runtime_io',E/'local-transport.py')
+io=importlib.util.module_from_spec(s);s.loader.exec_module(io);sys.modules['runtime_io']=io
+io.allocation()
+# Child Python processes inherit this bootstrap through the run-local .pth-free
+# sitecustomize hook; no shared Python module is replaced.
+import os
+os.environ['PYTHONPATH']=str(E/'python-hooks')+os.pathsep+os.environ.get('PYTHONPATH','')
+target=sys.argv.pop(1);assert target in ('operator.py','next.py','control.py','author.py')
+sys.argv[0]=str(E/target);runpy.run_path(str(E/target),run_name='__main__')
+`;
+const siteSource = String.raw`import importlib.util,sys
+from pathlib import Path
+E=Path(__file__).resolve().parent.parent
+s=importlib.util.spec_from_file_location('runtime_io',E/'local-transport.py')
+io=importlib.util.module_from_spec(s);s.loader.exec_module(io);sys.modules['runtime_io']=io
+`;
+function prepareTransport(run) {
+  for(const [name,source] of Object.entries({'local-transport.py':transportSource,'local-control.py':controlSource}))
+    fs.writeFileSync(path.join(run,name),source,{flag:'wx'});
+  fs.mkdirSync(path.join(run,'python-hooks'));
+  fs.writeFileSync(path.join(run,'python-hooks/sitecustomize.py'),siteSource,{flag:'wx'});
+}
+function install(run) {
+  assert(!installed, 'dedicated one-use local contract');
+  const fd = Number(process.env.WINE_LOCAL_RUNTIME_LOCK_FD);
+  assert(Number.isInteger(fd) && fd >= 3, 'inherited local runtime lock required');
+  const held = fs.fstatSync(fd), lock = fs.statSync('/tmp/wine-local-runtime.lock');
+  assert(held.dev === lock.dev && held.ino === lock.ino, 'wrong runtime lock descriptor');
+  assert.equal(cp.spawnSync('flock',['-n','/tmp/wine-local-runtime.lock','true']).status,1,'exclusive runtime lock must be held');
+  const release = createRelease(run);
+  validate(release, run);
+  const finite = require(path.join(BASE,'20261104-mdk2-fresh-pending-scene/finite-deadline.cjs'));
+  const originalDeadline = finite.browserDeadline;
+  finite.browserDeadline = (r,now) => r.runtimeKind === 'local-process-v1' ? validate(r,run,now) : originalDeadline(r,now);
+  const main = require(path.join(BASE,'20261104-mdk2-post-lua-native-boundary/main-state.cjs'));
+  const originalSource = main.sourceForRun;
+  main.sourceForRun = directory => translate(originalSource(directory));
+  fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(release,null,2)+'\n',{flag:'wx'});
+  prepareTransport(run);
+  installed = true;
+  return {release, restore() {finite.browserDeadline=originalDeadline;main.sourceForRun=originalSource;}};
+}
+module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,validate,createRelease,translate,install,prepareTransport,transportSource,controlSource,siteSource};
