@@ -9,10 +9,10 @@ const crypto = require('node:crypto');
 const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
-// Explicit one-attempt renewal after the repaired diagnostic, not guest progress.
+// Explicit installed-original assignment; pre-Chrome tests consume no game launch.
 const HARD_CLOSE = Date.parse('2026-11-04T23:50:00Z');
 const HARD_RECOVER = Date.parse('2026-11-04T23:53:00Z');
-const ASSIGNMENT = '20261104-mdk2-bounded-review-window';
+const ASSIGNMENT = '20261104-mdk2-installed-original-gameplay';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -278,10 +278,10 @@ function prepareTransport(run) {
   fs.writeFileSync(path.join(run,'python-hooks/sitecustomize.py'),siteSource,{flag:'wx'});
 }
 function heavyRelease(board) {
-  const rows=board.split('\n').filter(line=>/^2026-11-04T\S+ (?:stronghold-customgame-drain(?:-cause-nov04)? LOCAL HEAVY RELEASE(?:\s|$)|coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04:)/.test(line));
-  assert(rows.length,'explicit stronghold-customgame-drain LOCAL HEAVY RELEASE required');
+  const rows=board.split('\n').filter(line=>/^2026-11-04T\S+ (?:gltron-repaired-live(?:-backends-nov04)? LOCAL HEAVY RELEASE(?:\s|$)|coordinator LOCAL HEAVY RELEASE gltron-repaired-live-backends-nov04:)/.test(line));
+  assert(rows.length,'explicit gltron-repaired-live-backends-nov04 LOCAL HEAVY RELEASE required');
   const line=rows.at(-1),at=Date.parse(line.split(' ')[0]);
-  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-04T20:37:22Z')&&at<=Date.now(),'current predecessor release required');
+  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-04T21:00:23Z')&&at<=Date.now(),'current predecessor release required');
   return line;
 }
 function install(run) {
@@ -315,4 +315,18 @@ function install(run) {
   installed = true;
   return {release,lifecycle, restore() {finite.browserDeadline=originalDeadline;main.sourceForRun=originalSource;if(!existingTap)lifecycle.restore();}};
 }
-module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,launchOwned,install,prepareTransport,transportSource,controlSource,siteSource,heavyRelease};
+// Keep directory creation, the exact resolver, installation and the actual
+// composed caller in one entry. Tests replace only Puppeteer's launch boundary.
+async function start(run) {
+  fs.mkdirSync(run,{recursive:true});
+  const integration=require('./mdk2-construction-driver-integration.cjs');
+  const releaseLine=heavyRelease(fs.readFileSync(path.join(ROOT,'messageboard.txt'),'utf8'));
+  const {adapter,provenance}=integration.candidateResolver(hash(fs.readFileSync(path.join(ROOT,'tools/mdk2-construction-driver-integration.cjs'))));
+  const resolver=adapter.createResolver(),runtime=await adapter.installAdapter(resolver);
+  fs.writeFileSync(path.join(run,'original-adapter-proof.json'),JSON.stringify({provenance,releaseLine,
+    filesystem:runtime.filesystem,http:runtime.http,inspection:runtime.inspection},null,2)+'\n',{flag:'wx'});
+  fs.writeFileSync(path.join(run,'runtime-pins.json'),resolver.manifest(),{flag:'wx'});
+  install(run);
+  integration.run(run);
+}
+module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,launchOwned,install,start,prepareTransport,transportSource,controlSource,siteSource,heavyRelease};

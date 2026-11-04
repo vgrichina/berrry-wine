@@ -173,7 +173,7 @@ test('installed Puppeteer close path distinguishes orderly own child from CDP-fa
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);
- assert.equal(r.assignment,'20261104-mdk2-bounded-review-window');
+ assert.equal(r.assignment,'20261104-mdk2-installed-original-gameplay');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -270,17 +270,18 @@ test('install requires real inherited exclusive local lock before release or com
  assert.throws(()=>local.install(run),/lock required/);
  assert(!fs.existsSync(path.join(run,'runtime-release.json')));
 });
-test('exact current predecessor heavy release excludes mentions, task release and other owners',()=>{
- const good='2026-11-04T20:46:49+00:00 stronghold-customgame-drain LOCAL HEAVY RELEASE offline only';
+test('exact current GL predecessor heavy release excludes mentions, prior release and other owners',()=>{
+ const good='2026-11-04T21:02:00+00:00 gltron-repaired-live-backends-nov04 LOCAL HEAVY RELEASE original stopped';
  assert.equal(local.heavyRelease(good),good);
- const coordinated='2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: ZERO runtime; MDK may proceed';
+ const coordinated='2026-11-04T21:02:00.552949+00:00 coordinator LOCAL HEAVY RELEASE gltron-repaired-live-backends-nov04: MDK may proceed';
  assert.equal(local.heavyRelease(coordinated),coordinated);
+ assert.equal(local.heavyRelease(coordinated.replace('coordinator','gltron-repaired-live')),coordinated.replace('coordinator','gltron-repaired-live'));
  for(const line of [good.replace(' LOCAL HEAVY RELEASE',' RELEASE'),
-   good.replace('stronghold-customgame-drain','mdk2-bounded-review waiting stronghold-customgame-drain'),
-   good.replace('20:46:49','20:20:46'),good.replace('2026-11-04','2026-11-05'),
-   good.replace('stronghold-customgame-drain','stronghold-first-script-cause'),
+   good.replace('gltron-repaired-live-backends-nov04','mdk2-installed-original waiting gltron-repaired-live-backends-nov04'),
+   good.replace('21:02:00','20:58:26'),good.replace('2026-11-04','2026-11-05'),
+   good.replace('gltron-repaired-live-backends-nov04','stronghold-customgame-drain'),
    coordinated.replace('coordinator LOCAL','mdk2-bounded-review waiting coordinator LOCAL'),
-   coordinated.replace('drain-cause-nov04:','other-task:')])
+   coordinated.replace('gltron-repaired-live-backends-nov04:','other-task:')])
    assert.throws(()=>local.heavyRelease(line),/release/i);
 });
 test('actual local install makes the mandatory owning lifecycle tap ready before the composed launch caller',()=>{
@@ -289,11 +290,11 @@ test('actual local install makes the mandatory owning lifecycle tap ready before
  // Only that pathname, the test clock and board input change in this fixture.
  fs.writeFileSync(script,`const fs=require('fs'),assert=require('assert/strict'),Module=require('module');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))};
- const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse('2026-11-04T20:55:00Z');
+ const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse('2026-11-04T21:03:00Z');
  let source=mode==='old'?require('child_process').execFileSync('git',['show','6055aa7e43d7c3505b6796d447663366e3b85146:tools/mdk2-local-runtime.cjs'],{encoding:'utf8'}):fs.readFileSync(filename,'utf8');
  source=source.replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: explicit fixture only':'2026-11-04T21:02:00Z coordinator LOCAL HEAVY RELEASE gltron-repaired-live-backends-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(require('path').dirname(filename));m._compile(source,filename);
  const installed=m.exports.install(dir),tap=m.exports.lifecycleForRun(dir);
  assert.equal(installed.lifecycle,tap);assert.throws(()=>tap.ownedLaunch(),/exactly one/);
@@ -312,6 +313,45 @@ test('actual local install makes the mandatory owning lifecycle tap ready before
    }finally{fs.rmSync(dir,{recursive:true,force:true});}
  }
  if(process.env.MDK2_LOCAL_TEST_EVIDENCE)fs.writeFileSync(path.join(process.env.MDK2_LOCAL_TEST_EVIDENCE,'install-caller-before-after.json'),JSON.stringify(results,null,2));
+});
+test('actual composed entry creates run, installs release/recorder and calls mocked Puppeteer with zero Chrome',()=>{
+ const script=path.join(run,'composed-entry.cjs'),lock=path.join(run,'composed-runtime.lock');
+ const dir=fs.mkdtempSync(path.join(local.BASE,'mdk2-composed-entry-test-'));fs.rmdirSync(dir);
+ fs.writeFileSync(script,`'use strict';
+ const fs=require('fs'),path=require('path'),Module=require('module'),cp=require('child_process');
+ const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))},dir=${JSON.stringify(dir)};
+ const originalRead=fs.readFileSync;
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-04T21:02:00Z coordinator LOCAL HEAVY RELEASE gltron-repaired-live-backends-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
+ Date.now=()=>Date.parse('2026-11-04T21:03:00Z');
+ const source=fs.readFileSync(filename,'utf8').replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
+ const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(path.dirname(filename));require.cache[filename]=m;m._compile(source,filename);
+ const local=m.exports,load=Module._load,puppeteer=require('puppeteer'),events=[];
+ const mocked={...puppeteer,launch:async options=>{events.push({kind:'launch-boundary',options,recorder:local.lifecycleForRun(dir).file});throw Error('ZERO_CHROME_BOUNDARY');}};
+ Module._load=function(name,...args){return name==='puppeteer'?mocked:Reflect.apply(load,this,[name,...args]);};
+ const spawn=cp.spawn;cp.spawn=function(command,...args){if(/chrome/i.test(String(command))){events.push({kind:'forbidden-chrome-spawn'});throw Error('forbidden Chrome spawn');}return Reflect.apply(spawn,this,[command,...args]);};
+ const servers=require(${JSON.stringify(path.join(local.ROOT,'test/static-server.js'))}),start=servers.startStaticServer;
+ servers.startStaticServer=async options=>{const s=await start(options);events.push({kind:'listen',port:s.address().port});s.once('close',()=>events.push({kind:'close'}));return s;};
+ process.on('exit',code=>fs.writeFileSync(dir+'/entry-result.json',JSON.stringify({code,events})));
+ local.start(dir).catch(error=>{console.error(error.stack);process.exitCode=1;});
+ `);
+ try {
+  const result=cp.spawnSync('flock',['-x',lock,'bash','-c','exec 9>"$1"; export WINE_LOCAL_RUNTIME_LOCK_FD=9; exec "$2" "$3"','mdk2-composed',lock,process.execPath,script],{cwd:local.ROOT,encoding:'utf8',timeout:60000});
+  assert.equal(result.status,1,result.stderr);assert.equal(result.signal,null);
+  const evidence=JSON.parse(fs.readFileSync(path.join(dir,'entry-result.json')));
+  assert.equal(evidence.events.filter(r=>r.kind==='launch-boundary').length,1);
+  assert.equal(evidence.events.filter(r=>r.kind==='listen').length,2);
+  assert.equal(evidence.events.filter(r=>r.kind==='close').length,2);
+  assert(!evidence.events.some(r=>r.kind==='forbidden-chrome-spawn'));
+  const failure=JSON.parse(fs.readFileSync(path.join(dir,'browser/bootstrap-failure.json')));
+  assert.match(failure.error,/ZERO_CHROME_BOUNDARY/);
+  assert.match(failure.error,/launchOwned/,'actual caller must reach Puppeteer');
+  assert(!fs.existsSync(path.join(dir,'chrome-profile')));
+  const rows=fs.readFileSync(path.join(dir,'chrome-lifecycle.jsonl'),'utf8').trim().split('\n').map(JSON.parse);
+  assert.equal(rows[0].kind,'observer-installed');assert(!rows.some(r=>r.kind==='spawn'));
+  const release=JSON.parse(fs.readFileSync(path.join(dir,'runtime-release.json')));
+  assert.equal(release.assignment,local.ASSIGNMENT);
+  if(process.env.MDK2_LOCAL_TEST_EVIDENCE)fs.writeFileSync(path.join(process.env.MDK2_LOCAL_TEST_EVIDENCE,'composed-entry-boundary.json'),JSON.stringify({evidence,failure,rows,release},null,2));
+ }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
 test('actual original Python child: run-root hook reproduces operator collision; isolated hook fixes it',()=>{
  // Small generated controller inputs only. No browser, command spool or game.
