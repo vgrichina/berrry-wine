@@ -13,7 +13,7 @@ const memory = new ArrayBuffer(0x10000);
 const dv = new DataView(memory);
 const DESC = 0x1000, VERTS = 0x2000, CALL = 0x3000;
 
-function run(zenable, zwrite, zs, primitive = 4) {
+function run(zenable, zwrite, zs, primitive = 4, vertexType = 3) {
   new Uint8Array(memory).fill(0);
   const f = [];
   f[0] = 0x4000; f[1] = 640; f[2] = 480; f[3] = 16; f[4] = 1280; f[5] = 0x8000; f[6] = 1;
@@ -27,7 +27,7 @@ function run(zenable, zwrite, zs, primitive = 4) {
   });
   dv.setUint32(CALL, 0x5000, true);      // device
   dv.setUint32(CALL + 4, primitive, true);
-  dv.setUint32(CALL + 8, 3, true);       // TL vertex
+  dv.setUint32(CALL + 8, vertexType, true);
   dv.setUint32(CALL + 12, VERTS, true);  // guest address (identity-mapped here)
   dv.setUint32(CALL + 16, zs.length, true);
   const draws = [];
@@ -52,6 +52,11 @@ function run(zenable, zwrite, zs, primitive = 4) {
 // Depth off: sz = 300 (Flip3DTL), negative and in-range values all land in [0,1].
 const off = run(0, 0, [300, -2, 0.25]).depths;
 assert.deepStrictEqual(off, [1, 0, 0.25], `depth-off sz clamps into range: ${off}`);
+
+// Prepared supplied-projection geometry is untransformed at the public API.
+// Near/far clipping must survive depth-off, including after queue replay.
+assert.deepStrictEqual(run(0, 0, [-0.5, 1.5, 0.25], 4, 4).depths,
+  [-0.5, 1.5, 0.25], 'type 4 preserves geometric clip Z with depth disabled');
 
 // Depth test on: sz is the depth value and is passed through untouched.
 const on = run(1, 1, [300, -2, 0.25]).depths;
