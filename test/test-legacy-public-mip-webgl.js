@@ -42,7 +42,12 @@ function plan() {
       samples:[1,8,14,20,27].map(x=>({x,y:1}))},
     {label:'NONE restored',n:32,mip:1},
   ].map(s=>({filter:1,samples:[point],...s}));
-  const p={colors,states,tolerance:2};
+  const update={level:2,color:[192,48,224],state:{label:'child mip update',n:8,mip:2,filter:1,samples:[point]}};
+  const p={colors,states,update,tolerance:2};
+  const changed=colors.map(c=>c.slice());changed[update.level]=update.color;
+  assert.deepEqual(oracle(changed,update.state,point),update.color);
+  assert(oracle(colors,update.state,point).some((c,i)=>Math.abs(c-update.color[i])>p.tolerance),
+    'stale child upload discriminates at unchanged tolerance');
   assert.deepEqual(oracle(colors,states[0],point),colors[0]);
   assert.deepEqual(oracle(colors,states[1],point),colors[2]);
   const blend=oracle(colors,states[2],point);
@@ -81,6 +86,7 @@ function fixtureSource() {
       const l=await lock(obj),dimension=16>>level;
       eq(await read(lockDesc.p+8),dimension,'public mip height');
       eq(await read(lockDesc.p+12),dimension,'public mip width');
+      eq(l.pitch,dimension*4,'public mip exact pitch');
       const [r,g,b]=config.colors[level];
       for(let y=0;y<dimension;y++)for(let x=0;x<dimension;x++)
         await write(l.pointer+y*l.pitch+x*4,0xff000000|(r<<16)|(g<<8)|b);
@@ -147,6 +153,28 @@ function fixtureSource() {
       await until(()=>lastStats?.stats.drawCalls===drawCount,'all production stats');evidence.stats=lastStats.stats;
     }else if(gpu)evidence.stats=gpu.snapshot();
 `);
+  replace('    evidence.drawCount=drawCount;',`    const update=config.update,state=update.state,sample=state.samples[0];
+    await setState(state);await geometry(state);await draw();
+    await observe('child before overwrite',sample,state);
+    const obj=levels[update.level],dimension=16>>update.level,l=await lock(obj);
+    eq(await read(lockDesc.p+8),dimension,'updated child height');
+    eq(await read(lockDesc.p+12),dimension,'updated child width');
+    eq(l.pitch,dimension*4,'updated child pitch');
+    const [r,g,b]=update.color,pixel=(0xff000000|(r<<16)|(g<<8)|b)>>>0;
+    for(let y=0;y<dimension;y++)for(let x=0;x<dimension;x++)await write(l.pointer+y*l.pitch+x*4,pixel);
+    await unlock(obj);
+    const verify=await lock(obj);
+    eq(verify,l,'child backing and pitch retained');
+    for(let y=0;y<dimension;y++)for(let x=0;x<dimension;x++)
+      eq(await read(verify.pointer+y*verify.pitch+x*4),pixel,'public child overwrite persisted');
+    await unlock(obj);
+    evidence.update={object:obj,level:update.level,dimension,lock:l,color:update.color,persisted:true};
+    config.colors=config.colors.map((c,i)=>i===update.level?update.color.slice():c.slice());
+    await draw();await observe('child after overwrite',sample,state);
+    if(mode==='worker'){
+      await until(()=>lastStats?.stats.drawCalls===drawCount,'updated child GPU stats');evidence.stats=lastStats.stats;
+    }else if(gpu)evidence.stats=gpu.snapshot();
+    evidence.drawCount=drawCount;`);
   replace("    for(const [name,obj] of Object.entries({device,texture,rt,padding,d3d,dd}))",`    for(const obj of levels.slice(1))await com('Release acquired mip',obj,2);
     for(const [name,obj] of Object.entries({device,texture,rt,padding,d3d,dd}))`);
   return source;
@@ -158,6 +186,14 @@ function controls(){
   assert(!/mip_seed|mip_surface|mip_draw|fixedLOD/.test(source));
   for(const label of ['DirectDrawCreateEx','QI IDirect3D7','CreateSurface','CreateDevice7',
     'GetAttachedSurface7 mip','SetTextureStageState7','DrawPrimitive7','Lock Surface7'])assert(source.includes(label));
+  const context=vm.createContext({D3DIMGpu:{D3DIMGpu:class{_textureLevel(t,d){return {key:d.generation};}}}});
+  vm.runInContext('('+staleUploadControl.toString()+')()',context);
+  assert.deepEqual(JSON.parse(vm.runInContext(`JSON.stringify((()=>{
+    const gpu=new D3DIMGpu.D3DIMGpu(),child={texWidth:4,texHeight:4};
+    return [gpu._textureLevel(null,{...child,generation:'old'}).key,
+      gpu._textureLevel(null,{...child,generation:'new'}).key,
+      gpu._textureLevel(null,{texWidth:8,texHeight:8,generation:'other'}).key];
+  })())`,context)),['old','old','other']);
   return {status:'PLANNER ONLY; no pixels',observations:p.states.reduce((n,s)=>n+s.samples.length,0),...p};
 }
 
@@ -168,22 +204,38 @@ function config(){
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52)};
 }
 
-async function createServer(getWasm){
+// Fault injection only: freeze the first decoded 4x4 child generation while
+// leaving public writes, other uploads, draws and real GL readback active.
+// Served in both the page and render Worker; no production file/module changes.
+function staleUploadControl(){
+  const original=D3DIMGpu.D3DIMGpu.prototype._textureLevel;
+  const frozen=new WeakMap();
+  D3DIMGpu.D3DIMGpu.prototype._textureLevel=function(target,desc){
+    if(desc.texWidth!==4||desc.texHeight!==4)return original.call(this,target,desc);
+    if(!frozen.has(this))frozen.set(this,original.call(this,target,desc));
+    return {...frozen.get(this)};
+  };
+}
+
+async function createServer(getWasm,getNegative=()=>null){
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
     'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
   return require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
     // The custom handler runs before static-server's ordinary header path.
     res.setHeader('Cross-Origin-Opener-Policy','same-origin');
     res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
+    const pathname=new URL(req.url,'http://localhost').pathname;
+    if(pathname==='/lib/d3dim-gpu.js'&&getNegative()==='stale-child-upload'){
+      res.writeHead(200,{'Content-Type':'application/javascript','Cache-Control':'no-store'});
+      res.end(fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8')+'\n;('+staleUploadControl.toString()+')();');return true;
+    }
     if(req.url==='/legacy-render.wasm'){res.writeHead(200,{'Content-Type':'application/wasm'});res.end(getWasm());return true;}
     if(req.url!=='/legacy-render-fixture')return false;
     res.writeHead(200,{'Content-Type':'text/html'});res.end(scripts.map(n=>'<script src="/lib/'+n+'.js"></script>').join('\n'));return true;
   }});
 }
 
-async function serverControls(){
-  const bytes=Buffer.from([0,97,115,109,1,0,0,0]),server=await createServer(()=>bytes);
-  try{
+async function isolationControls(server,bytes){
     for(const route of ['/legacy-render-fixture','/legacy-render.wasm','/lib/guest-worker.js']){
       const response=await fetch('http://127.0.0.1:'+server.address().port+route);
       assert.equal(response.status,200);
@@ -191,6 +243,20 @@ async function serverControls(){
       assert.equal(response.headers.get('cross-origin-embedder-policy'),'require-corp',route);
       if(route.endsWith('.wasm'))assert.deepEqual(Buffer.from(await response.arrayBuffer()),bytes);
       else await response.text();
+    }
+}
+
+async function serverControls(){
+  const bytes=Buffer.from([0,97,115,109,1,0,0,0]),server=await createServer(()=>bytes,()=> 'stale-child-upload');
+  try{
+    await isolationControls(server,bytes);
+    // RenderWorker imports the GPU script with its production version query.
+    for(const route of ['/lib/d3dim-gpu.js','/lib/d3dim-gpu.js?v=legacy-texture-public-com']){
+      const response=await fetch('http://127.0.0.1:'+server.address().port+route);
+      assert.equal(response.status,200);assert.equal(response.headers.get('cache-control'),'no-store');
+      const injected=await response.text();
+      assert.equal(injected,fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8')+'\n;('+staleUploadControl.toString()+')();');
+      new vm.Script(injected);
     }
   }finally{await require('./static-server').closeServer(server);}
 }
@@ -218,10 +284,10 @@ async function runtime(){
     publicFixtureSha256:sha(fs.readFileSync(path.join(__dirname,'test-legacy-texture-rendered-contract.js'))),
     calcSha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))),
     unexecuted:['non-solid mip texels / within-level MIN-MAG discrimination','partial/malformed chains',
-      'per-level formats/pitch and changed-level uploads','legacy combined filters','other dimensions/formats',
+      'other per-level formats/padded pitch','legacy combined filters','other dimensions/formats',
       'physical GPU','games / full27']};
   const save=()=>fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(evidence,null,2)+'\n');
-  let server,browser,page,wasm;
+  let server,browser,page,wasm,activeNegative=null;
   try{
     for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
       const bytes=fs.readFileSync(path.join(moduleDir,name)),hash=sha(bytes);
@@ -234,7 +300,14 @@ async function runtime(){
       evidence.results.push({module:name,bootstrap:result});save();
     }
     if(process.argv.includes('--bootstrap')){evidence.status='BOOTSTRAP PASS; rendered paths unexecuted';return;}
-    server=await createServer(()=>wasm);
+    server=await createServer(()=>wasm,()=>activeNegative);
+    evidence.httpIsolation=[];
+    for(const module of evidence.modules){
+      wasm=fs.readFileSync(path.join(moduleDir,module.name));
+      await isolationControls(server,wasm);
+      evidence.httpIsolation.push({module:module.name,sha256:sha(wasm),routes:3,status:'PASS'});
+    }
+    save();
     evidence.browserOpenedAt=new Date().toISOString();
     browser=await require('puppeteer').launch({headless:true,executablePath:process.env.CHROME||'/usr/bin/google-chrome',
       args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader'],protocolTimeout:120000});
@@ -243,15 +316,16 @@ async function runtime(){
     const fixture=Function('return ('+fixtureSource()+')')();
     for(const module of evidence.modules){
       wasm=fs.readFileSync(path.join(moduleDir,module.name));
-      for(const mode of ['webgl','worker'])for(const webglVersion of [1,2]){
+      for(const mode of ['worker','webgl'])for(const webglVersion of [1,2]){
         const cfg={...config(),webglVersion};
         const open=async()=>{page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/legacy-render-fixture');};
-        await open();const result=await page.evaluate(fixture,mode,cfg,oracle.toString());
-        assert.equal(result.status,'PASS');assert.equal(result.observations.length,mode==='worker'?23:17);
+        activeNegative=null;await open();const result=await page.evaluate(fixture,mode,cfg,oracle.toString());
+        assert.equal(result.status,'PASS');assert.equal(result.observations.length,mode==='worker'?25:19);
         evidence.results.push({module:module.name,webglVersion,...result});save();
         await page.screenshot({path:path.join(dir,module.name+'-'+mode+'-'+webglVersion+'.png')});await page.close();page=null;
         console.log('PASS '+module.name+' '+mode+' WebGL'+webglVersion+' observations '+result.observations.length);
-        for(const negative of ['level-zero-only','stale-mip-filter']){
+        for(const negative of ['level-zero-only','stale-mip-filter','stale-child-upload']){
+          activeNegative=negative;
           await open();let failure;
           try{await page.evaluate(fixture,mode,cfg,oracle.toString(),negative);}catch(error){failure=String(error);}
           const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
@@ -259,6 +333,13 @@ async function runtime(){
           assert(failure?.includes('PIXEL ORACLE'),'negative must fail actual pixels: '+failure);
           assert(partial.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0));
           assert(partial.observations.some(o=>o.actual.some((c,i)=>Math.abs(c-o.expected[i])>cfg.tolerance)));
+          if(negative==='stale-child-upload'){
+            assert(partial.update?.persisted,'negative must execute public child writes');
+            const before=partial.observations.find(o=>o.label==='child before overwrite');
+            const after=partial.observations.find(o=>o.label==='child after overwrite');
+            assert(before&&after);assert.deepEqual(after.actual,before.actual,'old generation actually sampled');
+            assert.deepEqual(after.expected,cfg.update.color,'independent new authored color');
+          }
           if(mode==='worker')assert(partial.observations.some(o=>o.workerStats?.drawCalls>0));
           else assert(partial.observations.some(o=>o.webglRGBA&&o.glError===0));
           await page.close();page=null;console.log('PASS rendered negative '+negative+' '+mode+' WebGL'+webglVersion);
