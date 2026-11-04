@@ -1,10 +1,11 @@
 - [x] Owner-requested corpus addition: Stronghold Crusader original demo
   id: TG150-STRONGHOLD-CRUSADER-20261103
-  status: published original UK v1.1 registration and verified first offline skirmish building placement
+  status: published original UK v1.1 registration and ordinary browser village control; food-delivery successor active
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Result: Published 68b54c2f553e9d1074f37be0f7e4f5ee6c0a8b81. Ordinary controls opened Zephyr / Very Easy and placed a Hovel; it persisted after category switching at batch2749, housing capacity10->18. Coordinator inspected placed_verified2749.png and verified106 recovered files plus both tested modules. Locked build and focused registration/census checks passed; broader browser and campaign coverage remain open.
-  Lifecycle: Coordinator verified snapshot stronghold-first-hovel-20261104, then actual normal STOP bx_pmfcmfw2 at00:21:20.638Z, forcedfalse/errornull. Browser successor01a1a43c-3b52-79b3-9eb2-889ad6b01362 now owns original browser village controls on fresh bx_6j758ddr, expiry02:46:52Z, coordinator shutdown; no browser result yet.
-  Evidence: docs/re-notes/stronghold-crusader-demo.md; scratch/runs/20261104-stronghold-registered-skirmish/; scratch/runs/20261104-coordinator-stronghold-closeout/. Original executable SHA256 9024c533095f2227b0105b7e8a9e4cf28ec4fb206b165629787b2c97cf99f13f, all1856 files pinned.
+  Result: Published296b1173c extends CLI68b54c2f to ordinary browser ZephyrVeryEasy Hovel+Woodcutter persistent after categorychanges; population3/10to18/18, wood94to91. Coordinator inspected entry/final/wood91 and verified1370recoveredfullSHA inclBOTHmodules. ActualguestWorkers Canvas2D/DirectDraw; toolbarWebGL is not evidence of acceleration. Fooddelivery/save persistence/FPS/campaign untested.
+  Lifecycle: Named stronghold-browser-village-20261104 snapshotverified02:07:25.687Z. Preparedbx_6j758ddr RUNNINGidle retained for fresh foodproduction worker01a1a450-3d05-78b3-8824-a2301dd8a7e1 session43408, output scratch/usage-watch/stronghold-browser-food-nov04/, expiry02:46:52.316Z shutdownOwnercoordinator. ACK beforeuse; runtime/recovery deadline02:35Z. Priorboxbx_pmfcmfw2 normalSTOP00:21:20.638Z retained.
+  Next: One ordinary foodchain with visually observed delivery/inventoryincrease, or first concrete blocker; finalvillage was starving. No repeat placement-only result.
+  Evidence: docs/re-notes/stronghold-browser-village-20261104.md; scratch/runs/20261104-stronghold-browser-village/. Originalexecutable9024c533095f2227b0105b7e8a9e4cf28ec4fb206b165629787b2c97cf99f13f,1856filepin unchanged, canonicalcffca869 actual/compat580f49f3 retainedonly.
 
 # TODOS
 
