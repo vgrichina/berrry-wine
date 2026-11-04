@@ -3630,7 +3630,11 @@
     ;; CUBEMAP (0x0800, not PROJECTED 0x0400) requires cube surface storage.
     ;; Native Surface4/7 CreateSurface rejects extended caps before allocation;
     ;; neither GetCaps nor EnumDevices may advertise that unsupported resource.
-    (i32.store (i32.add (local.get $wa) (i32.const 32)) (i32.const 0xF7DF))   ;; dwTextureCaps, no SQUAREONLY/CUBEMAP
+    ;; PROJECTED (0x0400) requires dividing supplied texture coordinates too.
+    ;; d3dim_texgen only transforms camera-generated coordinates; ordinary UVs
+    ;; bypass it, and both software and GPU consume the unprojected pair.
+    ;; Keep the partial texgen behavior, but do not advertise full projection.
+    (i32.store (i32.add (local.get $wa) (i32.const 32)) (i32.const 0xF3DF))   ;; dwTextureCaps, no SQUAREONLY/CUBEMAP/PROJECTED
     ;; MIPNEAREST (0x04) requires mip-level selection. The software path
     ;; selects point/linear on one bound image; the GPU sampler sets mip=0.
     (i32.store (i32.add (local.get $wa) (i32.const 36)) (i32.const 0xC3))     ;; dwTextureFilterCaps, no legacy mip filters (0x04..0x20)

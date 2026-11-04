@@ -106,7 +106,7 @@ function fixture() {
     }
   }
   // Public EnumDevices callbacks copy descriptors while callback storage is live.
-  // Continue to HAL then CANCEL: exercises both HAL and HEL builder variants.
+  // Copy EVERY callback's HW/HEL descriptors, then CANCEL at HAL.
   // Enumeration order/count is this project's deterministic driver contract.
   const enumPlans = [];
   for (const [version, iid, slot] of [
@@ -118,12 +118,17 @@ function fixture() {
     const root = iid ? output() : root2;
     if (iid) { com(`QI IDirect3D${version}`, dd, 0, [guid(iid), root]); acquired.push(root); }
     const count = alloc(4), context = alloc(4), copies = [];
+    const expectedCount = version <= 2 ? 3 : version === 3 ? 2 : 1;
     for (const side of version === 7 ? ['fixed'] : ['HW','HEL']) {
-      const size = version === 7 ? 236 : 252, p = alloc(size + 8, true) + 4;
-      guards.push({ p, size }); caps.push({ p, size, version, side, route: 'EnumDevices' });
-      copies.push({ p, size });
+      const size = version === 7 ? 236 : 252, stride = size + 8;
+      const base = alloc(stride * expectedCount, true) + 4;
+      for(let callback=0;callback<expectedCount;callback++) {
+        const p=base+callback*stride;
+        guards.push({ p, size }); caps.push({ p, size, version, side, callback, route: 'EnumDevices' });
+      }
+      copies.push({ p:base, size, stride });
     }
-    const cbArg = alloc(4), expectedCount = version <= 2 ? 3 : version === 3 ? 2 : 1;
+    const cbArg = alloc(4);
     // Callback address is patched into PUSH immediate once appended below.
     const start = code.length;
     com(`IDirect3D${version} EnumDevices`, root, slot, [0xfeedface, context]);
@@ -147,16 +152,16 @@ function fixture() {
     byte(0x55,0x89,0xe5,0x56,0x57,0xfc);
     byte(0xff,0x05); word(plan.count);
     byte(0x8b,0x45,v7 ? 20 : 28,0xa3); word(plan.cbArg);
-    byte(0x83,0x3d); word(plan.count); byte(plan.expectedCount);
-    byte(0x74,11); // je copy; otherwise CONTINUE (1), preserving registers
-    byte(0xb8); word(1); byte(0x5f,0x5e,0x5d,0xc2,v7 ? 16 : 24,0);
     for (let i = 0; i < plan.copies.length; i++) {
       byte(0x8b,0x75,v7 ? 16 : 20 + i * 4);
       byte(0xbf); word(plan.copies[i].p);
+      byte(0xa1); word(plan.count); byte(0x48,0x69,0xc0); word(plan.copies[i].stride);
+      byte(0x01,0xc7); // edi += (count-1)*guarded descriptor stride
       byte(0xb9); word(plan.copies[i].size);
       byte(0xf3,0xa4);
     }
-    byte(0x31,0xc0,0x5f,0x5e,0x5d,0xc2,v7 ? 16 : 24,0);
+    byte(0xa1); word(plan.count); byte(0x83,0xf8,plan.expectedCount,0x0f,0x92,0xc0,0x0f,0xb6,0xc0);
+    byte(0x5f,0x5e,0x5d,0xc2,v7 ? 16 : 24,0);
   }
   assert(code.length < 0xd000);
   Buffer.from(code).copy(pe, raw(BASE + 0x3000));
@@ -184,12 +189,14 @@ function verify(m, read) {
     if (c.version !== 7) assert.equal(read(c.p), c.size, 'descriptor dwSize');
     for (const prim of c.version === 7 ? [4,60] : [44,100]) {
       assert.equal(read(c.p + prim), 56, 'D3DPRIMCAPS size');
-      assert.equal(read(c.p + prim + 32), 0xf7df, 'CUBEMAP absent; PROJECTED retained');
-      assert.equal(read(c.p + prim + 36), c.version === 7 ? 0x030003c3 : 0xc3,
-        'point/linear retained; unsupported mip bits absent');
+      assert.equal(read(c.p + prim + 32), process.argv.includes('--expect-projected')?0xf7df:0xf3df,
+        'CUBEMAP absent; unsupported PROJECTED absent');
+      assert.equal(read(c.p + prim + 36), c.version === 7 ?
+        (prim === 60 ? 0x030303ff : 0x030003c3) : 0xc3,
+        'point/linear and D3D7 triangle mips retained');
       assert.equal(read(c.p + prim + 44), 0xf7, 'BORDER absent; address modes retained');
     }
-    if (c.version === 7) assert.equal(read(c.p + 180), 0x3ff, 'texture ops retained');
+    if (c.version === 7) assert.equal(read(c.p + 180), 0xf, 'current texture ops retained');
   }
   for (const p of m.enumPlans) {
     assert.equal(read(p.count), p.expectedCount, 'callback CONTINUE/CANCEL honored');
@@ -209,10 +216,10 @@ function offline(f) {
   for (const c of m.caps) {
     if (c.version !== 7) set(c.p,c.size);
     for (const o of c.version === 7 ? [4,60] : [44,100]) {
-      set(c.p+o,56); set(c.p+o+32,0xf7df);
-      set(c.p+o+36,c.version === 7 ? 0x030003c3 : 0xc3); set(c.p+o+44,0xf7);
+      set(c.p+o,56); set(c.p+o+32,0xf3df);
+      set(c.p+o+36,c.version === 7 ? (o===60?0x030303ff:0x030003c3) : 0xc3); set(c.p+o+44,0xf7);
     }
-    if (c.version === 7) set(c.p+180,0x3ff);
+    if (c.version === 7) set(c.p+180,0xf);
   }
   for (const p of m.enumPlans) { set(p.count,p.expectedCount); set(p.cbArg,p.context); }
   const read = p => values.get(p) ?? POISON;
@@ -225,8 +232,8 @@ function offline(f) {
   }
   for (const c of m.caps) for (const o of c.version === 7 ? [4,60] : [44,100]) {
     reject(c.p+o+32,0xffdf,/CUBEMAP/);
-    reject(c.p+o+32,0xf3df,/PROJECTED/);
-    for (const bit of [4,8,16,32]) reject(c.p+o+36,read(c.p+o+36)|bit,/mip/);
+    reject(c.p+o+32,0xf7df,/PROJECTED/);
+    for (const bit of [4,8,16,32]) reject(c.p+o+36,read(c.p+o+36)^bit,/mip/);
     for (const bit of [1,2]) reject(c.p+o+36,read(c.p+o+36)&~bit,/point/);
     reject(c.p+o+44,0xff,/BORDER/);
   }
@@ -242,10 +249,96 @@ function offline(f) {
     descriptors: m.caps.length, peSHA256: hash(f.pe), codeSHA256: hash(f.code) };
 }
 
+// Bounded software rendering through the existing public x86 COM fixture.
+// Supplied (not camera-generated) coordinates expose the PROJECTED gap.
+async function projected(bytes, out) {
+  const vm = require('node:vm');
+  const { browserFixture, plan, oracle } = require('./test-legacy-texture-rendered-contract');
+  let source = browserFixture.toString();
+  const replace = (from, to) => {
+    assert.equal(source.split(from).length, 2, 'unique public fixture seam');
+    source = source.replace(from, to);
+  };
+  replace("for(const [i,[x,y]] of [[-8,-8],[24,-8],[-8,24]].entries())",
+    "for(const [i,[x,y]] of [[-1,1],[1,1],[-1,-1]].entries())");
+  replace('bits(.5),bits(1),0xffffffff,0,bits(uv[0]),bits(uv[1])',
+    'bits(.5),0,0xffffffff,0,bits(uv[0]),bits(uv[1])');
+  replace("device,25,4,0x1c4,vertices,3,0", "device,25,4,0x1e2,vertices,3,0");
+  const start = source.indexOf('    const setState=async state=>{');
+  const end = source.indexOf('    const describe=async()=>{', start);
+  assert(start > 0 && end > start);
+  replace(source.slice(start, end), `    const matrix=await alloc(64);
+    const identity=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
+    await words(matrix,identity.map(bits));
+    for(const type of [1,2,3])await ok(com('SetTransform7 identity',device,11,type,matrix));
+    const setState=async state=>{
+      const m=identity.slice();m[14]=state.q;
+      await words(matrix,m.map(bits));
+      await ok(com('SetTransform7 TEXTURE0',device,11,16,matrix));
+      const got=await guard(64);await ok(com('GetTransform7 TEXTURE0',device,12,16,got.p));
+      await got.check();for(let i=0;i<16;i++)eq(await read(got.p+4*i),bits(m[i]),'matrix round trip');
+      await tss(11,0);await tss(24,state.flags);
+      const flags=await guard(4);await ok(com('GetTextureStageState flags',device,36,0,24,flags.p));
+      await flags.check();eq(await read(flags.p),state.flags,'projection flags round trip');
+      for(const [id,v] of [[16,1],[17,1],[13,1],[14,1]])await tss(id,v);
+    };
+`);
+  replace('await geometry(sample.uv);await draw();await observe(state.label',
+    'await geometry(state.baked||negative===\'baked\'?sample.uv.map(v=>v/state.q):sample.uv);await draw();await observe(state.label');
+  replace('const expected=expectedColor(config.texture,sample.uv,state.filter,expectedAddress);',
+    "const expected=expectedColor(config.texture,state.baked||negative==='normative'?sample.uv.map(v=>v/state.q):sample.uv,state.filter,expectedAddress);");
+  const p = plan();
+  const config = { ...p, samples: [p.samples[0]], states: [
+    {label:'disabled',flags:0,q:.5},
+    {label:'projected-unit-q',flags:0x103,q:1},
+    {label:'projected-half-q-ignored',flags:0x103,q:.5},
+    {label:'disabled-restored',flags:0,q:.5},
+    {label:'application-predivided',flags:0,q:.5,baked:true},
+  ].map(s=>({filter:1,address:1,...s})),
+    thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
+    factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id };
+  const pe = fs.readFileSync(path.join(__dirname,'binaries/calc.exe'));
+  config.imageBase=pe.readUInt32LE(pe.readUInt32LE(0x3c)+52);
+  const routes=new Map([['/legacy-render.wasm',bytes],['/test/binaries/calc.exe',pe],
+    ['/lib/host-import-sigs.generated.json',fs.readFileSync(path.join(__dirname,'../lib/host-import-sigs.generated.json'))]]);
+  const results=[];
+  for(const negative of [null,'normative','baked']) {
+    const context=vm.createContext({WebAssembly,performance,setTimeout,
+      fetch:async url=>{assert(routes.has(url));const b=routes.get(url);
+        return {arrayBuffer:async()=>Uint8Array.from(b).buffer,json:async()=>JSON.parse(b.toString())};},
+      document:{createElement:()=>({style:{},getContext:()=>({putImageData(){}})}),body:{append(){}}},
+      ImageData:class {constructor(data,width,height){Object.assign(this,{data,width,height});}},
+    });
+    const run=vm.runInContext('('+source+')',context);
+    const c=negative?{...config,states:[config.states[2]]}:config;
+    let failure;
+    try {await run('software',c,oracle.toString(),negative);}catch(e){failure=e.stack;}
+    const evidence=JSON.parse(JSON.stringify(context.legacyTextureEvidence));
+    results.push({negative,failure:failure||null,...evidence});
+    if(out) {fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'projected-observed.json'),
+      JSON.stringify({wasmSHA256:hash(bytes),calcSHA256:hash(pe),adaptedFixtureSHA256:hash(source),results},null,2)+'\n');}
+    if(!negative) {
+      assert.equal(failure,undefined);assert.equal(evidence.status,'PASS');
+      assert.deepEqual(evidence.observations.map(o=>o.actual),[
+        [64,192,32],[64,192,32],[64,192,32],[64,192,32],[160,32,64]]);
+      for(const mask of evidence.advertised.textureCaps)
+        assert.equal(mask&0x400,process.argv.includes('--expect-projected')?0x400:0,'public PROJECTED advertisement');
+    } else {
+      assert(failure?.includes('PIXEL ORACLE'),'negative must fail at rendered pixels: '+failure);
+      assert(evidence.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0));
+      assert.deepEqual(evidence.observations[0].actual,negative==='normative'?[64,192,32]:[160,32,64]);
+      assert.deepEqual(evidence.observations[0].expected,negative==='normative'?[160,32,64]:[64,192,32]);
+    }
+  }
+  console.log(JSON.stringify({projected:'PASS: unsupported supplied-coordinate projection reproduced',
+    positivePixels:5,renderedNegativeControls:2,wasmSHA256:hash(bytes)}));
+}
+
 async function native(f) {
   const file = option('wasm'), expected = option('sha256');
   assert(file && /^[0-9a-f]{64}$/.test(expected || ''), '--wasm and --sha256 required');
   const bytes = fs.readFileSync(file); assert.equal(hash(bytes),expected,'production module hash');
+  if(process.argv.includes('--projected')) return projected(bytes,option('out'));
   const { createHostImports } = require('../lib/host-imports');
   const module = await WebAssembly.compile(bytes);
   const memory = new WebAssembly.Memory({ initial:8192, maximum:8192, shared:true });

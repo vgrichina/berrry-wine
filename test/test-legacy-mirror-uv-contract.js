@@ -119,7 +119,7 @@ function fixtureSource() {
   replace("eq((await read(caps.p+offset))&5,5,'advertised wrap and clamp');",
     "eq(await read(caps.p+offset),0xf7,'exact advertised address mask includes independent UV and MIRROR');");
   replace("eq((await read(caps.p+offset))&0x800,0,'unsupported cube remains unadvertised');",
-    "eq(await read(caps.p+offset),0xf7df,'exact texture mask keeps cube unadvertised');");
+    "eq(await read(caps.p+offset),0xf3df,'exact texture mask keeps cube and PROJECTED unadvertised');");
   return source;
 }
 
