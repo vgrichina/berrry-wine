@@ -51,7 +51,8 @@ const extraWat=String.raw`
  const tss=(t,v)=>e.mip_tss(dev,0,t,v),rs=(r,v)=>e.mip_rs(dev,r,v);
  e.mip_bind(dev,0,tex);rs(22,1);rs(7,0);rs(27,0);tss(1,2);tss(4,2);tss(13,1);tss(14,1);
  const evidence=[],frames=[];
- function stage(min=1,mag=1,mip=1){tss(17,min);tss(16,mag);tss(18,mip);}
+ const MIP_NONE=1,MIP_POINT=2,MIP_LINEAR=3; // DirectX 7 d3dtypes.h, not D3DTEXF.
+ function stage(min=1,mag=1,mip=MIP_POINT){tss(17,min);tss(16,mag);tss(18,mip);}
  function draw(n,{q=[1,1,1],uv=null}={}){
   fill(rt,0xff111111);
   [[0,0],[32,0],[0,32]].forEach(([x,y],i)=>{let a=vertices+i*32;f32(a,x);f32(a+4,y);f32(a+8,.5);f32(a+12,q[i]);w32(a+16,0xffffffff);w32(a+20,0);f32(a+24,uv?uv[i][0]:i===1?n:0);f32(a+28,uv?uv[i][1]:i===2?n:0);});
@@ -60,9 +61,9 @@ const extraWat=String.raw`
  const pixel=(x=4,y=4)=>m.getUint32(dib(rt)+y*pitch(rt)+x*4,true)>>>0;
  function expect(label,c,x=4,y=4,tolerance=0){let got=pixel(x,y);for(let b=0;b<4;b++)assert(Math.abs((got>>>(b*8)&255)-(c>>>(b*8)&255))<=tolerance,`${label}: got ${got.toString(16)} expected ${c.toString(16)}`);evidence.push({label,x,y,pixel:got,expected:c});frames.push(Array.from({length:1024},(_,i)=>pixel(i%32,Math.floor(i/32))));}
  stage();for(const [n,l] of [[.5,0],[2,0],[4,1],[8,2],[16,3],[32,4],[65536,4]]){draw(n);expect(`nearest footprint ${n/2}`,colors[l]);}
- stage(1,1,0);draw(32);expect('MIP NONE minification stays level zero',colors[0]);
- stage(1,1,2);draw(2*Math.sqrt(8));expect('linear mip half green/blue',0xff008080,4,4,1);
- stage(2,2,2);draw(2*Math.sqrt(8));expect('trilinear half green/blue',0xff008080,4,4,1);
+ stage(1,1,MIP_NONE);draw(32);expect('MIP NONE minification stays level zero',colors[0]);
+ stage(1,1,MIP_LINEAR);draw(2*Math.sqrt(8));expect('linear mip half green/blue',0xff008080,4,4,1);
+ stage(2,2,MIP_LINEAR);draw(2*Math.sqrt(8));expect('trilinear half green/blue',0xff008080,4,4,1);
  // Perspective quotient derivative varies within one face. Independent
  // analytic reference: U=x/8, V=y/8, Q=1-3*x/128-3*y/128.
  stage();draw(16,{q:[1,.25,.25]});
@@ -87,19 +88,19 @@ const extraWat=String.raw`
  levels.forEach((s,i)=>fill(s,colors[i]));
  for(const [f,c] of [[3,colors[2]],[4,0xff006699],[5,colors[2]],[6,0xff006699]]){legacy(f);draw(2*2**1.6);expect(`legacy filter ${f} fractional LOD`,c,4,4,1);}
  // Explicit NONE overrides legacy even with MIN unset (zero fallback).
- tss(18,0);draw(32);expect('explicit NONE with legacy MIN fallback',colors[0]);
+ tss(18,MIP_NONE);draw(32);expect('explicit NONE with legacy MIN fallback',colors[0]);
  // Stage overrides select point texels / no mips despite legacy filter 6.
- stage(1,1,0);draw(32);expect('explicit stage NONE overrides legacy mip request',colors[0]);
+ stage(1,1,MIP_NONE);draw(32);expect('explicit stage NONE overrides legacy mip request',colors[0]);
  // Opposing min/mag filters must switch with footprint; the old priority
  // order selected MAG for every fragment.
  for(let y=0;y<16;y++)for(let x=0;x<16;x++)m.setUint32(dib(tex)+y*pitch(tex)+4*x,x%2?0xffffffff:0xff000000,true);
- stage(1,2,0);draw(.5,{uv:[[.25,.25],[.75,.25],[.25,.75]]});expect('magnification uses MAG linear',0xff7f7f7f,4,4,1);
+ stage(1,2,MIP_NONE);draw(.5,{uv:[[.25,.25],[.75,.25],[.25,.75]]});expect('magnification uses MAG linear',0xff7f7f7f,4,4,1);
  draw(4);expect('minification uses MIN point',0xff000000);
- stage(2,1,0);draw(.5,{uv:[[.25,.25],[.75,.25],[.25,.75]]});expect('magnification uses MAG point',0xffffffff);
+ stage(2,1,MIP_NONE);draw(.5,{uv:[[.25,.25],[.75,.25],[.25,.75]]});expect('magnification uses MAG point',0xffffffff);
  draw(4);expect('minification uses MIN linear',0xff7f7f7f,4,4,1);
  // Magnification with mip selection enabled must retain every level-zero
  // checker pixel, including the within-image bilinear path.
- for(const filter of [1,2]){stage(filter,filter,0);draw(.5);const before=Array.from({length:1024},(_,i)=>pixel(i%32,Math.floor(i/32)));stage(filter,filter,1);draw(.5);assert.deepStrictEqual(Array.from({length:1024},(_,i)=>pixel(i%32,Math.floor(i/32))),before,`unchanged level0 checker pixels for filter ${filter}`);}
+ for(const filter of [1,2]){stage(filter,filter,MIP_NONE);draw(.5);const before=Array.from({length:1024},(_,i)=>pixel(i%32,Math.floor(i/32)));stage(filter,filter,MIP_POINT);draw(.5);assert.deepStrictEqual(Array.from({length:1024},(_,i)=>pixel(i%32,Math.floor(i/32))),before,`unchanged level0 checker pixels for filter ${filter}`);}
  fill(tex,colors[0]);
  // Each level owns metadata. Bad/missing successors stop rather than follow
  // cycles, stale images, a zero DIB, or non-halved attachments.
@@ -120,12 +121,12 @@ const extraWat=String.raw`
  m.setUint32(levelEntry+16,packed,true);e.mip_format(levels[1],0);fill(levels[1],colors[1]);
  const short=surface(16,16,true,2);assert(e.mip_next(short));assert.equal(e.mip_next(e.mip_next(short)),0,'declared two-level chain');
  fill(short,colors[0]);fill(e.mip_next(short),colors[1]);e.mip_bind(dev,0,short);stage();draw(65536);expect('declared chain length clamps',colors[1]);e.mip_bind(dev,0,tex);
- // Native triangle caps only. HAL/RGB enumerate this same builder; the GPU
- // still has a single-image descriptor and must keep the mip bits absent.
+ // HAL/RGB enumerate this same builder. Both native and WebGL triangles
+ // implement bounded mip chains; line caps remain unchanged.
  e.mip_caps(caps);assert.equal(e.guest_read32(caps+96)>>>0,0x030303ff);assert.equal(e.guest_read32(caps+40)>>>0,0x030003c3);
- e.mip_gpu(1);e.mip_caps(caps);assert.equal(e.guest_read32(caps+96)>>>0,0x030003c3);e.mip_gpu(0);
+ e.mip_gpu(1);e.mip_caps(caps);assert.equal(e.guest_read32(caps+96)>>>0,0x030303ff);e.mip_gpu(0);
  // Native mode must never leak into the next level-zero draw.
- stage(1,1,0);draw(32);expect('level0 behavior after mip draw unchanged',colors[0]);
+ stage(1,1,MIP_NONE);draw(32);expect('level0 behavior after mip draw unchanged',colors[0]);
  if(process.env.WINE_MIP_EVIDENCE){const dir=process.env.WINE_MIP_EVIDENCE;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'pixels.json'),JSON.stringify(evidence,null,2));const {PNG}=require('pngjs');const png=new PNG({width:256,height:32*Math.ceil(frames.length/8)});frames.forEach((frame,k)=>{for(let y=0;y<32;y++)for(let x=0;x<32;x++){let c=frame[y*32+x],o=((Math.floor(k/8)*32+y)*256+(k%8)*32+x)*4;png.data[o]=c>>>16&255;png.data[o+1]=c>>>8&255;png.data[o+2]=c&255;png.data[o+3]=255;}});fs.writeFileSync(path.join(dir,'pixels.png'),PNG.sync.write(png));}
  // Cross-level color-key coverage is intentionally unsupported. A request
  // must report the named production error instead of silently sampling level0.

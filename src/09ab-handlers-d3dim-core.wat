@@ -649,14 +649,14 @@
   ;;   31 vertex fog (FOGENABLE with FOGTABLEMODE NONE)  32 fogcolor  33 wrap
   ;;   34 viewport clip on  35 x0  36 y0  37 x1  38 y1 (exclusive)
   (func (export "d3dim_gpu_describe") (param $this i32) (result i32)
-    (local $out i32) (local $rt i32) (local $state i32) (local $tex i32) (local $filter i32)
+    (local $out i32) (local $rt i32) (local $state i32) (local $tex i32)
     (local $zen i32) (local $zfunc i32) (local $zwrite i32) (local $v i32)
     (local.set $rt (call $d3ddev_rt_entry (local.get $this)))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (i32.or (i32.eqz (local.get $rt)) (i32.eqz (local.get $state)))
       (then (return (i32.const 0))))
     (local.set $out (i32.add (call $d3dim_gpu_buffer) (i32.const 64)))
-    (call $zero_memory (local.get $out) (i32.const 180))
+    (call $zero_memory (local.get $out) (i32.const 192))
     (i32.store offset=0 (local.get $out) (local.get $rt))
     (i32.store offset=4 (local.get $out) (i32.load16_u offset=12 (local.get $rt)))
     (i32.store offset=8 (local.get $out) (i32.load16_u offset=14 (local.get $rt)))
@@ -703,15 +703,13 @@
     (i32.store offset=96 (local.get $out) (select (local.get $v) (i32.const 1) (local.get $v)))
     (local.set $v (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 14)))
     (i32.store offset=100 (local.get $out) (select (local.get $v) (i32.const 1) (local.get $v)))
-    ;; Filter: stage MAGFILTER, then MINFILTER, then DX1 TEXTUREMAG/MIN.
-    (local.set $filter (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 16)))
-    (if (i32.eqz (local.get $filter))
-      (then (local.set $filter (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 17)))))
-    (if (i32.eqz (local.get $filter))
-      (then (local.set $filter (call $gl32 (i32.add (local.get $state) (i32.const 324))))))
-    (if (i32.eqz (local.get $filter))
-      (then (local.set $filter (call $gl32 (i32.add (local.get $state) (i32.const 328))))))
-    (i32.store offset=104 (local.get $out) (i32.eq (local.get $filter) (i32.const 2)))
+    ;; Keep independent MIN/MAG/MIP selection, including legacy defaults and
+    ;; explicit stage NONE. Fields 45-47 extend describe within its 256 bytes.
+    (call $d3dim_mip_filters (local.get $state))
+    (i32.store offset=104 (local.get $out) (global.get $d3dim_mip_mag))
+    (i32.store offset=180 (local.get $out) (i32.add (global.get $d3dim_mip_min) (i32.const 1)))
+    (i32.store offset=184 (local.get $out) (i32.add (global.get $d3dim_mip_mag) (i32.const 1)))
+    (i32.store offset=188 (local.get $out) (global.get $d3dim_mip_mip))
     (i32.store offset=108 (local.get $out) (call $gl32 (i32.add (local.get $state) (i32.const 344))))
     (i32.store offset=112 (local.get $out) (call $gl32 (i32.add (local.get $state) (i32.const 292))))
     ;; Alpha test, normalized the way $d3dim_draw_tl_triangle_textured reads it:
@@ -750,6 +748,29 @@
     (i32.store offset=168 (local.get $out) (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 3)))
     (i32.store offset=172 (local.get $out) (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 5)))
     (i32.store offset=176 (local.get $out) (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 6)))
+    (local.get $out))
+
+  ;; A validated mip successor and its own upload metadata. Reuses the clear
+  ;; part (+0..39) of the seam after JS has copied describe. No guest pointers
+  ;; or inferred packed layouts cross the WebGL boundary.
+  (func (export "d3dim_gpu_mip_next") (param $tex i32) (result i32)
+    (local $n i32) (local $out i32)
+    (local.set $n (call $d3dim_mip_next (local.get $tex)))
+    (if (i32.eqz (local.get $n)) (then (return (i32.const 0))))
+    ;; A halved depth/flip attachment is not a texture mip image.
+    (if (i32.ne (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $n)))
+          (i32.const 0x421000)) (i32.const 0x401000))
+      (then (return (i32.const 0))))
+    (local.set $out (call $d3dim_gpu_buffer))
+    (i32.store (local.get $out) (local.get $n))
+    (i32.store offset=4 (local.get $out) (load.field DxObject width (local.get $n)))
+    (i32.store offset=8 (local.get $out) (load.field DxObject height (local.get $n)))
+    (i32.store offset=12 (local.get $out) (load.field DxObject bpp (local.get $n)))
+    (i32.store offset=16 (local.get $out) (load.field DxObject pitch (local.get $n)))
+    (i32.store offset=20 (local.get $out) (i32.load offset=20 (local.get $n)))
+    (i32.store offset=24 (local.get $out) (call $dx_surf_pal_get (local.get $n)))
+    (i32.store offset=28 (local.get $out) (call $dx_surf_pal_alpha (local.get $n)))
+    (i32.store offset=32 (local.get $out) (i32.load offset=24 (local.get $n)))
     (local.get $out))
 
   ;; Texture $tex decoded to RGBA8 bytes in a reused scratch buffer (result is
@@ -7437,6 +7458,11 @@
     (local.set $min (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 17)))
     (local.set $mag (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 16)))
     (local.set $mip (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 18)))
+    ;; D3D3/7 D3DTEXTUREMIPFILTER is NONE=1, POINT=2, LINEAR=3.
+    ;; The renderer and native sampler use normalized NONE=0/POINT=1/LINEAR=2;
+    ;; zero in the stored stage means unset, not a D3D8/9 filter enum.
+    (if (local.get $mip) (then
+      (local.set $mip (i32.sub (local.get $mip) (i32.const 1)))))
     (local.set $legacy (call $gl32 (i32.add (local.get $state) (i32.const 328))))
     (if (i32.eqz (local.get $min)) (then
       (local.set $min (select (i32.const 2) (i32.const 1)
@@ -8624,18 +8650,17 @@
     ;; DX7 texture-stage filters have distinct MINF/MAGF bits. The legacy
     ;; 0xFF filter mask alone advertises none of them. Both the software sampler
     ;; and GPU fixed-function descriptor implement point/linear; do not claim
-    ;; anisotropic support. Native triangle mip caps are added separately.
+    ;; anisotropic support. Triangle mip caps are added separately.
     ;; Leave legacy D3D1/2/3 and single-image line caps unchanged.
     ;; MINFPOINT | MINFLINEAR | MAGFPOINT | MAGFLINEAR = 0x03000300.
     (i32.store offset=40 (local.get $wa)
       (i32.or (i32.load offset=40 (local.get $wa)) (i32.const 0x03000300)))
     (i32.store offset=96 (local.get $wa)
       (i32.or (i32.load offset=96 (local.get $wa)) (i32.const 0x03000300)))
-    ;; Only native triangle drawing implements implicit mip LOD. GPU keeps
-    ;; its single-image contract; line caps and legacy descriptors stay bounded.
-    (if (i32.eqz (global.get $d3dim_gpu_on)) (then
-      (i32.store offset=96 (local.get $wa)
-        (i32.or (i32.load offset=96 (local.get $wa)) (i32.const 0x0003003C)))))
+    ;; Native and WebGL triangles implement point/linear mip LOD with explicit
+    ;; bounded chains. Line caps and legacy descriptors stay unchanged.
+    (i32.store offset=96 (local.get $wa)
+      (i32.or (i32.load offset=96 (local.get $wa)) (i32.const 0x0003003C)))
     (i32.store (i32.add (local.get $wa) (i32.const 116)) (i32.const 0xD00))  ;; DeviceRenderBitDepth
     (i32.store (i32.add (local.get $wa) (i32.const 120)) (i32.const 0x500))  ;; DeviceZBufferBitDepth
     (i32.store (i32.add (local.get $wa) (i32.const 124)) (i32.const 1))      ;; dwMinTextureWidth
