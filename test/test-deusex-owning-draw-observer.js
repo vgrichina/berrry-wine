@@ -8,7 +8,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { createHostImports } = require('../lib/host-imports');
 const { GuestThreadHost } = require('../lib/guest-thread-host');
-const { OwningDrawObserver, PC, BASE } = require('../lib/deusex-draw-observer');
+const { OwningDrawObserver, validateLimits, PC, BASE } = require('../lib/deusex-draw-observer');
 const crypto = require('node:crypto');
 const system = 'test/binaries/candidates/deus-ex-demo/installed/system/';
 const engineBytes = fs.readFileSync(system + 'engine.dll');
@@ -197,6 +197,57 @@ async function exercise(module, inWorker) {
       await host.slice(40);
       assert.equal(await status(), null, 'ordinary execution does not enable a collector');
     }
+    const stop = async () => inWorker
+      ? host.link._ask({ t: 'drawObserver', action: 'stop' }) : observer.finish('stopped-incomplete');
+    // Same constructor validation and unchanged message forwarding in the
+    // shipped owning Worker. Rejections must leave no active observer/timer.
+    const invalid = [null, [], 1,
+      ...[null, undefined, '', 'large', true, {}].map(limitProfile => ({ limitProfile })),
+      ...['standard', 'extended'].flatMap(limitProfile =>
+        ['maxBlocks', 'maxMs'].flatMap(key => {
+          const ceiling = key === 'maxBlocks' ? (limitProfile === 'extended' ? 10000000 : 2000000)
+            : (limitProfile === 'extended' ? 120000 : 15000);
+          return [undefined, null, 0, -1, 1.5, NaN, Infinity, -Infinity, '1', true,
+            ceiling + 1, 2 ** 32, Number.MAX_SAFE_INTEGER + 1].map(value => ({ limitProfile, [key]: value }));
+        }))];
+    for (const options of invalid) {
+      await setup('success');
+      await assert.rejects(start(options), /Draw observer/);
+      if (inWorker) {
+        const reply = await host.link._ask({ t: 'drawObserver', action: 'status' });
+        assert.equal(reply.active, false); assert.equal(reply.result, null);
+      }
+    }
+    for (const options of [{}, { limitProfile: 'extended' },
+      { maxBlocks: 2000000, maxMs: 15000 },
+      { limitProfile: 'extended', maxBlocks: 10000000, maxMs: 120000 }]) {
+      await setup('originalCalls'); await start(options); await run(100);
+      const result = await status(), expected = validateLimits(options);
+      assert.equal(result.status, cases.originalCalls);
+      for (const key of ['limitProfile', 'maxBlocks', 'maxMs'])
+        assert.equal(result.terminal[key], expected[key], 'exact forwarded ' + key);
+      await stop(); assert.deepEqual(await status(), result, 'terminal frozen after stop');
+      captures.push({ fixture: 'supported-exact-limits', options, result });
+    }
+    // Retire more than the old block ceiling in the actual interpreter, with
+    // the exact requested new maxima. This is a fixture loop, not game progress.
+    await setup('success'); await write(caller - 18, [0xeb, 0xfe]);
+    await start({ limitProfile: 'extended', maxBlocks: 10000000, maxMs: 120000 });
+    const extendedStarted = performance.now();
+    for (let i = 0; i < 21; i++) await run(i === 20 ? 1 : 100000);
+    assert.equal(await status(), null, 'extended observer survives old block ceiling');
+    await new Promise(resolve => setTimeout(resolve, Math.max(0, 15020 - (performance.now() - extendedStarted))));
+    await run(1);
+    assert.equal(await status(), null, 'extended observer survives old wall deadline');
+    await stop();
+    const extended = await status();
+    assert.equal(extended.status, 'stopped-incomplete');
+    assert.equal(extended.terminal.blocks, 2000002);
+    assert(extended.terminal.elapsedMs > 15000);
+    assert.equal(extended.terminal.maxBlocks, 10000000);
+    assert.equal(extended.terminal.maxMs, 120000);
+    captures.push({ fixture: 'beyond-old-block-ceiling', result: extended });
+    if (inWorker) assert.equal((await host.link._ask({ t: 'drawObserver', action: 'status' })).active, false);
     // Reproduce the demonstrated blind spot: CALL reaches Draw exactly when
     // the last permitted block retires. Entry must survive budget exhaustion.
     await setup('success'); await start({ maxBlocks: 1, maxMs: 2000 }); await run(1);
@@ -272,7 +323,7 @@ async function exercise(module, inWorker) {
           ...local(0x18,data + 1024),...local(0x1c,data + 2048),
           ...(kind === 'noSave' ? [0xbc,...u32(data + 8192),0xbd,7,0,0,0] : [])]);
       // Only start after all fixture writes/commands are finished.
-      await start({ maxBlocks: 150, maxMs: 2000, ...options });
+      await start({ limitProfile: 'extended', maxBlocks: 10000000, maxMs: 120000, ...options });
     }
     for (const width of [8,1,2]) for (const saturated of [false,true]) {
       await aliasSetup(width, saturated);
@@ -427,20 +478,23 @@ async function exercise(module, inWorker) {
     await write(exeBase + pe + 52, u32(0x400000));
 
     // Deadline expiry without guest execution is distinguishable from budget.
-    await setup('success'); await start({ maxBlocks: 100, maxMs: 1 });
+    await setup('success'); await start({ limitProfile: 'extended', maxBlocks: 10000000, maxMs: 1 });
     await new Promise(resolve => setTimeout(resolve, 10));
     if (!inWorker) await run(1);
     terminal = await status();
     captures.push({ fixture: 'deadline-before-run', result: terminal });
     assert.equal(terminal.terminal.reason, 'time-limit');
     assert.equal(terminal.terminal.blocks, 0);
-    assert.equal(terminal.terminal.remainingBlocks, 100);
+    assert.equal(terminal.terminal.remainingBlocks, 10000000);
     assert.equal(terminal.terminal.eip, caller - 18);
     assert.equal(terminal.terminal.boundary, inWorker ? 'worker-deadline-timer' : 'before-run');
 
-    await setup('trap'); await start({ maxBlocks: 20 });
+    await setup('trap'); await start({ limitProfile: 'extended', maxBlocks: 10000000, maxMs: 120000 });
     try { await run(20); } catch (_) { /* local WASM trap is rethrown unchanged */ }
     assert.equal((await status())?.status, 'trap-or-unobservable', 'actual illegal-instruction trap');
+    const trapped = structuredClone(await status());
+    await stop(); assert.deepEqual(await status(), trapped);
+    if (inWorker) assert.equal((await host.link._ask({ t: 'drawObserver', action: 'status' })).active, false);
 
     // Pending loader execution is neither consumed nor cleared by the probe.
     await setup('success'); await call('set_yield_state', 5, 0); await start();
@@ -499,7 +553,7 @@ async function exercise(module, inWorker) {
         events: reply.result.events.filter(e => ['entry','lockCall','lock','renderEspSave'].includes(e.point))
       }).firstMissing, 'natural Draw checkpoint: unlockCall');
       assert.throws(() => driver.assess({ events: [] }), /terminal-boundary/);
-      const budgetAssessment = driver.assess(terminal);
+      const budgetAssessment = driver.assess(extended);
       assert(budgetAssessment.firstMissing.includes('Draw'));
       console.log('PASS next original driver actual serialized page command + real WorkerLink + ordinary scheduler');
       // Execute the complete next browser driver offline: modeled DOM/boot and
