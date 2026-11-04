@@ -9,7 +9,7 @@ const contract=require('./test-legacy-projected-coordinate-contract');
 const previous=require('./test-legacy-projected-webgl');
 const ROOT=path.resolve(__dirname,'..');
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-const sourceCommit='5fa5519eb55e6b2fc83fae4ef12a218e7efc9a7e';
+const sourceCommit='a62801c2f653b738a9ba6fa052c91b9d7c673d52';
 // Published source-seal.json from the worker that built and tested the repair.
 // Keep these exact: matching a different locally available module is not proof.
 const modulePins={
@@ -50,7 +50,7 @@ function controls(){
   assert(source.includes('liveChangedBeforeDrain=true'),'held Worker mutation retained');
   assert(source.includes('d3dimSoftwareDrawCallsCompleted'),'owning Worker software exclusion retained');
   return {status:'PLAN ONLY; no GL pixels',sourceCommit,tolerance:p.tolerance,states:p.states.length,
-    repair:repairControls(),fixtureSHA256:hash(source),oracleSHA256:hash(contract.oracle.toString()),counts,
+    repair:repairControls(),capturedMatrixRepair:capturedMatrixControls(),fixtureSHA256:hash(source),oracleSHA256:hash(contract.oracle.toString()),counts,
     faults:['ignored','selector','component','early','lod','captured-matrix'],
     capturedMatrixFault:'held owned matrix replaced before actual owning Worker GL delivery'};
 }
@@ -114,26 +114,70 @@ function repairControls(){
   const p=contract.plan(),state=p.states.find(s=>s.label==='COUNT3/TEX7/scale16/wfalse');
   const answer=contract.oracle(p.colors,state,{x:9,y:11},true);
   assert.equal(answer.level,2);assert(Math.abs(answer.rho-5.560719202925077)<1e-12);
-  return {status:'OFFLINE repair compiler/Device checks PASS; repaired GL pixels untested',failedSample:answer};
+  return {status:'OFFLINE repair compiler/Device checks PASS; no GL pixels in this check',failedSample:answer};
 }
 function config(){return {...previous.config(),...contract.plan()};}
 const oracle=contract.oracle;
+// Runs in a delayed owning-Worker callback, outside the public COM setup scope.
+// Keep its identity matrix local so delivery never depends on fixture locals.
+function corruptCapturedMatrices(buffer,bytes){
+  const d=new DataView(buffer);let changed=0;
+  for(let offset=0;offset<bytes;){
+    const size=d.getUint32(offset,true);
+    assertRecord(size>0&&offset+size<=bytes);
+    if(d.getUint32(offset+12,true)===4){
+      new Uint8Array(buffer,offset+32+3136,64).set(new Uint8Array(new Float32Array(
+        [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]).buffer));
+      changed++;
+    }offset+=size;
+  }
+  return changed;
+  function assertRecord(ok){if(!ok)throw new Error('captured record size');}
+}
+function capturedMatrixControls(){
+  // Execute the exact callback helper in an isolated realm with no identity
+  // binding, using framed held type-3/type-4 records and byte guards.
+  const mutate=vm.runInNewContext('('+corruptCapturedMatrices.toString()+')');
+  const recordSize=3296,buffer=new ArrayBuffer(recordSize*2),bytes=new Uint8Array(buffer);
+  bytes.fill(0xa5);const d=new DataView(buffer);
+  for(let i=0;i<2;i++){d.setUint32(i*recordSize,recordSize,true);d.setUint32(i*recordSize+12,i?4:3,true);}
+  const before=bytes.slice(),offset=recordSize+32+3136;
+  assert.equal(mutate(buffer,bytes.length),1);
+  assert.deepEqual(Array.from(new Float32Array(buffer,offset,16)),[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);
+  assert.deepEqual(bytes.slice(0,offset),before.slice(0,offset));
+  assert.deepEqual(bytes.slice(offset+64),before.slice(offset+64));
+  assert.throws(()=>mutate(buffer,bytes.length-1),/captured record size/);
+  // Also run the actual emitted postMessage wrapper, holding then draining
+  // delivery. This catches a callback that still references out-of-scope state.
+  bytes.set(before);
+  const source=fixtureSource(),start=source.indexOf('port.postMessage=message=>{'),
+    end=source.indexOf('        return port;',start);
+  assert(start>0&&end>start);
+  const delivered=[],context=vm.createContext({port:{},post:m=>delivered.push(m),
+    holding:false,negative:'captured-matrix',evidence:{},endpointBuffers:undefined,
+    held:[],heldRecord:{messages:[]},check:assert});
+  vm.runInContext(corruptCapturedMatrices.toString()+';'+source.slice(start,end),context);
+  context.port.postMessage({t:'init',buffers:[buffer]});context.holding=true;
+  context.port.postMessage({t:'batch',index:0,bytes:bytes.length});
+  assert.equal(context.held.length,1);assert.deepEqual(bytes,before);
+  context.holding=false;context.held.shift()();
+  assert.equal(context.evidence.corruptedCapturedMatrices,1);
+  assert.deepEqual(delivered.map(m=>m.t),['init','batch']);
+  assert.deepEqual(Array.from(new Float32Array(buffer,offset,16)),[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);
+  assert.deepEqual(bytes.slice(0,offset),before.slice(0,offset));
+  assert.deepEqual(bytes.slice(offset+64),before.slice(offset+64));
+  return {status:'PASS isolated helper and exact emitted held/drained callback; type-4 matrix only; guards intact'};
+}
 function fixtureSource(){
   let source=contract.fixtureSource();
   const replace=(a,b)=>{assert.equal(source.split(a).length,2,'browser seam '+a);source=source.replace(a,b);};
-  replace('const held=[];let nativeEncoder,nativeWorker;', 'const held=[];let nativeEncoder,nativeWorker,endpointBuffers;');
+  replace('const held=[];let nativeEncoder,nativeWorker;', 'const held=[];let nativeEncoder,nativeWorker,endpointBuffers;'+corruptCapturedMatrices.toString());
   replace("if(holding&&(message.t==='batch'||held.length))held.push(()=>post(message));else post(message);",`if(message.t==='init')endpointBuffers=message.buffers;
           if(holding&&(message.t==='batch'||held.length))held.push(()=>{
             if(negative==='captured-matrix'&&message.t==='batch'){
               check(endpointBuffers,'captured endpoint buffers');
-              const buffer=endpointBuffers[message.index],d=new DataView(buffer);
-              for(let offset=0;offset<message.bytes;){
-                const size=d.getUint32(offset,true);check(size>0,'record size');
-                if(d.getUint32(offset+12,true)===4){
-                  new Uint8Array(buffer,offset+32+3136,64).set(new Uint8Array(new Float32Array(identity).buffer));
-                  evidence.corruptedCapturedMatrices=(evidence.corruptedCapturedMatrices||0)+1;
-                }offset+=size;
-              }
+              const changed=corruptCapturedMatrices(endpointBuffers[message.index],message.bytes);
+              evidence.corruptedCapturedMatrices=(evidence.corruptedCapturedMatrices||0)+changed;
             }post(message);
           });else post(message);`);
   replace('await setState(next);heldRecord.liveChangedBeforeDrain=true;',
@@ -147,7 +191,7 @@ function mutateAdapter(source){return source;}
 const transportPreflight=previous.transportPreflight;
 async function runtime(){
   const dir=process.env.LEGACY_PROJECTED_EVIDENCE;assert(dir);fs.mkdirSync(dir,{recursive:true});
-  const hardClose=Date.parse(process.env.LEGACY_PROJECTED_HARD_CLOSE||'2026-11-04T07:45:00Z');
+  const hardClose=Date.parse(process.env.LEGACY_PROJECTED_HARD_CLOSE);
   assert(Number.isFinite(hardClose),'explicit finite browser close time');
   const seal=JSON.parse(fs.readFileSync(path.join(dir,'source-seal.json')));
   const state={status:'PREPARING',seal,preflight:controls(),results:[],negatives:[],injections:[]};
@@ -253,4 +297,4 @@ if(require.main===module){
   else if(process.argv.includes('--modules')){const p=prerequisites();console.log(JSON.stringify(p,null,2));if(!p.modules.every(m=>m.match))process.exitCode=2;}
   else runtime().catch(e=>{console.error(e);process.exitCode=1;});
 }
-module.exports={controls,prerequisites,modulePins,sourceCommit,fixtureSource,config,oracle,runtime};
+module.exports={controls,prerequisites,modulePins,sourceCommit,fixtureSource,config,oracle,runtime,corruptCapturedMatrices,capturedMatrixControls};
