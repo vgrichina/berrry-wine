@@ -7,6 +7,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const vm = require('node:vm');
 const {plan, oracle, fixtureSource: softwareSource} = require('./test-legacy-mirror-uv-contract');
 const ROOT = path.resolve(__dirname, '..');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
@@ -20,6 +21,10 @@ function fixtureSource() {
     assert.equal(source.split(from).length,2,'unique browser fixture adaptation seam');
     source=source.replace(from,to);
   };
+  replace("    if(mode==='webgl')gpu=new D3DIMGpu.D3DIMGpu({getExports:()=>e,getMemory:()=>memory.buffer,",
+    "    if(mode==='webgl')gpu=new D3DIMGpu.D3DIMGpu({webglVersion:config.webglVersion,getExports:()=>e,getMemory:()=>memory.buffer,");
+  replace('port=manager.createEndpoint(options);',
+    'port=manager.createEndpoint({...options,webglVersion:config.webglVersion});');
   const begin=source.indexOf('      const transitions=config.cubeBorder?');
   const end=source.indexOf('      for(const [old,next] of transitions)',begin);
   assert(begin>0&&end>begin,'held queue transition seam');
@@ -32,18 +37,21 @@ function fixtureSource() {
         await until(()=>lastStats?.stats.drawCalls===drawCount,'observed worker draw stats');
         row.workerStats=lastStats.stats;
         eq(row.workerStats.requestedBackend,'webgl','observed worker WebGL');
+        checkVersion(row.workerStats.glVersion,'actual worker context VERSION');
         eq(row.workerStats.fallbacks,0,'observed worker no fallback');
         eq(row.workerStats.errors,0,'observed worker no errors');
         eq(row.workerStats.d3dimSoftwareDrawCallsCompleted,0,'observed worker no native rasterization');
         eq(row.workerStats.d3dimFallbackSoftwareDrawCallsCompleted,0,'observed worker no fallback rasterization');
         check(row.workerStats.glRenderer&&row.workerStats.renderEndpointId,'observed actual worker identity');
       }
+      if(gpu)checkVersion(evidence.glRenderer.version,'actual direct context VERSION');
       eq(actual,expected,'PIXEL ORACLE '+label);`);
   replace("await until(()=>lastStats?.stats.drawCalls===drawCount,'all production GPU stats');evidence.stats=lastStats.stats;",
     `await until(()=>lastStats?.stats.drawCalls===drawCount,'all production GPU stats');evidence.stats=lastStats.stats;
       evidence.workerIdentity={guestUrl:'/lib/guest-worker.js',renderUrl:'/lib/d3d-render-worker.js',
         endpointId:lastStats.stats.renderEndpointId,api:lastStats.stats.renderApi,
-        backend:lastStats.stats.requestedBackend,renderer:lastStats.stats.glRenderer};
+        backend:lastStats.stats.requestedBackend,renderer:lastStats.stats.glRenderer,
+        version:lastStats.stats.glVersion,requestedVersion:config.webglVersion};
       eq(evidence.workerIdentity.api,'legacy','actual render worker API');
       eq(evidence.workerIdentity.backend,'webgl','actual render worker backend');
       check(evidence.workerIdentity.endpointId&&evidence.workerIdentity.renderer,'actual worker endpoint and renderer');
@@ -52,8 +60,55 @@ function fixtureSource() {
       eq(evidence.queued.length,config.states.length*config.samples.length,'all held transitions executed');
       for(const q of evidence.queued){check(q.liveChangedBeforeDrain,'live state changed before drain');
         check(q.messages.includes('batch'),'held production draw batch');}`);
+  replace("  const held=[];",`  const held=[];
+  const checkVersion=(version,label)=>{
+    check(typeof version==='string',label+' present');
+    if(config.webglVersion!=='auto')
+      check(new RegExp('^WebGL '+config.webglVersion+'[.]0').test(version),label+' '+version);
+  };`);
   // Cleanup belongs to the ordinary fixture; no resource-lifetime contract.
   return source;
+}
+
+function apiVersion(value='auto') {
+  assert(['auto','1','2'].includes(value),'--webgl must be 1, 2 or auto');
+  return value==='auto'?value:Number(value);
+}
+
+// Exercise real legacy constructors with only the GPU device replaced. No
+// browser or sampler proxy can qualify runtime pixels through these controls.
+function versionControls() {
+  for(const version of [1,2,'auto',undefined]) {
+    let seen;
+    const context={D3D9Backend:{Device:class {constructor(canvas,options){seen=options?.webglVersion;}}}};
+    vm.runInNewContext(fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8'),context);
+    const gpu=new context.D3DIMGpu.D3DIMGpu({webglVersion:version,createCanvas:()=>({})});
+    assert(gpu._target({rt:1,dib:1,width:2,height:2,bpp:32}));
+    assert.equal(seen,version,'legacy device forwards explicit WebGL version');
+    let workerOptions;
+    const gl={VERSION:1,RENDERER:2,getExtension:()=>null,getParameter:k=>k===1?'WebGL 1.0 control':'control renderer'};
+    const worker={D3DIMGpu:{D3DIMGpu:class {
+      constructor(options){workerOptions=options;this.targets=new Map([[1,{device:{gpu:{gl}}}]]);}
+      call(){return 1;} snapshot(){return {drawCalls:1};}
+    }}};
+    vm.runInNewContext(fs.readFileSync(path.join(ROOT,'lib/d3dim-render-worker.js'),'utf8'),worker);
+    const adapter=worker.D3DIMRenderWorker.create({instance:{exports:{}},memory:{buffer:new ArrayBuffer(8)},
+      backend:'webgl',options:{webglVersion:version}});
+    assert.equal(workerOptions.webglVersion,version,'worker forwards explicit WebGL version');
+    assert.equal(adapter.execute({opcode:0x20001,wa:0}).glVersion,'WebGL 1.0 control',
+      'worker reports context VERSION, independently of request');
+  }
+  assert.equal(apiVersion('1'),1);assert.equal(apiVersion('2'),2);assert.equal(apiVersion(), 'auto');
+  for(const bad of ['0','3','webgl1',''])assert.throws(()=>apiVersion(bad));
+  for(const version of [1,2]) {
+    const requested=[];
+    assert.throws(()=>new (require('../lib/d3d9-backend').Device)({getContext:name=>{
+      requested.push(name);return null;
+    }},{webglVersion:version}),/WebGL is unavailable/);
+    assert.deepEqual(requested,version===1?['webgl','experimental-webgl']:['webgl2'],
+      'unavailable explicit version must not silently switch APIs');
+  }
+  fixtureSource();
 }
 
 async function runtime() {
@@ -63,11 +118,12 @@ async function runtime() {
   const source=process.env.LEGACY_MIRROR_GPU_SOURCE;
   assert.match(source||'',/^[0-9a-f]{40}$/,'full Git source identity required');
   fs.mkdirSync(dir,{recursive:true});
+  const webglVersion=apiVersion(process.argv.find(a=>a.startsWith('--webgl='))?.slice(8));
   const p=plan(),pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
-  const config={...p,thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
+  const config={...p,webglVersion,thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52)};
-  const evidence={source,status:'RUNNING',node:process.version,
+  const evidence={source,webglVersion,status:'RUNNING',node:process.version,
     fixtureSha256:sha(fs.readFileSync(__filename)),adaptedFixtureSha256:sha(fixtureSource()),
     oracleFixtureSha256:sha(fs.readFileSync(path.join(__dirname,'test-legacy-mirror-uv-contract.js'))),
     publicFixtureSha256:sha(fs.readFileSync(path.join(__dirname,'test-legacy-texture-rendered-contract.js'))),
@@ -142,7 +198,7 @@ async function runtime() {
 }
 
 if(require.main===module){
-  if(process.argv.includes('--plan')){fixtureSource();console.log(JSON.stringify(plan(),null,2));}
+  if(process.argv.includes('--plan')){versionControls();console.log(JSON.stringify({webglVersion:apiVersion(process.argv.find(a=>a.startsWith('--webgl='))?.slice(8)),...plan()},null,2));}
   else runtime().catch(error=>{console.error(error);process.exitCode=1;});
 }
-module.exports={fixtureSource};
+module.exports={fixtureSource,apiVersion,versionControls};
