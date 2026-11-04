@@ -2863,8 +2863,8 @@
   ;;
   ;; colour = emissive + mat.ambient * (RS_AMBIENT + sum(atten*spot*L.ambient))
   ;;        + mat.diffuse * sum(atten*spot*max(0, N.L)*L.diffuse), clamped;
-  ;; alpha = the diffuse source's alpha. Specular is not computed: the packed
-  ;; specular dword (fog factor in its alpha) is left as the vertex gave it.
+  ;; alpha = the diffuse source's alpha. Specular RGB uses the DX7 SDK
+  ;; imover_6muc halfway-vector model; its existing fog alpha is preserved.
   (func $d3dim_d7_rs (param $sw i32) (param $rs i32) (result i32)
     (i32.load (i32.add (local.get $sw) (i32.add (i32.const 256) (i32.shl (local.get $rs) (i32.const 2))))))
 
@@ -2873,7 +2873,7 @@
     (f32.div (f32.convert_i32_u (i32.and (i32.shr_u (local.get $c) (local.get $shift)) (i32.const 0xFF)))
              (f32.const 255.0)))
 
-  ;; Material colour $which (0 diffuse, 1 ambient, 3 emissive) as a D3DCOLOR,
+  ;; Material colour $which (0 diffuse, 1 ambient, 2 specular, 3 emissive) as a D3DCOLOR,
   ;; or the vertex colour its *MATERIALSOURCE render state selects.
   (func $d3dim_d7_mat_color (param $sw i32) (param $which i32) (param $src_rs i32)
       (param $vdiff i32) (param $vspec i32) (param $has_diff i32) (param $has_spec i32) (result i32)
@@ -2937,6 +2937,11 @@
     (local $lx f32) (local $ly f32) (local $lz f32) (local $d f32) (local $len f32)
     (local $att f32) (local $spot f32) (local $ndl f32) (local $rho f32) (local $ct f32) (local $cp f32)
     (local $ar f32) (local $ag f32) (local $ab f32) (local $dr f32) (local $dg f32) (local $db f32)
+    (local $cs i32) (local $spec_on i32) (local $power f32)
+    (local $sr f32) (local $sg f32) (local $sb f32) (local $rs f32)
+    (local $ex f32) (local $ey f32) (local $ez f32)
+    (local $snx f32) (local $sny f32) (local $snz f32)
+    (local $hx f32) (local $hy f32) (local $hz f32)
     (if (i32.or (i32.eqz (local.get $packed_g)) (i32.eqz (local.get $count)))
       (then (return (local.get $vtxType))))
     ;; Lit vertices need untransformed positions and a normal.
@@ -2960,6 +2965,12 @@
     (if (local.get $table) (then (local.set $tw (call $g2w (local.get $table)))))
     (local.set $mask (i32.load (i32.add (local.get $sw) (global.get $D3DIM_OFF_D3D7_LIGHT_ENABLE))))
     (local.set $amb (call $d3dim_d7_rs (local.get $sw) (i32.const 139)))         ;; AMBIENT
+    (local.set $power (f32.load offset=64 (i32.add (local.get $sw) (global.get $D3DIM_OFF_D3D7_MAT))))
+    ;; D3DMATERIAL7::dvPower explicitly disables highlights at zero, rather
+    ;; than evaluating x^0. SPECULARENABLE independently gates the RGB sum.
+    (local.set $spec_on (i32.and
+      (i32.ne (call $d3dim_d7_rs (local.get $sw) (i32.const 29)) (i32.const 0))
+      (f32.gt (local.get $power) (f32.const 0))))
     (local.set $stride (call $d3dim_fvf_stride (local.get $fvf)))
     (local.set $has_diff (i32.ne (i32.and (local.get $fvf) (i32.const 0x40)) (i32.const 0)))
     (local.set $has_spec (i32.ne (i32.and (local.get $fvf) (i32.const 0x80)) (i32.const 0)))
@@ -3017,6 +3028,44 @@
       (local.set $ag (call $d3dim_d7_ch (local.get $amb) (i32.const 8)))
       (local.set $ab (call $d3dim_d7_ch (local.get $amb) (i32.const 0)))
       (local.set $dr (f32.const 0.0)) (local.set $dg (f32.const 0.0)) (local.set $db (f32.const 0.0))
+      (local.set $sr (f32.const 0)) (local.set $sg (f32.const 0)) (local.set $sb (f32.const 0))
+      (if (local.get $spec_on) (then
+        ;; Specular vectors share camera space. For rigid world/view matrices
+        ;; this is the same dot product as the SDK's model-space formulation.
+        ;; The existing diffuse world-space computation remains independent.
+        (local.set $snx (f32.add (f32.add
+          (f32.mul (local.get $nx) (f32.load offset=64 (local.get $sw)))
+          (f32.mul (local.get $ny) (f32.load offset=80 (local.get $sw))))
+          (f32.mul (local.get $nz) (f32.load offset=96 (local.get $sw)))))
+        (local.set $sny (f32.add (f32.add
+          (f32.mul (local.get $nx) (f32.load offset=68 (local.get $sw)))
+          (f32.mul (local.get $ny) (f32.load offset=84 (local.get $sw))))
+          (f32.mul (local.get $nz) (f32.load offset=100 (local.get $sw)))))
+        (local.set $snz (f32.add (f32.add
+          (f32.mul (local.get $nx) (f32.load offset=72 (local.get $sw)))
+          (f32.mul (local.get $ny) (f32.load offset=88 (local.get $sw))))
+          (f32.mul (local.get $nz) (f32.load offset=104 (local.get $sw)))))
+        (local.set $ex (f32.const 0)) (local.set $ey (f32.const 0)) (local.set $ez (f32.const -1))
+        (if (call $d3dim_d7_rs (local.get $sw) (i32.const 142)) (then
+          (local.set $ex (f32.neg (f32.add (f32.add (f32.add
+            (f32.mul (local.get $px) (f32.load offset=64 (local.get $sw)))
+            (f32.mul (local.get $py) (f32.load offset=80 (local.get $sw))))
+            (f32.mul (local.get $pz) (f32.load offset=96 (local.get $sw)))) (f32.load offset=112 (local.get $sw)))))
+          (local.set $ey (f32.neg (f32.add (f32.add (f32.add
+            (f32.mul (local.get $px) (f32.load offset=68 (local.get $sw)))
+            (f32.mul (local.get $py) (f32.load offset=84 (local.get $sw))))
+            (f32.mul (local.get $pz) (f32.load offset=100 (local.get $sw)))) (f32.load offset=116 (local.get $sw)))))
+          (local.set $ez (f32.neg (f32.add (f32.add (f32.add
+            (f32.mul (local.get $px) (f32.load offset=72 (local.get $sw)))
+            (f32.mul (local.get $py) (f32.load offset=88 (local.get $sw))))
+            (f32.mul (local.get $pz) (f32.load offset=104 (local.get $sw)))) (f32.load offset=120 (local.get $sw)))))
+          (local.set $len (f32.sqrt (f32.add (f32.add
+            (f32.mul (local.get $ex) (local.get $ex)) (f32.mul (local.get $ey) (local.get $ey)))
+            (f32.mul (local.get $ez) (local.get $ez)))))
+          (if (f32.gt (local.get $len) (f32.const 0)) (then
+            (local.set $ex (f32.div (local.get $ex) (local.get $len)))
+            (local.set $ey (f32.div (local.get $ey) (local.get $len)))
+            (local.set $ez (f32.div (local.get $ez) (local.get $len)))))))))
       (local.set $k (i32.const 0))
       (if (local.get $tw) (then
         (block $ldone (loop $llp
@@ -3080,6 +3129,33 @@
                             (f64.promote_f32 (local.get $spot))
                             (f64.promote_f32 (f32.load offset=80 (local.get $lw))))))))))))))))))
             (local.set $att (f32.mul (local.get $att) (local.get $spot)))
+            (if (local.get $spec_on) (then
+              ;; H = normalize(V + L), L pointing from vertex to light.
+              (local.set $hx (f32.add (local.get $ex) (f32.add (f32.add
+                (f32.mul (local.get $lx) (f32.load offset=64 (local.get $sw)))
+                (f32.mul (local.get $ly) (f32.load offset=80 (local.get $sw))))
+                (f32.mul (local.get $lz) (f32.load offset=96 (local.get $sw))))))
+              (local.set $hy (f32.add (local.get $ey) (f32.add (f32.add
+                (f32.mul (local.get $lx) (f32.load offset=68 (local.get $sw)))
+                (f32.mul (local.get $ly) (f32.load offset=84 (local.get $sw))))
+                (f32.mul (local.get $lz) (f32.load offset=100 (local.get $sw))))))
+              (local.set $hz (f32.add (local.get $ez) (f32.add (f32.add
+                (f32.mul (local.get $lx) (f32.load offset=72 (local.get $sw)))
+                (f32.mul (local.get $ly) (f32.load offset=88 (local.get $sw))))
+                (f32.mul (local.get $lz) (f32.load offset=104 (local.get $sw))))))
+              (local.set $len (f32.sqrt (f32.add (f32.add
+                (f32.mul (local.get $hx) (local.get $hx)) (f32.mul (local.get $hy) (local.get $hy)))
+                (f32.mul (local.get $hz) (local.get $hz)))))
+              (if (f32.gt (local.get $len) (f32.const 0)) (then
+                (local.set $rs (f32.min (f32.const 1) (f32.max (f32.const 0) (f32.div
+                  (f32.add (f32.add (f32.mul (local.get $snx) (local.get $hx))
+                    (f32.mul (local.get $sny) (local.get $hy)))
+                    (f32.mul (local.get $snz) (local.get $hz))) (local.get $len)))))
+                (local.set $rs (f32.mul (local.get $att) (f32.demote_f64 (call $host_math_pow
+                  (f64.promote_f32 (local.get $rs)) (f64.promote_f32 (local.get $power))))))
+                (local.set $sr (f32.add (local.get $sr) (f32.mul (local.get $rs) (f32.load offset=20 (local.get $lw)))))
+                (local.set $sg (f32.add (local.get $sg) (f32.mul (local.get $rs) (f32.load offset=24 (local.get $lw)))))
+                (local.set $sb (f32.add (local.get $sb) (f32.mul (local.get $rs) (f32.load offset=28 (local.get $lw)))))))))
             (local.set $ar (f32.add (local.get $ar) (f32.mul (local.get $att) (f32.load offset=36 (local.get $lw)))))
             (local.set $ag (f32.add (local.get $ag) (f32.mul (local.get $att) (f32.load offset=40 (local.get $lw)))))
             (local.set $ab (f32.add (local.get $ab) (f32.mul (local.get $att) (f32.load offset=44 (local.get $lw)))))
@@ -3104,6 +3180,26 @@
         ;; Specular alpha is the vertex fog factor: 255, no fog (not 0, solid fog).
         (i32.store offset=12 (local.get $dst) (i32.const 0))
         (i32.store offset=20 (local.get $dst) (i32.const 0xFF000000))))
+      ;; Keep material floats until the final RGB conversion. Packing a small
+      ;; material channel first can erase a highlight from a bright light.
+      (local.set $cs (call $d3dim_d7_rs (local.get $sw) (i32.const 146)))
+      (if (i32.and
+        (i32.ne (call $d3dim_d7_rs (local.get $sw) (i32.const 141)) (i32.const 0))
+        (i32.or (i32.and (i32.eq (local.get $cs) (i32.const 1)) (local.get $has_diff))
+                (i32.and (i32.eq (local.get $cs) (i32.const 2)) (local.get $has_spec))))
+        (then
+          (local.set $cs (select (local.get $vdiff) (local.get $vspec) (i32.eq (local.get $cs) (i32.const 1))))
+          (local.set $sr (f32.mul (local.get $sr) (call $d3dim_d7_ch (local.get $cs) (i32.const 16))))
+          (local.set $sg (f32.mul (local.get $sg) (call $d3dim_d7_ch (local.get $cs) (i32.const 8))))
+          (local.set $sb (f32.mul (local.get $sb) (call $d3dim_d7_ch (local.get $cs) (i32.const 0)))))
+        (else
+          (local.set $cs (i32.add (local.get $sw) (global.get $D3DIM_OFF_D3D7_MAT)))
+          (local.set $sr (f32.mul (local.get $sr) (f32.load offset=32 (local.get $cs))))
+          (local.set $sg (f32.mul (local.get $sg) (f32.load offset=36 (local.get $cs))))
+          (local.set $sb (f32.mul (local.get $sb) (f32.load offset=40 (local.get $cs))))))
+      (i32.store offset=20 (local.get $dst) (i32.or
+        (i32.and (i32.load offset=20 (local.get $dst)) (i32.const 0xFF000000))
+        (call $d3dim_d7_pack4 (local.get $sr) (local.get $sg) (local.get $sb) (f32.const 0))))
       (i32.store offset=16 (local.get $dst)
         (call $d3dim_d7_pack4
           (f32.add (f32.add (call $d3dim_d7_ch (local.get $ce) (i32.const 16))

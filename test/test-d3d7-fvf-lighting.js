@@ -110,7 +110,7 @@ const LIGHTING = 137, AMBIENT = 139, COLORVERTEX = 141, DIFFUSEMATERIALSOURCE = 
   let r = lit(FVF, 0);
   assert.strictEqual(r.type, 2, 'lit vertices are drawn as LVERTEX');
   assert.strictEqual(hex(r.color), hex(0xff404040), 'ambient only: RS_AMBIENT x material ambient');
-  assert.strictEqual(hex(r.spec), hex(0x11223344), 'specular dword (fog alpha) kept');
+  assert.strictEqual(r.spec & 0xffffff, 0, 'disabled computed specular RGB is black');
 
   // Directional red light along +Z hits a -Z normal head on.
   setLight(0, { type: 3, diffuse: [1, 0, 0, 1], direction: [0, 0, 1] });
