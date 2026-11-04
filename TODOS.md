@@ -1621,7 +1621,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
   candidate: deus-ex-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: 01a1a728-77e9-74c3-9dd5-05701d43a851 active deusex-natural-bound-cache-nov04. Accepted d5e762bce production opt-in loader/media/generation binding before owning Worker JSrun; both variants queued loader/native slices whole-state/commands/trap parity PASS,33 seals/mainorigin verified. Fresh bx_t2kna5qz expiry16:03:07Z guest close15:48 recovery15:53 coordinator stop15:57Z; one bounded natural run after actual dependency controls. Full histories/internal WAT/cross-thread/gameplay unproved.
+  worker: 01a1a737-0ed9-7ff1-877d-dbd39ab063c5 active deusex-owning-readiness-repair-nov04. Accepted126f106e4 main+origin and394 fullSHA artifacts (356 recovered remote). One natural boot bound original Core/SoftDrv gen1, zero capped cache records; first terminal inherited inspector Worker instance absent BEFORE slot qualification, foreign Worker timing not identity proof. No readiness/Draw/raw/PNG/gameplay. bx_t2kna5qz normalSTOP/snapshot verified15:36Z; closed attempt neverresume. Fresh offline repair must select initialized owning endpoint before inspection, preserve owning faults and all original bounds; no runtime/box allocation.
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
