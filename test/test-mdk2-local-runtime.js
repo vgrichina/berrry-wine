@@ -7,7 +7,7 @@ const local=require('../tools/mdk2-local-runtime.cjs');
 const integration=require('../tools/mdk2-construction-driver-integration.cjs');
 const run=fs.mkdtempSync(path.join(local.BASE,'mdk2-local-contract-test-'));
 after(()=>fs.rmSync(run,{recursive:true,force:true}));
-const now=Date.parse('2026-11-04T17:30:00Z');
+const now=Date.parse('2026-11-04T17:50:00Z');
 function release(){return local.createRelease(run,now);}
 test('real local host/process release retains 360 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+360000);
@@ -27,6 +27,14 @@ for(const [name,change] of Object.entries({
 test('original useful-window minimum and absolute launch cutoff cannot be extended',()=>{
  assert.throws(()=>local.validate(release(),run,now+180000),/three-minute/);
  assert.throws(()=>local.createRelease(run,local.HARD_CLOSE-540000),/360\+180/);
+});
+test('renewed dated assignment retains exact absolute close and recovery bounds',()=>{
+ assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T18:25:00Z'));
+ assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T18:28:00Z'));
+ const r=release();r.recoverBy=new Date(local.HARD_RECOVER+1).toISOString();
+ assert.throws(()=>local.validate(r,run,now),/cleanup reserve/);
+ const late=local.createRelease(run,local.HARD_CLOSE-540001);
+ assert.equal(local.validate(late,run,local.HARD_CLOSE-540001),local.HARD_CLOSE-180001);
 });
 test('actual original composed source changes exactly obsolete TTL guard and Chrome path',()=>{
  const source=integration.compose(run).source, translated=local.translate(source);

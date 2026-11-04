@@ -8,8 +8,9 @@ const cp = require('node:child_process');
 const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
-const HARD_CLOSE = Date.parse('2026-11-04T17:55:00Z');
-const HARD_RECOVER = Date.parse('2026-11-04T17:58:00Z');
+// Explicitly renewed by the repaired-Python original attempt assignment.
+const HARD_CLOSE = Date.parse('2026-11-04T18:25:00Z');
+const HARD_RECOVER = Date.parse('2026-11-04T18:28:00Z');
 const ASSIGNMENT = '20261104-mdk2-bounded-trace-driver-repair';
 function identity(pid = process.pid) {
   const stat = fs.readFileSync('/proc/' + pid + '/stat', 'utf8');
