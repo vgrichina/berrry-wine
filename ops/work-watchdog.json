@@ -17,7 +17,7 @@
     "consumers": [
       {
         "agent": "codex-01a0ff91",
-        "agentId": "codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5",
+        "agentId": "codex:01a19022-1426-76b3-ae98-6265fb15fd66",
         "kind": "codex",
         "deliveryRequiredAfter": 123,
         "deliveryMode": "codex-queue"

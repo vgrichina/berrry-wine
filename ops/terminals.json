@@ -2,19 +2,19 @@
   "terminals": [
     {
       "id": "orchestrator",
-      "agentId": "codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5",
-      "label": "Orchestrator · persistent box",
+      "agentId": "codex:01a19022-1426-76b3-ae98-6265fb15fd66",
+      "label": "Codex coordinator · Telegram",
       "session": "wine-orchestrator",
-      "pane": "%0",
-      "panePid": 95949
+      "pane": "%10",
+      "panePid": 1500394
     },
     {
-      "id": "claude-launch-ux",
-      "agentId": "claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256",
-      "label": "Claude · App loading UX",
-      "session": "wine-claude-launch-ux",
-      "pane": "%4",
-      "panePid": 1055761,
+      "id": "claude-orchestrator",
+      "agentId": "claude:80aa9e95-435b-4acb-aeea-8ae3d860613c",
+      "label": "Claude coordinator",
+      "session": "wine-claude-orchestrator",
+      "pane": "%1",
+      "panePid": 1446990,
       "permissionMode": "bypass"
     }
   ]
