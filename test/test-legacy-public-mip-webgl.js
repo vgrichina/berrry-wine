@@ -12,16 +12,33 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 
 // Independent analytic perspective interpolation on a 32-pixel right triangle.
 // Differentiate U/Q and V/Q; choose mip levels from the largest texture-space
-// footprint. Solid authored levels isolate LOD from within-level filtering.
+// footprint. Spatial levels additionally use the normalized texel-center rule.
 function oracle(colors,state,sample) {
   const {x,y}=sample,q=state.q||[1,1,1],n=state.n;
   const Q=q[0]+(q[1]-q[0])*x/32+(q[2]-q[0])*y/32;
+  const offset=state.offset||[0,0];
   const U=n*q[1]*x/32,V=n*q[2]*y/32;
   const Qx=(q[1]-q[0])/32,Qy=(q[2]-q[0])/32;
   const ux=(n*q[1]/32*Q-U*Qx)/(Q*Q),uy=-U*Qy/(Q*Q);
   const vx=-V*Qx/(Q*Q),vy=(n*q[2]/32*Q-V*Qy)/(Q*Q);
   const rho=16*Math.sqrt(Math.max(ux*ux+vx*vx,uy*uy+vy*vy));
   const lod=Math.max(0,Math.min(4,Math.log2(rho)));
+  if(state.spatial){
+    const u=offset[0]+U/Q,v=offset[1]+V/Q;
+    const filter=rho<=1?state.mag:state.min;
+    const at=level=>{
+      const grid=colors[level],d=grid.length;
+      const tap=(a,b)=>grid[((b%d)+d)%d][((a%d)+d)%d];
+      if(filter===1)return tap(Math.floor(u*d),Math.floor(v*d)).slice();
+      const sx=u*d-.5,sy=v*d-.5,ix=Math.floor(sx),iy=Math.floor(sy),fx=sx-ix,fy=sy-iy;
+      const a=tap(ix,iy),b=tap(ix+1,iy),c=tap(ix,iy+1),e=tap(ix+1,iy+1);
+      return a.map((z,i)=>(z*(1-fx)+b[i]*fx)*(1-fy)+(c[i]*(1-fx)+e[i]*fx)*fy);
+    };
+    if(state.mip===1)return at(0);
+    if(state.mip===2)return at(Math.floor(lod+.5));
+    const lo=Math.floor(lod),hi=Math.min(4,lo+1),w=lod-lo,a=at(lo),b=at(hi);
+    return a.map((z,i)=>z*(1-w)+b[i]*w);
+  }
   if(state.mip===1)return colors[0].slice();
   if(state.mip===2)return colors[Math.floor(lod+.5)].slice();
   const lo=Math.floor(lod),hi=Math.min(4,lo+1),w=lod-lo;
@@ -64,6 +81,49 @@ function plan() {
   return p;
 }
 
+function spatialPlan(){
+  // Authored independently of production decoding: asymmetric checker/ramp
+  // channels vary in both axes and also distinguish every mip level.
+  const colors=Array.from({length:5},(_,level)=>Array.from({length:16>>level},(_,y)=>
+    Array.from({length:16>>level},(_,x)=>[24+level*23+(x%2)*112,
+      20+level*17+(y%2)*120,28+level*19+((x+y)%2)*96])));
+  const states=[
+    {label:'spatial MAG POINT',n:.5,min:1,mag:1},
+    {label:'spatial MAG LINEAR',n:.5,min:1,mag:2},
+    {label:'spatial MAG POINT restored',n:.5,min:2,mag:1},
+    {label:'spatial MIN POINT',n:4,min:1,mag:2},
+    {label:'spatial MIN LINEAR',n:4,min:2,mag:1},
+    {label:'spatial MIN POINT restored',n:4,min:1,mag:2},
+    {label:'spatial fractional POINT mip bilinear',n:2*Math.sqrt(8),min:2,mag:1},
+    {label:'spatial fractional trilinear',n:2*Math.sqrt(8),min:2,mag:1,mip:3},
+    {label:'spatial fractional trilinear point taps',n:2*Math.sqrt(8),min:1,mag:2,mip:3},
+    {label:'spatial perspective trilinear',n:4,min:2,mag:1,mip:3,q:[1,.5,.75],
+      samples:[2,5,8].map(x=>({x,y:2}))},
+  ].map(s=>({spatial:true,mip:2,offset:[.137,.193],samples:[{x:2,y:3}],...s}));
+  const tolerance=2;
+  for(const [a,b] of [[0,1],[3,4],[6,7],[7,8]]){
+    const x=oracle(colors,states[a],states[a].samples[0]),y=oracle(colors,states[b],states[b].samples[0]);
+    assert(x.some((c,i)=>Math.abs(c-y[i])>2*tolerance),'spatial pair discriminates '+a+'/'+b);
+  }
+  // Hand-calculated normalized coordinates and point / bilinear answers.
+  assert.deepEqual(oracle(colors,states[0],states[0].samples[0]),[24,140,124]);
+  assert.deepEqual(oracle(colors,states[3],states[3].samples[0]),[159,37,143]);
+  for(const [index,expected] of [[1,[45.504,99.44,85.580032]],
+    [4,[113.752,42.28,103.404992]],
+    [7,[120.84812152132,111.900779386421,103.339059274967]]]){
+    const actual=oracle(colors,states[index],states[index].samples[0]);
+    for(const [i,c] of expected.entries())assert(Math.abs(actual[i]-c)<1e-8,'analytic reference '+index);
+  }
+  for(const state of states)for(const sample of state.samples){
+    const q=state.q||[1,1,1],Q=q[0]+(q[1]-q[0])*sample.x/32+(q[2]-q[0])*sample.y/32;
+    const uv=[state.offset[0]+state.n*q[1]*sample.x/32/Q,
+      state.offset[1]+state.n*q[2]*sample.y/32/Q];
+    assert(uv.every(v=>v>.125&&v<.875),'interior UV away from wrap edges');
+    assert(uv.every(v=>Math.abs(v*16-Math.round(v*16))>.01),'noninteger base texel coordinates');
+  }
+  return {colors,states,tolerance,spatial:true,queuedPairs:[[0,1],[3,4],[4,5]],update:null};
+}
+
 function fixtureSource() {
   let source=browserFixture.toString();
   const replace=(a,b)=>{assert.equal(source.split(a).length,2,'unique public mip seam: '+a.slice(0,60));source=source.replace(a,b);};
@@ -87,9 +147,10 @@ function fixtureSource() {
       eq(await read(lockDesc.p+8),dimension,'public mip height');
       eq(await read(lockDesc.p+12),dimension,'public mip width');
       eq(l.pitch,dimension*4,'public mip exact pitch');
-      const [r,g,b]=config.colors[level];
-      for(let y=0;y<dimension;y++)for(let x=0;x<dimension;x++)
+      for(let y=0;y<dimension;y++)for(let x=0;x<dimension;x++){
+        const [r,g,b]=config.spatial?config.colors[level][y][x]:config.colors[level];
         await write(l.pointer+y*l.pitch+x*4,0xff000000|(r<<16)|(g<<8)|b);
+      }
       await unlock(obj);evidence.levelLocks.push({level,dimension,...l});
     }`);
   replace('[0,0,8,8,0,0x3f800000]','[0,0,32,32,0,0x3f800000]');
@@ -100,13 +161,16 @@ function fixtureSource() {
   block('    const geometry=async uv=>{','    const describe=async()=>{',`    const geometry=async state=>{
       for(const [i,[x,y]] of [[0,0],[32,0],[0,32]].entries())
         await words(vertices+i*32,[bits(x),bits(y),bits(.5),bits((state.q||[1,1,1])[i]),
-          0xffffffff,0,bits(i===1?state.n:0),bits(i===2?state.n:0)]);
+          0xffffffff,0,bits((state.offset||[0,0])[0]+(i===1?state.n:0)),
+          bits((state.offset||[0,0])[1]+(i===2?state.n:0))]);
     };
     let previousMip=1;
     const setState=async state=>{
       const mip=negative==='level-zero-only'?1:
         negative==='stale-mip-filter'&&state.mip===3?previousMip:state.mip;
-      for(const [id,v] of [[16,state.filter],[17,state.filter],[18,mip],[13,1],[14,1]]){
+      const min=negative==='nearest-only'?1:(state.min||state.filter),
+        mag=negative==='nearest-only'?1:(state.mag||state.filter);
+      for(const [id,v] of [[16,mag],[17,min],[18,mip],[13,1],[14,1]]){
         await tss(id,v);const out=await guard(4);
         await ok(com('GetTextureStageState7',device,36,0,id,out.p));await out.check();
         eq(await read(out.p),v,'public sampler readback '+id);
@@ -140,8 +204,8 @@ function fixtureSource() {
       for(const sample of state.samples)await observe(state.label+'/'+sample.x+','+sample.y,sample,state);
     }
     if(mode==='worker'){
-      for(const [old,next] of [[config.states[0],config.states[1]],[config.states[1],config.states[2]],
-        [config.states[2],config.states[3]]]){
+      for(const [a,b] of config.queuedPairs||[[0,1],[1,2],[2,3]]){
+        const old=config.states[a],next=config.states[b];
         await geometry(old);await setState(old);
         heldRecord={old,next,messages:[]};evidence.queued.push(heldRecord);holding=true;
         await draw();await until(()=>held.length>0,'held production batch');
@@ -153,7 +217,8 @@ function fixtureSource() {
       await until(()=>lastStats?.stats.drawCalls===drawCount,'all production stats');evidence.stats=lastStats.stats;
     }else if(gpu)evidence.stats=gpu.snapshot();
 `);
-  replace('    evidence.drawCount=drawCount;',`    const update=config.update,state=update.state,sample=state.samples[0];
+  replace('    evidence.drawCount=drawCount;',`    if(config.update){
+    const update=config.update,state=update.state,sample=state.samples[0];
     await setState(state);await geometry(state);await draw();
     await observe('child before overwrite',sample,state);
     const obj=levels[update.level],dimension=16>>update.level,l=await lock(obj);
@@ -174,6 +239,7 @@ function fixtureSource() {
     if(mode==='worker'){
       await until(()=>lastStats?.stats.drawCalls===drawCount,'updated child GPU stats');evidence.stats=lastStats.stats;
     }else if(gpu)evidence.stats=gpu.snapshot();
+    }
     evidence.drawCount=drawCount;`);
   replace("    for(const [name,obj] of Object.entries({device,texture,rt,padding,d3d,dd}))",`    for(const obj of levels.slice(1))await com('Release acquired mip',obj,2);
     for(const [name,obj] of Object.entries({device,texture,rt,padding,d3d,dd}))`);
@@ -181,7 +247,7 @@ function fixtureSource() {
 }
 
 function controls(){
-  versionControls();const p=plan(),source=fixtureSource();
+  versionControls();plan();const p=spatialPlan(),source=fixtureSource();
   new vm.Script('('+source+')');
   assert(!/mip_seed|mip_surface|mip_draw|fixedLOD/.test(source));
   for(const label of ['DirectDrawCreateEx','QI IDirect3D7','CreateSurface','CreateDevice7',
@@ -199,7 +265,7 @@ function controls(){
 
 function config(){
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
-  return {...plan(),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
+  return {...spatialPlan(),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52)};
 }
@@ -290,11 +356,11 @@ async function runtime(){
   const source=process.env.LEGACY_PUBLIC_MIP_SOURCE;
   assert(dir&&moduleDir);assert.match(source||'',/^[0-9a-f]{40}$/);
   fs.mkdirSync(dir,{recursive:true});
-  const evidence={status:'RUNNING',source,node:process.version,plan:plan(),modules:[],results:[],negativeControls:[],
+  const evidence={status:'RUNNING',source,node:process.version,plan:spatialPlan(),modules:[],results:[],negativeControls:[],
     fixtureSha256:sha(fs.readFileSync(__filename)),adaptedFixtureSha256:sha(fixtureSource()),
     publicFixtureSha256:sha(fs.readFileSync(path.join(__dirname,'test-legacy-texture-rendered-contract.js'))),
     calcSha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))),
-    unexecuted:['non-solid mip texels / within-level MIN-MAG discrimination','partial/malformed chains',
+    unexecuted:['partial/malformed chains',
       'other per-level formats/padded pitch','legacy combined filters','other dimensions/formats',
       'physical GPU','games / full27']};
   const save=()=>fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(evidence,null,2)+'\n');
@@ -338,6 +404,14 @@ async function runtime(){
       assert(failure?.includes('PIXEL ORACLE'),'negative must fail actual pixels: '+failure);
       assert(partial.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0));
       assert(partial.observations.some(o=>o.actual.some((c,i)=>Math.abs(c-o.expected[i])>cfg.tolerance)));
+      if(negative==='nearest-only'){
+        const failed=partial.observations.at(-1);
+        assert.equal(failed.state.mag,2,'linear magnification is exercised');
+        const nearest=oracle(cfg.colors,{...failed.state,min:1,mag:1},failed.sample);
+        assert(failed.actual.every((c,i)=>Math.abs(c-nearest[i])<=cfg.tolerance),
+          'successful rendered readback actually sampled nearest texels');
+        assert(partial.observations.length>=2,'point baseline draws before linear rejection');
+      }
       if(negative==='stale-child-upload'){
         assert(injections.some(r=>r.url===(mode==='worker'?'/lib/d3dim-gpu.js?v=legacy-texture-public-com':'/lib/d3dim-gpu.js')),
           'exact executor script served with injection');
@@ -351,20 +425,20 @@ async function runtime(){
       else assert(partial.observations.some(o=>o.webglRGBA&&o.glError===0));
       await page.close();page=null;console.log('PASS rendered negative '+negative+' '+module.name+' '+mode+' WebGL'+webglVersion);
     };
-    // Exercise the repaired versioned Worker route before any positive cell.
+    // Fail-fast new rendered control before positives; old solid matrix accepted.
     wasm=fs.readFileSync(path.join(moduleDir,evidence.modules[0].name));
-    await runNegative(evidence.modules[0],'worker',1,'stale-child-upload');
+    await runNegative(evidence.modules[0],'worker',1,'nearest-only');
     for(const module of evidence.modules){
       wasm=fs.readFileSync(path.join(moduleDir,module.name));
       for(const mode of ['worker','webgl'])for(const webglVersion of [1,2]){
         const cfg={...config(),webglVersion};
         activeNegative=null;await open();const result=await page.evaluate(fixture,mode,cfg,oracle.toString());
-        assert.equal(result.status,'PASS');assert.equal(result.observations.length,mode==='worker'?25:19);
+        assert.equal(result.status,'PASS');assert.equal(result.observations.length,mode==='worker'?18:12);
         evidence.results.push({module:module.name,webglVersion,...result});save();
         await page.screenshot({path:path.join(dir,module.name+'-'+mode+'-'+webglVersion+'.png')});await page.close();page=null;
         console.log('PASS '+module.name+' '+mode+' WebGL'+webglVersion+' observations '+result.observations.length);
-        for(const negative of ['level-zero-only','stale-mip-filter','stale-child-upload']){
-          if(module===evidence.modules[0]&&mode==='worker'&&webglVersion===1&&negative==='stale-child-upload')continue;
+        for(const negative of ['nearest-only']){
+          if(module===evidence.modules[0]&&mode==='worker'&&webglVersion===1)continue;
           await runNegative(module,mode,webglVersion,negative);
         }
       }
@@ -383,4 +457,4 @@ if(require.main===module){
     .catch(error=>{console.error(error);process.exitCode=1;});
   else runtime().catch(error=>{console.error(error);process.exitCode=1;});
 }
-module.exports={oracle,plan,fixtureSource,controls,bootstrap,serverControls};
+module.exports={oracle,plan,spatialPlan,fixtureSource,controls,bootstrap,serverControls};
