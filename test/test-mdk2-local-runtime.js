@@ -3,11 +3,70 @@ const {test,after}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const cp=require('node:child_process');
+const {createRequire}=require('node:module');
 const local=require('../tools/mdk2-local-runtime.cjs');
 const integration=require('../tools/mdk2-construction-driver-integration.cjs');
 const run=fs.mkdtempSync(path.join(local.BASE,'mdk2-local-contract-test-'));
 after(()=>fs.rmSync(run,{recursive:true,force:true}));
 const now=Date.parse('2026-11-04T17:50:00Z');
+test('installed Puppeteer close path distinguishes orderly own child from CDP-failure SIGKILL fallback',async()=>{
+ const r=createRequire(require.resolve('puppeteer'));
+ const core=r.resolve('puppeteer-core'),browsers=createRequire(core).resolve('@puppeteer/browsers');
+ const launcherPath=path.join(path.dirname(core),'node/BrowserLauncher.js');
+ const processPath=path.join(path.dirname(browsers),'launch.js');
+ const {BrowserLauncher}=await import(launcherPath),{launch}=await import(processPath);
+ const rows=[];
+ for(const failedCDP of [false,true]){
+  const diagnosticRun=fs.mkdtempSync(path.join(local.BASE,'mdk2-lifecycle-test-'));
+  const tap=local.traceOwnedLifecycle(diagnosticRun,process.execPath);
+  assert.throws(()=>local.traceOwnedLifecycle(diagnosticRun,process.execPath),/EEXIST/,'never overwrite lifecycle records');
+  assert.throws(()=>tap.watchBrowser({process:()=>({pid:-1})}),/owned child/);
+  const events=[],start=performance.now();
+  const record=(kind,data={})=>events.push({kind,at:new Date().toISOString(),ms:performance.now()-start,...data});
+  // The real installed launcher/process implementation with an owned Node
+  // child. This proves the mechanism, not the cause of historical Chrome loss.
+  const owned=launch({executablePath:process.execPath,args:['-e',
+   "process.stdin.once('data',()=>process.exit(0));console.log('ready');setInterval(()=>{},1000)",
+   '--','--user-data-dir='+path.join(diagnosticRun,'chrome-profile')],
+   env:process.env,handleSIGINT:false,handleSIGTERM:false,handleSIGHUP:false});
+  const child=owned.nodeProcess,kill=process.kill;
+  assert.throws(()=>tap.watchBrowser({process:()=>({pid:child.pid})}),/owned child/,'PID alone never binds a browser');
+  await new Promise((resolve,reject)=>{child.stdout.once('data',resolve);child.once('error',reject);});
+  record('spawn',{pid:child.pid,identity:local.identity(child.pid)});
+  child.once('exit',(code,signal)=>record('exit',{code,signal}));
+  process.kill=function(pid,signal){
+   assert([child.pid,-child.pid].includes(pid),'fixture must never signal foreign processes');
+   record('process.kill',{pid,signal,stack:new Error('kill caller').stack});
+   return Reflect.apply(kill,this,[pid,signal]);
+  };
+  try{
+   const launcher=new BrowserLauncher({},'chrome');
+   const browser=new (require('node:events').EventEmitter)();
+   browser.process=()=>child;
+   browser.close=()=>launcher.closeBrowser(owned,{async closeBrowser(){
+    record('Browser.close-request');
+    if(failedCDP){record('Browser.close-rejected');throw Error('fixture CDP disconnected');}
+    child.stdin.write('quit\n');
+   }});
+   tap.watchBrowser(browser);child.once('exit',()=>browser.emit('disconnected'));
+   const page=new (require('node:events').EventEmitter)();tap.watchPage(page);
+   page.emit('framedetached');page.emit('error',Error('fixture page crash'));page.emit('close');
+   await browser.close();
+  }finally{process.kill=kill;await owned.close();tap.restore();}
+  record('closed',{code:child.exitCode,signal:child.signalCode});
+  if(failedCDP){
+   assert.equal(child.signalCode,'SIGKILL');
+   assert(events.some(e=>e.kind==='process.kill'&&e.pid===-child.pid&&e.signal==='SIGKILL'&&/BrowserLauncher.closeBrowser/.test(e.stack)));
+  }else{assert.equal(child.exitCode,0);assert.equal(child.signalCode,null);assert(!events.some(e=>e.signal==='SIGKILL'));}
+  const diagnostic=fs.readFileSync(tap.file,'utf8').trim().split('\n').map(line=>JSON.parse(line));
+  for(const kind of ['observer-installed','spawn','browser.close-called','exit','browser-disconnected','browser.close-resolved','frame-detached','page-error','page-close','observer-restored'])assert(diagnostic.some(r=>r.kind===kind),kind);
+  if(failedCDP)assert(diagnostic.some(r=>r.kind==='process.kill'&&r.signal==='SIGKILL'&&r.pid===-child.pid&&/BrowserLauncher.closeBrowser/.test(r.stack)));
+  rows.push({failedCDP,events,diagnostic});
+  fs.rmSync(diagnosticRun,{recursive:true,force:true});
+ }
+ if(process.env.MDK2_LIFECYCLE_RESULT)fs.writeFileSync(process.env.MDK2_LIFECYCLE_RESULT,JSON.stringify({fixtureOnly:true,
+  sources:[launcherPath,processPath].map(p=>({path:p,sha256:integration.sha(fs.readFileSync(p))})),rows},null,2));
+});
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);

@@ -88,8 +88,9 @@ if(!isMainThread){
 }else{
   function retainedEvidence(){
     const base=path.join(ROOT,'scratch/runs/20261104-mdk2-measured-escape-original');
-    const seal=JSON.parse(fs.readFileSync(path.join(base,'seal.json')));
-    const inventoryBytes=fs.readFileSync(path.join(base,'remote-recovery-inventory.json'));
+    const retained=name=>{const p=path.join(base,name);return fs.existsSync(p)?fs.readFileSync(p):require('zlib').gunzipSync(fs.readFileSync(p+'.gz'));};
+    const seal=JSON.parse(retained('seal.json'));
+    const inventoryBytes=retained('remote-recovery-inventory.json');
     const pin=seal.files.find(r=>r.path==='remote-recovery-inventory.json');assert(pin);assert.equal(H(inventoryBytes),pin.sha256);assert.equal(inventoryBytes.length,pin.bytes);
     const inventory=JSON.parse(inventoryBytes);
     function json(name){const p=path.join(base,'recovered/browser',name+'.json'),pin=inventory.find(r=>r.path==='browser/'+name+'.json');assert(pin);

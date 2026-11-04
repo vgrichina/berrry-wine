@@ -11,6 +11,7 @@ const ROOT = path.resolve(__dirname, '..');
 const RUNS = path.join(ROOT, 'scratch/runs');
 const SOURCE = '1329b1ba6eb00144ff77d4cd92a8513d4fc953ad';
 const OBSERVER = 'de6a33f257d93e8814d666bdec62361161569ac4';
+const OBSERVER_REPAIR_SHA256 = '341f705e65d292ab014146af0594cc0531913428f14b0f47a125f7fba4acf0cb';
 const DRIVER = '20261104-mdk2-fresh-pending-scene/browser-driver.cjs';
 const MAIN = '20261104-mdk2-post-lua-native-boundary/main-state.cjs';
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -153,7 +154,8 @@ function verifyClosure(read = file => fs.readFileSync(path.join(RUNS, file))) {
     rows.push({path: file, bytes: bytes.length, sha256: expected});
   }
   const file = 'tools/mdk2-lua-construction-observer.cjs';
-  assert.equal(sha(fs.readFileSync(path.join(ROOT, file))), sha(gitFile(OBSERVER, file)), 'published observer changed');
+  assert.equal(sha(gitFile(OBSERVER, file)), '3692d60b20d38d00ac6bd57994cdbd669e5839ba482fee1f1e36edabf18ea248', 'original observer changed');
+  assert.equal(sha(fs.readFileSync(path.join(ROOT, file))), OBSERVER_REPAIR_SHA256, 'published observer repair changed');
   return rows;
 }
 function pinnedRuntime() {
@@ -559,7 +561,7 @@ function inspect() {
     assert.equal(bytes.length, row.bytes); assert.equal(sha(bytes), row.sha256);
     return row;
   });
-  return {status: 'offline-composition-checked', source: SOURCE, observer: OBSERVER, closure, pinsSHA256,
+  return {status: 'offline-composition-checked', source: SOURCE, observer: OBSERVER, observerRepairSHA256:OBSERVER_REPAIR_SHA256, closure, pinsSHA256,
     composedSHA256: sha(composed.source), preloadSHA256: sha(preloadSource()), moduleReferences,
     limits: {traceMs: 10000, boundaries: 100000, records: 512, constructionSlices: 16, restart: false},
     runtime: 'Not executed. Fresh release and original pinned served bytes required; coordinator owns allocation/shutdown.'};

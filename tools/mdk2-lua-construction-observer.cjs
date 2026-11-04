@@ -6,6 +6,8 @@
 const EXE_SHA256='b3e0226e411abff17ddabb723e493e95579490cb49bfe3787b1eade1144e27c1';
 const PINS=[
   [0x4522d0,'6a0ae8e9f2ffffa1d0874b0083c404c3'],
+  [0x4515c0,'8b4424046a0150ff1570c04800c3'],
+  [0x44fb7e,'51e84c270000'],
   [0x44fbd4,'8b15147d4b00c6421e02a1147d4b0050e8b7f8ffff83c404891d147d4b00'],
   [0x44f4a0,'568b7424080fbe461c4883f80b7766ff248518f54400'],
   [0x44f515,'5ec3'],[0x44f53c,'15f54400'],
@@ -38,11 +40,11 @@ function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()
   if(workerSlot!==0||exeSha256!==EXE_SHA256||!(/^[a-f0-9]{64}$/).test(wasmSha256||''))throw Error('wrong Worker/media/module pin');
   if(typeof host?.log_block!=='function'||typeof getExports!=='function'||owners.has(host))throw Error('missing or occupied owning import');
   if(!Number.isFinite(deadline)||deadline<=now()||!Number.isInteger(maxRecords)||maxRecords<1||maxRecords>4096||!Number.isInteger(maxBoundaries)||maxBoundaries<1||maxBoundaries>2000000)throw Error('invalid observation bound');
-  const original=host.log_block;let ex=null,poll=null,finalizer=null,load=null,buffer=null,previousLevel=null;
+  const original=host.log_block;let ex=null,poll=null,finalizer=null,load=null,buffer=null,previousLevel=null,suffix=null;
   const report={version:1,status:'running',workerSlot,exeSha256,wasmSha256,records:[],blocks:0,
     history:'Before attachment unknown; native completion is not Lua execution or gameplay',
     moduleBinding:'Caller must bind hashed module bytes to the actual owning Worker init Module'};
-  function finish(reason='stopped'){if(report.status==='running'){report.status=reason;report.pending={poll,finalizer,load,buffer};if(host.log_block===wrapped)host.log_block=original;owners.delete(host);}return report;}
+  function finish(reason='stopped'){if(report.status==='running'){report.status=reason;report.pending={poll,finalizer,load,buffer,unobservedPollPrefix:suffix};if(host.log_block===wrapped)host.log_block=original;owners.delete(host);}return report;}
   function read(a,n=4){
     if(!Number.isSafeInteger(a)||a<0x400000||a+n>0x80000000||n<1||n>256)throw Error('invalid native read');
     const b=new Uint8Array(ex.memory.buffer),v=[];
@@ -68,6 +70,17 @@ function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()
   }
   function emit(kind,extra={}){if(report.records.length>=maxRecords){finish('record-limit');return;}report.records.push({kind,block:report.blocks,pc:ex.get_eip()>>>0,esp:ex.get_esp()>>>0,resource:resource(),...extra});}
   function sample(){if(report.status!=='running')return report;try{if(now()>=deadline)return finish('deadline');identity();const current=level();
+    // A frozen attachment can be inside an already issued SleepEx. This is
+    // evidence of its remaining suffix, never evidence of a poll entry/return.
+    // Authorize only the exact original call chain seen in the retained run.
+    if(!report.records.length&&!report.blocks&&ex.get_eip()>>>0===0x4515cd){
+      const esp=ex.get_esp()>>>0,r=resource();
+      if(r.request&&r.active===r.request&&r.entry?.type===10&&
+        u(esp)===CUTS.pollRead&&u(esp+4)===10&&u(esp+8)===0x44fb84&&u(esp+12)===r.request){
+        suffix={esp,request:r.request,phase:'sleep-return'};
+        emit('poll-prefix-unobserved',{observedFrom:0x4515cd,stack:[u(esp),u(esp+4),u(esp+8),u(esp+12)],history:'poll entry and SleepEx call unobserved'});
+      }
+    }
     emit('sample',{level:current,levelCreatedSincePreviousSample:previousLevel?.tag===-6&&current.tag===-3});previousLevel=current;
   }catch(e){report.error=e.message;finish('unsupported-or-unobservable');}return report;}
   function boundary(pc,esp){
@@ -75,6 +88,19 @@ function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()
     if(++report.blocks>maxBoundaries){finish('boundary-limit');return;}
     identity();pc>>>=0;esp>>>=0;if(pc!==(ex.get_eip()>>>0)||esp!==(ex.get_esp()>>>0))throw Error('wrong boundary registers');
     const r=resource();
+    if(suffix){
+      if(r.request!==suffix.request||r.active!==suffix.request||r.entry?.type!==10)throw Error('unobserved poll suffix request changed');
+      if(suffix.phase==='sleep-return'){
+        if(pc!==0x4515cd||esp!==suffix.esp||u(esp)!==CUTS.pollRead||u(esp+4)!==10||u(esp+8)!==0x44fb84||u(esp+12)!==suffix.request)throw Error('unobserved poll suffix initial boundary mismatch');
+        suffix.phase='completion-read';return;
+      }
+      if(suffix.phase==='completion-read'){
+        if(pc!==CUTS.pollRead||esp!==suffix.esp+4||u(esp)!==10||u(esp+4)!==0x44fb84||u(esp+8)!==suffix.request)throw Error('unobserved poll suffix read mismatch');
+        suffix.phase='caller';emit('poll-suffix-read',{history:'poll prefix unknown; no poll-return claim'});return;
+      }
+      if(pc!==0x44fb84||esp!==suffix.esp+12||u(esp)!==suffix.request||ex.get_eax()>>>0!==r.completion)throw Error('unobserved poll suffix caller mismatch');
+      emit('poll-suffix-end',{history:'poll prefix remains unknown'});suffix=null;
+    }
     if(poll&&pc===poll.caller){if(esp!==poll.esp+4||ex.get_eax()>>>0!==r.completion)throw Error('poll return mismatch');emit('poll-return');poll=null;}
     if(pc===CUTS.poll)poll={esp,caller:u(esp)};
     if(pc===CUTS.pollRead&&!poll)throw Error('poll history missing');

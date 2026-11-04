@@ -84,6 +84,58 @@ async function within(action, ms, onTimeout = () => {}) {
     timer=setTimeout(()=>{onTimeout();reject(Error('local operation deadline'));},ms);
   })]); } finally {clearTimeout(timer);}
 }
+// Capture caller provenance before launching the owned browser. Observes only;
+// never sends a signal, closes a browser, or changes a launch argument.
+function traceOwnedLifecycle(run, executablePath = '/opt/google/chrome/chrome') {
+  assert.equal(fs.realpathSync(run),run,'canonical lifecycle run required');
+  assert.equal(path.dirname(run),BASE,'direct lifecycle run required');
+  const file=path.join(run,'chrome-lifecycle.jsonl'),children=new Map(),removers=[];
+  fs.writeFileSync(file,'',{flag:'wx'});
+  const record=(kind,data={})=>fs.appendFileSync(file,JSON.stringify({at:new Date().toISOString(),monotonicNs:process.hrtime.bigint().toString(),kind,...data})+'\n');
+  record('observer-installed',{owner:identity(),executablePath,profile:path.join(run,'chrome-profile')});
+  const spawn=cp.spawn,kill=process.kill;
+  function listen(emitter,event,fn){emitter.on(event,fn);removers.push(()=>emitter.off(event,fn));}
+  function spawnObserved(command,args,...rest){
+    const child=Reflect.apply(spawn,this,[command,args,...rest]);
+    if(command!==executablePath||!Array.isArray(args)||!args.includes('--user-data-dir='+path.join(run,'chrome-profile')))return child;
+    if(!child.pid){record('spawn-without-pid');return child;}
+    const childKill=child.kill;children.set(child.pid,{child,childKill});
+    let childIdentity;
+    try{childIdentity=identity(child.pid);}catch(error){childIdentity={unavailable:String(error)};}
+    record('spawn',{pid:child.pid,identity:childIdentity});
+    child.kill=function(signal){record('child.kill',{pid:child.pid,signal:signal??'SIGTERM',stack:new Error('owned kill caller').stack});return Reflect.apply(childKill,this,arguments);};
+    listen(child,'exit',(code,signal)=>record('exit',{pid:child.pid,code,signal}));
+    listen(child,'close',(code,signal)=>record('close',{pid:child.pid,code,signal}));
+    listen(child,'error',error=>record('child-error',{pid:child.pid,error:String(error)}));
+    let remaining=131072;
+    if(child.stderr)listen(child.stderr,'data',chunk=>{if(remaining<=0)return;const b=Buffer.from(chunk).subarray(0,remaining);remaining-=b.length;record('stderr',{pid:child.pid,text:b.toString(),truncated:remaining===0});});
+    return child;
+  }
+  function killObserved(pid,signal){
+    if(children.has(Math.abs(pid)))record('process.kill',{pid,signal:signal??'SIGTERM',stack:new Error('owned kill caller').stack});
+    return Reflect.apply(kill,this,arguments);
+  }
+  cp.spawn=spawnObserved;process.kill=killObserved;
+  listen(process,'exit',code=>record('driver-exit',{code}));
+  return {file,record,
+    watchBrowser(browser){
+      const child=browser.process();
+      assert(child&&children.get(child.pid)?.child===child,'lifecycle browser must be an observed owned child');
+      const close=browser.close;
+      browser.close=async function(...args){record('browser.close-called',{stack:new Error('close caller').stack});try{const result=await Reflect.apply(close,this,args);record('browser.close-resolved');return result;}catch(error){record('browser.close-rejected',{error:String(error)});throw error;}};
+      removers.push(()=>{browser.close=close;});
+      listen(browser,'disconnected',()=>record('browser-disconnected'));
+    },
+    watchPage(page){
+      listen(page,'close',()=>record('page-close'));
+      listen(page,'error',error=>record('page-error',{error:String(error)}));
+      listen(page,'framedetached',()=>record('frame-detached'));
+    },
+    restore(){if(cp.spawn===spawnObserved)cp.spawn=spawn;if(process.kill===killObserved)process.kill=kill;
+      for(const {child,childKill}of children.values())child.kill=childKill;
+      for(const remove of removers)remove();record('observer-restored');}
+  };
+}
 let installed = false;
 const transportSource = String.raw`# Local transport only; imported as runtime_io by the original operator chain.
 from pathlib import Path
@@ -180,4 +232,4 @@ function install(run) {
   installed = true;
   return {release, restore() {finite.browserDeadline=originalDeadline;main.sourceForRun=originalSource;}};
 }
-module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,install,prepareTransport,transportSource,controlSource,siteSource};
+module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,install,prepareTransport,transportSource,controlSource,siteSource};

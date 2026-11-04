@@ -267,6 +267,7 @@ test('actual Worker injection occurs before resume; preload exception is termina
 
 test('concrete composed route checks offline with finite one-shot trace', () => {
   const report = integration.inspect();
+  assert.equal(report.observerRepairSHA256,integration.sha(fs.readFileSync(path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs'))));
   assert.equal(report.status, 'offline-composition-checked');
   assert.deepEqual(report.limits, {traceMs:10000,boundaries:100000,records:512,constructionSlices:16,restart:false});
   assert.equal(integration.assertRunnable().composedSHA256, report.composedSHA256);
@@ -353,6 +354,31 @@ async function nativeOne(row, mode = 'success') {
 }
 
 for(const row of integration.pinnedRuntime().pins.moduleFiles) {
+  test('actual Sleep return at mid-poll attachment preserves unknown prefix: '+row.path, async()=>{
+    const old=await nativeOne(row,'mid-poll-old');
+    assert.match(old.value.report.fatal,/poll history missing/);
+    assert.equal(old.value.report.observer.blocks,2);
+    const repaired=await nativeOne(row,'mid-poll');
+    assert(repaired.value.pass,JSON.stringify(repaired.value));
+    assert.equal(repaired.value.report.fatal,null);
+    const report=repaired.value.report.observer;
+    for(const kind of ['poll-prefix-unobserved','poll-suffix-read','poll-suffix-end'])assert(report.records.some(r=>r.kind===kind),kind);
+    assert(!report.records.some(r=>r.kind==='poll-return'),'unobserved prefix never becomes poll history');
+    assert.equal(report.pending.poll,null);
+    assert.equal(report.pending.unobservedPollPrefix,null);
+    assert(report.records.every(r=>r.resource.completion===0),'actual pending request stays incomplete');
+    // segments include the full-memory hash at the identical poll endpoint.
+    // The old rejection disables tracing one boundary earlier; the following
+    // caller slice therefore no longer compares identical trace configurations.
+    for(const key of ['segments','guestHash','state','commands','workerSource'])assert.deepEqual(repaired.value[key],old.value[key],key);
+    fs.writeFileSync(path.join(EVIDENCE,path.basename(row.path)+'.mid-poll.json'),JSON.stringify({old:old.value,repaired:repaired.value},null,2));
+    for(const mode of ['bad-stack','stale-stack','foreign-request','wrong-order']){
+      const negative=await nativeOne(row,'mid-poll-'+mode);
+      assert(negative.value.rejected,JSON.stringify(negative.value));
+      assert(negative.value.report.fatal,JSON.stringify(negative.value));
+      assert.equal(negative.value.report.traced,false);
+    }
+  });
   test('composed original preload delivers original native fragment in real shipped Worker: '+row.path, async()=>{
     const result=await nativeOne(row);
     const control=await nativeOne(row,'control');
@@ -481,9 +507,12 @@ async function nativeChild() {
   const H=integration.sha;
   globalThis.addEventListener=(type,fn)=>{if(type==='message')parentPort.on('message',data=>fn({data}));};
   // The exact worker-specific preload string from the actual CDP seam.
-  const preload=workerData.mode==='control'
+  let preload=workerData.mode==='control'
     ? fs.readFileSync(path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene/observe-browser.js'),'utf8')
     : integration.preloadSource({targetId:workerData.targetId,workerURL:workerData.url});
+  if(workerData.mode==='mid-poll-old')preload=preload.replace(
+    fs.readFileSync(path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs'),'utf8'),
+    integration.gitFile(integration.OBSERVER,'tools/mdk2-lua-construction-observer.cjs').toString());
   vm.runInThisContext(preload);
   if(workerData.mode==='late'){
     assert.throws(()=>vm.runInThisContext(preload),/late|duplicate/);
@@ -514,18 +543,41 @@ async function nativeChild() {
     };
   }
   const source=integration.gitFile(integration.SOURCE,'lib/guest-worker.js').toString();entry._compile(source,filename);
-  const baseline=fs.readFileSync(path.join(integration.ROOT,'test/test-mdk2-lua-construction-observer.js'),'utf8');
-  assert.equal(H(baseline),H(integration.gitFile(integration.OBSERVER,'test/test-mdk2-lua-construction-observer.js')),'accepted qualification fixture changed');
+  const baseline=integration.gitFile(integration.OBSERVER,'test/test-mdk2-lua-construction-observer.js').toString();
+  const current=fs.readFileSync(path.join(integration.ROOT,'test/test-mdk2-lua-construction-observer.js'),'utf8');
+  const fixtureBytes=s=>s.slice(s.indexOf('async function fixture(access){'),s.indexOf('if(!isMainThread){'));
+  assert.equal(H(fixtureBytes(current)),H(fixtureBytes(baseline)),'accepted qualification fixture changed');
   let fixtureSource=baseline.slice(baseline.indexOf('async function fixture(access){'),baseline.indexOf('  // Diagnostic failures'));
   if(workerData.mode!=='control')fixtureSource=fixtureSource.replace('e.set_trace_esp(1,0x400000,0x480000);', `
+    if(workerData.mode.startsWith('mid-poll')){
+      // Actual frozen main's four leading words, expressed with this fixture's
+      // request address. Real original RET/MOV/ADD/RET and queued producer run.
+      e.set_eip(0x4515cd);e.set_esp(stack);
+      u(0x4b87d0,0);put(entry+30,[1]);
+      u(stack,CUTS.pollRead);u(stack+4,10);u(stack+8,0x44fb84);u(stack+12,entry);
+      if(workerData.mode==='mid-poll-bad-stack')u(stack+4,11);
+    }
     if(workerData.mode==='wrong-thread')e.set_current_thread_id(2);
     if(workerData.mode==='wrong-instance')await WebAssembly.instantiate(captured.module,{host:{}});
     if(workerData.mode==='foreign-module-object')await WebAssembly.instantiate(await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0])),{host:{}});
     const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode==='active-deadline'?20:9000);
     bound.invoke('start',{commandEnd:end,absoluteEnd:end});
+    if(workerData.mode==='mid-poll-stale-stack')u(stack+8,0x401800);
+    if(workerData.mode==='mid-poll-foreign-request')u(0x4b87d4,entry+32);
     if(workerData.mode==='active-deadline'){await new Promise(resolve=>setTimeout(resolve,40));assert.equal(bound.report().traced,false);throw Error('active deadline observed');}
     if(workerData.mode==='terminal'){bound.invoke('finish');bound.invoke('start',{commandEnd:end,absoluteEnd:end});}
   `);
+  fixtureSource=fixtureSource.replace('  e.set_esp(stack);u(stack,caller);u(stack+4,entry);', `
+  if(workerData.mode.startsWith('mid-poll')){
+    const start=workerData.mode==='mid-poll-wrong-order'?CUTS.pollRead:0x4515cd;
+    await run('actual-mid-poll-suffix',start,0x44fb84);
+    // Deliver the original caller boundary, then stop; no game is launched.
+    await slice();
+    const report=bound.invoke('finish',{reason:'fixture-end'});
+    const guestRegion=require('../lib/region-map.generated.js').REGIONS.GUEST_BASE;
+    parentPort.postMessage({pass:!report.fatal,rejected:report.fatal||undefined,report,segments,memoryHash:H(b),guestHash:H(b.subarray(guestRegion.base,guestRegion.end)),state:state(),workerSource:{path:'lib/guest-worker.js',sha256:H(source)}});return;
+  }
+  e.set_esp(stack);u(stack,caller);u(stack+4,entry);`);
   fixtureSource=fixtureSource.replace("e.set_eip(start);let steps=0;", "if(workerData.mode==='missing-history')start=CUTS.finalizeType10;e.set_eip(start);let steps=0;");
   const trapStart=baseline.indexOf('  // Original undefined instruction trap parity');
   const trapEnd=baseline.indexOf('  parentPort.postMessage({pass:true,segments,before,trap:',trapStart);
