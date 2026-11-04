@@ -3,17 +3,19 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve(process.env.STRONGHOLD_CONTRACT_RUN||'scratch/runs/20261104-stronghold-named-observation-gameplay/contract-test');
+const run=path.resolve(process.env.STRONGHOLD_CONTRACT_RUN||'scratch/runs/20261104-stronghold-quiet-rpc-original-gameplay/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
 const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:45:00Z');
-const actualOwn='2026-11-04T21:47:12+00:00 mdk2-honest-menu OWN tools/mdk2-local-runtime.cjs docs/re-notes/mdk2-honest-menu-medium-gameplay-20261104.md';
-const actualRelease='2026-11-04T21:49:05+00:00 mdk2-honest-menu LOCAL HEAVY RELEASE mdk2-honest-menu-medium-gameplay-nov04 offline fixture only';
-const fixtureBoard=actualOwn+'\n'+actualRelease,fixtureNow=Date.parse('2026-11-04T21:50:00Z');
+const actualOwn='2026-11-04T22:12:29+00:00 mdk2-medium-release OWN tools/mdk2-local-runtime.cjs docs/re-notes/mdk2-medium-release-gameplay-20261104.md';
+const actualRelease='2026-11-04T22:20:20+00:00 mdk2-medium-release LOCAL HEAVY RELEASE mdk2-medium-release-gameplay-2210 offline fixture only';
+const actualFileRelease='2026-11-04T22:26:57Z mdk2-medium-release RELEASE tools/mdk2-local-runtime.cjs docs/re-notes/mdk2-medium-release-gameplay-20261104.md';
+const fixtureBoard=actualOwn+'\n'+actualRelease+'\n'+actualFileRelease,fixtureNow=Date.parse('2026-11-04T22:28:00Z');
 assert.equal(api.requireRuntimeRelease(fixtureBoard,fixtureNow).row,actualRelease);
-for(const line of [actualRelease,fixtureBoard.replaceAll('mdk2-honest-menu','someone'),fixtureBoard.replace('LOCAL HEAVY RELEASE mdk2-honest-menu-medium-gameplay-nov04','LOCAL HEAVY RELEASE mdk2-measured-native-boundary-gameplay-nov04'),fixtureBoard.replace('21:49:05','21:47:11'),fixtureBoard.replace('21:49:05','22:53:05'),fixtureBoard.replace('21:47:12','21:47:11'),actualOwn+'\n2026-11-04T21:49:00Z stronghold waiting '+actualRelease,actualOwn+'\n'+actualRelease.replace('mdk2-honest-menu LOCAL','mdk2-measured-native LOCAL'),actualOwn+'\n'+actualRelease.replace('-nov04 offline','-nov04-extra offline')])assert.throws(()=>api.requireRuntimeRelease(line,fixtureNow),/release/);
-assert.throws(()=>api.requireRuntimeRelease(fixtureBoard+'\n'+actualOwn.replace('21:47:12','21:49:06'),fixtureNow),/release/,'fresh later OWN invalidates earlier release');
+for(const line of [actualRelease,fixtureBoard.replaceAll('mdk2-medium-release','someone'),fixtureBoard.replace('LOCAL HEAVY RELEASE mdk2-medium-release-gameplay-2210','LOCAL HEAVY RELEASE mdk2-measured-native-boundary-gameplay-nov04'),fixtureBoard.replace('22:20:20','22:12:28'),fixtureBoard.replace('22:20:20','22:53:05'),fixtureBoard.replace('22:12:29','22:12:28'),actualOwn+'\n2026-11-04T21:49:00Z stronghold waiting '+actualRelease,actualOwn+'\n'+actualRelease.replace('mdk2-medium-release LOCAL','mdk2-measured-native LOCAL'),actualOwn+'\n'+actualRelease.replace('-2210 offline','-2210-extra offline')])assert.throws(()=>api.requireRuntimeRelease(line,fixtureNow),/release/);
+assert.throws(()=>api.requireRuntimeRelease(fixtureBoard+'\n'+actualOwn.replace('22:12:29','22:28:01'),fixtureNow),/release/,'fresh later OWN invalidates earlier release');
+for(const board of [actualOwn+'\n'+actualRelease,fixtureBoard.replace('22:26:57','22:20:19'),fixtureBoard.replace('22:26:57','22:29:00'),fixtureBoard.replace('mdk2-medium-release RELEASE','foreign RELEASE')])assert.throws(()=>api.requireRuntimeRelease(board,fixtureNow),/release/);
 const lockProbe="const a=require('./tools/stronghold-local-runtime.cjs');console.log(JSON.stringify(a.requireLocalFlock(process.argv[1])))";
 const testLock=path.join(run,'offline-runtime.lock');fs.writeFileSync(testLock,'');
 assert.throws(()=>execFileSync(process.execPath,['-e',lockProbe,testLock],{stdio:'pipe'}),/Command failed/);
@@ -28,6 +30,7 @@ function reject(name,mutate,pattern=/required|identity|binding|deadline|authoriz
 }
 reject('missing authorization',r=>delete r.authorization);
 reject('missing current authorization',r=>delete r.freshLocalDiagnosticAuthorized);
+reject('previous named observation assignment',r=>r.assignment='stronghold-named-observation-gameplay user task');
 reject('foreign assignment',r=>r.assignment='foreign');
 reject('previous repaired entry assignment',r=>r.assignment='stronghold-repaired-entry-original-gameplay user task');
 reject('previous fresh complete assignment',r=>r.assignment='stronghold-fresh-complete-entry-gameplay user task');
@@ -65,8 +68,8 @@ reject('extended cleanup',r=>{r.cleanupBy=api.CLEANUP+1;r.expiresAt=r.cleanupBy;
 reject('insufficient runtime reserve',r=>r.chromeCutoff=r.issuedAt+719999);
 reject('insufficient cleanup reserve',r=>{r.cleanupBy=r.issuedAt+899999;r.expiresAt=r.cleanupBy;});
 reject('expired process contract',r=>r.expiresAt=now);
-assert.equal(api.CUTOFF,Date.parse('2026-11-04T23:50:00Z'));
-assert.equal(api.CLEANUP,Date.parse('2026-11-04T23:53:00Z'));
+assert.equal(api.CUTOFF,Date.parse('2026-11-04T23:40:00Z'));
+assert.equal(api.CLEANUP,Date.parse('2026-11-04T23:43:00Z'));
 const lastStart=api.createRelease({run,pins,nonce,now:api.CUTOFF-720000});
 assert.equal(lastStart.closeBy,api.CUTOFF);assert.equal(lastStart.cleanupBy-lastStart.closeBy,180000);
 assert.throws(()=>api.createRelease({run,pins,nonce,now:api.CUTOFF-719999}),/deadline/);
@@ -252,7 +255,8 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
   const out=path.join(faultRun,'browser'),fault=JSON.parse(fs.readFileSync(faultFile));
   assert.equal(fault.ok,false);assert.match(fault.error,/command\/review deadline/);
   assert.throws(()=>api.assertMailboxCommandReady(faultRun,{command:{action:'observe',name:'forbidden-after-fault'}}),/terminal/);
-  const reports=fs.readdirSync(out).filter(n=>/^preset-attachment-\d+\.json$/.test(n)).map(n=>JSON.parse(fs.readFileSync(path.join(out,n)))).filter(r=>r.report?.records);
+  const reportNames=new Set(fs.readdirSync(out).filter(n=>/^preset-attachment-\d+\.json(?:\.gz)?$/.test(n)).map(n=>n.replace(/\.gz$/,'')));
+  const reports=[...reportNames].map(n=>JSON.parse(base.retained(path.join(out,n)))).filter(r=>r.report?.records);
   const report=reports.sort((a,b)=>b.report.sequence-a.report.sequence)[0].report;
   assert.equal(report.limits.maxBoundaries,50000000);assert.equal(report.limits.maxMs,360000);
   assert(report.records.some(r=>r.kind==='callback-entry'&&r.argument===2));
@@ -264,6 +268,55 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
   const final=JSON.parse(fs.readFileSync(path.join(out,'final-state.json'))).main;
   assert.equal(final.mouseButtonsMask,0);assert.equal(final.inputQueue.length,1);assert.equal(final.inputQueue[0].msg,514);
   console.log('PASS retained original first-fault replay: callback2/request20/setup-entry observed, missing returns and queued release remain unproved; terminal prevents more commands');
+ }
+ // The new original reached an unrecognized partial setup frame. Replay the
+ // exact capture and composed arrival branch, without restarting that runtime.
+ const transitionRun=path.resolve('scratch/runs/20261104-stronghold-quiet-rpc-original-gameplay');
+ const transitionFile=path.join(transitionRun,'browser/route-native-boundary-8.png');
+ if(fs.existsSync(transitionFile)){
+  const {PNG}=require('pngjs'),bytes=fs.readFileSync(transitionFile),png=PNG.sync.read(bytes);
+  const route=require('../tools/stronghold-route-recognition-handoff.cjs');
+  const nav=route.compileClosure(base.retained(route.WRAPPER).toString(),route.WRAPPER,'');
+  assert.equal(nav.scene(bytes),'unknown','retained recognizers reproduce the actual first fault');
+  assert.equal(api.diagnosticScene(bytes,'unknown'),'setup-transition-observation');
+  for(const known of ['choose-type','actual-scene20-observation','zephyr-ready'])assert.equal(api.diagnosticScene(bytes,known),known);
+  let negatives=0;
+  for(const [x,y]of [[10,194],[869,861],[153,419],[84,733],[620,500]]){
+   const changed={...png,data:Buffer.from(png.data)};changed.data[(y*png.width+x)*4]^=1;
+   assert.equal(api.diagnosticScene(PNG.sync.write(changed),'unknown'),'unknown');negatives++;
+  }
+  const toolbar={...png,data:Buffer.from(png.data)};toolbar.data[(50*png.width+50)*4]^=1;
+  assert.equal(api.diagnosticScene(PNG.sync.write(toolbar),'unknown'),'setup-transition-observation');
+  const alpha={...png,data:Buffer.from(png.data)};alpha.data[(300*png.width+300)*4+3]=254;
+  assert.throws(()=>api.diagnosticScene(PNG.sync.write(alpha),'unknown'),/opaque/);
+  assert.throws(()=>api.diagnosticScene(PNG.sync.write(new PNG({width:800,height:600})),'unknown'),/geometry/);
+  for(const name of ['route-native-boundary-3','route-native-boundary-6','route-native-boundary-7']){
+   assert.equal(api.diagnosticScene(fs.readFileSync(path.join(transitionRun,'browser',name+'.png')),'unknown'),'unknown');negatives++;
+  }
+  const actualState=JSON.parse(base.retained(path.join(transitionRun,'browser/route-native-boundary-8.json'))).state;
+  const captureStart=p.route.indexOf(' const capture=async()=>{'),captureEnd=p.route.indexOf(' const sample=',captureStart);
+  const scope={require,physical:{capture:async()=>({png:bytes,state:actualState})},sha256:base.hash,scene:nav.scene,fail:m=>{throw Error(m);}};
+  const cap=await vm.runInNewContext(p.route.slice(captureStart,captureEnd)+'capture()',scope);
+  assert.equal(cap.scene,'setup-transition-observation');
+  const old=require('../tools/stronghold-owning-callback-observer.cjs').prepare({run,pins}).route;
+  const arrival=(source,value,arrived=512)=>{
+   const a=source.indexOf(' const acceptArrival=cap=>{'),b=source.indexOf(' const receipt=',a);assert(a>0&&b>a);
+   return vm.runInNewContext("let continuation='arrival',arrival="+arrived+",shellSamples=0,last;"+source.slice(a,b)+'acceptArrival(cap);({continuation,last});',{require,cap:value,fail:m=>{throw Error(m);}});
+  };
+  assert.throws(()=>arrival(old,{scene:'unknown'}),/first unexpected natural scene: unknown/);
+  assert.equal(arrival(p.route,cap).continuation,'arrival');
+  assert.throws(()=>arrival(p.route,{scene:'unknown'}),/first unexpected/);
+  assert.throws(()=>arrival(p.route,cap,3072),/arrival diagnostic cap/);
+  assert.throws(()=>arrival(p.route,{scene:'actual-scene20-observation'}),/no readiness grant/);
+  const report=JSON.parse(base.retained(path.join(transitionRun,'browser/preset-attachment-80.json'))).report;
+  assert.equal(report.fault,null);assert.deepEqual(report.pending,[]);
+  for(const kind of ['setup-return','callback-return','custom-path-completed'])assert(report.records.some(r=>r.kind===kind));
+  assert.equal(report.blocks,40092338);assert.equal(report.limits.maxBoundaries,50000000);
+  assert.deepEqual(actualState.main.inputQueue,[]);assert.equal(actualState.main.mouseButtonsMask,0);
+  assert.equal(actualState.main.activeInput,null);assert.equal(actualState.main.lastInput,null);assert.equal(actualState.main.tick.tickMs,16);
+  assert.throws(()=>api.assertMailboxCommandReady(transitionRun,{command:{action:'route-arrival'}}),/terminal/);
+  assert(p.route.includes("if(continuation!=='preset')fail('fresh later review required before preset')"));
+  console.log('PASS actual partial-setup fault OLD unknown/rejects NEW exact whole-game observation/arrival only; '+negatives+' pixel/scene negatives, alpha/geometry/cap/readiness/terminal guards; native returns and drained release retained');
  }
  const {EventEmitter}=require('node:events');
  async function closureFixture(code,signal,timeout=false){
@@ -327,7 +380,7 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  const p=route.prepare({run,pins});
  fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(p.createRelease()));
  const ownership=api.assertRuntimeOwnership;
- api.assertRuntimeOwnership=()=>({offlineFixtureRelease:true,release:api.requireRuntimeRelease(${JSON.stringify(fixtureBoard)},${fixtureNow}),flock:api.requireLocalFlock(${JSON.stringify(testLock)})});
+ api.assertRuntimeOwnership=()=>({offlineFixtureRelease:!process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE,release:api.requireRuntimeRelease(process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?fs.readFileSync('messageboard.txt','utf8'):${JSON.stringify(fixtureBoard)},process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?Date.now():${fixtureNow}),flock:api.requireLocalFlock(${JSON.stringify(testLock)})});
  const cp=require('node:child_process'),spawn=cp.spawn;let spawnAttempts=0;cp.spawn=()=>{spawnAttempts++;throw Error('OFFLINE SPAWN FORBIDDEN');};
  const puppeteer={launch:null},serverAPI=require(${JSON.stringify(require.resolve('./static-server.js'))}),start=serverAPI.startStaticServer;
  let launches=0,server,port;

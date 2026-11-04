@@ -1,22 +1,36 @@
 'use strict';
-// Explicit local-process contract for the authorized named-observation original attempt.
+// Explicit local-process contract for the authorized quiet-RPC original attempt.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-named-observation-gameplay user task';
-const ASSIGNMENT='stronghold-named-observation-gameplay user task';
+const AUTH='stronghold-quiet-rpc-original-gameplay-2230 user task';
+const ASSIGNMENT='stronghold-quiet-rpc-original-gameplay-2230 user task';
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-04T23:50:00Z'),CLEANUP=Date.parse('2026-11-04T23:53:00Z');
+const CUTOFF=Date.parse('2026-11-04T23:40:00Z'),CLEANUP=Date.parse('2026-11-04T23:43:00Z');
+// One personally inspected partial setup frame, observed after the original
+// callback returned. Identity only: no complete-layout or input-ready grant.
+const SETUP_TRANSITION='741b136a33e205825f23e70af83059d82dfe3b625bd869c321198ba16dec2e5c';
+function diagnosticScene(bytes,known){
+ if(known!=='unknown')return known;
+ const {PNG}=require('pngjs'),p=PNG.sync.read(bytes);
+ if(p.width!==1200||p.height!==900)throw Error('setup diagnostic geometry required');
+ const pixels=Buffer.alloc(860*668*4);
+ for(let y=0;y<668;y++)p.data.copy(pixels,y*860*4,((y+194)*1200+10)*4,((y+194)*1200+870)*4);
+ for(let i=3;i<pixels.length;i+=4)if(pixels[i]!==255)throw Error('opaque setup diagnostic required');
+ return base.hash(pixels)===SETUP_TRANSITION?'setup-transition-observation':known;
+}
 function requireRuntimeRelease(board,now=Date.now()){
- const assignment='mdk2-honest-menu-medium-gameplay-nov04';
+ const assignment='mdk2-medium-release-gameplay-2210';
  const rows=board.split('\n');
- const own=rows.filter(row=>/^\S+ mdk2-honest-menu OWN\b/.test(row)&&row.includes('mdk2-honest-menu-medium-gameplay-20261104')).at(-1);
+ const own=rows.filter(row=>/^\S+ mdk2-medium-release OWN\b/.test(row)&&row.includes('mdk2-medium-release-gameplay-20261104')).at(-1);
  const ownedAt=Date.parse(own?.split(' ')[0]);
- const row=rows.filter(row=>/^\S+ mdk2-honest-menu LOCAL HEAVY RELEASE\b/.test(row)&&row.split(/\s+/).includes(assignment)).at(-1);
+ const row=rows.filter(row=>/^\S+ mdk2-medium-release LOCAL HEAVY RELEASE\b/.test(row)&&row.split(/\s+/).includes(assignment)).at(-1);
  const at=Date.parse(row?.split(' ')[0]);
- if(!own||!row||!Number.isFinite(ownedAt)||!Number.isFinite(at)||ownedAt<Date.parse('2026-11-04T21:47:12Z')||at<ownedAt||at>now||ownedAt>now)
+ const fileRelease=rows.filter(row=>/^\S+ mdk2-medium-release RELEASE\b/.test(row)&&row.includes('docs/re-notes/mdk2-medium-release-gameplay-20261104.md')).at(-1);
+ const releasedAt=Date.parse(fileRelease?.split(' ')[0]);
+ if(!own||!row||!fileRelease||!Number.isFinite(ownedAt)||!Number.isFinite(at)||!Number.isFinite(releasedAt)||ownedAt<Date.parse('2026-11-04T22:12:29Z')||at<Date.parse('2026-11-04T22:20:20Z')||releasedAt<Date.parse('2026-11-04T22:26:57Z')||at<ownedAt||releasedAt<at||releasedAt>now||at>now||ownedAt>now)
   throw Error('exact '+assignment+' assignment-bound local heavy release after current OWN required');
- return {row,at,own,ownedAt,assignment};
+ return {row,at,own,ownedAt,fileRelease,releasedAt,assignment};
 }
 function requireLocalFlock(lockPath='/tmp/wine-local-runtime.lock'){
  const ancestors=new Set();
@@ -158,6 +172,11 @@ function assertMailboxCommandReady(run,options){
 }
 function prepare(options){
  const p=observer.prepare(options),q=JSON.stringify;
+ p.route=base.replaceOnce(p.route,'scene:scene(c.png)',`scene:require(${q(__filename)}).diagnosticScene(c.png,scene(c.png))`);
+ p.route=base.replaceOnce(p.route,"['choose-type-custom-hover','actual-scene20-earlier','actual-scene20-intermediate']",
+  "['choose-type-custom-hover','actual-scene20-earlier','actual-scene20-intermediate','setup-transition-observation']");
+ p.evidence.setupTransitionDiagnostic={gameRGBAsha256:SETUP_TRANSITION,gameBox:[10,194,860,668],
+  exactPixels:true,observationOnly:true,readinessGranted:false,arrivalAndObserverCapsUnchanged:true};
  p.source=base.replaceOnce(p.source,"  if(c.action==='observe'){",
   `  if(c.action==='observe'){\n    require(${q(__filename)}).validateCaptureCommand(c,OUT);`);
  p.source=base.replaceOnce(p.source,"  if(c.action==='shot'){",
@@ -185,6 +204,7 @@ function prepare(options){
  p.evidence.localRuntime={kind:'local-process',contractPath:__filename,contractSHA256:base.hash(fs.readFileSync(__filename)),
   navigationAndCommandCapsUnchanged:true,chrome:CHROME,chromeCutoff:CUTOFF,cleanupBy:CLEANUP};
  p.evidence.compositionSHA256=base.hash(p.source);
+ p.evidence.routeCompositionSHA256=base.hash(p.route);
  return {...p,createRelease:()=>createRelease({run:options.run,pins:options.pins,nonce})};
 }
-module.exports={identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,diagnosticScene,SETUP_TRANSITION,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
