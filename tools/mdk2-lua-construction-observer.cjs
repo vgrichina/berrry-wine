@@ -1,0 +1,97 @@
+'use strict';
+(() => {
+
+// Passive owning-main import observer. The caller supplies existing block tracing;
+// this module never arms tracing, executes exports, or changes guest state.
+const EXE_SHA256='b3e0226e411abff17ddabb723e493e95579490cb49bfe3787b1eade1144e27c1';
+const PINS=[
+  [0x4522d0,'6a0ae8e9f2ffffa1d0874b0083c404c3'],
+  [0x44fbd4,'8b15147d4b00c6421e02a1147d4b0050e8b7f8ffff83c404891d147d4b00'],
+  [0x44f4a0,'568b7424080fbe461c4883f80b7766ff248518f54400'],
+  [0x44f515,'5ec3'],[0x44f53c,'15f54400'],
+  [0x41fce5,'56e855ff02008b0683c40485c0741a'],
+  [0x41fcf9,'8b46088b0e575051e87a520200']
+].map(([pc,hex])=>Object.freeze({pc,hex}));
+const CUTS={poll:0x4522d0,pollRead:0x4522d7,consume:0x44fbd4,finalize:0x44f4a0,
+  finalizeType10:0x44f515,loadCall:0x41fce5,loadReturned:0x41fceb,
+  bufferCall:0x41fcf9,buffer:0x444f80};
+const owners=new WeakSet();
+// Decode an already frozen, independently read file-Worker sidecar. This is
+// evidence interpretation, never a request to execute or modify that Worker.
+function decodeFileSnapshot(main,file){
+  if(main?.realm!=='actual-main-worker'||main.values?.get_current_thread_id!==1||
+    file?.handle!==921600||file.values?.get_current_thread_id!==2||!file.available)throw Error('wrong main/file ownership');
+  for(const key of ['steps','ticks','guestMs'])if(main.frozen?.[key]!==file.frozen?.[key])throw Error('uncorrelated frozen history');
+  if(!main.frozen?.frozen||!file.frozen?.frozen||main.frozen.hosts!==1||file.frozen.hosts!==1)throw Error('unfrozen/foreign host');
+  const w=file.stack,esp=file.values.get_esp;
+  if(file.values.get_eip!==0x4515cd||!Array.isArray(w)||w.length>64||w[1]!==0)throw Error('not a supported callback Sleep boundary');
+  if(w[0]===0x451f62)return {kind:'idle-file-poll',decode:null};
+  const output=w[0]===0x45774a,input=w[0]===0x457708;
+  if(!output&&!input)throw Error('unknown file return branch');
+  const ptr=w[output?8:6],index=(ptr-esp)/4;
+  if(!Number.isInteger(index)||index<0||index+6>w.length)throw Error('decode state absent from bounded stack');
+  const [stream,compressedSize,compressedRead,outputSize,outputCopied,destination]=w.slice(index,index+6);
+  if(outputSize!==main.rawRequestWords?.[2]||destination!==main.rawRequestWords?.[0]||compressedRead>compressedSize||outputCopied>outputSize)throw Error('wrong request/decode cursors');
+  return {kind:output?'archive-output-callback':'archive-input-callback',decode:{state:ptr,stream,compressedSize,compressedRead,outputSize,outputCopied,destination,remaining:outputSize-outputCopied}};
+}
+function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()=>performance.now(),maxRecords=512,maxBoundaries=100000}={}) {
+  if(workerSlot!==0||exeSha256!==EXE_SHA256||!(/^[a-f0-9]{64}$/).test(wasmSha256||''))throw Error('wrong Worker/media/module pin');
+  if(typeof host?.log_block!=='function'||typeof getExports!=='function'||owners.has(host))throw Error('missing or occupied owning import');
+  if(!Number.isFinite(deadline)||deadline<=now()||!Number.isInteger(maxRecords)||maxRecords<1||maxRecords>4096||!Number.isInteger(maxBoundaries)||maxBoundaries<1||maxBoundaries>2000000)throw Error('invalid observation bound');
+  const original=host.log_block;let ex=null,poll=null,finalizer=null,load=null,buffer=null,previousLevel=null;
+  const report={version:1,status:'running',workerSlot,exeSha256,wasmSha256,records:[],blocks:0,
+    history:'Before attachment unknown; native completion is not Lua execution or gameplay',
+    moduleBinding:'Caller must bind hashed module bytes to the actual owning Worker init Module'};
+  function finish(reason='stopped'){if(report.status==='running'){report.status=reason;report.pending={poll,finalizer,load,buffer};if(host.log_block===wrapped)host.log_block=original;owners.delete(host);}return report;}
+  function read(a,n=4){
+    if(!Number.isSafeInteger(a)||a<0x400000||a+n>0x80000000||n<1||n>256)throw Error('invalid native read');
+    const b=new Uint8Array(ex.memory.buffer),v=[];
+    for(let i=0;i<n;i++){const w=ex.guest_to_wasm(a+i)>>>0;if(w===0xf0||w>=b.length)throw Error('unmapped native read');v.push(b[w]);}return v;
+  }
+  const u=a=>{const b=read(a);return (b[0]+b[1]*256+b[2]*65536+b[3]*16777216)>>>0;};
+  function identity(){const e=getExports();if(!e||ex&&e!==ex)throw Error('foreign instance');ex=e;
+    if(ex.get_current_thread_id()!==1||ex.get_image_base()!==0x400000)throw Error('wrong thread/loader');
+    if(u(0x400000)!==0x00905a4d||u(0x400000+u(0x40003c))!==0x4550)throw Error('wrong PE loader');
+    for(const {pc,hex}of PINS)if(read(pc,hex.length/2).map(v=>v.toString(16).padStart(2,'0')).join('')!==hex)throw Error('original bytes changed');
+  }
+  const resource=()=>{const request=u(0x4b87d4),active=u(0x4b7d14);return {request,active,pending:u(0x4b87cc),completion:u(0x4b87d0),completedBytes:u(0x5ce08c),
+    entry:request?{buffer:u(request),size:u(request+8),type:read(request+28,1)[0],status:read(request+30,1)[0],name:String.fromCharCode(...read(request+12,16)).split('\0')[0]}:null};};
+  function level(){
+    const state=u(0x4b7ce4);if(!state)return {available:false,reason:'Lua not initialized'};
+    const bucket=u(state+0xd4)+('L'.charCodeAt(0)%61)*12,n=u(bucket),list=u(bucket+8);
+    if(n>65536)throw Error('Lua bucket bound');let found=null;
+    for(let k=0;k<n;k++){const p=u(list+4*k);if(!p||p===0x4aff08||(u(p+12)|0)<0)continue;
+      if(u(p+28)!==5||String.fromCharCode(...read(p+32,5))!=='Level')continue;
+      if(found)throw Error('duplicate Level');const tag=u(p+16)|0;if(![-6,-3].includes(tag))throw Error('wrong Level tag');
+      found={available:true,tag,table:tag===-3?u(p+20):null};
+    }return found||{available:false,reason:'Level not interned'};
+  }
+  function emit(kind,extra={}){if(report.records.length>=maxRecords){finish('record-limit');return;}report.records.push({kind,block:report.blocks,pc:ex.get_eip()>>>0,esp:ex.get_esp()>>>0,resource:resource(),...extra});}
+  function sample(){if(report.status!=='running')return report;try{if(now()>=deadline)return finish('deadline');identity();const current=level();
+    emit('sample',{level:current,levelCreatedSincePreviousSample:previousLevel?.tag===-6&&current.tag===-3});previousLevel=current;
+  }catch(e){report.error=e.message;finish('unsupported-or-unobservable');}return report;}
+  function boundary(pc,esp){
+    if(report.status!=='running')return;if(now()>=deadline){finish('deadline');return;}
+    if(++report.blocks>maxBoundaries){finish('boundary-limit');return;}
+    identity();pc>>>=0;esp>>>=0;if(pc!==(ex.get_eip()>>>0)||esp!==(ex.get_esp()>>>0))throw Error('wrong boundary registers');
+    const r=resource();
+    if(poll&&pc===poll.caller){if(esp!==poll.esp+4||ex.get_eax()>>>0!==r.completion)throw Error('poll return mismatch');emit('poll-return');poll=null;}
+    if(pc===CUTS.poll)poll={esp,caller:u(esp)};
+    if(pc===CUTS.pollRead&&!poll)throw Error('poll history missing');
+    if(pc===CUTS.consume){if(r.completion!==1||!r.active||r.active!==r.request||r.entry?.type!==10)throw Error('wrong completion branch/request');emit('completion-consume');}
+    if(pc===CUTS.finalize){if(r.entry?.type!==10||u(esp+4)!==r.request||r.entry.status!==2)throw Error('wrong type10 finalizer');finalizer={esp,caller:u(esp),request:r.request};emit('completion-finalizer-entry');}
+    if(pc===CUTS.finalizeType10&&!finalizer)throw Error('finalizer history missing');
+    if(finalizer&&pc===finalizer.caller){if(esp!==finalizer.esp+4||r.request!==finalizer.request)throw Error('finalizer return mismatch');emit('completion-finalizer-return');finalizer=null;}
+    if(pc===CUTS.loadCall){if(ex.get_esi()>>>0!==r.request)throw Error('wrong demand request');load={esp,request:r.request};emit('demand-call');}
+    if(pc===CUTS.loadReturned){if(!load||esp!==load.esp-4||r.request!==load.request||r.active||r.completion!==1)throw Error('demand return history/completion missing');emit('demand-return');load=null;}
+    if(pc===CUTS.bufferCall){if(ex.get_esi()>>>0!==r.request||r.completion!==1||r.entry?.type!==10||r.active)throw Error('buffer request incomplete');buffer={esp,request:r.request};emit('script-buffer-call');}
+    if(pc===CUTS.buffer){if(!buffer||u(esp)!==0x41fd06||u(esp+4)!==r.entry.buffer||u(esp+8)!==r.entry.size)throw Error('buffer call history/arguments missing');emit('script-buffer-entry');buffer=null;}
+  }
+  function wrapped(pc,esp,...rest){try{boundary(pc,esp);}catch(e){report.error=e.message;finish('unsupported-or-unobservable');}return Reflect.apply(original,this,[pc,esp,...rest]);}
+  host.log_block=wrapped;owners.add(host);
+  return {report,sample,finish,check(){if(report.status==='running'&&now()>=deadline)return finish('deadline');if(report.status==='running'&&!report.blocks){report.error='mandatory native boundaries missing';finish('unsupported-or-unobservable');}return report;}};
+}
+const api={EXE_SHA256,PINS,CUTS,attach,decodeFileSnapshot};
+if(typeof module!=='undefined'&&module.exports)module.exports=api;
+else globalThis.Mdk2LuaConstructionObserver=api;
+})();
