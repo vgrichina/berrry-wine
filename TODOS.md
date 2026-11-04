@@ -1,9 +1,9 @@
 - [ ] Owner-requested corpus addition: Stronghold Crusader original demo
   id: TG150-STRONGHOLD-CRUSADER-20261103
-  status: queued for next free production slot; game visually identified, original package acquisition and registration pending
+  status: original v1.1 UK installer acquired and hashed; fresh extraction/registration worker dispatching, runtime queued behind Alice
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Next: Fresh scratch/usage-watch/stronghold-crusader-original-next.task.txt; acquire original demo, pin actual executable/per-file SHA256, register installed paths and attempt ordinary unit order/building placement. Two existing production workers remain live; no third launch, heavy runtimes serialized. Cached ModDB mirror410 is a stale URL, not a game/runtime blocker.
-  Evidence: docs/re-notes/stronghold-crusader-demo.md; scratch/runs/20261103-telegram150-game-identification/ (post metadata and viewed thumbnail). No executable, registration or gameplay claim yet.
+  Evidence: docs/re-notes/stronghold-crusader-demo.md; scratch/runs/20261103-telegram150-game-identification/ (post metadata and viewed thumbnail). Installer SHA256 0d4f49e83c81d0f9b60c592103267b27e84a34d05c7c11be8b1e13bf2a32ff45; game executable, registration and gameplay still unverified.
 
 # TODOS
 
