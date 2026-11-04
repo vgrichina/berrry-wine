@@ -3,10 +3,46 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-setup-transition-onward-2248 user task';
-const ASSIGNMENT='stronghold-setup-transition-onward-2248 user task';
+const AUTH='stronghold-current-runtime-binding-2355 user task';
+const ASSIGNMENT=AUTH;
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-04T23:35:00Z'),CLEANUP=Date.parse('2026-11-04T23:38:00Z');
+const CUTOFF=Date.parse('2026-11-05T00:55:00Z'),CLEANUP=Date.parse('2026-11-05T00:58:00Z');
+const ROOT=path.resolve(__dirname,'..');
+const ORIGINAL_PINS='scratch/runs/20261104-stronghold-setup-transition-onward/runtime-pins.json';
+const ORIGINAL_PINS_SHA='812aadea4a2b23a899919dc95b40b4d628a3836cedc0ae1e1844c966b284b7ef';
+const ACCEPTED_SOURCE='9422cf64ca9d0bf868becb64e7209fb5feb670b3';
+const PRESENTATION_SOURCE='a6d78555bfd5c076d87e4d8ed340c7c91bb4873d';
+const ACCEPTED=Object.freeze({
+ 'src/09ab-handlers-d3dim-core.wat':'5c892770004355099d016e301ff73366a560237d681faf0cd3c6bd3aa8e4fc07',
+ 'build/wine-assembly.wasm':'018c94ffbde8c857587c25c860db988d603d0662df9a18901f00c183af7493cd',
+ 'build/wine-assembly.compat.wasm':'4e684af48e4ec06ae8aada0d5cd2b522345a7a51b8ed89988d4d8fa0d75ea7c2',
+ 'tools/stronghold-owning-callback-observer.cjs':'a931b3dc3656e4409de1748d0a0557fff9b70914e23f04067961fa41fbc282bd'
+});
+// Exactly five named amendments. Every other historical row is retained and
+// checked; an unknown change stops offline rather than acquiring a new hash.
+function acceptedRuntimePins(original=fs.readFileSync(path.join(ROOT,ORIGINAL_PINS))){
+ if(base.hash(original)!==ORIGINAL_PINS_SHA)throw Error('stale original runtime manifest');
+ const pins=JSON.parse(original),amendments=[];
+ const named={...ACCEPTED,'tools/stronghold-local-runtime.cjs':base.hash(fs.readFileSync(__filename))};
+ const seen=new Set();
+ pins.files=pins.files.map(row=>{
+  if(seen.has(row.path))throw Error('duplicate runtime dependency');seen.add(row.path);
+  const bytes=fs.readFileSync(path.join(ROOT,row.path)),actual=base.hash(bytes),expected=named[row.path]||row.sha256;
+  if(actual!==expected)throw Error('unknown runtime dependency mismatch '+row.path);
+  if(!named[row.path])return row;
+  amendments.push({path:row.path,oldSHA256:row.sha256,newSHA256:expected,
+   publishedProvenance:row.path.startsWith('tools/')?PRESENTATION_SOURCE:ACCEPTED_SOURCE,
+   reason:row.path=== 'tools/stronghold-local-runtime.cjs'?'published passive helper plus explicitly authorized current binding and local assignment amendment':row.path.startsWith('tools/')?'published passive native/host presentation observer':'accepted fractional raster source and exact corresponding existing module pair'});
+  return {...row,bytes:bytes.length,sha256:expected};
+ });
+ if(pins.files.length!==2429||amendments.length!==5||Object.keys(named).some(p=>!seen.has(p)))throw Error('complete original closure required');
+ return {...pins,candidate:'named accepted raster and passive presentation binding',runtimeBinding:{originalPinsSHA256:ORIGINAL_PINS_SHA,source:ACCEPTED_SOURCE,presentation:PRESENTATION_SOURCE,assignment:ASSIGNMENT,amendments}};
+}
+function verifyAcceptedRuntimePins(pins){
+ const expected=acceptedRuntimePins();
+ if(JSON.stringify(pins)!==JSON.stringify(expected))throw Error('stale or changed accepted runtime closure');
+ return expected;
+}
 // Personally inspected partial setup frames after the original callback
 // returned. Exact identities only: no complete-layout or input-ready grant.
 const SETUP_TRANSITION='741b136a33e205825f23e70af83059d82dfe3b625bd869c321198ba16dec2e5c';
@@ -22,15 +58,15 @@ function diagnosticScene(bytes,known){
  return SETUP_TRANSITIONS.includes(base.hash(pixels))?'setup-transition-observation':known;
 }
 function requireRuntimeRelease(board,now=Date.now()){
- const assignment='stronghold-quiet-rpc-original-gameplay-2230';
+ const assignment='mdk2-accepted-runtime-binding-2350';
  const rows=board.split('\n');
- const own=rows.filter(row=>/^\S+ stronghold-quiet-rpc OWN\b/.test(row)&&row.includes('stronghold-quiet-rpc-original-gameplay-20261104')).at(-1);
+ const own=rows.filter(row=>/^\S+ mdk2-accepted-runtime-binding OWN\b/.test(row)&&row.includes('mdk2-accepted-runtime-binding-20261104')).at(-1);
  const ownedAt=Date.parse(own?.split(' ')[0]);
- const row=rows.filter(row=>/^\S+ stronghold-quiet-rpc LOCAL HEAVY RELEASE\b/.test(row)&&row.split(/\s+/).includes(assignment)).at(-1);
+ const row=rows.filter(row=>/^\S+ mdk2-accepted-runtime-binding LOCAL HEAVY RELEASE\b/.test(row)&&row.split(/\s+/).includes(assignment)).at(-1);
  const at=Date.parse(row?.split(' ')[0]);
- const fileRelease=rows.filter(row=>/^\S+ stronghold-quiet-rpc RELEASE\b/.test(row)&&row.includes('docs/re-notes/stronghold-quiet-rpc-original-gameplay-20261104.md')).at(-1);
+ const fileRelease=rows.filter(row=>/^\S+ mdk2-accepted-runtime-binding RELEASE\b/.test(row)&&row.includes('docs/re-notes/mdk2-accepted-runtime-binding-20261104.md')).at(-1);
  const releasedAt=Date.parse(fileRelease?.split(' ')[0]);
- if(!own||!row||!fileRelease||!Number.isFinite(ownedAt)||!Number.isFinite(at)||!Number.isFinite(releasedAt)||ownedAt<Date.parse('2026-11-04T22:30:00Z')||at<Date.parse('2026-11-04T22:39:17Z')||releasedAt<Date.parse('2026-11-04T22:45:12Z')||at<ownedAt||releasedAt<at||releasedAt>now||at>now||ownedAt>now)
+ if(!own||!row||!fileRelease||!Number.isFinite(ownedAt)||!Number.isFinite(at)||!Number.isFinite(releasedAt)||ownedAt<Date.parse('2026-11-04T23:51:39Z')||at<ownedAt||releasedAt<at||releasedAt>now||at>now||ownedAt>now)
   throw Error('exact '+assignment+' assignment-bound local heavy release after current OWN required');
  return {row,at,own,ownedAt,fileRelease,releasedAt,assignment};
 }
@@ -81,9 +117,10 @@ async function launchOwned(puppeteer,tap,options){
 }
 function binding(run,pins){
  const manifest=JSON.parse(fs.readFileSync(pins));
+ if(manifest.runtimeBinding)verifyAcceptedRuntimePins(manifest);
  const modules=['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>{
   const rows=manifest.files.filter(x=>x.path===file);if(rows.length!==1)throw Error('both candidate module pins required');
-  const sha256=base.hash(fs.readFileSync(file));if(sha256!==rows[0].sha256)throw Error('candidate module mismatch');return {path:file,sha256};
+  const sha256=base.hash(fs.readFileSync(file));if(sha256!==rows[0].sha256||sha256!==ACCEPTED[file])throw Error('candidate module mismatch');return {path:file,sha256};
  });
  return {run:path.resolve(run),pins:path.resolve(pins),pinsSHA256:base.hash(fs.readFileSync(pins)),modules};
 }
@@ -173,6 +210,8 @@ function assertMailboxCommandReady(run,options){
  return status.nextIndex;
 }
 function prepare(options){
+ const manifest=JSON.parse(fs.readFileSync(options.pins));
+ if(manifest.runtimeBinding)verifyAcceptedRuntimePins(manifest);
  const p=observer.prepare(options),q=JSON.stringify;
  p.source=base.replaceOnce(p.source,'const presetAttachment=attachmentAPI.createAttachment({sessions,save,log,pageState:state,validateAck:assertAck,',
   `const hostPresentation=require(${q(__filename)}).createHostPresentationController({page:()=>page,save,deadline:()=>deadline});\nconst presetAttachment=attachmentAPI.createAttachment({hostPresentation,sessions,save,log,pageState:state,validateAck:assertAck,`);
@@ -233,4 +272,4 @@ function createHostPresentationController({page,save,deadline}){
   async finish(reason){if(!active)return;active=false;persist(await evaluate(`globalThis.__strongholdHostPresentation.finish(${JSON.stringify(reason)})`));}
  };
 }
-module.exports={identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,diagnosticScene,SETUP_TRANSITION,SETUP_TRANSITIONS,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={acceptedRuntimePins,verifyAcceptedRuntimePins,ACCEPTED,ORIGINAL_PINS_SHA,identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,diagnosticScene,SETUP_TRANSITION,SETUP_TRANSITIONS,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};

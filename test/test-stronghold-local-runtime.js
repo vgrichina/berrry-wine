@@ -3,19 +3,34 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve(process.env.STRONGHOLD_CONTRACT_RUN||'scratch/runs/20261104-stronghold-setup-transition-onward/contract-test');
+const run=path.resolve(process.env.STRONGHOLD_CONTRACT_RUN||'scratch/runs/20261104-stronghold-current-runtime-binding/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
+const accepted=api.acceptedRuntimePins();
+assert.equal(accepted.files.length,2429);assert.equal(accepted.runtimeBinding.amendments.length,5);
+assert.equal(accepted.files.filter(r=>r.path.startsWith('test/binaries/')).length,1856);
+assert.deepEqual(api.verifyAcceptedRuntimePins(accepted),accepted);
+assert.throws(()=>api.acceptedRuntimePins(Buffer.from('{}')),/stale original/);
+for(const change of [p=>p.files.pop(),p=>p.files[0].sha256='0'.repeat(64),p=>p.runtimeBinding.amendments.pop(),p=>p.files.push(p.files[0])]){
+ const p=structuredClone(accepted);change(p);assert.throws(()=>api.verifyAcceptedRuntimePins(p),/closure/);
+}
+// Inject changed reads without changing any shared dependency on disk. This
+// separately tests both wrong module variants and an unnamed source change.
+const nativeRead=fs.readFileSync;
+for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm','src/09ab-handlers-d3dim-core.wat','lib/guest-worker.js','tools/stronghold-owning-callback-observer.cjs']){
+ let seen=false;
+ fs.readFileSync=function(name,...args){const bytes=Reflect.apply(nativeRead,this,[name,...args]);if(typeof name==='string'&&path.resolve(name)===path.resolve(file)){seen=true;const changed=Buffer.from(bytes);changed[0]^=1;return changed;}return bytes;};
+ try{assert.throws(()=>api.acceptedRuntimePins(),/unknown runtime dependency mismatch/);assert(seen);}finally{fs.readFileSync=nativeRead;}
+}
+console.log('PASS exact 2429-row closure, five named amendments, 1856 unchanged media; stale manifest/row deletion/duplicate/wrong pair/changed dependency negatives; no shared file mutation');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
 const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:45:00Z');
-const actualOwn='2026-11-04T22:30:00+00:00 stronghold-quiet-rpc OWN tools/stronghold-local-runtime.cjs docs/re-notes/stronghold-quiet-rpc-original-gameplay-20261104.md';
-const actualRelease='2026-11-04T22:39:17+00:00 stronghold-quiet-rpc LOCAL HEAVY RELEASE stronghold-quiet-rpc-original-gameplay-2230 offline fixture only';
-const actualFileRelease='2026-11-04T22:45:12Z stronghold-quiet-rpc RELEASE tools/stronghold-local-runtime.cjs docs/re-notes/stronghold-quiet-rpc-original-gameplay-20261104.md';
-const fixtureBoard=actualOwn+'\n'+actualRelease+'\n'+actualFileRelease,fixtureNow=Date.parse('2026-11-04T22:46:00Z');
+const actualOwn='2026-11-04T23:51:39+00:00 mdk2-accepted-runtime-binding OWN tools/mdk2-local-runtime.cjs docs/re-notes/mdk2-accepted-runtime-binding-20261104.md';
+const actualRelease='2026-11-05T00:01:00Z mdk2-accepted-runtime-binding LOCAL HEAVY RELEASE mdk2-accepted-runtime-binding-2350 offline fixture only';
+const actualFileRelease='2026-11-05T00:02:00Z mdk2-accepted-runtime-binding RELEASE tools/mdk2-local-runtime.cjs docs/re-notes/mdk2-accepted-runtime-binding-20261104.md';
+const fixtureBoard=actualOwn+'\n'+actualRelease+'\n'+actualFileRelease,fixtureNow=Date.parse('2026-11-05T00:03:00Z');
 assert.equal(api.requireRuntimeRelease(fixtureBoard,fixtureNow).row,actualRelease);
-for(const line of [actualRelease,fixtureBoard.replaceAll('stronghold-quiet-rpc','someone'),fixtureBoard.replace('LOCAL HEAVY RELEASE stronghold-quiet-rpc-original-gameplay-2230','LOCAL HEAVY RELEASE mdk2-medium-release-gameplay-2210'),fixtureBoard.replace('22:39:17','22:29:59'),fixtureBoard.replace('22:39:17','22:53:05'),fixtureBoard.replace('22:30:00','22:29:59'),actualOwn+'\n2026-11-04T21:49:00Z stronghold waiting '+actualRelease,actualOwn+'\n'+actualRelease.replace('stronghold-quiet-rpc LOCAL','foreign LOCAL'),actualOwn+'\n'+actualRelease.replace('-2230 offline','-2230-extra offline')])assert.throws(()=>api.requireRuntimeRelease(line,fixtureNow),/release/);
-assert.throws(()=>api.requireRuntimeRelease(fixtureBoard+'\n'+actualOwn.replace('22:30:00','22:46:01'),fixtureNow),/release/,'fresh later OWN invalidates earlier release');
-for(const board of [actualOwn+'\n'+actualRelease,fixtureBoard.replace('22:45:12','22:39:16'),fixtureBoard.replace('22:45:12','22:47:00'),fixtureBoard.replace('stronghold-quiet-rpc RELEASE','foreign RELEASE')])assert.throws(()=>api.requireRuntimeRelease(board,fixtureNow),/release/);
+for(const board of [actualRelease,fixtureBoard.replaceAll('mdk2-accepted-runtime-binding','someone'),fixtureBoard.replace('-2350 offline','-2350-extra offline'),fixtureBoard.replace('00:01:00','00:04:00'),fixtureBoard.replace('23:51:39','23:51:38'),actualOwn+'\n'+actualRelease,fixtureBoard.replace('00:02:00','00:00:59'),fixtureBoard.replace('00:02:00','00:04:00'),fixtureBoard.replace('binding RELEASE','binding FOREIGN'),fixtureBoard+'\n'+actualOwn.replace('2026-11-04T23:51:39+00:00','2026-11-05T00:02:01Z')])assert.throws(()=>api.requireRuntimeRelease(board,fixtureNow),/release/);
 const lockProbe="const a=require('./tools/stronghold-local-runtime.cjs');console.log(JSON.stringify(a.requireLocalFlock(process.argv[1])))";
 const testLock=path.join(run,'offline-runtime.lock');fs.writeFileSync(testLock,'');
 assert.throws(()=>execFileSync(process.execPath,['-e',lockProbe,testLock],{stdio:'pipe'}),/Command failed/);
@@ -69,8 +84,8 @@ reject('extended cleanup',r=>{r.cleanupBy=api.CLEANUP+1;r.expiresAt=r.cleanupBy;
 reject('insufficient runtime reserve',r=>r.chromeCutoff=r.issuedAt+719999);
 reject('insufficient cleanup reserve',r=>{r.cleanupBy=r.issuedAt+899999;r.expiresAt=r.cleanupBy;});
 reject('expired process contract',r=>r.expiresAt=now);
-assert.equal(api.CUTOFF,Date.parse('2026-11-04T23:35:00Z'));
-assert.equal(api.CLEANUP,Date.parse('2026-11-04T23:38:00Z'));
+assert.equal(api.CUTOFF,Date.parse('2026-11-05T00:55:00Z'));
+assert.equal(api.CLEANUP,Date.parse('2026-11-05T00:58:00Z'));
 const lastStart=api.createRelease({run,pins,nonce,now:api.CUTOFF-720000});
 assert.equal(lastStart.closeBy,api.CUTOFF);assert.equal(lastStart.cleanupBy-lastStart.closeBy,180000);
 assert.throws(()=>api.createRelease({run,pins,nonce,now:api.CUTOFF-719999}),/deadline/);
@@ -453,7 +468,7 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  // Forbid child spawning as a separate guard against a broken injection.
  const entryRun=path.join(run,'composed-'+Date.now());fs.mkdirSync(entryRun);
  const entryPins=path.join(entryRun,'pins.json');
- fs.copyFileSync(process.env.STRONGHOLD_OFFLINE_PINS||pins,entryPins);
+ fs.writeFileSync(entryPins,process.env.STRONGHOLD_OFFLINE_PINS?fs.readFileSync(process.env.STRONGHOLD_OFFLINE_PINS):JSON.stringify(api.acceptedRuntimePins()));
  const entryScript=path.join(entryRun,'mock-entry.cjs');
  fs.writeFileSync(entryScript,`
  const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
@@ -469,10 +484,17 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(p.createRelease()));
  const ownership=api.assertRuntimeOwnership;
  api.assertRuntimeOwnership=()=>({offlineFixtureRelease:!process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE,release:api.requireRuntimeRelease(process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?fs.readFileSync('messageboard.txt','utf8'):${JSON.stringify(fixtureBoard)},process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?Date.now():${fixtureNow}),flock:api.requireLocalFlock(${JSON.stringify(testLock)})});
- const cp=require('node:child_process'),spawn=cp.spawn;let spawnAttempts=0;cp.spawn=()=>{spawnAttempts++;throw Error('OFFLINE SPAWN FORBIDDEN');};
+ const cp=require('node:child_process'),spawn=cp.spawn,nativeSpawn=cp.ChildProcess.prototype.spawn;let spawnAttempts=0,nativeSpawnAttempts=0;
+ cp.spawn=()=>{spawnAttempts++;throw Error('OFFLINE SPAWN FORBIDDEN');};
+ cp.ChildProcess.prototype.spawn=function(){nativeSpawnAttempts++;throw Error('OFFLINE NATIVE SPAWN FORBIDDEN');};
  const puppeteer={launch:null},serverAPI=require(${JSON.stringify(require.resolve('./static-server.js'))}),start=serverAPI.startStaticServer;
  let launches=0,server,port;
- puppeteer.launch=async()=>{launches++;assert(api.lifecycleForRun(run));assert(fs.existsSync(path.join(run,'browser/runtime-ownership.json')));throw Error('OFFLINE MOCK LAUNCH SENTINEL');};
+ let httpResponses=0;
+ puppeteer.launch=async()=>{launches++;assert(api.lifecycleForRun(run));assert(fs.existsSync(path.join(run,'browser/runtime-ownership.json')));
+  const rows=JSON.parse(fs.readFileSync(pins)).files;
+  for(const row of rows){const response=await fetch('http://127.0.0.1:'+port+'/'+row.path),bytes=Buffer.from(await response.arrayBuffer());assert.equal(response.status,200,row.path);assert.equal(require(${JSON.stringify(require.resolve('../tools/stronghold-preset-driver-attachment.cjs'))}).hash(bytes),row.sha256,row.path);assert.equal(response.headers.get('cross-origin-opener-policy'),'same-origin');assert.equal(response.headers.get('cross-origin-embedder-policy'),'require-corp');assert.match(response.headers.get('cache-control'),/no-store/);httpResponses++;}
+  fs.writeFileSync(path.join(run,'http-closure.json'),JSON.stringify({rows:rows.length,httpResponses,allMatched:true}));
+  throw Error('OFFLINE MOCK LAUNCH SENTINEL');};
  serverAPI.startStaticServer=async options=>{server=await start(options);port=server.address().port;return server;};
  (async()=>{const cut=p.source.lastIndexOf('main().catch(');
  globalThis.__strongholdOfflinePuppeteer=puppeteer;
@@ -480,14 +502,14 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  assert.notEqual(composed,p.source.slice(0,cut));
  const caller=route.compileClosure(composed+'\\nmodule.exports={main,close};',p.driver,p.route,p.evidence.retainedClosure);
  try{await assert.rejects(caller.main(),/OFFLINE MOCK LAUNCH SENTINEL/);assert.equal(launches,1);assert(server.listening);assert.equal(api.lifecycleForRun(run).children.length,0);}
- finally{await caller.close('offline mocked launch complete');api.lifecycleForRun(run).restore();api.assertRuntimeOwnership=ownership;cp.spawn=spawn;delete globalThis.__strongholdOfflinePuppeteer;serverAPI.startStaticServer=start;Date.now=wallNow;}
- assert.equal(server.listening,false);assert.equal(spawnAttempts,0);
+ finally{await caller.close('offline mocked launch complete');api.lifecycleForRun(run).restore();api.assertRuntimeOwnership=ownership;cp.spawn=spawn;cp.ChildProcess.prototype.spawn=nativeSpawn;delete globalThis.__strongholdOfflinePuppeteer;serverAPI.startStaticServer=start;Date.now=wallNow;}
+ assert.equal(server.listening,false);assert.equal(spawnAttempts,0);assert.equal(nativeSpawnAttempts,0);
  const rows=fs.readFileSync(path.join(run,'chrome-lifecycle.jsonl'),'utf8').trim().split('\\n').map(JSON.parse);
  assert.deepEqual(rows.map(r=>r.kind),['installed','launch-request','recorder-restored']);
- console.log(JSON.stringify({pass:true,actualComposedEntry:true,filesystemPins:JSON.parse(fs.readFileSync(pins)).files.length,launchSentinels:launches,chromeSpawns:0,spawnAttempts,serverClosed:!server.listening,port,privateFlock:true}));
+ console.log(JSON.stringify({pass:true,actualComposedEntry:true,filesystemPins:JSON.parse(fs.readFileSync(pins)).files.length,httpResponses,launchSentinels:launches,chromeSpawns:0,spawnAttempts,nativeSpawnAttempts,serverClosed:!server.listening,port,privateFlock:true}));
  })().catch(e=>{console.error(e);process.exitCode=1;});
  `);
- const composed=execFileSync('flock',['-n',testLock,process.execPath,entryScript],{encoding:'utf8',timeout:60000});
+ const composed=execFileSync('flock',['-n',testLock,process.execPath,entryScript],{encoding:'utf8',timeout:180000});
  assert.match(composed,/"actualComposedEntry":true/);console.log(composed.trim());
  delete actual.authorization;fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(actual));
  await assert.rejects(vm.runInNewContext(guarded,{require,fs,path,RUN:run}),/authorization/);
