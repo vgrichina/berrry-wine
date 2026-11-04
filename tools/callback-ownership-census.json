@@ -9296,6 +9296,14 @@
       "ownership": "pending"
     },
     {
+      "file": "lib/deusex-softdrv-cache-observer.js",
+      "name": "host-file",
+      "sha256": "08a1f3ac58de89870932d8150133f4dc23faebaddacee937e707ef971568b224",
+      "kind": "host-entry",
+      "reason": "SoftDrv block observer review 20261104: optional passive ordinary run(1) adapter qualifies original palette fast/hash-hit lock additions, miss fallthrough and one release epilogue at RVA 94bf using mandatory block boundaries. It never interprets lock release as retirement. No guest calls/writes, instruction watch, context restoration, callbacks, scheduling changes or natural integration. Actual shipped queued Worker versus ordinary no-adapter control at both relocation bases and normal/compat modules checks full memory, registers, lazy flags, returned counts, commands and traps plus missing history, byte/frame, loader/foreign and bounded failures. Other release paths, Core invalidation, concurrency and full lifetimes require separate coverage. See docs/re-notes/deusex-softdrv-inline-cache-20261104.md; general ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
       "file": "lib/deusex-inline-eviction-observer.js",
       "name": "host-file",
       "sha256": "dde7764343f58e3ab7ffcf154ec5690f9e358c6aaea5ee4cd1045a10e6cbcfd0",
