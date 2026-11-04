@@ -3,7 +3,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-title-recognition-onward/contract-test');
+const run=path.resolve('scratch/runs/20261104-stronghold-menu-recognition-onward/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
@@ -20,6 +20,7 @@ reject('missing authorization',r=>delete r.authorization);
 reject('missing current authorization',r=>delete r.freshLocalDiagnosticAuthorized);
 reject('foreign assignment',r=>r.assignment='foreign');
 reject('expired predecessor authorization',r=>r.assignment='stronghold-portable-local-runtime user task');
+reject('previous title assignment',r=>r.assignment='stronghold-title-recognition-onward user task');
 reject('foreign shutdown owner',r=>r.shutdownOwner='worker');
 reject('box as local',r=>r.kind='leased-box');
 reject('fake box ID',r=>r.boxId='bx_local');

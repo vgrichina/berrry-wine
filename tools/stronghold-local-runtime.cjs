@@ -4,9 +4,9 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),cryp
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
 const AUTH='stronghold-split-gesture-reviews user task';
-const ASSIGNMENT='stronghold-title-recognition-onward user task';
+const ASSIGNMENT='stronghold-menu-recognition-onward user task';
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-04T18:05:00Z'),CLEANUP=Date.parse('2026-11-04T18:08:00Z');
+const CUTOFF=Date.parse('2026-11-04T19:00:00Z'),CLEANUP=Date.parse('2026-11-04T19:03:00Z');
 function identity(){
  const stat=fs.readFileSync('/proc/self/stat','utf8');
  return {hostname:os.hostname(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),
