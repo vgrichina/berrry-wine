@@ -8,6 +8,9 @@ const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').updat
 // Independent homogeneous polygon clipping. Colours remain packed bytes at
 // generated vertices, as required by the existing legacy TL representation.
 // Raster interpolation is affine screen-space Gouraud, separate from U/V/Q/w.
+// This continuous geometry convention does not specify D3D7 intermediate
+// precision. test-legacy-color-precision.js independently resolves the two
+// integer-boundary diagnostics without treating ideal-real bytes as required.
 function oracle(colors,scene,p,details=false){
   const unpack=n=>[n>>>16&255,n>>>8&255,n&255,n>>>24];
   let winner=null,depth=1;
