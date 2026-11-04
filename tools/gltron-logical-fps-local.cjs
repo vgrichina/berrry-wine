@@ -1,5 +1,5 @@
 'use strict';
-// Run-specific local diagnostic. External flock serializes the entire pair.
+// Run-specific WebGL diagnostic. External flock covers the entire runtime.
 // node tools/gltron-logical-fps-local.cjs --prepare RUN
 // After personally viewing the exact offline capture, this entry atomically
 // reviews it and starts only if that review succeeds:
@@ -184,18 +184,12 @@ function pageState() {
 
 function requireReleases(board, now = Date.now()) {
   const mdk = board.split('\n').findLast(line => {
-    const match = /^(\S+) mdk2-medium-through-loading LOCAL HEAVY RELEASE(?:\s|$)/.exec(line);
+    const match = /^(\S+) mdk2-installed-original(?:-gameplay-nov04)? LOCAL HEAVY RELEASE(?:\s|$)/.exec(line);
     const at = match && Date.parse(match[1]);
-    return match && Number.isFinite(at) && at >= Date.parse('2026-11-04T20:29:22Z') && at <= now;
+    return match && Number.isFinite(at) && at >= Date.parse('2026-11-04T21:16:19Z') && at <= now;
   });
-  if (!mdk) throw Error('requires explicit fresh mdk2-medium-through-loading release');
-  const stronghold = board.split('\n').findLast(line => {
-    const match = /^(\S+) (?:stronghold-render-sized(?:-observer-nov04)? LOCAL HEAVY RELEASE|coordinator LOCAL HEAVY RELEASE stronghold-render-sized-observer-nov04)(?:\s|:|$)/.exec(line);
-    const at = match && Date.parse(match[1]);
-    return match && Number.isFinite(at) && at >= Date.parse('2026-11-04T20:50:21Z') && at <= now;
-  });
-  if (!stronghold) throw Error('requires explicit fresh stronghold-render-sized-observer-nov04 release');
-  return { mdk, stronghold };
+  if (!mdk) throw Error('requires explicit fresh mdk2-installed-original-gameplay-nov04 release');
+  return { mdk };
 }
 
 function requireLocalFlock(lockPath = '/tmp/wine-local-runtime.lock') {
@@ -335,7 +329,20 @@ async function commandAck(out, command, timeoutMs = 55000) {
   }
   // No guest command is queued when the actual host capture/review handoff is
   // already stale. The browser monotonic five-second guard still decides arm.
-  if (command.action === 'measure') reviewedCapture(out, command.review);
+  const clientFault = path.join(out, 'client-first-failure.json');
+  if (fs.existsSync(clientFault) && command.action !== 'quit') throw Error('prior client first fault; never retry');
+  if (command.action === 'measure') {
+    try { reviewedCapture(out, command.review); }
+    catch (error) {
+      // A rejected prequeue review is still the first postlaunch fault. Keep
+      // its cause and let the owner close normally, without another command.
+      if (!fs.existsSync(clientFault)) write(clientFault, {
+        source: 'ACK client prequeue review', action: command.action,
+        review: command.review, error: error.stack || String(error), at: new Date().toISOString(), queued: false,
+      });
+      throw error;
+    }
+  }
   const commands = path.join(out, 'commands');
   const nums = fs.readdirSync(commands).filter(n => /^\d+\.json$/.test(n)).map(n => Number(n.slice(0, -5)));
   const n = nums.length ? Math.max(...nums) + 1 : 0;
@@ -453,7 +460,7 @@ async function runPair(run) {
   }
   let browserMs = 0, stopped = false;
   const puppeteer = require('puppeteer');
-  for (const backend of ['software', 'webgl']) {
+  for (const backend of ['webgl']) {
     if (stopped) break;
     if (Date.now() + BROWSER_MS > HARD_BROWSER_END || Date.now() + BROWSER_MS + CLEANUP_MS > HARD_CLEANUP_END) throw Error('full per-backend reserve unavailable');
     const out = path.join(run, backend);
@@ -551,6 +558,11 @@ async function runPair(run) {
       console.log('READY ' + backend + ' ' + out);
       let commandAt = Date.now();
       while (!closed && !failure) {
+        const clientFault = path.join(out, 'client-first-failure.json');
+        if (fs.existsSync(clientFault)) {
+          const first = JSON.parse(fs.readFileSync(clientFault));
+          failure = first.error; break;
+        }
         if (Date.now() - commandAt > COMMAND_MS) throw Error('40 second command deadline');
         const file = path.join(out, 'commands', number + '.json');
         if (!fs.existsSync(file)) { await pause(100); continue; }

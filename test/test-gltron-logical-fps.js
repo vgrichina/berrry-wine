@@ -357,6 +357,16 @@ async function main() {
       assert.equal(JSON.parse(fs.readFileSync(require('node:path').join(replay, 'commands/0.json'))).action, 'shot');
       assert.throws(() => requireHandoffProbe(queueDir), /rehearsal/);
     });
+    const firstClientFault = fs.readFileSync(require('node:path').join(replay, 'client-first-failure.json'), 'utf8');
+    assert.equal(JSON.parse(firstClientFault).queued, false);
+    assert.match(JSON.parse(firstClientFault).error, /five seconds/);
+    await assert.rejects(commandAck(replay, { action: 'measure', review: 'actual-shot' }, 100), /prior client first fault/);
+    await assert.rejects(commandAck(replay, { action: 'shot', name: 'retry' }, 100), /prior client first fault/);
+    check('prequeue first fault persists atomically and forbids subsequent gameplay or capture commands', () => {
+      assert.equal(fs.readFileSync(require('node:path').join(replay, 'client-first-failure.json'), 'utf8'), firstClientFault);
+      assert.deepEqual(fs.readdirSync(require('node:path').join(replay, 'commands')), ['0.json']);
+      assert(!fs.existsSync(require('node:path').join(replay, 'client-first-failure.json.tmp')));
+    });
     fs.writeFileSync(require('node:path').join(queueDir, 'reply-1.json'), JSON.stringify({ ok: true, capture: { ...capture, path: '/foreign' } }));
     await assert.rejects(commandAck(queueDir, { action: 'shot', name: 'actual-shot' }, 100), /exact capture/);
     check('actual ACK client refuses foreign capture even after successful command', () => {});
@@ -388,40 +398,22 @@ async function main() {
     for (const patch of [{ path: 'missing' }, { sha256: 'stale' }, { bytes: -1 }])
       assert.throws(() => validateHistory(productionPins, [{ ...productionPins[0], ...patch }]), /prior HTTP pin/);
   });
-  check('current named resource releases required; historical releases grant nothing', () => {
-    assert.throws(() => requireReleases('mdk2-poll-repair LOCAL HEAVY RELEASE\nstronghold-current-hover LOCAL HEAVY RELEASE'), /requires/);
-    assert.throws(() => requireReleases('stronghold-repaired-onward LOCAL HEAVY RELEASE'), /requires/);
-    assert.throws(() => requireReleases('mdk2-repaired-original LOCAL HEAVY RELEASE\nstronghold-repaired-onward LOCAL HEAVY RELEASE'), /requires/);
-    assert.throws(() => requireReleases('mdk2-continuous-onward LOCAL HEAVY RELEASE'), /requires/);
-    assert.throws(() => requireReleases('mdk2-continuous-construction-onward LOCAL HEAVY RELEASE'), /requires/);
-    assert.throws(() => requireReleases('mdk2-demand-entry LOCAL HEAVY RELEASE'), /requires/);
-    assert.throws(() => requireReleases('mdk2-demand-entry-continuity LOCAL HEAVY RELEASE'), /requires/);
-    const valid = '2026-11-04T20:29:22+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE';
-    const stronghold = '2026-11-04T20:50:21+00:00 stronghold-render-sized LOCAL HEAVY RELEASE';
-    assert.throws(() => requireReleases(valid), /stronghold-render-sized/);
-    assert(requireReleases(valid + '\n' + stronghold));
-    assert(requireReleases(valid + '\n2026-11-04T20:50:21+00:00 coordinator LOCAL HEAVY RELEASE stronghold-render-sized-observer-nov04: checked'));
-    for (const invalid of [
-      '2026-11-04T20:50:20+00:00 stronghold-render-sized LOCAL HEAVY RELEASE',
-      '2026-11-04T20:50:21+00:00 gltron-repaired-live waiting stronghold-render-sized LOCAL HEAVY RELEASE',
-      '2026-11-04T20:50:21+00:00 stronghold-customgame-drain LOCAL HEAVY RELEASE',
-      '2026-11-04T20:50:21+00:00 coordinator quotes stronghold-render-sized LOCAL HEAVY RELEASE',
-      '2027-11-04T20:50:21+00:00 stronghold-render-sized LOCAL HEAVY RELEASE'])
-      assert.throws(() => requireReleases(valid + '\n' + invalid), /stronghold-render-sized/);
-    // Execute the actual predecessor parser: it wrongly grants this task
-    // admission from the old MDK release alone.
-    const oldParser = vm.runInNewContext('(' + requireReleases.toString().replace(
-      /  const stronghold = [\s\S]*return \{ mdk, stronghold \};/, '  return { mdk };') + ')', { Date });
-    assert(oldParser(valid));
-    assert.throws(() => requireReleases(valid), /stronghold-render-sized/);
+  check('current installed MDK release required for sole WebGL entry', () => {
+    const valid = '2026-11-04T21:16:19+00:00 mdk2-installed-original LOCAL HEAVY RELEASE';
+    assert(requireReleases(valid));
+    assert(requireReleases(valid.replace('mdk2-installed-original', 'mdk2-installed-original-gameplay-nov04')));
     for (const line of [
-      '2026-11-04T20:29:21+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE',
-      '2026-11-04T20:21:00+00:00 gltron-complete-handoff waiting explicit mdk2-medium-through-loading LOCAL HEAVY RELEASE',
-      '2026-11-04T20:21:00+00:00 coordinator quotes ' + valid,
-      'mdk2-medium-through-loading LOCAL HEAVY RELEASE',
-      '2026-11-03T20:21:00+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE',
-      '2027-11-04T20:21:00+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE'])
-      assert.throws(() => requireReleases(line), /requires/);
+      '2026-11-04T20:29:22+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE',
+      '2026-11-04T21:16:18+00:00 mdk2-installed-original LOCAL HEAVY RELEASE',
+      '2027-11-04T21:16:19+00:00 mdk2-installed-original LOCAL HEAVY RELEASE',
+      '2026-11-04T21:16:19+00:00 coordinator quotes ' + valid,
+      '2026-11-04T21:16:19+00:00 foreign LOCAL HEAVY RELEASE',
+      'mdk2-installed-original LOCAL HEAVY RELEASE',
+      '2026-11-04T21:16:19+00:00 gltron waiting mdk2-installed-original LOCAL HEAVY RELEASE'])
+      assert.throws(() => requireReleases(line), /mdk2-installed-original/);
+    const producer = fs.readFileSync(require.resolve('../tools/gltron-logical-fps-local.cjs'), 'utf8');
+    assert.match(producer, /for \(const backend of \['webgl'\]\)/);
+    assert(!producer.includes("for (const backend of ['software', 'webgl'])"));
   });
   const { spawnSync } = require('node:child_process');
   // Execute the actual CLI entry point with every process/server/browser path
