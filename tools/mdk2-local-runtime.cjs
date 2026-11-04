@@ -12,7 +12,7 @@ const BASE = path.join(ROOT, 'scratch/runs');
 // Explicit installed-original assignment; pre-Chrome tests consume no game launch.
 const HARD_CLOSE = Date.parse('2026-11-04T23:50:00Z');
 const HARD_RECOVER = Date.parse('2026-11-04T23:53:00Z');
-const ASSIGNMENT = '20261104-mdk2-honest-menu-medium-gameplay';
+const ASSIGNMENT = '20261104-mdk2-medium-release-gameplay';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -278,10 +278,14 @@ function prepareTransport(run) {
   fs.writeFileSync(path.join(run,'python-hooks/sitecustomize.py'),siteSource,{flag:'wx'});
 }
 function heavyRelease(board) {
-  const rows=board.split('\n').filter(line=>/^2026-11-04T\S+ (?:gltron-low-latency LOCAL HEAVY RELEASE gltron-low-latency-webgl-gameplay-nov04(?:\s|$)|coordinator LOCAL HEAVY RELEASE gltron-low-latency-webgl-gameplay-nov04:)/.test(line));
-  assert(rows.length,'explicit gltron-low-latency-webgl-gameplay-nov04 LOCAL HEAVY RELEASE required');
+  const lines=board.split('\n');
+  const own=lines.findLastIndex(line=>/^2026-11-04T\S+ stronghold-named-observation OWN tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(line));
+  assert(own>=0,'predecessor OWN required before release');
+  const rows=lines.slice(own+1).filter(line=>/^2026-11-04T\S+ stronghold-named-observation LOCAL HEAVY RELEASE stronghold-named-observation-gameplay-nov04(?:\s|$)/.test(line));
+  assert(rows.length,'explicit stronghold-named-observation-gameplay-nov04 LOCAL HEAVY RELEASE required');
   const line=rows.at(-1),at=Date.parse(line.split(' ')[0]);
-  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-04T21:41:19Z')&&at<=Date.now(),'current predecessor release required');
+  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-04T22:00:55Z')&&at<=Date.now(),'current predecessor release required');
+  assert(lines.slice(own+1).some(row=>/^2026-11-04T\S+ stronghold-named-observation RELEASE tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(row)&&Date.parse(row.split(' ')[0])>=Date.parse('2026-11-04T22:05:30Z')&&Date.parse(row.split(' ')[0])<=Date.now()),'predecessor file release required');
   return line;
 }
 

@@ -312,7 +312,7 @@ test('installed Puppeteer close path distinguishes orderly own child from CDP-fa
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);
- assert.equal(r.assignment,'20261104-mdk2-honest-menu-medium-gameplay');
+ assert.equal(r.assignment,'20261104-mdk2-medium-release-gameplay');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -409,19 +409,18 @@ test('install requires real inherited exclusive local lock before release or com
  assert.throws(()=>local.install(run),/lock required/);
  assert(!fs.existsSync(path.join(run,'runtime-release.json')));
 });
-test('exact current GL predecessor heavy release excludes mentions, prior release and other owners',()=>{
- const good='2026-11-04T21:41:19+00:00 gltron-low-latency LOCAL HEAVY RELEASE gltron-low-latency-webgl-gameplay-nov04 original stopped';
- assert.equal(local.heavyRelease(good),good);
- const coordinated='2026-11-04T21:41:19.552949+00:00 coordinator LOCAL HEAVY RELEASE gltron-low-latency-webgl-gameplay-nov04: MDK may proceed';
- assert.equal(local.heavyRelease(coordinated),coordinated);
- assert.throws(()=>local.heavyRelease(coordinated.replace('coordinator','stronghold-fresh-complete')),/release/i);
- for(const line of [good.replace(' LOCAL HEAVY RELEASE',' RELEASE'),
-   good.replace('gltron-low-latency-webgl-gameplay-nov04','mdk2-installed-original waiting gltron-low-latency-webgl-gameplay-nov04'),
-   good.replace('21:41:19','21:41:18'),good.replace('2026-11-04','2026-11-05'),
-   good.replace('gltron-low-latency-webgl-gameplay-nov04','stronghold-customgame-drain'),
-   coordinated.replace('coordinator LOCAL','mdk2-bounded-review waiting coordinator LOCAL'),
-   coordinated.replace('gltron-low-latency-webgl-gameplay-nov04:','other-task:')])
-   assert.throws(()=>local.heavyRelease(line),/release/i);
+test('exact Stronghold predecessor requires current named heavy and file releases after OWN',()=>{
+ const own='2026-11-04T21:47:28Z stronghold-named-observation OWN tools/stronghold-local-runtime.cjs';
+ const heavy='2026-11-04T22:00:55Z stronghold-named-observation LOCAL HEAVY RELEASE stronghold-named-observation-gameplay-nov04 stopped';
+ const released='2026-11-04T22:05:30Z stronghold-named-observation RELEASE tools/stronghold-local-runtime.cjs';
+ const board=[own,heavy,released].join('\n');
+ assert.equal(local.heavyRelease(board),heavy);
+ for(const bad of [heavy, [heavy,own,released].join('\n'),[own,heavy].join('\n'),
+  board.replace('22:00:55','22:00:54'),board.replace('22:05:30','22:05:29'),
+  board.replace(' LOCAL HEAVY RELEASE',' waiting LOCAL HEAVY RELEASE'),
+  board.replace('stronghold-named-observation-gameplay-nov04','other-task'),
+  board.replaceAll('stronghold-named-observation ','coordinator '),
+  board+'\n'+own,board.replace('22:00:55Z','23:59:55Z')])assert.throws(()=>local.heavyRelease(bad),/release|OWN/i);
 });
 test('actual local install makes the mandatory owning lifecycle tap ready before the composed launch caller',()=>{
  const script=path.join(run,'install-caller.cjs'),lock=path.join(run,'private-runtime.lock');
@@ -429,11 +428,11 @@ test('actual local install makes the mandatory owning lifecycle tap ready before
  // Only that pathname, the test clock and board input change in this fixture.
  fs.writeFileSync(script,`const fs=require('fs'),assert=require('assert/strict'),Module=require('module');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))};
- const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse('2026-11-04T21:48:00Z');
+ const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse('2026-11-04T22:10:00Z');
  let source=mode==='old'?require('child_process').execFileSync('git',['show','6055aa7e43d7c3505b6796d447663366e3b85146:tools/mdk2-local-runtime.cjs'],{encoding:'utf8'}):fs.readFileSync(filename,'utf8');
  source=source.replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: explicit fixture only':'2026-11-04T21:41:19Z coordinator LOCAL HEAVY RELEASE gltron-low-latency-webgl-gameplay-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: explicit fixture only':'2026-11-04T21:47:28Z stronghold-named-observation OWN tools/stronghold-local-runtime.cjs\\n2026-11-04T22:00:55Z stronghold-named-observation LOCAL HEAVY RELEASE stronghold-named-observation-gameplay-nov04 explicit fixture only\\n2026-11-04T22:05:30Z stronghold-named-observation RELEASE tools/stronghold-local-runtime.cjs';return Reflect.apply(originalRead,this,[file,...args]);};
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(require('path').dirname(filename));m._compile(source,filename);
  const installed=m.exports.install(dir),tap=m.exports.lifecycleForRun(dir);
  assert.equal(installed.lifecycle,tap);assert.throws(()=>tap.ownedLaunch(),/exactly one/);
@@ -460,14 +459,15 @@ test('actual composed entry creates run, installs release/recorder and calls moc
  const fs=require('fs'),path=require('path'),Module=require('module'),cp=require('child_process');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))},dir=${JSON.stringify(dir)};
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-04T21:41:19Z coordinator LOCAL HEAVY RELEASE gltron-low-latency-webgl-gameplay-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
- Date.now=()=>Date.parse('2026-11-04T21:48:00Z');
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-04T21:47:28Z stronghold-named-observation OWN tools/stronghold-local-runtime.cjs\\n2026-11-04T22:00:55Z stronghold-named-observation LOCAL HEAVY RELEASE stronghold-named-observation-gameplay-nov04 explicit fixture only\\n2026-11-04T22:05:30Z stronghold-named-observation RELEASE tools/stronghold-local-runtime.cjs';return Reflect.apply(originalRead,this,[file,...args]);};
+ Date.now=()=>Date.parse('2026-11-04T22:10:00Z');
  const source=fs.readFileSync(filename,'utf8').replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(path.dirname(filename));require.cache[filename]=m;m._compile(source,filename);
  const local=m.exports,load=Module._load,events=[];
  const mocked={launch:async options=>{events.push({kind:'launch-boundary',options,recorder:local.lifecycleForRun(dir).file});throw Error('ZERO_CHROME_BOUNDARY');}};
  Module._load=function(name,...args){return name==='puppeteer'?mocked:Reflect.apply(load,this,[name,...args]);};
- const spawn=cp.spawn;cp.spawn=function(command,...args){if(/chrome/i.test(String(command))){events.push({kind:'forbidden-chrome-spawn'});throw Error('forbidden Chrome spawn');}return Reflect.apply(spawn,this,[command,...args]);};
+ cp.spawn=function(){events.push({kind:'forbidden-child-spawn'});throw Error('forbidden child spawn');};
+ cp.ChildProcess.prototype.spawn=function(){events.push({kind:'forbidden-native-child-spawn'});throw Error('forbidden native child spawn');};
  const servers=require(${JSON.stringify(path.join(local.ROOT,'test/static-server.js'))}),start=servers.startStaticServer;
  servers.startStaticServer=async options=>{const s=await start(options);events.push({kind:'listen',port:s.address().port});s.once('close',()=>events.push({kind:'close'}));return s;};
  process.on('exit',code=>fs.writeFileSync(dir+'/entry-result.json',JSON.stringify({code,events})));
@@ -480,7 +480,7 @@ test('actual composed entry creates run, installs release/recorder and calls moc
   assert.equal(evidence.events.filter(r=>r.kind==='launch-boundary').length,1);
   assert.equal(evidence.events.filter(r=>r.kind==='listen').length,2);
   assert.equal(evidence.events.filter(r=>r.kind==='close').length,2);
-  assert(!evidence.events.some(r=>r.kind==='forbidden-chrome-spawn'));
+  assert(!evidence.events.some(r=>r.kind.startsWith('forbidden-')));
   const failure=JSON.parse(fs.readFileSync(path.join(dir,'browser/bootstrap-failure.json')));
   assert.match(failure.error,/ZERO_CHROME_BOUNDARY/);
   assert.match(failure.error,/launchOwned/,'actual caller must reach Puppeteer');
