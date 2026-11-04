@@ -7,9 +7,9 @@
   status: original UK v1.1 food production, spear delivery, recruitment and commanded movement published; hostile engagement active
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Result: Publisheda0522f78a demonstrates native wood delivery clears Poleturner NoWood, spears reach Armoury, and one Spearman recruited (gold7900to7892, spears15to14, peasants7to6). Inspected Spearmen portrait/count1 and commanded displacement distinguish actual recruitment/movement from construction. Food59/popularity100 sustained. Earlier cheese delivery d6b48b1527 and native Save/Load unavailable413afa3bb retained. Canvas2D/DirectDraw guestWorkers, not WebGL; combat/persistence/FPS open.
-  Lifecycle: Fresh worker01a1a4d7-8f36-7093-a0ea-c3a32c93df15 session82081 on bx_285595gz, expiry05:33:35.510Z recovery05:23Z, coordinator shutdown. Independently ACKed actualRUNNING/APIidle healthy hydrated04:36:15Z. Prior bx_e94v5mct expired; no access/resume.
+  Lifecycle: Publishedbe46bdc0b stops before Chrome on missing puppeteer; no input/combat. Existing2415pins and HTTPguards passed. Fresh stronghold-browser-dependency-combat worker01a1a4df-486b-79c0-829b-d7198d396024 session41217 repairs pinned browser dependency then attempts bounded combat on same bx_285595gz, expiry05:33:35.510Z recovery05:23Z coordinator shutdown; healthy hydrated actualexec verified04:43:58Z. Prior bx_e94v5mct expired; no access/resume.
   Next: Identify an original hostile and attempt bounded native engagement with visible damage/defeat; stop at first evidenced prerequisite. No blind loops or greyed Save/Load retries.
-  Evidence: docs/re-notes/stronghold-spear-delivery-recruit-20261104.md; scratch/runs/20261104-stronghold-spear-delivery-recruit/. Original EXE9024c533 and1856filepin unchanged; actual canonicalcffca869 and companion580f49f3 retained. Next run scratch/runs/20261104-stronghold-native-hostile-engagement/.
+  Evidence: docs/re-notes/stronghold-spear-delivery-recruit-20261104.md; scratch/runs/20261104-stronghold-spear-delivery-recruit/. Original EXE9024c533 and1856filepin unchanged; actual canonicalcffca869 and companion580f49f3 retained. Next run scratch/runs/20261104-stronghold-browser-dependency-combat/.
 
 # TODOS
 
