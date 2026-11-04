@@ -3215,6 +3215,9 @@
       (global.set $rast_t0_q_on (i32.const 1))))
     (global.set $rast_gl_stipple (select (i32.const 1) (i32.const 0)
       (i32.ne (i32.and (local.get $caps) (i32.const 0x1000000)) (i32.const 0))))
+    ;; Triangles need GL's alpha blend equation just as point/line spans do.
+    ;; Scope this to the GL call so shared D3D draws retain their RGB path.
+    (global.set $gl_sw_rgba_span (i32.const 1))
     (call $rasterize_triangle_textured
       (global.get $gl_sw_r_rt) (global.get $gl_sw_r_tex)
       (i32.and (i32.ne (i32.and (local.get $caps) (i32.const 2)) (i32.const 0))
@@ -3242,6 +3245,7 @@
       (i32.load offset=20 (local.get $s))
       (i32.load offset=24 (local.get $s))
       (f32.const 1) (f32.const 1) (f32.const 1))
+    (global.set $gl_sw_rgba_span (i32.const 0))
     (global.set $rast_gl_stipple (i32.const 0))
     (global.set $rast_t0_q_on (i32.const 0))
     (global.set $rast_t1_on (i32.const 0))
