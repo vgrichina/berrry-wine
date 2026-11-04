@@ -160,3 +160,97 @@ test('actual exclusive selection copies its separate source and presentation vie
   assert.equal(next.read().metadata.source.kind, 'logical');
   assert.deepEqual(record.metadata.composition.windows.map(w => w.hwnd), [123]);
 });
+
+function ownedFixture() {
+  const r = fixture(), h = host(r), win = window(r);
+  h.processId = win.processId = 1000;
+  h.instance = win.wasm = { exports: {} };
+  return { r, h, win };
+}
+
+test('scoped host capture binds actual selected window/process, ignoring caller owner labels', () => {
+  const { r, h, win } = ownedFixture();
+  const options = { hwnd: win.hwnd, processId: 2000, instance: {} };
+  const t = h.requestImmutableCapture(options);
+  options.hwnd = 999; // Admission owns a copy; changing caller data cannot retarget it.
+  assert.equal(r._repaintScheduled, false);
+  r.repaint();
+  assert.equal(t.status, 'complete');
+  const record = t.read();
+  assert.deepEqual(record.metadata.captureOwner, { hwnd: 123, processId: 1000 });
+  assert.equal(record.metadata.composition.windows[0].processId, 1000);
+  assert.deepEqual(Array.from(record.outputRGBA), pixels(r.presentationCanvas));
+  assert.equal(record.metadata.engineRender, null);
+  assert.equal(record.metadata.viewportPlayer, null);
+  assert.equal(record.metadata.workerSlice, null);
+  win.processId = 3000;
+  assert.equal(t.read().metadata.captureOwner.processId, 1000);
+  assert.throws(() => { record.metadata.captureOwner.processId = 1; }, TypeError);
+  assert.equal(Object.values(record.metadata.captureOwner).includes(h.instance), false);
+});
+
+test('scoped admission rejects foreign or unmeasured owners without occupying the request slot', () => {
+  for (const change of [({ win }) => { win.processId++; },
+    ({ win }) => { win.wasm = { exports: {} }; },
+    ({ h }) => { h.instance = null; },
+    ({ h }) => { h.processId = undefined; },
+    ({ r }) => { delete r.windows[123]; }]) {
+    const f = ownedFixture(); change(f);
+    assert.throws(() => f.h.requestImmutableCapture({ hwnd: 123 }), /owner/);
+    assert.equal(f.r._immutableCaptureRequest, undefined);
+    assert.equal(f.r._repaintScheduled, false);
+    const unscoped = f.h.requestImmutableCapture(); f.r.repaint();
+    assert.equal(unscoped.status, 'complete');
+    assert.equal(unscoped.read().metadata.captureOwner, null);
+  }
+});
+
+test('scoped capture rejects stale HWND reuse, changed owner and absent selection without repaint retries', () => {
+  const changes = {
+    reuse: ({ r, win }) => { r.windows[123] = { ...win }; },
+    process: ({ win }) => { win.processId++; },
+    instance: ({ win }) => { win.wasm = { exports: {} }; },
+    hidden: ({ win }) => { win.visible = false; },
+    removed: ({ r }) => { delete r.windows[123]; },
+    exclusive: ({ r, win }) => {
+      const covering = { ...win, hwnd: 456, z: 2 };
+      win.wasm.exports.get_dx_exclusive_hwnd = () => 456;
+      r.windows[456] = covering;
+    },
+  };
+  for (const [kind, change] of Object.entries(changes)) {
+    const f = ownedFixture(), t = f.h.requestImmutableCapture({ hwnd: 123 });
+    change(f); f.r.repaint();
+    assert.equal(t.status, 'failed', kind); assert.match(t.error, /owner/, kind);
+    assert.equal(t.read(), null); assert.equal(f.r._immutablePublicationSequence, 1);
+    f.r._presentDisplayCanvas(); assert.equal(t.read(), null);
+    const next = f.h.requestImmutableCapture(); f.r.repaint();
+    assert.equal(next.read().metadata.publication, 2);
+    assert.equal(t.status, 'failed');
+  }
+});
+
+test('owner is checked at selection and after display; holds and failed display cannot bless it', () => {
+  for (const kind of ['selection', 'after-display', 'false', 'throw']) {
+    const { r, h, win } = ownedFixture();
+    const t = h.requestImmutableCapture({ hwnd: 123 });
+    r.beginWorkerGuestSlice(); r.repaint(); assert.equal(t.status, 'pending');
+    r.endWorkerGuestSlice();
+    const present = r._presentDisplayCanvas.bind(r);
+    if (kind === 'selection') {
+      r.windows[123] = { ...win };
+      r._presentDisplayCanvas = () => {
+        const display = present(); r.windows[123] = win; return display;
+      };
+    } else if (kind === 'after-display') {
+      r._presentDisplayCanvas = () => {
+        const display = present(); win.processId++; return display;
+      };
+    } else if (kind === 'false') r.presentationFilter.ctx = null;
+    else r.presentationFilter.ctx.drawImage = () => { throw Error('scoped display threw'); };
+    if (kind === 'false' || kind === 'throw') assert.throws(() => r.repaint(), /returned false|scoped display threw/);
+    else r.repaint();
+    assert.equal(t.status, 'failed', kind); assert.equal(t.read(), null);
+    assert.match(t.error, kind === 'false' ? /returned false/ : kind === 'throw' ? /scoped display threw/ : /owner/);
+  }
+});

@@ -6707,11 +6707,15 @@ class WineAssembly {
     this._presentFrameDue = false;
   }
 
-  requestImmutableCapture() {
+  requestImmutableCapture(options) {
     if (!this.renderer) throw new Error('Immutable capture requires a renderer');
     // The renderer owns the natural publication transaction. Do not force an
     // upload, release a Worker hold, or label it an engine/actor completion.
-    return this.renderer.requestImmutableCapture();
+    // A scoped request derives ownership from this host, never from caller
+    // supplied process/engine identity. The renderer pins the live window.
+    return this.renderer.requestImmutableCapture(options === undefined ? undefined : {
+      hwnd: options.hwnd, processId: this.processId, instance: this.instance,
+    });
   }
 
   // Upload the newest guest frame and composite, now. Called from the rAF,
