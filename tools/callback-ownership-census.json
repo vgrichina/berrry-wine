@@ -9294,6 +9294,14 @@
       "kind": "host-entry",
       "reason": "Startup cache observation review 20261104: optional Worker-local run(1) adapter reads original pinned Core while absent, INITIALIZING or LIVE without Engine/Draw initialization. Only ordinary run calls; no guest writes/calls, instruction watching, breakpoint takeover, context restoration or lifecycle callbacks. Original FlushItem unlocked branch and contiguous three-store clear block have mandatory delivered pre/post cut points; object/ID64/metadata/data/range retained before coalescing. Init/Create/helper entries and saved-PC/ESP returns remain bounded intervals, not lifetime callbacks. Other-thread concurrency, Core Create inline eviction, SoftDrv inline lock/release and prior history remain unknown. Actual shipped queued Worker versus ordinary no-adapter control tests original Init, nested helpers, split/coalesce/same-ID/address reuse, locked-no-clear and failed lookup, relocation, full-memory/register/lazy-flag/return/trap parity and explicit ownership/history gaps. See docs/re-notes/deusex-startup-cache-coverage-20261104.md; general callback ownership remains pending.",
       "ownership": "pending"
+    },
+    {
+      "file": "lib/deusex-inline-eviction-observer.js",
+      "name": "host-file",
+      "sha256": "dde7764343f58e3ab7ffcf154ec5690f9e358c6aaea5ee4cd1045a10e6cbcfd0",
+      "kind": "host-entry",
+      "reason": "Core Create inline eviction review 20261104: optional Worker-local extension of startup passive ordinary run(1) source. Original pinned mandatory CFG blocks expose hash removal, physical metadata recycling and selected ID replacement publication separately; recycled records keep stale ID bytes. No guest writes/calls, callbacks, instruction watching, context restoration or scheduler changes. Actual shipped queued Worker versus no-adapter control at both relocation bases covers original Init/Create/Unlock/FlushItem/helper instructions, same-ID/address reuse, locks, split/coalesce and missing-history negatives, whole-memory/register/lazy-flags/return/command/trap parity. SoftDrv, other invalidation paths, loader-run integration, concurrency and full lifetime remain unproved. See docs/re-notes/deusex-inline-eviction-observer-20261104.md; general ownership remains pending.",
+      "ownership": "pending"
     }
   ]
 }
