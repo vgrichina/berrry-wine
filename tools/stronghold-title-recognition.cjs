@@ -12,6 +12,27 @@ const NAVIGATION=path.join(ROOT,'scratch/runs/20261104-stronghold-explicit-idle-
 const NAVIGATION_SHA='855e59adc9c519d3382727c51823b84066bcbab285aaa04da2105bae31726907';
 const MENU_REFERENCE=path.join(ROOT,'scratch/runs/20261104-stronghold-original-route-gameplay/review/title-result.png');
 const MENU_REFERENCE_SHA='b467eeafe1283c67086b35b32587ba6aec6df637e31604d4458a13d9111f4229';
+const TYPE_REFERENCE=path.join(ROOT,'scratch/runs/20261104-stronghold-explicit-idle-input/review/crusader-type.png');
+const TYPE_REFERENCE_SHA='6f8afacc85b1d3fb900e02e568b4424846310121dfbcb19901792945ea9f99b1';
+function typeCrop(bytes){
+ const p=PNG.sync.read(bytes);if(p.width!==1200||p.height!==900)throw Error('ChooseType screenshot geometry required');
+ const b=Buffer.alloc(420*35*3);let k=0;
+ for(let y=340;y<375;y++)for(let x=235;x<655;x++){
+  const o=(y*p.width+x)*4;if(p.data[o+3]!==255)throw Error('nonopaque ChooseType');
+  for(let c=0;c<3;c++)b[k++]=p.data[o+c];
+ }return b;
+}
+function compareType(png){
+ const ref=base.retained(TYPE_REFERENCE);if(base.hash(ref)!==TYPE_REFERENCE_SHA)throw Error('sealed original ChooseType reference mismatch');
+ const a=typeCrop(ref),b=typeCrop(png),tiles=Array.from({length:30},()=>({changed:0,error:0}));let changed=0,error=0;
+ for(let y=0;y<35;y++)for(let x=0;x<420;x++){
+  const o=(y*420+x)*3,d=Math.max(...[0,1,2].map(c=>Math.abs(a[o+c]-b[o+c])));
+  if(d){changed++;error+=d;const t=tiles[Math.floor(y/7)*6+Math.floor(x/70)];t.changed++;t.error+=d;}
+ }
+ // Original/local:20 of14700 pixels,1041 error; tile maxima3 pixels/266 error.
+ // Small bounded headroom, no shifts/masks/rescaling; every70x7 tile counts.
+ return {accepted:changed<=30&&error<=1400&&tiles.every(t=>t.changed<=5&&t.error<=350),changed,error,tiles};
+}
 function menuCrop(bytes){
  const p=PNG.sync.read(bytes);if(p.width!==1200||p.height!==900)throw Error('menu screenshot geometry required');
  const b=Buffer.alloc(220*30*3);let k=0;
@@ -34,7 +55,9 @@ function menuScene(png){
  menuCrop(png);
  if(base.hash(base.retained(NAVIGATION))!==NAVIGATION_SHA)throw Error('sealed original navigation mismatch');
  const old=require(NAVIGATION).scene(png);if(old!=='unknown')return old;
- return compareMenu(png).accepted?'main-menu':'unknown';
+ const found=[];if(compareMenu(png).accepted)found.push('main-menu');
+ if(compareType(png).accepted)found.push('crusader-type');
+ return found.length===1?found[0]:'unknown';
 }
 function composeNavigation(bytes){
  if(base.hash(bytes)!==NAVIGATION_SHA)throw Error('sealed original navigation mismatch');
@@ -93,6 +116,7 @@ function prepare(options){
  p.source=base.replaceOnce(p.source,"require('../20261104-stronghold-current-request-native/title-driver.cjs').titleEnter",`require(${JSON.stringify(__filename)}).titleEnter`);
  p.evidence.titleRecognition={driver:DRIVER,driverSHA256:DRIVER_SHA,reference:REFERENCE,referenceSHA256:REFERENCE_SHA,allPixels:true,freshnessAndReviewUnchanged:true};
  p.evidence.menuRecognition={navigation:NAVIGATION,navigationSHA256:NAVIGATION_SHA,reference:MENU_REFERENCE,referenceSHA256:MENU_REFERENCE_SHA,allPixels:true,tiles:[20,15],limits:{changed:40,error:650,tileChanged:20,tileError:350},originalMenuDriverUnchanged:true};
+ p.evidence.typeRecognition={reference:TYPE_REFERENCE,referenceSHA256:TYPE_REFERENCE_SHA,allPixels:true,tiles:[70,7],limits:{changed:30,error:1400,tileChanged:5,tileError:350},originalMenuDriverUnchanged:true};
  p.evidence.compositionSHA256=base.hash(p.source);return p;
 }
-module.exports={crop,compare,titleScene,titleEnter,prepare,compileClosure,composeNavigation,menuScene,menuCrop,compareMenu,NAVIGATION,NAVIGATION_SHA,MENU_REFERENCE,MENU_REFERENCE_SHA,DRIVER,DRIVER_SHA,REFERENCE,REFERENCE_SHA};
+module.exports={crop,compare,titleScene,titleEnter,prepare,compileClosure,composeNavigation,menuScene,menuCrop,compareMenu,typeCrop,compareType,TYPE_REFERENCE,TYPE_REFERENCE_SHA,NAVIGATION,NAVIGATION_SHA,MENU_REFERENCE,MENU_REFERENCE_SHA,DRIVER,DRIVER_SHA,REFERENCE,REFERENCE_SHA};

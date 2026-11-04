@@ -36,8 +36,37 @@ if(fs.existsSync(onward+'menu-native-boundary-4.png')){
  assert.equal(api.titleScene(fs.readFileSync(onward+'title-boundary-0.png')),'title-dialog');
  assert.equal(api.titleScene(fs.readFileSync(onward+'title-boundary-2.png')),'main-menu');
  assert.equal(api.menuScene(fs.readFileSync(onward+'menu-native-boundary-0.png')),'main-menu');
- assert.equal(api.menuScene(fs.readFileSync(onward+'menu-native-boundary-4.png')),'unknown','first new onward blocker stays closed');
+ assert.equal(api.menuScene(fs.readFileSync(onward+'menu-native-boundary-4.png')),'crusader-type','demonstrated ChooseType mismatch repaired');
 }
+const type=fs.readFileSync(onward+'menu-native-boundary-4.png'),typeRef=base.retained(api.TYPE_REFERENCE);
+assert.equal(require(api.NAVIGATION).scene(type),'unknown');
+assert.equal(api.menuScene(typeRef),'crusader-type');assert.equal(api.menuScene(type),'crusader-type');
+assert.equal(base.hash(api.typeCrop(typeRef)),'1d414967a82a43f7f0b9a5228e1ca6f3c73595f2e3159e6436941e21c09b3fed');
+const typeStats=api.compareType(type);assert.equal(typeStats.changed,20);assert.equal(typeStats.error,1041);
+const freshRun='scratch/runs/20261104-stronghold-choosetype-recognition-onward/browser/';
+if(fs.existsSync(freshRun+'route-install-checkpoint.png')){
+ assert.equal(api.titleScene(fs.readFileSync(freshRun+'title-boundary-0.png')),'title-dialog');
+ assert.equal(api.titleScene(fs.readFileSync(freshRun+'title-boundary-2.png')),'main-menu');
+ assert.equal(api.menuScene(fs.readFileSync(freshRun+'menu-native-boundary-4.png')),'crusader-type');
+ const checkpoint=fs.readFileSync(freshRun+'route-install-checkpoint.png');
+ assert.equal(api.menuScene(checkpoint),'crusader-type');
+ assert.equal(api.compileClosure(base.retained(path.resolve('scratch/runs/20261104-stronghold-setup-preset-native-world/navigation.cjs')).toString(),path.resolve('scratch/runs/20261104-stronghold-setup-preset-native-world/navigation.cjs'),'').scene(checkpoint),'unknown','following exact route guard remains closed');
+}
+const typeNegatives=[['wrong scene',menu],['title',real]];
+for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1],[5,5]]){
+ const p=PNG.sync.read(type),q=PNG.sync.read(type);
+ for(let y=340;y<375;y++)for(let x=235;x<655;x++){
+  const o=(y*1200+x)*4,s=((y+dy)*1200+x+dx)*4;q.data.set(p.data.subarray(s,s+4),o);
+ }const png=PNG.sync.write(q);assert.equal(api.compareType(png).accepted,false);typeNegatives.push(['shift '+dx+','+dy,png]);
+}
+const tile=PNG.sync.read(typeRef);for(let x=235;x<241;x++)tile.data[(340*1200+x)*4]^=1;
+assert.equal(api.compareType(PNG.sync.write(tile)).accepted,false,'tile changed limit despite global pass');
+typeNegatives.push(['tile concentrated',PNG.sync.write(tile)]);
+const tileError=PNG.sync.read(typeRef);for(let x=235;x<238;x++){const o=(340*1200+x)*4;tileError.data[o]=tileError.data[o]<128?255:0;}
+assert.equal(api.compareType(PNG.sync.write(tileError)).accepted,false,'tile error despite global pass');
+typeNegatives.push(['tile error',PNG.sync.write(tileError)]);
+assert.throws(()=>api.menuScene(PNG.sync.write(new PNG({width:420,height:35}))),/geometry/);
+const typeAlpha=PNG.sync.read(type);typeAlpha.data[(340*1200+235)*4+3]=0;assert.throws(()=>api.compareType(PNG.sync.write(typeAlpha)),/nonopaque/);
 const menuStats=api.compareMenu(menu);assert.equal(menuStats.changed,29);assert.equal(menuStats.error,464);
 const menuNegatives=[];
 for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1],[5,5]]){
@@ -76,6 +105,26 @@ async function menuGate(mode,png=menu){
  await assert.rejects(()=>d.activate(),mode==='accepted'?/offline menu move reached/:mode==='bad-review'?/review mismatch/:mode==='stale-tick'?/crossed execution/:mode==='foreign-target'||mode==='stale-pixels'?/stale menu review/:/main menu required|geometry/);
  assert.equal(inputs,mode==='accepted'?1:0);
 }
+// Execute original qualified capture, review, whole-game identity and transition
+// checks before a dependent input sentinel. No guest or browser execution.
+const navigation=api.compileClosure(api.composeNavigation(base.retained(api.NAVIGATION)),api.NAVIGATION,'');
+const typeState=JSON.parse(fs.readFileSync(onward+'menu-native-boundary-4.json')).state;
+async function typeGate(mode,png=type){
+ let shots=0,inputs=0;const geometry=typeState.main.geometry;
+ const dom={session:'offline-type-gate',timeOrigin:1,href:typeState.main.href,version:'fixture',renderer:1,host:2,canvas:3,presentation:4,dpr:1,rect:geometry.rect,visualViewport:{width:1200,height:900,scale:1,offsetLeft:0,offsetTop:0}};
+ const io={state:async()=>structuredClone(typeState),controls:()=>({keys:[],buttons:[]}),capture:async()=>{
+  shots++;const state=structuredClone(typeState);let image=png;
+  if(shots===2){if(mode==='stale-tick')state.main.tick.steps++;
+   if(mode==='foreign-target')state.workers[0].id='foreign';
+   if(mode==='stale-pixels'){const p=PNG.sync.read(png);p.data[(600*1200+600)*4]^=1;image=PNG.sync.write(p);}}
+  return {png:image,state,geometry};}};
+ const d=new MenuDriver(io,{page:{evaluate:async()=>structuredClone(dom)},review:async c=>({sha256:mode==='bad-review'?'foreign':c.sha256,scene:c.scene})});
+ const action=async()=>{const c=await d.capture();navigation.assertTransition(c.png,'crusader-type');await d.reviewed({...c,scene:'crusader-type'});
+  const fresh=await d.capture();if(fresh.presentationSHA256!==c.presentationSHA256)throw Error('stale type review');
+  inputs++;throw Error('offline Custom Game move reached');};
+ await assert.rejects(action,mode==='accepted'?/offline Custom Game move reached/:mode==='bad-review'?/review mismatch/:mode==='stale-tick'?/crossed execution/:mode.startsWith('stale')||mode==='foreign-target'?/stale type review/:/unexpected menu state|geometry/);
+ assert.equal(inputs,mode==='accepted'?1:0);
+}
 const state=JSON.parse(fs.readFileSync(prior+'title-boundary-0.json')).state;
 const geometry=state.main.geometry;
 const dom={session:'offline-personal-gate-fixture',timeOrigin:1,href:state.main.href,version:'fixture',renderer:1,host:2,canvas:3,presentation:4,dpr:1,rect:geometry.rect,visualViewport:{width:1200,height:900,scale:1,offsetLeft:0,offsetTop:0}};
@@ -92,8 +141,10 @@ async function gate(mode){
  await assert.rejects(action,mode==='accepted'?/offline Enter reached/:mode==='bad-review'?/review mismatch/:mode==='stale-tick'?/crossed execution/:/stale game output\/identity/);
  assert.equal(inputs,mode==='accepted'?1:0);
 }
-(async()=>{for(const mode of ['accepted','bad-review','stale-tick','foreign-target','stale-pixels']){await gate(mode);await menuGate(mode);}
+(async()=>{for(const mode of ['accepted','bad-review','stale-tick','foreign-target','stale-pixels']){await gate(mode);await menuGate(mode);await typeGate(mode);}
+ for(const [,png]of typeNegatives)await typeGate('negative',png);
+ await typeGate('negative',PNG.sync.write(new PNG({width:420,height:35})));
  for(const [,png]of menuNegatives)await menuGate('negative',png);
  await menuGate('negative',PNG.sync.write(new PNG({width:220,height:30})));
- console.log(JSON.stringify({pass:true,realCaptureAccepted:true,stats,menuStats,shifted:5,cropped:true,wrongScene:true,menuNegativeBeforeInput:menuNegatives.length+1,staleAndForeignBeforeInput:true,originalReviewAndFreshness:true}));
+ console.log(JSON.stringify({pass:true,realCaptureAccepted:true,stats,menuStats,typeStats,typeNegativeBeforeInput:typeNegatives.length+1,shifted:5,cropped:true,wrongScene:true,menuNegativeBeforeInput:menuNegatives.length+1,staleAndForeignBeforeInput:true,originalReviewAndFreshness:true}));
 })().catch(e=>{console.error(e);process.exitCode=1;});
