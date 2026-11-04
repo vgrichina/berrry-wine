@@ -11,6 +11,7 @@ const BOUNDARY = Object.freeze({
   callbackTable: 0x42a200, currentCallbacks: 0x42b230,
   idle: 0x40518f, nonzeroDt: 0x4051a9, gameIdle: 0x4040de,
   display: 0x40eef1, game2Pointer: 0x43d284, dtOffset: 0x30,
+  gamePointer: 0x43d224,
 });
 
 function inspectOriginal(bytes) {
@@ -28,10 +29,31 @@ function inspectOriginal(bytes) {
   at(0x40518f, '558bece8e8740000e843e1ffffa184d24300837830007502eb19e830efffffe8245d0000e8f83b0000e887af0000e826b300005dc3');
   at(0x41049a, 'a130b24200ff10832534b2420000eb08a130b24200ff5004');
   at(0x4104ce, '558bec8b4508a330b242005dc3');
+  at(0x403229, '558beca124d24300c7400c01000000');
+  at(0x4033ee, '8b45088b40046bc00c8b0d24d243008b098b440104d905b8454200d95808');
   return { sha256: ORIGINAL_SHA, bytes: bytes.length, ...BOUNDARY,
     status: 'static-candidate-only',
     distinction: 'idle entry includes zero-dt polls; nonzero-dt path calls Game_Idle once; physics may substep',
     runtimeOwnershipVerified: false };
+}
+
+// Pinned Win32 Game/Player/Data layout, checked against original initData and
+// doCrashPlayer above. Reads only; speed > 0 is PLAYER_IS_ACTIVE in 0.70.
+function readLiveState(e, boundary) {
+  const buffer = e.memory.buffer, view = new DataView(buffer), translations = {};
+  const read = (name, va, floating = false) => {
+    const offset = e.guest_to_wasm(va) >>> 0;
+    if (offset < 0x100 || offset + 4 > buffer.byteLength) throw Error('untranslated live-player address ' + name);
+    const bits = view.getUint32(offset, true), value = floating ? view.getFloat32(offset, true) : bits;
+    translations[name] = { va, offset, bits, value }; return value;
+  };
+  const game = read('game', boundary.gamePointer);
+  const players = read('players', game), count = read('count', game + 4);
+  const winner = read('winner', game + 8) | 0, pause = read('pause', game + 12);
+  const data = read('playerOneData', players + 4), speed = read('speed', data + 8, true);
+  const direction = read('direction', data), trails = read('trails', data + 32), trailOffset = read('trailOffset', data + 36);
+  const live = count === 4 && winner === -1 && pause === 1 && Number.isFinite(speed) && speed > 0;
+  return { live, game, players, count, winner, pause, data, speed, direction, trails, trailOffset, translations };
 }
 
 function audit(root = path.resolve(__dirname, '..')) {
@@ -84,6 +106,11 @@ async function probeCompiled(wasmPath = 'build/wine-assembly.wasm') {
   new Uint8Array(memory.buffer).set(bytes, e.get_staging());
   assert(e.load_pe(bytes.length));
   const game = e.guest_alloc(4096) >>> 0, stack = e.guest_alloc(4096) >>> 0;
+  const liveGame = e.guest_alloc(4096) >>> 0, players = e.guest_alloc(4096) >>> 0, data = e.guest_alloc(4096) >>> 0;
+  e.guest_write32(BOUNDARY.gamePointer, liveGame); e.guest_write32(liveGame, players);
+  e.guest_write32(liveGame + 4, 4); e.guest_write32(liveGame + 8, 0xffffffff);
+  e.guest_write32(liveGame + 12, 1); e.guest_write32(players + 4, data);
+  e.guest_write32(data + 8, 0x41080000);
   e.guest_write32(BOUNDARY.game2Pointer, game);
   e.guest_write32(BOUNDARY.currentCallbacks, BOUNDARY.callbackTable);
   const rows = [];
@@ -126,7 +153,7 @@ async function probeCompiled(wasmPath = 'build/wine-assembly.wasm') {
     e.guest_write32(BOUNDARY.currentCallbacks, rejected);
     const w = { instance, running: true, threadManager: { threads: new Map() },
       _setLogicalFrame: (...args) => P._setLogicalFrame.call(owner, ...args) };
-    const window = { wine: w, __gltronModuleObservation: { instances: [{ instance, generation: 1 }] },
+    const window = { wine: w, __gltronReadLiveState: readLiveState, __gltronModuleObservation: { instances: [{ instance, generation: 1 }] },
       __gltronGameplayReview: { name: 'compiled', capturedAtMs: 0, callbacks: BOUNDARY.callbackTable, generation: 1 } };
     const context = vm.createContext({ window, performance: { now: () => 1 }, DataView,
       document: { visibilityState: 'visible', addEventListener() {}, removeEventListener() {} },
@@ -147,6 +174,27 @@ async function probeCompiled(wasmPath = 'build/wine-assembly.wasm') {
     assert.equal(e.get_logical_frame_addr(), 0);
     guards.push({ rejected, offset: finished.rejection.translations.callbacks.offset,
       prearmRejected: true, intervalRejected: true, markerReleased: true });
+  }
+  for (const speedBits of [0xbf800000, 0, 0x7fc00000]) {
+    e.guest_write32(BOUNDARY.currentCallbacks, BOUNDARY.callbackTable);
+    e.guest_write32(data + 8, speedBits);
+    const w = { instance, running: true, threadManager: { threads: new Map() },
+      _setLogicalFrame: (...args) => P._setLogicalFrame.call(owner, ...args) };
+    const window = { wine: w, __gltronReadLiveState: readLiveState,
+      __gltronModuleObservation: { instances: [{ instance, generation: 1 }] },
+      __gltronGameplayReview: { name: 'compiled', capturedAtMs: 0, callbacks: BOUNDARY.callbackTable, generation: 1 } };
+    const context = vm.createContext({ window, performance: { now: () => 1 }, DataView,
+      document: { visibilityState: 'visible', addEventListener() {}, removeEventListener() {} }, setInterval: () => 1, clearInterval() {} });
+    const install = vm.runInContext('(' + installPageCounter.toString() + ')', context);
+    await assert.rejects(install(BOUNDARY, 'compiled', 'compiled'), /live player/);
+    assert.equal(window.__gltronCounterRejection.live.translations.speed.bits, speedBits);
+    assert.equal(e.get_logical_frame_addr(), 0);
+    e.guest_write32(data + 8, 0x41080000);
+    await install(BOUNDARY, 'compiled', 'compiled');
+    e.guest_write32(data + 8, speedBits);
+    assert.throws(() => window.__gltronCounter.read(), /live player/);
+    assert.equal(window.__gltronCounter.finish().rejection.live.translations.speed.bits, speedBits);
+    guards.push({ speedBits, prearmRejected: true, intervalRejected: true, markerReleased: true });
   }
   return { wasm: { path: wasmPath, sha256: sha256(wasm), bytes: wasm.length },
     original: { sha256: ORIGINAL_SHA }, rows, guards, status: 'compiled-original-boundary-pass',
@@ -177,6 +225,8 @@ function summarizeCounterWindow(rows, { maxReadMs = 5, maxGapMs = 1500,
       throw Error('wrong gameplay marker or scene');
     if (r.tierGuard !== 0 || r.chain !== first.chain || r.uop !== first.uop ||
         ![0, 1].includes(r.chain) || ![0, 1].includes(r.uop)) throw Error('execution tier changed');
+    if (!r.live?.live || r.live.game !== first.live?.game || r.live.data !== first.live?.data)
+      throw Error('live player or round changed');
     if (i) {
       const prev = rows[i - 1];
       if (r.beforeMs < prev.afterMs || r.afterMs - prev.beforeMs > maxGapMs)
@@ -223,6 +273,8 @@ async function installPageCounter(boundary, token, reviewName) {
   const generation = generationRow?.generation;
   if (!generation) throw Error('owning module generation not observed');
   const initial = { chain: e.get_block_chain(), uop: e.get_uop() };
+  if (typeof window.__gltronReadLiveState !== 'function') throw Error('live player reader absent');
+  let initialLive;
   const rows = [], state = { token, rows, invalid: null, generation, timer: null };
   const invalidate = why => { state.invalid ||= why; };
   const read32 = va => {
@@ -266,6 +318,10 @@ async function installPageCounter(boundary, token, reviewName) {
         r.tierGuard || r.chain !== initial.chain || r.uop !== initial.uop || r.threadId !== 1) {
       state.rejection ||= r;
       throw Error('scene, marker, owner or tier changed');
+    }
+    r.live = window.__gltronReadLiveState(e, boundary);
+    if (!r.live.live || r.live.game !== initialLive.game || r.live.data !== initialLive.data) {
+      state.rejection ||= r; throw Error('live player lost or round replaced');
     }
     r.observerMs = performance.now() - observationStartMs;
     rows.push(r); return r;
@@ -311,6 +367,13 @@ async function installPageCounter(boundary, token, reviewName) {
       throw Error('not active gameCallbacks; observed 0x' + callbacksBeforeArm.value.toString(16));
     throw Error('fresh reviewed gameplay required at arming');
   }
+  initialLive = window.__gltronReadLiveState(e, boundary);
+  if (!initialLive.live) {
+    window.__gltronCounterRejection = { code: 'PLAYER_NOT_LIVE', token, generation,
+      review, armAtMs, callbacks: callbacksBeforeArm, live: initialLive,
+      marker: e.get_logical_frame_addr() >>> 0, count: e.get_logical_frame_count() >>> 0 };
+    throw Error('live player required before arming');
+  }
   children();
   await w._setLogicalFrame(boundary.nonzeroDt, 0);
   window.__gltronCounter = state;
@@ -327,7 +390,7 @@ async function installPageCounter(boundary, token, reviewName) {
   return { token, generation, initial, review, armAtMs, reviewAgeMs: armAtMs - review.capturedAtMs, row: rows[0] };
 }
 
-module.exports = { BOUNDARY, ORIGINAL_SHA, sha256, inspectOriginal, audit,
+module.exports = { BOUNDARY, ORIGINAL_SHA, sha256, inspectOriginal, audit, readLiveState,
   probeCompiled, summarizeCounterWindow, installPageCounter };
 if (require.main === module) {
   const args = process.argv.slice(2);

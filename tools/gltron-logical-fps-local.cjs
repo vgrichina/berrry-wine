@@ -5,7 +5,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
-const { BOUNDARY, sha256, audit, probeCompiled, installPageCounter, summarizeCounterWindow } = require('./gltron-logical-fps.cjs');
+const { BOUNDARY, sha256, audit, probeCompiled, installPageCounter, summarizeCounterWindow, readLiveState } = require('./gltron-logical-fps.cjs');
 const ROOT = path.resolve(__dirname, '..');
 const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
 const write = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
@@ -154,8 +154,11 @@ function pageState() {
   const w = window.wine, e = w?.instance?.exports, obs = window.__gltronModuleObservation;
   const bridge = window.__gltronBridge, local = bridge?.local;
   const read = va => e ? e.guest_read32(va) >>> 0 : null;
+  let live = null;
+  try { if (e) live = window.__gltronReadLiveState(e, { gamePointer: 0x43d224 }); }
+  catch (error) { live = { readError: error.message }; }
   return { at: new Date().toISOString(), atMs: performance.now(), visibility: document.visibilityState,
-    running: w?.running, stopped: w?._stopped, guestWorker: !!w?.guestWorker,
+    running: w?.running, stopped: w?._stopped, guestWorker: !!w?.guestWorker, live,
     backend: w?.threadManager?.backend, frozen: window.WineFrozen?.status(),
     modules: obs?.modules, instances: obs?.instances.map(r => ({ sha256: r.sha256, generation: r.generation,
       owningMain: r.instance === w?.instance, threadId: r.instance.exports.get_current_thread_id?.() })),
@@ -172,8 +175,8 @@ function pageState() {
 }
 
 function requireReleases(board) {
-  const mdk = board.split('\n').findLast(line => /mdk2-continuous-(?:construction-)?onward LOCAL HEAVY RELEASE/.test(line));
-  if (!mdk) throw Error('requires explicit mdk2-continuous-construction-onward release');
+  const mdk = board.split('\n').findLast(line => /mdk2-demand-entry(?:-continuity)? LOCAL HEAVY RELEASE/.test(line));
+  if (!mdk) throw Error('requires explicit fresh mdk2-demand-entry-continuity release');
   return { mdk };
 }
 
@@ -218,6 +221,7 @@ async function within(operation, timeoutMs, label) {
 async function captureForReview(page, out, name) {
   const file = path.join(out, name + '.png');
   if (!/^[a-z0-9-]+$/.test(name) || fs.existsSync(file)) throw Error('fresh capture required');
+  const capturedAtEpochMs = Date.now();
   const review = await page.evaluate(name => {
     const w = window.wine, e = w?.instance?.exports;
     return window.__gltronGameplayReview = { name, capturedAtMs: performance.now(),
@@ -225,17 +229,143 @@ async function captureForReview(page, out, name) {
       generation: window.__gltronModuleObservation?.instances.find(r => r.instance === w?.instance)?.generation };
   }, name);
   await page.screenshot({ path: file });
-  return { ...review, path: file, sha256: sha256(fs.readFileSync(file)) };
+  return { ...review, capturedAtEpochMs, path: file, sha256: sha256(fs.readFileSync(file)) };
+}
+
+function reviewedCapture(out, name, now = Date.now()) {
+  if (!/^[a-z0-9-]+$/.test(name)) throw Error('exact named review required');
+  const capture = JSON.parse(fs.readFileSync(path.join(out, name + '-capture-start.json')));
+  const expected = path.join(out, name + '.png');
+  if (capture.name !== name || capture.path !== expected || sha256(fs.readFileSync(expected)) !== capture.sha256)
+    throw Error('exact reviewed capture required');
+  const ageMs = now - capture.capturedAtEpochMs;
+  if (!Number.isFinite(ageMs) || ageMs < 0 || ageMs > 5000) throw Error('operator VIEW-to-action exceeds five seconds: ' + ageMs);
+  return { capture, reviewedAtEpochMs: now, ageMs };
+}
+
+function requireHandoffProbe(run, now = Date.now()) {
+  const out = path.join(run, 'offline-relay');
+  const proof = JSON.parse(fs.readFileSync(path.join(out, 'review-handoff.json')));
+  if (!proof.ok || proof.action !== 'review-only' || !Number.isFinite(proof.review?.reviewedAtEpochMs) ||
+      now < proof.review.reviewedAtEpochMs || now - proof.review.reviewedAtEpochMs > 300000)
+    throw Error('complete fresh offline VIEW/action rehearsal required before Chrome');
+  const review = reviewedCapture(out, proof.review.capture.name, proof.review.reviewedAtEpochMs);
+  if (JSON.stringify(review) !== JSON.stringify(proof.review)) throw Error('offline handoff proof changed');
+  return proof;
+}
+
+// This exact client is also exercised against the actual shot/ACK producer
+// offline. Its stdout contains the ACK; the operator relays capture.path to
+// view_image in the same tool invocation. No automatic claim of human review.
+async function commandAck(out, command, timeoutMs = 55000) {
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 55000) throw Error('bounded ACK required');
+  if (command.action === 'review-only') {
+    let proof;
+    try { proof = { ok: true, action: command.action, review: reviewedCapture(out, command.review) }; }
+    catch (error) { write(path.join(out, 'review-handoff.json'), { ok: false, action: command.action, error: error.message, atEpochMs: Date.now() }); throw error; }
+    write(path.join(out, 'review-handoff.json'), proof); return proof;
+  }
+  // No guest command is queued when the actual host capture/review handoff is
+  // already stale. The browser monotonic five-second guard still decides arm.
+  if (command.action === 'measure') reviewedCapture(out, command.review);
+  const commands = path.join(out, 'commands');
+  const nums = fs.readdirSync(commands).filter(n => /^\d+\.json$/.test(n)).map(n => Number(n.slice(0, -5)));
+  const n = nums.length ? Math.max(...nums) + 1 : 0;
+  if (n && !JSON.parse(fs.readFileSync(path.join(out, 'reply-' + (n - 1) + '.json'))).ok) throw Error('prior ACK failed');
+  if (fs.existsSync(path.join(out, 'cleanup.json'))) throw Error('runtime closed');
+  const file = path.join(commands, n + '.json');
+  fs.writeFileSync(file + '.tmp', JSON.stringify(command)); fs.renameSync(file + '.tmp', file);
+  const end = Date.now() + timeoutMs;
+  while (Date.now() < end) {
+    const reply = path.join(out, 'reply-' + n + '.json');
+    if (fs.existsSync(reply)) {
+      const ack = JSON.parse(fs.readFileSync(reply));
+      if (!ack.ok) throw Error('command rejected: ' + ack.error);
+      if (command.action === 'shot' || command.action === 'measure') {
+        const capture = ack.capture, expected = path.join(out, (command.action === 'shot' ? command.name : 'after-measure') + '.png');
+        if (!capture || capture.path !== expected || !Number.isFinite(capture.capturedAtMs) ||
+            sha256(fs.readFileSync(expected)) !== capture.sha256) throw Error('exact capture ACK required');
+      }
+      return { number: n, ...ack };
+    }
+    if (fs.existsSync(path.join(out, 'first-failure.json'))) throw Error('runtime first fault');
+    await pause(10);
+  }
+  throw Error('ACK deadline; never resend');
+}
+
+async function shotCommand(page, out, name) {
+  const capture = await captureForReview(page, out, name);
+  write(path.join(out, name + '-capture-start.json'), capture);
+  write(path.join(out, name + '.json'), await page.evaluate(pageState));
+  return capture;
+}
+
+// Read-only ray distances from the original trail segments; native A/S is the
+// sole gameplay mutation. Exclude the player's unfinished current segment.
+function steeringSample(boundary) {
+  const e = window.wine.instance.exports, live = window.__gltronReadLiveState(e, boundary);
+  const view = new DataView(e.memory.buffer);
+  const read = (va, float = false) => {
+    const at = e.guest_to_wasm(va) >>> 0;
+    if (at < 256 || at + 4 > view.byteLength) throw Error('untranslated steering address');
+    return float ? view.getFloat32(at, true) : view.getUint32(at, true);
+  };
+  const callbacks = read(boundary.currentCallbacks);
+  if (!live.live || callbacks !== boundary.callbackTable) return { live, callbacks };
+  if (live.direction > 3 || live.trailOffset >= 1000) throw Error('invalid steering data');
+  const current = live.trails + 16 * live.trailOffset;
+  const position = [read(current, true) + read(current + 8, true), read(current + 4, true) + read(current + 12, true)];
+  const size = read(read(boundary.game2Pointer) + 20);
+  if (size < 1 || size > 10000 || position.some(n => !Number.isFinite(n))) throw Error('invalid arena');
+  const segments = [[0, 0, size, 0], [size, 0, 0, size], [size, size, -size, 0], [0, size, 0, -size]];
+  for (let p = 0; p < live.count; p++) {
+    const data = read(live.players + p * 12 + 4), trails = read(data + 32), count = read(data + 36);
+    if (count >= 1000) throw Error('bounded trails exceeded');
+    if (read(data + 20, true) < 3.5) continue;
+    for (let j = 0; j <= count; j++) {
+      if (p === 0 && j === count) break;
+      const va = trails + 16 * j;
+      const segment = [0, 4, 8, 12].map(off => read(va + off, true));
+      if (segment.some(n => !Number.isFinite(n))) throw Error('invalid trail');
+      segments.push(segment);
+    }
+  }
+  return { atMs: performance.now(), live, callbacks, position, segments };
+}
+
+function chooseSteering(sample) {
+  if (!sample.live.live || sample.callbacks !== BOUNDARY.callbackTable) throw Error('live player lost during ordinary steering');
+  const dirs = [[0, -1], [-1, 0], [0, 1], [1, 0]], [x, y] = sample.position;
+  const distances = [0, 3, 1].map(turn => {
+    const [dx, dy] = dirs[(sample.live.direction + turn) % 4];
+    let nearest = 10000;
+    for (const [sx, sy, wx, wy] of sample.segments) {
+      const det = dx * wy - dy * wx;
+      if (!det) continue;
+      const t = ((sx - x) * wy - (sy - y) * wx) / det;
+      const u = ((sx - x) * dy - (sy - y) * dx) / det;
+      if (t > 0.01 && u >= 0 && u <= 1) nearest = Math.min(nearest, t);
+    }
+    return nearest;
+  });
+  return { distances, key: distances[0] < 90 ? (distances[1] >= distances[2] ? 'a' : 's') : null };
+}
+
+async function balancedKey(page, key, held, wait = pause, holdMs = 25) {
+  await page.keyboard.down(key); held.add(key);
+  try { await wait(holdMs); } finally { await page.keyboard.up(key); held.delete(key); }
 }
 
 async function runPair(run) {
+  const handoff = requireHandoffProbe(run);
   const releases = requireReleases(fs.readFileSync(path.join(ROOT, 'messageboard.txt'), 'utf8'));
   const pins = JSON.parse(fs.readFileSync(path.join(run, 'runtime-pins.json')));
   validateShellPins(pins.pins);
   validateRequiredPins(pins.pins, (await bootInputs()).paths);
   for (const pin of pins.pins) if (sha256(fs.readFileSync(path.join(ROOT, pin.path))) !== pin.sha256) throw Error('pin changed: ' + pin.path);
   if (Date.now() + BROWSER_MS + CLEANUP_MS > HARD_CLEANUP_END || Date.now() + BROWSER_MS > HARD_BROWSER_END) throw Error('full reserve unavailable');
-  write(path.join(run, 'resource-releases.json'), releases);
+  write(path.join(run, 'resource-releases.json'), { ...releases, handoff });
   for (const module of ['build/wine-assembly.wasm', 'build/wine-assembly.compat.wasm']) {
     write(path.join(run, 'preflight-' + path.basename(module) + '.json'), await probeCompiled(module));
   }
@@ -249,10 +379,11 @@ async function runPair(run) {
     const save = (name, value) => write(path.join(out, name + '.json'), value);
     const log = (name, value) => fs.appendFileSync(path.join(out, name + '.jsonl'), JSON.stringify({ at: new Date().toISOString(), ...value }) + '\n');
     let browser, page, server, chromeStarted, timer, closed = false, failure = null, number = 0, closingPromise, launchPromise;
+    let driving = false, drivePromise;
     const held = new Set();
     function close(reason) {
       if (closingPromise) return closingPromise;
-      closed = true; clearTimeout(timer);
+      closed = true; driving = false; clearTimeout(timer);
       closingPromise = (async () => {
       const port = server?.address();
       const cleanupDeadline = Math.min(Date.now() + CLEANUP_MS, HARD_CLEANUP_END);
@@ -263,6 +394,7 @@ async function runPair(run) {
       };
       let cleanupError = null;
       try {
+        if (drivePromise) await within(() => drivePromise, remaining(), 'ordinary input completion');
         for (const key of held) await within(() => page.keyboard.up(key), remaining(), 'key release');
         if (!browser && launchPromise) await within(() => launchPromise, remaining(), 'pending launch cleanup');
         if (browser) await normalClose(browser, row => log('lifecycle', row), remaining());
@@ -315,6 +447,7 @@ async function runPair(run) {
       page = await browser.newPage();
       page.setDefaultTimeout(60000); await page.setViewport({ width: 1200, height: 900 });
       await page.setCacheEnabled(false); await page.evaluateOnNewDocument(preload);
+      await page.evaluateOnNewDocument('window.__gltronReadLiveState = ' + readLiveState.toString());
       page.on('console', m => log('console', { type: m.type(), text: m.text().slice(0, 12000) }));
       page.on('pageerror', error => { failure ||= String(error); log('pageerror', { error: String(error) }); });
       const url = 'http://127.0.0.1:' + server.address().port + '/index.html?debug&candidates&gl-renderer=' + backend;
@@ -345,15 +478,42 @@ async function runPair(run) {
           let capture = null;
           await within(async () => {
           if (c.action === 'shot') {
-            capture = await captureForReview(page, out, c.name);
-            save(c.name + '-capture-start', capture);
-            save(c.name, await page.evaluate(pageState));
-          } else if (c.action === 'key') {
+            capture = await shotCommand(page, out, c.name);
+          } else if (c.action === 'key' || c.action === 'drive') {
             if (!['Enter', 'Escape', 'a', 's', 'ArrowLeft', 'ArrowRight'].includes(c.key) || !c.review || !fs.existsSync(path.join(out, c.review + '.png'))) throw Error('reviewed original route required');
+            if (c.action === 'drive' && (driving || c.key !== 'Enter')) throw Error('single reviewed unpause drive required');
             await page.focus('#screen');
-            await page.keyboard.down(c.key); held.add(c.key); await pause(100);
-            await page.keyboard.up(c.key); held.delete(c.key);
+            await balancedKey(page, c.key, held, pause, 100);
+            if (c.action === 'drive') {
+              await page.waitForFunction(boundary => {
+                const e = window.wine.instance.exports;
+                return e.guest_read32(boundary.currentCallbacks) === boundary.callbackTable && window.__gltronReadLiveState(e, boundary).live;
+              }, { timeout: 3000 }, BOUNDARY);
+              driving = true;
+              drivePromise = (async () => {
+                let lastTurn = 0;
+                while (driving && !closed && !failure) {
+                  const sample = await page.evaluate(steeringSample, BOUNDARY);
+                  // Preserve exact first loss before choosing or sending input.
+                  log('steering', { sample });
+                  const decision = chooseSteering(sample);
+                  if (decision.key && Date.now() - lastTurn >= 300) {
+                    log('steering-input', { ...decision, direction: sample.live.direction, trailOffset: sample.live.trailOffset });
+                    await balancedKey(page, decision.key, held); lastTurn = Date.now();
+                  }
+                  await pause(100);
+                }
+              })().catch(async error => {
+                failure ||= error.stack || String(error);
+                save('first-failure', { error: failure, source: 'ordinary steering' });
+                try {
+                  save('steering-rejected-owner', await page.evaluate(pageState));
+                  await page.screenshot({ path: path.join(out, 'steering-rejected.png') });
+                } catch (captureError) { save('steering-rejected-capture-error', { error: String(captureError) }); }
+              });
+            }
           } else if (c.action === 'measure') {
+            if (!driving) throw Error('ordinary gameplay maintenance required');
             if (!c.review || !fs.existsSync(path.join(out, c.review + '.png'))) throw Error('gameplay review required');
             const token = backend + '-' + Date.now();
             let armed;
@@ -372,10 +532,10 @@ async function runPair(run) {
             save('armed', armed);
             await pause(5500);
             const raw = await page.evaluate(() => window.__gltronCounter.finish()); save('raw-counter-window', raw);
-            await page.screenshot({ path: path.join(out, 'after-measure.png') }); save('after-measure', await page.evaluate(pageState));
+            capture = await shotCommand(page, out, 'after-measure');
             if (raw.invalid) throw Error(raw.invalid);
             const result = summarizeCounterWindow(raw.rows); save('measurement', result);
-            console.log('MEASURED ' + backend + ' ' + JSON.stringify(result));
+            console.log('INTERVAL_PENDING_PERSONAL_AFTER_REVIEW ' + backend + ' ' + JSON.stringify(result));
           } else if (c.action === 'next' || c.action === 'quit') {
             if (c.action === 'quit') stopped = true;
             await close('operator normal closure');
@@ -384,6 +544,10 @@ async function runPair(run) {
           save('reply-' + i, { ok: true, at: new Date().toISOString(), capture });
         } catch (error) {
           failure ||= error.stack || String(error); save('reply-' + i, { ok: false, error: failure });
+          try {
+            save('command-rejected-owner', await within(() => page.evaluate(pageState), 5000, 'firstfault owner'));
+            await within(() => page.screenshot({ path: path.join(out, 'command-rejected.png') }), 5000, 'firstfault capture');
+          } catch (captureError) { save('command-rejected-capture-error', { error: String(captureError) }); }
         }
       }
       if (failure) { stopped = true; save('first-failure', { error: failure }); }
@@ -394,10 +558,15 @@ async function runPair(run) {
   write(path.join(run, 'runtime-summary.json'), { browserMs, stopped, finishedAt: new Date().toISOString(), boxId: null, boxState: null, boxExpiry: null });
 }
 
-module.exports = { prepare, preload, pageState, captureForReview, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
+module.exports = { prepare, preload, pageState, captureForReview, shotCommand, commandAck, reviewedCapture, requireHandoffProbe, steeringSample, chooseSteering, balancedKey, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
 if (require.main === module) {
   const [action, run] = process.argv.slice(2);
-  if (!run || !['--prepare', '--run'].includes(action)) throw Error('usage: --prepare|--run RUN');
+  if (action === '--command') {
+    commandAck(path.resolve(run, process.argv[4]), JSON.parse(process.argv[5]))
+      .then(ack => console.log(JSON.stringify(ack))).catch(error => { console.error(error); process.exitCode = 1; });
+  } else {
+  if (!run || !['--prepare', '--run'].includes(action)) throw Error('usage: --prepare|--run RUN or --command RUN BACKEND JSON');
   Promise.resolve(action === '--prepare' ? prepare(path.resolve(run)) : runPair(path.resolve(run)))
     .catch(error => { console.error(error); process.exitCode = 1; });
+  }
 }

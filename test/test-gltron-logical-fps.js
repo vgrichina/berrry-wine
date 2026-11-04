@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const { BOUNDARY, inspectOriginal, summarizeCounterWindow, probeCompiled,
-  installPageCounter } = require('../tools/gltron-logical-fps.cjs');
+  installPageCounter, readLiveState } = require('../tools/gltron-logical-fps.cjs');
 let passed = 0;
 function check(name, fn) { fn(); passed++; console.log('PASS ' + name); }
 // Synthetic arithmetic fixtures, never published as gameplay observations.
@@ -12,7 +12,7 @@ function samples() {
     afterMs: 100.1 + i * 250, count: i * 5, owner: 'synthetic-owner',
     endpoint: 'page-main', threadId: 1, generation: 1,
     currentCallbacks: BOUNDARY.callbackTable, marker: BOUNDARY.nonzeroDt,
-    pace: 0, tierGuard: 0, chain: 1, uop: 1 }));
+    pace: 0, tierGuard: 0, chain: 1, uop: 1, live: { live: true, game: 900, data: 1000 } }));
 }
 check('counter delta needs no callback timestamps and brackets the rate', () => {
   const out = summarizeCounterWindow(samples());
@@ -80,6 +80,12 @@ async function pageFixture({ installNow = true } = {}) {
     [BOUNDARY.currentCallbacks, 256], [BOUNDARY.game2Pointer, 260], [0x800030, 264] ]);
   view.setUint32(256, BOUNDARY.callbackTable, true);
   view.setUint32(260, 0x800000, true); view.setUint32(264, 0, true);
+  for (const [va, offset, value] of [[BOUNDARY.gamePointer, 300, 0x900000],
+    [0x900000, 304, 0x910000], [0x900004, 308, 4], [0x900008, 312, 0xffffffff],
+    [0x90000c, 316, 1], [0x910004, 320, 0x920000], [0x920008, 324, 0x41080000],
+    [0x920000, 328, 0], [0x920020, 332, 0x930000], [0x920024, 336, 0]]) {
+    addr.set(va, offset); view.setUint32(offset, value, true);
+  }
   let marker = 0, pace = 0, tier = 0, frozen = false;
   const e = { memory, get_current_thread_id: () => 1, get_image_base: () => 0x400000,
     get_logical_frame_addr: () => marker, get_logical_frame_pace: () => pace,
@@ -88,7 +94,7 @@ async function pageFixture({ installNow = true } = {}) {
   const instance = { exports: e }, threadManager = { threads: new Map() };
   const wine = { instance, running: true, threadManager,
     _setLogicalFrame: async (a, p) => { marker = a; pace = p; } };
-  const window = { wine, WineFrozen: { status: () => ({ frozen }) },
+  const window = { wine, __gltronReadLiveState: readLiveState, WineFrozen: { status: () => ({ frozen }) },
     __gltronGameplayReview: { name: 'fixture', capturedAtMs: 100, callbacks: BOUNDARY.callbackTable, generation: 1 },
     __gltronModuleObservation: { instances: [{ instance, generation: 1 }] } };
   let now = 100;
@@ -102,6 +108,28 @@ async function pageFixture({ installNow = true } = {}) {
     setTier: v => { tier = v; }, setFrozen: v => { frozen = v; } };
 }
 async function main() {
+  for (const [offset, bits] of [[324, 0xbf800000], [324, 0], [324, 0x7fc00000], [316, 2], [312, 1]]) {
+    const f = await pageFixture({ installNow: false }); f.view.setUint32(offset, bits, true);
+    await assert.rejects(f.install(BOUNDARY, 'dead-fixture', 'fixture'), /live player/);
+    check('actual producer refuses dead/finished player despite exact gameCallbacks ' + offset + ':' + bits, () => {
+      assert.equal(f.e.get_logical_frame_addr(), 0);
+      assert.equal(f.window.__gltronCounterRejection.live.live, false);
+    });
+  }
+  const deadInterval = await pageFixture(); deadInterval.view.setUint32(324, 0xbf800000, true);
+  assert.throws(() => deadInterval.state.read(), /live player/);
+  check('exact callback match cannot hide a player-one crash during interval', () => {
+    const out = deadInterval.state.finish();
+    assert.equal(out.rejection.live.translations.speed.bits, 0xbf800000);
+    assert.equal(out.rejection.currentCallbacks, BOUNDARY.callbackTable);
+    assert.equal(deadInterval.e.get_logical_frame_addr(), 0);
+  });
+  check('summary rejects missing liveness and replaced round', () => {
+    for (const live of [undefined, { live: false }, { live: true, game: 901, data: 1000 }]) {
+      const rows = samples(); rows[10].live = live;
+      assert.throws(() => summarizeCounterWindow(rows), /live player/);
+    }
+  });
   for (const patch of [{ capturedAtMs: -5000 }, { capturedAtMs: 200 }, { generation: 2 }, { callbacks: 0x42a860 }, { name: 'other' }]) {
     const f = await pageFixture({ installNow: false });
     Object.assign(f.window.__gltronGameplayReview, patch);
@@ -177,7 +205,36 @@ async function main() {
     assert.equal(out.rows.length, 64); assert.match(out.invalid, /capacity/);
     assert.equal(bounded.e.get_logical_frame_addr(), 0);
   });
-  const { captureForReview, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within } = require('../tools/gltron-logical-fps-local.cjs');
+  const { captureForReview, shotCommand, commandAck, steeringSample, chooseSteering, balancedKey, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within } = require('../tools/gltron-logical-fps-local.cjs');
+  const localCandidate = require('../tools/gltron-logical-fps-local.cjs');
+  assert.equal(typeof localCandidate.requireHandoffProbe, 'function', 'actual runner must gate Chrome on the complete VIEW-to-reviewed-action rehearsal');
+  check('ordinary steering chooses clear front or safer native A/S turn', () => {
+    const sample = { live: { live: true, direction: 0 }, callbacks: BOUNDARY.callbackTable,
+      position: [50, 50], segments: [[0, 0, 100, 0], [0, 100, 100, 0], [0, 0, 0, 100], [100, 0, 0, 100]] };
+    assert.equal(chooseSteering(sample).key, 'a');
+    sample.segments.push([60, 0, 0, 100]); assert.equal(chooseSteering(sample).key, 's');
+    sample.segments.pop(); sample.segments.push([40, 0, 0, 100]); assert.equal(chooseSteering(sample).key, 'a');
+    sample.position = [50, 95]; sample.segments = [[0, 0, 100, 0]]; assert.equal(chooseSteering(sample).key, null);
+    sample.live.live = false; assert.throws(() => chooseSteering(sample), /live player/);
+  });
+  for (const reject of [false, true]) {
+    const calls = [], held = new Set(), page = { keyboard: { down: async key => calls.push('down:' + key), up: async key => calls.push('up:' + key) } };
+    const result = balancedKey(page, 'a', held, async () => { if (reject) throw Error('input fixture'); });
+    if (reject) await assert.rejects(result, /input fixture/); else await result;
+    check('native steering is balanced even on wait failure ' + reject, () => {
+      assert.deepEqual(calls, ['down:a', 'up:a']); assert.equal(held.size, 0);
+    });
+  }
+  const steerFixture = await pageFixture({ installNow: false });
+  // A true memory-backed read of the browser sampler rejects dead state before
+  // trying any trail geometry. Same translated speed used by counter guards.
+  steerFixture.view.setUint32(324, 0xbf800000, true);
+  steerFixture.e.guest_to_wasm = va => va === BOUNDARY.currentCallbacks ? 256 : ({
+    [BOUNDARY.gamePointer]: 300, 0x900000: 304, 0x900004: 308, 0x900008: 312,
+    0x90000c: 316, 0x910004: 320, 0x920008: 324, 0x920000: 328, 0x920020: 332, 0x920024: 336 }[va] || 0);
+  const sampled = vm.runInContext('(' + steeringSample.toString() + ')', vm.createContext({ window: steerFixture.window, DataView, performance })).call(null, BOUNDARY);
+  assert.throws(() => chooseSteering(sampled), /live player/);
+  check('actual browser sampler refuses crash with matching callback before steering', () => assert.equal(sampled.live.live, false));
   const captureDir = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'gltron-capture-fixture-'));
   try {
     const calls = [];
@@ -198,6 +255,48 @@ async function main() {
     await assert.rejects(captureForReview(page, captureDir, '../foreign'), /fresh capture/);
     check('capture relay refuses overwrite and foreign capture paths', () => {});
   } finally { fs.rmSync(captureDir, { recursive: true }); }
+  const queueDir = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'gltron-command-fixture-'));
+  try {
+    fs.mkdirSync(require('node:path').join(queueDir, 'commands'));
+    const page = { evaluate: async (fn, name) => name ? { name, capturedAtMs: 100, generation: 1, callbacks: BOUNDARY.callbackTable } : {},
+      screenshot: async ({ path }) => fs.writeFileSync(path, 'ACK fixture, not screenshot evidence') };
+    const pending = commandAck(queueDir, { action: 'shot', name: 'actual-shot' }, 1000);
+    const command = JSON.parse(fs.readFileSync(require('node:path').join(queueDir, 'commands/0.json')));
+    const capture = await shotCommand(page, queueDir, command.name);
+    fs.writeFileSync(require('node:path').join(queueDir, 'reply-0.json'), JSON.stringify({ ok: true, capture }));
+    const ack = await pending;
+    check('actual command queue/shot producer/ACK client compose with exact capture', () => assert.equal(ack.capture.sha256, capture.sha256));
+    const { reviewedCapture, requireHandoffProbe } = localCandidate;
+    const epoch = capture.capturedAtEpochMs;
+    for (const now of [epoch - 1, epoch + 5001, NaN]) assert.throws(() => reviewedCapture(queueDir, 'actual-shot', now), /five seconds/);
+    assert.equal(reviewedCapture(queueDir, 'actual-shot', epoch + 5000).ageMs, 5000);
+    const replay = require('node:path').join(queueDir, 'offline-relay'); fs.mkdirSync(replay);
+    const replayCapture = { ...capture, path: require('node:path').join(replay, 'actual-shot.png') };
+    fs.writeFileSync(replayCapture.path, fs.readFileSync(capture.path));
+    fs.writeFileSync(require('node:path').join(replay, 'actual-shot-capture-start.json'), JSON.stringify(replayCapture));
+    const proof = await commandAck(replay, { action: 'review-only', review: 'actual-shot' }, 100);
+    assert(requireHandoffProbe(queueDir, proof.review.reviewedAtEpochMs).ok);
+    check('actual rehearsal client and pre-Chrome gate require full exact review within unchanged five seconds', () => {
+      assert.throws(() => requireHandoffProbe(queueDir, proof.review.reviewedAtEpochMs + 300001), /fresh offline/);
+      const failed = { ...proof, ok: false }; fs.writeFileSync(require('node:path').join(replay, 'review-handoff.json'), JSON.stringify(failed));
+      assert.throws(() => requireHandoffProbe(queueDir), /rehearsal/);
+    });
+    replayCapture.capturedAtEpochMs = Date.now() - 10000;
+    fs.writeFileSync(require('node:path').join(replay, 'actual-shot-capture-start.json'), JSON.stringify(replayCapture));
+    await assert.rejects(commandAck(replay, { action: 'review-only', review: 'actual-shot' }, 100), /five seconds/);
+    assert.equal(JSON.parse(fs.readFileSync(require('node:path').join(replay, 'review-handoff.json'))).ok, false);
+    await assert.rejects(commandAck(replay, { action: 'measure', review: 'actual-shot' }, 100), /five seconds/);
+    check('stale reviewed-action rejects before any live command or Chrome, preserving rejection', () => {
+      assert(!fs.existsSync(require('node:path').join(replay, 'commands')));
+      assert.throws(() => requireHandoffProbe(queueDir), /rehearsal/);
+    });
+    fs.writeFileSync(require('node:path').join(queueDir, 'reply-1.json'), JSON.stringify({ ok: true, capture: { ...capture, path: '/foreign' } }));
+    await assert.rejects(commandAck(queueDir, { action: 'shot', name: 'actual-shot' }, 100), /exact capture/);
+    check('actual ACK client refuses foreign capture even after successful command', () => {});
+    fs.writeFileSync(require('node:path').join(queueDir, 'reply-1.json'), JSON.stringify({ ok: false }));
+    await assert.rejects(commandAck(queueDir, { action: 'shot', name: 'more' }, 100), /prior ACK failed/);
+    check('actual command client never progresses past unsuccessful ACK', () => {});
+  } finally { fs.rmSync(queueDir, { recursive: true }); }
   check('shell pin preflight rejects omitted fonts/manifest before Chrome', () => {
     const { sha256 } = require('../tools/gltron-logical-fps.cjs');
     const pins = requiredShellPaths().map(path => { const b = fs.readFileSync(path); return { path, bytes: b.length, sha256: sha256(b) }; });
@@ -226,8 +325,10 @@ async function main() {
     assert.throws(() => requireReleases('mdk2-poll-repair LOCAL HEAVY RELEASE\nstronghold-current-hover LOCAL HEAVY RELEASE'), /requires/);
     assert.throws(() => requireReleases('stronghold-repaired-onward LOCAL HEAVY RELEASE'), /requires/);
     assert.throws(() => requireReleases('mdk2-repaired-original LOCAL HEAVY RELEASE\nstronghold-repaired-onward LOCAL HEAVY RELEASE'), /requires/);
-    assert(requireReleases('mdk2-continuous-onward LOCAL HEAVY RELEASE'));
-    assert(requireReleases('mdk2-continuous-construction-onward LOCAL HEAVY RELEASE'));
+    assert.throws(() => requireReleases('mdk2-continuous-onward LOCAL HEAVY RELEASE'), /requires/);
+    assert.throws(() => requireReleases('mdk2-continuous-construction-onward LOCAL HEAVY RELEASE'), /requires/);
+    assert(requireReleases('mdk2-demand-entry LOCAL HEAVY RELEASE'));
+    assert(requireReleases('mdk2-demand-entry-continuity LOCAL HEAVY RELEASE'));
   });
   assert((await validateHttpPaths(productionPins, ['/binaries/gltron-0.70/gltron.exe', '/build/wine-assembly.compat.wasm'])).pass);
   await assert.rejects(validateHttpPaths(productionPins, ['/missing-gltron-asset']), /route failed/);
