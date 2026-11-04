@@ -9,6 +9,59 @@ const integration=require('../tools/mdk2-construction-driver-integration.cjs');
 const run=fs.mkdtempSync(path.join(local.BASE,'mdk2-local-contract-test-'));
 after(()=>fs.rmSync(run,{recursive:true,force:true}));
 const now=Date.parse('2026-11-04T17:50:00Z');
+test('actual installed launch timeout: old absent-Browser cleanup fails; late owned endpoint cleanup closes normally',async()=>{
+ const r=createRequire(require.resolve('puppeteer')),core=r.resolve('puppeteer-core');
+ const launcherPath=path.join(path.dirname(core),'node/BrowserLauncher.js');
+ const {BrowserLauncher}=await import(launcherPath);
+ const diagnosticRun=fs.mkdtempSync(path.join(local.BASE,'mdk2-late-endpoint-test-'));
+ const tap=local.traceOwnedLifecycle(diagnosticRun,process.execPath);
+ assert.equal(local.lifecycleForRun(diagnosticRun),tap);
+ let owned,browser;
+ class Launcher extends BrowserLauncher {
+  async computeLaunchArguments(){return {executablePath:process.execPath,userDataDir:path.join(diagnosticRun,'chrome-profile'),isTempUserDataDir:false,
+   args:['-e',"setTimeout(()=>process.stderr.write('DevTools listening on ws://127.0.0.1:12345/devtools/browser/ab'),100);setTimeout(()=>process.stderr.write('cd\\n'),200);process.stdin.once('data',()=>process.exit(0));setInterval(()=>{},1000)",'--','--user-data-dir='+path.join(diagnosticRun,'chrome-profile')]};}
+  async cleanUserDataDir(){}
+  async createCdpSocketConnection(process,options){owned=process;return super.createCdpSocketConnection(process,options);}
+ }
+ const launcher=new Launcher({},'chrome');
+ try {
+  await assert.rejects(async()=>{browser=await launcher.launch({timeout:20,handleSIGINT:false,handleSIGTERM:false,handleSIGHUP:false});},/Timed out/);
+  assert.equal(browser,undefined);
+  // This is the evidenced old caller's exact cleanup: no Browser => no close.
+  if(browser)await browser.close();
+  assert.equal(owned.nodeProcess.exitCode,null,'old cleanup leaves the actual launch child running');
+  let connections=0;
+  const result=await local.closeUnreturnedLaunch(tap,{deadline:Date.now()+3000,connect:async options=>{
+   connections++;assert.equal(options.browserWSEndpoint,'ws://127.0.0.1:12345/devtools/browser/abcd');
+   const connected=new (require('node:events').EventEmitter)();connected.pages=async()=>[];
+   connected.close=async()=>{owned.nodeProcess.stdin.write('quit\n');await owned.hasClosed();connected.emit('disconnected');};
+   connected.disconnect=()=>{};return connected;
+  }});
+  assert.deepEqual(result,{pid:owned.nodeProcess.pid,code:0,signal:null});assert.equal(connections,1);
+  await assert.rejects(local.closeUnreturnedLaunch(tap,{deadline:Date.now()+1000,connect:async()=>{throw Error('no retry');}}),/one launch-failure/);
+  const rows=fs.readFileSync(tap.file,'utf8').trim().split('\n').map(JSON.parse);
+  assert(rows.some(e=>e.kind==='launch-failure-cleanup-normal'));
+  assert(rows.some(e=>e.kind==='spawn'&&e.command===process.execPath&&e.args.includes('--user-data-dir='+path.join(diagnosticRun,'chrome-profile'))));
+  assert(!rows.some(e=>['process.kill','child.kill'].includes(e.kind)&&e.signal!==0),'no deliberate signal or fallback needed');
+  if(process.env.MDK2_LATE_ENDPOINT_RESULT)fs.writeFileSync(process.env.MDK2_LATE_ENDPOINT_RESULT,JSON.stringify({fixtureOnly:true,actualLauncherPath:launcherPath,sha256:integration.sha(fs.readFileSync(launcherPath)),oldCleanupLeavesLiveChild:true,result,rows},null,2));
+ }finally{
+  if(owned&&owned.nodeProcess.exitCode===null&&owned.nodeProcess.signalCode===null)owned.nodeProcess.stdin.write('quit\n');
+  if(owned)await owned.hasClosed();tap.restore();fs.rmSync(diagnosticRun,{recursive:true,force:true});
+ }
+ assert.throws(()=>local.lifecycleForRun(diagnosticRun),/not installed/);
+});
+test('launch-failure normal cleanup rejects stale identity, foreign endpoints, ambiguous history, abnormal exit and expired reserve',async()=>{
+ const self=local.identity(),logs=[];
+ const make=(change={})=>({record:(kind,data)=>logs.push({kind,...data}),ownedLaunch:()=>({child:{pid:process.pid,exitCode:null,signalCode:null},identity:self,stderr:'',...change})});
+ const never=async()=>{throw Error('must never connect');};
+ await assert.rejects(local.closeUnreturnedLaunch(make(),{deadline:Date.now()-1,connect:never}),/finite 60 second/);
+ await assert.rejects(local.closeUnreturnedLaunch(make(),{deadline:Date.now()+60001,connect:never}),/finite 60 second/);
+ await assert.rejects(local.closeUnreturnedLaunch(make({identity:{...self,startTicks:'foreign'}}),{deadline:Date.now()+1000,connect:never}),/gone or replaced/);
+ await assert.rejects(local.closeUnreturnedLaunch(make({stderr:'DevTools listening on ws://foreign:12345/devtools/browser/abcd\n'}),{deadline:Date.now()+30,connect:never}),/cleanup deadline/);
+ await assert.rejects(local.closeUnreturnedLaunch(make({stderr:'DevTools listening on ws://127.0.0.1:1/devtools/browser/abcd\nDevTools listening on ws://127.0.0.1:2/devtools/browser/abcd\n'}),{deadline:Date.now()+1000,connect:never}),/ambiguous/);
+ await assert.rejects(local.closeUnreturnedLaunch(make({child:{pid:process.pid,exitCode:null,signalCode:'SIGKILL'}}),{deadline:Date.now()+1000,connect:never}),/already exited/);
+ assert(!logs.some(e=>e.kind==='launch-failure-cleanup-normal'));
+});
 test('installed Puppeteer close path distinguishes orderly own child from CDP-failure SIGKILL fallback',async()=>{
  const r=createRequire(require.resolve('puppeteer'));
  const core=r.resolve('puppeteer-core'),browsers=createRequire(core).resolve('@puppeteer/browsers');

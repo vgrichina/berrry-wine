@@ -86,6 +86,7 @@ async function within(action, ms, onTimeout = () => {}) {
 }
 // Capture caller provenance before launching the owned browser. Observes only;
 // never sends a signal, closes a browser, or changes a launch argument.
+const lifecycleTaps=new Map();
 function traceOwnedLifecycle(run, executablePath = '/opt/google/chrome/chrome') {
   assert.equal(fs.realpathSync(run),run,'canonical lifecycle run required');
   assert.equal(path.dirname(run),BASE,'direct lifecycle run required');
@@ -99,16 +100,17 @@ function traceOwnedLifecycle(run, executablePath = '/opt/google/chrome/chrome') 
     const child=Reflect.apply(spawn,this,[command,args,...rest]);
     if(command!==executablePath||!Array.isArray(args)||!args.includes('--user-data-dir='+path.join(run,'chrome-profile')))return child;
     if(!child.pid){record('spawn-without-pid');return child;}
-    const childKill=child.kill;children.set(child.pid,{child,childKill});
+    const childKill=child.kill;
     let childIdentity;
     try{childIdentity=identity(child.pid);}catch(error){childIdentity={unavailable:String(error)};}
-    record('spawn',{pid:child.pid,identity:childIdentity});
+    const observed={child,childKill,identity:childIdentity,command,args:[...args],stderr:''};children.set(child.pid,observed);
+    record('spawn',{pid:child.pid,identity:childIdentity,command,args:[...args]});
     child.kill=function(signal){record('child.kill',{pid:child.pid,signal:signal??'SIGTERM',stack:new Error('owned kill caller').stack});return Reflect.apply(childKill,this,arguments);};
     listen(child,'exit',(code,signal)=>record('exit',{pid:child.pid,code,signal}));
     listen(child,'close',(code,signal)=>record('close',{pid:child.pid,code,signal}));
     listen(child,'error',error=>record('child-error',{pid:child.pid,error:String(error)}));
     let remaining=131072;
-    if(child.stderr)listen(child.stderr,'data',chunk=>{if(remaining<=0)return;const b=Buffer.from(chunk).subarray(0,remaining);remaining-=b.length;record('stderr',{pid:child.pid,text:b.toString(),truncated:remaining===0});});
+    if(child.stderr)listen(child.stderr,'data',chunk=>{if(remaining<=0)return;const b=Buffer.from(chunk).subarray(0,remaining);remaining-=b.length;observed.stderr+=b.toString();record('stderr',{pid:child.pid,text:b.toString(),truncated:remaining===0});});
     return child;
   }
   function killObserved(pid,signal){
@@ -117,7 +119,8 @@ function traceOwnedLifecycle(run, executablePath = '/opt/google/chrome/chrome') 
   }
   cp.spawn=spawnObserved;process.kill=killObserved;
   listen(process,'exit',code=>record('driver-exit',{code}));
-  return {file,record,
+  const tap={file,record,
+    ownedLaunch(){assert.equal(children.size,1,'exactly one observed owned launch required');return [...children.values()][0];},
     watchBrowser(browser){
       const child=browser.process();
       assert(child&&children.get(child.pid)?.child===child,'lifecycle browser must be an observed owned child');
@@ -133,8 +136,49 @@ function traceOwnedLifecycle(run, executablePath = '/opt/google/chrome/chrome') 
     },
     restore(){if(cp.spawn===spawnObserved)cp.spawn=spawn;if(process.kill===killObserved)process.kill=kill;
       for(const {child,childKill}of children.values())child.kill=childKill;
-      for(const remove of removers)remove();record('observer-restored');}
+      for(const remove of removers)remove();lifecycleTaps.delete(run);record('observer-restored');}
   };
+  lifecycleTaps.set(run,tap);return tap;
+}
+function lifecycleForRun(run){const tap=lifecycleTaps.get(run);assert(tap,'owned lifecycle recorder not installed');return tap;}
+// Active cleanup belongs to the caller, separate from the passive recorder.
+// launch() can reject before returning a Browser while its child is still live.
+// Only that recorded child and its own loopback endpoint may be closed here.
+const recoveredLaunches=new WeakSet();
+async function closeUnreturnedLaunch(tap,{deadline,connect}) {
+  assert(Number.isFinite(deadline)&&deadline>Date.now()&&deadline<=Date.now()+60000,'finite 60 second cleanup deadline required');
+  assert.equal(typeof connect,'function');
+  assert(!recoveredLaunches.has(tap),'one launch-failure cleanup only');recoveredLaunches.add(tap);
+  const owned=tap.ownedLaunch(),child=owned.child;
+  const checkIdentity=()=>assert.deepEqual(identity(child.pid),owned.identity,'recorded child gone or replaced');
+  const wait=()=>new Promise(resolve=>setTimeout(resolve,10));
+  const remaining=()=>{const ms=deadline-Date.now();assert(ms>0,'launch-failure cleanup deadline');return ms;};
+  tap.record('launch-failure-cleanup-begin',{pid:child.pid,identity:owned.identity});
+  try {
+    let endpoint;
+    while(!endpoint){
+      assert(child.exitCode===null&&child.signalCode===null,'owned launch already exited; preserve actual outcome');
+      checkIdentity();remaining();
+      const endpoints=owned.stderr.split(/\r?\n/).slice(0,-1).map(line=>/^DevTools listening on (ws:\/\/127\.0\.0\.1:\d+\/devtools\/browser\/[a-f0-9-]+)$/.exec(line)?.[1]).filter(Boolean);
+      assert(endpoints.length<=1,'ambiguous owned DevTools endpoint');endpoint=endpoints[0];
+      if(!endpoint)await wait();
+    }
+    checkIdentity();tap.record('launch-failure-connect',{pid:child.pid,endpoint});
+    const browser=await within(()=>connect({browserWSEndpoint:endpoint,protocolTimeout:Math.min(5000,remaining())}),remaining());
+    let disconnected=false;
+    browser.on('disconnected',()=>{disconnected=true;tap.record('recovery-browser-disconnected');});
+    try {
+      for(const page of await within(()=>browser.pages(),remaining()))tap.watchPage(page);
+      checkIdentity();tap.record('recovery-browser.close-called',{stack:new Error('launch-failure close caller').stack});
+      await within(()=>browser.close(),remaining());tap.record('recovery-browser.close-resolved');
+      while(child.exitCode===null&&child.signalCode===null){remaining();await wait();}
+      assert.equal(child.exitCode,0,'launch-failure child exit must be normal');
+      assert.equal(child.signalCode,null,'abnormal signal is never normal cleanup');
+      assert(disconnected,'recovery root disconnect required');
+      tap.record('launch-failure-cleanup-normal',{pid:child.pid,code:child.exitCode,signal:child.signalCode});
+      return {pid:child.pid,code:child.exitCode,signal:child.signalCode};
+    }finally{browser.disconnect();}
+  }catch(error){tap.record('launch-failure-cleanup-rejected',{error:String(error)});throw error;}
 }
 let installed = false;
 const transportSource = String.raw`# Local transport only; imported as runtime_io by the original operator chain.
@@ -232,4 +276,4 @@ function install(run) {
   installed = true;
   return {release, restore() {finite.browserDeadline=originalDeadline;main.sourceForRun=originalSource;}};
 }
-module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,install,prepareTransport,transportSource,controlSource,siteSource};
+module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,install,prepareTransport,transportSource,controlSource,siteSource};
