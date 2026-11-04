@@ -2117,13 +2117,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   worker: /root/setlocaltime_compat
   Result: Original run20261019-madbomber-setlocaltime-2 resolves SetLocalTime to00db9a34 and original CRT DllMain returns1. SDL DllMain returns0 after waveOutGetErrorTextA lookup returns0; separate API diagnosis follows. No gameplay. All3408pins unchanged, process groups/lease released and evidence recovered.
 
-- [ ] Resolve original Mad Bomber SDL WinMM error-text dependency
+- [x] Resolve original Mad Bomber SDL WinMM error-text dependency
   id: MADBOMBER-WINMM-ERROR-TEXT-20261019
-  status: partial (historical exact-source fullVM public API qualification accepted; original SDL observation separate)
+  status: done (historical public API qualification and retained original SDL observation reconciled)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   worker: none (independent historical API review complete)
   Evidence: Implementation7fd352855 and source reviewfe540cf2; retained native qualification01dfb0d98 independently accepted in docs/re-notes/madbomber-winmm-native-independent-review-20261024.md. Exact historicalb41a7c5 normal module8fac3993: unchanged public A/W native fixture exit0, host exit0, wrong-hash rejection exit1 before compile/memory. This does not qualify the current-main module or original SDL.
-  Next: Coordinator-owned original SDL observation remains outside this API evidence; keep this checkbox open until its exact requirement is reviewed. Existing original gameplay acceptance under NEW-GAME-MADBOMBER-20261018 remains intact. No runtime allocation or retry is implied.
+  Original SDL criterion: Reviewed retained Oct20 original output.log.gz: waveOutGetErrorTextA resolves to07504c80 (lines4114-4115); SDL DllMain00b5a130 returns1 (lines36-37). The later SDL_mixer midiStreamStop failure is separate. See docs/re-notes/madbomber-error-text-reconciled-20261104.md for raw-log SHA and historical scope. Existing original gameplay acceptance under NEW-GAME-MADBOMBER-20261018 remains intact; no new execution or current-build qualification.
 
 Coordinator 2026-11-04T18:11Z: GL production factory composition fresh worker session38633 launched after policy reread root5022466048 Mem3410939904 live2 gates PASS. Runtime serialized by local flock;19:45/48 cutoff. Missing factory route follows accepted5ae6ef0be; no duplicate browser endpoint test or hardware claim. Three live workers including finishing MDK ownership repair.
 
