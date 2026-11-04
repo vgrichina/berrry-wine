@@ -4,7 +4,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {PNG}=require('pngjs');
 const a=require('../tools/stronghold-route-recognition-handoff.cjs'),b=require('../tools/stronghold-preset-driver-attachment.cjs'),title=require('../tools/stronghold-title-recognition.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-current-hover-diagnostic');
+const run=path.resolve('scratch/runs/20261104-stronghold-repaired-hover-native-onward');
 const latest='scratch/runs/20261104-stronghold-choosetype-recognition-onward/browser/route-install-checkpoint';
 const png=b.retained(latest+'.png'),state=JSON.parse(b.retained(latest+'.json')).state;
 const nav=a.compileClosure(b.retained(a.WRAPPER).toString(),a.WRAPPER,'');
@@ -14,8 +14,8 @@ assert.equal(nav.scene(b.retained('scratch/runs/20261104-stronghold-menu-recogni
 assert(a.inspectNextHoverShared(b.retained(title.TYPE_REFERENCE)).every(r=>r.exact));
 assert(a.inspectNextHoverShared(b.retained('scratch/runs/20261104-stronghold-current-request-native/review/route-native-boundary-3.png')).every(r=>r.exact));
 assert(a.inspectNextHoverShared(png).every(r=>!r.exact),'known next shared hover gate mismatch must be diagnosed offline');
-const currentHover=path.join(run,'browser/route-native-boundary-3.png');
-const currentHoverFresh=path.join(run,'browser/route-native-boundary-4.png');
+const currentHover=path.resolve('scratch/runs/20261104-stronghold-current-hover-diagnostic/browser/route-native-boundary-3.png');
+const currentHoverFresh=path.resolve('scratch/runs/20261104-stronghold-current-hover-diagnostic/browser/route-native-boundary-4.png');
 for(const file of [a.HOVER_REFERENCE,currentHover,currentHoverFresh]){
  const bytes=b.retained(file);assert(a.compareHover(bytes).accepted);assert.equal(nav.scene(bytes),'choose-type-custom-hover');
 }
@@ -118,7 +118,9 @@ async function replay(observe=false,hoverFile=a.HOVER_REFERENCE,mode='accepted')
    const m=s.main;m.tick.steps+=n;m.inputQueue=[];m.activeInput=null;m.lastInput=null;
    Object.assign(m.inputTelemetry.hostRendererFields,{active:null,queue:[],mask:m.mouseButtonsMask});
    if(pressed){after+=n;if(after>=256)image=shell;}
-   const ack={requested:n,ran:n,steps:m.tick.steps,tickMs:16,frozen:true,hosts:1,guests:[{requested:n,ran:n,steps:m.tick.steps,tickMs:16,frozen:true,running:true}]};acks.push(ack);return ack;
+   const ack={requested:n,ran:n,steps:m.tick.steps,tickMs:16,frozen:true,hosts:1,guests:[{requested:n,ran:n,steps:m.tick.steps,tickMs:16,frozen:true,running:true}]};
+   if(mode==='gesture-short-ack'&&events.at(-1)===513)ack.guests[0].ran--;
+   acks.push(ack);return ack;
   }return structuredClone(g);
  },mouse:{move:async()=>input(512,0),down:async()=>input(513,1),up:async()=>input(514,0)}};
  const d=(observe?observedRoute:route).createRouteDriver({page,state:async()=>structuredClone(s),shot:async()=>({png:image,state:structuredClone(s)}),controls:()=>({keys:[],buttons:[]}),boundary:{run:f=>f()},live:()=>{},review:async c=>{
@@ -131,12 +133,21 @@ async function replay(observe=false,hoverFile=a.HOVER_REFERENCE,mode='accepted')
   return {scene:c.scene,sha256:reviews.length===2&&mode==='bad-review'?'foreign':c.sha256,personallyViewed:!(reviews.length===2&&mode==='unviewed'),observation:'offline authentic pixels'};
  }});
  await d.dispatch({action:'route-review-choose'});
- if(mode!=='accepted'){
+ if(mode!=='accepted'&&!mode.startsWith('gesture-')){
   await assert.rejects(d.dispatch({action:'route-review-hover'}),/personal capture review|stale|boundary|frozen|tick|ACK/);
   await assert.rejects(d.dispatch({action:'route-gesture'}),/terminal/);
   assert.deepEqual(events,[512]);return {mode,events,terminalBeforePress:true};
  }
  await d.dispatch({action:'route-review-hover'});
+ if(mode.startsWith('gesture-')){
+  if(mode==='gesture-stale-tick')s.main.tick.steps++;
+  if(mode==='gesture-foreign-target')s.workers[0].id='foreign';
+  if(mode==='gesture-stale-pixels'){const q=PNG.sync.read(image);q.data[(600*1200+600)*4]^=1;image=PNG.sync.write(q);}
+  await assert.rejects(d.dispatch({action:'route-gesture'}),/stale|boundary|frozen|tick|ACK|acknowledg/);
+  await assert.rejects(d.dispatch({action:'route-gesture'}),/terminal/);
+  assert.deepEqual(events,mode==='gesture-short-ack'?[512,513,514]:[512]);
+  return {mode,events,terminal:true,cleanupOnlyRelease:mode==='gesture-short-ack'};
+ }
  if(observe){
   assert.deepEqual(events,[512]);assert.equal(reviews[1].scene,'current-custom-hover-observation');
   await assert.rejects(d.dispatch({action:'route-gesture'}),/terminal/);
@@ -166,6 +177,8 @@ async function replay(observe=false,hoverFile=a.HOVER_REFERENCE,mode='accepted')
   hoverReviewNegatives.push(await replay(false,currentHover,mode));
   hoverReviewNegatives.push(await replay(true,currentHover,mode));
  }
- fs.writeFileSync(path.join(run,'offline-handoff.json'),JSON.stringify({pass:true,stats,historical,gates,replayResult,currentReplay,observationResult,hoverReviewNegatives,hoverNegatives:hoverNegatives.map(([name])=>name),sourceTamperRejected:true,originalSources:p.evidence.retainedClosure},null,2)+'\n');
+ const gestureNegatives=[];
+ for(const mode of ['gesture-stale-tick','gesture-foreign-target','gesture-stale-pixels','gesture-short-ack'])gestureNegatives.push(await replay(false,currentHover,mode));
+ fs.writeFileSync(path.join(run,'offline-handoff.json'),JSON.stringify({pass:true,stats,historical,gates,replayResult,currentReplay,observationResult,hoverReviewNegatives,gestureNegatives,hoverNegatives:hoverNegatives.map(([name])=>name),sourceTamperRejected:true,originalSources:p.evidence.retainedClosure},null,2)+'\n');
  console.log(JSON.stringify({pass:true,historical:historical.length,gates:gates.length,stats,sourceTamperRejected:true}));
 })().catch(e=>{console.error(e);process.exitCode=1;});

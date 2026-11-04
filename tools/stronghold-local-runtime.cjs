@@ -1,12 +1,12 @@
 'use strict';
-// Explicit local-process contract for the retained original diagnostic only.
+// Explicit local-process contract for the authorized repaired-hover onward attempt.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
 const AUTH='stronghold-split-gesture-reviews user task';
-const ASSIGNMENT='stronghold-current-hover-diagnostic user task';
+const ASSIGNMENT='stronghold-repaired-hover-native-onward user task';
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-04T21:00:00Z'),CLEANUP=Date.parse('2026-11-04T21:03:00Z');
+const CUTOFF=Date.parse('2026-11-04T21:45:00Z'),CLEANUP=Date.parse('2026-11-04T21:48:00Z');
 function identity(){
  const stat=fs.readFileSync('/proc/self/stat','utf8');
  return {hostname:os.hostname(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),
@@ -65,6 +65,35 @@ async function normalClose(browser,{timeoutMs=60000,record=()=>{}}={}){
   return result;
  }finally{clearTimeout(timer);child.removeListener('exit',listener);browser.disconnect();}
 }
+// Operator-side status only. A capture/review request is never an acceptance
+// receipt. Keep the next command out of the mailbox until the previous ACK;
+// in particular title-enter requests both a title and a resulting-menu review.
+function mailboxStatus(run,{now=Date.now()}={}){
+ const out=path.join(path.resolve(run),'browser'),read=name=>{
+  const file=path.join(out,name);return fs.existsSync(file)?JSON.parse(fs.readFileSync(file)):null;
+ };
+ const indices=fs.readdirSync(path.join(out,'commands')).filter(n=>/^\d+\.json$/.test(n)).map(n=>Number(n.slice(0,-5))).sort((a,b)=>a-b);
+ if(indices.some((n,i)=>n!==i))throw Error('contiguous original mailbox required');
+ const replies=indices.map(i=>({i,reply:read('reply-'+i+'.json')}));
+ const pending=replies.filter(r=>!r.reply).map(r=>r.i),failed=replies.find(r=>r.reply?.ok!==true&&r.reply);
+ const request=read('review-required.json');let review=null;
+ if(request){
+  if(!/^[a-f0-9]{64}$/.test(request.sha256||'')||!/^[a-zA-Z0-9-]+$/.test(request.requestId||''))throw Error('invalid original review request');
+  const command=Number.isInteger(request.commandIndex)?read('commands/'+request.commandIndex+'.json'):null;
+  const capture=fs.readdirSync(out).filter(n=>n.endsWith('.png')).find(n=>base.hash(fs.readFileSync(path.join(out,n)))===request.sha256)||null;
+  review={...request,capture,receiptPresent:fs.existsSync(path.join(run,'reviews',request.requestId+'.json')),
+   remainingMs:command?Math.max(0,command.replyDeadline*1000-now):null};
+ }
+ return {nextIndex:indices.length,pending,review,ready:!!read('ready.json'),
+  terminal:read('cleanup.json')||read('bootstrap-failure.json')||failed?.reply||null};
+}
+function assertMailboxCommandReady(run,options){
+ const status=mailboxStatus(run,options);
+ const detail=status.review?'; review '+status.review.scene+' '+(status.review.capture||status.review.sha256)+' receiptPresent='+status.review.receiptPresent:'';
+ if(status.terminal||status.pending.length||!status.ready)throw Error('original mailbox not ready: '+
+  (status.terminal?'terminal':status.pending.length?'pending command '+status.pending.join(','):'bootstrap')+detail);
+ return status.nextIndex;
+}
 function prepare(options){
  const p=observer.prepare(options),q=JSON.stringify;
  const old="  if(release.authorization!=='stronghold-split-gesture-reviews user task'||release.shutdownOwner!=='coordinator'||!release.boxId||!Number.isFinite(Date.parse(release.expiry))||Date.parse(release.expiry)<Date.now()+600000)throw Error('fresh authorized finite TTL required');\n  if(!Number.isFinite(Date.parse(release.closeBy))||Date.parse(release.closeBy)<=Date.now()||Date.parse(release.closeBy)>Date.parse(release.expiry)-300000)throw Error('fresh bounded closeBy required');";
@@ -89,4 +118,4 @@ function prepare(options){
  p.evidence.compositionSHA256=base.hash(p.source);
  return {...p,createRelease:()=>createRelease({run:options.run,pins:options.pins,nonce})};
 }
-module.exports={identity,binding,validateRelease,createRelease,normalClose,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={identity,binding,validateRelease,createRelease,normalClose,mailboxStatus,assertMailboxCommandReady,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};

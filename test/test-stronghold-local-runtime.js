@@ -3,7 +3,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-current-hover-diagnostic/contract-test');
+const run=path.resolve('scratch/runs/20261104-stronghold-repaired-hover-native-onward/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
@@ -24,6 +24,7 @@ reject('previous title assignment',r=>r.assignment='stronghold-title-recognition
 reject('previous menu assignment',r=>r.assignment='stronghold-menu-recognition-onward user task');
 reject('previous ChooseType assignment',r=>r.assignment='stronghold-choosetype-recognition-onward user task');
 reject('previous route assignment',r=>r.assignment='stronghold-route-recognition-handoff user task');
+reject('previous observation-only assignment',r=>r.assignment='stronghold-current-hover-diagnostic user task');
 reject('foreign shutdown owner',r=>r.shutdownOwner='worker');
 reject('box as local',r=>r.kind='leased-box');
 reject('fake box ID',r=>r.boxId='bx_local');
@@ -57,6 +58,58 @@ const original=base.retained(path.resolve(base.ORIGINAL)).toString();
 const boxStart=original.indexOf("  if(release.authorization!=="),boxEnd=original.indexOf("  if(fs.existsSync(OUT))",boxStart);
 assert(boxStart>0&&boxEnd>boxStart);
 assert.throws(()=>vm.runInNewContext(original.slice(boxStart,boxEnd),{release,Date:{now:()=>now,parse:Date.parse}}),/fresh authorized finite TTL/);
+// Replay the actual command6 transport boundary without any game, pixels or
+// fabricated scene acceptance. The previous client silently queued command7
+// before command6's second review/ACK; the new client must expose and reject it.
+const actualRun=path.resolve('scratch/runs/20261104-stronghold-repaired-hover-native-onward');
+if(fs.existsSync(path.join(actualRun,'browser/cleanup.json'))){
+ const status=api.mailboxStatus(actualRun);
+ assert(status.terminal);assert.deepEqual(status.pending,[7]);
+ assert.equal(status.review.scene,'main-menu');assert.equal(status.review.capture,'title-boundary-2.png');
+ assert.equal(status.review.receiptPresent,false);
+ assert.throws(()=>api.assertMailboxCommandReady(actualRun),/terminal; review main-menu/);
+ const fixture=path.join(run,'review-mailbox'),out=path.join(fixture,'browser');
+ fs.mkdirSync(path.join(out,'commands'),{recursive:true});fs.mkdirSync(path.join(fixture,'reviews'),{recursive:true});
+ const write=(name,value)=>fs.writeFileSync(path.join(out,name),JSON.stringify(value));
+ const second=JSON.parse(fs.readFileSync(path.join(actualRun,'browser/review-required.json')));
+ const first=fs.readFileSync(path.join(actualRun,'personal-capture-inspections.jsonl'),'utf8').trim().split('\n').map(JSON.parse).find(r=>r.scene==='title-dialog');
+ // Reset only this owned offline fixture; never an original attempt.
+ for(const name of fs.readdirSync(out))if(/^reply-\d+\.json$/.test(name))fs.unlinkSync(path.join(out,name));
+ for(const name of fs.readdirSync(path.join(out,'commands')))fs.unlinkSync(path.join(out,'commands',name));
+ for(const name of fs.readdirSync(path.join(fixture,'reviews')))fs.unlinkSync(path.join(fixture,'reviews',name));
+ write('ready.json',{fixtureOnly:true});
+ for(let i=0;i<=6;i++){
+  write('commands/'+i+'.json',JSON.parse(fs.readFileSync(path.join(actualRun,'browser/commands',i+'.json'))));
+  if(i<6)write('reply-'+i+'.json',{i,ok:true,fixtureOnly:true});
+ }
+ write('review-required.json',first);
+ const testNow=Date.parse(first.at);
+ assert.equal(api.mailboxStatus(fixture,{now:testNow}).review.scene,'title-dialog');
+ assert.throws(()=>api.assertMailboxCommandReady(fixture,{now:testNow}),/pending command 6; review title-dialog/);
+ const legacyNext=fs.readdirSync(path.join(out,'commands')).filter(f=>/^\d+\.json$/.test(f)).length;
+ assert.equal(legacyNext,7);write('commands/'+legacyNext+'.json',{action:'menu-crusader',fixtureOnly:true});
+ assert.deepEqual(api.mailboxStatus(fixture).pending,[6,7],'old client queues prematurely');
+ fs.unlinkSync(path.join(out,'commands/7.json'));
+ fs.writeFileSync(path.join(fixture,'reviews',first.requestId+'.json'),JSON.stringify({fixtureOnly:true}));
+ assert.throws(()=>api.assertMailboxCommandReady(fixture),/pending command 6/,'receipt alone is not command ACK');
+ write('review-required.json',second);
+ assert.equal(api.mailboxStatus(fixture,{now:Date.parse(second.at)}).review.receiptPresent,false);
+ const premature=JSON.parse(fs.readFileSync(path.join(actualRun,'browser/commands/7.json'))).replyDeadline*1000-39000;
+ assert.equal(api.mailboxStatus(fixture,{now:premature}).review.remainingMs,13094);
+ assert.throws(()=>api.assertMailboxCommandReady(fixture),/pending command 6; review main-menu/);
+ fs.writeFileSync(path.join(fixture,'reviews',second.requestId+'.json'),JSON.stringify({fixtureOnly:true}));
+ assert.throws(()=>api.assertMailboxCommandReady(fixture),/pending command 6/);
+ write('reply-6.json',{i:6,ok:true,fixtureOnly:true});
+ assert.equal(api.assertMailboxCommandReady(fixture),7);
+ write('reply-6.json',{i:6,ok:false,error:'command/review deadline',fixtureOnly:true});
+ assert.throws(()=>api.assertMailboxCommandReady(fixture),/terminal/);
+ write('reply-6.json',{i:6,ok:true,fixtureOnly:true});write('cleanup.json',{fixtureOnly:true});
+ assert.throws(()=>api.assertMailboxCommandReady(fixture),/terminal/);
+ fs.unlinkSync(path.join(out,'cleanup.json'));
+ write('review-required.json',{...second,requestId:'../foreign'});
+ assert.throws(()=>api.mailboxStatus(fixture),/invalid original review request/);
+ console.log('PASS actual two-review title handoff and old premature enqueue/new pending-review rejection; ACK, terminal and foreign-request negatives (offline transport only)');
+}
 const p=api.prepare({run,pins});new vm.Script(p.source);new vm.Script(p.route);
 const cut=p.source.lastIndexOf('main().catch(');assert(cut>10000);
 base.compileClosure(p.source.slice(0,cut),p.driver,p.route,p.evidence.retainedClosure);
