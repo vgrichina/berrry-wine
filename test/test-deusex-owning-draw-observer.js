@@ -14,6 +14,18 @@ const system = 'test/binaries/candidates/deus-ex-demo/installed/system/';
 const engineBytes = fs.readFileSync(system + 'engine.dll');
 const exeBytes = fs.readFileSync(system + 'deusex.exe');
 const renderBytes = fs.readFileSync(system + 'render.dll');
+const coreBytes = fs.readFileSync(system + 'core.dll');
+const winBytes = fs.readFileSync(system + 'windrv.dll');
+const regions = require('../lib/region-map.generated').REGIONS;
+// Seal the instruction-derived offsets against original PE file bytes.
+for (const [bytes, va, hex] of [[engineBytes, 0x1038ea2e, '8b7e30'],
+  [engineBytes, 0x1038ed86, '8b4f48'], [coreBytes, 0x1010aca0, '8b4104c3'],
+  [coreBytes, 0x1010abd0, '8b411cc3'], [coreBytes, 0x1010abb0, '8b4124c3'],
+  [winBytes, 0x1110cb60, '8b863001000085c08986b0000000'],
+  [winBytes, 0x1110cd9b, '8b8680010000a808'], [winBytes, 0x1110ceb0, '8b96f800000052'],
+  [winBytes, 0x1110ce6c, '8b8ef00000008b5104'], [winBytes, 0x11101145, 'e966b80000'],
+  [winBytes, 0x111011ea, 'e931bb0000']])
+  assert.equal(Buffer.from(original(bytes, va, hex.length / 2)).toString('hex'), hex);
 assert.equal(crypto.createHash('sha256').update(renderBytes).digest('hex'),
   '9f405de68112266bbd72cb4e37c39b3b9712052c49fcd2f7cd9f2654b443773b');
 assert.equal(crypto.createHash('sha256').update(engineBytes).digest('hex'),
@@ -658,12 +670,122 @@ async function exercise(module, inWorker) {
       await host.callExport('get_eip'); // conservative exported-command boundary
       assert.equal((await status()).status, 'intervening-command-incomplete');
     }
+    // Actual original Core/WinDrv PEs, and instruction-derived object/table
+    // fixtures observed in both the local executor and shipped owning Worker.
+    const identityLoads = {};
+    for (const [name, bytes] of [['core', coreBytes], ['win', winBytes]]) {
+      await stage(bytes); await call('load_dll', bytes.length, await call('get_next_dll_addr'));
+      const index = await call('get_last_loaded_dll_index');
+      identityLoads[name] = { index, base: v.getUint32(table + index * 32, true) };
+      assert(await call('complete_dll_initialize', index, v.getUint32(life + index * stride + 4, true), 3));
+    }
+    const objects = await call('guest_alloc', 4096) >>> 0;
+    const player = await call('guest_alloc', 4096) >>> 0;
+    const renderObject = await call('guest_alloc', 4096) >>> 0;
+    const bits = await call('guest_alloc', 4096) >>> 0;
+    const windowWrapper = await call('guest_alloc', 64) >>> 0;
+    const viewportVtable = await call('guest_alloc', 256) >>> 0;
+    const bitmapRecord = regions.GDI_OBJECT_TABLE.base;
+    const objectPointers = [engine, viewport, renderObject, player];
+    for (const negative of ['matching', 'stale-index', 'destroyed-slot', 'reused-class',
+      'mismatched-surface', 'retired-surface', 'bad-field-code', 'unmapped-player', 'directdraw', 'stale-wrapper',
+      'foreign-viewport-vtable', 'retired-core', 'same-address-aba', 'mismatched-window']) {
+      await setup('success');
+      await write(load + 0x8ea2e, original(engineBytes, 0x1038ea2e, 3));
+      await write(load + 0x8ed86, original(engineBytes, 0x1038ed86, 3));
+      await write(engine + 0x48, u32(renderObject)); await write(viewport + 0x30, u32(player));
+      await write(identityLoads.core.base + 0x19e4f8, [...u32(objects), ...u32(4), ...u32(4)]);
+      for (const [index, address] of objectPointers.entries()) {
+        await write(objects + 4 * index, u32(address));
+        await write(address, [...u32(0x401000), ...u32(index)]);
+        await write(address + 0x1c, [...u32(0), ...u32(42), ...u32(0x401000)]);
+      }
+      await write(viewport, u32(viewportVtable));
+      await write(viewportVtable + 0x60, u32(identityLoads.win.base + 0x1145));
+      await write(viewportVtable + 0x68, u32(identityLoads.win.base + 0x11ea));
+      await write(windowWrapper + 4, u32(0x10003));
+      for (const [offset, value] of [[0,0x10003],[4,0x610001],[8,32],[12,32],[16,123456],[20,128],[24,32]])
+        v.setUint32(regions.GDI_WINDOW_SURFACE_TABLE.base + offset, value, true);
+      for (const [offset, value] of [[0x180,4],[0x70,32],[0x74,32],[0x78,4],
+        [0xb0,bits],[0xb4,32],[0xf0,windowWrapper],[0xf8,0x1234],[0x104,0],[0x108,0]])
+        await write(viewport + offset, u32(value));
+      for (const [offset, value] of [[0,0x1234],[4,3],[8,32],[12,32],[16,32],
+        [24,await call('guest_to_wasm', bits)],[28,128]]) v.setUint32(bitmapRecord + offset, value, true);
+      if (negative === 'directdraw' || negative === 'stale-wrapper') {
+        const wrapperWa = regions.COM_WRAPPERS.base;
+        const wrapperGuest = (wrapperWa - regions.GUEST_BASE.base + (await call('get_image_base'))) >>> 0;
+        v.setUint32(wrapperWa + 4, 0, true);
+        v.setUint32(regions.DX_OBJECTS.base, 2, true);
+        v.setUint32(regions.DX_OBJECTS.base + 20, await call('guest_to_wasm', bits), true);
+        await write(viewport + 0x180, u32(8));
+        await write(viewport + 0x108, u32(negative === 'stale-wrapper' ? player : wrapperGuest));
+      }
+      const fixtureAddresses = [player + 4, objects + 12, player + 0x24, load + 0x8ea2e, viewport + 0x30, viewport];
+      const fixtureWas = new Map();
+      for (const a of fixtureAddresses) fixtureWas.set(a, await call('guest_to_wasm', a));
+      const bitsWa = await call('guest_to_wasm', bits);
+      const fixtureWrite = (a, value) => v.setUint32(fixtureWas.get(a), value, true);
+      await start({ maxBlocks: 100, maxMs: 2000 });
+      // Stop between actual blocks, after entry and before Lock returns.
+      await run(1); await run(1);
+      if (negative === 'stale-index') fixtureWrite(player + 4, 999);
+      if (negative === 'destroyed-slot') fixtureWrite(objects + 12, 0);
+      if (negative === 'reused-class') fixtureWrite(player + 0x24, 0x402000);
+      if (negative === 'mismatched-surface') v.setUint32(bitmapRecord + 24, bitsWa + 4, true);
+      if (negative === 'retired-surface') v.setUint32(bitmapRecord + 4, 0, true);
+      if (negative === 'mismatched-window') v.setUint32(regions.GDI_WINDOW_SURFACE_TABLE.base, 0x10004, true);
+      if (negative === 'bad-field-code') new Uint8Array(memory.buffer).set([0x8b,0x7e,0x34], fixtureWas.get(load + 0x8ea2e));
+      if (negative === 'unmapped-player') fixtureWrite(viewport + 0x30, 0xffff0000);
+      if (negative === 'foreign-viewport-vtable') fixtureWrite(viewport, 0x401000);
+      if (negative === 'retired-core') Atomics.store(new Int32Array(memory.buffer),
+        (life + identityLoads.core.index * stride) >>> 2, 3);
+      if (negative === 'same-address-aba') {
+        // A free/reallocate interval entirely between observations cannot be
+        // disproved from reciprocal slots; the diagnostic must stay unknown.
+        fixtureWrite(objects + 12, 0); fixtureWrite(objects + 12, player);
+      }
+      await run(100);
+      const result = await status(); captures.push({ fixture: 'identity-' + negative, result });
+      assert.equal(result.status, 'render-route-return-candidate-unverified-lifetime');
+      assert.equal(result.lifetime, 'unknown'); assert.equal(result.viewportToHostSurface, 'unknown');
+      const observed = result.identityObservations.at(-1);
+      const unlockCall = result.identityObservations.find(s => s.point === 'unlockCall');
+      assert.equal(typeof unlockCall.callContext.presentationArgument, 'number');
+      assert.equal(observed.lifetime, 'unknown'); assert.equal(observed.viewportToHostSurface, 'unknown');
+      if (negative === 'bad-field-code') assert(observed.errors.some(s => s.startsWith('fields:')));
+      else if (negative === 'unmapped-player') assert(observed.errors.some(s => s.startsWith('objects:')));
+      else if (negative === 'retired-core') {
+        assert(observed.errors.some(s => s.startsWith('objects: identity module absent: core.dll')));
+        Atomics.store(new Int32Array(memory.buffer), (life + identityLoads.core.index * stride) >>> 2, 2);
+      }
+      else {
+        assert.deepEqual(observed.errors, negative === 'stale-wrapper' ? ['surface: surface wrapper outside declared pools']
+          : negative === 'foreign-viewport-vtable' ? ['surface: viewport does not select original WinDrv Lock/Unlock'] : []);
+        const playerEvidence = observed.objects.objects.viewportPlayer;
+        if (negative === 'stale-index' || negative === 'destroyed-slot')
+          assert.equal(playerEvidence.membership, 'absent-or-reused');
+        if (negative === 'reused-class') assert.equal(playerEvidence.changedSinceEntry, true);
+        if (negative === 'same-address-aba') {
+          assert.equal(playerEvidence.changedSinceEntry, false);
+          assert.equal(playerEvidence.membership, 'reciprocal-at-boundary');
+        }
+        if (negative === 'matching' || negative === 'directdraw') assert.equal(observed.surface.candidates[0].pixelStorageMatches, true);
+        if (negative === 'mismatched-surface') assert.equal(observed.surface.candidates[0].pixelStorageMatches, false);
+        if (negative === 'retired-surface') assert.equal(observed.surface.candidates.length, 0);
+        if (negative === 'matching') assert.equal(observed.surface.windowSurfaces[0].id, 0x610001);
+        if (negative === 'mismatched-window') assert.equal(observed.surface.windowSurfaces.length, 0);
+      }
+    }
+    console.log('PASS original Core/WinDrv instruction identities, stale/destroyed/reused objects and mismatched/retired surfaces');
+
     // Load both complete original PE files through the actual loader. Supply
     // only a synthetic caller/dependency global; execute original Draw's real
     // prologue and zero-guard branch in its relocated image. This is isolated
     // machine-code coverage, never a natural original-game observation.
     Atomics.store(new Int32Array(memory.buffer), life >>> 2, 3); // retire old fixture before image-base change
     Atomics.store(new Int32Array(memory.buffer), renderLife >>> 2, 3);
+    for (const m of Object.values(identityLoads))
+      Atomics.store(new Int32Array(memory.buffer), (life + m.index * stride) >>> 2, 3);
     await stage(exeBytes); assert(await call('load_pe', exeBytes.length));
     await stage(engineBytes);
     const originalAddress = await call('get_next_dll_addr');
