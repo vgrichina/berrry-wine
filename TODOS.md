@@ -1621,7 +1621,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
   candidate: deus-ex-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: 01a1a6f6-9c1a-7552-a060-2cb7df4436a2 active deusex-softdrv-inline-cache-nov04 offline. Accepted d915b0547 CoreCreate inline unlink/recycle/publication with whole-state ordinary Worker parity at both bases;23 sealed files and main/origin verified. SoftDrv inline paths and full lifetime integration remain open.
+  worker: 01a1a707-0acc-7631-b4a3-ca476f8aeb6d active deusex-softdrv-release-paths-nov04 offline. Accepted4a723c802 palette acquisitions/miss/one release epilogue; both bases and modules ordinary Worker whole-state/commands/trap parity, negatives/regressions/locked build PASS;28 sealed files/mainorigin verified. Release preserves ID/data and is not retirement. Fresh worker extends nine explicitly unsupported release paths; loader/thread history, full lifetimes and natural game/pixel claims remain open.
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
