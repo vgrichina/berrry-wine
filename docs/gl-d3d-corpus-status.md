@@ -1,4 +1,15 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-11-03
+# OpenGL / Direct3D corpus status, reconciled 2026-11-04
+
+## November 4: original MDK2 browser/WebGL gameplay controls observed
+
+The ordinary localhost candidate selector now retains the existing MDK2
+registration. The original executable ran through Launch → New Game → Medium
+in an inspected browser with a real owning Worker WebGL1 context (ANGLE,
+Intel Mesa), canonical module `cffca869b541e6eff12ae3a6b74c4476977e0a7e23cd43d8ec5ba8faecd4bcee`.
+Reviewed captures include the original startup/cutscenes, tutorial, Up/Down
+movement and Space entering and exiting the Sniper Bullet view. [Exact source, input, backend and run limitations](re-notes/mdk2-browser-gameplay-20261104.md).
+The software CLI result below retains its separate scope; shooting/jumping,
+other title/backend gaps and exact historical 27-ID membership remain open.
 
 ## November 3: MDK2 prerequisites and bounded software gameplay verified
 
@@ -48,7 +59,7 @@ covers native, actual queued Worker, WebGL1/2, rejecting controls, locked
 builds and 34 scoped regressions. Coordinator review checked all 356 recovered
 files, both modules and the completed snapshot followed by normal STOP.
 The original run reached an inspected 640×480 Demo attract scene; this does
-not establish player control. The subsequent original New Game → Medium route is verified in `081a33477`: ordinary Up/Down movement and reversible Space sniper mode, with reviewed captures and 314 sequential control requests (maximum 64 batches). [Run evidence and limitations](re-notes/mdk2-ordinary-menu-control-20261103.md). Coordinator checked all 204 final local hashes, including both modules and 106 recovered payload files. This is explicit software CLI gameplay; original browser control, shooting/jumping and per-title software/WebGL evidence for the full historical corpus remain open.
+not establish player control. The subsequent original New Game → Medium route is verified in `081a33477`: ordinary Up/Down movement and reversible Space sniper mode, with reviewed captures and 314 sequential control requests (maximum 64 batches). [Run evidence and limitations](re-notes/mdk2-ordinary-menu-control-20261103.md). Coordinator checked all 204 final local hashes, including both modules and 106 recovered payload files. This is explicit software CLI gameplay; the November 4 browser result above adds bounded WebGL1 controls. Shooting/jumping and per-title software/WebGL evidence for the full historical corpus remain open.
 
 ### Recovered original corpus table; exact 27-ID membership still unresolved
 
