@@ -164,19 +164,46 @@ const native=observerFactory(EXE_SHA256,PINS);
 function workerSource({observeSource,options}){
  const epoch=options.targetId+'/'+options.sessionId;
  let install=base.installWorker.toString();
+ install=base.replaceOnce(install,'thread:entry?.getExports()?.get_current_thread_id(),',
+  'thread:(entry||preload.entries[0])?.getExports?.()?.get_current_thread_id?.(),slot:preload.entries[0]?.slot,endpointIdentity:preload.entries[0]?.endpointIdentity,');
  install=base.replaceOnce(install,"{command,kind:'begin'}","{command,kind:'begin',epoch:options.epoch}");
  install=base.replaceOnce(install,'{...row,command}','{...row,command,epoch:options.epoch}');
  return observeSource+'\n;globalThis.StrongholdNativePresetObserver=('+observerFactory.toString()+')('+JSON.stringify(EXE_SHA256)+','+JSON.stringify(PINS)+');\n;('+install+')('+JSON.stringify({...options,epoch})+');';
 }
 // Reuse the exact tested compile/send and target/session guards. The command
 // scope now spans the one Custom Game gesture and its input-free observations.
+function selectOwningWorker(inspected){
+ const owners=[];
+ for(const candidate of inspected){
+  const {id,entry,report:r}=candidate;
+  if(!r||r.targetId!==id||r.sessionId!==entry.sessionId||r.workerURL!==entry.info.url||
+   !Array.isArray(r.events)||r.entries!==1||r.terminal)throw Error('foreign/replaced Worker discovery report');
+  const received=r.events.filter(e=>e.kind==='received-module'),instantiated=r.events.filter(e=>e.kind==='instantiated');
+  const slot=received[0]?.slot;
+  if(received.length!==1||instantiated.length!==1||received[0].type!=='init'||
+   !Number.isInteger(slot)||slot<0||slot>15||instantiated[0].incoming?.slot!==slot||
+   instantiated[0].incoming?.type!=='init')throw Error('ambiguous Worker init discovery');
+  if(slot===0){
+   if(!r.installedBeforeInstantiation||r.entryError||r.slot!==0||r.endpointIdentity!==1||r.thread!==1)
+    throw Error('owning slot0/endpoint1/thread1 prerequisite');
+   owners.push(candidate);
+  }
+ }
+ if(owners.length!==1)throw Error('single exact owning Worker target/session prerequisite');
+ return owners[0];
+}
 function createAttachment(options){
  let source=base.createAttachment.toString();
  source=base.replaceOnce(source,"if(c.action!=='route-press-preset')return;","if(c.action!=='route-gesture')return;");
+ source=base.replaceOnce(source,
+  "     if(candidates.length!==1)throw Error('single exact preloaded Worker target/session prerequisite');\n     const [id,entry]=candidates[0];owner={id,entry,sessionId:entry.sessionId,session:entry.session,url:entry.info.url};\n     const r=await rpc('report');",
+  "     const inspected=[];\n     for(const [id,entry]of candidates){owner={id,entry,sessionId:entry.sessionId,session:entry.session,url:entry.info.url};inspected.push({id,entry,report:await rpc('report')});}\n     const {id,entry,report:r}=selectOwningWorker(inspected);owner={id,entry,sessionId:entry.sessionId,session:entry.session,url:entry.info.url};");
+ source=base.replaceOnce(source,"e.kind==='sent-module'&&e.workerURL===entry.info.url",
+  "e.kind==='sent-module'&&e.workerURL===entry.info.url&&e.slot===0");
  const start=source.indexOf('   async success(c){'),end=source.indexOf('   retire(event)',start);
  if(start<0||end<0)throw Error('attachment success seam');
  source=source.slice(0,start)+'   async success(){},\n'+source.slice(end);
- const factory=new Function('ROOT','require','path','return ('+source+')')(path.resolve(__dirname,'..'),require,path);
+ const factory=new Function('ROOT','require','path','selectOwningWorker','return ('+source+')')(path.resolve(__dirname,'..'),require,path,selectOwningWorker);
  // The resolved constructor URL fix remains in force.
  const pageState=options.pageState;
  return factory({...options,pageState:async()=>{
@@ -213,4 +240,4 @@ function prepare(options){
  p.evidence.compositionSHA256=base.hash(p.source);p.evidence.routeCompositionSHA256=base.hash(p.route);
  return p;
 }
-module.exports={EXE_SHA256,PINS,...native,observerFactory,workerSource,createAttachment,assertHistoricalShell,prepare};
+module.exports={EXE_SHA256,PINS,...native,observerFactory,workerSource,selectOwningWorker,createAttachment,assertHistoricalShell,prepare};

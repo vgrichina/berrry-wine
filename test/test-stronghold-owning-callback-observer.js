@@ -34,6 +34,7 @@ async function physical(){
   parentPort.postMessage({pass:true,badBindingRejected:true,report:attachment.report()});return;}
  const h=workerData.observed?{get report(){return attachment.report().report;},finish:reason=>attachment.invoke('finish',{reason})}:null;
  if(workerData.observed){assert(attachment.report().installedBeforeInstantiation,'pre-instantiation observer');
+  assert.equal(attachment.report().slot,0);assert.equal(attachment.report().endpointIdentity,1);assert.equal(attachment.report().thread,1);
   attachment.invoke('start',{command:1});assert.equal(h.report.status,'running',JSON.stringify(h.report));}
  assert.equal(hash(b),setupHash,'observer start is read only');
  e.set_trace_esp(workerData.observed||workerData.trace?1:0,0,0);
@@ -146,12 +147,13 @@ if(!isMainThread){
   });
  }
  async function composition(){
-  const run=path.resolve('scratch/runs/20261104-stronghold-owning-callback-observer/composition'),pins=path.join(run,'pins.json');fs.mkdirSync(run,{recursive:true});
+  const run=path.resolve('scratch/runs/20261104-stronghold-acknowledged-menu-onward/observer-composition'),pins=path.join(run,'pins.json');fs.mkdirSync(run,{recursive:true});
   fs.writeFileSync(pins,JSON.stringify({files:[{path:'build/wine-assembly.wasm',sha256:hash(fs.readFileSync('build/wine-assembly.wasm'))}]}));
   const p=api.prepare({run,pins});new vm.Script(p.source);new vm.Script(p.route);
   const cut=p.source.lastIndexOf('main().catch(');base.compileClosure(p.source.slice(0,cut),p.driver,p.route,p.evidence.retainedClosure);
   const bundle=api.workerSource({observeSource:'',options:{targetId:'fixture-target',sessionId:'fixture-session',expectedWorkerURL:URL}});new vm.Script(bundle);
   const control=originalAttachmentControl();await control;
+  await owningDiscoveryControl();
   assert(p.source.includes('installBeforeFirstScript'));assert(p.route.includes('shellSamples>=4'));assert(p.route.includes("assertHistoricalShell(cap.png)"));
   assert.deepEqual(p.evidence.callbackObserver.caps,{arrival:3072,route:4096,navigation:16384,shellSamples:4,perACK:64});
   const audit=require('../tools/stronghold-unavailable-scene.cjs');api.assertHistoricalShell(audit.read(ROOT,audit.RECOVERED+'route-native-boundary-7.png'));
@@ -205,7 +207,7 @@ if(!isMainThread){
  }
  async function originalAttachmentControl(){
   const wasm='a'.repeat(64),calls=[],events=[{kind:'compiled',sha256:wasm},{kind:'sent-module',workerURL:'lib/guest-worker.js?v=fixture',sha256:wasm,slot:0,type:'init'}];
-  const report={targetId:'t',sessionId:'s',workerURL:URL,entries:1,installedBeforeInstantiation:true,entryError:null,
+  const report={targetId:'t',sessionId:'s',workerURL:URL,entries:1,installedBeforeInstantiation:true,entryError:null,slot:0,endpointIdentity:1,thread:1,
    events:[{kind:'received-module',type:'init',slot:0},{kind:'instantiated',incoming:{type:'init',slot:0}}]};
   const entry={session:{send:async(method,args)=>{calls.push(args.expression);return {result:{value:JSON.stringify(report)}};}},sessionId:'s',info:{url:URL},expectedWorkerURL:URL,preloadVerified:true};
   const options={sessions:new Map([['t',entry]]),save:()=>{},log:()=>{},wasmSha256:wasm,pageState:async()=>({main:{href:'http://fixture/index.html',observation:{events}}})};
@@ -216,6 +218,63 @@ if(!isMainThread){
   report.sessionId='foreign';h=api.createAttachment(options);await assert.rejects(h.begin({action:'route-gesture'},2),/foreign/);
   report.sessionId='s';events.push({...events[1]});h=api.createAttachment(options);await assert.rejects(h.begin({action:'route-gesture'},2),/binding/);events.pop();
   events[1].sha256='b'.repeat(64);h=api.createAttachment(options);await assert.rejects(h.begin({action:'route-gesture'},2),/binding/);
+ }
+ async function owningDiscoveryControl(){
+  const run=path.resolve('scratch/runs/20261104-stronghold-acknowledged-menu-onward');
+  const file=path.join(run,'browser/final-state.json');if(!fs.existsSync(file))return;
+  const actual=JSON.parse(fs.readFileSync(file)),wasm=JSON.parse(fs.readFileSync(path.join(run,'composition.json'))).wasmSha256;
+  assert.equal(actual.workers.length,4);assert.equal(actual.main.tick.steps,8832);
+  const slots=actual.workers.map(w=>w.observation.events.find(e=>e.kind==='received-module').slot);
+  assert.deepEqual(slots,[0,1,2,3]);
+  const negatives=[];
+  async function replay(mode){
+   const starts=[],reports=new Map(),page=structuredClone(actual),sessions=new Map();
+   for(const w of page.workers){
+    const slot=w.observation.events.find(e=>e.kind==='received-module').slot;
+    const r={targetId:w.id,sessionId:'offline-'+w.id,workerURL:w.info.url,entries:1,
+     installedBeforeInstantiation:slot===0,entryError:slot===0?null:'wrong original Module/memory/slot/endpoint binding',
+     events:w.observation.events};
+    // Getter results are fixture assumptions, not historical runtime evidence.
+    if(slot===0)Object.assign(r,{slot:0,endpointIdentity:1,thread:1});
+    reports.set(w.id,r);
+    const entry={sessionId:r.sessionId,info:w.info,expectedWorkerURL:w.info.url,preloadVerified:true,
+     session:{send:async(_method,args)=>{
+      if(args.expression.includes('invoke("start"'))starts.push(w.id);
+      return {result:{value:JSON.stringify(r)}};
+     }}};
+    sessions.set(w.id,entry);
+   }
+   const owner=reports.get(page.workers[0].id),aux=reports.get(page.workers[1].id);
+   if(mode==='endpoint')owner.endpointIdentity=2;
+   if(mode==='thread')owner.thread=2;
+   if(mode==='late')owner.installedBeforeInstantiation=false;
+   if(mode==='foreign')owner.sessionId='foreign';
+   if(mode==='missing')sessions.delete(owner.targetId);
+   if(mode==='duplicate-owner'){
+    Object.assign(aux,{slot:0,endpointIdentity:1,thread:1,installedBeforeInstantiation:true,entryError:null});
+    aux.events=structuredClone(owner.events);
+   }
+   if(mode==='replaced')owner.events.push({...owner.events[0]});
+   if(mode==='aux-malformed')aux.events=[];
+   if(mode==='duplicate-send')page.main.observation.events.push({...page.main.observation.events.find(e=>e.kind==='sent-module'&&e.slot===0)});
+   const options={sessions,save:()=>{},log:()=>{},wasmSha256:wasm,pageState:async()=>page};
+   if(mode==='accepted'){
+    const legacy=base.createAttachment(options);
+    await assert.rejects(legacy.begin({action:'route-press-preset'},11),/single exact preloaded Worker/);
+    assert.equal(starts.length,0);
+   }
+   const h=api.createAttachment(options);
+   if(mode==='accepted'){
+    await h.begin({action:'route-gesture'},11);assert(h.active);
+    assert.deepEqual(starts,[owner.targetId]);await h.finish('offline-only');
+   }else{
+    await assert.rejects(h.begin({action:'route-gesture'},11),/prerequisite|discovery|foreign|binding/);
+    assert.equal(starts.length,0,mode+' must reject before arming');negatives.push(mode);
+   }
+  }
+  await replay('accepted');
+  for(const mode of ['endpoint','thread','late','foreign','missing','duplicate-owner','replaced','aux-malformed','duplicate-send'])await replay(mode);
+  console.log('PASS recorded four-Worker/six-send topology old rejection/new exact-owner selection; nine discovery negatives before arming (offline reports only)');
  }
  (async()=>{
   const evidence=await composition(),results=[];

@@ -1,12 +1,12 @@
 'use strict';
-// Explicit local-process contract for the authorized repaired-hover onward attempt.
+// Explicit local-process contract for the authorized acknowledged-menu attempt.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
 const AUTH='stronghold-split-gesture-reviews user task';
-const ASSIGNMENT='stronghold-repaired-hover-native-onward user task';
+const ASSIGNMENT='stronghold-acknowledged-menu-onward user task';
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-04T21:45:00Z'),CLEANUP=Date.parse('2026-11-04T21:48:00Z');
+const CUTOFF=Date.parse('2026-11-04T22:45:00Z'),CLEANUP=Date.parse('2026-11-04T22:48:00Z');
 function identity(){
  const stat=fs.readFileSync('/proc/self/stat','utf8');
  return {hostname:os.hostname(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),
@@ -80,7 +80,12 @@ function mailboxStatus(run,{now=Date.now()}={}){
  if(request){
   if(!/^[a-f0-9]{64}$/.test(request.sha256||'')||!/^[a-zA-Z0-9-]+$/.test(request.requestId||''))throw Error('invalid original review request');
   const command=Number.isInteger(request.commandIndex)?read('commands/'+request.commandIndex+'.json'):null;
-  const capture=fs.readdirSync(out).filter(n=>n.endsWith('.png')).find(n=>base.hash(fs.readFileSync(path.join(out,n)))===request.sha256)||null;
+  // Frozen captures can be byte-identical across commands. Display the newest
+  // matching capture, so an earlier startup image cannot hide the title review.
+  const capture=fs.readdirSync(out).filter(n=>n.endsWith('.png'))
+   .map(name=>({name,mtime:fs.statSync(path.join(out,name)).mtimeMs}))
+   .sort((a,b)=>b.mtime-a.mtime||b.name.localeCompare(a.name))
+   .find(({name})=>base.hash(fs.readFileSync(path.join(out,name)))===request.sha256)?.name||null;
   review={...request,capture,receiptPresent:fs.existsSync(path.join(run,'reviews',request.requestId+'.json')),
    remainingMs:command?Math.max(0,command.replyDeadline*1000-now):null};
  }

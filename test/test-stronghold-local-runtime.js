@@ -3,7 +3,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-repaired-hover-native-onward/contract-test');
+const run=path.resolve('scratch/runs/20261104-stronghold-acknowledged-menu-onward/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
@@ -25,6 +25,7 @@ reject('previous menu assignment',r=>r.assignment='stronghold-menu-recognition-o
 reject('previous ChooseType assignment',r=>r.assignment='stronghold-choosetype-recognition-onward user task');
 reject('previous route assignment',r=>r.assignment='stronghold-route-recognition-handoff user task');
 reject('previous observation-only assignment',r=>r.assignment='stronghold-current-hover-diagnostic user task');
+reject('previous missed-review assignment',r=>r.assignment='stronghold-repaired-hover-native-onward user task');
 reject('foreign shutdown owner',r=>r.shutdownOwner='worker');
 reject('box as local',r=>r.kind='leased-box');
 reject('fake box ID',r=>r.boxId='bx_local');
@@ -83,6 +84,13 @@ if(fs.existsSync(path.join(actualRun,'browser/cleanup.json'))){
   if(i<6)write('reply-'+i+'.json',{i,ok:true,fixtureOnly:true});
  }
  write('review-required.json',first);
+ const client=path.resolve('scratch/runs/20261104-stronghold-acknowledged-menu-onward/command.cjs');
+ const actualClientBlocked=scene=>{
+  assert.throws(()=>execFileSync(process.execPath,[client,JSON.stringify({action:'menu-crusader'}),fixture],{stdio:'pipe'}),
+   error=>error.status===1&&error.stderr.toString().includes('pending command 6; review '+scene));
+  assert(!fs.existsSync(path.join(out,'commands/7.json')),'actual client must leave no queued input');
+ };
+ actualClientBlocked('title-dialog');
  const testNow=Date.parse(first.at);
  assert.equal(api.mailboxStatus(fixture,{now:testNow}).review.scene,'title-dialog');
  assert.throws(()=>api.assertMailboxCommandReady(fixture,{now:testNow}),/pending command 6; review title-dialog/);
@@ -91,16 +99,32 @@ if(fs.existsSync(path.join(actualRun,'browser/cleanup.json'))){
  assert.deepEqual(api.mailboxStatus(fixture).pending,[6,7],'old client queues prematurely');
  fs.unlinkSync(path.join(out,'commands/7.json'));
  fs.writeFileSync(path.join(fixture,'reviews',first.requestId+'.json'),JSON.stringify({fixtureOnly:true}));
+ actualClientBlocked('title-dialog');
  assert.throws(()=>api.assertMailboxCommandReady(fixture),/pending command 6/,'receipt alone is not command ACK');
  write('review-required.json',second);
+ // Identical frozen pixels must name the current command's fresh capture,
+ // rather than an older startup capture. Reuse authentic bytes unchanged.
+ const actualPNG=fs.readFileSync(path.join(actualRun,'browser/title-boundary-2.png'));
+ for(const [name,age]of [['a-older.png',2],['z-current.png',1]]){
+  const file=path.join(out,name);fs.writeFileSync(file,actualPNG);
+  fs.utimesSync(file,new Date(Date.parse(second.at)-age*1000),new Date(Date.parse(second.at)-age*1000));
+ }
+ assert.equal(api.mailboxStatus(fixture).review.capture,'z-current.png');
+ const legacyCapture=fs.readdirSync(out).filter(n=>n.endsWith('.png')).find(n=>base.hash(fs.readFileSync(path.join(out,n)))===second.sha256);
+ assert.equal(legacyCapture,'a-older.png','old first-match display selects stale filename');
+ actualClientBlocked('main-menu');
  assert.equal(api.mailboxStatus(fixture,{now:Date.parse(second.at)}).review.receiptPresent,false);
  const premature=JSON.parse(fs.readFileSync(path.join(actualRun,'browser/commands/7.json'))).replyDeadline*1000-39000;
  assert.equal(api.mailboxStatus(fixture,{now:premature}).review.remainingMs,13094);
  assert.throws(()=>api.assertMailboxCommandReady(fixture),/pending command 6; review main-menu/);
  fs.writeFileSync(path.join(fixture,'reviews',second.requestId+'.json'),JSON.stringify({fixtureOnly:true}));
+ actualClientBlocked('main-menu');
  assert.throws(()=>api.assertMailboxCommandReady(fixture),/pending command 6/);
  write('reply-6.json',{i:6,ok:true,fixtureOnly:true});
  assert.equal(api.assertMailboxCommandReady(fixture),7);
+ execFileSync(process.execPath,[client,JSON.stringify({action:'menu-crusader'}),fixture],{stdio:'pipe'});
+ assert.equal(JSON.parse(fs.readFileSync(path.join(out,'commands/7.json'))).action,'menu-crusader');
+ fs.unlinkSync(path.join(out,'commands/7.json'));
  write('reply-6.json',{i:6,ok:false,error:'command/review deadline',fixtureOnly:true});
  assert.throws(()=>api.assertMailboxCommandReady(fixture),/terminal/);
  write('reply-6.json',{i:6,ok:true,fixtureOnly:true});write('cleanup.json',{fixtureOnly:true});
