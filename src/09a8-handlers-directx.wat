@@ -3631,9 +3631,9 @@
     ;; Native Surface4/7 CreateSurface rejects extended caps before allocation;
     ;; neither GetCaps nor EnumDevices may advertise that unsupported resource.
     ;; PROJECTED (0x0400) requires dividing supplied texture coordinates too.
-    ;; d3dim_texgen only transforms camera-generated coordinates; ordinary UVs
-    ;; bypass it, and both software and GPU consume the unprojected pair.
-    ;; Keep the partial texgen behavior, but do not advertise full projection.
+    ;; Supplied FLOAT2 COUNT3 projection now retains q through clipping and
+    ;; queue snapshots. Other coordinate dimensions/counts and generated q
+    ;; still need the full contract; keep PROJECTED clear until verified.
     (i32.store (i32.add (local.get $wa) (i32.const 32)) (i32.const 0xF3DF))   ;; dwTextureCaps, no SQUAREONLY/CUBEMAP/PROJECTED
     ;; MIPNEAREST (0x04) requires mip-level selection. The software path
     ;; selects point/linear on one bound image; the GPU sampler sets mip=0.

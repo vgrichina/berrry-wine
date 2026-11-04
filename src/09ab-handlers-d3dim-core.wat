@@ -258,12 +258,35 @@
   ;; waits for queued work before the caller rasterizes here, so the target
   ;; sees draws in guest order either way. The renderer instance replays with
   ;; $d3dim_state_override set and never re-queues.
+  ;; Internal type 4 retains supplied UV in a 32-byte TL record. The linear
+  ;; texture transform is deferred until after geometric clipping. This keeps
+  ;; texture q independent of position rhw without dividing at the vertices.
+  (global $d3dim_supplied_projection (mut i32) (i32.const 0))
+  (func $d3dim_supplied_projected (param $state i32) (result i32)
+    (local $block i32)
+    (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+    (local.set $block (call $gl32 (i32.add (local.get $state) (i32.const 4024))))
+    (if (i32.eqz (local.get $block)) (then (return (i32.const 0))))
+    (i32.and
+      (i32.eq (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 0))
+      (i32.eq (call $gl32 (i32.add (local.get $block) (i32.const 512))) (i32.const 0x103))))
+
+  ;; The encoder owns a copy in the WVP scratch of a type-4 TL snapshot. TL
+  ;; replay never recomputes WVP, so this does not alias live matrix scratch.
+  (func $d3dim_supplied_matrix (param $state i32) (result i32)
+    (if (global.get $d3dim_state_override) (then
+      (return (i32.add (call $g2w (local.get $state)) (i32.const 3136)))))
+    (call $g2w (call $gl32 (i32.add (local.get $state) (i32.const 4024)))))
+  (func (export "d3dim_gpu_supplied_matrix") (param $this i32) (result i32)
+    (call $d3dim_supplied_matrix (call $d3ddev_state (local.get $this))))
+
   (func $d3dim_worker_route
     (param $this i32) (param $primitive i32) (param $vertices i32) (param $count i32)
     (result i32)
     (if (global.get $d3dim_state_override) (then (return (i32.const 0))))
     (if (call $d3dim_worker_try_draw
-          (local.get $this) (local.get $primitive) (i32.const 3)
+          (local.get $this) (local.get $primitive)
+          (select (i32.const 4) (i32.const 3) (global.get $d3dim_supplied_projection))
           (local.get $vertices) (local.get $count))
       (then (return (i32.const 1))))
     (call $d3dim_worker_fence)
@@ -390,6 +413,7 @@
   ;; Coefficients and private GL matrix storage are persistent scratch; the
   ;; enable flags below guard their use and each draw supplies fresh values.
   (func (export "d3d_render_reset_transients")
+    (global.set $d3dim_supplied_projection (i32.const 0))
     (global.set $d3dim_mip_on (i32.const 0))
     (global.set $rast_fog_on (i32.const 0))
     (global.set $rast_t1_on (i32.const 0))
@@ -6500,6 +6524,7 @@
     (param $x1 i32) (param $y1 i32) (param $u1 f32) (param $v1 f32) (param $q1 f32) (param $c1 i32) (param $z1 f32)
     (param $x2 i32) (param $y2 i32) (param $u2 f32) (param $v2 f32) (param $q2 f32) (param $c2 i32) (param $z2 f32)
     (param $zbuf_guest i32) (param $zfunc i32) (param $zwrite i32)
+    (param $texture_q0 f32) (param $texture_q1 f32) (param $texture_q2 f32)
     (local $tx i32) (local $ty i32) (local $tc i32) (local $tu f32) (local $tv f32) (local $tq f32) (local $tz f32)
     (local $y i32) (local $xa i32) (local $xb i32)
     (local $ua f32) (local $va f32) (local $qa f32) (local $za f32)
@@ -6523,6 +6548,11 @@
     (local.set $v1 (f32.mul (local.get $v1) (local.get $q1)))
     (local.set $u2 (f32.mul (local.get $u2) (local.get $q2)))
     (local.set $v2 (f32.mul (local.get $v2) (local.get $q2)))
+    ;; Numerators are u' / w and v' / w; the denominator is texture q / w.
+    ;; The same rational planes feed sampling and quotient-rule mip gradients.
+    (local.set $q0 (f32.mul (local.get $q0) (local.get $texture_q0)))
+    (local.set $q1 (f32.mul (local.get $q1) (local.get $texture_q1)))
+    (local.set $q2 (f32.mul (local.get $q2) (local.get $texture_q2)))
     (if (global.get $d3dim_mip_on) (then
       (call $rast_plane (local.get $x0) (local.get $y0) (local.get $u0) (local.get $x1) (local.get $y1) (local.get $u1) (local.get $x2) (local.get $y2) (local.get $u2))
       (global.set $d3dim_mip_ua (global.get $rast_pa))
@@ -6676,10 +6706,14 @@
   (func $d3dim_draw_primitive
     (param $this i32) (param $primType i32) (param $vtxType i32)
     (param $lpvVertices i32) (param $dwVertexCount i32)
+    (local $saved i32)
+    (local.set $saved (global.get $d3dim_supplied_projection))
+    (global.set $d3dim_supplied_projection (i32.eq (local.get $vtxType) (i32.const 4)))
     (call $d3dim_clip_begin (local.get $this))
     (call $d3dim_draw_primitive_body (local.get $this) (local.get $primType) (local.get $vtxType)
       (local.get $lpvVertices) (local.get $dwVertexCount))
-    (call $d3dim_clip_end))
+    (call $d3dim_clip_end)
+    (global.set $d3dim_supplied_projection (local.get $saved)))
 
   (func $d3dim_draw_primitive_body
     (param $this i32) (param $primType i32) (param $vtxType i32)
@@ -6692,9 +6726,9 @@
     (if (i32.or (i32.eqz (local.get $lpvVertices)) (i32.eqz (local.get $dwVertexCount)))
       (then (return)))
     (if (i32.or (i32.lt_u (local.get $vtxType) (i32.const 1))
-                (i32.gt_u (local.get $vtxType) (i32.const 3)))
+                (i32.gt_u (local.get $vtxType) (i32.const 4)))
       (then (return)))
-    (if (i32.ne (local.get $vtxType) (i32.const 3))
+    (if (i32.lt_u (local.get $vtxType) (i32.const 3))
       (then
         (local.set $state_guest (call $d3ddev_state (local.get $this)))
         (if (i32.eqz (local.get $state_guest)) (then (return)))
@@ -6733,7 +6767,8 @@
           (local.set $i (i32.add (local.get $i) (i32.const 1)))
           (br $plp)))
         (call $d3dim_draw_primitive
-          (local.get $this) (local.get $primType) (i32.const 3)
+          (local.get $this) (local.get $primType)
+          (select (i32.const 4) (i32.const 3) (call $d3dim_supplied_projected (local.get $state_guest)))
           (local.get $scratch_g) (local.get $dwVertexCount))
         (return)))
     (if (call $d3dim_worker_route (local.get $this) (local.get $primType)
@@ -7236,11 +7271,17 @@
     (param $this i32) (param $primType i32) (param $vtxType i32)
     (param $lpvVertices i32) (param $dwVertexCount i32)
     (param $lpwIndices i32) (param $dwIndexCount i32)
+    (local $saved i32)
+    (local.set $saved (global.get $d3dim_supplied_projection))
+    (global.set $d3dim_supplied_projection (i32.and
+      (i32.lt_u (local.get $vtxType) (i32.const 3))
+      (call $d3dim_supplied_projected (call $d3ddev_state (local.get $this)))))
     (call $d3dim_clip_begin (local.get $this))
     (call $d3dim_draw_indexed_primitive_body (local.get $this) (local.get $primType) (local.get $vtxType)
       (local.get $lpvVertices) (local.get $dwVertexCount)
       (local.get $lpwIndices) (local.get $dwIndexCount))
-    (call $d3dim_clip_end))
+    (call $d3dim_clip_end)
+    (global.set $d3dim_supplied_projection (local.get $saved)))
 
   (func $d3dim_draw_indexed_primitive_body
     (param $this i32) (param $primType i32) (param $vtxType i32)
@@ -7494,6 +7535,8 @@
     (local $wrap i32)
     (local $u0 f32) (local $u1 f32) (local $u2 f32)
     (local $t0 f32) (local $t1 f32) (local $t2 f32)
+    (local $texture_q0 f32) (local $texture_q1 f32) (local $texture_q2 f32)
+    (local $matrix i32) (local $input i32) (local $output i32)
     (global.set $d3dim_mip_on (i32.const 0))
     (if (i32.eqz (local.get $tex)) (then
       (call $d3dim_draw_tl_triangle
@@ -7507,6 +7550,36 @@
     (local.set $u2 (f32.load (i32.add (local.get $v2) (i32.const 24))))
     (local.set $t2 (f32.load (i32.add (local.get $v2) (i32.const 28))))
     (local.set $state (call $d3ddev_state (local.get $this)))
+    (local.set $texture_q0 (f32.const 1))
+    (local.set $texture_q1 (f32.const 1))
+    (local.set $texture_q2 (f32.const 1))
+    ;; Linear transforms commute with homogeneous clipping. Keep supplied UV
+    ;; intact until here, then interpolate all three transformed components.
+    (if (global.get $d3dim_supplied_projection) (then
+      (local.set $matrix (call $d3dim_supplied_matrix (local.get $state)))
+      (local.set $input (i32.add (call $g2w (local.get $state)) (i32.const 4048)))
+      (local.set $output (i32.add (call $g2w (local.get $state)) (i32.const 4080)))
+      (f32.store offset=8 (local.get $input) (f32.const 0))
+      (f32.store offset=12 (local.get $input) (f32.const 1))
+      (f32.store (local.get $input) (local.get $u0))
+      (f32.store offset=4 (local.get $input) (local.get $t0))
+      (call $mat4_transform_vec4 (local.get $output) (local.get $matrix) (local.get $input))
+      (local.set $u0 (f32.load (local.get $output)))
+      (local.set $t0 (f32.load offset=4 (local.get $output)))
+      (local.set $texture_q0 (f32.load offset=8 (local.get $output)))
+      (f32.store (local.get $input) (local.get $u1))
+      (f32.store offset=4 (local.get $input) (local.get $t1))
+      (call $mat4_transform_vec4 (local.get $output) (local.get $matrix) (local.get $input))
+      (local.set $u1 (f32.load (local.get $output)))
+      (local.set $t1 (f32.load offset=4 (local.get $output)))
+      (local.set $texture_q1 (f32.load offset=8 (local.get $output)))
+      (f32.store (local.get $input) (local.get $u2))
+      (f32.store offset=4 (local.get $input) (local.get $t2))
+      (call $mat4_transform_vec4 (local.get $output) (local.get $matrix) (local.get $input))
+      (local.set $u2 (f32.load (local.get $output)))
+      (local.set $t2 (f32.load offset=4 (local.get $output)))
+      (local.set $texture_q2 (f32.load offset=8 (local.get $output)))
+    ))
     ;; Cylindrical wrapping: WRAPU/WRAPV take the short way across the seam.
     (local.set $wrap (call $d3dim_wrap_flags (local.get $state)))
     (if (i32.and (local.get $wrap) (i32.const 1)) (then
@@ -7621,7 +7694,8 @@
       (f32.load (i32.add (local.get $v2) (i32.const 12)))
       (local.get $c2)
       (f32.load (i32.add (local.get $v2) (i32.const 8)))
-      (local.get $zbuf) (local.get $zfunc) (local.get $zwrite))
+      (local.get $zbuf) (local.get $zfunc) (local.get $zwrite)
+      (local.get $texture_q0) (local.get $texture_q1) (local.get $texture_q2))
     (global.set $d3dim_mip_on (i32.const 0))
     (global.set $rast_fog_on (i32.const 0)))
 

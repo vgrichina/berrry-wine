@@ -24,7 +24,8 @@ function fixture() {
   gpu._target = () => target;
   gpu.targets.set(RT, target);
   const texture = () => {
-    Object.assign(desc, { texture: 1, texWidth: 1, texHeight: 1, texPitch: 4, texDib: 0x900 });
+    Object.assign(desc, { texture: 1, texWidth: 1, texHeight: 1, texPitch: 4, texDib: 0x900,
+      texBpp: 32, colorOp: 2, colorArg1: 2, colorArg2: 0, alphaArg1: 2, alphaArg2: 0 });
     [1, 1, 1, 32, 4, 0x900].forEach((v, i) => put(CLEAR + 32 + i * 4, v));
   };
   return { gpu, desc, target, put, texture, messages, draws, clears };
@@ -66,7 +67,7 @@ for (const [primitive, type, count] of [[4, 2, 3], [2, 3, 1], [3, 3, 0],
 // Exact masks distinguish every overlap, including short unsupported primitives.
 for (const [primitive, type, count, mask] of [[4, 2, 3, 1], [0, 3, 3, 2],
   [7, 2, 3, 3], [2, 3, 1, 4], [3, 2, 0, 5], [0, 3, 2, 6], [0, 2, 1, 7],
-  [4, 3, 2, 4], [6, 3, 0, 4], [0xffffffff, 0xffffffff, 0xffffffff, 3]]) {
+  [4, 3, 2, 4], [4, 4, 2, 4], [0, 4, 3, 2], [6, 3, 0, 4], [0xffffffff, 0xffffffff, 0xffffffff, 3]]) {
   const f = fixture(), before = f.gpu.snapshot();
   f.put(CALL + 4, primitive); f.put(CALL + 8, type); f.put(CALL + 16, count);
   for (let n = 1; n <= 2; n++) {
