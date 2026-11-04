@@ -3,19 +3,19 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve(process.env.STRONGHOLD_CONTRACT_RUN||'scratch/runs/20261104-stronghold-quiet-rpc-original-gameplay/contract-test');
+const run=path.resolve(process.env.STRONGHOLD_CONTRACT_RUN||'scratch/runs/20261104-stronghold-setup-transition-onward/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
 const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:45:00Z');
-const actualOwn='2026-11-04T22:12:29+00:00 mdk2-medium-release OWN tools/mdk2-local-runtime.cjs docs/re-notes/mdk2-medium-release-gameplay-20261104.md';
-const actualRelease='2026-11-04T22:20:20+00:00 mdk2-medium-release LOCAL HEAVY RELEASE mdk2-medium-release-gameplay-2210 offline fixture only';
-const actualFileRelease='2026-11-04T22:26:57Z mdk2-medium-release RELEASE tools/mdk2-local-runtime.cjs docs/re-notes/mdk2-medium-release-gameplay-20261104.md';
-const fixtureBoard=actualOwn+'\n'+actualRelease+'\n'+actualFileRelease,fixtureNow=Date.parse('2026-11-04T22:28:00Z');
+const actualOwn='2026-11-04T22:30:00+00:00 stronghold-quiet-rpc OWN tools/stronghold-local-runtime.cjs docs/re-notes/stronghold-quiet-rpc-original-gameplay-20261104.md';
+const actualRelease='2026-11-04T22:39:17+00:00 stronghold-quiet-rpc LOCAL HEAVY RELEASE stronghold-quiet-rpc-original-gameplay-2230 offline fixture only';
+const actualFileRelease='2026-11-04T22:45:12Z stronghold-quiet-rpc RELEASE tools/stronghold-local-runtime.cjs docs/re-notes/stronghold-quiet-rpc-original-gameplay-20261104.md';
+const fixtureBoard=actualOwn+'\n'+actualRelease+'\n'+actualFileRelease,fixtureNow=Date.parse('2026-11-04T22:46:00Z');
 assert.equal(api.requireRuntimeRelease(fixtureBoard,fixtureNow).row,actualRelease);
-for(const line of [actualRelease,fixtureBoard.replaceAll('mdk2-medium-release','someone'),fixtureBoard.replace('LOCAL HEAVY RELEASE mdk2-medium-release-gameplay-2210','LOCAL HEAVY RELEASE mdk2-measured-native-boundary-gameplay-nov04'),fixtureBoard.replace('22:20:20','22:12:28'),fixtureBoard.replace('22:20:20','22:53:05'),fixtureBoard.replace('22:12:29','22:12:28'),actualOwn+'\n2026-11-04T21:49:00Z stronghold waiting '+actualRelease,actualOwn+'\n'+actualRelease.replace('mdk2-medium-release LOCAL','mdk2-measured-native LOCAL'),actualOwn+'\n'+actualRelease.replace('-2210 offline','-2210-extra offline')])assert.throws(()=>api.requireRuntimeRelease(line,fixtureNow),/release/);
-assert.throws(()=>api.requireRuntimeRelease(fixtureBoard+'\n'+actualOwn.replace('22:12:29','22:28:01'),fixtureNow),/release/,'fresh later OWN invalidates earlier release');
-for(const board of [actualOwn+'\n'+actualRelease,fixtureBoard.replace('22:26:57','22:20:19'),fixtureBoard.replace('22:26:57','22:29:00'),fixtureBoard.replace('mdk2-medium-release RELEASE','foreign RELEASE')])assert.throws(()=>api.requireRuntimeRelease(board,fixtureNow),/release/);
+for(const line of [actualRelease,fixtureBoard.replaceAll('stronghold-quiet-rpc','someone'),fixtureBoard.replace('LOCAL HEAVY RELEASE stronghold-quiet-rpc-original-gameplay-2230','LOCAL HEAVY RELEASE mdk2-medium-release-gameplay-2210'),fixtureBoard.replace('22:39:17','22:29:59'),fixtureBoard.replace('22:39:17','22:53:05'),fixtureBoard.replace('22:30:00','22:29:59'),actualOwn+'\n2026-11-04T21:49:00Z stronghold waiting '+actualRelease,actualOwn+'\n'+actualRelease.replace('stronghold-quiet-rpc LOCAL','foreign LOCAL'),actualOwn+'\n'+actualRelease.replace('-2230 offline','-2230-extra offline')])assert.throws(()=>api.requireRuntimeRelease(line,fixtureNow),/release/);
+assert.throws(()=>api.requireRuntimeRelease(fixtureBoard+'\n'+actualOwn.replace('22:30:00','22:46:01'),fixtureNow),/release/,'fresh later OWN invalidates earlier release');
+for(const board of [actualOwn+'\n'+actualRelease,fixtureBoard.replace('22:45:12','22:39:16'),fixtureBoard.replace('22:45:12','22:47:00'),fixtureBoard.replace('stronghold-quiet-rpc RELEASE','foreign RELEASE')])assert.throws(()=>api.requireRuntimeRelease(board,fixtureNow),/release/);
 const lockProbe="const a=require('./tools/stronghold-local-runtime.cjs');console.log(JSON.stringify(a.requireLocalFlock(process.argv[1])))";
 const testLock=path.join(run,'offline-runtime.lock');fs.writeFileSync(testLock,'');
 assert.throws(()=>execFileSync(process.execPath,['-e',lockProbe,testLock],{stdio:'pipe'}),/Command failed/);
@@ -32,6 +32,7 @@ reject('missing authorization',r=>delete r.authorization);
 reject('missing current authorization',r=>delete r.freshLocalDiagnosticAuthorized);
 reject('previous named observation assignment',r=>r.assignment='stronghold-named-observation-gameplay user task');
 reject('foreign assignment',r=>r.assignment='foreign');
+reject('previous quiet RPC assignment',r=>r.assignment='stronghold-quiet-rpc-original-gameplay-2230 user task');
 reject('previous repaired entry assignment',r=>r.assignment='stronghold-repaired-entry-original-gameplay user task');
 reject('previous fresh complete assignment',r=>r.assignment='stronghold-fresh-complete-entry-gameplay user task');
 reject('expired predecessor authorization',r=>r.assignment='stronghold-portable-local-runtime user task');
@@ -68,8 +69,8 @@ reject('extended cleanup',r=>{r.cleanupBy=api.CLEANUP+1;r.expiresAt=r.cleanupBy;
 reject('insufficient runtime reserve',r=>r.chromeCutoff=r.issuedAt+719999);
 reject('insufficient cleanup reserve',r=>{r.cleanupBy=r.issuedAt+899999;r.expiresAt=r.cleanupBy;});
 reject('expired process contract',r=>r.expiresAt=now);
-assert.equal(api.CUTOFF,Date.parse('2026-11-04T23:40:00Z'));
-assert.equal(api.CLEANUP,Date.parse('2026-11-04T23:43:00Z'));
+assert.equal(api.CUTOFF,Date.parse('2026-11-04T23:35:00Z'));
+assert.equal(api.CLEANUP,Date.parse('2026-11-04T23:38:00Z'));
 const lastStart=api.createRelease({run,pins,nonce,now:api.CUTOFF-720000});
 assert.equal(lastStart.closeBy,api.CUTOFF);assert.equal(lastStart.cleanupBy-lastStart.closeBy,180000);
 assert.throws(()=>api.createRelease({run,pins,nonce,now:api.CUTOFF-719999}),/deadline/);
@@ -317,6 +318,50 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
   assert.throws(()=>api.assertMailboxCommandReady(transitionRun,{command:{action:'route-arrival'}}),/terminal/);
   assert(p.route.includes("if(continuation!=='preset')fail('fresh later review required before preset')"));
   console.log('PASS actual partial-setup fault OLD unknown/rejects NEW exact whole-game observation/arrival only; '+negatives+' pixel/scene negatives, alpha/geometry/cap/readiness/terminal guards; native returns and drained release retained');
+ }
+ // Replay this assignment's first fault through the real capture and arrival
+ // functions. A different opacity of the same partial layout is observation
+ // only; even these exact pixels cannot advance to a preset gesture.
+ const onwardRun=path.resolve('scratch/runs/20261104-stronghold-setup-transition-onward');
+ const onwardCapture=path.join(onwardRun,'browser/route-native-boundary-10.png');
+ if(fs.existsSync(onwardCapture)){
+  const {PNG}=require('pngjs'),bytes=fs.readFileSync(onwardCapture),png=PNG.sync.read(bytes);
+  const nav=require('../tools/stronghold-route-recognition-handoff.cjs').originalNavigation();
+  const oldDiagnostic=vm.runInNewContext('('+api.diagnosticScene.toString().replace('SETUP_TRANSITIONS.includes(base.hash(pixels))','base.hash(pixels)===SETUP_TRANSITION')+')',{require,base,Buffer,SETUP_TRANSITION:api.SETUP_TRANSITION});
+  assert.equal(nav.scene(bytes),'unknown');assert.equal(oldDiagnostic(bytes,'unknown'),'unknown');
+  assert.equal(api.diagnosticScene(bytes,'unknown'),'setup-transition-observation');
+  assert(Object.isFrozen(api.SETUP_TRANSITIONS));assert.equal(api.SETUP_TRANSITIONS.length,2);
+  let negatives=0;
+  for(const [x,y]of [[10,194],[869,861],[153,419],[84,733],[620,500],[150,240],[80,610]]){
+   const changed={...png,data:Buffer.from(png.data)};changed.data[(y*png.width+x)*4]^=1;
+   assert.equal(api.diagnosticScene(PNG.sync.write(changed),'unknown'),'unknown');negatives++;
+  }
+  const toolbar={...png,data:Buffer.from(png.data)};toolbar.data[(50*png.width+50)*4]^=1;
+  assert.equal(api.diagnosticScene(PNG.sync.write(toolbar),'unknown'),'setup-transition-observation');
+  const alpha={...png,data:Buffer.from(png.data)};alpha.data[(300*png.width+300)*4+3]=254;
+  assert.throws(()=>api.diagnosticScene(PNG.sync.write(alpha),'unknown'),/opaque/);
+  assert.throws(()=>api.diagnosticScene(PNG.sync.write(new PNG({width:800,height:600})),'unknown'),/geometry/);
+  for(const known of ['choose-type','actual-scene20-observation','zephyr-ready'])assert.equal(api.diagnosticScene(bytes,known),known);
+  const state=JSON.parse(base.retained(path.join(onwardRun,'browser/route-native-boundary-10.json'))).state;
+  const a=p.route.indexOf(' const capture=async()=>{'),b=p.route.indexOf(' const sample=',a);
+  const cap=await vm.runInNewContext(p.route.slice(a,b)+'capture()',{require,physical:{capture:async()=>({png:bytes,state})},sha256:base.hash,scene:nav.scene,fail:m=>{throw Error(m);}});
+  assert.equal(cap.scene,'setup-transition-observation');
+  const arrival=(value,arrived=1024)=>{
+   const a=p.route.indexOf(' const acceptArrival=cap=>{'),b=p.route.indexOf(' const receipt=',a);
+   return vm.runInNewContext("let continuation='arrival',arrival="+arrived+",shellSamples=0,last;"+p.route.slice(a,b)+'acceptArrival(cap);({continuation,last});',{require,cap:value,fail:m=>{throw Error(m);}});
+  };
+  assert.throws(()=>arrival({...cap,scene:oldDiagnostic(bytes,'unknown')}),/first unexpected natural scene: unknown/);
+  assert.equal(arrival(cap).continuation,'arrival');
+  assert.throws(()=>arrival(cap,3072),/arrival diagnostic cap/);
+  assert.throws(()=>arrival({...cap,scene:'actual-scene20-observation'}),/no readiness grant/);
+  assert.throws(()=>api.assertMailboxCommandReady(onwardRun,{command:{action:'route-arrival'}}),/terminal/);
+  const report=JSON.parse(base.retained(path.join(onwardRun,'browser/preset-attachment-133.json'))).report;
+  assert.equal(report.blocks,39098384);assert.equal(report.fault,null);assert.deepEqual(report.pending,[]);
+  assert.deepEqual(report.limits,{maxMs:360000,maxRecords:2048,maxBytes:1048576,maxBoundaries:50000000});
+  for(const kind of ['setup-return','callback-return','custom-path-completed'])assert(report.records.some(r=>r.kind===kind));
+  assert.deepEqual(state.main.inputQueue,[]);assert.equal(state.main.mouseButtonsMask,0);
+  assert.equal(state.main.activeInput,null);assert.equal(state.main.lastInput,null);assert.equal(state.main.tick.tickMs,16);
+  console.log('PASS current partial-setup first-fault OLD unknown/rejects NEW exact second identity/arrival only; '+negatives+' pixel negatives, alpha/geometry/precedence/terminal/cap/readiness guards and continuous39098384 native history');
  }
  const {EventEmitter}=require('node:events');
  async function closureFixture(code,signal,timeout=false){

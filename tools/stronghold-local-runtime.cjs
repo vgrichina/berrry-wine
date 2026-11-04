@@ -1,15 +1,17 @@
 'use strict';
-// Explicit local-process contract for the authorized quiet-RPC original attempt.
+// Explicit local-process contract for the authorized setup-transition attempt.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-quiet-rpc-original-gameplay-2230 user task';
-const ASSIGNMENT='stronghold-quiet-rpc-original-gameplay-2230 user task';
+const AUTH='stronghold-setup-transition-onward-2248 user task';
+const ASSIGNMENT='stronghold-setup-transition-onward-2248 user task';
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-04T23:40:00Z'),CLEANUP=Date.parse('2026-11-04T23:43:00Z');
-// One personally inspected partial setup frame, observed after the original
-// callback returned. Identity only: no complete-layout or input-ready grant.
+const CUTOFF=Date.parse('2026-11-04T23:35:00Z'),CLEANUP=Date.parse('2026-11-04T23:38:00Z');
+// Personally inspected partial setup frames after the original callback
+// returned. Exact identities only: no complete-layout or input-ready grant.
 const SETUP_TRANSITION='741b136a33e205825f23e70af83059d82dfe3b625bd869c321198ba16dec2e5c';
+const SETUP_TRANSITIONS=Object.freeze([SETUP_TRANSITION,
+ '5cf84f22b5e0e11ba4b5a945b1bd031febd8be322cffa382f9c02670c6df237f']);
 function diagnosticScene(bytes,known){
  if(known!=='unknown')return known;
  const {PNG}=require('pngjs'),p=PNG.sync.read(bytes);
@@ -17,18 +19,18 @@ function diagnosticScene(bytes,known){
  const pixels=Buffer.alloc(860*668*4);
  for(let y=0;y<668;y++)p.data.copy(pixels,y*860*4,((y+194)*1200+10)*4,((y+194)*1200+870)*4);
  for(let i=3;i<pixels.length;i+=4)if(pixels[i]!==255)throw Error('opaque setup diagnostic required');
- return base.hash(pixels)===SETUP_TRANSITION?'setup-transition-observation':known;
+ return SETUP_TRANSITIONS.includes(base.hash(pixels))?'setup-transition-observation':known;
 }
 function requireRuntimeRelease(board,now=Date.now()){
- const assignment='mdk2-medium-release-gameplay-2210';
+ const assignment='stronghold-quiet-rpc-original-gameplay-2230';
  const rows=board.split('\n');
- const own=rows.filter(row=>/^\S+ mdk2-medium-release OWN\b/.test(row)&&row.includes('mdk2-medium-release-gameplay-20261104')).at(-1);
+ const own=rows.filter(row=>/^\S+ stronghold-quiet-rpc OWN\b/.test(row)&&row.includes('stronghold-quiet-rpc-original-gameplay-20261104')).at(-1);
  const ownedAt=Date.parse(own?.split(' ')[0]);
- const row=rows.filter(row=>/^\S+ mdk2-medium-release LOCAL HEAVY RELEASE\b/.test(row)&&row.split(/\s+/).includes(assignment)).at(-1);
+ const row=rows.filter(row=>/^\S+ stronghold-quiet-rpc LOCAL HEAVY RELEASE\b/.test(row)&&row.split(/\s+/).includes(assignment)).at(-1);
  const at=Date.parse(row?.split(' ')[0]);
- const fileRelease=rows.filter(row=>/^\S+ mdk2-medium-release RELEASE\b/.test(row)&&row.includes('docs/re-notes/mdk2-medium-release-gameplay-20261104.md')).at(-1);
+ const fileRelease=rows.filter(row=>/^\S+ stronghold-quiet-rpc RELEASE\b/.test(row)&&row.includes('docs/re-notes/stronghold-quiet-rpc-original-gameplay-20261104.md')).at(-1);
  const releasedAt=Date.parse(fileRelease?.split(' ')[0]);
- if(!own||!row||!fileRelease||!Number.isFinite(ownedAt)||!Number.isFinite(at)||!Number.isFinite(releasedAt)||ownedAt<Date.parse('2026-11-04T22:12:29Z')||at<Date.parse('2026-11-04T22:20:20Z')||releasedAt<Date.parse('2026-11-04T22:26:57Z')||at<ownedAt||releasedAt<at||releasedAt>now||at>now||ownedAt>now)
+ if(!own||!row||!fileRelease||!Number.isFinite(ownedAt)||!Number.isFinite(at)||!Number.isFinite(releasedAt)||ownedAt<Date.parse('2026-11-04T22:30:00Z')||at<Date.parse('2026-11-04T22:39:17Z')||releasedAt<Date.parse('2026-11-04T22:45:12Z')||at<ownedAt||releasedAt<at||releasedAt>now||at>now||ownedAt>now)
   throw Error('exact '+assignment+' assignment-bound local heavy release after current OWN required');
  return {row,at,own,ownedAt,fileRelease,releasedAt,assignment};
 }
@@ -175,7 +177,7 @@ function prepare(options){
  p.route=base.replaceOnce(p.route,'scene:scene(c.png)',`scene:require(${q(__filename)}).diagnosticScene(c.png,scene(c.png))`);
  p.route=base.replaceOnce(p.route,"['choose-type-custom-hover','actual-scene20-earlier','actual-scene20-intermediate']",
   "['choose-type-custom-hover','actual-scene20-earlier','actual-scene20-intermediate','setup-transition-observation']");
- p.evidence.setupTransitionDiagnostic={gameRGBAsha256:SETUP_TRANSITION,gameBox:[10,194,860,668],
+ p.evidence.setupTransitionDiagnostic={gameRGBAsha256:SETUP_TRANSITION,gameRGBAsha256s:SETUP_TRANSITIONS,gameBox:[10,194,860,668],
   exactPixels:true,observationOnly:true,readinessGranted:false,arrivalAndObserverCapsUnchanged:true};
  p.source=base.replaceOnce(p.source,"  if(c.action==='observe'){",
   `  if(c.action==='observe'){\n    require(${q(__filename)}).validateCaptureCommand(c,OUT);`);
@@ -207,4 +209,4 @@ function prepare(options){
  p.evidence.routeCompositionSHA256=base.hash(p.route);
  return {...p,createRelease:()=>createRelease({run:options.run,pins:options.pins,nonce})};
 }
-module.exports={identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,diagnosticScene,SETUP_TRANSITION,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,diagnosticScene,SETUP_TRANSITION,SETUP_TRANSITIONS,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
