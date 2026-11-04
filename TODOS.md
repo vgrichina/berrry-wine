@@ -1,9 +1,10 @@
-- [ ] Owner-requested corpus addition: Stronghold Crusader original demo
+- [x] Owner-requested corpus addition: Stronghold Crusader original demo
   id: TG150-STRONGHOLD-CRUSADER-20261103
-  status: original UK v1.1 demo extracted and pinned; registration checks and locked build pass, first skirmish runtime active
+  status: published original UK v1.1 registration and verified first offline skirmish building placement
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Active fresh worker 01a1a3df-d940-7db1-ba8d-aef156102858 uses scratch/usage-watch/stronghold-registered-skirmish-next.task.txt. Runtime released00:12:03Z; fresh bx_pmfcmfw2 expires01:12:18Z, coordinator owns shutdown. Test ordinary menu and first offline Very Easy skirmish with a visible unit order or building placement; repair the first concrete blocker and publish its own tested registration. Two production workers maximum; heavy runtime serialized. Reuse existing media without acquisition or extraction repeats.
-  Evidence: Published preparation dd78dad0b8322a8f4dbb7e615a890c3132437c57; docs/re-notes/stronghold-crusader-demo.md and scratch/runs/20261103-stronghold-crusader-original/. Original executable SHA256 9024c533095f2227b0105b7e8a9e4cf28ec4fb206b165629787b2c97cf99f13f, all 1856 files pinned; shipped readme confirms three offline skirmishes. Registration remains uncommitted and runtime/menu/gameplay unverified. Current worker evidence: scratch/runs/20261104-stronghold-registered-skirmish/.
+  Result: Published 68b54c2f553e9d1074f37be0f7e4f5ee6c0a8b81. Ordinary controls opened Zephyr / Very Easy and placed a Hovel; it persisted after category switching at batch2749, housing capacity10->18. Coordinator inspected placed_verified2749.png and verified106 recovered files plus both tested modules. Locked build and focused registration/census checks passed; broader browser and campaign coverage remain open.
+  Lifecycle: Coordinator verified snapshot stronghold-first-hovel-20261104, then actual normal STOP bx_pmfcmfw2 at00:21:20.638Z, forcedfalse/errornull. Worker terminal; no successor Stronghold task running.
+  Evidence: docs/re-notes/stronghold-crusader-demo.md; scratch/runs/20261104-stronghold-registered-skirmish/; scratch/runs/20261104-coordinator-stronghold-closeout/. Original executable SHA256 9024c533095f2227b0105b7e8a9e4cf28ec4fb206b165629787b2c97cf99f13f, all1856 files pinned.
 
 # TODOS
 
