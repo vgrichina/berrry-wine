@@ -79,6 +79,7 @@ const E2E_EXCEPTIONS = Object.freeze([
   'test-legacy-processed-texture-transform.js',
   'test-legacy-generated-coordinate-contract.js',
   'test-legacy-generated-reflection-contract.js',
+  'test-legacy-generated-projected-contract.js',
   'test-legacy-strided-dimensions.js',
   'test-legacy-count1-texture.js',
   'test-listbox-ownerdraw.js',

@@ -1755,11 +1755,20 @@
   ;; Type 5 is projected; type 6 is an ordinary linear texture transform.
   ;; Keep the inputs, not vertex quotients, through queue capture and clipping.
   (func $d3dim_d7_supplied_type (param $this i32) (result i32)
-    (local $state i32) (local $flags i32)
+    (local $state i32) (local $flags i32) (local $selector i32)
     (local.set $state (call $d3ddev_state (local.get $this)))
-    (if (i32.gt_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 7))
-      (then (return (i32.const 0))))
+    (local.set $selector (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)))
     (local.set $flags (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 24)))
+    (if (i32.gt_u (local.get $selector) (i32.const 7)) (then
+      ;; Camera-space position is also a linear input vector. Preserve its
+      ;; three components for PROJECTED draws instead of interpolating vertex
+      ;; quotients. Other generated modes retain their separate path.
+      (if (i32.and
+          (i32.eq (i32.shr_u (local.get $selector) (i32.const 16)) (i32.const 2))
+          (i32.and (i32.ge_u (local.get $flags) (i32.const 0x102))
+                   (i32.le_u (local.get $flags) (i32.const 0x104))))
+        (then (return (i32.const 5))))
+      (return (i32.const 0))))
     (if (i32.or (i32.eqz (i32.and (local.get $flags) (i32.const 255)))
         (i32.gt_u (i32.and (local.get $flags) (i32.const 255)) (i32.const 4)))
       (then (return (i32.const 0))))
@@ -1771,6 +1780,7 @@
     (local $out i32) (local $ow i32) (local $pw i32) (local $src i32)
     (local $state i32) (local $i i32) (local $dst i32) (local $stride i32)
     (local $sets i32) (local $selector i32) (local $dimension i32) (local $offset i32)
+    (local $position i32) (local $input i32) (local $camera i32)
     (if (i32.or (i32.eqz (local.get $packed)) (i32.gt_u (local.get $count) (i32.const 104857)))
       (then (return (i32.const 0))))
     (local.set $out (call $heap_alloc (i32.mul (local.get $count) (i32.const 40))))
@@ -1779,6 +1789,9 @@
     (local.set $pw (call $g2w (local.get $packed)))
     (local.set $src (call $g2w (local.get $original)))
     (local.set $state (call $d3ddev_state (local.get $this)))
+    (local.set $position (i32.eq
+      (i32.shr_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 16))
+      (i32.const 2)))
     (call $d3ddev_composite_wvp (local.get $state))
     (call $d3dim_lights_refresh (local.get $state))
     (local.set $stride (call $d3dim_fvf_stride (local.get $fvf)))
@@ -1802,6 +1815,18 @@
         (if (i32.eq (local.get $dimension) (i32.const 4)) (then
           (i32.store offset=36 (local.get $dst) (i32.load offset=12
             (i32.add (local.get $src) (i32.add (i32.mul (local.get $i) (local.get $stride)) (local.get $offset)))))))))
+      (if (local.get $position) (then
+        ;; Use the original XYZ prefix, independent of FVF colors/lighting and
+        ;; supplied selector. Scratch belongs to this call, never to the queue.
+        (local.set $input (i32.add (call $g2w (local.get $state)) (i32.const 4048)))
+        (local.set $camera (i32.add (call $g2w (local.get $state)) (i32.const 4080)))
+        (memory.copy (local.get $input)
+          (i32.add (local.get $src) (i32.mul (local.get $i) (local.get $stride))) (i32.const 12))
+        (f32.store offset=12 (local.get $input) (f32.const 1))
+        (call $mat4_transform_vec4 (local.get $camera) (call $g2w (local.get $state)) (local.get $input))
+        (call $mat4_transform_vec4 (local.get $input)
+          (i32.add (call $g2w (local.get $state)) (i32.const 64)) (local.get $camera))
+        (memory.copy (i32.add (local.get $dst) (i32.const 24)) (local.get $input) (i32.const 16))))
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $lp)))
     (local.get $out))
 

@@ -257,7 +257,9 @@ async function main(){
       selector:(mode<<16)|7,generated:true,samples:[{x:8,y:12}]}));
     const r=await run(path.resolve(ROOT,wasm),{states,withNormals});results.push(r);save();
     assert.equal(r.failure,null);assert.equal(r.observations.length,3);
-    assert(r.descriptorTypes.length===3&&r.descriptorTypes.every(t=>t===3),'TCI excluded from supplied deferred projection');
+    // Camera-position PROJECTED now preserves its vector through type 5.
+    // Normal/reflection still use type 3; this historical cell has no oracle.
+    assert.deepEqual(r.descriptorTypes,[3,5,3],'generated projection representation by source');
     assert(r.observations.every(o=>o.expected===null),'no generated pixel correctness claim');
     console.log(JSON.stringify({withNormals,status:'GENERATED PREREQUISITES CHARACTERIZED; pixels UNQUALIFIED'}));
   }
