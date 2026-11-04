@@ -3,7 +3,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-acknowledged-menu-onward/contract-test');
+const run=path.resolve('scratch/runs/20261104-stronghold-unique-owner-onward/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
@@ -26,6 +26,7 @@ reject('previous ChooseType assignment',r=>r.assignment='stronghold-choosetype-r
 reject('previous route assignment',r=>r.assignment='stronghold-route-recognition-handoff user task');
 reject('previous observation-only assignment',r=>r.assignment='stronghold-current-hover-diagnostic user task');
 reject('previous missed-review assignment',r=>r.assignment='stronghold-repaired-hover-native-onward user task');
+reject('previous owning-discovery assignment',r=>r.assignment='stronghold-acknowledged-menu-onward user task');
 reject('foreign shutdown owner',r=>r.shutdownOwner='worker');
 reject('box as local',r=>r.kind='leased-box');
 reject('fake box ID',r=>r.boxId='bx_local');
@@ -51,6 +52,10 @@ reject('extended cleanup',r=>{r.cleanupBy=api.CLEANUP+1;r.expiresAt=r.cleanupBy;
 reject('insufficient runtime reserve',r=>r.chromeCutoff=r.issuedAt+719999);
 reject('insufficient cleanup reserve',r=>{r.cleanupBy=r.issuedAt+899999;r.expiresAt=r.cleanupBy;});
 reject('expired process contract',r=>r.expiresAt=now);
+assert.equal(api.CUTOFF,Date.parse('2026-11-04T23:45:00Z'));
+assert.equal(api.CLEANUP,Date.parse('2026-11-04T23:48:00Z'));
+const lastStart=api.createRelease({run,pins,nonce,now:api.CUTOFF-720000});
+assert.equal(lastStart.closeBy,api.CUTOFF);assert.equal(lastStart.cleanupBy-lastStart.closeBy,180000);
 assert.throws(()=>api.createRelease({run,pins,nonce,now:api.CUTOFF-719999}),/deadline/);
 const child=execFileSync(process.execPath,['-e',`const a=require('./tools/stronghold-local-runtime.cjs');try{a.validateRelease(${JSON.stringify(release)},${JSON.stringify({run,pins,nonce,now})});process.exit(9)}catch(e){if(!/identity/.test(e.message))throw e;console.log('foreign actual child rejected')}`],{encoding:'utf8'}).trim();
 assert.equal(child,'foreign actual child rejected');
@@ -84,7 +89,7 @@ if(fs.existsSync(path.join(actualRun,'browser/cleanup.json'))){
   if(i<6)write('reply-'+i+'.json',{i,ok:true,fixtureOnly:true});
  }
  write('review-required.json',first);
- const client=path.resolve('scratch/runs/20261104-stronghold-acknowledged-menu-onward/command.cjs');
+ const client=path.resolve('scratch/runs/20261104-stronghold-unique-owner-onward/command.cjs');
  const actualClientBlocked=scene=>{
   assert.throws(()=>execFileSync(process.execPath,[client,JSON.stringify({action:'menu-crusader'}),fixture],{stdio:'pipe'}),
    error=>error.status===1&&error.stderr.toString().includes('pending command 6; review '+scene));

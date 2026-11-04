@@ -4,7 +4,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {PNG}=require('pngjs');
 const a=require('../tools/stronghold-route-recognition-handoff.cjs'),b=require('../tools/stronghold-preset-driver-attachment.cjs'),title=require('../tools/stronghold-title-recognition.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-acknowledged-menu-onward');
+const run=path.resolve('scratch/runs/20261104-stronghold-unique-owner-onward');
 const latest='scratch/runs/20261104-stronghold-choosetype-recognition-onward/browser/route-install-checkpoint';
 const png=b.retained(latest+'.png'),state=JSON.parse(b.retained(latest+'.json')).state;
 const nav=a.compileClosure(b.retained(a.WRAPPER).toString(),a.WRAPPER,'');

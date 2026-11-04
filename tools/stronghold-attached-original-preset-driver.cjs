@@ -27,10 +27,19 @@ async function installBeforeFirstScript(session,{event,expression,deadline,log=(
   if(!bp.breakpointId)throw Error('pre-script breakpoint missing');breakpoint=bp.breakpointId;
   log('worker-bootstrap.jsonl',{...identity,phase:'breakpoint-before-startup-resume'});
   await session.send('Runtime.runIfWaitingForDebugger');
-  const stop=await paused,frame=stop.callFrames?.[0],script=scripts.get(frame?.location?.scriptId);
-  if(now()>=deadline||stop.reason!=='instrumentation'||!script||script.url!==identity.workerURL||
-    !Number.isInteger(script.executionContextId)||script.executionContextId<=0)
-   throw Error('exact first-script/context prerequisite missing');
+  const stop=await paused,frame=stop.callFrames?.[0],script=scripts.get(frame?.location?.scriptId),observedAt=now();
+  // Preserve the actual rejected prerequisites before throwing. A combined
+  // error alone loses whether the pause, script, context or deadline failed.
+  // This is evidence only: every original prerequisite remains mandatory.
+  const prerequisites={liveDeadline:observedAt<deadline,instrumentationPause:stop.reason==='instrumentation',
+   parsedTopScript:!!script,exactWorkerURL:script?.url===identity.workerURL,
+   positiveExecutionContext:Number.isInteger(script?.executionContextId)&&script.executionContextId>0};
+  log('worker-bootstrap.jsonl',{...identity,phase:'first-script-prerequisites',observedAt,deadline,prerequisites,
+   stop:{reason:stop.reason,callFrames:stop.callFrames?.map(f=>({functionName:f.functionName,url:f.url,location:f.location}))||[]},
+   script:script?{scriptId:script.scriptId,url:script.url,executionContextId:script.executionContextId}:null,
+   parsedScripts:[...scripts.values()].map(s=>({scriptId:s.scriptId,url:s.url,executionContextId:s.executionContextId}))});
+  const missing=Object.keys(prerequisites).filter(key=>!prerequisites[key]);
+  if(missing.length)throw Error('exact first-script/context prerequisite missing: '+missing.join(','));
   const result=await session.send('Runtime.evaluate',{expression,contextId:script.executionContextId});
   if(result.exceptionDetails)throw Error(JSON.stringify(result.exceptionDetails));
   log('worker-bootstrap.jsonl',{...identity,phase:'preload-before-first-script',scriptId:script.scriptId,contextId:script.executionContextId});

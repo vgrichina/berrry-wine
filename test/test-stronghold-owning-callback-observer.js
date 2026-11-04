@@ -147,7 +147,7 @@ if(!isMainThread){
   });
  }
  async function composition(){
-  const run=path.resolve('scratch/runs/20261104-stronghold-acknowledged-menu-onward/observer-composition'),pins=path.join(run,'pins.json');fs.mkdirSync(run,{recursive:true});
+  const run=path.resolve('scratch/runs/20261104-stronghold-unique-owner-onward/observer-composition'),pins=path.join(run,'pins.json');fs.mkdirSync(run,{recursive:true});
   fs.writeFileSync(pins,JSON.stringify({files:[{path:'build/wine-assembly.wasm',sha256:hash(fs.readFileSync('build/wine-assembly.wasm'))}]}));
   const p=api.prepare({run,pins});new vm.Script(p.source);new vm.Script(p.route);
   const cut=p.source.lastIndexOf('main().catch(');base.compileClosure(p.source.slice(0,cut),p.driver,p.route,p.evidence.retainedClosure);
@@ -291,7 +291,9 @@ if(!isMainThread){
    for(const arm of [control,trace,observed])for(const s of arm.segments)delete s.pages;
    results.push({variant,control,trace,observed,differences});console.log('PASS executable owning Worker callback/branch/scene/setup fixtures and parity',variant);
   }
-  const wrongInit=await one('wine-assembly.wasm',true,false,true);assert(wrongInit.badBindingRejected);assert.equal(wrongInit.commands.length,0);
+  const wrongInit=[];for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
+   const rejected=await one(variant,true,false,true);assert(rejected.badBindingRejected);assert.equal(rejected.commands.length,0);wrongInit.push({variant,...rejected});
+  }
   const out={passed:true,offlineOnly:true,fixtureOnly:true,evidence,results,wrongInit,media:{path:EXE,sha256:api.EXE_SHA256}};
   if(process.env.STRONGHOLD_CALLBACK_RESULT)fs.writeFileSync(process.env.STRONGHOLD_CALLBACK_RESULT,JSON.stringify(out,null,2)+'\n');
  })().catch(e=>{console.error(e.stack);process.exitCode=1;});

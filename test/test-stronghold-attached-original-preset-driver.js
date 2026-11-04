@@ -24,7 +24,7 @@ class Session extends EventEmitter{
    if(this.mode==='disconnect'){this.emit('Disconnected');return {};}
    if(this.mode==='idle')return {};
    this.emit('Debugger.scriptParsed',{scriptId:'actual-script',url:this.mode==='wrong-url'?'http://foreign/worker.js':event.targetInfo.url,executionContextId:this.mode==='missing-context'?undefined:17});
-   this.emit('Debugger.paused',{reason:this.mode==='wrong-reason'?'other':'instrumentation',callFrames:[{location:{scriptId:'actual-script'}}]});
+   this.emit('Debugger.paused',{reason:this.mode==='wrong-reason'?'other':'instrumentation',callFrames:this.mode==='missing-frame'?[]:[{location:{scriptId:this.mode==='missing-script'?'unparsed-script':'actual-script'}}]});
   }
   if(method==='Runtime.evaluate'){
    assert.equal(args.contextId,17);assert.equal(this.realm.started,undefined);
@@ -49,16 +49,42 @@ class Session extends EventEmitter{
  const rows=[];
  const s=new Session();await driver.installBeforeFirstScript(s,{event,expression:'globalThis.preloaded=true',deadline:Date.now()+1000,log:(name,row)=>rows.push({name,...row})});
  assert.deepEqual(s.calls.map(x=>x.method),['Runtime.enable','Debugger.enable','Debugger.setInstrumentationBreakpoint','Runtime.runIfWaitingForDebugger','Runtime.evaluate','Debugger.removeBreakpoint','Debugger.resume']);
- assert.equal(s.realm.started,true);assert.equal(rows[1].contextId,17);assert.equal(rows[1].sessionId,event.sessionId);
+ assert.equal(s.realm.started,true);assert.equal(rows.find(r=>r.phase==='preload-before-first-script').contextId,17);assert.equal(rows[1].sessionId,event.sessionId);
  assert.equal(s.listenerCount('Debugger.paused'),0);
  const negatives=[];
- for(const mode of ['disconnect','wrong-url','missing-context','wrong-reason','target-closed','exception','idle']){
+ for(const mode of ['disconnect','wrong-url','missing-context','missing-frame','missing-script','wrong-reason','target-closed','exception','idle']){
   const s=new Session(mode);await assert.rejects(driver.installBeforeFirstScript(s,{event,expression:'globalThis.preloaded=true',deadline:Date.now()+(mode==='idle'?10:1000)}));
   assert(!s.calls.some(x=>x.method==='Debugger.resume'));assert.equal(s.listenerCount('Debugger.paused'),0);assert.equal(s.realm.started,undefined);negatives.push(mode);
  }
  await assert.rejects(driver.installBeforeFirstScript(new Session(),{event:{...event,waitingForDebugger:false},expression:'',deadline:Date.now()+1000}),/paused/);
  await assert.rejects(driver.installBeforeFirstScript(new Session(),{event,expression:'',deadline:0}),/deadline/);
- const root=path.resolve(__dirname,'..'),run=path.join(root,'scratch/runs/20261104-stronghold-first-script-native/offline-successor-check');fs.mkdirSync(run,{recursive:true});
+ // Old combined failure loses the rejected values. The historical live stop
+ // was not retained; each cause below is explicitly an offline fixture.
+ const {execFileSync}=require('node:child_process'),Module=require('node:module');
+ const oldSource=execFileSync('git',['show','8008302103f1c4a258fc1a47072f173bc97bdcdb:tools/stronghold-attached-original-preset-driver.cjs'],{encoding:'utf8'});
+ const oldModule=new Module(require.resolve('../tools/stronghold-attached-original-preset-driver.cjs'),module);
+ oldModule.filename=require.resolve('../tools/stronghold-attached-original-preset-driver.cjs');oldModule.paths=module.paths;
+ oldModule._compile(oldSource,oldModule.filename);
+ const diagnose=async(install,mode)=>{
+  const logs=[],session=new Session(mode);let clock=0;
+  await assert.rejects(install(session,{event,expression:'globalThis.preloaded=true',deadline:1000,
+   now:()=>mode==='deadline'?(clock++?1000:0):0,log:(name,row)=>logs.push({name,...row})}));
+  assert(!session.calls.some(c=>['Runtime.evaluate','Debugger.resume'].includes(c.method)));
+  return logs.find(r=>r.phase==='first-script-prerequisites');
+ };
+ assert.equal(await diagnose(oldModule.exports.installBeforeFirstScript,'missing-context'),undefined,'old failure loses prerequisite evidence');
+ const diagnostics=[];
+ for(const [mode,failedKey] of [['missing-context','positiveExecutionContext'],['wrong-url','exactWorkerURL'],['wrong-reason','instrumentationPause'],['missing-frame','parsedTopScript'],['missing-script','parsedTopScript'],['deadline','liveDeadline']]){
+  const row=await diagnose(driver.installBeforeFirstScript,mode);assert(row);assert.equal(row.prerequisites[failedKey],false);
+  assert.equal(row.targetId,event.targetInfo.targetId);assert.equal(row.sessionId,event.sessionId);
+  assert.equal(row.parsedScripts[0].scriptId,'actual-script');
+  if(mode==='missing-context')assert.equal(row.script.executionContextId,undefined);
+  if(mode==='wrong-url')assert.equal(row.script.url,'http://foreign/worker.js');
+  if(mode==='missing-script')assert.equal(row.stop.callFrames[0].location.scriptId,'unparsed-script');
+  if(mode==='deadline')assert.equal(row.observedAt,row.deadline);
+  diagnostics.push({fixtureOnly:true,mode,...row});
+ }
+ const root=path.resolve(__dirname,'..'),run=path.join(root,'scratch/runs/20261104-stronghold-unique-owner-onward/attached-driver-composition');fs.mkdirSync(run,{recursive:true});
  const pins=path.join(run,'pins.json');fs.writeFileSync(pins,JSON.stringify({commit:'fixture-only',files:[{path:'build/wine-assembly.wasm',sha256:attachment.hash(fs.readFileSync(path.join(root,'build/wine-assembly.wasm')))}]}));
  const original=attachment.prepare({run,pins}),composed=driver.prepare({run,pins});
  assert.equal(composed.route,original.route);assert.deepEqual(composed.evidence.bounds,original.evidence.bounds);
@@ -68,7 +94,7 @@ class Session extends EventEmitter{
  new vm.Script(composed.source,{filename:composed.driver});
  // Compile the actual source and its retained helper closure without main.
  const cut=composed.source.lastIndexOf('main().catch(');attachment.compileClosure(composed.source.slice(0,cut),composed.driver,composed.route,composed.evidence.retainedClosure);
- const result={passed:true,transportOrder:s.calls.map(x=>x.method),negativeControls:negatives,urlBinding:{originalLiteralFailureReproduced:true,relativeAndAbsolutePass:true,negativeControls:12,rawEvidenceUnchanged:true},actualComposition:true,retainedHelpers:composed.evidence.retainedClosure.length,unchangedRouteAndBounds:true,actualChrome:false,causeOfOriginalTargetClosure:'unknown; successor requires fresh separately allocated browser qualification'};
+ const result={passed:true,transportOrder:s.calls.map(x=>x.method),negativeControls:negatives,urlBinding:{originalLiteralFailureReproduced:true,relativeAndAbsolutePass:true,negativeControls:12,rawEvidenceUnchanged:true},rejectedPrerequisites:{oldEvidenceMissing:true,newEvidence:diagnostics,historicalSubcause:'unknown; actual rejected fields were not recorded'},actualComposition:true,retainedHelpers:composed.evidence.retainedClosure.length,unchangedRouteAndBounds:true,actualChrome:false,causeOfOriginalTargetClosure:'unknown; successor requires fresh separately allocated browser qualification'};
  if(process.env.STRONGHOLD_ATTACHED_DRIVER_RESULT)fs.writeFileSync(process.env.STRONGHOLD_ATTACHED_DRIVER_RESULT,JSON.stringify(result,null,2));
  console.log('PASS offline exact-context first-script transport, fail-closed controls and actual retained driver composition; no Chrome/game');
 })().catch(error=>{console.error(error);process.exitCode=1;});
