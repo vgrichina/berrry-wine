@@ -1146,6 +1146,11 @@
   ;; records into the 32-byte legacy layouts consumed by the shared renderer.
   (func $handle_IDirect3DDevice7_DrawPrimitive (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $dwVertexCount i32) (local $vtxType i32) (local $packed i32)
+    (if (i32.eqz (call $d3dim_fvf_supplied_valid (local.get $arg0) (local.get $arg2))) (then
+      (i32.store (global.get $reg_base) (i32.const 0x80070057))
+      (i32.store offset=16 (global.get $reg_base)
+        (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+      (return)))
     (local.set $dwVertexCount (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
     (local.set $vtxType (call $d3dim_fvf_vtxtype (local.get $arg2)))
     (local.set $packed (call $d3dim_pack_fvf_vertices
@@ -1165,6 +1170,11 @@
   ;; IDirect3DDevice7_DrawIndexedPrimitive — 7 args (incl. this)
   (func $handle_IDirect3DDevice7_DrawIndexedPrimitive (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $dwVertexCount i32) (local $lpwIndices i32) (local $dwIndexCount i32) (local $vtxType i32) (local $packed i32)
+    (if (i32.eqz (call $d3dim_fvf_supplied_valid (local.get $arg0) (local.get $arg2))) (then
+      (i32.store (global.get $reg_base) (i32.const 0x80070057))
+      (i32.store offset=16 (global.get $reg_base)
+        (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
+      (return)))
     (local.set $dwVertexCount (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
     (local.set $lpwIndices    (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
     (local.set $dwIndexCount  (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))

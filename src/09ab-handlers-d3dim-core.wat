@@ -1716,6 +1716,42 @@
   ;; DX7 vertex buffers need at least enough guest memory for Lock callers to
   ;; upload vertices. We store data at entry+8, byte size at +12, a copied
   ;; D3DVERTEXBUFFERDESC at +16, and cached FVF/vertex count at +20/+24.
+  ;; D3DFVF_TEXCOORDSIZE encodes FLOAT2/3/4/1 as 0/1/2/3.
+  (func $d3dim_fvf_tex_size (param $fvf i32) (param $set i32) (result i32)
+    (local $code i32)
+    (local.set $code (i32.and (i32.shr_u (local.get $fvf)
+      (i32.add (i32.const 16) (i32.shl (local.get $set) (i32.const 1)))) (i32.const 3)))
+    (if (result i32) (i32.eq (local.get $code) (i32.const 3))
+      (then (i32.const 1)) (else (i32.add (local.get $code) (i32.const 2)))))
+
+  (func $d3dim_fvf_tex_offset (param $fvf i32) (param $set i32) (result i32)
+    (local $i i32) (local $bytes i32)
+    (block $done (loop $next
+      (br_if $done (i32.ge_u (local.get $i) (local.get $set)))
+      (local.set $bytes (i32.add (local.get $bytes)
+        (i32.shl (call $d3dim_fvf_tex_size (local.get $fvf) (local.get $i)) (i32.const 2))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $next)))
+    (local.get $bytes))
+
+  ;; Immediate Device7 draws retain two supplied components in the canonical
+  ;; legacy record. Higher dimensional input is usable by a 2D sampler with
+  ;; transforms disabled, but must not silently lose z/w in a transform.
+  (func $d3dim_fvf_supplied_valid (param $this i32) (param $fvf i32) (result i32)
+    (local $state i32) (local $selector i32) (local $count i32) (local $flags i32)
+    (local.set $state (call $d3ddev_state (local.get $this)))
+    (local.set $selector (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)))
+    (local.set $count (i32.and (i32.shr_u (local.get $fvf) (i32.const 8)) (i32.const 15)))
+    (if (i32.gt_u (local.get $count) (i32.const 8)) (then (return (i32.const 0))))
+    ;; Generated modes keep their existing, separate prerequisites.
+    (if (i32.gt_u (local.get $selector) (i32.const 0xffff)) (then (return (i32.const 1))))
+    (if (i32.and (i32.ne (local.get $count) (i32.const 0))
+          (i32.ge_u (local.get $selector) (local.get $count))) (then (return (i32.const 0))))
+    (local.set $flags (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 24)))
+    (if (i32.and (i32.ne (local.get $flags) (i32.const 0))
+          (i32.gt_u (call $d3dim_fvf_tex_size (local.get $fvf) (local.get $selector)) (i32.const 2)))
+      (then (return (i32.const 0))))
+    (i32.const 1))
+
   (func $d3dim_fvf_stride (param $fvf i32) (result i32)
     (local $stride i32) (local $tex i32)
     (if (i32.and (local.get $fvf) (i32.const 0x0004))
@@ -1734,7 +1770,7 @@
     (if (i32.and (local.get $fvf) (i32.const 0x0080))
       (then (local.set $stride (i32.add (local.get $stride) (i32.const 4)))))
     (local.set $tex (i32.and (i32.shr_u (local.get $fvf) (i32.const 8)) (i32.const 0xF)))
-    (local.set $stride (i32.add (local.get $stride) (i32.mul (local.get $tex) (i32.const 8))))
+    (local.set $stride (i32.add (local.get $stride) (call $d3dim_fvf_tex_offset (local.get $fvf) (local.get $tex))))
     (if (i32.eqz (local.get $stride)) (then (local.set $stride (i32.const 32))))
     (local.get $stride))
 
@@ -1820,11 +1856,11 @@
               (i32.load (i32.add (local.get $src) (local.get $offset))))
             (local.set $offset (i32.add (local.get $offset) (i32.const 4)))))
           (if (local.get $tex_count) (then
-            (local.set $offset (i32.add (local.get $offset) (i32.shl (local.get $tex_index) (i32.const 3))))
+            (local.set $offset (i32.add (local.get $offset) (call $d3dim_fvf_tex_offset (local.get $fvf) (local.get $tex_index))))
             (i32.store (i32.add (local.get $dst) (i32.const 24))
               (i32.load (i32.add (local.get $src) (local.get $offset))))
-            (i32.store (i32.add (local.get $dst) (i32.const 28))
-              (i32.load (i32.add (local.get $src) (i32.add (local.get $offset) (i32.const 4))))))))
+            (if (i32.ge_u (call $d3dim_fvf_tex_size (local.get $fvf) (local.get $tex_index)) (i32.const 2)) (then (i32.store (i32.add (local.get $dst) (i32.const 28))
+              (i32.load (i32.add (local.get $src) (i32.add (local.get $offset) (i32.const 4))))))))))
         (else
           (if (i32.eq (local.get $type) (i32.const 2))
             (then
@@ -1852,11 +1888,11 @@
                   (i32.load (i32.add (local.get $src) (local.get $offset))))
                 (local.set $offset (i32.add (local.get $offset) (i32.const 4)))))
               (if (local.get $tex_count) (then
-                (local.set $offset (i32.add (local.get $offset) (i32.shl (local.get $tex_index) (i32.const 3))))
+                (local.set $offset (i32.add (local.get $offset) (call $d3dim_fvf_tex_offset (local.get $fvf) (local.get $tex_index))))
                 (i32.store (i32.add (local.get $dst) (i32.const 24))
                   (i32.load (i32.add (local.get $src) (local.get $offset))))
-                (i32.store (i32.add (local.get $dst) (i32.const 28))
-                  (i32.load (i32.add (local.get $src) (i32.add (local.get $offset) (i32.const 4))))))))
+                (if (i32.ge_u (call $d3dim_fvf_tex_size (local.get $fvf) (local.get $tex_index)) (i32.const 2)) (then (i32.store (i32.add (local.get $dst) (i32.const 28))
+                  (i32.load (i32.add (local.get $src) (i32.add (local.get $offset) (i32.const 4))))))))))
             (else
               (call $memcpy (local.get $dst) (local.get $src) (i32.const 12))
               (local.set $offset (i32.const 12))
@@ -1871,11 +1907,11 @@
               (if (i32.and (local.get $fvf) (i32.const 0x0020))
                 (then (local.set $offset (i32.add (local.get $offset) (i32.const 4)))))
               (if (local.get $tex_count) (then
-                (local.set $offset (i32.add (local.get $offset) (i32.shl (local.get $tex_index) (i32.const 3))))
+                (local.set $offset (i32.add (local.get $offset) (call $d3dim_fvf_tex_offset (local.get $fvf) (local.get $tex_index))))
                 (i32.store (i32.add (local.get $dst) (i32.const 24))
                   (i32.load (i32.add (local.get $src) (local.get $offset))))
-                (i32.store (i32.add (local.get $dst) (i32.const 28))
-                  (i32.load (i32.add (local.get $src) (i32.add (local.get $offset) (i32.const 4)))))))))))
+                (if (i32.ge_u (call $d3dim_fvf_tex_size (local.get $fvf) (local.get $tex_index)) (i32.const 2)) (then (i32.store (i32.add (local.get $dst) (i32.const 28))
+                  (i32.load (i32.add (local.get $src) (i32.add (local.get $offset) (i32.const 4)))))))))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $lp)))
     (local.get $dst_g))
