@@ -3,14 +3,14 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-first-script-cause-onward/contract-test');
+const run=path.resolve('scratch/runs/20261104-stronghold-fresh-complete-entry-gameplay/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
 const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:45:00Z');
-const actualRelease='2026-11-04T20:53:05+00:00 mdk2-bounded-review LOCAL HEAVY RELEASE original closed';
-assert.equal(api.requireRuntimeRelease(actualRelease,Date.parse('2026-11-04T21:00:00Z')).row,actualRelease);
-for(const line of [actualRelease.replace('mdk2-bounded-review','someone'),actualRelease.replace('20:53:05','20:49:00'),actualRelease.replace('20:53:05','22:53:05'),'2026-11-04T20:54:00Z stronghold waiting '+actualRelease])assert.throws(()=>api.requireRuntimeRelease(line,Date.parse('2026-11-04T21:00:00Z')),/release/);
+const actualRelease='2026-11-04T21:20:05+00:00 gltron-atomic-ack-webgl LOCAL HEAVY RELEASE original closed';
+assert.equal(api.requireRuntimeRelease(actualRelease,Date.parse('2026-11-04T21:30:00Z')).row,actualRelease);
+for(const line of [actualRelease.replace('gltron-atomic-ack-webgl','someone'),actualRelease.replace('21:20:05','21:16:00'),actualRelease.replace('21:20:05','22:53:05'),'2026-11-04T20:54:00Z stronghold waiting '+actualRelease])assert.throws(()=>api.requireRuntimeRelease(line,Date.parse('2026-11-04T21:30:00Z')),/release/);
 const lockProbe="const a=require('./tools/stronghold-local-runtime.cjs');console.log(JSON.stringify(a.requireLocalFlock(process.argv[1])))";
 const testLock=path.join(run,'offline-runtime.lock');fs.writeFileSync(testLock,'');
 assert.throws(()=>execFileSync(process.execPath,['-e',lockProbe,testLock],{stdio:'pipe'}),/Command failed/);
@@ -185,7 +185,7 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  const embedded=JSON.parse(p.source.match(/nonce:("[a-f0-9]{64}")/)[1]);
  const actual=api.createRelease({run,pins,nonce:embedded,now});
  const testRequire=id=>id===require.resolve('../tools/stronghold-local-runtime.cjs')
-  ?{...api,assertRuntimeOwnership:()=>({offlineFixture:true}),validateRelease:(r,o)=>api.validateRelease(r,{...o,now})}:require(id);
+  ?{...api,install:()=>({offlineFixture:true}),assertRuntimeOwnership:()=>({offlineFixture:true}),validateRelease:(r,o)=>api.validateRelease(r,{...o,now})}:require(id);
  fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(actual));
  assert.equal(await vm.runInNewContext(guarded,{require:testRequire,fs,path,RUN:run,save:()=>{}}),true);
  // Execute the actual entry through its first real filesystem writes. A
@@ -206,6 +206,48 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(output,'runtime-ownership.json'))),{offlineFixture:true});
  await assert.rejects(vm.runInNewContext(saveSource+'\n'+init,{...scope}),/one original launch only/);
  console.log('PASS actual bootstrap filesystem old save-before-mkdir fails, repaired entry creates directory then receipt; fresh-entry latch preserved; no server/Chrome');
+ // Run the entire composed entry in a fresh filesystem under a real private
+ // ancestor flock. Only the unavailable external release signal and Chrome
+ // are fixtures; preparation, installation, release binding, HTTP and cleanup
+ // execute normally. Inject the module binding explicitly: Puppeteer's ESM
+ // namespace rejects assignment even though its descriptor says writable.
+ const actualPuppeteer=require('puppeteer'),actualLaunch=actualPuppeteer.launch;
+ assert.equal(Reflect.set(actualPuppeteer,'launch',()=>{}),false);
+ assert.equal(actualPuppeteer.launch,actualLaunch);
+ // Forbid child spawning as a separate guard against a broken injection.
+ const entryRun=path.join(run,'composed-'+Date.now());fs.mkdirSync(entryRun);
+ const entryPins=path.join(entryRun,'pins.json');
+ fs.copyFileSync(process.env.STRONGHOLD_OFFLINE_PINS||pins,entryPins);
+ const entryScript=path.join(entryRun,'mock-entry.cjs');
+ fs.writeFileSync(entryScript,`
+ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+ const api=require(${JSON.stringify(require.resolve('../tools/stronghold-local-runtime.cjs'))});
+ const route=require(${JSON.stringify(require.resolve('../tools/stronghold-route-recognition-handoff.cjs'))});
+ const run=__dirname,pins=path.join(run,'pins.json');
+ const p=route.prepare({run,pins});
+ fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(p.createRelease()));
+ const ownership=api.assertRuntimeOwnership;
+ api.assertRuntimeOwnership=()=>({offlineFixtureRelease:true,release:api.requireRuntimeRelease(${JSON.stringify(actualRelease)},Date.parse('2026-11-04T21:30:00Z')),flock:api.requireLocalFlock(${JSON.stringify(testLock)})});
+ const cp=require('node:child_process'),spawn=cp.spawn;let spawnAttempts=0;cp.spawn=()=>{spawnAttempts++;throw Error('OFFLINE SPAWN FORBIDDEN');};
+ const puppeteer={launch:null},serverAPI=require(${JSON.stringify(require.resolve('./static-server.js'))}),start=serverAPI.startStaticServer;
+ let launches=0,server,port;
+ puppeteer.launch=async()=>{launches++;assert(api.lifecycleForRun(run));assert(fs.existsSync(path.join(run,'browser/runtime-ownership.json')));throw Error('OFFLINE MOCK LAUNCH SENTINEL');};
+ serverAPI.startStaticServer=async options=>{server=await start(options);port=server.address().port;return server;};
+ (async()=>{const cut=p.source.lastIndexOf('main().catch(');
+ globalThis.__strongholdOfflinePuppeteer=puppeteer;
+ const composed=p.source.slice(0,cut).replace("const puppeteer=require('puppeteer');","const puppeteer=globalThis.__strongholdOfflinePuppeteer;");
+ assert.notEqual(composed,p.source.slice(0,cut));
+ const caller=route.compileClosure(composed+'\\nmodule.exports={main,close};',p.driver,p.route,p.evidence.retainedClosure);
+ try{await assert.rejects(caller.main(),/OFFLINE MOCK LAUNCH SENTINEL/);assert.equal(launches,1);assert(server.listening);assert.equal(api.lifecycleForRun(run).children.length,0);}
+ finally{await caller.close('offline mocked launch complete');api.lifecycleForRun(run).restore();api.assertRuntimeOwnership=ownership;cp.spawn=spawn;delete globalThis.__strongholdOfflinePuppeteer;serverAPI.startStaticServer=start;}
+ assert.equal(server.listening,false);assert.equal(spawnAttempts,0);
+ const rows=fs.readFileSync(path.join(run,'chrome-lifecycle.jsonl'),'utf8').trim().split('\\n').map(JSON.parse);
+ assert.deepEqual(rows.map(r=>r.kind),['installed','launch-request','recorder-restored']);
+ console.log(JSON.stringify({pass:true,actualComposedEntry:true,filesystemPins:JSON.parse(fs.readFileSync(pins)).files.length,launchSentinels:launches,chromeSpawns:0,spawnAttempts,serverClosed:!server.listening,port,privateFlock:true}));
+ })().catch(e=>{console.error(e);process.exitCode=1;});
+ `);
+ const composed=execFileSync('flock',['-n',testLock,process.execPath,entryScript],{encoding:'utf8',timeout:60000});
+ assert.match(composed,/"actualComposedEntry":true/);console.log(composed.trim());
  delete actual.authorization;fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(actual));
  await assert.rejects(vm.runInNewContext(guarded,{require,fs,path,RUN:run}),/authorization/);
  console.log(JSON.stringify({pass:true,negativeContracts:negatives,actualChildRejected:true,retainedHelpers:30,bounds:p.evidence.bounds}));

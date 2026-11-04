@@ -3,14 +3,14 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-render-sized-observer user task';
-const ASSIGNMENT='stronghold-render-sized-observer user task';
+const AUTH='stronghold-fresh-complete-entry-gameplay user task';
+const ASSIGNMENT='stronghold-fresh-complete-entry-gameplay user task';
 const CHROME='/opt/google/chrome/chrome';
 const CUTOFF=Date.parse('2026-11-04T23:50:00Z'),CLEANUP=Date.parse('2026-11-04T23:53:00Z');
 function requireRuntimeRelease(board,now=Date.now()){
- const rows=board.split('\n').filter(row=>/^\S+ mdk2-bounded-review LOCAL HEAVY RELEASE\b/.test(row));
+ const rows=board.split('\n').filter(row=>/^\S+ gltron-atomic-ack-webgl(?:-nov04)? LOCAL HEAVY RELEASE\b/.test(row));
  const row=rows.at(-1),at=Date.parse(row?.split(' ')[0]);
- if(!row||!Number.isFinite(at)||at<Date.parse('2026-11-04T20:50:00Z')||at>now)throw Error('exact mdk2-bounded-review-window-nov04 local heavy release required');
+ if(!row||!Number.isFinite(at)||at<Date.parse('2026-11-04T21:16:19Z')||at>now)throw Error('exact gltron-atomic-ack-webgl-nov04 local heavy release required');
  return {row,at};
 }
 function requireLocalFlock(lockPath='/tmp/wine-local-runtime.lock'){
@@ -30,6 +30,33 @@ function identity(){
  return {hostname:os.hostname(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),
   pid:process.pid,startTicks:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],uid:process.getuid(),
   root:fs.realpathSync(process.cwd()),executable:fs.realpathSync(process.execPath)};
+}
+const lifecycles=new Map();
+function install(run){
+ run=fs.realpathSync(run);
+ if(lifecycles.has(run))throw Error('one installed lifecycle per run');
+ const cp=require('node:child_process'),spawn=cp.spawn;
+ const file=path.join(run,'chrome-lifecycle.jsonl');fs.writeFileSync(file,'',{flag:'wx'});
+ const record=(kind,data={})=>fs.appendFileSync(file,JSON.stringify({at:new Date().toISOString(),kind,...data})+'\n');
+ const children=[];
+ function observed(command,args,...rest){
+  const child=Reflect.apply(spawn,this,[command,args,...rest]);
+  if(command!==CHROME||!args?.includes('--user-data-dir='+path.join(run,'chrome-profile')))return child;
+  let startTicks=null;try{const s=fs.readFileSync('/proc/'+child.pid+'/stat','utf8');startTicks=s.slice(s.lastIndexOf(')')+2).split(' ')[19];}catch{}
+  children.push(child);record('spawn',{pid:child.pid,startTicks,command,args});
+  child.once('exit',(code,signal)=>record('actual-exit',{pid:child.pid,startTicks,code,signal}));
+  child.once('error',e=>record('spawn-error',{error:String(e)}));return child;
+ }
+ cp.spawn=observed;
+ const tap={record,children,restore(){if(cp.spawn===observed)cp.spawn=spawn;lifecycles.delete(run);record('recorder-restored');}};
+ lifecycles.set(run,tap);record('installed',{identity:identity()});return tap;
+}
+function lifecycleForRun(run){const tap=lifecycles.get(path.resolve(run));if(!tap)throw Error('owned lifecycle recorder not installed');return tap;}
+async function launchOwned(puppeteer,tap,options){
+ tap.record('launch-request',{executablePath:options.executablePath,profile:options.userDataDir});
+ const browser=await puppeteer.launch(options);
+ if(tap.children.length!==1||tap.children[0]!==browser.process())throw Error('exactly one owned Chrome child required');
+ tap.record('launch-returned',{pid:browser.process().pid});return browser;
 }
 function binding(run,pins){
  const manifest=JSON.parse(fs.readFileSync(pins));
@@ -124,7 +151,8 @@ function prepare(options){
  const nonce=crypto.randomBytes(32).toString('hex');
  p.source=base.replaceOnce(p.source,old,`  require(${q(__filename)}).validateRelease(release,{run:RUN,pins:${q(options.pins)},nonce:${q(nonce)}});\n  const runtimeOwnership=require(${q(__filename)}).assertRuntimeOwnership();`);
  p.source=base.replaceOnce(p.source,"fs.mkdirSync(OUT);fs.mkdirSync(path.join(OUT,'commands'));",
-  "fs.mkdirSync(OUT);fs.mkdirSync(path.join(OUT,'commands'));\n  save('runtime-ownership.json',runtimeOwnership);");
+  `fs.mkdirSync(OUT);fs.mkdirSync(path.join(OUT,'commands'));\n  save('runtime-ownership.json',runtimeOwnership);\n  require(${q(__filename)}).install(RUN);`);
+ p.source=base.replaceOnce(p.source,'browser=await puppeteer.launch(',`browser=await require(${q(__filename)}).launchOwned(puppeteer,require(${q(__filename)}).lifecycleForRun(RUN),`);
  p.source=base.replaceOnce(p.source,'Date.parse(release.closeBy)','release.closeBy');
  p.source=base.replaceOnce(p.source,"executablePath:'/usr/bin/google-chrome'",`executablePath:${q(CHROME)}`);
  p.source=base.replaceOnce(p.source,'let browser,page,server,closing=false,halted=false,number=0,timer,deadline;',
@@ -144,4 +172,4 @@ function prepare(options){
  p.evidence.compositionSHA256=base.hash(p.source);
  return {...p,createRelease:()=>createRelease({run:options.run,pins:options.pins,nonce})};
 }
-module.exports={identity,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,normalClose,mailboxStatus,assertMailboxCommandReady,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,normalClose,mailboxStatus,assertMailboxCommandReady,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
