@@ -11,7 +11,7 @@ const ROOT = path.resolve(__dirname, '..');
 const RUNS = path.join(ROOT, 'scratch/runs');
 const SOURCE = '1329b1ba6eb00144ff77d4cd92a8513d4fc953ad';
 const OBSERVER = 'de6a33f257d93e8814d666bdec62361161569ac4';
-const OBSERVER_REPAIR_SHA256 = '32a032392dbcaaa587688123842cb7509ff4b0f63a7c42bf38e395413ddaf7a9';
+const OBSERVER_REPAIR_SHA256 = 'dd37b5ba98bf052078bc81c72f4850f4e73caeea5b72c81698c4b0805269dfc3';
 const DRIVER = '20261104-mdk2-fresh-pending-scene/browser-driver.cjs';
 const MAIN = '20261104-mdk2-post-lua-native-boundary/main-state.cjs';
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -156,6 +156,8 @@ function verifyClosure(read = file => fs.readFileSync(path.join(RUNS, file))) {
   const file = 'tools/mdk2-lua-construction-observer.cjs';
   assert.equal(sha(gitFile(OBSERVER, file)), '3692d60b20d38d00ac6bd57994cdbd669e5839ba482fee1f1e36edabf18ea248', 'original observer changed');
   assert.equal(sha(fs.readFileSync(path.join(ROOT, file))), OBSERVER_REPAIR_SHA256, 'published observer repair changed');
+  assert.equal(sha(fs.readFileSync(path.join(ROOT,'test/binaries/candidates/mdk2-demo/installed/mdk2demo/data/scripts.zip'))),
+    require('./mdk2-lua-construction-observer.cjs').SCRIPT_SHA256,'original scripts archive changed');
   return rows;
 }
 function pinnedRuntime() {
@@ -193,7 +195,7 @@ function installBinding(options) {
   // Only observation exhaustion is caught at the native run boundary. Genuine
   // native traps/import failures retain the shipped Worker's original handling.
   let observationStop = null, nativeSlice = null;
-  const observationReasons = ['boundary-limit','record-limit','deadline'];
+  const observationReasons = ['boundary-limit','record-limit','record-byte-limit','deadline'];
   function exhausted(reason) {
     stop(reason);
     observationStop ||= Error(reason);
@@ -352,6 +354,7 @@ function installBinding(options) {
     started = true; traceEnd = end;
     observer = g.Mdk2LuaConstructionObserver.attach({host: entry.host, getExports: () => entry.instance.exports,
       getSlice: () => nativeSlice,
+      getEpoch: () => entry.binding,
       workerSlot: 0, exeSha256: g.Mdk2LuaConstructionObserver.EXE_SHA256, wasmSha256: entry.binding.sha256,
       now: Date.now, deadline: end}); // One fixed 50M / 360s / 512 contract.
     observer.sample();

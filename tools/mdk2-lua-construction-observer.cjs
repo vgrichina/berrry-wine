@@ -4,6 +4,7 @@
 // Passive owning-main import observer. The caller supplies existing block tracing;
 // this module never arms tracing, executes exports, or changes guest state.
 const EXE_SHA256='b3e0226e411abff17ddabb723e493e95579490cb49bfe3787b1eade1144e27c1';
+const SCRIPT_SHA256='cfdae6e7d02b1823a59d0b85aa8eaca2f057dbb27e7b86d9a7199fc069f642d8';
 const PINS=[
   [0x4522d0,'6a0ae8e9f2ffffa1d0874b0083c404c3'],
   [0x4515c0,'8b4424046a0150ff1570c04800c3'],
@@ -12,7 +13,29 @@ const PINS=[
   [0x44f4a0,'568b7424080fbe461c4883f80b7766ff248518f54400'],
   [0x44f515,'5ec3'],[0x44f53c,'15f54400'],
   [0x41fce5,'56e855ff02008b0683c40485c0741a'],
-  [0x41fcf9,'8b46088b0e575051e87a520200']
+  [0x41fcf9,'8b46088b0e575051e87a520200'],
+  [0x402187,'e8e40e040083c404'],[0x443070,'51a1e47c4b00538b98f0000000'],
+  [0x443080,'e8bb010000'],[0x443240,'6820334400e856180000'],
+  [0x444ae0,'51ffd583c404'],[0x443344,'8b490451e813010000'],
+  [0x4434a0,'8b470c4583c3183be87cd6'],
+  [0x46d0bf,'e8acddfbff83c404c7462401000000'],
+  [0x42ae70,'e85b7f0100833d20714b00ff'],
+  [0x41e9ad,'e86ee1040083c41c5e59c3'],
+  [0x46cb20,'d94424088b442404d998a0000000c3'],
+  [0x46b62a,'d987a0000000'],
+  [0x46b66f,'e85c60feffd8afa0000000d997a0000000d81d28c24800dfe0f6c441740957e82dfafbff83c404'],
+  [0x42b0c0,'568b7424086a0756e86329feff'],
+  [0x42b0d4,'e8f77c010068484f4900e8ed8801005056e8d68a0100'],
+  [0x42b0f5,'e8267d01005ec3'],
+  [0x40daf0,'8b4424048b80840000008b4c24088b54884452e88853030050e86248030083c408c3'],
+  [0x4391a0,'a178e05c006a00506a01e891b00000'],
+  [0x43922f,'505756e8a929ffff83c4305f5ec3'],
+  [0x42bbe0,'568b742408578b7c24106aff'],
+  [0x42bc25,'5756e85410000083c4085f5ec3'],
+  [0x42cc80,'8b4424048b4c2408a32c714b00890d94744b00c705a07b4b00ffffffffc70548cb5c0001000000c3'],
+  [0x4019d2,'391d48cb5c00'],[0x401a28,'e863af0200891d48cb5c00'],
+  [0x42c990,'a1a07b4b008b0d2c714b008b155c714b00'],
+  [0x42cc1e,'687c614a00e8385a010050e842570100']
 ].map(([pc,hex])=>Object.freeze({pc,hex}));
 const CUTS={poll:0x4522d0,pollRead:0x4522d7,consume:0x44fbd4,finalize:0x44f4a0,
   finalizeType10:0x44f515,loadCall:0x41fce5,loadReturned:0x41fceb,
@@ -36,15 +59,16 @@ function decodeFileSnapshot(main,file){
   if(outputSize!==main.rawRequestWords?.[2]||destination!==main.rawRequestWords?.[0]||compressedRead>compressedSize||outputCopied>outputSize)throw Error('wrong request/decode cursors');
   return {kind:output?'archive-output-callback':'archive-input-callback',decode:{state:ptr,stream,compressedSize,compressedRead,outputSize,outputCopied,destination,remaining:outputSize-outputCopied}};
 }
-function attach({host,getExports,getSlice=()=>null,workerSlot,exeSha256,wasmSha256,deadline,now=()=>performance.now(),maxRecords=512,maxBoundaries=50000000}={}) {
+function attach({host,getExports,getSlice=()=>null,getEpoch=()=>null,workerSlot,exeSha256,wasmSha256,deadline,now=()=>performance.now(),maxRecords=512,maxBoundaries=50000000,maxRecordBytes=8192}={}) {
   if(workerSlot!==0||exeSha256!==EXE_SHA256||!(/^[a-f0-9]{64}$/).test(wasmSha256||''))throw Error('wrong Worker/media/module pin');
   if(typeof host?.log_block!=='function'||typeof getExports!=='function'||owners.has(host))throw Error('missing or occupied owning import');
   if(!Number.isFinite(deadline)||deadline<=now()||deadline>now()+360000||!Number.isInteger(maxRecords)||maxRecords<1||maxRecords>512||!Number.isInteger(maxBoundaries)||maxBoundaries<1||maxBoundaries>50000000)throw Error('invalid observation bound');
-  const original=host.log_block;let ex=null,poll=null,finalizer=null,load=null,buffer=null,previousLevel=null,suffix=null,decoder=null;
+  if(!Number.isInteger(maxRecordBytes)||maxRecordBytes<1||maxRecordBytes>8192)throw Error('invalid record byte bound');
+  const epoch=getEpoch(),frames={},original=host.log_block;let ex=null,poll=null,finalizer=null,load=null,buffer=null,previousLevel=null,suffix=null,decoder=null,lastOrdinal=0,timer=null;
   const report={version:1,status:'running',workerSlot,exeSha256,wasmSha256,records:[],blocks:0,
     history:'Before attachment unknown; native completion is not Lua execution or gameplay',
     moduleBinding:'Caller must bind hashed module bytes to the actual owning Worker init Module'};
-  function finish(reason='stopped'){if(report.status==='running'){report.status=reason;report.pending={poll,finalizer,load,buffer,decoder,unobservedPollPrefix:suffix};if(host.log_block===wrapped)host.log_block=original;owners.delete(host);}return report;}
+  function finish(reason='stopped'){if(report.status==='running'){report.status=reason;report.pending={poll,finalizer,load,buffer,decoder,unobservedPollPrefix:suffix,...frames};if(host.log_block===wrapped)host.log_block=original;owners.delete(host);}return report;}
   function read(a,n=4){
     if(!Number.isSafeInteger(a)||a<0x400000||a+n>0x80000000||n<1||n>256)throw Error('invalid native read');
     const b=new Uint8Array(ex.memory.buffer),v=[];
@@ -52,6 +76,9 @@ function attach({host,getExports,getSlice=()=>null,workerSlot,exeSha256,wasmSha2
   }
   const u=a=>{const b=read(a);return (b[0]+b[1]*256+b[2]*65536+b[3]*16777216)>>>0;};
   function identity(){const e=getExports();if(!e||ex&&e!==ex)throw Error('foreign instance');ex=e;
+    if(host.log_block!==wrapped)throw Error('owning import replaced');
+    if(getEpoch()!==epoch)throw Error('foreign observation epoch');
+    const slice=getSlice();if(slice){if(!Number.isSafeInteger(slice.ordinal)||slice.ordinal<1||slice.ordinal<lastOrdinal)throw Error('stale native slice');lastOrdinal=slice.ordinal;}
     if(ex.get_current_thread_id()!==1||ex.get_image_base()!==0x400000)throw Error('wrong thread/loader');
     if(u(0x400000)!==0x00905a4d||u(0x400000+u(0x40003c))!==0x4550)throw Error('wrong PE loader');
     for(const {pc,hex}of PINS)if(read(pc,hex.length/2).map(v=>v.toString(16).padStart(2,'0')).join('')!==hex)throw Error('original bytes changed');
@@ -69,7 +96,54 @@ function attach({host,getExports,getSlice=()=>null,workerSlot,exeSha256,wasmSha2
       found={available:true,tag,table:tag===-3?u(p+20):null};
     }return found||{available:false,reason:'Level not interned'};
   }
-  function emit(kind,extra={}){if(report.records.length>=maxRecords){finish('record-limit');return;}report.records.push({kind,block:report.blocks,pc:ex.get_eip()>>>0,esp:ex.get_esp()>>>0,resource:resource(),...extra});}
+  const deferred=()=>{const loadFlag=u(0x5ccb48);if(loadFlag>1)throw Error('deferred flag bound');return {requestedLevel:u(0x4b712c),checkpoint:u(0x4b7494),loadFlag};};
+  function emit(kind,extra={}){if(report.status!=='running')return;if(report.records.length>=maxRecords){finish('record-limit');return;}
+    const row={kind,block:report.blocks,pc:ex.get_eip()>>>0,esp:ex.get_esp()>>>0,resource:resource(),deferred:deferred(),...extra};
+    // JSON is ASCII for native records (including escaped resource names).
+    const bytes=JSON.stringify(row).replace(/[^\x00-\x7f]/g,'xxxxxx').length;
+    if(bytes>maxRecordBytes){finish('record-byte-limit');return;}report.records.push(row);}
+  function enter(name,esp,caller,extra={}){
+    if(frames[name])throw Error(name+' frame already pending');
+    if(u(esp)!==caller)throw Error(name+' caller mismatch');
+    frames[name]={esp,caller,...extra};emit(name+'-entry',{frame:{...frames[name]}});
+  }
+  function timerValue(object){const bits=u(object+0xa0),b=new ArrayBuffer(4),v=new DataView(b);v.setUint32(0,bits,true);const remaining=v.getFloat32(0,true);
+    if(!Number.isFinite(remaining))throw Error('timer value bound');
+    return {object,bits,remaining,absoluteDeadline:null,identity:'native gob pointer; startscreen association requires independent Lua identity',basis:'captured countdown; static subtraction contract, no inferred wall deadline'};}
+  function progression(pc,esp){
+    const returns={gc:0x40218c,dispatch:0x46d0c4,timerSet:0x41e9b2,timerHandler:0x46b693,timerCallback:0x42b0f2,timerLua:0x40db0e,deferredStore:0x42bc2c,newGame:0x439237,loader:0x401a2d};
+    for(const [name,caller]of Object.entries(returns))if(pc===caller){
+      if(name==='timerLua'&&!frames.timerCallback&&!frames.timerLua)continue; // Shared by other gob events.
+      const f=frames[name];if(!f)throw Error(name+' return history missing');
+      if(esp!==f.esp+4)throw Error(name+' return stack mismatch');
+      if(name==='deferredStore'){const d=deferred();if(d.requestedLevel!==f.level||d.checkpoint!==f.checkpoint||d.loadFlag!==1)throw Error('deferred store globals mismatch');}
+      if(name==='timerSet'){const value=timerValue(f.object);if(value.bits!==f.bits)throw Error('timer store mismatch');timer={object:f.object,armedAt:report.blocks};emit('timer-armed',{timer:value});}
+      emit(name+'-return',{frame:{...f},...(name==='timerHandler'?{timer:timerValue(f.object),meaning:'native timer dispatcher returned; does not imply an installed Lua handler'}:{})});delete frames[name];
+      if(name==='loader')frames.loadClear={esp};
+    }
+    if(pc===0x443070&&u(esp)===0x40218c)enter('gc',esp,0x40218c);
+    if(pc===0x42ae70&&u(esp)===0x46d0c4){
+      const index=u(esp+4),command=ex.get_esi()>>>0;
+      if(index!==62||u(command+12)!==2||u(command+36)!==0)throw Error('release dispatch context mismatch');
+      enter('dispatch',esp,0x46d0c4,{index,command,meaning:'release command 62; Medium requires correlated selector evidence'});
+    }
+    if(pc===0x46cb20&&u(esp)===0x41e9b2)enter('timerSet',esp,0x41e9b2,{object:u(esp+4),bits:u(esp+8)});
+    if(pc===0x42b0c0&&u(esp)===0x46b693){const object=u(esp+4),value=timerValue(object);
+      if(value.remaining>0)throw Error('timer firing before countdown expiry');
+      enter('timerHandler',esp,0x46b693,{object,armObserved:timer?.object===object});emit('timer-firing',{timer:value,armObserved:timer?.object===object});}
+    if(pc===0x40daf0&&u(esp)===0x42b0f2){
+      if(!frames.timerHandler||u(esp+4)!==frames.timerHandler.object||u(esp+8)!==7)throw Error('timer callback owning frame mismatch');
+      enter('timerCallback',esp,0x42b0f2,{object:u(esp+4),event:7});}
+    if(pc===0x442370&&u(esp)===0x40db0e&&frames.timerCallback){
+      enter('timerLua',esp,0x40db0e,{functionValue:u(esp+4),meaning:'captured Lua-call argument; success/result unknown'});}
+    if(pc===0x4391a0)emit('new-game-lua-wrapper',{history:'entry only; Lua caller and startscreen association unknown'});
+    if(pc===0x42bbe0&&u(esp)===0x439237)enter('newGame',esp,0x439237,{level:u(esp+4),checkpoint:u(esp+8)});
+    if(pc===0x42cc80&&u(esp)===0x42bc2c)enter('deferredStore',esp,0x42bc2c,{level:u(esp+4),checkpoint:u(esp+8)});
+    if(pc===0x4019d2)emit('deferred-load-check');
+    if(pc===0x42c990&&u(esp)===0x401a2d){if(deferred().loadFlag!==1)throw Error('loader flag mismatch');enter('loader',esp,0x401a2d);}
+    if(pc===0x401a33&&frames.loadClear){if(esp!==frames.loadClear.esp||deferred().loadFlag!==0)throw Error('load consumption clear mismatch');emit('deferred-load-consumed');delete frames.loadClear;}
+    if(pc===0x42cc1e)emit('level-lua-dispatch',{history:'native level lookup/call path; Lua execution result unknown'});
+  }
   // 47d980's SUB ESP,8 + four pushes places return/args at +24/+28.
   // Capture bytes only from actual registers and that checked frame. The
   // object fields are established by 47cea0/47cf60/47da00, not live addresses.
@@ -106,6 +180,13 @@ function attach({host,getExports,getSlice=()=>null,workerSlot,exeSha256,wasmSha2
     decoder=frame;return decoderContext(phase,object,frame);
   }
   function sample(){if(report.status!=='running')return report;try{if(now()>=deadline)return finish('deadline');identity();const current=level();
+    if(!report.records.length&&!report.blocks&&(ex.get_eip()>>>0)===0x4434a0){
+      const esp=ex.get_esp()>>>0;
+      for(const [offset,ret]of [[16,0x44334d],[24,0x444ae3],[48,0x44324a],[56,0x443085],[80,0x40218c]])
+        if(u(esp+offset)!==ret)throw Error('GC suffix frame mismatch');
+      if(u(esp+20)!==(ex.get_edi()>>>0))throw Error('GC suffix table argument mismatch');
+      frames.gc={esp:esp+80,caller:0x40218c,prefixUnknown:true};emit('gc-prefix-unobserved',{frame:{...frames.gc},history:'exact retained stack suffix; collection entry and graph unknown'});
+    }
     // A frozen attachment can be inside an already issued SleepEx. This is
     // evidence of its remaining suffix, never evidence of a poll entry/return.
     // Authorize only the exact original call chain seen in the retained run.
@@ -125,6 +206,7 @@ function attach({host,getExports,getSlice=()=>null,workerSlot,exeSha256,wasmSha2
     if(++report.blocks>maxBoundaries){finish('boundary-limit');return;}
     identity();pc>>>=0;esp>>>=0;if(pc!==(ex.get_eip()>>>0)||esp!==(ex.get_esp()>>>0))throw Error('wrong boundary registers');
     const r=resource();
+    progression(pc,esp);if(report.status!=='running')return;
     if(pc===0x47d9c8&&!decoder)emit('decoder-output',{decoder:outputContext('output')});
     if(decoder&&pc===decoder.caller){
       if(esp!==decoder.esp+28)throw Error('decoder return stack mismatch');
@@ -166,7 +248,7 @@ function attach({host,getExports,getSlice=()=>null,workerSlot,exeSha256,wasmSha2
   host.log_block=wrapped;owners.add(host);
   return {report,sample,finish,check(){if(report.status==='running'&&now()>=deadline)return finish('deadline');if(report.status==='running'&&!report.blocks){report.error='mandatory native boundaries missing';finish('unsupported-or-unobservable');}return report;}};
 }
-const api={EXE_SHA256,PINS,CUTS,attach,decodeFileSnapshot};
+const api={EXE_SHA256,SCRIPT_SHA256,PINS,CUTS,attach,decodeFileSnapshot};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 else globalThis.Mdk2LuaConstructionObserver=api;
 })();

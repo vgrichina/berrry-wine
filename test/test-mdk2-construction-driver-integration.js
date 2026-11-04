@@ -283,6 +283,9 @@ test('concrete composed route checks offline with finite one-shot trace', () => 
   assert.equal(report.status, 'offline-composition-checked');
   assert.deepEqual(report.limits, {traceMs:360000,boundaries:50000000,records:512,constructionSlices:[16,32,64],restart:false});
   assert.equal(integration.assertRunnable().composedSHA256, report.composedSHA256);
+  const preload=integration.preloadSource({targetId:'offline-main',workerURL:'http://offline/lib/guest-worker.js'});
+  assert(preload.includes('getEpoch: () => entry.binding'));
+  assert(preload.includes("'record-byte-limit'"));
 });
 
 test('actual first-script installer rejects foreign context and deadline without executing/resuming the script',async()=>{
@@ -368,9 +371,9 @@ async function nativeOne(row, mode = 'success') {
 }
 
 for(const row of integration.pinnedRuntime().pins.moduleFiles)
-for(const [mode,status]of [['boundary','boundary-limit'],['record','record-limit'],['deadline','deadline']])test('observation '+mode+' exhaustion retains real Worker terminal trace: '+row.path,async()=>{
+for(const [mode,status]of [['boundary','boundary-limit'],['record','record-limit'],['recordbytes','record-byte-limit'],['deadline','deadline']])test('observation '+mode+' exhaustion retains real Worker terminal trace: '+row.path,async()=>{
   const result=await nativeOne(row,'measured-'+mode+'-stop');
-  if(mode!=='boundary'){
+  if(!['boundary','recordbytes'].includes(mode)){
     const old=await nativeOne(row,'measured-old-'+mode+'-stop');
     write(EVIDENCE,path.basename(row.path)+'.old-terminal-'+mode+'.json',old.value);
     assert(old.value.rejected,JSON.stringify(old.value));
@@ -792,7 +795,7 @@ async function producerObserver(candidate) {
   assert.equal(integration.sha(exe),observer.EXE_SHA256);
   const bytes=Buffer.alloc(exe.length+4096);exe.copy(bytes);
   const addresses=new Map();let next=exe.length;
-  for(const a of [0x4b87d4,0x4b7d14,0x4b87cc,0x4b87d0,0x5ce08c,0x4b7ce4]){addresses.set(a,next);next+=4;}
+  for(const a of [0x4b87d4,0x4b7d14,0x4b87cc,0x4b87d0,0x5ce08c,0x4b7ce4,0x4b712c,0x4b7494,0x5ccb48]){addresses.set(a,next);next+=4;}
   const wa=a=>{for(const [p,o]of addresses)if(a>=p&&a<p+4)return o+a-p;
     if(a>=0x400000&&a<0x400400)return a-0x400000;
     try{return pe.va2off(a);}catch{return 0xf0;}};
@@ -1086,6 +1089,7 @@ async function nativeChild() {
     preload=preload.replace(integration.installBinding.toString(),source.slice(source.indexOf('function installBinding(options)'),source.indexOf('\nfunction preloadSource')).trim());
   }
   if(workerData.mode==='measured-boundary-stop')preload=preload.replaceAll('50000000','1000');
+  if(workerData.mode==='measured-recordbytes-stop')preload=preload.replace('maxRecordBytes=8192','maxRecordBytes=1000');
   if(workerData.mode.endsWith('record-stop'))preload=preload.replaceAll('maxRecords=512','maxRecords=2').replaceAll('records.length >= 512','records.length >= 2');
   if(workerData.mode==='mid-poll-old')preload=preload.replace(
     fs.readFileSync(path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs'),'utf8'),
@@ -1132,9 +1136,10 @@ async function nativeChild() {
   }
   const source=integration.gitFile(integration.SOURCE,'lib/guest-worker.js').toString();entry._compile(source,filename);
   const baseline=integration.gitFile(integration.OBSERVER,'test/test-mdk2-lua-construction-observer.js').toString();
-  const current=fs.readFileSync(path.join(integration.ROOT,'test/test-mdk2-lua-construction-observer.js'),'utf8');
   const fixtureBytes=s=>s.slice(s.indexOf('async function fixture(access){'),s.indexOf('if(!isMainThread){'));
-  assert.equal(H(fixtureBytes(current)),H(fixtureBytes(baseline)),'accepted qualification fixture changed');
+  // Keep this exact original fixture independent of the new timer fixtures.
+  // Passing it does not qualify a current filesystem/HTTP historical closure.
+  assert.equal(H(fixtureBytes(baseline)),'9c5ce247fc627d1ba5734bb80f5c5ab85e28a0cb0682c4c24fc461ed274ee1ec','original qualification fixture changed');
   let fixtureSource=baseline.slice(baseline.indexOf('async function fixture(access){'),baseline.indexOf('  // Diagnostic failures'));
   let checkpoints=0;
   let traceStartedAt=null;
@@ -1152,7 +1157,7 @@ async function nativeChild() {
   put(input,Buffer.alloc(rows/8,0xa5));put(table,[17,0,29,0]);
   e.set_esp(stack);u(stack,caller);u(stack+4,decoder);u(stack+8,0);u(stack+12,1);
   e.set_eip(0x47cea0);
-  if(workerData.mode.includes('decoder-context')){
+  if(workerData.mode.includes('decoder-context')||workerData.mode==='measured-recordbytes-stop'){
     // Small explicit fixture for the owning output/return path, not game state.
     u(decoder+0x20,1);u(decoder+0x4c,output);u(decoder+0x50,4);u(decoder+0x48,0);
     for(let i=0;i<4;i++)u(output+i*4,100+i*20);
