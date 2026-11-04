@@ -11,7 +11,7 @@ const ROOT = path.resolve(__dirname, '..');
 const RUNS = path.join(ROOT, 'scratch/runs');
 const SOURCE = '1329b1ba6eb00144ff77d4cd92a8513d4fc953ad';
 const OBSERVER = 'de6a33f257d93e8814d666bdec62361161569ac4';
-const OBSERVER_REPAIR_SHA256 = '4e19cb9da6497619b21e9e2080d747134304134b2d256af20f5cb377e9f015a5';
+const OBSERVER_REPAIR_SHA256 = '32a032392dbcaaa587688123842cb7509ff4b0f63a7c42bf38e395413ddaf7a9';
 const DRIVER = '20261104-mdk2-fresh-pending-scene/browser-driver.cjs';
 const MAIN = '20261104-mdk2-post-lua-native-boundary/main-state.cjs';
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -192,7 +192,7 @@ function installBinding(options) {
   let fatal = null, entry = null, receivedOnce = false, started = false, terminal = false, timer = null, traced = false, observer = null, paused = false, checkpoint = null, traceEnd = null;
   // Only observation exhaustion is caught at the native run boundary. Genuine
   // native traps/import failures retain the shipped Worker's original handling.
-  let observationStop = null;
+  let observationStop = null, nativeSlice = null;
   const observationReasons = ['boundary-limit','record-limit','deadline'];
   function exhausted(reason) {
     stop(reason);
@@ -202,7 +202,7 @@ function installBinding(options) {
   const report = () => ({realm: isPage ? 'page' : 'worker', targetId: options.targetId || null,
     workerURL: options.workerURL || null, fatal, started, terminal, traced, paused, traceEnd,
     binding: entry?.binding || null, thread: entry?.instance?.exports.get_current_thread_id?.(),
-    observer: observer?.report || null, audit});
+    observer: observer?.report || null, nativeSlice, audit});
   function stop(reason) {
     terminal = true; paused = false; clearTimeout(timer);
     if (traced) { traced = false; entry.instance.exports.set_trace_esp(0, 0, 0); }
@@ -300,8 +300,11 @@ function installBinding(options) {
         // An expired idle deadline must never disable tracing and then execute
         // an unobserved command. Keep the terminal report queryable by CDP.
         if (started && (observationStop || terminal && observationReasons.includes(observer?.report.status))) return;
-        try { return Reflect.apply(ex.run, ex, values); }
+        // The pinned Worker passes its received adaptive budget to run().
+        nativeSlice={budget:values[0],ordinal:(nativeSlice?.ordinal||0)+1,completed:false};
+        try { const result=Reflect.apply(ex.run, ex, values);nativeSlice.completed=true;return result; }
         catch (error) { if (error !== observationStop) throw error; }
+        finally { nativeSlice.ranBlocks=ex.get_last_run_blocks()>>>0; }
       }};
       return result.instance ? {...result, instance:{exports}} : {exports};
     } catch (error) { fatal ||= String(error); stop('instantiation-failure'); throw error; }
@@ -348,6 +351,7 @@ function installBinding(options) {
     if (!Number.isFinite(end) || end <= Date.now()) return fail('trace deadline');
     started = true; traceEnd = end;
     observer = g.Mdk2LuaConstructionObserver.attach({host: entry.host, getExports: () => entry.instance.exports,
+      getSlice: () => nativeSlice,
       workerSlot: 0, exeSha256: g.Mdk2LuaConstructionObserver.EXE_SHA256, wasmSha256: entry.binding.sha256,
       now: Date.now, deadline: end}); // One fixed 50M / 360s / 512 contract.
     observer.sample();
@@ -707,6 +711,28 @@ function retainedModule(row) {
   assert.equal(bytes.length, row.bytes); assert.equal(sha(bytes), row.sha256, 'retained module mismatch');
   return bytes;
 }
+// Explicit amendment of one historical dependency, after original-byte
+// verification. Never substitute today's bridge or relax the original pins.
+const QUIET_BRIDGE = Object.freeze({path:'lib/guest-rpc.js',
+  originalSHA256:'39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1',
+  sha256:'075388dd3e52b2b137c12111b34406be651467004333567a0be47e09c9f3763b'});
+function quietRuntimeBytes(name, bytes) {
+  if (name !== QUIET_BRIDGE.path) return bytes;
+  assert.equal(sha(bytes), QUIET_BRIDGE.originalSHA256, 'quiet amendment requires exact 1329 bridge');
+  const source = replaceOnce(bytes.toString(),
+    "(name === 'log' || name === 'log_i32' || name === 'log_api_exit'))",
+    "(name === 'log' || name === 'log_i32' || name === 'log_api_exit' || name === 'log_block'))");
+  assert.equal(sha(source), QUIET_BRIDGE.sha256, 'quiet bridge candidate changed');
+  return Buffer.from(source);
+}
+function quietManifest(bytes) {
+  const pins = JSON.parse(bytes);
+  assert.equal(sha(bytes), pinnedRuntime().pinsSHA256);
+  pins.amendments = [{...QUIET_BRIDGE, source:SOURCE, behavior:'quiet log_block; explicit forwarding unchanged'}];
+  pins.files = pins.files.map(row => row.path !== QUIET_BRIDGE.path ? row :
+    {...row, bytes:quietRuntimeBytes(row.path,gitFile(SOURCE,row.path)).length, sha256:QUIET_BRIDGE.sha256});
+  return Buffer.from(JSON.stringify(pins));
+}
 // Explicit NEW driver candidate; original runtime pins/helpers stay immutable.
 // The historical resolver rejects any changed accepted entry by design. Load
 // that exact resolver from Git and change only its entry admission, with both
@@ -718,15 +744,24 @@ function candidateResolver(expectedSHA256) {
   const file = path.join(ROOT, 'tools/mdk2-immutable-runtime-resolver.cjs');
   const original = gitFile(commit, 'tools/mdk2-immutable-runtime-resolver.cjs');
   assert.equal(sha(original), '356f0e7216e375e3e8d7c6a003d958de4f9f611205a222aa7d9cf65c7e53c77c');
-  const source = replaceOnce(original.toString(),
+  let source = replaceOnce(original.toString(),
     'exact(readLocal(resolver.root, ENTRY), {path:ENTRY, bytes:git(resolver.root, ACCEPTED, ENTRY).length, sha256:ENTRY_SHA});',
     `exact(git(resolver.root, ACCEPTED, ENTRY), {path:ENTRY, bytes:git(resolver.root, ACCEPTED, ENTRY).length, sha256:ENTRY_SHA});
     assert.equal(sha(readLocal(resolver.root, ENTRY)), ${JSON.stringify(expectedSHA256)}, 'changed recorded driver candidate');`);
+  source = replaceOnce(source, '  function read(name) {', '  function originalRead(name) {');
+  source = replaceOnce(source, '  function verify() {',
+    `  const amendment = require(${JSON.stringify(__filename)});
+  const candidateManifest = amendment.quietManifest(manifest);
+  const candidateRows = JSON.parse(candidateManifest).files;
+  function read(name) { return amendment.quietRuntimeBytes(name, originalRead(name)); }
+  function verify() {`);
+  source = replaceOnce(source, 'manifest:() => Buffer.from(manifest), files:() => [...rows.values()].map(r => ({...r}))',
+    'manifest:() => Buffer.from(candidateManifest), files:() => candidateRows.map(r => ({...r}))');
   const Module = require('node:module'), entry = new Module(file, module);
   entry.filename = file; entry.paths = Module._nodeModulePaths(path.dirname(file)); entry._compile(source, file);
   return {adapter:entry.exports, provenance:{kind:'explicit-new-driver-candidate', candidateSHA256:expectedSHA256,
     resolverCommit:commit, resolverSHA256:sha(original), composedResolverSHA256:sha(source),
-    historicalAccepted:'6d5121b5f96ee6032a9e347e2db64db29c478518'}};
+    historicalAccepted:'6d5121b5f96ee6032a9e347e2db64db29c478518', amendment:QUIET_BRIDGE}};
 }
 function controllerSources(runDirectory) {
   assert(path.isAbsolute(runDirectory)); verifyClosure();
@@ -773,7 +808,7 @@ function run(runDirectory) {
   require(path.join(RUNS, '20261104-mdk2-fresh-pending-scene/finite-deadline.cjs')).browserDeadline(release, Date.now());
   assertRunnable();
   const bytes = fs.readFileSync(path.join(runDirectory, 'runtime-pins.json'));
-  assert.equal(sha(bytes), pinnedRuntime().pinsSHA256, 'original sealed runtime pins required');
+  assert.equal(sha(bytes), sha(quietManifest(zlib.gunzipSync(fs.readFileSync(path.join(RUNS,'20261104-mdk2-fresh-pending-scene/runtime-pins.json.gz'))))), 'explicit quiet runtime pins required');
   for (const row of JSON.parse(bytes).files) assert.equal(sha(fs.readFileSync(path.join(ROOT, row.path))), row.sha256, 'runtime pin mismatch ' + row.path);
   const {file, source} = compose(runDirectory);
   for (const [name, code] of Object.entries(controllerSources(runDirectory))) {
@@ -786,7 +821,7 @@ function run(runDirectory) {
   entry.filename = file; entry.paths = Module._nodeModulePaths(path.dirname(file)); entry._compile(source, file);
 }
 module.exports = {ROOT, RUNS, SOURCE, OBSERVER, CLOSURE, HELPERS, DRIVER, MAIN, sha, gitFile, verifyClosure, pinnedRuntime,
-  installBinding, preloadSource, installBeforeFirstScript, frozenOwnership, correlateSnapshots, createTraceDriver, retainedModule, candidateResolver, controllerSources, compose, inspect, assertRunnable, run};
+  installBinding, preloadSource, installBeforeFirstScript, frozenOwnership, correlateSnapshots, createTraceDriver, retainedModule, QUIET_BRIDGE, quietRuntimeBytes, quietManifest, candidateResolver, controllerSources, compose, inspect, assertRunnable, run};
 if (require.main === module) {
   try {
     if (process.argv[2] === '--check' && process.argv.length === 3) console.log(JSON.stringify(inspect(), null, 2));

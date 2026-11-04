@@ -36,15 +36,15 @@ function decodeFileSnapshot(main,file){
   if(outputSize!==main.rawRequestWords?.[2]||destination!==main.rawRequestWords?.[0]||compressedRead>compressedSize||outputCopied>outputSize)throw Error('wrong request/decode cursors');
   return {kind:output?'archive-output-callback':'archive-input-callback',decode:{state:ptr,stream,compressedSize,compressedRead,outputSize,outputCopied,destination,remaining:outputSize-outputCopied}};
 }
-function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()=>performance.now(),maxRecords=512,maxBoundaries=50000000}={}) {
+function attach({host,getExports,getSlice=()=>null,workerSlot,exeSha256,wasmSha256,deadline,now=()=>performance.now(),maxRecords=512,maxBoundaries=50000000}={}) {
   if(workerSlot!==0||exeSha256!==EXE_SHA256||!(/^[a-f0-9]{64}$/).test(wasmSha256||''))throw Error('wrong Worker/media/module pin');
   if(typeof host?.log_block!=='function'||typeof getExports!=='function'||owners.has(host))throw Error('missing or occupied owning import');
   if(!Number.isFinite(deadline)||deadline<=now()||deadline>now()+360000||!Number.isInteger(maxRecords)||maxRecords<1||maxRecords>512||!Number.isInteger(maxBoundaries)||maxBoundaries<1||maxBoundaries>50000000)throw Error('invalid observation bound');
-  const original=host.log_block;let ex=null,poll=null,finalizer=null,load=null,buffer=null,previousLevel=null,suffix=null;
+  const original=host.log_block;let ex=null,poll=null,finalizer=null,load=null,buffer=null,previousLevel=null,suffix=null,decoder=null;
   const report={version:1,status:'running',workerSlot,exeSha256,wasmSha256,records:[],blocks:0,
     history:'Before attachment unknown; native completion is not Lua execution or gameplay',
     moduleBinding:'Caller must bind hashed module bytes to the actual owning Worker init Module'};
-  function finish(reason='stopped'){if(report.status==='running'){report.status=reason;report.pending={poll,finalizer,load,buffer,unobservedPollPrefix:suffix};if(host.log_block===wrapped)host.log_block=original;owners.delete(host);}return report;}
+  function finish(reason='stopped'){if(report.status==='running'){report.status=reason;report.pending={poll,finalizer,load,buffer,decoder,unobservedPollPrefix:suffix};if(host.log_block===wrapped)host.log_block=original;owners.delete(host);}return report;}
   function read(a,n=4){
     if(!Number.isSafeInteger(a)||a<0x400000||a+n>0x80000000||n<1||n>256)throw Error('invalid native read');
     const b=new Uint8Array(ex.memory.buffer),v=[];
@@ -70,6 +70,41 @@ function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()
     }return found||{available:false,reason:'Level not interned'};
   }
   function emit(kind,extra={}){if(report.records.length>=maxRecords){finish('record-limit');return;}report.records.push({kind,block:report.blocks,pc:ex.get_eip()>>>0,esp:ex.get_esp()>>>0,resource:resource(),...extra});}
+  // 47d980's SUB ESP,8 + four pushes places return/args at +24/+28.
+  // Capture bytes only from actual registers and that checked frame. The
+  // object fields are established by 47cea0/47cf60/47da00, not live addresses.
+  function decoderContext(phase,object,frame) {
+    const registers=Object.fromEntries(['eip','esp','ebp','eax','ebx','ecx','edx','esi','edi',
+      'flag_op','flag_a','flag_b','flag_res','flag_sign_shift','yield_reason'].map(n=>[n,ex['get_'+n]()>>>0]));
+    const words=Array.from({length:21},(_,i)=>u(object+i*4));
+    const stack=Array.from({length:16},(_,i)=>u(registers.esp+i*4));
+    const fields={readCallback:words[0],callbackArgument:words[1],inputBuffer:words[2],inputCapacity:words[3],
+      inputCursor:words[4],inputRemaining:words[5]|0,bitReservoir:words[6],bitCount:words[7],
+      sampleShift:words[8],channels:words[9],transformRows:words[10],blockWords:words[11],
+      transformBuffer:words[13],remainingWords:words[18],decodedCursor:words[19],decodedWords:words[20]};
+    const active=phase==='output'||phase==='output-sample';
+    const cursors=active?{source:registers.esi,destination:registers.ebp,words:registers.edi,
+      producedBytes:stack[4],requestedBytes:stack[9],shift:stack[5]}:null;
+    const window=(address,bytes)=>bytes>0?{address,bytes:read(address,Math.min(16,bytes))}:null;
+    const input=window(fields.inputCursor,fields.inputRemaining);
+    const decoded=window(active?registers.esi:fields.decodedCursor,(active?registers.edi:fields.decodedWords)*4);
+    const output=active?window(registers.ebp,Math.max(0,stack[9]-stack[4])):null;
+    const capturedBytes=64+84+[input,decoded,output].reduce((n,w)=>n+(w?.bytes.length||0),0);
+    if(capturedBytes>256)throw Error('decoder context byte bound');
+    const slice=getSlice();
+    return {phase,object,frame,registers,stack,objectWords:words,fields,cursors,capturedBytes,input,decoded,output,
+      slice:slice?{budget:slice.budget,ordinal:slice.ordinal,completed:slice.completed}:null,
+      history:'Bounded windows only; external callback/media and earlier execution are not reconstructed'};
+  }
+  function outputContext(phase) {
+    const code='83ec0853568b5c241457c744240c00000000558b43208b734c8b7b508b6c242089442414837c242400743f85ff7519837b4800743553e84500000083c40485c074288b734c8b7b508b068a4c241483c60483c502d3f88344241002668945fe4f8b4424103b44242472c18b44241089734c5d897b505f5e5b83c408c3';
+    if(read(0x47d980,code.length/2).map(v=>v.toString(16).padStart(2,'0')).join('')!==code)throw Error('original decoder bytes changed');
+    const esp=ex.get_esp()>>>0,object=ex.get_ebx()>>>0;
+    if(u(esp+28)!==object)throw Error('decoder frame/object mismatch');
+    const frame={esp,caller:u(esp+24),object,destination:u(esp+32),requestedBytes:u(esp+36)};
+    if(decoder&&(decoder.esp!==esp||decoder.object!==object||decoder.caller!==frame.caller))throw Error('decoder frame replaced');
+    decoder=frame;return decoderContext(phase,object,frame);
+  }
   function sample(){if(report.status!=='running')return report;try{if(now()>=deadline)return finish('deadline');identity();const current=level();
     // A frozen attachment can be inside an already issued SleepEx. This is
     // evidence of its remaining suffix, never evidence of a poll entry/return.
@@ -82,13 +117,19 @@ function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()
         emit('poll-prefix-unobserved',{observedFrom:0x4515cd,stack:[u(esp),u(esp+4),u(esp+8),u(esp+12)],history:'poll entry and SleepEx call unobserved'});
       }
     }
-    emit('sample',{level:current,levelCreatedSincePreviousSample:previousLevel?.tag===-6&&current.tag===-3});previousLevel=current;
+    emit('sample',{level:current,levelCreatedSincePreviousSample:previousLevel?.tag===-6&&current.tag===-3,
+      ...(ex.get_eip()>>>0===0x47d9c8?{decoder:outputContext('output-sample')}:{})});previousLevel=current;
   }catch(e){report.error=e.message;finish('unsupported-or-unobservable');}return report;}
   function boundary(pc,esp){
     if(report.status!=='running')return;if(now()>=deadline){finish('deadline');return;}
     if(++report.blocks>maxBoundaries){finish('boundary-limit');return;}
     identity();pc>>>=0;esp>>>=0;if(pc!==(ex.get_eip()>>>0)||esp!==(ex.get_esp()>>>0))throw Error('wrong boundary registers');
     const r=resource();
+    if(pc===0x47d9c8&&!decoder)emit('decoder-output',{decoder:outputContext('output')});
+    if(decoder&&pc===decoder.caller){
+      if(esp!==decoder.esp+28)throw Error('decoder return stack mismatch');
+      emit('decoder-return',{decoder:decoderContext('return',decoder.object,decoder)});decoder=null;
+    }
     if(suffix){
       if(r.request!==suffix.request||r.active!==suffix.request||r.entry?.type!==10)throw Error('unobserved poll suffix request changed');
       if(suffix.phase==='sleep-return'){

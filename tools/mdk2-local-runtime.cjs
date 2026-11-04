@@ -356,6 +356,7 @@ async function start(run) {
   const {adapter,provenance}=integration.candidateResolver(hash(fs.readFileSync(path.join(ROOT,'tools/mdk2-construction-driver-integration.cjs'))));
   const resolver=adapter.createResolver(),runtime=await adapter.installAdapter(resolver);
   fs.writeFileSync(path.join(run,'original-adapter-proof.json'),JSON.stringify({provenance,releaseLine,
+    runtimeAmendments:JSON.parse(resolver.manifest()).amendments,
     filesystem:runtime.filesystem,http:runtime.http,inspection:runtime.inspection},null,2)+'\n',{flag:'wx'});
   fs.writeFileSync(path.join(run,'runtime-pins.json'),resolver.manifest(),{flag:'wx'});
   install(run);

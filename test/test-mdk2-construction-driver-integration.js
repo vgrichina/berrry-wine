@@ -156,6 +156,16 @@ test('candidate resolver explicitly checks both immutable historical resolver an
  assert.equal(provenance.historicalAccepted,'6d5121b5f96ee6032a9e347e2db64db29c478518');
  assert.throws(()=>integration.candidateResolver('0'.repeat(64)),/changed recorded driver candidate/);
 });
+test('quiet candidate manifest amends only the exact historical bridge',()=>{
+ const original=integration.pinnedRuntime();
+ const manifest=JSON.parse(integration.quietManifest(require('zlib').gunzipSync(fs.readFileSync(path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene/runtime-pins.json.gz')))));
+ const differences=manifest.files.filter((row,i)=>JSON.stringify(row)!==JSON.stringify(original.pins.files[i]));
+ assert.deepEqual(differences.map(r=>r.path),['lib/guest-rpc.js']);
+ assert.deepEqual(manifest.moduleFiles,original.pins.moduleFiles);
+ assert.equal(differences[0].sha256,integration.QUIET_BRIDGE.sha256);
+ assert.throws(()=>integration.quietRuntimeBytes('lib/guest-rpc.js',Buffer.from(original.files['lib/guest-rpc.js']+' ')),/exact 1329 bridge/);
+ assert.deepEqual(manifest.amendments[0].source,integration.SOURCE);
+});
 test('explicit candidate adapter executes actual 432 filesystem and HTTP checks in dedicated process',()=>{
  const code=`const fs=require('node:fs'),i=require('./tools/mdk2-construction-driver-integration.cjs');
  (async()=>{const h=i.sha(fs.readFileSync(require.resolve('./tools/mdk2-construction-driver-integration.cjs')));
@@ -320,7 +330,7 @@ async function nativeOne(row, mode = 'success') {
   const url = 'http://offline/lib/guest-worker.js?v=pinned', targetId = 'offline-main';
   const sigs = require('../lib/host-import-sigs.generated.json').sigs;
   let brokerLogBlocks=0;
-  const broker = require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>{if(n==='log_block')brokerLogBlocks++;return 0;}])),sigs);
+  const broker = require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>{if(n==='log_block'){brokerLogBlocks++;if(mode.includes('bridge-exception'))throw Error('bridge fixture exception');}return 0;}])),sigs);
   const worker = new Worker(__filename,{workerData:{mode,port:port2,wasmHash:row.sha256,url,targetId},transferList:[port2]});
   let envelope, pendingSlice = 0; const commands=[],sliceResults=[];
   class PageWorker {
@@ -350,9 +360,10 @@ async function nativeOne(row, mode = 'success') {
       else if(m.t==='fixtureSliceRequest'){const c={t:'slice',seq:++pendingSlice,steps:mode.includes('measured')?1000:1};commands.push(c);worker.postMessage(c);}
       else if(m.t==='sliceDone'){sliceResults.push(m);port1.postMessage({t:'slice',message:m});}
       else if(m.t==='fixtureFailure'||m.t==='error')finish(Error(JSON.stringify(m)));
-      else if(m.pass||m.rejected)finish(null,{...m,commands,...(mode.includes('rpc-diagnosis')?{brokerLogBlocks,sliceResults}:{})});
+      else if(m.pass||m.rejected)finish(null,{...m,commands,...(mode.includes('rpc-diagnosis')||mode.includes('decoder-context')?{brokerLogBlocks,sliceResults}:{})});
     });
-    pageWorker.postMessage({t:'init',seq:0,module,memory,sigs,slot:0,endpointIdentity:1});
+    pageWorker.postMessage({t:'init',seq:0,module,memory,sigs,slot:0,endpointIdentity:1,
+      ...(mode.includes('bridge-forward')||mode.includes('bridge-exception')?{forwardGuestLogs:true}:{})});
   });
 }
 
@@ -415,6 +426,36 @@ test('retained Medium keyup stalls in decoder at exactly the adaptive minimum',(
     firstStep:checkpoints[0].result.steps,lastStep:final.frozen.steps,
     decoderCheckpoints:27,boundariesPerStep:1000,keyup:final.inputQueue,
     claim:'Frozen retained readbacks, not a resumed game or reconstructed decoder state'});
+});
+
+for(const row of integration.pinnedRuntime().pins.moduleFiles) test('bounded owning decoder context and native replay: '+row.path,async()=>{
+  const result=await nativeOne(row,'measured-decoder-context');
+  const forward=await nativeOne(row,'measured-decoder-context-bridge-forward');
+  const control=await nativeOne(row,'control-measured-decoder-context');
+  assert.deepEqual(control.value.state,result.value.state,'passive decoder context register/flag parity');
+  assert.deepEqual(control.value.decodedOutput,result.value.decodedOutput,'passive decoder output parity');
+  assert.equal(result.value.brokerLogBlocks,0);assert(forward.value.brokerLogBlocks>0);
+  assert.deepEqual(forward.value.replay.expected,result.value.replay.expected);
+  assert.deepEqual(forward.value.state,result.value.state);
+  const exceptions=[];
+  for(const suffix of ['', '-pinned']){
+    const fault=await nativeOne(row,'measured-decoder-context-bridge-exception'+suffix);
+    assert.match(fault.value.rejected,/host import log_block threw/);
+    assert.equal(fault.value.report.observer.status,'original-import-failure');
+    exceptions.push(fault.value);
+  }
+  assert.deepEqual(exceptions[0].faultState,exceptions[1].faultState,'original/amended exception native parity');
+  assert(result.value.replay.returned);assert.equal(result.value.report.fatal,null);
+  assert.equal(result.value.replay.context.registers.eip,0x47d9c8);
+  assert.equal(result.value.replay.context.fields.inputRemaining,8192);
+  assert.equal(result.value.replay.context.cursors.requestedBytes,8);
+  assert(result.value.replay.context.capturedBytes<=256);
+  assert.equal(result.value.replay.context.output.bytes.length,8);
+  assert.equal(result.value.replay.end.fields.decodedWords,0);
+  assert.equal(result.value.report.nativeSlice.budget,1000);
+  assert.equal(result.value.replay.context.slice.budget,1000);
+  assert.equal(result.value.replay.context.slice.completed,false);
+  write(EVIDENCE,path.basename(row.path)+'.decoder-context.json',{fixtureOnly:true,quiet:result.value,forward:forward.value,control:control.value,exceptions});
 });
 
 for(const row of integration.pinnedRuntime().pins.moduleFiles) test('original native decoder RPC diagnosis: '+row.path,async()=>{
@@ -1078,13 +1119,13 @@ async function nativeChild() {
       if(!pin)return original(m,file);
       const bytes=integration.gitFile(integration.SOURCE,relative);
       assert.equal(bytes.length,pin.bytes);assert.equal(H(bytes),pin.sha256,'original Worker dependency '+relative);
-      if(relative==='lib/guest-rpc.js'&&workerData.mode.includes('rpc-diagnosis-quiet')){
-        // The exact Stronghold repair, applied only in this offline fixture.
-        // All remaining pinned dependencies and original module bytes stay fixed.
-        const old="(name === 'log' || name === 'log_i32' || name === 'log_api_exit'))";
-        const replacement="(name === 'log' || name === 'log_i32' || name === 'log_api_exit' || name === 'log_block'))";
-        const text=bytes.toString();assert.equal(text.split(old).length,2);
-        m._compile(text.replace(old,replacement),file);return;
+      if(relative==='lib/guest-rpc.js'&&(workerData.mode.includes('rpc-diagnosis-quiet')||workerData.mode.includes('decoder-context')&&!workerData.mode.endsWith('-pinned'))){
+        // Read through the actual candidate resolver used by local.start(),
+        // including original verification and the explicit amendment manifest.
+        const {adapter}=integration.candidateResolver(H(fs.readFileSync(require.resolve('../tools/mdk2-construction-driver-integration.cjs'))));
+        const resolver=adapter.createResolver();
+        const served=resolver.read(relative);assert.equal(H(served),integration.QUIET_BRIDGE.sha256);
+        m._compile(served.toString(),file);return;
       }
       if(extension==='.json')m.exports=JSON.parse(bytes.toString());else m._compile(bytes.toString(),file);
     };
@@ -1111,6 +1152,12 @@ async function nativeChild() {
   put(input,Buffer.alloc(rows/8,0xa5));put(table,[17,0,29,0]);
   e.set_esp(stack);u(stack,caller);u(stack+4,decoder);u(stack+8,0);u(stack+12,1);
   e.set_eip(0x47cea0);
+  if(workerData.mode.includes('decoder-context')){
+    // Small explicit fixture for the owning output/return path, not game state.
+    u(decoder+0x20,1);u(decoder+0x4c,output);u(decoder+0x50,4);u(decoder+0x48,0);
+    for(let i=0;i<4;i++)u(output+i*4,100+i*20);
+    u(stack+8,output+0x100);u(stack+12,8);e.set_eip(0x47d980);
+  }
   if(workerData.mode.endsWith('deadline-stop'))reviewOffset=360001;
   const at=performance.now();let slices=0;
   while(e.get_eip()>>>0!==caller && slices++<2000){
@@ -1135,11 +1182,30 @@ async function nativeChild() {
     outputHash:H(b.subarray(wa(output),wa(output)+rows*4)),
     outputFirst:Array.from(new Uint32Array(memory.buffer,wa(output),16)),
     originalHistory:'Unknown after retained 87000 checkpoint; this is original native decoding with explicit fixture data.'};
+  if(workerData.mode.includes('decoder-context'))result.decodedOutput=Array.from(b.subarray(wa(output+0x100),wa(output+0x100)+8));
   if(workerData.mode.includes('rpc-diagnosis')){
     const region=require('../lib/region-map.generated.js').REGIONS.GUEST_BASE;
     result.guestHash=H(b.subarray(region.base,region.end));
   }
   if(returned){
+    if(workerData.mode.includes('decoder-context')&&!workerData.mode.startsWith('control')){
+      const context=report.observer.records.find(r=>r.kind==='decoder-output')?.decoder;
+      const end=report.observer.records.find(r=>r.kind==='decoder-return')?.decoder;
+      assert(context&&end,JSON.stringify(report));
+      const expected=Array.from(b.subarray(wa(output+0x100),wa(output+0x100)+8));
+      // Restore only the captured frame/object/source and actual GPRs. At C8
+      // MOV/ADD/SAR recompute flags before any conditional branch; incoming
+      // lazy flags are retained evidence, not guessed/set by this replay.
+      context.stack.forEach((v,i)=>u(context.registers.esp+i*4,v));
+      context.objectWords.forEach((v,i)=>u(context.object+i*4,v));
+      put(context.decoded.address,context.decoded.bytes);put(output+0x100,Buffer.alloc(8));
+      for(const n of ['esp','ebp','eax','ebx','ecx','edx','esi','edi'])e['set_'+n](context.registers[n]);
+      e.set_eip(context.registers.eip);await slice();
+      assert.equal(e.get_eip()>>>0,caller);assert.deepEqual(Array.from(b.subarray(wa(output+0x100),wa(output+0x100)+8)),expected);
+      const replayState=state();
+      for(const name of Object.keys(context.registers))assert.equal(replayState[name],result.state[name],'replayed '+name);
+      result.replay={context,end,expected,returned:true,state:replayState};
+    }
     if(!workerData.mode.startsWith('control'))bound.invoke('finish',{reason:'measured-return'});
     e.set_trace_esp(0,0,0);put(caller+16,[0x0f,0x0b]);e.invalidate_code_range(caller+16,2);e.set_eip(caller+16);
     let trap;try{await slice();}catch(error){trap=String(error);}assert(trap);result.trap={text:trap,hash:H(b),state:state()};

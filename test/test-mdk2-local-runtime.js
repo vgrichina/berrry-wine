@@ -489,7 +489,17 @@ test('actual composed entry creates run, installs release/recorder and calls moc
   assert.equal(rows[0].kind,'observer-installed');assert(!rows.some(r=>r.kind==='spawn'));
   const release=JSON.parse(fs.readFileSync(path.join(dir,'runtime-release.json')));
   assert.equal(release.assignment,local.ASSIGNMENT);
-  if(process.env.MDK2_LOCAL_TEST_EVIDENCE)fs.writeFileSync(path.join(process.env.MDK2_LOCAL_TEST_EVIDENCE,'composed-entry-boundary.json'),JSON.stringify({evidence,failure,rows,release},null,2));
+  const proof=JSON.parse(fs.readFileSync(path.join(dir,'original-adapter-proof.json')));
+  const manifestBytes=fs.readFileSync(path.join(dir,'runtime-pins.json')),manifest=JSON.parse(manifestBytes);
+  assert.deepEqual(proof.runtimeAmendments,manifest.amendments);
+  assert.equal(manifest.amendments[0].sha256,integration.QUIET_BRIDGE.sha256);
+  for(const channel of ['filesystem','http']){
+   assert.equal(proof[channel].length,432);
+   assert.equal(proof[channel].find(r=>r.path==='lib/guest-rpc.js').sha256,integration.QUIET_BRIDGE.sha256);
+  }
+  const runtime={manifestSHA256:integration.sha(manifestBytes),amendments:manifest.amendments,
+   bridgeFilesystem:proof.filesystem.find(r=>r.path==='lib/guest-rpc.js'),bridgeHTTP:proof.http.find(r=>r.path==='lib/guest-rpc.js')};
+  if(process.env.MDK2_LOCAL_TEST_EVIDENCE)fs.writeFileSync(path.join(process.env.MDK2_LOCAL_TEST_EVIDENCE,'composed-entry-boundary.json'),JSON.stringify({evidence,failure,rows,release,runtime},null,2));
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
 test('actual original Python child: run-root hook reproduces operator collision; isolated hook fixes it',()=>{
