@@ -2446,11 +2446,14 @@
     (local $diff_g i32) (local $diff_stride i32) (local $diff_wa i32)
     (local $spec_g i32) (local $spec_stride i32) (local $spec_wa i32)
     (local $tex_g i32) (local $tex_stride i32) (local $tex_wa i32)
-    (local $src i32) (local $dst i32)
+    (local $src i32) (local $dst i32) (local $dimension i32)
     (local.set $type (call $d3dim_fvf_vtxtype (local.get $fvf)))
     (if (i32.or
           (i32.or (i32.eqz (local.get $strided)) (i32.eqz (local.get $count)))
           (i32.eqz (local.get $type)))
+      (then (return (i32.const 0))))
+    ;; Bound the count before multiplication or touching component arrays.
+    (if (i32.gt_u (local.get $count) (i32.const 131072))
       (then (return (i32.const 0))))
     (local.set $pos_g (call $gl32 (local.get $strided)))
     (local.set $pos_stride (call $gl32 (i32.add (local.get $strided) (i32.const 4))))
@@ -2483,7 +2486,9 @@
         (i32.add (i32.const 32) (i32.shl (local.get $tex_index) (i32.const 3))))))
       (local.set $tex_stride (call $gl32 (i32.add (local.get $strided)
         (i32.add (i32.const 36) (i32.shl (local.get $tex_index) (i32.const 3))))))
-      (if (i32.eqz (local.get $tex_stride)) (then (local.set $tex_stride (i32.const 8))))
+      (local.set $dimension (call $d3dim_fvf_tex_size (local.get $fvf) (local.get $tex_index)))
+      (if (i32.eqz (local.get $tex_stride)) (then
+        (local.set $tex_stride (i32.shl (local.get $dimension) (i32.const 2)))))
       (if (local.get $tex_g) (then (local.set $tex_wa (call $g2w (local.get $tex_g)))))))
     (local.set $size (i32.mul (local.get $count) (i32.const 32)))
     (if (i32.or (i32.eqz (local.get $size)) (i32.gt_u (local.get $size) (i32.const 0x400000)))
@@ -2523,18 +2528,75 @@
       (if (local.get $tex_wa) (then
         (local.set $src (i32.add (local.get $tex_wa) (i32.mul (local.get $i) (local.get $tex_stride))))
         (f32.store (i32.add (local.get $dst) (i32.const 24)) (f32.load (local.get $src)))
-        (f32.store (i32.add (local.get $dst) (i32.const 28)) (f32.load (i32.add (local.get $src) (i32.const 4))))))
+        (if (i32.ge_u (local.get $dimension) (i32.const 2)) (then
+          (f32.store (i32.add (local.get $dst) (i32.const 28))
+            (f32.load (i32.add (local.get $src) (i32.const 4))))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $lp)))
     (local.get $dst_g))
 
+  ;; The strided selector addresses a separate dimensional array. Retain its
+  ;; z/w just like packed FVF/VB input, before matrix application and queuing.
+  (func $d3dim_strided_supplied_vertices
+    (param $this i32) (param $fvf i32) (param $strided i32)
+    (param $packed i32) (param $count i32) (param $type i32) (result i32)
+    (local $out i32) (local $ow i32) (local $pw i32) (local $state i32)
+    (local $selector i32) (local $dimension i32) (local $ptr i32) (local $stride i32)
+    (local $i i32) (local $dst i32) (local $src i32)
+    (if (i32.or (i32.eqz (local.get $packed)) (i32.gt_u (local.get $count) (i32.const 104857)))
+      (then (return (i32.const 0))))
+    (local.set $out (call $heap_alloc (i32.mul (local.get $count) (i32.const 40))))
+    (if (i32.eqz (local.get $out)) (then (return (i32.const 0))))
+    (local.set $ow (call $g2w (local.get $out)))
+    (local.set $pw (call $g2w (local.get $packed)))
+    (local.set $state (call $d3ddev_state (local.get $this)))
+    (call $d3ddev_composite_wvp (local.get $state))
+    (call $d3dim_lights_refresh (local.get $state))
+    (local.set $selector (call $d3dim_texcoord_index (local.get $this)))
+    (local.set $dimension (call $d3dim_fvf_tex_size (local.get $fvf) (local.get $selector)))
+    (if (i32.and (local.get $fvf) (i32.const 0xf00)) (then
+      (local.set $src (i32.add (local.get $strided)
+        (i32.add (i32.const 32) (i32.shl (local.get $selector) (i32.const 3)))))
+      (local.set $ptr (call $gl32 (local.get $src)))
+      (local.set $stride (call $gl32 (i32.add (local.get $src) (i32.const 4))))
+      (if (i32.eqz (local.get $stride)) (then
+        (local.set $stride (i32.shl (local.get $dimension) (i32.const 2)))))
+      (if (local.get $ptr) (then (local.set $ptr (call $g2w (local.get $ptr)))))))
+    (block $done (loop $next
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $dst (i32.add (local.get $ow) (i32.mul (local.get $i) (i32.const 40))))
+      (call $d3dim_prepare_draw_vertex (local.get $state) (local.get $type)
+        (i32.add (local.get $pw) (i32.mul (local.get $i) (i32.const 32))) (local.get $dst))
+      (f32.store offset=32 (local.get $dst) (f32.const 0))
+      (f32.store offset=36 (local.get $dst) (f32.const 1))
+      (if (local.get $ptr) (then
+        (local.set $src (i32.add (local.get $ptr) (i32.mul (local.get $i) (local.get $stride))))
+        (if (i32.ge_u (local.get $dimension) (i32.const 3)) (then
+          (i32.store offset=32 (local.get $dst) (i32.load offset=8 (local.get $src)))))
+        (if (i32.eq (local.get $dimension) (i32.const 4)) (then
+          (i32.store offset=36 (local.get $dst) (i32.load offset=12 (local.get $src)))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $next)))
+    (local.get $out))
+
   (func $d3dim_draw_primitive_strided
     (param $this i32) (param $primType i32) (param $fvf i32) (param $strided i32) (param $count i32)
-    (local $scratch i32) (local $vtxType i32)
+    (local $scratch i32) (local $vtxType i32) (local $extended i32) (local $supplied i32)
+    (if (i32.eqz (call $d3dim_fvf_supplied_valid (local.get $this) (local.get $fvf))) (then
+      (i32.store (global.get $reg_base) (i32.const 0x80070057)) (return)))
     (local.set $vtxType (call $d3dim_fvf_vtxtype (local.get $fvf)))
     (local.set $scratch (call $d3dim_pack_strided_tl
       (local.get $fvf) (local.get $strided) (local.get $count)
       (call $d3dim_texcoord_index (local.get $this))))
+    (if (i32.lt_u (local.get $vtxType) (i32.const 3)) (then
+      (local.set $supplied (call $d3dim_d7_supplied_type (local.get $this)))))
+    (if (i32.and (i32.ne (local.get $scratch) (i32.const 0))
+                 (i32.ne (local.get $supplied) (i32.const 0))) (then
+      (local.set $extended (call $d3dim_strided_supplied_vertices
+        (local.get $this) (local.get $fvf) (local.get $strided)
+        (local.get $scratch) (local.get $count) (local.get $vtxType)))
+      (call $heap_free (local.get $scratch))
+      (local.set $scratch (local.get $extended))
+      (local.set $vtxType (local.get $supplied))))
     (if (local.get $scratch) (then
       (call $d3dim_draw_primitive
         (local.get $this) (local.get $primType) (local.get $vtxType)
@@ -2545,11 +2607,23 @@
   (func $d3dim_draw_indexed_primitive_strided
     (param $this i32) (param $primType i32) (param $fvf i32) (param $strided i32) (param $count i32)
     (param $indices i32) (param $index_count i32)
-    (local $scratch i32) (local $vtxType i32)
+    (local $scratch i32) (local $vtxType i32) (local $extended i32) (local $supplied i32)
+    (if (i32.eqz (call $d3dim_fvf_supplied_valid (local.get $this) (local.get $fvf))) (then
+      (i32.store (global.get $reg_base) (i32.const 0x80070057)) (return)))
     (local.set $vtxType (call $d3dim_fvf_vtxtype (local.get $fvf)))
     (local.set $scratch (call $d3dim_pack_strided_tl
       (local.get $fvf) (local.get $strided) (local.get $count)
       (call $d3dim_texcoord_index (local.get $this))))
+    (if (i32.lt_u (local.get $vtxType) (i32.const 3)) (then
+      (local.set $supplied (call $d3dim_d7_supplied_type (local.get $this)))))
+    (if (i32.and (i32.ne (local.get $scratch) (i32.const 0))
+                 (i32.ne (local.get $supplied) (i32.const 0))) (then
+      (local.set $extended (call $d3dim_strided_supplied_vertices
+        (local.get $this) (local.get $fvf) (local.get $strided)
+        (local.get $scratch) (local.get $count) (local.get $vtxType)))
+      (call $heap_free (local.get $scratch))
+      (local.set $scratch (local.get $extended))
+      (local.set $vtxType (local.get $supplied))))
     (if (local.get $scratch) (then
       (call $d3dim_draw_indexed_primitive
         (local.get $this) (local.get $primType) (local.get $vtxType)
