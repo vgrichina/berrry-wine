@@ -1244,6 +1244,14 @@
       (return)))
     (local.set $entry (call $dx_from_this (local.get $obj)))
     (call $d3ddev_init_state (local.get $state))
+    ;; DX7 D3DRENDERSTATETYPE defaults: COLORVERTEX and LOCALVIEWER are
+    ;; TRUE; SPECULARMATERIALSOURCE is COLOR2. The common zeroed state
+    ;; already supplies FALSE for SPECULARENABLE and NORMALIZENORMALS.
+    ;; Apply only at Device7 creation, never when QI changes an interface.
+    (if (i32.eq (local.get $vtbl) (global.get $DX_VTBL_D3DDEV7)) (then
+      (call $gs32 (i32.add (local.get $state) (i32.const 820)) (i32.const 1))
+      (call $gs32 (i32.add (local.get $state) (i32.const 824)) (i32.const 1))
+      (call $gs32 (i32.add (local.get $state) (i32.const 840)) (i32.const 2))))
     ;; QueryInterface changes the visible interface, not this creation policy.
     (if (i32.eq (local.get $vtbl) (global.get $DX_VTBL_D3DDEV1)) (then (local.set $version (i32.const 1))))
     (if (i32.eq (local.get $vtbl) (global.get $DX_VTBL_D3DDEV2)) (then (local.set $version (i32.const 2))))
