@@ -13,6 +13,9 @@ const crypto = require('node:crypto');
 const system = 'test/binaries/candidates/deus-ex-demo/installed/system/';
 const engineBytes = fs.readFileSync(system + 'engine.dll');
 const exeBytes = fs.readFileSync(system + 'deusex.exe');
+const renderBytes = fs.readFileSync(system + 'render.dll');
+assert.equal(crypto.createHash('sha256').update(renderBytes).digest('hex'),
+  '9f405de68112266bbd72cb4e37c39b3b9712052c49fcd2f7cd9f2654b443773b');
 assert.equal(crypto.createHash('sha256').update(engineBytes).digest('hex'),
   '3606d3177b4473d1a56405c3e0b372e44dfde475705460be8d68846f6d16a8d0');
 assert.equal(crypto.createHash('sha256').update(exeBytes).digest('hex'),
@@ -104,6 +107,24 @@ async function exercise(module, inWorker) {
     load = v.getUint32(table, true); reloc = load - BASE;
     assert(inWorker ? reloc > 0 : reloc < 0, 'actual loader chooses opposite relocation signs');
     assert(await call('complete_dll_initialize', 0, v.getUint32(life + 4, true), 3));
+    await stage(renderBytes);
+    await call('load_dll', renderBytes.length, await call('get_next_dll_addr'));
+    const renderIndex = await call('get_last_loaded_dll_index');
+    const stride = await call('get_dll_lifecycle_stride');
+    const renderLife = life + renderIndex * stride;
+    const renderLoad = v.getUint32(table + renderIndex * 32, true);
+    assert(await call('complete_dll_initialize', renderIndex, v.getUint32(renderLife + 4, true), 3));
+    // Verify the actual loader's HIGHLOW relocation of every instruction in
+    // the original save/reuse/restore sequence; never replace these bytes.
+    const aliasOriginal = original(renderBytes, 0x10b03246, 0x3355 - 0x3246);
+    const aliasRelocated = [...aliasOriginal];
+    for (const rva of [0x3248,0x324e,0x3265,0x32da,0x3312,0x3318]) {
+      const i = rva - 0x3246;
+      const value = (Buffer.from(aliasOriginal).readUInt32LE(i) + renderLoad - 0x10b00000) >>> 0;
+      aliasRelocated.splice(i, 4, ...u32(value));
+    }
+    assert.deepEqual([...new Uint8Array(memory.buffer, await call('guest_to_wasm', renderLoad + 0x3246),
+      aliasRelocated.length)], aliasRelocated);
     const stack = await call('guest_alloc', 4096) >>> 0, esp = stack + 4000;
     const viewport = await call('guest_alloc', 4096) >>> 0;
     const engine = await call('guest_alloc', 4096) >>> 0;
@@ -222,6 +243,148 @@ async function exercise(module, inWorker) {
         assert.equal(result.events.at(-1).esp, esp + 20);
       }
     }
+    // Exact original Render instructions with controlled data and a synthetic
+    // caller/prologue. Exercise both pixel saturation branches and loop exits.
+    // Success here means only safe continued observation; no Draw is invented.
+    const data = await call('guest_alloc', 16384) >>> 0;
+    const wrapper = 0x402000, bridge = 0x402200;
+    const names = ['get_eip','get_esp','get_ebp'];
+    const regs = async () => inWorker ? (await host.link._ask({ t: 'readExports', names })).values
+      : Object.fromEntries(names.map(n => [n, ex[n]() >>> 0]));
+    async function aliasSetup(width, saturated, kind = '', options = {}) {
+      await setup(['wrongCleanup','unwind','missing'].includes(kind) ? kind : 'success');
+      await write(data, new Array(16384).fill(0));
+      for (let i = 0; i < width; i++) await write(data + 1024 + i * 4, u32(saturated ? 0x80808080 : i + 1));
+      await write(data + 0x40, u32(kind === 'loopAgain' ? 2 : 1));
+      await write(renderLoad + 0x49e40, u32(width));
+      // Reserve arguments then CALL: Render's stack is genuinely nested below
+      // Draw's. The data allocation is above the Draw entry stack threshold.
+      await branch(pc('lock'), bridge);
+      await branch(bridge, wrapper, [0x83,0xec,0x20,0xe8,...u32(wrapper - (bridge + 8))]);
+      // The CALL returns to bridge+8; bypass the appended JMP on return.
+      await branch(bridge + 8, pc(kind === 'missing' ? 'tail' : 'unlock') - 2,
+        [0x83,0xc4,0x20,0xba,...u32(callee), ...(kind === 'foreignViewport' ? [0x31,0xf6] : [])]);
+      const local = (offset, value) => [0xc7,0x45,offset & 255,...u32(value)];
+      await branch(wrapper, renderLoad + (kind === 'noSave' ? 0x327a : 0x3246),
+        [0x55,0x8b,0xec,0x81,0xec,...u32(0x440),0x53,0x56,0x57,
+          ...local(-0x24,0),...local(-0x1c,data + 4096),...local(-0xc,data + 8192),
+          ...local(-8,0),...local(-0x10,0),...local(8,data),...local(0x14,data),
+          ...local(0x18,data + 1024),...local(0x1c,data + 2048),
+          ...(kind === 'noSave' ? [0xbc,...u32(data + 8192),0xbd,7,0,0,0] : [])]);
+      // Only start after all fixture writes/commands are finished.
+      await start({ maxBlocks: 150, maxMs: 2000, ...options });
+    }
+    for (const width of [8,1,2]) for (const saturated of [false,true]) {
+      await aliasSetup(width, saturated);
+      let high = false, restored = false;
+      for (let i = 0; i < 100 && !await status(); i++) {
+        await run(1);
+        const r = await regs();
+        if (r.get_eip === renderLoad + 0x327a) {
+          assert(r.get_esp >= esp + 20);
+          assert.equal(r.get_ebp, width - 1);
+          assert.equal(await status(), null, 'original ESP alias survives the old false terminal');
+          high = true;
+        }
+        if (r.get_eip === renderLoad + 0x3355) restored = true;
+      }
+      const result = await status();
+      assert(result, JSON.stringify({ width, saturated, registers: await regs(),
+        halt: await call('get_last_run_halt'), yield: await call('get_yield_reason') }));
+      assert.equal(result.status, cases.success, JSON.stringify({width, saturated, result}));
+      assert.equal(high, width > 1);
+      assert(restored);
+      assert.deepEqual(result.events.filter(e => e.point.startsWith('renderEsp')).map(e => e.point),
+        ['renderEspSave','renderEspRestored']);
+      captures.push({ fixture: 'original-render-alias', width, saturated, result });
+    }
+    // A direct high-ESP landing has no observed save and gets no exception.
+    await aliasSetup(8, false, 'noSave'); await run(100);
+    assert.equal((await status()).status, 'unobserved-unwind-or-return');
+    await aliasSetup(8, false, '', { maxBlocks: 8 }); await run(100);
+    const aliasBudget = await status();
+    assert.equal(aliasBudget.status, 'expired-incomplete');
+    assert.equal(aliasBudget.terminal.reason, 'block-budget');
+    assert.equal(aliasBudget.terminal.eip, renderLoad + 0x327a);
+    assert.equal(aliasBudget.observedReturnPair, false);
+    assert(!aliasBudget.events.some(e => e.point === 'renderEspRestored'));
+    captures.push({ fixture: 'active-alias-budget', result: aliasBudget });
+    await aliasSetup(8, false, 'loopAgain');
+    let loopExit = false;
+    for (let i = 0; i < 60 && !await status(); i++) {
+      await run(1);
+      if ((await regs()).get_eip === renderLoad + 0x30cd) { loopExit = true; break; }
+    }
+    assert(loopExit, 'original post-restore JL target observed');
+    assert.equal(await status(), null);
+    if (inWorker) await host.link._ask({ t: 'drawObserver', action: 'stop' });
+    else observer.finish('stopped-incomplete');
+    const loopExitResult = await status();
+    assert(loopExitResult.events.some(e => e.point === 'renderEspRestored'));
+    assert.equal(loopExitResult.observedReturnPair, false);
+    captures.push({ fixture: 'original-render-restored-loop-exit', result: loopExitResult });
+    for (const kind of ['wrongCleanup','unwind','missing','foreignViewport']) {
+      await aliasSetup(8, false, kind); await run(100);
+      const result = await status();
+      assert.equal(result.status, cases[kind], 'safeguard survives original alias restoration: ' + kind);
+      assert.equal(result.observedReturnPair, false);
+      assert(result.events.some(e => e.point === 'renderEspRestored'));
+      captures.push({ fixture: 'post-alias-' + kind, result });
+    }
+
+    async function reachAlias() {
+      await aliasSetup(8, false);
+      for (let i = 0; i < 30; i++) {
+        await run(1);
+        if ((await regs()).get_eip === renderLoad + 0x327a) return;
+        assert.equal(await status(), null);
+      }
+      assert.fail('original alias not reached');
+    }
+    // These mutate shared memory directly, so the owning Worker's next slice
+    // must reject before executing another instruction, without a command
+    // cancellation masking the ownership/code/frame regression.
+    const aliasOffsets = {};
+    for (const address of [renderLoad + 0x38a08, renderLoad + 0x34a00, esp, renderLoad + 0x3316, renderLoad + 0x327a])
+      aliasOffsets[address] = await call('guest_to_wasm', address);
+    for (const kind of ['generation','retired','savedEsp','savedEbp','drawPair','code','loopCode']) {
+      await reachAlias();
+      const before = await regs();
+      let address, old;
+      if (kind === 'generation') Atomics.add(new Int32Array(memory.buffer), (renderLife + 4) >>> 2, 1);
+      else if (kind === 'retired') Atomics.store(new Int32Array(memory.buffer), renderLife >>> 2, 3);
+      else {
+        address = kind === 'savedEsp' ? renderLoad + 0x38a08 : kind === 'savedEbp' ? renderLoad + 0x34a00 : kind === 'drawPair' ? esp :
+          renderLoad + (kind === 'code' ? 0x3316 : 0x327a);
+        const offset = aliasOffsets[address];
+        old = v.getUint32(offset, true);
+        v.setUint32(offset, kind === 'code' ? old ^ 1 : old + 4, true);
+      }
+      await run(1);
+      const result = await status();
+      assert.equal(result.status, 'module-changed-or-unobservable', kind);
+      captures.push({ fixture: 'active-alias-invalid-' + kind, result });
+      if (kind === 'generation') Atomics.sub(new Int32Array(memory.buffer), (renderLife + 4) >>> 2, 1);
+      else if (kind === 'retired') Atomics.store(new Int32Array(memory.buffer), renderLife >>> 2, 2);
+      else {
+        const offset = await call('guest_to_wasm', address);
+        v.setUint32(offset, old, true);
+        await call('invalidate_code_range', address, 4);
+      }
+      assert.deepEqual(await regs(), before, 'invalid alias rejected before next run');
+    }
+    if (!inWorker) {
+      await reachAlias();
+      const before = await regs(), thread = ex.get_current_thread_id();
+      ex.set_current_thread_id(thread + 1); await run(1);
+      assert.equal((await status()).status, 'thread-changed');
+      assert.deepEqual(await regs(), before);
+      ex.set_current_thread_id(thread);
+      await reachAlias();
+      const other = (await WebAssembly.instantiate(module, { host: imports.host })).exports;
+      assert.equal(observer.run(other, 1), 0);
+      assert.equal((await status()).status, 'foreign-instance');
+    }
     // A complete return reached on the last block wins over budget expiry.
     await setup('success'); await start({ maxBlocks: 100 }); await run(100);
     const completeBlocks = (await status()).terminal.blocks;
@@ -318,7 +481,8 @@ async function exercise(module, inWorker) {
         return vm.runInNewContext('(' + fn.toString() + ')',
           { wine: { guestWorker: { link } } })(arg);
       } };
-      await setup('originalCalls');
+      await aliasSetup(8, true);
+      await host.link._ask({ t: 'drawObserver', action: 'stop' });
       // This stands in for the existing ordinary host scheduler. The actual
       // collection helper has no slice/run capability in its page context.
       let pending = Promise.resolve();
@@ -331,6 +495,9 @@ async function exercise(module, inWorker) {
       assert(actions.includes('status'));
       assert(records.some(r => r.name === 'assessment'));
       assert.equal(driver.assess(reply.result).engineRender, null);
+      assert.equal(driver.assess({ ...reply.result, observedReturnPair: false,
+        events: reply.result.events.filter(e => ['entry','lockCall','lock','renderEspSave'].includes(e.point))
+      }).firstMissing, 'natural Draw checkpoint: unlockCall');
       assert.throws(() => driver.assess({ events: [] }), /terminal-boundary/);
       const budgetAssessment = driver.assess(terminal);
       assert(budgetAssessment.firstMissing.includes('Draw'));
@@ -338,7 +505,9 @@ async function exercise(module, inWorker) {
       // Execute the complete next browser driver offline: modeled DOM/boot and
       // readiness observations, real serialized commands + actual WASM Worker.
       // The injected browser factory never launches a browser or game.
-      await setup('originalCalls'); actions.length = 0;
+      await aliasSetup(8, true);
+      await host.link._ask({ t: 'drawObserver', action: 'stop' });
+      actions.length = 0;
       const output = path.join(path.dirname(path.resolve(process.env.DEUSEX_COLLECTION_DRIVER)), 'driver-offline');
       fs.mkdirSync(output, { recursive: true });
       fs.writeFileSync(path.join(output, 'provision-manifest.json'), '{}');
@@ -440,6 +609,7 @@ async function exercise(module, inWorker) {
     // prologue and zero-guard branch in its relocated image. This is isolated
     // machine-code coverage, never a natural original-game observation.
     Atomics.store(new Int32Array(memory.buffer), life >>> 2, 3); // retire old fixture before image-base change
+    Atomics.store(new Int32Array(memory.buffer), renderLife >>> 2, 3);
     await stage(exeBytes); assert(await call('load_pe', exeBytes.length));
     await stage(engineBytes);
     const originalAddress = await call('get_next_dll_addr');
