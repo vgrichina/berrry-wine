@@ -12,7 +12,7 @@ function fixture(){
  for(const r of Object.keys(regs))ex['get_'+r]=()=>regs[r];
  const owner={ex,frame:{engine:1,viewport:2,esp:3,savedCaller:4},identityModule(name,preferred){assert.equal(name,'softdrv.dll');assert.equal(preferred,0x10d00000);calls++;return {index:7,base,size:0x100000,generation};},observe(...args){return {receiver:this,args};}};
  const previous=owner.observe,handle=attach(owner,{workerSlot:0,moduleSha256:'a'.repeat(64),mmxBase:0,drawId:'run/draw',now:()=>0});
- return {owner,ex,handle,previous,bytes,setGeneration:n=>generation=n,setPC:n=>pc=n,setThread:n=>thread=n,calls:()=>calls};
+ return {owner,ex,handle,previous,bytes,regs,base,setGeneration:n=>generation=n,setPC:n=>pc=n,setThread:n=>thread=n,calls:()=>calls};
 }
 const f=fixture(),before=hash(f.bytes);
 let answer=f.owner.observe(73,'x');assert.strictEqual(answer.receiver,f.owner);assert.deepEqual(answer.args,[73,'x']);
@@ -33,3 +33,33 @@ const dup=fixture();assert.throws(()=>attach(dup.owner,{workerSlot:0}),/already 
 const reattach=attach(dup.owner,{workerSlot:0,moduleSha256:'c'.repeat(64),mmxBase:0,drawId:'new',now:()=>0});dup.handle.stop();assert.throws(()=>attach(dup.owner,{workerSlot:0}),/already attached/,'stale stop cannot unregister a new attachment');reattach.stop();
 const failure=fixture(),sentinel=new Error('underlying failure');failure.handle.stop();failure.owner.observe=()=>{throw sentinel;};const failed=attach(failure.owner,{workerSlot:0,moduleSha256:'b'.repeat(64),mmxBase:0,drawId:'failure',now:()=>0});assert.throws(()=>failure.owner.observe(),e=>e===sentinel);assert.equal(failed.observer.result.sequence,0);failed.stop();
 console.log('PASS ordered observer fresh module generation, invocation and instance identities; read-only adapter return/throw/restoration controls');
+
+const early=fixture();early.handle.stop();early.owner.frame=null;
+const earlyHash=hash(early.bytes),earlyHandle=attach(early.owner,{workerSlot:0,moduleSha256:'a'.repeat(64),mmxBase:0,drawId:'early',now:()=>0,preDraw:true});
+early.setPC(early.base+0x3647f);early.owner.observe();
+const setup=earlyHandle.observer.result.records.find(r=>r.type==='descriptor-input');
+assert.equal(setup.identity.frame,null);assert.equal(setup.descriptor,early.regs.ecx);
+early.owner.frame={engine:1,viewport:2,esp:3,savedCaller:4};early.setPC(early.base+0x36509);early.owner.observe();
+let consumer=earlyHandle.observer.result.records.find(r=>r.type==='consumer');
+assert.equal(consumer.descriptor,setup.descriptor);assert.equal(consumer.descriptorSequence,setup.sequence);assert.equal(consumer.allocationLifetime,'unknown');
+assert.equal(earlyHandle.observer.result.coverage.preDrawBoundaries,1);
+assert.match(earlyHandle.observer.result.gaps.allocationLifetime,/no allocation\/free event source/);
+early.owner.frame={...early.owner.frame};early.owner.observe();
+consumer=earlyHandle.observer.result.records.filter(r=>r.type==='consumer').at(-1);assert.equal(consumer.descriptor,null,'a later Draw cannot inherit stale setup');
+assert.equal(earlyHandle.observer.result.coverage.consumersWithoutDescriptor,1);
+assert.equal(Object.values(earlyHandle.observer.result.coverage.unsupportedOpcodes).reduce((a,b)=>a+b,0),earlyHandle.observer.result.coverage.unrecognizedInstructions);
+for(let i=0;i<20;i++)early.owner.observe();assert.equal(earlyHandle.observer.result.coverage.unsupportedSamples.length,16);
+earlyHandle.stop();assert.equal(hash(early.bytes),earlyHash);
+const reload=fixture();reload.handle.stop();reload.owner.frame=null;
+const reloadHandle=attach(reload.owner,{workerSlot:0,moduleSha256:'a'.repeat(64),mmxBase:0,drawId:'reload',now:()=>0,preDraw:true});
+reload.setPC(reload.base+0x3647f);reload.owner.observe();reload.setGeneration(2);reload.owner.frame={engine:1,viewport:2,esp:3,savedCaller:4};reload.setPC(reload.base+0x36509);reload.owner.observe();
+assert.equal(reloadHandle.observer.result.records.find(r=>r.type==='consumer').descriptor,null);reloadHandle.stop();
+console.log('PASS opt-in pre-Draw descriptor lineage; later invocation/module rejection; bounded unsupported samples and explicit missing lifecycle');
+
+const prefix=fixture(),prefixBytes=[0x8b,0x48,4,0x0f,0x6f,0x78,8,0x83,0xc0,0x18,0x8b,0x59,0x2c];
+prefix.bytes.set(prefixBytes,0x1000+0x36472);prefix.regs.eax=prefix.base+0x90000;
+new DataView(prefix.ex.memory.buffer).setUint32(0x1000+0x90004,prefix.regs.ecx,true);
+const expectedDescriptor=prefix.regs.ecx;prefix.regs.ecx=0xfffffffd;prefix.setPC(prefix.base+0x36472);prefix.owner.observe();
+const incoming=prefix.handle.observer.result.records.find(r=>r.type==='descriptor-input');assert.equal(incoming.descriptor,expectedDescriptor);assert.equal(incoming.source,'eax-plus-4-before-load');
+prefix.bytes[0x1000+0x36472]=0x90;prefix.owner.observe();assert.equal(prefix.handle.observer.result.status,'observer-error');assert.match(prefix.handle.observer.result.records.at(-1).error,/signature changed/);prefix.handle.stop();
+console.log('PASS actual block-entry descriptor source ignores stale ECX and rejects changed load-chain bytes');
