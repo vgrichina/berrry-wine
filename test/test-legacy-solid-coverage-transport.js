@@ -221,6 +221,71 @@ function batching(){
   return reports;
 }
 
+// Numerical reproducer for the first real-browser failure, not GPU acceptance.
+// Replay the historical clip arithmetic at Float32 precision, then compare its
+// surviving edge with the independently known integer line x=(y+34)/12.
+function clippedOriginalEdges(){
+  const F=Math.fround,add=(a,b)=>F(F(a)+F(b)),sub=(a,b)=>F(F(a)-F(b));
+  const mul=(a,b)=>F(F(a)*F(b)),div=(a,b)=>F(F(a)/F(b));
+  const cross=(a,b)=>sub(mul(a[0],b[1]),mul(a[1],b[0]));
+  const screen=p=>[mul(add(div(p[0],p[3]),1),16),mul(add(-div(p[1],p[3]),1),16)];
+  const plane=(p,n)=>n%2?sub(p[3],p[n>>1]):add(p[3],p[n>>1]);
+  const reports=[];
+  for(const i of [2,5,8,11,14,17]){
+    const points=[[3,2],[26,4],[5,26]],depth=[-.1+i*.01,.5+i*.01,.9-i*.01],rhw=[1,.5,.25];
+    const original=points.map((p,j)=>{
+      const w=div(1,rhw[j]);return [mul(sub(div(p[0],16),1),w),mul(sub(1,div(p[1],16)),w),mul(sub(mul(F(depth[j]),2),1),w),w];
+    });
+    let polygon=original;
+    for(let n=0;n<6;n++){
+      const output=[];let previous=polygon.at(-1);
+      for(const p of polygon){
+        const dp=plane(previous,n),dc=plane(p,n);
+        if(dp<0&&dc>0||dp>0&&dc<0)output.push(previous.map((v,k)=>div(sub(mul(v,dc),mul(p[k],dp)),sub(dc,dp))));
+        if(dc>=0)output.push(p);previous=p;
+      }
+      polygon=output;
+    }
+    const projected=polygon.map(screen),a=projected.at(-1),b=projected[0];
+    const edge=cross([sub(b[0],a[0]),sub(b[1],a[1])],[sub(4,a[0]),sub(14,a[1])]);
+    const sa=screen(original[2]),sb=screen(original[0]);
+    const anchored=cross([sub(sb[0],sa[0]),sub(sb[1],sa[1])],[sub(4,sa[0]),sub(14,sa[1])]);
+    assert.equal(12*4,14+34,'the independent integer line owns (4,14)');
+    assert.equal(anchored,0,'original endpoint equation retains exact tie');
+    assert(sb[1]<sa[1],'this is an inclusive left edge');
+    reports.push({primitive:i,clippedEdge:edge,originalEdge:anchored});
+  }
+  assert.equal(reports[0].clippedEdge,-1/65536,'retained first clipped edge changes the ownership sign');
+  assert(reports.some(r=>r.clippedEdge<0),'old clipped endpoints must reject an owned sample');
+  assert(reports.slice(3).every(r=>r.clippedEdge===0),'unclipped control retains exact edge');
+  // Actual production-generated sources must contain the correction in both
+  // fallback and batched programs; this is a source check, never pixel proof.
+  transport(p=>{
+    assert.match(p.p,/if\(positiveW\)/);
+    assert.match(p.p,/solid_owns\(sc,sa,point,originalOrientation\)/);
+    assert.match(p.p,/float clipDepth=dot\(beta,vec3\(a.z,b.z,c.z\)\)/);
+    assert.match(p.p,/bool constantPlane=slope.x==0\.&&slope.y==0\./);
+    assert.match(p.p,/solid_cut\(vec3\(a.w\+a.z,b.w\+b.z,c.w\+c.z\),beta,dx,dy\)/);
+    assert.match(p.p,/solid_cut\(vec3\(a.w-a.z,b.w-b.z,c.w-c.z\),beta,dx,dy\)/);
+    // Evaluate the emitted scalar halfspace helper itself. This checks its
+    // tie-direction semantics, not WebGL compilation or floating-point rules.
+    const body=/bool solid_cut\(vec3 distances,vec3 beta,vec3 dx,vec3 dy\)\{([\s\S]*?)\n\}/.exec(p.p)[1];
+    const evaluate=source=>Function('dot','vec2','distances','beta','dx','dy',source.replace(/\b(?:float|vec2|bool) (\w+)=/g,'const $1='));
+    const dot=(a,b)=>a.reduce((s,n,i)=>s+n*b[i],0),vec2=(x,y)=>({x,y});
+    const cut=evaluate(body),beta=[.5,.25,.25],dx=[-1,1,0],dy=[-1,0,1];
+    const cases=[
+      [[-1,1,1],true,'near diagonal inclusive'],[[1,-1,-1],false,'far diagonal exclusive'],
+      [[-1,3,-1],true,'vertical inclusive'],[[1,-3,1],false,'vertical exclusive'],
+      [[-1,-1,3],true,'horizontal inclusive'],[[1,1,-3],false,'horizontal exclusive'],
+      [[0,0,0],true,'flat boundary'],[[1,1,1],true,'flat interior'],[[-1,-1,-1],false,'flat outside'],
+    ];
+    for(const [distances,expected,label]of cases)assert.equal(cut(dot,vec2,distances,beta,dx,dy),expected,label);
+    const backwards=evaluate(body.replace('slope.x>0.','slope.x<0.'));
+    assert.notEqual(backwards(dot,vec2,[-1,1,1],beta,dx,dy),true,'reversed tie-direction control must reject');
+  });
+  return reports;
+}
+
 // Independent screen-space edge oracle, not imported from the backend or the
 // older diagnostic. Float fixtures are binary rationals, with no tolerances in
 // ownership and no biased weights in the color/depth expectations.
@@ -302,6 +367,125 @@ async function renderedCases(options={}){
     return result;
   }finally{device.destroy();}
 }
+// Real compiler and pixel coverage across bank boundaries. The reference below
+// operates on the original triangles, never on invocation rectangles or GLSL.
+async function renderedBatches(options={}){
+  const check=(ok,message)=>{if(!ok)throw Error(message);};
+  const canvas=document.createElement('canvas');canvas.width=32;canvas.height=32;document.body.append(canvas);
+  const d=new D3D9Backend.Device(canvas,{webglVersion:options.version,solidCoverageTransport:true});
+  const g=d.gpu,gl=g.gl,submissions=[],programs=[];
+  const create=g.createProgram.bind(g),submit=g.draw.bind(g);
+  g.createProgram=(v,p,...args)=>{
+    programs.push({vertex:v,fragment:p});
+    // Deliberately collapse all banks to primitive zero. This compiles, but
+    // must fail the independent pixel oracle with distinct primitive inputs.
+    if(options.control==='selector'){
+      v=v.replace(/solid_batch=solid_corner.z;/,'solid_batch=0.;');
+      p=p.replace(/if\(solid_batch</g,'if(0.<');
+    }
+    return create(v,p,...args);
+  };
+  g.draw=call=>{submissions.push(call.count);return submit(call);};
+  if(options.limit)d.solidUniformLimits=[options.limit,options.limit];
+  const depth={id:900,width:32,height:32,format:75};
+  const attributes=[{register:0,usage:9,usageIndex:0,type:3,offset:0},{register:1,usage:10,usageIndex:0,type:3,offset:16}];
+  const fixedFunction={lighting:false,specular:false,fog:false,textureFactor:0xffffffff,stages:[{colorOp:1}]};
+  const reports=[];let comparisons=0;
+  // Preserve the reached cells and first failed pixel before throwing. A
+  // first-failure browser run must remain diagnosable without another launch.
+  const evidence=globalThis.legacyBatchEvidence={version:g.version,control:options.control||null,
+    limit:options.limit||null,reports,submissions,programs,comparisons:0,samples:[]};
+  const clear=()=>d.clear([0,0,0,1],7,1,null,depth,0);
+  const issue=(triangles,state={},extra={})=>{
+    if(options.control==='order')triangles=triangles.slice().reverse();
+    const input=Float32Array.from(triangles.flatMap(t=>t.points.flatMap((p,i)=>[...p,t.z?.[i]??.5,t.q?.[i]??1,...(t.colors?.[i]||t.color)])));
+    d.draw({primitive:4,primitiveCount:triangles.length,stride:32,vertices:new Uint8Array(input.buffer),attributes,
+      depthAttachment:depth,state:{cull:1,zenable:false,...state},fixedFunction,...extra});
+  };
+  const cross=(a,b,p)=>(b[0]-a[0])*(p[1]-a[1])-(b[1]-a[1])*(p[0]-a[0]);
+  const sample=(t,x,y)=>{
+    let v=t.points.map((p,i)=>({p,z:t.z?.[i]??.5,q:t.q?.[i]??1,c:t.colors?.[i]||t.color}));
+    if(cross(v[0].p,v[1].p,v[2].p)<0)v=[v[0],v[2],v[1]];
+    const area=cross(v[0].p,v[1].p,v[2].p),p=[x,y];
+    if(!area||!v.every((a,i)=>{const b=v[(i+1)%3],e=cross(a.p,b.p,p),dy=b.p[1]-a.p[1],dx=b.p[0]-a.p[0];return e>0||(e===0&&(dy<0||(dy===0&&dx>0)));}))return null;
+    const w=[cross(v[1].p,v[2].p,p),cross(v[2].p,v[0].p,p),cross(v[0].p,v[1].p,p)].map(n=>n/area);
+    const z=w.reduce((s,n,i)=>s+n*v[i].z,0);if(z<0||z>1)return null;
+    const q=w.reduce((s,n,i)=>s+n*v[i].q,0);
+    return {z,color:[0,1,2,3].map(c=>w.reduce((s,n,i)=>s+n*v[i].q*v[i].c[c],0)/q)};
+  };
+  const pixels=()=>g.readPixels(0,0,32,32,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(4096));
+  const compare=(label,reference)=>{
+    const bytes=pixels();
+    for(let y=1;y<24;y++)for(let x=1;x<24;x++){
+      const expected=reference(x,y),offset=((31-y)*32+x)*4,actual=Array.from(bytes.slice(offset,offset+3));
+      if(x===4&&y===14)evidence.samples.push({label,x,y,actual,expected});
+      if(!actual.every((n,c)=>Math.abs(n-expected[c])<=2)){
+        evidence.failure={label,x,y,actual,expected};evidence.failedRGBA=Array.from(bytes);
+      }
+      check(actual.every((n,c)=>Math.abs(n-expected[c])<=2),label+' pixel '+x+','+y+' actual '+actual+' expected '+expected);
+      comparisons++;evidence.comparisons=comparisons;
+    }
+    check(g.getError()===gl.NO_ERROR,label+' GL error');reports.push(label);
+  };
+  const triangles=Array.from({length:19},(_,i)=>({
+    points:i%3===0?[[-3,0],[27,0],[0,27]]:i%3===1?[[0,0],[25,3],[3,25]]:[[3,2],[26,4],[5,26]],
+    color:[(i%3===0?1:.1),(i%3===1?1:.2),(i%3===2?1:.3),.25],
+    q:[1,.5,.25],z:[-.1+i*.01,.5+i*.01,.9-i*.01],
+  }));
+  const reference=(list,blend=false,depthTest=false)=>(x,y)=>{
+    let color=[0,0,0],z=1;
+    for(const t of list){const s=sample(t,x,y);if(!s||(depthTest&&s.z>z))continue;
+      if(depthTest)z=s.z;
+      color=s.color.slice(0,3).map((n,c)=>Math.round(n*255*(blend?s.color[3]:1)+(blend?color[c]*(1-s.color[3]):0)));
+    }
+    return color;
+  };
+  try{
+    clear();issue(triangles);compare('19 ordered clipped primitives',reference(triangles));
+    check(submissions.some(n=>n>6)&&submissions.length>=3,'must cross real batched submissions');
+    clear();issue(triangles,{blend:true,srcblend:5,dstblend:6});compare('ordered alpha overlap',reference(triangles,true));
+    clear();issue(triangles,{zenable:true,zwrite:true});compare('affine depth across batches',reference(triangles,false,true));
+    clear();issue(triangles,{blend:true,srcblend:5,dstblend:6},{scissor:{enabled:true,left:4,top:5,right:18,bottom:19}});
+    compare('scissor transition',(x,y)=>x>=4&&x<18&&y>=5&&y<19?reference(triangles,true)(x,y):[0,0,0]);
+    issue(triangles);compare('scissor blend depth reset',reference(triangles));
+    // Distinct interpolated colors in every bank, not just constant colors.
+    const smooth=triangles.map((t,i)=>({...t,z:[.2,.4,.6],colors:[[i/20,.1,.2,1],[.1,i/20,.4,1],[.2,.3,i/20,1]]}));
+    clear();issue(smooth);compare('rational color across banks',reference(smooth));
+    // Each fragment increments exactly once. Nineteen overlapping primitives
+    // must leave 19, including coverage-discarded rectangle invocations.
+    const cover=Array.from({length:19},()=>({points:[[0,0],[30,0],[0,30]],color:[1,0,0,1]}));
+    clear();issue(cover,{colorWriteMask:0,stencilEnable:true,stencilPass:7});
+    issue([{...cover[0],color:[0,1,0,1]}],{stencilEnable:true,stencilFunc:3,stencilRef:19,stencilWriteMask:0});
+    compare('stencil increment through coverage discard',(x,y)=>sample(cover[0],x,y)?[0,255,0]:[0,0,0]);
+    // Opposite winding selects opposite stencil operations under frontFace CW.
+    clear();issue(cover.map(t=>({...t,points:[t.points[0],t.points[2],t.points[1]]})),
+      {colorWriteMask:0,stencilEnable:true,twoSidedStencil:true,stencilPass:1,ccwStencilPass:7});
+    issue([{...cover[0],color:[0,0,1,1]}],{stencilEnable:true,stencilFunc:3,stencilRef:19,stencilWriteMask:0});
+    compare('two sided stencil winding',(x,y)=>sample(cover[0],x,y)?[0,0,255]:[0,0,0]);
+    issue([{...cover[0],color:[1,0,0,1]}]);
+    compare('stencil disable transition',(x,y)=>sample(cover[0],x,y)?[255,0,0]:[0,0,0]);
+    for(const cull of [2,3]){
+      clear();issue(cover.map((t,i)=>({...t,points:i%2?[t.points[0],t.points[2],t.points[1]]:t.points,
+        color:i%2?[0,1,0,1]:[1,0,0,1]})),{cull});
+      compare('cull winding '+cull,(x,y)=>sample(cover[0],x,y)?(cull===2?[0,255,0]:[255,0,0]):[0,0,0]);
+    }
+    for(const primitive of [5,6]){
+      const points=primitive===5?Array.from({length:21},(_,i)=>[i+1,i%2?22:1]):
+        [[12,12],...Array.from({length:20},(_,i)=>[12+10*Math.cos(i*Math.PI/9.5),12+10*Math.sin(i*Math.PI/9.5)])];
+      const colors=points.map((_,i)=>[i/21,(21-i)/21,.25,1]),q=points.map((_,i)=>[1,.5,.25][i%3]);
+      const list=Array.from({length:19},(_,i)=>{
+        const ids=primitive===5?(i%2?[i+1,i,i+2]:[i,i+1,i+2]):[0,i+1,i+2];
+        return {points:ids.map(n=>points[n]),colors:ids.map(n=>colors[n]),q:ids.map(n=>q[n])};
+      });
+      const input=Float32Array.from(points.flatMap((p,i)=>[...p,.5,q[i],...colors[i]]));
+      clear();d.draw({primitive,primitiveCount:19,stride:32,vertices:new Uint8Array(input.buffer),
+        indices:Uint16Array.from(points.map((_,i)=>i)),attributes,depthAttachment:depth,state:{cull:1,zenable:false},fixedFunction});
+      compare('indexed topology '+primitive+' bank parity',reference(list));
+    }
+    return {version:g.version,control:options.control||null,limit:options.limit||null,reports,comparisons,submissions,programs,
+      samples:evidence.samples,finalRGBA:Array.from(pixels())};
+  }finally{d.destroy();canvas.remove();}
+}
 // Validate retained real-browser results separately from the submission mocks.
 // A planner/GLSL-only result, stale backend, or a missing queued Worker cell
 // must not be presented as rendered acceptance.
@@ -345,10 +529,35 @@ function renderedEvidence(file){
     }
   return {directVersions:2,directPixels:2284,publicCells:8,publicObservations:observations};
 }
+function batchRenderedEvidence(file){
+  const summary=renderedEvidence(file),fs=require('node:fs'),crypto=require('node:crypto');
+  const e=JSON.parse(fs.readFileSync(file)),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+  assert.equal(e.source.files['test/test-legacy-solid-coverage-transport.js'].sha256,hash(fs.readFileSync(__filename)),
+    'batch oracle must match the executed fixture');
+  for(const version of [1,2]){
+    for(const limit of [null,22]){
+      const cells=e.stages.filter(s=>s.batches?.version===version&&s.batches.limit===limit);
+      assert.equal(cells.length,1,'missing real batch pixel cell');
+      const r=cells[0].batches;
+      assert.equal(r.reports.length,13);assert.equal(r.comparisons,13*529);
+      assert(r.submissions.includes((limit?3:8)*6),'real multi-primitive submission required');
+      assert(r.submissions.includes(6),'final bank and single-draw transition required');
+      assert(r.programs.every(p=>p.vertex.includes('solid_batch=solid_corner.z;')));
+    }
+    for(const control of ['selector','order']){
+      const cells=e.stages.filter(s=>s.negative?.version===version&&s.negative.control===control);
+      assert.equal(cells.length,1);assert.match(cells[0].negative.error,/pixel .*actual .*expected/);
+    }
+  }
+  return {...summary,batchCells:4,batchComparisons:4*13*529,pixelControls:4};
+}
 if(require.main===module){
   if(!backendArg)console.log('PASS solid candidate actual Device.draw transport '+JSON.stringify(transport()));
+  if(!backendArg)console.log('PASS offline original-edge clipping reproducer '+JSON.stringify(clippedOriginalEdges()));
   console.log('PASS actual Device batching '+JSON.stringify(batching()));
   const file=process.argv.find(a=>a.startsWith('--render-evidence='));
   if(file)console.log('PASS retained real WebGL evidence '+JSON.stringify(renderedEvidence(file.slice(18))));
+  const batchFile=process.argv.find(a=>a.startsWith('--batch-render-evidence='));
+  if(batchFile)console.log('PASS retained real batch WebGL evidence '+JSON.stringify(batchRenderedEvidence(batchFile.slice(24))));
 }
-module.exports={snapshot,transport,batching,renderedCases,renderedEvidence};
+module.exports={snapshot,transport,batching,clippedOriginalEdges,renderedCases,renderedBatches,renderedEvidence,batchRenderedEvidence};
