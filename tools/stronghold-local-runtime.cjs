@@ -1,16 +1,16 @@
 'use strict';
-// Explicit local-process contract for the authorized first-script-cause onward attempt.
+// Explicit local-process contract for the authorized repaired-entry original attempt.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-fresh-complete-entry-gameplay user task';
-const ASSIGNMENT='stronghold-fresh-complete-entry-gameplay user task';
+const AUTH='stronghold-repaired-entry-original-gameplay user task';
+const ASSIGNMENT='stronghold-repaired-entry-original-gameplay user task';
 const CHROME='/opt/google/chrome/chrome';
 const CUTOFF=Date.parse('2026-11-04T23:50:00Z'),CLEANUP=Date.parse('2026-11-04T23:53:00Z');
 function requireRuntimeRelease(board,now=Date.now()){
- const rows=board.split('\n').filter(row=>/^\S+ gltron-atomic-ack-webgl(?:-nov04)? LOCAL HEAVY RELEASE\b/.test(row));
+ const rows=board.split('\n').filter(row=>/^\S+ mdk2-measured-native LOCAL HEAVY RELEASE\b/.test(row));
  const row=rows.at(-1),at=Date.parse(row?.split(' ')[0]);
- if(!row||!Number.isFinite(at)||at<Date.parse('2026-11-04T21:16:19Z')||at>now)throw Error('exact gltron-atomic-ack-webgl-nov04 local heavy release required');
+ if(!row||!Number.isFinite(at)||at<Date.parse('2026-11-04T21:21:55Z')||at>now)throw Error('exact mdk2-measured-native-boundary-gameplay-nov04 local heavy release required');
  return {row,at};
 }
 function requireLocalFlock(lockPath='/tmp/wine-local-runtime.lock'){
@@ -138,15 +138,25 @@ function mailboxStatus(run,{now=Date.now()}={}){
  return {nextIndex:indices.length,pending,review,ready:!!read('ready.json'),
   terminal:read('cleanup.json')||read('bootstrap-failure.json')||failed?.reply||null};
 }
+function validateCaptureCommand(command,out){
+ if(!['observe','shot'].includes(command?.action))return;
+ if(typeof command.name!=='string'||!/^[a-z0-9-]+$/.test(command.name)||fs.existsSync(path.join(out,command.name+'.png')))
+  throw Error('fresh capture name required before execution');
+}
 function assertMailboxCommandReady(run,options){
  const status=mailboxStatus(run,options);
  const detail=status.review?'; review '+status.review.scene+' '+(status.review.capture||status.review.sha256)+' receiptPresent='+status.review.receiptPresent:'';
  if(status.terminal||status.pending.length||!status.ready)throw Error('original mailbox not ready: '+
   (status.terminal?'terminal':status.pending.length?'pending command '+status.pending.join(','):'bootstrap')+detail);
+ if(options?.command)validateCaptureCommand(options.command,path.join(path.resolve(run),'browser'));
  return status.nextIndex;
 }
 function prepare(options){
  const p=observer.prepare(options),q=JSON.stringify;
+ p.source=base.replaceOnce(p.source,"  if(c.action==='observe'){",
+  `  if(c.action==='observe'){\n    require(${q(__filename)}).validateCaptureCommand(c,OUT);`);
+ p.source=base.replaceOnce(p.source,"  if(c.action==='shot'){",
+  `  if(c.action==='shot'){\n    require(${q(__filename)}).validateCaptureCommand(c,OUT);`);
  const old="  if(release.authorization!=='stronghold-split-gesture-reviews user task'||release.shutdownOwner!=='coordinator'||!release.boxId||!Number.isFinite(Date.parse(release.expiry))||Date.parse(release.expiry)<Date.now()+600000)throw Error('fresh authorized finite TTL required');\n  if(!Number.isFinite(Date.parse(release.closeBy))||Date.parse(release.closeBy)<=Date.now()||Date.parse(release.closeBy)>Date.parse(release.expiry)-300000)throw Error('fresh bounded closeBy required');";
  const nonce=crypto.randomBytes(32).toString('hex');
  p.source=base.replaceOnce(p.source,old,`  require(${q(__filename)}).validateRelease(release,{run:RUN,pins:${q(options.pins)},nonce:${q(nonce)}});\n  const runtimeOwnership=require(${q(__filename)}).assertRuntimeOwnership();`);
@@ -172,4 +182,4 @@ function prepare(options){
  p.evidence.compositionSHA256=base.hash(p.source);
  return {...p,createRelease:()=>createRelease({run:options.run,pins:options.pins,nonce})};
 }
-module.exports={identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,normalClose,mailboxStatus,assertMailboxCommandReady,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};

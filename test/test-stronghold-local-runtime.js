@@ -1,16 +1,16 @@
 'use strict';
-// Contract/composition tests only: no Chrome, HTTP or original game attempt.
+// Offline contract/composition tests: no Chrome or original game attempt.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-fresh-complete-entry-gameplay/contract-test');
+const run=path.resolve('scratch/runs/20261104-stronghold-repaired-entry-original-gameplay/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
 const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:45:00Z');
-const actualRelease='2026-11-04T21:20:05+00:00 gltron-atomic-ack-webgl LOCAL HEAVY RELEASE original closed';
+const actualRelease='2026-11-04T21:29:05+00:00 mdk2-measured-native LOCAL HEAVY RELEASE offline fixture only';
 assert.equal(api.requireRuntimeRelease(actualRelease,Date.parse('2026-11-04T21:30:00Z')).row,actualRelease);
-for(const line of [actualRelease.replace('gltron-atomic-ack-webgl','someone'),actualRelease.replace('21:20:05','21:16:00'),actualRelease.replace('21:20:05','22:53:05'),'2026-11-04T20:54:00Z stronghold waiting '+actualRelease])assert.throws(()=>api.requireRuntimeRelease(line,Date.parse('2026-11-04T21:30:00Z')),/release/);
+for(const line of [actualRelease.replace('mdk2-measured-native','someone'),actualRelease.replace('mdk2-measured-native','mdk2-installed-original'),actualRelease.replace('mdk2-measured-native','gltron-atomic-ack-webgl'),actualRelease.replace('21:29:05','21:21:54'),actualRelease.replace('21:29:05','22:53:05'),'2026-11-04T20:54:00Z stronghold waiting '+actualRelease])assert.throws(()=>api.requireRuntimeRelease(line,Date.parse('2026-11-04T21:30:00Z')),/release/);
 const lockProbe="const a=require('./tools/stronghold-local-runtime.cjs');console.log(JSON.stringify(a.requireLocalFlock(process.argv[1])))";
 const testLock=path.join(run,'offline-runtime.lock');fs.writeFileSync(testLock,'');
 assert.throws(()=>execFileSync(process.execPath,['-e',lockProbe,testLock],{stdio:'pipe'}),/Command failed/);
@@ -26,6 +26,7 @@ function reject(name,mutate,pattern=/required|identity|binding|deadline|authoriz
 reject('missing authorization',r=>delete r.authorization);
 reject('missing current authorization',r=>delete r.freshLocalDiagnosticAuthorized);
 reject('foreign assignment',r=>r.assignment='foreign');
+reject('previous fresh complete assignment',r=>r.assignment='stronghold-fresh-complete-entry-gameplay user task');
 reject('expired predecessor authorization',r=>r.assignment='stronghold-portable-local-runtime user task');
 reject('previous title assignment',r=>r.assignment='stronghold-title-recognition-onward user task');
 reject('previous menu assignment',r=>r.assignment='stronghold-menu-recognition-onward user task');
@@ -165,6 +166,43 @@ fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(release));
 const guarded=p.source.slice(start,end)+'return true;\n}main();';
 // The embedded random nonce must reject another preparation's release.
 (async()=>{
+ // Replay the actual failed observation command, including the composed loop.
+ // Before the repair it advances every step before discovering a bad name.
+ const observeStart=p.source.indexOf("  if(c.action==='observe'){");
+ const observeEnd=p.source.indexOf("  if(c.action==='step'){",observeStart);
+ assert(observeStart>0&&observeEnd>observeStart);
+ const observe=p.source.slice(observeStart,observeEnd);
+ const validation=`    require(${JSON.stringify(require.resolve('../tools/stronghold-local-runtime.cjs'))}).validateCaptureCommand(c,OUT);\n`;
+ const oldObserve=base.replaceOnce(observe,validation,'');
+ const captureOut=path.join(run,'capture-validation');fs.mkdirSync(captureOut,{recursive:true});
+ fs.writeFileSync(path.join(captureOut,'occupied.png'),'offline collision marker');
+ async function observeFixture(source,c){
+  let steps=0,captures=0;
+  const scope={require,c,i:0,OUT:captureOut,closing:false,deadline:Date.now()+40000,
+   command:async event=>{assert.equal(event.action,'step');steps+=event.n;},
+   freshShot:async()=>{captures++;throw Error('offline capture boundary sentinel');}};
+  const promise=vm.runInNewContext('(async()=>{'+source+'})()',scope);
+  await assert.rejects(promise,/fresh capture name required|offline capture boundary sentinel/);
+  return {steps,captures};
+ }
+ const failedPath=path.resolve('scratch/runs/20261104-stronghold-repaired-entry-original-gameplay/browser/commands/4.json');
+ const failedCommand=fs.existsSync(failedPath)?JSON.parse(fs.readFileSync(failedPath,'utf8')):{action:'observe',n:2048};
+ assert.equal(failedCommand.action,'observe');assert.equal(failedCommand.name,undefined);
+ assert.deepEqual(await observeFixture(oldObserve,failedCommand),{steps:2048,captures:1});
+ for(const name of [undefined,null,42,'bad/name','occupied']){
+  assert.deepEqual(await observeFixture(observe,{action:'observe',n:64,name}),{steps:0,captures:0});
+ }
+ for(const action of ['observe','shot']){
+  assert.throws(()=>api.validateCaptureCommand({action},captureOut),/before execution/);
+  assert.throws(()=>api.validateCaptureCommand({action,name:'occupied'},captureOut),/before execution/);
+  api.validateCaptureCommand({action,name:'fresh-valid'},captureOut);
+ }
+ const clientRun=path.join(run,'capture-client');fs.mkdirSync(path.join(clientRun,'browser/commands'),{recursive:true});
+ fs.writeFileSync(path.join(clientRun,'browser/ready.json'),'{}');
+ assert.throws(()=>api.assertMailboxCommandReady(clientRun,{command:failedCommand}),/before execution/);
+ assert.equal(fs.readdirSync(path.join(clientRun,'browser/commands')).length,0);
+ assert.equal(api.assertMailboxCommandReady(clientRun,{command:{action:'observe',name:'fresh-valid'}}),0);
+ console.log('PASS actual failed observe replay: old advances2048 then capture, repaired missing/invalid/duplicate name rejects before steps/capture; mailbox preflight leaves no command');
  const {EventEmitter}=require('node:events');
  async function closureFixture(code,signal,timeout=false){
   const child=Object.assign(new EventEmitter(),{pid:process.pid,exitCode:null,signalCode:null}),events=[];let disconnected=false;
