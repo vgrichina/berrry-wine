@@ -486,6 +486,216 @@ async function renderedBatches(options={}){
       samples:evidence.samples,finalRGBA:Array.from(pixels())};
   }finally{d.destroy();canvas.remove();}
 }
+// Independent exact integer determinant oracle. Inputs are authored window
+// homogeneous integers [X,Y,W,Zd3d], not backend-generated clip endpoints.
+function eyeOracle(t,x,y){
+  const det=(a,b,c)=>a[0]*(b[1]*c[2]-b[2]*c[1])-a[1]*(b[0]*c[2]-b[2]*c[0])+a[2]*(b[0]*c[1]-b[1]*c[0]);
+  const v=t.h.map(h=>h.slice(0,3).map(BigInt)),p=[BigInt(x),BigInt(y),1n];
+  let d=det(...v);if(d===0n)return null;
+  const sign=d<0n?-1n:1n;d*=sign;
+  const n=[det(p,v[1],v[2]),det(v[0],p,v[2]),det(v[0],v[1],p)].map(a=>a*sign);
+  const nx=[det([1n,0n,0n],v[1],v[2]),det(v[0],[1n,0n,0n],v[2]),det(v[0],v[1],[1n,0n,0n])].map(a=>a*sign);
+  const ny=[det([0n,1n,0n],v[1],v[2]),det(v[0],[0n,1n,0n],v[2]),det(v[0],v[1],[0n,1n,0n])].map(a=>a*sign);
+  const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0n);
+  const tests=[[1n,0n,0n],[0n,1n,0n],[0n,0n,1n],t.h.map(h=>BigInt(h[3])),t.h.map(h=>BigInt(h[2]-h[3]))];
+  for(const a of tests){const e=dot(a,n),dx=dot(a,nx),dy=dot(a,ny);
+    if(e<0n||e===0n&&!(dx>0n||dx===0n&&dy>=0n))return null;
+  }
+  const q=n.reduce((a,b)=>a+b,0n);if(q<=0n)return null;
+  const colors=t.colors||Array(3).fill(t.color||[1,0,0,.5]);
+  return {z:Number(dot(t.h.map(h=>BigInt(h[3])),n))/Number(d),
+    color:[0,1,2,3].map(c=>n.reduce((s,w,i)=>s+Number(w)*colors[i][c],0)/Number(q))};
+}
+function eyePlan(){
+  return [
+    {name:'one negative W oblique',h:[[3,2,1,0],[52,8,2,1],[-5,-26,-1,0]]},
+    {name:'zero W direction',h:[[3,2,1,0],[52,8,2,1],[2,24,0,0]]},
+    {name:'two negative W',h:[[16,16,1,0],[28,4,-1,0],[4,28,-1,0]]},
+    {name:'zero W origin degenerate',h:[[0,0,0,0],[8,2,1,0],[2,8,1,0]]},
+    {name:'all negative W',h:[[-2,-2,-1,0],[-24,-2,-1,0],[-2,-24,-1,0]]},
+    {name:'eye near cut',h:[[0,0,1,-1],[32,0,1,1],[0,32,-1,0]]},
+    {name:'eye far cut',h:[[0,0,1,2],[32,0,1,0],[0,32,-1,0]]},
+    {name:'eye shared diagonal a',h:[[0,0,1,0],[32,0,1,1],[32,32,-1,0]]},
+    {name:'eye shared diagonal b',h:[[0,0,1,0],[32,32,-1,0],[0,32,1,1]]},
+    {name:'collinear XYW',h:[[2,2,1,0],[4,4,2,1],[8,8,-1,0]]},
+  ];
+}
+function eyeFocused(){
+const F=Math.fround,A=(a,b)=>F(F(a)+F(b)),S=(a,b)=>F(F(a)-F(b)),M=(a,b)=>F(F(a)*F(b)),D=(a,b)=>F(F(a)/F(b));
+function clip(t){let poly=t.map(([X,Y,W,Z])=>[F((X-16*W)/16),F((16*W-Y)/16),F(2*Z-W),W]);for(let n=0;n<6;n++){let out=[],a=poly.at(-1);for(let b of poly){const plane=p=>n%2?S(p[3],p[n>>1]):A(p[3],p[n>>1]);let da=plane(a),db=plane(b);if(da<0&&db>0||da>0&&db<0)out.push(a.map((v,k)=>D(S(M(v,db),M(b[k],da)),S(db,da))));if(db>=0)out.push(b);a=b;}poly=out;}return poly.map(p=>[M(A(D(p[0],p[3]),1),16),M(S(1,D(p[1],p[3])),16)]);}
+function edge(a,b,p){return S(M(S(b[0],a[0]),S(p[1],a[1])),M(S(b[1],a[1]),S(p[0],a[0])));}
+const owns=(poly,p)=>{if(poly.length<3)return false;let area=0;for(let i=0;i<poly.length;i++)area+=edge([0,0],poly[i],poly[(i+1)%poly.length]);if(area<0)poly=poly.slice().reverse();return poly.every((a,i)=>{let b=poly[(i+1)%poly.length],e=edge(a,b,p);return e>0||e===0&&(b[1]<a[1]||b[1]===a[1]&&b[0]>a[0]);});};
+
+
+  const reports=[];
+  for(const t of eyePlan()){
+    const polygon=clip(t.h);let difference=0,visible=0;
+    for(let y=0;y<32;y++)for(let x=0;x<32;x++){
+      const expected=!!eyeOracle(t,x,y);visible+=expected;
+      if(owns(polygon,[x,y])!==expected)difference++;
+      const reversed={...t,h:t.h.slice().reverse()};
+      assert.deepEqual(eyeOracle(reversed,x,y),eyeOracle(t,x,y),'winding invariant exact oracle');
+    }
+    reports.push({name:t.name,visible,roundedDifferences:difference});
+  }
+  assert(reports.some(r=>r.roundedDifferences),'rounded clipping counterexample required');
+  for(const name of ['zero W origin degenerate','all negative W','collinear XYW'])assert.equal(reports.find(r=>r.name===name).visible,0);
+  transport(p=>{assert.match(p.p,/solid_halfspace\(ea\*direction,point\)/);assert(!p.p.includes('solid_screen(solid_polygon'));
+    assert.match(p.v,/solid_polygon\[i\].w>0\./);assert.match(p.p,/if\(determinant==0\.\)discard/);});
+  return reports;
+}
+async function renderedEyeCases(options){
+  const oracle=Function('return ('+options.oracle+')')(),plan=options.plan;
+  const canvas=document.createElement('canvas');canvas.width=32;canvas.height=32;document.body.append(canvas);
+  const d=new D3D9Backend.Device(canvas,{webglVersion:options.version,solidCoverageTransport:true});
+  const g=d.gpu,gl=g.gl,depth={id:907,width:32,height:32,format:75};
+  const evidence=globalThis.legacyEyeEvidence={version:g.version,reports:[],comparisons:0,programs:[],submissions:[]};
+  const create=g.createProgram.bind(g),submit=g.draw.bind(g);
+  g.createProgram=(v,p,...args)=>{evidence.programs.push({vertex:v,fragment:p});
+    if(options.control==='rounded')p=p.replace(/if\(!positiveW\)\{[\s\S]*?\n \}/,`if(!positiveW){
+     solid_clip(a,b,c);covered=solid_count>=3;vec2 previous=vec2(0.);
+     for(int i=0;i<12;i++){if(i==solid_count-1)previous=solid_screen(solid_polygon[i]);}
+     for(int i=0;i<12;i++){if(i<solid_count){vec2 current=solid_screen(solid_polygon[i]);if(!solid_owns(previous,current,point,-determinant))covered=false;previous=current;}}
+    }`);
+    return create(v,p,...args);};
+  g.draw=c=>{evidence.submissions.push(c.count);return submit(c);};
+  const identity=Float32Array.from([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);
+  const attributes=[{register:0,usage:0,usageIndex:0,type:3,offset:0},{register:1,usage:10,usageIndex:0,type:3,offset:16},{register:2,usage:5,usageIndex:0,type:1,offset:32}];
+  const fixedFunction={lighting:false,specular:false,fog:false,world:identity,view:identity,projection:identity,stages:[{colorOp:1}]};
+  const issue=(list,state={},texture=null)=>{
+    const input=Float32Array.from(list.flatMap(t=>t.h.flatMap(([X,Y,W,Z],i)=>[(X-16*W)/16,(16*W-Y)/16,Z,W,...(t.colors?.[i]||t.color||[1,0,0,.5]),...(t.uv?.[i]||[0,0])])));
+    d.draw({primitive:4,primitiveCount:list.length,stride:40,vertices:new Uint8Array(input.buffer),attributes,depthAttachment:depth,
+      state:{cull:1,zenable:false,...state},fixedFunction:texture?{...fixedFunction,stages:[{colorOp:2,colorArg1:2,alphaOp:2,alphaArg1:2,texCoordIndex:0,transformFlags:0},{colorOp:1}]}:fixedFunction,textures:texture?[texture]:[]});
+  };
+  const clear=()=>d.clear([0,0,0,1],7,1,null,depth,0);
+  const compare=(label,reference)=>{
+    if(options.preflightOnly){evidence.reports.push(label);return;}
+    const bytes=g.readPixels(0,0,32,32,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(4096));
+    for(let y=0;y<32;y++)for(let x=0;x<32;x++){
+      const expected=reference(x,y),offset=((31-y)*32+x)*4,actual=Array.from(bytes.slice(offset,offset+3));
+      if(!actual.every((n,i)=>Math.abs(n-expected[i])<=2)){evidence.failure={label,x,y,actual,expected};evidence.failedRGBA=Array.from(bytes);throw Error(label+' pixel '+x+','+y+' actual '+actual+' expected '+expected);}
+      evidence.comparisons++;
+    }
+    if(g.getError()!==gl.NO_ERROR)throw Error(label+' GL error');evidence.reports.push(label);
+  };
+  const reference=(list,blend=false,depthTest=false)=>(x,y)=>{let color=[0,0,0],z=1;
+    for(const t of list){const s=oracle(t,x,y);if(!s||depthTest&&s.z>z)continue;if(depthTest)z=s.z;
+      color=s.color.slice(0,3).map((n,c)=>Math.round(n*255*(blend?s.color[3]:1)+(blend?color[c]*(1-s.color[3]):0)));}return color;};
+  try{
+    for(const t of plan)for(const reverse of [false,true]){
+      const v=reverse?{...t,h:t.h.slice().reverse()}:t;clear();issue([v]);compare(t.name+'/'+reverse,reference([v]));
+    }
+    const list=Array.from({length:19},(_,i)=>({...plan[i%plan.length],color:[i%3===0?1:.1,i%3===1?1:.2,i%3===2?1:.3,.25]}));
+    for(const reversed of [false,true])for(const mode of ['opaque','alpha','depth','smooth']){
+      let l=reversed?list.slice().reverse():list;
+      if(mode==='smooth')l=l.map(t=>({...t,colors:[[.125,.25,.75,1],[.75,.125,.25,1],[.25,.75,.125,1]]}));
+      clear();issue(l,{blend:mode==='alpha',srcblend:5,dstblend:6,zenable:mode==='depth',zwrite:true});
+      compare(mode+' order '+reversed,reference(l,mode==='alpha',mode==='depth'));
+    }
+    const t=plan[1];
+    for(const reverse of [false,true]){
+      const v=reverse?{...t,h:t.h.slice().reverse()}:t;
+      clear();issue([v],{colorWriteMask:0,stencilEnable:true,stencilPass:7});
+      issue([{...v,color:[0,1,0,1]}],{stencilEnable:true,stencilFunc:3,stencilRef:1,stencilWriteMask:0});
+      compare('stencil exact once '+reverse,(x,y)=>oracle(v,x,y)?[0,255,0]:[0,0,0]);
+    }
+    for(const cull of [2,3]){
+      clear();issue([{...t,color:[1,0,0,1]},{...t,h:t.h.slice().reverse(),color:[0,1,0,1]}],{cull});
+      // This fixture's window determinant is positive. D3D screen CW is
+      // culled by mode 2, leaving the reversed green primitive.
+      compare('eye cull '+cull,(x,y)=>oracle(t,x,y)?(cull===2?[0,255,0]:[255,0,0]):[0,0,0]);
+    }
+    clear();issue([{...t,h:t.h.slice().reverse()}],{colorWriteMask:0,stencilEnable:true,twoSidedStencil:true,stencilPass:1,ccwStencilPass:7});
+    issue([{...t,color:[0,0,1,1]}],{stencilEnable:true,stencilFunc:3,stencilRef:1,stencilWriteMask:0});
+    compare('eye two sided stencil',(x,y)=>oracle(t,x,y)?[0,0,255]:[0,0,0]);
+    // Eye-crossing geometry has the same N/Q field as the unchanged public
+    // right-triangle oracle with q=[1,1,3]. Its original third UV is 3*n.
+    const mipOracle=Function('return ('+options.mipOracle+')')(),colors=options.mipColors;
+    for(const mip of [2,3])for(const n of [2,8]){
+      const levels=colors.map((c,l)=>{const width=16>>l,pixels=new Uint8Array(width*width*4);for(let i=0;i<width*width;i++)pixels.set([...c,255],i*4);return {width,height:width,pixels};});
+      // Public D3DTEXTUREFILTER uses NONE/POINT/LINEAR=1/2/3; the
+      // backend snapshot uses 0/1/2. Match the public bridge's mip atlas
+      // route so the solid shader differentiates the original N/Q field.
+      const texture={...levels[0],levels,clampMipChain:true,sampler:{min:1,mag:1,mip:mip-1}};
+      const t={h:[[0,0,1,0],[32,0,1,0],[0,32,-1,0]],uv:[[0,0],[n,0],[0,3*n]]};
+      clear();issue([t],{},texture);
+      compare('eye rational mip '+mip+'/'+n,(x,y)=>oracle(t,x,y)?mipOracle(colors,{n,mip,q:[1,1,3]},{x,y}):[0,0,0]);
+    }
+    evidence.finalRGBA=Array.from(g.readPixels(0,0,32,32,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(4096)));
+    globalThis.legacyEyeCapture=canvas.toDataURL();
+    return evidence;
+  }finally{d.destroy();canvas.remove();}
+}
+// Execute every exact fixture draw through the real fixed compiler before a
+// bounded browser run. This checks the previously missed textured branch; it
+// deliberately makes no GPU/pixel claim.
+async function eyePreflight(){
+  const vm=require('node:vm'),{oracle,plan}=require('./test-legacy-public-mip-webgl');
+  let draws=0,textured=0;const filters=[];
+  class FixtureDevice{
+    constructor(){
+      const constants=new Map(),gl=new Proxy({colorMask(){},getExtension(){return {};},getParameter(){return 1024;}},
+        {get(t,n){if(n in t)return t[n];if(!constants.has(n))constants.set(n,constants.size+1);return constants.get(n);}});
+      this.gpu=new Proxy({version:1,gl,canvas:{width:32,height:32},renderHeight:32,
+        createProgram(v,p){if(p.includes('d3d_lod0'))assert.match(p,/dFdx\(uv\*solid_q\)-uv\*dFdx\(solid_q\)/);return {};},
+        createTexture(){return {};},getError(){return gl.NO_ERROR;},readPixels(x,y,w,h,f,t,out){return out;}},
+        {get(t,n){return n in t?t[n]:()=>{};}});
+      this.device=Object.create(Device.prototype);
+      Object.assign(this.device,{gpu:this.gpu,solidCoverageTransport:true,vertices:{},indices:{},
+        fixedPlans:new Fixed.TLCache(),programs:new Map(),bindDepth(){},touchColor(){}});
+      for(const n of ['textures','textureTargets','resourceSamples','residentPixels','keyedTextures','keyMembers','stageKeys'])this.device[n]=new Map();
+    }
+    clear(){}destroy(){}
+    draw(snapshot){
+      const compiled=Fixed.compile(snapshot,{x:0,y:0,width:32,height:32,minZ:0,maxZ:1});
+      assert(compiled.vertex.source.includes('gl_Position'));
+      assert(compiled.pixel.source.includes('gl_FragColor'));
+      this.device.draw(snapshot);
+      draws++;if(snapshot.textures.length){
+        assert.equal(snapshot.textures[0].clampMipChain,true,'eye fixture must use the public mip atlas route');
+        const filter=this.device.mipUniforms.get(0).d3d_filter0[2];
+        assert.equal(filter,textured<2?1:2,'public POINT/LINEAR must map to snapshot 1/2');
+        filters.push(filter);textured++;
+      }
+    }
+  }
+  const context={Float32Array,Uint8Array,D3D9Backend:{Device:FixtureDevice},document:{createElement(){return {remove(){},toDataURL(){return '';}};},body:{append(){}}}};
+  const run=vm.runInNewContext('('+renderedEyeCases.toString()+')',context);
+  const options={version:1,preflightOnly:true,oracle:eyeOracle.toString(),plan:eyePlan(),mipOracle:oracle.toString(),mipColors:plan().colors};
+  const result=await run(options);assert.equal(textured,4);assert.equal(result.reports.length,37);
+  const successfulDraws=draws;
+  const missing=vm.runInNewContext('('+renderedEyeCases.toString().replace('texCoordIndex:0,transformFlags:0','')+')',context);
+  await assert.rejects(missing(options),/invalid texture coordinate index/,'historical fixture omission must reject before browser');
+  textured=0;
+  const wrongMip=vm.runInNewContext('('+renderedEyeCases.toString().replace('mip:mip-1','mip')+')',context);
+  await assert.rejects(wrongMip(options),/public POINT\/LINEAR must map/,'public enum must not reach the snapshot unchanged');
+  textured=0;
+  const nativeMip=vm.runInNewContext('('+renderedEyeCases.toString().replace('clampMipChain:true','clampMipChain:false')+')',context);
+  await assert.rejects(nativeMip(options),/public mip atlas route/,'implicit native gradients must not replace the public rational-gradient route');
+  return {draws:successfulDraws,textured:4,filters:filters.slice(0,4),grids:result.reports.length,missingTexCoordRejected:true,wrongMipRejected:true,nativeMipRejected:true};
+}
+function eyeRenderedEvidence(file){
+  const fs=require('node:fs'),hash=b=>require('node:crypto').createHash('sha256').update(b).digest('hex');
+  const e=JSON.parse(fs.readFileSync(file));
+  assert.match(e.status,/^PASS rendered candidate/);assert(!e.error&&!e.timeout);
+  for(const p of ['lib/d3d9-backend.js','test/test-legacy-solid-coverage-transport.js'])
+    assert.equal(e.source.files[p].sha256,hash(fs.readFileSync(require('node:path').join(__dirname,'..',p))));
+  for(const version of [1,2]){
+    const cells=e.stages.filter(s=>s.eye?.version===version);assert.equal(cells.length,1);
+    assert.equal(cells[0].eye.reports.length,37);assert.equal(cells[0].eye.comparisons,37*1024);
+    const negatives=e.stages.filter(s=>s.negative?.version===version&&s.negative.control==='rounded');assert.equal(negatives.length,1);
+    assert.match(negatives[0].negative.error,/pixel .*actual .*expected/);
+  }
+  let observations=0;
+  for(const module of ['wine-assembly.wasm','wine-assembly.compat.wasm'])for(const mode of ['worker','webgl'])for(const version of [1,2]){
+    const cells=e.stages.filter(s=>s.module===module&&s.mode===mode&&s.version===version);assert.equal(cells.length,1);
+    const r=cells[0].result;assert.equal(r.status,'PASS');assert.equal(r.observations.length,mode==='worker'?18:12);
+    assert.equal(r.stats.errors,0);assert.equal(r.stats.fallbacks,0);
+    for(const o of r.observations)assert(o.actual.every((c,i)=>Math.abs(c-o.expected[i])<=2));
+    observations+=r.observations.length;
+  }
+  return {eyePixels:2*37*1024,publicObservations:observations};
+}
 // Validate retained real-browser results separately from the submission mocks.
 // A planner/GLSL-only result, stale backend, or a missing queued Worker cell
 // must not be presented as rendered acceptance.
@@ -553,6 +763,8 @@ function batchRenderedEvidence(file){
 }
 if(require.main===module){
   if(!backendArg)console.log('PASS solid candidate actual Device.draw transport '+JSON.stringify(transport()));
+  if(!backendArg)eyePreflight().then(r=>console.log('PASS exact eye fixture preflight '+JSON.stringify(r))).catch(e=>{console.error(e);process.exitCode=1;});
+  if(!backendArg)console.log('PASS eye focused '+JSON.stringify(eyeFocused()));
   if(!backendArg)console.log('PASS offline original-edge clipping reproducer '+JSON.stringify(clippedOriginalEdges()));
   console.log('PASS actual Device batching '+JSON.stringify(batching()));
   const file=process.argv.find(a=>a.startsWith('--render-evidence='));
@@ -560,4 +772,4 @@ if(require.main===module){
   const batchFile=process.argv.find(a=>a.startsWith('--batch-render-evidence='));
   if(batchFile)console.log('PASS retained real batch WebGL evidence '+JSON.stringify(batchRenderedEvidence(batchFile.slice(24))));
 }
-module.exports={snapshot,transport,batching,clippedOriginalEdges,renderedCases,renderedBatches,renderedEvidence,batchRenderedEvidence};
+module.exports={eyeRenderedEvidence,eyePreflight,eyeOracle,eyePlan,eyeFocused,renderedEyeCases,snapshot,transport,batching,clippedOriginalEdges,renderedCases,renderedBatches,renderedEvidence,batchRenderedEvidence};
