@@ -2845,6 +2845,30 @@
             (i32.or (i32.shl (call $d3dim_d7_unit (local.get $g)) (i32.const 8))
                     (call $d3dim_d7_unit (local.get $b)))))
 
+  ;; A colored FVF is packed as D3DLVERTEX, whose color fields replace the
+  ;; normal. Generate stage-0 normal coordinates from the original FVF before
+  ;; that normal is lost to the draw consumer (also after lighting converts a
+  ;; D3DVERTEX). Reuse the legacy generator's matrix/count behavior; the packed
+  ;; LVERTEX consumer keeps this UV pair, so it is not transformed twice.
+  (func $d3dim_d7_normal_texcoords
+      (param $state i32) (param $fvf i32) (param $src_g i32) (param $packed_g i32) (param $count i32)
+    (local $stride i32) (local $src i32) (local $dst i32) (local $gen i32) (local $i i32)
+    (if (i32.ne (i32.shr_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11))
+          (i32.const 16)) (i32.const 1)) (then (return)))
+    (call $d3ddev_composite_wvp (local.get $state))
+    (local.set $stride (call $d3dim_fvf_stride (local.get $fvf)))
+    (local.set $src (call $g2w (local.get $src_g)))
+    (local.set $dst (call $g2w (local.get $packed_g)))
+    (block $done (loop $lp
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      ;; XYZ|NORMAL starts with the same six floats as D3DVERTEX, even
+      ;; when diffuse/specular/point-size/texture sets follow the normal.
+      (local.set $gen (call $d3dim_texgen (local.get $state) (i32.const 1) (local.get $src)))
+      (i64.store offset=24 (local.get $dst) (i64.load (local.get $gen)))
+      (local.set $src (i32.add (local.get $src) (local.get $stride)))
+      (local.set $dst (i32.add (local.get $dst) (i32.const 32)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $lp))))
+
   (func $d3dim_d7_light_vertices
       (param $this i32) (param $fvf i32) (param $src_g i32) (param $packed_g i32)
       (param $count i32) (param $vtxType i32) (result i32)
@@ -2865,6 +2889,9 @@
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (i32.eqz (local.get $state)) (then (return (local.get $vtxType))))
     (local.set $sw (call $g2w (local.get $state)))
+    (if (i32.eq (local.get $vtxType) (i32.const 2)) (then
+      (call $d3dim_d7_normal_texcoords (local.get $state) (local.get $fvf)
+        (local.get $src_g) (local.get $packed_g) (local.get $count))))
     (if (i32.ne (call $d3dim_d7_rs (local.get $sw) (i32.const 137)) (i32.const 1))  ;; LIGHTING
       (then (return (local.get $vtxType))))
     (local.set $table (i32.load (i32.add (local.get $sw) (global.get $D3DIM_OFF_D3D7_LIGHTS))))
@@ -3035,6 +3062,9 @@
           (call $d3dim_d7_ch (local.get $cd) (i32.const 24))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $lp)))
+    (if (i32.eq (local.get $vtxType) (i32.const 1)) (then
+      (call $d3dim_d7_normal_texcoords (local.get $state) (local.get $fvf)
+        (local.get $src_g) (local.get $packed_g) (local.get $count))))
     (i32.const 2))
 
   (func $d3dim_device7_set_clip_plane (param $this i32) (param $idx i32) (param $plane i32)
