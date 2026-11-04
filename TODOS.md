@@ -1,9 +1,9 @@
 - [ ] Owner-requested corpus addition: Stronghold Crusader original demo
   id: TG150-STRONGHOLD-CRUSADER-20261103
-  status: original v1.1 UK installer acquired and hashed; fresh extraction/registration worker dispatching, runtime queued behind Alice
+  status: original UK v1.1 demo extracted and pinned; registration checks and locked build pass in working tree, gameplay queued behind Alice
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Fresh scratch/usage-watch/stronghold-crusader-original-next.task.txt; acquire original demo, pin actual executable/per-file SHA256, register installed paths and attempt ordinary unit order/building placement. Two existing production workers remain live; no third launch, heavy runtimes serialized. Cached ModDB mirror410 is a stale URL, not a game/runtime blocker.
-  Evidence: docs/re-notes/stronghold-crusader-demo.md; scratch/runs/20261103-telegram150-game-identification/ (post metadata and viewed thumbnail). Installer SHA256 0d4f49e83c81d0f9b60c592103267b27e84a34d05c7c11be8b1e13bf2a32ff45; game executable, registration and gameplay still unverified.
+  Next: Active fresh worker 01a1a3df-d940-7db1-ba8d-aef156102858 uses scratch/usage-watch/stronghold-registered-skirmish-next.task.txt. After Alice runtime release, test ordinary menu and first offline Very Easy skirmish with a visible unit order or building placement; repair the first concrete blocker and publish its own tested registration. Two production workers maximum; heavy runtime serialized. Reuse existing media without acquisition or extraction repeats.
+  Evidence: Published preparation dd78dad0b8322a8f4dbb7e615a890c3132437c57; docs/re-notes/stronghold-crusader-demo.md and scratch/runs/20261103-stronghold-crusader-original/. Original executable SHA256 9024c533095f2227b0105b7e8a9e4cf28ec4fb206b165629787b2c97cf99f13f, all 1856 files pinned; shipped readme confirms three offline skirmishes. Registration remains uncommitted and runtime/menu/gameplay unverified. Current worker evidence: scratch/runs/20261104-stronghold-registered-skirmish/.
 
 # TODOS
 
