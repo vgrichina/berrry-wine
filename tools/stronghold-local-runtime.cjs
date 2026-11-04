@@ -1,17 +1,22 @@
 'use strict';
-// Explicit local-process contract for the authorized repaired-entry original attempt.
+// Explicit local-process contract for the authorized named-observation original attempt.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-repaired-entry-original-gameplay user task';
-const ASSIGNMENT='stronghold-repaired-entry-original-gameplay user task';
+const AUTH='stronghold-named-observation-gameplay user task';
+const ASSIGNMENT='stronghold-named-observation-gameplay user task';
 const CHROME='/opt/google/chrome/chrome';
 const CUTOFF=Date.parse('2026-11-04T23:50:00Z'),CLEANUP=Date.parse('2026-11-04T23:53:00Z');
 function requireRuntimeRelease(board,now=Date.now()){
- const rows=board.split('\n').filter(row=>/^\S+ mdk2-measured-native LOCAL HEAVY RELEASE\b/.test(row));
- const row=rows.at(-1),at=Date.parse(row?.split(' ')[0]);
- if(!row||!Number.isFinite(at)||at<Date.parse('2026-11-04T21:21:55Z')||at>now)throw Error('exact mdk2-measured-native-boundary-gameplay-nov04 local heavy release required');
- return {row,at};
+ const assignment='mdk2-honest-menu-medium-gameplay-nov04';
+ const rows=board.split('\n');
+ const own=rows.filter(row=>/^\S+ mdk2-honest-menu OWN\b/.test(row)&&row.includes('mdk2-honest-menu-medium-gameplay-20261104')).at(-1);
+ const ownedAt=Date.parse(own?.split(' ')[0]);
+ const row=rows.filter(row=>/^\S+ mdk2-honest-menu LOCAL HEAVY RELEASE\b/.test(row)&&row.split(/\s+/).includes(assignment)).at(-1);
+ const at=Date.parse(row?.split(' ')[0]);
+ if(!own||!row||!Number.isFinite(ownedAt)||!Number.isFinite(at)||ownedAt<Date.parse('2026-11-04T21:47:12Z')||at<ownedAt||at>now||ownedAt>now)
+  throw Error('exact '+assignment+' assignment-bound local heavy release after current OWN required');
+ return {row,at,own,ownedAt,assignment};
 }
 function requireLocalFlock(lockPath='/tmp/wine-local-runtime.lock'){
  const ancestors=new Set();

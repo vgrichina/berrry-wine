@@ -3,14 +3,17 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-repaired-entry-original-gameplay/contract-test');
+const run=path.resolve(process.env.STRONGHOLD_CONTRACT_RUN||'scratch/runs/20261104-stronghold-named-observation-gameplay/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
 const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:45:00Z');
-const actualRelease='2026-11-04T21:29:05+00:00 mdk2-measured-native LOCAL HEAVY RELEASE offline fixture only';
-assert.equal(api.requireRuntimeRelease(actualRelease,Date.parse('2026-11-04T21:30:00Z')).row,actualRelease);
-for(const line of [actualRelease.replace('mdk2-measured-native','someone'),actualRelease.replace('mdk2-measured-native','mdk2-installed-original'),actualRelease.replace('mdk2-measured-native','gltron-atomic-ack-webgl'),actualRelease.replace('21:29:05','21:21:54'),actualRelease.replace('21:29:05','22:53:05'),'2026-11-04T20:54:00Z stronghold waiting '+actualRelease])assert.throws(()=>api.requireRuntimeRelease(line,Date.parse('2026-11-04T21:30:00Z')),/release/);
+const actualOwn='2026-11-04T21:47:12+00:00 mdk2-honest-menu OWN tools/mdk2-local-runtime.cjs docs/re-notes/mdk2-honest-menu-medium-gameplay-20261104.md';
+const actualRelease='2026-11-04T21:49:05+00:00 mdk2-honest-menu LOCAL HEAVY RELEASE mdk2-honest-menu-medium-gameplay-nov04 offline fixture only';
+const fixtureBoard=actualOwn+'\n'+actualRelease,fixtureNow=Date.parse('2026-11-04T21:50:00Z');
+assert.equal(api.requireRuntimeRelease(fixtureBoard,fixtureNow).row,actualRelease);
+for(const line of [actualRelease,fixtureBoard.replaceAll('mdk2-honest-menu','someone'),fixtureBoard.replace('LOCAL HEAVY RELEASE mdk2-honest-menu-medium-gameplay-nov04','LOCAL HEAVY RELEASE mdk2-measured-native-boundary-gameplay-nov04'),fixtureBoard.replace('21:49:05','21:47:11'),fixtureBoard.replace('21:49:05','22:53:05'),fixtureBoard.replace('21:47:12','21:47:11'),actualOwn+'\n2026-11-04T21:49:00Z stronghold waiting '+actualRelease,actualOwn+'\n'+actualRelease.replace('mdk2-honest-menu LOCAL','mdk2-measured-native LOCAL'),actualOwn+'\n'+actualRelease.replace('-nov04 offline','-nov04-extra offline')])assert.throws(()=>api.requireRuntimeRelease(line,fixtureNow),/release/);
+assert.throws(()=>api.requireRuntimeRelease(fixtureBoard+'\n'+actualOwn.replace('21:47:12','21:49:06'),fixtureNow),/release/,'fresh later OWN invalidates earlier release');
 const lockProbe="const a=require('./tools/stronghold-local-runtime.cjs');console.log(JSON.stringify(a.requireLocalFlock(process.argv[1])))";
 const testLock=path.join(run,'offline-runtime.lock');fs.writeFileSync(testLock,'');
 assert.throws(()=>execFileSync(process.execPath,['-e',lockProbe,testLock],{stdio:'pipe'}),/Command failed/);
@@ -26,6 +29,7 @@ function reject(name,mutate,pattern=/required|identity|binding|deadline|authoriz
 reject('missing authorization',r=>delete r.authorization);
 reject('missing current authorization',r=>delete r.freshLocalDiagnosticAuthorized);
 reject('foreign assignment',r=>r.assignment='foreign');
+reject('previous repaired entry assignment',r=>r.assignment='stronghold-repaired-entry-original-gameplay user task');
 reject('previous fresh complete assignment',r=>r.assignment='stronghold-fresh-complete-entry-gameplay user task');
 reject('expired predecessor authorization',r=>r.assignment='stronghold-portable-local-runtime user task');
 reject('previous title assignment',r=>r.assignment='stronghold-title-recognition-onward user task');
@@ -203,6 +207,64 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  assert.equal(fs.readdirSync(path.join(clientRun,'browser/commands')).length,0);
  assert.equal(api.assertMailboxCommandReady(clientRun,{command:{action:'observe',name:'fresh-valid'}}),0);
  console.log('PASS actual failed observe replay: old advances2048 then capture, repaired missing/invalid/duplicate name rejects before steps/capture; mailbox preflight leaves no command');
+ // Replay the entire intended startup batch through the composed command and
+ // transport functions. This is an offline browser/ACK fixture, never gameplay.
+ const batchPath=process.env.STRONGHOLD_STARTUP_BATCH;
+ if(batchPath){
+  const batchBytes=fs.readFileSync(batchPath),batch=JSON.parse(batchBytes),names=new Set();
+  const batchOut=path.join(run,'startup-batch-'+Date.now());fs.mkdirSync(batchOut);
+  const a=p.source.indexOf('async function command(c,i){'),b=p.source.indexOf('let gameplayNumber=',a);
+  const t=p.source.indexOf('function installTransportEvidence(p){'),u=p.source.indexOf('async function main(){',t);
+  assert(a>0&&b>a&&t>0&&u>t);
+  let steps=0,preSteps=0,acks=0,shots=0,validations=0;const captured=[];
+  const ackTemplate=JSON.parse(fs.readFileSync('scratch/runs/20261104-stronghold-repaired-entry-original-gameplay/browser/step-0-0.json'));
+  const scope={require,fs,path,OUT:batchOut,RUN:batchOut,Date,closing:false,halted:false,navigationSteps:0,deadline:Date.now()+40000,activeReplyDeadline:Date.now()+39000,
+   held:new Set(),mouseHeld:new Set(),nativeDriver:null,sha:base.hash,log:()=>{},save:()=>{},
+   commandLive:()=>{},state:async()=>({main:{tick:{steps}}}),
+   assertAck:require('../scratch/runs/20261104-stronghold-explicit-idle-input/native-start-boundary.cjs').assertAck,
+   presetAttachment:{active:false,beforeStep:async()=>{preSteps++;},ack:async(result,n)=>{assert.equal(result.requested,n);assert.equal(result.ran,n);acks++;}},
+   freshShot:async name=>{api.validateCaptureCommand({action:'shot',name},batchOut);fs.writeFileSync(path.join(batchOut,name+'.png'),'OFFLINE CAPTURE MARKER');captured.push(name);},
+   page:{evaluate:async(fn,n)=>{assert(String(fn).includes('WineFrozen.step'));steps+=n;return {...structuredClone(ackTemplate),steps,guests:ackTemplate.guests.map(g=>({...g,steps}))};},screenshot:async()=>{shots++;return Buffer.from('OFFLINE CAPTURE MARKER');},mouse:{move:async()=>{},down:async()=>{},up:async()=>{}}}};
+  // Independent spawn prohibition protects this full batch replay too.
+  const cp=require('node:child_process'),spawn=cp.spawn;let spawns=0;cp.spawn=()=>{spawns++;throw Error('OFFLINE SPAWN FORBIDDEN');};
+  try{
+   const context=vm.createContext(scope);
+   vm.runInContext(p.source.slice(a,b)+p.source.slice(t,u)+'installTransportEvidence(page);',context);
+   for(const [i,c]of batch.entries()){
+    assert(['observe','shot'].includes(c.action));assert.equal(typeof c.name,'string');assert(!names.has(c.name));names.add(c.name);
+    api.validateCaptureCommand(c,batchOut);validations++;
+    context.c=c;context.i=i;await vm.runInContext('command(c,i)',context);
+   }
+   assert.equal(steps,batch.reduce((n,c)=>n+(c.action==='observe'?c.n:0),0));
+   assert.equal(acks,steps/64);assert.equal(preSteps,acks);assert.equal(shots,batch.filter(c=>c.action==='shot').length);
+   assert.equal(fs.readdirSync(batchOut).filter(n=>n.endsWith('.png')).length,batch.length);
+   assert.equal(scope.navigationSteps,steps);assert.equal(spawns,0);
+   const result={pass:true,offlineOnly:true,batchPath:path.resolve(batchPath),batchSHA256:base.hash(batchBytes),commands:batch.length,validations,steps,acks,uniqueCaptureNames:[...names],actualComposedCommand:true,actualTransportFunction:true,chromeSpawns:0,spawnAttempts:spawns};
+   fs.writeFileSync(path.join(run,'startup-batch-preflight.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
+  }finally{cp.spawn=spawn;}
+ }
+ // Reuse this assignment's original first-fault evidence if present. A native
+ // setup entry and host release receipt cannot certify the missing returns or
+ // a drained release. The runtime must remain terminal before another enqueue.
+ const faultRun=path.resolve('scratch/runs/20261104-stronghold-named-observation-gameplay');
+ const faultFile=path.join(faultRun,'browser/reply-11.json');
+ if(fs.existsSync(faultFile)){
+  const out=path.join(faultRun,'browser'),fault=JSON.parse(fs.readFileSync(faultFile));
+  assert.equal(fault.ok,false);assert.match(fault.error,/command\/review deadline/);
+  assert.throws(()=>api.assertMailboxCommandReady(faultRun,{command:{action:'observe',name:'forbidden-after-fault'}}),/terminal/);
+  const reports=fs.readdirSync(out).filter(n=>/^preset-attachment-\d+\.json$/.test(n)).map(n=>JSON.parse(fs.readFileSync(path.join(out,n)))).filter(r=>r.report?.records);
+  const report=reports.sort((a,b)=>b.report.sequence-a.report.sequence)[0].report;
+  assert.equal(report.limits.maxBoundaries,50000000);assert.equal(report.limits.maxMs,360000);
+  assert(report.records.some(r=>r.kind==='callback-entry'&&r.argument===2));
+  assert(report.records.some(r=>r.kind==='callback-branch'&&r.argument===2));
+  assert(report.records.some(r=>r.kind==='scene-request-return'&&r.state.requestedScene===20));
+  assert(report.records.some(r=>r.kind==='setup-entry'));
+  assert(!report.records.some(r=>['setup-return','callback-return','custom-path-completed'].includes(r.kind)));
+  assert.deepEqual(report.pending.map(r=>r.name),['callback','setup']);
+  const final=JSON.parse(fs.readFileSync(path.join(out,'final-state.json'))).main;
+  assert.equal(final.mouseButtonsMask,0);assert.equal(final.inputQueue.length,1);assert.equal(final.inputQueue[0].msg,514);
+  console.log('PASS retained original first-fault replay: callback2/request20/setup-entry observed, missing returns and queued release remain unproved; terminal prevents more commands');
+ }
  const {EventEmitter}=require('node:events');
  async function closureFixture(code,signal,timeout=false){
   const child=Object.assign(new EventEmitter(),{pid:process.pid,exitCode:null,signalCode:null}),events=[];let disconnected=false;
@@ -265,7 +327,7 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  const p=route.prepare({run,pins});
  fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(p.createRelease()));
  const ownership=api.assertRuntimeOwnership;
- api.assertRuntimeOwnership=()=>({offlineFixtureRelease:true,release:api.requireRuntimeRelease(${JSON.stringify(actualRelease)},Date.parse('2026-11-04T21:30:00Z')),flock:api.requireLocalFlock(${JSON.stringify(testLock)})});
+ api.assertRuntimeOwnership=()=>({offlineFixtureRelease:true,release:api.requireRuntimeRelease(${JSON.stringify(fixtureBoard)},${fixtureNow}),flock:api.requireLocalFlock(${JSON.stringify(testLock)})});
  const cp=require('node:child_process'),spawn=cp.spawn;let spawnAttempts=0;cp.spawn=()=>{spawnAttempts++;throw Error('OFFLINE SPAWN FORBIDDEN');};
  const puppeteer={launch:null},serverAPI=require(${JSON.stringify(require.resolve('./static-server.js'))}),start=serverAPI.startStaticServer;
  let launches=0,server,port;
