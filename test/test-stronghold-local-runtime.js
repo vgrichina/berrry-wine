@@ -8,6 +8,13 @@ fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
 const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:45:00Z');
+const actualRelease='2026-11-04T20:53:05+00:00 mdk2-bounded-review LOCAL HEAVY RELEASE original closed';
+assert.equal(api.requireRuntimeRelease(actualRelease,Date.parse('2026-11-04T21:00:00Z')).row,actualRelease);
+for(const line of [actualRelease.replace('mdk2-bounded-review','someone'),actualRelease.replace('20:53:05','20:49:00'),actualRelease.replace('20:53:05','22:53:05'),'2026-11-04T20:54:00Z stronghold waiting '+actualRelease])assert.throws(()=>api.requireRuntimeRelease(line,Date.parse('2026-11-04T21:00:00Z')),/release/);
+const lockProbe="const a=require('./tools/stronghold-local-runtime.cjs');console.log(JSON.stringify(a.requireLocalFlock(process.argv[1])))";
+const testLock=path.join(run,'offline-runtime.lock');fs.writeFileSync(testLock,'');
+assert.throws(()=>execFileSync(process.execPath,['-e',lockProbe,testLock],{stdio:'pipe'}),/Command failed/);
+const locked=JSON.parse(execFileSync('flock',['-n',testLock,process.execPath,'-e',lockProbe,testLock],{encoding:'utf8'}));assert.equal(locked.path,testLock);assert(Number.isInteger(locked.pid));
 const release=api.createRelease({run,pins,nonce,now});
 assert.equal(api.validateRelease(release,{run,pins,nonce,now}),release);
 assert.equal(release.identity.pid,process.pid);assert.equal(release.identity.hostname,require('os').hostname());
@@ -160,14 +167,15 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
 (async()=>{
  const {EventEmitter}=require('node:events');
  async function closureFixture(code,signal,timeout=false){
-  const child=Object.assign(new EventEmitter(),{pid:12345,exitCode:null,signalCode:null}),events=[];let disconnected=false;
+  const child=Object.assign(new EventEmitter(),{pid:process.pid,exitCode:null,signalCode:null}),events=[];let disconnected=false;
   const browser={process:()=>child,disconnect:()=>{disconnected=true;},target:()=>({createCDPSession:async()=>({send:async method=>{
    assert.equal(method,'Browser.close');if(!timeout)setTimeout(()=>{child.exitCode=code;child.signalCode=signal;child.emit('exit',code,signal);},1);
   }})})};
   const result=api.normalClose(browser,{timeoutMs:timeout?10:1000,record:r=>events.push(r)});
   if(timeout)await assert.rejects(result,/deadline/);
   else if(signal!==null||code!==0)await assert.rejects(result,/abnormal/);
-  else assert.deepEqual(await result,{pid:12345,code:0,signal:null});
+  else assert.deepEqual(await result,{pid:process.pid,code:0,signal:null});
+  assert(events[0].startTicks);
   assert(disconnected);assert.equal(child.listenerCount('exit'),0);return events;
  }
  await closureFixture(0,null);await closureFixture(null,'SIGKILL');await closureFixture(1,null);await closureFixture(null,null,true);
@@ -177,9 +185,27 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  const embedded=JSON.parse(p.source.match(/nonce:("[a-f0-9]{64}")/)[1]);
  const actual=api.createRelease({run,pins,nonce:embedded,now});
  const testRequire=id=>id===require.resolve('../tools/stronghold-local-runtime.cjs')
-  ?{...api,validateRelease:(r,o)=>api.validateRelease(r,{...o,now})}:require(id);
+  ?{...api,assertRuntimeOwnership:()=>({offlineFixture:true}),validateRelease:(r,o)=>api.validateRelease(r,{...o,now})}:require(id);
  fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(actual));
- assert.equal(await vm.runInNewContext(guarded,{require:testRequire,fs,path,RUN:run}),true);
+ assert.equal(await vm.runInNewContext(guarded,{require:testRequire,fs,path,RUN:run,save:()=>{}}),true);
+ // Execute the actual entry through its first real filesystem writes. A
+ // mocked save in the admission test above cannot prove directory ordering.
+ const initEnd=p.source.indexOf('  const pins=',start);assert(initEnd>end);
+ const init=p.source.slice(start,initEnd)+'return true;\n}main();';
+ const output=path.join(run,'bootstrap-order');
+ if(fs.existsSync(output))fs.rmSync(output,{recursive:true}); // Owned offline fixture only.
+ const saveSource=p.source.split('\n').find(line=>line.startsWith('const save='));assert(saveSource);
+ const scope={require:testRequire,fs,path,RUN:run,OUT:output};
+ const logLine="  save('runtime-ownership.json',runtimeOwnership);";
+ const withoutLog=base.replaceOnce(init,logLine,'');
+ const oldOrder=base.replaceOnce(withoutLog,"  if(fs.existsSync(OUT))",logLine+"\n  if(fs.existsSync(OUT))");
+ await assert.rejects(vm.runInNewContext(saveSource+'\n'+oldOrder,scope),/ENOENT/);
+ assert.equal(fs.existsSync(output),false);
+ assert.equal(await vm.runInNewContext(saveSource+'\n'+init,{...scope}),true);
+ assert(fs.statSync(path.join(output,'commands')).isDirectory());
+ assert.deepEqual(JSON.parse(fs.readFileSync(path.join(output,'runtime-ownership.json'))),{offlineFixture:true});
+ await assert.rejects(vm.runInNewContext(saveSource+'\n'+init,{...scope}),/one original launch only/);
+ console.log('PASS actual bootstrap filesystem old save-before-mkdir fails, repaired entry creates directory then receipt; fresh-entry latch preserved; no server/Chrome');
  delete actual.authorization;fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(actual));
  await assert.rejects(vm.runInNewContext(guarded,{require,fs,path,RUN:run}),/authorization/);
  console.log(JSON.stringify({pass:true,negativeContracts:negatives,actualChildRejected:true,retainedHelpers:30,bounds:p.evidence.bounds}));

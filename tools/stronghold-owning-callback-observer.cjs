@@ -17,21 +17,25 @@ const PINS=Object.freeze([
 // the pure JS translator and original import forwarding are used here.
 function observerFactory(EXE_SHA256,PINS){
  const occupied=new WeakSet();
+ // Fixed before execution: the original 800x600 RGB565 renderer alone needs
+ // 1,441,804 boundaries; live 64-step ACKs contained 64,000 entries. Fifty
+ // million holds 34 such full renders plus message/return overhead, within
+ // the unchanged 360s observation deadline. Blocks are counted, not stored.
  function attach({host,getExports,translate,memory,workerSlot,endpointIdentity,epoch,
    exeSha256,wasmSha256,workerURL,expectedWorkerURL,deadline,now=()=>performance.now(),
-   maxMs=360000,maxRecords=2048,maxBytes=1048576,maxBoundaries=1000000}={}){
+   maxMs=360000,maxRecords=2048,maxBytes=1048576,maxBoundaries=50000000}={}){
   if(workerSlot!==0||endpointIdentity!==1||exeSha256!==EXE_SHA256||!(/^[a-f0-9]{64}$/).test(wasmSha256||'')||
     !workerURL||workerURL!==expectedWorkerURL||typeof epoch!=='string'||!epoch||epoch.length>256)
    throw Error('wrong binding/epoch');
   if(typeof host?.log_block!=='function'||typeof getExports!=='function'||typeof translate!=='function'||
     !memory?.buffer||occupied.has(host))throw Error('missing/occupied owning imports or memory');
-  for(const [key,value,cap]of [['maxMs',maxMs,360000],['maxRecords',maxRecords,4096],['maxBytes',maxBytes,2097152],['maxBoundaries',maxBoundaries,2000000]])
+  for(const [key,value,cap]of [['maxMs',maxMs,360000],['maxRecords',maxRecords,4096],['maxBytes',maxBytes,2097152],['maxBoundaries',maxBoundaries,50000000]])
    if(!Number.isSafeInteger(value)||value<1||value>cap)throw Error('invalid '+key);
   if(!Number.isFinite(deadline)||deadline<=now())throw Error('original deadline');
   const prior=host.log_block,frames=[],rows=[];let ex=null,buffer=memory.buffer,active=false,timer,end=deadline;
   let command=null,event=null,lastAck=null,custom=null;
   const report={version:1,status:'installed',epoch,workerSlot,endpointIdentity,exeSha256,wasmSha256,workerURL,
-   records:rows,bytes:0,sequence:0,blocks:0,fault:null,pending:[],
+   records:rows,bytes:0,sequence:0,blocks:0,lastNativePC:null,fault:null,pending:[],
    limits:{maxMs,maxRecords,maxBytes,maxBoundaries},
    evidence:'Owning WASM block entries and saved-return intervals; not instruction-level CALL/RET certification. Input annotations are host receipts, not guest dispatch proof.'};
   function finish(reason='explicit-stop'){
@@ -66,6 +70,7 @@ function observerFactory(EXE_SHA256,PINS){
   function boundary(pc,esp){
    if(!live())return;pc>>>=0;esp>>>=0;
    if(++report.blocks>maxBoundaries)throw Error('boundary overflow');
+   report.lastNativePC=pc;
    if(pc!==(ex.get_eip()>>>0)||esp!==(ex.get_esp()>>>0))throw Error('wrong block registers');
    let f=frames.at(-1);
    if(f&&pc===f.caller){
@@ -97,7 +102,9 @@ function observerFactory(EXE_SHA256,PINS){
   }
   function wrapped(pc,esp,...rest){
    try{const f=frames.at(-1);boundary(pc,esp);if(f?.name==='scene-request'&&pc===f.caller&&custom)custom.managerDone=true;}
-   catch(error){fail(error);}
+   // An import exception unwinds the enclosing native run immediately. Merely
+   // recording the fault would execute an unobserved remainder of that run.
+   catch(error){fail(error);throw error;}
    try{return Reflect.apply(prior,this,[pc,esp,...rest]);}catch(error){fail(error);throw error;}
   }
   host.log_block=wrapped;occupied.add(host);
@@ -105,6 +112,7 @@ function observerFactory(EXE_SHA256,PINS){
    start(){if(report.status!=='installed')throw Error('observer terminal');try{identity();signatures();end=Math.min(deadline,now()+maxMs);active=true;report.status='running';emit('baseline');
     timer=setTimeout(()=>fail(Error('original observer deadline')),Math.max(1,end-now()));timer.unref?.();}catch(error){fail(error);}return report;},
    check(){try{if(live()&&!report.blocks)throw Error('missing trace records');}catch(error){fail(error);}return report;},
+   assertLive(){try{live();}catch(error){fail(error);}return report;},
    annotate(row){try{
     if(!live())return report;
     if(!row||row.epoch!==epoch)throw Error('foreign annotation epoch');
@@ -129,7 +137,7 @@ function observerFactory(EXE_SHA256,PINS){
     }else if(row.kind==='capture'){
      if(!/^[a-f0-9]{64}$/.test(row.sha256||'')||lastAck!==null&&row.steps!==lastAck)throw Error('stale capture state');
     }else if(!['begin','failed','success'].includes(row.kind))throw Error('unsupported annotation');
-    emit('host-annotation',{annotation:row});if(row.kind==='failed')finish('command-failed');
+    emit('host-annotation',{annotation:row,...(row.kind==='ACK'?{lastNativePC:report.lastNativePC,nativeFrames:frames.map(f=>({...f}))}:{})});if(row.kind==='failed')finish('command-failed');
    }catch(error){fail(error);}return report;}
   };
  }
@@ -168,6 +176,7 @@ function workerSource({observeSource,options}){
   'thread:(entry||preload.entries[0])?.getExports?.()?.get_current_thread_id?.(),slot:preload.entries[0]?.slot,endpointIdentity:preload.entries[0]?.endpointIdentity,');
  install=base.replaceOnce(install,"{command,kind:'begin'}","{command,kind:'begin',epoch:options.epoch}");
  install=base.replaceOnce(install,'{...row,command}','{...row,command,epoch:options.epoch}');
+ install=base.replaceOnce(install,"if(action==='check'){", "if(action==='assert-live'){entry.observer.assertLive();running();}\n     else if(action==='check'){");
  return observeSource+'\n;globalThis.StrongholdNativePresetObserver=('+observerFactory.toString()+')('+JSON.stringify(EXE_SHA256)+','+JSON.stringify(PINS)+');\n;('+install+')('+JSON.stringify({...options,epoch})+');';
 }
 // Reuse the exact tested compile/send and target/session guards. The command
@@ -200,6 +209,11 @@ function createAttachment(options){
   "     const inspected=[];\n     for(const [id,entry]of candidates){owner={id,entry,sessionId:entry.sessionId,session:entry.session,url:entry.info.url};inspected.push({id,entry,report:await rpc('report')});}\n     const {id,entry,report:r}=selectOwningWorker(inspected);owner={id,entry,sessionId:entry.sessionId,session:entry.session,url:entry.info.url};");
  source=base.replaceOnce(source,"e.kind==='sent-module'&&e.workerURL===entry.info.url",
   "e.kind==='sent-module'&&e.workerURL===entry.info.url&&e.slot===0");
+ source=base.replaceOnce(source,'get active(){return active;},begin,failed,finish,assertLive()',
+  "get active(){return active;},begin,failed,finish,async beforeStep(){if(active)await rpc('assert-live');},assertLive()");
+ source=base.replaceOnce(source,
+  "await annotate({kind:'ACK',requested,before,steps:result.steps,guests:result.guests});await rpc('check');",
+  "const s=await pageState(),m=s.main;if(m?.tick?.steps!==result.steps)throw Error('stale ACK input snapshot');await annotate({kind:'ACK',requested,before,steps:result.steps,guests:result.guests,input:m.inputQueue,activeInput:m.activeInput,lastInput:m.lastInput,mask:m.mouseButtonsMask,inputTelemetry:m.inputTelemetry});await rpc('check');");
  const start=source.indexOf('   async success(c){'),end=source.indexOf('   retire(event)',start);
  if(start<0||end<0)throw Error('attachment success seam');
  source=source.slice(0,start)+'   async success(){},\n'+source.slice(end);
@@ -225,6 +239,8 @@ function prepare(options){
  p.source=base.replaceOnce(p.source,`const attachmentAPI=require(${q(require.resolve('./stronghold-preset-driver-attachment.cjs'))});`,`const attachmentAPI=require(${q(__filename)});`);
  p.source=base.replaceOnce(p.source,`const presetAttachment=require(${q(require.resolve('./stronghold-attached-original-preset-driver.cjs'))}).createAttachment(`,`const presetAttachment=attachmentAPI.createAttachment(`);
  p.source=base.replaceOnce(p.source,`observerSource:fs.readFileSync(${q(require.resolve('./stronghold-native-preset-observer.cjs'))},'utf8'),`,'');
+ p.source=base.replaceOnce(p.source,'const observerBefore=stepping&&presetAttachment.active?',
+  'if(stepping)await presetAttachment.beforeStep();const observerBefore=stepping&&presetAttachment.active?');
  // No command past arrival can authorize another gesture.
  p.source=base.replaceOnce(p.source,"if(['install-native','gesture'].includes(c.action))", "if(['install-native','gesture','route-next','route-review','route-stability','route-review-preset-hover','route-press-preset','route-handoff'].includes(c.action))");
  // Retain the first shell and at most three further 256-step samples. This
@@ -235,6 +251,8 @@ function prepare(options){
  p.route=base.replaceOnce(p.route,"if(continuation!=='arrival'||arrival+256>3072)","if(continuation!=='arrival'||shellSamples>=4||arrival+256>3072)");
  p.evidence.callbackObserver={path:__filename,sha256:base.hash(fs.readFileSync(__filename)),offlineOnly:true,epoch:'exact target/session plus original init endpoint1',
   caps:{arrival:3072,route:4096,navigation:16384,shellSamples:4,perACK:64},runtimeQualified:false};
+ p.evidence.callbackObserver.observationBudget={maxBoundaries:50000000,maxMs:360000,maxRecords:2048,maxBytes:1048576,
+  measuredRenderBoundaries:1441804,measuredBoundariesPer64StepACK:64000,fullRenderCapacity:34,continuous:true,perBlockStorage:false};
  p.evidence.successor.routeCompositionUnchanged=false;
  p.evidence.successor.scope='Pre-first-script owning callback diagnostic composition; no runtime qualification or preset/Start grant';
  p.evidence.compositionSHA256=base.hash(p.source);p.evidence.routeCompositionSHA256=base.hash(p.route);

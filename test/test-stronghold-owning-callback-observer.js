@@ -67,6 +67,8 @@ async function physical(){
   rejects('slot',{workerSlot:1},/binding/);rejects('endpoint',{endpointIdentity:2},/binding/);
   rejects('media',{exeSha256:'0'.repeat(64)},/binding/);rejects('url',{workerURL:'foreign'},/binding/);
   rejects('epoch',{epoch:''},/binding/);rejects('deadline',{deadline:0},/deadline/);
+  rejects('oversizedBoundaryBudget',{maxBoundaries:50000001},/maxBoundaries/);
+  let budget=fresh();assert.equal(budget.report.limits.maxBoundaries,50000000);assert.equal(budget.report.limits.maxMs,360000);budget.finish();
   const before=hash(b);let x=start();x.check();assert.match(x.report.fault,/missing trace/);assert.equal(hash(b),before);negatives.missing=x.report.fault;
   const checks=[['foreignEpoch',{epoch:'foreign',command:1,kind:'begin'},/epoch/],
    ['inputOrder',{epoch,command:1,kind:'UP-consumed'},/order/],
@@ -96,14 +98,16 @@ async function physical(){
   }
   x=start({maxRecords:1});x.annotate({epoch,command:1,kind:'begin'});assert.match(x.report.fault,/overflow/);negatives.records=x.report.fault;
   x=start({maxBytes:1});assert.match(x.report.fault,/overflow/);negatives.bytes=x.report.fault;
-  x=start({maxBoundaries:1});e.set_trace_esp(1,0,0);await execute(7);assert.match(x.report.fault,/overflow/);negatives.boundaries=x.report.fault;e.set_trace_esp(0,0,0);
+  x=start({maxBoundaries:1});e.set_trace_esp(1,0,0);await assert.rejects(execute(7),/overflow/);assert.match(x.report.fault,/overflow/);assert.equal(x.report.blocks,2);assert.notEqual(e.get_eip()>>>0,stop);negatives.boundaries=x.report.fault;e.set_trace_esp(0,0,0);
+  x=start({maxRecords:1});e.set_trace_esp(1,0,0);await assert.rejects(execute(7),/overflow/);assert.notEqual(e.get_eip()>>>0,stop);assert.equal(x.report.records.length,1);negatives.nativeRecords=x.report.fault;e.set_trace_esp(0,0,0);
   x=start();e.set_current_thread_id(2);x.check();assert.match(x.report.fault,/thread/);e.set_current_thread_id(1);negatives.thread=x.report.fault;
   const val=b[wa(0x430e10)];b[wa(0x430e10)]^=1;x=start();assert.match(x.report.fault,/bytes/);b[wa(0x430e10)]=val;negatives.bytesChanged=x.report.fault;
   x=start({memory:new WebAssembly.Memory({initial:1})});assert.match(x.report.fault,/memory/);negatives.memory=x.report.fault;
   x=start({getExports:()=>({...e})});assert.equal(x.report.status,'running');x.check();assert.match(x.report.fault,/instance/);negatives.instance=x.report.fault;
   // Real original setup entry without a preceding callback must be rejected.
-  x=start();e.set_trace_esp(1,0,0);await execute(7,0x429100);assert.match(x.report.fault,/history/);negatives.setupHistory=x.report.fault;e.set_trace_esp(0,0,0);
+  x=start();e.set_trace_esp(1,0,0);await assert.rejects(execute(7,0x429100),/history/);assert.match(x.report.fault,/history/);negatives.setupHistory=x.report.fault;e.set_trace_esp(0,0,0);
   let time=0;x=start({now:()=>time,deadline:10});time=10;x.check();const first=x.report.fault;x.finish('later');x.annotate({});assert.equal(x.report.fault,first);negatives.earliestFault=first;
+  time=0;x=start({now:()=>time,deadline:10});time=10;e.set_trace_esp(1,0,0);await assert.rejects(execute(7),/deadline/);assert.equal(x.report.blocks,0);assert.notEqual(e.get_eip()>>>0,stop);negatives.nativeExpiry=x.report.fault;e.set_trace_esp(0,0,0);
  }
  parentPort.postMessage({pass:true,segments,observation,negatives,workerSourceSHA:globalThis.fixtureWorkerSHA,
   limits:'Synthetic dependency returns and setup epilogue; no original full setup/game execution claim'});

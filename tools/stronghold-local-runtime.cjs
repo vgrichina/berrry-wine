@@ -3,10 +3,28 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-split-gesture-reviews user task';
-const ASSIGNMENT='stronghold-first-script-cause-onward user task';
+const AUTH='stronghold-render-sized-observer user task';
+const ASSIGNMENT='stronghold-render-sized-observer user task';
 const CHROME='/opt/google/chrome/chrome';
 const CUTOFF=Date.parse('2026-11-04T23:50:00Z'),CLEANUP=Date.parse('2026-11-04T23:53:00Z');
+function requireRuntimeRelease(board,now=Date.now()){
+ const rows=board.split('\n').filter(row=>/^\S+ mdk2-bounded-review LOCAL HEAVY RELEASE\b/.test(row));
+ const row=rows.at(-1),at=Date.parse(row?.split(' ')[0]);
+ if(!row||!Number.isFinite(at)||at<Date.parse('2026-11-04T20:50:00Z')||at>now)throw Error('exact mdk2-bounded-review-window-nov04 local heavy release required');
+ return {row,at};
+}
+function requireLocalFlock(lockPath='/tmp/wine-local-runtime.lock'){
+ const ancestors=new Set();
+ for(let pid=process.pid;pid>1&&!ancestors.has(pid);){ancestors.add(pid);const s=fs.readFileSync('/proc/'+pid+'/stat','utf8');pid=Number(s.slice(s.lastIndexOf(')')+2).split(' ')[1]);}
+ const target=fs.statSync(lockPath),dev=BigInt(target.dev),major=((dev>>8n)&0xfffn)|((dev>>32n)&0xfffff000n),minor=(dev&0xffn)|((dev>>12n)&0xffffff00n);
+ for(const row of fs.readFileSync('/proc/locks','utf8').trim().split('\n')){
+  const p=row.trim().split(/\s+/),d=p[5]?.split(':'),pid=Number(p[4]);
+  if(p[1]!=='FLOCK'||p[3]!=='WRITE'||!ancestors.has(pid)||d?.[2]!==String(target.ino)||BigInt('0x'+d[0])!==major||BigInt('0x'+d[1])!==minor)continue;
+  for(const fd of fs.readdirSync('/proc/'+pid+'/fd')){try{const held=fs.statSync('/proc/'+pid+'/fd/'+fd);if(held.dev===target.dev&&held.ino===target.ino)return {pid,fd,path:lockPath};}catch{}}
+ }
+ throw Error('required local flock must be held by this process or its ancestor');
+}
+function assertRuntimeOwnership(){return {release:requireRuntimeRelease(fs.readFileSync('messageboard.txt','utf8')),flock:requireLocalFlock()};}
 function identity(){
  const stat=fs.readFileSync('/proc/self/stat','utf8');
  return {hostname:os.hostname(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),
@@ -48,6 +66,7 @@ function createRelease({run,pins,nonce,now=Date.now()}){
 async function normalClose(browser,{timeoutMs=60000,record=()=>{}}={}){
  if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>180000)throw Error('finite normal closure reserve required');
  const child=browser.process();if(!child)throw Error('owned Chrome process required');
+ const stat=fs.readFileSync('/proc/'+child.pid+'/stat','utf8'),startTicks=stat.slice(stat.lastIndexOf(')')+2).split(' ')[19];
  let timer,listener;
  const exit=new Promise((resolve,reject)=>{
   listener=(code,signal)=>resolve({pid:child.pid,code,signal});
@@ -56,11 +75,11 @@ async function normalClose(browser,{timeoutMs=60000,record=()=>{}}={}){
   timer=setTimeout(()=>reject(Error('normal Chrome exit deadline; closure unproved')),timeoutMs);
  });
  try{
-  record({kind:'normal-close-request',pid:child.pid});
+  record({kind:'normal-close-request',pid:child.pid,startTicks});
   const request=(async()=>{const session=await browser.target().createCDPSession();await session.send('Browser.close');})();
   // Closing the connection may reject the command before the process exits.
   request.catch(error=>record({kind:'normal-close-protocol-result',error:String(error)}));
-  const result=await exit;record({kind:'actual-chrome-exit',...result});
+  const result=await exit;record({kind:'actual-chrome-exit',...result,startTicks});
   if(result.code!==0||result.signal!==null)throw Error('abnormal Chrome exit '+JSON.stringify(result));
   return result;
  }finally{clearTimeout(timer);child.removeListener('exit',listener);browser.disconnect();}
@@ -103,7 +122,9 @@ function prepare(options){
  const p=observer.prepare(options),q=JSON.stringify;
  const old="  if(release.authorization!=='stronghold-split-gesture-reviews user task'||release.shutdownOwner!=='coordinator'||!release.boxId||!Number.isFinite(Date.parse(release.expiry))||Date.parse(release.expiry)<Date.now()+600000)throw Error('fresh authorized finite TTL required');\n  if(!Number.isFinite(Date.parse(release.closeBy))||Date.parse(release.closeBy)<=Date.now()||Date.parse(release.closeBy)>Date.parse(release.expiry)-300000)throw Error('fresh bounded closeBy required');";
  const nonce=crypto.randomBytes(32).toString('hex');
- p.source=base.replaceOnce(p.source,old,`  require(${q(__filename)}).validateRelease(release,{run:RUN,pins:${q(options.pins)},nonce:${q(nonce)}});`);
+ p.source=base.replaceOnce(p.source,old,`  require(${q(__filename)}).validateRelease(release,{run:RUN,pins:${q(options.pins)},nonce:${q(nonce)}});\n  const runtimeOwnership=require(${q(__filename)}).assertRuntimeOwnership();`);
+ p.source=base.replaceOnce(p.source,"fs.mkdirSync(OUT);fs.mkdirSync(path.join(OUT,'commands'));",
+  "fs.mkdirSync(OUT);fs.mkdirSync(path.join(OUT,'commands'));\n  save('runtime-ownership.json',runtimeOwnership);");
  p.source=base.replaceOnce(p.source,'Date.parse(release.closeBy)','release.closeBy');
  p.source=base.replaceOnce(p.source,"executablePath:'/usr/bin/google-chrome'",`executablePath:${q(CHROME)}`);
  p.source=base.replaceOnce(p.source,'let browser,page,server,closing=false,halted=false,number=0,timer,deadline;',
@@ -123,4 +144,4 @@ function prepare(options){
  p.evidence.compositionSHA256=base.hash(p.source);
  return {...p,createRelease:()=>createRelease({run:options.run,pins:options.pins,nonce})};
 }
-module.exports={identity,binding,validateRelease,createRelease,normalClose,mailboxStatus,assertMailboxCommandReady,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={identity,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,normalClose,mailboxStatus,assertMailboxCommandReady,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
