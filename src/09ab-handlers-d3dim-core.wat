@@ -263,20 +263,40 @@
   ;; texture q independent of position rhw without dividing at the vertices.
   (global $d3dim_supplied_projection (mut i32) (i32.const 0))
   (func $d3dim_supplied_projected (param $state i32) (result i32)
-    (local $block i32)
+    (local $block i32) (local $flags i32)
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
     (local.set $block (call $gl32 (i32.add (local.get $state) (i32.const 4024))))
     (if (i32.eqz (local.get $block)) (then (return (i32.const 0))))
+    (local.set $flags (call $gl32 (i32.add (local.get $block) (i32.const 512))))
     (i32.and
-      (i32.eq (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 0))
-      (i32.eq (call $gl32 (i32.add (local.get $block) (i32.const 512))) (i32.const 0x103))))
+      ;; Supplied sets have no TCI high word. FVF packing already selected
+      ;; their FLOAT2 pair; generated coordinates have different prerequisites.
+      (i32.le_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 7))
+      (i32.and (i32.ge_u (local.get $flags) (i32.const 0x102))
+        (i32.le_u (local.get $flags) (i32.const 0x104)))))
 
   ;; The encoder owns a copy in the WVP scratch of a type-4 TL snapshot. TL
   ;; replay never recomputes WVP, so this does not alias live matrix scratch.
   (func $d3dim_supplied_matrix (param $state i32) (result i32)
+    (local $matrix i32) (local $copy i32) (local $column i32) (local $row i32)
     (if (global.get $d3dim_state_override) (then
       (return (i32.add (call $g2w (local.get $state)) (i32.const 3136)))))
-    (call $g2w (call $gl32 (i32.add (local.get $state) (i32.const 4024)))))
+    (local.set $matrix (call $g2w (call $gl32 (i32.add (local.get $state) (i32.const 4024)))))
+    ;; Normalize the last output component into z, keeping both numerators.
+    ;; COUNT2 therefore yields (x/y,y/y) for a 2D sampler; COUNT4 ignores the
+    ;; third quotient and samples (x/w,y/w). No vertex division takes place.
+    (local.set $column (i32.shl (i32.sub
+      (i32.and (i32.load offset=512 (local.get $matrix)) (i32.const 0xff)) (i32.const 1)) (i32.const 2)))
+    (if (i32.eqz (i32.or (i32.eq (local.get $column) (i32.const 4))
+          (i32.eq (local.get $column) (i32.const 12)))) (then (return (local.get $matrix))))
+    (local.set $copy (i32.add (call $g2w (local.get $state)) (i32.const 3136)))
+    (call $memcpy (local.get $copy) (local.get $matrix) (i32.const 64))
+    (loop $rows
+      (i32.store offset=8 (i32.add (local.get $copy) (local.get $row))
+        (i32.load (i32.add (i32.add (local.get $matrix) (local.get $row)) (local.get $column))))
+      (local.set $row (i32.add (local.get $row) (i32.const 16)))
+      (br_if $rows (i32.lt_u (local.get $row) (i32.const 64))))
+    (local.get $copy))
   (func (export "d3dim_gpu_supplied_matrix") (param $this i32) (result i32)
     (call $d3dim_supplied_matrix (call $d3ddev_state (local.get $this))))
 
