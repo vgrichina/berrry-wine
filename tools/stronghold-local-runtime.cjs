@@ -4,9 +4,9 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),cryp
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
 const AUTH='stronghold-split-gesture-reviews user task';
-const ASSIGNMENT='stronghold-route-recognition-handoff user task';
+const ASSIGNMENT='stronghold-current-hover-diagnostic user task';
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-04T20:20:00Z'),CLEANUP=Date.parse('2026-11-04T20:23:00Z');
+const CUTOFF=Date.parse('2026-11-04T21:00:00Z'),CLEANUP=Date.parse('2026-11-04T21:03:00Z');
 function identity(){
  const stat=fs.readFileSync('/proc/self/stat','utf8');
  return {hostname:os.hostname(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),
@@ -42,6 +42,29 @@ function createRelease({run,pins,nonce,now=Date.now()}){
   issuedAt:now,closeBy:now+720000,expiresAt:CLEANUP,chromeCutoff:CUTOFF,cleanupBy:CLEANUP};
  return validateRelease(release,{run,pins,nonce,now});
 }
+// Request normal Chrome shutdown directly and observe the actual child exit.
+// Puppeteer's browser.close may fall back to killing its process; that cannot
+// establish normal closure. This helper sends no process signal.
+async function normalClose(browser,{timeoutMs=60000,record=()=>{}}={}){
+ if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>180000)throw Error('finite normal closure reserve required');
+ const child=browser.process();if(!child)throw Error('owned Chrome process required');
+ let timer,listener;
+ const exit=new Promise((resolve,reject)=>{
+  listener=(code,signal)=>resolve({pid:child.pid,code,signal});
+  if(child.exitCode!==null||child.signalCode!==null)listener(child.exitCode,child.signalCode);
+  else child.once('exit',listener);
+  timer=setTimeout(()=>reject(Error('normal Chrome exit deadline; closure unproved')),timeoutMs);
+ });
+ try{
+  record({kind:'normal-close-request',pid:child.pid});
+  const request=(async()=>{const session=await browser.target().createCDPSession();await session.send('Browser.close');})();
+  // Closing the connection may reject the command before the process exits.
+  request.catch(error=>record({kind:'normal-close-protocol-result',error:String(error)}));
+  const result=await exit;record({kind:'actual-chrome-exit',...result});
+  if(result.code!==0||result.signal!==null)throw Error('abnormal Chrome exit '+JSON.stringify(result));
+  return result;
+ }finally{clearTimeout(timer);child.removeListener('exit',listener);browser.disconnect();}
+}
 function prepare(options){
  const p=observer.prepare(options),q=JSON.stringify;
  const old="  if(release.authorization!=='stronghold-split-gesture-reviews user task'||release.shutdownOwner!=='coordinator'||!release.boxId||!Number.isFinite(Date.parse(release.expiry))||Date.parse(release.expiry)<Date.now()+600000)throw Error('fresh authorized finite TTL required');\n  if(!Number.isFinite(Date.parse(release.closeBy))||Date.parse(release.closeBy)<=Date.now()||Date.parse(release.closeBy)>Date.parse(release.expiry)-300000)throw Error('fresh bounded closeBy required');";
@@ -52,6 +75,8 @@ function prepare(options){
  p.source=base.replaceOnce(p.source,'let browser,page,server,closing=false,halted=false,number=0,timer,deadline;',
   'let browser,page,server,closing=false,halted=false,number=0,timer,deadline,bootstrapTimer;');
  p.source=base.replaceOnce(p.source,'if(closing)return;closing=true;clearTimeout(timer);','if(closing)return;closing=true;clearTimeout(timer);clearTimeout(bootstrapTimer);');
+ p.source=base.replaceOnce(p.source,"if(browser)await browser.close().catch(e=>log('cleanup-errors.jsonl',{error:String(e)}));",
+  `if(browser)await require(${q(__filename)}).normalClose(browser,{record:r=>log('chrome-normal-closure.jsonl',r)}).catch(e=>log('cleanup-errors.jsonl',{error:String(e)}));`);
  p.source=base.replaceOnce(p.source,'deadline=Math.min(Date.now()+360000,release.closeBy);',
   'deadline=Math.min(Date.now()+720000,release.closeBy);const bootstrapDeadline=Math.min(Date.now()+60000,deadline);');
  p.source=base.replaceOnce(p.source,"  page=await browser.newPage();", "  bootstrapTimer=setTimeout(()=>boundary.close(()=>close('bounded 60s bootstrap deadline')),Math.max(0,bootstrapDeadline-Date.now()));\n  page=await browser.newPage();");
@@ -64,4 +89,4 @@ function prepare(options){
  p.evidence.compositionSHA256=base.hash(p.source);
  return {...p,createRelease:()=>createRelease({run:options.run,pins:options.pins,nonce})};
 }
-module.exports={identity,binding,validateRelease,createRelease,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={identity,binding,validateRelease,createRelease,normalClose,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};

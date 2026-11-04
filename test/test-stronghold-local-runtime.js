@@ -3,7 +3,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-route-recognition-handoff/contract-test');
+const run=path.resolve('scratch/runs/20261104-stronghold-current-hover-diagnostic/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
@@ -23,6 +23,7 @@ reject('expired predecessor authorization',r=>r.assignment='stronghold-portable-
 reject('previous title assignment',r=>r.assignment='stronghold-title-recognition-onward user task');
 reject('previous menu assignment',r=>r.assignment='stronghold-menu-recognition-onward user task');
 reject('previous ChooseType assignment',r=>r.assignment='stronghold-choosetype-recognition-onward user task');
+reject('previous route assignment',r=>r.assignment='stronghold-route-recognition-handoff user task');
 reject('foreign shutdown owner',r=>r.shutdownOwner='worker');
 reject('box as local',r=>r.kind='leased-box');
 reject('fake box ID',r=>r.boxId='bx_local');
@@ -74,6 +75,20 @@ fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(release));
 const guarded=p.source.slice(start,end)+'return true;\n}main();';
 // The embedded random nonce must reject another preparation's release.
 (async()=>{
+ const {EventEmitter}=require('node:events');
+ async function closureFixture(code,signal,timeout=false){
+  const child=Object.assign(new EventEmitter(),{pid:12345,exitCode:null,signalCode:null}),events=[];let disconnected=false;
+  const browser={process:()=>child,disconnect:()=>{disconnected=true;},target:()=>({createCDPSession:async()=>({send:async method=>{
+   assert.equal(method,'Browser.close');if(!timeout)setTimeout(()=>{child.exitCode=code;child.signalCode=signal;child.emit('exit',code,signal);},1);
+  }})})};
+  const result=api.normalClose(browser,{timeoutMs:timeout?10:1000,record:r=>events.push(r)});
+  if(timeout)await assert.rejects(result,/deadline/);
+  else if(signal!==null||code!==0)await assert.rejects(result,/abnormal/);
+  else assert.deepEqual(await result,{pid:12345,code:0,signal:null});
+  assert(disconnected);assert.equal(child.listenerCount('exit'),0);return events;
+ }
+ await closureFixture(0,null);await closureFixture(null,'SIGKILL');await closureFixture(1,null);await closureFixture(null,null,true);
+ assert(!p.source.includes('await browser.close()'));
  await assert.rejects(vm.runInNewContext(guarded,{require,fs,path,RUN:run}),/nonce/);
  // Use this exact preparation's nonce and actual process, without launching.
  const embedded=JSON.parse(p.source.match(/nonce:("[a-f0-9]{64}")/)[1]);

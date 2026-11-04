@@ -14,6 +14,35 @@ const HOVER_SHARED=[
  {box:[110,315,660,75],sha256:'76c89d4845510f8bcd264f216161ad05d262b3c53efb3dbc2e5f70f05f5f2f38'},
  {box:[160,480,260,120],sha256:'41696e3a577197f9c7e8eecc26b05e79633386ab1def6d22fd56552e70d5ef3a'}
 ];
+const HOVER_REFERENCE=path.join(ROOT,'scratch/runs/20261104-stronghold-current-request-native/review/route-native-boundary-3.png');
+const HOVER_REFERENCE_SHA='23cf4c637d5cd0a2b58b290b36a62369d9c622f8d548243c6158849243473d41';
+// Measured against the personally reviewed original current hover at step8832.
+// Fixed screenshot coordinates, all RGB pixels and clipped40x15 tiles count.
+// The Custom Game heading is still exact; the description is independent.
+const HOVER_REGIONS=[
+ {box:[110,315,660,75],changed:130,error:2200,tileChanged:20,tileError:450},
+ {box:[160,480,260,120],changed:360,error:8500,tileChanged:65,tileError:1700},
+ {box:[345,630,195,33],changed:0,error:0,tileChanged:0,tileError:0},
+ {box:[240,676,400,25],changed:50,error:1300,tileChanged:16,tileError:600}
+];
+function compareHover(png){
+ const reference=base.retained(HOVER_REFERENCE);
+ if(base.hash(reference)!==HOVER_REFERENCE_SHA)throw Error('sealed original hover reference mismatch');
+ const a=PNG.sync.read(reference),b=PNG.sync.read(png);
+ if(b.width!==1200||b.height!==900)throw Error('hover screenshot geometry required');
+ const regions=HOVER_REGIONS.map(({box,changed:maxChanged,error:maxError,tileChanged,tileError})=>{
+  const [x,y,w,h]=box,columns=Math.ceil(w/40),tiles=Array.from({length:columns*Math.ceil(h/15)},()=>({changed:0,error:0}));
+  let changed=0,error=0;
+  for(let j=0;j<h;j++)for(let i=0;i<w;i++){
+   const o=((y+j)*1200+x+i)*4;
+   if(a.data[o+3]!==255||b.data[o+3]!==255)throw Error('nonopaque hover');
+   const d=Math.max(...[0,1,2].map(c=>Math.abs(a.data[o+c]-b.data[o+c])));
+   if(d){changed++;error+=d;const t=tiles[Math.floor(j/15)*columns+Math.floor(i/40)];t.changed++;t.error+=d;}
+  }
+  return {box,changed,error,tiles,accepted:changed<=maxChanged&&error<=maxError&&tiles.every(t=>t.changed<=tileChanged&&t.error<=tileError)};
+ });
+ return {accepted:regions.every(r=>r.accepted),regions};
+}
 // Diagnostic only. These two crops are byte-identical between the authentic
 // original ChooseType and hover; no hover-specific text acceptance is inferred.
 function inspectNextHoverShared(png){
@@ -58,7 +87,7 @@ function compareTower(png){
 function composeNavigation(bytes){
  if(base.hash(bytes)!==NAVIGATION_SHA)throw Error('sealed original route navigation mismatch');
  return base.replaceOnce(bytes.toString(),'function scene(bytes){',
-  `function scene(bytes){if(require(${JSON.stringify(__filename)}).boundedChooseType(bytes))return 'choose-type';`);
+  `function scene(bytes){const recognition=require(${JSON.stringify(__filename)});if(recognition.compareHover(bytes).accepted)return 'choose-type-custom-hover';if(recognition.boundedChooseType(bytes))return 'choose-type';`);
 }
 function boundedChooseType(png){return title.compareType(png).accepted&&compareTower(png).accepted;}
 function compileClosure(source,filename,routeSource,hashes=base.closureHashes(filename)){
@@ -78,8 +107,19 @@ function originalNavigation(){return title.compileClosure(base.retained(WRAPPER)
 function prepare(options){
  const p=title.prepare(options);
  assertClosure(p.evidence.retainedClosure);
+ if(options.observeCurrentHover===true){
+  // The separately authorized observation ends before the old exact hover
+  // gate. All original move, ownership, ACK, drainage and freshness guards
+  // still run. The receipt is evidence only and terminally forbids a press.
+  p.route=base.replaceOnce(p.route,
+   "const hovered=await capture();if(hovered.scene!=='choose-type-custom-hover')fail('hover scene required');",
+   "const hovered=await capture();await checkedReview({...hovered,scene:'current-custom-hover-observation'});const observedFresh=await capture();assertFresh(hovered,observedFresh);last=observedFresh;continuation='diagnostic-stop';failed=true;return receipt();");
+  p.evidence.currentHoverObservation={beforeExactHoverGate:true,originalMoveOnly:true,terminalBeforePress:true,personalReviewAndFreshness:true};
+  p.evidence.routeCompositionSHA256=base.hash(p.route);
+ }
  p.evidence.routeRecognition={path:__filename,sha256:base.hash(fs.readFileSync(__filename)),navigation:NAVIGATION,navigationSHA256:NAVIGATION_SHA,
   reference:title.TYPE_REFERENCE,referenceSHA256:title.TYPE_REFERENCE_SHA,closureManifest:CLOSURE_MANIFEST,closureManifestSHA256:CLOSURE_MANIFEST_SHA,header:'unchanged bounded header',tower:{box:[460,420,260,180],tiles:[52,30],changed:160,error:3000,tileChanged:35,tileError:1200},allPixels:true};
+ p.evidence.hoverRecognition={reference:HOVER_REFERENCE,referenceSHA256:HOVER_REFERENCE_SHA,regions:HOVER_REGIONS,tiles:[40,15],allPixels:true,geometry:[1200,900],opaque:true};
  return p;
 }
-module.exports={NAVIGATION,NAVIGATION_SHA,WRAPPER,towerCrop,compareTower,boundedChooseType,composeNavigation,compileClosure,originalNavigation,inspectNextHoverShared,prepare};
+module.exports={NAVIGATION,NAVIGATION_SHA,WRAPPER,towerCrop,compareTower,boundedChooseType,composeNavigation,compileClosure,originalNavigation,inspectNextHoverShared,compareHover,HOVER_REFERENCE,HOVER_REFERENCE_SHA,HOVER_REGIONS,prepare};
