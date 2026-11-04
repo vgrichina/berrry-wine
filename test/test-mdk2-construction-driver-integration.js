@@ -645,7 +645,8 @@ test('run-local controller composition retains actual operator/author and measur
   assert(sources['operator.py'].includes("str(E/'author.py')"));assert(sources['operator.py'].includes("str(E/'next.py')"));
   assert(sources['runtime_io.py'].includes("v['runDirectory'] == str(E)"));
   assert(!sources['runtime_io.py'].includes('bx_p6qbh9x9'));
-  assert(sources['native-menu.cjs'].includes('20261104-mdk2-measured-escape-original/native-menu.cjs'));
+  assert(sources['native-menu.cjs'].includes('mdk2-local-runtime.cjs'));
+  assert(sources['native-menu.cjs'].includes('.menuSelector()'));
   for(const [name,source] of Object.entries(sources)){
     if(name.endsWith('.py')){const result=cp.spawnSync('python3',['-c','import ast,sys;ast.parse(sys.stdin.read())'],{input:source,encoding:'utf8'});assert.equal(result.status,0,result.stderr);}
   }

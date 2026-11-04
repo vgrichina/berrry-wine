@@ -752,9 +752,9 @@ function controllerSources(runDirectory) {
     "assert v['assignment'] == '20261104-mdk2-measured-escape-original'", "assert v['assignment'] == '20261104-mdk2-bounded-trace-driver-repair'");
   sources['runtime_io.py'] = replaceOnce(sources['runtime_io.py'],
     "assert v['boxId'] == 'bx_p6qbh9x9'", "assert v['boxId'] and v['runDirectory'] == str(E)");
-  // The original control expects a run-local CLI at this one seam. Delegate
-  // to the sealed measured entry (including readiness.repairSource).
-  sources['native-menu.cjs'] = `const fs=require('fs');const {select}=require(${JSON.stringify(path.join(base, 'native-menu.cjs'))});\nconst [phase,dir,review,max]=process.argv.slice(2);select(dir,JSON.parse(fs.readFileSync(review)),phase,max===undefined?{}:{maxCommands:Number(max)}).then(v=>console.log(JSON.stringify(v))).catch(e=>{console.error(e);process.exitCode=1});\n`;
+  // The original control expects this run-local CLI. Preserve measured Escape
+  // and original16ms; add only the bounded post-keyup Medium rest reservation.
+  sources['native-menu.cjs'] = `const fs=require('fs');const {select}=require(${JSON.stringify(path.join(ROOT,'tools/mdk2-local-runtime.cjs'))}).menuSelector();\nconst [phase,dir,review,max]=process.argv.slice(2);select(dir,JSON.parse(fs.readFileSync(review)),phase,max===undefined?{}:{maxCommands:Number(max)}).then(v=>console.log(JSON.stringify(v))).catch(e=>{console.error(e);process.exitCode=1});\n`;
   return sources;
 }
 function assertRunnable() { return inspect(); }

@@ -9,6 +9,83 @@ const integration=require('../tools/mdk2-construction-driver-integration.cjs');
 const run=fs.mkdtempSync(path.join(local.BASE,'mdk2-local-contract-test-'));
 after(()=>fs.rmSync(run,{recursive:true,force:true}));
 const now=Date.parse('2026-11-04T17:50:00Z');
+test('actual Medium command/native prefix: original rejects required rest; bounded release reserve admits it offline',async()=>{
+ const actual=path.join(local.BASE,'20261104-mdk2-honest-menu-medium-gameplay/browser');
+ const results=[];
+ for(const [repaired,offset,tail]of [[false,0,false],[true,0,false],[true,16,false],[true,32,false],[true,0,true]]){
+  const tmp=fs.mkdtempSync(path.join(local.BASE,'mdk2-medium-rest-'));
+  try{
+   fs.mkdirSync(path.join(tmp,'commands'));
+   const read=name=>JSON.parse(fs.readFileSync(path.join(actual,name)));
+   const put=(name,v)=>fs.writeFileSync(path.join(tmp,name),JSON.stringify(v));
+   const main=read('native-selector-75.json').state.main;
+   // No historical game PNG is read or viewed: only the actual command/native
+   // prefix is used. The inspection pixels below are explicitly plain fixture.
+   const png=Buffer.from('OFFLINE MEDIUM REST BUDGET FIXTURE'),capture='fixture-medium',sha=integration.sha(png);
+   fs.writeFileSync(path.join(tmp,capture+'.png'),png);put(capture+'.json',{sha256:sha,state:{main}});
+   const r={capture,sha256:sha,steps:main.frozen.steps,personallyInspected:true,inspector:'offline native prefix fixture',screen:'difficulty',selection:'Medium',transitioning:false,difficultyDialogVisible:true,mediumHighlighted:true};
+   put('identity.json',{commit:integration.SOURCE,deadline:new Date(Date.now()+720000).toISOString(),release:{recoverBy:new Date(Date.now()+900000).toISOString()}});
+   put('selector.json',{app:'mdk2_demo',renderer:'webgl',isolated:true});
+   put('commands/84.json',{action:'shot',name:capture});
+   put('native-selector-ledger.json',{startedAt:Date.now(),steps:176+offset,commands:30,commandLimit:113,open:true,newgame:true,medium:false});
+   const sent=[];
+   const spool={next:85,end:Date.now()+60000,commands:()=>Array.from({length:85},(_,i)=>i),send:async function(c){
+    const i=this.next++;sent.push(c);
+    if(i<=127){
+     const expected=read('commands/'+i+'.json');if(expected.reviewRef)expected.reviewRef=capture;
+     assert.deepEqual(c,expected,'unchanged actual Medium prefix');
+     if(c.action==='state')put(c.name+'.json',read(c.name+'.json'));
+     if(['keydown','keyup'].includes(c.action))put('input-'+i+'.json',read('input-'+i+'.json'));
+    }else{
+     if(!tail)throw Error('OFFLINE_REQUIRED_REST_REACHED');
+     // Hypothetical unsettled future readbacks test only the fixed cap; these
+     // are not game execution or evidence of post-Medium completion.
+     if(c.action==='state')put(c.name+'.json',{main:read('input-127.json').main});
+    }
+    return {i,ack:{i,ok:true}};
+   }};
+   const selector=repaired?local.menuSelector():require(path.join(local.BASE,'20261104-mdk2-installed-original-gameplay/no-pacing-selector.cjs'));
+   let error;try{await selector.select(tmp,r,'medium',{spool,maxCommands:113});}catch(e){error=String(e);}
+   if(repaired&&offset<=16&&!tail){assert.match(error,/OFFLINE_REQUIRED_REST_REACHED/);assert.deepEqual(sent.at(-1),{action:'step',n:32});}
+   else assert.match(error,/menu step budget exhausted/);
+   if(tail){assert.deepEqual(sent.slice(43).filter(c=>c.action==='step'),[{action:'step',n:32},{action:'step',n:16}]);assert.equal(JSON.parse(fs.readFileSync(path.join(tmp,'native-selector-ledger.json'))).steps,544);}
+   if(offset===32)assert(!sent.some(c=>c.action==='keyup'),'press ceiling remains 512');
+   results.push({fixtureOnly:true,repaired,offset,hypotheticalTail:tail,error,sent,ledger:JSON.parse(fs.readFileSync(path.join(tmp,'native-selector-ledger.json')))});
+  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
+ }
+ if(process.env.MDK2_LOCAL_TEST_EVIDENCE)fs.writeFileSync(path.join(process.env.MDK2_LOCAL_TEST_EVIDENCE,'medium-release-reserve-before-after.json'),JSON.stringify(results,null,2));
+});
+test('exact initial and startup commands traverse the generated Python local transport and real ACK client offline',async()=>{
+ const tmp=fs.mkdtempSync(path.join(local.BASE,'mdk2-startup-commands-'));
+ const browser=path.join(tmp,'browser');fs.mkdirSync(path.join(browser,'commands'),{recursive:true});
+ const r=release();r.runDirectory=tmp;
+ fs.writeFileSync(path.join(tmp,'runtime-release.json'),JSON.stringify(r));local.prepareTransport(tmp);
+ for(const [name,code]of Object.entries(integration.controllerSources(tmp)))fs.writeFileSync(path.join(tmp,name),code);
+ fs.writeFileSync(path.join(browser,'identity.json'),JSON.stringify({fixtureOnly:true}));
+ const {InspectionGuard}=require(path.join(local.BASE,'20261104-mdk2-adequate-lifetime-menu/inspection-guard.cjs'));
+ const guard=new InspectionGuard(browser),commands=[];let steps=0;
+ const put=(name,value)=>fs.writeFileSync(path.join(browser,name),JSON.stringify(value));
+ const timer=setInterval(()=>{
+  const i=commands.length,file=path.join(browser,'commands',i+'.json');if(!fs.existsSync(file))return;
+  const c=JSON.parse(fs.readFileSync(file));guard.authorize(c,i);commands.push(c);
+  if(c.action==='step'){steps+=c.n;put('step-'+i+'.json',{requested:c.n,ran:c.n,timedOut:false});}
+  else if(c.action==='shot'){
+   assert.match(c.name,/^startup-\d+$/);const png=Buffer.from('explicit plain offline browser fixture');
+   fs.writeFileSync(path.join(browser,c.name+'.png'),png);
+   const shot={sha256:integration.sha(png),state:{main:{frozen:{steps},nativeSelection:{}}}};
+   put(c.name+'.json',shot);for(const suffix of ['-raw','-owner','-native-main'])put(c.name+suffix+'.json',{fixtureOnly:true});
+   guard.capture(c.name,shot,i);
+  }else assert.fail('unexpected startup command '+c.action);
+  put('reply-'+i+'.json',{i,ok:true});
+ },5);
+ const call=action=>new Promise((resolve,reject)=>cp.execFile('python3',[path.join(tmp,'local-control.py'),'next.py',action],{cwd:local.ROOT,timeout:10000},(e,stdout,stderr)=>e?reject(Error(stderr)):resolve(stdout)));
+ try{
+  await call('initial');await call('startup');
+  assert.deepEqual(commands,[{action:'shot',name:'startup-0'},...Array.from({length:8},()=>({action:'step',n:64})),{action:'shot',name:'startup-512'}]);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(tmp,'recovered/browser/startup-512.json'))).state.main.frozen.steps,512);
+  if(process.env.MDK2_LOCAL_TEST_EVIDENCE)fs.writeFileSync(path.join(process.env.MDK2_LOCAL_TEST_EVIDENCE,'exact-startup-transport.json'),JSON.stringify({fixtureOnly:true,commands,chromeSpawns:0},null,2));
+ }finally{clearInterval(timer);fs.rmSync(tmp,{recursive:true,force:true});}
+});
 test('actual Python review rejects contradictory menu classification before approval: old fail/new pass',()=>{
  const results=[];
  for(const repaired of [false,true]){
@@ -40,6 +117,36 @@ test('actual Python review rejects contradictory menu classification before appr
  const honest={screen:'main-menu',selection:'New Game',transitioning:false,controllerIconHighlighted:true,newGameLabelVisible:true,legalOverlayVisible:false};
  assert.doesNotThrow(()=>local.preflightMenuReview('observe',honest));
  if(process.env.MDK2_LOCAL_TEST_EVIDENCE)fs.writeFileSync(path.join(process.env.MDK2_LOCAL_TEST_EVIDENCE,'review-preflight-before-after.json'),JSON.stringify({fixtureOnly:true,results},null,2));
+});
+test('intended open, New Game and Medium field sets traverse the original author/operator/next/preflight/local control offline',()=>{
+ const results=[];
+ for(const mode of ['open','newgame','medium']){
+  const tmp=fs.mkdtempSync(path.join(local.BASE,'mdk2-menu-command-'));
+  try{
+   const r=release();r.runDirectory=tmp;fs.writeFileSync(path.join(tmp,'runtime-release.json'),JSON.stringify(r));local.prepareTransport(tmp);
+   for(const [name,code]of Object.entries(integration.controllerSources(tmp)))fs.writeFileSync(path.join(tmp,name),code);
+   const browser=path.join(tmp,'browser'),recovered=path.join(tmp,'recovered/browser');
+   fs.mkdirSync(path.join(browser,'commands'),{recursive:true});fs.mkdirSync(recovered,{recursive:true});
+   const png=Buffer.from('explicit offline menu command fixture'),sha=integration.sha(png),capture='fixture-'+mode;
+   const put=(dir,name,v)=>fs.writeFileSync(path.join(dir,name),JSON.stringify(v));
+   const value=(tag,value)=>({tag,value});
+   const main={running:true,frozen:{frozen:true,hosts:1,steps:0},inputQueue:[],activeInput:null,mouseButtonsMask:0,observation:{inputs:[]},nativeSelection:{version:'mdk2-original-selection-v2',available:true,file:value(-2,'startscreen'),freeze:value(-6,null),selected:value(-1,0),newconscheme:value(-6,null),conscheme:value(-2,mode==='medium'?'menu':'title'),current:value(-2,'diff'),showmenu:value(-1,1),command:{binding:28,secondary:-1,flags:2,rise:2,previous:0,raw:0,active:0}}};
+   const shot={sha256:sha,state:{main}};
+   for(const dir of [browser,recovered]){fs.writeFileSync(path.join(dir,capture+'.png'),png);put(dir,capture+'.json',shot);}
+   for(const suffix of ['-raw','-owner','-native-main'])put(browser,capture+suffix+'.json',{fixtureOnly:true});
+   put(browser,'commands/0.json',{action:'shot',name:capture});put(browser,'reply-0.json',{i:0,ok:true});
+   put(browser,'inspection-state.json',{status:'awaiting-inspection',capture,sha256:sha,steps:0,command:0,session:'fixture'});
+   const fields={reviewMode:mode,capture,sha256:sha,steps:0,personallyInspected:true,inspector:'explicit offline command fixture',screen:mode==='open'?'title':mode==='newgame'?'main-menu':'difficulty',selection:mode==='open'?'none':mode==='newgame'?'New Game':'Medium',transitioning:false,legalOverlayVisible:mode==='open',controllerIconVisible:mode!=='open',controllerIconHighlighted:mode==='newgame',newGameLabelVisible:mode==='newgame',difficultyDialogVisible:mode==='medium',mediumHighlighted:mode==='medium'};
+   put(tmp,'personal.json',fields);
+   // Only the browser-facing selector boundary is plain mocked. Every original
+   // Python route, input readiness preflight and approval validator still runs.
+   fs.writeFileSync(path.join(tmp,'native-menu.cjs'),`require(${JSON.stringify(path.join(local.BASE,'20261104-mdk2-adequate-lifetime-menu/native-menu.cjs'))}).ready(JSON.parse(require('fs').readFileSync(process.argv[4])),process.argv[2]);`);
+   const child=cp.spawnSync('python3',[path.join(tmp,'local-control.py'),'operator.py',mode,capture,path.join(tmp,'personal.json')],{cwd:local.ROOT,encoding:'utf8',timeout:10000});
+   assert.equal(child.status,0,child.stderr);assert(fs.existsSync(path.join(browser,'inspection-approval.json')));
+   results.push({fixtureOnly:true,mode,fields,status:child.status});
+  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
+ }
+ if(process.env.MDK2_LOCAL_TEST_EVIDENCE)fs.writeFileSync(path.join(process.env.MDK2_LOCAL_TEST_EVIDENCE,'exact-menu-transport.json'),JSON.stringify(results,null,2));
 });
 test('actual installed launch timeout: old absent-Browser cleanup fails; late owned endpoint cleanup closes normally',async()=>{
  const r=createRequire(require.resolve('puppeteer')),core=r.resolve('puppeteer-core');
@@ -205,7 +312,7 @@ test('installed Puppeteer close path distinguishes orderly own child from CDP-fa
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);
- assert.equal(r.assignment,'20261104-mdk2-measured-native-boundary-gameplay');
+ assert.equal(r.assignment,'20261104-mdk2-honest-menu-medium-gameplay');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -303,17 +410,17 @@ test('install requires real inherited exclusive local lock before release or com
  assert(!fs.existsSync(path.join(run,'runtime-release.json')));
 });
 test('exact current GL predecessor heavy release excludes mentions, prior release and other owners',()=>{
- const good='2026-11-04T21:23:30+00:00 stronghold-fresh-complete-entry-gameplay-nov04 LOCAL HEAVY RELEASE original stopped';
+ const good='2026-11-04T21:41:19+00:00 gltron-low-latency LOCAL HEAVY RELEASE gltron-low-latency-webgl-gameplay-nov04 original stopped';
  assert.equal(local.heavyRelease(good),good);
- const coordinated='2026-11-04T21:23:30.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-fresh-complete-entry-gameplay-nov04: MDK may proceed';
+ const coordinated='2026-11-04T21:41:19.552949+00:00 coordinator LOCAL HEAVY RELEASE gltron-low-latency-webgl-gameplay-nov04: MDK may proceed';
  assert.equal(local.heavyRelease(coordinated),coordinated);
- assert.equal(local.heavyRelease(coordinated.replace('coordinator','stronghold-fresh-complete')),coordinated.replace('coordinator','stronghold-fresh-complete'));
+ assert.throws(()=>local.heavyRelease(coordinated.replace('coordinator','stronghold-fresh-complete')),/release/i);
  for(const line of [good.replace(' LOCAL HEAVY RELEASE',' RELEASE'),
-   good.replace('stronghold-fresh-complete-entry-gameplay-nov04','mdk2-installed-original waiting stronghold-fresh-complete-entry-gameplay-nov04'),
-   good.replace('21:23:30','20:58:26'),good.replace('2026-11-04','2026-11-05'),
-   good.replace('stronghold-fresh-complete-entry-gameplay-nov04','stronghold-customgame-drain'),
+   good.replace('gltron-low-latency-webgl-gameplay-nov04','mdk2-installed-original waiting gltron-low-latency-webgl-gameplay-nov04'),
+   good.replace('21:41:19','21:41:18'),good.replace('2026-11-04','2026-11-05'),
+   good.replace('gltron-low-latency-webgl-gameplay-nov04','stronghold-customgame-drain'),
    coordinated.replace('coordinator LOCAL','mdk2-bounded-review waiting coordinator LOCAL'),
-   coordinated.replace('stronghold-fresh-complete-entry-gameplay-nov04:','other-task:')])
+   coordinated.replace('gltron-low-latency-webgl-gameplay-nov04:','other-task:')])
    assert.throws(()=>local.heavyRelease(line),/release/i);
 });
 test('actual local install makes the mandatory owning lifecycle tap ready before the composed launch caller',()=>{
@@ -322,11 +429,11 @@ test('actual local install makes the mandatory owning lifecycle tap ready before
  // Only that pathname, the test clock and board input change in this fixture.
  fs.writeFileSync(script,`const fs=require('fs'),assert=require('assert/strict'),Module=require('module');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))};
- const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse('2026-11-04T21:24:00Z');
+ const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse('2026-11-04T21:48:00Z');
  let source=mode==='old'?require('child_process').execFileSync('git',['show','6055aa7e43d7c3505b6796d447663366e3b85146:tools/mdk2-local-runtime.cjs'],{encoding:'utf8'}):fs.readFileSync(filename,'utf8');
  source=source.replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: explicit fixture only':'2026-11-04T21:23:30Z coordinator LOCAL HEAVY RELEASE stronghold-fresh-complete-entry-gameplay-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: explicit fixture only':'2026-11-04T21:41:19Z coordinator LOCAL HEAVY RELEASE gltron-low-latency-webgl-gameplay-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(require('path').dirname(filename));m._compile(source,filename);
  const installed=m.exports.install(dir),tap=m.exports.lifecycleForRun(dir);
  assert.equal(installed.lifecycle,tap);assert.throws(()=>tap.ownedLaunch(),/exactly one/);
@@ -353,12 +460,12 @@ test('actual composed entry creates run, installs release/recorder and calls moc
  const fs=require('fs'),path=require('path'),Module=require('module'),cp=require('child_process');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))},dir=${JSON.stringify(dir)};
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-04T21:23:30Z coordinator LOCAL HEAVY RELEASE stronghold-fresh-complete-entry-gameplay-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
- Date.now=()=>Date.parse('2026-11-04T21:24:00Z');
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-04T21:41:19Z coordinator LOCAL HEAVY RELEASE gltron-low-latency-webgl-gameplay-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
+ Date.now=()=>Date.parse('2026-11-04T21:48:00Z');
  const source=fs.readFileSync(filename,'utf8').replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(path.dirname(filename));require.cache[filename]=m;m._compile(source,filename);
- const local=m.exports,load=Module._load,puppeteer=require('puppeteer'),events=[];
- const mocked={...puppeteer,launch:async options=>{events.push({kind:'launch-boundary',options,recorder:local.lifecycleForRun(dir).file});throw Error('ZERO_CHROME_BOUNDARY');}};
+ const local=m.exports,load=Module._load,events=[];
+ const mocked={launch:async options=>{events.push({kind:'launch-boundary',options,recorder:local.lifecycleForRun(dir).file});throw Error('ZERO_CHROME_BOUNDARY');}};
  Module._load=function(name,...args){return name==='puppeteer'?mocked:Reflect.apply(load,this,[name,...args]);};
  const spawn=cp.spawn;cp.spawn=function(command,...args){if(/chrome/i.test(String(command))){events.push({kind:'forbidden-chrome-spawn'});throw Error('forbidden Chrome spawn');}return Reflect.apply(spawn,this,[command,...args]);};
  const servers=require(${JSON.stringify(path.join(local.ROOT,'test/static-server.js'))}),start=servers.startStaticServer;
