@@ -75,6 +75,7 @@ const E2E_EXCEPTIONS = Object.freeze([
   'test-legacy-mirror-gpu-worker-contract.js',
   'test-legacy-public-mip-webgl.js',
   'test-legacy-dimensional-vertex-buffer.js',
+  'test-legacy-processvertices-dimensional.js',
   'test-listbox-ownerdraw.js',
   'test-local-candidates-playability.js',
   'test-mplay32-dual-mode.js',

@@ -2055,10 +2055,10 @@
   ;; FVF layout. The inverse of $d3dim_pack_fvf_vertices, and the half
   ;; ProcessVertices needs: its destination buffer declares its own FVF, and a
   ;; buffer that is XYZRHW|DIFFUSE|TEX1 (28 bytes) is not the 32-byte TLVERTEX
-  ;; the transform produces. Every texture stage gets the same UV pair, which
-  ;; is what the fixed pipeline computes -- it has one set of coordinates.
+  ;; the transform produces. Texture sets are copied separately from the
+  ;; original FVF records: the canonical TLVERTEX holds only one UV pair.
   (func $d3dim_unpack_tl_vertex (param $fvf i32) (param $src_wa i32) (param $dst_wa i32)
-    (local $offset i32) (local $tex i32) (local $i i32)
+    (local $offset i32)
     (if (i32.and (local.get $fvf) (i32.const 0x0004))
       (then
         (call $memcpy (local.get $dst_wa) (local.get $src_wa) (i32.const 16))
@@ -2087,18 +2087,44 @@
     (if (i32.and (local.get $fvf) (i32.const 0x0080)) (then
       (i32.store (i32.add (local.get $dst_wa) (local.get $offset))
         (i32.load (i32.add (local.get $src_wa) (i32.const 20))))
-      (local.set $offset (i32.add (local.get $offset) (i32.const 4)))))
-    (local.set $tex (i32.and (i32.shr_u (local.get $fvf) (i32.const 8)) (i32.const 0xF)))
-    (local.set $i (i32.const 0))
-    (block $done (loop $lp
-      (br_if $done (i32.ge_u (local.get $i) (local.get $tex)))
-      (i32.store (i32.add (local.get $dst_wa) (local.get $offset))
-        (i32.load (i32.add (local.get $src_wa) (i32.const 24))))
-      (i32.store (i32.add (local.get $dst_wa) (i32.add (local.get $offset) (i32.const 4)))
-        (i32.load (i32.add (local.get $src_wa) (i32.const 28))))
-      (local.set $offset (i32.add (local.get $offset) (i32.const 8)))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br $lp))))
+      (local.set $offset (i32.add (local.get $offset) (i32.const 4))))))
+
+  ;; ProcessVertices does not collapse texture sets to the active draw-stage
+  ;; selector. Preserve each set's supplied components in its own FVF layout.
+  (func $d3dim_vb_copy_texcoords
+      (param $src_fvf i32) (param $src i32) (param $dst_fvf i32) (param $dst i32)
+      (param $generated_uv i32)
+    (local $src_sets i32) (local $dst_sets i32) (local $set i32)
+    (local $src_dim i32) (local $dst_dim i32) (local $c i32)
+    (local.set $src_sets (i32.and (i32.shr_u (local.get $src_fvf) (i32.const 8)) (i32.const 15)))
+    (local.set $dst_sets (i32.and (i32.shr_u (local.get $dst_fvf) (i32.const 8)) (i32.const 15)))
+    (local.set $src (i32.add (local.get $src) (i32.sub
+      (call $d3dim_fvf_stride (local.get $src_fvf))
+      (call $d3dim_fvf_tex_offset (local.get $src_fvf) (local.get $src_sets)))))
+    (local.set $dst (i32.add (local.get $dst) (i32.sub
+      (call $d3dim_fvf_stride (local.get $dst_fvf))
+      (call $d3dim_fvf_tex_offset (local.get $dst_fvf) (local.get $dst_sets)))))
+    (block $done (loop $next_set
+      (br_if $done (i32.ge_u (local.get $set) (local.get $dst_sets)))
+      (local.set $src_dim (i32.const 0))
+      (if (i32.lt_u (local.get $set) (local.get $src_sets)) (then
+        (local.set $src_dim (call $d3dim_fvf_tex_size (local.get $src_fvf) (local.get $set)))))
+      ;; Keep the existing generated-coordinate route's canonical UV output.
+      (if (local.get $generated_uv) (then
+        (local.set $src (local.get $generated_uv))
+        (local.set $src_dim (i32.const 2))))
+      (local.set $dst_dim (call $d3dim_fvf_tex_size (local.get $dst_fvf) (local.get $set)))
+      (local.set $c (i32.const 0))
+      (block $components_done (loop $component
+        (br_if $components_done (i32.ge_u (local.get $c) (local.get $dst_dim)))
+        (i32.store (i32.add (local.get $dst) (i32.shl (local.get $c) (i32.const 2)))
+          (if (result i32) (i32.lt_u (local.get $c) (local.get $src_dim))
+            (then (i32.load (i32.add (local.get $src) (i32.shl (local.get $c) (i32.const 2)))))
+            (else (select (i32.const 0x3f800000) (i32.const 0) (i32.eq (local.get $c) (i32.const 3))))))
+        (local.set $c (i32.add (local.get $c) (i32.const 1))) (br $component)))
+      (local.set $src (i32.add (local.get $src) (i32.shl (local.get $src_dim) (i32.const 2))))
+      (local.set $dst (i32.add (local.get $dst) (i32.shl (local.get $dst_dim) (i32.const 2))))
+      (local.set $set (i32.add (local.get $set) (i32.const 1))) (br $next_set))))
 
   ;; The vertex-buffer draw path had no tracing of its own. DPBlend/DPVtx
   ;; (kinds 17/18) are emitted by $d3dim_draw_primitive only, so an app that
@@ -2138,6 +2164,7 @@
     (local $state i32) (local $packed_g i32) (local $packed_wa i32)
     (local $scratch_g i32) (local $scratch_wa i32) (local $dst_wa i32) (local $i i32)
     (local $dbg_key i32)
+    (local $source_g i32) (local $source_copy i32)
     (if (i32.or (i32.eqz (local.get $dst_this)) (i32.eqz (local.get $src_this)))
       (then (return (i32.const 0x80004003))))  ;; E_POINTER
     (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
@@ -2155,6 +2182,10 @@
     (local.set $dst_size (i32.load (i32.add (local.get $dst_entry) (i32.const 12))))
     (local.set $src_fvf (load.field DxObject misc1 (local.get $src_entry)))
     (local.set $dst_fvf (load.field DxObject misc1 (local.get $dst_entry)))
+    (if (i32.or
+      (i32.gt_u (i32.and (i32.shr_u (local.get $src_fvf) (i32.const 8)) (i32.const 15)) (i32.const 8))
+      (i32.gt_u (i32.and (i32.shr_u (local.get $dst_fvf) (i32.const 8)) (i32.const 15)) (i32.const 8)))
+      (then (return (i32.const 0x80070057))))
     ;; A destination whose descriptor never reached us has no layout to unpack
     ;; into; the output of a transform is TLVERTEX, so say so explicitly rather
     ;; than let $d3dim_fvf_stride's 32-byte fallback imply it.
@@ -2191,17 +2222,28 @@
     (if (i32.gt_u (local.get $count) (i32.sub (local.get $dst_max) (local.get $dest_index)))
       (then (local.set $count (i32.sub (local.get $dst_max) (local.get $dest_index)))))
     (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
+    (local.set $source_g (i32.add (local.get $src_data_g) (i32.mul (local.get $src_index) (local.get $src_stride))))
+    ;; Overlapping ranges in the same VB must read the pre-call coordinates,
+    ;; just as the canonical position/light pack already does.
+    (if (i32.eq (local.get $src_data_g) (local.get $dst_data_g)) (then
+      (local.set $source_copy (call $heap_alloc (i32.mul (local.get $count) (local.get $src_stride))))
+      (if (i32.eqz (local.get $source_copy)) (then (return (i32.const 0x8007000E))))
+      (call $guest_memmove (local.get $source_copy) (local.get $source_g) (i32.mul (local.get $count) (local.get $src_stride)))
+      (local.set $source_g (local.get $source_copy))))
     (local.set $packed_g (call $d3dim_pack_fvf_vertices
       (local.get $src_fvf)
-      (i32.add (local.get $src_data_g) (i32.mul (local.get $src_index) (local.get $src_stride)))
+      (local.get $source_g)
       (local.get $count)
       (call $d3dim_texcoord_index (local.get $device))))
-    (if (i32.eqz (local.get $packed_g)) (then (return (i32.const 0x8007000E))))
+    (if (i32.eqz (local.get $packed_g)) (then
+      (if (local.get $source_copy) (then (call $heap_free (local.get $source_copy))))
+      (return (i32.const 0x8007000E))))
     ;; One scratch TLVERTEX for the whole call. Transforming in place would
     ;; alias $vertex_project's source with its destination.
     (local.set $scratch_g (call $heap_alloc (i32.const 32)))
     (if (i32.eqz (local.get $scratch_g)) (then
       (call $heap_free (local.get $packed_g))
+      (if (local.get $source_copy) (then (call $heap_free (local.get $source_copy))))
       (return (i32.const 0x8007000E))))
     (call $d3ddev_composite_wvp (local.get $state))
     (call $d3dim_lights_refresh (local.get $state))
@@ -2219,6 +2261,11 @@
       (call $d3dim_unpack_tl_vertex
         (local.get $dst_fvf) (local.get $scratch_wa)
         (i32.add (local.get $dst_wa) (i32.mul (local.get $i) (local.get $dst_stride))))
+      (call $d3dim_vb_copy_texcoords
+        (local.get $src_fvf) (call $g2w (i32.add (local.get $source_g) (i32.mul (local.get $i) (local.get $src_stride))))
+        (local.get $dst_fvf) (i32.add (local.get $dst_wa) (i32.mul (local.get $i) (local.get $dst_stride)))
+        (select (i32.add (local.get $scratch_wa) (i32.const 24)) (i32.const 0)
+          (i32.gt_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 0xffff))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $lp)))
     ;; kind=20 SetMtx over the composite world*view*projection actually used,
@@ -2242,6 +2289,7 @@
       (i32.load (i32.add (local.get $dst_wa) (i32.const 12))))
     (call $heap_free (local.get $scratch_g))
     (call $heap_free (local.get $packed_g))
+    (if (local.get $source_copy) (then (call $heap_free (local.get $source_copy))))
     (i32.const 0))
 
   (func $d3dim_vb_draw_primitive
