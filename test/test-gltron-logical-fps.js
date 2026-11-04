@@ -217,6 +217,23 @@ async function main() {
     sample.position = [50, 95]; sample.segments = [[0, 0, 100, 0]]; assert.equal(chooseSteering(sample).key, null);
     sample.live.live = false; assert.throws(() => chooseSteering(sample), /live player/);
   });
+  check('observed original turn permits narrow-corridor escape that old 300ms cooldown suppressed', () => {
+    const { steeringDecision } = localCandidate;
+    // Actual last live sample at 20:39:25.121Z, before the next sample died.
+    const sample = { live: { live: true, direction: 2, trailOffset: 7 },
+      callbacks: BOUNDARY.callbackTable, position: [259.23211669921875, 570.8626956939697],
+      segments: [[540, 576.0936279296875, -366.80322265625, 0],
+        [173.19677734375, 576.0936279296875, 0, -88.39434051513672],
+        [540, 360, 0, 216.09359741210938]] };
+    const pending = { direction: 1, trailOffset: 6 };
+    assert(45192.669999837875 - 44919.09999990463 < 300);
+    assert.equal(chooseSteering(sample).key, 's');
+    assert.equal(steeringDecision(sample, pending).key, 's');
+    assert.equal(steeringDecision(sample, sample.live).key, null);
+    assert.equal(steeringDecision(sample, sample.live).awaitingTurn, true);
+    sample.live.live = false;
+    assert.throws(() => steeringDecision(sample, pending), /live player/);
+  });
   for (const reject of [false, true]) {
     const calls = [], held = new Set(), page = { keyboard: { down: async key => calls.push('down:' + key), up: async key => calls.push('up:' + key) } };
     const result = balancedKey(page, 'a', held, async () => { if (reject) throw Error('input fixture'); });
@@ -351,9 +368,10 @@ async function main() {
     assert.throws(() => requireReleases('mdk2-continuous-construction-onward LOCAL HEAVY RELEASE'), /requires/);
     assert.throws(() => requireReleases('mdk2-demand-entry LOCAL HEAVY RELEASE'), /requires/);
     assert.throws(() => requireReleases('mdk2-demand-entry-continuity LOCAL HEAVY RELEASE'), /requires/);
-    const valid = '2026-11-04T20:21:00+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE';
+    const valid = '2026-11-04T20:29:22+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE';
     assert(requireReleases(valid));
     for (const line of [
+      '2026-11-04T20:29:21+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE',
       '2026-11-04T20:21:00+00:00 gltron-complete-handoff waiting explicit mdk2-medium-through-loading LOCAL HEAVY RELEASE',
       '2026-11-04T20:21:00+00:00 coordinator quotes ' + valid,
       'mdk2-medium-through-loading LOCAL HEAVY RELEASE',
@@ -362,6 +380,42 @@ async function main() {
       assert.throws(() => requireReleases(line), /requires/);
   });
   const { spawnSync } = require('node:child_process');
+  // Execute the actual CLI entry point with every process/server/browser path
+  // trapped. A missing lock check can fail this test, never launch Chrome.
+  async function unflockedCli(source) {
+    const filename = require.resolve('../tools/gltron-logical-fps-local.cjs');
+    const entry = { exports: {} }, errors = [], traps = [];
+    const trap = name => () => { traps.push(name); throw Error('SPAWN TRAP ' + name); };
+    const load = require('node:module').createRequire(filename);
+    const mockedRequire = name => {
+      if (name === 'node:child_process') return new Proxy({}, { get: (_, key) => trap('child_process.' + String(key)) });
+      if (name === 'puppeteer') return { launch: trap('Chrome') };
+      if (name === '../test/static-server.js') return { startStaticServer: trap('server') };
+      return load(name);
+    };
+    mockedRequire.main = entry;
+    const childProcess = { pid: process.pid, argv: [process.execPath, filename, '--run', '/missing-gltron-unflocked-fixture'], exitCode: 0 };
+    vm.runInNewContext(source, { require: mockedRequire, module: entry, exports: entry.exports,
+      __dirname: require('node:path').dirname(filename), process: childProcess,
+      console: { error: error => errors.push(String(error)), log: trap('unexpected stdout') },
+      Buffer, setTimeout, clearTimeout }, { filename });
+    await new Promise(resolve => setImmediate(resolve));
+    return { errors, traps, exitCode: childProcess.exitCode };
+  }
+  const cliSource = fs.readFileSync(require.resolve('../tools/gltron-logical-fps-local.cjs'), 'utf8');
+  const oldCli = await unflockedCli(cliSource.replace('const localFlock = requireLocalFlock();', 'const localFlock = null;'));
+  assert(!oldCli.errors.some(error => /required local flock/.test(error)), 'old producer must fail the lock contract');
+  const guardedCli = await unflockedCli(cliSource);
+  check('actual unflocked --run rejects before proof/server/Chrome with all spawn paths trapped; old producer fails', () => {
+    assert.equal(oldCli.exitCode, 1);
+    assert.equal(oldCli.errors.length, 1);
+    assert.match(oldCli.errors[0], /ENOENT.*review-handoff\.json/);
+    assert.equal(guardedCli.exitCode, 1);
+    assert.equal(guardedCli.errors.length, 1);
+    assert.match(guardedCli.errors[0], /required local flock/);
+    assert.deepEqual(guardedCli.traps, []);
+    assert.deepEqual(oldCli.traps, []);
+  });
   const lockDir = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'gltron-lock-fixture-'));
   try {
     const lock = require('node:path').join(lockDir, 'runtime.lock');

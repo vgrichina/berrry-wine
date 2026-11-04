@@ -178,7 +178,7 @@ function requireReleases(board, now = Date.now()) {
   const mdk = board.split('\n').findLast(line => {
     const match = /^(\S+) mdk2-medium-through-loading LOCAL HEAVY RELEASE(?:\s|$)/.exec(line);
     const at = match && Date.parse(match[1]);
-    return match && Number.isFinite(at) && at >= Date.parse('2026-11-04T20:19:19Z') && at <= now;
+    return match && Number.isFinite(at) && at >= Date.parse('2026-11-04T20:29:22Z') && at <= now;
   });
   if (!mdk) throw Error('requires explicit fresh mdk2-medium-through-loading release');
   return { mdk };
@@ -402,6 +402,16 @@ function chooseSteering(sample) {
   return { distances, key: distances[0] < 90 ? (distances[1] >= distances[2] ? 'a' : 's') : null };
 }
 
+function steeringDecision(sample, pendingTurn) {
+  const decision = chooseSteering(sample);
+  // Wait for the original player to acknowledge a turn, rather than imposing
+  // a wall-clock cooldown that can outlast the next narrow corridor.
+  if (pendingTurn && sample.live.direction === pendingTurn.direction &&
+      sample.live.trailOffset === pendingTurn.trailOffset)
+    return { ...decision, key: null, awaitingTurn: true };
+  return decision;
+}
+
 async function balancedKey(page, key, held, wait = pause, holdMs = 25) {
   await page.keyboard.down(key); held.add(key);
   try { await wait(holdMs); } finally { await page.keyboard.up(key); held.delete(key); }
@@ -544,15 +554,16 @@ async function runPair(run) {
               }, { timeout: 3000 }, BOUNDARY);
               driving = true;
               drivePromise = (async () => {
-                let lastTurn = 0;
+                let pendingTurn = null;
                 while (driving && !closed && !failure) {
                   const sample = await page.evaluate(steeringSample, BOUNDARY);
                   // Preserve exact first loss before choosing or sending input.
                   log('steering', { sample });
-                  const decision = chooseSteering(sample);
-                  if (decision.key && Date.now() - lastTurn >= 300) {
+                  const decision = steeringDecision(sample, pendingTurn);
+                  if (decision.key) {
                     log('steering-input', { ...decision, direction: sample.live.direction, trailOffset: sample.live.trailOffset });
-                    await balancedKey(page, decision.key, held); lastTurn = Date.now();
+                    pendingTurn = { direction: sample.live.direction, trailOffset: sample.live.trailOffset };
+                    await balancedKey(page, decision.key, held);
                   }
                   await pause(100);
                 }
@@ -611,7 +622,7 @@ async function runPair(run) {
   write(path.join(run, 'runtime-summary.json'), { browserMs, stopped, finishedAt: new Date().toISOString(), boxId: null, boxState: null, boxExpiry: null });
 }
 
-module.exports = { prepare, preload, pageState, captureForReview, shotCommand, commandAck, reviewedCapture, requireHandoffProbe, requireLocalFlock, steeringSample, chooseSteering, balancedKey, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
+module.exports = { prepare, preload, pageState, captureForReview, shotCommand, commandAck, reviewedCapture, requireHandoffProbe, requireLocalFlock, steeringSample, chooseSteering, steeringDecision, balancedKey, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
 if (require.main === module) {
   const [action, run] = process.argv.slice(2);
   if (action === '--command') {
