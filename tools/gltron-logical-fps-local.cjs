@@ -183,13 +183,23 @@ function pageState() {
 }
 
 function requireReleases(board, now = Date.now()) {
-  const mdk = board.split('\n').findLast(line => {
-    const match = /^(\S+) mdk2-installed-original(?:-gameplay-nov04)? LOCAL HEAVY RELEASE(?:\s|$)/.exec(line);
+  const lines = board.split('\n');
+  const stronghold = lines.findLast(line => {
+    const match = /^(\S+) stronghold-repaired-entry LOCAL HEAVY RELEASE(?:\s|$)/.exec(line);
     const at = match && Date.parse(match[1]);
-    return match && Number.isFinite(at) && at >= Date.parse('2026-11-04T21:16:19Z') && at <= now;
+    return match && Number.isFinite(at) && at >= Date.parse('2026-11-04T21:27:19Z') && at <= now;
   });
-  if (!mdk) throw Error('requires explicit fresh mdk2-installed-original-gameplay-nov04 release');
-  return { mdk };
+  if (!stronghold) throw Error('requires explicit stronghold-repaired-entry release for stronghold-repaired-entry-original-gameplay-nov04');
+  // Bind the actual actor's release to its latest preceding ownership record.
+  // A task name repeated by someone else is not runtime permission.
+  const ownership = lines.slice(0, lines.lastIndexOf(stronghold)).findLast(line =>
+    /^\S+ stronghold-repaired-entry OWN(?:\s|$)/.test(line));
+  const ownedAt = ownership && Date.parse(ownership.split(' ')[0]);
+  if (!Number.isFinite(ownedAt) || ownedAt < Date.parse('2026-11-04T21:27:19Z') ||
+      ownedAt > Date.parse(stronghold.split(' ')[0]) ||
+      !ownership.split(/\s+/).includes('docs/re-notes/stronghold-repaired-entry-original-gameplay-20261104.md'))
+    throw Error('stronghold-repaired-entry exact assignment ownership required before release');
+  return { stronghold, ownership };
 }
 
 function requireLocalFlock(lockPath = '/tmp/wine-local-runtime.lock') {
@@ -271,8 +281,12 @@ async function captureForReview(page, out, name) {
       callbacks: e?.guest_read32(0x42b230) >>> 0,
       generation: window.__gltronModuleObservation?.instances.find(r => r.instance === w?.instance)?.generation };
   }, name);
-  await page.screenshot({ path: file, clip: review.clip });
-  return { ...review, capturedAtEpochMs, path: file, sha256: sha256(fs.readFileSync(file)) };
+  // Lossless PNG, same complete clip and surface. Ask Chrome to spend less
+  // time compressing; do not downsample, re-encode, or move either start clock.
+  await page.screenshot({ path: file, clip: review.clip, type: 'png', optimizeForSpeed: true });
+  const captureCompletedAtEpochMs = Date.now();
+  return { ...review, capturedAtEpochMs, captureCompletedAtEpochMs,
+    path: file, sha256: sha256(fs.readFileSync(file)) };
 }
 
 function reviewedCapture(out, name, now = Date.now()) {
@@ -565,7 +579,7 @@ async function runPair(run) {
         }
         if (Date.now() - commandAt > COMMAND_MS) throw Error('40 second command deadline');
         const file = path.join(out, 'commands', number + '.json');
-        if (!fs.existsSync(file)) { await pause(100); continue; }
+        if (!fs.existsSync(file)) { await pause(10); continue; }
         commandAt = Date.now();
         const i = number++, c = JSON.parse(fs.readFileSync(file));
         log('commands', { i, ...c });

@@ -278,8 +278,10 @@ async function main() {
         window: {}, performance: { now: () => 100 }, innerWidth: 1200, innerHeight: 900,
         document: { querySelector: () => ({ getBoundingClientRect: () => rect }) },
       })(name);
-    }, screenshot: async ({ path, clip }) => {
+    }, screenshot: async ({ path, clip, type, optimizeForSpeed }) => {
       assert.deepEqual(JSON.parse(JSON.stringify(clip)), { x: 10, y: 185, width: 800, height: 600 });
+      assert.equal(type, 'png'); assert.equal(optimizeForSpeed, true);
+      await new Promise(resolve => setTimeout(resolve, 20));
       calls.push('pixels'); fs.writeFileSync(path, 'offline fixture only');
     } };
     const capture = await captureForReview(page, captureDir, 'fresh');
@@ -290,6 +292,7 @@ async function main() {
     check('actual shot producer returns exact pixels and capture epoch for one-invocation VIEW relay', () => {
       assert.deepEqual(calls, ['capture-start', 'pixels', 'view']);
       assert.equal(capture.name, 'fresh'); assert.equal(capture.capturedAtMs, 100);
+      assert(capture.captureCompletedAtEpochMs - capture.capturedAtEpochMs >= 20);
       assert.equal(capture.sha256, require('../tools/gltron-logical-fps.cjs').sha256(Buffer.from('offline fixture only')));
     });
     await assert.rejects(captureForReview(page, captureDir, 'fresh'), /fresh capture/);
@@ -398,19 +401,24 @@ async function main() {
     for (const patch of [{ path: 'missing' }, { sha256: 'stale' }, { bytes: -1 }])
       assert.throws(() => validateHistory(productionPins, [{ ...productionPins[0], ...patch }]), /prior HTTP pin/);
   });
-  check('current installed MDK release required for sole WebGL entry', () => {
-    const valid = '2026-11-04T21:16:19+00:00 mdk2-installed-original LOCAL HEAVY RELEASE';
+  check('exact repaired-entry Stronghold assignment release required for sole WebGL entry', () => {
+    const owned = '2026-11-04T21:27:19Z stronghold-repaired-entry OWN tools/stronghold-local-runtime.cjs docs/re-notes/stronghold-repaired-entry-original-gameplay-20261104.md\n';
+    const released = '2026-11-04T21:30:00+00:00 stronghold-repaired-entry LOCAL HEAVY RELEASE';
+    const valid = owned + released;
     assert(requireReleases(valid));
-    assert(requireReleases(valid.replace('mdk2-installed-original', 'mdk2-installed-original-gameplay-nov04')));
     for (const line of [
-      '2026-11-04T20:29:22+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE',
-      '2026-11-04T21:16:18+00:00 mdk2-installed-original LOCAL HEAVY RELEASE',
-      '2027-11-04T21:16:19+00:00 mdk2-installed-original LOCAL HEAVY RELEASE',
-      '2026-11-04T21:16:19+00:00 coordinator quotes ' + valid,
-      '2026-11-04T21:16:19+00:00 foreign LOCAL HEAVY RELEASE',
-      'mdk2-installed-original LOCAL HEAVY RELEASE',
-      '2026-11-04T21:16:19+00:00 gltron waiting mdk2-installed-original LOCAL HEAVY RELEASE'])
-      assert.throws(() => requireReleases(line), /mdk2-installed-original/);
+      valid.replace('stronghold-repaired-entry LOCAL', 'mdk2-installed-original LOCAL'),
+      valid.replace('stronghold-repaired-entry LOCAL', 'stronghold-fresh-complete LOCAL'),
+      valid.replace('21:30:00', '21:27:18'), valid.replace('2026-', '2027-'),
+      valid.replace(' LOCAL HEAVY RELEASE', ' RELEASE'),
+      valid.replace('stronghold-repaired-entry-original-gameplay-20261104.md', 'other-assignment.md'),
+      owned + released.replace('stronghold-repaired-entry LOCAL', 'stronghold-repaired-entry-other LOCAL'),
+      released, released + '\n' + owned,
+      owned.replace('21:27:19', '21:27:18') + released,
+      owned + '2026-11-04T21:28:00Z stronghold-repaired-entry OWN other-assignment\n' + released,
+      owned + '2026-11-04T21:30:00Z coordinator quotes ' + released,
+      valid.replace('2026-11-04T21:30:00+00:00 ', '')])
+      assert.throws(() => requireReleases(line), /stronghold-repaired-entry/);
     const producer = fs.readFileSync(require.resolve('../tools/gltron-logical-fps-local.cjs'), 'utf8');
     assert.match(producer, /for \(const backend of \['webgl'\]\)/);
     assert(!producer.includes("for (const backend of ['software', 'webgl'])"));
