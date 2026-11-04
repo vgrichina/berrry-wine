@@ -131,7 +131,7 @@ function consumer() {
   }catch(error){postMessage({t:'fault',error:String(error.stack||error)});}};
 }
 
-async function scenario({name,apiVersion}) {
+async function scenario({name,apiVersion,backend='webgl',processFactory=false}) {
   const assert=(ok,label)=>{if(!ok)throw Error(label);};
   assert(crossOriginIsolated,'HTTP fixture must enable cross-origin isolation');
   const distance=(a,b)=>Math.max(...a.map((v,i)=>Math.abs(v-b[i]))),q=c=>c.map(v=>Math.round(v*255));
@@ -158,15 +158,20 @@ async function scenario({name,apiVersion}) {
   const meta=['get_image_base','get_code_start','get_code_end','get_thunk_base','get_thunk_end','get_num_thunks','get_rsrc_rva'].map(key=>e[key]());
   const windows={[hwnd]:{hwnd,w:8,h:8,clientRect:{w:8,h:8}}},frames=[],contexts=[],batches=[],versions=[];
   globalThis.fragmentProgress={stages:[],batches,contexts};
-  let producerWorker,renderWorker,bridge,fail,resolveDone,nextId=1,closed=false,heldBatches=0;
+  let producerWorker,renderWorker,bridge,route,fail,resolveDone,nextId=1,closed=false,heldBatches=0;
   const requests=new Map(),listeners=[],failure=new Promise((_,reject)=>{fail=reject;});
   const safe=p=>Promise.race([p,failure]);
   const done=new Promise(resolve=>{resolveDone=resolve;});
   let resolveReady,resolveClosed;
   const ready=new Promise(resolve=>{resolveReady=resolve;}),closure=new Promise(resolve=>{resolveClosed=resolve;});
   try {
+    let port;
+    if(processFactory){
+      route=await globalThis.createFactoryCompositionRoute({module,memory,sigs,e,contexts,versions,fail});
+      port=route.port;
+    }else{
     renderWorker=new Worker('/test/fragment-consumer.js');
-    const port={ready,addEventListener(type,fn){listeners.push(fn);},
+    port={ready,addEventListener(type,fn){listeners.push(fn);},
       request(message){return new Promise(resolve=>{const id=nextId++;requests.set(id,resolve);renderWorker.postMessage({t:'execute',id,message});});},
       async terminate(){renderWorker.postMessage({t:'close'});await safe(closure);renderWorker.terminate();closed=true;}};
     renderWorker.onerror=event=>fail(Error(event.message));
@@ -177,8 +182,9 @@ async function scenario({name,apiVersion}) {
       else if(m.t==='frame')for(const fn of listeners)fn({data:m});
     };
     renderWorker.postMessage({t:'init',module,memory,sigs,imageBase:meta[0],apiVersion});await safe(ready);
-    bridge=new GLRenderHost.Bridge({backend:'webgl',renderer:{windows,mergeGpuLayerIntoBackCanvas(){}},exports:e,
-      createRenderEndpoint:()=>port,createCanvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;},
+    }
+    bridge=new GLRenderHost.Bridge({backend,renderer:{windows,mergeGpuLayerIntoBackCanvas(){}},exports:e,
+      createRenderEndpoint:route?route.createEndpoint:()=>port,createCanvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;},
       onPresent:layer=>{const ctx=layer.canvas.getContext('2d');frames.push(Array.from(ctx.getImageData(0,0,8,8).data));
         if(!layer.canvas.isConnected){document.body.append(layer.canvas);layer.canvas.style.width='256px';layer.canvas.style.imageRendering='pixelated';}}});
     const broker=GuestRpc.createMainBroker(memory,{
@@ -195,13 +201,14 @@ async function scenario({name,apiVersion}) {
       if(m.t==='glBatch')assert(broker.serveGlBatch(m),'actual native RPC batch served');
       else if(m.t==='rpc')broker.serveRpc(m.slot);else if(m.t==='calls')broker.serveCalls(m);
       else if(m.t==='fault')fail(Error(m.error));
-      else if(m.t==='armed'){heldBatches=0;renderWorker.postMessage({t:'hold'});}
+      else if(m.t==='armed'){heldBatches=0;if(backend!=='software'){if(route)route.hold();else renderWorker.postMessage({t:'hold'});}}
       else if(m.t==='mutated'){
+        if(backend==='software')return;
         assert(heldBatches===1&&batches.at(-1).ops.includes(42),
           'native packed draw and changed texture bind admitted before consumer release');
         assert(bridge.submissions.used===2,'real two-publication bound retained');
-        assert(requests.size===1,'first consumer request is still outstanding');
-        renderWorker.postMessage({t:'release'});
+        assert(route?route.pendingRequests()===1:requests.size===1,'first consumer request is still outstanding');
+        if(route)route.release();else renderWorker.postMessage({t:'release'});
       }else if(m.t==='progress')globalThis.fragmentProgress.stages.push(m.name);
       else if(m.t==='done')resolveDone(m);
     }catch(error){fail(error);}};
@@ -231,17 +238,24 @@ async function scenario({name,apiVersion}) {
       const right=['secondWithoutFirst','reverseDraws','staleTexture','staleFog','staleBlend'].includes(key);
       assert(distance(result.composed.slice(right?16:0,right?20:4),q(color))>8,'discriminates '+key);
     }
-    assert(contexts.length>0&&contexts.every(c=>c.actualVersion===apiVersion),'actual context class matches requested version');
-    assert(versions.length>0&&versions.every(v=>v===apiVersion),'production endpoint version matches');
-    assert(frames.length>0,'production host received actual Worker ImageBitmap');
-    check(frames.at(-1),witness(first),witness(second),'presented ImageBitmap RGB',true);
-    assert(bridge.local===null,'no local or software renderer fallback');
-    const packetStats={...bridge.packetStats};assert(packetStats.leasedBatches>=2,'actual shared native packet leases');
+    if(backend==='software'){
+      assert(contexts.length===0&&versions.length===0,'native software selection creates no WebGL context');
+    }else{
+      assert(contexts.length>0&&contexts.every(c=>c.actualVersion===apiVersion),'actual context class matches requested version');
+      assert(versions.length>0&&versions.every(v=>v===apiVersion),'production endpoint version matches');
+    }
+    assert(frames.length>0,'production host received actual Worker frame');
+    check(frames.at(-1),witness(first),witness(second),'presented Worker frame RGB',true);
+    assert(bridge.local===null,'no main-thread renderer fallback');
+    const packetStats={...bridge.packetStats};
+    if(backend==='software')assert(packetStats.leasedBatches===0,'software keeps producer parked without deferred leases');
+    else assert(packetStats.leasedBatches>=2,'actual shared native packet leases');
     await safe(bridge.close());
-    return {name,apiVersion,route:'public x86 resolved GL -> compiled WAT encoder -> GuestRpc broker -> GLRenderHost shared leases -> physical browser Worker GLRenderWorker -> WebGL shaders -> RGBA8 readback + ImageBitmap',
+    if(route){await route.close();closed=true;}
+    return {name,apiVersion,backend,processFactory:route?.info,route:'public x86 resolved GL -> compiled WAT encoder -> GuestRpc broker -> GLRenderHost shared leases -> physical browser Worker GLRenderWorker -> RGBA8 readback + presentation',
       calls:result.calls,contexts,versions:[...new Set(versions)],heldBatches,packetStats,batches,observations,
       wrongColors:Object.fromEntries(Object.entries(wrong).map(([k,v])=>[k,q(v)])),closed};
-  }finally{producerWorker?.terminate();renderWorker?.terminate();}
+  }finally{producerWorker?.terminate();renderWorker?.terminate();if(route)await route.close();}
 }
 
 async function main() {
