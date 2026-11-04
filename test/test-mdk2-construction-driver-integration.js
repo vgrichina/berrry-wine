@@ -9,7 +9,8 @@ const vm = require('node:vm');
 const cp = require('node:child_process');
 const integration = require('../tools/mdk2-construction-driver-integration.cjs');
 const {Worker, MessageChannel, isMainThread, parentPort, workerData} = require('node:worker_threads');
-const EVIDENCE = path.join(integration.RUNS, '20261104-mdk2-main-ownership-repair');
+const EVIDENCE = process.env.MDK2_TEST_EVIDENCE || fs.mkdtempSync(path.join(integration.RUNS, 'mdk2-construction-driver-test-'));
+assert.equal(path.dirname(EVIDENCE), integration.RUNS, 'direct owned test evidence run required');
 fs.mkdirSync(EVIDENCE, {recursive: true});
 
 function actualDriver() {
@@ -106,7 +107,7 @@ test('actual pinned wrapper reproduces accepted rejection; repaired barrier pres
   assert.equal(mainSidecar.values.get_current_thread_id,1);assert.equal(fileSidecar.values.get_current_thread_id,2);
   assert.equal(mainSidecar.values.get_eip,result.owners[0].values.get_eip);
   assert.equal(fileSidecar.values.get_eip,result.owners[1].values.get_eip);
-  fs.writeFileSync(path.join(integration.RUNS,'20261104-mdk2-main-ownership-repair/offline-wrapper-contract.json'),JSON.stringify({
+  fs.writeFileSync(path.join(EVIDENCE,'offline-wrapper-contract.json'),JSON.stringify({
     source:integration.SOURCE,actualClasses:['GuestThreadHost','WorkerLink'],transport:'offline exportsRead fixture; real _ask/_onMessage/readExports',
     historicalRejection:'foreign main ownership',wrapperSlot:f.host.slot??null,wrapperEndpoint:f.host.endpointIdentity??null,wrapperValues:values,repaired:result},null,2));
 });
@@ -162,7 +163,7 @@ test('explicit candidate adapter executes actual 432 filesystem and HTTP checks 
  const result=cp.spawnSync(process.execPath,['-e',code],{cwd:integration.ROOT,encoding:'utf8',timeout:60000});
  assert.equal(result.status,0,result.stderr);const report=JSON.parse(result.stdout);
  assert.equal(report.filesystem,432);assert.equal(report.http,432);
- fs.writeFileSync(path.join(integration.RUNS,'20261104-mdk2-main-ownership-repair/offline-candidate-adapter.json'),JSON.stringify(report,null,2));
+ fs.writeFileSync(path.join(EVIDENCE,'offline-candidate-adapter.json'),JSON.stringify(report,null,2));
 });
 test('exact retained closure and historical runtime pins resolve offline', () => {
   const rows = integration.verifyClosure(); assert.equal(rows.length, Object.keys({...integration.CLOSURE,...integration.HELPERS}).length);
@@ -397,7 +398,8 @@ test('page hook rejects late installation, unhashed and ambiguous replacement Mo
 
 function sealedSidecars() {
   const base=path.join(integration.RUNS,'20261104-mdk2-measured-escape-original');
-  const seal=JSON.parse(fs.readFileSync(path.join(base,'seal.json'))),bytes=fs.readFileSync(path.join(base,'remote-recovery-inventory.json'));
+  const retained=name=>{const p=path.join(base,name);return fs.existsSync(p)?fs.readFileSync(p):require('node:zlib').gunzipSync(fs.readFileSync(p+'.gz'));};
+  const seal=JSON.parse(retained('seal.json')),bytes=retained('remote-recovery-inventory.json');
   const pin=seal.files.find(r=>r.path==='remote-recovery-inventory.json');assert.equal(integration.sha(bytes),pin.sha256);
   const inventory=JSON.parse(bytes);
   function read(suffix){const name='comic-control-112'+suffix+'.json',p=path.join(base,'recovered/browser',name);

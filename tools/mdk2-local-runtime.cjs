@@ -9,10 +9,12 @@ const crypto = require('node:crypto');
 const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
-// Explicitly renewed by the main-ownership repair assignment.
-const HARD_CLOSE = Date.parse('2026-11-04T19:20:00Z');
-const HARD_RECOVER = Date.parse('2026-11-04T19:23:00Z');
-const ASSIGNMENT = '20261104-mdk2-bounded-trace-driver-repair';
+// Explicit one-attempt renewal by the startup-timing assignment, not guest progress.
+const HARD_CLOSE = Date.parse('2026-11-04T20:00:00Z');
+const HARD_RECOVER = Date.parse('2026-11-04T20:03:00Z');
+const ASSIGNMENT = '20261104-mdk2-startup-timing-onward';
+const BROWSER_MS = 720000;
+const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 function candidate() {
   return {git:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim(),
@@ -42,19 +44,19 @@ function validate(release, run, now = Date.now(), actual = identity()) {
   for (const key of ['driverSHA256','localSHA256']) assert.equal(release.candidate[key], current[key], 'changed local candidate ' + key);
   const issued = Date.parse(release.issuedAt), close = Date.parse(release.closeBy), recover = Date.parse(release.recoverBy);
   assert([now,issued,close,recover].every(Number.isFinite), 'finite local deadlines');
-  assert(issued <= now && now - issued < 360000, 'fresh local release');
-  assert(close <= issued + 360000 && close <= HARD_CLOSE, '360 second absolute browser cap');
+  assert(issued <= now && now - issued < BROWSER_MS, 'fresh local release');
+  assert(close <= issued + BROWSER_MS && close <= HARD_CLOSE, '720 second absolute browser cap');
   assert(close > now + 180000, 'original three-minute useful/recovery window required');
   assert(recover >= close + 180000 && recover <= HARD_RECOVER, 'original cleanup reserve required');
-  return Math.min(now + 900000, close);
+  return close;
 }
 function createRelease(run, now = Date.now()) {
-  assert(now + 360000 + 180000 < HARD_CLOSE, 'launch requires 360+180 seconds before Chrome cutoff');
+  assert(now + BROWSER_MS + RESERVE_MS < HARD_CLOSE, 'launch requires 720+180 seconds before Chrome cutoff');
   assert(!fs.existsSync(path.join(run,'browser')), 'one original launch only');
   return {authorization:'RUNTIME RELEASE MDK2 TARGET ONWARD', localAuthorization:'EXPLICIT LOCAL FINITE ORIGINAL ATTEMPT',
     assignment:ASSIGNMENT, shutdownOwner:'coordinator', runtimeKind:'local-process-v1', boxId:null, expiry:null,
     runDirectory:run, localIdentity:identity(), candidate:candidate(), nonce:crypto.randomBytes(32).toString('hex'), issuedAt:new Date(now).toISOString(),
-    closeBy:new Date(now + 360000).toISOString(), recoverBy:new Date(now + 540000).toISOString()};
+    closeBy:new Date(now + BROWSER_MS).toISOString(), recoverBy:new Date(now + BROWSER_MS + RESERVE_MS).toISOString()};
 }
 function once(source, from, to) {
   assert.equal(source.split(from).length, 2, 'local contract anchor changed: ' + from);
@@ -93,7 +95,7 @@ def allocation():
  assert v['authorization']=='RUNTIME RELEASE MDK2 TARGET ONWARD'
  assert v['localAuthorization']=='EXPLICIT LOCAL FINITE ORIGINAL ATTEMPT'
  assert v['runtimeKind']=='local-process-v1' and v['boxId'] is None and v['expiry'] is None
- assert v['assignment']=='20261104-mdk2-bounded-trace-driver-repair' and v['runDirectory']==str(E)
+ assert v['assignment']=='20261104-mdk2-startup-timing-onward' and v['runDirectory']==str(E)
  assert v['shutdownOwner']=='coordinator'
  assert len(v['nonce'])==64 and all(c in '0123456789abcdef' for c in v['nonce'])
  for field,name in [('driverSHA256','mdk2-construction-driver-integration.cjs'),('localSHA256','mdk2-local-runtime.cjs')]:

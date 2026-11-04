@@ -9,8 +9,9 @@ const run=fs.mkdtempSync(path.join(local.BASE,'mdk2-local-contract-test-'));
 after(()=>fs.rmSync(run,{recursive:true,force:true}));
 const now=Date.parse('2026-11-04T17:50:00Z');
 function release(){return local.createRelease(run,now);}
-test('real local host/process release retains 360 seconds and 180 seconds cleanup',()=>{
- const r=release();assert.equal(local.validate(r,run,now),now+360000);
+test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
+ const r=release();assert.equal(local.validate(r,run,now),now+720000);
+ assert.equal(r.assignment,'20261104-mdk2-startup-timing-onward');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -23,24 +24,50 @@ for(const [name,change] of Object.entries({
  'missing nonce':r=>delete r.nonce, 'malformed nonce':r=>r.nonce='fake',
  'missing candidate':r=>delete r.candidate, 'foreign driver':r=>r.candidate.driverSHA256='0'.repeat(64),
  'foreign local':r=>r.candidate.localSHA256='0'.repeat(64),
- 'long browser':r=>r.closeBy=new Date(now+360001).toISOString(),
- 'short reserve':r=>r.recoverBy=new Date(now+539999).toISOString(),
+ 'prior assignment release':r=>r.assignment='20261104-mdk2-bounded-trace-driver-repair',
+ 'long browser':r=>r.closeBy=new Date(now+720001).toISOString(),
+ 'short reserve':r=>r.recoverBy=new Date(now+899999).toISOString(),
  'nonfinite':r=>r.closeBy='unknown', 'future release':r=>r.issuedAt=new Date(now+1).toISOString()
 }))test('reject '+name,()=>{const r=release();change(r);assert.throws(()=>local.validate(r,run,now));});
 test('original useful-window minimum and absolute launch cutoff cannot be extended',()=>{
- assert.throws(()=>local.validate(release(),run,now+180000),/three-minute/);
- assert.throws(()=>local.createRelease(run,local.HARD_CLOSE-540000),/360\+180/);
+ assert.equal(local.validate(release(),run,now+539999),now+720000);
+ assert.throws(()=>local.validate(release(),run,now+540000),/three-minute/);
+ assert.throws(()=>local.createRelease(run,local.HARD_CLOSE-900000),/720\+180/);
 });
 test('renewed dated assignment retains exact absolute close and recovery bounds',()=>{
- assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T19:20:00Z'));
- assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T19:23:00Z'));
+ assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T20:00:00Z'));
+ assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T20:03:00Z'));
  const r=release();r.recoverBy=new Date(local.HARD_RECOVER+1).toISOString();
  assert.throws(()=>local.validate(r,run,now),/cleanup reserve/);
- const late=local.createRelease(run,local.HARD_CLOSE-540001);
- assert.equal(local.validate(late,run,local.HARD_CLOSE-540001),local.HARD_CLOSE-180001);
+ const late=local.createRelease(run,local.HARD_CLOSE-900001);
+ assert.equal(local.validate(late,run,local.HARD_CLOSE-900001),local.HARD_CLOSE-180001);
+});
+test('one launch and fresh nonce bind each new local contract',()=>{
+ assert.notEqual(release().nonce,release().nonce);
+ fs.mkdirSync(path.join(run,'browser'));
+ try{assert.throws(()=>release(),/one original launch/);}finally{fs.rmdirSync(path.join(run,'browser'));}
+});
+test('actual entry admits only the renewed validated local assignment before original deadline seam',()=>{
+ const finite=require(path.join(local.BASE,'20261104-mdk2-fresh-pending-scene/finite-deadline.cjs'));
+ const original=finite.browserDeadline, originalNow=Date.now;
+ let reached=0;
+ finite.browserDeadline=()=>{reached++;throw Error('original deadline reached; no bootstrap');};
+ Date.now=()=>now;
+ try{
+  for(const assignment of ['20261104-mdk2-bounded-trace-driver-repair',local.ASSIGNMENT]){
+   const r=release();r.assignment=assignment;
+   fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(r));
+   assert.throws(()=>integration.run(run),assignment===local.ASSIGNMENT?/original deadline reached/:/assignment|Expected values/);
+  }
+  assert.equal(reached,1);
+  assert(!fs.existsSync(path.join(run,'browser')));
+  assert(!fs.existsSync(path.join(run,'author.py')));
+ }finally{finite.browserDeadline=original;Date.now=originalNow;fs.unlinkSync(path.join(run,'runtime-release.json'));}
 });
 test('actual composed source retains original guards under explicit local identity and tighter finite caps',()=>{
  const source=integration.compose(run).source, translated=local.translate(source);
+ assert(translated.includes('deadline-180000'));
+ assert(translated.includes('recoveryReserveMs:180000'));
  new vm.Script(require('node:module').wrap(translated));
  const guard="if(release.authorization!=='RUNTIME RELEASE MDK2 TARGET ONWARD'||release.shutdownOwner!=='coordinator'||!release.boxId||Date.parse(release.expiry)<Date.now()+600000)throw Error('fresh authorized finite TTL required');";
  const tool=JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'));

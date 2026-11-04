@@ -615,7 +615,11 @@ function run(runDirectory) {
   // this gate. A stale release from the closed attempt cannot launch it again.
   const release = JSON.parse(fs.readFileSync(path.join(runDirectory, 'runtime-release.json')));
   assert.equal(release.runDirectory, runDirectory, 'fresh release must bind this exact run directory');
-  assert.equal(release.assignment, '20261104-mdk2-bounded-trace-driver-repair', 'fresh assignment required');
+  if (release.runtimeKind === 'local-process-v1') {
+    // A dated local renewal must validate its real identity/candidate/deadlines;
+    // it cannot inherit admission from the previous assignment's release.
+    require('./mdk2-local-runtime.cjs').validate(release, runDirectory);
+  } else assert.equal(release.assignment, '20261104-mdk2-bounded-trace-driver-repair', 'fresh assignment required');
   assert(!fs.existsSync(path.join(runDirectory, 'browser')), 'one fresh original launch only');
   require(path.join(RUNS, '20261104-mdk2-fresh-pending-scene/finite-deadline.cjs')).browserDeadline(release, Date.now());
   assertRunnable();
