@@ -1835,3 +1835,102 @@ retains the lifecycle evidence. Boat ID/state/expiry are N/A. No further browser
 heavy CLI/build, public deployment, laptop work, foreign signals, agents or
 successors were used. Next work would need a genuinely different supported
 access route; count7 remains the preferred fallback.
+
+### 2026-11-04 supported-stack preparation: crouch consumed before takeoff; first step still unresolved
+
+Run `scratch/runs/20261104-deusex-supported-stack/` restored the preferred
+**count7/time01:09:32** through ordinary native Load. It established grounded
+and airborne crouch consumption, but **no new supported footing, stack access,
+exit, ladder exercise or measured FPS**. Gameplay stopped after the first new
+access attempt returned to the floor. No crate pickup/drop or new save occurred;
+both accepted checkpoint pairs remain unchanged. The failed prior
+Space→X+Up sequence was not repeated.
+
+Historical identity was recovered before execution. The0403Z manifest records
+base `a504fa248caaecbbb042b65e9ae5384a340ade26`, with dirty source including
+concurrent font work, rather than a clean current-main build. All292 exact
+source hashes now also reproduce from that Git base plus this run's
+`historical-source.patch`: `git diff --binary` over nine changed files,
+independently applied and checked using a temporary Git index, without a source
+snapshot, checkout copy or branch. `historical-source-recovery.json` records the
+patch hash. Module SHA256 is
+`8459597c8d66e098d727fb4ab53e1cf46332241dc7eef2e158f3c475a78b1676`.
+All131 original/support pins,105 canonical served-response identities and19
+native DLL paths passed. Original SoftDrv, default guestWorker, three original
+live guest workers and1024×768 captures were retained. Current host modules
+were not used.
+
+The initial launch failed before a guest existed because the run's restricted
+server lacked the five global `.fon` files. The original failure frame and
+receipts remain in `recovered/startup-failure/`. The accepted14:50 response log
+supplied exact hashes for40 additional global assets; matching existing files
+were provisioned directly into the test runtime. `startup-dependency-check.json`
+and `startup-repair-verification.json` record this bounded preparation repair.
+No media was copied into evidence. The browser retest retained the first
+controller's original18-minute deadline. There was no guest-route replay.
+
+Inspected `05-native-load.png` shows count7/time01:09:32, and
+`07-exact-count7-observer.json` passes the unchanged observer's unique
+JCDentonMale0/save crosscheck at (7058.32031,−1773.35107,15.90000),yaw184635,
+Physics1,height43,zero velocity. `08` still says LOADING; only inspected
+`09-restored-scene.png` establishes actual crate-room gameplay before movement.
+The original observer and its positive/five rejection fixtures were retained
+byte-for-byte. Reads remained at the owning-worker return boundary; there were
+no arbitrary live crate reads, memory scans/writes or injected game calls.
+
+Cheap preparation reread original `DoJump`, `PlayerWalking.ProcessMove`,
+`DropDecoration`, bindings and accepted saved actor geometry. ProcessMove
+performs the height16 change while walking; DoJump allows crouching but refuses
+a carried decoration heavier than20. A nominal offset upper-crate layout was
+considered, but highlighted-target drops randomize their XY placement rather
+than accepting a chosen offset. It was not treated as a reachable new support.
+The selected bounded hypothesis was instead to **consume X on the ground before
+Space**, then test the original floor small crate as the first support, whose
+saved top is about2.103. Its saved transform remains planning evidence, not a
+new measurement of its live transform after collision.
+
+| Inspected action/evidence | Actual result |
+| --- | --- |
+| Grounded X; `10` and `11`,461ms apart | Both Physics1,zero velocity,height16,centerZ−11.10000. Feet remain−27.10000. Crouch consumption is demonstrated before any Space. |
+| ArrowRight400ms; `12` | This strafed, rather than turned: player moved to (7084.43994,−1761.60461,−11.10000),yaw unchanged. Original User.ini was reread; C is TurnRight. This control error is retained. |
+| C600ms then1050ms; `13`,`14` | Actual yaw216816, stationary,crouched, facing the highlighted floor small crate. No crate was lifted or moved by a pickup/drop action. |
+| Space+Up with X already consumed; `15`–`18` |129 checked trajectory samples retain height16 throughout. Positive sampled Vz204.05661 establishes takeoff; sampled apex centerZ36.18572. `16` is airborne, not a landing. |
+| Settled `17`,`18`,777ms apart | Identical (7076.08545,−1739.81909,−11.20000),Physics1,height16,zero velocity. Feet−27.20000 and inspected crate-ahead view establish return to floor, not new support. |
+| Release X; `19`,`20` | Standing height43,centerZ15.80000 at the same XY,zero velocity; all native inputs released. |
+
+The tested crouch-first hypothesis resolves input consumption, but not access.
+Horizontal displacement during the jump was small: at the last sampled descent
+state above the saved crate-top height, player XY was (7081.22363,−1753.20996);
+by (7080.22559,−1750.60718) the feet were already below that nominal top.
+Those positions are55.26 and52.48 units from the **saved** crate center. No live
+crate transform or precise collision margin is inferred from those distances.
+The first unresolved dependency is reaching usable horizontal support before
+descending below it. A closer, rechecked stationary launch is the next hypothesis;
+it has not been attempted or qualified. No exit jump, repeated crate route,
+new checkpoint or emulator fix followed this failure.
+
+`check.py` passes the source/Git-patch identity, both immutable checkpoint pairs,
+observer fixtures/native crosscheck, grounded/airborne height16, positive
+trajectory and stable floor result,30 balanced trusted native events,12 completed
+receipts (maximum12 steps, limit64),18 PNG dimensions,458 sealed runtime inputs
+with the explicitly recorded helper repair, and95 recovered unique evidence
+files/full SHA256. Both browser sessions together lasted329.236s through final
+cleanup, within the original18-minute bound. Controller exit0, held inputs empty
+and port8123 closed are retained. No production source was changed, so no
+production build or defect claim is made.
+
+Fresh authorized box `bx_z9s6mjdr`,TTL3600,expiry
+`2026-11-04T01:28:40.864Z`, was recorded before execution. It was handed back
+**RUNNING/idle**, with coordinator shutdown ownership; the worker did not stop,
+delete or resume any box. One module was executed and recovered locally with its
+full SHA256. The accepted historical closure supplies only the canonical845
+module, with no second compatibility-module identity; therefore **both-module
+recovery cannot be claimed**, and no current compatibility module was substituted.
+`remote-recovery-manifest.json`, `local-recovery-verified.json` and
+`boat-handoff-info.json` retain these evidence and lifecycle limits.
+
+Subsequent coordinator board entry00:41:33Z records the verified named snapshot
+`deusex-supported-stack-20261104` and actual normal STOPPED at
+`2026-11-04T00:41:10.755Z`,forcedfalse/errornull. This was coordinator action
+after the worker's RUNNING/idle handback; the worker performed no box lifecycle
+mutation. The original expiry is now inactive.
