@@ -6640,7 +6640,18 @@ class WineAssembly {
       // guest stops the chain: its due frame moves nothing. A surface still
       // locked mid-write keeps it going, as the rAF path does, so the retry
       // lands in the next slice rather than the one after.
-      if (this._presentNow() || this._dxLockDeferred) this._queuePresentFrame();
+      let uploaded;
+      try {
+        uploaded = this._presentNow();
+      } catch (error) {
+        // This is a scheduled display callback deferred by a Worker slice.
+        // A failed display must not turn into a fatal guest-loop failure just
+        // because rAF landed mid-slice. The failed frame is consumed; later
+        // ordinary damage can schedule another, as on the rAF path below.
+        console.error('[present] deferred frame failed:', error);
+        return;
+      }
+      if (uploaded || this._dxLockDeferred) this._queuePresentFrame();
       return;
     }
     if (this._presentWanted()) this._queuePresentFrame();

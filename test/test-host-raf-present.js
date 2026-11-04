@@ -23,21 +23,34 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { ThreadManager } = require('../lib/thread-manager');
+const { createRequire } = require('module');
+const { PresentationFilter } = require('../lib/presentation-filter');
+const { createCanvas } = require('../lib/raster-canvas');
 
 const hostSource = fs.readFileSync(path.join(__dirname, '..', 'host.js'), 'utf8');
 
-function makeHost({ withRaf }) {
+function makeHost({ withRaf, actualRenderer = false }) {
   const rafQueue = new Map();
   let rafSeq = 0;
-  const context = { URLSearchParams, console, setTimeout, clearTimeout };
+  const metrics = [];
+  const errors = [];
+  const context = { URLSearchParams, console: { ...console, error: (...args) => errors.push(args) }, setTimeout, clearTimeout,
+    performance: { now: () => 100 },
+    window: { WinePerf: { enabled: true, stepBegin() {}, stepEnd() {}, mark() {}, countBlocks() {},
+      frameUpload: (ms, uploaded) => metrics.push(uploaded) } } };
+  if (!actualRenderer) delete context.window;
   if (withRaf) {
     context.requestAnimationFrame = cb => { rafQueue.set(++rafSeq, cb); return rafSeq; };
     context.cancelAnimationFrame = id => { rafQueue.delete(id); };
   }
   vm.runInNewContext(hostSource + '\n;globalThis.WineAssembly = WineAssembly;', context);
   const wine = new context.WineAssembly();
+  wine.logToUI = message => { throw new Error(message); };
+  wine._releaseGuestMemory = () => {}; // No runtime/memory owner in this fixture.
   if (withRaf) wine.__rafForTest = context.requestAnimationFrame;
-  const log = { uploads: [], composites: 0, pacedCalls: 0, unpacedCalls: 0 };
+  const log = { uploads: [], composites: 0, pacedCalls: 0, unpacedCalls: 0,
+    sliceSync: [], publications: [] };
   // The guest's frame counter: each slice "presents" a new frame by bumping
   // it and marking the surface dirty, exactly what dx_trace kind 5 does.
   let guestFrame = 0;
@@ -59,6 +72,22 @@ function makeHost({ withRaf }) {
       if (this._repaintScheduled || force) { this._repaintScheduled = false; log.composites++; }
     },
   };
+  if (actualRenderer) {
+    const rendererPath = require.resolve('../lib/renderer');
+    const rendererContext = { ...context, require: createRequire(rendererPath), module: { exports: {} } };
+    vm.runInNewContext(fs.readFileSync(rendererPath, 'utf8'), rendererContext);
+    const { Win98Renderer } = rendererContext.module.exports;
+    const r = new Win98Renderer(createCanvas(8, 8));
+    r._isNode = false;
+    r.canvas.style = {};
+    r.presentationCanvas = createCanvas(16, 16);
+    r.presentationCanvas.style = {};
+    r.presentationFilter = new PresentationFilter(r.presentationCanvas, { createCanvas: () => null });
+    r.presentationScaleMode = 'integer';
+    // Real renderer and host share the browser frame queue through their VM
+    // globals; no scheduling or publication method is replaced.
+    wine.renderer = r;
+  }
   const present = () => { guestFrame++; wine._dxDirty = true; };
   const fireRaf = () => {
     const cbs = [...rafQueue.values()];
@@ -66,7 +95,7 @@ function makeHost({ withRaf }) {
     for (const cb of cbs) cb();
     return cbs.length;
   };
-  return { wine, log, present, fireRaf, rafQueue, isHeld: () => held };
+  return { wine, log, metrics, errors, present, fireRaf, rafQueue, isHeld: () => held };
 }
 
 // Drive host.js's own Worker loop (_runThreaded) with a controllable slice.
@@ -75,15 +104,15 @@ function driveWorkerLoop(h) {
   const scheduled = [];
   const resolvers = [];
   wine._scheduleStep = step => scheduled.push(step);
-  wine._beginGuestTickBatch = () => {};
+  wine._beginGuestTickBatch = wine._beginGuestTickBatchForTest || (() => {});
   wine._guestTickMs = () => 0;
-  wine.instance = { exports: {} };
+  wine.instance = wine.instance || { exports: {} };
   wine.guestWorker = {
-    broker: { publish() {} },
+    broker: { publish(state) { h.log.publications.push(state); } },
     // runMain reads the main link's send depth and wave offer first
     // (28a104092, f2367f0c5); an idle link has neither.
     link: { threadSendDepth: 0, _waveOffer: null },
-    slice() { return new Promise(resolve => resolvers.push(resolve)); },
+    slice(steps, sync) { h.log.sliceSync.push(sync); return new Promise(resolve => resolvers.push(resolve)); },
   };
   wine.running = true;
   wine._runThreaded(1000);
@@ -95,11 +124,11 @@ function driveWorkerLoop(h) {
   };
   // Finish the in-flight slice (optionally presenting inside it), let the
   // boundary run, and start the next slice.
-  const finishSlice = async ({ presents = 0, next = true } = {}) => {
+  const finishSlice = async ({ presents = 0, next = true, result = {} } = {}) => {
     for (let i = 0; i < presents; i++) h.present();
     await inFlight();
     assert.strictEqual(resolvers.length, 1, 'the step has asked for its slice');
-    resolvers.shift()({ eip: 1, yield: 0, focusHwnd: 0, blocks: 1000, ms: 1 });
+    resolvers.shift()({ eip: 1, yield: 0, focusHwnd: 0, blocks: 1000, ms: 1, ...result });
     await tick();
     if (next) {
       assert.strictEqual(scheduled.length, 1, 'a completed slice schedules its successor');
@@ -268,37 +297,122 @@ function driveWorkerLoop(h) {
     h.wine.running = false;
   }
 
-  // A thread created by the preceding slice must exist before main resumes.
-  // Otherwise main can start a timer deadline while its worker is still
-  // instantiating (NFS II's timer-readiness check fails in that interval).
+  // Bootstrap starts without joining: DLL_THREAD_ATTACH may need the creator
+  // to release a lock. Real manager methods own singleflight, readiness and
+  // runnable selection; only metadata/interpreter exports and transport fake.
   for (const stopBeforeReady of [false, true]) {
     const h = makeHost({ withRaf: false });
     let ready;
     let starts = 0;
-    h.wine.threadManager = {
-      _pendingThreads: [{}],
-      async spawnPending() {
+    let childSlices = 0, ticks = 0, waves = 0, audio = 0;
+    const memory = new WebAssembly.Memory({ initial: 1, maximum: 1, shared: true });
+    let numThunks = 3, thunkEnd = 0x1234;
+    const main = { exports: { get_sync_table: () => 0, get_num_thunks: () => numThunks,
+      get_thunk_end: () => thunkEnd, get_dll_count: () => 2,
+      sync_thunk_state(end, count) { thunkEnd = end; numThunks = count; } } };
+    const backend = {
+      readExports: async () => ({ get_image_base: 0x400000 }),
+      async spawnThread() {
         starts++;
         await new Promise(resolve => { ready = resolve; });
-        this._pendingThreads = [];
+        return { async slice() { childSlices++; return { eip: 1, yield: 0, blocks: 1 }; } };
       },
-      workerSyncState: () => null,
     };
+    const tm = new ThreadManager({}, memory, main, () => ({ host: {} }),
+      { workerBackend: backend, threadsRequested: true });
+    tm._log = () => {};
+    const handle = tm.createThread(0x401000, 0, 0, 0);
+    h.wine.threadManager = tm;
+    h.wine.instance = main;
+    h.wine._beginGuestTickBatchForTest = () => { ticks++; };
+    h.wine.hostCtx = { pumpAudioCompletions() { audio++; },
+      async pumpWaveCallbacks() { waves++; } };
     const loop = driveWorkerLoop(h);
-    let ticks = 0;
-    h.wine._beginGuestTickBatch = () => { ticks++; };
+    await loop.inFlight();
     assert.strictEqual(starts, 1);
-    assert.strictEqual(loop.resolvers.length, 0,
-      'main must not start its next slice during worker initialization');
-    await new Promise(resolve => setImmediate(resolve));
-    assert.strictEqual(ticks, 0, 'guest clock batch waits for worker initialization');
-    assert.strictEqual(loop.resolvers.length, 0);
+    assert.strictEqual(ticks, 1, 'first guest tick does not join bootstrap');
+    assert.strictEqual(loop.resolvers.length, 1, 'creator runs during child bootstrap');
+    assert.strictEqual(childSlices, 0, 'pending child cannot enter user code');
+    assert.strictEqual(h.log.sliceSync[0].numThunks, 3, 'main receives actual manager sync');
+    assert.strictEqual(h.log.sliceSync[0].dllCount, 2);
+    assert.strictEqual(tm.waitSingle(handle, 0), 0x102, 'pending handle is unsignaled');
+    const publications = h.log.publications.length;
+    await loop.finishSlice({ result: { numThunks: 7, thunkEnd: 0x5678 } });
+    assert.strictEqual(numThunks, 7, 'host publishes completed main thunk high-water state');
+    assert.strictEqual(h.log.sliceSync[1].thunkEnd, 0x5678, 'next main slice receives merged state');
+    assert.strictEqual(h.log.publications.length, publications + 1, 'broker service continues next boundary');
+    assert.strictEqual(starts, 1, 'successive boundaries share the real bootstrap flight');
+    assert.strictEqual(ticks, 2, 'next guest tick continues during bootstrap');
+    assert.strictEqual(waves, 2, 'wave callbacks continue during bootstrap');
+    assert.strictEqual(audio, 2, 'audio completions continue during bootstrap');
+    assert.strictEqual(childSlices, 0);
+    const flight = tm.spawnPending(); // Explicit readiness join remains available.
     if (stopBeforeReady) h.wine.running = false;
     ready();
-    await new Promise(resolve => setImmediate(resolve));
-    assert.strictEqual(ticks, stopBeforeReady ? 0 : 1);
-    assert.strictEqual(loop.resolvers.length, stopBeforeReady ? 0 : 1,
-      'main resumes once the new worker is ready, unless the app was stopped');
+    await flight;
+    await loop.finishSlice({ next: !stopBeforeReady });
+    assert.strictEqual(tm._pendingThreads.length, 0);
+    assert.strictEqual(childSlices, stopBeforeReady ? 0 : 1,
+      'ready child gets a real scheduler turn unless host stopped');
+    assert.strictEqual(loop.scheduled.length, 0, 'stopped case has no successor');
+    h.wine.running = false;
+  }
+
+  // ---- actual host + renderer/filter, through ordinary frame scheduling ---
+  for (const heldFailure of [false, true]) for (const failure of ['false', 'throw']) {
+    const h = makeHost({ withRaf: true, actualRenderer: true });
+    const r = h.wine.renderer, ctx = r.presentationFilter.ctx;
+    const messages = [];
+    h.wine.logToUI = message => messages.push(message);
+    let services = 0;
+    h.wine.hostCtx = { async pumpWaveCallbacks() { services++; } };
+    const loop = driveWorkerLoop(h);
+    await loop.inFlight();
+    r.scheduleRepaint();
+    await loop.finishSlice({ next: false });
+    assert.strictEqual(h.rafQueue.size, 1, 'ordinary GDI damage arms host rAF');
+    assert.deepStrictEqual(h.metrics, [], 'arming a frame is not publication');
+    if (heldFailure) {
+      loop.scheduled.shift()();
+      await loop.inFlight();
+      assert.strictEqual(r._workerPublicationHeld(), true);
+      assert.strictEqual(h.fireRaf(), 1);
+      assert.strictEqual(h.wine._presentFrameDue, true);
+      assert.deepStrictEqual(h.metrics, [], 'held frame cannot count an upload');
+      assert.strictEqual(r._repaintScheduled, true, 'held queue retains damage');
+    }
+    const draw = ctx.drawImage, displayError = new Error('display draw failed');
+    if (failure === 'false') r.presentationFilter.ctx = null;
+    else ctx.drawImage = () => { throw displayError; };
+    if (heldFailure) await loop.finishSlice({ next: false });
+    else assert.throws(() => h.fireRaf(), error => failure === 'false'
+      ? /PresentationFilter\.present returned false/.test(error.message) : error === displayError);
+    assert.deepStrictEqual(h.metrics, [], 'failed display never counts an upload');
+    assert.strictEqual(r._repainting, false, 'failed repaint unwinds');
+    assert.strictEqual(r._workerPublicationHeld(), false, 'slice hold unwinds');
+    assert.strictEqual(h.wine._presentRaf, 0, 'failed callback is consumed');
+    assert.strictEqual(h.wine._presentFrameDue, false);
+    assert.strictEqual(h.wine.running, true, 'display failure must not stop guest services');
+    assert.strictEqual(loop.scheduled.length, 1, 'next ordinary slice remains scheduled');
+    r.presentationFilter.ctx = ctx;
+    ctx.drawImage = draw;
+    loop.scheduled.shift()();
+    await loop.inFlight();
+    r.scheduleRepaint();
+    await loop.finishSlice({ next: false });
+    assert.strictEqual(h.rafQueue.size, 1);
+    assert.strictEqual(h.fireRaf(), 1);
+    assert.deepStrictEqual(h.metrics, [1], 'next ordinary frame publishes exactly once');
+    assert.strictEqual(r.presentationFilter.lastBackend, 'canvas-nearest');
+    assert.strictEqual(r._repaintScheduled, false);
+    assert.strictEqual(r._repaintRaf, null, 'host cancels redundant renderer rAF');
+    assert.strictEqual(services, heldFailure ? 3 : 2, 'service pump survives failed display');
+    assert.deepStrictEqual(messages, [], 'display failures do not enter fatal guest-loop handler');
+    assert.strictEqual(h.errors.length, heldFailure ? 1 : 0);
+    if (heldFailure) {
+      assert.strictEqual(h.errors[0][0], '[present] deferred frame failed:');
+      if (failure === 'throw') assert.strictEqual(h.errors[0][1], displayError);
+    }
     h.wine.running = false;
   }
 
@@ -331,7 +445,7 @@ function driveWorkerLoop(h) {
     assert.strictEqual(hud.snapshot().uploadsTotal, 60, 'a flush that moved no pixels is not an upload');
   }
 
-  console.log('PASS browser present is coalesced to one upload per display frame');
+  console.log('PASS host rAF coalescing, real Worker bootstrap/service contract and actual display failure/recovery boundaries');
 })().catch(error => {
   console.error(error && error.stack || error);
   process.exit(1);
