@@ -3,6 +3,8 @@
 
 // --plan never compiles, instantiates Wasm or starts a browser.
 // Runtime: LEGACY_RENDER_EVIDENCE=... node test/test-legacy-texture-rendered-contract.js
+// --cube-border adds runtime native cube rejection and characterizes the
+// UNADVERTISED BORDER fallback. It does not claim BORDER/cube support.
 // Unavailable runtime dependencies are failures/untested, never successful SKIPs.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -12,12 +14,14 @@ const cp = require('node:child_process');
 const ROOT = path.resolve(__dirname, '..');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 
-function plan() {
+function plan(cubeBorder=false) {
   const texture = [[32,64,96], [160,32,64], [64,192,32], [224,128,160]];
   const samples = [{name:'interior',uv:[3/8,5/8]}, {name:'outside',uv:[-1/8,9/8]}];
   const states = [[1,1],[2,1],[1,1],[1,3],[1,1],[2,1],[2,3],[2,1],[1,1]]
     .map(([filter,address],i) => ({label:`state-${i}-${filter===1?'point':'linear'}-${address===1?'wrap':'clamp'}`,filter,address}));
-  return {texture,samples,states};
+  if(cubeBorder) states.push(...[[1,4],[2,4],[1,3],[1,1],[1,4]].map(([filter,address],i)=>
+    ({label:`cube-border-${i}-${filter===1?'point':'linear'}-address-${address}`,filter,address})));
+  return {texture,samples,states,cubeBorder};
 }
 
 // Independent numerical oracle: normalized texture coordinates; texel centers
@@ -38,8 +42,8 @@ function oracle(texture, uv, filter, address) {
   });
 }
 
-function planner() {
-  const p=plan(),expected=p.states.map(s=>p.samples.map(t=>oracle(p.texture,t.uv,s.filter,s.address)));
+function planner(cubeBorder=false) {
+  const p=plan(cubeBorder),expected=p.states.map(s=>p.samples.map(t=>oracle(p.texture,t.uv,s.filter,s.address===4?1:s.address)));
   assert.notDeepEqual(expected[0][0],expected[1][0],'interior discriminates nearest-only');
   assert.notDeepEqual(expected[0][1],expected[3][1],'outside discriminates point wrap/clamp');
   assert.notDeepEqual(expected[5][1],expected[6][1],'outside discriminates linear wrap/clamp');
@@ -48,7 +52,10 @@ function planner() {
   assert.deepEqual(expected[0],expected[8],'all state restored');
   assert.deepEqual(expected[1],[[94,146,70],[142,66,86]],'independent hand-calculated bilinear colors');
   assert.deepEqual(expected[3][1],[64,192,32],'independent out-of-range clamped corner');
-  return {status:'PLANNER ONLY; rendering untested',...p,expected};
+  return {status:'PLANNER ONLY; rendering untested',...p,expected,
+    ...(cubeBorder?{borderContract:'UNADVERTISED; characterize software WRAP / WebGL CLAMP fallback only',
+      borderFallbacks:{software:p.samples.map(t=>oracle(p.texture,t.uv,1,1)),
+        webgl:p.samples.map(t=>oracle(p.texture,t.uv,1,3))}}:{})};
 }
 
 // Serialized into the browser unchanged. All guest operations, including
@@ -158,6 +165,23 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     finally{dv.setUint32(thunkWa+4,saved,true);}
     await ok(com('SetCooperativeLevel',dd,20,0,8));
     const d3d=await acquire(out=>com('QI IDirect3D7',dd,0,iidD3D7,out));
+    if(config.cubeBorder){
+      evidence.cubeRejections=[];
+      for(const caps2 of [0x200,0x600,0xfe00,0x400]){
+        const desc=await guard(124),out=await guard(4);
+        await words(desc.p,Array(31).fill(0));
+        for(const [off,v] of [[0,124],[4,0x1007],[8,2],[12,2],[72,32],[76,0x40],[84,32],
+          [88,0xff0000],[92,0xff00],[96,0xff],[104,0x1808],[108,caps2]])await write(desc.p+off,v);
+        const before=Array.from(new Uint8Array(memory.buffer,await wa(desc.p),124));
+        await write(out.p,0xa5a5a5a5);
+        const hr=await com('CreateSurface7 reject caps2 '+caps2.toString(16),dd,6,desc.p,out.p,0);
+        const value=await read(out.p);await out.check();await desc.check();
+        const after=Array.from(new Uint8Array(memory.buffer,await wa(desc.p),124));
+        evidence.cubeRejections.push({caps2,hr,output:value,guardsIntact:true,inputUnchanged:JSON.stringify(before)===JSON.stringify(after)});
+        eq(hr,0x80004001,'native extended cube caps E_NOTIMPL');eq(value,0,'native cube output cleared');
+        eq(after,before,'native cube descriptor unchanged');
+      }
+    }
     const surface=async(width,height,caps)=>{
       const desc=await alloc(124);await words(desc,Array(31).fill(0));
       for(const [off,v] of [[0,124],[4,0x1007],[8,height],[12,width],[72,32],[76,0x40],[84,32],
@@ -181,6 +205,8 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       eq((await read(caps.p+offset))&8,0,'unsupported BORDER remains unadvertised');
     }
     for(const offset of [36,92])eq((await read(caps.p+offset))&0x800,0,'unsupported cube remains unadvertised');
+    evidence.advertised={textureCaps:[await read(caps.p+36),await read(caps.p+92)],
+      addressCaps:[await read(caps.p+48),await read(caps.p+104)],cube:false,border:false};
     const lockDesc=await guard(124);
     const lock=async obj=>{
       await words(lockDesc.p,Array(31).fill(0));await write(lockDesc.p,124);
@@ -209,8 +235,17 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
         await words(vertices+i*32,[bits(x),bits(y),bits(.5),bits(1),0xffffffff,0,bits(uv[0]),bits(uv[1])]);
     };
     const setState=async state=>{
-      const filter=negative==='nearest'?1:state.filter,address=negative==='stale'?1:state.address;
+      const filter=negative==='nearest'?1:state.filter,address=negative==='border'&&state.address===4
+        ?(mode==='software'?3:1):negative==='stale'?1:state.address;
       for(const [id,v] of [[16,filter],[17,filter],[13,address],[14,address]])await tss(id,v);
+      if(config.cubeBorder){
+        // Accepted setters/readback do not imply advertised sampling support.
+        for(const id of [13,14]){
+          const out=await guard(4);await ok(com('GetTextureStageState7',device,36,0,id,out.p));
+          await out.check();eq(await read(out.p),address,'public address state round trip');
+        }
+        await tss(15,0xff5030d0); // Distinct BORDER color: unsupported fallback must not be mistaken for it.
+      }
     };
     const describe=async()=>{
       const p=(await raw('d3dim_gpu_describe',device))>>>0;check(p,'production descriptor');
@@ -232,25 +267,35 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       }
       preview.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),8,8),0,0);
       await unlock(rt);
-      const expected=expectedColor(config.texture,sample.uv,state.filter,state.address);
-      const row={label,sample,state,actual,expected,rawPixel:value,lock:l,dibRGBA,descriptor:await describe()};evidence.observations.push(row);
+      const expectedAddress=state.address===4?(mode==='software'?1:3):state.address;
+      const expected=expectedColor(config.texture,sample.uv,state.filter,expectedAddress);
+      const row={label,sample,state,expectedAddress,actual,expected,rawPixel:value,lock:l,dibRGBA,descriptor:await describe()};evidence.observations.push(row);
       if(gpu){
         const target=[...gpu.targets.values()][0];check(target,'real GPU target');
         const gl=target.device.gpu.gl;target.device.gpu.bindImplicitTarget();
+        if(!evidence.glRenderer){
+          const ext=gl.getExtension('WEBGL_debug_renderer_info');
+          evidence.glRenderer={version:gl.getParameter(gl.VERSION),renderer:gl.getParameter(gl.RENDERER),
+            vendor:gl.getParameter(gl.VENDOR),unmaskedRenderer:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):null};
+        }
         const rgba=new Uint8Array(4);gl.readPixels(2,8-1-2,1,1,gl.RGBA,gl.UNSIGNED_BYTE,rgba);
         row.webglRGBA=Array.from(rgba);row.glError=gl.getError();
-        eq(row.glError,gl.NO_ERROR,'WebGL readback error');eq(row.webglRGBA,[...expected,255],'independent actual WebGL pixels');
+        eq(row.glError,gl.NO_ERROR,'WebGL readback error');
       }
       // Explicit X8R8G8B8 target: each RGB channel is one unquantized byte.
       // Software X and GPU opaque X need not agree; RGB must agree exactly.
       eq(actual,expected,'PIXEL ORACLE '+label);
+      if(gpu)eq(row.webglRGBA,[...expected,255],'independent actual WebGL pixels');
     };
     for(const state of config.states){await setState(state);for(const sample of config.samples){
       await geometry(sample.uv);await draw();await observe(state.label+'/'+sample.name,sample,state);
     }}
     if(mode==='worker'){
       for(const sample of config.samples){await geometry(sample.uv);
-      for(const [old,next] of [[config.states[0],config.states[6]],[config.states[6],config.states[0]]]){
+      const transitions=config.cubeBorder?[[config.states[9],config.states[3]],[config.states[3],config.states[9]],
+        [config.states[9],config.states[0]],[config.states[0],config.states[9]]]
+        :[[config.states[0],config.states[6]],[config.states[6],config.states[0]]];
+      for(const [old,next] of transitions){
         await setState(old);heldRecord={old,next,sample,messages:[]};evidence.queued.push(heldRecord);holding=true;
         await draw();await until(()=>held.length>0,'held production batch');
         await setState(next);heldRecord.liveChangedBeforeDrain=true;
@@ -285,16 +330,17 @@ async function runtime() {
   const closure=require('../tools/watx-closure').watxSourceClosure();
   const source=process.env.LEGACY_RENDER_SOURCE||cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
   assert.match(source,/^[0-9a-f]{40}$/,'full committed source identity required');
+  const cubeBorder=process.argv.includes('--cube-border');
   const evidence={source,
     inputClosure:Object.fromEntries([...closure.vfs].filter(([p])=>!p.includes('/')).map(([p])=>['src/'+p,sha(fs.readFileSync(path.join(ROOT,'src',p)))])),
     fixtureSha256:sha(fs.readFileSync(__filename)),calc:{path:'test/binaries/calc.exe',sha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe')))},
-    plan:planner(),results:[],negativeControls:[]};
+    plan:planner(cubeBorder),results:[],negativeControls:[]};
   const scripts=['lib/region-map.generated.js','lib/gl-command-stream.js','lib/d3d-command-stream.js','lib/guest-rpc.js',
     'lib/guest-thread-host.js','lib/render-worker.js','lib/gpu-backend.js','lib/d3d9-shader.js','lib/d3d-shader-ir.js',
     'lib/d3d9-fixed.js','lib/d3d9-texture.js','lib/render-clear.js','lib/d3d9-backend.js','lib/d3dim-gpu.js'];
   evidence.productionJS=Object.fromEntries(fs.readdirSync(path.join(ROOT,'lib')).filter(p=>p.endsWith('.js')||p.endsWith('.json'))
     .map(p=>['lib/'+p,sha(fs.readFileSync(path.join(ROOT,'lib',p)))]));
-  const config={...plan(),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
+  const config={...plan(cubeBorder),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
   const bootstrapPE=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
   config.imageBase=bootstrapPE.readUInt32LE(bootstrapPE.readUInt32LE(0x3c)+52);
@@ -326,12 +372,15 @@ async function runtime() {
       await page.screenshot({path:path.join(dir,mode+'.png')});await page.close();page=null;
       console.log('PASS public-COM sampler rendered pixels '+mode);
     }
-    for(const negative of ['nearest','stale']){
+    for(const [negative,mode] of cubeBorder?['software','webgl','worker'].map(m=>['border',m])
+      :['nearest','stale'].map(n=>[n,'software'])){
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       let failure;
-      try{await page.evaluate(browserFixture,'software',config,oracle.toString(),negative);}catch(error){failure=String(error);}
+      const negativeConfig=negative==='border'?{...config,states:config.states.filter(s=>s.address===4)}:config;
+      try{await page.evaluate(browserFixture,mode,negativeConfig,oracle.toString(),negative);}catch(error){failure=String(error);}
       const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
-      evidence.negativeControls.push({negative,failure,partial});
+      evidence.negativeControls.push({negative,mode,failure,partial});
+      if(cubeBorder)await page.screenshot({path:path.join(dir,`negative-${negative}-${mode}.png`)});
       assert(failure?.includes('PIXEL ORACLE'),'negative control must fail pixel oracle, not bootstrap');
       assert(partial.observations.some(x=>JSON.stringify(x.actual)!==JSON.stringify(x.expected)),'actual discriminating pixel');
       await page.close();page=null;console.log('PASS rendered negative control rejected '+negative);
@@ -348,7 +397,7 @@ async function runtime() {
 }
 
 if(require.main===module){
-  if(process.argv.includes('--plan'))console.log(JSON.stringify(planner(),null,2));
+  if(process.argv.includes('--plan'))console.log(JSON.stringify(planner(process.argv.includes('--cube-border')),null,2));
   else runtime().catch(error=>{console.error(error);process.exitCode=1;});
 }
 module.exports={plan,oracle,planner,browserFixture};
