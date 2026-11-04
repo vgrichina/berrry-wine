@@ -3053,6 +3053,17 @@
           (f32.mul (local.get $nx) (f32.load offset=72 (local.get $sw)))
           (f32.mul (local.get $ny) (f32.load offset=88 (local.get $sw))))
           (f32.mul (local.get $nz) (f32.load offset=104 (local.get $sw)))))
+        ;; DX7 NORMALIZENORMALS applies after transformation to camera space.
+        ;; World-space normalization alone leaves a scaled view normal short
+        ;; or long, changing specular intensity even with this state enabled.
+        (if (call $d3dim_d7_rs (local.get $sw) (i32.const 143)) (then
+          (local.set $len (f32.sqrt (f32.add (f32.add
+            (f32.mul (local.get $snx) (local.get $snx)) (f32.mul (local.get $sny) (local.get $sny)))
+            (f32.mul (local.get $snz) (local.get $snz)))))
+          (if (f32.gt (local.get $len) (f32.const 0)) (then
+            (local.set $snx (f32.div (local.get $snx) (local.get $len)))
+            (local.set $sny (f32.div (local.get $sny) (local.get $len)))
+            (local.set $snz (f32.div (local.get $snz) (local.get $len)))))))
         (local.set $ex (f32.const 0)) (local.set $ey (f32.const 0)) (local.set $ez (f32.const -1))
         (if (call $d3dim_d7_rs (local.get $sw) (i32.const 142)) (then
           (local.set $ex (f32.neg (f32.add (f32.add (f32.add
