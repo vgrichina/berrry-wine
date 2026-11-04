@@ -234,6 +234,22 @@ async function main() {
     sample.live.live = false;
     assert.throws(() => steeringDecision(sample, pending), /live player/);
   });
+  check('partial original direction/trail changes cannot acknowledge pending native turn; old producer fails', () => {
+    const current = localCandidate.steeringDecision;
+    const old = vm.runInNewContext('(' + current.toString().replace(
+      'sample.live.direction === pendingTurn.direction ||', 'sample.live.direction === pendingTurn.direction &&') + ')', { chooseSteering });
+    const sample = { live: { live: true, direction: 2, trailOffset: 7 },
+      callbacks: BOUNDARY.callbackTable, position: [50, 50],
+      segments: [[0, 0, 100, 0], [0, 100, 100, 0], [0, 0, 0, 100], [100, 0, 0, 100]] };
+    for (const pending of [{ direction: 1, trailOffset: 7 }, { direction: 2, trailOffset: 6 }]) {
+      assert(old(sample, pending).key, 'old producer sends a second turn on a partial ACK');
+      assert.equal(current(sample, pending).key, null);
+      assert.equal(current(sample, pending).awaitingTurn, true);
+    }
+    assert(current(sample, { direction: 1, trailOffset: 6 }).key);
+    sample.live.live = false;
+    assert.throws(() => current(sample, sample.live), /live player/);
+  });
   for (const reject of [false, true]) {
     const calls = [], held = new Set(), page = { keyboard: { down: async key => calls.push('down:' + key), up: async key => calls.push('up:' + key) } };
     const result = balancedKey(page, 'a', held, async () => { if (reject) throw Error('input fixture'); });
@@ -255,9 +271,17 @@ async function main() {
   const captureDir = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'gltron-capture-fixture-'));
   try {
     const calls = [];
-    const page = { evaluate: async (_fn, name) => {
-      calls.push('capture-start'); return { name, capturedAtMs: 100, callbacks: BOUNDARY.callbackTable, generation: 1 };
-    }, screenshot: async ({ path }) => { calls.push('pixels'); fs.writeFileSync(path, 'offline fixture only'); } };
+    let rect = { x: 10, y: 185, width: 800, height: 600, right: 810, bottom: 785 };
+    const page = { evaluate: async (fn, name) => {
+      calls.push('capture-start');
+      return vm.runInNewContext('(' + fn.toString() + ')', {
+        window: {}, performance: { now: () => 100 }, innerWidth: 1200, innerHeight: 900,
+        document: { querySelector: () => ({ getBoundingClientRect: () => rect }) },
+      })(name);
+    }, screenshot: async ({ path, clip }) => {
+      assert.deepEqual(JSON.parse(JSON.stringify(clip)), { x: 10, y: 185, width: 800, height: 600 });
+      calls.push('pixels'); fs.writeFileSync(path, 'offline fixture only');
+    } };
     const capture = await captureForReview(page, captureDir, 'fresh');
     // The tool caller can capture and VIEW the returned exact path in a single
     // invocation, eliminating the ACK -> new model turn -> image-path handoff.
@@ -271,6 +295,10 @@ async function main() {
     await assert.rejects(captureForReview(page, captureDir, 'fresh'), /fresh capture/);
     await assert.rejects(captureForReview(page, captureDir, '../foreign'), /fresh capture/);
     check('capture relay refuses overwrite and foreign capture paths', () => {});
+    rect = { ...rect, bottom: 901 };
+    await assert.rejects(captureForReview(page, captureDir, 'outside'), /visible complete game canvas/);
+    assert(!fs.existsSync(require('node:path').join(captureDir, 'outside.png')));
+    check('real capture callback reads complete canvas bounds and rejects clipping before screenshot', () => {});
   } finally { fs.rmSync(captureDir, { recursive: true }); }
   const queueDir = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'gltron-command-fixture-'));
   try {
@@ -369,7 +397,23 @@ async function main() {
     assert.throws(() => requireReleases('mdk2-demand-entry LOCAL HEAVY RELEASE'), /requires/);
     assert.throws(() => requireReleases('mdk2-demand-entry-continuity LOCAL HEAVY RELEASE'), /requires/);
     const valid = '2026-11-04T20:29:22+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE';
-    assert(requireReleases(valid));
+    const stronghold = '2026-11-04T20:50:21+00:00 stronghold-render-sized LOCAL HEAVY RELEASE';
+    assert.throws(() => requireReleases(valid), /stronghold-render-sized/);
+    assert(requireReleases(valid + '\n' + stronghold));
+    assert(requireReleases(valid + '\n2026-11-04T20:50:21+00:00 coordinator LOCAL HEAVY RELEASE stronghold-render-sized-observer-nov04: checked'));
+    for (const invalid of [
+      '2026-11-04T20:50:20+00:00 stronghold-render-sized LOCAL HEAVY RELEASE',
+      '2026-11-04T20:50:21+00:00 gltron-repaired-live waiting stronghold-render-sized LOCAL HEAVY RELEASE',
+      '2026-11-04T20:50:21+00:00 stronghold-customgame-drain LOCAL HEAVY RELEASE',
+      '2026-11-04T20:50:21+00:00 coordinator quotes stronghold-render-sized LOCAL HEAVY RELEASE',
+      '2027-11-04T20:50:21+00:00 stronghold-render-sized LOCAL HEAVY RELEASE'])
+      assert.throws(() => requireReleases(valid + '\n' + invalid), /stronghold-render-sized/);
+    // Execute the actual predecessor parser: it wrongly grants this task
+    // admission from the old MDK release alone.
+    const oldParser = vm.runInNewContext('(' + requireReleases.toString().replace(
+      /  const stronghold = [\s\S]*return \{ mdk, stronghold \};/, '  return { mdk };') + ')', { Date });
+    assert(oldParser(valid));
+    assert.throws(() => requireReleases(valid), /stronghold-render-sized/);
     for (const line of [
       '2026-11-04T20:29:21+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE',
       '2026-11-04T20:21:00+00:00 gltron-complete-handoff waiting explicit mdk2-medium-through-loading LOCAL HEAVY RELEASE',
@@ -382,7 +426,7 @@ async function main() {
   const { spawnSync } = require('node:child_process');
   // Execute the actual CLI entry point with every process/server/browser path
   // trapped. A missing lock check can fail this test, never launch Chrome.
-  async function unflockedCli(source) {
+  async function unflockedCli(source, argv = ['--run', '/missing-gltron-unflocked-fixture']) {
     const filename = require.resolve('../tools/gltron-logical-fps-local.cjs');
     const entry = { exports: {} }, errors = [], traps = [];
     const trap = name => () => { traps.push(name); throw Error('SPAWN TRAP ' + name); };
@@ -394,7 +438,7 @@ async function main() {
       return load(name);
     };
     mockedRequire.main = entry;
-    const childProcess = { pid: process.pid, argv: [process.execPath, filename, '--run', '/missing-gltron-unflocked-fixture'], exitCode: 0 };
+    const childProcess = { pid: process.pid, argv: [process.execPath, filename, ...argv], exitCode: 0 };
     vm.runInNewContext(source, { require: mockedRequire, module: entry, exports: entry.exports,
       __dirname: require('node:path').dirname(filename), process: childProcess,
       console: { error: error => errors.push(String(error)), log: trap('unexpected stdout') },
@@ -415,6 +459,69 @@ async function main() {
     assert.match(guardedCli.errors[0], /required local flock/);
     assert.deepEqual(guardedCli.traps, []);
     assert.deepEqual(oldCli.traps, []);
+  });
+  const atomicDir = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'gltron-atomic-review-'));
+  try {
+    const relay = require('node:path').join(atomicDir, 'offline-relay');
+    fs.mkdirSync(relay);
+    fs.writeFileSync(require('node:path').join(relay, 'stale.png'), 'offline atomic fixture');
+    fs.writeFileSync(require('node:path').join(relay, 'stale-capture-start.json'), JSON.stringify({
+      name: 'stale', path: require('node:path').join(relay, 'stale.png'),
+      sha256: require('../tools/gltron-logical-fps.cjs').sha256(Buffer.from('offline atomic fixture')),
+      capturedAtEpochMs: Date.now() - 10000 }));
+    const guarded = await unflockedCli(cliSource, ['--review-run', atomicDir, 'stale']);
+    const fallthrough = cliSource.replace(
+      "await commandAck(path.join(path.resolve(run), 'offline-relay'), { action: 'review-only', review: process.argv[4] });",
+      "await commandAck(path.join(path.resolve(run), 'offline-relay'), { action: 'review-only', review: process.argv[4] }).catch(() => {});");
+    assert.notEqual(fallthrough, cliSource);
+    const old = await unflockedCli(fallthrough, ['--review-run', atomicDir, 'stale']);
+    check('actual atomic review/run CLI never enters runtime after failed offline review; old fallthrough fails', () => {
+      assert.equal(guarded.exitCode, 1); assert.equal(old.exitCode, 1);
+      assert.match(guarded.errors[0], /five seconds/);
+      assert.match(old.errors[0], /required local flock/);
+      assert.deepEqual(guarded.traps, []); assert.deepEqual(old.traps, []);
+    });
+  } finally { fs.rmSync(atomicDir, { recursive: true }); }
+  async function publicationFixture(writerSource) {
+    const dir = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'gltron-ack-publish-'));
+    fs.mkdirSync(require('node:path').join(dir, 'commands'));
+    const script = `
+      const fs = require('node:fs'), path = require('node:path');
+      const out = process.argv[1], original = fs.writeFileSync;
+      const write = (${writerSource});
+      fs.writeFileSync = (file, data, ...args) => {
+        original(file, '');
+        original(path.join(out, 'publication-window.json'), JSON.stringify({ path: file, emptyForMs: 250 }));
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 250);
+        original(file, data, ...args);
+      };
+      const timer = setInterval(() => {
+        if (!fs.existsSync(path.join(out, 'commands', '0.json'))) return;
+        clearInterval(timer); write(path.join(out, 'reply-0.json'), { ok: true });
+      }, 5);
+    `;
+    const child = require('node:child_process').spawn(process.execPath, ['-e', script, dir], { stdio: ['ignore', 'ignore', 'pipe'] });
+    let stderr = ''; child.stderr.on('data', b => { stderr += b; });
+    const exited = new Promise((resolve, reject) => { child.once('error', reject); child.once('exit', (code, signal) => resolve({ code, signal })); });
+    try {
+      let ack, error;
+      try { ack = await commandAck(dir, { action: 'key', key: 'Enter' }, 2500); }
+      catch (e) { error = { name: e.name, message: e.message }; }
+      assert.deepEqual(await exited, { code: 0, signal: null }, stderr);
+      return { ack, error, window: JSON.parse(fs.readFileSync(require('node:path').join(dir, 'publication-window.json'))) };
+    } finally { fs.rmSync(dir, { recursive: true }); }
+  }
+  const producerSource = localCandidate.writeJson.toString();
+  const oldProducerSource = producerSource.replace("  const temp = file + '.tmp';", '')
+    .replace('fs.writeFileSync(temp,', 'fs.writeFileSync(file,').replace('  fs.renameSync(temp, file);', '');
+  const partialOld = await publicationFixture(oldProducerSource);
+  const partialNew = await publicationFixture(producerSource);
+  check('actual ACK writer/client old partial-file race fails; atomic producer waits and accepts complete ACK', () => {
+    assert.equal(partialOld.error.name, 'SyntaxError');
+    assert.match(partialOld.error.message, /Unexpected end of JSON input/);
+    assert(partialOld.window.path.endsWith('reply-0.json'));
+    assert.equal(partialNew.error, undefined); assert.equal(partialNew.ack.ok, true);
+    assert(partialNew.window.path.endsWith('reply-0.json.tmp'));
   });
   const lockDir = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'gltron-lock-fixture-'));
   try {

@@ -1,18 +1,26 @@
 'use strict';
 // Run-specific local diagnostic. External flock serializes the entire pair.
 // node tools/gltron-logical-fps-local.cjs --prepare RUN
-// flock -n /tmp/wine-local-runtime.lock node tools/gltron-logical-fps-local.cjs --run RUN
+// After personally viewing the exact offline capture, this entry atomically
+// reviews it and starts only if that review succeeds:
+// flock -n /tmp/wine-local-runtime.lock node tools/gltron-logical-fps-local.cjs --review-run RUN CAPTURE_NAME
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const { BOUNDARY, sha256, audit, probeCompiled, installPageCounter, summarizeCounterWindow, readLiveState } = require('./gltron-logical-fps.cjs');
 const ROOT = path.resolve(__dirname, '..');
 const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
-const write = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
+// Readers poll from another process. Publish complete JSON with one rename;
+// existence must never expose a truncated ACK or capture/ownership record.
+function write(file, data) {
+  const temp = file + '.tmp';
+  fs.writeFileSync(temp, JSON.stringify(data, null, 2) + '\n');
+  fs.renameSync(temp, file);
+}
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
-const BROWSER_MS = 360000, CLEANUP_MS = 180000, BOOTSTRAP_MS = 60000, COMMAND_MS = 60000;
-const HARD_BROWSER_END = Date.parse('2026-11-04T23:30:00Z');
-const HARD_CLEANUP_END = Date.parse('2026-11-04T23:33:00Z');
+const BROWSER_MS = 720000, CLEANUP_MS = 180000, BOOTSTRAP_MS = 60000, COMMAND_MS = 40000;
+const HARD_BROWSER_END = Date.parse('2026-11-04T23:50:00Z');
+const HARD_CLEANUP_END = Date.parse('2026-11-04T23:53:00Z');
 const requiredShellPaths = () => ['manifest.webmanifest',
   ...require('../lib/font-substitutions').BUNDLED_BITMAP_FONTS.map(file => 'fonts/' + file),
   ...require('../lib/process-boot').SYSTEM_DATA_FILES.map(file => file.url),
@@ -181,7 +189,13 @@ function requireReleases(board, now = Date.now()) {
     return match && Number.isFinite(at) && at >= Date.parse('2026-11-04T20:29:22Z') && at <= now;
   });
   if (!mdk) throw Error('requires explicit fresh mdk2-medium-through-loading release');
-  return { mdk };
+  const stronghold = board.split('\n').findLast(line => {
+    const match = /^(\S+) (?:stronghold-render-sized(?:-observer-nov04)? LOCAL HEAVY RELEASE|coordinator LOCAL HEAVY RELEASE stronghold-render-sized-observer-nov04)(?:\s|:|$)/.exec(line);
+    const at = match && Date.parse(match[1]);
+    return match && Number.isFinite(at) && at >= Date.parse('2026-11-04T20:50:21Z') && at <= now;
+  });
+  if (!stronghold) throw Error('requires explicit fresh stronghold-render-sized-observer-nov04 release');
+  return { mdk, stronghold };
 }
 
 function requireLocalFlock(lockPath = '/tmp/wine-local-runtime.lock') {
@@ -255,11 +269,15 @@ async function captureForReview(page, out, name) {
   const capturedAtEpochMs = Date.now();
   const review = await page.evaluate(name => {
     const w = window.wine, e = w?.instance?.exports;
-    return window.__gltronGameplayReview = { name, capturedAtMs: performance.now(),
+    const rect = document.querySelector('#screen')?.getBoundingClientRect();
+    if (!rect || rect.width < 1 || rect.height < 1 || rect.x < 0 || rect.y < 0 ||
+        rect.right > innerWidth || rect.bottom > innerHeight) throw Error('visible complete game canvas required');
+    const clip = { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+    return window.__gltronGameplayReview = { name, clip, capturedAtMs: performance.now(),
       callbacks: e?.guest_read32(0x42b230) >>> 0,
       generation: window.__gltronModuleObservation?.instances.find(r => r.instance === w?.instance)?.generation };
   }, name);
-  await page.screenshot({ path: file });
+  await page.screenshot({ path: file, clip: review.clip });
   return { ...review, capturedAtEpochMs, path: file, sha256: sha256(fs.readFileSync(file)) };
 }
 
@@ -405,9 +423,10 @@ function chooseSteering(sample) {
 function steeringDecision(sample, pendingTurn) {
   const decision = chooseSteering(sample);
   // Wait for the original player to acknowledge a turn, rather than imposing
-  // a wall-clock cooldown that can outlast the next narrow corridor.
-  if (pendingTurn && sample.live.direction === pendingTurn.direction &&
-      sample.live.trailOffset === pendingTurn.trailOffset)
+  // a wall-clock cooldown that can outlast the next narrow corridor. Both
+  // original fields must advance; a yield between their guest writes is not ACK.
+  if (pendingTurn && (sample.live.direction === pendingTurn.direction ||
+      sample.live.trailOffset === pendingTurn.trailOffset))
     return { ...decision, key: null, awaitingTurn: true };
   return decision;
 }
@@ -436,6 +455,7 @@ async function runPair(run) {
   const puppeteer = require('puppeteer');
   for (const backend of ['software', 'webgl']) {
     if (stopped) break;
+    if (Date.now() + BROWSER_MS > HARD_BROWSER_END || Date.now() + BROWSER_MS + CLEANUP_MS > HARD_CLEANUP_END) throw Error('full per-backend reserve unavailable');
     const out = path.join(run, backend);
     if (fs.existsSync(out)) throw Error('single launch arm already exists');
     fs.mkdirSync(out); fs.mkdirSync(path.join(out, 'commands'));
@@ -491,7 +511,7 @@ async function runPair(run) {
           return {};
         } });
       chromeStarted = Date.now();
-      const remainingMs = Math.min(BROWSER_MS - browserMs, HARD_BROWSER_END - chromeStarted);
+      const remainingMs = Math.min(BROWSER_MS, HARD_BROWSER_END - chromeStarted);
       if (remainingMs < 30000) throw Error('insufficient remaining browser budget');
       await within(async () => {
       launchPromise = puppeteer.launch({ headless: false, executablePath: '/usr/bin/google-chrome',
@@ -506,7 +526,7 @@ async function runPair(run) {
         browserVersion: await browser.version(), argv: child.spawnargs, remainingMs, pinsCommit: pins.commit,
         browserEnd: new Date(Math.min(chromeStarted + remainingMs, HARD_BROWSER_END)).toISOString(),
         cleanupEnd: new Date(Math.min(chromeStarted + remainingMs + 180000, HARD_CLEANUP_END)).toISOString() });
-      timer = setTimeout(() => { stopped = true; close('cumulative browser deadline').catch(error => log('cleanup-error', { error: String(error) })); }, remainingMs - (Date.now() - chromeStarted));
+      timer = setTimeout(() => { stopped = true; close('backend browser deadline').catch(error => log('cleanup-error', { error: String(error) })); }, remainingMs - (Date.now() - chromeStarted));
       page = await browser.newPage();
       page.setDefaultTimeout(60000); await page.setViewport({ width: 1200, height: 900 });
       await page.setCacheEnabled(false); await page.evaluateOnNewDocument(preload);
@@ -531,7 +551,7 @@ async function runPair(run) {
       console.log('READY ' + backend + ' ' + out);
       let commandAt = Date.now();
       while (!closed && !failure) {
-        if (Date.now() - commandAt > COMMAND_MS) throw Error('60 second command deadline');
+        if (Date.now() - commandAt > COMMAND_MS) throw Error('40 second command deadline');
         const file = path.join(out, 'commands', number + '.json');
         if (!fs.existsSync(file)) { await pause(100); continue; }
         commandAt = Date.now();
@@ -622,10 +642,15 @@ async function runPair(run) {
   write(path.join(run, 'runtime-summary.json'), { browserMs, stopped, finishedAt: new Date().toISOString(), boxId: null, boxState: null, boxExpiry: null });
 }
 
-module.exports = { prepare, preload, pageState, captureForReview, shotCommand, commandAck, reviewedCapture, requireHandoffProbe, requireLocalFlock, steeringSample, chooseSteering, steeringDecision, balancedKey, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
+module.exports = { writeJson: write, prepare, preload, pageState, captureForReview, shotCommand, commandAck, reviewedCapture, requireHandoffProbe, requireLocalFlock, steeringSample, chooseSteering, steeringDecision, balancedKey, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
 if (require.main === module) {
   const [action, run] = process.argv.slice(2);
-  if (action === '--command') {
+  if (action === '--review-run') {
+    Promise.resolve().then(async () => {
+      await commandAck(path.join(path.resolve(run), 'offline-relay'), { action: 'review-only', review: process.argv[4] });
+      return runPair(path.resolve(run));
+    }).catch(error => { console.error(error); process.exitCode = 1; });
+  } else if (action === '--command') {
     commandAck(path.resolve(run, process.argv[4]), JSON.parse(process.argv[5]))
       .then(ack => console.log(JSON.stringify(ack))).catch(error => { console.error(error); process.exitCode = 1; });
   } else {
