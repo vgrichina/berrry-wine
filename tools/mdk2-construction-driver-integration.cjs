@@ -189,13 +189,13 @@ function installBinding(options) {
     return g[key] = {report, invoke:report};
   }
   const audit = [], allowed = options.moduleHashes;
-  let fatal = null, entry = null, receivedOnce = false, started = false, terminal = false, timer = null, traced = false, observer = null;
+  let fatal = null, entry = null, receivedOnce = false, started = false, terminal = false, timer = null, traced = false, observer = null, paused = false, checkpoint = null, traceEnd = null;
   const report = () => ({realm: isPage ? 'page' : 'worker', targetId: options.targetId || null,
-    workerURL: options.workerURL || null, fatal, started, terminal, traced,
+    workerURL: options.workerURL || null, fatal, started, terminal, traced, paused, traceEnd,
     binding: entry?.binding || null, thread: entry?.instance?.exports.get_current_thread_id?.(),
     observer: observer?.report || null, audit});
   function stop(reason) {
-    terminal = true; clearTimeout(timer);
+    terminal = true; paused = false; clearTimeout(timer);
     if (traced) { traced = false; entry.instance.exports.set_trace_esp(0, 0, 0); }
     observer?.finish(reason);
     return report();
@@ -257,11 +257,12 @@ function installBinding(options) {
     if (entry || terminal || !imports?.host || typeof imports.host.log_block !== 'function') return fail('late or replacement owning instantiation');
     entry = {binding, module, instance: null, installedBeforeInstantiation: true};
     // The wrapper exists before the native instantiate call. Attachment remains
-    // dormant until the driver authorizes its sole construction quantum.
+    // dormant until the driver authorizes construction observation.
     const original = imports.host.log_block;
     const host = {log_block: original};
     imports.host.log_block = function(...values) {
       if (!traced) return Reflect.apply(original, this, values);
+      if (paused) { fatal ||= 'native boundary delivered during frozen review'; stop('unobserved-execution'); }
       let result;
       try { result = Reflect.apply(host.log_block, this, values); }
       catch (error) { fatal ||= String(error); stop('original-import-failure'); throw error; }
@@ -280,6 +281,12 @@ function installBinding(options) {
       entry.instance = result.instance || result; add({kind: 'installed-before-instantiation', sha256: binding.sha256}); return result;
     } catch (error) { fatal ||= String(error); stop('instantiation-failure'); throw error; }
   };
+  function frozenRegisters() {
+    const ex = entry.instance.exports;
+    return ['current_thread_id','image_base','eip','esp','ebp','eax','ebx','ecx','edx','esi','edi',
+      'flag_op','flag_a','flag_b','flag_res','flag_sign_shift','yield_reason']
+      .map(name => ex['get_' + name]() >>> 0);
+  }
   function invoke(action, row = {}) {
     if (action === 'report') return report();
     if (action === 'finish') {
@@ -287,13 +294,30 @@ function installBinding(options) {
       if (observer?.report.error) fatal ||= observer.report.error;
       return stop(row.reason || 'driver-finish');
     }
+    if (action === 'checkpoint' || action === 'resume') {
+      if (fatal || terminal || !started || !traced || !observer || observer.report.status !== 'running')
+        return fail('native construction history ended; cannot continue');
+      if (Date.now() >= traceEnd || !Number.isFinite(row.commandEnd) || Date.now() >= row.commandEnd ||
+          !Number.isFinite(row.absoluteEnd) || Date.now() >= row.absoluteEnd) return fail('trace continuation deadline');
+      if (action === 'checkpoint') {
+        if (paused) return fail('duplicate trace checkpoint');
+        observer.sample(); observer.check();
+        if (observer.report.status !== 'running') return fail(observer.report.error || observer.report.status);
+        checkpoint = frozenRegisters(); paused = true;
+      } else {
+        if (!paused || JSON.stringify(frozenRegisters()) !== JSON.stringify(checkpoint))
+          return fail('changed owning registers across frozen review');
+        paused = false;
+      }
+      return report();
+    }
     if (action !== 'start') throw Error('unknown trace operation');
     if (fatal || terminal || started || !entry?.instance) return fail('trace cannot restart or bind late');
     const ex = entry.instance.exports;
     if (ex.get_current_thread_id() !== 1 || ex.get_image_base() !== 0x400000 || typeof ex.set_trace_esp !== 'function') return fail('wrong owning instance/thread/loader');
     const end = Math.min(row.commandEnd, row.absoluteEnd, Date.now() + 10000);
     if (!Number.isFinite(end) || end <= Date.now()) return fail('trace deadline');
-    started = true;
+    started = true; traceEnd = end;
     observer = g.Mdk2LuaConstructionObserver.attach({host: entry.host, getExports: () => entry.instance.exports,
       workerSlot: 0, exeSha256: g.Mdk2LuaConstructionObserver.EXE_SHA256, wasmSha256: entry.binding.sha256,
       now: Date.now, deadline: end}); // Published smaller defaults: 100000 / 512.
@@ -420,7 +444,7 @@ function correlateSnapshots(before, after, trace) {
 }
 
 function createTraceDriver({sessions, page, save, deadline, OUT}) {
-  let owner = null, active = false, consumed = false, terminal = false, before = null, commandEnd;
+  let owner = null, active = false, consumed = false, terminal = false, before = null, previous = null, commandEnd, quantum = 0;
   const read = name => JSON.parse(fs.readFileSync(path.join(OUT, name)));
   async function rpc(action, row) {
     assert(owner && sessions.get(owner.id) === owner.entry && owner.entry.session === owner.session && owner.entry.info.url === owner.url, 'lost/replacement owning Worker');
@@ -446,18 +470,16 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     for (const sidecar of [main, file]) assert.deepEqual(sidecar.frozen, barrier.frozen, 'foreign frozen sidecar');
     const fileOwner = barrier.owners.find(r => r.handle === 921600);
     assert(fileOwner && fileOwner.values.get_current_thread_id === 2, 'file Worker owner missing');
-    assert.equal(main.values.get_eip, barrier.owners[0].values.get_eip);
+    assert.equal(main.values.get_eip, barrier.owners[0].values.get_eip, 'changed frozen state: main EIP');
     assert.equal(file.values.get_eip, fileOwner.values.get_eip);
     return {barrier, main, file};
   }
   async function begin(c, i, pending) {
     const acceptedAt = Date.now();
     if (terminal) throw Error('trace driver terminal');
-    // The sole bounded quantum permanently finishes its owning observer.
-    // Later reviewed chunks cannot inherit native history from that terminal
-    // observer. Reject before WineFrozen.step, including after a scene change.
-    if (consumed) throw Error('native construction history ended; no unobserved continuation');
     const approval = read('inspection-approval.json');
+    if (consumed && approval.screen !== 'post-medium-construction')
+      throw Error('changed construction scene; retained history cannot be skipped');
     if (approval.screen !== 'post-medium-construction') return;
     // Only the original reviewed, input-free construction quantum qualifies.
     assert.equal(c.n, 16, 'trace construction quantum must be 16');
@@ -484,13 +506,19 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     const chosen = reports[0];
     assert.equal(chosen.report.targetId, chosen.id); assert.equal(chosen.report.thread, 1);
     assert.deepEqual(chosen.report.binding, sent[0], 'page compilation/transfer/instance mismatch');
-    owner = {...chosen, session: chosen.entry.session, url: chosen.entry.info.url};
+    if (consumed) assert(owner.id === chosen.id && owner.entry === chosen.entry && owner.session === chosen.entry.session &&
+      owner.url === chosen.entry.info.url, 'replacement construction owner across review');
+    else owner = {...chosen, session: chosen.entry.session, url: chosen.entry.info.url};
     before = await capture();
+    if (consumed) assert.deepEqual(before, previous, 'changed frozen state across construction review');
     assert.equal(before.barrier.owners[0].endpointIdentity, sent[0].endpointIdentity, 'foreign main endpoint');
     // A review of earlier construction never supplies missing level1 history.
     const words = before.main.rawRequestWords;
     const name = words ? Buffer.from(new Uint32Array(words.slice(3, 7)).buffer).toString('ascii').split('\0')[0] : null;
-    if (words?.[2] !== 192320 || name !== 'level1') return;
+    if (words?.[2] !== 192320 || name !== 'level1') {
+      assert(!consumed, 'required construction request changed; history cannot be skipped');
+      return;
+    }
     require('./mdk2-lua-construction-observer.cjs').decodeFileSnapshot(before.main, before.file);
     const aggregateEnds = ['construction-control-ledger.json','comic-control-ledger.json']
       .filter(name => fs.existsSync(path.join(OUT, name))).map(name => {
@@ -499,22 +527,28 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
       });
     commandEnd = Math.min(acceptedAt + 60000, deadline() - 180000, ...aggregateEnds);
     consumed = true; active = true;
-    const report = await rpc('start', {command: i, commandEnd, absoluteEnd: deadline() - 180000});
+    const report = await rpc(previous ? 'resume' : 'start', {command: i, commandEnd, absoluteEnd: deadline() - 180000});
+    save('bounded-trace-start-' + quantum + '.json', {command: i, before, report, commandEnd});
     save('bounded-trace-start.json', {command: i, before, report, commandEnd});
     assert(!report.fatal && report.traced, 'trace failed to start');
   }
   async function end(result) {
     if (!active) return;
     active = false;
-    const report = await rpc('finish', {reason: 'original-quantum-ended'});
+    const report = await rpc('checkpoint', {commandEnd, absoluteEnd: deadline() - 180000});
+    save('bounded-trace-end-' + quantum + '.json', {report, result});
     save('bounded-trace-end.json', {report, result});
     assert(result.ran === 16 && !result.timedOut && Date.now() < commandEnd, 'original construction command failed/deadline');
     const after = await capture();
-    save('bounded-trace-correlation.json', {before, after, correlation: correlateSnapshots(before, after, report)});
+    const correlation = correlateSnapshots(before, after, report);
+    save('bounded-trace-correlation-' + quantum + '.json', {before, after, correlation});
+    save('bounded-trace-correlation.json', {before, after, correlation});
     // A stopped main history does not erase independently frozen file progress.
     // Persist that readback, then retain the first main-observer failure.
     assert(!report.fatal, report.fatal || 'observer failed');
     assert(report.observer?.blocks > 0, 'mandatory native history missing');
+    assert(report.paused && report.traced && !report.terminal && report.observer.status === 'running', 'history did not checkpoint');
+    previous = after; quantum++;
   }
   async function finish(reason) {
     if (terminal) return;
@@ -566,6 +600,7 @@ function inspect() {
   });
   return {status: 'offline-composition-checked', source: SOURCE, observer: OBSERVER, observerRepairSHA256:OBSERVER_REPAIR_SHA256, closure, pinsSHA256,
     composedSHA256: sha(composed.source), preloadSHA256: sha(preloadSource()), moduleReferences,
+    continuity: {checkpoint: true, restart: false, deadlineReset: false, reviewClock: 'wall time; original deadline remains fixed'},
     limits: {traceMs: 10000, boundaries: 100000, records: 512, constructionSlices: 16, restart: false},
     runtime: 'Not executed. Fresh release and original pinned served bytes required; coordinator owns allocation/shutdown.'};
 }

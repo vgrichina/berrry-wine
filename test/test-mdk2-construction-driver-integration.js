@@ -13,13 +13,15 @@ const EVIDENCE = process.env.MDK2_TEST_EVIDENCE || fs.mkdtempSync(path.join(inte
 assert.equal(path.dirname(EVIDENCE), integration.RUNS, 'direct owned test evidence run required');
 fs.mkdirSync(EVIDENCE, {recursive: true});
 
-function actualDriver() {
+function actualDriver(candidate = integration) {
   const run = fs.mkdtempSync(path.join(EVIDENCE, 'protocol-'));
-  const {file, source} = integration.compose(run);
+  const {file, source} = candidate.compose(run);
   const end = source.indexOf('main().catch(');
   assert(end > 0); assert.equal(source.split('main().catch(').length, 2);
   const m = new Module(file, module); m.filename = file;
   m.paths = Module._nodeModulePaths(path.dirname(file));
+  const nativeRequire = m.require.bind(m);
+  m.require = name => name === require.resolve('../tools/mdk2-construction-driver-integration.cjs') ? candidate : nativeRequire(name);
   // Export the actual functions before the sole bootstrap invocation. No
   // implementation substitution, new observer, or guest runtime is involved.
   m._compile(source.slice(0, end) + `module.exports={RUN,OUT,preload,command,main,inspectionGuard,
@@ -354,6 +356,15 @@ async function nativeOne(row, mode = 'success') {
 }
 
 for(const row of integration.pinnedRuntime().pins.moduleFiles) {
+  test('sequential queued native slices retain one observer and exact state across checkpoints: '+row.path, async()=>{
+    const observed=await nativeOne(row,'continuity'),control=await nativeOne(row,'control');
+    assert(observed.value.pass,JSON.stringify(observed.value));
+    for(const key of ['segments','before','trap','commands','workerSource'])assert.deepEqual(observed.value[key],control.value[key],key);
+    assert(observed.value.checkpoints>5);
+    assert.equal(observed.value.report.fatal,null);
+    assert(observed.value.report.observer.records.some(r=>r.kind==='demand-return'));
+    write(EVIDENCE,path.basename(row.path)+'.continuity.json',{fixtureOnly:true,observed:observed.value,control:control.value});
+  });
   test('actual Sleep return at mid-poll attachment preserves unknown prefix: '+row.path, async()=>{
     const old=await nativeOne(row,'mid-poll-old');
     assert.match(old.value.report.fatal,/poll history missing/);
@@ -372,11 +383,16 @@ for(const row of integration.pinnedRuntime().pins.moduleFiles) {
     // caller slice therefore no longer compares identical trace configurations.
     for(const key of ['segments','guestHash','state','commands','workerSource'])assert.deepEqual(repaired.value[key],old.value[key],key);
     fs.writeFileSync(path.join(EVIDENCE,path.basename(row.path)+'.mid-poll.json'),JSON.stringify({old:old.value,repaired:repaired.value},null,2));
-    for(const mode of ['bad-stack','stale-stack','foreign-request','wrong-order']){
+    for(const mode of ['bad-stack','stale-stack','foreign-request','wrong-order','demand-return']){
       const negative=await nativeOne(row,'mid-poll-'+mode);
       assert(negative.value.rejected,JSON.stringify(negative.value));
       assert(negative.value.report.fatal,JSON.stringify(negative.value));
       assert.equal(negative.value.report.traced,false);
+      if(mode==='demand-return'){
+        assert.match(negative.value.report.fatal,/demand return history\/completion missing/);
+        assert(!negative.value.report.observer.records.some(r=>r.kind==='demand-call'));
+      }
+      write(EVIDENCE,path.basename(row.path)+'.mid-poll-negative-'+mode+'.json',{fixtureOnly:true,...negative.value});
     }
   });
   test('composed original preload delivers original native fragment in real shipped Worker: '+row.path, async()=>{
@@ -396,11 +412,15 @@ for(const row of integration.pinnedRuntime().pins.moduleFiles) {
   });
 }
 for(const row of integration.pinnedRuntime().pins.moduleFiles)
-for(const mode of ['wrong-module','wrong-endpoint','wrong-thread','wrong-instance','foreign-module-object','missing-history','import-failure','terminal','deadline','active-deadline','late']) {
+for(const mode of ['continuity-deadline','continuity-registers','continuity-paused-boundary','continuity-boundary-overflow','wrong-module','wrong-endpoint','wrong-thread','wrong-instance','foreign-module-object','missing-history','import-failure','terminal','deadline','active-deadline','late']) {
   test('real composed Worker lifecycle rejects '+mode+' '+row.path, async()=>{
     const result=await nativeOne(row,mode);
     assert(result.value.rejected,JSON.stringify(result.value));
     if(result.value.report)assert.equal(result.value.report.traced,false);
+    if(mode==='continuity-deadline'){
+      assert.equal(result.value.checkpoints,1,'expiry occurs inside the retained review pause');
+      assert.equal(result.value.report.observer.status,'deadline');
+    }
   });
 }
 
@@ -436,9 +456,16 @@ function sealedSidecars() {
 
 // Explicit protocol fixtures around the actual composed command functions.
 // Sidecars are sealed original readbacks; fake CDP replies are not runtime proof.
-for(const mode of ['success','post-quantum-scene','ambiguous','wrong-module','wrong-thread','wrong-target','replacement','missing-history','failure','terminal','deadline','unfrozen','ownership-rejected']) {
+for(const mode of ['success','post-quantum-scene','ambiguous','wrong-module','wrong-thread','wrong-target','replacement','missing-history','failure','terminal','deadline','unfrozen','ownership-rejected','changed-frozen','changed-owner','old-terminal','old-skip']) {
   test('actual composed construction command / attachment '+mode,async()=>{
-    const {api}=actualDriver();review(api);
+    let candidate=integration;
+    if(mode==='old-terminal'||mode==='old-skip'){
+      const filename=require.resolve('../tools/mdk2-construction-driver-integration.cjs'),old=new Module(filename,module);
+      old.filename=filename;old.paths=module.paths;
+      old._compile(integration.gitFile(mode==='old-skip'?'91d6a3a1583b956c1c0de4e41309f8eaaac3f0e1^':'91d6a3a1583b956c1c0de4e41309f8eaaac3f0e1','tools/mdk2-construction-driver-integration.cjs').toString(),filename);
+      candidate=old.exports;
+    }
+    const {api}=actualDriver(candidate);review(api);
     const approval=JSON.parse(fs.readFileSync(path.join(api.OUT,'inspection-approval.json')));
     Object.assign(approval,{screen:'post-medium-construction',originalScene:'level-destruction-construction',selection:'none',constructionBlackVisible:true});
     write(api.OUT,'inspection-approval.json',approval);write(api.OUT,'native-selector-ledger.json',{newgame:true,medium:true});
@@ -447,7 +474,7 @@ for(const mode of ['success','post-quantum-scene','ambiguous','wrong-module','wr
       compilation:0,bytes:2143540,workerURL:url,slot:0,endpointIdentity:1};
     const barrier={frozen:main.frozen,owners:[{handle:null,slot:0,endpointIdentity:1,values:{get_current_thread_id:1,get_eip:main.values.get_eip}},
       {handle:921600,slot:1,endpointIdentity:2,values:{get_current_thread_id:2,get_eip:file.values.get_eip}}]};
-    const calls=[];let starts=0,finishes=0,steps=0;
+    const calls=[];let starts=0,finishes=0,steps=0,checkpoints=0,resumes=0;
     const session={send:async(name,args)=>{
       calls.push(args.expression);
       const r={targetId:mode==='wrong-target'?'foreign':'fixture',workerURL:url,binding:{...sent},thread:mode==='wrong-thread'?2:1,
@@ -455,6 +482,8 @@ for(const mode of ['success','post-quantum-scene','ambiguous','wrong-module','wr
       if(mode==='wrong-module')r.binding.sha256='f'.repeat(64);
       if(args.expression.includes('invoke("start"')){starts++;r.traced=true;
         if(mode==='replacement')api.sessions.set('fixture',{session:{},info:{url}});}
+      if(args.expression.includes('invoke("resume"')){resumes++;r.traced=true;}
+      if(args.expression.includes('invoke("checkpoint"')){checkpoints++;r.paused=true;r.traced=true;r.observer={status:'running',blocks:mode==='missing-history'?0:10,records:[]};if(mode==='failure')r.fatal='fixture observer unsupported history';}
       if(args.expression.includes('invoke("finish"')){finishes++;r.observer={blocks:mode==='missing-history'?0:10,records:[]};
         if(mode==='failure')r.fatal='fixture observer unsupported history';}
       return {result:{value:JSON.stringify(r)}};
@@ -463,22 +492,32 @@ for(const mode of ['success','post-quantum-scene','ambiguous','wrong-module','wr
     if(mode==='ambiguous')api.sessions.set('other',{session,info:{url}});
     api.deadlineForTest(Date.now()+(mode==='deadline'?100000:900000));
     api.pageForTest({evaluate:async(fn,n)=>{
-      if(fn.name==='frozenOwnership'){if(mode==='unfrozen')throw Error('fixture unfrozen barrier');if(mode==='ownership-rejected')return {rejection:{reason:'foreign main ownership',owners:barrier.owners}};return barrier;}
-      if(fn.name==='mainState')return main;if(fn.name==='ownerState')return file;
+      if(fn.name==='frozenOwnership'){if(mode==='unfrozen')throw Error('fixture unfrozen barrier');if(mode==='ownership-rejected')return {rejection:{reason:'foreign main ownership',owners:barrier.owners}};return structuredClone(barrier);}
+      if(fn.name==='mainState')return structuredClone(main);if(fn.name==='ownerState')return structuredClone(file);
       if(fn.toString().includes('WineFrozen.step')){steps++;return {ran:n,timedOut:false};}
       return {input:{inputQueue:[],activeInput:null,mouseButtonsMask:0},binding:{audit:[sent]},frozen:main.frozen};
     }});
     if(mode==='terminal')await api.traceDriver.finish('fixture-terminal');
-    if(mode==='success'||mode==='post-quantum-scene'){
-      await api.command({action:'step',n:16},1);assert.equal(starts,1);assert.equal(finishes,1);assert.equal(steps,1);
+    if(['success','post-quantum-scene','changed-frozen','changed-owner','old-terminal','old-skip'].includes(mode)){
+      await api.command({action:'step',n:16},1);assert.equal(starts,1);assert.equal(checkpoints,mode.startsWith('old-')?0:1);assert.equal(finishes,mode.startsWith('old-')?1:0);assert.equal(steps,1);
       assert(fs.existsSync(path.join(api.OUT,'bounded-trace-correlation.json')));
       write(api.OUT,'reply-1.json',{i:1,ok:true});
       if(mode==='post-quantum-scene')write(api.OUT,'inspection-approval.json',{...approval,screen:'post-medium-pending'});
+      if(mode==='changed-frozen')main.values.get_eip++;
+      if(mode==='changed-owner')api.sessions.set('fixture',{session,info:{url}});
       let secondError;
       try{await api.command({action:'step',n:16},2);}catch(error){secondError=error;}
-      write(EVIDENCE,'continuation-producer'+(mode==='success'?'':'-scene-change')+'.json',{fixtureOnly:true,starts,finishes,steps,error:secondError?.message||null});
-      assert.match(secondError?.message||'unobserved continuation admitted',/native construction history ended/);
-      assert.equal(starts,1,'trace never restarts');assert.equal(steps,1,'no unobserved second quantum');
+      write(EVIDENCE,'continuation-producer-'+mode+'.json',{fixtureOnly:true,mode,starts,finishes,checkpoints,resumes,steps,error:secondError?.message||null});
+      if(mode==='success'){
+        assert.equal(secondError,undefined);assert.equal(checkpoints,2);assert.equal(resumes,1);assert.equal(steps,2);assert.equal(finishes,0);
+        await api.traceDriver.finish('fixture-terminal');
+      }else if(mode==='old-skip'){
+        assert.equal(secondError,undefined);assert.equal(steps,2);assert.equal(checkpoints,0);assert.equal(resumes,0);assert.equal(finishes,1);
+      }else{
+        assert.match(secondError?.message||'unobserved continuation admitted',/native construction history ended|changed construction scene|changed frozen state|replacement construction owner|foreign main endpoint/);
+        assert.equal(steps,1,'no unobserved second quantum');
+      }
+      assert.equal(starts,1,'trace never restarts');
     }else{
       await assert.rejects(api.command({action:'step',n:16},1));
       await assert.rejects(api.command({action:'step',n:16},2),/first failure|terminal/);
@@ -554,6 +593,24 @@ async function nativeChild() {
   const fixtureBytes=s=>s.slice(s.indexOf('async function fixture(access){'),s.indexOf('if(!isMainThread){'));
   assert.equal(H(fixtureBytes(current)),H(fixtureBytes(baseline)),'accepted qualification fixture changed');
   let fixtureSource=baseline.slice(baseline.indexOf('async function fixture(access){'),baseline.indexOf('  // Diagnostic failures'));
+  let checkpoints=0;
+  if(workerData.mode.startsWith('continuity'))fixtureSource=fixtureSource.replace(
+    'const slice=()=>new Promise', 'const rawSlice=()=>new Promise').replace(
+    "  workerData.port.on('message'", `  const slice=async()=>{
+      const value=await rawSlice();
+      const before=state(),end=Date.now()+9000;
+      const paused=bound.invoke('checkpoint',{commandEnd:end,absoluteEnd:end});
+      assert(paused.paused && !paused.terminal,JSON.stringify(paused));
+      checkpoints++;
+      if(workerData.mode==='continuity-deadline')await new Promise(resolve=>setTimeout(resolve,350));
+      if(workerData.mode==='continuity-registers')e.set_eax((e.get_eax()+1)>>>0);
+      if(workerData.mode==='continuity-paused-boundary')captured.host.log_block(e.get_eip(),e.get_esp());
+      const resumed=bound.invoke('resume',{commandEnd:end,absoluteEnd:end});
+      assert(!resumed.fatal,JSON.stringify(resumed));
+      assert.deepEqual(state(),before);
+      return value;
+    };
+  workerData.port.on('message'`);
   if(workerData.mode!=='control')fixtureSource=fixtureSource.replace('e.set_trace_esp(1,0x400000,0x480000);', `
     if(workerData.mode.startsWith('mid-poll')){
       // Actual frozen main's four leading words, expressed with this fixture's
@@ -566,8 +623,14 @@ async function nativeChild() {
     if(workerData.mode==='wrong-thread')e.set_current_thread_id(2);
     if(workerData.mode==='wrong-instance')await WebAssembly.instantiate(captured.module,{host:{}});
     if(workerData.mode==='foreign-module-object')await WebAssembly.instantiate(await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0])),{host:{}});
-    const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode==='active-deadline'?20:9000);
+    const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode==='active-deadline'?20:workerData.mode==='continuity-deadline'?300:9000);
     bound.invoke('start',{commandEnd:end,absoluteEnd:end});
+    if(workerData.mode==='continuity-boundary-overflow'){
+      e.set_eip(caller);
+      for(let k=0;k<100001 && bound.report().traced;k++)captured.host.log_block(caller,e.get_esp());
+      assert.equal(bound.report().observer.status,'boundary-limit');
+      throw Error('boundary overflow preserved');
+    }
     if(workerData.mode==='mid-poll-stale-stack')u(stack+8,0x401800);
     if(workerData.mode==='mid-poll-foreign-request')u(0x4b87d4,entry+32);
     if(workerData.mode==='active-deadline'){await new Promise(resolve=>setTimeout(resolve,40));assert.equal(bound.report().traced,false);throw Error('active deadline observed');}
@@ -579,6 +642,11 @@ async function nativeChild() {
     await run('actual-mid-poll-suffix',start,0x44fb84);
     // Deliver the original caller boundary, then stop; no game is launched.
     await slice();
+    if(workerData.mode==='mid-poll-demand-return'){
+      // A fully observed poll suffix supplies no demand-call entry. Real queued
+      // execution must reject its later demand-return boundary, never invent it.
+      e.set_eip(CUTS.loadReturned);await slice();
+    }
     const report=bound.invoke('finish',{reason:'fixture-end'});
     const guestRegion=require('../lib/region-map.generated.js').REGIONS.GUEST_BASE;
     parentPort.postMessage({pass:!report.fatal,rejected:report.fatal||undefined,report,segments,memoryHash:H(b),guestHash:H(b.subarray(guestRegion.base,guestRegion.end)),state:state(),workerSource:{path:'lib/guest-worker.js',sha256:H(source)}});return;
@@ -589,13 +657,13 @@ async function nativeChild() {
   const trapEnd=baseline.indexOf('  parentPort.postMessage({pass:true,segments,before,trap:',trapStart);
   fixtureSource+="if(workerData.mode==='control')e.set_trace_esp(0,0,0);\n";
   fixtureSource+=baseline.slice(trapStart,trapEnd);
-  fixtureSource+=`parentPort.postMessage({pass:true,segments,before,trap:{text:trap,hash:H(b),state:state()},report:bound?.report()||null,workerSource:{path:'lib/guest-worker.js',sha256:H(source)}});}`;
+  fixtureSource+=`parentPort.postMessage({pass:true,checkpoints,segments,before,trap:{text:trap,hash:H(b),state:state()},report:bound?.report()||null,workerSource:{path:'lib/guest-worker.js',sha256:H(source)}});}`;
   const fixture=eval('('+fixtureSource+')');
   workerData.port.once('message',()=>fixture(()=>({...captured,observer:workerData.mode==='control'?null:{
     get report(){return bound.report().observer},sample(){},finish(){return bound.invoke('finish',{reason:'fixture-end'}).observer}
   }})).catch(error=>{
     const report=bound?.invoke('finish',{reason:'fixture-failure'});
-    if(workerData.mode!=='success')parentPort.postMessage({rejected:String(error),report});
+    if(workerData.mode!=='success')parentPort.postMessage({rejected:String(error),report,checkpoints});
     else parentPort.postMessage({t:'fixtureFailure',error:error.stack,report});
   }));
 }
