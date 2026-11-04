@@ -1,0 +1,23 @@
+# MDK2 native post-cancel scene attempt, 2026-11-04
+
+**Stopped before Chrome at the first staging failure. No new native input, comic capture, request completion or playable scene was observed.** The worker incorrectly prepended the repository root to an already absolute local input path. The upload API accepted the resulting nested destination, but the intended prebrowser command failed with `MODULE_NOT_FOUND` at 07:55:41Z. The first-failure rule ended runtime work; no browser retry occurred.
+
+Evidence is in `scratch/runs/20261104-mdk2-native-post-cancel-scene/`. `remote-commands.jsonl` retains the failed command and subsequent read-only diagnosis. `failure-diagnosis.json` records all 28 uploaded small files by path, size and SHA-256, the missing intended directory, all **432 historical runtime pins passing**, and an empty Chrome/Node process inventory. No remote browser artifacts were created or require recovery. The unique command results and diagnosis are retained locally; existing modules, dependencies and media remain in their original runtime paths.
+
+The incorrect remote destination was:
+
+```text
+/home/user/wine-assembly/home/user/wine-assembly/scratch/runs/20261104-mdk2-native-post-cancel-scene/
+```
+
+The correct destination has one `/home/user/wine-assembly` prefix. The run-only `runtime_io.py` now provides `stage_file`, which constructs that destination from the owned run name and direct input basename, rejects foreign files and evidence files before upload, and has **three passing mocked-upload regression tests**. This correction was tested offline and was not deployed or used for another runtime attempt. The misplaced small files remain identified in the diagnosis; no source/media/module copies or source archives were made.
+
+Offline validation found a second, inherited test defect: `test-scene-transition.cjs` set the second Lua table entry to nil, assuming it was `freeze`. The post-comic fixture inserted `IntroMovieADone` before `freeze`, so that write changed the wrong synthetic field. The owned copy now uses the existing `memory({ready:true})` fixture option. The unchanged guards initially rejected the invalid fixture as expected: **170/171 passed**. After the fixture correction, **171/171 passed**, including actual controller/driver-command integration, serialized native observer, original-script source assertions, ACK/barrier, native-menu, construction, opening, deadline and first-failure tests. These are offline tests with synthetic execution, not game evidence. No production code changed; a production build was not required.
+
+The small controller/driver inputs were initially SHA-verified against the retained `1a207ffb0d02447cea321c66f12d9df93ccd9d79` final-input manifest. Their historical runtime identity remains source `1329b1ba6eb00144ff77d4cd92a8513d4fc953ad`, canonical module `cffca869b541e6eff12ae3a6b74c4476977e0a7e23cd43d8ec5ba8faecd4bcee`, compat module `580f49f3c78d26e6855efa0beb37046d03ea24690ff98cfcb3e94ce5e6cb1ee3`, original PE `b3e0226e411abff17ddabb723e493e95579490cb49bfe3787b1eade1144e27c1`, and scripts archive `cfdae6e7d02b1823a59d0b85aa8eaca2f057dbb27e7b86d9a7199fc069f642d8`. Actual CJS/ESM Puppeteer imports, isolated HTTP, registered-selector and remote controller tests were **not reached** in this attempt. Their predecessor results do not stand in for fresh checks.
+
+Git SHA, relevant binary diff, owned new-file patches, retained input identities, and artifact SHA-256 seal preserve recovery without a source archive. The test correction is retained as a patch against the predecessor input; predecessor files were not edited.
+
+**Handback:** assigned `bx_wm47edh3` remains **RUNNING / API idle, healthy and hydrated**, expiry **2026-11-04T08:33:42.970Z**; coordinator owns shutdown. The release recorded closeBy08:18Z and recoverBy08:23Z, but Chrome never launched. No allocation, resume, stop, source-box access, guest execution/input/write/call, Lua invocation, reload, subworker, successor, other game or deployment occurred.
+
+Next requires a separately assigned runtime attempt using corrected staging and freshly passing all pre-Chrome prerequisites. Reach and personally review a new original comic before one measured COM_PAUSE positive-edge sample and balanced native release; only a complete fresh witness permits separately reviewed input-free post-cancel observation. The [post-comic continuation note](mdk2-post-comic-continuation-20261104.md) defines the unchanged finite guards. Actual Lua Done, request fate and the resulting personally reviewed scene remain unproved. This single task stops here.
