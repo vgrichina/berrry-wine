@@ -1195,6 +1195,7 @@ class WineAssembly {
     this.memory = null;
     this.running = false;
     this.renderer = null;
+    this._lastInputEvent = null;
     this.resourceJson = null;
     this.threadManager = null;
     // Slot 0's focus global lives in the guest Worker. Browser input cannot
