@@ -10,9 +10,9 @@ const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
 // Explicit installed-original assignment; pre-Chrome tests consume no game launch.
-const HARD_CLOSE = Date.parse('2026-11-04T23:50:00Z');
-const HARD_RECOVER = Date.parse('2026-11-04T23:53:00Z');
-const ASSIGNMENT = '20261104-mdk2-medium-release-gameplay';
+const HARD_CLOSE = Date.parse('2026-11-04T23:30:00Z');
+const HARD_RECOVER = Date.parse('2026-11-04T23:33:00Z');
+const ASSIGNMENT = '20261104-mdk2-decoder-return-original';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -279,13 +279,14 @@ function prepareTransport(run) {
 }
 function heavyRelease(board) {
   const lines=board.split('\n');
-  const own=lines.findLastIndex(line=>/^2026-11-04T\S+ stronghold-named-observation OWN tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(line));
+  const own=lines.findLastIndex(line=>/^2026-11-04T\S+ stronghold-setup-transition-onward-2248 OWN tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(line));
   assert(own>=0,'predecessor OWN required before release');
-  const rows=lines.slice(own+1).filter(line=>/^2026-11-04T\S+ stronghold-named-observation LOCAL HEAVY RELEASE stronghold-named-observation-gameplay-nov04(?:\s|$)/.test(line));
-  assert(rows.length,'explicit stronghold-named-observation-gameplay-nov04 LOCAL HEAVY RELEASE required');
+  const rows=lines.slice(own+1).filter(line=>/^2026-11-04T\S+ stronghold-setup-transition-onward LOCAL HEAVY RELEASE stronghold-setup-transition-onward-2248(?:\s|$)/.test(line));
+  assert(rows.length,'explicit stronghold-setup-transition-onward LOCAL HEAVY RELEASE required');
   const line=rows.at(-1),at=Date.parse(line.split(' ')[0]);
-  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-04T22:00:55Z')&&at<=Date.now(),'current predecessor release required');
-  assert(lines.slice(own+1).some(row=>/^2026-11-04T\S+ stronghold-named-observation RELEASE tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(row)&&Date.parse(row.split(' ')[0])>=Date.parse('2026-11-04T22:05:30Z')&&Date.parse(row.split(' ')[0])<=Date.now()),'predecessor file release required');
+  assert(/Chrome.*EXIT0.*refused.*flockFREE/.test(line),'actual Chrome/ports/lock release required');
+  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-04T22:54:44Z')&&at<=Date.now(),'current predecessor release required');
+  assert(lines.slice(own+1).some(row=>/^2026-11-04T\S+ stronghold-setup-transition-onward RELEASE tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(row)&&Date.parse(row.split(' ')[0])>=Date.parse('2026-11-04T22:59:05Z')&&Date.parse(row.split(' ')[0])<=Date.now()),'predecessor file release required');
   return line;
 }
 
