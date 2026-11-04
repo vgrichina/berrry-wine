@@ -10,9 +10,9 @@ const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
 // Explicit one-attempt renewal after the repaired diagnostic, not guest progress.
-const HARD_CLOSE = Date.parse('2026-11-04T23:15:00Z');
-const HARD_RECOVER = Date.parse('2026-11-04T23:18:00Z');
-const ASSIGNMENT = '20261104-mdk2-medium-through-loading';
+const HARD_CLOSE = Date.parse('2026-11-04T23:50:00Z');
+const HARD_RECOVER = Date.parse('2026-11-04T23:53:00Z');
+const ASSIGNMENT = '20261104-mdk2-bounded-review-window';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -217,7 +217,7 @@ def allocation():
  assert v['authorization']=='RUNTIME RELEASE MDK2 TARGET ONWARD'
  assert v['localAuthorization']=='EXPLICIT LOCAL FINITE ORIGINAL ATTEMPT'
  assert v['runtimeKind']=='local-process-v1' and v['boxId'] is None and v['expiry'] is None
- assert v['assignment']=='20261104-mdk2-medium-through-loading' and v['runDirectory']==str(E)
+ assert v['assignment']=='${ASSIGNMENT}' and v['runDirectory']==str(E)
  assert v['shutdownOwner']=='coordinator'
  assert len(v['nonce'])==64 and all(c in '0123456789abcdef' for c in v['nonce'])
  for field,name in [('driverSHA256','mdk2-construction-driver-integration.cjs'),('localSHA256','mdk2-local-runtime.cjs')]:
@@ -277,6 +277,13 @@ function prepareTransport(run) {
   fs.mkdirSync(path.join(run,'python-hooks'));
   fs.writeFileSync(path.join(run,'python-hooks/sitecustomize.py'),siteSource,{flag:'wx'});
 }
+function heavyRelease(board) {
+  const rows=board.split('\n').filter(line=>/^2026-11-04T\S+ (?:stronghold-customgame-drain(?:-cause-nov04)? LOCAL HEAVY RELEASE(?:\s|$)|coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04:)/.test(line));
+  assert(rows.length,'explicit stronghold-customgame-drain LOCAL HEAVY RELEASE required');
+  const line=rows.at(-1),at=Date.parse(line.split(' ')[0]);
+  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-04T20:37:22Z')&&at<=Date.now(),'current predecessor release required');
+  return line;
+}
 function install(run) {
   assert(!installed, 'dedicated one-use local contract');
   const fd = Number(process.env.WINE_LOCAL_RUNTIME_LOCK_FD);
@@ -284,6 +291,7 @@ function install(run) {
   const held = fs.fstatSync(fd), lock = fs.statSync('/tmp/wine-local-runtime.lock');
   assert(held.dev === lock.dev && held.ino === lock.ino, 'wrong runtime lock descriptor');
   assert.equal(cp.spawnSync('flock',['-n','/tmp/wine-local-runtime.lock','true']).status,1,'exclusive runtime lock must be held');
+  heavyRelease(fs.readFileSync(path.join(ROOT,'messageboard.txt'),'utf8'));
   const release = createRelease(run);
   validate(release, run);
   const finite = require(path.join(BASE,'20261104-mdk2-fresh-pending-scene/finite-deadline.cjs'));
@@ -299,7 +307,12 @@ function install(run) {
   main.sourceForRun = directory => translate(originalSource(directory));
   fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(release,null,2)+'\n',{flag:'wx'});
   prepareTransport(run);
+  // The composed caller always requires this tap before launchOwned. Make that
+  // prerequisite part of installation, rather than an optional outer-wrapper
+  // call which can pass every offline byte gate and still fail at bootstrap.
+  const existingTap=lifecycleTaps.get(run);
+  const lifecycle=existingTap||traceOwnedLifecycle(run);
   installed = true;
-  return {release, restore() {finite.browserDeadline=originalDeadline;main.sourceForRun=originalSource;}};
+  return {release,lifecycle, restore() {finite.browserDeadline=originalDeadline;main.sourceForRun=originalSource;if(!existingTap)lifecycle.restore();}};
 }
-module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,launchOwned,install,prepareTransport,transportSource,controlSource,siteSource};
+module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,launchOwned,install,prepareTransport,transportSource,controlSource,siteSource,heavyRelease};

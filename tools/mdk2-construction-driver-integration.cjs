@@ -321,7 +321,11 @@ function installBinding(options) {
     if (fatal || terminal || started || !entry?.instance) return fail('trace cannot restart or bind late');
     const ex = entry.instance.exports;
     if (ex.get_current_thread_id() !== 1 || ex.get_image_base() !== 0x400000 || typeof ex.set_trace_esp !== 'function') return fail('wrong owning instance/thread/loader');
-    const end = Math.min(row.commandEnd, row.absoluteEnd, Date.now() + 10000);
+    // One sequence deadline includes every frozen personal review. Per-command
+    // deadlines are checked separately and must never shorten or renew it.
+    const now = Date.now();
+    if (!Number.isFinite(row.commandEnd) || row.commandEnd <= now) return fail('trace command deadline');
+    const end = Math.min(row.absoluteEnd, now + 180000);
     if (!Number.isFinite(end) || end <= Date.now()) return fail('trace deadline');
     started = true; traceEnd = end;
     observer = g.Mdk2LuaConstructionObserver.attach({host: entry.host, getExports: () => entry.instance.exports,
@@ -668,7 +672,7 @@ function inspect() {
   return {status: 'offline-composition-checked', source: SOURCE, observer: OBSERVER, observerRepairSHA256:OBSERVER_REPAIR_SHA256, closure, pinsSHA256,
     composedSHA256: sha(composed.source), preloadSHA256: sha(preloadSource()), moduleReferences,
     continuity: {checkpoint: true, restart: false, deadlineReset: false, reviewClock: 'wall time; original deadline remains fixed'},
-    limits: {traceMs: 10000, boundaries: 100000, records: 512, constructionSlices: [16,32,64], restart: false},
+    limits: {traceMs: 180000, boundaries: 100000, records: 512, constructionSlices: [16,32,64], restart: false},
     runtime: 'Not executed. Fresh release and original pinned served bytes required; coordinator owns allocation/shutdown.'};
 }
 function retainedModule(row) {

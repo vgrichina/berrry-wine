@@ -173,7 +173,7 @@ test('installed Puppeteer close path distinguishes orderly own child from CDP-fa
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);
- assert.equal(r.assignment,'20261104-mdk2-medium-through-loading');
+ assert.equal(r.assignment,'20261104-mdk2-bounded-review-window');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -197,8 +197,8 @@ test('original useful-window minimum and absolute launch cutoff cannot be extend
  assert.throws(()=>local.createRelease(run,local.HARD_CLOSE-900000),/720\+180/);
 });
 test('renewed dated assignment retains exact absolute close and recovery bounds',()=>{
- assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T23:15:00Z'));
- assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T23:18:00Z'));
+ assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T23:50:00Z'));
+ assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T23:53:00Z'));
  const r=release();r.recoverBy=new Date(local.HARD_RECOVER+1).toISOString();
  assert.throws(()=>local.validate(r,run,now),/cleanup reserve/);
  const late=local.createRelease(run,local.HARD_CLOSE-900001);
@@ -269,6 +269,49 @@ test('real Python local transport validates actual process and forbids remote/de
 test('install requires real inherited exclusive local lock before release or composition changes',()=>{
  assert.throws(()=>local.install(run),/lock required/);
  assert(!fs.existsSync(path.join(run,'runtime-release.json')));
+});
+test('exact current predecessor heavy release excludes mentions, task release and other owners',()=>{
+ const good='2026-11-04T20:46:49+00:00 stronghold-customgame-drain LOCAL HEAVY RELEASE offline only';
+ assert.equal(local.heavyRelease(good),good);
+ const coordinated='2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: ZERO runtime; MDK may proceed';
+ assert.equal(local.heavyRelease(coordinated),coordinated);
+ for(const line of [good.replace(' LOCAL HEAVY RELEASE',' RELEASE'),
+   good.replace('stronghold-customgame-drain','mdk2-bounded-review waiting stronghold-customgame-drain'),
+   good.replace('20:46:49','20:20:46'),good.replace('2026-11-04','2026-11-05'),
+   good.replace('stronghold-customgame-drain','stronghold-first-script-cause'),
+   coordinated.replace('coordinator LOCAL','mdk2-bounded-review waiting coordinator LOCAL'),
+   coordinated.replace('drain-cause-nov04:','other-task:')])
+   assert.throws(()=>local.heavyRelease(line),/release/i);
+});
+test('actual local install makes the mandatory owning lifecycle tap ready before the composed launch caller',()=>{
+ const script=path.join(run,'install-caller.cjs'),lock=path.join(run,'private-runtime.lock');
+ // A private real flock avoids interfering with a successor's heavy runtime.
+ // Only that pathname, the test clock and board input change in this fixture.
+ fs.writeFileSync(script,`const fs=require('fs'),assert=require('assert/strict'),Module=require('module');
+ const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))};
+ const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse('2026-11-04T20:55:00Z');
+ let source=mode==='old'?require('child_process').execFileSync('git',['show','6055aa7e43d7c3505b6796d447663366e3b85146:tools/mdk2-local-runtime.cjs'],{encoding:'utf8'}):fs.readFileSync(filename,'utf8');
+ source=source.replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
+ const originalRead=fs.readFileSync;
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
+ const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(require('path').dirname(filename));m._compile(source,filename);
+ const installed=m.exports.install(dir),tap=m.exports.lifecycleForRun(dir);
+ assert.equal(installed.lifecycle,tap);assert.throws(()=>tap.ownedLaunch(),/exactly one/);
+ const rows=fs.readFileSync(dir+'/chrome-lifecycle.jsonl','utf8').trim().split('\\n').map(JSON.parse);
+ assert.equal(rows[0].kind,'observer-installed');assert(!rows.some(r=>r.kind==='spawn'));
+ installed.restore();console.log('PASS install -> lifecycleForRun ready before any launch; no Chrome');
+ `);
+ const results={};
+ for(const mode of ['old','fixed']){
+   const dir=fs.mkdtempSync(path.join(local.BASE,'mdk2-install-caller-test-'));
+   try{
+    const r=cp.spawnSync('bash',['-c','exec 9>"$1"; flock -n -x 9 || exit; export WINE_LOCAL_RUNTIME_LOCK_FD=9; exec "$2" "$3" "$4" "$5"','mdk2-install-test',lock,process.execPath,script,mode,dir],{encoding:'utf8',cwd:local.ROOT});
+    results[mode]={status:r.status,stdout:r.stdout,stderr:r.stderr};
+    if(mode==='old'){assert.notEqual(r.status,0);assert.match(r.stderr,/owned lifecycle recorder not installed/);}
+    else assert.equal(r.status,0,r.stderr);
+   }finally{fs.rmSync(dir,{recursive:true,force:true});}
+ }
+ if(process.env.MDK2_LOCAL_TEST_EVIDENCE)fs.writeFileSync(path.join(process.env.MDK2_LOCAL_TEST_EVIDENCE,'install-caller-before-after.json'),JSON.stringify(results,null,2));
 });
 test('actual original Python child: run-root hook reproduces operator collision; isolated hook fixes it',()=>{
  // Small generated controller inputs only. No browser, command spool or game.

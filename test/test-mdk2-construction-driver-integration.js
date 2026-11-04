@@ -271,7 +271,7 @@ test('concrete composed route checks offline with finite one-shot trace', () => 
   const report = integration.inspect();
   assert.equal(report.observerRepairSHA256,integration.sha(fs.readFileSync(path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs'))));
   assert.equal(report.status, 'offline-composition-checked');
-  assert.deepEqual(report.limits, {traceMs:10000,boundaries:100000,records:512,constructionSlices:[16,32,64],restart:false});
+  assert.deepEqual(report.limits, {traceMs:180000,boundaries:100000,records:512,constructionSlices:[16,32,64],restart:false});
   assert.equal(integration.assertRunnable().composedSHA256, report.composedSHA256);
 });
 
@@ -370,12 +370,23 @@ for(const row of integration.pinnedRuntime().pins.moduleFiles) {
       assert.equal(fixed.value.faultState[name],old.value.faultState[name],name);
     assert.deepEqual(fixed.value.commands,old.value.commands);assert.equal(fixed.value.commands.length,1);
   });
-  test('unchanged real observer rejects sealed original Medium review interval on '+row.path,async()=>{
-    const r=await nativeOne(row,'continuity-historical-review-early');
+  test('old real observer rejects sealed original Medium review interval on '+row.path,async()=>{
+    const r=await nativeOne(row,'continuity-historical-old-review-early');
     assert.match(r.value.report.fatal,/trace continuation deadline|native construction history ended/);
     assert.equal(r.value.checkpoints,1);assert(r.value.report.traceEnd-r.value.traceStartedAt>=10000);
     assert(r.value.report.traceEnd-r.value.traceStartedAt<=10010);
     write(EVIDENCE,path.basename(row.path)+'.historical-review-deadline.json',{fixtureOnly:true,...r.value});
+  });
+  test('fixed whole-sequence deadline survives retained review without renewal on '+row.path,async()=>{
+    const observed=await nativeOne(row,'continuity-historical-review-early'),control=await nativeOne(row,'control-early');
+    write(EVIDENCE,path.basename(row.path)+'.latest-observed.json',observed.value);
+    assert(observed.value.pass,JSON.stringify(observed.value));
+    for(const key of ['segments','before','trap','commands','workerSource'])assert.deepEqual(observed.value[key],control.value[key],key);
+    assert.equal(observed.value.report.fatal,null);
+    assert(observed.value.checkpoints>5);
+    assert(observed.value.report.traceEnd-observed.value.traceStartedAt>=180000);
+    assert(observed.value.report.traceEnd-observed.value.traceStartedAt<=180010);
+    write(EVIDENCE,path.basename(row.path)+'.fixed-historical-review.json',{fixtureOnly:true,...observed.value});
   });
   test('genuine queued demand entry precedes finalizer across retained checkpoints: '+row.path, async()=>{
     const observed=await nativeOne(row,'continuity-early'),control=await nativeOne(row,'control-early');
@@ -620,7 +631,59 @@ test('run-local controller composition retains actual operator/author and measur
 // Execute the actual selector and continuation controllers through the actual
 // composed command/ACK/inspection path. Transport/native states below are
 // explicit protocol fixtures; the separate both-module queue tests execute x86.
-async function mediumProducer(candidate=integration, negative=null) {
+// Read-only native-state model for the actual owning binding/observer. This is
+// explicitly not a game instance. The both-module queued tests above separately
+// establish original instruction, memory, command and trap parity.
+async function producerObserver(candidate) {
+  const observer=require('../tools/mdk2-lua-construction-observer.cjs');
+  const media=path.join(integration.ROOT,'test/binaries/candidates/mdk2-demo/installed/mdk2demo/mdk2Main.exe');
+  const exe=fs.readFileSync(media),pe=require('../lib/pe').readPE(media);
+  assert.equal(integration.sha(exe),observer.EXE_SHA256);
+  const bytes=Buffer.alloc(exe.length+4096);exe.copy(bytes);
+  const addresses=new Map();let next=exe.length;
+  for(const a of [0x4b87d4,0x4b7d14,0x4b87cc,0x4b87d0,0x5ce08c,0x4b7ce4]){addresses.set(a,next);next+=4;}
+  const wa=a=>{for(const [p,o]of addresses)if(a>=p&&a<p+4)return o+a-p;
+    if(a>=0x400000&&a<0x400400)return a-0x400000;
+    try{return pe.va2off(a);}catch{return 0xf0;}};
+  const ex={memory:{buffer:bytes.buffer},guest_to_wasm:wa,set_trace_esp(){}};
+  for(const n of ['current_thread_id','image_base','eip','esp','ebp','eax','ebx','ecx','edx','esi','edi',
+    'flag_op','flag_a','flag_b','flag_res','flag_sign_shift','yield_reason'])
+    ex['get_'+n]=()=>({current_thread_id:1,image_base:0x400000,eip:0x401800,esp:0x74ff000}[n]||0);
+  const row=integration.pinnedRuntime().pins.moduleFiles[0],url='http://offline/lib/guest-worker.js';
+  let listener;
+  let clockOffset=0;
+  const realm={URL,Date:{now:()=>Date.now()+clockOffset},setTimeout,clearTimeout,Uint8Array,ArrayBuffer,
+    WebAssembly:{Module:WebAssembly.Module,compile:WebAssembly.compile,instantiate:async()=>({exports:ex})},
+    addEventListener(type,fn){assert.equal(type,'message');listener=fn;}};
+  vm.createContext(realm);
+  vm.runInContext(fs.readFileSync(path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs'),'utf8'),realm);
+  vm.runInContext('('+candidate.installBinding.toString()+')('+JSON.stringify({moduleHashes:[row.sha256],targetId:'fixture',workerURL:url})+')',realm);
+  const module=await WebAssembly.compile(integration.retainedModule(row));
+  const sent={kind:'sent',sha256:row.sha256,compilation:0,bytes:row.bytes,workerURL:url,slot:0,endpointIdentity:1};
+  listener({data:{t:'init',module,slot:0,endpointIdentity:1,__mdk2Binding:sent}});
+  const host={log_block:()=>37};await realm.WebAssembly.instantiate(module,{host});
+  return {sent,bound:realm.__mdk2BoundTrace,evaluate:expression=>vm.runInContext(expression,realm),
+    advance(ms){clockOffset+=ms;},
+    boundary(){assert.equal(host.log_block(0x401800,0x74ff000),37);}};
+}
+async function personalView(name) {
+  const images={'title':'startup-3072','menu':'native-selector-76','fixture-difficulty':'native-selector-79',
+    'fixture-fade':'native-selector-88','fixture-pending':'pending-control-97',
+    'fixture-absent':'pending-control-103','fixture-published':'comic-control-106','fixture-loading':'comic-control-112'};
+  const file=path.join(EVIDENCE,'historical-'+images[name]+'.png'),sha256=integration.sha(fs.readFileSync(file));
+  const at=Date.now(),receipt=path.join(EVIDENCE,'personal-view-'+name+'.json');
+  assert(!fs.existsSync(receipt),'fresh personal view receipt required');
+  write(EVIDENCE,'personal-view-request.json',{name,file,sha256,at,receipt,
+    claim:'Historical image personal-view timing rehearsal; synthetic native scene is independent of these pixels'});
+  while(!fs.existsSync(receipt)){
+    assert(Date.now()-at<180000,'personal review rehearsal deadline');
+    await new Promise(resolve=>setTimeout(resolve,100));
+  }
+  const r=JSON.parse(fs.readFileSync(receipt));
+  assert.equal(r.name,name);assert.equal(r.sha256,sha256);assert.equal(r.personallyViewed,true);
+  assert(r.viewedAt>=at&&r.viewedAt<=Date.now());
+}
+async function mediumProducer(candidate=integration, negative=null, personal=false) {
   const {api}=actualDriver(candidate), prior=path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene');
   const readJSON=name=>JSON.parse(fs.readFileSync(path.join(api.OUT,name)));
   const {main,file}=sealedSidecars();
@@ -628,16 +691,16 @@ async function mediumProducer(candidate=integration, negative=null) {
     '20261104-mdk2-measured-escape-original/recovered/browser/native-selector-79.json.gz')))).state.main;
   const m=structuredClone(original);m.frozen.steps=3344;
   const sync=()=>{main.frozen=structuredClone(m.frozen);file.frozen=structuredClone(m.frozen);};sync();
-  const sent={kind:'sent',sha256:integration.pinnedRuntime().pins.moduleFiles[0].sha256,compilation:0,
-    bytes:2143540,workerURL:'http://offline/lib/guest-worker.js',slot:0,endpointIdentity:1};
+  const model=await producerObserver(candidate),sent=model.sent;
   let starts=0,resumes=0,checkpoints=0,held=false,pressed=0,released=0,traceEnd=null;
   const quanta=[];
   const session={send:async(_,args)=>{
-    const r={targetId:'fixture',workerURL:sent.workerURL,binding:sent,thread:1,fatal:null,traced:true,paused:false,
-      terminal:false,traceEnd,observer:{status:'running',blocks:10,records:[]}};
-    if(args.expression.includes('invoke("start"')){starts++;traceEnd=Date.now()+10000;}
-    if(args.expression.includes('invoke("resume"')){resumes++;if(Date.now()>=traceEnd)r.fatal='trace continuation deadline';}
-    if(args.expression.includes('invoke("checkpoint"')){checkpoints++;r.paused=true;}
+    if(args.expression.includes('invoke("start"'))starts++;
+    if(args.expression.includes('invoke("resume"'))resumes++;
+    if(args.expression.includes('invoke("checkpoint"'))checkpoints++;
+    let r;try{r=JSON.parse(model.evaluate(args.expression));}catch(error){return {exceptionDetails:{text:String(error)}};}
+    if(traceEnd!==null)assert.equal(r.traceEnd,traceEnd,'whole-sequence deadline never changes');
+    if(r.traceEnd!==null)traceEnd=r.traceEnd;
     return {result:{value:JSON.stringify(r)}};
   }};
   api.sessions.set('fixture',{session,info:{url:sent.workerURL}});
@@ -654,6 +717,7 @@ async function mediumProducer(candidate=integration, negative=null) {
     if(fn.name==='rawPixels')return {base64:Buffer.from('fixture').toString('base64'),steps:m.frozen.steps};
     if(fn.toString().includes('WineFrozen.setTickMs'))return {tickMs:n};
     if(fn.toString().includes('WineFrozen.step(n)')){
+      if(starts)model.boundary();
       quanta.push(n);m.frozen.steps+=n;m.inputQueue=[];sync();
       if(held){pressed++;m.nativeSelection.command.raw=m.nativeSelection.command.previous=pressed>=2?1:0;}
       else if(pressed){released++;m.nativeSelection.command.raw=m.nativeSelection.command.previous=0;
@@ -682,6 +746,7 @@ async function mediumProducer(candidate=integration, negative=null) {
   async function approve(name,classification) {
     await spool.send({action:'shot',name});
     const p=readJSON('inspection-state.json');
+    if(personal)await personalView(name);
     return require(path.join(prior,'inspection-guard.cjs')).approve(api.OUT,{capture:name,sha256:p.sha256,steps:p.steps,
       personallyInspected:true,inspector:'offline protocol fixture only',...classification});
   }
@@ -690,7 +755,10 @@ async function mediumProducer(candidate=integration, negative=null) {
   try {
     await require(path.join(integration.RUNS,'20261104-mdk2-measured-escape-original/native-menu.cjs')).select(api.OUT,r,'medium',{spool,maxCommands:113});
     assert.deepEqual(quanta,[16,16,32,16],'actual repeated press and release polls');
-    if(negative==='review-expired')traceEnd=Date.now()-1;
+    if(negative==='historical-review')model.advance(20007);
+    if(negative==='review-expired'){
+      model.bound.invoke('finish',{reason:'deadline'});
+    }
     const common={selection:'none',transitioning:true,loadingVisible:false,comicPanelsVisible:false,tutorialVisible:false,unsupportedSceneVisible:false};
     const fade=await approve('fixture-fade',{...common,screen:'medium-transition',visualTransition:'medium-fade',mediumFadeVisible:true,
       difficultyDialogVisible:false,newGameLabelVisible:false,legalOverlayVisible:false});
@@ -719,13 +787,23 @@ async function mediumProducer(candidate=integration, negative=null) {
     await require(path.join(prior,'comic-control.cjs')).control(api.OUT,review,'observe-loading',{spool});
   } catch(error){failure=error;}
   await api.traceDriver.finish('fixture-terminal');
-  return {starts,resumes,checkpoints,quanta,failure};
+  return {starts,resumes,checkpoints,quanta,failure,report:model.bound.report(),traceEnd};
 }
 test('actual selector and all loading producers retain one trace over 16/32/64 and eight-chunk branch',async()=>{
   const r=await mediumProducer();assert.equal(r.failure,null,r.failure?.stack);
   assert.equal(r.starts,1);assert.equal(r.checkpoints,r.quanta.length);assert.equal(r.resumes,r.quanta.length-1);
   assert.deepEqual(r.quanta,[16,16,32,16,16,16,16,64,...Array(8).fill(64)]);
   write(EVIDENCE,'whole-producer-protocol.json',{fixtureOnly:true,...r});
+});
+if(process.env.MDK2_PERSONAL_REHEARSAL==='1')test('personally reviewed complete producer and actual observer rehearsal',async()=>{
+  const started=Date.now();await personalView('title');await personalView('menu');
+  const r=await mediumProducer(integration,null,true);
+  write(EVIDENCE,'personal-complete-producer.json',{fixtureOnly:true,started,finished:Date.now(),...r,
+    claim:'Real personal-view delays and actual controllers/driver/owning observer over read-only native-state model; not gameplay'});
+  assert.equal(r.failure,null,r.failure?.stack);assert.equal(r.starts,1);assert.equal(r.checkpoints,16);
+  assert.equal(r.resumes,15);assert.equal(r.report.fatal,null);
+  assert(r.report.observer.blocks>0);assert(r.report.observer.records.length<512);
+  assert(Date.now()<r.traceEnd,'complete personal review must fit the single sequence deadline');
 });
 test('whole producer path rejects untrusted Medium before execution',async()=>{
   const r=await mediumProducer(integration,'untrusted');assert(r.failure);assert.equal(r.quanta.length,0);assert.equal(r.starts,0);
@@ -736,6 +814,17 @@ for(const mode of ['extra-queue','foreign-active','changed-history'])test('whole
 test('whole producer review pause cannot renew its original wall deadline',async()=>{
   const r=await mediumProducer(integration,'review-expired');assert.match(r.failure?.message||'',/continuous trace stopped/);
   assert.deepEqual(r.quanta,[16,16,32,16]);assert.equal(r.starts,1);
+});
+test('actual whole producer and owning observer: historical 20.007s review fails old and passes fixed window',async()=>{
+  const filename=require.resolve('../tools/mdk2-construction-driver-integration.cjs'),old=new Module(filename,module);
+  old.filename=filename;old.paths=module.paths;
+  old._compile(integration.gitFile('6055aa7e43d7c3505b6796d447663366e3b85146','tools/mdk2-construction-driver-integration.cjs').toString(),filename);
+  const before=await mediumProducer(old.exports,'historical-review'),after=await mediumProducer(integration,'historical-review');
+  assert(before.failure,'old fixed 10s bound must reject before further execution');
+  assert.deepEqual(before.quanta,[16,16,32,16]);assert.equal(before.starts,1);
+  assert.equal(after.failure,null,after.failure?.stack);assert.equal(after.starts,1);assert.equal(after.resumes,15);
+  assert.equal(after.checkpoints,16);assert.equal(after.report.fatal,null);
+  write(EVIDENCE,'whole-producer-historical-before-after.json',{fixtureOnly:true,elapsed:20007,before,after});
 });
 test('input producer old gap and actual 64-slice contract fail before repaired whole producer passes',async()=>{
   const filename=require.resolve('../tools/mdk2-construction-driver-integration.cjs'),old=new Module(filename,module);
@@ -839,10 +928,10 @@ async function nativeChild() {
   let preload=workerData.mode.startsWith('control')
     ? fs.readFileSync(path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene/observe-browser.js'),'utf8')
     : integration.preloadSource({targetId:workerData.targetId,workerURL:workerData.url});
-  if(['mid-poll-old','missing-history-old-binding'].includes(workerData.mode)){
+  if(['mid-poll-old','missing-history-old-binding','continuity-historical-old-review-early'].includes(workerData.mode)){
     // The old failed observer also uses its actual historical fault-containment
     // adapter. The new adapter aborts the faulting slice immediately.
-    const source=integration.gitFile('86dc176a3b25a1eda252d1f4b83a1e30a8bb417b','tools/mdk2-construction-driver-integration.cjs').toString();
+    const source=integration.gitFile(workerData.mode==='continuity-historical-old-review-early'?'6055aa7e43d7c3505b6796d447663366e3b85146':'86dc176a3b25a1eda252d1f4b83a1e30a8bb417b','tools/mdk2-construction-driver-integration.cjs').toString();
     preload=preload.replace(integration.installBinding.toString(),source.slice(source.indexOf('function installBinding(options)'),source.indexOf('\nfunction preloadSource')).trim());
   }
   if(workerData.mode==='mid-poll-old')preload=preload.replace(
@@ -888,6 +977,8 @@ async function nativeChild() {
   let fixtureSource=baseline.slice(baseline.indexOf('async function fixture(access){'),baseline.indexOf('  // Diagnostic failures'));
   let checkpoints=0;
   let traceStartedAt=null;
+  const realClock=Date.now;let reviewOffset=0;
+  Date.now=()=>realClock()+reviewOffset;
   if(workerData.mode.endsWith('-early')){
     // Execute the original PUSH/CALL before completion fragments. Only fixture
     // setup repositions between fragments; the observer's load history is never
@@ -910,15 +1001,16 @@ async function nativeChild() {
       const paused=bound.invoke('checkpoint',{commandEnd:end,absoluteEnd:end});
       assert(paused.paused && !paused.terminal,JSON.stringify(paused));
       checkpoints++;
-      if(workerData.mode==='continuity-historical-review-early'){
+      if(workerData.mode.includes('historical')){
         // Reproduce the sealed actual command interval with an explicit test
-        // clock. The production observer keeps its original 10000ms deadline.
-        const clock=Date.now;Date.now=()=>clock()+20007;
+        // clock. The old and repaired bindings use the identical retained schedule.
+        const offset=[20007,38989,57614,74754,102107,118018][Math.min(checkpoints-1,5)];
+        reviewOffset=offset;
       }
       if(workerData.mode==='continuity-deadline')await new Promise(resolve=>setTimeout(resolve,350));
       if(workerData.mode==='continuity-registers')e.set_eax((e.get_eax()+1)>>>0);
       if(workerData.mode==='continuity-paused-boundary')captured.host.log_block(e.get_eip(),e.get_esp());
-      const resumed=bound.invoke('resume',{commandEnd:end,absoluteEnd:end});
+      const resumed=bound.invoke('resume',{commandEnd:workerData.mode.includes('historical')?Date.now()+9000:end,absoluteEnd:workerData.mode.includes('historical')?Date.now()+200000:end});
       assert(!resumed.fatal,JSON.stringify(resumed));
       assert.deepEqual(state(),before);
       return value;
@@ -940,7 +1032,7 @@ async function nativeChild() {
     if(workerData.mode==='wrong-thread')e.set_current_thread_id(2);
     if(workerData.mode==='wrong-instance')await WebAssembly.instantiate(captured.module,{host:{}});
     if(workerData.mode==='foreign-module-object')await WebAssembly.instantiate(await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0])),{host:{}});
-    const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode==='continuity-historical-review-early'?20000:workerData.mode==='active-deadline'?20:workerData.mode==='continuity-deadline'?300:9000);
+    const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode.includes('historical')?200000:workerData.mode==='active-deadline'?20:workerData.mode==='continuity-deadline'?300:9000);
     if(workerData.mode!=='late-early'){traceStartedAt=Date.now();bound.invoke('start',{commandEnd:end,absoluteEnd:end});}
     if(workerData.mode==='continuity-boundary-overflow'){
       e.set_eip(caller);
@@ -982,7 +1074,7 @@ async function nativeChild() {
   const trapEnd=baseline.indexOf('  parentPort.postMessage({pass:true,segments,before,trap:',trapStart);
   fixtureSource+="if(workerData.mode.startsWith('control'))e.set_trace_esp(0,0,0);\n";
   fixtureSource+=baseline.slice(trapStart,trapEnd);
-  fixtureSource+=`parentPort.postMessage({pass:true,checkpoints,segments,before,trap:{text:trap,hash:H(b),state:state()},report:bound?.report()||null,workerSource:{path:'lib/guest-worker.js',sha256:H(source)}});}`;
+  fixtureSource+=`parentPort.postMessage({pass:true,checkpoints,traceStartedAt,segments,before,trap:{text:trap,hash:H(b),state:state()},report:bound?.report()||null,workerSource:{path:'lib/guest-worker.js',sha256:H(source)}});}`;
   const fixture=eval('('+fixtureSource+')');
   workerData.port.once('message',()=>fixture(()=>({...captured,observer:workerData.mode.startsWith('control')?null:{
     get report(){return bound.report().observer},sample(){},finish(){return bound.invoke('finish',{reason:'fixture-end'}).observer}
