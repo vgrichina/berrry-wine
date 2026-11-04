@@ -6274,6 +6274,16 @@
       (local.set $tu (f32.add (local.get $u0) (f32.mul (f32.sub (local.get $u1) (local.get $u0)) (local.get $t))))
       (local.set $tv (f32.add (local.get $v0) (f32.mul (f32.sub (local.get $v1) (local.get $v0)) (local.get $t))))
       (local.set $tq (f32.add (local.get $q0) (f32.mul (f32.sub (local.get $q1) (local.get $q0)) (local.get $t))))
+      (if (global.get $d3dim_sample_on) (then
+        (local.set $tu (f32.add (global.get $d3dim_sample_uc)
+          (f32.add (f32.mul (global.get $d3dim_sample_ua) (f32.convert_i32_s (local.get $x)))
+            (f32.mul (global.get $d3dim_sample_ub) (f32.convert_i32_s (local.get $y))))))
+        (local.set $tv (f32.add (global.get $d3dim_sample_vc)
+          (f32.add (f32.mul (global.get $d3dim_sample_va) (f32.convert_i32_s (local.get $x)))
+            (f32.mul (global.get $d3dim_sample_vb) (f32.convert_i32_s (local.get $y))))))
+        (local.set $tq (f32.add (global.get $d3dim_sample_qc)
+          (f32.add (f32.mul (global.get $d3dim_sample_qa) (f32.convert_i32_s (local.get $x)))
+            (f32.mul (global.get $d3dim_sample_qb) (f32.convert_i32_s (local.get $y))))))))
       (if (global.get $rast_t0_q_on) (then
         (local.set $tq (f32.add (global.get $rast_t0_qc)
           (f32.add (f32.mul (global.get $rast_t0_qa) (f32.convert_i32_s (local.get $x)))
@@ -6282,6 +6292,10 @@
         (local.set $tu (f32.div (local.get $tu) (local.get $tq)))
         (local.set $tv (f32.div (local.get $tv) (local.get $tq)))))
       (local.set $tz (f32.add (local.get $z0) (f32.mul (f32.sub (local.get $z1) (local.get $z0)) (local.get $t))))
+      (if (global.get $d3dim_sample_on) (then
+        (local.set $tz (f32.add (global.get $d3dim_sample_zc)
+          (f32.add (f32.mul (global.get $d3dim_sample_za) (f32.convert_i32_s (local.get $x)))
+            (f32.mul (global.get $d3dim_sample_zb) (f32.convert_i32_s (local.get $y))))))))
       ;; A lerp between equal colours is that colour exactly, so a span with
       ;; one vertex colour (flat or unlit geometry) needs no per-pixel lerp.
       (local.set $diffuse (if (result i32) (i32.eq (local.get $c0) (local.get $c1))
@@ -7034,6 +7048,18 @@
       (global.set $d3dim_mip_qa (global.get $rast_pa))
       (global.set $d3dim_mip_qb (global.get $rast_pb))
       (global.set $d3dim_mip_qc (global.get $rast_pc))
+    ))
+    ;; Sampling and quotient-rule LOD use the same unrounded rational planes.
+    (if (global.get $d3dim_sample_on) (then
+      (global.set $d3dim_mip_ua (global.get $d3dim_sample_ua))
+      (global.set $d3dim_mip_ub (global.get $d3dim_sample_ub))
+      (global.set $d3dim_mip_uc (global.get $d3dim_sample_uc))
+      (global.set $d3dim_mip_va (global.get $d3dim_sample_va))
+      (global.set $d3dim_mip_vb (global.get $d3dim_sample_vb))
+      (global.set $d3dim_mip_vc (global.get $d3dim_sample_vc))
+      (global.set $d3dim_mip_qa (global.get $d3dim_sample_qa))
+      (global.set $d3dim_mip_qb (global.get $d3dim_sample_qb))
+      (global.set $d3dim_mip_qc (global.get $d3dim_sample_qc))
     ))
     ;; Sort by y, carrying all attributes with the screen-space vertices.
     (if (i32.gt_s (local.get $y0) (local.get $y1)) (then
@@ -8064,6 +8090,49 @@
     (global.set $d3dim_mip_on (i32.or (i32.ne (local.get $mip) (i32.const 0))
       (i32.ne (global.get $d3dim_mip_min) (global.get $d3dim_mip_mag)))))
 
+  ;; Coverage rounds scanline endpoints; interpolation must not move the
+  ;; attribute field with those endpoints. Supplied projected coordinates use
+  ;; planes through the unrounded clipped TL vertices, sampled at integer
+  ;; D3D pixel centres. Kept draw-local by the on flag around rasterization.
+  (global $d3dim_sample_on (mut i32) (i32.const 0))
+  (global $d3dim_sample_ua (mut f32) (f32.const 0))
+  (global $d3dim_sample_ub (mut f32) (f32.const 0))
+  (global $d3dim_sample_uc (mut f32) (f32.const 0))
+  (global $d3dim_sample_va (mut f32) (f32.const 0))
+  (global $d3dim_sample_vb (mut f32) (f32.const 0))
+  (global $d3dim_sample_vc (mut f32) (f32.const 0))
+  (global $d3dim_sample_qa (mut f32) (f32.const 0))
+  (global $d3dim_sample_qb (mut f32) (f32.const 0))
+  (global $d3dim_sample_qc (mut f32) (f32.const 0))
+  (global $d3dim_sample_za (mut f32) (f32.const 0))
+  (global $d3dim_sample_zb (mut f32) (f32.const 0))
+  (global $d3dim_sample_zc (mut f32) (f32.const 0))
+  (func $d3dim_sample_plane
+    (param $v0 i32) (param $v1 i32) (param $v2 i32)
+    (param $f0 f32) (param $f1 f32) (param $f2 f32)
+    (local $x0 f32) (local $y0 f32) (local $dx1 f32) (local $dy1 f32)
+    (local $dx2 f32) (local $dy2 f32) (local $df1 f32) (local $df2 f32) (local $det f32)
+    (local.set $x0 (f32.load (local.get $v0)))
+    (local.set $y0 (f32.load offset=4 (local.get $v0)))
+    (local.set $dx1 (f32.sub (f32.load (local.get $v1)) (local.get $x0)))
+    (local.set $dy1 (f32.sub (f32.load offset=4 (local.get $v1)) (local.get $y0)))
+    (local.set $dx2 (f32.sub (f32.load (local.get $v2)) (local.get $x0)))
+    (local.set $dy2 (f32.sub (f32.load offset=4 (local.get $v2)) (local.get $y0)))
+    (local.set $df1 (f32.sub (local.get $f1) (local.get $f0)))
+    (local.set $df2 (f32.sub (local.get $f2) (local.get $f0)))
+    (local.set $det (f32.sub (f32.mul (local.get $dx1) (local.get $dy2))
+      (f32.mul (local.get $dx2) (local.get $dy1))))
+    (global.set $rast_pa (f32.const 0))
+    (global.set $rast_pb (f32.const 0))
+    (if (f32.gt (f32.abs (local.get $det)) (f32.const 0.000000000001)) (then
+      (global.set $rast_pa (f32.div
+        (f32.sub (f32.mul (local.get $df1) (local.get $dy2)) (f32.mul (local.get $df2) (local.get $dy1))) (local.get $det)))
+      (global.set $rast_pb (f32.div
+        (f32.sub (f32.mul (local.get $dx1) (local.get $df2)) (f32.mul (local.get $dx2) (local.get $df1))) (local.get $det)))))
+    (global.set $rast_pc (f32.sub (local.get $f0)
+      (f32.add (f32.mul (global.get $rast_pa) (local.get $x0))
+        (f32.mul (global.get $rast_pb) (local.get $y0))))))
+
   (func $d3dim_draw_tl_triangle_textured
     (param $this i32) (param $rt i32) (param $tex i32) (param $use_z i32)
     (param $v0 i32) (param $v1 i32) (param $v2 i32)
@@ -8217,6 +8286,32 @@
         (call $d3dim_coord_i (f32.load (i32.add (local.get $v2) (i32.const 4))))
         (call $d3dim_fog_factor (local.get $v2))
         (call $gl32 (i32.add (local.get $state) (i32.const 392))))))
+    (global.set $d3dim_sample_on (i32.ne (global.get $d3dim_supplied_projection) (i32.const 0)))
+    (if (global.get $d3dim_sample_on) (then
+      (call $d3dim_sample_plane (local.get $v0) (local.get $v1) (local.get $v2) (f32.mul (local.get $u0) (f32.load offset=12 (local.get $v0))) (f32.mul (local.get $u1) (f32.load offset=12 (local.get $v1))) (f32.mul (local.get $u2) (f32.load offset=12 (local.get $v2))))
+      (global.set $d3dim_sample_ua (global.get $rast_pa))
+      (global.set $d3dim_sample_ub (global.get $rast_pb))
+      (global.set $d3dim_sample_uc (global.get $rast_pc))
+      (call $d3dim_sample_plane (local.get $v0) (local.get $v1) (local.get $v2) (f32.mul (local.get $t0) (f32.load offset=12 (local.get $v0))) (f32.mul (local.get $t1) (f32.load offset=12 (local.get $v1))) (f32.mul (local.get $t2) (f32.load offset=12 (local.get $v2))))
+      (global.set $d3dim_sample_va (global.get $rast_pa))
+      (global.set $d3dim_sample_vb (global.get $rast_pb))
+      (global.set $d3dim_sample_vc (global.get $rast_pc))
+      (call $d3dim_sample_plane (local.get $v0) (local.get $v1) (local.get $v2) (f32.mul (local.get $texture_q0) (f32.load offset=12 (local.get $v0))) (f32.mul (local.get $texture_q1) (f32.load offset=12 (local.get $v1))) (f32.mul (local.get $texture_q2) (f32.load offset=12 (local.get $v2))))
+      (global.set $d3dim_sample_qa (global.get $rast_pa))
+      (global.set $d3dim_sample_qb (global.get $rast_pb))
+      (global.set $d3dim_sample_qc (global.get $rast_pc))
+      (call $d3dim_sample_plane (local.get $v0) (local.get $v1) (local.get $v2) (f32.load offset=8 (local.get $v0)) (f32.load offset=8 (local.get $v1)) (f32.load offset=8 (local.get $v2)))
+      (global.set $d3dim_sample_za (global.get $rast_pa))
+      (global.set $d3dim_sample_zb (global.get $rast_pb))
+      (global.set $d3dim_sample_zc (global.get $rast_pc))
+      (if (local.get $fog) (then
+        (call $d3dim_sample_plane (local.get $v0) (local.get $v1) (local.get $v2)
+          (call $d3dim_fog_factor (local.get $v0))
+          (call $d3dim_fog_factor (local.get $v1))
+          (call $d3dim_fog_factor (local.get $v2)))
+        (global.set $rast_fog_a (global.get $rast_pa))
+        (global.set $rast_fog_b (global.get $rast_pb))
+        (global.set $rast_fog_c (global.get $rast_pc))))))
     (call $rasterize_triangle_textured
       (local.get $rt) (local.get $tex)
       (local.get $blend) (local.get $src_blend) (local.get $dst_blend)
@@ -8247,6 +8342,7 @@
       (f32.load (i32.add (local.get $v2) (i32.const 8)))
       (local.get $zbuf) (local.get $zfunc) (local.get $zwrite)
       (local.get $texture_q0) (local.get $texture_q1) (local.get $texture_q2))
+    (global.set $d3dim_sample_on (i32.const 0))
     (global.set $d3dim_mip_on (i32.const 0))
     (global.set $rast_fog_on (i32.const 0)))
 
