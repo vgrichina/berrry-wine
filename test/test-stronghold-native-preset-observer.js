@@ -144,7 +144,7 @@ if(!isMainThread){
         else if(m.t==='sliceDone')port1.postMessage({t:'slice',message:m});
         else if(m.t==='fixtureFailure'||m.t==='error')finish(Error(JSON.stringify(m)));
         else if(m.pass)finish(null,{...m,diagnosticImports,commands});});
-      w.postMessage({t:'init',seq:0,module,memory,sigs,slot:0,endpointIdentity:1});
+      w.postMessage({t:'init',seq:0,module,memory,sigs,slot:0,endpointIdentity:1,forwardGuestLogs:true});
     });
   }
   (async()=>{const results=[];for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){

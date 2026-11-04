@@ -16,10 +16,49 @@ function original(a,n){for(let i=0;i<exe.readUInt16LE(pe+6);i++){
 for(const [pc,hex]of api.PINS)assert.equal(original(pc,hex.length/2).toString('hex'),hex);
 const le=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
 const URL='http://fixture/lib/guest-worker.js?v=fixture',epoch='fixture-target/fixture-session';
+// First-fault discriminator: run the exact original 80,400-entry initializer,
+// including all three input-type branches. Only data/registers are synthetic;
+// a debugger breakpoint stops before the following original helper CALL.
+async function initializer({e,memory}){
+ const b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),wa=a=>g2w(a,0x400000,memory);
+ const object=0xfb4d08,count=0x13a10,from=object+0x165160,to=object+0x52480;
+ const codeBefore=hash(b.subarray(wa(0x4ec4e8),wa(0x4ec526)));
+ assert.equal(codeBefore,hash(original(0x4ec4e8,0x4ec526-0x4ec4e8)));
+ const guard=0xa55a,baseValue=0xfffe;
+ dv.setUint32(wa(0x8ed448),baseValue,true);
+ for(let i=0;i<count;i++)dv.setUint32(wa(from+i*4),[16,32,99][i%3],true);
+ dv.setUint16(wa(to-2),guard,true);dv.setUint16(wa(to+count*2),guard,true);
+ b.fill(0xcc,wa(to),wa(to+count*2));
+ e.set_esi(object);e.set_esp(0x7408000);e.set_eip(0x4ec4e8);e.set_bp(0x4ec526);
+ const attachment=globalThis.__strongholdPresetAttachment;
+ if(workerData.observed)attachment.invoke('start',{command:11});
+ if(workerData.observed||workerData.trace)e.set_trace_esp(1,0,0);
+ let pending;
+ const slice=n=>new Promise((resolve,reject)=>{pending={resolve,reject};parentPort.postMessage({t:'fixtureSlice',steps:n});});
+ workerData.port.on('message',m=>{if(m.t==='slice'){const p=pending;pending=null;m.value.trapped?p.reject(Error(m.value.trapped)):p.resolve(m.value.blocks);}});
+ const started=performance.now(),checkpoints=[];
+ for(let i=0;i<16;i++){
+  const blocks=await slice(64000);
+  checkpoints.push({blocks,pc:e.get_eip()>>>0,remaining:e.get_edi()>>>0});
+  if(e.get_eip()>>>0===0x4ec526)break;
+ }
+ const elapsedMs=performance.now()-started;
+ assert.equal(e.get_eip()>>>0,0x4ec526,'original fixed-count initializer must exit');
+ assert.equal(e.get_edi()>>>0,0);assert.equal(e.get_eax()>>>0,to+count*2);assert.equal(e.get_edx()>>>0,from+count*4);
+ for(let i=0;i<count;i++)assert.equal(dv.getUint16(wa(to+i*2),true),[0xfffe,0xffff,0][i%3], 'entry '+i);
+ for(const a of [to-2,to+count*2])assert.equal(dv.getUint16(wa(a),true),guard);
+ assert.equal(hash(b.subarray(wa(0x4ec4e8),wa(0x4ec526))),codeBefore,'original code remains unchanged');
+ let observation=null;if(workerData.observed){observation=attachment.report().report;assert.equal(observation.status,'running');assert.equal(observation.fault,null);attachment.invoke('finish',{reason:'offline-initializer-complete'});}
+ e.set_trace_esp(0,0,0);e.clear_bp();
+ parentPort.postMessage({pass:true,initializer:true,elapsedMs,checkpoints,outputSHA256:hash(b.subarray(wa(to),wa(to+count*2))),
+  codeSHA256:codeBefore,observation,workerSourceSHA:globalThis.fixtureWorkerSHA,
+  limits:'Synthetic data/registers; exact original fragment only, not historical register recovery or full setup/game execution'});
+}
 async function physical(){
  const {e,memory,host}=globalThis.fixtureAccess,b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer);
  const wa=a=>g2w(a,0x400000,memory),put=(a,v)=>b.set(v,wa(a)),u32=(a,v)=>dv.setUint32(wa(a),v>>>0,true);
  b.set(exe,e.get_staging());assert(e.load_pe(exe.length));e.set_api_log(0);
+ if(workerData.initializer)return initializer({e,memory,host});
  const caller=0x580000,stop=caller+64,stack=0x7408000,string=caller+96,tick=caller+112;
  put(stop,[0xeb,0xfe]);put(string,[0]);put(tick,[0x31,0xc0,0xc3]);u32(0x5841c8,tick);
  // Full original callback and scene manager retained. Test-only dependencies
@@ -131,15 +170,16 @@ if(!isMainThread){
  globalThis.fixtureWorkerSHA=hash(src);m.filename=filename;m.paths=module.paths;m._compile(src.toString(),filename);
  workerData.port.once('message',()=>physical().catch(e=>parentPort.postMessage({failure:e.stack})));
 }else{
- async function one(variant,observed,trace=false,badBinding=false){
+ async function one(variant,observed,trace=false,badBinding=false,init=false,forwardGuestLogs=false){
   const bytes=fs.readFileSync(path.join(ROOT,'build',variant)),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
   const {port1,port2}=new MessageChannel(),sigs=require('../lib/host-import-sigs.generated.json').sigs;
+  let brokerLogBlocks=0;
   const broker=require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>{
-   if(!['log_block','log','log_i32','beep_process_begin','beep_thread_begin','midi_stream_service'].includes(n))throw Error('unexpected fixture broker '+n);return 0;
+   if(!['log_block','log','log_i32','beep_process_begin','beep_thread_begin','midi_stream_service'].includes(n))throw Error('unexpected fixture broker '+n);if(n==='log_block')brokerLogBlocks++;return 0;
   }])),sigs);
-  const module=await WebAssembly.compile(bytes),w=new Worker(__filename,{workerData:{port:port2,observed,trace,badBinding,wasmHash:hash(bytes)},transferList:[port2]});
+  const module=await WebAssembly.compile(bytes),w=new Worker(__filename,{workerData:{port:port2,observed,trace,badBinding,initializer:init,wasmHash:hash(bytes)},transferList:[port2]});
   return new Promise((resolve,reject)=>{let seq=0,done=false;const commands=[];
-   const end=async(error,value)=>{if(done)return;done=true;clearTimeout(timer);await w.terminate();port1.close();error?reject(error):resolve({...value,commands,moduleSHA:hash(bytes)});};
+   const end=async(error,value)=>{if(done)return;done=true;clearTimeout(timer);await w.terminate();port1.close();error?reject(error):resolve({...value,commands,brokerLogBlocks,moduleSHA:hash(bytes)});};
    const timer=setTimeout(()=>end(Error('fixture Worker deadline')),40000);w.on('error',e=>end(e));
    w.on('message',m=>{
     if(m.t==='ready')port1.postMessage({start:true});else if(m.t==='rpc')broker.serveRpc(m.slot,m.waitEntry);
@@ -147,11 +187,11 @@ if(!isMainThread){
     else if(m.t==='fixtureSlice'){const c={t:'slice',seq:++seq,steps:m.steps};commands.push(c);w.postMessage(c);}
     else if(m.t==='sliceDone')port1.postMessage({t:'slice',value:m});
     else if(m.failure||m.t==='error')end(Error(JSON.stringify(m)));else if(m.pass)end(null,m);
-   });w.postMessage({t:'init',seq:0,module,memory,sigs,slot:0,endpointIdentity:badBinding?2:1});
+   });w.postMessage({t:'init',seq:0,module,memory,sigs,slot:0,endpointIdentity:badBinding?2:1,forwardGuestLogs});
   });
  }
  async function composition(){
-  const run=path.resolve('scratch/runs/20261104-stronghold-first-script-cause-onward/observer-composition'),pins=path.join(run,'pins.json');fs.mkdirSync(run,{recursive:true});
+  const run=path.resolve(process.env.STRONGHOLD_CALLBACK_RUN||'scratch/runs/20261104-stronghold-first-script-cause-onward/observer-composition'),pins=path.join(run,'pins.json');fs.mkdirSync(run,{recursive:true});
   fs.writeFileSync(pins,JSON.stringify({files:[{path:'build/wine-assembly.wasm',sha256:hash(fs.readFileSync('build/wine-assembly.wasm'))}]}));
   const p=api.prepare({run,pins});new vm.Script(p.source);new vm.Script(p.route);
   const cut=p.source.lastIndexOf('main().catch(');base.compileClosure(p.source.slice(0,cut),p.driver,p.route,p.evidence.retainedClosure);
@@ -280,17 +320,48 @@ if(!isMainThread){
   for(const mode of ['endpoint','thread','late','foreign','missing','duplicate-owner','replaced','aux-malformed','duplicate-send'])await replay(mode);
   console.log('PASS recorded four-Worker/six-send topology old rejection/new exact-owner selection; nine discovery negatives before arming (offline reports only)');
  }
+ function blockForwardingControls(){
+  const rpc=require('../lib/guest-rpc'),memory={buffer:new SharedArrayBuffer(8192*65536)},sigs={log_block:{params:['i32','i32'],results:[]}};
+  for(const opts of [{},{forwardGuestLogs:false},{forwardGlLogs:false},{forwardGuestLogs:true},{forwardGlLogs:true},{forwardGuestLogs:false,forwardGlLogs:true}]){
+   const expected=opts.forwardGuestLogs===undefined?!!opts.forwardGlLogs:!!opts.forwardGuestLogs,seen=[],errors=[];
+   let posts=0,throws=false;
+   const broker=rpc.createMainBroker(memory,{log_block:(...args)=>{if(throws)throw Error('forwarded block failure');seen.push(args);}},sigs,{onError:(_n,e)=>errors.push(e.message)});
+   const worker=rpc.createWorkerImports(memory,sigs,m=>{posts++;assert.equal(m.t,'rpc');broker.serveRpc(m.slot,m.waitEntry);},{slot:0,...opts});
+   worker.imports.host.log_block(0x4ec4f9,0x7408000);worker.flushAsync();
+   assert.equal(posts,expected?1:0);assert.deepEqual(seen,expected?[[0x4ec4f9,0x7408000]]:[]);
+   if(expected){throws=true;assert.throws(()=>worker.imports.host.log_block(1,2),/host import log_block threw/);assert.deepEqual(errors,['forwarded block failure']);}
+  }
+  console.log('PASS default/explicit/legacy block forwarding and synchronous exception semantics');
+ }
  (async()=>{
+  blockForwardingControls();
+  if(process.argv.includes('--initializer-only')){
+   const results=[];
+   for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
+    const control=await one(variant,false,false,false,true),trace=await one(variant,false,true,false,true),observed=await one(variant,true,false,false,true),forwarded=await one(variant,true,false,false,true,true);
+    for(const arm of [trace,observed,forwarded]){
+     assert.equal(arm.outputSHA256,control.outputSHA256);assert.equal(arm.codeSHA256,control.codeSHA256);
+     assert.deepEqual(arm.checkpoints,control.checkpoints);assert.deepEqual(arm.commands,control.commands);
+    }
+    assert.equal(trace.brokerLogBlocks,0,'quiet trace must not broker the default no-op log_block');
+    assert.equal(observed.brokerLogBlocks,0,'local native observer retains all boundaries without no-op RPC');
+    assert.equal(observed.observation.blocks,294800);assert.equal(forwarded.observation.blocks,observed.observation.blocks);
+    assert.deepEqual(observed.observation,forwarded.observation,'native history and all finite observer guards are identical');
+    assert.equal(forwarded.brokerLogBlocks,294800,'explicitly forwarded block diagnostics retain every synchronous call');
+    results.push({variant,control,trace,observed,forwarded});console.log('PASS exact original 80400-entry initialization, all branches, fixed exit, output/counter/Worker-command parity; quiet no-op RPC removed, explicit forwarding retained',variant);
+   }
+   if(process.env.STRONGHOLD_CALLBACK_RESULT)fs.writeFileSync(process.env.STRONGHOLD_CALLBACK_RESULT,JSON.stringify({passed:true,offlineOnly:true,results,media:{path:EXE,sha256:api.EXE_SHA256}},null,2)+'\n');
+   return;
+  }
   const evidence=await composition(),results=[];
   for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
    const control=await one(variant,false),trace=await one(variant,false,true),observed=await one(variant,true);
    assert.equal(observed.workerSourceSHA,control.workerSourceSHA);assert.equal(trace.workerSourceSHA,control.workerSourceSHA);
    assert.deepEqual(observed.segments,trace.segments,'trace-armed full memory/register/return parity');
    assert.deepEqual(control.commands,trace.commands);assert.deepEqual(observed.commands.slice(0,control.commands.length),control.commands);
-   const rpc=require('../lib/region-map.generated').BASE.THREAD_RPC;
    const differences=observed.segments.map((s,i)=>{
     assert.deepEqual(s.registers,control.segments[i].registers);assert.deepEqual(s.returned,control.segments[i].returned);
-    const d=s.pages.flatMap((v,j)=>v!==control.segments[i].pages[j]?[j*65536]:[]);assert.deepEqual(d,[rpc]);return d;
+    const d=s.pages.flatMap((v,j)=>v!==control.segments[i].pages[j]?[j*65536]:[]);assert.deepEqual(d,[]);return d;
    });
    for(const arm of [control,trace,observed])for(const s of arm.segments)delete s.pages;
    results.push({variant,control,trace,observed,differences});console.log('PASS executable owning Worker callback/branch/scene/setup fixtures and parity',variant);
