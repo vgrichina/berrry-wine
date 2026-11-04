@@ -1143,9 +1143,10 @@
 
   ;; IDirect3DDevice7::DrawPrimitive(primType, fvf, lpvVerts, dwVtxCount, dwFlags)
   ;; DX7 replaces the explicit vtxType enum with an FVF bitfield. Pack FVF
-  ;; records into the 32-byte legacy layouts consumed by the shared renderer.
+  ;; records into legacy layouts, extending supplied texture inputs to 40-byte
+  ;; TL records when an untransformed draw enables a texture transform.
   (func $handle_IDirect3DDevice7_DrawPrimitive (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $dwVertexCount i32) (local $vtxType i32) (local $packed i32)
+    (local $dwVertexCount i32) (local $vtxType i32) (local $packed i32) (local $extended i32) (local $supplied i32)
     (if (i32.eqz (call $d3dim_fvf_supplied_valid (local.get $arg0) (local.get $arg2))) (then
       (i32.store (global.get $reg_base) (i32.const 0x80070057))
       (i32.store offset=16 (global.get $reg_base)
@@ -1158,6 +1159,15 @@
       (call $d3dim_texcoord_index (local.get $arg0))))
     (local.set $vtxType (call $d3dim_d7_light_vertices (local.get $arg0) (local.get $arg2)
       (local.get $arg3) (local.get $packed) (local.get $dwVertexCount) (local.get $vtxType)))
+    ;; Texture transforms apply only to untransformed supplied positions.
+    (if (i32.lt_u (local.get $vtxType) (i32.const 3)) (then
+      (local.set $supplied (call $d3dim_d7_supplied_type (local.get $arg0)))))
+    (if (i32.and (i32.ne (local.get $packed) (i32.const 0)) (i32.ne (local.get $supplied) (i32.const 0))) (then
+      (local.set $extended (call $d3dim_d7_supplied_vertices (local.get $arg0) (local.get $arg2)
+        (local.get $arg3) (local.get $packed) (local.get $dwVertexCount) (local.get $vtxType)))
+      (call $heap_free (local.get $packed))
+      (local.set $packed (local.get $extended))
+      (local.set $vtxType (local.get $supplied))))
     (if (local.get $packed) (then
       (call $d3dim_draw_primitive (local.get $arg0) (local.get $arg1) (local.get $vtxType)
         (local.get $packed) (local.get $dwVertexCount))
@@ -1169,7 +1179,7 @@
 
   ;; IDirect3DDevice7_DrawIndexedPrimitive — 7 args (incl. this)
   (func $handle_IDirect3DDevice7_DrawIndexedPrimitive (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $dwVertexCount i32) (local $lpwIndices i32) (local $dwIndexCount i32) (local $vtxType i32) (local $packed i32)
+    (local $dwVertexCount i32) (local $lpwIndices i32) (local $dwIndexCount i32) (local $vtxType i32) (local $packed i32) (local $extended i32) (local $supplied i32)
     (if (i32.eqz (call $d3dim_fvf_supplied_valid (local.get $arg0) (local.get $arg2))) (then
       (i32.store (global.get $reg_base) (i32.const 0x80070057))
       (i32.store offset=16 (global.get $reg_base)
@@ -1184,6 +1194,15 @@
       (call $d3dim_texcoord_index (local.get $arg0))))
     (local.set $vtxType (call $d3dim_d7_light_vertices (local.get $arg0) (local.get $arg2)
       (local.get $arg3) (local.get $packed) (local.get $dwVertexCount) (local.get $vtxType)))
+    ;; Texture transforms apply only to untransformed supplied positions.
+    (if (i32.lt_u (local.get $vtxType) (i32.const 3)) (then
+      (local.set $supplied (call $d3dim_d7_supplied_type (local.get $arg0)))))
+    (if (i32.and (i32.ne (local.get $packed) (i32.const 0)) (i32.ne (local.get $supplied) (i32.const 0))) (then
+      (local.set $extended (call $d3dim_d7_supplied_vertices (local.get $arg0) (local.get $arg2)
+        (local.get $arg3) (local.get $packed) (local.get $dwVertexCount) (local.get $vtxType)))
+      (call $heap_free (local.get $packed))
+      (local.set $packed (local.get $extended))
+      (local.set $vtxType (local.get $supplied))))
     (if (local.get $packed) (then
       (call $d3dim_draw_indexed_primitive
         (local.get $arg0) (local.get $arg1) (local.get $vtxType)
