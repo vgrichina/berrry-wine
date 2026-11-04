@@ -1,12 +1,12 @@
 'use strict';
-// Explicit local-process contract for the authorized unique-owner onward attempt.
+// Explicit local-process contract for the authorized first-script-cause onward attempt.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
 const AUTH='stronghold-split-gesture-reviews user task';
-const ASSIGNMENT='stronghold-unique-owner-onward user task';
+const ASSIGNMENT='stronghold-first-script-cause-onward user task';
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-04T23:45:00Z'),CLEANUP=Date.parse('2026-11-04T23:48:00Z');
+const CUTOFF=Date.parse('2026-11-04T23:50:00Z'),CLEANUP=Date.parse('2026-11-04T23:53:00Z');
 function identity(){
  const stat=fs.readFileSync('/proc/self/stat','utf8');
  return {hostname:os.hostname(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),

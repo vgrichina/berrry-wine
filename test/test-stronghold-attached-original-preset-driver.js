@@ -84,7 +84,7 @@ class Session extends EventEmitter{
   if(mode==='deadline')assert.equal(row.observedAt,row.deadline);
   diagnostics.push({fixtureOnly:true,mode,...row});
  }
- const root=path.resolve(__dirname,'..'),run=path.join(root,'scratch/runs/20261104-stronghold-unique-owner-onward/attached-driver-composition');fs.mkdirSync(run,{recursive:true});
+ const root=path.resolve(__dirname,'..'),run=path.join(root,'scratch/runs/20261104-stronghold-first-script-cause-onward/attached-driver-composition');fs.mkdirSync(run,{recursive:true});
  const pins=path.join(run,'pins.json');fs.writeFileSync(pins,JSON.stringify({commit:'fixture-only',files:[{path:'build/wine-assembly.wasm',sha256:attachment.hash(fs.readFileSync(path.join(root,'build/wine-assembly.wasm')))}]}));
  const original=attachment.prepare({run,pins}),composed=driver.prepare({run,pins});
  assert.equal(composed.route,original.route);assert.deepEqual(composed.evidence.bounds,original.evidence.bounds);

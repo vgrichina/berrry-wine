@@ -147,7 +147,7 @@ if(!isMainThread){
   });
  }
  async function composition(){
-  const run=path.resolve('scratch/runs/20261104-stronghold-unique-owner-onward/observer-composition'),pins=path.join(run,'pins.json');fs.mkdirSync(run,{recursive:true});
+  const run=path.resolve('scratch/runs/20261104-stronghold-first-script-cause-onward/observer-composition'),pins=path.join(run,'pins.json');fs.mkdirSync(run,{recursive:true});
   fs.writeFileSync(pins,JSON.stringify({files:[{path:'build/wine-assembly.wasm',sha256:hash(fs.readFileSync('build/wine-assembly.wasm'))}]}));
   const p=api.prepare({run,pins});new vm.Script(p.source);new vm.Script(p.route);
   const cut=p.source.lastIndexOf('main().catch(');base.compileClosure(p.source.slice(0,cut),p.driver,p.route,p.evidence.retainedClosure);
