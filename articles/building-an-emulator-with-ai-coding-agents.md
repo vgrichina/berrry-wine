@@ -1,7 +1,7 @@
-# Building an emulator with AI coding agents: what 3,700 commits with Claude Code and Codex taught
-<!-- description: What 3,700 commits with Claude Code and Codex taught: crash instead of stub, record what failed, measure honestly, and many agents in one source tree. -->
+# Building an emulator with AI coding agents: what 10,000 commits with Claude Code and Codex taught
+<!-- description: What 10,000 commits with Claude Code and Codex taught: crash instead of stub, record what failed, measure honestly, many agents in one tree, then a coordinator with workers. -->
 
-Wine-Assembly, a Windows 98 emulator written in WebAssembly Text, was built in about five months by one maintainer working with Claude Code and Codex, often several agent sessions at once in one repository. The record of that collaboration is unusually complete: 3,758 commits, 431 Claude sessions, 118 Codex rollouts and a 4,400-line shared message board, all reconstructed in [the project story](/story.html). This article pulls out what actually made it work, for anyone trying to run systems work with coding agents rather than demos.
+Wine-Assembly, a Windows 98 emulator written in WebAssembly Text, was built in about five months by one maintainer working with Claude Code and Codex, often several agent sessions at once in one repository. The record of that collaboration is unusually complete. By September 4, 2026 it held 3,758 commits, 431 Claude sessions, 118 Codex rollouts and a 4,400-line shared message board. By November 4 it held 10,740 commits and roughly 100 billion logged agent tokens, all reconstructed in [the project story](/story.html). This article pulls out what actually made it work, for anyone trying to run systems work with coding agents rather than demos.
 
 ## Give the agent a crash, not a wish
 
@@ -50,6 +50,18 @@ flowchart TB
 ```
 
 Most of these rules were written down as *memory* entries after an incident, in the form "what happened, why, how to apply", and are loaded into every new session. The story's later acts record the incidents that produced them.
+
+## From a room of sessions to a coordinator
+
+In October the shape changed. A long-running Codex coordinator moved onto a remote 8 GB box with one checkout of the repository. It splits a goal ("every OpenGL and Direct3D app, on software and WebGL") into bounded lanes and hands each to a worker: first in-process subagents, and from October 20 separate `codex exec` processes, each with its own task file and output directory. It reviews the evidence each worker leaves under `scratch/runs/<id>/` and commits to main. The maintainer talks to it over Telegram.
+
+Three things followed:
+
+- **Commits got cheaper and smaller.** On the busiest coordinator days a commit cost about 3 million tokens, against 9–24 million in September. Many are now recorded observations rather than code changes.
+- **The tokens are mostly re-reading.** About 97% of the tokens on record are cached context being read again. The first coordinator used 6.9 billion tokens over 28 days, of which 15 million were output. It was replaced when its context compacted every few minutes and its replies lagged.
+- **The limits are operational.** They are a worker cap, memory and disk floors checked before each launch, one browser per box, and builds serialized behind a lock. Each came from an incident: an out-of-memory night with two browsers and five agent processes, and a disk that run evidence kept filling.
+
+The per-day numbers, and what the logs could not see, are in the story's "Tokens and commits" section and `docs/stats/`.
 
 ## What the maintainer still does
 

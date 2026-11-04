@@ -34,7 +34,7 @@ Wine-Assembly runs real Windows 98 programs in the browser: an x86 interpreter, 
 - [Driving a Windows 98 emulator from a script](/articles/driving-a-windows-98-emulator-from-a-script.md)  
   <small>Headless runs, frozen mode, the JSON control channel, agent handoff, and bring-your-own media.</small>
 - [Building an emulator with AI coding agents](/articles/building-an-emulator-with-ai-coding-agents.md)  
-  <small>What 3,700 commits with Claude Code and Codex taught about crashes, tracing, negative results and shared trees.</small>
+  <small>What 10,000 commits with Claude Code and Codex taught about crashes, tracing, negative results, shared trees and a coordinator with workers.</small>
 
 ## Compared with other emulators
 
