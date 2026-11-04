@@ -2198,9 +2198,10 @@
   ;; vertices, reused rather than rebuilt: pack the source FVF into the
   ;; canonical 32-byte vertex, project and light it through
   ;; $d3dim_prepare_draw_vertex, then unpack into the destination's own FVF.
+  ;; LIGHT first applies Device7 material/source/light state to the packed
+  ;; colours, using the original FVF normals just as Device7 VB draws do.
   ;; dwVertexOp's TRANSFORM bit is not consulted because it is mandatory --
-  ;; D3D rejects a call without it, and every other bit (LIGHT, CLIP, EXTENTS)
-  ;; either already happens here or is an output we do not compute.
+  ;; D3D rejects a call without it. CLIP/EXTENTS outputs are not computed.
   (func $d3dim_vb_process_vertices
       (param $dst_this i32) (param $vertex_op i32) (param $dest_index i32) (param $count i32)
       (param $src_this i32) (param $src_index i32) (param $device i32) (param $flags i32)
@@ -2287,6 +2288,10 @@
     (if (i32.eqz (local.get $packed_g)) (then
       (if (local.get $source_copy) (then (call $heap_free (local.get $source_copy))))
       (return (i32.const 0x8007000E))))
+    (if (i32.and (local.get $vertex_op) (i32.const 0x400)) (then
+      (local.set $src_vtx (call $d3dim_d7_light_vertices
+        (local.get $device) (local.get $src_fvf) (local.get $source_g)
+        (local.get $packed_g) (local.get $count) (local.get $src_vtx)))))
     ;; One scratch TLVERTEX for the whole call. Transforming in place would
     ;; alias $vertex_project's source with its destination.
     (local.set $scratch_g (call $heap_alloc (i32.const 32)))
