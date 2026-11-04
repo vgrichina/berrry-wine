@@ -1601,17 +1601,17 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Gameplay screenshot and FPS: Deus Ex demo
   id: GAMEPLAY-deus-ex-demo
-  status: active (count10 fresh reload and Small0 support/native count12 verified; count12 reload, onward traversal and FPS open)
+  status: active (count12 fresh reload and Small0 native support verified; count14 preserved, onward traversal and FPS open)
 
   candidate: deus-ex-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: fresh01a1a44b-33e8-7462-94ac-802333a63d54 session19830; scratch/usage-watch/deusex-small0-reload-onward-run2-nov04/; count12 reload then one Z96-wood jump
+  worker: fresh01a1a454-bdf7-7d13-8c94-0ad7196b2cab session18098; scratch/usage-watch/deusex-small0-native-speed-nov04/; native movement-speed diagnosis then one onward jump
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Published7e9ced575 verifies fresh ordinary count10 reload then one jump to stable Small0 edge/cylinder support7019.338867,-1693.322998,109.590935, native BaseCrateUnbreakableSmall0/count12/time01:15:48. Coordinator fullSHA95 recovered files/module PASS; underfoot22 inspected, transient teal10/12/20/23/26 excluded. Fresh count12 reload NOTTESTED; successor mounts immutable copies before one onward jump toward farther Z96 wood. No exit/completion/FPS claim.
-  Latest run: scratch/runs/20261104-deusex-low-wood-reload/; docs/re-notes/deusex-low-wood-reload-20261104.md. Named deusex-small0-footing-20261104 snapshot verified02:01:01.326Z; bx_ctxfuux7 actual normal STOP02:01:17.772Z forcedfalse/errornull. Historical845 module authoritative; companion absent, no substitution/BOTH claim. Dark Reign2 independent39fd081bd startup lacks D3D7 mips, no paired movement; fresh01a1a449 sampling implementation/regression task uses prepared bx_44kza28q expiry02:47Z shutdownOwnercoordinator.
+  Next: Published334eacb190 verifies fresh count12 Load and native count13 BaseSmall0. One jump advanced16.3215units with maximum sampled horizontal speed36.30554 then stableSmall0 at7026.704590,-1707.887939,109.602844. Farther Z96 wood NOTreached. Count14/time01:17:23 preserved; fresh count14 reload UNTESTED. Fresh successor reads original bindings/native movement mode to identify slow speed, then ONE justified onward jump. No exit/completion/FPS claim.
+  Latest run: scratch/runs/20261104-deusex-small0-reload-onward/; docs/re-notes/deusex-small0-reload-onward-20261104.md. Coordinator fullSHA83 recovered PASS and final22 inspected. Prepared bx_2t2b9xah retained RUNNING/APIidle expiry03:02:57.823Z coordinator shutdown; runtime/recoverydeadline02:50Z. Historical845 module authoritative; companion absent, no substitution/BOTH claim. Dark Reign2 independent mip implementation runs separately.
   Done: Reviewed gameplay screenshot and scene-qualified frame measurement with raw samples, counter proof and tested build identity; retain explicit failures.
   Evidence: docs/re-notes/deus-ex-demo.md; scratch/runs/20261031T0447Z-deusex-browser/; scratch/gameplay-coverage-20261003/tasks/GAMEPLAY-deus-ex-demo.json
   notes: Original Training gameplay and first-door traversal are verified on the default guestWorker software browser route. This does not qualify WebGL, audio, FPS, Liberty Island or completion. Historical missing-path reports are superseded for registered deus_ex_demo.
