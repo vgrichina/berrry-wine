@@ -72,6 +72,7 @@ const E2E_EXCEPTIONS = Object.freeze([
   'test-legacy-texture-rendered-contract.js',
   // Explicit prebuilt full-module public COM pixels and retained provenance.
   'test-legacy-mirror-uv-contract.js',
+  'test-legacy-mirror-gpu-worker-contract.js',
   'test-listbox-ownerdraw.js',
   'test-local-candidates-playability.js',
   'test-mplay32-dual-mode.js',
