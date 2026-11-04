@@ -271,11 +271,32 @@ async function main() {
     for (const now of [epoch - 1, epoch + 5001, NaN]) assert.throws(() => reviewedCapture(queueDir, 'actual-shot', now), /five seconds/);
     assert.equal(reviewedCapture(queueDir, 'actual-shot', epoch + 5000).ageMs, 5000);
     const replay = require('node:path').join(queueDir, 'offline-relay'); fs.mkdirSync(replay);
-    const replayCapture = { ...capture, path: require('node:path').join(replay, 'actual-shot.png') };
-    fs.writeFileSync(replayCapture.path, fs.readFileSync(capture.path));
-    fs.writeFileSync(require('node:path').join(replay, 'actual-shot-capture-start.json'), JSON.stringify(replayCapture));
+    fs.mkdirSync(require('node:path').join(replay, 'commands'));
+    const replayPending = commandAck(replay, { action: 'shot', name: 'actual-shot' }, 1000);
+    const replayCapture = await shotCommand(page, replay, 'actual-shot');
+    const replayReply = require('node:path').join(replay, 'reply-0.json');
+    const replayAck = { ok: true, capture: replayCapture };
+    fs.writeFileSync(replayReply, JSON.stringify(replayAck));
+    await replayPending;
     const proof = await commandAck(replay, { action: 'review-only', review: 'actual-shot' }, 100);
     assert(requireHandoffProbe(queueDir, proof.review.reviewedAtEpochMs).ok);
+    for (const patch of [{ ok: false }, { capture: { ...replayCapture, path: '/foreign' } },
+      { capture: { ...replayCapture, sha256: 'wrong' } },
+      { capture: { ...replayCapture, capturedAtEpochMs: replayCapture.capturedAtEpochMs - 1 } }]) {
+      fs.writeFileSync(replayReply, JSON.stringify({ ...replayAck, ...patch }));
+      assert.throws(() => requireHandoffProbe(queueDir), /shot ACK/);
+      await assert.rejects(commandAck(replay, { action: 'review-only', review: 'actual-shot' }), /shot ACK/);
+      fs.writeFileSync(replayReply, JSON.stringify(replayAck));
+      fs.writeFileSync(require('node:path').join(replay, 'review-handoff.json'), JSON.stringify(proof));
+    }
+    check('actual review client and pre-Chrome gate reject failed/path/hash/epoch shot ACKs', () => {});
+    const replayMetadata = require('node:path').join(replay, 'actual-shot-capture-start.json');
+    for (const patch of [{ path: '/foreign' }, { sha256: 'wrong' }, { capturedAtEpochMs: NaN }]) {
+      fs.writeFileSync(replayMetadata, JSON.stringify({ ...replayCapture, ...patch }));
+      assert.throws(() => requireHandoffProbe(queueDir), /capture|five seconds/);
+    }
+    fs.writeFileSync(replayMetadata, JSON.stringify(replayCapture));
+    check('actual pre-Chrome gate rechecks named capture path hash and capture epoch', () => {});
     check('actual rehearsal client and pre-Chrome gate require full exact review within unchanged five seconds', () => {
       assert.throws(() => requireHandoffProbe(queueDir, proof.review.reviewedAtEpochMs + 300001), /fresh offline/);
       const failed = { ...proof, ok: false }; fs.writeFileSync(require('node:path').join(replay, 'review-handoff.json'), JSON.stringify(failed));
@@ -287,7 +308,8 @@ async function main() {
     assert.equal(JSON.parse(fs.readFileSync(require('node:path').join(replay, 'review-handoff.json'))).ok, false);
     await assert.rejects(commandAck(replay, { action: 'measure', review: 'actual-shot' }, 100), /five seconds/);
     check('stale reviewed-action rejects before any live command or Chrome, preserving rejection', () => {
-      assert(!fs.existsSync(require('node:path').join(replay, 'commands')));
+      assert.deepEqual(fs.readdirSync(require('node:path').join(replay, 'commands')), ['0.json']);
+      assert.equal(JSON.parse(fs.readFileSync(require('node:path').join(replay, 'commands/0.json'))).action, 'shot');
       assert.throws(() => requireHandoffProbe(queueDir), /rehearsal/);
     });
     fs.writeFileSync(require('node:path').join(queueDir, 'reply-1.json'), JSON.stringify({ ok: true, capture: { ...capture, path: '/foreign' } }));
@@ -327,9 +349,42 @@ async function main() {
     assert.throws(() => requireReleases('mdk2-repaired-original LOCAL HEAVY RELEASE\nstronghold-repaired-onward LOCAL HEAVY RELEASE'), /requires/);
     assert.throws(() => requireReleases('mdk2-continuous-onward LOCAL HEAVY RELEASE'), /requires/);
     assert.throws(() => requireReleases('mdk2-continuous-construction-onward LOCAL HEAVY RELEASE'), /requires/);
-    assert(requireReleases('mdk2-demand-entry LOCAL HEAVY RELEASE'));
-    assert(requireReleases('mdk2-demand-entry-continuity LOCAL HEAVY RELEASE'));
+    assert.throws(() => requireReleases('mdk2-demand-entry LOCAL HEAVY RELEASE'), /requires/);
+    assert.throws(() => requireReleases('mdk2-demand-entry-continuity LOCAL HEAVY RELEASE'), /requires/);
+    const valid = '2026-11-04T20:21:00+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE';
+    assert(requireReleases(valid));
+    for (const line of [
+      '2026-11-04T20:21:00+00:00 gltron-complete-handoff waiting explicit mdk2-medium-through-loading LOCAL HEAVY RELEASE',
+      '2026-11-04T20:21:00+00:00 coordinator quotes ' + valid,
+      'mdk2-medium-through-loading LOCAL HEAVY RELEASE',
+      '2026-11-03T20:21:00+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE',
+      '2027-11-04T20:21:00+00:00 mdk2-medium-through-loading LOCAL HEAVY RELEASE'])
+      assert.throws(() => requireReleases(line), /requires/);
   });
+  const { spawnSync } = require('node:child_process');
+  const lockDir = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'gltron-lock-fixture-'));
+  try {
+    const lock = require('node:path').join(lockDir, 'runtime.lock');
+    fs.writeFileSync(lock, '');
+    const modulePath = require.resolve('../tools/gltron-logical-fps-local.cjs');
+    const script = `console.log(JSON.stringify(require(${JSON.stringify(modulePath)}).requireLocalFlock(process.argv[1])))`;
+    const without = spawnSync(process.execPath, ['-e', script, lock], { encoding: 'utf8' });
+    assert.notEqual(without.status, 0); assert.match(without.stderr, /required local flock/);
+    const held = spawnSync('flock', ['-n', lock, process.execPath, '-e', script, lock], { encoding: 'utf8' });
+    assert.equal(held.status, 0, held.stderr); assert.equal(JSON.parse(held.stdout).path, lock);
+    const other = require('node:path').join(lockDir, 'other.lock'); fs.writeFileSync(other, '');
+    const foreign = spawnSync('flock', ['-n', other, process.execPath, '-e', script, lock], { encoding: 'utf8' });
+    assert.notEqual(foreign.status, 0); assert.match(foreign.stderr, /required local flock/);
+    const holder = require('node:child_process').spawn('flock', ['-n', lock, process.execPath, '-e',
+      "process.stdout.write('held'); process.stdin.resume(); process.stdin.on('end', () => process.exit(0));"]);
+    const exited = new Promise(resolve => holder.once('exit', (code, signal) => resolve({ code, signal })));
+    try {
+      await within(() => new Promise((resolve, reject) => { holder.stdout.once('data', resolve); holder.once('error', reject); }), 3000, 'fixture flock');
+      const unrelated = spawnSync(process.execPath, ['-e', script, lock], { encoding: 'utf8' });
+      assert.notEqual(unrelated.status, 0); assert.match(unrelated.stderr, /required local flock/);
+    } finally { holder.stdin.end(); assert.deepEqual(await within(() => exited, 3000, 'fixture closure'), { code: 0, signal: null }); }
+    check('actual inherited flock required; absent other-file and unrelated same-file holders reject', () => {});
+  } finally { fs.rmSync(lockDir, { recursive: true }); }
   assert((await validateHttpPaths(productionPins, ['/binaries/gltron-0.70/gltron.exe', '/build/wine-assembly.compat.wasm'])).pass);
   await assert.rejects(validateHttpPaths(productionPins, ['/missing-gltron-asset']), /route failed/);
   await assert.rejects(validateHttpPaths([], ['/binaries/gltron-0.70/gltron.exe']), /pin mismatch/);

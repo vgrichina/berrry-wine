@@ -174,10 +174,41 @@ function pageState() {
     log: document.querySelector('#log')?.textContent?.slice(-5000) };
 }
 
-function requireReleases(board) {
-  const mdk = board.split('\n').findLast(line => /mdk2-demand-entry(?:-continuity)? LOCAL HEAVY RELEASE/.test(line));
-  if (!mdk) throw Error('requires explicit fresh mdk2-demand-entry-continuity release');
+function requireReleases(board, now = Date.now()) {
+  const mdk = board.split('\n').findLast(line => {
+    const match = /^(\S+) mdk2-medium-through-loading LOCAL HEAVY RELEASE(?:\s|$)/.exec(line);
+    const at = match && Date.parse(match[1]);
+    return match && Number.isFinite(at) && at >= Date.parse('2026-11-04T20:19:19Z') && at <= now;
+  });
+  if (!mdk) throw Error('requires explicit fresh mdk2-medium-through-loading release');
   return { mdk };
+}
+
+function requireLocalFlock(lockPath = '/tmp/wine-local-runtime.lock') {
+  const ancestors = new Set();
+  for (let pid = process.pid; pid > 1 && !ancestors.has(pid);) {
+    ancestors.add(pid);
+    const stat = fs.readFileSync('/proc/' + pid + '/stat', 'utf8');
+    pid = Number(stat.slice(stat.lastIndexOf(')') + 2).split(' ')[1]);
+  }
+  const target = fs.statSync(lockPath);
+  const dev = BigInt(target.dev);
+  const major = ((dev >> 8n) & 0xfffn) | ((dev >> 32n) & 0xfffff000n);
+  const minor = (dev & 0xffn) | ((dev >> 12n) & 0xffffff00n);
+  for (const row of fs.readFileSync('/proc/locks', 'utf8').trim().split('\n')) {
+    const parts = row.trim().split(/\s+/), pid = Number(parts[4]);
+    const device = parts[5]?.split(':');
+    if (parts[1] !== 'FLOCK' || parts[3] !== 'WRITE' || !ancestors.has(pid) ||
+        device?.[2] !== String(target.ino) || BigInt('0x' + device[0]) !== major ||
+        BigInt('0x' + device[1]) !== minor) continue;
+    for (const fd of fs.readdirSync('/proc/' + pid + '/fd')) {
+      try {
+        const held = fs.statSync('/proc/' + pid + '/fd/' + fd);
+        if (held.dev === target.dev && held.ino === target.ino) return { pid, fd, path: lockPath };
+      } catch { /* A closing unrelated descriptor cannot qualify the lock. */ }
+    }
+  }
+  throw Error('required local flock must be held by this process or its ancestor');
 }
 
 // Chrome-only direct protocol request; observe the owned child, without the
@@ -251,7 +282,23 @@ function requireHandoffProbe(run, now = Date.now()) {
     throw Error('complete fresh offline VIEW/action rehearsal required before Chrome');
   const review = reviewedCapture(out, proof.review.capture.name, proof.review.reviewedAtEpochMs);
   if (JSON.stringify(review) !== JSON.stringify(proof.review)) throw Error('offline handoff proof changed');
+  const shot = successfulCaptureAck(out, review.capture);
+  if (JSON.stringify(shot) !== JSON.stringify(proof.shot)) throw Error('offline shot ACK proof changed');
   return proof;
+}
+
+// A capture file alone does not prove its producing command succeeded. Bind
+// the rehearsal to the actual queue's latest completed shot and exact ACK.
+function successfulCaptureAck(out, capture) {
+  const numbers = fs.readdirSync(path.join(out, 'commands'))
+    .filter(n => /^\d+\.json$/.test(n)).map(n => Number(n.slice(0, -5)));
+  if (!numbers.length) throw Error('successful exact shot ACK required');
+  const number = Math.max(...numbers);
+  const command = JSON.parse(fs.readFileSync(path.join(out, 'commands', number + '.json')));
+  const ack = JSON.parse(fs.readFileSync(path.join(out, 'reply-' + number + '.json')));
+  if (command.action !== 'shot' || command.name !== capture.name || ack.ok !== true ||
+      JSON.stringify(ack.capture) !== JSON.stringify(capture)) throw Error('successful exact shot ACK required');
+  return { number, command, ack };
 }
 
 // This exact client is also exercised against the actual shot/ACK producer
@@ -261,7 +308,10 @@ async function commandAck(out, command, timeoutMs = 55000) {
   if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 55000) throw Error('bounded ACK required');
   if (command.action === 'review-only') {
     let proof;
-    try { proof = { ok: true, action: command.action, review: reviewedCapture(out, command.review) }; }
+    try {
+      const review = reviewedCapture(out, command.review);
+      proof = { ok: true, action: command.action, review, shot: successfulCaptureAck(out, review.capture) };
+    }
     catch (error) { write(path.join(out, 'review-handoff.json'), { ok: false, action: command.action, error: error.message, atEpochMs: Date.now() }); throw error; }
     write(path.join(out, 'review-handoff.json'), proof); return proof;
   }
@@ -358,6 +408,9 @@ async function balancedKey(page, key, held, wait = pause, holdMs = 25) {
 }
 
 async function runPair(run) {
+  // Validate the inherited external lock even for a gate-only invocation.
+  // Missing release/proof tests must never fall through into an unflocked run.
+  const localFlock = requireLocalFlock();
   const handoff = requireHandoffProbe(run);
   const releases = requireReleases(fs.readFileSync(path.join(ROOT, 'messageboard.txt'), 'utf8'));
   const pins = JSON.parse(fs.readFileSync(path.join(run, 'runtime-pins.json')));
@@ -365,7 +418,7 @@ async function runPair(run) {
   validateRequiredPins(pins.pins, (await bootInputs()).paths);
   for (const pin of pins.pins) if (sha256(fs.readFileSync(path.join(ROOT, pin.path))) !== pin.sha256) throw Error('pin changed: ' + pin.path);
   if (Date.now() + BROWSER_MS + CLEANUP_MS > HARD_CLEANUP_END || Date.now() + BROWSER_MS > HARD_BROWSER_END) throw Error('full reserve unavailable');
-  write(path.join(run, 'resource-releases.json'), { ...releases, handoff });
+  write(path.join(run, 'resource-releases.json'), { ...releases, handoff, localFlock });
   for (const module of ['build/wine-assembly.wasm', 'build/wine-assembly.compat.wasm']) {
     write(path.join(run, 'preflight-' + path.basename(module) + '.json'), await probeCompiled(module));
   }
@@ -558,7 +611,7 @@ async function runPair(run) {
   write(path.join(run, 'runtime-summary.json'), { browserMs, stopped, finishedAt: new Date().toISOString(), boxId: null, boxState: null, boxExpiry: null });
 }
 
-module.exports = { prepare, preload, pageState, captureForReview, shotCommand, commandAck, reviewedCapture, requireHandoffProbe, steeringSample, chooseSteering, balancedKey, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
+module.exports = { prepare, preload, pageState, captureForReview, shotCommand, commandAck, reviewedCapture, requireHandoffProbe, requireLocalFlock, steeringSample, chooseSteering, balancedKey, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
 if (require.main === module) {
   const [action, run] = process.argv.slice(2);
   if (action === '--command') {
