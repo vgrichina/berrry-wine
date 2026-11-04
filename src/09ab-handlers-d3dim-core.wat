@@ -1737,7 +1737,7 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $next)))
     (local.get $bytes))
 
-  ;; Immediate Device7 validates supplied selectors against the FVF layout.
+  ;; FVF draws validate supplied selectors against the declared layout.
   ;; Enabled transforms preserve all input components in extended TL records.
   (func $d3dim_fvf_supplied_valid (param $this i32) (param $fvf i32) (result i32)
     (local $state i32) (local $selector i32) (local $count i32)
@@ -2248,12 +2248,15 @@
     (param $this i32) (param $primType i32) (param $vb i32) (param $start i32) (param $count i32)
     (local $entry i32) (local $data_g i32) (local $size i32) (local $fvf i32)
     (local $stride i32) (local $max_count i32) (local $vtxType i32) (local $packed i32)
+    (local $supplied i32) (local $extended i32)
     (if (i32.or (i32.eqz (local.get $vb)) (i32.eqz (local.get $count)))
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
     (local.set $entry (call $dx_from_this (local.get $vb)))
     (local.set $data_g (load.field DxObject misc0 (local.get $entry)))
     (local.set $size (i32.load (i32.add (local.get $entry) (i32.const 12))))
     (local.set $fvf (load.field DxObject misc1 (local.get $entry)))
+    (if (i32.eqz (call $d3dim_fvf_supplied_valid (local.get $this) (local.get $fvf))) (then
+      (i32.store (global.get $reg_base) (i32.const 0x80070057)) (return)))
     (local.set $stride (call $d3dim_fvf_stride (local.get $fvf)))
     (local.set $vtxType (call $d3dim_fvf_vtxtype (local.get $fvf)))
     (if (i32.eqz (local.get $vtxType))
@@ -2271,6 +2274,19 @@
     (local.set $vtxType (call $d3dim_d7_light_vertices (local.get $this) (local.get $fvf)
       (i32.add (local.get $data_g) (i32.mul (local.get $start) (local.get $stride)))
       (local.get $packed) (local.get $count) (local.get $vtxType)))
+    ;; Use the same supplied-vector representation as immediate FVF draws.
+    ;; The original records begin at start, including for relative indices.
+    (if (i32.lt_u (local.get $vtxType) (i32.const 3)) (then
+      (local.set $supplied (call $d3dim_d7_supplied_type (local.get $this)))))
+    (if (i32.and (i32.ne (local.get $packed) (i32.const 0))
+                 (i32.ne (local.get $supplied) (i32.const 0))) (then
+      (local.set $extended (call $d3dim_d7_supplied_vertices
+        (local.get $this) (local.get $fvf)
+        (i32.add (local.get $data_g) (i32.mul (local.get $start) (local.get $stride)))
+        (local.get $packed) (local.get $count) (local.get $vtxType)))
+      (call $heap_free (local.get $packed))
+      (local.set $packed (local.get $extended))
+      (local.set $vtxType (local.get $supplied))))
     (if (local.get $packed) (then
       (call $d3dim_draw_primitive
         (local.get $this) (local.get $primType) (local.get $vtxType)
@@ -2283,6 +2299,7 @@
     (param $indices i32) (param $index_count i32)
     (local $entry i32) (local $data_g i32) (local $size i32) (local $fvf i32)
     (local $stride i32) (local $max_count i32) (local $vtxType i32) (local $packed i32)
+    (local $supplied i32) (local $extended i32)
     (local $dbg_key i32) (local $ibase_wa i32) (local $i i32) (local $idx i32) (local $need i32)
     (if (i32.or
           (i32.or (i32.eqz (local.get $vb)) (i32.eqz (local.get $count)))
@@ -2292,6 +2309,8 @@
     (local.set $data_g (load.field DxObject misc0 (local.get $entry)))
     (local.set $size (i32.load (i32.add (local.get $entry) (i32.const 12))))
     (local.set $fvf (load.field DxObject misc1 (local.get $entry)))
+    (if (i32.eqz (call $d3dim_fvf_supplied_valid (local.get $this) (local.get $fvf))) (then
+      (i32.store (global.get $reg_base) (i32.const 0x80070057)) (return)))
     (local.set $stride (call $d3dim_fvf_stride (local.get $fvf)))
     (local.set $vtxType (call $d3dim_fvf_vtxtype (local.get $fvf)))
     (if (i32.eqz (local.get $vtxType))
@@ -2350,6 +2369,19 @@
     (local.set $vtxType (call $d3dim_d7_light_vertices (local.get $this) (local.get $fvf)
       (i32.add (local.get $data_g) (i32.mul (local.get $start) (local.get $stride)))
       (local.get $packed) (local.get $count) (local.get $vtxType)))
+    ;; Use the same supplied-vector representation as immediate FVF draws.
+    ;; The original records begin at start, including for relative indices.
+    (if (i32.lt_u (local.get $vtxType) (i32.const 3)) (then
+      (local.set $supplied (call $d3dim_d7_supplied_type (local.get $this)))))
+    (if (i32.and (i32.ne (local.get $packed) (i32.const 0))
+                 (i32.ne (local.get $supplied) (i32.const 0))) (then
+      (local.set $extended (call $d3dim_d7_supplied_vertices
+        (local.get $this) (local.get $fvf)
+        (i32.add (local.get $data_g) (i32.mul (local.get $start) (local.get $stride)))
+        (local.get $packed) (local.get $count) (local.get $vtxType)))
+      (call $heap_free (local.get $packed))
+      (local.set $packed (local.get $extended))
+      (local.set $vtxType (local.get $supplied))))
     (if (local.get $packed) (then
       (call $d3dim_draw_indexed_primitive
         (local.get $this) (local.get $primType) (local.get $vtxType)
