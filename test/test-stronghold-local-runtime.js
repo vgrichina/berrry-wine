@@ -157,6 +157,11 @@ if(fs.existsSync(path.join(actualRun,'browser/cleanup.json'))){
  console.log('PASS actual two-review title handoff and old premature enqueue/new pending-review rejection; ACK, terminal and foreign-request negatives (offline transport only)');
 }
 const p=api.prepare({run,pins});new vm.Script(p.source);new vm.Script(p.route);
+assert(p.source.includes('createHostPresentationController({page:()=>page,save,deadline:()=>deadline})'));
+assert(p.source.includes('const presentationBefore=await hostPresentation.token();'));
+assert(p.source.indexOf('await hostPresentation.capture(presentationBefore,sha(png),name)')<p.source.indexOf('await presetAttachment.capture(name,sha(png),current)'));
+assert.deepEqual(p.evidence.hostPresentation,{passive:true,normalCallsOnly:true,endpointSlot:0,maxRecords:2048,maxBytes:1048576,
+ operationToUpload:'unknown without unique cross-realm RPC identity',readinessGranted:false,pixelsAccepted:false});
 assert.deepEqual(p.evidence.callbackObserver.passiveDraw,{entry:0x4292c0,returnInstruction:0x42a20e,
  returnEvidence:'byte-pinned epilogue block plus saved caller/ESP return; block-level hook',
  sameHistory:true,presentation:'pending',hostRelation:null,readinessGranted:false,pixelsAccepted:false});
@@ -180,6 +185,33 @@ fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(release));
 const guarded=p.source.slice(start,end)+'return true;\n}main();';
 // The embedded random nonce must reject another preparation's release.
 (async()=>{
+ // Run the serialized page hook through the production Node controller.
+ // A plain page VM supplies a host; there is no browser, Worker or render call
+ // by the controller. The producer below owns its own normal pipeline.
+ {
+  const memory={buffer:new ArrayBuffer(1024)},canvas={},display={},sid=0x200001,hwnd=65537,saved=[];
+  const presentation={canvas,directDraw:true,targetHwnd:hwnd,version:0,surface:{storage:new Uint8Array(memory.buffer),storageOffset:64}};
+  const renderer={canvas:display,windows:{[hwnd]:{_backCanvas:canvas}},ctx:{canvas:display,drawImage(){}},
+   _immutablePublicationSequence:0,repaint(){this.ctx.drawImage(canvas);this._immutablePublicationSequence++;}};
+  const imports={gdi_surface_upload(){presentation.version++;return 1;}};
+  const broker={serveCall(m){return imports.gdi_surface_upload(...m.args);}};
+  const instance={},wine={memory,instance,processId:1000,renderer,_hostImports:imports,guestWorker:{broker},hostCtx:{sharedGdi:{surfacePresentations:new Map([[sid,presentation]])}}};
+  Object.assign(renderer.windows[hwnd],{wasm:instance,wasmMemory:memory,processId:1000});
+  const scope=vm.createContext({wine,performance,Date,TextEncoder,setTimeout,clearTimeout,Promise});
+  const controller=api.createHostPresentationController({page:()=>({evaluate:async s=>vm.runInContext(s,scope)}),
+   save:(name,value)=>saved.push({name,value:structuredClone(value)}),deadline:()=>Date.now()+10000});
+  assert.equal(await controller.token(),null);await controller.start('controller-target/controller-session');
+  await assert.rejects(controller.start('controller-target/controller-session'),/occupied/);
+  assert.equal(renderer._immutablePublicationSequence,0,'install never forces a render');
+  broker.serveCall({slot:0,args:[sid,0,0,4,4]});renderer.repaint();
+  await controller.capture(await controller.token(),'c'.repeat(64),'controller-shot');
+  await controller.link({epoch:'controller-target/controller-session',status:'running',records:[],fault:null});
+  assert.equal(saved.at(-1).value.link.operationCompletion,null);assert.equal(saved.at(-1).value.link.readinessGranted,false);
+  const last=saved.at(-1).value.host.records.at(-1);assert.equal(last.kind,'capture-bracket');assert.equal(last.sha256,'c'.repeat(64));
+  await controller.finish('fixture-terminal');assert.equal(await controller.token(),null);
+  assert.equal(imports.gdi_surface_upload.name,'gdi_surface_upload');assert.equal(renderer._immutablePublicationSequence,1);
+  console.log('PASS production host presentation controller serialized page VM; exact capture bracket, passive lifecycle and no readiness grant');
+ }
  // Replay the actual failed observation command, including the composed loop.
  // Before the repair it advances every step before discovering a bad name.
  const observeStart=p.source.indexOf("  if(c.action==='observe'){");

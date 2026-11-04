@@ -49,7 +49,7 @@ function observerFactory(EXE_SHA256,PINS){
   for(const [key,value,cap]of [['maxMs',maxMs,360000],['maxRecords',maxRecords,4096],['maxBytes',maxBytes,2097152],['maxBoundaries',maxBoundaries,50000000]])
    if(!Number.isSafeInteger(value)||value<1||value>cap)throw Error('invalid '+key);
   if(!Number.isFinite(deadline)||deadline<=now())throw Error('original deadline');
-  const prior=host.log_block,frames=[],rows=[];let ex=null,buffer=memory.buffer,active=false,timer,end=deadline;
+  const prior=host.log_block,frames=[],rows=[],restores=[];let ex=null,buffer=memory.buffer,active=false,timer,end=deadline;
   let command=null,event=null,lastAck=null,custom=null,draw=null,surface=null,lastDraw=null,previousPC=null;
   const report={version:1,status:'installed',epoch,workerSlot,endpointIdentity,exeSha256,wasmSha256,workerURL,
    records:rows,bytes:0,sequence:0,blocks:0,lastNativePC:null,fault:null,pending:[],
@@ -59,7 +59,7 @@ function observerFactory(EXE_SHA256,PINS){
   function finish(reason='explicit-stop'){
    if(!['installed','running'].includes(report.status))return report;
    active=false;clearTimeout(timer);report.status=reason;report.pending=[...frames.map(f=>({...f})),...(draw?[{name:'draw',...draw}]:[]),...(surface?[{name:'surface',...surface}]:[])];
-   if(host.log_block===wrapped)host.log_block=prior;occupied.delete(host);return report;
+   if(host.log_block===wrapped)host.log_block=prior;for(const restore of restores)restore();occupied.delete(host);return report;
   }
   function fail(error){if(!report.fault)report.fault=String(error.message||error);return finish('unsupported-or-unobservable');}
   function read(a,n=4){
@@ -88,7 +88,7 @@ function observerFactory(EXE_SHA256,PINS){
    rows.push(row);report.bytes+=size;report.sequence++;
   }
   function live(){if(!active)return false;if(now()>=end)throw Error('original observer deadline');identity();if(host.log_block!==wrapped)throw Error('import owner replaced');return true;}
-  function drawing(pc,esp){
+  function drawing(pc,esp,entryEvidence='block-entry'){
    if(pc===0x4292c0){
     signatures();if(draw||surface)throw Error('missing draw/surface return');
     const s=state();if(s.currentScene!==20||s.requestedScene!==20)throw Error('foreign draw scene owner');
@@ -129,9 +129,10 @@ function observerFactory(EXE_SHA256,PINS){
     signatures();if(surface||draw)throw Error('surface nesting/draw incomplete');
     const caller=u32(esp);if(caller!==surfaceReturn)throw Error('surface saved return missing');
     const callPC=caller-3,vtable=(callPC===0x467f55?ex.get_edx():ex.get_ecx())>>>0,object=u32(esp+4),target=u32(vtable+0x14);
-    if(!object||u32(object)!==vtable||pc!==target)throw Error('surface identity missing');
+    if(!object||u32(object)!==vtable||pc!==target)throw Error('surface identity missing '+JSON.stringify({pc,target,vtable,object,objectVtable:object?u32(object):null}));
     surface={callPC,caller,esp,target,vtable,object,source:u32(esp+12),manager:ex.get_esi()>>>0,
-     precedingDrawReturn:lastDraw};emit('surface-target-entry',{...surface});
+     precedingDrawReturn:lastDraw};emit('surface-target-entry',{...surface,entryEvidence});
+    surface.entrySequence=report.sequence;
    }
    previousPC=pc;
   }
@@ -177,6 +178,34 @@ function observerFactory(EXE_SHA256,PINS){
    try{return Reflect.apply(prior,this,[pc,esp,...rest]);}catch(error){fail(error);throw error;}
   }
   host.log_block=wrapped;occupied.add(host);
+  // Observe the actual owning import call, before RPC filtering/coalescing.
+  // RPC upload's synthetic 1 is only a queued request, never host completion.
+  for(const name of ['dx_trace','gdi_surface_attach','gdi_surface_upload']){
+   const fn=host[name];if(typeof fn!=='function')continue;
+   function hook(...args){
+    // API thunks are dispatched before log_block in $run. The first actual
+    // import still exposes the current dispatch thunk and saved CALL. EIP
+    // may still name the CALL block on the cached fast path. Do
+    // not fabricate a block entry or increment the boundary counter.
+    if(active&&!surface&&surfaceReturns[previousPC])try{
+     if(live()){
+      const thunk=ex.com_callback_get_thunk?.()>>>0;
+      const target=thunk&&(ex.thunk_word?.(thunk,0)>>>0)===0xcaca0010&&ex.thunk_word(thunk,1)===1006?thunk:ex.get_eip()>>>0;
+      drawing(target,ex.get_esp()>>>0,'owning-import-entry');
+     }
+    }catch(error){fail(error);}
+    const current=active&&surface?{...surface}:null;
+    let result;try{result=Reflect.apply(fn,this,args);}catch(error){throw error;}
+    if(current)try{
+     if(!live())return result;
+     const slot=u32(current.object+4),sourceSlot=current.source?u32(current.source+4):null;
+     emit('surface-import-request',{entrySequence:current.entrySequence,name,args:args.slice(0,5),slot,sourceSlot,
+      result:typeof result==='number'?result:null,completion:'unknown; original import may enqueue RPC'});
+    }catch(error){fail(error);}
+    return result;
+   }
+   host[name]=hook;restores.push(()=>{if(host[name]===hook)host[name]=fn;});
+  }
   return {report,finish,
    start(){if(report.status!=='installed')throw Error('observer terminal');try{identity();signatures();end=Math.min(deadline,now()+maxMs);active=true;report.status='running';emit('baseline');
     timer=setTimeout(()=>fail(Error('original observer deadline')),Math.max(1,end-now()));timer.unref?.();}catch(error){fail(error);}return report;},
@@ -239,6 +268,108 @@ function observerFactory(EXE_SHA256,PINS){
  return {attach,installPreload};
 }
 const native=observerFactory(EXE_SHA256,PINS);
+// Serialized into the page only after exact owning Worker discovery. This
+// observes normal calls; it never schedules a present, flush or readback.
+function hostPresentationFactory(){
+ const occupied=new WeakSet();
+ function attach({getHost,epoch,deadline,now=()=>performance.now(),maxRecords=2048,maxBytes=1048576}={}){
+  if(typeof getHost!=='function'||typeof epoch!=='string'||!epoch||epoch.length>256||
+   !Number.isFinite(deadline)||deadline<=now()||!Number.isSafeInteger(maxRecords)||maxRecords<1||maxRecords>2048||
+   !Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>1048576)throw Error('host presentation binding/limits');
+  deadline=Math.min(deadline,now()+360000);
+  const owner=getHost(),memory=owner?.memory,renderer=owner?.renderer,gdi=owner?.hostCtx?.sharedGdi,
+   imports=owner?._hostImports,broker=owner?.guestWorker?.broker;
+  if(!memory?.buffer||!renderer?.ctx||!gdi?.surfacePresentations||!imports||!broker||occupied.has(owner))throw Error('host presentation unavailable/occupied');
+  const buffer=memory.buffer,restores=[],guards=[],ids=new WeakMap();let nextId=0,slot=null,frame=null,timer;
+  const id=o=>o&&typeof o==='object'?(ids.has(o)?ids.get(o):(ids.set(o,++nextId),nextId)):null;
+  const ownsWindow=win=>!!win&&!!owner.instance&&win.wasm===owner.instance&&win.wasmMemory===memory&&
+   Number.isSafeInteger(owner.processId)&&owner.processId>0&&win.processId===owner.processId;
+  const report={epoch,status:'running',records:[],bytes:0,sequence:0,frame:0,pending:0,fault:null,
+   readinessGranted:false,pixelsAccepted:false,operationRelation:null};
+  function finish(reason='terminal'){
+   if(report.status!=='running')return report;report.status=reason;clearTimeout(timer);
+   for(const restore of restores.reverse())restore();occupied.delete(owner);return report;
+  }
+  function fault(e){report.fault=String(e.message||e);finish('unsupported-or-unobservable');}
+  function live(){if(report.status!=='running')return false;
+   if(now()>=deadline)throw Error('host presentation deadline');
+   if(getHost()!==owner||owner.memory!==memory||memory.buffer!==buffer||owner.renderer!==renderer||
+    owner.hostCtx.sharedGdi!==gdi||owner._hostImports!==imports||owner.guestWorker?.broker!==broker||
+    guards.some(([o,k,f])=>o[k]!==f))throw Error('host presentation owner replaced');
+   return true;
+  }
+  function emit(kind,data={}){
+   if(!live())return;const row={kind,epoch,sequence:report.sequence+1,...data};
+   const bytes=new TextEncoder().encode(JSON.stringify(row)).length;
+   if(report.records.length>=maxRecords||report.bytes+bytes>maxBytes)throw Error('host presentation record/byte overflow');
+   report.records.push(row);report.bytes+=bytes;report.sequence++;
+  }
+  function observe(fn){try{if(live())return fn();}catch(e){fault(e);}}
+  function hook(object,key,before,after){
+   const original=object[key];if(typeof original!=='function')return;
+   function wrapped(...args){
+    const context=observe(()=>before?.(args));let value;
+    try{value=Reflect.apply(original,this,args);}catch(error){if(key==='repaint')frame=null;observe(()=>emit('call-failed',{method:key}));throw error;}
+    if(report.status!=='running')return value;
+    // Return the very same Promise/result. Completion observers never replace
+    // the original rejection, result or receiver, including after uninstall.
+    if(value instanceof Promise){if(report.pending>=16){fault(Error('host async pending bound'));return value;}report.pending++;
+     value.then(v=>{report.pending--;observe(()=>after?.(args,v,context));},()=>{report.pending--;if(key==='repaint')frame=null;observe(()=>emit('call-failed',{method:key}));});
+    }else observe(()=>after?.(args,value,context));
+    return value;
+   }
+   object[key]=wrapped;guards.push([object,key,wrapped]);restores.push(()=>{if(object[key]===wrapped)object[key]=original;});
+  }
+  // The broker supplies the actual endpoint slot. A batch can contain calls
+  // from only its stated slot; imports outside a broker call retain null.
+  for(const key of ['serveCall','serveCalls','serveRpc']){
+   const original=broker[key];if(typeof original!=='function')continue;
+   function wrapped(...args){const previous=slot;slot=key==='serveRpc'?args[0]:args[0]?.slot;
+    try{return Reflect.apply(original,this,args);}finally{slot=previous;}}
+   broker[key]=wrapped;guards.push([broker,key,wrapped]);restores.push(()=>{if(broker[key]===wrapped)broker[key]=original;});
+  }
+  hook(imports,'gdi_surface_upload',args=>({slot,id:args[0]>>>0,rect:args.slice(1,5)}),(args,result,c)=>{
+   const p=gdi.surfacePresentations.get(c.id),s=p?.surface,win=renderer.windows?.[p?.targetHwnd];
+   emit('host-upload-completed',{...c,result:typeof result==='number'?result:null,
+    presentation:id(p),canvas:id(p?.canvas),window:id(win),hwnd:p?.targetHwnd??null,
+    version:p?.version??null,storageOffset:s?.storageOffset??null,
+    owningMemory:s?.storage?.buffer===buffer,owningWindow:ownsWindow(win),directDraw:p?.directDraw===true,
+    attached:!!win&&win._backCanvas===p?.canvas});
+  });
+  hook(owner,'_presentNow',null,(_args,result)=>emit('host-present-completed',{
+   result:typeof result==='number'?result:null,frame:report.frame,surfaceRelation:null}));
+  hook(gdi,'presentBestDxOffscreen',null,(_args,result)=>emit('fallback-present-completed',{
+   result:typeof result==='number'?result:null,surfaceRelation:null}));
+  hook(renderer,'repaint',()=>{const current={draws:[],before:renderer._immutablePublicationSequence||0};frame=current;return current;},(_args,_value,c)=>{
+   frame=null;const sequence=renderer._immutablePublicationSequence||0;
+   if(sequence>c.before){report.frame=sequence;emit('renderer-completed',{frame:sequence,draws:c.draws,
+    displayCanvas:id(renderer.canvas),publication:'normal repaint return'});}
+  });
+  hook(renderer.ctx,'drawImage',args=>({source:args[0],frame}),(_args,_value,c)=>{
+   if(!c?.frame||frame!==c.frame)return;
+   // Store only exact canvas members actually passed to the normal drawing
+   // call. Intermediates, WebGL, layers and shared-window blits stay unknown.
+   for(const [surfaceId,p]of gdi.surfacePresentations){
+    if(p.canvas!==c.source)continue;
+    if(c.frame.draws.length>=16)throw Error('host frame member bound');
+    const win=renderer.windows?.[p.targetHwnd];
+    c.frame.draws.push({id:surfaceId,presentation:id(p),canvas:id(p.canvas),window:id(win),hwnd:p.targetHwnd,
+     version:p.version,storageOffset:p.surface?.storageOffset,owningMemory:p.surface?.storage?.buffer===buffer,owningWindow:ownsWindow(win),
+     attached:!!win&&win._backCanvas===p.canvas,destinationCanvas:id(renderer.ctx.canvas)});
+   }
+  });
+  occupied.add(owner);timer=setTimeout(()=>finish('deadline'),Math.max(1,deadline-now()));timer.unref?.();
+  return {report,finish,check(){observe(()=>{});return report;},
+   token(){observe(()=>{});return {epoch,status:report.status,sequence:report.sequence,frame:report.frame,pending:report.pending};},
+   capture(before,sha256,name){observe(()=>{
+    if(!before||before.epoch!==epoch||before.status!=='running'||before.sequence!==report.sequence||before.frame!==report.frame||
+     before.pending||report.pending||!report.frame||!(/^[a-f0-9]{64}$/).test(sha256||'')||typeof name!=='string'||name.length>256)
+     throw Error('stale/unknown host capture');
+    emit('capture-bracket',{frame:report.frame,sha256,name,screenPixels:'unknown; external screenshot identity only'});
+   });return report;}};
+ }
+ return {attach};
+}
 function workerSource({observeSource,options}){
  const epoch=options.targetId+'/'+options.sessionId;
  let install=base.installWorker.toString();
@@ -273,6 +404,14 @@ function selectOwningWorker(inspected){
 }
 function createAttachment(options){
  let source=base.createAttachment.toString();
+ source=base.replaceOnce(source,'command=i;balanced=false;await rpc(\'start\',{command});active=true;',
+  "command=i;balanced=false;await hostPresentation?.start(owner.id+'/'+owner.sessionId);await rpc('start',{command});active=true;");
+ source=base.replaceOnce(source,'terminal=true;active=false;\n   try{if(owner)',
+  "terminal=true;active=false;try{await hostPresentation?.finish(reason);}catch(e){persist({reason,error:String(e),hostPresentation:'unknown'});}\n   try{if(owner)");
+ source=base.replaceOnce(source,"persist({reason:'owning-session-detached',history:'unknown; retain last native frames'});",
+  "persist({reason:'owning-session-detached',history:'unknown; retain last native frames'});hostPresentation?.finish('owning-session-detached').catch(e=>persist({hostPresentation:'unknown',error:String(e)}));");
+ source=base.replaceOnce(source,"async capture(name,digest,state){await annotate({kind:'capture',name,sha256:digest,steps:state.main.tick.steps});}",
+  "async capture(name,digest,state){await annotate({kind:'capture',name,sha256:digest,steps:state.main.tick.steps});if(active&&hostPresentation)await hostPresentation.link((await rpc('report')).report);}");
  source=base.replaceOnce(source,"if(c.action!=='route-press-preset')return;","if(c.action!=='route-gesture')return;");
  source=base.replaceOnce(source,
   "     if(candidates.length!==1)throw Error('single exact preloaded Worker target/session prerequisite');\n     const [id,entry]=candidates[0];owner={id,entry,sessionId:entry.sessionId,session:entry.session,url:entry.info.url};\n     const r=await rpc('report');",
@@ -287,7 +426,7 @@ function createAttachment(options){
  const start=source.indexOf('   async success(c){'),end=source.indexOf('   retire(event)',start);
  if(start<0||end<0)throw Error('attachment success seam');
  source=source.slice(0,start)+'   async success(){},\n'+source.slice(end);
- const factory=new Function('ROOT','require','path','selectOwningWorker','return ('+source+')')(path.resolve(__dirname,'..'),require,path,selectOwningWorker);
+ const factory=new Function('ROOT','require','path','selectOwningWorker','hostPresentation','return ('+source+')')(path.resolve(__dirname,'..'),require,path,selectOwningWorker,options.hostPresentation);
  // The resolved constructor URL fix remains in force.
  const pageState=options.pageState;
  return factory({...options,pageState:async()=>{
@@ -331,4 +470,47 @@ function prepare(options){
  p.evidence.compositionSHA256=base.hash(p.source);p.evidence.routeCompositionSHA256=base.hash(p.route);
  return p;
 }
-module.exports={EXE_SHA256,PINS,...native,observerFactory,workerSource,selectOwningWorker,createAttachment,assertHistoricalShell,prepare};
+// A storage/endpoint join is useful evidence, but cannot identify which
+// asynchronous RPC upload came from a particular original call. Keep that
+// missing transport identity explicit rather than pairing nearby records.
+function linkPresentation(nativeReport,hostReport){
+ const result={epoch:nativeReport?.epoch??null,status:'unknown',relations:[],operationCompletion:null,
+  freshPixels:null,readinessGranted:false};
+ if(!nativeReport||!hostReport||nativeReport.epoch!==hostReport.epoch||nativeReport.fault||hostReport.fault||
+  nativeReport.status!=='running'||hostReport.status!=='running'||hostReport.pending)return result;
+ if(!Array.isArray(nativeReport.records)||!Array.isArray(hostReport.records)||nativeReport.records.length>2048||hostReport.records.length>2048)return result;
+ if(nativeReport.records.some(r=>r.epoch!==nativeReport.epoch)||hostReport.records.some(r=>r.epoch!==hostReport.epoch))return result;
+ let comparisons=0;const bounded=()=>{if(++comparisons<=8192)return true;result.scanTruncated=true;return false;};
+ for(const request of nativeReport.records.filter(r=>r.kind==='surface-import-request'&&r.name==='gdi_surface_upload')){
+  if(!bounded())return result;
+  const entry=nativeReport.records.find(r=>r.kind==='surface-target-entry'&&r.sequence===request.entrySequence);
+  const returned=nativeReport.records.find(r=>r.kind==='surface-return'&&r.entrySequence===request.entrySequence);
+  const trace=nativeReport.records.find(r=>r.kind==='surface-import-request'&&r.name==='dx_trace'&&
+   r.entrySequence===request.entrySequence&&r.args[0]===12&&r.args[1]===request.slot&&r.args[2]===request.sourceSlot);
+  const present=nativeReport.records.find(r=>r.kind==='surface-import-request'&&r.name==='dx_trace'&&
+   r.entrySequence===request.entrySequence&&r.args[0]===5&&r.args[1]===request.slot);
+  const attach=nativeReport.records.find(r=>r.kind==='surface-import-request'&&r.name==='gdi_surface_attach'&&
+   r.entrySequence===request.entrySequence&&r.args[0]===request.args[0]&&r.args[1]>0);
+  if(!entry||!returned||!returned.hresultZero||returned.result!==0||!trace||!present||!attach||!Number.isInteger(request.slot)||request.slot<0||request.slot>=16384||request.args[0]!==0x200000+request.slot)continue;
+  for(const upload of hostReport.records.filter(r=>r.kind==='host-upload-completed'&&r.id===request.args[0]&&r.slot===0&&
+   r.result===1&&r.owningMemory&&r.owningWindow&&r.directDraw&&r.attached&&r.hwnd===attach.args[1]&&r.storageOffset===present.args[3])){
+   if(!bounded())return result;
+   for(const completion of hostReport.records.filter(r=>r.kind==='renderer-completed'&&r.sequence>upload.sequence)){
+    if(!bounded())return result;
+    const member=completion.draws.find(d=>d.id===upload.id&&d.presentation===upload.presentation&&d.canvas===upload.canvas&&
+     d.window===upload.window&&d.hwnd===upload.hwnd&&d.version===upload.version&&d.storageOffset===upload.storageOffset&&
+     d.owningMemory&&d.owningWindow&&d.attached&&d.destinationCanvas===completion.displayCanvas);
+    if(!member)continue;
+    if(result.relations.length>=16)return result;
+    result.relations.push({nativeEntry:entry.sequence,nativeReturn:returned.sequence,object:entry.object,source:entry.source,
+     target:entry.target,hresult:returned.result,slot:request.slot,upload:upload.sequence,frame:completion.frame,
+     hwnd:member.hwnd,window:member.window,canvas:member.canvas,storageOffset:member.storageOffset,
+     relation:'matching canonical slot/storage address; page upload and exact canvas draw completed; allocation generation unknown',
+     operationToUpload:'unknown; no unique cross-realm RPC operation identity',capture:hostReport.records.find(r=>
+      r.kind==='capture-bracket'&&r.sequence>completion.sequence&&r.frame===completion.frame)??null});
+   }
+  }
+ }
+ if(result.relations.length)result.status='structural-candidates-only';return result;
+}
+module.exports={EXE_SHA256,PINS,...native,observerFactory,hostPresentationFactory,linkPresentation,workerSource,selectOwningWorker,createAttachment,assertHistoricalShell,prepare};

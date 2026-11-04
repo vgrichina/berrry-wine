@@ -174,6 +174,10 @@ function assertMailboxCommandReady(run,options){
 }
 function prepare(options){
  const p=observer.prepare(options),q=JSON.stringify;
+ p.source=base.replaceOnce(p.source,'const presetAttachment=attachmentAPI.createAttachment({sessions,save,log,pageState:state,validateAck:assertAck,',
+  `const hostPresentation=require(${q(__filename)}).createHostPresentationController({page:()=>page,save,deadline:()=>deadline});\nconst presetAttachment=attachmentAPI.createAttachment({hostPresentation,sessions,save,log,pageState:state,validateAck:assertAck,`);
+ p.source=base.replaceOnce(p.source,'const png=Buffer.from(await page.screenshot()),current=await state();',
+  'const presentationBefore=await hostPresentation.token();\n  const png=Buffer.from(await page.screenshot()),current=await state();\n  await hostPresentation.capture(presentationBefore,sha(png),name);');
  p.route=base.replaceOnce(p.route,'scene:scene(c.png)',`scene:require(${q(__filename)}).diagnosticScene(c.png,scene(c.png))`);
  p.route=base.replaceOnce(p.route,"['choose-type-custom-hover','actual-scene20-earlier','actual-scene20-intermediate']",
   "['choose-type-custom-hover','actual-scene20-earlier','actual-scene20-intermediate','setup-transition-observation']");
@@ -205,8 +209,28 @@ function prepare(options){
  p.evidence.bounds.chromeMs=720000;
  p.evidence.localRuntime={kind:'local-process',contractPath:__filename,contractSHA256:base.hash(fs.readFileSync(__filename)),
   navigationAndCommandCapsUnchanged:true,chrome:CHROME,chromeCutoff:CUTOFF,cleanupBy:CLEANUP};
+ p.evidence.hostPresentation={passive:true,normalCallsOnly:true,endpointSlot:0,maxRecords:2048,maxBytes:1048576,
+  operationToUpload:'unknown without unique cross-realm RPC identity',readinessGranted:false,pixelsAccepted:false};
  p.evidence.compositionSHA256=base.hash(p.source);
  p.evidence.routeCompositionSHA256=base.hash(p.route);
  return {...p,createRelease:()=>createRelease({run:options.run,pins:options.pins,nonce})};
 }
-module.exports={identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,diagnosticScene,SETUP_TRANSITION,SETUP_TRANSITIONS,prepare,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+function createHostPresentationController({page,save,deadline}){
+ let active=false,sequence=0;
+ const persist=r=>{save('host-presentation-'+sequence+++'.json',r);return r;};
+ const evaluate=source=>page().evaluate(source);
+ return {
+  async start(epoch){
+   const source='('+observer.hostPresentationFactory.toString()+')()';
+   await evaluate(`(()=>{if(globalThis.__strongholdHostPresentation)throw Error('occupied host presentation');
+    globalThis.__strongholdHostPresentation=${source}.attach({getHost:()=>typeof wine==='undefined'?null:wine,
+     epoch:${JSON.stringify(epoch)},deadline:performance.now()+${JSON.stringify(deadline())}-Date.now()});return true;})()`);
+   active=true;
+  },
+  async token(){return active?evaluate('globalThis.__strongholdHostPresentation.token()'):null;},
+  async capture(before,sha256,name){if(active)persist(await evaluate(`globalThis.__strongholdHostPresentation.capture(${JSON.stringify(before)},${JSON.stringify(sha256)},${JSON.stringify(name)})`));},
+  async link(nativeReport){if(active){const host=await evaluate('globalThis.__strongholdHostPresentation.check()');persist({nativeEpoch:nativeReport?.epoch,host,link:observer.linkPresentation(nativeReport,host)});}},
+  async finish(reason){if(!active)return;active=false;persist(await evaluate(`globalThis.__strongholdHostPresentation.finish(${JSON.stringify(reason)})`));}
+ };
+}
+module.exports={identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,diagnosticScene,SETUP_TRANSITION,SETUP_TRANSITIONS,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};

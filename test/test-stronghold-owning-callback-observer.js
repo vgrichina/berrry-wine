@@ -210,7 +210,34 @@ async function drawFixture({e,memory,host}){
   assert.equal(observation.records.filter(r=>r.kind==='surface-return').length,4);
   assert.deepEqual(observation.records.filter(r=>r.kind==='surface-return').map(r=>r.result),[0,0x80004005,0,0]);
   assert(observation.records.filter(r=>r.kind==='surface-return').every(r=>r.object===object&&r.vtable===vtable&&r.target===target&&r.precedingDrawReturn));
-  assert.deepEqual(observation.presentation,{status:'pending',hostRelation:null,readinessGranted:false});attachment.invoke('finish',{reason:'offline-draw-fixture-complete'});}
+  assert.deepEqual(observation.presentation,{status:'pending',hostRelation:null,readinessGranted:false});}
+ // Exercise a real shipped Blt API thunk as well. $run dispatches it before
+ // log_block; an owning import must recover the exact original CALL stack.
+ // Only objects/table/DIB/rectangles are synthetic; no real window or pixels.
+ const thunkObservation=workerData.observed?{get report(){return attachment.report().report;},
+  finish:reason=>attachment.invoke('finish',{reason})}:null;
+ e.init_dx_com_thunks();e.seal_thunks();let blt=0;
+ const bltId=require('../src/api_table.json').findIndex(r=>r.name==='IDirectDrawSurface_Blt');assert(bltId>0);
+ for(let a=e.get_thunk_base();a<e.get_thunk_end();a+=8)if(e.thunk_word(a,1)===bltId){blt=a;break;}
+ assert(blt,'actual Blt thunk');u32(vtable+0x14,blt);u32(object+4,3);
+ const regions=require('../lib/region-map.generated.js'),table=regions.BASE.DX_OBJECTS,dib=regions.BASE.DIB_BACKING_BASE;
+ for(const [slot,obj,flags,offset]of [[3,object,1,0],[4,0x5a4000,4,64]]){
+  u32(obj+4,slot);for(const [o,value]of [[0,2],[4,1],[12,4|(4<<16)],[16,16|(8<<16)],[20,dib+offset],[28,flags]])dv.setUint32(table+slot*32+o,value,true);
+ }
+ for(const offset of [16,32])for(const [i,value]of [0,0,4,4].entries())u32(stack+offset+i*4,value);
+ e.set_trace_esp(workerData.observed||workerData.trace?1:0,0,0);
+ e.set_esi(manager);e.set_ebp(0);e.set_esp(stack);e.set_eip(0x467cfd);
+ const thunkSlices=[];for(let i=0;i<20;i++){thunkSlices.push(await slice(64));if(e.get_eip()>>>0===stop)break;}
+ assert.equal(e.get_eip()>>>0,stop);assert.equal(e.get_eax()>>>0,0);assert.equal(e.get_esp()>>>0,stack);
+ if(thunkObservation){
+  assert.equal(thunkObservation.report.status,'running',JSON.stringify(thunkObservation.report));
+  const rows=thunkObservation.report.records,entry=rows.find(r=>r.kind==='surface-target-entry'&&r.target===blt);
+  assert.equal(entry.target,blt);assert.equal(entry.entryEvidence,'owning-import-entry');
+  assert(rows.some(r=>r.kind==='surface-return'&&r.result===0));
+  for(const name of ['dx_trace','gdi_surface_attach','gdi_surface_upload'])assert(rows.some(r=>r.kind==='surface-import-request'&&r.name===name),name);
+  thunkObservation.finish('offline-actual-thunk');
+ }
+ results.push({actualBltThunk:blt,slices:thunkSlices,registers:Object.fromEntries(['eip','esp','eax','ebx','ecx','edx','esi','edi','ebp','flag_op','flag_a','flag_b','flag_res'].map(n=>[n,e['get_'+n]()>>>0]))});
  e.set_trace_esp(0,0,0);
  const memorySHA256=hash(b),negatives={};
  if(workerData.observed){
@@ -265,7 +292,7 @@ if(!isMainThread){
   const {port1,port2}=new MessageChannel(),sigs=require('../lib/host-import-sigs.generated.json').sigs;
   let brokerLogBlocks=0;
   const broker=require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>{
-   if(!['log_block','log','log_i32','beep_process_begin','beep_thread_begin','midi_stream_service'].includes(n))throw Error('unexpected fixture broker '+n);if(n==='log_block')brokerLogBlocks++;return 0;
+   if(!['log_block','log','log_i32','beep_process_begin','beep_thread_begin','midi_stream_service','dx_trace','gdi_surface_create','gdi_surface_attach','gdi_surface_upload'].includes(n))throw Error('unexpected fixture broker '+n);if(n==='log_block')brokerLogBlocks++;return n.startsWith('gdi_surface_')?1:0;
   }])),sigs);
   const module=await WebAssembly.compile(bytes),w=new Worker(__filename,{workerData:{port:port2,observed,trace,badBinding,initializer:init,draw,wasmHash:hash(bytes)},transferList:[port2]});
   return new Promise((resolve,reject)=>{let seq=0,done=false;const commands=[];
@@ -432,8 +459,102 @@ if(!isMainThread){
    }
    return results;
  }
+ async function hostPipelineControls(){
+  // Independent host pipeline: no observer emit/annotate functions are called
+  // by the producer. Normal imports, broker and drawing calls drive hooks.
+  function fixture({observe=true,...extra}={}){
+   const memory={buffer:new ArrayBuffer(4096)},canvas={},display={},calls=[],hwnd=65537,sid=0x200003;
+   const presentation={canvas,directDraw:true,targetHwnd:hwnd,version:0,
+    surface:{storage:new Uint8Array(memory.buffer),storageOffset:128}};
+   const renderer={canvas:display,ctx:{canvas:display,drawImage(source){calls.push(['draw',this===renderer.ctx,source===canvas]);return 71;}},
+    windows:{[hwnd]:{_backCanvas:canvas}},_immutablePublicationSequence:0,
+    repaint(mode){calls.push(['repaint',this===renderer,mode]);
+     if(mode==='throw')throw failure;
+     this.ctx.drawImage(canvas,0,0);this._immutablePublicationSequence++;return 19;}};
+   const failure=Error('independent original failure');let resolve,originalPromise;
+   const imports={gdi_surface_upload(id,l,t,r,b){calls.push(['upload',this===imports,id,l,t,r,b]);
+    if(l===-1)throw failure;if(l===-2)return 0;
+    if(l===-3)return originalPromise=new Promise(done=>{resolve=()=>{presentation.version++;done(1);};});
+    if(l===-4)return originalPromise=Promise.reject(failure);
+    presentation.version++;return 1;}};
+   const broker={serveCall(msg){return imports.gdi_surface_upload(...msg.args);},
+    serveCalls(msg){return msg.args.map(args=>imports.gdi_surface_upload(...args));},serveRpc(slot,...args){return imports.gdi_surface_upload(...args);}};
+   const instance={},owner={memory,instance,processId:1000,renderer,_hostImports:imports,hostCtx:{sharedGdi:{surfacePresentations:new Map([[sid,presentation]])}},guestWorker:{broker}};
+   Object.assign(renderer.windows[hwnd],{wasm:instance,wasmMemory:memory,processId:1000});
+   let current=owner,clock=0;
+   const originals={upload:imports.gdi_surface_upload,repaint:renderer.repaint,draw:renderer.ctx.drawImage,serve:broker.serveCall};
+   const h=observe?api.hostPresentationFactory().attach({getHost:()=>current,epoch,now:()=>clock,deadline:10000,...extra}):null;
+   return {h,owner,renderer,imports,broker,presentation,calls,failure,originals,sid,hwnd,
+    replace:()=>{current={...owner};},expire:()=>{clock=10001;},resolve:()=>resolve(),originalPromise:()=>originalPromise,
+    upload:(l=0)=>broker.serveCall({slot:0,args:[sid,l,0,4,4]})};
+  }
+  const f=fixture();assert.equal(f.upload(),1);assert.equal(f.renderer.repaint('normal'),19);
+  const off=fixture({observe:false});assert.equal(off.upload(),1);assert.equal(off.renderer.repaint('normal'),19);
+  assert.deepEqual(f.calls,off.calls);assert.equal(f.presentation.version,off.presentation.version);
+  assert.equal(f.renderer._immutablePublicationSequence,off.renderer._immutablePublicationSequence);
+  assert.equal(hash(Buffer.from(f.owner.memory.buffer)),hash(Buffer.from(off.owner.memory.buffer)));
+  assert.deepEqual(f.calls,[['upload',true,f.sid,0,0,4,4],['repaint',true,'normal'],['draw',true,true]]);
+  f.h.capture(f.h.token(),'a'.repeat(64),'fresh');
+  const host=structuredClone(f.h.report),native={epoch,status:'running',fault:null,records:[]};
+  function row(kind,data){native.records.push({kind,epoch,sequence:native.records.length+1,...data});}
+  row('surface-target-entry',{object:100,source:200,target:300});
+  row('surface-import-request',{entrySequence:1,name:'dx_trace',args:[12,3,4,0,0],slot:3,sourceSlot:4});
+  row('surface-import-request',{entrySequence:1,name:'dx_trace',args:[5,3,16,128,0],slot:3,sourceSlot:4});
+  row('surface-import-request',{entrySequence:1,name:'gdi_surface_attach',args:[f.sid,f.hwnd],slot:3,sourceSlot:4});
+  row('surface-import-request',{entrySequence:1,name:'gdi_surface_upload',args:[f.sid,0,0,4,4],slot:3,sourceSlot:4});
+  row('surface-return',{entrySequence:1,hresultZero:true,result:0});
+  const linked=api.linkPresentation(native,host);assert.equal(linked.relations.length,1);
+  assert.equal(linked.relations[0].capture.sha256,'a'.repeat(64));
+  assert.equal(linked.operationCompletion,null);assert.equal(linked.freshPixels,null);assert.equal(linked.readinessGranted,false);
+  const negatives=[];
+  for(const [name,mutate]of [
+   ['foreign epoch',(_n,h)=>h.epoch='foreign'],['foreign row epoch',(_n,h)=>h.records[0].epoch='foreign'],
+   ['failed HRESULT',n=>n.records.at(-1).hresultZero=false],['failed HRESULT value',n=>n.records.at(-1).result=0x80004005],['wrong native surface',n=>n.records[4].slot=8],
+   ['wrong source',n=>n.records[1].args[2]=8],['wrong native target HWND',n=>n.records[3].args[1]++],
+   ['wrong upload surface',(_n,h)=>h.records[0].id++],['wrong window',(_n,h)=>h.records[0].window++],
+   ['wrong HWND',(_n,h)=>h.records[0].hwnd++],['wrong owner',(_n,h)=>h.records[0].slot=1],
+   ['unknown owner',(_n,h)=>h.records[0].slot=null],['failed upload',(_n,h)=>h.records[0].result=0],
+   ['wrong memory',(_n,h)=>h.records[0].owningMemory=false],['wrong storage',(_n,h)=>h.records[0].storageOffset++],
+   ['foreign window process',(_n,h)=>h.records[0].owningWindow=false],
+   ['stale version',(_n,h)=>h.records[1].draws[0].version++],['wrong canvas',(_n,h)=>h.records[1].draws[0].canvas++],
+   ['wrong destination',(_n,h)=>h.records[1].displayCanvas++],['unattached',(_n,h)=>h.records[0].attached=false],
+   ['pending async',(_n,h)=>h.pending=1],['terminal',(_n,h)=>h.status='terminal'],
+   ['native terminal',n=>n.status='terminal'],['no completed present',(_n,h)=>h.records.splice(1,1)]]){
+   const n=structuredClone(native),h=structuredClone(host);mutate(n,h);assert.equal(api.linkPresentation(n,h).relations.length,0,name);negatives.push(name);
+  }
+  const failed=fixture();assert.throws(()=>failed.upload(-1),e=>e===failed.failure);assert.equal(failed.upload(-2),0);
+  assert.throws(()=>failed.renderer.repaint('throw'),e=>e===failed.failure);
+  assert(!failed.h.report.records.some(r=>r.kind==='renderer-completed'));failed.h.finish();
+  const foreign=fixture();foreign.renderer.windows[foreign.hwnd].processId++;
+  foreign.upload();foreign.renderer.repaint();assert.equal(foreign.h.report.records[0].owningWindow,false);
+  assert.equal(foreign.h.report.records[1].draws[0].owningWindow,false);foreign.h.finish();
+  const replaced=fixture(),replacement=()=>77;replaced.imports.gdi_surface_upload=replacement;
+  replaced.h.check();assert.match(replaced.h.report.fault,/owner replaced/);assert.equal(replaced.imports.gdi_surface_upload,replacement);
+  const pending=fixture(),promise=pending.upload(-3);assert(promise instanceof Promise);assert.equal(promise,pending.originalPromise());assert.equal(pending.h.report.pending,1);
+  assert.equal(pending.h.report.records.length,0);pending.resolve();assert.equal(await promise,1);await Promise.resolve();
+  assert.equal(pending.h.report.pending,0);assert.equal(pending.h.report.records[0].result,1);pending.h.finish();
+  const rejected=fixture(),rejection=rejected.upload(-4);assert.equal(rejection,rejected.originalPromise());
+  await assert.rejects(rejection,e=>e===rejected.failure);await Promise.resolve();assert.equal(rejected.h.report.pending,0);
+  assert(!rejected.h.report.records.some(r=>r.kind==='host-upload-completed'));rejected.h.finish();
+  const late=fixture(),latePromise=late.upload(-3);late.h.finish('uninstall-pending');late.resolve();assert.equal(await latePromise,1);
+  await Promise.resolve();assert.equal(late.h.report.records.length,0);
+  for(const mode of ['stale','epoch','pending','no-frame']){
+   const s=fixture();if(mode!=='no-frame'){s.upload();s.renderer.repaint();}
+   const token=s.h.token();if(mode==='stale')s.upload();if(mode==='epoch')token.epoch='wrong';if(mode==='pending')token.pending=1;
+   s.h.capture(token,'b'.repeat(64),'stale');assert.match(s.h.report.fault,/capture/);s.h.finish();
+  }
+  for(const [name,extra,trigger]of [['records',{maxRecords:1},s=>{s.upload();s.upload();}],['bytes',{maxBytes:1},s=>s.upload()],
+   ['owner',{},s=>{s.replace();s.upload();}],['deadline',{},s=>{s.expire();s.upload();}]]){
+   const s=fixture(extra);trigger(s);assert(s.h.report.fault,name);assert.equal(s.imports.gdi_surface_upload,s.originals.upload);
+  }
+  f.h.finish();assert.equal(f.imports.gdi_surface_upload,f.originals.upload);assert.equal(f.renderer.repaint,f.originals.repaint);
+  assert.equal(f.renderer.ctx.drawImage,f.originals.draw);assert.equal(f.broker.serveCall,f.originals.serve);
+  const count=f.h.report.records.length;f.upload();f.renderer.repaint();assert.equal(f.h.report.records.length,count);
+  console.log('PASS independent passive host pipeline identity/failure/async/cleanup/bounds controls; '+negatives.length+' structural join negatives; operation/fresh pixels remain unknown');
+ }
  (async()=>{
   blockForwardingControls();
+  await hostPipelineControls();
   if(process.argv.includes('--draw-only')){
    const results=await drawFixtures();
    if(process.env.STRONGHOLD_CALLBACK_RESULT)fs.writeFileSync(process.env.STRONGHOLD_CALLBACK_RESULT,JSON.stringify({passed:true,offlineOnly:true,fixtureOnly:true,results},null,2)+'\n');return;
