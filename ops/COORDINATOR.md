@@ -14,9 +14,18 @@ access controls take precedence. Public deployment needs its existing authorizat
   and an independently compared upstream package. Blood II uses the local
   DEMO V1.0A (BUILD 109) pin in `docs/re-notes/blood2-demo.md`; do not download
   `Win98_Games-A-D.7z`. Apply this rule to every lane.
-- The coordinator assigns games and bounded tasks. Use at most **two** production
-  workers; the ceiling is not a target. Serialize shared integration and heavy
-  runtime tests. Respect laptop and other agents' ownership.
+- The coordinator assigns games and bounded tasks. Use at most **four** production
+  workers (owner decision 2026-11-03 22:45Z); the ceiling is not a target. Prefer
+  filling eligible slots with independent, high-value lanes while quota remains.
+  Respect laptop and other agents' ownership.
+- Check immediately before **each** worker launch: `MemAvailable` must be at
+  least **1.5 GB** and root filesystem free space at least **5 GB**. Run fewer
+  workers when either gate fails. These launch gates supersede the older
+  two-worker cap and lower disk launch floors; the 8 GB cleanup target remains.
+- At most **one** Chrome/browser or heavy CLI runtime may run on this coordinator
+  box at a time. Put other heavy runtimes on separate leased `bx_*` test boxes;
+  independent lanes there may run concurrently. Serialize shared integration and
+  every full build with `flock /tmp/wine-build.lock bash tools/build.sh`.
 - Start a fresh worker for each new task; same-task clarification is allowed.
   Workers do not spawn agents or refill the queue.
 - Worker automatic compaction is **200,000 total-context tokens**. Coordinator
