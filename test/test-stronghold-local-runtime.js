@@ -157,6 +157,12 @@ if(fs.existsSync(path.join(actualRun,'browser/cleanup.json'))){
  console.log('PASS actual two-review title handoff and old premature enqueue/new pending-review rejection; ACK, terminal and foreign-request negatives (offline transport only)');
 }
 const p=api.prepare({run,pins});new vm.Script(p.source);new vm.Script(p.route);
+assert.deepEqual(p.evidence.callbackObserver.passiveDraw,{entry:0x4292c0,returnInstruction:0x42a20e,
+ returnEvidence:'byte-pinned epilogue block plus saved caller/ESP return; block-level hook',
+ sameHistory:true,presentation:'pending',hostRelation:null,readinessGranted:false,pixelsAccepted:false});
+// A sampled native fade endpoint cannot widen the pixel classifier.
+assert.equal(api.diagnosticScene(fs.readFileSync(path.join('scratch/runs/20261104-stronghold-quiet-rpc-original-gameplay/browser/route-native-boundary-3.png')),'unknown',
+ {fade692e18:0,direction690e54:0,drawReturned:true}),'unknown');
 const cut=p.source.lastIndexOf('main().catch(');assert(cut>10000);
 base.compileClosure(p.source.slice(0,cut),p.driver,p.route,p.evidence.retainedClosure);
 assert.equal(p.evidence.retainedClosure.length,30);
@@ -421,8 +427,13 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
  const api=require(${JSON.stringify(require.resolve('../tools/stronghold-local-runtime.cjs'))});
  const route=require(${JSON.stringify(require.resolve('../tools/stronghold-route-recognition-handoff.cjs'))});
+ // Fixture clock keeps this offline entry test executable after the original
+ // authorization expires. Production deadline/admission code is unchanged.
+ const wallNow=Date.now;if(!process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE)Date.now=()=>${fixtureNow};
  const run=__dirname,pins=path.join(run,'pins.json');
  const p=route.prepare({run,pins});
+ assert.equal(p.evidence.callbackObserver.passiveDraw.readinessGranted,false);
+ assert.equal(p.evidence.callbackObserver.passiveDraw.presentation,'pending');
  fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(p.createRelease()));
  const ownership=api.assertRuntimeOwnership;
  api.assertRuntimeOwnership=()=>({offlineFixtureRelease:!process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE,release:api.requireRuntimeRelease(process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?fs.readFileSync('messageboard.txt','utf8'):${JSON.stringify(fixtureBoard)},process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?Date.now():${fixtureNow}),flock:api.requireLocalFlock(${JSON.stringify(testLock)})});
@@ -437,7 +448,7 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  assert.notEqual(composed,p.source.slice(0,cut));
  const caller=route.compileClosure(composed+'\\nmodule.exports={main,close};',p.driver,p.route,p.evidence.retainedClosure);
  try{await assert.rejects(caller.main(),/OFFLINE MOCK LAUNCH SENTINEL/);assert.equal(launches,1);assert(server.listening);assert.equal(api.lifecycleForRun(run).children.length,0);}
- finally{await caller.close('offline mocked launch complete');api.lifecycleForRun(run).restore();api.assertRuntimeOwnership=ownership;cp.spawn=spawn;delete globalThis.__strongholdOfflinePuppeteer;serverAPI.startStaticServer=start;}
+ finally{await caller.close('offline mocked launch complete');api.lifecycleForRun(run).restore();api.assertRuntimeOwnership=ownership;cp.spawn=spawn;delete globalThis.__strongholdOfflinePuppeteer;serverAPI.startStaticServer=start;Date.now=wallNow;}
  assert.equal(server.listening,false);assert.equal(spawnAttempts,0);
  const rows=fs.readFileSync(path.join(run,'chrome-lifecycle.jsonl'),'utf8').trim().split('\\n').map(JSON.parse);
  assert.deepEqual(rows.map(r=>r.kind),['installed','launch-request','recorder-restored']);

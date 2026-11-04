@@ -5,6 +5,25 @@ const base=require('./stronghold-preset-driver-attachment.cjs');
 const original=require('./stronghold-attached-original-preset-driver.cjs');
 const EXE_SHA256=base.EXE_SHA256;
 const PINS=Object.freeze([
+ [0x424bb0,'68c0924200'],
+ [0x4293a0,'8b0d383369008bd62bd181fad00700007e10b9000d6801893538336900e8ee0b0500'],
+ // Call argument construction and post-clock block.
+ [0x42a1fd,'c70584d5db0001000000'],
+ [0x429af3,'33eda100fa75013bc5740648a300fa7501b9000d6801e872f60500'],
+ [0x467cfd,'8b86b0000000558d54242468000000018b08528b96b4000000528d5424205250ff5114'],
+ [0x467d91,'8b86b0000000558d54242468000000018b08528b96b8000000528d5424205250ff5114'],
+ [0x467e28,'8b86b0000000558d54242468000000018b08528b96b4000000528d5424205250ff5114'],
+ [0x467f35,'8b86b0000000558d4c242468000000018b10518b8eb4000000518d4c24205150ff5214'],
+ // Original draw arithmetic, clocks, final RET and conditional surface calls.
+ [0x4292c0,'83ec6853555657ff15c84158008b2d7835ef008bf0a18406ba008b0d7435ef002bc533db992bc28974241cd1f850a18006ba002bc1b980d5db00992bc2d1f85053e83abf0200a1540e69003bc30f848d000000391dfcf975010f85810000003bc3c705b038d100010000008bce7d378b2db8216900b8999999992bcdf7e9c1fa048bc2c1e81f03d0a1182e690003c23bc3a3182e69007f48891d182e6900891d540e6900eb3a8b15b8216900b8676666662bcaf7e9a1182e6900c1fa048bcac1e91f03d103c283f820a3182e69007c10c705182e690020000000891d5c37d100'],
+ [0x4297aa,'892dfcf97501'],
+ [0x429ae8,'ff15c8415800a3b821690033ed'],
+ [0x42a207,'5f5e5d5b83c468c3'],
+ [0x467b90,'8b44240481ecf00700005355565733ed33ff83f8648bf1bb800000007c0a83e8648984240408000039ae900000007405bf010000003bc57403896e60392e75175f5e5dc705f40f6700010000005b81c4f0070000c20400'],
+ [0x467d1d,'ff5114'],
+ [0x467db1,'ff5114'],
+ [0x467e48,'ff5114'],
+ [0x467f55,'ff5214'],
  [0x430e10,'8b4424045383f8ff75106a006a29b95837d100e828d203005bc383f801751733dbb95837d100536a39891dbc37d100e80cd203005bc383f8020f85c60000005633db57536a14b95837d100891dd44bd100c70584f9750101000000891d7437d100e8dad10300e88582ffffb9000d6801891d542f6900e885780400b93202000033c0bfbce67501c7059014680101000000c7051813680163000000c7059c13680101000000f3ab53b9c0abdb00c705c037d1000300000066abe8729f03008bf883c9ff33c06a04f2aef7d12bf98bc18bf7bfb6e77501c1e902f3a58bc883e103f3a4b9000d6801891d74257601e80ee70400b909000000b801000000bf50f87501f3ab5f5e5bc3'],
  [0x46e050,'538b5c2408555683fb178bf17505bb290000008b44241457895e18894604ff15c84158008946088bc383e80c'],
  [0x429100,'5355b96811ba00e814820b00'],
@@ -17,10 +36,8 @@ const PINS=Object.freeze([
 // the pure JS translator and original import forwarding are used here.
 function observerFactory(EXE_SHA256,PINS){
  const occupied=new WeakSet();
- // Fixed before execution: the original 800x600 RGB565 renderer alone needs
- // 1,441,804 boundaries; live 64-step ACKs contained 64,000 entries. Fifty
- // million holds 34 such full renders plus message/return overhead, within
- // the unchanged 360s observation deadline. Blocks are counted, not stored.
+ // Fixed continuous limits; isolated render cost never proves full-draw
+ // completion or remaining headroom. Blocks are counted, not stored.
  function attach({host,getExports,translate,memory,workerSlot,endpointIdentity,epoch,
    exeSha256,wasmSha256,workerURL,expectedWorkerURL,deadline,now=()=>performance.now(),
    maxMs=360000,maxRecords=2048,maxBytes=1048576,maxBoundaries=50000000}={}){
@@ -33,14 +50,15 @@ function observerFactory(EXE_SHA256,PINS){
    if(!Number.isSafeInteger(value)||value<1||value>cap)throw Error('invalid '+key);
   if(!Number.isFinite(deadline)||deadline<=now())throw Error('original deadline');
   const prior=host.log_block,frames=[],rows=[];let ex=null,buffer=memory.buffer,active=false,timer,end=deadline;
-  let command=null,event=null,lastAck=null,custom=null;
+  let command=null,event=null,lastAck=null,custom=null,draw=null,surface=null,lastDraw=null,previousPC=null;
   const report={version:1,status:'installed',epoch,workerSlot,endpointIdentity,exeSha256,wasmSha256,workerURL,
    records:rows,bytes:0,sequence:0,blocks:0,lastNativePC:null,fault:null,pending:[],
    limits:{maxMs,maxRecords,maxBytes,maxBoundaries},
-   evidence:'Owning WASM block entries and saved-return intervals; not instruction-level CALL/RET certification. Input annotations are host receipts, not guest dispatch proof.'};
+   presentation:{status:'pending',hostRelation:null,readinessGranted:false},
+   evidence:'Owning WASM block entries and saved-return intervals. Draw and conditional surface observations never certify host presentation or pixels. Input annotations are host receipts, not guest dispatch proof.'};
   function finish(reason='explicit-stop'){
    if(!['installed','running'].includes(report.status))return report;
-   active=false;clearTimeout(timer);report.status=reason;report.pending=frames.map(f=>({...f}));
+   active=false;clearTimeout(timer);report.status=reason;report.pending=[...frames.map(f=>({...f})),...(draw?[{name:'draw',...draw}]:[]),...(surface?[{name:'surface',...surface}]:[])];
    if(host.log_block===wrapped)host.log_block=prior;occupied.delete(host);return report;
   }
   function fail(error){if(!report.fault)report.fault=String(error.message||error);return finish('unsupported-or-unobservable');}
@@ -52,13 +70,16 @@ function observerFactory(EXE_SHA256,PINS){
    return out;
   }
   const u32=a=>{const b=read(a);return(b[0]+b[1]*256+b[2]*65536+b[3]*16777216)>>>0;};
+  const surfaceReturns={0x467cfd:0x467d20,0x467d91:0x467db4,0x467e28:0x467e4b,0x467f35:0x467f58};
+  const drawPhases=[0x4292cd,0x429306,0x4293c2,0x429aee,0x429b0e];
   function identity(){
    const e=getExports();if(!e||ex&&e!==ex||e.memory!==memory||memory.buffer!==buffer)throw Error('foreign instance/memory');ex=e;
    if(e.get_current_thread_id()!==1||e.get_image_base()!==0x400000)throw Error('foreign thread/loader');
    if(u32(0x40003c)!==0x118||u32(0x400118)!==0x4550||u32(0x40014c)!==0x400000||u32(0x400168)!==0x199e000)throw Error('original header mismatch');
   }
   function signatures(){for(const [pc,hex]of PINS)if(read(pc,hex.length/2).map(v=>v.toString(16).padStart(2,'0')).join('')!==hex)throw Error('original bytes mismatch');}
-  const state=()=>({currentScene:u32(0xd13764),requestedScene:u32(0xd13770),manager4:u32(0xd1375c),manager8:u32(0xd13760),mode:u32(0x1681318),saved:u32(0x690f7c)});
+  const state=()=>({currentScene:u32(0xd13764),requestedScene:u32(0xd13770),manager4:u32(0xd1375c),manager8:u32(0xd13760),mode:u32(0x1681318),saved:u32(0x690f7c),
+   fade692e18:u32(0x692e18),direction690e54:u32(0x690e54)|0,timestamp6921b8:u32(0x6921b8),refresh175f9fc:u32(0x175f9fc),inputSuppressiond138b0:u32(0xd138b0)});
   function emit(kind,extra={}){
    const row={kind,sequence:report.sequence+1,block:report.blocks,epoch,command,pc:ex.get_eip()>>>0,esp:ex.get_esp()>>>0,state:state(),...extra};
    // UTF-8 byte accounting, including non-ASCII annotations.
@@ -67,11 +88,59 @@ function observerFactory(EXE_SHA256,PINS){
    rows.push(row);report.bytes+=size;report.sequence++;
   }
   function live(){if(!active)return false;if(now()>=end)throw Error('original observer deadline');identity();if(host.log_block!==wrapped)throw Error('import owner replaced');return true;}
+  function drawing(pc,esp){
+   if(pc===0x4292c0){
+    signatures();if(draw||surface)throw Error('missing draw/surface return');
+    const s=state();if(s.currentScene!==20||s.requestedScene!==20)throw Error('foreign draw scene owner');
+    const caller=u32(esp);if(!caller)throw Error('draw saved return missing');
+    emit('draw-entry',{caller});draw={caller,esp,entrySequence:report.sequence,phase:0};lastDraw=null;
+   }
+   if(draw){
+    const index=drawPhases.indexOf(pc);
+    if(index>=0){
+     if(index!==draw.phase)throw Error('draw clock/update/return history missing at '+pc.toString(16)+' phase '+draw.phase);
+     if(index===0){draw.entryTime=ex.get_eax()>>>0;}
+     if(index===3){draw.lateTime=ex.get_eax()>>>0;}
+     if(index===4&&u32(0x6921b8)!==draw.lateTime)throw Error('draw late timestamp mismatch');
+     emit(['draw-entry-clock','draw-update-before','draw-update-after','draw-late-clock','draw-timestamp-stored'][index],
+      {entrySequence:draw.entrySequence,entryTime:draw.entryTime,lateTime:draw.lateTime});draw.phase++;
+    }
+    if(pc===0x42a1fd||pc===0x42a207){
+     if(draw.phase!==5||esp!==draw.esp-120||u32(draw.esp)!==draw.caller)throw Error('draw epilogue stack/history mismatch');
+     draw.epilogue=true;emit('draw-return-block',{entrySequence:draw.entrySequence,retPC:0x42a20e});
+    }
+    if(pc===0x4297b0)emit('draw-refresh-cleared',{entrySequence:draw.entrySequence});
+    if(pc===draw.caller){
+     if(draw.phase!==5||!draw.epilogue||esp!==draw.esp+4)throw Error('draw return history missing');
+     emit('draw-return',{entrySequence:draw.entrySequence,entryTime:draw.entryTime,lateTime:draw.lateTime});
+     lastDraw=report.sequence;draw=null;
+    }
+   }else if(drawPhases.includes(pc)||pc===0x42a1fd||pc===0x42a207)throw Error('draw entry history missing');
+   // These are candidate native operations after a completed draw. No claim
+   // ties their surfaces to the host canvas, ACK or captured pixels.
+   if(surface){
+    if(pc===surface.caller){
+     if(esp!==surface.esp+28)throw Error('surface return stack mismatch');
+     emit('surface-return',{...surface,result:ex.get_eax()>>>0,hresultZero:(ex.get_eax()>>>0)===0});surface=null;
+    }
+   }
+   const surfaceReturn=surfaceReturns[previousPC];
+   if(surfaceReturn){
+    signatures();if(surface||draw)throw Error('surface nesting/draw incomplete');
+    const caller=u32(esp);if(caller!==surfaceReturn)throw Error('surface saved return missing');
+    const callPC=caller-3,vtable=(callPC===0x467f55?ex.get_edx():ex.get_ecx())>>>0,object=u32(esp+4),target=u32(vtable+0x14);
+    if(!object||u32(object)!==vtable||pc!==target)throw Error('surface identity missing');
+    surface={callPC,caller,esp,target,vtable,object,source:u32(esp+12),manager:ex.get_esi()>>>0,
+     precedingDrawReturn:lastDraw};emit('surface-target-entry',{...surface});
+   }
+   previousPC=pc;
+  }
   function boundary(pc,esp){
    if(!live())return;pc>>>=0;esp>>>=0;
    if(++report.blocks>maxBoundaries)throw Error('boundary overflow');
    report.lastNativePC=pc;
    if(pc!==(ex.get_eip()>>>0)||esp!==(ex.get_esp()>>>0))throw Error('wrong block registers');
+   drawing(pc,esp);
    let f=frames.at(-1);
    if(f&&pc===f.caller){
     if(esp!==f.esp+f.cleanup)throw Error('return stack/history mismatch');
@@ -137,7 +206,8 @@ function observerFactory(EXE_SHA256,PINS){
     }else if(row.kind==='capture'){
      if(!/^[a-f0-9]{64}$/.test(row.sha256||'')||lastAck!==null&&row.steps!==lastAck)throw Error('stale capture state');
     }else if(!['begin','failed','success'].includes(row.kind))throw Error('unsupported annotation');
-    emit('host-annotation',{annotation:row,...(row.kind==='ACK'?{lastNativePC:report.lastNativePC,nativeFrames:frames.map(f=>({...f}))}:{})});if(row.kind==='failed')finish('command-failed');
+    emit('host-annotation',{annotation:row,...(row.kind==='ACK'?{lastNativePC:report.lastNativePC,
+     nativeFrames:[...frames.map(f=>({...f})),...(draw?[{name:'draw',...draw}]:[]),...(surface?[{name:'surface',...surface}]:[])]}:{})});if(row.kind==='failed')finish('command-failed');
    }catch(error){fail(error);}return report;}
   };
  }
@@ -253,6 +323,9 @@ function prepare(options){
   caps:{arrival:3072,route:4096,navigation:16384,shellSamples:4,perACK:64},runtimeQualified:false};
  p.evidence.callbackObserver.observationBudget={maxBoundaries:50000000,maxMs:360000,maxRecords:2048,maxBytes:1048576,
   measuredRenderBoundaries:1441804,measuredBoundariesPer64StepACK:64000,fullRenderCapacity:34,continuous:true,perBlockStorage:false};
+ p.evidence.callbackObserver.passiveDraw={entry:0x4292c0,returnInstruction:0x42a20e,
+  returnEvidence:'byte-pinned epilogue block plus saved caller/ESP return; block-level hook',
+  sameHistory:true,presentation:'pending',hostRelation:null,readinessGranted:false,pixelsAccepted:false};
  p.evidence.successor.routeCompositionUnchanged=false;
  p.evidence.successor.scope='Pre-first-script owning callback diagnostic composition; no runtime qualification or preset/Start grant';
  p.evidence.compositionSHA256=base.hash(p.source);p.evidence.routeCompositionSHA256=base.hash(p.route);

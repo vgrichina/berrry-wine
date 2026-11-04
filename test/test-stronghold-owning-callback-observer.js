@@ -58,6 +58,7 @@ async function physical(){
  const {e,memory,host}=globalThis.fixtureAccess,b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer);
  const wa=a=>g2w(a,0x400000,memory),put=(a,v)=>b.set(v,wa(a)),u32=(a,v)=>dv.setUint32(wa(a),v>>>0,true);
  b.set(exe,e.get_staging());assert(e.load_pe(exe.length));e.set_api_log(0);
+ if(workerData.draw)return drawFixture({e,memory,host});
  if(workerData.initializer)return initializer({e,memory,host});
  const caller=0x580000,stop=caller+64,stack=0x7408000,string=caller+96,tick=caller+112;
  put(stop,[0xeb,0xfe]);put(string,[0]);put(tick,[0x31,0xc0,0xc3]);u32(0x5841c8,tick);
@@ -151,6 +152,90 @@ async function physical(){
  parentPort.postMessage({pass:true,segments,observation,negatives,workerSourceSHA:globalThis.fixtureWorkerSHA,
   limits:'Synthetic dependency returns and setup epilogue; no original full setup/game execution claim'});
 }
+async function drawFixture({e,memory,host}){
+ const b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),wa=a=>g2w(a,0x400000,memory);
+ const put=(a,v)=>b.set(v,wa(a)),u32=(a,v)=>dv.setUint32(wa(a),v>>>0,true),get=a=>dv.getUint32(wa(a),true);
+ const caller=0x580000,stop=caller+64,stack=0x7408000,tick=caller+112,clock=caller+160;
+ const jump=(from,to)=>put(from,[0xe9,...le(to-from-5)]);
+ // Exact original entry, both arithmetic branches, late clock/store and final
+ // epilogue execute. The background/composite UI are explicitly stubbed/jumped.
+ put(0x455240,[0xc2,12,0]);put(0x489180,[0xc3]);put(0x479fb0,[0xc3]);jump(0x4293c2,0x429ae8);jump(0x429b0e,0x42a207);
+ put(tick,[0xa1,...le(clock),0x83,0x05,...le(clock),100,0xc3]);u32(0x5841c8,tick);
+ put(caller,[0xb8,...le(0x4292c0),0xff,0xd0,0xe9,...le(stop-caller-12)]);put(stop,[0xeb,0xfe]);
+ e.invalidate_code_range(0x400000,0x180000);
+ const attachment=globalThis.__strongholdPresetAttachment;
+ if(workerData.observed)attachment.invoke('start',{command:1});
+ e.set_trace_esp(workerData.observed||workerData.trace?1:0,0,0);
+ let pending;const slice=n=>new Promise((resolve,reject)=>{pending={resolve,reject};parentPort.postMessage({t:'fixtureSlice',steps:n});});
+ workerData.port.on('message',m=>{if(m.t==='slice'){const p=pending;pending=null;m.value.trapped?p.reject(Error(m.value.trapped)):p.resolve(m.value.blocks);}});
+ const cases=[... [0,16,32,39,40,80,1280].map(gap=>({gap,fade:32,direction:-3,refresh:0})),
+  {gap:1280,fade:32,direction:-3,refresh:1},{gap:80,fade:31,direction:3,refresh:0},
+  {gap:80,fade:0,direction:0,refresh:0},{gap:80,fade:1,direction:-3,refresh:0,previous:0xfffffff0}];
+ const results=[];
+ for(const c of cases){
+  jump(0x4293c2,c.refresh?0x4297aa:0x429ae8);jump(0x4297b0,0x429ae8);e.invalidate_code_range(0x4293c2,5);e.invalidate_code_range(0x4297b0,5);
+  const previous=c.previous??1000,entry=(previous+c.gap)>>>0;
+  for(const [a,v]of [[0xd13764,20],[0xd13770,20],[0x1681318,99],[0x692e18,c.fade],[0x690e54,c.direction],[0x175f9fc,c.refresh],[0x6921b8,previous],[0xd138b0,0],[0xd1375c,0xffffffff],[clock,entry]])u32(a,v);
+  e.set_eip(caller);e.set_esp(stack);const slices=[];
+  for(let i=0;i<20;i++){try{slices.push(await slice(64));}catch(error){throw Error(JSON.stringify({case:c,error:String(error),records:attachment?.report?.().report?.records?.slice(-8)}));}if(e.get_eip()>>>0===stop)break;}
+  assert.equal(e.get_eip()>>>0,stop);
+  // Independent division oracle; no multiply-high implementation shared with
+  // production observer or native instructions.
+  const advancing=c.direction!==0&&!c.refresh,delta=advancing?Math.trunc(c.gap/40)*Math.sign(c.direction):0;
+  const fade=Math.max(0,Math.min(32,c.fade+delta));
+  assert.equal(get(0x692e18),fade);assert.equal(get(0x690e54)|0,advancing&&c.direction<0&&fade===0?0:c.direction);
+  assert.equal(get(0x6921b8),(entry+100)>>>0);assert.equal(get(0xd138b0),advancing?1:0);
+  assert.equal(get(0x175f9fc),0);
+  results.push({case:c,slices,fade,timestamp:get(0x6921b8),registers:Object.fromEntries(['eip','esp','eax','ebx','ecx','edx','esi','edi','ebp','flag_op','flag_a','flag_b','flag_res'].map(n=>[n,e['get_'+n]()>>>0]))});
+ }
+ // Execute all four original conditional Blt call blocks with initialized
+ // synthetic COM objects and a stdcall result stub; no real surfaces exist.
+ const manager=0x5a0000,object=0x5a1000,vtable=0x5a2000,target=0x5a3000;
+ const beforeEarlyReturn=workerData.observed?attachment.report().report.records.length:null;
+ u32(manager,0);u32(stack,stop);u32(stack+4,0);e.set_ecx(manager);e.set_esp(stack);e.set_eip(0x467b90);
+ const earlySlices=[];for(let i=0;i<20;i++){earlySlices.push(await slice(64));if(e.get_eip()>>>0===stop)break;}
+ assert.equal(e.get_eip()>>>0,stop);assert.equal(e.get_esp()>>>0,stack+8);
+ if(workerData.observed)assert.equal(attachment.report().report.records.length,beforeEarlyReturn,'routine return alone creates no presentation witness');
+ results.push({routineEarlyReturn:true,slices:earlySlices});
+ u32(manager+0xb0,object);u32(manager+0xb4,0x5a4000);u32(manager+0xb8,0x5a5000);u32(object,vtable);u32(vtable+0x14,target);
+ for(const [start,ret,result]of [[0x467cfd,0x467d20,0],[0x467d91,0x467db4,0x80004005],[0x467e28,0x467e4b,0],[0x467f35,0x467f58,0]]){
+  put(target,[0xb8,...le(result),0xc2,24,0]);jump(ret,stop);e.invalidate_code_range(0x467b90,0x400);e.invalidate_code_range(target,8);
+  e.set_esi(manager);e.set_ebp(0);e.set_esp(stack);e.set_eip(start);
+  const slices=[];for(let i=0;i<20;i++){slices.push(await slice(64));if(e.get_eip()>>>0===stop)break;}
+  assert.equal(e.get_eip()>>>0,stop);assert.equal(e.get_eax()>>>0,result);results.push({surfaceStart:start,result,slices});
+ }
+ const observation=workerData.observed?attachment.report().report:null;
+ if(observation){assert.equal(observation.status,'running',JSON.stringify(observation));assert.equal(observation.records.filter(r=>r.kind==='draw-return').length,cases.length);
+  for(const r of observation.records.filter(r=>r.kind==='draw-return')){assert.equal(r.state.timestamp6921b8,r.lateTime);assert.equal((r.lateTime-r.entryTime)>>>0,100);}
+  assert.equal(observation.records.filter(r=>r.kind==='surface-return').length,4);
+  assert.deepEqual(observation.records.filter(r=>r.kind==='surface-return').map(r=>r.result),[0,0x80004005,0,0]);
+  assert(observation.records.filter(r=>r.kind==='surface-return').every(r=>r.object===object&&r.vtable===vtable&&r.target===target&&r.precedingDrawReturn));
+  assert.deepEqual(observation.presentation,{status:'pending',hostRelation:null,readinessGranted:false});attachment.invoke('finish',{reason:'offline-draw-fixture-complete'});}
+ e.set_trace_esp(0,0,0);
+ const memorySHA256=hash(b),negatives={};
+ if(workerData.observed){
+  const options={host,getExports:()=>e,translate:g2w,memory,workerSlot:0,endpointIdentity:1,epoch,exeSha256:api.EXE_SHA256,
+   wasmSha256:workerData.wasmHash,workerURL:URL,expectedWorkerURL:URL,deadline:performance.now()+10000};
+  const fresh=(extra={})=>{const h=api.attach({...options,...extra});h.start();assert.equal(h.report.status,'running');return h;};
+  function reset(){e.set_eip(caller);e.set_esp(stack);e.set_trace_esp(1,0,0);}
+  let h=fresh();jump(0x4293c2,0x42a207);e.invalidate_code_range(0x4293c2,5);reset();
+  await assert.rejects(slice(64),/history/);assert.match(h.report.fault,/history/);negatives.missingClock=h.report.fault;
+  jump(0x4293c2,0x429ae8);e.invalidate_code_range(0x4293c2,5);
+  h=fresh();e.set_bp(0x42a207);reset();await slice(64);assert.equal(e.get_eip()>>>0,0x42a207);
+  h.finish('fixture-missing-return');assert(h.report.pending.some(f=>f.name==='draw'));const count=h.report.records.length;
+  assert.throws(()=>h.start(),/terminal/);h.annotate({epoch,command:1,kind:'begin'});assert.equal(h.report.records.length,count);negatives.missingReturnTerminal=true;e.clear_bp();
+  h=fresh();h.annotate({epoch:'stale',command:1,kind:'begin'});assert.match(h.report.fault,/epoch/);negatives.staleEpoch=true;
+  h=fresh();e.set_current_thread_id(2);h.check();assert.match(h.report.fault,/thread/);e.set_current_thread_id(1);negatives.wrongOwner=true;
+  h=fresh();u32(0xd13770,99);reset();await assert.rejects(slice(64),/scene owner/);assert.match(h.report.fault,/scene owner/);u32(0xd13770,20);negatives.wrongSceneOwner=true;
+  for(const [name,extra]of [['recordLimit',{maxRecords:1}],['countLimit',{maxBoundaries:1}]]){
+   h=fresh(extra);reset();await assert.rejects(slice(64),/overflow/);assert.match(h.report.fault,/overflow/);negatives[name]=true;
+  }
+  h=api.attach({...options,maxBytes:1});h.start();assert.match(h.report.fault,/overflow/);negatives.byteLimit=true;
+  const pin=b[wa(0x429335)];b[wa(0x429335)]^=1;h=api.attach(options);h.start();assert.match(h.report.fault,/bytes/);b[wa(0x429335)]=pin;negatives.drawBytePin=true;
+ }
+ parentPort.postMessage({pass:true,draw:true,results,observation,negatives,memorySHA256,
+  limits:'Original instruction fragments with synthetic clocks/data/caller, background stub and UI jumps; no actual game draw/presentation witness'});
+}
 if(!isMainThread){
  if(workerData.observed){
   // Execute the exact serialized production Worker attachment, with only the
@@ -170,14 +255,19 @@ if(!isMainThread){
  globalThis.fixtureWorkerSHA=hash(src);m.filename=filename;m.paths=module.paths;m._compile(src.toString(),filename);
  workerData.port.once('message',()=>physical().catch(e=>parentPort.postMessage({failure:e.stack})));
 }else{
- async function one(variant,observed,trace=false,badBinding=false,init=false,forwardGuestLogs=false){
-  const bytes=fs.readFileSync(path.join(ROOT,'build',variant)),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
+ // Read each existing module once for this process. Shared builds may replace
+ // the path between parity arms; one in-memory fixture keeps their identity
+ // exact without copying/restoring modules or asserting historical closure.
+ const fixtureModules=new Map();
+ async function one(variant,observed,trace=false,badBinding=false,init=false,forwardGuestLogs=false,draw=false){
+  if(!fixtureModules.has(variant))fixtureModules.set(variant,fs.readFileSync(path.join(ROOT,'build',variant)));
+  const bytes=fixtureModules.get(variant),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
   const {port1,port2}=new MessageChannel(),sigs=require('../lib/host-import-sigs.generated.json').sigs;
   let brokerLogBlocks=0;
   const broker=require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>{
    if(!['log_block','log','log_i32','beep_process_begin','beep_thread_begin','midi_stream_service'].includes(n))throw Error('unexpected fixture broker '+n);if(n==='log_block')brokerLogBlocks++;return 0;
   }])),sigs);
-  const module=await WebAssembly.compile(bytes),w=new Worker(__filename,{workerData:{port:port2,observed,trace,badBinding,initializer:init,wasmHash:hash(bytes)},transferList:[port2]});
+  const module=await WebAssembly.compile(bytes),w=new Worker(__filename,{workerData:{port:port2,observed,trace,badBinding,initializer:init,draw,wasmHash:hash(bytes)},transferList:[port2]});
   return new Promise((resolve,reject)=>{let seq=0,done=false;const commands=[];
    const end=async(error,value)=>{if(done)return;done=true;clearTimeout(timer);await w.terminate();port1.close();error?reject(error):resolve({...value,commands,brokerLogBlocks,moduleSHA:hash(bytes)});};
    const timer=setTimeout(()=>end(Error('fixture Worker deadline')),40000);w.on('error',e=>end(e));
@@ -333,8 +423,21 @@ if(!isMainThread){
   }
   console.log('PASS default/explicit/legacy block forwarding and synchronous exception semantics');
  }
+ async function drawFixtures(){
+   const results=[];
+   for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
+    const control=await one(variant,false,false,false,false,false,true),trace=await one(variant,false,true,false,false,false,true),observed=await one(variant,true,false,false,false,false,true);
+    for(const arm of [trace,observed]){assert.equal(arm.moduleSHA,control.moduleSHA,'same current module fixture');assert.deepEqual(arm.results,control.results);assert.deepEqual(arm.commands.slice(0,control.commands.length),control.commands);assert.equal(arm.memorySHA256,control.memorySHA256);}
+    results.push({variant,control,trace,observed});console.log('PASS original draw instruction fragments, independent arithmetic oracle and full memory/register/command parity',variant);
+   }
+   return results;
+ }
  (async()=>{
   blockForwardingControls();
+  if(process.argv.includes('--draw-only')){
+   const results=await drawFixtures();
+   if(process.env.STRONGHOLD_CALLBACK_RESULT)fs.writeFileSync(process.env.STRONGHOLD_CALLBACK_RESULT,JSON.stringify({passed:true,offlineOnly:true,fixtureOnly:true,results},null,2)+'\n');return;
+  }
   if(process.argv.includes('--initializer-only')){
    const results=[];
    for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
@@ -353,7 +456,7 @@ if(!isMainThread){
    if(process.env.STRONGHOLD_CALLBACK_RESULT)fs.writeFileSync(process.env.STRONGHOLD_CALLBACK_RESULT,JSON.stringify({passed:true,offlineOnly:true,results,media:{path:EXE,sha256:api.EXE_SHA256}},null,2)+'\n');
    return;
   }
-  const evidence=await composition(),results=[];
+  const evidence=await composition(),drawResults=await drawFixtures(),results=[];
   for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
    const control=await one(variant,false),trace=await one(variant,false,true),observed=await one(variant,true);
    assert.equal(observed.workerSourceSHA,control.workerSourceSHA);assert.equal(trace.workerSourceSHA,control.workerSourceSHA);
@@ -369,7 +472,7 @@ if(!isMainThread){
   const wrongInit=[];for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
    const rejected=await one(variant,true,false,true);assert(rejected.badBindingRejected);assert.equal(rejected.commands.length,0);wrongInit.push({variant,...rejected});
   }
-  const out={passed:true,offlineOnly:true,fixtureOnly:true,evidence,results,wrongInit,media:{path:EXE,sha256:api.EXE_SHA256}};
+  const out={passed:true,offlineOnly:true,fixtureOnly:true,evidence,results,drawResults,wrongInit,media:{path:EXE,sha256:api.EXE_SHA256}};
   if(process.env.STRONGHOLD_CALLBACK_RESULT)fs.writeFileSync(process.env.STRONGHOLD_CALLBACK_RESULT,JSON.stringify(out,null,2)+'\n');
  })().catch(e=>{console.error(e.stack);process.exitCode=1;});
 }
