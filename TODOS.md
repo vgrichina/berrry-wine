@@ -1377,6 +1377,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 ## GL/D3D reconciliation — October 7
 
+  Current update 2026-11-04T21:21:58.740754+00:00: MDK2 cd7880453 composed startup/fresh Title-NewGame-Medium verified576sealed34295096B with main/origin ancestry;38focused+lockedbuildPASS. Medium observation hit fixed100000boundary limit, terminal13000history unknown; no loading/gameplay claim. Fresh 01a1a870-679e-70d1-98b1-d686d388ffe6 session65211 taskmdk2-measured-native-boundary-gameplay-nov04 measures real native observation work and finite budget/trace preservation before ONEoriginal afterStronghold release. Eachlaunch policyPASS root5070495744B Mem2462085120B live2. GLatomicACK/Stronghold/MDK threeworkers; localbrowser serialized. Full27/crashfreedom remainopen.
+
 - [ ] GL/Direct3D corpus: every 3D app works on software and WebGL
   id: GLD3D-CORPUS-27-20261006
   Current update 2026-11-04T09:43Z: Publishedfb9b73fed repairs mixed FVF stride, coordinate selector and FLOAT1 defaults; eight new WebGL cells pass 1024 draws/2960 pixel observations. Root verified75 artifacts and main ancestry. New GPU negative controls did not execute before launcher timeout; transformed FLOAT3/4 explicitly reject. Fresh worker01a1a5ee-8d65-7c20-a4bd-bdcf56108b22 implements transformed FLOAT3/4 end to end on bx_6k76zbug; hard close10:10/recover10:15/expiry10:20:16Z, coordinator shutdown. Earlier sixteen positive cells and36 fault controls retain their exact scope; full27/generated coordinates/hardware remain open.
