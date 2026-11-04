@@ -6,13 +6,13 @@ Evidence: `scratch/runs/20261103-telegram150-game-identification/post.json` and 
 
 ## Target and current state
 
-The original UK v1.1 multiplayer demo is acquired, extracted without installer execution, and pinned per file. Its readme confirms three offline skirmishes as well as multiplayer. No launch, registered selector entry or gameplay is claimed. The existing `crusaders_mm_demo` is a different game.
+The original UK v1.1 multiplayer demo is registered as `stronghold_crusader_demo` and has reached its first offline skirmish, **Zephyr — Very Easy (1/10)**. Ordinary construction placed a hovel beside the keep; it persisted after switching construction categories, and housing capacity increased from 10 to 18. This is bounded CLI software-rendered gameplay evidence, not a completed battle or browser/multiplayer qualification. The existing `crusaders_mm_demo` is a different game.
 
 An acquisition candidate is https://www.moddb.com/games/stronghold-crusader/downloads/stronghold-crusader-demo (listed `StrongholdCrusadersinglems.rar`, 92,080,301 bytes). The cached download link returned HTTP410; this is a stale mirror URL, not proof the demo is unavailable. Alternate original-demo listing: https://games.softpedia.com/get/Games-Demo/Stronghold-Crusader.shtml (`stronghold_crusader_demo_v1-1_uk.exe`). Listing metadata is not an accepted executable pin. Obtain a direct original package and inspect it before trusting its identity. Do not substitute Extreme, HD, Definitive Edition, a wrapper downloader or a fan engine.
 
 ## Bounded next action
 
-Fresh task: `scratch/usage-watch/stronghold-crusader-original-next.task.txt`, prioritized for the next free production slot under the owner's cap of two. Acquire/extract the demo, register actual installed paths, reach the ordinary menu and attempt a visible unit order or building placement. Record the first real failure if progress stops. Runtime tests remain serialized behind the existing legacy/Alice assignments.
+The registration and first-skirmish construction task is complete; see the tested route below. Acquisition/extraction and the media inventory are accepted; use the existing installed files. Any broader gameplay or browser work is a separate bounded follow-up. The coordinator owns shutdown of this task's box, handed back running with unique evidence and both modules recovered locally.
 
 Git is the source archive: record commit and relevant binary diff, never source-tree tarballs. Reference original media by path and hash, provision only what the test runtime needs, and never copy media into repeated evidence packages. A compilation container is not the target build or download prerequisite.
 
@@ -45,4 +45,35 @@ python3 scratch/runs/20261103-stronghold-crusader-original/prepare.py
 
 The run retains the extraction logs, CAB listing, static PE inspection, readme text, pin inventory, manifest-generation recipe, and `registry-proposal.patch`. The patch is unapplied: `lib/apps.js` has not been claimed or edited. Its in-memory registry evaluation and all companion path/size/guest-mapping checks passed, including the production lazy-loading policy. An initial preparation assertion incorrectly expected the lazy-policy return value to be an array; that harness failure is retained separately and was corrected to read `.files`. It was not a game failure.
 
-After explicit runtime release, check ownership before applying the registry patch, run focused registry/path checks and the mandatory locked build before any code commit, then test ordinary startup and offline gameplay on the fresh assigned runtime. Preserve exact tested source/module/media identities and the first actual failure. Runtime, menu, gameplay, build, and publication of a functioning registration are still pending; static preparation does not establish compatibility.
+The unapplied-patch and runtime-pending statements above describe the preparation checkpoint, superseded by the registration and execution below.
+
+## Registered first skirmish and ordinary construction — 2026-11-04
+
+Evidence: `scratch/runs/20261104-stronghold-registered-skirmish/`. Runtime source is input commit `dd78dad0b8322a8f4dbb7e615a890c3132437c57` plus the owned registry/census changes in `relevant-tracked.patch`. `git-blob-references.json` names 386 exact Git blobs; no source archive was made. The registration selects the existing installed EXE, guest path `c:\strongholdcrusaderdemo\Stronghold Crusader multiplayer demo.exe`, working directory `c:\strongholdcrusaderdemo`, and the accepted 1,853-companion manifest. It retains `requiredFiles: true` and concurrency 10. No guest binary, script, save or media was patched.
+
+The coordinator's board release at 00:12:03Z and worker ACK at 00:12:15Z preceded allocation. Fresh TTL3600 box `bx_pmfcmfw2` was recorded before use, expiry **2026-11-04T01:12:18.560Z**, shutdown owner **coordinator**. It was handed back RUNNING/idle; the worker did not stop, delete or resume it. `box.json`, `runtime-release-ack.json`, and `boat-handoff-info.json` preserve identity and lifecycle observations.
+
+The exact EXE SHA-256 remains `9024c533095f2227b0105b7e8a9e4cf28ec4fb206b165629787b2c97cf99f13f`. Both built modules were recovered from the runtime and compared byte-for-byte with the staged modules:
+
+| Module | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Canonical | 2,143,540 | `cffca869b541e6eff12ae3a6b74c4476977e0a7e23cd43d8ec5ba8faecd4bcee` |
+| Compatibility | 2,146,153 | `580f49f3c78d26e6855efa0beb37046d03ea24690ff98cfcb3e94ce5e6cb1ee3` |
+
+PID 18778 actually compiled and instantiated the canonical module; the compatibility module was built and recovered, not selected for this Node 24.22.1 execution. Runtime loaded the original adjacent Miles and Bink DLLs. All 2,255 sealed source/media/helper/module inputs matched after execution. `local-recovery-verified.json` and `remote-recovery-manifest.json` seal 106 recovered run files plus both modules with full SHA-256, including all unique logs, captures and sequential input receipts.
+
+Launch used the production registered selector `--app=stronghold_crusader_demo`, `--no-build --wasm=build/wine-assembly.wasm`, software rendering, cooperative guest threads, `--batch-size=100000`, `--tick-ms-per-batch=5`, and the frozen control channel. The CLI backing canvas initially defaulted to 640×480 while the game window requested 800×600; the ordinary harness `canvas-resize:800:600` at batch 320 corrected capture dimensions without changing guest state. Use `--screen=800x600` from launch on a follow-up.
+
+The completed route, with images under `recovered/game/`:
+
+1. `startup64.png`: original castle artwork; `canvas321.png`: Firefly splash. Escape, then the ordinary title prompt at `menu579.png`.
+2. Hold Start Game at (398,274), then release: `title_up715.png` shows the main menu and **Demo V1.1**. Hold Crusader at (304,144), release, then select the left map at (266,305). The right towers are the unavailable Crusader trail; that exploratory selection is retained.
+3. Hover first numbered button (68,491): `very_easy1003.png` identifies **Zephyr — Very Easy (1/10)**. Select it, then `easy1075.png` shows the scenario description and Normal Game. Start with the green hand at (717,568).
+4. `load1659.png` and `world1915.png`: live keep and construction UI. Choose Town Buildings at (145,578), then Hovel at (46,520). `hovel_preview2187.png` shows the ordinary placement preview at (190,300), cost six wood.
+5. Hold at (190,300) for 16 batches and release; `hovel_placed2267.png` records placement. Escape opened Game Options, so Resume Game was used. Switch to Castle Buildings at (33,578), move the cursor away, and inspect `placed_verified2749.png`: the hovel remains beside the keep, the preview is gone, and capacity reads **5/18**, compared with the initial **1/10**. `game-result.json` identifies before/preview/after images.
+
+`control-verification.json` checks all **180 sequential completed requests**, including 59 step requests, maximum 64 batches each, exact terminal batch progression to **2749**, 38 ordinary input commands, and no outstanding request. Inputs use the production mouse/key path; held presses span guest frames. One-shot click at the title only produced hover, and one-shot right-click did not cancel the hovel preview; category switching provided the clean final proof. The harness then received a normal quit request; Node exited 0, its process was absent, and port 8123 was closed before evidence recovery. The box remained running for coordinator custody.
+
+Validation: actual registry/picker/path/size/guest-mapping/lazy-policy checks for all 1,853 companions; `node test/test-app-files-policy.js`; `node test/test-callback-ownership-census.js`; mandatory `flock /tmp/wine-build.lock bash tools/build.sh`; visible reviewed construction captures and completed receipt checks. The first build stopped on the `lib/apps.js` whole-file census seal; only declarative selector/path data changed, so its hash and review reason were updated, retaining ownership pending. The subsequent full build passed. A provisioning helper omitted `registry-path-check.js`; that staging failure is preserved in `provision.log`, repaired by uploading the single missing helper, and the remote path check passed before launch. **No production game failure or runtime fix was encountered in this route.**
+
+Recovery: retain the existing installed media and `installed-pin.json`; source comes from the recorded Git blobs plus `relevant-tracked.patch`. `provision.py` documents direct per-file verification/staging, `game-drive.py` the exact launch, `route.py` bounded ordinary controls, and `recover.py` full-SHA recovery. Do not rerun provisioning into the occupied root or resume the old box. A new authorized run should use a fresh runtime and the published registration, with original pinned media and the recorded module hashes.
