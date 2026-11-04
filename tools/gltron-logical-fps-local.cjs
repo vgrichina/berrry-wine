@@ -10,8 +10,9 @@ const ROOT = path.resolve(__dirname, '..');
 const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
 const write = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
-const HARD_BROWSER_END = Date.parse('2026-11-04T21:15:00Z');
-const HARD_CLEANUP_END = Date.parse('2026-11-04T21:18:00Z');
+const BROWSER_MS = 360000, CLEANUP_MS = 180000, BOOTSTRAP_MS = 60000, COMMAND_MS = 60000;
+const HARD_BROWSER_END = Date.parse('2026-11-04T22:15:00Z');
+const HARD_CLEANUP_END = Date.parse('2026-11-04T22:18:00Z');
 const requiredShellPaths = () => ['manifest.webmanifest',
   ...require('../lib/font-substitutions').BUNDLED_BITMAP_FONTS.map(file => 'fonts/' + file),
   ...require('../lib/process-boot').SYSTEM_DATA_FILES.map(file => file.url),
@@ -25,22 +26,84 @@ function validateShellPins(pins) {
   }
 }
 
-function prepare(run) {
+async function bootInputs() {
+  const { APPS } = require('../lib/apps');
+  const app = APPS.gltron, registry = require('../lib/dll-registry');
+  const scripts = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')
+    .split('const WINE_RUNTIME_SCRIPTS = Object.freeze([')[1].split(']);')[0];
+  const paths = new Set(['index.html', ...requiredShellPaths(),
+    ...[...scripts.matchAll(/"([^"\n]+\.js)"/g)].map(m => m[1]),
+    'build/wine-assembly.wasm', 'build/wine-assembly.compat.wasm']);
+  // Conservative production superset also seals lazy workers/worklets, shaders,
+  // source-compile fallback includes and assets reached after app startup.
+  for (const file of git('ls-files', '-z', '--', 'lib', 'src', 'fonts', 'icons', 'tools/watx-src').split('\0').filter(Boolean)) paths.add(file);
+  const byName = new Map(app.files.map(f => [path.basename(f.url).toLowerCase(), f.url]));
+  const missing = [];
+  const graph = await require('../lib/process-boot').resolveDllGraph({
+    exeBytes: fs.readFileSync(path.join(ROOT, 'test/' + app.exe)), seeds: app.dlls,
+    detectRequiredDlls: require('../lib/dll-loader').detectRequiredDlls,
+    loadSpec: async spec => {
+      const name = path.basename(spec), url = spec.includes('/') ? spec : registry.DLL_PATHS[name.toLowerCase()] || byName.get(name.toLowerCase());
+      if (!url) { missing.push(spec); return null; }
+      const file = url.startsWith('test/') ? url : 'test/' + url;
+      if (!fs.existsSync(path.join(ROOT, file))) { missing.push(file); return null; }
+      const bytes = fs.readFileSync(path.join(ROOT, file)); paths.add(file);
+      return { name, bytes, path: file };
+    },
+    onMissing: name => { missing.push(name); },
+  });
+  if (missing.length) throw Error('missing production DLLs: ' + missing.join(', '));
+  for (const f of app.files) paths.add('test/' + f.url);
+  return { paths: [...paths], dlls: graph.map(({ name, path }) => ({ name, path })) };
+}
+function validateRequiredPins(pins, paths) {
+  for (const file of paths) {
+    const b = fs.readFileSync(path.join(ROOT, file));
+    if (!pins.some(p => p.path === file && p.bytes === b.length && p.sha256 === sha256(b)))
+      throw Error('required production pin missing or stale: ' + file);
+  }
+}
+function validateHistory(pins, rows) {
+  for (const row of rows) if (!pins.some(p => p.path === row.path && p.bytes === row.bytes && p.sha256 === row.sha256))
+    throw Error('prior HTTP pin missing or stale: ' + row.path);
+  return { requests: rows.length, distinctPaths: new Set(rows.map(r => r.path)).size, pass: true };
+}
+async function validateHttpPaths(pins, urls) {
+  const { resolveStaticPath } = require('../test/static-server');
+  for (const url of urls) {
+    const resolved = await resolveStaticPath(ROOT, url, {
+      rewritePath: p => p.startsWith('/binaries/') ? '/test' + p : p });
+    if (resolved.status !== 200) throw Error('offline HTTP route failed: ' + url + ' status ' + resolved.status);
+    const file = path.relative(ROOT, resolved.file), bytes = fs.readFileSync(resolved.file);
+    if (!pins.some(p => p.path === file && p.bytes === bytes.length && p.sha256 === sha256(bytes)))
+      throw Error('offline HTTP route pin mismatch: ' + url);
+  }
+  return { routes: urls.length, pass: true, serverStarted: false, browserStarted: false };
+}
+async function prepare(run) {
   fs.mkdirSync(run, { recursive: true });
   const offline = audit(ROOT);
+  const boot = await bootInputs();
+  write(path.join(run, 'production-boot-inputs.json'), boot);
   write(path.join(run, 'offline-audit.json'), offline);
   const files = new Set(git('ls-files', '-z', '--', 'src', 'lib', 'host.js', 'index.html',
     'style.css', 'build', 'fonts', 'manifest.webmanifest', 'test/static-server.js').split('\0').filter(Boolean));
   for (const file of ['build/wine-assembly.wasm', 'build/wine-assembly.compat.wasm']) files.add(file);
-  for (const file of requiredShellPaths()) files.add(file);
+  for (const file of boot.paths) files.add(file);
   for (const file of ['tools/gltron-logical-fps.cjs', 'tools/gltron-logical-fps-local.cjs', 'test/test-gltron-logical-fps.js']) files.add(file);
   for (const file of offline.media) files.add(file.path);
-  // These existing files are fetched by the normal shell / DLL loader.
-  for (const file of git('ls-files', '-z', '--', '*.js', '*.css', '*.json', '*.png', '*.svg', '*.ico', '*.woff2', '*.dll').split('\0').filter(Boolean)) files.add(file);
+  // Root shell assets only; unrelated agents' tools and evidence are not boot
+  // dependencies. Production directories and the actual DLL graph are above.
+  for (const file of git('ls-files', '-z', '--', '*.js', '*.css', '*.json', '*.ico').split('\0').filter(p => p && !p.includes('/'))) files.add(file);
   if (fs.existsSync(path.join(ROOT, 'lib/wininit-boot.js'))) files.add('lib/wininit-boot.js');
   const pins = [...files].filter(p => fs.existsSync(path.join(ROOT, p)) && fs.statSync(path.join(ROOT, p)).isFile())
     .map(p => { const b = fs.readFileSync(path.join(ROOT, p)); return { path: p, bytes: b.length, sha256: sha256(b) }; });
   validateShellPins(pins);
+  validateRequiredPins(pins, boot.paths);
+  const prior = path.join(ROOT, 'scratch/runs/20261104-gltron-production-frame-counter');
+  const history = ['software', 'webgl'].flatMap(arm => fs.readFileSync(path.join(prior, arm, 'served.jsonl'), 'utf8').trim().split('\n').map(JSON.parse));
+  write(path.join(run, 'prior-http-check.json'), validateHistory(pins, history));
+  write(path.join(run, 'offline-http-check.json'), await validateHttpPaths(pins, [...boot.paths.map(p => '/' + (p.startsWith('test/binaries/') ? p.slice(5) : p)), ...history.map(r => r.url)]));
   const relevant = ['host.js', 'index.html', 'lib', 'src', 'test/static-server.js',
     'tools/gltron-logical-fps.cjs', 'tools/gltron-logical-fps-local.cjs', 'test/test-gltron-logical-fps.js'];
   fs.writeFileSync(path.join(run, 'relevant-source.patch'), execFileSync('git', ['diff', 'HEAD', '--binary', '--', ...relevant], { cwd: ROOT }));
@@ -109,9 +172,9 @@ function pageState() {
 }
 
 function requireReleases(board) {
-  const mdk = board.split('\n').findLast(line => line.includes('mdk2-poll-repair LOCAL HEAVY RELEASE'));
-  const stronghold = board.split('\n').findLast(line => line.includes('stronghold-current-hover LOCAL HEAVY RELEASE'));
-  if (!mdk || !stronghold) throw Error('requires explicit MDKpollhistory AND stronghold-current-hover releases');
+  const mdk = board.split('\n').findLast(line => line.includes('mdk2-repaired-original LOCAL HEAVY RELEASE'));
+  const stronghold = board.split('\n').findLast(line => line.includes('stronghold-repaired-onward LOCAL HEAVY RELEASE'));
+  if (!mdk || !stronghold) throw Error('requires explicit mdk2-repaired-original AND stronghold-repaired-onward releases');
   return { mdk, stronghold };
 }
 
@@ -137,12 +200,25 @@ async function normalClose(browser, record, timeoutMs = 60000) {
   } finally { clearTimeout(timer); child.removeListener('exit', listener); browser.disconnect(); }
 }
 
+function processIdentity(pid) {
+  const stat = fs.readFileSync('/proc/' + pid + '/stat', 'utf8');
+  return { pid, startTicks: stat.slice(stat.lastIndexOf(')') + 2).split(' ')[19],
+    cmdline: fs.readFileSync('/proc/' + pid + '/cmdline', 'utf8').split('\0').filter(Boolean) };
+}
+async function within(operation, timeoutMs, label) {
+  let timer;
+  try { return await Promise.race([Promise.resolve().then(operation), new Promise((_, reject) => {
+    timer = setTimeout(() => reject(Error(label + ' deadline')), timeoutMs);
+  })]); } finally { clearTimeout(timer); }
+}
+
 async function runPair(run, webglOnly = false) {
   const releases = requireReleases(fs.readFileSync(path.join(ROOT, 'messageboard.txt'), 'utf8'));
   const pins = JSON.parse(fs.readFileSync(path.join(run, webglOnly ? 'webgl-preflight/runtime-pins.json' : 'runtime-pins.json')));
   validateShellPins(pins.pins);
+  validateRequiredPins(pins.pins, (await bootInputs()).paths);
   for (const pin of pins.pins) if (sha256(fs.readFileSync(path.join(ROOT, pin.path))) !== pin.sha256) throw Error('pin changed: ' + pin.path);
-  if (Date.now() + 360000 > HARD_CLEANUP_END || Date.now() + 180000 > HARD_BROWSER_END) throw Error('full reserve unavailable');
+  if (Date.now() + BROWSER_MS + CLEANUP_MS > HARD_CLEANUP_END || Date.now() + BROWSER_MS > HARD_BROWSER_END) throw Error('full reserve unavailable');
   write(path.join(run, 'resource-releases.json'), releases);
   for (const module of ['build/wine-assembly.wasm', 'build/wine-assembly.compat.wasm']) {
     write(path.join(run, (webglOnly ? 'webgl-' : '') + 'preflight-' + path.basename(module) + '.json'), await probeCompiled(module));
@@ -161,22 +237,40 @@ async function runPair(run, webglOnly = false) {
     fs.mkdirSync(out); fs.mkdirSync(path.join(out, 'commands'));
     const save = (name, value) => write(path.join(out, name + '.json'), value);
     const log = (name, value) => fs.appendFileSync(path.join(out, name + '.jsonl'), JSON.stringify({ at: new Date().toISOString(), ...value }) + '\n');
-    let browser, page, server, chromeStarted, timer, closed = false, failure = null, number = 0, closingPromise;
+    let browser, page, server, chromeStarted, timer, closed = false, failure = null, number = 0, closingPromise, launchPromise;
     const held = new Set();
     function close(reason) {
       if (closingPromise) return closingPromise;
       closed = true; clearTimeout(timer);
       closingPromise = (async () => {
-      for (const key of held) await page?.keyboard.up(key).catch(() => {});
-      const child = browser?.process();
       const port = server?.address();
-      try { if (browser) await normalClose(browser, row => log('lifecycle', row)); }
+      const cleanupDeadline = Math.min(Date.now() + CLEANUP_MS, HARD_CLEANUP_END);
+      const remaining = () => {
+        const ms = cleanupDeadline - Date.now();
+        if (ms < 1) throw Error('absolute cleanup deadline');
+        return ms;
+      };
+      let cleanupError = null;
+      try {
+        for (const key of held) await within(() => page.keyboard.up(key), remaining(), 'key release');
+        if (!browser && launchPromise) await within(() => launchPromise, remaining(), 'pending launch cleanup');
+        if (browser) await normalClose(browser, row => log('lifecycle', row), remaining());
+      }
+      catch (error) { cleanupError = String(error); throw error; }
       finally {
         if (chromeStarted) browserMs += Date.now() - chromeStarted;
-        if (server) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
+        try {
+          if (server) {
+            server.closeAllConnections();
+            await within(() => new Promise(resolve => server.close(resolve)), remaining(), 'server closure');
+          }
+        } catch (error) { cleanupError ||= String(error); }
+      const child = browser?.process();
       save('cleanup', { reason, chromePid: child?.pid, exitCode: child?.exitCode, signal: child?.signalCode,
-        cumulativeBrowserMs: browserMs, nodePid: process.pid, port, boxId: null, boxState: null, boxExpiry: null });
+        cleanupDeadline, cleanupError, cumulativeBrowserMs: browserMs, nodePid: process.pid,
+        serverListening: !!server?.listening, port, boxId: null, boxState: null, boxExpiry: null });
       }
+      if (cleanupError) throw Error(cleanupError);
       })();
       return closingPromise;
     }
@@ -191,20 +285,24 @@ async function runPair(run, webglOnly = false) {
           return {};
         } });
       chromeStarted = Date.now();
-      const remainingMs = Math.min(180000 - browserMs, HARD_BROWSER_END - chromeStarted);
+      const remainingMs = Math.min(BROWSER_MS - browserMs, HARD_BROWSER_END - chromeStarted);
       if (remainingMs < 30000) throw Error('insufficient remaining browser budget');
-      browser = await puppeteer.launch({ headless: false, executablePath: '/usr/bin/google-chrome',
-        userDataDir: path.join(out, 'chrome-profile'), protocolTimeout: 15000, timeout: 20000,
-        args: ['--no-sandbox', '--enable-unsafe-swiftshader', '--disable-dev-shm-usage', '--disable-background-networking'] });
+      await within(async () => {
+      launchPromise = puppeteer.launch({ headless: false, executablePath: '/usr/bin/google-chrome',
+        userDataDir: path.join(out, 'chrome-profile'), protocolTimeout: 60000, timeout: 60000,
+        args: ['--no-sandbox', '--enable-unsafe-swiftshader', '--disable-dev-shm-usage', '--disable-background-networking'] }).then(value => { browser = value; return value; });
+      await launchPromise;
+      if (closed) throw Error('bootstrap closed');
       const child = browser.process();
       child.on('exit', (code, signal) => log('lifecycle', { event: 'chrome-exit', pid: child.pid, code, signal }));
       browser.on('disconnected', () => log('lifecycle', { event: 'browser-disconnected' }));
-      save('launch', { backend, chromePid: child.pid, nodePid: process.pid, chromeStarted,
+      save('launch', { backend, chromePid: child.pid, chromeIdentity: processIdentity(child.pid), nodeIdentity: processIdentity(process.pid), nodePid: process.pid, chromeStarted,
         browserVersion: await browser.version(), argv: child.spawnargs, remainingMs, pinsCommit: pins.commit,
         browserEnd: new Date(Math.min(chromeStarted + remainingMs, HARD_BROWSER_END)).toISOString(),
         cleanupEnd: new Date(Math.min(chromeStarted + remainingMs + 180000, HARD_CLEANUP_END)).toISOString() });
       timer = setTimeout(() => { stopped = true; close('cumulative browser deadline').catch(error => log('cleanup-error', { error: String(error) })); }, remainingMs - (Date.now() - chromeStarted));
-      page = await browser.newPage(); await page.setViewport({ width: 1200, height: 900 });
+      page = await browser.newPage();
+      page.setDefaultTimeout(60000); await page.setViewport({ width: 1200, height: 900 });
       await page.setCacheEnabled(false); await page.evaluateOnNewDocument(preload);
       page.on('console', m => log('console', { type: m.type(), text: m.text().slice(0, 12000) }));
       page.on('pageerror', error => { failure ||= String(error); log('pageerror', { error: String(error) }); });
@@ -222,24 +320,42 @@ async function runPair(run, webglOnly = false) {
       await page.click('button[onclick="launchApp()"]');
       await page.waitForFunction(() => window.wine?.running, { timeout: 30000 });
       save('ready', await page.evaluate(pageState));
+      }, BOOTSTRAP_MS, '60 second bootstrap');
       console.log('READY ' + backend + ' ' + out);
+      let commandAt = Date.now();
       while (!closed && !failure) {
+        if (Date.now() - commandAt > COMMAND_MS) throw Error('60 second command deadline');
         const file = path.join(out, 'commands', number + '.json');
         if (!fs.existsSync(file)) { await pause(100); continue; }
+        commandAt = Date.now();
         const i = number++, c = JSON.parse(fs.readFileSync(file));
         log('commands', { i, ...c });
         try {
+          await within(async () => {
           if (c.action === 'shot') {
             if (!/^[a-z0-9-]+$/.test(c.name) || fs.existsSync(path.join(out, c.name + '.png'))) throw Error('fresh capture required');
             await page.screenshot({ path: path.join(out, c.name + '.png') }); save(c.name, await page.evaluate(pageState));
           } else if (c.action === 'key') {
             if (!['Enter', 'Escape', 'a', 's'].includes(c.key) || !c.review || !fs.existsSync(path.join(out, c.review + '.png'))) throw Error('reviewed original route required');
+            await page.focus('#screen');
             await page.keyboard.down(c.key); held.add(c.key); await pause(100);
             await page.keyboard.up(c.key); held.delete(c.key);
           } else if (c.action === 'measure') {
             if (!c.review || !fs.existsSync(path.join(out, c.review + '.png'))) throw Error('gameplay review required');
             const token = backend + '-' + Date.now();
-            const armed = await page.evaluate(installPageCounter, BOUNDARY, token); save('armed', armed);
+            let armed;
+            try { armed = await page.evaluate(installPageCounter, BOUNDARY, token); }
+            catch (error) {
+              try {
+                save('counter-rejection', await within(() => page.evaluate(() => ({
+                  rejection: window.__gltronCounterRejection || null,
+                  atMs: performance.now(),
+                })), 5000, 'rejected counter evidence'));
+                save('rejected-owner-context', await within(() => page.evaluate(pageState), 5000, 'rejected owner evidence'));
+              } catch (captureError) { save('counter-rejection-capture-error', { error: String(captureError) }); }
+              throw error;
+            }
+            save('armed', armed);
             await pause(5500);
             const raw = await page.evaluate(() => window.__gltronCounter.finish()); save('raw-counter-window', raw);
             if (raw.invalid) throw Error(raw.invalid);
@@ -250,6 +366,7 @@ async function runPair(run, webglOnly = false) {
             if (c.action === 'quit') stopped = true;
             await close('operator normal closure');
           } else throw Error('unsupported action');
+          }, ['next', 'quit'].includes(c.action) ? CLEANUP_MS : COMMAND_MS, 'bounded command');
           save('reply-' + i, { ok: true, at: new Date().toISOString() });
         } catch (error) {
           failure ||= error.stack || String(error); save('reply-' + i, { ok: false, error: failure });
@@ -263,7 +380,7 @@ async function runPair(run, webglOnly = false) {
   write(path.join(run, webglOnly ? 'runtime-summary-webgl.json' : 'runtime-summary.json'), { browserMs, stopped, finishedAt: new Date().toISOString(), boxId: null, boxState: null, boxExpiry: null });
 }
 
-module.exports = { prepare, preload, pageState, requireReleases, normalClose, requiredShellPaths, validateShellPins };
+module.exports = { prepare, preload, pageState, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
 if (require.main === module) {
   const [action, run] = process.argv.slice(2);
   if (!run || !['--prepare', '--run', '--run-webgl'].includes(action)) throw Error('usage: --prepare|--run|--run-webgl RUN');

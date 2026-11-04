@@ -248,7 +248,21 @@ async function installPageCounter(boundary, token) {
   };
   // Check the authentic scene before arming; dt at an arbitrary host boundary
   // need not be positive. The original branch, not this snapshot, filters dt0.
-  if (read32(boundary.currentCallbacks).value !== boundary.callbackTable) throw Error('not active gameCallbacks');
+  const callbacksBeforeArm = read32(boundary.currentCallbacks);
+  if (callbacksBeforeArm.value !== boundary.callbackTable) {
+    // Preserve the rejected live translation before the runner closes. A prior
+    // personally reviewed screenshot does not prove the scene still owns idle.
+    const beforeMs = performance.now();
+    window.__gltronCounterRejection = {
+      code: 'NOT_ACTIVE_GAME_CALLBACKS', token, generation,
+      expectedCallbacks: boundary.callbackTable, callbacks: callbacksBeforeArm,
+      game: read32(boundary.game2Pointer), threadId: e.get_current_thread_id(),
+      count: e.get_logical_frame_count() >>> 0, marker: e.get_logical_frame_addr() >>> 0,
+      pace: e.get_logical_frame_pace(), tierGuard: e.get_dbg_tier_guard(),
+      chain: e.get_block_chain(), uop: e.get_uop(), beforeMs, afterMs: performance.now(),
+    };
+    throw Error('not active gameCallbacks; observed 0x' + callbacksBeforeArm.value.toString(16));
+  }
   children();
   await w._setLogicalFrame(boundary.nonzeroDt, 0);
   window.__gltronCounter = state;

@@ -74,7 +74,7 @@ check('actual trace guards differ from production marker', () => {
 
 // Execute the exact browser adapter in a page-shaped VM: lifecycle and pointer
 // checks only. The separate compiled probe executes original machine code.
-async function pageFixture() {
+async function pageFixture({ installNow = true } = {}) {
   const memory = new WebAssembly.Memory({ initial: 1 });
   const view = new DataView(memory.buffer), addr = new Map([
     [BOUNDARY.currentCallbacks, 256], [BOUNDARY.game2Pointer, 260], [0x800030, 264] ]);
@@ -95,11 +95,27 @@ async function pageFixture() {
   const context = vm.createContext({ window, document, performance: { now: () => now += 0.01 },
     setInterval: () => 1, clearInterval() {}, DataView });
   const install = vm.runInContext('(' + installPageCounter.toString() + ')', context);
-  await install(BOUNDARY, 'fixture');
+  if (installNow) await install(BOUNDARY, 'fixture');
   return { window, wine, e, instance, view, state: window.__gltronCounter,
+    install,
     setTier: v => { tier = v; }, setFrozen: v => { frozen = v; } };
 }
 async function main() {
+  for (const rejectedCallbacks of [0, 0x42a860, 0x42a204]) {
+    const f = await pageFixture({ installNow: false });
+    f.view.setUint32(256, rejectedCallbacks, true);
+    await assert.rejects(f.install(BOUNDARY, 'review-to-arm-fixture'), /not active gameCallbacks; observed 0x/);
+    check('pre-arm scene change retains translated rejection ' + rejectedCallbacks.toString(16), () => {
+      const r = f.window.__gltronCounterRejection;
+      assert.equal(r.callbacks.va, BOUNDARY.currentCallbacks);
+      assert.equal(r.callbacks.offset, 256); assert.equal(r.callbacks.value, rejectedCallbacks);
+      assert.equal(r.expectedCallbacks, BOUNDARY.callbackTable);
+      assert.equal(r.generation, 1); assert.equal(r.threadId, 1);
+      assert.equal(r.marker, 0); assert.equal(r.pace, 0); assert.equal(r.tierGuard, 0);
+      assert.equal(f.e.get_logical_frame_addr(), 0); assert.equal(f.e.get_logical_frame_count(), 123);
+      assert.equal(f.window.__gltronCounter, undefined);
+    });
+  }
   for (const [name, mutate, message] of [
     ['owner replacement', f => { f.window.wine = {}; }, /runtime changed/],
     ['instance replacement', f => { f.wine.instance = { exports: f.e }; }, /runtime changed/],
@@ -134,7 +150,7 @@ async function main() {
     assert.equal(out.rows.length, 64); assert.match(out.invalid, /capacity/);
     assert.equal(bounded.e.get_logical_frame_addr(), 0);
   });
-  const { requireReleases, normalClose, requiredShellPaths, validateShellPins } = require('../tools/gltron-logical-fps-local.cjs');
+  const { requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within } = require('../tools/gltron-logical-fps-local.cjs');
   check('shell pin preflight rejects omitted fonts/manifest before Chrome', () => {
     const { sha256 } = require('../tools/gltron-logical-fps.cjs');
     const pins = requiredShellPaths().map(path => { const b = fs.readFileSync(path); return { path, bytes: b.length, sha256: sha256(b) }; });
@@ -143,11 +159,34 @@ async function main() {
     const bad = pins.map(p => ({ ...p })); bad[0].sha256 = 'bad';
     assert.throws(() => validateShellPins(bad), /shell pin/);
   });
-  check('both named resource releases are required', () => {
-    assert.throws(() => requireReleases('mdk2-poll-repair LOCAL HEAVY RELEASE'), /requires/);
-    assert.throws(() => requireReleases('stronghold-route-handoff LOCAL HEAVY RELEASE'), /requires/);
-    assert(requireReleases('mdk2-poll-repair LOCAL HEAVY RELEASE\nstronghold-current-hover LOCAL HEAVY RELEASE'));
+  const boot = await bootInputs();
+  const productionPins = boot.paths.map(path => { const b = fs.readFileSync(path); return { path, bytes: b.length, sha256: require('../tools/gltron-logical-fps.cjs').sha256(b) }; });
+  check('actual production boot graph includes original media, both modules and shared CRT', () => {
+    validateRequiredPins(productionPins, boot.paths);
+    assert(boot.dlls.some(d => d.path === 'test/binaries/dlls/msvcrt.dll'));
+    assert(boot.paths.includes('lib/process-boot.js'));
+    for (const p of productionPins) {
+      assert.throws(() => validateRequiredPins(productionPins.filter(r => r !== p), boot.paths), /production pin/);
+      assert.throws(() => validateRequiredPins(productionPins.map(r => r === p ? { ...r, sha256: 'stale' } : r), boot.paths), /production pin/);
+    }
   });
+  check('historical HTTP validation rejects unknown paths, stale hashes and sizes', () => {
+    assert(validateHistory(productionPins, productionPins).pass);
+    for (const patch of [{ path: 'missing' }, { sha256: 'stale' }, { bytes: -1 }])
+      assert.throws(() => validateHistory(productionPins, [{ ...productionPins[0], ...patch }]), /prior HTTP pin/);
+  });
+  check('current named resource releases required; historical releases grant nothing', () => {
+    assert.throws(() => requireReleases('mdk2-poll-repair LOCAL HEAVY RELEASE\nstronghold-current-hover LOCAL HEAVY RELEASE'), /requires/);
+    assert.throws(() => requireReleases('stronghold-repaired-onward LOCAL HEAVY RELEASE'), /requires/);
+    assert(requireReleases('mdk2-repaired-original LOCAL HEAVY RELEASE\nstronghold-repaired-onward LOCAL HEAVY RELEASE'));
+  });
+  assert((await validateHttpPaths(productionPins, ['/binaries/gltron-0.70/gltron.exe', '/build/wine-assembly.compat.wasm'])).pass);
+  await assert.rejects(validateHttpPaths(productionPins, ['/missing-gltron-asset']), /route failed/);
+  await assert.rejects(validateHttpPaths([], ['/binaries/gltron-0.70/gltron.exe']), /pin mismatch/);
+  check('actual offline HTTP rewrite rejects a missing asset and an unpinned response', () => {});
+  assert.equal(await within(async () => 7, 100, 'fixture'), 7);
+  await assert.rejects(within(() => new Promise(() => {}), 5, 'fixture'), /fixture deadline/);
+  check('bounded operation preserves success and rejects an unresolved operation', () => {});
   const { EventEmitter } = require('node:events');
   const child = new EventEmitter(); Object.assign(child, { pid: 123, exitCode: null, signalCode: null });
   const records = [], calls = [];
@@ -160,6 +199,18 @@ async function main() {
     assert.deepEqual(calls, ['Browser.close', 'disconnect']);
     assert(records.some(r => r.event === 'actual-owned-exit' && r.code === 0));
   });
+  for (const outcome of ['abnormal', 'deadline']) {
+    const c = new EventEmitter(); Object.assign(c, { pid: 124, exitCode: null, signalCode: null });
+    const rows = [];
+    const b = { process: () => c, disconnect() {}, target: () => ({ createCDPSession: async () => ({ send: async () => {
+      if (outcome === 'abnormal') queueMicrotask(() => { c.signalCode = 'SIGKILL'; c.emit('exit', null, 'SIGKILL'); });
+    } }) }) };
+    await assert.rejects(normalClose(b, r => rows.push(r), 10), outcome === 'abnormal' ? /abnormal/ : /deadline/);
+    check('closure preserves ' + outcome + ' instead of claiming normal exit', () => {
+      assert(!rows.some(r => r.event === 'actual-owned-exit' && r.code === 0));
+      if (outcome === 'abnormal') assert(rows.some(r => r.signal === 'SIGKILL'));
+    });
+  }
   for (const modulePath of process.argv.slice(2).length ? process.argv.slice(2) :
     ['build/wine-assembly.wasm', 'build/wine-assembly.compat.wasm']) {
     const out = await probeCompiled(modulePath);
