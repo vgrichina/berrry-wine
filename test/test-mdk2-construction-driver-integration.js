@@ -319,9 +319,10 @@ async function nativeOne(row, mode = 'success') {
   const {port1,port2} = new MessageChannel();
   const url = 'http://offline/lib/guest-worker.js?v=pinned', targetId = 'offline-main';
   const sigs = require('../lib/host-import-sigs.generated.json').sigs;
-  const broker = require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>0])),sigs);
+  let brokerLogBlocks=0;
+  const broker = require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>{if(n==='log_block')brokerLogBlocks++;return 0;}])),sigs);
   const worker = new Worker(__filename,{workerData:{mode,port:port2,wasmHash:row.sha256,url,targetId},transferList:[port2]});
-  let envelope, pendingSlice = 0; const commands=[];
+  let envelope, pendingSlice = 0; const commands=[],sliceResults=[];
   class PageWorker {
     constructor(url) { this.url=url; }
     postMessage(message) {
@@ -347,9 +348,9 @@ async function nativeOne(row, mode = 'success') {
       else if(m.t==='call') broker.serveCall(m);
       else if(m.t==='calls') broker.serveCalls(m);
       else if(m.t==='fixtureSliceRequest'){const c={t:'slice',seq:++pendingSlice,steps:mode.includes('measured')?1000:1};commands.push(c);worker.postMessage(c);}
-      else if(m.t==='sliceDone')port1.postMessage({t:'slice',message:m});
+      else if(m.t==='sliceDone'){sliceResults.push(m);port1.postMessage({t:'slice',message:m});}
       else if(m.t==='fixtureFailure'||m.t==='error')finish(Error(JSON.stringify(m)));
-      else if(m.pass||m.rejected)finish(null,{...m,commands});
+      else if(m.pass||m.rejected)finish(null,{...m,commands,...(mode.includes('rpc-diagnosis')?{brokerLogBlocks,sliceResults}:{})});
     });
     pageWorker.postMessage({t:'init',seq:0,module,memory,sigs,slot:0,endpointIdentity:1});
   });
@@ -366,6 +367,91 @@ for(const [mode,status]of [['boundary','boundary-limit'],['record','record-limit
   write(EVIDENCE,path.basename(row.path)+'.retained-'+mode+'.json',result.value);
   assert(result.value.pass,JSON.stringify(result.value));assert(result.value.terminal.terminal);
   assert.equal(result.value.terminal.observer.status,status);assert.equal(result.value.terminal.traced,false);
+});
+
+test('retained Medium keyup stalls in decoder at exactly the adaptive minimum',()=>{
+  const zlib=require('node:zlib'),base='scratch/runs/20261104-mdk2-medium-release-gameplay/browser/';
+  const mapping=new Map();
+  for(const name of ['released-headroom-2209.jsonl','released-headroom-2230.jsonl'])
+    for(const line of fs.readFileSync(path.join(integration.ROOT,'scratch/usage-watch',name),'utf8').trim().split('\n')){
+      const row=JSON.parse(line);if(row.original)mapping.set(row.original,row);
+    }
+  const inputs=[];
+  // These three small readbacks were never archived by either release sweep.
+  const unarchived=[
+    ['045a66244599d39aedd6c2114eaca8e5b75d3c922c2be4d383bcd8890ae8e45d',3366],
+    ['5a52d8f890373d468d51d5b21b6606ba979d58999834008b1c97126c9d7ad418',4036],
+    ['8d62160c8de58adc8f048a3bf0dc8e18c772e69b4da1412e0a72ef362bb3eea5',4706]
+  ];
+  function read(name){
+    const relative=base+name,file=path.join(integration.ROOT,relative);
+    const bytes=fs.existsSync(file)?fs.readFileSync(file):zlib.gunzipSync(fs.readFileSync(file+'.gz'));
+    const index=/^bounded-trace-end-([012])\.json$/.exec(name)?.[1];
+    const pin=mapping.get(relative)||(index===undefined?null:{sha256:unarchived[index][0],bytes:unarchived[index][1]});
+    assert(pin,'retained release mapping '+relative);
+    assert.equal(integration.sha(bytes),pin.sha256);assert.equal(bytes.length,pin.bytes);
+    inputs.push({path:relative,sha256:pin.sha256,bytes:pin.bytes});return JSON.parse(bytes);
+  }
+  const checkpoints=Array.from({length:29},(_,i)=>read('bounded-trace-end-'+i+'.json'));
+  for(const [i,current]of checkpoints.entries()){
+    assert.equal(current.report.fatal,null);assert.equal(current.report.observer.status,'running');
+    assert.equal(current.report.traceEnd,checkpoints[0].report.traceEnd);
+    assert(current.report.observer.records.every(r=>r.kind==='sample'));
+    if(i<2)continue;
+    const previous=checkpoints[i-1];
+    assert.equal(current.result.steps-previous.result.steps,16);
+    assert.equal(current.report.observer.blocks-previous.report.observer.blocks,16000);
+    const pc=current.report.observer.records.at(-1).pc;
+    assert(pc>=0x47cea0&&pc<0x47e100,'original decoder range');
+  }
+  const final=read('native-selector-75-released-71.json').main;
+  assert.equal(final.frozen.steps,4128);
+  assert.deepEqual(final.inputQueue,[{type:'key',hwnd:0,wParam:13,msg:257,lParam:3223060481}]);
+  assert.equal(final.nativeSelection.command.raw,1);assert.equal(final.nativeSelection.command.previous,1);
+  assert.equal(final.nativeSelection.current.value,'diff');
+  const original=integration.pinnedRuntime().files['lib/guest-rpc.js'];
+  assert(original.includes("(name === 'log' || name === 'log_i32' || name === 'log_api_exit'))"));
+  write(EVIDENCE,'retained-native-minimum.json',{inputs,
+    firstStep:checkpoints[0].result.steps,lastStep:final.frozen.steps,
+    decoderCheckpoints:27,boundariesPerStep:1000,keyup:final.inputQueue,
+    claim:'Frozen retained readbacks, not a resumed game or reconstructed decoder state'});
+});
+
+for(const row of integration.pinnedRuntime().pins.moduleFiles) test('original native decoder RPC diagnosis: '+row.path,async()=>{
+  const pinned=await nativeOne(row,'measured-rpc-diagnosis-pinned');
+  const quiet=await nativeOne(row,'measured-rpc-diagnosis-quiet');
+  const traceOnly=await nativeOne(row,'control-measured-rpc-diagnosis-quiet');
+  for(const arm of [pinned,quiet]){
+    assert(arm.value.returned);assert.equal(arm.value.report.fatal,null);
+    assert.equal(arm.value.report.observer.status,'measured-return');
+    assert(arm.value.checkpoints>1);assert(arm.value.blocks<50000000);
+  }
+  assert.equal(pinned.value.brokerLogBlocks,pinned.value.blocks);
+  assert.equal(quiet.value.brokerLogBlocks,0);
+  assert.equal(traceOnly.value.brokerLogBlocks,0);assert(traceOnly.value.returned);
+  for(const key of ['state','guestHash','outputHash','outputFirst','commands'])
+    assert.deepEqual(traceOnly.value[key],quiet.value[key],key);
+  for(const key of ['state','guestHash','outputHash','outputFirst','commands','trap']){
+    // Trap's full-memory hash includes the transport's differing RPC sequence.
+    if(key==='trap')assert.deepEqual(quiet.value.trap.state,pinned.value.trap.state);
+    else assert.deepEqual(quiet.value[key],pinned.value[key],key);
+  }
+  const host=integration.gitFile(integration.SOURCE,'host.js').toString();
+  const lo=host.indexOf('        const ranBlocks = r.trapped ? 0 : r.blocks | 0;');
+  const hi=host.indexOf('        // Nothing ran this step',lo);assert(lo>0&&hi>lo);
+  const adapt=(r,steps)=>{
+    const self={_workerAdaptiveSteps:100000},context={self,r,steps,inputBurstSlice:false,configuredSteps:100000};
+    vm.runInNewContext(host.slice(lo,hi),context);return self._workerAdaptiveSteps;
+  };
+  const summary=arm=>({elapsedMs:arm.value.elapsedMs,brokerLogBlocks:arm.value.brokerLogBlocks,
+    slices:arm.value.slices,blocks:arm.value.blocks,
+    samples:arm.value.sliceResults.slice(0,-1).map(r=>({blocks:r.blocks,ms:r.ms,nextBudget:adapt(r,1000)}))});
+  assert.equal(adapt({blocks:1000,ms:100,trapped:false},1000),1000);
+  assert.equal(adapt({blocks:1000,ms:1,trapped:false},1000),12000);
+  write(EVIDENCE,path.basename(row.path)+'.rpc-diagnosis.json',{fixtureOnly:true,
+    claim:'Same original decoder and fixed slice commands; no release/callback/gameplay claim',
+    pinned:summary(pinned),quiet:summary(quiet),traceOnly:summary(traceOnly),
+    results:{pinned:pinned.value,quiet:quiet.value,traceOnly:traceOnly.value}});
 });
 
 for(const row of integration.pinnedRuntime().pins.moduleFiles) test('measured unchanged native decoder exceeds old boundary contract: '+row.path,async()=>{
@@ -992,6 +1078,14 @@ async function nativeChild() {
       if(!pin)return original(m,file);
       const bytes=integration.gitFile(integration.SOURCE,relative);
       assert.equal(bytes.length,pin.bytes);assert.equal(H(bytes),pin.sha256,'original Worker dependency '+relative);
+      if(relative==='lib/guest-rpc.js'&&workerData.mode.includes('rpc-diagnosis-quiet')){
+        // The exact Stronghold repair, applied only in this offline fixture.
+        // All remaining pinned dependencies and original module bytes stay fixed.
+        const old="(name === 'log' || name === 'log_i32' || name === 'log_api_exit'))";
+        const replacement="(name === 'log' || name === 'log_i32' || name === 'log_api_exit' || name === 'log_block'))";
+        const text=bytes.toString();assert.equal(text.split(old).length,2);
+        m._compile(text.replace(old,replacement),file);return;
+      }
       if(extension==='.json')m.exports=JSON.parse(bytes.toString());else m._compile(bytes.toString(),file);
     };
   }
@@ -1041,6 +1135,10 @@ async function nativeChild() {
     outputHash:H(b.subarray(wa(output),wa(output)+rows*4)),
     outputFirst:Array.from(new Uint32Array(memory.buffer,wa(output),16)),
     originalHistory:'Unknown after retained 87000 checkpoint; this is original native decoding with explicit fixture data.'};
+  if(workerData.mode.includes('rpc-diagnosis')){
+    const region=require('../lib/region-map.generated.js').REGIONS.GUEST_BASE;
+    result.guestHash=H(b.subarray(region.base,region.end));
+  }
   if(returned){
     if(!workerData.mode.startsWith('control'))bound.invoke('finish',{reason:'measured-return'});
     e.set_trace_esp(0,0,0);put(caller+16,[0x0f,0x0b]);e.invalidate_code_range(caller+16,2);e.set_eip(caller+16);
