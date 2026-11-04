@@ -257,9 +257,9 @@ async function main(){
       selector:(mode<<16)|7,generated:true,samples:[{x:8,y:12}]}));
     const r=await run(path.resolve(ROOT,wasm),{states,withNormals});results.push(r);save();
     assert.equal(r.failure,null);assert.equal(r.observations.length,3);
-    // Camera-position PROJECTED now preserves its vector through type 5.
-    // Normal/reflection still use type 3; this historical cell has no oracle.
-    assert.deepEqual(r.descriptorTypes,[3,5,3],'generated projection representation by source');
+    // Supported PROJECTED generation preserves its vector through type 5.
+    // Normal/reflection require XYZ|NORMAL. This historical cell has no oracle.
+    assert.deepEqual(r.descriptorTypes,withNormals?[5,5,5]:[5],'generated projection representation by source');
     assert(r.observations.every(o=>o.expected===null),'no generated pixel correctness claim');
     console.log(JSON.stringify({withNormals,status:'GENERATED PREREQUISITES CHARACTERIZED; pixels UNQUALIFIED'}));
   }

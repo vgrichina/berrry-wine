@@ -1760,11 +1760,12 @@
     (local.set $selector (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)))
     (local.set $flags (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 24)))
     (if (i32.gt_u (local.get $selector) (i32.const 7)) (then
-      ;; Camera-space position is also a linear input vector. Preserve its
-      ;; three components for PROJECTED draws instead of interpolating vertex
-      ;; quotients. Other generated modes retain their separate path.
+      ;; All supported generated vectors must retain their three components
+      ;; for PROJECTED draws instead of interpolating vertex quotients.
       (if (i32.and
-          (i32.eq (i32.shr_u (local.get $selector) (i32.const 16)) (i32.const 2))
+          (i32.and
+            (i32.ge_u (i32.shr_u (local.get $selector) (i32.const 16)) (i32.const 1))
+            (i32.le_u (i32.shr_u (local.get $selector) (i32.const 16)) (i32.const 3)))
           (i32.and (i32.ge_u (local.get $flags) (i32.const 0x102))
                    (i32.le_u (local.get $flags) (i32.const 0x104))))
         (then (return (i32.const 5))))
@@ -1774,13 +1775,23 @@
       (then (return (i32.const 0))))
     (select (i32.const 5) (i32.const 6) (i32.and (local.get $flags) (i32.const 256))))
 
+  ;; Strided normal/reflection generation has not supplied an original normal
+  ;; to the extended-vector producer. Keep its previous route separate.
+  (func $d3dim_d7_strided_supplied_type (param $this i32) (result i32)
+    (local $mode i32)
+    (local.set $mode (i32.shr_u (call $d3dim_tss_load
+      (call $d3ddev_state (local.get $this)) (i32.const 0) (i32.const 11)) (i32.const 16)))
+    (if (i32.or (i32.eq (local.get $mode) (i32.const 1))
+                (i32.eq (local.get $mode) (i32.const 3))) (then (return (i32.const 0))))
+    (call $d3dim_d7_supplied_type (local.get $this)))
+
   (func $d3dim_d7_supplied_vertices
     (param $this i32) (param $fvf i32) (param $original i32)
     (param $packed i32) (param $count i32) (param $type i32) (result i32)
     (local $out i32) (local $ow i32) (local $pw i32) (local $src i32)
     (local $state i32) (local $i i32) (local $dst i32) (local $stride i32)
     (local $sets i32) (local $selector i32) (local $dimension i32) (local $offset i32)
-    (local $position i32) (local $input i32) (local $camera i32)
+    (local $position i32) (local $input i32) (local $camera i32) (local $mode i32)
     (if (i32.or (i32.eqz (local.get $packed)) (i32.gt_u (local.get $count) (i32.const 104857)))
       (then (return (i32.const 0))))
     (local.set $out (call $heap_alloc (i32.mul (local.get $count) (i32.const 40))))
@@ -1789,9 +1800,13 @@
     (local.set $pw (call $g2w (local.get $packed)))
     (local.set $src (call $g2w (local.get $original)))
     (local.set $state (call $d3ddev_state (local.get $this)))
-    (local.set $position (i32.eq
-      (i32.shr_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 16))
-      (i32.const 2)))
+    (local.set $mode
+      (i32.shr_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 16)))
+    (local.set $position (i32.eq (local.get $mode) (i32.const 2)))
+    (if (i32.and
+          (i32.or (i32.eq (local.get $mode) (i32.const 1)) (i32.eq (local.get $mode) (i32.const 3)))
+          (i32.ne (i32.and (local.get $fvf) (i32.const 0x16)) (i32.const 0x12))) (then
+      (call $heap_free (local.get $out)) (return (i32.const 0))))
     (call $d3ddev_composite_wvp (local.get $state))
     (call $d3dim_lights_refresh (local.get $state))
     (local.set $stride (call $d3dim_fvf_stride (local.get $fvf)))
@@ -1827,6 +1842,15 @@
         (call $mat4_transform_vec4 (local.get $input)
           (i32.add (call $g2w (local.get $state)) (i32.const 64)) (local.get $camera))
         (memory.copy (i32.add (local.get $dst) (i32.const 24)) (local.get $input) (i32.const 16))))
+      (if (i32.or (i32.eq (local.get $mode) (i32.const 1))
+                  (i32.eq (local.get $mode) (i32.const 3))) (then
+        ;; The packed normal may already be replaced by colors or lighting.
+        ;; Generate from original XYZ|NORMAL, without texture transformation or
+        ;; division. The type-5 consumer owns matrix application and texture q.
+        (local.set $input (call $d3dim_texgen_input (local.get $state) (i32.const 1)
+          (i32.add (local.get $src) (i32.mul (local.get $i) (local.get $stride)))))
+        (memory.copy (i32.add (local.get $dst) (i32.const 24)) (local.get $input) (i32.const 12))
+        (f32.store offset=36 (local.get $dst) (f32.const 1))))
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $lp)))
     (local.get $out))
 
@@ -2613,7 +2637,7 @@
       (local.get $fvf) (local.get $strided) (local.get $count)
       (call $d3dim_texcoord_index (local.get $this))))
     (if (i32.lt_u (local.get $vtxType) (i32.const 3)) (then
-      (local.set $supplied (call $d3dim_d7_supplied_type (local.get $this)))))
+      (local.set $supplied (call $d3dim_d7_strided_supplied_type (local.get $this)))))
     (if (i32.and (i32.ne (local.get $scratch) (i32.const 0))
                  (i32.ne (local.get $supplied) (i32.const 0))) (then
       (local.set $extended (call $d3dim_strided_supplied_vertices
@@ -2640,7 +2664,7 @@
       (local.get $fvf) (local.get $strided) (local.get $count)
       (call $d3dim_texcoord_index (local.get $this))))
     (if (i32.lt_u (local.get $vtxType) (i32.const 3)) (then
-      (local.set $supplied (call $d3dim_d7_supplied_type (local.get $this)))))
+      (local.set $supplied (call $d3dim_d7_strided_supplied_type (local.get $this)))))
     (if (i32.and (i32.ne (local.get $scratch) (i32.const 0))
                  (i32.ne (local.get $supplied) (i32.const 0))) (then
       (local.set $extended (call $d3dim_strided_supplied_vertices
@@ -7278,17 +7302,15 @@
   ;; Stage 0 texture-coordinate generation for a vertex $vertex_project just
   ;; transformed (it left (x,y,z,1) at state +4032). D3DTSS_TEXCOORDINDEX's high
   ;; word picks the source: CAMERASPACEPOSITION (2) is the position, and
-  ;; CAMERASPACENORMAL (1) the normal of a D3DVERTEX, through world*view. When
-  ;; TEXTURETRANSFORMFLAGS has a count, [x y z 1] then goes through stage 0's
-  ;; TEXTURE0 matrix, divided by its last element if PROJECTED (0x100).
-  ;; Returns the WASM address of the (u, v) pair, or 0 when the coordinates
-  ;; are the vertex's own. Reflection (3) uses the camera-space position and
+  ;; CAMERASPACENORMAL (1) the normal of a D3DVERTEX, through world*view.
+  ;; Returns the raw generated vector, or 0 when coordinates are supplied.
+  ;; Reflection (3) uses the camera-space position and
   ;; normal: R = 2*(N.V)*N - V, where V is the unit vector toward the camera.
   ;; Reference: Microsoft DX7 SDK, Configuring Automatically-Generated Texture
   ;; Coordinates (imover_9n38), and Texture Coordinate Processing Path (1hyc).
-  (func $d3dim_texgen (param $state_guest i32) (param $vtxType i32) (param $src_wa i32) (result i32)
-    (local $sw i32) (local $mode i32) (local $a i32) (local $b i32) (local $block i32)
-    (local $flags i32) (local $count i32) (local $q f32)
+  (func $d3dim_texgen_input (param $state_guest i32) (param $vtxType i32) (param $src_wa i32) (result i32)
+    (local $sw i32) (local $mode i32) (local $a i32) (local $b i32)
+    (local $q f32)
     (local $nx f32) (local $ny f32) (local $nz f32)
     (local $vx f32) (local $vy f32) (local $vz f32) (local $dot f32)
     (local.set $mode (i32.shr_u
@@ -7346,6 +7368,16 @@
       (f32.store offset=4 (local.get $b) (f32.sub (f32.mul (local.get $dot) (local.get $ny)) (local.get $vy)))
       (f32.store offset=8 (local.get $b) (f32.sub (f32.mul (local.get $dot) (local.get $nz)) (local.get $vz)))
       (f32.store offset=12 (local.get $b) (f32.const 0))))
+    (local.get $b))
+
+  ;; Apply the legacy ordinary-vector matrix/count behavior. PROJECTED FVF
+  ;; draws use the raw input helper above and the extended rational consumer.
+  (func $d3dim_texgen (param $state_guest i32) (param $vtxType i32) (param $src_wa i32) (result i32)
+    (local $a i32) (local $b i32) (local $block i32)
+    (local $flags i32) (local $count i32) (local $q f32)
+    (local.set $b (call $d3dim_texgen_input (local.get $state_guest) (local.get $vtxType) (local.get $src_wa)))
+    (if (i32.eqz (local.get $b)) (then (return (i32.const 0))))
+    (local.set $a (i32.add (call $g2w (local.get $state_guest)) (i32.const 4048)))
     (local.set $block (call $gl32 (i32.add (local.get $state_guest) (i32.const 4024))))
     (if (local.get $block)
       (then (local.set $flags (call $gl32 (i32.add (local.get $block) (i32.const 512))))))
