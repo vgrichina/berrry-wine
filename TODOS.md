@@ -1612,13 +1612,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
   candidate: deus-ex-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: fresh01a1a49a-9f49-7583-b522-6abcba800449 session26915; scratch/usage-watch/deusex-supported-bearing-plan-nov04/; offline supported-position/bearing geometry and native turn bindings, no runtime or box dependency
+  worker: fresh01a1a4d0-03f9-70e3-aba8-f5f411039206 session1722; scratch/usage-watch/deusex-capture-publication-contract-nov04/; offline causal publication/capture helper repair, no runtime or box
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Published5f12207f stops safely after measured Left12.183294 overshoots ideal8.627353; actual front7045.449<7047, no Down preparation/Up/Space, targetZ96 unreached and final blankteal capture not visual proof. Fresh01a1a4b4-0b91 feedback feasible-region worker (session92169) reuses healthy RUNNING/APIidle bx_dzkgnet6; derive Down from first feasible measured nonzero Left, test quantized movement and capture readiness before runtime, retain original support/145msUp/preSpace8/vertical clearance guards. One immutablecount14 load, first real failure stops. Recover04:32Z, shutdowncoordinator.
-  Latest run: scratch/runs/20261104-deusex-atomic-preparation-takeoff/; docs/re-notes/deusex-atomic-preparation-takeoff-20261104.md. Recovered70 files plus actual historical845 module with full SHA,453 pins unchanged; normal browser close03:19:12.713Z. bx_a9uvp4n2 actual STOPPED03:29:33.532Z, snapshot verified03:29:33.492Z. Historical second module absent; no substitution.
+  Next: Published6a74fbc16 original count14 restore visible but publication735to736 held/crossed rejects qualification; no pulse or onward gameplay. Missing pinned API-table HTTP500 found late, repaired offline only; limitation preserved. Fresh worker traces historical publication lifecycle and executable helper capture/approval contract; no guard weakening or runtime retries. Root45files+canonical fullSHA PASS. bx_affrncy3 normalSTOPPED04:27:19.117Z snapshotverified04:27:19.078Z.
+  Latest run: scratch/runs/20261104-deusex-owned-publication-pulse/; docs/re-notes/deusex-owned-publication-pulse-20261104.md. Observer33, queue6, timing14 and real driver integration passed; staging negatives repaired offline; BaseSmall0 readiness and old blank-world cause remain unknown.
   Done: Reviewed gameplay screenshot and scene-qualified frame measurement with raw samples, counter proof and tested build identity; retain explicit failures.
   Evidence: docs/re-notes/deus-ex-demo.md; scratch/runs/20261031T0447Z-deusex-browser/; scratch/gameplay-coverage-20261003/tasks/GAMEPLAY-deus-ex-demo.json
   notes: Original Training gameplay and first-door traversal are verified on the default guestWorker software browser route. This does not qualify WebGL, audio, FPS, Liberty Island or completion. Historical missing-path reports are superseded for registered deus_ex_demo.
