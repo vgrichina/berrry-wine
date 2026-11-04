@@ -4,9 +4,9 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),cryp
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
 const AUTH='stronghold-split-gesture-reviews user task';
-const ASSIGNMENT='stronghold-choosetype-recognition-onward user task';
+const ASSIGNMENT='stronghold-route-recognition-handoff user task';
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-04T19:35:00Z'),CLEANUP=Date.parse('2026-11-04T19:38:00Z');
+const CUTOFF=Date.parse('2026-11-04T20:20:00Z'),CLEANUP=Date.parse('2026-11-04T20:23:00Z');
 function identity(){
  const stat=fs.readFileSync('/proc/self/stat','utf8');
  return {hostname:os.hostname(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),
@@ -31,15 +31,15 @@ function validateRelease(release,{run,pins,nonce,now=Date.now()}={}){
  if(JSON.stringify(release.binding)!==JSON.stringify(binding(run,pins)))throw Error('foreign/stale run or candidate binding');
  const {issuedAt,closeBy,expiresAt,chromeCutoff,cleanupBy}=release;
  if(![now,issuedAt,closeBy,expiresAt,chromeCutoff,cleanupBy].every(Number.isFinite)||issuedAt>now||now-issuedAt>60000||
-    closeBy<=now||closeBy>issuedAt+360000||expiresAt!==cleanupBy||chromeCutoff>CUTOFF||cleanupBy>CLEANUP||
-    issuedAt+360000>chromeCutoff||issuedAt+540000>cleanupBy||closeBy>chromeCutoff||expiresAt<=now)
+    closeBy<=now||closeBy>issuedAt+720000||expiresAt!==cleanupBy||chromeCutoff>CUTOFF||cleanupBy>CLEANUP||
+    issuedAt+720000>chromeCutoff||issuedAt+900000>cleanupBy||closeBy>chromeCutoff||expiresAt<=now)
   throw Error('fresh finite local deadline and cleanup reserve required');
  return release;
 }
 function createRelease({run,pins,nonce,now=Date.now()}){
  const release={version:1,kind:'local-process',authorization:AUTH,assignment:ASSIGNMENT,
   freshLocalDiagnosticAuthorized:true,shutdownOwner:'coordinator',nonce,identity:identity(),binding:binding(run,pins),
-  issuedAt:now,closeBy:now+360000,expiresAt:CLEANUP,chromeCutoff:CUTOFF,cleanupBy:CLEANUP};
+  issuedAt:now,closeBy:now+720000,expiresAt:CLEANUP,chromeCutoff:CUTOFF,cleanupBy:CLEANUP};
  return validateRelease(release,{run,pins,nonce,now});
 }
 function prepare(options){
@@ -53,13 +53,14 @@ function prepare(options){
   'let browser,page,server,closing=false,halted=false,number=0,timer,deadline,bootstrapTimer;');
  p.source=base.replaceOnce(p.source,'if(closing)return;closing=true;clearTimeout(timer);','if(closing)return;closing=true;clearTimeout(timer);clearTimeout(bootstrapTimer);');
  p.source=base.replaceOnce(p.source,'deadline=Math.min(Date.now()+360000,release.closeBy);',
-  'deadline=Math.min(Date.now()+360000,release.closeBy);const bootstrapDeadline=Math.min(Date.now()+60000,deadline);');
+  'deadline=Math.min(Date.now()+720000,release.closeBy);const bootstrapDeadline=Math.min(Date.now()+60000,deadline);');
  p.source=base.replaceOnce(p.source,"  page=await browser.newPage();", "  bootstrapTimer=setTimeout(()=>boundary.close(()=>close('bounded 60s bootstrap deadline')),Math.max(0,bootstrapDeadline-Date.now()));\n  page=await browser.newPage();");
  p.source=base.replaceOnce(p.source,"  save('ready.json',await state());", "  clearTimeout(bootstrapTimer);\n  save('ready.json',await state());");
  p.source=base.replaceOnce(p.source,"  await page.screenshot({path:path.join(OUT,'selector-before-launch.png')});",
   "  const selectorPNG=await page.screenshot({path:path.join(OUT,'selector-before-launch.png')});\n  activeCommand='bootstrap-selector';activeReplyDeadline=Math.min(Date.now()+40000,bootstrapDeadline);\n  await personalReview({sha256:sha(selectorPNG),scene:'registered-selector',state:await state()});");
+ p.evidence.bounds.chromeMs=720000;
  p.evidence.localRuntime={kind:'local-process',contractPath:__filename,contractSHA256:base.hash(fs.readFileSync(__filename)),
-  capsUnchanged:true,chrome:CHROME,chromeCutoff:CUTOFF,cleanupBy:CLEANUP};
+  navigationAndCommandCapsUnchanged:true,chrome:CHROME,chromeCutoff:CUTOFF,cleanupBy:CLEANUP};
  p.evidence.compositionSHA256=base.hash(p.source);
  return {...p,createRelease:()=>createRelease({run:options.run,pins:options.pins,nonce})};
 }
