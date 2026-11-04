@@ -2846,15 +2846,17 @@
                     (call $d3dim_d7_unit (local.get $b)))))
 
   ;; A colored FVF is packed as D3DLVERTEX, whose color fields replace the
-  ;; normal. Generate stage-0 normal coordinates from the original FVF before
+  ;; normal. Generate stage-0 normal/reflection coordinates from the original FVF before
   ;; that normal is lost to the draw consumer (also after lighting converts a
   ;; D3DVERTEX). Reuse the legacy generator's matrix/count behavior; the packed
   ;; LVERTEX consumer keeps this UV pair, so it is not transformed twice.
   (func $d3dim_d7_normal_texcoords
       (param $state i32) (param $fvf i32) (param $src_g i32) (param $packed_g i32) (param $count i32)
-    (local $stride i32) (local $src i32) (local $dst i32) (local $gen i32) (local $i i32)
-    (if (i32.ne (i32.shr_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11))
-          (i32.const 16)) (i32.const 1)) (then (return)))
+    (local $stride i32) (local $src i32) (local $dst i32) (local $gen i32) (local $i i32) (local $mode i32)
+    (local.set $mode (i32.shr_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11))
+      (i32.const 16)))
+    (if (i32.and (i32.ne (local.get $mode) (i32.const 1))
+                (i32.ne (local.get $mode) (i32.const 3))) (then (return)))
     (call $d3ddev_composite_wvp (local.get $state))
     (local.set $stride (call $d3dim_fvf_stride (local.get $fvf)))
     (local.set $src (call $g2w (local.get $src_g)))
@@ -7255,16 +7257,19 @@
   ;; TEXTURETRANSFORMFLAGS has a count, [x y z 1] then goes through stage 0's
   ;; TEXTURE0 matrix, divided by its last element if PROJECTED (0x100).
   ;; Returns the WASM address of the (u, v) pair, or 0 when the coordinates
-  ;; are the vertex's own. Reflection vectors (3) are not generated yet.
-  ;; Reference: wine-mirror/wine dlls/wined3d/glsl_shader.c, the FFP vertex
-  ;; shader's WINED3DTSS_TCI_* cases.
+  ;; are the vertex's own. Reflection (3) uses the camera-space position and
+  ;; normal: R = 2*(N.V)*N - V, where V is the unit vector toward the camera.
+  ;; Reference: Microsoft DX7 SDK, Configuring Automatically-Generated Texture
+  ;; Coordinates (imover_9n38), and Texture Coordinate Processing Path (1hyc).
   (func $d3dim_texgen (param $state_guest i32) (param $vtxType i32) (param $src_wa i32) (result i32)
     (local $sw i32) (local $mode i32) (local $a i32) (local $b i32) (local $block i32)
     (local $flags i32) (local $count i32) (local $q f32)
+    (local $nx f32) (local $ny f32) (local $nz f32)
+    (local $vx f32) (local $vy f32) (local $vz f32) (local $dot f32)
     (local.set $mode (i32.shr_u
       (call $d3dim_tss_load (local.get $state_guest) (i32.const 0) (i32.const 11)) (i32.const 16)))
     (if (i32.eqz (local.get $mode)) (then (return (i32.const 0))))
-    (if (i32.gt_u (local.get $mode) (i32.const 2)) (then (return (i32.const 0))))
+    (if (i32.gt_u (local.get $mode) (i32.const 3)) (then (return (i32.const 0))))
     (local.set $sw (call $g2w (local.get $state_guest)))
     (local.set $a (i32.add (local.get $sw) (i32.const 4048)))
     (local.set $b (i32.add (local.get $sw) (i32.const 4080)))
@@ -7281,6 +7286,41 @@
         (call $mat4_transform_vec4 (local.get $a) (local.get $sw) (local.get $b))))
     ;; view @ +64
     (call $mat4_transform_vec4 (local.get $b) (i32.add (local.get $sw) (i32.const 64)) (local.get $a))
+    (if (i32.eq (local.get $mode) (i32.const 3)) (then
+      (local.set $nx (f32.load (local.get $b)))
+      (local.set $ny (f32.load offset=4 (local.get $b)))
+      (local.set $nz (f32.load offset=8 (local.get $b)))
+      (if (call $d3dim_d7_rs (local.get $sw) (i32.const 143)) (then
+        (local.set $q (f32.sqrt (f32.add (f32.add
+          (f32.mul (local.get $nx) (local.get $nx)) (f32.mul (local.get $ny) (local.get $ny)))
+          (f32.mul (local.get $nz) (local.get $nz)))))
+        (if (f32.gt (local.get $q) (f32.const 0)) (then
+          (local.set $nx (f32.div (local.get $nx) (local.get $q)))
+          (local.set $ny (f32.div (local.get $ny) (local.get $q)))
+          (local.set $nz (f32.div (local.get $nz) (local.get $q)))))))
+      ;; Read the original XYZ directly: the colored-packing caller has not
+      ;; projected this vertex, so +4032 need not contain its position.
+      (memory.copy (local.get $b) (local.get $src_wa) (i32.const 12))
+      (f32.store offset=12 (local.get $b) (f32.const 1))
+      (call $mat4_transform_vec4 (local.get $a) (local.get $sw) (local.get $b))
+      (call $mat4_transform_vec4 (local.get $b) (i32.add (local.get $sw) (i32.const 64)) (local.get $a))
+      (local.set $vx (f32.neg (f32.load (local.get $b))))
+      (local.set $vy (f32.neg (f32.load offset=4 (local.get $b))))
+      (local.set $vz (f32.neg (f32.load offset=8 (local.get $b))))
+      (local.set $q (f32.sqrt (f32.add (f32.add
+        (f32.mul (local.get $vx) (local.get $vx)) (f32.mul (local.get $vy) (local.get $vy)))
+        (f32.mul (local.get $vz) (local.get $vz)))))
+      (if (f32.gt (local.get $q) (f32.const 0)) (then
+        (local.set $vx (f32.div (local.get $vx) (local.get $q)))
+        (local.set $vy (f32.div (local.get $vy) (local.get $q)))
+        (local.set $vz (f32.div (local.get $vz) (local.get $q)))))
+      (local.set $dot (f32.mul (f32.const 2) (f32.add (f32.add
+        (f32.mul (local.get $nx) (local.get $vx)) (f32.mul (local.get $ny) (local.get $vy)))
+        (f32.mul (local.get $nz) (local.get $vz)))))
+      (f32.store (local.get $b) (f32.sub (f32.mul (local.get $dot) (local.get $nx)) (local.get $vx)))
+      (f32.store offset=4 (local.get $b) (f32.sub (f32.mul (local.get $dot) (local.get $ny)) (local.get $vy)))
+      (f32.store offset=8 (local.get $b) (f32.sub (f32.mul (local.get $dot) (local.get $nz)) (local.get $vz)))
+      (f32.store offset=12 (local.get $b) (f32.const 0))))
     (local.set $block (call $gl32 (i32.add (local.get $state_guest) (i32.const 4024))))
     (if (local.get $block)
       (then (local.set $flags (call $gl32 (i32.add (local.get $block) (i32.const 512))))))
