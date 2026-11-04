@@ -9,6 +9,38 @@ const integration=require('../tools/mdk2-construction-driver-integration.cjs');
 const run=fs.mkdtempSync(path.join(local.BASE,'mdk2-local-contract-test-'));
 after(()=>fs.rmSync(run,{recursive:true,force:true}));
 const now=Date.parse('2026-11-04T17:50:00Z');
+test('actual Python review rejects contradictory menu classification before approval: old fail/new pass',()=>{
+ const results=[];
+ for(const repaired of [false,true]){
+  const tmp=fs.mkdtempSync(path.join(local.BASE,'mdk2-review-preflight-'));
+  after(()=>fs.rmSync(tmp,{recursive:true,force:true}));
+  const r=release();r.runDirectory=tmp;
+  fs.writeFileSync(path.join(tmp,'runtime-release.json'),JSON.stringify(r));local.prepareTransport(tmp);
+  const sources=integration.controllerSources(tmp);
+  const preflight=sources['control.py'].split('\n').find(line=>line.includes('preflightMenuReview'));
+  assert(preflight);
+  fs.writeFileSync(path.join(tmp,'control.py'),repaired?sources['control.py']:sources['control.py'].replace(preflight+'\n',''));
+  const browser=path.join(tmp,'browser'),recovered=path.join(tmp,'recovered/browser');
+  fs.mkdirSync(path.join(browser,'commands'),{recursive:true});fs.mkdirSync(recovered,{recursive:true});
+  const png=Buffer.from('explicit offline review fixture: no game pixels'),sha=integration.sha(png);
+  const put=(file,value)=>fs.writeFileSync(file,JSON.stringify(value));
+  fs.writeFileSync(path.join(browser,'fixture.png'),png);
+  put(path.join(browser,'commands/0.json'),{action:'shot',name:'fixture'});put(path.join(browser,'reply-0.json'),{i:0,ok:true});
+  put(path.join(browser,'inspection-state.json'),{status:'awaiting-inspection',capture:'fixture',sha256:sha,steps:0,command:0,session:'fixture'});
+  put(path.join(recovered,'fixture.json'),{sha256:sha,state:{main:{frozen:{steps:0}}}});
+  const native=path.join(local.BASE,'20261104-mdk2-adequate-lifetime-menu/native-menu.cjs');
+  fs.writeFileSync(path.join(tmp,'native-menu.cjs'),`require(${JSON.stringify(native)}).ready(JSON.parse(require('fs').readFileSync(process.argv[4])),process.argv[2]);`);
+  const fields={screen:'main-menu',selection:'none',transitioning:true,controllerIconHighlighted:false,newGameLabelVisible:false,legalOverlayVisible:false};
+  const child=cp.spawnSync('python3',[path.join(tmp,'local-control.py'),'control.py','review','fixture',JSON.stringify(fields),'native-menu','observe'],{cwd:local.ROOT,encoding:'utf8',timeout:10000});
+  assert.notEqual(child.status,0);assert.match(child.stderr,/wrong native selection/);
+  const approval=fs.existsSync(path.join(browser,'inspection-approval.json'));
+  assert.equal(approval,!repaired,'contradictory review must not be published');
+  results.push({repaired,status:child.status,approval,stderr:child.stderr});
+ }
+ const honest={screen:'main-menu',selection:'New Game',transitioning:false,controllerIconHighlighted:true,newGameLabelVisible:true,legalOverlayVisible:false};
+ assert.doesNotThrow(()=>local.preflightMenuReview('observe',honest));
+ if(process.env.MDK2_LOCAL_TEST_EVIDENCE)fs.writeFileSync(path.join(process.env.MDK2_LOCAL_TEST_EVIDENCE,'review-preflight-before-after.json'),JSON.stringify({fixtureOnly:true,results},null,2));
+});
 test('actual installed launch timeout: old absent-Browser cleanup fails; late owned endpoint cleanup closes normally',async()=>{
  const r=createRequire(require.resolve('puppeteer')),core=r.resolve('puppeteer-core');
  const launcherPath=path.join(path.dirname(core),'node/BrowserLauncher.js');
@@ -173,7 +205,7 @@ test('installed Puppeteer close path distinguishes orderly own child from CDP-fa
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);
- assert.equal(r.assignment,'20261104-mdk2-installed-original-gameplay');
+ assert.equal(r.assignment,'20261104-mdk2-measured-native-boundary-gameplay');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -271,17 +303,17 @@ test('install requires real inherited exclusive local lock before release or com
  assert(!fs.existsSync(path.join(run,'runtime-release.json')));
 });
 test('exact current GL predecessor heavy release excludes mentions, prior release and other owners',()=>{
- const good='2026-11-04T21:02:00+00:00 gltron-repaired-live-backends-nov04 LOCAL HEAVY RELEASE original stopped';
+ const good='2026-11-04T21:23:30+00:00 stronghold-fresh-complete-entry-gameplay-nov04 LOCAL HEAVY RELEASE original stopped';
  assert.equal(local.heavyRelease(good),good);
- const coordinated='2026-11-04T21:02:00.552949+00:00 coordinator LOCAL HEAVY RELEASE gltron-repaired-live-backends-nov04: MDK may proceed';
+ const coordinated='2026-11-04T21:23:30.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-fresh-complete-entry-gameplay-nov04: MDK may proceed';
  assert.equal(local.heavyRelease(coordinated),coordinated);
- assert.equal(local.heavyRelease(coordinated.replace('coordinator','gltron-repaired-live')),coordinated.replace('coordinator','gltron-repaired-live'));
+ assert.equal(local.heavyRelease(coordinated.replace('coordinator','stronghold-fresh-complete')),coordinated.replace('coordinator','stronghold-fresh-complete'));
  for(const line of [good.replace(' LOCAL HEAVY RELEASE',' RELEASE'),
-   good.replace('gltron-repaired-live-backends-nov04','mdk2-installed-original waiting gltron-repaired-live-backends-nov04'),
-   good.replace('21:02:00','20:58:26'),good.replace('2026-11-04','2026-11-05'),
-   good.replace('gltron-repaired-live-backends-nov04','stronghold-customgame-drain'),
+   good.replace('stronghold-fresh-complete-entry-gameplay-nov04','mdk2-installed-original waiting stronghold-fresh-complete-entry-gameplay-nov04'),
+   good.replace('21:23:30','20:58:26'),good.replace('2026-11-04','2026-11-05'),
+   good.replace('stronghold-fresh-complete-entry-gameplay-nov04','stronghold-customgame-drain'),
    coordinated.replace('coordinator LOCAL','mdk2-bounded-review waiting coordinator LOCAL'),
-   coordinated.replace('gltron-repaired-live-backends-nov04:','other-task:')])
+   coordinated.replace('stronghold-fresh-complete-entry-gameplay-nov04:','other-task:')])
    assert.throws(()=>local.heavyRelease(line),/release/i);
 });
 test('actual local install makes the mandatory owning lifecycle tap ready before the composed launch caller',()=>{
@@ -290,11 +322,11 @@ test('actual local install makes the mandatory owning lifecycle tap ready before
  // Only that pathname, the test clock and board input change in this fixture.
  fs.writeFileSync(script,`const fs=require('fs'),assert=require('assert/strict'),Module=require('module');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))};
- const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse('2026-11-04T21:03:00Z');
+ const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse('2026-11-04T21:24:00Z');
  let source=mode==='old'?require('child_process').execFileSync('git',['show','6055aa7e43d7c3505b6796d447663366e3b85146:tools/mdk2-local-runtime.cjs'],{encoding:'utf8'}):fs.readFileSync(filename,'utf8');
  source=source.replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: explicit fixture only':'2026-11-04T21:02:00Z coordinator LOCAL HEAVY RELEASE gltron-repaired-live-backends-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: explicit fixture only':'2026-11-04T21:23:30Z coordinator LOCAL HEAVY RELEASE stronghold-fresh-complete-entry-gameplay-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(require('path').dirname(filename));m._compile(source,filename);
  const installed=m.exports.install(dir),tap=m.exports.lifecycleForRun(dir);
  assert.equal(installed.lifecycle,tap);assert.throws(()=>tap.ownedLaunch(),/exactly one/);
@@ -321,8 +353,8 @@ test('actual composed entry creates run, installs release/recorder and calls moc
  const fs=require('fs'),path=require('path'),Module=require('module'),cp=require('child_process');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))},dir=${JSON.stringify(dir)};
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-04T21:02:00Z coordinator LOCAL HEAVY RELEASE gltron-repaired-live-backends-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
- Date.now=()=>Date.parse('2026-11-04T21:03:00Z');
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-04T21:23:30Z coordinator LOCAL HEAVY RELEASE stronghold-fresh-complete-entry-gameplay-nov04: explicit fixture only';return Reflect.apply(originalRead,this,[file,...args]);};
+ Date.now=()=>Date.parse('2026-11-04T21:24:00Z');
  const source=fs.readFileSync(filename,'utf8').replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(path.dirname(filename));require.cache[filename]=m;m._compile(source,filename);
  const local=m.exports,load=Module._load,puppeteer=require('puppeteer'),events=[];

@@ -271,7 +271,7 @@ test('concrete composed route checks offline with finite one-shot trace', () => 
   const report = integration.inspect();
   assert.equal(report.observerRepairSHA256,integration.sha(fs.readFileSync(path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs'))));
   assert.equal(report.status, 'offline-composition-checked');
-  assert.deepEqual(report.limits, {traceMs:180000,boundaries:100000,records:512,constructionSlices:[16,32,64],restart:false});
+  assert.deepEqual(report.limits, {traceMs:360000,boundaries:50000000,records:512,constructionSlices:[16,32,64],restart:false});
   assert.equal(integration.assertRunnable().composedSHA256, report.composedSHA256);
 });
 
@@ -338,7 +338,7 @@ async function nativeOne(row, mode = 'success') {
   const module = await realm.WebAssembly.compile(integration.retainedModule(row));
   const pageWorker = new realm.Worker(url);
   return new Promise((resolve,reject)=>{
-    const timer=setTimeout(()=>finish(Error('native integration timeout')),45000);
+    const timer=setTimeout(()=>finish(Error('native integration timeout')),360000);
     const finish=async(error,value)=>{clearTimeout(timer);await worker.terminate();port1.close();error?reject(error):resolve({value,envelope,page:realm.__mdk2BoundTrace.report()});};
     worker.on('error',error=>mode.startsWith('wrong-')?finish(null,{rejected:String(error)}):finish(error));
     worker.on('message',m=>{
@@ -346,7 +346,7 @@ async function nativeOne(row, mode = 'success') {
       else if(m.t==='rpc') broker.serveRpc(m.slot,m.waitEntry);
       else if(m.t==='call') broker.serveCall(m);
       else if(m.t==='calls') broker.serveCalls(m);
-      else if(m.t==='fixtureSliceRequest'){const c={t:'slice',seq:++pendingSlice,steps:1};commands.push(c);worker.postMessage(c);}
+      else if(m.t==='fixtureSliceRequest'){const c={t:'slice',seq:++pendingSlice,steps:mode.includes('measured')?1000:1};commands.push(c);worker.postMessage(c);}
       else if(m.t==='sliceDone')port1.postMessage({t:'slice',message:m});
       else if(m.t==='fixtureFailure'||m.t==='error')finish(Error(JSON.stringify(m)));
       else if(m.pass||m.rejected)finish(null,{...m,commands});
@@ -354,6 +354,29 @@ async function nativeOne(row, mode = 'success') {
     pageWorker.postMessage({t:'init',seq:0,module,memory,sigs,slot:0,endpointIdentity:1});
   });
 }
+
+for(const row of integration.pinnedRuntime().pins.moduleFiles)
+for(const [mode,status]of [['boundary','boundary-limit'],['record','record-limit'],['deadline','deadline']])test('observation '+mode+' exhaustion retains real Worker terminal trace: '+row.path,async()=>{
+  const result=await nativeOne(row,'measured-'+mode+'-stop');
+  if(mode!=='boundary'){
+    const old=await nativeOne(row,'measured-old-'+mode+'-stop');
+    write(EVIDENCE,path.basename(row.path)+'.old-terminal-'+mode+'.json',old.value);
+    assert(old.value.rejected,JSON.stringify(old.value));
+  }
+  write(EVIDENCE,path.basename(row.path)+'.retained-'+mode+'.json',result.value);
+  assert(result.value.pass,JSON.stringify(result.value));assert(result.value.terminal.terminal);
+  assert.equal(result.value.terminal.observer.status,status);assert.equal(result.value.terminal.traced,false);
+});
+
+for(const row of integration.pinnedRuntime().pins.moduleFiles) test('measured unchanged native decoder exceeds old boundary contract: '+row.path,async()=>{
+  const old=await nativeOne(row,'measured-old'),observed=await nativeOne(row,'measured'),control=await nativeOne(row,'control-measured');
+  write(EVIDENCE,path.basename(row.path)+'.measured-native.json',{old:old.value,observed:observed.value,control:control.value});
+  assert(old.value.rejected || !old.value.returned);assert.equal(old.value.report.observer.status,'boundary-limit');
+  assert(observed.value.returned,JSON.stringify(observed.value));assert(observed.value.blocks>100000);
+  assert(observed.value.checkpoints>1);assert.equal(observed.value.report.fatal,null);
+  assert.deepEqual(observed.value.outputFirst,[29,17,29,17,17,29,17,29,29,17,29,17,17,29,17,29]);
+  for(const key of ['state','memoryHash','outputHash','outputFirst','commands','trap'])assert.deepEqual(observed.value[key],control.value[key],key);
+});
 
 for(const row of integration.pinnedRuntime().pins.moduleFiles) {
   test('actual queued first fault stops before original POP ESI on '+row.path,async()=>{
@@ -384,8 +407,8 @@ for(const row of integration.pinnedRuntime().pins.moduleFiles) {
     for(const key of ['segments','before','trap','commands','workerSource'])assert.deepEqual(observed.value[key],control.value[key],key);
     assert.equal(observed.value.report.fatal,null);
     assert(observed.value.checkpoints>5);
-    assert(observed.value.report.traceEnd-observed.value.traceStartedAt>=180000);
-    assert(observed.value.report.traceEnd-observed.value.traceStartedAt<=180010);
+    assert(observed.value.report.traceEnd-observed.value.traceStartedAt>=200000);
+    assert(observed.value.report.traceEnd-observed.value.traceStartedAt<=200010);
     write(EVIDENCE,path.basename(row.path)+'.fixed-historical-review.json',{fixtureOnly:true,...observed.value});
   });
   test('genuine queued demand entry precedes finalizer across retained checkpoints: '+row.path, async()=>{
@@ -818,7 +841,7 @@ test('whole producer review pause cannot renew its original wall deadline',async
 test('actual whole producer and owning observer: historical 20.007s review fails old and passes fixed window',async()=>{
   const filename=require.resolve('../tools/mdk2-construction-driver-integration.cjs'),old=new Module(filename,module);
   old.filename=filename;old.paths=module.paths;
-  old._compile(integration.gitFile('6055aa7e43d7c3505b6796d447663366e3b85146','tools/mdk2-construction-driver-integration.cjs').toString(),filename);
+  old._compile(integration.gitFile('6055aa7e43d7c3505b6796d447663366e3b85146','tools/mdk2-construction-driver-integration.cjs').toString().replace('e886e6d868a6690867113526a66df106b024cedb89f2d5024aaf6cf89568a0ea',integration.sha(fs.readFileSync(require.resolve('../tools/mdk2-lua-construction-observer.cjs')))),filename);
   const before=await mediumProducer(old.exports,'historical-review'),after=await mediumProducer(integration,'historical-review');
   assert(before.failure,'old fixed 10s bound must reject before further execution');
   assert.deepEqual(before.quanta,[16,16,32,16]);assert.equal(before.starts,1);
@@ -829,7 +852,7 @@ test('actual whole producer and owning observer: historical 20.007s review fails
 test('input producer old gap and actual 64-slice contract fail before repaired whole producer passes',async()=>{
   const filename=require.resolve('../tools/mdk2-construction-driver-integration.cjs'),old=new Module(filename,module);
   old.filename=filename;old.paths=module.paths;
-  old._compile(integration.gitFile('86dc176a3b25a1eda252d1f4b83a1e30a8bb417b','tools/mdk2-construction-driver-integration.cjs').toString(),filename);
+  old._compile(integration.gitFile('86dc176a3b25a1eda252d1f4b83a1e30a8bb417b','tools/mdk2-construction-driver-integration.cjs').toString().replace('e886e6d868a6690867113526a66df106b024cedb89f2d5024aaf6cf89568a0ea',integration.sha(fs.readFileSync(require.resolve('../tools/mdk2-lua-construction-observer.cjs')))),filename);
   const r=await mediumProducer(old.exports);
   assert.match(r.failure?.message||'',/trace construction quantum must be 16/);
   assert.equal(r.starts,1);assert.equal(r.checkpoints,1);
@@ -928,12 +951,14 @@ async function nativeChild() {
   let preload=workerData.mode.startsWith('control')
     ? fs.readFileSync(path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene/observe-browser.js'),'utf8')
     : integration.preloadSource({targetId:workerData.targetId,workerURL:workerData.url});
-  if(['mid-poll-old','missing-history-old-binding','continuity-historical-old-review-early'].includes(workerData.mode)){
+  if(['measured-old','measured-old-record-stop','measured-old-deadline-stop','mid-poll-old','missing-history-old-binding','continuity-historical-old-review-early'].includes(workerData.mode)){
     // The old failed observer also uses its actual historical fault-containment
     // adapter. The new adapter aborts the faulting slice immediately.
-    const source=integration.gitFile(workerData.mode==='continuity-historical-old-review-early'?'6055aa7e43d7c3505b6796d447663366e3b85146':'86dc176a3b25a1eda252d1f4b83a1e30a8bb417b','tools/mdk2-construction-driver-integration.cjs').toString();
+    const source=integration.gitFile(workerData.mode.startsWith('measured-old')?'cd788045394d877eb28cdb9f01c3acc62cc13bb4':workerData.mode==='continuity-historical-old-review-early'?'6055aa7e43d7c3505b6796d447663366e3b85146':'86dc176a3b25a1eda252d1f4b83a1e30a8bb417b','tools/mdk2-construction-driver-integration.cjs').toString();
     preload=preload.replace(integration.installBinding.toString(),source.slice(source.indexOf('function installBinding(options)'),source.indexOf('\nfunction preloadSource')).trim());
   }
+  if(workerData.mode==='measured-boundary-stop')preload=preload.replaceAll('50000000','1000');
+  if(workerData.mode.endsWith('record-stop'))preload=preload.replaceAll('maxRecords=512','maxRecords=2').replaceAll('records.length >= 512','records.length >= 2');
   if(workerData.mode==='mid-poll-old')preload=preload.replace(
     fs.readFileSync(path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs'),'utf8'),
     integration.gitFile(integration.OBSERVER,'tools/mdk2-lua-construction-observer.cjs').toString());
@@ -979,11 +1004,55 @@ async function nativeChild() {
   let traceStartedAt=null;
   const realClock=Date.now;let reviewOffset=0;
   Date.now=()=>realClock()+reviewOffset;
+    if(workerData.mode.includes('measured'))fixtureSource=fixtureSource.replace(
+    '  e.set_esp(stack);u(stack,caller);u(stack+4,entry);', `
+  {
+  // Actual unchanged decoder at the prior fault PC. Initialized fixture input
+  // and caller are explicit; the lost original bitstream/state remain unknown.
+  const decoder=entry+0x4000,input=entry+0x5000,output=entry+0x10000,table=entry+0x200000;
+  const rows=65536;
+  u(decoder+0x10,input);u(decoder+0x14,rows/8);u(decoder+0x18,0);u(decoder+0x1c,0);
+  u(decoder+0x24,1);u(decoder+0x28,rows);u(decoder+0x34,output);u(0x5cc408,table+2);
+  put(input,Buffer.alloc(rows/8,0xa5));put(table,[17,0,29,0]);
+  e.set_esp(stack);u(stack,caller);u(stack+4,decoder);u(stack+8,0);u(stack+12,1);
+  e.set_eip(0x47cea0);
+  if(workerData.mode.endsWith('deadline-stop'))reviewOffset=360001;
+  const at=performance.now();let slices=0;
+  while(e.get_eip()>>>0!==caller && slices++<2000){
+    const result=await slice();
+    if(!workerData.mode.startsWith('control') && bound.report().terminal)break;
+    if(!workerData.mode.startsWith('control') && slices%16===0){
+      const end=Date.now()+20000;
+      bound.invoke('checkpoint',{commandEnd:end,absoluteEnd:traceStartedAt+360000});
+      checkpoints++;
+      bound.invoke('resume',{commandEnd:end,absoluteEnd:traceStartedAt+360000});
+    }
+  }
+  if(workerData.mode.endsWith('-stop')){
+    const stopped=state(),hash=H(b);await slice();
+    assert.deepEqual(state(),stopped,'terminal observer cannot advance native state');assert.equal(H(b),hash);
+    parentPort.postMessage({pass:true,terminal:bound.report(),state:stopped,checkpoints});return;
+  }
+  const returned=e.get_eip()>>>0===caller;
+  const report=workerData.mode.startsWith('control')?null:bound.report();
+  const result={pass:true,returned,slices,checkpoints,elapsedMs:performance.now()-at,
+    blocks:report?.observer.blocks,report,state:state(),memoryHash:H(b),
+    outputHash:H(b.subarray(wa(output),wa(output)+rows*4)),
+    outputFirst:Array.from(new Uint32Array(memory.buffer,wa(output),16)),
+    originalHistory:'Unknown after retained 87000 checkpoint; this is original native decoding with explicit fixture data.'};
+  if(returned){
+    if(!workerData.mode.startsWith('control'))bound.invoke('finish',{reason:'measured-return'});
+    e.set_trace_esp(0,0,0);put(caller+16,[0x0f,0x0b]);e.invalidate_code_range(caller+16,2);e.set_eip(caller+16);
+    let trap;try{await slice();}catch(error){trap=String(error);}assert(trap);result.trap={text:trap,hash:H(b),state:state()};
+  }
+  parentPort.postMessage(result);return;
+  }
+  e.set_esp(stack);u(stack,caller);u(stack+4,entry);`);
   if(workerData.mode.endsWith('-early')){
     // Execute the original PUSH/CALL before completion fragments. Only fixture
     // setup repositions between fragments; the observer's load history is never
     // seeded, cleared or reconstructed at any checkpoint.
-    fixtureSource=fixtureSource.replace('  e.set_esp(stack);u(stack,caller);u(stack+4,entry);', `
+  fixtureSource=fixtureSource.replace('  e.set_esp(stack);u(stack,caller);u(stack+4,entry);', `
   e.set_esp(stack);e.set_esi(entry);e.set_edi(entry+12);u(0x4b87d4,0);u(0x4b7d14,0);
   if(workerData.mode==='wrong-register-early')e.set_esi(entry+32);
   await run('genuine-demand-entry',CUTS.loadCall,0x44fc40);
@@ -1032,11 +1101,12 @@ async function nativeChild() {
     if(workerData.mode==='wrong-thread')e.set_current_thread_id(2);
     if(workerData.mode==='wrong-instance')await WebAssembly.instantiate(captured.module,{host:{}});
     if(workerData.mode==='foreign-module-object')await WebAssembly.instantiate(await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0])),{host:{}});
-    const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode.includes('historical')?200000:workerData.mode==='active-deadline'?20:workerData.mode==='continuity-deadline'?300:9000);
+    const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode.includes('historical')?200000:workerData.mode.includes('measured')?360000:workerData.mode==='active-deadline'?20:workerData.mode==='continuity-deadline'?300:9000);
     if(workerData.mode!=='late-early'){traceStartedAt=Date.now();bound.invoke('start',{commandEnd:end,absoluteEnd:end});}
     if(workerData.mode==='continuity-boundary-overflow'){
+      bound.report().observer.blocks=49999999;
       e.set_eip(caller);
-      for(let k=0;k<100001 && bound.report().traced;k++)captured.host.log_block(caller,e.get_esp());
+      for(let k=0;k<50000001 && bound.report().traced;k++)captured.host.log_block(caller,e.get_esp());
       assert.equal(bound.report().observer.status,'boundary-limit');
       throw Error('boundary overflow preserved');
     }

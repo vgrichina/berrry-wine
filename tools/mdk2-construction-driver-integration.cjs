@@ -11,7 +11,7 @@ const ROOT = path.resolve(__dirname, '..');
 const RUNS = path.join(ROOT, 'scratch/runs');
 const SOURCE = '1329b1ba6eb00144ff77d4cd92a8513d4fc953ad';
 const OBSERVER = 'de6a33f257d93e8814d666bdec62361161569ac4';
-const OBSERVER_REPAIR_SHA256 = 'e886e6d868a6690867113526a66df106b024cedb89f2d5024aaf6cf89568a0ea';
+const OBSERVER_REPAIR_SHA256 = '4e19cb9da6497619b21e9e2080d747134304134b2d256af20f5cb377e9f015a5';
 const DRIVER = '20261104-mdk2-fresh-pending-scene/browser-driver.cjs';
 const MAIN = '20261104-mdk2-post-lua-native-boundary/main-state.cjs';
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -190,6 +190,15 @@ function installBinding(options) {
   }
   const audit = [], allowed = options.moduleHashes;
   let fatal = null, entry = null, receivedOnce = false, started = false, terminal = false, timer = null, traced = false, observer = null, paused = false, checkpoint = null, traceEnd = null;
+  // Only observation exhaustion is caught at the native run boundary. Genuine
+  // native traps/import failures retain the shipped Worker's original handling.
+  let observationStop = null;
+  const observationReasons = ['boundary-limit','record-limit','deadline'];
+  function exhausted(reason) {
+    stop(reason);
+    observationStop ||= Error(reason);
+    throw observationStop;
+  }
   const report = () => ({realm: isPage ? 'page' : 'worker', targetId: options.targetId || null,
     workerURL: options.workerURL || null, fatal, started, terminal, traced, paused, traceEnd,
     binding: entry?.binding || null, thread: entry?.instance?.exports.get_current_thread_id?.(),
@@ -272,19 +281,29 @@ function installBinding(options) {
       if (observer.report.status !== 'running') {
         const status = observer.report.status;
         if (observer.report.error) fatal ||= observer.report.error;
+        if (observationReasons.includes(status)) exhausted(status);
         stop(status);
         throw Error(fatal || status);
       }
-      if (traced && (observer.report.blocks >= 100000 || observer.report.records.length >= 512)) {
-        const reason = observer.report.blocks >= 100000 ? 'boundary-limit' : 'record-limit';
-        stop(reason); throw Error(reason);
+      if (traced && (observer.report.blocks >= 50000000 || observer.report.records.length >= 512)) {
+        const reason = observer.report.blocks >= 50000000 ? 'boundary-limit' : 'record-limit';
+        exhausted(reason);
       }
       return result;
     };
     entry.host = host;
     try {
       const result = await Reflect.apply(instantiate, this, [module, imports, ...args]);
-      entry.instance = result.instance || result; add({kind: 'installed-before-instantiation', sha256: binding.sha256}); return result;
+      entry.instance = result.instance || result; add({kind: 'installed-before-instantiation', sha256: binding.sha256});
+      const ex = entry.instance.exports;
+      const exports = {...ex, run(...values) {
+        // An expired idle deadline must never disable tracing and then execute
+        // an unobserved command. Keep the terminal report queryable by CDP.
+        if (started && (observationStop || terminal && observationReasons.includes(observer?.report.status))) return;
+        try { return Reflect.apply(ex.run, ex, values); }
+        catch (error) { if (error !== observationStop) throw error; }
+      }};
+      return result.instance ? {...result, instance:{exports}} : {exports};
     } catch (error) { fatal ||= String(error); stop('instantiation-failure'); throw error; }
   };
   function frozenRegisters() {
@@ -325,12 +344,12 @@ function installBinding(options) {
     // deadlines are checked separately and must never shorten or renew it.
     const now = Date.now();
     if (!Number.isFinite(row.commandEnd) || row.commandEnd <= now) return fail('trace command deadline');
-    const end = Math.min(row.absoluteEnd, now + 180000);
+    const end = Math.min(row.absoluteEnd, now + 360000);
     if (!Number.isFinite(end) || end <= Date.now()) return fail('trace deadline');
     started = true; traceEnd = end;
     observer = g.Mdk2LuaConstructionObserver.attach({host: entry.host, getExports: () => entry.instance.exports,
       workerSlot: 0, exeSha256: g.Mdk2LuaConstructionObserver.EXE_SHA256, wasmSha256: entry.binding.sha256,
-      now: Date.now, deadline: end}); // Published smaller defaults: 100000 / 512.
+      now: Date.now, deadline: end}); // One fixed 50M / 360s / 512 contract.
     observer.sample();
     if (observer.report.error || observer.report.status !== 'running') return fail(observer.report.error || 'initial sample failed');
     traced = true; ex.set_trace_esp(1, 0, 0);
@@ -527,7 +546,7 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     if (!consumed && !['difficulty','post-medium-construction'].includes(approval.screen)) return;
     scene(approval);
     // Execution credit is exactly the unchanged producer's command. The main
-    // observer still counts every boundary within the same 100000/512 limits.
+    // observer counts every boundary within one fixed 50M/360s/512 contract.
     assert([16,32,64].includes(c.n), 'unsupported traced quantum');
     if (approval.screen === 'difficulty') assert(inputReceipt, 'Medium trusted input receipt missing');
     assert.equal(approval.capture, pending.capture); assert.equal(approval.sha256, pending.sha256);
@@ -588,7 +607,14 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
   async function end(result) {
     if (!active) return;
     active = false;
-    const report = await rpc('checkpoint', {commandEnd, absoluteEnd: deadline() - 180000});
+    let report;
+    try { report = await rpc('checkpoint', {commandEnd, absoluteEnd: deadline() - 180000}); }
+    catch (error) {
+      // Observation exhaustion unwinds run without killing the Worker. Persist
+      // its terminal native history before the original first-failure closure.
+      save('bounded-trace-first-fault.json', await rpc('report'));
+      throw error;
+    }
     save('bounded-trace-end-' + quantum + '.json', {report, result});
     save('bounded-trace-end.json', {report, result});
     assert(result.ran === requested && !result.timedOut && Date.now() < commandEnd, 'original construction command failed/deadline');
@@ -672,7 +698,7 @@ function inspect() {
   return {status: 'offline-composition-checked', source: SOURCE, observer: OBSERVER, observerRepairSHA256:OBSERVER_REPAIR_SHA256, closure, pinsSHA256,
     composedSHA256: sha(composed.source), preloadSHA256: sha(preloadSource()), moduleReferences,
     continuity: {checkpoint: true, restart: false, deadlineReset: false, reviewClock: 'wall time; original deadline remains fixed'},
-    limits: {traceMs: 180000, boundaries: 100000, records: 512, constructionSlices: [16,32,64], restart: false},
+    limits: {traceMs: 360000, boundaries: 50000000, records: 512, constructionSlices: [16,32,64], restart: false},
     runtime: 'Not executed. Fresh release and original pinned served bytes required; coordinator owns allocation/shutdown.'};
 }
 function retainedModule(row) {
@@ -713,6 +739,11 @@ function controllerSources(runDirectory) {
   const oldModes = "('open','opening','newgame','medium','fade','pending','construction')";
   const modes = "('open','opening','newgame','medium','fade','pending','construction','loading','cancel','post','cinematic')";
   for (const name of ['author.py','operator.py']) sources[name] = replaceOnce(sources[name], oldModes, modes);
+  // Reject contradictory menu fields before the original control publishes an
+  // inspection approval. The original selector repeats its own check later.
+  const reviewCheck = 'require(process.argv[1]).preflightMenuReview(process.argv[2],JSON.parse(process.argv[3]))';
+  sources['control.py'] = replaceOnce(sources['control.py'], "if sys.argv[1]=='review':\n",
+    "if sys.argv[1]=='review':\n if sys.argv[4]=='native-menu': __import__('subprocess').run(['node','-e'," + JSON.stringify(reviewCheck) + "," + JSON.stringify(path.join(ROOT,'tools/mdk2-local-runtime.cjs')) + ",sys.argv[5],sys.argv[3]],check=True)\n");
   sources['author.py'] = replaceOnce(sources['author.py'], "mode in ('newgame','medium')", "mode in ('newgame','medium','cancel')");
   // Keep the author -> operator -> next -> control path and personal review
   // validators. Only the obsolete allocation identity is replaced by the fresh

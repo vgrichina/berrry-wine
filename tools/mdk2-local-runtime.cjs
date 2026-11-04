@@ -12,7 +12,7 @@ const BASE = path.join(ROOT, 'scratch/runs');
 // Explicit installed-original assignment; pre-Chrome tests consume no game launch.
 const HARD_CLOSE = Date.parse('2026-11-04T23:50:00Z');
 const HARD_RECOVER = Date.parse('2026-11-04T23:53:00Z');
-const ASSIGNMENT = '20261104-mdk2-installed-original-gameplay';
+const ASSIGNMENT = '20261104-mdk2-measured-native-boundary-gameplay';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -278,11 +278,17 @@ function prepareTransport(run) {
   fs.writeFileSync(path.join(run,'python-hooks/sitecustomize.py'),siteSource,{flag:'wx'});
 }
 function heavyRelease(board) {
-  const rows=board.split('\n').filter(line=>/^2026-11-04T\S+ (?:gltron-repaired-live(?:-backends-nov04)? LOCAL HEAVY RELEASE(?:\s|$)|coordinator LOCAL HEAVY RELEASE gltron-repaired-live-backends-nov04:)/.test(line));
-  assert(rows.length,'explicit gltron-repaired-live-backends-nov04 LOCAL HEAVY RELEASE required');
+  const rows=board.split('\n').filter(line=>/^2026-11-04T\S+ (?:stronghold-fresh-complete(?:-entry-gameplay-nov04)? LOCAL HEAVY RELEASE(?:\s|$)|coordinator LOCAL HEAVY RELEASE stronghold-fresh-complete-entry-gameplay-nov04:)/.test(line));
+  assert(rows.length,'explicit stronghold-fresh-complete-entry-gameplay-nov04 LOCAL HEAVY RELEASE required');
   const line=rows.at(-1),at=Date.parse(line.split(' ')[0]);
-  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-04T21:00:23Z')&&at<=Date.now(),'current predecessor release required');
+  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-04T21:18:00Z')&&at<=Date.now(),'current predecessor release required');
   return line;
+}
+function preflightMenuReview(phase, review) {
+  // Keep the original selector's classification rules ahead of publishing an
+  // inspection approval. This cannot infer pixels or repair a human review.
+  require('./mdk2-construction-driver-integration.cjs').verifyClosure();
+  require(path.join(BASE,'20261104-mdk2-adequate-lifetime-menu/native-menu.cjs')).ready(review, phase);
 }
 function install(run) {
   assert(!installed, 'dedicated one-use local contract');
@@ -329,4 +335,4 @@ async function start(run) {
   install(run);
   integration.run(run);
 }
-module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,launchOwned,install,start,prepareTransport,transportSource,controlSource,siteSource,heavyRelease};
+module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,launchOwned,install,start,prepareTransport,transportSource,controlSource,siteSource,heavyRelease,preflightMenuReview};

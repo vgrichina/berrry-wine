@@ -125,6 +125,7 @@ if(!isMainThread){
     const hashes=models.map(m=>H(m.bytes)),o=attach(opts);o.sample();current=1;o.sample();assert.equal(o.report.status,'running',JSON.stringify(o.report));
     assert.equal(o.report.records[0].levelCreatedSincePreviousSample,false);assert.equal(o.report.records[1].levelCreatedSincePreviousSample,true);
     assert.deepEqual(models.map(m=>H(m.bytes)),hashes);o.finish();
+    for(const extra of [{maxBoundaries:50000001},{maxRecords:513},{deadline:360001}])assert.throws(()=>attach({...opts,...extra}),/bound/);
     const startedWithTable=attach(opts);startedWithTable.sample();assert.equal(startedWithTable.report.records[0].levelCreatedSincePreviousSample,false);startedWithTable.finish();
     const foreign=attach({...opts,getExports:()=>current?{...ex}:ex});current=0;foreign.sample();current=1;foreign.sample();assert.match(foreign.report.error,/instance/);
     const bounded=attach({...opts,maxRecords:1});assert.throws(()=>attach(opts),/occupied/);bounded.sample();bounded.sample();assert.equal(bounded.report.status,'record-limit');

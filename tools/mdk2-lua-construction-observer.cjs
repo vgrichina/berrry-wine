@@ -36,10 +36,10 @@ function decodeFileSnapshot(main,file){
   if(outputSize!==main.rawRequestWords?.[2]||destination!==main.rawRequestWords?.[0]||compressedRead>compressedSize||outputCopied>outputSize)throw Error('wrong request/decode cursors');
   return {kind:output?'archive-output-callback':'archive-input-callback',decode:{state:ptr,stream,compressedSize,compressedRead,outputSize,outputCopied,destination,remaining:outputSize-outputCopied}};
 }
-function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()=>performance.now(),maxRecords=512,maxBoundaries=100000}={}) {
+function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()=>performance.now(),maxRecords=512,maxBoundaries=50000000}={}) {
   if(workerSlot!==0||exeSha256!==EXE_SHA256||!(/^[a-f0-9]{64}$/).test(wasmSha256||''))throw Error('wrong Worker/media/module pin');
   if(typeof host?.log_block!=='function'||typeof getExports!=='function'||owners.has(host))throw Error('missing or occupied owning import');
-  if(!Number.isFinite(deadline)||deadline<=now()||!Number.isInteger(maxRecords)||maxRecords<1||maxRecords>4096||!Number.isInteger(maxBoundaries)||maxBoundaries<1||maxBoundaries>2000000)throw Error('invalid observation bound');
+  if(!Number.isFinite(deadline)||deadline<=now()||deadline>now()+360000||!Number.isInteger(maxRecords)||maxRecords<1||maxRecords>512||!Number.isInteger(maxBoundaries)||maxBoundaries<1||maxBoundaries>50000000)throw Error('invalid observation bound');
   const original=host.log_block;let ex=null,poll=null,finalizer=null,load=null,buffer=null,previousLevel=null,suffix=null;
   const report={version:1,status:'running',workerSlot,exeSha256,wasmSha256,records:[],blocks:0,
     history:'Before attachment unknown; native completion is not Lua execution or gameplay',
