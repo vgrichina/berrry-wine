@@ -3,11 +3,11 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
-const run=path.resolve('scratch/runs/20261104-stronghold-portable-local-runtime/contract-test');
+const run=path.resolve('scratch/runs/20261104-stronghold-title-recognition-onward/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
-const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:20:00Z');
+const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:45:00Z');
 const release=api.createRelease({run,pins,nonce,now});
 assert.equal(api.validateRelease(release,{run,pins,nonce,now}),release);
 assert.equal(release.identity.pid,process.pid);assert.equal(release.identity.hostname,require('os').hostname());
@@ -19,6 +19,7 @@ function reject(name,mutate,pattern=/required|identity|binding|deadline|authoriz
 reject('missing authorization',r=>delete r.authorization);
 reject('missing current authorization',r=>delete r.freshLocalDiagnosticAuthorized);
 reject('foreign assignment',r=>r.assignment='foreign');
+reject('expired predecessor authorization',r=>r.assignment='stronghold-portable-local-runtime user task');
 reject('foreign shutdown owner',r=>r.shutdownOwner='worker');
 reject('box as local',r=>r.kind='leased-box');
 reject('fake box ID',r=>r.boxId='bx_local');
