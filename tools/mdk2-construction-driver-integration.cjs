@@ -11,7 +11,7 @@ const ROOT = path.resolve(__dirname, '..');
 const RUNS = path.join(ROOT, 'scratch/runs');
 const SOURCE = '1329b1ba6eb00144ff77d4cd92a8513d4fc953ad';
 const OBSERVER = 'de6a33f257d93e8814d666bdec62361161569ac4';
-const OBSERVER_REPAIR_SHA256 = '341f705e65d292ab014146af0594cc0531913428f14b0f47a125f7fba4acf0cb';
+const OBSERVER_REPAIR_SHA256 = 'e886e6d868a6690867113526a66df106b024cedb89f2d5024aaf6cf89568a0ea';
 const DRIVER = '20261104-mdk2-fresh-pending-scene/browser-driver.cjs';
 const MAIN = '20261104-mdk2-post-lua-native-boundary/main-state.cjs';
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -429,12 +429,14 @@ function correlateSnapshots(before, after, trace) {
       return {kind:'unknown', reason:error.message, decode:null}; } };
   const first = interpret(before), last = interpret(after);
   const a = before.main, b = after.main;
-  assert.equal(a.request, b.request, 'request replaced across quantum');
-  assert.deepEqual(a.rawRequestWords?.slice(0, 4), b.rawRequestWords?.slice(0, 4), 'request buffer/size/name changed');
+  // Earlier attachment can precede publication of the request. Preserve both
+  // endpoints and delivered native events rather than infer an absent prefix.
+  const requestChanged = a.request !== b.request;
+  if (!requestChanged) assert.deepEqual(a.rawRequestWords?.slice(0, 4), b.rawRequestWords?.slice(0, 4), 'request buffer/size/name changed');
   const records = trace?.observer?.records || [];
   // These quantities are separate observations, never an inferred call history.
-  return {before: first, after: last,
-    outputProgress: first.decode && last.decode ? last.decode.outputCopied - first.decode.outputCopied : null,
+  return {before: first, after: last, requestChanged, requests: [a.request, b.request],
+    outputProgress: !requestChanged && first.decode && last.decode ? last.decode.outputCopied - first.decode.outputCopied : null,
     completion: records.length ? records.at(-1).resource.completion : null,
     completedBytesDelta: records.length > 1 ? records.at(-1).resource.completedBytes - records[0].resource.completedBytes : null,
     expectedCompletionDelta: 192320,
@@ -512,14 +514,10 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     before = await capture();
     if (consumed) assert.deepEqual(before, previous, 'changed frozen state across construction review');
     assert.equal(before.barrier.owners[0].endpointIdentity, sent[0].endpointIdentity, 'foreign main endpoint');
-    // A review of earlier construction never supplies missing level1 history.
-    const words = before.main.rawRequestWords;
-    const name = words ? Buffer.from(new Uint32Array(words.slice(3, 7)).buffer).toString('ascii').split('\0')[0] : null;
-    if (words?.[2] !== 192320 || name !== 'level1') {
-      assert(!consumed, 'required construction request changed; history cannot be skipped');
-      return;
-    }
-    require('./mdk2-lua-construction-observer.cjs').decodeFileSnapshot(before.main, before.file);
+    // Attach at the first reviewed construction quantum, even before level1
+    // exists. Waiting for its published request loses the genuine demand call.
+    // decodeFileSnapshot remains interpretation of file progress, not admission
+    // to main observation; an earlier idle/unknown file suffix is retained.
     const aggregateEnds = ['construction-control-ledger.json','comic-control-ledger.json']
       .filter(name => fs.existsSync(path.join(OUT, name))).map(name => {
         const ledger = read(name); assert(Number.isFinite(ledger.startedAt), 'original aggregate deadline missing');

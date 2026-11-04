@@ -56,8 +56,9 @@ function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()
     if(u(0x400000)!==0x00905a4d||u(0x400000+u(0x40003c))!==0x4550)throw Error('wrong PE loader');
     for(const {pc,hex}of PINS)if(read(pc,hex.length/2).map(v=>v.toString(16).padStart(2,'0')).join('')!==hex)throw Error('original bytes changed');
   }
+  const requestEntry=request=>({buffer:u(request),size:u(request+8),type:read(request+28,1)[0],status:read(request+30,1)[0],name:String.fromCharCode(...read(request+12,16)).split('\0')[0]});
   const resource=()=>{const request=u(0x4b87d4),active=u(0x4b7d14);return {request,active,pending:u(0x4b87cc),completion:u(0x4b87d0),completedBytes:u(0x5ce08c),
-    entry:request?{buffer:u(request),size:u(request+8),type:read(request+28,1)[0],status:read(request+30,1)[0],name:String.fromCharCode(...read(request+12,16)).split('\0')[0]}:null};};
+    entry:request?requestEntry(request):null};};
   function level(){
     const state=u(0x4b7ce4);if(!state)return {available:false,reason:'Lua not initialized'};
     const bucket=u(state+0xd4)+('L'.charCodeAt(0)%61)*12,n=u(bucket),list=u(bucket+8);
@@ -108,7 +109,14 @@ function attach({host,getExports,workerSlot,exeSha256,wasmSha256,deadline,now=()
     if(pc===CUTS.finalize){if(r.entry?.type!==10||u(esp+4)!==r.request||r.entry.status!==2)throw Error('wrong type10 finalizer');finalizer={esp,caller:u(esp),request:r.request};emit('completion-finalizer-entry');}
     if(pc===CUTS.finalizeType10&&!finalizer)throw Error('finalizer history missing');
     if(finalizer&&pc===finalizer.caller){if(esp!==finalizer.esp+4||r.request!==finalizer.request)throw Error('finalizer return mismatch');emit('completion-finalizer-return');finalizer=null;}
-    if(pc===CUTS.loadCall){if(ex.get_esi()>>>0!==r.request)throw Error('wrong demand request');load={esp,request:r.request};emit('demand-call');}
+    if(pc===CUTS.loadCall){
+      // PUSH ESI / CALL precedes the callee that may publish the file request.
+      // Read the actual argument now; an empty global cannot supply its identity.
+      const request=ex.get_esi()>>>0,entry=request?requestEntry(request):null;
+      if(!request||(r.request&&request!==r.request)||(r.active&&request!==r.active)||
+        entry?.type!==10||entry.size!==192320||entry.name!=='level1')throw Error('wrong demand request');
+      load={esp,request};emit('demand-call',{argument:{request,entry}});
+    }
     if(pc===CUTS.loadReturned){if(!load||esp!==load.esp-4||r.request!==load.request||r.active||r.completion!==1)throw Error('demand return history/completion missing');emit('demand-return');load=null;}
     if(pc===CUTS.bufferCall){if(ex.get_esi()>>>0!==r.request||r.completion!==1||r.entry?.type!==10||r.active)throw Error('buffer request incomplete');buffer={esp,request:r.request};emit('script-buffer-call');}
     if(pc===CUTS.buffer){if(!buffer||u(esp)!==0x41fd06||u(esp+4)!==r.entry.buffer||u(esp+8)!==r.entry.size)throw Error('buffer call history/arguments missing');emit('script-buffer-entry');buffer=null;}
