@@ -1,6 +1,5 @@
 'use strict';
-// These are actual-driver/protocol tests of a STOPPING preflight. They do not
-// qualify a runnable observer composition or repeat the accepted native suite.
+// Actual retained-driver composition and bounded trace in the shipped Worker.
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -9,7 +8,8 @@ const Module = require('node:module');
 const vm = require('node:vm');
 const cp = require('node:child_process');
 const integration = require('../tools/mdk2-construction-driver-integration.cjs');
-const EVIDENCE = path.join(integration.RUNS, '20261104-mdk2-construction-driver-integration');
+const {Worker, MessageChannel, isMainThread, parentPort, workerData} = require('node:worker_threads');
+const EVIDENCE = path.join(integration.RUNS, '20261104-mdk2-bounded-trace-driver-repair');
 fs.mkdirSync(EVIDENCE, {recursive: true});
 
 function actualDriver() {
@@ -22,7 +22,7 @@ function actualDriver() {
   // Export the actual functions before the sole bootstrap invocation. No
   // implementation substitution, new observer, or guest runtime is involved.
   m._compile(source.slice(0, end) + `module.exports={RUN,OUT,preload,command,main,inspectionGuard,
-    pageForTest(p){page=p},haltForTest(){halted=true}};`, file);
+    traceDriver, pageForTest(p){page=p},deadlineForTest(d){deadline=d},sessions,haltForTest(){halted=true}};`, file);
   const api = m.exports;
   fs.mkdirSync(api.OUT); fs.mkdirSync(path.join(api.OUT, 'commands'));
   fs.writeFileSync(path.join(api.OUT, 'identity.json'), JSON.stringify({testOnly: 'offline protocol fixture'}));
@@ -41,8 +41,9 @@ function review(api) {
     personallyInspected: true, inspector: 'offline protocol fixture only'});
 }
 
+if (isMainThread) {
 test('exact retained closure and historical runtime pins resolve offline', () => {
-  const rows = integration.verifyClosure(); assert.equal(rows.length, 15);
+  const rows = integration.verifyClosure(); assert.equal(rows.length, Object.keys({...integration.CLOSURE,...integration.HELPERS}).length);
   const runtime = integration.pinnedRuntime(); assert.equal(runtime.pins.files.length, 432);
   assert.equal(runtime.pins.moduleFiles[0].sha256, 'cffca869b541e6eff12ae3a6b74c4476977e0a7e23cd43d8ec5ba8faecd4bcee');
 });
@@ -64,9 +65,11 @@ test('positive actual composition compiles main/state/command/preload without in
   const {api, source, run} = actualDriver();
   assert.equal(api.RUN, run); assert.equal(api.OUT, path.join(run, 'browser'));
   assert.equal(typeof api.main, 'function'); assert.equal(typeof api.command, 'function');
-  assert.equal(integration.sha(api.preload), '12cedfe958c4fe2acc11dfdaf4a7e06843d4826b1cc0bd0bcf92639a161e7f7a');
+  assert.equal(api.preload, integration.preloadSource());
   const original = require(path.join(integration.RUNS, integration.MAIN)).sourceForRun(run);
-  assert.equal(source, original); // Includes the original first-failure/cleanup code.
+  assert.notEqual(source, original);
+  assert(source.includes('integration.createTraceDriver'));
+  assert(source.includes("await traceDriver.finish('terminal-cleanup')"));
   assert(!fs.existsSync(path.join(api.OUT, 'bootstrap-failure.json')));
 });
 
@@ -99,7 +102,7 @@ test('actual driver rejects incomplete response; terminal guard prevents later s
   api.pageForTest({evaluate: async () => {calls++; return {ran: 15, timedOut: false};}});
   await assert.rejects(api.command({action: 'step', n: 16}, 1), /incomplete frozen step/);
   // main's unchanged catch performs this latch; assert its actual source too.
-  assert(source.includes("catch(e){halted=true;save('reply-'+i+'.json',{i,ok:false"));
+  assert(source.includes("catch(e){halted=true;await traceDriver.finish('first-command-failure');save('reply-'+i+'.json',{i,ok:false"));
   api.haltForTest();
   await assert.rejects(api.command({action: 'step', n: 16}, 2), /first failure preserved/);
   await assert.rejects(api.command({action: 'keydown', key: 'Enter'}, 2), /first failure preserved/);
@@ -113,33 +116,53 @@ test('actual Worker injection occurs before resume; preload exception is termina
   assert(lo > 0 && hi > lo);
   for (const fault of [false, true]) {
     const sent = [], pending = [], logs = []; let handler;
-    const session = {send: async (name, args) => {
+    const handlers=new Map();
+    const session = {on:(name,fn)=>handlers.set(name,fn),off:name=>handlers.delete(name),send: async (name, args) => {
       sent.push(name);
-      if (name === 'Runtime.evaluate') {
-        assert.equal(args.expression, api.preload);
+      if(name==='Debugger.setInstrumentationBreakpoint')return {breakpointId:'first-script'};
+      if(name==='Runtime.runIfWaitingForDebugger'){
+        handlers.get('Debugger.scriptParsed')({scriptId:'original',url:'http://offline/lib/guest-worker.js'});
+        handlers.get('Debugger.paused')({reason:'instrumentation',callFrames:[{callFrameId:'owning-frame',location:{scriptId:'original'}}]});
+      }
+      if (name === 'Debugger.evaluateOnCallFrame') {
+        assert.equal(args.expression, integration.preloadSource({targetId:'owning-main',workerURL:'http://offline/lib/guest-worker.js'}));
         return fault ? {exceptionDetails: {text: 'offline preload failure'}} : {};
       }
     }};
     const context = {cdp: {on: (name, fn) => {handler = fn;}, connection: () => ({session: () => session})},
       pending, sessions: new Map(), preload: api.preload, sha: integration.sha, halted: false,
-      log: (name, value) => logs.push({name, value})};
+      integration,deadline:Date.now()+30000, traceDriver:{finish:async()=>{}}, log: (name, value) => logs.push({name, value})};
     vm.runInNewContext(source.slice(lo, hi), context);
-    handler({sessionId: 'offline', targetInfo: {type: 'worker', targetId: 'owning-main'}, waitingForDebugger: true});
+    handler({sessionId: 'offline', targetInfo: {type: 'worker', targetId: 'owning-main', url:'http://offline/lib/guest-worker.js'}, waitingForDebugger: true});
     await Promise.all(pending);
-    assert.deepEqual(sent, fault ? ['Runtime.enable', 'Runtime.evaluate'] : ['Runtime.enable', 'Runtime.evaluate', 'Runtime.runIfWaitingForDebugger']);
+    const prefix=['Runtime.enable','Debugger.enable','Debugger.setInstrumentationBreakpoint','Runtime.runIfWaitingForDebugger','Debugger.evaluateOnCallFrame'];
+    assert.deepEqual(sent, fault ? prefix : [...prefix,'Debugger.removeBreakpoint','Debugger.resume','Debugger.disable']);
     assert.equal(context.halted, fault);
     assert.equal(logs[0].name, fault ? 'first-failures.jsonl' : 'worker-preloads.jsonl');
   }
 });
 
-test('actual retained route has zero trace arming and no observer; STOP is not a runnable integration claim', () => {
+test('concrete composed route checks offline with finite one-shot trace', () => {
   const report = integration.inspect();
-  assert.equal(report.status, 'blocked-before-allocation');
-  assert.equal(report.code, 'ORIGINAL_DRIVER_TRACE_DISABLED');
-  assert.equal(report.actualDriver.existingTraceArmed, false);
-  assert.equal(report.actualDriver.observerInstalled, false);
-  assert.equal(report.actualDriver.mainWorkerModuleBinding, false);
-  assert.throws(() => integration.assertRunnable(), /ORIGINAL_DRIVER_TRACE_DISABLED/);
+  assert.equal(report.status, 'offline-composition-checked');
+  assert.deepEqual(report.limits, {traceMs:10000,boundaries:100000,records:512,constructionSlices:16,restart:false});
+  assert.equal(integration.assertRunnable().composedSHA256, report.composedSHA256);
+});
+
+test('actual first-script installer rejects foreign context and deadline without executing/resuming the script',async()=>{
+  for(const mode of ['foreign','deadline']){
+    const handlers=new Map(),calls=[];
+    const session={on:(n,f)=>handlers.set(n,f),off:n=>handlers.delete(n),send:async(n,args)=>{
+      calls.push(n);
+      if(n==='Debugger.setInstrumentationBreakpoint')return {breakpointId:'first'};
+      if(n==='Runtime.runIfWaitingForDebugger'&&mode==='foreign'){
+        handlers.get('Debugger.paused')({reason:'instrumentation',callFrames:[{callFrameId:'wrong',url:'http://foreign/worker.js'}]});
+      }
+    }};
+    await assert.rejects(integration.installBeforeFirstScript(session,'throw Error("must not execute")','http://offline/lib/guest-worker.js',Date.now()+(mode==='deadline'?20:1000)),/foreign|deadline/);
+    assert(!calls.includes('Debugger.evaluateOnCallFrame'));assert(!calls.includes('Debugger.resume'));
+    assert.equal(handlers.size,0);
+  }
 });
 
 test('actual CLI run entry fails before creating output or calling original main', () => {
@@ -147,6 +170,245 @@ test('actual CLI run entry fails before creating output or calling original main
   assert(!fs.existsSync(future));
   const result = cp.spawnSync(process.execPath, [path.join(integration.ROOT, 'tools/mdk2-construction-driver-integration.cjs'), '--run', future],
     {cwd: integration.ROOT, encoding: 'utf8'});
-  assert.equal(result.status, 2); assert(result.stderr.includes('ORIGINAL_DRIVER_TRACE_DISABLED'));
+  assert.equal(result.status, 2); assert(result.stderr.includes('runtime-release.json'));
   assert(!fs.existsSync(future));
 });
+
+test('actual CLI rejects stale or unbound releases before bootstrap/Puppeteer/HTTP',()=>{
+  for(const mode of ['stale','unbound']){
+    const run=fs.mkdtempSync(path.join(EVIDENCE,'release-'));
+    const release={runDirectory:mode==='unbound'?'/foreign':run,assignment:'20261104-mdk2-bounded-trace-driver-repair',
+      authorization:'RUNTIME RELEASE MDK2 TARGET ONWARD',shutdownOwner:'coordinator',boxId:'offline-fixture',
+      expiry:'2000-01-01T00:00:00Z',closeBy:'2000-01-01T00:00:00Z',recoverBy:'2000-01-01T00:00:00Z'};
+    write(run,'runtime-release.json',release);
+    const result=cp.spawnSync(process.execPath,[path.join(integration.ROOT,'tools/mdk2-construction-driver-integration.cjs'),'--run',run],{encoding:'utf8'});
+    assert.equal(result.status,2);assert(!fs.existsSync(path.join(run,'browser')));assert(!fs.existsSync(path.join(run,'author.py')));
+  }
+});
+
+// The page realm runs the exact composed preload. Its Worker envelope is then
+// structured-cloned by a real worker_thread into the shipped Worker bootstrap.
+async function nativeOne(row, mode = 'success') {
+  const {api} = actualDriver(), memory = new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
+  const {port1,port2} = new MessageChannel();
+  const url = 'http://offline/lib/guest-worker.js?v=pinned', targetId = 'offline-main';
+  const sigs = require('../lib/host-import-sigs.generated.json').sigs;
+  const broker = require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>0])),sigs);
+  const worker = new Worker(__filename,{workerData:{mode,port:port2,wasmHash:row.sha256,url,targetId},transferList:[port2]});
+  let envelope, pendingSlice = 0; const commands=[];
+  class PageWorker {
+    constructor(url) { this.url=url; }
+    postMessage(message) {
+      envelope = message;
+      if(mode==='wrong-module') message={...message,__mdk2Binding:{...message.__mdk2Binding,sha256:'0'.repeat(64)}};
+      if(mode==='wrong-endpoint') message={...message,endpointIdentity:99};
+      worker.postMessage(message);
+    }
+  }
+  const realm = {document:{},location:{href:'http://offline/index.html'},URL,Worker:PageWorker,
+    WebAssembly:{...WebAssembly,Module:WebAssembly.Module,compile:WebAssembly.compile,instantiate:WebAssembly.instantiate},
+    ArrayBuffer,Uint8Array,crypto:require('node:crypto').webcrypto,Date,setTimeout,clearTimeout,addEventListener(){}};
+  vm.createContext(realm); vm.runInContext(api.preload,realm);
+  const module = await realm.WebAssembly.compile(integration.retainedModule(row));
+  const pageWorker = new realm.Worker(url);
+  return new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>finish(Error('native integration timeout')),45000);
+    const finish=async(error,value)=>{clearTimeout(timer);await worker.terminate();port1.close();error?reject(error):resolve({value,envelope,page:realm.__mdk2BoundTrace.report()});};
+    worker.on('error',error=>mode.startsWith('wrong-')?finish(null,{rejected:String(error)}):finish(error));
+    worker.on('message',m=>{
+      if(m.t==='ready') port1.postMessage({t:'start'});
+      else if(m.t==='rpc') broker.serveRpc(m.slot,m.waitEntry);
+      else if(m.t==='call') broker.serveCall(m);
+      else if(m.t==='calls') broker.serveCalls(m);
+      else if(m.t==='fixtureSliceRequest'){const c={t:'slice',seq:++pendingSlice,steps:1};commands.push(c);worker.postMessage(c);}
+      else if(m.t==='sliceDone')port1.postMessage({t:'slice',message:m});
+      else if(m.t==='fixtureFailure'||m.t==='error')finish(Error(JSON.stringify(m)));
+      else if(m.pass||m.rejected)finish(null,{...m,commands});
+    });
+    pageWorker.postMessage({t:'init',seq:0,module,memory,sigs,slot:0,endpointIdentity:1});
+  });
+}
+
+for(const row of integration.pinnedRuntime().pins.moduleFiles) {
+  test('composed original preload delivers original native fragment in real shipped Worker: '+row.path, async()=>{
+    const result=await nativeOne(row);
+    const control=await nativeOne(row,'control');
+    assert(result.value.pass,JSON.stringify(result.value));
+    for(const key of ['segments','before','trap','commands','workerSource'])assert.deepEqual(result.value[key],control.value[key],key);
+    const report=result.value.report;
+    assert.equal(report.fatal,null);assert.equal(report.traced,false);assert.equal(report.started,true);
+    assert(report.observer.blocks>0 && report.observer.blocks<=100000);
+    for(const kind of ['completion-consume','completion-finalizer-entry','completion-finalizer-return','poll-return','demand-return','script-buffer-entry'])
+      assert(report.observer.records.some(r=>r.kind===kind),kind);
+    assert.deepEqual(report.binding,JSON.parse(JSON.stringify(result.envelope.__mdk2Binding)));
+    assert.equal(report.binding.sha256,row.sha256);
+    assert.deepEqual(Array.from(result.page.audit,r=>r.kind),['compiled','sent']);
+    fs.writeFileSync(path.join(EVIDENCE,path.basename(row.path)+'.native.json'),JSON.stringify({observed:result.value,control:control.value},null,2));
+  });
+}
+for(const row of integration.pinnedRuntime().pins.moduleFiles)
+for(const mode of ['wrong-module','wrong-endpoint','wrong-thread','wrong-instance','foreign-module-object','missing-history','import-failure','terminal','deadline','active-deadline','late']) {
+  test('real composed Worker lifecycle rejects '+mode+' '+row.path, async()=>{
+    const result=await nativeOne(row,mode);
+    assert(result.value.rejected,JSON.stringify(result.value));
+    if(result.value.report)assert.equal(result.value.report.traced,false);
+  });
+}
+
+test('page hook rejects late installation, unhashed and ambiguous replacement Module sends', async()=>{
+  for(const mode of ['late','unhashed','replacement']){
+    class W{postMessage(){}}
+    const realm={document:{},location:{href:'http://offline/'},URL,Worker:W,ArrayBuffer,Uint8Array,
+      WebAssembly:{Module:WebAssembly.Module,compile:WebAssembly.compile,instantiate:WebAssembly.instantiate},crypto:require('crypto').webcrypto,Date,setTimeout,clearTimeout};
+    vm.createContext(realm);
+    if(mode==='late')realm.__mdk2Observe={events:[{kind:'instantiated'}]};
+    const install='('+integration.installBinding.toString()+')('+JSON.stringify({moduleHashes:integration.pinnedRuntime().pins.moduleFiles.map(r=>r.sha256)})+')';
+    if(mode==='late'){assert.throws(()=>vm.runInContext(install,realm),/late/);continue;}
+    vm.runInContext(install,realm);
+    const bytes=integration.retainedModule(integration.pinnedRuntime().pins.moduleFiles[0]);
+    const module=await (mode==='unhashed'?WebAssembly:realm.WebAssembly).compile(bytes),w=new realm.Worker('http://offline/lib/guest-worker.js');
+    const msg={t:'init',slot:0,module,endpointIdentity:1};
+    if(mode==='replacement')w.postMessage(msg);
+    assert.throws(()=>w.postMessage(msg),/unhashed|replacement/);
+  }
+});
+
+function sealedSidecars() {
+  const base=path.join(integration.RUNS,'20261104-mdk2-measured-escape-original');
+  const seal=JSON.parse(fs.readFileSync(path.join(base,'seal.json'))),bytes=fs.readFileSync(path.join(base,'remote-recovery-inventory.json'));
+  const pin=seal.files.find(r=>r.path==='remote-recovery-inventory.json');assert.equal(integration.sha(bytes),pin.sha256);
+  const inventory=JSON.parse(bytes);
+  function read(suffix){const name='comic-control-112'+suffix+'.json',p=path.join(base,'recovered/browser',name);
+    const b=fs.existsSync(p)?fs.readFileSync(p):require('node:zlib').gunzipSync(fs.readFileSync(p+'.gz'));
+    const row=inventory.find(r=>r.path==='browser/'+name);assert.equal(b.length,row.bytes);assert.equal(integration.sha(b),row.sha256);return JSON.parse(b);}
+  return {main:read('-native-main'),file:read('-owner')};
+}
+
+// Explicit protocol fixtures around the actual composed command functions.
+// Sidecars are sealed original readbacks; fake CDP replies are not runtime proof.
+for(const mode of ['success','ambiguous','wrong-module','wrong-thread','wrong-target','replacement','missing-history','failure','terminal','deadline','unfrozen']) {
+  test('actual composed construction command / attachment '+mode,async()=>{
+    const {api}=actualDriver();review(api);
+    const approval=JSON.parse(fs.readFileSync(path.join(api.OUT,'inspection-approval.json')));
+    Object.assign(approval,{screen:'post-medium-construction',originalScene:'level-destruction-construction',selection:'none',constructionBlackVisible:true});
+    write(api.OUT,'inspection-approval.json',approval);write(api.OUT,'native-selector-ledger.json',{newgame:true,medium:true});
+    const {main,file}=sealedSidecars();main.frozen.steps=3344;file.frozen.steps=3344;
+    const url='http://offline/lib/guest-worker.js',sent={kind:'sent',sha256:integration.pinnedRuntime().pins.moduleFiles[0].sha256,
+      compilation:0,bytes:2143540,workerURL:url,slot:0,endpointIdentity:1};
+    const barrier={frozen:main.frozen,owners:[{handle:null,slot:0,endpointIdentity:1,values:{get_current_thread_id:1,get_eip:main.values.get_eip}},
+      {handle:921600,slot:1,endpointIdentity:2,values:{get_current_thread_id:2,get_eip:file.values.get_eip}}]};
+    const calls=[];let starts=0,finishes=0,steps=0;
+    const session={send:async(name,args)=>{
+      calls.push(args.expression);
+      const r={targetId:mode==='wrong-target'?'foreign':'fixture',workerURL:url,binding:{...sent},thread:mode==='wrong-thread'?2:1,
+        fatal:null,traced:false,observer:null};
+      if(mode==='wrong-module')r.binding.sha256='f'.repeat(64);
+      if(args.expression.includes('invoke("start"')){starts++;r.traced=true;
+        if(mode==='replacement')api.sessions.set('fixture',{session:{},info:{url}});}
+      if(args.expression.includes('invoke("finish"')){finishes++;r.observer={blocks:mode==='missing-history'?0:10,records:[]};
+        if(mode==='failure')r.fatal='fixture observer unsupported history';}
+      return {result:{value:JSON.stringify(r)}};
+    }};
+    api.sessions.set('fixture',{session,info:{url}});
+    if(mode==='ambiguous')api.sessions.set('other',{session,info:{url}});
+    api.deadlineForTest(Date.now()+(mode==='deadline'?100000:900000));
+    api.pageForTest({evaluate:async(fn,n)=>{
+      if(fn.name==='frozenOwnership'){if(mode==='unfrozen')throw Error('fixture unfrozen barrier');return barrier;}
+      if(fn.name==='mainState')return main;if(fn.name==='ownerState')return file;
+      if(fn.toString().includes('WineFrozen.step')){steps++;return {ran:n,timedOut:false};}
+      return {input:{inputQueue:[],activeInput:null,mouseButtonsMask:0},binding:{audit:[sent]},frozen:main.frozen};
+    }});
+    if(mode==='terminal')await api.traceDriver.finish('fixture-terminal');
+    if(mode==='success'){
+      await api.command({action:'step',n:16},1);assert.equal(starts,1);assert.equal(finishes,1);assert.equal(steps,1);
+      assert(fs.existsSync(path.join(api.OUT,'bounded-trace-correlation.json')));
+      await api.traceDriver.begin({action:'step',n:16},2,api.inspectionGuard.pending);assert.equal(starts,1,'trace never restarts');
+    }else{
+      await assert.rejects(api.command({action:'step',n:16},1));
+      await assert.rejects(api.command({action:'step',n:16},2),/first failure|terminal/);
+      assert(steps<=1);
+    }
+  });
+}
+
+test('run-local controller composition retains actual operator/author and measured Escape',()=>{
+  const sources=integration.controllerSources('/home/user/wine-assembly/scratch/runs/FRESH-MDK2');
+  assert(sources['operator.py'].includes("str(E/'author.py')"));assert(sources['operator.py'].includes("str(E/'next.py')"));
+  assert(sources['runtime_io.py'].includes("v['runDirectory'] == str(E)"));
+  assert(!sources['runtime_io.py'].includes('bx_p6qbh9x9'));
+  assert(sources['native-menu.cjs'].includes('20261104-mdk2-measured-escape-original/native-menu.cjs'));
+  for(const [name,source] of Object.entries(sources)){
+    if(name.endsWith('.py')){const result=cp.spawnSync('python3',['-c','import ast,sys;ast.parse(sys.stdin.read())'],{input:source,encoding:'utf8'});assert.equal(result.status,0,result.stderr);}
+  }
+});
+} else {
+  nativeChild().catch(error=>parentPort.postMessage({t:'fixtureFailure',error:error.stack}));
+}
+
+async function nativeChild() {
+  const {EXE_SHA256,PINS,CUTS,attach}=require('../tools/mdk2-lua-construction-observer.cjs');
+  const exe=fs.readFileSync(path.join(integration.ROOT,'test/binaries/candidates/mdk2-demo/installed/mdk2demo/mdk2Main.exe'));
+  assert.equal(integration.sha(exe),EXE_SHA256);
+  const H=integration.sha;
+  globalThis.addEventListener=(type,fn)=>{if(type==='message')parentPort.on('message',data=>fn({data}));};
+  // The exact worker-specific preload string from the actual CDP seam.
+  const preload=workerData.mode==='control'
+    ? fs.readFileSync(path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene/observe-browser.js'),'utf8')
+    : integration.preloadSource({targetId:workerData.targetId,workerURL:workerData.url});
+  vm.runInThisContext(preload);
+  if(workerData.mode==='late'){
+    assert.throws(()=>vm.runInThisContext(preload),/late|duplicate/);
+    parentPort.postMessage({rejected:'late preload'});return;
+  }
+  const bound=globalThis.__mdk2BoundTrace,hook=WebAssembly.instantiate;
+  let captured;
+  WebAssembly.instantiate=async function(module,imports,...args){
+    if(workerData.mode==='import-failure')imports.host.log_block=()=>{throw Error('original import fixture failure');};
+    const result=await Reflect.apply(hook,this,[module,imports,...args]);
+    captured={e:(result.instance||result).exports,memory:imports.host.memory,host:imports.host,module};return result;
+  };
+  // The shipped Worker source is loaded as shipped, without replacing its queue,
+  // init handler, native interpreter, imports, or slice dispatch implementation.
+  const filename=path.join(integration.ROOT,'lib/guest-worker.js'),entry=new Module(filename,module);
+  entry.filename=filename;entry.paths=Module._nodeModulePaths(path.dirname(filename));
+  // Reconstruct only required pinned dependencies in memory from Git. Today's
+  // checkout is never substituted for the original shipped Worker closure.
+  const pins=new Map(integration.pinnedRuntime().pins.files.map(r=>[r.path,r]));
+  for(const extension of ['.js','.json']){
+    const original=Module._extensions[extension];
+    Module._extensions[extension]=(m,file)=>{
+      const relative=path.relative(integration.ROOT,file),pin=pins.get(relative);
+      if(!pin)return original(m,file);
+      const bytes=integration.gitFile(integration.SOURCE,relative);
+      assert.equal(bytes.length,pin.bytes);assert.equal(H(bytes),pin.sha256,'original Worker dependency '+relative);
+      if(extension==='.json')m.exports=JSON.parse(bytes.toString());else m._compile(bytes.toString(),file);
+    };
+  }
+  const source=integration.gitFile(integration.SOURCE,'lib/guest-worker.js').toString();entry._compile(source,filename);
+  const baseline=fs.readFileSync(path.join(integration.ROOT,'test/test-mdk2-lua-construction-observer.js'),'utf8');
+  assert.equal(H(baseline),H(integration.gitFile(integration.OBSERVER,'test/test-mdk2-lua-construction-observer.js')),'accepted qualification fixture changed');
+  let fixtureSource=baseline.slice(baseline.indexOf('async function fixture(access){'),baseline.indexOf('  // Diagnostic failures'));
+  if(workerData.mode!=='control')fixtureSource=fixtureSource.replace('e.set_trace_esp(1,0x400000,0x480000);', `
+    if(workerData.mode==='wrong-thread')e.set_current_thread_id(2);
+    if(workerData.mode==='wrong-instance')await WebAssembly.instantiate(captured.module,{host:{}});
+    if(workerData.mode==='foreign-module-object')await WebAssembly.instantiate(await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0])),{host:{}});
+    const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode==='active-deadline'?20:9000);
+    bound.invoke('start',{commandEnd:end,absoluteEnd:end});
+    if(workerData.mode==='active-deadline'){await new Promise(resolve=>setTimeout(resolve,40));assert.equal(bound.report().traced,false);throw Error('active deadline observed');}
+    if(workerData.mode==='terminal'){bound.invoke('finish');bound.invoke('start',{commandEnd:end,absoluteEnd:end});}
+  `);
+  fixtureSource=fixtureSource.replace("e.set_eip(start);let steps=0;", "if(workerData.mode==='missing-history')start=CUTS.finalizeType10;e.set_eip(start);let steps=0;");
+  const trapStart=baseline.indexOf('  // Original undefined instruction trap parity');
+  const trapEnd=baseline.indexOf('  parentPort.postMessage({pass:true,segments,before,trap:',trapStart);
+  fixtureSource+="if(workerData.mode==='control')e.set_trace_esp(0,0,0);\n";
+  fixtureSource+=baseline.slice(trapStart,trapEnd);
+  fixtureSource+=`parentPort.postMessage({pass:true,segments,before,trap:{text:trap,hash:H(b),state:state()},report:bound?.report()||null,workerSource:{path:'lib/guest-worker.js',sha256:H(source)}});}`;
+  const fixture=eval('('+fixtureSource+')');
+  workerData.port.once('message',()=>fixture(()=>({...captured,observer:workerData.mode==='control'?null:{
+    get report(){return bound.report().observer},sample(){},finish(){return bound.invoke('finish',{reason:'fixture-end'}).observer}
+  }})).catch(error=>{
+    const report=bound?.invoke('finish',{reason:'fixture-failure'});
+    if(workerData.mode!=='success')parentPort.postMessage({rejected:String(error),report});
+    else parentPort.postMessage({t:'fixtureFailure',error:error.stack,report});
+  }));
+}
