@@ -1603,7 +1603,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
   candidate: deus-ex-demo
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none (released; native stack checkpoint retained)
+  worker: codex:01a1a427-6688-71a3-8767-40f02ed8667c (fresh closer-support landing task; own leased runtime)
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
   accepted: 2026-10-03T08:42:45.967Z
@@ -1999,7 +1999,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Legacy texture cube API conformance
   id: D3D-LEGACY-TEXTURE-CAPS-AUDIT-20261013
-  worker: none; rendered-boundary worker completed and reviewedbe2fc9746
+  worker: codex:01a1a427-3b41-72d0-8186-8d78ea1ba81e (fresh current-runtime cube rejection/BORDER behavior task; be2fc9746 sampler accepted)
   status: partial (capability corrections and public COM software/WebGL/queued Worker sampler rendering accepted; broader advertised behavior audit remains)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Next: Do not reintegrate historical branch patches: current main includes cube122109793, BORDER93addaa3c and fixture-bootstrap682d0c824; common producer masks are texture0xF7DF/address0xF7. Retained actual public COM fixture passes47calls/45descriptors on pinned modulebc5412c1 (docs/re-notes/legacy-caps-early-exit-20261020.md), with current offline1053negative controls PASS. Existing Surface4/7 COM regression asserts failed cube creation, null output and intact guards; docs/legacy-surface47-abi-20261019.txt records both-dispatch historical candidate passes (a74ccff4/c0192423). That historical raw evidence is not currently located. Continue the advertised software/GPU behavior audit and current-runtime cube rejection/backend rendering coverage; do not create a duplicate source-only rejection test. Historical native pass does not prove current runtime or independent-face storage/backend/gameplay. Surface4/7 ABI already merged. Reconciliation evidence: scratch/runs/20261103-legacy-caps-main-reconcile/.
