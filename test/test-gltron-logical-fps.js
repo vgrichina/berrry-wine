@@ -89,22 +89,42 @@ async function pageFixture({ installNow = true } = {}) {
   const wine = { instance, running: true, threadManager,
     _setLogicalFrame: async (a, p) => { marker = a; pace = p; } };
   const window = { wine, WineFrozen: { status: () => ({ frozen }) },
+    __gltronGameplayReview: { name: 'fixture', capturedAtMs: 100, callbacks: BOUNDARY.callbackTable, generation: 1 },
     __gltronModuleObservation: { instances: [{ instance, generation: 1 }] } };
   let now = 100;
   const document = { visibilityState: 'visible', addEventListener() {}, removeEventListener() {} };
   const context = vm.createContext({ window, document, performance: { now: () => now += 0.01 },
     setInterval: () => 1, clearInterval() {}, DataView });
   const install = vm.runInContext('(' + installPageCounter.toString() + ')', context);
-  if (installNow) await install(BOUNDARY, 'fixture');
+  if (installNow) await install(BOUNDARY, 'fixture', 'fixture');
   return { window, wine, e, instance, view, state: window.__gltronCounter,
     install,
     setTier: v => { tier = v; }, setFrozen: v => { frozen = v; } };
 }
 async function main() {
+  for (const patch of [{ capturedAtMs: -5000 }, { capturedAtMs: 200 }, { generation: 2 }, { callbacks: 0x42a860 }, { name: 'other' }]) {
+    const f = await pageFixture({ installNow: false });
+    Object.assign(f.window.__gltronGameplayReview, patch);
+    await assert.rejects(f.install(BOUNDARY, 'fixture', 'fixture'), /fresh reviewed gameplay/);
+    check('actual arming rejects stale or mismatched review ' + JSON.stringify(patch), () => {
+      assert.equal(f.e.get_logical_frame_addr(), 0);
+      assert.equal(f.window.__gltronCounterRejection.callbacks.value, BOUNDARY.callbackTable);
+    });
+  }
+  const changed = await pageFixture();
+  changed.view.setUint32(256, 0x42a860, true);
+  assert.throws(() => changed.state.read(), /scene/);
+  check('actual interval rejection preserves first exact translation before cleanup', () => {
+    const out = changed.state.finish();
+    assert.equal(out.rejection.translations.callbacks.value, 0x42a860);
+    assert.equal(out.rejection.translations.callbacks.offset, 256);
+    assert.equal(out.rejection.marker, BOUNDARY.nonzeroDt);
+    assert.equal(changed.e.get_logical_frame_addr(), 0);
+  });
   for (const rejectedCallbacks of [0, 0x42a860, 0x42a204]) {
     const f = await pageFixture({ installNow: false });
     f.view.setUint32(256, rejectedCallbacks, true);
-    await assert.rejects(f.install(BOUNDARY, 'review-to-arm-fixture'), /not active gameCallbacks; observed 0x/);
+    await assert.rejects(f.install(BOUNDARY, 'review-to-arm-fixture', 'fixture'), /not active gameCallbacks; observed 0x/);
     check('pre-arm scene change retains translated rejection ' + rejectedCallbacks.toString(16), () => {
       const r = f.window.__gltronCounterRejection;
       assert.equal(r.callbacks.va, BOUNDARY.currentCallbacks);
@@ -116,6 +136,13 @@ async function main() {
       assert.equal(f.window.__gltronCounter, undefined);
     });
   }
+  const unreadable = await pageFixture();
+  unreadable.view.setUint32(256, 0x42a860, true);
+  unreadable.view.setUint32(260, 0, true);
+  assert.throws(() => unreadable.state.read(), /untranslated/);
+  check('changed scene retains exact callback even when its game pointer cannot translate', () => {
+    assert.equal(unreadable.state.finish().rejection.translations.callbacks.value, 0x42a860);
+  });
   for (const [name, mutate, message] of [
     ['owner replacement', f => { f.window.wine = {}; }, /runtime changed/],
     ['instance replacement', f => { f.wine.instance = { exports: f.e }; }, /runtime changed/],
@@ -150,7 +177,27 @@ async function main() {
     assert.equal(out.rows.length, 64); assert.match(out.invalid, /capacity/);
     assert.equal(bounded.e.get_logical_frame_addr(), 0);
   });
-  const { requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within } = require('../tools/gltron-logical-fps-local.cjs');
+  const { captureForReview, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within } = require('../tools/gltron-logical-fps-local.cjs');
+  const captureDir = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'gltron-capture-fixture-'));
+  try {
+    const calls = [];
+    const page = { evaluate: async (_fn, name) => {
+      calls.push('capture-start'); return { name, capturedAtMs: 100, callbacks: BOUNDARY.callbackTable, generation: 1 };
+    }, screenshot: async ({ path }) => { calls.push('pixels'); fs.writeFileSync(path, 'offline fixture only'); } };
+    const capture = await captureForReview(page, captureDir, 'fresh');
+    // The tool caller can capture and VIEW the returned exact path in a single
+    // invocation, eliminating the ACK -> new model turn -> image-path handoff.
+    const view = file => { calls.push('view'); assert.equal(fs.readFileSync(file, 'utf8'), 'offline fixture only'); };
+    view(capture.path);
+    check('actual shot producer returns exact pixels and capture epoch for one-invocation VIEW relay', () => {
+      assert.deepEqual(calls, ['capture-start', 'pixels', 'view']);
+      assert.equal(capture.name, 'fresh'); assert.equal(capture.capturedAtMs, 100);
+      assert.equal(capture.sha256, require('../tools/gltron-logical-fps.cjs').sha256(Buffer.from('offline fixture only')));
+    });
+    await assert.rejects(captureForReview(page, captureDir, 'fresh'), /fresh capture/);
+    await assert.rejects(captureForReview(page, captureDir, '../foreign'), /fresh capture/);
+    check('capture relay refuses overwrite and foreign capture paths', () => {});
+  } finally { fs.rmSync(captureDir, { recursive: true }); }
   check('shell pin preflight rejects omitted fonts/manifest before Chrome', () => {
     const { sha256 } = require('../tools/gltron-logical-fps.cjs');
     const pins = requiredShellPaths().map(path => { const b = fs.readFileSync(path); return { path, bytes: b.length, sha256: sha256(b) }; });
@@ -178,7 +225,9 @@ async function main() {
   check('current named resource releases required; historical releases grant nothing', () => {
     assert.throws(() => requireReleases('mdk2-poll-repair LOCAL HEAVY RELEASE\nstronghold-current-hover LOCAL HEAVY RELEASE'), /requires/);
     assert.throws(() => requireReleases('stronghold-repaired-onward LOCAL HEAVY RELEASE'), /requires/);
-    assert(requireReleases('mdk2-repaired-original LOCAL HEAVY RELEASE\nstronghold-repaired-onward LOCAL HEAVY RELEASE'));
+    assert.throws(() => requireReleases('mdk2-repaired-original LOCAL HEAVY RELEASE\nstronghold-repaired-onward LOCAL HEAVY RELEASE'), /requires/);
+    assert(requireReleases('mdk2-continuous-onward LOCAL HEAVY RELEASE'));
+    assert(requireReleases('mdk2-continuous-construction-onward LOCAL HEAVY RELEASE'));
   });
   assert((await validateHttpPaths(productionPins, ['/binaries/gltron-0.70/gltron.exe', '/build/wine-assembly.compat.wasm'])).pass);
   await assert.rejects(validateHttpPaths(productionPins, ['/missing-gltron-asset']), /route failed/);

@@ -11,8 +11,8 @@ const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8'
 const write = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 const BROWSER_MS = 360000, CLEANUP_MS = 180000, BOOTSTRAP_MS = 60000, COMMAND_MS = 60000;
-const HARD_BROWSER_END = Date.parse('2026-11-04T22:15:00Z');
-const HARD_CLEANUP_END = Date.parse('2026-11-04T22:18:00Z');
+const HARD_BROWSER_END = Date.parse('2026-11-04T23:30:00Z');
+const HARD_CLEANUP_END = Date.parse('2026-11-04T23:33:00Z');
 const requiredShellPaths = () => ['manifest.webmanifest',
   ...require('../lib/font-substitutions').BUNDLED_BITMAP_FONTS.map(file => 'fonts/' + file),
   ...require('../lib/process-boot').SYSTEM_DATA_FILES.map(file => file.url),
@@ -172,10 +172,9 @@ function pageState() {
 }
 
 function requireReleases(board) {
-  const mdk = board.split('\n').findLast(line => line.includes('mdk2-repaired-original LOCAL HEAVY RELEASE'));
-  const stronghold = board.split('\n').findLast(line => line.includes('stronghold-repaired-onward LOCAL HEAVY RELEASE'));
-  if (!mdk || !stronghold) throw Error('requires explicit mdk2-repaired-original AND stronghold-repaired-onward releases');
-  return { mdk, stronghold };
+  const mdk = board.split('\n').findLast(line => /mdk2-continuous-(?:construction-)?onward LOCAL HEAVY RELEASE/.test(line));
+  if (!mdk) throw Error('requires explicit mdk2-continuous-construction-onward release');
+  return { mdk };
 }
 
 // Chrome-only direct protocol request; observe the owned child, without the
@@ -212,25 +211,37 @@ async function within(operation, timeoutMs, label) {
   })]); } finally { clearTimeout(timer); }
 }
 
-async function runPair(run, webglOnly = false) {
+// Return the exact capture in the command ACK. Operator tool calls must relay
+// this path to VIEW in the same invocation, then submit the reviewed action.
+// This removes an avoidable model/tool handoff; it does not promise a human
+// review will fit the unchanged five-second arming deadline.
+async function captureForReview(page, out, name) {
+  const file = path.join(out, name + '.png');
+  if (!/^[a-z0-9-]+$/.test(name) || fs.existsSync(file)) throw Error('fresh capture required');
+  const review = await page.evaluate(name => {
+    const w = window.wine, e = w?.instance?.exports;
+    return window.__gltronGameplayReview = { name, capturedAtMs: performance.now(),
+      callbacks: e?.guest_read32(0x42b230) >>> 0,
+      generation: window.__gltronModuleObservation?.instances.find(r => r.instance === w?.instance)?.generation };
+  }, name);
+  await page.screenshot({ path: file });
+  return { ...review, path: file, sha256: sha256(fs.readFileSync(file)) };
+}
+
+async function runPair(run) {
   const releases = requireReleases(fs.readFileSync(path.join(ROOT, 'messageboard.txt'), 'utf8'));
-  const pins = JSON.parse(fs.readFileSync(path.join(run, webglOnly ? 'webgl-preflight/runtime-pins.json' : 'runtime-pins.json')));
+  const pins = JSON.parse(fs.readFileSync(path.join(run, 'runtime-pins.json')));
   validateShellPins(pins.pins);
   validateRequiredPins(pins.pins, (await bootInputs()).paths);
   for (const pin of pins.pins) if (sha256(fs.readFileSync(path.join(ROOT, pin.path))) !== pin.sha256) throw Error('pin changed: ' + pin.path);
   if (Date.now() + BROWSER_MS + CLEANUP_MS > HARD_CLEANUP_END || Date.now() + BROWSER_MS > HARD_BROWSER_END) throw Error('full reserve unavailable');
   write(path.join(run, 'resource-releases.json'), releases);
   for (const module of ['build/wine-assembly.wasm', 'build/wine-assembly.compat.wasm']) {
-    write(path.join(run, (webglOnly ? 'webgl-' : '') + 'preflight-' + path.basename(module) + '.json'), await probeCompiled(module));
+    write(path.join(run, 'preflight-' + path.basename(module) + '.json'), await probeCompiled(module));
   }
   let browserMs = 0, stopped = false;
-  if (webglOnly) {
-    const prior = JSON.parse(fs.readFileSync(path.join(run, 'software/cleanup.json')));
-    if (prior.exitCode !== 0 || prior.signal !== null || !Number.isFinite(prior.cumulativeBrowserMs)) throw Error('prior normal closure and cumulative time required');
-    browserMs = prior.cumulativeBrowserMs;
-  }
   const puppeteer = require('puppeteer');
-  for (const backend of webglOnly ? ['webgl'] : ['software', 'webgl']) {
+  for (const backend of ['software', 'webgl']) {
     if (stopped) break;
     const out = path.join(run, backend);
     if (fs.existsSync(out)) throw Error('single launch arm already exists');
@@ -331,12 +342,14 @@ async function runPair(run, webglOnly = false) {
         const i = number++, c = JSON.parse(fs.readFileSync(file));
         log('commands', { i, ...c });
         try {
+          let capture = null;
           await within(async () => {
           if (c.action === 'shot') {
-            if (!/^[a-z0-9-]+$/.test(c.name) || fs.existsSync(path.join(out, c.name + '.png'))) throw Error('fresh capture required');
-            await page.screenshot({ path: path.join(out, c.name + '.png') }); save(c.name, await page.evaluate(pageState));
+            capture = await captureForReview(page, out, c.name);
+            save(c.name + '-capture-start', capture);
+            save(c.name, await page.evaluate(pageState));
           } else if (c.action === 'key') {
-            if (!['Enter', 'Escape', 'a', 's'].includes(c.key) || !c.review || !fs.existsSync(path.join(out, c.review + '.png'))) throw Error('reviewed original route required');
+            if (!['Enter', 'Escape', 'a', 's', 'ArrowLeft', 'ArrowRight'].includes(c.key) || !c.review || !fs.existsSync(path.join(out, c.review + '.png'))) throw Error('reviewed original route required');
             await page.focus('#screen');
             await page.keyboard.down(c.key); held.add(c.key); await pause(100);
             await page.keyboard.up(c.key); held.delete(c.key);
@@ -344,7 +357,7 @@ async function runPair(run, webglOnly = false) {
             if (!c.review || !fs.existsSync(path.join(out, c.review + '.png'))) throw Error('gameplay review required');
             const token = backend + '-' + Date.now();
             let armed;
-            try { armed = await page.evaluate(installPageCounter, BOUNDARY, token); }
+            try { armed = await page.evaluate(installPageCounter, BOUNDARY, token, c.review); }
             catch (error) {
               try {
                 save('counter-rejection', await within(() => page.evaluate(() => ({
@@ -352,22 +365,23 @@ async function runPair(run, webglOnly = false) {
                   atMs: performance.now(),
                 })), 5000, 'rejected counter evidence'));
                 save('rejected-owner-context', await within(() => page.evaluate(pageState), 5000, 'rejected owner evidence'));
+                await within(() => page.screenshot({ path: path.join(out, 'counter-rejected.png') }), 5000, 'rejection capture');
               } catch (captureError) { save('counter-rejection-capture-error', { error: String(captureError) }); }
               throw error;
             }
             save('armed', armed);
             await pause(5500);
             const raw = await page.evaluate(() => window.__gltronCounter.finish()); save('raw-counter-window', raw);
+            await page.screenshot({ path: path.join(out, 'after-measure.png') }); save('after-measure', await page.evaluate(pageState));
             if (raw.invalid) throw Error(raw.invalid);
             const result = summarizeCounterWindow(raw.rows); save('measurement', result);
-            await page.screenshot({ path: path.join(out, 'after-measure.png') }); save('after-measure', await page.evaluate(pageState));
             console.log('MEASURED ' + backend + ' ' + JSON.stringify(result));
           } else if (c.action === 'next' || c.action === 'quit') {
             if (c.action === 'quit') stopped = true;
             await close('operator normal closure');
           } else throw Error('unsupported action');
           }, ['next', 'quit'].includes(c.action) ? CLEANUP_MS : COMMAND_MS, 'bounded command');
-          save('reply-' + i, { ok: true, at: new Date().toISOString() });
+          save('reply-' + i, { ok: true, at: new Date().toISOString(), capture });
         } catch (error) {
           failure ||= error.stack || String(error); save('reply-' + i, { ok: false, error: failure });
         }
@@ -377,13 +391,13 @@ async function runPair(run, webglOnly = false) {
       interruptedOperation: error.stack || String(error) }); }
     finally { await close(failure || 'arm complete'); }
   }
-  write(path.join(run, webglOnly ? 'runtime-summary-webgl.json' : 'runtime-summary.json'), { browserMs, stopped, finishedAt: new Date().toISOString(), boxId: null, boxState: null, boxExpiry: null });
+  write(path.join(run, 'runtime-summary.json'), { browserMs, stopped, finishedAt: new Date().toISOString(), boxId: null, boxState: null, boxExpiry: null });
 }
 
-module.exports = { prepare, preload, pageState, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
+module.exports = { prepare, preload, pageState, captureForReview, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
 if (require.main === module) {
   const [action, run] = process.argv.slice(2);
-  if (!run || !['--prepare', '--run', '--run-webgl'].includes(action)) throw Error('usage: --prepare|--run|--run-webgl RUN');
-  Promise.resolve(action === '--prepare' ? prepare(path.resolve(run)) : runPair(path.resolve(run), action === '--run-webgl'))
+  if (!run || !['--prepare', '--run'].includes(action)) throw Error('usage: --prepare|--run RUN');
+  Promise.resolve(action === '--prepare' ? prepare(path.resolve(run)) : runPair(path.resolve(run)))
     .catch(error => { console.error(error); process.exitCode = 1; });
 }

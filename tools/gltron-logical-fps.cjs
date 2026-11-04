@@ -119,8 +119,37 @@ async function probeCompiled(wasmPath = 'build/wine-assembly.wasm') {
     e.set_esp(stack + 4080); e.set_eip(BOUNDARY.nonzeroDt); e.run(1);
     assert.equal(e.get_logical_frame_count() >>> 0, before);
   }
+  // Execute the browser guard against this real module and its translator.
+  // This remains an offline fixture, never a gameplay interval.
+  const guards = [];
+  for (const rejected of [0, 0x42a860, 0x42a204]) {
+    e.guest_write32(BOUNDARY.currentCallbacks, rejected);
+    const w = { instance, running: true, threadManager: { threads: new Map() },
+      _setLogicalFrame: (...args) => P._setLogicalFrame.call(owner, ...args) };
+    const window = { wine: w, __gltronModuleObservation: { instances: [{ instance, generation: 1 }] },
+      __gltronGameplayReview: { name: 'compiled', capturedAtMs: 0, callbacks: BOUNDARY.callbackTable, generation: 1 } };
+    const context = vm.createContext({ window, performance: { now: () => 1 }, DataView,
+      document: { visibilityState: 'visible', addEventListener() {}, removeEventListener() {} },
+      setInterval: () => 1, clearInterval() {} });
+    const install = vm.runInContext('(' + installPageCounter.toString() + ')', context);
+    const count = e.get_logical_frame_count() >>> 0;
+    await assert.rejects(install(BOUNDARY, 'compiled', 'compiled'), /not active gameCallbacks/);
+    assert.equal(window.__gltronCounterRejection.callbacks.value, rejected);
+    assert.equal(window.__gltronCounterRejection.callbacks.offset, e.guest_to_wasm(BOUNDARY.currentCallbacks) >>> 0);
+    assert.equal(e.get_logical_frame_addr(), 0);
+    assert.equal(e.get_logical_frame_count() >>> 0, count);
+    e.guest_write32(BOUNDARY.currentCallbacks, BOUNDARY.callbackTable);
+    await install(BOUNDARY, 'compiled', 'compiled');
+    e.guest_write32(BOUNDARY.currentCallbacks, rejected);
+    assert.throws(() => window.__gltronCounter.read(), /scene/);
+    const finished = window.__gltronCounter.finish();
+    assert.equal(finished.rejection.translations.callbacks.value, rejected);
+    assert.equal(e.get_logical_frame_addr(), 0);
+    guards.push({ rejected, offset: finished.rejection.translations.callbacks.offset,
+      prearmRejected: true, intervalRejected: true, markerReleased: true });
+  }
   return { wasm: { path: wasmPath, sha256: sha256(wasm), bytes: wasm.length },
-    original: { sha256: ORIGINAL_SHA }, rows, status: 'compiled-original-boundary-pass',
+    original: { sha256: ORIGINAL_SHA }, rows, guards, status: 'compiled-original-boundary-pass',
     limitation: 'Offline data/register fixture, not live scene or FPS; enabled uop is not proof this tiny branch entered a uop program.' };
 }
 
@@ -180,7 +209,7 @@ function summarizeCounterWindow(rows, { maxReadMs = 5, maxGapMs = 1500,
 // Evaluated in the browser page AFTER personally reviewing actual gameplay.
 // Reject worker ownership instead of silently adding unrelated instance counts.
 // The only production setter is the existing count-only logical marker.
-async function installPageCounter(boundary, token) {
+async function installPageCounter(boundary, token, reviewName) {
   if (window.__gltronCounter) throw Error('counter already attached');
   const w = window.wine, instance = w?.instance, e = instance?.exports;
   if (!w || !e || w.guestWorker || w._stopped || !w.running) throw Error('unsupported main owner');
@@ -209,6 +238,7 @@ async function installPageCounter(boundary, token) {
   });
   function read() {
     const observationStartMs = performance.now();
+    state.pendingRead = null;
     if (state.invalid) throw Error(state.invalid);
     if (rows.length >= 64 || (rows.length && observationStartMs - rows[0].beforeMs > 10000))
       throw Error('bounded observation deadline or capacity');
@@ -221,7 +251,10 @@ async function installPageCounter(boundary, token) {
       throw Error('hidden or frozen interval');
     const childReads = children();
     if (childReads.some(r => r.count !== 0)) throw Error('foreign thread counted gameplay');
-    const callbacks = read32(boundary.currentCallbacks), game = read32(boundary.game2Pointer);
+    const callbacks = read32(boundary.currentCallbacks);
+    state.pendingRead = { observationStartMs, translations: { callbacks } };
+    const game = read32(boundary.game2Pointer);
+    state.pendingRead.translations.game = game;
     const dt = read32(game.value + boundary.dtOffset);
     const beforeMs = performance.now(), count = e.get_logical_frame_count() >>> 0, afterMs = performance.now();
     const r = { beforeMs, afterMs, count, owner: token, endpoint: 'page-main', generation,
@@ -230,38 +263,53 @@ async function installPageCounter(boundary, token) {
       marker: e.get_logical_frame_addr() >>> 0, pace: e.get_logical_frame_pace(),
       tierGuard: e.get_dbg_tier_guard(), chain: e.get_block_chain(), uop: e.get_uop() };
     if (r.currentCallbacks !== boundary.callbackTable || r.marker !== boundary.nonzeroDt || r.pace ||
-        r.tierGuard || r.chain !== initial.chain || r.uop !== initial.uop || r.threadId !== 1)
+        r.tierGuard || r.chain !== initial.chain || r.uop !== initial.uop || r.threadId !== 1) {
+      state.rejection ||= r;
       throw Error('scene, marker, owner or tier changed');
+    }
     r.observerMs = performance.now() - observationStartMs;
     rows.push(r); return r;
   }
   const visibility = () => { if (document.visibilityState !== 'visible') invalidate('page became hidden'); };
-  state.read = () => { try { return read(); } catch (error) { invalidate(error.message); throw error; } };
+  state.read = () => { try { return read(); } catch (error) {
+    if (state.pendingRead) state.rejection ||= { ...state.pendingRead, error: error.message };
+    invalidate(error.message); throw error;
+  } };
   state.finish = () => {
     clearInterval(state.timer);
     document.removeEventListener('visibilitychange', visibility);
     try {
       try { state.read(); } catch (_) { /* Return the latched reason and raw reads. */ }
-      return { rows, invalid: state.invalid, token, generation };
+      return { rows, invalid: state.invalid, rejection: state.rejection || null, token, generation };
     }
     finally { if (window.wine === w && w.instance === instance) w._setLogicalFrame(0, 0); }
   };
   // Check the authentic scene before arming; dt at an arbitrary host boundary
   // need not be positive. The original branch, not this snapshot, filters dt0.
   const callbacksBeforeArm = read32(boundary.currentCallbacks);
-  if (callbacksBeforeArm.value !== boundary.callbackTable) {
+  const review = window.__gltronGameplayReview, armAtMs = performance.now();
+  const freshReview = review && review.name === reviewName &&
+    Number.isFinite(review.capturedAtMs) && armAtMs >= review.capturedAtMs &&
+    armAtMs - review.capturedAtMs <= 5000 && review.generation === generation &&
+    review.callbacks === boundary.callbackTable;
+  if (callbacksBeforeArm.value !== boundary.callbackTable || !freshReview) {
     // Preserve the rejected live translation before the runner closes. A prior
     // personally reviewed screenshot does not prove the scene still owns idle.
     const beforeMs = performance.now();
     window.__gltronCounterRejection = {
-      code: 'NOT_ACTIVE_GAME_CALLBACKS', token, generation,
+      code: callbacksBeforeArm.value !== boundary.callbackTable ? 'NOT_ACTIVE_GAME_CALLBACKS' : 'STALE_GAMEPLAY_REVIEW', token, generation,
+      review, armAtMs, reviewAgeMs: review ? armAtMs - review.capturedAtMs : null,
       expectedCallbacks: boundary.callbackTable, callbacks: callbacksBeforeArm,
-      game: read32(boundary.game2Pointer), threadId: e.get_current_thread_id(),
+      threadId: e.get_current_thread_id(),
       count: e.get_logical_frame_count() >>> 0, marker: e.get_logical_frame_addr() >>> 0,
       pace: e.get_logical_frame_pace(), tierGuard: e.get_dbg_tier_guard(),
       chain: e.get_block_chain(), uop: e.get_uop(), beforeMs, afterMs: performance.now(),
     };
-    throw Error('not active gameCallbacks; observed 0x' + callbacksBeforeArm.value.toString(16));
+    try { window.__gltronCounterRejection.game = read32(boundary.game2Pointer); }
+    catch (error) { window.__gltronCounterRejection.gameReadError = error.message; }
+    if (callbacksBeforeArm.value !== boundary.callbackTable)
+      throw Error('not active gameCallbacks; observed 0x' + callbacksBeforeArm.value.toString(16));
+    throw Error('fresh reviewed gameplay required at arming');
   }
   children();
   await w._setLogicalFrame(boundary.nonzeroDt, 0);
@@ -276,7 +324,7 @@ async function installPageCounter(boundary, token) {
       if (window.wine === w && w.instance === instance) w._setLogicalFrame(0, 0);
     }
   }, 250);
-  return { token, generation, initial, row: rows[0] };
+  return { token, generation, initial, review, armAtMs, reviewAgeMs: armAtMs - review.capturedAtMs, row: rows[0] };
 }
 
 module.exports = { BOUNDARY, ORIGINAL_SHA, sha256, inspectOriginal, audit,
