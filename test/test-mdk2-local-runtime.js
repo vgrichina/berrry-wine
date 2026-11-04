@@ -20,6 +20,9 @@ for(const [name,change] of Object.entries({
  'wrong assignment':r=>r.assignment='other', 'wrong shutdown owner':r=>r.shutdownOwner='worker',
  'wrong host':r=>r.localIdentity.hostname+='x', 'wrong process':r=>r.localIdentity.pid++,
  'replaced process':r=>r.localIdentity.startTicks+='0', 'changed boot':r=>r.localIdentity.bootId+='x',
+ 'missing nonce':r=>delete r.nonce, 'malformed nonce':r=>r.nonce='fake',
+ 'missing candidate':r=>delete r.candidate, 'foreign driver':r=>r.candidate.driverSHA256='0'.repeat(64),
+ 'foreign local':r=>r.candidate.localSHA256='0'.repeat(64),
  'long browser':r=>r.closeBy=new Date(now+360001).toISOString(),
  'short reserve':r=>r.recoverBy=new Date(now+539999).toISOString(),
  'nonfinite':r=>r.closeBy='unknown', 'future release':r=>r.issuedAt=new Date(now+1).toISOString()
@@ -29,21 +32,36 @@ test('original useful-window minimum and absolute launch cutoff cannot be extend
  assert.throws(()=>local.createRelease(run,local.HARD_CLOSE-540000),/360\+180/);
 });
 test('renewed dated assignment retains exact absolute close and recovery bounds',()=>{
- assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T18:25:00Z'));
- assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T18:28:00Z'));
+ assert.equal(local.HARD_CLOSE,Date.parse('2026-11-04T19:20:00Z'));
+ assert.equal(local.HARD_RECOVER,Date.parse('2026-11-04T19:23:00Z'));
  const r=release();r.recoverBy=new Date(local.HARD_RECOVER+1).toISOString();
  assert.throws(()=>local.validate(r,run,now),/cleanup reserve/);
  const late=local.createRelease(run,local.HARD_CLOSE-540001);
  assert.equal(local.validate(late,run,local.HARD_CLOSE-540001),local.HARD_CLOSE-180001);
 });
-test('actual original composed source changes exactly obsolete TTL guard and Chrome path',()=>{
+test('actual composed source retains original guards under explicit local identity and tighter finite caps',()=>{
  const source=integration.compose(run).source, translated=local.translate(source);
  new vm.Script(require('node:module').wrap(translated));
  const guard="if(release.authorization!=='RUNTIME RELEASE MDK2 TARGET ONWARD'||release.shutdownOwner!=='coordinator'||!release.boxId||Date.parse(release.expiry)<Date.now()+600000)throw Error('fresh authorized finite TTL required');";
- assert.equal(translated.replace(`require(${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))}).validate(release,RUN);`,guard)
-   .replace("executablePath:'/opt/google/chrome/chrome'","executablePath:'/usr/bin/google-chrome'"),source);
+ const tool=JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'));
+ assert.equal(translated.replace(`require(${tool}).validate(release,RUN);`,guard)
+   .replace("executablePath:'/opt/google/chrome/chrome'","executablePath:'/usr/bin/google-chrome'")
+   .replace('protocolTimeout:40000,timeout:30000','protocolTimeout:60000,timeout:30000')
+   .replace(`await require(${tool}).within(()=>command(c,i),40000,()=>{halted=true;void close('local 40 second command deadline');});`,'await command(c,i);')
+   .replace(`  await require(${tool}).within(async()=>{\n  browser=await puppeteer.launch(`,'  browser=await puppeteer.launch(')
+   .replace("  if(closing){await browser.close();throw Error('local bootstrap closed');}\n  page=await browser.newPage();",'  page=await browser.newPage();')
+   .replace('  if(closing)throw Error(\'local bootstrap closed\');\n  await page.click(\'button[onclick="launchApp()"]\');','  await page.click(\'button[onclick="launchApp()"]\');')
+   .replace("\n  },60000,()=>{halted=true;void close('local 60 second bootstrap deadline');});",''),source);
  for(const broken of [source.replace(guard,''),source+guard,source.replace("executablePath:'/usr/bin/google-chrome'",'')])
    assert.throws(()=>local.translate(broken),/anchor changed/);
+});
+test('local additive deadline returns actual result, preserves first fault and rejects timed-out operation',async()=>{
+ assert.equal(await local.within(()=>7,100),7);
+ await assert.rejects(local.within(()=>{throw Error('concrete first fault');},100),/concrete first fault/);
+ let closed=false;
+ await assert.rejects(local.within(()=>new Promise(()=>{}),5,()=>{closed=true;}),/local operation deadline/);
+ assert.equal(closed,true);
+ await assert.rejects(local.within(()=>{throw Error('must not start');},0),/local bootstrap deadline/);
 });
 test('real Python local transport validates actual process and forbids remote/detached transport',()=>{
  const tmp=fs.mkdtempSync(path.join(run,'transport-test-'));

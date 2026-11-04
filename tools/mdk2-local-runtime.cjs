@@ -5,13 +5,20 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 const cp = require('node:child_process');
+const crypto = require('node:crypto');
 const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
-// Explicitly renewed by the repaired-Python original attempt assignment.
-const HARD_CLOSE = Date.parse('2026-11-04T18:25:00Z');
-const HARD_RECOVER = Date.parse('2026-11-04T18:28:00Z');
+// Explicitly renewed by the main-ownership repair assignment.
+const HARD_CLOSE = Date.parse('2026-11-04T19:20:00Z');
+const HARD_RECOVER = Date.parse('2026-11-04T19:23:00Z');
 const ASSIGNMENT = '20261104-mdk2-bounded-trace-driver-repair';
+const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+function candidate() {
+  return {git:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim(),
+    driverSHA256:hash(fs.readFileSync(path.join(ROOT,'tools/mdk2-construction-driver-integration.cjs'))),
+    localSHA256:hash(fs.readFileSync(__filename))};
+}
 function identity(pid = process.pid) {
   const stat = fs.readFileSync('/proc/' + pid + '/stat', 'utf8');
   return {hostname:os.hostname(), bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),
@@ -29,6 +36,10 @@ function validate(release, run, now = Date.now(), actual = identity()) {
   assert.equal(release.boxId, null, 'no fabricated box identity');
   assert.equal(release.expiry, null, 'local process has no allocation expiry');
   assert.deepEqual(release.localIdentity, actual, 'real host/process identity required');
+  assert.match(release.nonce, /^[a-f0-9]{64}$/, 'fresh local nonce required');
+  assert.match(release.candidate?.git || '', /^[a-f0-9]{40}$/, 'recorded candidate Git required');
+  const current = candidate();
+  for (const key of ['driverSHA256','localSHA256']) assert.equal(release.candidate[key], current[key], 'changed local candidate ' + key);
   const issued = Date.parse(release.issuedAt), close = Date.parse(release.closeBy), recover = Date.parse(release.recoverBy);
   assert([now,issued,close,recover].every(Number.isFinite), 'finite local deadlines');
   assert(issued <= now && now - issued < 360000, 'fresh local release');
@@ -42,7 +53,7 @@ function createRelease(run, now = Date.now()) {
   assert(!fs.existsSync(path.join(run,'browser')), 'one original launch only');
   return {authorization:'RUNTIME RELEASE MDK2 TARGET ONWARD', localAuthorization:'EXPLICIT LOCAL FINITE ORIGINAL ATTEMPT',
     assignment:ASSIGNMENT, shutdownOwner:'coordinator', runtimeKind:'local-process-v1', boxId:null, expiry:null,
-    runDirectory:run, localIdentity:identity(), issuedAt:new Date(now).toISOString(),
+    runDirectory:run, localIdentity:identity(), candidate:candidate(), nonce:crypto.randomBytes(32).toString('hex'), issuedAt:new Date(now).toISOString(),
     closeBy:new Date(now + 360000).toISOString(), recoverBy:new Date(now + 540000).toISOString()};
 }
 function once(source, from, to) {
@@ -53,7 +64,23 @@ function translate(source) {
   // Only the obsolete box-TTL guard changes. All review/input/deadline code stays.
   const guard = "if(release.authorization!=='RUNTIME RELEASE MDK2 TARGET ONWARD'||release.shutdownOwner!=='coordinator'||!release.boxId||Date.parse(release.expiry)<Date.now()+600000)throw Error('fresh authorized finite TTL required');";
   source = once(source, guard, `require(${JSON.stringify(__filename)}).validate(release,RUN);`);
-  return once(source, "executablePath:'/usr/bin/google-chrome'", "executablePath:'/opt/google/chrome/chrome'");
+  source = once(source, "executablePath:'/usr/bin/google-chrome'", "executablePath:'/opt/google/chrome/chrome'");
+  source = once(source, 'protocolTimeout:60000,timeout:30000', 'protocolTimeout:40000,timeout:30000');
+  source = once(source, 'await command(c,i);', `await require(${JSON.stringify(__filename)}).within(()=>command(c,i),40000,()=>{halted=true;void close('local 40 second command deadline');});`);
+  source = once(source, '  browser=await puppeteer.launch(', `  await require(${JSON.stringify(__filename)}).within(async()=>{\n  browser=await puppeteer.launch(`);
+  // Late launch completion still hands its browser to normal closure, and
+  // cannot issue the registered Launch input after a bootstrap deadline.
+  source = once(source, '  page=await browser.newPage();', "  if(closing){await browser.close();throw Error('local bootstrap closed');}\n  page=await browser.newPage();");
+  source = once(source, '  await page.click(\'button[onclick="launchApp()"]\');', '  if(closing)throw Error(\'local bootstrap closed\');\n  await page.click(\'button[onclick="launchApp()"]\');');
+  return once(source, "  save('ready.json',await state());console.log('MDK2 ordinary browser launch ready');",
+    "  save('ready.json',await state());console.log('MDK2 ordinary browser launch ready');\n  },60000,()=>{halted=true;void close('local 60 second bootstrap deadline');});");
+}
+async function within(action, ms, onTimeout = () => {}) {
+  assert(Number.isFinite(ms) && ms > 0, 'local bootstrap deadline');
+  let timer;
+  try { return await Promise.race([Promise.resolve().then(action), new Promise((resolve,reject) => {
+    timer=setTimeout(()=>{onTimeout();reject(Error('local operation deadline'));},ms);
+  })]); } finally {clearTimeout(timer);}
 }
 let installed = false;
 const transportSource = String.raw`# Local transport only; imported as runtime_io by the original operator chain.
@@ -68,6 +95,9 @@ def allocation():
  assert v['runtimeKind']=='local-process-v1' and v['boxId'] is None and v['expiry'] is None
  assert v['assignment']=='20261104-mdk2-bounded-trace-driver-repair' and v['runDirectory']==str(E)
  assert v['shutdownOwner']=='coordinator'
+ assert len(v['nonce'])==64 and all(c in '0123456789abcdef' for c in v['nonce'])
+ for field,name in [('driverSHA256','mdk2-construction-driver-integration.cjs'),('localSHA256','mdk2-local-runtime.cjs')]:
+  assert hashlib.sha256((Path(ROOT)/'tools'/name).read_bytes()).hexdigest()==v['candidate'][field],'changed local candidate'
  i=v['localIdentity'];assert i['root']==str(Path(ROOT).resolve()) and i['hostname']==socket.gethostname()
  assert i['bootId']==Path('/proc/sys/kernel/random/boot_id').read_text().strip()
  stat=Path('/proc/'+str(i['pid'])+'/stat').read_text()
@@ -79,7 +109,7 @@ def local(file):
 def remote(code,timeout=60,detach=False):
  allocation();assert not detach and 0<timeout<=90,'bounded synchronous local control only'
  assert not any(x in code for x in ('boat ','ssh ','curl ','wget ')),'local transport only'
- p=subprocess.run(code,shell=True,cwd=ROOT,capture_output=True,text=True,timeout=timeout,executable='/bin/bash')
+ p=subprocess.run(code,shell=True,cwd=ROOT,capture_output=True,text=True,timeout=min(timeout,40),executable='/bin/bash')
  r=dict(stdout=p.stdout,stderr=p.stderr,exitCode=p.returncode,stdoutTruncated=False,stderrTruncated=False)
  with (E/'local-commands.jsonl').open('a') as f:f.write(json.dumps(dict(code=code,result=r))+'\n')
  assert p.returncode==0,r
@@ -134,7 +164,12 @@ function install(run) {
   validate(release, run);
   const finite = require(path.join(BASE,'20261104-mdk2-fresh-pending-scene/finite-deadline.cjs'));
   const originalDeadline = finite.browserDeadline;
-  finite.browserDeadline = (r,now) => r.runtimeKind === 'local-process-v1' ? validate(r,run,now) : originalDeadline(r,now);
+  finite.browserDeadline = (r,now) => {
+    if (r.runtimeKind !== 'local-process-v1') return originalDeadline(r,now);
+    assert.equal(r.nonce,release.nonce,'changed release nonce');
+    assert.deepEqual(r.candidate,release.candidate,'changed release candidate');
+    return validate(r,run,now);
+  };
   const main = require(path.join(BASE,'20261104-mdk2-post-lua-native-boundary/main-state.cjs'));
   const originalSource = main.sourceForRun;
   main.sourceForRun = directory => translate(originalSource(directory));
@@ -143,4 +178,4 @@ function install(run) {
   installed = true;
   return {release, restore() {finite.browserDeadline=originalDeadline;main.sourceForRun=originalSource;}};
 }
-module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,validate,createRelease,translate,install,prepareTransport,transportSource,controlSource,siteSource};
+module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,install,prepareTransport,transportSource,controlSource,siteSource};

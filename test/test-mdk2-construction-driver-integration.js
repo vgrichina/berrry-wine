@@ -9,7 +9,7 @@ const vm = require('node:vm');
 const cp = require('node:child_process');
 const integration = require('../tools/mdk2-construction-driver-integration.cjs');
 const {Worker, MessageChannel, isMainThread, parentPort, workerData} = require('node:worker_threads');
-const EVIDENCE = path.join(integration.RUNS, '20261104-mdk2-bounded-trace-driver-repair');
+const EVIDENCE = path.join(integration.RUNS, '20261104-mdk2-main-ownership-repair');
 fs.mkdirSync(EVIDENCE, {recursive: true});
 
 function actualDriver() {
@@ -42,6 +42,128 @@ function review(api) {
 }
 
 if (isMainThread) {
+fs.writeFileSync(path.join(EVIDENCE,'ownership-negatives.jsonl'),'');
+// Real pinned production classes, without starting a Worker or guest. Only the
+// transport response is a fixture; wrapper/WorkerLink.readExports are executed.
+function ownershipFixture() {
+  const cache = new Map(), pins = new Map(integration.pinnedRuntime().pins.files.map(r => [r.path,r]));
+  function load(name) {
+    if (cache.has(name)) return cache.get(name).exports;
+    const bytes = integration.gitFile(integration.SOURCE,name), pin = pins.get(name);
+    assert(pin); assert.equal(integration.sha(bytes),pin.sha256);
+    const filename=path.join(integration.ROOT,name), m=new Module(filename,module); cache.set(name,m);
+    m.filename=filename; m.paths=Module._nodeModulePaths(path.dirname(filename));
+    const native=m.require.bind(m);
+    m.require=request=>request.startsWith('.') ? load(path.relative(integration.ROOT,require.resolve(path.resolve(path.dirname(filename),request)))) : native(request);
+    if(name.endsWith('.json'))m.exports=JSON.parse(bytes);else m._compile(bytes.toString(),filename);
+    return m.exports;
+  }
+  const {GuestThreadHost,WorkerLink}=load('lib/guest-thread-host.js');
+  const host=new GuestThreadHost({}), main=new WorkerLink({slot:0}), file=new WorkerLink({slot:1});
+  const state={frozen:true,hosts:1,steps:3360,ticks:100,guestMs:1};
+  const traffic=[];let mutate=()=>{};
+  for(const [link,tid] of [[main,1],[file,2]]){
+    link.worker={postMessage:message=>{
+      traffic.push({slot:link.slot,...message});assert.equal(message.t,'readExports');
+      assert.equal(link._pending.size,1);
+      queueMicrotask(()=>{
+        // Exact production exportsRead envelope. _onMessage drains the real
+        // _ask queue before readExports returns its plain values object.
+        const core={get_current_thread_id:tid,get_eip:0x401000,get_esp:0x7400000};
+        link._onMessage({t:'exportsRead',seq:message.seq,values:Object.fromEntries(message.names.map(n=>[n,core[n]??0]))});
+        mutate(link);
+      });
+    }};
+  }
+  host.link=main;host.threadLinks.set(1,file);
+  const thread={link:file,inFlight:false,freeRunPending:false,importRetryPreparing:false};
+  const wine={guestWorker:host,threadManager:{threads:new Map([[921600,thread]]),workerBackend:host},_frozenBudget:0};
+  // Use realm-native Map for queue type checks and serialize the actual page fn.
+  const realm=vm.createContext({wine,WineFrozen:{status:()=>({...state})},Map});
+  const invoke=persist=>vm.runInContext('('+integration.frozenOwnership.toString()+')('+JSON.stringify(persist)+')',realm);
+  return {host,main,file,thread,wine,state,traffic,invoke,realm,setMutation:fn=>{mutate=fn;}};
+}
+test('actual pinned wrapper reproduces accepted rejection; repaired barrier preserves main+file identities',async()=>{
+  const f=ownershipFixture();
+  const values=await f.host.readExports(['get_current_thread_id','get_eip','get_esp']);
+  assert.equal(values.get_current_thread_id,1);assert.equal(f.host.slot,undefined);
+  const original=integration.gitFile('6d5121b5f96ee6032a9e347e2db64db29c478518','tools/mdk2-construction-driver-integration.cjs').toString();
+  const fn=original.slice(original.indexOf('async function frozenOwnership()'),original.indexOf('\nfunction correlateSnapshots'));
+  await assert.rejects(vm.runInContext('('+fn+')()',f.realm),/foreign main ownership/);
+  const result=JSON.parse(JSON.stringify(await f.invoke(false)));
+  assert.deepEqual(result.owners.map(r=>[r.handle,r.slot,r.endpointIdentity,r.values.get_current_thread_id]),[[null,0,1,1],[921600,1,2,2]]);
+  assert.deepEqual(result.frozen,f.state);assert(f.traffic.every(r=>r.t==='readExports'));
+  f.wine.memory={buffer:new ArrayBuffer(16384)};
+  f.wine._guestToWasmAddress=address=>{
+    if(address>=0x7400000&&address<0x7401000)return address-0x7400000+0x1000;
+    if(address===0x4b7ce4)return 0x2000;if(address===0x4b87d4)return 0x2004;
+    throw Error('unexpected passive fixture address');
+  };
+  const {mainState}=require(path.join(integration.RUNS,integration.MAIN));
+  const {ownerState}=require(path.join(integration.RUNS,'20261104-mdk2-explicit-capture-native-onward/read-only.cjs'));
+  const mainSidecar=await vm.runInContext('('+mainState.toString()+')()',f.realm);
+  const fileSidecar=await vm.runInContext('('+ownerState.toString()+')()',f.realm);
+  assert.equal(mainSidecar.values.get_current_thread_id,1);assert.equal(fileSidecar.values.get_current_thread_id,2);
+  assert.equal(mainSidecar.values.get_eip,result.owners[0].values.get_eip);
+  assert.equal(fileSidecar.values.get_eip,result.owners[1].values.get_eip);
+  fs.writeFileSync(path.join(integration.RUNS,'20261104-mdk2-main-ownership-repair/offline-wrapper-contract.json'),JSON.stringify({
+    source:integration.SOURCE,actualClasses:['GuestThreadHost','WorkerLink'],transport:'offline exportsRead fixture; real _ask/_onMessage/readExports',
+    historicalRejection:'foreign main ownership',wrapperSlot:f.host.slot??null,wrapperEndpoint:f.host.endpointIdentity??null,wrapperValues:values,repaired:result},null,2));
+});
+for(const mode of ['foreign-slot','foreign-endpoint','foreign-thread','malformed','local-main','pending-main','pending-file','starting-main','starting-file','inflight','free-run','import-retry','stopped',
+ 'changed-tick','changed-tick-ms','changed-status-field','changed-step','changed-time','changed-hosts','thawed','budget','replaced-wrapper','replaced-link','replaced-manager','replaced-backend','replaced-table','replaced-thread','replaced-file','replaced-worker','changed-endpoint','changed-slot','new-queue','queued-after','starting-after','inflight-after','added-thread','duplicate-link']) {
+ test('executable all-Worker ownership fence rejects '+mode,async()=>{
+  const f=ownershipFixture();
+  const initial={
+   'foreign-slot':()=>{f.main.slot=3;},'foreign-endpoint':()=>{f.main.endpointIdentity=3;},
+   'foreign-thread':()=>{f.main._ask=async()=>({values:{get_current_thread_id:2,get_eip:1,get_esp:1}});},
+   malformed:()=>{f.main._ask=async()=>({values:{get_current_thread_id:1,get_eip:null,get_esp:1}});},
+   'local-main':()=>{f.host.localMainExports=()=>({});},'pending-main':()=>f.main._pending.set(9,{}),'pending-file':()=>f.file._pending.set(9,{}),
+   'starting-main':()=>{f.wine._guestWorkerStarting={};},'starting-file':()=>f.host._startingLinks.add({}),inflight:()=>{f.thread.inFlight=true;},
+   'free-run':()=>{f.thread.freeRunPending=true;},'import-retry':()=>{f.thread.importRetryPreparing=true;},stopped:()=>{f.main._stopped=true;},
+   'duplicate-link':()=>{f.thread.link=f.main;}
+  };
+  if(initial[mode])initial[mode]();else f.setMutation(link=>{
+   if(link!==f.file)return;
+   switch(mode){
+    case 'changed-tick':f.state.ticks++;break;case 'changed-step':f.state.steps++;break;case 'changed-time':f.state.guestMs++;break;
+    case 'changed-tick-ms':f.state.tickMs=5;break;case 'changed-status-field':f.state.extra='changed';break;
+    case 'changed-hosts':f.state.hosts++;break;case 'thawed':f.state.frozen=false;break;case 'budget':f.wine._frozenBudget=16;break;
+    case 'replaced-wrapper':f.wine.guestWorker={...f.host};break;case 'replaced-link':f.host.link={...f.main};break;
+    case 'replaced-manager':f.wine.threadManager={...f.wine.threadManager};break;case 'replaced-table':f.wine.threadManager.threads=new Map(f.wine.threadManager.threads);break;
+    case 'replaced-backend':f.wine.threadManager.workerBackend={...f.host};break;
+    case 'replaced-thread':f.wine.threadManager.threads.set(921600,{...f.thread});break;case 'replaced-file':f.thread.link={...f.file};break;
+    case 'replaced-worker':f.main.worker={};break;case 'changed-endpoint':f.main.endpointIdentity++;break;case 'changed-slot':f.main.slot++;break;
+    case 'new-queue':f.main._pending=new Map();break;case 'queued-after':f.main._pending.set(9,{});break;
+    case 'starting-after':f.host._startingLinks.add({});break;case 'inflight-after':f.thread.inFlight=true;break;
+    case 'added-thread':f.wine.threadManager.threads.set(7,{});break;default:throw Error(mode);
+   }
+  });
+  const result=await f.invoke(true);assert(result.rejection,mode);
+  fs.appendFileSync(path.join(EVIDENCE,'ownership-negatives.jsonl'),JSON.stringify({mode,...result})+'\n');
+  assert.equal(typeof result.rejection.reason,'string');assert(Array.isArray(result.rejection.owners));
+  if(mode==='foreign-thread'){assert.equal(result.rejection.owners[0].values.get_current_thread_id,2);}
+  assert(f.traffic.every(r=>r.t==='readExports'),'no guest work or scheduling');
+ });
+}
+test('candidate resolver explicitly checks both immutable historical resolver and recorded new entry',()=>{
+ const hash=integration.sha(fs.readFileSync(require.resolve('../tools/mdk2-construction-driver-integration.cjs')));
+ const {adapter,provenance}=integration.candidateResolver(hash);
+ assert.equal(typeof adapter.installAdapter,'function');assert.equal(provenance.candidateSHA256,hash);
+ assert.equal(provenance.historicalAccepted,'6d5121b5f96ee6032a9e347e2db64db29c478518');
+ assert.throws(()=>integration.candidateResolver('0'.repeat(64)),/changed recorded driver candidate/);
+});
+test('explicit candidate adapter executes actual 432 filesystem and HTTP checks in dedicated process',()=>{
+ const code=`const fs=require('node:fs'),i=require('./tools/mdk2-construction-driver-integration.cjs');
+ (async()=>{const h=i.sha(fs.readFileSync(require.resolve('./tools/mdk2-construction-driver-integration.cjs')));
+ const {adapter,provenance}=i.candidateResolver(h);const runtime=await adapter.installAdapter(adapter.createResolver());
+ try{console.log(JSON.stringify({filesystem:runtime.filesystem.length,http:runtime.http.length,provenance}));}finally{runtime.restore();}
+ })().catch(e=>{console.error(e.stack);process.exitCode=1});`;
+ const result=cp.spawnSync(process.execPath,['-e',code],{cwd:integration.ROOT,encoding:'utf8',timeout:60000});
+ assert.equal(result.status,0,result.stderr);const report=JSON.parse(result.stdout);
+ assert.equal(report.filesystem,432);assert.equal(report.http,432);
+ fs.writeFileSync(path.join(integration.RUNS,'20261104-mdk2-main-ownership-repair/offline-candidate-adapter.json'),JSON.stringify(report,null,2));
+});
 test('exact retained closure and historical runtime pins resolve offline', () => {
   const rows = integration.verifyClosure(); assert.equal(rows.length, Object.keys({...integration.CLOSURE,...integration.HELPERS}).length);
   const runtime = integration.pinnedRuntime(); assert.equal(runtime.pins.files.length, 432);
@@ -286,7 +408,7 @@ function sealedSidecars() {
 
 // Explicit protocol fixtures around the actual composed command functions.
 // Sidecars are sealed original readbacks; fake CDP replies are not runtime proof.
-for(const mode of ['success','ambiguous','wrong-module','wrong-thread','wrong-target','replacement','missing-history','failure','terminal','deadline','unfrozen']) {
+for(const mode of ['success','ambiguous','wrong-module','wrong-thread','wrong-target','replacement','missing-history','failure','terminal','deadline','unfrozen','ownership-rejected']) {
   test('actual composed construction command / attachment '+mode,async()=>{
     const {api}=actualDriver();review(api);
     const approval=JSON.parse(fs.readFileSync(path.join(api.OUT,'inspection-approval.json')));
@@ -313,7 +435,7 @@ for(const mode of ['success','ambiguous','wrong-module','wrong-thread','wrong-ta
     if(mode==='ambiguous')api.sessions.set('other',{session,info:{url}});
     api.deadlineForTest(Date.now()+(mode==='deadline'?100000:900000));
     api.pageForTest({evaluate:async(fn,n)=>{
-      if(fn.name==='frozenOwnership'){if(mode==='unfrozen')throw Error('fixture unfrozen barrier');return barrier;}
+      if(fn.name==='frozenOwnership'){if(mode==='unfrozen')throw Error('fixture unfrozen barrier');if(mode==='ownership-rejected')return {rejection:{reason:'foreign main ownership',owners:barrier.owners}};return barrier;}
       if(fn.name==='mainState')return main;if(fn.name==='ownerState')return file;
       if(fn.toString().includes('WineFrozen.step')){steps++;return {ran:n,timedOut:false};}
       return {input:{inputQueue:[],activeInput:null,mouseButtonsMask:0},binding:{audit:[sent]},frozen:main.frozen};
@@ -327,6 +449,11 @@ for(const mode of ['success','ambiguous','wrong-module','wrong-thread','wrong-ta
       await assert.rejects(api.command({action:'step',n:16},1));
       await assert.rejects(api.command({action:'step',n:16},2),/first failure|terminal/);
       assert(steps<=1);
+      if(mode==='ownership-rejected'){
+        assert.equal(steps,0);assert.equal(starts,0);
+        const saved=JSON.parse(fs.readFileSync(path.join(api.OUT,'bounded-trace-ownership-before.json')));
+        assert.deepEqual(saved.rejection.owners,barrier.owners);
+      }
     }
   });
 }

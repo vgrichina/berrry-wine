@@ -353,29 +353,47 @@ async function installBeforeFirstScript(session, expression, workerURL, absolute
 }
 
 // Read-only queue fences, with unchanged frozen scheduling and no run/setter.
-async function frozenOwnership() {
-  const w = wine, before = WineFrozen.status();
+async function frozenOwnership(persistRejection = false) {
+  const rows = []; let before, after;
+  try {
+  const w = wine; before = WineFrozen.status();
   if (!before.frozen || before.hosts !== 1 || w._frozenBudget || !w.guestWorker || !w.threadManager?.threads) throw Error('frozen owning Worker barrier unavailable');
-  const threads = [...w.threadManager.threads.entries()];
+  // guestWorker is GuestThreadHost, not WorkerLink. Its readExports delegates
+  // to .link, but it has no slot/endpoint/_pending of its own.
+  const host = w.guestWorker, main = host.link, manager = w.threadManager, table = manager.threads, backend = manager.workerBackend;
+  if (!main || host.localMainExports || typeof main.readExports !== 'function') throw Error('main WorkerLink unavailable');
+  const threads = [...table.entries()];
   const threadLinks = new Map(threads.map(([handle,t]) => [handle,t.link]));
   if (threads.some(([,t]) => t.inFlight || t.freeRunPending || t.importRetryPreparing) ||
       w.threadManager.workerBackend?._startingLinks?.size) throw Error('unfrozen Worker lifecycle');
-  const links = [{handle: null, link: w.guestWorker}, ...threads.filter(([, t]) => t.link).map(([handle, t]) => ({handle, link: t.link}))];
+  const links = [{handle: null, link: main}, ...threads.filter(([, t]) => t.link).map(([handle, t]) => ({handle, link: t.link}))];
   if (new Set(links.map(r => r.link)).size !== links.length) throw Error('ambiguous Worker ownership');
-  const rows = [];
+  const identities = links.map(({link}) => ({slot:link.slot, endpointIdentity:link.endpointIdentity, worker:link.worker, pending:link._pending}));
+  const lifecycle = () => host._stopped || host._startingLinks?.size || w._guestWorkerStarting ||
+    threads.some(([,t]) => t.inFlight || t.freeRunPending || t.importRetryPreparing) || manager.workerBackend?._startingLinks?.size;
+  if (lifecycle()) throw Error('unfrozen Worker lifecycle');
+  if (links.some(({link}) => link._stopped || !link.worker || !(link._pending instanceof Map) || link._pending.size)) throw Error('Worker queue not frozen');
   for (const {handle, link} of links) {
-    if (link._pending?.size) throw Error('Worker queue not frozen');
     const values = await link.readExports(['get_current_thread_id', 'get_eip', 'get_esp']);
     rows.push({handle, slot: link.slot, endpointIdentity: link.endpointIdentity, values});
+    if (!values || ['get_current_thread_id','get_eip','get_esp'].some(k => !Number.isInteger(values[k]) || values[k] < 0 || values[k] > 0xffffffff)) throw Error('malformed Worker exports');
   }
-  const after = WineFrozen.status();
-  if (JSON.stringify([...w.threadManager.threads.keys()]) !== JSON.stringify(threads.map(([h]) => h)) ||
+  after = WineFrozen.status();
+  if (w.guestWorker !== host || host.link !== main || w.threadManager !== manager || manager.threads !== table || manager.workerBackend !== backend || lifecycle() ||
+      JSON.stringify([...w.threadManager.threads.keys()]) !== JSON.stringify(threads.map(([h]) => h)) ||
       threads.some(([handle,t]) => w.threadManager.threads.get(handle) !== t || t.link !== threadLinks.get(handle) || t.inFlight || t.freeRunPending || t.importRetryPreparing) ||
       w.threadManager.workerBackend?._startingLinks?.size ||
-      links.some(({link}) => link._pending?.size) || w._frozenBudget ||
-      ['steps','ticks','guestMs','hosts','frozen'].some(k => before[k] !== after[k])) throw Error('changed all-Worker frozen ownership');
-  if (rows[0].slot !== 0 || rows[0].values.get_current_thread_id !== 1) throw Error('foreign main ownership');
+      links.some(({link},i) => link._stopped || link._pending !== identities[i].pending || link._pending?.size || link.worker !== identities[i].worker || link.slot !== identities[i].slot || link.endpointIdentity !== identities[i].endpointIdentity) || w._frozenBudget ||
+      JSON.stringify(before) !== JSON.stringify(after)) throw Error('changed all-Worker frozen ownership');
+  if (rows[0].slot !== 0 || rows[0].endpointIdentity !== 1 || rows[0].values.get_current_thread_id !== 1) throw Error('foreign main ownership');
+  if (new Set(rows.map(r => r.slot)).size !== rows.length || new Set(rows.map(r => r.endpointIdentity)).size !== rows.length ||
+      rows.some(r => !Number.isInteger(r.slot) || r.slot < 0 || !Number.isInteger(r.endpointIdentity) || r.endpointIdentity < 1)) throw Error('foreign Worker identity');
   return {frozen: after, owners: rows};
+  } catch (error) {
+    const rejection = {reason:String(error.message || error), before, after, owners:rows};
+    if (persistRejection === true) return {rejection};
+    error.ownership = rejection; throw error;
+  }
 }
 
 function correlateSnapshots(before, after, trace) {
@@ -411,11 +429,17 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     return value;
   }
   async function capture() {
-    const barrier = await page().evaluate(frozenOwnership);
+    const ownership = async phase => {
+      const result = await page().evaluate(frozenOwnership, true);
+      save('bounded-trace-ownership-' + phase + '.json', result);
+      assert(!result.rejection, 'frozen ownership rejected: ' + JSON.stringify(result.rejection));
+      return result;
+    };
+    const barrier = await ownership('before');
     const {mainState} = require(path.join(RUNS, MAIN));
     const {ownerState} = require(path.join(RUNS, '20261104-mdk2-explicit-capture-native-onward/read-only.cjs'));
     const main = await page().evaluate(mainState), file = await page().evaluate(ownerState);
-    const after = await page().evaluate(frozenOwnership);
+    const after = await ownership('after');
     assert.deepEqual(after, barrier, 'all-Worker capture changed');
     for (const sidecar of [main, file]) assert.deepEqual(sidecar.frozen, barrier.frozen, 'foreign frozen sidecar');
     const fileOwner = barrier.owners.find(r => r.handle === 921600);
@@ -546,6 +570,27 @@ function retainedModule(row) {
   assert.equal(bytes.length, row.bytes); assert.equal(sha(bytes), row.sha256, 'retained module mismatch');
   return bytes;
 }
+// Explicit NEW driver candidate; original runtime pins/helpers stay immutable.
+// The historical resolver rejects any changed accepted entry by design. Load
+// that exact resolver from Git and change only its entry admission, with both
+// the original accepted blob and the caller's recorded candidate hash checked.
+function candidateResolver(expectedSHA256) {
+  assert.match(expectedSHA256, /^[a-f0-9]{64}$/);
+  assert.equal(sha(fs.readFileSync(__filename)), expectedSHA256, 'changed recorded driver candidate');
+  const commit = 'da862db135ef8d0b3bf43c0d7d453f945b44c5a5';
+  const file = path.join(ROOT, 'tools/mdk2-immutable-runtime-resolver.cjs');
+  const original = gitFile(commit, 'tools/mdk2-immutable-runtime-resolver.cjs');
+  assert.equal(sha(original), '356f0e7216e375e3e8d7c6a003d958de4f9f611205a222aa7d9cf65c7e53c77c');
+  const source = replaceOnce(original.toString(),
+    'exact(readLocal(resolver.root, ENTRY), {path:ENTRY, bytes:git(resolver.root, ACCEPTED, ENTRY).length, sha256:ENTRY_SHA});',
+    `exact(git(resolver.root, ACCEPTED, ENTRY), {path:ENTRY, bytes:git(resolver.root, ACCEPTED, ENTRY).length, sha256:ENTRY_SHA});
+    assert.equal(sha(readLocal(resolver.root, ENTRY)), ${JSON.stringify(expectedSHA256)}, 'changed recorded driver candidate');`);
+  const Module = require('node:module'), entry = new Module(file, module);
+  entry.filename = file; entry.paths = Module._nodeModulePaths(path.dirname(file)); entry._compile(source, file);
+  return {adapter:entry.exports, provenance:{kind:'explicit-new-driver-candidate', candidateSHA256:expectedSHA256,
+    resolverCommit:commit, resolverSHA256:sha(original), composedResolverSHA256:sha(source),
+    historicalAccepted:'6d5121b5f96ee6032a9e347e2db64db29c478518'}};
+}
 function controllerSources(runDirectory) {
   assert(path.isAbsolute(runDirectory)); verifyClosure();
   const base = path.join(RUNS, '20261104-mdk2-measured-escape-original');
@@ -588,7 +633,7 @@ function run(runDirectory) {
   entry.filename = file; entry.paths = Module._nodeModulePaths(path.dirname(file)); entry._compile(source, file);
 }
 module.exports = {ROOT, RUNS, SOURCE, OBSERVER, CLOSURE, HELPERS, DRIVER, MAIN, sha, gitFile, verifyClosure, pinnedRuntime,
-  installBinding, preloadSource, installBeforeFirstScript, frozenOwnership, correlateSnapshots, createTraceDriver, retainedModule, controllerSources, compose, inspect, assertRunnable, run};
+  installBinding, preloadSource, installBeforeFirstScript, frozenOwnership, correlateSnapshots, createTraceDriver, retainedModule, candidateResolver, controllerSources, compose, inspect, assertRunnable, run};
 if (require.main === module) {
   try {
     if (process.argv[2] === '--check' && process.argv.length === 3) console.log(JSON.stringify(inspect(), null, 2));
