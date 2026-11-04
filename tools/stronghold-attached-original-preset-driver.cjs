@@ -47,8 +47,31 @@ async function installBeforeFirstScript(session,{event,expression,deadline,log=(
  }
 }
 
+// Observe-browser records the constructor argument, which may be relative.
+// CDP records the resolved URL. Resolve against the actual owning page, keeping
+// origin, path and query exact; retain every event so ambiguity still rejects.
+function createAttachment(options){
+ const pageState=options.pageState;
+ return attachment.createAttachment({...options,pageState:async()=>{
+  const state=await pageState(),main=state.main;
+  const events=main?.observation?.events;
+  if(!Array.isArray(events))return state;
+  const normalized=events.map(event=>{
+   if(event.kind!=='sent-module')return event;
+   if(typeof event.workerURL!=='string'||!event.workerURL)throw Error('sent Module Worker URL missing');
+   const base=new URL(main.href);
+   if(!['http:','https:'].includes(base.protocol))throw Error('owning page HTTP URL required');
+   const workerURL=new URL(event.workerURL,base).href;
+   options.log?.('module-url-bindings.jsonl',{pageURL:base.href,rawWorkerURL:event.workerURL,workerURL});
+   return {...event,workerURL};
+  });
+  return {...state,main:{...main,observation:{...main.observation,events:normalized}}};
+ }});
+}
+
 function prepare(options){
  const p=attachment.prepare(options),q=JSON.stringify;
+ p.source=attachment.replaceOnce(p.source,'const presetAttachment=attachmentAPI.createAttachment(',`const presetAttachment=require(${q(__filename)}).createAttachment(`);
  const before="      await session.send('Runtime.enable');\n      if(event.waitingForDebugger!==true)throw Error('late Worker preload: not paused at attach');";
  p.source=attachment.replaceOnce(p.source,before,"      if(event.waitingForDebugger!==true)throw Error('late Worker preload: not paused at attach');");
  p.source=attachment.replaceOnce(p.source,"const result=await session.send('Runtime.evaluate',{expression});",
@@ -59,7 +82,7 @@ function prepare(options){
   scope:'Offline pre-first-script bootstrap handshake; original failed run is closed; fresh Chrome qualification required'};
  return p;
 }
-module.exports={installBeforeFirstScript,prepare};
+module.exports={installBeforeFirstScript,createAttachment,prepare};
 if(require.main===module){
  try{
   const args=process.argv.slice(2),value=n=>args[args.indexOf(n)+1];
