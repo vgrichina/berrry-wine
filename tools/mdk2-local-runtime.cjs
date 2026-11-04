@@ -10,9 +10,9 @@ const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
 // Explicit installed-original assignment; pre-Chrome tests consume no game launch.
-const HARD_CLOSE = Date.parse('2026-11-04T23:30:00Z');
-const HARD_RECOVER = Date.parse('2026-11-04T23:33:00Z');
-const ASSIGNMENT = '20261104-mdk2-decoder-return-original';
+const HARD_CLOSE = Date.parse('2026-11-05T00:20:00Z');
+const HARD_RECOVER = Date.parse('2026-11-05T00:23:00Z');
+const ASSIGNMENT = '20261104-mdk2-original-timer-load';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
