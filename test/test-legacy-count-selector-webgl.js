@@ -16,8 +16,23 @@ const modulePins={
   'wine-assembly.wasm':'129a71a01a5fbc8b07d6fa242a5a3ebc6a29f5aed9fb4b6a47d9318a764c1f52',
   'wine-assembly.compat.wasm':'3fde0fc42ecd0d9d5096d0b9eb83cd3086cb74aab8ac3f7b9f3fd15f5783fe6a',
 };
+const acceptedPositive={commit:'bf257f136ffaa4cddb89a7335a090e983f6e4fab',
+  run:'20261104-legacy-repaired-quotient-webgl',
+  resultSHA256:'da6582bac3cddcde051165dbc46c28f2f3c9a6ce825d39e7509f403cec0f890f',
+  cells:16,draws:3712,observations:10648};
+function faultCases(remaining=false){
+  const cases=[];
+  for(const version of [1,2])for(const count of [2,3,4])
+    for(const fault of ['ignored','selector','component','early','lod','captured-matrix'])
+      cases.push(['wine-assembly.wasm',fault==='captured-matrix'?'worker':'webgl',version,false,fault,count]);
+  return remaining?cases.slice(5):cases;
+}
 
 function controls(){
+  assert.equal(faultCases().length,36);
+  assert.equal(faultCases(true).length,31);
+  assert.deepEqual(faultCases(true)[0],['wine-assembly.wasm','worker',1,false,'captured-matrix',2]);
+  assert.deepEqual(faultCases(true).slice(1),faultCases().slice(6));
   const p=contract.plan();
   assert.equal(p.tolerance,2);
   assert.equal(p.states.length,155);
@@ -194,7 +209,9 @@ async function runtime(){
   const hardClose=Date.parse(process.env.LEGACY_PROJECTED_HARD_CLOSE);
   assert(Number.isFinite(hardClose),'explicit finite browser close time');
   const seal=JSON.parse(fs.readFileSync(path.join(dir,'source-seal.json')));
-  const state={status:'PREPARING',seal,preflight:controls(),results:[],negatives:[],injections:[]};
+  const remaining=process.argv.includes('--remaining-faults');
+  const state={status:'PREPARING',seal,preflight:controls(),results:[],negatives:[],injections:[],
+    reusedPositive:remaining?acceptedPositive:null};
   const save=()=>fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(state)+'\n');
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker',
     'gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
@@ -280,9 +297,8 @@ async function runtime(){
     // Canonical direct and queued first, then bounded compatibility coverage.
     const cells=['wine-assembly.wasm','wine-assembly.compat.wasm'].flatMap(name=>['webgl','worker'].flatMap(mode=>
       [1,2].flatMap(version=>[false,true].map(indexed=>[name,mode,version,indexed]))));
-    for(let i=0;i<cells.length;i++)if(await run(...cells[i]))i=-1;
-    for(const version of [1,2])for(const count of [2,3,4])for(const fault of ['ignored','selector','component','early','lod','captured-matrix'])
-      await run('wine-assembly.wasm',fault==='captured-matrix'?'worker':'webgl',version,false,fault,count);
+    if(!remaining)for(const cell of cells)await run(...cell);
+    for(const cell of faultCases(remaining))await run(...cell);
     state.status='PASS';
   }catch(error){state.status='FAIL; later paths unexecuted';state.error=error.stack;
     if(page)state.partial=await page.evaluate(()=>globalThis.legacyTextureEvidence).catch(()=>null);throw error;
@@ -297,4 +313,4 @@ if(require.main===module){
   else if(process.argv.includes('--modules')){const p=prerequisites();console.log(JSON.stringify(p,null,2));if(!p.modules.every(m=>m.match))process.exitCode=2;}
   else runtime().catch(e=>{console.error(e);process.exitCode=1;});
 }
-module.exports={controls,prerequisites,modulePins,sourceCommit,fixtureSource,config,oracle,runtime,corruptCapturedMatrices,capturedMatrixControls};
+module.exports={controls,prerequisites,modulePins,sourceCommit,fixtureSource,config,oracle,runtime,corruptCapturedMatrices,capturedMatrixControls,faultCases,acceptedPositive};
