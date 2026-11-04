@@ -5708,6 +5708,7 @@ class WineAssembly {
         !self._rendererInputPendingPublisher) {
       self._rendererInputPendingPublisher = (depth, wake) => {
         if (wake) {
+          self._workerInputWakeEpoch = (self._workerInputWakeEpoch || 0) + 1;
           self._workerInputBurstSlices = Math.max(
             self._workerInputBurstSlices | 0,
             Math.min(12, Math.max(0, depth | 0) + 4)
@@ -5763,6 +5764,7 @@ class WineAssembly {
         self._beginGuestTickBatch();
         await self._pumpWaveCallbacksAtBoundary();
         if(!self.running) return;
+        const inputWakeEpoch = self._workerInputWakeEpoch;
         if (self.guestWorker.broker) {
           // The guest's message-wait resume runs inside the worker and needs to
           // know whether the renderer has input queued — that queue is here, so
@@ -6097,8 +6099,15 @@ class WineAssembly {
           // none. Park until the guest's next WM_TIMER, capped; input cancels
           // the park through _wakeStep. Runnable guest threads bound it the
           // same way they do there.
-          self._workerParkMain(Number.isFinite(r.timerDue) && r.timerDue >= 0
-            ? r.timerDue : WineAssembly.MAX_PARK_SLEEP_MS, perfSliceDoneAt);
+          // Input may have arrived after this slice started but before its
+          // message-wait reply reached the page. Its wake hook had no timer
+          // to cancel then; do not install a stale park after that wake. A
+          // generation (rather than queue depth) also avoids hot polling on
+          // input queued for another process sharing the renderer.
+          if (inputWakeEpoch === self._workerInputWakeEpoch) {
+            self._workerParkMain(Number.isFinite(r.timerDue) && r.timerDue >= 0
+              ? r.timerDue : WineAssembly.MAX_PARK_SLEEP_MS, perfSliceDoneAt);
+          }
         } else if (r.yield === 3) {
           await self._handleComDllLoadThreaded();
         } else if (r.yield === 18) {
