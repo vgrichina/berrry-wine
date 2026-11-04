@@ -655,24 +655,6 @@ function generatePages() {
     }),
   });
   urls.push({ loc: `${SITE}/apps/`, lastmod: blurbDates.modified, priority: '0.8', changefreq: 'monthly' });
-  // An app page left on disk from an earlier run (the app left the desktop,
-  // or was never on the production one) would be uploaded again by the
-  // deploy, and the berrry API cannot delete the live copy. Overwrite it with
-  // a noindex stub pointing at /apps/ so the live URL drops out of search.
-  const appPages = new Set(pages.map(p => p.name).filter(n => n.startsWith('apps/')));
-  const appsDir = path.join(ROOT, 'apps');
-  for (const f of fs.existsSync(appsDir) ? fs.readdirSync(appsDir) : []) {
-    if (!f.endsWith('.html') || appPages.has(`apps/${f}`)) continue;
-    pages.push({
-      name: `apps/${f}`,
-      content: '<!doctype html>\n<html lang="en"><head><meta charset="utf-8">\n' +
-        '<meta name="robots" content="noindex">\n' +
-        `<link rel="canonical" href="${SITE}/apps/">\n` +
-        '<meta http-equiv="refresh" content="0; url=/apps/">\n' +
-        '<title>Moved — Wine-Assembly</title></head>\n' +
-        '<body><p>This program is not on the desktop. See <a href="/apps/">the programs that are</a>.</p></body></html>\n',
-    });
-  }
 
   const articlesIndexRel = 'articles/README.md';
   if (fs.existsSync(path.join(ROOT, articlesIndexRel))) {
