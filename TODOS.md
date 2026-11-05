@@ -2160,17 +2160,17 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-ARANNA-DEMO-20261010
-  blocker: Recorded original installer absent locally; verified media reconstruction and a free worker slot required. Fresh box creation and command access succeeded.
+  blocker: Original installer recovered and exact historical SHA256 verified; free worker slot, current runtime access preflight and setup reconstruction required.
   worker: none (four existing workers occupied; replacement setup prepared by coordinator)
-  status: pending (fresh replacement provisioned; original media reconstruction pending)
+  status: pending (original media recovered; runtime/setup and gameplay pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  candidate: test/binaries/win98-games-a-d/DungeonSiegelegendsofaranna_demo-D3D.exe
-  Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Recover/verify original installer, supporting assets and historical receipt, then use an authorized bounded runtime to observe acceptance and installed payload. Local exact-path observations and unknown remote availability are in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
+  candidate: scratch/game-media/aranna-demo-20261105/dsloademo.exe (260378624 bytes, SHA256 e3923f18d3ec9bf52ffe556821dbaa2078e985087c7bf4b171a36b9883b851cf; exact historical original)
+  Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Use recovered original by path/hash, reconstruct supporting assets and verify current authorized runtime access, then observe ordinary acceptance, installed payload and gameplay. Recovery receipt: scratch/runs/20261105-aranna-original-media-recovery/recovery-receipt.json; recipe/history: docs/re-notes/dungeon-siege-legends-aranna-demo.md. No installer execution or acceptance occurred during media recovery.
   Previous checkpoint (licence-decision hold superseded): Generic RTF fix cedee9b54 now shows readable original EULA; before1504Z/after1523Z browser evidence reviewed. No acceptance provided and no input sent. Payload /home/user/aranna-game-20261010 remains on bx_hx8msa33; no gameplay/FPS/audio qualification. Active slot refilled Invisible War.
   Done: Original launch, ordinary player-controlled gameplay and reviewed screenshot with source/build identity; fixes committed on main.
   Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=false until observed.
 
-  Runtime replacement 2026-11-05: Owner authorized fresh POST /sandboxes with persisted UUID Idempotency-Key. New bx_ymnfhg6q created and command access verified; reconstruction commit/recipe hashes staged. Preparation only, no guest run/acceptance/gameplay. Stopped with snapshotAvailable=true after receipts retrieved; receipt/status in scratch/runs/20261105-owner-fresh-runtime/. Old bx_hx8msa33 superseded and left untouched; no old resume/delete. Rebuild from repo and recorded fixture hashes; media absence remains explicit. One heavy runtime per box; stop promptly after run/evidence retrieval.
+  Runtime replacement 2026-11-05: Owner authorized fresh POST /sandboxes with persisted UUID Idempotency-Key. New bx_ymnfhg6q created and command access verified; reconstruction commit/recipe hashes staged. Preparation only, no guest run/acceptance/gameplay. Stopped with snapshotAvailable=true after receipts retrieved; receipt/status in scratch/runs/20261105-owner-fresh-runtime/. Old bx_hx8msa33 superseded and left untouched; no old resume/delete. Rebuild from repo and recorded fixture hashes; original installer recovered on20261105 with exact recorded SHA256. One heavy runtime per box; stop promptly after run/evidence retrieval.
 
 - [~] Shadow Man original demo: installed launcher/configuration response accepted
   id: NEW-GAME-SHADOW-MAN-DEMO-20261013
