@@ -2181,16 +2181,17 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-ARANNA-DEMO-20261010
-  blocker: Original installer recovered; fresh bx_96k82f8h created successfully, but SSH preflight returned403 api_key_action_forbidden (2026-11-05 12:55Z). Box stopped; remote runtime requires SSH access authorization, or a free serialized local runtime slot.
-  worker: fresh aranna-original-local-gameplay-1710; source-only behind rectangular1610 -> RFsource1620 -> Lords callbacklifetime1635 releases/cleanup
-  status: active (local original setup/gameplay assigned; media/extraction recovered)
+  blocker: After ordinary EULA acceptance, original reports C:\Resources\Logic.dsres read error0x17; host file4206880B SHA90b26f17 matches original. Worker read/seek versus archive/decompression cause unresolved; no emulator defect established.
+  worker: fresh aranna-worker-resource-read-1850; generated Worker file/seek controls, source-only behind Shadow1800 then Conan1840 releases/cleanup
+  status: active diagnostic; original EULA acceptance observed, menu/gameplay not reached
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: scratch/game-media/aranna-demo-20261105/dsloademo.exe (260378624 bytes, SHA256 e3923f18d3ec9bf52ffe556821dbaa2078e985087c7bf4b171a36b9883b851cf; exact historical original)
-  Prepared: Canonical extraction scratch/game-media/aranna-demo-20261105/extracted/ verified28files/281799760B, DSLOA.exe historical hash exact, both case-distinct setup DLLs preserved. Per-file receipt scratch/runs/20261105-aranna-extraction/result.json. No guest execution, acceptance or installation.
-  Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Use recovered original by path/hash, reconstruct supporting assets and verify current authorized runtime access, then observe ordinary acceptance, installed payload and gameplay. Recovery receipt: scratch/runs/20261105-aranna-original-media-recovery/recovery-receipt.json; recipe/history: docs/re-notes/dungeon-siege-legends-aranna-demo.md. No installer execution or acceptance occurred during media recovery.
+  Prepared: Canonical extraction scratch/game-media/aranna-demo-20261105/extracted/ verified28files/281799760B, DSLOA.exe historical hash exact, both case-distinct setup DLLs preserved. Per-file receipt scratch/runs/20261105-aranna-extraction/result.json. Original1710 subsequently executed extracted DSLOA.exe and observed ordinary EULA acceptance; installation unqualified.
+  Update 2026-11-05: Note-only94e82d5b2 published; acceptedInGuest=true from ordinary click, closed EULA and newly written FIRSTRUN=1. First Logic.dsres failure retained and screenshots reviewed. RichEdit10/10, dependency checks and locked build passed; all runtime/files released17:03:28.
+  Next: Generated Worker file/seek/error controls and exact failing offset/result; fix only demonstrated emulator divergence. Further original run requires a changed proved prerequisite.
   Previous checkpoint (licence-decision hold superseded): Generic RTF fix cedee9b54 now shows readable original EULA; before1504Z/after1523Z browser evidence reviewed. No acceptance provided and no input sent. Payload /home/user/aranna-game-20261010 remains on bx_hx8msa33; no gameplay/FPS/audio qualification. Active slot refilled Invisible War.
   Done: Original launch, ordinary player-controlled gameplay and reviewed screenshot with source/build identity; fixes committed on main.
-  Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=false until observed.
+  Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=true observed2026-11-05; installation/gameplay unqualified.
 
   Runtime replacement 2026-11-05: Owner authorized fresh POST /sandboxes with persisted UUID Idempotency-Key. New bx_ymnfhg6q created and command access verified; reconstruction commit/recipe hashes staged. Preparation only, no guest run/acceptance/gameplay. Stopped with snapshotAvailable=true after receipts retrieved; receipt/status in scratch/runs/20261105-owner-fresh-runtime/. Old bx_hx8msa33 superseded and left untouched; no old resume/delete. Rebuild from repo and recorded fixture hashes; original installer recovered on20261105 with exact recorded SHA256. One heavy runtime per box; stop promptly after run/evidence retrieval.
 
