@@ -1523,11 +1523,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Evidence: test/toyvm-dos-corpus/manifest.json; test/toyvm-dos-corpus/titles.json; ops/dos-corpus.json; tools/toyvm-dos-corpus.js; user instruction2026-10-07. Daggerfall/Arena DOSBox gameplay does not establish native compatibility.
 - [~] New-game lane: Betrayal in Antara demo (Sierra 1997, SCI32 RPG)
   id: NEW-GAME-BETRAYAL-ANTARA-DEMO-20261006
-  status: active (one owner-authorized retry; source-only until shared test queue releases)
+  status: blocked (authorized retry finished; original media and owning raw trap evidence missing)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 2 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Fresh antara-emulator-owner-retry-nov05 locates retained evidence and diagnoses our Win16 CPU/API/callback behavior against documented semantics, fixing a demonstrated mismatch with a regression. Shared edits/tests wait for Strong0950, D3Dclip1010 and RFworker1020 releases. Old remote box remains stopped; no original browser run assigned. Record missing prerequisites if diagnosis cannot be grounded in available evidence.
+  Next: Recover the twelve named media/raw-log/patch prerequisites listed in scratch/runs/20261105-antara-emulator-owner-retry/source-and-prerequisites.json. Retry finished source-only exit0: current FAR_ADDR and named-module fixes already present; EIP19db02 has no authenticated segment mapping. No new mismatch, flag, code changes or execution. Preserve findings.md recovery recipe; old bx_fugmje42 remains stopped. No speculative repair or repeat archive search.
   candidate: win98-games-a-d/Betrayl-a-Antara-DEMO-SW (16-bit Sierra SETUP.EXE installs the game; local, no download)
   Prior evidence: WIP scratch/new-game-antara-20261006 and ops/handoffs/antara-security-hold-20261008.md; bx_fugmje42 stopped after expiry, retrieval incomplete; no installation/gameplay qualification.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
@@ -1538,11 +1538,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: Arx Fatalis demo (original local MSI/CAB media)
   id: NEW-GAME-ARX-FATALIS-DEMO-20261007
-  status: queued (one owner-authorized retry; serialized)
+  status: active (one owner-authorized retry; source preparation behind existing shared test queue)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 3 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Retry emulator startup exception diagnostics from preserved evidence; compare our CPU/memory/API behavior with documented semantics and fix with a regression.
+  Next: Fresh arx-emulator-owner-retry-nov05 checks current emulator startup CPU/memory/API behavior against retained evidence and documented semantics, fixes a demonstrated mismatch with a regression. Shared edits/tests wait Strong0950 then D3Dclip1010 then RFworker1020 FINAL releases and cleanup. No original browser or box assigned; record precise missing prerequisites if retained evidence is insufficient.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: test/binaries/win98-games-a-d/Arx_Fatalis-demo-D3D-Glide
   Prior evidence: scratch/runs/20261007-arx-diagnostic-interrupted preserved; remote cleaned, intro AV unresolved.
