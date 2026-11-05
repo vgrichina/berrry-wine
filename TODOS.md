@@ -1538,11 +1538,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: Arx Fatalis demo (original local MSI/CAB media)
   id: NEW-GAME-ARX-FATALIS-DEMO-20261007
-  status: active (one owner-authorized retry; source preparation behind existing shared test queue)
+  status: blocked (authorized retry finished; fourteen media/raw-evidence prerequisites missing)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 3 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Fresh arx-emulator-owner-retry-nov05 checks current emulator startup CPU/memory/API behavior against retained evidence and documented semantics, fixes a demonstrated mismatch with a regression. Shared edits/tests wait Strong0950 then D3Dclip1010 then RFworker1020 FINAL releases and cleanup. No original browser or box assigned; record precise missing prerequisites if retained evidence is insufficient.
+  Next: Recover fourteen exact paths listed in scratch/runs/20261105-arx-emulator-owner-retry/prerequisite-inventory.json and follow findings.md recovery recipe. Retry source-only exit0: allocation placement repair already present; later0xC000DE05 lacks fault EIP/address/access/owning thread record. No demonstrated new mismatch, flag, code or execution. Authenticate media and raw fault evidence before diagnosis; no speculative lock bypass or repeat archive hunt.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: test/binaries/win98-games-a-d/Arx_Fatalis-demo-D3D-Glide
   Prior evidence: scratch/runs/20261007-arx-diagnostic-interrupted preserved; remote cleaned, intro AV unresolved.
@@ -1603,11 +1603,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Diagnose original Winamp MilkDrop exception and validate visualization
   id: GLD3D-WINAMP-EXCEPTION-20261007
-  status: queued (one owner-authorized retry; serialized)
+  status: active (authorized emulator retry; source preparation behind shared test queue)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 4 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Retry emulator exception handling diagnostics from preserved evidence; identify and repair our documented CPU/Win32 semantic mismatch with a regression.
+  Next: Fresh winamp-emulator-owner-retry-nov05 diagnoses documented emulator CPU/Win32 exception semantics from retained owning-worker evidence. Shared edits/tests wait Strong0950 then D3Dclip1010 then RFworker1020 releases/cleanup. No original runtime or box assigned; record precise missing evidence if a mismatch cannot be demonstrated.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Done: Demonstrated generic cause repaired with regression and ordinary original visualization reviewed; FPS/audio separate.
   Evidence: scratch/runs/20261007-winamp-milkdrop-complete-closure; ops/handoffs/winamp-milkdrop-ordinary-20261007.md
