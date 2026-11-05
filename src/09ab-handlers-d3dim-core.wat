@@ -6970,6 +6970,21 @@
           (i32.and (local.get $dst) (i32.const 255))
           (local.get $alpha) (local.get $src_blend) (local.get $dst_blend)))))
 
+  ;; A8R8G8B8 framebuffer blending uses destination alpha and writes alpha.
+  ;; Keep the established legacy ZERO/SRCCOLOR RGB truncation fast path;
+  ;; the remaining RGBA channels use the same rounded byte equation as GL.
+  (func $d3dim_blend_argb
+    (param $src i32) (param $dst i32) (param $sf i32) (param $df i32) (result i32)
+    (local $out i32)
+    (local.set $out (call $gl_sw_blend_rgba
+      (local.get $src) (local.get $dst) (local.get $sf) (local.get $df)))
+    (if (i32.and (i32.eq (local.get $sf) (i32.const 1))
+                 (i32.eq (local.get $df) (i32.const 3))) (then
+      (local.set $out (i32.or (i32.and (local.get $out) (i32.const 0xff000000))
+        (call $d3dim_blend_rgb
+          (local.get $src) (local.get $dst) (local.get $sf) (local.get $df))))))
+    (local.get $out))
+
   ;; D3DCMPFUNC: 1 NEVER, 2 LESS, 3 EQUAL, 4 LESSEQUAL, 5 GREATER,
   ;; 6 NOTEQUAL, 7 GREATEREQUAL, 8 ALWAYS.  Use unsigned comparisons for
   ;; packed 16/32-bit depth because both formats map [0,1] monotonically.
@@ -7767,7 +7782,9 @@
                   (i32.shl (i32.and (local.get $px16) (i32.const 31)) (i32.const 3))))))))
           (local.set $color (if (result i32) (global.get $gl_sw_rgba_span)
             (then (call $gl_sw_blend_rgba (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))
-            (else (call $d3dim_blend_rgb (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))))))
+            (else (if (result i32) (i32.eq (local.get $rtfmt) (i32.const 5))
+              (then (call $d3dim_blend_argb (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))
+              (else (call $d3dim_blend_rgb (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))))))))
         ;; D3DANTIALIAS_SORTDEPENDENT smooths polygon boundaries against the
         ;; colour already in the render target. Interior pixels keep the hot
         ;; opaque path; only the two scanline edge samples need a destination
@@ -9536,6 +9553,13 @@
     (if (i32.eqz (local.get $address_v)) (then (local.set $address_v (i32.const 1))))
     (if (i32.eqz (local.get $src_blend)) (then (local.set $src_blend (i32.const 2))))
     (if (i32.eqz (local.get $dst_blend)) (then (local.set $dst_blend (i32.const 1))))
+    ;; Legacy paired source factors override the destination selection.
+    ;; Lower at draw time, preserving raw public state and queued snapshots,
+    ;; just as the D3DIM GPU executor does before submitting its draw.
+    (if (i32.eq (local.get $src_blend) (i32.const 12)) (then
+      (local.set $src_blend (i32.const 5)) (local.set $dst_blend (i32.const 6))))
+    (if (i32.eq (local.get $src_blend) (i32.const 13)) (then
+      (local.set $src_blend (i32.const 6)) (local.set $dst_blend (i32.const 5))))
     (if (local.get $use_z) (then
       (if (local.get $state) (then
         (if (call $gl32 (i32.add (local.get $state) (i32.const 284))) (then
