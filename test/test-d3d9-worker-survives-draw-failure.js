@@ -17,10 +17,10 @@
 // at command 8917, the worker was gone by 8918, and the run's remaining 587
 // commands had nothing to run on. The rendered frame never changed again.
 //
-// Recovery from a failed stream is a device reset, which bumps the generation
-// and rebuilds the stream -- and that is only reachable while the worker is
-// still alive to receive it. So keeping the worker alive is what makes the
-// existing recovery path usable at all, which is the last case here.
+// The generation rollover below tests receiver bookkeeping with a synthetic
+// executor. Healthy host Reset submits RESOURCE_UPDATE without changing the
+// generation. Real-worker failure retirement and supported recreation through
+// the host are covered by test-d3d9-worker-reset-recovery.js.
 'use strict';
 const assert = require('assert');
 const Stream = require('../lib/d3d-command-stream');
@@ -116,8 +116,8 @@ const phases = (posted, sequence) =>
 }
 
 {
-  // Recovery. A failed stream is cleared by a device reset, which arrives as a
-  // higher generation -- the path that was unreachable once the worker exited.
+  // Receiver bookkeeping only: a higher generation replaces its failed stream.
+  // This does not create/reset a native device in a live worker device map.
   const h = harness({ failAt: new Set([1]) });
   h.send();
   assert.deepStrictEqual(phases(h.posted, 1), ['consumed', 'failed']);

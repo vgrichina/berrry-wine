@@ -101,8 +101,14 @@ const settled = promise => promise.then(() => null, error => error);
     // THE ASSERTION. Under the old behaviour the next command threw out of
     // receive(), the worker called shutdownNeutral() and the thread exited.
     // Give it a moment to die if it is going to.
-    first.error = null; // what the producer's own reset would clear
-    const after = await settled(waitFor(first, first.submit(Stream.OPCODES.DRAW, goodDraw())));
+    // Model a follow-on command already in transport when failure is learned.
+    // Healthy host Reset does not advance generation or clear this error;
+    // production retirement/recreation is covered by worker-reset-recovery.
+    const following = consumer.execute({ version: Stream.VERSION, deviceId: 1,
+      generation: first.generation, sequence: first.submitted + 1,
+      opcode: Stream.OPCODES.DRAW, payload: goodDraw(), resources: [], byteLength: 64 });
+    following.consumed.catch(() => {});
+    const after = await settled(following.completion);
     assert.ok(after, "a poisoned device's later draw is still reported failed");
     assert.match(String(after.message || after), /earlier render command failed/,
       `expected the poisoned-stream answer, got: ${after && after.message}`);
