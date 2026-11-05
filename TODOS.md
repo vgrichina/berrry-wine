@@ -326,8 +326,8 @@ and jobs remain preserved. No old-session wakeup is requested.
 
 - [ ] Stop stale execution after a store modifies the remainder of the running decoded block
   id: CPU-SAME-BLOCK-SELF-MODIFYING-CODE-20261105
-  status: ready (new owner-reported CPU correctness issue; separate from accepted REP restart)
-  owner: unassigned
+  status: in-progress (fresh cpu-same-block-smc-1120 worker; source work first, serialized tests/build)
+  owner: cpu-same-block-smc-1120
   Report 2026-11-05 claude-laptop: A guest store into the remainder of the currently executing decoded block retires the block but leaves the thread pointer on it, allowing stale decoded instructions to execute. Likely affects any store, not only REP; establish actual scope before fixing.
   Next: Fresh bounded worker reproduces with a minimal generated x86 guest through production decoding/dispatch, including scalar and REP stores, then fixes running-block continuation/invalidation in our emulator. Coordinate src/05-alu.wat, src/04-cache.wat and dispatch ownership; preserve exact instruction progress and fault behavior.
   Done: Changed next instruction executes newly decoded bytes; meaningful scalar/REP same-block controls, unaffected other-block/nonoverlap behavior, fault/restart cases and appropriate decode/uop paths pass, plus locked full build. No guest program modification or private diagnostic workaround. Commit/push own tested implementation.
@@ -1112,15 +1112,15 @@ commit output — do not assume your hunks landed.**
 
 - [!] Complete Serious Sam production integration and ordinary gameplay
   id: SAM-PRODUCTION-FOLLOWTHROUGH
-  status: in-progress (REP blocker resolved; fresh headless GL worker allocated)
+  status: blocked (REP resolved; fresh box SSH denied HTTP403 api_key_action_forbidden before staging)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: Owner update 2026-11-05 accepts MIG b786b78da/eadf70fd5 and unblocks this lane. Next normal production slot; existing four workers continue, no fifth worker.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Fresh sam-production-headless-gl-1115 assigned after Strong terminal; runtime on leased bx_72mzdfcs, shared integration waits D3Dclip1010 then RFworker1020. Reconcile accepted REP fix and production fault/classifier contracts; integrate necessary tested production slices with meaningful regressions, then Serious Sam demo ordinary gameplay using headless GL. Preserve authentic first failure and exact source/module/media identities; no private diagnostic shortcuts. Shared integration/builds and local heavy runtime remain serialized.
+  Next: Owner/runtime service must permit authenticated SSH before another remote gameplay allocation. First boat ssh bx_72mzdfcs returned HTTP403 api_key_action_forbidden, response log UTC 2026-11-05T11:12:58.623574867Z (exact server event UTC unknown); no retry or alternate access. Published cf88c6139 records five matching canonical prerequisites and no guest execution, screenshot or emulator failure. Coordinator stopped the unused box, verified stopped 2026-11-05T11:15:22Z. Once permitted, resume production headless GL ordinary menu/level movement/combat with authentic first failure and exact identities; no private shortcuts.
   created: 2026-10-02T04:16:51.185761+00:00
   created-by: orchestrator-handoff-audit
   depends-on: MIG-SAM-REP-RESTART (satisfied b786b78da, merged eadf70fd5)
-  worker: sam-production-headless-gl-1115; leased bx_72mzdfcs idle at allocation, TTL 2026-11-05T13:11:54Z, coordinator shutdown; scratch/usage-watch/sam-production-headless-gl-1115.task.txt
+  worker: sam-production-headless-gl-1115 completed and released; bx_72mzdfcs stopped by coordinator, snapshot available; scratch/usage-watch/sam-production-headless-gl-1115.task.txt
   candidate: serious-sam-demo
   Done: Production build reaches menu and level with supported input, verified movement/combat and no private diagnostic shortcuts; exact source/module and focused regressions retained.
   Evidence: ops/handoffs/mig-sam-fault-remainder.md; ops/handoffs/01a0f6ff-da61-7710-a604-d9442103dbbd.md
