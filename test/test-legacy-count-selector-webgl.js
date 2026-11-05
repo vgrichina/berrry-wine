@@ -153,7 +153,7 @@ function capturedMatrixControls(){
   // Execute the exact callback helper in an isolated realm with no identity
   // binding, using framed held type-3/type-4 records and byte guards.
   const mutate=vm.runInNewContext('('+corruptCapturedMatrices.toString()+')');
-  const recordSize=3296,buffer=new ArrayBuffer(recordSize*2),bytes=new Uint8Array(buffer);
+  const recordSize=3296,buffer=new SharedArrayBuffer(recordSize*2),bytes=new Uint8Array(buffer);
   bytes.fill(0xa5);const d=new DataView(buffer);
   for(let i=0;i<2;i++){d.setUint32(i*recordSize,recordSize,true);d.setUint32(i*recordSize+12,i?4:3,true);}
   const before=bytes.slice(),offset=recordSize+32+3136;
@@ -162,26 +162,78 @@ function capturedMatrixControls(){
   assert.deepEqual(bytes.slice(0,offset),before.slice(0,offset));
   assert.deepEqual(bytes.slice(offset+64),before.slice(offset+64));
   assert.throws(()=>mutate(buffer,bytes.length-1),/captured record size/);
-  // Also run the actual emitted postMessage wrapper, holding then draining
-  // delivery. This catches a callback that still references out-of-scope state.
+  // The old identity scope failure must still reject before changing bytes.
+  const referenceError=name=>error=>error.name==='ReferenceError'&&error.message===name+' is not defined';
+  const identityLiteral='[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]';
+  const helper=corruptCapturedMatrices.toString();
+  assert.equal(helper.split(identityLiteral).length,2);
+  const oldMutate=vm.runInNewContext('('+helper.replace(identityLiteral,'identity')+')');
   bytes.set(before);
+  assert.throws(()=>oldMutate(buffer,bytes.length),referenceError('identity'));
+  assert.deepEqual(bytes,before);
+  // Execute the emitted lexical declarations too. The wrapper gained queue
+  // and transport instrumentation after this isolated regression was written;
+  // a hand-built context omitted those locals and failed before fault delivery.
+  // Strict mode also refuses accidental globals from init assignments.
   const source=fixtureSource(),start=source.indexOf('port.postMessage=message=>{'),
-    end=source.indexOf('        return port;',start);
-  assert(start>0&&end>start);
-  const delivered=[],context=vm.createContext({port:{},post:m=>delivered.push(m),
-    holding:false,negative:'captured-matrix',evidence:{},endpointBuffers:undefined,
-    held:[],heldRecord:{messages:[]},check:assert});
-  vm.runInContext(corruptCapturedMatrices.toString()+';'+source.slice(start,end),context);
-  context.port.postMessage({t:'init',buffers:[buffer]});context.holding=true;
-  context.port.postMessage({t:'batch',index:0,bytes:bytes.length});
-  assert.equal(context.held.length,1);assert.deepEqual(bytes,before);
-  context.holding=false;context.held.shift()();
+    end=source.indexOf('        return port;',start),
+    declarations=source.indexOf('  const held=[];'),worker=source.indexOf("  if(mode==='worker') {",declarations);
+  assert(declarations>0&&worker>declarations&&start>worker&&end>start);
+  const prefix=source.slice(declarations,worker),wrapper=source.slice(start,end);
+  const omissionSeams={transport:['const transport=evidence.transport={batches:[],holds:[]};',''],
+    queueBuffers:['let queueBuffers,queueControl;','let queueControl;'],
+    queueControl:['let queueBuffers,queueControl;','let queueBuffers;'],
+    heldPackets:['const heldPackets=[];','']};
+  const isolated=omit=>{
+    let locals=prefix;
+    if(omit){const [from,to]=omissionSeams[omit];assert.equal(locals.split(from).length,2);locals=locals.replace(from,to);}
+    const delivered=[],context=vm.createContext({port:{},post:m=>delivered.push(m),
+      holding:false,negative:'captured-matrix',evidence:{},heldRecord:{messages:[]},check:assert});
+    const scope=vm.runInContext("'use strict';\n"+locals+wrapper+
+      ';({held,heldPackets:typeof heldPackets===\'undefined\'?null:heldPackets,transport:typeof transport===\'undefined\'?null:transport, get buffers(){return queueBuffers;},get control(){return queueControl;},transportSnapshot})',context);
+    return {context,scope,delivered};
+  };
+  const control=new SharedArrayBuffer(32),controls=new Int32Array(control);
+  controls[3]=7;controls[1]=6;
+  const untouched=new SharedArrayBuffer(bytes.length),buffers=[untouched,buffer];
+  const init={t:'init',buffers,control},batch={t:'batch',seq:7,index:1,bytes:bytes.length,commands:2};
+  const {context,scope,delivered}=isolated();
+  context.port.postMessage(init);
+  assert.equal(scope.buffers,buffers);assert.equal(scope.control.buffer,control);
+  assert.equal(scope.transportSnapshot().submitted,7);assert.equal(scope.transportSnapshot().completed,6);
+  context.port.postMessage(batch); // Immediate delivery records transport, never corrupts.
+  assert.deepEqual(bytes,before);assert.equal(scope.held.length,0);
+  context.holding=true;
+  const heldBatch={...batch,seq:8},fence={t:'fence'};
+  context.port.postMessage(heldBatch);context.port.postMessage(fence);
+  assert.equal(scope.held.length,2);assert.equal(scope.heldPackets.length,1);
+  assert.equal(scope.heldPackets[0],heldBatch);assert.deepEqual(context.heldRecord.messages,['batch','fence']);
+  assert.equal(scope.transport.batches.length,2);
+  for(const [i,row] of scope.transport.batches.entries()){
+    assert.equal(row.sequence,7+i);assert.equal(row.index,1);assert.equal(row.commands,2);
+    assert.deepEqual(Array.from(row.header),Array.from(new Uint32Array(buffer,0,8)));
+  }
+  assert.deepEqual(delivered,[init,batch]);assert.deepEqual(bytes,before);
+  context.holding=false;for(const send of scope.held.splice(0))send();
   assert.equal(context.evidence.corruptedCapturedMatrices,1);
-  assert.deepEqual(delivered.map(m=>m.t),['init','batch']);
+  assert.deepEqual(delivered,[init,batch,heldBatch,fence]);
   assert.deepEqual(Array.from(new Float32Array(buffer,offset,16)),[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);
   assert.deepEqual(bytes.slice(0,offset),before.slice(0,offset));
   assert.deepEqual(bytes.slice(offset+64),before.slice(offset+64));
-  return {status:'PASS isolated helper and exact emitted held/drained callback; type-4 matrix only; guards intact'};
+  assert(new Uint8Array(untouched).every(byte=>byte===0),'only the selected endpoint buffer changes');
+  // Remove each real binding in memory: these must fail in the exact wrapper,
+  // before held delivery or matrix mutation, rather than passing a parse check.
+  for(const omit of Object.keys(omissionSeams)){
+    bytes.set(before);const broken=isolated(omit);
+    assert.throws(()=>{
+      broken.context.port.postMessage(init);broken.context.holding=true;
+      broken.context.port.postMessage(heldBatch);
+    },referenceError(omit));
+    assert.equal(broken.scope.held.length,0);assert.deepEqual(bytes,before);
+    assert.equal(broken.context.evidence.corruptedCapturedMatrices,undefined);
+  }
+  return {status:'PASS strict isolated emitted locals/wrapper; immediate and held/drained delivery; type-4 matrix only; guards intact',
+    rejectedMissingBindings:[...Object.keys(omissionSeams),'identity'],pixels:'NONE; isolated transport regression only'};
 }
 function fixtureSource(){
   let source=contract.fixtureSource();

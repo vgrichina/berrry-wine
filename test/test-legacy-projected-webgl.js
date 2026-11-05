@@ -115,17 +115,54 @@ function fixtureSource(){
 // submission. Only rendered semantic behavior changes.
 function mutateAdapter(source,negative){
   const replace=(a,b)=>{assert.equal(source.split(a).length,2,'unique fault seam '+negative);source=source.replace(a,b);};
-  if(negative==='ignored')replace('stage.transformFlags = 0x103;','stage.transformFlags = 0;');
-  if(negative==='early')replace('stage.transformFlags = 0x103;',`for(let n=0;n<order.length;n++){
+  const flags='stage.transformFlags = vertexType === 6 ? 0 : 0x103;';
+  if(negative==='ignored')replace(flags,'stage.transformFlags = 0;');
+  if(negative==='early')replace(flags,`if(vertexType!==6)for(let n=0;n<order.length;n++){
     const p=n*stride,q=projected.getFloat32(p+32,true);
     projected.setFloat32(p+24,projected.getFloat32(p+24,true)/q,true);
     projected.setFloat32(p+28,projected.getFloat32(p+28,true)/q,true);
     projected.setFloat32(p+32,1,true);
-  }stage.transformFlags = 0x103;`);
+  }`+flags);
   if(negative==='lod')replace('mag: d.mag, min: d.min, mip: d.mip','mag: d.mag, min: d.min, mip: 0');
   if(negative==='live-matrix')replace('const matrixWa = e.d3dim_gpu_supplied_matrix(self) >>> 0;',`e.d3dim_gpu_state_override(0);
     const matrixWa = e.d3dim_gpu_supplied_matrix(self) >>> 0;`);
   return source;
+}
+
+function adapterFaultControls(){
+  const original=fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8');
+  let cases=0;
+  // Execute the actual transformed-input block, not merely its shader syntax.
+  // Type 6 is deliberately unprojected; the early-division fault must preserve
+  // that control while corrupting the projected type-4/type-5 coordinates.
+  for(const vertexType of [4,5,6])for(const fault of [null,'ignored','early']){
+    const source=fault?mutateAdapter(original,fault):original;
+    const start=source.indexOf('      if (textured && vertexType >= 4) {'),end=source.indexOf('\n      const draw = {',start);
+    assert(start>0&&end>start);
+    const inputStride=vertexType===4?32:40,bytes=new Uint8Array(inputStride*3),view=new DataView(bytes.buffer);
+    for(let n=0;n<3;n++){
+      view.setFloat32(n*inputStride+12,.25,true);
+      view.setFloat32(n*inputStride+24,2+n,true);view.setFloat32(n*inputStride+28,4+n,true);
+      if(vertexType>=5){view.setFloat32(n*inputStride+32,2,true);view.setFloat32(n*inputStride+36,1,true);}
+    }
+    const matrix=new Float32Array([1,0,0,0,0,1,0,0,0,0,0,0,0,0,2,1]);
+    const run=vm.runInNewContext('(function(){let drawBytes=bytes,stride=inputStride,attributes=[{usage:5,type:1}];'+
+      source.slice(start,end)+';return {drawBytes,stride,attributes,stage};})',
+      {textured:true,vertexType,inputStride,bytes,view,stage:{},order:[0,1,2],self:1,e:{d3dim_gpu_supplied_matrix:()=>0}});
+    const result=run.call({_view(){},u8:new Uint8Array(matrix.buffer)}),out=new DataView(result.drawBytes.buffer);
+    assert.equal(result.stride,40);assert.equal(result.attributes[0].type,3);
+    assert.equal(result.stage.transformFlags,fault==='ignored'||vertexType===6?0:0x103);
+    const early=fault==='early'&&vertexType!==6;
+    for(let n=0;n<3;n++){
+      assert.equal(out.getFloat32(n*40+12,true),.25,'geometric RHW preserved');
+      assert.equal(out.getFloat32(n*40+24,true),(2+n)/(early?2:1));
+      assert.equal(out.getFloat32(n*40+28,true),(4+n)/(early?2:1));
+      assert.equal(out.getFloat32(n*40+32,true),early?1:2);
+      assert.equal(out.getFloat32(n*40+36,true),1);
+    }
+    cases++;
+  }
+  return {cases,status:'PASS isolated actual adapter transform block; no pixels'};
 }
 
 function controls(){
@@ -167,7 +204,7 @@ function controls(){
   }
   assert(levels.size>=3,'nontrivial mip coverage');
   for(const negative of ['ignored','early','lod','live-matrix'])new vm.Script(mutateAdapter(fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8'),negative));
-  return {status:'PREFLIGHT SOURCE ONLY; no browser pixels',states:p.states.length,oracleLevels:[...levels]};
+  return {status:'PREFLIGHT SOURCE ONLY; no browser pixels',states:p.states.length,oracleLevels:[...levels],adapterFaults:adapterFaultControls()};
 }
 
 function config(){
