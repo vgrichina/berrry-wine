@@ -1,12 +1,12 @@
 'use strict';
-// Explicit local-process contract for the authorized setup-transition attempt.
+// Explicit local-process contract for the named connected original attempt.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-observed-control-gameplay-0422 user task';
+const AUTH='stronghold-connected-original-gameplay-0745 user task';
 const ASSIGNMENT=AUTH;
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-05T11:57:00Z'),CLEANUP=Date.parse('2026-11-05T12:00:00Z');
+const CUTOFF=Date.parse('2026-11-05T15:57:00Z'),CLEANUP=Date.parse('2026-11-05T16:00:00Z');
 const ROOT=path.resolve(__dirname,'..');
 const ORIGINAL_PINS='scratch/runs/20261104-stronghold-setup-transition-onward/runtime-pins.json';
 const ORIGINAL_PINS_SHA='812aadea4a2b23a899919dc95b40b4d628a3836cedc0ae1e1844c966b284b7ef';
@@ -51,6 +51,100 @@ function verifyAcceptedRuntimePins(pins){
  if(JSON.stringify(pins)!==JSON.stringify(expected))throw Error('stale or changed accepted runtime closure');
  return expected;
 }
+// Separate fresh binding: historical acceptedRuntimePins and original seal stay closed.
+const FRESH_ACCEPTED=Object.freeze({
+ "host.js": "ade4787cff4c10b5b712c7b5f431357f23d48390960211e5de2403edb6691de6",
+ "lib/host-imports.js": "92fb9ef3a622e43c0dcdb1bebd056e44e6af037a2db1661ebd822fb04b67b523",
+ "lib/region-map.generated.js": "04d99fa3c0f4d20b537094e001dc80ad8f04de4ad5b2b218bb4dbe5785409881",
+ "lib/renderer.js": "4c24b83889a1ed49d390c5fc86630733eb7167942f26e526ecf35948704624b5",
+ "src/00-regions.wat": "e6497e311b55c12fa4c3f5caa98b7f44f1374522d9b890430e9ac7c0afe9a5f6",
+ "src/01-header.wat": "438e1d993f1e882e17f8f5a8a23bcd35d5711ab72e905e310bb97c863e4d1f81",
+ "src/04-cache.wat": "cc62883a7e03425fa90e241ed5d12c1574e1293288796e8b0088eee8ec3329eb",
+ "src/05-alu.wat": "6553444d10d2e9d7822ab2ccae254230d30abc707a9a3b4d9d4f0295d15cb326",
+ "src/05c-seg16-ops.wat": "c19d454dd56356508c3bf2e7d3dba0a84af72bc62af2c61d94667820874f1361",
+ "src/06b-core-handlers.wat": "30e3d3eb0161cd29721e3dd565fa56a72e878aa857fbd75bba1d786a1c7dea0f",
+ "src/07d-uop-engine.wat": "cc98d8e3a8668d0bf49a3efdfd5af3bd5b4e3e4c5082401c18b654a734adb848",
+ "src/07e-uop-compiler.wat": "fa9153928ca68a04992f526cab69bdc25626a3c7daf092fad263519e7718f305",
+ "src/08-pe-loader.wat": "b398edca212c7466eb46f36981969264a1f21f1337700140fe41094d3ce797df",
+ "src/09a-handlers.wat": "5175a9f3c274dd817f7957be8dc9855be804cbe08f1e38599113a1f600bcadf2",
+ "src/09a8-handlers-directx.wat": "e888572a429d90c58f61d2d57c5ef9b7c56981f3497ecfcc32df2b4fe1de833d",
+ "src/09aa-handlers-d3dim.wat": "927cd022bb8b8408202baed418fe9fb3cfe05a592dbe7704ed7a3ce3e94097c3",
+ "src/09ab-handlers-d3dim-core.wat": "7c7aa75960f8d3fd1b0648206350e0a6e2e2609919b30fbfc1040433b786c0c9",
+ "src/09b-dispatch.wat": "d27ab09af3d262798084b69f9c65cb65d4b53d8e6afe20ce024ff011349d12d7",
+ "src/11-seh.wat": "81683b0f40dbbba7127ee0e14d001011cfb6b5e9cb3c22ae1e9498c4e03e7a8d",
+ "src/13-exports.wat": "9f195c50a1a28005dc44f4e62a0bfb972daf732ad0b2975e62f003c6afb677dc",
+ "tools/callback-ownership-census.json": "420cac5e1b2d558bb54d3fdc2e8edc831e0da1ae64a5732806b62cfec9a1068e",
+ "build/wine-assembly.wasm": "3361c1289e540ba1107c788905ab5a70ace7f4d003cfd05e1264c54bfc65267b",
+ "build/wine-assembly.compat.wasm": "d33d98564db864ce8a1a7a4abad0554c4934331b36074bdb854c1ab96e458008",
+ "tools/stronghold-owning-callback-observer.cjs": "b62b62555bff6aea31b55696de85b68fc19d9bf3fd5d5163d9bfbd20a69b7943",
+ "tools/stronghold-native-preset-observer.cjs": "b991df4dc48d3cfe08582002ec51ffa3dcb03fd701fcf9e009aae9ce1f981911"
+});
+const FRESH_PROVENANCE=Object.freeze({
+ "host.js": "23d773990dcedcdf2df551f1e105ec39f529a045",
+ "lib/host-imports.js": "23d773990dcedcdf2df551f1e105ec39f529a045",
+ "lib/region-map.generated.js": "9ac81b952558a3bba20761bddc6e7c80df970fa2",
+ "lib/renderer.js": "23d773990dcedcdf2df551f1e105ec39f529a045",
+ "src/00-regions.wat": "9ac81b952558a3bba20761bddc6e7c80df970fa2",
+ "src/01-header.wat": "23d773990dcedcdf2df551f1e105ec39f529a045",
+ "src/04-cache.wat": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+ "src/05-alu.wat": "23d773990dcedcdf2df551f1e105ec39f529a045",
+ "src/05c-seg16-ops.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
+ "src/06b-core-handlers.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
+ "src/07d-uop-engine.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
+ "src/07e-uop-compiler.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
+ "src/08-pe-loader.wat": "9ac81b952558a3bba20761bddc6e7c80df970fa2",
+ "src/09a-handlers.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
+ "src/09a8-handlers-directx.wat": "03b16e2553ddbe7d879fea8524e9df479a97fa07",
+ "src/09aa-handlers-d3dim.wat": "4683c73ca889ff4f84d809e2fb7fd3d06432f7c3",
+ "src/09ab-handlers-d3dim-core.wat": "4683c73ca889ff4f84d809e2fb7fd3d06432f7c3",
+ "src/09b-dispatch.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
+ "src/11-seh.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
+ "src/13-exports.wat": "23d773990dcedcdf2df551f1e105ec39f529a045",
+ "tools/callback-ownership-census.json": "23d773990dcedcdf2df551f1e105ec39f529a045",
+ "build/wine-assembly.wasm": "4683c73ca889ff4f84d809e2fb7fd3d06432f7c3 existing build; validate full build before use",
+ "build/wine-assembly.compat.wasm": "4683c73ca889ff4f84d809e2fb7fd3d06432f7c3 existing build; validate full build before use",
+ "tools/stronghold-owning-callback-observer.cjs": "23d773990dcedcdf2df551f1e105ec39f529a045",
+ "tools/stronghold-native-preset-observer.cjs": "89caed5d1deeec73ea1c8538e8eb50f996b29496"
+});
+const FRESH_NEW_FILES=['test/test-stronghold-connected-runtime-binding.js'];
+function freshSourceIdentity(files){
+ const cp=require('node:child_process');
+ const gitSHA=cp.execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim();
+ const relevant=files.map(r=>r.path).filter(p=>!p.startsWith('test/binaries/'));
+ const diff=cp.execFileSync('git',['diff','--binary','HEAD','--',...relevant,...FRESH_NEW_FILES],{cwd:ROOT,maxBuffer:64*1024*1024});
+ const ownedNewFilePatches=[];
+ for(const file of FRESH_NEW_FILES){
+  if(!fs.existsSync(path.join(ROOT,file)))throw Error('missing fresh contract source '+file);
+  const tracked=cp.spawnSync('git',['ls-files','--error-unmatch','--',file],{cwd:ROOT,stdio:'pipe'});
+  if(tracked.status===0)continue;
+  const patch=cp.spawnSync('git',['diff','--no-index','--binary','--','/dev/null',file],{cwd:ROOT,maxBuffer:16*1024*1024});
+  if(patch.error||patch.status!==1||!patch.stdout.length)throw Error('owned new-file source patch unavailable '+file);
+  ownedNewFilePatches.push({path:file,patchSHA256:base.hash(patch.stdout)});
+ }
+ return {gitSHA,relevantDiffSHA256:base.hash(diff),ownedNewFilePatches};
+}
+function freshRuntimePins(){
+ const original=fs.readFileSync(path.join(ROOT,ORIGINAL_PINS));
+ if(base.hash(original)!==ORIGINAL_PINS_SHA)throw Error('stale original runtime manifest');
+ const pins=JSON.parse(original),seen=new Set(),amendments=[];
+ const named={...FRESH_ACCEPTED,'tools/stronghold-local-runtime.cjs':base.hash(fs.readFileSync(__filename))};
+ pins.files=pins.files.map(row=>{
+  if(seen.has(row.path))throw Error('duplicate fresh runtime dependency');seen.add(row.path);
+  const bytes=fs.readFileSync(path.join(ROOT,row.path)),expected=named[row.path]||row.sha256;
+  if(base.hash(bytes)!==expected)throw Error('unknown fresh runtime dependency mismatch '+row.path);
+  if(named[row.path])amendments.push({path:row.path,oldSHA256:row.sha256,newSHA256:expected,
+   publishedProvenance:FRESH_PROVENANCE[row.path]||'current authorized run-specific local contract'});
+  return {...row,bytes:bytes.length,sha256:expected};
+ });
+ if(pins.files.length!==2429||Object.keys(named).some(p=>!seen.has(p)))throw Error('complete fresh original closure required');
+ const sourceIdentity=freshSourceIdentity(pins.files);
+ return {...pins,commit:sourceIdentity.gitSHA,candidate:'named connected Stronghold original',
+  freshRuntimeBinding:{assignment:AUTH,originalPinsSHA256:ORIGINAL_PINS_SHA,sourceIdentity,amendments}};
+}
+function verifyFreshRuntimePins(pins){
+ if(JSON.stringify(pins)!==JSON.stringify(freshRuntimePins()))throw Error('stale or changed fresh runtime closure');
+ return pins;
+}
 // Image identity brackets the capture; only the complete owning transaction
 // can describe setup progress. No screenshot identity grants classification.
 function diagnosticScene(bytes,known,observation){
@@ -66,17 +160,17 @@ function diagnosticScene(bytes,known,observation){
  return 'setup-transition-observation';
 }
 const PREDECESSORS=Object.freeze([
- ['return-fire-browser-body-receipts','return-fire-browser-body-receipts-0345'],
- ['mdk2-actual-startup-seam','mdk2-actual-startup-seam-0405']
+ ['d3d7-processvertices-strided','d3d7-processvertices-strided-0635'],
+ ['return-fire-captured-body-gameplay','return-fire-captured-body-gameplay-0730']
 ]);
 function requireRuntimeRelease(board,now=Date.now()){
  const rows=board.split('\n'),dependencies=[];
  for(const [worker,assignment] of PREDECESSORS){
   const own=rows.filter(r=>r.split(/\s+/)[1]===worker&&r.split(/\s+/)[2]==='OWN').at(-1);
-  const runtimeOwn=rows.filter(r=>r.includes(' '+worker+' LOCAL HEAVY OWN ')).at(-1);
-  const fileRelease=rows.filter(r=>r.includes(' '+worker+' FINAL runtime AND file RELEASE ')&&r.includes('docs/re-notes/'+worker+'-20261105.md')&&r.includes('ALLBUILDSFINISHED')).at(-1);
+  const runtimeOwn=rows.filter(r=>r.split(/\s+/)[1]===worker&&r.split(/\s+/).slice(2,5).join(' ')==='LOCAL HEAVY OWN').at(-1);
+  const fileRelease=rows.filter(r=>{const p=r.split(/\s+/);return p[1]===worker&&p.slice(2,7).join(' ')==='FINAL runtime AND file RELEASE'&&p.includes('docs/re-notes/'+worker+'-20261105.md')&&p.includes('ALLBUILDSFINISHED');}).at(-1);
   const ownedAt=Date.parse(own?.split(' ')[0]),runtimeOwnedAt=Date.parse((runtimeOwn||own)?.split(' ')[0]),releasedAt=Date.parse(fileRelease?.split(' ')[0]);
-  if(!own||!fileRelease||![now,ownedAt,runtimeOwnedAt,releasedAt].every(Number.isFinite)||runtimeOwnedAt<Date.parse('2026-11-05T04:00:00Z')||releasedAt<ownedAt||releasedAt<runtimeOwnedAt||releasedAt>now||releasedAt>Date.parse('2026-11-05T11:30:00Z')||
+  if(!own||!fileRelease||![now,ownedAt,runtimeOwnedAt,releasedAt].every(Number.isFinite)||runtimeOwnedAt<Date.parse('2026-11-05T07:40:00Z')||releasedAt<ownedAt||releasedAt<runtimeOwnedAt||releasedAt>now||releasedAt>Date.parse('2026-11-05T15:00:00Z')||
      (dependencies.length&&(releasedAt<dependencies.at(-1).releasedAt||runtimeOwnedAt<dependencies.at(-1).releasedAt)))
    throw Error('exact '+assignment+' FINAL runtime and file release after current OWN, all builds finished required');
   dependencies.push({worker,assignment,own,ownedAt,runtimeOwn,runtimeOwnedAt,row:fileRelease,at:releasedAt,fileRelease,releasedAt});
@@ -133,10 +227,11 @@ async function launchOwned(puppeteer,tap,options){
 }
 function binding(run,pins){
  const manifest=JSON.parse(fs.readFileSync(pins));
- if(manifest.runtimeBinding)verifyAcceptedRuntimePins(manifest);
+ if(manifest.freshRuntimeBinding)verifyFreshRuntimePins(manifest);
+ else if(manifest.runtimeBinding)verifyAcceptedRuntimePins(manifest);
  const modules=['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>{
   const rows=manifest.files.filter(x=>x.path===file);if(rows.length!==1)throw Error('both candidate module pins required');
-  const sha256=base.hash(fs.readFileSync(file));if(sha256!==rows[0].sha256||sha256!==ACCEPTED[file])throw Error('candidate module mismatch');return {path:file,sha256};
+  const sha256=base.hash(fs.readFileSync(file));if(sha256!==rows[0].sha256||sha256!==(manifest.freshRuntimeBinding?FRESH_ACCEPTED:ACCEPTED)[file])throw Error('candidate module mismatch');return {path:file,sha256};
  });
  return {run:path.resolve(run),pins:path.resolve(pins),pinsSHA256:base.hash(fs.readFileSync(pins)),modules};
 }
@@ -236,7 +331,8 @@ function nextMailboxAction(status,command){
 }
 function prepare(options){
  const manifest=JSON.parse(fs.readFileSync(options.pins));
- if(manifest.runtimeBinding)verifyAcceptedRuntimePins(manifest);
+ if(manifest.freshRuntimeBinding)verifyFreshRuntimePins(manifest);
+ else if(manifest.runtimeBinding)verifyAcceptedRuntimePins(manifest);
  const p=observer.prepare(options),q=JSON.stringify;
  p.source=base.replaceOnce(p.source,'const presetAttachment=attachmentAPI.createAttachment({sessions,save,log,pageState:state,validateAck:assertAck,',
   `const hostPresentation=require(${q(__filename)}).createHostPresentationController({page:()=>page,save,deadline:()=>deadline});\nconst presetAttachment=attachmentAPI.createAttachment({hostPresentation,sessions,save,log,pageState:state,validateAck:assertAck,`);
@@ -345,4 +441,4 @@ function createHostPresentationController({page,save,deadline}){
   }
  };
 }
-module.exports={acceptedRuntimePins,verifyAcceptedRuntimePins,ACCEPTED,ORIGINAL_PINS_SHA,identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireBuildReleases,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,nextMailboxAction,diagnosticScene,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={freshRuntimePins,verifyFreshRuntimePins,freshSourceIdentity,FRESH_ACCEPTED,FRESH_PROVENANCE,acceptedRuntimePins,verifyAcceptedRuntimePins,ACCEPTED,ORIGINAL_PINS_SHA,identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireBuildReleases,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,nextMailboxAction,diagnosticScene,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
