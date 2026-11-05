@@ -18,6 +18,7 @@
     { "name": "DeviceIoControl", "api": "DeviceIoControl", "ordinal": 594 },
     { "name": "QueueUserAPC", "api": "QueueUserAPC", "ordinal": 595 },
     { "name": "GetNativeSystemInfo", "api": "GetNativeSystemInfo", "ordinal": 596 },
+    { "name": "IsWow64Process", "api": "IsWow64Process", "ordinal": 597 },
     {
       "name": "_hread",
       "api": "_hread",

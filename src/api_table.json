@@ -39077,5 +39077,12 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 2667114061
+  },
+  {
+    "id": 4604,
+    "name": "IsWow64Process",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3224646603
   }
 ]

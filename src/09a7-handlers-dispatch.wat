@@ -5263,6 +5263,28 @@
     (call $handle_GetSystemInfo (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
 
+  ;; IsWow64Process(hProcess, PBOOL): this OS is native x86, not WOW64.
+  ;; FALSE is the output, not the success return. Resolve process identity and
+  ;; XP's PROCESS_QUERY_INFORMATION right before publishing that result. The
+  ;; host owns child/alias handles and their access masks and closed lifetime.
+  (func $handle_IsWow64Process (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $access i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (if (i32.eqz (call $current_process_handle_valid (local.get $arg0)))
+      (then
+        (local.set $access (call $host_process_ctl (i32.const 6) (local.get $arg0) (i32.const 0x400)))
+        (if (i32.ne (local.get $access) (i32.const 1))
+          (then
+            (global.set $last_error
+              (select (i32.sub (i32.const 0) (local.get $access)) (i32.const 6)
+                (i32.lt_s (local.get $access) (i32.const 0))))
+            (return)))))
+    (if (call $ptr_range_access_bad (local.get $arg1) (i32.const 4) (i32.const 1))
+      (then (global.set $last_error (i32.const 998)) (return))) ;; ERROR_NOACCESS
+    (call $gs32 (local.get $arg1) (i32.const 0))
+    (i32.store (global.get $reg_base) (i32.const 1)))
+
   ;; GetUserName reports its size including the NUL on both success and
   ;; insufficient-buffer failure. A/W differ only in the destination width.
   (func $get_user_name (param $buf_g i32) (param $size_g i32)
