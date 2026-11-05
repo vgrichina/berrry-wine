@@ -2010,8 +2010,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 6 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Retry emulator GetWindow/GetNextWindow follow-up using preserved evidence; compare our Win32 implementation with documented behavior and fix with a regression.
-  owner: /root/new_demo_refill
+  Next: Owner-authorized retry remains queued after CMR3. Reconcile merged bedaaaa7f first: current USER230/262 invalid-window handling and existing regressions already cover NULL rejection, valid sibling traversal, stale/nonwindow handles, Pascal far ABI and strict general conversion. Do not repeat that repaired defect. Inspect retained evidence for the next demonstrated emulator mismatch; original review-hold/preflight runs and SETUP.EXE are absent, while the Nov03 retained-payload audit survives. Preparation: scratch/runs/20261105-lords2-retry-preparation/prerequisites.json. No new gameplay or current test result claimed.
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  prev-owner: /root/new_demo_refill (released; coordinator reclaimed 2026-11-05)
   Done: Registered original launch, actual ordinary player control and reviewed gameplay screenshot with source/run identity.
 
 - title: USER ASK - add a FIFA game to the corpus (user linked FIFA Street; that is console-only, so a Win9x FIFA demo instead)
