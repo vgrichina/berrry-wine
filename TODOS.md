@@ -1845,10 +1845,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] User priority: Return Fire demo
   id: NEW-GAME-RETURN-FIRE-DEMO-20261009
+  Update 2026-11-05T16:52Z: Published95131b6cf generated native-trace investigation: three independently full-consumed streams reach native DidCancelLoadingBody before teardown, including retained readers/controllers; delayed-tail control completes. Internal bookkeeping remains source inference, no project defect/repair proved. All four cancellations remain failed transfers; original cause unproved, no original retry. Collector91/composition33/locked build PASS, FINALcleanup16:49:43 released runtime to Lords1635. Next discriminating evidence is source-mapped native stack/state on generated fixture.
   Update 2026-11-05T16:15Z: Published9aab8b880 generated Chromium24case investigation:42 non-aborting consumers received exact full bodies, but required200 ERR_ABORTED occurred both without interception and after collector capture/continue. Two positive Network failures remain failures; original delivery/cause unproved, no production change or original retry. Collector91/composition33/locked build PASS. Fresh return-fire-stream-cancellation-source-1620 traces direct cancellation lifecycle on the retained minimal generated stream cases; source-only behind Lords1542 -> Strong1555 -> rectangular1610.
   Update 2026-11-05T15:30Z: 7e3bf7788 records ONE fresh original on current transport: exact owning Worker startup bytes verified, then required ART.CAR GET200 canceled after captured canonical bytes were verified and continued. No Play/screenshots/input/audio/FPS; cause unestablished, no retry. Build and91/33/33/3 preflights PASS; cleanup/final release verified. Fresh return-fire-required200-cancellation-1530 uses generated Chromium fixtures and independent consumed-byte witnesses to identify a collector bug or real abort; no original authorized. Source-only behind Lords1450 -> Strong1500 -> countselector1520.
   blocker: none for bounded launcher/deployment/movement scope; sustained play/audio/FPS remain separate.
-  worker: return-fire-current-transport-gameplay-1410, fresh01a1ac05-d2f2-7c21-a379-d3abe562060f (source preparation; original runtime queued)
+  worker: none (generated source investigation1620 complete; no original authorized)
   status: bounded gameplay and visible native launcher accepted; broader coverage open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: return-fire-demo
@@ -2151,7 +2152,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   blocker: Supporting setup reconstruction, current runtime preflight and a free worker slot required; historical DirectX prerequisite remains unresolved. Original installer recovered and verified locally.
   status: pending (fresh replacement provisioned; exact original installer recovered 2026-11-05)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none (four existing workers occupied; replacement setup prepared by coordinator)
+  worker: aoe3-supporting-input-recovery-1755 (fresh launcher3108758; exact historical Git recipes/manifests and read-only supporting asset recovery, no runtime/boxes)
   candidate: test/binaries/win98-games-a-d/Age-of-empire-3trial-Win98-SW.exe
   Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Original installer scratch/game-media/aoe3-demo-20261105/aoe3trial.exe is 383598224B, SHA256 4ef69289dfa0817ec14942d85ef597835a9d2b09e1506c60b9938b20daa274ad, matching the historical pin. Reconstruct supporting assets from recorded hashes and preflight an authorized bounded runtime before observing acceptance and installed payload. Recovery receipt: scratch/runs/20261105-aoe3-original-media-recovery/recovery-receipt.json; no installer execution or new acceptance/gameplay observation from recovery. Local exact-path observations and unknown remote availability are in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
   Previous checkpoint (licence-decision hold superseded): Original reaches EULA with InterlockedExchangeAdd candidate, XP profile, native MSXML4 and its resource DLL. Screenshot991 sent; no button answered. Evidence scratch/runs/20261010T0430Z-aoe3-eula. Await user review before gameplay; pipeline refilled Beyond Good and Evil.
@@ -2192,8 +2193,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Shadow Man original demo: installed launcher/configuration response accepted
   id: NEW-GAME-SHADOW-MAN-DEMO-20261013
-  blocker: Browser prerequisite missing: installed2046files177700067B absent locally. Recover exact snapshot3ac9827f-20cf-4e1c-98a8-40b4edcd1b2f members from scratch/runs/20261105-shadow-man-browser-gameplay/required-input-recovery.json. Launcher and genuine saved config/registry verified; no browser attempted.
-  worker: shadow-man-snapshot-input-recovery-1720 (fresh launcher3098005; bounded read-only exact snapshot recovery, no box/runtime; stop on access denial)
+  blocker: Installed input blocker resolved: cecd6e8a62 recovered all2046files177700067B to scratch/game-media/shadow-man-installed-20261105/, each length/SHA plus full local reread PASS. Registration/browser prerequisites and serialized runtime pending; no browser result claimed.
+  worker: shadow-man-recovered-browser-gameplay-1800 (fresh launcher3109543; source-only until Lords1635 then Aranna1710 FINALcleanup, one bounded ordinary browser attempt after prerequisite success)
   status: partial (original CLI menu-to-gameplay and ordinary movement accepted; registration/browser pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Next: Use established original configuration/Play route for a future bounded browser or longer gameplay qualification; first add a correctly pinned corpus entry if registration is assigned. Publisheddebc24bfc evidence run20261103-shadow-man-config-recover, root review20261103-coordinator-shadow-review. Do not repeat the old disabled-Play investigation.
