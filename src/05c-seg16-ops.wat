@@ -403,12 +403,46 @@
     (local.set $sel (read-thread-word))
     (call $win16_far_transfer (local.get $sel) (local.get $off) (i32.const 0) (i32.const 0)))
 
+  ;; Failure-only indirect far-call evidence. Emit before pushing the return
+  ;; frame or changing CS, while the operand and its owners still describe the
+  ;; faulting instruction. CA165E23 is followed by 21 words; the browser retains
+  ;; the live selector/module tables synchronously through log_i32. The normal
+  ;; win16_set_sreg validity check remains responsible for rejecting the target.
+  (func $win16_log_far_fault (param $addr i32) (param $off i32) (param $sel i32) (param $ret i32)
+    (call $host_log_i32 (i32.const 0xCA165E23))
+    (call $host_log_i32 (local.get $addr))
+    (call $host_log_i32 (local.get $off))
+    (call $host_log_i32 (local.get $sel))
+    (call $host_log_i32 (local.get $ret))
+    (call $host_log_i32 (global.get $eip))
+    (call $host_log_i32 (global.get $sreg_cs))
+    (call $host_log_i32 (global.get $seg_base_cs))
+    (call $host_log_i32 (global.get $sreg_ss))
+    (call $host_log_i32 (global.get $seg_base_ss))
+    (call $host_log_i32 (i32.load offset=16 (global.get $reg_base)))
+    (call $host_log_i32 (global.get $sreg_ds))
+    (call $host_log_i32 (global.get $seg_base_ds))
+    (call $host_log_i32 (global.get $sreg_es))
+    (call $host_log_i32 (global.get $seg_base_es))
+    (call $host_log_i32 (global.get $WIN16_SEG_TABLE))
+    (call $host_log_i32 (global.get $WIN16_SEL_MAX))
+    (call $host_log_i32 (call $win16_dll_rec (i32.const 1)))
+    (call $host_log_i32 (i32.sub
+      (i32.add (global.get $WIN16_DYNAMIC_BASE) (global.get $WIN16_DYNAMIC_MODULES)) (i32.const 1)))
+    (call $host_log_i32 (global.get $win16_ne_off))
+    (call $host_log_i32 (global.get $win16_seg_count))
+    (call $host_log_i32 (global.get $PE_STAGING)))
+
   ;; 369: CALL FAR m16:16 — op = linear return address, address in next word
   (func $th_call_far_mem (param $op i32)
     (local $addr i32) (local $off i32) (local $sel i32)
     (local.set $addr (call $read_addr))
     (local.set $off (call $gl16 (local.get $addr)))
     (local.set $sel (call $gl16 (i32.add (local.get $addr) (i32.const 2))))
+    (if (i32.and (i32.ne (local.get $sel) (global.get $WIN16_THUNK_SEL))
+          (i32.eqz (call $win16_seg_base (call $win16_sel_to_index (local.get $sel)))))
+      (then (call $win16_log_far_fault
+        (local.get $addr) (local.get $off) (local.get $sel) (local.get $op))))
     (call $win16_push_far_ret (local.get $op))
     (call $win16_far_transfer (local.get $sel) (local.get $off) (local.get $op) (i32.const 1)))
 

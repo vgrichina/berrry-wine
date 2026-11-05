@@ -2300,7 +2300,54 @@ class WineAssembly {
         self.logToUI('[wine-asm] ' + text);
       }
     };
+    let pendingFarFault = null;
+    const captureWin16FarFault = val => {
+      // CA165E23 is a failure-only WAT record, not verbose API output. Finish
+      // reading its live ownership tables before the import returns to the CS
+      // trap. Each getImports context owns its collector, including auxiliaries.
+      if ((val >>> 0) === 0xCA165E23 && !pendingFarFault) {
+        pendingFarFault = [];
+        return true;
+      }
+      if (pendingFarFault) {
+        pendingFarFault.push(val >>> 0);
+        if (pendingFarFault.length === 21) {
+          const fields = ['operandAddress', 'targetOffset', 'targetSelector', 'returnAddress',
+            'blockEip', 'cs', 'csBase', 'ss', 'ssBase', 'esp', 'ds', 'dsBase', 'es', 'esBase',
+            'segmentTable', 'segmentCount', 'moduleTable', 'moduleCount',
+            'taskNeOffset', 'taskSegments', 'taskImage'];
+          const fault = { version: 1, processId: self.processId, threadId: opts.threadId || 0 };
+          fields.forEach((name, i) => { fault[name] = pendingFarFault[i]; });
+          pendingFarFault = null;
+          try {
+            const view = new DataView(self.memory.buffer);
+            const words = p => [0, 4, 8, 12].map(off => view.getUint32(p + off, true));
+            fault.segments = [];
+            for (let index = 1; index < fault.segmentCount; index++) {
+              const [base, limit, flags, neSegment] = words(fault.segmentTable + index * 16);
+              if (base) fault.segments.push({ index, base, limit, flags, neSegment });
+            }
+            fault.modules = [];
+            for (let index = 0; index < fault.moduleCount; index++) {
+              const [neOffset, segmentBase, image, segmentCount] = words(fault.moduleTable + index * 16);
+              if (segmentCount) fault.modules.push({ id: index + 1, neOffset, segmentBase, image, segmentCount });
+            }
+            fault.registers = {};
+            const ex = ctx.exports;
+            for (const name of ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi', 'ebp'])
+              if (ex && ex['get_' + name]) fault.registers[name] = ex['get_' + name]() >>> 0;
+          } catch (error) { fault.captureError = String(error); }
+          ctx.lastWin16FarFault = self.lastWin16FarFault = fault;
+          // A broken diagnostic sink must not replace the emulator's CS trap.
+          try { console.error('[Win16 far fault] ' + JSON.stringify(fault)); }
+          catch (error) { fault.logError = String(error); }
+        }
+        return true;
+      }
+      return false;
+    };
     h.log_i32 = (val) => {
+      if (captureWin16FarFault(val)) return;
       if (((val >>> 0) >>> 16) === 0xC0DE) {
         pendingTraceComApiId = (val >>> 0) & 0xFFFF;
         lastTraceApi = false;
@@ -2902,7 +2949,7 @@ class WineAssembly {
     // Memory is set later in init()
     h.memory = null;
 
-    return { host: h, gdi: base.gdi };
+    return { host: h, gdi: base.gdi, __captureWin16FarFault: captureWin16FarFault };
   }
 
   // Every non-mousemove input event, every CreateWindow/SetWindowText and the
@@ -3375,7 +3422,10 @@ class WineAssembly {
         emit: (line) => console.log(line),
       });
       wi.host.log = workerApiLog.log;
-      wi.host.log_i32 = workerApiLog.log_i32;
+      const captureWin16FarFault = wi.__captureWin16FarFault;
+      wi.host.log_i32 = value => {
+        if (!captureWin16FarFault(value)) workerApiLog.log_i32(value);
+      };
       wi.host.log_eip = (eip) => {
         if (typeof window !== 'undefined' && typeof window.__waProfileEipHit === 'function') {
           window.__waProfileEipHit(eip >>> 0, tid | 0);
