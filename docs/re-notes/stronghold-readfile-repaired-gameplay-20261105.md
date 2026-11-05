@@ -38,7 +38,7 @@ The fresh actual composed-entry check passed 2429 filesystem and HTTP rows,
 with zero Chrome or original launches. Source/module/media mutation controls
 remain enabled. `flock /tmp/wine-build.lock bash tools/build.sh` passed
 at 15:37:48Z; both output module hashes remain the exact published repair.
-The actual original outcome will be recorded below.
+The single original outcome is recorded below.
 
 Canonical media is checked in place, without copies:
 `test/binaries/candidates/stronghold-crusader-demo/installed/App_Executables/Stronghold Crusader multiplayer demo.exe`,
@@ -47,3 +47,52 @@ Git SHA and relevant binary diff/new-file patches provide source recovery;
 there are no source snapshots or media archives. No leased box or subworker
 is used; box ID/state/expiry are N/A and lifecycle remains with the coordinator.
 No public deployment is authorized.
+
+
+The runtime binding and focused test were published on main as
+`7b383873a3bb9ebc8420e98c1bb1458d52b171d0`; strict pinned-SSH pull/push passed.
+The one original attempt began at 15:38:39.643Z against that exact commit.
+Personally inspected fresh images show startup/loading art, the title screen,
+main menu, Choose Type and Custom Game hover. Every requested live review was
+answered before its deadline. Unrequested fresh boundary images were also
+inspected; the final boundary-5 image received its explicit viewed receipt
+after terminal failure. No Custom Game DOWN was delivered: the final physical
+input was the hover move at 15:43:28.119Z. Setup, world and ordinary visible
+hostile engagement remain unestablished.
+
+Command 11 failed closed at 15:44:13.347Z with
+`Stronghold continuous profile/image/epoch coverage unavailable`. The owning
+worker had been instrumented before instantiation (thread 1, slot 0, endpoint 1,
+profile 2, actual image `0x400000`, epoch `965192883`). The immutable first
+failure occurred earlier, during startup at **15:39:30.060Z**, before block
+observation was attached. Reports 0, 4 and 6 retain the identical complete
+record; zero native blocks were recorded. Later host annotations are not guest
+execution evidence.
+
+The first record has reason 5, predicate site 0, depth 1, previous reason 0,
+callback entries/returns 6/5, EIP `0x4aa829`, ESP `0x074ffe58`, process epoch 1
+and invocation root 2. Its top frame is kind 1, target `0x4a9810`, saved return
+`0x07500590`, entry ESP `0x074ffebc`, parent EIP `0x4672a7`, parent ESP
+`0x074ffee0`, with zero tokens. Current thunk EIP is `0x07500290`.
+`first-failure.json` retains all 36 words and the actual native caller offsets;
+`first-failure-retention.json` preserves equality and final physical input.
+This differs from the prior generated false-kind-1 ReadFile park signature.
+It does not prove a causal emulator mismatch or authorize guessing a repair.
+An offline source-index decoder failed its binary-export check (both initial
+and import-hoisted order); combined WAT is not the compiler input. Neither
+unvalidated mapping is used, and no diagnostic rebuild or new original ran.
+
+The first concrete command failure triggered normal browser closure; Chrome
+actually exited code 0, signal null at 15:44:13.570Z, and the finite caller exited
+code 0. That caller status describes orderly teardown, not gameplay success.
+No second original, forced readiness, epoch change, frame pop or fallback ran.
+Post-observation hashing verifies all 2429 sealed source/module/media rows
+unchanged. Cleanup independently verifies seven recorded process identities
+absent, the owned profile removed, HTTP 34287 and CDP 41249 refused, four locks
+free, no heavy runtime, no owned watcher, and over 9.2 GB free disk. No box was
+allocated or changed; ID/state/expiry remain N/A.
+
+The concrete blocker is the newly retained startup coverage gap above. Next
+work should explain its native caller and callback lifecycle from these retained
+bytes before any separately authorized original observation. No emulator change
+is made on this evidence. Existing gameplay/coverage guards remain intact.
