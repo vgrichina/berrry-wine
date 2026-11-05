@@ -99,12 +99,13 @@ const extraWat = String.raw`
     return state();
   };
 
-  // Mode 0: no handlers at all.
+  // Explicit trace-only mode: no handlers at all. The production default now
+  // follows the reserved-page rule, covered by the ordinary owning-Worker test.
   e.guest_write32(fsBase, frameA);
-  e.set_fault_unmapped(0);
+  e.set_fault_unmapped(1);
   let before = arm();
-  assert.strictEqual(e.t_g2w(fault) >>> 0, sentinel, 'mode 0: a reserved miss is the sentinel');
-  assert.strictEqual(e.guest_read32(count), 0, 'mode 0 runs no handler');
+  assert.strictEqual(e.t_g2w(fault) >>> 0, sentinel, 'trace-only mode: a reserved miss is the sentinel');
+  assert.strictEqual(e.guest_read32(count), 0, 'trace-only mode runs no handler');
 
   // Mode 5, outside any reservation: still quiet.
   e.set_fault_unmapped(5);

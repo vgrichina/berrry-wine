@@ -251,14 +251,19 @@
 
   (func $g2w_miss (param $ga i32) (result i32)
     (local $wa i32)
-    ;; Mode 5: Windows' rule for reserved memory, and nothing else. A
+    ;; Windows' rule for reserved memory, also under the production default.
+    ;; Mode 5 retains the same rule for explicit reserved-page diagnostics. A
     ;; read of a MEM_RESERVE page that was never committed is an access
     ;; violation, and an engine may commit the page from its own exception
     ;; filter and continue (Serious Sam's CTStream::ExceptionFilter maps
     ;; stream buffers this way). The filter chain runs synchronously from
     ;; here, so the faulting instruction simply completes against the page
     ;; the filter committed: no precise faulting EIP is needed to resume.
-    (if (i32.eq (global.get $fault_unmapped) (i32.const 5))
+    ;; A reserved stream must get its guest page-in handler before the load
+    ;; completes. Returning the quiet sentinel here made Aranna checksum zeros
+    ;; from an uncommitted resource buffer instead of invoking its pager.
+    (if (i32.or (i32.eqz (global.get $fault_unmapped))
+                (i32.eq (global.get $fault_unmapped) (i32.const 5)))
       (then
         (if (i32.and
               (i32.and (i32.ge_u (local.get $ga) (i32.const 0x10000))
