@@ -148,7 +148,8 @@ AoE3 gameplay. This task used its one session and did not retry.
 
 Final independent `cleanup.json` passes: 14 recorded owned PIDs absent,
 control port 19765 refused, no profiles created, four locks free, zero heavy
-processes, watcher absent and 7411597312 bytes free on /home. Box ID, state and
+processes, watcher absent and more than 5 GB free on /home. The check before
+publication is also retained as `cleanup-before-publication.json`. Box ID, state and
 expiry are N/A; coordinator lifecycle ownership is unchanged. No platform
 operation was rejected. The evidence containment checker exits zero; AoE3 has
 no corpus candidate entry, so these findings remain in the investigation note.
