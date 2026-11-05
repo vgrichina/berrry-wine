@@ -1979,10 +1979,10 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Done: Original pinned demo reaches ordinary player-controlled gameplay with reviewed screenshots and exact source/run identity; full corpus backend coverage remains separate.
 - [ ] Improve and validate original .kkrieger control responsiveness
   id: KKRIEGER-CONTROL-LATENCY-20261015
-  status: ready (local browser attempt failed before menu; failure diagnostics prepared)
+  status: blocked (required unique diagnostics archived to laptop; no current browser attempt)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Next: Read-only CS wait/main EIP/cooperative-owner samples merged0b95d3233,10focused testsPASS. Retained run118738 suggests audio critical-section/main-loop delay but owner/duration attribution unproved. TG90 authorizes persistent-box testing. Local attempt20261018-kkrieger-local-latency ended detached Frame before menu; no CS-owner samples. Host stderr/lifecycle diagnostics prepared; next serialized retry after AVP2 pair, inspect root cause before scheduler changes.
-  Assigned 2026-11-05: fresh kkrieger-control-diagnostics-1645 reconstructs retained launch diagnostics and identifies pre-menu browser lifecycle failure before any scheduler change. Source-only behind rectangular1610 -> RFsource1620 -> Lords1635; at most one ordinary original after cheap prerequisites, no leased box in this assignment.
+  Update 2026-11-05: kkrieger-control-diagnostics-1645 terminal0; no tests/build/browser/code change. Required24 unique payloads archived to /Users/vg/wine-boat-archive/scratch-runs-202610/ and absent here. Exact paths/hashes: scratch/runs/20261105-kkrieger-control-diagnostics/recovery-inventory.json against ARCHIVED-202610.boat.sha256. Recover diagnostics before another attempt; old SIGKILL sender/first-attempt cause unproved. Preparation note preserved uncommitted. Slot replaced by ShadowMan browser gameplay.
   Evidence: docs/kkrieger-position-capture-20261015.md; scratch/runs/20261015-kkrieger-position-capture
 
 - [~] New-game lane: Outlaws original Windows single-player demo
@@ -2192,7 +2192,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [~] Shadow Man original demo: installed launcher/configuration response accepted
   id: NEW-GAME-SHADOW-MAN-DEMO-20261013
   blocker: No current CLI startup/control blocker observed. Browser, longer gameplay, audio, save/load, normal guest exit and corpus registration remain unqualified.
-  worker: none (38979 terminal0 reviewed; successor GL64819 launched; Jedi and Alice retain two prospective game lanes)
+  worker: fresh shadow-man-browser-gameplay-1700; source-only behind rectangular1610 -> RFsource1620 -> Lords callbacklifetime1635 releases/cleanup
   status: partial (original CLI menu-to-gameplay and ordinary movement accepted; registration/browser pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Next: Use established original configuration/Play route for a future bounded browser or longer gameplay qualification; first add a correctly pinned corpus entry if registration is assigned. Publisheddebc24bfc evidence run20261103-shadow-man-config-recover, root review20261103-coordinator-shadow-review. Do not repeat the old disabled-Play investigation.
