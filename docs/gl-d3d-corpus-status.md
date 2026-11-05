@@ -63,6 +63,21 @@ not establish player control. The subsequent original New Game → Medium route 
 
 ### Recovered original corpus table; exact 27-ID membership still unresolved
 
+The count predates this table. Commit
+`2d722ab3766c288d13796ed9dad3f1ceeca8f1eb` (September 22) introduced
+`tools/gfx-app-census.js` and reported 27 OpenGL/Direct3D candidates among
+225 registry apps, including seven D3DRM screen savers. Its commit message
+explicitly retains `icewind_dale_demo` and `tworld` as possible launcher noise.
+The original scanner used DLL/name literals in registered executables and DLLs;
+it did not establish runtime API use. Reproduce this provenance with
+`git show --format=fuller 2d722ab37` and
+`git show 2d722ab37:tools/gfx-app-census.js`.
+The commit does not enumerate all 27 IDs. Recovering that exact output still
+requires the contemporaneous registry and binary inputs or a retained census;
+running today's expanded scanner against today's files cannot establish the
+historical membership. No app is removed on the basis of the noise warning.
+Source-only evidence: `scratch/runs/20261105-gld3d-historical-census-provenance/`.
+
 The original version of this file is retained at commit `d5b3b56cb`
 (October 6, task `GLD3D-CORPUS-27-20261006`). It describes the goal as every
 OpenGL and Direct3D registry app working on both software and WebGL. Its
