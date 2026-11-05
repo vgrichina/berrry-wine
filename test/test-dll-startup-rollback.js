@@ -57,8 +57,69 @@ async function exercise(module,detachFails=false){
  assert.equal(loader.drainDllUnload({exports:e,memoryBuffer:memory.buffer},resident.loadAddr),true);assert.equal(read(0x80),1);
  return {badAttach:read(4),badDetach:read(0),dependencyDetach:read(0x10),residentDetach:read(0x80)};
 }
+
+// Actual production Worker command boundary: a normal attach, an unfinished
+// NULL-jump frame, and an interpreter trap retain their distinct outcomes.
+// Shared generated control body for the Node regression and browser validation.
+// env provides the real production Host and its ordinary memory/import setup.
+async function transportControl(env) {
+ const results=[];
+ for (const [name, code] of [
+  ['success',[0xb8,7,0,0,0,0xc2,12,0]],
+  ['incomplete',[0x31,0xc0,0xff,0xe0]],
+  ['fault',[0x0f,0x0b]],
+  ['rollback',[0x83,0x7c,0x24,8,1,0x75,5,0x31,0xc0,0xc2,12,0,0x31,0xc0,0xff,0xe0]],
+ ]) {
+  const {host,logs}=await env.create();
+  try {
+   const exe=env.pe([[0x2000,[0xc3]]]);
+   await host.start(); await host.loadPe(exe,'loader-control.exe',1);
+   const before={eip:await host.callExport('get_eip'),esp:await host.callExport('get_esp')};
+   let response,error;
+   try {response=await host.loadDlls([{name:name+'.dll',bytes:env.pe([[0x1000,code]],true)}],exe);}
+   catch(e){error=e;}
+   const after={eip:await host.callExport('get_eip'),esp:await host.callExport('get_esp')};
+   if(name==='success') {
+    env.check(!error&&response.length===1,'successful real attach reaches response');
+    env.check(logs.some(x=>x.includes('DllMain returned, EAX=0x7')),'existing success trace forwarded');
+   } else if(name==='rollback') {
+    env.check(error?.name==='AggregateError'&&error.errors?.length===2,'aggregate startup/rollback retained');
+    env.check(error.cause?.dllInitializationFailed&&error.errors[0].dllInitializationFailed,'initiating FALSE preserved through rollback');
+    env.check(error.errors[1].outcome?.completed===false,'secondary incomplete detach retained');
+   } else {
+    env.check(error&&error.outcome,'loader outcome survives actual Worker transport');
+    env.check(!error.outcome.completed&&!error.outcome.exited,'actual incomplete callback');
+    env.check(Number.isInteger(error.outcome.eip)&&Number.isInteger(error.outcome.esp),'owning callback registers retained');
+    env.check(Number.isInteger(error.outcome.halt)&&Number.isInteger(error.outcome.yieldReason),'pre-restoration halt/yield retained');
+    env.check(error.stage==='loadDlls'&&error.workerSlot===0,'failure owner retained');
+    if(name==='incomplete')env.check(error.outcome.eip===0&&error.outcome.esp!==before.esp&&!error.outcome.fault,'NULL jump is unfinished frame');
+    if(name==='fault')env.check(error.outcome.fault?.message&&error.cause?.message===error.outcome.fault.message,'trap and initiating cause retained');
+    env.check(logs.some(x=>x.includes('error details:')),'browser console receives details before launch catch');
+   }
+   env.check(before.eip===after.eip&&before.esp===after.esp,'caller context restored separately from retained callback context');
+   results.push({name,before,after,response,error:error?{name:error.name,message:error.message,outcome:error.outcome,cause:error.cause,errors:error.errors,stage:error.stage,workerSlot:error.workerSlot}:null,logs});
+  } finally {await host.stop();}
+ }
+ return results;
+}
+
+async function exerciseTransport(module) {
+ const {GuestThreadHost}=require('../lib/guest-thread-host');
+ return transportControl({pe,check:(value,message)=>assert.ok(value,message),create:async()=>{
+  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),logs=[];
+  const ctx={getMemory:()=>memory.buffer,resourceJson:{menus:{},dialogs:{},strings:{},bitmaps:{}},onExit(){}};
+  const imports=createHostImports(ctx);imports.host.memory=memory;
+  const {sigs}=require('../lib/host-import-sigs.generated.json');
+  const host=new GuestThreadHost({memory,module,sigs,hostImports:imports.host,
+   workerUrl:path.join(__dirname,'../lib/guest-worker.js'),clockIntervalMs:0,log:line=>logs.push(line)});
+  return {host,logs};
+ }});
+}
+
 async function main(){
  const module=await WebAssembly.compile(fs.readFileSync(process.env.WA_TEST_WASM||path.join(__dirname,'../build/wine-assembly.wasm')));
+ const transport=await exerciseTransport(module);
+ if(process.env.WA_LOADER_OUTCOME_ARTIFACTS)fs.writeFileSync(path.join(process.env.WA_LOADER_OUTCOME_ARTIFACTS,"transport-"+path.basename(process.env.WA_TEST_WASM||"standard")+".json"),JSON.stringify(transport,null,2));
  const run=async()=>[await exercise(module),await exercise(module,true)];
  const expected=await run(),worker=new Worker(__filename,{workerData:{module}});
  const guard=setTimeout(()=>worker.terminate(),20000);
