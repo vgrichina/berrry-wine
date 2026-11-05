@@ -60,7 +60,7 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
       targetId: state.identity.targetId, requestId: event.requestId,
       networkId: event.networkId || null, redirectedRequestId: event.redirectedRequestId || null,
       url: event.request?.url, method: event.request?.method,
-      status: event.responseStatusCode, state: 'paused'};
+      status: event.responseStatusCode, resourceType: event.resourceType, state: 'paused'};
     rows.push(row);
     state.active.add(row);
     try {
@@ -92,6 +92,11 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
         fromCache: () => null, bodyIdentity: identity,
         request: () => ({method: () => row.method, redirectChain: () => []}),
         buffer: async () => {assert(bytes, 'no captured HTTP 200 body'); return Buffer.from(bytes);}});
+      // A synchronous, identity-bound policy acknowledgment is deliberately
+      // separate from a verified body or a pending fallback promise.
+      if (row.status === 404 && accepted?.optionalAbsence === identity &&
+          typeof accepted.policy === 'string' && accepted.policy.length)
+        row.absencePolicy = accepted.policy;
       // HTTP 200 policy returns its settlement promise. A font bundle 404
       // must continue immediately so the browser can initiate the fallback.
       if (row.status === 200) await deadline(Promise.resolve(accepted), row, 'policy', state);
@@ -113,7 +118,7 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
     assert(!sessions.has(identity.sessionId), 'duplicate collector session');
     const state = {session, identity: {...identity}, cancels: new Set(), ids: new Set(),
       active: new Set(), ready: false, detached: false, network: [],
-      requests: new Map(), observed200: new Map()};
+      requests: new Map(), responses: new Map(), terminals: new Set(), observed200: new Map()};
     sessions.set(identity.sessionId, state);
     const handler = event => {
       const job = paused(state, event);
@@ -136,21 +141,55 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
       'Network.loadingFinished', 'Network.loadingFailed']) {
       const listener = event => {
         try {
-        if (name === 'Network.requestWillBeSent' && new URL(event.request.url).origin === origin)
-          state.requests.set(event.requestId, event.request.url);
+        if (name === 'Network.requestWillBeSent') {
+          const previous = state.requests.get(event.requestId);
+          if (new URL(event.request.url).origin === origin || previous)
+            state.requests.set(event.requestId, {url: event.request.url,
+              method: event.request.method, type: event.type,
+              redirected: !!event.redirectResponse || !!previous?.redirected,
+              count: (previous?.count || 0) + 1});
+        }
+        if (name === 'Network.responseReceived' && new URL(event.response.url).origin === origin)
+          state.responses.set(event.requestId, {url: event.response.url,
+            status: event.response.status, type: event.type,
+            count: (state.responses.get(event.requestId)?.count || 0) + 1});
         if (name === 'Network.responseReceived' && event.response?.status === 200 &&
           new URL(event.response.url).origin === origin) state.observed200.set(event.requestId, event.response.url);
         record({source: name, ...identity, at: Date.now(),
         networkId: event.requestId, timestamp: event.timestamp,
         url: event.request?.url || event.response?.url,
         method: event.request?.method, status: event.response?.status,
+        resourceType: event.type, redirected: !!event.redirectResponse,
         errorText: event.errorText, canceled: event.canceled,
+        blockedReason: event.blockedReason, corsErrorStatus: event.corsErrorStatus,
         encodedDataLength: event.encodedDataLength,
         fromDiskCache: event.response?.fromDiskCache,
         fromServiceWorker: event.response?.fromServiceWorker});
+        const alreadyTerminal = state.terminals.has(event.requestId);
+        if (name === 'Network.loadingFinished' || name === 'Network.loadingFailed')
+          state.terminals.add(event.requestId);
         if (name === 'Network.loadingFailed') {
-          const url = state.requests.get(event.requestId) || rows.find(r =>
-            r.sessionId === identity.sessionId && r.networkId === event.requestId)?.url;
+          const request = state.requests.get(event.requestId), response = state.responses.get(event.requestId);
+          const matches = rows.filter(r => r.sessionId === identity.sessionId && r.networkId === event.requestId);
+          const row = matches.length === 1 ? matches[0] : null;
+          // Chromium rejects a classic-script HTTP 404 with ERR_ABORTED even
+          // without interception. Settle only the explicitly accepted absence
+          // whose complete owning chain confirms that status rejection. Never
+          // infer acceptance from an optional URL or the error string alone.
+          if (!closed && !firstFault && !state.detached && !alreadyTerminal && row?.absencePolicy &&
+              row.state === 'continued' && row.method === 'GET' && row.status === 404 &&
+              row.resourceType === 'Script' && !row.redirectedRequestId &&
+              request?.count === 1 && !request.redirected && request.method === 'GET' &&
+              request.type === 'Script' && request.url === row.url &&
+              response?.count === 1 && response.status === 404 && response.type === 'Script' && response.url === row.url &&
+              event.type === 'Script' && event.errorText === 'net::ERR_ABORTED' &&
+              event.canceled === true && !event.blockedReason && !event.corsErrorStatus) {
+            record({...identity, source: name, state: 'optional-absence-script-rejection',
+              requestId: row.requestId, networkId: event.requestId, url: row.url,
+              policy: row.absencePolicy, errorText: event.errorText, canceled: true, at: Date.now()});
+            return;
+          }
+          const url = request?.url || matches[0]?.url;
           if (url) fault({...identity, state: 'network-loading-failed', networkId: event.requestId,
             url, canceled: event.canceled}, event.errorText || 'browser transfer failed');
         }

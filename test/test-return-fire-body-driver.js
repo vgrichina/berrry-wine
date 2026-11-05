@@ -34,6 +34,7 @@ const cases = [];
 let suiteDone = false;
 process.once('beforeExit', () => {if (!suiteDone) {console.error('FAIL composed suite incomplete'); process.exitCode = 1;}});
 async function run(name, mode) {
+  const successful = mode === 'positive' || mode === 'optional-script404';
   const runDir = path.join(RUN, name); fs.mkdirSync(runDir);
   let source = compose({source: priorSource, expectedSHA256: EXPECTED, run: runDir});
   // Shorten only the fixture timeout, never the qualified helper/default.
@@ -84,8 +85,37 @@ async function run(name, mode) {
     if (overrides.reject) bytes = Error('No data found for resource with given identifier');
     if (overrides.never) bytes = () => new Promise(() => {});
     target.origin = new URL(response.url()).origin;
+    const script = overrides.optionalScript;
+    const networkId = 'network-' + id;
+    const failed = {requestId: networkId, type: 'Script', errorText: 'net::ERR_ABORTED', canceled: true};
+    if (script === 'optional-script-not-canceled') failed.canceled = false;
+    if (script === 'optional-script-reset') failed.errorText = 'net::ERR_CONNECTION_RESET';
+    if (script) target.emit('Network.requestWillBeSent', {requestId: networkId, type: 'Script',
+      request: {url: response.url(), method: 'GET'},
+      ...(script === 'optional-script-network-redirect' ? {redirectResponse: {status: 302}} : {})});
     target.pause(id, bytes, {request: {url: response.url(), method: overrides.method || 'GET'},
+      ...(script ? {resourceType: 'Script'} : {}),
       responseStatusCode: status, ...(overrides.redirect ? {redirectedRequestId: 'earlier'} : {})});
+    if (script) {
+      if (script === 'optional-script-before-continue') target.emit('Network.loadingFailed', failed);
+      for (let attempt = 0; attempt < 20 && !target.calls.some(c =>
+        c.method === 'Fetch.continueResponse' && c.params.requestId === id); attempt++)
+        await new Promise(resolve => setImmediate(resolve));
+      await new Promise(resolve => setImmediate(resolve));
+      if (script === 'optional-script-fetch-error') {
+        target.pause(id, bytes, {request: {url: response.url(), method: 'GET'}, resourceType: 'Script',
+          responseStatusCode: undefined, responseErrorReason: 'Failed'});
+        await new Promise(resolve => setImmediate(resolve));
+      }
+      if (script !== 'optional-script-missing-response') target.emit('Network.responseReceived', {
+        requestId: networkId, type: 'Script', response: {url: response.url(), status}});
+      if (script === 'optional-script-detach') target.emit(disconnect);
+      if (script === 'optional-script-other-session') {
+        const other = target === child ? session : child;
+        other.emit('Network.requestWillBeSent', {requestId: networkId, type: 'Script', request: {url: response.url(), method: 'GET'}});
+        other.emit('Network.loadingFailed', failed);
+      } else target.emit('Network.loadingFailed', failed);
+    }
     if (overrides.detach) target.emit(disconnect);
     if (overrides.cancel) throw Error('synthetic navigation cancellation');
   }
@@ -126,14 +156,22 @@ async function run(name, mode) {
         assert(enable >= 0 && resume > enable, 'attach collector before Worker resume');
       }
       const system = read(path.join(PRIOR, 'system-data-ledger.json')).files;
-      if (mode === 'positive' || mode === 'missing-system-receipt' || mode.startsWith('font-')) {
+      if (successful || mode.startsWith('optional-script-') || mode === 'missing-system-receipt' || mode.startsWith('font-')) {
         for (const file of system) await httpResponse(url, file.path, {
           omit: mode === 'missing-system-receipt'});
         await httpResponse(url, 'favicon.ico');
         await require(path.join(PRIOR, 'host-fallback.cjs')).exercise({root: ROOT,
           origin: new URL(url).origin, page, pinFiles: m.exports.pins().files});
         await Promise.all(awaiting);
-        if (mode === 'positive') {
+        if (mode.startsWith('optional-script')) {
+          await httpResponse(url, mode === 'optional-script-required200' ? system[0].path : 'build-info.js',
+            {optionalScript: mode});
+          if (successful) {
+            await httpResponse(url, 'build-info.js', {optionalScript: mode, worker: true});
+            await httpResponse(url, 'build-info.js', {optionalScript: mode, nested: true});
+          }
+        }
+        if (successful) {
           // Synthetic missing declaration; the real declared TLB is untouched.
           const relative = path.relative(ROOT, path.join(runDir, 'intentionally-absent.tlb'));
           const missingURL = new URL('/' + relative, url);
@@ -168,9 +206,9 @@ async function run(name, mode) {
     assert(!options.args.some(a => /mute-audio|autoplay-policy|disable-audio/.test(a)));
     return {newPage: async () => page, close: async () => {
       closes++;
-      if (mode !== 'positive') assert(fs.existsSync(path.join(runDir, 'mock-runtime/first-failure.json')));
+      if (!successful) assert(fs.existsSync(path.join(runDir, 'mock-runtime/first-failure.json')));
     }};
-  }, review: async () => {assert.equal(mode, 'positive'); return {x: 368, y: 456};}, delay: async () => {}});
+  }, review: async () => {assert(successful); return {x: 368, y: 456};}, delay: async () => {}});
   const out = path.join(runDir, 'mock-runtime'), final = read(path.join(out, 'driver-final.json'));
   const receipts = read(path.join(out, 'receipts-final.json'));
   const collector = read(path.join(out, 'body-collector-final.json'));
@@ -178,13 +216,21 @@ async function run(name, mode) {
   assert.equal(read(path.join(out, 'final-pins.json')).verified, mode !== 'pin-wronghash');
   assert.deepEqual(final.firstFailure, result.firstFailure);
   assert.deepEqual(read(path.join(out, 'terminal-result.json')).firstFailure, result.firstFailure);
-  if (mode === 'positive') {
+  if (successful) {
     assert.equal(result.firstFailure, null); assert(receipts.complete); assert(collector.complete);
     assert.equal(controls, 1);
     assert.equal(receipts.receipts.filter(r => r.receipt === 'optional-fallback').length, 1);
     assert.equal(receipts.receipts.filter(r => r.path.endsWith('ART/1PSCREEN.~CR') && r.verified).length, 3);
     const ids = receipts.receipts.filter(r => r.path.endsWith('ART/1PSCREEN.~CR')).map(r => r.bodyIdentity.sessionId);
     assert.equal(new Set(ids).size, 3);
+    if (mode === 'optional-script404') {
+      const optional = receipts.receipts.filter(r => r.path === 'build-info.js');
+      assert.equal(optional.length, 3);
+      assert(optional.every(r => r.receipt === 'optional-absence' && r.verified === false));
+      assert.equal(new Set(optional.map(r => r.bodyIdentity.sessionId)).size, 3);
+      const events = fs.readFileSync(path.join(out, 'body-collector.jsonl'), 'utf8').trim().split('\n').map(JSON.parse);
+      assert.equal(events.filter(r => r.state === 'optional-absence-script-rejection').length, 3);
+    }
   } else {
     assert(result.firstFailure); assert.equal(controls, 0);
     const first = read(path.join(out, 'first-failure.json'));
@@ -201,6 +247,8 @@ async function run(name, mode) {
       'font-rejected': 'browser-body-collector', 'font-unresolved': 'browser-body-collector',
       'bundle-wrong-query': 'unclassified-bundle-request', 'missing-child-session': 'browser-body-session-missing',
     };
+    for (const m of ['required200', 'not-canceled', 'reset', 'missing-response', 'before-continue',
+      'fetch-error', 'other-session', 'detach', 'network-redirect']) boundaries['optional-script-' + m] = 'browser-body-collector';
     assert.equal(result.firstFailure.boundary, boundaries[mode], mode);
     assert(!receipts.complete || mode === 'missing-system-receipt');
   }
@@ -219,7 +267,10 @@ async function run(name, mode) {
       'pin-wrongsize', 'system-query', 'existing-404', 'body-rejected',
       'body-timeout', 'cancel', 'detach', 'post', 'redirect', 'missing-system-receipt',
       'font-corrupt', 'font-omitted', 'font-rejected', 'font-unresolved',
-      'bundle-wrong-query', 'unknown-404', 'missing-child-session']) await run(mode, mode);
+      'bundle-wrong-query', 'unknown-404', 'missing-child-session', 'optional-script404',
+      'optional-script-required200', 'optional-script-not-canceled', 'optional-script-reset',
+      'optional-script-missing-response', 'optional-script-before-continue', 'optional-script-fetch-error',
+      'optional-script-other-session', 'optional-script-detach', 'optional-script-network-redirect']) await run(mode, mode);
     assert.equal(sha(fs.readFileSync(USED)), EXPECTED);
     assert.equal(publicAttempts, 1); assert.equal(nativeAttempts, 1);
     fs.writeFileSync(path.join(RUN, 'summary.json'), JSON.stringify({passed: true, cases,

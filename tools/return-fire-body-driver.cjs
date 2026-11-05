@@ -41,6 +41,8 @@ function compose({source, expectedSHA256, run, collectorPath = path.join(__dirna
   change("receipt:'pending'};", "receipt:'pending',mock,bodyIdentity:r.bodyIdentity};");
   change("   const declaredSystem=", `   if(r.request?.().method()!=='GET'||r.request?.().redirectChain?.().length){complete('rejected-status',{verified:false});failureState.value={boundary:'unclassified-http-method-or-redirect',...row};return;}
    const declaredSystem=`);
+  change("if(optionalAbsent){complete('optional-absence',{policy:relative==='favicon.ico'?'implicit-browser-favicon-absent':'optional-build-info-absent',verified:false});return;}",
+    "if(optionalAbsent){complete('optional-absence',{policy:relative==='favicon.ico'?'implicit-browser-favicon-absent':'optional-build-info-absent',verified:false});return {optionalAbsence:r.bodyIdentity,policy:row.policy};}");
   change("  }catch(e){let url=null;try{url=String(r.url());}catch{}const row={url,receipt:'rejected-malformed',verified:false,error:String(e)};receipts.push({row,cancel:()=>{}});record('actual-http.jsonl',row);failureState.value={boundary:'malformed-http-response',...row};}});",
     "   return done;\n  }catch(e){let url=null;try{url=String(r.url());}catch{}const row={url,receipt:'rejected-malformed',verified:false,error:String(e)};receipts.push({row,cancel:()=>{}});record('actual-http.jsonl',row);failureState.value={boundary:'malformed-http-response',...row};}};\n  const {targetInfo}=await cdp.send('Target.getTargetInfo');\n  await bodyCollector.attach(cdp,{sessionId:cdp.id(),targetId:targetInfo.targetId});");
   change('   await Promise.all(responses);checkFault();', '   await bodyCollector.drain();await Promise.all(responses);checkFault();');

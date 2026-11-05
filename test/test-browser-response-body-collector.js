@@ -48,7 +48,7 @@ async function main() {
     const collector = createCollector({origin, disconnectedEvent: DISCONNECT,
       timeoutMs: 30, ...options, record: row => rows.push(row), onFault: row => faults.push(row),
       onResponse: async response => received.push({identity: response.bodyIdentity,
-        body: response.status() === 200 ? await response.buffer() : null})});
+        body: response.status() === 200 ? await response.buffer() : null}), ...options});
     const s = new Session(name); s.origin = origin;
     try { await collector.attach(s, {sessionId: name, targetId: 'target-' + name});
       await execute({collector, s, rows, faults, received}); passed++;
@@ -180,6 +180,84 @@ async function main() {
       await assert.rejects(collector.drain());
       assert.equal(faults[0].state, 'network-loading-failed'); assert(!collector.snapshot().complete);
     });
+    // Chromium's classic-script 404 rejection is also called ERR_ABORTED. Only
+    // an explicitly accepted absence with the entire owning response chain may
+    // settle that notification; a URL or the error string alone proves nothing.
+    const absence = response => ({optionalAbsence: response.bodyIdentity, policy: 'fixture-optional-absence'});
+    async function script404({collector, s}, mode = 'positive') {
+      const url = origin + '/build-info.js';
+      const request = {requestId: 'network-a', type: 'Script', request: {url, method: 'GET'}};
+      if (mode === 'network-post') request.request.method = 'POST';
+      if (mode === 'request-url') request.request.url += '?different';
+      if (mode === 'network-redirect') request.redirectResponse = {url: origin + '/earlier', status: 302};
+      if (mode === 'request-type') request.type = 'Fetch';
+      if (mode !== 'missing-request') s.emit('Network.requestWillBeSent', request);
+      if (mode === 'reused-network-id') s.emit('Network.requestWillBeSent', request);
+      const send = s.send.bind(s);
+      const failed = {requestId: 'network-a', type: 'Script', errorText: 'net::ERR_ABORTED', canceled: true};
+      if (mode === 'not-canceled') failed.canceled = false;
+      if (mode === 'other-error') failed.errorText = 'net::ERR_CONNECTION_RESET';
+      if (mode === 'failure-type') failed.type = 'Fetch';
+      if (mode === 'missing-failure-type') delete failed.type;
+      if (mode === 'blocked') failed.blockedReason = 'other';
+      if (mode === 'cors-error') failed.corsErrorStatus = {corsError: 'InvalidResponse'};
+      if (mode === 'continuation-rejected') s.send = (method, params) => method === 'Fetch.continueResponse'
+        ? Promise.reject(Error('continuation rejected')) : send(method, params);
+      if (mode === 'continuation-timeout') s.send = (method, params) => method === 'Fetch.continueResponse'
+        ? new Promise(() => {}) : send(method, params);
+      if (mode === 'before-continuation') s.send = (method, params) => {
+        if (method === 'Fetch.continueResponse') s.emit('Network.loadingFailed', failed);
+        return send(method, params);
+      };
+      if (mode === 'detach-continuation') s.send = (method, params) => {
+        if (method === 'Fetch.continueResponse') s.emit(DISCONNECT);
+        return send(method, params);
+      };
+      s.pause('a', body, {request: {url, method: mode === 'fetch-post' ? 'POST' : 'GET'},
+        responseStatusCode: mode === 'required-200' ? 200 : 404,
+        resourceType: mode === 'missing-fetch-type' ? undefined : mode === 'fetch-type' ? 'XHR' : 'Script',
+        ...(mode === 'fetch-redirect' ? {redirectedRequestId: 'earlier'} : {})});
+      await collector.settle();
+      if (mode === 'duplicate-fetch-error') {
+        s.pause('a', body, {request: {url, method: 'GET'}, responseStatusCode: undefined,
+          resourceType: 'Script', responseErrorReason: 'Failed'});
+        await collector.settle();
+      }
+      if (mode !== 'missing-response') s.emit('Network.responseReceived', {
+        requestId: mode === 'wrong-network-id' ? 'other' : 'network-a',
+        type: mode === 'response-type' ? 'Fetch' : 'Script',
+        response: {url: mode === 'response-url' ? url + '?other' : url,
+          status: mode === 'response-status' || mode === 'required-200' ? 200 : 404}});
+      if (mode === 'duplicate-response') s.emit('Network.responseReceived', {
+        requestId: 'network-a', type: 'Script', response: {url, status: 404}});
+      if (mode === 'already-finished') s.emit('Network.loadingFinished', {requestId: 'network-a'});
+      if (mode === 'detach-after-continue') s.emit(DISCONNECT);
+      s.emit('Network.loadingFailed', failed);
+    }
+    await run('accepted-script404-status-rejection', async ctx => {
+      await script404(ctx); await ctx.collector.drain();
+      assert(ctx.collector.snapshot().complete);
+      assert(ctx.rows.some(r => r.state === 'optional-absence-script-rejection'));
+      assert(!ctx.s.calls.some(c => c.method === 'Fetch.getResponseBody'));
+    }, {onResponse: absence});
+    for (const mode of ['missing-ack', 'wrong-identity', 'missing-policy', 'missing-request',
+      'missing-response', 'network-post', 'fetch-post', 'network-redirect', 'fetch-redirect',
+      'reused-network-id', 'request-url', 'response-url', 'wrong-network-id', 'response-status',
+      'request-type', 'fetch-type', 'response-type', 'failure-type', 'not-canceled', 'other-error',
+      'required-200', 'continuation-rejected', 'before-continuation', 'detach-continuation', 'duplicate-fetch-error',
+      'missing-fetch-type', 'missing-failure-type', 'blocked', 'cors-error', 'continuation-timeout',
+      'duplicate-response', 'already-finished', 'detach-after-continue', 'async-ack']) {
+      await run('script404-negative-' + mode, async ctx => {
+        await script404(ctx, mode); await assert.rejects(ctx.collector.drain());
+        assert.equal(ctx.faults.length, 1); assert(!ctx.collector.snapshot().complete);
+        const first = JSON.stringify(ctx.faults[0]);
+        assert(Object.isFrozen(ctx.faults[0]));
+        ctx.s.emit('Network.loadingFailed', {requestId: 'network-a', errorText: 'later failure', canceled: true});
+        assert.equal(JSON.stringify(ctx.collector.snapshot().firstFault), first);
+      }, {onResponse: response => mode === 'async-ack' ? Promise.resolve(absence(response)) : mode === 'missing-ack' ? undefined : {
+        optionalAbsence: mode === 'wrong-identity' ? {...response.bodyIdentity} : response.bodyIdentity,
+        policy: mode === 'missing-policy' ? '' : 'fixture-optional-absence'}});
+    }
     console.log('PASS ' + passed + ' synthetic CDP lifecycle cases; real local FS/HTTP bytes; ZERO Chrome');
   } finally { server.closeIdleConnections?.(); await closeServer(server); }
 }
