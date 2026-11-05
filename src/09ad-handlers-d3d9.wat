@@ -1032,6 +1032,10 @@
           (select (local.get $hwnd) (i32.const 0) (local.get $windowed)))
         (store.field DxObject misc1
           (call $dx_from_this (call $gl32 (local.get $ppDev))) (local.get $program))
+        (call $d3d9_trace_world (call $gl32 (local.get $ppDev)) (i32.const 12)
+          (i32.add (call $g2w (local.get $program)) (i32.const 2708))
+          (i32.add (call $g2w (local.get $program)) (i32.const 2708)) (local.get $program)
+          (i32.add (local.get $program) (i32.const 2708)))
         (if (local.get $pp) (then
           (if (call $gl32 (i32.add (local.get $pp) (i32.const 36))) (then
             (call $gs32 (i32.add (local.get $depth_surface) (i32.const 8)) (call $gl32 (local.get $ppDev)))
@@ -1643,7 +1647,17 @@
 
   ;; IDirect3DDevice9_MultiplyTransform — 3 args (incl. this)
   (func $handle_IDirect3DDevice9_MultiplyTransform (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (i32.and (i32.eq (local.get $arg1) (i32.const 256))
+      (i32.and (i32.ne (local.get $arg2) (i32.const 0)) (i32.ne (call $d3d9_program_state (local.get $arg0)) (i32.const 0)))) (then
+      (call $d3d9_trace_world (local.get $arg0) (i32.const 9) (call $g2w (local.get $arg2))
+        (i32.add (call $g2w (call $d3d9_program_state (local.get $arg0))) (i32.const 2708))
+        (call $d3d9_program_state (local.get $arg0)) (local.get $arg2))))
     (call $d3d9_recording_guard (local.get $arg0) (local.get $name_ptr))
+    (if (i32.and (i32.eq (local.get $arg1) (i32.const 256))
+      (i32.and (i32.ne (local.get $arg2) (i32.const 0)) (i32.ne (call $d3d9_program_state (local.get $arg0)) (i32.const 0)))) (then
+      (call $d3d9_trace_world (local.get $arg0) (i32.const 10) (call $g2w (local.get $arg2))
+        (i32.add (call $g2w (call $d3d9_program_state (local.get $arg0))) (i32.const 2708))
+        (call $d3d9_program_state (local.get $arg0)) (local.get $arg2))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 

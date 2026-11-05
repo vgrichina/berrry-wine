@@ -2,15 +2,19 @@
 'use strict';
 const assert=require('assert');
 const {bootRenderHarness}=require('./render-helper');
+const {Bridge}=require('../lib/d3d9-host');
 (async()=>{
   const methods=['BeginStateBlock','EndStateBlock','SetRenderState','GetRenderState','SetFVF','GetFVF','SetSamplerState','GetSamplerState','SetTexture','GetTexture','SetTransform','GetTransform','GetGammaRamp','SetGammaRamp','CreateVertexDeclaration','SetVertexDeclaration','GetVertexDeclaration'];
   const blockMethods=['Capture','Apply','Release','QueryInterface','GetDevice'];
   methods.push('SetTextureStageState','GetTextureStageState');
-  methods.push('SetNPatchMode');
+  methods.push('SetNPatchMode','MultiplyTransform');
   methods.push('SetIndices','GetIndices','SetStreamSource','GetStreamSource');
   for(const stage of ['Vertex','Pixel'])for(const op of ['Create','Set','Get'])methods.push(op+stage+'Shader');
   for(const stage of ['Vertex','Pixel'])for(const op of ['Set','Get'])methods.push(op+stage+'ShaderConstantF');
-  const {exports:e}=await bootRenderHarness({fonts:'none',extraWat:`
+  const provenance=new Bridge({backend:'software',worldProvenance:true});
+  const {exports:e}=await bootRenderHarness({fonts:'none',extraHostOverrides:{
+    gpu_gl_call:(op,p,aux)=>op===0x30017&&aux===24?1:0,
+    dx_trace:(...args)=>provenance.noteWorldTrace(...args)},extraWat:`
     (func (export "buffer") (param $device i32) (param $kind i32) (param $out i32) (result i32)
       (call $d3d9_buffer_create (local.get $device) (i32.const 128) (i32.const 0)
         (select (i32.const 101) (i32.const 0) (i32.eq (local.get $kind) (i32.const 7)))
@@ -274,5 +278,32 @@ const {bootRenderHarness}=require('./render-helper');
   assert.strictEqual(e.Apply(fb),0);
   assert.strictEqual(e.GetFVF(d,out),0);assert.strictEqual(read(out),0x4002,'Apply restores the recorded FVF');
   assert.strictEqual(e.Release(fb),0);
+  // Actual handlers emit copied scalar bits. Later source writes and Apply
+  // cannot alter previous provenance, and recording never masquerades as live.
+  identity.forEach((v,i)=>e.guest_write32(mat+4*i,v));
+  e.guest_write32(mat,0x40000000);assert.strictEqual(e.SetTransform(d,256,mat),0);
+  const retained=provenance.worldTraceHistory.get(d).at(-1),serialized=JSON.stringify(retained);
+  e.guest_write32(mat,0x40400000);assert.strictEqual(e.MultiplyTransform(d,256,mat),0);
+  assert.strictEqual(e.GetTransform(d,256,copy),0);const multipliedWord=read(copy);
+  assert.strictEqual(provenance.worldTraceHistory.get(d).at(-1).sourceBits[0],0x40400000);
+  assert.strictEqual(provenance.worldTraceHistory.get(d).at(-1).destinationBits[0],multipliedWord,'trace matches actual API state');
+  assert.strictEqual(e.BeginStateBlock(d),0);assert.strictEqual(e.SetTransform(d,256,mat),0);
+  assert.strictEqual(e.GetTransform(d,256,copy),0);assert.strictEqual(read(copy),multipliedWord);
+  assert.strictEqual(e.EndStateBlock(d,out),0);const worldBlock=read(out);
+  e.guest_write32(mat,0x40800000);assert.strictEqual(e.Apply(worldBlock),0);
+  assert.strictEqual(e.GetTransform(d,256,copy),0);assert.strictEqual(read(copy),0x40400000);
+  assert.strictEqual(e.Capture(worldBlock),0);assert.strictEqual(e.Release(worldBlock),0);
+  assert.strictEqual(JSON.stringify(retained),serialized,'later guest and stateblock writes preserve copied provenance');
+  assert.strictEqual(retained.sourceBits[0],0x40000000);assert.strictEqual(retained.destinationBits[0],0x40000000);
+  assert(Object.isFrozen(retained)&&Object.isFrozen(retained.sourceBits));
+  for(const op of[1,2,3,4,5,6,7,8,9,10])assert(provenance.worldTraceHistory.get(d).some(r=>r.operation===op),'WORLD route '+op);
+  for(let i=0;i<24;i++)assert.strictEqual(e.SetTransform(d,256,mat),0);
+  assert.strictEqual(provenance.worldTraceHistory.get(d).length,32,'history bounded');
+  const liveWriter=provenance.worldLiveWriters.get(d);
+  assert.strictEqual(e.BeginStateBlock(d),0);
+  for(let i=0;i<40;i++)assert.strictEqual(e.SetTransform(d,256,mat),0);
+  assert.strictEqual(provenance.worldLiveWriters.get(d),liveWriter,'recorded writes cannot evict the last live writer');
+  assert.strictEqual(e.EndStateBlock(d,out),0);assert.strictEqual(e.Release(read(out)),0);
+  assert.strictEqual(provenance.worldTracePackets.size,0);assert.strictEqual(provenance.worldTraceErrors,0);
   console.log('PASS D3D9 selective state recording, last-write wins, Capture/Apply and lifetime');
 })().catch(error=>{console.error(error);process.exitCode=1;});

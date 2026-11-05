@@ -1248,6 +1248,58 @@
     (memory.copy (select (local.get $rw) (local.get $slot) (local.get $get))
       (select (local.get $slot) (local.get $rw) (local.get $get)) (i32.const 1536)))
 
+  ;; Opt-in, value-only WORLD provenance. The owning CPU copies every word
+  ;; into scalar trace messages before resuming. No live export or guest write.
+  (global $d3d9_world_trace_enabled (mut i32) (i32.const -1))
+  (global $d3d9_world_trace_serial (mut i32) (i32.const 0))
+  (func $d3d9_trace_world (param $device i32) (param $op i32)
+    (param $source i32) (param $dest i32) (param $owner i32) (param $source_guest i32)
+    (local $serial i32) (local $slot i32) (local $index i32) (local $call_esp i32)
+    (if (i32.eq (global.get $d3d9_world_trace_enabled) (i32.const -1)) (then
+      (global.set $d3d9_world_trace_enabled
+        (i32.eq (call $host_gpu_gl_call (i32.const 0x30017) (i32.const 0) (i32.const 24)) (i32.const 1)))))
+    (if (i32.eqz (global.get $d3d9_world_trace_enabled)) (then (return)))
+    ;; CreateDevice retires its stdcall frame before attaching the program.
+    ;; Other traced routes still own the original API frame at this point.
+    (local.set $call_esp (i32.sub (i32.load offset=16 (global.get $reg_base))
+      (select (i32.const 32) (i32.const 0) (i32.eq (local.get $op) (i32.const 12)))))
+    (global.set $d3d9_world_trace_serial (i32.add (global.get $d3d9_world_trace_serial) (i32.const 1)))
+    (local.set $serial (i32.shl (global.get $d3d9_world_trace_serial) (i32.const 5)))
+    (local.set $slot (i32.or (i32.const 0x43570000) (i32.and (global.get $current_thread_id) (i32.const 65535))))
+    ;; A passive diagnostic must not add a trap to a previously ignored input.
+    (if (i32.or (i32.eqz (call $d3d_shader_vm_range (local.get $source) (i32.const 64)))
+      (i32.eqz (call $d3d_shader_vm_range (local.get $dest) (i32.const 64)))) (then
+      (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 31))
+        (local.get $device) (local.get $op)) (return)))
+    (call $host_dx_trace (i32.const 30) (local.get $slot) (local.get $serial) (local.get $device) (local.get $op))
+    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 1))
+      (global.get $eip) (call $gl32 (local.get $call_esp)))
+    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 2))
+      (global.get $current_thunk_eip) (local.get $call_esp))
+    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 3))
+      (local.get $owner) (global.get $current_thread_id))
+    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 4))
+      (local.get $source) (local.get $dest))
+    (loop $source_words
+      (call $host_dx_trace (i32.const 30) (local.get $slot)
+        (i32.or (local.get $serial) (i32.add (i32.const 5) (local.get $index)))
+        (i32.load (i32.add (local.get $source) (i32.shl (local.get $index) (i32.const 3))))
+        (i32.load offset=4 (i32.add (local.get $source) (i32.shl (local.get $index) (i32.const 3)))))
+      (local.set $index (i32.add (local.get $index) (i32.const 1)))
+      (br_if $source_words (i32.lt_u (local.get $index) (i32.const 8))))
+    (local.set $index (i32.const 0))
+    (loop $dest_words
+      (call $host_dx_trace (i32.const 30) (local.get $slot)
+        (i32.or (local.get $serial) (i32.add (i32.const 13) (local.get $index)))
+        (i32.load (i32.add (local.get $dest) (i32.shl (local.get $index) (i32.const 3))))
+        (i32.load offset=4 (i32.add (local.get $dest) (i32.shl (local.get $index) (i32.const 3)))))
+      (local.set $index (i32.add (local.get $index) (i32.const 1)))
+      (br_if $dest_words (i32.lt_u (local.get $index) (i32.const 8))))
+    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 21))
+      (local.get $source_guest) (i32.const 0))
+    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 22))
+      (local.get $device) (local.get $op)))
+
   (func $d3d9_transform_index (param $type i32) (result i32)
     (if (i32.lt_u (i32.sub (local.get $type) (i32.const 2)) (i32.const 2))
       (then (return (i32.sub (local.get $type) (i32.const 2)))))
@@ -1258,7 +1310,7 @@
     (i32.const -1))
 
   (func $d3d9_transform (param $device i32) (param $type i32) (param $matrix i32) (param $get i32)
-    (local $index i32) (local $state i32) (local $slot i32) (local $block i32)
+    (local $index i32) (local $state i32) (local $slot i32) (local $block i32) (local $record i32)
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
     (local.set $index (call $d3d9_transform_index (local.get $type)))
     (if (i32.eq (local.get $index) (i32.const -1)) (then (return)))
@@ -1271,12 +1323,21 @@
       (memory.copy (call $g2w (local.get $matrix)) (local.get $slot) (i32.const 64)))
     (else
       (local.set $block (call $gl32 (i32.add (local.get $state) (i32.const 1740))))
+      (local.set $record (local.get $block))
       (if (local.get $block) (then
         (local.set $block (call $g2w (local.get $block)))
         (i32.store8 offset=1644 (i32.add (local.get $block) (local.get $index)) (i32.const 1))
         (local.set $slot (i32.add (local.get $block)
           (i32.add (i32.const 1912) (i32.mul (local.get $index) (i32.const 64)))))))
-      (memory.copy (local.get $slot) (call $g2w (local.get $matrix)) (i32.const 64))))
+      (if (i32.eq (local.get $type) (i32.const 256)) (then
+        (call $d3d9_trace_world (local.get $device) (select (i32.const 3) (i32.const 1) (local.get $block))
+          (call $g2w (local.get $matrix)) (local.get $slot) (select (local.get $record) (local.get $state) (local.get $block))
+          (local.get $matrix))))
+      (memory.copy (local.get $slot) (call $g2w (local.get $matrix)) (i32.const 64))
+      (if (i32.eq (local.get $type) (i32.const 256)) (then
+        (call $d3d9_trace_world (local.get $device) (select (i32.const 4) (i32.const 2) (local.get $block))
+          (call $g2w (local.get $matrix)) (local.get $slot) (select (local.get $record) (local.get $state) (local.get $block))
+          (local.get $matrix))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
   (func $d3d9_resource_free (param $obj i32)
@@ -1553,8 +1614,18 @@
           (i32.add (i32.const 2068) (i32.mul (local.get $rs) (i32.const 64)))))
         (local.set $values (i32.add (local.get $wa)
           (i32.add (i32.const 1912) (i32.mul (local.get $rs) (i32.const 64)))))
+        (if (i32.eq (local.get $rs) (i32.const 10)) (then
+          (call $d3d9_trace_world (local.get $device) (select (i32.const 5) (i32.const 7) (local.get $apply))
+            (select (local.get $values) (local.get $live) (local.get $apply))
+            (select (local.get $live) (local.get $values) (local.get $apply)) (local.get $obj)
+            (select (i32.add (local.get $obj) (i32.const 2552)) (i32.add (local.get $state) (i32.const 2708)) (local.get $apply)))))
         (memory.copy (select (local.get $live) (local.get $values) (local.get $apply))
-          (select (local.get $values) (local.get $live) (local.get $apply)) (i32.const 64))))
+          (select (local.get $values) (local.get $live) (local.get $apply)) (i32.const 64))
+        (if (i32.eq (local.get $rs) (i32.const 10)) (then
+          (call $d3d9_trace_world (local.get $device) (select (i32.const 6) (i32.const 8) (local.get $apply))
+            (select (local.get $values) (local.get $live) (local.get $apply))
+            (select (local.get $live) (local.get $values) (local.get $apply)) (local.get $obj)
+            (select (i32.add (local.get $obj) (i32.const 2552)) (i32.add (local.get $state) (i32.const 2708)) (local.get $apply)))))))
       (local.set $rs (i32.add (local.get $rs) (i32.const 1)))
       (br_if $matrices (i32.lt_u (local.get $rs) (i32.const 266))))
     (local.set $rs (i32.const 0))
