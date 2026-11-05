@@ -157,9 +157,9 @@
       ],
       "exports": [],
       "targets": [],
-      "sha256": "a5df35bdb3863b07d1516104a8b81acb4061d8f0dca427fc22aa4cfafe304a3c",
+      "sha256": "d7aed6bde93a28063f9e5f9507aad410d53f07608f7f159cc019098e85eff0ad",
       "kind": "lifecycle",
-      "reason": "Private invocation identity primitive; sync-family instrumentation only, all other callback ownership pending.",
+      "reason": "Private invocation identity primitive; sync-family instrumentation only, all other callback ownership pending. Pending-context v1 rejects post-execution lifetime replacement; invocation lifetime behavior and broader pending ownership qualification unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -203,9 +203,9 @@
       ],
       "exports": [],
       "targets": [],
-      "sha256": "714bf87a9c2dcc63df044c35d3f5708b4950fd17a126b35f09e8ff227e584320",
+      "sha256": "bd78976e54fed267d8a48f74cb8cefb77f06951777b489f28e2364bf8af7278a",
       "kind": "lifecycle",
-      "reason": "Private invocation identity primitive; sync-family instrumentation only, all other callback ownership pending.",
+      "reason": "Private invocation identity primitive; sync-family instrumentation only, all other callback ownership pending. Pending-context v1 rejects post-execution lifetime replacement; invocation lifetime behavior and broader pending ownership qualification unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {

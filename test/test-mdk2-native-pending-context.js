@@ -35,7 +35,7 @@ for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm']
    const counts=new Uint32Array(e.memory.buffer,e.get_handler_hist_base(),e.get_handler_hist_slots());
    // H474/475 are fused push+CALL/pop+RET in the actual handler table.
    const table=fs.readFileSync(path.join(ROOT,'src/02-thread-table.wat'),'utf8');
-   const funcs=[...table.matchAll(/(\$th_[A-Za-z0-9_]+)\s*;;\s*(\d+):/g)];
+   const funcs=[...table.matchAll(/(\$th_[A-Za-z0-9_]+)\s*;;\s*(\d+)\b/g)];
    for(const n of ['$th_push_run_call','$th_pop_run_ret'])assert(counts[Number(funcs.find(m=>m[1]===n)?.[2])]>0,n);
   }
  });
@@ -44,7 +44,7 @@ for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm']
   e.run(1);assert.equal(depth(),1);e.run(1);assert.equal(valid(),1);assert.equal(depth(),0);assert.equal(e.get_esp()>>>0,S);
  });
  test(file+' actual uop CALL/RET preserves tier and proof',async()=>{
-  const {e,put,valid,depth}=await fixture(file);e.set_uop(1);e.set_ecx(9);
+  const {e,put,valid,depth}=await fixture(file);e.set_uop(1);e.set_ecx(9);e.set_handler_hist_enabled(1);e.reset_handler_hist();
   put(C,[...call(C,T),0x49,0x75,0xf8,...jmp(C+8,END)]);put(T,[0x40,0xc3]);
   const pc=e.uop_compile(C);assert(pc,'must compile actual call/ret loop');e.uop_install(C,pc);
   assert.equal(e.get_dbg_tier_guard(),0);
@@ -52,6 +52,16 @@ for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm']
   assert(e.uop_stats(4)>enters,'actual program entry');
   for(let k=0;k<40&&(e.get_eip()>>>0)!==END;k++)e.run(8);
   assert.equal(e.get_eip()>>>0,END);assert.equal(depth(),0);assert.equal(valid(),1);assert.equal(e.get_eax(),9);
+  // A tier entry counter alone cannot prove that RET stayed in that tier.
+  // Histogram collection preserves uop scheduling. There are exactly nine real
+  // CALLs and RETs here; fewer than nine ordinary RETs proves actual uop RET
+  // execution while allowing the natural fallback at a slice budget boundary.
+  const counts=new Uint32Array(e.memory.buffer,e.get_handler_hist_base(),e.get_handler_hist_slots());
+  const table=fs.readFileSync(path.join(ROOT,'src/02-thread-table.wat'),'utf8');
+  const funcs=[...table.matchAll(/(\$th_[A-Za-z0-9_]+)\s*;;\s*(\d+)\b/g)];
+  const ordinary=n=>{const row=funcs.find(m=>m[1]===n);assert(row,n);return counts[Number(row[2])];};
+  assert.equal(ordinary('$th_call_rel'),0,'CALLs execute as native uops');
+  assert(ordinary('$th_ret')<9,'at least one actual RET must execute as native uops');
  });
  for(const mode of ['return-pc','entry-esp'])test(file+' sticky '+mode+' mismatch from actual RET',async()=>{
   const {e,put,u,valid}=await fixture(file);put(C,call(C,T));
@@ -104,6 +114,18 @@ for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm']
   assert.deepEqual(out[0],out[1]);
  });
 }
+
+for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'])for(const mode of ['process','root'])test(file+' foreign shared native '+mode+' lifetime invalidates unchanged thread',async()=>{
+ const a=await fixture(file);a.put(C,[0xeb,0xfe]);a.e.run(1);assert.equal(a.valid(),1);
+ const ctx={exports:null,getMemory:()=>a.e.memory.buffer},host=require('../lib/host-imports.js').createHostImports(ctx).host;
+ Object.assign(host,{memory:a.e.memory,exit(){},log(){},log_i32(){},crash_unimplemented(){}});
+ const {instance}=await WebAssembly.instantiate(fs.readFileSync(path.join(ROOT,file)),{host}),b=ctx.exports=instance.exports;
+ if(mode==='process'){
+  const exe=fs.readFileSync(path.join(ROOT,'test/binaries/notepad.exe'));new Uint8Array(a.e.memory.buffer).set(exe,b.get_staging());b.load_pe(exe.length);
+ }else b.init_thread(0,a.e.get_image_base(),0,0,0,0,0,0);
+ assert.equal(a.e.get_current_thread_id(),1);assert.equal(a.valid(),0);assert.equal(a.e.pending_context_reason(),2);
+ assert.throws(()=>observer.pendingAbsence(a.e,17),/incomplete/);
+});
 
 // Existing immutable historical modules are decoded in memory only. The same
 // synthetic program verifies disabled architectural output and tier choices.

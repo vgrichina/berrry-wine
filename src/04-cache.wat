@@ -2313,6 +2313,7 @@
 
   (func $invocation_process_begin
     (local $epoch i64) (local $root i64)
+    (if (global.get $pending_seen) (then (call $pending_gap)))
     ;; Process loads belong to the main instance. Reject before allocation.
     (if (i32.ne (global.get $current_thread_id) (i32.const 1)) (then (unreachable)))
     (local.set $epoch (call $invocation_new_id))
@@ -2324,6 +2325,7 @@
 
   (func $invocation_thread_begin (param $tid i32)
     (local $epoch i64) (local $root i64) (local $candidate i64)
+    (if (global.get $pending_seen) (then (call $pending_gap)))
     (if (i32.ge_u (local.get $tid) (i32.const 16)) (then (unreachable)))
     (if (i32.ne (global.get $current_thread_id) (i32.add (local.get $tid) (i32.const 1)))
       (then (unreachable)))

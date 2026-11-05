@@ -2716,6 +2716,8 @@
   (global $pending_slot (mut i32) (i32.const 0))
   (global $pending_depth (mut i32) (i32.const 0))
   (global $pending_active (mut i32) (i32.const 0))
+  (global $pending_process_epoch (mut i64) (i64.const 0))
+  (global $pending_root (mut i64) (i64.const 0))
   (global $pending_compiled_pc (mut i32) (i32.const 0))
   (global $pending_compiled_eip (mut i32) (i32.const 0))
   (global $pending_compiled_gen (mut i32) (i32.const 0))

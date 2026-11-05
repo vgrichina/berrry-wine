@@ -289,6 +289,26 @@
           (i32.ne (global.get $pending_thread) (global.get $current_thread_id)))
       (then (if (i32.eqz (global.get $pending_reason))
         (then (global.set $pending_reason (i32.const 2))))))
+    ;; The JS arm precedes PE/thread initialization. Bind its native lifetime
+    ;; at the first execution/compilation, then reject another process/root
+    ;; replacing shared ownership even if this instance's thread ID is unchanged.
+    (if (i32.and (global.get $pending_seen)
+          (i32.and (global.get $pending_armed) (i32.eqz (global.get $pending_reason))))
+      (then
+        (if (i64.eqz (global.get $pending_process_epoch)) (then
+          (global.set $pending_process_epoch (global.get $invocation_epoch))
+          (global.set $pending_root (global.get $invocation_root))))
+        (if (i64.eqz (global.get $pending_process_epoch))
+          (then (global.set $pending_reason (i32.const 2))))
+        (if (i64.ne (global.get $pending_process_epoch) (global.get $invocation_epoch))
+          (then (global.set $pending_reason (i32.const 2))))
+        (if (i64.ne (global.get $pending_root) (global.get $invocation_root))
+          (then (global.set $pending_reason (i32.const 2))))
+        (if (i64.ne (global.get $pending_process_epoch)
+              (i64.atomic.load (region.addr $CALLBACK_OWNERSHIP 8)))
+          (then (global.set $pending_reason (i32.const 2))))
+        (if (i64.ne (global.get $pending_root) (i64.atomic.load (global.get $invocation_slot)))
+          (then (global.set $pending_reason (i32.const 2))))))
     (i32.and (i32.ne (global.get $pending_armed) (i32.const 0))
       (i32.eqz (global.get $pending_reason))))
   (func $pending_target (param $target i32) (result i32)
