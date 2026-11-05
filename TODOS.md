@@ -313,14 +313,15 @@ and jobs remain preserved. No old-session wakeup is requested.
 
 - [!] Correct REP MOVS restart on absent sparse pages
   id: MIG-SAM-REP-RESTART
+  status: active (one owner-authorized retry)
+  retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
+  retry-order: 1 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
+  Next: Owner-authorized retry: reconcile preserved REP MOVS implementation with current main; validate remaining ContinueSearch, precise fault/progress/restart and direct code-write regression gates; fix only emulator WAT/JS and commit tested changes.
   candidate: serious-sam-demo
   owner: codex:01a0f9db-4a5d-7733-ade9-8b71d8e3f05f
-  Next: incomplete handoff accepted; seven file/patch hashes verified. Matrices/regressions/zero-count/block paths pass. Corrected uop log passes with2entries/1COPYdeopt, tool exit unconfirmed. ContinueSearch, direct MOVS code-write review and final static gates remain after automated review stopped the worker.
-  Done: correct single fault, first absent byte, failed-element preservation and retry at REP for widths1/2/4 DF0/1, with source identities and coverage limits. No generic fault-policy/classifier/layout changes or canonical build.
+  Done: correct single fault, first absent byte, failed-element preservation and retry at REP for widths1/2/4 DF0/1, with source identities and coverage limits. No generic fault-policy/classifier/layout changes; current required canonical build applies.
   Evidence: ops/handoffs/mig-sam-rep-restart.md; scratch/mig-sam-rep-restart-20261002/evidence-summary.json.
-  blocker: Worker execution stopped by automated cybersecurity-risk flag; final validation incomplete.
-  waiting-on: automated review resolution
-  needs: Resolve the blocked validation step before promoting or committing this change.
 
 - [x] Review remaining Serious Sam diagnostic fault transforms
   id: MIG-SAM-FAULT-REMAINDER
@@ -1102,16 +1103,17 @@ commit output — do not assume your hunks landed.**
 
 - [!] Complete Serious Sam production integration and ordinary gameplay
   id: SAM-PRODUCTION-FOLLOWTHROUGH
-  status: blocked
+  status: queued (one owner-authorized retry; serialized)
+  retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
+  retry-order: 2 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
+  Next: After MIG-SAM-REP-RESTART finishes, use its result to validate generic emulator fault/classifier contracts and integrate tested production slices with regressions before ordinary gameplay.
   created: 2026-10-02T04:16:51.185761+00:00
   created-by: orchestrator-handoff-audit
   depends-on: MIG-SAM-REP-RESTART
   candidate: serious-sam-demo
-  Next: After REP review clears, validate generic fault/classifier contracts, integrate only owned tested timer/TLS/memory slices and review diagnostic transform removal before launcher/input work.
   Done: Production build reaches menu and level with supported input, verified movement/combat and no private diagnostic shortcuts; exact source/module and focused regressions retained.
   Evidence: ops/handoffs/mig-sam-fault-remainder.md; ops/handoffs/01a0f6ff-da61-7710-a604-d9442103dbbd.md
-  blocker: REP validation remains incomplete after automated review; do not retry through another channel.
-  waiting-on: MIG-SAM-REP-RESTART review resolution
 
 - [ ] Integrate tested private renderer changes without losing main work
   id: RENDER-PRIVATE-INTEGRATION
@@ -1520,23 +1522,29 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Evidence: test/toyvm-dos-corpus/manifest.json; test/toyvm-dos-corpus/titles.json; ops/dos-corpus.json; tools/toyvm-dos-corpus.js; user instruction2026-10-07. Daggerfall/Arena DOSBox gameplay does not establish native compatibility.
 - [~] New-game lane: Betrayal in Antara demo (Sierra 1997, SCI32 RPG)
   id: NEW-GAME-BETRAYAL-ANTARA-DEMO-20261006
-  status: blocked
+  status: queued (one owner-authorized retry; serialized)
+  retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
+  retry-order: 4 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
+  Next: Retry emulator installer/crash diagnostics from preserved evidence; compare our emulated CPU/Win32 behavior against documentation and fix with a regression. Old remote box is stopped; do not resume it.
   candidate: win98-games-a-d/Betrayl-a-Antara-DEMO-SW (16-bit Sierra SETUP.EXE installs the game; local, no download)
+  Prior evidence: WIP scratch/new-game-antara-20261006 and ops/handoffs/antara-security-hold-20261008.md; bx_fugmje42 stopped after expiry, retrieval incomplete; no installation/gameplay qualification.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none (automatic security rejection; exited1)
   created: 2026-10-06T04:51:54.000Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
-  Next: Hold rejected crash diagnostic; no retry/rephrase. WIP preserved, remote bx_fugmje42 authoritatively stopped after expiry, full cleanup/evidence retrieval incomplete. See ops/handoffs/antara-security-hold-20261008.md. No installation/gameplay qualification.
   Done: Working registered launch, ordinary player input visibly changes actual gameplay, reviewed gameplay screenshot with run/source identity, scoped fixes + tests on main. FPS, audio and browser separate.
   Evidence: scratch/new-game-antara-20261006 (work), scratch/runs/<id> (reviewed captures)
 
 - [ ] New-game lane: Arx Fatalis demo (original local MSI/CAB media)
   id: NEW-GAME-ARX-FATALIS-DEMO-20261007
-  status: blocked
+  status: queued (one owner-authorized retry; serialized)
+  retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
+  retry-order: 5 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
+  Next: Retry emulator startup exception diagnostics from preserved evidence; compare our CPU/memory/API behavior with documented semantics and fix with a regression.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none; arx-fault exited1
   candidate: test/binaries/win98-games-a-d/Arx_Fatalis-demo-D3D-Glide
-  Next: Automated possible-cybersecurity-risk rejection stopped diagnostic; no retry/rephrase. Root cleaned remote and preserved scratch/runs/20261007-arx-diagnostic-interrupted. Prior introAV unresolved; Darkstone refills lane.
+  Prior evidence: scratch/runs/20261007-arx-diagnostic-interrupted preserved; remote cleaned, intro AV unresolved.
   Done: Original asset closure registered locally, ordinary reviewed player scene and control evidence, scoped tested fixes integrated on main; no FPS claim without separate measurement.
   Evidence: scratch/wt-diehard-20261007/scratch/refill-after-diehard/shortlist.json; original ARX.exe SHAebd3e2b3; no currentmain registration or historical qualified run found.
 
@@ -1581,21 +1589,25 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: Command & Conquer: Tiberian Sun demo
   id: NEW-GAME-TIBERIAN-SUN-DEMO-20261006
-  status: blocked
+  status: queued (one owner-authorized retry; serialized)
+  retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
+  retry-order: 3 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
+  Next: Retry emulator activation/control-flow continuation diagnostics using preserved launch evidence; compare our Win32/x86 implementation against documented semantics and fix with a regression.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none (bad-transfer worker exited1 at2026-10-08T13:02:23.732Z after automatic cybersecurity rejection)
   candidate: test/binaries/win98-games-a-d/CnC-TiberianSun-demo-SW/extracted
-  Next: Parent10002 DirectDraw repaint loop and registered COM shadow-CPU activation repaired, including AddRef ULONG edge correction; root11182 hashes and real owner/paint regressions passed. Ordinary campaign loading now reaches first OleRun, then owning trap atEIP00d88176/ESP00d88168 in heap frame data. Next capture first bad control-flow producer, including activation continuation integrity; do not assume an independent guest defect or redo cleared menu/COM causes. Final AddRef edge tested/build-only d8d4096 differs from actual browser ff3281; gameplay still unqualified.
+  Prior evidence: Parent DirectDraw repaint and COM activation/AddRef fixes passed; first OleRun then trap EIP00d88176/ESP00d88168 in heap frame data remains. Tested AddRef build d8d4096 differs from browser ff3281; no gameplay qualification.
   Evidence: Shared historical task and fresh worker title audit2026-10-07. Darkstone already has controlledTown/camera evidence, so it is not rerun or counted as a new title. Tiberian Sun remains nonpublic and unqualified.
   Done: Registered original launch reaches a mission, ordinary input visibly commands units, reviewed screenshot with exact source/run identity, scoped tested changes pushed main. FPS/audio require separate evidence.
-  Blocker: Diagnostic preparation was rejected automatically for possible cybersecurity risk. No retry, rephrasing, or delegation of rejected operation. Existing work preserved; no new gameplay evidence.
 
 - [~] Diagnose original Winamp MilkDrop exception and validate visualization
   id: GLD3D-WINAMP-EXCEPTION-20261007
-  status: blocked
+  status: queued (one owner-authorized retry; serialized)
+  retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
+  retry-order: 6 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
+  Next: Retry emulator exception handling diagnostics from preserved evidence; identify and repair our documented CPU/Win32 semantic mismatch with a regression.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none (worker exited1 after automated rejection)
-  Next: HELD: automated cybersecurity-risk rejection terminated Winamp diagnostic worker at23:52:06. No retry/rephrasing/delegation of rejected diagnostic. Root recovered14 existing outputs and verified driver/browser exited; no exception cause or visualization qualification.
   Done: Demonstrated generic cause repaired with regression and ordinary original visualization reviewed; FPS/audio separate.
   Evidence: scratch/runs/20261007-winamp-milkdrop-complete-closure; ops/handoffs/winamp-milkdrop-ordinary-20261007.md
 
@@ -1862,11 +1874,15 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Colin McRae Rally 3 demo
   id: NEW-GAME-CMR3-DEMO-20261010
-  status: blocked (automatic-review replay hold; native diagnostic tested and merged)
+  status: queued (one owner-authorized retry; serialized)
+  retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
+  retry-order: 7 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
+  Next: Retry emulator memory/lifetime diagnostics from preserved replay evidence; compare our CPU/Win32 behavior with documented semantics and fix with a regression.
   runtime-revalidated: 2026-10-15 native recovery56105 terminal0; serialized remote runtime available, no transport blocker.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: test/binaries/win98-games-a-d/ColinMcRay-Rally3-pcdemo-D3D.exe
-  Next: Preserve rejected replay105999; do not retry/rephrase/delegate around automatic possible-cybersecurity-risk rejection (exact operation unspecified). Root stopped via ordinary ctl quit13:08:09, postflight identities unchanged and runtime inventory empty13:10:11. Diagnostic729d3fc73 merged after native lifetime/backend plus intended reason-zero negativecontrol/restored PASS104186. No new driving or corruption cause established. Fresh /root/new_game_refill_20261015 selects an independent unqualified title.
+  Prior evidence: Replay105999 preserved; ordinary quit and empty runtime verified historically. Diagnostic729d3fc73 merged, intended negative control/restored PASS104186; no driving or corruption cause established.
   Done: Original launch, player-controlled gameplay and reviewed screenshot with tested identity.
   Evidence: scratch/cmr3-demo-20261010/selection.json
 
@@ -1988,9 +2004,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Lords of the Realm II original playable Windows demo
   id: NEW-GAME-LORDS2-DEMO-20261015
-  status: blocked (automatic-review hold on GetWindow/GetNextWindow follow-up)
+  Prior evidence: scratch/runs/20261015-lords2-review-hold and shared WIP; original250171 reached GetNextWindow invalid1446 after GetParent fix, no gameplay.
+  status: queued (one owner-authorized retry; serialized)
+  retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
+  retry-order: 8 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
+  Next: Retry emulator GetWindow/GetNextWindow follow-up using preserved evidence; compare our Win32 implementation with documented behavior and fix with a regression.
   owner: /root/new_demo_refill
-  Next: Worker turn rejected for possible cybersecurity risk during scoped GetWindow/GetNextWindow follow-up; exact internal action not disclosed. Do not retry/rephrase/delegate. WIP preserved in scratch/runs/20261015-lords2-review-hold and source worktree; original250171 reached GetNextWindow invalid1446 after GetParent fix, no gameplay. Fresh independent new_game_refill_after_lords selects replacement lane.
   Done: Registered original launch, actual ordinary player control and reviewed gameplay screenshot with source/run identity.
 
 - title: USER ASK - add a FIFA game to the corpus (user linked FIFA Street; that is console-only, so a Win9x FIFA demo instead)

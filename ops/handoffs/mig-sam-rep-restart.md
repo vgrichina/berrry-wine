@@ -1,4 +1,6 @@
-# MIG-SAM-REP-RESTART — INCOMPLETE / needs review
+# MIG-SAM-REP-RESTART — owner-authorized emulator retry
+
+Owner authorized one retry on 2026-11-05, superseding the previous no-retry boundary. Reconcile against current main, validate documented x86/Win32 semantics, fix our emulator and add regressions. Guest programs remain unmodified test evidence. If flagged again, stop and record the exact operation and UTC timestamp; notify the owner on Telegram. No additional retry or rewording. The older account below is historical evidence, not a current stop instruction.
 
 Worker `codex:01a0f9db-4a5d-7733-ade9-8b71d8e3f05f`, 2026-10-02 UTC.
 Coordinator directed documentation-only stop after reporting an automated
