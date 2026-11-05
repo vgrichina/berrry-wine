@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 'use strict';
 // Exact rational geometry and IEEE-754 roundTiesToEven. This file imports no
-// renderer, clipper, plane, span or sampler. Public transport is loaded only
-// by publicRuns(); its floating reference is never an acceptance oracle here.
+// production renderer, clipper, plane, span or sampler arithmetic. The public
+// fixture supplies authored plans and transport; its floating reference is
+// never an acceptance oracle here.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),zlib=require('node:zlib');
 const gcd=(a,b)=>b?gcd(b,a%b):a<0n?-a:a;
 class Q{
@@ -99,7 +100,7 @@ function selfTest(){
   const d=new DataView(new ArrayBuffer(4));for(let i=0;i<1000;i++){const v=new Q(BigInt(i*7919-3000000),BigInt(i+17));d.setFloat32(0,v.number(),true);assert.equal(bits(v),d.getUint32(0,true));}
   return reference();
 }
-async function publicRuns(wasm,out){
+async function publicRuns(wasm,out,acceptPlacement=false){
   const transport=require('./test-legacy-fractional-color'),p=transport.plan(),states=[];
   for(const [prefix,order,point] of [['z-0.5,0.8,0.6/',[1,2,0],[16,4]],['z0,4,0/',[0,2,1],[5,6]],['z-0.5,0.8,0.6/',[0,1,2],[16,4]]]){
     for(const constant of [false,true])for(const fog of [false,true]){
@@ -115,6 +116,8 @@ async function publicRuns(wasm,out){
     states.push({...s,label:s.label+'/distinctQ',layers:s.layers.map(l=>({...l,matrix:qControl.layers[0].matrix,qCoefficients:qControl.layers[0].qCoefficients}))});
     states.push({...s,label:s.label+'/alpha',layers:s.layers.map(l=>l.name==='clipped'?{...l,alphaTest:true,diffuse:l.diffuse.map((c,i)=>((c&0xffffff)|([32,192,128][i]<<24))>>>0)}:l)});
   }
+  const expected=states.map(s=>s.samples.map(p=>placementSample(s,[p.x,p.y]).rgb));
+  fs.writeFileSync(path.join(out,'independent-precision-pixels.json'),JSON.stringify({states,expected},null,2));
   let images;const summaries=[];
   for(const queued of [false,true])for(const indexed of [false,true]){
     const r=await transport.run(wasm,{states,queued,indexed});assert.equal(r.failure,null);assert.equal(r.status,'PASS');
@@ -142,10 +145,120 @@ async function publicRuns(wasm,out){
     const opaque=states.findIndex(s=>s.label===states[alpha].label.replace('/alpha',''));
     assert.notDeepEqual(targets[alpha],targets[opaque],'public alpha-test discriminator');
     fs.writeFileSync(path.join(out,`public-${queued}-${indexed}.json.gz`),zlib.gzipSync(JSON.stringify(r)));
+    if(acceptPlacement)for(let i=0;i<r.observations.length;i++)assert.deepEqual(r.observations[i].actual,expected[Math.floor(i/5)][i%5],'independent fixed-conversion boundary and neighbor RGB');
     summaries.push({queued,indexed,moduleSHA:r.wasmSHA256,scenes:states.length,draws:r.drawCount,observations:r.observations.map(o=>({label:o.label,actual:o.actual,expected:o.expected}))});
   }
   fs.writeFileSync(path.join(out,'public-summary.json'),JSON.stringify(summaries,null,2));return images;
 }
-async function main(){const report=selfTest(),out=process.argv.find(a=>a.startsWith('--out='))?.slice(6),wasm=process.argv.find(a=>a.startsWith('--wasm='))?.slice(7);if(out){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'exact-reference.json'),JSON.stringify(report,null,2));}if(wasm){assert(out);await publicRuns(wasm,out);}console.log('PASS exact rational / binary32 boundary diagnostics'+(wasm?' and public transport characterizations':''));}
+// A scoped software arithmetic contract, not a native D3D7 byte mandate.
+// Inputs are authored fixture values, never renderer traces or captured output.
+// RN at each operation uses the BigInt IEEE implementation above. Clipping,
+// coordinate storage, alpha, fog and truncating channel conversion are held
+// fixed; the selectable RGB calculation isolates sample placement only.
+const add=(a,b)=>f(q(a).add(b)),sub=(a,b)=>f(q(a).sub(b)),mul=(a,b)=>f(q(a).mul(b)),div=(a,b)=>f(q(a).div(b));
+const lerp=(a,b,t)=>add(a,mul(sub(b,a),t));
+const byte=v=>Number(q(v).n<0n?0n:q(v).sub(255).n>0n?255n:q(v).floor());
+const coord=v=>Number(add(v,'0.5').floor());
+const unpack=n=>[n>>>16&255,n>>>8&255,n&255,n>>>24].map(q);
+function placementVertices(layer,inputOnly=false){
+  let poly=layer.manual?layer.manual.map(v=>({s:[f(q(16).mul(q(v.h[0]).div(q(v.h[3])).add(1))),f(q(16).mul(q(1).sub(q(v.h[1]).div(q(v.h[3])))))],z:f(q(v.h[2]).div(q(v.h[3]))),r:f(q(1).div(q(v.h[3]))),c:v.c.map(q),fog:q(v.f)})):
+    layer.order.map(i=>{
+      const z=f(q(layer.zs[i])),w=layer.geomW?add(1,mul(z,'0.5')):q(1),r=div(1,w);
+      // Guest x/y are stored before the matrix multiply. The fixture authors
+      // x/y with its decimal w, so that store is distinct from projected w.
+      const authoredW=layer.geomW?q(1).add(q(layer.zs[i]).div(2)):q(1);
+      const x=f(authoredW.mul([-1,1,-1][i])),y=f(authoredW.mul([1,1,-1][i]));
+      return {s:[add(16,mul(mul(x,r),16)),sub(16,mul(mul(y,r),16))],z:mul(z,r),r,c:unpack(layer.diffuse[i]),fog:q(layer.factors[i])};
+    });
+  // Explicit TL inputs bypass homogeneous clipping in the public route.
+  if(layer.manual||inputOnly)return poly;
+  for(const far of [false,true]){
+    const distance=v=>div(far?sub(1,v.z):v.z,v.r),out=[];
+    for(let i=0;i<poly.length;i++){
+      const a=poly[(i+poly.length-1)%poly.length],b=poly[i],da=distance(a),db=distance(b);
+      if((da.n<0n)!==(db.n<0n)){
+        const t=div(da,sub(da,db)),wa=div(1,a.r),wb=div(1,b.r),w=lerp(wa,wb,t);
+        const h=(v,w,c)=>mul(div(c?sub(16,v.s[c]):sub(v.s[c],16),16),w);
+        const cx=lerp(h(a,wa,0),h(b,wb,0),t),cy=lerp(h(a,wa,1),h(b,wb,1),t);
+        out.push({s:[add(16,mul(div(cx,w),16)),sub(16,mul(div(cy,w),16))],z:q(far?1:0),r:div(1,w),c:a.c.map((v,c)=>q(byte(lerp(v,b.c[c],t)))),fog:q(byte(lerp(a.fog,b.fog,t)))});
+      }
+      if(db.n>=0n)out.push(b);
+    }
+    poly=out;
+  }
+  return poly;
+}
+function placementPlane(tri,values,point,undivided=false){
+  const [o,u,v]=tri.map(v=>v.s),dx1=sub(u[0],o[0]),dy1=sub(u[1],o[1]),dx2=sub(v[0],o[0]),dy2=sub(v[1],o[1]);
+  const det=sub(mul(dx1,dy2),mul(dx2,dy1)),df1=sub(values[1],values[0]),df2=sub(values[2],values[0]);
+  if(det.n===0n)return undivided?null:values[0];
+  const a=sub(mul(df1,dy2),mul(df2,dy1)),b=sub(mul(dx1,df2),mul(dx2,df1));
+  // Anchor at the first packed channel, just as the existing byte lerp does.
+  // Divide the displacement once. A zero displacement stays zero exactly;
+  // multiplying the base channel by area and dividing again needlessly loses
+  // constant-channel and endpoint identities for nonintegral determinants.
+  if(undivided)return add(values[0],div(add(mul(a,sub(point[0],o[0])),mul(b,sub(point[1],o[1]))),det));
+  const ax=div(a,det),by=div(b,det),c=sub(values[0],add(mul(ax,o[0]),mul(by,o[1])));
+  return add(c,add(mul(ax,point[0]),mul(by,point[1])));
+}
+function placementSpan(tri,point){
+  const vertices=tri.map(v=>({...v,s:v.s.map(coord)}));
+  // Same stable y ordering, but derived from the public fixture, not a trace.
+  for(const [a,b] of [[0,1],[1,2],[0,1]])if(vertices[a].s[1]>vertices[b].s[1])[vertices[a],vertices[b]]=[vertices[b],vertices[a]];
+  const [a,b,c]=vertices,[x,y]=point;
+  if(y<a.s[1]||y>=c.s[1])return null;
+  const edge=(a,b)=>{const t=div(y-a.s[1],b.s[1]-a.s[1]);return {x:coord(lerp(a.s[0],b.s[0],t)),c:a.c.map((v,i)=>q(byte(lerp(v,b.c[i],t)))),z:lerp(a.z,b.z,t)};};
+  let l=edge(a,c),r=y<b.s[1]?edge(a,b):edge(b,c);
+  if(l.x>r.x)[l,r]=[r,l];if(l.x===r.x||x<l.x||x>=r.x)return null;
+  const t=mul(x-l.x,div(1,r.x-l.x));
+  return {c:l.c.map((v,i)=>byte(lerp(v,r.c[i],t))),z:lerp(l.z,r.z,t)};
+}
+function placementSample(scene,point,legacyRGB=false,polygons=null){
+  let depth=65535,rgb=[11,22,33],winner=null;
+  for(const [layerIndex,layer] of scene.layers.entries()){
+    const poly=polygons?.[layerIndex]||placementVertices(layer);
+    for(let i=1;i+1<poly.length;i++){
+      const tri=[poly[0],poly[i],poly[i+1]],span=placementSpan(tri,point);if(!span)continue;
+      const z=layer.manual?span.z:placementPlane(tri,tri.map(v=>v.z),point),raw=byteDepth(z);
+      if(raw>=depth||layer.alphaTest&&span.c[3]<=100)continue;
+      let channels=legacyRGB?span.c.slice(0,3).map(q):[0,1,2].map(c=>placementPlane(tri,tri.map(v=>v.c[c]),point,true));
+      // Collinear stored vertices have no unique affine RGB field. Preserve
+      // the existing span behavior if coordinate rounding gives them coverage.
+      if(channels.some(v=>v===null))channels=span.c.slice(0,3).map(q);
+      let color=channels.map(byte);
+      let fog=q(1);
+      if(layer.fog){
+        const fogTri=layer.manual?tri.map(v=>({...v,s:v.s.map(v=>q(coord(v)))})):tri;
+        fog=placementPlane(fogTri,tri.map(v=>div(v.fog,255)),point);
+        fog=fog.n<0n?q(0):fog.sub(1).n>0n?q(1):fog;
+        color=color.map((v,c)=>byte(lerp(layer.fogColor[c],v,fog)));
+      }
+      depth=raw;rgb=color;winner={tri,raw,alpha:span.c[3],channels,fog,rgb};
+    }
+  }
+  return {rgb,winner};
+}
+function placementTarget(scene,legacyRGB=false){
+  const polygons=scene.layers.map(l=>placementVertices(l)),rgba=[];
+  for(let y=0;y<32;y++)for(let x=0;x<32;x++)rgba.push(...placementSample(scene,[x,y],legacyRGB,polygons).rgb,255);
+  return rgba;
+}
+function byteDepth(z){z=q(z);return Number(mul(z.n<0n?0:z.sub(1).n>0n?1:z,65535).floor());}
+function placementSelfTest(){
+  // Mathematical identity discriminator independent of any rendered witness:
+  // the area-multiplied base can lose a constant byte before final truncation.
+  const d=f(q(3).div(137)),constantTri=[{s:[q(0),q(0)]},{s:[q(1),q(0)]},{s:[q(0),d]}];
+  assert.equal(byte(div(mul(15,d),d)),14);
+  for(const point of [[0,0],[1,0],['0.25','0.001']])assert.equal(byte(placementPlane(constantTri,[q(15),q(15),q(15)],point,true)),15);
+  const transport=require('./test-legacy-fractional-color'),p=transport.plan();
+  const find=(prefix,order)=>p.states.find(s=>s.label.startsWith(prefix)&&s.geomW&&!s.constant&&!s.fog&&String(s.order)===String(order));
+  const primary=find('z-0.5,0.8,0.6/',[0,1,2]),cyclic=find('z-0.5,0.8,0.6/',[1,2,0]),far=find('z0,4,0/',[0,2,1]);
+  const cases=[[primary,[16,4],[104,51,131]],[cyclic,[16,4],[99,54,133]],[far,[5,6],[46,62,116]]];
+  for(const [s,pixel,expected] of cases)assert.deepEqual(placementSample(s,pixel).rgb,expected);
+  assert.deepEqual(placementSample(primary,[16,4],true).rgb,[108,51,133]);
+  const near=placementVertices(cyclic.layers[0]);assert.equal(bits(near[0].s[0]),0x4189d89e);
+  return cases.map(([s,pixel])=>({label:s.label,pixel,placed:placementSample(s,pixel),legacy:placementSample(s,pixel,true)}));
+}
+async function main(){const report=selfTest(),placement=placementSelfTest(),out=process.argv.find(a=>a.startsWith('--out='))?.slice(6),wasm=process.argv.find(a=>a.startsWith('--wasm='))?.slice(7);if(out){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'exact-reference.json'),JSON.stringify({report,placement},null,2));}if(wasm){assert(out);await publicRuns(wasm,out,process.argv.includes('--placement'));}console.log('PASS exact rational / binary32 boundary diagnostics and scoped RGB placement reference'+(wasm?' and public transport checks':''));}
 if(require.main===module)main().catch(e=>{console.error(e.stack);process.exitCode=1;});
-module.exports={Q,bits,bitsQ,f,clip,project,bary,authored,reference,selfTest,publicRuns};
+module.exports={Q,bits,bitsQ,f,clip,project,bary,authored,reference,selfTest,publicRuns,placementVertices,placementPlane,placementSample,placementTarget,placementSelfTest};

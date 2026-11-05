@@ -438,6 +438,7 @@
   ;; enable flags below guard their use and each draw supplies fresh values.
   (func (export "d3d_render_reset_transients")
     (global.set $d3dim_supplied_projection (i32.const 0))
+    (global.set $d3dim_color_on (i32.const 0))
     (global.set $d3dim_mip_on (i32.const 0))
     (global.set $rast_fog_on (i32.const 0))
     (global.set $rast_t1_on (i32.const 0))
@@ -6301,6 +6302,11 @@
       (local.set $diffuse (if (result i32) (i32.eq (local.get $c0) (local.get $c1))
         (then (local.get $c0))
         (else (call $d3dim_color_lerp (local.get $c0) (local.get $c1) (local.get $t)))))
+      ;; Correct RGB placement while retaining the existing span alpha.
+      (if (global.get $d3dim_color_on) (then
+        (local.set $diffuse (i32.or
+          (i32.and (local.get $diffuse) (i32.const 0xFF000000))
+          (call $d3dim_sample_color (local.get $x) (local.get $y))))))
       (if (global.get $d3dim_mip_on)
         (then
           (local.set $sample (call $d3dim_mip_sample (local.get $tex_entry)
@@ -8107,6 +8113,76 @@
   (global $d3dim_sample_za (mut f32) (f32.const 0))
   (global $d3dim_sample_zb (mut f32) (f32.const 0))
   (global $d3dim_sample_zc (mut f32) (f32.const 0))
+  ;; Gouraud RGB belongs to the stored floating TL positions, not rounded
+  ;; coverage vertices or packed scanline endpoints. Keep clipped colour bytes,
+  ;; alpha, fog and output truncation unchanged. Anchor the affine displacement
+  ;; at c0 so constant channels remain exact even with a fractional determinant.
+  (global $d3dim_color_on (mut i32) (i32.const 0))
+  (global $d3dim_color_ra (mut f32) (f32.const 0))
+  (global $d3dim_color_rb (mut f32) (f32.const 0))
+  (global $d3dim_color_rc (mut f32) (f32.const 0))
+  (global $d3dim_color_ga (mut f32) (f32.const 0))
+  (global $d3dim_color_gb (mut f32) (f32.const 0))
+  (global $d3dim_color_gc (mut f32) (f32.const 0))
+  (global $d3dim_color_ba (mut f32) (f32.const 0))
+  (global $d3dim_color_bb (mut f32) (f32.const 0))
+  (global $d3dim_color_bc (mut f32) (f32.const 0))
+  (global $d3dim_color_pa (mut f32) (f32.const 0))
+  (global $d3dim_color_pb (mut f32) (f32.const 0))
+  (global $d3dim_color_pc (mut f32) (f32.const 0))
+  (global $d3dim_color_x (mut f32) (f32.const 0))
+  (global $d3dim_color_y (mut f32) (f32.const 0))
+  (global $d3dim_color_det (mut f32) (f32.const 0))
+  (func $d3dim_color_channel_plane (param $v0 i32) (param $v1 i32) (param $v2 i32)
+    (param $c0 i32) (param $c1 i32) (param $c2 i32) (param $shift i32)
+    (local $dx1 f32) (local $dy1 f32) (local $dx2 f32) (local $dy2 f32)
+    (local $f0 f32) (local $df1 f32) (local $df2 f32) (local $det f32)
+    (global.set $d3dim_color_x (f32.load (local.get $v0)))
+    (global.set $d3dim_color_y (f32.load offset=4 (local.get $v0)))
+    (local.set $dx1 (f32.sub (f32.load (local.get $v1)) (global.get $d3dim_color_x)))
+    (local.set $dy1 (f32.sub (f32.load offset=4 (local.get $v1)) (global.get $d3dim_color_y)))
+    (local.set $dx2 (f32.sub (f32.load (local.get $v2)) (global.get $d3dim_color_x)))
+    (local.set $dy2 (f32.sub (f32.load offset=4 (local.get $v2)) (global.get $d3dim_color_y)))
+    (local.set $f0 (f32.convert_i32_u (i32.and (i32.shr_u (local.get $c0) (local.get $shift)) (i32.const 255))))
+    (local.set $df1 (f32.sub (f32.convert_i32_u (i32.and (i32.shr_u (local.get $c1) (local.get $shift)) (i32.const 255))) (local.get $f0)))
+    (local.set $df2 (f32.sub (f32.convert_i32_u (i32.and (i32.shr_u (local.get $c2) (local.get $shift)) (i32.const 255))) (local.get $f0)))
+    (local.set $det (f32.sub (f32.mul (local.get $dx1) (local.get $dy2)) (f32.mul (local.get $dx2) (local.get $dy1))))
+    ;; No unique affine field at exact zero: retain the existing span path.
+    (if (f32.eq (local.get $det) (f32.const 0)) (then
+      (global.set $d3dim_color_on (i32.const 0))
+      (local.set $det (f32.const 1))))
+    (global.set $d3dim_color_det (local.get $det))
+    (global.set $d3dim_color_pa (f32.sub (f32.mul (local.get $df1) (local.get $dy2)) (f32.mul (local.get $df2) (local.get $dy1))))
+    (global.set $d3dim_color_pb (f32.sub (f32.mul (local.get $dx1) (local.get $df2)) (f32.mul (local.get $dx2) (local.get $df1))))
+    (global.set $d3dim_color_pc (local.get $f0)))
+  (func $d3dim_color_plane (param $v0 i32) (param $v1 i32) (param $v2 i32)
+    (param $c0 i32) (param $c1 i32) (param $c2 i32)
+    (global.set $d3dim_color_on (i32.const 1))
+    (call $d3dim_color_channel_plane (local.get $v0) (local.get $v1) (local.get $v2) (local.get $c0) (local.get $c1) (local.get $c2) (i32.const 16))
+    (global.set $d3dim_color_ra (global.get $d3dim_color_pa))
+    (global.set $d3dim_color_rb (global.get $d3dim_color_pb))
+    (global.set $d3dim_color_rc (global.get $d3dim_color_pc))
+    (call $d3dim_color_channel_plane (local.get $v0) (local.get $v1) (local.get $v2) (local.get $c0) (local.get $c1) (local.get $c2) (i32.const 8))
+    (global.set $d3dim_color_ga (global.get $d3dim_color_pa))
+    (global.set $d3dim_color_gb (global.get $d3dim_color_pb))
+    (global.set $d3dim_color_gc (global.get $d3dim_color_pc))
+    (call $d3dim_color_channel_plane (local.get $v0) (local.get $v1) (local.get $v2) (local.get $c0) (local.get $c1) (local.get $c2) (i32.const 0))
+    (global.set $d3dim_color_ba (global.get $d3dim_color_pa))
+    (global.set $d3dim_color_bb (global.get $d3dim_color_pb))
+    (global.set $d3dim_color_bc (global.get $d3dim_color_pc)))
+  (func $d3dim_color_channel (param $x i32) (param $y i32)
+    (param $a f32) (param $b f32) (param $c f32) (result i32)
+    ;; Same f32 -> unsigned truncation and byte saturation as color_lerp.
+    (i32.trunc_sat_f32_u (f32.max (f32.const 0) (f32.min (f32.const 255)
+      (f32.add (local.get $c) (f32.div (f32.add
+        (f32.mul (local.get $a) (f32.sub (f32.convert_i32_s (local.get $x)) (global.get $d3dim_color_x)))
+        (f32.mul (local.get $b) (f32.sub (f32.convert_i32_s (local.get $y)) (global.get $d3dim_color_y))))
+        (global.get $d3dim_color_det)))))))
+  (func $d3dim_sample_color (param $x i32) (param $y i32) (result i32)
+    (i32.or (i32.or
+      (i32.shl (call $d3dim_color_channel (local.get $x) (local.get $y) (global.get $d3dim_color_ra) (global.get $d3dim_color_rb) (global.get $d3dim_color_rc)) (i32.const 16))
+      (i32.shl (call $d3dim_color_channel (local.get $x) (local.get $y) (global.get $d3dim_color_ga) (global.get $d3dim_color_gb) (global.get $d3dim_color_gc)) (i32.const 8)))
+      (call $d3dim_color_channel (local.get $x) (local.get $y) (global.get $d3dim_color_ba) (global.get $d3dim_color_bb) (global.get $d3dim_color_bc))))
   (func $d3dim_sample_plane
     (param $v0 i32) (param $v1 i32) (param $v2 i32)
     (param $f0 f32) (param $f1 f32) (param $f2 f32)
@@ -8287,6 +8363,12 @@
         (call $d3dim_fog_factor (local.get $v2))
         (call $gl32 (i32.add (local.get $state) (i32.const 392))))))
     (global.set $d3dim_sample_on (i32.ne (global.get $d3dim_supplied_projection) (i32.const 0)))
+    (global.set $d3dim_color_on (i32.const 0))
+    (if (i32.ne (i32.and (i32.or
+          (i32.xor (local.get $c0) (local.get $c1))
+          (i32.xor (local.get $c0) (local.get $c2))) (i32.const 0x00FFFFFF)) (i32.const 0)) (then
+      (call $d3dim_color_plane (local.get $v0) (local.get $v1) (local.get $v2)
+        (local.get $c0) (local.get $c1) (local.get $c2))))
     (if (global.get $d3dim_sample_on) (then
       (call $d3dim_sample_plane (local.get $v0) (local.get $v1) (local.get $v2) (f32.mul (local.get $u0) (f32.load offset=12 (local.get $v0))) (f32.mul (local.get $u1) (f32.load offset=12 (local.get $v1))) (f32.mul (local.get $u2) (f32.load offset=12 (local.get $v2))))
       (global.set $d3dim_sample_ua (global.get $rast_pa))
@@ -8343,6 +8425,7 @@
       (local.get $zbuf) (local.get $zfunc) (local.get $zwrite)
       (local.get $texture_q0) (local.get $texture_q1) (local.get $texture_q2))
     (global.set $d3dim_sample_on (i32.const 0))
+    (global.set $d3dim_color_on (i32.const 0))
     (global.set $d3dim_mip_on (i32.const 0))
     (global.set $rast_fog_on (i32.const 0)))
 

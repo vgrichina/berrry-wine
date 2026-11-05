@@ -173,6 +173,13 @@ async function main(){
   const wasm=process.argv.find(a=>a.startsWith('--wasm='))?.slice(7);
   if(!wasm){console.log('PASS homogeneous packed-colour plan ONLY',p.states.length);return;}
   const out=process.argv.find(a=>a.startsWith('--out='))?.slice(6);assert(out);fs.mkdirSync(out,{recursive:true});
+  // Retain the historical ideal-real diagnostic and its failures explicitly.
+  // Public acceptance defaults to the independently derived, scoped software
+  // operations; --ideal-strict still exposes the old unsupported byte mandates.
+  if(process.argv.includes('--placement')||process.argv.includes('--baseline-placement')||
+      !process.argv.includes('--characterize')&&!process.argv.includes('--ideal-strict')){
+    await placementRuns(wasm,out,process.argv.includes('--baseline-placement'));return;
+  }
   const characterize=process.argv.includes('--characterize'),summary=[];let images,moduleSHA;
   for(const queued of [false,true])for(const indexed of [false,true]){
     const r=await run(wasm,{queued,indexed});
@@ -221,5 +228,80 @@ async function main(){
     console.log('PASS rendered rejection',negative);
   }
 }
+function placementPlan(){
+  const p=plan(),base=p.states.find(s=>!s.geomW&&!s.constant&&!s.fog&&s.label.startsWith('z0.2,0.8,0.6/'));
+  for(const order of [[0,1,2],[0,2,1],[1,2,0]])for(const fog of [false,true]){
+    const s=p.states.find(s=>s.geomW&&!s.constant&&s.fog===fog&&String(s.order)===String(order)&&s.label.startsWith('z-0.5,0.8,0.6/'));
+    p.states.push({...s,label:s.label+'/constantGreen',layers:s.layers.map(l=>l.name==='clipped'?{...l,diffuse:l.diffuse.map(c=>((c&0xffff00ff)|0x6000)>>>0)}:l)});
+  }
+  // Fractional x AND y, independent of depth clipping. Translate all three
+  // vertices across rounding cells, testing the general placement mechanism.
+  for(const delta of [-.25,0,.25])for(const order of [[0,1,2],[0,2,1],[1,2,0]])
+    for(const constant of [false,true])for(const fog of [false,true]){
+      const positions=[[.75+delta,.625+delta],[30.25+delta,1.375+delta],[1.25+delta,30.125+delta]];
+      const vertices=positions.map(([x,y],i)=>{const w=[1,2,4][i];return {h:[(x/16-1)*w,(1-y/16)*w,.25*w,w],c:constant?[64,96,128,255]:[[16,48,80,32],[224,40,176,192],[64,128,224,128]][i],f:constant?96:[32,128,224][i]};});
+      const layers=base.layers.map(l=>l.name==='clipped'?{...l,manual:order.map(i=>vertices[i]),order,fog,alphaTest:!constant}: {...l,order,fog:false});
+      p.states.push({...base,label:`fractionalXY/${delta}/order${order}/constant${constant}/fog${fog}`,constant,fog,order,layers,
+        samples:[{x:8,y:12},{x:9,y:12},{x:8,y:13},{x:16,y:4},{x:5,y:6},{x:1,y:1},{x:28,y:28}]});
+  }
+  for(const fog of [false,true]){
+    // Exactly collinear in stored binary32, but rounding gives a thin covered
+    // triangle. With no unique RGB plane, preserve the old span interpolation.
+    const manual=[[1.25,1.25],[10.25,5.75],[23.25,12.25]].map(([x,y],i)=>({h:[x/16-1,1-y/16,.25,1],c:[[16,48,80,255],[224,40,176,255],[64,128,224,255]][i],f:[32,128,224][i]}));
+    p.states.push({...base,label:`collinearStored/fog${fog}`,fog,layers:base.layers.map(l=>l.name==='clipped'?{...l,manual,fog}:l)});
+  }
+  return p;
+}
+async function placementRuns(wasm,out,legacyRGB=false){
+  const ref=require('./test-legacy-color-precision');ref.selfTest();ref.placementSelfTest();
+  const p=placementPlan();
+  // Seal expected values BEFORE the public draw. Never use captures, traces
+  // or observed bytes to populate or correct this table.
+  const expected=p.states.map(s=>s.samples.map(v=>ref.placementSample(s,[v.x,v.y],legacyRGB).rgb));
+  fs.writeFileSync(path.join(out,'independent-expected.json'),JSON.stringify({legacyRGB,states:p.states,expected},null,2));
+  const expectedTargets=p.states.map(s=>ref.placementTarget(s,legacyRGB));
+  fs.writeFileSync(path.join(out,'independent-complete-targets.json.gz'),zlib.gzipSync(JSON.stringify(expectedTargets)));
+  let targets;const summary=[];
+  for(const queued of [false,true])for(const indexed of [false,true]){
+    const r=await run(wasm,{states:p.states,queued,indexed});
+    fs.writeFileSync(path.join(out,`placement-${queued}-${indexed}.json.gz`),zlib.gzipSync(JSON.stringify(r)));
+    assert.equal(r.failure,null);assert.equal(r.status,'PASS');assert.equal(r.observations.length,p.states.length*7);
+    const mismatch=[];
+    for(let i=0;i<p.states.length;i++)for(let j=0;j<7;j++){
+      const o=r.observations[i*7+j],want=expected[i][j];
+      if(String(o.actual)!==String(want))mismatch.push({label:o.label,actual:o.actual,expected:want, historicalIdeal:o.expected});
+    }
+    const next=r.observations.filter((_,i)=>i%7===0).map(o=>o.dibRGBA);
+    const targetMismatch=[];
+    for(let i=0;i<next.length;i++)for(let k=0;k<next[i].length;k+=4)
+      if(next[i].slice(k,k+3).some((v,c)=>v!==expectedTargets[i][k+c]))targetMismatch.push({label:p.states[i].label,x:k/4%32,y:Math.floor(k/128),actual:next[i].slice(k,k+3),expected:expectedTargets[i].slice(k,k+3)});
+    if(targets)assert.deepEqual(next,targets,'complete immediate/indexed/physicalWorker targets');else targets=next;
+    for(let i=0;i<p.states.length;i++)if(p.states[i].label.endsWith('/otherTextureQ')){
+      const j=p.states.findIndex(s=>s.label===p.states[i].label.replace('/otherTextureQ',''));assert.deepEqual(next[i],next[j],'Q leaves RGB/depth/fog unchanged');
+    }
+    if(queued){
+      assert.equal(r.transport.fallbacks,0);assert.equal(r.transport.replayCommands,p.states.length*2);assert.equal(r.records.length,p.states.length);assert.equal(r.immutable.length,p.states.length);
+      for(const row of r.immutable)assert.deepEqual(row.after,row.before,'immutable capture after source/index/state mutations');
+      for(let i=0;i<p.states.length;i++)for(let j=0;j<2;j++){
+        const input=ref.placementVertices(p.states[i].layers[j],true);
+        for(let k=0;k<3;k++)assert.deepEqual(r.records[i][j].vertices[k].slice(0,4),[...input[k].s,input[k].z,input[k].r].map(v=>v.number()),'independent exact binary32 captured screen/depth/reciprocal storage');
+      }
+    }
+    summary.push({queued,indexed,wasmSHA256:r.wasmSHA256,targetSHA256:next.map(v=>sha(Buffer.from(v))),draws:r.drawCount,pixels:r.observations.length,mismatch,targetMismatch});
+    fs.writeFileSync(path.join(out,'placement-summary.json'),JSON.stringify({legacyRGB,summary},null,2));
+    console.log(JSON.stringify({queued,indexed,pixels:r.observations.length,mismatches:mismatch.length,targetMismatches:targetMismatch.length,first:mismatch[0]||targetMismatch[0]}));
+    assert.deepEqual(mismatch,[],'independent fixed-conversion RGB placement reference');
+    assert.deepEqual(targetMismatch,[],'independent complete target including preserved coverage/alpha/fog/depth');
+  }
+  if(!legacyRGB)for(const negative of ['constant-diffuse','fog-off','alpha-off']){
+    const scene=p.states.find(s=>s.geomW&&!s.constant&&s.label.startsWith('z-0.5,0.8,0.6/')&&(negative==='fog-off'?s.fog:negative==='alpha-off'?s.label.endsWith('/alphaTest'):!s.fog));
+    const wants=scene.samples.map(v=>ref.placementSample(scene,[v.x,v.y]).rgb),r=await run(wasm,{states:[scene]},negative);
+    fs.writeFileSync(path.join(out,`placement-negative-${negative}.json.gz`),zlib.gzipSync(JSON.stringify(r)));
+    assert.equal(r.failure,null);assert.equal(r.status,'PASS');
+    assert(r.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0));assert(r.calls.some(c=>c.label==='Lock Surface7'&&c.result===0));
+    assert(r.observations.some((o,i)=>String(o.actual)!==String(wants[i])),'independent rendered negative '+negative);
+  }
+  return targets;
+}
+module.exports={plan,oracle,fixtureSource,run,placementPlan,placementRuns};
 if(require.main===module)main().catch(e=>{console.error(e.stack);process.exitCode=1;});
-module.exports={plan,oracle,fixtureSource,run};
