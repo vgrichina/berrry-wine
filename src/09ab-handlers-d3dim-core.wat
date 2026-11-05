@@ -6970,7 +6970,7 @@
           (i32.and (local.get $dst) (i32.const 255))
           (local.get $alpha) (local.get $src_blend) (local.get $dst_blend)))))
 
-  ;; A8R8G8B8 framebuffer blending uses destination alpha and writes alpha.
+  ;; Alpha-bearing framebuffer blending uses destination alpha and writes alpha.
   ;; Keep the established legacy ZERO/SRCCOLOR RGB truncation fast path;
   ;; the remaining RGBA channels use the same rounded byte equation as GL.
   (func $d3dim_blend_argb
@@ -7342,7 +7342,7 @@
     (local $fast16 i32) (local $wmask i32) (local $hmask i32) (local $twf f32) (local $thf f32)
     (local $sx f32) (local $sy f32) (local $flx f32) (local $fly f32)
     (local $wx i32) (local $wy i32) (local $ix0 i32) (local $ix1 i32) (local $iy0 i32) (local $iy1 i32)
-    (local $rtfmt i32) (local $rt555 i32)
+    (local $rtfmt i32) (local $rt555 i32) (local $rtalpha i32)
     (local $trow0 i32) (local $trow1 i32) (local $pv v128) (local $cv v128) (local $hv v128)
     (local.set $sw (i32.and (i32.load (i32.add (local.get $rt_entry) (i32.const 12))) (i32.const 0xFFFF)))
     (local.set $sh (i32.shr_u (i32.load (i32.add (local.get $rt_entry) (i32.const 12))) (i32.const 16)))
@@ -7374,6 +7374,10 @@
     (local.set $dib_wa (i32.load (i32.add (local.get $rt_entry) (i32.const 20))))
     (if (i32.eqz (local.get $dib_wa)) (then (return)))
     (local.set $rtfmt (call $dx_surf_fmt_get (local.get $rt_entry)))
+    (local.set $rtalpha (i32.or
+      (i32.or (i32.eq (local.get $rtfmt) (i32.const 3))
+              (i32.eq (local.get $rtfmt) (i32.const 4)))
+      (i32.eq (local.get $rtfmt) (i32.const 5))))
     (local.set $rt555 (i32.and (i32.eq (local.get $bpp) (i32.const 16))
       (i32.or (i32.eq (local.get $rtfmt) (i32.const 2)) (i32.eq (local.get $rtfmt) (i32.const 3)))))
     (local.set $tw (i32.load16_u offset=12 (local.get $tex_entry)))
@@ -7772,7 +7776,7 @@
             (then (local.set $dst (i32.load (local.get $ptr))))
             (else
               (local.set $px16 (i32.load16_u (local.get $ptr)))
-              (local.set $dst (if (result i32) (local.get $rt555)
+              (local.set $dst (if (result i32) (i32.or (local.get $rt555) (local.get $rtalpha))
                 (then (call $d3dim_decode_surface_pixel_fmt
                   (local.get $rtfmt) (local.get $px16) (i32.const 16)))
                 (else (i32.or
@@ -7782,7 +7786,7 @@
                   (i32.shl (i32.and (local.get $px16) (i32.const 31)) (i32.const 3))))))))
           (local.set $color (if (result i32) (global.get $gl_sw_rgba_span)
             (then (call $gl_sw_blend_rgba (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))
-            (else (if (result i32) (i32.eq (local.get $rtfmt) (i32.const 5))
+            (else (if (result i32) (local.get $rtalpha)
               (then (call $d3dim_blend_argb (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))
               (else (call $d3dim_blend_rgb (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))))))))
         ;; D3DANTIALIAS_SORTDEPENDENT smooths polygon boundaries against the
@@ -7818,6 +7822,10 @@
           (if (global.get $rast_gl_dither) (then
             (local.set $color (call $gl_logic_dither_source (local.get $color)
               (local.get $x) (local.get $y) (local.get $rt555)))))
+          (if (local.get $rtalpha)
+            (then (local.set $px16 (call $d3dim_encode_surface_pixel
+              (local.get $rt_entry) (local.get $color) (i32.const 16))))
+            (else
           (if (local.get $rt555)
             ;; X1R5G5B5 target -- a BI_RGB 16bpp DIB, which is what an
             ;; OpenGL bitmap context renders into (SimGolf). Packing 565 into
@@ -7835,7 +7843,7 @@
               (local.set $px16 (i32.or (i32.or
                 (i32.shl (i32.and (i32.shr_u (local.get $color) (i32.const 19)) (i32.const 0x1F)) (i32.const 11))
                 (i32.shl (i32.and (i32.shr_u (local.get $color) (i32.const 10)) (i32.const 0x3F)) (i32.const 5)))
-                (i32.and (i32.shr_u (local.get $color) (i32.const 3)) (i32.const 0x1F))))))))
+                (i32.and (i32.shr_u (local.get $color) (i32.const 3)) (i32.const 0x1F))))))))))
           (local.set $ptr (i32.add (local.get $row_wa) (i32.mul (local.get $x) (i32.const 2))))
           (if (global.get $rast_gl_logic) (then
             (local.set $px16 (call $gl_logic_word (local.get $px16) (i32.load16_u (local.get $ptr))))))
