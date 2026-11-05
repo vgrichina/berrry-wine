@@ -2146,11 +2146,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-CONAN-DEMO-20261010
-  blocker: Recorded original installer absent locally; verified media reconstruction and a free worker slot required. Fresh box creation and command access succeeded.
-  status: pending (fresh replacement provisioned; original media reconstruction pending)
+  blocker: Newly recovered Conan demo installer available; equivalence to historical fixture unknown. Supporting inputs and free worker/runtime slot required. Fresh box creation and command access succeeded.
+  status: pending (fresh replacement provisioned; newly recovered demo pinned, historical identity unknown)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   worker: none (four existing workers occupied; replacement setup prepared by coordinator)
   candidate: test/binaries/win98-games-a-d/Conan cauldron-DX9-D3D/ConanPC-Demo.exe
+  Media recovered 2026-11-05: scratch/game-media/conan-demo-20261105/ConanPC-Demo-from-Herni-Vyber-23.exe, 126741363B, SHA256 73038ac99299abc8d5e0cef28d83324e6b493fecdbd21fd65964919376fa3007, from archived Herni Vyber23 magazine disc. Historical installer size/hash unknown, so equivalence is unproved. No execution/acceptance. Receipt scratch/runs/20261105-conan-original-media-recovery/recovery-receipt.json.
   Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Recover/verify original installer, supporting assets and historical receipt, then use an authorized bounded runtime to observe acceptance and installed payload. Local exact-path observations and unknown remote availability are in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
   Previous checkpoint (licence-decision hold superseded): Original staged and SHA verified on bx_hx8msa33. Ordinary language/welcome/destination inputs reach EULA with I Reject selected, run20261010T0803Z-conan-destination. Do not answer acceptance. No installer process running; extracted game not yet available. Refill actionable new-game slot while this remains held.
   Done: Original launch, player-controlled gameplay, reviewed screenshot and tested fixes on main; no public deployment.

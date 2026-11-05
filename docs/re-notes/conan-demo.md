@@ -56,7 +56,8 @@ snapshot at 10:26:47.045Z. Evidence is in
 `scratch/runs/20261105-owner-fresh-runtime/conan-{request,create,setup,setup-receipt,state}.json`.
 No installer, acceptance or gameplay was run on this replacement.
 
-The current blocker is reconstruction of the original installer and supporting
+A newly sourced demo installer is now available as described below. The current
+blocker is historical identity comparison and reconstruction of supporting
 inputs, followed by an eligible worker/runtime slot. The historical original
 size and SHA-256 remain unknown. A similarly named public demo cannot be
 claimed to match that fixture without evidence.
@@ -95,3 +96,24 @@ claimed to match that fixture without evidence.
 No code changed and no runtime tests ran. Validation for this checkpoint is
 read-only availability inspection, current task/authorization reconciliation,
 document review, and `git diff --check`.
+
+## Newly recovered magazine demo (2026-11-05)
+
+The [Herni Vyber 23 archive](https://archive.org/details/hernivyber23) lists
+Conan demo among its contents. Read-only ISO directory inspection located
+`HRY/CONAN_DE/_CONANPC.EXE;1`, extent 4780, in the MODE1/2352 disc image.
+HTTP byte ranges recovered only that file; no whole-disc copy was retained.
+The PE32 installer contains the string `Conan Demo Installation`.
+
+- Local media: `scratch/game-media/conan-demo-20261105/ConanPC-Demo-from-Herni-Vyber-23.exe`.
+- Size: 126741363 bytes.
+- SHA-256: `73038ac99299abc8d5e0cef28d83324e6b493fecdbd21fd65964919376fa3007`.
+- Source: `https://archive.org/download/hernivyber23/Herni-Vyber-23.bin`.
+- Recovery receipt: `scratch/runs/20261105-conan-original-media-recovery/recovery-receipt.json`.
+
+The historical installer has no retained size/hash pin, so this is newly
+recovered demo media, with equivalence to the historical fixture unproved.
+No installer, guest runtime, acceptance or gameplay was executed. A future
+worker can inspect this fixture without claiming a historical hash match.
+Free space on /home before recovery was 10289782784 bytes; afterward it was
+10163023872 bytes, above the owner's 8 GB cleanup target.
