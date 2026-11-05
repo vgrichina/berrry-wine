@@ -1603,11 +1603,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Diagnose original Winamp MilkDrop exception and validate visualization
   id: GLD3D-WINAMP-EXCEPTION-20261007
-  status: active (authorized emulator retry; source preparation behind shared test queue)
+  status: blocked (authorized retry completed; no demonstrated emulator mismatch)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 4 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Fresh winamp-emulator-owner-retry-nov05 diagnoses documented emulator CPU/Win32 exception semantics from retained owning-worker evidence. Shared edits/tests wait Strong0950 then D3Dclip1010 then RFworker1020 releases/cleanup. No original runtime or box assigned; record precise missing evidence if a mismatch cannot be demonstrated.
+  Next: Owner-authorized retry completed 2026-11-05 without a renewed flag. Twelve recovered owning-worker outputs support IPC3015 reply1 and EIP1, not a demonstrated CPU/Win32 mismatch; seventeen named raw/preparation paths absent. Recover named fault/SEH records, exact module/source identity and semantic oracle before further diagnosis. Existing media hashes and recovery recipe: scratch/runs/20261105-winamp-emulator-owner-retry/findings.md. No code/tests/build/runtime occurred.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Done: Demonstrated generic cause repaired with regression and ordinary original visualization reviewed; FPS/audio separate.
   Evidence: scratch/runs/20261007-winamp-milkdrop-complete-closure; ops/handoffs/winamp-milkdrop-ordinary-20261007.md
@@ -1875,11 +1875,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Colin McRae Rally 3 demo
   id: NEW-GAME-CMR3-DEMO-20261010
-  status: queued (one owner-authorized retry; serialized)
+  status: active (one owner-authorized emulator retry; source preparation behind shared test queue)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 5 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Retry emulator memory/lifetime diagnostics from preserved replay evidence; compare our CPU/Win32 behavior with documented semantics and fix with a regression.
+  Next: Fresh cmr3-emulator-owner-retry-nov05 diagnoses our native allocator/memory/lifetime behavior from retained UK Warwick loading evidence. Shared edits/tests wait Strong0950 then D3Dclip1010 then RFworker1020 exact releases/cleanup. No original runtime or box assigned; preserve precise missing prerequisites if no grounded mismatch.
   runtime-revalidated: 2026-10-15 native recovery56105 terminal0; serialized remote runtime available, no transport blocker.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: test/binaries/win98-games-a-d/ColinMcRay-Rally3-pcdemo-D3D.exe
