@@ -278,7 +278,16 @@ async function continuationDiagnostics(kind, module) {
         throw error;
       }
     };
-    await host.releaseMainMessagePoint(); // existing best-effort catch swallows
+    // Retain the historical three-request transport as a diagnostic probe.
+    // Production now uses an atomic endpoint operation; this is not gameplay.
+    await (async function releaseMainMessagePointLegacyTransport() {
+      try {
+        if (((await link.callExport('get_yield_reason')) | 0) === 17) {
+          await link.callExport('set_incoming_send_pending', 0);
+          await link.callExport('clear_yield');
+        }
+      } catch (_) {} // exercise observable diagnostics even when caught
+    })();
     link.callExport = original;
     assert(callback && rejected, 'actual production release path must hit fence');
     assert.match(rejected.message, /fences export clear_yield/);
@@ -305,7 +314,7 @@ async function continuationDiagnostics(kind, module) {
       assert(logs.some(s => s.includes('releaseMainMessagePoint') && s.includes('801')),
         'swallowed failure must retain joined issuer/reservation diagnostic');
     }
-    console.log('OBSERVED', kind, 'production unscoped continuation', JSON.stringify({
+    console.log('OBSERVED', kind, 'historical unscoped transport', JSON.stringify({
       reservation: rejected.callbackReservation, command: rejected.commandContext,
       request: rejected.exportRequest,
     }));
@@ -363,10 +372,86 @@ async function continuationDiagnostics(kind, module) {
     });
   } finally { link.callExport = original; await c.close(); }
 }
+async function atomicMessagePointRelease(kind, module) {
+  const c = await context(kind, module, 0);
+  const { link, host } = c;
+  const call = link.callExport.bind(link);
+  const release = link.releaseMainMessagePoint?.bind(link);
+  let callback;
+  const admit = async () => {
+    if (!callback) callback = await link.dispatchThreadSend(args(901, 12));
+  };
+  try {
+    await call('set_yield_state', 17, 1);
+    const root = await state(link);
+    // Before: admit the original's scoped ReadFile callback after the incoming
+    // flag clear, before clear_yield. After: admit before the single operation.
+    link.callExport = async (name, ...values) => {
+      const result = await call(name, ...values);
+      if (name === 'set_incoming_send_pending' && values[0] === 0) await admit();
+      return result;
+    };
+    if (release) link.releaseMainMessagePoint = async () => { await admit(); return release(); };
+    const result = await host.releaseMainMessagePoint();
+    link.callExport = call;
+    if (release) link.releaseMainMessagePoint = release;
+    assert.deepStrictEqual(result, { released: false, reason: 'callback-owned' },
+      'stale root release must explicitly defer without touching scoped I/O');
+    const active = await state(link);
+    assert.strictEqual(active[3], 12);
+    await assert.rejects(call('clear_yield'), /fences export/);
+    const nested = await link.dispatchThreadSend(args(902, 13));
+    const inner = await state(link);
+    assert.deepStrictEqual(await host.releaseMainMessagePoint(), result);
+    assert.deepStrictEqual(await state(link), inner, 'nested scope remains intact');
+    assert((await link.scopedThreadSendYield(nested, true)).completed);
+    assert((await link.resumeThreadSendDispatch(undefined, 902, nested.waitEpoch)).done);
+    await link.acknowledgeThreadSendResume(902, nested.waitEpoch);
+    assert.deepStrictEqual(await state(link), active);
+    assert((await link.scopedThreadSendYield(callback, true)).completed);
+    assert.deepStrictEqual(await host.releaseMainMessagePoint(), result,
+      'completed scope still owns context until acknowledged resume');
+    assert((await link.resumeThreadSendDispatch(undefined, 901, callback.waitEpoch)).done);
+    await link.acknowledgeThreadSendResume(901, callback.waitEpoch);
+    assert.deepStrictEqual(await state(link), root);
+    // A callback can itself stop at yield 17 without a wait reservation.
+    // The number alone must never authorize mutation of its context.
+    await link.dispatchThreadSend(args(903, 17));
+    const callbackMessagePoint = await state(link);
+    assert.deepStrictEqual(await host.releaseMainMessagePoint(), result);
+    assert.deepStrictEqual(await state(link), callbackMessagePoint);
+    assert((await link.abortThreadSendDispatch(true, 903)).aborted);
+    assert.deepStrictEqual(await state(link), root);
+    assert.deepStrictEqual(await host.releaseMainMessagePoint(), { released: true });
+    assert.strictEqual(await call('get_yield_reason'), 0);
+    assert.deepStrictEqual(await host.releaseMainMessagePoint(),
+      { released: false, reason: 'not-message-point' });
+    await call('set_yield_state', 10, 1);
+    const outgoing = await link.beginProcessSendWait();
+    const outgoingState = await state(link);
+    assert.deepStrictEqual(await host.releaseMainMessagePoint(), result);
+    assert.deepStrictEqual(await state(link), outgoingState);
+    assert((await link.completeProcessSendWait(outgoing, 5)).completed);
+    await link.acknowledgeThreadSendResume(0, outgoing.waitEpoch);
+    const endpointRelease = link.releaseMainMessagePoint.bind(link);
+    link.releaseMainMessagePoint = async () => { throw new Error('injected release transport failure'); };
+    await assert.rejects(host.releaseMainMessagePoint(), /injected release transport failure/);
+    link.releaseMainMessagePoint = endpointRelease;
+    await c.close();
+    await assert.rejects(link.releaseMainMessagePoint(), /retired/,
+      'transport/retirement errors must propagate, not become a successful defer');
+    console.log('PASS', kind, 'atomic root message-point release, scoped I/O/nesting/root-send preservation');
+  } finally {
+    link.callExport = call;
+    if (release) link.releaseMainMessagePoint = release;
+    await c.close();
+  }
+}
 const deadline = setTimeout(() => { console.error('reservation test exceeded 15 seconds'); process.exit(1); }, 15000);
 (async () => {
   const module = await fixture();
   for (const kind of ['Worker', 'local']) {
+    await atomicMessagePointRelease(kind, module);
     await continuationDiagnostics(kind, module);
     await lostReplies(kind, module);
     await pendingAndFences(kind, module);
