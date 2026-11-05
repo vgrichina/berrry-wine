@@ -1523,11 +1523,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Evidence: test/toyvm-dos-corpus/manifest.json; test/toyvm-dos-corpus/titles.json; ops/dos-corpus.json; tools/toyvm-dos-corpus.js; user instruction2026-10-07. Daggerfall/Arena DOSBox gameplay does not establish native compatibility.
 - [~] New-game lane: Betrayal in Antara demo (Sierra 1997, SCI32 RPG)
   id: NEW-GAME-BETRAYAL-ANTARA-DEMO-20261006
-  status: queued (one owner-authorized retry; serialized)
+  status: active (one owner-authorized retry; source-only until shared test queue releases)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 2 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Retry emulator installer/crash diagnostics from preserved evidence; compare our emulated CPU/Win32 behavior against documentation and fix with a regression. Old remote box is stopped; do not resume it.
+  Next: Fresh antara-emulator-owner-retry-nov05 locates retained evidence and diagnoses our Win16 CPU/API/callback behavior against documented semantics, fixing a demonstrated mismatch with a regression. Shared edits/tests wait for Strong0950, D3Dclip1010 and RFworker1020 releases. Old remote box remains stopped; no original browser run assigned. Record missing prerequisites if diagnosis cannot be grounded in available evidence.
   candidate: win98-games-a-d/Betrayl-a-Antara-DEMO-SW (16-bit Sierra SETUP.EXE installs the game; local, no download)
   Prior evidence: WIP scratch/new-game-antara-20261006 and ops/handoffs/antara-security-hold-20261008.md; bx_fugmje42 stopped after expiry, retrieval incomplete; no installation/gameplay qualification.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
