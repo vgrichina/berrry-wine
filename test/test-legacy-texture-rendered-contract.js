@@ -85,6 +85,11 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
   if(config.immediate)host.heap_oom_trace=(...args)=>{evidence.logs.push({name:'heap_oom_trace',args});};
   let e,raw,link,manager,port,lastStats,gpu,holding=false,heldRecord;
   const held=[],heldPackets=[];let queueBuffers,queueControl;
+  const transport=evidence.transport={batches:[],holds:[]};
+  const transportSnapshot=()=>queueControl?{
+    submitted:Atomics.load(queueControl,3),completed:Atomics.load(queueControl,1),error:Atomics.load(queueControl,2),
+    buffers:queueBuffers.map(buffer=>({header:Array.from(new Uint32Array(buffer,0,8)),
+      firstVertex:Array.from(new Uint32Array(buffer,32+4096,8))}))}:null;
   if(mode==='worker') {
     const broker=GuestRpc.createMainBroker(memory,host,sigs,{onError:(name,error)=>evidence.logs.push({name,error:String(error)})});
     broker.publish({tickMs:0});
@@ -100,6 +105,8 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
         const post=port.postMessage.bind(port);
         port.postMessage=message=>{
           if(message.t==='init'){queueBuffers=message.buffers;queueControl=new Int32Array(message.control);}
+          if(message.t==='batch')transport.batches.push({sequence:message.seq,index:message.index,
+            commands:message.commands,header:Array.from(new Uint32Array(queueBuffers[message.index],0,8))});
           if(holding&&message.t==='batch')heldPackets.push(message);
           if(holding&&(message.t==='batch'||held.length))held.push(()=>post(message));else post(message);
           if(holding)heldRecord.messages.push(message.t);
@@ -310,13 +317,19 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
         dd,hal,texture,texturePalette:config.texture,surface,lock,unlock,bits,observe,
         use:target=>{device=target.device;rt=target.rt;},
         initial:{device,rt},allocationFailure:!!config.noPreview,countDraw:()=>drawCount++,
-        queue:{hold:label=>{heldRecord={label,messages:[]};holding=true;return heldRecord;},
-          packet:async()=>{await until(()=>heldPackets.length>0,'held immediate batch');
+        queue:{hold:label=>{heldRecord={label,device,rt,messages:[],before:transportSnapshot()};
+            transport.holds.push(heldRecord);holding=true;return heldRecord;},
+          packet:async()=>{
+            try{await until(()=>heldPackets.length>0,'held immediate batch');}
+            finally{heldRecord.after=transportSnapshot();}
             const packet=heldPackets.at(-1),buffer=queueBuffers[packet.index],view=new DataView(buffer);
+            eq(view.getUint32(4,true),heldRecord.device,'queued immediate exact device');
+            heldRecord.packet={sequence:packet.seq,device:view.getUint32(4,true),header:Array.from(new Uint32Array(buffer,0,8))};
             eq(packet.commands,1,'single immediate draw batch');eq(view.getUint32(20,true),4096,'queued immediate state');
             eq(view.getUint32(28,true),0,'queued immediate draw record');
             return {sequence:packet.seq,vertices:new Uint8Array(buffer,32+4096,view.getUint32(24,true)),
               completed:Atomics.load(queueControl,1)};},
+          snapshot:transportSnapshot,pendingPackets:()=>heldPackets.length,
           completed:()=>Atomics.load(queueControl,1),
           drain:()=>{holding=false;for(const send of held.splice(0))send();heldPackets.length=0;}}});
     }

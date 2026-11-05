@@ -353,10 +353,11 @@ async function viewportDepthFixture(c) {
   // mapped depths have separate byte discrimination above; raw control here
   // must be rejected specifically by the final pixel oracle.
   async function submit(t,indexed){
-    await ok(com('depth BeginScene',t.device,5));
-    if(indexed)await ok(com('depth DrawIndexedVB',t.device,32,4,dst,2,3,indices,3,0));
-    else await ok(com('depth DrawVB',t.device,31,4,dst,2,3,0));
-    countDraw();await ok(com('depth EndScene',t.device,6));
+    const device=negative==='secondary-route'&&t===B?A.device:t.device;
+    await ok(com('depth BeginScene',device,5));
+    if(indexed)await ok(com('depth DrawIndexedVB',device,32,4,dst,2,3,indices,3,0));
+    else await ok(com('depth DrawVB',device,31,4,dst,2,3,0));
+    countDraw();await ok(com('depth EndScene',device,6));
   }
   async function competing(t){
     use(t);await ok(com('depth zenable',t.device,20,7,1));await ok(com('depth zwrite',t.device,20,14,1));
@@ -366,8 +367,8 @@ async function viewportDepthFixture(c) {
     await ok(com('depth competitor BeginScene',t.device,5));await ok(com('depth competitor DrawPrimitive7',t.device,25,4,0x44,tl,3,0));
     countDraw();await ok(com('depth competitor EndScene',t.device,6));
   }
-  async function pixels(label){await observe(label,{name:'red .5 occludes mapped green',uv:[.25,.25]},
-    {filter:1,address:1,palette:Array(4).fill([208,48,32])});}
+  async function pixels(label,color=[208,48,32]){await observe(label,{name:'independent target/depth color',uv:[.25,.25]},
+    {filter:1,address:1,palette:Array(4).fill(color)});}
   for(const method of ['buffer','strided'])for(const range of [[.625,.875],[.75,.75]]){
     await configure(A,[0,0,8,8],range);await fill();await ok(process(method,A));
     await competing(A);
@@ -376,12 +377,47 @@ async function viewportDepthFixture(c) {
     }
     await submit(A,false);await pixels('viewport depth '+method+' '+range);
   }
-  if(mode==='worker')for(const [i,method] of ['buffer','strided'].entries()){
-    const t=A;await configure(t,[0,0,8,8],[.625,.875]);await fill();await ok(process(method,t));await competing(t);
+  // Both ordinary and indexed public draws retain independent target depths.
+  for(const indexed of [false,true]){
+    await configure(A,[0,0,8,8],[.25,.25]);await competing(A);
+    await configure(B,[0,0,8,8],[0,0]);await competing(B);
+    await fill();await ok(process('strided',B));await submit(B,indexed);
+    await pixels('secondary routing green '+indexed,[32,192,64]);
+    use(A);await pixels('other target retained red '+indexed);
+    if(negative==='shared-depth')await ok(com('adversarial other-target depth contamination',A.device,10,0,0,2,0,bits(0),0));
+    await fill();await ok(process('buffer',A));await submit(A,indexed);
+    await pixels('independent target depth green '+indexed,[32,192,64]);
+    use(B);await pixels('secondary retained green '+indexed,[32,192,64]);
+  }
+  if(mode==='worker'){
+    r.buffered=[];
+    for(const indexed of [false,true]){
+      await configure(B,[0,0,8,8],[.625,.875]);await fill();await ok(process('strided',B));
+      use(B);queue.hold('busy secondary competitor '+indexed);await competing(B);
+      const red=await queue.packet();
+      eq(new DataView(red.vertices.buffer,red.vertices.byteOffset,red.vertices.byteLength).getUint32(16,true),0xffd03020,
+        'controlled predecessor is red competitor');
+      const before=queue.snapshot();await submit(B,indexed);const after=queue.snapshot();
+      eq(queue.pendingPackets(),1,'small green draw remains producer-buffered behind held red');
+      eq(after.submitted,before.submitted,'public secondary enqueue does not promise immediate submission');
+      const z=bits(.625+.25*normalized[indexed?2:0]);
+      check(after.buffers.some((slot,j)=>slot.header[1]===B.device&&slot.firstVertex[2]===z&&
+        slot.firstVertex[4]===0xff20c040&&JSON.stringify(slot)!==JSON.stringify(before.buffers[j])),
+        'public secondary green canonical bytes copied into changed producer slot');
+      r.buffered.push({indexed,device:B.device,rt:B.rt,redSequence:red.sequence,before,after});
+      queue.drain();await pixels('public buffered secondary '+indexed);
+    }
+  }
+  if(mode==='worker')for(const t of [A,B])for(const [i,method] of ['buffer','strided'].entries()){
+    await configure(t,[0,0,8,8],[.625,.875]);await fill();await ok(process(method,t));await competing(t);
+    // Offscreen EndScene need not submit a small draw while its predecessor is
+    // busy. Public readback completes/verifies that predecessor before holding
+    // the next packet; target routing and production batching stay unchanged.
+    await pixels('held competitor '+(t===A?'A':'B')+' '+method);
     await verify(method,t,[0,0,8,8],[.625,.875],0);eq(await snap(indices,8),[2,1],'held draw exact public indices');
     queue.hold('viewport depth storage reuse '+method);await submit(t,!!i);
     const packet=await queue.packet(),before=Array.from(packet.vertices);
-    r.held.push({method,sequence:packet.sequence,before});
+    r.held.push({method,indexed:!!i,device:t.device,rt:t.rt,sequence:packet.sequence,before});
     const sl=await vbLock(src);await words(sl.p,Array(sl.n/4).fill(0x7fc00000));await vbUnlock(src);
     await words(desc,Array(24).fill(0));await words(indices,[0xffffffff,0xffffffff]);await fill();
     const oldSource=src,oldDestination=dst,oldStorage=await vbLock(dst);await vbUnlock(dst);
@@ -391,12 +427,12 @@ async function viewportDepthFixture(c) {
     const reused=await vbLock(src);await words(reused.p,Array(reused.n/4).fill(0x7fc00000));await vbUnlock(src);
     r.held.at(-1).storageReuse={oldSource,oldDestination,oldStorage,newSource:src,newDestination:dst,newSourceStorage:reused};
     await words(vp,[0,0,8,8,bits(0),bits(0)]);await ok(com('depth change live viewport',t.device,13,vp));
-    if(negative==='depth-queued'){
+    if(negative==='depth-queued'||(t===B&&negative===(i?'secondary-indexed-queued':'secondary-queued'))){
       // Queue vertices are canonical 32-byte records; corrupt only depth.
       const d=new DataView(packet.vertices.buffer,packet.vertices.byteOffset,packet.vertices.byteLength);
       for(let n=8;n<d.byteLength;n+=32)d.setFloat32(n,.125,true);
     }else eq(Array.from(packet.vertices),before,'queued depth survives original storage reuse');
-    queue.drain();await pixels('queued viewport depth '+method);
+    queue.drain();await pixels('queued viewport depth '+(t===A?'A':'B')+' '+method);
     const l=await vbLock(src);for(let j=0;j<3;j++)await words(l.p+(j+1)*16,sourceRows[j]);await vbUnlock(src);
     await words(desc,Array(24).fill(0));await words(desc,[l.p+16,16]);await words(desc+16,[l.p+28,16]);await words(indices,[2,1]);
   }
@@ -470,7 +506,16 @@ async function main(){
   save('inputs.json',{source:require('node:child_process').execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
     modules:modules.map(name=>({path:'build/'+name,sha256:hash(fs.readFileSync(path.join(root,'build',name)))})),
     media:{path:'test/binaries/calc.exe',sha256:hash(pe)}});
-  const negatives=['stride','component','state','depth'];
+  const negatives=['stride','component','state','depth','secondary-route','shared-depth'];
+  const failureOracle=negative=>({
+    queued:/PIXEL ORACLE queued immutable PVS/,
+    depth:/PIXEL ORACLE viewport depth/,
+    'depth-queued':/PIXEL ORACLE queued viewport depth A buffer/,
+    'secondary-route':/PIXEL ORACLE secondary routing green/,
+    'shared-depth':/PIXEL ORACLE independent target depth green/,
+    'secondary-queued':/PIXEL ORACLE queued viewport depth B buffer/,
+    'secondary-indexed-queued':/PIXEL ORACLE queued viewport depth B strided/,
+  })[negative]||/DESTINATION BYTE ORACLE/;
   if(!process.argv.includes('--browser')){
     const saved=globalThis.fetch;
     try{for(const name of modules){
@@ -483,7 +528,7 @@ async function main(){
       console.log('PASS real x86 PVS '+name+' '+result.calls.length+' COM records '+result.observations.length+' pixel checkpoints');
       for(const negative of negatives){let failure;try{await browserFixture('software',config,oracle.toString(),negative);}catch(e){failure=e;}
         const partial=globalThis.legacyTextureEvidence;save(name+'-negative-'+negative+'.json',{failure:String(failure),partial});
-        assert.match(String(failure),negative==='depth'?/PIXEL ORACLE viewport depth/:/DESTINATION BYTE ORACLE/,'designated oracle must discriminate '+negative);
+        assert.match(String(failure),failureOracle(negative),'designated oracle must discriminate '+negative);
         assert(partial.calls.some(x=>x.label==='ProcessVerticesStrided7'&&x.result===0),'successful faulty public call');
       }
     }}finally{globalThis.fetch=saved;}
@@ -517,11 +562,11 @@ async function main(){
         await page.screenshot({path:path.join(dir,name+'-'+mode+'.png'),fullPage:true});await page.close();page=null;
         console.log('PASS rendered PVS '+name+' '+mode);
       }
-      for(const negative of ['stride','component','state','queued','depth','depth-queued']){
-        const mode=['queued','depth-queued'].includes(negative)?'worker':'software';page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/pvs-fixture');
+      for(const negative of ['stride','component','state','queued','depth','depth-queued','secondary-route','shared-depth','secondary-queued','secondary-indexed-queued']){
+        const mode=['queued','depth-queued','secondary-queued','secondary-indexed-queued'].includes(negative)?'worker':'software';page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/pvs-fixture');
         let failure;try{await page.evaluate(browserFixture,mode,config,oracle.toString(),negative);}catch(e){failure=String(e);}
         const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);save(name+'-browser-negative-'+negative+'.json',{failure,partial});
-        assert.match(failure,negative==='queued'?/PIXEL ORACLE queued immutable PVS/:negative==='depth'?/PIXEL ORACLE viewport depth/:negative==='depth-queued'?/PIXEL ORACLE queued viewport depth/:/DESTINATION BYTE ORACLE/);
+        assert.match(failure,failureOracle(negative));
         report.negativeControls.push({name,negative,failure});await page.close();page=null;
       }
     }report.status='PASS';
