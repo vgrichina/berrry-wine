@@ -11,7 +11,7 @@ async function offlineCoverageContract(){
  const manifest=api.offlineCoveragePins(),pins=path.join(run,'offline-pins.json');
  assert.equal(manifest.files.length,2429);assert.equal(manifest.offlineCoverageBinding.originalExecutionAuthorized,false);
  api.verifyOfflineCoveragePins(manifest);fs.writeFileSync(pins,JSON.stringify(manifest,null,2));
- assert.throws(()=>api.freshRuntimePins(),/unknown fresh runtime dependency mismatch/);
+ assert.throws(()=>api.verifyFreshRuntimePins(JSON.parse(fs.readFileSync('scratch/runs/20261105-stronghold-prompt-review-gameplay/runtime-pins.json'))),/fresh runtime closure/);
  assert.throws(()=>api.acceptedRuntimePins(),/unknown runtime dependency mismatch/);
  assert.throws(()=>api.binding(run,pins),/cannot authorize original execution/);
  assert.throws(()=>api.createRelease({run,pins,nonce:'a'.repeat(64)}),/cannot authorize original execution/);
@@ -65,7 +65,8 @@ assert.equal(base.hash(original),api.ORIGINAL_PINS_SHA);
 assert.throws(()=>api.acceptedRuntimePins(),/unknown runtime dependency mismatch/);
 const fresh=api.freshRuntimePins(),pins=path.join(run,'runtime-pins.json');
 assert.equal(fresh.files.length,2429);assert.equal(fresh.files.filter(r=>r.path.startsWith('test/binaries/')).length,1856);
-assert.equal(fresh.freshRuntimeBinding.assignment,'stronghold-prompt-review-gameplay-0855 user task');
+assert.equal(fresh.freshRuntimeBinding.assignment,'stronghold-landed-startup-original-1135 user task');
+assert.throws(()=>api.verifyFreshRuntimePins(JSON.parse(fs.readFileSync('scratch/runs/20261105-stronghold-prompt-review-gameplay/runtime-pins.json'))),/fresh runtime closure/);
 assert.equal(fresh.freshRuntimeBinding.originalPinsSHA256,base.hash(original));
 assert.equal(fresh.commit,cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim());
 assert.equal(api.verifyFreshRuntimePins(fresh),fresh);
@@ -98,12 +99,18 @@ for(const mutate of [r=>r.assignment='foreign',r=>r.authorization='foreign',r=>r
 }
 assert.throws(()=>api.validateRelease(release,{run,pins,nonce,now:now+60001}));negatives++;
 const board=fs.readFileSync('messageboard.txt','utf8'),ownership=api.assertRuntimeOwnership();
-assert.equal(ownership.release.dependencies.length,2);
+assert.equal(ownership.release.dependencies.length,3);
 for(const d of ownership.release.dependencies){
  assert.throws(()=>api.requireRuntimeRelease(board.replace(d.fileRelease,'')),/release/);
  assert.throws(()=>api.requireRuntimeRelease(board.replace(d.fileRelease,d.fileRelease.replace('ALLBUILDSFINISHED','pending'))),/release/);
  assert.throws(()=>api.requireRuntimeRelease(board+'\n'+new Date().toISOString()+' '+d.worker+' OWN newer'),/release/);
  negatives+=3;
+}
+// Reject chronological release inversion even when every exact FINAL exists.
+{
+ const [cpu,rf]=ownership.release.dependencies;
+ const reversed=board.replace(rf.fileRelease,rf.fileRelease.replace(rf.fileRelease.split(' ')[0],new Date(cpu.releasedAt-1).toISOString()));
+ assert.throws(()=>api.requireRuntimeRelease(reversed),/release/);negatives++;
 }
 assert.equal(api.diagnosticScene(Buffer.from('arbitrary pixels'),'unknown'),'unknown');
 const p=route.prepare({run,pins});new vm.Script(p.source);new vm.Script(p.route);
