@@ -326,12 +326,12 @@ and jobs remain preserved. No old-session wakeup is requested.
   Done: correct single fault, first absent byte, failed-element preservation and retry at REP for widths1/2/4 DF0/1, with source identities and coverage limits. No generic fault-policy/classifier/layout changes; current required canonical build applies.
   Evidence: ops/handoffs/mig-sam-rep-restart.md; scratch/mig-sam-rep-restart-20261002/evidence-summary.json.
 
-- [ ] Stop stale execution after a store modifies the remainder of the running decoded block
+- [x] Stop stale execution after a store modifies the remainder of the running decoded block
   id: CPU-SAME-BLOCK-SELF-MODIFYING-CODE-20261105
-  status: in-progress (fresh cpu-same-block-smc-1120 worker; source work first, serialized tests/build)
+  status: done (3a38eed05 published main/origin; worker released 2026-11-05T12:26:47Z)
   owner: cpu-same-block-smc-1120
   Report 2026-11-05 claude-laptop: A guest store into the remainder of the currently executing decoded block retires the block but leaves the thread pointer on it, allowing stale decoded instructions to execute. Likely affects any store, not only REP; establish actual scope before fixing.
-  Next: Fresh bounded worker reproduces with a minimal generated x86 guest through production decoding/dispatch, including scalar and REP stores, then fixes running-block continuation/invalidation in our emulator. Coordinate src/05-alu.wat, src/04-cache.wat and dispatch ownership; preserve exact instruction progress and fault behavior.
+  Result: Production instruction-boundary continuation reloads modified bytes, including scalar writing fusions and REP stores; preserves register/flag/pacing and REP restart bodies. Baseline stale execution reproduced; 268 SMC cases on each shipping module, REP182, block368, focused decode/uop/fault regressions and locked full build pass. Two unrelated baseline fixture failures documented. Evidence: scratch/runs/20261105-cpu-same-block-smc/result.json; docs/re-notes/same-block-self-modifying-code-20261105.md. No original-game gameplay claim.
   Done: Changed next instruction executes newly decoded bytes; meaningful scalar/REP same-block controls, unaffected other-block/nonoverlap behavior, fault/restart cases and appropriate decode/uop paths pass, plus locked full build. No guest program modification or private diagnostic workaround. Commit/push own tested implementation.
 
 - [x] Review remaining Serious Sam diagnostic fault transforms
