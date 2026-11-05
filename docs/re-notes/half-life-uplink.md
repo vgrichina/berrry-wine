@@ -1855,3 +1855,45 @@ Safari/WebKit/WindowServer load, unlike the earlier repeat. Do not advertise
 an FPS gain until a quiet paired rerun. The proven improvement is removal of
 the unnecessary per-frame copy/fence, not resolution-independent rendering.
 The later show-callback return-value correction is outside this timing run.
+
+## Uniform preparation and presentation reuse (2026-11-05)
+
+The GL frontend previously built every uniform value (including four flattened
+eight-light arrays and a folded projection) whenever any uniform was dirty.
+It now resolves only dirty names. The shared GPU backend compares caller values
+against its owned snapshot before allocating, and reuses snapshot storage on
+changes of the same shape. In-place matrix/integer changes, signed zero and
+NaN comparisons are covered; values are never cached by caller-array identity.
+
+The GL Worker presentation bridge now resizes its canvas only when a dimension
+changes. Bitmap frames use copy compositing to replace transparent pixels as
+well as opaque pixels; raw frames still use putImageData. The protocol regression
+covers stable dimensions, resizing, raw frames and bitmap retirement.
+
+Fixed-function, GPU resource/cache, Worker protocol, depth-range folding,
+multitexture, stencil and color-mask tests pass. Browser cache-version and diff
+checks pass. These are JS changes; the loaded WASM stays
+`13e7c0acf67521ac91fb8462896c80b1cdfc3ac98c527398272a4186e9a08650`.
+The unrelated dirty ShowWindow candidate remains present in both measurements
+and is still not release-qualified.
+
+Headed Chrome Worker runs `20261105-uplink-uniform-baseline` and
+`20261105-uplink-uniform-candidate` use the same 1024x768 staircase save,
+settling, two 60-second samples and a separate 30-second CPU profile. Baseline
+samples are 9.54/12.03 presentations/s; candidate samples are 14.56/7.73.
+The large within-run variation prevents a defensible overall FPS gain claim.
+Both runs preserve the actual three JS sources, loaded WASM hash, source patch,
+profiles, process-load snapshots and harnesses.
+
+Render-Worker profiles attribute 260.963 + 56.822 ms of self time to uniform
+preparation/cache calls over 284 baseline presentations, versus 4.793 + 7.321 ms
+over 224 candidate presentations: about 1.119 -> 0.054 ms per presentation.
+This is sampled CPU attribution under variable host load, not an isolated
+end-to-end speedup. Total sampled Worker GC rose from 44.005 to 93.701 ms;
+do not claim reduced overall GC from these runs. No page errors were reported,
+and textured gameplay/HUD captures were reviewed at the same saved position.
+
+The additional real Chrome pixel probe passes opaque-to-translucent replacement
+without stale pixels, same-size canvas reuse, resizing to transparent content,
+and a subsequent raw-pixel frame. Probe output and source are preserved in the
+candidate run. No interpreter/JIT optimization is involved.

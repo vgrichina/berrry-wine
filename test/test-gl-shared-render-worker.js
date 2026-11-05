@@ -357,6 +357,25 @@ function workerCapturedGeometry(){
   adapter.destroy();
 }
 async function hostProtocol(){
+  // Same-sized frames retain storage; bitmap replacement must include alpha.
+  {
+    let width=2,height=2,resizes=0,closed=0;
+    const ctx={drawImage(){assert.strictEqual(this.globalCompositeOperation,'copy');},
+      createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData(){}};
+    const canvas={get width(){return width;},set width(v){width=v;resizes++;},
+      get height(){return height;},set height(v){height=v;resizes++;},getContext:()=>ctx};
+    const renderer={windows:{8:{}}};
+    const bridge=new Bridge({renderer,createCanvas:()=>canvas});
+    const frame=(w,h)=>({hwnd:8,width:w,height:h,bitmap:{close(){closed++;}}});
+    bridge._present(frame(2,2));bridge._present(frame(2,2));
+    assert.strictEqual(resizes,0,'stable frame dimensions never reset storage');
+    bridge._present(frame(3,2));
+    assert.strictEqual(resizes,1,'resolution changes resize only the changed dimension');
+    bridge._present({hwnd:8,width:3,height:2,pixels:new Uint8Array(24)});
+    assert.strictEqual(resizes,1,'pixel frames also reuse storage');
+    assert.strictEqual(closed,3,'each transferred bitmap is released');
+    await bridge.close();
+  }
   const memory=new SharedArrayBuffer(4096),commands=[],copies=[],draws=[],events={},gate=deferred();
   const windows={8:{hwnd:8,w:2,h:2,clientRect:{left:0,top:0,right:2,bottom:2}}};
   const surface={width:2,height:2,rgbaRect(){return Uint8ClampedArray.from({length:16},(_,i)=>i);},
