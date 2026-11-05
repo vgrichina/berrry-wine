@@ -2150,10 +2150,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-AOE3-DEMO-20261010
-  blocker: Supporting setup reconstruction, current runtime preflight and a free worker slot required; historical DirectX prerequisite remains unresolved. Original installer recovered and verified locally.
+  blocker: Current runtime prerequisite unresolved (historical genuine DirectX7 versus required9); all208 supporting files recovered and verified.
   status: pending (fresh replacement provisioned; exact original installer recovered 2026-11-05)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: aoe3-supporting-input-recovery-1755 (fresh launcher3108758; exact historical Git recipes/manifests and read-only supporting asset recovery, no runtime/boxes)
+  worker: aoe3-recovered-runtime-prerequisite-1830 (fresh launcher3119674; current runner and genuine prerequisite diagnosis, source-only behind Aranna1710 -> Shadow1800 -> legacy1820 FINAL releases; no boxes)
+  Recovery outcome 2026-11-05: Publishedb6c993d70; all208 supporting files572051434B verified, including174 installed files and exactage3.exe5d7fb9a8. No guest run/acceptance/gameplay. Historical373pin manifests retained separately; originalregistry unchanged. Evidence scratch/runs/20261105-aoe3-supporting-input-recovery/.
   candidate: test/binaries/win98-games-a-d/Age-of-empire-3trial-Win98-SW.exe
   Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Original installer scratch/game-media/aoe3-demo-20261105/aoe3trial.exe is 383598224B, SHA256 4ef69289dfa0817ec14942d85ef597835a9d2b09e1506c60b9938b20daa274ad, matching the historical pin. Reconstruct supporting assets from recorded hashes and preflight an authorized bounded runtime before observing acceptance and installed payload. Recovery receipt: scratch/runs/20261105-aoe3-original-media-recovery/recovery-receipt.json; no installer execution or new acceptance/gameplay observation from recovery. Local exact-path observations and unknown remote availability are in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
   Previous checkpoint (licence-decision hold superseded): Original reaches EULA with InterlockedExchangeAdd candidate, XP profile, native MSXML4 and its resource DLL. Screenshot991 sent; no button answered. Evidence scratch/runs/20261010T0430Z-aoe3-eula. Await user review before gameplay; pipeline refilled Beyond Good and Evil.
