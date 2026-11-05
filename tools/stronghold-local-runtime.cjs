@@ -3,10 +3,10 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-landed-startup-original-1135 user task';
+const AUTH='stronghold-first-native-invalidation-1335 user task';
 const ASSIGNMENT=AUTH;
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-05T16:57:00Z'),CLEANUP=Date.parse('2026-11-05T17:00:00Z');
+const CUTOFF=Date.parse('2026-11-05T19:57:00Z'),CLEANUP=Date.parse('2026-11-05T20:00:00Z');
 const ROOT=path.resolve(__dirname,'..');
 const ORIGINAL_PINS='scratch/runs/20261104-stronghold-setup-transition-onward/runtime-pins.json';
 const ORIGINAL_PINS_SHA='812aadea4a2b23a899919dc95b40b4d628a3836cedc0ae1e1844c966b284b7ef';
@@ -59,10 +59,10 @@ const FRESH_ACCEPTED=Object.freeze({
  "lib/region-map.generated.js": "04d99fa3c0f4d20b537094e001dc80ad8f04de4ad5b2b218bb4dbe5785409881",
  "lib/renderer.js": "4c24b83889a1ed49d390c5fc86630733eb7167942f26e526ecf35948704624b5",
  "src/00-regions.wat": "e6497e311b55c12fa4c3f5caa98b7f44f1374522d9b890430e9ac7c0afe9a5f6",
- "src/01-header.wat": "7f433425ea8491ef9dbd21e6bef553f802c67cb6edbe6be6076c18530f2e635b",
+ "src/01-header.wat": "55f5f70c3271f3d5da3a0a4a967ccdd79c478d5f42f2c50a7b19d9b1369c8ad7",
  "src/02-thread-table.wat": "4da5a4dc095358d9bceef725faa225326c5d25b84a1d2d6a416a1f1b910d218c",
  "src/04-cache.wat": "148195dabbf53b8edde7c1219e3c7ca690dc4e39ae60f3f49a278070d3ad5864",
- "src/05-alu.wat": "8c1ba6bf9a8d5c9905c5f61f131e8f08fa9f40ca27069f8ece4f553534f77e74",
+ "src/05-alu.wat": "183f554f454129b6bd992403295a2368d1dc962558c57c198f7e13f453d49159",
  "src/05b-string-ops.wat": "a35dd675eb51e557efe9984b55dd81b8825a0bda7e706d06e8d1546920853dcb",
  "src/05c-seg16-ops.wat": "c19d454dd56356508c3bf2e7d3dba0a84af72bc62af2c61d94667820874f1361",
  "src/06b-core-handlers.wat": "f61cb5f6ad8f59222a61b702138dbb0cc515037d6325912238dd9b0e452be1dd",
@@ -76,16 +76,17 @@ const FRESH_ACCEPTED=Object.freeze({
  "src/09a-handlers.wat": "5175a9f3c274dd817f7957be8dc9855be804cbe08f1e38599113a1f600bcadf2",
  "src/09a8-handlers-directx.wat": "e888572a429d90c58f61d2d57c5ef9b7c56981f3497ecfcc32df2b4fe1de833d",
  "src/09aa-handlers-d3dim.wat": "927cd022bb8b8408202baed418fe9fb3cfe05a592dbe7704ed7a3ce3e94097c3",
- "src/09ab-handlers-d3dim-core.wat": "cf40f9c84c480dd37103be1584e631eda19ab1edf578731ba952dceea31277e6",
+ "src/09ab-handlers-d3dim-core.wat": "2e4daaf71b9f60b7f7f3e45ad47ce67d9b34b5ecf32d5d17caa2dd44be0586b8",
  "src/09b-dispatch.wat": "0dba6b9df2156694052bc41282a7424635ff67cd4ca1a22eb3594bdd1b3c2cdc",
  "src/09b2-dispatch-table.generated.wat": "b1f4335ef6dc76cbb387c3e40b86eff5aa663ec9ad327ebcaff23e60618ae937",
  "src/11-seh.wat": "4fce9b30bc0bcc6e26a551e37a07af22b6c6aa1d2fb2c143a7bde6f279924b51",
- "src/13-exports.wat": "e77681e9ae20eab4e30369ecf94b97eae5d8f976aec4f12b23ab73d6c50dbd81",
+ "src/13-exports.wat": "a29e1ac902f3a5c83c342613b174e355df7a8234991714ed97093089a868bc40",
  "tools/callback-ownership-census.json": "2087b545eefdeb57931946088676418cb9ca1277deac7f9fe736d02efa43d5c9",
- "build/wine-assembly.wasm": "bc4cabf7745ac4644c3d8cc1f5b70d798277c2a4525e3c665b98d08d6577894b",
- "build/wine-assembly.compat.wasm": "b1f38f1543731c349edaa5d2ae29e4ff0e42b82edd859ce7201de49f1ab278f7",
- "tools/stronghold-owning-callback-observer.cjs": "7216d60ef76932b79d2f82a9de993b2289b05b4646a1098cb6694bc51000453b",
- "tools/stronghold-native-preset-observer.cjs": "b991df4dc48d3cfe08582002ec51ffa3dcb03fd701fcf9e009aae9ce1f981911"
+ "build/wine-assembly.wasm": "006b2e5adeb4d05e4647fd5581f87c4caeb3b2bc038fb4a945307be8240b2afe",
+ "build/wine-assembly.compat.wasm": "c652f4eb35f380ffdb5f77ea1e210397028993e64ba726716f592862f7266753",
+ "tools/stronghold-owning-callback-observer.cjs": "cf8259c8779339563694a67839bc40d2ff9548fba3b95139b9d6f5f2840970f9",
+ "tools/stronghold-native-preset-observer.cjs": "b991df4dc48d3cfe08582002ec51ffa3dcb03fd701fcf9e009aae9ce1f981911",
+ "lib/d3dim-gpu.js": "77b15217eaf3146b4d7d3878b0cdf373da858b5936733ab9bdada77b1eb0f2b6"
 });
 const FRESH_PROVENANCE=Object.freeze({
  "host.js": "23d773990dcedcdf2df551f1e105ec39f529a045",
@@ -94,10 +95,10 @@ const FRESH_PROVENANCE=Object.freeze({
  "lib/region-map.generated.js": "9ac81b952558a3bba20761bddc6e7c80df970fa2",
  "lib/renderer.js": "23d773990dcedcdf2df551f1e105ec39f529a045",
  "src/00-regions.wat": "9ac81b952558a3bba20761bddc6e7c80df970fa2",
- "src/01-header.wat": "dd0f27e878db016965e823ec920dc51ef3434ed6",
+ "src/01-header.wat": "current authorized first-native-invalidation diagnostic; full flock build and focused regression required",
  "src/02-thread-table.wat": "3a38eed05553086ff39a530501b2962b5bc9bc6c",
  "src/04-cache.wat": "3a38eed05553086ff39a530501b2962b5bc9bc6c",
- "src/05-alu.wat": "3a38eed05553086ff39a530501b2962b5bc9bc6c",
+ "src/05-alu.wat": "current authorized first-native-invalidation diagnostic; full flock build and focused regression required",
  "src/05b-string-ops.wat": "b786b78da4660f2587a14ee4d68c14467ab8c170",
  "src/05c-seg16-ops.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
  "src/06b-core-handlers.wat": "3a38eed05553086ff39a530501b2962b5bc9bc6c",
@@ -111,18 +112,19 @@ const FRESH_PROVENANCE=Object.freeze({
  "src/09a-handlers.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
  "src/09a8-handlers-directx.wat": "03b16e2553ddbe7d879fea8524e9df479a97fa07",
  "src/09aa-handlers-d3dim.wat": "4683c73ca889ff4f84d809e2fb7fd3d06432f7c3",
- "src/09ab-handlers-d3dim-core.wat": "ba2782c125a5b4e497a07274be438709d619632e",
+ "src/09ab-handlers-d3dim-core.wat": "59ca0a456d8a73617726cee11caddcb60e238f84",
  "src/09b-dispatch.wat": "dd0f27e878db016965e823ec920dc51ef3434ed6",
  "src/09b2-dispatch-table.generated.wat": "dd0f27e878db016965e823ec920dc51ef3434ed6",
  "src/11-seh.wat": "b786b78da4660f2587a14ee4d68c14467ab8c170",
- "src/13-exports.wat": "dd0f27e878db016965e823ec920dc51ef3434ed6",
+ "src/13-exports.wat": "current authorized first-native-invalidation diagnostic; full flock build and focused regression required",
  "tools/callback-ownership-census.json": "3a38eed05553086ff39a530501b2962b5bc9bc6c",
- "build/wine-assembly.wasm": "current existing full-build module; validate full flock build before original",
- "build/wine-assembly.compat.wasm": "current existing full-build module; validate full flock build before original",
- "tools/stronghold-owning-callback-observer.cjs": "dd0f27e878db016965e823ec920dc51ef3434ed6",
- "tools/stronghold-native-preset-observer.cjs": "89caed5d1deeec73ea1c8538e8eb50f996b29496"
+ "build/wine-assembly.wasm": "current authorized first-native-invalidation diagnostic; full flock build and focused regression required",
+ "build/wine-assembly.compat.wasm": "current authorized first-native-invalidation diagnostic; full flock build and focused regression required",
+ "tools/stronghold-owning-callback-observer.cjs": "current authorized first-native-invalidation diagnostic; full flock build and focused regression required",
+ "tools/stronghold-native-preset-observer.cjs": "89caed5d1deeec73ea1c8538e8eb50f996b29496",
+ "lib/d3dim-gpu.js": "59ca0a456d8a73617726cee11caddcb60e238f84"
 });
-const FRESH_NEW_FILES=['test/test-stronghold-connected-runtime-binding.js'];
+const FRESH_NEW_FILES=['test/test-stronghold-connected-runtime-binding.js','test/test-stronghold-first-native-invalidation.js'];
 function freshSourceIdentity(files){
  const cp=require('node:child_process');
  const gitSHA=cp.execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim();
@@ -154,7 +156,7 @@ function freshRuntimePins(){
  });
  if(pins.files.length!==2429||Object.keys(named).some(p=>!seen.has(p)))throw Error('complete fresh original closure required');
  const sourceIdentity=freshSourceIdentity(pins.files);
- return {...pins,commit:sourceIdentity.gitSHA,candidate:'named landed-startup connected Stronghold original',
+ return {...pins,commit:sourceIdentity.gitSHA,candidate:'named first-native-invalidation Stronghold original',
   freshRuntimeBinding:{assignment:AUTH,originalPinsSHA256:ORIGINAL_PINS_SHA,sourceIdentity,amendments}};
 }
 function verifyFreshRuntimePins(pins){
@@ -195,9 +197,8 @@ function diagnosticScene(bytes,known,observation){
  return 'setup-transition-observation';
 }
 const PREDECESSORS=Object.freeze([
- ['cpu-same-block-smc','cpu-same-block-smc-1120','same-block-self-modifying-code'],
- ['return-fire-worker-body-transport','return-fire-worker-body-transport-1020','return-fire-worker-body-transport'],
- ['lords2-recovered-original-gameplay','lords2-recovered-original-gameplay-1105','lords2-recovered-original-gameplay']
+ ['d3dim-keyed-mip','d3dim-keyed-mip-1230','d3dim-keyed-mip'],
+ ['lords2-far-call-gameplay','lords2-far-call-gameplay-1310','lords2-far-call-gameplay']
 ]);
 function requireRuntimeRelease(board,now=Date.now()){
  const rows=board.split('\n'),dependencies=[];
@@ -206,7 +207,7 @@ function requireRuntimeRelease(board,now=Date.now()){
   const runtimeOwn=rows.filter(r=>r.split(/\s+/)[1]===worker&&(r.split(/\s+/).slice(2,5).join(' ')==='LOCAL HEAVY OWN'||r.includes(' LOCALHEAVY OWN '))).at(-1);
   const fileRelease=rows.filter(r=>{const p=r.split(/\s+/);return p[1]===worker&&p.slice(2,7).join(' ')==='FINAL runtime AND file RELEASE'&&p.includes('docs/re-notes/'+note+'-20261105.md')&&p.includes('ALLBUILDSFINISHED');}).at(-1);
   const ownedAt=Date.parse(own?.split(' ')[0]),runtimeOwnedAt=Date.parse((runtimeOwn||own)?.split(' ')[0]),releasedAt=Date.parse(fileRelease?.split(' ')[0]);
-  if(!own||!fileRelease||![now,ownedAt,runtimeOwnedAt,releasedAt].every(Number.isFinite)||runtimeOwnedAt<Date.parse('2026-11-05T11:15:00Z')||releasedAt<ownedAt||releasedAt<runtimeOwnedAt||releasedAt>now||releasedAt>Date.parse('2026-11-05T17:00:00Z')||
+  if(!own||!fileRelease||![now,ownedAt,runtimeOwnedAt,releasedAt].every(Number.isFinite)||runtimeOwnedAt<Date.parse('2026-11-05T13:28:00Z')||releasedAt<ownedAt||releasedAt<runtimeOwnedAt||releasedAt>now||releasedAt>Date.parse('2026-11-05T20:00:00Z')||
      (dependencies.length&&(releasedAt<dependencies.at(-1).releasedAt||runtimeOwnedAt<dependencies.at(-1).releasedAt)))
    throw Error('exact '+assignment+' FINAL runtime and file release after current OWN, all builds finished required');
   dependencies.push({worker,assignment,own,ownedAt,runtimeOwn,runtimeOwnedAt,row:fileRelease,at:releasedAt,fileRelease,releasedAt});

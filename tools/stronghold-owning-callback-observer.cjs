@@ -63,7 +63,9 @@ function cycleFactory({getExports,u32,emit,verify=()=>{},nativeEpoch=0}={}){
    error.nativeCoverage={expected:{profile:2,imageBase:0x400000,nativeEpoch:nativeEpoch>>>0,callbackVersion:1},
     actual:{profile:e?.pending_context_profile?.()??null,imageBase:e?.pending_context_image_base?.()??null,
      nativeEpoch:e?.pending_context_epoch?.()>>>0,callbackVersion:e?.pending_context_callback_version?.()??null,
-     reason:e?.pending_context_reason?.()??null,depth:e?.pending_context_depth?.()??null}};
+     reason:e?.pending_context_reason?.()??null,depth:e?.pending_context_depth?.()??null},
+    firstNativeFailure:e?.pending_context_first_failure_version?.()===1&&e.pending_context_first_failure(0)!==0?
+     {version:1,words:Array.from({length:36},(_,i)=>e.pending_context_first_failure(i)>>>0)}:null};
    throw error;
   }
   const depth=e.pending_context_depth()>>>0;if(depth>64)throw Error('native depth bound');
@@ -355,6 +357,26 @@ function observerFactory(EXE_SHA256,PINS,controlFactory=preset.controlFactory,ma
    try{return Reflect.apply(prior,this,[pc,esp,...rest]);}catch(error){fail(error);throw error;}
   }
   host.log_block=wrapped;occupied.add(host);
+  // Installed before instantiation/startup, and independent of block tracing.
+  // Native captures the immutable words before its first reason store; this
+  // synchronous import adds the actual Wasm caller/offset and host UTC. It
+  // grants no coverage/readiness and never changes ordinary execution.
+  const priorI32=host.log_i32;
+  if(typeof priorI32==='function'){
+   function firstFailure(value,...rest){
+    if((value>>>0)===0x504e4631&&!report.firstNativeFailure){
+     try{
+      const e=getExports();
+      if(e?.pending_context_first_failure_version?.()===1&&e.pending_context_first_failure(0)!==0)
+       report.firstNativeFailure={version:1,at:new Date().toISOString(),
+        stack:String(new Error('first native coverage invalidation').stack),
+        words:Array.from({length:36},(_,i)=>e.pending_context_first_failure(i)>>>0)};
+     }catch(error){report.firstNativeFailureCaptureError=String(error);}
+    }
+    return Reflect.apply(priorI32,this,[value,...rest]);
+   }
+   host.log_i32=firstFailure;restores.push(()=>{if(host.log_i32===firstFailure)host.log_i32=priorI32;});
+  }
   // Observe the actual owning import call, before RPC filtering/coalescing.
   // RPC upload's synthetic 1 is only a queued request, never host completion.
   for(const name of ['dx_trace','gdi_surface_attach','gdi_surface_upload']){

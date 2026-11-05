@@ -65,7 +65,7 @@ assert.equal(base.hash(original),api.ORIGINAL_PINS_SHA);
 assert.throws(()=>api.acceptedRuntimePins(),/unknown runtime dependency mismatch/);
 const fresh=api.freshRuntimePins(),pins=path.join(run,'runtime-pins.json');
 assert.equal(fresh.files.length,2429);assert.equal(fresh.files.filter(r=>r.path.startsWith('test/binaries/')).length,1856);
-assert.equal(fresh.freshRuntimeBinding.assignment,'stronghold-landed-startup-original-1135 user task');
+assert.equal(fresh.freshRuntimeBinding.assignment,'stronghold-first-native-invalidation-1335 user task');
 assert.throws(()=>api.verifyFreshRuntimePins(JSON.parse(fs.readFileSync('scratch/runs/20261105-stronghold-prompt-review-gameplay/runtime-pins.json'))),/fresh runtime closure/);
 assert.equal(fresh.freshRuntimeBinding.originalPinsSHA256,base.hash(original));
 assert.equal(fresh.commit,cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim());
@@ -99,7 +99,7 @@ for(const mutate of [r=>r.assignment='foreign',r=>r.authorization='foreign',r=>r
 }
 assert.throws(()=>api.validateRelease(release,{run,pins,nonce,now:now+60001}));negatives++;
 const board=fs.readFileSync('messageboard.txt','utf8'),ownership=api.assertRuntimeOwnership();
-assert.equal(ownership.release.dependencies.length,3);
+assert.equal(ownership.release.dependencies.length,2);
 for(const d of ownership.release.dependencies){
  assert.throws(()=>api.requireRuntimeRelease(board.replace(d.fileRelease,'')),/release/);
  assert.throws(()=>api.requireRuntimeRelease(board.replace(d.fileRelease,d.fileRelease.replace('ALLBUILDSFINISHED','pending'))),/release/);
