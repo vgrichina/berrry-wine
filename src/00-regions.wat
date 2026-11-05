@@ -196,8 +196,6 @@
   (region.declare $CS_RING (size 0x00000100) (align 0x00000100)
     (stride 0x4 (count 64)) (mask $CS_MASK) (size-is-power-of-2)
     (owner "05-alu.wat:$cs_push"))
-  (region.declare $PENDING_CONTEXT (size 0x00009000) (align 0x00001000)
-    (owner "01-header.wat:$PENDING_CONTEXT"))
   ;; timeSetEvent slots: 8 x 24 bytes, then the id allocator in its own region.
   ;; Sized from $MM_TIMER_MAX x $MM_TIMER_ENTRY, so growing either without
   ;; growing this is a compile error rather than a silent overrun into whatever
@@ -273,6 +271,10 @@
   ;; than pinning another raw address.
   (region.declare $LAST_ACTIVE_POPUP_TABLE (size 0x00000400) (align 0x00000100)
     (owner "09a1-comctl-handlers.wat:$wnd_last_active_popup_addr_for_slot"))
+  ;; Append observation storage without relocating any existing region.
+  (region.declare $PENDING_CONTEXT (size 0x00009000) (align 0x00001000)
+    (owner "01-header.wat:$PENDING_CONTEXT"))
+
   ;; WIDENED 0x100000 -> 0x3EE000 (wave 3). The low heap never fitted in 1MB:
   ;; $heap_low_reserve hands out 1MB chunks and stopped only when the next
   ;; chunk would reach $PAGE_INDEX_ARENA, which the hand-placed map happened to

@@ -1930,6 +1930,7 @@
       (param $thunk_gs i32) (param $thunk_ge i32) (param $num_th i32)
       (param $main_rsrc_rva i32)
     (local $pe_off i32)
+    (if (global.get $pending_seen) (then (call $pending_gap)))
     (call $gdi_thread_scratch_init (local.get $tid))
     ;; A reused Worker instance must not retain heap-backed queue overflow from
     ;; its previous guest thread. Do this before replacing allocator cursors.

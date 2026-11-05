@@ -68,8 +68,11 @@ for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm']
   assert.equal(e.get_eip()>>>0,C+5);assert.equal(valid(),0);assert.equal(e.pending_context_reason(),3);
   assert.equal(e.get_esp()>>>0,S);assert.equal(e.pending_context_status(17),0);
  });
- for(const mode of ['late','foreign-epoch','foreign-thread','rearm','callback','nonlocal','untracked-entry','precompiled','aborted-run','raw-uop','raw-install','raw-range','stale-install'])test(file+' rejects '+mode,async()=>{
-  const {e,put,valid}=await fixture(file,mode!=='late'&&mode!=='precompiled');put(C,[0xeb,0xfe]);
+ for(const mode of ['late','foreign-epoch','foreign-thread','rearm','callback','nonlocal','untracked-entry','precompiled','aborted-run','raw-uop','raw-install','raw-range','stale-install','reload','reinit','foreign-arm'])test(file+' rejects '+mode,async()=>{
+  const {e,put,valid}=await fixture(file,mode!=='late'&&mode!=='precompiled'&&mode!=='foreign-arm');put(C,[0xeb,0xfe]);
+  if(mode==='foreign-arm'){e.set_current_thread_id(2);assert.equal(e.pending_context_arm(17),0);}
+  if(mode==='reload'){e.run(1);const exe=fs.readFileSync(path.join(ROOT,'test/binaries/notepad.exe'));new Uint8Array(e.memory.buffer).set(exe,e.get_staging());e.load_pe(exe.length);}
+  if(mode==='reinit'){e.run(1);e.init_thread(0,e.get_image_base(),0,0,0,0,0,0);}
   if(mode==='late'){e.run(1);assert.equal(e.pending_context_arm(17),0);}
   if(mode==='aborted-run'){put(C,[0x0f,0x0b]);assert.throws(()=>e.run(1));}
   if(mode==='raw-uop'){e.set_uop(1);const pc=e.uop_compile(C);assert(pc);e.uop_run(pc+48,1);}

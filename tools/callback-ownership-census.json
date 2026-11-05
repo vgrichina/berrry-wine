@@ -231,9 +231,9 @@
         "init_thread"
       ],
       "targets": [],
-      "sha256": "134eb73ac5e92a5aa0326c90c49aa85796bbec90aafa542268ea02efd8594ac2",
+      "sha256": "b92febfad9863dd51569ea883a3502e34bbe719f0a8fa50899ddc39e44218ad4",
       "kind": "lifecycle",
-      "reason": "Starts a fresh private thread root after selecting its thread ID; existing process epoch retained. Expanded worker indexes reserve only the current worker code tail before decoding. Selects private GDI scratch storage by instance slot without invoking callbacks; lifecycle ownership unchanged.",
+      "reason": "Starts a fresh private thread root after selecting its thread ID; existing process epoch retained. Expanded worker indexes reserve only the current worker code tail before decoding. Selects private GDI scratch storage by instance slot without invoking callbacks; lifecycle ownership unchanged. Pending-context v1 invalidates post-execution context replacement without changing process/thread entry behavior; broader callback ownership remains pending (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -2314,9 +2314,9 @@
           "$entry_point"
         ]
       ],
-      "sha256": "24c8dc98ed86af670ffa353003e5746c13bcc0dc3f2ba4832dd163d3dafa42aa",
+      "sha256": "03eeae368209709338fa685e0af67131d216a5f6e73f519401adbc336634f143",
       "kind": "lifecycle",
-      "reason": "Process or task entry; must establish a fresh lifetime before nonlocal contexts can be registered.",
+      "reason": "Process or task entry; must establish a fresh lifetime before nonlocal contexts can be registered. Pending-context v1 invalidates post-execution context replacement without changing process/thread entry behavior; broader callback ownership remains pending (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {

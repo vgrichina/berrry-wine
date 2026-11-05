@@ -1572,6 +1572,13 @@ async function nativeChild() {
   WebAssembly.instantiate=async function(module,imports,...args){
     if(workerData.mode==='import-failure')imports.host.log_block=()=>{throw Error('original import fixture failure');};
     const result=await Reflect.apply(hook,this,[module,imports,...args]);
+    // These tests isolate the JS observer. Current native tracking is therefore
+    // armed identically in the historical-preload control before loader code
+    // receives the instance. Compare full memory, including the real ledger;
+    // disabled-native parity is separately tested on all three execution tiers.
+    const ex=(result.instance||result).exports;
+    if(workerData.mode.startsWith('control')&&ex.pending_context_version?.()===1)
+      assert.equal(ex.pending_context_arm(2),1);
     captured={e:(result.instance||result).exports,memory:imports.host.memory,host:imports.host,module};return result;
   };
   // The shipped Worker source is loaded as shipped, without replacing its queue,
