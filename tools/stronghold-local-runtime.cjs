@@ -3,19 +3,19 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-current-runtime-binding-2355 user task';
+const AUTH='stronghold-review-ack-original-0036 user task';
 const ASSIGNMENT=AUTH;
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-05T00:55:00Z'),CLEANUP=Date.parse('2026-11-05T00:58:00Z');
+const CUTOFF=Date.parse('2026-11-05T01:20:00Z'),CLEANUP=Date.parse('2026-11-05T01:23:00Z');
 const ROOT=path.resolve(__dirname,'..');
 const ORIGINAL_PINS='scratch/runs/20261104-stronghold-setup-transition-onward/runtime-pins.json';
 const ORIGINAL_PINS_SHA='812aadea4a2b23a899919dc95b40b4d628a3836cedc0ae1e1844c966b284b7ef';
-const ACCEPTED_SOURCE='9422cf64ca9d0bf868becb64e7209fb5feb670b3';
+const ACCEPTED_SOURCE='17e09475ecaeaa47de76684df0a0518124a6e387';
 const PRESENTATION_SOURCE='a6d78555bfd5c076d87e4d8ed340c7c91bb4873d';
 const ACCEPTED=Object.freeze({
- 'src/09ab-handlers-d3dim-core.wat':'5c892770004355099d016e301ff73366a560237d681faf0cd3c6bd3aa8e4fc07',
- 'build/wine-assembly.wasm':'018c94ffbde8c857587c25c860db988d603d0662df9a18901f00c183af7493cd',
- 'build/wine-assembly.compat.wasm':'4e684af48e4ec06ae8aada0d5cd2b522345a7a51b8ed89988d4d8fa0d75ea7c2',
+ 'src/09ab-handlers-d3dim-core.wat':'dbcf489a787b4f399eadc926e13336976d6eb0cc30ffed5c8c360af5b496a75a',
+ 'build/wine-assembly.wasm':'e620f3adfc2850580004e204bc1fea495844e942806866f8ada24c215212e412',
+ 'build/wine-assembly.compat.wasm':'66b37bd76da5a7b49c063b4eb0d44c898aaf00ff41e000a6fbd87c01edc136c8',
  'tools/stronghold-owning-callback-observer.cjs':'a931b3dc3656e4409de1748d0a0557fff9b70914e23f04067961fa41fbc282bd'
 });
 // Exactly five named amendments. Every other historical row is retained and
@@ -31,8 +31,8 @@ function acceptedRuntimePins(original=fs.readFileSync(path.join(ROOT,ORIGINAL_PI
   if(actual!==expected)throw Error('unknown runtime dependency mismatch '+row.path);
   if(!named[row.path])return row;
   amendments.push({path:row.path,oldSHA256:row.sha256,newSHA256:expected,
-   publishedProvenance:row.path.startsWith('tools/')?PRESENTATION_SOURCE:ACCEPTED_SOURCE,
-   reason:row.path=== 'tools/stronghold-local-runtime.cjs'?'published passive helper plus explicitly authorized current binding and local assignment amendment':row.path.startsWith('tools/')?'published passive native/host presentation observer':'accepted fractional raster source and exact corresponding existing module pair'});
+   publishedProvenance:row.path==='tools/stronghold-local-runtime.cjs'?'9ac356cab12a5417487fa86a434c45cac4d3e7ff':row.path.startsWith('tools/')?PRESENTATION_SOURCE:ACCEPTED_SOURCE,
+   reason:row.path=== 'tools/stronghold-local-runtime.cjs'?'published passive helper plus explicitly authorized review-ACK operator plan, final release gates and local assignment amendment':row.path.startsWith('tools/')?'published passive native/host presentation observer':'final corrective RGB anchored subpixel placement with literal preserved SIMD packing and exact corresponding existing module pair; supersedes initial 8808ec112'});
   return {...row,bytes:bytes.length,sha256:expected};
  });
  if(pins.files.length!==2429||amendments.length!==5||Object.keys(named).some(p=>!seen.has(p)))throw Error('complete original closure required');
@@ -81,7 +81,21 @@ function requireLocalFlock(lockPath='/tmp/wine-local-runtime.lock'){
  }
  throw Error('required local flock must be held by this process or its ancestor');
 }
-function assertRuntimeOwnership(){return {release:requireRuntimeRelease(fs.readFileSync('messageboard.txt','utf8')),flock:requireLocalFlock()};}
+function requireBuildReleases(board,now=Date.now()){
+ const rows=board.split('\n'),releases=[];
+ for(const [worker,note] of [
+  ['legacy-subpixel-color-placement','docs/re-notes/legacy-subpixel-color-placement-20261105.md'],
+  ['mdk2-pin-validation-cost','docs/re-notes/mdk2-pin-validation-cost-20261105.md']]){
+  const own=rows.filter(r=>r.split(/\s+/)[1]===worker&&r.split(/\s+/)[2]==='OWN').at(-1);
+  const row=rows.filter(r=>r.split(/\s+/)[1]===worker&&r.split(/\s+/)[2]==='RELEASE'&&r.includes(note)).at(-1);
+  const ownedAt=Date.parse(own?.split(' ')[0]),releasedAt=Date.parse(row?.split(' ')[0]);
+  if(!own||!row||!Number.isFinite(ownedAt)||!Number.isFinite(releasedAt)||ownedAt>releasedAt||releasedAt>now)
+   throw Error('final code/build release required: '+worker);
+  releases.push({worker,own,row,ownedAt,releasedAt});
+ }
+ return releases;
+}
+function assertRuntimeOwnership(){const board=fs.readFileSync('messageboard.txt','utf8');return {release:requireRuntimeRelease(board),buildReleases:requireBuildReleases(board),flock:requireLocalFlock()};}
 function identity(){
  const stat=fs.readFileSync('/proc/self/stat','utf8');
  return {hostname:os.hostname(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),
@@ -209,6 +223,15 @@ function assertMailboxCommandReady(run,options){
  if(options?.command)validateCaptureCommand(options.command,path.join(path.resolve(run),'browser'));
  return status.nextIndex;
 }
+// Operator plan only: no writes or game controls. A review receipt is not an
+// ACK, and a rejected ACK is terminal even if its capture was reviewed.
+function nextMailboxAction(status,command){
+ if(status.terminal)return {kind:'stop',reason:'terminal'};
+ if(status.review&&!status.review.receiptPresent)return {kind:'personally-view-and-review',capture:status.review.capture};
+ if(status.pending.length)return {kind:'wait-for-ack',indices:status.pending};
+ if(!status.ready)return {kind:'wait-for-bootstrap'};
+ return {kind:'submit-existing-command',command};
+}
 function prepare(options){
  const manifest=JSON.parse(fs.readFileSync(options.pins));
  if(manifest.runtimeBinding)verifyAcceptedRuntimePins(manifest);
@@ -272,4 +295,4 @@ function createHostPresentationController({page,save,deadline}){
   async finish(reason){if(!active)return;active=false;persist(await evaluate(`globalThis.__strongholdHostPresentation.finish(${JSON.stringify(reason)})`));}
  };
 }
-module.exports={acceptedRuntimePins,verifyAcceptedRuntimePins,ACCEPTED,ORIGINAL_PINS_SHA,identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,diagnosticScene,SETUP_TRANSITION,SETUP_TRANSITIONS,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={acceptedRuntimePins,verifyAcceptedRuntimePins,ACCEPTED,ORIGINAL_PINS_SHA,identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireBuildReleases,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,nextMailboxAction,diagnosticScene,SETUP_TRANSITION,SETUP_TRANSITIONS,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};

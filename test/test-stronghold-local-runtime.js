@@ -31,6 +31,13 @@ const actualFileRelease='2026-11-05T00:02:00Z mdk2-accepted-runtime-binding RELE
 const fixtureBoard=actualOwn+'\n'+actualRelease+'\n'+actualFileRelease,fixtureNow=Date.parse('2026-11-05T00:03:00Z');
 assert.equal(api.requireRuntimeRelease(fixtureBoard,fixtureNow).row,actualRelease);
 for(const board of [actualRelease,fixtureBoard.replaceAll('mdk2-accepted-runtime-binding','someone'),fixtureBoard.replace('-2350 offline','-2350-extra offline'),fixtureBoard.replace('00:01:00','00:04:00'),fixtureBoard.replace('23:51:39','23:51:38'),actualOwn+'\n'+actualRelease,fixtureBoard.replace('00:02:00','00:00:59'),fixtureBoard.replace('00:02:00','00:04:00'),fixtureBoard.replace('binding RELEASE','binding FOREIGN'),fixtureBoard+'\n'+actualOwn.replace('2026-11-04T23:51:39+00:00','2026-11-05T00:02:01Z')])assert.throws(()=>api.requireRuntimeRelease(board,fixtureNow),/release/);
+const buildBoard=['legacy-subpixel-color-placement','mdk2-pin-validation-cost'].flatMap(worker=>[
+ '2026-11-05T00:01:00Z '+worker+' OWN fixture',
+ '2026-11-05T00:02:00Z '+worker+' RELEASE docs/re-notes/'+worker+'-20261105.md final corrective code/build release'
+]).join('\n');
+assert.equal(api.requireBuildReleases(buildBoard,Date.parse('2026-11-05T00:03:00Z')).length,2);
+for(const board of ['',buildBoard.replace('legacy-subpixel-color-placement RELEASE','legacy-subpixel-color-placement STATUS'),buildBoard.replace('mdk2-pin-validation-cost RELEASE','mdk2-pin-validation-cost STATUS'),buildBoard+'\n2026-11-05T00:02:01Z legacy-subpixel-color-placement OWN newer'])assert.throws(()=>api.requireBuildReleases(board,Date.parse('2026-11-05T00:03:00Z')),/final code\/build release/);
+assert.throws(()=>api.requireBuildReleases(buildBoard,Date.parse('2026-11-05T00:01:59Z')),/final code\/build release/);
 const lockProbe="const a=require('./tools/stronghold-local-runtime.cjs');console.log(JSON.stringify(a.requireLocalFlock(process.argv[1])))";
 const testLock=path.join(run,'offline-runtime.lock');fs.writeFileSync(testLock,'');
 assert.throws(()=>execFileSync(process.execPath,['-e',lockProbe,testLock],{stdio:'pipe'}),/Command failed/);
@@ -47,6 +54,7 @@ reject('missing authorization',r=>delete r.authorization);
 reject('missing current authorization',r=>delete r.freshLocalDiagnosticAuthorized);
 reject('previous named observation assignment',r=>r.assignment='stronghold-named-observation-gameplay user task');
 reject('foreign assignment',r=>r.assignment='foreign');
+reject('previous pending-review original assignment',r=>r.assignment='stronghold-current-runtime-binding-2355 user task');
 reject('previous quiet RPC assignment',r=>r.assignment='stronghold-quiet-rpc-original-gameplay-2230 user task');
 reject('previous repaired entry assignment',r=>r.assignment='stronghold-repaired-entry-original-gameplay user task');
 reject('previous fresh complete assignment',r=>r.assignment='stronghold-fresh-complete-entry-gameplay user task');
@@ -84,13 +92,38 @@ reject('extended cleanup',r=>{r.cleanupBy=api.CLEANUP+1;r.expiresAt=r.cleanupBy;
 reject('insufficient runtime reserve',r=>r.chromeCutoff=r.issuedAt+719999);
 reject('insufficient cleanup reserve',r=>{r.cleanupBy=r.issuedAt+899999;r.expiresAt=r.cleanupBy;});
 reject('expired process contract',r=>r.expiresAt=now);
-assert.equal(api.CUTOFF,Date.parse('2026-11-05T00:55:00Z'));
-assert.equal(api.CLEANUP,Date.parse('2026-11-05T00:58:00Z'));
+assert.equal(api.CUTOFF,Date.parse('2026-11-05T01:20:00Z'));
+assert.equal(api.CLEANUP,Date.parse('2026-11-05T01:23:00Z'));
 const lastStart=api.createRelease({run,pins,nonce,now:api.CUTOFF-720000});
 assert.equal(lastStart.closeBy,api.CUTOFF);assert.equal(lastStart.cleanupBy-lastStart.closeBy,180000);
 assert.throws(()=>api.createRelease({run,pins,nonce,now:api.CUTOFF-719999}),/deadline/);
 const child=execFileSync(process.execPath,['-e',`const a=require('./tools/stronghold-local-runtime.cjs');try{a.validateRelease(${JSON.stringify(release)},${JSON.stringify({run,pins,nonce,now})});process.exit(9)}catch(e){if(!/identity/.test(e.message))throw e;console.log('foreign actual child rejected')}`],{encoding:'utf8'}).trim();
 assert.equal(child,'foreign actual child rejected');
+// Reproduce the actual install-route8 boundary with the four-case operator
+// plan, then exercise successful and rejected ACKs through the real mailbox.
+{
+ const fixture=path.join(run,'install-route8-ack'),out=path.join(fixture,'browser');
+ fs.rmSync(fixture,{recursive:true,force:true}); // This test's offline fixture only.
+ fs.mkdirSync(path.join(out,'commands'),{recursive:true});fs.mkdirSync(path.join(fixture,'reviews'),{recursive:true});
+ const write=(name,value)=>fs.writeFileSync(path.join(out,name),JSON.stringify(value));
+ const request=JSON.parse(fs.readFileSync('scratch/runs/20261104-stronghold-current-runtime-binding/browser/review-required.json'));
+ assert.equal(request.commandIndex,8);
+ for(let i=0;i<=8;i++){write('commands/'+i+'.json',{action:i===8?'install-route':'fixture',replyDeadline:now/1000+39});if(i<8)write('reply-'+i+'.json',{ok:true});}
+ write('ready.json',{});write('review-required.json',request);
+ const command={action:'route-review-choose'},plan=()=>api.nextMailboxAction(api.mailboxStatus(fixture),command);
+ assert.equal(plan().kind,'personally-view-and-review');
+ assert.throws(()=>api.assertMailboxCommandReady(fixture),/pending command 8/);
+ fs.writeFileSync(path.join(fixture,'reviews',request.requestId+'.json'),JSON.stringify({fixtureOnly:true}));
+ assert.equal(plan().kind,'wait-for-ack');
+ assert.throws(()=>api.assertMailboxCommandReady(fixture),/pending command 8/);
+ write('reply-8.json',{ok:true});assert.equal(plan().kind,'submit-existing-command');
+ assert.equal(api.assertMailboxCommandReady(fixture),9);
+ write('reply-8.json',{ok:false,error:'rejected capture review'});assert.equal(plan().kind,'stop');
+ assert.throws(()=>api.assertMailboxCommandReady(fixture),/terminal/);
+ assert(!fs.existsSync(path.join(out,'commands/9.json')));
+ assert.equal(api.nextMailboxAction({terminal:null,review:null,pending:[],ready:false},command).kind,'wait-for-bootstrap');
+ console.log('PASS original install-route8 four-case review/ACK plan, pending/rejected/successful ACK and no command9; no controls sent');
+}
 // The unchanged predecessor's leased-box branch must reject this local record.
 const original=base.retained(path.resolve(base.ORIGINAL)).toString();
 const boxStart=original.indexOf("  if(release.authorization!=="),boxEnd=original.indexOf("  if(fs.existsSync(OUT))",boxStart);
@@ -483,7 +516,7 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
  assert.equal(p.evidence.callbackObserver.passiveDraw.presentation,'pending');
  fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(p.createRelease()));
  const ownership=api.assertRuntimeOwnership;
- api.assertRuntimeOwnership=()=>({offlineFixtureRelease:!process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE,release:api.requireRuntimeRelease(process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?fs.readFileSync('messageboard.txt','utf8'):${JSON.stringify(fixtureBoard)},process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?Date.now():${fixtureNow}),flock:api.requireLocalFlock(${JSON.stringify(testLock)})});
+ api.assertRuntimeOwnership=()=>({offlineFixtureRelease:!process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE,release:api.requireRuntimeRelease(process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?fs.readFileSync('messageboard.txt','utf8'):${JSON.stringify(fixtureBoard)},process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?Date.now():${fixtureNow}),buildReleases:api.requireBuildReleases(process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?fs.readFileSync('messageboard.txt','utf8'):${JSON.stringify(buildBoard)},process.env.STRONGHOLD_REQUIRE_CURRENT_RELEASE?Date.now():${fixtureNow}),flock:api.requireLocalFlock(${JSON.stringify(testLock)})});
  const cp=require('node:child_process'),spawn=cp.spawn,nativeSpawn=cp.ChildProcess.prototype.spawn;let spawnAttempts=0,nativeSpawnAttempts=0;
  cp.spawn=()=>{spawnAttempts++;throw Error('OFFLINE SPAWN FORBIDDEN');};
  cp.ChildProcess.prototype.spawn=function(){nativeSpawnAttempts++;throw Error('OFFLINE NATIVE SPAWN FORBIDDEN');};
