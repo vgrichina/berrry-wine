@@ -155,9 +155,9 @@ test('candidate resolver explicitly checks both immutable historical resolver an
  assert.equal(typeof adapter.installAdapter,'function');assert.equal(provenance.candidateSHA256,hash);
  assert.equal(provenance.historicalAccepted,'6d5121b5f96ee6032a9e347e2db64db29c478518');
  assert.throws(()=>integration.candidateResolver('0'.repeat(64)),/changed recorded driver candidate/);
- assert.throws(()=>adapter.createResolver({binding:'historical'}),/actual entry requires accepted binding/);
+ assert.throws(()=>adapter.createResolver({binding:'historical'}),/actual entry requires current binding/);
  const historical=require('../tools/mdk2-immutable-runtime-resolver.cjs').createResolver({binding:'historical'});
- await assert.rejects(adapter.installAdapter(historical),/complete accepted source\/module pair/);
+ await assert.rejects(adapter.installAdapter(historical),/complete current source\/module pair/);
 });
 test('quiet candidate manifest amends only the exact historical bridge',()=>{
  const original=integration.pinnedRuntime();
@@ -850,6 +850,35 @@ test('observer GC prefix failure remains terminal and queryable in actual curren
  }
 });
 
+test('continuous early GC: genuine collector CALL/RET and late start in both accepted Workers',async()=>{
+ for(const row of integration.selectedRuntime().pins.moduleFiles){
+  const observed=await nativeOne(row,'continuous-gc'),control=await nativeOne(row,'control-continuous-gc');
+  write(EVIDENCE,path.basename(row.path)+'.continuous-gc.json',{fixtureOnly:true,observed:observed.value,control:control.value});
+  assert(observed.value.pass,JSON.stringify(observed.value));assert(control.value.pass,JSON.stringify(control.value));
+  for(const key of ['state','memoryHash','guestHash','commands'])assert.deepEqual(observed.value[key],control.value[key],key);
+  const records=observed.value.report.observer.records,entry=records.findIndex(r=>r.kind==='gc-entry'),returned=records.findIndex(r=>r.kind==='gc-return');
+  assert(entry>=0&&returned>entry);assert.equal(records[returned].esp,records[entry].esp+4);
+  assert.equal(observed.value.checkpoints,1);assert.equal(observed.value.report.traceEnd,observed.value.traceEnd);
+  const late=await nativeOne(row,'late-continuous-gc');
+  write(EVIDENCE,path.basename(row.path)+'.late-continuous-gc.json',{fixtureOnly:true,...late.value});
+  assert(late.value.pass,JSON.stringify(late.value));assert.match(late.value.report.fatal,/gc return history missing/);
+  assert.equal(late.value.noLaterExecution,true);assert.equal(late.value.initialPC,0x449096);
+ }
+});
+test('continuous early GC: native pending-frame faults preserve first report and reject next slice',async()=>{
+ for(const row of integration.selectedRuntime().pins.moduleFiles)for(const mode of ['pin','owner','epoch','esp','caller','expiry','boundary-limit','record-limit']){
+  const r=await nativeOne(row,'continuous-gc-'+mode);
+  write(EVIDENCE,path.basename(row.path)+'.continuous-gc-'+mode+'.json',{fixtureOnly:true,...r.value});
+  assert(r.value.pass,JSON.stringify(r.value));assert.equal(r.value.noLaterExecution,true);
+  const pattern={pin:/original bytes changed/,owner:/replacement owning instantiation/,epoch:/foreign observation epoch/,
+    esp:/changed owning registers/,caller:/gc return history missing/,expiry:/continuation deadline/,
+    'boundary-limit':/boundary-limit/,'record-limit':/record-limit/}[mode];
+  assert.match(r.value.report.fatal||r.value.report.observer.status,pattern);
+  assert.equal(r.value.report.observer.records.some(x=>x.kind==='gc-entry'),mode!=='caller');
+  assert(!r.value.report.observer.records.some(x=>x.kind==='gc-return'));
+ }
+});
+
 test('genuine original import failure still traps in actual current Worker',async()=>{
  for(const row of integration.selectedRuntime().pins.moduleFiles){
   const result=await nativeOne({...row,localReference:row.path},'import-failure');
@@ -1064,16 +1093,25 @@ async function personalView(name) {
   assert.equal(r.name,name);assert.equal(r.sha256,sha256);assert.equal(r.personallyViewed,true);
   assert(r.viewedAt>=at&&r.viewedAt<=Date.now());
 }
-async function mediumProducer(candidate=integration, negative=null, personal=false) {
+async function mediumProducer(candidate=integration, negative=null, personal=false, early=false) {
   const {api}=actualDriver(candidate), prior=path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene');
   const readJSON=name=>JSON.parse(fs.readFileSync(path.join(api.OUT,name)));
   const {main,file}=sealedSidecars();
   const original=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(path.join(integration.RUNS,
     '20261104-mdk2-measured-escape-original/recovered/browser/native-selector-79.json.gz')))).state.main;
   const m=structuredClone(original);m.frozen.steps=3344;
+  if(early){
+    const retained=JSON.parse(fs.readFileSync(path.join(integration.RUNS,'20261105-mdk2-post-medium-timer-onward/browser/startup-3584-native-main.json')));
+    const menu=JSON.parse(fs.readFileSync(path.join(integration.RUNS,'20261105-mdk2-post-medium-timer-onward/browser/startup-3584.json'))).state.main;
+    Object.assign(main,retained);m.frozen=structuredClone(retained.frozen);
+    m.nativeSelection=structuredClone(menu.nativeSelection);m.observation.inputs=structuredClone(menu.observation.inputs);
+    if(negative==='unsupported-stack')main.stack[47]=0;
+    if(negative==='unsupported-pc')main.values.get_eip=0x449096;
+    if(negative==='native-not-rest')m.nativeSelection.command.raw=1;
+  }
   const sync=()=>{main.frozen=structuredClone(m.frozen);file.frozen=structuredClone(m.frozen);};sync();
   const model=await producerObserver(candidate),sent=model.sent;
-  let starts=0,resumes=0,checkpoints=0,held=false,pressed=0,released=0,traceEnd=null;
+  let starts=0,resumes=0,checkpoints=0,held=false,pressed=0,released=0,traceEnd=null,selectionPhase=early?'newgame':'medium';
   const quanta=[];
   const session={send:async(_,args)=>{
     if(args.expression.includes('invoke("start"'))starts++;
@@ -1087,6 +1125,7 @@ async function mediumProducer(candidate=integration, negative=null, personal=fal
   api.sessions.set('fixture',{session,info:{url:sent.workerURL}});
   api.deadlineForTest(Date.now()+900000);
   api.pageForTest({keyboard:Object.fromEntries(['down','up'].map(method=>[method,async key=>{
+    if(method==='down'){pressed=0;released=0;}
     held=method==='down';m.observation.inputs.push({type:held?'keydown':'keyup',key,trusted:negative!=='untrusted',target:'screen'});
     m.inputQueue=[{type:'key',hwnd:0,wParam:13,msg:held?0x100:0x101,lParam:held?0:0xc0000000}];
   }])),screenshot:async()=>Buffer.from('explicit offline fixture, no original pixels'),evaluate:async(fn,n)=>{
@@ -1101,9 +1140,12 @@ async function mediumProducer(candidate=integration, negative=null, personal=fal
     if(fn.toString().includes('WineFrozen.step(n)')){
       if(starts)model.boundary();
       quanta.push(n);m.frozen.steps+=n;m.inputQueue=[];sync();
-      if(held){pressed++;m.nativeSelection.command.raw=m.nativeSelection.command.previous=pressed>=2?1:0;}
+      if(held){pressed++;m.nativeSelection.command.raw=m.nativeSelection.command.previous=pressed>=(early?1:2)?1:0;}
       else if(pressed){released++;m.nativeSelection.command.raw=m.nativeSelection.command.previous=0;
-        if(released>=2){m.nativeSelection.freeze={tag:-1,value:1};m.nativeSelection.showmenu={tag:-1,value:0};}}
+        if(released>=(early?1:2)){
+          if(selectionPhase==='newgame')Object.assign(m.nativeSelection,{freeze:{tag:-6,value:null},current:{tag:-2,value:'diff'},showmenu:{tag:-1,value:1},conscheme:{tag:-2,value:'menu'},newconscheme:{tag:-6,value:null}});
+          else {m.nativeSelection.freeze={tag:-1,value:1};m.nativeSelection.showmenu={tag:-1,value:0};}
+        }}
       return {requested:n,ran:n,timedOut:false};
     }
     if(fn.toString().includes('binding: __mdk2BoundTrace')){
@@ -1112,13 +1154,13 @@ async function mediumProducer(candidate=integration, negative=null, personal=fal
       if(negative==='foreign-active')input.activeInput={type:'key',wParam:32};
       const observation=structuredClone(m.observation);
       if(negative==='changed-history')observation.inputs[0].trusted=false;
-      return {input,observation,binding:{audit:[sent]},frozen:m.frozen};
+      return {input,observation,nativeSelection:structuredClone(m.nativeSelection),binding:{audit:[sent]},frozen:m.frozen};
     }
     return structuredClone(m);
   }});
   write(api.OUT,'identity.json',{commit:integration.SOURCE,deadline:new Date(Date.now()+900000).toISOString()});
   write(api.OUT,'selector.json',{app:'mdk2_demo',renderer:'webgl',isolated:true});
-  write(api.OUT,'native-selector-ledger.json',{startedAt:Date.now(),steps:0,commands:0,commandLimit:113,open:true,newgame:true,medium:false});
+  write(api.OUT,'native-selector-ledger.json',{startedAt:Date.now(),steps:0,commands:0,commandLimit:113,open:true,newgame:!early,medium:false});
   const {Spool}=require(path.join(prior,'native-menu.cjs'));
   let spool;
   spool=new Spool(api.OUT,{pause:async()=>{
@@ -1132,10 +1174,32 @@ async function mediumProducer(candidate=integration, negative=null, personal=fal
     return require(path.join(prior,'inspection-guard.cjs')).approve(api.OUT,{capture:name,sha256:p.sha256,steps:p.steps,
       personallyInspected:true,inspector:'offline protocol fixture only',...classification});
   }
-  const r=await approve('fixture-difficulty',{screen:'difficulty',selection:'Medium',transitioning:false,difficultyDialogVisible:true,mediumHighlighted:true});
+  const mainMenu={screen:'main-menu',selection:'New Game',transitioning:false,newGameLabelVisible:true,controllerIconVisible:true,controllerIconHighlighted:true,legalOverlayVisible:false};
   let failure=null;
   try {
+    if(early){
+      const initial=await approve('fixture-startup3584',mainMenu);
+      if(negative==='stale-review')write(api.OUT,'inspection-approval.json',{...initial,steps:3583});
+      if(negative==='bad-ack')write(api.OUT,'reply-0.json',{i:0,ok:false});
+      const selector=require(path.join(integration.RUNS,'20261104-mdk2-measured-escape-original/native-menu.cjs'));
+      await selector.select(api.OUT,initial,'observe',{spool,maxCommands:113});
+      const newgame=await approve('fixture-newgame',mainMenu);
+      await selector.select(api.OUT,newgame,'newgame',{spool,maxCommands:113});
+      assert.deepEqual(quanta,[16,16,32]);assert.equal(starts,1);
+      selectionPhase='medium';
+      if(negative==='review-expired')model.advance(360001);
+    }
+    const r=await approve('fixture-difficulty',{screen:'difficulty',selection:'Medium',transitioning:false,difficultyDialogVisible:true,mediumHighlighted:true});
+    if(early&&negative==='stale-difficulty')write(api.OUT,'inspection-approval.json',{...r,capture:'fixture-newgame'});
+    if(early&&negative==='bad-difficulty-ack')write(api.OUT,'reply-'+r.command+'.json',{i:r.command,ok:false});
+    if(early&&negative==='foreign-difficulty-input')m.observation.inputs.push(
+      {type:'keydown',key:' ',trusted:true,target:'screen'},{type:'keyup',key:' ',trusted:true,target:'screen'});
     await require(path.join(integration.RUNS,'20261104-mdk2-measured-escape-original/native-menu.cjs')).select(api.OUT,r,'medium',{spool,maxCommands:113});
+    if(early){
+      assert.deepEqual(quanta,[16,16,32,16,32]);
+      await api.traceDriver.finish('fixture-terminal');
+      return {starts,resumes,checkpoints,quanta,failure,report:model.bound.report(),traceEnd};
+    }
     assert.deepEqual(quanta,[16,16,32,16],'actual repeated press and release polls');
     if(negative==='historical-review')model.advance(20007);
     if(negative==='review-expired'){
@@ -1171,6 +1235,20 @@ async function mediumProducer(candidate=integration, negative=null, personal=fal
   await api.traceDriver.finish('fixture-terminal');
   return {starts,resumes,checkpoints,quanta,failure,report:model.bound.report(),traceEnd};
 }
+test('continuous early GC producer: actual observe16 NewGame fullrest fresh difficulty Medium fullrest',async()=>{
+ const r=await mediumProducer(integration,null,false,true);
+ write(EVIDENCE,'early-menu-producer.json',{fixtureOnly:true,...r});
+ assert.equal(r.failure,null,r.failure?.stack);assert.equal(r.starts,1);assert.equal(r.resumes,4);assert.equal(r.checkpoints,5);
+ assert.deepEqual(r.quanta,[16,16,32,16,32]);assert.equal(r.report.fatal,null);
+});
+for(const mode of ['unsupported-stack','unsupported-pc','native-not-rest','stale-review','bad-ack','untrusted','extra-queue','foreign-active','changed-history','review-expired','stale-difficulty','bad-difficulty-ack','foreign-difficulty-input'])
+ test('continuous early GC producer rejects '+mode+' before dependent execution',async()=>{
+  const r=await mediumProducer(integration,mode,false,true);
+  write(EVIDENCE,'early-menu-negative-'+mode+'.json',{fixtureOnly:true,...r,failure:r.failure?.message});
+  assert(r.failure,mode);
+  assert.deepEqual(r.quanta,mode==='untrusted'?[16]:['review-expired','stale-difficulty','bad-difficulty-ack','foreign-difficulty-input'].includes(mode)?[16,16,32]:[]);
+  assert(r.starts<=1);
+ });
 test('actual selector and all loading producers retain one trace over 16/32/64 and eight-chunk branch',async()=>{
   const r=await mediumProducer();assert.equal(r.failure,null,r.failure?.stack);
   assert.equal(r.starts,1);assert.equal(r.checkpoints,r.quanta.length);assert.equal(r.resumes,r.quanta.length-1);
@@ -1320,6 +1398,8 @@ async function nativeChild() {
     preload=preload.replace(integration.installBinding.toString(),source.slice(source.indexOf('function installBinding(options)'),source.indexOf('\nfunction preloadSource')).trim());
   }
   if(workerData.mode==='measured-boundary-stop')preload=preload.replaceAll('50000000','1000');
+  if(workerData.mode==='continuous-gc-boundary-limit')preload=preload.replaceAll('50000000','8');
+  if(workerData.mode==='continuous-gc-record-limit')preload=preload.replaceAll('maxRecords=512','maxRecords=2');
   if(workerData.mode==='measured-recordbytes-stop')preload=preload.replace('maxRecordBytes=8192','maxRecordBytes=1000');
   if(workerData.mode.endsWith('record-stop'))preload=preload.replaceAll('maxRecords=512','maxRecords=2').replaceAll('records.length >= 512','records.length >= 2');
   if(workerData.mode==='mid-poll-old')preload=preload.replace(
@@ -1563,7 +1643,7 @@ async function nativeChild() {
   fixtureSource+="if(workerData.mode.startsWith('control'))e.set_trace_esp(0,0,0);\n";
   fixtureSource+=baseline.slice(trapStart,trapEnd);
   fixtureSource+=`parentPort.postMessage({pass:true,checkpoints,traceStartedAt,segments,before,trap:{text:trap,hash:H(b),state:state()},report:bound?.report()||null,workerSource:{path:'lib/guest-worker.js',sha256:H(source)}});}`;
-  const fixture=eval('('+fixtureSource+')');
+  const fixture=workerData.mode.includes('continuous-gc')?access=>continuousGCFixture(access(),bound,ms=>{reviewOffset+=ms;}):eval('('+fixtureSource+')');
   workerData.port.once('message',()=>fixture(()=>({...captured,observer:workerData.mode.startsWith('control')?null:{
     get report(){return bound.report().observer},sample(){},finish(){return bound.invoke('finish',{reason:'fixture-end'}).observer}
   }})).catch(error=>{
@@ -1578,4 +1658,94 @@ async function nativeChild() {
     }
     else parentPort.postMessage({t:'fixtureFailure',error:error.stack,report});
   }));
+}
+
+// Explicit synthetic Lua heap derived from original initializers444410,
+// 446a00,447fd0,448ba0. Every executed instruction is unchanged PE code.
+async function continuousGCFixture({e,memory,module},bound,advanceReview) {
+ const mode=workerData.mode,control=mode.startsWith('control'),late=mode.startsWith('late');
+ const b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),H=integration.sha;
+ const wa=a=>{const w=e.guest_to_wasm(a)>>>0;assert.notEqual(w,0xf0);return w;};
+ const u=(a,v)=>dv.setUint32(wa(a),v>>>0,true),put=(a,v)=>b.set(v,wa(a));
+ const exe=fs.readFileSync(path.join(integration.ROOT,'test/binaries/candidates/mdk2-demo/installed/mdk2demo/mdk2Main.exe'));
+ b.set(exe,e.get_staging());assert(e.load_pe(exe.length));e.set_api_log(0);
+ const S=0x1800000,luaStack=S+0x1000,buckets=S+0x2000,tags=S+0x3000,str=S+0x5000,list=S+0x5100;
+ put(S,Buffer.alloc(0x6000));u(0x4b7ce4,S);u(S,luaStack+12);u(S+4,luaStack);u(S+8,luaStack+0x5f4);u(luaStack,-2);u(luaStack+4,str);
+ u(S+0xa8,-5);u(S+0xac,0x444470);u(S+0xcc,str);u(S+0xd4,buckets);u(S+0xd8,tags);u(S+0xdc,14);u(S+0xe0,-6);
+ for(let i=0;i<14*18;i++)u(tags+i*12,-6);
+ u(S+0xec,150);u(S+0xf0,1);
+ // One unmarked interned nil Level global rooted by a real stack TValue.
+ // Original root traversal marks it; the real sweep resets that mark at449096.
+ // No allocation, freeing callback, Lua execution or collector stub is needed.
+ u(str+4,0);u(str+16,-6);u(str+28,5);put(str+32,Buffer.from('Level\0'));
+ u(buckets+(76%61)*12,1);u(buckets+(76%61)*12+4,1);u(buckets+(76%61)*12+8,list);u(list,str);
+ for(const a of [0x4b87d4,0x4b7d14,0x4b87cc,0x4b87d0,0x5ce08c,0x5ccb48])u(a,0);
+ u(0x4b6570,4);e.set_current_thread_id(1);e.set_esp(0x74ff000);e.set_ebx(0);e.set_eip(0x402176);
+ if(mode==='continuous-gc-caller'){
+  // Negative initial input: wrong collector caller. The full real collector
+  // returns to an original RET, then40218c; no matching entry may be invented.
+  e.set_eip(0x443070);u(0x74ff000,0x44313b);u(0x74ff004,0x40218c);
+ }
+ e.set_trace_esp(1,0,0);
+ const state=()=>Object.fromEntries(['eip','esp','ebp','eax','ebx','ecx','edx','esi','edi','flag_op','flag_a','flag_b','flag_res','flag_sign_shift','yield_reason','last_run_blocks','last_run_halt'].map(n=>[n,e['get_'+n]()>>>0]));
+ let pending;const slice=()=>new Promise((resolve,reject)=>{pending={resolve,reject};parentPort.postMessage({t:'fixtureSliceRequest'});});
+ workerData.port.on('message',m=>{if(m.t==='slice'){const p=pending;pending=null;m.message.trapped?p.reject(Error(m.message.trapped)):p.resolve(m.message);}});
+ let initialPC=null,traceEnd=null,checkpoints=0,slices=0,lastBlocks=0,lastRecords=0,epochChanged=false,sawMarkedRoot=false;
+ if(mode==='continuous-gc-epoch'){
+  const attach=globalThis.Mdk2LuaConstructionObserver.attach;
+  globalThis.Mdk2LuaConstructionObserver.attach=options=>attach({...options,getEpoch:()=>epochChanged?null:options.getEpoch()});
+ }
+ async function stoppedProof(){
+  const first=structuredClone(bound.report()),stopped=state(),hash=H(b);await slice();
+  assert.deepEqual(state(),stopped);assert.equal(H(b),hash);
+  assert.deepEqual(bound.invoke('report'),first,'next queued slice preserves the complete first terminal report');
+  if(first.fatal)assert.throws(()=>bound.invoke('checkpoint',{commandEnd:Date.now()+60000,absoluteEnd:traceEnd}));
+  assert.deepEqual(bound.report().observer,first.observer);assert.equal(bound.report().fatal,first.fatal);
+  parentPort.postMessage({pass:true,noLaterExecution:true,initialPC,report:bound.report(),state:stopped,checkpoints,traceEnd});
+ }
+ const start=()=>{initialPC=e.get_eip()>>>0;const r=bound.invoke('start',{commandEnd:Date.now()+60000,absoluteEnd:Date.now()+360000});traceEnd=r.traceEnd;};
+ if(!control&&!late)start();
+ while(e.get_eip()>>>0!==0x452450&&slices++<4000){
+  if(late&&traceEnd===null&&e.get_eip()>>>0===0x449096)start();
+  await slice();
+  sawMarkedRoot ||= dv.getUint32(wa(str+4),true)===1;
+  if(control)continue;
+  const r=bound.report();
+  if(r.fatal||r.terminal){
+   if(late)assert.match(r.fatal,/gc return history missing/);
+   else assert(mode!=='continuous-gc',JSON.stringify(r));
+   await stoppedProof();return;
+  }
+  if(!r.started)continue;
+  assert(r.observer.blocks>=lastBlocks&&r.observer.records.length>=lastRecords);lastBlocks=r.observer.blocks;lastRecords=r.observer.records.length;
+  assert.equal(r.traceEnd,traceEnd);
+  if(!checkpoints&&r.observer.records.some(x=>x.kind==='gc-entry')){
+   assert(!r.observer.records.some(x=>x.kind==='gc-return'));
+   const before=state(),hash=H(b),end=Date.now()+60000;
+   let paused;
+   try{paused=bound.invoke('checkpoint',{commandEnd:end,absoluteEnd:traceEnd});}
+   catch(error){assert.equal(mode,'continuous-gc-record-limit');await stoppedProof();return;}
+   assert(paused.paused);checkpoints++;
+   assert.equal(paused.observer.records.filter(x=>x.kind==='gc-entry').length,1);
+   assert(!paused.observer.records.some(x=>x.kind==='gc-return'));
+   // Fault injection is explicit and limited to negative cases; successful
+   // early/late/control paths never change registers or memory after setup.
+   if(mode==='continuous-gc-pin')put(0x402187,[0x90]);
+   if(mode==='continuous-gc-esp')e.set_esp((e.get_esp()+4)>>>0);
+   if(mode==='continuous-gc-epoch')epochChanged=true;
+   advanceReview(mode==='continuous-gc-expiry'?360001:20007);
+   try{
+    if(mode==='continuous-gc-owner')await WebAssembly.instantiate(module,{host:{}});
+    const resumed=bound.invoke('resume',{commandEnd:Date.now()+60000,absoluteEnd:traceEnd});assert.equal(resumed.traceEnd,traceEnd);
+   }catch(error){assert(['continuous-gc-owner','continuous-gc-esp','continuous-gc-expiry'].includes(mode),String(error));await stoppedProof();return;}
+   if(mode==='continuous-gc') {assert.deepEqual(state(),before);assert.equal(H(b),hash);}
+  }
+ }
+ assert.equal(e.get_eip()>>>0,0x452450,'real collector must return through40218c');assert(!late,'late prefix must fail');
+ assert(sawMarkedRoot,'original root traversal must mark the initially unmarked string');
+ assert.equal(dv.getUint32(wa(str+4),true),0,'original sweep must reset the real root mark');
+ const region=require('../lib/region-map.generated.js').REGIONS.GUEST_BASE;
+ const report=control?null:structuredClone(bound.invoke('finish',{reason:'fixture-end'}));
+ const result={pass:true,fixtureOnly:true,initialPC,traceEnd,checkpoints,slices,state:state(),memoryHash:H(b),guestHash:H(b.subarray(region.base,region.end)),report};
+ parentPort.postMessage(result);
 }

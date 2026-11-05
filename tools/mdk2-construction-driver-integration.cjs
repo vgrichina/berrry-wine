@@ -303,7 +303,8 @@ function installBinding(options) {
       const exports = {...ex, run(...values) {
         // An expired idle deadline must never disable tracing and then execute
         // an unobserved command. Keep the terminal report queryable by CDP.
-        if (started && (observationStop || terminal && observationReasons.includes(observer?.report.status))) return;
+        if (started && (observationStop || terminal && (observationReasons.includes(observer?.report.status) ||
+            fatal && observer?.report.status !== 'original-import-failure'))) return;
         // The pinned Worker passes its received adaptive budget to run().
         nativeSlice={budget:values[0],ordinal:(nativeSlice?.ordinal||0)+1,completed:false};
         try { const result=Reflect.apply(ex.run, ex, values);nativeSlice.completed=true;return result; }
@@ -543,10 +544,15 @@ function passiveOuterState(main) {
 
 function createTraceDriver({sessions, page, save, deadline, OUT}) {
   let owner = null, active = false, consumed = false, terminal = false, before = null, previous = null, commandEnd, quantum = 0;
-  let requested = null, inputReceipt = null;
+  let requested = null, inputReceipt = null, menuTrace = null;
+  const menuBase = path.join(RUNS, '20261104-mdk2-fresh-pending-scene');
+  const nativeMenu = require(path.join(menuBase, 'native-menu.cjs'));
+  const {nativeReady} = require(path.join(menuBase, 'native-readiness.cjs'));
+  const {enterPressed, enterCallbackAfterRelease} = require(path.join(menuBase, 'opening-boundary.cjs'));
   const read = name => JSON.parse(fs.readFileSync(path.join(OUT, name)));
   function scene(approval) {
     const base = path.join(RUNS, '20261104-mdk2-fresh-pending-scene');
+    if (approval.screen === 'main-menu') return nativeMenu.ready(approval, 'observe');
     if (approval.screen === 'difficulty') return require(path.join(base, 'native-menu.cjs')).ready(approval, 'medium');
     if (approval.screen === 'medium-transition') return require(path.join(base, 'native-menu.cjs')).ready(approval, 'observe');
     if (approval.screen === 'post-medium-pending') return require(path.join(base, 'pending-control.cjs')).scene(approval, 'observe-pending');
@@ -562,13 +568,39 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     const approval = read('inspection-approval.json');
     if (!consumed && approval.screen !== 'difficulty') return;
     scene(approval);
-    assert(['difficulty','opening-comic'].includes(approval.screen), 'observation scene does not authorize traced keyboard input');
+    assert(['main-menu','difficulty','opening-comic'].includes(approval.screen), 'observation scene does not authorize traced keyboard input');
     assert.equal(c.reviewRef, approval.capture, 'foreign input review');
-    assert.equal(c.key, approval.screen === 'difficulty' ? 'Enter' : 'Escape', 'foreign traced key');
+    assert.equal(c.key, approval.screen === 'opening-comic' ? 'Escape' : 'Enter', 'foreign traced key');
     const receipt = read('input-' + i + '.json').main;
     const events = receipt.observation.inputs, edge = events.at(-1);
     assert.deepEqual([edge?.type, edge?.key, edge?.trusted, edge?.target], [c.action, c.key, true, 'screen'], 'untrusted traced input');
     const {balanced} = require(path.join(RUNS, '20261104-mdk2-fresh-pending-scene/native-menu.cjs'));
+    if (menuTrace && approval.screen !== 'opening-comic') {
+      const phase = approval.screen === 'main-menu' ? 'newgame' : 'medium';
+      const ledger = read('native-selector-ledger.json');
+      assert.equal(ledger[phase], true, 'native menu attempt not reserved');
+      if (phase === 'newgame') assert(!ledger.medium && !menuTrace.newgameDone, 'New Game out of sequence');
+      else assert(menuTrace.newgameDone && !menuTrace.mediumDone, 'Medium before New Game full rest');
+      if (c.action === 'keydown') {
+        assert.equal(menuTrace.edge, 'rest', 'traced menu press already pending');
+        const reviewed = nativeMenu.checkedReview(OUT, approval);
+        nativeMenu.ready(approval, phase); nativeReady(reviewed, phase); nativeReady(receipt, phase);
+        assert.equal(approval.steps, previous.barrier.frozen.steps, 'stale native menu review');
+        assert.deepEqual(reviewed.observation.inputs, inputReceipt.observation.inputs, 'input after menu review');
+        if (phase === 'medium') {
+          assert.notEqual(approval.capture, menuTrace.review.capture, 'fresh difficulty review required');
+          assert(approval.steps >= menuTrace.newgameRestSteps, 'difficulty review before New Game rest');
+        }
+        menuTrace.phase = phase; menuTrace.review = {capture:approval.capture,sha256:approval.sha256};
+        menuTrace.edge = 'down'; menuTrace.pressSeen = false; menuTrace.releaseSlices = 0;
+      } else {
+        assert.equal(c.action, 'keyup'); assert.equal(menuTrace.phase, phase);
+        assert.equal(menuTrace.edge, 'down', 'missing traced menu press');
+        assert(menuTrace.pressSeen, 'native Enter press not observed');
+        assert.deepEqual({capture:approval.capture,sha256:approval.sha256}, menuTrace.review, 'menu review changed during input');
+        menuTrace.edge = 'up';
+      }
+    }
     if (inputReceipt) {
       assert.deepEqual(events.slice(0, -1), inputReceipt.observation.inputs, 'traced input history changed');
     } else {
@@ -611,16 +643,22 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     const acceptedAt = Date.now();
     if (terminal) throw Error('trace driver terminal');
     const approval = read('inspection-approval.json');
-    if (!consumed && !['difficulty','post-medium-construction'].includes(approval.screen)) return;
+    const earlyMenu = approval.screen === 'main-menu' && approval.steps >= 3584;
+    if (!consumed && !earlyMenu && !['difficulty','post-medium-construction'].includes(approval.screen)) return;
     scene(approval);
     // Execution credit is exactly the unchanged producer's command. The main
     // observer counts every boundary within one fixed 50M/360s/512 contract.
     assert([16,32,64].includes(c.n), 'unsupported traced quantum');
     if (approval.screen === 'difficulty') assert(inputReceipt, 'Medium trusted input receipt missing');
     assert.equal(approval.capture, pending.capture); assert.equal(approval.sha256, pending.sha256);
-    const menu = read('native-selector-ledger.json'); assert(menu.newgame && menu.medium, 'independent NewGame/Medium prerequisite');
+    const menu = read('native-selector-ledger.json');
+    if (!consumed && earlyMenu) assert(!menu.newgame && !menu.medium, 'early observation must precede New Game');
+    else if (!menuTrace) assert(menu.newgame && menu.medium, 'independent NewGame/Medium prerequisite');
+    else if (approval.screen === 'main-menu') assert(!menu.medium, 'main menu after Medium attempt');
+    else if (approval.screen === 'difficulty') assert(menuTrace.newgameDone, 'difficulty before New Game full rest');
+    else assert(menuTrace.mediumDone, 'continuation before Medium full rest');
     const state = await page().evaluate(() => ({input: __mdk2InputSnapshot(sharedRenderer), observation: __mdk2Observe,
-      binding: __mdk2BoundTrace.report(), frozen: WineFrozen.status()}));
+      nativeSelection: __mdk2NativeSelection(wine), binding: __mdk2BoundTrace.report(), frozen: WineFrozen.status()}));
     assert(!state.binding.fatal, 'page binding failure');
     assert.equal(state.input.mouseButtonsMask, 0);
     if (inputReceipt) {
@@ -656,6 +694,23 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     before = await capture();
     if (consumed) assert.deepEqual(before, previous, 'changed frozen state across construction review');
     assert.equal(before.barrier.owners[0].endpointIdentity, sent[0].endpointIdentity, 'foreign main endpoint');
+    if (!consumed && earlyMenu) {
+      // Exactly the reviewed3584 seam. Earlier visually similar observations
+      // are still opening; later attachment cannot recreate a lost GC entry.
+      assert.equal(approval.steps, 3584, 'missed reviewed early observation');
+      assert.equal(state.frozen.tickMs, 16); assert.equal(c.n, 16);
+      nativeMenu.ready(approval, 'newgame');
+      const reviewed = nativeMenu.checkedReview(OUT, approval);
+      nativeReady(reviewed, 'newgame'); nativeReady(state, 'newgame');
+      assert.deepEqual(state.observation.inputs, reviewed.observation.inputs, 'input after early review');
+      assert.equal(before.main.values.get_eip, 0x47d9c8, 'unsupported pre-GC decoder checkpoint');
+      for (const [index, pc] of [[6,0x47ca7e],[14,0x47a928],[22,0x47b393],[39,0x47c012],[42,0x47c626],[45,0x451546],[47,0x402176]])
+        assert.equal(before.main.stack?.[index], pc, 'unsupported pre-GC maintenance stack');
+      // This is only admission evidence. start/sample validates decoder context;
+      // only subsequent genuine native boundaries can create GC history.
+      inputReceipt = {...state.input,observation:state.observation};
+      menuTrace = {phase:'newgame',edge:'rest',newgameDone:false,mediumDone:false,review:{capture:approval.capture,sha256:approval.sha256}};
+    }
     // Attach at the first reviewed construction quantum, even before level1
     // exists. Waiting for its published request loses the genuine demand call.
     // decodeFileSnapshot remains interpretation of file progress, not admission
@@ -687,6 +742,22 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     save('bounded-trace-end.json', {report, result});
     assert(result.ran === requested && !result.timedOut && Date.now() < commandEnd, 'original construction command failed/deadline');
     const after = await capture();
+    if (menuTrace && menuTrace.edge !== 'rest') {
+      const native = await page().evaluate(() => ({nativeSelection:__mdk2NativeSelection(wine),
+        ...__mdk2InputSnapshot(sharedRenderer),observation:__mdk2Observe,frozen:WineFrozen.status()}));
+      assert.deepEqual(native.frozen, after.barrier.frozen, 'menu native read advanced');
+      assert.deepEqual(native.observation.inputs, inputReceipt.observation.inputs, 'input during traced menu quantum');
+      if (menuTrace.edge === 'down') menuTrace.pressSeen ||= enterPressed(native);
+      else {
+        menuTrace.releaseSlices += requested;
+        if (menuTrace.releaseSlices >= 32 && enterCallbackAfterRelease(native, menuTrace.phase)) {
+          assert.deepEqual(native.inputQueue, []); assert.equal(native.activeInput, null); assert.equal(native.mouseButtonsMask, 0);
+          nativeMenu.balanced(native.observation.inputs);
+          menuTrace[menuTrace.phase + 'Done'] = true; menuTrace.edge = 'rest';
+          if (menuTrace.phase === 'newgame') menuTrace.newgameRestSteps = native.frozen.steps;
+        }
+      }
+    }
     const correlation = correlateSnapshots(before, after, report);
     save('bounded-trace-correlation-' + quantum + '.json', {before, after, correlation});
     save('bounded-trace-correlation.json', {before, after, correlation});
