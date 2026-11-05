@@ -2006,11 +2006,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [~] New-game lane: Lords of the Realm II original playable Windows demo
   id: NEW-GAME-LORDS2-DEMO-20261015
   Prior evidence: scratch/runs/20261015-lords2-review-hold and shared WIP; original250171 reached GetNextWindow invalid1446 after GetParent fix, no gameplay.
-  status: active (last owner-authorized emulator retry; source preparation behind shared test queue)
+  status: active (authorized retry finished with missing evidence; canonical demo media recovery)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 6 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Fresh lords2-emulator-owner-retry-nov05 follows completed CMR3; source-only behind Strong0950 -> D3Dclip1010 -> RFworker1020 exact releases/cleanup. Reconcile merged bedaaaa7f first: current USER230/262 invalid-window handling and existing regressions already cover NULL rejection, valid sibling traversal, stale/nonwindow handles, Pascal far ABI and strict general conversion. Do not repeat that repaired defect. Inspect retained evidence for the next demonstrated emulator mismatch; original review-hold/preflight runs and SETUP.EXE are absent, while the Nov03 retained-payload audit survives. Preparation: scratch/runs/20261105-lords2-retry-preparation/prerequisites.json. No new gameplay or current test result claimed.
+  Retry outcome 2026-11-05: exit0; 44 named prerequisites and historical preflight files absent. Surviving audit hashes match; current main contains bedaaaa7f USER230/262 repair. No new demonstrated mismatch, flag, code, tests or runtime. Findings: scratch/runs/20261105-lords2-emulator-owner-retry/findings.md. All six authorized coordinator retries finished without a renewed flag; each retains its explicit evidence gap.
+  Next: Fresh lords2-static-media-recovery-1100 recovers the small pinned demo ZIP using existing acquisition/static-inspection helpers, verifies its original file manifest, and preserves one canonical fixture path plus hashes. No guest execution, emulator edits, leased boxes or repeat diagnosis. Original gameplay remains unverified.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   prev-owner: /root/new_demo_refill (released; coordinator reclaimed 2026-11-05)
   Done: Registered original launch, actual ordinary player control and reviewed gameplay screenshot with source/run identity.
