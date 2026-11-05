@@ -1112,15 +1112,15 @@ commit output — do not assume your hunks landed.**
 
 - [!] Complete Serious Sam production integration and ordinary gameplay
   id: SAM-PRODUCTION-FOLLOWTHROUGH
-  status: ready (REP blocker resolved; queued for next normal production slot)
+  status: in-progress (REP blocker resolved; fresh headless GL worker allocated)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: Owner update 2026-11-05 accepts MIG b786b78da/eadf70fd5 and unblocks this lane. Next normal production slot; existing four workers continue, no fifth worker.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Schedule fresh sam-production-followthrough-next at the next eligible worker completion. Reconcile accepted REP fix and production fault/classifier contracts; integrate necessary tested production slices with meaningful regressions, then Serious Sam demo ordinary gameplay using headless GL. Preserve authentic first failure and exact source/module/media identities; no private diagnostic shortcuts. Shared integration/builds and local heavy runtime remain serialized.
+  Next: Fresh sam-production-headless-gl-1115 assigned after Strong terminal; runtime on leased bx_72mzdfcs, shared integration waits D3Dclip1010 then RFworker1020. Reconcile accepted REP fix and production fault/classifier contracts; integrate necessary tested production slices with meaningful regressions, then Serious Sam demo ordinary gameplay using headless GL. Preserve authentic first failure and exact source/module/media identities; no private diagnostic shortcuts. Shared integration/builds and local heavy runtime remain serialized.
   created: 2026-10-02T04:16:51.185761+00:00
   created-by: orchestrator-handoff-audit
   depends-on: MIG-SAM-REP-RESTART (satisfied b786b78da, merged eadf70fd5)
-  worker: queued; scratch/usage-watch/sam-production-followthrough-next.task.txt
+  worker: sam-production-headless-gl-1115; leased bx_72mzdfcs idle at allocation, TTL 2026-11-05T13:11:54Z, coordinator shutdown; scratch/usage-watch/sam-production-headless-gl-1115.task.txt
   candidate: serious-sam-demo
   Done: Production build reaches menu and level with supported input, verified movement/combat and no private diagnostic shortcuts; exact source/module and focused regressions retained.
   Evidence: ops/handoffs/mig-sam-fault-remainder.md; ops/handoffs/01a0f6ff-da61-7710-a604-d9442103dbbd.md
