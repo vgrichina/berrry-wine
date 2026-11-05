@@ -168,3 +168,32 @@ and surrounding live-state/draw observations. Windows DX7 comparison, public
 COM reproduction, exact unresolved typed membership, MultiplyTransform behavior
 and texture lifetime remain unmeasured. Next work is the bounded repair plus
 these regressions, once assigned; no runtime slot is requested by this note.
+
+## Setter-reference supplement, 2026-11-05
+
+Five additional Microsoft-authored DX7 SDK method topics were read from the
+same third-party mirror and retained with exact bytes, SHA-256, size and URL in
+`scratch/runs/20261105-d3d7-setter-contract-supplement/sources.json`. This is
+documentary evidence, not an authenticated Microsoft distribution or a native
+Windows measurement.
+
+The [SetTexture reference](https://library.thedatadungeon.com/directx7/devdoc/live/directx/imref_2s2s.content.htm)
+explicitly requires the ordinary binding call to increment the surface's
+reference count. Clearing the stage with NULL permits release. Thus ordinary
+texture-binding ownership has a DX7 source; this does **not** establish the
+additional reference-count behavior of Begin/End, Create, Capture, Apply or
+DeleteStateBlock. Their exact resource-lifetime oracle remains open.
+
+The SetMaterial (`imref_4g10`) and SetLight (`imref_0884`) topics describe
+structure-valued device properties replacing earlier material handles and light
+objects. SetLight replaces existing properties at the selected index. These
+reinforce the need to preserve values rather than a mutable caller buffer;
+neither specifies the missing predefined-block membership. SetViewport
+(`imref_47c4`) likewise supplies no typed-block rule. Its ordinary validation
+text does not reopen the held viewport crash task.
+
+The [MultiplyTransform reference](https://library.thedatadungeon.com/directx7/devdoc/live/directx/imref_1smc.content.htm)
+specifies the supplied matrix multiplied by the selected current matrix, but
+does not discuss recording. Its absence from the separate nine-method recording
+list remains insufficient to invent a recording error or no-op. No production
+change, build, COM fixture or game run was performed for this supplement.
