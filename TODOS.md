@@ -1590,11 +1590,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: Command & Conquer: Tiberian Sun demo
   id: NEW-GAME-TIBERIAN-SUN-DEMO-20261006
-  status: active (one owner-authorized retry; source-only until existing shared test queue releases)
+  status: blocked (configured media and retained trap evidence missing locally; authorized retry stopped without a flag)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 1 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Fresh worker tiberian-emulator-owner-retry-nov05 prepares from current main and preserved evidence, then waits for Strong0950, D3Dclip1010 and RFworker1020 releases before shared edits/tests. Diagnose our documented Win32/x86 behavior and fix with a regression; no MIG/DLL review, original browser run or leased box assigned in this bounded task.
+  Next: Restore or locate original SUN media matching f70dcf32a25fe63cde2dd16bcf60feea93a98c94fc371ee97446df247160414b and raw final trap/AddRef records. Retry 20261105-tiberian-emulator-owner-retry exited0 source-only: configured extracted media and 20261008T1227Z/1236Z runs absent; current source already contains historical registered-owner COM activation/unsigned AddRef fixes. No current mismatch, tests, build, repair or gameplay established. Findings scratch/runs/20261105-tiberian-emulator-owner-retry/findings.md; no renewed flag or automatic retry assigned.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: test/binaries/win98-games-a-d/CnC-TiberianSun-demo-SW/extracted
   Prior evidence: Parent DirectDraw repaint and COM activation/AddRef fixes passed; first OleRun then trap EIP00d88176/ESP00d88168 in heap frame data remains. Tested AddRef build d8d4096 differs from browser ff3281; no gameplay qualification.
