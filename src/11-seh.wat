@@ -326,7 +326,15 @@
     (if (i32.eq (local.get $disp) (i32.const 1))
       (then
         (global.set $fault_raising (i32.const 1))
+        ;; The next frame sees the same access violation the first one did.
+        ;; $rep_fault_write was cleared when the raise returned, and any fault
+        ;; since may have moved $fault_address: take both from the record.
+        (if (i32.eq (call $gl32 (local.get $rec)) (i32.const 0xC0000005))
+          (then
+            (global.set $rep_fault_write (call $gl32 (i32.add (local.get $rec) (i32.const 20))))
+            (global.set $fault_address (call $gl32 (i32.add (local.get $rec) (i32.const 24))))))
         (call $seh_walk_from (call $gl32 (local.get $rec)) (call $gl32 (local.get $frame)))
+        (global.set $rep_fault_write (i32.const 0))
         (global.set $fault_raising (i32.const 0))
         (return)))
     (call $seh_terminate_unhandled (i32.or (i32.const 0xDE00) (call $gl32 (local.get $rec)))))
@@ -464,6 +472,9 @@
     (call $gs32 (local.get $rec) (i32.const 0xC0000005))
     (call $gs32 (i32.add (local.get $rec) (i32.const 12)) (local.get $old_eip))
     (call $gs32 (i32.add (local.get $rec) (i32.const 16)) (i32.const 2))
+    ;; Read/write kind: a REP element offered by $rep_fault_sync names it;
+    ;; every scalar $g2w_miss offer keeps the read classification.
+    (call $gs32 (i32.add (local.get $rec) (i32.const 20)) (global.get $rep_fault_write))
     (call $gs32 (i32.add (local.get $rec) (i32.const 24)) (local.get $ga))
     (call $gs32 (local.get $ctx) (i32.const 0x10007))
     (call $gs32 (i32.add (local.get $ctx) (i32.const 0x9c)) (local.get $old_edi))

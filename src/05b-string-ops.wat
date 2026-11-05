@@ -305,19 +305,71 @@
           (local.set $i (i32.add (local.get $i) (i32.const 1)))
           (br $fill))))))
 
+  ;; Which REP string ops take the precise per-element path below instead of
+  ;; the bulk `_do` body. Fault mode 3 always does. Fault mode 5 (Windows'
+  ;; reserved-page rule) does only when the bulk span is not one proven affine
+  ;; mapping -- a fully committed copy keeps memory.copy/fill, and only a span
+  ;; that might touch an uncommitted page pays for per-element checks. A count
+  ;; whose byte extent wraps is never proven, so it takes the exact path too.
+  (func $rep_precise (param $w i32) (param $movs i32) (result i32)
+    (local $n i32) (local $bytes i32) (local $back i32)
+    (if (i32.eq (global.get $fault_unmapped) (i32.const 3)) (then (return (i32.const 1))))
+    (if (i32.ne (global.get $fault_unmapped) (i32.const 5)) (then (return (i32.const 0))))
+    (local.set $n (i32.load offset=4 (global.get $reg_base)))
+    (if (i32.eqz (local.get $n)) (then (return (i32.const 0))))
+    (if (i32.gt_u (local.get $n) (i32.div_u (i32.const -1) (local.get $w)))
+      (then (return (i32.const 1))))
+    (local.set $bytes (i32.mul (local.get $n) (local.get $w)))
+    (local.set $back (select (i32.sub (local.get $bytes) (local.get $w)) (i32.const 0) (global.get $df)))
+    (if (i32.eqz (call $string_guest_range_contiguous
+          (i32.sub (i32.load offset=28 (global.get $reg_base)) (local.get $back)) (local.get $bytes)))
+      (then (return (i32.const 1))))
+    (if (local.get $movs)
+      (then (return (i32.eqz (call $string_guest_range_contiguous
+        (i32.sub (i32.load offset=24 (global.get $reg_base)) (local.get $back)) (local.get $bytes))))))
+    (i32.const 0))
+
+  ;; Fault mode 5: offer an absent byte of a REP element to the guest's
+  ;; filters synchronously, as $g2w_miss does for a scalar access, but with the
+  ;; architectural state Windows reports: EIP is the REP prefix and ECX/ESI/EDI
+  ;; count only the elements already complete (the caller published them), and
+  ;; ExceptionInformation[0] names read or write. Answers 1 when a filter
+  ;; continued AND the byte is now present, so the caller re-checks the
+  ;; element from scratch (a filter may also have decommitted something).
+  (func $rep_fault_sync (param $a i32) (param $write i32) (param $pc i32) (result i32)
+    (local $saved_eip i32) (local $ok i32)
+    (if (i32.eqz (i32.and
+          (i32.and (i32.ge_u (local.get $a) (i32.const 0x10000))
+                   (i32.eqz (global.get $fault_raising)))
+          (i32.and (i32.eqz (global.get $api_handler_depth))
+                   (i32.ne (call $virtual_reserved_contains (local.get $a)) (i32.const 0)))))
+      (then (return (i32.const 0))))
+    (local.set $saved_eip (global.get $eip))
+    (global.set $eip (local.get $pc))
+    (global.set $rep_fault_write (local.get $write))
+    (local.set $ok (call $seh_fault_sync (local.get $a)))
+    (global.set $rep_fault_write (i32.const 0))
+    (global.set $eip (local.get $saved_eip))
+    (i32.and (i32.ne (local.get $ok) (i32.const 0))
+             (i32.ne (call $guest_addr_mapped (local.get $a)) (i32.const 0))))
+
   ;; Asynchronous SEH must abandon this decoded stream BEFORE the failed
   ;; element. The op carries the prefix PC rather than the enclosing block PC.
   ;; Publish progress after each complete element, never after a partial store.
   ;; Return 1 after a fault redirect; callers must not dispatch the terminator.
+  ;; Under fault mode 5 the walk is synchronous instead: a continued filter
+  ;; re-checks the element, and an absent byte no filter repaired keeps the
+  ;; quiet-sentinel rule (reads 0, writes lost) for that element only.
   (func $rep_fault_checked (param $w i32) (param $movs i32) (param $pc i32) (result i32)
     (local $s i32) (local $d i32) (local $i i32) (local $a i32)
-    (local $v i32) (local $step i32) (local $write i32)
+    (local $v i32) (local $step i32) (local $write i32) (local $lossy i32)
     (local.set $step (select (i32.sub (i32.const 0) (local.get $w))
                             (local.get $w) (global.get $df)))
     (block $done (loop $elements
       (br_if $done (i32.eqz (i32.load offset=4 (global.get $reg_base))))
       (local.set $s (i32.load offset=24 (global.get $reg_base)))
       (local.set $d (i32.load offset=28 (global.get $reg_base)))
+      (local.set $lossy (i32.const 0))
       ;; Source is checked first, as on x86 MOVS. Check the WHOLE element
       ;; before a destination store, including unaligned page straddles.
       (local.set $write (i32.eqz (local.get $movs)))
@@ -326,6 +378,10 @@
         (loop $bytes
           (local.set $a (i32.add (select (local.get $d) (local.get $s) (local.get $write)) (local.get $i)))
           (if (i32.eqz (call $guest_addr_mapped (local.get $a))) (then
+            (if (i32.eq (global.get $fault_unmapped) (i32.const 5)) (then
+              (br_if $elements (call $rep_fault_sync (local.get $a) (local.get $write) (local.get $pc)))
+              (local.set $lossy (i32.const 1))
+              (br $mapped)))
             (global.set $eip (local.get $pc))
             (global.set $fault_address (local.get $a))
             (global.set $rep_fault_write (local.get $write))
@@ -337,17 +393,35 @@
         (br_if $mapped (local.get $write))
         (local.set $write (i32.const 1))
         (br $operands)))
-      (local.set $v (i32.load (global.get $reg_base)))
-      (if (local.get $movs) (then
-        (local.set $v (if (result i32) (i32.eq (local.get $w) (i32.const 1))
-          (then (call $gl8 (local.get $s)))
-          (else (if (result i32) (i32.eq (local.get $w) (i32.const 2))
-            (then (call $gl16 (local.get $s))) (else (call $gl32 (local.get $s)))))))))
-      (if (i32.eq (local.get $w) (i32.const 1))
-        (then (call $gs8 (local.get $d) (local.get $v)))
-        (else (if (i32.eq (local.get $w) (i32.const 2))
-          (then (call $gs16 (local.get $d) (local.get $v)))
-          (else (call $gs32 (local.get $d) (local.get $v))))))
+      (if (local.get $lossy)
+        (then
+          ;; Byte-wise so no absent byte reaches $g2w_miss and is offered a
+          ;; second time: absent source bytes read 0, absent stores are lost.
+          (local.set $i (i32.const 0))
+          (loop $lbytes
+            (local.set $v
+              (if (result i32) (local.get $movs)
+                (then (if (result i32) (call $guest_addr_mapped (i32.add (local.get $s) (local.get $i)))
+                  (then (call $gl8 (i32.add (local.get $s) (local.get $i))))
+                  (else (i32.const 0))))
+                (else (i32.shr_u (i32.load (global.get $reg_base))
+                                 (i32.shl (local.get $i) (i32.const 3))))))
+            (if (call $guest_addr_mapped (i32.add (local.get $d) (local.get $i)))
+              (then (call $gs8 (i32.add (local.get $d) (local.get $i)) (local.get $v))))
+            (local.set $i (i32.add (local.get $i) (i32.const 1)))
+            (br_if $lbytes (i32.lt_u (local.get $i) (local.get $w)))))
+        (else
+          (local.set $v (i32.load (global.get $reg_base)))
+          (if (local.get $movs) (then
+            (local.set $v (if (result i32) (i32.eq (local.get $w) (i32.const 1))
+              (then (call $gl8 (local.get $s)))
+              (else (if (result i32) (i32.eq (local.get $w) (i32.const 2))
+                (then (call $gl16 (local.get $s))) (else (call $gl32 (local.get $s)))))))))
+          (if (i32.eq (local.get $w) (i32.const 1))
+            (then (call $gs8 (local.get $d) (local.get $v)))
+            (else (if (i32.eq (local.get $w) (i32.const 2))
+              (then (call $gs16 (local.get $d) (local.get $v)))
+              (else (call $gs32 (local.get $d) (local.get $v))))))))
       (if (local.get $movs) (then
         (i32.store offset=24 (global.get $reg_base) (i32.add (local.get $s) (local.get $step)))))
       (i32.store offset=28 (global.get $reg_base) (i32.add (local.get $d) (local.get $step)))
@@ -437,7 +511,7 @@
   (func $rep_stosd_do (call $rep_stos_do (i32.const 4)))
   (func $th_rep_movsb (param $op i32)
      (local $nx_fn i32) (local $nx_op i32)
-    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (call $rep_precise (i32.const 1) (i32.const 1)))
       (then (if (call $rep_fault_checked (i32.const 1) (i32.const 1) (local.get $op)) (then (return))) (dispatch-next)))
     (if (global.get $rep_store_step)
       (then (if (call $rep_store_step_do (i32.const 1) (i32.const 1)) (then (return))))
@@ -445,7 +519,7 @@
     (dispatch-next))
   (func $th_rep_movsd (param $op i32)
      (local $nx_fn i32) (local $nx_op i32)
-    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (call $rep_precise (i32.const 4) (i32.const 1)))
       (then (if (call $rep_fault_checked (i32.const 4) (i32.const 1) (local.get $op)) (then (return))) (dispatch-next)))
     (if (global.get $rep_store_step)
       (then (if (call $rep_store_step_do (i32.const 4) (i32.const 1)) (then (return))))
@@ -453,7 +527,7 @@
     (dispatch-next))
   (func $th_rep_stosb (param $op i32)
      (local $nx_fn i32) (local $nx_op i32)
-    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (call $rep_precise (i32.const 1) (i32.const 0)))
       (then (if (call $rep_fault_checked (i32.const 1) (i32.const 0) (local.get $op)) (then (return))) (dispatch-next)))
     (if (global.get $rep_store_step)
       (then (if (call $rep_store_step_do (i32.const 1) (i32.const 0)) (then (return))))
@@ -461,7 +535,7 @@
     (dispatch-next))
   (func $th_rep_stosd (param $op i32)
      (local $nx_fn i32) (local $nx_op i32)
-    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (call $rep_precise (i32.const 4) (i32.const 0)))
       (then (if (call $rep_fault_checked (i32.const 4) (i32.const 0) (local.get $op)) (then (return))) (dispatch-next)))
     (if (global.get $rep_store_step)
       (then (if (call $rep_store_step_do (i32.const 4) (i32.const 0)) (then (return))))
