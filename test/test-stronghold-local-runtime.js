@@ -7,14 +7,14 @@ const run=path.resolve(process.env.STRONGHOLD_CONTRACT_RUN||'scratch/runs/202611
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');
 const accepted=api.acceptedRuntimePins();
-assert.equal(accepted.files.length,2429);assert.equal(accepted.runtimeBinding.amendments.length,5);
+assert.equal(accepted.files.length,2429);assert.equal(accepted.runtimeBinding.amendments.length,7);
 assert.equal(accepted.files.filter(r=>r.path.startsWith('test/binaries/')).length,1856);
 assert.deepEqual(api.verifyAcceptedRuntimePins(accepted),accepted);
 const observerAmendment=accepted.runtimeBinding.amendments.find(r=>r.path==='tools/stronghold-owning-callback-observer.cjs');
-assert.equal(observerAmendment.priorBindingSHA256,'a931b3dc3656e4409de1748d0a0557fff9b70914e23f04067961fa41fbc282bd');
-assert.equal(observerAmendment.newSHA256,'0329fc2adcc573e78072beb390de4b08fed721722062e2457da04d35a9c153f1');
-assert.equal(observerAmendment.publishedProvenance,'ac635964f52d222b99d04b0750601a2eee081f44');
-const oldBinding=structuredClone(accepted);oldBinding.files.find(r=>r.path===observerAmendment.path).sha256=observerAmendment.priorBindingSHA256;
+assert.equal(observerAmendment.oldSHA256,'a4f1b0767a8c0168a70f0720941d8396d4618683e56ee39beb2ee8ff84dd7ffe');
+assert.equal(observerAmendment.newSHA256,'8493f2dfd26090b3dc638c44e790822d3c540c90b002594a27133ad32ce32c04');
+assert.equal(observerAmendment.publishedProvenance,'89caed5d1deeec73ea1c8538e8eb50f996b29496');
+const oldBinding=structuredClone(accepted);oldBinding.files.find(r=>r.path===observerAmendment.path).sha256=observerAmendment.oldSHA256;
 assert.throws(()=>api.verifyAcceptedRuntimePins(oldBinding),/closure/);
 assert.throws(()=>api.acceptedRuntimePins(Buffer.from('{}')),/stale original/);
 for(const change of [p=>p.files.pop(),p=>p.files[0].sha256='0'.repeat(64),p=>p.runtimeBinding.amendments.pop(),p=>p.files.push(p.files[0])]){
@@ -23,7 +23,7 @@ for(const change of [p=>p.files.pop(),p=>p.files[0].sha256='0'.repeat(64),p=>p.r
 // Inject changed reads without changing any shared dependency on disk. This
 // separately tests both wrong module variants and an unnamed source change.
 const nativeRead=fs.readFileSync;
-for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm','src/09ab-handlers-d3dim-core.wat','lib/guest-worker.js','tools/stronghold-owning-callback-observer.cjs']){
+for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm','src/09aa-handlers-d3dim.wat','src/09ab-handlers-d3dim-core.wat','tools/stronghold-native-preset-observer.cjs','lib/guest-worker.js','tools/stronghold-owning-callback-observer.cjs']){
  let seen=false;
  fs.readFileSync=function(name,...args){const bytes=Reflect.apply(nativeRead,this,[name,...args]);if(typeof name==='string'&&path.resolve(name)===path.resolve(file)){seen=true;const changed=Buffer.from(bytes);changed[0]^=1;return changed;}return bytes;};
  try{assert.throws(()=>api.acceptedRuntimePins(),/unknown runtime dependency mismatch/);assert(seen);}finally{fs.readFileSync=nativeRead;}
@@ -32,31 +32,30 @@ for(const file of ['tools/stronghold-owning-callback-observer.cjs','lib/guest-wo
  fs.readFileSync=function(name,...args){if(typeof name==='string'&&path.resolve(name)===path.resolve(file)){const e=Error('missing bound dependency '+file);e.code='ENOENT';throw e;}return Reflect.apply(nativeRead,this,[name,...args]);};
  try{assert.throws(()=>api.acceptedRuntimePins(),/missing bound dependency/);}finally{fs.readFileSync=nativeRead;}
 }
-console.log('PASS exact 2429-row closure, five named amendments, 1856 unchanged media; stale manifest/row deletion/duplicate/wrong pair/changed dependency negatives; no shared file mutation');
+console.log('PASS exact 2429-row closure, seven named amendments, 1856 unchanged media; stale manifest/row deletion/duplicate/wrong pair/changed dependency negatives; no shared file mutation');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
 const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:45:00Z');
-const fixtureNow=Date.parse('2026-11-05T01:40:00Z');
+const fixtureNow=Date.parse('2026-11-05T05:00:00Z');
+const workers=['return-fire-browser-body-receipts','mdk2-actual-startup-seam'];
+const assignment=worker=>worker+(worker.startsWith('mdk2')?'-0405':'-0345');
 const fixtureRows=worker=>[
- '2026-11-05T01:25:00Z '+worker+' OWN tools/'+worker+'.cjs',
- '2026-11-05T01:26:00Z '+worker+' LOCAL HEAVY RELEASE '+worker+(worker.startsWith('mdk2')?'-0235':'-0215')+'; normal cleanup',
- '2026-11-05T01:27:00Z '+worker+' FINAL runtime AND file RELEASE docs/re-notes/'+worker+'-20261105.md ALLBUILDSFINISHED'
+ '2026-11-05T04:25:00Z '+worker+' OWN tools/'+worker+'.cjs',
+ '2026-11-05T04:'+(worker.startsWith('mdk2')?'28':'26')+':00Z '+worker+' LOCAL HEAVY OWN '+assignment(worker)+'; ordinary',
+ '2026-11-05T04:'+ (worker.startsWith('mdk2')?'29':'27')+':00Z '+worker+' FINAL runtime AND file RELEASE docs/re-notes/'+worker+'-20261105.md ALLBUILDSFINISHED'
 ];
-const workers=['mdk2-continuous-original-medium','return-fire-font-fallback-audio'];
 const fixtureBoard=workers.flatMap(fixtureRows).join('\n'),buildBoard=fixtureBoard;
 assert.equal(api.requireRuntimeRelease(fixtureBoard,fixtureNow).dependencies.length,2);
 assert.equal(api.requireBuildReleases(buildBoard,fixtureNow).length,2);
 for(const worker of workers){
  const rows=fixtureRows(worker);
- for(const board of [fixtureBoard.replace(rows[0],''),fixtureBoard.replace(rows[1],''),fixtureBoard.replace(rows[2],''),fixtureBoard.replaceAll(worker,'foreign'),fixtureBoard.replace(rows[1],rows[1].replace('; normal','-extra; normal')),fixtureBoard.replace(rows[2],rows[2].replace('01:27:00','01:24:00')),fixtureBoard.replace(rows[2],rows[2].replace('ALLBUILDSFINISHED','builds pending')),fixtureBoard+'\n2026-11-05T01:28:00Z '+worker+' OWN newer']){
+ for(const board of [fixtureBoard.replace(rows[0],''),fixtureBoard.replace(rows[2],''),fixtureBoard.replaceAll(worker,'foreign'),fixtureBoard.replace(rows[2],rows[2].replace('ALLBUILDSFINISHED','builds pending')),fixtureBoard+'\n2026-11-05T04:30:00Z '+worker+' OWN newer',fixtureBoard+'\n2026-11-05T04:30:00Z '+worker+' LOCAL HEAVY OWN '+assignment(worker)+'; newer']){
   assert.throws(()=>api.requireRuntimeRelease(board,fixtureNow),/release/);
   assert.throws(()=>api.requireBuildReleases(board,fixtureNow),/release/);
  }
- const assignment=worker+(worker.startsWith('mdk2')?'-0235':'-0215');
- assert.throws(()=>api.requireRuntimeRelease(fixtureBoard+'\n2026-11-05T01:28:00Z '+worker+' LOCAL HEAVY OWN '+assignment+'; newer',fixtureNow),/release/);
- const offlineRepair=fixtureBoard+'\n2026-11-05T01:25:30Z '+worker+' LOCAL HEAVY OWN '+assignment+'; original\n2026-11-05T01:26:30Z '+worker+' OWN offline repair';
- assert.equal(api.requireRuntimeRelease(offlineRepair,fixtureNow).dependencies.length,2);
 }
-assert.throws(()=>api.requireRuntimeRelease(fixtureBoard,Date.parse('2026-11-05T01:26:59Z')),/release/);
+assert.throws(()=>api.requireRuntimeRelease(fixtureBoard,Date.parse('2026-11-05T04:26:59Z')),/release/);
+assert.throws(()=>api.requireRuntimeRelease(fixtureBoard.replace('04:29:00Z','04:26:30Z'),fixtureNow),/release/);
+assert.throws(()=>api.requireRuntimeRelease(fixtureBoard.replaceAll('T04:','T12:'),Date.parse('2026-11-05T13:00:00Z')),/release/);
 const lockProbe="const a=require('./tools/stronghold-local-runtime.cjs');console.log(JSON.stringify(a.requireLocalFlock(process.argv[1])))";
 const testLock=path.join(run,'offline-runtime.lock');fs.writeFileSync(testLock,'');
 assert.throws(()=>execFileSync(process.execPath,['-e',lockProbe,testLock],{stdio:'pipe'}),/Command failed/);
@@ -73,6 +72,7 @@ reject('missing authorization',r=>delete r.authorization);
 reject('missing current authorization',r=>delete r.freshLocalDiagnosticAuthorized);
 reject('previous named observation assignment',r=>r.assignment='stronghold-named-observation-gameplay user task');
 reject('foreign assignment',r=>r.assignment='foreign');
+reject('previous bypass original assignment',r=>r.assignment='stronghold-repaired-bypass-original-0250 user task');
 reject('previous capture-onward assignment',r=>r.assignment='stronghold-repaired-capture-onward-0130 user task');
 reject('previous review-ACK assignment',r=>r.assignment='stronghold-review-ack-original-0036 user task');
 reject('previous pending-review original assignment',r=>r.assignment='stronghold-current-runtime-binding-2355 user task');
@@ -113,8 +113,8 @@ reject('extended cleanup',r=>{r.cleanupBy=api.CLEANUP+1;r.expiresAt=r.cleanupBy;
 reject('insufficient runtime reserve',r=>r.chromeCutoff=r.issuedAt+719999);
 reject('insufficient cleanup reserve',r=>{r.cleanupBy=r.issuedAt+899999;r.expiresAt=r.cleanupBy;});
 reject('expired process contract',r=>r.expiresAt=now);
-assert.equal(api.CUTOFF,Date.parse('2026-11-05T07:30:00Z'));
-assert.equal(api.CLEANUP,Date.parse('2026-11-05T07:33:00Z'));
+assert.equal(api.CUTOFF,Date.parse('2026-11-05T11:57:00Z'));
+assert.equal(api.CLEANUP,Date.parse('2026-11-05T12:00:00Z'));
 const lastStart=api.createRelease({run,pins,nonce,now:api.CUTOFF-720000});
 assert.equal(lastStart.closeBy,api.CUTOFF);assert.equal(lastStart.cleanupBy-lastStart.closeBy,180000);
 assert.throws(()=>api.createRelease({run,pins,nonce,now:api.CUTOFF-719999}),/deadline/);

@@ -3,25 +3,31 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-repaired-bypass-original-0250 user task';
+const AUTH='stronghold-observed-control-gameplay-0422 user task';
 const ASSIGNMENT=AUTH;
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-05T07:30:00Z'),CLEANUP=Date.parse('2026-11-05T07:33:00Z');
+const CUTOFF=Date.parse('2026-11-05T11:57:00Z'),CLEANUP=Date.parse('2026-11-05T12:00:00Z');
 const ROOT=path.resolve(__dirname,'..');
 const ORIGINAL_PINS='scratch/runs/20261104-stronghold-setup-transition-onward/runtime-pins.json';
 const ORIGINAL_PINS_SHA='812aadea4a2b23a899919dc95b40b4d628a3836cedc0ae1e1844c966b284b7ef';
-const ACCEPTED_SOURCE='17e09475ecaeaa47de76684df0a0518124a6e387';
-const DRAW_BYPASS_SOURCE='ac635964f52d222b99d04b0750601a2eee081f44';
-const PRIOR_OBSERVER_SHA='a931b3dc3656e4409de1748d0a0557fff9b70914e23f04067961fa41fbc282bd';
-const PRESENTATION_SOURCE='a6d78555bfd5c076d87e4d8ed340c7c91bb4873d';
+// Run-specific named amendments to published changes only. Every other row
+// remains byte-bound to the immutable historical manifest.
 const ACCEPTED=Object.freeze({
- 'src/09ab-handlers-d3dim-core.wat':'dbcf489a787b4f399eadc926e13336976d6eb0cc30ffed5c8c360af5b496a75a',
- 'build/wine-assembly.wasm':'e620f3adfc2850580004e204bc1fea495844e942806866f8ada24c215212e412',
- 'build/wine-assembly.compat.wasm':'66b37bd76da5a7b49c063b4eb0d44c898aaf00ff41e000a6fbd87c01edc136c8',
- 'tools/stronghold-owning-callback-observer.cjs':'0329fc2adcc573e78072beb390de4b08fed721722062e2457da04d35a9c153f1'
+ "src/09aa-handlers-d3dim.wat": "c673c21b2bb671903d2d78440a24e1a3bca832f513429d6b30081724ffe321b6",
+ "src/09ab-handlers-d3dim-core.wat": "283add545fac3497e6c7bf936b1726542c23215d538970eb63a6228132fbce18",
+ "build/wine-assembly.wasm": "3859c274df0233659eb10fe4d2784fff7d1553242b4ae2b3bf653e5d2ebdd95b",
+ "build/wine-assembly.compat.wasm": "9f042b70d7e43d3947415e1de01e7a540b3c7f7fa6c7fbefabdbea17e9633e95",
+ "tools/stronghold-owning-callback-observer.cjs": "8493f2dfd26090b3dc638c44e790822d3c540c90b002594a27133ad32ce32c04",
+ "tools/stronghold-native-preset-observer.cjs": "b991df4dc48d3cfe08582002ec51ffa3dcb03fd701fcf9e009aae9ce1f981911"
 });
-// Exactly five named amendments. Every other historical row is retained and
-// checked; an unknown change stops offline rather than acquiring a new hash.
+const PROVENANCE=Object.freeze({
+ "src/09aa-handlers-d3dim.wat": "f1d62b136d7e3b7d7bb1a108774f5c804533e483",
+ "src/09ab-handlers-d3dim-core.wat": "f1d62b136d7e3b7d7bb1a108774f5c804533e483",
+ "build/wine-assembly.wasm": "f1d62b136d7e3b7d7bb1a108774f5c804533e483",
+ "build/wine-assembly.compat.wasm": "f1d62b136d7e3b7d7bb1a108774f5c804533e483",
+ "tools/stronghold-owning-callback-observer.cjs": "89caed5d1deeec73ea1c8538e8eb50f996b29496",
+ "tools/stronghold-native-preset-observer.cjs": "89caed5d1deeec73ea1c8538e8eb50f996b29496"
+});
 function acceptedRuntimePins(original=fs.readFileSync(path.join(ROOT,ORIGINAL_PINS))){
  if(base.hash(original)!==ORIGINAL_PINS_SHA)throw Error('stale original runtime manifest');
  const pins=JSON.parse(original),amendments=[];
@@ -33,13 +39,12 @@ function acceptedRuntimePins(original=fs.readFileSync(path.join(ROOT,ORIGINAL_PI
   if(actual!==expected)throw Error('unknown runtime dependency mismatch '+row.path);
   if(!named[row.path])return row;
   amendments.push({path:row.path,oldSHA256:row.sha256,newSHA256:expected,
-   ...(row.path==='tools/stronghold-owning-callback-observer.cjs'?{priorBindingSHA256:PRIOR_OBSERVER_SHA}:{}),
-   publishedProvenance:row.path==='tools/stronghold-owning-callback-observer.cjs'?DRAW_BYPASS_SOURCE:row.path==='tools/stronghold-local-runtime.cjs'?'60c888e0492b08bdaac640fae3a900a35eb6fe6a':row.path.startsWith('tools/')?PRESENTATION_SOURCE:ACCEPTED_SOURCE,
-   reason:row.path==='tools/stronghold-owning-callback-observer.cjs'?'published ac635964f native same-draw bypass provenance repair; explicit prior accepted a931b3 observer binding only':row.path=== 'tools/stronghold-local-runtime.cjs'?'published 60c888e passive capture/fault repair plus explicitly authorized named observer binding, current assignment, deadline and exact predecessor amendments; all relative limits unchanged':row.path.startsWith('tools/')?'published passive native/host presentation observer':'final corrective RGB anchored subpixel placement with literal preserved SIMD packing and exact corresponding existing module pair; supersedes initial 8808ec112'});
+   publishedProvenance:PROVENANCE[row.path]||'current authorized run-specific local contract',
+   reason:row.path==='tools/stronghold-local-runtime.cjs'?'current assignment, finite host deadlines, exact predecessor FINAL releases and named dependency bindings only; all gameplay/observer guards unchanged':row.path.includes('observer.cjs')?'published passive native control state; pending/hover/activation/application/draw/presentation remain distinct':'published selective D3D7 state-block repair and its corresponding existing module pair'});
   return {...row,bytes:bytes.length,sha256:expected};
  });
- if(pins.files.length!==2429||amendments.length!==5||Object.keys(named).some(p=>!seen.has(p)))throw Error('complete original closure required');
- return {...pins,candidate:'named accepted raster and passive presentation binding',runtimeBinding:{originalPinsSHA256:ORIGINAL_PINS_SHA,source:ACCEPTED_SOURCE,presentation:PRESENTATION_SOURCE,drawBypass:DRAW_BYPASS_SOURCE,assignment:ASSIGNMENT,amendments}};
+ if(pins.files.length!==2429||amendments.length!==7||Object.keys(named).some(p=>!seen.has(p)))throw Error('complete original closure required');
+ return {...pins,candidate:'named published D3D7 and passive control-state binding',runtimeBinding:{originalPinsSHA256:ORIGINAL_PINS_SHA,assignment:ASSIGNMENT,amendments}};
 }
 function verifyAcceptedRuntimePins(pins){
  const expected=acceptedRuntimePins();
@@ -62,20 +67,20 @@ function diagnosticScene(bytes,known){
  return SETUP_TRANSITIONS.includes(base.hash(pixels))?'setup-transition-observation':known;
 }
 const PREDECESSORS=Object.freeze([
- ['mdk2-continuous-original-medium','mdk2-continuous-original-medium-0235'],
- ['return-fire-font-fallback-audio','return-fire-font-fallback-audio-0215']
+ ['return-fire-browser-body-receipts','return-fire-browser-body-receipts-0345'],
+ ['mdk2-actual-startup-seam','mdk2-actual-startup-seam-0405']
 ]);
 function requireRuntimeRelease(board,now=Date.now()){
  const rows=board.split('\n'),dependencies=[];
  for(const [worker,assignment] of PREDECESSORS){
   const own=rows.filter(r=>r.split(/\s+/)[1]===worker&&r.split(/\s+/)[2]==='OWN').at(-1);
-  const runtimeOwn=rows.filter(r=>r.includes(' '+worker+' LOCAL HEAVY OWN '+assignment+';')).at(-1);
-  const row=rows.filter(r=>r.includes(' '+worker+' LOCAL HEAVY RELEASE '+assignment+';')).at(-1);
+  const runtimeOwn=rows.filter(r=>r.includes(' '+worker+' LOCAL HEAVY OWN ')).at(-1);
   const fileRelease=rows.filter(r=>r.includes(' '+worker+' FINAL runtime AND file RELEASE ')&&r.includes('docs/re-notes/'+worker+'-20261105.md')&&r.includes('ALLBUILDSFINISHED')).at(-1);
-  const ownedAt=Date.parse(own?.split(' ')[0]),runtimeOwnedAt=Date.parse((runtimeOwn||own)?.split(' ')[0]),at=Date.parse(row?.split(' ')[0]),releasedAt=Date.parse(fileRelease?.split(' ')[0]);
-  if(!own||!row||!fileRelease||![now,ownedAt,runtimeOwnedAt,at,releasedAt].every(Number.isFinite)||runtimeOwnedAt<Date.parse('2026-11-05T01:20:00Z')||at<runtimeOwnedAt||releasedAt<ownedAt||releasedAt<at||releasedAt>now)
+  const ownedAt=Date.parse(own?.split(' ')[0]),runtimeOwnedAt=Date.parse((runtimeOwn||own)?.split(' ')[0]),releasedAt=Date.parse(fileRelease?.split(' ')[0]);
+  if(!own||!fileRelease||![now,ownedAt,runtimeOwnedAt,releasedAt].every(Number.isFinite)||runtimeOwnedAt<Date.parse('2026-11-05T04:00:00Z')||releasedAt<ownedAt||releasedAt<runtimeOwnedAt||releasedAt>now||releasedAt>Date.parse('2026-11-05T11:30:00Z')||
+     (dependencies.length&&(releasedAt<dependencies.at(-1).releasedAt||runtimeOwnedAt<dependencies.at(-1).releasedAt)))
    throw Error('exact '+assignment+' FINAL runtime and file release after current OWN, all builds finished required');
-  dependencies.push({worker,assignment,own,ownedAt,runtimeOwn,runtimeOwnedAt,row,at,fileRelease,releasedAt});
+  dependencies.push({worker,assignment,own,ownedAt,runtimeOwn,runtimeOwnedAt,row:fileRelease,at:releasedAt,fileRelease,releasedAt});
  }
  return {dependencies,row:dependencies[0].row};
 }

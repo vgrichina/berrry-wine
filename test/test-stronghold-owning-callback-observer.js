@@ -790,8 +790,12 @@ if(!isMainThread){
    base.compileClosure(local.source.slice(0,local.source.lastIndexOf('main().catch(')),local.driver,local.route,local.evidence.retainedClosure);
    assert.equal(local.evidence.callbackObserver.passiveControls.readinessGranted,false);
    assert.equal(local.evidence.callbackObserver.passiveControls.presentation,'unknown');
-   assert.throws(()=>runtime.acceptedRuntimePins(),/unknown runtime dependency mismatch/,'historical original binding stays closed after observer change');
-   evidence.localRuntime={compositionSHA256:local.evidence.compositionSHA256,routeCompositionSHA256:local.evidence.routeCompositionSHA256,historicalBindingAccepted:false};
+   const current=runtime.acceptedRuntimePins();
+   assert.equal(current.runtimeBinding.assignment,runtime.ASSIGNMENT);
+   assert.equal(current.files.find(r=>r.path==='tools/stronghold-owning-callback-observer.cjs').sha256,hash(fs.readFileSync(require.resolve('../tools/stronghold-owning-callback-observer.cjs'))));
+   const historical=JSON.parse(fs.readFileSync(path.join(ROOT,'scratch/runs/20261105-stronghold-repaired-bypass-original/runtime-pins.json')));
+   assert.throws(()=>runtime.verifyAcceptedRuntimePins(historical),/stale or changed accepted runtime closure/,'historical original binding stays closed after explicit current-run amendment');
+   evidence.localRuntime={compositionSHA256:local.evidence.compositionSHA256,routeCompositionSHA256:local.evidence.routeCompositionSHA256,historicalBindingAccepted:false,currentNamedBindingAccepted:true};
    for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
     const arms=[];for(const [observed,trace]of [[false,false],[false,true],[true,false]])arms.push(await one(variant,observed,trace,false,false,false,false,true));
     const [control,trace,observed]=arms;
