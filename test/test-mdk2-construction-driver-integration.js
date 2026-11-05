@@ -502,6 +502,9 @@ async function nativeOne(row, mode = 'success') {
   let brokerLogBlocks=0;
   const broker = require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>{if(n==='log_block'){brokerLogBlocks++;if(mode.includes('bridge-exception'))throw Error('bridge fixture exception');}return 0;}])),sigs);
   const worker = new Worker(__filename,{workerData:{mode,port:port2,wasmHash:row.sha256,url,targetId,acceptedSource:row.localReference===row.path},transferList:[port2]});
+  // Module/provenance rejection can happen before the response Promise exists.
+  // Release this fixture's Worker and port on that path as well.
+  try {
   let envelope, pendingSlice = 0; const commands=[],sliceResults=[];
   class PageWorker {
     constructor(url) { this.url=url; }
@@ -520,7 +523,7 @@ async function nativeOne(row, mode = 'success') {
   vm.createContext(realm); vm.runInContext(integration.preloadSource({moduleHashes:[row.sha256]}),realm);
   const module = await realm.WebAssembly.compile(integration.retainedModule(row));
   const pageWorker = new realm.Worker(url);
-  return new Promise((resolve,reject)=>{
+  return await new Promise((resolve,reject)=>{
     const timer=setTimeout(()=>finish(Error('native integration timeout')),360000);
     const finish=async(error,value)=>{clearTimeout(timer);await worker.terminate();port1.close();error?reject(error):resolve({value,envelope,page:realm.__mdk2BoundTrace.report()});};
     worker.on('error',error=>mode.startsWith('wrong-')?finish(null,{rejected:String(error)}):finish(error));
@@ -537,6 +540,10 @@ async function nativeOne(row, mode = 'success') {
     pageWorker.postMessage({t:'init',seq:0,module,memory,sigs,slot:0,endpointIdentity:1,
       ...(mode.includes('bridge-forward')||mode.includes('bridge-exception')?{forwardGuestLogs:true}:{})});
   });
+  } finally {
+    await worker.terminate();
+    port1.close();
+  }
 }
 
 // Pin validation cost: use original PE bytes and independently placed individual

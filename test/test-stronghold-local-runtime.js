@@ -3,6 +3,27 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const api=require('../tools/stronghold-local-runtime.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
+if(process.argv.includes('--observation-contract')){
+ // The old runtime manifest is deliberately not amended by this source-only
+ // implementation task. The full composed positive lives in the native-copy
+ // test; this focused consumer regression rejects historical image-only proof.
+ assert.throws(()=>api.acceptedRuntimePins(),/unknown runtime dependency mismatch/);
+ assert.equal(api.SETUP_TRANSITIONS,undefined);
+ const inputs=[Buffer.from('arbitrary non-PNG bytes')];
+ for(const file of ['scratch/runs/20261104-stronghold-setup-transition-onward/browser/route-native-boundary-10.png',
+  'scratch/runs/20261104-stronghold-current-runtime-binding/browser/route-native-boundary-10.png']){
+  if(fs.existsSync(file))inputs.push(fs.readFileSync(file));
+ }
+ for(const bytes of inputs){
+  assert.equal(api.diagnosticScene(bytes,'unknown'),'unknown');
+  const partial={status:'proved-setup-in-progress',sha256:base.hash(bytes),readinessGranted:false,pixelsAccepted:false,gameplay:false};
+  assert.equal(api.diagnosticScene(bytes,'unknown',partial),'unknown');
+  assert.equal(api.diagnosticScene(bytes,'unknown',{...partial,proof:{nativeReport:{},hostReport:{},capture:{}}}),'unknown');
+ }
+ assert.equal(api.diagnosticScene(inputs[0],'main-menu'),'main-menu');
+ console.log('PASS observation consumer: image-only, missing/partial provenance unknown; immutable original runtime closure remains rejected; full route tested separately');
+ return;
+}
 const run=path.resolve(process.env.STRONGHOLD_CONTRACT_RUN||'scratch/runs/20261104-stronghold-current-runtime-binding/contract-test');
 fs.mkdirSync(run,{recursive:true});
 const pins=path.join(run,'pins.json');

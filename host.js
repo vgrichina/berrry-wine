@@ -2215,7 +2215,13 @@ class WineAssembly {
         self._dxLockHeld = 0;
       }
       self._dxDirty = false;
-      return gdi.presentBestDxOffscreen(true) ? 1 : 0;
+      return gdi.presentBestDxOffscreen(true, {
+        source: 'WineAssembly._presentDxIfDirty',
+        localLocks: dxLockDepth.size,
+        sharedLocks: dxShared ? dxShared.locks : null,
+        heldChecks: self._dxLockHeld || 0,
+        frozenSteps: Number.isSafeInteger(self._frozenSteps) ? self._frozenSteps : null,
+      }) ? 1 : 0;
     };
 
     const traceApiNames = (typeof window !== 'undefined' && window.__waTraceApiNames)

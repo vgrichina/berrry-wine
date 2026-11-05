@@ -134,7 +134,7 @@
   (func (export "pending_context_version") (result i32) (i32.const 1))
   ;; A successful arm is possible exactly once, before any guest execution.
   ;; Epoch is supplied by the authenticated owner; native lease is instance local.
-  (func (export "pending_context_arm") (param $epoch i32) (result i32)
+  (func $pending_context_arm (export "pending_context_arm") (param $epoch i32) (result i32)
     (local $lease i32)
     (if (i32.or (global.get $pending_seen) (global.get $pending_armed))
       (then (global.set $pending_reason (i32.const 1)) (return (i32.const 0))))
@@ -154,6 +154,29 @@
     (global.set $pending_slot (i32.add (global.get $PENDING_CONTEXT)
       (i32.add (i32.const 4096) (i32.shl (local.get $lease) (i32.const 11)))))
     (i32.const 1))
+  (func (export "pending_context_epoch") (result i32)
+    (global.get $pending_epoch))
+  (func (export "pending_context_profile") (result i32)
+    (global.get $pending_profile))
+  (func (export "pending_context_image_base") (result i32)
+    (global.get $pending_image_base))
+  ;; Explicit profile arm has the same once-before-execution lifetime rule.
+  ;; Invalid requests consume the arm; changing profile cannot revive proof.
+  ;; The owning JS preload additionally binds the full executable SHA-256
+  ;; and exact Worker/module/memory/endpoint epoch before returning init.
+  (func (export "pending_context_arm_profile")
+    (param $epoch i32) (param $profile i32) (param $image i32) (result i32)
+    (if (i32.or (global.get $pending_seen) (global.get $pending_armed))
+      (then (global.set $pending_reason (i32.const 1)) (return (i32.const 0))))
+    (if (i32.or (i32.ne (local.get $profile) (i32.const 2))
+                (i32.ne (local.get $image) (i32.const 0x400000)))
+      (then
+        (global.set $pending_armed (i32.const 1))
+        (global.set $pending_reason (i32.const 2))
+        (return (i32.const 0))))
+    (global.set $pending_profile (local.get $profile))
+    (global.set $pending_image_base (local.get $image))
+    (call $pending_context_arm (local.get $epoch)))
   (func $pending_coverage (export "pending_context_coverage") (param $epoch i32) (result i32)
     (if (i32.ne (local.get $epoch) (global.get $pending_epoch))
       (then (if (global.get $pending_armed)

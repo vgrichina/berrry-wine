@@ -2710,6 +2710,11 @@
   (global $PENDING_CONTEXT_SIZE i32 (region.size $PENDING_CONTEXT))
   (global $pending_seen (mut i32) (i32.const 0))
   (global $pending_armed (mut i32) (i32.const 0))
+  ;; Profile 1 retains the original MDK2 target set and arm ABI. Profile 2
+  ;; is explicitly Stronghold-bound; a depth from one is never the other's
+  ;; absence proof. The expected image base is checked at native execution.
+  (global $pending_profile (mut i32) (i32.const 1))
+  (global $pending_image_base (mut i32) (i32.const 0))
   (global $pending_reason (mut i32) (i32.const 0))
   (global $pending_thread (mut i32) (i32.const 0))
   (global $pending_epoch (mut i32) (i32.const 0))

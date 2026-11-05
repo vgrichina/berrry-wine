@@ -295,6 +295,10 @@
     (if (i32.and (global.get $pending_seen)
           (i32.and (global.get $pending_armed) (i32.eqz (global.get $pending_reason))))
       (then
+        (if (i32.and
+              (i32.ne (global.get $pending_image_base) (i32.const 0))
+              (i32.ne (global.get $pending_image_base) (global.get $image_base)))
+          (then (global.set $pending_reason (i32.const 2))))
         (if (i64.eqz (global.get $pending_process_epoch)) (then
           (global.set $pending_process_epoch (global.get $invocation_epoch))
           (global.set $pending_root (global.get $invocation_root))))
@@ -312,6 +316,16 @@
     (i32.and (i32.ne (global.get $pending_armed) (i32.const 0))
       (i32.eqz (global.get $pending_reason))))
   (func $pending_target (param $target i32) (result i32)
+    ;; Do not union target sets: MDK2's original fixed-target proof keeps its
+    ;; meaning. Stronghold callers must request and verify profile 2.
+    (if (i32.eq (global.get $pending_profile) (i32.const 2)) (then
+      (return (i32.or
+        (i32.eq (local.get $target) (i32.const 0x4e95f0))
+        (i32.or (i32.eq (local.get $target) (i32.const 0x4e9180))
+        (i32.or (i32.eq (local.get $target) (i32.const 0x4e9400))
+        (i32.or (i32.eq (local.get $target) (i32.const 0x4292c0))
+        (i32.or (i32.eq (local.get $target) (i32.const 0x4ea0a0))
+                (i32.eq (local.get $target) (i32.const 0x467b90))))))))))
     (i32.or (i32.eq (local.get $target) (i32.const 0x44fc40)) (i32.or (i32.eq (local.get $target) (i32.const 0x42c990)) (i32.or (i32.eq (local.get $target) (i32.const 0x42cc80)) (i32.or (i32.eq (local.get $target) (i32.const 0x42bbe0)) (i32.or (i32.eq (local.get $target) (i32.const 0x442370)) (i32.or (i32.eq (local.get $target) (i32.const 0x40daf0)) (i32.or (i32.eq (local.get $target) (i32.const 0x42b0c0)) (i32.or (i32.eq (local.get $target) (i32.const 0x46cb20)) (i32.or (i32.eq (local.get $target) (i32.const 0x42ae70)) (i32.or (i32.eq (local.get $target) (i32.const 0x443070)) (i32.or (i32.eq (local.get $target) (i32.const 0x444f80)) (i32.or (i32.eq (local.get $target) (i32.const 0x44f4a0)) (i32.or (i32.eq (local.get $target) (i32.const 0x4522d0)) (i32.const 0)))))))))))))))
   (func $pending_entry (param $pc i32) (param $esp i32)
     (local $p i32)

@@ -66,7 +66,7 @@ function decodeFileSnapshot(main,file){
 // Only the authenticated owning instance may supply these exports. No saved
 // stack words, sampled startup rows, or JS frames can stand in for coverage.
 function pendingAbsence(ex,epoch){
-  if(ex?.pending_context_version?.()!==1||ex.pending_context_status(epoch)!==1)
+  if(ex?.pending_context_version?.()!==1||(ex.pending_context_profile?.()??1)!==1||ex.pending_context_status(epoch)!==1)
     throw Error('native pending context incomplete: '+(ex?.pending_context_reason?.()??'unsupported'));
   const depth=ex.pending_context_depth()>>>0;
   if(depth!==0)throw Error('native relevant calls pending: '+depth);

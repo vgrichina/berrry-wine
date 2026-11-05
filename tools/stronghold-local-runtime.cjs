@@ -51,20 +51,19 @@ function verifyAcceptedRuntimePins(pins){
  if(JSON.stringify(pins)!==JSON.stringify(expected))throw Error('stale or changed accepted runtime closure');
  return expected;
 }
-// Personally inspected partial setup frames after the original callback
-// returned. Exact identities only: no complete-layout or input-ready grant.
-const SETUP_TRANSITION='741b136a33e205825f23e70af83059d82dfe3b625bd869c321198ba16dec2e5c';
-const SETUP_TRANSITIONS=Object.freeze([SETUP_TRANSITION,
- '5cf84f22b5e0e11ba4b5a945b1bd031febd8be322cffa382f9c02670c6df237f',
- '25ffd65fb0eb87ae71b33ca8c491cbea0f8766cfc30b57c6bed099328bcb5ab4']);
-function diagnosticScene(bytes,known){
+// Image identity brackets the capture; only the complete owning transaction
+// can describe setup progress. No screenshot identity grants classification.
+function diagnosticScene(bytes,known,observation){
  if(known!=='unknown')return known;
- const {PNG}=require('pngjs'),p=PNG.sync.read(bytes);
- if(p.width!==1200||p.height!==900)throw Error('setup diagnostic geometry required');
- const pixels=Buffer.alloc(860*668*4);
- for(let y=0;y<668;y++)p.data.copy(pixels,y*860*4,((y+194)*1200+10)*4,((y+194)*1200+870)*4);
- for(let i=3;i<pixels.length;i+=4)if(pixels[i]!==255)throw Error('opaque setup diagnostic required');
- return SETUP_TRANSITIONS.includes(base.hash(pixels))?'setup-transition-observation':known;
+ if(!observation||observation.status!=='proved-setup-in-progress'||
+  observation.sha256!==base.hash(bytes)||observation.readinessGranted!==false||
+  observation.pixelsAccepted!==false||observation.gameplay!==false)return known;
+ const proof=observation.proof;
+ if(!proof)return known;
+ const joined=observer.joinCaptureTransaction(proof.nativeReport,proof.hostReport,proof.capture);
+ if(joined.status!=='proved-setup-in-progress'||joined.sha256!==observation.sha256||
+  joined.name!==observation.name||joined.steps!==observation.steps||joined.epoch!==observation.epoch||joined.command!==observation.command)return known;
+ return 'setup-transition-observation';
 }
 const PREDECESSORS=Object.freeze([
  ['return-fire-browser-body-receipts','return-fire-browser-body-receipts-0345'],
@@ -242,7 +241,9 @@ function prepare(options){
  p.source=base.replaceOnce(p.source,'const presetAttachment=attachmentAPI.createAttachment({sessions,save,log,pageState:state,validateAck:assertAck,',
   `const hostPresentation=require(${q(__filename)}).createHostPresentationController({page:()=>page,save,deadline:()=>deadline});\nconst presetAttachment=attachmentAPI.createAttachment({hostPresentation,sessions,save,log,pageState:state,validateAck:assertAck,`);
  p.source=base.replaceOnce(p.source,'const png=Buffer.from(await page.screenshot()),current=await state();',
-  'const presentationBefore=await hostPresentation.captureToken();\n  const png=Buffer.from(await page.screenshot()),current=await state();\n  await hostPresentation.capture(presentationBefore,sha(png),name);');
+  'const presentationBefore=await hostPresentation.captureToken();\n  const png=Buffer.from(await page.screenshot()),current=await state();\n  const hostCapture=await hostPresentation.capture(presentationBefore,sha(png),name);');
+ p.source=base.replaceOnce(p.source,'await presetAttachment.capture(name,sha(png),current);return {png,state:current};',
+  'const nativeObservation=await presetAttachment.capture(name,sha(png),current,hostCapture);return {png,state:current,nativeObservation};');
  // Check the passive page observer before any later command, step or mouse
  // delivery. The synchronous latch also covers reviews and commandLive calls.
  p.source=base.replaceOnce(p.source,'function commandLive(){presetAttachment.assertLive();',
@@ -253,11 +254,11 @@ function prepare(options){
   'if(stepping){await hostPresentation.check();await presetAttachment.beforeStep();}');
  p.source=base.replaceOnce(p.source,'p.mouse[action]=async(...args)=>{const result=await original(...args);',
   'p.mouse[action]=async(...args)=>{await hostPresentation.check();const result=await original(...args);');
- p.route=base.replaceOnce(p.route,'scene:scene(c.png)',`scene:require(${q(__filename)}).diagnosticScene(c.png,scene(c.png))`);
+ p.route=base.replaceOnce(p.route,'scene:scene(c.png)',`scene:require(${q(__filename)}).diagnosticScene(c.png,scene(c.png),c.nativeObservation)`);
  p.route=base.replaceOnce(p.route,"['choose-type-custom-hover','actual-scene20-earlier','actual-scene20-intermediate']",
   "['choose-type-custom-hover','actual-scene20-earlier','actual-scene20-intermediate','setup-transition-observation']");
- p.evidence.setupTransitionDiagnostic={gameRGBAsha256:SETUP_TRANSITION,gameRGBAsha256s:SETUP_TRANSITIONS,gameBox:[10,194,860,668],
-  exactPixels:true,observationOnly:true,readinessGranted:false,arrivalAndObserverCapsUnchanged:true};
+ p.evidence.setupTransitionDiagnostic={basis:'continuous Stronghold owner/cycle/selected-copy/publication/capture transaction',
+  exactPixels:false,observationOnly:true,readinessGranted:false,pixelsAccepted:false,gameplay:false,arrivalAndObserverCapsUnchanged:true};
  p.source=base.replaceOnce(p.source,"  if(c.action==='observe'){",
   `  if(c.action==='observe'){\n    require(${q(__filename)}).validateCaptureCommand(c,OUT);`);
  p.source=base.replaceOnce(p.source,"  if(c.action==='shot'){",
@@ -313,12 +314,12 @@ function createHostPresentationController({page,save,deadline}){
  };
  return {
   assertLive,check,token,
-  async start(epoch){
+  async start(epoch,nativeBinding){
    assertLive();if(active)throw Error('occupied host presentation');
    const source='('+observer.hostPresentationFactory.toString()+')()';
    await read(`(()=>{if(globalThis.__strongholdHostPresentation)throw Error('occupied host presentation');
     globalThis.__strongholdHostPresentation=${source}.attach({getHost:()=>typeof wine==='undefined'?null:wine,
-     epoch:${JSON.stringify(epoch)},deadline:performance.now()+${JSON.stringify(deadline())}-Date.now()});return globalThis.__strongholdHostPresentation.check();})()`);
+     nativeBinding:${JSON.stringify(nativeBinding)},epoch:${JSON.stringify(epoch)},deadline:performance.now()+${JSON.stringify(deadline())}-Date.now()});return globalThis.__strongholdHostPresentation.check();})()`);
    active=true;
   },
   // Before an ordinary produced frame, screenshots remain unbracketed. The
@@ -327,9 +328,12 @@ function createHostPresentationController({page,save,deadline}){
   async capture(before,sha256,name){
    assertLive();if(!active)return;
    if(before===null){const report=await check();persist({...report,captureDeferred:true,name,sha256,reason:'no ordinary produced frame before screenshot'});return;}
-   persist(await read(`globalThis.__strongholdHostPresentation.capture(${JSON.stringify(before)},${JSON.stringify(sha256)},${JSON.stringify(name)})`));
+   return persist(await read(`globalThis.__strongholdHostPresentation.capture(${JSON.stringify(before)},${JSON.stringify(sha256)},${JSON.stringify(name)})`));
   },
-  async link(nativeReport){assertLive();if(active){const host=await check();persist({nativeEpoch:nativeReport?.epoch,host,link:observer.linkPresentation(nativeReport,host)});}},
+  async link(nativeReport,capture){assertLive();if(!active)return null;const host=await check();
+   const joined=observer.joinCaptureTransaction(nativeReport,host,capture);
+   persist({nativeEpoch:nativeReport?.epoch,host,link:joined});return joined;
+  },
   // Cleanup preserves the earliest latched fault. It cannot revive or replace
   // the terminal report, and it must still release any remaining page hooks.
   async finish(reason='terminal'){
@@ -341,4 +345,4 @@ function createHostPresentationController({page,save,deadline}){
   }
  };
 }
-module.exports={acceptedRuntimePins,verifyAcceptedRuntimePins,ACCEPTED,ORIGINAL_PINS_SHA,identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireBuildReleases,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,nextMailboxAction,diagnosticScene,SETUP_TRANSITION,SETUP_TRANSITIONS,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={acceptedRuntimePins,verifyAcceptedRuntimePins,ACCEPTED,ORIGINAL_PINS_SHA,identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireBuildReleases,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,nextMailboxAction,diagnosticScene,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};

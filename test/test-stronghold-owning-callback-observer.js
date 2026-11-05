@@ -488,18 +488,25 @@ async function drawFixture({e,memory,host}){
 }
 if(!isMainThread){
  if(workerData.observed){
-  // Execute the exact serialized production Worker attachment, with only the
-  // Node/browser event API adapter. No observer callback is invoked by tests.
+  // These historical independent fragments deliberately replace EIP/ESP
+  // between cases. Isolate their legacy draw/control observer from the new
+  // continuous-cycle consumer; none can produce a native transaction proof.
+  // The complete, unmodified transaction is tested by native-copy-publication.
   globalThis.location={href:URL};globalThis.memUtils={g2w};globalThis.addEventListener=(name,fn)=>{
    assert.equal(name,'message');parentPort.on('message',data=>fn({data}));
   };
-  vm.runInThisContext(api.workerSource({observeSource:'',options:{targetId:'fixture-target',sessionId:'fixture-session',expectedWorkerURL:URL,
-   exeSha256:api.EXE_SHA256,wasmSha256:workerData.wasmHash,deadlineEpochMs:Date.now()+20000}}));
+  const bundle=api.workerSource({observeSource:'',options:{targetId:'fixture-target',sessionId:'fixture-session',expectedWorkerURL:URL,
+   exeSha256:api.EXE_SHA256,wasmSha256:workerData.wasmHash,deadlineEpochMs:Date.now()+20000}});
+  const seam='verify:signatures,nativeEpoch}';assert.equal(bundle.split(seam).length,2);
+  vm.runInThisContext(bundle.replace(seam,'verify:signatures,nativeEpoch:0}'));
  }
  const instantiate=WebAssembly.instantiate;
  WebAssembly.instantiate=async function(module,imports,...rest){
   const host={...imports.host};imports.host.log_block=(...a)=>host.log_block(...a);
-  const r=await Reflect.apply(instantiate,this,[module,imports,...rest]);globalThis.fixtureAccess={e:(r.instance||r).exports,memory:imports.host.memory,host};return r;
+  const r=await Reflect.apply(instantiate,this,[module,imports,...rest]);
+  if(!workerData.observed){let epochNumber=2166136261;for(const c of epoch)epochNumber=Math.imul(epochNumber^c.charCodeAt(0),16777619)>>>0;
+   assert.equal((r.instance||r).exports.pending_context_arm_profile(epochNumber||1,2,0x400000),1);}
+  globalThis.fixtureAccess={e:(r.instance||r).exports,memory:imports.host.memory,host};return r;
  };
  const filename=path.join(ROOT,'lib/guest-worker.js'),Module=require('node:module'),m=new Module(filename,module),src=fs.readFileSync(filename);
  globalThis.fixtureWorkerSHA=hash(src);m.filename=filename;m.paths=module.paths;m._compile(src.toString(),filename);
