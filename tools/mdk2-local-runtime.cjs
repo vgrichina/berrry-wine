@@ -10,9 +10,9 @@ const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
 // Explicit installed-original assignment; pre-Chrome tests consume no game launch.
-const HARD_CLOSE = Date.parse('2026-11-05T01:40:00Z');
-const HARD_RECOVER = Date.parse('2026-11-05T01:43:00Z');
-const ASSIGNMENT = '20261105-mdk2-optimized-original';
+const HARD_CLOSE = Date.parse('2026-11-05T02:20:00Z');
+const HARD_RECOVER = Date.parse('2026-11-05T02:23:00Z');
+const ASSIGNMENT = '20261105-mdk2-post-medium-timer-onward';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -281,15 +281,23 @@ function prepareTransport(run) {
 }
 function heavyRelease(board) {
   const lines=board.split('\n');
-  const own=lines.findLastIndex(line=>/^2026-11-05T\S+ stronghold-review-ack-original OWN tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(line));
-  assert(own>=0,'predecessor OWN required before release');
-  const rows=lines.slice(own+1).filter(line=>/^2026-11-05T\S+ stronghold-review-ack-original LOCAL HEAVY RELEASE stronghold-review-ack-original-0036(?:[;\s]|$)/.test(line));
-  assert(rows.length,'explicit stronghold-review-ack-original-0036 LOCAL HEAVY RELEASE required');
-  const line=rows.at(-1),at=Date.parse(line.split(' ')[0]);
-  assert(/Chrome.*EXIT0.*refused.*flockFREE/.test(line),'actual Chrome/ports/lock release required');
-  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-05T00:53:36Z')&&at<=Date.now(),'current predecessor release required');
-  assert(lines.slice(own+1).some(row=>/^2026-11-05T\S+ stronghold-review-ack-original RELEASE tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(row)&&Date.parse(row.split(' ')[0])>=at&&Date.parse(row.split(' ')[0])<=Date.now()),'predecessor file release required');
-  return line;
+  const current = row => {
+    const at=Date.parse(row.split(' ')[0]);
+    return Number.isFinite(at)&&at>=Date.parse('2026-11-05T01:18:32Z')&&at<=Date.now();
+  };
+  const own=lines.findLastIndex(line=>/^2026-11-05T\S+ return-fire-playback-observation OWN docs\/re-notes\/return-fire-playback-observation-20261105\.md(?:\s|$)/.test(line));
+  assert(own>=0,'Return Fire predecessor OWN required before release');
+  const runtime=lines.slice(own+1).findLast(line=>/^2026-11-05T\S+ return-fire-playback-observation LOCAL HEAVY RELEASE return-fire-playback-observation-0050(?:[;\s]|$)/.test(line));
+  assert(runtime&&current(runtime),'current Return Fire0050 runtime release required');
+  assert(/Chrome.*EXIT0.*refused.*flockFREE/.test(runtime),'actual Chrome/ports/lock release required');
+  const files=lines.slice(own+1).findLast(line=>/^2026-11-05T\S+ return-fire-playback-observation FINAL runtime AND file RELEASE docs\/re-notes\/return-fire-playback-observation-20261105\.md(?:\s|$)/.test(line));
+  assert(files&&current(files)&&Date.parse(files.split(' ')[0])>=Date.parse(runtime.split(' ')[0]),'Return Fire final file release required');
+  const remedyOwn=lines.findLastIndex(line=>/^2026-11-05T\S+ stronghold-host-capture-fault-repair OWN tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(line));
+  assert(remedyOwn>=0,'Stronghold0104 source OWN required');
+  const remedy=lines.slice(remedyOwn+1).findLast(line=>/^2026-11-05T\S+ stronghold-host-capture-fault-repair (?:FINAL runtime AND file )?RELEASE tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(line));
+  assert(remedy&&current(remedy)&&Date.parse(remedy.split(' ')[0])>=Date.parse(files.split(' ')[0]),'Stronghold0104 final file release required');
+  assert(/(?:COMMIT|IMPLEMENTATION)[a-f0-9]{40}(?:\s|$)/.test(remedy)&&/pullpushPASS/.test(remedy)&&/ALLBUILDSFINISHED/.test(remedy),'Stronghold0104 published remedy and all builds finished required');
+  return runtime+'\n'+remedy;
 }
 
 function preflightMenuReview(phase, review) {

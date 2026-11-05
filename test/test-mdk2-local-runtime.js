@@ -396,7 +396,7 @@ test('installed Puppeteer close path distinguishes orderly own child from CDP-fa
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);
- assert.equal(r.assignment,'20261105-mdk2-optimized-original');
+ assert.equal(r.assignment,'20261105-mdk2-post-medium-timer-onward');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -420,8 +420,8 @@ test('original useful-window minimum and absolute launch cutoff cannot be extend
  assert.throws(()=>local.createRelease(run,local.HARD_CLOSE-900000),/720\+180/);
 });
 test('renewed dated assignment retains exact absolute close and recovery bounds',()=>{
- assert.equal(local.HARD_CLOSE,Date.parse('2026-11-05T01:40:00Z'));
- assert.equal(local.HARD_RECOVER,Date.parse('2026-11-05T01:43:00Z'));
+ assert.equal(local.HARD_CLOSE,Date.parse('2026-11-05T02:20:00Z'));
+ assert.equal(local.HARD_RECOVER,Date.parse('2026-11-05T02:23:00Z'));
  const r=release();r.recoverBy=new Date(local.HARD_RECOVER+1).toISOString();
  assert.throws(()=>local.validate(r,run,now),/cleanup reserve/);
  const late=local.createRelease(run,local.HARD_CLOSE-900001);
@@ -493,19 +493,26 @@ test('install requires real inherited exclusive local lock before release or com
  assert.throws(()=>local.install(run),/lock required/);
  assert(!fs.existsSync(path.join(run,'runtime-release.json')));
 });
-test('exact Stronghold predecessor requires current named heavy and file releases after OWN',()=>{
- const own='2026-11-05T00:35:47Z stronghold-review-ack-original OWN tools/stronghold-local-runtime.cjs';
- const heavy='2026-11-05T00:53:36Z stronghold-review-ack-original LOCAL HEAVY RELEASE stronghold-review-ack-original-0036 Chrome123EXIT0 portsrefused flockFREE stopped';
- const released='2026-11-05T00:59:49Z stronghold-review-ack-original RELEASE tools/stronghold-local-runtime.cjs';
- const board=[own,heavy,released].join('\n');
- assert.equal(local.heavyRelease(board),heavy);
- for(const bad of [heavy, [heavy,own,released].join('\n'),[own,heavy].join('\n'),
-  board.replace('00:53:36','00:53:35'),board.replace('00:59:49','00:53:35'),
-  board.replace(' LOCAL HEAVY RELEASE',' waiting LOCAL HEAVY RELEASE'),
-  ...['Chrome123EXIT0','portsrefused','flockFREE'].map(field=>board.replace(field,'')),
-  board.replace('stronghold-review-ack-original-0036','other-task'),
-  board.replaceAll('stronghold-review-ack-original ','coordinator '),
-  board+'\n'+own,board.replace('2026-11-05T00:53:36Z',new Date(Date.now()+60000).toISOString())])assert.throws(()=>local.heavyRelease(bad),/release|OWN/i);
+const dependencyRows=[
+ '2026-11-05T00:51:40Z return-fire-playback-observation OWN docs/re-notes/return-fire-playback-observation-20261105.md',
+ '2026-11-05T01:19:42Z return-fire-playback-observation LOCAL HEAVY RELEASE return-fire-playback-observation-0050 Chrome123EXIT0 portsrefused flockFREE',
+ '2026-11-05T01:21:18Z return-fire-playback-observation FINAL runtime AND file RELEASE docs/re-notes/return-fire-playback-observation-20261105.md',
+ '2026-11-05T01:21:35Z stronghold-host-capture-fault-repair OWN tools/stronghold-local-runtime.cjs',
+ '2026-11-05T01:21:36Z stronghold-host-capture-fault-repair RELEASE tools/stronghold-local-runtime.cjs COMMIT'+'a'.repeat(40)+' main pullpushPASS ALLBUILDSFINISHED'
+];
+const dependencyBoard=dependencyRows.join('\n');
+test('exact Return Fire0050 and Stronghold0104 require final releases and published completed builds',()=>{
+ assert.equal(local.heavyRelease(dependencyBoard),dependencyRows[1]+'\n'+dependencyRows[4]);
+ const bad=[...dependencyRows.map((_,i)=>dependencyRows.filter((_,j)=>i!==j).join('\n')),
+  dependencyBoard+'\n'+dependencyRows[0],dependencyBoard+'\n'+dependencyRows[3],
+  dependencyBoard.replace('01:21:18','01:19:41'),dependencyBoard.replace('01:21:36','01:21:17'),
+  dependencyBoard.replace('01:19:42','01:18:31'),
+  dependencyBoard.replace('2026-11-05T01:21:36Z',new Date(Date.now()+60000).toISOString()),
+  ...['Chrome123EXIT0','portsrefused','flockFREE','COMMIT'+'a'.repeat(40),'pullpushPASS','ALLBUILDSFINISHED'].map(field=>dependencyBoard.replace(field,'')),
+  dependencyBoard.replace('return-fire-playback-observation-0050','other-task'),
+  dependencyBoard.replaceAll('stronghold-host-capture-fault-repair ','coordinator '),
+  dependencyBoard.replace(' FINAL runtime AND file RELEASE',' waiting FINAL runtime AND file RELEASE')];
+ for(const row of bad)assert.throws(()=>local.heavyRelease(row),/release|OWN|builds|required/i);
 });
 test('actual local install makes the mandatory owning lifecycle tap ready before the composed launch caller',()=>{
  const script=path.join(run,'install-caller.cjs'),lock=path.join(run,'private-runtime.lock');
@@ -513,11 +520,11 @@ test('actual local install makes the mandatory owning lifecycle tap ready before
  // Only that pathname, the test clock and board input change in this fixture.
  fs.writeFileSync(script,`const fs=require('fs'),assert=require('assert/strict'),Module=require('module');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))};
- const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse(mode==='old'?'2026-11-04T22:10:00Z':'2026-11-05T01:00:00Z');
+ const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse(mode==='old'?'2026-11-04T22:10:00Z':'2026-11-05T01:30:00Z');
  let source=mode==='old'?require('child_process').execFileSync('git',['show','6055aa7e43d7c3505b6796d447663366e3b85146:tools/mdk2-local-runtime.cjs'],{encoding:'utf8'}):fs.readFileSync(filename,'utf8');
  source=source.replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: Chrome123EXIT0 portsrefused flockFREE explicit fixture only':'2026-11-05T00:35:47Z stronghold-review-ack-original OWN tools/stronghold-local-runtime.cjs\\n2026-11-05T00:53:36Z stronghold-review-ack-original LOCAL HEAVY RELEASE stronghold-review-ack-original-0036 Chrome123EXIT0 portsrefused flockFREE explicit fixture only\\n2026-11-05T00:59:49Z stronghold-review-ack-original RELEASE tools/stronghold-local-runtime.cjs';return Reflect.apply(originalRead,this,[file,...args]);};
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: Chrome123EXIT0 portsrefused flockFREE explicit fixture only':${JSON.stringify(dependencyBoard)};return Reflect.apply(originalRead,this,[file,...args]);};
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(require('path').dirname(filename));m._compile(source,filename);
  const installed=m.exports.install(dir),tap=m.exports.lifecycleForRun(dir);
  assert.equal(installed.lifecycle,tap);assert.throws(()=>tap.ownedLaunch(),/exactly one/);
@@ -544,8 +551,8 @@ test('actual composed entry creates run, installs release/recorder and calls moc
  const fs=require('fs'),path=require('path'),Module=require('module'),cp=require('child_process');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))},dir=${JSON.stringify(dir)};
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-05T00:35:47Z stronghold-review-ack-original OWN tools/stronghold-local-runtime.cjs\\n2026-11-05T00:53:36Z stronghold-review-ack-original LOCAL HEAVY RELEASE stronghold-review-ack-original-0036 Chrome123EXIT0 portsrefused flockFREE explicit fixture only\\n2026-11-05T00:59:49Z stronghold-review-ack-original RELEASE tools/stronghold-local-runtime.cjs';return Reflect.apply(originalRead,this,[file,...args]);};
- Date.now=()=>Date.parse('2026-11-05T01:00:00Z');
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return ${JSON.stringify(dependencyBoard)};return Reflect.apply(originalRead,this,[file,...args]);};
+ Date.now=()=>Date.parse('2026-11-05T01:30:00Z');
  const source=fs.readFileSync(filename,'utf8').replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(path.dirname(filename));require.cache[filename]=m;m._compile(source,filename);
  const local=m.exports,load=Module._load,events=[];
