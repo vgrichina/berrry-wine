@@ -371,7 +371,11 @@
   ;; whenever a handler leaves EIP alone — yield or no yield — and splices the
   ;; call out entirely, so the guest would resume past its own ReadFile with
   ;; the arguments still on the stack.
+  ;; Scoped by win32_dispatch, including nested dispatch. Only io_block emits
+  ;; this event; EIP equality or a yield reason alone is not callback ownership.
+  (global $api_io_retry (mut i32) (i32.const 0))
   (func $io_block (param $unpop i32)
+    (global.set $api_io_retry (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (local.get $unpop)))
     (global.set $handler_set_eip (i32.const 1))
     (global.set $eip (global.get $current_thunk_eip))

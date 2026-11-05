@@ -436,6 +436,32 @@
     (i64.store offset=24 (local.get $p) (i64.const 0))
     (global.set $pending_depth (i32.add (global.get $pending_depth) (i32.const 1)))
     (local.get $p))
+  ;; An internal IO retry retains the dispatcher's original API frame. It is
+  ;; neither a guest CALL nor a RET. Authenticate the io_block event against
+  ;; this invocation before preserving (without pushing/popping) its history.
+  (func $pending_dispatch_io_retry (param $entry_eip i32) (param $return_eip i32)
+      (param $parent_esp i32) (param $entry_esp i32) (param $thunk i32)
+    (if (i32.eqz (global.get $pending_armed)) (then (return)))
+    ;; Legacy profiles retain their redirect rejection.
+    (if (i32.ne (global.get $pending_profile) (i32.const 2)) (then
+      (call $pending_dispatch_callback (local.get $entry_eip) (local.get $return_eip) (local.get $parent_esp))
+      (return)))
+    (if (i32.eqz (call $pending_valid)) (then (return)))
+    (if (i32.or
+          (i32.or (i32.ne (global.get $eip) (local.get $thunk))
+                  (i32.ne (global.get $current_thunk_eip) (local.get $thunk)))
+          (i32.or
+            (i32.or (i32.ne (i32.load offset=16 (global.get $reg_base)) (local.get $entry_esp))
+                    (i32.ne (call $gl32 (local.get $entry_esp)) (local.get $return_eip)))
+            (i32.or
+              (i32.or (i32.ne (global.get $yield_reason) (i32.const 12))
+                      (i32.eqz (global.get $yield_flag)))
+              (i32.or (i32.ne (global.get $steps) (i32.const 0))
+                      (i32.eqz (global.get $handler_set_eip))))))
+      (then (call $pending_gap_at (i32.const 109)
+        (local.get $entry_eip) (local.get $return_eip) (local.get $parent_esp)
+        (local.get $entry_esp) (local.get $thunk) (i32.const 0)))))
+
   ;; Native dispatch owns the callback stack it has just built. Extend the
   ;; shadow CALL/RET history with that exact child, rather than declaring an
   ;; unexplained EIP change covered. Legacy profile 1 still rejects redirects.

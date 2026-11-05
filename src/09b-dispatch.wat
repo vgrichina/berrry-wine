@@ -100,6 +100,7 @@
   (func $win32_dispatch (param $thunk_idx i32)
     (local $resource_pins i64) (local $return_eip i32) (local $entry_eip i32)
     (local $parent_esp i32)
+    (local $entry_esp i32) (local $saved_io_retry i32)
     (local $resource_pin i32) (local $resource_base i32) (local $resource_rva i32)
     (local $resource_size i32) (local $resource_stride i32)
     ;; REP debugger mode has no resumable API continuation. Reject the entry
@@ -117,6 +118,7 @@
       (global.set $eip (i32.add (global.get $thunk_guest_base) (i32.shl (local.get $thunk_idx) (i32.const 3))))
       (global.set $handler_set_eip (i32.const 1))
       (global.set $steps (i32.const 0)) (return)))
+    (local.set $entry_esp (i32.load offset=16 (global.get $reg_base)))
     (local.set $return_eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))
     (local.set $entry_eip (global.get $eip))
     (local.set $parent_esp (call $api_stdcall_stack_bytes
@@ -136,8 +138,16 @@
     (global.set $rsrc_api_pins (i64.const 0))
     (global.set $rsrc_api_scope (i32.add (global.get $rsrc_api_scope) (i32.const 1)))
     (global.set $api_handler_depth (i32.add (global.get $api_handler_depth) (i32.const 1)))
+    (local.set $saved_io_retry (global.get $api_io_retry))
+    (global.set $api_io_retry (i32.const 0))
     (call $win32_dispatch_inner (local.get $thunk_idx))
-    (call $pending_dispatch_callback (local.get $entry_eip) (local.get $return_eip) (local.get $parent_esp))
+    (if (global.get $api_io_retry)
+      (then (call $pending_dispatch_io_retry
+        (local.get $entry_eip) (local.get $return_eip) (local.get $parent_esp)
+        (local.get $entry_esp)
+        (i32.add (global.get $thunk_guest_base) (i32.shl (local.get $thunk_idx) (i32.const 3)))))
+      (else (call $pending_dispatch_callback (local.get $entry_eip) (local.get $return_eip) (local.get $parent_esp))))
+    (global.set $api_io_retry (local.get $saved_io_retry))
     (call $pop_rsrc_ctx)
     (call $rsrc_release_api_pins)
     (global.set $rsrc_api_pins (local.get $resource_pins))

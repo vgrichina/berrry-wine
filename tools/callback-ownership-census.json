@@ -3955,9 +3955,9 @@
           "$current_thunk_eip"
         ]
       ],
-      "sha256": "2f7f046d439863f46a178ee850ea1825118559e7f003b8f682c059b09b7b99cf",
+      "sha256": "4f0b982b6c2608e72f0648e935dd7ef100e2123e4cbbafb3d7324dbca66925ca",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. ReadFile lazy-retry review 20261105-stronghold-readfile-native-retry: io_block emits an invocation-scoped internal park event; dispatcher saves/clears/restores it across nesting and validates original ESP/return, dispatched thunk, yield/handler/step state and existing native lifetime before preserving history without a callback push/pop. Genuine redirects keep existing checks; legacy profiles reject redirects. Guest EIP targets, execution and general invocation ownership remain unchanged/pending. Generated two-module causal regression and malformed park/native callback/epoch/exception cases qualify this narrow classification only.",
       "ownership": "pending"
     },
     {
@@ -4697,9 +4697,9 @@
           "$return_eip"
         ]
       ],
-      "sha256": "349afeafdd9efce33a4ce9c68660c2e91c7d8e421695488faed63da79eecf545",
+      "sha256": "b2b5a75ead26fb2c660f76a0e3da01a0f0b627735b4b01a9dd26c5b6e273e325",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Shadow Man exact-candidate source review 2026-10-28: Dispatcher retains existing resource-pin save/restore and callback-continuation redirects. Only added operation clears diagnostic kind before deferred DLL unload can redirect after inner handler. No new owner or EIP target; existing callback/continuation lifetimes remain pending. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Stronghold profile-2 coverage review 20261105: native dispatcher records its exact redirected callback target, current stack and canonical continuation or saved caller in bounded shadow history. Native RET must consume that frame exactly; bad returns/unsupported redirects retain permanent coverage failure. Profile 1 remains conservative; no EIP target or callback execution is changed; general invocation ownership remains pending.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Shadow Man exact-candidate source review 2026-10-28: Dispatcher retains existing resource-pin save/restore and callback-continuation redirects. Only added operation clears diagnostic kind before deferred DLL unload can redirect after inner handler. No new owner or EIP target; existing callback/continuation lifetimes remain pending. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Stronghold profile-2 coverage review 20261105: native dispatcher records its exact redirected callback target, current stack and canonical continuation or saved caller in bounded shadow history. Native RET must consume that frame exactly; bad returns/unsupported redirects retain permanent coverage failure. Profile 1 remains conservative; no EIP target or callback execution is changed; general invocation ownership remains pending. ReadFile lazy-retry review 20261105-stronghold-readfile-native-retry: io_block emits an invocation-scoped internal park event; dispatcher saves/clears/restores it across nesting and validates original ESP/return, dispatched thunk, yield/handler/step state and existing native lifetime before preserving history without a callback push/pop. Genuine redirects keep existing checks; legacy profiles reject redirects. Guest EIP targets, execution and general invocation ownership remain unchanged/pending. Generated two-module causal regression and malformed park/native callback/epoch/exception cases qualify this narrow classification only.",
       "ownership": "pending"
     },
     {
