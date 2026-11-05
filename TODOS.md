@@ -2153,10 +2153,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-AOE3-DEMO-20261010
-  blocker: Genuine XP-compatible DirectX9c setup payload/manifest and verifiable installation state missing from supplied set; originalReadme requires9c, supplied registry/provider indicates7. Installer opaque payload remains unexamined beyond listing.
-  status: active input recovery; no current guest session or gameplay observation
+  blocker: Genuine XP DirectX9c setup input recovered; actual setup execution and resulting installation state remain unproved. Original inner MSI remains undecoded; outer header inspection does not prove an embedded redist is absent.
+  status: active genuine DXSETUP preparation; runtime queued behind Conan1840 -> Aranna1850 -> legacy1915
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: fresh aoe3-genuine-dx9-inputs-1900 (input recovery only; no guest/browser/boxes, heavy extraction behind Shadow1800 -> Conan1840 -> Aranna1850)
+  worker: fresh aoe3-genuine-dxsetup-1925; source-only until predecessor FINAL releases and independent cleanup, then genuine setup and same-target original gameplay if ready
+  Update 2026-11-05T17:23Z: Input recovery1900 published02ca36bb2; genuine Microsoft February2010 redist109072752B SHA f6d191e89a963d7cca34f169d30f49eab99c1ed3bb92da73ec43617caaa1e93f includes dxnt.cab. Package/cabinets and historical cryptographic provenance pass; current trust/revocation policy unproved. No installer ran or installation state fabricated. Fresh1925 authorized to run real DXSETUP, capture its files/registry/logs/restart outputs and advance original only from completed actual state. Ordinary acceptance authorization persists. No boxes or held diagnostic retry.
   Recovery outcome 2026-11-05: Publishedb6c993d70; all208 supporting files572051434B verified, including174 installed files and exactage3.exe5d7fb9a8. No guest run/acceptance/gameplay. Historical373pin manifests retained separately; originalregistry unchanged. Evidence scratch/runs/20261105-aoe3-supporting-input-recovery/.
   candidate: test/binaries/win98-games-a-d/Age-of-empire-3trial-Win98-SW.exe
   Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Original installer scratch/game-media/aoe3-demo-20261105/aoe3trial.exe is 383598224B, SHA256 4ef69289dfa0817ec14942d85ef597835a9d2b09e1506c60b9938b20daa274ad, matching the historical pin. Reconstruct supporting assets from recorded hashes and preflight an authorized bounded runtime before observing acceptance and installed payload. Recovery receipt: scratch/runs/20261105-aoe3-original-media-recovery/recovery-receipt.json; no installer execution or new acceptance/gameplay observation from recovery. Local exact-path observations and unknown remote availability are in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
