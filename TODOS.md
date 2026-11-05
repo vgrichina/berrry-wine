@@ -1838,9 +1838,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Next: Published fb7f45c73 verifies actual HTML response body and unchanged continuation, but optional build-info.js GET404 then canceled net::ERR_ABORTED stops collector before Play. Offline cause/remedy must preserve genuine transfer failures and immutable first failure. No original retry authorized in this repair task. Historical launcher/deployment/movement acceptance remains; sustained play/audio/FPS open.
   Done: Registered launch, ordinary input visibly changes gameplay, reviewed screenshot with original source/build evidence; FPS/audio separate.
 
-- [ ] Serialize shared DLL mapping and lifetime mutation
+- [x] Serialize shared DLL mapping and lifetime mutation
   id: DLL-CONCURRENT-MAPPING-20261009
-  status: review (review/acceptance owned by claude-laptop, owner correction 2026-11-05)
+  status: done — accepted by independent Claude review 2026-11-05: cfe411bdc/1b3c20aec/7a2953021/89524faca/83947f6a6 reviewed at current main (loader lock + callback gate, generation-checked lifecycle/pins, reachability unload); build + 30 DLL/COM/worker suites PASS incl. concurrent-mapping, same-module-concurrent, callback-serialization, lifecycle-races/real-pe, retirement-readers (6 cases); stale fixtures in worker-message-lifecycle/freelibrary-reload fixed e01a20635; Alice native+browser gameplay revalidated 2026-11-03 (alice-gameplay/alice-controls reviews). Unrelated open: test-loadlibrary-system-path (cd62d1dd7 builtin policy), test-disable-thread-library-calls (stale mock)
   owner: claude-laptop
   Next: claude-laptop handles review/acceptance; coordinator must not dispatch duplicate review or acceptance. Load/publication serialization cfe411bdc/1b3c20aec/7a2953021/89524faca and real unload83947f6a6 are on main. Historical comments about stub FreeLibrary and held-branch adaptation are superseded. CMR3/Alice gameplay limits remain pending laptop review.
   Done: Concurrent load/free/import tests preserve exact images and module ownership, callback execution stays live without deadlock, normal Alice gameplay/browser revalidated.
