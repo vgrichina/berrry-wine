@@ -313,13 +313,13 @@ and jobs remain preserved. No old-session wakeup is requested.
 
 - [!] Correct REP MOVS restart on absent sparse pages
   id: MIG-SAM-REP-RESTART
-  status: active (one owner-authorized retry)
+  status: active (claude-laptop owned; Codex retry withdrawn by owner correction 2026-11-05)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
-  retry-order: 1 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-order: Owner correction 2026-11-05 assigns MIG to claude-laptop; do not start, resume or retry it from this coordinator. Other authorized lanes proceed independently, one retry at a time.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Owner-authorized retry: reconcile preserved REP MOVS implementation with current main; validate remaining ContinueSearch, precise fault/progress/restart and direct code-write regression gates; fix only emulator WAT/JS and commit tested changes.
+  Next: claude-laptop handles REP MOVS implementation and review. Coordinator stopped its source-only retry process tree on 2026-11-05; no shared edits, executable tests or runtime had begun. Preserve existing evidence and await laptop result; do not launch a successor for MIG.
   candidate: serious-sam-demo
-  owner: codex:01a0f9db-4a5d-7733-ade9-8b71d8e3f05f
+  owner: claude-laptop
   Done: correct single fault, first absent byte, failed-element preservation and retry at REP for widths1/2/4 DF0/1, with source identities and coverage limits. No generic fault-policy/classifier/layout changes; current required canonical build applies.
   Evidence: ops/handoffs/mig-sam-rep-restart.md; scratch/mig-sam-rep-restart-20261002/evidence-summary.json.
 
@@ -1103,11 +1103,11 @@ commit output — do not assume your hunks landed.**
 
 - [!] Complete Serious Sam production integration and ordinary gameplay
   id: SAM-PRODUCTION-FOLLOWTHROUGH
-  status: queued (one owner-authorized retry; serialized)
+  status: waiting (claude-laptop MIG-SAM-REP-RESTART result)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
-  retry-order: 2 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-order: Owner correction 2026-11-05: wait for claude-laptop MIG result; do not start now. Other six authorized retry lanes may proceed one at a time.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: After MIG-SAM-REP-RESTART finishes, use its result to validate generic emulator fault/classifier contracts and integrate tested production slices with regressions before ordinary gameplay.
+  Next: Wait for claude-laptop to finish MIG-SAM-REP-RESTART, then use its result to validate generic emulator fault/classifier contracts and integrate tested production slices with regressions before ordinary gameplay.
   created: 2026-10-02T04:16:51.185761+00:00
   created-by: orchestrator-handoff-audit
   depends-on: MIG-SAM-REP-RESTART
@@ -1525,7 +1525,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-BETRAYAL-ANTARA-DEMO-20261006
   status: queued (one owner-authorized retry; serialized)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
-  retry-order: 4 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-order: 2 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Next: Retry emulator installer/crash diagnostics from preserved evidence; compare our emulated CPU/Win32 behavior against documentation and fix with a regression. Old remote box is stopped; do not resume it.
   candidate: win98-games-a-d/Betrayl-a-Antara-DEMO-SW (16-bit Sierra SETUP.EXE installs the game; local, no download)
@@ -1540,7 +1540,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-ARX-FATALIS-DEMO-20261007
   status: queued (one owner-authorized retry; serialized)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
-  retry-order: 5 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-order: 3 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Next: Retry emulator startup exception diagnostics from preserved evidence; compare our CPU/memory/API behavior with documented semantics and fix with a regression.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
@@ -1592,7 +1592,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-TIBERIAN-SUN-DEMO-20261006
   status: queued (one owner-authorized retry; serialized)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
-  retry-order: 3 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-order: 1 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Next: Retry emulator activation/control-flow continuation diagnostics using preserved launch evidence; compare our Win32/x86 implementation against documented semantics and fix with a regression.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
@@ -1605,7 +1605,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: GLD3D-WINAMP-EXCEPTION-20261007
   status: queued (one owner-authorized retry; serialized)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
-  retry-order: 6 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-order: 4 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Next: Retry emulator exception handling diagnostics from preserved evidence; identify and repair our documented CPU/Win32 semantic mismatch with a regression.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
@@ -1840,9 +1840,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Serialize shared DLL mapping and lifetime mutation
   id: DLL-CONCURRENT-MAPPING-20261009
-  status: review (serialization and unload merged; CMR3/Alice gameplay revalidation pending)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Load/publication serialization cfe411bdc/1b3c20aec/7a2953021/89524faca and real unload83947f6a6 are on main. Historical comments about stub FreeLibrary and held-branch adaptation are superseded. Current next action is fresh CMR3/Alice original gameplay validation; reproduce a current boundary before changing loader behavior.
+  status: review (review/acceptance owned by claude-laptop, owner correction 2026-11-05)
+  owner: claude-laptop
+  Next: claude-laptop handles review/acceptance; coordinator must not dispatch duplicate review or acceptance. Load/publication serialization cfe411bdc/1b3c20aec/7a2953021/89524faca and real unload83947f6a6 are on main. Historical comments about stub FreeLibrary and held-branch adaptation are superseded. CMR3/Alice gameplay limits remain pending laptop review.
   Done: Concurrent load/free/import tests preserve exact images and module ownership, callback execution stays live without deadlock, normal Alice gameplay/browser revalidated.
 
 - [x] New-game lane: Aliens versus Predator 2 single-player demo
@@ -1877,7 +1877,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-CMR3-DEMO-20261010
   status: queued (one owner-authorized retry; serialized)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
-  retry-order: 7 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-order: 5 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Next: Retry emulator memory/lifetime diagnostics from preserved replay evidence; compare our CPU/Win32 behavior with documented semantics and fix with a regression.
   runtime-revalidated: 2026-10-15 native recovery56105 terminal0; serialized remote runtime available, no transport blocker.
@@ -2008,7 +2008,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Prior evidence: scratch/runs/20261015-lords2-review-hold and shared WIP; original250171 reached GetNextWindow invalid1446 after GetParent fix, no gameplay.
   status: queued (one owner-authorized retry; serialized)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
-  retry-order: 8 of 8; MIG-SAM-REP-RESTART, then SAM-PRODUCTION-FOLLOWTHROUGH, then remaining listed tasks one at a time.
+  retry-order: 6 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Next: Retry emulator GetWindow/GetNextWindow follow-up using preserved evidence; compare our Win32 implementation with documented behavior and fix with a regression.
   owner: /root/new_demo_refill

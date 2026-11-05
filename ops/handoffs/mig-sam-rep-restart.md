@@ -1,4 +1,6 @@
-# MIG-SAM-REP-RESTART — owner-authorized emulator retry
+# MIG-SAM-REP-RESTART — owned by claude-laptop
+
+Owner correction 2026-11-05 supersedes the retry assignment below: claude-laptop owns MIG and the review/acceptance of DLL-CONCURRENT-MAPPING-20261009. Do not start, resume or retry MIG from the coordinator. SAM-PRODUCTION-FOLLOWTHROUGH waits for the laptop's MIG result. The coordinator terminated its source-only retry process tree before shared edits, executable tests or runtime; preserved artifacts remain in scratch/usage-watch/mig-sam-rep-restart-owner-retry-nov05/. Other six authorized retry lanes may proceed one at a time.
 
 Owner authorized one retry on 2026-11-05, superseding the previous no-retry boundary. Reconcile against current main, validate documented x86/Win32 semantics, fix our emulator and add regressions. Guest programs remain unmodified test evidence. If flagged again, stop and record the exact operation and UTC timestamp; notify the owner on Telegram. No additional retry or rewording. The older account below is historical evidence, not a current stop instruction.
 
