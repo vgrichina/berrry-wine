@@ -1769,3 +1769,89 @@ from the published bundle rather than presenting the replacement as proof.
 Gameplay/pause screenshots and shared-state readbacks are retained. Repeated
 renderer switching was not requalified in this pass. Automated test browsers
 are closed; local dev server 52671 still serves the committed fixes.
+
+## Hidden intro window and explicit show ordering (2026-11-04)
+
+The intro backdrop is a hidden indirect-template root (style 0x80000840),
+initially 578x431. Half-Life clears its DC before showing the separate 320x240
+movie, which it explicitly centers on the virtual desktop. Our unconditional
+force-show of hidden top-level indirect templates exposed this unfinished root.
+Removing that workaround restores the template visibility contract. Hidden
+dialogs must also not arm the implicit-main activation continuation.
+
+The first candidate (`3f7e0afd...`, `20261103-uplink-intro-hidden`) removes the
+stray backdrop but exposes a second ordering error: explicit ShowWindow posted
+WM_SHOWWINDOW, allowing activation/painting before Half-Life initialized its
+menu background. The next candidate sends that notification using a guest-stack
+continuation that retains the HWND, resolved show command, placement return
+convention and original visibility. Completion revalidates the HWND before
+changing visibility; built-in controls stay on native dispatch. Creation,
+explicit callback/destruction, ShowWindowAsync, secondary sizing, modal show
+ordering and Paint Attributes regressions pass, as do native/compat builds.
+Final candidate `13e7c0acf67521ac91fb8462896c80b1cdfc3ac98c527398272a4186e9a08650`
+in `20261104-uplink-final-intro` shows the centered movie without the stray
+backdrop, a complete main menu, textured Hazard Course gameplay and a complete
+pause menu. However, repeated switching is NOT qualified: dismissing the
+driver-advice popup returns to Video instead of exposing the mode controls.
+The final run is therefore failed release qualification. Keep the startup/
+ShowWindow changes uncommitted pending diagnosis; only the independent empty
+nonclient-paint optimization is ready to commit. Safari remains excluded.
+
+`20261103-uplink-switch-review` completed OpenGL -> Software -> OpenGL ->
+Direct3D -> Software at 640x480 in one headed Chrome Worker session. Each
+restart reached textured Hazard Course elevator gameplay and a textured pause
+menu, without Z_Free or runtime errors. This is the prior committed module
+`a9b1c2b7...`, not the new explicit-show candidate; camera positions vary and
+the run is not an FPS comparison. Safari remains intentionally excluded.
+
+Four SEO-only main commits were cherry-picked onto the release branch:
+e3467a0bc, 332e567d3, b52c9193f and 337621c88, now 9cd701049, 7462d9282,
+4a48b4385 and 003a6e730. Game descriptions, screenshots, FAQs and Space Cadet
+title changes are included, along with the correction preserving existing
+demoscene pages. Generated game pages pass screenshot, JSON-LD and indexability
+checks. Unrelated main runtime changes were excluded; nothing was deployed.
+
+## Resolution-dependent OpenGL readback (2026-11-04)
+
+Headed Chrome/ANGLE Metal on Apple M1, Worker gameplay, the saved staircase
+view, 30-second settling and two 60-second samples per resolution:
+`20261104-uplink-resolution-640-repeat` gives 39.98/39.93 presents/s;
+`20261104-uplink-resolution-1024-repeat` gives 34.51/34.55. Both load module
+`b70e10ee645f5660065fe5e98257b7b6fac191fce3a9ad893c87ea3d0df1c507`.
+These are guest presentations, not independently verified unique display
+frames. Screenshots show the same textured view/HUD. Earlier single samples
+17.12/8.36, in the runs without `-repeat`, are not reliable controls: the same
+640 build subsequently runs at 40/s. Those first samples also did not trigger
+the readback path; retain them rather than generalizing their zero counters.
+
+The repeat profile establishes the unnecessary work precisely:
+`DefWindowProcA -> defwndproc_do_ncpaint -> defwndproc_ncpaint ->
+gdi_surface_descriptor -> gpu_gl_call(0x10002)`. The frame painter resolves
+GPU-owned pixels before a fill that is entirely excluded by its NC clip.
+The game repeatedly shows its already-visible borderless game window; its
+client covers the whole window, so no nonclient pixels need painting.
+
+Each repeat frame triggers getImageData, RGBA-to-canonical conversion and a
+subsequent canonical-to-RGBA upload. At 640x480, readback traffic is ~49 MB/s
+and merge time ~1.18 ms/frame. At 1024x768, it is ~109 MB/s and ~2.96 ms/frame.
+The 1024 page profile spends 7.29% in writeRgbaRect, 3.17% in rgbaRect and
+2.90% in getImageData; the guest spends 21.04% in brokerCall. The render Worker
+is idle ~93% of its sampled interval; this is not a GPU-utilization reading.
+
+The fix checks whether the positive client rectangle covers the complete
+window before NC DC allocation/pixel access, in both frame-painter entry
+paths. It follows geometry rather than a game-name or style-only exception.
+The regression retains GPU ownership for an empty NC clip and still resolves
+a one-pixel nonclient band. Caption states, WinMine dialog frames, borderless
+dialog menus and real deferred OpenGL/GDI ordering regressions pass.
+
+`20261104-uplink-empty-nc-1024`, module
+`43610ae3be08103e3e66c7fee10a8eba82131f669c510b2d6af54f947e687120`,
+has zero readbacks/merges in both 60-second samples and the separate 30-second
+profile. Textured gameplay, full pause background and resumed gameplay were
+reviewed. The pixel-copy hotspot disappears. Its 7.72/8.62 presents/s cannot
+establish a gain or regression: contemporaneous process snapshots show heavy
+Safari/WebKit/WindowServer load, unlike the earlier repeat. Do not advertise
+an FPS gain until a quiet paired rerun. The proven improvement is removal of
+the unnecessary per-frame copy/fence, not resolution-independent rendering.
+The later show-callback return-value correction is outside this timing run.
