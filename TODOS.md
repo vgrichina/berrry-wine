@@ -1843,12 +1843,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [ ] User priority: Return Fire demo
   id: NEW-GAME-RETURN-FIRE-DEMO-20261009
   blocker: none for bounded launcher/deployment/movement scope; sustained play/audio/FPS remain separate.
-  worker: none (transport repair cf5e9c163 published and released; original gameplay follow-up queued)
+  worker: return-fire-current-transport-gameplay-1410, fresh01a1ac05-d2f2-7c21-a379-d3abe562060f (source preparation; original runtime queued)
   status: bounded gameplay and visible native launcher accepted; broader coverage open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: return-fire-demo
   priority: user-first
-  Next: Transport prerequisite fixed cf5e9c163 (2026-11-05): owning Worker Network bytes collected only after the actual missing Fetch capability is established, with exact startup identity and required-byte guards. Collector91/composition33/real-browser12 plus optional404 controls and full build PASS; all owned runtime released. Evidence scratch/runs/20261105-return-fire-worker-body-transport/. The repair did not run the original game. Next bounded original gameplay/audio observation uses this published transport after a runtime slot opens; historical launcher/deployment/movement acceptance remains, sustained play/audio/FPS open.
+  Next: Transport prerequisite fixed cf5e9c163 (2026-11-05): owning Worker Network bytes collected only after the actual missing Fetch capability is established, with exact startup identity and required-byte guards. Collector91/composition33/real-browser12 plus optional404 controls and full build PASS; all owned runtime released. Evidence scratch/runs/20261105-return-fire-worker-body-transport/. The repair did not run the original game. Fresh1410 prepares an explicit original entry preserving the generated-only helper guard, then after Strong1335 -> formats1345 -> Lords1355 FINAL file/runtime releases and cleanup runs one bounded ordinary original toward Play/deployment/movement and reviewed gameplay captures. Input main c11e415e0; no leased box, runtime local and serialized; stopby23:30Z. Historical launcher/deployment/movement acceptance remains; sustained play/audio/FPS open.
   Done: Registered launch, ordinary input visibly changes gameplay, reviewed screenshot with original source/build evidence; FPS/audio separate.
 
 - [x] Serialize shared DLL mapping and lifetime mutation
