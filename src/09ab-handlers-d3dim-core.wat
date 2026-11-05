@@ -825,6 +825,8 @@
     (i32.store offset=24 (local.get $out) (call $dx_surf_pal_get (local.get $n)))
     (i32.store offset=28 (local.get $out) (call $dx_surf_pal_alpha (local.get $n)))
     (i32.store offset=32 (local.get $out) (i32.load offset=24 (local.get $n)))
+    (i32.store offset=36 (local.get $out)
+      (i32.ne (i32.and (i32.load offset=28 (local.get $n)) (i32.const 0x100)) (i32.const 0)))
     (local.get $out))
 
   ;; Texture $tex decoded to RGBA8 bytes in a reused scratch buffer (result is
@@ -7172,17 +7174,37 @@
 
   (func $d3dim_mip_sample_level
     (param $e i32) (param $u f32) (param $v f32)
-    (param $au i32) (param $av i32) (param $linear i32) (result i32)
-    (call $d3dim_texture_sample_prepared
+    (param $au i32) (param $av i32) (param $linear i32) (param $key_blend i32) (result i32)
+    (local $key i32) (local $enabled i32) (local $bpp i32)
+    ;; DX7 explicit COLORKEYBLENDENABLE substitutes each matching tap with
+    ;; zero RGBA before spatial filtering and inter-level interpolation.
+    ;; Every mip image owns its key, palette, format and pitch metadata.
+    (local.set $bpp (i32.load16_u offset=16 (local.get $e)))
+    (local.set $enabled (i32.and (local.get $key_blend)
+      (i32.ne (i32.and (i32.load offset=28 (local.get $e)) (i32.const 0x100)) (i32.const 0))))
+    ;; Key inheritance from a keyed root to an unkeyed child is not resolved.
+    ;; Only explicitly keyed sampled images are supported by this extension.
+    (if (i32.and (local.get $key_blend) (i32.eqz (local.get $enabled)))
+      (then (call $crash_unimplemented (region.addr $D3DIM_AUX 0x40))))
+    (if (local.get $enabled) (then
+      ;; Do not infer alpha-palette/key precedence for a child level.
+      (if (call $dx_surf_pal_alpha (local.get $e)) (then (unreachable)))
+      (local.set $key (i32.load offset=24 (local.get $e)))
+      (if (i32.ne (local.get $bpp) (i32.const 8)) (then
+        (local.set $key (i32.and (call $d3dim_decode_surface_pixel
+          (local.get $e) (local.get $key) (local.get $bpp)) (i32.const 0x00ffffff)))))))
+    (call $d3dim_texture_sample_keyed
       (i32.load16_u offset=12 (local.get $e)) (i32.load16_u offset=14 (local.get $e))
       (i32.load16_u offset=16 (local.get $e)) (i32.load16_u offset=18 (local.get $e))
       (i32.load offset=20 (local.get $e)) (call $dx_surf_fmt_get (local.get $e))
       (call $dx_surf_pal_get (local.get $e)) (call $dx_surf_pal_alpha (local.get $e))
-      (local.get $u) (local.get $v) (local.get $au) (local.get $av) (local.get $linear)))
+      (local.get $u) (local.get $v) (local.get $au) (local.get $av) (local.get $linear)
+      (local.get $enabled) (local.get $key)))
 
   (func $d3dim_mip_sample
     (param $e i32) (param $x i32) (param $y i32)
-    (param $au i32) (param $av i32) (param $sample_u f32) (param $sample_v f32) (result i32)
+    (param $au i32) (param $av i32) (param $sample_u f32) (param $sample_v f32)
+    (param $key_blend i32) (result i32)
     (local $u f32) (local $v f32) (local $q f32) (local $fx f32) (local $fy f32)
     (local $dxu f32) (local $dxv f32) (local $dyu f32) (local $dyv f32)
     (local $rho2 f32) (local $lod f32) (local $frac f32)
@@ -7197,7 +7219,7 @@
     ;; existing bounded coordinate policy; they must never trap in log/trunc.
     (if (i32.eqz (f32.gt (f32.abs (local.get $q)) (f32.const 0.000000000001)))
       (then (return (call $d3dim_mip_sample_level (local.get $e) (f32.const 0) (f32.const 0)
-        (local.get $au) (local.get $av) (global.get $d3dim_mip_mag)))))
+        (local.get $au) (local.get $av) (global.get $d3dim_mip_mag) (local.get $key_blend)))))
     (local.set $u (f32.div (local.get $u) (local.get $q)))
     (local.set $v (f32.div (local.get $v) (local.get $q)))
     (local.set $dxu (f32.mul (f32.div (f32.sub (global.get $d3dim_mip_ua) (f32.mul (local.get $u) (global.get $d3dim_mip_qa))) (local.get $q)) (f32.convert_i32_u (i32.load16_u offset=12 (local.get $e)))))
@@ -7230,14 +7252,14 @@
     ;; Retain the established edge/span lookup interpolation, including its
     ;; level-zero rounding. Derivatives come from unrounded triangle planes.
     (local.set $c (call $d3dim_mip_sample_level (local.get $e) (local.get $sample_u) (local.get $sample_v)
-      (local.get $au) (local.get $av) (local.get $linear)))
+      (local.get $au) (local.get $av) (local.get $linear) (local.get $key_blend)))
     (if (i32.and (f32.gt (local.get $frac) (f32.const 0)) (i32.eq (local.get $i) (local.get $level)))
       (then
         (local.set $n (call $d3dim_mip_next (local.get $e)))
         (if (local.get $n) (then
           (local.set $c (call $d3dim_color_lerp (local.get $c)
             (call $d3dim_mip_sample_level (local.get $n) (local.get $sample_u) (local.get $sample_v)
-              (local.get $au) (local.get $av) (local.get $linear)) (local.get $frac)))))))
+              (local.get $au) (local.get $av) (local.get $linear) (local.get $key_blend)) (local.get $frac)))))))
     (local.get $c))
 
   ;; Native D3D triangle sampler state. Never enabled by GL/Glide or GPU
@@ -7336,7 +7358,11 @@
         (i32.ne
           (i32.and (i32.load offset=28 (local.get $tex_entry)) (i32.const 0x100))
           (i32.const 0))))
-    (if (i32.and (local.get $key_active)
+    ;; FALSE/untouched state144 filtered-key semantics remain unresolved.
+    ;; Preserve the named failure for that combination; explicit TRUE below
+    ;; follows the Microsoft DX7 sample-replacement contract.
+    (if (i32.and (i32.and (local.get $key_active)
+          (i32.ne (local.get $color_key_enable) (i32.const 2)))
           (i32.and (global.get $d3dim_mip_on) (i32.ne (global.get $d3dim_mip_mip) (i32.const 0))))
       (then (call $crash_unimplemented (region.addr $D3DIM_AUX 0x40))))
     (if (local.get $key_active) (then
@@ -7472,16 +7498,8 @@
         (then
           (local.set $sample (call $d3dim_mip_sample (local.get $tex_entry)
             (local.get $x) (local.get $y) (local.get $address_u) (local.get $address_v)
-            (local.get $tu) (local.get $tv)))
-          (local.set $linear (global.get $d3dim_mip_effective_linear))
-          ;; No-mip keyed sampling retains the raw-index and tap replacement
-          ;; rules below, with the footprint-selected within-image filter.
-          (if (local.get $key_blend) (then
-            (local.set $sample (call $d3dim_texture_sample_keyed
-              (local.get $tw) (local.get $th) (local.get $tbpp) (local.get $tpitch)
-              (local.get $tdib) (local.get $tfmt) (local.get $tpal) (local.get $tpal_alpha)
-              (local.get $tu) (local.get $tv) (local.get $address_u) (local.get $address_v)
-              (local.get $linear) (i32.const 1) (local.get $sample_key))))))
+            (local.get $tu) (local.get $tv) (local.get $key_blend)))
+          (local.set $linear (global.get $d3dim_mip_effective_linear)))
         (else
       (if (local.get $fast16)
         (then
