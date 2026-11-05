@@ -89,8 +89,9 @@ and the heavy titles; the table is not an unambiguous 27-ID manifest.
 Reproduce the source with
 `git show d5b3b56cb:docs/gl-d3d-corpus-status.md`. Preserve its entries as
 historical candidates when reconciling coverage; do not select 27 by dropping
-grouped examples or heavy titles. Alias-to-registry mapping, the exact intended
-27-ID set, and current evidence for both backends remain open. The original
+grouped examples or heavy titles. All 37 names now resolve to current registry
+IDs as described below; the exact intended 27-ID set and current evidence for
+both backends remain open. The original
 software sweep explicitly capped runs at 120 seconds and did not run its
 WebGL arm, so its menu/loading rows and older WebGL citations do not establish
 current gameplay or parity. This recovers a concrete provenance source without
@@ -109,9 +110,31 @@ registrations in `lib/apps.js`:
 | `rockroll` | `scr_rockroll` | `ROCKROLL.SCR` |
 | `scifi` | `scr_scifi` | `SCIFI.SCR` |
 
-This static mapping retains all seven historical candidates. Their paired
-October 30 browser observations are recorded below; mapping an alias adds no
-runtime coverage. The intended exact 27-ID membership remains unresolved.
+The remaining 30 historical names are already exact current registry IDs:
+
+```text
+blood2_demo tomb_raider_2_demo tomb_raider_3_demo gta2_demo mw3
+diablo2_demo darkstone_demo arcanum_demo dx_boids dx_flip3dtl
+dx_tunnel dx_twist mcm dx_globe dx_viewer halflife_uplink
+simgolf_demo quake2_demo warcraft3_demo ptct ut2003_demo
+ut2003_demo_server ut2004_demo alien_shooter crimsonland pawn
+pirates_2004 black_white_2_demo morrowind winamp
+```
+
+On November 5, splitting the original table's first column at slashes and
+commas reproduced 26 groups and 37 unique names. Looking up every name in
+`require('./lib/apps.js').APPS`, with only the six abbreviated saver aliases
+above expanded, resolved all 37 to unique registry IDs and executable paths.
+The complete path mapping and source hashes are retained in
+`scratch/runs/20261105-gld3d-historical-registry-map/result.json`; the registry
+SHA-256 was `146c8059f639a1571e6c9e925a5ab7676ffd547a56327863ea72b6eb3aa22455`.
+This checks registry declarations, not installed media or execution. In
+particular, `ut2003_demo` and `ut2003_demo_server` share an executable path but
+remain distinct registrations and historical candidates.
+
+This static mapping retains all 37 historical candidates. The savers' paired
+October 30 browser observations are recorded below; mapping adds no runtime
+coverage. The intended exact 27-ID membership remains unresolved.
 
 ### Earlier November 3 checkpoint: 51 unsupported names
 
