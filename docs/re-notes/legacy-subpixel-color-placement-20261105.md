@@ -47,8 +47,10 @@ A=d1*vy-d2*uy and B=ux*d2-vx*d1. Sample integer (x,y) using
 c0 + (A*(x-p0.x) + B*(y-p0.y)) / D
 ```
 
-Each operation rounds separately to binary32, then the existing unsigned
-truncate/saturate-to-byte policy applies. This is an explicitly chosen software
+Each operation rounds separately to binary32, then the literal existing SIMD
+conversion applies: `i32x4.trunc_sat_f32x4_u`,
+`i16x8.narrow_i32x4_u`, and `i8x16.narrow_i16x8_u`. The narrowing
+inputs are signed even though their saturated outputs are unsigned. This is an explicitly chosen software
 interpolation graph, not an exact native D3D7 conformance claim. The anchor
 matches the existing lerp's base-plus-displacement form. Unlike multiplying
 c0 by D before division, it preserves zero displacement and constant channels
@@ -88,10 +90,11 @@ that the test is broader than the primary clipped pixel. The rejected run,
 full failures, and all expected values are retained under `before-strict/`
 and `before-full-strict/`.
 
-The final public plan has 224 scenes: the original 180, six constant-green
+The final public plan has 226 scenes: the original 180, six constant-green
 channel controls, and 36 explicit-TL fractional-x/y scenes translated across
 rounding cells, three vertex orders, constant/varying RGB/fog and alpha tests,
-plus two exactly collinear stored-TL controls. The latter have no unique affine
+plus two exactly collinear and two one-stored-coordinate-ULP near-collinear
+stored-TL controls. The latter have no unique affine
 RGB field, but rounding gives them thin coverage; exact-zero determinant
 retains their existing span interpolation without an epsilon cutoff.
 Both geometric w fields, near/far clipping, the two precision boundaries,
@@ -123,9 +126,33 @@ to the scoped fixed-conversion reference; `--placement` selects it explicitly
 and `--baseline-placement` tests the former placement. No historical mismatch
 is silently dropped or turned into a tolerance.
 
+## Literal conversion correction and retained failure
+
+The first published placement commit, `8808ec112404f83adfe9fea69e5174a288c2a32b`,
+passed the original 224 scenes but used a scalar pre-conversion clamp. A final
+source audit identified that this differs from the existing signed-input SIMD
+narrows for large extrapolated channels. That clamp was an error and is removed
+by the corrective commit accompanying this note. No history or failure is erased.
+
+The independent reference now explicitly models the literal existing conversion
+operations. Two near-collinear controls use one binary32 screen-y ULP to produce
+a nonzero determinant while retaining thin rounded coverage. At pixel (6,4),
+independent channel arithmetic gives `[-203685744,44040240,-40107872]`.
+Unsigned truncation followed by the existing signed-input saturating narrows
+packs these as `[0,0,0]`; a scalar byte clamp instead yields `[0,255,0]`.
+`independent-packing-discriminator.json` retains the derivation.
+`first-fix-packing-discriminator/` retains the first commit's rejection: ten
+complete-target pixels fail, even though all selected samples pass. This is why
+complete targets and the explicit conversion operations matter. The final
+implementation uses the exact existing SIMD instruction sequence; the independent
+reference uses explicit integer reinterpretation and saturation. Neither defines
+a universal native DX7 conversion rule. All original 224 expected targets are
+unchanged. The expanded table and reference code were sealed before the
+corrective production edit, rather than derived from observed pixels.
+
 ## Validation and publication
 
-The production diff adds 83 lines in `src/09ab-handlers-d3dim-core.wat`: RGB
+The cumulative production diff adds 88 lines in `src/09ab-handlers-d3dim-core.wat`: RGB
 plane setup, integer-position sampling with the retained f32 channel conversion,
 RGB replacement preserving the old diffuse alpha, and draw/Worker transient
 reset. Constant RGB and flat faces retain the existing path. Exactly zero
@@ -134,24 +161,30 @@ coverage, texture, depth or capability code was removed or rewritten.
 
 `flock /tmp/wine-build.lock bash tools/build.sh` passed, building canonical
 and compatibility modules. Their existing paths and new SHA-256 are recorded
-in `after-path-sha256.txt`; binaries were not copied into evidence.
+in `literal-path-sha256.txt`; binaries were not copied into evidence.
 
 ```
-node test/test-legacy-fractional-color.js --wasm=build/wine-assembly.wasm --out=<run>/after-normal --placement
-node test/test-legacy-fractional-color.js --wasm=build/wine-assembly.compat.wasm --out=<run>/after-compat --placement
-node test/test-legacy-color-precision.js --wasm=<module> --out=<run>/precision-after-<variant> --placement
+node test/test-legacy-fractional-color.js --wasm=build/wine-assembly.wasm --out=<run>/after-literal-normal --placement
+node test/test-legacy-fractional-color.js --wasm=build/wine-assembly.compat.wasm --out=<run>/after-literal-compat --placement
+node test/test-legacy-color-precision.js --wasm=<module> --out=<run>/precision-after-literal-<variant> --placement
 ```
 
 Both module variants pass all four ordinary/indexed immediate/physicalWorker
-routes: 224 scenes, 448 public draws, 1,568 selected samples and 229,376 complete
-RGB pixels per route. Across eight routes, all 1,835,008 RGB pixels equal the
-pre-edit sealed reference exactly; all complete targets also agree across
-routes and modules. Recomputed expected-table hashes match the pre-edit seal,
-and the reference source-file hashes remain unchanged since that seal.
-Worker fallbacks are zero. Input records and immutable command hashes also
-match their BEFORE-repair values exactly, besides remaining unchanged after
-live source/index/state mutations. `final-verification.json` records these
-checks. No production trace or observed color populated any expected table.
+routes: 226 scenes, 452 public draws, 1,582 selected samples and 231,424 complete
+RGB pixels per route. Across eight routes, all 1,851,392 RGB pixels equal the
+independently sealed reference exactly; all complete targets also agree across
+routes and modules. The final 226-scene table and reference-file hashes match
+`literal-packing-reference-seal.json`, prepared before the corrective source
+edit. Filtering out the two added scenes exactly reproduces the original
+224-scene pre-source sealed targets; none of those expected bytes changed.
+Worker fallbacks are zero. The original 224 scenes retain identical captured vertices and matrices. The
+first 223 also retain identical complete command hashes. The last original
+collinear-fog scene follows an additional scene in the expanded plan, and its
+complete command hashes differ; no claim of full-byte identity is made for
+that reordered execution. All 226 captures remain immutable after live
+source/index/state mutations. `literal-final-verification.json`
+records the final checks; `final-verification.json` retains the initial
+224-scene comparisons. No production trace or observed color populated any expected table.
 
 The precision suite separately passes thirty scenes and five boundary/neighbor
 samples per scene on each of the eight routes, including independently packed
@@ -162,10 +195,11 @@ Lock and disagree with the independent expected colors on both modules.
 Both modules pass the accepted fractional-texture, clipped-depth/fog and
 variable-Q/fog suites, including their rendered negatives. Indexed texture,
 vertex fog and shared-render-Worker neighbors pass. Commands, exit codes and
-individual logs are in `regressions.json`; the locked build log is `build.log`.
+individual logs are in `regressions-literal-packing.json`; the final locked build log is
+`build-literal-packing.log`. The earlier build and regression records remain.
 
 The unchanged historical 180-scene ideal-real diagnostic has FOUR disagreements
-per route, all retained under `historical-after-{normal,compat}/`: cyclic near
+per route, all retained under `historical-after-literal-{normal,compat}/`: cyclic near
 red 99 versus ideal 100; reversed far blue 116 versus ideal 117; unit-w TL fog
 blue 189 versus ideal 188; varying-w TL fog red 148 versus ideal 149. Their
 independent arithmetic is above and in `independent-byte-ledger.json`.

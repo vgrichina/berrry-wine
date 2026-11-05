@@ -249,6 +249,12 @@ function placementPlan(){
     // triangle. With no unique RGB plane, preserve the old span interpolation.
     const manual=[[1.25,1.25],[10.25,5.75],[23.25,12.25]].map(([x,y],i)=>({h:[x/16-1,1-y/16,.25,1],c:[[16,48,80,255],[224,40,176,255],[64,128,224,255]][i],f:[32,128,224][i]}));
     p.states.push({...base,label:`collinearStored/fog${fog}`,fog,layers:base.layers.map(l=>l.name==='clipped'?{...l,manual,fog}:l)});
+    const thin=manual.map(v=>({...v,h:v.h.slice()}));
+    // One screen-y binary32 step separates a valid affine field from the
+    // zero-determinant control. Its rounded coverage extrapolates far beyond
+    // byte range, discriminating the literal retained packing from a clamp.
+    thin[2].h[1]-=1/16777216;
+    p.states.push({...base,label:`nearCollinearStored/fog${fog}`,fog,layers:base.layers.map(l=>l.name==='clipped'?{...l,manual:thin,fog}:l)});
   }
   return p;
 }

@@ -158,6 +158,17 @@ async function publicRuns(wasm,out,acceptPlacement=false){
 const add=(a,b)=>f(q(a).add(b)),sub=(a,b)=>f(q(a).sub(b)),mul=(a,b)=>f(q(a).mul(b)),div=(a,b)=>f(q(a).div(b));
 const lerp=(a,b,t)=>add(a,mul(sub(b,a),t));
 const byte=v=>Number(q(v).n<0n?0n:q(v).sub(255).n>0n?255n:q(v).floor());
+// Literal existing SIMD conversion: unsigned truncation, then unsigned-output
+// saturating narrows whose INPUT lanes are signed i32 and signed i16. Convex
+// byte interpolation never exposes the signed interpretation. An RGB plane
+// extrapolated at rounded coverage can, so do not replace this with a clamp.
+function packedByte(v){
+  v=q(v);let n=v.n<0n?0n:v.sub('4294967295').n>0n?4294967295n:v.floor();
+  if(n>=2147483648n)n-=4294967296n;
+  n=n<0n?0n:n>65535n?65535n:n;
+  if(n>=32768n)n-=65536n;
+  return Number(n<0n?0n:n>255n?255n:n);
+}
 const coord=v=>Number(add(v,'0.5').floor());
 const unpack=n=>[n>>>16&255,n>>>8&255,n&255,n>>>24].map(q);
 function placementVertices(layer,inputOnly=false){
@@ -225,7 +236,7 @@ function placementSample(scene,point,legacyRGB=false,polygons=null){
       // Collinear stored vertices have no unique affine RGB field. Preserve
       // the existing span behavior if coordinate rounding gives them coverage.
       if(channels.some(v=>v===null))channels=span.c.slice(0,3).map(q);
-      let color=channels.map(byte);
+      let color=channels.map(packedByte);
       let fog=q(1);
       if(layer.fog){
         const fogTri=layer.manual?tri.map(v=>({...v,s:v.s.map(v=>q(coord(v)))})):tri;
@@ -245,6 +256,7 @@ function placementTarget(scene,legacyRGB=false){
 }
 function byteDepth(z){z=q(z);return Number(mul(z.n<0n?0:z.sub(1).n>0n?1:z,65535).floor());}
 function placementSelfTest(){
+  assert.deepEqual([-1,0,255,256,32767,32768,65535,2147483648].map(v=>packedByte(q(v))),[0,0,255,255,255,0,0,0]);
   // Mathematical identity discriminator independent of any rendered witness:
   // the area-multiplied base can lose a constant byte before final truncation.
   const d=f(q(3).div(137)),constantTri=[{s:[q(0),q(0)]},{s:[q(1),q(0)]},{s:[q(0),d]}];

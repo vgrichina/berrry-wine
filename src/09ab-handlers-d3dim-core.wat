@@ -8171,18 +8171,23 @@
     (global.set $d3dim_color_bb (global.get $d3dim_color_pb))
     (global.set $d3dim_color_bc (global.get $d3dim_color_pc)))
   (func $d3dim_color_channel (param $x i32) (param $y i32)
-    (param $a f32) (param $b f32) (param $c f32) (result i32)
-    ;; Same f32 -> unsigned truncation and byte saturation as color_lerp.
-    (i32.trunc_sat_f32_u (f32.max (f32.const 0) (f32.min (f32.const 255)
-      (f32.add (local.get $c) (f32.div (f32.add
-        (f32.mul (local.get $a) (f32.sub (f32.convert_i32_s (local.get $x)) (global.get $d3dim_color_x)))
-        (f32.mul (local.get $b) (f32.sub (f32.convert_i32_s (local.get $y)) (global.get $d3dim_color_y))))
-        (global.get $d3dim_color_det)))))))
+    (param $a f32) (param $b f32) (param $c f32) (result f32)
+    (f32.add (local.get $c) (f32.div (f32.add
+      (f32.mul (local.get $a) (f32.sub (f32.convert_i32_s (local.get $x)) (global.get $d3dim_color_x)))
+      (f32.mul (local.get $b) (f32.sub (f32.convert_i32_s (local.get $y)) (global.get $d3dim_color_y))))
+      (global.get $d3dim_color_det))))
   (func $d3dim_sample_color (param $x i32) (param $y i32) (result i32)
-    (i32.or (i32.or
-      (i32.shl (call $d3dim_color_channel (local.get $x) (local.get $y) (global.get $d3dim_color_ra) (global.get $d3dim_color_rb) (global.get $d3dim_color_rc)) (i32.const 16))
-      (i32.shl (call $d3dim_color_channel (local.get $x) (local.get $y) (global.get $d3dim_color_ga) (global.get $d3dim_color_gb) (global.get $d3dim_color_gc)) (i32.const 8)))
-      (call $d3dim_color_channel (local.get $x) (local.get $y) (global.get $d3dim_color_ba) (global.get $d3dim_color_bb) (global.get $d3dim_color_bc))))
+    (local $vr v128) (local $v16 v128)
+    ;; Retain color_lerp's literal conversion, including its signed-input
+    ;; saturating narrows. A clamp before truncation differs when a nearly
+    ;; collinear field extrapolates far outside byte range at rounded coverage.
+    (local.set $vr (i32x4.trunc_sat_f32x4_u
+      (f32x4.replace_lane 2 (f32x4.replace_lane 1 (f32x4.replace_lane 0 (f32x4.splat (f32.const 0))
+        (call $d3dim_color_channel (local.get $x) (local.get $y) (global.get $d3dim_color_ba) (global.get $d3dim_color_bb) (global.get $d3dim_color_bc)))
+        (call $d3dim_color_channel (local.get $x) (local.get $y) (global.get $d3dim_color_ga) (global.get $d3dim_color_gb) (global.get $d3dim_color_gc)))
+        (call $d3dim_color_channel (local.get $x) (local.get $y) (global.get $d3dim_color_ra) (global.get $d3dim_color_rb) (global.get $d3dim_color_rc)))))
+    (local.set $v16 (i16x8.narrow_i32x4_u (local.get $vr) (i32x4.splat (i32.const 0))))
+    (i32x4.extract_lane 0 (i8x16.narrow_i16x8_u (local.get $v16) (i16x8.splat (i32.const 0)))))
   (func $d3dim_sample_plane
     (param $v0 i32) (param $v1 i32) (param $v2 i32)
     (param $f0 f32) (param $f1 f32) (param $f2 f32)
