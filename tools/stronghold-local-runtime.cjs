@@ -3,20 +3,22 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-repaired-capture-onward-0130 user task';
+const AUTH='stronghold-repaired-bypass-original-0250 user task';
 const ASSIGNMENT=AUTH;
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-05T03:10:00Z'),CLEANUP=Date.parse('2026-11-05T03:13:00Z');
+const CUTOFF=Date.parse('2026-11-05T07:30:00Z'),CLEANUP=Date.parse('2026-11-05T07:33:00Z');
 const ROOT=path.resolve(__dirname,'..');
 const ORIGINAL_PINS='scratch/runs/20261104-stronghold-setup-transition-onward/runtime-pins.json';
 const ORIGINAL_PINS_SHA='812aadea4a2b23a899919dc95b40b4d628a3836cedc0ae1e1844c966b284b7ef';
 const ACCEPTED_SOURCE='17e09475ecaeaa47de76684df0a0518124a6e387';
+const DRAW_BYPASS_SOURCE='ac635964f52d222b99d04b0750601a2eee081f44';
+const PRIOR_OBSERVER_SHA='a931b3dc3656e4409de1748d0a0557fff9b70914e23f04067961fa41fbc282bd';
 const PRESENTATION_SOURCE='a6d78555bfd5c076d87e4d8ed340c7c91bb4873d';
 const ACCEPTED=Object.freeze({
  'src/09ab-handlers-d3dim-core.wat':'dbcf489a787b4f399eadc926e13336976d6eb0cc30ffed5c8c360af5b496a75a',
  'build/wine-assembly.wasm':'e620f3adfc2850580004e204bc1fea495844e942806866f8ada24c215212e412',
  'build/wine-assembly.compat.wasm':'66b37bd76da5a7b49c063b4eb0d44c898aaf00ff41e000a6fbd87c01edc136c8',
- 'tools/stronghold-owning-callback-observer.cjs':'a931b3dc3656e4409de1748d0a0557fff9b70914e23f04067961fa41fbc282bd'
+ 'tools/stronghold-owning-callback-observer.cjs':'0329fc2adcc573e78072beb390de4b08fed721722062e2457da04d35a9c153f1'
 });
 // Exactly five named amendments. Every other historical row is retained and
 // checked; an unknown change stops offline rather than acquiring a new hash.
@@ -31,12 +33,13 @@ function acceptedRuntimePins(original=fs.readFileSync(path.join(ROOT,ORIGINAL_PI
   if(actual!==expected)throw Error('unknown runtime dependency mismatch '+row.path);
   if(!named[row.path])return row;
   amendments.push({path:row.path,oldSHA256:row.sha256,newSHA256:expected,
-   publishedProvenance:row.path==='tools/stronghold-local-runtime.cjs'?'7c73cca3087d661e6aba1f57df082970705fe129':row.path.startsWith('tools/')?PRESENTATION_SOURCE:ACCEPTED_SOURCE,
-   reason:row.path=== 'tools/stronghold-local-runtime.cjs'?'published 7c73cca passive capture/fault repair plus explicitly authorized current assignment, deadline and exact predecessor amendments; all relative limits unchanged':row.path.startsWith('tools/')?'published passive native/host presentation observer':'final corrective RGB anchored subpixel placement with literal preserved SIMD packing and exact corresponding existing module pair; supersedes initial 8808ec112'});
+   ...(row.path==='tools/stronghold-owning-callback-observer.cjs'?{priorBindingSHA256:PRIOR_OBSERVER_SHA}:{}),
+   publishedProvenance:row.path==='tools/stronghold-owning-callback-observer.cjs'?DRAW_BYPASS_SOURCE:row.path==='tools/stronghold-local-runtime.cjs'?'60c888e0492b08bdaac640fae3a900a35eb6fe6a':row.path.startsWith('tools/')?PRESENTATION_SOURCE:ACCEPTED_SOURCE,
+   reason:row.path==='tools/stronghold-owning-callback-observer.cjs'?'published ac635964f native same-draw bypass provenance repair; explicit prior accepted a931b3 observer binding only':row.path=== 'tools/stronghold-local-runtime.cjs'?'published 60c888e passive capture/fault repair plus explicitly authorized named observer binding, current assignment, deadline and exact predecessor amendments; all relative limits unchanged':row.path.startsWith('tools/')?'published passive native/host presentation observer':'final corrective RGB anchored subpixel placement with literal preserved SIMD packing and exact corresponding existing module pair; supersedes initial 8808ec112'});
   return {...row,bytes:bytes.length,sha256:expected};
  });
  if(pins.files.length!==2429||amendments.length!==5||Object.keys(named).some(p=>!seen.has(p)))throw Error('complete original closure required');
- return {...pins,candidate:'named accepted raster and passive presentation binding',runtimeBinding:{originalPinsSHA256:ORIGINAL_PINS_SHA,source:ACCEPTED_SOURCE,presentation:PRESENTATION_SOURCE,assignment:ASSIGNMENT,amendments}};
+ return {...pins,candidate:'named accepted raster and passive presentation binding',runtimeBinding:{originalPinsSHA256:ORIGINAL_PINS_SHA,source:ACCEPTED_SOURCE,presentation:PRESENTATION_SOURCE,drawBypass:DRAW_BYPASS_SOURCE,assignment:ASSIGNMENT,amendments}};
 }
 function verifyAcceptedRuntimePins(pins){
  const expected=acceptedRuntimePins();
@@ -59,8 +62,8 @@ function diagnosticScene(bytes,known){
  return SETUP_TRANSITIONS.includes(base.hash(pixels))?'setup-transition-observation':known;
 }
 const PREDECESSORS=Object.freeze([
- ['mdk2-post-medium-timer-onward','mdk2-post-medium-timer-onward-0120'],
- ['return-fire-request-closure-audio','return-fire-request-closure-audio-0125']
+ ['mdk2-continuous-original-medium','mdk2-continuous-original-medium-0235'],
+ ['return-fire-font-fallback-audio','return-fire-font-fallback-audio-0215']
 ]);
 function requireRuntimeRelease(board,now=Date.now()){
  const rows=board.split('\n'),dependencies=[];
