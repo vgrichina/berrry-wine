@@ -1844,6 +1844,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] User priority: Return Fire demo
   id: NEW-GAME-RETURN-FIRE-DEMO-20261009
+  Update 2026-11-05T15:30Z: 7e3bf7788 records ONE fresh original on current transport: exact owning Worker startup bytes verified, then required ART.CAR GET200 canceled after captured canonical bytes were verified and continued. No Play/screenshots/input/audio/FPS; cause unestablished, no retry. Build and91/33/33/3 preflights PASS; cleanup/final release verified. Fresh return-fire-required200-cancellation-1530 uses generated Chromium fixtures and independent consumed-byte witnesses to identify a collector bug or real abort; no original authorized. Source-only behind Lords1450 -> Strong1500 -> countselector1520.
   blocker: none for bounded launcher/deployment/movement scope; sustained play/audio/FPS remain separate.
   worker: return-fire-current-transport-gameplay-1410, fresh01a1ac05-d2f2-7c21-a379-d3abe562060f (source preparation; original runtime queued)
   status: bounded gameplay and visible native launcher accepted; broader coverage open
