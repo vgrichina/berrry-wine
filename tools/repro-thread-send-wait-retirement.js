@@ -15,14 +15,14 @@ function expect(label, actual, expected) {
 }
 const registers = link => Promise.all(['esp', 'eax', 'eip', 'yield_reason', 'depth']
   .map(name => link.callExport('get_' + name)));
-async function context(kind, module) {
+async function context(kind, module, slot = 3) {
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const instance = await WebAssembly.instantiate(module);
   const manager = new ThreadManager(module, memory, instance, null);
   const host = new GuestThreadHost(kind === 'local'
     ? { localMainExports: () => instance.exports } : {});
   const link = kind === 'local' ? host._localLink : new WorkerLink({
-    slot: 3, memory, module, sigs: {},
+    slot, memory, module, sigs: {},
     workerUrl: path.resolve(__dirname, '../lib/guest-worker.js'),
   });
   if (kind === 'Worker') { await link.start(); host.link = link; }

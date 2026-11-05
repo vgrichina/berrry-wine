@@ -15,6 +15,9 @@ async function fixture() {
     (func (export "get_${n}") (result i32) (global.get $${n}))
     (func (export "set_${n}") (param $v i32) (global.set $${n} (local.get $v)))`).join('\n') + `
     (memory 1)
+    (global $incoming_send_pending (mut i32) (i32.const 1))
+    (func (export "set_incoming_send_pending") (param $v i32)
+      (global.set $incoming_send_pending (local.get $v)))
     (global $next_wait (mut i32) (i32.const 0))
     (global $sleep_yielded (mut i32) (i32.const 1))
     ;; Same destructive getter body as src/13-exports.wat.
