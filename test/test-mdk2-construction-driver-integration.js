@@ -46,6 +46,160 @@ function review(api) {
 
 if (isMainThread) {
 fs.writeFileSync(path.join(EVIDENCE,'ownership-negatives.jsonl'),'');
+// Explicit synthetic transport/native-state fixture. The exact production
+// composed preload and binding wrapper run; no native history is fabricated.
+async function startupProvenanceFixture(mode='valid') {
+  const memory=new Uint8Array(4096), before=Buffer.from(memory);
+  const calls=[],forwarded=[]; let listener, pc=0x4641c7, failure=null, throwRequested=false, clock=0;
+  const regs={current_thread_id:1,image_base:0x400000,eip:pc,esp:0x74ffc00,ebp:0x74ffc80,
+    eax:1,ebx:2,ecx:3,edx:4,esi:5,edi:6,flag_op:0,flag_a:0,flag_b:0,flag_res:0,flag_sign_shift:31,yield_reason:0,tick_count:836};
+  const ex={memory:{buffer:memory.buffer},get_last_run_blocks:()=>ex.blocks,
+    guest_to_wasm:a=>mode==='unmapped'&&a===regs.esp+191?0xf0:a-0x74ffc00+512,
+    set_trace_esp(){throw Error('dormant provenance must not enable native tracing');},
+    run(budget){calls.push(['run',budget]);if(throwRequested)throw failure;ex.blocks=budget-1;regs.eip+=4;regs.yield_reason=budget%3;memory[0]++;return 37;}};
+  for(const name of Object.keys(regs))ex['get_'+name]=()=>regs[name];
+  const FakeModule=class {}, module=new FakeModule(),row=integration.selectedRuntime().pins.moduleFiles[0];
+  const url='http://offline/lib/guest-worker.js', sent={kind:'sent',sha256:row.sha256,compilation:3,bytes:row.bytes,workerURL:url,slot:0,endpointIdentity:1};
+  const realm={URL,Date,setTimeout,clearTimeout,Uint8Array,ArrayBuffer,performance:{now:()=>clock+=3},
+    WebAssembly:{Module:FakeModule,compile:async()=>module,instantiate:async()=>({exports:ex})},
+    postMessage(...args){forwarded.push({receiver:this,args});return 91;},
+    addEventListener(type,fn){assert.equal(type,'message');listener=fn;}};
+  vm.createContext(realm);vm.runInContext(integration.preloadSource({targetId:'synthetic-owner',workerURL:url}),realm);
+  listener({data:{t:'init',module,slot:0,endpointIdentity:1,__mdk2Binding:sent}});
+  const original=()=>53,host={log_block:original};
+  const instance=await realm.WebAssembly.instantiate(module,{host});
+  return {ex:instance.exports,regs,memory,before,calls,host,original,sent,bound:realm.__mdk2BoundTrace,
+    fail(error){throwRequested=true;failure=error;},mode,forwarded,
+    request(seq,budget){listener({data:{t:'slice',seq,steps:budget}});},
+    emit(...args){return realm.postMessage(...args);},
+    breakClock(){realm.performance.now=()=>{throw Error('synthetic clock failure');};}};
+}
+test('composed dormant startup journal records actual forwarded budgets, yields, owner, epoch and bounded raw callers',async()=>{
+  const f=await startupProvenanceFixture();
+  for(let i=1;i<=512;i++)assert.equal(f.ex.run(i%2?6000:1000),37);
+  const report=f.bound.report(),p=report.startup;
+  assert.equal(report.started,false);assert.equal(report.observer,null);assert.equal(report.traced,false);
+  assert.equal(report.traceEnd,null);assert.equal(p.slices,512);assert.equal(p.completed,512);
+  assert.equal(p.blocks,256*(5999+999));assert.equal(p.recent.length,128);assert.equal(p.dropped,384);
+  assert.equal(p.recent[0].ordinal,385);assert.equal(p.recent.at(-1).ordinal,512);
+  assert(p.milestones.length<=16);assert.equal(p.milestones[0].ordinal,1);
+  for(const row of [...p.recent,...p.milestones]){
+    assert.equal(row.elapsedMs,3);assert.equal(row.completed,true);assert.equal(row.ranBlocks,row.budget-1);
+    assert.equal(row.before.valid,true);assert.equal(row.after.valid,true);
+    assert.equal(row.after.registers.eip,row.before.registers.eip+4);
+    assert.equal(row.after.registers.yield_reason,row.budget%3);
+    assert.equal(row.halt,null,'unavailable halt getter is unknown');
+    assert.equal(row.after.caller.words.length,48);assert(row.after.caller.words.every(x=>x===0));
+    assert.equal(row.owner.targetId,'synthetic-owner');assert.equal(row.owner.endpointIdentity,1);
+    assert.equal(row.owner.moduleSHA256,f.sent.sha256);assert.equal(row.owner.compilation,3);
+  }
+  assert.equal(f.host.log_block(1,2),53);assert.equal(f.calls.length,512);
+  assert.equal(f.memory[0],0);assert.equal(integration.sha(f.memory),integration.sha(f.before));
+  // A caller cannot mutate retained records through the read-only report.
+  p.recent[0].budget=9;p.milestones.length=0;
+  assert.equal(f.bound.report().startup.recent[0].budget,6000);
+  const first=f.bound.invoke('finish',{reason:'first-driver-failure'}).startup;
+  f.bound.invoke('finish',{reason:'later-cleanup'});
+  assert.deepEqual(f.bound.report().startup,first);
+  write(EVIDENCE,'synthetic-startup-bounded.json',{fixtureOnly:true,nativeExecuted:false,report:f.bound.report(),calls:f.calls});
+});
+test('composed startup preserves the first native exception and provenance through later report/cleanup',async()=>{
+  const f=await startupProvenanceFixture();f.ex.run(6000);
+  const error=Error('synthetic first native trap');f.fail(error);
+  assert.throws(()=>f.ex.run(1000),caught=>caught===error);
+  const first=f.bound.report().startup;
+  assert.equal(first.status,'sealed');assert.equal(first.firstFailure.message,error.message);
+  assert.equal(first.recent.at(-1).completed,false);assert.equal(first.slices,2);
+  f.bound.invoke('finish',{reason:'cleanup'});f.bound.invoke('finish',{reason:'later'});
+  assert.deepEqual(f.bound.report().startup,first);
+});
+test('composed startup retains native failure even when provenance clock fails before run',async()=>{
+  const f=await startupProvenanceFixture();
+  const error=Error('synthetic native trap after capture failure');f.breakClock();f.fail(error);
+  assert.throws(()=>f.ex.run(6000),caught=>caught===error);
+  const first=f.bound.report().startup;
+  assert.equal(first.firstError.message,'synthetic clock failure');
+  assert.equal(first.firstFailure.message,error.message);assert.equal(first.status,'sealed');
+  f.bound.invoke('finish',{reason:'cleanup'});
+  assert.deepEqual(f.bound.report().startup,first);
+});
+test('composed startup preserves primitive native exceptions without replacing them with diagnostic errors',async()=>{
+  for(const error of [undefined,0,'synthetic primitive exception']){
+    const f=await startupProvenanceFixture();f.fail(error);let threw=false;
+    try{f.ex.run(6000);}catch(caught){threw=true;assert.equal(caught,error);}
+    assert.equal(threw,true);
+    assert.equal(f.bound.report().startup.firstFailure.message,String(error));
+    assert.equal(f.bound.report().startup.status,'sealed');
+  }
+});
+for(const mode of ['unmapped','thread','loader','stack','register'])test('composed startup marks invalid '+mode+' context without changing guest effects or masking the first error',async()=>{
+  const f=await startupProvenanceFixture(mode);
+  if(mode==='thread')f.regs.current_thread_id=2;
+  if(mode==='loader')f.regs.image_base=0x500000;
+  if(mode==='stack')f.regs.esp=0xfffffffc;
+  if(mode==='register')f.regs.eax=NaN;
+  assert.equal(f.ex.run(1000),37);assert.equal(f.memory[0],1);
+  const first=f.bound.report().startup.firstError;assert(first);
+  assert.equal(f.bound.report().startup.recent[0].after.valid,false);
+  f.regs.esp=0;f.ex.run(1000);
+  assert.deepEqual(f.bound.report().startup.firstError,first);
+  assert.equal(f.bound.report().fatal,null);assert.equal(f.bound.report().observer,null);
+});
+for(const row of integration.selectedRuntime().pins.moduleFiles)test('actual native queued fragments retain dormant startup provenance and exact guest parity: '+row.path,async()=>{
+  const selected={...row,localReference:row.path};
+  const observed=await nativeOne(selected,'startup-native'),control=await nativeOne(selected,'control-startup-native');
+  assert.equal(observed.value.pass,true,JSON.stringify(observed.value));
+  for(const key of ['segments','before','trap','commands','workerSource'])assert.deepEqual(observed.value[key],control.value[key],key);
+  const report=observed.value.report,p=report.startup;
+  assert.equal(report.started,false);assert.equal(report.observer,null);assert.equal(report.traceEnd,null);
+  assert(p.slices>0);assert.equal(p.slices,observed.value.commands.length);
+  assert(p.recent.length<=128);assert(p.milestones.length<=16);
+  assert(p.recent.every(r=>r.budget===1&&r.after.valid&&r.after.caller.words.length===48));
+  assert.equal(p.recent.at(-1).completed,false);assert(p.firstFailure);
+  assert.equal(p.status,'sealed');assert.equal(p.firstError,null);
+  assert(p.recent.every(r=>r.owner.moduleSHA256===row.sha256&&r.owner.endpointIdentity===1));
+  assert(!JSON.stringify(p).includes('gc-entry'));
+  write(EVIDENCE,path.basename(row.path)+'.startup-native-parity.json',{fixtureOnly:true,originalGameRun:false,
+    setup:'Existing native fragment fixture with explicit synthetic inputs/caller; original instructions and actual Worker queue',observed:observed.value,control:control.value});
+});
+
+test('composed browser feedback hook retains actual sliceDone timing and yields while forwarding identical messages',async()=>{
+  const f=await startupProvenanceFixture(), transfer=[];
+  for(let i=1;i<=256;i++){
+    f.request(i,6000);f.ex.run(6000);
+    const message={t:'sliceDone',seq:i,ms:12.25,blocks:5999,eip:f.regs.eip,esp:f.regs.esp,yield:1,
+      sleepYielded:true,sleepMs:16,sleepLeftMs:0,localSleeps:1,localMessageWaits:0};
+    assert.equal(f.emit(message,transfer),91);
+    assert.equal(f.forwarded.at(-1).args[0],message);assert.equal(f.forwarded.at(-1).args[1],transfer);
+  }
+  const p=f.bound.report().startup;assert.equal(p.feedback.available,true);
+  assert.equal(p.feedback.seen,256);assert.equal(p.feedback.recent.length,128);assert.equal(p.feedback.dropped,128);
+  assert.equal(p.feedback.recent[0].seq,129);
+  assert(p.feedback.recent.every(r=>r.correlated&&r.ms===12.25&&r.blocks===5999&&r.sleepYielded&&r.request.budget===6000));
+  assert.equal(p.recent.at(-1).request.seq,256);
+  f.ex.run(1000);
+  assert.equal(f.bound.report().startup.recent.at(-1).request,null,'completed slice cannot tag unrelated later native runs');
+  // Malformed metadata cannot create an unbounded journal record or affect the
+  // original transport. The first capture error remains available thereafter.
+  const malformed={t:'sliceDone',seq:'x'.repeat(20000)};
+  assert.equal(f.emit(malformed),91);assert.equal(f.forwarded.at(-1).args[0],malformed);
+  const first=f.bound.report().startup.firstError;assert(first);
+  assert.equal(f.bound.report().startup.feedback.recent.length,128);
+  f.bound.invoke('finish',{reason:'first failure'});
+  const sealed=f.bound.report().startup;f.emit({t:'sliceDone',seq:257,ms:1});
+  assert.deepEqual(f.bound.report().startup,sealed);
+  write(EVIDENCE,'synthetic-browser-slice-feedback.json',{fixtureOnly:true,nativeExecuted:false,report:sealed});
+});
+test('composed startup marks overlapping requests and unmatched feedback without guessing an owner sequence',async()=>{
+  const f=await startupProvenanceFixture();f.request(1,1000);f.request(2,6000);
+  assert.equal(f.ex.run(1000),37);
+  const message={t:'sliceDone',seq:1,ms:1,blocks:999};assert.equal(f.emit(message),91);
+  const p=f.bound.report().startup;
+  assert.equal(p.firstError.message,'overlapping slice requests');
+  assert.equal(p.recent[0].request,null);assert.equal(p.feedback.recent[0].request,null);
+  assert.equal(p.feedback.recent[0].correlated,false);
+});
+
 // Real pinned production classes, without starting a Worker or guest. Only the
 // transport response is a fixture; wrapper/WorkerLink.readExports are executed.
 function ownershipFixture() {
@@ -1454,6 +1608,8 @@ async function nativeChild() {
   // Passing it does not qualify a current filesystem/HTTP historical closure.
   assert.equal(H(fixtureBytes(baseline)),'9c5ce247fc627d1ba5734bb80f5c5ab85e28a0cb0682c4c24fc461ed274ee1ec','original qualification fixture changed');
   let fixtureSource=baseline.slice(baseline.indexOf('async function fixture(access){'),baseline.indexOf('  // Diagnostic failures'));
+  if(workerData.mode==='control-startup-native')fixtureSource=fixtureSource.replace(
+    'e.set_trace_esp(1,0x400000,0x480000);','e.set_trace_esp(0,0,0);');
   let checkpoints=0;
   let traceStartedAt=null;
   const realClock=Date.now;let reviewOffset=0;
@@ -1585,7 +1741,7 @@ async function nativeChild() {
     if(workerData.mode==='wrong-instance')await WebAssembly.instantiate(captured.module,{host:{}});
     if(workerData.mode==='foreign-module-object')await WebAssembly.instantiate(await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0])),{host:{}});
     const end=workerData.mode==='deadline'?Date.now()-1:Date.now()+(workerData.mode.includes('historical')?200000:workerData.mode.includes('measured')?360000:workerData.mode==='active-deadline'?20:workerData.mode==='continuity-deadline'?300:9000);
-    if(workerData.mode!=='late-early'){traceStartedAt=Date.now();bound.invoke('start',{commandEnd:end,absoluteEnd:end});}
+    if(workerData.mode!=='late-early'&&workerData.mode!=='startup-native'){traceStartedAt=Date.now();bound.invoke('start',{commandEnd:end,absoluteEnd:end});}
     if(workerData.mode==='continuity-boundary-overflow'){
       bound.report().observer.blocks=49999999;
       e.set_eip(caller);
@@ -1644,7 +1800,7 @@ async function nativeChild() {
   fixtureSource+=baseline.slice(trapStart,trapEnd);
   fixtureSource+=`parentPort.postMessage({pass:true,checkpoints,traceStartedAt,segments,before,trap:{text:trap,hash:H(b),state:state()},report:bound?.report()||null,workerSource:{path:'lib/guest-worker.js',sha256:H(source)}});}`;
   const fixture=workerData.mode.includes('continuous-gc')?access=>continuousGCFixture(access(),bound,ms=>{reviewOffset+=ms;}):eval('('+fixtureSource+')');
-  workerData.port.once('message',()=>fixture(()=>({...captured,observer:workerData.mode.startsWith('control')?null:{
+  workerData.port.once('message',()=>fixture(()=>({...captured,observer:workerData.mode.startsWith('control')||workerData.mode==='startup-native'?null:{
     get report(){return bound.report().observer},sample(){},finish(){return bound.invoke('finish',{reason:'fixture-end'}).observer}
   }})).catch(error=>{
     const report=bound?.invoke('finish',{reason:'fixture-failure'});

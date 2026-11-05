@@ -196,6 +196,84 @@ function installBinding(options) {
   // its first terminal report queryable. Genuine native/import failures retain
   // the shipped Worker's original handling.
   let observationStop = null, nativeSlice = null;
+  // Passive slice-end witnesses only. Saved words are context, never CALL/GC
+  // history. A rolling window plus sparse milestones has a fixed space bound.
+  const startup = {version:1, status:'collecting', slices:0, completed:0, blocks:0,
+    dropped:0, recent:[], milestones:[], firstError:null, firstFailure:null,
+    feedback:{available:!isPage && typeof g.postMessage==='function',seen:0,dropped:0,recent:[]},
+    limits:{recent:128,milestones:16,callerWords:48},
+    coverage:'Ordinary run boundaries only; intervening instructions and pending calls unknown'};
+  let startupRequest=null;
+  const startupClock = () => typeof performance !== 'undefined' ? performance.now() : Date.now();
+  const startupError = (phase,error) => {
+    startup.firstError ||= {phase,ordinal:nativeSlice?.ordinal || 0,message:String(error?.message || error).slice(0,256)};
+  };
+  function freezeStartup(reason) {
+    if (startup.status === 'collecting') { startup.status='sealed'; startup.sealedBy=String(reason).slice(0,256); }
+  }
+  function startupState(callers) {
+    const ex=entry.instance.exports, registers={};
+    try {
+      for (const name of ['current_thread_id','image_base','eip','esp','ebp','eax','ebx','ecx','edx','esi','edi',
+        'flag_op','flag_a','flag_b','flag_res','flag_sign_shift','yield_reason','tick_count']) {
+        const value=ex['get_'+name]();
+        if (!Number.isInteger(value)) throw Error('invalid register '+name);
+        registers[name]=value>>>0;
+      }
+      if (ex!==entry.instance.exports || registers.current_thread_id!==1 || registers.image_base!==0x400000)
+        throw Error('foreign startup owner/thread/loader');
+      const state={valid:true,registers};
+      if (callers) {
+        const esp=registers.esp, bytes=new Uint8Array(ex.memory.buffer), words=[];
+        if (esp<0x7400000 || esp>0x7500000-192 || esp%4) throw Error('invalid startup caller range');
+        for (let i=0;i<192;i+=4) {
+          let word=0;
+          for (let j=0;j<4;j++) {
+            const w=ex.guest_to_wasm(esp+i+j)>>>0;
+            if (w===0xf0 || w>=bytes.length) throw Error('unmapped startup caller byte');
+            word+=bytes[w]*2**(j*8);
+          }
+          words.push(word>>>0);
+        }
+        state.caller={esp,words,meaning:'raw saved words; no pending-call inference'};
+      }
+      return state;
+    } catch(error) {
+      startupError('native-state',error);
+      return {valid:false,registers,error:String(error.message || error).slice(0,256)};
+    }
+  }
+  function startupBegin() {
+    if (started || terminal || startup.status!=='collecting') return null;
+    try {
+      if (!Number.isSafeInteger(nativeSlice.budget) || nativeSlice.budget<0 ||
+          typeof options.targetId!=='string' || options.targetId.length>128 ||
+          typeof options.workerURL!=='string' || options.workerURL.length>512) throw Error('invalid startup budget/owner');
+      return {ordinal:nativeSlice.ordinal,budget:nativeSlice.budget,request:startupRequest,
+        owner:{targetId:options.targetId,workerURL:options.workerURL,slot:0,endpointIdentity:entry.binding.endpointIdentity,
+          moduleSHA256:entry.binding.sha256,compilation:entry.binding.compilation,instance:1},
+        before:startupState(false),beganAt:startupClock()};
+    } catch(error) { startupError('slice-begin',error); return null; }
+  }
+  function startupEnd(row,endedAt,error) {
+    if (!row) return;
+    try {
+      if (!Number.isFinite(endedAt) || !Number.isFinite(row.beganAt) || endedAt<row.beganAt) throw Error('invalid startup clock interval');
+      row.endedAt=endedAt; row.elapsedMs=endedAt-row.beganAt;
+      row.completed=nativeSlice.completed; row.ranBlocks=nativeSlice.ranBlocks;
+      row.halt=entry.instance.exports.get_last_run_halt ? entry.instance.exports.get_last_run_halt()>>>0 : null;
+      row.after=startupState(true);
+      if (error) {
+        row.error=String(error.message || error).slice(0,256);
+        startup.firstFailure ||= {ordinal:row.ordinal,message:row.error};
+      }
+      startup.slices++; startup.completed+=row.completed?1:0; startup.blocks+=row.ranBlocks;
+      if (startup.recent.length===128) { startup.recent.shift(); startup.dropped++; }
+      startup.recent.push(row);
+      if (startup.milestones.length<16 && Number.isInteger(Math.log2(row.ordinal))) startup.milestones.push(row);
+      if (error) freezeStartup('native-run-failure');
+    } catch(error) { startupError('slice-end',error); }
+  }
   const observationReasons = ['boundary-limit','record-limit','record-byte-limit','deadline'];
   function exhausted(reason) {
     stop(reason);
@@ -205,8 +283,9 @@ function installBinding(options) {
   const report = () => ({realm: isPage ? 'page' : 'worker', targetId: options.targetId || null,
     workerURL: options.workerURL || null, fatal, started, terminal, traced, paused, traceEnd,
     binding: entry?.binding || null, thread: entry?.instance?.exports.get_current_thread_id?.(),
-    observer: observer?.report || null, nativeSlice, audit});
+    observer: observer?.report || null, nativeSlice, startup:JSON.parse(JSON.stringify(startup)), audit});
   function stop(reason) {
+    freezeStartup(reason);
     terminal = true; paused = false; clearTimeout(timer);
     if (traced) { traced = false; entry.instance.exports.set_trace_esp(0, 0, 0); }
     observer?.finish(reason);
@@ -244,9 +323,39 @@ function installBinding(options) {
       return Reflect.apply(post, this, [message, ...args]);
     };
   } else {
+    if (typeof g.postMessage==='function') {
+      const post=g.postMessage;
+      g.postMessage=function(message,...args) {
+        if (entry && !started && !terminal && startup.status==='collecting' && message?.t==='sliceDone') {
+          try {
+            const correlated=!!startupRequest && message.seq===startupRequest.seq;
+            const row={request:correlated?startupRequest:null,correlated,seq:message.seq,ms:message.ms,blocks:message.blocks,
+              eip:message.eip,esp:message.esp,yield:message.yield,sleepYielded:message.sleepYielded,
+              sleepMs:message.sleepMs,sleepLeftMs:message.sleepLeftMs,localSleeps:message.localSleeps,
+              localMessageWaits:message.localMessageWaits,lastRunOrdinal:nativeSlice?.ordinal || 0};
+            if (Object.values(row).some(v=>v!==undefined && v!==null && typeof v!=='number' && typeof v!=='boolean' && v!==startupRequest))
+              throw Error('invalid slice feedback scalar');
+            if (!correlated) startupError('slice-feedback','unmatched slice sequence');
+            startup.feedback.seen++;
+            if (startup.feedback.recent.length===128) { startup.feedback.recent.shift(); startup.feedback.dropped++; }
+            startup.feedback.recent.push(row);
+          } catch(error) { startupError('slice-feedback',error); }
+        }
+        const result=Reflect.apply(post,this,[message,...args]);
+        if (message?.t==='sliceDone' && message.seq===startupRequest?.seq) startupRequest=null;
+        return result;
+      };
+    }
     if (typeof addEventListener !== 'function') throw Error('Worker message hook unavailable');
     addEventListener('message', event => {
       const message = event.data;
+      if (message?.t==='slice' && !started && !terminal && startup.status==='collecting') {
+        if (startup.feedback.available && startupRequest) {
+          startupRequest=null; startupError('slice-request','overlapping slice requests');
+        } else if (Number.isSafeInteger(message.seq) && Number.isSafeInteger(message.steps))
+          startupRequest={seq:message.seq,budget:message.steps};
+        else { startupRequest=null; startupError('slice-request','invalid slice request scalars'); }
+      }
       if (message?.t !== 'init' || !(message.module instanceof WebAssembly.Module)) return;
       if (entry || receivedOnce || received.has(message.module)) fail('replacement or duplicate Worker init');
       if (message.slot !== 0) { receivedOnce = true; add({kind: 'foreign-slot', slot: message.slot}); return; }
@@ -307,9 +416,25 @@ function installBinding(options) {
             fatal && observer?.report.status !== 'original-import-failure'))) return;
         // The pinned Worker passes its received adaptive budget to run().
         nativeSlice={budget:values[0],ordinal:(nativeSlice?.ordinal||0)+1,completed:false};
+        const provenance=startupBegin(); let runError=null, endedAt=null;
         try { const result=Reflect.apply(ex.run, ex, values);nativeSlice.completed=true;return result; }
-        catch (error) { if (error !== observationStop) throw error; }
-        finally { nativeSlice.ranBlocks=ex.get_last_run_blocks()>>>0; }
+        catch (error) {
+          runError=error;
+          // Preserve the native failure even if timing/context capture failed
+          // before this run. Diagnostic errors must never replace it.
+          if (!started && startup.status==='collecting') {
+            startup.firstFailure ||= {ordinal:nativeSlice.ordinal,message:String(error?.message || error).slice(0,256)};
+            freezeStartup('native-run-failure');
+          }
+          if (error !== observationStop) throw error;
+        }
+        finally {
+          // The elapsed interval excludes caller readback, which the host's
+          // enclosing wall-time measurement still includes. No clock is set.
+          if (provenance) { try { endedAt=startupClock(); } catch(error) { startupError('clock',error); } }
+          nativeSlice.ranBlocks=ex.get_last_run_blocks()>>>0;
+          startupEnd(provenance,endedAt,runError);
+        }
       }};
       return result.instance ? {...result, instance:{exports}} : {exports};
     } catch (error) { fatal ||= String(error); stop('instantiation-failure'); throw error; }
@@ -345,6 +470,7 @@ function installBinding(options) {
       return report();
     }
     if (action !== 'start') throw Error('unknown trace operation');
+    freezeStartup('observer-admission');
     if (fatal || terminal || started || !entry?.instance) return fail('trace cannot restart or bind late');
     const ex = entry.instance.exports;
     if (ex.get_current_thread_id() !== 1 || ex.get_image_base() !== 0x400000 || typeof ex.set_trace_esp !== 'function') return fail('wrong owning instance/thread/loader');
