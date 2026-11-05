@@ -1,3 +1,4 @@
+  Update 2026-11-05T01:50Z: MDK3dafc52d0+3c0035701 preserves the strict GC-entry coverage failure and queryable terminal report; fresh earlier-attachment source diagnosis published f44125521, actual earlier GC entry remains unobserved. ReturnFire94d1d6236 confirmed manifest200 then stopped before guest startup on implicit favicon404; audio remains unobserved and final driver artifacts were missing. Fresh harness-policy/result-persistence worker42554 prepares offline, then one original after Stronghold0130 final runtime/file release and verified cleanup. Stronghold34536 owns the serialized original runtime; no gameplay claim added.
   Update 2026-11-05T01:30Z: Published7c73cca30 Stronghold ordinary-produced-frame capture deferral and earliest terminal propagation repair;21 lifecycle, focused/full locked build and actual2429FSHTTP zeroChrome PASS. Partial setup recognition remains observation only. Fresh one-original gameplay continuation prepares offline, strictly after MDK0120 and ReturnFire0125 final releases and verified cleanup; gameplay proof remains open.
   Update 2026-11-05T01:25Z: ReturnFire533e8faad original stopped preguest on omitted HTML-declared manifest.webmanifest (HTTP500); startup/Play/host delivery remain unobserved, no audio defect. Normalcleanup PASS. Fresh request-discovery correction/preflight worker prepares offline; ONE original follows Stronghold repair and MDK postMedium final releases.
   Update 2026-11-05T01:20Z: MDK5e2542a56+5b72401a7 original completed Medium native press, balanced keyup and active0 full rest3968 within384/512 menu steps; eleven images reviewed, no loading/gameplay. Focused/full locked build/preflight and normal cleanup PASS. Fresh postMedium timer/onward worker prepares offline; runtime follows ReturnFire and Stronghold offline repair final releases.
@@ -1790,12 +1791,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [ ] User priority: Return Fire demo
   id: NEW-GAME-RETURN-FIRE-DEMO-20261009
   blocker: none for bounded launcher/deployment/movement scope; sustained play/audio/FPS remain separate.
-  worker: none (bounded launcher follow-up complete)
+  worker: return-fire-implicit-request-audio-0150 (fresh session42554; runtime waits Stronghold0130 final release)
   status: bounded gameplay and visible native launcher accepted; broader coverage open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: return-fire-demo
   priority: user-first
-  Next: Launcher follow-up5d014a0e complete: reviewed visible Hard/Easy controls and trusted Play route in20261031T2230Z-return-fire-launcher at actualHTTPed3f924a. No paint defect; prior teal-only image view corrected. Retain pinned full-color deployment/movement20261031T2213Z-return-fire-presentation fix9f695796c. Sustained play/audio/FPS remain separate.
+  Next: Fresh worker42554 fixes implicit optional-request policy and reliable first-failure/final-result persistence, then one serialized original after Stronghold0130 final release and verified cleanup. Published94d1d6236 original confirmed manifest200 but stopped preguest on absent favicon404; no audio API/host delivery observed and driver final artifacts missing. Keep required status/hash guards and frozen observation limits. Retain accepted launcher5d014a0e and full-color deployment/movement9f695796c; sustained play/audio/FPS remain open.
   Done: Registered launch, ordinary input visibly changes gameplay, reviewed screenshot with original source/build evidence; FPS/audio separate.
 
 - [ ] Serialize shared DLL mapping and lifetime mutation
