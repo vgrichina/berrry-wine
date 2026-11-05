@@ -230,6 +230,7 @@ async function main() {
   // the address is chosen, and each arm is a different address by design.
   function arm(bytes, blockExec, seed, opts) {
     const addr = (opts && opts.addr) || nextCode();
+    e.set_stack_fusion(opts && opts.stackFusion === false ? 0 : 1);
     const wa = g2w(addr);
     for (let i = 0; i < bytes.length; i++) mem[wa + i] = bytes[i];
     seedData();
@@ -285,10 +286,12 @@ async function main() {
       x87native: e.get_bx_x87_native_uops(),
       rmw: e.get_bx_pass_rmw(),
     };
+    const smcExitsBefore = e.get_block_exec_region_smc_exits();
     e.set_eip(addr);
     e.run(100000);
     const out = {
       addr,
+      regionSmcExits: e.get_block_exec_region_smc_exits() - smcExitsBefore,
       eip: e.get_eip() >>> 0,
       eax: e.get_eax() >>> 0, ecx: e.get_ecx() >>> 0, edx: e.get_edx() >>> 0,
       ebx: e.get_ebx() >>> 0, esp: e.get_esp() >>> 0, ebp: e.get_ebp() >>> 0,
@@ -332,8 +335,8 @@ async function main() {
 
   function equiv(name, body, seed, opts) {
     const bytes = block(body);
-    const off = arm(bytes, false, seed);
-    const on = arm(bytes, true, seed);
+    const off = arm(bytes, false, seed, opts);
+    const on = arm(bytes, true, seed, opts);
     totalNative += on.natives; totalFallback += on.fallbacks; totalInstalls += on.installs;
     const regsOk = ['eax', 'ecx', 'edx', 'ebx', 'esp', 'ebp', 'esi', 'edi']
       .every(k => off[k] === on[k]);
@@ -419,9 +422,9 @@ async function main() {
     [...load16(EAX, EBX, 0x20), ...load16abs(ECX, DATA + 0x24),
      ...store16(EAX, EBX, 0x60), ...load16(EDX, EBX, 0x60)]);
   equiv('PUSH_R / POP_R move ESP through a local',
-    [...pushR(EAX), ...pushR(ECX), ...popR(EDX), ...popR(EDI)]);
+    [...pushR(EAX), ...pushR(ECX), ...popR(EDX), ...popR(EDI)], null, { stackFusion: false });
   equiv('PUSH_I',
-    [...pushI(0x11223344), ...pushI(0xFFFFFFFF), ...popR(EAX), ...popR(ECX)]);
+    [...pushI(0x11223344), ...pushI(0xFFFFFFFF), ...popR(EAX), ...popR(ECX)], null, { stackFusion: false });
   equiv('a long straight-line block, 24 ops',
     Array.from({ length: 6 }, (_, i) => [
       ...aluRI(0, EAX, i + 1), ...aluRR(XOR, ECX, EAX),
@@ -2980,10 +2983,12 @@ async function main() {
         ctlRegion.eax === ctlThreaded.eax,
         `region eax=${ctlRegion.eax.toString(16)} ` +
         `threaded eax=${ctlThreaded.eax.toString(16)}`);
-      check('  and a region with a call tail is what ran',
-        smcRegion.tailRuns >= 1,
-        `sideExits=${smcRegion.tailRuns} — no side exit, so the descriptor ` +
-        `under test is not the one this case is about`);
+      // The write drops the page holding the live region. Continuing to its
+      // CALL tail would execute the retired descriptor. Demand an actual
+      // multi-block execution followed by the new instruction-boundary exit.
+      check('  the live region exits at the code-writing instruction',
+        smcRegion.tailRegions >= 1 && smcRegion.regionSmcExits >= 1,
+        `regions=${smcRegion.tailRegions} smcExits=${smcRegion.regionSmcExits}`);
     }
 
     // (6) RE-ENTRY AT call+5. The callee returns into the middle of the

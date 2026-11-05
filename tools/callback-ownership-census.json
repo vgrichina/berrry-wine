@@ -995,9 +995,9 @@
           "$target"
         ]
       ],
-      "sha256": "36026a919e5403c5a6e2c08b1d1022b25739155000fabdc2478ab4f5c29a6100",
+      "sha256": "c0f0660265186c6d0b3832629d99160f243077eccc6bcfd0983a0ab3d00c3385",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Code-stack PUSH/CALL groups resume through the existing retired-block transfer after the first original PUSH; invocation identity is preserved.",
       "ownership": "pending"
     },
     {
@@ -1512,9 +1512,9 @@
           "$fall"
         ]
       ],
-      "sha256": "1221adb2695df0dad5a91c846d5c19eb45ac6d208f98be5191100c7bd0e57baa",
+      "sha256": "6ba61576ad0abd1add0237d0f33dfd887390e0b33239ea83ee838b1cd81c269f",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. A retired writing ALU/Jcc pair resumes at the original Jcc through the existing retired-block transfer; invocation identity is preserved.",
       "ownership": "pending"
     },
     {
@@ -1575,9 +1575,9 @@
           "$fall"
         ]
       ],
-      "sha256": "83876e877c640032d82517b4bcd3766bb97af457db5c91a4a496a0aeb93e2c60",
+      "sha256": "95d1d564ec66760945f10121c8d77fc188bdd4717917e36cdb4919fe1426ad4d",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. A retired DEC/JNZ pair resumes at the original JNZ through the existing retired-block transfer; invocation identity is preserved.",
       "ownership": "pending"
     },
     {
@@ -2014,9 +2014,9 @@
           ]
         ]
       ],
-      "sha256": "6a70c30a27612c11e32b96488c3aba44cd9319356f2556fe621fda532ab25277",
+      "sha256": "32d387efca732c06c93b7ce8c2249972e08e367de101edee06373a9277e75d7a",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Byte COPY_RUN falls back to its original checkpointed stream before code-page writes; folded EIP/clock and invocation identity remain unchanged.",
       "ownership": "pending"
     },
     {
@@ -2246,9 +2246,9 @@
           "$exit_eip"
         ]
       ],
-      "sha256": "79b7e60ae22a5bde20cfea036e72d6beaee47fee102de68a748fcc4e8863413c",
+      "sha256": "63ba349e778e3f303b95a315e4125f5b10bc3287e438ea2c0c47b8bd38fba7ac",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. SMC checkpoints publish all architectural registers, settle pacing and transfer through the existing retired-block continuation; invocation identity is preserved.",
       "ownership": "pending"
     },
     {

@@ -3803,7 +3803,8 @@
     (local $dst_stride i32) (local $dst_idx i32) (local $dst_cnt i32)
     (local $ctr_kind i32) (local $ctr_loc i32) (local $ctr_disp i32)
     (local $ctr_step i32) (local $ctr_idx i32) (local $ctr_cnt i32)
-    (local $fall i32)
+    (local $fall i32) (local $original i32) (local $original_end i32)
+    (local $original_bytes i32)
 
     (local.set $n (global.get $op_index_n))
     ;; load / bump / store / bump / count / branch is the floor; anything
@@ -3822,6 +3823,12 @@
         (local.set $p (call $loop_op_at (local.get $i)))
         (local.set $fn (load.field LoopOp handler (local.get $p)))
         (local.set $op (load.field.memarg LoopOp operand (local.get $p)))
+        ;; The guarded fold retains the complete checkpointed stream as its
+        ;; code-destination fallback; checkpoints carry no copy-loop role.
+        (if (i32.eq (local.get $fn) (i32.const 501))
+          (then
+            (local.set $i (i32.add (local.get $i) (i32.const 1)))
+            (br $p1)))
         (local.set $role (call $loop_role (local.get $fn) (local.get $op)))
 
         (if (i32.eq (local.get $role) (global.get $LR_LOAD8))
@@ -3936,7 +3943,9 @@
     ;; so the counter has to be the last thing that set them.
     (local.set $p (call $loop_op_at (i32.sub (local.get $n) (i32.const 1))))
     (if (i32.ne (load.field LoopOp handler (local.get $p)) (i32.const 312)) (then (return (i32.const 0))))
-    (if (i32.ne (local.get $ctr_idx) (i32.sub (local.get $n) (i32.const 2)))
+    ;; A memory counter has its own post-store checkpoint before the Jcc.
+    (if (i32.ne (local.get $ctr_idx)
+          (i32.sub (local.get $n) (select (i32.const 3) (i32.const 2) (local.get $mem_cnt))))
       (then (return (i32.const 0))))
 
     ;; Fold the cursor bumps into the displacements. The super-op bumps AFTER
@@ -3959,9 +3968,18 @@
 
     (local.set $fall (i32.load offset=8
       (call $loop_op_at (i32.sub (local.get $n) (i32.const 1)))))
+    ;; Keep the original stream behind the folded descriptor. Its relative
+    ;; offset survives page publication/relocation. A destination touching
+    ;; code executes this stream, so every original instruction retains its
+    ;; invalidation checkpoint instead of copying stale decoded iterations.
+    (local.set $original_bytes (i32.sub (global.get $thread_alloc) (local.get $tstart)))
+    (local.set $original (i32.add (global.get $thread_alloc) (i32.const 80)))
+    (memory.copy (local.get $original) (local.get $tstart) (local.get $original_bytes))
+    (local.set $original_end (i32.add (local.get $original) (local.get $original_bytes)))
     (global.set $thread_alloc (local.get $tstart))
     (global.set $op_index_n (i32.const 0))
-    (call $te (global.get $LOOP_SUPEROP_COPY) (i32.const 0))
+    (call $te (global.get $LOOP_SUPEROP_COPY)
+      (i32.sub (local.get $original) (i32.add (local.get $tstart) (i32.const 8))))
     (call $te_raw (local.get $ld_base))
     (call $te_raw (local.get $src_stride))
     (call $te_raw (local.get $ld_disp))
@@ -3976,6 +3994,7 @@
     (call $te_raw (local.get $fall))
     (call $te_raw (local.get $start_eip))
     (call $te_raw (local.get $n))
+    (global.set $thread_alloc (local.get $original_end))
     (i32.const 1))
 
   ;; Bytes a cursor can still touch before it leaves the 4 KB page it sits in,
@@ -4607,6 +4626,38 @@
           (i32.add (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $ctr_loc) (i32.const 2)))) (local.get $ctr_disp)))
         (local.set $ctr (call $gl32 (local.get $ctr_addr))))
         (else (local.set $ctr (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $ctr_loc) (i32.const 2)))))))))
+
+    ;; The byte-loop matcher supplies an ordinary checkpointed stream as a
+    ;; relative fallback. Prove the whole destination is data before folding
+    ;; even one iteration: a store can change the next cursor bump or branch,
+    ;; so leaving only after the folded iteration would already be too late.
+    ;; Other COPY_RUN families use op=0 and keep their existing lowering.
+    (block $copy_proved
+    (if (i32.gt_s (local.get $op) (i32.const 0))
+      (then
+        (local.set $lo (i32.add (local.get $dst) (local.get $dst_disp)))
+        (local.set $hi (local.get $lo))
+        (if (i32.gt_s (local.get $dst_stride) (i32.const 0))
+          (then (local.set $hi (i32.add (local.get $hi) (i32.sub (local.get $ctr) (i32.const 1)))))
+          (else (local.set $lo (i32.sub (local.get $lo) (i32.sub (local.get $ctr) (i32.const 1))))))
+        (block $ordinary
+          (br_if $ordinary (i32.eqz (local.get $ctr)))
+          (br_if $ordinary (i32.gt_u (local.get $lo) (local.get $hi)))
+          (if (i32.eq (local.get $ctr_kind) (i32.const 1))
+            (then
+              (br_if $ordinary (call $code_page_test (local.get $ctr_addr)))
+              (br_if $ordinary (call $code_page_test (i32.add (local.get $ctr_addr) (i32.const 3))))))
+          (local.set $lo (i32.and (local.get $lo) (i32.const 0xFFFFF000)))
+          (local.set $hi (i32.and (local.get $hi) (i32.const 0xFFFFF000)))
+          (loop $data_pages
+            (br_if $ordinary (call $code_page_test (local.get $lo)))
+            (if (i32.ne (local.get $lo) (local.get $hi))
+              (then
+                (local.set $lo (i32.add (local.get $lo) (i32.const 4096)))
+                (br $data_pages))))
+          (br $copy_proved))
+        (global.set $ip (i32.add (local.get $tp) (local.get $op)))
+        (dispatch-next))))
 
     ;; A memory counter has to be written back per iteration in general: the
     ;; destination range is allowed to cover the counter's own address, and a
@@ -6493,6 +6544,12 @@
     (global.set $tu_b (i32.const 0))
     (global.set $tu_extra (i32.const 0))
 
+    (if (i32.eq (local.get $fn) (i32.const 501))
+      (then
+        (global.set $tu_kind (global.get $TU_STORE_CHECKPOINT))
+        (global.set $tu_imm (local.get $op))
+        (return (i32.const 1))))
+
     ;; -- 32-bit ADC/SBB: the interior flag consumers -------------------------
     ;; H5/H6 are the reg,imm32 pair and H14/H15 the reg,reg pair, encoded like
     ;; their ADD/SUB neighbours. They are separate kinds rather than ALU
@@ -7140,6 +7197,9 @@
   ;; lazy-flag globals, so every write it can observe has to still be there.
   (func $tree_uop_flag_reads (param $kind i32) (param $b i32) (result i32)
     (local $sub i32)
+    ;; Newly decoded code after an SMC exit can observe every lazy flag.
+    (if (i32.eq (local.get $kind) (global.get $TU_STORE_CHECKPOINT))
+      (then (return (global.get $TF_F_ALL))))
     (if (i32.or (i32.eq (local.get $kind) (global.get $TU_INC))
         (i32.or (i32.eq (local.get $kind) (global.get $TU_DEC))
                 (i32.eq (local.get $kind) (global.get $TU_SHIFT))))

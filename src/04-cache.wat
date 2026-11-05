@@ -759,6 +759,8 @@
   ;; thread the page holds none, and their stale blocks would never be
   ;; invalidated again -- Storm and Smacker rewrite generated blitters in place,
   ;; so that is a real case.
+  (global $store_invalidation_pending (mut i32) (i32.const 0))
+
   (func $invalidate_code_range (param $ga i32) (param $len i32)
     (local $end i32) (local $page i32) (local $slot i32)
     (local $off i32) (local $stop i32) (local $hits0 i32) (local $kills0 i32)
@@ -814,6 +816,8 @@
       (local.set $page (i32.add (local.get $page) (i32.const 0x1000)))
       (br $ps)))
     (global.set $in_code_write (i32.const 0))
+    (if (i32.ne (global.get $cache_inval_hits) (local.get $hits0))
+      (then (global.set $store_invalidation_pending (i32.const 1))))
     (if (global.get $uop_nranges)
       (then (call $uop_code_write (local.get $ga) (local.get $len))))
     ;; --trace-code-writes: every write that actually retired decoded code,
@@ -2511,6 +2515,8 @@
 
   ;; Thread emit helpers
   (func $te (param $fn i32) (param $op i32)
+    (if (i32.eqz (call $decode_handler_readonly (local.get $fn) (local.get $op)))
+      (then (global.set $d_store_boundary (i32.const 1))))
     ;; Backstop only: $decode_block reserves far more headroom than a single
     ;; block needs, so reaching this mid-emit means something unusual. Never
     ;; recycle from here — $tstart is already captured and a reset would leave
@@ -2624,7 +2630,7 @@
     ;; whole cache and restart at $eip. The fresh decode will produce
     ;; valid threaded code. This recovers from rare corruption rather
     ;; than trapping with wasm "table index out of bounds".
-    (if (i32.ge_u (local.get $nx_fn) (i32.const 501))
+    (if (i32.ge_u (local.get $nx_fn) (i32.const 502))
       (then
         (return_call $dispatch_bad (local.get $nx_fn))))
     (if (global.get $handler_hist_enabled)
@@ -2644,6 +2650,62 @@
 
   (func $next
     (local $nx_fn i32) (local $nx_op i32)
+    (dispatch-next))
+
+  ;; A writing fusion can stop after its first original guest instruction.
+  ;; Its ordinary trailing checkpoint consumes this precise interior PC on
+  ;; both threaded dispatch and block-executor fallback paths.
+  (global $store_fused_resume_pc (mut i32) (i32.const 0))
+
+  (func $store_continuation_target (param $pc i32) (result i32)
+    (local $resume i32)
+    (local.set $resume (global.get $store_fused_resume_pc))
+    (if (local.get $resume)
+      (then
+        (global.set $store_fused_resume_pc (i32.const 0))
+        (global.set $store_invalidation_pending (i32.const 0))
+        (return (local.get $resume))))
+    (select (local.get $pc) (i32.const 0)
+      (call $store_continuation_invalid (local.get $pc))))
+
+  (func $store_span_touches_code (param $lo i32) (param $len i32) (result i32)
+    (local $hi i32)
+    (local.set $hi (i32.add (local.get $lo) (i32.sub (local.get $len) (i32.const 1))))
+    (if (i32.lt_u (local.get $hi) (local.get $lo)) (then (return (i32.const 1))))
+    (local.set $lo (i32.and (local.get $lo) (i32.const 0xFFFFF000)))
+    (local.set $hi (i32.and (local.get $hi) (i32.const 0xFFFFF000)))
+    (loop $pages
+      (if (call $code_page_test (local.get $lo)) (then (return (i32.const 1))))
+      (if (i32.ne (local.get $lo) (local.get $hi))
+        (then
+          (local.set $lo (i32.add (local.get $lo) (i32.const 4096)))
+          (br $pages))))
+    (i32.const 0))
+
+  ;; A write into some OTHER block must not interrupt this continuation.
+  ;; Internal PCs carry COVER entries, so page_probe (entry-only) is not the
+  ;; question here. Retirement clears every byte of the owning block; a full
+  ;; page drop removes the directory entry. Both make this byte unavailable.
+  (func $store_continuation_invalid (param $pc i32) (result i32)
+    (local $page i32) (local $slot i32)
+    (if (i32.eqz (global.get $store_invalidation_pending)) (then (return (i32.const 0))))
+    (global.set $store_invalidation_pending (i32.const 0))
+    (local.set $page (i32.and (local.get $pc) (i32.const 0xFFFFF000)))
+    (local.set $slot (call $page_dir_slot (local.get $page)))
+    (if (i32.ne (i32.load (local.get $slot)) (local.get $page)) (then (return (i32.const 1))))
+    (i32.eq
+      (i32.load16_u (i32.add (i32.load offset=4 (local.get $slot))
+        (i32.shl (i32.and (local.get $pc) (i32.const 4095)) (i32.const 1))))
+      (global.get $PAGE_INDEX_NONE)))
+
+  ;; Decoded instruction boundary after a potential writer. A retirement
+  ;; invalidates entries, but cannot move a running $ip out of stale code.
+  ;; Resolve the next guest PC only after the complete instruction commits.
+  (func $th_store_continue (param $op i32)
+    (local $nx_fn i32) (local $nx_op i32) (local $pc i32)
+    (local.set $pc (call $store_continuation_target (local.get $op)))
+    (if (local.get $pc)
+      (then (return_call $th_block_retired (local.get $pc))))
     (dispatch-next))
 
   ;; Read next thread i32 and advance $ip.

@@ -653,18 +653,25 @@
   ;; semantics.
   ;;
   ;; op: src in bits 0..3, base in bits 4..7, count in bits 8..31.
-  ;; word: signed starting displacement.
+  ;; Words: signed starting displacement, then the first original successor PC.
   (func $th_store32_base_span (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $src i32) (local $base i32) (local $n i32) (local $disp i32)
     (local $ga i32) (local $wa i32)
-    (local $len i32) (local $v i32) (local $i i32)
+    (local $first_pc i32) (local $len i32) (local $v i32) (local $i i32)
     (local.set $src (i32.and (local.get $op) (i32.const 0xF)))
     (local.set $base (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $n (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $disp (read-thread-word))
+    (local.set $first_pc (read-thread-word))
     (local.set $ga (i32.add (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $base) (i32.const 2)))) (local.get $disp)))
     (local.set $v (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $src) (i32.const 2)))))
     (local.set $len (i32.shl (local.get $n) (i32.const 2)))
+    (if (call $store_span_touches_code (local.get $ga) (local.get $len))
+      (then
+        (call $gs32 (local.get $ga) (local.get $v))
+        (global.set $store_fused_resume_pc (local.get $first_pc))
+        (dispatch-next)))
+
 
     ;; memory.fill repeats a byte, so only zero has dword-store semantics here.
     ;; $g2w_affine_span rejects wrapped ends, holes, and mapping boundaries;
@@ -716,7 +723,7 @@
   ;; lazy-flag globals are byte-for-byte what the unfused pair produced, so
   ;; PUSHFD, SETcc or a second branch after the group still see the truth.
   ;;
-  ;; op: bits 0-3 base reg, 8-11 the ALU op, 12-15 the condition code.
+  ;; op: bits 0-3 base reg, 8-11 ALU op, 12-15 condition, 16+ Jcc byte length.
   ;; Words: disp, imm32, fall-through EIP, branch target — the 131 payload with
   ;; the ordinary Jcc payload appended, so the emitter is unchanged apart from
   ;; which opcode it writes.
@@ -733,6 +740,12 @@
     (if (i32.ne (local.get $alu) (i32.const 7)) (then (call $gs32 (local.get $addr) (local.get $val))))
     (local.set $fall (read-thread-word))
     (local.set $target (read-thread-word))
+    ;; The store may rewrite the fused Jcc itself. Its byte length is carried
+    ;; above the condition bits, so resume at its original instruction start.
+    (if (call $store_continuation_invalid
+          (i32.sub (local.get $fall) (i32.shr_u (local.get $op) (i32.const 16))))
+      (then (return_call $th_block_retired
+        (i32.sub (local.get $fall) (i32.shr_u (local.get $op) (i32.const 16))))))
     (if (call $eval_cc (local.get $cc))
       (then (global.set $eip (local.get $target)))
       (else (global.set $eip (local.get $fall))))
@@ -780,14 +793,15 @@
   ;; have performed them, using the same helpers, so the lazy-flag state left
   ;; behind is the ALU op's — whatever $do_alu32 publishes — exactly as in the
   ;; unfused pair. op: bits 0-3 base reg, 4-7 the unary op, 8-11 the ALU op.
-  ;; Words: the displacement, then the immediate.
+  ;; Words: displacement, immediate, then the first original successor PC.
   (func $th_unary_alu_m32_ro (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $addr i32) (local $uop i32) (local $alu i32)
-    (local $old i32) (local $r i32) (local $imm i32)
+    (local $first_pc i32) (local $old i32) (local $r i32) (local $imm i32)
     (local.set $addr (i32.add
       (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2))))
       (read-thread-word)))
     (local.set $imm (read-thread-word))
+    (local.set $first_pc (read-thread-word))
     (local.set $uop (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $alu (i32.and (i32.shr_u (local.get $op) (i32.const 8)) (i32.const 0xF)))
     (local.set $old (call $gl32 (local.get $addr)))
@@ -803,6 +817,10 @@
       (then (local.set $r (i32.sub (i32.const 0) (local.get $old)))
             (call $set_flags_sub (i32.const 0) (local.get $old) (local.get $r))))
     (call $gs32 (local.get $addr) (local.get $r))
+    (if (call $store_span_touches_code (local.get $addr) (i32.const 4))
+      (then
+        (global.set $store_fused_resume_pc (local.get $first_pc))
+        (dispatch-next)))
     (local.set $r (call $do_alu32 (local.get $alu) (local.get $r) (local.get $imm)))
     (if (i32.ne (local.get $alu) (i32.const 7))
       (then (call $gs32 (local.get $addr) (local.get $r))))
@@ -874,6 +892,8 @@
     (call $gs8 (local.get $op) (local.get $r))
     (local.set $fall (read-thread-word))
     (local.set $target (read-thread-word))
+    (if (call $store_continuation_invalid (i32.sub (local.get $fall) (i32.const 2)))
+      (then (return_call $th_block_retired (i32.sub (local.get $fall) (i32.const 2)))))
     (if (global.get $handler_hist_enabled)
       (then (call $branch_hist_record_jcc (i32.const 5))))
     (if (local.get $r)

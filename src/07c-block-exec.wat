@@ -78,6 +78,9 @@
   (global $block_exec_installs (mut i32) (i32.const 0))
   (global $block_exec_declines (mut i32) (i32.const 0))
   (global $block_exec_runs (mut i32) (i32.const 0))
+  (global $block_exec_region_smc_exits (mut i32) (i32.const 0))
+  (func (export "get_block_exec_region_smc_exits") (result i32)
+    (global.get $block_exec_region_smc_exits))
   (global $block_exec_native_ops (mut i64) (i64.const 0))
   (global $block_exec_fallback_ops (mut i64) (i64.const 0))
   ;; Interior block edges the region did not have to take. Together with the
@@ -273,7 +276,8 @@
   ;; never runs. Both are asserted by test-block-exec.js rather than left to
   ;; the reading.
   (global $TU_X87RUN   i32 (i32.const 60))
-  (global $TU_MAX_KIND i32 (i32.const 60))
+  (global $TU_STORE_CHECKPOINT i32 (i32.const 61))
+  (global $TU_MAX_KIND i32 (i32.const 61))
 
   ;; ======================================================================
   ;; ROUND 11 -- the decode-time load/op split (design doc section 16)
@@ -405,6 +409,7 @@
   ;; threaded path does not stop for them between two ops of one block either,
   ;; so excluding them would make the two arms differ rather than agree.
   (func $bx_op_unsafe (param $fn i32) (result i32)
+    (if (i32.eq (local.get $fn) (i32.const 501)) (then (return (i32.const 0))))
     ;; CALL / RET / JMP / Jcc / $th_block_end / LOOP
     (if (i32.and (i32.ge_u (local.get $fn) (i32.const 39))
                  (i32.le_u (local.get $fn) (i32.const 46)))
@@ -1487,6 +1492,12 @@
             (i32.store offset=12 (local.get $up) (global.get $tu_imm))
             (i32.store offset=16 (local.get $up) (global.get $tu_fn))
             (i32.store offset=20 (local.get $up) (global.get $tu_b))
+            ;; b records original native-dispatch cost through this boundary,
+            ;; independent of micro-op splitting and optimizer compaction.
+            (if (i32.eq (local.get $k) (global.get $TU_STORE_CHECKPOINT))
+              (then
+                (i32.store offset=20 (local.get $up)
+                  (i32.add (i32.add (local.get $nat) (local.get $nx87run)) (i32.const 1)))))
             (local.set $ui (i32.add (local.get $ui) (i32.const 1)))
             (local.set $nat (i32.add (local.get $nat) (i32.const 1)))
             (local.set $i (i32.add (local.get $i) (i32.const 1)))
@@ -3195,6 +3206,10 @@
         (if (i32.eq (local.get $i) (global.get $bx_opt_term_pos))
           (then (call $bx_kill_term_wreg)))
         (local.set $kind (i32.load (local.get $up)))
+        (if (i32.eq (local.get $kind) (global.get $TU_STORE_CHECKPOINT))
+          (then
+            (local.set $i (i32.add (local.get $i) (i32.const 1)))
+            (br $w1)))
         (local.set $d (i32.load offset=4 (local.get $up)))
         (call $bx_mem_shape (local.get $up))
 
@@ -3364,13 +3379,18 @@
         ;; micro-op and the folded terminator does not run between them: the
         ;; terminator reads and writes architectural registers, so a value
         ;; carried across it is not the value the consumer would have read.
+        ;; Preserve a defining MOV when the consumer can be followed by an
+        ;; SMC exit: the exit publishes the original architectural registers.
         (if (i32.and
               (i32.or (i32.eq (local.get $kind) (global.get $TU_MOV_RR))
                       (i32.eq (local.get $kind) (global.get $TU_MOV_RI)))
-              (i32.and (i32.lt_u (i32.add (local.get $i) (i32.const 1))
-                                 (local.get $nuops))
-                       (i32.ne (i32.add (local.get $i) (i32.const 1))
-                               (global.get $bx_opt_term_pos))))
+              (i32.and
+                (i32.or (i32.ge_u (i32.add (local.get $i) (i32.const 2)) (local.get $nuops))
+                  (i32.ne (i32.load (i32.add (local.get $up) (i32.const 48)))
+                          (global.get $TU_STORE_CHECKPOINT)))
+                (i32.and (i32.lt_u (i32.add (local.get $i) (i32.const 1)) (local.get $nuops))
+                         (i32.ne (i32.add (local.get $i) (i32.const 1))
+                                 (global.get $bx_opt_term_pos)))))
           (then
             (local.set $nxt (i32.add (local.get $up)
               (i32.shl (global.get $TREE_UOP_WORDS) (i32.const 2))))
@@ -4219,6 +4239,12 @@
             (i32.store offset=12 (local.get $up) (global.get $tu_imm))
             (i32.store offset=16 (local.get $up) (global.get $tu_fn))
             (i32.store offset=20 (local.get $up) (global.get $tu_b))
+            ;; b records original native-dispatch cost through this boundary,
+            ;; independent of micro-op splitting and optimizer compaction.
+            (if (i32.eq (local.get $k) (global.get $TU_STORE_CHECKPOINT))
+              (then
+                (i32.store offset=20 (local.get $up)
+                  (i32.add (i32.add (local.get $nat) (local.get $nx87run)) (i32.const 1)))))
             (local.set $sc (i32.add (local.get $sc) (global.get $TREE_UOP_WORDS)))
             (local.set $nuops (i32.add (local.get $nuops) (i32.const 1)))
             (local.set $nat (i32.add (local.get $nat) (i32.const 1)))
@@ -4639,6 +4665,7 @@
   ;; branch decision through the ordinary helpers.
   ;; ----------------------------------------------------------------------
   (func $th_block_exec (param $op i32)
+    (local $smc_pc i32)
      (local $nx_fn i32) (local $nx_op i32) (local $tp i32) (local $up i32) (local $ub i32)
     (local $steps_in i32) (local $fb_used i32) (local $n_fb i32)
     (local $tail_ip i32) (local $fb_bytes i32) (local $fbp i32)
@@ -4904,6 +4931,40 @@
                           (i32.sub (local.get $va) (local.get $vb)))))))))))
             (br_if $body_done (i32.ge_u (local.get $i) (local.get $nuops)))
             (local.set $kind (i32.load           (local.get $up)))
+            (if (i32.eq (local.get $kind) (global.get $TU_STORE_CHECKPOINT))
+              (then
+                (local.set $smc_pc
+                  (call $store_continuation_target (i32.load offset=12 (local.get $up))))
+                (if (local.get $smc_pc)
+                  (then
+                    (i32.store offset=0 (global.get $reg_base) (local.get $r0))
+                    (i32.store offset=4 (global.get $reg_base) (local.get $r1))
+                    (i32.store offset=8 (global.get $reg_base) (local.get $r2))
+                    (i32.store offset=12 (global.get $reg_base) (local.get $r3))
+                    (i32.store offset=16 (global.get $reg_base) (local.get $r4))
+                    (i32.store offset=20 (global.get $reg_base) (local.get $r5))
+                    (i32.store offset=24 (global.get $reg_base) (local.get $r6))
+                    (i32.store offset=28 (global.get $reg_base) (local.get $r7))
+                    (global.set $ea_temp (local.get $ea_hold))
+                    (if (i32.gt_u (local.get $nblocks) (i32.const 1))
+                      (then (global.set $block_exec_region_smc_exits
+                        (i32.add (global.get $block_exec_region_smc_exits) (i32.const 1)))))
+                    (global.set $block_exec_runs (i32.add (global.get $block_exec_runs) (i32.const 1)))
+                    ;; Settle completed members and this native prefix;
+                    ;; fallback handlers billed the parked counter themselves.
+                    (global.set $steps
+                      (i32.sub (local.get $steps_in)
+                        (i32.sub
+                          (i32.add (local.get $nsteps)
+                            (i32.add (i32.load offset=20 (local.get $up))
+                              (i32.sub (i32.const 0x100000) (global.get $steps))))
+                          (i32.const 1))))
+                    (global.set $block_budget
+                      (i32.sub (global.get $block_budget) (local.get $nblk)))
+                    (return_call $th_block_retired (local.get $smc_pc))))
+                (local.set $up (i32.add (local.get $up) (i32.const 24)))
+                (local.set $i (i32.add (local.get $i) (i32.const 1)))
+                (br $body)))
             (local.set $d    (i32.load offset=4  (local.get $up)))
             (local.set $a    (i32.load offset=8  (local.get $up)))
             (local.set $imm  (i32.load offset=12 (local.get $up)))
@@ -5882,6 +5943,7 @@
   ;; same 269 differential cases through both arms of `--block-exec-leaf`, so a
   ;; body that drifts is a failing test rather than a silent divergence.
   (func $th_block_exec_leaf (param $op i32)
+    (local $smc_pc i32)
      (local $nx_fn i32) (local $nx_op i32) (local $tp i32) (local $up i32) (local $ub i32)
     (local $nuops i32) (local $cost i32) (local $tail_ip i32) (local $brp i32)
     (local $r0 i32) (local $r1 i32) (local $r2 i32) (local $r3 i32)
@@ -5943,6 +6005,30 @@
       (loop $body
             (br_if $body_done (i32.ge_u (local.get $i) (local.get $nuops)))
             (local.set $kind (i32.load           (local.get $up)))
+            (if (i32.eq (local.get $kind) (global.get $TU_STORE_CHECKPOINT))
+              (then
+                (local.set $smc_pc
+                  (call $store_continuation_target (i32.load offset=12 (local.get $up))))
+                (if (local.get $smc_pc)
+                  (then
+                    (i32.store offset=0 (global.get $reg_base) (local.get $r0))
+                    (i32.store offset=4 (global.get $reg_base) (local.get $r1))
+                    (i32.store offset=8 (global.get $reg_base) (local.get $r2))
+                    (i32.store offset=12 (global.get $reg_base) (local.get $r3))
+                    (i32.store offset=16 (global.get $reg_base) (local.get $r4))
+                    (i32.store offset=20 (global.get $reg_base) (local.get $r5))
+                    (i32.store offset=24 (global.get $reg_base) (local.get $r6))
+                    (i32.store offset=28 (global.get $reg_base) (local.get $r7))
+                    (global.set $ea_temp (local.get $ea_hold))
+                    (global.set $block_exec_runs (i32.add (global.get $block_exec_runs) (i32.const 1)))
+                    (global.set $block_exec_leaf_runs (i32.add (global.get $block_exec_leaf_runs) (i32.const 1)))
+                    (global.set $steps
+                      (i32.sub (global.get $steps)
+                        (i32.sub (i32.load offset=20 (local.get $up)) (i32.const 1))))
+                    (return_call $th_block_retired (local.get $smc_pc))))
+                (local.set $up (i32.add (local.get $up) (i32.const 24)))
+                (local.set $i (i32.add (local.get $i) (i32.const 1)))
+                (br $body)))
             (local.set $d    (i32.load offset=4  (local.get $up)))
             (local.set $a    (i32.load offset=8  (local.get $up)))
             (local.set $imm  (i32.load offset=12 (local.get $up)))
@@ -6694,6 +6780,7 @@
   ;; It MAY carry TU_FALLBACK and TU_X87RUN micro-ops; those are the point.
   ;; Everything else is the pure leaf's contract, unchanged.
   (func $th_block_exec_leaf_fb (param $op i32)
+    (local $smc_pc i32)
      (local $nx_fn i32) (local $nx_op i32) (local $tp i32) (local $up i32) (local $ub i32)
     ;; ROUND 17 additions over the pure leaf: the fallback pool base, the
     ;; count of fallback micro-ops this run retired, and the two words the
@@ -6777,6 +6864,33 @@
       (loop $body
             (br_if $body_done (i32.ge_u (local.get $i) (local.get $nuops)))
             (local.set $kind (i32.load           (local.get $up)))
+            (if (i32.eq (local.get $kind) (global.get $TU_STORE_CHECKPOINT))
+              (then
+                (local.set $smc_pc
+                  (call $store_continuation_target (i32.load offset=12 (local.get $up))))
+                (if (local.get $smc_pc)
+                  (then
+                    (i32.store offset=0 (global.get $reg_base) (local.get $r0))
+                    (i32.store offset=4 (global.get $reg_base) (local.get $r1))
+                    (i32.store offset=8 (global.get $reg_base) (local.get $r2))
+                    (i32.store offset=12 (global.get $reg_base) (local.get $r3))
+                    (i32.store offset=16 (global.get $reg_base) (local.get $r4))
+                    (i32.store offset=20 (global.get $reg_base) (local.get $r5))
+                    (i32.store offset=24 (global.get $reg_base) (local.get $r6))
+                    (i32.store offset=28 (global.get $reg_base) (local.get $r7))
+                    (global.set $ea_temp (local.get $ea_hold))
+                    (global.set $block_exec_runs (i32.add (global.get $block_exec_runs) (i32.const 1)))
+                    (global.set $block_exec_leaf_fb_runs (i32.add (global.get $block_exec_leaf_fb_runs) (i32.const 1)))
+                    (global.set $steps
+                      (i32.sub (local.get $steps_in)
+                        (i32.sub
+                          (i32.add (i32.load offset=20 (local.get $up))
+                            (i32.sub (i32.const 0x100000) (global.get $steps)))
+                          (i32.const 1))))
+                    (return_call $th_block_retired (local.get $smc_pc))))
+                (local.set $up (i32.add (local.get $up) (i32.const 24)))
+                (local.set $i (i32.add (local.get $i) (i32.const 1)))
+                (br $body)))
             (local.set $d    (i32.load offset=4  (local.get $up)))
             (local.set $a    (i32.load offset=8  (local.get $up)))
             (local.set $imm  (i32.load offset=12 (local.get $up)))

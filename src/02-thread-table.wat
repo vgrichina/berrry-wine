@@ -11,7 +11,7 @@
   ;; For byte regs: 0=al,1=cl,2=dl,3=bl,4=ah,5=ch,6=dh,7=bh
 
   (type $handler_t (func (param i32)))
-  (table $handlers 501 funcref)
+  (table $handlers 502 funcref)
 
   (elem (i32.const 0)
     ;; -- Core --
@@ -570,4 +570,5 @@
     $th_jmp_tbl                ;; 498: jmp [disp+r*4], a switch table jump (06b)
     $th_lock_rmw               ;; 499: LOCK RMW / memory XCHG as atomic CAS, threaded only (05)
     $th_ftol_native            ;; 500: statically linked MSVC _ftol body, native (06)
+    $th_store_continue         ;; 501: instruction-boundary store continuation
   )

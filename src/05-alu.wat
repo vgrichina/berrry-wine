@@ -1018,8 +1018,50 @@
       (br $items)))
     (i32.store offset=16 (global.get $reg_base) (local.get $cur))
     (i32.const 0))
+  ;; Keep data-stack runs fused. If any push can touch code, execute only
+  ;; the first original PUSH and let the instruction-boundary continuation
+  ;; decode the remaining bytes again. Skip the unused immediate words so a
+  ;; fallback returns through its normal resume trampoline.
+  (func $stack_run_smc_first (param $op i32) (param $extra i32) (param $pc i32) (result i32)
+    (local $cur i32) (local $len i32) (local $n i32) (local $k i32)
+    (local $code i32) (local $v i32) (local $first i32)
+    (local.set $cur (i32.load offset=16 (global.get $reg_base)))
+    (local.set $len
+      (i32.shl (i32.add (i32.shr_u (local.get $op) (i32.const 28)) (local.get $extra)) (i32.const 2)))
+    (if (i32.eqz (call $store_span_touches_code (i32.sub (local.get $cur) (local.get $len)) (local.get $len)))
+      (then (return (i32.const 0))))
+    (local.set $first (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 15)))
+    (local.set $v
+      (if (result i32) (i32.eq (local.get $first) (i32.const 4))
+        (then (local.get $cur))
+        (else (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $first) (i32.const 7)) (i32.const 2)))))))
+    (local.set $n (i32.and (local.get $op) (i32.const 15)))
+    (loop $immediates
+      (local.set $code (i32.and
+        (i32.shr_u (local.get $op) (i32.add (i32.const 4) (i32.shl (local.get $k) (i32.const 2))))
+        (i32.const 15)))
+      (if (i32.eq (local.get $code) (i32.const 8))
+        (then
+          (if (i32.eqz (local.get $k))
+            (then (local.set $v (read-thread-word)))
+            (else (drop (read-thread-word))))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1)))
+      (br_if $immediates (i32.lt_u (local.get $k) (local.get $n))))
+    (local.set $cur (i32.sub (local.get $cur) (i32.const 4)))
+    (i32.store offset=16 (global.get $reg_base) (local.get $cur))
+    (call $gs32 (local.get $cur) (local.get $v))
+    (if (call $stack_run_faulted) (then (return (i32.const 2))))
+    (global.set $store_fused_resume_pc (local.get $pc))
+    (i32.const 1))
+
+  ;; PUSH run payload starts with its first original successor PC, followed
+  ;; by the immediate words consumed by the existing run body.
   (func $th_push_run (param $op i32)
-    (local $nx_fn i32) (local $nx_op i32)
+    (local $nx_fn i32) (local $nx_op i32) (local $first_pc i32) (local $smc i32)
+    (local.set $first_pc (read-thread-word))
+    (local.set $smc (call $stack_run_smc_first (local.get $op) (i32.const 0) (local.get $first_pc)))
+    (if (i32.eq (local.get $smc) (i32.const 2)) (then (return)))
+    (if (local.get $smc) (then (dispatch-next)))
     (if (call $stack_run_push (local.get $op) (i32.const 0)) (then (return)))
     (dispatch-next))
   (func $th_pop_run (param $op i32)
@@ -1029,7 +1071,14 @@
   ;; ... PUSH items, then CALL rel32: next words are the return address and
   ;; the target, after the items' immediates.
   (func $th_push_run_call (param $op i32)
-    (local $ret i32) (local $target i32) (local $cur i32)
+    (local $first_pc i32) (local $smc i32) (local $ret i32) (local $target i32) (local $cur i32)
+    (local.set $first_pc (read-thread-word))
+    (local.set $smc (call $stack_run_smc_first (local.get $op) (i32.const 1) (local.get $first_pc)))
+    (if (i32.eq (local.get $smc) (i32.const 2)) (then (return)))
+    (if (local.get $smc)
+      (then
+        (global.set $store_fused_resume_pc (i32.const 0))
+        (return_call $th_block_retired (local.get $first_pc))))
     (if (call $stack_run_push (local.get $op) (i32.const 1)) (then (return)))
     (local.set $ret (read-thread-word))
     (local.set $target (read-thread-word))

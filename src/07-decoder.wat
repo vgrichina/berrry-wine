@@ -50,6 +50,94 @@
   ;; Reading the terminator back out of the stream needs the real end.
   (global $d_block_end (mut i32) (i32.const 0))
 
+  ;; A guest store can retire the block that contains it. Retirement breaks
+  ;; entry through the header, not an $ip already past that header. Record a
+  ;; continuation after the complete writing instruction, so a retired block
+  ;; resumes from guest bytes. Never insert one between an EA producer and
+  ;; consumer, or between elements of one nonfaulting REP.
+  (global $d_store_boundary (mut i32) (i32.const 0))
+
+  ;; Proven non-writing handlers need no continuation checkpoint. Unknown/new
+  ;; handlers conservatively get one. This is decode-time bookkeeping; the
+  ;; ordinary dispatch path has no invalidation test.
+  (func $decode_handler_readonly (param $fn i32) (param $op i32) (result i32)
+    (local $group i32) (local $reg i32)
+    ;; x87 register operations and memory reads do not write guest memory.
+    ;; Keep their expression fusions intact; only actual memory-store forms
+    ;; need a continuation checkpoint.
+    (if (i32.eq (local.get $fn) (i32.const 189)) (then (return (i32.const 1))))
+    (if (i32.or (i32.eq (local.get $fn) (i32.const 188))
+                (i32.eq (local.get $fn) (i32.const 190)))
+      (then
+        (local.set $group (i32.shr_u (local.get $op)
+          (select (i32.const 4) (i32.const 8) (i32.eq (local.get $fn) (i32.const 188)))))
+        (local.set $reg (i32.and (i32.shr_u (local.get $op)
+          (select (i32.const 0) (i32.const 4) (i32.eq (local.get $fn) (i32.const 188)))) (i32.const 7)))
+        (if (i32.eqz (i32.and (local.get $group) (i32.const 1)))
+          (then (return (i32.const 1))))
+        (if (i32.or (i32.or (i32.eq (local.get $reg) (i32.const 2))
+                           (i32.eq (local.get $reg) (i32.const 3)))
+                   (i32.eq (local.get $reg) (i32.const 7)))
+          (then (return (i32.const 0))))
+        (return (i32.eqz (i32.and (i32.eq (local.get $reg) (i32.const 6))
+                                 (i32.ne (local.get $group) (i32.const 3)))))))
+    ;; Entry instrumentation and checkpoints do not write guest memory.
+    (if (i32.or (i32.eq (local.get $fn) (i32.const 501))
+        (i32.or (i32.eq (local.get $fn) (i32.const 470))
+                (i32.eq (local.get $fn) (i32.const 476)))) (then (return (i32.const 1))))
+    (if (i32.le_u (local.get $fn) (i32.const 20)) (then (return (i32.const 1))))
+    (if (i32.or (i32.eq (local.get $fn) (i32.const 22))
+        (i32.or (i32.eq (local.get $fn) (i32.const 24))
+        (i32.or (i32.eq (local.get $fn) (i32.const 26))
+        (i32.or (i32.eq (local.get $fn) (i32.const 28))
+                (i32.eq (local.get $fn) (i32.const 30)))))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 41))
+                 (i32.le_u (local.get $fn) (i32.const 46))) (then (return (i32.const 1))))
+    (if (i32.or (i32.eq (local.get $fn) (i32.const 48))
+        (i32.or (i32.eq (local.get $fn) (i32.const 50))
+                (i32.eq (local.get $fn) (i32.const 53)))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 55))
+                 (i32.le_u (local.get $fn) (i32.const 67))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 70))
+                 (i32.le_u (local.get $fn) (i32.const 75))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 78))
+                 (i32.le_u (local.get $fn) (i32.const 81))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 90))
+                 (i32.le_u (local.get $fn) (i32.const 101))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 103))
+                 (i32.le_u (local.get $fn) (i32.const 116))) (then (return (i32.const 1))))
+    ;; EA-only helpers must stay with their consumers. The consumer decides
+    ;; whether the instruction writes; $decode never checks this flag mid-op.
+    (if (i32.or (i32.eq (local.get $fn) (i32.const 148))
+        (i32.or (i32.eq (local.get $fn) (i32.const 149))
+        (i32.or (i32.eq (local.get $fn) (i32.const 363))
+                (i32.eq (local.get $fn) (i32.const 364))))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 143))
+                 (i32.le_u (local.get $fn) (i32.const 147))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 150))
+                 (i32.le_u (local.get $fn) (i32.const 159))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 198))
+                 (i32.le_u (local.get $fn) (i32.const 210))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 307))
+                 (i32.le_u (local.get $fn) (i32.const 322))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $fn) (i32.const 339))
+                 (i32.le_u (local.get $fn) (i32.const 346))) (then (return (i32.const 1))))
+    (if (i32.or (i32.eq (local.get $fn) (i32.const 406))
+        (i32.or (i32.eq (local.get $fn) (i32.const 408))
+                (i32.eq (local.get $fn) (i32.const 467)))) (then (return (i32.const 1))))
+    (i32.const 0))
+
+  ;; A fresh decode has not published/marked its page yet. Static store
+  ;; fusions must also refuse the page being decoded, not only marked pages.
+  (func $decode_static_store_touches_code (param $addr i32) (result i32)
+    (local $page i32)
+    (local.set $page (i32.and (global.get $d_pc) (i32.const 0xFFFFF000)))
+    (i32.or
+      (i32.or
+        (i32.eq (i32.and (local.get $addr) (i32.const 0xFFFFF000)) (local.get $page))
+        (i32.eq (i32.and (i32.add (local.get $addr) (i32.const 3)) (i32.const 0xFFFFF000)) (local.get $page)))
+      (call $store_span_touches_code (local.get $addr) (i32.const 4))))
+
   ;; --no-sib-fusion: emit the unfused compute_ea_sib + consumer pair instead
   ;; of the fused single handler. On by default. This exists because
   ;; docs/interpreter-dispatch-perf.md's rule for keeping a fusion is an
@@ -1357,6 +1445,8 @@
     (if (i32.or (global.get $code16) (global.get $d_addr16)) (then (return (i32.const 0))))
     (if (i32.eqz (call $mr_absolute)) (then (return (i32.const 0))))
     (local.set $abs (global.get $mr_disp))
+    (if (call $decode_static_store_touches_code (local.get $abs))
+      (then (return (i32.const 0))))
     (local.set $p (global.get $d_pc))
     ;; inc rP
     (if (i32.ne (call $gl8 (local.get $p)) (i32.add (i32.const 0x40) (local.get $dst)))
@@ -1497,10 +1587,11 @@
   ;; must end the block. Only the fast [base+disp] form is folded: the SIB and
   ;; absolute forms go through $emit_sib_or_abs and keep handler 51.
   (func $try_emit_alu_m32_i_jcc (param $alu_op i32) (param $imm i32) (result i32)
-    (local $b i32) (local $b2 i32) (local $cc i32) (local $disp i32)
+    (local $b i32) (local $b2 i32) (local $cc i32) (local $disp i32) (local $jcc_pc i32)
     (if (i32.or (global.get $code16) (global.get $d_addr16)) (then (return (i32.const 0))))
     (if (i32.eqz (call $mr_simple_base)) (then (return (i32.const 0))))
     (if (call $fuse_stop (global.get $d_pc)) (then (return (i32.const 0))))
+    (local.set $jcc_pc (global.get $d_pc))
     (local.set $b (call $gl8 (global.get $d_pc)))
     (if (i32.and (i32.ge_u (local.get $b) (i32.const 0x70))
                  (i32.le_u (local.get $b) (i32.const 0x7F)))
@@ -1523,7 +1614,8 @@
     (call $te (i32.const 407)
       (i32.or
         (i32.or (i32.shl (local.get $alu_op) (i32.const 8)) (global.get $mr_base))
-        (i32.shl (local.get $cc) (i32.const 12))))
+        (i32.or (i32.shl (local.get $cc) (i32.const 12))
+          (i32.shl (i32.sub (global.get $d_pc) (local.get $jcc_pc)) (i32.const 16)))))
     (call $te_raw (global.get $mr_disp))
     (call $te_raw (local.get $imm))
     (call $te_raw (global.get $d_pc))
@@ -1555,6 +1647,9 @@
   (func $try_emit_abs_run (param $store i32) (param $reg0 i32) (param $addr0 i32) (result i32)
     (local $p i32) (local $n i32) (local $i i32) (local $m i32) (local $len i32) (local $op i32)
     (if (i32.or (global.get $code16) (global.get $d_addr16)) (then (return (i32.const 0))))
+    (if (i32.and (local.get $store)
+          (call $decode_static_store_touches_code (local.get $addr0)))
+      (then (return (i32.const 0))))
     ;; how many follow
     (local.set $p (global.get $d_pc))
     (local.set $n (i32.const 1))
@@ -1563,6 +1658,12 @@
       (br_if $stop (call $fuse_stop (local.get $p)))
       (local.set $m (call $abs_mov_at (local.get $p) (local.get $store)))
       (br_if $stop (i32.eqz (local.get $m)))
+      (if (local.get $store)
+        (then
+          (if (call $decode_static_store_touches_code
+                (call $gl32 (i32.add (local.get $p)
+                  (i32.sub (i32.shr_u (local.get $m) (i32.const 4)) (i32.const 4)))))
+            (then (return (i32.const 0))))))
       (local.set $p (i32.add (local.get $p) (i32.shr_u (local.get $m) (i32.const 4))))
       (local.set $n (i32.add (local.get $n) (i32.const 1)))
       (br $l)))
@@ -1735,6 +1836,7 @@
         (i32.or (i32.shl (local.get $base) (i32.const 4))
                 (i32.shl (local.get $n) (i32.const 8)))))
     (call $te_raw (local.get $disp0))
+    (call $te_raw (global.get $d_pc)) ;; next original instruction before the fold
     (global.set $d_pc (local.get $p))
     (i32.const 1))
 
@@ -1838,6 +1940,7 @@
               (else (i32.const 0)))))))
       (else
         (call $te (select (i32.const 474) (i32.const 472) (local.get $tail)) (local.get $ops))
+        (call $te_raw (global.get $d_pc)) ;; first PUSH continuation
         ;; The immediates, in item order: the first from the caller, the rest
         ;; re-read from the bytes the scan already walked.
         (if (i32.eq (local.get $first) (i32.const 8)) (then (call $te_raw (local.get $imm0))))
@@ -2466,6 +2569,7 @@
         (i32.or (i32.shl (local.get $uop) (i32.const 4)) (global.get $mr_base))))
     (call $te_raw (global.get $mr_disp))
     (call $te_raw (local.get $imm))
+    (call $te_raw (global.get $d_pc)) ;; next original instruction before the fold
     (global.set $d_pc (local.get $p))
     (i32.const 1))
 
@@ -2877,6 +2981,7 @@
     ;; bail-out) leaves a consistent -- if unused -- index behind.
     (global.set $op_index_n (i32.const 0))
     (global.set $op_index_poison (i32.const 0))
+    (global.set $d_store_boundary (i32.const 0))
     ;; Ask once, here, whether this block entry is the MSVC small-block-heap
     ;; scan loop. The run loop then only has to compare EIP with the answer.
     (call $sbh_note_candidate (local.get $start_eip))
@@ -2984,6 +3089,11 @@
         (if (local.get $uop_pc) (then (call $te (i32.const 470) (local.get $uop_pc))))))
     (block $exit (loop $decode
       (br_if $exit (local.get $done))
+
+      (if (global.get $d_store_boundary)
+        (then
+          (global.set $d_store_boundary (i32.const 0))
+          (call $te (i32.const 501) (global.get $d_pc))))
 
       ;; Reuse a known suffix instead of publishing an overlapping block.
       ;; Otherwise alternating outer/interior entries repeatedly retire each
