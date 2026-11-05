@@ -129,3 +129,19 @@ The prior two queued first-fault native regressions also pass: the adapter still
 stops before the rejected POP ESI for both historical module fixtures. The full
 flock build passes after the remedy and again reproduces the unchanged current
 e620f3ad/66b37bd7 pair. All builds are finished.
+
+The diagnostic remedy is published as
+`3dafc52d07f404c42ede112e0e6c62d8725f9a20`, with immediate origin and direct
+strict pinned SSH pull/push. Its exact published actual composed preflight again
+passes439FS/439proofHTTP/439actualHTTP/2253installed-caller checks, independent
+public/native spawn prohibitions, zero Chrome and both servers closed.
+`remedy-preflight-result.json`, `remedy-amendment-ledger.json` and
+`remedy-relevant-diff.patch` bind that change without source/module copies.
+
+Final result: concrete GC-entry coverage prerequisite, with tested and published
+first-fault evidence preservation. The timer/deferred-load/gameplay objective is
+not established. Next work must prepare earlier ordinary trace attachment with
+complete input/owner/review/GC history, or independently establish a safe ordinary
+attachment boundary; retain the missing-entry rejection and all original caps.
+Any new original attempt needs separate authorization. This assignment stops
+here. Box ID/state/expiry remain NA; coordinator retains shutdown ownership.
