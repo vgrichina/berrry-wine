@@ -1,7 +1,8 @@
 'use strict';
 
-// Browser response bytes only. No filesystem, HTTP client, retry, fulfillment,
-// or Network.getResponseBody fallback belongs in this collector.
+// Browser response bytes only. Fetch captures page responses while paused.
+// Workers lacking Fetch use a capability-checked owning Network session;
+// failed body reads never select another channel or re-fetch a resource.
 const {createHash} = require('crypto');
 const assert = require('assert/strict');
 
@@ -55,6 +56,85 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
     assert(bytes.length <= maxBodyBytes, 'browser body exceeds limit');
     return bytes;
   }
+  const finished = row => row.state === 'continued' || row.state === 'collected';
+  function track(job) { jobs.add(job); job.finally(() => jobs.delete(job)); }
+  async function deliver(state, row, bytes) {
+    assert(!closed && !state.detached, 'target lost before body policy');
+    const identity = freeze({...row});
+    const accepted = onResponse({url: () => row.url, status: () => row.status,
+      fromCache: () => null, bodyIdentity: identity,
+      request: () => ({method: () => row.method, redirectChain: () => []}),
+      buffer: async () => {assert(bytes, 'no captured HTTP 200 body'); return Buffer.from(bytes);}});
+    if (row.status === 404 && accepted?.optionalAbsence === identity &&
+        typeof accepted.policy === 'string' && accepted.policy.length)
+      row.absencePolicy = accepted.policy;
+    if (row.status === 200) await deadline(Promise.resolve(accepted), row, 'policy', state);
+    else await Promise.resolve();
+  }
+  function startupRequest(state, event) {
+    // Chromium reports Worker main-script response/finish in the Worker but
+    // its request in the explicit parent. Bind by target/request ID, never URL
+    // alone. Retrieve the body again in the Worker; no parent bytes are used.
+    const id = state.identity, parent = sessions.get(id.parentSessionId);
+    const request = parent?.requests.get(event.requestId);
+    const receipts = rows.filter(r => r.sessionId === id.parentSessionId &&
+      r.networkId === event.requestId && r.state === 'continued' && r.status === 200);
+    assert(id.type === 'worker' && id.waitingForDebugger === true &&
+      event.requestId === id.targetId && event.type === 'Script' &&
+      event.response.url === id.url && parent?.transport === 'Fetch' &&
+      request?.url === id.url && request.method === 'GET' && request.type === 'Script' &&
+      request.count === 1 && !request.redirected && receipts.length === 1 &&
+      receipts[0].url === id.url && receipts[0].method === 'GET' &&
+      !receipts[0].redirectedRequestId,
+    'Worker startup response lacks exact parent request/verified Fetch identity');
+    const receipt = receipts[0];
+    return {request, binding: {sessionId: id.parentSessionId, targetId: parent.identity.targetId,
+      requestId: receipt.requestId, networkId: event.requestId, url: id.url,
+      method: request.method, bytes: receipt.bytes, sha256: receipt.sha256}};
+  }
+  function networkRequest(state, networkId, request, startupBinding = null) {
+    assert(!state.networkRows.has(networkId), 'duplicate Network request identity');
+    const row = {source: 'CDP.Network.response-body', ...state.identity,
+      requestId: networkId, networkId, redirectedRequestId: null,
+      url: request.url, method: request.method, resourceType: request.type,
+      startupBinding, state: 'requested'};
+    rows.push(row); state.networkRows.set(networkId, row); state.active.add(row);
+    let resolve, reject;
+    const terminal = new Promise((yes, no) => {resolve = yes; reject = no;});
+    state.waiters.set(networkId, {resolve, reject});
+    track((async () => {
+      try {
+        assert(state.ready && !closed && !state.detached, 'Worker request before collector readiness');
+        assert.equal(new URL(row.url).origin, origin, 'unexpected response origin');
+        assert.equal(row.method, 'GET', 'unexpected response method');
+        assert(request.count === 1 && !request.redirected, 'redirected response forbidden');
+        log(row, 'requested');
+        await deadline(terminal, row, 'transfer', state);
+        const response = state.responses.get(networkId);
+        assert(response?.count === 1 && response.url === row.url && response.type === row.resourceType,
+          'Network response does not match exact request identity');
+        assert(Number.isInteger(row.status), 'missing Network response status');
+        assert(!(row.status >= 300 && row.status < 400), 'redirected response forbidden');
+        let bytes;
+        if (row.status === 200) {
+          bytes = decode(await deadline(state.session.send('Network.getResponseBody',
+            {requestId: networkId}), row, 'body', state));
+          assert(!closed && !state.detached, 'target lost during body retrieval');
+          const sha256 = createHash('sha256').update(bytes).digest('hex');
+          if (startupBinding) {
+            assert.equal(bytes.length, startupBinding.bytes, 'Worker startup body size differs from parent');
+            assert.equal(sha256, startupBinding.sha256, 'Worker startup body differs from parent');
+          }
+          log(row, 'captured', {bytes: bytes.length, sha256});
+          await deliver(state, row, bytes);
+        } else await state.policies.get(networkId);
+        assert(!closed && !state.detached && !firstFault, 'collector closed before collection settled');
+        log(row, 'collected');
+      } catch (error) {
+        log(row, closed ? 'cancelled' : 'failed', {error: String(error)}); fault({...row}, error);
+      } finally { state.policies.delete(networkId); state.active.delete(row); state.waiters.delete(networkId); }
+    })());
+  }
   async function paused(state, event) {
     const row = {source: 'CDP.Fetch.response-stage', sessionId: state.identity.sessionId,
       targetId: state.identity.targetId, requestId: event.requestId,
@@ -87,20 +167,7 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
       }
       // Policy accepts/rejects the actual captured bytes; metadata alone is
       // never presented as a verified 200 body. An optional 404 has no body.
-      const identity = Object.freeze({...row});
-      const accepted = onResponse({url: () => row.url, status: () => row.status,
-        fromCache: () => null, bodyIdentity: identity,
-        request: () => ({method: () => row.method, redirectChain: () => []}),
-        buffer: async () => {assert(bytes, 'no captured HTTP 200 body'); return Buffer.from(bytes);}});
-      // A synchronous, identity-bound policy acknowledgment is deliberately
-      // separate from a verified body or a pending fallback promise.
-      if (row.status === 404 && accepted?.optionalAbsence === identity &&
-          typeof accepted.policy === 'string' && accepted.policy.length)
-        row.absencePolicy = accepted.policy;
-      // HTTP 200 policy returns its settlement promise. A font bundle 404
-      // must continue immediately so the browser can initiate the fallback.
-      if (row.status === 200) await deadline(Promise.resolve(accepted), row, 'policy', state);
-      else await Promise.resolve();
+      await deliver(state, row, bytes);
       assert(!closed && !state.detached && !firstFault, 'collector closed before continuation');
       await deadline(state.session.send('Fetch.continueResponse', {requestId: row.requestId}),
         row, 'continuation', state);
@@ -118,11 +185,12 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
     assert(!sessions.has(identity.sessionId), 'duplicate collector session');
     const state = {session, identity: {...identity}, cancels: new Set(), ids: new Set(),
       active: new Set(), ready: false, detached: false, network: [],
-      requests: new Map(), responses: new Map(), terminals: new Set(), observed200: new Map()};
+      requests: new Map(), responses: new Map(), terminals: new Set(), observed200: new Map(),
+      networkRows: new Map(), waiters: new Map(), policies: new Map(), transport: null};
     sessions.set(identity.sessionId, state);
     const handler = event => {
       const job = paused(state, event);
-      jobs.add(job); job.finally(() => jobs.delete(job));
+      track(job);
     };
     const detached = () => {
       if (state.detached) return;
@@ -148,6 +216,10 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
               method: event.request.method, type: event.type,
               redirected: !!event.redirectResponse || !!previous?.redirected,
               count: (previous?.count || 0) + 1});
+          if (state.transport === 'Network' && state.requests.has(event.requestId) && !closed && !firstFault) {
+            assert(!previous, 'redirected or duplicate Network request forbidden');
+            networkRequest(state, event.requestId, state.requests.get(event.requestId));
+          }
         }
         if (name === 'Network.responseReceived' && new URL(event.response.url).origin === origin)
           state.responses.set(event.requestId, {url: event.response.url,
@@ -168,6 +240,30 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
         const alreadyTerminal = state.terminals.has(event.requestId);
         if (name === 'Network.loadingFinished' || name === 'Network.loadingFailed')
           state.terminals.add(event.requestId);
+        if (state.transport === 'Network' && !closed && !firstFault && !state.detached) {
+          if (name === 'Network.responseReceived' && new URL(event.response.url).origin === origin) {
+            if (!state.networkRows.has(event.requestId)) {
+              const startup = startupRequest(state, event);
+              networkRequest(state, event.requestId, startup.request, startup.binding);
+            }
+            const row = state.networkRows.get(event.requestId), response = state.responses.get(event.requestId);
+            assert(response.count === 1 && response.url === row.url && response.type === row.resourceType,
+              'Network response identity mismatch');
+            assert(Number.isInteger(response.status) && !(response.status >= 300 && response.status < 400),
+              'redirected or invalid Network response status');
+            log(row, 'response', {status: response.status});
+            // Non-200 policy is metadata-only and must acknowledge absence
+            // synchronously before a possible classic-script ERR_ABORTED.
+            if (row.status !== 200) {
+              const policy = deliver(state, row); state.policies.set(event.requestId, policy);
+              policy.catch(error => state.waiters.get(event.requestId)?.reject(error));
+            }
+          }
+          if (name === 'Network.loadingFinished' && state.networkRows.has(event.requestId)) {
+            assert(!alreadyTerminal, 'duplicate Network terminal event');
+            state.waiters.get(event.requestId)?.resolve();
+          }
+        }
         if (name === 'Network.loadingFailed') {
           const request = state.requests.get(event.requestId), response = state.responses.get(event.requestId);
           const matches = rows.filter(r => r.sessionId === identity.sessionId && r.networkId === event.requestId);
@@ -177,7 +273,8 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
           // whose complete owning chain confirms that status rejection. Never
           // infer acceptance from an optional URL or the error string alone.
           if (!closed && !firstFault && !state.detached && !alreadyTerminal && row?.absencePolicy &&
-              row.state === 'continued' && row.method === 'GET' && row.status === 404 &&
+              (row.state === 'continued' || (state.transport === 'Network' && row.state === 'response')) &&
+              row.method === 'GET' && row.status === 404 &&
               row.resourceType === 'Script' && !row.redirectedRequestId &&
               request?.count === 1 && !request.redirected && request.method === 'GET' &&
               request.type === 'Script' && request.url === row.url &&
@@ -187,6 +284,7 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
             record({...identity, source: name, state: 'optional-absence-script-rejection',
               requestId: row.requestId, networkId: event.requestId, url: row.url,
               policy: row.absencePolicy, errorText: event.errorText, canceled: true, at: Date.now()});
+            state.waiters.get(event.requestId)?.resolve();
             return;
           }
           const url = request?.url || matches[0]?.url;
@@ -198,12 +296,38 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
       state.network.push([name, listener]); session.on(name, listener);
     }
     try {
-      await deadline(session.send('Network.enable'), {}, 'network-enable', state);
-      await deadline(session.send('Fetch.enable', {patterns: [
-        {urlPattern: origin + '/*', requestStage: 'Response'}]}), {}, 'enable', state);
+      await deadline(session.send('Network.enable', {maxTotalBufferSize: maxBodyBytes,
+        maxResourceBufferSize: maxBodyBytes}), {}, 'network-enable', state);
+      try {
+        await deadline(session.send('Fetch.enable', {patterns: [
+          {urlPattern: origin + '/*', requestStage: 'Response'}]}), {}, 'enable', state);
+        state.transport = 'Fetch';
+      } catch (error) {
+        // Puppeteer 25 preserves originalMessage but drops the numeric CDP
+        // code. Require the exact protocol/method error, never substring-match
+        // a timeout, denial, detach or failed body read into another channel.
+        assert(identity.type === 'worker' && identity.waitingForDebugger === true &&
+          error.name === 'ProtocolError' && error.originalMessage === "'Fetch.enable' wasn't found" &&
+          (error.code === undefined || error.code === -32601), String(error));
+        record({source: 'CDP.capability', ...identity, method: 'Fetch.enable',
+          state: 'method-unavailable', error: String(error), at: Date.now()});
+        try {
+          await deadline(session.send('Network.getResponseBody',
+            {requestId: '__wine_body_capability_probe__'}), {}, 'body-capability', state);
+          throw Error('Network body capability probe unexpectedly returned a body');
+        } catch (probe) {
+          if (!(probe.name === 'ProtocolError' &&
+              probe.originalMessage === 'No resource with given identifier found' &&
+              (probe.code === undefined || probe.code === -32000))) {
+            fault({...identity, state: 'unsupported-worker-body-transport',
+              fetchError: String(error), networkError: String(probe)}, probe); throw probe;
+          }
+        }
+        state.transport = 'Network';
+      }
       assert(!closed && !state.detached, 'target closed during collector attachment');
       state.ready = true;
-      record({source: 'CDP.Fetch.response-stage', ...identity, state: 'enabled', at: Date.now()});
+      record({source: 'CDP.body-transport', ...identity, transport: state.transport, state: 'enabled', at: Date.now()});
     } catch (error) { fault({...identity, state: 'enable-failed'}, error); throw error; }
   }
   async function settle() {
@@ -213,7 +337,7 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
     await settle();
     const missing = uncovered();
     if (missing.length) fault({state: 'missing-browser-body-receipt', missing},
-      'observed HTTP 200 lacks owning-session Fetch body receipt');
+      'observed HTTP 200 lacks owning-session browser body receipt');
     if (firstFault) throw Error(firstFault.error);
     assert(!closed, 'collector closed');
   }
@@ -232,13 +356,13 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
   function snapshot() {
     const missing = uncovered();
     return {closed, firstFault, missing, complete: sessions.size > 0 &&
-      [...sessions.values()].every(s => s.ready) && !firstFault && !missing.length && rows.every(r => r.state === 'continued'),
-      responses: rows.map(r => ({...r})), sessions: [...sessions.values()].map(s => ({...s.identity, detached: s.detached}))};
+      [...sessions.values()].every(s => s.ready && !s.active.size) && !firstFault && !missing.length && rows.every(finished),
+      responses: rows.map(r => ({...r})), sessions: [...sessions.values()].map(s => ({...s.identity, transport: s.transport, ready: s.ready, detached: s.detached}))};
   }
   function uncovered() {
     return [...sessions.values()].flatMap(s => [...s.observed200].filter(([networkId]) =>
       !rows.some(r => r.sessionId === s.identity.sessionId && r.networkId === networkId &&
-        r.status === 200 && r.state === 'continued')).map(([networkId, url]) =>
+        r.status === 200 && finished(r))).map(([networkId, url]) =>
       ({...s.identity, networkId, url})));
   }
   return {attach, drain, settle, close, snapshot};

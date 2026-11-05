@@ -27,10 +27,13 @@ function compose({source, expectedSHA256, run, collectorPath = path.join(__dirna
   change('  const cdp=await page.createCDPSession();', `  const cdp=await page.createCDPSession();
   bodyCollector=require(${JSON.stringify(collectorPath)}).createCollector({origin,
    disconnectedEvent:require('puppeteer').CDPSessionEvent.Disconnected,
-   onResponse:r=>responseHandler(r),onFault:f=>{failureState.value=f;},
+   onResponse:r=>{const accepted=responseHandler(r);if(r.status()!==200){checkFault();return accepted;}
+    return Promise.resolve(accepted).then(()=>{checkFault();});},onFault:f=>{failureState.value=f;},
    record:row=>record('body-collector.jsonl',{mock,...row})});`);
   // Install response interception before any paused child can execute/fetch.
   change("  cdp.on('Target.attachedToTarget',event=>{const session=cdp.connection().session(event.sessionId),identity=", "  const onAttached=(parent,event)=>{const session=parent.connection()?.session(event.sessionId),identity=");
+  change('identity={targetId:event.targetInfo.targetId,sessionId:event.sessionId,',
+    'identity={type:event.targetInfo.type,parentSessionId:parent.id(),targetId:event.targetInfo.targetId,sessionId:event.sessionId,');
   change("   pending.push((async()=>{if(event.targetInfo.type==='worker'", `   if(!session){failureState.value={boundary:'browser-body-session-missing',...identity};return;}
    pending.push((async()=>{await bodyCollector.attach(session,identity);
     session.on('Target.attachedToTarget',child=>onAttached(session,child));

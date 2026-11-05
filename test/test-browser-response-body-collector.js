@@ -258,6 +258,104 @@ async function main() {
         optionalAbsence: mode === 'wrong-identity' ? {...response.bodyIdentity} : response.bodyIdentity,
         policy: mode === 'missing-policy' ? '' : 'fixture-optional-absence'}});
     }
+    const protocolError = (message, code) => Object.assign(Error(message),
+      {name: 'ProtocolError', originalMessage: message, ...(code === undefined ? {} : {code})});
+    async function worker(ctx, options = {}) {
+      const w = new Session('worker'); w.origin = origin;
+      const send = w.send.bind(w);
+      w.send = async (method, params) => {
+        if (method === 'Fetch.enable') {
+          w.calls.push({method, params});
+          throw options.fetchError || protocolError("'Fetch.enable' wasn't found");
+        }
+        if (method === 'Network.getResponseBody') {
+          w.calls.push({method, params});
+          if (params.requestId === '__wine_body_capability_probe__')
+            throw options.capabilityError || protocolError('No resource with given identifier found');
+          const bytes = w.bodies.get(params.requestId);
+          if (bytes instanceof Error) throw bytes;
+          if (typeof bytes === 'function') return bytes();
+          assert(Buffer.isBuffer(bytes), 'body must belong to this Worker request');
+          return {body: bytes.toString('base64'), base64Encoded: true};
+        }
+        assert(!['Fetch.getResponseBody', 'Fetch.continueResponse'].includes(method), 'no Worker Fetch body channel');
+        return send(method, params);
+      };
+      await ctx.collector.attach(w, {sessionId: 'worker', targetId: 'worker-target',
+        type: 'worker', waitingForDebugger: true, url: origin + '/worker.js',
+        parentSessionId: ctx.s.id, ...options.identity});
+      w.request = (id, extra = {}) => w.emit('Network.requestWillBeSent', {requestId: id,
+        type: 'Fetch', request: {url: origin + '/index.html', method: 'GET'}, ...extra});
+      w.response = (id, extra = {}) => w.emit('Network.responseReceived', {requestId: id,
+        type: 'Fetch', response: {url: origin + '/index.html', status: 200}, ...extra});
+      return w;
+    }
+    await run('Worker-Network-terminal-before-body', async ctx => {
+      const w = await worker(ctx); w.bodies.set('n', body); w.request('n'); w.response('n');
+      assert(!ctx.collector.snapshot().complete);
+      let settled = false; const draining = ctx.collector.drain().then(() => {settled = true;});
+      await tick(); assert(!settled);
+      assert(!w.calls.some(c => c.method === 'Network.getResponseBody' && c.params.requestId === 'n'));
+      w.emit('Network.loadingFinished', {requestId: 'n'}); await draining;
+      assert(ctx.collector.snapshot().complete); assert.deepEqual(ctx.received[0].body, body);
+      assert.equal(ctx.received[0].identity.sessionId, 'worker');
+      assert.equal(ctx.collector.snapshot().responses[0].state, 'collected');
+    });
+    for (const mode of ['missing-body', 'timeout', 'transfer-timeout', 'detach', 'wrong-session',
+      'post', 'redirect', 'response-url', 'response-type', 'orphan', 'loading-failed', 'duplicate-response'])
+      await run('Worker-Network-' + mode, async ctx => {
+        const w = await worker(ctx);
+        w.bodies.set('n', mode === 'missing-body' ? protocolError('No data found for resource with given identifier') :
+          mode === 'timeout' ? () => new Promise(() => {}) : body);
+        if (mode === 'wrong-session') {ctx.s.bodies.set('n', body); w.bodies.delete('n');}
+        if (mode !== 'orphan') w.request('n', mode === 'post' ? {request: {url: origin + '/index.html', method: 'POST'}} : {});
+        if (mode === 'redirect') w.request('n', {redirectResponse: {status: 302}});
+        w.response('n', mode === 'response-url' ? {response: {url: origin + '/other', status: 200}} :
+          mode === 'response-type' ? {type: 'Script'} : {});
+        if (mode === 'duplicate-response') w.response('n');
+        if (mode === 'detach') w.emit(DISCONNECT);
+        if (mode === 'loading-failed') w.emit('Network.loadingFailed', {requestId: 'n', errorText: 'net::ERR_CONTENT_LENGTH_MISMATCH'});
+        if (mode !== 'transfer-timeout') w.emit('Network.loadingFinished', {requestId: 'n'});
+        await assert.rejects(ctx.collector.drain()); assert(!ctx.collector.snapshot().complete);
+        assert.equal(ctx.received.length, 0); assert.equal(ctx.faults.length, 1);
+        const first = JSON.stringify(ctx.faults[0]); w.emit(DISCONNECT);
+        assert.equal(JSON.stringify(ctx.collector.snapshot().firstFault), first);
+      });
+    await run('Worker-Network-optional-script404', async ctx => {
+      const w = await worker(ctx);
+      w.request('n', {type: 'Script'}); w.response('n', {type: 'Script', response: {url: origin + '/index.html', status: 404}});
+      w.emit('Network.loadingFailed', {requestId: 'n', type: 'Script', errorText: 'net::ERR_ABORTED', canceled: true});
+      await ctx.collector.drain(); assert(ctx.collector.snapshot().complete);
+      assert(!w.calls.some(c => c.method === 'Network.getResponseBody' && c.params.requestId === 'n'));
+    }, {onResponse: absence});
+    for (const mode of ['positive', 'missing-parent', 'wrong-parent', 'redirect-parent', 'post-parent',
+      'unverified-parent', 'wrong-target', 'wrong-type', 'wrong-body']) await run('Worker-startup-' + mode, async ctx => {
+      const url = origin + '/worker.js';
+      if (mode !== 'missing-parent') ctx.s.emit('Network.requestWillBeSent', {requestId: 'worker-target', type: 'Script',
+        request: {url, method: mode === 'post-parent' ? 'POST' : 'GET'},
+        ...(mode === 'redirect-parent' ? {redirectResponse: {status: 302}} : {})});
+      if (mode !== 'unverified-parent') {ctx.s.pause('parent', body, {networkId: 'worker-target', request: {url, method: 'GET'}}); await ctx.collector.drain();}
+      const w = await worker(ctx, {identity: {parentSessionId: mode === 'wrong-parent' ? 'unknown' : ctx.s.id}});
+      const id = mode === 'wrong-target' ? 'other' : 'worker-target';
+      w.bodies.set(id, mode === 'wrong-body' ? Buffer.from('other script') : body);
+      w.response(id, {type: mode === 'wrong-type' ? 'Fetch' : 'Script', response: {url, status: 200}});
+      w.emit('Network.loadingFinished', {requestId: id});
+      if (mode === 'positive') {await ctx.collector.drain(); assert(ctx.collector.snapshot().complete);
+        assert.equal(ctx.received.at(-1).identity.sessionId, 'worker');
+        assert.equal(ctx.received.at(-1).identity.startupBinding.sessionId, ctx.s.id);
+        assert(Object.isFrozen(ctx.received.at(-1).identity.startupBinding));
+      } else {await assert.rejects(ctx.collector.drain()); assert(!ctx.collector.snapshot().complete);}
+    });
+    for (const mode of ['unknown-fetch-error', 'fetch-denied', 'body-method-unavailable', 'body-probe-timeout', 'not-paused', 'page'])
+      await run('Worker-capability-' + mode, async ctx => {
+        const options = mode === 'unknown-fetch-error' ? {fetchError: Error("'Fetch.enable' wasn't found")} :
+          mode === 'fetch-denied' ? {fetchError: protocolError('permission denied', -32000)} :
+          mode === 'body-method-unavailable' ? {capabilityError: protocolError("'Network.getResponseBody' wasn't found", -32601)} :
+          mode === 'body-probe-timeout' ? {capabilityError: Error('body-capability timeout')} :
+          {identity: mode === 'page' ? {type: 'page'} : {waitingForDebugger: false}};
+        await assert.rejects(worker(ctx, options)); assert(!ctx.collector.snapshot().complete);
+        assert.equal(ctx.faults.length, 1);
+      });
     console.log('PASS ' + passed + ' synthetic CDP lifecycle cases; real local FS/HTTP bytes; ZERO Chrome');
   } finally { server.closeIdleConnections?.(); await closeServer(server); }
 }

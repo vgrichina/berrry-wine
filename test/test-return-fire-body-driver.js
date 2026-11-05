@@ -13,7 +13,7 @@ const EXPECTED = '90f4d8f6d182b28aefe07744148452d5deb8590aaf12801a0313e137ca13b0
 const RUN_PARENT = path.join(ROOT, 'scratch/runs/20261105-return-fire-browser-body-receipts');
 fs.mkdirSync(RUN_PARENT, {recursive: true});
 const RUN = process.env.RF_BODY_TEST_RUN || fs.mkdtempSync(path.join(RUN_PARENT, 'test-'));
-assert(RUN.startsWith(path.join(ROOT, 'scratch/runs/20261105-return-fire-browser-body-receipts/')));
+assert(RUN.startsWith(path.join(ROOT, 'scratch/runs/')), 'fresh caller-owned evidence under scratch/runs required');
 fs.mkdirSync(RUN, {recursive: true});
 const read = file => JSON.parse(fs.readFileSync(file));
 const priorSource = fs.readFileSync(USED, 'utf8');
@@ -34,11 +34,12 @@ const cases = [];
 let suiteDone = false;
 process.once('beforeExit', () => {if (!suiteDone) {console.error('FAIL composed suite incomplete'); process.exitCode = 1;}});
 async function run(name, mode) {
-  const successful = mode === 'positive' || mode === 'optional-script404';
+  const successful = mode === 'positive' || mode === 'optional-script404' || mode === 'worker-network';
   const runDir = path.join(RUN, name); fs.mkdirSync(runDir);
   let source = compose({source: priorSource, expectedSHA256: EXPECTED, run: runDir});
   // Shorten only the fixture timeout, never the qualified helper/default.
-  source = source.replace("onResponse:r=>responseHandler(r),", "timeoutMs:100,onResponse:r=>responseHandler(r),");
+  source = source.replace("disconnectedEvent:require('puppeteer').CDPSessionEvent.Disconnected,",
+    "disconnectedEvent:require('puppeteer').CDPSessionEvent.Disconnected,timeoutMs:100,");
   const pinMutation = {
     'pin-missing': "pin.files=pin.files.filter(f=>!f.path.startsWith('test/binaries/tlbs/'));",
     'pin-wronghash': "pin.files.find(f=>f.path.startsWith('test/binaries/tlbs/')).sha256='0'.repeat(64);",
@@ -60,6 +61,8 @@ async function run(name, mode) {
   const grandchild = new Session('nested-worker');
   const send = session.send.bind(session), childSend = child.send.bind(child);
   session.id = () => 'page-session';
+  child.id = () => 'worker-session';
+  grandchild.id = () => 'nested-session';
   session.connection = () => ({session: id => {assert.equal(id, 'worker-session'); return mode === 'missing-child-session' ? null : child;}});
   session.send = async (method, params) => {
     if (method === 'Target.getTargetInfo') return {targetInfo: {targetId: 'page-target'}};
@@ -70,6 +73,17 @@ async function run(name, mode) {
   };
   child.connection = () => ({session: id => {assert.equal(id, 'nested-session'); return grandchild;}});
   child.send = async (method, params) => {
+    if (mode === 'worker-network' && method === 'Fetch.enable') {
+      child.calls.push({method, params});
+      throw Object.assign(Error("'Fetch.enable' wasn't found"), {name: 'ProtocolError', originalMessage: "'Fetch.enable' wasn't found"});
+    }
+    if (mode === 'worker-network' && method === 'Network.getResponseBody') {
+      child.calls.push({method, params});
+      if (params.requestId === '__wine_body_capability_probe__')
+        throw Object.assign(Error('No resource with given identifier found'), {name: 'ProtocolError', originalMessage: 'No resource with given identifier found'});
+      const body = child.bodies.get(params.requestId); assert(Buffer.isBuffer(body));
+      return {body: body.toString('base64'), base64Encoded: true};
+    }
     if (method === 'Target.setAutoAttach') child.emit('Target.attachedToTarget', {
       sessionId: 'nested-session', targetInfo: {type: 'worker', targetId: 'nested-target',
         url: 'http://127.0.0.1/lib/nested-worker.js'}, waitingForDebugger: true});
@@ -87,6 +101,13 @@ async function run(name, mode) {
     target.origin = new URL(response.url()).origin;
     const script = overrides.optionalScript;
     const networkId = 'network-' + id;
+    if (mode === 'worker-network' && target === child) {
+      target.bodies.set(networkId, bytes);
+      target.emit('Network.requestWillBeSent', {requestId: networkId, type: 'Fetch', request: {url: response.url(), method: 'GET'}});
+      target.emit('Network.responseReceived', {requestId: networkId, type: 'Fetch', response: {url: response.url(), status}});
+      target.emit('Network.loadingFinished', {requestId: networkId});
+      return;
+    }
     const failed = {requestId: networkId, type: 'Script', errorText: 'net::ERR_ABORTED', canceled: true};
     if (script === 'optional-script-not-canceled') failed.canceled = false;
     if (script === 'optional-script-reset') failed.errorText = 'net::ERR_CONNECTION_RESET';
@@ -223,6 +244,13 @@ async function run(name, mode) {
     assert.equal(receipts.receipts.filter(r => r.path.endsWith('ART/1PSCREEN.~CR') && r.verified).length, 3);
     const ids = receipts.receipts.filter(r => r.path.endsWith('ART/1PSCREEN.~CR')).map(r => r.bodyIdentity.sessionId);
     assert.equal(new Set(ids).size, 3);
+    if (mode === 'worker-network') {
+      const worker = collector.sessions.find(s => s.sessionId === 'worker-session');
+      assert.equal(worker.transport, 'Network'); assert.equal(worker.parentSessionId, 'page-session');
+      const row = receipts.receipts.find(r => r.bodyIdentity?.sessionId === 'worker-session');
+      assert.equal(row.bodyIdentity.source, 'CDP.Network.response-body');
+      assert(!child.calls.some(c => c.method === 'Fetch.getResponseBody' || c.method === 'Fetch.continueResponse'));
+    }
     if (mode === 'optional-script404') {
       const optional = receipts.receipts.filter(r => r.path === 'build-info.js');
       assert.equal(optional.length, 3);
@@ -263,7 +291,7 @@ async function run(name, mode) {
     await assert.rejects(real.launch({executablePath: '/usr/bin/google-chrome', headless: false,
       userDataDir: path.join(RUN, 'guard-native-profile'), args: ['--no-sandbox']}), /NATIVE_SPAWN_FORBIDDEN/);
     cp.spawn = publicGuard;
-    for (const mode of ['positive', 'wrong-hash', 'wrong-size', 'pin-missing', 'pin-wronghash',
+    for (const mode of ['positive', 'worker-network', 'wrong-hash', 'wrong-size', 'pin-missing', 'pin-wronghash',
       'pin-wrongsize', 'system-query', 'existing-404', 'body-rejected',
       'body-timeout', 'cancel', 'detach', 'post', 'redirect', 'missing-system-receipt',
       'font-corrupt', 'font-omitted', 'font-rejected', 'font-unresolved',
