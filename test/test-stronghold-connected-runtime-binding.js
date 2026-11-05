@@ -23,7 +23,7 @@ assert.equal(base.hash(original),api.ORIGINAL_PINS_SHA);
 assert.throws(()=>api.acceptedRuntimePins(),/unknown runtime dependency mismatch/);
 const fresh=api.freshRuntimePins(),pins=path.join(run,'runtime-pins.json');
 assert.equal(fresh.files.length,2429);assert.equal(fresh.files.filter(r=>r.path.startsWith('test/binaries/')).length,1856);
-assert.equal(fresh.freshRuntimeBinding.assignment,'stronghold-connected-original-gameplay-0745 user task');
+assert.equal(fresh.freshRuntimeBinding.assignment,'stronghold-prompt-review-gameplay-0855 user task');
 assert.equal(fresh.freshRuntimeBinding.originalPinsSHA256,base.hash(original));
 assert.equal(fresh.commit,cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim());
 assert.equal(api.verifyFreshRuntimePins(fresh),fresh);

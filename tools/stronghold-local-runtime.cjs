@@ -3,7 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-connected-original-gameplay-0745 user task';
+const AUTH='stronghold-prompt-review-gameplay-0855 user task';
 const ASSIGNMENT=AUTH;
 const CHROME='/opt/google/chrome/chrome';
 const CUTOFF=Date.parse('2026-11-05T15:57:00Z'),CLEANUP=Date.parse('2026-11-05T16:00:00Z');
@@ -69,13 +69,13 @@ const FRESH_ACCEPTED=Object.freeze({
  "src/09a-handlers.wat": "5175a9f3c274dd817f7957be8dc9855be804cbe08f1e38599113a1f600bcadf2",
  "src/09a8-handlers-directx.wat": "e888572a429d90c58f61d2d57c5ef9b7c56981f3497ecfcc32df2b4fe1de833d",
  "src/09aa-handlers-d3dim.wat": "927cd022bb8b8408202baed418fe9fb3cfe05a592dbe7704ed7a3ce3e94097c3",
- "src/09ab-handlers-d3dim-core.wat": "7c7aa75960f8d3fd1b0648206350e0a6e2e2609919b30fbfc1040433b786c0c9",
+ "src/09ab-handlers-d3dim-core.wat": "b0d46ca473d2397cbafbffbf77738007aa106b577c568c34b346bcacad660396",
  "src/09b-dispatch.wat": "d27ab09af3d262798084b69f9c65cb65d4b53d8e6afe20ce024ff011349d12d7",
  "src/11-seh.wat": "81683b0f40dbbba7127ee0e14d001011cfb6b5e9cb3c22ae1e9498c4e03e7a8d",
  "src/13-exports.wat": "9f195c50a1a28005dc44f4e62a0bfb972daf732ad0b2975e62f003c6afb677dc",
  "tools/callback-ownership-census.json": "420cac5e1b2d558bb54d3fdc2e8edc831e0da1ae64a5732806b62cfec9a1068e",
- "build/wine-assembly.wasm": "3361c1289e540ba1107c788905ab5a70ace7f4d003cfd05e1264c54bfc65267b",
- "build/wine-assembly.compat.wasm": "d33d98564db864ce8a1a7a4abad0554c4934331b36074bdb854c1ab96e458008",
+ "build/wine-assembly.wasm": "05f4f99c47f46138bc599e0b588d0ab29ef87a5c8c0e22ded9e3ac9ac3fd3ffb",
+ "build/wine-assembly.compat.wasm": "67b702236abced4946b31906c901440f0d0607b99f74cd4b327a6dd0c9a18ca6",
  "tools/stronghold-owning-callback-observer.cjs": "b62b62555bff6aea31b55696de85b68fc19d9bf3fd5d5163d9bfbd20a69b7943",
  "tools/stronghold-native-preset-observer.cjs": "b991df4dc48d3cfe08582002ec51ffa3dcb03fd701fcf9e009aae9ce1f981911"
 });
@@ -96,13 +96,13 @@ const FRESH_PROVENANCE=Object.freeze({
  "src/09a-handlers.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
  "src/09a8-handlers-directx.wat": "03b16e2553ddbe7d879fea8524e9df479a97fa07",
  "src/09aa-handlers-d3dim.wat": "4683c73ca889ff4f84d809e2fb7fd3d06432f7c3",
- "src/09ab-handlers-d3dim-core.wat": "4683c73ca889ff4f84d809e2fb7fd3d06432f7c3",
+ "src/09ab-handlers-d3dim-core.wat": "e708ba0f72ad06ecc2a0627a059886186fd9fd01",
  "src/09b-dispatch.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
  "src/11-seh.wat": "0265956f9fbb4a69be631594dc1c36da9dace9dd",
  "src/13-exports.wat": "23d773990dcedcdf2df551f1e105ec39f529a045",
  "tools/callback-ownership-census.json": "23d773990dcedcdf2df551f1e105ec39f529a045",
- "build/wine-assembly.wasm": "4683c73ca889ff4f84d809e2fb7fd3d06432f7c3 existing build; validate full build before use",
- "build/wine-assembly.compat.wasm": "4683c73ca889ff4f84d809e2fb7fd3d06432f7c3 existing build; validate full build before use",
+ "build/wine-assembly.wasm": "e708ba0f72ad06ecc2a0627a059886186fd9fd01 existing build; validate full build before use",
+ "build/wine-assembly.compat.wasm": "e708ba0f72ad06ecc2a0627a059886186fd9fd01 existing build; validate full build before use",
  "tools/stronghold-owning-callback-observer.cjs": "23d773990dcedcdf2df551f1e105ec39f529a045",
  "tools/stronghold-native-preset-observer.cjs": "89caed5d1deeec73ea1c8538e8eb50f996b29496"
 });
@@ -138,7 +138,7 @@ function freshRuntimePins(){
  });
  if(pins.files.length!==2429||Object.keys(named).some(p=>!seen.has(p)))throw Error('complete fresh original closure required');
  const sourceIdentity=freshSourceIdentity(pins.files);
- return {...pins,commit:sourceIdentity.gitSHA,candidate:'named connected Stronghold original',
+ return {...pins,commit:sourceIdentity.gitSHA,candidate:'named prompt-reviewed connected Stronghold original',
   freshRuntimeBinding:{assignment:AUTH,originalPinsSHA256:ORIGINAL_PINS_SHA,sourceIdentity,amendments}};
 }
 function verifyFreshRuntimePins(pins){
@@ -160,8 +160,8 @@ function diagnosticScene(bytes,known,observation){
  return 'setup-transition-observation';
 }
 const PREDECESSORS=Object.freeze([
- ['d3d7-processvertices-strided','d3d7-processvertices-strided-0635'],
- ['return-fire-captured-body-gameplay','return-fire-captured-body-gameplay-0730']
+ ['d3d7-viewport-depth-consistency','d3d7-viewport-depth-consistency-0815'],
+ ['return-fire-optional404-cancellation','return-fire-optional404-cancellation-0825']
 ]);
 function requireRuntimeRelease(board,now=Date.now()){
  const rows=board.split('\n'),dependencies=[];
@@ -170,7 +170,7 @@ function requireRuntimeRelease(board,now=Date.now()){
   const runtimeOwn=rows.filter(r=>r.split(/\s+/)[1]===worker&&r.split(/\s+/).slice(2,5).join(' ')==='LOCAL HEAVY OWN').at(-1);
   const fileRelease=rows.filter(r=>{const p=r.split(/\s+/);return p[1]===worker&&p.slice(2,7).join(' ')==='FINAL runtime AND file RELEASE'&&p.includes('docs/re-notes/'+worker+'-20261105.md')&&p.includes('ALLBUILDSFINISHED');}).at(-1);
   const ownedAt=Date.parse(own?.split(' ')[0]),runtimeOwnedAt=Date.parse((runtimeOwn||own)?.split(' ')[0]),releasedAt=Date.parse(fileRelease?.split(' ')[0]);
-  if(!own||!fileRelease||![now,ownedAt,runtimeOwnedAt,releasedAt].every(Number.isFinite)||runtimeOwnedAt<Date.parse('2026-11-05T07:40:00Z')||releasedAt<ownedAt||releasedAt<runtimeOwnedAt||releasedAt>now||releasedAt>Date.parse('2026-11-05T15:00:00Z')||
+  if(!own||!fileRelease||![now,ownedAt,runtimeOwnedAt,releasedAt].every(Number.isFinite)||runtimeOwnedAt<Date.parse('2026-11-05T08:54:00Z')||releasedAt<ownedAt||releasedAt<runtimeOwnedAt||releasedAt>now||releasedAt>Date.parse('2026-11-05T15:00:00Z')||
      (dependencies.length&&(releasedAt<dependencies.at(-1).releasedAt||runtimeOwnedAt<dependencies.at(-1).releasedAt)))
    throw Error('exact '+assignment+' FINAL runtime and file release after current OWN, all builds finished required');
   dependencies.push({worker,assignment,own,ownedAt,runtimeOwn,runtimeOwnedAt,row:fileRelease,at:releasedAt,fileRelease,releasedAt});
