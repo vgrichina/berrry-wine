@@ -1376,16 +1376,17 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Inventory every game and complete gameplay screenshot/FPS coverage
   id: OPS-ALL-GAMEPLAY-COVERAGE
-  status: blocked (saved runtime box stopped; owner resume required)
+  status: pending (fresh replacement provisioned; serialized coverage run pending)
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   created: 2026-10-03T08:30:54.631Z
   created-by: user via Telegram
   accepted: 2026-10-03T08:30:54.631Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Disk reserve restored; saved bx_9ef2wdsw still stopped and scoped resume403. Await owner resume for serialized scene-qualified capture/FPS validation, after independent source/evidence checks. Darkstone matching-landmark movement reviewed and trace mergedcffd439e2; no new FPS/backend correctness claim. Existing per-game evidence gaps remain explicit.
+  Next: Use the fresh replacement setup and select verified available game fixtures for serialized scene-qualified screenshot/FPS validation when a worker slot frees. Do not resume superseded box. Darkstone matching-landmark movement/trace cffd439e2 remains accepted; no new FPS/backend claim.
   Done: Each game has a reviewed actual-gameplay screenshot and valid scene-qualified FPS evidence, or an explicit per-game blocker with exact missing paths; menus, intros and raw Flip event rates are not gameplay FPS.
   Evidence: ops/handoffs/migration-core-ready-20261003.md
+  Runtime replacement 2026-11-05: Owner authorized fresh POST /sandboxes with persisted UUID Idempotency-Key. New bx_2ap8npd8 created and command access verified; reconstruction commit/recipe hashes staged. Preparation only, no guest run/acceptance/gameplay. Stopped with snapshotAvailable=true after receipts retrieved; receipt/status in scratch/runs/20261105-owner-fresh-runtime/. Old bx_9ef2wdsw superseded and left untouched; no old resume/delete. Rebuild from repo and recorded fixture hashes; media absence remains explicit. One heavy runtime per box; stop promptly after run/evidence retrieval.
 
 - [x] New-game lane: original Daggerfall ordinary player-controlled dungeon
   id: NEW-GAME-DAGGERFALL-20261005
@@ -2115,35 +2116,37 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-AOE3-DEMO-20261010
-  blocker: Existing sandbox.resume 403 api_key_action_forbidden; requires documented authorized runtime access change and coordinator allocation, not a retry.
-  status: blocked (authorized acceptance; runtime and original-media prerequisites)
+  blocker: Recorded original installer absent locally; verified media reconstruction and a free worker slot required. Fresh box creation and command access succeeded.
+  status: pending (fresh replacement provisioned; original media reconstruction pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none (awaiting authorized runtime and verified original closure)
+  worker: none (four existing workers occupied; replacement setup prepared by coordinator)
   candidate: test/binaries/win98-games-a-d/Age-of-empire-3trial-Win98-SW.exe
   Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Recover/verify original installer, supporting assets and historical receipt, then use an authorized bounded runtime to observe acceptance and installed payload. Local exact-path observations and unknown remote availability are in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
   Previous checkpoint (licence-decision hold superseded): Original reaches EULA with InterlockedExchangeAdd candidate, XP profile, native MSXML4 and its resource DLL. Screenshot991 sent; no button answered. Evidence scratch/runs/20261010T0430Z-aoe3-eula. Await user review before gameplay; pipeline refilled Beyond Good and Evil.
   Done: Ordinary original launch reaches player-controlled gameplay with reviewed screenshot and run/build identity; tested fixes on main.
   Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=false until observed.
 
+  Runtime replacement 2026-11-05: Owner authorized fresh POST /sandboxes with persisted UUID Idempotency-Key. New bx_byzj52ta created and command access verified; reconstruction commit/recipe hashes staged. Preparation only, no guest run/acceptance/gameplay. Stopped with snapshotAvailable=true after receipts retrieved; receipt/status in scratch/runs/20261105-owner-fresh-runtime/. Old bx_hx8msa33 superseded and left untouched; no old resume/delete. Rebuild from repo and recorded fixture hashes; media absence remains explicit. One heavy runtime per box; stop promptly after run/evidence retrieval.
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-CONAN-DEMO-20261010
-  blocker: Existing sandbox.resume 403 api_key_action_forbidden; requires documented authorized runtime access change and coordinator allocation, not a retry.
-  status: blocked (authorized acceptance; runtime and original-media prerequisites)
+  blocker: Recorded original installer absent locally; verified media reconstruction and a free worker slot required. Fresh box creation and command access succeeded.
+  status: pending (fresh replacement provisioned; original media reconstruction pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: none (awaiting authorized runtime and verified original closure)
+  worker: none (four existing workers occupied; replacement setup prepared by coordinator)
   candidate: test/binaries/win98-games-a-d/Conan cauldron-DX9-D3D/ConanPC-Demo.exe
   Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Recover/verify original installer, supporting assets and historical receipt, then use an authorized bounded runtime to observe acceptance and installed payload. Local exact-path observations and unknown remote availability are in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
   Previous checkpoint (licence-decision hold superseded): Original staged and SHA verified on bx_hx8msa33. Ordinary language/welcome/destination inputs reach EULA with I Reject selected, run20261010T0803Z-conan-destination. Do not answer acceptance. No installer process running; extracted game not yet available. Refill actionable new-game slot while this remains held.
   Done: Original launch, player-controlled gameplay, reviewed screenshot and tested fixes on main; no public deployment.
   Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=false until observed.
 
+  Runtime replacement 2026-11-05: Owner authorized fresh POST /sandboxes with persisted UUID Idempotency-Key. New bx_wnnajw2r created and command access verified; reconstruction commit/recipe hashes staged. Preparation only, no guest run/acceptance/gameplay. Stopped with snapshotAvailable=true after receipts retrieved; receipt/status in scratch/runs/20261105-owner-fresh-runtime/. Old bx_hx8msa33 superseded and left untouched; no old resume/delete. Rebuild from repo and recorded fixture hashes; media absence remains explicit. One heavy runtime per box; stop promptly after run/evidence retrieval.
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-ARANNA-DEMO-20261010
-  blocker: Existing sandbox.resume 403 api_key_action_forbidden; requires documented authorized runtime access change and coordinator allocation, not a retry.
-  worker: none (awaiting authorized runtime and verified original closure)
-  status: blocked (authorized acceptance; runtime and original-media prerequisites)
+  blocker: Recorded original installer absent locally; verified media reconstruction and a free worker slot required. Fresh box creation and command access succeeded.
+  worker: none (four existing workers occupied; replacement setup prepared by coordinator)
+  status: pending (fresh replacement provisioned; original media reconstruction pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: test/binaries/win98-games-a-d/DungeonSiegelegendsofaranna_demo-D3D.exe
   Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Recover/verify original installer, supporting assets and historical receipt, then use an authorized bounded runtime to observe acceptance and installed payload. Local exact-path observations and unknown remote availability are in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
@@ -2151,6 +2154,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Done: Original launch, ordinary player-controlled gameplay and reviewed screenshot with source/build identity; fixes committed on main.
   Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=false until observed.
 
+  Runtime replacement 2026-11-05: Owner authorized fresh POST /sandboxes with persisted UUID Idempotency-Key. New bx_ymnfhg6q created and command access verified; reconstruction commit/recipe hashes staged. Preparation only, no guest run/acceptance/gameplay. Stopped with snapshotAvailable=true after receipts retrieved; receipt/status in scratch/runs/20261105-owner-fresh-runtime/. Old bx_hx8msa33 superseded and left untouched; no old resume/delete. Rebuild from repo and recorded fixture hashes; media absence remains explicit. One heavy runtime per box; stop promptly after run/evidence retrieval.
 
 - [~] Shadow Man original demo: installed launcher/configuration response accepted
   id: NEW-GAME-SHADOW-MAN-DEMO-20261013
