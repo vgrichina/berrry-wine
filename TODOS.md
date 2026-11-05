@@ -1875,11 +1875,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Colin McRae Rally 3 demo
   id: NEW-GAME-CMR3-DEMO-20261010
-  status: active (one owner-authorized emulator retry; source preparation behind shared test queue)
+  status: blocked (owner retry completed; causal evidence/media missing)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 5 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Fresh cmr3-emulator-owner-retry-nov05 diagnoses our native allocator/memory/lifetime behavior from retained UK Warwick loading evidence. Shared edits/tests wait Strong0950 then D3Dclip1010 then RFworker1020 exact releases/cleanup. No original runtime or box assigned; preserve precise missing prerequisites if no grounded mismatch.
+  Next: Owner retry completed2026-11-05 without renewed rejection or code/runtime:19 named evidence/media paths absent. Four recovered historical receipts lack damaged-node/arena/mapping/ownership data establishing producer mismatch. Existing diagnostic729d3fc73 and generation-aware unload remain integrated. Recover raw85638/105999 and authenticated original302/native12/registry/profile before further diagnosis. Findings: scratch/runs/20261105-cmr3-emulator-owner-retry/findings.md.
   runtime-revalidated: 2026-10-15 native recovery56105 terminal0; serialized remote runtime available, no transport blocker.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: test/binaries/win98-games-a-d/ColinMcRay-Rally3-pcdemo-D3D.exe
@@ -2006,11 +2006,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [~] New-game lane: Lords of the Realm II original playable Windows demo
   id: NEW-GAME-LORDS2-DEMO-20261015
   Prior evidence: scratch/runs/20261015-lords2-review-hold and shared WIP; original250171 reached GetNextWindow invalid1446 after GetParent fix, no gameplay.
-  status: queued (one owner-authorized retry; serialized)
+  status: active (last owner-authorized emulator retry; source preparation behind shared test queue)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 6 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Owner-authorized retry remains queued after CMR3. Reconcile merged bedaaaa7f first: current USER230/262 invalid-window handling and existing regressions already cover NULL rejection, valid sibling traversal, stale/nonwindow handles, Pascal far ABI and strict general conversion. Do not repeat that repaired defect. Inspect retained evidence for the next demonstrated emulator mismatch; original review-hold/preflight runs and SETUP.EXE are absent, while the Nov03 retained-payload audit survives. Preparation: scratch/runs/20261105-lords2-retry-preparation/prerequisites.json. No new gameplay or current test result claimed.
+  Next: Fresh lords2-emulator-owner-retry-nov05 follows completed CMR3; source-only behind Strong0950 -> D3Dclip1010 -> RFworker1020 exact releases/cleanup. Reconcile merged bedaaaa7f first: current USER230/262 invalid-window handling and existing regressions already cover NULL rejection, valid sibling traversal, stale/nonwindow handles, Pascal far ABI and strict general conversion. Do not repeat that repaired defect. Inspect retained evidence for the next demonstrated emulator mismatch; original review-hold/preflight runs and SETUP.EXE are absent, while the Nov03 retained-payload audit survives. Preparation: scratch/runs/20261105-lords2-retry-preparation/prerequisites.json. No new gameplay or current test result claimed.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   prev-owner: /root/new_demo_refill (released; coordinator reclaimed 2026-11-05)
   Done: Registered original launch, actual ordinary player control and reviewed gameplay screenshot with source/run identity.
