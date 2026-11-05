@@ -65,7 +65,7 @@ function expectCounts(result, distinct, raw, duplicates, anonymous) {
 }
 
 test('exact source mutation reconstructs the pinned accepted main sidebar baseline', () => {
-  assert.equal(crypto.createHash('sha256').update(baseline).digest('hex'), '9abafb9bd0f37110da8c57199708f4dcb60a20a1d58de20e3f2ffe4e2f3486f7');
+  assert.equal(crypto.createHash('sha256').update(baseline).digest('hex'), '8c22bbbd063bb82ea8f3eae5cbcf4a49a52453d1ba1e9b4fc2e1725ad1994502');
 });
 
 test('numeric/boolean IDs, exact strings, prototype-looking names and missing forms follow accepted identity', () => {

@@ -415,27 +415,46 @@ function corpusView() {
   return title('EXE corpus', 'Browse by category, release readiness and recorded evidence.') + corpusLaunchBar() + corpusReleaseBar() +
     `<div class="coverage-bar"><strong>${state.candidates.filter(c=>candidateCapture(c).shot).length} / ${state.candidates.length} with linked screenshots</strong><span>Historical images do not establish current compatibility.</span><button data-corpus-filter="with-shot">With screenshots</button><button data-corpus-filter="no-shot">Missing screenshots</button></div>`+
     `<div class="toolbar corpus-search-bar"><input id="corpus-query" type="search" placeholder="Search games and apps by name, id or exe…" aria-label="Search the EXE corpus" value="${escape(corpusQuery)}" autocomplete="off"><select id="corpus-type" aria-label="Entry type">${[['all','Games and apps'],['games','Games only'],['apps','Apps and tools only']].map(([id,label])=>`<option value="${id}" ${corpusType===id?'selected':''}>${label} (${id==='all'?state.candidates.length:state.candidates.filter(c=>corpusKind(c)===id).length})</option>`).join('')}</select>${corpusQuery||corpusType!=='all'?'<button data-corpus-search-clear="1">Clear search</button>':''}</div>`+
-    `<div class="toolbar"><select id="corpus-launch" aria-label="Launch availability"><option value="all" ${corpusLaunch==='all'?'selected':''}>All launch states</option><option value="available" ${corpusLaunch==='available'?'selected':''}>Launchable now</option></select><select id="corpus-release" aria-label="Release readiness">${[['all','All release states'],['unreleased','Unreleased games'],['gameplay-reviewed','Unreleased · gameplay reviewed'],...releaseStates.map(([id,label])=>[id,label])].map(([id,label])=>`<option value="${id}" ${corpusRelease===id?'selected':''}>${escape(label)}</option>`).join('')}</select><select id="corpus-category" aria-label="Category"><option value="all">All categories</option>${categories.map(g=>`<option value="${escape(g.id)}" ${corpusCategory===g.id?'selected':''}>${escape(g.label)} (${state.candidates.filter(c=>(c.category?.id || 'unclassified')===g.id).length})</option>`).join('')}</select><select id="corpus-group" aria-label="Source group"><option value="all">All source groups</option>${[...new Set(state.candidates.map(c=>c.sourceGroup).filter(Boolean))].sort().map(g=>`<option ${corpusGroup===g?'selected':''} value="${escape(g)}">${escape(g)}</option>`).join('')}</select><select id="filter" aria-label="Corpus status">${[['all', 'All candidates'], ['working', 'In progress'], ['with-shot', 'With screenshots'], ['no-run', 'No recorded run'], ['no-shot', 'Missing screenshots'], ['passed', 'Latest run passed'], ['failed', 'Latest run failed'], ['harness-error', 'Harness error']].map(([s, label]) => `<option value="${s}" ${s === filter ? 'selected' : ''}>${label}</option>`).join('')}</select><span class="sub">${candidates.length} candidates · ${state.candidates.filter(c => candidateWork(c)?.status === 'active').length} in progress</span></div><p class="sub">Includes manifest and registered apps. Unclassified entries need category review. Source group does not imply redistribution permission.</p>${categories.map(category => {
-      const members = candidates.filter(c => (c.category?.id || 'unclassified') === category.id);
-      if (!members.length) return '';
-      return `<section class="corpus-category" data-category="${escape(category.id)}"><h2>${escape(category.label)} <span class="sub">(${members.length})</span></h2><div class="corpus-grid">${members.map(c => {
+    `<div class="toolbar"><select id="corpus-launch" aria-label="Launch availability"><option value="all" ${corpusLaunch==='all'?'selected':''}>All launch states</option><option value="available" ${corpusLaunch==='available'?'selected':''}>Launchable now</option></select><select id="corpus-release" aria-label="Release readiness">${[['all','All release states'],['unreleased','Unreleased games'],['gameplay-reviewed','Unreleased · gameplay reviewed'],...releaseStates.map(([id,label])=>[id,label])].map(([id,label])=>`<option value="${id}" ${corpusRelease===id?'selected':''}>${escape(label)}</option>`).join('')}</select><select id="corpus-category" aria-label="Category"><option value="all">All categories</option>${categories.map(g=>`<option value="${escape(g.id)}" ${corpusCategory===g.id?'selected':''}>${escape(g.label)} (${state.candidates.filter(c=>(c.category?.id || 'unclassified')===g.id).length})</option>`).join('')}</select><select id="corpus-group" aria-label="Source group"><option value="all">All source groups</option>${[...new Set(state.candidates.map(c=>c.sourceGroup).filter(Boolean))].sort().map(g=>`<option ${corpusGroup===g?'selected':''} value="${escape(g)}">${escape(g)}</option>`).join('')}</select><select id="filter" aria-label="Corpus status">${[['all', 'All candidates'], ['working', 'In progress'], ['with-shot', 'With screenshots'], ['no-run', 'No recorded run'], ['no-shot', 'Missing screenshots'], ['passed', 'Latest run passed'], ['failed', 'Latest run failed'], ['harness-error', 'Harness error']].map(([s, label]) => `<option value="${s}" ${s === filter ? 'selected' : ''}>${label}</option>`).join('')}</select><span class="sub">${candidates.length} candidates · ${state.candidates.filter(c => candidateWork(c)?.status === 'active').length} in progress</span></div><p class="sub">Includes manifest and registered apps. Unclassified entries need category review. Source group does not imply redistribution permission.</p>${corpusGroups(candidates, categories)}`;
+}
+// ~370 entries do not fit one page on a phone. Entries that need attention come
+// first; each category is a collapsed section with its counts and is only
+// rendered when opened, in pages of CORPUS_PAGE cards. A filter or search, or a
+// short result, opens every section.
+const corpusOpen = new Map(), corpusLimits = new Map(), CORPUS_PAGE = 24;
+const corpusFailing = c => ['failed', 'harness-error', 'timeout'].includes(c.latestRun?.outcome);
+const corpusAttention = c => corpusFailing(c) || ['active', 'blocked', 'review'].includes(candidateWork(c)?.status);
+function corpusFiltered() { return !!(query || corpusQuery || corpusType !== 'all' || corpusCategory !== 'all' || corpusGroup !== 'all' || corpusRelease !== 'all' || corpusLaunch !== 'all' || filter !== 'all'); }
+function corpusSection(id, label, members, defaultOpen, extra = '', openAll = false) {
+  if (!members.length) return '';
+  const open = openAll || (corpusOpen.get(id) ?? defaultOpen);
+  const limit = corpusLimits.get(id) || CORPUS_PAGE;
+  const failing = members.filter(corpusFailing).length, working = members.filter(c => candidateWork(c)?.status === 'active').length, shots = members.filter(c => candidateCapture(c).shot).length;
+  const facts = [working ? `<span class="warn">${working} in progress</span>` : '', failing ? `<span class="bad">${failing} failing</span>` : '', `${shots} with screenshots`].filter(Boolean).join(' · ');
+  return `<details class="corpus-category" data-category="${escape(id)}" data-corpus-section="${escape(id)}" ${open ? 'open' : ''}><summary><h2>${escape(label)} <span class="group-count">${members.length}</span></h2><span class="sub corpus-facts">${facts}${extra}</span></summary>${open ? `<div class="corpus-grid">${members.slice(0, limit).map(corpusCard).join('')}</div>${members.length > limit ? `<button class="showmore wide" data-corpus-more="${escape(id)}">Show ${Math.min(CORPUS_PAGE, members.length - limit)} more of ${members.length - limit}</button>` : ''}` : ''}</details>`;
+}
+function corpusGroups(candidates, categories) {
+  if (!candidates.length) return empty('No matching candidates.');
+  const openAll = candidates.length <= CORPUS_PAGE || corpusFiltered(), attention = openAll ? [] : candidates.filter(corpusAttention);
+  return corpusSection('attention', 'Needs attention', attention, true, ' · in-progress, blocked or failing entries') +
+    categories.map(category => corpusSection(category.id, category.label, candidates.filter(c => (c.category?.id || 'unclassified') === category.id), false, '', openAll)).join('');
+}
+function corpusCard(c) {
       const {shot,run:captureRun,older,gameplay} = candidateCapture(c);
       const work = candidateWork(c);
       return `<div class="candidate-shell"><button class="candidate ${shot?'':'candidate-no-capture'} ${work?.status === 'active' ? 'candidate-working' : ''}" data-candidate="${escape(c.id)}">${work ? `<div class="candidate-work">${badge(work.status === 'active' ? '▶ In progress' : taskState(work.status)[1], 'task-label task-label-' + work.status)}<span>${escape(work.title)}</span></div>` : ''}<div class="thumbnail">${shot ? `<img src="${escape(shot.url)}" alt="${older?'Earlier':'Latest'} capture for ${escape(c.name)}: ${escape(shot.name)}" loading="lazy">` : 'NO LINKED CAPTURE'}</div><div class="candidate-info">${corpusReleaseReview(c)}${corpusAssessment(c)}<div class="sub">${escape(c.sourceGroup || 'Source unclassified')}${c.localOnly?' · Local only':''}</div><h3>${escape(c.name || c.id)}</h3><div class="sub">${escape(c.version || c.id)}</div>${gameplay?badge('Reviewed gameplay scene','good'):''}${corpusFps(c)}<div class="candidate-bottom">${badge(c.latestRun ? 'Latest run: '+c.latestRun.outcome : 'No recorded run', ['failed','harness-error'].includes(c.latestRun?.outcome)?'bad':'')}<span class="sub">${c.taskIds.length} linked tasks</span></div>${c.latestRun?.route?`<div class="sub candidate-route" title="${escape(c.latestRun.route)}">${escape(c.latestRun.route)}</div>`:''}<div class="sub">Fixture ${escape(c.fixtureStatus)} · ${shot ? (older?'Earlier capture · '+when(captureRun.startedAt):captureRun.verification + ' capture') : 'screenshot missing'}</div></div></button>${corpusLaunchActions(c)}</div>`;
-    }).join('')}</div></section>`;
-    }).join('') || empty('No matching candidates.')}`;
 }
 let desktopSelection='all';
 function desktopRowHtml(row) {
   const c=state.candidates.find(x=>x.id===row.id),[,label,color]=releaseState(c);
   const gateMark=g=>g.met?'✓':g.status==='blocked'?'✕':'?';
-  const unmet=row.gates.filter(g=>!g.met);
+  const unmet=row.gates.filter(g=>!g.met),fold=row.blockers.length+unmet.length>2;
   const rate=row.rate.known?`<strong>${escape(row.rate.text)}</strong> <span class="sub">${row.rate.reviewed?'reviewed run':'unreviewed run'}${row.rate.historical?' · historical':''} · ${escape(row.rate.qualification)}${row.rate.measuredAt?' · '+age(row.rate.measuredAt)+' ago':''}${row.rate.scene?' · '+escape(row.rate.scene):''}</span>`:`<strong>${escape(row.rate.text)}</strong>`;
   const shot=row.screenshot?`<button class="desktop-shot" data-run="${escape(row.screenshot.runKey)}" aria-label="Open reviewed gameplay evidence for ${escape(row.name)}"><img src="${escape(row.screenshot.url)}" alt="Reviewed gameplay: ${escape(row.name)} · ${escape(row.screenshot.name)}" loading="lazy"></button>`:'<div class="desktop-shot desktop-shot-missing">No reviewed gameplay screenshot</div>';
   return `<article class="desktop-row panel" data-desktop-row="${escape(row.id)}">${shot}<div class="desktop-body"><div class="desktop-head"><h3>${escape(row.name)}</h3>${badge(label,color)}<span class="desktop-gates" aria-label="Release gates">${row.gates.map(g=>`<span class="gate gate-${g.met?'met':g.status==='blocked'?'blocked':'unknown'}" title="${escape(g.name+': '+g.status+' — '+g.detail)}">${gateMark(g)} ${escape(g.name)}</span>`).join('')}</span></div>`+
     `<p class="desktop-line">${rate}</p><p class="desktop-line sub">${escape(row.input.text)} · ${escape(row.sound.text)} · Deploy not recorded${row.gameplayRun?` · Gameplay run ${escape(row.gameplayRun.build.text)} · <span class="build-${row.gameplayRun.servedMatch.status}">${escape(row.gameplayRun.servedMatch.text)}</span>`:''}</p>`+
     `${row.staleReasons.length?`<p class="desktop-line notice-line">Review not current: ${escape(row.staleReasons.join(' '))}</p>`:''}`+
-    `<ul class="desktop-blockers">${row.blockers.map(b=>`<li class="blocker-item"><strong>Blocker:</strong> ${escape(b.summary)}${b.source?` <span class="sub">${escape(b.source)}</span>`:''}</li>`).join('')}${unmet.map(g=>`<li><strong>${escape(g.name)}</strong> ${escape(g.status.replaceAll('-',' '))}: ${escape(g.detail)}${g.source?` <span class="sub">${escape(g.source)}</span>`:''}</li>`).join('')}</ul>`+
+    `${fold?`<details class="desktop-fold"><summary>${row.blockers.length} blocker${row.blockers.length===1?'':'s'} · ${unmet.length} unmet gate${unmet.length===1?'':'s'}</summary>`:''}<ul class="desktop-blockers">${row.blockers.map(b=>`<li class="blocker-item"><strong>Blocker:</strong> ${escape(b.summary)}${b.source?` <span class="sub">${escape(b.source)}</span>`:''}</li>`).join('')}${unmet.map(g=>`<li><strong>${escape(g.name)}</strong> ${escape(g.status.replaceAll('-',' '))}: ${escape(g.detail)}${g.source?` <span class="sub">${escape(g.source)}</span>`:''}</li>`).join('')}</ul>${fold?'</details>':''}`+
     `${row.next?`<p class="desktop-line"><strong>Next:</strong> ${escape(row.next)}</p>`:''}<div class="desktop-actions">${corpusLaunchActions(c,false,true)}<button data-candidate="${escape(row.id)}">Details →</button></div></div></article>`;
 }
 function desktopView() {
@@ -447,8 +466,38 @@ function desktopView() {
     `<div class="release-counts desktop-counts">${counts.map(([id,n,label,hint])=>`<button data-desktop-filter="${id}" aria-pressed="${desktopSelection===id}" title="${escape(hint)}"><strong>${n}</strong> ${escape(label)}</button>`).join('')}</div>`+stale+
     `<div class="toolbar"><select id="desktop-selection" aria-label="Desktop readiness filter">${choices.map(([id,l])=>`<option value="${id}" ${desktopSelection===id?'selected':''}>${l}</option>`).join('')}</select><span class="sub">${rows.length} shown · ${q.production.status==='verified'?'production snapshot checked '+escape(when(q.production.checkedAt)):'production membership unverified'} · ${q.unknownMembership} games with unknown membership are not listed</span></div>`+
     `<p class="source-note">From recorded release reviews, runs and launch routes only. Rates use their recorded metric label; nothing is inferred from block or present counts. Sound and deploy evidence are not recorded for any game and are shown as such; they are not gates here. ✓ passed · ✕ blocked · ? not reviewed. This view does not publish or deploy.</p>`+
-    `<div class="desktop-list">${rows.map(desktopRowHtml).join('') || empty('No unreleased games match this filter.')}</div>`;
+    (rows.length ? desktopGroups(rows) : `<div class="desktop-list">${empty('No unreleased games match this filter.')}</div>`);
 }
+// Grouped by what is left to do, closest to release first. Groups after the
+// first non-empty one start collapsed and render only when opened, in pages.
+const desktopOpen = new Map(), desktopLimits = new Map(), DESKTOP_PAGE = 10;
+function desktopGroups(rows) {
+  const groups = [['ready', 'Ready', r => r.status === 'ready'], ['playable', 'Playable · reviewed gameplay and launchable', r => r.playable],
+    ['review-needed', 'Review needed · no recorded blockers', r => r.status === 'review-needed'], ['blocked', 'Blocked', r => r.status === 'blocked'], ['other', 'Not reviewed yet', () => true]];
+  const seen = new Set(), openAll = rows.length <= 12 || !!query;
+  let shown = 0;
+  return groups.map(([id, label, test]) => {
+    const members = rows.filter(r => !seen.has(r.id) && test(r)); members.forEach(r => seen.add(r.id));
+    if (!members.length) return '';
+    const open = openAll || (desktopOpen.get(id) ?? shown++ < 1), limit = desktopLimits.get(id) || DESKTOP_PAGE;
+    const blockers = members.reduce((n, r) => n + r.blockers.length, 0);
+    return `<details class="desktop-group" data-desktop-group="${id}" ${open ? 'open' : ''}><summary><h2>${escape(label)} <span class="group-count">${members.length}</span></h2>${blockers ? `<span class="sub">${blockers} recorded blocker${blockers === 1 ? '' : 's'}</span>` : ''}</summary>${open ? `<div class="desktop-list">${members.slice(0, limit).map(desktopRowHtml).join('')}</div>${members.length > limit ? `<button class="showmore wide" data-desktop-more="${id}">Show ${Math.min(DESKTOP_PAGE, members.length - limit)} more of ${members.length - limit}</button>` : ''}` : ''}</details>`;
+  }).join('');
+}
+document.addEventListener('toggle', event => {
+  const el = event.target;
+  if (!el.isConnected || !el.matches?.('details[data-corpus-section],details[data-desktop-group]')) return;
+  const [map, id] = el.dataset.corpusSection ? [corpusOpen, el.dataset.corpusSection] : [desktopOpen, el.dataset.desktopGroup];
+  if (map.get(id) === el.open) return;
+  map.set(id, el.open);
+  if (el.open && !el.querySelector('.corpus-grid,.desktop-list')) render();
+}, true);
+document.addEventListener('click', event => {
+  const el = event.target.closest?.('[data-corpus-more],[data-desktop-more]'); if (!el || !state) return;
+  if (el.dataset.corpusMore) corpusLimits.set(el.dataset.corpusMore, (corpusLimits.get(el.dataset.corpusMore) || CORPUS_PAGE) + CORPUS_PAGE);
+  else desktopLimits.set(el.dataset.desktopMore, (desktopLimits.get(el.dataset.desktopMore) || DESKTOP_PAGE) + DESKTOP_PAGE);
+  render();
+});
 document.addEventListener('change',event=>{if(event.target.id==='desktop-selection'){desktopSelection=event.target.value;render();}});
 document.addEventListener('click',event=>{const el=event.target.closest?.('[data-desktop-filter]');if(el&&state){desktopSelection=desktopSelection===el.dataset.desktopFilter?'all':el.dataset.desktopFilter;render();}});
 function currentAgents() {
