@@ -65,11 +65,64 @@ build reproduces both accepted module hashes. An intermediate test overlapped
 that build's output replacement and correctly rejected a changing module;
 its failed log is retained and the stable final closure is checked again.
 
-Runtime evidence is appended after publication and serialized admission.
-Until then, no original has been consumed. Native draw/update/late-clock/return,
-taken surface source/target/HRESULT, normal page upload/renderer completion and
-fresh pixels remain unproved. Structural candidates do not prove unique
-operation ownership or fresh pixels. Original assets/configuration, active0
+Binding implementation was published as
+`9ac356cab12a5417487fa86a434c45cac4d3e7ff` before the original. After exact MDK2
+heavy/file releases, this worker independently verified its recorded Node,
+flock and Chrome PIDs/start ticks absent, three ports refusing connections and
+the exact profile absent. The final published full-entry preflight again passed
+all 2,429 filesystem rows and all 2,429 HTTP responses with public/native spawn
+forbidden and zero Chrome. An independent current load sample found no active
+heavy process; no other Chrome was present. The external runtime flock was
+then acquired atomically for exactly one original.
+
+## One original: operator sequencing failure, normal closure
+
+Actual Chrome `1518358`, start ticks `188495984`, launched at
+`2026-11-05T00:15:50.605Z`; Chrome version `151.0.7922.108`. The page's actual
+compile/instantiate/slot0 module-send receipts name canonical SHA
+`018c94ffbde8c857587c25c860db988d603d0662df9a18901f00c183af7493cd`,
+2,148,848 bytes. All 1,038 actual served responses matched their exact pins.
+Compat was verified offline and at its existing path, not selected by Chrome.
+Every fresh original image was personally viewed before the next operator
+controls. The ordinary title and Crusader flow reached ChooseType at step
+8768, frozen 16ms, with empty input queue, null active input and mouse mask 0.
+
+The first fault was **operator client sequencing**, not a game/source fault.
+After submitting `install-route` command 8, I attempted `route-review-choose`
+while command 8 was waiting for its capture-bound ChooseType review. The client
+correctly refused with `original mailbox not ready: pending command 8; review
+choose-type route-install-checkpoint.png receiptPresent=false`. Command 9 was
+never written. Under the owner's first-post-Chrome-fault stop rule, I stopped
+at this protective refusal, personally viewed the pending checkpoint for
+evidence and supplied no further control/review continuation. Consequently the
+pending command reached its unchanged review deadline at `00:19:40.586Z`.
+The automatic first-command-failure path requested normal `Browser.close` at
+`00:19:40.593Z`; the actual child exited code 0, signal null at
+`00:19:40.687Z`. There was no actual retry.
+
+`first-client-failure.json` distinguishes the initial protective client refusal
+from the later `reply-8.json` command/review deadline. The offline operator-plan
+repair (`next-action.cjs`, four passing cases) requires personal view/review,
+then successful ACK, then consideration of the next existing command. It
+returns a plan only, cannot submit input and verifies command 9 remains absent.
+The production mailbox guard already behaved correctly and is unchanged.
+
+At `00:19:55.881Z`, independent cleanup verified original Chrome PID/start
+ticks absent, Node `1518341`/start `188495874` absent, external flock parent
+`1518340` absent, HTTP `36195` and DevTools `35603` refused, no process using
+the exact profile, profile removed after process exit, and external flock free.
+Box ID/state/expiry remain NA; coordinator owns shutdown. The heavy release is
+on the messageboard; final file release follows evidence publication.
+
+The native and page presentation observers were **not armed**: no Custom Game
+hover/press, draw/update/late-clock/return, taken surface source/target/HRESULT,
+normal page upload/renderer completion or fresh-pixel witness was obtained.
+Unique operation ownership and fresh pixels remain unknown; no readiness,
+preset, Start, world or gameplay is claimed. The next original needs a fresh
+assignment after this offline operator sequencing repair; this assignment ends
+at its first concrete causal failure.
+
+Original assets/configuration, active0
 full rest, 16ms, 512/544, continuous 50M/360s, owner/record/byte/input/ACK and
 frozen-review guards remain unchanged; no resets, cap increases, forced render
 or timer driving are introduced.
