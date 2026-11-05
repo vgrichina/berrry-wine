@@ -17,6 +17,7 @@
     { "name": "SetLocalTime", "api": "SetLocalTime", "ordinal": 593 },
     { "name": "DeviceIoControl", "api": "DeviceIoControl", "ordinal": 594 },
     { "name": "QueueUserAPC", "api": "QueueUserAPC", "ordinal": 595 },
+    { "name": "GetNativeSystemInfo", "api": "GetNativeSystemInfo", "ordinal": 596 },
     {
       "name": "_hread",
       "api": "_hread",

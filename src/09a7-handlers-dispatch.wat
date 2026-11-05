@@ -5256,6 +5256,13 @@
     ;; wProcessorRevision=0 → already zero
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
+  ;; GetNativeSystemInfo returns the installed OS's architecture. Our native
+  ;; platform is 32-bit x86 (no WOW64 layer), so use the same SYSTEM_INFO as
+  ;; GetSystemInfo. The JavaScript host's architecture is not the guest OS.
+  (func $handle_GetNativeSystemInfo (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_GetSystemInfo (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
+
   ;; GetUserName reports its size including the NUL on both success and
   ;; insufficient-buffer failure. A/W differ only in the destination width.
   (func $get_user_name (param $buf_g i32) (param $size_g i32)

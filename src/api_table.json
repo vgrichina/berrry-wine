@@ -39070,5 +39070,12 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 3824263486
+  },
+  {
+    "id": 4603,
+    "name": "GetNativeSystemInfo",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2667114061
   }
 ]
