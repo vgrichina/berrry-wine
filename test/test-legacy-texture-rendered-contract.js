@@ -309,7 +309,8 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       // Explicit X8R8G8B8 target: each RGB channel is one unquantized byte.
       // Software X and GPU opaque X need not agree; RGB must agree exactly.
       eq(actual,expected,'PIXEL ORACLE '+label);
-      if(gpu)eq(row.webglRGBA,[...expected,255],'independent actual WebGL pixels');
+      if(gpu)eq(state.rgbOnly?row.webglRGBA.slice(0,3):row.webglRGBA,
+        state.rgbOnly?expected:[...expected,255],'independent actual WebGL pixels');
     };
     if(config.immediate){
       await (0,eval)('('+config.immediateSource+')')({mode,negative,evidence,check,eq,until,
