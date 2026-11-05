@@ -3,6 +3,7 @@
 
 // DX6.1 SDK imref_789w.htm: DECAL=1/COPY=7 select texture RGBA;
 // DECALALPHA=3 mixes RGB by texture alpha and preserves source alpha.
+// ADD=8 saturates texture + diffuse RGB and preserves source alpha.
 // Serialized unchanged into the established public x86 COM browser harness.
 async function blendFixture(c) {
   const {mode,negative,evidence,check,eq,read,alloc,write,words,guard,guid,
@@ -29,11 +30,11 @@ async function blendFixture(c) {
   const caps=await guard(252),hel=await guard(252);await write(caps.p,252);await write(hel.p,252);
   await ok(com('GetCaps3',device,3,caps.p,hel.p));await caps.check();await hel.check();
   report.advertised=[];
-  for(const offset of [84,140]){const value=await read(caps.p+offset);eq(value&0x45,0x45,'advertised DECAL/DECALALPHA/COPY');report.advertised.push(value);}
+  for(const offset of [84,140]){const value=await read(caps.p+offset);eq(value&0xc5,0xc5,'advertised DECAL/DECALALPHA/COPY/ADD');eq(value,0xffff,'legacy blend capability mask unchanged');report.advertised.push(value);}
   const tex=[180,45,90],diff=[51,153,255],diffAlpha=170;
   const rgba=(rgb,a)=>(a*0x1000000+(rgb[0]<<16)+(rgb[1]<<8)+rgb[2])>>>0;
   const textures=[];
-  async function makeTexture(alpha) {
+  async function makeTexture(alpha,texAlpha=85,rgb=tex) {
     const desc=await alloc(124);await words(desc,Array(31).fill(0));
     for(const [off,v] of [[0,124],[4,0x1007],[8,2],[12,2],[72,32],[76,alpha?0x41:0x40],[84,32],
       [88,0xff0000],[92,0xff00],[96,0xff],[100,alpha?0xff000000:0],[104,0x1800]])await write(desc+off,v);
@@ -42,12 +43,12 @@ async function blendFixture(c) {
     await ok(com('GetSurfaceDesc texture format',obj,22,actual.p));await actual.check();
     eq((await read(actual.p+76))&1,alpha?1:0,'public alpha-format flag');
     eq(await read(actual.p+100),alpha?0xff000000:0,'public alpha-format mask');
-    const l=await lock(obj);for(let y=0;y<2;y++)for(let x=0;x<2;x++)await write(l.pointer+y*l.pitch+x*4,rgba(tex,85));await unlock(obj);
+    const l=await lock(obj);for(let y=0;y<2;y++)for(let x=0;x<2;x++)await write(l.pointer+y*l.pitch+x*4,rgba(rgb,texAlpha));await unlock(obj);
     const iid=await guid([0x93281502,0x11d08cf8,0xa000ab89,0x294105c9]);
     const texture=await acquire(out=>com('QI Texture2',obj,0,iid,out));
     const out=await guard(4);await ok(com('Texture2 GetHandle',texture,3,device,out.p));await out.check();
     const handle=await read(out.p);check(handle,'real texture handle');
-    const row={obj,texture,handle,alpha};textures.push(row);return row;
+    const row={obj,texture,handle,alpha,texAlpha,rgb};textures.push(row);return row;
   }
   const A=await makeTexture(true),X=await makeTexture(false);
   const bind=t=>rs(1,t.handle);
@@ -63,25 +64,37 @@ async function blendFixture(c) {
     countDraw();await ok(com('EndScene3',device,10));indexed=!indexed;}
   async function clear(){const l=await lock(rt);for(let y=0;y<8;y++)for(let x=0;x<8;x++)await write(l.pointer+y*l.pitch+x*4,0);await unlock(rt);}
   // Pure independent SDK equations. All products here are integral bytes.
-  function expected(blend,alpha,alphaTest=false){
-    const a=alpha?85:255;
-    const rgb=blend===3?tex.map((v,i)=>(v*a+diff[i]*(255-a))/255)
+  function expected(blend,texture,alphaTest=false,ref=texture.alpha?128:213){
+    const {alpha,rgb:tex,texAlpha}=texture;
+    const a=alpha?texAlpha:255;
+    const rgb=blend===8?tex.map((v,i)=>Math.min(255,v+diff[i])):blend===3?tex.map((v,i)=>(v*a+diff[i]*(255-a))/255)
       :blend===2||blend===4?tex.map((v,i)=>v*diff[i]/255):blend===0?diff.slice():tex.slice();
-    const outAlpha=blend===3||blend===0?diffAlpha:blend===2&&!alpha?diffAlpha:blend===4?a*diffAlpha/255:a;
+    const outAlpha=blend===8||blend===3||blend===0?diffAlpha:blend===2&&!alpha?diffAlpha:blend===4?a*diffAlpha/255:a;
     check(rgb.every(Number.isInteger),'fixture RGB avoids unspecified rounding');
-    return alphaTest&&outAlpha<=(alpha?128:213)?[0,0,0]:rgb;
+    return alphaTest&&outAlpha<=ref?[0,0,0]:rgb;
   }
-  async function witness(label,blend,texture,alphaTest=false){
-    const rgb=expected(blend,texture.alpha,alphaTest);use({device:alias,rt});
+  async function witness(label,blend,texture,alphaTest=false,ref){
+    const rgb=expected(blend,texture,alphaTest,ref);use({device:alias,rt});
     await observe(label,{name:'SDK independent solid blend',uv:[.25,.25]}, {filter:1,address:1,rgbOnly:true,palette:[rgb,rgb,rgb,rgb]});
-    report.pixels.push({label,blend,textureAlpha:!!texture.alpha,alphaTest,expected:rgb});
+    report.pixels.push({label,blend,textureAlpha:!!texture.alpha,storedAlpha:texture.texAlpha,textureRGB:texture.rgb,alphaTest,ref,expected:rgb});
   }
-  async function render(label,blend,texture,alphaTest=false){await clear();await draw();await witness(label,blend,texture,alphaTest);}
-  const legacy=blend=>negative==='ignored'?Promise.resolve():rs(21,blend);
+  async function render(label,blend,texture,alphaTest=false,ref){await clear();await draw();await witness(label,blend,texture,alphaTest,ref);}
+  const legacy=async blend=>{
+    if(negative==='ignored')return; // Preserve the preceding DECAL control.
+    await rs(21,blend);
+    if(negative==='ignored-add'&&blend===8){
+      // Deliberately erase only the effective legacy selection through a raw
+      // TSS rewrite. The actual Device3 ADD setter returned S_OK, raw RS=8
+      // and all raw TSS values remain intact. Model successful ignored ADD.
+      await tss(1,await getTSS(1));
+      report.ignoredADD={setterSucceeded:true,raw:await getRS(21),rawTSS:await readRawTSS()};
+      eq(report.ignoredADD.raw,8,'fault control keeps successful raw ADD');
+    }
+  };
   const raw=await readRawTSS();
   for(const texture of [A,X]){
     await bind(texture);
-    for(const blend of [2,1,3,7,4,3,1]){
+    for(const blend of (negative==='ignored'?[2,1,3,7,4,3,1]:[2,8,1,3,8,7,4,3,1])){
       await rs(15,0);await legacy(blend);
       if(negative!=='ignored')eq(await getRS(21),blend,'legacy RS raw readback');
       eq(await readRawTSS(),raw,'legacy setter preserves raw TSS');
@@ -90,6 +103,19 @@ async function blendFixture(c) {
       await rs(15,1);await rs(24,texture.alpha?128:213);await rs(25,5); // GREATER: distinguishes 85/170 and 170/255.
       await render('alpha witness '+blend+(texture.alpha?' RGBA':' RGB'),blend,texture,true);await rs(15,0);
     }
+  }
+  // Texture alpha never affects ADD, including zero/opaque and no-alpha
+  // formats with the same stored bytes. Both alpha tests must select 170.
+  const addTextures=[A,X,await makeTexture(true,0),await makeTexture(true,255),
+    await makeTexture(true,85,[240,0,0]),await makeTexture(false,85,[0,180,0])];
+  for(const [i,texture] of addTextures.entries()){
+    await bind(texture);await legacy(8);await rs(15,0);
+    await render('ADD asymmetric/saturation '+i,8,texture);
+    for(const ref of [128,213]){
+      await rs(15,1);await rs(24,ref);await rs(25,5);
+      await render('ADD source alpha '+i+' GREATER '+ref,8,texture,true,ref);
+    }
+    await rs(15,0);
   }
   // Only stage-zero combiner writes leave legacy mode. Other stages/filter
   // writes retain it. Then a new legacy setter restores it on the same device.
@@ -110,8 +136,18 @@ async function blendFixture(c) {
   await tss(1,3);await capture(token);await legacy(1);await apply(token);await render('Capture inactive legacy marker',0,A);
   await begin();await legacy(3);await tss(1,3);const rawLast=await end();await apply(rawLast);await render('recorded TSS wins last',0,A);
   await begin();await tss(1,3);await legacy(3);const legacyLast=await end();await apply(legacyLast);await render('recorded legacy wins last',3,A);
+  await legacy(8);await tss(16,1);await tss(2,0,1);await render('unrelated TSS retains ADD',8,A);
+  await tss(4,3);await tss(1,3);await render('explicit TSS cancels ADD',0,A);
+  await legacy(8);await render('ADD restored after TSS',8,A);
+  await legacy(1);await begin();await legacy(8);await render('ADD recording leaves live DECAL',1,A);
+  const addToken=await end();await render('ADD End leaves live DECAL',1,A);
+  await apply(addToken);await render('Apply recorded ADD',8,A);
+  await legacy(8);await capture(addToken);await legacy(3);await apply(addToken);await render('Capture ADD effective marker',8,A);
+  await tss(1,3);await capture(addToken);await legacy(8);await apply(addToken);await render('Capture ADD inactive marker',0,A);
+  await begin();await legacy(8);await tss(1,3);const addRawLast=await end();await apply(addRawLast);await render('recorded ADD then TSS',0,A);
+  await begin();await tss(1,3);await legacy(8);const addLegacyLast=await end();await apply(addLegacyLast);await render('recorded TSS then ADD',8,A);
   if(mode==='worker'){
-    for(const [old,next] of [[1,3],[3,7],[7,3]]){
+    for(const [old,next] of [[1,3],[3,7],[7,3],[8,3],[3,8],[8,2]]){
       await clear();await legacy(old);use({device,rt});queue.hold('legacy '+old+' then '+next);await draw();
       const packet=await queue.packet();
       const capturedLegacy=new DataView(packet.vertices.buffer,32,4096).getUint32(3936,true);
@@ -122,8 +158,21 @@ async function blendFixture(c) {
       row.completedAfterDrain=queue.completed();check(row.completedAfterDrain>=packet.sequence,'held draw consumed');
       await render('later live legacy '+next,next,A);
     }
+    for(const texture of [A,X])for(const ref of [128,213]){
+      await bind(texture);await rs(15,1);await rs(24,ref);await rs(25,5);
+      await clear();await legacy(8);use({device,rt});queue.hold('ADD alpha '+ref);await draw();
+      const packet=await queue.packet();
+      const capturedLegacy=new DataView(packet.vertices.buffer,32,4096).getUint32(3936,true);
+      eq(capturedLegacy,8,'queued ADD alpha marker');
+      const next=texture.alpha?2:7;await legacy(next);
+      check(queue.completed()<packet.sequence,'ADD alpha draw held across mutation');
+      const row={old:8,next,alpha:!!texture.alpha,ref,capturedLegacy,sequence:packet.sequence,completedBeforeDrain:queue.completed()};report.queued.push(row);
+      queue.drain();await witness('queued ADD source alpha '+texture.alpha+' '+ref,8,texture,true,ref);
+      row.completedAfterDrain=queue.completed();check(row.completedAfterDrain>=packet.sequence,'ADD alpha batch consumed');
+      await render('later alpha mode '+next+' '+ref,next,texture,true,ref);await rs(15,0);
+    }
   }
-  for(const t of [token,rawLast,legacyLast])await ok(com('DeleteStateBlock',alias,41,t));
+  for(const t of [token,rawLast,legacyLast,addToken,addRawLast,addLegacyLast])await ok(com('DeleteStateBlock',alias,41,t));
   await rs(1,0);await com('Release alias',alias,2);await com('Release viewport',viewport,2);
   await com('Release legacy device',device,2);await com('Release legacy target',rt,2);await com('Release D3D3',d3d,2);
   for(const t of textures){await com('Release Texture2',t.texture,2);await com('Release texture surface',t.obj,2);}
@@ -165,7 +214,7 @@ async function runtime() {
     evidence.browser=await browser.version();evidence.endpoint=browser.wsEndpoint();
     const child=browser.process();evidence.process={pid:child.pid,profile:child.spawnargs.find(s=>s.startsWith('--user-data-dir='))?.slice(16)};
     child.once('exit',(code,signal)=>{evidence.process.exit={code,signal};});
-    timer=setTimeout(()=>{evidence.deadlineExceeded=true;browser.close().catch(()=>{});},240000);
+    timer=setTimeout(()=>{evidence.deadlineExceeded=true;browser.close().catch(()=>{});},360000);
     for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
       wasm=fs.readFileSync(path.join(ROOT,'build',name));const moduleHash=hash(wasm);
       for(const mode of ['software','webgl','worker']){
@@ -177,14 +226,20 @@ async function runtime() {
       }
       // Omit the real legacy setter; all surrounding COM calls and draws still
       // succeed. The independent pixel equation must reject ignored state.
-      for(const mode of ['software','webgl','worker']){
+      for(const mode of ['software','webgl','worker'])for(const control of ['ignored','ignored-add']){
         page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/legacy-render-fixture');
-        let failure;try{await page.evaluate(base.browserFixture,mode,config,base.oracle.toString(),'ignored');}catch(e){failure=String(e);}
+        let failure;try{await page.evaluate(base.browserFixture,mode,config,base.oracle.toString(),control);}catch(e){failure=String(e);}
         const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
-        evidence.controls.push({name,moduleHash,mode,failure,partial});
-        assert(failure?.includes('PIXEL ORACLE mode 1 RGBA'),'ignored-mode control must fail DECAL RGB, after successful calls');
+        evidence.controls.push({name,moduleHash,mode,control,failure,partial});
+        const blend=control==='ignored-add'?8:1;
+        assert(failure?.includes('PIXEL ORACLE mode '+blend+' RGBA'),'ignored-mode control must fail independent RGB, after successful calls');
+        if(control==='ignored-add'){
+          assert(partial.calls.some(c=>c.label==='SetRenderState3 21'&&c.args[1]===21&&c.args[2]===8&&c.result===0),'actual ADD setter S_OK');
+          assert.equal(partial.legacyBlend.ignoredADD.raw,8);
+          assert(partial.calls.some(c=>/^Draw(Indexed)?Primitive3$/.test(c.label)&&c.result===0),'actual draw S_OK');
+        }
         const pixel=partial.observations.at(-1);assert.notDeepEqual(pixel.actual,pixel.expected);
-        await page.close();page=null;console.log('PASS '+name+' '+mode+' ignored mode rejected by pixels');
+        await page.close();page=null;console.log('PASS '+name+' '+mode+' '+control+' rejected by pixels');
       }
     }
     evidence.status='PASS';

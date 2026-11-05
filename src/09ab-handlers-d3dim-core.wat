@@ -38,7 +38,7 @@
   ;;   +3904  legacy clip normalization (sx,tx,sy,ty,sz,tz) (24)
   ;;   +3928  legacy clip normalization enabled        (i32, 4)
   ;;   +3932  immutable legacy creation version (0=other) (i32, 4)
-  ;;   +3936  active legacy TEXTUREMAPBLEND mode (1/2/3/4/7, or 0 for TSS) (4)
+  ;;   +3936  active legacy TEXTUREMAPBLEND mode (1/2/3/4/7/8, or 0 for TSS) (4)
   ;;   +3940  stage-zero MIPFILTER explicitly set (i32, including NONE)
   ;;   +3944  owned SetTexture reference (guest interface ptr; never captured)
   ;;   +3948  initialized light-parameter membership mask (never captured)
@@ -1968,7 +1968,7 @@
         (drop (call $d3dim_sb_record (local.get $this) (i32.const 9) (i32.const 0)
           (select (local.get $val) (i32.const 0) (i32.or
             (i32.le_u (i32.sub (local.get $val) (i32.const 1)) (i32.const 3))
-            (i32.eq (local.get $val) (i32.const 7)))) (i32.const 0))))) (return)))))
+            (i32.le_u (i32.sub (local.get $val) (i32.const 7)) (i32.const 1)))) (i32.const 0))))) (return)))))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (i32.and (i32.ne (local.get $state) (i32.const 0))
                  (i32.lt_u (local.get $rs) (i32.const 512)))
@@ -1989,7 +1989,7 @@
               (call $gs32 (i32.add (local.get $state) (i32.const 3936))
                 (select (local.get $val) (i32.const 0)
                   (i32.or (i32.le_u (i32.sub (local.get $val) (i32.const 1)) (i32.const 3))
-                          (i32.eq (local.get $val) (i32.const 7)))))))
+                          (i32.le_u (i32.sub (local.get $val) (i32.const 7)) (i32.const 1)))))))
             ;; D3DRENDERSTATE_TEXTUREHANDLE = 1 in the v1 execute-buffer API.
             (if (i32.eq (local.get $rs) (i32.const 1))
               (then
@@ -5265,8 +5265,10 @@
       (if (local.get $legacy) (then
         ;; DX6.1 SDK D3DTEXTUREBLEND: DECAL=1 and COPY=7 select texture
         ;; RGBA; DECALALPHA=3 interpolates RGB by texture alpha and keeps
+        ;; diffuse alpha. ADD=8 saturates texture + diffuse RGB and keeps
         ;; diffuse alpha. Lower only effective state, leaving raw TSS intact.
         (if (i32.eq (local.get $type) (i32.const 1)) (then
+          (if (i32.eq (local.get $legacy) (i32.const 8)) (then (return (i32.const 7))))
           (if (i32.eq (local.get $legacy) (i32.const 3)) (then (return (i32.const 13))))
           (if (i32.or (i32.eq (local.get $legacy) (i32.const 1))
                       (i32.eq (local.get $legacy) (i32.const 7))) (then (return (i32.const 2))))
@@ -5276,7 +5278,8 @@
         (if (i32.or (i32.eq (local.get $type) (i32.const 3))
                     (i32.eq (local.get $type) (i32.const 6))) (then (return (i32.const 1))))
         (if (i32.eq (local.get $type) (i32.const 4)) (then
-          (if (i32.eq (local.get $legacy) (i32.const 3)) (then (return (i32.const 3))))
+          (if (i32.or (i32.eq (local.get $legacy) (i32.const 8))
+                      (i32.eq (local.get $legacy) (i32.const 3))) (then (return (i32.const 3))))
           (if (i32.or (i32.eq (local.get $legacy) (i32.const 1))
                       (i32.eq (local.get $legacy) (i32.const 7))) (then (return (i32.const 2))))
           ;; MODULATEALPHA multiplies texture and diffuse alpha. MODULATE
@@ -6845,6 +6848,12 @@
       (then (local.set $rgb (i32.and (local.get $tex) (i32.const 0x00ffffff)))))
     (if (i32.eq (local.get $colorop) (i32.const 3))
       (then (local.set $rgb (i32.and (local.get $diffuse) (i32.const 0x00ffffff)))))
+    ;; DX6.1 ADD: independent saturated byte sums; alpha is selected below.
+    (if (i32.eq (local.get $colorop) (i32.const 7)) (then
+      (local.set $rgb (i32.and
+        (i32x4.extract_lane 0 (i8x16.add_sat_u
+          (i32x4.splat (local.get $tex)) (i32x4.splat (local.get $diffuse))))
+        (i32.const 0x00ffffff)))))
     ;; BLENDTEXTUREALPHA: ARG1 * texture alpha + ARG2 * (1 - alpha).
     ;; GL_DECAL uses this RGB operation with SELECTARG2 for primary alpha.
     (if (i32.eq (local.get $colorop) (i32.const 13))
