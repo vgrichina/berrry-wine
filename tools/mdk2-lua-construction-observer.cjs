@@ -37,6 +37,9 @@ const PINS=[
   [0x42c990,'a1a07b4b008b0d2c714b008b155c714b00'],
   [0x42cc1e,'687c614a00e8385a010050e842570100']
 ].map(([pc,hex])=>Object.freeze({pc,hex}));
+// Decode constants once; guest bytes are still freshly read, byte by byte,
+// on every identity check. Keep the public pin records unchanged.
+const PIN_BYTES=new Map(PINS.map(({hex})=>[hex,Uint8Array.from(hex.match(/../g),v=>parseInt(v,16))]));
 const CUTS={poll:0x4522d0,pollRead:0x4522d7,consume:0x44fbd4,finalize:0x44f4a0,
   finalizeType10:0x44f515,loadCall:0x41fce5,loadReturned:0x41fceb,
   bufferCall:0x41fcf9,buffer:0x444f80};
@@ -81,7 +84,12 @@ function attach({host,getExports,getSlice=()=>null,getEpoch=()=>null,workerSlot,
     const slice=getSlice();if(slice){if(!Number.isSafeInteger(slice.ordinal)||slice.ordinal<1||slice.ordinal<lastOrdinal)throw Error('stale native slice');lastOrdinal=slice.ordinal;}
     if(ex.get_current_thread_id()!==1||ex.get_image_base()!==0x400000)throw Error('wrong thread/loader');
     if(u(0x400000)!==0x00905a4d||u(0x400000+u(0x40003c))!==0x4550)throw Error('wrong PE loader');
-    for(const {pc,hex}of PINS)if(read(pc,hex.length/2).map(v=>v.toString(16).padStart(2,'0')).join('')!==hex)throw Error('original bytes changed');
+    for(const {pc,hex}of PINS){
+      // Read the complete pin first: an unmapped later byte must still win
+      // over an earlier mismatch, exactly as in the hex comparison.
+      const bytes=read(pc,hex.length/2),expected=PIN_BYTES.get(hex);
+      for(let i=0;i<bytes.length;i++)if(bytes[i]!==expected[i])throw Error('original bytes changed');
+    }
   }
   const requestEntry=request=>({buffer:u(request),size:u(request+8),type:read(request+28,1)[0],status:read(request+30,1)[0],name:String.fromCharCode(...read(request+12,16)).split('\0')[0]});
   const resource=()=>{const request=u(0x4b87d4),active=u(0x4b7d14);return {request,active,pending:u(0x4b87cc),completion:u(0x4b87d0),completedBytes:u(0x5ce08c),

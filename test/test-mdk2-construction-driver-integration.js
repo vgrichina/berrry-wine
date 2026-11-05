@@ -375,6 +375,195 @@ async function nativeOne(row, mode = 'success') {
   });
 }
 
+// Pin validation cost: use original PE bytes and independently placed individual
+// guest bytes. No assumption about affine mappings, page size, or continuity.
+const PIN_COST_BASE = '36305d9c09ee1be1a4d86fa3ff9bdf2149253c64';
+function pinCostObserver(previous=false) {
+  if(!previous)return require('../tools/mdk2-lua-construction-observer.cjs');
+  const filename=path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs');
+  const m=new Module(filename,module);m.filename=filename;
+  const bytes=integration.gitFile(PIN_COST_BASE,'tools/mdk2-lua-construction-observer.cjs');
+  assert.equal(integration.sha(bytes),'dd37b5ba98bf052078bc81c72f4850f4e73caeea5b72c81698c4b0805269dfc3');
+  m._compile(bytes.toString(),filename);return m.exports;
+}
+function pinCostFixture(api,{scattered=true,track=true,...extra}={}) {
+  const media=path.join(integration.ROOT,'test/binaries/candidates/mdk2-demo/installed/mdk2demo/mdk2Main.exe');
+  const exe=fs.readFileSync(media),pe=require('../lib/pe').readPE(media);
+  assert.equal(integration.sha(exe),api.EXE_SHA256);
+  const memory={buffer:new ArrayBuffer(0x200000)},b=new Uint8Array(memory.buffer),mapping=new Map(),events=[];
+  let next=1024,translations=0,originalCalls=0,clock=0,ordinal=1,epoch=1,thread=1,base=0x400000,foreign=false;
+  const address=a=>{if(!mapping.has(a)){mapping.set(a,scattered?(next++*8191)%b.length:a-0x400000+256);}return mapping.get(a);};
+  const put=(a,bytes)=>{for(let i=0;i<bytes.length;i++)b[address(a+i)]=bytes[i];};
+  // Header and instructions come from the original PE, not expected hex strings.
+  for(const [a,n]of [[0x400000,4],[0x40003c,4],[0x400000+exe.readUInt32LE(0x3c),4],...api.PINS.map(p=>[p.pc,p.hex.length/2])])
+    {const offset=a<0x401000?a-0x400000:pe.va2off(a);assert(offset>=0);put(a,exe.subarray(offset,offset+n));}
+  const ex={memory,guest_to_wasm(a){translations++;if(track)events.push(a);const w=address(a);if(w===-1)throw Error('fixture translation failure');return w;},
+    get_current_thread_id:()=>thread,get_image_base:()=>base,get_eip:()=>0x47d8f3,get_esp:()=>0x074ffc84};
+  const original=function(...args){originalCalls++;return this===host&&args[2]==='tail'?37:19;};
+  const host={log_block:original};
+  const opts={host,getExports:()=>foreign?{...ex}:ex,getSlice:()=>({ordinal}),getEpoch:()=>epoch,
+    workerSlot:0,exeSha256:api.EXE_SHA256,wasmSha256:'0'.repeat(64),deadline:30000,now:()=>clock,...extra};
+  const observer=api.attach(opts);
+  return {api,b,mapping,events,ex,host,observer,opts,address,put,
+    set(values){({clock=clock,ordinal=ordinal,epoch=epoch,thread=thread,base=base,foreign=foreign}=values);},
+    fire:()=>host.log_block.call(host,ex.get_eip(),ex.get_esp(),'tail'),
+    counts:()=>({translations,originalCalls}),
+    result(){return {report:structuredClone(this.observer.report),events:[...events],counts:{translations,originalCalls},memoryHash:integration.sha(b)};}};
+}
+test('pin cost equivalence: every byte mutation on boundary and sample, independent discontinuous mappings',()=>{
+  const old=pinCostObserver(true),candidate=pinCostObserver();
+  assert.deepEqual(candidate.PINS,old.PINS);assert.deepEqual(candidate.CUTS,old.CUTS);
+  let cases=0;
+  for(const scattered of [false,true])for(const action of ['boundary','sample']){
+    const original=pinCostFixture(old,{scattered}),optimized=pinCostFixture(candidate,{scattered});
+    for(const f of [original,optimized]){assert.equal(f.fire(),37);f.observer.sample();}
+    assert.deepEqual(optimized.result(),original.result());
+    for(const {pc,hex}of old.PINS)for(let i=0;i<hex.length/2;i++){
+      const a=pc+i;
+      original.events.length=optimized.events.length=0;
+      for(const f of [original,optimized]){
+        const saved=f.b[f.address(a)];f.b[f.address(a)]=saved^0xff;
+        if(action==='sample')f.observer.sample();else assert.equal(f.fire(),37);
+        assert.equal(f.observer.report.error,'original bytes changed');
+        f.b[f.address(a)]=saved;
+      }
+      assert.deepEqual(optimized.result(),original.result());cases++;
+      // A new attachment for each negative; the successful prefix proves there
+      // is no remembered acceptance from a prior boundary or frozen sample.
+      for(const f of [original,optimized]){
+        f.observer=f.api.attach(f.opts);
+        assert.equal(f.fire(),37);f.observer.sample();
+      }
+    }
+    for(const f of [original,optimized])f.observer.finish('fixture-end');
+  }
+  write(EVIDENCE,'pin-cost-mutations.json',{pass:true,cases,pins:old.PINS.length,bytes:old.PINS.reduce((n,p)=>n+p.hex.length/2,0),actions:['boundary','sample'],mappings:['affine','individual-byte-scatter']});
+});
+test('pin cost equivalence: remapping, owner, unmapped/bounds/failure precedence and limits',()=>{
+  const rows=[];
+  const scenarios={
+    'remapped-every-byte':f=>{for(const p of f.api.PINS)for(let i=0;i<p.hex.length/2;i++){const a=p.pc+i,w=f.address(a),v=f.b[w];f.mapping.set(a,w+1);f.b[w+1]=v;f.b[w]=v^255;}},
+    'remapped-changed':f=>{const a=f.api.PINS[0].pc,w=f.address(a);f.mapping.set(a,w+1);f.b[w+1]=f.b[w]^255;},
+    'wrong-thread':f=>f.set({thread:2}), 'wrong-loader':f=>f.set({base:0x500000}),
+    'foreign-instance':f=>f.set({foreign:true}), 'foreign-epoch':f=>f.set({epoch:2}),
+    'stale-slice':f=>f.set({ordinal:0}), 'replaced-import':f=>{f.host.log_block=()=>23;},
+    'unmapped-sentinel':f=>f.mapping.set(f.api.PINS[0].pc,0xf0),
+    'unmapped-end':f=>f.mapping.set(f.api.PINS[0].pc,f.b.length),
+    'negative-mapping':f=>f.mapping.set(f.api.PINS[0].pc,-2),
+    'translation-throws':f=>f.mapping.set(f.api.PINS[0].pc,-1),
+    'mismatch-then-unmapped-same-pin':f=>{const pc=f.api.PINS[0].pc;f.b[f.address(pc)]^=255;f.mapping.set(pc+1,0xf0);},
+    'mismatch-then-throw-same-pin':f=>{const pc=f.api.PINS[0].pc;f.b[f.address(pc)]^=255;f.mapping.set(pc+1,-1);},
+    'mismatch-then-unmapped-next-pin':f=>{f.b[f.address(f.api.PINS[0].pc)]^=255;f.mapping.set(f.api.PINS[1].pc,0xf0);},
+    'deadline':f=>f.set({clock:30000}),
+    'original-import-throws':f=>{f.observer.finish();f.host.log_block=()=>{throw Error('original import failure');};f.observer=f.api.attach(f.opts);},
+    'changed-pin-and-import-throws':f=>{f.observer.finish();f.host.log_block=()=>{throw Error('original import failure');};f.observer=f.api.attach(f.opts);f.b[f.address(f.api.PINS[0].pc)]^=255;},
+    'invalid-native-read':f=>{f.put(0x40003c,[255,255,255,127]);},
+  };
+  for(const [name,mutate]of Object.entries(scenarios))for(const action of ['boundary','sample']){
+    const results=[];
+    for(const api of [pinCostObserver(true),pinCostObserver()]){
+      const f=pinCostFixture(api);f.fire();f.observer.sample();mutate(f);
+      let returned,error;try{returned=action==='sample'?f.observer.sample().status:f.fire();}catch(e){error=e.message;}
+      results.push({...f.result(),returned,error});f.observer.finish();
+    }
+    assert.deepEqual(results[1],results[0],name+' '+action);
+    if(name==='mismatch-then-unmapped-same-pin')assert.equal(results[1].report.error,'unmapped native read');
+    if(name==='mismatch-then-unmapped-next-pin')assert.equal(results[1].report.error,'original bytes changed');
+    if(name==='remapped-every-byte')assert.equal(results[1].report.status,'running');
+    rows.push({name,action,status:results[1].report.status,error:results[1].report.error,counts:results[1].counts});
+  }
+  for(const limits of [{maxRecords:1},{maxRecordBytes:1},{maxBoundaries:1}]){
+    const results=[];for(const api of [pinCostObserver(true),pinCostObserver()]){
+      const f=pinCostFixture(api,limits);f.fire();f.observer.sample();f.fire();f.observer.sample();results.push(f.result());
+    }assert.deepEqual(results[1],results[0]);rows.push({limits,status:results[1].report.status});
+  }
+  for(const options of [{workerSlot:1},{exeSha256:'0'.repeat(64)},{wasmSha256:'bad'},
+    {maxRecords:0},{maxRecords:513},{maxRecordBytes:0},{maxRecordBytes:8193},
+    {maxBoundaries:0},{maxBoundaries:50000001},{deadline:0},{deadline:360001}]){
+    const errors=[];for(const api of [pinCostObserver(true),pinCostObserver()]){
+      const f=pinCostFixture(api);f.observer.finish();
+      assert.throws(()=>api.attach({...f.opts,...options}),e=>{errors.push(e.message);return true;});
+    }assert.equal(errors[1],errors[0]);rows.push({options,error:errors[1]});
+  }
+  write(EVIDENCE,'pin-cost-negatives.json',{pass:true,rows});
+});
+test('pin cost separated observer timing and exact work counts (getter-only, no native execution)',()=>{
+  const apis=[pinCostObserver(true),pinCostObserver()],rounds=[],boundaries=10000;
+  for(let round=0;round<7;round++){
+    const row=[];
+    for(const which of round%2?[1,0]:[0,1]){
+      const f=pinCostFixture(apis[which],{scattered:false,track:false});
+      for(let i=0;i<1000;i++)f.fire();
+      const before=f.counts(),hash=integration.sha(f.b),at=performance.now();
+      for(let i=0;i<boundaries;i++)f.fire();
+      const ms=performance.now()-at,after=f.counts();
+      assert.equal(f.observer.report.status,'running');assert.equal(integration.sha(f.b),hash);
+      assert.equal(after.translations-before.translations,534*boundaries);
+      assert.equal(after.originalCalls-before.originalCalls,boundaries);
+      row[which]={ms,boundaries,translations:after.translations-before.translations,originalCalls:after.originalCalls-before.originalCalls};f.observer.finish();
+    }rounds.push(row);
+  }
+  const median=which=>rounds.map(r=>r[which].ms).sort((a,b)=>a-b)[3];
+  const result={fixtureOnly:true,nativeExecuted:false,baseline:PIN_COST_BASE,boundariesPerRound:boundaries,
+    rounds,baselineMedianMs:median(0),candidateMedianMs:median(1),reductionPercent:100*(1-median(1)/median(0)),
+    translationsPerBoundary:534,pinnedBytesPerBoundary:502,pinsPerBoundary:35,
+    removedPerBoundary:{hexByteConversions:502,hexArrayMaps:35,hexStringJoins:35},
+    nativeTimingClaim:false,adaptiveSchedulingChanged:false};
+  write(EVIDENCE,'pin-cost-timing.json',result);console.log('PIN_COST_TIMING '+JSON.stringify(result));
+});
+
+for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm'])
+test('pin cost separated observer timing with final module native translator (no instruction replay) '+variant,async()=>{
+  const file='build/'+variant,bytes=fs.readFileSync(path.join(integration.ROOT,file)),module=await WebAssembly.compile(bytes);
+  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),imports={memory};
+  for(const row of WebAssembly.Module.imports(module))if(row.kind==='function'){
+    assert.equal(row.module,'host');imports[row.name]=()=>0;
+  }
+  const {exports:e}=await WebAssembly.instantiate(module,{host:imports}),b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer);
+  const media='test/binaries/candidates/mdk2-demo/installed/mdk2demo/mdk2Main.exe',exe=fs.readFileSync(path.join(integration.ROOT,media));
+  assert.equal(integration.sha(exe),pinCostObserver().EXE_SHA256);b.set(exe,e.get_staging());assert(e.load_pe(exe.length));
+  e.set_current_thread_id(1);e.set_eip(0x47d8f3);e.set_esp(0x074ffc84);
+  for(const a of [0x4b87d4,0x4b7d14,0x4b87cc,0x4b87d0,0x5ce08c])dv.setUint32(e.guest_to_wasm(a),0,true);
+  let translations=0,calls=0;
+  const ex={...e,guest_to_wasm(a){translations++;return e.guest_to_wasm(a);}};
+  const state=()=>Object.fromEntries(['eip','esp','ebp','eax','ebx','ecx','edx','esi','edi','flag_op','flag_a','flag_b','flag_res','flag_sign_shift','yield_reason'].map(n=>[n,e['get_'+n]()>>>0]));
+  const before={hash:integration.sha(b),state:state()},apis=[pinCostObserver(true),pinCostObserver()],rounds=[],boundaries=10000;
+  for(let round=0;round<7;round++){
+    const row=[];for(const which of round%2?[1,0]:[0,1]){
+      const host={log_block(){calls++;return 37;}},o=apis[which].attach({host,getExports:()=>ex,workerSlot:0,
+        exeSha256:apis[which].EXE_SHA256,wasmSha256:integration.sha(bytes),now:()=>0,deadline:30000});
+      for(let i=0;i<1000;i++)host.log_block(0x47d8f3,0x074ffc84);
+      const t=translations,c=calls,at=performance.now();
+      for(let i=0;i<boundaries;i++)host.log_block(0x47d8f3,0x074ffc84);
+      row[which]={ms:performance.now()-at,boundaries,translations:translations-t,originalCalls:calls-c};
+      assert.equal(o.report.status,'running');assert.equal(translations-t,534*boundaries);assert.equal(calls-c,boundaries);o.finish();
+    }rounds.push(row);
+  }
+  assert.deepEqual({hash:integration.sha(b),state:state()},before,'passive timing preserves complete native memory and GPRs');
+  const median=which=>rounds.map(r=>r[which].ms).sort((a,b)=>a-b)[3];
+  const result={fixtureOnly:true,guestInstructionsExecuted:false,nativeTranslator:true,path:file,sha256:integration.sha(bytes),
+    rounds,baselineMedianMs:median(0),candidateMedianMs:median(1),reductionPercent:100*(1-median(1)/median(0)),before,translationsPerBoundary:534};
+  write(EVIDENCE,variant+'.pin-cost-native-translator-timing.json',result);
+  console.log('PIN_COST_NATIVE_TRANSLATOR '+JSON.stringify({path:file,baselineMedianMs:median(0),candidateMedianMs:median(1),reductionPercent:result.reductionPercent}));
+});
+
+for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm'])
+test('pin cost final module short original-byte native fragments full memory/GPR/commands/traps '+variant,async()=>{
+  const file='build/'+variant,bytes=fs.readFileSync(path.join(integration.ROOT,file));
+  const row={path:file,localReference:file,bytes:bytes.length,sha256:integration.sha(bytes)};
+  // Explicit final-build offline qualification, separate from the immutable
+  // accepted historical manifest. No runtime binding or inventory is rewritten.
+  const baseline=await nativeOne(row,'pin-cost-baseline'),candidate=await nativeOne(row),control=await nativeOne(row,'control');
+  for(const r of [baseline,candidate,control])assert(r.value.pass,JSON.stringify(r.value));
+  for(const key of ['segments','before','trap','commands','workerSource']){
+    assert.deepEqual(candidate.value[key],baseline.value[key],key+' old/new');
+    assert.deepEqual(candidate.value[key],control.value[key],key+' observed/control');
+  }
+  assert.deepEqual(candidate.value.report.observer,baseline.value.report.observer,'complete observer report');
+  assert.equal(integration.sha(fs.readFileSync(path.join(integration.ROOT,file))),row.sha256,'shared final module changed during test');
+  write(EVIDENCE,variant+'.pin-cost-final-native.json',{fixtureOnly:true,row,baseline:baseline.value,candidate:candidate.value,control:control.value});
+});
+
 for(const row of integration.selectedRuntime().pins.moduleFiles)
 test('accepted complete Worker source/module pair preserves original native fragment and control '+row.path,async()=>{
  const observed=await nativeOne(row),control=await nativeOne(row,'control');
@@ -1094,6 +1283,9 @@ async function nativeChild() {
   let preload=workerData.mode.startsWith('control')
     ? fs.readFileSync(path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene/observe-browser.js'),'utf8')
     : integration.preloadSource({targetId:workerData.targetId,workerURL:workerData.url,moduleHashes:[workerData.wasmHash]});
+  if(workerData.mode==='pin-cost-baseline')preload=preload.replace(
+    fs.readFileSync(path.join(integration.ROOT,'tools/mdk2-lua-construction-observer.cjs'),'utf8'),
+    integration.gitFile('36305d9c09ee1be1a4d86fa3ff9bdf2149253c64','tools/mdk2-lua-construction-observer.cjs').toString());
   if(['measured-old','measured-old-record-stop','measured-old-deadline-stop','mid-poll-old','missing-history-old-binding','continuity-historical-old-review-early'].includes(workerData.mode)){
     // The old failed observer also uses its actual historical fault-containment
     // adapter. The new adapter aborts the faulting slice immediately.
