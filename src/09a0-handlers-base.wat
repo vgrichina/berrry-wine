@@ -4953,6 +4953,42 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
   )
 
+  ;; ADVPACK!IsNTAdmin(0, NULL) queries the process token's administrator
+  ;; membership. Reuse the same TokenGroups contract as GetTokenInformation;
+  ;; resolving this export must not elevate a token or imply setup succeeded.
+  ;; The current token model has one group (28 packed bytes). Keep temporary
+  ;; output below the caller's frame and release the TOKEN_QUERY handle even
+  ;; when querying fails. Reserved arguments are never dereferenced.
+  (func $handle_IsNTAdmin (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $esp i32) (local $scratch i32) (local $token i32)
+    (local $sid i32) (local $admin i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $scratch (i32.sub (local.get $esp) (i32.const 32)))
+    (block $done
+      (if (i32.eqz (call $token_guest_span_valid (local.get $scratch) (i32.const 32)))
+        (then (global.set $last_error (i32.const 87)) (br $done)))
+      (local.set $token (call $token_allocate_handle (i32.const 8)))
+      (if (i32.eqz (local.get $token))
+        (then (global.set $last_error (i32.const 8)) (br $done)))
+      (call $handle_GetTokenInformation
+        (local.get $token) (i32.const 2) (local.get $scratch) (i32.const 28)
+        (i32.add (local.get $scratch) (i32.const 28)) (i32.const 0))
+      (if (i32.ne (i32.load (global.get $reg_base)) (i32.const 0))
+        (then
+          (local.set $sid (call $gl32 (i32.add (local.get $scratch) (i32.const 4))))
+          (if (call $security_sid_valid (local.get $sid))
+            (then
+              (local.set $admin (i32.and
+                (i32.eq (call $gl32 (local.get $scratch)) (i32.const 1))
+                (i32.and
+                  (i32.eq (i32.and
+                    (call $gl32 (i32.add (local.get $scratch) (i32.const 8)))
+                    (i32.const 0x14)) (i32.const 4))
+                  (call $security_sid_is_builtin_admin (local.get $sid)))))))))
+      (drop (call $token_close_handle (local.get $token))))
+    (i32.store (global.get $reg_base) (local.get $admin))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 12))))
+
   ;; AdjustTokenPrivileges(TokenHandle, DisableAllPrivileges, NewState,
   ;; BufferLength, PreviousState, ReturnLength).
   (func $handle_AdjustTokenPrivileges (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

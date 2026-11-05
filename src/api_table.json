@@ -39063,5 +39063,12 @@
     "convention": "stdcall",
     "hash": 825856340,
     "test_call": true
+  },
+  {
+    "id": 4602,
+    "name": "IsNTAdmin",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3824263486
   }
 ]
