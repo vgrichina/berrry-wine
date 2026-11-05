@@ -79,7 +79,7 @@ async function run() {
     }
     if(reply.t==='dllLookup'){
       lookups.push(reply);
-      queueMicrotask(()=>sandbox.onmessage({data:{t:'dllLookupResult',lookup:reply.lookup,bytes:files[String(reply.fileName).toLowerCase()]||null}}));
+      queueMicrotask(()=>sandbox.onmessage({data:{t:'dllLookupResult',endpointIdentity:reply.endpointIdentity,lookup:reply.lookup,bytes:files[String(reply.fileName).toLowerCase()]||null}}));
     }
   };
   sandbox={URL,importScripts(){},location:{href:'https://example.invalid/lib/guest-worker.js?v=fixture'},
