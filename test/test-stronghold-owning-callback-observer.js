@@ -58,6 +58,7 @@ async function physical(){
  const {e,memory,host}=globalThis.fixtureAccess,b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer);
  const wa=a=>g2w(a,0x400000,memory),put=(a,v)=>b.set(v,wa(a)),u32=(a,v)=>dv.setUint32(wa(a),v>>>0,true);
  b.set(exe,e.get_staging());assert(e.load_pe(exe.length));e.set_api_log(0);
+ if(workerData.control)return controlFixture({e,memory,host});
  if(workerData.draw)return drawFixture({e,memory,host});
  if(workerData.initializer)return initializer({e,memory,host});
  const caller=0x580000,stop=caller+64,stack=0x7408000,string=caller+96,tick=caller+112;
@@ -152,6 +153,148 @@ async function physical(){
  parentPort.postMessage({pass:true,segments,observation,negatives,workerSourceSHA:globalThis.fixtureWorkerSHA,
   limits:'Synthetic dependency returns and setup epilogue; no original full setup/game execution claim'});
 }
+// Deliberately synthetic data/caller, executed original instructions. The
+// unobserved and trace-only arms independently seal every memory page and CPU
+// register after the same shipped-Worker slice commands, including failures.
+async function controlFixture({e,memory,host}){
+ const b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),wa=a=>g2w(a,0x400000,memory);
+ const put=(a,v)=>b.set(v,wa(a)),u32=(a,v)=>dv.setUint32(wa(a),v>>>0,true),get=a=>dv.getUint32(wa(a),true);
+ const caller=0x580000,stop=caller+64,stack=0x7408000,manager=0x692f48,child=0x5ba6b8;
+ put(stop,[0xeb,0xfe]);
+ // Original initializer establishes the owner/callback links; widget geometry
+ // and sprite metadata below are explicit fixture inputs, never gameplay.
+  for(const [a,v]of [[0x1681318,99],[0x995678,0],[0x657abc,0],[0x657ab0,0],[0x657ab4,1],[0x8ed440,0]])u32(a,v);
+ dv.setInt16(wa(0x7eb740),12,true);dv.setInt16(wa(0x7eb742),12,true);
+ const attachment=globalThis.__strongholdPresetAttachment;
+ if(workerData.observed)attachment.invoke('start',{command:1});
+ e.set_trace_esp(workerData.observed||workerData.trace?1:0,0,0);
+ let pending,submitted=0;const slice=n=>new Promise((resolve,reject)=>{submitted++;pending={resolve,reject};parentPort.postMessage({t:'fixtureSlice',steps:n});});
+ workerData.port.on('message',m=>{if(m.t==='slice'){const p=pending;pending=null;m.value.trapped?p.reject(Error(m.value.trapped)):p.resolve(m.value.blocks);}});
+ const snapshot=()=>({registers:Object.fromEntries(['eip','esp','eax','ebx','ecx','edx','esi','edi','ebp','flag_op','flag_a','flag_b','flag_res','flag_sign_shift','yield_reason'].map(n=>[n,e['get_'+n]()>>>0])),
+  pages:Array.from({length:b.length/65536},(_,i)=>hash(b.subarray(i*65536,(i+1)*65536)))});
+ const segments=[];
+ async function execute(name,target,arg=0,ecx=0){
+  put(caller,[0x68,...le(arg),0xb9,...le(ecx),0xb8,...le(target),0xff,0xd0,0x83,0xc4,4,0xe9,...le(stop-(caller+25))]);
+  e.invalidate_code_range(caller,25);e.set_eip(caller);e.set_esp(stack);
+  const slices=[];for(let i=0;i<1000&&(e.get_eip()>>>0)!==stop;i++)slices.push(await slice(64));
+  assert.equal(e.get_eip()>>>0,stop,name);segments.push({name,slices,...snapshot()});
+  if(workerData.observed)assert.equal(attachment.report().report.status,'running',JSON.stringify(attachment.report().report));
+ }
+ // The initializer's ret4 cleans the pushed descriptor. Use an exact fixture
+ // CALL, not execute()'s cdecl cleanup, to keep caller ESP identical.
+ put(caller,[0x68,...le(0x5ba528),0xb9,...le(manager),0xb8,...le(0x4e9280),0xff,0xd0,0xe9,...le(stop-(caller+22))]);
+ e.invalidate_code_range(caller,22);e.set_eip(caller);e.set_esp(stack);
+ for(let i=0;i<100&&(e.get_eip()>>>0)!==stop;i++)await slice(64);
+ assert.equal(e.get_eip()>>>0,stop);assert.equal(get(child+0x4c),manager);assert.equal(get(child+0x14),0x42d880);
+ u32(manager+0x38,child);
+ u32(0x69332c,7);u32(0x1681318,0);await execute('hover-mode-rejected',0x42d850,1);assert.equal(get(0x69332c),7);
+ u32(0x1681318,0);await execute('activation-mode-rejected',0x42d880,1);
+ u32(0x1681318,99);u32(0x69165c,2);await execute('activation-pending-rejected',0x42d880,1);assert.equal(get(0x69165c),2);
+ for(const [suppressed,hover,press] of [[0,1,0],[1,1,0],[0,0,1],[0,0x8000,2]]){
+  u32(0xd138b0,suppressed);u32(0x69332c,9);dv.setUint16(wa(child+0x32),hover,true);dv.setUint16(wa(child+0x34),press,true);
+  dv.setUint16(wa(child+0x36),0,true);dv.setUint16(wa(child+0x38),0,true);
+  await execute('widget-feedback-'+suppressed+'-'+hover+'-'+press,0x4e9e30,0,child);assert.equal(get(0x995674),suppressed?0:((hover<<16>>16)|(press<<16>>16))>>>0);assert.equal(get(0x69332c),suppressed?9:1);
+ }
+ for(const [label,offset]of [['hidden',0x36],['disabled',0x38]]){
+  dv.setUint16(wa(child+offset),1,true);await execute('widget-'+label,0x4e9e30,0,child);dv.setUint16(wa(child+offset),0,true);
+ }
+ const childFlags=get(child);
+ for(const [label,flag]of [['hiddenFlag',0x80000000],['drawMode1ExcludedFlag',0x800000]]){
+  u32(child,childFlags|flag);await execute('widget-'+label,0x4e9e30,0,child);u32(child,childFlags);
+ }
+ // Independent original traversal oracle: exact flag/mode branches decide
+ // whether the normal draw CALL block is reached. Stop before that CALL;
+ // arbitrary caller/registers are fixture inputs, never a natural UI claim.
+ const visibilityDecisions=[];
+ for(const [flag,mode,target]of [[0,1,0x4e95b9],[0x80000000,1,0x4e95c9],[0x800000,1,0x4e95c9],[0x800000,3,0x4e95b9]]){
+  u32(child,childFlags|flag);e.set_esi(child);e.set_edi(mode);e.set_ebx(manager);e.set_esp(stack);e.set_eip(0x4e9579);
+  const slices=[];for(let i=0;i<16&&![0x4e95b9,0x4e95c9].includes(e.get_eip()>>>0);i++)slices.push(await slice(1));
+  assert.equal(e.get_eip()>>>0,target,'original flag/mode traversal');visibilityDecisions.push({flag,mode,target,slices});
+ }
+ u32(child,childFlags);segments.push({name:'original-widget-visibility-branches',...snapshot()});
+ const inputDecisions=[];
+ for(const [hidden,disabled,target]of [[0,0,0x4e964b],[1,0,0x4e9e18],[0,1,0x4e9e18]]){
+  dv.setUint16(wa(child+0x36),hidden,true);dv.setUint16(wa(child+0x38),disabled,true);
+  e.set_ecx(child);e.set_esp(stack);e.set_eip(0x4e9620);
+  const slices=[];for(let i=0;i<8&&![0x4e964b,0x4e9e18].includes(e.get_eip()>>>0);i++)slices.push(await slice(1));
+  assert.equal(e.get_eip()>>>0,target,'original hidden/disabled input branch');inputDecisions.push({hidden,disabled,target,slices});
+ }
+ dv.setUint16(wa(child+0x36),0,true);dv.setUint16(wa(child+0x38),0,true);
+ segments.push({name:'original-widget-input-gates',...snapshot()});
+ u32(manager+0x38,child+4);await execute('foreign-selected-identity',0x42d850,1);u32(manager+0x38,child);
+ u32(0x69165c,1);u32(0x1bd26a4,0);u32(0x691bd0,0);await execute('updater-no-edge',0x42db40);
+ for(const [a,v]of [[0x69165c,4],[0x1bd26a4,1],[0xfb4620,0],[0xdbbd30,0],[0xfb464c,0],[0xfb4638,0]])u32(a,v);
+ await execute('updater-application',0x42db40);assert.equal(get(0x69165c),0);
+ for(const [held,previous,entry]of [[1,0,0x468b39],[1,1,0x468b2f],[0,1,0x468b39]]){
+  u32(0x1bd26b0,held);u32(0x1bd26bc,previous);u32(0x1bd26a4,99);
+  e.set_esi(0x1bd2670);e.set_edi(0);e.set_ebx(1);e.set_ebp(0);e.set_esp(stack);e.set_eip(entry);
+  const slices=[];for(let i=0;i<8&&(e.get_eip()>>>0)!==0x468b58;i++)slices.push(await slice(1));
+  assert.equal(e.get_eip()>>>0,0x468b58);slices.push(await slice(1));assert.equal(get(0x1bd26a4),held&&!previous?1:0);
+  segments.push({name:'mouse-edge-'+held+'-'+previous,slices,...snapshot()});
+ }
+ // Leave an actual original choice-1 invocation pending at its UI helper.
+ u32(0x1681318,99);u32(0x69165c,0);
+ put(caller,[0x68,...le(1),0xb8,...le(0x42d880),0xff,0xd0,0xeb,0xfe]);e.invalidate_code_range(caller,14);e.set_eip(caller);e.set_esp(stack);
+ const slices=[];for(let i=0;i<4096&&(e.get_eip()>>>0)!==0x46cbe0;i++)slices.push(await slice(1));
+ assert.equal(e.get_eip()>>>0,0x46cbe0);slices.push(await slice(1));assert.equal(get(0x69165c),1);assert.equal(get(0x690f7c),1);
+ segments.push({name:'partial-queued-activation',slices,...snapshot()});
+ const paritySlices=submitted;let observation=null;const negatives={};
+ if(workerData.observed){
+  const r=attachment.report().report;assert.equal(r.status,'running',JSON.stringify(r));
+  for(const kind of ['preset-hover-entry','preset-hover-return','preset-activation-entry','preset-activation-return','preset-widget-draw-entry','preset-widget-draw-return','preset-widget-feedback','preset-edge-decision','preset-edge-accepted','preset-application-entry','preset-application-return','preset-pending-cleared','native-press-edge-sampled','preset-queued'])assert(r.records.some(x=>x.kind===kind),kind);
+  assert(r.records.some(x=>x.kind==='preset-widget-feedback'&&x.suppression===1&&x.after===0));
+  assert(r.records.some(x=>x.kind==='preset-widget-feedback'&&x.suppression===0&&x.after===1));
+  assert(r.records.some(x=>x.kind==='preset-hover-entry'&&x.widgetRelation?.pointer===child));
+  assert(r.records.some(x=>x.kind==='preset-edge-decision'&&x.edge===0&&x.pending===1));
+  assert(r.records.some(x=>x.kind==='preset-activation-entry'&&x.state.mode===0));
+  assert(r.records.some(x=>x.kind==='preset-activation-entry'&&x.state.pending69165c===2));
+  for(const key of ['hiddenFlag','drawMode1ExcludedFlag'])assert(r.records.some(x=>x.state.selectedWidget[key]===true),key);
+  assert(r.records.some(x=>x.state.selectedWidget.pointer===child+4&&x.state.selectedWidget.identity.startsWith('unknown')));
+  for(const key of ['hidden36','disabled38'])assert(r.records.some(x=>x.state.selectedWidget[key]===1),key);
+  assert.equal(r.records.filter(x=>x.kind==='preset-queued').length,1);assert.equal(r.records.filter(x=>x.kind==='preset-application-entry').length,1);
+  assert(r.records.every(x=>x.epoch===epoch));assert.equal(r.presentation.readinessGranted,false);assert.equal(r.presentation.hostRelation,null);
+  // Synthetic host ACK receipt tests report composition only. It is not an
+  // actual 64-step guest/browser ACK, input delivery or completed frame.
+  attachment.invoke('annotate',{kind:'ACK',requested:64,before:0,steps:64,
+   source:'synthetic host receipt; no native delivery or completed-frame claim',
+   guests:[{requested:64,ran:64,steps:64,running:true,frozen:true,tickMs:16}]});
+  const ack=r.records.at(-1);assert.equal(ack.annotation.kind,'ACK');
+  assert(ack.nativeFrames.some(x=>x.name==='preset-activation'));assert(!ack.nativeFrames.some(x=>x.name==='preset-application'));
+  assert.equal(ack.lastNativePC,r.lastNativePC);
+  attachment.invoke('finish',{reason:'fixture-partial-pending'});observation=attachment.report().report;
+  assert(observation.pending.some(x=>x.name==='preset-activation'));assert(!observation.records.some(x=>x.kind==='draw-return'));
+ }
+ e.set_trace_esp(0,0,0);
+ const options={host,getExports:()=>e,translate:g2w,memory,workerSlot:0,endpointIdentity:1,epoch,exeSha256:api.EXE_SHA256,
+  wasmSha256:workerData.wasmHash,workerURL:URL,expectedWorkerURL:URL,deadline:performance.now()+10000};
+ if(workerData.observed){
+  function fresh(extra={}){const x=api.attach({...options,...extra});x.start();return x;}
+  async function negative(name,target,alter,pattern){
+   const x=fresh();e.set_eip(target);e.set_esp(stack);u32(stack,stop);alter?.(x);e.set_trace_esp(1,0,0);
+   await assert.rejects(slice(1),pattern);e.set_trace_esp(0,0,0);assert.match(x.report.fault,pattern);
+   const first=x.report.fault,stopped=snapshot(),records=structuredClone(x.report.records);x.annotate({epoch:'foreign',command:2,kind:'begin'});x.finish('later');x.check();
+   assert.equal(x.report.fault,first);assert.deepEqual(x.report.records,records);assert.deepEqual(snapshot(),stopped);negatives[name]=first;
+  }
+  await negative('applicationWithoutUpdater',0x42e490,null,/history/);
+  await negative('returnWithoutApplication',0x42db77,null,/history/);
+  await negative('edgeWithoutUpdater',0x42db5b,null,/history/);
+  await negative('feedbackWithoutWidget',0x4e9ef9,()=>e.set_esi(child),/history/);
+  await negative('wrongWidgetOwner',0x4e9e30,()=>{e.set_ecx(child);u32(child+0x4c,manager+4);},/owner/);u32(child+0x4c,manager);
+  await negative('wrongMouseObject',0x468b39,()=>e.set_esi(0x1bd2674),/object/);
+  await negative('wrongThread',0x42d850,()=>e.set_current_thread_id(2),/thread/);e.set_current_thread_id(1);
+  const z=fresh();u32(0x1681318,0);e.set_eip(0x42d850);e.set_esp(stack);u32(stack,stop);e.set_trace_esp(1,0,0);
+  await slice(1);u32(stack,stop+1);await assert.rejects(slice(1),/caller/);e.set_trace_esp(0,0,0);negatives.changedSavedCaller=z.report.fault;
+  const proxy={...e,get_eip:()=>((e.get_eip()>>>0)+1)>>>0};
+  const badPC=fresh({getExports:()=>proxy});e.set_eip(0x42d850);e.set_esp(stack);u32(stack,stop);e.set_trace_esp(1,0,0);
+  await assert.rejects(slice(1),/registers/);e.set_trace_esp(0,0,0);negatives.wrongPC=badPC.report.fault;
+  const pin=b[wa(0x4e9ee0)];const x=fresh();b[wa(0x4e9ee0)]^=1;e.set_eip(0x42d850);e.set_trace_esp(1,0,0);
+  await assert.rejects(slice(1),/bytes/);e.set_trace_esp(0,0,0);b[wa(0x4e9ee0)]=pin;negatives.changedFeedbackBytes=x.report.fault;
+  for(const [name,extra]of [['recordOverflow',{maxRecords:1}],['byteOverflow',{maxBytes:1}]]){const x=fresh(extra);if(x.report.status==='running')x.annotate({epoch,command:1,kind:'begin'});assert.match(x.report.fault,/overflow/);negatives[name]=x.report.fault;}
+  const y=fresh();y.annotate({epoch:'foreign',command:1,kind:'begin'});assert.match(y.report.fault,/epoch/);negatives.foreignEpoch=y.report.fault;
+ }
+ parentPort.postMessage({pass:true,controls:true,paritySlices,segments,visibilityDecisions,inputDecisions,observation,negatives,limits:'Synthetic caller/data and original instruction fragments; no original gameplay, draw completion, host publication or readiness claim'});
+}
+
 async function drawFixture({e,memory,host}){
  const b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),wa=a=>g2w(a,0x400000,memory);
  const put=(a,v)=>b.set(v,wa(a)),u32=(a,v)=>dv.setUint32(wa(a),v>>>0,true),get=a=>dv.getUint32(wa(a),true);
@@ -366,7 +509,7 @@ if(!isMainThread){
  // the path between parity arms; one in-memory fixture keeps their identity
  // exact without copying/restoring modules or asserting historical closure.
  const fixtureModules=new Map();
- async function one(variant,observed,trace=false,badBinding=false,init=false,forwardGuestLogs=false,draw=false){
+ async function one(variant,observed,trace=false,badBinding=false,init=false,forwardGuestLogs=false,draw=false,control=false){
   if(!fixtureModules.has(variant))fixtureModules.set(variant,fs.readFileSync(path.join(ROOT,'build',variant)));
   const bytes=fixtureModules.get(variant),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
   const {port1,port2}=new MessageChannel(),sigs=require('../lib/host-import-sigs.generated.json').sigs;
@@ -374,7 +517,7 @@ if(!isMainThread){
   const broker=require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>{
    if(!['log_block','log','log_i32','beep_process_begin','beep_thread_begin','midi_stream_service','dx_trace','gdi_surface_create','gdi_surface_attach','gdi_surface_upload'].includes(n))throw Error('unexpected fixture broker '+n);if(n==='log_block')brokerLogBlocks++;return n.startsWith('gdi_surface_')?1:0;
   }])),sigs);
-  const module=await WebAssembly.compile(bytes),w=new Worker(__filename,{workerData:{port:port2,observed,trace,badBinding,initializer:init,draw,wasmHash:hash(bytes)},transferList:[port2]});
+  const module=await WebAssembly.compile(bytes),w=new Worker(__filename,{workerData:{port:port2,observed,trace,badBinding,initializer:init,draw,control,wasmHash:hash(bytes)},transferList:[port2]});
   return new Promise((resolve,reject)=>{let seq=0,done=false;const commands=[];
    const end=async(error,value)=>{if(done)return;done=true;clearTimeout(timer);await w.terminate();port1.close();error?reject(error):resolve({...value,commands,brokerLogBlocks,moduleSHA:hash(bytes)});};
    const timer=setTimeout(()=>end(Error('fixture Worker deadline')),40000);w.on('error',e=>end(e));
@@ -639,6 +782,28 @@ if(!isMainThread){
   if(process.argv.includes('--draw-only')){
    const results=await drawFixtures();
    if(process.env.STRONGHOLD_CALLBACK_RESULT)fs.writeFileSync(process.env.STRONGHOLD_CALLBACK_RESULT,JSON.stringify({passed:true,offlineOnly:true,fixtureOnly:true,results},null,2)+'\n');return;
+  }
+  if(process.argv.includes('--controls-only')){
+   const evidence=await composition(),results=[];
+   const runtime=require('../tools/stronghold-local-runtime.cjs'),run=path.resolve(process.env.STRONGHOLD_CALLBACK_RUN||'scratch/runs/20261104-stronghold-first-script-cause-onward/observer-composition'),pins=path.join(run,'pins.json');
+   const local=runtime.prepare({run,pins});new vm.Script(local.source);new vm.Script(local.route);
+   base.compileClosure(local.source.slice(0,local.source.lastIndexOf('main().catch(')),local.driver,local.route,local.evidence.retainedClosure);
+   assert.equal(local.evidence.callbackObserver.passiveControls.readinessGranted,false);
+   assert.equal(local.evidence.callbackObserver.passiveControls.presentation,'unknown');
+   assert.throws(()=>runtime.acceptedRuntimePins(),/unknown runtime dependency mismatch/,'historical original binding stays closed after observer change');
+   evidence.localRuntime={compositionSHA256:local.evidence.compositionSHA256,routeCompositionSHA256:local.evidence.routeCompositionSHA256,historicalBindingAccepted:false};
+   for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
+    const arms=[];for(const [observed,trace]of [[false,false],[false,true],[true,false]])arms.push(await one(variant,observed,trace,false,false,false,false,true));
+    const [control,trace,observed]=arms;
+    assert.deepEqual(observed.visibilityDecisions,control.visibilityDecisions);assert.deepEqual(trace.visibilityDecisions,control.visibilityDecisions);
+    assert.deepEqual(observed.inputDecisions,control.inputDecisions);assert.deepEqual(trace.inputDecisions,control.inputDecisions);
+    assert.deepEqual(observed.segments,trace.segments,'trace-only complete memory/register parity');
+    assert.deepEqual(observed.segments,control.segments,'independent unobserved complete memory/register parity');
+    assert.deepEqual(observed.commands.slice(0,observed.paritySlices),control.commands);assert.deepEqual(trace.commands,control.commands);
+    for(const arm of arms)for(const segment of arm.segments)delete segment.pages;
+    results.push({variant,control,trace,observed});console.log('PASS composed owning Worker passive preset/control fixtures; independent all-page/register/command parity',variant);
+   }
+   if(process.env.STRONGHOLD_CALLBACK_RESULT)fs.writeFileSync(process.env.STRONGHOLD_CALLBACK_RESULT,JSON.stringify({passed:true,fixtureOnly:true,offlineOnly:true,evidence,results},null,2)+'\n');return;
   }
   if(process.argv.includes('--initializer-only')){
    const results=[];

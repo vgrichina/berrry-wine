@@ -22,7 +22,109 @@ const CUTS=Object.freeze({hover:0x42d850,activate:0x42d880,choice1:0x42d9de,
   mouseBefore:0x468b39,mouseChanged:0x468b49,mouseSet:0x468b50,mouseAfter:0x468b58});
 const ENTRIES=new Map([[CUTS.hover,'hover'],[CUTS.activate,'activation'],[CUTS.update,'updater'],[CUTS.apply,'application']]);
 const STATES=Object.freeze({pending69165c:0x69165c,saved690f7c:0x690f7c,description69332c:0x69332c,
-  mode1681318:0x1681318,mouse34:0x1bd26a4,mouse40:0x1bd26b0,mouse4c:0x1bd26bc});
+  mode1681318:0x1681318,feedback995674:0x995674,inputSuppressiond138b0:0xd138b0,mouse34:0x1bd26a4,mouse40:0x1bd26b0,mouse4c:0x1bd26bc});
+const CONTROL_PINS=Object.freeze([[4623151,"c786cc010000fdffffff"],[4348368,"6828a55b00b9482f6900e8a1380c00c3"],[5149375,"8b10895848"],[5149481,"8b48108b78188d504c33f6f6420302741c837a14007503894a14837a1c007503897a1c83c25046f642030275e4"],[5150073,"8b06a90000008075472500008000740583ff03741785c0750583ff01740985ff740583ff027529"],[5150240,"83ec245355568bf15733ed8b3e81e7ffff7f0066396e36897c242c0f85d707000066396e380f85cd070000"],[5152304,"51535556578bf133ff66397e360f854b020000"],[5152459,"0fbf46340fbf4e320bc1893d80569900a374569900a1b038d1000fbf56383bc78915885699007406893d745699008b464c8b48143bcf747f"],[5152825,"83f801750c8b4e1851ff561c83c404eb1783f80375128b561852ff561ca17c56990083c404894648"],[5150627,"396e2c740fa19846fb0085c075068b564c897238"],[6006396,"80d84200"],[6006404,"50d84200"]].map(([pc,hex])=>Object.freeze({pc,hex})));
+
+// Shared by the composed owning observer. This factory has no host hooks,
+// timers, exports that mutate the guest, or independent resource budget.
+// Its events use the owning observer's existing first-fault and finite caps.
+function controlFactory({read,u32,getExports,emit,sequence,signatures}) {
+ const manager=0x692f48,descriptor=0x5ba528,children=[0x5ba6b8,0x5ba708,0x5ba758];
+ const cuts=new Set([0x42d850,0x42d880,0x42d9de,0x42d9e3,0x46cbe0,0x42da62,
+  0x42db40,0x42db53,0x42db5b,0x42db68,0x42db71,0x42e490,0x42db77,0x42db87,
+  0x468b2f,0x468b39,0x468b49,0x468b50,0x468b55,0x468b58,0x4e9e30,0x4e9ef3,0x4e9ef9,0x4e9f03,0x4e9f82]);
+ const entries=new Map([[0x42d850,'preset-hover'],[0x42d880,'preset-activation'],
+  [0x42db40,'preset-updater'],[0x42e490,'preset-application']]);
+ const frames=[];let prior=null,mouse=null;
+ const u16=a=>{const b=read(a,2);return b[0]+256*b[1];};
+ function widget(pointer){
+  const index=children.indexOf(pointer);
+  if(index<0)return {pointer,identity:'unknown; not a numbered preset child'};
+  const owner=u32(pointer+0x4c),root=u32(manager),argument=u32(pointer+0x18),flags=u32(pointer);
+  const valid=owner===manager&&root===descriptor&&argument===index+1&&(flags&0x7fffff)===3&&
+   u32(pointer+0x14)===0x42d880&&u32(pointer+0x1c)===0x42d850;
+  return {pointer,owner,descriptor:root,argument,flags,identity:valid?'scene20-numbered-preset':'unknown; widget owner/descriptor/callback mismatch',
+   hiddenFlag:!!(flags&0x80000000),drawMode1ExcludedFlag:!!(flags&0x800000),
+   hidden36:u16(pointer+0x36),disabled38:u16(pointer+0x38),hover32:u16(pointer+0x32),press34:u16(pointer+0x34),
+   selected:u32(manager+0x38)===pointer,visiblePixels:null,readinessGranted:false};
+ }
+ function state(){
+  const root=u32(manager),selected=u32(manager+0x38);
+  return {pending69165c:u32(0x69165c),feedback995674:u32(0x995674),description69332c:u32(0x69332c),
+   mouse34:u32(0x1bd26a4),mouse40:u32(0x1bd26b0),mouse4c:u32(0x1bd26bc),
+   selectedWidget:{manager,descriptor:root,pointer:selected,
+    ...(root===descriptor&&selected?widget(selected):{identity:'unknown; no matching setup selection'})}};
+ }
+ function boundary(pc,esp){
+  const ex=getExports(),top=frames.at(-1);
+  if(top&&u32(top.esp)!==top.caller)throw Error('control saved caller changed');
+  if(!cuts.has(pc)&&pc!==top?.caller){prior=pc;return;}
+  signatures();
+  let f=top,returned=null;
+  if(f&&pc===f.caller){
+   if(esp!==f.esp+4||u32(f.esp)!==f.caller)throw Error('control return stack/caller history mismatch');
+   emit(f.name+'-return',{entrySequence:f.sequence,argument:f.argument,eax:ex.get_eax()>>>0});
+   returned=f;frames.pop();f=frames.at(-1);
+   if(returned.name==='preset-application'){if(f?.name!=='preset-updater')throw Error('application updater history missing');f.applicationReturned=true;}
+  }
+  if(entries.has(pc)){
+   const name=entries.get(pc),caller=u32(esp),argument=name==='preset-updater'?null:u32(esp+4);
+   if(!caller||frames.length>=8)throw Error('control saved return/nesting missing');
+   if(name==='preset-application'&&(!f||f.name!=='preset-updater'||prior!==0x42db71||caller!==0x42db77||esp!==f.esp-20||argument!==u32(0x69165c)||!f.edgeAccepted))throw Error('application call/updater history missing');
+   const widgetRelation=name==='preset-hover'&&f?.name==='preset-widget-draw'&&caller===0x4ea056&&prior===0x4ea04f&&(ex.get_esi()>>>0)===f.pointer?{entrySequence:f.sequence,pointer:f.pointer}:null;
+   emit(name+'-entry',{caller,argument,widgetRelation});
+   frames.push({name,caller,argument,esp,sequence:sequence()});f=frames.at(-1);
+  }
+  if([0x42d9de,0x42d9e3,0x42da62].includes(pc)&&f?.name!=='preset-activation')throw Error('activation history missing');
+  if(pc===0x42d9e3)f.queueBefore=state();
+  if(pc===0x46cbe0&&f?.queueBefore){
+   if(f.name!=='preset-activation'||f.argument!==1||prior!==0x42d9e3||esp!==f.esp-40||u32(esp)!==0x42da57||u32(0x69165c)!==1||u32(0x690f7c)!==1)throw Error('preset queue history mismatch');
+   emit('preset-queued',{entrySequence:f.sequence,before:f.queueBefore});delete f.queueBefore;
+  }
+  if([0x42db53,0x42db5b,0x42db68,0x42db71,0x42db77,0x42db87].includes(pc)){
+   if(f?.name!=='preset-updater')throw Error('updater history missing');
+   if(pc===0x42db53){f.edge=u32(0x1bd26a4);emit('preset-edge-decision',{entrySequence:f.sequence,edge:f.edge,pending:u32(0x69165c)});}
+   if(pc===0x42db5b){if(prior!==0x42db53||!f.edge||u32(0x1bd26a4)!==f.edge)throw Error('native edge decision history missing');f.edgeAccepted=true;emit('preset-edge-accepted',{entrySequence:f.sequence});}
+   if(pc===0x42db71&&(!f.edgeAccepted||prior!==0x42db68||!u32(0x69165c)||(ex.get_eax()>>>0)!==u32(0x69165c)))throw Error('application recheck history missing');
+   if(pc===0x42db77&&!returned)throw Error('application return history missing');
+   if(pc===0x42db87&&f.applicationReturned){
+    if(prior!==0x42db77||u32(0x69165c)!==0||u32(0x692404)!==1)throw Error('application clear history mismatch');
+    emit('preset-pending-cleared',{entrySequence:f.sequence});
+   }
+  }
+  if(pc===0x468b2f||pc===0x468b39){
+   if((ex.get_esi()>>>0)!==0x1bd2670||(ex.get_edi()>>>0)!==0||(ex.get_ebx()>>>0)!==1)throw Error('native mouse object/constants mismatch');
+   mouse={sourcePC:pc,held:u32(0x1bd26b0),previous:u32(0x1bd26bc),esp};
+  }
+  if(mouse&&[0x468b49,0x468b50,0x468b55].includes(pc)){
+   if(pc===0x468b49&&![0x468b2f,0x468b39].includes(prior)||pc!==0x468b49&&prior!==0x468b49)throw Error('native mouse branch history missing');
+  }
+  if(pc===0x468b58&&mouse){
+   if((ex.get_esi()>>>0)!==0x1bd2670||esp!==mouse.esp||u32(0x1bd26b0)!==mouse.held||u32(0x1bd26bc)!==mouse.previous||
+    ![0x468b2f,0x468b39,0x468b50,0x468b55].includes(prior)||u32(0x1bd26a4)!==(mouse.held!==mouse.previous&&mouse.held!==0?1:0))throw Error('native mouse edge history mismatch');
+   emit('native-press-edge-sampled',{...mouse,edge:u32(0x1bd26a4)});mouse=null;
+  }
+  if(pc===0x4e9e30&&children.includes(ex.get_ecx()>>>0)){
+   const w=widget(ex.get_ecx()>>>0),caller=u32(esp);
+   if(w.identity!=='scene20-numbered-preset'||!caller||frames.length>=8)throw Error('widget owner/descriptor/caller mismatch');
+   emit('preset-widget-draw-entry',{widget:w,caller});frames.push({name:'preset-widget-draw',pointer:w.pointer,caller,esp,sequence:sequence(),
+    feedback:{suppression:u32(0xd138b0),before:((w.hover32<<16>>16)|(w.press34<<16>>16))>>>0}});f=frames.at(-1);
+  }
+  if([0x4e9ef3,0x4e9ef9,0x4e9f03,0x4e9f82].includes(pc)&&children.includes(ex.get_esi()>>>0)){
+   if(f?.name!=='preset-widget-draw'||f.pointer!==(ex.get_esi()>>>0)||esp!==f.esp-20||u32(f.esp)!==f.caller||widget(f.pointer).identity!=='scene20-numbered-preset')throw Error('widget feedback history/owner mismatch');
+   if(f.feedback){
+    if(pc===(f.feedback.suppression?0x4e9ef3:0x4e9ef9))f.feedback.path=pc;
+    if(pc===0x4e9f03||pc===0x4e9f82){
+     if(!f.feedback.path||![0x4e9ef3,0x4e9ef9].includes(prior)||u32(0xd138b0)!==f.feedback.suppression||u32(0x995674)!==(f.feedback.suppression?0:f.feedback.before))throw Error('widget feedback suppression history mismatch');
+     emit('preset-widget-feedback',{entrySequence:f.sequence,widget:widget(f.pointer),...f.feedback,after:u32(0x995674)});delete f.feedback;
+    }
+   }
+  }
+  prior=pc;
+ }
+ return {state,boundary,pending:()=>[...frames.map(f=>({...f})),...(mouse?[{name:'native-mouse-edge',...mouse}]:[])]};
+}
+
 const attached=new WeakSet();
 function attach({host,getExports,workerSlot,exeSha256,wasmSha256,workerURL,expectedWorkerURL,
   deadline,now=()=>performance.now(),maxMs=10000,maxRecords=2048,maxBoundaries=1000000}={}) {
@@ -184,6 +286,6 @@ function installPreload(options={}) {
     finish(reason){closed=true;for(const e of entries)e.observer?.finish(reason);if(WebAssembly.instantiate===wrapped)WebAssembly.instantiate=original;}
   };
 }
-const api={EXE_SHA256,PINS,CUTS,STATES,attach,installPreload};
+const api={EXE_SHA256,PINS,CONTROL_PINS,CUTS,STATES,controlFactory,attach,installPreload};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else globalThis.StrongholdNativePresetObserver=api;
 })();

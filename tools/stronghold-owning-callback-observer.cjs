@@ -3,8 +3,10 @@
 const fs=require('node:fs'),path=require('node:path');
 const base=require('./stronghold-preset-driver-attachment.cjs');
 const original=require('./stronghold-attached-original-preset-driver.cjs');
+const preset=require('./stronghold-native-preset-observer.cjs');
 const EXE_SHA256=base.EXE_SHA256;
 const PINS=Object.freeze([
+ ...[...preset.PINS,...preset.CONTROL_PINS].map(({pc,hex})=>[pc,hex]),
  [0x424bb0,'68c0924200'],
  [0x4293a0,'8b0d383369008bd62bd181fad00700007e10b9000d6801893538336900e8ee0b0500'],
  // Call argument construction and post-clock block.
@@ -39,7 +41,7 @@ const PINS=Object.freeze([
 
 // Serialized verbatim into the pre-instantiation owning realm. Only getters,
 // the pure JS translator and original import forwarding are used here.
-function observerFactory(EXE_SHA256,PINS){
+function observerFactory(EXE_SHA256,PINS,controlFactory=preset.controlFactory){
  const occupied=new WeakSet();
  // Fixed continuous limits; isolated render cost never proves full-draw
  // completion or remaining headroom. Blocks are counted, not stored.
@@ -63,7 +65,7 @@ function observerFactory(EXE_SHA256,PINS){
    evidence:'Owning WASM block entries and saved-return intervals. Draw and conditional surface observations never certify host presentation or pixels. Input annotations are host receipts, not guest dispatch proof.'};
   function finish(reason='explicit-stop'){
    if(!['installed','running'].includes(report.status))return report;
-   active=false;clearTimeout(timer);report.status=reason;report.pending=[...frames.map(f=>({...f})),...(draw?[{name:'draw',...draw}]:[]),...(surface?[{name:'surface',...surface}]:[])];
+   active=false;clearTimeout(timer);report.status=reason;report.pending=[...frames.map(f=>({...f})),...(draw?[{name:'draw',...draw}]:[]),...(surface?[{name:'surface',...surface}]:[]),...controls.pending()];
    if(host.log_block===wrapped)host.log_block=prior;for(const restore of restores)restore();occupied.delete(host);return report;
   }
   function fail(error){if(!report.fault)report.fault=String(error.message||error);return finish('unsupported-or-unobservable');}
@@ -84,7 +86,7 @@ function observerFactory(EXE_SHA256,PINS){
   }
   function signatures(){for(const [pc,hex]of PINS)if(read(pc,hex.length/2).map(v=>v.toString(16).padStart(2,'0')).join('')!==hex)throw Error('original bytes mismatch');}
   const state=()=>({currentScene:u32(0xd13764),requestedScene:u32(0xd13770),manager4:u32(0xd1375c),manager8:u32(0xd13760),mode:u32(0x1681318),saved:u32(0x690f7c),
-   fade692e18:u32(0x692e18),direction690e54:u32(0x690e54)|0,timestamp6921b8:u32(0x6921b8),refresh175f9fc:u32(0x175f9fc),inputSuppressiond138b0:u32(0xd138b0)});
+   fade692e18:u32(0x692e18),direction690e54:u32(0x690e54)|0,timestamp6921b8:u32(0x6921b8),refresh175f9fc:u32(0x175f9fc),inputSuppressiond138b0:u32(0xd138b0),...controls.state()});
   function emit(kind,extra={}){
    const row={kind,sequence:report.sequence+1,block:report.blocks,epoch,command,pc:ex.get_eip()>>>0,esp:ex.get_esp()>>>0,state:state(),...extra};
    // UTF-8 byte accounting, including non-ASCII annotations.
@@ -92,6 +94,7 @@ function observerFactory(EXE_SHA256,PINS){
    if(rows.length>=maxRecords||report.bytes+size>maxBytes)throw Error('record/byte overflow');
    rows.push(row);report.bytes+=size;report.sequence++;
   }
+  const controls=controlFactory({read,u32,getExports:()=>ex,emit,sequence:()=>report.sequence,signatures});
   function live(){if(!active)return false;if(now()>=end)throw Error('original observer deadline');identity();if(host.log_block!==wrapped)throw Error('import owner replaced');return true;}
   function drawFrame(esp){
    if(esp!==draw.esp-120||u32(draw.esp)!==draw.caller)throw Error('draw frame stack/caller mismatch');
@@ -184,6 +187,7 @@ function observerFactory(EXE_SHA256,PINS){
    if(++report.blocks>maxBoundaries)throw Error('boundary overflow');
    report.lastNativePC=pc;
    if(pc!==(ex.get_eip()>>>0)||esp!==(ex.get_esp()>>>0))throw Error('wrong block registers');
+   controls.boundary(pc,esp);
    drawing(pc,esp);
    let f=frames.at(-1);
    if(f&&pc===f.caller){
@@ -279,7 +283,7 @@ function observerFactory(EXE_SHA256,PINS){
      if(!/^[a-f0-9]{64}$/.test(row.sha256||'')||lastAck!==null&&row.steps!==lastAck)throw Error('stale capture state');
     }else if(!['begin','failed','success'].includes(row.kind))throw Error('unsupported annotation');
     emit('host-annotation',{annotation:row,...(row.kind==='ACK'?{lastNativePC:report.lastNativePC,
-     nativeFrames:[...frames.map(f=>({...f})),...(draw?[{name:'draw',...draw}]:[]),...(surface?[{name:'surface',...surface}]:[])]}:{})});if(row.kind==='failed')finish('command-failed');
+     nativeFrames:[...frames.map(f=>({...f})),...(draw?[{name:'draw',...draw}]:[]),...(surface?[{name:'surface',...surface}]:[]),...controls.pending()]}:{})});if(row.kind==='failed')finish('command-failed');
    }catch(error){fail(error);}return report;}
   };
  }
@@ -421,7 +425,7 @@ function workerSource({observeSource,options}){
  install=base.replaceOnce(install,"{command,kind:'begin'}","{command,kind:'begin',epoch:options.epoch}");
  install=base.replaceOnce(install,'{...row,command}','{...row,command,epoch:options.epoch}');
  install=base.replaceOnce(install,"if(action==='check'){", "if(action==='assert-live'){entry.observer.assertLive();running();}\n     else if(action==='check'){");
- return observeSource+'\n;globalThis.StrongholdNativePresetObserver=('+observerFactory.toString()+')('+JSON.stringify(EXE_SHA256)+','+JSON.stringify(PINS)+');\n;('+install+')('+JSON.stringify({...options,epoch})+');';
+ return observeSource+'\n;globalThis.StrongholdNativePresetObserver=('+observerFactory.toString()+')('+JSON.stringify(EXE_SHA256)+','+JSON.stringify(PINS)+',('+preset.controlFactory.toString()+'));\n;('+install+')('+JSON.stringify({...options,epoch})+');';
 }
 // Reuse the exact tested compile/send and target/session guards. The command
 // scope now spans the one Custom Game gesture and its input-free observations.
@@ -508,6 +512,10 @@ function prepare(options){
  p.evidence.callbackObserver.passiveDraw={entry:0x4292c0,returnInstruction:0x42a20e,
   returnEvidence:'byte-pinned epilogue block plus saved caller/ESP return; block-level hook',
   sameHistory:true,presentation:'pending',hostRelation:null,readinessGranted:false,pixelsAccepted:false};
+ p.evidence.callbackObserver.passiveControls={history:'native boundaries only; pre-start history unknown',
+  hover:'description only',activation:'entry/queue distinct from application',application:'saved caller/ESP interval only',
+  widget:'exact scene20 manager/descriptor and numbered child identity; visibility/disabled samples only',
+  presentation:'unknown',readinessGranted:false,pixelsAccepted:false};
  p.evidence.successor.routeCompositionUnchanged=false;
  p.evidence.successor.scope='Pre-first-script owning callback diagnostic composition; no runtime qualification or preset/Start grant';
  p.evidence.compositionSHA256=base.hash(p.source);p.evidence.routeCompositionSHA256=base.hash(p.route);

@@ -76,6 +76,9 @@ async function physical(){
   h?.annotate({command:19,kind:'failed',reason:'fixture command failure'});
   if(h){assert.equal(h.report.status,'command-failed');assert.equal(h.report.coverage.applications,1);assert.equal(h.report.pending.length,1);
     assert(h.report.records.some(r=>r.kind==='native-edge-decision'&&r.edge===0));
+    assert(h.report.records.some(r=>r.name==='hover'&&r.state.feedback995674===1));
+    assert(h.report.records.every(r=>Number.isInteger(r.state.inputSuppressiond138b0)));
+    assert(h.report.records.every(r=>Number.isInteger(r.state.pending69165c)));
     assert(h.report.records.some(r=>r.kind==='native-edge-accepted'));
     assert(h.report.records.some(r=>r.kind==='native-return'&&r.name==='application'));
     assert(h.report.records.some(r=>r.kind==='native-block'&&r.label==='mouseAfter'&&r.state.mouse34===1));
