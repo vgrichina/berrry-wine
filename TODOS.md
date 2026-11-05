@@ -2177,8 +2177,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-ARANNA-DEMO-20261010
   blocker: Original installer recovered; fresh bx_96k82f8h created successfully, but SSH preflight returned403 api_key_action_forbidden (2026-11-05 12:55Z). Box stopped; remote runtime requires SSH access authorization, or a free serialized local runtime slot.
-  worker: none (prepared task pending available runtime; three other workers active)
-  status: pending (original media recovered; runtime/setup and gameplay pending)
+  worker: fresh aranna-original-local-gameplay-1710; source-only behind rectangular1610 -> RFsource1620 -> Lords callbacklifetime1635 releases/cleanup
+  status: active (local original setup/gameplay assigned; media/extraction recovered)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: scratch/game-media/aranna-demo-20261105/dsloademo.exe (260378624 bytes, SHA256 e3923f18d3ec9bf52ffe556821dbaa2078e985087c7bf4b171a36b9883b851cf; exact historical original)
   Prepared: Canonical extraction scratch/game-media/aranna-demo-20261105/extracted/ verified28files/281799760B, DSLOA.exe historical hash exact, both case-distinct setup DLLs preserved. Per-file receipt scratch/runs/20261105-aranna-extraction/result.json. No guest execution, acceptance or installation.
@@ -2191,8 +2191,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Shadow Man original demo: installed launcher/configuration response accepted
   id: NEW-GAME-SHADOW-MAN-DEMO-20261013
-  blocker: No current CLI startup/control blocker observed. Browser, longer gameplay, audio, save/load, normal guest exit and corpus registration remain unqualified.
-  worker: fresh shadow-man-browser-gameplay-1700; source-only behind rectangular1610 -> RFsource1620 -> Lords callbacklifetime1635 releases/cleanup
+  blocker: Browser prerequisite missing: installed2046files177700067B absent locally. Recover exact snapshot3ac9827f-20cf-4e1c-98a8-40b4edcd1b2f members from scratch/runs/20261105-shadow-man-browser-gameplay/required-input-recovery.json. Launcher and genuine saved config/registry verified; no browser attempted.
+  worker: none (shadow-man-browser-gameplay-1700 terminal0; missing installed media, no runtime)
   status: partial (original CLI menu-to-gameplay and ordinary movement accepted; registration/browser pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Next: Use established original configuration/Play route for a future bounded browser or longer gameplay qualification; first add a correctly pinned corpus entry if registration is assigned. Publisheddebc24bfc evidence run20261103-shadow-man-config-recover, root review20261103-coordinator-shadow-review. Do not repeat the old disabled-Play investigation.
