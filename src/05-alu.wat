@@ -3614,7 +3614,7 @@
   ;; REP MOVSW
   (func $th_rep_movsw (param $op i32)
      (local $nx_fn i32) (local $nx_op i32)
-    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (call $rep_precise (i32.const 2) (i32.const 1)))
       (then (if (call $rep_fault_checked (i32.const 2) (i32.const 1) (local.get $op)) (then (return))) (dispatch-next)))
     (if (global.get $rep_store_step) (then
       (if (call $rep_store_step_do (i32.const 2) (i32.const 1)) (then (return)))
@@ -3632,7 +3632,7 @@
   ;; REP STOSW
   (func $th_rep_stosw (param $op i32)
      (local $nx_fn i32) (local $nx_op i32)
-    (if (i32.and (i32.eqz (global.get $rep_store_step)) (i32.eq (global.get $fault_unmapped) (i32.const 3)))
+    (if (i32.and (i32.eqz (global.get $rep_store_step)) (call $rep_precise (i32.const 2) (i32.const 0)))
       (then (if (call $rep_fault_checked (i32.const 2) (i32.const 0) (local.get $op)) (then (return))) (dispatch-next)))
     (if (global.get $rep_store_step) (then
       (if (call $rep_store_step_do (i32.const 2) (i32.const 0)) (then (return)))

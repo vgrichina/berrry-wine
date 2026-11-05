@@ -7642,9 +7642,9 @@
           "$old_eip"
         ]
       ],
-      "sha256": "126ab8d812be9d0b9c37c421488a9d5139b5ddaeb269b076a14440f3983d7f8e",
+      "sha256": "6aaebb633b273210b668fbdddfd6cf8ef3bba469c976912292ea3dabe39462c3",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). REP MOVS restart (MIG-SAM-REP-RESTART): mode-5 REP elements are offered through $rep_fault_sync; seh_fault_sync only additionally records the read/write kind in the record.",
       "ownership": "pending"
     },
     {
@@ -9276,9 +9276,30 @@
           "$pc"
         ]
       ],
-      "sha256": "668741f368132e11c6d4b5ef572155b9c1abc051d925045ff38f29b0a46753a4",
+      "sha256": "a305eca052f2e5022d32da38c8e9ff32f49045f8f7d2c6fe72a77dbd028ced81",
       "kind": "guest-control",
-      "reason": "Candidate REP mode3 preflight: reads mappings, commits architectural progress only after complete element; on absent byte sets prefix EIP/address/intent, raises existing asynchronous exception and returns immediately. No new nested context or retained guest continuation; invocation ownership remains pending.",
+      "reason": "Candidate REP mode3 preflight: reads mappings, commits architectural progress only after complete element; on absent byte sets prefix EIP/address/intent, raises existing asynchronous exception and returns immediately. No new nested context or retained guest continuation; invocation ownership remains pending. REP MOVS restart (MIG-SAM-REP-RESTART): mode-5 REP elements are offered through $rep_fault_sync; seh_fault_sync only additionally records the read/write kind in the record.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/05b-string-ops.wat",
+      "name": "$rep_fault_sync",
+      "writes": 2,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "local.get",
+          "$pc"
+        ],
+        [
+          "local.get",
+          "$saved_eip"
+        ]
+      ],
+      "sha256": "5011496c6c37a0f50ac8de822100bcd206bfcfba92ecab26ec4e772803f3cffe",
+      "kind": "guest-control",
+      "reason": "Mode-5 REP absent byte: sets the REP prefix EIP for the record/CONTEXT, calls the existing $seh_fault_sync nested filter walk (which owns invocation/sync depth and restores registers), then restores the interrupted EIP. No new continuation or retained context; ownership remains pending.",
       "ownership": "pending"
     },
     {
