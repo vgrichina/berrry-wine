@@ -41,19 +41,39 @@ No alternate route was attempted. The sandbox was not resumed, no files
 were transferred, and no guest, browser, or build ran. This enforced access
 restriction is the immediate blocker, independent of license authorization.
 
+## Owner-directed replacement, 2026-11-05
+
+The restriction above is a historical observation, not a prerequisite to ask
+the owner to change access. The owner directed fresh boxes instead of retrying
+stopped boxes that return `403 api_key_action_forbidden`. Old `bx_hx8msa33`
+is superseded and must remain untouched; do not resume or delete it.
+
+Replacement `bx_wnnajw2r` was created with a persisted UUID Idempotency-Key.
+Its setup command `cmd_yhu8kz94cuqx` completed successfully at
+2026-11-05T10:26:25.739Z. This verifies preparation command access only.
+The retained final state records normal stop at 10:26:47.081Z and a verified
+snapshot at 10:26:47.045Z. Evidence is in
+`scratch/runs/20261105-owner-fresh-runtime/conan-{request,create,setup,setup-receipt,state}.json`.
+No installer, acceptance or gameplay was run on this replacement.
+
+The current blocker is reconstruction of the original installer and supporting
+inputs, followed by an eligible worker/runtime slot. The historical original
+size and SHA-256 remain unknown. A similarly named public demo cannot be
+claimed to match that fixture without evidence.
+
 ## Recovery and execution prerequisites
 
-1. Resume the saved sandbox through an authorized supported session once
-   the access restriction is resolved. Do not retry denied pagination,
-   SSH/scp, or substitute credentials. Recheck the snapshot and preserve all
-   original files. Inventory Conan filenames and the historical evidence
-   before selecting any source; compute actual size and SHA-256.
-2. Recover the original installer, its controller/logs and EULA capture using
-   permitted exec/FilesAPI directly to roomy `bx_rqnkhrnr`. Keep large bytes
-   off this local host (2.32 GB available after checkout; required floor
-   greater than 2 GB). Pin and verify both ends of each transfer. Record a
-   recovery manifest including source box, absolute paths, size and hashes.
-   Snapshot-stop the recovery box after transfer verification; do not delete.
+1. Recover original identity from retained local evidence or old-box files
+   only if reachable without resume. Do not retry denied pagination or use
+   substitute credentials. Preserve old boxes. Record actual source, size and
+   SHA-256; distinguish any newly sourced demo from the unknown historical pin.
+2. Reconstruct from the repository, recorded fixture hashes and small specific
+   inputs. Reference existing media by path and hash; do not copy media into
+   every run or archive the source tree. Use the prepared replacement when
+   permitted. If another stopped-box resume returns 403, follow the owner's
+   fresh-box procedure with a persisted UUID Idempotency-Key. Fork only when
+   installed state is required and permitted. Stop each new box promptly after
+   its run and evidence retrieval; never delete the superseded old box.
 3. Prepare an isolated immutable stage with a coherent source/module pair.
    Audit the selected runner's full boot closure: SYSTEM_DATA_FILES including
    stdole type libraries, bitmap fonts including Terminal.fon, substitution
