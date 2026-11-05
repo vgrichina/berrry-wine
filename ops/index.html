@@ -30,10 +30,6 @@
     </nav>
     <div class="nav-label">More</div>
     <nav class="nav-more" aria-label="More views">
-      <a href="#overview" data-view="overview">Classic overview</a>
-      <a href="#tasklist" data-view="tasklist">Task list <small id="task-count" class="count"></small></a>
-      <a href="#agentlist" data-view="agentlist">Agent sessions</a>
-      <a href="#blockers" data-view="blockers">Blockers <small id="blocker-count" class="count"></small></a>
       <a href="#corpus" data-view="corpus">EXE corpus <small id="corpus-count" class="count"></small></a>
       <a href="#release" data-view="release">Release checklist</a>
       <a href="#dos" data-view="dos">DOS / ToyVM <small id="dos-count" class="count"></small></a>
@@ -49,6 +45,19 @@
       <button id="search-toggle" class="icon-btn only-phone" aria-label="Search" aria-expanded="false"><span data-icon="search" aria-hidden="true"></span></button>
       <button id="refresh" class="icon-btn" title="Refresh data" aria-label="Refresh data"><span data-icon="refresh" aria-hidden="true"></span></button>
     </header>
+    <nav class="subnav" data-for="tasks" aria-label="Task views" hidden>
+      <a href="#tasks" data-sub="" data-label="Board">Board</a>
+      <a href="#tasks/needs" data-sub="needs" data-label="Needs you">Needs you <small class="count alert" data-count="needs"></small></a>
+      <a href="#tasks/active" data-sub="active" data-label="Running">Running <small class="count" data-count="active"></small></a>
+      <a href="#tasks/ready" data-sub="ready" data-label="Up next">Up next <small class="count" data-count="ready"></small></a>
+      <a href="#tasks/blocked" data-sub="blocked" data-label="Blocked">Blocked <small id="blocker-count" class="count"></small></a>
+      <a href="#tasks/done" data-sub="done" data-label="Done">Done <small class="count" data-count="done"></small></a>
+      <a href="#tasks/all" data-sub="all" data-label="All">All <small id="task-count" class="count"></small></a>
+    </nav>
+    <nav class="subnav" data-for="agents" aria-label="Agent views" hidden>
+      <a href="#agents" data-sub="" data-label="Now">Working now</a>
+      <a href="#agents/list" data-sub="list" data-label="All sessions">All sessions <small class="count" data-count="sessions"></small></a>
+    </nav>
     <section id="urgent-approvals" aria-label="Live approval requests" aria-live="polite" hidden></section>
     <main id="main" tabindex="-1"><div class="empty">Reading project files…</div></main>
   </div>

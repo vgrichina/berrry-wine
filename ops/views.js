@@ -2,9 +2,10 @@
 // The five destinations of the redesigned dashboard (Home, Games, Tasks,
 // Agents, Activity) plus the phone "More" page. They read the same /api/state
 // snapshot as the classic views in app.js and reuse its helpers (escape, age,
-// badge, agentSignal, candidateCapture, corpusLaunchActions, ...). Everything
-// the classic views offered stays one tap away: each new card opens the same
-// detail dialogs, and the classic pages live under "More".
+// badge, agentSignal, candidateCapture, corpusLaunchActions, ...). Each new card
+// opens the same detail dialogs. The classic task list, blockers and agent
+// session pages are tabs of Tasks and Agents (see route() in app.js); "More"
+// holds only pages with no main-view equivalent.
 
 const ICONS = {
   home: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
@@ -27,8 +28,10 @@ function paintIcons(root = document) {
   root.querySelectorAll('[data-icon]').forEach(el => { if (!el.firstChild) el.innerHTML = icon(el.dataset.icon); });
 }
 
-const PAGE_TITLES = { home: 'Home', games: 'Games', tasks: 'Tasks', tasklist: 'Task list', agents: 'Agents', activity: 'Activity', more: 'More', overview: 'Classic overview', agentlist: 'Agent sessions', blockers: 'Blockers', corpus: 'EXE corpus', release: 'Release checklist', dos: 'DOS / ToyVM', analytics: 'Usage & cost' };
-const NAV_SECTION = { tasklist: 'tasks', agentlist: 'agents', blockers: 'tasks', overview: 'more', corpus: 'more', release: 'more', dos: 'more', analytics: 'more' };
+const PAGE_TITLES = { home: 'Home', games: 'Games', tasks: 'Tasks', agents: 'Agents', activity: 'Activity', more: 'More', corpus: 'EXE corpus', release: 'Release checklist', dos: 'DOS / ToyVM', analytics: 'Usage & cost' };
+// Pages without their own phone tab highlight "More" there; on the desktop
+// sidebar they highlight their own entry.
+const NAV_SECTION = { corpus: 'more', release: 'more', dos: 'more', analytics: 'more' };
 const agoText = value => value ? (Date.now() - Date.parse(value) < 60000 ? 'just now' : age(value) + ' ago') : '';
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
@@ -54,7 +57,7 @@ function needsYou() {
     items.push({ kind: 'hot', ic: 'alert', title: t.title, body: ask, acts: [`<button class="btn small primary" data-blocker="${escape(t.id)}">Answer</button>`, `<button class="btn small" data-task="${escape(t.id)}">Details</button>`] });
   }
   const review = state.tasks.filter(t => t.status === 'review');
-  if (review.length) items.push({ kind: 'info', ic: 'check', title: `${plural(review.length, 'finished result')} to review`, body: review.slice(0, 3).map(t => t.title).join(' · ') + (review.length > 3 ? ' …' : ''), acts: [`<a class="btn small" href="#tasks" data-board-col="review">Open review queue</a>`] });
+  if (review.length) items.push({ kind: 'info', ic: 'check', title: `${plural(review.length, 'finished result')} to review`, body: review.slice(0, 3).map(t => t.title).join(' · ') + (review.length > 3 ? ' …' : ''), acts: [`<a class="btn small" href="#tasks/needs">Open review queue</a>`] });
   for (const a of stoppedAgents()) {
     items.push({ kind: 'warn', ic: 'pause', title: `Agent stopped with work left: ${agentName(a)}`, body: agentSignal(a).reason, acts: [terminalButton(a, 'Resume in terminal', true), `<button class="btn small" data-agent="${escape(a.id)}">Details</button>`] });
   }
@@ -99,13 +102,19 @@ function gameCard(c) {
 // ---- header and navigation -----------------------------------------------
 
 function renderChrome() {
-  const section = NAV_SECTION[view] || view;
-  document.querySelectorAll('nav a[data-view]').forEach(a => {
-    const on = a.dataset.view === view || a.dataset.view === section;
-    a.classList.toggle('active', on);
-    if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  const { base, sub } = route(), section = NAV_SECTION[base] || base;
+  const mark = (a, on) => { a.classList.toggle('active', on); if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); };
+  document.querySelectorAll('nav a[data-view]').forEach(a => mark(a, a.dataset.view === base || a.dataset.view === section));
+  // Tab bars inside Tasks and Agents: one per page, the current tab highlighted.
+  document.querySelectorAll('.subnav').forEach(nav => {
+    nav.hidden = nav.dataset.for !== base;
+    nav.querySelectorAll('a[data-sub]').forEach(a => mark(a, a.dataset.sub === sub));
   });
-  $('#page-title').textContent = PAGE_TITLES[view] || 'Home';
+  const tc = s => state.tasks.filter(t => t.status === s).length;
+  const tabCounts = { needs: needsCount(), active: tc('active'), ready: tc('ready'), done: tc('done'), sessions: topLevel(state.agents).length };
+  document.querySelectorAll('[data-count]').forEach(el => { const n = tabCounts[el.dataset.count]; el.textContent = n || ''; });
+  const current = document.querySelector(`.subnav[data-for="${base}"] a[data-sub="${sub}"]`);
+  $('#page-title').textContent = (PAGE_TITLES[base] || 'Home') + (sub && current ? ' · ' + current.dataset.label : '');
   const needs = needsCount(), live = topLevel(liveAgents()).length, stopped = stoppedAgents().length, b = state.emulatorBuild;
   $('#needs-count').textContent = needs || '';
   const tab = $('#tab-needs-count'); tab.textContent = needs; tab.hidden = !needs;
@@ -115,7 +124,7 @@ function renderChrome() {
   const pills = [
     `<a class="pill" href="#agents"><span class="dot ${live ? 'good pulse' : ''}"></span>${plural(live, 'agent')} working</a>`,
     stopped ? `<a class="pill" href="#agents"><span class="dot warn"></span>${stopped} stopped with work left</a>` : '',
-    needs ? `<a class="pill pill-hot" href="#tasks"><span class="dot hot"></span>${needs} waiting on you</a>` : '',
+    needs ? `<a class="pill pill-hot" href="#tasks/needs"><span class="dot hot"></span>${needs} waiting on you</a>` : '',
   ].join('');
   const buildHtml = `<span class="dot ${build[1]}"></span>${escape(build[0])}`;
   if ($('#build-line').innerHTML !== buildHtml) { $('#build-line').innerHTML = buildHtml; $('#build-line').title = b?.note || ''; }
@@ -131,28 +140,40 @@ function homeView() {
   const tc = s => state.tasks.filter(t => t.status === s).length, asks = needsYou();
   const seg = (n, tone) => n ? `<span class="seg-${tone}" style="width:${(100 * n / total).toFixed(2)}%" title="${n}"></span>` : '';
   const helpers = liveAgents().filter(a => a.parentAgentId).length;
-  const latest = [], seen = new Set();
-  for (const r of state.runs) {
-    if (!r.gameplayScreenshots?.length || seen.has(r.candidateId)) continue;
-    const c = state.candidates.find(c => c.id === r.candidateId || c.appIds?.includes(r.candidateId));
-    if (!c || seen.has(c.id) || !matches(c)) continue;
-    seen.add(c.id); seen.add(r.candidateId); latest.push([c, r]);
-    if (latest.length === 4) break;
-  }
+  // Newest first by run start. Reviewed gameplay is rare, so recent captures from
+  // agent runs (not reviewed gameplay) are shown beside it.
+  const newest = (pick, limit) => {
+    const out = [], seen = new Set();
+    for (const r of [...state.runs].sort((a, b) => (b.startedAt || '').localeCompare(a.startedAt || ''))) {
+      const shot = pick(r);
+      if (!shot || seen.has(r.candidateId)) continue;
+      const c = state.candidates.find(c => c.id === r.candidateId || c.appIds?.includes(r.candidateId));
+      if (!c || seen.has(c.id) || !matches(c)) continue;
+      seen.add(c.id); seen.add(r.candidateId); out.push([c, r, shot]);
+      if (out.length === limit) break;
+    }
+    return out;
+  };
+  const latest = newest(r => r.gameplayScreenshots?.at(-1), 4);
+  const captures = newest(r => !r.gameplayScreenshots?.length && (r.visuals?.at(-1) || r.screenshots?.at(-1)), 4);
+  const stale = !latest.length || Date.now() - Date.parse(latest[0][1].startedAt) > 3 * 86400000;
+  const mini = ([c, r, shot], note) => `<div class="mini"><button class="shot" data-game="${escape(c.id)}" aria-label="Details for ${escape(c.name || c.id)}"><img src="${escape(shot.url)}" alt="" loading="lazy"></button><div class="cap" title="${escape(c.name || c.id)}">${escape(c.name || c.id)}</div><div class="sub">${playRoute(c) ? `<a href="${escape(playRoute(c).url)}" target="_blank" rel="noopener noreferrer">${icon('play')} Play</a> · ` : ''}${note}${agoText(r.startedAt)}</div></div>`;
   const commits = (state.activity || []).filter(a => a.type === 'commit' && matches(a)).slice(0, 6);
-  return `<div class="kpis">
+  return `${statusSummary(true)}<div class="kpis">
     <a class="card kpi" href="#agents"><div class="v">${live.length}</div><div class="l">Agents working now</div><div class="h">${stopped.length} stopped with work left · ${idle.length} idle</div></a>
-    <a class="card kpi kpi-hot" href="#tasks"><div class="v">${asks.length}</div><div class="l">Waiting on you</div><div class="h">${state.tasks.filter(t => t.status === 'review').length} results to review</div></a>
+    <a class="card kpi kpi-hot" href="#tasks/needs"><div class="v">${asks.length}</div><div class="l">Waiting on you</div><div class="h">${state.tasks.filter(t => t.status === 'review').length} results to review</div></a>
     <a class="card kpi" href="#games"><div class="v">${counts.live + counts.playable}<small> / ${games.length}</small></div><div class="l">Games playable</div><div class="bar">${seg(counts.live, 'good')}${seg(counts.playable, 'accent')}${seg(counts.starts, 'mute')}${seg(counts.broken, 'bad')}</div></a>
-    <a class="card kpi" href="#tasks"><div class="v">${tc('active')}</div><div class="l">Tasks in progress</div><div class="h">${tc('ready')} up next · ${tc('blocked')} blocked</div></a>
+    <a class="card kpi" href="#tasks/active"><div class="v">${tc('active')}</div><div class="l">Tasks in progress</div><div class="h">${tc('ready')} up next · ${tc('blocked')} blocked</div></a>
   </div>
   <div class="grid2">
     <div class="col-stack">
-      <section class="card needs"><div class="card-h"><h2>${asks.length ? `<span class="n">${asks.length}</span>` : ''}Needs you</h2><a class="link" href="#tasks">All →</a></div>
+      <section class="card needs"><div class="card-h"><h2>${asks.length ? `<span class="n">${asks.length}</span>` : ''}Needs you</h2><a class="link" href="#tasks/needs">All →</a></div>
         ${asks.filter(matches).map(askRow).join('') || `<div class="calm">${icon('check')} Nothing is waiting on you.</div>`}
       </section>
-      <section class="card"><div class="card-h"><h2>Latest playable games</h2><a class="link" href="#games">All games →</a></div>
-        ${latest.length ? `<div class="mini-games">${latest.map(([c, r]) => `<div class="mini"><button class="shot" data-game="${escape(c.id)}" aria-label="Details for ${escape(c.name || c.id)}"><img src="${escape(r.gameplayScreenshots.at(-1).url)}" alt="" loading="lazy"></button><div class="cap">${escape(c.name || c.id)}</div><div class="sub">${playRoute(c) ? `<a href="${escape(playRoute(c).url)}" target="_blank" rel="noopener noreferrer">${icon('play')} Play</a> · ` : ''}${agoText(r.startedAt)}</div></div>`).join('')}</div>` : '<div class="calm">No reviewed gameplay yet.</div>'}
+      <section class="card"><div class="card-h"><h2>Latest reviewed gameplay</h2><a class="link" href="#games">All games →</a></div>
+        ${latest.length ? `<div class="mini-games">${latest.map(x => mini(x, '')).join('')}</div>` : '<div class="calm">No reviewed gameplay yet.</div>'}
+        ${stale && latest.length ? `<p class="sub card-note">No newer reviewed gameplay run; the newest is ${agoText(latest[0][1].startedAt)}.</p>` : ''}
+        ${captures.length ? `<div class="card-h card-h-sub"><h3>Latest captures from agent runs</h3><a class="link" href="#corpus">Corpus →</a></div><div class="mini-games">${captures.map(x => mini(x, 'capture · ')).join('')}</div>` : ''}
       </section>
     </div>
     <div class="col-stack">
@@ -164,7 +185,7 @@ function homeView() {
         <ul class="feed">${commits.map(c => `<li><span class="k ${c.code?.state === 'merged' ? 'k-good' : ''}">${c.code?.state === 'merged' ? '✓' : '•'}</span><span>${escape(c.subject || c.text)} ${c.code?.state === 'merged' ? '<span class="badge b-good">on main</span>' : c.code?.state === 'pushed' ? '<span class="badge b-info">pushed</span>' : '<span class="badge b-mute">local</span>'}</span><span class="ago">${agoText(c.time)}</span></li>`).join('') || '<li><span></span><span class="sub">No commits.</span><span></span></li>'}</ul>
       </section>
     </div>
-  </div>${notice()}`;
+  </div>`;
 }
 function askRow(d) {
   return `<div class="ask ask-${d.kind}"><div class="ask-ic">${icon(d.ic)}</div><div class="ask-copy"><h3>${escape(d.title)}</h3><p>${escape(d.body)}</p></div><div class="acts">${d.acts.join('')}</div></div>`;
@@ -205,37 +226,40 @@ function gameDetail(id) {
 document.addEventListener('click', event => {
   const hero = event.target.closest?.('[data-hero]');
   if (hero) { $('#gd-hero').src = hero.dataset.hero; hero.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === hero)); return; }
-  const el = event.target.closest?.('[data-game],[data-game-filter],[data-more-games],[data-board-col],[data-task-mode]');
+  const el = event.target.closest?.('[data-game],[data-game-filter],[data-more-games],[data-task-mode]');
   if (!el || !state) return;
   if (el.dataset.game) gameDetail(el.dataset.game);
   if (el.dataset.gameFilter) { gameFilter = el.dataset.gameFilter; gameLimit = 48; render(); }
   if (el.dataset.moreGames) { gameLimit += 48; render(); }
-  if (el.dataset.boardCol) { boardColumn = el.dataset.boardCol; if (view === 'tasks') render(); }
 });
 
 // ---- Tasks board -------------------------------------------------------------
 
-let boardColumn = 'needs';
 function boardCard(t) {
   const agent = state.agents.find(a => a.id === t.owner), live = agent && liveAgents().some(a => a.id === agent.id);
   const owner = !t.owner ? 'Unassigned' : agent ? agentName(agent) === t.title ? t.owner.split(':')[0] : t.owner.split(':')[0] + ' · ' + t.owner.split(':').at(-1).slice(0, 6) : t.owner.split(':')[0];
   const next = t.status === 'blocked' ? t.needs || t.blocker || t.next : t.next || t.done;
   return `<button class="task-card task-card-${escape(t.status)}" data-task="${escape(t.id)}"><h3>${escape(t.title)}</h3>${next ? `<p>${escape(next)}</p>` : ''}<span class="f"><span class="dot ${live ? 'good pulse' : ''}"></span>${escape(owner)}${t.progressAt ? ' · ' + agoText(t.progressAt) : ''}</span></button>`;
 }
-function tasksBoard() {
+// Board: the four columns that matter now, each capped with a link to its full
+// tab. "#tasks/needs" is the Needs-you column on its own. The other tabs
+// (Running, Up next, Done, List) are the classic list in app.js, Blocked is the
+// blocker view.
+const BOARD_CAP = 6;
+function tasksBoard(sub = '') {
   const by = s => sortedTasks(state.tasks.filter(t => t.status === s && matches(t)));
   const asks = needsYou().filter(matches), review = by('review');
   const { needsUser } = BlockerModel.blockerSummary(state);
   const blocked = by('blocked').filter(t => !needsUser.includes(t));
   const cols = [
-    ['needs', 'Needs you', asks.length, asks.filter(a => a.kind !== 'info').map(askRow).join('') + review.map(boardCard).join('')],
-    ['active', 'Running', by('active').length, by('active').map(boardCard).join('')],
-    ['ready', 'Up next', by('ready').length, by('ready').slice(0, 12).map(boardCard).join('') + (by('ready').length > 12 ? `<a class="showmore" href="#tasklist">+ ${by('ready').length - 12} more in the task list →</a>` : '')],
-    ['blocked', 'Blocked · agents handling', blocked.length, blocked.map(boardCard).join('')],
+    ['needs', 'Needs you', asks.length, [...asks.filter(a => a.kind !== 'info').map(askRow), ...review.map(boardCard)]],
+    ['active', 'Running', by('active').length, by('active').map(boardCard)],
+    ['ready', 'Up next', by('ready').length, by('ready').map(boardCard)],
+    ['blocked', 'Blocked · agents handling', blocked.length, blocked.map(boardCard)],
   ];
-  const tc = s => state.tasks.filter(t => t.status === s).length;
-  return `<div class="board-tools"><div class="seg" role="tablist">${cols.map(([k, l, n]) => `<button role="tab" data-board-col="${k}" aria-selected="${boardColumn === k}">${l.split(' · ')[0]} <span class="c">${n}</span></button>`).join('')}</div><a class="chip chip-link" href="#tasklist" data-view="tasklist">List view</a><a class="chip chip-link" href="#tasklist">Backlog <span class="c">${tc('backlog')}</span></a><a class="chip chip-link" href="#tasklist">Done <span class="c">${tc('done')}</span></a><button id="new-task" class="btn primary small">+ New task</button></div>
-    <div class="board">${cols.map(([k, l, n, body]) => `<section class="col ${boardColumn === k ? 'on' : ''}" aria-label="${escape(l)}"><div class="col-h">${escape(l)}<span class="c">${n}</span></div>${body || '<div class="calm small">Nothing here.</div>'}</section>`).join('')}</div>`;
+  const tools = `<div class="board-tools"><a class="chip chip-link" href="#tasks/all">Backlog <span class="c">${state.tasks.filter(t => t.status === 'backlog').length}</span></a><button id="new-task" class="btn primary small">+ New task</button></div>`;
+  if (sub === 'needs') return tools + `<div class="needs-list">${cols[0][3].join('') || `<div class="calm">${icon('check')} Nothing is waiting on you.</div>`}</div>`;
+  return tools + `<div class="board">${cols.map(([k, l, n, cards]) => `<section class="col" aria-label="${escape(l)}"><div class="col-h"><a href="#tasks/${k}">${escape(l)}</a><span class="c">${n}</span></div>${cards.slice(0, BOARD_CAP).join('') || '<div class="calm small">Nothing here.</div>'}${cards.length > BOARD_CAP ? `<a class="showmore" href="#tasks/${k}">All ${cards.length} →</a>` : ''}</section>`).join('')}</div>`;
 }
 
 // ---- Agents -----------------------------------------------------------------
@@ -256,14 +280,15 @@ function agentsGrouped() {
   const working = live.filter(a => !stopped.includes(a));
   return `<h2 class="section-title">Working now · ${working.length}</h2><div class="agents">${working.map(agentTile).join('') || '<div class="calm">No agent is working right now.</div>'}</div>
     ${stopped.length ? `<h2 class="section-title">Stopped with work left · ${stopped.length}</h2><div class="agents">${stopped.map(agentTile).join('')}</div>` : ''}
-    <details class="card idle-list agent-history" ${idleAgentsOpen || query ? 'open' : ''}><summary>Idle and earlier sessions · ${idle.length}</summary>${idle.map(a => `<div class="idle-row"><button class="linkish" data-agent="${escape(a.id)}">${escape(agentName(a))}</button><span class="badge b-mute">${escape(a.provider)}</span><span class="ago">${agoText(a.lastActivityAt)}</span></div>`).join('')}</details>${notice()}`;
+    <details class="card idle-list agent-history" ${idleAgentsOpen || query ? 'open' : ''}><summary>Idle and earlier sessions · ${idle.length}</summary>${idle.map(a => `<div class="idle-row"><button class="linkish" data-agent="${escape(a.id)}">${escape(agentName(a))}</button><span class="badge b-mute">${escape(a.provider)}</span><span class="ago">${agoText(a.lastActivityAt)}</span></div>`).join('')}</details>`;
 }
 document.addEventListener('toggle', event => { if (event.target.matches?.('.idle-list') && event.target.isConnected && !query) idleAgentsOpen = event.target.open; }, true);
 
 // ---- More (phone) -------------------------------------------------------------
 
 function moreView() {
-  const rows = [['overview', 'Classic overview', 'The original operations console'], ['tasklist', 'Task list', 'Every task grouped by status, with filters'], ['agentlist', 'Agent sessions', 'Every session with processes, CPU and memory'], ['blockers', 'Blockers', 'Blocked tasks and who has to act'], ['corpus', 'EXE corpus', 'Every game and app, with filters and evidence'], ['release', 'Release checklist', 'Unreleased games sorted by what is left'], ['dos', 'DOS / ToyVM', 'DOS payloads and ToyVM verdicts'], ['analytics', 'Usage & cost', 'Daily per-agent usage and time']];
+  // Task list, Blockers and Agent sessions are tabs inside Tasks and Agents now.
+  const rows = [['corpus', 'EXE corpus', 'Every game and app, with filters and evidence'], ['release', 'Release checklist', 'Unreleased games sorted by what is left'], ['dos', 'DOS / ToyVM', 'DOS payloads and ToyVM verdicts'], ['analytics', 'Usage & cost', 'Daily per-agent usage and time']];
   return `<div class="card more-list">${rows.map(([id, l, h]) => `<a href="#${id}" data-view="${id}"><span><b>${escape(l)}</b><span class="sub">${escape(h)}</span></span><span aria-hidden="true">›</span></a>`).join('')}</div><p class="sub foot-note">${$('#build-line').innerHTML} · ${escape($('#updated').textContent)}</p>`;
 }
 

@@ -11,7 +11,7 @@
     el('terminal-notice').textContent='View only. Closing this drawer leaves the agent running.';
     el('terminal-screen').replaceChildren();
     try {
-      if(!window.Terminal)throw Error('Terminal dependencies unavailable. Run npm ci --prefix ops --ignore-scripts.');
+      if(!window.Terminal)throw Error('The terminal viewer (xterm.js) did not load, so the live pane cannot be shown. On the dashboard host run: npm ci --prefix ops --ignore-scripts, then reload this page. The agent keeps running either way.');
       const response=await fetch('/api/terminal-ticket',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:target.id})});
       if(!response.ok)throw Error(await response.text());
       const grant=await response.json();if(attempt!==epoch)return;
@@ -35,7 +35,13 @@
       };
       socket.onclose=()=>{if(attempt!==epoch)return;mode='view';terminal.options.disableStdin=true;modeButton.disabled=true;status.textContent='Disconnected · Reconnect to view';drawer.classList.remove('terminal-controlling');};
       socket.onerror=()=>{if(attempt===epoch)status.textContent='Connection failed · Reconnect to view';};
-    } catch(error) {if(attempt===epoch)status.textContent=error.message;}
+    } catch(error) {
+      if(attempt!==epoch)return;
+      status.textContent='Unavailable';
+      // Say why in the drawer itself, not only in the small status line.
+      const note=document.createElement('p');note.className='terminal-unavailable';note.textContent=error.message;
+      el('terminal-screen').replaceChildren(note);
+    }
   }
   window.OpsTerminal={open(value){target=value;el('terminal-title').textContent=`Terminal / ${value.session}`;if(!drawer.open)drawer.showModal();connect();}};
   modeButton.onclick=()=>{modeButton.disabled=true;send({type:'mode',mode:mode==='control'?'view':'control'});};

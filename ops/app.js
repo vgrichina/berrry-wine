@@ -44,6 +44,7 @@ const taskStates = [
   ['unknown', 'Historical notes', 'No current task status recorded', '·'],
 ];
 const expandedTaskGroups = new Map();
+const taskGroupLimits = new Map(), TASK_PAGE = 30;
 let agentHistoryOpen=false;
 let activityLimit=25;
 let activityFilter='all';
@@ -149,8 +150,33 @@ function agentName(a) {
   if(a.taskTitle)return a.taskTitle;
   const task=/\b([A-Z][A-Z0-9]+(?:-[A-Z0-9]+){2,})\b/.exec(a.title || '')?.[1];
   // Codex child prompts often start with a bracketed role label: use it rather than the whole prompt.
-  const label=/^\[([^\]]{3,60})\]/.exec(a.title || '')?.[1];
-  return task || label || (a.title && a.title !== a.id ? a.title : 'Untitled session');
+  const label=/^\[(?!Completion ID)([^\]]{3,60})\]/.exec(a.title || '')?.[1];
+  return task || (label && humanizeLane(label)) || (a.title && a.title !== a.id ? readableTitle(a.title) : 'Untitled session');
+}
+// Lane ids such as "stronghold-copy-route-implementation-0620" read as
+// "Stronghold: copy route implementation"; anything else is returned unchanged.
+const LANE_ID = /^[a-z][a-z0-9]*(?:-[a-z0-9]+){2,}$/;
+function humanizeLane(text) {
+  if (!LANE_ID.test(text)) return text;
+  const [head, ...rest] = text.replace(/-(?:\d{4,8}|20\d{6}(?:t\d+z?)?)$/i, '').split('-');
+  return head[0].toUpperCase() + head.slice(1) + (rest.length ? ': ' + rest.join(' ') : '');
+}
+// A worker's title is the start of its raw goal prompt, cut at a fixed length by
+// the reader. Show a short headline: drop the "Goal:" boilerplate and commit
+// tokens, prefer an embedded lane id, keep the first sentence and cut at a word.
+function readableTitle(raw, max = 90) {
+  let text = String(raw).replace(/\s+/g, ' ').trim();
+  const clipped = text.length >= 159;
+  const lane = /\b([a-z][a-z0-9]*(?:-[a-z0-9]+){2,}-\d{4})\b/.exec(text)?.[1];
+  if (lane) return humanizeLane(lane);
+  text = text.replace(/^\[[^\]]*\]\s*/, '').replace(/^(?:goal|task|objective)\s*:\s*/i, '')
+    .replace(/\bpublished[0-9a-f]{7,40}\b\s*/gi, '').replace(/\s*->\s*/g, ' → ');
+  const sentence = /^(.{20,}?[.;!?])\s/.exec(text)?.[1];
+  let cut = sentence ? sentence.replace(/[.;]$/, '') : text, truncated = !sentence && clipped;
+  if (cut.length > max) { cut = cut.slice(0, max); truncated = true; }
+  // The reader's cut (or ours) can end mid-word: drop the partial word.
+  if (truncated) cut = cut.replace(/\s+\S*$/, '');
+  return cut.replace(/[\s,;:→-]+$/, '') + (truncated ? '…' : '');
 }
 function agentLine2(a,signal) {
   if(signal.reason)return signal.reason;
@@ -214,7 +240,9 @@ function feedRows(rows, truncate = false) { return rows.map(row => {
 // The page name lives in the header now; a view keeps its one-line purpose and actions.
 function title(name, subtitle, action = '') { return `<div class="title-row"><p class="lead">${escape(subtitle)}</p>${action}</div>`; }
 function section(name, target) { return `<div class="section-head"><h2>${name}</h2>${target ? `<a href="#${target}">View all →</a>` : ''}</div>`; }
-function notice() { return state.warnings.length ? `<div class="notice"><details><summary>${state.warnings.length} source notices</summary><ul>${state.warnings.map(w => `<li>${escape(w)}</li>`).join('')}</ul></details></div>` : ''; }
+// Reader diagnostics (missing artifacts, unreadable logs). Useful when data looks
+// wrong, noise otherwise: a muted, collapsed footer on Activity only.
+function notice() { return state.warnings.length ? `<details class="source-notices"><summary>Data source notices · ${state.warnings.length}</summary><ul>${state.warnings.map(w => `<li>${escape(w)}</li>`).join('')}</ul></details>` : ''; }
 function statusSummary(compact=false) {
   const status=state.projectStatus || {},lines=(status.body || '').split('\n');
   const headlineIndex=lines.findIndex(line=>/^# /.test(line));
@@ -280,15 +308,16 @@ function overview() {
 }
 function tasksView() {
   const tasks = state.tasks.filter(t => matches(t) && (filter === 'all' || t.status === filter));
-  const counts = taskStates.slice(0,4).map(([s,label]) => `<button class="queue-count task-label-${s}" data-task-filter="${s}" aria-pressed="${filter === s}"><strong>${state.tasks.filter(t => t.status === s && matches(t)).length}</strong><span>${label}</span></button>`).join('');
+  // Status counts live in the Tasks tab bar; long groups (Done) render in pages.
   const groups = taskStates.map(([s,label,hint,symbol]) => {
     const items = tasks.filter(t => t.status === s);
     if (!items.length) return '';
     const open = filter !== 'all' || query || (expandedTaskGroups.get(s) ?? ['active','ready','review','blocked'].includes(s));
-    return `<details class="task-group task-group-${s}" data-task-group="${s}" ${open ? 'open' : ''}><summary><span class="task-label task-label-${s}">${symbol} ${label}</span><span class="group-count">${items.length}</span><span class="group-hint">${hint}</span></summary><div class="panel">${taskRows(items)}</div></details>`;
+    const limit = taskGroupLimits.get(s) || TASK_PAGE, shown = sortedTasks(items).slice(0, limit);
+    return `<details class="task-group task-group-${s}" data-task-group="${s}" ${open ? 'open' : ''}><summary><span class="task-label task-label-${s}">${symbol} ${label}</span><span class="group-count">${items.length}</span><span class="group-hint">${hint}</span></summary><div class="panel">${taskRows(shown)}</div>${items.length > limit ? `<button class="showmore wide" data-task-more="${s}">Show ${Math.min(TASK_PAGE, items.length - limit)} more of ${items.length - limit}</button>` : ''}</details>`;
   }).join('');
   return title('Task queue', 'Running first, then the next assignments. Status comes from the task ledger, not process activity.', '<div class="task-controls"><button id="todo-source">Read source</button><button id="new-task" class="primary-action">+ New task</button></div>') +coordinatorBar()+
-    `<div class="queue-counts">${counts}</div><details class="queue-briefing" ${queueBriefingOpen?'open':''}><summary>Project TLDR</summary>${statusSummary(true)}</details><p id="task-queue-status" role="status"></p><div class="toolbar"><select id="filter" aria-label="Task status"><option value="all" ${filter === 'all' ? 'selected' : ''}>All statuses</option>${taskStates.map(([s,label]) => `<option value="${s}" ${s === filter ? 'selected' : ''}>${label}</option>`).join('')}</select><span class="sub">${tasks.length} items · source order; full criteria in Details</span></div>${groups || empty('No tasks match this view.')}`;
+    `<details class="queue-briefing" ${queueBriefingOpen?'open':''}><summary>Project TLDR</summary>${statusSummary(true)}</details><p id="task-queue-status" role="status"></p><div class="toolbar"><select id="filter" aria-label="Task status"><option value="all" ${filter === 'all' ? 'selected' : ''}>All statuses</option>${taskStates.map(([s,label]) => `<option value="${s}" ${s === filter ? 'selected' : ''}>${label}</option>`).join('')}</select><span class="sub">${tasks.length} items · source order; full criteria in Details</span></div>${groups || empty('No tasks match this view.')}`;
 }
 function candidateWork(c) {
   const order = ['active','review','blocked','ready'];
@@ -428,12 +457,12 @@ function currentAgents() {
 }
 function agentsView() {
   const current=topLevel(currentAgents()),ids=new Set(current.map(a=>a.id)),history=topLevel(state.agents).filter(a=>!ids.has(a.id) && matchesTree(a));
-  return title('Agents', 'Decisions and sessions needing a check first. Recent activity is not proof of task progress.') + `<div class="agent-list">${current.filter(matchesTree).map(agentCard).join('') || empty('No current sessions observed.')}</div><details class="agent-history" ${agentHistoryOpen || query?'open':''}><summary>Other observed sessions (${history.length})</summary><div class="agent-list">${history.map(agentCard).join('')}</div></details>` + notice();
+  return title('Agents', 'Decisions and sessions needing a check first. Recent activity is not proof of task progress.') + `<div class="agent-list">${current.filter(matchesTree).map(agentCard).join('') || empty('No current sessions observed.')}</div><details class="agent-history" ${agentHistoryOpen || query?'open':''}><summary>Other observed sessions (${history.length})</summary><div class="agent-list">${history.map(agentCard).join('')}</div></details>`;
 }
 function activityView() {
   const rows=matchingActivity();
   const cs=state.codeState;
-  return title('Activity', 'Recent Git commits and messageboard entries. Undated messages retain their board order.')+(cs?`<p class="source-note">Commit state: ${cs.available?escape(cs.note)+(cs.mainRef?' Merged means reachable from '+escape(cs.mainRef)+'.':' No remote default branch found.')+(cs.fetchedAt?' Last fetch '+escape(when(cs.fetchedAt))+'.':' Last fetch time unknown.'):escape(cs.note)}</p>`:'')+`${state.activityWarning?`<p class="notice" role="status">${escape(state.activityWarning)}</p>`:''}<div class="toolbar"><select id="activity-filter" aria-label="Activity type">${[['all','All activity'],['commit','Commits'],['message','Messages']].map(([id,label])=>`<option value="${id}" ${activityFilter===id?'selected':''}>${label}</option>`).join('')}</select><span class="sub">Showing ${Math.min(activityLimit,rows.length)} of ${rows.length} matching entries</span></div><div class="panel">${rows.length?feedRows(rows.slice(0,activityLimit)):empty(query?'No activity matches this search and filter.':activityFilter==='commit'?'No commits available.':activityFilter==='message'?'No messages available.':'No activity available.')}</div>${rows.length>activityLimit?'<div class="form-actions"><button data-more-activity="25">Show 25 more</button><button data-more-activity="all">Show all matching entries</button></div>':''}`;
+  return title('Activity', 'Recent Git commits and messageboard entries. Undated messages retain their board order.')+(cs?`<p class="source-note">Commit state: ${cs.available?escape(cs.note)+(cs.mainRef?' Merged means reachable from '+escape(cs.mainRef)+'.':' No remote default branch found.')+(cs.fetchedAt?' Last fetch '+escape(when(cs.fetchedAt))+'.':' Last fetch time unknown.'):escape(cs.note)}</p>`:'')+`${state.activityWarning?`<p class="notice" role="status">${escape(state.activityWarning)}</p>`:''}<div class="toolbar"><select id="activity-filter" aria-label="Activity type">${[['all','All activity'],['commit','Commits'],['message','Messages']].map(([id,label])=>`<option value="${id}" ${activityFilter===id?'selected':''}>${label}</option>`).join('')}</select><span class="sub">Showing ${Math.min(activityLimit,rows.length)} of ${rows.length} matching entries</span></div><div class="panel">${rows.length?feedRows(rows.slice(0,activityLimit)):empty(query?'No activity matches this search and filter.':activityFilter==='commit'?'No commits available.':activityFilter==='message'?'No messages available.':'No activity available.')}</div>${rows.length>activityLimit?'<div class="form-actions"><button data-more-activity="25">Show 25 more</button><button data-more-activity="all">Show all matching entries</button></div>':''}${notice()}`;
 }
 function matchingActivity() { return (state.activity || []).filter(row=>matches(row) && (activityFilter==='all' || (row.type==='commit'?'commit':'message')===activityFilter)); }
 // The 5s poll re-renders the whole view. Assigning innerHTML would rebuild
@@ -470,8 +499,25 @@ function morphAttributes(have, want) {
   if ((have.tagName === 'INPUT' || have.tagName === 'TEXTAREA') && have !== document.activeElement && have.value !== (want.getAttribute('value') ?? '')) have.value = want.getAttribute('value') ?? '';
   if (have.tagName === 'SELECT') { const sel = want.querySelector('option[selected]'); if (sel && have.value !== sel.value && have !== document.activeElement) have.value = sel.value; }
 }
+// The old Classic overview, Task list, Agent sessions and Blockers pages are folded
+// into Home, Tasks and Agents. Their hashes (bookmarks, Telegram links) still work:
+// each lands on the merged view and is rewritten to the canonical hash.
+const ROUTE_ALIASES = { overview: 'home', tasklist: 'tasks/all', blockers: 'tasks/blocked', agentlist: 'agents/list' };
+const TASK_LIST_SUBS = ['all', ...taskStates.map(s => s[0])];
+function route(hash = view) {
+  const canon = ROUTE_ALIASES[hash] || hash || 'home', [base, sub = ''] = canon.split('/');
+  return { base, sub, canon };
+}
+function tasksPage(sub) {
+  if (sub === 'blocked') return blockersView();
+  if (TASK_LIST_SUBS.includes(sub)) return tasksView();
+  return tasksBoard(sub);
+}
+function agentsPage(sub) { return sub === 'list' ? agentsView() : agentsGrouped(); }
 function render() {
   if (!state) return;
+  const { base, sub } = route();
+  if (base === 'tasks') filter = TASK_LIST_SUBS.includes(sub) ? sub : 'all';
   renderApprovals();
   renderChrome();
   $('#task-count').textContent = state.tasks.filter(t=>!['done','deferred','unknown'].includes(t.status)).length; $('#task-count').title='Open tasks; completed, deferred and historical records excluded'; $('#corpus-count').textContent = state.candidates.length; $('#dos-count').textContent = state.dosCorpus?.rows?.length || '';
@@ -479,10 +525,16 @@ function render() {
   $('#blocker-count').textContent = blockerCounts.rawBlockedRows ? `${blockerCounts.distinctBlockedTaskIds} distinct IDs${blockerCounts.anonymousBlockedRows ? ` + ${blockerCounts.anonymousBlockedRows} anonymous rows` : ''}` : '';
   $('#blocker-count').title = BlockerModel.countSummaryText(blockerCounts);
   $('#updated').textContent = `Snapshot ${new Date(state.generatedAt).toLocaleTimeString()} · refresh every 5s`;
-  const views = { home: homeView, games: gamesView, tasks: tasksBoard, agents: agentsGrouped, activity: activityView, more: moreView, overview, tasklist: tasksView, agentlist: agentsView, blockers: blockersView, corpus: corpusView, dos: dosView, release: desktopView, analytics: analyticsView };
-  const classic = ['overview', 'tasklist', 'agentlist', 'blockers', 'corpus', 'dos', 'release', 'analytics'].includes(view);
-  morphHtml($('#main'), (classic ? stoppedAgentBanner() : '') + (views[view] || homeView)());
-  document.body.dataset.view = views[view] ? view : 'home';
+  const views = { home: homeView, games: gamesView, tasks: tasksPage, agents: agentsPage, activity: activityView, more: moreView, corpus: corpusView, dos: dosView, release: desktopView, analytics: analyticsView };
+  const classic = ['corpus', 'dos', 'release', 'analytics'].includes(base);
+  morphHtml($('#main'), (classic ? stoppedAgentBanner() : '') + (views[base] || homeView)(sub));
+  document.body.dataset.view = views[base] ? base : 'home';
+}
+// Hash → view. A legacy hash is replaced (not pushed) by its merged view.
+function applyHash() {
+  const raw = decodeURIComponent(location.hash.slice(1)) || 'home', { canon } = route(raw);
+  if (canon !== raw && typeof history !== 'undefined') history.replaceState(null, '', '#' + canon);
+  view = canon;
 }
 function show(label, html) { currentTaskId=null;$('#detail-label').textContent = label; $('#detail-body').innerHTML = html; if (!$('#detail').open) $('#detail').showModal(); }
 function runRows(runs) { return runs.map(r => `<div class="run"><div class="run-head"><button data-run="${escape(r.key)}">${escape(r.id)} · ${escape(r.route || 'route unspecified')}</button>${badge(r.outcome, tone(r.outcome))}</div><div class="sub">${escape(when(r.startedAt))} · ${escape(r.verification)} · ${escape(r.source)}</div></div>`).join('') || empty('No run folders recorded yet. See ops/README.md.'); }
@@ -509,10 +561,22 @@ function refresh() {
   activeRefresh=fetchState().finally(()=>{activeRefresh=null;});return activeRefresh;
 }
 async function refreshAfterWrite(){if(activeRefresh)await activeRefresh;await refresh();}
-async function fetchState() {
+// The server names each top-level part of the snapshot with a content hash
+// (X-State-Parts). Later polls send those back, receive only the parts that
+// changed (the rest listed in _unchanged) and a 304 when nothing changed at all.
+let stateEtag = '', stateParts = '';
+async function fetchState(force = false) {
+  if (!force && state && document.hidden) return;
   try {
-    const response = await fetch('/api/state'); if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    state = await response.json(); $('#connection').textContent = '● Connected'; $('#connection').classList.remove('error'); render();refreshTaskDetail();
+    const known = state && stateParts ? '?known=' + encodeURIComponent(stateParts) : '';
+    const response = await fetch('/api/state' + known, { cache: 'no-store', headers: state && stateEtag ? { 'If-None-Match': stateEtag } : {} });
+    if (response.status === 304) { $('#connection').textContent = '● Connected'; $('#connection').classList.remove('error'); return; }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const next = await response.json();
+    for (const key of next._unchanged || []) next[key] = state[key];
+    delete next._unchanged;
+    stateEtag = response.headers.get('ETag') || ''; stateParts = response.headers.get('X-State-Parts') || '';
+    state = next; $('#connection').textContent = '● Connected'; $('#connection').classList.remove('error'); render();refreshTaskDetail();
   } catch (e) {
     $('#connection').textContent = '● Disconnected'; $('#connection').classList.add('error');
     if (!state) $('#main').innerHTML = empty(`Could not read project data: ${e.message}. Start node ops/server.js.`);
@@ -538,7 +602,8 @@ document.addEventListener('click', event => {
   if(el.dataset.moreActivity){activityLimit=el.dataset.moreActivity==='all'?matchingActivity().length:activityLimit+Number(el.dataset.moreActivity);render();}
   if (el.dataset.terminal) { const entry=state.terminals?.find(t=>t.id===el.dataset.terminal);if(entry?.available)window.OpsTerminal.open(entry); }
   if (el.dataset.statusSummary) show('PROJECT / TLDR',statusSummary());
-  if (el.dataset.taskFilter) { filter = filter === el.dataset.taskFilter ? 'all' : el.dataset.taskFilter; render(); }
+  if (el.dataset.taskFilter) location.hash = '#tasks/' + (filter === el.dataset.taskFilter ? 'all' : el.dataset.taskFilter);
+  if (el.dataset.taskMore) { const s = el.dataset.taskMore; taskGroupLimits.set(s, (taskGroupLimits.get(s) || TASK_PAGE) + TASK_PAGE); render(); }
   if (el.dataset.task) taskDetail(el.dataset.task);
   if (el.dataset.candidate) candidateDetail(el.dataset.candidate);
   if (el.dataset.agent) agentDetail(el.dataset.agent);
@@ -568,8 +633,21 @@ document.addEventListener('submit', async event => {
 });
 $('#refresh').onclick = refresh;
 $('#search').addEventListener('input', e => { query = e.target.value.toLowerCase(); activityLimit=25; render(); });
-document.addEventListener('change', e => { if (e.target.id === 'filter') { filter = e.target.value; render(); } });
-window.addEventListener('hashchange', () => { view = location.hash.slice(1) || 'home'; window.scrollTo(0, 0); filter = 'all'; query = ''; $('#search').value = ''; render(); });
+document.addEventListener('change', e => {
+  if (e.target.id !== 'filter') return;
+  // On Tasks the status filter is the tab: keep the hash (and the highlighted tab) in step.
+  if (route().base === 'tasks') location.hash = '#tasks/' + e.target.value; else { filter = e.target.value; render(); }
+});
+window.addEventListener('hashchange', () => {
+  const before = route().base;
+  applyHash(); filter = 'all';
+  // Switching tabs inside Tasks or Agents keeps the search and scroll position context.
+  if (route().base !== before) { window.scrollTo(0, 0); query = ''; $('#search').value = ''; }
+  render();
+});
+// Polling pauses while the tab is hidden and catches up as soon as it is shown.
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+applyHash();
 paintIcons();
 refresh();
 setInterval(refresh, 5000);

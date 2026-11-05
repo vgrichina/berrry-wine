@@ -10,6 +10,36 @@ const { createTaskStore } = require('./task-store');
 const { createEmulatorHandler } = require('./emulator-server');
 const { createToyvmHandler } = require('./toyvm-server');
 const { createAnalytics } = require('./analytics');
+const crypto = require('node:crypto');
+const zlib = require('node:zlib');
+
+// Each snapshot is serialized once, per top-level key, with a short content hash.
+// The 5s poll then sends only the keys whose hash the client does not hold.
+const partCache = new WeakMap();
+function stateParts(data) {
+  if (!partCache.has(data)) partCache.set(data, new Map(Object.entries(data).map(([key, value]) => {
+    const json = JSON.stringify(value) ?? 'null';
+    return [key, { json, hash: crypto.createHash('sha1').update(json).digest('base64url').slice(0, 12) }];
+  })));
+  return partCache.get(data);
+}
+// Vendored browser files: ops/node_modules (npm ci --prefix ops) first, then any
+// node_modules Node itself would resolve from here (e.g. the repository root).
+function vendorFile(name) {
+  const local = path.join(__dirname, name);
+  if (fs.existsSync(local)) return local;
+  const [, scope, pkg, ...rest] = name.split('/');
+  try { return path.join(path.dirname(require.resolve(`${scope}/${pkg}/package.json`, { paths: [__dirname] })), ...rest); } catch { return null; }
+}
+// gzip (off the main thread) when the client accepts it and the body is worth it.
+function sendBody(req, res, headers, body) {
+  if (req.method === 'HEAD') { res.writeHead(200, headers); return res.end(); }
+  if (body.length < 1024 || !/\bgzip\b/.test(req.headers['accept-encoding'] || '')) { res.writeHead(200, headers); return res.end(body); }
+  zlib.gzip(body, { level: 6 }, (error, zipped) => {
+    if (error) { res.writeHead(200, headers); return res.end(body); }
+    res.writeHead(200, { ...headers, 'Content-Encoding': 'gzip' }); res.end(zipped);
+  });
+}
 
 function createServer(options = {}) {
   const reader = createReader(options);
@@ -38,7 +68,7 @@ function createServer(options = {}) {
       if (await serveEmulator(req,res)) return;
       if (await serveToyvm(req,res)) return;
       const url = new URL(req.url, `http://${host}`);
-      if(req.method==='GET' && url.pathname==='/api/analytics') { const data=await analytics(await reader.analyticsSnapshot());res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify(data));return; }
+      if(req.method==='GET' && url.pathname==='/api/analytics') { const data=await analytics(await reader.analyticsSnapshot());return sendBody(req,res,{'Content-Type':'application/json',Vary:'Accept-Encoding'},Buffer.from(JSON.stringify(data))); }
       if(req.method==='POST' && url.pathname==='/api/terminal-ticket') return await terminals.ticket(req,res);
       if(req.method==='POST' && url.pathname==='/api/approval-decision') return await terminals.approvalDecision(req,res);
       if(req.method==='POST' && url.pathname==='/api/work-nudge') return await terminals.nudge(req,res);
@@ -105,8 +135,23 @@ function createServer(options = {}) {
       if (!['GET', 'HEAD'].includes(req.method)) return fail(405, 'Method not supported');
       if (url.pathname === '/api/state') {
         const data = await snapshot();
-        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-        return res.end(req.method === 'HEAD' ? undefined : JSON.stringify({...data,terminals:await terminals.list(),approvals:await terminals.approvals()}));
+        // Parts the client already holds (?known=key.hash,...) are left out and
+        // listed in _unchanged; without ?known the body is the full snapshot as before.
+        // Only parts over 2 KB are named; small ones are always sent.
+        const parts = stateParts(data), known = new Map((url.searchParams.get('known') || '').split(',').map(p => p.split('.')).filter(p => p.length === 2));
+        const live = { terminals: JSON.stringify(await terminals.list()), approvals: JSON.stringify(await terminals.approvals()) };
+        const named = [...parts].filter(([key, part]) => !(key in live) && part.json.length > 2048);
+        const unchanged = named.filter(([key, part]) => known.get(key) === part.hash).map(([key]) => key), fields = [];
+        for (const [key, part] of parts) if (!(key in live) && !unchanged.includes(key)) fields.push(JSON.stringify(key) + ':' + part.json);
+        for (const [key, json] of Object.entries(live)) fields.push(JSON.stringify(key) + ':' + json);
+        if (unchanged.length) fields.push('"_unchanged":' + JSON.stringify(unchanged));
+        const body = Buffer.from('{' + fields.join(',') + '}');
+        // generatedAt changes on every read; leave it out so an idle project answers 304.
+        const etag = '"' + crypto.createHash('sha1').update(fields.filter(f => !f.startsWith('"generatedAt":')).join(',')).digest('base64url') + '"';
+        const headers = { 'Content-Type': 'application/json; charset=utf-8', ETag: etag, Vary: 'Accept-Encoding',
+          'X-State-Parts': named.map(([key, part]) => key + '.' + part.hash).join(',') };
+        if (req.headers['if-none-match'] === etag) { res.writeHead(304, headers); return res.end(); }
+        return sendBody(req, res, headers, body);
       }
       let file, type = 'text/plain; charset=utf-8';
       const statics = { '/': ['index.html', 'text/html; charset=utf-8'], '/index.html': ['index.html', 'text/html; charset=utf-8'], '/app.js': ['app.js', 'text/javascript; charset=utf-8'], '/blocker-model.js': ['blocker-model.js', 'text/javascript; charset=utf-8'], '/release-model.js': ['release-model.js', 'text/javascript; charset=utf-8'], '/dos-view.js': ['dos-view.js', 'text/javascript; charset=utf-8'], '/style.css': ['style.css', 'text/css; charset=utf-8'],
@@ -123,7 +168,7 @@ function createServer(options = {}) {
         '/vendor/xterm.css':['node_modules/@xterm/xterm/css/xterm.css','text/css; charset=utf-8'],
         };
       if (statics[url.pathname]) {
-        const [name, mime] = statics[url.pathname]; file = path.join(__dirname, name); type = mime;
+        const [name, mime] = statics[url.pathname]; file = name.startsWith('node_modules/') ? vendorFile(name) : path.join(__dirname, name); type = mime;
       } else if (url.pathname === '/artifact') {
         await snapshot(); file = await reader.artifact(url.searchParams.get('key'));
         const extension = path.extname(file || '').toLowerCase();

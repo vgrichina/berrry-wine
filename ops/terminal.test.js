@@ -188,7 +188,7 @@ test('browser terminal renders, controls a disposable pane, and reconnects in Vi
   t.after(()=>browser.close());
   const page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.setViewport({width:1280,height:900});await page.goto(f.base);
-  await page.click('a[data-view="tasklist"]');
+  await page.goto(f.base+'#tasks/all');
   await page.waitForSelector('.task-owner [data-terminal="fixture"]');
   await page.click('.task-details');
   assert.match(await page.$eval('#detail-body',el=>el.textContent),/codex:test/);

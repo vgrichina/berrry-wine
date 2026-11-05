@@ -610,3 +610,30 @@ test('a goal record older than the 1 MiB tail window is found by the backward sc
   assert.equal(await scanGoal(file, size, size - 1024), undefined, 'a range without goal records says nothing');
   await fs.rm(dir, {recursive: true});
 });
+
+test('/api/state is gzipped, answers If-None-Match with 304 and omits big parts the client already holds', async t => {
+  const f = await fixture(); t.after(f.cleanup);
+  await f.write('TODOS.md', Array.from({length: 40}, (_, i) => `- [ ] Task number ${i} with enough words to make this part large\n  id: T-${i}\n`).join(''));
+  const server = createServer({ root: f.root, codexRoot: false, claudeRoot: false });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => server.close(resolve)));
+  const get = (query, headers = {}) => new Promise((resolve, reject) => http.get(`http://127.0.0.1:${server.address().port}/api/state${query}`, {headers}, r => {
+    const chunks = []; r.on('data', c => chunks.push(c)); r.on('end', () => resolve({r, body: Buffer.concat(chunks)}));
+  }).on('error', reject));
+  const first = await get('', {'Accept-Encoding': 'gzip'});
+  assert.equal(first.r.statusCode, 200);
+  assert.equal(first.r.headers['content-encoding'], 'gzip');
+  const full = JSON.parse(require('node:zlib').gunzipSync(first.body));
+  assert.equal(full.tasks.length, 40);
+  const etag = first.r.headers.etag, parts = first.r.headers['x-state-parts'];
+  assert.ok(etag);
+  assert.match(parts, /(^|,)tasks\.[\w-]{12}(,|$)/);
+  assert.equal((await get('', {'If-None-Match': etag})).r.statusCode, 304);
+  const delta = JSON.parse((await get('?known=' + encodeURIComponent(parts))).body);
+  assert.ok(delta._unchanged.includes('tasks'));
+  assert.equal(delta.tasks, undefined);
+  assert.ok('terminals' in delta && 'approvals' in delta, 'live parts are always sent');
+  const plain = await get('');
+  assert.equal(plain.r.headers['content-encoding'], undefined, 'no gzip unless the client accepts it');
+  assert.equal(JSON.parse(plain.body).tasks.length, 40);
+});
