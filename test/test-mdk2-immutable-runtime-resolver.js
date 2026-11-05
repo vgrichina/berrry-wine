@@ -52,8 +52,8 @@ test('real filesystem resolver validates all original432 pins and retains refere
   resolver = api.createResolver();
   const rows = resolver.verify();
   assert.equal(rows.length,432);
-  assert.equal(rows.filter(r => r.source.kind === 'live').length,418);
-  assert.equal(rows.filter(r => r.source.kind === 'git').length,12);
+  assert.equal(rows.filter(r => r.source.kind === 'live').length,417);
+  assert.equal(rows.filter(r => r.source.kind === 'git').length,13);
   assert.equal(rows.filter(r => r.source.kind === 'gzip' || r.source.kind === 'retained').length,2);
   assert.equal(api.sha(resolver.manifest()),api.PINS_SHA);
   const independent = entry.pinnedRuntime();
@@ -67,8 +67,9 @@ test('real filesystem resolver validates all original432 pins and retains refere
 test('stale or truncated manifest rejects before source selection', () => {
   for (const bytes of [Buffer.from('{}'), resolver.manifest().subarray(1)]) assert.throws(() => api.createResolver({manifestBytes:bytes}),/stale original manifest/);
 });
-test('accepted production default binds both modules and every named dependency while preserving history', () => {
-  const selected = production.createResolver(), pins = JSON.parse(selected.manifest());
+test('accepted manifest preserves every historical amendment; current binaries cannot masquerade as accepted', () => {
+  const pins = JSON.parse(production.acceptedManifest(resolver.manifest()));
+  assert.throws(()=>production.createResolver(),/runtime (size|SHA) mismatch/);
   assert.equal(pins.commit, production.BOUND_SOURCE); assert.equal(pins.files.length,439);
   assert.equal(pins.historical.commit,api.SOURCE); assert.equal(pins.historical.files.length,432);
   assert.equal(pins.historical.pinsSHA256,api.PINS_SHA);
@@ -76,7 +77,6 @@ test('accepted production default binds both modules and every named dependency 
     '018c94ffbde8c857587c25c860db988d603d0662df9a18901f00c183af7493cd',
     '4e684af48e4ec06ae8aada0d5cd2b522345a7a51b8ed89988d4d8fa0d75ea7c2']);
   assert.equal(pins.amendments.length,25);
-  for (const row of selected.verify()) assert.equal(row.sha256,pins.files.find(r=>r.path===row.path).sha256);
   const quiet = pins.amendments.find(r=>r.path==='lib/guest-rpc.js');
   assert.equal(quiet.sha256,entry.QUIET_BRIDGE.sha256);
   assert.equal(quiet.publication,'d223b191ce637894f82d2d470c2a5d60c6cdee43');
@@ -85,25 +85,47 @@ test('accepted production default binds both modules and every named dependency 
     if(row.oldSHA256)assert.equal(api.sha(entry.gitFile(api.SOURCE,row.path)),row.oldSHA256);
   }
 });
+test('current native source/module layer binds committed bytes and preserves complete prior inventories',()=>{
+ const selected=production.createResolver({binding:'current'}),pins=JSON.parse(selected.manifest());
+ assert.equal(pins.commit,production.CURRENT_SOURCE);assert.equal(pins.priorCurrent.commit,production.PRIOR_CURRENT_SOURCE);
+ assert.equal(pins.accepted.commit,production.BOUND_SOURCE);assert.equal(pins.historical.commit,production.SOURCE);
+ // Reconstruct the pre-task resolver in memory directly from its published Git
+ // object; its entire previous-current manifest must remain byte-identical.
+ const filename=path.join(api.ROOT,'tools/mdk2-immutable-runtime-resolver.cjs'),old={exports:{}};
+ const bytes=entry.gitFile('9c968fb24','tools/mdk2-immutable-runtime-resolver.cjs');
+ new vm.Script(Module.wrap(bytes.toString()),{filename}).runInThisContext()(old.exports,require,old,filename,path.dirname(filename));
+ assert.deepEqual(production.priorCurrentManifest(resolver.manifest()),old.exports.currentManifest(resolver.manifest()));
+ assert.deepEqual(pins.priorCurrent.moduleFiles.map(r=>r.sha256),production.PRIOR_CURRENT_BINDING.filter(r=>r.module).map(r=>r.sha256));
+ assert.deepEqual(pins.moduleFiles.map(r=>r.sha256),production.CURRENT_BINDING.filter(r=>r.module).map(r=>r.sha256));
+ assert.equal(pins.amendments.length,pins.priorCurrent.amendments.length+production.CURRENT_BINDING.length);
+ assert.equal(selected.verify().length,439);
+ for(const row of production.CURRENT_BINDING){
+  if(row.module){const e=new WebAssembly.Module(selected.read(row.path));assert(WebAssembly.Module.exports(e).some(x=>x.name==='pending_context_arm'));}
+  else assert.equal(production.sha(entry.gitFile(production.CURRENT_SOURCE,row.path)),row.sha256,row.path);
+ }
+});
+for(const row of production.CURRENT_BINDING.filter(r=>r.sourceOnly))test('changed native committed source rejects '+row.path,()=>{
+ assert.throws(()=>faulted({binding:'current',gitPath:row.path,gitCommit:production.CURRENT_SOURCE}).createResolver(),/runtime (size|SHA) mismatch/);
+});
 for (const truncate of [false,true]) {
   for (const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'])
-    test('accepted module altered/wrong pair rejects '+file+' truncate='+truncate,()=>{
-      assert.throws(()=>faulted({file,truncate,binding:'accepted'}).createResolver(),/runtime (SHA|size) mismatch/);
+    test('current module altered/wrong pair rejects '+file+' truncate='+truncate,()=>{
+      assert.throws(()=>faulted({file,truncate,binding:'current'}).createResolver(),/runtime (SHA|size) mismatch/);
     });
   test('changed accepted dependency rejects before selection truncate='+truncate,()=>{
     assert.throws(()=>faulted({gitPath:'lib/guest-worker.js',gitCommit:production.BOUND_SOURCE,truncate,binding:'accepted'}).createResolver(),/runtime (SHA|size) mismatch/);
   });
 }
-test('accepted full HTTP closure and changed driver admission reject without Chrome',async()=>{
-  const selected=production.createResolver(), server=await production.startServer(selected);
+test('current full HTTP closure and changed driver admission reject without Chrome',async()=>{
+  const selected=production.createResolver({binding:'current'}), server=await production.startServer(selected);
   try {assert.equal((await production.verifyHTTP(selected,server)).length,439);}
   finally {await production.close(server);}
   await assert.rejects(production.installAdapter(selected,'0'.repeat(64)),/changed recorded driver candidate/);
   await assert.rejects(production.installAdapter(selected),/explicit driver candidate required/);
 });
-test('real historical canonical or compat module at accepted path is rejected as the wrong pair',()=>{
+test('real historical canonical or compat module at current path is rejected as the wrong pair',()=>{
   for(const row of entry.pinnedRuntime().pins.moduleFiles)
-    assert.throws(()=>faulted({binding:'accepted',file:row.path,replacement:entry.retainedModule(row)}).createResolver(),/runtime (SHA|size) mismatch/);
+    assert.throws(()=>faulted({binding:'current',file:row.path,replacement:entry.retainedModule(row)}).createResolver(),/runtime (SHA|size) mismatch/);
 });
 for (const truncate of [false,true]) {
   test((truncate ? 'truncated' : 'altered') + ' historical Git source rejects against original pin', () => {
@@ -135,7 +157,7 @@ test('a previously selected live source cannot fall back to Git after mutation',
   };
   const mod = {exports:{}};
   new vm.Script(Module.wrap(fsRead(filename,'utf8'))).runInThisContext()(mod.exports,n => n === 'node:fs' ? facade : require(n),mod,filename,path.dirname(filename));
-  const r = mod.exports.createResolver(); armed = true;
+  const r = mod.exports.createResolver({binding:'historical'}); armed = true;
   assert.throws(() => r.read('lib/apps.js'),/runtime size mismatch/);
 });
 test('foreign, absolute, out-of-root, encoded and traversal paths reject', () => {

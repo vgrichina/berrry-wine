@@ -308,8 +308,8 @@ function acceptedManifest(original) {
 
 // Preserve the complete accepted manifest; amend only the named released source
 // and its exact existing module pair for this separately authorized original.
-const CURRENT_SOURCE = '17e09475ecaeaa47de76684df0a0518124a6e387';
-const CURRENT_BINDING = Object.freeze([
+const PRIOR_CURRENT_SOURCE = '17e09475ecaeaa47de76684df0a0518124a6e387';
+const PRIOR_CURRENT_BINDING = Object.freeze([
   {
     "path": "src/09ab-handlers-d3dim-core.wat",
     "oldSHA256": "5c892770004355099d016e301ff73366a560237d681faf0cd3c6bd3aa8e4fc07",
@@ -338,21 +338,224 @@ const CURRENT_BINDING = Object.freeze([
     "module": true
   }
 ].map(row => Object.freeze(row)));
-function currentManifest(original) {
+function priorCurrentManifest(original) {
   const acceptedBytes = acceptedManifest(original), pins = JSON.parse(acceptedBytes);
   const files = new Map(pins.files.map(row => [row.path, {...row}]));
-  for (const change of CURRENT_BINDING) {
+  for (const change of PRIOR_CURRENT_BINDING) {
     const prior = change.sourceOnly ? BINDING.find(row => row.path === change.path) : files.get(change.path);
     assert.equal(prior?.sha256, change.oldSHA256, 'stale current dependency pair: ' + change.path);
-    if (change.sourceOnly) exact(git(ROOT, CURRENT_SOURCE, change.path), change);
+    if (change.sourceOnly) exact(git(ROOT, PRIOR_CURRENT_SOURCE, change.path), change);
     else files.set(change.path, {path:change.path, bytes:change.bytes, sha256:change.sha256});
   }
-  return Buffer.from(JSON.stringify({...pins, commit:CURRENT_SOURCE,
+  return Buffer.from(JSON.stringify({...pins, commit:PRIOR_CURRENT_SOURCE,
     accepted:{commit:BOUND_SOURCE, pinsSHA256:sha(acceptedBytes), files:pins.files,
       moduleFiles:pins.moduleFiles, amendments:pins.amendments},
-    amendments:[...pins.amendments, ...CURRENT_BINDING.map(row => ({...row, source:CURRENT_SOURCE}))],
+    amendments:[...pins.amendments, ...PRIOR_CURRENT_BINDING.map(row => ({...row, source:PRIOR_CURRENT_SOURCE}))],
     files:[...files.values()],
-    moduleFiles:CURRENT_BINDING.filter(row => row.module).map(row => ({path:row.path, localReference:row.path, bytes:row.bytes, sha256:row.sha256}))}));
+    moduleFiles:PRIOR_CURRENT_BINDING.filter(row => row.module).map(row => ({path:row.path, localReference:row.path, bytes:row.bytes, sha256:row.sha256}))}));
+}
+
+// Named native repair layer. The prior current and complete accepted inventories
+// remain byte-for-byte history; no existing module pin is silently substituted.
+const CURRENT_SOURCE = '06491f25371eea98cbc54c9217cd0a4d5e01a09d';
+const CURRENT_BINDING = Object.freeze([
+  {
+    "path": "src/00-regions.wat",
+    "oldSHA256": "a50b82ca480f44520696cb89abfb86889aada962b193c66f34a2a1996e900cab",
+    "sha256": "e6497e311b55c12fa4c3f5caa98b7f44f1374522d9b890430e9ac7c0afe9a5f6",
+    "bytes": 71224,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/01-header.wat",
+    "oldSHA256": "a773f58b210f3720fe9296c689655ab8c50ebcfaf4bf7387fa45de61321791e0",
+    "sha256": "9142e6fd107f599af67fab71e4355cfc83153599d42ffc4756b88912b5b383c9",
+    "bytes": 300773,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/04-cache.wat",
+    "oldSHA256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd",
+    "sha256": "cc62883a7e03425fa90e241ed5d12c1574e1293288796e8b0088eee8ec3329eb",
+    "bytes": 162746,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/05-alu.wat",
+    "oldSHA256": "c9058214ccec19954ffe95da95c92c1d6ca3c30a7c564b4f9f02be91551d73f6",
+    "sha256": "a8e651d3731148ac7b9a547bbfbc3521f97a5f936e83df8788f2fcb2dadc0211",
+    "bytes": 267482,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/05c-seg16-ops.wat",
+    "oldSHA256": "5a0724ec8ce77a7071f2d3abd155d156433fcd530a3ef742c726fece168dd110",
+    "sha256": "c19d454dd56356508c3bf2e7d3dba0a84af72bc62af2c61d94667820874f1361",
+    "bytes": 52087,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/06b-core-handlers.wat",
+    "oldSHA256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+    "sha256": "30e3d3eb0161cd29721e3dd565fa56a72e878aa857fbd75bba1d786a1c7dea0f",
+    "bytes": 103508,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/07d-uop-engine.wat",
+    "oldSHA256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3",
+    "sha256": "cc98d8e3a8668d0bf49a3efdfd5af3bd5b4e3e4c5082401c18b654a734adb848",
+    "bytes": 166243,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/07e-uop-compiler.wat",
+    "oldSHA256": "e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3",
+    "sha256": "fa9153928ca68a04992f526cab69bdc25626a3c7daf092fad263519e7718f305",
+    "bytes": 316817,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/08-pe-loader.wat",
+    "oldSHA256": "94514986011e87d08c4051a031d7acfc1a4ffa73cca2ffebc584dd2479009373",
+    "sourceOnly": true,
+    "sha256": "b398edca212c7466eb46f36981969264a1f21f1337700140fe41094d3ce797df",
+    "bytes": 393853,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context"
+  },
+  {
+    "path": "src/09a-handlers.wat",
+    "oldSHA256": "9ce03da6504606a140a3ebe3fb906ad947e20349443bad324475485c3a4e5b5f",
+    "sha256": "5175a9f3c274dd817f7957be8dc9855be804cbe08f1e38599113a1f600bcadf2",
+    "bytes": 63553,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/09aa-handlers-d3dim.wat",
+    "oldSHA256": "e10cf2ea4f140a3dd96172e6c4ec3996bf47748d2423ae02d82deaa2f57d15c1",
+    "sha256": "c673c21b2bb671903d2d78440a24e1a3bca832f513429d6b30081724ffe321b6",
+    "bytes": 142045,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/09ab-handlers-d3dim-core.wat",
+    "oldSHA256": "dbcf489a787b4f399eadc926e13336976d6eb0cc30ffed5c8c360af5b496a75a",
+    "sha256": "283add545fac3497e6c7bf936b1726542c23215d538970eb63a6228132fbce18",
+    "bytes": 658030,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/09b-dispatch.wat",
+    "oldSHA256": "c9dce4bd6775c25e9860513e21bf159258d55a7159857efbd556b3ce592f2a1b",
+    "sha256": "d27ab09af3d262798084b69f9c65cb65d4b53d8e6afe20ce024ff011349d12d7",
+    "bytes": 114561,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/11-seh.wat",
+    "oldSHA256": "03853edfe2535841a2e92dfeb319aef2966b8722faad3d391578752a8ad87fb3",
+    "sha256": "81683b0f40dbbba7127ee0e14d001011cfb6b5e9cb3c22ae1e9498c4e03e7a8d",
+    "bytes": 58847,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "src/13-exports.wat",
+    "oldSHA256": "3fe8828d725b9e448129ffb2afb1ac91eea0c4eee667c7e39507a60c9e345d2c",
+    "sha256": "ce689ad77db551a3ff4c6e6390af9e610dab245fe4089b416e0290613a0ab567",
+    "bytes": 362645,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "tools/mdk2-construction-driver-integration.cjs",
+    "oldSHA256": "304095c0d5a70966ce13172731e055446af6444a25f5fb0fc1ee7d354ba77feb",
+    "sha256": "4da7a613174bb52bc7aefd63566dc068b7389e447a8299b96d5db240bb176364",
+    "bytes": 86326,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "tools/mdk2-lua-construction-observer.cjs",
+    "oldSHA256": "dd37b5ba98bf052078bc81c72f4850f4e73caeea5b72c81698c4b0805269dfc3",
+    "sha256": "a870bfed4eee5326323e5035292ae2dc7009e6dcd2607b65530d12b09e538022",
+    "bytes": 22982,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "sourceOnly": true
+  },
+  {
+    "path": "lib/region-map.generated.js",
+    "oldSHA256": "e4be2702cecdeb92938f9ab1f7f84747ed0849acace03cc00c7b12084f0fb374",
+    "sha256": "04d99fa3c0f4d20b537094e001dc80ad8f04de4ad5b2b218bb4dbe5785409881",
+    "bytes": 37183,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context"
+  },
+  {
+    "path": "build/wine-assembly.wasm",
+    "oldSHA256": "e620f3adfc2850580004e204bc1fea495844e942806866f8ada24c215212e412",
+    "sha256": "8605f6c4800e0286e9d863c599618d7d97cde67936f4b4e6c1528897576aa611",
+    "bytes": 2154315,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "module": true
+  },
+  {
+    "path": "build/wine-assembly.compat.wasm",
+    "oldSHA256": "66b37bd76da5a7b49c063b4eb0d44c898aaf00ff41e000a6fbd87c01edc136c8",
+    "sha256": "ac64ace417f0af22b904213bf2f739b97a2132f7f631c261eccd855fae18c970",
+    "bytes": 2156930,
+    "publication": "06491f25371eea98cbc54c9217cd0a4d5e01a09d",
+    "reason": "Native pending-context v1 bound to owning process epoch/root, sticky gaps, preserved disabled layout and synchronous actual seam admission; both-module actual guest CALL/RET and continuous real GC fixtures; run 20261105-mdk2-native-pending-context",
+    "module": true
+  }
+].map(row => Object.freeze(row)));
+function currentManifest(original) {
+  const priorBytes=priorCurrentManifest(original), pins=JSON.parse(priorBytes);
+  const files=new Map(pins.files.map(row=>[row.path,{...row}]));
+  for(const change of CURRENT_BINDING){
+    if(change.sourceOnly){
+      assert.equal(sha(git(ROOT,PRIOR_CURRENT_SOURCE,change.path)),change.oldSHA256,'stale native source pair: '+change.path);
+      exact(git(ROOT,CURRENT_SOURCE,change.path),change);
+    }else{
+      assert.equal(files.get(change.path)?.sha256,change.oldSHA256,'stale native runtime pair: '+change.path);
+      if(!change.module)exact(git(ROOT,CURRENT_SOURCE,change.path),change);
+      files.set(change.path,{path:change.path,bytes:change.bytes,sha256:change.sha256});
+    }
+  }
+  return Buffer.from(JSON.stringify({...pins,commit:CURRENT_SOURCE,
+    priorCurrent:{commit:PRIOR_CURRENT_SOURCE,pinsSHA256:sha(priorBytes),files:pins.files,moduleFiles:pins.moduleFiles,amendments:pins.amendments},
+    amendments:[...pins.amendments,...CURRENT_BINDING.map(row=>({...row,source:CURRENT_SOURCE}))],
+    files:[...files.values()],moduleFiles:CURRENT_BINDING.filter(row=>row.module).map(row=>({path:row.path,localReference:row.path,bytes:row.bytes,sha256:row.sha256}))}));
 }
 
 function createResolver({root = ROOT, manifestBytes, binding = 'accepted'} = {}) {
@@ -508,7 +711,7 @@ async function installAdapter(resolver, candidateSHA256) {
     fs.readFileSync = nativeRead; serverModule.startStaticServer = originalStart; active = false;
   }};
 }
-module.exports = {ROOT, SOURCE, CURRENT_SOURCE, CURRENT_BINDING, currentManifest, BOUND_SOURCE, BINDING, acceptedManifest, ACCEPTED, ENTRY, PINS_SHA, sha, exact, relative, requestPath, createResolver, startServer, verifyHTTP, close, installAdapter};
+module.exports = {ROOT, SOURCE, PRIOR_CURRENT_SOURCE, PRIOR_CURRENT_BINDING, priorCurrentManifest, CURRENT_SOURCE, CURRENT_BINDING, currentManifest, BOUND_SOURCE, BINDING, acceptedManifest, ACCEPTED, ENTRY, PINS_SHA, sha, exact, relative, requestPath, createResolver, startServer, verifyHTTP, close, installAdapter};
 if (require.main === module) {
   // Deliberately no --run mode: gameplay requires a fresh separate assignment.
   (async () => {
