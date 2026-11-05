@@ -108,7 +108,7 @@ that immutable original binding.
 The single attempt ran from 08:36:21Z to 08:40:21Z. The actual composed entry
 served 1,038 matching responses and compiled the canonical 2,159,303-byte module
 with SHA-256 `3361c1289e540ba1107c788905ab5a70ace7f4d003cfd05e1264c54bfc65267b`.
-Actual Worker slots 0–5 were observed. Six startup commands reached step 8,448;
+Actual module-delivery events for Worker slots 0–2 were observed. Six startup commands reached step 8,448;
 ordinary Enter down/up in command 6 reached step 8,576. The trace contains
 134 exact 64-step ACKs. Final input queue is empty, active and last input are
 null, and mouse button mask is zero.
