@@ -488,7 +488,8 @@ function appsIndexMd(apps) {
   L.push('');
   L.push(`Every icon on the Wine-Assembly desktop, with a page each: what the program is, a picture of it running here, and a link that starts it. ` +
     `They are real Windows 98 executables, not ports; the emulator underneath is an x86 interpreter and Win32 layer written in WebAssembly Text. ` +
-    `Programs the site cannot redistribute (game demos, shareware installers, the DirectX SDK samples) are in the debug dropdown on the [main page](/?debug) instead.`);
+    `Programs the site cannot redistribute (game demos, shareware installers, the DirectX SDK samples) are in the debug dropdown on the [main page](/?debug) instead. ` +
+    `For everything else the emulator has been tried on, and how to run your own copy, see the [compatibility list](/compat/).`);
   L.push('');
   for (const [group, list] of byGroup) {
     L.push(`## ${group}`);
@@ -500,6 +501,150 @@ function appsIndexMd(apps) {
       L.push(`<a class="app-card" href="/apps/${a.id}.html">${img}<span>${esc(a.name)}</span><small>${esc(first)}</small></a>`);
     }
     L.push('</div>');
+    L.push('');
+  }
+  return L.join('\n');
+}
+
+// compat/: one page per title the emulator has been tried on, answering the
+// search "does X run in the browser" with the measured status of each
+// edition, the way to bring your own copy, and where to get the game.
+// tools/site-compat.json is the data; every status there comes from an RE
+// note's evidence, never from a guess. Store links are plain unless
+// `_affiliate` holds a template for that store, and then they are marked
+// rel="sponsored" and disclosed on the page.
+const COMPAT_REL = 'tools/site-compat.json';
+const COMPAT_STATUS = {
+  playable: { rank: 6, label: 'Plays', mark: '●' },
+  issues: { rank: 5, label: 'Plays, with issues', mark: '◐' },
+  // Gameplay is on screen and answers input, but only a moment of it was
+  // driven (one shot aimed, a unit selected): too little to say "plays".
+  ingame: { rank: 4, label: 'Reaches gameplay', mark: '◑' },
+  menus: { rank: 3, label: 'Reaches the menu', mark: '◔' },
+  starts: { rank: 2, label: 'Starts only', mark: '○' },
+  fails: { rank: 1, label: 'Does not run yet', mark: '✕' },
+  unknown: { rank: 0, label: 'Not tested yet', mark: '?' },
+};
+const EDITION_LABEL = {
+  demo: 'Demo', shareware: 'Shareware', trial: 'Trial', freeware: 'Freeware', retail: 'Full game',
+  gog: 'GOG release', beta: 'Beta demo', installer: 'Installer', other: 'Other build',
+  wep: 'Entertainment Pack (16-bit)', bundled: 'Came with Windows',
+};
+
+function loadCompat(desktopIds) {
+  const file = path.join(ROOT, COMPAT_REL);
+  if (!fs.existsSync(file)) return null;
+  const data = JSON.parse(fs.readFileSync(file, 'utf-8'));
+  const titles = (data.titles || []).map(t => {
+    const editions = (t.editions || []).map(e => ({
+      ...e,
+      // Playable here only when the site hosts it: the public desktop set.
+      playId: (e.appIds || []).find(id => desktopIds.has(id)) || null,
+    }));
+    const best = editions.reduce((b, e) => (COMPAT_STATUS[e.status] || COMPAT_STATUS.unknown).rank > (COMPAT_STATUS[b] || COMPAT_STATUS.unknown).rank ? e.status : b, 'unknown');
+    return { ...t, editions, status: best };
+  });
+  titles.sort((a, b) => a.title.localeCompare(b.title));
+  return { affiliate: data._affiliate || {}, titles };
+}
+
+function storeLink(store, affiliate) {
+  // Keyed by store ("GOG"); a listing's name may add the edition after it.
+  const key = Object.keys(affiliate).find(k => affiliate[k] && store.name.startsWith(k));
+  const tpl = key && affiliate[key];
+  const href = tpl ? tpl.replace('{url}', encodeURIComponent(store.url)).replace('{raw}', store.url) : store.url;
+  return { href, sponsored: !!tpl };
+}
+
+function compatPageMd(t, affiliate) {
+  const st = COMPAT_STATUS[t.status] || COMPAT_STATUS.unknown;
+  const L = [];
+  L.push(`# Does ${t.title} run in the browser?`);
+  L.push('');
+  const who = [t.developer, t.year].filter(Boolean).join(', ');
+  L.push(`**${st.mark} ${st.label}.** ${esc(t.title)}${who ? ` (${esc(who)})` : ''} has been tried on Wine-Assembly, a Windows 98 emulator that runs the original program in a browser tab. This is what was measured, edition by edition.`);
+  L.push('');
+  const play = t.editions.find(e => e.playId);
+  if (play) L.push(`<a class="app-launch" href="/apps/${play.playId}.html">Play the ${esc((EDITION_LABEL[play.edition] || 'hosted').toLowerCase())} here &rarr;</a>`);
+  L.push('');
+  L.push('| Edition | Status | Tested | What works | Not yet |');
+  L.push('|---|---|---|---|---|');
+  const cell = s => esc(s || '').replace(/\|/g, '\\|');
+  for (const e of t.editions) {
+    const es = COMPAT_STATUS[e.status] || COMPAT_STATUS.unknown;
+    L.push(`| ${cell(EDITION_LABEL[e.edition] || e.edition)} | ${es.mark} ${es.label} | ${e.statusDate || '—'} | ${cell(e.works)} | ${cell(e.issues)} |`);
+  }
+  L.push('');
+  L.push('## Bring your own copy');
+  L.push('');
+  L.push(`Have the CD or the installer? Drop the \`.iso\`, \`.zip\` or \`setup.exe\` on the [desktop](/), or use Start → Add a Game. ` +
+    `The disc stays in your browser and is never uploaded; only small save files can sync, and only if you sign in. ` +
+    `Retail discs are not hosted here, so this is how the full game is tried.`);
+  L.push('');
+  L.push(`<a class="app-launch" href="/?add-game">Add your copy &rarr;</a>`);
+  L.push('');
+  const stores = t.store || [];
+  if (stores.length || t.demo || t.archive || t.bundled) {
+    L.push(`## Where to get ${esc(t.title)}`);
+    L.push('');
+    if (t.bundled) L.push(`- It came with ${esc(t.bundled)}.`);
+    let sponsored = false;
+    for (const s of stores) {
+      const { href, sponsored: sp } = storeLink(s, affiliate);
+      sponsored = sponsored || sp;
+      L.push(`- Buy the full game: <a href="${esc(href)}" rel="${sp ? 'sponsored ' : ''}noopener">${esc(s.name)}</a>${sp ? ' ¹' : ''}`);
+    }
+    if (t.demo) L.push(`- ${esc(t.demo.label || 'Demo')}: <a href="${esc(t.demo.url)}" rel="noopener">${esc(new URL(t.demo.url).hostname)}</a>`);
+    if (t.archive && !stores.length) L.push(`- Not sold today. A preservation copy is on the <a href="${esc(t.archive)}" rel="noopener">Internet Archive</a>.`);
+    if (sponsored) { L.push(''); L.push('¹ Affiliate link: a purchase through it supports this project at no extra cost to you.'); }
+    L.push('');
+  }
+  const notes = [...new Set(t.editions.map(e => e.note).filter(Boolean))];
+  if (notes.length) {
+    L.push('## Technical notes');
+    L.push('');
+    L.push(`How it runs, what was fixed and what is still open, for the curious: ${notes.map(n => `[${n}](/docs/re-notes/${n}.html)`).join(', ')}.`);
+    L.push('');
+  }
+  L.push('See the [whole compatibility list](/compat/) or the [programs on the desktop](/apps/).');
+  return L.join('\n');
+}
+
+function compatDescription(t) {
+  const st = COMPAT_STATUS[t.status] || COMPAT_STATUS.unknown;
+  const lead = `${t.title}${t.year ? ` (${t.year})` : ''} in the browser: ${st.label.toLowerCase()} on Wine-Assembly, the Windows 98 emulator.`;
+  const best = t.editions.find(e => e.status === t.status);
+  const more = best && best.works ? ` ${best.works}` : '';
+  const full = lead + more;
+  if (full.length <= 158) return full;
+  return lead.length <= 158 ? lead : lead.slice(0, 157) + '…';
+}
+
+function compatIndexMd(titles) {
+  const L = [];
+  L.push('# Windows games in the browser: compatibility list');
+  L.push('<!-- description: Which Windows 95 and 98 games run in a browser tab on Wine-Assembly, edition by edition, from measured runs: plays, reaches the menu or not yet. -->');
+  L.push('');
+  L.push(`Every program Wine-Assembly has been tried on, with what was measured, not hoped. ` +
+    `Titles with a ▶ are hosted and start with one click; for the rest, [add your own copy](/?add-game) (an ISO, a zip or an installer), which stays in your browser.`);
+  L.push('');
+  const legend = Object.values(COMPAT_STATUS).map(s => `${s.mark} ${s.label}`).join(' · ');
+  L.push(`<small>${legend}</small>`);
+  L.push('');
+  const order = Object.keys(COMPAT_STATUS).sort((a, b) => COMPAT_STATUS[b].rank - COMPAT_STATUS[a].rank);
+  for (const key of order) {
+    const list = titles.filter(t => t.status === key);
+    if (!list.length) continue;
+    const st = COMPAT_STATUS[key];
+    L.push(`## ${st.mark} ${st.label} (${list.length})`);
+    L.push('');
+    L.push('| Game | Year | Tested editions |');
+    L.push('|---|---|---|');
+    for (const t of list) {
+      const play = t.editions.some(e => e.playId) ? ' ▶' : '';
+      const eds = t.editions.map(e => EDITION_LABEL[e.edition] || e.edition).join(', ');
+      L.push(`| [${esc(t.title)}](/compat/${t.slug}.html)${play} | ${t.year || ''} | ${esc(eds)} |`);
+    }
     L.push('');
   }
   return L.join('\n');
@@ -655,6 +800,45 @@ function generatePages() {
     }),
   });
   urls.push({ loc: `${SITE}/apps/`, lastmod: blurbDates.modified, priority: '0.8', changefreq: 'monthly' });
+
+  const compat = loadCompat(new Set(apps.map(a => a.id)));
+  if (compat) {
+    const compatDates = { published: gitDate(COMPAT_REL, 'first'), modified: gitDate(COMPAT_REL) };
+    for (const t of compat.titles) {
+      pages.push({
+        name: `compat/${t.slug}.html`,
+        content: pageHtml({
+          md: compatPageMd(t, compat.affiliate),
+          title: `Does ${t.title} run in the browser?`,
+          description: compatDescription(t),
+          urlPath: `compat/${t.slug}.html`, sourceRel: COMPAT_REL,
+          dates: compatDates,
+          ldExtra: {
+            '@type': 'WebPage',
+            about: {
+              '@type': 'VideoGame', name: t.title, gamePlatform: 'PC', operatingSystem: 'Windows 95, Windows 98',
+              ...(t.year ? { datePublished: String(t.year) } : {}),
+              ...(t.developer ? { author: { '@type': 'Organization', name: t.developer } } : {}),
+              ...(t.publisher ? { publisher: { '@type': 'Organization', name: t.publisher } } : {}),
+            },
+          },
+        }),
+      });
+      urls.push({ loc: `${SITE}/compat/${t.slug}.html`, lastmod: compatDates.modified, priority: '0.6', changefreq: 'monthly' });
+    }
+    const indexMd = compatIndexMd(compat.titles);
+    pages.push({
+      name: 'compat/index.html',
+      content: pageHtml({
+        md: indexMd,
+        title: 'Windows games in the browser: compatibility list',
+        description: extractMeta(indexMd).description,
+        urlPath: 'compat/', sourceRel: COMPAT_REL,
+        dates: compatDates,
+      }),
+    });
+    urls.push({ loc: `${SITE}/compat/`, lastmod: compatDates.modified, priority: '0.8', changefreq: 'weekly' });
+  }
 
   const articlesIndexRel = 'articles/README.md';
   if (fs.existsSync(path.join(ROOT, articlesIndexRel))) {
