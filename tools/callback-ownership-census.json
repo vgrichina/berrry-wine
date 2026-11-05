@@ -299,9 +299,9 @@
     {
       "file": "lib/dll-loader.js",
       "name": "host-file",
-      "sha256": "3cf7d00658b3d1ec19bb48192b728a4ba215dbff1ed49862cddad0416d2f49eb",
+      "sha256": "466ea8225607ce517f6d106ec60d72bcade9412af350caccefd7a87940c76936",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261031 Pirates: asynchronous thread notification retains its existing DLL gate, generation pins, generator and saved caller frame across a blocking CS yield. Worker resolver reads the mapped owner word and exact parked stack argument, awaits without guest execution, verifies unchanged EIP/ESP/yield before clearing only that wait, then lets native EnterCriticalSection retry acquisition. Unsupported waits and synchronous callbacks still reject incomplete completion. Focused test-worker-dll-critical-section.js rejects retained old source; broader ownership remains pending. Async DLL continuation retirement review 20261031: bind an owner to the actual endpoint instance; track each async callback gate and generator through its real finally unwind, including nested LoadLibrary. Cancellation fences admission and gives mapping iterators an incomplete outcome for rollback/quarantine, never a completed callback. Failed notification snapshot pins retain their exact generation until endpoint retirement joins the command; release only those owned pins. A generation cleanup fault prevents acknowledgment, and unfinished PROCESS_ATTACH mapping pins remain quarantined. Scoped/cooperative ownership remains separate and unchanged. Deterministic actual Worker/RPC failed-init, nested CS/lookup cancellation, lost reply, stale generation, unresponsive transport and ordinary-success tests plus retained-host causal orphan-gate rejection; evidence scratch/runs/20261031T1022Z-pirates-retirement/. No new native replay; broader ownership remains pending. Review 20261031 builtin execution policy: reject builtin-only native mapping before lifecycle acquisition; central classification delegation adds no callback, continuation or cleanup path. Review 20261103 Alice CLI gate admission: an optional contention hook runs only after failed real gate admission and receives the observed owner word. It never owns or releases the gate; callback rejection propagates unchanged, and the next loop checks endpoint cancellation before another atomic admission. Immediate and same-owner recursive acquisition never invokes the hook. Existing generator, generation pin, quarantine and finally release paths are unchanged. Production CLI real PE old-fail/new-pass, ordinary scheduling, actual owner-id/nested load/unload, owner fault quarantine, gate hook rejection/retired requester and existing real Worker serialization/lifecycle tests are retained in scratch/runs/20261103-alice-gate-scheduling-repair/. Broader invocation ownership remains pending.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261031 Pirates: asynchronous thread notification retains its existing DLL gate, generation pins, generator and saved caller frame across a blocking CS yield. Worker resolver reads the mapped owner word and exact parked stack argument, awaits without guest execution, verifies unchanged EIP/ESP/yield before clearing only that wait, then lets native EnterCriticalSection retry acquisition. Unsupported waits and synchronous callbacks still reject incomplete completion. Focused test-worker-dll-critical-section.js rejects retained old source; broader ownership remains pending. Async DLL continuation retirement review 20261031: bind an owner to the actual endpoint instance; track each async callback gate and generator through its real finally unwind, including nested LoadLibrary. Cancellation fences admission and gives mapping iterators an incomplete outcome for rollback/quarantine, never a completed callback. Failed notification snapshot pins retain their exact generation until endpoint retirement joins the command; release only those owned pins. A generation cleanup fault prevents acknowledgment, and unfinished PROCESS_ATTACH mapping pins remain quarantined. Scoped/cooperative ownership remains separate and unchanged. Deterministic actual Worker/RPC failed-init, nested CS/lookup cancellation, lost reply, stale generation, unresponsive transport and ordinary-success tests plus retained-host causal orphan-gate rejection; evidence scratch/runs/20261031T1022Z-pirates-retirement/. No new native replay; broader ownership remains pending. Review 20261031 builtin execution policy: reject builtin-only native mapping before lifecycle acquisition; central classification delegation adds no callback, continuation or cleanup path. Review 20261103 Alice CLI gate admission: an optional contention hook runs only after failed real gate admission and receives the observed owner word. It never owns or releases the gate; callback rejection propagates unchanged, and the next loop checks endpoint cancellation before another atomic admission. Immediate and same-owner recursive acquisition never invokes the hook. Existing generator, generation pin, quarantine and finally release paths are unchanged. Production CLI real PE old-fail/new-pass, ordinary scheduling, actual owner-id/nested load/unload, owner fault quarantine, gate hook rejection/retired requester and existing real Worker serialization/lifecycle tests are retained in scratch/runs/20261103-alice-gate-scheduling-repair/. Broader invocation ownership remains pending. Stronghold profile-2 coverage review 20261105: optional native begin/finish token replaces only ordinary DllMain stack setup and saved EIP/ESP restoration. Native token checks registered entrypoint/generation, process/root, actual RET sentinel and exact parent stack; incomplete outcomes keep failed native history. Existing DLL gate, generator, initialization policy, register/yield restoration, profile-1 behavior and endpoint retirement remain unchanged; broader invocation ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -4697,9 +4697,9 @@
           "$return_eip"
         ]
       ],
-      "sha256": "6527d3414906d9c743eed690b174ed160ccaaa4d15b1a058a551a8aecc4ded20",
+      "sha256": "349afeafdd9efce33a4ce9c68660c2e91c7d8e421695488faed63da79eecf545",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Shadow Man exact-candidate source review 2026-10-28: Dispatcher retains existing resource-pin save/restore and callback-continuation redirects. Only added operation clears diagnostic kind before deferred DLL unload can redirect after inner handler. No new owner or EIP target; existing callback/continuation lifetimes remain pending. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Shadow Man exact-candidate source review 2026-10-28: Dispatcher retains existing resource-pin save/restore and callback-continuation redirects. Only added operation clears diagnostic kind before deferred DLL unload can redirect after inner handler. No new owner or EIP target; existing callback/continuation lifetimes remain pending. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Stronghold profile-2 coverage review 20261105: native dispatcher records its exact redirected callback target, current stack and canonical continuation or saved caller in bounded shadow history. Native RET must consume that frame exactly; bad returns/unsupported redirects retain permanent coverage failure. Profile 1 remains conservative; no EIP target or callback execution is changed; general invocation ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -9319,6 +9319,52 @@
       "sha256": "6233cc42f6c33c9c700469354cb29ff4f3e5acae4fbffb894e064addbdac48ce",
       "kind": "host-entry",
       "reason": "Loader cache binding review 20261104: optional Worker init installs an exports facade before loader admission. Synchronous staged original PE SHA-256 binds only load_dll own published index/base/size/generation; preexisting/name-only/foreign mappings remain unknown. Core inline/startup and SoftDrv sources compose read-only at owning JS run boundaries, including production queued loadDlls initialization and slices. Original guest errors propagate; no guest call/write, context restoration, breakpoint/watch, lifecycle retirement or cross-thread history join is added. Aggregate returned blocks are preserved across ordinary run(1) boundaries; original loader retains callback gate, saved frame, finally and initialization policy. Scope remains Worker 0/thread 1, internal WAT reentry/concurrency/full lifetimes unknown. Production queued loader plus ordinary no-adapter controls normal/compat verify whole memory/state/commands/traps; unload/reload/media/thread/late controls retained. See docs/re-notes/deusex-loader-bound-cache-observer-20261104.md; broader invocation ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "export:pending_context_loader_begin",
+      "writes": 1,
+      "boundaryCalls": [
+        "$invocation_validate"
+      ],
+      "exports": [
+        "pending_context_loader_begin"
+      ],
+      "targets": [
+        [
+          "local.get",
+          "$target"
+        ]
+      ],
+      "sha256": "50b483430731713e98cc0287a828eb3be40ae959310705d3039e1facca1b8a67",
+      "kind": "callback",
+      "reason": "Stronghold profile-2 optional native loader continuation: validate active module entrypoint/generation and native process/root before recording private one-shot token, saved parent CPU and stdcall child. No active-run nesting supported. Existing setter, rearm, history and lifetime guards remain; broader callback ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "export:pending_context_loader_finish",
+      "writes": 1,
+      "boundaryCalls": [
+        "$invocation_validate"
+      ],
+      "exports": [
+        "pending_context_loader_finish"
+      ],
+      "targets": [
+        [
+          "i32.load",
+          "offset=16",
+          [
+            "local.get",
+            "$p"
+          ]
+        ]
+      ],
+      "sha256": "b1367a1661b572b3a4b68d8a64c858046396381a50ba923aebb619073b734d40",
+      "kind": "continuation",
+      "reason": "Stronghold profile-2 loader resume: exact retained token and current DLL generation/root required; complete proof requires native checked RET sentinel with exact stack, normal run halt and no yield. Incomplete callbacks restore only their owned continuation while retaining failed shadow history. Foreign/reused tokens never restore CPU; general ownership remains pending.",
       "ownership": "pending"
     }
   ]

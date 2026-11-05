@@ -2720,6 +2720,13 @@
   (global $pending_epoch (mut i32) (i32.const 0))
   (global $pending_slot (mut i32) (i32.const 0))
   (global $pending_depth (mut i32) (i32.const 0))
+  ;; Each 32-byte shadow frame keeps its original target/return/ESP triple,
+  ;; then kind (0 CALL, 1 native dispatch, 2 loader, 3 returned loader,
+  ;; 4 returned dispatch; loader high bits retain the exact DLL row index),
+  ;; saved parent EIP/ESP and a once-only native loader token.
+  (global $pending_callback_entries (mut i32) (i32.const 0))
+  (global $pending_callback_returns (mut i32) (i32.const 0))
+  (global $pending_loader_serial (mut i32) (i32.const 0))
   (global $pending_active (mut i32) (i32.const 0))
   (global $pending_process_epoch (mut i64) (i64.const 0))
   (global $pending_root (mut i64) (i64.const 0))

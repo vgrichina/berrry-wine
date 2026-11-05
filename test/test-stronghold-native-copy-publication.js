@@ -349,9 +349,125 @@ async function routeFixture(variant,observe=true){
  return {variant,moduleSHA256:wasmSha256,results,finalMemorySHA256,blocks,completed,negatives,lifetimeNegatives,savedReports:saved.length,originalExecution:false,browserExecution:false};
 }
 
+async function coverageFixture(variant,negative='valid'){
+ const {bootRenderHarness}=require('./render-helper'),{g2w}=require('../lib/mem-utils');
+ const loader=require('../lib/dll-loader'),{pe,BASE}=require('./test-dll-lifecycle-real-pe');
+ const bytes=fs.readFileSync('build/'+variant),module=await WebAssembly.compile(bytes),wasmSha256=hash(bytes);
+ const workerURL='http://fixture/lib/guest-worker.js?v=coverage',targetId='coverage',sessionId='fixture';
+ const instantiate=WebAssembly.instantiate,listeners=[];
+ globalThis.location={href:workerURL};globalThis.memUtils={g2w};
+ globalThis.__mdk2Observe={events:[]};globalThis.addEventListener=(name,fn)=>{assert.equal(name,'message');listeners.push(fn);};
+ const source=api.workerSource({observeSource:'',options:{targetId,sessionId,expectedWorkerURL:workerURL,
+  exeSha256:api.EXE_SHA256,wasmSha256,deadlineEpochMs:Date.now()+30000}});
+ // No seam replacement or nativeEpoch disabling: execute the actual serialized
+ // owning-worker installer used by the selected composed runtime.
+ vm.runInThisContext(source);
+ const h=await bootRenderHarness({prebuiltModule:module,fonts:'none',beforeInstantiate(ctx,host){
+  globalThis.__mdk2Observe.events.push({kind:'received-module',type:'init',slot:0});
+  for(const fn of listeners)fn({data:{t:'init',module,memory:host.memory,slot:0,endpointIdentity:1}});
+ }});
+ globalThis.__mdk2Observe.events.push({kind:'instantiated',incoming:{type:'init',slot:0}});
+ const installed=globalThis.__strongholdPresetAttachment,initial=installed.report();
+ assert(initial.installedBeforeInstantiation);assert.equal(initial.entryError,null);
+ const nativeEpoch=initial.report.nativeEpoch;assert(nativeEpoch);
+ const e=h.exports,b=new Uint8Array(h.memory.buffer),d=new DataView(h.memory.buffer),wa=a=>g2w(a,BASE,h.memory);
+ const exe=fs.readFileSync(EXE);assert.equal(hash(exe),api.EXE_SHA256);b.set(exe,e.get_staging());assert(e.load_pe(exe.length));e.set_api_log(0);
+ // Synthetic caller and WndProc use the actual original's native import slots.
+ // Every original observer pin remains unchanged; original entry is never run.
+ const wc=Buffer.alloc(40);wc.writeUInt32LE(0x580800,4);wc.writeUInt32LE(0x580b00,36);b.set(wc,wa(0x580a00));b.set(Buffer.from('coverage-window\0'),wa(0x580b00));
+ b.set([0xb8,1,0,0,0,0xc2,16,0],wa(0x580800));
+ const code=[0x68,...u32bytes(0x580a00),0xff,0x15,...u32bytes(0x584160)];
+ for(const n of [0,BASE,0,0,100,100,0,0,0,0x580b00,0x580b00,0])code.push(0x68,...u32bytes(n));
+ code.push(0xff,0x15,...u32bytes(0x58415c),0xeb,0xfe);b.set(code,wa(0x580000));
+ e.invalidate_code_range(0x580000,0x1000);e.set_eip(0x580000);e.set_esp(0x7408000);
+ loader.loadDll(e,h.memory.buffer,pe([[0x1000,[0xb8,1,0,0,0,0xc2,12,0]]],true),'coverage-decoy.dll');
+ const mapped=loader.loadDll(e,h.memory.buffer,pe([[0x1000,[0xb8,1,0,0,0,0xc2,12,0]]],true),'coverage-fixture.dll');
+ assert(mapped.index>0,'exercise exact nonzero DLL row identity');
+ const saved={pc:e.get_eip()>>>0,esp:e.get_esp()>>>0};let setupSetters=0;
+ const facade={...e,set_eip(...a){setupSetters++;return e.set_eip(...a);},set_esp(...a){setupSetters++;return e.set_esp(...a);}};
+ if(negative==='legacy-loader')facade.pending_context_callback_version=undefined;
+ const outcome=loader.callDllMain(facade,mapped.loadAddr,mapped.dllMain,null,{requireCompletion:true,strictReturn:true});
+ assert(outcome.completed);assert.equal(setupSetters,negative==='legacy-loader'?4:0,'only old loader wiring uses EIP/ESP setters');
+ assert.equal(e.get_eip()>>>0,saved.pc);assert.equal(e.get_esp()>>>0,saved.esp);
+ assert.equal(e.pending_context_status(nativeEpoch),negative==='legacy-loader'?0:1);assert.equal(e.pending_context_depth(),0);
+ assert.equal(e.pending_context_callback_entries(),negative==='legacy-loader'?0:1);assert.equal(e.pending_context_callback_returns(),negative==='legacy-loader'?0:1);
+ if(negative==='legacy-loader'){assert.equal(e.pending_context_reason(),5);}
+ else if(['wrong-token','generation','unfinished','token-replay'].includes(negative)){
+  const token=e.pending_context_loader_begin(nativeEpoch,mapped.loadAddr,mapped.dllMain,1,0);assert(token);
+  if(negative==='generation')d.setUint32(e.get_dll_lifecycle_table()+mapped.index*e.get_dll_lifecycle_stride()+4,mapped.generation+1,true);
+  if(negative==='token-replay'){
+   e.run(32);assert.equal(e.pending_context_loader_finish(token,1),1);assert.equal(e.pending_context_status(nativeEpoch),1);
+  }
+  const result=e.pending_context_loader_finish(negative==='wrong-token'?token+1n:token,negative==='unfinished'?1:0);
+  assert.equal(result,negative==='unfinished'?1:0);assert.equal(e.pending_context_status(nativeEpoch),0);
+ }else{
+  // Trace only to corrupt a generated fixture callback for the wrong-RET
+  // negative. Normal setup uses the same production native dispatcher.
+  if(negative==='wrong-return'){
+   e.set_bp(0x580800);e.run(256);assert.equal(e.get_eip()>>>0,0x580800);
+   d.setUint32(wa(e.get_esp()>>>0),0x580000,true);e.clear_bp();e.run(1);
+   assert.equal(e.pending_context_reason(),4);
+  }else{
+   if(negative==='valid'){
+    e.set_bp(0x580800);e.run(256);assert.equal(e.get_eip()>>>0,0x580800);
+    assert.equal(e.pending_context_status(nativeEpoch),1);assert.equal(e.pending_context_depth(),1);
+    assert.equal(e.pending_context_entry(0,0)>>>0,0x580800);assert.equal(e.pending_context_entry(0,2)>>>0,e.get_esp()>>>0);
+    assert.equal(e.pending_context_callback_entries(),2);assert.equal(e.pending_context_callback_returns(),1);e.clear_bp();
+   }
+   e.run(256);assert.equal(e.get_eax()>>>0,65537);assert.equal(e.pending_context_status(nativeEpoch),1);
+  }
+ }
+ let exports=e;
+ if(negative==='wrong-profile')exports={...e,pending_context_profile:()=>1};
+ if(negative==='wrong-image')exports={...e,pending_context_image_base:()=>0x500000};
+ if(negative==='wrong-epoch')exports={...e,pending_context_epoch:()=>nativeEpoch+1};
+ if(negative==='absence')exports={...e,pending_context_callback_version:undefined};
+ if(negative==='lifetime'){const token=e.com_callback_enter();e.com_callback_leave(token);assert.equal(e.pending_context_status(nativeEpoch),0);}
+ if(['process','root'].includes(negative)){
+  const ctx={getMemory:()=>h.memory.buffer},imports=require('../lib/host-imports').createHostImports(ctx);imports.host.memory=h.memory;
+  const other=await Reflect.apply(instantiate,WebAssembly,[module,imports]);ctx.exports=other.exports;
+  if(negative==='root')other.exports.init_thread(0,e.get_image_base(),0,0,0,0,0,0);
+  else{b.set(exe,other.exports.get_staging());other.exports.load_pe(exe.length);}
+  assert.equal(e.get_current_thread_id(),1);assert.equal(e.pending_context_status(nativeEpoch),0);assert.equal(e.pending_context_reason(),2);
+ }
+ if(negative==='native-epoch')assert.equal(e.pending_context_status(nativeEpoch+1),0);
+ if(negative==='rearm')assert.equal(e.pending_context_arm_profile(nativeEpoch,2,BASE),0);
+ const cycle=api.cycleFactory({getExports:()=>exports,u32:a=>d.getUint32(wa(a),true),nativeEpoch,emit(){}});
+ const native=installed.report().report;
+ const session={async send(method,args){assert.equal(method,'Runtime.evaluate');
+  return {result:{value:vm.runInThisContext(args.expression)}};
+ }};
+ const sessions=new Map([[targetId,{session,sessionId,info:{url:workerURL},expectedWorkerURL:workerURL,preloadVerified:true}]]);
+ const attachment=api.createAttachment({sessions,wasmSha256,pageState:async()=>({main:{href:'http://fixture/',observation:{events:[{kind:'compiled',sha256:wasmSha256},{kind:'sent-module',sha256:wasmSha256,workerURL,slot:0,type:'init'}]}}}),save(){},log(){},validateAck(){}});
+ let receipt;
+ if(negative==='valid'){
+  receipt=cycle.snapshot(true);assert.equal(receipt.callbackHistory.entries,3);assert.equal(receipt.callbackHistory.returns,3);assert.equal(receipt.entries.length,0);
+  await attachment.begin({action:'route-gesture'},11);assert(attachment.active);
+  await attachment.capture('offline-before-DOWN',hash(Buffer.from('offline identity only')),{main:{tick:{steps:0}}});
+  assert.equal(native.status,'running');
+  assert.equal(cycle.receipt().status,'unknown','startup coverage never grants whole-cycle readiness');
+  await attachment.finish('offline-prerequisite-complete');
+ }else{
+  assert.throws(()=>cycle.snapshot(true),/coverage/);
+  // Native-invalid cases must also fail the actual selected begin boundary.
+  if(!['wrong-profile','wrong-image','wrong-epoch','absence'].includes(negative)){
+   await attachment.begin({action:'route-gesture'},11);
+   await assert.rejects(attachment.capture('offline-before-DOWN',hash(Buffer.from('offline identity only')),{main:{tick:{steps:0}}}),/coverage|terminal/);
+   const first=native.fault;assert(first);assert.equal(native.coverageFailure.actual.reason,e.pending_context_reason());
+   const failure=structuredClone(native.coverageFailure);assert.throws(()=>installed.invoke('check',{}),/terminal/);assert.equal(native.fault,first);assert.deepEqual(native.coverageFailure,failure);
+  }
+ }
+ const reason=e.pending_context_reason();
+ if(reason){assert.equal(e.pending_context_arm_profile(nativeEpoch,2,BASE),0);assert.equal(e.pending_context_status(nativeEpoch+1),0);assert.equal(e.pending_context_reason(),reason,'first native failure survives rearm and foreign epoch query');}
+ installed.invoke('finish',{reason:'offline-fixture-complete'});
+ return {variant,coveragePrerequisite:true,negative,reason,receipt,moduleSHA256:wasmSha256,exe:{path:EXE,sha256:hash(exe)},
+  loaderCompleted:outcome.completed,setupSetters,unmodifiedWorkerSourceSHA256:hash(source),preInstantiationBinding:true,originalEntryExecuted:false,readinessGranted:false,pixelsAccepted:false,gameplay:false};
+}
+function u32bytes(n){return [n&255,n>>>8&255,n>>>16&255,n>>>24&255];}
+
 async function parent(){
  const results=[];
- for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm'])for(const mode of ['native','profile','composed','route-control','route']){
+ for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm'])for(const mode of ['native','profile','composed','route-control','route',...['valid','legacy-loader','wrong-profile','wrong-image','wrong-epoch','absence','lifetime','process','root','native-epoch','rearm','wrong-return','wrong-token','generation','unfinished','token-replay'].map(n=>'coverage:'+n)]){
   results.push(await new Promise((resolve,reject)=>{const w=new Worker(__filename,{workerData:{variant,mode}});let result;
    w.on('message',m=>result=m);w.on('error',reject);w.on('exit',code=>code===0&&result?resolve(result):reject(Error('fixture exit '+code)));
   }));console.log('PASS',variant,mode);
@@ -366,4 +482,4 @@ async function parent(){
  if(run)fs.writeFileSync(path.join(run,'focused-result.json'),JSON.stringify({results,originalExecution:false,browserExecution:false,readinessGranted:false,pixelsAccepted:false},null,2)+'\n');
 }
 if(isMainThread)parent().catch(e=>{console.error(e.stack);process.exitCode=1;});
-else (async()=>parentPort.postMessage(workerData.mode==='native'?await nativeFixture(workerData.variant):workerData.mode==='profile'?await profileFixture(workerData.variant):workerData.mode.startsWith('route')?await routeFixture(workerData.variant,workerData.mode==='route'):await composedFixture(workerData.variant)))().catch(e=>{console.error(e.stack);process.exitCode=1;});
+else (async()=>parentPort.postMessage(workerData.mode.startsWith('coverage:')?await coverageFixture(workerData.variant,workerData.mode.slice(9)):workerData.mode==='native'?await nativeFixture(workerData.variant):workerData.mode==='profile'?await profileFixture(workerData.variant):workerData.mode.startsWith('route')?await routeFixture(workerData.variant,workerData.mode==='route'):await composedFixture(workerData.variant)))().catch(e=>{console.error(e.stack);process.exitCode=1;});

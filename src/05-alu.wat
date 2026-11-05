@@ -332,7 +332,26 @@
     (if (i32.eqz (call $pending_valid)) (then (return)))
     (if (global.get $pending_depth) (then
       (local.set $p (i32.add (global.get $pending_slot)
-        (i32.mul (i32.sub (global.get $pending_depth) (i32.const 1)) (i32.const 12))))
+        (i32.shl (i32.sub (global.get $pending_depth) (i32.const 1)) (i32.const 5))))
+      ;; A native callback RET stays represented through its continuation.
+      (if (i32.eq (i32.load offset=12 (local.get $p)) (i32.const 4)) (then
+        (if (i32.or (i32.ne (local.get $pc) (i32.load offset=4 (local.get $p)))
+              (i32.gt_u (local.get $esp) (i32.load offset=20 (local.get $p))))
+          (then (call $pending_gap) (return)))
+        (if (i32.eq (local.get $pc) (i32.load offset=16 (local.get $p))) (then
+          (if (i32.ne (local.get $esp) (i32.load offset=20 (local.get $p)))
+            (then (call $pending_gap) (return)))
+          (global.set $pending_depth (i32.sub (global.get $pending_depth) (i32.const 1))))
+          (else (return)))
+        (return)))
+      ;; A returned loader remains native-owned until its token is resumed.
+      ;; Its sentinel is a checked RET, never an arbitrary EIP/ESP sample.
+      (if (i32.eq (i32.and (i32.load offset=12 (local.get $p)) (i32.const 255)) (i32.const 3))
+        (then
+          (if (i32.or (i32.ne (local.get $pc) (i32.const 0))
+                (i32.ne (local.get $esp) (i32.load offset=20 (local.get $p))))
+            (then (call $pending_gap)))
+          (return)))
       (if (i32.gt_u (local.get $esp) (i32.load offset=8 (local.get $p)))
         (then (call $pending_gap) (return)))))
     (if (call $pending_target (local.get $pc)) (then
@@ -342,23 +361,79 @@
         (then (call $pending_gap))))))
 
   (func $pending_push (param $target i32) (param $ret i32) (param $esp i32)
-    (local $p i32)
     (if (i32.eqz (call $pending_valid)) (then (return)))
     (if (i32.eqz (call $pending_target (local.get $target))) (then (return)))
+    (drop (call $pending_frame_push (local.get $target) (local.get $ret) (local.get $esp) (i32.const 0))))
+  (func $pending_frame_push (param $target i32) (param $ret i32) (param $esp i32)
+      (param $kind i32) (result i32)
+    (local $p i32)
     (if (i32.ge_u (global.get $pending_depth) (i32.const 64))
-      (then (global.set $pending_reason (i32.const 3)) (return)))
+      (then (global.set $pending_reason (i32.const 3)) (return (i32.const 0))))
     (local.set $p (i32.add (global.get $pending_slot)
-      (i32.mul (global.get $pending_depth) (i32.const 12))))
+      (i32.shl (global.get $pending_depth) (i32.const 5))))
     (i32.store (local.get $p) (local.get $target))
     (i32.store offset=4 (local.get $p) (local.get $ret))
     (i32.store offset=8 (local.get $p) (local.get $esp))
-    (global.set $pending_depth (i32.add (global.get $pending_depth) (i32.const 1))))
+    (i32.store offset=12 (local.get $p) (local.get $kind))
+    (i64.store offset=16 (local.get $p) (i64.const 0))
+    (i64.store offset=24 (local.get $p) (i64.const 0))
+    (global.set $pending_depth (i32.add (global.get $pending_depth) (i32.const 1)))
+    (local.get $p))
+  ;; Native dispatch owns the callback stack it has just built. Extend the
+  ;; shadow CALL/RET history with that exact child, rather than declaring an
+  ;; unexplained EIP change covered. Legacy profile 1 still rejects redirects.
+  (func $pending_dispatch_callback (param $entry_eip i32) (param $return_eip i32) (param $parent_esp i32)
+    (local $esp i32) (local $ret i32) (local $th i32) (local $metadata i32) (local $p i32)
+    (if (i32.eqz (global.get $pending_armed)) (then (return)))
+    (if (i32.ne (global.get $pending_profile) (i32.const 2)) (then
+      (if (i32.and (i32.ne (global.get $eip) (local.get $entry_eip))
+          (i32.ne (global.get $eip) (local.get $return_eip))) (then (call $pending_gap)))
+      (return)))
+    (if (i32.eqz (call $pending_valid)) (then (return)))
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (if (global.get $pending_depth) (then
+      (local.set $p (i32.add (global.get $pending_slot)
+        (i32.shl (i32.sub (global.get $pending_depth) (i32.const 1)) (i32.const 5))))))
+    (if (if (result i32) (local.get $p)
+          (then (i32.eq (i32.load offset=12 (local.get $p)) (i32.const 4))) (else (i32.const 0)))
+      (then
+        ;; This continuation was reached by the recorded child's exact RET.
+        (if (i32.ne (local.get $entry_eip) (i32.load offset=4 (local.get $p)))
+          (then (call $pending_gap) (return)))
+        (local.set $return_eip (i32.load offset=16 (local.get $p)))
+        (local.set $parent_esp (i32.load offset=20 (local.get $p)))
+        (global.set $pending_depth (i32.sub (global.get $pending_depth) (i32.const 1)))
+        (if (i32.eq (global.get $eip) (local.get $return_eip)) (then
+          (if (i32.ne (local.get $esp) (local.get $parent_esp)) (then (call $pending_gap)))
+          (return))))
+      (else
+        (if (i32.or (i32.eq (global.get $eip) (local.get $entry_eip))
+              (i32.eq (global.get $eip) (local.get $return_eip))) (then (return)))
+        (if (i32.lt_s (local.get $parent_esp) (i32.const 0)) (then (call $pending_gap) (return)))))
+    (local.set $ret (call $gl32 (local.get $esp)))
+    (if (i32.ne (local.get $ret) (local.get $return_eip)) (then
+      (if (i32.or (i32.lt_u (local.get $ret) (global.get $thunk_guest_base))
+            (i32.ge_u (local.get $ret) (global.get $thunk_guest_end)))
+        (then (call $pending_gap) (return)))
+      (local.set $th (i32.shr_u (i32.sub (local.get $ret) (global.get $thunk_guest_base)) (i32.const 3)))
+      (if (i32.or (i32.ne (i32.and (local.get $ret) (i32.const 7)) (i32.const 0))
+            (call $thunk_patch_changed (local.get $th))) (then (call $pending_gap) (return)))
+      (local.set $metadata (i32.load (call $thunk_metadata_addr (local.get $th))))
+      (if (i32.ne (i32.and (local.get $metadata) (i32.const 0xFFFF0000)) (i32.const 0xCACA0000))
+        (then (call $pending_gap) (return)))))
+    (if (i32.or (i32.eqz (global.get $eip)) (i32.ge_u (local.get $esp) (local.get $parent_esp)))
+      (then (call $pending_gap) (return)))
+    (local.set $p (call $pending_frame_push (global.get $eip) (local.get $ret) (local.get $esp) (i32.const 1)))
+    (if (local.get $p) (then
+      (i32.store offset=16 (local.get $p) (local.get $return_eip))
+      (i32.store offset=20 (local.get $p) (local.get $parent_esp))
+      (global.set $pending_callback_entries (i32.add (global.get $pending_callback_entries) (i32.const 1))))))
   (func $pending_pop (param $ret i32) (param $esp i32)
     (local $p i32) (local $entry i32)
     (if (i32.eqz (call $pending_valid)) (then (return)))
     (if (i32.eqz (global.get $pending_depth)) (then (return)))
     (local.set $p (i32.add (global.get $pending_slot)
-      (i32.mul (i32.sub (global.get $pending_depth) (i32.const 1)) (i32.const 12))))
+      (i32.shl (i32.sub (global.get $pending_depth) (i32.const 1)) (i32.const 5))))
     (local.set $entry (i32.load offset=8 (local.get $p)))
     ;; Nested untracked calls return below the tracked entry. A return to the
     ;; recorded PC from a different ESP is never accepted as that return.
@@ -368,7 +443,14 @@
         (if (i32.or (i32.ne (local.get $esp) (local.get $entry))
                     (i32.ne (local.get $ret) (i32.load offset=4 (local.get $p))))
           (then (global.set $pending_reason (i32.const 4)) (return)))
-        (global.set $pending_depth (i32.sub (global.get $pending_depth) (i32.const 1))))))
+        (if (i32.ne (i32.load offset=12 (local.get $p)) (i32.const 0))
+          (then (global.set $pending_callback_returns (i32.add (global.get $pending_callback_returns) (i32.const 1)))))
+        (if (i32.eq (i32.load offset=12 (local.get $p)) (i32.const 1))
+          (then (i32.store offset=12 (local.get $p) (i32.const 4)))
+          (else (if (i32.eq (i32.and (i32.load offset=12 (local.get $p)) (i32.const 255)) (i32.const 2))
+          (then (i32.store offset=12 (local.get $p)
+            (i32.or (i32.and (i32.load offset=12 (local.get $p)) (i32.const 0xFFFFFF00)) (i32.const 3))))
+          (else (global.set $pending_depth (i32.sub (global.get $pending_depth) (i32.const 1))))))))))
 
   (func $th_nop (param $op i32) (local $nx_fn i32) (local $nx_op i32) (dispatch-next))
   ;; 1: skip next word

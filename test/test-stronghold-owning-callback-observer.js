@@ -8,6 +8,16 @@ const base=require('../tools/stronghold-preset-driver-attachment.cjs');
 const {g2w}=require('../lib/mem-utils');
 const ROOT=path.resolve(__dirname,'..'),hash=base.hash,EXE=base.MEDIA,exe=fs.readFileSync(path.join(ROOT,EXE));
 assert.equal(hash(exe),api.EXE_SHA256);
+// Consumer ABI checks are pure reads; no absent history can be filled in by JS.
+{
+ const good={pending_context_version:()=>1,pending_context_callback_version:()=>1,pending_context_profile:()=>2,
+  pending_context_image_base:()=>0x400000,pending_context_epoch:()=>17,pending_context_status:()=>1,pending_context_coverage:()=>1,
+  pending_context_depth:()=>0,pending_context_reason:()=>0,pending_context_callback_entries:()=>3,pending_context_callback_returns:()=>3,get_eip:()=>0x580000,get_esp:()=>0x7408000};
+ const snapshot=e=>api.cycleFactory({getExports:()=>e,nativeEpoch:17,u32(){throw Error('no speculative stack reads');},emit(){}}).snapshot(true);
+ assert.deepEqual(snapshot(good).callbackHistory,{version:1,entries:3,returns:3});
+ for(const changed of [{pending_context_profile:()=>1},{pending_context_image_base:()=>0x500000},{pending_context_epoch:()=>18},
+  {pending_context_callback_version:undefined},{pending_context_status:()=>0}])assert.throws(()=>snapshot({...good,...changed}),/coverage unavailable/);
+}
 const pe=exe.readUInt32LE(60),opt=pe+24,sections=opt+exe.readUInt16LE(pe+20);
 function original(a,n){for(let i=0;i<exe.readUInt16LE(pe+6);i++){
  const s=sections+i*40,va=exe.readUInt32LE(s+12)+0x400000,size=exe.readUInt32LE(s+16);

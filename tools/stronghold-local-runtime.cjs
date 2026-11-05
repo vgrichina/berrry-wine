@@ -145,6 +145,25 @@ function verifyFreshRuntimePins(pins){
  if(JSON.stringify(pins)!==JSON.stringify(freshRuntimePins()))throw Error('stale or changed fresh runtime closure');
  return pins;
 }
+// Offline qualification records the current complete dependency closure. It
+// deliberately cannot mint a launch release or amend either historical seal.
+function offlineCoveragePins(){
+ const original=fs.readFileSync(path.join(ROOT,ORIGINAL_PINS));
+ if(base.hash(original)!==ORIGINAL_PINS_SHA)throw Error('stale original runtime manifest');
+ const pins=JSON.parse(original),seen=new Set();
+ const files=pins.files.map(row=>{
+  if(seen.has(row.path))throw Error('duplicate offline dependency');seen.add(row.path);
+  const bytes=fs.readFileSync(path.join(ROOT,row.path));
+  return {...row,bytes:bytes.length,sha256:base.hash(bytes)};
+ });
+ if(files.length!==2429)throw Error('complete offline closure required');
+ return {...pins,files,offlineCoverageBinding:{version:1,originalPinsSHA256:ORIGINAL_PINS_SHA,
+  sourceIdentity:freshSourceIdentity(files),originalExecutionAuthorized:false}};
+}
+function verifyOfflineCoveragePins(pins){
+ if(JSON.stringify(pins)!==JSON.stringify(offlineCoveragePins()))throw Error('stale or changed offline coverage closure');
+ return pins;
+}
 // Image identity brackets the capture; only the complete owning transaction
 // can describe setup progress. No screenshot identity grants classification.
 function diagnosticScene(bytes,known,observation){
@@ -227,6 +246,7 @@ async function launchOwned(puppeteer,tap,options){
 }
 function binding(run,pins){
  const manifest=JSON.parse(fs.readFileSync(pins));
+ if(manifest.offlineCoverageBinding)throw Error('offline coverage closure cannot authorize original execution');
  if(manifest.freshRuntimeBinding)verifyFreshRuntimePins(manifest);
  else if(manifest.runtimeBinding)verifyAcceptedRuntimePins(manifest);
  const modules=['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>{
@@ -331,7 +351,8 @@ function nextMailboxAction(status,command){
 }
 function prepare(options){
  const manifest=JSON.parse(fs.readFileSync(options.pins));
- if(manifest.freshRuntimeBinding)verifyFreshRuntimePins(manifest);
+ if(manifest.offlineCoverageBinding)verifyOfflineCoveragePins(manifest);
+ else if(manifest.freshRuntimeBinding)verifyFreshRuntimePins(manifest);
  else if(manifest.runtimeBinding)verifyAcceptedRuntimePins(manifest);
  const p=observer.prepare(options),q=JSON.stringify;
  p.source=base.replaceOnce(p.source,'const presetAttachment=attachmentAPI.createAttachment({sessions,save,log,pageState:state,validateAck:assertAck,',
@@ -441,4 +462,4 @@ function createHostPresentationController({page,save,deadline}){
   }
  };
 }
-module.exports={freshRuntimePins,verifyFreshRuntimePins,freshSourceIdentity,FRESH_ACCEPTED,FRESH_PROVENANCE,acceptedRuntimePins,verifyAcceptedRuntimePins,ACCEPTED,ORIGINAL_PINS_SHA,identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireBuildReleases,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,nextMailboxAction,diagnosticScene,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
+module.exports={offlineCoveragePins,verifyOfflineCoveragePins,freshRuntimePins,verifyFreshRuntimePins,freshSourceIdentity,FRESH_ACCEPTED,FRESH_PROVENANCE,acceptedRuntimePins,verifyAcceptedRuntimePins,ACCEPTED,ORIGINAL_PINS_SHA,identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireBuildReleases,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,nextMailboxAction,diagnosticScene,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};

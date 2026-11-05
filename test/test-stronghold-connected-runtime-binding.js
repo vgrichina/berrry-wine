@@ -3,6 +3,48 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const cp=require('node:child_process'),api=require('../tools/stronghold-local-runtime.cjs');
 const route=require('../tools/stronghold-route-recognition-handoff.cjs'),base=require('../tools/stronghold-preset-driver-attachment.cjs');
+async function offlineCoverageContract(){
+ const run=path.resolve(process.env.STRONGHOLD_COVERAGE_RUN);fs.mkdirSync(run,{recursive:true});
+ api.requireLocalFlock();
+ const seal='scratch/runs/20261105-stronghold-prompt-review-gameplay/first-failure.json',sealed=fs.readFileSync(seal);
+ assert.equal(base.hash(sealed),'ee7426e75089303d14cc4799c46daf0561d584c45bb2537c65a6935cdafffe72');
+ const manifest=api.offlineCoveragePins(),pins=path.join(run,'offline-pins.json');
+ assert.equal(manifest.files.length,2429);assert.equal(manifest.offlineCoverageBinding.originalExecutionAuthorized,false);
+ api.verifyOfflineCoveragePins(manifest);fs.writeFileSync(pins,JSON.stringify(manifest,null,2));
+ assert.throws(()=>api.freshRuntimePins(),/unknown fresh runtime dependency mismatch/);
+ assert.throws(()=>api.acceptedRuntimePins(),/unknown runtime dependency mismatch/);
+ assert.throws(()=>api.binding(run,pins),/cannot authorize original execution/);
+ assert.throws(()=>api.createRelease({run,pins,nonce:'a'.repeat(64)}),/cannot authorize original execution/);
+ for(const mutate of [p=>p.files.pop(),p=>p.files.push(p.files[0]),p=>p.files[0].sha256='0'.repeat(64),
+  p=>p.offlineCoverageBinding.originalExecutionAuthorized=true,p=>p.offlineCoverageBinding.sourceIdentity.gitSHA='0'.repeat(40),
+  p=>p.offlineCoverageBinding.originalPinsSHA256='0'.repeat(64)]){
+  const changed=structuredClone(manifest);mutate(changed);assert.throws(()=>api.verifyOfflineCoveragePins(changed),/offline coverage closure/);
+ }
+ const p=route.prepare({run,pins});new vm.Script(p.source);new vm.Script(p.route);
+ assert(p.source.includes('createHostPresentationController'));assert(p.source.includes('validateRelease'));
+ assert(p.source.includes('installTransportEvidence'));assert(p.source.includes('personalReview'));
+ assert.equal(p.evidence.setupTransitionDiagnostic.readinessGranted,false);assert.equal(p.evidence.setupTransitionDiagnostic.pixelsAccepted,false);
+ const worker=base.hash(require('../tools/stronghold-owning-callback-observer.cjs').workerSource({observeSource:'',options:{targetId:'coverage',sessionId:'fixture',expectedWorkerURL:'http://fixture/lib/guest-worker.js'}}));
+ const nativeSpawn=cp.ChildProcess.prototype.spawn;let spawns=0;
+ cp.ChildProcess.prototype.spawn=function(){spawns++;throw Error('OFFLINE SPAWN FORBIDDEN');};
+ const {startStaticServer}=require('./static-server');let server,httpResponses=0,port;
+ try{
+  server=await startStaticServer({root:path.resolve('.'),port:0});port=server.address().port;
+  // Exercise the production server's complete selected closure without a browser.
+  for(const row of manifest.files){
+   const response=await fetch('http://127.0.0.1:'+port+'/'+row.path),bytes=Buffer.from(await response.arrayBuffer());
+   assert.equal(response.status,200,row.path);assert.equal(base.hash(bytes),row.sha256,row.path);httpResponses++;
+  }
+ }finally{
+  if(server)await new Promise((resolve,reject)=>server.close(e=>e?reject(e):resolve()));
+  cp.ChildProcess.prototype.spawn=nativeSpawn;
+ }
+ assert.equal(spawns,0);assert.equal(server.listening,false);assert.equal(base.hash(fs.readFileSync(seal)),base.hash(sealed));
+ const result={pass:true,httpResponses,port,serverClosed:true,spawns,originalExecutions:0,historicalFirstFailureUnchanged:true,
+  selectedCompositionSHA256:base.hash(p.source),workerSourceSHA256:worker,offlineLaunchRejected:true,readinessGranted:false,pixelsAccepted:false,gameplay:false};
+ fs.writeFileSync(path.join(run,'offline-contract-result.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
+}
+if(process.env.STRONGHOLD_COVERAGE_RUN){offlineCoverageContract().catch(e=>{console.error(e.stack);process.exitCode=1;});return;}
 if(!process.env.STRONGHOLD_CONNECTED_RUN){
  // The ordinary unit tier must not acquire a shared runtime or issue a dated
  // original authorization. The complete fresh-entry fixture is explicit.

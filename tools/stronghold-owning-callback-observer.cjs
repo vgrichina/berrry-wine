@@ -56,15 +56,21 @@ function cycleFactory({getExports,u32,emit,verify=()=>{},nativeEpoch=0}={}){
  ]);
  function snapshot(outside=false){
   const e=getExports();
-  if(!nativeEpoch||e?.pending_context_version?.()!==1||e.pending_context_profile?.()!==2||
+  if(!nativeEpoch||e?.pending_context_version?.()!==1||e.pending_context_callback_version?.()!==1||e.pending_context_profile?.()!==2||
    e.pending_context_image_base?.()!==0x400000||(e.pending_context_epoch?.()>>>0)!==(nativeEpoch>>>0)||
-   (outside?e.pending_context_status(nativeEpoch):e.pending_context_coverage(nativeEpoch))!==1)
-   throw Error('Stronghold continuous profile/image/epoch coverage unavailable');
+   (outside?e.pending_context_status(nativeEpoch):e.pending_context_coverage(nativeEpoch))!==1){
+   const error=Error('Stronghold continuous profile/image/epoch coverage unavailable');
+   error.nativeCoverage={expected:{profile:2,imageBase:0x400000,nativeEpoch:nativeEpoch>>>0,callbackVersion:1},
+    actual:{profile:e?.pending_context_profile?.()??null,imageBase:e?.pending_context_image_base?.()??null,
+     nativeEpoch:e?.pending_context_epoch?.()>>>0,callbackVersion:e?.pending_context_callback_version?.()??null,
+     reason:e?.pending_context_reason?.()??null,depth:e?.pending_context_depth?.()??null}};
+   throw error;
+  }
   const depth=e.pending_context_depth()>>>0;if(depth>64)throw Error('native depth bound');
   const entries=[];for(let i=0;i<depth;i++)entries.push({target:e.pending_context_entry(i,0)>>>0,
    caller:e.pending_context_entry(i,1)>>>0,esp:e.pending_context_entry(i,2)>>>0});
   return {profile:2,imageBase:0x400000,nativeEpoch:nativeEpoch>>>0,valid:1,
-   reason:e.pending_context_reason()>>>0,entries,pc:e.get_eip()>>>0,esp:e.get_esp()>>>0};
+   reason:e.pending_context_reason()>>>0,callbackHistory:{version:1,entries:e.pending_context_callback_entries()>>>0,returns:e.pending_context_callback_returns()>>>0},entries,pc:e.get_eip()>>>0,esp:e.get_esp()>>>0};
  }
  function state(){return cycle?JSON.parse(JSON.stringify(cycle)):null;}
  function boundary(pc,esp){
@@ -190,7 +196,7 @@ function observerFactory(EXE_SHA256,PINS,controlFactory=preset.controlFactory,ma
    active=false;clearTimeout(timer);report.status=reason;report.pending=[...frames.map(f=>({...f})),...(draw?[{name:'draw',...draw}]:[]),...(surface?[{name:'surface',...surface}]:[]),...controls.pending()];
    if(host.log_block===wrapped)host.log_block=prior;for(const restore of restores)restore();occupied.delete(host);return report;
   }
-  function fail(error){if(!report.fault)report.fault=String(error.message||error);return finish('unsupported-or-unobservable');}
+  function fail(error){if(!report.fault){report.fault=String(error.message||error);if(error.nativeCoverage)report.coverageFailure=error.nativeCoverage;}return finish('unsupported-or-unobservable');}
   function read(a,n=4){
    if(!Number.isSafeInteger(a)||a<=0||!Number.isSafeInteger(n)||n<1||n>512||a+n>0x100000000)throw Error('invalid native read');
    const bytes=new Uint8Array(buffer),out=[];
@@ -434,7 +440,7 @@ function observerFactory(EXE_SHA256,PINS,controlFactory=preset.controlFactory,ma
     deadline:performance.now()+options.deadlineEpochMs-Date.now()});}catch(error){entry.error=String(error);}
    try{const result=await Reflect.apply(instantiate,this,[module,imports,...rest]);instance=result.instance||result;
     const e=instance.exports;
-    if(!Number.isInteger(options.nativeEpoch)||options.nativeEpoch<=0||options.nativeEpoch>0xffffffff||
+    if(e.pending_context_callback_version?.()!==1||!Number.isInteger(options.nativeEpoch)||options.nativeEpoch<=0||options.nativeEpoch>0xffffffff||
      e.pending_context_arm_profile?.(options.nativeEpoch,2,0x400000)!==1)
      throw Error('pre-execution Stronghold native profile arm failed');
     return result;}
