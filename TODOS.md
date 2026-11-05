@@ -2154,10 +2154,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-AOE3-DEMO-20261010
-  blocker: Genuine XP DirectX9c setup input recovered; actual setup execution and resulting installation state remain unproved. Original inner MSI remains undecoded; outer header inspection does not prove an embedded redist is absent.
-  status: active genuine DXSETUP preparation; runtime queued behind Conan1840 -> Aranna1850 -> legacy1915
+  blocker: Genuine DXSETUP failed at missing advpack IsNTAdmin; repair fb256f9f6 is published and tested, setup progression and resulting usable DirectX state remain unproved.
+  status: active repaired DXSETUP progression; runtime queued behind Conan1935 -> Aranna1945 -> legacyADD1955
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: fresh aoe3-genuine-dxsetup-1925; source-only until predecessor FINAL releases and independent cleanup, then genuine setup and same-target original gameplay if ready
+  worker: fresh aoe3-repaired-dxsetup-2005; source-only until Conan1935 -> Aranna1945 -> legacyADD1955 FINAL releases and independent cleanup
+  Update 2026-11-05T17:56Z: Published fb256f9f6456e1d790e9fe0813adaec28cdadc35 implements advpack IsNTAdmin against existing process token, both-mode dynamic lookup/dispatch/stdcall/exhaustion regression and adapted token tests plus locked fullbuild PASS. One genuine XP DXSETUP stopped before DSETUP entry, created only actual logs, registry unchanged; no usable DirectX/gameplay claim. Root reviewed84artifact hashes, teal capture and independently ten absent cleanupPIDs/control19725refused. Fresh2005 validates progression after the real repair, preserving actual setup state; no media duplication/boxes/held-task retry.
   Update 2026-11-05T17:23Z: Input recovery1900 published02ca36bb2; genuine Microsoft February2010 redist109072752B SHA f6d191e89a963d7cca34f169d30f49eab99c1ed3bb92da73ec43617caaa1e93f includes dxnt.cab. Package/cabinets and historical cryptographic provenance pass; current trust/revocation policy unproved. No installer ran or installation state fabricated. Fresh1925 authorized to run real DXSETUP, capture its files/registry/logs/restart outputs and advance original only from completed actual state. Ordinary acceptance authorization persists. No boxes or held diagnostic retry.
   Recovery outcome 2026-11-05: Publishedb6c993d70; all208 supporting files572051434B verified, including174 installed files and exactage3.exe5d7fb9a8. No guest run/acceptance/gameplay. Historical373pin manifests retained separately; originalregistry unchanged. Evidence scratch/runs/20261105-aoe3-supporting-input-recovery/.
   candidate: test/binaries/win98-games-a-d/Age-of-empire-3trial-Win98-SW.exe
