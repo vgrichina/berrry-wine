@@ -89,3 +89,13 @@ runtime task must reconstruct the setup and supporting files, observe ordinary
 acceptance and installation, then test the original game. The replacement box
 `bx_ymnfhg6q` was previously created and stopped with a snapshot; verify current
 access before assigning a runtime. The superseded `bx_hx8msa33` remains untouched.
+
+Fresh runtime preflight on 2026-11-05 at 12:55Z created `bx_96k82f8h`
+using a persisted UUID Idempotency-Key and a one-hour TTL. Creation succeeded,
+but the first SSH command returned HTTP403 `api_key_action_forbidden`,
+“This API key cannot perform ssh.” No setup, guest execution, alternate
+execution route, or SSH retry followed. The coordinator stopped the new box;
+creation, denial and stopped-state evidence are in
+`scratch/runs/20261105-aranna-fresh-runtime/`. Old boxes remain untouched.
+Resume this lane with permitted SSH access or an available serialized local
+runtime slot; recovered media and ordinary acceptance authorization remain valid.

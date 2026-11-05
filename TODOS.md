@@ -1842,12 +1842,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [ ] User priority: Return Fire demo
   id: NEW-GAME-RETURN-FIRE-DEMO-20261009
   blocker: none for bounded launcher/deployment/movement scope; sustained play/audio/FPS remain separate.
-  worker: return-fire-optional404-cancellation-0825 (fresh offline repair; shared tests/runtime follow Strong0745 then D3Ddepth0815 FINAL release and cleanup)
+  worker: none (transport repair cf5e9c163 published and released; original gameplay follow-up queued)
   status: bounded gameplay and visible native launcher accepted; broader coverage open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: return-fire-demo
   priority: user-first
-  Next: Published fb7f45c73 verifies actual HTML response body and unchanged continuation, but optional build-info.js GET404 then canceled net::ERR_ABORTED stops collector before Play. Offline cause/remedy must preserve genuine transfer failures and immutable first failure. No original retry authorized in this repair task. Historical launcher/deployment/movement acceptance remains; sustained play/audio/FPS open.
+  Next: Transport prerequisite fixed cf5e9c163 (2026-11-05): owning Worker Network bytes collected only after the actual missing Fetch capability is established, with exact startup identity and required-byte guards. Collector91/composition33/real-browser12 plus optional404 controls and full build PASS; all owned runtime released. Evidence scratch/runs/20261105-return-fire-worker-body-transport/. The repair did not run the original game. Next bounded original gameplay/audio observation uses this published transport after a runtime slot opens; historical launcher/deployment/movement acceptance remains, sustained play/audio/FPS open.
   Done: Registered launch, ordinary input visibly changes gameplay, reviewed screenshot with original source/build evidence; FPS/audio separate.
 
 - [x] Serialize shared DLL mapping and lifetime mutation
@@ -2161,8 +2161,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-ARANNA-DEMO-20261010
-  blocker: Original installer recovered and exact historical SHA256 verified; free worker slot, current runtime access preflight and setup reconstruction required.
-  worker: none (four existing workers occupied; replacement setup prepared by coordinator)
+  blocker: Original installer recovered; fresh bx_96k82f8h created successfully, but SSH preflight returned403 api_key_action_forbidden (2026-11-05 12:55Z). Box stopped; remote runtime requires SSH access authorization, or a free serialized local runtime slot.
+  worker: none (prepared task pending available runtime; three other workers active)
   status: pending (original media recovered; runtime/setup and gameplay pending)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: scratch/game-media/aranna-demo-20261105/dsloademo.exe (260378624 bytes, SHA256 e3923f18d3ec9bf52ffe556821dbaa2078e985087c7bf4b171a36b9883b851cf; exact historical original)
