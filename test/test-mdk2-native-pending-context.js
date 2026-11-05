@@ -192,7 +192,7 @@ async function liveFixture(file,mode='match'){
   // The tracked frame is still live; no stack readback can erase it.
   const P=0x4522d0;put(caller,call(caller,P));put(P,jmp(P,0x47d9c8));e.set_esp(seamESP+4);e.set_ebx(object);
  }
- const bound=realm.__mdk2BoundTrace;return {e,bound,u,dv,wa,str,mode,seamESP};
+ const bound=realm.__mdk2BoundTrace;return {e,bound,u,put,dv,wa,str,mode,seamESP};
 }
 for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm']){
  test(file+' synchronous live admission then genuine continuous GC entry/return',async()=>{
@@ -210,9 +210,15 @@ for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm']
  });
  for(const mode of ['guard-6','guard-14','guard-22','guard-39','guard-42','guard-45','guard-47','callback','pending'])test(file+' live rejection '+mode,async()=>{
   const {e,bound}=await liveFixture(file,mode);let n=0;
-  while((e.get_eip()>>>0)!==0x47d9c8&&n++<50)e.run(1);
-  const r=bound.report();assert.equal(e.get_eip()>>>0,0x47d9c8);assert.equal(r.started,false);assert.equal(r.observer,null);assert(r.liveAdmission.rejection,JSON.stringify(r));
+  let failure;
+  try{while((e.get_eip()>>>0)!==0x47d9c8&&n++<50)e.run(1);}catch(error){failure=error;}
+  assert(failure,'first failed native proof must stop the caller');
+  const r=JSON.parse(JSON.stringify(bound.report()));assert.equal(r.started,false);assert.equal(r.observer,null);assert(r.terminal);assert(r.fatal);assert(r.liveAdmission.failure,JSON.stringify(r));
+  if(mode==='callback'){assert.equal(r.liveAdmission.failure.phase,'before-run');assert.equal(r.startup.slices,0);}
+  else{assert.equal(e.get_eip()>>>0,0x47d9c8);assert(r.liveAdmission.rejection,JSON.stringify(r));}
   if(mode==='pending')assert(e.pending_context_depth()>0);
+  const registers=[e.get_eip(),e.get_esp(),e.get_eax(),e.get_last_run_blocks()];
+  e.run(1000);assert.deepEqual([e.get_eip(),e.get_esp(),e.get_eax(),e.get_last_run_blocks()],registers);assert.deepEqual(JSON.parse(JSON.stringify(bound.report())),r);assert.deepEqual(JSON.parse(JSON.stringify(bound.invoke('finish',{reason:'fixture-cleanup'}))),r);
  });
 }
 
@@ -238,3 +244,17 @@ for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm']
   e.run(1);assert.deepEqual(JSON.parse(JSON.stringify(bound.report())),first);
  });
 }
+
+for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'])test(file+' pre-admission invalidation during native execution seals first completed boundary',async()=>{
+ const {e,bound,put}=await liveFixture(file);
+ // Actual guest JMP enters relevant GC without a CALL; status is valid before
+ // execution, then the native entry hook invalidates. No saved stack supplies it.
+ const caller=e.get_eip()>>>0;put(caller,jmp(caller,0x443070));
+ assert.equal(e.pending_context_status(1),1);let failure,n=0;
+ try{while(n++<4)e.run(1);}catch(error){failure=error;}
+ assert(failure);const r=JSON.parse(JSON.stringify(bound.report()));
+ assert.equal(r.liveAdmission.failure.phase,'after-run');assert.equal(r.liveAdmission.status,'invalid');assert(r.terminal);assert.equal(r.started,false);assert.equal(r.observer,null);
+ assert(r.nativeSlice.completed);assert.equal(r.startup.status,'sealed');assert.equal(r.startup.firstFailure.message,r.fatal);
+ const registers=[e.get_eip(),e.get_esp(),e.get_eax(),e.get_last_run_blocks()];
+ e.run(1000);assert.deepEqual([e.get_eip(),e.get_esp(),e.get_eax(),e.get_last_run_blocks()],registers);assert.deepEqual(JSON.parse(JSON.stringify(bound.report())),r);assert.deepEqual(JSON.parse(JSON.stringify(bound.invoke('finish',{reason:'fixture-cleanup'}))),r);
+});

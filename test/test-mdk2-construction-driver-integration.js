@@ -145,22 +145,32 @@ for(const mode of ['unmapped','thread','loader','stack','register'])test('compos
   assert.deepEqual(f.bound.report().startup.firstError,first);
   assert.equal(f.bound.report().fatal,null);assert.equal(f.bound.report().observer,null);
 });
-for(const row of integration.selectedRuntime().pins.moduleFiles)test('actual native queued fragments retain dormant startup provenance and exact guest parity: '+row.path,async()=>{
+for(const row of integration.selectedRuntime().pins.moduleFiles)test('actual native queued fragments reject missing CALL history at the first unchanged guest boundary: '+row.path,async()=>{
   const selected={...row,localReference:row.path};
   const observed=await nativeOne(selected,'startup-native'),control=await nativeOne(selected,'control-startup-native');
-  assert.equal(observed.value.pass,true,JSON.stringify(observed.value));
-  for(const key of ['segments','before','trap','commands','workerSource'])assert.deepEqual(observed.value[key],control.value[key],key);
+  assert.match(observed.value.rejected,/native pending context incomplete: 5/);
+  assert.equal(control.value.pass,true,JSON.stringify(control.value));
+  assert.deepEqual(observed.value.commands,control.value.commands.slice(0,1));
+  const controlBoundary=control.value.segments[0].trace[0].state;
+  assert.deepEqual(observed.value.faultState,Object.fromEntries(Object.keys(observed.value.faultState).map(k=>[k,controlBoundary[k]])));
   const report=observed.value.report,p=report.startup;
   assert.equal(report.started,false);assert.equal(report.observer,null);assert.equal(report.traceEnd,null);
-  assert(p.slices>0);assert.equal(p.slices,observed.value.commands.length);
+  assert.equal(p.slices,1);assert.equal(p.slices,observed.value.commands.length);
   assert(p.recent.length<=128);assert(p.milestones.length<=16);
   assert(p.recent.every(r=>r.budget===1&&r.after.valid&&r.after.caller.words.length===48));
-  assert.equal(p.recent.at(-1).completed,false);assert(p.firstFailure);
+  assert.equal(p.recent.at(-1).completed,true);
+  assert.equal(p.recent[0].ranBlocks,controlBoundary.last_run_blocks);
+  assert.equal(p.recent[0].halt,controlBoundary.last_run_halt);
+  assert.equal(p.recent[0].after.registers.yield_reason,controlBoundary.yield_reason);
+  assert.equal(report.terminal,true);assert.equal(report.liveAdmission.failure.reason,5);
+  assert.equal(report.liveAdmission.failure.phase,'after-run');
+  assert.deepEqual(p.firstFailure,report.liveAdmission.failure);
+  assert.equal(p.sealedBy,'native-pending-context-failure');
   assert.equal(p.status,'sealed');assert.equal(p.firstError,null);
   assert(p.recent.every(r=>r.owner.moduleSHA256===row.sha256&&r.owner.endpointIdentity===1));
   assert(!JSON.stringify(p).includes('gc-entry'));
-  write(EVIDENCE,path.basename(row.path)+'.startup-native-parity.json',{fixtureOnly:true,originalGameRun:false,
-    setup:'Existing native fragment fixture with explicit synthetic inputs/caller; original instructions and actual Worker queue',observed:observed.value,control:control.value});
+  write(EVIDENCE,path.basename(row.path)+'.startup-native-rejection.json',{fixtureOnly:true,originalGameRun:false,
+    setup:'Synthetic direct entry without CALL; compare only the first boundary with untracked control, never infer pending history',observed:observed.value,control:control.value});
 });
 
 test('composed browser feedback hook retains actual sliceDone timing and yields while forwarding identical messages',async()=>{

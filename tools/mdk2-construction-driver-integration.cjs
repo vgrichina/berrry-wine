@@ -197,7 +197,17 @@ function installBinding(options) {
   // the shipped Worker's original handling.
   let observationStop = null, nativeSlice = null;
   let pendingEpoch=null;
-  const liveAdmission={status:'unavailable',witness:null,rejection:null};
+  const liveAdmission={status:'unavailable',witness:null,rejection:null,failure:null};
+  function rejectPending(reason,phase){
+    const ex=entry.instance.exports;
+    liveAdmission.failure ||= {phase,ordinal:nativeSlice?.ordinal||0,message:String(reason),
+      reason:ex.pending_context_reason?.()??null,epoch:pendingEpoch,thread:ex.get_current_thread_id(),
+      pc:ex.get_eip()>>>0,esp:ex.get_esp()>>>0,depth:ex.pending_context_depth?.()??null};
+    liveAdmission.status='invalid';fatal ||= startup.firstFailure?.message || String(reason);
+    startup.firstFailure ||= {...liveAdmission.failure};
+    stop('native-pending-context-failure');
+    observationStop ||= Error(fatal);throw observationStop;
+  }
   const liveGuards=[[6,0x47ca7e],[14,0x47a928],[22,0x47b393],[39,0x47c012],[42,0x47c626],[45,0x451546],[47,0x402176]];
   function tryLiveAdmission(){
     if(started||terminal||!entry?.instance||pendingEpoch===null)return;
@@ -215,7 +225,7 @@ function installBinding(options) {
       const proof=g.Mdk2LuaConstructionObserver.pendingAbsence(ex,pendingEpoch);
       liveAdmission.witness={ordinal:nativeSlice.ordinal,pc:0x47d9c8,esp,callers,proof,
         compilation:entry.binding.compilation,endpointIdentity:entry.binding.endpointIdentity};
-    } catch(error){liveAdmission.rejection={ordinal:nativeSlice.ordinal,message:String(error.message)};return;}
+    } catch(error){liveAdmission.rejection={ordinal:nativeSlice.ordinal,message:String(error.message)};rejectPending(error.message,'live-admission');}
     // One deadline starts here, including all later frozen reviews. No native
     // execution is forwarded between the absence proof and attachment.
     const now=Date.now();
@@ -440,8 +450,12 @@ function installBinding(options) {
       if(ex.pending_context_version?.()===1){
         pendingEpoch=entry.binding.compilation+1;
         liveAdmission.status=ex.pending_context_arm(pendingEpoch)===1?'armed':'invalid';
+        if(liveAdmission.status==='invalid')rejectPending('native pending context arm failed','arm');
       }
       const exports = {...ex, run(...values) {
+        if(liveAdmission.failure)return;
+        if(!started&&pendingEpoch!==null&&ex.pending_context_status(pendingEpoch)!==1)
+          rejectPending('native pending context incomplete: '+ex.pending_context_reason(),'before-run');
         // An expired idle deadline must never disable tracing and then execute
         // an unobserved command. Keep the terminal report queryable by CDP.
         if (started && (observationStop || terminal && (observationReasons.includes(observer?.report.status) ||
@@ -466,7 +480,11 @@ function installBinding(options) {
           if (provenance) { try { endedAt=startupClock(); } catch(error) { startupError('clock',error); } }
           nativeSlice.ranBlocks=ex.get_last_run_blocks()>>>0;
           startupEnd(provenance,endedAt,runError);
-          if(!runError&&nativeSlice.completed)tryLiveAdmission();
+          if(!runError&&nativeSlice.completed){
+            if(!started&&pendingEpoch!==null&&ex.pending_context_status(pendingEpoch)!==1)
+              rejectPending('native pending context incomplete: '+ex.pending_context_reason(),'after-run');
+            tryLiveAdmission();
+          }
         }
       }};
       return result.instance ? {...result, instance:{exports}} : {exports};
