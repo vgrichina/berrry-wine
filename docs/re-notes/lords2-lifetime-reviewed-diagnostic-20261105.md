@@ -1,7 +1,8 @@
 # Lords II lifetime-reviewed far-call diagnostic — 2026-11-05
 
 The diagnostic, lifetime regression and full build pass. The single original
-setup observation is pending.
+setup observation reached Main Menu, then ended because the worker supplied an
+unsupported continuation-queue command before Install.
 No installation or gameplay has been established by this continuation.
 
 Evidence: `scratch/runs/20261105-lords2-lifetime-reviewed-diagnostic/`.
@@ -64,6 +65,44 @@ All 181 canonical media files (14,382,323 bytes) match their inventory hashes.
 The existing browser manifest remains
 `a1749143a2de176c4f3fdf314337a1767f6101eed4a88b6d5b0dee4d59012f8e`.
 
-Pending: one finite ordinary original setup observation, actual rejected
-selector/operand/module cause, a warranted repair if demonstrated, and exact
-runtime/file release. Box ID/state/expiry: N/A.
+## Original observation and remaining blocker
+
+Diagnostic commit `6a0ce7e7198fd023316930471d081a87828ca0af` was published before
+the original observation, with explicit pinned-key SSH pull/push verified.
+One original launched at 14:30:21.579 UTC with a 540-second outer deadline.
+Chrome loaded the standard module, 2,173,124 bytes, SHA-256
+`97998535c23a4f6a0f8f982fb5ede1287edc7e2ae8255d5869bdd6fdf33e4e54`.
+The saved startup readout confirms the cooperative backend, active child T1,
+and no fault record or operand observations. `startup.png` was personally
+inspected and shows the Sierra Main Menu. No Install input was delivered.
+
+The worker wrote `commands/0.json` with `click:509,147`. The production
+continuation queue accepts `canvasclick`, while `click` is only supported by
+the initial scripted-step path. At 14:31:39 UTC the queue rejected it with
+`Error: unsupported queued step click` and closed the browser. The probe
+exited 1; the passive Chrome observer recorded actual exit 0, signal null,
+after ordinary `Browser.close`. This was an avoidable worker input error,
+not an emulator diagnosis or platform/tool approval rejection. The caller's
+own exit 0 does not override the recorded probe failure.
+
+The original was not relaunched under the one-observation limit. No repaired
+original far-call capture, rejected selector, relocated operand, causal repair,
+installation or gameplay was established. The earlier Wave-No failure remains
+unresolved. The static original-byte lead in `static-operand-relocation.json`
+uses the earlier inferred module mapping and is not a live target or proof of
+an emulator mismatch. No guest target was changed.
+
+The run now contains a small command writer that calls the actual production
+queue validator before publishing a future command. Its regression rejects
+the erroneous `click` and accepts ordinary `canvasclick`/wait/fresh screenshot
+and quit without launching a browser. A future authorized original observation
+must derive click fractions from its current screen geometry, prevalidate each
+queue command, then reach Install, System Test Yes and Wave No to collect the
+still-missing live evidence. Box ID/state/expiry: N/A; no boxes were assigned.
+
+Cleanup independently confirmed the three own runtime processes absent, the
+Chrome profile removed, both server/debug ports refusing connections, four
+free locks and no heavy runtime. The first cleanup checker accidentally matched
+its own shell command text; that failed checker record is retained and the
+corrected check reads actual executable/argument fields from `/proc`. No broad
+process killing or cleanup of another worker's files occurred.
