@@ -149,12 +149,15 @@ for(const mode of ['foreign-slot','foreign-endpoint','foreign-thread','malformed
   assert(f.traffic.every(r=>r.t==='readExports'),'no guest work or scheduling');
  });
 }
-test('candidate resolver explicitly checks both immutable historical resolver and recorded new entry',()=>{
+test('candidate resolver explicitly checks both immutable historical resolver and recorded new entry',async()=>{
  const hash=integration.sha(fs.readFileSync(require.resolve('../tools/mdk2-construction-driver-integration.cjs')));
  const {adapter,provenance}=integration.candidateResolver(hash);
  assert.equal(typeof adapter.installAdapter,'function');assert.equal(provenance.candidateSHA256,hash);
  assert.equal(provenance.historicalAccepted,'6d5121b5f96ee6032a9e347e2db64db29c478518');
  assert.throws(()=>integration.candidateResolver('0'.repeat(64)),/changed recorded driver candidate/);
+ assert.throws(()=>adapter.createResolver({binding:'historical'}),/actual entry requires accepted binding/);
+ const historical=require('../tools/mdk2-immutable-runtime-resolver.cjs').createResolver({binding:'historical'});
+ await assert.rejects(adapter.installAdapter(historical),/complete accepted source\/module pair/);
 });
 test('quiet candidate manifest amends only the exact historical bridge',()=>{
  const original=integration.pinnedRuntime();
@@ -174,7 +177,7 @@ test('explicit candidate adapter executes actual 432 filesystem and HTTP checks 
  })().catch(e=>{console.error(e.stack);process.exitCode=1});`;
  const result=cp.spawnSync(process.execPath,['-e',code],{cwd:integration.ROOT,encoding:'utf8',timeout:60000});
  assert.equal(result.status,0,result.stderr);const report=JSON.parse(result.stdout);
- assert.equal(report.filesystem,432);assert.equal(report.http,432);
+ assert.equal(report.filesystem,439);assert.equal(report.http,439);
  fs.writeFileSync(path.join(EVIDENCE,'offline-candidate-adapter.json'),JSON.stringify(report,null,2));
 });
 test('exact retained closure and historical runtime pins resolve offline', () => {
@@ -334,7 +337,7 @@ async function nativeOne(row, mode = 'success') {
   const sigs = require('../lib/host-import-sigs.generated.json').sigs;
   let brokerLogBlocks=0;
   const broker = require('../lib/guest-rpc').createMainBroker(memory,Object.fromEntries(Object.keys(sigs).map(n=>[n,()=>{if(n==='log_block'){brokerLogBlocks++;if(mode.includes('bridge-exception'))throw Error('bridge fixture exception');}return 0;}])),sigs);
-  const worker = new Worker(__filename,{workerData:{mode,port:port2,wasmHash:row.sha256,url,targetId},transferList:[port2]});
+  const worker = new Worker(__filename,{workerData:{mode,port:port2,wasmHash:row.sha256,url,targetId,acceptedSource:row.localReference===row.path},transferList:[port2]});
   let envelope, pendingSlice = 0; const commands=[],sliceResults=[];
   class PageWorker {
     constructor(url) { this.url=url; }
@@ -348,7 +351,9 @@ async function nativeOne(row, mode = 'success') {
   const realm = {document:{},location:{href:'http://offline/index.html'},URL,Worker:PageWorker,
     WebAssembly:{...WebAssembly,Module:WebAssembly.Module,compile:WebAssembly.compile,instantiate:WebAssembly.instantiate},
     ArrayBuffer,Uint8Array,crypto:require('node:crypto').webcrypto,Date,setTimeout,clearTimeout,addEventListener(){}};
-  vm.createContext(realm); vm.runInContext(api.preload,realm);
+  // Explicit historical fixtures retain their exact module; production's
+  // default preload admits only the accepted pair.
+  vm.createContext(realm); vm.runInContext(integration.preloadSource({moduleHashes:[row.sha256]}),realm);
   const module = await realm.WebAssembly.compile(integration.retainedModule(row));
   const pageWorker = new realm.Worker(url);
   return new Promise((resolve,reject)=>{
@@ -370,6 +375,13 @@ async function nativeOne(row, mode = 'success') {
   });
 }
 
+for(const row of integration.selectedRuntime().pins.moduleFiles)
+test('accepted complete Worker source/module pair preserves original native fragment and control '+row.path,async()=>{
+ const observed=await nativeOne(row),control=await nativeOne(row,'control');
+ assert(observed.value.pass,JSON.stringify(observed.value));assert(control.value.pass,JSON.stringify(control.value));
+ for(const key of ['segments','before','trap','commands','workerSource'])assert.deepEqual(observed.value[key],control.value[key],key);
+ assert.equal(observed.envelope.__mdk2Binding.sha256,row.sha256);
+});
 for(const row of integration.pinnedRuntime().pins.moduleFiles)
 for(const [mode,status]of [['boundary','boundary-limit'],['record','record-limit'],['recordbytes','record-byte-limit'],['deadline','deadline']])test('observation '+mode+' exhaustion retains real Worker terminal trace: '+row.path,async()=>{
   const result=await nativeOne(row,'measured-'+mode+'-stop');
@@ -1081,7 +1093,7 @@ async function nativeChild() {
   // The exact worker-specific preload string from the actual CDP seam.
   let preload=workerData.mode.startsWith('control')
     ? fs.readFileSync(path.join(integration.RUNS,'20261104-mdk2-fresh-pending-scene/observe-browser.js'),'utf8')
-    : integration.preloadSource({targetId:workerData.targetId,workerURL:workerData.url});
+    : integration.preloadSource({targetId:workerData.targetId,workerURL:workerData.url,moduleHashes:[workerData.wasmHash]});
   if(['measured-old','measured-old-record-stop','measured-old-deadline-stop','mid-poll-old','missing-history-old-binding','continuity-historical-old-review-early'].includes(workerData.mode)){
     // The old failed observer also uses its actual historical fault-containment
     // adapter. The new adapter aborts the faulting slice immediately.
@@ -1115,13 +1127,15 @@ async function nativeChild() {
   entry.filename=filename;entry.paths=Module._nodeModulePaths(path.dirname(filename));
   // Reconstruct only required pinned dependencies in memory from Git. Today's
   // checkout is never substituted for the original shipped Worker closure.
-  const pins=new Map(integration.pinnedRuntime().pins.files.map(r=>[r.path,r]));
+  const selected=workerData.acceptedSource?integration.selectedRuntime():integration.pinnedRuntime();
+  const sourceCommit=selected.pins.commit;
+  const pins=new Map(selected.pins.files.map(r=>[r.path,r]));
   for(const extension of ['.js','.json']){
     const original=Module._extensions[extension];
     Module._extensions[extension]=(m,file)=>{
       const relative=path.relative(integration.ROOT,file),pin=pins.get(relative);
       if(!pin)return original(m,file);
-      const bytes=integration.gitFile(integration.SOURCE,relative);
+      const bytes=integration.gitFile(sourceCommit,relative);
       assert.equal(bytes.length,pin.bytes);assert.equal(H(bytes),pin.sha256,'original Worker dependency '+relative);
       if(relative==='lib/guest-rpc.js'&&(workerData.mode.includes('rpc-diagnosis-quiet')||workerData.mode.includes('decoder-context')&&!workerData.mode.endsWith('-pinned'))){
         // Read through the actual candidate resolver used by local.start(),
@@ -1134,7 +1148,7 @@ async function nativeChild() {
       if(extension==='.json')m.exports=JSON.parse(bytes.toString());else m._compile(bytes.toString(),file);
     };
   }
-  const source=integration.gitFile(integration.SOURCE,'lib/guest-worker.js').toString();entry._compile(source,filename);
+  const source=integration.gitFile(sourceCommit,'lib/guest-worker.js').toString();entry._compile(source,filename);
   const baseline=integration.gitFile(integration.OBSERVER,'test/test-mdk2-lua-construction-observer.js').toString();
   const fixtureBytes=s=>s.slice(s.indexOf('async function fixture(access){'),s.indexOf('if(!isMainThread){'));
   // Keep this exact original fixture independent of the new timer fixtures.

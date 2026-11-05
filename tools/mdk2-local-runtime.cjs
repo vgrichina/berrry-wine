@@ -10,16 +10,18 @@ const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
 // Explicit installed-original assignment; pre-Chrome tests consume no game launch.
-const HARD_CLOSE = Date.parse('2026-11-05T00:20:00Z');
-const HARD_RECOVER = Date.parse('2026-11-05T00:23:00Z');
-const ASSIGNMENT = '20261104-mdk2-original-timer-load';
+const HARD_CLOSE = Date.parse('2026-11-05T00:35:00Z');
+const HARD_RECOVER = Date.parse('2026-11-05T00:38:00Z');
+const ASSIGNMENT = '20261104-mdk2-accepted-runtime-binding';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 function candidate() {
   return {git:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim(),
     driverSHA256:hash(fs.readFileSync(path.join(ROOT,'tools/mdk2-construction-driver-integration.cjs'))),
-    localSHA256:hash(fs.readFileSync(__filename))};
+    localSHA256:hash(fs.readFileSync(__filename)),
+    resolverSHA256:hash(fs.readFileSync(path.join(ROOT,'tools/mdk2-immutable-runtime-resolver.cjs'))),
+    observerSHA256:hash(fs.readFileSync(path.join(ROOT,'tools/mdk2-lua-construction-observer.cjs')))};
 }
 function identity(pid = process.pid) {
   const stat = fs.readFileSync('/proc/' + pid + '/stat', 'utf8');
@@ -41,7 +43,7 @@ function validate(release, run, now = Date.now(), actual = identity()) {
   assert.match(release.nonce, /^[a-f0-9]{64}$/, 'fresh local nonce required');
   assert.match(release.candidate?.git || '', /^[a-f0-9]{40}$/, 'recorded candidate Git required');
   const current = candidate();
-  for (const key of ['driverSHA256','localSHA256']) assert.equal(release.candidate[key], current[key], 'changed local candidate ' + key);
+  for (const key of ['driverSHA256','localSHA256','resolverSHA256','observerSHA256']) assert.equal(release.candidate[key], current[key], 'changed local candidate ' + key);
   const issued = Date.parse(release.issuedAt), close = Date.parse(release.closeBy), recover = Date.parse(release.recoverBy);
   assert([now,issued,close,recover].every(Number.isFinite), 'finite local deadlines');
   assert(issued <= now && now - issued < BROWSER_MS, 'fresh local release');
@@ -220,7 +222,7 @@ def allocation():
  assert v['assignment']=='${ASSIGNMENT}' and v['runDirectory']==str(E)
  assert v['shutdownOwner']=='coordinator'
  assert len(v['nonce'])==64 and all(c in '0123456789abcdef' for c in v['nonce'])
- for field,name in [('driverSHA256','mdk2-construction-driver-integration.cjs'),('localSHA256','mdk2-local-runtime.cjs')]:
+ for field,name in [('driverSHA256','mdk2-construction-driver-integration.cjs'),('localSHA256','mdk2-local-runtime.cjs'),('resolverSHA256','mdk2-immutable-runtime-resolver.cjs'),('observerSHA256','mdk2-lua-construction-observer.cjs')]:
   assert hashlib.sha256((Path(ROOT)/'tools'/name).read_bytes()).hexdigest()==v['candidate'][field],'changed local candidate'
  i=v['localIdentity'];assert i['root']==str(Path(ROOT).resolve()) and i['hostname']==socket.gethostname()
  assert i['bootId']==Path('/proc/sys/kernel/random/boot_id').read_text().strip()
@@ -306,13 +308,50 @@ function reserveMediumRelease(source) {
     "assert(ledger.steps <= 512 || (mediumReleased && ledger.steps <= 544), 'menu step budget exhausted');");
   return once(source,'      balanced(upEvents);','      balanced(upEvents);\n      mediumReleased=phase===\'medium\';');
 }
-function menuSelector() {
+function bindControllerSource(source) {
+  // Two exact identity literals only. No admission predicate or budget changes.
+  const runtime=require('./mdk2-immutable-runtime-resolver.cjs');
+  source=once(source, runtime.SOURCE, runtime.BOUND_SOURCE);
+  return once(source,
+    'cffca869b541e6eff12ae3a6b74c4476977e0a7e23cd43d8ec5ba8faecd4bcee',
+    '018c94ffbde8c857587c25c860db988d603d0662df9a18901f00c183af7493cd');
+}
+const BOUND_CONTROLLERS=Object.freeze({
+  'unhighlighted-control':'20261104-mdk2-unhighlighted-menu-onward/unhighlighted-control.cjs',
+  'pending-control':'20261104-mdk2-pending-scheme-cause/pending-control.cjs',
+  'construction-control':'20261104-mdk2-adequate-lifetime-menu/construction-control.cjs',
+  'comic-control':'20261104-mdk2-adequate-lifetime-menu/comic-control.cjs',
+});
+function controllerBindingProof() {
+  const integration=require('./mdk2-construction-driver-integration.cjs');
+  const files=['20261104-mdk2-adequate-lifetime-menu/native-menu.cjs',...Object.values(BOUND_CONTROLLERS)];
+  return files.map(relative=>{
+    const original=fs.readFileSync(path.join(BASE,relative),'utf8');
+    const expected=integration.HELPERS[relative] || integration.HELPERS['20261104-mdk2-fresh-pending-scene/'+path.basename(relative)];
+    assert.equal(hash(original),expected,'changed controller binding dependency');
+    const bound=bindControllerSource(original);
+    return {path:'scratch/runs/'+relative,oldSHA256:expected,sha256:hash(bound),bytes:Buffer.byteLength(bound),
+      reason:'In-memory exact source/canonical identity binding only; original controller predicates unchanged'};
+  });
+}
+function boundController(name) {
+  const integration=require('./mdk2-construction-driver-integration.cjs');integration.verifyClosure();
+  const relative=BOUND_CONTROLLERS[name];assert(relative,'foreign bound controller');
+  const file=path.join(BASE,relative),original=fs.readFileSync(file,'utf8');
+  const expected=integration.HELPERS[relative] || integration.HELPERS['20261104-mdk2-fresh-pending-scene/'+name+'.cjs'];
+  assert.equal(hash(original),expected,'changed retained controller');
+  const Module=require('node:module'),entry=new Module(file,module);
+  entry.filename=file;entry.paths=Module._nodeModulePaths(path.dirname(file));entry._compile(bindControllerSource(original),file);
+  return entry.exports;
+}
+function menuSelector({binding='accepted'}={}) {
+  assert(['accepted','historical'].includes(binding),'foreign selector binding');
   require('./mdk2-construction-driver-integration.cjs').verifyClosure();
   const file=path.join(BASE,'20261104-mdk2-installed-original-gameplay/no-pacing-selector.cjs');
   const original=fs.readFileSync(file,'utf8');
   assert.equal(hash(original),'fd27215aa2e01e4cb02cbc5d4d7f5c06b56740e6d25ed5ff471d39d004899266','accepted original16ms selector changed');
   const source=once(original,"const source=original.replace(pacing,'');",
-    `const source=require(${JSON.stringify(__filename)}).reserveMediumRelease(original.replace(pacing,''));`);
+    `const helper=require(${JSON.stringify(__filename)});const source=helper.reserveMediumRelease(${binding==='accepted' ? 'helper.bindControllerSource(original.replace(pacing,\'\'))' : "original.replace(pacing,'')"});`);
   const Module=require('node:module'),entry=new Module(file,module);
   entry.filename=file;entry.paths=Module._nodeModulePaths(path.dirname(file));entry._compile(source,file);
   return entry.exports;
@@ -363,4 +402,4 @@ async function start(run) {
   install(run);
   integration.run(run);
 }
-module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,launchOwned,install,start,prepareTransport,transportSource,controlSource,siteSource,heavyRelease,preflightMenuReview,reserveMediumRelease,menuSelector};
+module.exports = {ROOT,BASE,HARD_CLOSE,HARD_RECOVER,ASSIGNMENT,identity,candidate,validate,createRelease,translate,within,traceOwnedLifecycle,lifecycleForRun,closeUnreturnedLaunch,launchOwned,install,start,prepareTransport,transportSource,controlSource,siteSource,heavyRelease,preflightMenuReview,reserveMediumRelease,bindControllerSource,BOUND_CONTROLLERS,controllerBindingProof,boundController,menuSelector};

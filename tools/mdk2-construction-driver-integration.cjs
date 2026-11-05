@@ -368,7 +368,7 @@ function installBinding(options) {
 }
 
 function preloadSource(options = {}) {
-  const runtime = pinnedRuntime();
+  const runtime = selectedRuntime();
   const original = fs.readFileSync(path.join(RUNS, '20261104-mdk2-fresh-pending-scene/observe-browser.js'), 'utf8');
   const observer = fs.readFileSync(path.join(ROOT, 'tools/mdk2-lua-construction-observer.cjs'), 'utf8');
   return original + '\n' + observer + '\n;(' + installBinding.toString() + ')(' + JSON.stringify({moduleHashes: runtime.pins.moduleFiles.map(r => r.sha256), ...options}) + ');void 0;';
@@ -694,7 +694,7 @@ function compose(run) {
   return {file: path.join(RUNS, DRIVER), source};
 }
 function inspect() {
-  const closure = verifyClosure(), {pins, pinsSHA256} = pinnedRuntime();
+  const closure = verifyClosure(), {pins, pinsSHA256} = selectedRuntime();
   const composed = compose(path.join(RUNS, 'FRESH-MDK2-RUN-PLACEHOLDER'));
   new (require('node:vm').Script)(require('node:module').wrap(composed.source), {filename: composed.file});
   const moduleReferences = pins.moduleFiles.map(row => {
@@ -702,7 +702,8 @@ function inspect() {
     assert.equal(bytes.length, row.bytes); assert.equal(sha(bytes), row.sha256);
     return row;
   });
-  return {status: 'offline-composition-checked', source: SOURCE, observer: OBSERVER, observerRepairSHA256:OBSERVER_REPAIR_SHA256, closure, pinsSHA256,
+  return {status: 'offline-composition-checked', source: pins.commit, observer: OBSERVER, observerRepairSHA256:OBSERVER_REPAIR_SHA256, closure, pinsSHA256,
+    controllerBindings:require('./mdk2-local-runtime.cjs').controllerBindingProof(),
     composedSHA256: sha(composed.source), preloadSHA256: sha(preloadSource()), moduleReferences,
     continuity: {checkpoint: true, restart: false, deadlineReset: false, reviewClock: 'wall time; original deadline remains fixed'},
     limits: {traceMs: 360000, boundaries: 50000000, records: 512, constructionSlices: [16,32,64], restart: false},
@@ -713,6 +714,14 @@ function retainedModule(row) {
   const bytes = fs.existsSync(file) ? fs.readFileSync(file) : zlib.gunzipSync(fs.readFileSync(file + '.gz'));
   assert.equal(bytes.length, row.bytes); assert.equal(sha(bytes), row.sha256, 'retained module mismatch');
   return bytes;
+}
+// The installed entry, preload and inspection share this explicit accepted
+// closure. pinnedRuntime() remains the unchanged historical inventory.
+function selectedRuntime() {
+  const resolver = require('./mdk2-immutable-runtime-resolver.cjs');
+  const original = zlib.gunzipSync(fs.readFileSync(path.join(RUNS, '20261104-mdk2-fresh-pending-scene/runtime-pins.json.gz')));
+  const bytes = resolver.acceptedManifest(original), pins = JSON.parse(bytes);
+  return {pins, pinsSHA256:sha(bytes)};
 }
 // Explicit amendment of one historical dependency, after original-byte
 // verification. Never substitute today's bridge or relax the original pins.
@@ -747,24 +756,20 @@ function candidateResolver(expectedSHA256) {
   const file = path.join(ROOT, 'tools/mdk2-immutable-runtime-resolver.cjs');
   const original = gitFile(commit, 'tools/mdk2-immutable-runtime-resolver.cjs');
   assert.equal(sha(original), '356f0e7216e375e3e8d7c6a003d958de4f9f611205a222aa7d9cf65c7e53c77c');
-  let source = replaceOnce(original.toString(),
-    'exact(readLocal(resolver.root, ENTRY), {path:ENTRY, bytes:git(resolver.root, ACCEPTED, ENTRY).length, sha256:ENTRY_SHA});',
-    `exact(git(resolver.root, ACCEPTED, ENTRY), {path:ENTRY, bytes:git(resolver.root, ACCEPTED, ENTRY).length, sha256:ENTRY_SHA});
-    assert.equal(sha(readLocal(resolver.root, ENTRY)), ${JSON.stringify(expectedSHA256)}, 'changed recorded driver candidate');`);
-  source = replaceOnce(source, '  function read(name) {', '  function originalRead(name) {');
-  source = replaceOnce(source, '  function verify() {',
-    `  const amendment = require(${JSON.stringify(__filename)});
-  const candidateManifest = amendment.quietManifest(manifest);
-  const candidateRows = JSON.parse(candidateManifest).files;
-  function read(name) { return amendment.quietRuntimeBytes(name, originalRead(name)); }
-  function verify() {`);
-  source = replaceOnce(source, 'manifest:() => Buffer.from(manifest), files:() => [...rows.values()].map(r => ({...r}))',
-    'manifest:() => Buffer.from(candidateManifest), files:() => candidateRows.map(r => ({...r}))');
-  const Module = require('node:module'), entry = new Module(file, module);
-  entry.filename = file; entry.paths = Module._nodeModulePaths(path.dirname(file)); entry._compile(source, file);
-  return {adapter:entry.exports, provenance:{kind:'explicit-new-driver-candidate', candidateSHA256:expectedSHA256,
-    resolverCommit:commit, resolverSHA256:sha(original), composedResolverSHA256:sha(source),
-    historicalAccepted:'6d5121b5f96ee6032a9e347e2db64db29c478518', amendment:QUIET_BRIDGE}};
+  const resolver = require('./mdk2-immutable-runtime-resolver.cjs');
+  return {adapter:{...resolver,
+    createResolver(options={}) {
+      assert(!options.binding || options.binding==='accepted','actual entry requires accepted binding');
+      return resolver.createResolver({...options,binding:'accepted'});
+    },
+    async installAdapter(r) {
+      assert.equal(sha(r.manifest()),selectedRuntime().pinsSHA256,'actual entry requires complete accepted source/module pair');
+      return resolver.installAdapter(r, expectedSHA256);
+    }},
+    provenance:{kind:'explicit-accepted-runtime-binding', candidateSHA256:expectedSHA256,
+      historicalResolverCommit:commit, historicalResolverSHA256:sha(original),
+      resolverSHA256:sha(fs.readFileSync(file)), source:resolver.BOUND_SOURCE,
+      historicalAccepted:'6d5121b5f96ee6032a9e347e2db64db29c478518', amendment:QUIET_BRIDGE}};
 }
 function controllerSources(runDirectory) {
   assert(path.isAbsolute(runDirectory)); verifyClosure();
@@ -782,6 +787,9 @@ function controllerSources(runDirectory) {
   const reviewCheck = 'require(process.argv[1]).preflightMenuReview(process.argv[2],JSON.parse(process.argv[3]))';
   sources['control.py'] = replaceOnce(sources['control.py'], "if sys.argv[1]=='review':\n",
     "if sys.argv[1]=='review':\n if sys.argv[4]=='native-menu': __import__('subprocess').run(['node','-e'," + JSON.stringify(reviewCheck) + "," + JSON.stringify(path.join(ROOT,'tools/mdk2-local-runtime.cjs')) + ",sys.argv[5],sys.argv[3]],check=True)\n");
+  sources['control.py'] = replaceOnce(sources['control.py'],
+    "else helper+'/'+sys.argv[4]+'.cjs'", "else R+'/bound-controller.cjs '+sys.argv[4]");
+  sources['bound-controller.cjs'] = `const fs=require('fs');const [name,action,dir,review]=process.argv.slice(2);require(${JSON.stringify(path.join(ROOT,'tools/mdk2-local-runtime.cjs'))}).boundController(name).control(dir,JSON.parse(fs.readFileSync(review)),action).then(v=>console.log(JSON.stringify(v))).catch(e=>{console.error(e);process.exitCode=1});\n`;
   sources['author.py'] = replaceOnce(sources['author.py'], "mode in ('newgame','medium')", "mode in ('newgame','medium','cancel')");
   // Keep the author -> operator -> next -> control path and personal review
   // validators. Only the obsolete allocation identity is replaced by the fresh
@@ -811,7 +819,7 @@ function run(runDirectory) {
   require(path.join(RUNS, '20261104-mdk2-fresh-pending-scene/finite-deadline.cjs')).browserDeadline(release, Date.now());
   assertRunnable();
   const bytes = fs.readFileSync(path.join(runDirectory, 'runtime-pins.json'));
-  assert.equal(sha(bytes), sha(quietManifest(zlib.gunzipSync(fs.readFileSync(path.join(RUNS,'20261104-mdk2-fresh-pending-scene/runtime-pins.json.gz'))))), 'explicit quiet runtime pins required');
+  assert.equal(sha(bytes), selectedRuntime().pinsSHA256, 'explicit accepted runtime pins required');
   for (const row of JSON.parse(bytes).files) assert.equal(sha(fs.readFileSync(path.join(ROOT, row.path))), row.sha256, 'runtime pin mismatch ' + row.path);
   const {file, source} = compose(runDirectory);
   for (const [name, code] of Object.entries(controllerSources(runDirectory))) {
@@ -823,7 +831,7 @@ function run(runDirectory) {
   const Module = require('node:module'), entry = new Module(file, module);
   entry.filename = file; entry.paths = Module._nodeModulePaths(path.dirname(file)); entry._compile(source, file);
 }
-module.exports = {ROOT, RUNS, SOURCE, OBSERVER, CLOSURE, HELPERS, DRIVER, MAIN, sha, gitFile, verifyClosure, pinnedRuntime,
+module.exports = {ROOT, RUNS, SOURCE, OBSERVER, CLOSURE, HELPERS, DRIVER, MAIN, sha, gitFile, verifyClosure, pinnedRuntime, selectedRuntime,
   installBinding, preloadSource, installBeforeFirstScript, frozenOwnership, correlateSnapshots, createTraceDriver, retainedModule, QUIET_BRIDGE, quietRuntimeBytes, quietManifest, candidateResolver, controllerSources, compose, inspect, assertRunnable, run};
 if (require.main === module) {
   try {

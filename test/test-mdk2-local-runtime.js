@@ -9,6 +9,21 @@ const integration=require('../tools/mdk2-construction-driver-integration.cjs');
 const run=fs.mkdtempSync(path.join(local.BASE,'mdk2-local-contract-test-'));
 after(()=>fs.rmSync(run,{recursive:true,force:true}));
 const now=Date.parse('2026-11-04T17:50:00Z');
+test('accepted controllers change only two exact pair literals and retain original checks',()=>{
+ const resolver=require('../tools/mdk2-immutable-runtime-resolver.cjs');
+ const files=['20261104-mdk2-adequate-lifetime-menu/native-menu.cjs',...Object.values(local.BOUND_CONTROLLERS)];
+ for(const file of files){
+  const original=fs.readFileSync(path.join(local.BASE,file),'utf8'),bound=local.bindControllerSource(original);
+  assert.equal(bound.replace(resolver.BOUND_SOURCE,resolver.SOURCE).replace('018c94ffbde8c857587c25c860db988d603d0662df9a18901f00c183af7493cd','cffca869b541e6eff12ae3a6b74c4476977e0a7e23cd43d8ec5ba8faecd4bcee'),original);
+  assert.throws(()=>local.bindControllerSource(bound),/anchor changed/);
+ }
+ for(const name of Object.keys(local.BOUND_CONTROLLERS))assert.equal(typeof local.boundController(name).control,'function');
+ assert.throws(()=>local.boundController('foreign'),/foreign bound controller/);
+ const generated=integration.controllerSources(run);
+ assert(generated['control.py'].includes("R+'/bound-controller.cjs '+sys.argv[4]"));
+ assert(generated['bound-controller.cjs'].includes('.boundController(name).control('));
+ assert.equal(typeof local.menuSelector().select,'function');
+});
 test('actual Medium command/native prefix: original rejects required rest; bounded release reserve admits it offline',async()=>{
  const actual=path.join(local.BASE,'20261104-mdk2-honest-menu-medium-gameplay/browser');
  const results=[];
@@ -44,7 +59,7 @@ test('actual Medium command/native prefix: original rejects required rest; bound
     }
     return {i,ack:{i,ok:true}};
    }};
-   const selector=repaired?local.menuSelector():require(path.join(local.BASE,'20261104-mdk2-installed-original-gameplay/no-pacing-selector.cjs'));
+   const selector=repaired?local.menuSelector({binding:'historical'}):require(path.join(local.BASE,'20261104-mdk2-installed-original-gameplay/no-pacing-selector.cjs'));
    let error;try{await selector.select(tmp,r,'medium',{spool,maxCommands:113});}catch(e){error=String(e);}
    if(repaired&&offset<=16&&!tail){assert.match(error,/OFFLINE_REQUIRED_REST_REACHED/);assert.deepEqual(sent.at(-1),{action:'step',n:32});}
    else assert.match(error,/menu step budget exhausted/);
@@ -312,7 +327,7 @@ test('installed Puppeteer close path distinguishes orderly own child from CDP-fa
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);
- assert.equal(r.assignment,'20261104-mdk2-original-timer-load');
+ assert.equal(r.assignment,'20261104-mdk2-accepted-runtime-binding');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -336,8 +351,8 @@ test('original useful-window minimum and absolute launch cutoff cannot be extend
  assert.throws(()=>local.createRelease(run,local.HARD_CLOSE-900000),/720\+180/);
 });
 test('renewed dated assignment retains exact absolute close and recovery bounds',()=>{
- assert.equal(local.HARD_CLOSE,Date.parse('2026-11-05T00:20:00Z'));
- assert.equal(local.HARD_RECOVER,Date.parse('2026-11-05T00:23:00Z'));
+ assert.equal(local.HARD_CLOSE,Date.parse('2026-11-05T00:35:00Z'));
+ assert.equal(local.HARD_RECOVER,Date.parse('2026-11-05T00:38:00Z'));
  const r=release();r.recoverBy=new Date(local.HARD_RECOVER+1).toISOString();
  assert.throws(()=>local.validate(r,run,now),/cleanup reserve/);
  const late=local.createRelease(run,local.HARD_CLOSE-900001);
@@ -421,7 +436,7 @@ test('exact Stronghold predecessor requires current named heavy and file release
   ...['Chrome123EXIT0','portsrefused','flockFREE'].map(field=>board.replace(field,'')),
   board.replace('stronghold-setup-transition-onward-2248','other-task'),
   board.replaceAll('stronghold-setup-transition-onward-2248 ','coordinator '),
-  board+'\n'+own,board.replace('22:54:44Z','23:59:55Z')])assert.throws(()=>local.heavyRelease(bad),/release|OWN/i);
+  board+'\n'+own,board.replace('2026-11-04T22:54:44Z',new Date(Date.now()+60000).toISOString())])assert.throws(()=>local.heavyRelease(bad),/release|OWN/i);
 });
 test('actual local install makes the mandatory owning lifecycle tap ready before the composed launch caller',()=>{
  const script=path.join(run,'install-caller.cjs'),lock=path.join(run,'private-runtime.lock');
@@ -493,9 +508,9 @@ test('actual composed entry creates run, installs release/recorder and calls moc
   const proof=JSON.parse(fs.readFileSync(path.join(dir,'original-adapter-proof.json')));
   const manifestBytes=fs.readFileSync(path.join(dir,'runtime-pins.json')),manifest=JSON.parse(manifestBytes);
   assert.deepEqual(proof.runtimeAmendments,manifest.amendments);
-  assert.equal(manifest.amendments[0].sha256,integration.QUIET_BRIDGE.sha256);
+  assert.equal(manifest.amendments.find(r=>r.path==='lib/guest-rpc.js').sha256,integration.QUIET_BRIDGE.sha256);
   for(const channel of ['filesystem','http']){
-   assert.equal(proof[channel].length,432);
+   assert.equal(proof[channel].length,439);
    assert.equal(proof[channel].find(r=>r.path==='lib/guest-rpc.js').sha256,integration.QUIET_BRIDGE.sha256);
   }
   const runtime={manifestSHA256:integration.sha(manifestBytes),amendments:manifest.amendments,
