@@ -2132,17 +2132,17 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-AOE3-DEMO-20261010
-  blocker: Recorded original installer absent locally; verified media reconstruction and a free worker slot required. Fresh box creation and command access succeeded.
-  status: pending (fresh replacement provisioned; original media reconstruction pending)
+  blocker: Supporting setup reconstruction, current runtime preflight and a free worker slot required; historical DirectX prerequisite remains unresolved. Original installer recovered and verified locally.
+  status: pending (fresh replacement provisioned; exact original installer recovered 2026-11-05)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   worker: none (four existing workers occupied; replacement setup prepared by coordinator)
   candidate: test/binaries/win98-games-a-d/Age-of-empire-3trial-Win98-SW.exe
-  Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Recover/verify original installer, supporting assets and historical receipt, then use an authorized bounded runtime to observe acceptance and installed payload. Local exact-path observations and unknown remote availability are in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
+  Next: Ordinary Accept/Yes authorization persists from20261018; acceptedInGuest=false until observed. Original installer scratch/game-media/aoe3-demo-20261105/aoe3trial.exe is 383598224B, SHA256 4ef69289dfa0817ec14942d85ef597835a9d2b09e1506c60b9938b20daa274ad, matching the historical pin. Reconstruct supporting assets from recorded hashes and preflight an authorized bounded runtime before observing acceptance and installed payload. Recovery receipt: scratch/runs/20261105-aoe3-original-media-recovery/recovery-receipt.json; no installer execution or new acceptance/gameplay observation from recovery. Local exact-path observations and unknown remote availability are in docs/re-notes/dashboard-actionable-reconciliation-20261020.md.
   Previous checkpoint (licence-decision hold superseded): Original reaches EULA with InterlockedExchangeAdd candidate, XP profile, native MSXML4 and its resource DLL. Screenshot991 sent; no button answered. Evidence scratch/runs/20261010T0430Z-aoe3-eula. Await user review before gameplay; pipeline refilled Beyond Good and Evil.
   Done: Ordinary original launch reaches player-controlled gameplay with reviewed screenshot and run/build identity; tested fixes on main.
   Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=false until observed.
 
-  Runtime replacement 2026-11-05: Owner authorized fresh POST /sandboxes with persisted UUID Idempotency-Key. New bx_byzj52ta created and command access verified; reconstruction commit/recipe hashes staged. Preparation only, no guest run/acceptance/gameplay. Stopped with snapshotAvailable=true after receipts retrieved; receipt/status in scratch/runs/20261105-owner-fresh-runtime/. Old bx_hx8msa33 superseded and left untouched; no old resume/delete. Rebuild from repo and recorded fixture hashes; media absence remains explicit. One heavy runtime per box; stop promptly after run/evidence retrieval.
+  Runtime replacement 2026-11-05: Owner authorized fresh POST /sandboxes with persisted UUID Idempotency-Key. New bx_byzj52ta created and command access verified; reconstruction commit/recipe hashes staged. Preparation only, no guest run/acceptance/gameplay. Stopped with snapshotAvailable=true after receipts retrieved; receipt/status in scratch/runs/20261105-owner-fresh-runtime/. Old bx_hx8msa33 superseded and left untouched; no old resume/delete. Rebuild from repo and recorded fixture hashes; installer now recovered locally, supporting setup still needs reconstruction. One heavy runtime per box; stop promptly after run/evidence retrieval.
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-CONAN-DEMO-20261010
