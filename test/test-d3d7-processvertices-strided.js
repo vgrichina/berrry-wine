@@ -150,7 +150,7 @@ async function pvsFixture(c) {
   await fillVB(vb,out);const sentinel=Array(out.n*6).fill(0xcdcdcdcd);
   const reject=async(label,hr,fn)=>{eq(await fn(),hr,'REJECTION '+label);r.rejections.push({label,hr});await verify(vb,out,sentinel,'failure atomic '+label);};
   for(const [label,op,flags,index,count,hr] of [['missing transform',0,0,2,3,INVALID],['unknown operation',0x80000001,0,2,3,INVALID],
-    ['unknown flags',1,2,2,3,INVALID],['clip',5,0,2,3,UNSUPPORTED],['extents',9,0,2,3,UNSUPPORTED],
+    ['unknown flags',1,2,2,3,INVALID],
     ['destination end',1,0,6,1,INVALID],['destination overrun',1,0,4,3,INVALID],['count wrap',1,0,2,0xffffffff,INVALID],
     ['index wrap',1,0,0xffffffff,3,INVALID]])await reject(label,hr,()=>process(vb,s,f,A,op,flags,index,count));
   for(const [label,desc] of [['null descriptor',0],['unmapped descriptor',0xfffffff0]])
@@ -486,7 +486,250 @@ async function viewportDepthFixture(c) {
 }
 
 
-module.exports={pvsFixture,viewportDepthFixture};
+// Public VB clipping keeps homogeneous distances independent from mapped depth.
+async function clipExtentsFixture(c) {
+  const {mode,negative,evidence,eq,check,raw,read,alloc,words,guard,guid,com,ok,acquire,
+    hal,dd,texture,texturePalette,surface,lock,unlock,bits,observe,use,initial,countDraw,queue}=c;
+  const r=evidence.clipExtents={outputs:[],status:[],pixels:[],rejections:[],held:[]};
+  const iid=await guid([0xf5049e77,0x11d24861,0xa00007a4,0xa82906c9]);
+  const d3d=await acquire(out=>com('QI clip D3D7',dd,0,iid,out));
+  const A=initial,B={rt:await surface(8,8,0x2840)};
+  B.device=await acquire(out=>com('Create clip device B',d3d,4,hal,B.rt,out));
+  const caps=await guard(236);await ok(com('clip GetCaps7',A.device,3,caps.p));await caps.check();
+  r.maxUserClipPlanes=(await read(caps.p+212))&65535;eq(r.maxUserClipPlanes,0,'public caps advertise no user clip planes');
+  const own=[];const get=async n=>{const p=await alloc(n);own.push(p);return p;};
+  const desc=await get(16),vp=await get(24),matrix=await get(64),streams=await get(96),indices=await get(8);
+  const status=await guard(32),outStatus=await guard(32);
+  const snap=async(p,n)=>{const a=[];for(let i=0;i<n;i+=4)a.push(await read(p+i));return a;};
+  const vbCreate=async(fvf,caps=0x800,flags=0,count=6)=>{await words(desc,[16,caps,fvf,count]);
+    return acquire(out=>com('Create clip VB',d3d,5,desc,out,flags));};
+  const vbLock=async vb=>{const p=await guard(4),n=await guard(4);await ok(com('Lock clip VB',vb,3,0,p.p,n.p));
+    await p.check();await n.check();return {p:await read(p.p),n:await read(n.p)};};
+  const vbUnlock=vb=>ok(com('Unlock clip VB',vb,4));
+  let src=await vbCreate(0x42),dst=await vbCreate(0x44);const noClip=await vbCreate(0x44,0x801);
+  const identity=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
+  const color=0xff20c040,green=[32,192,64],black=[0,0,0];
+  await words(indices,[0x00010002,0]); // WORD relative indices 2,1,0
+  const screen=[[-8,-8],[24,-8],[-8,24]],ws=[1,2,4,8];
+  async function configure(t,z,range=[.75,.75]){
+    await words(vp,[0,0,8,8,...range.map(bits)]);await ok(com('clip viewport',t.device,13,vp));
+    for(const id of [1,2]){await words(matrix,identity.map(bits));await ok(com('clip identity',t.device,11,id,matrix));}
+    const m=identity.slice();m[2]=z[0];m[10]=z[1];m[11]=1;m[15]=0;
+    await words(matrix,m.map(bits));await ok(com('clip projection',t.device,11,3,matrix));
+    for(const [id,v] of [[7,0],[14,0],[15,0],[22,1],[27,0],[28,0],[29,0],[41,0],[136,0],[137,0],[138,0],[152,0]])
+      await ok(com('clip render state',t.device,20,id,v));
+    await ok(com('clip no texture',t.device,35,0,0));
+    await ok(com('clip disable stage1',t.device,37,1,1,1));
+    await ok(com('clip diffuse stage',t.device,37,0,1,2));await ok(com('clip diffuse arg',t.device,37,0,2,0));
+  }
+  async function seed(points=screen){const s=await vbLock(src);await words(s.p,Array(s.n/4).fill(0xa5a5a5a5));
+    for(let i=0;i<points.length;i++)await words(s.p+(i+1)*16,[bits((points[i][0]/4-1)*ws[i]),bits((1-points[i][1]/4)*ws[i]),bits(ws[i]),color]);
+    await vbUnlock(src);await words(streams,Array(24).fill(0));await words(streams,[s.p+16,16]);await words(streams+16,[s.p+28,16]);return s;}
+  async function fill(vb=dst){const d=await vbLock(vb);await words(d.p,Array(d.n/4).fill(0xcdcdcdcd));await vbUnlock(vb);return d;}
+  async function reset(t,values=[3,0x00fff000,100,-100,100,-100,0x12345678,0x9abcdef0]){
+    await words(status.p,values.map((x,i)=>i>=2&&i<6?bits(x):x));await ok(com('clip SetClipStatus reset',t.device,27,status.p));await status.check();}
+  async function clipStatus(t,label,wanted){await words(outStatus.p,Array(8).fill(0xcdcdcdcd));await ok(com('clip GetClipStatus',t.device,28,outStatus.p));
+    const actual=await snap(outStatus.p,32);await outStatus.check();r.status.push({label,actual,wanted});
+    eq(actual,wanted,'CLIP STATUS ORACLE '+label);}
+  async function process(method,t,op=5,vb=dst,count=3,flags=0){return method==='buffer'
+    ?com('clip ProcessVertices7',vb,5,op,2,count,src,1,t.device,flags)
+    :com('clip ProcessVerticesStrided7',vb,8,op,2,count,streams,0x42,t.device,flags);}
+  async function bytes(z,range,label,points=screen,flags=0){const d=await vbLock(dst),actual=await snap(d.p,d.n),wanted=Array(30).fill(0xcdcdcdcd);
+    for(let i=0;i<3;i++){
+      const ndc=points[i][0]/4-1,depth=z[0]*ndc+z[1];
+      wanted.splice((i+2)*5,5,bits(points[i][0]),bits(points[i][1]),bits(range[0]+(range[1]-range[0])*depth),bits(1/ws[i]),flags?0xcdcdcdcd:color);
+    }
+    await vbUnlock(dst);r.outputs.push({label,actual,wanted});eq(actual,wanted,'CLIP DESTINATION BYTE ORACLE '+label);}
+  async function draw(t,method,indexed,label,expected,rightExpected=expected,prim=4,count=3,rightY=2,submissions=prim>=5?count-2:1){
+    use(t);await ok(com('clip Clear',t.device,10,0,0,1,0xff000000,bits(1),0));
+    await ok(com('clip BeginScene',t.device,5));
+    if(indexed)await ok(com('clip indexed VB draw',t.device,32,prim,dst,2,count,indices,count,0));
+    else await ok(com('clip ordinary VB draw',t.device,31,prim,dst,2,count,0));
+    // Fully rejected primitives submit nothing; each strip/fan triangle is
+    // clipped independently. Keep the existing exact backend-count oracle.
+    for(let i=0;i<submissions;i++)countDraw();await ok(com('clip EndScene',t.device,6));
+    await observe('clip '+label,{name:'independent clip color',uv:[.25,.25]},
+      {filter:1,address:1,palette:[expected,expected,expected,expected]});
+    const l=await lock(t.rt),left=await read(l.pointer+2*l.pitch+2*4),right=await read(l.pointer+rightY*l.pitch+6*4);await unlock(t.rt);
+    const rgb=v=>[v>>>16&255,v>>>8&255,v&255];r.pixels.push({label,left:rgb(left),right:rgb(right),expected,rightExpected});
+    eq(rgb(left),expected,'CLIP PIXEL ORACLE left '+label);eq(rgb(right),rightExpected,'CLIP PIXEL ORACLE right '+label);
+  }
+  for(const method of ['buffer','strided'])for(const t of [A,B])for(const indexed of [false,true]){
+    for(const [label,z,left,right,submissions] of [['inside depth',[0,.5],green,green,1],['outside near',[0,-.5],black,black,0],
+      ['outside far',[0,1.5],black,black,0],['near boundary',[0,0],black,black,0],['far boundary',[0,1],green,green,1],['partial near',[.5,0],black,green,1],['partial far',[.5,1],green,black,1]]){
+      await configure(t,z);const input=await seed(),before=await snap(input.p,input.n);await fill();await reset(t);
+      const op=negative==='clip-drop'?1:5;await ok(process(method,t,op));await bytes(z,[.75,.75],method+' '+label);
+      eq(await snap(input.p,input.n),before,'CLIP source unchanged '+method+' '+label);
+      if(negative!=='clip-drop'){
+        const common=label==='outside near'||label==='near boundary'?16:label==='outside far'?32:0;
+        const union=15|(label==='outside near'||label==='near boundary'?16:label==='outside far'?32:label.startsWith('partial')?48:0);
+        await clipStatus(t,method+' '+label+' generated status',[3,0xfc0000|(common<<12)|union,bits(100),bits(-100),bits(100),bits(-100),0xcdcdcdcd,0xcdcdcdcd]);
+      }
+      await draw(t,method,indexed,method+' '+(t===A?'A':'B')+' '+indexed+' '+label,left,right,4,3,2,submissions);
+    }
+  }
+  // Overwriting a processed range without CLIP removes the old generated
+  // clipping information. The mapped depth alone remains inside the viewport.
+  for(const method of ['buffer','strided'])for(const indexed of [false,true]){
+    await configure(A,[0,-.5]);await seed();await fill();await reset(A);
+    await ok(process(method,A,5));await reset(A);await ok(process(method,A,1));
+    await bytes([0,-.5],[.75,.75],method+' overwrites clip metadata');
+    await clipStatus(A,method+' TRANSFORM leaves status',[3,0x00fff000,bits(100),bits(-100),bits(100),bits(-100),0xcdcdcdcd,0xcdcdcdcd]);
+    await draw(A,method,indexed,method+' TRANSFORM removes old CLIP indexed '+indexed,green,green);
+  }
+  // Independent SDK boundary classifications: lower planes are strict.
+  for(const method of ['buffer','strided'])for(const [label,point,z,code] of [
+    ['left boundary',[0,4],.5,1],['right boundary',[8,4],.5,0],
+    ['bottom boundary',[4,8],.5,8],['top boundary',[4,0],.5,0],
+    ['near boundary',[4,4],0,16],['far boundary',[4,4],1,0]]){
+    await configure(A,[0,z]);await seed([point,point,point]);await fill();await reset(A);await ok(process(method,A));
+    await clipStatus(A,method+' '+label,[3,0xfc0000|(code<<12)|code,bits(100),bits(-100),bits(100),bits(-100),0xcdcdcdcd,0xcdcdcdcd]);
+  }
+  // Two triangles exercise strip winding and fan assembly with indexed and ordinary consumers.
+  await words(indices,[0x00010000,0x00030002]);
+  for(const method of ['buffer','strided'])for(const indexed of [false,true])for(const prim of [5,6]){
+    const points=prim===5?[[0,0],[8,0],[0,8],[8,8]]:[[0,0],[8,0],[8,8],[0,8]];
+    await configure(A,[.5,0]);await ok(com('clip strip cull CCW',A.device,20,22,3));
+    await seed(points);await fill();await ok(process(method,A,5,dst,4));
+    await draw(A,method,indexed,method+' strip fan '+prim+' indexed '+indexed,black,green,prim,4,6);
+  }
+  await words(indices,[0x00010002,0]);
+  // The existing point/line rasterizer is software; check its public consumers too.
+  if(mode==='software')for(const method of ['buffer','strided'])for(const indexed of [false,true])for(const prim of [1,2,3]){
+    const points=prim===1?[[2,2],[6,2],[6,6]]:[[-8,2],[24,2],[24,6]];
+    await configure(A,[.5,0]);await seed(points);await fill();await ok(process(method,A));
+    await words(indices,[0x00010000,0x00000002]);
+    await draw(A,method,indexed,method+' point line '+prim+' indexed '+indexed,black,green,prim);
+  }
+  await words(indices,[0x00010002,0]);
+  // Clipped intersections retain supplied texture coordinates. The constant
+  // UV selects the non-default upper-right texel with unequal source W.
+  const uvSrc=await vbCreate(0x142),uvDst=await vbCreate(0x144),savedDst=dst;
+  for(const method of ['buffer','strided'])for(const indexed of [false,true]){
+    await configure(A,[.5,0]);const input=await vbLock(uvSrc);
+    await words(input.p,Array(input.n/4).fill(0xa5a5a5a5));
+    for(let i=0;i<3;i++)await words(input.p+(i+1)*24,[bits((screen[i][0]/4-1)*ws[i]),bits((1-screen[i][1]/4)*ws[i]),bits(ws[i]),0xffffffff,bits(.75),bits(.25)]);
+    await vbUnlock(uvSrc);await words(streams,Array(24).fill(0));await words(streams,[input.p+24,24]);
+    await words(streams+16,[input.p+36,24]);await words(streams+32,[input.p+40,24]);
+    dst=uvDst;await fill();await ok(method==='buffer'
+      ?com('clip UV ProcessVertices7',dst,5,5,2,3,uvSrc,1,A.device,0)
+      :com('clip UV ProcessVerticesStrided7',dst,8,5,2,3,streams,0x142,A.device,0));
+    const output=await vbLock(dst),actual=await snap(output.p,output.n),wanted=Array(42).fill(0xcdcdcdcd);
+    for(let i=0;i<3;i++)wanted.splice((i+2)*7,7,bits(screen[i][0]),bits(screen[i][1]),bits(.75),bits(1/ws[i]),0xffffffff,bits(.75),bits(.25));
+    await vbUnlock(dst);eq(actual,wanted,'CLIP supplied UV byte oracle '+method);
+    await ok(com('clip supplied UV texture',A.device,35,0,texture));
+    for(const [id,v]of [[1,2],[2,2],[4,2],[5,2],[11,0],[13,1],[14,1],[16,1],[17,1],[18,0],[24,0]])await ok(com('clip supplied UV sampler',A.device,37,0,id,v));
+    await draw(A,method,indexed,method+' supplied UV intersection indexed '+indexed,black,texturePalette[1]);
+  }
+  dst=savedDst;await com('clip Release UV source',uvSrc,2);await com('clip Release UV destination',uvDst,2);
+  // Extents have exact independent dyadic screen bounds, separate from depth.
+  const points=[[1,1],[3,1],[1,3]],more=[[4,4],[7,4],[4,7]];
+  for(const method of ['buffer','strided']){
+    await configure(A,[0,.5],[.125,.625]);await seed(points);await fill();await reset(A);
+    await ok(process(method,A,9));await bytes([0,.5],[.125,.625],method+' extents',points);
+    await clipStatus(A,method+' first extents',[3,0x00fff000,bits(1),bits(3),bits(1),bits(3),0xcdcdcdcd,0xcdcdcdcd]);
+    await seed(more);await fill();await ok(process(method,A,9));
+    await clipStatus(A,method+' accumulated extents',[3,0x00fff000,bits(1),bits(7),bits(1),bits(7),0xcdcdcdcd,0xcdcdcdcd]);
+    if(negative!=='extents-reset')await reset(A);
+    await seed(more);await ok(process(method,A,9));
+    await clipStatus(A,method+' reset extents',[3,0x00fff000,bits(4),bits(7),bits(4),bits(7),0xcdcdcdcd,0xcdcdcdcd]);
+    // Reset after processing: rendering these vertices must not accumulate again.
+    await reset(A);await ok(com('clip render EXTENTS enabled',A.device,20,138,1));
+    await draw(A,method,false,method+' extents render no recount',black,black);
+    await clipStatus(A,method+' render preserves explicit reset',[3,0x00fff000,bits(100),bits(-100),bits(100),bits(-100),0xcdcdcdcd,0xcdcdcdcd]);
+    // DONOTCOPYDATA leaves the diffuse destination sentinel, while position and extents are computed.
+    await seed(points);await fill();await reset(A);await ok(process(method,A,13,dst,3,1));
+    await bytes([0,.5],[.125,.625],method+' clip extents DONOTCOPYDATA',points,1);
+    await clipStatus(A,method+' combined clip extents',[3,0xfc0000,bits(1),bits(3),bits(1),bits(3),0xcdcdcdcd,0xcdcdcdcd]);
+    await reset(B,[3,0x00fff000,-8,24,-8,24,0,0]);
+    await clipStatus(B,method+' distinct device',[3,0x00fff000,bits(-8),bits(24),bits(-8),bits(24),0xcdcdcdcd,0xcdcdcdcd]);
+  }
+  // Explicit operations produce valid fields even when the prior structure
+  // contained neither field. Invalid payload must not seed an accumulator.
+  for(const method of ['buffer','strided']){
+    await configure(A,[0,.5]);await seed(points);await fill();
+    await reset(A,[0,0xdeadbeef,-100,100,-100,100,0,0]);await ok(process(method,A,13));
+    await clipStatus(A,method+' initializes valid fields',[3,0x01fc0000,bits(1),bits(3),bits(1),bits(3),0xcdcdcdcd,0xcdcdcdcd]);
+  }
+  // Rejections preserve all destination bytes and public status/extents.
+  await configure(A,[0,.5]);await seed();
+  for(const method of ['buffer','strided'])for(const [vb,label] of [[noClip,'descriptor DONOTCLIP']]){
+    const d=await fill(vb);await reset(A);const before=await snap(d.p,d.n);
+    const hr=await process(method,A,13,vb);r.rejections.push({method,label,hr});eq(hr,0x88760800,'clip format rejection '+method+' '+label);
+    eq(await snap(d.p,d.n),before,'clip rejected destination atomic');
+    await clipStatus(A,method+' rejection preserves extents',[3,0x00fff000,bits(100),bits(-100),bits(100),bits(-100),0xcdcdcdcd,0xcdcdcdcd]);
+  }
+  for(const method of ['buffer','strided']){
+    await fill();await reset(A);
+    for(const [op,flags,label] of [[0,0,'mandatory TRANSFORM'],[0x80000001,0,'unknown op'],[13,2,'unknown flags']]){
+      eq(await process(method,A,op,dst,3,flags),0x80070057,'clip invalid '+method+' '+label);
+      const d=await vbLock(dst);eq(await snap(d.p,d.n),Array(30).fill(0xcdcdcdcd),'clip invalid destination atomic');await vbUnlock(dst);
+      await clipStatus(A,method+' invalid preserves status',[3,0x00fff000,bits(100),bits(-100),bits(100),bits(-100),0xcdcdcdcd,0xcdcdcdcd]);
+    }
+    for(const device of [0,A.rt,0xfffffff0])eq(await process(method,{device},13),0x88760082,'clip invalid device '+method);
+    if(method==='buffer')eq(await com('clip invalid source',dst,5,13,2,3,0,1,A.device,0),0x88760082,'clip null source');
+    const held=await vbLock(dst);eq(await process(method,A,13),0x887601ae,'clip locked destination '+method);
+    eq(await snap(held.p,held.n),Array(30).fill(0xcdcdcdcd),'clip busy destination atomic');await vbUnlock(dst);
+    if(method==='buffer'){await vbLock(src);eq(await process(method,A,13),0x887601ae,'clip locked source');await vbUnlock(src);}
+    await ok(com('clip user plane enabled',A.device,20,152,1));eq(await process(method,A,13),0x80004001,'clip unsupported user plane');
+    await ok(com('clip user plane disabled',A.device,20,152,0));
+    const rejected=await vbLock(dst);eq(await snap(rejected.p,rejected.n),Array(30).fill(0xcdcdcdcd),'clip all rejected destinations atomic');await vbUnlock(dst);
+    await clipStatus(A,method+' busy unsupported preserve status',[3,0x00fff000,bits(100),bits(-100),bits(100),bits(-100),0xcdcdcdcd,0xcdcdcdcd]);
+    if(c.allocationFailure){
+      // Free one real4K allocation after exhaustion: canonical temporaries fit,
+      // but a fresh1024-record clip allocation cannot. Exercise the last
+      // fallible processing stage, not merely the first pack allocation.
+      const oomVB=await vbCreate(0x44,0x800,0,1024),storage=await fill(oomVB),sentinel=await snap(storage.p,storage.n);
+      const args=method==='buffer'?[oomVB,13,2,3,src,1,A.device,0]:[oomVB,13,2,3,streams,0x42,A.device,0];
+      const call=await c.prepareInvoke('clip last allocation failure '+method,args,oomVB,method==='buffer'?5:8),pressure=[];
+      let hole=await alloc(4096);
+      try{
+        for(const n of [0x1000000,0x100000,0x10000,4096,256,128,64]){
+          let failed=false;for(let i=0;i<10000;i++){const p=(await raw('guest_alloc',n))>>>0;if(!p){failed=true;break;}pressure.push({p,n});}
+          check(failed,'finite clip allocator exhaustion '+method+' '+n);
+        }
+        await raw('guest_free',hole);hole=0;
+        eq(await call(),0x8007000e,'clip last allocation OOM '+method);
+      }finally{if(hole)await raw('guest_free',hole);for(const {p} of pressure)await raw('guest_free',p);}
+      const d=await vbLock(oomVB);eq(await snap(d.p,d.n),sentinel,'clip OOM entire destination atomic');await vbUnlock(oomVB);
+      await clipStatus(A,method+' OOM preserves status',[3,0x00fff000,bits(100),bits(-100),bits(100),bits(-100),0xcdcdcdcd,0xcdcdcdcd]);
+      await ok(process(method,A,13,oomVB));await com('clip Release OOM VB',oomVB,2);
+    }
+  }
+  if(mode==='worker')for(const t of [A,B])for(const method of ['buffer','strided']){
+    await configure(t,[.5,0]);await seed();await fill();await ok(process(method,t));use(t);
+    await ok(com('clip held clear',t.device,10,0,0,1,0xff000000,bits(1),0));
+    // Public readback completes any predecessor before retaining the new packet.
+    const fence=await lock(t.rt);await unlock(t.rt);
+    queue.hold('processed clip storage release '+method);await ok(com('clip held BeginScene',t.device,5));
+    if(method==='strided')await ok(com('clip held indexed draw',t.device,32,4,dst,2,3,indices,3,0));
+    else await ok(com('clip held ordinary draw',t.device,31,4,dst,2,3,0));
+    countDraw();await ok(com('clip held EndScene',t.device,6));const packet=await queue.packet(),before=Array.from(packet.vertices);
+    r.held.push({method,device:t.device,rt:t.rt,sequence:packet.sequence,before});
+    await words(streams,Array(24).fill(0));await words(indices,[0xffffffff,0xffffffff]);
+    eq(await com('clip held release source',src,2),0,'clip source released with packet held');
+    eq(await com('clip held release destination',dst,2),0,'clip destination released with packet held');
+    src=await vbCreate(0x42);dst=await vbCreate(0x44);const poison=await vbLock(dst);await words(poison.p,Array(poison.n/4).fill(0x7fc00000));await vbUnlock(dst);
+    await words(vp,[0,0,8,8,bits(0),bits(0)]);await ok(com('clip held changed live viewport',t.device,13,vp));
+    if(negative==='clip-queued'){
+      const bytes=new DataView(packet.vertices.buffer,packet.vertices.byteOffset,packet.vertices.byteLength);
+      for(let i=0;i<bytes.byteLength;i+=32)bytes.setFloat32(i,bytes.getFloat32(i,true)-4,true);
+    }else eq(Array.from(packet.vertices),before,'queued clipping survives sidecar release and storage reuse');
+    queue.drain();await observe('queued clip storage '+(t===A?'A':'B')+' '+method,{name:'clipped left half',uv:[.25,.25]},
+      {filter:1,address:1,palette:[black,black,black,black]});
+    const l=await lock(t.rt),pixel=await read(l.pointer+2*l.pitch+6*4);await unlock(t.rt);
+    eq([pixel>>>16&255,pixel>>>8&255,pixel&255],green,'CLIP PIXEL ORACLE queued retained right half');
+    await words(indices,[0x00010002,0]);
+  }
+  // Unsupported3-D extents never read or overwrite adjacent device owners.
+  await reset(A);await words(status.p,[4,0,0,0,0,0,0,0]);eq(await com('clip EXTENTS3 rejected',A.device,27,status.p),0x80004001,'SDK EXTENTS3 unsupported');
+  await clipStatus(A,'EXTENTS3 preserves supported status',[3,0x00fff000,bits(100),bits(-100),bits(100),bits(-100),0xcdcdcdcd,0xcdcdcdcd]);
+  for(const vb of [src,dst,noClip])await com('clip Release VB',vb,2);
+  await com('clip Release B device',B.device,2);await com('clip Release B surface',B.rt,2);await com('clip Release D3D7',d3d,2);
+  for(const p of own)await raw('guest_free',p);use(A);
+}
+
+module.exports={pvsFixture,viewportDepthFixture,clipExtentsFixture};
 
 // The same public COM fixture runs against both shipped modules.
 async function main(){
@@ -494,7 +737,7 @@ async function main(){
   const root=path.resolve(__dirname,'..'),{browserFixture,plan,oracle}=require('./test-legacy-texture-rendered-contract');
   const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
   const pe=fs.readFileSync(path.join(root,'test/binaries/calc.exe'));
-  const source=`async c=>{await (${pvsFixture.toString()})(c);await (${viewportDepthFixture.toString()})(c);}`;
+  const source=`async c=>{await (${pvsFixture.toString()})(c);await (${viewportDepthFixture.toString()})(c);await (${clipExtentsFixture.toString()})(c);}`;
   const config={...plan(),immediate:true,immediateSource:source,noPreview:!process.argv.includes('--browser'),
     thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
@@ -506,8 +749,11 @@ async function main(){
   save('inputs.json',{source:require('node:child_process').execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
     modules:modules.map(name=>({path:'build/'+name,sha256:hash(fs.readFileSync(path.join(root,'build',name)))})),
     media:{path:'test/binaries/calc.exe',sha256:hash(pe)}});
-  const negatives=['stride','component','state','depth','secondary-route','shared-depth'];
+  const negatives=['stride','component','state','depth','secondary-route','shared-depth','clip-drop','extents-reset'];
   const failureOracle=negative=>({
+    'clip-drop':/PIXEL ORACLE clip buffer A false outside near/,
+    'clip-queued':/PIXEL ORACLE queued clip storage A buffer/,
+    'extents-reset':/CLIP STATUS ORACLE buffer reset extents/,
     queued:/PIXEL ORACLE queued immutable PVS/,
     depth:/PIXEL ORACLE viewport depth/,
     'depth-queued':/PIXEL ORACLE queued viewport depth A buffer/,
@@ -559,11 +805,26 @@ async function main(){
         page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/pvs-fixture');
         const result=await page.evaluate(browserFixture,mode,config,oracle.toString());assert.equal(result.status,'PASS');
         save(name+'-'+mode+'.json',result);report.cells.push({name,mode,moduleSha256:hash(wasm),calls:result.calls.length,pixels:result.observations.length});
-        await page.screenshot({path:path.join(dir,name+'-'+mode+'.png'),fullPage:true});await page.close();page=null;
+        await page.screenshot({path:path.join(dir,name+'-'+mode+'.png'),fullPage:true});
+        // Keep public surface readbacks inspectable without depending on
+        // scrolling/compositing of an offscreen figure in a tall page. Export
+        // the original fixture canvas with the browser's native PNG encoder;
+        // do not redraw, scale, or process its pixels.
+        for(const [id,label] of [['partial-near','clip buffer A false partial near'],
+          ['uv-intersection','clip strided supplied UV intersection indexed true'],
+          ['extents','clip strided extents render no recount'],
+          ...(mode==='worker'?[['held','queued clip storage A buffer']]:[])]){
+          const handle=await page.evaluateHandle(label=>Array.from(document.querySelectorAll('figure'))
+            .find(el=>el.querySelector('figcaption')?.textContent===label),label);
+          const element=handle.asElement();assert(element,'capture figure '+label);
+          const png=await element.evaluate(el=>el.querySelector('canvas').toDataURL('image/png').split(',')[1]);
+          fs.writeFileSync(path.join(dir,name+'-'+mode+'-'+id+'-readback.png'),Buffer.from(png,'base64'));await handle.dispose();
+        }
+        await page.close();page=null;
         console.log('PASS rendered PVS '+name+' '+mode);
       }
-      for(const negative of ['stride','component','state','queued','depth','depth-queued','secondary-route','shared-depth','secondary-queued','secondary-indexed-queued']){
-        const mode=['queued','depth-queued','secondary-queued','secondary-indexed-queued'].includes(negative)?'worker':'software';page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/pvs-fixture');
+      for(const negative of ['stride','component','state','queued','depth','depth-queued','secondary-route','shared-depth','secondary-queued','secondary-indexed-queued','clip-drop','extents-reset','clip-queued']){
+        const mode=['queued','depth-queued','secondary-queued','secondary-indexed-queued','clip-queued'].includes(negative)?'worker':'software';page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/pvs-fixture');
         let failure;try{await page.evaluate(browserFixture,mode,config,oracle.toString(),negative);}catch(e){failure=String(e);}
         const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);save(name+'-browser-negative-'+negative+'.json',{failure,partial});
         assert.match(failure,failureOracle(negative));

@@ -2036,6 +2036,8 @@
     (local $state i32)
     (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
     (if (i32.eqz (local.get $lpClip)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
+    (if (i32.and (call $gl32 (local.get $lpClip)) (i32.const 4)) (then
+      (i32.store (global.get $reg_base) (i32.const 0x80004001)) (return)))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (local.get $state)
       (then (call $memcpy
@@ -2553,10 +2555,10 @@
       (if (i32.gt_u (local.get $desc_size) (i32.const 32)) (then (local.set $desc_size (i32.const 32))))
       (local.set $fvf (call $gl32 (i32.add (local.get $lpDesc) (i32.const 8))))
       (local.set $count (call $gl32 (i32.add (local.get $lpDesc) (i32.const 12))))
-      (local.set $desc_g (call $heap_alloc (i32.const 32)))
+      (local.set $desc_g (call $heap_alloc (i32.const 36)))
       (if (i32.eqz (local.get $desc_g)) (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000E)) (return)))
-      (call $guest_memset (local.get $desc_g) (i32.const 0) (i32.const 32))
+      (call $guest_memset (local.get $desc_g) (i32.const 0) (i32.const 36))
       (call $guest_memmove (local.get $desc_g) (local.get $lpDesc) (local.get $desc_size))
       (call $gs32 (local.get $desc_g) (local.get $desc_size))))
     ;; Never let vertex count describe more storage than was allocated.
@@ -2592,7 +2594,10 @@
     (local.set $ptr (load.field DxObject misc0 (local.get $entry)))
     (if (local.get $ptr) (then (call $heap_free (local.get $ptr))))
     (local.set $ptr (i32.load (i32.add (local.get $entry) (i32.const 16))))
-    (if (local.get $ptr) (then (call $heap_free (local.get $ptr))))
+    (if (local.get $ptr) (then
+      (if (call $gl32 (i32.add (local.get $ptr) (i32.const 32))) (then
+        (call $heap_free (call $gl32 (i32.add (local.get $ptr) (i32.const 32))))))
+      (call $heap_free (local.get $ptr))))
     (call $dx_free (local.get $entry)))
 
   (func $d3dim_vb_lock (param $this i32) (param $ppData i32) (param $pSize i32)
@@ -2734,6 +2739,271 @@
         (f32.add (local.get $min)
           (f32.mul (f32.sub (local.get $max) (local.get $min)) (f32.load offset=8 (local.get $out))))))))
 
+  ;; Private processed-VB metadata follows the public descriptor's 32 bytes.
+  ;; Each record keeps clip XYZW, homogeneous screen XYZ, and a valid bit.
+  ;; The third screen component is viewport depth, independent of clip Z.
+  (func $d3dim_pv_clip_storage (param $entry i32) (param $op i32) (result i32)
+    (local $desc i32) (local $ptr i32) (local $bytes i32)
+    (local.set $desc (i32.load offset=16 (local.get $entry)))
+    (if (i32.eqz (local.get $desc)) (then (return (i32.const 0))))
+    (local.set $ptr (call $gl32 (i32.add (local.get $desc) (i32.const 32))))
+    (if (i32.and (i32.eqz (local.get $ptr))
+      (i32.ne (i32.and (local.get $op) (i32.const 4)) (i32.const 0))) (then
+      (if (i32.gt_u (load.field DxObject misc2 (local.get $entry)) (i32.const 0x07ffffff)) (then (return (i32.const 0))))
+      (local.set $bytes (i32.shl (load.field DxObject misc2 (local.get $entry)) (i32.const 5)))
+      (local.set $ptr (call $heap_alloc (local.get $bytes)))
+      (if (local.get $ptr) (then
+        (call $guest_memset (local.get $ptr) (i32.const 0) (local.get $bytes))
+        (call $gs32 (i32.add (local.get $desc) (i32.const 32)) (local.get $ptr))))))
+    (local.get $ptr))
+
+  (func $d3dim_pv_clip_allowed (param $entry i32) (result i32)
+    (local $desc i32)
+    (local.set $desc (i32.load offset=16 (local.get $entry)))
+    (if (i32.eqz (local.get $desc)) (then (return (i32.const 0))))
+    (i32.eqz (i32.and (call $gl32 (i32.add (local.get $desc) (i32.const 4))) (i32.const 1))))
+
+  (func $d3dim_pv_clip_code (param $clip i32) (result i32)
+    (local $code i32) (local $w f32)
+    (local.set $w (f32.load offset=12 (local.get $clip)))
+    (local.set $code (i32.or (local.get $code) (i32.shl (f32.le (f32.load offset=0 (local.get $clip)) (f32.neg (local.get $w))) (i32.const 0))))
+    (local.set $code (i32.or (local.get $code) (i32.shl (f32.gt (f32.load offset=0 (local.get $clip)) (local.get $w)) (i32.const 1))))
+    (local.set $code (i32.or (local.get $code) (i32.shl (f32.gt (f32.load offset=4 (local.get $clip)) (local.get $w)) (i32.const 2))))
+    (local.set $code (i32.or (local.get $code) (i32.shl (f32.le (f32.load offset=4 (local.get $clip)) (f32.neg (local.get $w))) (i32.const 3))))
+    (local.set $code (i32.or (local.get $code) (i32.shl (f32.le (f32.load offset=8 (local.get $clip)) (f32.const 0)) (i32.const 4))))
+    (local.set $code (i32.or (local.get $code) (i32.shl (f32.gt (f32.load offset=8 (local.get $clip)) (local.get $w)) (i32.const 5))))
+    (local.get $code))
+
+  (func $d3dim_pv_record (param $state i32) (param $op i32) (param $tl i32) (param $record i32)
+    (local $sw i32) (local $clip i32) (local $status i32) (local $code i32) (local $w f32) (local $minz f32) (local $range f32)
+    (local.set $sw (call $g2w (local.get $state)))
+    (local.set $clip (i32.add (local.get $sw) (i32.const 4064)))
+    (local.set $status (i32.add (local.get $sw) (global.get $D3DIM_OFF_CLIP_STATUS)))
+    (if (local.get $record) (then
+      (i32.store offset=28 (local.get $record) (i32.and (local.get $op) (i32.const 4)))
+      (if (i32.and (local.get $op) (i32.const 4)) (then
+        (memory.copy (local.get $record) (local.get $clip) (i32.const 16))
+        (local.set $w (f32.load offset=12 (local.get $clip)))
+        (f32.store offset=16 (local.get $record)
+          (f32.add (f32.mul (f32.load (i32.add (local.get $sw) (global.get $D3DIM_OFF_VP_ORIGIN))) (local.get $w))
+            (f32.mul (f32.load (local.get $clip)) (f32.load (i32.add (local.get $sw) (global.get $D3DIM_OFF_VP_SCALE))))))
+        (f32.store offset=20 (local.get $record)
+          (f32.sub (f32.mul (f32.load offset=4 (i32.add (local.get $sw) (global.get $D3DIM_OFF_VP_ORIGIN))) (local.get $w))
+            (f32.mul (f32.load offset=4 (local.get $clip)) (f32.load offset=4 (i32.add (local.get $sw) (global.get $D3DIM_OFF_VP_SCALE))))))
+        (local.set $minz (f32.load offset=8 (i32.add (local.get $sw) (global.get $D3DIM_OFF_VP_SCALE))))
+        (local.set $range (f32.sub (f32.load offset=12 (i32.add (local.get $sw) (global.get $D3DIM_OFF_VP_SCALE))) (local.get $minz)))
+        (f32.store offset=24 (local.get $record)
+          (f32.add (f32.mul (local.get $minz) (local.get $w))
+            (f32.mul (local.get $range) (f32.load offset=8 (local.get $clip)))))))))
+    (if (i32.and (local.get $op) (i32.const 4)) (then
+      ;; Flags describe valid fields, not an opt-out from an explicit CLIP.
+      ;; A new status accumulator starts at the SDK's D3DSTATUS_DEFAULT.
+      (if (i32.eqz (i32.and (i32.load (local.get $status)) (i32.const 1))) (then
+        (i32.store offset=4 (local.get $status) (i32.const 0x01fff000))
+        (i32.store (local.get $status) (i32.or (i32.load (local.get $status)) (i32.const 1)))))
+      (local.set $code (call $d3dim_pv_clip_code (local.get $clip)))
+      (i32.store offset=4 (local.get $status)
+        (i32.or (local.get $code) (i32.and (i32.load offset=4 (local.get $status))
+          (i32.or (i32.const 0xfffc0fff) (i32.shl (local.get $code) (i32.const 12))))))))
+    (if (i32.and (local.get $op) (i32.const 8)) (then
+      (if (i32.eqz (i32.and (i32.load (local.get $status)) (i32.const 2))) (then
+        (f32.store offset=8 (local.get $status) (f32.load (local.get $tl)))
+        (f32.store offset=12 (local.get $status) (f32.load (local.get $tl)))
+        (f32.store offset=16 (local.get $status) (f32.load offset=4 (local.get $tl)))
+        (f32.store offset=20 (local.get $status) (f32.load offset=4 (local.get $tl)))))
+      (f32.store offset=8 (local.get $status) (f32.min (f32.load offset=8 (local.get $status)) (f32.load offset=0 (local.get $tl))))
+      (f32.store offset=12 (local.get $status) (f32.max (f32.load offset=12 (local.get $status)) (f32.load offset=0 (local.get $tl))))
+      (f32.store offset=16 (local.get $status) (f32.min (f32.load offset=16 (local.get $status)) (f32.load offset=4 (local.get $tl))))
+      (f32.store offset=20 (local.get $status) (f32.max (f32.load offset=20 (local.get $status)) (f32.load offset=4 (local.get $tl))))
+      (i32.store (local.get $status) (i32.or (i32.load (local.get $status)) (i32.const 2))))))
+
+  ;; Distances in the retained, un-divided clip space; vertex is 64 bytes.
+  (func $d3dim_pv_distance (param $v i32) (param $plane i32) (result f32)
+    (local $w f32)
+    (local.set $w (f32.load offset=44 (local.get $v)))
+    (if (i32.eqz (local.get $plane)) (then (return (f32.add (local.get $w) (f32.load offset=32 (local.get $v))))))
+    (if (i32.eq (local.get $plane) (i32.const 1)) (then (return (f32.sub (local.get $w) (f32.load offset=32 (local.get $v))))))
+    (if (i32.eq (local.get $plane) (i32.const 2)) (then (return (f32.sub (local.get $w) (f32.load offset=36 (local.get $v))))))
+    (if (i32.eq (local.get $plane) (i32.const 3)) (then (return (f32.add (local.get $w) (f32.load offset=36 (local.get $v))))))
+    (if (i32.eq (local.get $plane) (i32.const 4)) (then (return (f32.load offset=40 (local.get $v)))))
+    (f32.sub (local.get $w) (f32.load offset=40 (local.get $v))))
+
+  ;; SDK7 clipfrml.gif uses strict lower and inclusive upper boundaries.
+  (func $d3dim_pv_inside (param $d f32) (param $plane i32) (result i32)
+    (if (i32.or (i32.eqz (local.get $plane))
+      (i32.or (i32.eq (local.get $plane) (i32.const 3)) (i32.eq (local.get $plane) (i32.const 4))))
+      (then (return (f32.gt (local.get $d) (f32.const 0)))))
+    (f32.ge (local.get $d) (f32.const 0)))
+
+  (func $d3dim_pv_intersection (param $a i32) (param $b i32) (param $out i32) (param $plane i32)
+    (local $da f32) (local $db f32) (local $t f32) (local $i i32)
+    (local $av f32) (local $bv f32)
+    (local.set $da (call $d3dim_pv_distance (local.get $a) (local.get $plane)))
+    (local.set $db (call $d3dim_pv_distance (local.get $b) (local.get $plane)))
+    (local.set $t (f32.div (local.get $da) (f32.sub (local.get $da) (local.get $db))))
+    ;; Read both inputs before writing each component; out may alias either.
+    (local.set $i (i32.const 32))
+    (block $done (loop $lp
+      (br_if $done (i32.ge_u (local.get $i) (i32.const 60)))
+      (local.set $av (f32.load (i32.add (local.get $a) (local.get $i))))
+      (local.set $bv (f32.load (i32.add (local.get $b) (local.get $i))))
+      (f32.store (i32.add (local.get $out) (local.get $i))
+        (f32.add (local.get $av) (f32.mul (f32.sub (local.get $bv) (local.get $av)) (local.get $t))))
+      (local.set $i (i32.add (local.get $i) (i32.const 4))) (br $lp)))
+    (i32.store offset=16 (local.get $out) (call $d3dim_color_lerp
+      (i32.load offset=16 (local.get $a)) (i32.load offset=16 (local.get $b)) (local.get $t)))
+    (i32.store offset=20 (local.get $out) (call $d3dim_color_lerp
+      (i32.load offset=20 (local.get $a)) (i32.load offset=20 (local.get $b)) (local.get $t)))
+    (local.set $av (f32.load offset=24 (local.get $a)))
+    (local.set $bv (f32.load offset=24 (local.get $b)))
+    (f32.store offset=24 (local.get $out)
+      (f32.add (local.get $av) (f32.mul (f32.sub (local.get $bv) (local.get $av)) (local.get $t))))
+    (local.set $av (f32.load offset=28 (local.get $a)))
+    (local.set $bv (f32.load offset=28 (local.get $b)))
+    (f32.store offset=28 (local.get $out)
+      (f32.add (local.get $av) (f32.mul (f32.sub (local.get $bv) (local.get $av)) (local.get $t))))
+    (i32.store offset=60 (local.get $out) (i32.const 4)))
+
+  (func $d3dim_pv_polygon (param $in i32) (param $count i32) (param $out i32) (param $plane i32) (result i32)
+    (local $i i32) (local $n i32) (local $prev i32) (local $cur i32)
+    (local $pd f32) (local $cd f32)
+    (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
+    (local.set $prev (i32.add (local.get $in) (i32.shl (i32.sub (local.get $count) (i32.const 1)) (i32.const 6))))
+    (local.set $pd (call $d3dim_pv_distance (local.get $prev) (local.get $plane)))
+    (block $done (loop $lp
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $cur (i32.add (local.get $in) (i32.shl (local.get $i) (i32.const 6))))
+      (local.set $cd (call $d3dim_pv_distance (local.get $cur) (local.get $plane)))
+      (if (i32.ne (call $d3dim_pv_inside (local.get $pd) (local.get $plane)) (call $d3dim_pv_inside (local.get $cd) (local.get $plane))) (then
+        (call $d3dim_pv_intersection (local.get $prev) (local.get $cur)
+          (i32.add (local.get $out) (i32.shl (local.get $n) (i32.const 6))) (local.get $plane))
+        (local.set $n (i32.add (local.get $n) (i32.const 1)))))
+      (if (call $d3dim_pv_inside (local.get $cd) (local.get $plane)) (then
+        (memory.copy (i32.add (local.get $out) (i32.shl (local.get $n) (i32.const 6))) (local.get $cur) (i32.const 64))
+        (local.set $n (i32.add (local.get $n) (i32.const 1)))))
+      (local.set $prev (local.get $cur)) (local.set $pd (local.get $cd))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $lp)))
+    (local.get $n))
+
+  (func $d3dim_pv_project_record (param $v i32) (param $out i32)
+    (local $q f32)
+    (local.set $q (f32.div (f32.const 1) (f32.load offset=44 (local.get $v))))
+    (f32.store (local.get $out) (f32.mul (f32.load offset=48 (local.get $v)) (local.get $q)))
+    (f32.store offset=4 (local.get $out) (f32.mul (f32.load offset=52 (local.get $v)) (local.get $q)))
+    (f32.store offset=8 (local.get $out) (f32.mul (f32.load offset=56 (local.get $v)) (local.get $q)))
+    (f32.store offset=12 (local.get $out) (local.get $q))
+    (memory.copy (i32.add (local.get $out) (i32.const 16)) (i32.add (local.get $v) (i32.const 16)) (i32.const 16)))
+
+  ;; Clip before enqueue: consumers own canonical bytes, never VB sidecars.
+  ;; Inputs are packed TL vertices and relative WORD indices, when present.
+  (func $d3dim_pv_draw_clipped
+    (param $this i32) (param $prim i32) (param $packed i32) (param $count i32)
+    (param $records i32) (param $start i32) (param $indices i32) (param $index_count i32) (result i32)
+    (local $scratch i32) (local $a i32) (local $b i32) (local $out i32)
+    (local $i i32) (local $j i32) (local $idx i32) (local $n i32) (local $step i32)
+    (local $end i32) (local $in_count i32) (local $out_count i32) (local $plane i32)
+    (local $v i32) (local $record i32) (local $all i32) (local $tmp i32)
+    (local $d0 f32) (local $d1 f32)
+    (if (i32.or (i32.lt_u (local.get $prim) (i32.const 1)) (i32.gt_u (local.get $prim) (i32.const 6)))
+      (then (return (i32.const 0x80070057))))
+    (local.set $n (select (local.get $index_count) (local.get $count) (i32.ne (local.get $indices) (i32.const 0))))
+    (local.set $in_count (select (i32.const 1) (select (i32.const 2) (i32.const 3) (i32.le_u (local.get $prim) (i32.const 3))) (i32.eq (local.get $prim) (i32.const 1))))
+    (if (i32.lt_u (local.get $n) (local.get $in_count)) (then (return (i32.const 0))))
+    (local.set $step (select (local.get $in_count) (i32.const 1)
+      (i32.or (i32.eq (local.get $prim) (i32.const 2)) (i32.eq (local.get $prim) (i32.const 4)))))
+    ;; Validate the complete index stream before any draw is published.
+    (if (local.get $indices) (then
+      (block $checked (loop $check
+        (br_if $checked (i32.ge_u (local.get $i) (local.get $n)))
+        (if (i32.ge_u (i32.load16_u (i32.add (call $g2w (local.get $indices)) (i32.shl (local.get $i) (i32.const 1)))) (local.get $count))
+          (then (return (i32.const 0x80070057))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $check)))))
+    ;; Two convex 12-vertex buffers and a 21-vertex triangle fan expansion.
+    (local.set $scratch (call $heap_alloc (i32.const 2208)))
+    (if (i32.eqz (local.get $scratch)) (then (return (i32.const 0x8007000e))))
+    (local.set $a (call $g2w (local.get $scratch)))
+    (local.set $b (i32.add (local.get $a) (i32.const 768)))
+    (local.set $out (i32.add (local.get $a) (i32.const 1536)))
+    (local.set $end (i32.sub (local.get $n) (local.get $in_count)))
+    (local.set $i (i32.const 0))
+    (block $done (loop $primitive
+      (br_if $done (i32.gt_u (local.get $i) (local.get $end)))
+      (local.set $j (i32.const 0)) (local.set $all (i32.const 1))
+      (block $gathered (loop $gather
+        (br_if $gathered (i32.ge_u (local.get $j) (local.get $in_count)))
+        (local.set $idx (i32.add (local.get $i) (local.get $j)))
+        (if (i32.eq (local.get $prim) (i32.const 6)) (then
+          (local.set $idx (select (i32.const 0) (local.get $idx) (i32.eqz (local.get $j))))))
+        (if (i32.and (i32.eq (local.get $prim) (i32.const 5))
+          (i32.and (i32.ne (i32.and (local.get $i) (i32.const 1)) (i32.const 0)) (i32.lt_u (local.get $j) (i32.const 2)))) (then
+          (local.set $idx (i32.add (local.get $i) (i32.xor (local.get $j) (i32.const 1))))))
+        (if (local.get $indices) (then
+          (local.set $idx (i32.load16_u (i32.add (call $g2w (local.get $indices)) (i32.shl (local.get $idx) (i32.const 1)))))))
+        (local.set $v (i32.add (local.get $a) (i32.shl (local.get $j) (i32.const 6))))
+        (local.set $record (i32.add (call $g2w (local.get $records)) (i32.shl (i32.add (local.get $start) (local.get $idx)) (i32.const 5))))
+        (memory.copy (local.get $v) (i32.add (call $g2w (local.get $packed)) (i32.shl (local.get $idx) (i32.const 5))) (i32.const 32))
+        (memory.copy (i32.add (local.get $v) (i32.const 32)) (local.get $record) (i32.const 32))
+        (local.set $all (i32.and (local.get $all) (i32.ne (i32.load offset=28 (local.get $record)) (i32.const 0))))
+        (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $gather)))
+      (local.set $out_count (i32.const 0))
+      (block $emit
+        (if (i32.eqz (local.get $all)) (then
+          ;; Unprocessed ranges carry no generated clip flags.
+          (local.set $j (i32.const 0))
+          (block $copied (loop $copy
+            (br_if $copied (i32.ge_u (local.get $j) (local.get $in_count)))
+            (memory.copy (i32.add (local.get $out) (i32.shl (local.get $j) (i32.const 5)))
+              (i32.add (local.get $a) (i32.shl (local.get $j) (i32.const 6))) (i32.const 32))
+            (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $copy)))
+          (local.set $out_count (local.get $in_count)) (br $emit)))
+        (local.set $plane (i32.const 0)) (local.set $n (local.get $in_count))
+        (block $clipped (loop $clip
+          (br_if $clipped (i32.ge_u (local.get $plane) (i32.const 6)))
+          (block $plane_done
+            (local.set $d0 (call $d3dim_pv_distance (local.get $a) (local.get $plane)))
+            (if (i32.eq (local.get $in_count) (i32.const 1)) (then
+              (br_if $emit (i32.eqz (call $d3dim_pv_inside (local.get $d0) (local.get $plane))))
+              (br $plane_done)))
+            (if (i32.eq (local.get $in_count) (i32.const 2)) (then
+              (local.set $d1 (call $d3dim_pv_distance (i32.add (local.get $a) (i32.const 64)) (local.get $plane)))
+              (br_if $emit (i32.and (i32.eqz (call $d3dim_pv_inside (local.get $d0) (local.get $plane))) (i32.eqz (call $d3dim_pv_inside (local.get $d1) (local.get $plane)))))
+              (if (i32.eqz (call $d3dim_pv_inside (local.get $d0) (local.get $plane)))
+                (then (call $d3dim_pv_intersection (local.get $a) (i32.add (local.get $a) (i32.const 64)) (local.get $a) (local.get $plane)))
+                (else (if (i32.eqz (call $d3dim_pv_inside (local.get $d1) (local.get $plane)))
+                  (then (call $d3dim_pv_intersection (local.get $a) (i32.add (local.get $a) (i32.const 64)) (i32.add (local.get $a) (i32.const 64)) (local.get $plane))))))
+              (br $plane_done)))
+            (local.set $n (call $d3dim_pv_polygon (local.get $a) (local.get $n) (local.get $b) (local.get $plane)))
+            (br_if $emit (i32.lt_u (local.get $n) (i32.const 3)))
+            (local.set $tmp (local.get $a)) (local.set $a (local.get $b)) (local.set $b (local.get $tmp)))
+          (local.set $plane (i32.add (local.get $plane) (i32.const 1))) (br $clip)))
+        ;; A surviving eye-plane degeneracy has no projectable area.
+        (local.set $j (i32.const 0))
+        (block $positive (loop $wcheck
+          (br_if $positive (i32.ge_u (local.get $j) (local.get $n)))
+          (br_if $emit (f32.le (f32.load offset=44 (i32.add (local.get $a) (i32.shl (local.get $j) (i32.const 6)))) (f32.const 0)))
+          (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $wcheck)))
+        (if (i32.lt_u (local.get $in_count) (i32.const 3)) (then
+          (call $d3dim_pv_project_record (local.get $a) (local.get $out))
+          (if (i32.eq (local.get $in_count) (i32.const 2)) (then
+            (call $d3dim_pv_project_record (i32.add (local.get $a) (i32.const 64)) (i32.add (local.get $out) (i32.const 32)))))
+          (local.set $out_count (local.get $in_count)))
+          (else
+            (local.set $j (i32.const 1))
+            (block $fanned (loop $fan
+              (br_if $fanned (i32.ge_u (i32.add (local.get $j) (i32.const 1)) (local.get $n)))
+              (local.set $v (i32.add (local.get $out) (i32.shl (local.get $out_count) (i32.const 5))))
+              (call $d3dim_pv_project_record (local.get $a) (local.get $v))
+              (call $d3dim_pv_project_record (i32.add (local.get $a) (i32.shl (local.get $j) (i32.const 6))) (i32.add (local.get $v) (i32.const 32)))
+              (call $d3dim_pv_project_record (i32.add (local.get $a) (i32.shl (i32.add (local.get $j) (i32.const 1)) (i32.const 6))) (i32.add (local.get $v) (i32.const 64)))
+              (local.set $out_count (i32.add (local.get $out_count) (i32.const 3)))
+              (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $fan))))))
+      (if (local.get $out_count) (then
+        (call $d3dim_draw_primitive (local.get $this)
+          (select (i32.const 1) (select (i32.const 2) (i32.const 4) (i32.eq (local.get $in_count) (i32.const 2))) (i32.eq (local.get $in_count) (i32.const 1)))
+          (i32.const 3) (i32.add (local.get $scratch) (i32.const 1536)) (local.get $out_count))))
+      (local.set $i (i32.add (local.get $i) (local.get $step))) (br $primitive)))
+    (call $heap_free (local.get $scratch)) (i32.const 0))
+
   ;; ProcessVerticesStrided accepts a source FVF (not a source index) after
   ;; twelve D3DDP_PTRSTRIDE pairs. See SDK7 imover_6uqs/imover_3grp and d3d.h.
   ;; Keep all input reads and fallible allocation before destination stores.
@@ -2781,14 +3051,12 @@
     (local $i i32) (local $j i32) (local $sets i32) (local $dst_sets i32)
     (local $dim i32) (local $dst_dim i32) (local $src_tex i32) (local $dst_tex i32)
     (local $src_color i32) (local $dst_color i32) (local $lit i32) (local $hr i32)
-    (local $end i64)
+    (local $end i64) (local $clip_records i32)
     (local.set $hr (i32.const 0x80070057))
     (block $failed
       (br_if $failed (i32.eqz (i32.and (local.get $op) (i32.const 1))))
       (br_if $failed (i32.and (local.get $op) (i32.const -1038))) ;; known TRANSFORM|CLIP|EXTENTS|LIGHT
       (br_if $failed (i32.and (local.get $flags) (i32.const -2)))
-      (local.set $hr (i32.const 0x80004001))
-      (br_if $failed (i32.and (local.get $op) (i32.const 12))) ;; clip/extents not computed
       (local.set $hr (i32.const 0x88760800)) ;; D3DERR_INVALIDVERTEXFORMAT
       (br_if $failed (i32.eqz (call $d3dim_pvs_fvf_valid (local.get $fvf) (i32.const 2))))
       (br_if $failed (i32.and (i32.ne (i32.and (local.get $op) (i32.const 1024)) (i32.const 0))
@@ -2802,6 +3070,11 @@
       (local.set $dst_fvf (load.field DxObject misc1 (local.get $entry)))
       (local.set $hr (i32.const 0x88760800))
       (br_if $failed (i32.eqz (call $d3dim_pvs_fvf_valid (local.get $dst_fvf) (i32.const 4))))
+      (br_if $failed (i32.and (i32.ne (i32.and (local.get $op) (i32.const 4)) (i32.const 0))
+        (i32.eqz (call $d3dim_pv_clip_allowed (local.get $entry)))))
+      (local.set $hr (i32.const 0x80004001))
+      (br_if $failed (i32.and (i32.ne (i32.and (local.get $op) (i32.const 4)) (i32.const 0))
+        (i32.ne (call $d3dim_d7_rs (call $g2w (local.get $state)) (i32.const 152)) (i32.const 0))))
       (local.set $hr (i32.const 0x887601ae)) ;; DDERR_SURFACEBUSY
       (br_if $failed (load.field DxObject flags (local.get $entry))) ;; VB Lock state
       (local.set $hr (i32.const 0x80004001))
@@ -2926,6 +3199,9 @@
         (drop (call $d3dim_d7_light_vertices (local.get $device) (local.get $fvf) (local.get $source) (local.get $packed) (local.get $count) (i32.const 2)))))
       (local.set $output (call $heap_alloc (i32.add (i32.mul (local.get $count) (local.get $dst_stride)) (i32.const 32))))
       (br_if $failed (i32.eqz (local.get $output)))
+      (local.set $clip_records (call $d3dim_pv_clip_storage (local.get $entry) (local.get $op)))
+      (br_if $failed (i32.and (i32.ne (i32.and (local.get $op) (i32.const 4)) (i32.const 0))
+        (i32.eqz (local.get $clip_records))))
       (local.set $output_wa (call $g2w (local.get $output)))
       (call $memcpy (local.get $output_wa) (call $g2w (local.get $dst)) (i32.mul (local.get $count) (local.get $dst_stride)))
       (call $d3ddev_composite_wvp (local.get $state))
@@ -2939,6 +3215,10 @@
         (local.set $span (i32.add (local.get $output_wa) (i32.mul (local.get $count) (local.get $dst_stride))))
         (call $vertex_project (local.get $state) (i32.add (local.get $packed_wa) (i32.shl (local.get $i) (i32.const 5))) (local.get $span))
         (call $d3dim_process_viewport_depth (local.get $state) (local.get $span))
+        (call $d3dim_pv_record (local.get $state) (local.get $op) (local.get $span)
+          (if (result i32) (local.get $clip_records)
+            (then (i32.add (call $g2w (local.get $clip_records)) (i32.shl (i32.add (local.get $index) (local.get $i)) (i32.const 5))))
+            (else (i32.const 0))))
         (local.set $pointer (i32.add (local.get $output_wa) (i32.mul (local.get $i) (local.get $dst_stride))))
         (call $memcpy (local.get $pointer) (local.get $span) (i32.const 16))
         (local.set $dst_color (i32.const 16))
@@ -3000,8 +3280,8 @@
   ;; $d3dim_prepare_draw_vertex, then unpack into the destination's own FVF.
   ;; LIGHT first applies Device7 material/source/light state to the packed
   ;; colours, using the original FVF normals just as Device7 VB draws do.
-  ;; dwVertexOp's TRANSFORM bit is not consulted because it is mandatory --
-  ;; D3D rejects a call without it. CLIP/EXTENTS outputs are not computed.
+  ;; TRANSFORM is mandatory. CLIP retains homogeneous coordinates privately;
+  ;; EXTENTS accumulates the device screen rectangle during processing.
   (func $d3dim_vb_process_vertices
       (param $dst_this i32) (param $vertex_op i32) (param $dest_index i32) (param $count i32)
       (param $src_this i32) (param $src_index i32) (param $device i32) (param $flags i32)
@@ -3014,7 +3294,18 @@
     (local $state i32) (local $packed_g i32) (local $packed_wa i32)
     (local $scratch_g i32) (local $scratch_wa i32) (local $dst_wa i32) (local $i i32)
     (local $dbg_key i32)
-    (local $source_g i32) (local $source_copy i32)
+    (local $source_g i32) (local $source_copy i32) (local $clip_records i32)
+    (if (i32.or (i32.eqz (i32.and (local.get $vertex_op) (i32.const 1)))
+      (i32.or (i32.ne (i32.and (local.get $vertex_op) (i32.const -1038)) (i32.const 0))
+        (i32.ne (i32.and (local.get $flags) (i32.const -2)) (i32.const 0))))
+      (then (return (i32.const 0x80070057))))
+    (if (i32.and (local.get $vertex_op) (i32.const 12)) (then
+      (if (i32.or
+        (i32.eqz (call $d3dim_pvs_object (local.get $dst_this) (i32.const 22)))
+        (i32.eqz (call $d3dim_pvs_object (local.get $src_this) (i32.const 22))))
+        (then (return (i32.const 0x88760082))))
+      (if (i32.eqz (call $d3dim_pvs_object (local.get $device) (i32.const 20)))
+        (then (return (i32.const 0x88760082))))))
     (if (i32.or (i32.eqz (local.get $dst_this)) (i32.eqz (local.get $src_this)))
       (then (return (i32.const 0x80004003))))  ;; E_POINTER
     (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
@@ -3024,6 +3315,18 @@
     (local.set $src_entry (call $dx_from_this (local.get $src_this)))
     (if (i32.or (i32.eqz (local.get $dst_entry)) (i32.eqz (local.get $src_entry)))
       (then (return (i32.const 0x80004003))))
+    (if (i32.and (local.get $vertex_op) (i32.const 4)) (then
+      (if (i32.eqz (call $d3dim_pv_clip_allowed (local.get $dst_entry)))
+        (then (return (i32.const 0x88760800))))
+      (if (call $d3dim_d7_rs (call $g2w (local.get $state)) (i32.const 152))
+        (then (return (i32.const 0x80004001))))))
+    (if (i32.and (local.get $vertex_op) (i32.const 12)) (then
+      (if (i32.or (load.field DxObject flags (local.get $src_entry)) (load.field DxObject flags (local.get $dst_entry)))
+        (then (return (i32.const 0x887601ae))))
+      (if (i32.or
+        (i32.eqz (call $d3dim_pvs_fvf_valid (load.field DxObject misc1 (local.get $src_entry)) (i32.const 2)))
+        (i32.eqz (call $d3dim_pvs_fvf_valid (load.field DxObject misc1 (local.get $dst_entry)) (i32.const 4))))
+        (then (return (i32.const 0x88760800))))))
     (local.set $src_data_g (load.field DxObject misc0 (local.get $src_entry)))
     (local.set $dst_data_g (load.field DxObject misc0 (local.get $dst_entry)))
     (if (i32.or (i32.eqz (local.get $src_data_g)) (i32.eqz (local.get $dst_data_g)))
@@ -3099,6 +3402,12 @@
       (call $heap_free (local.get $packed_g))
       (if (local.get $source_copy) (then (call $heap_free (local.get $source_copy))))
       (return (i32.const 0x8007000E))))
+    (local.set $clip_records (call $d3dim_pv_clip_storage (local.get $dst_entry) (local.get $vertex_op)))
+    (if (i32.and (i32.ne (i32.and (local.get $vertex_op) (i32.const 4)) (i32.const 0))
+      (i32.eqz (local.get $clip_records))) (then
+      (call $heap_free (local.get $scratch_g)) (call $heap_free (local.get $packed_g))
+      (if (local.get $source_copy) (then (call $heap_free (local.get $source_copy))))
+      (return (i32.const 0x8007000e))))
     (call $d3ddev_composite_wvp (local.get $state))
     (call $d3dim_lights_refresh (local.get $state))
     (local.set $packed_wa (call $g2w (local.get $packed_g)))
@@ -3115,6 +3424,10 @@
       ;; Already transformed sources retain supplied depth, as before.
       (if (i32.ne (local.get $src_vtx) (i32.const 3)) (then
         (call $d3dim_process_viewport_depth (local.get $state) (local.get $scratch_wa))))
+      (call $d3dim_pv_record (local.get $state) (local.get $vertex_op) (local.get $scratch_wa)
+        (if (result i32) (local.get $clip_records)
+          (then (i32.add (call $g2w (local.get $clip_records)) (i32.shl (i32.add (local.get $dest_index) (local.get $i)) (i32.const 5))))
+          (else (i32.const 0))))
       (call $d3dim_unpack_tl_vertex_fields
         (local.get $dst_fvf) (local.get $scratch_wa)
         (i32.add (local.get $dst_wa) (i32.mul (local.get $i) (local.get $dst_stride)))
@@ -3160,7 +3473,7 @@
     (param $this i32) (param $primType i32) (param $vb i32) (param $start i32) (param $count i32)
     (local $entry i32) (local $data_g i32) (local $size i32) (local $fvf i32)
     (local $stride i32) (local $max_count i32) (local $vtxType i32) (local $packed i32)
-    (local $supplied i32) (local $extended i32)
+    (local $supplied i32) (local $extended i32) (local $clip_records i32) (local $hr i32)
     (if (i32.or (i32.eqz (local.get $vb)) (i32.eqz (local.get $count)))
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
     (local.set $entry (call $dx_from_this (local.get $vb)))
@@ -3199,6 +3512,14 @@
       (call $heap_free (local.get $packed))
       (local.set $packed (local.get $extended))
       (local.set $vtxType (local.get $supplied))))
+    (local.set $clip_records (call $d3dim_pv_clip_storage (local.get $entry) (i32.const 0)))
+    (if (i32.and (i32.ne (local.get $packed) (i32.const 0))
+      (i32.and (i32.eq (local.get $vtxType) (i32.const 3)) (i32.ne (local.get $clip_records) (i32.const 0)))) (then
+      (local.set $hr (call $d3dim_pv_draw_clipped (local.get $this) (local.get $primType)
+        (local.get $packed) (local.get $count) (local.get $clip_records) (local.get $start)
+        (i32.const 0) (i32.const 0)))
+      (call $heap_free (local.get $packed))
+      (i32.store (global.get $reg_base) (local.get $hr)) (return)))
     (if (local.get $packed) (then
       (call $d3dim_draw_primitive
         (local.get $this) (local.get $primType) (local.get $vtxType)
@@ -3211,7 +3532,7 @@
     (param $indices i32) (param $index_count i32)
     (local $entry i32) (local $data_g i32) (local $size i32) (local $fvf i32)
     (local $stride i32) (local $max_count i32) (local $vtxType i32) (local $packed i32)
-    (local $supplied i32) (local $extended i32)
+    (local $supplied i32) (local $extended i32) (local $clip_records i32) (local $hr i32)
     (local $dbg_key i32) (local $ibase_wa i32) (local $i i32) (local $idx i32) (local $need i32)
     (if (i32.or
           (i32.or (i32.eqz (local.get $vb)) (i32.eqz (local.get $count)))
@@ -3294,6 +3615,14 @@
       (call $heap_free (local.get $packed))
       (local.set $packed (local.get $extended))
       (local.set $vtxType (local.get $supplied))))
+    (local.set $clip_records (call $d3dim_pv_clip_storage (local.get $entry) (i32.const 0)))
+    (if (i32.and (i32.ne (local.get $packed) (i32.const 0))
+      (i32.and (i32.eq (local.get $vtxType) (i32.const 3)) (i32.ne (local.get $clip_records) (i32.const 0)))) (then
+      (local.set $hr (call $d3dim_pv_draw_clipped (local.get $this) (local.get $primType)
+        (local.get $packed) (local.get $count) (local.get $clip_records) (local.get $start)
+        (local.get $indices) (local.get $index_count)))
+      (call $heap_free (local.get $packed))
+      (i32.store (global.get $reg_base) (local.get $hr)) (return)))
     (if (local.get $packed) (then
       (call $d3dim_draw_indexed_primitive
         (local.get $this) (local.get $primType) (local.get $vtxType)
