@@ -3,10 +3,10 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const observer=require('./stronghold-owning-callback-observer.cjs');
 const base=require('./stronghold-preset-driver-attachment.cjs');
-const AUTH='stronghold-review-ack-original-0036 user task';
+const AUTH='stronghold-repaired-capture-onward-0130 user task';
 const ASSIGNMENT=AUTH;
 const CHROME='/opt/google/chrome/chrome';
-const CUTOFF=Date.parse('2026-11-05T01:20:00Z'),CLEANUP=Date.parse('2026-11-05T01:23:00Z');
+const CUTOFF=Date.parse('2026-11-05T03:10:00Z'),CLEANUP=Date.parse('2026-11-05T03:13:00Z');
 const ROOT=path.resolve(__dirname,'..');
 const ORIGINAL_PINS='scratch/runs/20261104-stronghold-setup-transition-onward/runtime-pins.json';
 const ORIGINAL_PINS_SHA='812aadea4a2b23a899919dc95b40b4d628a3836cedc0ae1e1844c966b284b7ef';
@@ -31,8 +31,8 @@ function acceptedRuntimePins(original=fs.readFileSync(path.join(ROOT,ORIGINAL_PI
   if(actual!==expected)throw Error('unknown runtime dependency mismatch '+row.path);
   if(!named[row.path])return row;
   amendments.push({path:row.path,oldSHA256:row.sha256,newSHA256:expected,
-   publishedProvenance:row.path==='tools/stronghold-local-runtime.cjs'?'9ac356cab12a5417487fa86a434c45cac4d3e7ff':row.path.startsWith('tools/')?PRESENTATION_SOURCE:ACCEPTED_SOURCE,
-   reason:row.path=== 'tools/stronghold-local-runtime.cjs'?'published passive helper plus explicitly authorized review-ACK operator plan, final release gates and local assignment amendment':row.path.startsWith('tools/')?'published passive native/host presentation observer':'final corrective RGB anchored subpixel placement with literal preserved SIMD packing and exact corresponding existing module pair; supersedes initial 8808ec112'});
+   publishedProvenance:row.path==='tools/stronghold-local-runtime.cjs'?'7c73cca3087d661e6aba1f57df082970705fe129':row.path.startsWith('tools/')?PRESENTATION_SOURCE:ACCEPTED_SOURCE,
+   reason:row.path=== 'tools/stronghold-local-runtime.cjs'?'published 7c73cca passive capture/fault repair plus explicitly authorized current assignment, deadline and exact predecessor amendments; all relative limits unchanged':row.path.startsWith('tools/')?'published passive native/host presentation observer':'final corrective RGB anchored subpixel placement with literal preserved SIMD packing and exact corresponding existing module pair; supersedes initial 8808ec112'});
   return {...row,bytes:bytes.length,sha256:expected};
  });
  if(pins.files.length!==2429||amendments.length!==5||Object.keys(named).some(p=>!seen.has(p)))throw Error('complete original closure required');
@@ -58,18 +58,23 @@ function diagnosticScene(bytes,known){
  for(let i=3;i<pixels.length;i+=4)if(pixels[i]!==255)throw Error('opaque setup diagnostic required');
  return SETUP_TRANSITIONS.includes(base.hash(pixels))?'setup-transition-observation':known;
 }
+const PREDECESSORS=Object.freeze([
+ ['mdk2-post-medium-timer-onward','mdk2-post-medium-timer-onward-0120'],
+ ['return-fire-request-closure-audio','return-fire-request-closure-audio-0125']
+]);
 function requireRuntimeRelease(board,now=Date.now()){
- const assignment='mdk2-accepted-runtime-binding-2350';
- const rows=board.split('\n');
- const own=rows.filter(row=>/^\S+ mdk2-accepted-runtime-binding OWN\b/.test(row)&&row.includes('mdk2-accepted-runtime-binding-20261104')).at(-1);
- const ownedAt=Date.parse(own?.split(' ')[0]);
- const row=rows.filter(row=>/^\S+ mdk2-accepted-runtime-binding LOCAL HEAVY RELEASE\b/.test(row)&&row.split(/\s+/).includes(assignment)).at(-1);
- const at=Date.parse(row?.split(' ')[0]);
- const fileRelease=rows.filter(row=>/^\S+ mdk2-accepted-runtime-binding RELEASE\b/.test(row)&&row.includes('docs/re-notes/mdk2-accepted-runtime-binding-20261104.md')).at(-1);
- const releasedAt=Date.parse(fileRelease?.split(' ')[0]);
- if(!own||!row||!fileRelease||!Number.isFinite(ownedAt)||!Number.isFinite(at)||!Number.isFinite(releasedAt)||ownedAt<Date.parse('2026-11-04T23:51:39Z')||at<ownedAt||releasedAt<at||releasedAt>now||at>now||ownedAt>now)
-  throw Error('exact '+assignment+' assignment-bound local heavy release after current OWN required');
- return {row,at,own,ownedAt,fileRelease,releasedAt,assignment};
+ const rows=board.split('\n'),dependencies=[];
+ for(const [worker,assignment] of PREDECESSORS){
+  const own=rows.filter(r=>r.split(/\s+/)[1]===worker&&r.split(/\s+/)[2]==='OWN').at(-1);
+  const runtimeOwn=rows.filter(r=>r.includes(' '+worker+' LOCAL HEAVY OWN '+assignment+';')).at(-1);
+  const row=rows.filter(r=>r.includes(' '+worker+' LOCAL HEAVY RELEASE '+assignment+';')).at(-1);
+  const fileRelease=rows.filter(r=>r.includes(' '+worker+' FINAL runtime AND file RELEASE ')&&r.includes('docs/re-notes/'+worker+'-20261105.md')&&r.includes('ALLBUILDSFINISHED')).at(-1);
+  const ownedAt=Date.parse(own?.split(' ')[0]),runtimeOwnedAt=Date.parse((runtimeOwn||own)?.split(' ')[0]),at=Date.parse(row?.split(' ')[0]),releasedAt=Date.parse(fileRelease?.split(' ')[0]);
+  if(!own||!row||!fileRelease||![now,ownedAt,runtimeOwnedAt,at,releasedAt].every(Number.isFinite)||runtimeOwnedAt<Date.parse('2026-11-05T01:20:00Z')||at<runtimeOwnedAt||releasedAt<ownedAt||releasedAt<at||releasedAt>now)
+   throw Error('exact '+assignment+' FINAL runtime and file release after current OWN, all builds finished required');
+  dependencies.push({worker,assignment,own,ownedAt,runtimeOwn,runtimeOwnedAt,row,at,fileRelease,releasedAt});
+ }
+ return {dependencies,row:dependencies[0].row};
 }
 function requireLocalFlock(lockPath='/tmp/wine-local-runtime.lock'){
  const ancestors=new Set();
@@ -83,18 +88,7 @@ function requireLocalFlock(lockPath='/tmp/wine-local-runtime.lock'){
  throw Error('required local flock must be held by this process or its ancestor');
 }
 function requireBuildReleases(board,now=Date.now()){
- const rows=board.split('\n'),releases=[];
- for(const [worker,note] of [
-  ['legacy-subpixel-color-placement','docs/re-notes/legacy-subpixel-color-placement-20261105.md'],
-  ['mdk2-pin-validation-cost','docs/re-notes/mdk2-pin-validation-cost-20261105.md']]){
-  const own=rows.filter(r=>r.split(/\s+/)[1]===worker&&r.split(/\s+/)[2]==='OWN').at(-1);
-  const row=rows.filter(r=>r.split(/\s+/)[1]===worker&&r.split(/\s+/)[2]==='RELEASE'&&r.includes(note)).at(-1);
-  const ownedAt=Date.parse(own?.split(' ')[0]),releasedAt=Date.parse(row?.split(' ')[0]);
-  if(!own||!row||!Number.isFinite(ownedAt)||!Number.isFinite(releasedAt)||ownedAt>releasedAt||releasedAt>now)
-   throw Error('final code/build release required: '+worker);
-  releases.push({worker,own,row,ownedAt,releasedAt});
- }
- return releases;
+ return requireRuntimeRelease(board,now).dependencies;
 }
 function assertRuntimeOwnership(){const board=fs.readFileSync('messageboard.txt','utf8');return {release:requireRuntimeRelease(board),buildReleases:requireBuildReleases(board),flock:requireLocalFlock()};}
 function identity(){

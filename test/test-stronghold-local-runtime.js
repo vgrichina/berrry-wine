@@ -25,19 +25,28 @@ for(const file of ['build/wine-assembly.wasm','build/wine-assembly.compat.wasm',
 console.log('PASS exact 2429-row closure, five named amendments, 1856 unchanged media; stale manifest/row deletion/duplicate/wrong pair/changed dependency negatives; no shared file mutation');
 fs.writeFileSync(pins,JSON.stringify({files:['build/wine-assembly.wasm','build/wine-assembly.compat.wasm'].map(file=>({path:file,sha256:base.hash(fs.readFileSync(file))}))}));
 const nonce='a'.repeat(64),now=Date.parse('2026-11-04T17:45:00Z');
-const actualOwn='2026-11-04T23:51:39+00:00 mdk2-accepted-runtime-binding OWN tools/mdk2-local-runtime.cjs docs/re-notes/mdk2-accepted-runtime-binding-20261104.md';
-const actualRelease='2026-11-05T00:01:00Z mdk2-accepted-runtime-binding LOCAL HEAVY RELEASE mdk2-accepted-runtime-binding-2350 offline fixture only';
-const actualFileRelease='2026-11-05T00:02:00Z mdk2-accepted-runtime-binding RELEASE tools/mdk2-local-runtime.cjs docs/re-notes/mdk2-accepted-runtime-binding-20261104.md';
-const fixtureBoard=actualOwn+'\n'+actualRelease+'\n'+actualFileRelease,fixtureNow=Date.parse('2026-11-05T00:03:00Z');
-assert.equal(api.requireRuntimeRelease(fixtureBoard,fixtureNow).row,actualRelease);
-for(const board of [actualRelease,fixtureBoard.replaceAll('mdk2-accepted-runtime-binding','someone'),fixtureBoard.replace('-2350 offline','-2350-extra offline'),fixtureBoard.replace('00:01:00','00:04:00'),fixtureBoard.replace('23:51:39','23:51:38'),actualOwn+'\n'+actualRelease,fixtureBoard.replace('00:02:00','00:00:59'),fixtureBoard.replace('00:02:00','00:04:00'),fixtureBoard.replace('binding RELEASE','binding FOREIGN'),fixtureBoard+'\n'+actualOwn.replace('2026-11-04T23:51:39+00:00','2026-11-05T00:02:01Z')])assert.throws(()=>api.requireRuntimeRelease(board,fixtureNow),/release/);
-const buildBoard=['legacy-subpixel-color-placement','mdk2-pin-validation-cost'].flatMap(worker=>[
- '2026-11-05T00:01:00Z '+worker+' OWN fixture',
- '2026-11-05T00:02:00Z '+worker+' RELEASE docs/re-notes/'+worker+'-20261105.md final corrective code/build release'
-]).join('\n');
-assert.equal(api.requireBuildReleases(buildBoard,Date.parse('2026-11-05T00:03:00Z')).length,2);
-for(const board of ['',buildBoard.replace('legacy-subpixel-color-placement RELEASE','legacy-subpixel-color-placement STATUS'),buildBoard.replace('mdk2-pin-validation-cost RELEASE','mdk2-pin-validation-cost STATUS'),buildBoard+'\n2026-11-05T00:02:01Z legacy-subpixel-color-placement OWN newer'])assert.throws(()=>api.requireBuildReleases(board,Date.parse('2026-11-05T00:03:00Z')),/final code\/build release/);
-assert.throws(()=>api.requireBuildReleases(buildBoard,Date.parse('2026-11-05T00:01:59Z')),/final code\/build release/);
+const fixtureNow=Date.parse('2026-11-05T01:40:00Z');
+const fixtureRows=worker=>[
+ '2026-11-05T01:25:00Z '+worker+' OWN tools/'+worker+'.cjs',
+ '2026-11-05T01:26:00Z '+worker+' LOCAL HEAVY RELEASE '+worker+(worker.startsWith('mdk2')?'-0120':'-0125')+'; normal cleanup',
+ '2026-11-05T01:27:00Z '+worker+' FINAL runtime AND file RELEASE docs/re-notes/'+worker+'-20261105.md ALLBUILDSFINISHED'
+];
+const workers=['mdk2-post-medium-timer-onward','return-fire-request-closure-audio'];
+const fixtureBoard=workers.flatMap(fixtureRows).join('\n'),buildBoard=fixtureBoard;
+assert.equal(api.requireRuntimeRelease(fixtureBoard,fixtureNow).dependencies.length,2);
+assert.equal(api.requireBuildReleases(buildBoard,fixtureNow).length,2);
+for(const worker of workers){
+ const rows=fixtureRows(worker);
+ for(const board of [fixtureBoard.replace(rows[0],''),fixtureBoard.replace(rows[1],''),fixtureBoard.replace(rows[2],''),fixtureBoard.replaceAll(worker,'foreign'),fixtureBoard.replace(rows[1],rows[1].replace('; normal','-extra; normal')),fixtureBoard.replace(rows[2],rows[2].replace('01:27:00','01:24:00')),fixtureBoard.replace(rows[2],rows[2].replace('ALLBUILDSFINISHED','builds pending')),fixtureBoard+'\n2026-11-05T01:28:00Z '+worker+' OWN newer']){
+  assert.throws(()=>api.requireRuntimeRelease(board,fixtureNow),/release/);
+  assert.throws(()=>api.requireBuildReleases(board,fixtureNow),/release/);
+ }
+ const assignment=worker+(worker.startsWith('mdk2')?'-0120':'-0125');
+ assert.throws(()=>api.requireRuntimeRelease(fixtureBoard+'\n2026-11-05T01:28:00Z '+worker+' LOCAL HEAVY OWN '+assignment+'; newer',fixtureNow),/release/);
+ const offlineRepair=fixtureBoard+'\n2026-11-05T01:25:30Z '+worker+' LOCAL HEAVY OWN '+assignment+'; original\n2026-11-05T01:26:30Z '+worker+' OWN offline repair';
+ assert.equal(api.requireRuntimeRelease(offlineRepair,fixtureNow).dependencies.length,2);
+}
+assert.throws(()=>api.requireRuntimeRelease(fixtureBoard,Date.parse('2026-11-05T01:26:59Z')),/release/);
 const lockProbe="const a=require('./tools/stronghold-local-runtime.cjs');console.log(JSON.stringify(a.requireLocalFlock(process.argv[1])))";
 const testLock=path.join(run,'offline-runtime.lock');fs.writeFileSync(testLock,'');
 assert.throws(()=>execFileSync(process.execPath,['-e',lockProbe,testLock],{stdio:'pipe'}),/Command failed/);
@@ -54,6 +63,7 @@ reject('missing authorization',r=>delete r.authorization);
 reject('missing current authorization',r=>delete r.freshLocalDiagnosticAuthorized);
 reject('previous named observation assignment',r=>r.assignment='stronghold-named-observation-gameplay user task');
 reject('foreign assignment',r=>r.assignment='foreign');
+reject('previous review-ACK assignment',r=>r.assignment='stronghold-review-ack-original-0036 user task');
 reject('previous pending-review original assignment',r=>r.assignment='stronghold-current-runtime-binding-2355 user task');
 reject('previous quiet RPC assignment',r=>r.assignment='stronghold-quiet-rpc-original-gameplay-2230 user task');
 reject('previous repaired entry assignment',r=>r.assignment='stronghold-repaired-entry-original-gameplay user task');
@@ -92,8 +102,8 @@ reject('extended cleanup',r=>{r.cleanupBy=api.CLEANUP+1;r.expiresAt=r.cleanupBy;
 reject('insufficient runtime reserve',r=>r.chromeCutoff=r.issuedAt+719999);
 reject('insufficient cleanup reserve',r=>{r.cleanupBy=r.issuedAt+899999;r.expiresAt=r.cleanupBy;});
 reject('expired process contract',r=>r.expiresAt=now);
-assert.equal(api.CUTOFF,Date.parse('2026-11-05T01:20:00Z'));
-assert.equal(api.CLEANUP,Date.parse('2026-11-05T01:23:00Z'));
+assert.equal(api.CUTOFF,Date.parse('2026-11-05T03:10:00Z'));
+assert.equal(api.CLEANUP,Date.parse('2026-11-05T03:13:00Z'));
 const lastStart=api.createRelease({run,pins,nonce,now:api.CUTOFF-720000});
 assert.equal(lastStart.closeBy,api.CUTOFF);assert.equal(lastStart.cleanupBy-lastStart.closeBy,180000);
 assert.throws(()=>api.createRelease({run,pins,nonce,now:api.CUTOFF-719999}),/deadline/);
