@@ -311,17 +311,26 @@ and jobs remain preserved. No old-session wakeup is requested.
   Done: precise fault/progress/retry baseline evidence and MOVSW/fallback coverage limits, without weakening expected behavior or promoting diagnostic shortcuts.
   Evidence: ops/handoffs/mig-sam-fault-plan.md.
 
-- [!] Correct REP MOVS restart on absent sparse pages
+- [x] Correct REP MOVS restart on absent sparse pages
   id: MIG-SAM-REP-RESTART
-  status: active (claude-laptop owned; Codex retry withdrawn by owner correction 2026-11-05)
+  status: done (claude-laptop fix b786b78da, merged eadf70fd5; owner acceptance 2026-11-05)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: Owner correction 2026-11-05 assigns MIG to claude-laptop; do not start, resume or retry it from this coordinator. Other authorized lanes proceed independently, one retry at a time.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: claude-laptop handles REP MOVS implementation and review. Coordinator stopped its source-only retry process tree on 2026-11-05; no shared edits, executable tests or runtime had begun. Preserve existing evidence and await laptop result; do not launch a successor for MIG.
+  Result: Mode-5 reservedPageFaults REP MOVS now reports the faulting instruction EIP, current progress registers and correct access kind; mode-3 ContinueSearch preserves write kind. Owner reports test/test-rep-movs-fault-restart.js 215 checks PASS, build and REP/SEH/uop regressions PASS. Commits b786b78da / eadf70fd5 are on origin/main; shared-worktree integration is pending Stronghold-owned overlap reconciliation.
+  Next: complete; remove SAM REP blocker. Same-block stale decoded execution is a distinct task below, not a reason to reopen this accepted repair.
   candidate: serious-sam-demo
   owner: claude-laptop
   Done: correct single fault, first absent byte, failed-element preservation and retry at REP for widths1/2/4 DF0/1, with source identities and coverage limits. No generic fault-policy/classifier/layout changes; current required canonical build applies.
   Evidence: ops/handoffs/mig-sam-rep-restart.md; scratch/mig-sam-rep-restart-20261002/evidence-summary.json.
+
+- [ ] Stop stale execution after a store modifies the remainder of the running decoded block
+  id: CPU-SAME-BLOCK-SELF-MODIFYING-CODE-20261105
+  status: ready (new owner-reported CPU correctness issue; separate from accepted REP restart)
+  owner: unassigned
+  Report 2026-11-05 claude-laptop: A guest store into the remainder of the currently executing decoded block retires the block but leaves the thread pointer on it, allowing stale decoded instructions to execute. Likely affects any store, not only REP; establish actual scope before fixing.
+  Next: Fresh bounded worker reproduces with a minimal generated x86 guest through production decoding/dispatch, including scalar and REP stores, then fixes running-block continuation/invalidation in our emulator. Coordinate src/05-alu.wat, src/04-cache.wat and dispatch ownership; preserve exact instruction progress and fault behavior.
+  Done: Changed next instruction executes newly decoded bytes; meaningful scalar/REP same-block controls, unaffected other-block/nonoverlap behavior, fault/restart cases and appropriate decode/uop paths pass, plus locked full build. No guest program modification or private diagnostic workaround. Commit/push own tested implementation.
 
 - [x] Review remaining Serious Sam diagnostic fault transforms
   id: MIG-SAM-FAULT-REMAINDER
@@ -1103,14 +1112,15 @@ commit output — do not assume your hunks landed.**
 
 - [!] Complete Serious Sam production integration and ordinary gameplay
   id: SAM-PRODUCTION-FOLLOWTHROUGH
-  status: waiting (claude-laptop MIG-SAM-REP-RESTART result)
+  status: ready (REP blocker resolved; queued for next normal production slot)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
-  retry-order: Owner correction 2026-11-05: wait for claude-laptop MIG result; do not start now. Other six authorized retry lanes may proceed one at a time.
+  retry-order: Owner update 2026-11-05 accepts MIG b786b78da/eadf70fd5 and unblocks this lane. Next normal production slot; existing four workers continue, no fifth worker.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Next: Wait for claude-laptop to finish MIG-SAM-REP-RESTART, then use its result to validate generic emulator fault/classifier contracts and integrate tested production slices with regressions before ordinary gameplay.
+  Next: Schedule fresh sam-production-followthrough-next at the next eligible worker completion. Reconcile accepted REP fix and production fault/classifier contracts; integrate necessary tested production slices with meaningful regressions, then Serious Sam demo ordinary gameplay using headless GL. Preserve authentic first failure and exact source/module/media identities; no private diagnostic shortcuts. Shared integration/builds and local heavy runtime remain serialized.
   created: 2026-10-02T04:16:51.185761+00:00
   created-by: orchestrator-handoff-audit
-  depends-on: MIG-SAM-REP-RESTART
+  depends-on: MIG-SAM-REP-RESTART (satisfied b786b78da, merged eadf70fd5)
+  worker: queued; scratch/usage-watch/sam-production-followthrough-next.task.txt
   candidate: serious-sam-demo
   Done: Production build reaches menu and level with supported input, verified movement/combat and no private diagnostic shortcuts; exact source/module and focused regressions retained.
   Evidence: ops/handoffs/mig-sam-fault-remainder.md; ops/handoffs/01a0f6ff-da61-7710-a604-d9442103dbbd.md
@@ -1842,7 +1852,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: DLL-CONCURRENT-MAPPING-20261009
   status: done — accepted by independent Claude review 2026-11-05: cfe411bdc/1b3c20aec/7a2953021/89524faca/83947f6a6 reviewed at current main (loader lock + callback gate, generation-checked lifecycle/pins, reachability unload); build + 30 DLL/COM/worker suites PASS incl. concurrent-mapping, same-module-concurrent, callback-serialization, lifecycle-races/real-pe, retirement-readers (6 cases); stale fixtures in worker-message-lifecycle/freelibrary-reload fixed e01a20635; Alice native+browser gameplay revalidated 2026-11-03 (alice-gameplay/alice-controls reviews). Unrelated open: test-loadlibrary-system-path (cd62d1dd7 builtin policy), test-disable-thread-library-calls (stale mock)
   owner: claude-laptop
-  Next: claude-laptop handles review/acceptance; coordinator must not dispatch duplicate review or acceptance. Load/publication serialization cfe411bdc/1b3c20aec/7a2953021/89524faca and real unload83947f6a6 are on main. Historical comments about stub FreeLibrary and held-branch adaptation are superseded. CMR3/Alice gameplay limits remain pending laptop review.
+  Acceptance: claude-laptop accepted 3343777ea with test fixes e01a20635; owner confirmed 2026-11-05.
+  Next: complete; coordinator must not dispatch duplicate review or acceptance. Load/publication serialization cfe411bdc/1b3c20aec/7a2953021/89524faca and real unload83947f6a6 are on main. Historical comments about stub FreeLibrary and held-branch adaptation are superseded. CMR3/Alice gameplay limits remain pending laptop review.
   Done: Concurrent load/free/import tests preserve exact images and module ownership, callback execution stays live without deadlock, normal Alice gameplay/browser revalidated.
 
 - [x] New-game lane: Aliens versus Predator 2 single-player demo
