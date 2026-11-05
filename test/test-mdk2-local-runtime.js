@@ -9,12 +9,81 @@ const integration=require('../tools/mdk2-construction-driver-integration.cjs');
 const run=fs.mkdtempSync(path.join(local.BASE,'mdk2-local-contract-test-'));
 after(()=>fs.rmSync(run,{recursive:true,force:true}));
 const now=Date.parse('2026-11-04T17:50:00Z');
+test('optimized original current manifest preserves historical and accepted closures with exactly three named amendments',()=>{
+ const resolver=require('../tools/mdk2-immutable-runtime-resolver.cjs');
+ const original=require('node:zlib').gunzipSync(fs.readFileSync(path.join(local.BASE,'20261104-mdk2-fresh-pending-scene/runtime-pins.json.gz')));
+ const accepted=JSON.parse(resolver.acceptedManifest(original));
+ const current=JSON.parse(resolver.currentManifest(original));
+ assert.deepEqual(current.historical,accepted.historical);
+ assert.deepEqual(current.accepted.files,accepted.files);
+ assert.deepEqual(current.accepted.moduleFiles,accepted.moduleFiles);
+ assert.deepEqual(current.accepted.amendments,accepted.amendments);
+ assert.deepEqual(current.amendments.slice(0,25),accepted.amendments);
+ assert.equal(current.amendments.length,28);
+ assert.deepEqual(current.amendments.slice(25).map(r=>r.path),[
+  'src/09ab-handlers-d3dim-core.wat','build/wine-assembly.wasm','build/wine-assembly.compat.wasm']);
+ assert.equal(current.commit,resolver.CURRENT_SOURCE);
+ for(const row of current.files){
+  if(!row.path.startsWith('build/'))assert.deepEqual(row,accepted.files.find(r=>r.path===row.path));
+ }
+ const selected=resolver.createResolver({binding:'current'});
+ assert.equal(selected.verify().length,439);
+ assert.deepEqual(JSON.parse(selected.manifest()),current);
+ assert.deepEqual(integration.selectedRuntime().pins,current);
+ assert.throws(()=>integration.candidateResolver(integration.sha(fs.readFileSync(require.resolve('../tools/mdk2-construction-driver-integration.cjs')))).adapter.createResolver({binding:'accepted'}),/current binding/);
+});
+test('optimized original passive outer frozen read captures actual counter and stream, rejects unavailable bytes without zero invention',()=>{
+ const exe=path.join(local.ROOT,'test/binaries/candidates/mdk2-demo/installed/mdk2demo/mdk2Main.exe');
+ const bytes=fs.readFileSync(exe),pe=require('../lib/pe').readPE(exe);
+ assert.equal(integration.sha(bytes),'b3e0226e411abff17ddabb723e493e95579490cb49bfe3787b1eade1144e27c1');
+ const memory=new Uint8Array(65536),mapping=new Map();let next=512;
+ const write=(a,b)=>b.forEach((v,i)=>{if(!mapping.has(a+i))mapping.set(a+i,next+=7);memory[mapping.get(a+i)]=v;});
+ const word=v=>{const b=Buffer.alloc(4);b.writeUInt32LE(v);return [...b];};
+ const esp=0x74ffc78,stream=0x847a000,arg=77,destination=0x847b000;
+ const frozen={frozen:true,hosts:1,steps:3648,ticks:1,guestMs:20};
+ const stack=Array(96).fill(0x12345678);
+ stack[30]=0x47ca7e;stack[40]=0x47a928;stack[45]=stream;stack[46]=0x47b393;
+ stack[47]=arg;stack[48]=destination;stack[49]=32768;stack[59]=3;
+ write(esp+192,stack.slice(48).flatMap(word));
+ const object=Array(32).fill(0x10203040);object[2]=0x47a880;object[7]=arg;object[8]=destination;object[9]=0x847c000;object[31]=32768;
+ write(stream,object.flatMap(word));
+ for(const [pc,n] of [[0x47a880,8],[0x47b1a0,14],[0x47b38d,14],[0x47b549,15]])write(pc,[...bytes.subarray(pe.va2off(pc),pe.va2off(pc)+n)]);
+ const main={realm:'actual-main-worker',values:{get_current_thread_id:1,get_esp:esp},stack:stack.slice(0,48),frozen};
+ const realm={wine:{memory:{buffer:memory.buffer},_guestToWasmAddress:a=>mapping.get(a)??-1},WineFrozen:{status:()=>({...frozen})},main};
+ const invoke=()=>vm.runInNewContext('('+integration.passiveOuterState.toString()+')(main)',realm);
+ const before=integration.sha(memory),result=invoke();
+ assert.equal(result.available,true,result.reason);assert.equal(result.outer.counterAddress,esp+59*4);
+ assert.equal(result.outer.refillIterations,3);assert.equal(result.outer.stream,stream);
+ assert.equal(result.outer.callback,0x47a880);assert.equal(result.outer.callbackArgument,arg);
+ assert.equal(integration.sha(memory),before);
+ for(const address of [esp+192,...Array.from({length:128},(_,i)=>stream+i)]){
+  const physical=mapping.get(address);mapping.delete(address);
+  const failed=invoke();assert.equal(failed.available,false);assert.equal(failed.outer,null);assert.match(failed.reason,/unmapped/);
+  mapping.set(address,physical);
+ }
+ for(const address of [0x47a880,0x47b1a0,0x47b38d,0x47b549]){
+  const physical=mapping.get(address);memory[physical]^=1;
+  const failed=invoke();assert.equal(failed.available,false);assert.equal(failed.outer,null);assert.match(failed.reason,/instructions changed/);
+  memory[physical]^=1;
+ }
+ for(const index of [30,40,46]){
+  const saved=main.stack[index];main.stack[index]=0;
+  assert.equal(invoke().outer,null);main.stack[index]=saved;
+ }
+ const physical=mapping.get(stream+8);memory[physical]^=1;
+ assert.match(invoke().reason,/callback\/argument/);memory[physical]^=1;
+ realm.WineFrozen.status=()=>({...frozen,steps:frozen.steps+1});assert.throws(invoke,/foreign\/unfrozen/);
+ let reads=0;realm.WineFrozen.status=()=>({...frozen,steps:frozen.steps+(reads++?1:0)});
+ assert.throws(invoke,/guest advanced/);
+ realm.WineFrozen.status=()=>({...frozen});assert.equal(invoke().available,true);
+ assert.equal(integration.sha(memory),before);
+});
 test('accepted controllers change only two exact pair literals and retain original checks',()=>{
  const resolver=require('../tools/mdk2-immutable-runtime-resolver.cjs');
  const files=['20261104-mdk2-adequate-lifetime-menu/native-menu.cjs',...Object.values(local.BOUND_CONTROLLERS)];
  for(const file of files){
   const original=fs.readFileSync(path.join(local.BASE,file),'utf8'),bound=local.bindControllerSource(original);
-  assert.equal(bound.replace(resolver.BOUND_SOURCE,resolver.SOURCE).replace('018c94ffbde8c857587c25c860db988d603d0662df9a18901f00c183af7493cd','cffca869b541e6eff12ae3a6b74c4476977e0a7e23cd43d8ec5ba8faecd4bcee'),original);
+  assert.equal(bound.replace(resolver.CURRENT_SOURCE,resolver.SOURCE).replace('e620f3adfc2850580004e204bc1fea495844e942806866f8ada24c215212e412','cffca869b541e6eff12ae3a6b74c4476977e0a7e23cd43d8ec5ba8faecd4bcee'),original);
   assert.throws(()=>local.bindControllerSource(bound),/anchor changed/);
  }
  for(const name of Object.keys(local.BOUND_CONTROLLERS))assert.equal(typeof local.boundController(name).control,'function');
@@ -327,7 +396,7 @@ test('installed Puppeteer close path distinguishes orderly own child from CDP-fa
 function release(){return local.createRelease(run,now);}
 test('startup assignment renews real local host/process release to 720 seconds and 180 seconds cleanup',()=>{
  const r=release();assert.equal(local.validate(r,run,now),now+720000);
- assert.equal(r.assignment,'20261104-mdk2-accepted-runtime-binding');
+ assert.equal(r.assignment,'20261105-mdk2-optimized-original');
  assert.equal(r.boxId,null);assert.equal(r.expiry,null);assert.equal(r.localIdentity.pid,process.pid);
  assert.equal(Date.parse(r.recoverBy)-Date.parse(r.closeBy),180000);
 });
@@ -351,8 +420,8 @@ test('original useful-window minimum and absolute launch cutoff cannot be extend
  assert.throws(()=>local.createRelease(run,local.HARD_CLOSE-900000),/720\+180/);
 });
 test('renewed dated assignment retains exact absolute close and recovery bounds',()=>{
- assert.equal(local.HARD_CLOSE,Date.parse('2026-11-05T00:35:00Z'));
- assert.equal(local.HARD_RECOVER,Date.parse('2026-11-05T00:38:00Z'));
+ assert.equal(local.HARD_CLOSE,Date.parse('2026-11-05T01:40:00Z'));
+ assert.equal(local.HARD_RECOVER,Date.parse('2026-11-05T01:43:00Z'));
  const r=release();r.recoverBy=new Date(local.HARD_RECOVER+1).toISOString();
  assert.throws(()=>local.validate(r,run,now),/cleanup reserve/);
  const late=local.createRelease(run,local.HARD_CLOSE-900001);
@@ -425,18 +494,18 @@ test('install requires real inherited exclusive local lock before release or com
  assert(!fs.existsSync(path.join(run,'runtime-release.json')));
 });
 test('exact Stronghold predecessor requires current named heavy and file releases after OWN',()=>{
- const own='2026-11-04T21:47:28Z stronghold-setup-transition-onward-2248 OWN tools/stronghold-local-runtime.cjs';
- const heavy='2026-11-04T22:54:44Z stronghold-setup-transition-onward LOCAL HEAVY RELEASE stronghold-setup-transition-onward-2248 Chrome123EXIT0 portsrefused flockFREE stopped';
- const released='2026-11-04T22:59:05Z stronghold-setup-transition-onward RELEASE tools/stronghold-local-runtime.cjs';
+ const own='2026-11-05T00:35:47Z stronghold-review-ack-original OWN tools/stronghold-local-runtime.cjs';
+ const heavy='2026-11-05T00:53:36Z stronghold-review-ack-original LOCAL HEAVY RELEASE stronghold-review-ack-original-0036 Chrome123EXIT0 portsrefused flockFREE stopped';
+ const released='2026-11-05T00:59:49Z stronghold-review-ack-original RELEASE tools/stronghold-local-runtime.cjs';
  const board=[own,heavy,released].join('\n');
  assert.equal(local.heavyRelease(board),heavy);
  for(const bad of [heavy, [heavy,own,released].join('\n'),[own,heavy].join('\n'),
-  board.replace('22:54:44','22:54:43'),board.replace('22:59:05','22:59:04'),
+  board.replace('00:53:36','00:53:35'),board.replace('00:59:49','00:53:35'),
   board.replace(' LOCAL HEAVY RELEASE',' waiting LOCAL HEAVY RELEASE'),
   ...['Chrome123EXIT0','portsrefused','flockFREE'].map(field=>board.replace(field,'')),
-  board.replace('stronghold-setup-transition-onward-2248','other-task'),
-  board.replaceAll('stronghold-setup-transition-onward-2248 ','coordinator '),
-  board+'\n'+own,board.replace('2026-11-04T22:54:44Z',new Date(Date.now()+60000).toISOString())])assert.throws(()=>local.heavyRelease(bad),/release|OWN/i);
+  board.replace('stronghold-review-ack-original-0036','other-task'),
+  board.replaceAll('stronghold-review-ack-original ','coordinator '),
+  board+'\n'+own,board.replace('2026-11-05T00:53:36Z',new Date(Date.now()+60000).toISOString())])assert.throws(()=>local.heavyRelease(bad),/release|OWN/i);
 });
 test('actual local install makes the mandatory owning lifecycle tap ready before the composed launch caller',()=>{
  const script=path.join(run,'install-caller.cjs'),lock=path.join(run,'private-runtime.lock');
@@ -444,11 +513,11 @@ test('actual local install makes the mandatory owning lifecycle tap ready before
  // Only that pathname, the test clock and board input change in this fixture.
  fs.writeFileSync(script,`const fs=require('fs'),assert=require('assert/strict'),Module=require('module');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))};
- const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse(mode==='old'?'2026-11-04T22:10:00Z':'2026-11-04T23:00:00Z');
+ const [mode,dir]=process.argv.slice(2);Date.now=()=>Date.parse(mode==='old'?'2026-11-04T22:10:00Z':'2026-11-05T01:00:00Z');
  let source=mode==='old'?require('child_process').execFileSync('git',['show','6055aa7e43d7c3505b6796d447663366e3b85146:tools/mdk2-local-runtime.cjs'],{encoding:'utf8'}):fs.readFileSync(filename,'utf8');
  source=source.replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: Chrome123EXIT0 portsrefused flockFREE explicit fixture only':'2026-11-04T21:47:28Z stronghold-setup-transition-onward-2248 OWN tools/stronghold-local-runtime.cjs\\n2026-11-04T22:54:44Z stronghold-setup-transition-onward LOCAL HEAVY RELEASE stronghold-setup-transition-onward-2248 Chrome123EXIT0 portsrefused flockFREE explicit fixture only\\n2026-11-04T22:59:05Z stronghold-setup-transition-onward RELEASE tools/stronghold-local-runtime.cjs';return Reflect.apply(originalRead,this,[file,...args]);};
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return mode==='old'?'2026-11-04T20:50:07.552949+00:00 coordinator LOCAL HEAVY RELEASE stronghold-customgame-drain-cause-nov04: Chrome123EXIT0 portsrefused flockFREE explicit fixture only':'2026-11-05T00:35:47Z stronghold-review-ack-original OWN tools/stronghold-local-runtime.cjs\\n2026-11-05T00:53:36Z stronghold-review-ack-original LOCAL HEAVY RELEASE stronghold-review-ack-original-0036 Chrome123EXIT0 portsrefused flockFREE explicit fixture only\\n2026-11-05T00:59:49Z stronghold-review-ack-original RELEASE tools/stronghold-local-runtime.cjs';return Reflect.apply(originalRead,this,[file,...args]);};
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(require('path').dirname(filename));m._compile(source,filename);
  const installed=m.exports.install(dir),tap=m.exports.lifecycleForRun(dir);
  assert.equal(installed.lifecycle,tap);assert.throws(()=>tap.ownedLaunch(),/exactly one/);
@@ -475,8 +544,8 @@ test('actual composed entry creates run, installs release/recorder and calls moc
  const fs=require('fs'),path=require('path'),Module=require('module'),cp=require('child_process');
  const filename=${JSON.stringify(require.resolve('../tools/mdk2-local-runtime.cjs'))},dir=${JSON.stringify(dir)};
  const originalRead=fs.readFileSync;
- fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-04T21:47:28Z stronghold-setup-transition-onward-2248 OWN tools/stronghold-local-runtime.cjs\\n2026-11-04T22:54:44Z stronghold-setup-transition-onward LOCAL HEAVY RELEASE stronghold-setup-transition-onward-2248 Chrome123EXIT0 portsrefused flockFREE explicit fixture only\\n2026-11-04T22:59:05Z stronghold-setup-transition-onward RELEASE tools/stronghold-local-runtime.cjs';return Reflect.apply(originalRead,this,[file,...args]);};
- Date.now=()=>Date.parse('2026-11-04T23:00:00Z');
+ fs.readFileSync=function(file,...args){if(file===${JSON.stringify(path.join(local.ROOT,'messageboard.txt'))})return '2026-11-05T00:35:47Z stronghold-review-ack-original OWN tools/stronghold-local-runtime.cjs\\n2026-11-05T00:53:36Z stronghold-review-ack-original LOCAL HEAVY RELEASE stronghold-review-ack-original-0036 Chrome123EXIT0 portsrefused flockFREE explicit fixture only\\n2026-11-05T00:59:49Z stronghold-review-ack-original RELEASE tools/stronghold-local-runtime.cjs';return Reflect.apply(originalRead,this,[file,...args]);};
+ Date.now=()=>Date.parse('2026-11-05T01:00:00Z');
  const source=fs.readFileSync(filename,'utf8').replaceAll('/tmp/wine-local-runtime.lock',${JSON.stringify(lock)});
  const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(path.dirname(filename));require.cache[filename]=m;m._compile(source,filename);
  const local=m.exports,load=Module._load,events=[];

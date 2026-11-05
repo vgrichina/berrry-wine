@@ -10,9 +10,9 @@ const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '..');
 const BASE = path.join(ROOT, 'scratch/runs');
 // Explicit installed-original assignment; pre-Chrome tests consume no game launch.
-const HARD_CLOSE = Date.parse('2026-11-05T00:35:00Z');
-const HARD_RECOVER = Date.parse('2026-11-05T00:38:00Z');
-const ASSIGNMENT = '20261104-mdk2-accepted-runtime-binding';
+const HARD_CLOSE = Date.parse('2026-11-05T01:40:00Z');
+const HARD_RECOVER = Date.parse('2026-11-05T01:43:00Z');
+const ASSIGNMENT = '20261105-mdk2-optimized-original';
 const BROWSER_MS = 720000;
 const RESERVE_MS = 180000;
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -281,14 +281,14 @@ function prepareTransport(run) {
 }
 function heavyRelease(board) {
   const lines=board.split('\n');
-  const own=lines.findLastIndex(line=>/^2026-11-04T\S+ stronghold-setup-transition-onward-2248 OWN tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(line));
+  const own=lines.findLastIndex(line=>/^2026-11-05T\S+ stronghold-review-ack-original OWN tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(line));
   assert(own>=0,'predecessor OWN required before release');
-  const rows=lines.slice(own+1).filter(line=>/^2026-11-04T\S+ stronghold-setup-transition-onward LOCAL HEAVY RELEASE stronghold-setup-transition-onward-2248(?:\s|$)/.test(line));
-  assert(rows.length,'explicit stronghold-setup-transition-onward LOCAL HEAVY RELEASE required');
+  const rows=lines.slice(own+1).filter(line=>/^2026-11-05T\S+ stronghold-review-ack-original LOCAL HEAVY RELEASE stronghold-review-ack-original-0036(?:[;\s]|$)/.test(line));
+  assert(rows.length,'explicit stronghold-review-ack-original-0036 LOCAL HEAVY RELEASE required');
   const line=rows.at(-1),at=Date.parse(line.split(' ')[0]);
   assert(/Chrome.*EXIT0.*refused.*flockFREE/.test(line),'actual Chrome/ports/lock release required');
-  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-04T22:54:44Z')&&at<=Date.now(),'current predecessor release required');
-  assert(lines.slice(own+1).some(row=>/^2026-11-04T\S+ stronghold-setup-transition-onward RELEASE tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(row)&&Date.parse(row.split(' ')[0])>=Date.parse('2026-11-04T22:59:05Z')&&Date.parse(row.split(' ')[0])<=Date.now()),'predecessor file release required');
+  assert(Number.isFinite(at)&&at>=Date.parse('2026-11-05T00:53:36Z')&&at<=Date.now(),'current predecessor release required');
+  assert(lines.slice(own+1).some(row=>/^2026-11-05T\S+ stronghold-review-ack-original RELEASE tools\/stronghold-local-runtime\.cjs(?:\s|$)/.test(row)&&Date.parse(row.split(' ')[0])>=at&&Date.parse(row.split(' ')[0])<=Date.now()),'predecessor file release required');
   return line;
 }
 
@@ -311,10 +311,10 @@ function reserveMediumRelease(source) {
 function bindControllerSource(source) {
   // Two exact identity literals only. No admission predicate or budget changes.
   const runtime=require('./mdk2-immutable-runtime-resolver.cjs');
-  source=once(source, runtime.SOURCE, runtime.BOUND_SOURCE);
+  source=once(source, runtime.SOURCE, runtime.CURRENT_SOURCE);
   return once(source,
     'cffca869b541e6eff12ae3a6b74c4476977e0a7e23cd43d8ec5ba8faecd4bcee',
-    '018c94ffbde8c857587c25c860db988d603d0662df9a18901f00c183af7493cd');
+    'e620f3adfc2850580004e204bc1fea495844e942806866f8ada24c215212e412');
 }
 const BOUND_CONTROLLERS=Object.freeze({
   'unhighlighted-control':'20261104-mdk2-unhighlighted-menu-onward/unhighlighted-control.cjs',

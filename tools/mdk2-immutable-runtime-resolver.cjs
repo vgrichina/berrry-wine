@@ -306,15 +306,64 @@ function acceptedManifest(original) {
     moduleFiles:BINDING.filter(row => row.module).map(row => ({path:row.path, localReference:row.path, bytes:row.bytes, sha256:row.sha256}))}));
 }
 
+// Preserve the complete accepted manifest; amend only the named released source
+// and its exact existing module pair for this separately authorized original.
+const CURRENT_SOURCE = '17e09475ecaeaa47de76684df0a0518124a6e387';
+const CURRENT_BINDING = Object.freeze([
+  {
+    "path": "src/09ab-handlers-d3dim-core.wat",
+    "oldSHA256": "5c892770004355099d016e301ff73366a560237d681faf0cd3c6bd3aa8e4fc07",
+    "sha256": "dbcf489a787b4f399eadc926e13336976d6eb0cc30ffed5c8c360af5b496a75a",
+    "bytes": 629038,
+    "publication": "17e09475ecaeaa47de76684df0a0518124a6e387",
+    "reason": "Final published RGB anchored subpixel placement with literal preserved SIMD packing; exact released module pair",
+    "sourceOnly": true
+  },
+  {
+    "path": "build/wine-assembly.wasm",
+    "oldSHA256": "018c94ffbde8c857587c25c860db988d603d0662df9a18901f00c183af7493cd",
+    "sha256": "e620f3adfc2850580004e204bc1fea495844e942806866f8ada24c215212e412",
+    "bytes": 2149486,
+    "publication": "17e09475ecaeaa47de76684df0a0518124a6e387",
+    "reason": "Final published RGB anchored subpixel placement with literal preserved SIMD packing; exact released module pair",
+    "module": true
+  },
+  {
+    "path": "build/wine-assembly.compat.wasm",
+    "oldSHA256": "4e684af48e4ec06ae8aada0d5cd2b522345a7a51b8ed89988d4d8fa0d75ea7c2",
+    "sha256": "66b37bd76da5a7b49c063b4eb0d44c898aaf00ff41e000a6fbd87c01edc136c8",
+    "bytes": 2152099,
+    "publication": "17e09475ecaeaa47de76684df0a0518124a6e387",
+    "reason": "Final published RGB anchored subpixel placement with literal preserved SIMD packing; exact released module pair",
+    "module": true
+  }
+].map(row => Object.freeze(row)));
+function currentManifest(original) {
+  const acceptedBytes = acceptedManifest(original), pins = JSON.parse(acceptedBytes);
+  const files = new Map(pins.files.map(row => [row.path, {...row}]));
+  for (const change of CURRENT_BINDING) {
+    const prior = change.sourceOnly ? BINDING.find(row => row.path === change.path) : files.get(change.path);
+    assert.equal(prior?.sha256, change.oldSHA256, 'stale current dependency pair: ' + change.path);
+    if (change.sourceOnly) exact(git(ROOT, CURRENT_SOURCE, change.path), change);
+    else files.set(change.path, {path:change.path, bytes:change.bytes, sha256:change.sha256});
+  }
+  return Buffer.from(JSON.stringify({...pins, commit:CURRENT_SOURCE,
+    accepted:{commit:BOUND_SOURCE, pinsSHA256:sha(acceptedBytes), files:pins.files,
+      moduleFiles:pins.moduleFiles, amendments:pins.amendments},
+    amendments:[...pins.amendments, ...CURRENT_BINDING.map(row => ({...row, source:CURRENT_SOURCE}))],
+    files:[...files.values()],
+    moduleFiles:CURRENT_BINDING.filter(row => row.module).map(row => ({path:row.path, localReference:row.path, bytes:row.bytes, sha256:row.sha256}))}));
+}
+
 function createResolver({root = ROOT, manifestBytes, binding = 'accepted'} = {}) {
   assert.equal(root, path.resolve(root), 'absolute canonical root required');
   assert.equal(fs.realpathSync(root), root, 'symlink root');
   const originalManifest = manifestBytes === undefined ? zlib.gunzipSync(readLocal(root, BASE + 'runtime-pins.json.gz')) : Buffer.from(manifestBytes);
   assert.equal(sha(originalManifest), PINS_SHA, 'stale original manifest');
-  assert(['accepted','historical'].includes(binding), 'unknown runtime binding');
-  const manifest = binding === 'accepted' ? acceptedManifest(originalManifest) : originalManifest;
+  assert(['current','accepted','historical'].includes(binding), 'unknown runtime binding');
+  const manifest = binding === 'current' ? currentManifest(originalManifest) : binding === 'accepted' ? acceptedManifest(originalManifest) : originalManifest;
   const pins = JSON.parse(manifest);
-  const sourceCommit = binding === 'accepted' ? BOUND_SOURCE : SOURCE;
+  const sourceCommit = binding === 'current' ? CURRENT_SOURCE : binding === 'accepted' ? BOUND_SOURCE : SOURCE;
   const rows = new Map(), sources = new Map();
   for (const row of pins.files) {
     relative(row.path); assert(!rows.has(row.path), 'duplicate runtime path');
@@ -459,7 +508,7 @@ async function installAdapter(resolver, candidateSHA256) {
     fs.readFileSync = nativeRead; serverModule.startStaticServer = originalStart; active = false;
   }};
 }
-module.exports = {ROOT, SOURCE, BOUND_SOURCE, BINDING, acceptedManifest, ACCEPTED, ENTRY, PINS_SHA, sha, exact, relative, requestPath, createResolver, startServer, verifyHTTP, close, installAdapter};
+module.exports = {ROOT, SOURCE, CURRENT_SOURCE, CURRENT_BINDING, currentManifest, BOUND_SOURCE, BINDING, acceptedManifest, ACCEPTED, ENTRY, PINS_SHA, sha, exact, relative, requestPath, createResolver, startServer, verifyHTTP, close, installAdapter};
 if (require.main === module) {
   // Deliberately no --run mode: gameplay requires a fresh separate assignment.
   (async () => {

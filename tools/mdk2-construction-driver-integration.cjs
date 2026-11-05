@@ -481,6 +481,64 @@ function correlateSnapshots(before, after, trace) {
     history: 'Only delivered events are known; cursors, completion, finalizer, buffer and Level are distinct. Missing history unknown.'};
 }
 
+// Supplemental frozen read through the existing host translator. No Worker
+// run/export call, render, timer, observer record or tracing change is made.
+function passiveOuterState(main) {
+  const w = wine, before = WineFrozen.status();
+  if (main?.realm !== 'actual-main-worker' || main.values?.get_current_thread_id !== 1 ||
+      !before.frozen || before.hosts !== 1 || JSON.stringify(before) !== JSON.stringify(main.frozen))
+    throw Error('foreign/unfrozen outer snapshot');
+  let capturedBytes = 0, stackTail = null;
+  const result = {available:false, stackTail:null, outer:null, capturedBytes:0,
+    history:'Frozen bytes only; saved frames are not witnessed callback or maintenance returns'};
+  try {
+    if (!w?.memory?.buffer || typeof w._guestToWasmAddress !== 'function') throw Error('passive memory hook unavailable');
+    const memory = new Uint8Array(w.memory.buffer);
+    function read(address, count) {
+      if (!Number.isSafeInteger(address) || address < 0x400000 || count < 1 || count > 256 || address + count >= 0x80000000)
+        throw Error('outer read bounds');
+      const bytes = [];
+      for (let i=0; i<count; i++) {
+        const physical = w._guestToWasmAddress(address+i);
+        if (!Number.isInteger(physical) || physical < 0x100 || physical >= memory.length) throw Error('outer read unmapped');
+        bytes.push(memory[physical]); capturedBytes++;
+      }
+      return bytes;
+    }
+    const words = bytes => Array.from({length:bytes.length/4},(_,i) =>
+      (bytes[i*4]+bytes[i*4+1]*256+bytes[i*4+2]*65536+bytes[i*4+3]*16777216)>>>0);
+    if (!Array.isArray(main.stack) || main.stack.length !== 48) throw Error('original bounded stack unavailable');
+    stackTail = {address:main.values.get_esp+192, words:words(read(main.values.get_esp+192,192))};
+    result.stackTail = stackTail;
+    const all = [...main.stack,...stackTail.words];
+    const matches = all.flatMap((value,index)=>value===0x47b393?[index]:[]);
+    const inner = all.indexOf(0x47ca7e), middle = all.indexOf(0x47a928), index = matches[0];
+    if (matches.length !== 1 || inner < 0 || middle <= inner || index <= middle || index+13 >= all.length)
+      throw Error('supported decoder/stream frame chain absent');
+    for (const [pc,hex] of [[0x47a880,'a138c35c00535556'],
+      [0x47b1a0,'83ec24538b5c242c55568a433c57'],
+      [0x47b38d,'525051ff53088b4b7c8be883c40c'],
+      [0x47b549,'8b44242448894424240f85d9fdffff']]) {
+      if (read(pc,hex.length/2).map(v=>v.toString(16).padStart(2,'0')).join('') !== hex)
+        throw Error('outer original instructions changed');
+    }
+    // 47a880 saves EBX immediately below its return slot. The three cdecl
+    // arguments plus return occupy16 bytes; caller counter is then ESP+24h.
+    const stream = all[index-1], objectWords = words(read(stream,128));
+    if (objectWords[2] !== 0x47a880 || objectWords[7] !== all[index+1])
+      throw Error('stream callback/argument mismatch');
+    const returnSlot = main.values.get_esp+index*4;
+    result.outer = {stream, objectWords, callback:objectWords[2], callbackArgument:objectWords[7],
+      buffer:objectWords[8], directSoundBuffer:objectWords[9], flags:objectWords[15],
+      blockBytes:objectWords[31], returnSlot, savedReturn:all[index],
+      callbackArguments:all.slice(index+1,index+4), counterAddress:returnSlot+52, refillIterations:all[index+13]};
+    result.available = true;
+  } catch (error) { result.reason = String(error.message || error); }
+  const after = WineFrozen.status();
+  if (JSON.stringify(before) !== JSON.stringify(after)) throw Error('guest advanced during outer snapshot');
+  return {...result,capturedBytes,frozen:after};
+}
+
 function createTraceDriver({sessions, page, save, deadline, OUT}) {
   let owner = null, active = false, consumed = false, terminal = false, before = null, previous = null, commandEnd, quantum = 0;
   let requested = null, inputReceipt = null;
@@ -537,6 +595,7 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
     const {mainState} = require(path.join(RUNS, MAIN));
     const {ownerState} = require(path.join(RUNS, '20261104-mdk2-explicit-capture-native-onward/read-only.cjs'));
     const main = await page().evaluate(mainState), file = await page().evaluate(ownerState);
+    main.outerSnapshot = await page().evaluate(passiveOuterState, main);
     const after = await ownership('after');
     assert.deepEqual(after, barrier, 'all-Worker capture changed');
     for (const sidecar of [main, file]) assert.deepEqual(sidecar.frozen, barrier.frozen, 'foreign frozen sidecar');
@@ -720,7 +779,7 @@ function retainedModule(row) {
 function selectedRuntime() {
   const resolver = require('./mdk2-immutable-runtime-resolver.cjs');
   const original = zlib.gunzipSync(fs.readFileSync(path.join(RUNS, '20261104-mdk2-fresh-pending-scene/runtime-pins.json.gz')));
-  const bytes = resolver.acceptedManifest(original), pins = JSON.parse(bytes);
+  const bytes = resolver.currentManifest(original), pins = JSON.parse(bytes);
   return {pins, pinsSHA256:sha(bytes)};
 }
 // Explicit amendment of one historical dependency, after original-byte
@@ -759,16 +818,16 @@ function candidateResolver(expectedSHA256) {
   const resolver = require('./mdk2-immutable-runtime-resolver.cjs');
   return {adapter:{...resolver,
     createResolver(options={}) {
-      assert(!options.binding || options.binding==='accepted','actual entry requires accepted binding');
-      return resolver.createResolver({...options,binding:'accepted'});
+      assert(!options.binding || options.binding==='current','actual entry requires current binding');
+      return resolver.createResolver({...options,binding:'current'});
     },
     async installAdapter(r) {
-      assert.equal(sha(r.manifest()),selectedRuntime().pinsSHA256,'actual entry requires complete accepted source/module pair');
+      assert.equal(sha(r.manifest()),selectedRuntime().pinsSHA256,'actual entry requires complete current source/module pair');
       return resolver.installAdapter(r, expectedSHA256);
     }},
-    provenance:{kind:'explicit-accepted-runtime-binding', candidateSHA256:expectedSHA256,
+    provenance:{kind:'explicit-current-runtime-binding', candidateSHA256:expectedSHA256,
       historicalResolverCommit:commit, historicalResolverSHA256:sha(original),
-      resolverSHA256:sha(fs.readFileSync(file)), source:resolver.BOUND_SOURCE,
+      resolverSHA256:sha(fs.readFileSync(file)), source:resolver.CURRENT_SOURCE,
       historicalAccepted:'6d5121b5f96ee6032a9e347e2db64db29c478518', amendment:QUIET_BRIDGE}};
 }
 function controllerSources(runDirectory) {
@@ -831,7 +890,7 @@ function run(runDirectory) {
   const Module = require('node:module'), entry = new Module(file, module);
   entry.filename = file; entry.paths = Module._nodeModulePaths(path.dirname(file)); entry._compile(source, file);
 }
-module.exports = {ROOT, RUNS, SOURCE, OBSERVER, CLOSURE, HELPERS, DRIVER, MAIN, sha, gitFile, verifyClosure, pinnedRuntime, selectedRuntime,
+module.exports = {passiveOuterState, ROOT, RUNS, SOURCE, OBSERVER, CLOSURE, HELPERS, DRIVER, MAIN, sha, gitFile, verifyClosure, pinnedRuntime, selectedRuntime,
   installBinding, preloadSource, installBeforeFirstScript, frozenOwnership, correlateSnapshots, createTraceDriver, retainedModule, QUIET_BRIDGE, quietRuntimeBytes, quietManifest, candidateResolver, controllerSources, compose, inspect, assertRunnable, run};
 if (require.main === module) {
   try {

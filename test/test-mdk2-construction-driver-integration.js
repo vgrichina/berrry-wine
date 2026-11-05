@@ -924,6 +924,7 @@ for(const mode of ['early','early-old','medium-unobserved','success','post-quant
     api.pageForTest({evaluate:async(fn,n)=>{
       if(fn.name==='frozenOwnership'){if(mode==='unfrozen')throw Error('fixture unfrozen barrier');if(mode==='ownership-rejected')return {rejection:{reason:'foreign main ownership',owners:barrier.owners}};return structuredClone(barrier);}
       if(fn.name==='mainState')return structuredClone(main);if(fn.name==='ownerState')return structuredClone(file);
+      if(fn.name==='passiveOuterState')return {available:false,reason:'explicit fixture has no supplemental memory hook'};
       if(fn.toString().includes('WineFrozen.step')){steps++;return {ran:n,timedOut:false};}
       return {input:{inputQueue:[],activeInput:null,mouseButtonsMask:0},binding:{audit:[sent]},frozen:main.frozen};
     }});
@@ -1069,6 +1070,7 @@ async function mediumProducer(candidate=integration, negative=null, personal=fal
       {handle:921600,slot:1,endpointIdentity:2,values:{get_current_thread_id:2,get_eip:file.values.get_eip}}]};
     if(fn.name==='mainState')return structuredClone(main);
     if(fn.name==='ownerState')return structuredClone(file);
+      if(fn.name==='passiveOuterState')return {available:false,reason:'explicit fixture has no supplemental memory hook'};
     if(fn.name==='rawPixels')return {base64:Buffer.from('fixture').toString('base64'),steps:m.frozen.steps};
     if(fn.toString().includes('WineFrozen.setTickMs'))return {tickMs:n};
     if(fn.toString().includes('WineFrozen.step(n)')){
