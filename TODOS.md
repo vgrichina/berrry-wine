@@ -2006,12 +2006,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [~] New-game lane: Lords of the Realm II original playable Windows demo
   id: NEW-GAME-LORDS2-DEMO-20261015
   Prior evidence: scratch/runs/20261015-lords2-review-hold and shared WIP; original250171 reached GetNextWindow invalid1446 after GetParent fix, no gameplay.
-  status: active (authorized retry finished with missing evidence; canonical demo media recovery)
+  status: active (canonical media recovered; original gameplay preparation and serialized runtime)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 6 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Retry outcome 2026-11-05: exit0; 44 named prerequisites and historical preflight files absent. Surviving audit hashes match; current main contains bedaaaa7f USER230/262 repair. No new demonstrated mismatch, flag, code, tests or runtime. Findings: scratch/runs/20261105-lords2-emulator-owner-retry/findings.md. All six authorized coordinator retries finished without a renewed flag; each retains its explicit evidence gap.
-  Next: Fresh lords2-static-media-recovery-1100 recovers the small pinned demo ZIP using existing acquisition/static-inspection helpers, verifies its original file manifest, and preserves one canonical fixture path plus hashes. No guest execution, emulator edits, leased boxes or repeat diagnosis. Original gameplay remains unverified.
+  Media recovered 2026-11-05: scratch/game-media/lords2-demo-20261105/original contains all181 original files, exact candidate-manifest match, zero differences; pinned ZIP7522232 bytes SHA256afef0f0dd7012c46f483ab09d785431ba5813c2080d8468a52e8ec32c745f49d. Findings: scratch/runs/20261105-lords2-static-media-recovery/findings.md. Original distribution is not installed output.
+  Next: Fresh lords2-recovered-original-gameplay-1105 prepares canonical setup route without duplicate media, then after Strong0950 -> D3Dclip1010 -> RFworker1020 explicit releases runs original setup/ordinary controls toward verified gameplay screenshots. Preserve first real failure if blocked; no repeat GetWindow fix or invented installation.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   prev-owner: /root/new_demo_refill (released; coordinator reclaimed 2026-11-05)
   Done: Registered original launch, actual ordinary player control and reviewed gameplay screenshot with source/run identity.
