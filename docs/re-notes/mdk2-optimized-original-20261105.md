@@ -11,7 +11,7 @@ new-file patches, with original media/modules referenced by existing path and
 SHA only. No source snapshots, archives, copied modules or media are used.
 
 Preparation began offline while `stronghold-review-ack-original-0036` owned
-the heavy runtime. Source/module mutation and the full build remain gated on
+the heavy runtime. Source/module mutation and the full build were gated on
 its final runtime AND file release and independent verification of exact
 PID/startticks, ports and profile cleanup. Return Fire waits this assignment's
 final release. All builds must finish before that release.
@@ -85,4 +85,90 @@ Git revision and therefore rejected a historical source before reaching the
 intended current check; its corrected scope changes only accepted/current Git
 reads. These are offline fixture failures, not original attempts.
 
-Original result is pending; no original execution or gameplay is claimed.
+Implementation `5e2542a569861d7458f336784b41012538d72926` was published
+with immediate strict pinned SSH pull/push before execution. The full actual
+composed FS+HTTP route then passed439 FS,439 proof HTTP,439 actual HTTP and2253
+installed-caller checks with plain Puppeteer mocked, public/native
+`SPAWN_FORBIDDEN`, zero Chrome launches and both temporary servers closed.
+`preflight/` and `preflight.log` preserve that boundary. The actual original
+page compiled, instantiated and sent the canonical current e620 module; the
+owning worker trace independently binds those bytes, slot0 and endpoint1.
+
+ONE original launched at01:06:10.512Z under exclusive
+`/tmp/wine-local-runtime.lock`. Eleven fresh PNGs were personally inspected:
+startup0/512/1024/1536/2048/2560/3072/3584 and native selectors64/67/77.
+`personal-views.jsonl` binds each review to its PNG SHA. Startup progressed
+through gray/black surfaces, BioWare splash and MDK2 title/legal overlay to
+New Game. Selector64 showed New Game; selector67 showed the difficulty dialog
+with Medium highlighted. Selector77 showed the MDK2 background without the
+difficulty dialog or icons, with no comic, loading text, world or gameplay.
+
+The existing ordinary controls used observe16, New Game64 and Medium304
+steps:384/512 aggregate menu steps and53/113 commands. No544 release reserve
+was needed; no control limit, ACK,16ms, observer50M/360s or active0 full-rest
+guard changed. The first Medium checkpoints showed queued WM_KEYDOWN13 and
+WM_CHAR13 with `asyncPressPublished:true`, while native command62 remained
+raw/previous/active0 and the difficulty menu remained open. At global3840,
+the queue emptied and native command62 reached phase4, raw1/previous1/active0.
+This satisfies the original native press predicate; it must not be described
+as active1. Keyup was subsequently queued. At3952 it was consumed with
+active1 and showmenu0; only at3968 did phase/raw/previous/active all return0,
+with empty input queue, null active input and mouse mask0. The ordinary
+controller then accepted full rest. No pending/loading/cancel/comic/gameplay
+control was sent after this successful Medium assessment.
+
+The continuous trace spans546000 native boundaries with19 samples,
+2 decoder-output records,2 decoder returns,1 GC entry/return,3 deferred-load
+checks,1 command62 dispatch entry/return, and1 timer-set entry/armed/return.
+Decoder returns to47ca7e occur at blocks164483 and499381. GC enters443070 at
+164511 and returns40218c at301232. Command62 dispatch enters42ae70 at500479
+and returns46d0c4 at504653. Timer-set enters46cb20 at503366 and returns41e9b2
+at503367; the captured timer object138660096 contains countdown
+1.2000000476837158, with no inferred wall deadline. There is no captured timer
+handler, demand-load/type10/new-level entry, loading or gameplay progression.
+The three deferred checks each retain requestedLevel/checkpoint/loadFlag0;
+these are captured values, not defaults for absent memory.
+
+All19 correlation snapshots preserve frozen16ms ownership and thread1, with
+no mismatching duplicate checkpoint. Ten have the supported saved decoder /
+stream frame chain. Each captures stream138913920, callback47a880,
+argument404232216, buffer14348388, DirectSound buffer136451064, flags298,
+blockBytes32768 and refillIterations1 at address122682724. They cover the
+first decoder at3680–3744 and the second at3872–3936. The other9 snapshots
+retain `outer:null` and the explicit absent-frame reason; they are not counter0.
+The stream's captured words25/28/29 change from3025920/3/142336 to
+3065856/4/182272 between those groups. This is frozen stream/refill state,
+not a direct callback-return event. No direct outer callback or maintenance
+return hook was captured. The original static call chain places maintenance
+before GC entry, so its prior return is an inference from native continuation,
+not a separately witnessed maintenance return. `original-analysis.json`
+retains all19 snapshots and the native event sequence.
+
+This establishes that the optimized observer can complete this original
+menu/Medium boundary under the existing guards. It does not establish a
+controlled whole-history speedup or gameplay speed. The prior accepted attempt
+left Medium queued at4096; this attempt reaches native press, key release and
+full rest at3968. However, New Game needed64 steps here versus48 before,
+so the Medium trace begins3664 rather than3648, and the explicitly amended
+current module differs from the earlier accepted module. These confounds
+prevent sole causal attribution to the numeric comparison. The35-pin/502-byte/
+534-translation equivalence and passive fixture timing remain separate facts.
+No second original was attempted and no gameplay result is claimed.
+
+The original had no surfaced post-Chrome fault. After the final pixel review,
+the normal quit path called Browser.close at01:12:31.165Z, Chrome exited0/null
+at01:12:31.312Z, and Browser.close resolved01:12:31.313Z. No kill fallback ran.
+Independent cleanup at01:13:00.062Z verified Chrome1594185/start188797975,
+Node1593763/start188797530 and flock1593762/start188797530 absent; proof
+HTTP46457, actual HTTP39117 and DevTools46143 refused; exact profile absent;
+and external flock inode141907 free. `cleanup-verification.json` records this.
+The local heavy runtime was released01:13:11Z; file ownership is released only
+after this final note is published. All builds are finished. Return Fire may
+then independently verify the recorded exact cleanup before its own attempt.
+Box ID/state/expiry remain NA; coordinator owns shutdown.
+
+Final offline audit rechecked all11 PNG hashes,19 frozen ownership snapshots,
+384-step/53-command ledger, exact module binding and final active0 full rest.
+`result.json` is reviewed and scoped to menu/Medium, with loading/gameplay false.
+Relevant source evidence remains Git plus binary diff/new-file patch and
+existing input SHA references; no snapshots or media/module copies were added.
