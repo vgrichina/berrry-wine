@@ -275,7 +275,182 @@ async function pvsFixture(c) {
   use(A);await com('Release secondary PVS device',B.device,2);await com('Release secondary PVS target',B.rt,2);await com('Release PVS D3D',d3d,2);
 }
 
-module.exports={pvsFixture};
+// Prepared addition only; not an executable test until ordered runtime release.
+async function viewportDepthFixture(c) {
+  const {mode,negative,evidence,check,eq,raw,read,alloc,words,guard,guid,com,ok,acquire,
+    dd,hal,surface,bits,observe,use,initial,countDraw,queue}=c;
+  const r=evidence.viewportDepth={outputs:[],held:[],failures:[]};
+  const d3d=await acquire(async out=>com('depth QI D3D7',dd,0,
+    await guid([0xf5049e77,0x11d24861,0xa00007a4,0xa82906c9]),out));
+  const A=initial,B={rt:await surface(8,8,0x2840)};
+  B.device=await acquire(out=>com('depth CreateDevice7',d3d,4,hal,B.rt,out));
+  const matrix=await alloc(64),vp=await alloc(24),desc=await alloc(96),tl=await alloc(60),indices=await alloc(8);
+  const I=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
+  const positions=[[-8,-8],[24,-8],[-8,24]],ws=[1,2,4];
+  const sourceRows=positions.map(([x,y],i)=>[
+    bits((x/4-1)*ws[i]-.125),bits((1-y/4)*ws[i]+.25),bits(ws[i]/2),0xff20c040]);
+  const normalized=[.25,.1875,.15625]; // Zc=.25*Z+.125; Wc=2*Z.
+  const snap=async(p,n)=>{const a=[];for(let i=0;i<n;i+=4)a.push(await read(p+i));return a;};
+  const vbCreate=async fvf=>{const d=await guard(16);await words(d.p,[16,0,fvf,6]);
+    const vb=await acquire(out=>com('depth CreateVB7',d3d,5,d.p,out,0));await d.check();return vb;};
+  const vbLock=async vb=>{const p=await guard(4),n=await guard(4);await ok(com('depth LockVB',vb,3,0,p.p,n.p));
+    await p.check();await n.check();return {p:await read(p.p),n:await read(n.p)};};
+  const vbUnlock=vb=>ok(com('depth UnlockVB',vb,4));
+  let src=await vbCreate(0x42),dst=await vbCreate(0x44);
+  let source=await vbLock(src);eq(source.n,96,'source capacity');
+  await words(source.p,Array(24).fill(0xa5a5a5a5));
+  for(let i=0;i<3;i++)await words(source.p+(i+1)*16,sourceRows[i]);await vbUnlock(src);
+  const sourceBefore=await snap(source.p,source.n);
+  // Equivalent strided source starts at vertex1 with its own explicit stride.
+  await words(desc,Array(24).fill(0));await words(desc,[source.p+16,16]);await words(desc+16,[source.p+28,16]);
+  await words(indices,[2,1]); // WORD indices 2,0,1.
+  async function configure(t,rect,range){
+    await words(vp,[...rect,...range.map(bits)]);await ok(com('depth SetViewport7',t.device,13,vp));
+    const got=await guard(24);await ok(com('depth GetViewport7',t.device,15,got.p));await got.check();
+    eq(await snap(got.p,24),[...rect,...range.map(bits)],'independent public viewport round trip');
+    const world=I.slice();world[12]=.25;world[13]=-.5;
+    const view=I.slice();view[12]=-.125;view[13]=.25;
+    const proj=I.slice();proj[10]=.25;proj[14]=.125;proj[11]=2;proj[15]=0;
+    for(const [id,m] of [[1,world],[2,view],[3,proj]]){await words(matrix,m.map(bits));await ok(com('depth SetTransform7',t.device,11,id,matrix));}
+    for(const [id,v] of [[7,0],[14,0],[15,0],[22,1],[27,0],[28,0],[29,0],[137,0],[141,0]])
+      await ok(com('depth SetRenderState7',t.device,20,id,v));
+    await ok(com('depth no texture',t.device,35,0,0));
+    for(const [id,v] of [[1,2],[2,0],[4,2],[5,0],[11,0],[24,0]])await ok(com('depth TSS7',t.device,37,0,id,v));
+    await ok(com('depth disable stage1',t.device,37,1,1,1));
+  }
+  const process=(method,t,flags=0)=>method==='strided'
+    ?com('depth ProcessVerticesStrided7',dst,8,1,2,3,desc,0x42,t.device,flags)
+    :com('depth ProcessVertices7',dst,5,1,2,3,src,1,t.device,flags);
+  const fill=async()=>{const l=await vbLock(dst);eq(l.n,120,'destination capacity');await words(l.p,Array(30).fill(0xcdcdcdcd));await vbUnlock(dst);};
+  function expected(rect,range,flags){
+    const out=Array(30).fill(0xcdcdcdcd);
+    for(let i=0;i<3;i++)out.splice((i+2)*5,5,
+      bits(rect[0]+positions[i][0]*rect[2]/8),bits(rect[1]+positions[i][1]*rect[3]/8),
+      bits(range[0]+(range[1]-range[0])*normalized[i]),bits(1/ws[i]),flags?0xcdcdcdcd:0xff20c040);
+    return out;
+  }
+  async function verify(method,t,rect,range,flags){
+    const l=await vbLock(dst),actual=await snap(l.p,l.n);await vbUnlock(dst);
+    const wanted=expected(rect,range,flags),label=method+' '+rect+' '+range+' flags'+flags;
+    r.outputs.push({label,actual,expected:wanted});eq(actual,wanted,'DEPTH DESTINATION BYTE ORACLE '+label);
+  }
+  for(const [t,rect,range] of [[A,[1,2,4,4],[.125,.625]],[B,[0,0,8,8],[.625,.875]],
+    [A,[0,0,8,8],[.75,.75]],[B,[2,1,4,6],[0,0]],[A,[0,0,8,8],[1,1]],
+    [B,[0,0,8,8],[0,1]]]){
+    await configure(t,rect,range);
+    for(const method of ['buffer','strided'])for(const flags of [0,1]){
+      await fill();await ok(process(method,t,flags));await verify(method,t,rect,range,flags);
+    }
+  }
+  eq(await snap(source.p,source.n),sourceBefore,'both processing methods preserve entire source');
+  await configure(A,[1,2,4,4],[.125,.625]);await configure(B,[0,0,8,8],[.625,.875]);
+  for(const [t,rect,range] of [[A,[1,2,4,4],[.125,.625]],[B,[0,0,8,8],[.625,.875]],[A,[1,2,4,4],[.125,.625]]])
+    for(const method of ['buffer','strided']){
+      await fill();await ok(process(method,t));await verify(method,t,rect,range,0);
+    }
+  // Independent depth competition: normalized Z is <.5 but mapped Z is >.5.
+  // The red .5 triangle must occlude processed green. Incorrect raw or twice
+  // mapped depths have separate byte discrimination above; raw control here
+  // must be rejected specifically by the final pixel oracle.
+  async function submit(t,indexed){
+    await ok(com('depth BeginScene',t.device,5));
+    if(indexed)await ok(com('depth DrawIndexedVB',t.device,32,4,dst,2,3,indices,3,0));
+    else await ok(com('depth DrawVB',t.device,31,4,dst,2,3,0));
+    countDraw();await ok(com('depth EndScene',t.device,6));
+  }
+  async function competing(t){
+    use(t);await ok(com('depth zenable',t.device,20,7,1));await ok(com('depth zwrite',t.device,20,14,1));
+    await ok(com('depth zfunc LESS',t.device,20,23,2));
+    await ok(com('depth Clear7',t.device,10,0,0,3,0xff000000,bits(1),0));
+    const rows=positions.flatMap(([x,y])=>[bits(x),bits(y),bits(.5),bits(1),0xffd03020]);await words(tl,rows);
+    await ok(com('depth competitor BeginScene',t.device,5));await ok(com('depth competitor DrawPrimitive7',t.device,25,4,0x44,tl,3,0));
+    countDraw();await ok(com('depth competitor EndScene',t.device,6));
+  }
+  async function pixels(label){await observe(label,{name:'red .5 occludes mapped green',uv:[.25,.25]},
+    {filter:1,address:1,palette:Array(4).fill([208,48,32])});}
+  for(const method of ['buffer','strided'])for(const range of [[.625,.875],[.75,.75]]){
+    await configure(A,[0,0,8,8],range);await fill();await ok(process(method,A));
+    await competing(A);
+    if(negative==='depth'){
+      const l=await vbLock(dst);for(let i=0;i<3;i++)await words(l.p+(i+2)*20+8,[bits(normalized[i])]);await vbUnlock(dst);
+    }
+    await submit(A,false);await pixels('viewport depth '+method+' '+range);
+  }
+  if(mode==='worker')for(const [i,method] of ['buffer','strided'].entries()){
+    const t=A;await configure(t,[0,0,8,8],[.625,.875]);await fill();await ok(process(method,t));await competing(t);
+    await verify(method,t,[0,0,8,8],[.625,.875],0);eq(await snap(indices,8),[2,1],'held draw exact public indices');
+    queue.hold('viewport depth storage reuse '+method);await submit(t,!!i);
+    const packet=await queue.packet(),before=Array.from(packet.vertices);
+    r.held.push({method,sequence:packet.sequence,before});
+    const sl=await vbLock(src);await words(sl.p,Array(sl.n/4).fill(0x7fc00000));await vbUnlock(src);
+    await words(desc,Array(24).fill(0));await words(indices,[0xffffffff,0xffffffff]);await fill();
+    const oldSource=src,oldDestination=dst,oldStorage=await vbLock(dst);await vbUnlock(dst);
+    eq(await com('depth release held source',src,2),0,'source VB final release while render held');
+    eq(await com('depth release held destination',dst,2),0,'destination VB final release while render held');
+    src=await vbCreate(0x42);dst=await vbCreate(0x44);await fill();
+    const reused=await vbLock(src);await words(reused.p,Array(reused.n/4).fill(0x7fc00000));await vbUnlock(src);
+    r.held.at(-1).storageReuse={oldSource,oldDestination,oldStorage,newSource:src,newDestination:dst,newSourceStorage:reused};
+    await words(vp,[0,0,8,8,bits(0),bits(0)]);await ok(com('depth change live viewport',t.device,13,vp));
+    if(negative==='depth-queued'){
+      // Queue vertices are canonical 32-byte records; corrupt only depth.
+      const d=new DataView(packet.vertices.buffer,packet.vertices.byteOffset,packet.vertices.byteLength);
+      for(let n=8;n<d.byteLength;n+=32)d.setFloat32(n,.125,true);
+    }else eq(Array.from(packet.vertices),before,'queued depth survives original storage reuse');
+    queue.drain();await pixels('queued viewport depth '+method);
+    const l=await vbLock(src);for(let j=0;j<3;j++)await words(l.p+(j+1)*16,sourceRows[j]);await vbUnlock(src);
+    await words(desc,Array(24).fill(0));await words(desc,[l.p+16,16]);await words(desc+16,[l.p+28,16]);await words(indices,[2,1]);
+  }
+  // Preserve existing buffer-method errors and source bytes on valid paths.
+  eq(await com('depth PV invalid source index',dst,5,1,2,1,src,6,A.device,0),0x80070057,'PV source overrun');
+  eq(await com('depth PV null source',dst,5,1,2,1,0,1,A.device,0),0x80004003,'PV null source');
+  // A complete FVF tail distinguishes DONOTCOPYDATA from default copying.
+  // Explicit supplied diffuse/specular avoids computed-alpha qualification.
+  await configure(A,[0,0,8,8],[.125,.625]);
+  const tailSrc=await vbCreate(0x1c2),tailDst=await vbCreate(0x1c4),ts=await vbLock(tailSrc);
+  eq(ts.n,168,'tail source stride');await words(ts.p,Array(42).fill(0xa5a5a5a5));
+  for(let i=0;i<3;i++)await words(ts.p+(i+1)*28,[...sourceRows[i],0x12345678,bits(.25+i/8),bits(.75-i/8)]);
+  const tailBefore=await snap(ts.p,ts.n);await vbUnlock(tailSrc);
+  for(const op of [1,0x401])for(const flags of [0,1]){
+    const l=await vbLock(tailDst);eq(l.n,192,'tail destination stride');await words(l.p,Array(48).fill(0xcdcdcdcd));await vbUnlock(tailDst);
+    await ok(com('depth PV tail DONOTCOPYDATA',tailDst,5,op,2,3,tailSrc,1,A.device,flags));
+    const wanted=Array(48).fill(0xcdcdcdcd);
+    for(let i=0;i<3;i++)wanted.splice((i+2)*8,8,bits(positions[i][0]),bits(positions[i][1]),
+      bits(.125+.5*normalized[i]),bits(1/ws[i]),
+      ...(flags?Array(4).fill(0xcdcdcdcd):[0xff20c040,0x12345678,bits(.25+i/8),bits(.75-i/8)]));
+    const got=await vbLock(tailDst),actual=await snap(got.p,got.n);await vbUnlock(tailDst);
+    r.outputs.push({label:'PV supplied tail op'+op+' flags'+flags,actual,expected:wanted});eq(actual,wanted,'DEPTH DESTINATION BYTE ORACLE PV tail');
+    eq(await snap(ts.p,ts.n),tailBefore,'PV tail source immutable');
+  }
+  const litSrc=await vbCreate(0x1d2),ls=await vbLock(litSrc),material=await alloc(68);
+  eq(ls.n,240,'lit source stride');await words(ls.p,Array(60).fill(0xa5a5a5a5));
+  for(let i=0;i<3;i++)await words(ls.p+(i+1)*40,[...sourceRows[i].slice(0,3),bits(0),bits(0),bits(1),
+    sourceRows[i][3],0x12345678,bits(.25+i/8),bits(.75-i/8)]);
+  await vbUnlock(litSrc);
+  await words(material,[0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,1,0].map(bits));
+  await ok(com('depth PV emissive material',A.device,16,material));await ok(com('depth PV enable lighting',A.device,20,137,1));
+  for(const flags of [0,1]){
+    const l=await vbLock(tailDst);await words(l.p,Array(48).fill(0xcdcdcdcd));await vbUnlock(tailDst);
+    await ok(com('depth PV LIGHT DONOTCOPYDATA',tailDst,5,0x401,2,3,litSrc,1,A.device,flags));
+    const wanted=Array(48).fill(0xcdcdcdcd),excluded=[];
+    for(let i=0;i<3;i++){
+      wanted.splice((i+2)*8,8,bits(positions[i][0]),bits(positions[i][1]),bits(.125+.5*normalized[i]),bits(1/ws[i]),
+        0xffff0000,0,...(flags?[0xcdcdcdcd,0xcdcdcdcd]:[bits(.25+i/8),bits(.75-i/8)]));
+      excluded.push((i+2)*8+4,(i+2)*8+5);
+    }
+    const l2=await vbLock(tailDst),actual=await snap(l2.p,l2.n);await vbUnlock(tailDst);
+    const mask=a=>a.map((v,i)=>excluded.includes(i)?v&0xffffff:v);
+    r.outputs.push({label:'PV computed RGB tail flags'+flags,actual,expected:wanted,excludedAlphaWords:excluded});
+    eq(mask(actual),mask(wanted),'DEPTH DESTINATION BYTE ORACLE PV computed RGB tail');
+  }
+  await raw('guest_free',material);await com('depth Release lit source',litSrc,2);
+  await com('depth Release tail source',tailSrc,2);await com('depth Release tail destination',tailDst,2);
+  await com('depth Release source',src,2);await com('depth Release destination',dst,2);
+  await com('depth Release B device',B.device,2);await com('depth Release B target',B.rt,2);await com('depth Release D3D7',d3d,2);
+  for(const p of [matrix,vp,desc,tl,indices])await raw('guest_free',p);use(A);
+}
+
+
+module.exports={pvsFixture,viewportDepthFixture};
 
 // The same public COM fixture runs against both shipped modules.
 async function main(){
@@ -283,7 +458,8 @@ async function main(){
   const root=path.resolve(__dirname,'..'),{browserFixture,plan,oracle}=require('./test-legacy-texture-rendered-contract');
   const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
   const pe=fs.readFileSync(path.join(root,'test/binaries/calc.exe'));
-  const config={...plan(),immediate:true,immediateSource:pvsFixture.toString(),noPreview:!process.argv.includes('--browser'),
+  const source=`async c=>{await (${pvsFixture.toString()})(c);await (${viewportDepthFixture.toString()})(c);}`;
+  const config={...plan(),immediate:true,immediateSource:source,noPreview:!process.argv.includes('--browser'),
     thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52)};
@@ -294,7 +470,7 @@ async function main(){
   save('inputs.json',{source:require('node:child_process').execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
     modules:modules.map(name=>({path:'build/'+name,sha256:hash(fs.readFileSync(path.join(root,'build',name)))})),
     media:{path:'test/binaries/calc.exe',sha256:hash(pe)}});
-  const negatives=['stride','component','state'];
+  const negatives=['stride','component','state','depth'];
   if(!process.argv.includes('--browser')){
     const saved=globalThis.fetch;
     try{for(const name of modules){
@@ -307,7 +483,7 @@ async function main(){
       console.log('PASS real x86 PVS '+name+' '+result.calls.length+' COM records '+result.observations.length+' pixel checkpoints');
       for(const negative of negatives){let failure;try{await browserFixture('software',config,oracle.toString(),negative);}catch(e){failure=e;}
         const partial=globalThis.legacyTextureEvidence;save(name+'-negative-'+negative+'.json',{failure:String(failure),partial});
-        assert.match(String(failure),/DESTINATION BYTE ORACLE/,'designated byte oracle must discriminate '+negative);
+        assert.match(String(failure),negative==='depth'?/PIXEL ORACLE viewport depth/:/DESTINATION BYTE ORACLE/,'designated oracle must discriminate '+negative);
         assert(partial.calls.some(x=>x.label==='ProcessVerticesStrided7'&&x.result===0),'successful faulty public call');
       }
     }}finally{globalThis.fetch=saved;}
@@ -341,11 +517,11 @@ async function main(){
         await page.screenshot({path:path.join(dir,name+'-'+mode+'.png'),fullPage:true});await page.close();page=null;
         console.log('PASS rendered PVS '+name+' '+mode);
       }
-      for(const negative of ['stride','component','state','queued']){
-        const mode=negative==='queued'?'worker':'software';page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/pvs-fixture');
+      for(const negative of ['stride','component','state','queued','depth','depth-queued']){
+        const mode=['queued','depth-queued'].includes(negative)?'worker':'software';page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/pvs-fixture');
         let failure;try{await page.evaluate(browserFixture,mode,config,oracle.toString(),negative);}catch(e){failure=String(e);}
         const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);save(name+'-browser-negative-'+negative+'.json',{failure,partial});
-        assert.match(failure,negative==='queued'?/PIXEL ORACLE queued immutable PVS/:/DESTINATION BYTE ORACLE/);
+        assert.match(failure,negative==='queued'?/PIXEL ORACLE queued immutable PVS/:negative==='depth'?/PIXEL ORACLE viewport depth/:negative==='depth-queued'?/PIXEL ORACLE queued viewport depth/:/DESTINATION BYTE ORACLE/);
         report.negativeControls.push({name,negative,failure});await page.close();page=null;
       }
     }report.status='PASS';

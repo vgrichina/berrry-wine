@@ -2629,6 +2629,13 @@
   ;; the transform produces. Texture sets are copied separately from the
   ;; original FVF records: the canonical TLVERTEX holds only one UV pair.
   (func $d3dim_unpack_tl_vertex (param $fvf i32) (param $src_wa i32) (param $dst_wa i32)
+    (call $d3dim_unpack_tl_vertex_fields (local.get $fvf) (local.get $src_wa) (local.get $dst_wa) (i32.const 3)))
+
+  ;; Position always changes. Select default normal/reserved stores (bit 1)
+  ;; and color stores (bit 2) independently for D3DPV_DONOTCOPYDATA.
+  ;; Field offsets advance even when the destination bytes are preserved.
+  (func $d3dim_unpack_tl_vertex_fields
+    (param $fvf i32) (param $src_wa i32) (param $dst_wa i32) (param $copy_fields i32)
     (local $offset i32)
     (if (i32.and (local.get $fvf) (i32.const 0x0004))
       (then
@@ -2646,18 +2653,22 @@
     (if (i32.and (local.get $fvf) (i32.const 0x0010)) (then
       ;; A transformed vertex has no normal left to carry; zero rather than
       ;; leave whatever the last batch wrote at that offset.
-      (call $zero_memory (i32.add (local.get $dst_wa) (local.get $offset)) (i32.const 12))
+      (if (i32.and (local.get $copy_fields) (i32.const 1)) (then
+        (call $zero_memory (i32.add (local.get $dst_wa) (local.get $offset)) (i32.const 12))))
       (local.set $offset (i32.add (local.get $offset) (i32.const 12)))))
     (if (i32.and (local.get $fvf) (i32.const 0x0020)) (then
-      (i32.store (i32.add (local.get $dst_wa) (local.get $offset)) (i32.const 0))
+      (if (i32.and (local.get $copy_fields) (i32.const 1)) (then
+        (i32.store (i32.add (local.get $dst_wa) (local.get $offset)) (i32.const 0))))
       (local.set $offset (i32.add (local.get $offset) (i32.const 4)))))
     (if (i32.and (local.get $fvf) (i32.const 0x0040)) (then
-      (i32.store (i32.add (local.get $dst_wa) (local.get $offset))
-        (i32.load (i32.add (local.get $src_wa) (i32.const 16))))
+      (if (i32.and (local.get $copy_fields) (i32.const 2)) (then
+        (i32.store (i32.add (local.get $dst_wa) (local.get $offset))
+          (i32.load (i32.add (local.get $src_wa) (i32.const 16))))))
       (local.set $offset (i32.add (local.get $offset) (i32.const 4)))))
     (if (i32.and (local.get $fvf) (i32.const 0x0080)) (then
-      (i32.store (i32.add (local.get $dst_wa) (local.get $offset))
-        (i32.load (i32.add (local.get $src_wa) (i32.const 20))))
+      (if (i32.and (local.get $copy_fields) (i32.const 2)) (then
+        (i32.store (i32.add (local.get $dst_wa) (local.get $offset))
+          (i32.load (i32.add (local.get $src_wa) (i32.const 20))))))
       (local.set $offset (i32.add (local.get $offset) (i32.const 4))))))
 
   ;; ProcessVertices does not collapse texture sets to the active draw-stage
@@ -2709,6 +2720,20 @@
   (global $d3dim_dbg_pv_last (mut i32) (i32.const -1))
   (global $d3dim_dbg_vb_last (mut i32) (i32.const -1))
 
+  ;; Final processing output uses the SDK7 output depth range. Keep this
+  ;; outside vertex_project: internal triangle clipping reconstructs clip Z
+  ;; from its normalized Z/W representation. Legacy viewport objects already
+  ;; normalize their clip volume and store the output range [0,1].
+  (func $d3dim_process_viewport_depth (param $state i32) (param $out i32)
+    (local $range i32) (local $min f32) (local $max f32)
+    (local.set $range (i32.add (call $g2w (local.get $state)) (global.get $D3DIM_OFF_VP_SCALE)))
+    (local.set $min (f32.load offset=8 (local.get $range)))
+    (local.set $max (f32.load offset=12 (local.get $range)))
+    (if (i32.or (f32.ne (local.get $min) (f32.const 0)) (f32.ne (local.get $max) (f32.const 1))) (then
+      (f32.store offset=8 (local.get $out)
+        (f32.add (local.get $min)
+          (f32.mul (f32.sub (local.get $max) (local.get $min)) (f32.load offset=8 (local.get $out))))))))
+
   ;; ProcessVerticesStrided accepts a source FVF (not a source index) after
   ;; twelve D3DDP_PTRSTRIDE pairs. See SDK7 imover_6uqs/imover_3grp and d3d.h.
   ;; Keep all input reads and fallible allocation before destination stores.
@@ -2756,7 +2781,6 @@
     (local $i i32) (local $j i32) (local $sets i32) (local $dst_sets i32)
     (local $dim i32) (local $dst_dim i32) (local $src_tex i32) (local $dst_tex i32)
     (local $src_color i32) (local $dst_color i32) (local $lit i32) (local $hr i32)
-    (local $minz f32) (local $depth f32)
     (local $end i64)
     (local.set $hr (i32.const 0x80070057))
     (block $failed
@@ -2905,12 +2929,6 @@
       (local.set $output_wa (call $g2w (local.get $output)))
       (call $memcpy (local.get $output_wa) (call $g2w (local.get $dst)) (i32.mul (local.get $count) (local.get $dst_stride)))
       (call $d3ddev_composite_wvp (local.get $state))
-      ;; SDK7 viewport scaling uses MinZ/MaxZ as an output depth range.
-      ;; vertex_project supplies normalized Z; do not inherit its legacy
-      ;; callers' assumption that the range is always [0,1].
-      (local.set $span (i32.add (call $g2w (local.get $state)) (global.get $D3DIM_OFF_VP_SCALE)))
-      (local.set $minz (f32.load offset=8 (local.get $span)))
-      (local.set $depth (f32.sub (f32.load offset=12 (local.get $span)) (local.get $minz)))
       (local.set $dst_sets (i32.and (i32.shr_u (local.get $dst_fvf) (i32.const 8)) (i32.const 15)))
       (local.set $src_tex (i32.sub (local.get $stride) (call $d3dim_fvf_tex_offset (local.get $fvf) (local.get $sets))))
       (local.set $dst_tex (i32.sub (local.get $dst_stride) (call $d3dim_fvf_tex_offset (local.get $dst_fvf) (local.get $dst_sets))))
@@ -2920,8 +2938,7 @@
         ;; Projection writes a canonical 32-byte record into trailing scratch.
         (local.set $span (i32.add (local.get $output_wa) (i32.mul (local.get $count) (local.get $dst_stride))))
         (call $vertex_project (local.get $state) (i32.add (local.get $packed_wa) (i32.shl (local.get $i) (i32.const 5))) (local.get $span))
-        (f32.store offset=8 (local.get $span)
-          (f32.add (local.get $minz) (f32.mul (local.get $depth) (f32.load offset=8 (local.get $span)))))
+        (call $d3dim_process_viewport_depth (local.get $state) (local.get $span))
         (local.set $pointer (i32.add (local.get $output_wa) (i32.mul (local.get $i) (local.get $dst_stride))))
         (call $memcpy (local.get $pointer) (local.get $span) (i32.const 16))
         (local.set $dst_color (i32.const 16))
@@ -3095,14 +3112,24 @@
         (local.get $state) (local.get $src_vtx)
         (i32.add (local.get $packed_wa) (i32.shl (local.get $i) (i32.const 5)))
         (local.get $scratch_wa))
-      (call $d3dim_unpack_tl_vertex
+      ;; Already transformed sources retain supplied depth, as before.
+      (if (i32.ne (local.get $src_vtx) (i32.const 3)) (then
+        (call $d3dim_process_viewport_depth (local.get $state) (local.get $scratch_wa))))
+      (call $d3dim_unpack_tl_vertex_fields
         (local.get $dst_fvf) (local.get $scratch_wa)
-        (i32.add (local.get $dst_wa) (i32.mul (local.get $i) (local.get $dst_stride))))
-      (call $d3dim_vb_copy_texcoords
-        (local.get $src_fvf) (call $g2w (i32.add (local.get $source_g) (i32.mul (local.get $i) (local.get $src_stride))))
-        (local.get $dst_fvf) (i32.add (local.get $dst_wa) (i32.mul (local.get $i) (local.get $dst_stride)))
-        (select (i32.add (local.get $scratch_wa) (i32.const 24)) (i32.const 0)
-          (i32.gt_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 0xffff))))
+        (i32.add (local.get $dst_wa) (i32.mul (local.get $i) (local.get $dst_stride)))
+        (select
+          (select (i32.const 2) (i32.const 0)
+            (i32.and
+              (i32.ne (i32.and (local.get $vertex_op) (i32.const 1024)) (i32.const 0))
+              (i32.eq (call $d3dim_d7_rs (call $g2w (local.get $state)) (i32.const 137)) (i32.const 1))))
+          (i32.const 3) (i32.ne (i32.and (local.get $flags) (i32.const 1)) (i32.const 0))))
+      (if (i32.eqz (i32.and (local.get $flags) (i32.const 1))) (then
+        (call $d3dim_vb_copy_texcoords
+          (local.get $src_fvf) (call $g2w (i32.add (local.get $source_g) (i32.mul (local.get $i) (local.get $src_stride))))
+          (local.get $dst_fvf) (i32.add (local.get $dst_wa) (i32.mul (local.get $i) (local.get $dst_stride)))
+          (select (i32.add (local.get $scratch_wa) (i32.const 24)) (i32.const 0)
+            (i32.gt_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 0xffff))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $lp)))
     ;; kind=20 SetMtx over the composite world*view*projection actually used,
