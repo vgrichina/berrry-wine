@@ -2149,6 +2149,7 @@
 
   (func $branch_end_at (param $patch_at i32) (param $shift i32) (param $tag i32)
      (local $nx_fn i32) (local $nx_op i32) (local $t i32)
+    (call $pending_entry (global.get $eip) (i32.load offset=16 (global.get $reg_base)))
     (if (global.get $be_gate_on) (then (call $branch_end_diag)))
     ;; ROUND 19: how many desk trips came out of a block-executor tail. $ip is
     ;; still inside the stream the terminator was read from, so the descriptor
@@ -2356,6 +2357,7 @@
 
   (func $invocation_enter (result i64)
     (local $id i64)
+    (call $pending_gap)
     (call $invocation_validate)
     ;; Root occupies stack[0], leaving 63 child levels. Fail before mutation.
     (if (i32.ge_u (global.get $invocation_depth) (i32.const 63)) (then (unreachable)))

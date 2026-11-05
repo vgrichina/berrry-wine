@@ -184,6 +184,7 @@
         (return)))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $op))
+    (call $pending_push (local.get $target) (local.get $op) (i32.load offset=16 (global.get $reg_base)))
     (global.set $eip (local.get $target)))
   (func $th_jmp_r (param $op i32)
     (local $target i32) (local $ret_addr i32)
@@ -1221,6 +1222,7 @@
         (return)))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $op))
+    (call $pending_push (local.get $target) (local.get $op) (i32.load offset=16 (global.get $reg_base)))
     (call $cs_push (local.get $op))
     (global.set $eip (local.get $target)))
   ;; 141: jmp [base+disp]. op=0, w1=base, w2=disp.

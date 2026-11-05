@@ -2703,6 +2703,23 @@
   (global $cs_depth (mut i32) (i32.const 0))
   (global $cs_enabled (mut i32) (i32.const 0))
 
+  ;; One-shot pending-call coverage. Independent of the debug return ring.
+  ;; The shared allocator leases a distinct 2KB slot per owning instance;
+  ;; sixteen leases per memory, never reused. Exhaustion fails closed.
+  (global $PENDING_CONTEXT i32 (region.addr $PENDING_CONTEXT 0))
+  (global $PENDING_CONTEXT_SIZE i32 (region.size $PENDING_CONTEXT))
+  (global $pending_seen (mut i32) (i32.const 0))
+  (global $pending_armed (mut i32) (i32.const 0))
+  (global $pending_reason (mut i32) (i32.const 0))
+  (global $pending_thread (mut i32) (i32.const 0))
+  (global $pending_epoch (mut i32) (i32.const 0))
+  (global $pending_slot (mut i32) (i32.const 0))
+  (global $pending_depth (mut i32) (i32.const 0))
+  (global $pending_active (mut i32) (i32.const 0))
+  (global $pending_compiled_pc (mut i32) (i32.const 0))
+  (global $pending_compiled_eip (mut i32) (i32.const 0))
+  (global $pending_compiled_gen (mut i32) (i32.const 0))
+
   ;; Direction flag for string ops (0=up, 1=down)
   (global $df (mut i32) (i32.const 0))
 

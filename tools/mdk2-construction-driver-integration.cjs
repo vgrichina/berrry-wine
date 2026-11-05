@@ -11,7 +11,7 @@ const ROOT = path.resolve(__dirname, '..');
 const RUNS = path.join(ROOT, 'scratch/runs');
 const SOURCE = '1329b1ba6eb00144ff77d4cd92a8513d4fc953ad';
 const OBSERVER = 'de6a33f257d93e8814d666bdec62361161569ac4';
-const OBSERVER_REPAIR_SHA256 = '23bcc67a67e2d54cd879db6c1f8a52b0a2ed71b6954c612bab8507c1492969a5';
+const OBSERVER_REPAIR_SHA256 = 'a870bfed4eee5326323e5035292ae2dc7009e6dcd2607b65530d12b09e538022';
 const DRIVER = '20261104-mdk2-fresh-pending-scene/browser-driver.cjs';
 const MAIN = '20261104-mdk2-post-lua-native-boundary/main-state.cjs';
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -196,6 +196,32 @@ function installBinding(options) {
   // its first terminal report queryable. Genuine native/import failures retain
   // the shipped Worker's original handling.
   let observationStop = null, nativeSlice = null;
+  let pendingEpoch=null;
+  const liveAdmission={status:'unavailable',witness:null,rejection:null};
+  const liveGuards=[[6,0x47ca7e],[14,0x47a928],[22,0x47b393],[39,0x47c012],[42,0x47c626],[45,0x451546],[47,0x402176]];
+  function tryLiveAdmission(){
+    if(started||terminal||!entry?.instance||pendingEpoch===null)return;
+    const ex=entry.instance.exports;
+    if((ex.get_eip()>>>0)!==0x47d9c8)return;
+    // Read the actual completed run, synchronously before its wrapper returns.
+    // A rejected candidate never manufactures initial observer frames.
+    try {
+      if(ex.get_current_thread_id()!==1||ex.get_image_base()!==0x400000)throw Error('foreign live owner');
+      const esp=ex.get_esp()>>>0,callers=[];
+      for(const [index,expected] of liveGuards){
+        const actual=ex.guest_read32(esp+index*4)>>>0;callers.push([index,actual]);
+        if(actual!==expected)throw Error('unsupported pre-GC maintenance stack');
+      }
+      const proof=g.Mdk2LuaConstructionObserver.pendingAbsence(ex,pendingEpoch);
+      liveAdmission.witness={ordinal:nativeSlice.ordinal,pc:0x47d9c8,esp,callers,proof,
+        compilation:entry.binding.compilation,endpointIdentity:entry.binding.endpointIdentity};
+    } catch(error){liveAdmission.rejection={ordinal:nativeSlice.ordinal,message:String(error.message)};return;}
+    // One deadline starts here, including all later frozen reviews. No native
+    // execution is forwarded between the absence proof and attachment.
+    const now=Date.now();
+    invoke('start',{commandEnd:now+360000,absoluteEnd:now+360000,live:true});
+    liveAdmission.status='admitted';
+  }
   // Passive slice-end witnesses only. Saved words are context, never CALL/GC
   // history. A rolling window plus sparse milestones has a fixed space bound.
   const startup = {version:1, status:'collecting', slices:0, completed:0, blocks:0,
@@ -283,7 +309,7 @@ function installBinding(options) {
   const report = () => ({realm: isPage ? 'page' : 'worker', targetId: options.targetId || null,
     workerURL: options.workerURL || null, fatal, started, terminal, traced, paused, traceEnd,
     binding: entry?.binding || null, thread: entry?.instance?.exports.get_current_thread_id?.(),
-    observer: observer?.report || null, nativeSlice, startup:JSON.parse(JSON.stringify(startup)), audit});
+    observer: observer?.report || null, liveAdmission, nativeSlice, startup:JSON.parse(JSON.stringify(startup)), audit});
   function stop(reason) {
     freezeStartup(reason);
     terminal = true; paused = false; clearTimeout(timer);
@@ -409,6 +435,12 @@ function installBinding(options) {
       const result = await Reflect.apply(instantiate, this, [module, imports, ...args]);
       entry.instance = result.instance || result; add({kind: 'installed-before-instantiation', sha256: binding.sha256});
       const ex = entry.instance.exports;
+      // Arm before exposing the instance to loader/Worker code. Missing old
+      // exports remain explicitly unavailable; they never supply absence proof.
+      if(ex.pending_context_version?.()===1){
+        pendingEpoch=entry.binding.compilation+1;
+        liveAdmission.status=ex.pending_context_arm(pendingEpoch)===1?'armed':'invalid';
+      }
       const exports = {...ex, run(...values) {
         // An expired idle deadline must never disable tracing and then execute
         // an unobserved command. Keep the terminal report queryable by CDP.
@@ -434,6 +466,7 @@ function installBinding(options) {
           if (provenance) { try { endedAt=startupClock(); } catch(error) { startupError('clock',error); } }
           nativeSlice.ranBlocks=ex.get_last_run_blocks()>>>0;
           startupEnd(provenance,endedAt,runError);
+          if(!runError&&nativeSlice.completed)tryLiveAdmission();
         }
       }};
       return result.instance ? {...result, instance:{exports}} : {exports};
@@ -470,6 +503,12 @@ function installBinding(options) {
       return report();
     }
     if (action !== 'start') throw Error('unknown trace operation');
+    // The ordinary driver may reach its reviewed command after live admission.
+    // Adopt the same continuous observer without renewing deadline or frames.
+    if(started&&liveAdmission.status==='admitted'&&!row.live){
+      if(fatal||terminal||paused||!traced||Date.now()>=traceEnd) return fail('live trace unavailable');
+      return report();
+    }
     freezeStartup('observer-admission');
     if (fatal || terminal || started || !entry?.instance) return fail('trace cannot restart or bind late');
     const ex = entry.instance.exports;
@@ -480,8 +519,13 @@ function installBinding(options) {
     if (!Number.isFinite(row.commandEnd) || row.commandEnd <= now) return fail('trace command deadline');
     const end = Math.min(row.absoluteEnd, now + 360000);
     if (!Number.isFinite(end) || end <= Date.now()) return fail('trace deadline');
+    if((ex.get_eip()>>>0)===0x47d9c8){
+      try{g.Mdk2LuaConstructionObserver.pendingAbsence(ex,pendingEpoch);}
+      catch(error){return fail(error.message);}
+    }
     started = true; traceEnd = end;
-    observer = g.Mdk2LuaConstructionObserver.attach({host: entry.host, getExports: () => entry.instance.exports,
+    observer = g.Mdk2LuaConstructionObserver.attach({
+      pendingEpoch:row.live?pendingEpoch:null,host: entry.host, getExports: () => entry.instance.exports,
       getSlice: () => nativeSlice,
       getEpoch: () => entry.binding,
       workerSlot: 0, exeSha256: g.Mdk2LuaConstructionObserver.EXE_SHA256, wasmSha256: entry.binding.sha256,
@@ -829,9 +873,11 @@ function createTraceDriver({sessions, page, save, deadline, OUT}) {
       const reviewed = nativeMenu.checkedReview(OUT, approval);
       nativeReady(reviewed, 'newgame'); nativeReady(state, 'newgame');
       assert.deepEqual(state.observation.inputs, reviewed.observation.inputs, 'input after early review');
-      assert.equal(before.main.values.get_eip, 0x47d9c8, 'unsupported pre-GC decoder checkpoint');
+      const live=chosen.report.liveAdmission;
+      const admission=live?.status==='admitted'?live.witness:null;
+      assert.equal(admission?.pc??before.main.values.get_eip, 0x47d9c8, 'unsupported pre-GC decoder checkpoint');
       for (const [index, pc] of [[6,0x47ca7e],[14,0x47a928],[22,0x47b393],[39,0x47c012],[42,0x47c626],[45,0x451546],[47,0x402176]])
-        assert.equal(before.main.stack?.[index], pc, 'unsupported pre-GC maintenance stack');
+        assert.equal(admission?admission.callers.find(r=>r[0]===index)?.[1]:before.main.stack?.[index], pc, 'unsupported pre-GC maintenance stack');
       // This is only admission evidence. start/sample validates decoder context;
       // only subsequent genuine native boundaries can create GC history.
       inputReceipt = {...state.input,observation:state.observation};

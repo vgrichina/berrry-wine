@@ -92,9 +92,9 @@
       "ownershipWrites": [
         "$invocation_depth"
       ],
-      "sha256": "027ee0baff59f5434034ce0b7f0626b8c10c7120f2c190ab6029a6feab3b87d2",
+      "sha256": "ed51ff09ec6d2ffde6caf610f3331454bc99fa7db9c07dbcea218f0422d1ce01",
       "kind": "lifecycle",
-      "reason": "Private invocation identity primitive; sync-family instrumentation only, all other callback ownership pending.",
+      "reason": "Private invocation identity primitive; sync-family instrumentation only, all other callback ownership pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -512,9 +512,9 @@
           "$target"
         ]
       ],
-      "sha256": "592b4575f0d00a35f23c7736ab010963b1d5e0fa86f48ff2985bf458dc68114c",
+      "sha256": "e8d8dd7edb8dea28fe2362d59735023c129d19ab048bf3b7f03762e5b299861f",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Memory CALL protected review 2026-11-03: absolute FF15 admission only; preflight every target/return-slot byte, exclude DIB readback, then commit one architectural CALL and stop before target execution. Thunk calls preserve their ordinary shadow-stack exclusion and resume the existing dispatcher only after disarm. No new guest handler, callback invocation, retained identity or context restoration. Ordinary inline dispatch unchanged; callback ownership remains pending.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Memory CALL protected review 2026-11-03: absolute FF15 admission only; preflight every target/return-slot byte, exclude DIB readback, then commit one architectural CALL and stop before target execution. Thunk calls preserve their ordinary shadow-stack exclusion and resume the existing dispatcher only after disarm. No new guest handler, callback invocation, retained identity or context restoration. Ordinary inline dispatch unchanged; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -529,9 +529,9 @@
           "$target"
         ]
       ],
-      "sha256": "2f871e9bbb9f423e8474f03d6dc07bffa46d00f6f84d4c1cf49a48f7db5efe81",
+      "sha256": "cde57b0980d0794f413dbbbeddc4bd27849da83317eca803b15adf7cac4a715b",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -546,9 +546,9 @@
           "$target"
         ]
       ],
-      "sha256": "978cd7f9dc7f376dbfc5a086e10e5bb721e23f9d3a181c3f97bd1fa20c7c11be",
+      "sha256": "88b02cf8810ba06f219143a65b8a5fe5f16042af11e5e67ad2f9f1ad64d526be",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -978,9 +978,9 @@
           "$ret"
         ]
       ],
-      "sha256": "e2fd6de10102d83e033e4be8085fd779d88aff9adfa2e2af3bcdffe2aa3699c5",
+      "sha256": "ddde991a10e8bf1e55b0c09954830ae603ae6489c21314e7eb02af133ae388cf",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: Fused POP/RET preserves stack_run_pop early return and guard16; loads return local via existing sr_fast/sr_delta or gl32 path, snapshots kind4 before EIP from same local and ESP=cur+4+imm. No retained callback ownership; guest word origin remains unproven. Ownership remains pending.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: Fused POP/RET preserves stack_run_pop early return and guard16; loads return local via existing sr_fast/sr_delta or gl32 path, snapshots kind4 before EIP from same local and ESP=cur+4+imm. No retained callback ownership; guest word origin remains unproven. Ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -995,9 +995,9 @@
           "$target"
         ]
       ],
-      "sha256": "77403172c2d4b5fd21a2c4eb6a8b38d55db0b749dd5ba99b286566d25fc807a4",
+      "sha256": "36026a919e5403c5a6e2c08b1d1022b25739155000fabdc2478ab4f5c29a6100",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1012,9 +1012,9 @@
           "$ret"
         ]
       ],
-      "sha256": "5019445c6c322e8e01ee52ba7f7f6587e02dcfe5d4b59fad615612ca36acc595",
+      "sha256": "119c382f5cc98a82b55a8fe7e2b2dfacdef579cf3d679f8ebb061fe1677da0bd",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: RET reads guest ESP/return word into locals once after guard16, snapshots kind2 before EIP assignment from that same local and ESP+=4; cs_pop is diagnostic depth only. No invocation enter/leave or retained callback owner. Guest return word origin/writer and lifetime remain unproven. Ownership remains pending.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: RET reads guest ESP/return word into locals once after guard16, snapshots kind2 before EIP assignment from that same local and ESP+=4; cs_pop is diagnostic depth only. No invocation enter/leave or retained callback owner. Guest return word origin/writer and lifetime remain unproven. Ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1029,9 +1029,9 @@
           "$ret"
         ]
       ],
-      "sha256": "767441e740fbf303e6dd85205bf6c9ff9cb9bc5957fdfc614497cda00e2d8297",
+      "sha256": "a550748493003de5ebed77ed9f27b79110c1a381f9b9f54bbe6dec07964f77fd",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: RET imm reads guest ESP/return word into locals once after guard16, snapshots kind3 before EIP from that same local and ESP+=4+op. No callback owner acquired or released; return word provenance/lifetime remain unproven. Ownership remains pending.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: RET imm reads guest ESP/return word into locals once after guard16, snapshots kind3 before EIP from that same local and ESP+=4+op. No callback owner acquired or released; return word provenance/lifetime remain unproven. Ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1110,9 +1110,9 @@
           ]
         ]
       ],
-      "sha256": "e3ac5febd66152f05639135c937b582dd0092b9702faab4e793b68cbaae97294",
+      "sha256": "80aff5aedd8be8b0c3491b7a6d8d3927468fe476ebeddae4815aa9de549f2780",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1134,9 +1134,9 @@
           ]
         ]
       ],
-      "sha256": "928c795e9d854d0ed7f511c36dcc08cafa6d4ef02d61605c6299596f096c095b",
+      "sha256": "dded004160cc82f2247077beebdaabe46289ca05d4e8626b1b9735399fe29b68",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1258,9 +1258,9 @@
           ]
         ]
       ],
-      "sha256": "6b63d8e66ceafacb98ac028b73a682880e9df4455106986d39762dad56ee6454",
+      "sha256": "bdb99a2db669f0f15be9d8e9aea1d65ddca4ab6fe329e3b82b5844c1433a1c19",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1290,9 +1290,9 @@
           ]
         ]
       ],
-      "sha256": "f6a312432792c67a67a52d4dd6c074b11a418d89181fe53650faafd49ada04ee",
+      "sha256": "efc5ff4beb6e8fc59ac069eace367936f7a5858ec4ae545d82ad35cb6d830cac",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1314,9 +1314,9 @@
           ]
         ]
       ],
-      "sha256": "2bab4dec4da25d910321c99f48825fc60d3ad56b2814b35fb2ed6725f50c5fa2",
+      "sha256": "1383c3b232dddcb4bfcaf1bf14ef6d4884b871d8d0fc427cf090e810ddc8b2a4",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1422,9 +1422,9 @@
           ]
         ]
       ],
-      "sha256": "98d22cfdbb472eb24e74f79da83852037ffddf57159fa82cec3791c2bb85b319",
+      "sha256": "5fb8de62fdd542df69aa3faedd67ad296beacff42615ed431fff45268f939ad9",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1446,9 +1446,9 @@
           ]
         ]
       ],
-      "sha256": "9402d51310f0744996feb5660254fb318bdbe93c6b58b3e472a2f2daf44c6a21",
+      "sha256": "33bb305d9c7b6fe374673590d54f6965e32e15608b788c30f1748ba3d1377e9e",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1470,9 +1470,9 @@
           ]
         ]
       ],
-      "sha256": "fa4dccb4db71008979b6895c22f66aef435a500b0e271d9009da7595ac2a2aeb",
+      "sha256": "2dda7bef0398f606bf70c8d113e8ae9e1ba1049a62b2277ec915c38459050c67",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1533,9 +1533,9 @@
           "$target"
         ]
       ],
-      "sha256": "5bda6ab7ca09cdaa98c8347f03b052e27bb61658ce7b0e8ad3f9b61b416d2d9e",
+      "sha256": "d8771b23e24307a55f34ae4b457d2f32f0ec3d6d26e7669cb479ed260c371b4a",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -1554,9 +1554,9 @@
           "$target"
         ]
       ],
-      "sha256": "96a6b49e5808622318afe13c2556d5f39f9021688a637990144798f215e2ca8f",
+      "sha256": "2ad3b6d8fc105c70ce814252ac5d86c663191dde39e2ee5ab8736490a595022f",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -2275,9 +2275,9 @@
           ]
         ]
       ],
-      "sha256": "504f190f120e96388df7d112a9428f17c7298babeddfc921c0c2cd8b7905968d",
+      "sha256": "4876c8a9013099747ce8ca25dfd010faaa3e9826389fb27b8a39e5a6a9546b12",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -2285,15 +2285,17 @@
       "name": "export:uop_run",
       "writes": 0,
       "boundaryCalls": [
+        "$pending_gap",
+        "$pending_gap",
         "$uop_run"
       ],
       "exports": [
         "uop_run"
       ],
       "targets": [],
-      "sha256": "fb86b3f6b343e948db136774db933f4a73957abaa0f2cc705b48fa2a100e6680",
+      "sha256": "afd1c6d01b768c012e99d077ed4565cb12f2401eb092e0c97a52f65dd7c06e1d",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 marks raw diagnostic execution as an unsupported coverage gap; native targets and callback lifetime unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -4695,9 +4697,9 @@
           "$return_eip"
         ]
       ],
-      "sha256": "dca31f448d34926aeda148c16ddd972174c72503289e0623b938397cfd26dee8",
+      "sha256": "6527d3414906d9c743eed690b174ed160ccaaa4d15b1a058a551a8aecc4ded20",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Shadow Man exact-candidate source review 2026-10-28: Dispatcher retains existing resource-pin save/restore and callback-continuation redirects. Only added operation clears diagnostic kind before deferred DLL unload can redirect after inner handler. No new owner or EIP target; existing callback/continuation lifetimes remain pending. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Shadow Man exact-candidate source review 2026-10-28: Dispatcher retains existing resource-pin save/restore and callback-continuation redirects. Only added operation clears diagnostic kind before deferred DLL unload can redirect after inner handler. No new owner or EIP target; existing callback/continuation lifetimes remain pending. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -7640,9 +7642,9 @@
           "$old_eip"
         ]
       ],
-      "sha256": "2e99233f80d3dd2a5f9c96e6636612caf3f59b020d0e70ed71311e3eadd625eb",
+      "sha256": "126ab8d812be9d0b9c37c421488a9d5139b5ddaeb269b076a14440f3983d7f8e",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -7668,9 +7670,9 @@
           ]
         ]
       ],
-      "sha256": "609b90726171ab7901c8266dc8067fd7b0e6475d0c2d1a80d6a0fbf19a7beb66",
+      "sha256": "eccfb9d297bce01b0380990a10c0a640f8a684ea541ca5b2c48280004d1c0637",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -7710,9 +7712,9 @@
           "$except_body"
         ]
       ],
-      "sha256": "6b9c124e82a7e65b4d1c113583d0d75cd660980712aba5733c6d3e0de605b1c5",
+      "sha256": "b7a06300ea64e14d8d3a66e6823acadea777c5cbedcac49b21305c37d0420e62",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -7793,9 +7795,9 @@
           ]
         ]
       ],
-      "sha256": "78d531195dc5d33c144942b9bc8479a446cef2573b6d48e97d349eb09ad75565",
+      "sha256": "7f89f4f6fd7c5d5024121824bd7772869ea023e85ff7fb3eb70fe47c068642fd",
       "kind": "host-entry",
-      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth. Shadow Man exact-candidate source review 2026-10-28: Reentrant host entry retains existing budget/API-depth save/restore and thunk auto-pop target. Clears kind/thunk-entry at fresh run and each nonzero loop boundary; brackets explicit thunk dispatch with entry flag; zero branch checks record before null_diag_event increments count and notifies synchronous host observer (return traps). Nested run or deferred unload invalidates attribution; diagnostic globals are not a retained per-invocation stack. No new EIP target/ownership retain; source inventory only, reentry/runtime and original writer remain unqualified. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.",
+      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth. Shadow Man exact-candidate source review 2026-10-28: Reentrant host entry retains existing budget/API-depth save/restore and thunk auto-pop target. Clears kind/thunk-entry at fresh run and each nonzero loop boundary; brackets explicit thunk dispatch with entry flag; zero branch checks record before null_diag_event increments count and notifies synchronous host observer (return traps). Nested run or deferred unload invalidates attribution; diagnostic globals are not a retained per-invocation stack. No new EIP target/ownership retain; source inventory only, reentry/runtime and original writer remain unqualified. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -8102,9 +8104,9 @@
           "0"
         ]
       ],
-      "sha256": "cf6e5e84f2332c501e686bd415c1615090e7bb81b3bb3fcd568f25685bc750a5",
+      "sha256": "a6faec92e63f1992a7c5ac71a2856053a680c3c120f9e56fd3784ebc006cfbe2",
       "kind": "host-entry",
-      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth.",
+      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {
@@ -9024,9 +9026,9 @@
         "$mm_callback_owner",
         "$mm_callback_depth"
       ],
-      "sha256": "b38a99c5e1ea45085b1fda8dbc3544c73962f0c5b1a6780473debbdb6c0734ec",
+      "sha256": "0ab2f39e94ab57400a04dd7b186f1c3db6a86abba4892e8bacba68e513944e54",
       "kind": "continuation",
-      "reason": "CACA000A retained private child/root/ESP record; source-slice tests in test-mm-timer-ownership.js. Broader callback ownership remains pending.",
+      "reason": "CACA000A retained private child/root/ESP record; source-slice tests in test-mm-timer-ownership.js. Broader callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
       "ownership": "pending"
     },
     {

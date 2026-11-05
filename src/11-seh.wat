@@ -295,6 +295,7 @@
 
   ;; Put the thread back exactly as the CONTEXT at $ctx describes it.
   (func $seh_load_context (param $ctx i32)
+    (call $pending_gap)
     (i32.store offset=28 (global.get $reg_base) (call $gl32 (i32.add (local.get $ctx) (i32.const 0x9c))))
     (i32.store offset=24 (global.get $reg_base) (call $gl32 (i32.add (local.get $ctx) (i32.const 0xa0))))
     (i32.store offset=12 (global.get $reg_base) (call $gl32 (i32.add (local.get $ctx) (i32.const 0xa4))))
@@ -401,6 +402,7 @@
     (local $io_fills i32) (local $io_ready i32)
     (local $expected_child i64) (local $expected_parent i64) (local $expected_root i64)
     (local $expected_depth i32) (local $expected_inv_depth i32)
+    (call $pending_gap)
     (if (i32.or (global.get $fault_sync_active)
                 (i32.eqz (global.get $sync_msg_ret_thunk)))
       (then (return (i32.const 0))))
@@ -656,6 +658,7 @@
   (func $rtl_unwind_begin (param $target i32) (param $rec_in i32) (param $retval i32) (param $ret i32)
     (local $esp i32) (local $s i32) (local $i i32) (local $rec i32) (local $ctx i32)
     (local $flags i32)
+    (call $pending_gap)
     (if (i32.eqz (global.get $rtl_unwind_thunk))
       (then (global.set $rtl_unwind_thunk (call $com_cont_thunk (i32.const 0xCACA0039)))))
     (local.set $esp (i32.load offset=16 (global.get $reg_base)))
@@ -784,6 +787,7 @@
     (local $trylevel i32) (local $scopetable i32) (local $entry i32)
     (local $filter i32) (local $filter_wa i32) (local $except_body i32)
     (local $filter_result i32) (local $first_byte i32)
+    (call $pending_gap)
     ;; Every path out of here that returns has replaced $eip, so claim the
     ;; redirect up front rather than at each of the four exits. $run clears it.
     (global.set $eip_redirected (i32.const 1))

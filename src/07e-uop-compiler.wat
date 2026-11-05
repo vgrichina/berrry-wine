@@ -3750,6 +3750,8 @@
       (call $uc_o2 (i32.const 64) (local.get $d)
         (if (result i64) (i32.lt_u (i32.add (local.get $j) (i32.const 1)) (local.get $n))
           (then (local.get $alt)) (else (call $uc_xstub))))
+      (if (global.get $pending_armed) (then
+        (call $uc_o2 (i32.const 80) (call $uc_aN (local.get $cand)) (call $uc_aR (i32.const 4)))))
       (call $uc_o3 (i32.const 8) (call $uc_aR (i32.const 4)) (call $uc_aR (i32.const 4))
                    (call $uc_aN (i32.add (i32.const 4) (i32.load offset=28 (local.get $R)))))
       (global.set $uc_sm (local.get $m)) (global.set $uc_smd (local.get $md))
@@ -3846,6 +3848,8 @@
         (if (i32.lt_u (i32.add (local.get $k) (i32.const 1)) (global.get $uc_nblk))
           (then (local.set $next (call $uc_aL (local.get $pfx) (i32.load (call $uc_blk (i32.add (local.get $k) (i32.const 1))))))))
         (call $uc_label (call $uc_aL (local.get $pfx) (i32.load (local.get $B))))
+        (if (global.get $pending_armed) (then
+          (call $uc_o2 (i32.const 87) (call $uc_aN (i32.load (local.get $B))) (call $uc_aR (i32.const 4)))))
         (local.set $rae (i32.load (i32.add (i32.add (local.get $F) (i32.const 0x5000)) (i32.shl (local.get $k) (i32.const 2)))))
         (local.set $n (i32.const 0))
         (block $idone (loop $iloop
@@ -3909,6 +3913,9 @@
                             (call $uc_xstub) (i64.const 0) (i64.const 0))))
                   (call $uc_store (i32.add (local.get $R) (i32.const 80)) (i32.const 32) (call $uc_aC (local.get $nx)))
                   (call $uc_o3 (i32.const 8) (call $uc_aR (i32.const 4)) (call $uc_aR (i32.const 4)) (call $uc_aN (i32.const -4)))
+                  (if (global.get $pending_armed) (then
+                    (call $uc_o3 (i32.const 79) (call $uc_aN (local.get $tgt))
+                      (call $uc_aN (local.get $nx)) (call $uc_aR (i32.const 4)))))
                   (local.set $md (i32.or (local.get $md) (i32.const 16)))
                   (local.set $cd (i32.or (local.get $cd) (i32.const 16)))
                   (global.set $uc_smd (local.get $md))
@@ -4947,4 +4954,9 @@
     (i32.load (i32.add (i32.add (global.get $UC_MISC) (i32.const 0xC00))
                        (i32.shl (i32.and (local.get $why) (i32.const 63)) (i32.const 2)))))
   (func (export "uop_compile") (param $eip i32) (result i32)
-    (call $uop_compile (local.get $eip)))
+    ;; Pre-arm compilation could otherwise leave an uninstrumented program.
+    (global.set $pending_seen (i32.const 1))
+    (global.set $pending_compiled_eip (local.get $eip))
+    (global.set $pending_compiled_pc (call $uop_compile (local.get $eip)))
+    (global.set $pending_compiled_gen (global.get $uop_gen))
+    (global.get $pending_compiled_pc))

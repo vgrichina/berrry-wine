@@ -992,6 +992,7 @@
   (global $uop_io_w      (mut i32) (i32.const 0))
   (func $uop_run (param $pc i32) (param $budget i32) (result i32)
     (local $op i32)
+    (global.set $pending_seen (i32.const 1))
     (loop $L
       (local.set $pc (call $uop_fast (local.get $pc) (local.get $budget)))
       (local.set $budget (global.get $uop_io_budget))
@@ -1027,6 +1028,19 @@
                                              (i32.eq (local.get $op) (i32.const 16)))
                       (then (i32.const 24)) (else (i32.const 20))))))))
           (br $L)))
+      (if (i32.eq (local.get $op) (i32.const 79)) (then
+        (call $pending_push (i32.load offset=4 (local.get $pc))
+          (i32.load offset=8 (local.get $pc))
+          (i32.load (i32.load offset=12 (local.get $pc))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L)))
+      (if (i32.eq (local.get $op) (i32.const 80)) (then
+        (call $pending_pop (i32.load offset=4 (local.get $pc))
+          (i32.load (i32.load offset=8 (local.get $pc))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L)))
+      (if (i32.eq (local.get $op) (i32.const 87)) (then
+        (call $pending_entry (i32.load offset=4 (local.get $pc))
+          (i32.load (i32.load offset=8 (local.get $pc))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L)))
       ;; 26 GUARD w base disp len rw x
       (if (i32.eq (local.get $op) (i32.const 26))
         (then
@@ -1111,10 +1125,10 @@
                   $c64 $c65 $c66 $c67 $c68 $c69 $c70 $c71
                   $c72 $c73 $c74 $c75 $c76 $c77
                   $c78
-                  ;; 79-80 are not emitted
-                  $c0 $c0
+                  ;; Pending CALL/RET observation services.
+                  $svc $svc
                   $c81 $c82 $c83 $c84 $c85 $c86
-                  $c0
+                  $svc $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
         (global.set $eip (i32.load offset=4 (local.get $pc)))
@@ -2568,8 +2582,13 @@
   ;; A test's direct run has no enter op to act on a megamorphic exit.
   (func (export "uop_run") (param $pc i32) (param $budget i32) (result i32)
     (local $r i32)
+    ;; Raw diagnostic programs are host supplied and have no coverage lease.
+    (call $pending_gap)
+    (if (global.get $pending_active) (then (call $pending_gap)))
+    (global.set $pending_active (i32.const 1))
     (local.set $r (call $uop_run (local.get $pc) (local.get $budget)))
     (global.set $uop_icg_retire (i32.const 0))
+    (global.set $pending_active (i32.const 0))
     (local.get $r))
   ;; CF | ZF<<1 | SF<<2 | OF<<3 | PF<<4, so a test can compare two arms'
   ;; flags whatever lazy representation each left behind.
@@ -2626,6 +2645,7 @@
     (call $bx_hot_gate_refresh))
   (func (export "get_uop") (result i32) (global.get $uop_enabled))
   (func (export "uop_add_range") (param $lo i32) (param $hi i32) (param $pc i32) (result i32)
+    (call $pending_gap) ;; Arbitrary host-created metadata has no coverage lease.
     (call $uop_add_range (local.get $lo) (local.get $hi) (local.get $pc)))
   (func (export "uop_flush") (call $uop_flush))
   (func (export "uop_gen") (result i32) (global.get $uop_gen))
@@ -2634,4 +2654,11 @@
   (func (export "set_uop_poor_work") (param $n i32)
     (global.set $UOP_POOR_WORK (select (local.get $n) (i32.const 1) (local.get $n))))
   (func (export "uop_install") (param $eip i32) (param $pc i32)
+    ;; Only this instance's immediately preceding native compilation is covered.
+    (if (i32.or (i32.eqz (local.get $pc))
+          (i32.or (i32.ne (local.get $pc) (global.get $pending_compiled_pc))
+            (i32.or (i32.ne (local.get $eip) (global.get $pending_compiled_eip))
+                    (i32.ne (global.get $uop_gen) (global.get $pending_compiled_gen)))))
+      (then (call $pending_gap)))
+    (global.set $pending_compiled_pc (i32.const 0))
     (call $uop_install (local.get $eip) (local.get $pc)))

@@ -276,6 +276,66 @@
     (if (i32.gt_s (global.get $cs_depth) (i32.const 0))
       (then (global.set $cs_depth (i32.sub (global.get $cs_depth) (i32.const 1))))))
 
+  ;; Pending context version 1: MDK2 tracked targets, 64 frames, one epoch.
+  ;; Reasons: 1 late/rearm, 2 foreign owner/thread, 3 overflow, 4 bad return,
+  ;; 5 unsupported callback/unwind/coverage, 6 instance lease exhaustion.
+  (func $pending_gap
+    (global.set $pending_seen (i32.const 1))
+    (if (global.get $pending_armed) (then
+      (if (i32.eqz (global.get $pending_reason))
+        (then (global.set $pending_reason (i32.const 5)))))))
+  (func $pending_valid (result i32)
+    (if (i32.and (i32.ne (global.get $pending_armed) (i32.const 0))
+          (i32.ne (global.get $pending_thread) (global.get $current_thread_id)))
+      (then (if (i32.eqz (global.get $pending_reason))
+        (then (global.set $pending_reason (i32.const 2))))))
+    (i32.and (i32.ne (global.get $pending_armed) (i32.const 0))
+      (i32.eqz (global.get $pending_reason))))
+  (func $pending_target (param $target i32) (result i32)
+    (i32.or (i32.eq (local.get $target) (i32.const 0x44fc40)) (i32.or (i32.eq (local.get $target) (i32.const 0x42c990)) (i32.or (i32.eq (local.get $target) (i32.const 0x42cc80)) (i32.or (i32.eq (local.get $target) (i32.const 0x42bbe0)) (i32.or (i32.eq (local.get $target) (i32.const 0x442370)) (i32.or (i32.eq (local.get $target) (i32.const 0x40daf0)) (i32.or (i32.eq (local.get $target) (i32.const 0x42b0c0)) (i32.or (i32.eq (local.get $target) (i32.const 0x46cb20)) (i32.or (i32.eq (local.get $target) (i32.const 0x42ae70)) (i32.or (i32.eq (local.get $target) (i32.const 0x443070)) (i32.or (i32.eq (local.get $target) (i32.const 0x444f80)) (i32.or (i32.eq (local.get $target) (i32.const 0x44f4a0)) (i32.or (i32.eq (local.get $target) (i32.const 0x4522d0)) (i32.const 0)))))))))))))))
+  (func $pending_entry (param $pc i32) (param $esp i32)
+    (local $p i32)
+    (if (i32.eqz (call $pending_valid)) (then (return)))
+    (if (global.get $pending_depth) (then
+      (local.set $p (i32.add (global.get $pending_slot)
+        (i32.mul (i32.sub (global.get $pending_depth) (i32.const 1)) (i32.const 12))))
+      (if (i32.gt_u (local.get $esp) (i32.load offset=8 (local.get $p)))
+        (then (call $pending_gap) (return)))))
+    (if (call $pending_target (local.get $pc)) (then
+      (if (i32.eqz (global.get $pending_depth)) (then (call $pending_gap) (return)))
+      (if (i32.or (i32.ne (i32.load (local.get $p)) (local.get $pc))
+                  (i32.ne (i32.load offset=8 (local.get $p)) (local.get $esp)))
+        (then (call $pending_gap))))))
+
+  (func $pending_push (param $target i32) (param $ret i32) (param $esp i32)
+    (local $p i32)
+    (if (i32.eqz (call $pending_valid)) (then (return)))
+    (if (i32.eqz (call $pending_target (local.get $target))) (then (return)))
+    (if (i32.ge_u (global.get $pending_depth) (i32.const 64))
+      (then (global.set $pending_reason (i32.const 3)) (return)))
+    (local.set $p (i32.add (global.get $pending_slot)
+      (i32.mul (global.get $pending_depth) (i32.const 12))))
+    (i32.store (local.get $p) (local.get $target))
+    (i32.store offset=4 (local.get $p) (local.get $ret))
+    (i32.store offset=8 (local.get $p) (local.get $esp))
+    (global.set $pending_depth (i32.add (global.get $pending_depth) (i32.const 1))))
+  (func $pending_pop (param $ret i32) (param $esp i32)
+    (local $p i32) (local $entry i32)
+    (if (i32.eqz (call $pending_valid)) (then (return)))
+    (if (i32.eqz (global.get $pending_depth)) (then (return)))
+    (local.set $p (i32.add (global.get $pending_slot)
+      (i32.mul (i32.sub (global.get $pending_depth) (i32.const 1)) (i32.const 12))))
+    (local.set $entry (i32.load offset=8 (local.get $p)))
+    ;; Nested untracked calls return below the tracked entry. A return to the
+    ;; recorded PC from a different ESP is never accepted as that return.
+    (if (i32.or (i32.ge_u (local.get $esp) (local.get $entry))
+                (i32.eq (local.get $ret) (i32.load offset=4 (local.get $p))))
+      (then
+        (if (i32.or (i32.ne (local.get $esp) (local.get $entry))
+                    (i32.ne (local.get $ret) (i32.load offset=4 (local.get $p))))
+          (then (global.set $pending_reason (i32.const 4)) (return)))
+        (global.set $pending_depth (i32.sub (global.get $pending_depth) (i32.const 1))))))
+
   (func $th_nop (param $op i32) (local $nx_fn i32) (local $nx_op i32) (dispatch-next))
   ;; 1: skip next word
   (func $th_next_word (param $op i32) (local $nx_fn i32) (local $nx_op i32) (drop (read-thread-word)) (dispatch-next))
@@ -637,6 +697,7 @@
     (local $target i32) (local.set $target (read-thread-word))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $op))
+    (call $pending_push (local.get $target) (local.get $op) (i32.load offset=16 (global.get $reg_base)))
     (call $cs_push (local.get $op))
     (global.set $eip (local.get $target))
     (return_call $branch_end))
@@ -675,7 +736,8 @@
       (call $gs32 (local.get $stack) (local.get $op))
       (i32.store offset=16 (global.get $reg_base) (local.get $stack))
       (if (i32.eqz (thunk-contains (local.get $target)))
-        (then (call $cs_push (local.get $op))))
+        (then (call $pending_push (local.get $target) (local.get $op) (i32.load offset=16 (global.get $reg_base)))
+    (call $cs_push (local.get $op))))
       (global.set $eip (local.get $target))
       (global.set $block_budget (i32.const 0))
       (return)))
@@ -691,6 +753,7 @@
     ;; Regular indirect call
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $op))
+    (call $pending_push (local.get $target) (local.get $op) (i32.load offset=16 (global.get $reg_base)))
     (call $cs_push (local.get $op))
     (global.set $eip (local.get $target))
     (return_call $branch_end))
@@ -718,6 +781,7 @@
       (i32.const 0) (i32.const 0))
     (global.set $eip (local.get $ret))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $pending_pop (local.get $ret) (local.get $esp))
     (call $cs_pop)
     (return_call $branch_end))
   (func $th_ret_imm (param $op i32)
@@ -730,6 +794,7 @@
       (local.get $esp) (local.get $ret) (i32.const 0) (i32.const 0))
     (global.set $eip (local.get $ret))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.add (i32.const 4) (local.get $op))))
+    (call $pending_pop (local.get $ret) (local.get $esp))
     (call $cs_pop)
     (return_call $branch_end))
 
@@ -857,6 +922,7 @@
     (if (global.get $sr_fast)
       (then (i32.store (i32.add (local.get $cur) (global.get $sr_delta)) (local.get $ret)))
       (else (call $gs32 (local.get $cur) (local.get $ret))))
+    (call $pending_push (local.get $target) (local.get $ret) (local.get $cur))
     (call $cs_push (local.get $ret))
     (global.set $eip (local.get $target))
     (return_call $branch_end))
@@ -877,6 +943,7 @@
     (global.set $eip (local.get $ret))
     (i32.store offset=16 (global.get $reg_base)
       (i32.add (local.get $cur) (i32.add (i32.const 4) (local.get $imm))))
+    (call $pending_pop (local.get $ret) (local.get $cur))
     (call $cs_pop)
     (return_call $branch_end))
   ;; H43's operand word is emitted as 0 at all three decoder sites and read by
@@ -2654,7 +2721,8 @@
 
   ;; 266: CALL rel16 — push 16-bit return addr, jump to 16-bit target
   (func $th_call_rel16 (param $op i32)
-    (local $target i32) (local.set $target (read-thread-word))
+    (local $target i32) (call $pending_gap)
+    (local.set $target (read-thread-word))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 2)))
     (call $gs16 (i32.load offset=16 (global.get $reg_base)) (i32.and (local.get $op) (i32.const 0xFFFF)))
     (global.set $eip (local.get $target)))

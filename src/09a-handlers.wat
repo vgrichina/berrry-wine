@@ -286,6 +286,7 @@
   ;; the root; a retired instance must never bootstrap a replacement here.
   (func $mm_callback_begin (param $esp i32) (param $audio i32)
     (local $depth i32) (local $frame i32) (local $child i64)
+    (call $pending_gap)
     (call $invocation_validate)
     (local.set $depth (select (global.get $mm_callback_depth) (i32.const 0)
       (i64.eq (global.get $mm_callback_owner) (global.get $invocation_root))))

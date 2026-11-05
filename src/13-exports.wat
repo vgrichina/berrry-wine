@@ -131,6 +131,48 @@
   ;; ============================================================
   ;; MAIN RUN LOOP
   ;; ============================================================
+  (func (export "pending_context_version") (result i32) (i32.const 1))
+  ;; A successful arm is possible exactly once, before any guest execution.
+  ;; Epoch is supplied by the authenticated owner; native lease is instance local.
+  (func (export "pending_context_arm") (param $epoch i32) (result i32)
+    (local $lease i32)
+    (if (i32.or (global.get $pending_seen) (global.get $pending_armed))
+      (then (global.set $pending_reason (i32.const 1)) (return (i32.const 0))))
+    (global.set $pending_armed (i32.const 1))
+    (global.set $pending_epoch (local.get $epoch))
+    (global.set $pending_thread (global.get $current_thread_id))
+    (if (i32.or (i32.eqz (local.get $epoch))
+          (i32.ne (global.get $current_thread_id) (i32.const 1)))
+      (then (global.set $pending_reason (i32.const 2)) (return (i32.const 0))))
+    (loop $lease_slot
+      (local.set $lease (i32.atomic.load (global.get $PENDING_CONTEXT)))
+      (if (i32.ge_u (local.get $lease) (i32.const 16))
+        (then (global.set $pending_reason (i32.const 6)) (return (i32.const 0))))
+      (br_if $lease_slot (i32.ne (local.get $lease)
+        (i32.atomic.rmw.cmpxchg (global.get $PENDING_CONTEXT) (local.get $lease)
+          (i32.add (local.get $lease) (i32.const 1))))))
+    (global.set $pending_slot (i32.add (global.get $PENDING_CONTEXT)
+      (i32.add (i32.const 4096) (i32.shl (local.get $lease) (i32.const 11)))))
+    (i32.const 1))
+  (func $pending_coverage (export "pending_context_coverage") (param $epoch i32) (result i32)
+    (if (i32.ne (local.get $epoch) (global.get $pending_epoch))
+      (then (if (global.get $pending_armed)
+        (then (global.set $pending_reason (i32.const 2))))))
+    (call $pending_valid))
+  (func (export "pending_context_status") (param $epoch i32) (result i32)
+    ;; A trap/aborted run leaves this bit set. No snapshot inside execution,
+    ;; or after that coverage gap, can certify absence.
+    (if (global.get $pending_active) (then (call $pending_gap)))
+    (call $pending_coverage (local.get $epoch)))
+  (func (export "pending_context_reason") (result i32) (global.get $pending_reason))
+  (func (export "pending_context_depth") (result i32) (global.get $pending_depth))
+  (func (export "pending_context_entry") (param $index i32) (param $field i32) (result i32)
+    (if (i32.or (i32.ge_u (local.get $index) (global.get $pending_depth))
+                (i32.ge_u (local.get $field) (i32.const 3))) (then (return (i32.const 0))))
+    (i32.load (i32.add (global.get $pending_slot)
+      (i32.add (i32.mul (local.get $index) (i32.const 12))
+               (i32.shl (local.get $field) (i32.const 2))))))
+
   ;; JS COM frames retain this exact i64 child token, never a depth surrogate.
   ;; A failed/aborted call deliberately leaves its child live: only explicit
   ;; process/thread retirement may discard it, not a JS exception handler.
@@ -164,6 +206,10 @@
     (local $prev_eip i32) (local $prev_esp i32)
     (local $saved_budget i32) (local $saved_start i32) (local $shared_cache_generation i32)
     (local $saved_api_depth i32)
+    (if (global.get $pending_active) (then (call $pending_gap)))
+    (global.set $pending_active (i32.const 1))
+    (global.set $pending_seen (i32.const 1))
+    (drop (call $pending_valid))
     ;; These entry services have no per-store architectural continuation.
     ;; Refuse their whole entry state in REP debugger mode, before attribution,
     ;; budgets, queue import/pop, stack writes, host calls or callback setup.
@@ -222,6 +268,7 @@
           (local.get $shared_cache_generation))
         (global.set $thread_flush_pending (i32.const 1))))
     (block $halt (loop $main
+      (call $pending_entry (global.get $eip) (i32.load offset=16 (global.get $reg_base)))
       (if (i32.eqz (global.get $eip))
         (then
           (call $null_transfer_check)
@@ -534,7 +581,8 @@
       (i32.add (global.get $blocks_retired_base) (global.get $last_run_blocks)))
     (global.set $run_budget_start (local.get $saved_start))
     (global.set $api_handler_depth (local.get $saved_api_depth))
-    (global.set $block_budget (local.get $saved_budget)))
+    (global.set $block_budget (local.get $saved_budget))
+    (global.set $pending_active (i32.const 0)))
 
   ;; Blocks retired since the instance started, including the running call's
   ;; progress so far. Wraps; only ever used as a difference.
@@ -786,7 +834,7 @@
   (func (export "get_sync_msg_depth") (result i32) (global.get $sync_msg_depth))
   (func (export "get_window_thread") (param $hwnd i32) (result i32)
     (call $wnd_get_thread (local.get $hwnd)))
-  (func (export "set_current_thread_id") (param i32) (global.set $current_thread_id (local.get 0)))
+  (func (export "set_current_thread_id") (param i32) (if (global.get $pending_seen) (then (call $pending_gap))) (global.set $current_thread_id (local.get 0)))
   (func (export "set_host_shadow") (param i32)
     (global.set $host_shadow (i32.ne (local.get 0) (i32.const 0))))
   (func (export "get_image_base") (result i32) (global.get $image_base))
@@ -2541,8 +2589,8 @@
   (func (export "get_code_end") (result i32) (global.get $code_end))
 
   ;; Register setters for test harness
-  (func (export "set_eip") (param i32) (global.set $eip (local.get 0)))
-  (func (export "set_esp") (param i32) (i32.store offset=16 (global.get $reg_base) (local.get 0)))
+  (func (export "set_eip") (param i32) (if (global.get $pending_seen) (then (call $pending_gap))) (global.set $eip (local.get 0)))
+  (func (export "set_esp") (param i32) (if (global.get $pending_seen) (then (call $pending_gap))) (i32.store offset=16 (global.get $reg_base) (local.get 0)))
   (func (export "set_ebp") (param i32) (i32.store offset=20 (global.get $reg_base) (local.get 0)))
   (func (export "set_eax") (param i32) (i32.store offset=0 (global.get $reg_base) (local.get 0)))
   (func (export "set_ecx") (param i32) (i32.store offset=4 (global.get $reg_base) (local.get 0)))

@@ -62,7 +62,17 @@ function decodeFileSnapshot(main,file){
   if(outputSize!==main.rawRequestWords?.[2]||destination!==main.rawRequestWords?.[0]||compressedRead>compressedSize||outputCopied>outputSize)throw Error('wrong request/decode cursors');
   return {kind:output?'archive-output-callback':'archive-input-callback',decode:{state:ptr,stream,compressedSize,compressedRead,outputSize,outputCopied,destination,remaining:outputSize-outputCopied}};
 }
-function attach({host,getExports,getSlice=()=>null,getEpoch=()=>null,workerSlot,exeSha256,wasmSha256,deadline,now=()=>performance.now(),maxRecords=512,maxBoundaries=50000000,maxRecordBytes=8192}={}) {
+// Versioned native proof is independent of the diagnostic return-address ring.
+// Only the authenticated owning instance may supply these exports. No saved
+// stack words, sampled startup rows, or JS frames can stand in for coverage.
+function pendingAbsence(ex,epoch){
+  if(ex?.pending_context_version?.()!==1||ex.pending_context_status(epoch)!==1)
+    throw Error('native pending context incomplete: '+(ex?.pending_context_reason?.()??'unsupported'));
+  const depth=ex.pending_context_depth()>>>0;
+  if(depth!==0)throw Error('native relevant calls pending: '+depth);
+  return {version:1,epoch,thread:ex.get_current_thread_id()>>>0,depth:0};
+}
+function attach({pendingEpoch=null,host,getExports,getSlice=()=>null,getEpoch=()=>null,workerSlot,exeSha256,wasmSha256,deadline,now=()=>performance.now(),maxRecords=512,maxBoundaries=50000000,maxRecordBytes=8192}={}) {
   if(workerSlot!==0||exeSha256!==EXE_SHA256||!(/^[a-f0-9]{64}$/).test(wasmSha256||''))throw Error('wrong Worker/media/module pin');
   if(typeof host?.log_block!=='function'||typeof getExports!=='function'||owners.has(host))throw Error('missing or occupied owning import');
   if(!Number.isFinite(deadline)||deadline<=now()||deadline>now()+360000||!Number.isInteger(maxRecords)||maxRecords<1||maxRecords>512||!Number.isInteger(maxBoundaries)||maxBoundaries<1||maxBoundaries>50000000)throw Error('invalid observation bound');
@@ -81,6 +91,7 @@ function attach({host,getExports,getSlice=()=>null,getEpoch=()=>null,workerSlot,
   function identity(){const e=getExports();if(!e||ex&&e!==ex)throw Error('foreign instance');ex=e;
     if(host.log_block!==wrapped)throw Error('owning import replaced');
     if(getEpoch()!==epoch)throw Error('foreign observation epoch');
+    if(pendingEpoch!==null&&ex.pending_context_coverage(pendingEpoch)!==1)throw Error('native pending coverage lost');
     const slice=getSlice();if(slice){if(!Number.isSafeInteger(slice.ordinal)||slice.ordinal<1||slice.ordinal<lastOrdinal)throw Error('stale native slice');lastOrdinal=slice.ordinal;}
     if(ex.get_current_thread_id()!==1||ex.get_image_base()!==0x400000)throw Error('wrong thread/loader');
     if(u(0x400000)!==0x00905a4d||u(0x400000+u(0x40003c))!==0x4550)throw Error('wrong PE loader');
@@ -256,7 +267,7 @@ function attach({host,getExports,getSlice=()=>null,getEpoch=()=>null,workerSlot,
   host.log_block=wrapped;owners.add(host);
   return {report,sample,finish,check(){if(report.status==='running'&&now()>=deadline)return finish('deadline');if(report.status==='running'&&!report.blocks){report.error='mandatory native boundaries missing';finish('unsupported-or-unobservable');}return report;}};
 }
-const api={EXE_SHA256,SCRIPT_SHA256,PINS,CUTS,attach,decodeFileSnapshot};
+const api={pendingAbsence,EXE_SHA256,SCRIPT_SHA256,PINS,CUTS,attach,decodeFileSnapshot};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 else globalThis.Mdk2LuaConstructionObserver=api;
 })();

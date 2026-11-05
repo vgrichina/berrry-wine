@@ -196,6 +196,8 @@
   (region.declare $CS_RING (size 0x00000100) (align 0x00000100)
     (stride 0x4 (count 64)) (mask $CS_MASK) (size-is-power-of-2)
     (owner "05-alu.wat:$cs_push"))
+  (region.declare $PENDING_CONTEXT (size 0x00009000) (align 0x00001000)
+    (owner "01-header.wat:$PENDING_CONTEXT"))
   ;; timeSetEvent slots: 8 x 24 bytes, then the id allocator in its own region.
   ;; Sized from $MM_TIMER_MAX x $MM_TIMER_ENTRY, so growing either without
   ;; growing this is a compile error rather than a silent overrun into whatever
