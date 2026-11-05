@@ -1810,7 +1810,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] AoWII rendering overlap and gameplay measurement
   id: AOW2-RENDERING-COVERAGE-20261009
-  Update 2026-11-05: Fresh aow2-current-browser-gameplay-1850 launcher3241931 assigned ONE original current browser owning-Worker WebGL army movement/terrain-panel capture. Source-only behind AoE3repaired2005 -> Conanresidency1825 -> Arannaloader1840 exactFINALcleanup; native acceptance preserved. No new browser/FPS/audio claim yet.
+  Update 2026-11-05T19:45Z: Published eff3a6aa2, run20261105-aow2-current-browser-gameplay: ONE current original browser reached reviewed Scenario submenu, then Worker0 clear_yield rejected by callback reservation fence. Issuer/token/epoch unknown; no gameplay, actual WebGL/FPS/audio qualification. Coordinator verified137 artifact hashes,3 absent PIDs/2 refused ports/1 absent profile and inspected submenu screenshot. Fresh aow2-callback-reservation-1945 isolates host continuation with small real Worker regression, preserving guard; SOURCEONLY AoE3native1900 -> legacyframebuffer1925 -> Conanplayer1930 exactFINALcleanup. No original rerun in successor; native acceptance preserved.
   status: current native visual gap closed; gameplay FPS/audio remain open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Next: Preserve reviewed current army movement and lower-panel clipping evidence. Logical gameplay FPS and audio need separate evidence; no browser/GPU/general-playability claim. Do not repeat accepted viewport9a438f1b9 or vblank918f25772 repairs.
