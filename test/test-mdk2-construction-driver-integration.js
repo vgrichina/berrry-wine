@@ -836,6 +836,31 @@ for(const mode of ['continuity-deadline','continuity-registers','continuity-paus
   });
 }
 
+test('observer GC prefix failure remains terminal and queryable in actual current Worker without later execution',async()=>{
+ for(const row of integration.selectedRuntime().pins.moduleFiles){
+  const result=await nativeOne({...row,localReference:row.path},'gc-prefix-preserve');
+  assert(result.value.pass,JSON.stringify(result.value));
+  assert.match(result.value.report.fatal,/gc return history missing/);
+  assert.equal(result.value.report.observer.status,'unsupported-or-unobservable');
+  assert.equal(result.value.report.observer.blocks,1);
+  assert.equal(result.value.report.terminal,true);assert.equal(result.value.report.traced,false);
+  assert(!result.value.report.observer.records.some(r=>r.kind==='gc-entry'||r.kind==='gc-return'));
+  assert.equal(result.value.noLaterExecution,true);
+  write(EVIDENCE,path.basename(row.path)+'.gc-prefix-preserve.json',{fixtureOnly:true,...result.value});
+ }
+});
+
+test('genuine original import failure still traps in actual current Worker',async()=>{
+ for(const row of integration.selectedRuntime().pins.moduleFiles){
+  const result=await nativeOne({...row,localReference:row.path},'import-failure');
+  assert(result.value.rejected,JSON.stringify(result.value));
+  assert.match(result.value.rejected,/original import fixture failure/);
+  assert.match(result.value.report.fatal,/original import fixture failure/);
+  assert.equal(result.value.report.traced,false);
+  write(EVIDENCE,path.basename(row.path)+'.genuine-import-failure.json',{fixtureOnly:true,...result.value});
+ }
+});
+
 test('page hook rejects late installation, unhashed and ambiguous replacement Module sends', async()=>{
   for(const mode of ['late','unhashed','replacement']){
     class W{postMessage(){}}
@@ -1465,7 +1490,7 @@ async function nativeChild() {
   workerData.port.on('message'`);
   if(workerData.mode.startsWith('missing-history-'))fixtureSource=fixtureSource.replace(
     'const slice=()=>new Promise','const rawSlice=()=>new Promise').replace(
-    "  workerData.port.on('message'", `  const slice=async()=>{await rawSlice();throw Error('first rejected boundary returned to native producer');};
+    "  workerData.port.on('message'", `  const slice=async()=>{await rawSlice();if(workerData.mode==='missing-history-stop'&&bound.report().fatal)throw Error(bound.report().fatal);throw Error('first rejected boundary returned to native producer');};
   workerData.port.on('message'`);
   if(!workerData.mode.startsWith('control'))fixtureSource=fixtureSource.replace('e.set_trace_esp(1,0x400000,0x480000);', `
     if(workerData.mode.startsWith('mid-poll')){
@@ -1518,6 +1543,21 @@ async function nativeChild() {
   }
   e.set_esp(stack);u(stack,caller);u(stack+4,entry);`);
   fixtureSource=fixtureSource.replace("e.set_eip(start);let steps=0;", "if(workerData.mode.startsWith('missing-history'))start=CUTS.finalizeType10;e.set_eip(start);let steps=0;");
+  if(workerData.mode==='gc-prefix-preserve')fixtureSource=fixtureSource.replace(
+    "  await run('type10-finalizer',CUTS.finalize,caller);", `
+  {
+  // Genuine original return boundary with deliberately unobserved entry. No
+  // historical stack/GC frame is invented and no game is launched.
+  e.set_eip(0x40218c);await slice();
+  const first=bound.report();assert.match(first.fatal,/gc return history missing/);
+  const stopped=state(),memoryHash=H(b);await slice();
+  assert.deepEqual(state(),stopped);assert.equal(H(b),memoryHash);
+  const end=Date.now()+9000;assert.throws(()=>bound.invoke('checkpoint',{commandEnd:end,absoluteEnd:end}),/gc return history missing/);
+  const report=bound.invoke('report');assert.equal(report.fatal,first.fatal);
+  assert.equal(report.observer.blocks,1);assert.equal(report.observer.status,'unsupported-or-unobservable');
+  parentPort.postMessage({pass:true,noLaterExecution:true,report,stopped,memoryHash});return;
+  }
+  await run('type10-finalizer',CUTS.finalize,caller);`);
   const trapStart=baseline.indexOf('  // Original undefined instruction trap parity');
   const trapEnd=baseline.indexOf('  parentPort.postMessage({pass:true,segments,before,trap:',trapStart);
   fixtureSource+="if(workerData.mode.startsWith('control'))e.set_trace_esp(0,0,0);\n";

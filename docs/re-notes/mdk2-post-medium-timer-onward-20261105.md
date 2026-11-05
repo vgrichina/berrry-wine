@@ -59,3 +59,73 @@ the MDK full flock build. Actual Chrome still waits final file publication.
 The full flock build passes and reproduces current e620f3ad/66b37bd7 modules.
 Stronghold final `7c73cca3087d661e6aba1f57df082970705fe129` and its01:27:13Z
 file release satisfy the explicit final publication/build gate.
+
+Implementation `d1c6c9796` was published by immediate origin and direct strict
+pinned SSH pull/push. Actual run Git was
+`b00672c90e56a3c538e867064a1976f1412612d4`; all relevant source differences
+were recorded before launch. `amendment-ledger.json` binds old/new local helper
+and test hashes, and unchanged integration/resolver/observer and module hashes.
+The actual composed preflight passed439FS/439proofHTTP/439actualHTTP and2253
+installed-caller rows with plain Puppeteer mocked, public/native spawn forbidden,
+zero Chrome launches and both servers closed. Historical manifests and current
+runtime source/module rows were unchanged.
+
+ONE original launched Chrome at01:29:40.526Z and reached New Game, then the difficulty
+screen with Medium highlighted at3648. Ten fresh PNG checkpoints were personally
+viewed, from startup0 through native-selector67; each review binds its PNG SHA.
+New Game needed48 steps, versus64 in the prior original. The ordinary Medium
+keydown was acknowledged at command76; its readback still had queued KEYDOWN13
+and CHAR13, asyncPressPublished true, and native command62 raw0. This is queued
+input, not native press or consumption. No Medium full-rest, timer, loading or
+gameplay result is established by this attempt.
+
+The first attempted Medium16-step command77 failed at01:32:54.463Z. The surfaced
+CDP error was TargetCloseError on Runtime.evaluate. The retained browser console
+records the underlying owning-Worker trap: `gc return history missing` at
+EIP40218c. Initial observer state at3648 had zero boundaries and only its initial
+sample. Its all-Worker frozen snapshot captured main PC449096, ESP074ffd68,
+saved44308f at stack index4, and saved40218c at index10 (ESP+40). Original static
+instructions show44308a calls449050 and44308f is its actual return. Together
+with the later missing-entry return, this supports an already in-flight GC
+when tracing attached. The earlier GC entry is not observed or reconstructed.
+The concrete prerequisite is native GC entry coverage before requiring that
+return. The task cannot progress by fabricating an entry or relaxing that guard.
+
+The actual driver immediately took its first-command-failure cleanup. Normal
+Browser.close called01:32:54.494Z, Chrome1625277/start188938976 exited0/null at
+01:32:54.606Z and closure resolved.607Z. No kill fallback ran. Independent
+verification at01:33:12.162Z confirms that Chrome, Node1624693/start188938366
+and flock1624692/start188938366 are absent, proofHTTP40585/actualHTTP44711/
+DevTools42721 refused, exact profile absent and external flock inode141907 free.
+A subsequent ordinary quit request found its owner process already absent;
+it submitted no additional command. No second original was attempted.
+
+The necessary offline remedy preserves the first observer failure through the
+existing private run-unwind sentinel. Previously the observer's strict rejection
+threw through the ordinary guest Worker, closing its CDP session and losing the
+terminal report. The adapter now catches its own observer rejection at the same
+native run boundary already used for observation exhaustion. The observer still
+rejects missing GC history, stops tracing and becomes terminal. A later queued
+slice executes no native instructions. The report stays queryable, so the driver
+can persist the actual cause before its normal first-fault closure. Original
+native/import traps keep their ordinary handling. No observer byte, pin work,
+record/boundary/deadline guard, source/module manifest, guest state, input or
+controller cap is changed. This improves fault evidence; it does not establish
+GC entry coverage or authorize any further original.
+
+The new actual shipped-Worker regression executes the original GC return
+boundary with an explicitly unobserved fixture prefix, independently for both
+current module variants. It fails against the prior adapter and passes with the
+remedy: the same missing-history cause remains terminal/queryable, no GC entry
+or return event is invented, and a second queued slice preserves all registers
+and the complete memory hash. Genuine original-import failures still trap for
+both modules. Twenty-nine focused integration tests and45 local tests pass.
+The initial new fixture used a duplicate local variable, then an incorrect
+expected status/error string; these offline fixture failures are retained,
+corrected and distinguished from the actual red regression. No fixture is an
+original gameplay attempt.
+
+The prior two queued first-fault native regressions also pass: the adapter still
+stops before the rejected POP ESI for both historical module fixtures. The full
+flock build passes after the remedy and again reproduces the unchanged current
+e620f3ad/66b37bd7 pair. All builds are finished.

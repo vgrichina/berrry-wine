@@ -192,8 +192,9 @@ function installBinding(options) {
   }
   const audit = [], allowed = options.moduleHashes;
   let fatal = null, entry = null, receivedOnce = false, started = false, terminal = false, timer = null, traced = false, observer = null, paused = false, checkpoint = null, traceEnd = null;
-  // Only observation exhaustion is caught at the native run boundary. Genuine
-  // native traps/import failures retain the shipped Worker's original handling.
+  // Observer rejection/exhaustion unwinds at the native run boundary, keeping
+  // its first terminal report queryable. Genuine native/import failures retain
+  // the shipped Worker's original handling.
   let observationStop = null, nativeSlice = null;
   const observationReasons = ['boundary-limit','record-limit','record-byte-limit','deadline'];
   function exhausted(reason) {
@@ -285,7 +286,8 @@ function installBinding(options) {
         if (observer.report.error) fatal ||= observer.report.error;
         if (observationReasons.includes(status)) exhausted(status);
         stop(status);
-        throw Error(fatal || status);
+        observationStop ||= Error(fatal || status);
+        throw observationStop;
       }
       if (traced && (observer.report.blocks >= 50000000 || observer.report.records.length >= 512)) {
         const reason = observer.report.blocks >= 50000000 ? 'boundary-limit' : 'record-limit';
