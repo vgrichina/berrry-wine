@@ -75,7 +75,7 @@ difficulty selection, and Kordava LOADING at failure. None proves player
 gameplay. The probe and Chrome exited normally with code 0; independent
 `runtime-cleanup.json` verified PIDs, ports, profile and four locks released.
 
-## Regression and remaining original retest
+## Regression and single original retest
 
 `test/test-d3d9-queued-texture-residency-web.js` exercises the production
 receiver/executor on a real render Worker under both WebGL1 and WebGL2.
@@ -92,5 +92,36 @@ stage choices, filters, mip chains, resource aliases and keyed residency.
 gates and standard/compat modules (2173782/2176428 bytes). Logs are
 `regression-before.log`, `regression-after.log`, `existing-residency.log`,
 `existing-cube-lod.log`, and `build-after-repair.log`.
-The single original retest remains pending at this repair publication point.
-No gameplay is claimed.
+
+Repair commit `72768dcf89631796103d7295c0546195fd867871` was immediately
+published on main before the single original retest. The retest reused the
+same pinned installation without installer execution or media copying. Its
+actual loaded module matched the diagnostic module above; CDP confirmed the
+actual render Worker's repaired backend hash
+`0d6cea709b269d2c3e1461d6354bf822087f51543f57d39ee10ac61de57bcbdb`.
+
+The repaired Worker retained `t106`'s 1048576 bytes at DRAW 4944, successfully
+resolved its key-only reference at DRAW 4947, and released it at DRAW 5091.
+Sequence numbers differ from the diagnostic because the menu/splash timing
+differs. Observation started at sequence 1 and continued through DRAW 23001,
+without an observed missing texture, observer error or logged queue error.
+`causal-verdict.json` checks these facts against the preserved traces.
+
+Personally reviewed retest captures progress from splash and New Game/Warrior
+through Kordava LOADING into a rendered, narrated opening cinematic. One
+ordinary Escape press/release during that cinematic did not establish player
+control. `retest/final-scene.png` and `retest/last-before-close.png` show the
+town panorama and story subtitles. **Player gameplay, movement, combat and
+audio are not verified.** No further original launch was made.
+
+The session was closed normally at 19:14:38Z after demonstrating the repair;
+probe and Chrome both exited 0. `retest/runtime-cleanup.json` independently
+verifies its Node/Chrome PIDs absent, both ports refused, browser profile absent
+and four locks free. No boxes were used (ID/state/expiry: N/A).
+
+Next evidence needed is ordinary player control after the opening cinematic.
+The texture-residency cause has a failing-before/passing-after queued
+regression and a successful genuine retest of the formerly failing key path;
+the cinematic is not a gameplay acceptance result. Evidence, exact source
+identities, relevant binarydiff/new-file patches and unique actual modules
+remain under the named run. The genuine 37-file installation is preserved.
