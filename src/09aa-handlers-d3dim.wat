@@ -825,6 +825,7 @@
 
   ;; IDirect3DDevice2_GetCaps — 3 args (incl. this): (this, lpHWDesc, lpHELDesc)
   (func $handle_IDirect3DDevice2_GetCaps (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (call $d3dim_fill_device_desc (local.get $arg1))
     (call $d3dim_fill_device_desc (local.get $arg2))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
@@ -832,16 +833,19 @@
 
   ;; IDirect3DDevice2_SwapTextureHandles — 3 args (incl. this)
   (func $handle_IDirect3DDevice2_SwapTextureHandles (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice2_GetStats — 2 args (incl. this)
   (func $handle_IDirect3DDevice2_GetStats (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 12)) (then (return)))
     (i32.store offset=0 (global.get $reg_base) (call $d3dim_get_stats (local.get $arg1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice2_AddViewport — 2 args (incl. this)
   (func $handle_IDirect3DDevice2_AddViewport (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 12)) (then (return)))
     (call $handle_IDirect3DDevice3_AddViewport
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -849,6 +853,7 @@
 
   ;; IDirect3DDevice2_DeleteViewport — 2 args (incl. this)
   (func $handle_IDirect3DDevice2_DeleteViewport (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 12)) (then (return)))
     (call $handle_IDirect3DDevice3_DeleteViewport
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -856,6 +861,7 @@
 
   ;; IDirect3DDevice2_NextViewport — 4 args (incl. this)
   (func $handle_IDirect3DDevice2_NextViewport (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 20)) (then (return)))
     (call $handle_IDirect3DDevice3_NextViewport
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -864,6 +870,7 @@
   ;; IDirect3DDevice2_EnumTextureFormats — 3 args (incl. this)
   (func $handle_IDirect3DDevice2_EnumTextureFormats (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $ret_addr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (if (i32.eqz (local.get $arg1)) (then
       (i32.store offset=0 (global.get $reg_base) (i32.const 0))
       (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
@@ -878,21 +885,25 @@
 
   ;; IDirect3DDevice2_BeginScene — 1 args (incl. this)
   (func $handle_IDirect3DDevice2_BeginScene (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 8)) (then (return)))
     (call $d3dim_begin_scene (local.get $arg0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   ;; IDirect3DDevice2_EndScene — 1 args (incl. this)
   (func $handle_IDirect3DDevice2_EndScene (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 8)) (then (return)))
     (call $d3dim_end_scene (local.get $arg0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   ;; IDirect3DDevice2_GetDirect3D — 2 args (incl. this)
   (func $handle_IDirect3DDevice2_GetDirect3D (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 12)) (then (return)))
     (call $d3dim_get_direct3d (local.get $arg0) (local.get $arg1) (global.get $DX_VTBL_D3D2))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice2_SetCurrentViewport — 2 args (incl. this)
   (func $handle_IDirect3DDevice2_SetCurrentViewport (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 12)) (then (return)))
     (call $handle_IDirect3DDevice3_SetCurrentViewport
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -900,11 +911,13 @@
 
   ;; IDirect3DDevice2_GetCurrentViewport — 2 args (incl. this)
   (func $handle_IDirect3DDevice2_GetCurrentViewport (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 12)) (then (return)))
     (call $d3dim_get_current_viewport (local.get $arg0) (local.get $arg1) (global.get $DX_VTBL_D3DVP2))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice2_SetRenderTarget — 3 args (incl. this)
   (func $handle_IDirect3DDevice2_SetRenderTarget (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (call $d3dim_set_render_target (local.get $arg0) (local.get $arg1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
@@ -912,64 +925,77 @@
   ;; Writes the bound render-target surface ptr to *arg1 and AddRefs it.
   ;; rt_slot is stashed at entry+8 by d3dim_create_device.
   (func $handle_IDirect3DDevice2_GetRenderTarget (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 12)) (then (return)))
     (call $d3dim_get_render_target (local.get $arg0) (local.get $arg1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice2_Begin — 4 args (incl. this)
-  ;; The v2 half of the unimplemented immediate-mode family; see the comment on
-  ;; $handle_IDirect3DDevice3_Begin for why these trap instead of returning
-  ;; S_OK and dropping the vertices on the floor.
+  ;; Device2's D3DVERTEXTYPE is normalized by the shared stream builder.
   (func $handle_IDirect3DDevice2_Begin (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr)))
+    (call $d3dim_immediate_begin (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 2))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
 
   ;; IDirect3DDevice2_BeginIndexed — 6 args (incl. this)
   (func $handle_IDirect3DDevice2_BeginIndexed (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr)))
+    (call $d3dim_immediate_begin (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+      (local.get $arg3) (local.get $arg4) (i32.const 1) (i32.const 2))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
 
   ;; IDirect3DDevice2_Vertex — 2 args (incl. this)
   (func $handle_IDirect3DDevice2_Vertex (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr)))
+    (call $d3dim_immediate_submit (local.get $arg0) (local.get $arg1) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice2_Index — 2 args (incl. this)
   (func $handle_IDirect3DDevice2_Index (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr)))
+    (call $d3dim_immediate_submit (local.get $arg0) (local.get $arg1) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice2_End — 2 args (incl. this)
   (func $handle_IDirect3DDevice2_End (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr)))
+    (call $d3dim_immediate_end (local.get $arg0) (local.get $arg1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice2_GetRenderState — 3 args (incl. this)
   (func $handle_IDirect3DDevice2_GetRenderState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (call $d3dim_get_render_state (local.get $arg0) (local.get $arg1) (local.get $arg2))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice2_SetRenderState — 3 args (incl. this)
   (func $handle_IDirect3DDevice2_SetRenderState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (call $d3dim_set_render_state (local.get $arg0) (local.get $arg1) (local.get $arg2))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice2_GetLightState — 3 args (incl. this)
   (func $handle_IDirect3DDevice2_GetLightState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (call $d3dim_get_light_state (local.get $arg0) (local.get $arg1) (local.get $arg2))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice2_SetLightState — 3 args (incl. this)
   (func $handle_IDirect3DDevice2_SetLightState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (call $d3dim_set_light_state (local.get $arg0) (local.get $arg1) (local.get $arg2))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice2_SetTransform — 3 args (incl. this)
   (func $handle_IDirect3DDevice2_SetTransform (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (call $d3dim_set_transform (local.get $arg0) (local.get $arg1) (local.get $arg2))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice2_GetTransform — 3 args (incl. this)
   (func $handle_IDirect3DDevice2_GetTransform (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (call $d3dim_get_transform (local.get $arg0) (local.get $arg1) (local.get $arg2))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice2_MultiplyTransform — 3 args (incl. this)
   (func $handle_IDirect3DDevice2_MultiplyTransform (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
     (call $d3dim_multiply_transform (local.get $arg0) (local.get $arg1) (local.get $arg2))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
@@ -985,6 +1011,7 @@
   ;; handle those once the WVP pipeline and triangle fill land.
   (func $handle_IDirect3DDevice2_DrawPrimitive (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $dwVertexCount i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 28)) (then (return)))
     (local.set $dwVertexCount (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
     ;; kind=10 DP2: primType, vtxType, vtxCount, lpvVertices
     (call $host_dx_trace (i32.const 10) (local.get $arg1) (local.get $arg2)
@@ -997,6 +1024,7 @@
   ;; IDirect3DDevice2_DrawIndexedPrimitive — 8 args (incl. this)
   (func $handle_IDirect3DDevice2_DrawIndexedPrimitive (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $dwVertexCount i32) (local $lpwIndices i32) (local $dwIndexCount i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 36)) (then (return)))
     (local.set $dwVertexCount (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
     (local.set $lpwIndices    (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
     (local.set $dwIndexCount  (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
@@ -1012,10 +1040,12 @@
   ;; but removes a silent data drop so that apps polling Get-after-Set see the
   ;; value they stored.
   (func $handle_IDirect3DDevice2_SetClipStatus (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 12)) (then (return)))
     (call $d3dim_set_clip_status (local.get $arg0) (local.get $arg1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   (func $handle_IDirect3DDevice2_GetClipStatus (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 12)) (then (return)))
     (call $d3dim_get_clip_status (local.get $arg0) (local.get $arg1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 

@@ -43,9 +43,11 @@
   ;;   +3944  owned SetTexture reference (guest interface ptr; never captured)
   ;;   +3948  initialized light-parameter membership mask (never captured)
   ;;   +3952  defined light-enable membership mask (never captured)
+  ;;   +3956  scene bracket (new Device2/3 immediate draws require it)
   ;;   +3968  render Worker producer descriptor scratch (32)
   ;;   +4000  D3DCLIPSTATUS round-trip storage          (24)
   ;;   +4024  texture-transform block guest ptr        (i32, 4)  ($d3dim_tex_block)
+  ;;   +4028  owned Device2/3 immediate stream descriptor (never captured)
   ;;   +4032  vertex_project vec temp                  (16)
   ;;   +4048  texgen temp A                            (16)
   ;;   +4064  vertex_project clip temp                 (16)
@@ -1546,11 +1548,19 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
   ;; ── BeginScene / EndScene ─────────────────────────────────────
-  ;; Phase 0: no-op; Phase 5 will reset/flush the triangle queue here.
   (func $d3dim_begin_scene (param $this i32)
+    (local $state i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
+    (local.set $state (call $d3ddev_state (local.get $this)))
+    (if (local.get $state) (then
+      (call $gs32 (i32.add (local.get $state) (i32.const 3956)) (i32.const 1))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
   (func $d3dim_end_scene (param $this i32)
-    (local $rt i32)
+    (local $rt i32) (local $state i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
+    (local.set $state (call $d3ddev_state (local.get $this)))
+    (if (local.get $state) (then
+      (call $gs32 (i32.add (local.get $state) (i32.const 3956)) (i32.const 0))))
     ;; If the RT is the primary surface, present it now. d3drm-based apps
     ;; (ARCHITEC, others) never call Flip/Unlock — they rely on EndScene
     ;; to make the frame visible. Non-primary RTs are left untouched; the
@@ -1561,6 +1571,259 @@
         (then (call $d3dim_worker_fence) (call $dx_present (local.get $rt))
           (call $present_frame_end)))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+
+  ;; DX5 Device2 / DX6 Device3 Begin-family. SDK references and the exact
+  ;; supported FVF subset are recorded in d3dim-immediate-drawing-20261105.md.
+  ;; Descriptor (guest allocation, 48 bytes): mode, primitive, FVF, flags,
+  ;; input stride, submitted count, stream capacity, owned canonical stream,
+  ;; owned canonical indexed source, source count, sticky HRESULT, vertex type.
+  ;; No instance-global builder: independently interleaved devices own all data.
+  ;; 65536 submissions / 4MB input is a deliberate finite implementation limit.
+  (func $d3dim_immediate_desc (param $this i32) (result i32)
+    (local $state i32)
+    (if (global.get $d3dim_state_override) (then (return (i32.const 0))))
+    (local.set $state (call $d3ddev_state (local.get $this)))
+    (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+    (call $gl32 (i32.add (local.get $state) (i32.const 4028))))
+
+  (func $d3dim_immediate_error (param $desc i32) (param $hr i32)
+    (if (local.get $desc) (then
+      (if (i32.eqz (call $gl32 (i32.add (local.get $desc) (i32.const 40)))) (then
+        (call $gs32 (i32.add (local.get $desc) (i32.const 40)) (local.get $hr))))))
+    (i32.store (global.get $reg_base) (local.get $hr)))
+
+  (func $d3dim_immediate_forbid (param $this i32) (result i32)
+    (local $d i32)
+    (local.set $d (call $d3dim_immediate_desc (local.get $this)))
+    (if (local.get $d) (then
+      (if (call $gl32 (local.get $d)) (then
+        (call $d3dim_immediate_error (local.get $d) (i32.const 0x80070057))
+        (return (i32.const 1))))))
+    (i32.const 0))
+
+  ;; Public Device2/3 entry points use this before any query, callback, state
+  ;; change or alternate draw during a sequence. IUnknown reference/lifetime
+  ;; methods remain available; the submitted storage belongs to the device.
+  (func $d3dim_immediate_reject (param $this i32) (param $pop i32) (result i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then
+      (i32.store offset=16 (global.get $reg_base)
+        (i32.add (i32.load offset=16 (global.get $reg_base)) (local.get $pop)))
+      (return (i32.const 1))))
+    (i32.const 0))
+
+  (func $d3dim_immediate_destroy (param $state i32)
+    (local $d i32) (local $p i32)
+    (local.set $d (call $gl32 (i32.add (local.get $state) (i32.const 4028))))
+    (if (i32.eqz (local.get $d)) (then (return)))
+    (call $gs32 (i32.add (local.get $state) (i32.const 4028)) (i32.const 0))
+    (local.set $p (call $gl32 (i32.add (local.get $d) (i32.const 28))))
+    (if (local.get $p) (then (call $heap_free (local.get $p))))
+    (local.set $p (call $gl32 (i32.add (local.get $d) (i32.const 32))))
+    (if (local.get $p) (then (call $heap_free (local.get $p))))
+    (call $heap_free (local.get $d)))
+
+  (func $d3dim_immediate_begin
+    (param $this i32) (param $prim i32) (param $format i32) (param $flags i32)
+    (param $source i32) (param $count i32) (param $indexed i32) (param $version i32)
+    (local $state i32) (local $d i32) (local $fvf i32) (local $stride i32)
+    (local $copy i32) (local $type i32) (local $span i32) (local $hr i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
+    (local.set $state (call $d3ddev_state (local.get $this)))
+    (local.set $hr (i32.const 0x80070057))
+    (block $bad
+      (br_if $bad (i32.eqz (local.get $state)))
+      (if (i32.eqz (call $gl32 (i32.add (local.get $state) (i32.const 3956)))) (then
+        (local.set $hr (i32.const 0x887602f9)) (br $bad)))
+      (br_if $bad (i32.or (i32.lt_u (local.get $prim) (i32.const 1))
+        (i32.gt_u (local.get $prim) (i32.const 6))))
+      (br_if $bad (i32.and (i32.ne (local.get $indexed) (i32.const 0))
+        (i32.eq (local.get $prim) (i32.const 1))))
+      (br_if $bad (i32.and (local.get $flags)
+        (i32.xor (select (i32.const 15) (i32.const 29)
+          (i32.eq (local.get $version) (i32.const 2))) (i32.const -1))))
+      (local.set $fvf (local.get $format))
+      (if (i32.eq (local.get $version) (i32.const 2)) (then
+        (br_if $bad (i32.or (i32.lt_u (local.get $format) (i32.const 1))
+          (i32.gt_u (local.get $format) (i32.const 3))))
+        (local.set $fvf (select (i32.const 0x112)
+          (select (i32.const 0x1e2) (i32.const 0x1c4) (i32.eq (local.get $format) (i32.const 2)))
+          (i32.eq (local.get $format) (i32.const 1))))))
+      ;; DX6 XYZ or XYZRHW, optional normal/colors, zero to eight 2D UV sets.
+      ;; DX7 blending/coordinate dimension extensions are explicitly unsupported.
+      (br_if $bad (i32.eqz (call $d3dim_fvf_vtxtype (local.get $fvf))))
+      (br_if $bad (i32.and (local.get $fvf) (i32.const 1)))
+      (br_if $bad (i32.eq (i32.and (local.get $fvf) (i32.const 6)) (i32.const 6)))
+      (br_if $bad (i32.and (i32.ne (i32.and (local.get $fvf) (i32.const 4)) (i32.const 0))
+        (i32.ne (i32.and (local.get $fvf) (i32.const 16)) (i32.const 0))))
+      (local.set $hr (i32.const 0x80004001))
+      (br_if $bad (i32.and (local.get $fvf) (i32.const 0xfffff009)))
+      (br_if $bad (i32.gt_u (i32.shr_u (i32.and (local.get $fvf) (i32.const 0xf00)) (i32.const 8)) (i32.const 8)))
+      (br_if $bad (i32.and (i32.ne (i32.and (local.get $fvf) (i32.const 32)) (i32.const 0))
+        (i32.ne (local.get $fvf) (i32.const 0x1e2))))
+      ;; The existing canonical pipeline cannot retain a normal AND prelit
+      ;; colors. DONOTLIGHT explicitly chooses the supplied colors instead.
+      (br_if $bad (i32.and (i32.ne (i32.and (local.get $fvf) (i32.const 16)) (i32.const 0))
+        (i32.and (i32.ne (i32.and (local.get $fvf) (i32.const 192)) (i32.const 0))
+          (i32.eqz (i32.and (local.get $flags) (i32.const 16))))))
+      ;; Extended texture transforms / generated coordinates require the DX7
+      ;; extended-vertex path, not this DX5/6 canonical representation.
+      (br_if $bad (i32.eqz (call $d3dim_fvf_supplied_valid (local.get $this) (local.get $fvf))))
+      (br_if $bad (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 24)))
+      (br_if $bad (i32.shr_u (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 11)) (i32.const 16)))
+      (local.set $stride (call $d3dim_fvf_stride (local.get $fvf)))
+      (local.set $type (call $d3dim_fvf_vtxtype (local.get $fvf)))
+      (if (local.get $indexed) (then
+        (local.set $hr (i32.const 0x80070057))
+        (br_if $bad (i32.or (i32.eqz (local.get $source)) (i32.eqz (local.get $count))))
+        (local.set $hr (i32.const 0x8007000e))
+        (br_if $bad (i32.or (i32.gt_u (local.get $count) (i32.const 65536))
+          (i32.gt_u (i32.mul (local.get $count) (local.get $stride)) (i32.const 0x400000))))
+        (local.set $span (call $g2w_affine_span (local.get $source) (i32.mul (local.get $count) (local.get $stride))))
+        (local.set $hr (i32.const 0x80004001))
+        (br_if $bad (i32.eq (local.get $span) (global.get $NULL_SENTINEL)))
+        (local.set $copy (call $d3dim_pack_fvf_vertices (local.get $fvf) (local.get $source)
+          (local.get $count) (call $d3dim_texcoord_index (local.get $this))))
+        (local.set $hr (i32.const 0x8007000e))
+        (br_if $bad (i32.eqz (local.get $copy)))))
+      (local.set $d (call $d3dim_immediate_desc (local.get $this)))
+      (if (i32.eqz (local.get $d)) (then
+        (local.set $d (call $heap_alloc (i32.const 48)))
+        (local.set $hr (i32.const 0x8007000e))
+        (br_if $bad (i32.eqz (local.get $d)))
+        (call $zero_memory (call $g2w (local.get $d)) (i32.const 48))
+        (call $gs32 (i32.add (local.get $state) (i32.const 4028)) (local.get $d))))
+      (call $gs32 (local.get $d) (i32.add (local.get $indexed) (i32.const 1)))
+      (call $gs32 (i32.add (local.get $d) (i32.const 4)) (local.get $prim))
+      (call $gs32 (i32.add (local.get $d) (i32.const 8)) (local.get $fvf))
+      (call $gs32 (i32.add (local.get $d) (i32.const 12)) (local.get $flags))
+      (call $gs32 (i32.add (local.get $d) (i32.const 16)) (local.get $stride))
+      (call $gs32 (i32.add (local.get $d) (i32.const 20)) (i32.const 0))
+      (call $gs32 (i32.add (local.get $d) (i32.const 32)) (local.get $copy))
+      (call $gs32 (i32.add (local.get $d) (i32.const 36)) (local.get $count))
+      (call $gs32 (i32.add (local.get $d) (i32.const 40)) (i32.const 0))
+      (call $gs32 (i32.add (local.get $d) (i32.const 44)) (local.get $type))
+      (i32.store (global.get $reg_base) (i32.const 0)) (return))
+    (if (local.get $copy) (then (call $heap_free (local.get $copy))))
+    (i32.store (global.get $reg_base) (local.get $hr)))
+
+  (func $d3dim_immediate_submit (param $this i32) (param $value i32) (param $indexed i32)
+    (local $d i32) (local $count i32) (local $cap i32) (local $p i32)
+    (local $old i32) (local $src i32) (local $hr i32) (local $stride i32)
+    (local.set $d (call $d3dim_immediate_desc (local.get $this)))
+    (local.set $hr (i32.const 0x80070057))
+    (block $bad
+      (br_if $bad (i32.eqz (local.get $d)))
+      (br_if $bad (i32.ne (call $gl32 (local.get $d)) (i32.add (local.get $indexed) (i32.const 1))))
+      (local.set $hr (call $gl32 (i32.add (local.get $d) (i32.const 40))))
+      (br_if $bad (local.get $hr))
+      (local.set $hr (i32.const 0x80070057))
+      (if (local.get $indexed) (then
+        (local.set $value (i32.and (local.get $value) (i32.const 65535)))
+        (br_if $bad (i32.ge_u (local.get $value) (call $gl32 (i32.add (local.get $d) (i32.const 36))))))
+        (else
+          (br_if $bad (i32.eqz (local.get $value)))
+          (local.set $stride (call $gl32 (i32.add (local.get $d) (i32.const 16))))
+          (local.set $hr (i32.const 0x80004001))
+          (br_if $bad (i32.eq (call $g2w_affine_span (local.get $value) (local.get $stride)) (global.get $NULL_SENTINEL)))))
+      (local.set $count (call $gl32 (i32.add (local.get $d) (i32.const 20))))
+      (local.set $hr (i32.const 0x8007000e))
+      (br_if $bad (i32.ge_u (local.get $count) (i32.const 65536)))
+      (local.set $cap (call $gl32 (i32.add (local.get $d) (i32.const 24))))
+      (if (i32.ge_u (local.get $count) (local.get $cap)) (then
+        (local.set $cap (select (i32.shl (local.get $cap) (i32.const 1)) (i32.const 16) (i32.ne (local.get $cap) (i32.const 0))))
+        (local.set $p (call $heap_alloc (i32.mul (local.get $cap) (i32.const 32))))
+        (br_if $bad (i32.eqz (local.get $p)))
+        (local.set $old (call $gl32 (i32.add (local.get $d) (i32.const 28))))
+        (if (local.get $old) (then
+          (call $memcpy (call $g2w (local.get $p)) (call $g2w (local.get $old)) (i32.mul (local.get $count) (i32.const 32)))
+          (call $heap_free (local.get $old))))
+        (call $gs32 (i32.add (local.get $d) (i32.const 28)) (local.get $p))
+        (call $gs32 (i32.add (local.get $d) (i32.const 24)) (local.get $cap))))
+      (local.set $p (i32.add (call $gl32 (i32.add (local.get $d) (i32.const 28))) (i32.mul (local.get $count) (i32.const 32))))
+      (if (local.get $indexed) (then
+        (call $gs32 (local.get $p) (local.get $value)))
+        (else
+          (local.set $src (call $d3dim_pack_fvf_vertices
+            (call $gl32 (i32.add (local.get $d) (i32.const 8))) (local.get $value) (i32.const 1)
+            (call $d3dim_texcoord_index (local.get $this))))
+          (br_if $bad (i32.eqz (local.get $src)))
+          (call $memcpy (call $g2w (local.get $p)) (call $g2w (local.get $src)) (i32.const 32))
+          (call $heap_free (local.get $src))))
+      (call $gs32 (i32.add (local.get $d) (i32.const 20)) (i32.add (local.get $count) (i32.const 1)))
+      (i32.store (global.get $reg_base) (i32.const 0)) (return))
+    (call $d3dim_immediate_error (local.get $d) (local.get $hr)))
+
+  (func $d3dim_immediate_end (param $this i32) (param $reserved i32)
+    (local $d i32) (local $mode i32) (local $prim i32) (local $count i32)
+    (local $state i32) (local $hr i32) (local $out i32) (local $src i32)
+    (local $stream i32) (local $source i32) (local $type i32) (local $i i32)
+    (local $flags i32) (local $fvf i32) (local $clip0 v128) (local $clip1 i64)
+    (local.set $d (call $d3dim_immediate_desc (local.get $this)))
+    (local.set $hr (i32.const 0x80070057))
+    (block $done
+      (br_if $done (i32.eqz (local.get $d)))
+      (local.set $mode (call $gl32 (local.get $d)))
+      (br_if $done (i32.eqz (local.get $mode)))
+      ;; Every End closes, including a rejected/failed sequence. No partial draw.
+      (call $gs32 (local.get $d) (i32.const 0))
+      (local.set $source (call $gl32 (i32.add (local.get $d) (i32.const 32))))
+      (call $gs32 (i32.add (local.get $d) (i32.const 32)) (i32.const 0))
+      (br_if $done (local.get $reserved))
+      (local.set $hr (call $gl32 (i32.add (local.get $d) (i32.const 40))))
+      (br_if $done (local.get $hr))
+      (local.set $hr (i32.const 0x80070057))
+      (local.set $count (call $gl32 (i32.add (local.get $d) (i32.const 20))))
+      (local.set $prim (call $gl32 (i32.add (local.get $d) (i32.const 4))))
+      (br_if $done (i32.lt_u (local.get $count)
+        (select (i32.const 1) (select (i32.const 2) (i32.const 3) (i32.le_u (local.get $prim) (i32.const 3)))
+          (i32.eq (local.get $prim) (i32.const 1)))))
+      ;; Disjoint lists ignore an incomplete trailing primitive, as SDK5/6 say.
+      (if (i32.eq (local.get $prim) (i32.const 2)) (then
+        (local.set $count (i32.and (local.get $count) (i32.const -2)))))
+      (if (i32.eq (local.get $prim) (i32.const 4)) (then
+        (local.set $count (i32.mul (i32.div_u (local.get $count) (i32.const 3)) (i32.const 3)))))
+      (local.set $out (call $heap_alloc (i32.mul (local.get $count) (i32.const 32))))
+      (local.set $hr (i32.const 0x8007000e))
+      (br_if $done (i32.eqz (local.get $out)))
+      (local.set $state (call $d3ddev_state (local.get $this)))
+      (local.set $stream (call $gl32 (i32.add (local.get $d) (i32.const 28))))
+      (local.set $type (call $gl32 (i32.add (local.get $d) (i32.const 44))))
+      (local.set $flags (call $gl32 (i32.add (local.get $d) (i32.const 12))))
+      (local.set $fvf (call $gl32 (i32.add (local.get $d) (i32.const 8))))
+      (local.set $clip0 (v128.load (i32.add (call $g2w (local.get $state)) (i32.const 4000))))
+      (local.set $clip1 (i64.load (i32.add (call $g2w (local.get $state)) (i32.const 4016))))
+      (call $d3ddev_composite_wvp (local.get $state))
+      (call $d3dim_lights_refresh (local.get $state))
+      (block $vertices_done (loop $vertices
+        (br_if $vertices_done (i32.ge_u (local.get $i) (local.get $count)))
+        (local.set $src (i32.add (local.get $stream) (i32.mul (local.get $i) (i32.const 32))))
+        (if (i32.eq (local.get $mode) (i32.const 2)) (then
+          (local.set $src (i32.add (local.get $source) (i32.shl (call $gl32 (local.get $src)) (i32.const 5))))))
+        (local.set $src (call $g2w (local.get $src)))
+        (if (i32.and (local.get $flags) (i32.const 16)) (then
+          (if (i32.and (i32.eqz (i32.and (local.get $fvf) (i32.const 192)))
+                (i32.eqz (i32.and (local.get $fvf) (i32.const 4)))) (then
+            (i32.store offset=12 (local.get $src) (i32.const 0))
+            (i32.store offset=16 (local.get $src) (i32.const -1))
+            (local.set $type (i32.const 2))))
+          (if (i32.eqz (i32.and (local.get $fvf) (i32.const 128))) (then
+            (i32.store offset=20 (local.get $src) (i32.const 0))))))
+        (call $d3dim_prepare_draw_vertex (local.get $state) (local.get $type) (local.get $src)
+          (i32.add (call $g2w (local.get $out)) (i32.shl (local.get $i) (i32.const 5))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $vertices)))
+      ;; Existing producer encodes/copies vertex bytes before returning. Its
+      ;; delayed consumer never owns pointers into these temporary allocations.
+      (call $d3dim_draw_primitive (local.get $this) (local.get $prim)
+        (select (i32.const 4) (i32.const 3) (call $d3dim_supplied_projected (local.get $state)))
+        (local.get $out) (local.get $count))
+      (if (i32.and (local.get $flags) (i32.const 8)) (then
+        (v128.store (i32.add (call $g2w (local.get $state)) (i32.const 4000)) (local.get $clip0))
+        (i64.store (i32.add (call $g2w (local.get $state)) (i32.const 4016)) (local.get $clip1))))
+      (if (i32.and (local.get $flags) (i32.const 1)) (then (call $d3dim_worker_fence)))
+      (local.set $hr (i32.const 0)))
+    (if (local.get $out) (then (call $heap_free (local.get $out))))
+    (if (local.get $source) (then (call $heap_free (local.get $source))))
+    (i32.store (global.get $reg_base) (local.get $hr)))
 
   ;; ── State-block forwarders ────────────────────────────────────
   ;; Mirror IDirect3DDevice3_SetTransform / SetRenderState / SetLightState
@@ -1629,6 +1892,7 @@
       (br 0))))
 
   (func $d3dim_set_transform (param $this i32) (param $xtype i32) (param $lpmat i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
     (if (i32.ne (local.get $lpmat) (i32.const 0)) (then (if (call $d3dim_sb_record (local.get $this) (i32.const 2) (local.get $xtype) (local.get $lpmat) (i32.const 64)) (then (return)))))
     (if (local.get $lpmat) (then
       ;; kind=27 Xform: the raw matrix the guest supplied, before any
@@ -1662,6 +1926,7 @@
 
   (func $d3dim_multiply_transform (param $this i32) (param $xtype i32) (param $lpmat i32)
     (local $state i32) (local $sw i32) (local $slot i32) (local $dst_wa i32) (local $tmp_wa i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
     (if (i32.eqz (local.get $lpmat)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (i32.eqz (local.get $state)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
@@ -1696,6 +1961,7 @@
 
   (func $d3dim_set_render_state (param $this i32) (param $rs i32) (param $val i32)
     (local $state i32) (local $slot i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
     (if (i32.lt_u (local.get $rs) (i32.const 512)) (then (if (call $d3dim_sb_record (local.get $this) (i32.const 0) (local.get $rs) (local.get $val) (i32.const 0)) (then (if (i32.eq (local.get $rs) (i32.const 21)) (then
         (drop (call $d3dim_sb_record (local.get $this) (i32.const 9) (i32.const 0)
           (select (local.get $val) (i32.const 0) (i32.or (i32.eq (local.get $val) (i32.const 2)) (i32.eq (local.get $val) (i32.const 4)))) (i32.const 0))))) (return)))))
@@ -1743,6 +2009,7 @@
 
   (func $d3dim_set_light_state (param $this i32) (param $ls i32) (param $val i32)
     (local $state i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (i32.and (i32.ne (local.get $state) (i32.const 0))
                  (i32.lt_u (local.get $ls) (i32.const 128)))
@@ -1767,6 +2034,7 @@
 
   (func $d3dim_set_clip_status (param $this i32) (param $lpClip i32)
     (local $state i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
     (if (i32.eqz (local.get $lpClip)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (local.get $state)
@@ -4250,6 +4518,7 @@
   ;; only (multi-stage TSS stored separately by Phase 3).
   (func $d3dim_set_texture (param $this i32) (param $stage i32) (param $lpTex i32)
     (local $state i32) (local $slot i32) (local $old i32) (local $entry i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
     (if (i32.ne (local.get $stage) (i32.const 0)) (then
       (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
     (if (call $d3dim_sb_record (local.get $this) (i32.const 8) (i32.const 0) (local.get $lpTex) (i32.const 0)) (then (return)))
@@ -4467,6 +4736,7 @@
   ;; SetTextureStageState(stage, type, value).
   (func $d3dim_set_tss (param $this i32) (param $stage i32) (param $type i32) (param $val i32)
     (local $state i32) (local $addr i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
     (if (i32.and (i32.lt_u (local.get $stage) (i32.const 8)) (i32.lt_u (local.get $type) (i32.const 32))) (then (if (call $d3dim_sb_record (local.get $this) (i32.const 1) (i32.or (i32.shl (local.get $stage) (i32.const 5)) (local.get $type)) (local.get $val) (i32.const 0)) (then (if (i32.eqz (local.get $stage)) (then
         (if (i32.and (i32.ge_u (local.get $type) (i32.const 1)) (i32.le_u (local.get $type) (i32.const 6)))
           (then (drop (call $d3dim_sb_record (local.get $this) (i32.const 9) (i32.const 0) (i32.const 0) (i32.const 0)))))
@@ -4496,6 +4766,7 @@
 
   ;; ── Current viewport binding ──────────────────────────────────
   (func $d3dim_set_current_viewport (param $this i32) (param $lpVp i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
     ;; Selection is separate from AddViewport ownership.  The exact core
     ;; validates that this device already owns the viewport and maintains the
     ;; independent current-selection reference.
@@ -4546,6 +4817,7 @@
   ;; seeds it; SetRenderTarget updates it for apps that switch back buffers.
   (func $d3dim_set_render_target (param $this i32) (param $rt_surf i32)
     (local $entry i32) (local $rt_entry i32) (local $rt_slot i32)
+    (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
     (call $d3dim_worker_fence)
     (local.set $entry (call $dx_from_this (local.get $this)))
     (if (i32.eqz (local.get $rt_surf)) (then
@@ -10238,6 +10510,7 @@
       (local.set $steps (i32.add (local.get $steps) (i32.const 1)))
       (br $free_nodes)))
     (if (local.get $state) (then
+      (call $d3dim_immediate_destroy (local.get $state))
       (call $d3dim_sb_destroy_device (local.get $state))
       (call $d3dim_set_texture (local.get $owner) (i32.const 0) (i32.const 0))
       (if (call $gl32 (i32.add (local.get $state) (i32.const 3448)))

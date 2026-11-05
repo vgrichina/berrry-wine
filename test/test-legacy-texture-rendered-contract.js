@@ -82,6 +82,7 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
   // No rendering/resource/device import is stubbed by this accommodation.
   for(const name of ['beep_process_begin','beep_thread_begin'])
     host[name]=(...args)=>{evidence.logs.push({name,args});return 0;};
+  if(config.immediate)host.heap_oom_trace=(...args)=>{evidence.logs.push({name:'heap_oom_trace',args});};
   let e,raw,link,manager,port,lastStats,gpu,holding=false,heldRecord;
   const held=[],heldPackets=[];let queueBuffers,queueControl;
   if(mode==='worker') {
@@ -134,7 +135,7 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     };
     const guid=async values=>{const p=await alloc(16);await words(p,values);return p;};
     const stack=await alloc(8192)+4096;
-    async function invoke(label,args,object=0,slot=0,target=0) {
+    async function prepareInvoke(label,args,object=0,slot=0,target=0) {
       const code=[],word=n=>code.push(n&255,(n>>>8)&255,(n>>>16)&255,n>>>24);
       for(const arg of args.slice().reverse()){code.push(0x68);word(arg);}
       let vtable=0;
@@ -145,14 +146,17 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       const result=await guard(8);
       code.push(0xa3);word(result.p);code.push(0x89,0x25);word(result.p+4);code.push(0xc3);
       const pc=await alloc(code.length+4);await bytes(pc,code);
-      await raw('set_esp',stack);await raw('call_func',pc,0,0,0,0);
-      for(let n=0;n<100&&(await raw('get_eip'));n++)await raw('run',10000);
-      const row={label,args,object,vtable,slot,target,result:await read(result.p),esp:await read(result.p+4),
-        finalEsp:(await raw('get_esp'))>>>0,eip:(await raw('get_eip'))>>>0};
-      evidence.calls.push(row);await result.check();
-      eq(row.eip,0,label+' bounded completion');eq(row.esp,stack-20,label+' exact stdcall');eq(row.finalEsp,stack-16,label+' caller RET');
-      return row.result;
+      return async()=>{
+        await raw('set_esp',stack);await raw('call_func',pc,0,0,0,0);
+        for(let n=0;n<100&&(await raw('get_eip'));n++)await raw('run',10000);
+        const row={label,args,object,vtable,slot,target,result:await read(result.p),esp:await read(result.p+4),
+          finalEsp:(await raw('get_esp'))>>>0,eip:(await raw('get_eip'))>>>0};
+        evidence.calls.push(row);await result.check();
+        eq(row.eip,0,label+' bounded completion');eq(row.esp,stack-20,label+' exact stdcall');eq(row.finalEsp,stack-16,label+' caller RET');
+        return row.result;
+      };
     }
+    const invoke=async(...args)=>(await prepareInvoke(...args))();
     const com=(label,obj,slot,...args)=>invoke(label,[obj,...args],obj,slot);
     const ok=async value=>eq(await value,0,'HRESULT');
     const output=await guard(4);
@@ -259,8 +263,9 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     const draw=async()=>{await ok(com('BeginScene7',device,5));
       await ok(com('DrawPrimitive7',device,25,4,0x1c4,vertices,3,0));drawCount++;
       await ok(com('EndScene7',device,6));};
-    const preview=document.createElement('canvas');preview.width=preview.height=8;
-    preview.style.cssText='width:256px;height:256px;image-rendering:pixelated';document.body.append(preview);
+    const preview=config.noPreview?null:document.createElement('canvas');
+    if(preview){preview.width=preview.height=8;
+      preview.style.cssText='width:256px;height:256px;image-rendering:pixelated';document.body.append(preview);}
     const observe=async(label,sample,state)=>{
       // Public Lock is the production CPU-access fence, not a test fence.
       const l=await lock(rt),p=l.pointer+2*l.pitch+2*4,value=await read(p);
@@ -270,8 +275,8 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
         const pixel=await read(l.pointer+y*l.pitch+x*4);
         dibRGBA.push(pixel>>>16&255,pixel>>>8&255,pixel&255,255);
       }
-      preview.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),8,8),0,0);
-      if(config.stateblocks){
+      if(preview)preview.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),8,8),0,0);
+      if(preview&&(config.stateblocks||config.immediate)){
         const tile=document.createElement('figure'),caption=document.createElement('figcaption'),canvas=document.createElement('canvas');
         tile.style.cssText='display:inline-block;margin:8px;vertical-align:top;width:190px';
         caption.textContent=label;canvas.width=canvas.height=8;canvas.style.cssText='width:160px;height:160px;image-rendering:pixelated';
@@ -299,6 +304,22 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       eq(actual,expected,'PIXEL ORACLE '+label);
       if(gpu)eq(row.webglRGBA,[...expected,255],'independent actual WebGL pixels');
     };
+    if(config.immediate){
+      await (0,eval)('('+config.immediateSource+')')({mode,negative,evidence,check,eq,until,
+        raw,read,alloc,wa,write,bytes,words,guard,guid,stack,invoke,prepareInvoke,com,ok,acquire,
+        dd,hal,texture,texturePalette:config.texture,surface,lock,unlock,bits,observe,
+        use:target=>{device=target.device;rt=target.rt;},
+        initial:{device,rt},allocationFailure:!!config.noPreview,countDraw:()=>drawCount++,
+        queue:{hold:label=>{heldRecord={label,messages:[]};holding=true;return heldRecord;},
+          packet:async()=>{await until(()=>heldPackets.length>0,'held immediate batch');
+            const packet=heldPackets.at(-1),buffer=queueBuffers[packet.index],view=new DataView(buffer);
+            eq(packet.commands,1,'single immediate draw batch');eq(view.getUint32(20,true),4096,'queued immediate state');
+            eq(view.getUint32(28,true),0,'queued immediate draw record');
+            return {sequence:packet.seq,vertices:new Uint8Array(buffer,32+4096,view.getUint32(24,true)),
+              completed:Atomics.load(queueControl,1)};},
+          completed:()=>Atomics.load(queueControl,1),
+          drain:()=>{holding=false;for(const send of held.splice(0))send();heldPackets.length=0;}}});
+    }
     if(config.stateblocks){
       evidence.stateblocks={nativeWindowsBlockRefcounts:null,checkpoints:[],heldBatches:[]};
       const sb=evidence.stateblocks;
@@ -417,10 +438,10 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       use(primary);await bind(0);await com('Release alternate texture',alternate,2);
     }
 
-    if(!config.stateblocks)for(const state of config.states){await setState(state);for(const sample of config.samples){
+    if(!config.stateblocks&&!config.immediate)for(const state of config.states){await setState(state);for(const sample of config.samples){
       await geometry(sample.uv);await draw();await observe(state.label+'/'+sample.name,sample,state);
     }}
-    if(mode==='worker'&&!config.stateblocks){
+    if(mode==='worker'&&!config.stateblocks&&!config.immediate){
       for(const sample of config.samples){await geometry(sample.uv);
       const transitions=config.cubeBorder?[[config.states[9],config.states[3]],[config.states[3],config.states[9]],
         [config.states[9],config.states[0]],[config.states[0],config.states[9]]]
@@ -435,6 +456,7 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       }}
       await until(()=>lastStats?.stats.drawCalls===drawCount,'all production GPU stats');evidence.stats=lastStats.stats;
     }
+    if(mode==='worker'&&config.immediate){await until(()=>lastStats?.stats.drawCalls===drawCount,'immediate Worker stats');evidence.stats=lastStats.stats;}
     if(gpu)evidence.stats=gpu.snapshot();
     evidence.drawCount=drawCount;
     if(mode!=='software'){
@@ -461,7 +483,7 @@ async function runtime() {
   const closure=require('../tools/watx-closure').watxSourceClosure();
   const source=process.env.LEGACY_RENDER_SOURCE||cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
   assert.match(source,/^[0-9a-f]{40}$/,'full committed source identity required');
-  const cubeBorder=process.argv.includes('--cube-border'),stateblocks=process.argv.includes('--stateblocks');
+  const cubeBorder=process.argv.includes('--cube-border'),stateblocks=process.argv.includes('--stateblocks'),immediate=process.argv.includes('--immediate');
   const evidence={source,
     inputClosure:Object.fromEntries([...closure.vfs].filter(([p])=>!p.includes('/')).map(([p])=>['src/'+p,sha(fs.readFileSync(path.join(ROOT,'src',p)))])),
     fixtureSha256:sha(fs.readFileSync(__filename)),calc:{path:'test/binaries/calc.exe',sha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe')))},
@@ -471,7 +493,9 @@ async function runtime() {
     'lib/d3d9-fixed.js','lib/d3d9-texture.js','lib/render-clear.js','lib/d3d9-backend.js','lib/d3dim-gpu.js'];
   evidence.productionJS=Object.fromEntries(fs.readdirSync(path.join(ROOT,'lib')).filter(p=>p.endsWith('.js')||p.endsWith('.json'))
     .map(p=>['lib/'+p,sha(fs.readFileSync(path.join(ROOT,'lib',p)))]));
-  const config={...plan(cubeBorder),stateblocks,thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
+  const config={...plan(cubeBorder),stateblocks,immediate,
+    ...(immediate?{immediateSource:require('./test-d3dim-immediate-drawing').immediateFixture.toString()}:{}),
+    thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
   const bootstrapPE=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
   config.imageBase=bootstrapPE.readUInt32LE(bootstrapPE.readUInt32LE(0x3c)+52);
@@ -479,7 +503,7 @@ async function runtime() {
   try {
     // Hash both modules in place; runtime selects --compat when requested.
     const moduleDir=process.env.LEGACY_RENDER_MODULE_DIR;
-    assert(!stateblocks||moduleDir,'state-block rendering requires both existing shipped modules');
+    assert(!(stateblocks||immediate)||moduleDir,'state-block/immediate rendering requires both existing shipped modules');
     const canonical=moduleDir?fs.readFileSync(path.join(moduleDir,'wine-assembly.wasm')):compileSrcWasm();
     const compatVfs=moduleDir?null:require('../lib/dispatch-trampoline').applyToVfs(new Map(closure.vfs));
     const compat=moduleDir?fs.readFileSync(path.join(moduleDir,'wine-assembly.compat.wasm'))
@@ -510,9 +534,9 @@ async function runtime() {
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       evidence.results.push(await page.evaluate(browserFixture,mode,config,oracle.toString()));
       await page.screenshot({path:path.join(dir,mode+'.png'),fullPage:true});await page.close();page=null;
-      console.log('PASS public-COM '+(stateblocks?'selective state-block':'sampler')+' rendered pixels '+mode);
+      console.log('PASS public-COM '+(immediate?'Device2/3 immediate':stateblocks?'selective state-block':'sampler')+' rendered pixels '+mode);
     }
-    for(const [negative,mode] of stateblocks?[['recording','software'],['full-state','software'],['queued-stale','worker'],['queued-cross','worker']]:cubeBorder?['software','webgl','worker'].map(m=>['border',m])
+    for(const [negative,mode] of immediate?[['dropped','software'],['cross-device','software'],['queued-vertices','worker']]:stateblocks?[['recording','software'],['full-state','software'],['queued-stale','worker'],['queued-cross','worker']]:cubeBorder?['software','webgl','worker'].map(m=>['border',m])
       :['nearest','stale'].map(n=>[n,'software'])){
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       let failure;
@@ -520,8 +544,12 @@ async function runtime() {
       try{await page.evaluate(browserFixture,mode,negativeConfig,oracle.toString(),negative);}catch(error){failure=String(error);}
       const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
       evidence.negativeControls.push({negative,mode,failure,partial});
-      if(cubeBorder||stateblocks)await page.screenshot({path:path.join(dir,`negative-${negative}-${mode}.png`),fullPage:true});
+      if(cubeBorder||stateblocks||immediate)await page.screenshot({path:path.join(dir,`negative-${negative}-${mode}.png`),fullPage:true});
       assert(failure?.includes('PIXEL ORACLE'),'negative control must fail pixel oracle, not bootstrap');
+      if(immediate){
+        const label={dropped:'v2 1c4 Vertex','cross-device':'interleaved B','queued-vertices':'queued immutable vertices 0'}[negative];
+        assert(failure.includes('PIXEL ORACLE '+label),'immediate fault must fail its designated pixel');
+      }
       if(stateblocks){
         const label={recording:'during recording','full-state':'selective Apply preserves changed binding','queued-stale':'queued recaptured A state','queued-cross':'queued B captured state'}[negative];
         assert(failure.includes('PIXEL ORACLE '+label),'fault must fail at its designated state-block pixel');

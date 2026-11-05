@@ -799,3 +799,14 @@ The software RGB565 candidate changes IDirect3D9::CheckDeviceFormatConversion
 from unconditional success to rejecting conversions involving format23, which
 StretchRect does not implement. The existing BGRA8 behavior is unchanged.
 This removes one straight-line handler from the inventory:243 to242.
+
+## Device2/3 immediate drawing (2026-11-05)
+
+240 to 239: the new per-device Begin-family guard makes Device2
+SwapTextureHandles reject calls during an active primitive sequence. This
+removes its formerly straight-line body from the quiet classifier; it does
+not qualify the existing outside-sequence SwapTextureHandles stub. All other
+inventory members are unchanged. Pin
+239/dd03acce6daa85ac00a3959a3b58175dc272f1e157f4c124527e4c18176f28cf.
+See `docs/re-notes/d3dim-immediate-drawing-20261105.md` and run
+`20261105-d3dim-immediate-drawing` for public COM/pixel validation.
