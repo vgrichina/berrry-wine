@@ -107,15 +107,58 @@ Box ID/state/expiry: NA (local processes).
 
 Validation before publication: 25 resolver, 43 local and 153 integration tests and
 `flock /tmp/wine-build.lock bash tools/build.sh`. The build reproduces both
-accepted module hashes. The final published candidate must still pass a fresh
-actual-entry 439-filesystem/439-HTTP response preflight with plain Puppeteer
-mock plus independent public/native spawn prohibitions, ZERO Chrome, before
-its one authorized original observation.
+accepted module hashes. Published candidate `337356d17278bf2a5df8726437d2dabea3933e4d` passed the fresh
+actual-entry 439-filesystem/439-proof-HTTP/439-actual-caller-HTTP preflight,
+111 helper and five bound-controller checks, and 2253 installed Puppeteer caller
+filesystem checks. Plain Puppeteer mock plus independent public/native spawn
+prohibitions admitted ZERO Chrome. Wrong pair, stale hash and changed dependency
+negatives reject. The exited preflight directory was moved into the run directory
+as `preflight/`; its audit retains its original direct path. The same final
+published entry repeated the closure before its single actual Chrome launch.
 The final local test uses a relative future timestamp, fixing its obsolete
 pre-midnight negative fixture without changing production release checks.
 
-Original observation status: pending final published-candidate preflight.
-No gameplay or new timer/load witness is claimed by this binding repair.
+Original observation: ONE launch, at `2026-11-05T00:05:50.545Z`, stopped on
+the first causal failure. Actual page and both guest-worker module observations
+are canonical `018c94ff…`; selected source is `9422cf64c…`. I personally viewed
+every fresh image (ten PNGs: startup 0 through 3584 in 512-step increments,
+then native-selector-64 at 3600 and native-selector-67 at 3648) before controls.
+New Game opened the difficulty dialog; Medium was visibly highlighted.
+
+The original Medium selector exhausted its unchanged aggregate 512-step menu
+allowance at global step4096, before admitting the press. Its ledger is
+512 steps /69 commands of113; 16 observe +48 New Game +448 Medium execution
+steps account for512. The extra32 post-release reserve (maximum544) was never
+eligible: Enter down/character remained queued, native command raw/previous/active
+were all0, `current=diff`, `conscheme=menu`, `showmenu=1`. This is pending input,
+not a completed Medium release or a full-rest witness. No Medium keyup was sent
+and no additional gameplay command followed the failure.
+
+The continuous main-worker observer spans3648–4096 without restart, with
+465000 blocks,29 samples,3 decoder-output and2 decoder-return records. Its
+worker slot0/endpoint1, thread1 and module identity remain fixed. It records
+no main-GC-exit/native timer-handler/deferred-load/type10/script-buffer/newLevel
+event during this window. Resource completion remains the already-completed
+`pointer` request; deferred requestedLevel/checkpoint/loadFlag remain0 and
+Level table138666976 remains unchanged. Neither decoder activity nor this
+resource completion establishes timer/load execution or gameplay. Detailed
+records and owner boundaries remain in `browser/bounded-trace-*`; the concise
+analysis is `original-observation-analysis.json`. No gameplay claim is made.
+
+On that failure I requested normal close. `browser.close` was called
+00:11:31.808Z, resolved00:11:32.355Z; Chrome PID1507134/start188435978 exited0
+with null signal. Node1506733/start188435528 and flock1506732/start188435528
+are absent. ProofHTTP44569, actualHTTP34373 and DevTools41881 refuse connections;
+no profile Chrome remains, the exact owned profile was removed, and external
+flock inode141907 is free. `cleanup-verification.json` records the checks at
+00:11:54Z, well before both cutoffs. No retry, reset, cap raise, source repair
+or new Chrome followed. Box ID/state/expiryNA; coordinator retains shutdown.
+
+Evidence uses Git commit337356d plus relevant binary patches and existing-path
+SHA references, including original media/module identities. There are no source
+snapshots, media/module copies or archives. The next investigation is offline:
+why the accepted runtime spends the bounded Medium window in decoder execution
+before consuming Enter; this assignment ends at the preserved first failure.
 The 50M/360s, owner/record/byte/input/ACK, frozen-review and original assets/config
 guards remain; no reset, cap raise or timer driving is introduced. ACK, active1,
 a countdown, an absolute deadline, deferred-load demand, completion, type10,
