@@ -3,6 +3,9 @@
 
 // --plan never compiles, instantiates Wasm or starts a browser.
 // Runtime: LEGACY_RENDER_EVIDENCE=... node test/test-legacy-texture-rendered-contract.js
+// --stateblocks exercises selective Begin/End/Apply/Capture pixels and delayed
+// two-device production Worker batches; requires LEGACY_RENDER_MODULE_DIR=build.
+// Run once normally and once with --compat for the two shipped modules.
 // --cube-border adds runtime native cube rejection and characterizes the
 // UNADVERTISED BORDER fallback. It does not claim BORDER/cube support.
 // Unavailable runtime dependencies are failures/untested, never successful SKIPs.
@@ -80,7 +83,7 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
   for(const name of ['beep_process_begin','beep_thread_begin'])
     host[name]=(...args)=>{evidence.logs.push({name,args});return 0;};
   let e,raw,link,manager,port,lastStats,gpu,holding=false,heldRecord;
-  const held=[];
+  const held=[],heldPackets=[];let queueBuffers,queueControl;
   if(mode==='worker') {
     const broker=GuestRpc.createMainBroker(memory,host,sigs,{onError:(name,error)=>evidence.logs.push({name,error:String(error)})});
     broker.publish({tickMs:0});
@@ -95,6 +98,8 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
         port.addEventListener('message',event=>{if(event.data.t==='stats')lastStats=event.data;});
         const post=port.postMessage.bind(port);
         port.postMessage=message=>{
+          if(message.t==='init'){queueBuffers=message.buffers;queueControl=new Int32Array(message.control);}
+          if(holding&&message.t==='batch')heldPackets.push(message);
           if(holding&&(message.t==='batch'||held.length))held.push(()=>post(message));else post(message);
           if(holding)heldRecord.messages.push(message.t);
         };
@@ -191,8 +196,8 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     const texture=await surface(2,2,0x1800);
     // Separate backing/watch pages without manufacturing surface records.
     const padding=await surface(128,128,0x1800);
-    const rt=await surface(8,8,0x2840);
-    const device=await acquire(out=>com('CreateDevice7',d3d,4,hal,rt,out));
+    let rt=await surface(8,8,0x2840);
+    let device=await acquire(out=>com('CreateDevice7',d3d,4,hal,rt,out));
     evidence.objects={dd,d3d,texture,padding,rt,device};
     const caps=await guard(236);await ok(com('GetCaps7',device,3,caps.p));await caps.check();
     evidence.caps=Array.from(new Uint32Array(memory.buffer,await wa(caps.p),59));
@@ -266,12 +271,19 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
         dibRGBA.push(pixel>>>16&255,pixel>>>8&255,pixel&255,255);
       }
       preview.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),8,8),0,0);
+      if(config.stateblocks){
+        const tile=document.createElement('figure'),caption=document.createElement('figcaption'),canvas=document.createElement('canvas');
+        tile.style.cssText='display:inline-block;margin:8px;vertical-align:top;width:190px';
+        caption.textContent=label;canvas.width=canvas.height=8;canvas.style.cssText='width:160px;height:160px;image-rendering:pixelated';
+        canvas.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),8,8),0,0);
+        tile.append(caption,canvas);document.body.append(tile);
+      }
       await unlock(rt);
       const expectedAddress=state.address===4?(mode==='software'?1:3):state.address;
-      const expected=expectedColor(config.texture,sample.uv,state.filter,expectedAddress);
+      const expected=expectedColor(state.palette||config.texture,sample.uv,state.filter,expectedAddress);
       const row={label,sample,state,expectedAddress,actual,expected,rawPixel:value,lock:l,dibRGBA,descriptor:await describe()};evidence.observations.push(row);
       if(gpu){
-        const target=[...gpu.targets.values()][0];check(target,'real GPU target');
+        const target=gpu.targets.get(row.descriptor[0]);check(target,'real GPU target');
         const gl=target.device.gpu.gl;target.device.gpu.bindImplicitTarget();
         if(!evidence.glRenderer){
           const ext=gl.getExtension('WEBGL_debug_renderer_info');
@@ -287,10 +299,128 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       eq(actual,expected,'PIXEL ORACLE '+label);
       if(gpu)eq(row.webglRGBA,[...expected,255],'independent actual WebGL pixels');
     };
-    for(const state of config.states){await setState(state);for(const sample of config.samples){
+    if(config.stateblocks){
+      evidence.stateblocks={nativeWindowsBlockRefcounts:null,checkpoints:[],heldBatches:[]};
+      const sb=evidence.stateblocks;
+      const primary={device,rt},secondary={rt:await surface(8,8,0x2840)};
+      secondary.device=await acquire(out=>com('second Device7',d3d,4,hal,secondary.rt,out));
+      const alternate=await surface(2,2,0x1800);
+      const colors=[[240,32,16],[16,224,48],[48,16,208],[192,160,96]];
+      const l=await lock(alternate);
+      for(let i=0;i<4;i++){const [r,g,b]=colors[i];await write(l.pointer+(i>>>1)*l.pitch+(i%2)*4,0xff000000|(r<<16)|(g<<8)|b);}
+      await unlock(alternate);
+      const use=target=>{device=target.device;rt=target.rt;};
+      const bind=obj=>ok(com('SetTexture7 fixture binding',device,35,0,obj));
+      const sampler=async(filter,address)=>{for(const [id,v] of [[16,filter],[17,filter],[13,address],[14,address]])await tss(id,v);};
+      const begin=()=>ok(com('BeginStateBlock',device,22));
+      const end=async()=>{const out=await guard(4);await ok(com('EndStateBlock',device,23,out.p));await out.check();return read(out.p);};
+      const apply=token=>ok(com('ApplyStateBlock',device,39,token));
+      const capture=token=>ok(com('CaptureStateBlock',device,40,token));
+      const sample=config.samples[1];
+      eq(expectedColor(config.texture,sample.uv,1,1),[160,32,64],'hand-calculated initial point wrap');
+      eq(expectedColor(colors,sample.uv,2,3),[48,16,208],'hand-calculated alternate clamped corner');
+      eq(expectedColor(colors,sample.uv,2,1),[93,163,61],'hand-calculated alternate bilinear wrap');
+      const witness=async(label,palette,filter,address)=>{
+        const state={label,filter,address,palette};
+        await observe(label,sample,state);sb.checkpoints.push({label,device,rt,filter,address});
+      };
+      const render=async(label,palette,filter,address)=>{await geometry(sample.uv);await draw();await witness(label,palette,filter,address);};
+      for(const target of [primary,secondary]){
+        use(target);await ok(com('SetViewport7 fixture',device,13,viewport));
+        for(const [id,v] of [[7,0],[14,0],[15,0],[22,1],[27,0],[28,0],[41,0],[137,0]])await ok(com('seed RS',device,20,id,v));
+        for(const [id,v] of [[1,2],[2,2],[4,2],[5,2],[18,0]])await tss(id,v);
+        await ok(com('disable fixture stage1',device,37,1,1,1));await bind(texture);await sampler(1,1);
+      }
+      use(primary);
+      await render('before recording',config.texture,1,1);
+      await begin();await sampler(2,3);
+      if(negative==='recording'){
+        // Model premature recording effects through public calls after ending.
+        const premature=await end();await apply(premature);
+      }
+      await render('during recording',config.texture,1,1);
+      const token=await end();
+      await render('after End',config.texture,1,1);
+      await bind(alternate);await apply(token);
+      if(negative==='full-state')await bind(texture); // Fault model: unselected binding overwritten.
+      await render('selective Apply preserves changed binding',colors,2,3);
+      await sampler(1,1);await capture(token);await sampler(2,3);await bind(texture);await apply(token);
+      await render('selective Capture preserves membership',config.texture,1,1);
+      await sampler(2,1);await capture(token);await sampler(1,3);await bind(alternate);await apply(token);
+      await render('second Capture preserves unrelated binding',colors,2,1);
+      use(secondary);await sampler(1,3);await bind(alternate);
+      await render('second device independent',colors,1,3);
+      if(mode==='worker'){
+        const snapshots=[];
+        const queue=async(target,palette,filter,address,label,configure=true)=>{
+          use(target);await bind(palette===colors?alternate:texture);if(configure)await sampler(filter,address);await geometry(sample.uv);
+          heldRecord={label,messages:[]};sb.heldBatches.push(heldRecord);holding=true;
+          const before=held.length;await draw();await until(()=>held.length>before,'held '+label);
+          const packet=heldPackets.at(-1),buffer=queueBuffers[packet.index],view=new DataView(buffer);
+          eq(packet.commands,1,'one independent draw per held production batch');
+          eq(view.getUint32(28,true),0,'real D3DIM draw record');eq(view.getUint32(20,true),4096,'captured state size');
+          const bytes=new Uint8Array(buffer,32,4096);
+          snapshots.push({bytes,copy:bytes.slice(),label});
+          heldRecord.device=device;heldRecord.rt=rt;heldRecord.sequence=packet.seq;heldRecord.index=packet.index;
+          heldRecord.expected=expectedColor(palette,sample.uv,filter,address);
+          heldRecord.completedAtQueue=Atomics.load(queueControl,1);
+          check(heldRecord.completedAtQueue<packet.seq,'production batch consumption delayed');
+          heldRecord.descriptorAtQueue=await describe();
+        };
+        // Each small batch submits after the consumer catches up. Hold one
+        // at a time, alternating devices and mutating both before consumption.
+        await queue(primary,config.texture,1,1,'A point wrap');
+        await sampler(2,3);await bind(alternate);
+        use(secondary);await sampler(1,1);await bind(texture);
+        for(const row of sb.heldBatches){
+          row.completedAfterLiveChanges=Atomics.load(queueControl,1);
+          check(row.completedAfterLiveChanges<row.sequence,'still not consumed after live changes');
+          row.liveChangedBeforeConsumption=true;
+        }
+        holding=false;for(const send of held.splice(0))send();heldPackets.length=0;
+        use(primary);await witness('queued A captured state',config.texture,1,1);
+        sb.heldBatches.at(-1).completedAfterDrain=Atomics.load(queueControl,1);
+        check(sb.heldBatches.at(-1).completedAfterDrain>=sb.heldBatches.at(-1).sequence,'actual A batch consumed');
+        await queue(secondary,colors,2,1,'B linear wrap');
+        await sampler(1,1);await bind(texture);
+        use(primary);await sampler(1,3);await bind(texture);
+        if(negative==='queued-cross'){
+          snapshots.at(-1).bytes.set(snapshots[0].copy);
+          sb.mutation={kind:negative,bytes:4096,donorDevice:primary.device,receiverDevice:secondary.device};
+        }
+        const second=sb.heldBatches.at(-1);second.completedAfterLiveChanges=Atomics.load(queueControl,1);
+        check(second.completedAfterLiveChanges<second.sequence,'B batch held after both devices changed');second.liveChangedBeforeConsumption=true;
+        holding=false;for(const send of held.splice(0))send();heldPackets.length=0;
+        use(secondary);await witness('queued B captured state',colors,2,1);
+        second.completedAfterDrain=Atomics.load(queueControl,1);check(second.completedAfterDrain>=second.sequence,'actual B batch consumed');
+        // Reuse the same device with a different recorded/Captured state.
+        use(primary);await sampler(2,1);await capture(token);await sampler(1,3);await apply(token);
+        await queue(primary,colors,2,1,'A recaptured linear wrap',false);
+        await sampler(1,3);await bind(texture);
+        use(secondary);await sampler(1,3);await bind(texture);use(primary);
+        if(negative==='queued-stale'){
+          snapshots.at(-1).bytes.set(snapshots[0].copy);
+          sb.mutation={kind:negative,bytes:4096,donorDevice:primary.device,receiverDevice:primary.device};
+        }
+        sb.heldBatches.at(-1).liveChangedBeforeConsumption=true;
+        sb.heldBatches.at(-1).completedAfterLiveChanges=Atomics.load(queueControl,1);
+        check(Atomics.load(queueControl,1)<sb.heldBatches.at(-1).sequence,'recaptured batch still held');
+        holding=false;for(const send of held.splice(0))send();heldPackets.length=0;
+        await witness('queued recaptured A state',colors,2,1);
+        sb.heldBatches.at(-1).completedAfterDrain=Atomics.load(queueControl,1);
+        check(sb.heldBatches.at(-1).completedAfterDrain>=sb.heldBatches.at(-1).sequence,'actual recaptured batch consumed');
+        await render('later live A state',config.texture,1,3);
+        await until(()=>lastStats?.stats.drawCalls===drawCount,'stateblock Worker stats');evidence.stats=lastStats.stats;
+      }
+      use(primary);await ok(com('DeleteStateBlock',device,41,token));
+      use(secondary);await bind(0);await com('Release second device',device,2);await com('Release second target',rt,2);
+      use(primary);await bind(0);await com('Release alternate texture',alternate,2);
+    }
+
+    if(!config.stateblocks)for(const state of config.states){await setState(state);for(const sample of config.samples){
       await geometry(sample.uv);await draw();await observe(state.label+'/'+sample.name,sample,state);
     }}
-    if(mode==='worker'){
+    if(mode==='worker'&&!config.stateblocks){
       for(const sample of config.samples){await geometry(sample.uv);
       const transitions=config.cubeBorder?[[config.states[9],config.states[3]],[config.states[3],config.states[9]],
         [config.states[9],config.states[0]],[config.states[0],config.states[9]]]
@@ -304,7 +434,8 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
         await draw();await observe('next '+next.label,sample,next);
       }}
       await until(()=>lastStats?.stats.drawCalls===drawCount,'all production GPU stats');evidence.stats=lastStats.stats;
-    }else if(gpu)evidence.stats=gpu.snapshot();
+    }
+    if(gpu)evidence.stats=gpu.snapshot();
     evidence.drawCount=drawCount;
     if(mode!=='software'){
       eq(evidence.stats.drawCalls,drawCount,'every draw reached GPU');eq(evidence.stats.fallbacks,0,'no software fallback');
@@ -330,7 +461,7 @@ async function runtime() {
   const closure=require('../tools/watx-closure').watxSourceClosure();
   const source=process.env.LEGACY_RENDER_SOURCE||cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
   assert.match(source,/^[0-9a-f]{40}$/,'full committed source identity required');
-  const cubeBorder=process.argv.includes('--cube-border');
+  const cubeBorder=process.argv.includes('--cube-border'),stateblocks=process.argv.includes('--stateblocks');
   const evidence={source,
     inputClosure:Object.fromEntries([...closure.vfs].filter(([p])=>!p.includes('/')).map(([p])=>['src/'+p,sha(fs.readFileSync(path.join(ROOT,'src',p)))])),
     fixtureSha256:sha(fs.readFileSync(__filename)),calc:{path:'test/binaries/calc.exe',sha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe')))},
@@ -340,20 +471,21 @@ async function runtime() {
     'lib/d3d9-fixed.js','lib/d3d9-texture.js','lib/render-clear.js','lib/d3d9-backend.js','lib/d3dim-gpu.js'];
   evidence.productionJS=Object.fromEntries(fs.readdirSync(path.join(ROOT,'lib')).filter(p=>p.endsWith('.js')||p.endsWith('.json'))
     .map(p=>['lib/'+p,sha(fs.readFileSync(path.join(ROOT,'lib',p)))]));
-  const config={...plan(cubeBorder),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
+  const config={...plan(cubeBorder),stateblocks,thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
   const bootstrapPE=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
   config.imageBase=bootstrapPE.readUInt32LE(bootstrapPE.readUInt32LE(0x3c)+52);
-  let wasm,browser,server,page;
+  let wasm,browser,server,page,deadline;
   try {
-    // Save BOTH unique tested modules. Runtime selects --compat when requested.
+    // Hash both modules in place; runtime selects --compat when requested.
     const moduleDir=process.env.LEGACY_RENDER_MODULE_DIR;
+    assert(!stateblocks||moduleDir,'state-block rendering requires both existing shipped modules');
     const canonical=moduleDir?fs.readFileSync(path.join(moduleDir,'wine-assembly.wasm')):compileSrcWasm();
     const compatVfs=moduleDir?null:require('../lib/dispatch-trampoline').applyToVfs(new Map(closure.vfs));
     const compat=moduleDir?fs.readFileSync(path.join(moduleDir,'wine-assembly.compat.wasm'))
       :compileSrcWasm((file,source)=>compatVfs.get(file)||source,{tailCalls:false});
     for(const [name,bytes] of [['canonical',canonical],['compat',compat]]){
-      fs.writeFileSync(path.join(dir,name+'.wasm'),bytes);evidence[name+'Sha256']=sha(bytes);
+      evidence[name+'Sha256']=sha(bytes);evidence[name+'Path']=moduleDir?path.join(moduleDir,name==='canonical'?'wine-assembly.wasm':'wine-assembly.compat.wasm'):null;
     }
     wasm=process.argv.includes('--compat')?compat:canonical;evidence.testedModuleSha256=sha(wasm);
     server=await startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
@@ -363,16 +495,24 @@ async function runtime() {
       if(req.url!=='/legacy-render-fixture')return false;
       res.writeHead(200,{'Content-Type':'text/html'});res.end(scripts.map(p=>`<script src="/${p}"></script>`).join('\n'));return true;
     }});
+    evidence.launchedAt=new Date().toISOString();
+    evidence.browserDeadline=new Date(Date.now()+180000).toISOString();
+    evidence.cleanupDeadline=new Date(Date.now()+210000).toISOString();
     browser=await puppeteer.launch({headless:true,executablePath:process.env.CHROME||'/usr/bin/chromium',
       args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader'],protocolTimeout:120000});
+    deadline=setTimeout(()=>{evidence.deadlineExceeded=true;browser.close().catch(()=>{});},180000);
     evidence.browser=await browser.version();
+    evidence.serverAddress=server.address();evidence.devtools=browser.wsEndpoint();
+    const child=browser.process();evidence.browserProcess={pid:child.pid,startTicks:fs.readFileSync('/proc/'+child.pid+'/stat','utf8').split(') ')[1].split(' ')[19]};
+    evidence.browserProcess.profile=child.spawnargs.find(a=>a.startsWith('--user-data-dir='))?.slice('--user-data-dir='.length);
+    child.once('exit',(code,signal)=>{evidence.browserProcess.exit={code,signal,at:new Date().toISOString()};});
     for(const mode of ['software','webgl','worker']){
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       evidence.results.push(await page.evaluate(browserFixture,mode,config,oracle.toString()));
-      await page.screenshot({path:path.join(dir,mode+'.png')});await page.close();page=null;
-      console.log('PASS public-COM sampler rendered pixels '+mode);
+      await page.screenshot({path:path.join(dir,mode+'.png'),fullPage:true});await page.close();page=null;
+      console.log('PASS public-COM '+(stateblocks?'selective state-block':'sampler')+' rendered pixels '+mode);
     }
-    for(const [negative,mode] of cubeBorder?['software','webgl','worker'].map(m=>['border',m])
+    for(const [negative,mode] of stateblocks?[['recording','software'],['full-state','software'],['queued-stale','worker'],['queued-cross','worker']]:cubeBorder?['software','webgl','worker'].map(m=>['border',m])
       :['nearest','stale'].map(n=>[n,'software'])){
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       let failure;
@@ -380,19 +520,37 @@ async function runtime() {
       try{await page.evaluate(browserFixture,mode,negativeConfig,oracle.toString(),negative);}catch(error){failure=String(error);}
       const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
       evidence.negativeControls.push({negative,mode,failure,partial});
-      if(cubeBorder)await page.screenshot({path:path.join(dir,`negative-${negative}-${mode}.png`)});
+      if(cubeBorder||stateblocks)await page.screenshot({path:path.join(dir,`negative-${negative}-${mode}.png`),fullPage:true});
       assert(failure?.includes('PIXEL ORACLE'),'negative control must fail pixel oracle, not bootstrap');
+      if(stateblocks){
+        const label={recording:'during recording','full-state':'selective Apply preserves changed binding','queued-stale':'queued recaptured A state','queued-cross':'queued B captured state'}[negative];
+        assert(failure.includes('PIXEL ORACLE '+label),'fault must fail at its designated state-block pixel');
+      }
       assert(partial.observations.some(x=>JSON.stringify(x.actual)!==JSON.stringify(x.expected)),'actual discriminating pixel');
       await page.close();page=null;console.log('PASS rendered negative control rejected '+negative);
     }
     evidence.status='PASS';
   }catch(error){
     evidence.status='FAIL / remaining paths untested';evidence.error=error.stack||String(error);
-    if(page)evidence.partial=await page.evaluate(()=>globalThis.legacyTextureEvidence||null).catch(()=>null);
+    if(page){
+      evidence.partial=await page.evaluate(()=>globalThis.legacyTextureEvidence||null).catch(()=>null);
+      await page.screenshot({path:path.join(dir,'failure.png'),fullPage:true}).catch(()=>{});
+    }
     throw error;
   }finally{
-    fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(evidence,null,2)+'\n');
-    if(browser)await browser.close();if(server)await closeServer(server);
+    if(deadline)clearTimeout(deadline);
+    try{
+      let cleanupTimer;
+      try{
+        await Promise.race([(async()=>{if(browser)await browser.close();if(server)await closeServer(server);})(),
+          new Promise((_,reject)=>{cleanupTimer=setTimeout(()=>reject(Error('normal cleanup deadline exceeded')),30000);})]);
+        if(browser)assert.deepEqual([evidence.browserProcess.exit?.code,evidence.browserProcess.exit?.signal],[0,null],'normal browser exit');
+      }catch(error){evidence.status='FAIL / cleanup';evidence.cleanupError=String(error);throw error;}
+      finally{clearTimeout(cleanupTimer);}
+    }finally{
+      evidence.cleanupCompletedAt=new Date().toISOString();
+      fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(evidence,null,2)+'\n');
+    }
   }
 }
 
