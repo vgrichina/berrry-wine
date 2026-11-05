@@ -218,11 +218,9 @@
   ;; LoadLibrary that found it must park and retry rather than hand out a
   ;; module whose initializer has not run (Windows holds such a caller on the
   ;; loader lock). Never for the initializing thread itself -- a DllMain that
-  ;; loads its own module gets it at once -- and bounded by wall time: a host
-  ;; path that maps a module and then fails before its DllMain never marks it,
-  ;; and a guest parked on that row would never run again.
-  (global $dll_init_wait_row (mut i32) (i32.const -1))
-  (global $dll_init_wait_since (mut i32) (i32.const 0))
+  ;; loads its own module gets it at once. There is no wall-time bound: every
+  ;; host failure path ends INITIALIZING through complete_dll_initialize (FAILED)
+  ;; during rollback, so only a quarantined (trapped) load leaves waiters parked.
   (func $dll_row_init_pending (param $index i32) (result i32)
     (local $flags i32) (local $owner i32) (local $state i32)
     (local.set $state (i32.atomic.load (call $dll_lifecycle_row (local.get $index))))
