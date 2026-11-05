@@ -261,7 +261,7 @@ const interfaces = [
     { name: 'ProcessVertices',        nargs: 8, handler: 'IDirect3DVertexBuffer_ProcessVertices' },
     { name: 'GetVertexBufferDesc',    nargs: 2, handler: 'IDirect3DVertexBuffer_GetVertexBufferDesc' },
     { name: 'Optimize',               nargs: 3 },
-    { name: 'ProcessVerticesStrided', nargs: 9 },
+    { name: 'ProcessVerticesStrided', nargs: 8 },
   ]},
 
   // ── IDirect3DTexture (v1) ───────────────────────────────────────────

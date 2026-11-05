@@ -125,7 +125,12 @@ function spatialPlan(){
 }
 
 function fixtureSource() {
-  let source=browserFixture.toString();
+  // Immediate-mode injection switches targets through mutable bindings. This
+  // older adapter's strict seams and descendants use fixed targets instead.
+  let source=browserFixture.toString()
+    .replace('let rt=await surface(8,8,0x2840);','const rt=await surface(8,8,0x2840);')
+    .replace('let device=await acquire','const device=await acquire')
+    .replace('const held=[],heldPackets=[];', 'const held=[];const heldPackets=[];');
   const replace=(a,b)=>{assert.equal(source.split(a).length,2,'unique public mip seam: '+a.slice(0,60));source=source.replace(a,b);};
   const block=(a,b,replacement)=>{const start=source.indexOf(a),end=source.indexOf(b,start);assert(start>=0&&end>start);replace(source.slice(start,end),replacement);};
   replace('port=manager.createEndpoint(options);','port=manager.createEndpoint({...options,webglVersion:config.webglVersion});');
@@ -181,8 +186,8 @@ function fixtureSource() {
   replace('preview.width=preview.height=8','preview.width=preview.height=32');
   replace('p=l.pointer+2*l.pitch+2*4','p=l.pointer+sample.y*l.pitch+sample.x*4');
   replace('for(let y=0;y<8;y++)for(let x=0;x<8;x++)','for(let y=0;y<32;y++)for(let x=0;x<32;x++)');
-  replace('new Uint8ClampedArray(dibRGBA),8,8','new Uint8ClampedArray(dibRGBA),32,32');
-  replace("const expectedAddress=state.address===4?(mode==='software'?1:3):state.address;\n      const expected=expectedColor(config.texture,sample.uv,state.filter,expectedAddress);",'const expectedAddress=[1,1];\n      const expected=expectedColor(config.colors,state,sample);');
+  replace("if(preview)preview.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),8,8)","if(preview)preview.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),32,32)");
+  replace("const expectedAddress=state.address===4?(mode==='software'?1:3):state.address;\n      const expected=expectedColor(state.palette||config.texture,sample.uv,state.filter,expectedAddress);",'const expectedAddress=[1,1];\n      const expected=expectedColor(config.colors,state,sample);');
   replace('gl.readPixels(2,8-1-2,1,1','gl.readPixels(sample.x,32-1-sample.y,1,1');
   replace("      eq(actual,expected,'PIXEL ORACLE '+label);\n      if(gpu)eq(row.webglRGBA,[...expected,255],'independent actual WebGL pixels');",`      const close=(got,want,label)=>check(got.length===want.length&&got.every((c,i)=>Math.abs(c-want[i])<=config.tolerance),
         'PIXEL ORACLE '+label+': '+JSON.stringify(got)+' expected '+JSON.stringify(want));
@@ -200,7 +205,7 @@ function fixtureSource() {
       check(version.startsWith('WebGL '+config.webglVersion+'.0'),'actual context VERSION '+version);
       close(actual,expected,label);
       if(gpu){close(row.webglRGBA.slice(0,3),expected,'actual GL '+label);eq(row.webglRGBA[3],255,'GL opaque alpha');}`);
-  block('    for(const state of config.states){','    evidence.drawCount=drawCount;',`    for(const state of config.states){await setState(state);await geometry(state);await draw();
+  block('    if(!config.stateblocks&&!config.immediate)for(const state of config.states){','    evidence.drawCount=drawCount;',`    for(const state of config.states){await setState(state);await geometry(state);await draw();
       for(const sample of state.samples)await observe(state.label+'/'+sample.x+','+sample.y,sample,state);
     }
     if(mode==='worker'){

@@ -21,6 +21,9 @@ const extraWat=String.raw`
     (call $d3dim_pack_fvf_vertices (local.get $fvf) (local.get $src) (local.get $count) (i32.const 0)))
   (func (export "vb_unpack") (param $fvf i32) (param $src i32) (param $dst i32)
     (call $d3dim_unpack_tl_vertex (local.get $fvf) (call $g2w (local.get $src)) (call $g2w (local.get $dst))))
+  (func (export "vb_copy_texcoords") (param $fvf i32) (param $src i32) (param $dst i32)
+    (call $d3dim_vb_copy_texcoords (local.get $fvf) (call $g2w (local.get $src))
+      (local.get $fvf) (call $g2w (local.get $dst)) (i32.const 0)))
   (func (export "vb_call") (param $id i32) (param $obj i32) (param $a i32)
       (param $b i32) (param $c i32) (param $stack i32) (result i32)
     (i32.store offset=16 (global.get $reg_base) (local.get $stack))
@@ -122,8 +125,12 @@ const extraWat=String.raw`
       e.vb_unpack(fvf,packed,dst+4);
       const expected=[0x3f800000,0x40000000,0x40400000];
       if(reserved)expected.push(0);
+      const header=expected.concat([0xff123456,0xffabcdef,0xcccccccc,0xcccccccc]);
+      assert.deepStrictEqual(header.map((_,j)=>e.guest_read32(dst+4+j*4)>>>0),header,
+        'header unpack leaves texture components for the separate dimensional copy');
+      e.vb_copy_texcoords(fvf,data,dst+4);
       expected.push(0xff123456,0xffabcdef,0x3e800000,0x3f400000);
-      assert.deepStrictEqual(expected.map((_,j)=>e.guest_read32(dst+4+j*4)>>>0),expected,'unpack writes reserved slot and correct colors/UV');
+      assert.deepStrictEqual(expected.map((_,j)=>e.guest_read32(dst+4+j*4)>>>0),expected,'unpack and dimensional copy write reserved slot and correct colors/UV');
       assert.strictEqual(e.guest_read32(dst)>>>0,0xcccccccc);
       assert.strictEqual(e.guest_read32(dst+stride+4)>>>0,0xcccccccc);
     }

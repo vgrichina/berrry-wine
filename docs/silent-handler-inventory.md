@@ -1,5 +1,11 @@
 # Silent-handler inventory history
 
+2026-11-05: 239 -> 237. Both vertex-buffer Unlock handlers now clear shared
+object lock state and reject invalid objects. ProcessVerticesStrided checks
+that state before processing; Lock marks it through the common VB alias.
+No quiet handler was added. Public x86 COM regressions cover locked rejection,
+Unlock recovery and released/recreated buffer lifetimes.
+
 2026-10-19: No inventory change. `ImmGetProperty` shares the existing
 two-argument no-IME result/cleanup and reports zero capabilities/version
 because no IME is installed, consistent with `GetKeyboardLayout/List` exposing

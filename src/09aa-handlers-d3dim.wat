@@ -1898,7 +1898,7 @@
 
   ;; IDirect3DVertexBuffer_Unlock — 1 args (incl. this)
   (func $handle_IDirect3DVertexBuffer_Unlock (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base) (call $d3dim_vb_unlock (local.get $arg0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   ;; IDirect3DVertexBuffer_ProcessVertices — 8 args (incl. this)
@@ -1935,7 +1935,7 @@
 
   ;; IDirect3DVertexBuffer7_Unlock — 1 args (incl. this)
   (func $handle_IDirect3DVertexBuffer7_Unlock (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base) (call $d3dim_vb_unlock (local.get $arg0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
 
@@ -1945,9 +1945,16 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
-  ;; IDirect3DVertexBuffer7_ProcessVerticesStrided — 9 args (incl. this)
+  ;; IDirect3DVertexBuffer7_ProcessVerticesStrided — 8 args (incl. this)
   (func $handle_IDirect3DVertexBuffer7_ProcessVerticesStrided (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr)))
+    (i32.store offset=0 (global.get $reg_base)
+      (call $d3dim_vb_process_vertices_strided
+        (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)
+        (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+        (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+        (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32)))))
+    (i32.store offset=16 (global.get $reg_base)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))))
 
 
   ;; ── IDirect3DTexture — 8 methods ─────────────
