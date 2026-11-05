@@ -1121,19 +1121,12 @@
 
   ;; IDirect3DDevice7_BeginStateBlock — 1 args (incl. this)
   (func $handle_IDirect3DDevice7_BeginStateBlock (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (global.set $d3dim_stateblock_record_dev (local.get $arg0))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base) (call $d3dim_sb_begin (local.get $arg0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   ;; IDirect3DDevice7_EndStateBlock — 2 args (incl. this)
   (func $handle_IDirect3DDevice7_EndStateBlock (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $handle i32) (local $dev_this i32)
-    (local.set $dev_this (global.get $d3dim_stateblock_record_dev))
-    (if (i32.eqz (local.get $dev_this)) (then (local.set $dev_this (local.get $arg0))))
-    (local.set $handle (call $d3dim_stateblock_create (local.get $dev_this)))
-    (if (local.get $arg1) (then (call $gs32 (local.get $arg1) (local.get $handle))))
-    (global.set $d3dim_stateblock_record_dev (i32.const 0))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base) (call $d3dim_sb_end (local.get $arg0) (local.get $arg1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice7_PreLoad — 2 args (incl. this)
@@ -1281,28 +1274,22 @@
 
   ;; IDirect3DDevice7_ApplyStateBlock — 2 args (incl. this)
   (func $handle_IDirect3DDevice7_ApplyStateBlock (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $d3dim_stateblock_apply (local.get $arg0) (local.get $arg1))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base) (call $d3dim_sb_operation (local.get $arg0) (local.get $arg1) (i32.const 1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice7_CaptureStateBlock — 2 args (incl. this)
   (func $handle_IDirect3DDevice7_CaptureStateBlock (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $d3dim_stateblock_capture (local.get $arg0) (local.get $arg1))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base) (call $d3dim_sb_operation (local.get $arg0) (local.get $arg1) (i32.const 0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice7_DeleteStateBlock — 2 args (incl. this)
   (func $handle_IDirect3DDevice7_DeleteStateBlock (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $d3dim_stateblock_delete (local.get $arg1))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base) (call $d3dim_sb_operation (local.get $arg0) (local.get $arg1) (i32.const 2)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3DDevice7_CreateStateBlock — 3 args (incl. this)
   (func $handle_IDirect3DDevice7_CreateStateBlock (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $handle i32)
-    (local.set $handle (call $d3dim_stateblock_create (local.get $arg0)))
-    (if (local.get $arg2) (then (call $gs32 (local.get $arg2) (local.get $handle))))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base) (call $d3dim_sb_create (local.get $arg0) (local.get $arg1) (local.get $arg2)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice7_Load(this, lpDestTex, lpDestPoint, lpSrcTex, lprcSrcRect,

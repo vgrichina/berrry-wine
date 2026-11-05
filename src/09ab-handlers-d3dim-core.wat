@@ -40,6 +40,9 @@
   ;;   +3932  immutable legacy creation version (0=other) (i32, 4)
   ;;   +3936  active legacy TEXTUREMAPBLEND mode (2/4, or 0 for TSS) (4)
   ;;   +3940  stage-zero MIPFILTER explicitly set (i32, including NONE)
+  ;;   +3944  owned SetTexture reference (guest interface ptr; never captured)
+  ;;   +3948  initialized light-parameter membership mask (never captured)
+  ;;   +3952  defined light-enable membership mask (never captured)
   ;;   +3968  render Worker producer descriptor scratch (32)
   ;;   +4000  D3DCLIPSTATUS round-trip storage          (24)
   ;;   +4024  texture-transform block guest ptr        (i32, 4)  ($d3dim_tex_block)
@@ -916,10 +919,11 @@
   (global $D3DIM_EB_CACHE_PTRS_SIZE i32 (region.size $D3DIM_EB_CACHE_PTRS))
   (global $D3DIM_EB_CACHE_MAX  i32 (i32.const 16384)) ;; = $DX_MAX
   (global $D3DIM_EB_CACHE_HEADER i32 (i32.const 32))
-  ;; D3D7 state blocks: 32 entries × [snapshot_guest, dev_slot, reserved].
+  ;; D3D7 state blocks: 32 entries × [values_guest, owner_state_guest, token].
+  ;; token=0 denotes an open recorder. Values never contain device storage.
   (global $D3DIM_STATEBLOCKS i32 (region.addr $D3DIM_AUX 0x00000840))
   (global $D3DIM_STATEBLOCK_MAX i32 (i32.const 32))
-  (global $d3dim_stateblock_record_dev (mut i32) (i32.const 0))
+  (global $d3dim_stateblock_serial (mut i32) (i32.const 0))
   (global $d3dim_dbg_vproj_count (mut i32) (i32.const 0))
 
   ;; D3DSTATS is dwSize followed by five counters.  The software renderer does
@@ -936,78 +940,311 @@
       (i32.const 20))
     (i32.const 0))
 
-  (func $d3dim_stateblock_entry (param $handle i32) (result i32)
-    (if (i32.or
-          (i32.eqz (local.get $handle))
-          (i32.gt_u (local.get $handle) (global.get $D3DIM_STATEBLOCK_MAX)))
-      (then (return (i32.const 0))))
-    (i32.add (global.get $D3DIM_STATEBLOCKS)
-      (i32.mul (i32.sub (local.get $handle) (i32.const 1)) (i32.const 12))))
-
-  (func $d3dim_stateblock_create (param $dev_this i32) (result i32)
-    (local $state_guest i32) (local $snapshot_guest i32) (local $entry i32)
-    (local $dev_entry i32) (local $dev_slot i32) (local $i i32)
-    (local.set $state_guest (call $d3ddev_state (local.get $dev_this)))
-    (if (i32.eqz (local.get $state_guest)) (then (return (i32.const 0))))
-    (local.set $dev_entry (call $dx_from_this (local.get $dev_this)))
-    (local.set $dev_slot (call $dx_slot_of (local.get $dev_entry)))
+  ;; Owned typed records: count followed by 112-byte {kind,index,value[104]}.
+  ;; No device snapshot, ownership list, mutable indirect pointer or draw scratch.
+  ;; Kinds: 0 RS, 1 stage/TSS, 2 transform, 3 material, 4 light parameters,
+  ;; 5 light enable, 6 clip plane, 7 viewport, 8 retained texture, 9 derived.
+  ;; The finite key space is <1024 records. Allocate before Begin succeeds, so
+  ;; recording a valid setter cannot fail half way through a state block.
+  (func $d3dim_sb_find (param $this i32) (param $token i32) (result i32)
+    (local $owner i32) (local $i i32) (local $block_entry i32)
+    (local.set $owner (call $d3ddev_state (local.get $this)))
+    (if (i32.eqz (local.get $owner)) (then (return (i32.const 0))))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $D3DIM_STATEBLOCK_MAX)))
-      (local.set $entry (i32.add (global.get $D3DIM_STATEBLOCKS)
-        (i32.mul (local.get $i) (i32.const 12))))
-      (if (i32.eqz (i32.load (local.get $entry)))
-        (then
-          (local.set $snapshot_guest (call $heap_alloc (i32.const 4096)))
-          (if (i32.eqz (local.get $snapshot_guest)) (then (return (i32.const 0))))
-          (call $memcpy
-            (call $g2w (local.get $snapshot_guest))
-            (call $g2w (local.get $state_guest))
-            (i32.const 4096))
-          (i32.store (local.get $entry) (local.get $snapshot_guest))
-          (i32.store (i32.add (local.get $entry) (i32.const 4)) (local.get $dev_slot))
-          (return (i32.add (local.get $i) (i32.const 1)))))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br $scan)))
+      (local.set $block_entry (i32.add (global.get $D3DIM_STATEBLOCKS) (i32.mul (local.get $i) (i32.const 12))))
+      (if (i32.and (i32.ne (i32.load (local.get $block_entry)) (i32.const 0))
+            (i32.and (i32.eq (i32.load offset=4 (local.get $block_entry)) (local.get $owner))
+              (i32.eq (i32.load offset=8 (local.get $block_entry)) (local.get $token))))
+        (then (return (local.get $block_entry))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
     (i32.const 0))
 
-  (func $d3dim_stateblock_apply (param $dev_this i32) (param $handle i32)
-    (local $entry i32) (local $snapshot_guest i32) (local $state_guest i32) (local $tex_block i32)
-    (local.set $entry (call $d3dim_stateblock_entry (local.get $handle)))
-    (if (i32.eqz (local.get $entry)) (then (return)))
-    (local.set $snapshot_guest (i32.load (local.get $entry)))
-    (if (i32.eqz (local.get $snapshot_guest)) (then (return)))
-    (local.set $state_guest (call $d3ddev_state (local.get $dev_this)))
-    (if (i32.eqz (local.get $state_guest)) (then (return)))
-    ;; The texture-transform block (+4024) is the device's own allocation, not
-    ;; a value: keep it rather than adopt the pointer a capture copied, so an
-    ;; apply never aliases or drops it. Its matrices are not part of the block.
-    (local.set $tex_block (call $gl32 (i32.add (local.get $state_guest) (i32.const 4024))))
-    (call $memcpy
-      (call $g2w (local.get $state_guest))
-      (call $g2w (local.get $snapshot_guest))
-      (i32.const 4096))
-    (call $gs32 (i32.add (local.get $state_guest) (i32.const 4024)) (local.get $tex_block)))
+  (func $d3dim_sb_begin (param $this i32) (result i32)
+    (local $i i32) (local $block_entry i32) (local $data i32) (local $owner i32)
+    (if (call $d3dim_sb_find (local.get $this) (i32.const 0))
+      (then (return (i32.const 0x88760835)))) ;; D3DERR_INBEGINSTATEBLOCK
+    (local.set $owner (call $d3ddev_state (local.get $this)))
+    (if (i32.eqz (local.get $owner)) (then (return (i32.const 0x80070057))))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (global.get $D3DIM_STATEBLOCK_MAX)))
+      (local.set $block_entry (i32.add (global.get $D3DIM_STATEBLOCKS) (i32.mul (local.get $i) (i32.const 12))))
+      (if (i32.eqz (i32.load (local.get $block_entry))) (then
+        (local.set $data (call $heap_alloc (i32.const 114692)))
+        (if (i32.eqz (local.get $data)) (then (return (i32.const 0x8007000e))))
+        (call $gs32 (local.get $data) (i32.const 0))
+        (i32.store (local.get $block_entry) (local.get $data))
+        (i32.store offset=4 (local.get $block_entry) (local.get $owner))
+        (i32.store offset=8 (local.get $block_entry) (i32.const 0))
+        (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (i32.const 0x8007000e))
 
-  (func $d3dim_stateblock_capture (param $dev_this i32) (param $handle i32)
-    (local $entry i32) (local $snapshot_guest i32) (local $state_guest i32)
-    (local.set $entry (call $d3dim_stateblock_entry (local.get $handle)))
-    (if (i32.eqz (local.get $entry)) (then (return)))
-    (local.set $snapshot_guest (i32.load (local.get $entry)))
-    (if (i32.eqz (local.get $snapshot_guest)) (then (return)))
-    (local.set $state_guest (call $d3ddev_state (local.get $dev_this)))
-    (if (i32.eqz (local.get $state_guest)) (then (return)))
-    (call $memcpy
-      (call $g2w (local.get $snapshot_guest))
-      (call $g2w (local.get $state_guest))
-      (i32.const 4096)))
+  (func $d3dim_sb_end (param $this i32) (param $out i32) (result i32)
+    (local $block_entry i32)
+    (local.set $block_entry (call $d3dim_sb_find (local.get $this) (i32.const 0)))
+    (if (i32.eqz (local.get $block_entry)) (then (return (i32.const 0x88760836))))
+    (if (i32.eqz (local.get $out)) (then (return (i32.const 0x80070057))))
+    ;; Tokens are process-unique until exhaustion. Never silently resurrect a
+    ;; deleted token or a token whose device allocation has since been reused.
+    (if (i32.eq (global.get $d3dim_stateblock_serial) (i32.const -1))
+      (then (return (i32.const 0x8007000e))))
+    (global.set $d3dim_stateblock_serial (i32.add (global.get $d3dim_stateblock_serial) (i32.const 1)))
+    (i32.store offset=8 (local.get $block_entry) (global.get $d3dim_stateblock_serial))
+    (call $gs32 (local.get $out) (global.get $d3dim_stateblock_serial))
+    (i32.const 0))
 
-  (func $d3dim_stateblock_delete (param $handle i32)
-    (local $entry i32) (local $snapshot_guest i32)
-    (local.set $entry (call $d3dim_stateblock_entry (local.get $handle)))
-    (if (i32.eqz (local.get $entry)) (then (return)))
-    (local.set $snapshot_guest (i32.load (local.get $entry)))
-    (if (local.get $snapshot_guest) (then (call $heap_free (local.get $snapshot_guest))))
-    (call $zero_memory (local.get $entry) (i32.const 12)))
+  ;; Return a member's guest value address, inserting it on the first write.
+  (func $d3dim_sb_member (param $block_entry i32) (param $kind i32) (param $index i32) (result i32)
+    (local $data i32) (local $count i32) (local $i i32) (local $record i32)
+    (local.set $data (i32.load (local.get $block_entry)))
+    (local.set $count (call $gl32 (local.get $data)))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $record (i32.add (local.get $data) (i32.add (i32.const 4) (i32.mul (local.get $i) (i32.const 112)))))
+      (if (i32.and (i32.eq (call $gl32 (local.get $record)) (local.get $kind))
+            (i32.eq (call $gl32 (i32.add (local.get $record) (i32.const 4))) (local.get $index)))
+        (then (return (i32.add (local.get $record) (i32.const 8)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (local.set $record (i32.add (local.get $data) (i32.add (i32.const 4) (i32.mul (local.get $count) (i32.const 112)))))
+    (call $guest_memset (local.get $record) (i32.const 0) (i32.const 112))
+    (call $gs32 (local.get $record) (local.get $kind))
+    (call $gs32 (i32.add (local.get $record) (i32.const 4)) (local.get $index))
+    (call $gs32 (local.get $data) (i32.add (local.get $count) (i32.const 1)))
+    (i32.add (local.get $record) (i32.const 8)))
+
+  ;; Intercept only documented recordable setters, after their argument checks.
+  ;; scalar for size=0, immediate copy of the caller's bytes otherwise.
+  (func $d3dim_sb_record (param $this i32) (param $kind i32) (param $index i32)
+      (param $value i32) (param $size i32) (result i32)
+    (local $block_entry i32) (local $dst i32)
+    (local.set $block_entry (call $d3dim_sb_find (local.get $this) (i32.const 0)))
+    (if (i32.eqz (local.get $block_entry)) (then (return (i32.const 0))))
+    ;; WORLD1..3/blended transforms are not implemented by this renderer.
+    ;; Never record its fallback composite/scratch slot as a transform value.
+    (if (i32.and (i32.eq (local.get $kind) (i32.const 2))
+          (i32.eqz (i32.or
+            (i32.le_u (i32.sub (local.get $index) (i32.const 1)) (i32.const 2))
+            (i32.le_u (i32.sub (local.get $index) (i32.const 16)) (i32.const 7)))))
+      (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057))
+        (return (i32.const 1))))
+    (local.set $dst (call $d3dim_sb_member (local.get $block_entry) (local.get $kind) (local.get $index)))
+    (if (i32.eq (local.get $kind) (i32.const 8)) (then
+      ;; Retain the resource, without asserting native state-block AddRef counts.
+      ;; Acquire first: replacing a member with itself must remain safe.
+      (if (local.get $value) (then (drop (call $dx_com_addref (local.get $value)))))
+      (if (call $gl32 (local.get $dst))
+        (then (drop (call $dx_surface_release (call $gl32 (local.get $dst))))))))
+    (if (local.get $size)
+      (then (call $guest_memmove (local.get $dst) (local.get $value) (local.get $size)))
+      (else (call $gs32 (local.get $dst) (local.get $value))))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.const 1))
+
+  (func $d3dim_sb_retire (param $block_entry i32)
+    (local $data i32) (local $i i32) (local $count i32) (local $r i32)
+    (local.set $data (i32.load (local.get $block_entry)))
+    (local.set $count (call $gl32 (local.get $data)))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $r (i32.add (local.get $data) (i32.add (i32.const 4) (i32.mul (local.get $i) (i32.const 112)))))
+      (if (i32.and (i32.eq (call $gl32 (local.get $r)) (i32.const 8))
+            (i32.ne (call $gl32 (i32.add (local.get $r) (i32.const 8))) (i32.const 0)))
+        (then (drop (call $dx_surface_release (call $gl32 (i32.add (local.get $r) (i32.const 8)))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (call $zero_memory (local.get $block_entry) (i32.const 12))
+    (call $heap_free (local.get $data)))
+
+  (func $d3dim_sb_destroy_device (param $owner i32)
+    (local $block_entry i32) (local $i i32)
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (global.get $D3DIM_STATEBLOCK_MAX)))
+      (local.set $block_entry (i32.add (global.get $D3DIM_STATEBLOCKS) (i32.mul (local.get $i) (i32.const 12))))
+      (if (i32.and (i32.ne (i32.load (local.get $block_entry)) (i32.const 0))
+            (i32.eq (i32.load offset=4 (local.get $block_entry)) (local.get $owner)))
+        (then (call $d3dim_sb_retire (local.get $block_entry))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan))))
+
+  ;; Capture and Apply share the identical fixed membership walk. Apply uses
+  ;; ordinary setters so derived state follows selected state changes only.
+  (func $d3dim_sb_transfer (param $this i32) (param $block_entry i32) (param $apply i32)
+    (local $data i32) (local $count i32) (local $i i32) (local $record i32)
+    (local $kind i32) (local $index i32) (local $value i32)
+    (local $blend i32) (local $has_blend i32) (local $mip i32) (local $has_mip i32) (local $previous i32)
+    (local.set $data (i32.load (local.get $block_entry)))
+    (local.set $count (call $gl32 (local.get $data)))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $record (i32.add (local.get $data) (i32.add (i32.const 4) (i32.mul (local.get $i) (i32.const 112)))))
+      (local.set $kind (call $gl32 (local.get $record)))
+      (local.set $index (call $gl32 (i32.add (local.get $record) (i32.const 4))))
+      (local.set $value (i32.add (local.get $record) (i32.const 8)))
+      (if (i32.eq (local.get $kind) (i32.const 0)) (then
+        (if (local.get $apply)
+          (then (call $d3dim_set_render_state (local.get $this) (local.get $index) (call $gl32 (local.get $value))))
+          (else (call $d3dim_get_render_state (local.get $this) (local.get $index) (local.get $value))))))
+      (if (i32.eq (local.get $kind) (i32.const 1)) (then
+        (if (local.get $apply)
+          (then (call $d3dim_set_tss (local.get $this) (i32.shr_u (local.get $index) (i32.const 5)) (i32.and (local.get $index) (i32.const 31)) (call $gl32 (local.get $value))))
+          (else (call $d3dim_get_tss (local.get $this) (i32.shr_u (local.get $index) (i32.const 5)) (i32.and (local.get $index) (i32.const 31)) (local.get $value))))))
+      (if (i32.eq (local.get $kind) (i32.const 2)) (then
+        (if (local.get $apply)
+          (then (call $d3dim_set_transform (local.get $this) (local.get $index) (local.get $value)))
+          (else (call $d3dim_get_transform (local.get $this) (local.get $index) (local.get $value))))))
+      (if (i32.eq (local.get $kind) (i32.const 3)) (then
+        (if (local.get $apply)
+          (then (call $d3dim_device7_set_material (local.get $this)  (local.get $value)))
+          (else (call $d3dim_device7_get_material (local.get $this)  (local.get $value))))))
+      (if (i32.eq (local.get $kind) (i32.const 4)) (then
+        (if (local.get $apply)
+          (then (call $d3dim_device7_set_light (local.get $this) (local.get $index) (local.get $value)))
+          (else (call $d3dim_device7_get_light (local.get $this) (local.get $index) (local.get $value))))))
+      (if (i32.eq (local.get $kind) (i32.const 5)) (then
+        (if (local.get $apply)
+          (then (call $d3dim_device7_light_enable (local.get $this) (local.get $index) (call $gl32 (local.get $value))))
+          (else (call $d3dim_device7_get_light_enable (local.get $this) (local.get $index) (local.get $value))))))
+      (if (i32.eq (local.get $kind) (i32.const 6)) (then
+        (if (local.get $apply)
+          (then (call $d3dim_device7_set_clip_plane (local.get $this) (local.get $index) (local.get $value)))
+          (else (call $d3dim_device7_get_clip_plane (local.get $this) (local.get $index) (local.get $value))))))
+      (if (i32.eq (local.get $kind) (i32.const 7)) (then
+        (if (local.get $apply)
+          (then (call $d3dim_device7_set_viewport (local.get $this)  (local.get $value)))
+          (else (call $d3dim_device7_get_viewport (local.get $this)  (local.get $value))))))
+      (if (i32.eq (local.get $kind) (i32.const 8)) (then
+        (if (local.get $apply)
+          (then (call $d3dim_set_texture (local.get $this) (i32.const 0) (call $gl32 (local.get $value))))
+          (else
+            (local.set $previous (call $gl32 (local.get $value)))
+            (call $d3dim_get_texture (local.get $this) (i32.const 0) (local.get $value))
+            (if (local.get $previous)
+              (then (drop (call $dx_surface_release (local.get $previous)))))))))
+      (if (i32.eq (local.get $kind) (i32.const 9)) (then
+        (if (local.get $apply)
+          (then (if (local.get $index)
+            (then (local.set $mip (call $gl32 (local.get $value))) (local.set $has_mip (i32.const 1)))
+            (else (local.set $blend (call $gl32 (local.get $value))) (local.set $has_blend (i32.const 1)))))
+          (else (call $gs32 (local.get $value)
+            (call $gl32 (i32.add (call $d3ddev_state (local.get $this))
+              (i32.add (i32.const 3936) (i32.shl (local.get $index) (i32.const 2))))))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    ;; These effective-state markers describe selected raw states. Restore them
+    ;; after setter replay, so key insertion order cannot override last-write.
+    (if (local.get $has_blend) (then (call $gs32
+      (i32.add (call $d3ddev_state (local.get $this)) (i32.const 3936)) (local.get $blend))))
+    (if (local.get $has_mip) (then (call $gs32
+      (i32.add (call $d3ddev_state (local.get $this)) (i32.const 3940)) (local.get $mip)))))
+
+  ;; Allocate selected indirect destinations before changing any member value.
+  (func $d3dim_sb_prepare (param $this i32) (param $block_entry i32) (param $apply i32) (result i32)
+    (local $data i32) (local $i i32) (local $count i32) (local $r i32)
+    (local $kind i32) (local $index i32) (local $state i32)
+    (local.set $state (call $d3ddev_state (local.get $this)))
+    (local.set $data (i32.load (local.get $block_entry)))
+    (local.set $count (call $gl32 (local.get $data)))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $r (i32.add (local.get $data) (i32.add (i32.const 4) (i32.mul (local.get $i) (i32.const 112)))))
+      (local.set $kind (call $gl32 (local.get $r)))
+      (local.set $index (call $gl32 (i32.add (local.get $r) (i32.const 4))))
+      (if (i32.or (i32.and (i32.eq (local.get $kind) (i32.const 2)) (i32.ge_u (local.get $index) (i32.const 16)))
+            (i32.and (i32.eq (local.get $kind) (i32.const 1)) (i32.eq (i32.and (local.get $index) (i32.const 31)) (i32.const 24))))
+        (then (if (i32.eqz (call $d3dim_tex_block (local.get $state))) (then (return (i32.const 0x8007000e))))))
+      (if (i32.and (i32.ne (local.get $apply) (i32.const 0)) (i32.eq (local.get $kind) (i32.const 4)))
+        (then (if (i32.eqz (call $d3dim_device7_light_table (local.get $state))) (then (return (i32.const 0x8007000e))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (i32.const 0))
+
+  (func $d3dim_sb_operation (param $this i32) (param $token i32) (param $op i32) (result i32)
+    (local $block_entry i32) (local $hr i32)
+    (if (call $d3dim_sb_find (local.get $this) (i32.const 0))
+      (then (return (i32.const 0x88760835))))
+    (if (i32.eqz (local.get $token)) (then (return (i32.const 0x88760834))))
+    (local.set $block_entry (call $d3dim_sb_find (local.get $this) (local.get $token)))
+    (if (i32.eqz (local.get $block_entry)) (then (return (i32.const 0x88760834))))
+    (if (i32.eq (local.get $op) (i32.const 2))
+      (then (call $d3dim_sb_retire (local.get $block_entry)))
+      (else
+        (local.set $hr (call $d3dim_sb_prepare (local.get $this) (local.get $block_entry) (local.get $op)))
+        (if (local.get $hr) (then (return (local.get $hr))))
+        (call $d3dim_sb_transfer (local.get $this) (local.get $block_entry) (local.get $op))))
+    (i32.const 0))
+
+  (func $d3dim_sb_predefined_member (param $type i32) (param $kind i32) (param $index i32) (result i32)
+    ;; ALL uses the DX7 TSS enum, excluding the compact array's unused slot 0.
+    (if (i32.and (i32.eq (local.get $type) (i32.const 1))
+          (i32.eq (local.get $kind) (i32.const 1)))
+      (then (return (i32.le_u (i32.sub (local.get $index) (i32.const 1)) (i32.const 23)))))
+    (if (i32.eq (local.get $type) (i32.const 1)) (then
+      (if (i32.eqz (local.get $kind)) (then (return (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 2)) (i32.eq (local.get $index) (i32.const 4))) (i32.or (i32.eq (local.get $index) (i32.const 7)) (i32.eq (local.get $index) (i32.const 8)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 9)) (i32.eq (local.get $index) (i32.const 10))) (i32.or (i32.eq (local.get $index) (i32.const 14)) (i32.eq (local.get $index) (i32.const 15))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 16)) (i32.eq (local.get $index) (i32.const 19))) (i32.or (i32.eq (local.get $index) (i32.const 20)) (i32.eq (local.get $index) (i32.const 22)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 23)) (i32.eq (local.get $index) (i32.const 24))) (i32.or (i32.eq (local.get $index) (i32.const 25)) (i32.eq (local.get $index) (i32.const 26)))))) (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 27)) (i32.eq (local.get $index) (i32.const 28))) (i32.or (i32.eq (local.get $index) (i32.const 29)) (i32.eq (local.get $index) (i32.const 30)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 33)) (i32.eq (local.get $index) (i32.const 34))) (i32.or (i32.eq (local.get $index) (i32.const 35)) (i32.eq (local.get $index) (i32.const 36))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 37)) (i32.eq (local.get $index) (i32.const 38))) (i32.or (i32.eq (local.get $index) (i32.const 40)) (i32.eq (local.get $index) (i32.const 41)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 47)) (i32.eq (local.get $index) (i32.const 48))) (i32.or (i32.eq (local.get $index) (i32.const 52)) (i32.eq (local.get $index) (i32.const 53))))))) (i32.or (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 54)) (i32.eq (local.get $index) (i32.const 55))) (i32.or (i32.eq (local.get $index) (i32.const 56)) (i32.eq (local.get $index) (i32.const 57)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 58)) (i32.eq (local.get $index) (i32.const 59))) (i32.or (i32.eq (local.get $index) (i32.const 60)) (i32.eq (local.get $index) (i32.const 128))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 129)) (i32.eq (local.get $index) (i32.const 130))) (i32.or (i32.eq (local.get $index) (i32.const 131)) (i32.eq (local.get $index) (i32.const 132)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 133)) (i32.eq (local.get $index) (i32.const 134))) (i32.or (i32.eq (local.get $index) (i32.const 135)) (i32.eq (local.get $index) (i32.const 136)))))) (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 137)) (i32.eq (local.get $index) (i32.const 138))) (i32.or (i32.eq (local.get $index) (i32.const 139)) (i32.eq (local.get $index) (i32.const 140)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 141)) (i32.eq (local.get $index) (i32.const 142))) (i32.or (i32.eq (local.get $index) (i32.const 143)) (i32.eq (local.get $index) (i32.const 144))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 145)) (i32.eq (local.get $index) (i32.const 146))) (i32.or (i32.eq (local.get $index) (i32.const 147)) (i32.eq (local.get $index) (i32.const 148)))) (i32.or (i32.eq (local.get $index) (i32.const 151)) (i32.eq (local.get $index) (i32.const 152))))))))))
+      (return (i32.const 1))))
+    (if (i32.eq (local.get $type) (i32.const 2)) (then
+      (if (i32.eq (local.get $kind) (i32.const 0)) (then (return (i32.or (i32.or (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 2)) (i32.eq (local.get $index) (i32.const 4))) (i32.or (i32.eq (local.get $index) (i32.const 7)) (i32.eq (local.get $index) (i32.const 8)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 9)) (i32.eq (local.get $index) (i32.const 10))) (i32.or (i32.eq (local.get $index) (i32.const 14)) (i32.eq (local.get $index) (i32.const 15))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 16)) (i32.eq (local.get $index) (i32.const 19))) (i32.or (i32.eq (local.get $index) (i32.const 20)) (i32.eq (local.get $index) (i32.const 23)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 24)) (i32.eq (local.get $index) (i32.const 25))) (i32.or (i32.eq (local.get $index) (i32.const 26)) (i32.eq (local.get $index) (i32.const 27)))))) (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 33)) (i32.eq (local.get $index) (i32.const 36))) (i32.or (i32.eq (local.get $index) (i32.const 37)) (i32.eq (local.get $index) (i32.const 38)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 40)) (i32.eq (local.get $index) (i32.const 41))) (i32.or (i32.eq (local.get $index) (i32.const 47)) (i32.eq (local.get $index) (i32.const 52))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 53)) (i32.eq (local.get $index) (i32.const 54))) (i32.or (i32.eq (local.get $index) (i32.const 55)) (i32.eq (local.get $index) (i32.const 56)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 57)) (i32.eq (local.get $index) (i32.const 58))) (i32.or (i32.eq (local.get $index) (i32.const 59)) (i32.eq (local.get $index) (i32.const 60))))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 128)) (i32.eq (local.get $index) (i32.const 129))) (i32.or (i32.eq (local.get $index) (i32.const 130)) (i32.eq (local.get $index) (i32.const 131)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 132)) (i32.eq (local.get $index) (i32.const 133))) (i32.or (i32.eq (local.get $index) (i32.const 134)) (i32.eq (local.get $index) (i32.const 135)))))))))
+      (if (i32.eq (local.get $kind) (i32.const 1)) (then (return (i32.or (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 1)) (i32.eq (local.get $index) (i32.const 2))) (i32.or (i32.eq (local.get $index) (i32.const 3)) (i32.eq (local.get $index) (i32.const 4)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 5)) (i32.eq (local.get $index) (i32.const 6))) (i32.or (i32.eq (local.get $index) (i32.const 7)) (i32.eq (local.get $index) (i32.const 8))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 9)) (i32.eq (local.get $index) (i32.const 10))) (i32.or (i32.eq (local.get $index) (i32.const 11)) (i32.eq (local.get $index) (i32.const 12)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 13)) (i32.eq (local.get $index) (i32.const 14))) (i32.or (i32.eq (local.get $index) (i32.const 15)) (i32.eq (local.get $index) (i32.const 16)))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 17)) (i32.eq (local.get $index) (i32.const 18))) (i32.or (i32.eq (local.get $index) (i32.const 19)) (i32.eq (local.get $index) (i32.const 20)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 21)) (i32.eq (local.get $index) (i32.const 22))) (i32.or (i32.eq (local.get $index) (i32.const 23)) (i32.eq (local.get $index) (i32.const 24)))))))))
+    ))
+    (if (i32.eq (local.get $type) (i32.const 3)) (then
+      (if (i32.eq (local.get $kind) (i32.const 0)) (then (return (i32.or (i32.or (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 9)) (i32.eq (local.get $index) (i32.const 22))) (i32.or (i32.eq (local.get $index) (i32.const 28)) (i32.eq (local.get $index) (i32.const 29)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 34)) (i32.eq (local.get $index) (i32.const 35))) (i32.or (i32.eq (local.get $index) (i32.const 36)) (i32.eq (local.get $index) (i32.const 37))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 38)) (i32.eq (local.get $index) (i32.const 48))) (i32.or (i32.eq (local.get $index) (i32.const 136)) (i32.eq (local.get $index) (i32.const 137)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 138)) (i32.eq (local.get $index) (i32.const 139))) (i32.or (i32.eq (local.get $index) (i32.const 140)) (i32.eq (local.get $index) (i32.const 141)))))) (i32.or (i32.or (i32.or (i32.eq (local.get $index) (i32.const 142)) (i32.eq (local.get $index) (i32.const 143))) (i32.or (i32.eq (local.get $index) (i32.const 145)) (i32.eq (local.get $index) (i32.const 146)))) (i32.or (i32.or (i32.eq (local.get $index) (i32.const 147)) (i32.eq (local.get $index) (i32.const 148))) (i32.or (i32.eq (local.get $index) (i32.const 151)) (i32.eq (local.get $index) (i32.const 152)))))))))
+      (if (i32.eq (local.get $kind) (i32.const 1)) (then (return (i32.or (i32.eq (local.get $index) (i32.const 11)) (i32.eq (local.get $index) (i32.const 24))))))
+      (return (i32.or (i32.eq (local.get $kind) (i32.const 2)) (i32.or (i32.eq (local.get $kind) (i32.const 5)) (i32.eq (local.get $kind) (i32.const 6)))))
+    ))
+    (i32.const 0))
+
+  (func $d3dim_sb_create (param $this i32) (param $type i32) (param $out i32) (result i32)
+    (local $hr i32) (local $block_entry i32) (local $kind i32) (local $index i32)
+    (local $limit i32) (local $stage i32)
+    (if (call $d3dim_sb_find (local.get $this) (i32.const 0))
+      (then (return (i32.const 0x88760835))))
+    (if (i32.or (i32.eqz (local.get $out))
+          (i32.gt_u (i32.sub (local.get $type) (i32.const 1)) (i32.const 2)))
+      (then (return (i32.const 0x80070057))))
+    (local.set $hr (call $d3dim_sb_begin (local.get $this)))
+    (if (local.get $hr) (then (return (local.get $hr))))
+    (local.set $block_entry (call $d3dim_sb_find (local.get $this) (i32.const 0)))
+    ;; All three DX7 groups include texture transform flags; allocate before
+    ;; the address resolver can turn allocation failure into missing membership.
+    (if (i32.eqz (call $d3dim_tex_block (call $d3ddev_state (local.get $this)))) (then
+      (call $d3dim_sb_retire (local.get $block_entry)) (return (i32.const 0x8007000e))))
+    (block $done (loop $kinds
+      (br_if $done (i32.ge_u (local.get $kind) (i32.const 9)))
+      (local.set $limit (i32.const 1))
+      (if (i32.eqz (local.get $kind)) (then (local.set $limit (i32.const 512))))
+      (if (i32.eq (local.get $kind) (i32.const 1)) (then (local.set $limit (i32.const 32))))
+      (if (i32.eq (local.get $kind) (i32.const 2)) (then (local.set $limit (i32.const 24))))
+      (if (i32.eq (local.get $kind) (i32.const 4)) (then (local.set $limit (i32.const 8))))
+      (if (i32.eq (local.get $kind) (i32.const 5)) (then (local.set $limit (i32.const 32))))
+      (if (i32.eq (local.get $kind) (i32.const 6)) (then (local.set $limit (i32.const 6))))
+      (local.set $index (i32.const 0))
+      (block $next (loop $indices
+        (br_if $next (i32.ge_u (local.get $index) (local.get $limit)))
+        (if (i32.and (i32.or (i32.ne (local.get $kind) (i32.const 5))
+              (i32.ne (i32.and (call $gl32 (i32.add (call $d3ddev_state (local.get $this)) (i32.const 3952)))
+                (i32.shl (i32.const 1) (local.get $index))) (i32.const 0)))
+            (i32.and (i32.or (i32.ne (local.get $kind) (i32.const 4))
+              (i32.ne (i32.and (call $gl32 (i32.add (call $d3ddev_state (local.get $this)) (i32.const 3948)))
+                (i32.shl (i32.const 1) (local.get $index))) (i32.const 0)))
+            (i32.and (call $d3dim_sb_predefined_member (local.get $type) (local.get $kind) (local.get $index))
+              (i32.or (i32.ne (local.get $kind) (i32.const 2))
+                (i32.or (i32.and (i32.ge_u (local.get $index) (i32.const 1)) (i32.le_u (local.get $index) (i32.const 3)))
+                  (i32.ge_u (local.get $index) (i32.const 16))))))) (then
+          (if (i32.eq (local.get $kind) (i32.const 1))
+            (then
+              (local.set $stage (i32.const 0))
+              (block $stages_done (loop $stages
+                (br_if $stages_done (i32.ge_u (local.get $stage) (i32.const 8)))
+                (if (call $d3dim_tss_addr (call $d3ddev_state (local.get $this)) (local.get $stage) (local.get $index))
+                  (then (drop (call $d3dim_sb_member (local.get $block_entry) (local.get $kind)
+                    (i32.or (i32.shl (local.get $stage) (i32.const 5)) (local.get $index))))))
+                (local.set $stage (i32.add (local.get $stage) (i32.const 1))) (br $stages))))
+            (else (drop (call $d3dim_sb_member (local.get $block_entry) (local.get $kind) (local.get $index)))))))
+        (local.set $index (i32.add (local.get $index) (i32.const 1))) (br $indices)))
+      (local.set $kind (i32.add (local.get $kind) (i32.const 1))) (br $kinds)))
+    (if (i32.ne (local.get $type) (i32.const 3)) (then
+      (drop (call $d3dim_sb_member (local.get $block_entry) (i32.const 9) (i32.const 0)))
+      (drop (call $d3dim_sb_member (local.get $block_entry) (i32.const 9) (i32.const 1)))))
+    (call $d3dim_sb_transfer (local.get $this) (local.get $block_entry) (i32.const 0))
+    (local.set $hr (call $d3dim_sb_end (local.get $this) (local.get $out)))
+    (if (local.get $hr) (then (call $d3dim_sb_retire (local.get $block_entry))))
+    (local.get $hr))
 
   ;; ── QueryInterface upgrade routing ────────────────────────────
   ;; Return a matching interface wrapper and AddRef its DX_OBJECTS slot.
@@ -1392,6 +1629,7 @@
       (br 0))))
 
   (func $d3dim_set_transform (param $this i32) (param $xtype i32) (param $lpmat i32)
+    (if (i32.ne (local.get $lpmat) (i32.const 0)) (then (if (call $d3dim_sb_record (local.get $this) (i32.const 2) (local.get $xtype) (local.get $lpmat) (i32.const 64)) (then (return)))))
     (if (local.get $lpmat) (then
       ;; kind=27 Xform: the raw matrix the guest supplied, before any
       ;; composition. Half-Life's D3D renderer is a GL shim -- 221
@@ -1458,6 +1696,9 @@
 
   (func $d3dim_set_render_state (param $this i32) (param $rs i32) (param $val i32)
     (local $state i32) (local $slot i32)
+    (if (i32.lt_u (local.get $rs) (i32.const 512)) (then (if (call $d3dim_sb_record (local.get $this) (i32.const 0) (local.get $rs) (local.get $val) (i32.const 0)) (then (if (i32.eq (local.get $rs) (i32.const 21)) (then
+        (drop (call $d3dim_sb_record (local.get $this) (i32.const 9) (i32.const 0)
+          (select (local.get $val) (i32.const 0) (i32.or (i32.eq (local.get $val) (i32.const 2)) (i32.eq (local.get $val) (i32.const 4)))) (i32.const 0))))) (return)))))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (i32.and (i32.ne (local.get $state) (i32.const 0))
                  (i32.lt_u (local.get $rs) (i32.const 512)))
@@ -2756,6 +2997,7 @@
   (func $d3dim_device7_set_material (param $this i32) (param $lpMat i32)
     (local $state i32)
     (if (i32.eqz (local.get $lpMat)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
+    (if (call $d3dim_sb_record (local.get $this) (i32.const 3) (i32.const 0) (local.get $lpMat) (i32.const 68)) (then (return)))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (local.get $state)
       (then (call $guest_memmove
@@ -2793,10 +3035,18 @@
     (local $state i32) (local $table i32)
     (if (i32.eqz (local.get $lpLight)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
     (if (i32.ge_u (local.get $idx) (i32.const 8)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
+    (if (call $d3dim_sb_record (local.get $this) (i32.const 4) (local.get $idx) (local.get $lpLight) (i32.const 104)) (then (return)))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (local.set $table (call $d3dim_device7_light_table (local.get $state)))
     (if (local.get $table)
-      (then (call $memcpy
+      (then
+        (call $gs32 (i32.add (local.get $state) (i32.const 3952))
+          (i32.or (call $gl32 (i32.add (local.get $state) (i32.const 3952)))
+            (i32.shl (i32.const 1) (local.get $idx))))
+        (call $gs32 (i32.add (local.get $state) (i32.const 3948))
+          (i32.or (call $gl32 (i32.add (local.get $state) (i32.const 3948)))
+            (i32.shl (i32.const 1) (local.get $idx))))
+        (call $memcpy
               (call $g2w (i32.add (local.get $table) (i32.mul (local.get $idx) (i32.const 104))))
               (call $g2w (local.get $lpLight))
               (i32.const 104))))
@@ -2826,10 +3076,12 @@
 
   (func $d3dim_device7_light_enable (param $this i32) (param $idx i32) (param $enable i32)
     (local $state i32) (local $sw i32) (local $mask i32) (local $bit i32)
+    (if (i32.lt_u (local.get $idx) (i32.const 32)) (then (if (call $d3dim_sb_record (local.get $this) (i32.const 5) (local.get $idx) (local.get $enable) (i32.const 0)) (then (return)))))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (i32.and
           (i32.ne (local.get $state) (i32.const 0))
           (i32.lt_u (local.get $idx) (i32.const 32))) (then
+      (call $gs32 (i32.add (local.get $state) (i32.const 3952)) (i32.or (call $gl32 (i32.add (local.get $state) (i32.const 3952))) (i32.shl (i32.const 1) (local.get $idx))))
       (local.set $sw (call $g2w (local.get $state)))
       (local.set $mask (i32.load (i32.add (local.get $sw) (global.get $D3DIM_OFF_D3D7_LIGHT_ENABLE))))
       (local.set $bit (i32.shl (i32.const 1) (local.get $idx)))
@@ -3243,6 +3495,7 @@
     (local $state i32)
     (if (i32.eqz (local.get $plane)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
     (if (i32.ge_u (local.get $idx) (i32.const 6)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
+    (if (call $d3dim_sb_record (local.get $this) (i32.const 6) (local.get $idx) (local.get $plane) (i32.const 16)) (then (return)))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (local.get $state)
       (then (call $memcpy
@@ -3996,14 +4249,23 @@
   ;; SetTexture(stage, lpTex). Phase 0: store DX slot of lpTex on stage 0
   ;; only (multi-stage TSS stored separately by Phase 3).
   (func $d3dim_set_texture (param $this i32) (param $stage i32) (param $lpTex i32)
-    (local $state i32) (local $slot i32)
+    (local $state i32) (local $slot i32) (local $old i32) (local $entry i32)
+    (if (i32.ne (local.get $stage) (i32.const 0)) (then
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
+    (if (call $d3dim_sb_record (local.get $this) (i32.const 8) (i32.const 0) (local.get $lpTex) (i32.const 0)) (then (return)))
     (local.set $state (call $d3ddev_state (local.get $this)))
-    (if (i32.eqz (local.get $state)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
-    (if (i32.eqz (local.get $stage)) (then
-      (if (local.get $lpTex)
-        (then (local.set $slot (call $dx_slot_of (call $dx_from_this (local.get $lpTex)))))
-        (else (local.set $slot (i32.const 0))))
-      (call $gs32 (i32.add (local.get $state) (global.get $D3DIM_OFF_TEX_STAGE)) (local.get $slot))))
+    (if (local.get $state) (then
+      (if (local.get $lpTex) (then
+        (local.set $entry (call $dx_from_this (local.get $lpTex)))
+        (local.set $slot (call $dx_slot_of (local.get $entry)))
+        (drop (call $dx_com_addref (call $d3dim_primary_guest (local.get $entry))))))
+      ;; +3944 is an ownership reference, distinct from the binding DX slot.
+      ;; A legacy TEXTUREHANDLE assignment never owned this new reference.
+      (local.set $old (call $gl32 (i32.add (local.get $state) (i32.const 3944))))
+      (call $gs32 (i32.add (local.get $state) (i32.const 3944))
+        (select (call $d3dim_primary_guest (local.get $entry)) (i32.const 0) (i32.ne (local.get $slot) (i32.const 0))))
+      (call $gs32 (i32.add (local.get $state) (global.get $D3DIM_OFF_TEX_STAGE)) (local.get $slot))
+      (if (local.get $old) (then (drop (call $dx_surface_release (local.get $old)))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
   (func $d3dim_get_texture (param $this i32) (param $stage i32) (param $ppTex i32)
@@ -4205,6 +4467,11 @@
   ;; SetTextureStageState(stage, type, value).
   (func $d3dim_set_tss (param $this i32) (param $stage i32) (param $type i32) (param $val i32)
     (local $state i32) (local $addr i32)
+    (if (i32.and (i32.lt_u (local.get $stage) (i32.const 8)) (i32.lt_u (local.get $type) (i32.const 32))) (then (if (call $d3dim_sb_record (local.get $this) (i32.const 1) (i32.or (i32.shl (local.get $stage) (i32.const 5)) (local.get $type)) (local.get $val) (i32.const 0)) (then (if (i32.eqz (local.get $stage)) (then
+        (if (i32.and (i32.ge_u (local.get $type) (i32.const 1)) (i32.le_u (local.get $type) (i32.const 6)))
+          (then (drop (call $d3dim_sb_record (local.get $this) (i32.const 9) (i32.const 0) (i32.const 0) (i32.const 0)))))
+        (if (i32.eq (local.get $type) (i32.const 18))
+          (then (drop (call $d3dim_sb_record (local.get $this) (i32.const 9) (i32.const 1) (i32.const 1) (i32.const 0))))))) (return)))))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (i32.eqz (local.get $state)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
     (local.set $addr (call $d3dim_tss_addr (local.get $state) (local.get $stage) (local.get $type)))
@@ -4548,6 +4815,7 @@
     (local $state i32) (local $sw i32) (local $vp_wa i32)
     (local $x i32) (local $y i32) (local $w i32) (local $h i32)
     (if (i32.eqz (local.get $lpVp)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
+    (if (call $d3dim_sb_record (local.get $this) (i32.const 7) (i32.const 0) (local.get $lpVp) (i32.const 24)) (then (return)))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (i32.eqz (local.get $state)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
     (local.set $sw (call $g2w (local.get $state)))
@@ -9969,7 +10237,14 @@
       (local.set $node (local.get $node_next))
       (local.set $steps (i32.add (local.get $steps) (i32.const 1)))
       (br $free_nodes)))
-    (if (local.get $state) (then (call $heap_free (local.get $state))))
+    (if (local.get $state) (then
+      (call $d3dim_sb_destroy_device (local.get $state))
+      (call $d3dim_set_texture (local.get $owner) (i32.const 0) (i32.const 0))
+      (if (call $gl32 (i32.add (local.get $state) (i32.const 3448)))
+        (then (call $heap_free (call $gl32 (i32.add (local.get $state) (i32.const 3448))))))
+      (if (call $gl32 (i32.add (local.get $state) (i32.const 4024)))
+        (then (call $heap_free (call $gl32 (i32.add (local.get $state) (i32.const 4024))))))
+      (call $heap_free (local.get $state))))
     ;; The creator reference belongs to the device, not each device interface.
     ;; Clear the link before retiring either object; a nonfinal Release above
     ;; must leave it intact. Surface-QI devices have no creator (zero).
