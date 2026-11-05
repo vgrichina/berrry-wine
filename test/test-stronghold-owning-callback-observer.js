@@ -155,38 +155,64 @@ async function physical(){
 async function drawFixture({e,memory,host}){
  const b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),wa=a=>g2w(a,0x400000,memory);
  const put=(a,v)=>b.set(v,wa(a)),u32=(a,v)=>dv.setUint32(wa(a),v>>>0,true),get=a=>dv.getUint32(wa(a),true);
- const caller=0x580000,stop=caller+64,stack=0x7408000,tick=caller+112,clock=caller+160;
+ const caller=0x580000,stop=caller+64,stack=0x7408000,tick=caller+112,clock=caller+160,clockCalls=clock+4;
  const jump=(from,to)=>put(from,[0xe9,...le(to-from-5)]);
- // Exact original entry, both arithmetic branches, late clock/store and final
- // epilogue execute. The background/composite UI are explicitly stubbed/jumped.
- put(0x455240,[0xc2,12,0]);put(0x489180,[0xc3]);put(0x479fb0,[0xc3]);jump(0x4293c2,0x429ae8);jump(0x429b0e,0x42a207);
- put(tick,[0xa1,...le(clock),0x83,0x05,...le(clock),100,0xc3]);u32(0x5841c8,tick);
+ // Every tested native branch window is intact. Only unrelated composite UI
+ // work is jumped; dependencies return normally through their genuine CALLs.
+ // Clock values/data/caller remain synthetic fixture inputs, never game proof.
+ const windows=[[0x42971b,0x4297b0],[0x429ad4,0x429b0e]];
+ const intact=()=>windows.map(([a,z])=>{const bytes=b.subarray(wa(a),wa(z));assert.deepEqual(Buffer.from(bytes),original(a,z-a));return {from:a,to:z,sha256:hash(bytes)};});
+ const branchWindows=intact();
+ put(0x455240,[0xc2,12,0]);put(0x489180,[0xc3]);put(0x479fb0,[0xc3]);
+ put(0x47a000,[0xc3]);put(0x449780,[0xc3]);
+ jump(0x4293c2,0x42971b);jump(0x4297b0,0x429ad4);jump(0x429b0e,0x42a207);
+ put(tick,[0xa1,...le(clock),0x83,0x05,...le(clock),100,0xff,0x05,...le(clockCalls),0xc3]);u32(0x5841c8,tick);
  put(caller,[0xb8,...le(0x4292c0),0xff,0xd0,0xe9,...le(stop-caller-12)]);put(stop,[0xeb,0xfe]);
  e.invalidate_code_range(0x400000,0x180000);
  const attachment=globalThis.__strongholdPresetAttachment;
  if(workerData.observed)attachment.invoke('start',{command:1});
  e.set_trace_esp(workerData.observed||workerData.trace?1:0,0,0);
- let pending;const slice=n=>new Promise((resolve,reject)=>{pending={resolve,reject};parentPort.postMessage({t:'fixtureSlice',steps:n});});
+ let pending,submitted=0;const slice=n=>new Promise((resolve,reject)=>{submitted++;pending={resolve,reject};parentPort.postMessage({t:'fixtureSlice',steps:n});});
  workerData.port.on('message',m=>{if(m.t==='slice'){const p=pending;pending=null;m.value.trapped?p.reject(Error(m.value.trapped)):p.resolve(m.value.blocks);}});
- const cases=[... [0,16,32,39,40,80,1280].map(gap=>({gap,fade:32,direction:-3,refresh:0})),
-  {gap:1280,fade:32,direction:-3,refresh:1},{gap:80,fade:31,direction:3,refresh:0},
-  {gap:80,fade:0,direction:0,refresh:0},{gap:80,fade:1,direction:-3,refresh:0,previous:0xfffffff0}];
+ const cases=[{gap:1280,fade:32,direction:-3,refresh:1},
+  ...[0,16,32,39,40,80,1280].map(gap=>({gap,fade:32,direction:-3,refresh:0})),
+  {gap:80,fade:31,direction:3,refresh:0},{gap:80,fade:0,direction:0,refresh:0},
+  {gap:80,fade:1,direction:-3,refresh:0,previous:0xfffffff0},
+  {gap:80,fade:31,direction:-3,refresh:0,alternate:1},
+  {gap:80,fade:31,direction:-3,refresh:1,alternate:0x80000000},
+  {gap:80,fade:31,direction:-3,refresh:2}].filter(c=>!process.env.STRONGHOLD_CALLBACK_BRANCH||(c.alternate?'alternate':c.refresh?'late':'refresh-zero')===process.env.STRONGHOLD_CALLBACK_BRANCH||c.refresh&&!c.alternate);
  const results=[];
+ let prefix=[];
  for(const c of cases){
-  jump(0x4293c2,c.refresh?0x4297aa:0x429ae8);jump(0x4297b0,0x429ae8);e.invalidate_code_range(0x4293c2,5);e.invalidate_code_range(0x4297b0,5);
+  const route=c.alternate?'alternate':c.refresh?'late':'refresh-zero';
   const previous=c.previous??1000,entry=(previous+c.gap)>>>0;
-  for(const [a,v]of [[0xd13764,20],[0xd13770,20],[0x1681318,99],[0x692e18,c.fade],[0x690e54,c.direction],[0x175f9fc,c.refresh],[0x6921b8,previous],[0xd138b0,0],[0xd1375c,0xffffffff],[clock,entry]])u32(a,v);
-  e.set_eip(caller);e.set_esp(stack);const slices=[];
-  for(let i=0;i<20;i++){try{slices.push(await slice(64));}catch(error){throw Error(JSON.stringify({case:c,error:String(error),records:attachment?.report?.().report?.records?.slice(-8)}));}if(e.get_eip()>>>0===stop)break;}
+  for(const [a,v]of [[0xd13764,20],[0xd13770,20],[0x1681318,99],[0x692e18,c.fade],[0x690e54,c.direction],[0x175f9fc,c.refresh],[0x6921b8,previous],[0xd138b0,0],[0xd1375c,0xffffffff],[0xdbbd30,c.alternate||0],[0x691844,0x7fffffff],[clock,entry],[clockCalls,0]])u32(a,v);
+  e.set_edi(0);e.set_eip(caller);e.set_esp(stack);const slices=[],checkpoints=[];
+  // The same original invocation crosses queued slices without changing
+  // guest data/registers between checkpoints. Breakpoints also hold the tier
+  // guard identically in all parity arms; no observer history is seeded.
+  for(const pc of [0x4293c2,0x42971b,route==='alternate'?0x429b04:0x42976a,route==='late'?0x429aee:0x429b0e,0x42a207,stop]){
+   e.set_bp(pc);
+   try{slices.push(await slice(64));}catch(error){throw Error(JSON.stringify({case:c,route,error:String(error),clockCalls:get(clockCalls),timestamp:get(0x6921b8),records:attachment?.report?.().report?.records?.slice(-12)}));}
+   assert.equal(e.get_eip()>>>0,pc);checkpoints.push({pc,esp:e.get_esp()>>>0,clockCalls:get(clockCalls),timestamp:get(0x6921b8)});
+   // Re-enter the SAME breakpoint once, consuming its documented skip-once
+   // state before moving it. This executes one original block normally.
+   try{slices.push(await slice(1));}catch(error){throw Error(JSON.stringify({case:c,route,error:String(error),clockCalls:get(clockCalls),timestamp:get(0x6921b8),records:attachment?.report?.().report?.records?.slice(-12)}));}
+   e.clear_bp();
+   if(workerData.observed){const r=attachment.report().report;assert.equal(r.status,'running');assert.deepEqual(r.records.slice(0,prefix.length),prefix);prefix=structuredClone(r.records);}
+  }
   assert.equal(e.get_eip()>>>0,stop);
   // Independent division oracle; no multiply-high implementation shared with
   // production observer or native instructions.
   const advancing=c.direction!==0&&!c.refresh,delta=advancing?Math.trunc(c.gap/40)*Math.sign(c.direction):0;
   const fade=Math.max(0,Math.min(32,c.fade+delta));
   assert.equal(get(0x692e18),fade);assert.equal(get(0x690e54)|0,advancing&&c.direction<0&&fade===0?0:c.direction);
-  assert.equal(get(0x6921b8),(entry+100)>>>0);assert.equal(get(0xd138b0),advancing?1:0);
-  assert.equal(get(0x175f9fc),0);
-  results.push({case:c,slices,fade,timestamp:get(0x6921b8),registers:Object.fromEntries(['eip','esp','eax','ebx','ecx','edx','esi','edi','ebp','flag_op','flag_a','flag_b','flag_res'].map(n=>[n,e['get_'+n]()>>>0]))});
+  const calls=route==='late'?2:1,timestamp=route==='late'?(entry+100)>>>0:previous;
+  assert.equal(get(clockCalls),calls,'independent guest clock CALL counter');assert.equal(get(clock),(entry+100*calls)>>>0);
+  assert.equal(get(0x6921b8),timestamp);assert.equal(get(0xd138b0),advancing?1:0);
+  assert.equal(get(0x175f9fc),c.alternate?c.refresh:0);assert.equal(e.get_esp()>>>0,stack);
+  assert.deepEqual(intact(),branchWindows);
+  results.push({case:c,route,slices,checkpoints,clockCalls:calls,fade,timestamp,registers:Object.fromEntries(['eip','esp','eax','ebx','ecx','edx','esi','edi','ebp','flag_op','flag_a','flag_b','flag_res'].map(n=>[n,e['get_'+n]()>>>0]))});
  }
  // Execute all four original conditional Blt call blocks with initialized
  // synthetic COM objects and a stdcall result stub; no real surfaces exist.
@@ -204,9 +230,14 @@ async function drawFixture({e,memory,host}){
   const slices=[];for(let i=0;i<20;i++){slices.push(await slice(64));if(e.get_eip()>>>0===stop)break;}
   assert.equal(e.get_eip()>>>0,stop);assert.equal(e.get_eax()>>>0,result);results.push({surfaceStart:start,result,slices});
  }
- const observation=workerData.observed?attachment.report().report:null;
+ let observation=workerData.observed?attachment.report().report:null;
  if(observation){assert.equal(observation.status,'running',JSON.stringify(observation));assert.equal(observation.records.filter(r=>r.kind==='draw-return').length,cases.length);
-  for(const r of observation.records.filter(r=>r.kind==='draw-return')){assert.equal(r.state.timestamp6921b8,r.lateTime);assert.equal((r.lateTime-r.entryTime)>>>0,100);}
+  for(const [i,r]of observation.records.filter(r=>r.kind==='draw-return').entries()){
+   const expected=results[i];assert.equal(r.state.timestamp6921b8,expected.timestamp);
+   const rows=observation.records.filter(x=>x.entrySequence===r.entrySequence);
+   if(expected.route==='late'){assert.equal(r.state.timestamp6921b8,r.lateTime);assert.equal((r.lateTime-r.entryTime)>>>0,100);assert.equal(rows.filter(x=>x.kind==='draw-late-clock').length,1);}
+   else{assert.equal(r.lateTime,undefined);assert.equal(rows.filter(x=>x.kind==='draw-late-clock').length,0);assert.equal(rows.filter(x=>x.kind==='draw-clock-bypass').length,1);assert.equal(rows.filter(x=>x.kind==='draw-timestamp-preserved').length,1);}
+  }
   assert.equal(observation.records.filter(r=>r.kind==='surface-return').length,4);
   assert.deepEqual(observation.records.filter(r=>r.kind==='surface-return').map(r=>r.result),[0,0x80004005,0,0]);
   assert(observation.records.filter(r=>r.kind==='surface-return').every(r=>r.object===object&&r.vtable===vtable&&r.target===target&&r.precedingDrawReturn));
@@ -235,19 +266,68 @@ async function drawFixture({e,memory,host}){
   assert.equal(entry.target,blt);assert.equal(entry.entryEvidence,'owning-import-entry');
   assert(rows.some(r=>r.kind==='surface-return'&&r.result===0));
   for(const name of ['dx_trace','gdi_surface_attach','gdi_surface_upload'])assert(rows.some(r=>r.kind==='surface-import-request'&&r.name===name),name);
-  thunkObservation.finish('offline-actual-thunk');
  }
  results.push({actualBltThunk:blt,slices:thunkSlices,registers:Object.fromEntries(['eip','esp','eax','ebx','ecx','edx','esi','edi','ebp','flag_op','flag_a','flag_b','flag_res'].map(n=>[n,e['get_'+n]()>>>0]))});
  e.set_trace_esp(0,0,0);
  const memorySHA256=hash(b),negatives={};
  if(workerData.observed){
+  observation=structuredClone(attachment.report().report);
   const options={host,getExports:()=>e,translate:g2w,memory,workerSlot:0,endpointIdentity:1,epoch,exeSha256:api.EXE_SHA256,
    wasmSha256:workerData.wasmHash,workerURL:URL,expectedWorkerURL:URL,deadline:performance.now()+10000};
   const fresh=(extra={})=>{const h=api.attach({...options,...extra});h.start();assert.equal(h.report.status,'running');return h;};
-  function reset(){e.set_eip(caller);e.set_esp(stack);e.set_trace_esp(1,0,0);}
+  function reset(){u32(0xdbbd30,0);u32(0x175f9fc,0);e.set_eip(caller);e.set_esp(stack);e.set_trace_esp(1,0,0);}
+  const stopped=()=>({pc:e.get_eip()>>>0,esp:e.get_esp()>>>0,calls:get(clockCalls),timestamp:get(0x6921b8),submitted});
+  // This is the actual serialized production assert-live operation used by
+  // createAttachment.beforeStep, after an executed native provenance fault.
+  jump(0x4293c2,0x429b04);e.invalidate_code_range(0x4293c2,5);reset();
+  await assert.rejects(slice(64),/provenance/);
+  const originalFault=attachment.report().report.fault,beforeGate=stopped();
+  await assert.rejects((async()=>{attachment.invoke('assert-live');await slice(64);})(),/terminal/);
+  assert.deepEqual(stopped(),beforeGate);assert.equal(attachment.report().report.fault,originalFault);
+  negatives.serializedNextSlice={fault:originalFault,stopped:beforeGate,nextSliceSent:false};
+  jump(0x4293c2,0x42971b);e.invalidate_code_range(0x4293c2,5);
+  const guardedSlice=async(h,n=64)=>{h.assertLive();if(h.report.status!=='running')throw Error(h.report.fault||'observer terminal');return slice(n);};
+  async function rejected(h,name,pattern){
+   assert.match(h.report.fault,pattern);assert.equal(h.report.status,'unsupported-or-unobservable');
+   const first=h.report.fault,before=stopped(),rows=h.report.records.length,blocks=h.report.blocks;
+   await assert.rejects(guardedSlice(h),pattern);h.finish('later');h.annotate({epoch:'stale',command:9,kind:'begin'});h.check();
+   assert.deepEqual(stopped(),before);assert.equal(h.report.fault,first);assert.equal(h.report.records.length,rows);assert.equal(h.report.blocks,blocks);
+   negatives[name]={fault:first,pc:before.pc,blocks,records:rows,nextSliceSent:false};
+  }
+  async function park(h,pc,refresh=0){reset();u32(0x175f9fc,refresh);e.set_bp(stop);for(let i=0;i<80&&(e.get_eip()>>>0)!==pc;i++)await guardedSlice(h,1);assert.equal(e.get_eip()>>>0,pc);e.clear_bp();}
+  for(const [name,pc,next]of [['missingEntryClock',0x4292cd,0x429306],['missingUpdateBefore',0x429306,0x4293c2],['missingUpdateAfter',0x4293c2,0x42971b],['skippedDrawRET',0x42a207,caller+7]]){
+   const x=fresh();await park(x,pc);e.set_eip(next);await assert.rejects(guardedSlice(x),/history|stack/);await rejected(x,name,/history|stack/);
+  }
+  for(const [name,pc,alter,pattern]of [
+   ['wrongESP',0x42971b,()=>e.set_esp((e.get_esp()>>>0)+4),/stack/],
+   ['wrongCaller',0x42971b,()=>u32(stack-4,caller+17),/caller/],
+   ['wrongBranchSuccessor',0x42976a,()=>e.set_eip(0x429af5),/provenance/],
+   ['preservedTimestamp',0x429b0e,()=>u32(0x6921b8,get(0x6921b8)^1),/timestamp/],
+   ['skippedClockRET',tick,()=>e.set_eip(0x4292cd),/stack/]]){
+   const x=fresh();await park(x,pc);alter();await assert.rejects(guardedSlice(x),pattern);await rejected(x,name,pattern);
+  }
+  let x=fresh();await park(x,0x429ad4,1);e.set_eip(0x429aee);
+  await assert.rejects(guardedSlice(x),/CALL\/return/);await rejected(x,'skippedLateClockCALL',/CALL\/return/);
+  x=fresh();await park(x,0x42976a);await guardedSlice(x,1);assert.equal(e.get_eip()>>>0,0x429af5);u32(0x175f9fc,1);
+  await assert.rejects(guardedSlice(x),/provenance/);await rejected(x,'changedBranchOperand',/provenance/);
+  for(const pc of [0x429723,0x429770]){
+   x=fresh();await park(x,0x42971b);const byte=b[wa(pc)];b[wa(pc)]^=1;
+   await assert.rejects(guardedSlice(x),/bytes/);await rejected(x,'branchByte'+pc.toString(16),/bytes/);b[wa(pc)]=byte;e.invalidate_code_range(pc,1);
+  }
+  const changedPins=api.PINS.map(([pc,hex])=>[pc,pc===0x42971b?'90'+hex.slice(2):hex]);
+  x=api.observerFactory(api.EXE_SHA256,changedPins).attach(options);x.start();await rejected(x,'wrongBranchPins',/bytes/);
+  x=fresh();await park(x,0x42971b);e.set_current_thread_id(2);x.assertLive();await rejected(x,'pendingOwner',/thread/);e.set_current_thread_id(1);
+  x=fresh();await park(x,0x42971b);x.annotate({epoch:'stale',command:1,kind:'begin'});await rejected(x,'pendingEpoch',/epoch/);
+  x=fresh();reset();e.set_eip(0x429af5);await assert.rejects(guardedSlice(x),/entry history/);await rejected(x,'staleBypassHistory',/entry history/);
+  x=fresh();reset();const callByte=b[wa(caller+6)];b[wa(caller+6)]=0xe0;u32(stack,0);e.invalidate_code_range(caller,12);
+  await assert.rejects(guardedSlice(x),/saved return/);await rejected(x,'skippedDrawCALL',/saved return/);b[wa(caller+6)]=callByte;e.invalidate_code_range(caller,12);
+  let monotonic=0;x=fresh({now:()=>monotonic,deadline:100000,maxMs:100000});await park(x,0x42971b);const prefix=structuredClone(x.report.records);
+  monotonic=50000;x.assertLive();assert.equal(x.report.status,'running');assert.deepEqual(x.report.records,prefix);
+  monotonic=100000;x.assertLive();await rejected(x,'fixedDeadlineAcrossCheckpoints',/deadline/);
+  x=fresh({maxRecords:6});reset();await assert.rejects(guardedSlice(x),/overflow/);await rejected(x,'branchRecordOverflow',/overflow/);
   let h=fresh();jump(0x4293c2,0x42a207);e.invalidate_code_range(0x4293c2,5);reset();
   await assert.rejects(slice(64),/history/);assert.match(h.report.fault,/history/);negatives.missingClock=h.report.fault;
-  jump(0x4293c2,0x429ae8);e.invalidate_code_range(0x4293c2,5);
+  jump(0x4293c2,0x42971b);e.invalidate_code_range(0x4293c2,5);
   h=fresh();e.set_bp(0x42a207);reset();await slice(64);assert.equal(e.get_eip()>>>0,0x42a207);
   h.finish('fixture-missing-return');assert(h.report.pending.some(f=>f.name==='draw'));const count=h.report.records.length;
   assert.throws(()=>h.start(),/terminal/);h.annotate({epoch,command:1,kind:'begin'});assert.equal(h.report.records.length,count);negatives.missingReturnTerminal=true;e.clear_bp();
@@ -260,7 +340,7 @@ async function drawFixture({e,memory,host}){
   h=api.attach({...options,maxBytes:1});h.start();assert.match(h.report.fault,/overflow/);negatives.byteLimit=true;
   const pin=b[wa(0x429335)];b[wa(0x429335)]^=1;h=api.attach(options);h.start();assert.match(h.report.fault,/bytes/);b[wa(0x429335)]=pin;negatives.drawBytePin=true;
  }
- parentPort.postMessage({pass:true,draw:true,results,observation,negatives,memorySHA256,
+ parentPort.postMessage({pass:true,draw:true,results,observation,negatives,memorySHA256,branchWindows,
   limits:'Original instruction fragments with synthetic clocks/data/caller, background stub and UI jumps; no actual game draw/presentation witness'});
 }
 if(!isMainThread){
@@ -452,7 +532,8 @@ if(!isMainThread){
  }
  async function drawFixtures(){
    const results=[];
-   for(const variant of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
+   for(const variant of (process.env.STRONGHOLD_CALLBACK_VARIANT?[process.env.STRONGHOLD_CALLBACK_VARIANT]:['wine-assembly.wasm','wine-assembly.compat.wasm'])){
+    assert(['wine-assembly.wasm','wine-assembly.compat.wasm'].includes(variant));
     const control=await one(variant,false,false,false,false,false,true),trace=await one(variant,false,true,false,false,false,true),observed=await one(variant,true,false,false,false,false,true);
     for(const arm of [trace,observed]){assert.equal(arm.moduleSHA,control.moduleSHA,'same current module fixture');assert.deepEqual(arm.results,control.results);assert.deepEqual(arm.commands.slice(0,control.commands.length),control.commands);assert.equal(arm.memorySHA256,control.memorySHA256);}
     results.push({variant,control,trace,observed});console.log('PASS original draw instruction fragments, independent arithmetic oracle and full memory/register/command parity',variant);

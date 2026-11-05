@@ -17,6 +17,11 @@ const PINS=Object.freeze([
  // Original draw arithmetic, clocks, final RET and conditional surface calls.
  [0x4292c0,'83ec6853555657ff15c84158008b2d7835ef008bf0a18406ba008b0d7435ef002bc533db992bc28974241cd1f850a18006ba002bc1b980d5db00992bc2d1f85053e83abf0200a1540e69003bc30f848d000000391dfcf975010f85810000003bc3c705b038d100010000008bce7d378b2db8216900b8999999992bcdf7e9c1fa048bc2c1e81f03d0a1182e690003c23bc3a3182e69007f48891d182e6900891d540e6900eb3a8b15b8216900b8676666662bcaf7e9a1182e6900c1fa048bcac1e91f03d103c283f820a3182e69007c10c705182e690020000000891d5c37d100'],
  [0x4297aa,'892dfcf97501'],
+ // Intact alternate/refresh comparisons and immediate successors. A bypass
+ // requires their executed same-frame history, never just a visited target.
+ [0x42971b,'33ed392d30bddb000f85db030000'],
+ [0x429729,'8b15441869008bc72bc23d307500007e30a190146801893d441869003bc574146a09b9000d6801892dd8366d01e8b55e0500eb0d392dc41269007505e8561e0000392dfcf975010f847f030000'],
+ [0x429ad4,'8b54241c89154c46fb00c70568e67501ffffffffff15c8415800a3b821690033ed'],
  [0x429ae8,'ff15c8415800a3b821690033ed'],
  [0x42a207,'5f5e5d5b83c468c3'],
  [0x467b90,'8b44240481ecf00700005355565733ed33ff83f8648bf1bb800000007c0a83e8648984240408000039ae900000007405bf010000003bc57403896e60392e75175f5e5dc705f40f6700010000005b81c4f0070000c20400'],
@@ -88,34 +93,72 @@ function observerFactory(EXE_SHA256,PINS){
    rows.push(row);report.bytes+=size;report.sequence++;
   }
   function live(){if(!active)return false;if(now()>=end)throw Error('original observer deadline');identity();if(host.log_block!==wrapped)throw Error('import owner replaced');return true;}
+  function drawFrame(esp){
+   if(esp!==draw.esp-120||u32(draw.esp)!==draw.caller)throw Error('draw frame stack/caller mismatch');
+   if(u32(0xd13764)!==20||u32(0xd13770)!==20)throw Error('foreign draw scene owner');
+  }
   function drawing(pc,esp,entryEvidence='block-entry'){
    if(pc===0x4292c0){
     signatures();if(draw||surface)throw Error('missing draw/surface return');
     const s=state();if(s.currentScene!==20||s.requestedScene!==20)throw Error('foreign draw scene owner');
     const caller=u32(esp);if(!caller)throw Error('draw saved return missing');
-    emit('draw-entry',{caller});draw={caller,esp,entrySequence:report.sequence,phase:0};lastDraw=null;
+    emit('draw-entry',{caller});draw={caller,esp,entrySequence:report.sequence,phase:0,entryTimestamp:s.timestamp6921b8,clockTarget:u32(0x5841c8)};lastDraw=null;
    }
    if(draw){
+    if(draw.branch){
+     const branch=draw.branch;drawFrame(esp);signatures();
+     if(pc!==branch.target||u32(branch.operand)!==branch.value||(ex.get_ebp()>>>0)!==0)throw Error('draw branch provenance mismatch');
+     emit('draw-branch',{entrySequence:draw.entrySequence,...branch});draw.branch=null;
+     if(branch.source===0x42976a||pc===0x429b04){draw.clockPath=branch.path;
+      if(branch.path!=='late'){draw.bypass=branch;emit('draw-clock-bypass',{entrySequence:draw.entrySequence,...branch});}}
+     else draw.alternatePassed=true;
+    }
+    if(pc===0x42971b||pc===0x42971d||pc===0x42976a){
+     drawFrame(esp);signatures();if(draw.phase!==3||draw.clockPath||pc===0x42976a&&!draw.alternatePassed||pc!==0x42971b&&(ex.get_ebp()>>>0)!==0)throw Error('draw branch history missing');
+     const refresh=pc===0x42976a,operand=refresh?0x175f9fc:0xdbbd30,value=u32(operand);
+     const target=refresh?(value===0?0x429af5:0x429776):(value===0?0x429729:0x429b04);
+     draw.branch={source:pc,target,operand,value,path:refresh?(value===0?'refresh-zero':'late'):(value===0?'alternate-not-taken':'alternate')};
+    }
+    if(pc===0x429729&&!draw.alternatePassed||pc===0x429776&&draw.clockPath!=='late'||
+      pc===0x429af5&&draw.clockPath!=='refresh-zero'&&draw.phase!==4||pc===0x429b04&&!draw.bypass&&draw.phase!==4)throw Error('draw branch provenance missing');
+    // Native API thunks dispatch before log_block. For those, the preceding
+    // pinned CALL block is the witness. A normal x86 target additionally owns
+    // its saved return/stack across any number of queued slices and blocks.
+    if(pc===draw.clockTarget&&(draw.phase===0||draw.phase===3&&draw.clockPath==='late')){
+     const ret=u32(esp),expected=draw.phase===0?0x4292cd:0x429aee;
+     if(ret===expected){
+      const sources=draw.phase===0?[0x4292c0]:[0x429ad4,0x429ade,0x429ae8];
+      if(esp!==draw.esp-124||!sources.includes(previousPC))throw Error('draw clock CALL history missing');
+      signatures();draw.clockCall={ret,esp};
+     }
+    }
     const index=drawPhases.indexOf(pc);
     if(index>=0){
-     if(index!==draw.phase)throw Error('draw clock/update/return history missing at '+pc.toString(16)+' phase '+draw.phase);
+     drawFrame(esp);
+     const bypass=index===4&&draw.phase===3&&draw.bypass;
+     if(index!==draw.phase&&!bypass)throw Error('draw clock/update/return history missing at '+pc.toString(16)+' phase '+draw.phase);
+     if(index===0||index===3){
+      signatures();const sources=index===0?[0x4292c0]:[0x429ad4,0x429ade,0x429ae8];
+      if((index===3&&draw.clockPath!=='late')||(draw.clockCall?draw.clockCall.ret!==pc||esp!==draw.clockCall.esp+4:!sources.includes(previousPC)))throw Error('draw clock CALL/return history missing');
+      draw.clockCall=null;
+     }
      if(index===0){draw.entryTime=ex.get_eax()>>>0;}
      if(index===3){draw.lateTime=ex.get_eax()>>>0;}
-     if(index===4&&u32(0x6921b8)!==draw.lateTime)throw Error('draw late timestamp mismatch');
-     emit(['draw-entry-clock','draw-update-before','draw-update-after','draw-late-clock','draw-timestamp-stored'][index],
-      {entrySequence:draw.entrySequence,entryTime:draw.entryTime,lateTime:draw.lateTime});draw.phase++;
+     if(index===4&&u32(0x6921b8)!==(bypass?draw.entryTimestamp:draw.lateTime))throw Error('draw '+(bypass?'preserved':'late')+' timestamp mismatch');
+     emit(bypass?'draw-timestamp-preserved':['draw-entry-clock','draw-update-before','draw-update-after','draw-late-clock','draw-timestamp-stored'][index],
+      {entrySequence:draw.entrySequence,entryTime:draw.entryTime,lateTime:draw.lateTime,clockPath:draw.clockPath});draw.phase=index+1;
     }
     if(pc===0x42a1fd||pc===0x42a207){
-     if(draw.phase!==5||esp!==draw.esp-120||u32(draw.esp)!==draw.caller)throw Error('draw epilogue stack/history mismatch');
+     drawFrame(esp);signatures();if(draw.phase!==5||draw.branch||draw.clockCall)throw Error('draw epilogue stack/history mismatch');
      draw.epilogue=true;emit('draw-return-block',{entrySequence:draw.entrySequence,retPC:0x42a20e});
     }
     if(pc===0x4297b0)emit('draw-refresh-cleared',{entrySequence:draw.entrySequence});
     if(pc===draw.caller){
      if(draw.phase!==5||!draw.epilogue||esp!==draw.esp+4)throw Error('draw return history missing');
-     emit('draw-return',{entrySequence:draw.entrySequence,entryTime:draw.entryTime,lateTime:draw.lateTime});
+     emit('draw-return',{entrySequence:draw.entrySequence,entryTime:draw.entryTime,lateTime:draw.lateTime,clockPath:draw.clockPath});
      lastDraw=report.sequence;draw=null;
     }
-   }else if(drawPhases.includes(pc)||pc===0x42a1fd||pc===0x42a207)throw Error('draw entry history missing');
+   }else if(drawPhases.includes(pc)||[0x42971b,0x42971d,0x429729,0x42976a,0x429776,0x429af5,0x429b04,0x42a1fd,0x42a207].includes(pc))throw Error('draw entry history missing');
    // These are candidate native operations after a completed draw. No claim
    // ties their surfaces to the host canvas, ACK or captured pixels.
    if(surface){
