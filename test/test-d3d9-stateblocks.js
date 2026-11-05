@@ -11,10 +11,19 @@ const {Bridge}=require('../lib/d3d9-host');
   methods.push('SetIndices','GetIndices','SetStreamSource','GetStreamSource');
   for(const stage of ['Vertex','Pixel'])for(const op of ['Create','Set','Get'])methods.push(op+stage+'Shader');
   for(const stage of ['Vertex','Pixel'])for(const op of ['Set','Get'])methods.push(op+stage+'ShaderConstantF');
+  let traceEnabled=true;
   const provenance=new Bridge({backend:'software',worldProvenance:true});
   const {exports:e}=await bootRenderHarness({fonts:'none',extraHostOverrides:{
-    gpu_gl_call:(op,p,aux)=>op===0x30017&&aux===24?1:0,
+    gpu_gl_call:(op,p,aux)=>op===0x30017&&aux===24&&traceEnabled?1:0,
     dx_trace:(...args)=>provenance.noteWorldTrace(...args)},extraWat:`
+    (func (export "traceProbe") (param $p i32) (result i32) (call $d3d9_world_probe_matrix (local.get $p)))
+    (func (export "traceMissingSetup")
+      (global.set $d3d9_world_trace_enabled (i32.const -1))
+      (global.set $api_handler_depth (i32.const 1))
+      (i32.store (global.get $NULL_SENTINEL) (i32.const 0x12345678)))
+    (func (export "traceMissingFinish") (result i32)
+      (global.set $api_handler_depth (i32.const 0))
+      (i32.load (global.get $NULL_SENTINEL)))
     (func (export "buffer") (param $device i32) (param $kind i32) (param $out i32) (result i32)
       (call $d3d9_buffer_create (local.get $device) (i32.const 128) (i32.const 0)
         (select (i32.const 101) (i32.const 0) (i32.eq (local.get $kind) (i32.const 7)))
@@ -305,5 +314,15 @@ const {Bridge}=require('../lib/d3d9-host');
   assert.strictEqual(provenance.worldLiveWriters.get(d),liveWriter,'recorded writes cannot evict the last live writer');
   assert.strictEqual(e.EndStateBlock(d,out),0);assert.strictEqual(e.Release(read(out)),0);
   assert.strictEqual(provenance.worldTracePackets.size,0);assert.strictEqual(provenance.worldTraceErrors,0);
+  // MultiplyTransform currently ignores its source. Diagnostics must not fault
+  // it in or write the quiet-miss sentinel, even when the pointer is unmapped.
+  const reserved=0xf0000000;assert.strictEqual(e.traceProbe(reserved),0);
+  for(const enabled of [false,true]){
+    traceEnabled=enabled;e.traceMissingSetup();
+    const errors=provenance.worldTraceErrors||0;
+    assert.strictEqual(e.MultiplyTransform(d,256,reserved),0);
+    assert.strictEqual(e.traceMissingFinish()>>>0,0x12345678,'passive trace must preserve unread unmapped source/sentinel, enabled='+enabled);
+    assert.strictEqual(provenance.worldTraceErrors,errors+(enabled?2:0),'unavailable source is explicit only when enabled');
+  }
   console.log('PASS D3D9 selective state recording, last-write wins, Capture/Apply and lifetime');
 })().catch(error=>{console.error(error);process.exitCode=1;});

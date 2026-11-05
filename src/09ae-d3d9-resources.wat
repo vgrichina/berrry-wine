@@ -1252,6 +1252,27 @@
   ;; into scalar trace messages before resuming. No live export or guest write.
   (global $d3d9_world_trace_enabled (mut i32) (i32.const -1))
   (global $d3d9_world_trace_serial (mut i32) (i32.const 0))
+  ;; MultiplyTransform currently does not read its input. A diagnostic must
+  ;; therefore translate only an already mapped, contiguous 64-byte source,
+  ;; without g2w misses, SEH, lazy DIB materialization or sentinel writes.
+  (func $d3d9_world_probe_matrix (param $ga i32) (result i32)
+    (local $wa i32)
+    (if (i32.gt_u (local.get $ga) (i32.const 0xFFFFFFC0)) (then (return (i32.const 0))))
+    (local.set $wa (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE)))
+    (if (i32.and (i32.lt_u (local.get $wa) (region.end $DIRECT_WINDOW))
+      (i32.le_u (i32.const 64) (i32.sub (region.end $DIRECT_WINDOW) (local.get $wa))))
+      (then (return (local.get $wa))))
+    ;; DIB's backing may need a stateful lazy fill: report it unavailable.
+    (if (i32.lt_u (i32.sub (local.get $ga) (global.get $DIB_GUEST_BASE)) (global.get $DIB_GUEST_CAPACITY))
+      (then (return (i32.const 0))))
+    (local.set $wa (call $guest_page_translate (local.get $ga)))
+    (if (i32.eq (local.get $wa) (global.get $NULL_SENTINEL)) (then (return (i32.const 0))))
+    ;; A 64-byte span crosses at most one page boundary, so these endpoints
+    ;; prove its affine mapping; both translations are read-only PTE loads.
+    (if (i32.ne (call $guest_page_translate (i32.add (local.get $ga) (i32.const 63)))
+      (i32.add (local.get $wa) (i32.const 63))) (then (return (i32.const 0))))
+    (local.get $wa))
+
   (func $d3d9_trace_world (param $device i32) (param $op i32)
     (param $source i32) (param $dest i32) (param $owner i32) (param $source_guest i32)
     (local $serial i32) (local $slot i32) (local $index i32) (local $call_esp i32)
