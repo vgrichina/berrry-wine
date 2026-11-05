@@ -206,7 +206,7 @@ if(fs.existsSync(path.join(actualRun,'browser/cleanup.json'))){
 }
 const p=api.prepare({run,pins});new vm.Script(p.source);new vm.Script(p.route);
 assert(p.source.includes('createHostPresentationController({page:()=>page,save,deadline:()=>deadline})'));
-assert(p.source.includes('const presentationBefore=await hostPresentation.token();'));
+assert(p.source.includes('const presentationBefore=await hostPresentation.captureToken();'));
 assert(p.source.indexOf('await hostPresentation.capture(presentationBefore,sha(png),name)')<p.source.indexOf('await presetAttachment.capture(name,sha(png),current)'));
 assert.deepEqual(p.evidence.hostPresentation,{passive:true,normalCallsOnly:true,endpointSlot:0,maxRecords:2048,maxBytes:1048576,
  operationToUpload:'unknown without unique cross-realm RPC identity',readinessGranted:false,pixelsAccepted:false});
@@ -232,7 +232,170 @@ assert(start>0&&end>start);
 fs.writeFileSync(path.join(run,'runtime-release.json'),JSON.stringify(release));
 const guarded=p.source.slice(start,end)+'return true;\n}main();';
 // The embedded random nonce must reject another preparation's release.
+async function hostControllerFixtures(source){
+ function fixture(){
+  const memory={buffer:new ArrayBuffer(1024)},canvas={},display={},instance={},hwnd=65537,sid=0x200001,saved=[];
+  let renders=0,uploads=0;
+  const presentation={canvas,directDraw:true,targetHwnd:hwnd,version:0,surface:{storage:new Uint8Array(memory.buffer),storageOffset:64}};
+  const renderer={canvas:display,windows:{[hwnd]:{_backCanvas:canvas,wasm:instance,wasmMemory:memory,processId:1000}},ctx:{canvas:display,drawImage(){}},_immutablePublicationSequence:0,
+   repaint(){renders++;this.ctx.drawImage(canvas);this._immutablePublicationSequence++;}};
+  const imports={gdi_surface_upload(){uploads++;presentation.version++;return 1;}},broker={serveCall(m){return imports.gdi_surface_upload(...m.args);}};
+  const original={upload:imports.gdi_surface_upload,repaint:renderer.repaint,serve:broker.serveCall,draw:renderer.ctx.drawImage};
+  const wine={memory,instance,processId:1000,renderer,_hostImports:imports,guestWorker:{broker},hostCtx:{sharedGdi:{surfacePresentations:new Map([[sid,presentation]])}}};
+  const scope=vm.createContext({wine,performance,Date,TextEncoder,setTimeout,clearTimeout,Promise});
+  const page={evaluate:async source=>vm.runInContext(source,scope)};
+  const controller=api.createHostPresentationController({page:()=>page,save:(name,value)=>saved.push({name,value:structuredClone(value)}),deadline:()=>Date.now()+10000});
+  const produce=()=>{broker.serveCall({slot:0,args:[sid,0,0,4,4]});renderer.repaint();};
+  const restored=()=>{assert.equal(imports.gdi_surface_upload,original.upload);assert.equal(renderer.repaint,original.repaint);assert.equal(broker.serveCall,original.serve);assert.equal(renderer.ctx.drawImage,original.draw);};
+  return {controller,saved,produce,scope,page,wine,renderer,restored,counts:()=>({renders,uploads})};
+ }
+ const epoch='offline-target/offline-session',digest='a'.repeat(64),native={epoch,status:'running',fault:null,records:[]};let cases=0;
+ // The original frame-zero capture remains terminal through the real factory.
+ {
+  const f=fixture(),h=f.controller;await h.start(epoch);const before=await h.token();assert.equal(before.frame,0);
+  await assert.rejects(h.capture(before,digest,'frame-zero'),/stale\/unknown host capture/);
+  const first=f.saved[0].value;assert.equal(first.frame,0);assert.equal(first.sequence,0);assert.equal(first.status,'unsupported-or-unobservable');assert.deepEqual(first.records,[]);
+  f.restored();assert.deepEqual(f.counts(),{renders:0,uploads:0});
+  let fatal;try{h.assertLive();}catch(e){fatal=e;}assert(fatal);
+  for(const call of [()=>h.check(),()=>h.token(),()=>h.capture(before,digest,'later'),()=>h.link(native),()=>h.start(epoch)])await assert.rejects(call(),e=>e===fatal);
+  assert.equal(f.saved.length,1,'first fault is retained without later replacement');await h.finish('cleanup');f.restored();cases++;
+ }
+ // Passive lifecycle: a screenshot may precede the first ordinary frame, but
+ // that screenshot is explicitly unbracketed and cannot become presentation.
+ {
+  const f=fixture(),h=f.controller;await h.start(epoch);const before=await h.captureToken();assert.equal(before,null);
+  await h.capture(before,digest,'before-frame');assert.deepEqual(f.counts(),{renders:0,uploads:0});
+  assert.equal(f.saved.at(-1).value.captureDeferred,true);assert.equal(f.saved.at(-1).value.frame,0);assert.equal(f.saved.at(-1).value.records.length,0);
+  f.produce();await h.capture(await h.captureToken(),digest,'ordinary-frame');await h.link(native);
+  const {host,link}=f.saved.at(-1).value;assert.equal(host.status,'running');assert.equal(host.records.at(-1).kind,'capture-bracket');assert.equal(host.records.at(-1).frame,1);
+  assert.equal(link.readinessGranted,false);assert.equal(link.operationCompletion,null);assert.equal(link.freshPixels,null);assert.deepEqual(f.counts(),{renders:1,uploads:1});
+  await h.finish('cleanup');f.restored();cases++;
+ }
+ for(const mode of ['stale','digest','foreign-epoch','pending','failed-capture-evaluation']){
+  const f=fixture(),h=f.controller;await h.start(epoch);f.produce();const before=await h.captureToken();
+  if(mode==='stale')f.produce();if(mode==='foreign-epoch')before.epoch='foreign';
+  if(mode==='pending')before.pending=1;
+  if(mode==='failed-capture-evaluation'){
+   f.page.evaluate=async()=>{throw Error('capture evaluation failed');};
+   await assert.rejects(h.capture(before,digest,'failed'),/capture evaluation failed/);
+   assert.equal(f.saved[0].value.status,'unsupported-or-unobservable');assert.throws(()=>h.assertLive(),/capture evaluation failed/);
+   f.page.evaluate=async script=>vm.runInContext(script,f.scope);
+  }else await assert.rejects(h.capture(before,mode==='digest'?'bad':digest,mode),/stale\/unknown host capture/);
+  await h.finish('cleanup');f.restored();cases++;
+ }
+ for(const method of ['check','token','captureToken','capture','link']){
+  const f=fixture(),h=f.controller;await h.start(epoch);f.produce();const before=await h.token();f.wine.renderer={};
+  const call=()=>method==='capture'?h.capture(before,digest,'replaced'):method==='link'?h.link(native):h[method]();
+  await assert.rejects(call(),/host presentation owner replaced/);assert.equal(f.saved[0].value.fault,'host presentation owner replaced');
+  assert.throws(()=>h.assertLive(),/host presentation owner replaced/);await h.finish('cleanup');f.restored();cases++;
+ }
+ {
+  const f=fixture(),h=f.controller;await h.start(epoch);
+  vm.runInContext("globalThis.__strongholdHostPresentation.finish('deadline')",f.scope);
+  await assert.rejects(h.link(native),/host presentation terminal: deadline/);
+  assert.equal(f.saved[0].value.status,'deadline');assert.equal(f.saved[0].value.fault,null);
+  assert.throws(()=>h.assertLive(),/deadline/);await h.finish('cleanup');f.restored();cases++;
+ }
+ for(const mode of ['deadline','owner-replaced']){
+  const f=fixture(),h=f.controller;await h.start(epoch);
+  if(mode==='deadline')vm.runInContext("globalThis.__strongholdHostPresentation.finish('deadline')",f.scope);
+  else f.wine.renderer={};
+  await assert.rejects(h.finish('cleanup'),/deadline|owner replaced/);
+  assert.equal(f.saved.length,1);assert.throws(()=>h.assertLive(),/deadline|owner replaced/);f.restored();cases++;
+ }
+ {
+  const f=fixture(),h=f.controller;await h.start(epoch);const lost=Error('page evaluation lost');f.page.evaluate=async()=>{throw lost;};
+  await assert.rejects(h.check(),/page evaluation lost/);assert.throws(()=>h.assertLive(),/page evaluation lost/);assert.equal(f.saved[0].value.status,'unsupported-or-unobservable');
+  // Restore page access only to permit ordinary observer cleanup.
+  f.page.evaluate=async source=>vm.runInContext(source,f.scope);await h.finish('cleanup');f.restored();cases++;
+ }
+ if(source){
+  const start=source.indexOf('async function freshShot(name){'),end=source.indexOf('\nfunction operatorLive()',start);assert(start>0&&end>start);
+  for(const mode of ['no-frame','ordinary-frame','screenshot-failed','stale-during-screenshot','terminal-before-screenshot']){
+   const f=fixture(),h=f.controller;await h.start(epoch);if(!['no-frame','terminal-before-screenshot'].includes(mode))f.produce();
+   if(mode==='terminal-before-screenshot')f.wine.renderer={};
+   let shots=0,writes=0,nativeCaptures=0;
+   const freshShot=vm.runInNewContext(source.slice(start,end)+';freshShot',{
+    Buffer,OUT:'/offline-output',path:require('node:path'),sha:()=>digest,hostPresentation:h,
+    fs:{existsSync:()=>false,writeFileSync:()=>{writes++;},renameSync:()=>{}},save:()=>{},
+    state:async()=>({main:{tick:{steps:64}}}),presetAttachment:{capture:async()=>{nativeCaptures++;}},
+    page:{screenshot:async()=>{shots++;if(mode==='screenshot-failed')throw Error('screenshot failed');if(mode==='stale-during-screenshot')f.produce();return Buffer.from('offline screenshot');}}
+   });
+   if(['screenshot-failed','stale-during-screenshot','terminal-before-screenshot'].includes(mode)){
+    await assert.rejects(freshShot(mode),/screenshot failed|stale\/unknown host capture|host presentation owner replaced/);
+    assert.equal(writes,0);assert.equal(nativeCaptures,0);
+    if(mode==='terminal-before-screenshot')assert.equal(shots,0);
+    assert(!f.saved.some(r=>r.value.records?.some(row=>row.kind==='capture-bracket')));
+   }else{
+    await freshShot(mode);assert.equal(writes,1);assert.equal(nativeCaptures,1);
+    assert.equal(f.saved[0].value.captureDeferred,mode==='no-frame'?true:undefined);
+    assert.deepEqual(f.counts(),mode==='no-frame'?{renders:0,uploads:0}:{renders:1,uploads:1});
+   }
+   await h.finish('cleanup');f.restored();cases++;
+  }
+ }
+ console.log('PASS '+cases+' real-controller + serialized-factory lifecycle/terminal cases, zero forced renders, no readiness');
+}
 (async()=>{
+ await hostControllerFixtures(p.source);
+ // Terminal passive reports reject before the next real composed command,
+ // step or mouse transport can deliver controls.
+ {
+  let began=0,commands=0,controls=0,steps=0;
+  const fatal=Error('earliest passive host fault');
+  const a=p.source.indexOf("if(c.action!=='quit')await hostPresentation.check();await presetAttachment.begin(c,i);"),b=p.source.indexOf('await presetAttachment.success(c);',a);
+  assert(a>0&&b>a);
+  await assert.rejects(vm.runInNewContext('(async()=>{'+p.source.slice(a,b)+'})()',{
+   c:{action:'route-arrival'},i:14,hostPresentation:{check:async()=>{throw fatal;}},presetAttachment:{begin:async()=>{began++;}},mailboxDispatch:async()=>{commands++;}}),e=>e===fatal);
+  assert.equal(began,0);assert.equal(commands,0);
+  const a2=p.source.indexOf('function installTransportEvidence(p){'),b2=p.source.indexOf('\nasync function main()',a2);
+  assert(a2>0&&b2>a2);
+  const page={evaluate:async()=>{steps++;},mouse:Object.fromEntries(['move','down','up'].map(k=>[k,async()=>{controls++;}]))};
+  const install=vm.runInNewContext(p.source.slice(a2,b2)+';installTransportEvidence',{
+   hostPresentation:{check:async()=>{throw fatal;}},presetAttachment:{active:false,beforeStep:async()=>{}},
+   commandLive:()=>{},navigationSteps:0,log:()=>{},state:async()=>({})});
+  install(page);
+  await assert.rejects(page.evaluate('WineFrozen.step',64),e=>e===fatal);
+  for(const action of ['move','down','up'])await assert.rejects(page.mouse[action](),e=>e===fatal);
+  assert.equal(steps,0);assert.equal(controls,0);
+  assert(p.source.includes('function commandLive(){hostPresentation.assertLive();presetAttachment.assertLive();'));
+  console.log('PASS actual composed next-command, step and all mouse transports reject terminal host before delivery');
+ }
+ // The exact latest partial setup has a third opaque whole-game identity.
+ // Recognition only permits the existing bounded observation continuation.
+ {
+  const {PNG}=require('pngjs'),nav=require('../tools/stronghold-route-recognition-handoff.cjs').originalNavigation();
+  const original=path.resolve('scratch/runs/20261105-stronghold-review-ack-original');
+  const bytes=base.retained(path.join(original,'browser/route-native-boundary-8.png')),png=PNG.sync.read(bytes);
+  assert.equal(base.hash(bytes),'0b8f94943db27b249f9e1a50171fbdcc44397cf9046ba397081c79f0ab72bb59');
+  assert.equal(nav.scene(bytes),'unknown');assert.equal(api.diagnosticScene(bytes,'unknown'),'setup-transition-observation');
+  let negatives=0;
+  for(const [x,y]of [[10,194],[869,861],[153,419],[84,733],[620,500],[150,240],[80,610]]){
+   const changed={...png,data:Buffer.from(png.data)};changed.data[(y*png.width+x)*4]^=1;
+   assert.equal(api.diagnosticScene(PNG.sync.write(changed),'unknown'),'unknown');negatives++;
+  }
+  const alpha={...png,data:Buffer.from(png.data)};alpha.data[(300*png.width+300)*4+3]=254;
+  assert.throws(()=>api.diagnosticScene(PNG.sync.write(alpha),'unknown'),/opaque/);
+  assert.throws(()=>api.diagnosticScene(PNG.sync.write(new PNG({width:800,height:600})),'unknown'),/geometry/);
+  const toolbar={...png,data:Buffer.from(png.data)};toolbar.data[(50*png.width+50)*4]^=1;
+  assert.equal(api.diagnosticScene(PNG.sync.write(toolbar),'unknown'),'setup-transition-observation');
+  for(const known of ['choose-type','actual-scene20-observation','zephyr-ready'])assert.equal(api.diagnosticScene(bytes,known),known);
+  const state=JSON.parse(base.retained(path.join(original,'browser/route-native-boundary-8.json'))).state;
+  const a=p.route.indexOf(' const capture=async()=>{'),b=p.route.indexOf(' const sample=',a);
+  const cap=await vm.runInNewContext(p.route.slice(a,b)+'capture()',{require,physical:{capture:async()=>({png:bytes,state})},sha256:base.hash,scene:nav.scene,fail:m=>{throw Error(m);}});
+  assert.equal(cap.scene,'setup-transition-observation');
+  const arrival=(value,arrived=1024)=>{
+   const a=p.route.indexOf(' const acceptArrival=cap=>{'),b=p.route.indexOf(' const receipt=',a);
+   return vm.runInNewContext("let continuation='arrival',arrival="+arrived+",shellSamples=0,last;"+p.route.slice(a,b)+'acceptArrival(cap);({continuation,last});',{require,cap:value,fail:m=>{throw Error(m);}});
+  };
+  assert.equal(arrival(cap).continuation,'arrival');
+  assert.throws(()=>arrival(cap,3072),/arrival diagnostic cap/);
+  assert.throws(()=>arrival({...cap,scene:'actual-scene20-observation'}),/no readiness grant/);
+  assert.throws(()=>api.assertMailboxCommandReady(original,{command:{action:'route-arrival'}}),/terminal/);
+  assert(p.route.includes("if(continuation!=='preset')fail('fresh later review required before preset')"));
+  console.log('PASS exact step10304 partialsetup observation only; '+negatives+' pixel negatives, opacity/geometry/precedence/cap/terminal/readiness guards retained');
+ }
+
  // Run the serialized page hook through the production Node controller.
  // A plain page VM supplies a host; there is no browser, Worker or render call
  // by the controller. The producer below owns its own normal pipeline.
@@ -416,7 +579,7 @@ const guarded=p.source.slice(start,end)+'return true;\n}main();';
   const oldDiagnostic=vm.runInNewContext('('+api.diagnosticScene.toString().replace('SETUP_TRANSITIONS.includes(base.hash(pixels))','base.hash(pixels)===SETUP_TRANSITION')+')',{require,base,Buffer,SETUP_TRANSITION:api.SETUP_TRANSITION});
   assert.equal(nav.scene(bytes),'unknown');assert.equal(oldDiagnostic(bytes,'unknown'),'unknown');
   assert.equal(api.diagnosticScene(bytes,'unknown'),'setup-transition-observation');
-  assert(Object.isFrozen(api.SETUP_TRANSITIONS));assert.equal(api.SETUP_TRANSITIONS.length,2);
+  assert(Object.isFrozen(api.SETUP_TRANSITIONS));assert.equal(api.SETUP_TRANSITIONS.length,3);
   let negatives=0;
   for(const [x,y]of [[10,194],[869,861],[153,419],[84,733],[620,500],[150,240],[80,610]]){
    const changed={...png,data:Buffer.from(png.data)};changed.data[(y*png.width+x)*4]^=1;

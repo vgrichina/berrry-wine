@@ -47,7 +47,8 @@ function verifyAcceptedRuntimePins(pins){
 // returned. Exact identities only: no complete-layout or input-ready grant.
 const SETUP_TRANSITION='741b136a33e205825f23e70af83059d82dfe3b625bd869c321198ba16dec2e5c';
 const SETUP_TRANSITIONS=Object.freeze([SETUP_TRANSITION,
- '5cf84f22b5e0e11ba4b5a945b1bd031febd8be322cffa382f9c02670c6df237f']);
+ '5cf84f22b5e0e11ba4b5a945b1bd031febd8be322cffa382f9c02670c6df237f',
+ '25ffd65fb0eb87ae71b33ca8c491cbea0f8766cfc30b57c6bed099328bcb5ab4']);
 function diagnosticScene(bytes,known){
  if(known!=='unknown')return known;
  const {PNG}=require('pngjs'),p=PNG.sync.read(bytes);
@@ -239,7 +240,17 @@ function prepare(options){
  p.source=base.replaceOnce(p.source,'const presetAttachment=attachmentAPI.createAttachment({sessions,save,log,pageState:state,validateAck:assertAck,',
   `const hostPresentation=require(${q(__filename)}).createHostPresentationController({page:()=>page,save,deadline:()=>deadline});\nconst presetAttachment=attachmentAPI.createAttachment({hostPresentation,sessions,save,log,pageState:state,validateAck:assertAck,`);
  p.source=base.replaceOnce(p.source,'const png=Buffer.from(await page.screenshot()),current=await state();',
-  'const presentationBefore=await hostPresentation.token();\n  const png=Buffer.from(await page.screenshot()),current=await state();\n  await hostPresentation.capture(presentationBefore,sha(png),name);');
+  'const presentationBefore=await hostPresentation.captureToken();\n  const png=Buffer.from(await page.screenshot()),current=await state();\n  await hostPresentation.capture(presentationBefore,sha(png),name);');
+ // Check the passive page observer before any later command, step or mouse
+ // delivery. The synchronous latch also covers reviews and commandLive calls.
+ p.source=base.replaceOnce(p.source,'function commandLive(){presetAttachment.assertLive();',
+  'function commandLive(){hostPresentation.assertLive();presetAttachment.assertLive();');
+ p.source=base.replaceOnce(p.source,'await presetAttachment.begin(c,i);',
+  "if(c.action!=='quit')await hostPresentation.check();await presetAttachment.begin(c,i);");
+ p.source=base.replaceOnce(p.source,'if(stepping)await presetAttachment.beforeStep();',
+  'if(stepping){await hostPresentation.check();await presetAttachment.beforeStep();}');
+ p.source=base.replaceOnce(p.source,'p.mouse[action]=async(...args)=>{const result=await original(...args);',
+  'p.mouse[action]=async(...args)=>{await hostPresentation.check();const result=await original(...args);');
  p.route=base.replaceOnce(p.route,'scene:scene(c.png)',`scene:require(${q(__filename)}).diagnosticScene(c.png,scene(c.png))`);
  p.route=base.replaceOnce(p.route,"['choose-type-custom-hover','actual-scene20-earlier','actual-scene20-intermediate']",
   "['choose-type-custom-hover','actual-scene20-earlier','actual-scene20-intermediate','setup-transition-observation']");
@@ -278,21 +289,54 @@ function prepare(options){
  return {...p,createRelease:()=>createRelease({run:options.run,pins:options.pins,nonce})};
 }
 function createHostPresentationController({page,save,deadline}){
- let active=false,sequence=0;
+ let active=false,sequence=0,fatal=null;
  const persist=r=>{save('host-presentation-'+sequence+++'.json',r);return r;};
+ const assertLive=()=>{if(fatal)throw fatal;};
  const evaluate=source=>page().evaluate(source);
+ function reject(report){
+  if(!fatal){fatal=Error('host presentation terminal: '+(report?.fault||report?.status||'missing report'));persist(report||{status:'unsupported-or-unobservable',fault:'missing host presentation report',readinessGranted:false,pixelsAccepted:false});}
+  throw fatal;
+ }
+ function running(report){if(!report||report.status!=='running'||report.fault)reject(report);return report;}
+ async function read(source,token=false){
+  assertLive();
+  try{const value=await evaluate(source);running(token?value.report:value);return value;}
+  catch(e){if(fatal)throw fatal;reject({status:'unsupported-or-unobservable',fault:String(e.message||e),history:'unknown; retain last host reports',readinessGranted:false,pixelsAccepted:false});}
+ }
+ const check=async()=>{assertLive();return active?read('globalThis.__strongholdHostPresentation.check()'):null;};
+ const token=async()=>{
+  assertLive();if(!active)return null;
+  const value=await read('(()=>{const h=globalThis.__strongholdHostPresentation;const token=h.token();return {token,report:h.check()};})()',true);
+  return value.token;
+ };
  return {
+  assertLive,check,token,
   async start(epoch){
+   assertLive();if(active)throw Error('occupied host presentation');
    const source='('+observer.hostPresentationFactory.toString()+')()';
-   await evaluate(`(()=>{if(globalThis.__strongholdHostPresentation)throw Error('occupied host presentation');
+   await read(`(()=>{if(globalThis.__strongholdHostPresentation)throw Error('occupied host presentation');
     globalThis.__strongholdHostPresentation=${source}.attach({getHost:()=>typeof wine==='undefined'?null:wine,
-     epoch:${JSON.stringify(epoch)},deadline:performance.now()+${JSON.stringify(deadline())}-Date.now()});return true;})()`);
+     epoch:${JSON.stringify(epoch)},deadline:performance.now()+${JSON.stringify(deadline())}-Date.now()});return globalThis.__strongholdHostPresentation.check();})()`);
    active=true;
   },
-  async token(){return active?evaluate('globalThis.__strongholdHostPresentation.token()'):null;},
-  async capture(before,sha256,name){if(active)persist(await evaluate(`globalThis.__strongholdHostPresentation.capture(${JSON.stringify(before)},${JSON.stringify(sha256)},${JSON.stringify(name)})`));},
-  async link(nativeReport){if(active){const host=await evaluate('globalThis.__strongholdHostPresentation.check()');persist({nativeEpoch:nativeReport?.epoch,host,link:observer.linkPresentation(nativeReport,host)});}},
-  async finish(reason){if(!active)return;active=false;persist(await evaluate(`globalThis.__strongholdHostPresentation.finish(${JSON.stringify(reason)})`));}
+  // Before an ordinary produced frame, screenshots remain unbracketed. The
+  // factory still rejects any direct frame-zero capture and every stale token.
+  async captureToken(){const before=await token();return before?.frame?before:null;},
+  async capture(before,sha256,name){
+   assertLive();if(!active)return;
+   if(before===null){const report=await check();persist({...report,captureDeferred:true,name,sha256,reason:'no ordinary produced frame before screenshot'});return;}
+   persist(await read(`globalThis.__strongholdHostPresentation.capture(${JSON.stringify(before)},${JSON.stringify(sha256)},${JSON.stringify(name)})`));
+  },
+  async link(nativeReport){assertLive();if(active){const host=await check();persist({nativeEpoch:nativeReport?.epoch,host,link:observer.linkPresentation(nativeReport,host)});}},
+  // Cleanup preserves the earliest latched fault. It cannot revive or replace
+  // the terminal report, and it must still release any remaining page hooks.
+  async finish(reason='terminal'){
+   if(!active)return;active=false;let value;
+   try{value=await evaluate(`(()=>{const h=globalThis.__strongholdHostPresentation;const before={...h.check()};return {before,report:h.finish(${JSON.stringify(reason)})};})()`);}
+   catch(e){if(fatal)throw fatal;reject({status:'unsupported-or-unobservable',fault:String(e.message||e),history:'unknown; retain last host reports',readinessGranted:false,pixelsAccepted:false});}
+   if(!fatal)running(value.before);
+   persist(value.report);
+  }
  };
 }
 module.exports={acceptedRuntimePins,verifyAcceptedRuntimePins,ACCEPTED,ORIGINAL_PINS_SHA,identity,install,lifecycleForRun,launchOwned,binding,validateRelease,createRelease,requireRuntimeRelease,requireBuildReleases,requireLocalFlock,assertRuntimeOwnership,validateCaptureCommand,normalClose,mailboxStatus,assertMailboxCommandReady,nextMailboxAction,diagnosticScene,SETUP_TRANSITION,SETUP_TRANSITIONS,prepare,createHostPresentationController,AUTH,ASSIGNMENT,CUTOFF,CLEANUP};
