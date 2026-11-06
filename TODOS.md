@@ -2294,9 +2294,10 @@ Coordinator 2026-11-04T20:37:41.271986+00:00: Accepted9707f9525 Stronghold554sea
 
 2026-11-04T20:44:16.491512+00:00 coordinator: GLlocked launcher51465EXIT143 actualworker1104186absent result/finalMISSING. WIPrecords software50enteredupdates5553.09ms9.004updates/s with exactbefore/afterliveplayer; coordinator personallyVIEWEDafter image; laterdeath/noWebGL. Fresh 01a1a84d-d46b-79e1-a89d-b16b4e125ee2 session47523 gltron-land-live-observation-nov04 owns interruptedcode tests/build/publish ZEROneworiginal. EACHpolicygates root5173043200B Mem3499876352B live2PASS. Newcapture TelegramAPI2005DELIVERED accurateupdates-not-displayFPScaption. MDK79206 Stronghold43276 confirmedlive20:43; threeworkers. Nextcompletion or20:55fallback.
 
-- [ ] Implement documented D3D9 MultiplyTransform
+- [x] Implement documented D3D9 MultiplyTransform
   id: D3D9-MULTIPLY-TRANSFORM-20261105
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: d3d9-multiply-transform-2320
-  Next: Current handler returns success without multiplication. Reproduce via public x86 COM on both modules using independent noncommuting product oracle; implement inputMatrix times existingState, per-device/aliasing/stateblock/ABI contracts and actual owning Worker rendered geometry. No assumed Conan causality or original game retry. Source-only behind Aranna2220 -> Conan2300 -> legacy2305 exactFINALcleanup.
+  worker: none; d3d9-multiply-transform-2320 completed and released
+  Outcome 2026-11-06: Published983bda626a0e716e1f8e89d55216ed14992bed19 implements inputMatrix times existingState, per-device copied input, aliasing and complete split-sparse span handling. Both shipped modules pass ordinary x86 COM/owning browser Worker trace-on/off controls, 48 independent rendered pixels with reversed/no-op negatives, selector/stateblock/ABI neighbors and locked build. Evidence: scratch/runs/20261105-d3d9-multiply-transform/ and docs/re-notes/d3d9-multiply-transform-20261105.md. Generated screenshots reviewed and sent to owner; no Conan/gameplay claim.
+  Follow-up: Public COM/browser Reset remains open. Fresh reset0032 exited source-only at the serialized runtime gate; preserved unexecuted fixture and source findings in scratch/runs/20261106-d3d9-public-reset-browser/. Assign a fresh worker after Arannaheap2340, Conanmatrix2358 and legacyPoint0025 final releases and verified cleanup; no Reset tests or defect demonstrated by that draft.
   Done: Tested implementation and focused neighbors plus required locked build pass; worker commits and publishes owned files.
