@@ -143,6 +143,36 @@ encoderScopedFence();
   adapter.execute({opcode:0x20005,wa:0});
   assert.strictEqual(adapter.d3dimSoftwareDrawCallsCompleted,1,'GL has separate evidence semantics');
 }
+// A presentation before context creation must not cache a missing renderer;
+// subsequent presentations reuse renderer/version only for the same context.
+{
+  let gpu,queries=0,extensions=0;
+  const context={module:{exports:{}},require:()=>({D3DIMGpu:class{
+    constructor(){gpu=this;this.targets=new Map();}
+    call(){return 1;} snapshot(){return {};}
+  }}),DataView,Error};
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../lib/d3dim-render-worker.js'),'utf8'),context);
+  const adapter=context.module.exports.create({backend:'webgl',memory:{buffer:new ArrayBuffer(64)},instance:{exports:{}}});
+  const present=()=>adapter.execute({opcode:0x20001,wa:0});
+  const gl=(name,version)=>({RENDERER:1,VERSION:2,
+    getExtension(){extensions++;return null;},
+    getParameter(parameter){queries++;assert([1,2].includes(parameter));return parameter===2?version:name;}});
+  const absent=present();
+  assert.strictEqual(absent.glRenderer,null);
+  assert.strictEqual(absent.glVersion,null);
+  gpu.targets.set(1,{device:{gpu:{gl:gl('first','WebGL 1.0')}}});
+  for(let i=0;i<100;i++){
+    const result=present();
+    assert.strictEqual(result.glRenderer,'first');
+    assert.strictEqual(result.glVersion,'WebGL 1.0');
+  }
+  assert.strictEqual(queries,2);assert.strictEqual(extensions,1);
+  gpu.targets.set(1,{device:{gpu:{gl:gl('replacement','WebGL 2.0')}}});
+  const replacement=present();
+  assert.strictEqual(replacement.glRenderer,'replacement');
+  assert.strictEqual(replacement.glVersion,'WebGL 2.0');
+  assert.strictEqual(queries,4);assert.strictEqual(extensions,2);
+}
 (async()=>{
   const f=fixture(),a=f.manager.createEndpoint({api:'glide',name:'a'}),b=f.manager.createEndpoint({api:'gl',name:'b'});
   await Promise.all([a.ready,b.ready]);

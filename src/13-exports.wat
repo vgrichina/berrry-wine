@@ -955,6 +955,7 @@
   (func (export "test_shared_post_read") (param $msg_ptr i32) (param $remove i32) (result i32)
     (call $shared_post_queue_read (local.get $msg_ptr) (local.get $remove)))
   (func (export "reset_thread_message_queue") (param $tid i32)
+    (call $cursor_thread_reset (local.get $tid))
     (call $getmessage_hook_reset (local.get $tid))
     (call $shared_post_queue_reset_tid (local.get $tid)))
   (func (export "test_timer_set")
@@ -1813,12 +1814,17 @@
               (i32.shl (local.get $y) (i32.const 16)))))
     (call $defwndproc_do_ncpaint (local.get $hwnd)))
   ;; Cursor state readback — for tests / JS to verify SetCursor plumbing.
-  (func (export "get_cursor") (result i32) (global.get $current_cursor))
+  (func (export "get_cursor") (result i32)
+    (call $cursor_thread_handle (global.get $current_thread_id)))
+  (func (export "get_thread_cursor") (param $tid i32) (result i32)
+    (call $cursor_thread_handle (local.get $tid)))
+  (func (export "get_thread_cursor_display_count") (param $tid i32) (result i32)
+    (call $cursor_thread_count (local.get $tid)))
   ;; ShowCursor's signed display count is also browser presentation state.
   ;; A negative count means the guest deliberately hid the system cursor and
   ;; is normally drawing/tracking its own (often through DirectInput).
   (func (export "get_cursor_display_count") (result i32)
-    (global.get $cursor_count))
+    (call $cursor_thread_count (global.get $current_thread_id)))
   ;; 1 when some DirectInput device that is a mouse (misc0 kind 2) is acquired
   ;; with DISCL_EXCLUSIVE (low bit of the DISCL_* the device flags keep): the
   ;; game reads mouse counts only and hides the system cursor, so the page

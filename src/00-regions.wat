@@ -478,6 +478,9 @@
     (owner "09e-win16-api.wat:$WIN16_BUILTIN_NAMES"))
   (region.declare $WND_THREAD_TABLE (size 0x00000400) (align 0x00000100)
     (owner "09c0-window-table.wat:$wnd_thread_addr"))
+  (region.declare $CURSOR_THREAD_STATE (size 0x110) (align 0x10)
+    (stride 0x10 (count 17))
+    (owner "09a-handlers1-user.wat:$cursor_thread_addr"))
   (region.declare $THREAD_MSG_INPUT_FLAGS (size 0x00001000) (align 0x00000100)
     (owner "09a-handlers.wat:$thread_msg_input_flags_addr"))
   (region.declare $THREAD_MSG_QUEUES (size 0x00002080) (align 0x00000100)
@@ -806,6 +809,10 @@
     (owner "test/test-wat-window-tables.js:$TEST_SCRATCH"))
   (region.declare $DX_OBJECTS (size 0x00080000) (align 0x00001000)
     (stride $DX_ENTRY_SIZE (count $DX_MAX))
+    (owner "09a8-handlers-directx.wat:$dx_alloc"))
+  ;; Exclusive upper bound of slots ever allocated as legacy lights. Shared
+  ;; across WASM instances; never shrinks on release or slot recycling.
+  (region.declare $DX_LIGHT_LIMIT (size 0x4) (align 0x4)
     (owner "09a8-handlers-directx.wat:$dx_alloc"))
   (region.declare $COM_WRAPPERS (size 0x00020000) (align 0x00001000)
     (owner "09a8-handlers-directx.wat:$dx_alloc_locked"))

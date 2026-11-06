@@ -106,6 +106,8 @@
   ;; (mostly 2x2 and other tiny ones) that all stay live, filled all 8192 slots
   ;; and its renderer died in the CreateSurface error path.
   (global $DX_MAX i32 (i32.const 16384))
+  (global $DX_LIGHT_LIMIT i32 (region.addr $DX_LIGHT_LIMIT 0))
+  (global $DX_LIGHT_LIMIT_SIZE i32 (i32.const 4))
   ;; D3DIM matrix handle table (Immediate Mode): 256 slots × 64 bytes.
   ;; Handle value = slot_idx + 1 (0 is invalid). Allocation state is kept in
   ;; a separate byte table because SetMatrix may legitimately store an all-zero
@@ -613,9 +615,16 @@
   ;; section is pure table arithmetic with no host import in it, which is what
   ;; makes a spinlock safe here — see the rules on $lock_acquire.
   (func $dx_alloc (param $type i32) (result i32)
-    (local $r i32)
+    (local $r i32) (local $limit i32)
     (call $lock_acquire (global.get $LOCK_DX))
     (local.set $r (call $dx_alloc_locked (local.get $type)))
+    ;; Publish under LOCK_DX so concurrent allocators cannot lower the bound.
+    ;; The reader still checks type, buffer and dwSize on every refresh.
+    (if (i32.and (i32.ne (local.get $r) (i32.const 0))
+                 (i32.eq (local.get $type) (i32.const 24))) (then
+      (local.set $limit (i32.add (call $dx_slot_of (local.get $r)) (i32.const 1)))
+      (if (i32.gt_u (local.get $limit) (i32.atomic.load (global.get $DX_LIGHT_LIMIT)))
+        (then (i32.atomic.store (global.get $DX_LIGHT_LIMIT) (local.get $limit))))))
     (call $lock_release (global.get $LOCK_DX))
     ;; Kind 21 publishes object allocation to the host-side live-surface
     ;; index. Keep the import outside LOCK_DX: a real Worker import is an RPC

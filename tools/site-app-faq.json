@@ -25,6 +25,15 @@
   "heroes2_demo": "The mouse does everything: left-click to select and move, right-click and hold for information. The adventure map scrolls when the pointer touches an edge.",
   "rct": "The mouse does everything. Scroll the map by dragging with the right button, and the toolbar at the top opens rides, scenery and finances.",
   "blobby_volley": "The keyboard moves the blobs; the game's own options screen shows the keys for each player, and the opening menu picks a computer opponent.",
+  "starcraft_shareware": "The mouse does everything: left-click or drag a box to select units, right-click to move or attack, and the map scrolls when the pointer touches an edge. F10 opens the game menu. On a phone an eight-way pad scrolls the map, with Esc and Menu buttons.",
+  "diablo_shareware": "Left-click to walk, attack, talk and pick things up. I opens the inventory, C the character sheet and Tab the automap, as in the original. On a phone there are Esc, Map and Items buttons.",
+  "quake2_demo": "W, A, S and D move, the mouse aims and the left button fires; Space jumps and C crouches, and the mouse wheel changes weapon. These are set as first-launch defaults and can be changed in Options. On a phone a cross pad moves, dragging aims, and Fire, Jump and Crouch are buttons.",
+  "quake3_demo": "W, A, S and D move, the mouse aims and the left button fires; Space jumps, C crouches, Shift walks, and the mouse wheel or [ and ] change weapon. These are first-launch defaults you can change in Setup. On a phone a cross pad moves, dragging aims, and Fire, Jump, Crouch and Weapon are buttons.",
+  "nfs2se_glide_demo": "The arrow keys drive: Up accelerates, Down brakes and reverses, Left and Right steer, and Space is the handbrake. Enter and Esc work the menus. On a phone there are Gas, Brake and Handbrake buttons and an eight-way pad.",
+  "nfs3_glide_demo": "The arrow keys drive: Up accelerates, Down brakes and reverses, Left and Right steer, and Space is the handbrake. Enter and Esc work the menus. On a phone there are Gas, Brake and Handbrake buttons and an eight-way pad.",
+  "simcity2000_demo": "The mouse does everything: pick a tool from the floating toolbar and click or drag on the map to zone, build roads and place buildings. The scroll bars and the centering tool move the view.",
+  "moorhuhn": "Space starts a round, then type a name and press Enter. Aim with the mouse, left-click to shoot and right-click to reload. On a phone, tap to shoot and tap the lower-right corner to reload.",
+  "wep16_jezzball": "Left-click on the field to start a wall from that point; right-click switches between horizontal and vertical walls. A wall the atoms hit before it is finished costs a life.",
   "_sound_comment": "Per-app answer to 'Does sound work?'. Measured 2026-09-06 by a headless sweep (pe-imports + --trace-api on the audio APIs) and a read of lib/host-audio.js: the wave, DirectSound, MCI and MIDI paths all reach Web Audio; PlaySoundA only plays SND_RESOURCE sounds. Apps not listed get the generic wave/DirectSound sentence.",
   "_sound": {
     "notepad": "Notepad has no sound of its own; the original only beeps on an error, and that beep is played.",
@@ -52,7 +61,16 @@
     "cwordzap": "Yes. Word Zap's two sounds are stored in the executable as resources and play through Web Audio. Browsers only allow audio after a click or a key press.",
     "qblackjack": "Yes. Blackjack's three sound clips are played from memory through Web Audio. Browsers only allow audio after a click or a key press.",
     "blobby_volley": "Yes. Blobby Volley's hit sound is played from memory through Web Audio. Browsers only allow audio after a click or a key press, so it starts with your first input.",
-    "winamp": "Yes. Decoded audio goes through the wave-out API to the browser's Web Audio once a track is loaded. Browsers only allow audio after a click or a key press, so it starts with your first input."
+    "winamp": "Yes. Decoded audio goes through the wave-out API to the browser's Web Audio once a track is loaded. Browsers only allow audio after a click or a key press, so it starts with your first input.",
+    "starcraft_shareware": "Yes. Blizzard's Storm library opens DirectSound and plays its sound buffers, which the emulator mixes into the browser's Web Audio (traced 2026-10-30). Browsers only allow audio after a click or a key press.",
+    "diablo_shareware": "Yes. Blizzard's Storm library opens DirectSound and plays its sound buffers, which the emulator mixes into the browser's Web Audio (traced 2026-10-30). Browsers only allow audio after a click or a key press.",
+    "quake2_demo": "Sound effects, yes: Quake II loads DirectSound and its buffers play through Web Audio (traced 2026-10-30). Its music was CD audio, and there is no game CD here, so there is no music. Browsers only allow audio after a click or a key press.",
+    "quake3_demo": "Yes. Quake III loads DirectSound and its sound buffer plays through the browser's Web Audio (traced 2026-10-30). Browsers only allow audio after a click or a key press.",
+    "nfs2se_glide_demo": "Not verified yet. A 30-second headless trace on 2026-10-30 ended before the demo opened any sound device, so this page does not claim sound works.",
+    "nfs3_glide_demo": "Yes. The demo opens DirectSound, creates its sound buffers and plays them through the browser's Web Audio (traced 2026-10-30). Browsers only allow audio after a click or a key press.",
+    "simcity2000_demo": "Yes. The music is MIDI, opened through the MCI sequencer and played by a General MIDI synthesizer built into the page (traced 2026-10-30). Browsers only allow audio after a click or a key press.",
+    "moorhuhn": "Yes. Moorhuhn loads DirectSound and plays its sound effects as DirectSound buffers, which go to the browser's Web Audio (traced 2026-10-30). Browsers only allow audio after a click or a key press.",
+    "wep16_jezzball": "Its effects are WAV files (bounce, level won, game lost and others) that ship beside it here, and the 16-bit sndPlaySound call that plays them is routed to Web Audio. That path has not yet been traced in a running game."
   },
   "bricks": "Drag a brick with the mouse toward the space it should fill; the red block has to reach the exit at the bottom. Shift+S toggles sound and the other letters in the left column are Shift shortcuts too. The buttons on the right undo, replay and change level."
 }

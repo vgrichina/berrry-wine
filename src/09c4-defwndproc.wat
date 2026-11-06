@@ -248,6 +248,19 @@
 
       )
 
+  ;; The NC clip is window minus client. A borderless drawable whose client
+  ;; covers the window has no pixels to paint. Test before allocating a DC:
+  ;; resolving a GPU-owned window for a subsequently clipped fill forces an
+  ;; otherwise unnecessary full-frame readback (Half-Life's WM_NCPAINT loop).
+  (func $defwndproc_empty_nc_clip (param $hwnd i32) (param $w i32) (param $h i32) (result i32)
+    (i32.and
+      (i32.and (i32.gt_s (local.get $w) (i32.const 0)) (i32.gt_s (local.get $h) (i32.const 0)))
+      (i32.and
+        (i32.and (i32.le_s (call $client_rect_get_l (local.get $hwnd)) (i32.const 0))
+                 (i32.le_s (call $client_rect_get_t (local.get $hwnd)) (i32.const 0)))
+        (i32.and (i32.ge_s (call $client_rect_get_r (local.get $hwnd)) (local.get $w))
+                 (i32.ge_s (call $client_rect_get_b (local.get $hwnd)) (local.get $h))))))
+
   (func $defwndproc_ncpaint (export "defwndproc_ncpaint")
         (param $hwnd i32) (param $w i32) (param $h i32)
         (param $title_wa i32) (param $title_len i32) (param $flags i32)
@@ -278,6 +291,9 @@
     (local $simple_child_border i32)
     (local $glyph_brush i32)
     (local $frame i32)
+
+    (if (call $defwndproc_empty_nc_clip (local.get $hwnd) (local.get $w) (local.get $h))
+      (then (return (i32.const 0))))
 
     ;; NC paint gets a real typed DC with a WAT-built visible clip:
     ;; window rect minus client rect. JS only applies this region to the
@@ -634,6 +650,8 @@
                             (load.field.memarg PaintRect top (local.get $rect))))
     (if (i32.or (i32.le_s (local.get $w) (i32.const 0))
                 (i32.le_s (local.get $h) (i32.const 0)))
+      (then (return)))
+    (if (call $defwndproc_empty_nc_clip (local.get $hwnd) (local.get $w) (local.get $h))
       (then (return)))
     ;; Flags
     (local.set $style (call $wnd_get_style (local.get $hwnd)))

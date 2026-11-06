@@ -15,7 +15,7 @@ const ROOT = path.join(__dirname, '..');
 const extraWat = String.raw`
   (func (export "test_seed_hidden_then_show_dialog")
     (param $dlgproc i32) (result i64)
-    (local $hidden i32) (local $dlg i32) (local $saved_esp i32)
+    (local $hidden i32) (local $dlg i32)
     ;; The first allocation models a hidden framework/utility HWND that the
     ;; convenience main_hwnd latch saw before the application's real UI.
     (local.set $hidden (global.get $next_hwnd))
@@ -32,13 +32,12 @@ const extraWat = String.raw`
     (drop (call $wnd_set_style (local.get $dlg) (i32.const 0x80000000)))
     (drop (call $dialog_proc_set (local.get $dlg) (local.get $dlgproc)))
 
-    ;; Direct handler calls do not have ShowWindow's stdcall frame. Preserve
-    ;; the harness stack around the handler's normal 12-byte cleanup.
-    (local.set $saved_esp (i32.load offset=16 (global.get $reg_base)))
+    ;; Keep a genuine return slot while synchronous guest notifications run.
+    ;; Zero is the harness execution stop sentinel.
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0))
     (call $handle_ShowWindow
       (local.get $dlg) (i32.const 5)
       (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
-    (i32.store offset=16 (global.get $reg_base) (local.get $saved_esp))
     (i64.or (i64.extend_i32_u (local.get $hidden))
       (i64.shl (i64.extend_i32_u (local.get $dlg)) (i64.const 32))))
 
@@ -80,7 +79,7 @@ function u32(value) {
   const bytes = new Uint8Array(memory.buffer);
   const view = new DataView(memory.buffer);
   const count = e.guest_alloc(4) >>> 0;
-  const messages = e.guest_alloc(20) >>> 0;
+  const messages = e.guest_alloc(24) >>> 0;
   const proc = e.guest_alloc(64) >>> 0;
 
   // DLGPROC: messages[count++] = msg; return TRUE.
@@ -94,9 +93,14 @@ function u32(value) {
     0xc2, 0x10, 0x00,
   ]), toWasm(proc));
 
+  const initialEsp = e.get_esp() >>> 0;
   const packed = BigInt.asUintN(64, e.test_seed_hidden_then_show_dialog(proc));
   const hidden = Number(packed & 0xffffffffn) >>> 0;
   const dialog = Number(packed >> 32n) >>> 0;
+  e.run(1000000);
+  assert.strictEqual(e.get_eip(), 0, 'ShowWindow resumes its original caller');
+  assert.strictEqual(e.get_esp() >>> 0, initialEsp + 12,
+    'guest callbacks preserve ShowWindow stdcall cleanup');
 
   assert.notStrictEqual(dialog, hidden, 'real dialog is distinct from hidden utility HWND');
   assert.strictEqual(e.test_main_hwnd() >>> 0, dialog,
@@ -109,12 +113,12 @@ function u32(value) {
     'first ShowWindow makes the promoted dialog active on this thread queue');
   assert.strictEqual(e.test_dialog_marker_installed(dialog), 1,
     'synchronous activation restores USER\'s retained dialog marker');
-  assert.strictEqual(view.getUint32(toWasm(count), true), 5,
+  assert.strictEqual(view.getUint32(toWasm(count), true), 6,
     'dialog procedure receives the complete startup sequence');
-  assert.deepStrictEqual(Array.from({ length: 5 }, (_, i) =>
+  assert.deepStrictEqual(Array.from({ length: 6 }, (_, i) =>
     view.getUint32(toWasm(messages + i * 4), true)),
-  [0x001c, 0x0006, 0x0007, 0x0003, 0x0005],
-  'startup order is WM_ACTIVATEAPP, WM_ACTIVATE, WM_SETFOCUS, WM_MOVE, WM_SIZE');
+  [0x0018, 0x001c, 0x0006, 0x0007, 0x0003, 0x0005],
+  'startup sends WM_SHOWWINDOW before activation, focus, move and size');
 
   console.log('PASS  first ShowWindow promotes and activates a retained top-level dialog');
 })().catch(error => {
