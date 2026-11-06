@@ -1,5 +1,18 @@
 # Diablo Shareware
 
+## File-access trace (2026-10-15)
+
+Reviewed `scratch/runs/20261015-file-reads-diablo_shareware/`: new Warrior
+reaches Tristram on the stable deployed WASM/local range server. `spawn.mpq`
+is 50,274,091 bytes. Successful ReadFile calls cover 12,657,626 unique bytes;
+HTTP response bodies total 30,351,147 bytes across 29 requests, including
+preloads/prefetch. Those requests span all five 10 MiB parts, so fetching each
+whole touched part once would cost 50,274,091 bytes, about 66% more. ReadFile
+coverage excludes direct/mapped consumers; this is not a timing benchmark.
+This first-town trace is a counterexample to every game needing its whole
+archive at startup. Parent `20261015-game-file-reads/analysis.json` compares
+RCT and Quake III and records the exact tested runtime identity.
+
 `test/binaries/candidates/diablo-shareware/installed/`, registry id
 `diablo_shareware` (`lib/apps.js`). Reaches gameplay — see the
 `project_diablo_gameplay` note for how a character gets into Tristram.

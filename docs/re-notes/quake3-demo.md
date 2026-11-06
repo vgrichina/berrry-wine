@@ -17,6 +17,16 @@ an adapter ignores abort, so existing parked-read retries and Retry/Quit UI
 can run. Late responses cannot populate the cache. This deadline is for
 provider-backed game data; eager downloads and bundle requests are separate.
 
+## File-access trace (2026-10-15)
+
+Reviewed `scratch/runs/20261015-file-reads-quake3_demo/`: q3dm1 rendered on
+the stable deployed WASM/local range server. `pak0.pk3` is 46,853,694 bytes;
+successful guest ReadFile calls cover 11,348,898 unique bytes. The current
+cache fetches 109,768,254 bytes in 105 requests, with repeated chunk loads.
+Guest reads span all five 10 MiB deployment parts. Retaining each whole part
+once would cost 46,853,694 bytes. This is one first-map trace, not a runtime
+speed benchmark; the hosting card remains open in the final screenshot.
+
 ## Hosting banner follow-up, 2026-10-15
 
 The shell previously equated owning a browser LAN room with running a game
