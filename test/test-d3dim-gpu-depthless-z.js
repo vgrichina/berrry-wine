@@ -40,13 +40,20 @@ function run(zenable, zwrite, zs, primitive = 4, vertexType = 3) {
   // No WebGL here: a target whose device records what it is handed.
   const target = { width: 640, height: 480, bpp: 16, dib: 0x8000, check: false, textureKeys: new Set(),
     device: { draw: d => draws.push(d) } };
+  let stores = 0;
+  gpu._storeNative16 = () => { stores++; };
   gpu._target = () => target;
   const accepted = gpu.call(OPCODES.DRAW, CALL);
   if (!accepted) return { accepted, draws, stats: gpu.stats };
-  assert.strictEqual(draws.length, 1);
-  const out = new DataView(draws[0].vertices.buffer);
-  return { accepted, draw: draws[0], stats: gpu.stats,
-    depths: Array.from({length: draws[0].vertices.byteLength / 32}, (_, i) => out.getFloat32(i * 32 + 8, true)) };
+  assert.strictEqual(stores, draws.length, 'every canonical primitive stores native color');
+  assert(draws.every(d => d.primitiveCount === 1));
+  const bytes = new Uint8Array(draws.reduce((n, d) => n + d.vertices.byteLength, 0));
+  let offset = 0;
+  for (const d of draws) { bytes.set(d.vertices, offset); offset += d.vertices.byteLength; }
+  const draw = { ...draws[0], primitiveCount: draws.length, vertices: bytes };
+  const out = new DataView(bytes.buffer);
+  return { accepted, draw, stats: gpu.stats,
+    depths: Array.from({length: bytes.byteLength / 32}, (_, i) => out.getFloat32(i * 32 + 8, true)) };
 }
 
 // Depth off: sz = 300 (Flip3DTL), negative and in-range values all land in [0,1].

@@ -7776,14 +7776,10 @@
             (then (local.set $dst (i32.load (local.get $ptr))))
             (else
               (local.set $px16 (i32.load16_u (local.get $ptr)))
-              (local.set $dst (if (result i32) (i32.or (local.get $rt555) (local.get $rtalpha))
-                (then (call $d3dim_decode_surface_pixel_fmt
-                  (local.get $rtfmt) (local.get $px16) (i32.const 16)))
-                (else (i32.or
-                  (i32.or
-                    (i32.shl (i32.shl (i32.and (i32.shr_u (local.get $px16) (i32.const 11)) (i32.const 31)) (i32.const 3)) (i32.const 16))
-                    (i32.shl (i32.shl (i32.and (i32.shr_u (local.get $px16) (i32.const 5)) (i32.const 63)) (i32.const 2)) (i32.const 8)))
-                  (i32.shl (i32.and (local.get $px16) (i32.const 31)) (i32.const 3))))))))
+              ;; Destination factors consume the stored channel expanded by
+              ;; bit replication, including RGB565's low replicated bits.
+              (local.set $dst (call $d3dim_decode_surface_pixel_fmt
+                (local.get $rtfmt) (local.get $px16) (i32.const 16)))))
           (local.set $color (if (result i32) (global.get $gl_sw_rgba_span)
             (then (call $gl_sw_blend_rgba (local.get $color) (local.get $dst) (local.get $src_blend) (local.get $dst_blend)))
             (else (if (result i32) (local.get $rtalpha)

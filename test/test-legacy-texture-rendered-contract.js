@@ -316,6 +316,12 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       await (0,eval)('('+config.immediateSource+')')({mode,negative,evidence,check,eq,until,
         raw,read,alloc,wa,write,bytes,words,guard,guid,stack,invoke,prepareInvoke,com,ok,acquire,
         dd,hal,texture,texturePalette:config.texture,surface,lock,unlock,bits,observe,
+        rendererInfo:()=>{
+          const gl=gpu?.targets.values().next().value?.device.gpu.gl;
+          if(!gl)return null;
+          const ext=gl.getExtension('WEBGL_debug_renderer_info');
+          return {version:gl.getParameter(gl.VERSION),renderer:gl.getParameter(ext?ext.UNMASKED_RENDERER_WEBGL:gl.RENDERER)};
+        },
         use:target=>{device=target.device;rt=target.rt;},
         initial:{device,rt},allocationFailure:!!config.noPreview,countDraw:()=>drawCount++,
         queue:{hold:label=>{heldRecord={label,device,rt,messages:[],before:transportSnapshot()};
@@ -470,7 +476,8 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       }}
       await until(()=>lastStats?.stats.drawCalls===drawCount,'all production GPU stats');evidence.stats=lastStats.stats;
     }
-    if(mode==='worker'&&config.immediate){await until(()=>lastStats?.stats.drawCalls===drawCount,'immediate Worker stats');evidence.stats=lastStats.stats;}
+    if(mode==='worker'&&config.immediate){await until(()=>lastStats?.stats.drawCalls===drawCount,'immediate Worker stats');evidence.stats=lastStats.stats;
+      evidence.glRenderer={version:lastStats.stats.glVersion,renderer:lastStats.stats.glRenderer};}
     if(gpu)evidence.stats=gpu.snapshot();
     evidence.drawCount=drawCount;
     if(mode!=='software'){

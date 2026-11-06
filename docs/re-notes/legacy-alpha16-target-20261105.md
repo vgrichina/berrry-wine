@@ -107,3 +107,12 @@ multiple unfenced draw accumulation and broader capability coverage remain
 unqualified. The next discriminator for a broader target contract is a
 quantized two-draw dependency without an intervening CPU Lock; this run does
 not claim that result. Box ID/state/expiry are not applicable.
+
+## Dependent-draw follow-up
+
+[Dependent native framebuffer draws](legacy-dependent-alpha16-20261105.md)
+now covers the previously unqualified two-draw dependency with no intermediate
+CPU surface access. It reproduces and repairs GPU deferred native16 storage
+and software RGB565 destination expansion, with both-module software/direct
+WebGL/owning Worker pixels, intra-public-draw overlaps and depth/scissor checks.
+The single-draw results above retain their original scope and evidence.
