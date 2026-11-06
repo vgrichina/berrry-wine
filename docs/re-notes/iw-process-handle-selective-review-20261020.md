@@ -101,6 +101,12 @@ handle (`src/09a0b-handlers-base-late.wat:945`). The retained alias branch's
 broader history already separated validity; do not assume that prerequisite
 arrives by applying the eeef patch alone.
 
+**D4 — memory-release claim is limited to the alias object's edge.**
+An E4 record still holds `rec.wine` even after `object.wine` becomes null. The
+alias object releases its host as intended, but a parent retaining its child
+record can still retain the child host/memory. Not a measured heap leak.
+(Recovered from branch task/iw-process-handle-selective-review, Oct 2026.)
+
 Additional acceptance boundaries: OpenProcess remains a deterministic E2
 handle for the current PID with the older access model; it is not a new
 closeable E6 entry. The E6 `inherit` flag is stored, but inherited-process

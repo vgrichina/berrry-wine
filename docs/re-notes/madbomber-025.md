@@ -316,3 +316,39 @@ all source, original, archive, shared CRT and module pins remained unchanged.
 Runtime was released. Next action is a bounded source review of actual
 `_fdopen` FILE/descriptor ownership semantics and resolver availability,
 with conformance coverage before any implementation or new original retry.
+
+## SDL_mixer packed-import failure: `midiStreamStop` (2026-10-20)
+
+(Recovered from branch task/madbomber-midi-stream-stop-oct20, Oct 2026.)
+
+SDL_mixer.dll has preferred image base `0x10000000`; the observed load base
+was `0x009da000`, so original VA `0x10047cb9` = observed `0x00a21cb9`, the
+return address logged for API #707 GetProcAddress("midiStreamStop") -> 0
+(see `madbomber-native-qualification-20261020.md`). That address is inside
+the same UPX-style wrapper import loop as zlib's, before the unpacked
+initializer runs:
+
+```text
+10047cae  push edi                 ; import name
+10047cb2  push ebp                 ; loaded module
+10047cb3  call [esi+0x4739c]        ; GetProcAddress
+10047cb9  or eax,eax
+10047cbb  jz 10047cc4
+10047cbd  mov [ebx],eax            ; save resolved import
+10047cbf  add ebx,4
+10047cc2  jmp 10047ca5             ; next import
+10047cc4  popad
+10047cc5  xor eax,eax
+10047cc7  ret 0xc                 ; FALSE from DLL attach
+```
+
+Disassemble with `node tools/disasm_fn.js SDL_mixer.dll 10047c82 28 --linear`.
+A nonzero export only passes this check; it says nothing about SDL_mixer's own
+initialization. `midiStreamStop` has since been implemented (API 4593,
+`$handle_midiStreamStop` in `src/09a3-handlers-audio.wat`; see
+`midi-stream-lifecycle-20261020.md`). Design constraints found while it was
+blocked: `midiOutReset` is not a substitute (it calls the host reset, which
+does all-sounds-off on the one TinySynth shared by every MIDI handle, so it
+silences sibling handles); stop must instead send per-channel All Notes Off
+and return pending headers via MOM_DONE (`0x3c9`) callbacks, not the wave
+path's WOM_DONE (`0x3bd`).
