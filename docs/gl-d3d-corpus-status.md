@@ -78,6 +78,27 @@ running today's expanded scanner against today's files cannot establish the
 historical membership. No app is removed on the basis of the noise warning.
 Source-only evidence: `scratch/runs/20261105-gld3d-historical-census-provenance/`.
 
+On November 6, the exact September 22 registry and scanner were evaluated
+directly from Git objects against the currently retained binary paths. The
+registry still has 225 apps. This produced 89 candidates including DirectDraw,
+and **28 candidates with a family other than DirectDraw**; the original commit
+reported 87 and 27 respectively. The reconstruction records SHA-256 and size
+for each available input among 333 unique paths, with four missing inputs.
+It does not establish that today's files equal the September 22 binaries.
+The script and complete results are retained in
+`scratch/runs/20261106-historical-census-candidate/`.
+
+The 28 reconstructed candidates are `generally`, `arcanum_demo`,
+`ut2003_demo`, `ut2003_demo_server`, `ut2004_demo`, `icewind_dale_demo`,
+`baldurs_gate_chapters_1_2_demo`, `morrowind`, `simgolf_demo`,
+`black_white_2_demo`, `quake2_demo`, `halflife_uplink`, `warcraft3_demo`,
+`pawn`, `tworld`, `winamp`, `mcm`, `ptct`, `dx_globe`, `dx_viewer`,
+`dx_flip3dtl`, and the seven screen savers listed below. These are a reproducible
+candidate list for follow-up, not a replacement historical 27-ID manifest or
+runtime coverage evidence. The missing paths are the historical Atomic
+Bomberman executable and the Quake II, Diablo II and Half-Life installer paths;
+other registered files can still produce hits for an app with a missing path.
+
 The original version of this file is retained at commit `d5b3b56cb`
 (October 6, task `GLD3D-CORPUS-27-20261006`). It describes the goal as every
 OpenGL and Direct3D registry app working on both software and WebGL. Its
