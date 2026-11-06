@@ -77,4 +77,11 @@ assert.equal(fixture({ format: 4 }).draw([[1, 1]]), 0, 'unsupported 4444 remains
 assert.equal(fixture().draw([[Infinity, -Infinity]]), 1, 'fully clipped operation is accepted without pixels');
 const nan = fixture(); nan.draw([[NaN, NaN]]);
 assert.deepEqual(nan.draws[0].colorBounds, [0, 0, 2, 2], 'WAT saturating NaN conversion is zero');
+// Synthetic lowering seam: native pixel storage is checked by the browser
+// companion and its ordinary public-COM owning-Worker route in both modules.
+const alpha = fixture({ format: 3 });
+assert.equal(alpha.draw([0,127,128,255].map((a,i)=>[i*2,2,(a*0x1000000+0x4a92d3)>>>0])),1);
+assert.deepEqual(alpha.draws.filter((_,i)=>i%2===0).map(d=>new DataView(d.vertices.buffer,d.vertices.byteOffset,d.vertices.byteLength).getUint32(16,true)),
+  [0x00d3924a,0x7fd3924a,0x80d3924a,0xffd3924a], 'A1 point lowering retains complete diffuse alpha');
+assert(alpha.draws.every(d=>!d.state.blend&&!d.state.zenable&&!d.state.zwrite&&!d.fixedFunction.alphaTest));
 console.log('PASS D3DIM point lowering, clipping, immutable batches, state independence and explicit fallbacks');
