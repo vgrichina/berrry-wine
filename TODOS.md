@@ -77,7 +77,8 @@
 - [ ] Owner-requested corpus addition: KKnD (1997), original DOS and Windows Xtreme demos
   id: NEW-GAME-KKND-DEMO-20261106
   status: active (media verified; fresh worker preparing original Windows demo)
-  worker: kknd-original-demo-0235 (launcher3787699); source-only behind Reset0130 then CapsFixture0135 then Aranna0205 final releases/cleanup
+  worker: kknd-static-payload-recovery-0236 (launcher3790414); bounded static extraction and parser checks authorized now, no game/browser/shared build
+  Update 2026-11-06T02:36Z: First worker stopped without extraction because coordinator runtime gate was overbroad. Fresh worker validates retained15-member parser, recovers original cabinets/assets once and records complete hashes plus registration recipe. Static recovery proceeds independently; game execution remains serialized after Reset0130 then CapsFixture0135 then Aranna0205. No gameplay claim.
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   Request: Telegram163 links exQUIZitely status2118524267604140164, identifying Beam Software's original KKnD: Krush, Kill 'n' Destroy (1997), not KKnD2.
   Media: https://archive.org/details/kknd-demo original DOS demo ZIP5684907B SHA2567ff2ef0abe45322027750cee26caf871d970474d92d98272598ab15426cc0be4; https://archive.org/details/KKNDXT Windows Xtreme demo installer7737611B SHA256b0974e129ab1c02d4fdf7cd202494f39f426a1e08cbd37759db125a9a114248d. Both downloaded once; byte sizes and Archive.org SHA1 verified. Existing paths and recovery URLs in docs/re-notes/kknd-corpus-intake-20261106.md.
