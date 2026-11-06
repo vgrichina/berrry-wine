@@ -2081,6 +2081,12 @@
 
   ;; Both public spellings share pending return and stdcall completion.
   (func $dispatch_winhelp_finish (param $accepted i32) (param $command i32)
+    (if (i32.eq (local.get $accepted) (i32.const -2))
+      (then
+        ;; A document read retains this API frame, without installing a
+        ;; callback. Retry the same thunk after JS fills its exact VFS read.
+        (call $io_block (i32.const 0))
+        (return)))
     (if (i32.eq (local.get $accepted) (i32.const -1))
       (then
         ;; The callback CPU/stack is still installed. JS services its real

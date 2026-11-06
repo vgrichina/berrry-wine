@@ -365,6 +365,7 @@
     (local $saved_budget i32) (local $saved_start i32) (local $shared_cache_generation i32)
     (local $saved_api_depth i32)
     (call $help_macro_resume_check)
+    (call $help_document_vfs_resume_check)
     (if (global.get $pending_active) (then (call $pending_gap)))
     (global.set $pending_active (i32.const 1))
     (global.set $pending_seen (i32.const 1))

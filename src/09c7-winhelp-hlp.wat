@@ -4862,16 +4862,68 @@
     (call $help_run_registration_macros)
     (i32.const 1))
 
-  ;; Load an optional same-directory .cnt companion. A missing companion is
-  ;; normal; an existing malformed/truncated one fails the document load so a
-  ;; partially bound Contents tree is never published.
-  (func $help_document_try_load_cnt_vfs
-    (param $path_wa i32) (result i32)
+  ;; A public document load owns its path and both byte images until reads
+  ;; finish. These are instance/thread locals, never a macro callback frame.
+  ;; Parse only complete images: a pending CNT cannot publish half a document.
+  (global $help_vfs_phase (mut i32) (i32.const 0))
+  (global $help_vfs_path (mut i32) (i32.const 0))
+  (global $help_vfs_cnt_path (mut i32) (i32.const 0))
+  (global $help_vfs_hlp (mut i32) (i32.const 0))
+  (global $help_vfs_hlp_size (mut i32) (i32.const 0))
+  (global $help_vfs_cnt (mut i32) (i32.const 0))
+  (global $help_vfs_cnt_size (mut i32) (i32.const 0))
+  (global $help_vfs_handle (mut i32) (i32.const 0))
+  (global $help_vfs_temp (mut i32) (i32.const 0))
+  (global $help_vfs_read (mut i32) (i32.const 0))
+  (global $help_vfs_size (mut i32) (i32.const 0))
+  (global $help_vfs_root (mut i64) (i64.const 0))
+  (global $help_vfs_token (mut i64) (i64.const 0))
+  (global $help_vfs_esp (mut i32) (i32.const 0))
+  (global $help_vfs_thunk (mut i32) (i32.const 0))
+
+  (func $help_document_vfs_clear
+    (global.set $help_vfs_phase (i32.const 0))
+    (global.set $help_vfs_path (i32.const 0))
+    (global.set $help_vfs_cnt_path (i32.const 0))
+    (global.set $help_vfs_hlp (i32.const 0))
+    (global.set $help_vfs_cnt (i32.const 0))
+    (global.set $help_vfs_handle (i32.const 0))
+    (global.set $help_vfs_temp (i32.const 0))
+    (global.set $help_vfs_read (i32.const 0)))
+  (func $help_document_vfs_release
+    (if (global.get $help_vfs_handle)
+      (then (drop (call $host_fs_close_handle (global.get $help_vfs_handle)))))
+    (if (global.get $help_vfs_temp) (then (call $heap_free (global.get $help_vfs_temp))))
+    (if (global.get $help_vfs_read) (then (call $heap_free (global.get $help_vfs_read))))
+    (if (global.get $help_vfs_path) (then (call $heap_free (global.get $help_vfs_path))))
+    (if (global.get $help_vfs_cnt_path) (then (call $heap_free (global.get $help_vfs_cnt_path))))
+    (if (global.get $help_vfs_hlp) (then (call $heap_free (global.get $help_vfs_hlp))))
+    (if (global.get $help_vfs_cnt) (then (call $heap_free (global.get $help_vfs_cnt))))
+    (call $help_document_vfs_clear))
+  (func $help_document_vfs_resume_check
+    (if (i32.eqz (global.get $help_vfs_phase)) (then (return)))
+    ;; Reject retired instances before touching their heap, host handle or CPU.
+    (call $invocation_validate)
+    (if (i64.ne (global.get $help_vfs_root) (global.get $invocation_root))
+      (then
+        ;; An explicit process/thread replacement in THIS instance owns the
+        ;; old heap. Closing its host handle is safe; freeing old GAs is not.
+        (if (global.get $help_vfs_handle)
+          (then (drop (call $host_fs_close_handle (global.get $help_vfs_handle)))))
+        (call $help_document_vfs_clear)
+        (return)))
+    (if (i32.eq (global.get $yield_reason) (i32.const 2))
+      (then (call $help_document_vfs_release) (return)))
+    (if (i64.ne (global.get $help_vfs_token) (call $invocation_current))
+      (then (unreachable)))
+    (if (i32.or
+          (i32.ne (global.get $help_vfs_esp) (i32.load offset=16 (global.get $reg_base)))
+          (i32.ne (global.get $help_vfs_thunk) (global.get $current_thunk_eip)))
+      (then (unreachable))))
+
+  (func $help_document_cnt_path_copy (param $path_wa i32) (result i32)
     (local $path_len i32) (local $cnt_len i32) (local $i i32) (local $dot i32)
     (local $ch i32) (local $path_ga i32) (local $cnt_path i32)
-    (local $handle i32) (local $size i32)
-    (local $temp_ga i32) (local $temp_wa i32)
-    (local $read_ga i32) (local $read_wa i32) (local $ok i32)
     (local.set $path_len (call $help_cstring_length_memory
       (local.get $path_wa) (i32.const 1024)))
     (if (i32.le_s (local.get $path_len) (i32.const 0))
@@ -4908,149 +4960,158 @@
       (i32.const 116))
     (local.set $cnt_len (i32.add (local.get $dot) (i32.const 4)))
     (i32.store8 (i32.add (local.get $cnt_path) (local.get $cnt_len)) (i32.const 0))
-    (local.set $handle (call $host_fs_create_file
-      (local.get $cnt_path) (i32.const 0x80000000)
-      (i32.const 3) (i32.const 0x80) (i32.const 0)))
-    (if (i32.eq (local.get $handle) (i32.const -1))
-      (then
-        (call $heap_free (local.get $path_ga))
-        (return (i32.const 1))))
-    (local.set $size (call $host_fs_get_file_size (local.get $handle)))
-    (if (i32.or (i32.eq (local.get $size) (i32.const -1))
-          (i32.eqz (local.get $size)))
-      (then
-        (drop (call $host_fs_close_handle (local.get $handle)))
-        (call $heap_free (local.get $path_ga))
-        (call $help_set_error (global.get $HELP_ERROR_CNT) (i32.const 0))
-        (return (i32.const 0))))
-    (if (i32.gt_u (local.get $size) (global.get $HELP_MAX_CNT_BYTES))
-      (then
-        (drop (call $host_fs_close_handle (local.get $handle)))
-        (call $heap_free (local.get $path_ga))
-        (call $help_set_error (global.get $HELP_ERROR_CAPACITY) (i32.const 0))
-        (return (i32.const 0))))
-    (local.set $temp_ga (call $heap_alloc (local.get $size)))
-    (local.set $read_ga (call $heap_alloc (i32.const 4)))
-    (if (i32.or (i32.eqz (local.get $temp_ga)) (i32.eqz (local.get $read_ga)))
-      (then
-        (drop (call $host_fs_close_handle (local.get $handle)))
-        (if (local.get $temp_ga) (then (call $heap_free (local.get $temp_ga))))
-        (if (local.get $read_ga) (then (call $heap_free (local.get $read_ga))))
-        (call $heap_free (local.get $path_ga))
-        (call $help_set_error (global.get $HELP_ERROR_ALLOCATION) (i32.const 0))
-        (return (i32.const 0))))
-    (local.set $temp_wa (call $g2w (local.get $temp_ga)))
-    (local.set $read_wa (call $g2w (local.get $read_ga)))
-    (i32.store (local.get $read_wa) (i32.const 0))
-    (local.set $ok (call $host_fs_read_file
-      (local.get $handle) (local.get $temp_ga) (local.get $size) (local.get $read_ga)))
-    (drop (call $host_fs_close_handle (local.get $handle)))
-    (call $heap_free (local.get $path_ga))
-    (if (i32.or (i32.eqz (local.get $ok))
-          (i32.ne (i32.load (local.get $read_wa)) (local.get $size)))
-      (then
-        (call $heap_free (local.get $read_ga))
-        (call $heap_free (local.get $temp_ga))
-        (call $help_set_error (global.get $HELP_ERROR_VFS) (i32.const 0))
-        (return (i32.const 0))))
-    (local.set $ok (call $help_load_cnt_buffer (local.get $temp_wa) (local.get $size)))
-    (call $heap_free (local.get $read_ga))
-    (call $heap_free (local.get $temp_ga))
-    (local.get $ok))
+    (local.get $path_ga))
 
-  ;; Load an already-mounted help file through the ordinary VFS boundary.
-  ;; The host supplies only file bytes; parsing and ownership stay in WAT.
-  (func $help_document_load_vfs
-    (param $path_wa i32) (result i32)
-    (local $handle i32) (local $size i32)
-    (local $temp_ga i32) (local $temp_wa i32)
-    (local $read_ga i32) (local $read_wa i32) (local $ok i32)
-    (local $path_len i32) (local $path_ga i32) (local $path_copy i32)
-    (if (i32.eqz (local.get $path_wa))
+  ;; 1 complete, 2 optional absent, -1 pending, 0 terminal failure. A retry
+  ;; uses the same handle AND destinations, preserving VFS partial progress.
+  (func $help_document_vfs_read_image
+    (param $path i32) (param $limit i32) (param $optional i32) (result i32)
+    (local $error i32)
+    (if (i32.eqz (global.get $help_vfs_handle))
       (then
-        (call $help_document_reset)
-        (call $help_set_error (global.get $HELP_ERROR_BAD_ARGUMENT) (i32.const 0))
-        (return (i32.const 0))))
-    (local.set $path_len (call $help_cstring_length_memory
-      (local.get $path_wa) (i32.const 1024)))
-    (if (i32.le_s (local.get $path_len) (i32.const 0))
-      (then
-        (call $help_document_reset)
-        (call $help_set_error (global.get $HELP_ERROR_BAD_ARGUMENT) (i32.const 0))
-        (return (i32.const 0))))
-    (local.set $handle (call $host_fs_create_file
-      (local.get $path_wa) (i32.const 0x80000000)
-      (i32.const 3) (i32.const 0x80) (i32.const 0)))
-    (if (i32.eq (local.get $handle) (i32.const -1))
-      (then
-        (call $help_document_reset)
-        (call $help_set_error (global.get $HELP_ERROR_VFS) (i32.const 0))
-        (return (i32.const 0))))
-    (local.set $size (call $host_fs_get_file_size (local.get $handle)))
-    (if (i32.or
-          (i32.eq (local.get $size) (i32.const -1))
-          (i32.eqz (local.get $size)))
-      (then
-        (drop (call $host_fs_close_handle (local.get $handle)))
-        (call $help_document_reset)
-        (call $help_set_error (global.get $HELP_ERROR_VFS) (i32.const 0))
-        (return (i32.const 0))))
-    (if (i32.gt_u (local.get $size) (global.get $HELP_MAX_FILE_BYTES))
-      (then
-        (drop (call $host_fs_close_handle (local.get $handle)))
-        (call $help_document_reset)
-        (call $help_set_error (global.get $HELP_ERROR_CAPACITY) (i32.const 0))
-        (return (i32.const 0))))
-    (local.set $temp_ga (call $heap_alloc (local.get $size)))
-    (local.set $read_ga (call $heap_alloc (i32.const 4)))
-    (if (i32.or (i32.eqz (local.get $temp_ga)) (i32.eqz (local.get $read_ga)))
-      (then
-        (drop (call $host_fs_close_handle (local.get $handle)))
-        (if (local.get $temp_ga) (then (call $heap_free (local.get $temp_ga))))
-        (if (local.get $read_ga) (then (call $heap_free (local.get $read_ga))))
-        (call $help_document_reset)
-        (call $help_set_error (global.get $HELP_ERROR_ALLOCATION) (i32.const 0))
-        (return (i32.const 0))))
-    (local.set $temp_wa (call $g2w (local.get $temp_ga)))
-    (local.set $read_wa (call $g2w (local.get $read_ga)))
-    (i32.store (local.get $read_wa) (i32.const 0))
-    (local.set $ok (call $host_fs_read_file
-      (local.get $handle) (local.get $temp_ga) (local.get $size) (local.get $read_ga)))
-    (drop (call $host_fs_close_handle (local.get $handle)))
-    (if (i32.or
-          (i32.eqz (local.get $ok))
-          (i32.ne (i32.load (local.get $read_wa)) (local.get $size)))
-      (then
-        (call $heap_free (local.get $read_ga))
-        (call $heap_free (local.get $temp_ga))
-        (call $help_document_reset)
-        (call $help_set_error (global.get $HELP_ERROR_VFS) (i32.const 0))
-        (return (i32.const 0))))
-    (local.set $ok (call $help_document_load_buffer (local.get $temp_wa) (local.get $size)))
-    (call $heap_free (local.get $read_ga))
-    (call $heap_free (local.get $temp_ga))
-    (if (local.get $ok)
-      (then
-        (if (i32.eqz (call $help_document_try_load_cnt_vfs (local.get $path_wa)))
+        (global.set $help_vfs_handle (call $host_fs_create_file
+          (local.get $path) (i32.const 0x80000000) (i32.const 3) (i32.const 0x80) (i32.const 0)))
+        (if (i32.eq (global.get $help_vfs_handle) (i32.const -1))
           (then
-            (call $help_document_release_storage)
+            (global.set $help_vfs_handle (i32.const 0))
+            (if (local.get $optional) (then (return (i32.const 2))))
+            (call $help_set_error (global.get $HELP_ERROR_VFS) (i32.const 0))
             (return (i32.const 0))))
-        ;; Retain the exact bounded VFS path that produced this document. It
-        ;; is the canonical base for relative external-hotspot resolution.
-        (local.set $path_ga
-          (call $heap_alloc (i32.add (local.get $path_len) (i32.const 1))))
-        (if (i32.eqz (local.get $path_ga))
+        (global.set $help_vfs_size (call $host_fs_get_file_size (global.get $help_vfs_handle)))
+        (if (i32.or (i32.eqz (global.get $help_vfs_size))
+              (i32.gt_u (global.get $help_vfs_size) (local.get $limit)))
           (then
-            (call $help_document_release_storage)
+            (call $help_set_error
+              (if (result i32)
+                (i32.and (i32.ne (global.get $help_vfs_size) (i32.const -1))
+                  (i32.gt_u (global.get $help_vfs_size) (local.get $limit)))
+                (then (global.get $HELP_ERROR_CAPACITY))
+                (else (select (global.get $HELP_ERROR_CNT) (global.get $HELP_ERROR_VFS) (local.get $optional))))
+              (i32.const 0))
+            (return (i32.const 0))))
+        (global.set $help_vfs_temp (call $heap_alloc (global.get $help_vfs_size)))
+        (global.set $help_vfs_read (call $heap_alloc (i32.const 4)))
+        (if (i32.or (i32.eqz (global.get $help_vfs_temp)) (i32.eqz (global.get $help_vfs_read)))
+          (then
+            (call $help_set_error (global.get $HELP_ERROR_ALLOCATION) (i32.const 0))
+            (return (i32.const 0))))))
+    (local.set $error (call $host_fs_read_file_result
+      (global.get $help_vfs_handle) (global.get $help_vfs_temp)
+      (global.get $help_vfs_size) (global.get $help_vfs_read)))
+    (if (i32.eq (local.get $error) (i32.const 997)) (then (return (i32.const -1))))
+    (if (i32.or (i32.ne (local.get $error) (i32.const 0))
+          (i32.ne (i32.load (call $g2w (global.get $help_vfs_read))) (global.get $help_vfs_size)))
+      (then
+        (call $help_set_error (global.get $HELP_ERROR_VFS) (i32.const 0))
+        (return (i32.const 0))))
+    (drop (call $host_fs_close_handle (global.get $help_vfs_handle)))
+    (global.set $help_vfs_handle (i32.const 0))
+    (call $heap_free (global.get $help_vfs_read))
+    (global.set $help_vfs_read (i32.const 0))
+    (i32.const 1))
+
+  (func $help_document_try_load_cnt_vfs (result i32)
+    (local $result i32)
+    (local.set $result (call $help_document_vfs_read_image
+      (call $g2w (global.get $help_vfs_cnt_path)) (global.get $HELP_MAX_CNT_BYTES) (i32.const 1)))
+    (if (i32.eq (local.get $result) (i32.const 1))
+      (then
+        (global.set $help_vfs_cnt (global.get $help_vfs_temp))
+        (global.set $help_vfs_cnt_size (global.get $help_vfs_size))
+        (global.set $help_vfs_temp (i32.const 0))))
+    (local.get $result))
+
+  ;; Only the public A/W dispatchers opt into -1 pending. Existing synchronous
+  ;; consumers keep their boolean result and terminal-failure policy.
+  (func $help_document_load_vfs_mode (param $path_wa i32) (param $park i32) (result i32)
+    (local $length i32) (local $result i32) (local $ok i32)
+    (local $error i32) (local $error_offset i32)
+    (local $path i32) (local $hlp i32) (local $hlp_size i32)
+    (local $cnt i32) (local $cnt_size i32)
+    (call $help_document_vfs_resume_check)
+    (if (i32.eqz (global.get $help_vfs_phase))
+      (then
+        (local.set $length (call $help_cstring_length_memory (local.get $path_wa) (i32.const 1024)))
+        (if (i32.or (i32.eqz (local.get $path_wa)) (i32.le_s (local.get $length) (i32.const 0)))
+          (then
+            (call $help_document_reset)
+            (call $help_set_error (global.get $HELP_ERROR_BAD_ARGUMENT) (i32.const 0))
+            (return (i32.const 0))))
+        (call $invocation_ensure)
+        (global.set $help_last_error (i32.const 0))
+        (global.set $help_last_error_offset (i32.const 0))
+        (global.set $help_vfs_root (global.get $invocation_root))
+        (global.set $help_vfs_token (call $invocation_current))
+        (global.set $help_vfs_esp (i32.load offset=16 (global.get $reg_base)))
+        (global.set $help_vfs_thunk (global.get $current_thunk_eip))
+        (global.set $help_vfs_phase (i32.const 1))
+        (global.set $help_vfs_path (call $heap_alloc (i32.add (local.get $length) (i32.const 1))))
+        (if (i32.eqz (global.get $help_vfs_path))
+          (then
+            (call $help_document_vfs_release)
+            (call $help_document_reset)
             (call $help_set_error (global.get $HELP_ERROR_ALLOCATION) (i32.const 0))
             (return (i32.const 0))))
-        (local.set $path_copy (call $g2w (local.get $path_ga)))
-        (memory.copy (local.get $path_copy) (local.get $path_wa)
-          (i32.add (local.get $path_len) (i32.const 1)))
-        (global.set $help_doc_path_ga (local.get $path_ga))
-        (global.set $help_doc_path_wa (local.get $path_copy))
-        (global.set $help_doc_path_len (local.get $path_len))))
-    (local.get $ok))
+        (memory.copy (call $g2w (global.get $help_vfs_path)) (local.get $path_wa)
+          (i32.add (local.get $length) (i32.const 1)))
+        (global.set $help_vfs_cnt_path (call $help_document_cnt_path_copy
+          (call $g2w (global.get $help_vfs_path))))))
+    (block $failed
+      (br_if $failed (i32.eqz (global.get $help_vfs_cnt_path)))
+      (if (i32.eq (global.get $help_vfs_phase) (i32.const 1))
+        (then
+          (local.set $result (call $help_document_vfs_read_image
+            (call $g2w (global.get $help_vfs_path)) (global.get $HELP_MAX_FILE_BYTES) (i32.const 0)))
+          (if (i32.eq (local.get $result) (i32.const -1))
+            (then (if (local.get $park) (then (return (i32.const -1))))))
+          (br_if $failed (i32.ne (local.get $result) (i32.const 1)))
+          (global.set $help_vfs_hlp (global.get $help_vfs_temp))
+          (global.set $help_vfs_hlp_size (global.get $help_vfs_size))
+          (global.set $help_vfs_temp (i32.const 0))
+          (global.set $help_vfs_phase (i32.const 2))))
+      (local.set $result (call $help_document_try_load_cnt_vfs))
+      (if (i32.eq (local.get $result) (i32.const -1))
+        (then (if (local.get $park) (then (return (i32.const -1))))))
+      (br_if $failed (i32.le_s (local.get $result) (i32.const 0)))
+      ;; The I/O continuation is complete before parsing can run a document's
+      ;; registration macros. Those callbacks own their own invocation/CPU.
+      (local.set $path (global.get $help_vfs_path))
+      (local.set $hlp (global.get $help_vfs_hlp))
+      (local.set $hlp_size (global.get $help_vfs_hlp_size))
+      (local.set $cnt (global.get $help_vfs_cnt))
+      (local.set $cnt_size (global.get $help_vfs_cnt_size))
+      (call $heap_free (global.get $help_vfs_cnt_path))
+      (call $help_document_vfs_clear)
+      (local.set $ok (call $help_document_load_buffer
+        (call $g2w (local.get $hlp)) (local.get $hlp_size)))
+      (if (i32.and (i32.ne (local.get $ok) (i32.const 0)) (i32.ne (local.get $cnt) (i32.const 0)))
+        (then (local.set $ok (call $help_load_cnt_buffer
+          (call $g2w (local.get $cnt)) (local.get $cnt_size)))))
+      (if (local.get $ok)
+        (then
+          (global.set $help_doc_path_ga (local.get $path))
+          (global.set $help_doc_path_wa (call $g2w (local.get $path)))
+          (global.set $help_doc_path_len (call $help_cstring_length_memory
+            (global.get $help_doc_path_wa) (i32.const 1024))))
+        (else
+          (call $heap_free (local.get $path))
+          (call $help_document_release_storage)))
+      (call $heap_free (local.get $hlp))
+      (if (local.get $cnt) (then (call $heap_free (local.get $cnt))))
+      (return (local.get $ok)))
+    ;; A read/open failure replaces the old document just as before. Pending
+    ;; reads reach this branch only for a synchronous, non-public consumer.
+    (local.set $error (global.get $help_last_error))
+    (local.set $error_offset (global.get $help_last_error_offset))
+    (call $help_document_vfs_release)
+    (call $help_document_reset)
+    (call $help_set_error
+      (select (local.get $error) (global.get $HELP_ERROR_VFS) (i32.ne (local.get $error) (i32.const 0)))
+      (local.get $error_offset))
+    (i32.const 0))
+
+  (func $help_document_load_vfs (param $path_wa i32) (result i32)
+    (call $help_document_load_vfs_mode (local.get $path_wa) (i32.const 0)))
 
   ;; Unified API engine. The A/W boundary owns normalization; path_wa and any
   ;; command-specific string data are bounded WA pointers by the time they
@@ -5059,6 +5120,7 @@
   (func $help_dispatch
     (param $caller i32) (param $path_wa i32) (param $command i32)
     (param $data i32) (param $source_is_wide i32) (result i32)
+    (local $loaded i32)
     (drop (local.get $source_is_wide))
     (if (i32.eq (local.get $command) (global.get $HELP_COMMAND_QUIT))
       (then
@@ -5069,7 +5131,11 @@
         ;; An explicit WinHelp API file replacement starts a fresh document
         ;; session; only in-document external links retain Back snapshots.
         (call $help_document_snapshot_release_all)
-        (if (i32.eqz (call $help_document_load_vfs (local.get $path_wa)))
+        (local.set $loaded (call $help_document_load_vfs_mode
+          (local.get $path_wa) (global.get $help_macro_public_entry)))
+        (if (i32.eq (local.get $loaded) (i32.const -1))
+          (then (return (i32.const -2))))
+        (if (i32.eqz (local.get $loaded))
           (then
             (global.set $help_session_last_command (local.get $command))
             (global.set $help_session_status (global.get $HELP_DISPATCH_LOAD_FAILED))

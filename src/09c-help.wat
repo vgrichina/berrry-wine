@@ -94,11 +94,19 @@
             (global.set $help_session_status (global.get $HELP_DISPATCH_BAD_DATA))
             (return (i32.const 0))))
         (local.set $path_wa (call $g2w (local.get $path_copy_ga)))
-        ;; Finish the synchronous path load before allocating command-string
+        ;; Finish the path load before allocating command-string
         ;; storage. Document replacement releases prior heap blocks and must
         ;; not overlap either normalization buffer's lifetime.
         (call $help_document_snapshot_release_all)
-        (if (i32.eqz (call $help_document_load_vfs (local.get $path_wa)))
+        (local.set $result (call $help_document_load_vfs_mode
+          (local.get $path_wa) (global.get $help_macro_public_entry)))
+        (if (i32.eq (local.get $result) (i32.const -1))
+          (then
+            ;; The reader retains its own path. No command normalization has
+            ;; been allocated yet; retry this public W call after its fill.
+            (call $heap_free (local.get $path_copy_ga))
+            (return (i32.const -2))))
+        (if (i32.eqz (local.get $result))
           (then
             (call $heap_free (local.get $path_copy_ga))
             (global.set $help_session_last_command (local.get $command))

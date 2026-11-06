@@ -2,6 +2,36 @@
   "version": 1,
   "entries": [
     {
+      "file": "src/09c7-winhelp-hlp.wat",
+      "name": "$help_document_load_vfs_mode",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_ensure",
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "97ea856d9e3805e775b8bd7d683019d213723fe4e8c7b2da3d38e7eaefc96fe1",
+      "kind": "continuation",
+      "reason": "Owns bounded document byte reads and path until completion; parks only the public API frame, retaining exact handle/destinations; native invocation root/token fences retries.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c7-winhelp-hlp.wat",
+      "name": "$help_document_vfs_resume_check",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_validate",
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "5718c7961ee95f899ded154069c46ac09292a91a6dbd7976936072d13f7f7e10",
+      "kind": "continuation",
+      "reason": "Validates document-read invocation before resume, CPU work or heap access; explicit replacement discards old heap pointers and closes the retained host handle.",
+      "ownership": "pending"
+    },
+    {
       "file": "src/13-exports.wat",
       "name": "$com_callback_check",
       "writes": 0,
@@ -7830,7 +7860,7 @@
           ]
         ]
       ],
-      "sha256": "94b1c8bf933ed84c4d3b7aa6ccd629e142bf6ba3e0bf82ce0c7e3765ef1ef353",
+      "sha256": "78ecf4a957ced50310e0b28867750e2fb44c14f1531cc5c3aadd80a1c02aa4f5",
       "kind": "host-entry",
       "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth. Shadow Man exact-candidate source review 2026-10-28: Reentrant host entry retains existing budget/API-depth save/restore and thunk auto-pop target. Clears kind/thunk-entry at fresh run and each nonzero loop boundary; brackets explicit thunk dispatch with entry flag; zero branch checks record before null_diag_event increments count and notifies synchronous host observer (return traps). Nested run or deferred unload invalidates attribution; diagnostic globals are not a retained per-invocation stack. No new EIP target/ownership retain; source inventory only, reentry/runtime and original writer remain unqualified. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Review 20261106 native help suspension: exact live child/root/depth or synchronous ancestry guards the saved frame. Validated root replacement discards old help frames; existing init_thread owns sync-pin retirement; main wait snapshots retain their absolute deadline only for their original instance/root. Real PE/DLL public RegisterRoutine/HELP_COMMAND eager/lazy, nested, termination and stale-owner tests cover this bounded path on both modules. Broader ownership remains pending. See docs/re-notes/help-suspension-20261106.md.",
       "ownership": "pending"
