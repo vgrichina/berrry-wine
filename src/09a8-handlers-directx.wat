@@ -3992,7 +3992,9 @@
     ;; never sets dwSize on its two stack DDCAPS: on Windows the call fails and
     ;; it logs stack garbage, while writing 380 bytes here ran over its frame
     ;; and the log function "returned" into the CRT exit (code 5).
-    (local.set $sz (i32.const 0)) ;; 1 = a supplied DDCAPS has a bad dwSize
+    ;; Neither output requested is DDERR_INVALIDPARAMS too. Validate before
+    ;; writing either structure, just as for a malformed supplied dwSize.
+    (local.set $sz (i32.eqz (i32.or (local.get $arg1) (local.get $arg2))))
     (if (local.get $arg1)
       (then (if (call $ddcaps_size_invalid (local.get $arg1)) (then (local.set $sz (i32.const 1))))))
     (if (local.get $arg2)
@@ -4038,13 +4040,24 @@
         (then (i32.store (i32.add (local.get $wa) (i32.const 0x3c)) (global.get $DX_VIDMEM_TOTAL))))
       (if (i32.gt_u (local.get $sz) (i32.const 0x40))
         (then (i32.store (i32.add (local.get $wa) (i32.const 0x40)) (global.get $DX_VIDMEM_TOTAL))))))
-    ;; Same for HEL caps
+    ;; HEL describes the CPU Blt implementation, independently of hardware.
+    ;; Public COM fixtures qualify packed 8/16/24/32-bit copies in all three
+    ;; system-memory directions, including caller-owned padded storage. Do
+    ;; not add CANBLTSYSMEM to HAL: these tests establish no hardware path.
     (if (local.get $arg2) (then
       (local.set $wa (call $g2w (local.get $arg2)))
       (local.set $sz (i32.load (local.get $wa)))
       (call $zero_memory (local.get $wa) (local.get $sz))
       (i32.store (local.get $wa) (local.get $sz))
-      (i32.store (i32.add (local.get $wa) (i32.const 4)) (i32.const 0x24041))
+      (i32.store (i32.add (local.get $wa) (i32.const 4)) (i32.const 0x80024041))
+      ;; Directional capabilities promise ordinary copies only. Keep effects,
+      ;; ROP arrays and other optional operations clear unless qualified.
+      (if (i32.ge_u (local.get $sz) (i32.const 176))
+        (then (i32.store offset=172 (local.get $wa) (i32.const 0x40)))) ;; SVB
+      (if (i32.ge_u (local.get $sz) (i32.const 220))
+        (then (i32.store offset=216 (local.get $wa) (i32.const 0x40)))) ;; VSB
+      (if (i32.ge_u (local.get $sz) (i32.const 264))
+        (then (i32.store offset=260 (local.get $wa) (i32.const 0x40)))) ;; SSB
       (if (i32.ge_u (local.get $sz) (i32.const 136))
         (then (i32.store offset=132 (local.get $wa) (i32.const 0x20000))))
       (if (i32.ge_u (local.get $sz) (i32.const 368))
@@ -5190,6 +5203,21 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004001)) ;; DDERR_UNSUPPORTED
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
+  ;; Scalar Blt paths use packed three-byte pixels at 24bpp. Reading or
+  ;; writing a DWORD also changes the next pixel/padding and crosses row ends.
+  ;; The bulk row and SIMD color-key paths already use the actual byte stride.
+  (func $dx_blt_wide_load (param $p i32) (param $bps i32) (result i32)
+    (if (result i32) (i32.eq (local.get $bps) (i32.const 3))
+      (then (i32.or (i32.load16_u (local.get $p))
+        (i32.shl (i32.load8_u offset=2 (local.get $p)) (i32.const 16))))
+      (else (i32.load (local.get $p)))))
+  (func $dx_blt_wide_store (param $p i32) (param $v i32) (param $bps i32)
+    (if (i32.eq (local.get $bps) (i32.const 3))
+      (then
+        (i32.store16 (local.get $p) (local.get $v))
+        (i32.store8 offset=2 (local.get $p) (i32.shr_u (local.get $v) (i32.const 16))))
+      (else (i32.store (local.get $p) (local.get $v)))))
+
   ;; Blt(this, lpDestRect, lpDDSrcSurface, lpSrcRect, dwFlags, lpDDBltFx)
   ;; Note: 6 args but we only get 5 from dispatch; 6th is at ESP+24
   (func $handle_IDirectDrawSurface_Blt (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -5309,10 +5337,10 @@
                                      (i32.mul (i32.add (local.get $dx) (local.get $sx)) (i32.const 2))))
                             (local.get $row)))
                         (else
-                          (i32.store (i32.add (local.get $dst_dib)
+                          (call $dx_blt_wide_store (i32.add (local.get $dst_dib)
                             (i32.add (i32.mul (i32.add (local.get $dy) (local.get $sy)) (local.get $dst_pitch))
-                                     (i32.mul (i32.add (local.get $dx) (local.get $sx)) (i32.const 4))))
-                            (local.get $row))))))))
+                                     (i32.mul (i32.add (local.get $dx) (local.get $sx)) (local.get $bps))))
+                            (local.get $row) (local.get $bps))))))))
                 (local.set $sx (i32.add (local.get $sx) (i32.const 1)))
                 (br $fill_col))))
             (local.set $sy (i32.add (local.get $sy) (i32.const 1)))
@@ -5594,20 +5622,20 @@
                                      (i32.mul (i32.add (local.get $dx) (local.get $src_w)) (i32.const 2))))
                           (local.get $col)))))))
                     (else
-                      (local.set $col (i32.load
+                      (local.set $col (call $dx_blt_wide_load
                         (i32.add (local.get $src_dib)
                           (i32.add (i32.mul (i32.add (local.get $sy) (local.get $row)) (local.get $src_pitch))
-                                   (i32.mul (i32.add (local.get $sx) (local.get $src_w)) (i32.const 4))))))
+                                   (i32.mul (i32.add (local.get $sx) (local.get $src_w)) (local.get $bps)))) (local.get $bps)))
                       (if (i32.ne (local.get $col) (local.get $ckey))
                         (then (if (call $dx_clipper_contains
                               (local.get $clip_entry) (local.get $clip_data)
                               (i32.add (local.get $dx) (local.get $src_w))
                               (i32.add (local.get $dy) (local.get $row)))
-                        (then (i32.store
+                        (then (call $dx_blt_wide_store
                           (i32.add (local.get $dst_dib)
                             (i32.add (i32.mul (i32.add (local.get $dy) (local.get $row)) (local.get $dst_pitch))
-                                     (i32.mul (i32.add (local.get $dx) (local.get $src_w)) (i32.const 4))))
-                          (local.get $col))))))))))
+                                     (i32.mul (i32.add (local.get $dx) (local.get $src_w)) (local.get $bps))))
+                          (local.get $col) (local.get $bps))))))))))
                 (local.set $src_w (i32.add (local.get $src_w) (i32.const 1)))
                 (br $ckblit_col)))
               (local.set $row (i32.add (local.get $row) (i32.const 1)))
@@ -5665,16 +5693,16 @@
                                   (i32.mul (i32.add (local.get $sy) (local.get $row)) (local.get $src_pitch))
                                   (i32.mul (i32.add (local.get $sx) (local.get $src_w)) (i32.const 2)))))))
                         (else
-                          (i32.store
+                          (call $dx_blt_wide_store
                             (i32.add (local.get $dst_dib)
                               (i32.add
                                 (i32.mul (i32.add (local.get $dy) (local.get $row)) (local.get $dst_pitch))
-                                (i32.mul (i32.add (local.get $dx) (local.get $src_w)) (i32.const 4))))
-                            (i32.load
+                                (i32.mul (i32.add (local.get $dx) (local.get $src_w)) (local.get $bps))))
+                            (call $dx_blt_wide_load
                               (i32.add (local.get $src_dib)
                                 (i32.add
                                   (i32.mul (i32.add (local.get $sy) (local.get $row)) (local.get $src_pitch))
-                                  (i32.mul (i32.add (local.get $sx) (local.get $src_w)) (i32.const 4))))))))))))
+                                  (i32.mul (i32.add (local.get $sx) (local.get $src_w)) (local.get $bps)))) (local.get $bps)) (local.get $bps))))))))
                 (local.set $src_w (i32.add (local.get $src_w) (i32.const 1)))
                 (br $clip_blit_col)))
               (local.set $row (i32.add (local.get $row) (i32.const 1)))
@@ -5752,21 +5780,21 @@
                                      (i32.mul (i32.add (local.get $dx) (local.get $src_w)) (i32.const 2))))
                           (local.get $col)))))))
                     (else
-                      (local.set $col (i32.load
+                      (local.set $col (call $dx_blt_wide_load
                         (i32.add (local.get $src_dib)
                           (i32.add (i32.mul (local.get $src_h) (local.get $src_pitch))
-                                   (i32.mul (local.get $bpp) (i32.const 4))))))
+                                   (i32.mul (local.get $bpp) (local.get $bps)))) (local.get $bps)))
                       (if (i32.or (i32.eqz (local.get $src_keyed))
                                     (i32.ne (local.get $col) (local.get $ckey)))
                         (then (if (call $dx_clipper_contains
                               (local.get $clip_entry) (local.get $clip_data)
                               (i32.add (local.get $dx) (local.get $src_w))
                               (i32.add (local.get $dy) (local.get $row)))
-                        (then (i32.store
+                        (then (call $dx_blt_wide_store
                           (i32.add (local.get $dst_dib)
                             (i32.add (i32.mul (i32.add (local.get $dy) (local.get $row)) (local.get $dst_pitch))
-                                     (i32.mul (i32.add (local.get $dx) (local.get $src_w)) (i32.const 4))))
-                          (local.get $col))))))))))
+                                     (i32.mul (i32.add (local.get $dx) (local.get $src_w)) (local.get $bps))))
+                          (local.get $col) (local.get $bps))))))))))
                 (local.set $src_w (i32.add (local.get $src_w) (i32.const 1)))
                 (br $str_col)))
               (local.set $row (i32.add (local.get $row) (i32.const 1)))
