@@ -167,7 +167,7 @@
   (func $d3dim_worker_fence
     (local $front i32)
     (drop (call $d3dim_lazy_fence (i32.const 0) (i32.const 0)))
-    (if (global.get $d3dim_worker_pending) (then
+    (if (i32.or (global.get $d3dim_worker_pending) (global.get $d3dim_gpu_cooperative)) (then
       (global.set $d3dim_worker_pending (i32.const 0))
       (drop (call $host_gpu_gl_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))))
     (if (global.get $d3dim_present_pending) (then
@@ -206,7 +206,8 @@
       ;; The shared barrier already submitted this producer and synchronized
       ;; this exact span. Result 2 only means OTHER targets remain dirty.
       (if (local.get $synchronized) (then (return)))
-      (if (i32.eqz (global.get $d3dim_worker_pending)) (then (return)))
+      (if (i32.eqz (i32.or (global.get $d3dim_worker_pending)
+                           (global.get $d3dim_gpu_cooperative))) (then (return)))
       (if (local.get $entry) (then
         (local.set $dib (load.field DxObject misc1 (local.get $entry)))
         (local.set $length (i32.mul (load.field DxObject pitch (local.get $entry))
@@ -458,6 +459,10 @@
   ;; applies the same state interpretation the software rasterizer uses, so
   ;; the two backends differ in how they draw and never in what they draw.
   (global $d3dim_gpu_on (mut i32) (i32.const 0))
+  ;; Cooperative instances share a host GPU owner. A sibling can have pending
+  ;; pixels even when this instance has never drawn, so CPU barriers must query
+  ;; the owner rather than consulting only this instance's pending flag.
+  (global $d3dim_gpu_cooperative (mut i32) (i32.const 0))
   ;; Opt-in experiment. Only DIB-backed,
   ;; nonprimary Locks qualify; host/other-surface barriers remain eager.
   ;; Translation is conservative: an address proof may synchronize early.
@@ -612,6 +617,14 @@
   (global $d3dim_gpu_scratch_cap (mut i32) (i32.const 0))
   (func (export "d3dim_gpu_enable") (param $on i32)
     (global.set $d3dim_gpu_on (i32.ne (local.get $on) (i32.const 0))))
+  ;; Joins this instance to a host GPU owner shared with cooperative
+  ;; siblings. The fence first retires anything this instance still owes
+  ;; (including an async-Flip present), so the host can then switch to
+  ;; synchronous Flip before a sibling touches the chain.
+  (func (export "d3dim_gpu_cooperative_enable")
+    (call $d3dim_worker_fence)
+    (global.set $d3dim_gpu_cooperative (i32.const 1))
+    (global.set $d3dim_gpu_on (i32.const 1)))
   ;; The process render owner describes an immutable queued state snapshot.
   ;; Reset to zero after each GPU batch draw, including exceptional exits.
   (func (export "d3dim_gpu_state_override") (param $state i32)
