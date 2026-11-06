@@ -1,6 +1,6 @@
 # Recovery candidate: sparse save and provider ownership, 2026-11-06
 
-Static comparison of recovery tip `80bc9a61509d1976ea55b2610b3b987611c48595` with main `6dde1c166` identifies missing interfaces worth a bounded current-main reproduction. No runtime defect or successful port is claimed.
+Initial static comparison of recovery tip `80bc9a61509d1976ea55b2610b3b987611c48595` with main `6dde1c166` identified missing interfaces worth a bounded current-main reproduction. The later isolated host-import reproduction below establishes a separate overlay tracking defect; no successful port is claimed.
 
 The recovery's `6653eb1ae` added SparseByteProvider and managed VFS entry ownership; later `686bf81e1` extends stop/overlay lifecycle handling. Current `lib/byte-provider.js` has provider close methods but no SparseByteProvider, retain/release or fork methods. `lib/vfs-entry-ownership.js` is absent on main. Current overlay storage documents whole-file read/writeBatch, and the overlay explicitly rejects nonresident provider-backed opens for write rather than materializing them. Current VirtualFS.writeFile grows eager backing. These are observable source differences, not evidence that every historical implementation detail is appropriate now.
 
@@ -11,3 +11,11 @@ Next bounded assignment: reproduce a partial write to a large lazy writable base
 The thread-reuse portion of 6653eb1ae must be reconciled separately: current ThreadManager._allocWorkerSlot already holds exited slots until link._retirementComplete and stack release; current GuestThreadHost.dropThread waits for stop and checks link identity before deleting the slot. Worker stop additionally requires scoped-loader retirement receipts before termination. Do not overwrite these newer lifecycle contracts with the historical simpler barrier. Current test-worker-bootstrap-retirement.js contains retirement cases; they were inspected, not executed.
 
 Pinned current source hashes are in scratch/runs/20261106-recovery-sparse-save-candidate/sources.json. This review started no tests, build, browser, guest or boat. Four existing workers remained live, with the local runtime occupied by PTCT. Runtime/overlay/save/help/font startup reconciliation remains incomplete.
+
+## Confirmed host-import tracking failure
+
+On main `37ed580e5`, an isolated Node reproduction calls the actual `createFilesystemImports(...).fs_create_file` with `CREATE_ALWAYS`, closes the successful handle without `WriteFile`, then calls overlay `flush()`. For a new empty file and an existing three-byte file, the host route returns a valid handle but produces no dirty path and writes zero records. Matching direct `VirtualFS.createFile` controls mark the path and publish a zero-byte file record. These four cases are recorded in `scratch/runs/20261106-overlay-create-route-probe/result.json`; rerun with `node scratch/runs/20261106-overlay-create-route-probe/probe.cjs` from the repository root. The result pins all three relevant source hashes.
+
+The cause is the call boundary: `lib/vfs-overlay.js` wraps `createFile`, while the host import calls `createFileResult` directly. A repair must cover the authoritative operation and preserve errors, disposition semantics and legacy/direct callers without double marking. Include actual host imports in regressions; direct VFS tests alone miss this defect. A failed create must not dirty the overlay, and truncating a lazy base must not fetch bytes that are being discarded.
+
+This probe used `memoryStore` and resident input bytes. Durable reload, compiled guest execution and large lazy partial writes remain untested. Existing rejection of nonresident `OPEN_EXISTING` write opens is intentional current behavior, not a new regression. The queued sparse-save assignment includes the route failure and still requires the full bounded partial-write/checkpoint/reload goal.
