@@ -60,7 +60,7 @@ function fixtureSource() {
       eq(evidence.queued.length,config.states.length*config.samples.length,'all held transitions executed');
       for(const q of evidence.queued){check(q.liveChangedBeforeDrain,'live state changed before drain');
         check(q.messages.includes('batch'),'held production draw batch');}`);
-  replace("  const held=[];",`  const held=[];
+  replace("  const held=[],heldPackets=[];let queueBuffers,queueControl;",`  const held=[],heldPackets=[];let queueBuffers,queueControl;
   const checkVersion=(version,label)=>{
     check(typeof version==='string',label+' present');
     if(config.webglVersion!=='auto')
