@@ -205,6 +205,28 @@ software fallback, and an original-game before/after profile. No such fix or
 speedup has been tested here. Profiling overhead is unknown; these instrumented
 times are not a speed comparison against the earlier uninstrumented route.
 
+**Update 2026-11-05 — cooperative GPU routing landed (unit-validated only).**
+Ported from `fix/revolt-cooperative-d3dim`: `host.js` gives each cooperative
+thread's imports a `d3dCommands` that calls the one in-page `D3DIMGpu` via
+`callForExports(<that instance's exports>, …)`, and `ThreadManager.spawnPending`
+calls `__initializeCooperative` after WASM/stack/TLS init, which runs
+`attachCooperative` → each instance's new `d3dim_gpu_cooperative_enable`
+export (sets `$d3dim_gpu_on` and `$d3dim_gpu_cooperative`). With
+`$d3dim_gpu_cooperative` set, `$d3dim_worker_fence` / `$d3dim_surface_fence`
+query the shared owner even when this instance has no pending draw of its own,
+since a sibling may own the dirty pixels. The first attach retires the main
+instance's owed async-Flip present and switches the owner to synchronous Flip,
+because that obligation lives in one instance's globals and a sibling could
+swap the chain under the in-flight readback. `test/test-d3dim-cooperative-routing.js`
+covers a secondary-instance draw described with its own exports, cross-instance
+draw/clear/Lock ordering, scratch reuse, page-lease release through a sibling,
+async-Flip retirement at attach, and WebGL-unavailable software fallback
+(`--negative-barrier` / `--negative-caller` fail as intended). **Not yet done:**
+an original-game before/after browser profile on the loading thread — the
+CLI has no WebGL, so the speedup is unmeasured. Limits: a cooperative thread
+spawned before `_startD3DIMGpu` keeps software D3DIM, and Worker-backed
+threads are unchanged (they use the render Worker path).
+
 All 56 transferred original artifacts passed SHA-256 checks. Chrome and driver
 exited normally; the supervisor recorded all 16 discovered child PIDs and both
 owned groups absent at 23:32:57.113 UTC. Independent checks also found the
