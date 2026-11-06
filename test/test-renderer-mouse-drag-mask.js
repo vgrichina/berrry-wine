@@ -183,7 +183,14 @@ assert.strictEqual(delayedHitTest.msg, 0x0084,
   'queued delayed click should deliver WM_NCHITTEST before WM_LBUTTONDOWN');
 const delayedDown = delayedRenderer.checkInput();
 assert.strictEqual(delayedDown.msg, 0x0201, 'queued delayed click should deliver WM_LBUTTONDOWN after its hit-test');
-assert.strictEqual(delayedRenderer.getAsyncKeyState(0x01), 0x8001, 'queued WM_LBUTTONDOWN should expose held button snapshot even if mouseup is already queued');
+assert.strictEqual(delayedRenderer.getMouseButtons(), 1,
+  'dequeued WM_LBUTTONDOWN retains its message-time button snapshot');
+assert.strictEqual(delayedRenderer.getAsyncKeyState(0x01), 1,
+  'GetAsyncKeyState reports physical release even while a queued down is active, retaining the unconsumed press bit');
+assert.strictEqual(delayedRenderer.getAsyncKeyState(0x01), 0,
+  'the async press bit is consumed once without changing the message snapshot');
+assert.strictEqual(delayedRenderer.getMouseButtons(), 1,
+  'an asynchronous query must not consume the active message snapshot');
 delayedRenderer.setMousePosition(150, 120);
 assert.strictEqual(delayedRenderer.getMousePosition(), (120 << 16) | 150, 'SetCursorPos should supersede any active queued mouse snapshot');
 // Since 37ff2f8d a release is never handed over in the pump that took its
@@ -215,6 +222,25 @@ assert.strictEqual(staleRenderer.getMouseButtons(), 0, 'move snapshot should exp
 assert.strictEqual(staleRenderer.checkInput(), 0, 'empty input poll should return no message');
 staleRenderer.handleMouseDown(70, 80, 1);
 assert.strictEqual(staleRenderer.getAsyncKeyState(0x01), 0x8001, 'new mouse down should not be masked by stale move snapshot');
+
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getasynckeystate
+// The high bit describes current physical buttons, independently of the
+// event being dispatched. Exercise all mouse VKs and both stale directions.
+for (const [vk, mask] of [[1, 1], [2, 2], [4, 0x10], [5, 0x20], [6, 0x40]]) {
+  const asyncRenderer = new Win98Renderer(canvas);
+  asyncRenderer._mouseButtonsMask = mask;
+  asyncRenderer._activeInputEvent = { type: 'mouse', mouseButtons: 0 };
+  assert.strictEqual(asyncRenderer.peekAsyncKeyState(vk), 0x8000,
+    `physical VK ${vk} down must survive an older released event`);
+  assert.strictEqual(asyncRenderer.getMouseButtons(), 0,
+    'message-time state remains separate from physical state');
+  asyncRenderer._mouseButtonsMask = 0;
+  asyncRenderer._activeInputEvent = { type: 'mouse', mouseButtons: mask };
+  assert.strictEqual(asyncRenderer.peekAsyncKeyState(vk), 0,
+    `physical VK ${vk} release must survive an older down event`);
+  assert.strictEqual(asyncRenderer.getMouseButtons(), mask,
+    'async state queries preserve the dequeued down event');
+}
 
 const focusRenderer = new Win98Renderer(canvas);
 let focusHwnd = 131;
