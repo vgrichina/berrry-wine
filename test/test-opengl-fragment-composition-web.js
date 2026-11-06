@@ -63,6 +63,37 @@ function producer() {
     for(const mode of [0x1700,0x1701,0x1702]){call('glMatrixMode',[mode]);call('glLoadIdentity');}
     call('glMatrixMode',[0x1700]);
     for(const cap of [0xb50,0xb71,0xb44,0xbd0])call('glDisable',[cap]);
+    const fogCases=[],fogOut=e.guest_alloc(64)>>>0,fogIn=e.guest_alloc(16)>>>0;
+    const fogA={enabled:1,mode:0x2601,density:.25,start:0,end:1,index:3.5,color:[0,0,1,1]};
+    const fogB={enabled:0,mode:0x800,density:2,start:.25,end:2,index:7.25,color:[0,1,0,.5]};
+    function fogSet(s){
+      call(s.enabled?'glEnable':'glDisable',[0xb60]);call('glFogi',[0xb65,s.mode]);
+      for(const [p,k] of [[0xb62,'density'],[0xb63,'start'],[0xb64,'end'],[0xb61,'index']])call('glFogf',[p,f(s[k])]);
+      s.color.forEach((x,i)=>v.setFloat32(wa(fogIn)+4*i,x,true));call('glFogfv',[0xb66,fogIn]);
+    }
+    function fogQuery(p,n=1){call('glGetFloatv',[p,fogOut]);return Array.from(new Float32Array(memory.buffer,wa(fogOut),n));}
+    function fogCapture(label,expected){
+      const state={enabled:call('glIsEnabled',[0xb60]),mode:fogQuery(0xb65)[0],density:fogQuery(0xb62)[0],start:fogQuery(0xb63)[0],end:fogQuery(0xb64)[0],index:fogQuery(0xb61)[0],color:fogQuery(0xb66,4)};
+      call('glClearColor',[0,0,0,1].map(f));call('glClear',[0x4000]);call('glColor4f',[1,0,0,1].map(f));
+      call('glBegin',[7]);for(const [x,y] of [[-1,-1],[1,-1],[1,1],[-1,1]])call('glVertex3f',[x,y,-.5].map(f));call('glEnd');
+      call('glReadPixels',[4,4,1,1,0x1908,0x1401,fogOut]);
+      fogCases.push({label,state,expected,pixel:Array.from(new Uint8Array(memory.buffer,wa(fogOut),4)),error:call('glGetError')});
+    }
+    fogSet(fogA);fogCapture('analytical linear control',fogA);
+    fogSet(fogB);fogCapture('disabled control',fogB);
+    fogSet({...fogB,enabled:1});fogCapture('analytical exponential control',{...fogB,enabled:1});
+    const fogSquared={...fogA,mode:0x801,density:1};fogSet(fogSquared);fogCapture('analytical squared exponential control',fogSquared);
+    for(const mask of [0x80,0x2000,8,64,0x8000,0xfffff]){
+      fogSet(fogA);call('glPushAttrib',[mask]);fogSet(fogB);call('glPopAttrib');
+      fogCapture('mask '+mask,mask&0x80?fogA:{...fogB,enabled:mask&0x2000?1:0});
+    }
+    fogSet(fogA);call('glPushAttrib',[0x2000]);fogSet(fogB);
+    fogCapture('enable changed state rendered before pop',fogB);
+    call('glPopAttrib');fogCapture('enable restored after intervening rendering',{...fogB,enabled:1});
+    fogSet(fogA);call('glPushAttrib',[0x80]);fogSet(fogB);call('glPushAttrib',[0x80]);fogSet(fogA);
+    call('glPopAttrib');fogCapture('nested inner',fogB);call('glPopAttrib');fogCapture('nested outer',fogA);
+    call('glDisable',[0xb60]);
+
     const input=e.guest_alloc(16)>>>0,output=e.guest_alloc(256)>>>0;
     for(const [name,texel] of [[1,[64,128,192,128]],[2,[224,48,96,192]]]){
       call('glBindTexture',[0xde1,name]);
@@ -97,7 +128,7 @@ function producer() {
     call('glBlendFunc',[0x304,0x305]);call('glColor4f',[1,0,0,.25].map(f));quad();
     const witness=read();api('SwapBuffers',[dc]);call('glFinish');
     call('wglMakeCurrent',[0,0]);call('wglDeleteContext',[context]);
-    postMessage({t:'done',calls,before,composed,witness,stats:built.stats});
+    postMessage({t:'done',calls,before,composed,witness,fogCases,stats:built.stats});
   }catch(error){postMessage({t:'fault',error:String(error.stack||error)});}};
 }
 
@@ -214,6 +245,17 @@ async function scenario({name,apiVersion,backend='webgl',processFactory=false}) 
     }catch(error){fail(error);}};
     producerWorker.postMessage({module,memory,sigs,meta,apis,dc});
     const result=await safe(done);await safe(bridge.drain());
+    const fogObservations=result.fogCases.map(item=>{
+      const s=item.expected,d=.5;
+      let factor=s.enabled?(s.mode===0x2601?(s.end-d)/(s.end-s.start):s.mode===0x800?Math.exp(-s.density*d):Math.exp(-Math.pow(s.density*d,2))):1;
+      factor=Math.max(0,Math.min(1,factor));
+      const expectedPixel=s.color.slice(0,3).map((c,i)=>Math.round(255*(factor*(i===0?1:0)+(1-factor)*c)));
+      return {...item,expectedPixel,statePass:JSON.stringify(item.state)===JSON.stringify(s),pixelPass:distance(item.pixel.slice(0,3),expectedPixel)<=3,errorPass:item.error===0};
+    });
+    globalThis.fogObservations=fogObservations;
+    const fogPass=fogObservations.every(x=>x.statePass&&x.pixelPass&&x.errorPass);
+    assert(fogPass,'public fog attrib state/pixel mismatch '+JSON.stringify(fogObservations.filter(x=>!x.statePass||!x.pixelPass||!x.errorPass)));
+
     const observations=[];
     const check=(pixels,left,right,label,rgbOnly=false)=>{
       for(let y=0;y<8;y++)for(let x=0;x<8;x++){
@@ -253,7 +295,7 @@ async function scenario({name,apiVersion,backend='webgl',processFactory=false}) 
     await safe(bridge.close());
     if(route){await route.close();closed=true;}
     return {name,apiVersion,backend,processFactory:route?.info,route:'public x86 resolved GL -> compiled WAT encoder -> GuestRpc broker -> GLRenderHost shared leases -> physical browser Worker GLRenderWorker -> RGBA8 readback + presentation',
-      calls:result.calls,contexts,versions:[...new Set(versions)],heldBatches,packetStats,batches,observations,
+      fogObservations,calls:result.calls,contexts,versions:[...new Set(versions)],heldBatches,packetStats,batches,observations,
       wrongColors:Object.fromEntries(Object.entries(wrong).map(([k,v])=>[k,q(v)])),closed};
   }finally{producerWorker?.terminate();renderWorker?.terminate();if(route)await route.close();}
 }

@@ -370,8 +370,8 @@
   ;; glPushAttrib/glPopAttrib for the fields kept here, per attribute group.
   (func $gl_sw_push_attrib (param $mask i32)
     (local $frame i32)
-    ;; Past GL's required depth the push is dropped; the matching pop is then
-    ;; dropped too, by the depth test in $gl_sw_pop_attrib.
+    ;; Public validation rejects overflow before any observer runs. A failed
+    ;; push adds no frame; the next accepted pop restores the existing top.
     (if (i32.ge_u (global.get $gl_sw_attrib_depth) (i32.const 16)) (then (return)))
     (local.set $frame (i32.add (global.get $gl_sw_st)
       (i32.add (i32.const 64) (i32.mul (global.get $gl_sw_attrib_depth) (i32.const 96)))))
@@ -446,6 +446,9 @@
     ;; GL_ENABLE_BIT: every enable this file tracks.
     (if (i32.and (local.get $mask) (i32.const 0x2000))
       (then (call $gl_sw_restore_caps (local.get $saved) (i32.const 0xFCFFFFF))))
+    ;; GL_FOG_BIT owns fog enable as well as the period sidecar parameters.
+    (if (i32.and (local.get $mask) (i32.const 0x80))
+      (then (call $gl_sw_restore_caps (local.get $saved) (i32.const 64))))
     ;; GL_TRANSFORM_BIT owns GL_NORMALIZE; it is also an enable.
     (if (i32.and (local.get $mask) (i32.const 0x1000))
       (then (call $gl_sw_restore_caps (local.get $saved) (i32.const 0x400000))))
@@ -1750,14 +1753,14 @@
     (global.set $gl_sw_border_set_failed (i32.const 0))
     (if (i32.eq (local.get $op) (i32.const 180)) (then
       (i32.store offset=4104 (global.get $gl_sw_st) (i32.load offset=4 (local.get $stack))) (return)))
-    ;; New stipple state is native even for a WebGL context. Attribute
-    ;; frames must exist on both routes and are observed exactly once.
+    ;; Attribute frames exist on both routes and are observed exactly once.
+    ;; Fog enable also feeds native getters when the drawable uses WebGL.
     (if (i32.eq (local.get $op) (i32.const 76))
       (then (call $gl_sw_push_attrib (i32.load offset=4 (local.get $stack))) (return)))
     (if (i32.eq (local.get $op) (i32.const 77))
       (then (call $gl_sw_pop_attrib) (return)))
     (if (i32.or (i32.eq (local.get $op) (i32.const 8)) (i32.eq (local.get $op) (i32.const 10))) (then
-      (local.set $bit (i32.and (call $gl_sw_cap_bit (i32.load offset=4 (local.get $stack))) (i32.const 0xF800000)))
+      (local.set $bit (i32.and (call $gl_sw_cap_bit (i32.load offset=4 (local.get $stack))) (i32.const 0xF800040)))
       (if (local.get $bit) (then
         (i32.store (global.get $gl_sw_st) (if (result i32) (i32.eq (local.get $op) (i32.const 10))
           (then (i32.or (i32.load (global.get $gl_sw_st)) (local.get $bit)))
@@ -4713,36 +4716,62 @@
         (i32.eq (local.get $face) (i32.const 0xb57))) (then (call $gl_period_color))))
 
   (func $gl_period_push (param $frame i32)
-    (local $p i32) (local $b i32)
+    (local $p i32) (local $b i32) (local $mask i32) (local $fog i32)
     (memory.copy (i32.add (local.get $frame) (i32.const 72))
       (i32.add (global.get $gl_sw_st) (i32.const 4108)) (i32.const 16))
     (i32.store offset=88 (local.get $frame) (i32.const 0))
-    (if (i32.and (i32.load (local.get $frame)) (i32.const 64)) (then
-      (local.set $p (call $gl_list_alloc (i32.const 976)))
+    (local.set $mask (i32.load (local.get $frame)))
+    (if (i32.and (local.get $mask) (i32.const 0xc0)) (then
+      ;; Preserve the complete existing lighting image; fog appends its own
+      ;; 32-byte matrix state, index word and 20-byte raster state.
+      (local.set $fog (select (i32.const 976) (i32.const 0) (i32.and (local.get $mask) (i32.const 64))))
+      (local.set $p (call $gl_list_alloc (i32.add (local.get $fog)
+        (select (i32.const 56) (i32.const 0) (i32.and (local.get $mask) (i32.const 128))))))
       (if (i32.eqz (local.get $p)) (then (unreachable)))
       (local.set $b (call $gl_mtx_block))
-      (memory.copy (local.get $p) (i32.add (local.get $b) (i32.const 8352)) (i32.const 608))
-      (memory.copy (i32.add (local.get $p) (i32.const 608))
-        (i32.add (local.get $b) (i32.const 10832)) (i32.const 368))
+      (if (i32.and (local.get $mask) (i32.const 64)) (then
+        (memory.copy (local.get $p) (i32.add (local.get $b) (i32.const 8352)) (i32.const 608))
+        (memory.copy (i32.add (local.get $p) (i32.const 608))
+          (i32.add (local.get $b) (i32.const 10832)) (i32.const 368))))
+      (if (i32.and (local.get $mask) (i32.const 128)) (then
+        (local.set $fog (i32.add (local.get $p) (local.get $fog)))
+        (memory.copy (local.get $fog) (i32.add (local.get $b) (i32.const 8960)) (i32.const 32))
+        (i32.store offset=32 (local.get $fog) (i32.load offset=11200 (local.get $b)))
+        (i32.store offset=36 (local.get $fog) (global.get $gl_sw_fog_mode))
+        (f32.store offset=40 (local.get $fog) (global.get $gl_sw_fog_density))
+        (f32.store offset=44 (local.get $fog) (global.get $gl_sw_fog_start))
+        (f32.store offset=48 (local.get $fog) (global.get $gl_sw_fog_end))
+        (i32.store offset=52 (local.get $fog) (global.get $gl_sw_fog_color))))
       (i32.store offset=88 (local.get $frame) (local.get $p)))))
   (func $gl_period_pop (param $frame i32) (param $mask i32)
-    (local $p i32) (local $b i32)
+    (local $p i32) (local $b i32) (local $fog i32)
     (if (i32.and (local.get $mask) (i32.const 8)) (then
       (memory.copy (i32.add (global.get $gl_sw_st) (i32.const 4108))
         (i32.add (local.get $frame) (i32.const 72)) (i32.const 8))))
     (if (i32.and (local.get $mask) (i32.const 64)) (then
       (memory.copy (i32.add (global.get $gl_sw_st) (i32.const 4116))
-        (i32.add (local.get $frame) (i32.const 80)) (i32.const 8))
-      (local.set $p (i32.load offset=88 (local.get $frame)))
-      (if (local.get $p) (then
-        (local.set $b (call $gl_mtx_block))
+        (i32.add (local.get $frame) (i32.const 80)) (i32.const 8))))
+    (local.set $p (i32.load offset=88 (local.get $frame)))
+    (if (local.get $p) (then
+      (local.set $b (call $gl_mtx_block))
+      (if (i32.and (local.get $mask) (i32.const 64)) (then
         (memory.copy (i32.add (local.get $b) (i32.const 8352)) (local.get $p) (i32.const 608))
         (memory.copy (i32.add (local.get $b) (i32.const 10832))
-          (i32.add (local.get $p) (i32.const 608)) (i32.const 368))
-        (call $heap_free (call $w2g (local.get $p)))
-        (i32.store offset=88 (local.get $frame) (i32.const 0)))))))
+          (i32.add (local.get $p) (i32.const 608)) (i32.const 368))))
+      (if (i32.and (local.get $mask) (i32.const 128)) (then
+        (local.set $fog (i32.add (local.get $p)
+          (select (i32.const 976) (i32.const 0) (i32.and (local.get $mask) (i32.const 64)))))
+        (memory.copy (i32.add (local.get $b) (i32.const 8960)) (local.get $fog) (i32.const 32))
+        (i32.store offset=11200 (local.get $b) (i32.load offset=32 (local.get $fog)))
+        (global.set $gl_sw_fog_mode (i32.load offset=36 (local.get $fog)))
+        (global.set $gl_sw_fog_density (f32.load offset=40 (local.get $fog)))
+        (global.set $gl_sw_fog_start (f32.load offset=44 (local.get $fog)))
+        (global.set $gl_sw_fog_end (f32.load offset=48 (local.get $fog)))
+        (global.set $gl_sw_fog_color (i32.load offset=52 (local.get $fog)))))
+      (call $heap_free (call $w2g (local.get $p)))
+      (i32.store offset=88 (local.get $frame) (i32.const 0)))))
 
-  ;; Saved context frames own their lighting snapshots even when the context
+  ;; Saved context frames own their lighting/fog snapshots even when the context
   ;; is deleted with a nonempty server attribute stack.
   (func $gl_period_free_context (param $saved i32)
     (local $i i32) (local $frame i32) (local $p i32)
