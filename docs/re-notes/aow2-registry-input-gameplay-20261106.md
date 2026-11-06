@@ -79,3 +79,9 @@ demand and owning request terminal events, identifying why the verified Fetch
 later receives ERR_ABORTED. Do not weaken required-response collection or
 repeat the original without a separately authorized launch. World inspection,
 two ordinary army commands/points and earliest terrain producer remain open.
+
+Follow-up: [generated comctl terminal control](aow2-comctl-terminal-control-20261106.md)
+records successful direct native comctl demand, but the matched package graph
+hits an immutable required `Ml42ND50.bpl` cancellation before comctl. The
+original cancellation's cause remains unresolved; no original was repeated,
+no required fault was ignored, and gameplay remains gated.
