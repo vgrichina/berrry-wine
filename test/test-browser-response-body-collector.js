@@ -356,6 +356,42 @@ async function main() {
         await assert.rejects(worker(ctx, options)); assert(!ctx.collector.snapshot().complete);
         assert.equal(ctx.faults.length, 1);
       });
+    // Audio worklets emit their own ordinary Script request/response/finish
+    // chain. They may use the same exact capability check, but may never use
+    // the dedicated Worker's special parent-bound startup identity.
+    for (const mode of ['positive', 'missing-body', 'detach', 'cancel', 'orphan',
+      'denied', 'not-paused', 'same-url']) await run('Worklet-Network-' + mode, async ctx => {
+      const options = {identity: {type: 'worklet', ...(mode === 'not-paused' ? {waitingForDebugger: false} : {})},
+        ...(mode === 'denied' ? {fetchError: protocolError('permission denied', -32000)} : {})};
+      if (mode === 'denied' || mode === 'not-paused') {
+        await assert.rejects(worker(ctx, options)); assert.equal(ctx.faults.length, 1); return;
+      }
+      const w = await worker(ctx, options);
+      w.bodies.set('n', mode === 'missing-body' ? protocolError('No resource with given identifier found') :
+        ['detach', 'cancel'].includes(mode) ? () => new Promise(() => {}) : body);
+      if (mode !== 'orphan') w.request('n', {type: 'Script'});
+      w.response('n', {type: 'Script'});
+      w.emit('Network.loadingFinished', {requestId: 'n'});
+      if (mode === 'same-url') {
+        w.bodies.set('other', Buffer.from('distinct worklet response'));
+        w.request('other', {type: 'Script'}); w.response('other', {type: 'Script'});
+        w.emit('Network.loadingFinished', {requestId: 'other'});
+      }
+      await tick();
+      if (mode === 'detach') w.emit(DISCONNECT);
+      if (mode === 'cancel') ctx.collector.close('worklet cancellation');
+      if (mode === 'positive' || mode === 'same-url') {
+        await ctx.collector.drain(); assert(ctx.collector.snapshot().complete);
+        assert(ctx.received.every(r => r.identity.type === 'worklet' && r.identity.startupBinding === null));
+        assert.equal(ctx.received.length, mode === 'same-url' ? 2 : 1);
+        if (mode === 'same-url') assert.notDeepEqual(ctx.received[0].body, ctx.received[1].body);
+      } else {
+        await assert.rejects(ctx.collector.drain()); assert(!ctx.collector.snapshot().complete);
+        if (mode !== 'cancel') assert.equal(ctx.faults.length, 1);
+        if (mode === 'missing-body') for (const key of ['url', 'method', 'status', 'requestId', 'targetId', 'sessionId'])
+          assert.notEqual(ctx.faults[0][key], undefined, 'failed worklet body retains ' + key);
+      }
+    });
     console.log('PASS ' + passed + ' synthetic CDP lifecycle cases; real local FS/HTTP bytes; ZERO Chrome');
   } finally { server.closeIdleConnections?.(); await closeServer(server); }
 }

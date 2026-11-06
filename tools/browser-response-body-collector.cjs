@@ -1,7 +1,7 @@
 'use strict';
 
 // Browser response bytes only. Fetch captures page responses while paused.
-// Workers lacking Fetch use a capability-checked owning Network session;
+// Workers/worklets lacking Fetch use a capability-checked owning Network session;
 // failed body reads never select another channel or re-fetch a resource.
 const {createHash} = require('crypto');
 const assert = require('assert/strict');
@@ -306,7 +306,7 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
         // Puppeteer 25 preserves originalMessage but drops the numeric CDP
         // code. Require the exact protocol/method error, never substring-match
         // a timeout, denial, detach or failed body read into another channel.
-        assert(identity.type === 'worker' && identity.waitingForDebugger === true &&
+        assert(['worker', 'worklet'].includes(identity.type) && identity.waitingForDebugger === true &&
           error.name === 'ProtocolError' && error.originalMessage === "'Fetch.enable' wasn't found" &&
           (error.code === undefined || error.code === -32601), String(error));
         record({source: 'CDP.capability', ...identity, method: 'Fetch.enable',
