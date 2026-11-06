@@ -50,6 +50,48 @@ Gameplay (`Play Sid Meier's Pirates!`), audio, the WebGL arm at this build.
 `ole32.dll` is absent from this box's `test/binaries/dlls`, so the Miles
 providers' ole32 imports fall to WAT stubs.
 
+## Fixture, original disc EXE and early bring-up facts (2026-10-01)
+
+(Recovered from branch `archive/shared-tree-presync-20261011`, Oct 2026.)
+
+- **Two sources.** Default payload is the archive.org "Sid Meiers Pirates PC
+  Windows ISO" (a community Inno repack with GOG metadata, not an authenticated
+  GOG installer); `digital/app/Pirates!.exe` is 3,323,288 bytes, v1.0.2.0
+  (30927), entry `0x005f09ac`. The recipe also keeps the UK `PIRATES.iso` (a
+  later Sold Out DVD reissue), whose `Pirates!.exe` (4,712,406 bytes) is
+  disc-protected (below). `node tools/fetch-candidate-corpus.js --id=pirates-2004
+  --prepare` needs `7z` and `innoextract`; the DVD's three MSZip cabs are laid
+  out from the MSI File/Component/Directory tables by `tools/msi-file-layout.js`
+  (cab member names are GUIDs), VC7.1 runtimes staged app-local, no custom
+  actions run. The DVD's `directx/DirectX.cab` supplies the genuine `dxdiagn.dll`.
+- **Config.** The game derives its profile folder from the EXE directory (the
+  VFS root here), so the profile lives at `c:\My Documents\My Games\c:\Config.ini`.
+  Fully disabling shaders exposes fixed-function specular lighting, so the local
+  profile keeps normal shaders with minimum water/world detail.
+- **Startup requirements.** Load the bundled `msvcr71.dll`/`msvcp71.dll`
+  (emulated CRT `setlocale` is not enough). DxDiag COM use is at `0x004ace40`
+  (CLSID `{A65B8071-3BFE-4213-9A5B-491DA4461CA7}`), real DLL registered as
+  InprocServer32; the app-local DirectX version must be `4.09.00.0904` (the Win98
+  default `4.07.00.0700` makes it report too old).
+- **StretchRect.** Default graphics, while sailing, calls Device9 vtable `+0x88`
+  (StretchRect) at `0x0050bdc0` (block `0x0050bdaf`) with rectangles and
+  `D3DTEXF_LINEAR`; it needs rect + filtered copies (now `$d3d9_stretch_rect` in
+  `09am-d3d-color.wat`).
+- **Threads.** Startup creates ~134 threads, mostly short-lived workers at
+  `0x00afa4f6` that ExitThread; Workers must be retired after the slice reply
+  or they leak. The Miles thread starts at `0x010bd4d0`.
+- **Ruled out: texture cache thrash.** At the tavern, 32/128/32 MB budgets all
+  uploaded zero texture bytes in steady state; the earlier hundreds of MB were
+  scene loading. The 32 MB budget stays.
+- **Original disc EXE (protection wrapper).** Entry `0x008f906e`, base
+  `0x00400000`; the wrapper resolves kernel APIs from `0x008f7f75` and needs
+  `WriteProcessMemory` (implemented, current process only; writes 64-byte blocks
+  from the temp module at `0x00eb9a82`). On Win98 it extracts/loads
+  `~df394b.tmp` and traps at `0x00e5f11e` on `SIDT [ebp-0x3c]` (`0f 01 4d c4`)
+  next to CLI/STI descriptor code. With `--winver=win2k` it extracts
+  `SECDRV.SYS`, fails to open `\\.\Global\SecDrv` and `\\.\SecDrv`, and exits 1.
+  The kernel driver is not hostable; use the digital EXE.
+
 ## TG77 cooperative thread attach (2026-10-14, unresolved)
 
 Safari reported `DllMain did not complete` for module `0x9f1000`, reason 2,
