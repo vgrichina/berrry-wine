@@ -59,6 +59,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Bricks I | [bricks.md](bricks.md) |
 | Civilization II: Multiplayer Gold Edition (Indeo 4 movies, headless Indeo install) | [civilization-2-mge.md](civilization-2-mge.md) |
 | DX-Ball | [dxball.md](dxball.md) |
+| Enigma 1.01 (SDL + Lua; unregistered; UPX-unpacked route, provider order, open Start Game click blocker) | [enigma.md](enigma.md) |
 | Diablo pre-release demo (1996) | [diablo-demo.md](diablo-demo.md) |
 | Diablo II Shareware demo | [diablo2-demo.md](diablo2-demo.md) |
 | Diablo Shareware | [diablo-shareware.md](diablo-shareware.md) |
@@ -234,6 +235,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Jedi Knight: Dark Forces II demo (start with jedi-status; preflight, installer, licence, layout, components input, renderer input, DirectX predicate, alternate recovery) | [jedi-status-20261021.md](jedi-status-20261021.md), [jedi-knight-demo.md](jedi-knight-demo.md), [jedi-knight-installer-handoff.md](jedi-knight-installer-handoff.md), [jedi-original-accept-launch-20261020.md](jedi-original-accept-launch-20261020.md), [jedi-original-layout-install-20261021.md](jedi-original-layout-install-20261021.md), [jedi-components-input-fix-20261020.md](jedi-components-input-fix-20261020.md), [jedi-input-review-integrate-20261020.md](jedi-input-review-integrate-20261020.md), [jedi-directx-predicate-20261021.md](jedi-directx-predicate-20261021.md), [jedi-original-alternate-recovery-20261021.md](jedi-original-alternate-recovery-20261021.md) |
 | JezzBall (WEP4) | [jezzball.md](jezzball.md) |
 | .kkrieger Chapter I beta | [kkrieger-beta.md](kkrieger-beta.md) |
+| Kobo Deluxe 0.5.1 (not acquired: upstream 403) | [kobo-deluxe.md](kobo-deluxe.md) |
 | LBreakout2 2.5.1 | [lbreakout2-251.md](lbreakout2-251.md) |
 | LMarbles 1.0.8 | [lmarbles-first-launch.md](lmarbles-first-launch.md) |
 | Lords of the Realm II demo | [lords2-demo.md](lords2-demo.md) |
