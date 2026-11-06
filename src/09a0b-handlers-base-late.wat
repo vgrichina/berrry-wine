@@ -1181,7 +1181,14 @@
   ;; authoritative arena base and follow each extent until the requested
   ;; header is reached. Return its aligned size (including the header), or zero
   ;; for an interior, unmapped, malformed, or stale pointer.
+  ;; Per-instance work counter used only by pressure compaction. The
+  ;; validator makes no callbacks and cannot reenter the allocator.
+  (global $heap_compact_work (mut i32) (i32.const 0))
   (func $heap_validate_exact_block (param $guest_ptr i32) (result i32)
+    (call $heap_validate_exact_block_work (local.get $guest_ptr) (i32.const 0)))
+
+  (func $heap_validate_exact_block_work (param $guest_ptr i32)
+      (param $limited i32) (result i32)
     (local $block i32) (local $rec i32) (local $cur i32)
     (local $allocated_end i32) (local $reserved_end i32)
     (local $wa i32) (local $raw i32) (local $size i32) (local $next i32)
@@ -1196,8 +1203,20 @@
     (local.set $reserved_end (i32.load offset=4 (local.get $rec)))
     (local.set $allocated_end (i32.atomic.load offset=8 (local.get $rec)))
     (block $invalid (loop $walk
+      (if (local.get $limited)
+        (then
+          (if (i32.eqz (global.get $heap_compact_work))
+            (then (return (i32.const 0))))
+          (global.set $heap_compact_work
+            (i32.sub (global.get $heap_compact_work) (i32.const 1)))))
       (br_if $invalid (i32.ge_u (local.get $cur) (local.get $allocated_end)))
       (br_if $invalid (i32.gt_u (local.get $cur) (local.get $block)))
+      ;; Pressure recovery must never invoke a guest pager (and thereby
+      ;; recursively allocate) while validating allocator metadata.
+      (if (local.get $limited)
+        (then
+          (if (i32.eqz (call $guest_addr_mapped (local.get $cur)))
+            (then (return (i32.const 0))))))
       (local.set $wa (call $g2w (local.get $cur)))
       (local.set $raw (i32.atomic.load (local.get $wa)))
       ;; Bit zero is GlobalAlloc's live tag; bits 1..2 are always malformed.
@@ -1400,14 +1419,59 @@
   ;; bits. This is O(29*n), bounded, allocation-free, and makes adjacent arena
   ;; extents neighbors without an O(n^2) pair search. A final linear pass joins
   ;; consecutive extents only when both belong to the same allocator arena.
+  ;; Validate bin links and exact tail identity before pressure flushing can
+  ;; write through those guest-writable links. No list mutation on refusal.
+  (func $heap_compact_bins_valid (result i32)
+    (local $i i32) (local $cur i32) (local $tail i32) (local $last i32)
+    (local $size i32) (local $count i32) (local $v i64)
+    (loop $bins
+      (local.set $v (call $heap_bin_get (local.get $i)))
+      (local.set $cur (i32.wrap_i64 (local.get $v)))
+      (local.set $tail (i32.wrap_i64 (i64.shr_u (local.get $v) (i64.const 32))))
+      (local.set $last (i32.const 0))
+      (local.set $size (i32.shl (i32.add (local.get $i) (i32.const 2)) (i32.const 3)))
+      (block $checked (loop $links
+        (br_if $checked (i32.eqz (local.get $cur)))
+        (local.set $count (i32.add (local.get $count) (i32.const 1)))
+        (if (i32.gt_u (local.get $count) (i32.const 65536))
+          (then (return (i32.const 0))))
+        (if (i32.ne
+              (call $heap_validate_exact_block_work
+                (i32.add (local.get $cur) (i32.const 4)) (i32.const 1))
+              (local.get $size))
+          (then (return (i32.const 0))))
+        (if (i32.ne (i32.atomic.load (call $g2w (local.get $cur))) (local.get $size))
+          (then (return (i32.const 0))))
+        (local.set $last (local.get $cur))
+        (local.set $cur (i32.load offset=4 (call $g2w (local.get $cur))))
+        (br $links)))
+      (if (i32.ne (local.get $last) (local.get $tail))
+        (then (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $bins (i32.lt_u (local.get $i) (global.get $HEAP_BIN_COUNT))))
+    (i32.const 1))
+
   (func $heap_compact_free_list (result i32)
+    (call $heap_compact_free_list_bounded (i32.const 0)))
+
+  ;; Zero retains the public API's validation policy. Pressure callers supply
+  ;; a shared header-visit budget: long arena walks cannot multiply unchecked
+  ;; by the number of free nodes. No heap allocation or host call is made.
+  (func $heap_compact_free_list_bounded (param $budget i32) (result i32)
     (local $cur i32) (local $next i32) (local $size i32)
     (local $count i32) (local $bit i32) (local $mask i32)
     (local $head0 i32) (local $tail0 i32)
     (local $head1 i32) (local $tail1 i32)
-    (local $largest i32)
+    (local $largest i32) (local $rec i32)
     ;; Validate exact block boundaries, untagged free extents, and a finite
     ;; list before any link is rewritten. The count cap also rejects cycles.
+    (global.set $heap_compact_work (local.get $budget))
+    ;; The existing flush writes each bin tail. In pressure mode validate all
+    ;; bin chains/tails before that write, sharing the same bounded work pool.
+    (if (local.get $budget)
+      (then
+        (if (i32.eqz (call $heap_compact_bins_valid))
+          (then (return (i32.const -1))))))
     (call $heap_bins_flush)
     (local.set $cur (global.get $free_list))
     (block $valid (loop $check
@@ -1415,14 +1479,15 @@
       (local.set $count (i32.add (local.get $count) (i32.const 1)))
       (if (i32.gt_u (local.get $count) (i32.const 65536))
         (then (return (i32.const -1))))
-      (local.set $size (call $heap_validate_exact_block
-        (i32.add (local.get $cur) (i32.const 4))))
-      (if (i32.or
-            (i32.eqz (local.get $size))
-            (i32.ne
-              (i32.and (i32.atomic.load (call $g2w (local.get $cur)))
-                (i32.const 7))
-              (i32.const 0)))
+      (local.set $size (call $heap_validate_exact_block_work
+        (i32.add (local.get $cur) (i32.const 4))
+        (i32.ne (local.get $budget) (i32.const 0))))
+      (if (i32.eqz (local.get $size))
+        (then (return (i32.const -1))))
+      (if (i32.ne
+            (i32.and (i32.atomic.load (call $g2w (local.get $cur)))
+              (i32.const 7))
+            (i32.const 0))
         (then (return (i32.const -1))))
       (local.set $cur
         (i32.load offset=4 (call $g2w (local.get $cur))))
@@ -1477,7 +1542,7 @@
       (local.set $size (i32.atomic.load (call $g2w (local.get $cur))))
       (local.set $next
         (i32.load offset=4 (call $g2w (local.get $cur))))
-      (if (i32.and
+      (block $keep (if (i32.and
             (i32.ne (local.get $next) (i32.const 0))
             (i32.and
               (i32.eq (call $heap_arena_find (local.get $cur))
@@ -1485,12 +1550,29 @@
               (i32.eq (i32.add (local.get $cur) (local.get $size))
                       (local.get $next))))
         (then
+          ;; A peer's arena releaser recognizes dedicated large arenas by a
+          ;; whole-range free header. Do not manufacture that shape from an
+          ;; ordinary carved sparse arena: its private list cannot be purged
+          ;; by the peer. Keeping the final two extents separate preserves the
+          ;; arena's identity while still recovering partial free runs.
+          (if (local.get $budget)
+            (then
+              (local.set $rec (call $heap_arena_find (local.get $cur)))
+              (if (i32.and
+                    (i32.ge_u (local.get $cur) (call $virtual_alloc_min))
+                    (i32.and
+                      (i32.eq (local.get $cur) (i32.atomic.load (local.get $rec)))
+                      (i32.eq
+                        (i32.add (local.get $next)
+                          (i32.atomic.load (call $g2w (local.get $next))))
+                        (i32.load offset=4 (local.get $rec)))))
+                (then (br $keep)))))
           (i32.store (call $g2w (local.get $cur))
             (i32.add (local.get $size)
               (i32.atomic.load (call $g2w (local.get $next)))))
           (i32.store offset=4 (call $g2w (local.get $cur))
             (i32.load offset=4 (call $g2w (local.get $next))))
-          (br $merge)))
+          (br $merge))))
       ;; The 4-byte header is not caller-usable space.
       (if (i32.gt_u (i32.sub (local.get $size) (i32.const 4))
                     (local.get $largest))
