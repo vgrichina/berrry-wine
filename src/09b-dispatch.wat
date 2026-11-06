@@ -326,6 +326,36 @@
     ;; marker, candidate, then that same saved pair.
     (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0001))
       (then
+        ;; Explicit ShowWindow's WM_SHOWWINDOW returned. Restore its original
+        ;; API frame and finish visibility/activation exactly once.
+        (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+        ;; USER also accepts legacy cdecl callbacks, which leave the four
+        ;; message arguments above our owned frame. Authenticate the message
+        ;; and retained HWND before normalizing that alternative return shape.
+        (if (i32.and
+              (i32.eq (call $gl32 (i32.add (local.get $esp) (i32.const 16))) (i32.const 0x53574E44))
+              (i32.and
+                (i32.eq (call $gl32 (i32.add (local.get $esp) (i32.const 4))) (i32.const 0x18))
+                (i32.eq (call $gl32 (local.get $esp))
+                  (call $gl32 (i32.add (local.get $esp) (i32.const 20))))))
+          (then
+            (local.set $esp (i32.add (local.get $esp) (i32.const 16)))
+            (i32.store offset=16 (global.get $reg_base) (local.get $esp))))
+        (if (i32.eq (call $gl32 (local.get $esp)) (i32.const 0x53574E44)) ;; SWND
+          (then
+            (local.set $arg0 (call $gl32 (i32.add (local.get $esp) (i32.const 4))))
+            (local.set $arg1 (call $gl32 (i32.add (local.get $esp) (i32.const 8))))
+            (local.set $arg2 (call $gl32 (i32.add (local.get $esp) (i32.const 12))))
+            (local.set $arg3 (call $gl32 (i32.add (local.get $esp) (i32.const 16))))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 20)))
+            (global.set $eip (call $gl32 (i32.add (local.get $esp) (i32.const 20))))
+            (if (call $show_window_core (local.get $arg0) (local.get $arg1)
+                  (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)
+                  (local.get $arg2) (i32.or (i32.const 1) (i32.shl (local.get $arg3) (i32.const 1))))
+              (then
+                (i32.store offset=16 (global.get $reg_base)
+                  (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))))
+            (return)))
         ;; The implicit show callback owns this marker on its guest stack.
         ;; It can yield or create nested windows without losing its target.
         (if (i32.eq (call $gl32 (i32.load offset=16 (global.get $reg_base))) (i32.const 0x43534857)) ;; "CSHW"

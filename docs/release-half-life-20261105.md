@@ -1,6 +1,7 @@
 # Half-Life release preparation, 2026-11-05
 
-Status: branch prepared; **not release-qualified or deployed**.
+Status: release build and packaging checks passed; deployment authorized with the
+remaining gameplay verification recorded below.
 
 Branch `release/2026-11-05-half-life` starts at
 `c84edcd8db6f7d55de822e4c395ff8eb1fa12a0d`, the committed Half-Life
@@ -20,9 +21,9 @@ Ignored binary/dependency assets were linked with
 - The x87 dispatch experiment remains reverted. Its benchmark results are
   diagnostic evidence, not a release optimization.
 
-The dirty ShowWindow/startup candidate in
-`/private/tmp/wine-uplink-startup-20261030` is deliberately excluded. Its WAT,
-tests and ownership census are preserved there. The latest performance notes,
+The ShowWindow/startup candidate from
+`/private/tmp/wine-uplink-startup-20261030` is now being qualified with a renderer
+owned-popup ordering fix. The original dirty checkout is preserved. The latest performance notes,
 including CPU profiles, hot-loop investigation, reverted x87 dispatch experiment
 and the inconclusive wasm3 microbenchmark, are included in this branch.
 
@@ -56,39 +57,56 @@ invented manifest is substituted. Manifest SHA-256:
 `node test/test-deploy-build-outputs.js` now passes; the retail exclusion test
 also passes with the restored fixture (1,304 release assets).
 An existence audit of all 1,304 registry-derived assets reports no missing
-files. Native and compatibility WASM outputs are still absent until the final
-clean build; the asset checks alone do not qualify a deployable package.
-The complete offline dry-run command
-`BERRRY_KEY=offline-dry-run node tools/deploy-berrry.js --dry-run` generated
-static pages and collected the demo assets (including eight Uplink PAK parts),
-then correctly stopped at the absent `build/wine-assembly.wasm`. There were no
-`MISSING` asset warnings. The original log is
-`/private/tmp/wine-release-20261105-packaging-dry-run.log`; rerun after the
-clean native/compat build to finish qualification. Quake III deployment asset
-regressions also pass. No upload or network credential was used.
+files. The final offline dry run passes: **2,744 files considered**, including
+both WASM builds and eight Uplink PAK parts. Log:
+`/private/tmp/wine-release-20261105-final-dry-run.log`.
 
-## Required before cutting the release
+## Final build and startup checks
 
-1. Resolve the intro geometry decision. The committed base still exposes the
-   small/offset intro backdrop. The dirty candidate fixes that visually but
-   fails Video Modes navigation after dismissing driver advice. Do not include
-   it until both normal startup and mode navigation pass in the same build.
-2. Build native and compatibility WASM from the final clean branch, together
-   with the generated region mirror; retain their hashes. **Do not copy the
-   latest dev-server module `13e7c0acf67521ac91fb8462896c80b1cdfc3ac98c527398272a4186e9a08650`:**
-   it includes the excluded dirty startup candidate and is not this commit's
-   reproducible artifact.
-3. Requalify that exact final artifact in visible Chrome: normal intro/main
-   menu, visible pointer, New Game, textured gameplay/HUD, pause/resume,
-   resolution changes and repeated Software/OpenGL/Direct3D switches. Earlier
-   committed-module switching passed (`20261103-uplink-switch-review`), but
-   cannot qualify a different final binary. Safari is explicitly skipped.
-4. Complete build/deployment asset gates and a full dry run with original
-   readme and split PAK parts retained. Record exact final artifact identities,
-   selected scope and known limitations before any publication.
+Built from this release source with `bash tools/build.sh`:
 
-No new browser run, build, push or deployment was performed during branch
-preparation, to avoid competing with the wasm3 microbenchmark. Existing FPS
-results are host-contention-sensitive; neither this branch nor its checklist
-establishes a new FPS gain. See [Half-Life investigation notes](re-notes/half-life-uplink.md)
-for reviewed runs and detailed limitations.
+- Native WASM: `999a42bfe60981e6e40cb1f41d7f1b9676229eeb5552849fc7d58e521cd57e22`.
+- Compatibility WASM: `5c263f5d9477ed64c49bacadbbbd11c4884f987178433c8ad17f6ff7af4e5084`.
+- Region layout: `624d2388f3d5dc0b`.
+- Region mirror SHA-256: `d1536918090e3f535393296e9b51787745c7e7af6d046756e4d8e74dfda8551f`.
+
+Hidden indirect dialogs retain their template visibility. Explicit ShowWindow
+delivers WM_SHOWWINDOW before visibility/activation using an invocation-owned
+guest frame. Its continuation handles stdcall and authenticated legacy cdecl
+returns. Showing an owned popup promotes its subtree above sibling popups,
+while raising only the owner preserves sibling order.
+
+Fresh visible Chrome diagnosis `20261105-uplink-startup-resolution` confirmed
+the mode dialog was visible but covered by Video (shared owner65566,
+mode65586 z1078, Video65579 z1079). The fixed release build exposes the mode
+controls after advice OK in cooperative and isolated Worker modes:
+`20261105-uplink-release-qualification` and
+`20261105-uplink-release-worker`. Intro and main menu were captured;
+the cooperative native screen capture shows the pointer in Video Modes.
+
+Focused owner/modal/letterbox tests and startup continuation, async show,
+secondary/child sizing, dialog promotion and owned-form activation regressions
+pass. Paint Attributes passes unchanged with WINE_ASSEMBLY_WASM pinned to the
+final native build; earlier 120-second failures were automatic compilation
+timeouts. The callback census and build gates pass.
+
+## Remaining verification and known limitation
+
+- Finish New Game, textured gameplay/HUD, pause/resume, resolution changes and
+  repeated Software/OpenGL/Direct3D switches on this exact artifact. Earlier
+  committed-module switching passed (`20261103-uplink-switch-review`).
+  The latest scripted navigation accidentally opened Content Control;
+  it does not qualify gameplay. One earlier Worker attempt accidentally
+  selected Quit and was relaunched; this was test input, not a crash.
+- `test-callwindowproc-dialog-modal.js` traps on a legacy cdecl callback
+  during synchronous activation. The same failure was reproduced on an
+  isolated clean baseline `f2c5ff493`; it is not introduced by this release.
+  Log: `/private/tmp/wine-uplink-cdecl-baseline-20261105.log`.
+- Safari is explicitly skipped. Compatibility WASM was built and validated,
+  but this round of visible Chrome tests loaded the native artifact.
+- No new FPS claim is made; existing measurements are sensitive to host load.
+
+The user authorized committing and deploying with these remaining checks
+explicit, then merging into origin/main and continuing verification.
+See [Half-Life investigation notes](re-notes/half-life-uplink.md) for the
+completed CPU, hot-loop, x87 and wasm3 investigations.

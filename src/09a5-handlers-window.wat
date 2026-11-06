@@ -933,6 +933,9 @@
   ;; is still only an invisible framework helper.  CACA0001 delivers the
   ;; ordinary implicit-show activation sequence after WM_INITDIALOG returns.
   (func $created_dialog_promote_app_main (param $hwnd i32) (param $dlgproc i32)
+    ;; A hidden modeless dialog is not an implicit ShowWindow operation.
+    (if (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000)))
+      (then (return)))
     (if (i32.and
           (i32.and
             (i32.and
@@ -994,14 +997,6 @@
   (func $handle_CreateDialogParamA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $ret_addr i32) (local $hwnd i32) (local $dlg_wndproc i32)
     (local $ctrl_count i32) (local $i i32) (local $ctrl_hwnd i32) (local $dlg_rec i32)
-    (local $from_indirect i32)
-    ;; $dlg_load consumes $dlg_indirect_template_ptr, so snapshot it here: it
-    ;; is the only thing that separates an in-memory template
-    ;; (CreateDialogIndirectParam*, which is what MFC's modal path builds)
-    ;; from a plain resource-id CreateDialogParam*. The force-visible block
-    ;; below needs that distinction.
-    (local.set $from_indirect
-      (i32.ne (global.get $dlg_indirect_template_ptr) (i32.const 0)))
     ;; Allocate HWND from next_hwnd
     (local.set $hwnd (global.get $next_hwnd))
     (global.set $next_hwnd (i32.add (global.get $next_hwnd) (i32.const 1)))
@@ -1084,31 +1079,9 @@
     ;; Owner-relative template placement / DS_CENTER — see
     ;; $dlg_place_owner_relative and the matching call in $handle_DialogBoxParamA.
     (call $dlg_place_owner_relative (local.get $hwnd))
-    ;; Top-level dialogs created through MFC's modal path can arrive through
-    ;; CreateDialogIndirectParam without a later explicit ShowWindow call.
-    ;; A hidden top-level dialog then traps the app in an invisible modal loop.
-    ;; Child dialog pages remain hidden until their container shows them.
-    ;; Restricted to the indirect (in-memory template) entry: a plain
-    ;; CreateDialogParamA on a resource id is the ordinary modeless API, and an
-    ;; app that creates such a dialog without WS_VISIBLE means it. SimCity
-    ;; 2000 builds its Graph/Population/City Map/SimNation panels that way at
-    ;; startup and shows them from its View menu; force-showing them put four
-    ;; opaque panels over the city view on every launch.
-    (if (i32.and
-          (local.get $from_indirect)
-          (i32.and
-            (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x40000000)))
-            (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000)))))
-      (then
-        (drop (call $wnd_set_style (local.get $hwnd)
-          (i32.or (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000))))
-        (drop (call $host_show_window (local.get $hwnd) (i32.const 5)))
-        ;; This stands in for the ShowWindow(SW_SHOWNORMAL) MFC's modal loop
-        ;; would otherwise make (it skips it once WS_VISIBLE is set), so it
-        ;; activates the dialog as that call would: Paint's Attributes dialog
-        ;; drew an inactive title bar once activation stopped following
-        ;; z-order (aba07804c).
-        (call $show_window_activate_top_level (local.get $hwnd) (i32.const 5))))
+    ;; Indirect templates have the same visibility contract as resource
+    ;; templates. In particular, MFC owns the later show from its modal loop;
+    ;; exposing a hidden dialog here displays unfinished WM_INITDIALOG work.
     ;; Populate WAT CLIENT_RECT from the same non-client metrics used for
     ;; painting. Coordinate conversion APIs depend on this for child pages
     ;; hosted inside dialog client areas.
@@ -1346,31 +1319,40 @@
   ;; 71: ShowWindow
   (func $handle_ShowWindow (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (if (call $show_window_core (local.get $arg0) (local.get $arg1)
-          (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr) (i32.const 0))
+          (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr) (i32.const 0) (i32.const 0))
       (then
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))))
+
+  ;; Result convention: 0 ShowWindow visibility, 1 placement success,
+  ;; 2 private ShowWindowAsync DispatchMessage result. Keep it across callbacks.
+  (func $show_window_result (param $kind i32) (param $visible i32) (result i32)
+    (select (i32.eq (local.get $kind) (i32.const 1)) (local.get $visible) (local.get $kind)))
 
   ;; Placement shares the show operation, but its BOOL means success rather
   ;; than prior visibility. Carry that return convention into the owned
   ;; startup continuation frame; an EAX write before the callback is lost.
   ;; Returns 1 for ordinary caller cleanup, 0 if a continuation owns the frame.
-  (func $show_window_core (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32) (param $placement i32) (result i32)
+  (func $show_window_core (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32) (param $placement i32) (param $notified i32) (result i32)
     (local $packed i32) (local $wndproc i32) (local $app_wndproc i32)
     (local $client_size i32)
     (local $was_visible i32)
     (local $was_zoomed i32)
     (local $rect i32)
+    (local $frame i32)
     (if (i32.or (i32.eqz (local.get $arg0))
           (i32.lt_s (call $wnd_table_find (local.get $arg0)) (i32.const 0)))
       (then
         (global.set $last_error (i32.const 1400))
         (i32.store (global.get $reg_base) (i32.const 0))
         (return (i32.const 1))))
-    (local.set $arg1 (call $startup_show_select
-      (call $wnd_get_style (local.get $arg0)) (call $wnd_get_owner (local.get $arg0)) (local.get $arg1)))
-    (local.set $was_visible (i32.ne
-      (i32.and (call $wnd_get_style (local.get $arg0)) (i32.const 0x10000000))
-      (i32.const 0)))
+    (if (local.get $notified)
+      (then (local.set $was_visible (i32.shr_u (local.get $notified) (i32.const 1))))
+      (else
+        (local.set $arg1 (call $startup_show_select
+          (call $wnd_get_style (local.get $arg0)) (call $wnd_get_owner (local.get $arg0)) (local.get $arg1)))
+        (local.set $was_visible (i32.ne
+          (i32.and (call $wnd_get_style (local.get $arg0)) (i32.const 0x10000000))
+          (i32.const 0)))))
     ;; Visible, maximized and not iconic: SW_SHOWMAXIMIZED changes nothing
     ;; (Wine WINPOS_MinMaximize answers SWP_NOSIZE|SWP_NOMOVE), so no WM_SIZE.
     (local.set $was_zoomed (i32.and (local.get $was_visible)
@@ -1380,11 +1362,36 @@
     ;; the host toggles visibility, so wndprocs can observe the transition.
     ;; Only a visibility change sends it (Wine show_window: show != was_visible);
     ;; a wndproc that re-shows its visible window must not get another one.
-    (if (i32.ne (i32.ne (local.get $arg1) (i32.const 0)) (local.get $was_visible))
+    (if (i32.and (i32.eqz (local.get $notified))
+          (i32.ne (i32.ne (local.get $arg1) (i32.const 0)) (local.get $was_visible)))
       (then
-        (drop (call $post_queue_push
-                (local.get $arg0) (i32.const 0x0018)
-                (i32.ne (local.get $arg1) (i32.const 0)) (i32.const 0)))))
+        ;; WM_SHOWWINDOW is sent, not posted. Its resources must be ready
+        ;; before activation/UpdateWindow paint. A guest-stack continuation
+        ;; keeps the invocation alive across lazy-file yields and nested shows.
+        (local.set $wndproc (call $wnd_table_get (local.get $arg0)))
+        (if (i32.eq (local.get $wndproc) (global.get $WNDPROC_DIALOG))
+          (then (local.set $wndproc (call $dialog_proc_get (local.get $arg0)))))
+        (if (i32.and (i32.and (i32.ne (local.get $wndproc) (i32.const 0))
+                (i32.ne (local.get $wndproc) (global.get $WNDPROC_BUILTIN)))
+              (i32.lt_u (local.get $wndproc) (i32.const 0xFFFF0000)))
+          (then
+            (local.set $frame (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 40)))
+            (call $gs32 (local.get $frame) (global.get $createwnd_ret_thunk))
+            (call $gs32 (i32.add (local.get $frame) (i32.const 4)) (local.get $arg0))
+            (call $gs32 (i32.add (local.get $frame) (i32.const 8)) (i32.const 0x18))
+            (call $gs32 (i32.add (local.get $frame) (i32.const 12)) (i32.ne (local.get $arg1) (i32.const 0)))
+            (call $gs32 (i32.add (local.get $frame) (i32.const 16)) (i32.const 0))
+            (call $gs32 (i32.add (local.get $frame) (i32.const 20)) (i32.const 0x53574E44)) ;; SWND
+            (call $gs32 (i32.add (local.get $frame) (i32.const 24)) (local.get $arg0))
+            (call $gs32 (i32.add (local.get $frame) (i32.const 28)) (local.get $arg1))
+            (call $gs32 (i32.add (local.get $frame) (i32.const 32)) (local.get $placement))
+            (call $gs32 (i32.add (local.get $frame) (i32.const 36)) (local.get $was_visible))
+            (i32.store offset=16 (global.get $reg_base) (local.get $frame))
+            (global.set $eip (local.get $wndproc))
+            (global.set $steps (i32.const 0))
+            (return (i32.const 0))))
+        (drop (call $wnd_send_message (local.get $arg0) (i32.const 0x18)
+          (i32.ne (local.get $arg1) (i32.const 0)) (i32.const 0)))))
     (local.set $client_size (call $host_show_window (local.get $arg0) (local.get $arg1)))
     ;; Record the minimized/maximized state the command asks for. The renderer
     ;; keeps its own copy for compositing; this is the one the guest reads back
@@ -1599,7 +1606,8 @@
             (global.set $paint_pending (i32.const 1))
             (call $nc_flags_set (global.get $main_hwnd) (i32.const 4))
             (call $invalidate_hwnd (global.get $main_hwnd))
-            (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+            (i32.store offset=0 (global.get $reg_base)
+              (call $show_window_result (local.get $placement) (local.get $was_visible)))
             (return (i32.const 1))))
         (if (i32.and (i32.ne (local.get $wndproc) (i32.const 0))
                      (i32.lt_u (local.get $wndproc) (i32.const 0xFFFF0000)))
@@ -1626,11 +1634,11 @@
             ;; for CACA0001 to pop at end of chain.
             (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
             (call $gs32 (i32.load offset=16 (global.get $reg_base))
-              (select (i32.const 1) (local.get $was_visible) (local.get $placement)))
+              (call $show_window_result (local.get $placement) (local.get $was_visible)))
             (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
             (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $packed))
             (global.set $createwnd_saved_hwnd
-              (select (i32.const 1) (local.get $was_visible) (local.get $placement)))
+              (call $show_window_result (local.get $placement) (local.get $was_visible)))
             (global.set $createwnd_saved_ret (local.get $packed))
             ;; The activation callbacks can create/promote another main HWND
             ;; or destroy this one. Keep this chain's target on its own frame.
@@ -1715,7 +1723,8 @@
             (drop (call $post_queue_push (local.get $arg0) (i32.const 0x0007)
               (i32.const 0) (i32.const 0)))))))
     (call $show_window_activate_top_level (local.get $arg0) (local.get $arg1))
-    (i32.store offset=0 (global.get $reg_base) (local.get $was_visible))
+    (i32.store offset=0 (global.get $reg_base)
+      (call $show_window_result (local.get $placement) (local.get $was_visible)))
     (return (i32.const 1)))
 
   ;; BOOL ShowWindowAsync(HWND, int). USER does not run the target window's
@@ -2810,10 +2819,12 @@
         (local.set $tmp (call $gl32 (i32.load offset=16 (global.get $reg_base))))
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $tmp))
-        (call $handle_ShowWindow
+        (if (call $show_window_core
           (call $gl32 (local.get $arg0))
           (call $gl32 (i32.add (local.get $arg0) (i32.const 8)))
-          (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+          (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 2) (i32.const 0))
+          (then (i32.store offset=16 (global.get $reg_base)
+            (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))))
         ;; DispatchMessage returns an LRESULT, not ShowWindow's BOOL.
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (return)))

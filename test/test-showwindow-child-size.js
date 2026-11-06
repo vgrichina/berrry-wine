@@ -49,11 +49,9 @@ const extraWat = String.raw`
   e.set_post_queue_count(0);
   e.test_call_show_window(child, 5);
 
-  assert.strictEqual(e.post_queue_depth(), 2,
-    'first show queues WM_SHOWWINDOW followed by WM_SIZE');
+  assert.strictEqual(e.post_queue_depth(), 1,
+    'first show sends WM_SHOWWINDOW synchronously and queues only WM_SIZE');
   assert.deepStrictEqual([0, 1, 2, 3].map(field => e.post_queue_peek(0, field) >>> 0),
-    [child, 0x0018, 1, 0], 'WM_SHOWWINDOW describes the visible transition');
-  assert.deepStrictEqual([0, 1, 2, 3].map(field => e.post_queue_peek(1, field) >>> 0),
     [child, 0x0005, 0, packedSize], 'WM_SIZE carries the current child client size');
 
   e.set_post_queue_count(0);

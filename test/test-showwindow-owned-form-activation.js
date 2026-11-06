@@ -90,23 +90,27 @@ function u32(value) {
     0xc2, 0x10, 0x00,
   ]), toWasm(proc));
 
+  const initialEsp = e.get_esp() >>> 0;
   const packed = BigInt.asUintN(64, e.test_show_owned_top_level(proc));
   const helper = Number(packed & 0xffffffffn) >>> 0;
   const form = Number(packed >> 32n) >>> 0;
+  e.run(1000000);
+  assert.strictEqual(e.get_eip(), 0, 'ShowWindow resumes its original caller');
+  assert.strictEqual(e.get_esp() >>> 0, initialEsp + 12,
+    'guest notifications preserve ShowWindow stdcall cleanup');
   assert.notStrictEqual(form, helper);
   assert.strictEqual(e.test_main_hwnd() >>> 0, form,
     'visible form replaces its zero-area VCL utility owner as main HWND');
   assert.strictEqual(e.test_active_hwnd() >>> 0, form,
     'activating ShowWindow transitions away from the utility HWND');
-  e.run(1000000);
   assert.strictEqual(e.get_focus_hwnd() >>> 0, form,
     'activated owned top-level receives focus');
   assert.strictEqual(activatedRendererHwnd, form,
     'renderer input ownership follows the activated form');
   const seen = Array.from({ length: view.getUint32(toWasm(count), true) }, (_, i) =>
     view.getUint32(toWasm(messages + i * 4), true));
-  assert.deepStrictEqual(seen, [0x001c, 0x0006, 0x0007, 0x0003, 0x0005],
-    'resumable startup chain delivers activation, focus, move, and size');
+  assert.deepStrictEqual(seen, [0x0018, 0x001c, 0x0006, 0x0007, 0x0003, 0x0005],
+    'resumable startup chain sends show before activation, focus, move, and size');
   console.log('PASS activating ShowWindow reaches a VCL-style owned top-level form');
 })().catch(error => {
   console.error(error && error.stack || error);

@@ -379,9 +379,9 @@
     {
       "file": "lib/renderer.js",
       "name": "host-file",
-      "sha256": "577036a3fc6d12c7d69be5b236d1ff3251807ceb897fa258276294cf9fed39de",
+      "sha256": "e9e0cdd037efb8fe5779534cbd435c8d85bb3203bd461be09abc785204c57554",
       "kind": "host-entry",
-      "reason": "Uplink background review 20261029: borderless dialog coverage reads the existing canonical dialog-proc getter synchronously; no callback invocation or retained context. Existing upload ordering and captioned chrome exclusion retained. Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Startup review a339395: SW_FORCEMINIMIZE joins existing non-child minimization path; existing window object and restoration rectangle ownership unchanged. Review 20261025: complete delta from seal 71d9c29a to 27e2a785 separates isChild traversal from popup owner links and adds ancestor clipping with save/try/finally/restore for single-source child composition. Reviewed recursive wasm/memory alias restoration, surface snapshots and window lifetimes; no guest ownership certification. See docs/reviews/host-census-four-row-reconcile-oct25.md; ownership remains pending. Uplink integration: canonical WAT child enumeration reads geometry synchronously and retains no callback/context; newer popup ownership and ancestor clipping retained.",
+      "reason": "Uplink background review 20261029: borderless dialog coverage reads the existing canonical dialog-proc getter synchronously; no callback invocation or retained context. Existing upload ordering and captioned chrome exclusion retained. Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Startup review a339395: SW_FORCEMINIMIZE joins existing non-child minimization path; existing window object and restoration rectangle ownership unchanged. Review 20261025: complete delta from seal 71d9c29a to 27e2a785 separates isChild traversal from popup owner links and adds ancestor clipping with save/try/finally/restore for single-source child composition. Reviewed recursive wasm/memory alias restoration, surface snapshots and window lifetimes; no guest ownership certification. See docs/reviews/host-census-four-row-reconcile-oct25.md; ownership remains pending. Uplink integration: canonical WAT child enumeration reads geometry synchronously and retains no callback/context; newer popup ownership and ancestor clipping retained. Review 20261105: owned-popup subtree promotion mutates z-order using synchronous owner getters and invocation-local Sets/arrays. No guest callback, asynchronous continuation or retained context is introduced; ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -3108,7 +3108,7 @@
           "$arg3"
         ]
       ],
-      "sha256": "01a3ae15545593137e73db364438f86380415ea9cee6235b21308a1a4280ba24",
+      "sha256": "4fdf0d861e4096b9b710ec0461f9c3b8c4555b7d4346fa14369b170a7e330db0",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
       "ownership": "pending"
@@ -3217,7 +3217,7 @@
           "$wndproc"
         ]
       ],
-      "sha256": "5c1aaca85b7336f659ece82d03a29c67ff5a75690aeb0553fcfb384b78edc2bf",
+      "sha256": "6f2fe690baea8ae96a4150b09baa3b250cd240c6586b0cc89a066935c3c4445c",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
       "ownership": "pending"
@@ -3267,7 +3267,7 @@
     {
       "file": "src/09a5-handlers-window.wat",
       "name": "$show_window_core",
-      "writes": 2,
+      "writes": 3,
       "boundaryCalls": [],
       "exports": [],
       "targets": [
@@ -3278,11 +3278,15 @@
         [
           "local.get",
           "$wndproc"
+        ],
+        [
+          "local.get",
+          "$wndproc"
         ]
       ],
-      "sha256": "4d6f82f0d5d0e3c587cdda714c8bbb26db2b27027f3df52ebb83719f165bd99d",
+      "sha256": "cf69d16016af355543969e96d5c342f79916ec709a6fe6c26cee133b70eba3a7",
       "kind": "mixed-dispatch",
-      "reason": "Show-return frame construction unchanged. Prior visibility is captured for both ShowWindow results; placement/implicit creation use zero on destruction. Final WM_SIZE now returns through CACA003D before releasing the owned cells (2026-10-21 source-slice evidence; fresh actual-guest/runtime qualification pending). Other mixed-dispatch lifetimes and private invocation-token ownership remain pending.",
+      "reason": "WM_SHOWWINDOW now precedes visibility/activation on a guest-stack SWND continuation retaining HWND, resolved command, placement convention and prior visibility. Resumption revalidates HWND and restores the API frame; native controls use native dispatch. Focused show/async/size/modal/Paint tests pass. Final WM_SIZE retains CACA003D ownership. Other mixed-dispatch lifetimes and private invocation-token ownership remain pending.",
       "ownership": "pending"
     },
     {
@@ -4750,7 +4754,7 @@
     {
       "file": "src/09b-dispatch.wat",
       "name": "$win32_dispatch_inner",
-      "writes": 65,
+      "writes": 66,
       "boundaryCalls": [
         "$crt_callback_continue",
         "$crt_callback_continue",
@@ -4780,6 +4784,15 @@
         [
           "global.get",
           "$delphi_resume_eip"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            ["local.get", "$esp"],
+            ["i32.const", "20"]
+          ]
         ],
         [
           "call",
@@ -5235,9 +5248,9 @@
           ]
         ]
       ],
-      "sha256": "b4d18a35fc2ad53d4911104402d8b6aadb0ce0e2c2771cd31e664aee9955b24e",
+      "sha256": "c0aa8b0a38883c5ac58af1c978e4d03feb9a7be39c3b10912a0971bab6ffd644",
       "kind": "mixed-dispatch",
-      "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending. Implicit-show correction 2026-11-01: guest-stack CSHW marker retains target/caller across yielding WM_SHOWWINDOW; activation follows completion, destruction returns NULL. Ordering, nested-main replacement and frame cleanup regression passes. Broader ownership remains pending. Nested child returns leave the main implicit-show latch pending.",
+      "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending. Implicit-show correction 2026-11-01: guest-stack CSHW marker retains target/caller across yielding WM_SHOWWINDOW; activation follows completion, destruction returns NULL. Ordering, nested-main replacement and frame cleanup regression passes. Broader ownership remains pending. Nested child returns leave the main implicit-show latch pending. Review 20261105: explicit SWND frame retains target, resolved show command, return convention and prior visibility across callbacks. Resume validates HWND before host mutation. Legacy cdecl return normalizes four arguments only when the owned marker, WM_SHOWWINDOW and retained HWND agree; stdcall layout unchanged. No new shared continuation state; broader ownership remains pending.",
       "ownership": "pending"
     },
     {
