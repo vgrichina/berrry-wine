@@ -1830,11 +1830,13 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 
 - [ ] New-game lane: Disciples II demo
   id: NEW-GAME-DISCIPLES2-DEMO-20261009
+  Update 2026-11-06: Reclaimed released follow-up from codex:01a19022. Current source and docs/re-notes/disciples2-demo.md supersede the October9 menu hypothesis: 22d835d4f is an ancestor of main and the October11 notes report first-click hover sequencing fixed. Registry already contains logicalFrame647da0/verifier647df2; the historical27.4FPS sample explicitly lacked verifier confirmation. October19 native-module identity repair qualified startup only. Next: current-build registered gameplay with ordinary first-click progression and movement, verify logical marker and presentation verifier together, and assess audio only with actual listening evidence. Do not repeat the old menu repair or promote historical measurements to current acceptance. No new run/test/build performed in this reconciliation; follow-up awaits a free worker slot.
   status: active
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: root; native and browser movement verified, input/FPS/audio follow-up ready; all runtimes terminal
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  worker: none; reclaimed by coordinator 2026-11-06, current gameplay/verifier/audio follow-up queued
+  prev-owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66 (released)
   candidate: test/binaries/win98-games-a-d/Discipless2_demo-D3D.exe
-  Next: Registered native and browser gameplay verified: ordinary leader move20/20->16/20 and camera follow, reviewed run20261009T0728Z-disciples2-browser-gameplay, photo967. Registration fd5aa4a35 on main. Browser50788/50800 clean stop07:28:27Z. Menu repeat-click issue remains despite1000ms holds and both down/up reaching renderer/input log; inspect guest consumption/activation.30.10599s presentation sample2432 events/1649 uploads is80.7813/54.7732 per second, not logical FPS. Qualify gameplay counter and audio separately. No public promotion. Alice real GL implementation is next unblocked implementation lane.
+  Historical October9: Registered native and browser gameplay verified: ordinary leader move20/20->16/20 and camera follow, reviewed run20261009T0728Z-disciples2-browser-gameplay, photo967. Registration fd5aa4a35 on main. Browser50788/50800 clean stop07:28:27Z. The then-open menu repeat-click issue was superseded by22d835d4f/October11 notes above.30.10599s presentation sample2432 events/1649 uploads is80.7813/54.7732 per second, not logical FPS. Current gameplay, verified logical frames and audio remain separate requirements. No public promotion.
   Evidence: scratch/disciples2-preflight-20261009/preflight.json
   Done: Registered normal launch, actual gameplay control, reviewed screenshot, fixes/tests pushed main.
 
