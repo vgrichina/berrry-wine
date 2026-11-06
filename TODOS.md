@@ -2216,8 +2216,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-ARANNA-DEMO-20261010
   blocker: Repaired defaults reach EULA/cinematic/Main Menu; Single Player remains unopened. Later sparse backing commit and heap refusals have no established cause or input causal link.
-  worker: aranna-pressure-recovery-0100; fresh successor queued after Conanmatrix2358 then legacyPoint0025 final releases/cleanup
-  status: Original menu verified; measured recoverable fragmentation, safe pressure recovery assigned
+  worker: aranna-menu-input-cause-0205 (launcher3753935); source-only until Conan0125 then Reset0130 then CapsFixture0135 final releases/cleanup
+  status: Generated pressure recovery repaired; original remains Main Menu with persistent allocation refusals; allocation ownership and input causality open
+  Update 2026-11-06T02:05Z: Published pressure repair c6ce9168e, final note a6d8048f5. Both modules recover the generated45056-byte allocation automatically with18201live guards and peer/malformed/bounded-work negatives; focused heap checks and locked builds pass, including merged TrueType coverage. Coordinator verified286artifact hashes and119absentPIDs/12closedports/6absentprofiles/4freelocks. Exactly one original remained Main Menu after Single Player mouse+Enter; drained logs contain176OOMnotifications and88final refusals, so original recovery/gameplay is unproved. Fresh successor distinguishes allocation ownership from menu input consumption before any materially changed replay. Evidence scratch/runs/20261106-aranna-pressure-recovery/; FPS/audio unknown. Conan owns the serialized runtime, followed by Reset then caps fixture.
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   candidate: scratch/game-media/aranna-demo-20261105/dsloademo.exe (260378624 bytes, SHA256 e3923f18d3ec9bf52ffe556821dbaa2078e985087c7bf4b171a36b9883b851cf; exact historical original)
   Prepared: Canonical extraction scratch/game-media/aranna-demo-20261105/extracted/ verified28files/281799760B, DSLOA.exe historical hash exact, both case-distinct setup DLLs preserved. Per-file receipt scratch/runs/20261105-aranna-extraction/result.json. Original1710 subsequently executed extracted DSLOA.exe and observed ordinary EULA acceptance; installation unqualified.
