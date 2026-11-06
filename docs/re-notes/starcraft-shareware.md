@@ -880,6 +880,16 @@ block 0x4b48aa  7 ops        block 0x4b48d7  4 ops
 
 Every op carries a classified role, so role classification is not the blocker.
 
+**A longer window disagrees with the 30% figure** (recovered from branch commit
+02570433, 2026-09-15). Over 4700 batches of the gameplay route with
+`--handler-hist` (1.218e9 block entries) the nest was **4.15%**: `0x4b48aa`
+2.17%, `0x4b4892` 1.31%, `0x4b48e3` 0.63%, `0x4b48d7` 0.037%. Measured there,
+the fill arm averaged **3.5 bytes per run** (467,232 bytes / 132,865 runs) and
+is 58x colder than the literal arm, so `0x4b48aa` is the arm worth folding.
+The share depends heavily on the scene and window; quote the window with the
+number. The same session found the nest switches on between batches 1120 and
+1160 of that route.
+
 ### Cost per game frame is flat, and it is not view-dependent
 
 Eleven 150-batch windows (30s game time each) in one frozen session, counting

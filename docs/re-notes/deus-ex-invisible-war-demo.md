@@ -351,6 +351,57 @@ setup panels, portrait and readable done button after ordinary Enter. The
 before/after pictures were reviewed. This verifies the setup rendering fix;
 player-controlled gameplay, audio and FPS remain unqualified.
 
+## Ion Launcher handoff chain (10-11 October)
+
+(Recovered from branch commit 149a3547b, Oct 2026. The host/WAT fixes named
+here are on main: process aliases `0x00E6xxxx` in `09a0-handlers-base.wat`,
+`lib/process-send-broker.js`, D3D8/D3D9 `GetAdapterMonitor`.)
+
+Start Game makes DX2 hand the level to `C:\System\Ion Launcher.exe` and exit.
+Each link that broke, in order:
+
+1. **ShellExecuteExA** at DX2 `0x402704` (60-byte SHELLEXECUTEINFO, mask
+   `0x440`, nShow 5); timeout termination at `0x402850`. The old handler
+   faked success without launching and wrote 33 into nShow (+28) instead of
+   hInstApp (+32). Needs a real child and hProcess for NOCLOSEPROCESS.
+2. **Launcher args.** DX2 builds them with format `0x904738`
+   `%s %s "%s" %s %s` (`0x904754` = `dummy`, the third field); field two is
+   MONITORINFOEXA.szDevice from `GetCreationParameters` (`0x4020b5`) →
+   `GetDirect3D` → `GetAdapterMonitor` (`0x4020db`) → `GetMonitorInfoA`
+   (`0x402104`). D3D8/D3D9 returned NULL for every adapter, the empty field
+   shifted the launcher's strtok parse, and it restarted DX2 with empty args.
+   Fix: adapter 0 → USER32 primary monitor `0x10000`, absent adapters NULL.
+   Good child command: `-display \\.\DISPLAY1 640x480 M1_Seattle_MercDistrict_Sak.gmp?-LoadTravel`.
+3. **Launcher WinMain** `0x4038b0` creates two *events* named `Ion Launcher
+   Mutex` (`0x40a278`) / `Ion Game Mutex` (`0x40a268`); `GetLastError == 183`
+   at `0x40390c` sets BL; BL selects the fresh-launch path at `0x403a7f`.
+   With BL zero, `0x403830` registers the class and `0x403690` creates the
+   window; a zero result also falls to the empty-args restart at `0x403aa0`,
+   so an empty child command cannot distinguish the two. Named events must be
+   shared across processes (the browser namespace confirmed both open with
+   alreadyExists=true).
+4. **FindWindowA** at DX2 `0x4027ba` (filter at `0x904728`) must see the other
+   process's windows: a desktop query precedes the local WND walk.
+5. **Child lifetime.** Browser `process_spawn` installed `_stopChildren` and
+   every `stop()` ran it, so DX2's deliberate `TerminateProcess(-1,-1)` killed
+   its live launcher. Windows ancestry has no such contract; cascade removed.
+6. **DuplicateHandle** at `0x4027f0`/`0x402806`: DX2 duplicates its
+   GetCurrentProcess pseudo handle into the launcher (SAME_ACCESS) and sends it
+   as lParam of message `0x400` via **SendMessageA** (IAT `0x904478`, call
+   `0x402818` — not PostMessage). Launcher handler `0x40377a` stores lParam at
+   `0x40c048`; its wait `0x4033a0` starts that at -1 and pumps up to 120000 ms
+   (timeout returns 1 at `0x403439`). Copying -1 unchanged hit exactly the
+   sentinel; now target-owned process aliases `0x00E60000|n` reference a shared
+   process object that keeps the exit DWORD after teardown. CLI children are
+   separate OS processes and return ERROR_NOT_SUPPORTED for this.
+7. **GetExitCodeProcess** read process_ctl's -1 as invalid handle, but
+   0xFFFFFFFF is DX2's real exit code; op 2 now checks validity only for -1.
+8. **Cross-process SendMessageA** — see the next section; it cut parent exit →
+   level spawn from 122587 ms to 3822 ms.
+
+Launcher statics: `0x4032c0` builds its own SHELLEXECUTEINFO, calls
+ShellExecuteExA at `0x403352`, stores hProcess at `0x40c04c`.
+
 ## Synchronous launcher handoff: receiver admission prerequisite (11 October)
 
 The held investigation branch records the original process-alias run in

@@ -889,6 +889,27 @@ and ut2004_demo at the root manifest, with `exeGuestPath`/`workingDirectory` set
 
 Evidence: `scratch/runs/20261010T2335Z-ut2004-fresh-fetch-app-w5`.
 
+## Unreal Special Edition: headless single-player route (2026-10-01)
+
+(Recovered from branch archive cbfe9895, Oct 2026.) A plain Node route past
+the SoftDrv flyby, using the stock command-line override:
+
+```
+node test/run.js --app=unreal_special_demo --args='Nyleve.unr?game=UnrealI.SinglePlayer -window' \
+  --no-threads --quiet-api --no-close --stuck-after=0 --batch-size=200000 \
+  --tick-ms-per-batch=25 --repaint-every=10 --branch-clock --max-batches=2101 \
+  --input=1490:click:300:250,1550:di-keydown:38,1550:keydown:38,1750:di-keyup:38,1750:keyup:38,1800:di-keydown:39,1800:keydown:39,1950:di-keyup:39,1950:keyup:39
+```
+
+(The original also pinned `--wall-clock-ms=1790673326000`; the `--input` list
+is reconstructed from the described route, not copied from its command.)
+The click at `(300,250)` focuses the viewport and fires. Up/Right are the INI's
+`MoveForward`/`TurnRight`; the route sent both the DirectInput and the window
+keydown and was not minimized. Checkpoints: batch 1500 first-person weapon,
+100 health, 49 ammo; 1760 `YOU GOT A FLARE` with inventory icon; 2000 turned
+view. The starting room looks like the prison interior, so the URL is not proof
+of the loaded map. 7,350,053 API calls, byte-identical PNGs across two builds.
+
 ## Unreal Special menu labels (2026-10-11, TEST-FILES-OBJECT-ENTRIES)
 
 The menu bar showed raw `ID_FileMenu ID_ViewMenu ID_WindowMenu`. The menu

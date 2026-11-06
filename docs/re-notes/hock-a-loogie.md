@@ -43,6 +43,20 @@ rectangle before the existing show-state path. The repair uses existing
 helpers, introduces no callbacks, and preserves existing show-state handling.
 No game-specific condition, output, API stub or asset change is involved.
 
+### Remaining right-edge crop: no WM_SIZE after SetWindowPlacement
+
+(Recovered from branch commit 0730e511, Oct 2026. Since fixed: SetWindowPlacement
+now uses USER's positioning transaction and startup SIZE reads current client
+geometry, see `docs/reviews/hock-qualified-notify-integration-20261021.md`.) After the
+CLIENT_RECT repair the timer was still cropped at the right. The guest
+stretches its 320×240 picture to its **cached WM_SIZE** dimensions (632×434,
+minus a 20 px status bar → 632×414) while the settled client is 556×434:
+startup delivers the creation-time size, and the later SetWindowPlacement
+sends no correcting WM_SIZE. A normal host resize at the same 564×480 outer
+size updates the guest to 556 and shows the whole timer, so the fix belongs
+in SetWindowPlacement's size notification, not renderer scaling or an ad hoc
+queued message.
+
 ## Verification
 
 - New `test/test-window-placement-client.js` runs the real source-compiled WAT
